@@ -1,7 +1,6 @@
 {
-  "name": "@bitcoin-computer/node-secret",
+  "name": "@bitcoin-computer/node",
   "version": "0.9.10",
-  "private": true,
   "description": "",
   "keywords": [
     "Bitcoin",
@@ -11,7 +10,7 @@
   "contributors": [
     "Clemens Ley"
   ],
-  "main": "dist/min/bcn.cjs.js",
+  "main": "src/bcn.cjs.js",
   "repository": "bitcoin-computer/bitcoin-computer-node-secret",
   "author": "Clemens Ley",
   "license": "CC-BY-ND-4.0",
@@ -78,7 +77,6 @@
     "start-test-ltc": ". scripts/development-setup.sh && start_test_ltc",
     "start-test-btc": ". scripts/development-setup.sh && start_test_btc",
     "sync": "$(grep SYNC_START .package.paths | cut -d '=' -f2)",
-    "deploy": "yarn dist-clean && yarn build && yarn node-clean && yarn cp-files-script",
     "cp-files-script": "./scripts/cp-files.sh",
     "cp-files-script-repo": "./scripts/cp-files-to-repo.sh",
     "node-clean": "./scripts/node-clean.sh",
@@ -104,16 +102,15 @@
     "aws-ecr-login": "exec bash -c '. scripts/aws-setup.sh && aws_ecr_login'",
     "aws-tag": ". scripts/aws-setup.sh && aws_tag",
     "clean": "rm -rf ./dist",
-    "lint": "eslint src test",
-    "lint-fix": "eslint src test --fix",
     "reset": "yes | ./scripts/reset.sh",
-    "types": "tsc -p tsconfig.json",
     "clean-ltc-data": "rm -rf ./chain-setup/ltc-regtest/blockchain-data && rm -rf ./chain-setup/ltc-regtest/db-data",
     "fund-ltc": "./chain-setup/ltc-regtest/topup-test-wallets.sh",
     "fund-btc": "./chain-setup/btc-regtest/topup-test-wallets.sh",
     "test": "./scripts/test.py",
     "up": "./scripts/up.py",
-    "down": "./scripts/down.py",
-    "test-unit": "yarn test -u"
+    "down": "./scripts/down.py"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
