@@ -176,7 +176,7 @@ aws ecr create-repository --repository-name <repository-name> --region us-east-2
 ```
 6. Update the .env.aws environment file with the full name of the repository already created.
 ```shell
-AWS_REPOSITORY=<user-account>.dkr.ecr.<repository-region>.amazonaws.com/<repository-name>
+AWS_REPOSITORY=<repository-name>
 ```
 
 7. Tag and push the image to ECR

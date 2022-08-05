@@ -26,7 +26,8 @@
     "prepare": "husky install",
     "create-version": "lerna version --force-publish",
     "validate-branch": ". scripts/validate-branch.sh && validate_branch",
-    "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch"
+    "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch",
+    "copy-to-public-monorepo": "./scripts/cp-files-to-repo.sh"
   },
   "version": "0.9.1-beta",
   "dependencies": {
