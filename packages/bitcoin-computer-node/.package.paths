@@ -1,0 +1,3 @@
+
+SRC_ENTRY=src/bcn.cjs.js
+SYNC_START=ts-node src/bcn.sync.cjs.js

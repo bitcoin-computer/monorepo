@@ -1,0 +1,84 @@
+version: "3"
+services:
+  bitcoind:
+    image: ruimarinho/bitcoin-core
+    # specify additional command line arguments here
+    command: bitcoind
+    healthcheck:
+      test: [ "CMD", "/entrypoint.sh", "bitcoin-cli", "getinfo" ]
+    restart: on-failure
+    ports:
+      # change to 18333 if running testnet or 9333 if running on STN
+      - "8333:8333"
+      # JSON-RPC
+      - "8332:8332"
+      # ZMQ
+      - "28332:28332"
+    volumes:
+      # using a custom path for data dir
+      - ./blockchain-data:/home/bitcoin/.bitcoin
+      # using a custom path for custom bitcoin.conf
+      - ./bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
+    networks:
+      - bitcoin
+  bitcoin-cli:
+    image: ruimarinho/bitcoin-core
+    entrypoint: [ "/entrypoint.sh", "bitcoin-cli" ]
+    command: ""
+    depends_on:
+      - bitcoind
+    network_mode: service:bitcoind
+    volumes:
+      # using a custom path for custom bitcoin.conf
+      - ./bitcoin.conf:/home/bitcoin/.bitcoin/bitcoin.conf
+  sync:
+    build: ../../
+    image: bitcoin-computer-node
+    command: npm run sync
+    env_file:
+      - ../../.env
+    restart: on-failure
+    depends_on:
+      - db
+    links:
+      - bitcoind
+      - db
+    networks:
+      - bitcoin
+      - bcn
+  bcn:
+    build: ../../
+    image: bitcoin-computer-node
+    command: npm start
+    env_file:
+      - ../../.env
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+    links:
+      - bitcoind
+      - db
+    working_dir: /usr/src/app
+    volumes:
+      - ./bcn.config.json:/usr/src/app/bcn.config.json
+    networks:
+      - bitcoin
+      - bcn
+  db:
+    image: postgres
+    env_file:
+      - ../../.env
+    restart: on-failure
+    ports:
+      - '5432:5432'
+    volumes:
+      - ../../db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
+      - ./db-data:/var/lib/postgresql/data
+    networks:
+      - bcn
+
+networks:
+  bitcoin: null
+  bcn: null

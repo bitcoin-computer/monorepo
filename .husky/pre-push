@@ -1,0 +1,7 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+yarn validate-branch
+lerna run types
+lerna run lint-fix
+lerna run test-unit

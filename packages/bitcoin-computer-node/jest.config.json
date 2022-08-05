@@ -1,0 +1,18 @@
+{
+  "testEnvironment": "node",
+  "testEnvironmentOptions": {
+    "url": "http://localhost:3000/"
+  },
+  "transform": {
+    ".+\\.(ts)$": "ts-jest"
+  },
+  "testMatch": [
+    "**/test/**/*.test.ts"
+  ],
+  "moduleFileExtensions": [
+    "ts",
+    "js",
+    "json",
+    "node"
+  ]
+}

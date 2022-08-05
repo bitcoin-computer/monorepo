@@ -1,0 +1,4 @@
+{
+  "require": ["dotenv/config"],
+  "timeout": "30000000"
+}

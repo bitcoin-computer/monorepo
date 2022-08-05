@@ -1,0 +1,56 @@
+version: "3"
+services:
+  db:
+    env_file: .env
+    volumes:
+      - ./chain-setup/ltc-regtest/db-data:/var/lib/postgresql/data
+      - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
+  litecoind:
+    # healthcheck:
+    #  test: ["CMD", "/entrypoint.sh", "bitcoin-cli", "getblockchaininfo"]
+    env_file: .env
+    networks:
+      - bitcoin
+    image: public.ecr.aws/j9i7w6o6/litecoin-docker-images:latest
+    ports:
+      # 19444 for regtest, 19333 testnet, 9333 if running on mainnet
+      - 19444:19444
+      # JSON-RPC: 19332 for regtest, 19332 for testnet, 9332 for mainnet
+      - 19332:19332
+      # ZMQ: 28332
+      - 28332:28332
+    volumes:
+      # using a custom path for data dir
+      - ./chain-setup/ltc-regtest/blockchain-data:/home/litecoin/.litecoin
+    command:
+      [
+        "litecoind",
+        "-regtest=1",
+        "-dbcache=4000",
+        "-txindex=1",
+        "-server=1",
+        "-rpcbind=0.0.0.0",
+        "-rpcworkqueue=512",
+        "-rpcport=19332",
+        "-port=19444",
+        "-zmqpubhashtx=tcp://0.0.0.0:28332",
+        "-zmqpubrawtx=tcp://0.0.0.0:28332",
+        "-rpcallowip=0.0.0.0/0",
+        "-rpcauth=${RPC_AUTH}",
+        "-wallet=${DEFAULT_WALLET}"
+      ]
+  bcn:
+    build: .
+    image: bitcoin-computer-node
+    env_file: .env
+    depends_on:
+      - db
+      - litecoind
+    environment:
+      - BCN_ENV=dev
+      - RPC_HOST=litecoind
+      - RPC_PORT=19332
+      - ZMQ_URL=tcp://litecoind:28332
+      - NETWORK=regtest
+      - CHAIN=LTC
+      - BCN_URL=http://127.0.0.1:3000

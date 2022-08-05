@@ -1,0 +1,78 @@
+version: "3"
+services:
+  db:
+    env_file: .env
+    volumes:
+      - ./chain-setup/ltc-testnet/db-data:/var/lib/postgresql/data
+      - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
+  bitcoind:
+    image: ruimarinho/bitcoin-core
+    ports:
+      # 8333 for regtest, 18333 testnet, 9333 if running on STN
+      - 18333:18333
+      # JSON-RPC: 8332 for regtest, 18332 for testnet
+      - 18332:18332
+      # ZMQ: 28332
+      - 28332:28332
+    volumes:
+      # using a custom path for data dir
+      - ./chain-setup/btc-regtest/blockchain-data:/home/bitcoin/.bitcoin
+    networks:
+      - bitcoin
+    command:
+      [
+        "bitcoind",
+        "-testnet=1",
+        "-dbcache=4000",
+        "-txindex=1",
+        "-server=1",
+        "-rpcbind=0.0.0.0",
+        "-rpcworkqueue=512",
+        "-rpcport=18332",
+        "-port=18333",
+        "-printtoconsole=1",
+        "-zmqpubhashtx=tcp://0.0.0.0:28332",
+        "-zmqpubrawtx=tcp://0.0.0.0:28332",
+        "-rpcallowip=0.0.0.0/0",
+        "-rpcauth=${RPC_AUTH}",
+        "-wallet=${DEFAULTWALLET}"
+      ]
+  bcn:
+    build: .
+    image: bitcoin-computer-node
+    env_file: .env
+    depends_on:
+      - db
+      - bitcoind
+    environment:
+      - BCN_ENV=prod
+      - RPC_HOST=bitcoind
+      - RPC_PORT=18332
+      - ZMQ_URL=tcp://bitcoind:28332
+      - NETWORK=testnet
+      - CHAIN=LTC
+      - BCN_URL=http://127.0.0.1:3000
+  sync:
+    command: npm run sync
+    build: .
+    image: bitcoin-computer-node
+    env_file: .env
+    depends_on:
+      - db
+      - bitcoind
+    environment:
+      - BCN_ENV=prod
+      - RPC_HOST=bitcoind
+      - RPC_PORT=18332
+      - NETWORK=testnet
+      - CHAIN=LTC
+      - ZMQ_URL=tcp://bitcoind:28332
+      - BCN_URL=http://127.0.0.1:3000
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=db
+      - RPC_PROTOCOL=http
+      - RPC_USER=${RPC_USER}
+      - RPC_PASSWORD=${RPC_PASSWORD}
+    networks:
+      - bitcoin
+      - bcn

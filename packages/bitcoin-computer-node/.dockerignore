@@ -1,0 +1,12 @@
+node_modules/
+dist/
+chain-setup/**/blockchain-data
+chain-setup/**/db-data
+npm-debug.log
+coverage/
+.env
+.env.aws
+.DS_Store
+combined.log
+error.log
+bcn-deploy.zip

@@ -1,0 +1,35 @@
+{
+  "name": "bitcoin-computer",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@types/node": "^17.0.35",
+    "edit-json-file": "^1.7.0",
+    "husky": "^8.0.1",
+    "lerna": "^5.1.2",
+    "path": "^0.12.7",
+    "ts-node": "^10.8.0",
+    "typescript": "^4.7.2",
+    "url": "^0.11.0"
+  },
+  "scripts": {
+    "deploy": "yarn cleanup-public-package-json && lerna run deploy && yarn cleanup-public-package-json",
+    "publish-npm": "yarn validate-branch-for-deploy && lerna publish from-package && ./scripts/create-release-lib.sh && ./scripts/create-release-node.sh",
+    "publish-testing": "yarn validate-branch-for-deploy && yarn pre-publish-testing && yarn publish-npm && yarn post-publish-testing",
+    "pre-publish-testing": "yarn ensure-clean-git-working-tree && yarn cleanup-public-package-json-testing && yarn pre-git-commit",
+    "post-publish-testing": "yarn cleanup-public-package-json && yarn post-git-commit",
+    "cleanup-public-package-json": "node --loader ts-node/esm ./scripts/cleanup-public-package-json.ts",
+    "cleanup-public-package-json-testing": "node --loader ts-node/esm ./scripts/cleanup-public-package-json.ts testing",
+    "ensure-clean-git-working-tree": "./scripts/ensure-clean-git-working-tree.sh",
+    "pre-git-commit": "./scripts/test-pre-publish-git-commit.sh",
+    "post-git-commit": "./scripts/test-post-publish-git-commit.sh",
+    "prepare": "husky install",
+    "create-version": "lerna version --force-publish",
+    "validate-branch": ". scripts/validate-branch.sh && validate_branch",
+    "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch"
+  },
+  "version": "0.9.1-beta",
+  "dependencies": {
+    "@endo/static-module-record": "^0.7.6"
+  }
+}

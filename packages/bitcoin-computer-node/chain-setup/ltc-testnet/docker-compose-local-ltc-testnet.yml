@@ -1,0 +1,73 @@
+version: "3"
+services:
+  db:
+    env_file: .env
+    volumes:
+      - ./chain-setup/ltc-testnet/db-data:/var/lib/postgresql/data
+      - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
+  litecoind:
+    image: public.ecr.aws/j9i7w6o6/litecoin-docker-images:latest
+    networks:
+      - bitcoin
+    command:
+      [
+        "litecoind",
+        "-testnet=1",
+        "-dbcache=4000",
+        "-txindex=1",
+        "-server=1",
+        "-rpcbind=0.0.0.0",
+        "-rpcworkqueue=512",
+        "-rpcport=19332",
+        "-port=19335",
+        "-zmqpubhashtx=tcp://0.0.0.0:28332",
+        "-zmqpubrawtx=tcp://0.0.0.0:28332",
+        "-rpcallowip=0.0.0.0/0",
+        "-rpcauth=${RPC_AUTH}",
+        "-wallet=${DEFAULTWALLET}"
+      ]
+    ports:
+      - 19333:19333
+      - 19332:19332
+      - 28332:28332
+    volumes:
+      - ./chain-setup/ltc-testnet/blockchain-data:/home/litecoin/.litecoin
+  bcn:
+    build: .
+    image: bitcoin-computer-node
+    env_file: .env
+    environment:
+      - BCN_ENV=prod
+      - RPC_HOST=litecoind
+      - RPC_PORT=19332
+      - ZMQ_URL=tcp://litecoind:28332
+      - NETWORK=testnet
+      - CHAIN=LTC
+      - BCN_URL=http://127.0.0.1:3000
+    depends_on:
+      - db
+      - litecoind
+  sync:
+    command: npm run sync
+    build: .
+    image: bitcoin-computer-node
+    env_file: .env
+    depends_on:
+      - db
+      - litecoind
+    environment:
+      - BCN_ENV=prod
+      - RPC_HOST=litecoind
+      - RPC_PORT=19332
+      - NETWORK=testnet
+      - CHAIN=LTC
+      - ZMQ_URL=tcp://litecoind:28332
+      - BCN_URL=http://127.0.0.1:3000
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=db
+      - RPC_PROTOCOL=http
+      - RPC_USER=${RPC_USER}
+      - RPC_PASSWORD=${RPC_PASSWORD}
+    networks:
+      - bitcoin
+      - bcn

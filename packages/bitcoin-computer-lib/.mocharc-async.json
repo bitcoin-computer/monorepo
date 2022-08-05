@@ -1,0 +1,5 @@
+{
+  "require": ["dotenv/config"],
+  "spec": "test/*.async-test.js",
+  "timeout": "30000000"
+}
