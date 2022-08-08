@@ -104,7 +104,6 @@
     "clean-ltc-data": "rm -rf ./chain-setup/ltc-regtest/blockchain-data && rm -rf ./chain-setup/ltc-regtest/db-data",
     "fund-ltc": "./chain-setup/ltc-regtest/topup-test-wallets.sh",
     "fund-btc": "./chain-setup/btc-regtest/topup-test-wallets.sh",
-    "test": "./scripts/test.py",
     "up": "./scripts/up.py",
     "down": "./scripts/down.py"
   },

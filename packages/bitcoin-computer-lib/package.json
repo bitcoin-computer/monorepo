@@ -83,8 +83,7 @@
     "major": "npm version major && npm publish",
     "prepublish-only": "npm run lint && npm test && npm run build",
     "reinstall": "rm -rf node_modules package-lock.json && npm install",
-    "count": "./scripts/count-errors.sh",
-    "test": "./scripts/test.py"
+    "count": "./scripts/count-errors.sh"
   },
   "watch": {
     "test": "{src,test}/*.js",
