@@ -25,6 +25,3 @@ jobs:
       - name: Lerna bootstrap
         run: lerna bootstrap
       - run: lerna run types
-      - run: lerna run rollup
-      - run: lerna run lint-fix
-      - run: lerna run test-unit
