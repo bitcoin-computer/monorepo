@@ -1,5 +1,0 @@
-{
-  "require": ["dotenv/config", "ts-node/register"],
-  "spec": "test/*.unit.test.js",
-  "timeout": "30000000"
-}
