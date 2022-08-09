@@ -1,0 +1,31 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "airbnb-base",
+    "plugin:flowtype/recommended",
+    "prettier"
+  ],
+  "env": {
+    "browser": true,
+    "mocha": true
+  },
+  "plugins": ["flowtype", "flowtype-errors"],
+  "rules": {
+    "class-methods-use-this": "off",
+    "flowtype-errors/show-errors": "error",
+    "func-names": "off",
+    "lines-between-class-members": "off",
+    "no-bitwise": "off",
+    "no-continue": "off",
+    "no-else-return": "off",
+    "no-param-reassign": "off",
+    "no-plusplus": [
+      "error",
+      {
+        "allowForLoopAfterthoughts": true
+      }
+    ],
+    "no-underscore-dangle": "off",
+    "import/no-cycle": "off"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": [
+    "airbnb-base",
+    "plugin:prettier/recommended",
+    "prettier",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:import/typescript"
+  ],
+  "plugins": [
+    "@typescript-eslint"
+  ],
+  "env": {
+  "jest": true
+  },
+  "rules": {
+    "semi": ["error", "never"],
+    "@typescript-eslint/no-extra-semi": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "import/extensions": "off",
+    "lines-between-class-members": "off",
+    "import/prefer-default-export": "off",
+    "no-underscore-dangle": [
+      "error",
+      {
+        "allowAfterThis": true,
+        "allow": [
+          "_readers",
+          "_owners",
+          "_amount",
+          "_id",
+          "_rev",
+          "_root"
+        ]
+      }
+    ]
+  }
+}

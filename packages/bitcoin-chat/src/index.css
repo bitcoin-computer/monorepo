@@ -1,0 +1,73 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.4;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.sidebar {
+  margin: 68px 8px 8px 8px;
+  height: calc(100vh - 80px);
+  width: 165px;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  overflow-x: hidden;
+  line-height: 1.5
+}
+
+.main {
+  margin: 40px 0px 5px 180px;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+textarea {
+  width: calc(100vw - 200px);
+  height: calc(100vh - 160px);
+}
+
+input {
+  width: calc(100vw - 257px);
+  margin-right: 5px;
+}
+
+.login-screen {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  background-color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-screen input {
+  width: 400px;
+  margin: 5px 0;
+}
+
+.login-screen button {
+  width: 100px;
+  margin: 5px 0;
+}
+
+.branding {
+  position: absolute;
+  bottom: 0;
+}
