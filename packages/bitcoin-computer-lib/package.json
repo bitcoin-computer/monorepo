@@ -1,11 +1,10 @@
 {
   "name": "@bitcoin-computer/lib",
   "version": "0.9.10",
-  "private": true,
   "description": "Smart Contracts for Bitcoin",
   "license": "CC-BY-ND-4.0",
   "repository": "bitcoin-computer/bitcoin-computer-lib",
-  "main": "dist/src/bitcoin-computer-lib.cjs.js",
+  "main": "bitcoin-computer-lib.cjs.js",
   "author": {
     "name": "Clemens Ley",
     "email": "clemens@bitcoincomputer.io",
@@ -17,7 +16,6 @@
   "files": [
     "dist"
   ],
-  "type": "module",
   "dependencies": {
     "@babel/core": "^7.18.0",
     "@endo/static-module-record": "^0.7.4",
@@ -74,26 +72,19 @@
     "cp-files": "./scripts/cp-files.sh",
     "lib-clean": "./scripts/lib-clean.sh",
     "postcoverage": "open-cli coverage/lcov-report/index.html",
-    "lint": "eslint src test",
-    "lint-fix": "eslint src test --fix",
     "docs": "documentation readme src --section=API",
     "clean": "rm -fr dist/*",
-    "rollup": "node --max-old-space-size=3072 node_modules/rollup/dist/bin/rollup -c",
-    "deploy": "yarn run lib-clean && yarn run clean && yarn run rollup && yarn run cp-files",
     "prebuild": "npm run clean",
     "build": "npm run rollup",
     "decls": "tsc -p tsconfig.decls.json",
-    "types": "tsc -p tsconfig.types.json",
     "watch": "npm-watch",
     "patch": "npm version patch && npm publish",
     "minor": "npm version minor && npm publish",
     "major": "npm version major && npm publish",
     "prepublish-only": "npm run lint && npm test && npm run build",
-    "postpublish": "git push origin master --follow-tags",
     "reinstall": "rm -rf node_modules package-lock.json && npm install",
     "count": "./scripts/count-errors.sh",
-    "test": "./scripts/test.py",
-    "test-unit": "yarn test -u"
+    "test": "./scripts/test.py"
   },
   "watch": {
     "test": "{src,test}/*.js",
@@ -102,5 +93,8 @@
   },
   "keywords": [
     "generator-nod"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
