@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/node-secret",
+  "name": "@bitcoin-computer/node",
   "version": "0.9.10",
   "private": true,
   "description": "",
