@@ -18,30 +18,6 @@ docker_hub_push() {
   fi
 }
 
-docker_volume_remove_aws() {
-  CONTEXT_TYPE=$(docker context ls | grep '*' | awk '{print $3}')
-  CONTEXT_NAME=$(docker context ls | grep '*' | awk '{print $1}')
-  echo "Using context name '$CONTEXT_NAME', context type '$CONTEXT_TYPE'."
-  if [[ $CONTEXT_TYPE == "ecs" ]]; then
-    if [[ $# -le 0 ]]; then
-      echo "Error: volume id needed. Usage: 'yarn docker-volume-rm-aws <fs_id>'"
-      exit 1
-    else
-      read -p "[!] Using context '$CONTEXT_NAME'. Removing volume '$1' Continue? (Y/N): " prompt
-      if [[ $prompt == "y" || $prompt == "Y" || $prompt == "yes" || $prompt == "Yes" ]] ;
-      then
-
-        . ./scripts/aws-config.sh && aws_secret_export
-        docker volume rm $1
-      fi
-    fi
-  else
-    echo "Error: the current context is not an ecs-type one."
-    echo "Please, switch to the ecs context: list the contexts running 'docker context ls'. Pick the ecs-type context name. Run: 'yarn docker-context-use <ecs-context-name>'"
-  fi
-
-}
-
 docker_volume_remove_local() {
   CONTEXT_NAME=$(docker context ls | grep '*' | awk '{print $1}')
   CONTEXT_TYPE=$(docker context ls | grep '*' | awk '{print $3}')

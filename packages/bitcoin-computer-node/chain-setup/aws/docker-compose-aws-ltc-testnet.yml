@@ -6,12 +6,12 @@ services:
     environment:
       - FILES=db/db_schema.sql
     volumes:
-      - sh-ltc-testnet-v0-9-7-side-car:/opt/
+      - sh-ltc-testnet-v0-9-10-side-car:/opt/
   db:
     env_file: .env.aws
     volumes:
-      - db-ltc-testnet-v0-9-7-data:/var/lib/postgresql/data
-      - sh-ltc-testnet-v0-9-7-side-car:/docker-entrypoint-initdb.d/
+      - db-ltc-testnet-v0-9-10-data:/var/lib/postgresql/data
+      - sh-ltc-testnet-v0-9-10-side-car:/docker-entrypoint-initdb.d/
     deploy:
       resources:
         reservations:
@@ -47,7 +47,7 @@ services:
       - 19332:19332
       - 28332:28332
     volumes:
-      - bc-ltc-testnet-v0-9-7-data:/home/litecoin/.litecoin
+      - bc-ltc-testnet-v0-9-10-data:/home/litecoin/.litecoin
     depends_on:
       - side-car
     deploy:
@@ -56,7 +56,7 @@ services:
           memory: 16384M
           cpus: '2'
   bcn:
-    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-repository:latest
+    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-repository:0.9.10
     env_file: .env.aws
     environment:
       - BCN_ENV=prod
@@ -76,7 +76,7 @@ services:
           cpus: '2'
   sync:
     command: npm run sync
-    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-repository:latest
+    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-repository:0.9.10
     env_file: .env.aws
     depends_on:
       - litecoind
@@ -110,14 +110,25 @@ services:
       - bcn
 
 volumes:
-  sh-ltc-testnet-v0-9-7-side-car: {}
-  db-ltc-testnet-v0-9-7-data:
-  bc-ltc-testnet-v0-9-7-data:
+  sh-ltc-testnet-v0-9-10-side-car: {}
+  db-ltc-testnet-v0-9-10-data:
+  bc-ltc-testnet-v0-9-10-data:
 
-
-x-aws-loadbalancer: ltc-testnet-bc-node-v0-9-7
+x-aws-loadbalancer: ltc-testnet-bc-node-v0-9-10
 x-aws-cloudformation:
   Resources:
+    BcnTaskDefinition:
+      Properties:
+        runtimePlatform: {
+          operatingSystemFamily: "LINUX",
+          cpuArchitecture: "ARM64"
+        }
+    SyncTaskDefinition:
+      Properties:
+        runtimePlatform: {
+          operatingSystemFamily: "LINUX",
+          cpuArchitecture: "ARM64"
+        }
     BcnService:
       Properties:
         HealthCheckGracePeriodSeconds: 2800000 #13 hs aprox

@@ -1,6 +1,7 @@
 {
-  "name": "@bitcoin-computer/node",
+  "name": "@bitcoin-computer/node-secret",
   "version": "0.9.10",
+  "private": true,
   "description": "",
   "keywords": [
     "Bitcoin",
@@ -10,7 +11,7 @@
   "contributors": [
     "Clemens Ley"
   ],
-  "main": "src/bcn.cjs.js",
+  "main": "dist/min/bcn.cjs.js",
   "repository": "bitcoin-computer/bitcoin-computer-node-secret",
   "author": "Clemens Ley",
   "license": "CC-BY-ND-4.0",
@@ -32,6 +33,7 @@
     "chai": "^4.3.6",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
+    "edit-json-file": "^1.7.0",
     "elliptic": "^6.5.3",
     "exponential-backoff": "^3.1.0",
     "express": "^4.17.1",
@@ -76,6 +78,7 @@
     "start-test-ltc": ". scripts/development-setup.sh && start_test_ltc",
     "start-test-btc": ". scripts/development-setup.sh && start_test_btc",
     "sync": "$(grep SYNC_START .package.paths | cut -d '=' -f2)",
+    "deploy": "yarn dist-clean && yarn build && yarn node-clean && yarn cp-files-script",
     "cp-files-script": "./scripts/cp-files.sh",
     "node-clean": "./scripts/node-clean.sh",
     "dist-clean": "rm -rf dist",
@@ -84,30 +87,32 @@
     "docker-hub-push": ". scripts/docker-setup.sh && docker_hub_push",
     "bitcoin-cli-ltc-regtest": ". scripts/bitcoin-cli-setup.sh && bitcoin_cli_ltc_regtest",
     "bitcoin-cli-btc-regtest": ". scripts/bitcoin-cli-setup.sh && bitcoin_cli_btc_regtest",
-    "docker-context-use": ". scripts/aws-setup.sh && docker_context_use",
+    "docker-context-use": "./scripts/aws-setup.py dockerContextUse",
     "docker-install": ". scripts/docker-setup.sh && docker_install",
     "docker-volume-rm-local": ". scripts/docker-setup.sh && docker_volume_remove_local",
-    "docker-volume-rm-aws": ". scripts/docker-setup.sh && docker_volume_remove_aws",
+    "docker-volume-rm-aws": "./scripts/aws-setup.py dockerVolumeRemoveAws",
     "prod-btc-regtest": "docker compose -f docker-compose.yml -f chain-setup/btc-regtest/docker-compose-local-btc-regtest.yml",
     "prod-btc-testnet": "docker compose -f docker-compose.yml -f chain-setup/btc-testnet/docker-compose-local-btc-testnet.yml",
-    "prod-ltc-testnet": ". scripts/aws-config.sh && aws_secret_export  && docker compose -f docker-compose.yml -f chain-setup/ltc-testnet/docker-compose-local-ltc-testnet.yml",
+    "prod-ltc-testnet": "./scripts/aws-setup.py awsSecretExport  && docker compose -f docker-compose.yml -f chain-setup/ltc-testnet/docker-compose-local-ltc-testnet.yml",
     "prod-ltc-regtest": "docker compose -f docker-compose.yml -f chain-setup/ltc-regtest/docker-compose-local-ltc-regtest.yml",
     "dev-ltc-regtest-up": "yarn prod-ltc-regtest up db & yarn prod-ltc-regtest up litecoind & yarn start-test-ltc &",
     "dev-ltc-regtest-down": "yarn prod-ltc-regtest down",
-    "aws-login": ". scripts/aws-config.sh && aws_login",
+    "aws-login": "./scripts/aws-setup.py awsLogin",
     "aws-ltc-testnet": ". scripts/aws-setup.sh && aws_ltc_testnet",
-    "aws-push-bcn-image": "exec bash -c '. scripts/aws-setup.sh && aws_push_bcn_image'",
-    "aws-ecr-login": "exec bash -c '. scripts/aws-setup.sh && aws_ecr_login'",
-    "aws-tag": ". scripts/aws-setup.sh && aws_tag",
+    "aws-push-bcn-image": "./scripts/aws-setup.py ecsPushImage",
+    "aws-ecr-login": "./scripts/aws-setup.py awsEcrLogin",
+    "aws-tag": "./scripts/aws-setup.py awsTag",
     "clean": "rm -rf ./dist",
+    "lint": "eslint src test",
+    "lint-fix": "eslint src test --fix",
     "reset": "yes | ./scripts/reset.sh",
+    "types": "tsc -p tsconfig.json",
     "clean-ltc-data": "rm -rf ./chain-setup/ltc-regtest/blockchain-data && rm -rf ./chain-setup/ltc-regtest/db-data",
     "fund-ltc": "./chain-setup/ltc-regtest/topup-test-wallets.sh",
     "fund-btc": "./chain-setup/btc-regtest/topup-test-wallets.sh",
+    "test": "./scripts/test.py",
     "up": "./scripts/up.py",
-    "down": "./scripts/down.py"
-  },
-  "publishConfig": {
-    "access": "public"
+    "down": "./scripts/down.py",
+    "test-unit": "yarn test -u"
   }
 }
