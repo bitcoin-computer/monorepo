@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/node",
+  "name": "@vivek-singh/node",
   "version": "0.9.10",
   "description": "",
   "keywords": [
@@ -20,7 +20,7 @@
   "homepage": "https://github.com/bitcoin-computer/bitcoin-computer-node#readme",
   "dependencies": {
     "@babel/core": "^7.18.5",
-    "@bitcoin-computer/lib": "^0.9.10",
+    "@vivek-singh/lib": "^0.9.10",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
     "@types/sinon": "^10.0.11",

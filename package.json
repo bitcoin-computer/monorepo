@@ -13,8 +13,7 @@
     "url": "^0.11.0"
   },
   "scripts": {
-    "deploy": "yarn cleanup-public-package-json && lerna run deploy && yarn cleanup-public-package-json",
-    "publish-npm": "yarn validate-branch-for-deploy && lerna publish from-package && ./scripts/create-release-lib.sh && ./scripts/create-release-node.sh",
+    "publish-npm": "yarn ensure-clean-git-working-tree && yarn validate-branch-for-deploy && lerna publish from-package",
     "publish-testing": "yarn validate-branch-for-deploy && yarn pre-publish-testing && yarn publish-npm && yarn post-publish-testing",
     "pre-publish-testing": "yarn ensure-clean-git-working-tree && yarn cleanup-public-package-json-testing && yarn pre-git-commit",
     "post-publish-testing": "yarn cleanup-public-package-json && yarn post-git-commit",

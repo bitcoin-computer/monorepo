@@ -3,11 +3,11 @@ import { dirname } from "path";
 import { fileURLToPath } from "url";
 
 const libName = process.argv[2]
-  ? "@bitcoin-computer/lib-testing"
-  : "@bitcoin-computer/lib";
+  ? "@vivek-singh/lib-testing"
+  : "@vivek-singh/lib";
 const nodeName = process.argv[2]
-  ? "@bitcoin-computer/node-testing"
-  : "@bitcoin-computer/node";
+  ? "@vivek-singh/node-testing"
+  : "@vivek-singh/node";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 let file = editFileJSON(
   `${__dirname}/../packages/bitcoin-computer-lib/package.json`,
@@ -56,12 +56,12 @@ nodeFile.unset("scripts.test-unit");
 nodeFile.set("main", "src/bcn.cjs.js");
 if (process.argv[2]) {
   const dependencies = nodeFile.get("dependencies");
-  const version = dependencies["@bitcoin-computer/lib"];
+  const version = dependencies["@vivek-singh/lib"];
   nodeFile.set("dependencies", {
     ...dependencies,
     libName: version,
   });
-  nodeFile.unset("dependencies.@bitcoin-computer/lib");
+  nodeFile.unset("dependencies.@vivek-singh/lib");
 }
 
 nodeFile.save();

@@ -3,7 +3,7 @@
   "version": "0.9.10",
   "private": true,
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.9.10",
+    "@vivek-singh/lib": "^0.9.10",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.0",
