@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer-bitcore",
-  "version": "0.1.24",
+  "version": "0.9.11",
   "description": "A simple, safe, and powerful JavaScript Bitcoin library.",
   "author": "Clemens Ley <ley.clemens@gmail.com>",
   "license": "MIT",
@@ -18,7 +18,6 @@
     "flow": "flow check",
     "clean": "rm -rf dist",
     "docs": "mustache package.json README.tpl.md > README.md",
-    "preversion": "npm run clean && npm run lint && npm run flow && npm run test",
     "version": "npm run build && npm run docs && git add README.md",
     "postversion": "git push && git push --tags && npm publish",
     "bump": "npm version patch -m 'Bump version to %s.'"

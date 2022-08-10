@@ -1,10 +1,10 @@
 {
   "name": "non-fungible-token",
-  "version": "0.1.0",
+  "version": "0.9.11",
   "private": true,
   "dependencies": {
+    "@bitcoin-computer/lib": "^0.9.11",
     "bitcoin-computer-lib": "0.8.0-beta",
-    "@bitcoin-computer/lib": "0.9.10",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-scripts": "3.2.0"

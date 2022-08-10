@@ -1,6 +1,6 @@
 {
   "name": "BRC20",
-  "version": "0.0.0",
+  "version": "0.9.11",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "engines": {
     "node": ">= 16.13 <17"
@@ -36,8 +36,8 @@
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
   "dependencies": {
+    "@bitcoin-computer/lib": "^0.9.11",
     "bitcoin-computer-lib": "^0.8.0-beta",
-    "@bitcoin-computer/lib": "0.9.10",
     "eslint-plugin-prettier": "^4.0.0",
     "ts-node": "^10.8.1",
     "tslib": "~2.4.0"

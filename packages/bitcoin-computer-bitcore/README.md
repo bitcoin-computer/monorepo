@@ -1,4 +1,4 @@
-# Bitcoin Computer Bitcore
+# [Bitcoin Computer Bitcore](https://github.com/bitcoin-computer/bitcoin-source): A Bitcoin implementation written in modern Javascript
 
 ## About Bitcoin Computer Bitcore
 
@@ -13,8 +13,12 @@ We are looking for contributors. You do not have to be a Bitcoin protocol expert
 ### Using NPM
 
 ```s
-$ npm install --save bitcoin-computer-bitcore
+$ npm install --save bitcoin-source
 ```
+
+### Manually
+
+You can also download a pre-compiled and minified version here: [dist](https://github.com/bitcoin-computer/bitcoin-source/tree/master/dist/bitcoin-source-0.9.11.js)
 
 ## Examples
 
@@ -46,9 +50,9 @@ This is an open-source project, and any form of contribution is welcome. Feel fr
 To get started with development, you should first clone the repository and install any dependencies:
 
 ```s
-$ git clone https://github.com/bitcoin-computer/bitcoin-computer-bitcore
+$ git clone https://github.com/bitcoin-computer/bitcoin-source
 $ cd bitcoin-computer-bitcore
-$ yarn install
+$ npm install
 ```
 
 Next, you can check everything is installed correctly by running the full test-suite and verifying that all tests are completed successfully.
