@@ -18,8 +18,6 @@
     "flow": "flow check",
     "clean": "rm -rf dist",
     "docs": "mustache package.json README.tpl.md > README.md",
-    "version": "npm run build && npm run docs && git add README.md",
-    "postversion": "git push && git push --tags && npm publish",
     "bump": "npm version patch -m 'Bump version to %s.'"
   },
   "keywords": [
