@@ -1,9 +1,9 @@
 {
   "name": "react-wallet",
-  "version": "0.9.10",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "@vivek-singh/lib": "^0.9.10",
+    "@vivek-singh/lib": "^1.0.0",
     "bitcoin-computer-lib": "^0.7.0-beta",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",

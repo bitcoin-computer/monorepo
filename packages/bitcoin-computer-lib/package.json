@@ -1,6 +1,6 @@
 {
   "name": "@vivek-singh/lib",
-  "version": "0.9.10",
+  "version": "1.0.0",
   "description": "Smart Contracts for Bitcoin",
   "license": "CC-BY-ND-4.0",
   "repository": "bitcoin-computer/bitcoin-computer-lib",
@@ -20,7 +20,7 @@
     "@babel/core": "^7.18.0",
     "@endo/static-module-record": "^0.7.4",
     "axios": "^0.27.2",
-    "bitcoin-computer-bitcore": "^0.9.10",
+    "bitcoin-computer-bitcore": "^1.0.0",
     "bitcoind-rpc": "^0.9.1",
     "crypto-js": "^4.0.0",
     "dotenv": "^16.0.0",
