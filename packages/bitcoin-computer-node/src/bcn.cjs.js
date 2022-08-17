@@ -840,8 +840,8 @@ class ce {
 }
 var le = async (t) => await ce.getBulkTransactions(t);
 const { Computer: de } = _t.TESTING
-  ? require("@vivek-singh/lib-testing")
-  : require("@vivek-singh/lib");
+  ? require("@bitcoin-computer/lib-testing")
+  : require("@bitcoin-computer/lib");
 const { CHAIN: ue, NETWORK: pe, BCN_URL: fe } = _t;
 const ye = new de({ chain: ue, network: pe, url: fe });
 const he = (t) =>
@@ -1068,12 +1068,9 @@ $e.use(R.default.json({ limit: "100mb" })),
         .update(_t.BCN_URL + i)
         .digest("hex");
       if (!be.keyFromPublic(o, "hex").verify(c, n))
-        return void e
-          .status(401)
-          .json({
-            error:
-              "The origin and public key pair doesn't match the signature.",
-          });
+        return void e.status(401).json({
+          error: "The origin and public key pair doesn't match the signature.",
+        });
       (e.locals.authToken = a), r();
     } catch (t) {
       Nt.error(`Auth failed with error '${t.message}'`),
@@ -1094,11 +1091,9 @@ $e.use(R.default.json({ limit: "100mb" })),
         }
         const { blacklist: s, whitelist: a } = JSON.parse(t.toString());
         if (s && a)
-          return void e
-            .status(403)
-            .json({
-              error: "Cannot enforce blacklist and whitelist at the same time.",
-            });
+          return void e.status(403).json({
+            error: "Cannot enforce blacklist and whitelist at the same time.",
+          });
         const { publicKey: n } = e.locals.authToken;
         if ((a && !a.includes(n)) || (s && s.includes(n)))
           return void e
@@ -1284,7 +1279,7 @@ const Pe = (() => {
     t.post("/non-standard-utxo", async (t, e) => {
       e.status(500).json({
         error:
-          "Please upgrade to @vivek-singh/lib-testing@0.7.7.0-beta or greater.",
+          "Please upgrade to @bitcoin-computer/lib-testing@0.7.7.0-beta or greater.",
       });
     }),
     t.get("/tx/:txId", async ({ params: t }, e) => {

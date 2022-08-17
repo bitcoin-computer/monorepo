@@ -1,5 +1,5 @@
 {
-  "name": "@vivek-singh/node",
+  "name": "@bitcoin-computer/node",
   "version": "1.0.0",
   "description": "",
   "keywords": [
@@ -24,7 +24,7 @@
     "@types/mocha": "^9.1.1",
     "@types/sinon": "^10.0.11",
     "@types/sinon-chai": "^3.2.8",
-    "@vivek-singh/lib": "^1.0.0",
+    "@bitcoin-computer/lib": "^1.0.0",
     "axios-mock-adapter": "^1.21.1",
     "bitcoin-computer-bitcore": "^1.0.0",
     "bitcoind-rpc": "^0.9.1",

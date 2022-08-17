@@ -746,8 +746,8 @@ var Ft = async (t) => {
     }
 };
 const { Computer: Ut } = lt.TESTING
-  ? require("@vivek-singh/lib-testing")
-  : require("@vivek-singh/lib");
+  ? require("@bitcoin-computer/lib-testing")
+  : require("@bitcoin-computer/lib");
 const { CHAIN: Gt, NETWORK: Wt, BCN_URL: Kt } = lt;
 const jt = new Ut({ chain: Gt, network: Wt, url: Kt });
 const qt = async (t, e, n) => {

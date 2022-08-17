@@ -30,7 +30,7 @@ yarn test
 Create file `index.mjs`
 
 ```
-import { Computer } from '@vivek-singh/lib'
+import { Computer } from '@bitcoin-computer/lib'
 
 // a smart contract
 class Counter {
@@ -62,7 +62,7 @@ Then, execute the following in the same directory
 
 ```
 yarn init -y
-yarn add @vivek-singh/lib
+yarn add @bitcoin-computer/lib
 node index.mjs
 ```
 
@@ -82,7 +82,7 @@ Counter {
 Create file `index.js`.
 
 ```
-import { Computer } from '@vivek-singh/lib'
+import { Computer } from '@bitcoin-computer/lib'
 
 class Counter {
   constructor() {
@@ -121,7 +121,7 @@ Run the following in an empty directory and open your browser at [http://localho
 
 ```
 npm init -y
-npm i -s @vivek-singh/lib
+npm i -s @bitcoin-computer/lib
 npm i -g parcel
 parcel index.html
 ```
