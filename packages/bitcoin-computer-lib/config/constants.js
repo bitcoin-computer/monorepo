@@ -1,4 +1,3 @@
-const MIN_NON_DUST_AMOUNT = parseInt(process.env.BC_DUST_LIMIT || '', 10) || 1546
 const DEFAULT_FEE = parseInt(process.env.BC_DEFAULT_FEE || '', 10) || 2500
 const SCRIPT_CHUNK_SIZE = parseInt(process.env.BC_SCRIPT_CHUNK_SIZE || '', 10) || 479
 const SIGHASH_ALL = 0x01          // TODO: import from bitcoin-computer-bitcore.Signatures
@@ -11,9 +10,9 @@ const ENCODING_NUMBER_LENGTH = 3
 const MAX_PUBKEYS_PER_SCRIPT = 3
 const OP_RETURN_SIZE = 80         // maximum number of bytes for the change output
 const CHANGE_OUTPUT_MAX_SIZE = 62 // TODO use CTransaction.CHANGE_OUTPUT_MAX_SIZE from bitcore
+const MWEB_HEIGHT =  parseInt(process.env.MWEB_HEIGHT || '', 10) || 432
 
 export {
-  MIN_NON_DUST_AMOUNT,
   SCRIPT_CHUNK_SIZE,
   DEFAULT_FEE,
   SIGHASH_ALL,
@@ -25,5 +24,6 @@ export {
   ENCODING_NUMBER_LENGTH,
   MAX_PUBKEYS_PER_SCRIPT,
   OP_RETURN_SIZE,
-  CHANGE_OUTPUT_MAX_SIZE
+  CHANGE_OUTPUT_MAX_SIZE,
+  MWEB_HEIGHT
 }

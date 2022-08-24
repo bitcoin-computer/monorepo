@@ -5,7 +5,7 @@ services:
     volumes:
       - ./chain-setup/ltc-testnet/db-data:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
-  bitcoind:
+  node:
     image: ruimarinho/bitcoin-core
     ports:
       # 8333 for regtest, 18333 testnet, 9333 if running on STN
@@ -35,7 +35,7 @@ services:
         "-zmqpubrawtx=tcp://0.0.0.0:28332",
         "-rpcallowip=0.0.0.0/0",
         "-rpcauth=${RPC_AUTH}",
-        "-wallet=${DEFAULTWALLET}"
+        "-wallet=${DEFAULT_WALLET}"
       ]
   bcn:
     build: .
@@ -43,12 +43,12 @@ services:
     env_file: .env
     depends_on:
       - db
-      - bitcoind
+      - node
     environment:
       - BCN_ENV=prod
-      - RPC_HOST=bitcoind
+      - RPC_HOST=node
       - RPC_PORT=18332
-      - ZMQ_URL=tcp://bitcoind:28332
+      - ZMQ_URL=tcp://node:28332
       - NETWORK=testnet
       - CHAIN=LTC
       - BCN_URL=http://127.0.0.1:3000
@@ -59,14 +59,14 @@ services:
     env_file: .env
     depends_on:
       - db
-      - bitcoind
+      - node
     environment:
       - BCN_ENV=prod
-      - RPC_HOST=bitcoind
+      - RPC_HOST=node
       - RPC_PORT=18332
       - NETWORK=testnet
       - CHAIN=LTC
-      - ZMQ_URL=tcp://bitcoind:28332
+      - ZMQ_URL=tcp://node:28332
       - BCN_URL=http://127.0.0.1:3000
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db

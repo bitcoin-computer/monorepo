@@ -1,10 +1,10 @@
 {
   "name": "@bitcoin-computer/lib",
-  "version": "1.0.0",
+  "version": "0.10.0-alpha.2",
   "description": "Smart Contracts for Bitcoin",
   "license": "CC-BY-ND-4.0",
   "repository": "bitcoin-computer/bitcoin-computer-lib",
-  "main": "bitcoin-computer-lib.cjs.js",
+  "main": "bitcoin-computer-lib.es.mjs",
   "author": {
     "name": "Clemens Ley",
     "email": "clemens@bitcoincomputer.io",
@@ -16,11 +16,12 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "dependencies": {
     "@babel/core": "^7.18.0",
     "@endo/static-module-record": "^0.7.4",
     "axios": "^0.27.2",
-    "bitcoin-computer-bitcore": "^1.0.0",
+    "bitcoin-computer-bitcore": "^0.1.23",
     "bitcoind-rpc": "^0.9.1",
     "crypto-js": "^4.0.0",
     "dotenv": "^16.0.0",
@@ -32,7 +33,7 @@
     "tweetnacl-util": "^0.15.1"
   },
   "devDependencies": {
-    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/plugin-transform-runtime": "^7.18.10",
     "@babel/preset-env": "^7.16.11",
     "@rollup/plugin-babel": "^5.1.0",
     "@rollup/plugin-commonjs": "^22.0.0",
@@ -64,10 +65,11 @@
     "rollup": "^2.36.1",
     "rollup-plugin-terser": "^7.0.2",
     "ts-mocha": "^10.0.0",
-    "ts-node": "^10.7.0",
+    "ts-node": "^10.9.1",
     "typescript": "^4.0.3"
   },
   "scripts": {
+    "start-setup": "node --experimental-specifier-resolution=node --loader ts-node/esm $(grep SETUP_ENTRY .package.paths | cut -d '=' -f2)",
     "coverage": "npm test -- --coverage",
     "cp-files": "./scripts/cp-files.sh",
     "lib-clean": "./scripts/lib-clean.sh",

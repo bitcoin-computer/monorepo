@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (c) 2021-2022 Bitcoin Computer developers
+# Distributed under the MIT software license.
 
 import argparse
 import subprocess
@@ -28,7 +30,7 @@ if(args.bitcoin):
 else:
     if(args.testnet):
         subprocess.run(
-            ['sh', '-c', 'source scripts/aws-config.sh && aws_secret_export && docker compose -f docker-compose.yml -f chain-setup/ltc-testnet/docker-compose-local-ltc-testnet.yml down'])
+            ['sh', '-c', 'docker compose -f docker-compose.yml -f chain-setup/ltc-testnet/docker-compose-local-ltc-testnet.yml down'])
     else:
         subprocess.run(
             ['sh', '-c', 'docker compose -f docker-compose.yml -f chain-setup/ltc-regtest/docker-compose-local-ltc-regtest.yml down'])

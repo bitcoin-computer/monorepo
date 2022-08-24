@@ -9,7 +9,7 @@ cp ./README.md $NodeDir/.
 cp ./.env.* $NodeDir/.
 cp ./.gitignore $NodeDir/.
 cp ./docker-compose.yml $NodeDir/.
-cp ./package.json $NodeDir/.
+# cp ./package.json $NodeDir/.
 cp -r db/. $NodeDir/db/
 cp -r scripts/. $NodeDir/scripts/
 cp -r ./README.md $NodeDir/.

@@ -29,12 +29,22 @@ You can run the Bitcoin Computer Node in your local machine, connecting to regte
 To start the Bitcoin Computer Node on Litecoin (LTC) regtest run:
 
 ```shell
-yarn prod-ltc-regtest up
+yarn up
 ```
 
 When you run this command for the first time the required software is downloaded and compiled. This can take several minutes. Subsequent starts only need to start the server and are much faster
 
-You will see the logs of the services that make up the Bitcoin Computer Node: a Litecoin Node called ``litecoind``, a database called ``db``, an api server called ``bcn``, and a process called ``sync``. The bcn and sync services depend on the db. As first actions, both services will try to connect to db. Until the database is up and running, messages indicating connection attempts are be logged.
+You will see the logs of the services that make up the Bitcoin Computer Node: a Litecoin Node called ``node``, a database called ``db``, an api server called ``bcn``, and a process called ``sync``. The bcn and sync services depend on the db. As first actions, both services will try to connect to db. Until the database is up and running, messages indicating connection attempts are be logged.
+
+
+The ``up`` command is parametrized with other options. For example, you can change the chain to Bitcoin using -btc
+
+```shell
+yarn up -btc
+```
+
+Type ``yarn up -h`` to get the list of all possible commands.
+
 
 Once the error messages stop you can run the tests:
 
@@ -42,11 +52,13 @@ Once the error messages stop you can run the tests:
 yarn test
 ```
 
-For local development you will need to fund the test wallets using the following command. You can configure the wallets that are funded using the file ``chain-setup/ltc-regtest/topup-wallet.sh``. This will fund the default addresses only. To fund specific addresses of the regtest update ``TEST_ADDRESS`` variable in environment variables. E.g. Address1;Address2 (; separate values).
+For local development you will need to fund the test wallets using the following command. 
 
 ```shell
 yarn fund-ltc
 ```
+
+You can configure the wallets that are funded using the file ``chain-setup/ltc-regtest/topup-wallet.sh``. This will fund the default addresses only. To fund specific addresses of the regtest update ``TEST_ADDRESS`` variable in environment variables. E.g. Address1;Address2 (; separate values).
 
 For local development following are the default mnemonic phrases that get funded:
 *  travel upgrade inside soda birth essence junk merit never twenty system opinion
@@ -59,7 +71,7 @@ For local development following are the default mnemonic phrases that get funded
 To stop the Bitcoin Computer Node run:
 
 ```shell
-yarn prod-ltc-regtest down
+yarn down
 ```
 
 To stop the Bitcoin Computer Node, reset the database, delete all blockchain data, and stop all docker containers, run the following command:
@@ -231,7 +243,7 @@ fs-149787a0            arn:aws:elasticfilesystem:us-east-1:[<account-id>]:file-s
 To start the deployment process for LTC over testnet run:
 
 ```shell
-yarn aws-ltc-testnet up
+yarn up --testnet --aws
 ```
 
 This command will automatically create a CloudFormation template, that will be deployed as a AWS ECS Fargate service. If everything is properly configured, the creation progress will be displayed on the console. The CloudFormation template can be seen as an stack in the AWS CloudFormation web dashboard.
@@ -239,14 +251,14 @@ This command will automatically create a CloudFormation template, that will be d
 In case you want to stop all the services and to remove all the resources created in AWS from the CloudFormation template already created, run the following command:
 
 ```shell
-yarn aws-ltc-testnet down
+yarn down --testnet --aws
 ```
  The deletion progress will also be displayed on the console. The CloudFormation template stack will be in a 'delete in progress' state in the AWS CloudFormation web dashboard.
 
 Likewise, the CloudFormation template can be generated without deploying it to AWS. This can be useful for analyzing the resources that will be created during the deploy. The template will be generated into the standard output running the following command:
 
 ```shell
-yarn aws-ltc-testnet convert
+yarn up --testnet --convert
 ```
 
 ### Trouble Shooting

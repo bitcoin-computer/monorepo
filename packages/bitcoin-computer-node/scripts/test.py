@@ -18,8 +18,8 @@ chainGroup.add_argument("-ltc", "--litecoin",
                         action="store_true", default=True)
 
 networkGroup = parser.add_mutually_exclusive_group()
-networkGroup.add_argument("-r", "--regtest", action="store_true")
-networkGroup.add_argument("-t", "--testnet", action="store_true", default=True)
+networkGroup.add_argument("-r", "--regtest", action="store_true", default=True)
+networkGroup.add_argument("-t", "--testnet", action="store_true")
 
 
 testTypeGroup = parser.add_mutually_exclusive_group()

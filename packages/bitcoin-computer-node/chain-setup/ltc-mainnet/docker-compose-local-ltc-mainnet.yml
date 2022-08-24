@@ -12,14 +12,13 @@ services:
     command:
       [
         "litecoind",
-        "-testnet=1",
         "-dbcache=4000",
         "-txindex=1",
         "-server=1",
         "-rpcbind=0.0.0.0",
         "-rpcworkqueue=512",
-        "-rpcport=19332",
-        "-port=19335",
+        "-rpcport=9332",
+        "-port=9335",
         "-zmqpubhashtx=tcp://0.0.0.0:28332",
         "-zmqpubrawtx=tcp://0.0.0.0:28332",
         "-rpcallowip=0.0.0.0/0",
@@ -27,8 +26,8 @@ services:
         "-wallet=${DEFAULT_WALLET}"
       ]
     ports:
-      - 19333:19333
-      - 19332:19332
+      - 9333:9333
+      - 9332:9332
       - 28332:28332
     volumes:
       - ./chain-setup/ltc-testnet/blockchain-data:/home/litecoin/.litecoin
@@ -40,9 +39,9 @@ services:
     environment:
       - BCN_ENV=prod
       - RPC_HOST=node
-      - RPC_PORT=19332
+      - RPC_PORT=9332
       - ZMQ_URL=tcp://node:28332
-      - NETWORK=testnet
+      - NETWORK=mainnet
       - CHAIN=LTC
       - BCN_URL=http://127.0.0.1:3000
     depends_on:
@@ -59,8 +58,8 @@ services:
     environment:
       - BCN_ENV=prod
       - RPC_HOST=node
-      - RPC_PORT=19332
-      - NETWORK=testnet
+      - RPC_PORT=9332
+      - NETWORK=mainnet
       - CHAIN=LTC
       - ZMQ_URL=tcp://node:28332
       - BCN_URL=http://127.0.0.1:3000

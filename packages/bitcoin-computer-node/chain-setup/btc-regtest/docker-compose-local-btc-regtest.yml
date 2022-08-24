@@ -5,7 +5,7 @@ services:
     volumes:
       - ./chain-setup/btc-regtest/db-data:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
-  bitcoind:
+  node:
     image: ruimarinho/bitcoin-core:22.0
     # image: bitcoind-custom-regtest
     ports:
@@ -41,8 +41,8 @@ services:
     env_file: .env
     environment:
       - BCN_ENV=dev
-      - RPC_HOST=bitcoind
+      - RPC_HOST=node
       - RPC_PORT=8332
-      - ZMQ_URL=tcp://bitcoind:28332
+      - ZMQ_URL=tcp://node:28332
       - NETWORK=regtest
       - CHAIN=BTC

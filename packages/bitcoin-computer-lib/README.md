@@ -18,16 +18,16 @@ You can find more information in the [Bitcoin Computer Docs](https://docs.bitcoi
 
 The easiest way to get started is to run the tests. If you get an error "Insufficient funds" have a look [here](#fund-your-computer-object).
 
-```
+````
 git clone git@github.com:bitcoin-computer/bitcoin-computer-lib.git
 cd bitcoin-computer-lib
 yarn install
 yarn test
-```
+````
 
 ## Run in Node.js
 
-Create file `index.mjs`
+Create file ``index.mjs``
 
 ```
 import { Computer } from '@bitcoin-computer/lib'
@@ -59,12 +59,12 @@ class Counter {
 ```
 
 Then, execute the following in the same directory
-
-```
+````
 yarn init -y
 yarn add @bitcoin-computer/lib
 node index.mjs
-```
+````
+
 
 If you get an error "Insufficient funds" have a look [here](#fund-your-computer-object). Once the wallet is funded you will see:
 
@@ -79,7 +79,7 @@ Counter {
 
 ## Run in the Browser
 
-Create file `index.js`.
+Create file ``index.js``.
 
 ```
 import { Computer } from '@bitcoin-computer/lib'
@@ -106,7 +106,7 @@ class Counter {
 })()
 ```
 
-Create file `index.html`
+Create file ``index.html``
 
 ```
 <html>
@@ -133,11 +133,13 @@ If you get an error message "Insufficient balance in address \<address\>" you ne
 By default the Bitcoin Computer runs on Litecoin testnet. You can get free testnet coins from a Litecoin testnet faucet [here](https://kuttler.eu/en/bitcoin/ltc/faucet/), [here](https://testnet-faucet.com/ltc-testnet/), or
 [here](https://testnet.help/en/ltcfaucet/testnet).
 
+
 We recommend generating a new mnemonic sentence through a [BIP39 generator](https://iancoleman.io/bip39/).
+
 
 ## Documentation and Help
 
-Have a look at the [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/docs/), ask in our [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg), or [create an issue](https://github.com/bitcoin-computer/computer/issues).
+Have a look at the [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/docs/), ask in our [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg),  or [create an issue](https://github.com/bitcoin-computer/computer/issues).
 
 ## Beta Warning
 
@@ -149,10 +151,10 @@ We will remove the beta-tag once we have completed a security review.
 
 Our prospectus road map is:
 
-- Fix all known security issues (getting close but not there yet)
-- Get security audit
-- Fix all issues discovered in audit
-- Launch secure version with long term support
+* Fix all known security issues (getting close but not there yet)
+* Get security audit
+* Fix all issues discovered in audit
+* Launch secure version with long term support
 
 The interface to the Bitcoin Computer will not change so you can start developing applications now. When the security reviewed version lands all you need to do is update the dependency.
 
@@ -173,7 +175,7 @@ The fees to the Bitcoin Computer are exactly the same as the miners fees.
 You are free to: share, copy, and redistribute the material in any medium or format
 for any purpose, even commercially under the following terms:
 
-- Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-- NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
+* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+* NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
 
 This is a human-readable summary of (and not a substitute for) the [license](https://creativecommons.org/licenses/by-nd/3.0/legalcode).

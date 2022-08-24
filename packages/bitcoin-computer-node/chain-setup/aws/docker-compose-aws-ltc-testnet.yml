@@ -7,6 +7,10 @@ services:
       - FILES=db/db_schema.sql
     volumes:
       - sh-ltc-testnet-v0-9-10-side-car:/opt/
+    ports:
+      - 2049:2049
+    networks:
+      - bcn
   db:
     env_file: .env.aws
     volumes:
@@ -21,7 +25,7 @@ services:
           cpus: '2'
     depends_on:
       - side-car
-  litecoind:
+  node:
     image: uphold/litecoin-core:0.17
     networks:
       - bitcoin
@@ -56,13 +60,13 @@ services:
           memory: 16384M
           cpus: '2'
   bcn:
-    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-repository:0.9.10
+    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-multiplatform:0.9.10
     env_file: .env.aws
     environment:
       - BCN_ENV=prod
       - RPC_PORT=19332
-      - RPC_HOST=litecoind
-      - ZMQ_URL=tcp://litecoind:28332
+      - RPC_HOST=node
+      - ZMQ_URL=tcp://node:28332
       - CHAIN=LTC
       - NETWORK=testnet
       - DEBUG_MODE=5
@@ -76,10 +80,10 @@ services:
           cpus: '2'
   sync:
     command: npm run sync
-    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-repository:0.9.10
+    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-multiplatform:0.9.10
     env_file: .env.aws
     depends_on:
-      - litecoind
+      - node
       - bcn
       - db
     deploy:
@@ -93,7 +97,7 @@ services:
       - BCN_ENV=prod
       - CHAIN=LTC
       - NETWORK=testnet
-      - ZMQ_URL=tcp://litecoind:28332
+      - ZMQ_URL=tcp://node:28332
       - DEBUG_MODE=5
       - BCN_URL=https://node.bitcoincomputer.io
       - POSTGRES_PORT=5432
@@ -102,9 +106,9 @@ services:
       - RPC_USER=${RPC_USER}
       - RPC_PASSWORD=${RPC_PASSWORD}
       - RPC_AUTH=${RPC_AUTH}
-      - RPC_HOST=litecoind
+      - RPC_HOST=node
       - RPC_PORT=19332
-      - DEFAULTWALLET=${DEFAULT_WALLET}
+      - DEFAULT_WALLET=${DEFAULT_WALLET}
     networks:
       - bitcoin
       - bcn
@@ -117,18 +121,6 @@ volumes:
 x-aws-loadbalancer: ltc-testnet-bc-node-v0-9-10
 x-aws-cloudformation:
   Resources:
-    BcnTaskDefinition:
-      Properties:
-        runtimePlatform: {
-          operatingSystemFamily: "LINUX",
-          cpuArchitecture: "ARM64"
-        }
-    SyncTaskDefinition:
-      Properties:
-        runtimePlatform: {
-          operatingSystemFamily: "LINUX",
-          cpuArchitecture: "ARM64"
-        }
     BcnService:
       Properties:
         HealthCheckGracePeriodSeconds: 2800000 #13 hs aprox

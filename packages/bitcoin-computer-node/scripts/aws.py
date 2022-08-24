@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
+# Copyright (c) 2021-2022 Bitcoin Computer developers
+# Distributed under the MIT software license.
+
 
 from argparse import ArgumentParser
 import json
 import subprocess
 import sys
+
+EXPORT_CREDENTIALS = "export AWS_ACCESS_KEY=$(grep AWS_ACCESS_KEY .env.aws | cut -d '=' -f2) && export AWS_SECRET_ACCESS_KEY=$(grep AWS_SECRET_ACCESS_KEY .env.aws | cut -d '=' -f2) && aws ecr get-login-password | docker login --username AWS --password-stdin $(grep AWS_ACCOUNT .env.aws | cut -d '=' -f2)"
 
 def dockerVolumeRemoveAws(sys):
     contextType = subprocess.getoutput("docker context ls | grep '*' | awk '{print $3}'")
@@ -17,21 +22,15 @@ def dockerVolumeRemoveAws(sys):
         else:
             cont = input("[!] Using context '{0}'. Removing volume '{1}' Continue? (Y/N): ".format(contextName, sys.argv[2]))
             if cont=='yes' or cont=='y' or cont=='YES' or cont=='Y':
-                awsSecretExport()
-                subprocess.run(['sh', '-c', "docker volume rm {0}".format(sys.argv[2])])
+                subprocess.run(['sh', '-c', "{0} && docker volume rm {1}".format(EXPORT_CREDENTIALS, sys.argv[2])])
 
     else:
         print("Error: the current context is not an ecs-type one.")
         print("Please, switch to the ecs context: list the contexts running 'docker context ls'. Pick the ecs-type context name. Run: 'yarn docker-context-use <ecs-context-name>'")
 
 def awsLogin(self):
-    awsSecretExport()
-    subprocess.run(['sh', '-c', "aws ecr get-login-password | docker login --username AWS --password-stdin $(grep AWS_ACCOUNT .env.aws | cut -d '=' -f2);"])
+    subprocess.run(['sh', '-c', "{0} && aws ecr get-login-password | docker login --username AWS --password-stdin $(grep AWS_ACCOUNT .env.aws | cut -d '=' -f2)".format(EXPORT_CREDENTIALS)])
     
-
-def awsSecretExport():
-    print('Exporting AWS_ACCESS_KEY && AWS_SECRET_ACCESS_KEY')
-    subprocess.run(['sh', '-c', "export AWS_ACCESS_KEY=$(grep AWS_ACCESS_KEY .env.aws | cut -d '=' -f2) && export AWS_SECRET_ACCESS_KEY=$(grep AWS_SECRET_ACCESS_KEY .env.aws | cut -d '=' -f2);"])
 
 def awsEcrLogin(self):
     # Reads credentials from .env.aws
@@ -71,8 +70,7 @@ def awsEcrLogin(self):
 
 def dockerContextUse(sys):
     if (len(sys.argv) >= 3):
-        awsSecretExport()
-        subprocess.run(['sh', '-c', 'docker context use {0}'.format(sys.argv[2])])
+        subprocess.run(['sh', '-c', '{0} && docker context use {1}'.format(EXPORT_CREDENTIALS, sys.argv[2])])
 
 def awsTag(self):
     currentTag = input('Input the current image tag: ')

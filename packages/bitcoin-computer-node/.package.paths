@@ -1,3 +1,4 @@
 
-SRC_ENTRY=src/bcn.cjs.js
-SYNC_START=ts-node src/bcn.sync.cjs.js
+SRC_ENTRY=src/bcn.es.mjs
+SYNC_START=ts-node src/bcn.sync.es.mjs
+START_PATH=src/bcn.es.mjs
