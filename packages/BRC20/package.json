@@ -1,6 +1,6 @@
 {
   "name": "BRC20",
-  "version": "1.0.0",
+  "version": "0.10.0-alpha.2",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "engines": {
     "node": ">= 16.13 <17"
