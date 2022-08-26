@@ -1,6 +1,6 @@
 {
   "name": "BRC721",
-  "version": "1.0.0",
+  "version": "0.10.0-alpha.2",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "scripts": {
     "start": "node build/src/main.js",
