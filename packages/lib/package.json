@@ -4,7 +4,7 @@
   "description": "Smart Contracts for Bitcoin",
   "license": "CC-BY-ND-4.0",
   "repository": "bitcoin-computer/bitcoin-computer-lib",
-  "main": "bitcoin-computer-lib.es.mjs",
+  "main": "src/bitcoin-computer-lib.es.mjs",
   "author": {
     "name": "Clemens Ley",
     "email": "clemens@bitcoincomputer.io",
