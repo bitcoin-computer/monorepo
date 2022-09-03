@@ -29,15 +29,13 @@
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "lint": "eslint src test --ext .ts,.tsx",
-    "types": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch"
   },
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@bitcoin-computer/lib": "^1.0.0",
-    "bitcoin-computer-lib": "^0.8.0-beta",
+    "@bitcoin-computer/lib": "0.10.0-alpha.2",
     "eslint-plugin-prettier": "^4.0.0",
     "ts-node": "^10.8.1",
     "tslib": "~2.4.0"
