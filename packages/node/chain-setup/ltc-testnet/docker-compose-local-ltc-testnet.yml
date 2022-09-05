@@ -27,7 +27,7 @@ services:
         "-wallet=${DEFAULT_WALLET}"
       ]
     ports:
-      - 19333:19333
+      - 19335:19335
       - 19332:19332
       - 28332:28332
     volumes:
