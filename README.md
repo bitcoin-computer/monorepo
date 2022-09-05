@@ -16,22 +16,10 @@ Checkout branch ``dev``. First update package versions using the following comma
 yarn create-version
 ```
 
-Then obfuscate code and copy to the public packages.
-
-```js
-yarn deploy
-```
-
 Commit the changes to ``dev``
 
 ```
 git commit
-```
-
-Deploy testing version
-
-```js
-yarn publish-testing
 ```
 
 Merge ``dev`` to ``main`` and run following command to deploy public versions
