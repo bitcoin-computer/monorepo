@@ -5,7 +5,7 @@ Infrastructure for building Smart Contracts on Litecoin, Bitcoin and other UTXOs
 ## Library
 
 * [Bitcoin Computer Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib): A library for building smart contracts on Litecoin/Bitcoin. 
-* [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node): The Bitcoin Computer Node provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib). It provides the backend infrastructure for running smart contract based applications. It consists of a Litecoin/Bitcoin node, a database for storing index structures and off-chain data, and a web server.
+* [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node): It provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib). It provides the backend infrastructure for running smart contract based applications. It consists of a Litecoin/Bitcoin node, a database for storing index structures and off-chain data, and a web server.
 
 ## Standard Smart Contracts
 
