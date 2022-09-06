@@ -1,0 +1,76 @@
+name: build
+on: 
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version:
+          - '0.10.0-alpha.3'
+        folder:
+          - 'packages/node'
+      fail-fast: false
+    steps:
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login into Docker Hub
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
+
+      - name: Prepare Docker build
+        id: prepare
+        run: |
+          function version { echo "$@" | awk -F. '{ printf("%d%03d%03d%03d\n", $1,$2,$3,$4); }'; }
+
+          BCN_VERSION=${{matrix.version}}
+          PLATFORMS="linux/amd64,linux/arm64/v8,linux/arm/v7"
+          PUSH=true
+          DOCKER_REPO=bcdb/bcn
+
+          TAGS=("$DOCKER_REPO:${BCN_VERSION} $DOCKER_REPO:latest")
+
+          echo "Building BCN_VERSION $BCN_VERSION/ for PLATFORMS ${PLATFORMS}/"
+
+          echo ::set-output name=build_date::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          echo ::set-output name=docker_platforms::${PLATFORMS}
+          echo ::set-output name=push::${PUSH}
+          echo ::set-output name=tags::${TAGS[@]}
+
+      - name: Build Docker image
+        run: |
+          TAGS=(${{ steps.prepare.outputs.tags }})
+
+          echo "Build date: ${{ steps.prepare.outputs.build_date }}"
+          echo "Docker platform: ${{ steps.prepare.outputs.docker_platforms }}"
+          echo "Push: ${{ steps.prepare.outputs.push }}"
+          echo "Tags: ${{ steps.prepare.outputs.tags }}"
+
+          echo docker buildx build --platform ${{ steps.prepare.outputs.docker_platforms }} \
+            --output "type=image,push=${{steps.prepare.outputs.push}}" \
+            --progress=plain \
+            --build-arg "BUILD_DATE=${{ steps.prepare.outputs.build_date }}" \
+            --build-arg "VCS_REF=${GITHUB_SHA::8}" \
+            $(printf "%s" "${TAGS[@]/#/ --tag }" ) \
+            ${{ matrix.folder }}/
+
+          docker buildx build --platform ${{ steps.prepare.outputs.docker_platforms }} \
+            --output "type=image,push=${{steps.prepare.outputs.push}}" \
+            --progress=plain \
+            --build-arg "BUILD_DATE=${{ steps.prepare.outputs.build_date }}" \
+            --build-arg "VCS_REF=${GITHUB_SHA::8}" \
+            $(printf "%s" "${TAGS[@]/#/ --tag }" ) \
+            ${{ matrix.folder }}/
+
+      - name: Clear DockerHub credentials
+        run: |
+          rm -f ${HOME}/.docker/config.json
