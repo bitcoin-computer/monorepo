@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer-node-js-boilerplate",
-  "version": "0.10.0-alpha.2",
+  "version": "0.10.0-alpha.3",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "scripts": {
     "start": "node build/src/main.js",
@@ -44,5 +44,6 @@
   "license": "MIT",
   "volta": {
     "node": "16.13.0"
-  }
+  },
+  "gitHead": "b842d7ab52160012a631c3e422bce996149f9931"
 }

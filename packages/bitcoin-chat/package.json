@@ -1,12 +1,12 @@
 {
   "name": "bitcoin-chat",
-  "version": "0.10.0-alpha.2",
+  "version": "0.10.0-alpha.3",
   "private": true,
   "dependencies": {
+    "@bitcoin-computer/lib": "^1.0.0",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
-    "@bitcoin-computer/lib": "^1.0.0",
     "bitcoin-computer-lib": "^0.7.0-beta",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",

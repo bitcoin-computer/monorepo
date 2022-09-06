@@ -1,6 +1,6 @@
 # Bitcoin Computer Node
 
-The Bitcoin Computer Node provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/bc-lib).
+The Bitcoin Computer Node provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib).
 
 It provides the backend infrastructure for running smart contract based applications. It consists of a Bitcoin node, a database for storing index structures and off-chain data, and a web server.
 

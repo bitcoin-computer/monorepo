@@ -1,6 +1,6 @@
 {
   "name": "react-wallet",
-  "version": "0.10.0-alpha.2",
+  "version": "0.10.0-alpha.3",
   "private": true,
   "dependencies": {
     "@bitcoin-computer/lib": "^1.0.0",

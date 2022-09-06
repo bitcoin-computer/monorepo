@@ -2,7 +2,7 @@
 
 An implementation of the ERC721 [standard](https://eips.ethereum.org/EIPS/eip-721) on Bitcoin.
 
-Built on the [Bitcoin Computer](http://bitcoincomputer.io/), a lightweight smart contract system for Litecoin. See the the [documentation](https://docs.bitcoincomputer.io/advanced-examples/fungible-token/) for more information.
+Built on the [Bitcoin Computer](http://bitcoincomputer.io/), a lightweight smart contract system for Litecoin and Bitcoin. See the the [documentation](https://docs.bitcoincomputer.io/advanced-examples/fungible-token/) for more information.
 
 The following interface is currently implemented.
 

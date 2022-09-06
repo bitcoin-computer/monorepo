@@ -13,11 +13,13 @@ HOSTNAME=localhost
 
 psql "postgresql://$USERNAME:$PASSWORD@$HOSTNAME/$DATABASE" << EOF
 TRUNCATE TABLE "NonStandard";
+TRUNCATE TABLE "Input";
+TRUNCATE TABLE "Output";
 TRUNCATE TABLE "User";
 TRUNCATE TABLE "OffChain";
-TRUNCATE TABLE "Sync";
+TRUNCATE TABLE "SyncStatus";
 
-INSERT INTO "Sync" ("syncedHeight", "bitcoindSyncedHeight", "bitcoindSyncedProgress") VALUES (-1, -1, 0);
+INSERT INTO "SyncStatus" ("syncedHeight", "bitcoindSyncedHeight", "bitcoindSyncedProgress") VALUES (-1, -1, 0);
 EOF
 
 # Delete all containers:

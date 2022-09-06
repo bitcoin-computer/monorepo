@@ -1,11 +1,12 @@
 {
   "name": "bitcoin-computer-bitcore",
-  "version": "0.10.0-alpha.2",
+  "version": "0.10.0-alpha.3",
   "description": "A simple, safe, and powerful JavaScript Bitcoin library.",
   "author": "Clemens Ley <ley.clemens@gmail.com>",
   "license": "MIT",
   "main": "dist/bitcoin-computer-bitcore.common.js",
   "module": "dist/bitcoin-computer-bitcore.esm.js",
+  "private": true,
   "files": [
     "dist"
   ],

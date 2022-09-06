@@ -139,24 +139,13 @@ We recommend generating a new mnemonic sentence through a [BIP39 generator](http
 
 ## Documentation and Help
 
-Have a look at the [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/docs/), ask in our [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg),  or [create an issue](https://github.com/bitcoin-computer/computer/issues).
+Have a look at the [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/docs/), ask in our [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg),  or [create an issue](https://github.com/bitcoin-computer/monorepo/issues).
 
 ## Beta Warning
 
 This software has been carefully developed over four years by a qualified team. However it has not been security reviewed and we cannot guarantee the absence of bugs. Bugs can lead to the loss of funds. We do not recommend to use this software in production yet. Use at your own risk.
 
 We will remove the beta-tag once we have completed a security review.
-
-## Road Map
-
-Our prospectus road map is:
-
-* Fix all known security issues (getting close but not there yet)
-* Get security audit
-* Fix all issues discovered in audit
-* Launch secure version with long term support
-
-The interface to the Bitcoin Computer will not change so you can start developing applications now. When the security reviewed version lands all you need to do is update the dependency.
 
 ## Price
 
