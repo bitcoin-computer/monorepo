@@ -1,13 +1,5 @@
 # Bitcoin Computer Monorepo
 
-## Get started
-
-```js
-git clone https://github.com/Bitcoin-Computer-Secrets/monorepo.git
-yarn install
-lerna bootstrap
-```
-
 ## Publish packages
 
 Checkout branch ``dev``. First update package versions using the following command.

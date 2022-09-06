@@ -1,11 +1,10 @@
 # Bitcoin Computer Monorepo
 
-Infraestructure to build Smart Contract over Litecoin, Bitcoin and any UTXOs-based blockchains.
+Infrastructure to build Smart Contract over Litecoin, Bitcoin and any UTXOs-based blockchains.
 
 ## Library
 
 * [Bitcoin Computer Lib](): A library for building Smart Contract on Litecoin/ Bitcoin blockchain. 
-
 * [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node): The Bitcoin Computer Node provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib). It provides the backend infrastructure for running smart contract based applications. It consists of a Litecoin/Bitcoin node, a database for storing index structures and off-chain data, and a web server.
 
 ## Standard Smart Contracts
@@ -33,5 +32,4 @@ Have a look at the [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/d
 ## Price
 
 * Testnet: The Bitcoin Computer will be free forever on testnet.
-
 * Mainnet: The fees to the Bitcoin Computer are exactly the same as the miners fees.
