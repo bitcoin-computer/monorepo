@@ -252,17 +252,6 @@ This software has been carefully developed over four years by a qualified team. 
 
 We will remove the beta-tag once we have completed a security review.
 
-## Road Map
-
-Our prospectus road map is:
-
-* Fix all known security issues (getting close but not there yet)
-* Get security audit
-* Fix all issues discovered in audit
-* Launch secure version with long term support
-
-The interface to the Bitcoin Computer will not change so you can start developing applications now. When the security reviewed version lands all you need to do is update the dependency.
-
 ## Price
 
 ### Testnet
