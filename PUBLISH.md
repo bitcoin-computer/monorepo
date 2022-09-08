@@ -2,13 +2,24 @@
 
 ## Publish packages
 
-Checkout branch ``dev``. First update package versions using the following command.
+Checkout branch ``main``. Build the image and run all the tests
+```
+cd packages/node; yarn install; yarn build-docker; 
+yarn test; 
+yarn test -i;
+```
 
+Update package versions using the following command.
 ```js
 yarn create-version
 ```
 
-Commit the changes to ``dev``
+Checkout a new branch for the deploy
+```
+git checkout -b <new-version-number>
+```
+
+Commit the changes to ``main``
 
 ```
 git commit
