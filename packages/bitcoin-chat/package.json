@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-chat",
-  "version": "0.10.0-alpha.3",
+  "version": "0.10.0-alpha.4",
   "private": true,
   "dependencies": {
     "@bitcoin-computer/lib": "^1.0.0",
