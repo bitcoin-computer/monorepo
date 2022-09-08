@@ -142,9 +142,9 @@ AWS_ACCOUNT=<account-id>.dkr.ecr.<selected-region>.amazonaws.com
 ```
 
 ### Preparing the deploy
-This project uses Amazon Elastic Container Registry (ECR) to hold the images for the Bitcoin Computer Node container. Also, the Amazon S3 Storage Service is used to hold the db_schema.sql file for the db service.
+This project uses the Amazon S3 Storage Service to hold the db_schema.sql file for the db service.
 
-For a Docker and AWS integration, you must use two types of Docker contexts: one called "default", that will be used both for building the image in a local execution and to push the image to ECR; and another context "ECS" for deploying to AWS.
+For a Docker and AWS integration, you must use two types of Docker contexts: one called "default" that will be used for building the image in a local execution, and another context "ECS" for deploying to AWS.
 
 The following steps must be done in order to enable Docker to automatically deploy the services into AWS.
 
