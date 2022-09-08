@@ -6,7 +6,7 @@ services:
     environment:
       - FILES=db/db_schema.sql
     volumes:
-      - sh-ltc-testnet-v0-9-10-side-car:/opt/
+      - sh-ltc-testnet-v0-10-0-alpha-3-side-car:/opt/
     ports:
       - 2049:2049
     networks:
@@ -14,8 +14,8 @@ services:
   db:
     env_file: .env.aws
     volumes:
-      - db-ltc-testnet-v0-9-10-data:/var/lib/postgresql/data
-      - sh-ltc-testnet-v0-9-10-side-car:/docker-entrypoint-initdb.d/
+      - db-ltc-testnet-v0-10-0-alpha-3-data:/var/lib/postgresql/data
+      - sh-ltc-testnet-v0-10-0-alpha-3-side-car:/docker-entrypoint-initdb.d/
     deploy:
       resources:
         reservations:
@@ -26,7 +26,7 @@ services:
     depends_on:
       - side-car
   node:
-    image: uphold/litecoin-core:0.17
+    image: bcdb/litecoind:0.21
     networks:
       - bitcoin
     command:
@@ -51,7 +51,7 @@ services:
       - 19332:19332
       - 28332:28332
     volumes:
-      - bc-ltc-testnet-v0-9-10-data:/home/litecoin/.litecoin
+      - bc-ltc-testnet-v0-10-0-alpha-3-data:/home/litecoin/.litecoin
     depends_on:
       - side-car
     deploy:
@@ -60,7 +60,8 @@ services:
           memory: 16384M
           cpus: '2'
   bcn:
-    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-multiplatform:0.9.10
+    image: bcdb/bcn:0.10.0-alpha.3
+    platform: linux/amd64
     env_file: .env.aws
     environment:
       - BCN_ENV=prod
@@ -80,7 +81,8 @@ services:
           cpus: '2'
   sync:
     command: npm run sync
-    image: 428034753515.dkr.ecr.us-east-2.amazonaws.com/bcn-multiplatform:0.9.10
+    image: bcdb/bcn:0.10.0-alpha.3
+    platform: linux/amd64
     env_file: .env.aws
     depends_on:
       - node
@@ -114,16 +116,31 @@ services:
       - bcn
 
 volumes:
-  sh-ltc-testnet-v0-9-10-side-car: {}
-  db-ltc-testnet-v0-9-10-data:
-  bc-ltc-testnet-v0-9-10-data:
+  sh-ltc-testnet-v0-10-0-alpha-3-side-car: {}
+  db-ltc-testnet-v0-10-0-alpha-3-data:
+  bc-ltc-testnet-v0-10-0-alpha-3-data:
 
-x-aws-loadbalancer: ltc-testnet-bc-node-v0-9-10
+x-aws-loadbalancer: ltc-testnet-v0-10-0-alpha-3
 x-aws-cloudformation:
   Resources:
+    BcnTaskDefinition:
+      Properties:
+        runtimePlatform: {
+          operatingSystemFamily: "LINUX",
+          cpuArchitecture: "AMD64"
+        }
+    SyncTaskDefinition:
+      Properties:
+        runtimePlatform: {
+          operatingSystemFamily: "LINUX",
+          cpuArchitecture: "AMD64"
+        }
     BcnService:
       Properties:
         HealthCheckGracePeriodSeconds: 2800000 #13 hs aprox
+    SidecarService:
+      Properties:
+        HealthCheckGracePeriodSeconds: 2147483647 #69 years
     # Keep these lines that automatically defines properties for the load balancer
     # To be switched from the old cluster to the new-format-version cluster.
     # BcnTCP3000TargetGroup:

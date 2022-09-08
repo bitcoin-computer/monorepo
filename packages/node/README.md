@@ -1,6 +1,6 @@
 # Bitcoin Computer Node
 
-The Bitcoin Computer Node provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib).
+The Bitcoin Computer Node provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/).
 
 It provides the backend infrastructure for running smart contract based applications. It consists of a Bitcoin node, a database for storing index structures and off-chain data, and a web server.
 
@@ -142,9 +142,9 @@ AWS_ACCOUNT=<account-id>.dkr.ecr.<selected-region>.amazonaws.com
 ```
 
 ### Preparing the deploy
-This project uses Amazon Elastic Container Registry (ECR) to hold the images for the Bitcoin Computer Node container. Also, the Amazon S3 Storage Service is used to hold the db_schema.sql file for the db service.
+This project uses the Amazon S3 Storage Service to hold the db_schema.sql file for the db service.
 
-For a Docker and AWS integration, you must use two types of Docker contexts: one called "default", that will be used both for building the image in a local execution and to push the image to ECR; and another context "ECS" for deploying to AWS.
+For a Docker and AWS integration, you must use two types of Docker contexts: one called "default" that will be used for building the image in a local execution, and another context "ECS" for deploying to AWS.
 
 The following steps must be done in order to enable Docker to automatically deploy the services into AWS.
 
@@ -173,41 +173,9 @@ docker context ls
 docker context use default
 ```
 
-3. Build the Bitcoin Computer Node image
-```shell
-yarn build-docker
-```
+3. Create a new Amazon S3 bucket and upload the file db_schema.sql to the folder ``<bucket-name>/db/db_schema.sql``
 
-4. Login into AWS
-```shell
-yarn aws-ecr-login
-```
-5. Create a repository in ECR
-```shell
-aws ecr create-repository --repository-name <repository-name> --region us-east-2
-```
-6. Update the .env.aws environment file with the full name of the repository already created.
-```shell
-AWS_REPOSITORY=<repository-name>
-```
-
-7. Tag and push the image to ECR
-
-The bcn image will be pushed to AWS with the tag matching the project version. The following command prompts a confirmation message with the tag and repository information. After confirmation, it tags and pushes the bcn image into ECR.
-
-```shell
-yarn aws-push-bcn-image
-```
-
-8. Once the image is pushed to AWS, you will need to tag it to the latest version:
-```shell
-yarn aws-tag <current-tag> <repository-name> latest
-```
-
-
-9. Create a new Amazon S3 bucket and upload the file db_schema.sql to the folder ``<bucket-name>/db/db_schema.sql``
-
-10. Update the .env.aws environment file with the full name of the bucket already created.
+4. Update the .env.aws environment file with the full name of the bucket already created.
 ```shell
 BUCKET=<bucket-name>
 ```
@@ -283,17 +251,6 @@ context requires credentials to be passed as environment variables
 This software has been carefully developed over four years by a qualified team. However it has not been security reviewed and we cannot guarantee the absence of bugs. Bugs can lead to the loss of funds. We do not recommend to use this software in production yet. Use at your own risk.
 
 We will remove the beta-tag once we have completed a security review.
-
-## Road Map
-
-Our prospectus road map is:
-
-* Fix all known security issues (getting close but not there yet)
-* Get security audit
-* Fix all issues discovered in audit
-* Launch secure version with long term support
-
-The interface to the Bitcoin Computer will not change so you can start developing applications now. When the security reviewed version lands all you need to do is update the dependency.
 
 ## Price
 

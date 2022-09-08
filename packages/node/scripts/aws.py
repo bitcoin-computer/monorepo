@@ -8,7 +8,7 @@ import json
 import subprocess
 import sys
 
-EXPORT_CREDENTIALS = "export AWS_ACCESS_KEY=$(grep AWS_ACCESS_KEY .env.aws | cut -d '=' -f2) && export AWS_SECRET_ACCESS_KEY=$(grep AWS_SECRET_ACCESS_KEY .env.aws | cut -d '=' -f2) && aws ecr get-login-password | docker login --username AWS --password-stdin $(grep AWS_ACCOUNT .env.aws | cut -d '=' -f2)"
+EXPORT_CREDENTIALS = "export AWS_ACCESS_KEY=$(grep AWS_ACCESS_KEY .env.aws | cut -d '=' -f2) && export AWS_SECRET_ACCESS_KEY=$(grep AWS_SECRET_ACCESS_KEY .env.aws | cut -d '=' -f2) && aws ecr get-login-password --region $(grep AWS_DEFAULT_REGION .env.aws | cut -d '=' -f2) | docker login --username AWS --password-stdin $(grep AWS_ACCOUNT .env.aws | cut -d '=' -f2)"
 
 def dockerVolumeRemoveAws(sys):
     contextType = subprocess.getoutput("docker context ls | grep '*' | awk '{print $3}'")
