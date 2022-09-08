@@ -1,7 +1,7 @@
 name: build
 on: 
   push:
-    branches: [ main ]
+    branches: [ bcn-multiplatform ]
 
 jobs:
   build:
@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         version:
-          - '0.10.0-alpha.3'
+          - '0.10.0-alpha.4'
         folder:
           - 'packages/node'
       fail-fast: false
