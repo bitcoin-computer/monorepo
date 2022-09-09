@@ -5,7 +5,6 @@ import type { Computer } from 'bitcoin-computer'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-
 export interface IWalletProps {
   computer: typeof Computer
   chain: string
@@ -53,12 +52,11 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
             <br />
             <br />
             <b>Address</b>
-            <br /> {computer ? computer.db.wallet.getAddress().toString() : ''}
+            <br /> {computer ? computer.getAddress().toString() : ''}
             <br />
             <br />
             <b>Public Key</b>
-            <br />{' '}
-            {computer ? computer.db.wallet.getPublicKey().toString() : ''}
+            <br /> {computer ? computer.getPublicKey().toString() : ''}
           </ModalContent>
         </Modal>
       )}

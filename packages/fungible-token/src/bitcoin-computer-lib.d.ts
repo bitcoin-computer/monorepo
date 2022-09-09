@@ -1,1 +1,1 @@
-declare module 'bitcoin-computer-lib';
+declare module '@bitcoin-computer/lib'
