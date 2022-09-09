@@ -43,12 +43,12 @@ const App: React.FC = () => {
         new Computer({
           mnemonic: password,
           chain: 'LTC',
-          // url: 'https://node.bitcoincomputer.io',
-          // network: 'testnet',
+          url: 'https://node.bitcoincomputer.io',
+          network: 'testnet',
 
           // To run locally on regtest, uncomment the following lines:
-          url: 'http://127.0.0.1:3000',
-          network: 'regtest',
+          // url: 'http://127.0.0.1:3000',
+          // network: 'regtest',
         })
       )
       console.log('Bitcoin Computer created on ' + chain)
