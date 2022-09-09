@@ -3,19 +3,11 @@ import useInterval from './useInterval'
 import { Modal, ModalContent, Close } from './Modal'
 import type { Computer } from 'bitcoin-computer'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
 
 export interface IWalletProps {
   computer: typeof Computer
   chain: string
 }
-const Button = styled.button`
-  color: black;
-  font-size: 20px;
-  padding: 20px 51.5px;
-  border-radius: 5px;
-  cursor: pointer;
-`
 
 const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
   const [balance, setBalance] = useState(0)
@@ -28,7 +20,7 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
   }, 3000)
   return (
     <>
-      <Button onClick={() => setVisible(true)}>Wallet</Button>
+      <button onClick={() => setVisible(true)}>Wallet</button>
       {isVisible && (
         <Modal>
           <ModalContent>
