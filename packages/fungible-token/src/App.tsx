@@ -41,14 +41,14 @@ const App: React.FC = () => {
     if (isLoggedIn && !computer) {
       setComputer(
         new Computer({
-          seed: password,
+          mnemonic: password,
           chain: 'LTC',
-          url: 'https://node.bitcoincomputer.io',
-          network: 'testnet',
+          // url: 'https://node.bitcoincomputer.io',
+          // network: 'testnet',
 
           // To run locally on regtest, uncomment the following lines:
-          // url: 'http://127.0.0.1:3000',
-          // network: 'regtest'
+          url: 'http://127.0.0.1:3000',
+          network: 'regtest',
         })
       )
       console.log('Bitcoin Computer created on ' + chain)
@@ -62,12 +62,8 @@ const App: React.FC = () => {
   useInterval(() => {
     const refresh = async () => {
       if (computer !== null) {
-        const revs = await computer.getRevs(
-          computer.db.wallet.getPublicKey().toString()
-        )
-        setObjects(
-          await Promise.all(revs.map(async (rev: string) => computer.sync(rev)))
-        )
+        const revs = await computer.getRevs(computer.getPublicKey().toString())
+        setObjects(await Promise.all(revs.map(async (rev: string) => computer.sync(rev))))
       }
     }
     refresh()

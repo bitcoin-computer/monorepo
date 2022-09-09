@@ -12,7 +12,6 @@ const Button = styled.button`
   cursor: pointer;
 `
 
-
 const Input = styled.input`
   width: 590px;
 `
@@ -25,20 +24,18 @@ const MintToken: React.FC<IMintTokenProps> = ({ computer }) => {
   const [supplyString, setSupplyString] = useState('')
   const [name, setName] = useState('')
   const [isVisible, setVisible] = useState(false)
- 
+
   const mintToken = async (e: React.SyntheticEvent) => {
     try {
       e.preventDefault()
-      const publicKey = computer.db.wallet.getPublicKey().toString()
+      const publicKey = computer.getPublicKey().toString()
       const TokenSc = await Utils.importFromPublic('/token-sc.js')
       const supply = parseInt(supplyString)
       const token = await computer.new(TokenSc, [publicKey, supply, name])
       setVisible(false)
-      console.log(
-        `Minted ${token.name} with supply ${supply} and id ${token._id}`
-      )
+      console.log(`Minted ${token.name} with supply ${supply} and id ${token._id}`)
       /* eslint-disable @typescript-eslint/no-explicit-any */
-      } catch (err: any) {
+    } catch (err: any) {
       if (err.message.startsWith('Insufficient balance in address'))
         alert(
           `You need testnet coins to mint a token. To get free testnet coins open the your wallet. If you have just made a deposit you might have to reload the browser.`
@@ -48,15 +45,15 @@ const MintToken: React.FC<IMintTokenProps> = ({ computer }) => {
 
   const clicked = () => {
     setVisible(true)
-    if (computer.db.wallet.getBalance() === 0){
+    if (computer.getBalance() === 0) {
       alert('Wallet has zero balance, please fund the wallet first.')
     }
   }
 
   return (
     <>
-    <Button onClick={() => clicked()}>Mint</Button>
-    {isVisible && (
+      <Button onClick={() => clicked()}>Mint</Button>
+      {isVisible && (
         <Modal>
           <ModalContent>
             <Close onClick={() => setVisible(false)}>&times;</Close>
@@ -73,11 +70,7 @@ const MintToken: React.FC<IMintTokenProps> = ({ computer }) => {
               <br />
               <b>Name</b>
               <br />
-              <Input
-                type="string"
-                value={name}
-                onChange={(e) => setName(e.target.value || '')}
-              />
+              <Input type="string" value={name} onChange={(e) => setName(e.target.value || '')} />
               <br />
               <br />
               <button type="submit">Mint</button>
