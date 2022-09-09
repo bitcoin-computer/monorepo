@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import Utils from "./utils";
+import ChatSc from "./chat-sc"
 
 function StartChat({ computer }) {
   const navigate = useNavigate();
@@ -8,8 +8,7 @@ function StartChat({ computer }) {
   const createChat = async (e) => {
     try {
       e.preventDefault();
-      const publicKey = computer.getPublicKey().toString();
-      const ChatSc = await Utils.importFromPublic("/chat-sc.js");
+      const publicKey = computer.getPublicKey();
       const chat = await computer.new(ChatSc, [publicKey]);
       navigate(`/chat/${chat._id}`);
     } catch (err) {

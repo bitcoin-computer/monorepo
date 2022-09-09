@@ -66,7 +66,7 @@ function App() {
           <Routes>
             <Route
               path="/chat/:id/:outIndex"
-              render={() => <Chat computer={computer}></Chat>}
+              element={<Chat computer={computer}></Chat>}
             />
           </Routes>
         </div>

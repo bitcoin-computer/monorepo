@@ -15,14 +15,14 @@ function Wallet({ computer, chain }) {
   return (
     <div className="flex">
       <small>
-        <b>Public Key</b> {computer ? computer.getPublicKey().toString() : ""}
+        <b>Public Key</b> {computer ? computer.getPublicKey() : ""}
         <br />
       </small>
       <small>
         <b>Balance</b> {balance / 1e8} {chain}
       </small>
       <small>
-        <b>Address</b> {computer ? computer.getAddress().toString() : ""}
+        <b>Address</b> {computer ? computer.getAddress() : ""}
         <br />
       </small>
       <small>
