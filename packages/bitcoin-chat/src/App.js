@@ -25,7 +25,7 @@ function App() {
     if (isLoggedIn && !computer) {
       setComputer(
         new Computer({
-          menmonic: password,
+          mnemonic: password,
           chain: "LTC",
           url: "https://node.bitcoincomputer.io",
           network: "testnet",
