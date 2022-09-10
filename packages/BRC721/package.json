@@ -1,5 +1,5 @@
 {
-  "name": "BRC721",
+  "name": "@bitcoin-computer/BRC721",
   "version": "0.10.0-alpha.4",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "private": true,

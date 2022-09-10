@@ -1,5 +1,5 @@
 {
-  "name": "non-fungible-token",
+  "name": "@bitcoin-computer/non-fungible-token",
   "version": "0.10.0-alpha.4",
   "private": true,
   "dependencies": {

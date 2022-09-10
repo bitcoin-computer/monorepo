@@ -1,5 +1,5 @@
 {
-  "name": "bitcoin-fungible-token",
+  "name": "@bitcoin-computer/fungible-token",
   "version": "0.10.0-alpha.4",
   "private": true,
   "dependencies": {
