@@ -16,11 +16,7 @@ const Flex = styled.div`
 
 const Header = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  height: 600px;
-  margin: 5px;
+  justify-content: left;
   & > button {
     margin: 5px;
   }
@@ -62,7 +58,7 @@ const App: React.FC = () => {
   useInterval(() => {
     const refresh = async () => {
       if (computer !== null) {
-        const revs = await computer.getRevs(computer.getPublicKey().toString())
+        const revs = await computer.getRevs(computer.getPublicKey())
         setObjects(await Promise.all(revs.map(async (rev: string) => computer.sync(rev))))
       }
     }

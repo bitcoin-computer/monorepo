@@ -115,9 +115,9 @@ function App() {
       {
         <div>
           <h2>Wallet</h2>
-          <b>Address</b>&nbsp;{computer.getAddress().toString()}
+          <b>Address</b>&nbsp;{computer.getAddress()}
           <br />
-          <b>Public Key</b>&nbsp;{computer.getPublicKey().toString()}
+          <b>Public Key</b>&nbsp;{computer.getPublicKey()}
           <br />
           <b>Balance</b>&nbsp;{balance / 1e8}
           {" LTC"}

@@ -1,16 +1,9 @@
 import React, { useState } from 'react'
-import Utils from './utils'
 import { Modal, ModalContent, Close } from './Modal'
 import styled from 'styled-components'
 import type { Computer } from 'bitcoin-computer'
 import PropTypes from 'prop-types'
-
-const Button = styled.button`
-  color: black;
-  font-size: 20px;
-  padding: 20px 60px;
-  cursor: pointer;
-`
+import Token  from './token-sc'
 
 const Input = styled.input`
   width: 590px;
@@ -28,10 +21,9 @@ const MintToken: React.FC<IMintTokenProps> = ({ computer }) => {
   const mintToken = async (e: React.SyntheticEvent) => {
     try {
       e.preventDefault()
-      const publicKey = computer.getPublicKey().toString()
-      const TokenSc = await Utils.importFromPublic('/token-sc.js')
+      const publicKey = computer.getPublicKey()
       const supply = parseInt(supplyString)
-      const token = await computer.new(TokenSc, [publicKey, supply, name])
+      const token = await computer.new(Token, [publicKey, supply, name])
       setVisible(false)
       console.log(`Minted ${token.name} with supply ${supply} and id ${token._id}`)
       /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -52,7 +44,7 @@ const MintToken: React.FC<IMintTokenProps> = ({ computer }) => {
 
   return (
     <>
-      <Button onClick={() => clicked()}>Mint</Button>
+      <button onClick={() => clicked()}>Mint</button>
       {isVisible && (
         <Modal>
           <ModalContent>

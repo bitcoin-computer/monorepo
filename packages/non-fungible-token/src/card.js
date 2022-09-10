@@ -1,7 +1,7 @@
 import "./card.css";
 import React from "react";
 
-export default ({ artwork, setArtSending }) => {
+const artworkCard = ({ artwork, setArtSending }) => {
   const handleClick = async () => {
     const publicKey = prompt("Please enter the public key of the new owner");
     try {
@@ -16,7 +16,7 @@ export default ({ artwork, setArtSending }) => {
       setArtSending(false);
     }
   };
-
+  
   return artwork ? (
     <li key={artwork._rev} className="card" onClick={handleClick}>
       <img src={artwork.url || artwork.imageUrl} alt={artwork.title} />
@@ -31,3 +31,4 @@ export default ({ artwork, setArtSending }) => {
     <></>
   );
 };
+export default artworkCard;

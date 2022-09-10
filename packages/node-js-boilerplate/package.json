@@ -1,8 +1,7 @@
 {
-  "name": "@bitcoin-computer/BRC721",
+  "name": "@bitcoin-computer/node-js-boilerplate",
   "version": "0.10.0-alpha.4",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
-  "private": true,
   "scripts": {
     "start": "node build/src/main.js",
     "clean": "rimraf coverage build tmp",
@@ -22,7 +21,7 @@
     "tslib": "~2.4.0"
   },
   "devDependencies": {
-    "@types/jest": "^28.1.3",
+    "@types/jest": "~28.1.3",
     "@types/node": "~18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
@@ -45,5 +44,6 @@
   "license": "MIT",
   "volta": {
     "node": "16.13.0"
-  }
+  },
+  "gitHead": "b842d7ab52160012a631c3e422bce996149f9931"
 }
