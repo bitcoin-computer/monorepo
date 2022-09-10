@@ -1,5 +1,5 @@
 {
-  "name": "react-wallet",
+  "name": "@bitcoin-computer/wallet",
   "version": "0.10.0-alpha.4",
   "private": true,
   "dependencies": {
