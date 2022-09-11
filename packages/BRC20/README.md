@@ -1,4 +1,4 @@
-# BRC20
+# BRC20 Fungible Token Contract
 
 An implementation of the ERC20 [standard](https://eips.ethereum.org/EIPS/eip-20) on Bitcoin.
 

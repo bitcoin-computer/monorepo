@@ -4,7 +4,7 @@ Infrastructure for building Smart Contracts on Litecoin, Bitcoin and other UTXOs
 
 ## Library
 
-* [Bitcoin Computer Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib): A library for building smart contracts on Litecoin/Bitcoin. 
+* [Bitcoin Computer Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib): A library for building smart contracts on Litecoin/Bitcoin.
 * [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node): It provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib). It provides the backend infrastructure for running smart contract based applications. It consists of a Litecoin/Bitcoin node, a database for storing index structures and off-chain data, and a web server.
 
 ## Standard Smart Contracts
@@ -15,8 +15,8 @@ Infrastructure for building Smart Contracts on Litecoin, Bitcoin and other UTXOs
 
 ## Applications
 
-* [Bitcoin chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/bitcoin-chat)
-* [Bitcoin wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/react-bitcoin-wallet)
+* [Bitcoin chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat)
+* [Bitcoin wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet)
 * [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token)
 * [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token)
 
