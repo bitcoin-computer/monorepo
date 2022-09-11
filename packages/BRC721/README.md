@@ -1,4 +1,4 @@
-# BRC721
+# BRC721 Non-Fungible Token Contract
 
 An implementation of the ERC721 [standard](https://eips.ethereum.org/EIPS/eip-721) on Bitcoin.
 

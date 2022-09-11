@@ -1,8 +1,8 @@
-# Bitcoin Token
+# Fungible Token Application
 
-A hackable token for LTC. Intended as a starting point for developers to build on top of. Build on the [Bitcoin Computer](http://bitcoincomputer.io) library.
+A simple application for minting, storing, and sending fungible tokens on Bitcoin. Intended as a starting point for developers to build on top of. Build on the [Bitcoin Computer](http://bitcoincomputer.io) library.
 
-The smart contract itself could not be simpler:
+The smart contract is very simple:
 
 ````
 class Token {
