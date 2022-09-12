@@ -1,4 +1,3 @@
-
 // Goal: we need a type for the computer.new and computer.sync functions.
 // Consider examples
 
@@ -77,26 +76,27 @@ const a: NonRecursiveSmart<{ n: number }> = {
 //   },
 // }
 
+type Json = string | number | boolean | null | Json[] | { [key: string]: Json }
 
-type Json = string | number | boolean | null | Json[] | { [key: string]: Json };
-
-
-let data: Json = {
-  caption: "Test",
+const data: Json = {
+  caption: 'Test',
   location: { x: 10, y: 20 },
-  values: [0, 10, 20]
+  values: [0, 10, 20],
 }
 
 // type Smart<Type> = string | number | boolean | null | Smart<any>[] | { [Property in keyof Type]: Type[Property] };
 
 type Smart<Type> =
-  string |
-  number |
-  boolean |
-  null |
-  Smart<Type>[] |
-  { [Property in keyof Type]: Type[Property] extends object ? Type[Property] & { _id: string } : Type[Property] };
-
+  | string
+  | number
+  | boolean
+  | null
+  | Smart<Type>[]
+  | {
+      [Property in keyof Type]: Type[Property] extends object
+        ? Type[Property] & { _id: string }
+        : Type[Property]
+    }
 
 // const counter2: Smart<Counter> = {
 //   n: 5

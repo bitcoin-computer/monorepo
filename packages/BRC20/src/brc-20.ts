@@ -1,4 +1,3 @@
-import { Computer } from 'bitcoin-computer-lib'
 import { TokenBag } from './token-bag'
 
 interface IBRC20 {
@@ -11,10 +10,10 @@ interface IBRC20 {
 export class BRC20 implements IBRC20 {
   name: string
   symbol: string
-  computer: Computer
+  computer: any
   mintId: string
 
-  constructor(name: string, symbol: string, computer: Computer, mintId?: string) {
+  constructor(name: string, symbol: string, computer: any, mintId?: string) {
     this.name = name
     this.symbol = symbol
     this.computer = computer
@@ -53,7 +52,7 @@ export class BRC20 implements IBRC20 {
 
   async transfer(to: string, amount: number): Promise<void> {
     let _amount = amount
-    const owner = this.computer.db.wallet.getPublicKey().toString()
+    const owner = this.computer.getPublicKey()
     const bags = await this.getBags(owner)
     const results = []
     while (_amount > 0) {

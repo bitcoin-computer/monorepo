@@ -6,20 +6,23 @@
   "engines": {
     "node": ">= 16.13 <17"
   },
+  "type": "module",
   "devDependencies": {
-    "@types/jest": "~27.5.1",
+    "@types/chai": "^4.3.1",
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^9.1.1",
     "@types/node": "~17.0.36",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.29.0",
+    "chai": "^4.3.6",
+    "chai-exclude": "^2.1.0",
     "eslint": "^8.7.0",
     "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-prettier": "~8.5.0",
     "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-jest": "~26.4.6",
-    "jest": "~28.1.0",
+    "mocha": "^10.0.0",
     "prettier": "~2.6.2",
     "rimraf": "~3.0.2",
-    "ts-jest": "~28.0.3",
     "tsutils": "~3.21.0",
     "typescript": "~4.7.2"
   },
@@ -31,14 +34,12 @@
     "build:watch": "tsc -w -p tsconfig.release.json",
     "lint": "eslint src test --ext .ts,.tsx",
     "types": "tsc --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "mocha --config .mocharc.json"
   },
   "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@bitcoin-computer/lib": "^1.0.0",
-    "bitcoin-computer-lib": "^0.8.0-beta",
+    "@bitcoin-computer/lib": "^0.10.0-alpha.4",
     "eslint-plugin-prettier": "^4.0.0",
     "ts-node": "^10.8.1",
     "tslib": "~2.4.0"
