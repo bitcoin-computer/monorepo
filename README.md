@@ -2,6 +2,43 @@
 
 Infrastructure for building Smart Contracts on Litecoin, Bitcoin and other UTXOs-based blockchains.
 
+## Get Started
+You can use our template to get started with your own project. It includes a simple example that computes the balance of an address.
+
+```bash
+npx create-react-app app-name --template @bitcoin-computer/cra-template
+```
+
+A new Computer object is created in the App.js file. The Computer object is used to interact with the blockchain.
+
+```javascript
+const [computer] = useState(
+    new Computer({
+      ...config,
+      mnemonic:
+        "travel upgrade inside soda birth essence junk merit never twenty system opinion",
+    })
+  );
+```
+
+In the template, the Computer object is used to get the balance of an address. The address is passed as a prop to the App component.
+
+```javascript
+const newBalance = await computer.db.wallet.getBalance();
+```
+
+You can use the config options to connect to a different blockchain. The default is Litecoin Testnet. If you want to connect to `regtest`, you can use the following config.
+
+```javascript
+const [config] = useState({
+    chain: "LTC",
+    network: "regtest",
+    url: "http://127.0.0.1:3000",
+  });
+```  
+
+Many other examples can be found in the [Applications](#applications) section. The complete documentation can be found in [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/docs/).
+
 ## Library
 
 * [Bitcoin Computer Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib): A library for building smart contracts on Litecoin/Bitcoin.
