@@ -28,13 +28,20 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
             <h1>Wallet</h1>
             {balance === 0 && (
               <p>
-                Copy your address into a{' '}
+                Copy your address into {' '}
                 <a
                   target="_blank"
                   rel="noopener noreferrer"
                   href="https://testnet-faucet.com/ltc-testnet/"
                 >
-                  LTC Faucet
+                  this
+                </a>{' '} or {' '}
+                <a
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  href="http://litecointf.salmen.website/"
+                >
+                  this LTC faucet
                 </a>{' '}
                 to fund your wallet.
               </p>

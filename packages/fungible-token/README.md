@@ -26,13 +26,13 @@ You can find more information in the accompanying [Medium Article](https://mediu
 
 ## Start the app
 
-Clone the repo and run
+To run the code clone the project in a new folder, run ``yarn install`` and start the app using
 
 ````
-npm run start
+yarn start
 ````
 
-To log in you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/). You then need to fund the wallet using a [LTC faucet](https://testnet-faucet.com/ltc-testnet/)
+To log in you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/). You then need to fund the wallet using [this](https://testnet-faucet.com/ltc-testnet/) or [this LTC faucet](http://litecointf.salmen.website/).
 
 For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
 
@@ -44,9 +44,9 @@ The app is very bare bones and contributions are more than welcome. Have a look 
 
 ![chat-screen](https://i.ibb.co/hMqsDjQ/Screen-Shot-2020-09-23-at-00-16-18.png)
 
-# MIT Licence
+# MIT License
 
-Copyright 2020 Clemens Ley
+Copyright (c) 2022 BCDB Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
