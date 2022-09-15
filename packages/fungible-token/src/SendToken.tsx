@@ -30,6 +30,10 @@ const SendToken: React.FC<ISendTokenProps> = ({ tokens }) => {
         leftToSpend -= tokenCoins
       }
     }
+    alert(`Sent tokens\n ${ 
+      newTokens
+        .map((token) => `${token.coins} -> ${token._owners[0]}`)
+        .join('\n')}`)
 
     console.log(
       'Sent tokens\n',

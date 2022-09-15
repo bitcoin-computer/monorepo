@@ -59,9 +59,10 @@ function App() {
     try {
       if (computer) {
         const newBalance = await computer.getBalance();
-        const newRevs = await computer.getRevs(computer.getPublicKey());
+        const newRevs = await computer.query({contract: Artwork, publicKey: computer.getPublicKey()})
         console.log("public key: ", computer.getPublicKey());
         console.log("revs", newRevs);
+
         // sync art work when revs are not same
         if (!areEqual(revs, newRevs)) {
           const newArts = await Promise.all(

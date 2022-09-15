@@ -8,6 +8,7 @@ import Card from './Card'
 import useInterval from './useInterval'
 import styled from 'styled-components'
 import { TokenType } from './types'
+import Token from './token-sc'
 
 const Flex = styled.div`
   display: flex;
@@ -53,17 +54,18 @@ const App: React.FC = () => {
       console.log('You have been logged out')
       setComputer(null)
     }
-  }, 1000)
+  }, 20000)
 
   useInterval(() => {
     const refresh = async () => {
       if (computer !== null) {
-        const revs = await computer.getRevs(computer.getPublicKey())
+        // Get all revisions created with the Token contract and the current wallet public key
+        const revs = await computer.query({contract: Token, publicKey: computer.getPublicKey()})
         setObjects(await Promise.all(revs.map(async (rev: string) => computer.sync(rev))))
       }
     }
     refresh()
-  }, 7000)
+  }, 20000)
 
   // todo: refactor this function
   const groupByRoot = (list: TokenType[]) =>
