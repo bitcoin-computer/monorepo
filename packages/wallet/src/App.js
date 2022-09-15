@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Computer } from "@bitcoin-computer/lib";
 import "./App.css";
 
@@ -19,12 +19,44 @@ function App() {
   const [amount, setAmount] = useState(0);
   const [to, setTo] = useState("");
 
+  function useInterval(callback, delay) {
+    const savedCallback = useRef();
+
+    // Remember the latest callback.
+    useEffect(() => {
+      savedCallback.current = callback;
+    }, [callback]);
+
+    // Set up the interval.
+    useEffect(() => {
+      function tick() {
+        savedCallback.current();
+      }
+      if (delay !== null) {
+        let id = setInterval(tick, delay);
+        return () => clearInterval(id);
+      }
+    }, [delay]);
+  }
+
   useEffect(() => {
     async function refresh() {
       if (computer) setBalance(await computer.getBalance());
     }
     refresh();
   }, [computer]);
+
+  useInterval(async () => {
+    try {
+      if (computer) {
+        const newBalance = await computer.getBalance();
+        setBalance(newBalance);
+      }
+    } catch (err) {
+      console.log("error occurred while fetching wallet details: ", err);
+    }
+  }, 20000);
+
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
