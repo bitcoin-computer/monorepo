@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/BRC721",
-  "version": "0.10.0-alpha.4",
+  "version": "0.10.0-alpha.5",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "private": true,
   "type": "module",
@@ -15,7 +15,7 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.10.0-alpha.4",
+    "@bitcoin-computer/lib": "^0.10.0-alpha.5",
     "eslint-plugin-prettier": "^4.0.0",
     "ts-node": "^10.8.1",
     "tslib": "~2.4.0"

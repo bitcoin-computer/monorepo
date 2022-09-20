@@ -1,9 +1,9 @@
 {
   "name": "@bitcoin-computer/fungible-token",
-  "version": "0.10.0-alpha.4",
+  "version": "0.10.0-alpha.5",
   "private": true,
   "dependencies": {
-    "@bitcoin-computer/lib": "0.10.0-alpha.4",
+    "@bitcoin-computer/lib": "^0.10.0-alpha.5",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.0",
@@ -57,7 +57,7 @@
     "react-app-rewired": "^2.2.1",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
-    "url-polyfill": "^1.1.12",
-    "url": "0.11.0"
+    "url": "0.11.0",
+    "url-polyfill": "^1.1.12"
   }
 }
