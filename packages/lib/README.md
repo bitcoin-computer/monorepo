@@ -1,5 +1,8 @@
+<p align="center">
+  <img src="img/logo.jpg" alt="bitcoin-computer-logo" border="0"/>
+</p>
 
-# Bitcoin Computer Library
+# Lightweight Smart Contracts for Litecoin and Bitcoin.
 
 A smart contract system for Litecoin and Bitcoin. You can build fungible and non-fungible tokens (NFTs), games, social networks, stable coins, exchanges, auctions, voting, office applications, artificial intelligence, ... anything really. We currently support Litecoin and Bitcoin but will add more currencies soon.
 

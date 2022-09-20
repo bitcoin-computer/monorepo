@@ -52,5 +52,5 @@ INSERT INTO
 
 CREATE VIEW "Utxos" AS  
 SELECT "rev", "address", "satoshis", "scriptPubKey" 
-FROM "Output" WHERE "Output".rev NOT IN
-(SELECT rev FROM "Input")
+FROM "Output" WHERE NOT EXISTS 
+(SELECT ip.rev FROM "Input" ip  WHERE ip.rev = "Output".rev)
