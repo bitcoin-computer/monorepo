@@ -3,7 +3,6 @@
 # Distributed under the MIT software license.
 
 import argparse
-import json
 import subprocess
 
 parser = argparse.ArgumentParser()
