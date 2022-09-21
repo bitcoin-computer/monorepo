@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         version:
-          - '0.10.0-alpha.4'
+          - '0.10.0-alpha.7'
         folder:
           - 'packages/node'
       fail-fast: false
