@@ -33,9 +33,9 @@ services:
     volumes:
       - ./chain-setup/ltc-testnet/blockchain-data:/home/litecoin/.litecoin
   bcn:
-    image: bcdb/bcn:0.9.12
-    # image: bitcoin-computer-node
-    # build: .
+    image: bcdb/bcn:0.10.0-alpha.8
+    #image: bitcoin-computer-node
+    build: .
     env_file: .env
     environment:
       - BCN_ENV=prod
@@ -50,7 +50,7 @@ services:
       - node
   sync:
     command: npm run sync
-    image: bcdb/bcn:0.9.12
+    image: bcdb/bcn:0.10.0-alpha.8
     # image: bitcoin-computer-node
     env_file: .env
     depends_on:
