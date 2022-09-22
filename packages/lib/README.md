@@ -1,29 +1,11 @@
-<p align="center">
-  <img src="img/logo.jpg" alt="bitcoin-computer-logo" border="0"/>
-</p>
-
 # Lightweight Smart Contracts for Litecoin and Bitcoin.
 
-A smart contract system for Litecoin and Bitcoin. You can build fungible and non-fungible tokens (NFTs), games, social networks, stable coins, exchanges, auctions, voting, office applications, artificial intelligence, ... anything really. We currently support Litecoin and Bitcoin but will add more currencies soon.
+A smart contract system for Litecoin and Bitcoin. You can build fungible and non-fungible tokens (NFTs), games, social networks, stable coins, exchanges, auctions, voting, office applications, artificial intelligence, ... anything really. We currently support Litecoin but we will add more currencies soon.
 
-You can find more information in the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/).
-
-<br>
-
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/bitcoin-computer/bitcoin-computer-lib.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bitcoin-computer/bitcoin-computer-lib/context:javascript) [![Total alerts](https://img.shields.io/lgtm/alerts/g/bitcoin-computer/bitcoin-computer-lib.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bitcoin-computer/bitcoin-computer-lib/alerts/)
-
-<br>
-
-## Quick start
-
-The easiest way to get started is to run the tests. If you get an error "Insufficient funds" have a look [here](#fund-your-computer-object).
-
-````
-git clone git@github.com:bitcoin-computer/bitcoin-computer-lib.git
-cd bitcoin-computer-lib
-yarn install
-yarn test
-````
+[Documentation](https://docs.bitcoincomputer.io/) |
+[Telegram](https://t.me/thebitcoincomputer) |
+[Twitter](https://twitter.com/TheBitcoinToken) |
+[Github](https://github.com/bitcoin-computer/monorepo)
 
 ## Run in Node.js
 
@@ -58,16 +40,14 @@ class Counter {
 })()
 ```
 
-Then, execute the following in the same directory
+Install the latest *beta* version and run the app, for example:
 ````
 yarn init -y
-yarn add @bitcoin-computer/lib
+yarn add @bitcoin-computer/lib@0.10.0-beta.3
 node index.mjs
 ````
 
-
 If you get an error "Insufficient funds" have a look [here](#fund-your-computer-object). Once the wallet is funded you will see:
-
 ```
 Counter {
   n: 1,
@@ -76,6 +56,8 @@ Counter {
   _root: '8136e4bceaf528ef6a8ff...'
 }
 ```
+
+You can replace the mnemonic with your own BIP39 mnemonic sentence. You can generate a new mnemonic [here](https://iancoleman.io/bip39/).
 
 ## Run in the Browser
 
@@ -128,13 +110,7 @@ parcel index.html
 
 ## Fund Your Computer Object
 
-If you get an error message "Insufficient balance in address \<address\>" you need to fund the wallet inside the computer object.
-
-By default the Bitcoin Computer runs on Litecoin testnet. You can get free testnet coins from a Litecoin testnet faucet [here](https://kuttler.eu/en/bitcoin/ltc/faucet/), [here](https://testnet-faucet.com/ltc-testnet/), or
-[here](https://testnet.help/en/ltcfaucet/testnet).
-
-
-We recommend generating a new mnemonic sentence through a [BIP39 generator](https://iancoleman.io/bip39/).
+If you get an error message "Insufficient balance in address \<address\>" you need to fund the wallet inside the computer object. You can get free testnet coins from a [Litecoin testnet faucet](http://litecointf.salmen.website/).
 
 
 ## Documentation and Help
@@ -145,17 +121,10 @@ Have a look at the [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/d
 
 This software has been carefully developed over four years by a qualified team. However it has not been security reviewed and we cannot guarantee the absence of bugs. Bugs can lead to the loss of funds. We do not recommend to use this software in production yet. Use at your own risk.
 
-We will remove the beta-tag once we have completed a security review.
-
 ## Price
 
-### Testnet
-
-The Bitcoin Computer will be free forever on testnet.
-
-### Mainnet
-
-The fees to the Bitcoin Computer are exactly the same as the miners fees.
+* Testnet: The Bitcoin Computer will be free forever on testnet.
+* Mainnet: The fees to the Bitcoin Computer are exactly the same as the miners fees.
 
 ## License
 
