@@ -3,7 +3,7 @@
   "version": "0.10.0-alpha.6",
   "private": true,
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.10.0-alpha.6",
+    "@bitcoin-computer/lib": "0.10.0-beta.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",

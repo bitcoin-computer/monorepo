@@ -4,10 +4,13 @@ import { Computer } from '@bitcoin-computer/lib'
 import { TokenBag } from '../src/token-bag'
 
 const opts = {
-  mnemonic: 'opera deputy attitude upset royal keep',
+  mnemonic:
+    'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
-  url: 'http://127.0.0.1:3000',
-  network: 'regtest',
+  url: 'https://node.bitcoincomputer.io',
+  network: 'testnet',
+  // url: 'http://127.0.0.1:3000',
+  // network: 'regtest',
 }
 
 describe('TokenBag', () => {
