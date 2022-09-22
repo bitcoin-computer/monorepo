@@ -4,10 +4,13 @@ import { Computer } from '@bitcoin-computer/lib'
 import { BRC20 } from '../src/brc-20'
 
 const opts = {
-  mnemonic: 'bright word little amazing coast obvious',
+  mnemonic:
+    'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
-  url: 'http://127.0.0.1:3000',
-  network: 'regtest',
+  url: 'https://node.bitcoincomputer.io',
+  network: 'testnet',
+  // url: 'http://127.0.0.1:3000',
+  // network: 'regtest',
 }
 
 describe('BRC20', () => {
@@ -61,7 +64,7 @@ describe('BRC20', () => {
       }
     })
 
-    it('Should computer the balance', async () => {
+    it('Should compute the balance', async () => {
       const computer = new Computer(opts)
       const brc20 = new BRC20('test', 'TST', computer)
       const publicKey = brc20.computer.getPublicKey()

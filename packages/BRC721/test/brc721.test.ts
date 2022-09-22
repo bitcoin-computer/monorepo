@@ -5,10 +5,13 @@ import { NFT } from '../src/nft'
 import { BRC721 } from '../src/brc721'
 
 const opts = {
-  mnemonic: 'bright word little amazing coast obvious',
+  mnemonic:
+    'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
-  url: 'http://127.0.0.1:3000',
-  network: 'regtest',
+  url: 'https://node.bitcoincomputer.io',
+  network: 'testnet',
+  // url: 'http://127.0.0.1:3000',
+  // network: 'regtest',
 }
 
 describe('BRC721', () => {

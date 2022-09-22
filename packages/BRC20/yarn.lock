@@ -238,10 +238,10 @@
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-"@bitcoin-computer/lib@^0.10.0-alpha.4":
-  version "0.10.0-alpha.4"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/lib/-/lib-0.10.0-alpha.4.tgz#0c18c6de87ccca35f62d14a11940b68b5ff63b49"
-  integrity sha512-KPCihsDRVoBZFhR975XI3vlej69UkHGK03ynuSnqYU2rMbOnDdagHBdyu4I6JXZyLYZ9tza+HnWxMkHTjtQaew==
+"@bitcoin-computer/lib@0.10.0-beta.3":
+  version "0.10.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@bitcoin-computer/lib/-/lib-0.10.0-beta.3.tgz#05869f414a57b9179b3e3174621d94b38014a871"
+  integrity sha512-3MSL1k45xrLPKCo/po+fkVO6avPYWYfiCckzvt2KT0lzwHbKpx1j50JW4/Dy3ISxxAuCPVD0t1o0rwbCdpM1+A==
   dependencies:
     "@babel/core" "^7.18.0"
     "@bitcoin-computer/bitcore-mnemonic-ltc" "8.25.41"
@@ -575,7 +575,7 @@
     semver "^7.3.7"
     tsutils "^3.21.0"
 
-"@typescript-eslint/utils@5.36.2", "@typescript-eslint/utils@^5.10.0":
+"@typescript-eslint/utils@5.36.2":
   version "5.36.2"
   resolved "https://registry.yarnpkg.com/@typescript-eslint/utils/-/utils-5.36.2.tgz#b01a76f0ab244404c7aefc340c5015d5ce6da74c"
   integrity sha512-uNcopWonEITX96v9pefk9DC1bWMdkweeSsewJ6GeC7L6j2t0SJywisgkr9wUTtXk90fi2Eljj90HSHm3OGdGRg==
@@ -1300,13 +1300,6 @@ eslint-plugin-import@^2.25.4:
     object.values "^1.1.5"
     resolve "^1.22.0"
     tsconfig-paths "^3.14.1"
-
-eslint-plugin-jest@~26.4.6:
-  version "26.4.7"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jest/-/eslint-plugin-jest-26.4.7.tgz#3defa590ff3e4d218d1014c21909a7f73a63d3a3"
-  integrity sha512-xLB5tefaNhHoxrOKrNPg/PiTxY+zeitoj7sOkeNOznx1mRysN8O7O7+9sN/sRUol5cMh7QYbCTWXbXE/K3/M4w==
-  dependencies:
-    "@typescript-eslint/utils" "^5.10.0"
 
 eslint-plugin-prettier@^4.0.0:
   version "4.2.1"
