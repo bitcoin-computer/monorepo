@@ -1,13 +1,11 @@
 # Bitcoin Computer Node
 
-The Bitcoin Computer Node provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/).
-
-It provides the backend infrastructure for running smart contract based applications. It consists of a Bitcoin node, a database for storing index structures and off-chain data, and a web server.
-
+Server infrastructure to run smart contracts on Bitcoin and Litecoin using the [Bitcoin Computer](http://bitcoincomputer.io/).
 
 [Documentation](https://docs.bitcoincomputer.io/) |
-[Telegram](thebitcoincomputer) |
-[Twitter](https://twitter.com/TheBitcoinToken)
+[Telegram](https://t.me/thebitcoincomputer) |
+[Twitter](https://twitter.com/TheBitcoinToken) |
+[Github](https://github.com/bitcoin-computer/monorepo)
 
 ## Local Deployment
 
@@ -52,7 +50,7 @@ Once the error messages stop you can run the tests:
 yarn test
 ```
 
-For local development you will need to fund the test wallets using the following command. 
+For local development you will need to fund the test wallets using the following command.
 
 ```shell
 yarn fund-ltc
