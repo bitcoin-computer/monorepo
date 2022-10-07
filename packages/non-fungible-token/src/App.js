@@ -4,15 +4,16 @@ import "./App.css";
 import Card from "./card";
 import Artwork from "./artwork";
 import { areEqual } from "./util";
+import ArtworkForm from "./artworkForm";
 
 function App() {
   const [config] = useState({
     chain: "LTC",
-    network: "testnet",
-    url: "https://node.bitcoincomputer.io",
+    // network: "testnet",
+    // url: "https://node.bitcoincomputer.io",
     // to run locally, change network and url:
-    // network: "regtest",
-    // url: "http://127.0.0.1:3000",
+    network: "regtest",
+    url: "http://127.0.0.1:3000",
   });
   const [computer, setComputer] = useState(
     new Computer({
@@ -24,9 +25,9 @@ function App() {
 
   const [balance, setBalance] = useState(0);
 
-  const [title, setTitle] = useState("");
-  const [artist, setArtist] = useState("");
-  const [url, setUrl] = useState("");
+  // const [title, setTitle] = useState("");
+  // const [artist, setArtist] = useState("");
+  // const [url, setUrl] = useState("");
 
   const [revs, setRevs] = useState([]);
   const [artworks, setArtworks] = useState([]);
@@ -59,7 +60,10 @@ function App() {
     try {
       if (computer) {
         const newBalance = await computer.getBalance();
-        const newRevs = await computer.query({contract: Artwork, publicKey: computer.getPublicKey()})
+        const newRevs = await computer.query({
+          contract: Artwork,
+          publicKey: computer.getPublicKey(),
+        });
         console.log("public key: ", computer.getPublicKey());
         console.log("revs", newRevs);
 
@@ -85,32 +89,33 @@ function App() {
     console.log("called from child");
   };
 
-  const handleSubmit = async (evt) => {
-    evt.preventDefault();
-    try {
-      if (!title) {
-        alert("Provide valid title.");
-        return;
-      }
-      if (!artist) {
-        alert("Provide valid artist.");
-        return;
-      }
-      if (!url) {
-        alert("Provide valid url.");
-        return;
-      }
-      const artwork = await computer.new(Artwork, [title, artist, url]);
-      console.log("created artwork", artwork);
-    } catch (err) {
-      console.log("error occurred while creating art: ", err);
-    } finally {
-      setTitle("");
-      setArtist("");
-      setUrl("");
-    }
-  };
+  // const handleSubmit = async (evt) => {
+  //   evt.preventDefault();
+  //   try {
+  //     if (!title) {
+  //       alert("Provide valid title.");
+  //       return;
+  //     }
+  //     if (!artist) {
+  //       alert("Provide valid artist.");
+  //       return;
+  //     }
+  //     if (!url) {
+  //       alert("Provide valid url.");
+  //       return;
+  //     }
+  //     const artwork = await computer.new(Artwork, [title, artist, url]);
+  //     console.log("created artwork", artwork);
+  //   } catch (err) {
+  //     console.log("error occurred while creating art: ", err);
+  //   } finally {
+  //     setTitle("");
+  //     setArtist("");
+  //     setUrl("");
+  //   }
+  // };
 
+  console.log("rerendering");
   return (
     <div className="App">
       {
@@ -129,8 +134,9 @@ function App() {
           >
             Generate New Wallet
           </button>
-          <h2>Create new Artwork</h2>
-          <form onSubmit={handleSubmit}>
+          {/* <h2>Create new Artwork</h2> */}
+          {ArtworkForm({})}
+          {/* <form onSubmit={handleSubmit}>
             Title
             <br />
             <input
@@ -155,7 +161,7 @@ function App() {
             <button type="submit" value="Send Bitcoin">
               Create Artwork
             </button>
-          </form>
+          </form> */}
           <h2>Your Artworks</h2>
           <ul className="flex-container">
             {artworks.map((artwork) => (
