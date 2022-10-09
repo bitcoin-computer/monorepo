@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-// import Artwork from "./artwork";
+import Artwork from "./artwork";
 
-function ArtworkForm() {
-  // const { computer } = props;
+function ArtworkForm(props) {
+  const { computer } = props;
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [url, setUrl] = useState("");
@@ -22,8 +22,8 @@ function ArtworkForm() {
         alert("Provide valid url.");
         return;
       }
-      // const artwork = await computer.new(Artwork, [title, artist, url]);
-      // console.log("created artwork", artwork);
+      const artwork = await computer.new(Artwork, [title, artist, url]);
+      console.log("created artwork", artwork);
     } catch (err) {
       console.log("error occurred while creating art: ", err);
     } finally {
@@ -33,7 +33,6 @@ function ArtworkForm() {
     }
   };
 
-  console.log("rerendering form");
   return (
     <div className="ArtworkForm">
       {
