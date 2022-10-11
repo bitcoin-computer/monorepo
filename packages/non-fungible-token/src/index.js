@@ -3,12 +3,26 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import * as serviceWorker from "./serviceWorker";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Login from "./auth/Login";
+import { RequireAuth } from "./common/RequireAuth";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
-    <App />
+    <BrowserRouter>
+      <Routes>
+        <Route
+          exact
+          path="/"
+          element={<RequireAuth redirectTo="/auth/login" />}
+        >
+          <Route exact path="/" element={<App />} />
+        </Route>
+        <Route path="auth/login" element={<Login />} />
+      </Routes>
+    </BrowserRouter>
   </React.StrictMode>
 );
 
