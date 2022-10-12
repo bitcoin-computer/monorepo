@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/wallet",
-  "version": "0.10.0-alpha.7",
+  "version": "0.10.1",
   "private": true,
   "dependencies": {
     "@bitcoin-computer/lib": "0.10.0-beta.3",
