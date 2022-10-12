@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/lib",
-  "version": "0.10.0-alpha.6",
+  "version": "0.10.0-alpha.7",
   "description": "Client Side Library for the Bitcoin Computer",
   "contributors": [
     "Clemens Ley",
