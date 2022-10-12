@@ -1,7 +1,34 @@
 {
   "name": "bitcoin-computer",
-  "private": false,
+  "version": "0.10.0-beta.3",
+  "description": "Lightweight Smart Contracts for Bitcoin and Litecoin",
+  "contributors": [
+    "Clemens Ley",
+    "Laura Tardivo",
+    "Vivek Singh"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo"
+  },
   "type": "module",
+  "homepage": "http://bitcoincomputer.io/",
+  "author": {
+    "name": "Clemens Ley",
+    "email": "clemens@bitcoincomputer.io"
+  },
+  "private": false,
+  "scripts": {
+    "publish-npm": "yarn ensure-clean-git-working-tree && yarn validate-branch-for-deploy && lerna publish from-package",
+    "ensure-clean-git-working-tree": "./scripts/ensure-clean-git-working-tree.sh",
+    "prepare": "husky install",
+    "create-version": "lerna version --force-publish",
+    "validate-branch": ". scripts/validate-branch.sh && validate_branch",
+    "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch"
+  },
+  "dependencies": {
+    "@endo/static-module-record": "^0.7.6"
+  },
   "devDependencies": {
     "@types/node": "^17.0.35",
     "edit-json-file": "^1.7.0",
@@ -11,17 +38,5 @@
     "ts-node": "^10.8.0",
     "typescript": "^4.7.2",
     "url": "^0.11.0"
-  },
-  "scripts": {
-    "publish-npm": "yarn ensure-clean-git-working-tree && yarn validate-branch-for-deploy && lerna publish from-package",
-    "ensure-clean-git-working-tree": "./scripts/ensure-clean-git-working-tree.sh",
-    "prepare": "husky install",
-    "create-version": "lerna version --force-publish",
-    "validate-branch": ". scripts/validate-branch.sh && validate_branch",
-    "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch"
-  },
-  "version": "0.10.0-beta.3",
-  "dependencies": {
-    "@endo/static-module-record": "^0.7.6"
   }
 }

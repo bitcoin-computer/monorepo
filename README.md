@@ -14,8 +14,8 @@ npx create-react-app <your-app-name> --template @bitcoin-computer/cra-template
 
 Then, open a browser to http://localhost:3000.
 
-The Wallet application allows you to generate addresses based on some mnemonic strings. 
-You will need to fund your wallet using the Bitcoin Computer Node. Follow the instructions in the [Readme](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) file. 
+The Wallet application allows you to generate addresses based on some mnemonic strings.
+You will need to fund your wallet using the Bitcoin Computer Node. Follow the instructions in the [Readme](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) file.
 
 Once you fund the Wallet, the balance should be updated. You can then send transactions to other addresses.
 

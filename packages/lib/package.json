@@ -1,22 +1,54 @@
 {
   "name": "@bitcoin-computer/lib",
   "version": "0.10.0-alpha.6",
-  "description": "Smart Contracts for Bitcoin",
-  "license": "CC-BY-ND-4.0",
-  "repository": "bitcoin-computer/bitcoin-computer-lib",
+  "description": "Client Side Library for the Bitcoin Computer",
+  "contributors": [
+    "Clemens Ley",
+    "Laura Tardivo",
+    "Vivek Singh"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib"
+  },
+  "type": "module",
   "main": "src/bitcoin-computer-lib.es.mjs",
+  "homepage": "http://bitcoincomputer.io/",
   "author": {
     "name": "Clemens Ley",
-    "email": "clemens@bitcoincomputer.io",
-    "url": "https://github.com/bitcoin-computer"
+    "email": "clemens@bitcoincomputer.io"
+  },
+  "private": false,
+  "license": "CC-BY-ND-4.0",
+  "bugs": {
+    "url": "https://github.com/bitcoin-computer/monorepo/issues"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=16"
   },
   "files": [
     "dist"
   ],
-  "type": "module",
+  "scripts": {
+    "start-setup": "node --experimental-specifier-resolution=node --loader ts-node/esm $(grep SETUP_ENTRY .package.paths | cut -d '=' -f2)",
+    "coverage": "npm test -- --coverage",
+    "cp-files": "./scripts/cp-files.sh",
+    "lib-clean": "./scripts/lib-clean.sh",
+    "postcoverage": "open-cli coverage/lcov-report/index.html",
+    "docs": "documentation readme src --section=API",
+    "clean": "rm -fr dist/*",
+    "prebuild": "npm run clean",
+    "build": "npm run rollup",
+    "decls": "tsc -p tsconfig.decls.json",
+    "watch": "npm-watch",
+    "patch": "npm version patch && npm publish",
+    "minor": "npm version minor && npm publish",
+    "major": "npm version major && npm publish",
+    "prepublish-only": "npm run lint && npm test && npm run build",
+    "reinstall": "rm -rf node_modules package-lock.json && npm install",
+    "count": "./scripts/count-errors.sh",
+    "test": "./scripts/test.py"
+  },
   "dependencies": {
     "@babel/core": "^7.18.0",
     "@bitcoin-computer/bitcore-mnemonic-ltc": "8.25.41",
@@ -69,36 +101,16 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.0.3"
   },
-  "scripts": {
-    "start-setup": "node --experimental-specifier-resolution=node --loader ts-node/esm $(grep SETUP_ENTRY .package.paths | cut -d '=' -f2)",
-    "coverage": "npm test -- --coverage",
-    "cp-files": "./scripts/cp-files.sh",
-    "lib-clean": "./scripts/lib-clean.sh",
-    "postcoverage": "open-cli coverage/lcov-report/index.html",
-    "docs": "documentation readme src --section=API",
-    "clean": "rm -fr dist/*",
-    "prebuild": "npm run clean",
-    "build": "npm run rollup",
-    "decls": "tsc -p tsconfig.decls.json",
-    "watch": "npm-watch",
-    "patch": "npm version patch && npm publish",
-    "minor": "npm version minor && npm publish",
-    "major": "npm version major && npm publish",
-    "prepublish-only": "npm run lint && npm test && npm run build",
-    "reinstall": "rm -rf node_modules package-lock.json && npm install",
-    "count": "./scripts/count-errors.sh",
-    "test": "./scripts/test.py"
-  },
   "watch": {
     "test": "{src,test}/*.js",
     "lint": "{src,test}/*.js",
     "build": "src"
   },
   "keywords": [
-    "generator-nod"
+    "Bitcoin",
+    "Litecoin",
+    "Smart Contracts",
+    "Javascript"
   ],
-  "publishConfig": {
-    "access": "public"
-  },
   "gitHead": "b842d7ab52160012a631c3e422bce996149f9931"
 }
