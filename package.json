@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer",
-  "private": true,
+  "private": false,
   "type": "module",
   "devDependencies": {
     "@types/node": "^17.0.35",
@@ -20,7 +20,7 @@
     "validate-branch": ". scripts/validate-branch.sh && validate_branch",
     "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch"
   },
-  "version": "0.9.1-beta",
+  "version": "0.10.0-beta.3",
   "dependencies": {
     "@endo/static-module-record": "^0.7.6"
   }
