@@ -36,9 +36,14 @@ function Artworks(props) {
   }, [computer]);
 
   return (
-    <div className="Artworks">
-      <h2>Your Artworks</h2>
-      <ul className="flex-container">
+    <div className="sm:mx-auto sm:w-full sm:max-w-md ">
+      <div className="text-center my-5">
+        <h1 className="font-medium text-xl ">Your Art Works</h1>
+        <a href="/art/artworks" className="underline col-blue">
+          create new artwork
+        </a>
+      </div>
+      <ul className="flex-container grid grid-cols-3 gap-1">
         {artworks.map((artwork) => (
           <Card artwork={artwork} key={artwork.url} />
         ))}

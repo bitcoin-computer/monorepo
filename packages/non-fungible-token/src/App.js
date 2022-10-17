@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
-import "./App.css";
 import ArtworkForm from "./component/artworks/artworkForm";
 import Artworks from "./component/artworks/artworks";
 import WalletInfo from "./component/wallet/walletInfo";
@@ -8,7 +7,7 @@ import Navbar from "./component/navbar/navbar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RequireAuth } from "./common/RequireAuth";
 import Login from "./auth/Login";
-import BRCTest from "./brc";
+
 function App() {
   const [config] = useState({
     chain: "LTC",
@@ -16,7 +15,7 @@ function App() {
     // url: "https://node.bitcoincomputer.io",
     // to run locally, change network and url:
     network: "regtest",
-    url: "http://127.0.0.1:3000",
+    url: "https://5575-2401-4900-1ca3-75bd-99d6-13ba-5d4e-9dfc.in.ngrok.io",
   });
   // travel upgrade inside soda birth essence junk merit never twenty system opinion
   const [computer, setComputer] = useState(
@@ -53,6 +52,22 @@ function App() {
           <Route path="/auth/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
+      {/*// {
+      //   <div>
+      //     <Navbar />
+      //     <div className="mt-20">
+      //       <WalletInfo className="mt-20" computer={computer} />
+      //       <button
+      //         type="submit"
+      //         onClick={() => setComputer(new Computer(config))}
+      //       >
+      //         Generate New Wallet
+      //       </button>
+      //       <ArtworkForm computer={computer} />
+      //       <Artworks computer={computer} />
+      //     </div>
+      //   </div>
+      // }*/}
     </div>
   );
 }

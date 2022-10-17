@@ -45,7 +45,7 @@ function Login() {
           <input
             type="string"
             placeholder="Password (BIP39 Seed)"
-            class="block text-sm py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
+            class="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />

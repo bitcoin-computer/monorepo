@@ -9,8 +9,8 @@ function WalletInfo(props) {
       try {
         if (computer) {
           const newBalance = await computer.getBalance();
-          // console.log("new balance: ", newBalance);
-          // console.log("public key: ", computer.getPublicKey());
+          console.log("new balance: ", newBalance);
+          console.log("public key: ", computer.getPublicKey());
           setBalance(newBalance);
         }
       } catch (err) {
@@ -25,15 +25,35 @@ function WalletInfo(props) {
   }, [computer]);
 
   return (
-    <div className="Artworks">
-      <h2>Wallet</h2>
-      <b>Address</b>&nbsp;{computer.getAddress()}
-      <br />
-      <b>Public Key</b>&nbsp;{computer.getPublicKey()}
-      <br />
-      <b>Balance</b>&nbsp;{balance / 1e8}
-      {" LTC"}
-      <br />
+    <div className=" mt-10 sm:mx-auto sm:w-full sm:max-w-md border shadow-md rounded-lg">
+      <div className="m-4">
+        <h2 className="text-center font-medium text-xl mb-4">Wallet</h2>
+        <div className="flex flex-row mb-2 ">
+          <p className="mr-2 font-bold">Address</p>
+          <div className="border shadow-inner rounded-lg ">
+            <div className="m-1">
+              {computer.getAddress().toString().substring(0, 15) + "..."}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-row  mb-2 ">
+          <p className="mr-2 font-bold">Public Key</p>
+          <div className="border shadow-inner rounded-lg ">
+            <div className="m-1">
+              {computer.getPublicKey().toString().substring(0, 15) + "..."}
+            </div>
+          </div>
+        </div>
+        <div className="flex flex-row   ">
+          <p className="mr-2 font-bold">Balance</p>
+          <div className="border shadow-inner rounded-lg ">
+            <div className="m-1">
+              {balance / 1e8}
+              {" LTC"}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

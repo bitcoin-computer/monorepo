@@ -16,15 +16,39 @@ const artworkCard = ({ artwork }) => {
   };
 
   return artwork ? (
-    <li key={artwork._rev} className="card" onClick={handleClick}>
-      <img src={artwork.url || artwork.imageUrl} alt={artwork.title} />
-      <div className="container">
-        <b>{artwork.title}</b>
-        <br />
-        {artwork.artist}
-        <br />
+    // <li key={artwork._rev} className="card " onClick={handleClick}>
+    //   <img src={artwork.url || artwork.imageUrl} alt={artwork.title} />
+    //   <div className="container">
+    //     <b>{artwork.title}</b>
+    //     <br />
+    //     {artwork.artist}
+    //     <br />
+    //   </div>
+    // </li>
+
+    <div
+      key={artwork._rev}
+      onClick={handleClick}
+      class="max-w-sm w-12.5  bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700"
+    >
+      <a href={artwork.url || artwork.imageUrl}>
+        <img
+          class="rounded-t-lg"
+          src={artwork.url || artwork.imageUrl}
+          alt={artwork.title}
+        />
+      </a>
+      <div class="p-5">
+        <a href="#">
+          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+            {artwork.title}
+          </h5>
+        </a>
+        <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">
+          {artwork.artist}
+        </p>
       </div>
-    </li>
+    </div>
   ) : (
     <></>
   );

@@ -48,7 +48,7 @@ export default function Navbar() {
           </button>
         </div>
         <div
-          class="hidden justify-between items-center w-full md:flex md:w-auto md:order-1"
+          class="hidden justify-between ml-auto mr-5 items-center w-full md:flex md:w-auto md:order-1"
           id="navbar-sticky"
         >
           <ul class="flex flex-col p-4 mt-4 bg-gray-50 rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
