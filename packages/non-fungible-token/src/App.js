@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { Computer } from "@bitcoin-computer/lib";
 import "./App.css";
-import ArtworkForm from "./artworkForm";
-import Artworks from "./artworks";
-import WalletInfo from "./walletInfo";
+import ArtworkForm from "./component/artworks/artworkForm";
+import Artworks from "./component/artworks/artworks";
+import WalletInfo from "./component/wallet/walletInfo";
+import Navbar from "./component/navbar/navbar";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { RequireAuth } from "./common/RequireAuth";
+import Login from "./auth/Login";
+import BRCTest from "./brc";
 function App() {
-  const navigate = useNavigate();
-
   const [config] = useState({
     chain: "LTC",
     // network: "testnet",
@@ -24,38 +26,33 @@ function App() {
     })
   );
 
-  const logout = () => {
-    localStorage.removeItem("BIP_39_KEY");
-    localStorage.removeItem("CHAIN");
-    navigate("/auth/login");
-  };
-
   return (
-    <div className="App">
-      {
-        <div>
-          <button
-            style={{
-              position: "relative",
-              float: "right",
-              padding: "5px",
-              fontSize: "16px",
-            }}
-            onClick={() => logout()}
+    <div>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={<RequireAuth redirectTo="/auth/login" />}
           >
-            Logout
-          </button>
-          <WalletInfo computer={computer} />
-          <button
-            type="submit"
-            onClick={() => setComputer(new Computer(config))}
-          >
-            Generate New Wallet
-          </button>
-          <ArtworkForm computer={computer} />
-          <Artworks computer={computer} />
-        </div>
-      }
+            <Route exact path="/" element={<Navbar />} />
+          </Route>
+          <Route
+            exact
+            path="/art/artworkform"
+            element={<ArtworkForm computer={computer} />}
+          />
+          <Route
+            path="/art/artworks"
+            element={<Artworks computer={computer} />}
+          />
+          <Route
+            path="/wallet/walletinfo"
+            element={<WalletInfo computer={computer} />}
+          />
+          <Route path="/auth/login" element={<Login />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }

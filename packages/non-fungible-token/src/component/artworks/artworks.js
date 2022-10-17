@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Artwork from "./artwork";
 import Card from "./card";
-import { areEqual } from "./util";
+import { areEqual } from "../util/util";
 
 function Artworks(props) {
   const { computer } = props;

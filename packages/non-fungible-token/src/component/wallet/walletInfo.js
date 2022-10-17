@@ -9,8 +9,8 @@ function WalletInfo(props) {
       try {
         if (computer) {
           const newBalance = await computer.getBalance();
-          console.log("new balance: ", newBalance);
-          console.log("public key: ", computer.getPublicKey());
+          // console.log("new balance: ", newBalance);
+          // console.log("public key: ", computer.getPublicKey());
           setBalance(newBalance);
         }
       } catch (err) {
