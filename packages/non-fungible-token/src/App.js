@@ -5,7 +5,7 @@ import Artworks from "./component/artworks/artworks";
 import WalletInfo from "./component/wallet/walletInfo";
 import Navbar from "./component/navbar/navbar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { RequireAuth } from "./common/RequireAuth";
+// import { RequireAuth } from "./common/RequireAuth";
 import Login from "./auth/Login";
 
 function App() {
@@ -15,10 +15,10 @@ function App() {
     // url: "https://node.bitcoincomputer.io",
     // to run locally, change network and url:
     network: "regtest",
-    url: "https://5575-2401-4900-1ca3-75bd-99d6-13ba-5d4e-9dfc.in.ngrok.io",
+    url: "http://127.0.0.1:3000",
   });
   // travel upgrade inside soda birth essence junk merit never twenty system opinion
-  const [computer, setComputer] = useState(
+  const [computer] = useState(
     new Computer({
       ...config,
       mnemonic: localStorage.getItem("BIP_39_KEY"),
@@ -28,14 +28,15 @@ function App() {
   return (
     <div>
       <BrowserRouter>
+        <Navbar />
         <Routes>
-          <Route
+          {/* <Route
             exact
             path="/"
             element={<RequireAuth redirectTo="/auth/login" />}
           >
             <Route exact path="/" element={<Navbar />} />
-          </Route>
+          </Route> */}
           <Route
             exact
             path="/art/artworkform"
@@ -45,29 +46,10 @@ function App() {
             path="/art/artworks"
             element={<Artworks computer={computer} />}
           />
-          <Route
-            path="/wallet/walletinfo"
-            element={<WalletInfo computer={computer} />}
-          />
+          <Route path="/" element={<WalletInfo computer={computer} />} />
           <Route path="/auth/login" element={<Login />} />
         </Routes>
       </BrowserRouter>
-      {/*// {
-      //   <div>
-      //     <Navbar />
-      //     <div className="mt-20">
-      //       <WalletInfo className="mt-20" computer={computer} />
-      //       <button
-      //         type="submit"
-      //         onClick={() => setComputer(new Computer(config))}
-      //       >
-      //         Generate New Wallet
-      //       </button>
-      //       <ArtworkForm computer={computer} />
-      //       <Artworks computer={computer} />
-      //     </div>
-      //   </div>
-      // }*/}
     </div>
   );
 }

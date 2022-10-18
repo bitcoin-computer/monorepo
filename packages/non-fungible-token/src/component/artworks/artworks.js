@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Artwork from "./artwork";
 import Card from "./card";
 import { areEqual } from "../util/util";
+import { NavLink } from "react-router-dom";
 
 function Artworks(props) {
   const { computer } = props;
@@ -36,12 +37,12 @@ function Artworks(props) {
   }, [computer]);
 
   return (
-    <div className="sm:mx-auto sm:w-full sm:max-w-md ">
+    <div className="mt-40 sm:mx-auto sm:w-full sm:max-w-3xl ">
       <div className="text-center my-5">
         <h1 className="font-medium text-xl ">Your Art Works</h1>
-        <a href="/art/artworks" className="underline col-blue">
+        <NavLink to="/art/artworkform" className="underline col-blue">
           create new artwork
-        </a>
+        </NavLink>
       </div>
       <ul className="flex-container grid grid-cols-3 gap-1">
         {artworks.map((artwork) => (

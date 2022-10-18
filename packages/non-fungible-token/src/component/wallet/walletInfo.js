@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { FaCopy } from "react-icons/fa";
 
 function WalletInfo(props) {
   const { computer } = props;
@@ -25,24 +26,32 @@ function WalletInfo(props) {
   }, [computer]);
 
   return (
-    <div className=" mt-10 sm:mx-auto sm:w-full sm:max-w-md border shadow-md rounded-lg">
+    <div className="mt-40 sm:mx-auto sm:w-full sm:max-w-3xl border shadow-md rounded-lg">
       <div className="m-4">
         <h2 className="text-center font-medium text-xl mb-4">Wallet</h2>
         <div className="flex flex-row mb-2 ">
           <p className="mr-2 font-bold">Address</p>
           <div className="border shadow-inner rounded-lg ">
-            <div className="m-1">
-              {computer.getAddress().toString().substring(0, 15) + "..."}
-            </div>
+            <div className="m-1">{computer.getAddress().toString()}</div>
           </div>
+          <FaCopy
+            onClick={() => {
+              navigator.clipboard.writeText(computer.getAddress().toString());
+            }}
+            className="text-2xl mt-1 pl-2"
+          ></FaCopy>
         </div>
         <div className="flex flex-row  mb-2 ">
           <p className="mr-2 font-bold">Public Key</p>
           <div className="border shadow-inner rounded-lg ">
-            <div className="m-1">
-              {computer.getPublicKey().toString().substring(0, 15) + "..."}
-            </div>
+            <div className="m-1">{computer.getPublicKey().toString()}</div>
           </div>
+          <FaCopy
+            onClick={() => {
+              navigator.clipboard.writeText(computer.getPublicKey().toString());
+            }}
+            className="text-2xl mt-1 pl-2"
+          ></FaCopy>
         </div>
         <div className="flex flex-row   ">
           <p className="mr-2 font-bold">Balance</p>

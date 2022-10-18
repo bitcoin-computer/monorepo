@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import Artwork from "./artwork";
+import { useNavigate, NavLink } from "react-router-dom";
 
 function ArtworkForm(props) {
+  const navigate = useNavigate();
   const { computer } = props;
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
@@ -24,6 +26,7 @@ function ArtworkForm(props) {
       }
       const artwork = await computer.new(Artwork, [title, artist, url]);
       console.log("created artwork", artwork);
+      navigate("/auth/login");
     } catch (err) {
       console.log("error occurred while creating art: ", err);
     } finally {
@@ -34,55 +37,22 @@ function ArtworkForm(props) {
   };
 
   return (
-    // <div className="ArtworkForm">
-    //   {
-    //     <div>
-    //       <h2>Create new Artwork</h2>
-    //       <form onSubmit={handleSubmit}>
-    //         Title
-    //         <br />
-    //         <input
-    //           type="string"
-    //           value={title}
-    //           onChange={(e) => setTitle(e.target.value)}
-    //         />
-    //         Artist
-    //         <br />
-    //         <input
-    //           type="string"
-    //           value={artist}
-    //           onChange={(e) => setArtist(e.target.value)}
-    //         />
-    //         Url
-    //         <br />
-    //         <input
-    //           type="string"
-    //           value={url}
-    //           onChange={(e) => setUrl(e.target.value)}
-    //         />
-    //         <button type="submit" value="Send Litecoin">
-    //           Create Artwork
-    //         </button>
-    //       </form>
-    //     </div>
-    //   }
-    // </div>
-    <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md ">
+    <div className="mt-40 sm:mx-auto sm:w-full sm:max-w-3xl ">
       <div className="text-center mb-5">
         <h1 className="font-medium text-xl ">Create new art work</h1>
-        <a href="/art/artworks" className="underline col-blue">
+        <NavLink to="/art/artworks" className="underline col-blue">
           your art works
-        </a>
+        </NavLink>
       </div>
 
       <form
         onSubmit={handleSubmit}
-        className="p-10 shadow-xl bg-slate-200  rounded-lg "
+        className="p-10 shadow-xl bg-gray-100  rounded-lg "
       >
         <div class="mb-6">
           <label
             for="title"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
           >
             Title
           </label>
@@ -91,14 +61,14 @@ function ArtworkForm(props) {
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required=""
+            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            required={true}
           />
         </div>
         <div class="mb-6">
           <label
             for="artist"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
           >
             Artist
           </label>
@@ -107,14 +77,14 @@ function ArtworkForm(props) {
             id="artist"
             value={artist}
             onChange={(e) => setArtist(e.target.value)}
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required=""
+            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            required={true}
           />
         </div>
         <div class="mb-6">
           <label
             for="url"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+            class="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
           >
             Url
           </label>
@@ -122,9 +92,9 @@ function ArtworkForm(props) {
             type="string"
             id="url"
             value={url}
-            onChange={(e) => setArtist(e.target.value)}
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            required=""
+            onChange={(e) => setUrl(e.target.value)}
+            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            required={true}
           />
         </div>
 
