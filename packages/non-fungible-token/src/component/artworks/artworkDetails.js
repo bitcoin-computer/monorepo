@@ -13,7 +13,7 @@ function ArtworkDetails(props) {
   const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    (async () => {
       if (computer) {
         // add try catch and error handling
         // txnId and outputNumber
@@ -21,11 +21,8 @@ function ArtworkDetails(props) {
         setArtwork(newArtwork);
         console.log("new artwork: ", artwork);
       }
-    }, 5000);
+    })();
 
-    return () => {
-      clearInterval(interval);
-    };
     // eslint-disable-next-line
   }, [computer]);
 

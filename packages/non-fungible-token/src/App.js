@@ -25,7 +25,6 @@ function App() {
       mnemonic: localStorage.getItem("BIP_39_KEY"),
     })
   );
-  console.log("form rendered");
   return (
     <div>
       <BrowserRouter>

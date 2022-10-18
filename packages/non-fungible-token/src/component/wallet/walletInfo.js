@@ -6,7 +6,7 @@ function WalletInfo(props) {
   const [balance, setBalance] = useState(0);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    (async () => {
       try {
         if (computer) {
           const newBalance = await computer.getBalance();
@@ -17,11 +17,9 @@ function WalletInfo(props) {
       } catch (err) {
         console.log("error occurred while fetching wallet details: ", err);
       }
-    }, 5000);
+    })();
 
-    return () => {
-      clearInterval(interval);
-    };
+    
     // eslint-disable-next-line
   }, [computer]);
 

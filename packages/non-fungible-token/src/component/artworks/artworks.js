@@ -10,7 +10,7 @@ function Artworks(props) {
   const [artworks, setArtworks] = useState([]);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    (async () => {
       if (computer) {
         const newRevs = await computer.query({
           contract: Artwork,
@@ -29,11 +29,8 @@ function Artworks(props) {
         }
         setRevs(newRevs);
       }
-    }, 5000);
+    })();
 
-    return () => {
-      clearInterval(interval);
-    };
     // eslint-disable-next-line
   }, [computer]);
 
