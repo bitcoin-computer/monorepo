@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Computer } from "@bitcoin-computer/lib";
 
-function Login() {
+function Login(props) {
+  const { config, setComputer } = props;
   // Clear the local storage
   localStorage.removeItem("BIP_39_KEY");
   localStorage.removeItem("CHAIN");
@@ -13,20 +15,26 @@ function Login() {
   const login = () => {
     localStorage.setItem("BIP_39_KEY", password);
     localStorage.setItem("CHAIN", chain);
+    setComputer(
+      new Computer({
+        ...config,
+        mnemonic: localStorage.getItem("BIP_39_KEY"),
+      })
+    );
     navigate("/");
   };
 
   return (
-    <div class="min-h-screen bg-purple-400 flex justify-center items-center">
-      <div class="absolute w-60 h-60 rounded-xl bg-purple-300 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
-      <div class="absolute w-48 h-48 rounded-xl bg-purple-300 -bottom-6 -right-10 transform rotate-12 hidden md:block"></div>
-      <div class="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
+    <div className="min-h-screen bg-purple-400 flex justify-center items-center">
+      <div className="absolute w-60 h-60 rounded-xl bg-purple-300 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
+      <div className="absolute w-48 h-48 rounded-xl bg-purple-300 -bottom-6 -right-10 transform rotate-12 hidden md:block"></div>
+      <div className="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
         <div>
-          <h1 class="text-3xl font-bold text-center mb-4 cursor-pointer">
+          <h1 className="text-3xl font-bold text-center mb-4 cursor-pointer">
             Bitcoin Token
           </h1>
         </div>
-        <div class="space-y-4">
+        <div className="space-y-4">
           <p className="font-sans">
             Don&apos;t forget to write down your seed.
           </p>
@@ -45,7 +53,7 @@ function Login() {
           <input
             type="string"
             placeholder="Password (BIP39 Seed)"
-            class="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
+            className="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -62,10 +70,10 @@ function Login() {
           </select>
         </div>
         {/*login button*/}
-        <div class="text-center mt-6">
+        <div className="text-center mt-6">
           <button
             onClick={login}
-            class="py-3 w-64 text-xl text-white bg-purple-400 rounded-2xl"
+            className="py-3 w-64 text-xl text-white bg-purple-400 rounded-2xl"
           >
             Log In
           </button>

@@ -22,6 +22,7 @@ function Artworks(props) {
           const newArts = await Promise.all(
             newRevs.map(async (rev) => computer.sync(rev))
           );
+          console.log(newArts);
           setArtworks(newArts);
         } else {
           console.log("no new art added");
@@ -45,8 +46,8 @@ function Artworks(props) {
         </NavLink>
       </div>
       <ul className="flex-container grid grid-cols-3 gap-1">
-        {artworks.map((artwork) => (
-          <Card artwork={artwork} key={artwork.url} />
+        {artworks.map((artwork, index) => (
+          <Card artwork={artwork} rev={revs[index]} key={artwork.url} />
         ))}
       </ul>{" "}
     </div>

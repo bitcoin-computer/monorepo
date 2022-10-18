@@ -5,8 +5,9 @@ import Artworks from "./component/artworks/artworks";
 import WalletInfo from "./component/wallet/walletInfo";
 import Navbar from "./component/navbar/navbar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-// import { RequireAuth } from "./common/RequireAuth";
+import { RequireAuth } from "./common/RequireAuth";
 import Login from "./auth/Login";
+import ArtworkDetails from "./component/artworks/artworkDetails";
 
 function App() {
   const [config] = useState({
@@ -18,36 +19,61 @@ function App() {
     url: "http://127.0.0.1:3000",
   });
   // travel upgrade inside soda birth essence junk merit never twenty system opinion
-  const [computer] = useState(
+  const [computer, setComputer] = useState(
     new Computer({
       ...config,
       mnemonic: localStorage.getItem("BIP_39_KEY"),
     })
   );
-
+  console.log("form rendered");
   return (
     <div>
       <BrowserRouter>
         <Navbar />
         <Routes>
-          {/* <Route
-            exact
-            path="/"
+          <Route
+            path="/auth/login"
+            element={<Login config={config} setComputer={setComputer} />}
+          />
+          <Route
+            path="/art/artworkform"
             element={<RequireAuth redirectTo="/auth/login" />}
           >
-            <Route exact path="/" element={<Navbar />} />
-          </Route> */}
+            <Route
+              path="/art/artworkform"
+              element={<ArtworkForm computer={computer} />}
+            />
+          </Route>
+
+          <Route path="/" element={<RequireAuth redirectTo="/auth/login" />}>
+            <Route path="/" element={<Artworks computer={computer} />} />
+          </Route>
+
           <Route
+            path="/art/:revId/:version"
+            element={<RequireAuth redirectTo="/auth/login" />}
+          >
+            <Route
+              path="/art/:revId/:version"
+              element={<ArtworkDetails computer={computer} />}
+            />
+          </Route>
+
+          <Route
+            path="/wallet"
+            element={<RequireAuth redirectTo="/auth/login" />}
+          >
+            <Route
+              path="/wallet"
+              element={<WalletInfo computer={computer} />}
+            />
+          </Route>
+
+          {/* <Route
             exact
             path="/art/artworkform"
             element={<ArtworkForm computer={computer} />}
-          />
-          <Route
-            path="/art/artworks"
-            element={<Artworks computer={computer} />}
-          />
-          <Route path="/" element={<WalletInfo computer={computer} />} />
-          <Route path="/auth/login" element={<Login />} />
+          /> */}
         </Routes>
       </BrowserRouter>
     </div>

@@ -26,7 +26,7 @@ function ArtworkForm(props) {
       }
       const artwork = await computer.new(Artwork, [title, artist, url]);
       console.log("created artwork", artwork);
-      navigate("/auth/login");
+      navigate("/");
     } catch (err) {
       console.log("error occurred while creating art: ", err);
     } finally {
@@ -40,7 +40,7 @@ function ArtworkForm(props) {
     <div className="mt-40 sm:mx-auto sm:w-full sm:max-w-3xl ">
       <div className="text-center mb-5">
         <h1 className="font-medium text-xl ">Create new art work</h1>
-        <NavLink to="/art/artworks" className="underline col-blue">
+        <NavLink to="/" className="underline col-blue">
           your art works
         </NavLink>
       </div>
@@ -49,10 +49,10 @@ function ArtworkForm(props) {
         onSubmit={handleSubmit}
         className="p-10 shadow-xl bg-gray-100  rounded-lg "
       >
-        <div class="mb-6">
+        <div className="mb-6">
           <label
             for="title"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
           >
             Title
           </label>
@@ -61,14 +61,14 @@ function ArtworkForm(props) {
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required={true}
           />
         </div>
-        <div class="mb-6">
+        <div className="mb-6">
           <label
             for="artist"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
           >
             Artist
           </label>
@@ -77,14 +77,14 @@ function ArtworkForm(props) {
             id="artist"
             value={artist}
             onChange={(e) => setArtist(e.target.value)}
-            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required={true}
           />
         </div>
-        <div class="mb-6">
+        <div className="mb-6">
           <label
             for="url"
-            class="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
           >
             Url
           </label>
@@ -93,7 +93,7 @@ function ArtworkForm(props) {
             id="url"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            class="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            className="border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required={true}
           />
         </div>
@@ -101,7 +101,7 @@ function ArtworkForm(props) {
         <button
           type="submit"
           value="Send Litecoin"
-          class="text-white  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          className="text-white  bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Create Artwork
         </button>
