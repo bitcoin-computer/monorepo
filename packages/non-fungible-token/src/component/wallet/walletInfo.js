@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { FaCopy } from "react-icons/fa";
+import SnackBar from "../util/snackBar";
 
 function WalletInfo(props) {
   const { computer } = props;
   const [balance, setBalance] = useState(0);
+
+  const [show, setShow] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -19,9 +24,15 @@ function WalletInfo(props) {
       }
     })();
 
-    
     // eslint-disable-next-line
   }, [computer]);
+
+  const copyText = (text) => {
+    navigator.clipboard.writeText(text);
+    setSuccess(true);
+    setMessage("Copied");
+    setShow(true);
+  };
 
   return (
     <div className="mt-40 sm:mx-auto sm:w-full sm:max-w-3xl border shadow-md rounded-lg">
@@ -33,10 +44,8 @@ function WalletInfo(props) {
             <div className="m-1">{computer.getAddress().toString()}</div>
           </div>
           <FaCopy
-            onClick={() => {
-              navigator.clipboard.writeText(computer.getAddress().toString());
-            }}
-            className="text-2xl mt-1 pl-2"
+            onClick={copyText(computer.getPublicKey())}
+            className="text-2xl mt-1 pl-2 hover:text-slate-500 cursor-pointer"
           ></FaCopy>
         </div>
         <div className="flex flex-row  mb-2 ">
@@ -45,10 +54,8 @@ function WalletInfo(props) {
             <div className="m-1">{computer.getPublicKey().toString()}</div>
           </div>
           <FaCopy
-            onClick={() => {
-              navigator.clipboard.writeText(computer.getPublicKey().toString());
-            }}
-            className="text-2xl mt-1 pl-2"
+            onClick={copyText(computer.getPublicKey())}
+            className="text-2xl mt-1 pl-2 hover:text-slate-500 cursor-pointer"
           ></FaCopy>
         </div>
         <div className="flex flex-row   ">
@@ -61,6 +68,9 @@ function WalletInfo(props) {
           </div>
         </div>
       </div>
+      {show && (
+        <SnackBar success={success} message={message} setShow={setShow} />
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import Loader from "../util/loader";
 import SnackBar from "../util/snackBar";
 
 function ArtworkDetails(props) {
@@ -7,22 +8,30 @@ function ArtworkDetails(props) {
   const { computer } = props;
   let params = useParams();
   const [artwork, setArtwork] = useState({});
-  const [revId] = useState(params.revId);
-  const [version] = useState(params.version);
+  const [txnId] = useState(params.txnId);
+  const [outNum] = useState(params.outNum);
   const [disabled, setDisabled] = useState(false);
   const [receiverAddress, setReceiverAddress] = useState("");
   const [show, setShow] = useState(false);
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
       if (computer) {
-        // add try catch and error handling
-        // txnId and outputNumber
-        const newArtwork = await computer.sync(`${revId}/${version}`);
-        setArtwork(newArtwork);
-        console.log("new artwork: ", artwork);
+        try {
+          const newArtwork = await computer.sync(`${txnId}/${outNum}`);
+          setArtwork(newArtwork);
+          setLoading(false);
+        } catch (error) {
+          setMessage(error.message);
+          setSuccess(false);
+          setShow(true);
+          setTimeout(async () => {
+            navigate("/");
+          }, 4000);
+        }
       }
     })();
 
@@ -72,17 +81,20 @@ function ArtworkDetails(props) {
           <div className="space-y-2">
             <h2 className="font-bold">{artwork.artist}</h2>
             <h2>
-              <span className="font-bold">Token ID</span>: {revId}/{version}
+              Token ID:{" "}
+              <span className="font-bold">
+                {txnId}/{outNum}
+              </span>
             </h2>
             <h2>
-              <span className="font-bold">Chain</span>: Litecoin
+              Chain: <span className="font-bold">Litecoin</span>
             </h2>
             <h2>
-              <span className="font-bold">Token Standard</span>: BRC721
+              Token Standard: <span className="font-bold">BRC721</span>
             </h2>
             <h2>
-              <span className="font-bold">Network</span>:{" "}
-              {computer.getNetwork()}
+              Network:
+              <span className="font-bold">{computer.getNetwork()}</span>
             </h2>
             <input
               type="string"
@@ -107,6 +119,7 @@ function ArtworkDetails(props) {
       {show && (
         <SnackBar success={success} message={message} setShow={setShow} />
       )}
+      {loading && <Loader />}
     </div>
   );
 }

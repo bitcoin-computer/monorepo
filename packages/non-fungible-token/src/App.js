@@ -49,11 +49,11 @@ function App() {
           </Route>
 
           <Route
-            path="/art/:revId/:version"
+            path="/art/:txnId/:outNum"
             element={<RequireAuth redirectTo="/auth/login" />}
           >
             <Route
-              path="/art/:revId/:version"
+              path="/art/:txnId/:outNum"
               element={<ArtworkDetails computer={computer} />}
             />
           </Route>

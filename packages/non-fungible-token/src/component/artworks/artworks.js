@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 import Artwork from "./artwork";
 import Card from "./card";
 import { areEqual } from "../util/util";
-import { NavLink } from "react-router-dom";
+import Loader from "../util/loader";
 
 function Artworks(props) {
   const { computer } = props;
   const [revs, setRevs] = useState([]);
   const [artworks, setArtworks] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
@@ -24,6 +25,7 @@ function Artworks(props) {
           );
           console.log(newArts);
           setArtworks(newArts);
+          setLoading(false);
         } else {
           console.log("no new art added");
         }
@@ -35,18 +37,21 @@ function Artworks(props) {
   }, [computer]);
 
   return (
-    <div className="mt-40 sm:mx-auto sm:w-full sm:max-w-3xl ">
-      <div className="text-center my-5">
-        <h1 className="font-medium text-xl ">Your Art Works</h1>
-        <NavLink to="/art/artworkform" className="underline col-blue">
-          create new artwork
-        </NavLink>
+    <div className="mt-36">
+      <div class="grid grid-cols-1 pl-40 pr-40">
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          <div>
+            <h1 className="font-medium text-2xl ">Your Art Works</h1>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-3 gap-12">
+          {artworks.map((artwork, index) => (
+            <Card artwork={artwork} rev={revs[index]} key={artwork.url} />
+          ))}
+        </div>
       </div>
-      <ul className="flex-container grid grid-cols-3 gap-1">
-        {artworks.map((artwork, index) => (
-          <Card artwork={artwork} rev={revs[index]} key={artwork.url} />
-        ))}
-      </ul>{" "}
+      {loading && <Loader />}
     </div>
   );
 }
