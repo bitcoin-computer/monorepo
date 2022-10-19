@@ -1,18 +1,28 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Computer } from "@bitcoin-computer/lib";
+import SnackBar from "../component/util/snackBar";
 
 function Login(props) {
   const { config, setComputer } = props;
+  const [show, setShow] = useState(false);
+  const [succes, setSuccess] = useState(false);
+  const [message, setMessage] = useState("");
   // Clear the local storage
   localStorage.removeItem("BIP_39_KEY");
   localStorage.removeItem("CHAIN");
 
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
-  const [chain, setChain] = useState("");
+  const [chain, setChain] = useState("LTC");
 
   const login = () => {
+    if (!password) {
+      setMessage("Please provide valid password");
+      setSuccess(false);
+      setShow(true);
+      return;
+    }
     localStorage.setItem("BIP_39_KEY", password);
     localStorage.setItem("CHAIN", chain);
     setComputer(
@@ -73,12 +83,15 @@ function Login(props) {
         <div className="text-center mt-6">
           <button
             onClick={login}
-            className="py-3 w-64 text-xl text-white bg-purple-400 rounded-2xl"
+            className="py-3 w-64 text-xl text-white bg-blue-400 rounded-2xl"
           >
             Log In
           </button>
         </div>
       </div>
+      {show && (
+        <SnackBar message={message} success={succes} setShow={setShow} />
+      )}
     </div>
   );
 }

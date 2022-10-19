@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import SnackBar from "../util/snackBar";
 
 function ArtworkDetails(props) {
   const navigate = useNavigate();
@@ -10,7 +11,9 @@ function ArtworkDetails(props) {
   const [version] = useState(params.version);
   const [disabled, setDisabled] = useState(false);
   const [receiverAddress, setReceiverAddress] = useState("");
+  const [show, setShow] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -31,64 +34,78 @@ function ArtworkDetails(props) {
     try {
       if (!receiverAddress) {
         setDisabled(false);
-        alert("Provide valid title.");
+        setMessage("Please provide a valid address");
+        setSuccess(false);
+        setShow(true);
+        return;
       }
+
       await artwork.setOwner(receiverAddress);
+      setMessage("Successfully Sent");
       setSuccess(true);
+      setShow(true);
       setTimeout(async () => {
         navigate("/");
-      }, 3000);
+      }, 4000);
     } catch (error) {
       setDisabled(false);
-      console.log("error while sending NFT, ", error);
+      setMessage(error.message);
+      setSuccess(false);
+      setShow(true);
     } finally {
       console.log("NFT sent successfully.");
     }
   };
 
   return (
-    <div className="mt-40 sm:mx-auto sm:w-full sm:max-w-3xl ">
-      <div className="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
-        <div>
-          <h1 className="text-3xl font-bold text-center mb-4 cursor-pointer">
-            {artwork.title}
-          </h1>
-        </div>
-        <div className="mt-10">
+    <div className="mt-36">
+      <div class="grid grid-cols-2 gap-4">
+        <div className="h-96 pl-40">
           <img
-            className="rounded-t-lg max-h-60"
+            className="h-96"
             src={artwork.url || artwork.imageUrl}
             alt={artwork.title}
           />
         </div>
-        <div className="space-y-4">
-          <p className="font-sans">{artwork.artist}</p>
-          <input
-            type="string"
-            placeholder="Public Key of Receiver"
-            className="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
-            value={receiverAddress}
-            onChange={(e) => setReceiverAddress(e.target.value)}
-          />
-        </div>
-        {/*login button*/}
-        <div className="text-center mt-6">
-          <button
-            disabled={disabled}
-            onClick={handleSend}
-            className="py-3 w-64 text-xl text-white bg-blue-400 rounded-2xl"
-          >
-            Send
-          </button>
+        <div className="h-96 pr-40">
+          <h1 className="text-3xl font-bold mb-4">{artwork.title}</h1>
+          <div className="space-y-2">
+            <h2 className="font-bold">{artwork.artist}</h2>
+            <h2>
+              <span className="font-bold">Token ID</span>: {revId}/{version}
+            </h2>
+            <h2>
+              <span className="font-bold">Chain</span>: Litecoin
+            </h2>
+            <h2>
+              <span className="font-bold">Token Standard</span>: BRC721
+            </h2>
+            <h2>
+              <span className="font-bold">Network</span>:{" "}
+              {computer.getNetwork()}
+            </h2>
+            <input
+              type="string"
+              placeholder="Public Key of Receiver"
+              className="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
+              value={receiverAddress}
+              onChange={(e) => setReceiverAddress(e.target.value)}
+            />
+          </div>
+          {/*login button*/}
+          <div className=" mt-6">
+            <button
+              disabled={disabled}
+              onClick={handleSend}
+              className="py-3 w-64 text-xl text-white bg-blue-400 rounded-2xl"
+            >
+              Send
+            </button>
+          </div>
         </div>
       </div>
-      {success && (
-        <div
-          className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded fixed top-40 right-2"
-          role="alert"
-        >
-          <strong className="font-bold">Successfully sent!</strong>
-        </div>
+      {show && (
+        <SnackBar success={success} message={message} setShow={setShow} />
       )}
     </div>
   );

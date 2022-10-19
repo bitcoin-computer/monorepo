@@ -28,7 +28,7 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        <Navbar />
+        <Navbar computer={computer} />
         <Routes>
           <Route
             path="/auth/login"
