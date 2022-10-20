@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Artwork from "./artwork";
 import { useNavigate } from "react-router-dom";
 import SnackBar from "../util/snackBar";
+import Loader from "../util/loader";
 
 function ArtworkForm(props) {
   const navigate = useNavigate();
@@ -13,10 +14,8 @@ function ArtworkForm(props) {
   const [show, setShow] = useState(false);
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const goToArts = () => {
-    navigate("/");
-  };
   const handleSubmit = async (evt) => {
     evt.preventDefault();
     try {
@@ -39,15 +38,18 @@ function ArtworkForm(props) {
         setShow(true);
         return;
       }
+      setLoading(true);
       await computer.new(Artwork, [title, artist, url]);
 
       setMessage("NFT minted.");
       setSuccess(true);
       setShow(true);
       setTimeout(() => {
+        setLoading(false);
         navigate("/");
-      }, 3000);
+      }, 2000);
     } catch (err) {
+      setLoading(false);
       setDisabled(false);
       setMessage(err.message);
       setSuccess(false);
@@ -61,30 +63,22 @@ function ArtworkForm(props) {
         <div className="sm:mx-auto sm:w-full pl-40 pr-40">
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div>
-              <h1 className="font-bold text-2xl ">Create new art work</h1>
-            </div>
-            <div>
-              <button
-                disabled={disabled}
-                onClick={goToArts}
-                className="float-right py-1 w-36 text-xl text-white bg-blue-400 rounded-xl"
-              >
-                your art works
-              </button>
+              <h1 className="font-bold text-3xl ">Create a new artwork </h1>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div className="border grid place-items-center">
               {!url && (
-                <img className="max-h-60" src="/placeholder.png" alt="NFT" />
+                <img
+                  className="max-h-52 w-auto"
+                  src="/small-placeholder.png"
+                  alt="NFT"
+                />
               )}
-              {url && <img className="max-h-full" src={url} alt="NFT" />}
+              {url && <img className="h-100 w-auto" src={url} alt="NFT" />}
             </div>
             <div>
-              <form
-                onSubmit={handleSubmit}
-                className="p-10 shadow-xl border rounded-lg "
-              >
+              <form onSubmit={handleSubmit} className="p-10 border ">
                 <div className="mb-6">
                   <label
                     htmlFor="title"
@@ -95,7 +89,7 @@ function ArtworkForm(props) {
                   <input
                     type="string"
                     placeholder="Title"
-                    className="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
+                    className="block  py-3 px-4 rounded-lg w-full border outline-none"
                     id="title"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
@@ -112,7 +106,7 @@ function ArtworkForm(props) {
                   <input
                     type="string"
                     placeholder="Artist"
-                    className="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
+                    className="block  py-3 px-4 rounded-lg w-full border outline-none "
                     id="artist"
                     value={artist}
                     onChange={(e) => setArtist(e.target.value)}
@@ -130,7 +124,7 @@ function ArtworkForm(props) {
                   <input
                     type="string"
                     placeholder="URL"
-                    className="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
+                    className="block  py-3 px-4 rounded-lg w-full border outline-none "
                     id="url"
                     value={url}
                     onChange={(e) => setUrl(e.target.value)}
@@ -154,6 +148,7 @@ function ArtworkForm(props) {
       {show && (
         <SnackBar success={success} message={message} setShow={setShow} />
       )}
+      {loading && <Loader />}
     </div>
   );
 }

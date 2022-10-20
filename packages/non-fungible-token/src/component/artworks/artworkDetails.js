@@ -68,51 +68,53 @@ function ArtworkDetails(props) {
 
   return (
     <div className="mt-36">
-      <div className="grid grid-cols-2 gap-4">
-        <div className="h-96 pl-40">
-          <img
-            className="h-96"
-            src={artwork.url || artwork.imageUrl}
-            alt={artwork.title}
-          />
+      <div className="grid grid-cols-1 gap-4 mb-8">
+        <div className="pl-32 mb-4">
+          <h1 className="font-bold text-3xl ">Send NFT</h1>
         </div>
-        <div className="h-96 pr-40">
-          <h1 className="text-3xl font-bold mb-4">{artwork.title}</h1>
-          <div className="space-y-2">
-            <h2 className="font-bold">{artwork.artist}</h2>
-            <h2>
-              Token ID:{" "}
-              <span className="font-bold">
-                {txnId}/{outNum}
-              </span>
-            </h2>
-            <h2>
-              Chain: <span className="font-bold">Litecoin</span>
-            </h2>
-            <h2>
-              Token Standard: <span className="font-bold">BRC721</span>
-            </h2>
-            <h2>
-              Network:
-              <span className="font-bold">{computer.getNetwork()}</span>
-            </h2>
-            <input
-              type="string"
-              placeholder="Public Key of Receiver"
-              className="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
-              value={receiverAddress}
-              onChange={(e) => setReceiverAddress(e.target.value)}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="h-96 pl-32">
+            <img
+              className="h-96"
+              src={artwork.url || artwork.imageUrl}
+              alt={artwork.title}
             />
           </div>
-          {/*login button*/}
-          <div className=" mt-6">
-            <button
-              disabled={disabled}
-              onClick={handleSend}
-              className="py-3 w-64 text-xl text-white bg-blue-400 rounded-2xl"
-            >
-              Send
-            </button>
+          <div className="h-96 pr-32">
+            <h1 className="text-3xl font-bold mb-4">{artwork.title}</h1>
+            <div className="space-y-2">
+              <h2 className="font-bold">{artwork.artist}</h2>
+              <h2>
+                <span className="font-bold">Token ID</span>: {txnId}/{outNum}
+              </h2>
+              <h2>
+                <span className="font-bold">Chain</span>: Litecoin
+              </h2>
+              <h2>
+                <span className="font-bold">Token Standard</span>: BRC721
+              </h2>
+              <h2>
+                <span className="font-bold">Network</span>:{" "}
+                {computer.getNetwork()}
+              </h2>
+              <input
+                type="string"
+                placeholder="Public Key of Receiver"
+                className="block  py-3 px-4 rounded-lg w-full border outline-none hover:shadow-inner"
+                value={receiverAddress}
+                onChange={(e) => setReceiverAddress(e.target.value)}
+              />
+            </div>
+            {/*login button*/}
+            <div className=" mt-6">
+              <button
+                disabled={disabled}
+                onClick={handleSend}
+                className="py-3 w-64 text-xl text-white bg-blue-400 rounded-2xl"
+              >
+                Send
+              </button>
+            </div>
           </div>
         </div>
       </div>

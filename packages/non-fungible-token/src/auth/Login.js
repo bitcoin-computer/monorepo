@@ -14,7 +14,7 @@ function Login(props) {
 
   const navigate = useNavigate();
   const [password, setPassword] = useState("");
-  const [chain, setChain] = useState("LTC");
+  const [chain] = useState("LTC");
 
   const login = () => {
     if (!password) {
@@ -35,13 +35,13 @@ function Login(props) {
   };
 
   return (
-    <div className="min-h-screen bg-blue-400 flex justify-center items-center">
+    <div className="min-h-screen flex justify-center items-center">
       <div className="absolute w-60 h-60 rounded-xl bg-blue-300 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
       <div className="absolute w-48 h-48 rounded-xl bg-blue-300 -bottom-6 -right-10 transform rotate-12 hidden md:block"></div>
-      <div className="py-12 px-12 bg-white rounded-2xl shadow-xl z-20">
+      <div className="py-12 px-12 bg-white rounded-2xl border">
         <div>
           <h1 className="text-3xl font-bold text-center mb-4 cursor-pointer">
-            Bitcoin Token
+            Litecoin Art
           </h1>
         </div>
         <div className="space-y-4">
@@ -68,7 +68,7 @@ function Login(props) {
             onChange={(e) => setPassword(e.target.value)}
           />
           {/*dropdown to select the crypto*/}
-          <select
+          {/* <select
             value={chain}
             onChange={(e) => {
               setChain(e.target.value);
@@ -77,7 +77,7 @@ function Login(props) {
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
             <option value="LTC">LTC</option>
-          </select>
+          </select> */}
         </div>
         {/*login button*/}
         <div className="text-center mt-6">
