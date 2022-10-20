@@ -1,6 +1,6 @@
 # Non-Fungible Token Application
 
-A minimal application for creating and sharing tokens. You can create a new artwork token and send it to a friend. The screen refreshes every few seconds to show the tokens owned by each user. Build using [Bitcoin Computer](https://bitcoin-computer.gitbook.io/docs/).
+A minimal application for creating and sharing tokens. You can create a new artwork token and send it to a friend. Build using [Bitcoin Computer](https://bitcoin-computer.gitbook.io/docs/).
 
 ![app image](./public/screen-shot.png)
 
