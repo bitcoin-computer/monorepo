@@ -47,11 +47,13 @@ yarn test
 
 ## Fund the Wallet
 
-When using ```regtest```, your wallet address must be funded.
+When using ```regtest```, your wallet address can be funded using the following command: 
 
 ```shell
 yarn fund-ltc <address1> [<address2> ... <addressN>]
 ```
+
+When using ```testnet```, you can make a deposit into the wallet by sending Litecoins to your address, using [this](https://testnet-faucet.com/ltc-testnet/) or [this LTC faucet](http://litecointf.salmen.website/).
 
 ## Stop the Services
 

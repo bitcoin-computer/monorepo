@@ -9,14 +9,25 @@ import { RequireAuth } from "./common/RequireAuth";
 import Login from "./auth/Login";
 import ArtworkDetails from "./component/artworks/artworkDetails";
 
+
+const getConf = (network) => {
+  if(network === "testnet")
+    return {
+      network: "testnet",
+      url: "https://node.bitcoincomputer.io",  
+    }
+  else if(network === "regtest")
+    return {
+      network: "regtest",
+      url: "http://127.0.0.1:3000",
+    }
+  throw new Error("Unsupported configuration")
+}
+
 function App() {
   const [config] = useState({
     chain: "LTC",
-    // network: "testnet",
-    // url: "https://node.bitcoincomputer.io",
-    // to run locally, change network and url:
-    network: "regtest",
-    url: "http://127.0.0.1:3000",
+    ...getConf("testnet")
   });
   // travel upgrade inside soda birth essence junk merit never twenty system opinion
   const [computer, setComputer] = useState(
