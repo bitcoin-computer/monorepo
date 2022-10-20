@@ -3,6 +3,11 @@
 ENV_PATH=".env"
 REGTEST_ADDRESSES=$(grep TEST_ADDRESS $ENV_PATH | cut -d '=' -f2)
 
+for address in $@
+do
+  REGTEST_ADDRESSES+=";"$address
+done
+
 arr=(${REGTEST_ADDRESSES//";"/ })
 
 for val in "${arr[@]}";
