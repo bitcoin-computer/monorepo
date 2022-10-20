@@ -3,7 +3,7 @@ function Loader() {
     <div className="fixed inset-1/2 h-12 w-12 text-slate-500">
       <svg
         aria-hidden="true"
-        class="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+        className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
