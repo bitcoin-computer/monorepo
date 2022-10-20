@@ -44,7 +44,7 @@ function Artworks(props) {
 
   return (
     <div className="mt-36">
-      <div class="grid grid-cols-1 pl-40 pr-40">
+      <div className="grid grid-cols-1 pl-40 pr-40">
         <div className="grid grid-cols-2 gap-4 mb-8">
           <div>
             <h1 className="font-medium text-2xl ">Your Art Works</h1>

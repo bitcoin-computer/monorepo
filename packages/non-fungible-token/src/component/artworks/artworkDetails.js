@@ -68,7 +68,7 @@ function ArtworkDetails(props) {
 
   return (
     <div className="mt-36">
-      <div class="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-2 gap-4">
         <div className="h-96 pl-40">
           <img
             className="h-96"

@@ -87,7 +87,7 @@ function ArtworkForm(props) {
               >
                 <div className="mb-6">
                   <label
-                    for="title"
+                    htmlFor="title"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
                   >
                     Title
@@ -104,7 +104,7 @@ function ArtworkForm(props) {
                 </div>
                 <div className="mb-6">
                   <label
-                    for="artist"
+                    htmlFor="artist"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
                   >
                     Artist
@@ -121,7 +121,7 @@ function ArtworkForm(props) {
                 </div>
                 <div className="mb-6">
                   <label
-                    for="url"
+                    htmlFor="url"
                     className="block mb-2 text-sm font-medium text-gray-900 dark:text-black"
                   >
                     URL
