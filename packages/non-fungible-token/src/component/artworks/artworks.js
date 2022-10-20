@@ -12,24 +12,30 @@ function Artworks(props) {
 
   useEffect(() => {
     (async () => {
-      if (computer) {
-        const newRevs = await computer.query({
-          contract: Artwork,
-          publicKey: computer.getPublicKey(),
-        });
+      try {
+        if (computer) {
+          const newRevs = await computer.query({
+            contract: Artwork,
+            publicKey: computer.getPublicKey(),
+          });
 
-        // sync art work when revs are not same
-        if (!areEqual(revs, newRevs)) {
-          const newArts = await Promise.all(
-            newRevs.map(async (rev) => computer.sync(rev))
-          );
-          console.log(newArts);
-          setArtworks(newArts);
-          setLoading(false);
-        } else {
-          console.log("no new art added");
+          // sync art work when revs are not same
+          if (!areEqual(revs, newRevs)) {
+            const newArts = await Promise.all(
+              newRevs.map(async (rev) => computer.sync(rev))
+            );
+            console.log(newArts);
+            setArtworks(newArts);
+            setLoading(false);
+          } else {
+            console.log("no new art added");
+          }
+          setRevs(newRevs);
         }
-        setRevs(newRevs);
+      } catch (error) {
+        console.log(error.message);
+      } finally {
+        setLoading(false);
       }
     })();
 

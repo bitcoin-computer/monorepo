@@ -27,8 +27,15 @@ function WalletInfo(props) {
     // eslint-disable-next-line
   }, [computer]);
 
-  const copyText = (text) => {
-    navigator.clipboard.writeText(text);
+  const copyAddress = () => {
+    navigator.clipboard.writeText(computer.getAddress().toString());
+    setSuccess(true);
+    setMessage("Copied");
+    setShow(true);
+  };
+
+  const copyKey = () => {
+    navigator.clipboard.writeText(computer.getPublicKey().toString());
     setSuccess(true);
     setMessage("Copied");
     setShow(true);
@@ -44,7 +51,7 @@ function WalletInfo(props) {
             <div className="m-1">{computer.getAddress().toString()}</div>
           </div>
           <FaCopy
-            onClick={copyText(computer.getPublicKey())}
+            onClick={copyAddress}
             className="text-2xl mt-1 pl-2 hover:text-slate-500 cursor-pointer"
           ></FaCopy>
         </div>
@@ -54,7 +61,7 @@ function WalletInfo(props) {
             <div className="m-1">{computer.getPublicKey().toString()}</div>
           </div>
           <FaCopy
-            onClick={copyText(computer.getPublicKey())}
+            onClick={copyKey}
             className="text-2xl mt-1 pl-2 hover:text-slate-500 cursor-pointer"
           ></FaCopy>
         </div>
