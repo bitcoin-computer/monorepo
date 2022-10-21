@@ -73,9 +73,9 @@ function ArtworkDetails(props) {
           <h1 className="font-bold text-3xl ">Send NFT</h1>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="h-96 pl-32">
+          <div className="w-full pl-32">
             <img
-              className="h-96"
+              className="w-full h-auto"
               src={artwork.url || artwork.imageUrl}
               alt={artwork.title}
             />

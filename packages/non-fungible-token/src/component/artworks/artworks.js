@@ -3,8 +3,10 @@ import Artwork from "./artwork";
 import Card from "./card";
 import { areEqual } from "../util/util";
 import Loader from "../util/loader";
+import { useNavigate } from "react-router-dom";
 
 function Artworks(props) {
+  const navigate = useNavigate();
   const { computer } = props;
   const [revs, setRevs] = useState([]);
   const [artworks, setArtworks] = useState([]);
@@ -51,11 +53,23 @@ function Artworks(props) {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-12">
+        <div className="flex flex-wrap">
           {artworks.map((artwork, index) => (
             <Card artwork={artwork} rev={revs[index]} key={artwork.url} />
           ))}
         </div>
+        {artworks.length === 0 && !loading && (
+          <div className="h-96 w-full grid grid-cols-1 gap-4 place-items-center">
+            <button
+              onClick={() => {
+                navigate("/art/artworkform");
+              }}
+              className="py-3 w-64 text-xl text-white bg-blue-600 rounded-xl"
+            >
+              Create your first art work
+            </button>
+          </div>
+        )}
       </div>
       {loading && <Loader />}
     </div>

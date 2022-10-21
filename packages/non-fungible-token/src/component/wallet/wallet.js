@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { GrClose } from "react-icons/gr";
+import { GrClose, GrRefresh } from "react-icons/gr";
 import SnackBar from "../util/snackBar";
 import { FaCopy } from "react-icons/fa";
 
@@ -11,23 +11,27 @@ export default function Wallet({ computer, isOpen, setIsOpen }) {
 
   useEffect(() => {
     (async () => {
-      try {
-        if (computer) {
-          const newBalance = await computer.getBalance();
-          console.log("new balance: ", newBalance);
-          console.log("public key: ", computer.getPublicKey());
-          setBalance(newBalance);
-        }
-      } catch (err) {
-        setSuccess(false);
-        setMessage(err.message);
-        setShow(true);
-        console.log("error occurred while fetching wallet details: ", err);
-      }
+      await refreshBalance();
     })();
 
     // eslint-disable-next-line
   }, [computer]);
+
+  const refreshBalance = async () => {
+    try {
+      if (computer) {
+        const newBalance = await computer.getBalance();
+        console.log("new balance: ", newBalance);
+        console.log("public key: ", computer.getPublicKey());
+        setBalance(newBalance);
+      }
+    } catch (err) {
+      setSuccess(false);
+      setMessage(err.message);
+      setShow(true);
+      console.log("error occurred while fetching wallet details: ", err);
+    }
+  };
 
   const copyAddress = () => {
     navigator.clipboard.writeText(computer.getAddress().toString());
@@ -71,11 +75,15 @@ export default function Wallet({ computer, isOpen, setIsOpen }) {
             <h5 class="mb-4 text-md text-center font-medium text-gray-700">
               Total Balance
             </h5>
-            <div class="text-center dark:text-black">
+            <div class="flex flex-row place-items-center justify-center dark:text-black">
               <span class=" text-center text-2xl font-extrabold">
                 {balance / 1e8}
               </span>
               <span class="text-2xl ml-2 font-extrabold">LTC</span>
+              <GrRefresh
+                onClick={refreshBalance}
+                className=" text-2xl ml-4 hover:text-slate-500 cursor-pointer"
+              ></GrRefresh>
             </div>
           </div>
           <div className="mt-1">
@@ -83,7 +91,11 @@ export default function Wallet({ computer, isOpen, setIsOpen }) {
               <h2>
                 <span className="font-bold">Address</span>:
               </h2>
-              <div className="ml-2">{computer.getAddress().toString()}</div>
+              <div className="ml-2">
+                {computer.getAddress().toString().substring(0, 16) +
+                  "..." +
+                  computer.getAddress().toString().slice(-8)}
+              </div>
               <FaCopy
                 onClick={copyAddress}
                 className="text-2xl pl-2 hover:text-slate-500 cursor-pointer"
