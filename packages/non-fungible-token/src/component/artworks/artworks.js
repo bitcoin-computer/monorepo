@@ -64,7 +64,7 @@ function Artworks(props) {
               onClick={() => {
                 navigate("/art/artworkform");
               }}
-              className="py-3 w-64 text-xl text-white bg-blue-600 rounded-xl"
+              className="py-3 w-64 text-xl text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
             >
               Create your first art work
             </button>

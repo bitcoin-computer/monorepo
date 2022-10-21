@@ -110,7 +110,7 @@ function ArtworkDetails(props) {
               <button
                 disabled={disabled}
                 onClick={handleSend}
-                className="py-3 w-64 text-xl text-white bg-blue-400 rounded-2xl"
+                className="py-3 w-64 text-xl text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
               >
                 Send
               </button>
