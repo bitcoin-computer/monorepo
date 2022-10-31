@@ -73,9 +73,9 @@ function ArtworkDetails(props) {
           <h1 className="font-bold text-3xl ">Send NFT</h1>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="h-96 pl-32">
+          <div className="w-full pl-32">
             <img
-              className="h-96"
+              className="w-full h-auto"
               src={artwork.url || artwork.imageUrl}
               alt={artwork.title}
             />
@@ -110,7 +110,7 @@ function ArtworkDetails(props) {
               <button
                 disabled={disabled}
                 onClick={handleSend}
-                className="py-3 w-64 text-xl text-white bg-blue-400 rounded-2xl"
+                className="py-3 w-64 text-xl text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
               >
                 Send
               </button>

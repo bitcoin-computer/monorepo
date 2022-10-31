@@ -35,9 +35,9 @@ function Login(props) {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-center">
-      <div className="absolute w-60 h-60 rounded-xl bg-blue-300 -top-5 -left-16 z-0 transform rotate-45 hidden md:block"></div>
-      <div className="absolute w-48 h-48 rounded-xl bg-blue-300 -bottom-6 -right-10 transform rotate-12 hidden md:block"></div>
+    <div className="h-screen w-screen max-h-screen max-w-screen flex justify-center items-center">
+      <div className="absolute w-52 h-52 rounded-xl bg-blue-300 -top-4 -left-8 z-0 transform rotate-45 hidden md:block"></div>
+      <div className="absolute w-44 h-44 rounded-xl bg-blue-300 -bottom-4 -right-8 transform rotate-12 hidden md:block"></div>
       <div className="py-12 px-12 bg-white rounded-2xl border">
         <div>
           <h1 className="text-3xl font-bold text-center mb-4 cursor-pointer">
@@ -83,7 +83,7 @@ function Login(props) {
         <div className="text-center mt-6">
           <button
             onClick={login}
-            className="py-3 w-64 text-xl text-white bg-blue-400 rounded-2xl"
+            className="py-3 w-64 text-xl text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
           >
             Log In
           </button>

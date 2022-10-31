@@ -12,7 +12,7 @@ export default function Navbar({ computer }) {
     navigate("/auth/login");
   };
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false && loggedIn);
   return (
     <div>
       <nav className="bg-white fixed w-full z-20 top-0 left-0 border-b border-gray-200">
@@ -31,7 +31,7 @@ export default function Navbar({ computer }) {
               <button
                 onClick={logout}
                 type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                className="text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 Log Out
               </button>
@@ -46,7 +46,7 @@ export default function Navbar({ computer }) {
                 <li>
                   <NavLink
                     to="/"
-                    className="block py-2 pr-4 text-gray-700 text-lg rounded hover:text-gray-900"
+                    className="block py-2 pr-4 text-gray-700 text-lg rounded hover:text-gray-900 cursor-pointer"
                   >
                     Artworks
                   </NavLink>
@@ -54,7 +54,7 @@ export default function Navbar({ computer }) {
                 <li>
                   <NavLink
                     to="/art/artworkform"
-                    className="block py-2 pr-4 text-gray-700 text-lg rounded hover:text-gray-900"
+                    className="block py-2 pr-4 text-gray-700 text-lg rounded hover:text-gray-900 cursor-pointer"
                   >
                     Create
                   </NavLink>
@@ -64,7 +64,7 @@ export default function Navbar({ computer }) {
                     onClick={() => {
                       setIsOpen(true);
                     }}
-                    className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900"
+                    className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
                   >
                     <FaWallet className="text-2xl"></FaWallet>
                     {/* Wallet */}
@@ -75,7 +75,9 @@ export default function Navbar({ computer }) {
           )}
         </div>
       </nav>
-      <Wallet computer={computer} isOpen={isOpen} setIsOpen={setIsOpen} />
+      {loggedIn && (
+        <Wallet computer={computer} isOpen={isOpen} setIsOpen={setIsOpen} />
+      )}
     </div>
   );
 }
