@@ -19,20 +19,18 @@ TRUNCATE TABLE "User";
 TRUNCATE TABLE "OffChain";
 TRUNCATE TABLE "SyncStatus";
 
-INSERT INTO "SyncStatus" ("syncedHeight", "bitcoindSyncedHeight", "bitcoindSyncedProgress") VALUES (-1, -1, 0);
+INSERT INTO "SyncStatus" ("syncedHeight", "workerId") VALUES (-1, 1);
 EOF
 
-# Delete all containers:
-docker rm -f $(docker ps -a -q)
-
-# Stop the container(s):
-docker-compose down
+# stop all docker containers and networks
+# docker ps -a --format="{{.ID}}" | xargs docker update --restart=no | xargs docker stop
+docker stop $(docker ps -a -q) & docker update --restart=no $(docker ps -a -q) & systemctl restart docker
 
 # Delete all volumes:
 docker volume rm $(docker volume ls -q)
 
-# stop all docker containers and networks
-docker stop $(docker ps --quiet)
+# Delete all containers:
+docker rm -f $(docker ps -a -q)
 
 # delete all dangling containers, images, volumes, networks
 docker system prune

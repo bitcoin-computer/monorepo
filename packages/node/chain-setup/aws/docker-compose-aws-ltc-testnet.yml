@@ -6,7 +6,7 @@ services:
     environment:
       - FILES=db/db_schema.sql
     volumes:
-      - sh-ltc-testnet-v0-10-0-alpha-3-side-car:/opt/
+      - sh-ltc-testnet-v0-10-0-alpha-8-side-car:/opt/
     ports:
       - 2049:2049
     networks:
@@ -14,8 +14,8 @@ services:
   db:
     env_file: .env.aws
     volumes:
-      - db-ltc-testnet-v0-10-0-alpha-3-data:/var/lib/postgresql/data
-      - sh-ltc-testnet-v0-10-0-alpha-3-side-car:/docker-entrypoint-initdb.d/
+      - db-ltc-testnet-v0-10-0-alpha-8-data:/var/lib/postgresql/data
+      - sh-ltc-testnet-v0-10-0-alpha-8-side-car:/docker-entrypoint-initdb.d/
     deploy:
       resources:
         reservations:
@@ -33,7 +33,7 @@ services:
       [
         "litecoind",
         "-testnet=1",
-        "-dbcache=4000",
+        "-dbcache=8000",
         "-txindex=1",
         "-server=1",
         "-rpcbind=0.0.0.0",
@@ -51,7 +51,7 @@ services:
       - 19332:19332
       - 28332:28332
     volumes:
-      - bc-ltc-testnet-v0-10-0-alpha-3-data:/home/litecoin/.litecoin
+      - bc-ltc-testnet-v0-10-0-alpha-8-data:/home/litecoin/.litecoin
     depends_on:
       - side-car
     deploy:
@@ -60,7 +60,7 @@ services:
           memory: 16384M
           cpus: '2'
   bcn:
-    image: bcdb/bcn:0.10.0-alpha.3
+    image: bcdb/bcn:0.10.0-alpha.8
     platform: linux/amd64
     env_file: .env.aws
     environment:
@@ -81,7 +81,7 @@ services:
           cpus: '2'
   sync:
     command: npm run sync
-    image: bcdb/bcn:0.10.0-alpha.3
+    image: bcdb/bcn:0.10.0-alpha.8
     platform: linux/amd64
     env_file: .env.aws
     depends_on:
@@ -116,11 +116,11 @@ services:
       - bcn
 
 volumes:
-  sh-ltc-testnet-v0-10-0-alpha-3-side-car: {}
-  db-ltc-testnet-v0-10-0-alpha-3-data:
-  bc-ltc-testnet-v0-10-0-alpha-3-data:
+  sh-ltc-testnet-v0-10-0-alpha-8-side-car: {}
+  db-ltc-testnet-v0-10-0-alpha-8-data:
+  bc-ltc-testnet-v0-10-0-alpha-8-data:
 
-x-aws-loadbalancer: ltc-testnet-v0-10-0-alpha-3
+x-aws-loadbalancer: ltc-testnet-v0-10-0-alpha-8
 x-aws-cloudformation:
   Resources:
     BcnTaskDefinition:

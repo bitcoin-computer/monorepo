@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
 import ArtworkForm from "./component/artworks/artworkForm";
-import Artworks from "./component/artworks/artworks";
+import AllArtworks from "./component/artworks/allArtworks";
 import Navbar from "./component/navbar/navbar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RequireAuth } from "./common/RequireAuth";
@@ -25,9 +25,11 @@ const getConf = (network) => {
 function App() {
   const [config] = useState({
     chain: "LTC",
-    ...getConf("testnet"),
+    ...getConf("regtest"),
   });
   // travel upgrade inside soda birth essence junk merit never twenty system opinion
+  // hover harsh text dice wealth pill across trade soccer olive view acquire
+  // damp comfort scan couple absurd enter slogan cheap ketchup print syrup hurdle one document diamond
   const [computer, setComputer] = useState(
     new Computer({
       ...config,
@@ -35,10 +37,12 @@ function App() {
     })
   );
 
+  const [publicKey, setPublicKey] = useState("");
+
   return (
     <div>
       <BrowserRouter>
-        <Navbar computer={computer} />
+        <Navbar setPublicKey={setPublicKey} computer={computer} />
         <Routes>
           <Route
             path="/auth/login"
@@ -55,8 +59,32 @@ function App() {
           </Route>
 
           <Route path="/" element={<RequireAuth redirectTo="/auth/login" />}>
-            <Route path="/" element={<Artworks computer={computer} />} />
+            <Route
+              path="/"
+              element={
+                <AllArtworks
+                  setPublicKey={setPublicKey}
+                  publicKey={publicKey}
+                  computer={computer}
+                />
+              }
+            />
           </Route>
+
+          {/* <Route
+            path="/my-artworks"
+            element={<RequireAuth redirectTo="/auth/login" />}
+          >
+            <Route
+              path="/my-artworks"
+              element={
+                <AllArtworks
+                  publicKey={computer.getPublicKey()}
+                  computer={computer}
+                />
+              }
+            />
+          </Route> */}
 
           <Route
             path="/art/:txnId/:outNum"
