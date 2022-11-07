@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '../src/nft'
+import { BRC721 } from '../src/brc721'
 
 const randomOpts = {
   mnemonic:
@@ -18,13 +18,13 @@ const opts = {
   ...randomOpts,
 }
 
-describe('NFT', () => {
+describe('BRC721', () => {
   describe('Constructor', () => {
     it('should create a Javascript object', () => {
-      expect(NFT).not.to.be.undefined
-      expect(typeof NFT).to.eq('function')
+      expect(BRC721).not.to.be.undefined
+      expect(typeof BRC721).to.eq('function')
 
-      const token = new NFT('to', 'name', 'symbol')
+      const token = new BRC721('to', 'name', 'symbol')
       expect(token).not.to.be.undefined
     })
 
@@ -32,7 +32,7 @@ describe('NFT', () => {
       const computer = new Computer(opts)
       const publicKeyString = computer.getPublicKey()
 
-      const nft = await computer.new(NFT, [publicKeyString, 'name', 'symbol'])
+      const nft = await computer.new(BRC721, [publicKeyString, 'name', 'symbol'])
       expect(nft._owners).deep.equal([publicKeyString])
       expect(nft.name).to.eq('name')
       expect(nft.symbol).to.eq('symbol')
@@ -50,7 +50,7 @@ describe('NFT', () => {
       const computer2 = new Computer(randomOpts)
       const publicKeyString2 = computer2.getPublicKey()
 
-      const nft = await computer.new(NFT, [publicKeyString, 'name', 'symbol'])
+      const nft = await computer.new(BRC721, [publicKeyString, 'name', 'symbol'])
       expect(nft._owners).deep.equal([publicKeyString])
       expect(nft.name).to.eq('name')
       expect(nft.symbol).to.eq('symbol')
