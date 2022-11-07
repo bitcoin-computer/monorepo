@@ -1,33 +1,39 @@
 # Non-Fungible Token Application
 
-A minimal application for creating and sharing tokens. You can create a new artwork token and send it to a friend. The screen refreshes every few seconds to show the tokens owned by each user. Build using [Bitcoin Computer](https://bitcoin-computer.gitbook.io/docs/).
+An application for creating, storing and sending non-fungible tokens on Litecoin. Built using the [Bitcoin Computer](https://bitcoin-computer.gitbook.io/docs/).
 
-![app image](./public/screen-shot.png)
+## Get Started
 
+To run the application on testnet use the following commands. The application will connect to a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#bitcoin-computer-node) provided by BCDB Inc.
 
-The application first creates a ```Computer``` object. You can configure the parameters to use <em>regtest</em> (local) or <em>testnet</em> network modes. You can use a set of [BIP39 words] (https://iancoleman.io/bip39/) as seed.
+````
+yarn install
+yarn start
+````
 
+## Run With Your Own Node
+
+To run your own node, follow the instructions the [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#getting-started). Then change the file [App.js](https://github.com/bitcoin-computer/monorepo/blob/main/packages/non-fungible-token/src/App.js) as shown below.
 
 ```javascript
-const [config] = useState({
-    chain: 'LTC',
-    network: 'testnet',
-    url: 'https://node.bitcoincomputer.io',
-    // to run locally, change network and url:
-    // network: 'regtest',
-    // url: 'http://127.0.0.1:3000',
-  });
-  const [computer, setComputer] = useState(
-    new Computer({
-      ...config,
-      seed: 'travel upgrade inside soda birth essence junk merit never twenty system opinion'
-    })
-  );
+function App() {
+  const [config] = useState({
+    chain: "LTC",
+    ...getConf("regtest")   // <-- change this line to "testnet"
+  })
+  ...
 ```
 
-We are currently supporting LTC, and will add support to other currencies soon. You can make a deposit into the wallet by sending Litecoins to the address shown, using [this](https://testnet-faucet.com/ltc-testnet/) or [this LTC faucet](http://litecointf.salmen.website/).
+## Troubleshooting
 
-You can find more information in the [docs](https://bitcoin-computer.gitbook.io/docs/). Also check out the corresponding [Youtube tutorial](https://www.youtube.com/watch?v=SnTwevzmRrs).
+If you get an error ``"Insuficient balance in address <your address>"``, take a look to the Bitcoin Computer Node [documentation](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet) for how to fund your wallet.
+
+
+## Screenshots
+
+![app image](./public/nft-main-page.png)
+
+## Video
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=SnTwevzmRrs
 " target="_blank"><img src="http://img.youtube.com/vi/SnTwevzmRrs/0.jpg"

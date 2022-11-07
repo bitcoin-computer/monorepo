@@ -2,25 +2,6 @@
 
 Infrastructure for building Smart Contracts on Litecoin, Bitcoin and other UTXOs-based blockchains.
 
-## Get Started
-
-The first step is to run your own local `regtest` [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node). Clone the repository and follow the instructions on the [Readme](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) file.
-
-To get started with a simple Wallet example application, you can use our template to create a new project:
-
-```bash
-npx create-react-app <your-app-name> --template @bitcoin-computer/cra-template
-```
-
-Then, open a browser to http://localhost:3000.
-
-The Wallet application allows you to generate addresses based on some mnemonic strings. 
-You will need to fund your wallet using the Bitcoin Computer Node. Follow the instructions in the [Readme](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) file. 
-
-Once you fund the Wallet, the balance should be updated. You can then send transactions to other addresses.
-
-Many other examples can be found in the [Applications](#applications) section. The complete documentation can be found in [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/docs/).
-
 ## Smart Contract System
 
 * [Bitcoin Computer Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib): A library for building smart contracts on Litecoin/Bitcoin.
@@ -39,6 +20,25 @@ Many other examples can be found in the [Applications](#applications) section. T
 * [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token)
 * [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token)
 
+## Get Started
+
+The first step is to run your own local `regtest` [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node). Clone the repository and follow the instructions on the [Readme](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) file.
+
+To get started with a simple Wallet example application, you can use our template to create a new project:
+
+```bash
+npx create-react-app <your-app-name> --template @bitcoin-computer/cra-template
+```
+
+Then, open a browser to http://localhost:3000.
+
+The Wallet application allows you to generate addresses based on some mnemonic strings.
+You will need to fund your wallet using the Bitcoin Computer Node. Follow the instructions in the [Readme](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) file.
+
+Once you fund the Wallet, the balance should be updated. You can then send transactions to other addresses.
+
+Many other examples can be found in the [Applications](#applications) section. The complete documentation can be found in [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/docs/).
+
 
 ## Questions
 
@@ -51,4 +51,4 @@ Have a look at the [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/d
 ## Price
 
 * Testnet: The Bitcoin Computer will be free forever on testnet.
-* Mainnet: The fees for the Bitcoin Computer are exactly the same as the miners fees. For example, if the miner transaction fees is $0.01, then you will pay $0.02: one cent to the Litecoin/Bitcoin miners, and one cent to support the development of the Bitcoin Computer.
+* Mainnet: The fees for the Bitcoin Computer are exactly the same as the miners fees. For example, if the miner transaction fees is $0.01, then you will pay $0.02: one cent to the miners, and one cent to support the development of the Bitcoin Computer.

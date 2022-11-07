@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/BRC20",
-  "version": "0.10.0-alpha.6",
+  "version": "0.10.1",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "private": true,
   "engines": {
