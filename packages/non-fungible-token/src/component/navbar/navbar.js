@@ -1,5 +1,4 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { FaWallet } from "react-icons/fa";
 import { useState } from "react";
 import Wallet from "../wallet/wallet";
 
@@ -93,9 +92,9 @@ export default function Navbar({ setPublicKey, computer }) {
                     onClick={() => {
                       setIsOpen(true);
                     }}
-                    className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
+                    className="block py-2 pr-4 text-gray-700 text-lg rounded hover:text-gray-900 cursor-pointer"
                   >
-                    <FaWallet className="text-2xl"></FaWallet>
+                    Wallet
                   </span>
                 </li>
               </ul>
