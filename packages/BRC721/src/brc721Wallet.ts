@@ -21,7 +21,7 @@ export class BRC721Wallet implements IBRC721Wallet {
   }
 
   async ownerOf(tokenId: string): Promise<string[]> {
-    const rev = await this.computer.idToRev(tokenId)
+    const [rev] = await this.computer.idsToRevs([tokenId])
     const obj = await this.computer.sync(rev)
     return obj._owners
   }

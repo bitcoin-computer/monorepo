@@ -2,9 +2,8 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { BRC721 } from '../src/brc721'
-import { BRC721Wallet } from '../src/brc721wallet'
 
-const opts = {
+const randomOpts = {
   mnemonic:
     'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
@@ -14,53 +13,59 @@ const opts = {
   // network: 'regtest',
 }
 
+const opts = {
+  mnemonic: 'opera deputy attitude upset royal keep',
+  ...randomOpts,
+}
+
 describe('BRC721', () => {
   describe('Constructor', () => {
-    it('Should create a new BRC721 object', async () => {
-      const nft = new BRC721('to', 'name', 'symbol')
-      expect(nft).not.to.be.undefined
-      expect(nft).to.deep.eq({
-        name: 'name',
-        symbol: 'symbol',
-        _owners: ['to'],
-      })
-    })
-  })
+    it('should create a Javascript object', () => {
+      expect(BRC721).not.to.be.undefined
+      expect(typeof BRC721).to.eq('function')
 
-  describe('mint', () => {
-    it('Should mint tokens', async () => {
-      const computer = new Computer(opts)
-      const brc721 = new BRC721Wallet(computer)
-      const publicKey = brc721.computer.getPublicKey()
-      const rev = await brc721.mint(publicKey, 'name', 'symbol')
-      expect(rev).not.to.be.undefined
-      expect(typeof rev).to.eq('object')
+      const token = new BRC721('to', 'name', 'symbol')
+      expect(token).not.to.be.undefined
     })
-  })
 
-  describe('balanceOf', () => {
-    it('Should computer the balance', async () => {
+    it('should create a smart object', async () => {
       const computer = new Computer(opts)
-      const brc721 = new BRC721Wallet(computer)
-      const publicKey = computer.getPublicKey()
-      brc721.mint(publicKey, 'name', 'symbol')
-      expect(brc721).not.to.be.undefined
-      const balance = await brc721.balanceOf(publicKey)
-      expect(balance).to.be.greaterThanOrEqual(1)
+      const publicKeyString = computer.getPublicKey()
+
+      const nft = await computer.new(BRC721, [publicKeyString, 'name', 'symbol'])
+      expect(nft._owners).deep.equal([publicKeyString])
+      expect(nft.name).to.eq('name')
+      expect(nft.symbol).to.eq('symbol')
+      expect(nft._id).to.be.a('string')
+      expect(nft._rev).to.be.a('string')
+      expect(nft._root).to.be.a('string')
     })
   })
 
   describe('transfer', () => {
-    it('Should transfer a token', async () => {
+    it('Should update a smart object', async () => {
       const computer = new Computer(opts)
-      const computer2 = new Computer()
-      const brc721 = new BRC721Wallet(computer)
-      const publicKey = brc721.computer.getPublicKey()
-      const token = await brc721.mint(publicKey, 'name', 'symbol')
-      const publicKey2 = computer2.getPublicKey()
-      await brc721.transferTo(publicKey2, token._id)
-      const res = await brc721.balanceOf(publicKey)
-      expect(res).to.be.greaterThanOrEqual(1)
+      const publicKeyString = computer.getPublicKey()
+
+      const computer2 = new Computer(randomOpts)
+      const publicKeyString2 = computer2.getPublicKey()
+
+      const nft = await computer.new(BRC721, [publicKeyString, 'name', 'symbol'])
+      expect(nft._owners).deep.equal([publicKeyString])
+      expect(nft.name).to.eq('name')
+      expect(nft.symbol).to.eq('symbol')
+      expect(nft._id).to.be.a('string')
+      expect(nft._rev).to.be.a('string')
+      expect(nft._root).to.be.a('string')
+
+      await nft.transfer(publicKeyString2, 1)
+
+      expect(nft._owners).deep.equal([publicKeyString2])
+      expect(nft.name).to.eq('name')
+      expect(nft.symbol).to.eq('symbol')
+      expect(nft._id).to.be.a('string')
+      expect(nft._rev).to.be.a('string')
+      expect(nft._root).to.be.a('string')
     })
   })
 })

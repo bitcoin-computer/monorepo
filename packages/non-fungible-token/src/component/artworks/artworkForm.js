@@ -3,6 +3,7 @@ import Artwork from "./artwork";
 import { useNavigate } from "react-router-dom";
 import SnackBar from "../util/snackBar";
 import Loader from "../util/loader";
+import { BRC721Wallet } from "@bitcoin-computer/BRC721";
 
 function ArtworkForm(props) {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ function ArtworkForm(props) {
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [brc721Wallet] = useState(new BRC721Wallet(computer));
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
@@ -40,6 +42,13 @@ function ArtworkForm(props) {
       }
       setLoading(true);
       await computer.new(Artwork, [title, artist, url]);
+
+      const testNFT = await brc721Wallet.mint(
+        computer.getPublicKey(),
+        "VIVEK",
+        "VIV"
+      );
+      console.log("testNFT: ", testNFT);
 
       setMessage("NFT minted.");
       setSuccess(true);
