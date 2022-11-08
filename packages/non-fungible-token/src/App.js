@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
 import ArtworkForm from "./component/artworks/artworkForm";
 import AllArtworks from "./component/artworks/allArtworks";
-import Navbar from "./component/navbar/navbar";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RequireAuth } from "./common/RequireAuth";
 import Login from "./auth/Login";
 import ArtworkDetails from "./component/artworks/artworkDetails";
+import NavbarWrapper from "./component/navbar/navbarWrapper";
 
 const getConf = (network) => {
   if (network === "testnet")
@@ -42,7 +42,7 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        <Navbar setPublicKey={setPublicKey} computer={computer} />
+        <NavbarWrapper computer={computer} setPublicKey={setPublicKey} />
         <Routes>
           <Route
             path="/auth/login"
@@ -62,29 +62,10 @@ function App() {
             <Route
               path="/"
               element={
-                <AllArtworks
-                  setPublicKey={setPublicKey}
-                  publicKey={publicKey}
-                  computer={computer}
-                />
+                <AllArtworks publicKey={publicKey} computer={computer} />
               }
             />
           </Route>
-
-          {/* <Route
-            path="/my-artworks"
-            element={<RequireAuth redirectTo="/auth/login" />}
-          >
-            <Route
-              path="/my-artworks"
-              element={
-                <AllArtworks
-                  publicKey={computer.getPublicKey()}
-                  computer={computer}
-                />
-              }
-            />
-          </Route> */}
 
           <Route
             path="/art/:txnId/:outNum"

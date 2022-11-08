@@ -4,10 +4,11 @@ import { areEqual } from "../util/util";
 import Loader from "../util/loader";
 import Artworks from "./artworks";
 import { useNavigate } from "react-router-dom";
+import SnackBar from "../util/snackBar";
 
 function AllArtworks(props) {
   const navigate = useNavigate();
-  const { computer, publicKey, setPublicKey } = props;
+  const { computer, publicKey } = props;
   const [revs, setRevs] = useState([]);
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,6 +18,10 @@ function AllArtworks(props) {
   const [isPrevAvailable, setIsPrevAvailable] = useState(
     pageNum === 0 ? false : true
   );
+
+  const [show, setShow] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [message, setMessage] = useState("");
 
   let artsPerPage = 4;
   let limit = artsPerPage + 1;
@@ -70,6 +75,9 @@ function AllArtworks(props) {
         setLoading(true);
         await getArts();
       } catch (error) {
+        setMessage(error.message);
+        setSuccess(false);
+        setShow(true);
         console.log(error.message);
       } finally {
         setLoading(false);
@@ -114,17 +122,9 @@ function AllArtworks(props) {
                     ? "Arts Found"
                     : "All Arts"}
                 </h1>
-                {publicKey && (
-                  <button
-                    onClick={() => setPublicKey("")}
-                    class="h-10 ml-4 p-2 w-20 mr-4 text-sm text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
-                  >
-                    <span>Go to All</span>
-                  </button>
-                )}
               </div>
               <nav className="h-20">
-                <ul class="flex justify-center pt-2">
+                <ul className="flex justify-center pt-2">
                   <li>
                     <button
                       disabled={!isPrevAvailable}
@@ -150,6 +150,9 @@ function AllArtworks(props) {
           </div>
         )}
       </div>
+      {show && (
+        <SnackBar success={success} message={message} setShow={setShow} />
+      )}
       {loading && <Loader />}
     </div>
   );
