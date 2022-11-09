@@ -124,7 +124,7 @@ function AllArtworks(props) {
                 </h1>
               </div>
               <nav className="h-20">
-                <ul className="flex justify-center pt-2">
+                <ul className="flex justify-end pt-1 ">
                   <li>
                     <button
                       disabled={!isPrevAvailable}
