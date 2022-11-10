@@ -924,10 +924,10 @@
     "@babel/helper-validator-identifier" "^7.18.6"
     to-fast-properties "^2.0.0"
 
-"@bitcoin-computer/bitcore-lib-ltc@^8.25.41":
-  version "8.25.41"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-lib-ltc/-/bitcore-lib-ltc-8.25.41.tgz#0797b88a3c58d9083b9a4e9f56fd5bb91e580bad"
-  integrity sha512-B/vvzEvC2XMr4SZs1LHL8Jc7xdN0ezdqAV7Hl/0QjaX9hle73YDfQDbEF5KNrAPCGBrYBatk1LzG5cX80ngcjQ==
+"@bitcoin-computer/bitcore-lib-ltc@^8.25.42":
+  version "8.25.42"
+  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-lib-ltc/-/bitcore-lib-ltc-8.25.42.tgz#7822110ce7386840c336c137d63bc30b57eda271"
+  integrity sha512-5r/SLVKFtgYGeb4r0Poffjv6yqRrq/n1raMZE7aZISDXbwZq2EkXQYLlt6+VCqXwaqAlrWj0al0KE7+ejM2bfg==
   dependencies:
     "@bitcoin-computer/bn.js" "^5.2.3"
     "@bitcoin-computer/elliptic" "^6.5.5"
@@ -938,12 +938,12 @@
     lodash "^4.17.20"
     scryptsy "2.1.0"
 
-"@bitcoin-computer/bitcore-mnemonic-ltc@8.25.41":
-  version "8.25.41"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-mnemonic-ltc/-/bitcore-mnemonic-ltc-8.25.41.tgz#9d8478513639bc574710dd0321def6572c21766d"
-  integrity sha512-vbdCRClWvX4UswywqvGzHhWICC3WsT4IL+hkbOIOPzxuXgC8jHfL8mQa/3NhxNzK5Cc78Qm+uRcN9AeAY9/YmA==
+"@bitcoin-computer/bitcore-mnemonic-ltc@8.25.42":
+  version "8.25.42"
+  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-mnemonic-ltc/-/bitcore-mnemonic-ltc-8.25.42.tgz#854f76d5c3389de81a4355cf773a9bd058699f4f"
+  integrity sha512-gmHNrbZj1wUfLeoqXwm0UG4k8zrbmjQujc+yDhDvvk8ODEhGW2vELY5J846cMKD9Kb4ITSJKi2SCMKSL7YhDfQ==
   dependencies:
-    "@bitcoin-computer/bitcore-lib-ltc" "^8.25.41"
+    "@bitcoin-computer/bitcore-lib-ltc" "^8.25.42"
     unorm "^1.4.1"
 
 "@bitcoin-computer/bn.js@^5.2.3":

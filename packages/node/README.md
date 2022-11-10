@@ -2,76 +2,108 @@
 
 The Bitcoin Computer Node provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/bc-lib).
 
+It provides the backend infrastructure for running smart contract based applications. It consists of a Bitcoin node, a database for storing index structures and off-chain data, and a web server.
+
+
 [Documentation](https://docs.bitcoincomputer.io/) |
 [Telegram](thebitcoincomputer) |
 [Twitter](https://twitter.com/TheBitcoinToken)
+## Local Deployment
 
-## Getting Started
-
-### Install
-
-Clone the [```monorepo```](https://github.com/bitcoin-computer/monorepo.git) repository from GitHub. Move to ```packages/node``` and then copy the file ``.env.example`` into a file ``.env`` in the root folder. Run ```setup.sh``` to install Docker, npm and yarn if you don't have them installed already. After executing ```setup.sh``` close and reopen the terminal window to make sure that the Docker daemon is running. The run ``yarn install``.
+You can start a Bitcoin Computer Node on your local machine using [Docker](https://www.docker.com/). Clone the [```monorepo```](https://github.com/bitcoin-computer/monorepo.git) repository from GitHub. Move to ```packages/node``` and then copy the file ``.env.example`` into a file ``.env`` in the root folder.
 
 ```shell
 git clone https://github.com/bitcoin-computer/monorepo.git
 cd monorepo/packages/node
 cp .env.example .env
-./scripts/setup.sh
-yarn install
 ```
 
+### Installing dependencies
 
+Before running the Bitcoin Computer Node for the first time you need to install Docker, yarn and other dependencies and build the Docker image. We provide an script for installing the required software.
 
-### Start the Node
+```shell
+$ ./scripts/setup.sh
+```
+
+After executing the script yow will need to logout and login again to your machine, to make sure that the Docker daemon is running.
+
+### Building the Docker image
+You can now start the Bitcoin Computer Node using Docker Compose.
+
+```shell
+yarn install
+yarn build-docker
+```
+
+## Network modes
+You can run the Bitcoin Computer Node in your local machine, connecting to ```regtest```, ```testnet``` or ```livenet``` (mainnet) network modes. 
+
+### Local ``regtest`` network mode
 To start the Bitcoin Computer Node on Litecoin (LTC) regtest run:
 
 ```shell
 yarn up
 ```
 
-Use the ``-t`` option to start the node on testnet. Type ``yarn up -h`` to get the list of all configuration options.
+
+When you run this command for the first time the required software is downloaded and compiled. This can take several minutes. Subsequent starts only need to start the server and are much faster
+
+You will see the logs of the services that make up the Bitcoin Computer Node: a Litecoin Node called ``node``, a database called ``db`` and api server called ``bcn``. The ``bcn`` service depend on ``db``. Until the database is up and running, messages indicating connection attempts are be logged.
+
+The ``up`` command is parametrized with other options. For example, you can change the chain to Bitcoin using the flag ```-btc```
 
 ```shell
-yarn up -t
+yarn up -btc
 ```
 
-You will see the logs of the services that make up the Bitcoin Computer Node: a Litecoin Node called ``node``, a database called ``db`` and api server called ``bcn``. Until the database is up and running, messages indicating connection attempts are be logged.
+Type ``yarn up -h`` to get the list of all possible commands.
 
-### Run the Tests
-
-To run the tests, execute
+We provide a set of test that you can run to verify the proper execution on the node on ```regtest```. To run the tests, execute:
 
 ```shell
 yarn test
 ```
 
-## Fund the Wallet
-
-When using ```regtest```, your wallet address can be funded using the following command: 
+When using ```regtest```, the wallets must be found. So, you must launch the ```db```, ```node``` and ```bcn``` services, and then fund the wallets. For local development you will need to fund the test wallets using the following command. 
 
 ```shell
-yarn fund-ltc <address1> [<address2> ... <addressN>]
+yarn fund-ltc
 ```
 
-When using ```testnet```, you can make a deposit into the wallet by sending Litecoins to your address, using [this](https://testnet-faucet.com/ltc-testnet/) or [this LTC faucet](http://litecointf.salmen.website/).
+You can configure the wallets that are funded using the file ``chain-setup/ltc-regtest/topup-wallet.sh``. This will fund the default addresses only. To fund specific addresses of the regtest update ``TEST_ADDRESS`` variable in environment variables. E.g. Address1;Address2 (; separate values).
 
-## Stop the Services
+For local development following are the default mnemonic phrases that get funded:
+* travel upgrade inside soda birth essence junk merit never twenty system opinion
+* hover harsh text dice wealth pill across trade soccer olive view acquire
+* damp comfort scan couple absurd enter slogan cheap ketchup print syrup hurdle one document diamond
+* notable rose silver indicate wreck mean raise together jar fish seat air
+* lens release coil rain forward lemon cube satisfy inject visa ring segment
 
-To stop the Bitcoin Computer Node run
+
+To stop the Bitcoin Computer Node run:
 
 ```shell
 yarn down
 ```
 
-To stop the Bitcoin Computer Node, reset the database, delete all blockchain data, and stop all docker containers, run the following command
+To stop the Bitcoin Computer Node, reset the database, delete all blockchain data, and stop all docker containers, run the following command:
 
 ```shell
 yarn reset
 ```
 
-## Syncing in parallel
+<!--
+Install docker
 
-If your machine has more than 4 cores you can run the sync process in parallel to shorten the synchronization time. This is only required on testnet and mainnet. First, run the services ```db```, ```node``` and ```bcn``` in separated terminal windows.
+```shell
+yarn install-docker
+```
+-->
+## Syncing a node on ```testnet``` or ```mainnet``` network modes
+
+We provide an easy to run way to sync a Litecoin/Bitcoin node on ```testnet``` or ```mainnet``` network modes.
+With the ```-t``` flag you can initiate the ```db```, ```node``` and ```bcn``` services in separated processes (note the dash before the service name):
 
 ```shell
 yarn up -t -db
@@ -85,28 +117,45 @@ yarn up -t -node
 yarn up -t -bcn
 ```
 
-Then launch the ```sync``` process in parallel by using the ```-cpus``` flag to indicate the number of cores of your machine.
+The synchronization process is carried out syncing all the blocks for computing the balances. The ```sync``` process can be launched sequentially or in parallel, using all your available cores to reduce the hole computation times. 
+
+To launch the ```sync``` process sequentially run the following command:
 
 ```shell
-yarn up -t -sync -cpus 16
+yarn up -t -sync
 ```
 
-The ```sync``` process can be stopped at any time. When you restart the process, it will continue from the last block processed. 
+To run the synchronization in parallel you need to launch different ```worker``` sync processes, indicating their ```workerId``` and the total number of processes ```numWorkers```. As an example, you can launch the following commands in different shell terminals, using 3 processes in charge of the synchronization process:
 
-### Times and Costs Estimates
+```shell
+yarn up -t -sync --workerId 1 --numWorkers 3
+yarn up -t -sync --workerId 2 --numWorkers 3
+yarn up -t -sync --workerId 3 --numWorkers 3
+```
 
-The following table shows the estimated times and costs for syncing a Litecoin node on ```testnet```. The costs are estimated using an AWS EC2 instance [prices](https://aws.amazon.com/ec2/pricing/on-demand/). All experiments were run using a 50GB SSD storage.
+Finally, you will need to run the sync service in charge of synchronizing all the Bitcoin-Computer non standard transactions. For this purpose, run an extra sync service with another ```workerId``` number, and with the flag ```--nonStandard``` set to ```true```, like in the following command:
+
+```shell
+yarn up -t -sync --workerId 4 --nonStandard true
+```
+
+The ```sync``` process can be stopped at any time. When you restart the process, it will continue from the last block processed. Once the ```sync``` process is reaches the last block, you can stop them, or let them continue running in the background.
+
+### Times and costs estimation for syncing a node on ```testnet``` using AWS EC2 instance
+
+The following table shows the estimated times and costs for syncing a Litecoin node on ```testnet``` network mode. The costs are estimated using an AWS EC2 instance [prices](https://aws.amazon.com/ec2/pricing/on-demand/). The sync type column specifies how many ```sync``` processes are involved. When the synchronization type is sequential, only one ```sync``` instance is used. When the synchronization type is parallel, the number of ```sync``` instances refers to the number of workers used.
 
 
-| CPUs | RAM  | Sync Time | Monthly Costs  |
-|------|------|-----------|----------------|
-| 2    | 16GB | 28h       | 66.82 USD      |
-| 4    | 16GB | 10h 30m   | 108.28 USD     |
-| 8    | 32GB | 7h 10m    | 239.62 USD     |
-| 16   | 32GB | 4h 44m    | 440.64 USD     |
+| CPUs  | Sync Type | Num Sync Workers | RAM |  SSD |  Sync Time | Approximate Monthly Costs  |
+|---|---|---|---|---|---|---|
+| 2 | sequential | 1 | 16GB | 50 SSD | 28h | 66.82 USD |
+| 4 | parallel | 2 | 16GB | 50 SSD | 10h 30m | 108.28 USD |
+| 8 | parallel | 6 |32GB | 50 SSD | 7h 10m | 239.62 USD  |
+| 16 | parallel | 14 |32GB | 50 SSD | 4h 44m | 440.64 USD  |
 
 
-<!-- ## Deployment to AWS over Fargate
+
+## Deployment to AWS over Fargate
 
 ### Requirements
 To deploy the Bitcoin Computer Node on AWS you need the following:
@@ -198,6 +247,8 @@ docker context use default
 BUCKET=<bucket-name>
 ```
 
+<!-- 11. TODO: security-groups, inbound/outbound rules for the default VPC and EFS -->
+
 ### The deploy command
 Once the steps above are done, switch to the ECS context created in step 1. and run the following command to launch the Bitcoin Computer Node on AWS. The deploy will create several volumes in the Amazon Elastic File System (EFS) service. The volumes are not removed unless you explicitly remove them, and are only removed if they are not linked to any running task.
 
@@ -260,25 +311,37 @@ yarn aws-login
 context requires credentials to be passed as environment variables
 ```
 
-3. While the deployment is in the creation state, different types of problems can occur. One of the most common errors seen on the console is getting an EFS error code, which causes the process to be suspended and the deployment to be into a "delete in progress" state. If the error obtained is the following: "TaskFailedToStart: ResourceInitializationError: failed to invoke EFS utils commands to set up EFS volumes: stderr: b'mount.nfs4: Connection reset by peer' : unsuccessful EFS utils command execution; code: 32", it is recommended to remove all the unlinked elastic file system volumes (if they do not contain relevant information) and run again the deployment. 
+3. While the deployment is in the creation state, different types of problems can occur. One of the most common errors seen on the console is getting an EFS error code, which causes the process to be suspended and the deployment to be into a "delete in progress" state. If the error obtained is the following: "TaskFailedToStart: ResourceInitializationError: failed to invoke EFS utils commands to set up EFS volumes: stderr: b'mount.nfs4: Connection reset by peer' : unsuccessful EFS utils command execution; code: 32", it is recommended to remove all the unlinked elastic file system volumes (if they do not contain relevant information) and run again the deployment.
 
 ## Beta Warning
 
 This software has been carefully developed over four years by a qualified team. However it has not been security reviewed and we cannot guarantee the absence of bugs. Bugs can lead to the loss of funds. We do not recommend to use this software in production yet. Use at your own risk.
 
-We will remove the beta-tag once we have completed a security review. -->
+We will remove the beta-tag once we have completed a security review.
 
 ## Price
 
-The Bitcoin Computer will be free forever on testnet. 
+### Testnet
 
-The fees for the Bitcoin Computer are exactly the same as the miners fees. For example, if the miner transaction fees is $0.01, then you will pay $0.02: one cent to the miners, and one cent to support the development of the Bitcoin Computer.
+The Bitcoin Computer will be free forever on testnet.
+
+### Mainnet
+
+You can run an application on mainnet using your own [Bitcoin Computer Node](https://www.npmjs.com/package/bitcoin-computer-node). The Bitcoin Computer charges either the dust limit or the sum of
+* 0.1% of the amount being sent,
+* a fixed-low-fee (as defined below) per smart object creation and update. This fee applies to nested objects, so if you update a smart object an one of it's sub-objects you have to pay two fixed-low-fee's. The fee does not apply to objects that can be garbage collected.
+
+The fixed-low-fee is calibrated to be around one USD cent on average. It depends on the chain. Specifically
+* on LTC the fixed-low-fee is 8000 satoshi
+* on BCH the fixed-low-fee is 2700 satoshi
+* on DOGE the fixed-low-fee is 7000000 satoshi
+* on BTC the fixed-low-fee is 22 satoshi
+
+This percentage is baked into every version of the Bitcoin Computer. All fees are automatically computed and collected by the Bitcoin Computer software. No action is required from the developer in order to pay the fees.
 
 
 ## Contributions
 
 We are currently supporting LTC. Contributions are welcome. We have set up a system to add support for BTC, DOGE and BCH, but it is not completed yet. See the chain-setup folder for details. If you can get it to work on a different currency, please let us know and create a new pull request.
-
-## Getting Help
 
 If you have any questions, please let us know on our <a href="https://t.me/thebitcoincomputer">Telegram group</a> or on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.

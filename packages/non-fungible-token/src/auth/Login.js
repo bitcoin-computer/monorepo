@@ -41,7 +41,7 @@ function Login(props) {
       <div className="py-12 px-12 bg-white rounded-2xl border">
         <div>
           <h1 className="text-3xl font-bold text-center mb-4 cursor-pointer">
-            Litecoin Art
+            LiteArt
           </h1>
         </div>
         <div className="space-y-4">

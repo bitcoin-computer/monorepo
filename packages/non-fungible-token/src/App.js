@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
 import ArtworkForm from "./component/artworks/artworkForm";
-import Artworks from "./component/artworks/artworks";
-import Navbar from "./component/navbar/navbar";
+import AllArtworks from "./component/artworks/allArtworks";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { RequireAuth } from "./common/RequireAuth";
 import Login from "./auth/Login";
 import ArtworkDetails from "./component/artworks/artworkDetails";
+import NavbarWrapper from "./component/navbar/navbarWrapper";
 
 const getConf = (network) => {
   if (network === "testnet")
@@ -25,9 +25,11 @@ const getConf = (network) => {
 function App() {
   const [config] = useState({
     chain: "LTC",
-    ...getConf("testnet"),
+    ...getConf("regtest"),
   });
   // travel upgrade inside soda birth essence junk merit never twenty system opinion
+  // hover harsh text dice wealth pill across trade soccer olive view acquire
+  // damp comfort scan couple absurd enter slogan cheap ketchup print syrup hurdle one document diamond
   const [computer, setComputer] = useState(
     new Computer({
       ...config,
@@ -35,10 +37,12 @@ function App() {
     })
   );
 
+  const [publicKey, setPublicKey] = useState("");
+
   return (
     <div>
       <BrowserRouter>
-        <Navbar computer={computer} />
+        <NavbarWrapper computer={computer} setPublicKey={setPublicKey} />
         <Routes>
           <Route
             path="/auth/login"
@@ -55,7 +59,12 @@ function App() {
           </Route>
 
           <Route path="/" element={<RequireAuth redirectTo="/auth/login" />}>
-            <Route path="/" element={<Artworks computer={computer} />} />
+            <Route
+              path="/"
+              element={
+                <AllArtworks publicKey={publicKey} computer={computer} />
+              }
+            />
           </Route>
 
           <Route

@@ -5,6 +5,7 @@
 import argparse
 import json
 import subprocess
+from subprocess import Popen
 
 from aws import EXPORT_CREDENTIALS
 
@@ -36,18 +37,31 @@ serviceGroup.add_argument('-node', action="store_const", dest="service", const='
 
 parser.set_defaults(service='')
 
+parser.add_argument('--workerId', dest="workerId",type=int, default=1)
+parser.add_argument('--numWorkers', dest="numWorkers",type=int, default=1)
+parser.add_argument('--nonStandard', dest="nonStandard",default='false')
 
 args = parser.parse_args()
 
-
 print(args)
 
-commandLine = 'docker compose -f docker-compose.yml -f chain-setup/'+args.chain+'-'+args.network+'/docker-compose-local-'+args.chain+'-'+args.network+'.yml up {0}'.format(args.service)
+commandLine = ' docker compose -f docker-compose.yml -f chain-setup/'+args.chain+'-'+args.network+'/docker-compose-local-'+args.chain+'-'+args.network+'.yml '
 
+print(commandLine)
 # ltc and regtest are the default
 if(args.cloud == 'local'):
-    subprocess.run(
-        ['sh', '-c', commandLine])
+    if(args.network == 'regtest'):
+        subprocess.run(
+            ['sh', '-c', commandLine+' up {0}'.format(args.service)]) 
+    else:
+        # testnet or mainnet
+        if(args.service != 'sync'):
+            subprocess.run(
+                ['sh', '-c', commandLine+' up {0}'.format(args.service)]) 
+            
+        if(args.service == 'sync'):            
+            subprocess.run(
+                ['sh', '-c', 'export SYNC_NON_STANDARD='+args.nonStandard+' WORKER_ID='+str(args.workerId)+' && export NUM_WORKERS='+str(args.numWorkers)+' && '+ commandLine+' run sync']) 
 else:
     projectName = subprocess.check_output("grep PROJECT_NAME .env.aws | cut -d '=' -f2", shell=True).decode("utf-8").strip()
     print('AWS projectName {0} '.format(projectName))

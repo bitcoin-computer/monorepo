@@ -13,14 +13,36 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE TABLE IF NOT EXISTS
   "NonStandard" (
+    "lastUpdated" timestamp default CURRENT_TIMESTAMP not null,
     "rev" VARCHAR(70) NOT NULL PRIMARY KEY REFERENCES "Output"("rev") ON DELETE RESTRICT,
     "id" VARCHAR(70) NOT NULL,
     "publicKeys" VARCHAR(66)[],
     "classHash" VARCHAR(64)
   );
 
+CREATE OR REPLACE FUNCTION triggerSetTimestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW."lastUpdated" = CURRENT_TIMESTAMP;
+  RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE OR REPLACE TRIGGER updateNonStandardLastUpdated
+  BEFORE UPDATE
+  ON
+    "NonStandard"
+  FOR EACH ROW
+EXECUTE PROCEDURE triggerSetTimestamp();
+
 CREATE UNIQUE INDEX "NonStandardUniqueIndex"
 ON "NonStandard"("id");
+
+CREATE INDEX "NonStandardPublicKeysIndex"
+ON "NonStandard"("publicKeys");
+
+CREATE INDEX "NonStandardClassHashIndex"
+ON "NonStandard"("classHash");
 
 CREATE TABLE IF NOT EXISTS
   "User" (
@@ -36,19 +58,9 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE TABLE IF NOT EXISTS
   "SyncStatus" (
-    "oneRowId" bool PRIMARY KEY DEFAULT TRUE,
     "syncedHeight" INTEGER NOT NULL,
-    "bitcoindSyncedHeight" INTEGER NOT NULL,
-    "bitcoindSyncedProgress" DECIMAL(10,9) NOT NULL,
-    CONSTRAINT "OneRowUni" CHECK ("oneRowId")
+    "workerId" INTEGER NOT NULL PRIMARY KEY
   );
-INSERT INTO
-  "SyncStatus" (
-    "syncedHeight",
-    "bitcoindSyncedHeight",
-    "bitcoindSyncedProgress"
-  )
-  VALUES (-1, -1, 0);
 
 CREATE VIEW "Utxos" AS  
 SELECT "rev", "address", "satoshis", "scriptPubKey" 

@@ -5,10 +5,12 @@ services:
     volumes:
       - ./chain-setup/ltc-testnet/db-data:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
+    restart: always
   node:
     image: bcdb/litecoind:0.21
     networks:
       - bitcoin
+    restart: always
     command:
       [
         "litecoind",
@@ -27,16 +29,17 @@ services:
         "-wallet=${DEFAULT_WALLET}"
       ]
     ports:
-      - 19335:19335
+      - 19333:19333
       - 19332:19332
       - 28332:28332
     volumes:
       - ./chain-setup/ltc-testnet/blockchain-data:/home/litecoin/.litecoin
   bcn:
-    image: bcdb/bcn:0.9.12
-    # image: bitcoin-computer-node
-    # build: .
+    #image: bcdb/bcn:0.9.12
+    image: bitcoin-computer-node
+    build: .
     env_file: .env
+    restart: always
     environment:
       - BCN_ENV=prod
       - RPC_HOST=node
@@ -50,9 +53,10 @@ services:
       - node
   sync:
     command: npm run sync
-    image: bcdb/bcn:0.9.12
-    # image: bitcoin-computer-node
+    # image: bcdb/bcn:0.9.12
+    image: bitcoin-computer-node
     env_file: .env
+    restart: always
     depends_on:
       - db
       - node
@@ -69,6 +73,11 @@ services:
       - RPC_PROTOCOL=http
       - RPC_USER=${RPC_USER}
       - RPC_PASSWORD=${RPC_PASSWORD}
+      - WORKER_ID=${WORKER_ID}
+      - NUM_WORKERS=${NUM_WORKERS}
+      - SYNC_NON_STANDARD=${SYNC_NON_STANDARD}
+      - BC_START_HEIGHT=2500000
     networks:
       - bitcoin
       - bcn
+  
