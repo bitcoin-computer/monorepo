@@ -4,11 +4,12 @@
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "private": true,
   "type": "module",
+  "main": "build/src/brc721Wallet.js",
   "scripts": {
     "start": "node build/src/main.js",
     "clean": "rimraf coverage build tmp",
     "prebuild": "npm run lint",
-    "build": "tsc -p tsconfig.release.json",
+    "build": "tsc -p tsconfig.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "lint": "eslint --fix . --ext .ts,.tsx",
     "test": "mocha --config .mocharc.json",

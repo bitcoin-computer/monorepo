@@ -7,13 +7,8 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "lib": [
-      "esnext",
-      "DOM"
-    ]
+    "outDir": "build",
+    "lib": ["esnext", "DOM"]
   },
-  "include": [
-    "src/**/*",
-    "test/**/*"
-  ]
+  "include": ["src/**/*", "test/**/*"]
 }
