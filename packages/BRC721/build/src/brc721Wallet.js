@@ -9,14 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { BRC721 } from './brc721';
 export class BRC721Wallet {
-    constructor(computer) {
+    constructor(computer, contract = BRC721) {
         this.computer = computer;
+        this.contract = contract;
     }
     balanceOf(publicKey) {
         return __awaiter(this, void 0, void 0, function* () {
-            const revs = yield this.computer.queryRevs({ publicKey, contract: BRC721 });
+            const revs = yield this.computer.queryRevs({ publicKey, contract: this.contract });
             const nfts = yield Promise.all(revs.map((rev) => this.computer.sync(rev)));
-            return BRC721.balanceOf(nfts);
+            return this.contract.balanceOf(nfts);
         });
     }
     ownerOf(tokenId) {
@@ -33,9 +34,9 @@ export class BRC721Wallet {
             yield obj.transfer(to);
         });
     }
-    mint(to, name, symbol) {
+    mint(to, name, symbol, opts = []) {
         return __awaiter(this, void 0, void 0, function* () {
-            const nft = yield this.computer.new(BRC721, [to, name, symbol]);
+            const nft = yield this.computer.new(this.contract, [to, name, symbol, ...opts]);
             return nft;
         });
     }

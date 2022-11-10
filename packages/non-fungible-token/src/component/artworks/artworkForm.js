@@ -16,6 +16,7 @@ function ArtworkForm(props) {
   const [success, setSuccess] = useState(false);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  console.log("creating");
   const [brc721Wallet] = useState(new BRC721Wallet(computer));
 
   const handleSubmit = async (evt) => {

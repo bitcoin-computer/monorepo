@@ -20,8 +20,22 @@ const opts = {
     // url: 'http://127.0.0.1:3000',
     // network: 'regtest',
 };
-describe('BRC721', () => {
-    describe('Constructor', () => {
+class ExtentedBRC721 {
+    constructor(to, name, symbol, url) {
+        this._owners = [to];
+        this.name = name;
+        this.symbol = symbol;
+        this.url = url;
+    }
+    transfer(to) {
+        this._owners = [to];
+    }
+    static balanceOf(nfts) {
+        return nfts.length;
+    }
+}
+describe('BRC721Wallet', () => {
+    describe('BRC721 Constructor', () => {
         it('Should create a new BRC721 object', () => __awaiter(void 0, void 0, void 0, function* () {
             const nft = new BRC721('to', 'name', 'symbol');
             expect(nft).not.to.be.undefined;
@@ -32,49 +46,67 @@ describe('BRC721', () => {
             });
         }));
     });
-    describe('mint', () => {
-        it('Should mint tokens', () => __awaiter(void 0, void 0, void 0, function* () {
-            const computer = new Computer(opts);
-            const brc721 = new BRC721Wallet(computer);
-            const publicKey = brc721.computer.getPublicKey();
-            const rev = yield brc721.mint(publicKey, 'name', 'symbol');
-            expect(rev).not.to.be.undefined;
-            expect(typeof rev).to.eq('object');
+    describe('ExtentedBRC721 Constructor', () => {
+        it('Should create a new ExtentedBRC721 object', () => __awaiter(void 0, void 0, void 0, function* () {
+            const nft = new ExtentedBRC721('to', 'name', 'symbol', 'www.test.com');
+            expect(nft).not.to.be.undefined;
+            expect(nft).to.deep.eq({
+                name: 'name',
+                symbol: 'symbol',
+                _owners: ['to'],
+                url: 'www.test.com',
+            });
         }));
     });
-    describe('balanceOf', () => {
-        it('Should computer the balance', () => __awaiter(void 0, void 0, void 0, function* () {
-            const computer = new Computer(opts);
-            const brc721 = new BRC721Wallet(computer);
-            const publicKey = computer.getPublicKey();
-            brc721.mint(publicKey, 'name', 'symbol');
-            expect(brc721).not.to.be.undefined;
-            const balance = yield brc721.balanceOf(publicKey);
-            expect(balance).to.be.greaterThanOrEqual(1);
-        }));
-    });
-    describe('transfer', () => {
-        it('Should transfer a token', () => __awaiter(void 0, void 0, void 0, function* () {
-            const computer = new Computer(opts);
-            const computer2 = new Computer();
-            const brc721 = new BRC721Wallet(computer);
-            const publicKey = brc721.computer.getPublicKey();
-            const token = yield brc721.mint(publicKey, 'name', 'symbol');
-            const publicKey2 = computer2.getPublicKey();
-            yield brc721.transferTo(publicKey2, token._id);
-            const res = yield brc721.balanceOf(publicKey);
-            expect(res).to.be.greaterThanOrEqual(1);
-        }));
-    });
-    describe('ownerOf', () => {
-        it('Should computer the owner', () => __awaiter(void 0, void 0, void 0, function* () {
-            const computer = new Computer(opts);
-            const brc721 = new BRC721Wallet(computer);
-            const publicKey = computer.getPublicKey();
-            const token = yield brc721.mint(publicKey, 'name', 'symbol');
-            expect(brc721).not.to.be.undefined;
-            const owners = yield brc721.ownerOf(token._id);
-            expect(owners.length).to.be.greaterThanOrEqual(1);
-        }));
+    const runs = [
+        { contract: BRC721, extendedProps: [] },
+        { contract: ExtentedBRC721, extendedProps: ['www.test.com'] },
+    ];
+    runs.forEach(({ contract, extendedProps }) => {
+        describe(`${contract.name} mint`, () => {
+            it('Should mint tokens', () => __awaiter(void 0, void 0, void 0, function* () {
+                const computer = new Computer(opts);
+                const brc721 = new BRC721Wallet(computer, contract);
+                const publicKey = brc721.computer.getPublicKey();
+                const rev = yield brc721.mint(publicKey, 'name', 'symbol', extendedProps);
+                expect(rev).not.to.be.undefined;
+                expect(typeof rev).to.eq('object');
+            }));
+        });
+        describe(`${contract.name} balanceOf`, () => {
+            it('Should compute the balance', () => __awaiter(void 0, void 0, void 0, function* () {
+                const computer = new Computer(opts);
+                const brc721 = new BRC721Wallet(computer, contract);
+                const publicKey = computer.getPublicKey();
+                yield brc721.mint(publicKey, 'name', 'symbol', extendedProps);
+                expect(brc721).not.to.be.undefined;
+                const balance = yield brc721.balanceOf(publicKey);
+                expect(balance).to.be.greaterThanOrEqual(1);
+            }));
+        });
+        describe(`${contract.name} transfer`, () => {
+            it('Should transfer a token', () => __awaiter(void 0, void 0, void 0, function* () {
+                const computer = new Computer(opts);
+                const computer2 = new Computer();
+                const brc721 = new BRC721Wallet(computer, contract);
+                const publicKey = brc721.computer.getPublicKey();
+                const token = yield brc721.mint(publicKey, 'name', 'symbol', extendedProps);
+                const publicKey2 = computer2.getPublicKey();
+                yield brc721.transferTo(publicKey2, token._id);
+                const res = yield brc721.balanceOf(publicKey);
+                expect(res).to.be.greaterThanOrEqual(1);
+            }));
+        });
+        describe(`${contract.name} ownerOf`, () => {
+            it('Should computer the owner', () => __awaiter(void 0, void 0, void 0, function* () {
+                const computer = new Computer(opts);
+                const brc721 = new BRC721Wallet(computer, contract);
+                const publicKey = computer.getPublicKey();
+                const token = yield brc721.mint(publicKey, 'name', 'symbol', extendedProps);
+                expect(brc721).not.to.be.undefined;
+                const owners = yield brc721.ownerOf(token._id);
+                expect(owners.length).to.be.greaterThanOrEqual(1);
+            }));
+        });
     });
 });

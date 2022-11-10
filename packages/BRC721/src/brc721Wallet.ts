@@ -9,15 +9,17 @@ interface IBRC721Wallet {
 
 export class BRC721Wallet implements IBRC721Wallet {
   computer: any
+  contract: any
 
-  constructor(computer: any) {
+  constructor(computer: any, contract: any = BRC721) {
     this.computer = computer
+    this.contract = contract
   }
 
   async balanceOf(publicKey: string): Promise<number> {
-    const revs = await this.computer.queryRevs({ publicKey, contract: BRC721 })
-    const nfts: BRC721[] = await Promise.all(revs.map((rev) => this.computer.sync(rev)))
-    return BRC721.balanceOf(nfts)
+    const revs = await this.computer.queryRevs({ publicKey, contract: this.contract })
+    const nfts: any[] = await Promise.all(revs.map((rev) => this.computer.sync(rev)))
+    return this.contract.balanceOf(nfts)
   }
 
   async ownerOf(tokenId: string): Promise<string[]> {
@@ -32,8 +34,8 @@ export class BRC721Wallet implements IBRC721Wallet {
     await obj.transfer(to)
   }
 
-  async mint(to: string, name: string, symbol: string): Promise<BRC721> {
-    const nft = await this.computer.new(BRC721, [to, name, symbol])
+  async mint(to: string, name: string, symbol: string, opts: any[] = []): Promise<any> {
+    const nft = await this.computer.new(this.contract, [to, name, symbol, ...opts])
     return nft
   }
 }

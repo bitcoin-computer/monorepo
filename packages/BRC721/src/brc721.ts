@@ -1,3 +1,7 @@
+export interface IBRC721 {
+  transfer(to: string)
+}
+
 export class BRC721 {
   name: string
   symbol: string
@@ -14,10 +18,6 @@ export class BRC721 {
 
   transfer(to: string) {
     this._owners = [to]
-  }
-
-  mint(to: string) {
-    return new BRC721(to, this.name, this.symbol)
   }
 
   static balanceOf(nfts: BRC721[]) {
