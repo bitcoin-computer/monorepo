@@ -60,7 +60,7 @@ function ArtworkForm(props) {
   return (
     <div className="mt-36">
       <div className="grid grid-cols-1 gap-4 h-96">
-        <div className="sm:mx-auto sm:w-full pl-40 pr-40">
+        <div className="sm:mx-auto sm:w-full pl-10 pr-10">
           <div className="grid grid-cols-2 gap-4 mb-8">
             <div>
               <h1 className="font-bold text-3xl ">Create a new artwork </h1>

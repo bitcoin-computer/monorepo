@@ -62,13 +62,15 @@ export default function Wallet({ computer, isOpen, setIsOpen }) {
         }
       >
         <article className="relative w-screen max-w-md pb-10 flex flex-col space-y-6 overflow-y-scroll h-full">
-          <div className="flex flex-row mb-2">
-            <h2 className="mt-4 float-left font-bold text-xl ml-4">Wallet</h2>
+          <div className="flex w-full mb-2">
+            <h2 className="mt-4 grow float-left font-bold text-xl ml-4">
+              Wallet
+            </h2>
             <GrClose
               onClick={() => {
                 setIsOpen(false);
               }}
-              className="float-right text-2xl mt-4 mr-4 hover:text-slate-500 cursor-pointer"
+              className="justify-end text-2xl mt-4 mr-4 hover:text-slate-500 cursor-pointer"
             ></GrClose>
           </div>
           <div className="p-4 w-full mt-4">

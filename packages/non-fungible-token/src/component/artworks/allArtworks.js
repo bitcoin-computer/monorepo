@@ -97,7 +97,7 @@ function AllArtworks(props) {
   }, [publicKey]);
 
   return (
-    <div className="mt-36">
+    <div className="mt-28">
       {artworks.length === 0 && !loading && (
         <div className="h-96 w-full grid grid-cols-1 gap-4 place-items-center">
           <button
@@ -110,7 +110,7 @@ function AllArtworks(props) {
           </button>
         </div>
       )}
-      <div className="grid grid-cols-1 pl-40 pr-40 h-120">
+      <div className="grid grid-cols-1 pl-10 pr-10 h-120">
         {artworks.length !== 0 && (
           <div>
             <div className="grid grid-cols-2 gap-4 mb-8">

@@ -35,8 +35,7 @@ export default function Navbar({
     <div>
       <nav className="bg-white fixed w-full z-20 top-0 left-0 border-b border-gray-200">
         <div className="!p-0 w-full grid grid-cols-12 items-center mx-auto">
-          <div className="col-span-1"></div>
-          <div className="col-span-1 items-center">
+          <div className="col-span-1 ml-10 items-center">
             <a href="/">
               <img
                 src="/logo.png"
@@ -46,9 +45,9 @@ export default function Navbar({
             </a>
           </div>
           {loggedIn && (
-            <div className="col-span-9">
+            <div className="col-span-11 mr-10">
               <ul className="flex p-4 mt-4 justify-end rounded-lg mt-0 space-x-4 text-sm font-medium bg-white">
-                <li>
+                <li className="grow">
                   <div className="relative mr-8">
                     <div class="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
                       <svg
@@ -69,7 +68,7 @@ export default function Navbar({
                     </div>
                     <input
                       type="search"
-                      className="block pl-10 p-4 w-full w-80 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300"
+                      className="block pl-10 p-4 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300"
                       placeholder="Search Public Key"
                       value={publicKeyInput}
                       onChange={(e) => setPublicKeyInput(e.target.value)}
@@ -109,7 +108,7 @@ export default function Navbar({
                   <button
                     onClick={logout}
                     type="button"
-                    className="text-white mt-1 w-auto p-2 h-10 bg-gray-400 hover:bg-gray-500 rounded-lg font-medium text-md"
+                    className="block py-2 pr-4 text-gray-700 text-lg rounded hover:text-gray-900 cursor-pointer"
                   >
                     Log Out
                   </button>
