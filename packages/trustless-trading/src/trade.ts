@@ -20,13 +20,16 @@ export class Token {
 export class Payment {
   _owners: string[]
   _amount: number
+  readonly _id: string
+  readonly _rev: string
+  readonly _root: string
   constructor(to: string, satoshis: number) {
     this._owners = [to]
     this._amount = satoshis
   }
 
   redeem() {
-    this._amount = 0
+    this._amount = 50000
   }
 }
 
