@@ -36,8 +36,7 @@ export class Payment {
 export class Swap {
   constructor(t: Token, p: Payment) {
     const pOwners = p._owners
-    p._owners = t._owners
-    t._owners = pOwners
-    return 'done'
+    p._owners = [t._owners[0]]
+    t._owners = [pOwners[0]]
   }
 }
