@@ -14,7 +14,7 @@ const opts = {
   // url: 'http://127.0.0.1:3000',
   // network: 'regtest',
 }
-// n2xDdfpcz7cNtvsngdNb4DnJbFzVNG7s3z
+
 describe('Trade', () => {
   it('should create a Javascript object', async () => {
     const sellerComputer = new Computer(opts)
@@ -32,26 +32,15 @@ describe('Trade', () => {
 
     const payment = await buyerComputer.new(Payment, [buyerComputer.getPublicKey(), 100000])
     const tokenToBuyByUser = await buyerComputer.sync(tokenCreatedBySeller._rev)
-    let parsedJson = null
-    try {
-      const swap = await buyerComputer.new(Swap, [tokenToBuyByUser, payment])
-    } catch (error) {
-      parsedJson = error.response.data.txJSON
-    }
+    const swapTx = await buyerComputer.getCreateTx(Swap, [tokenToBuyByUser, payment])
+    sellerComputer.sign(swapTx.tx)
+    await sellerComputer.broadcast(swapTx.tx)
+    const tokenRev = await sellerComputer.getLatestRev(tokenCreatedBySeller._id)
+    const paymentRev = await sellerComputer.getLatestRev(payment._id)
 
-    try {
-      const transaction = new Transaction().fromObject(parsedJson)
-      sellerComputer.sign(transaction)
-      await sellerComputer.sendTx(transaction)
-      const tokenRev = await sellerComputer.getLatestRev(tokenCreatedBySeller._id)
-      const paymentRev = await sellerComputer.getLatestRev(payment._id)
-
-      const updatedToken = await sellerComputer.sync(tokenRev)
-      const updatedPayment = await sellerComputer.sync(paymentRev)
-      expect(sellerComputer.getPublicKey()).eq(updatedPayment._owners[0])
-      expect(buyerComputer.getPublicKey()).eq(updatedToken._owners[0])
-    } catch (e) {
-      console.log(e)
-    }
+    const updatedToken = await sellerComputer.sync(tokenRev)
+    const updatedPayment = await sellerComputer.sync(paymentRev)
+    expect(sellerComputer.getPublicKey()).eq(updatedPayment._owners[0])
+    expect(buyerComputer.getPublicKey()).eq(updatedToken._owners[0])
   })
 })

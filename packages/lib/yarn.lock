@@ -1194,7 +1194,14 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node16/-/node16-1.0.3.tgz#472eaab5f15c1ffdd7f8628bd4c4f753995ec79e"
   integrity sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==
 
-"@types/chai@^4.3.1":
+"@types/chai-as-promised@^7.1.5":
+  version "7.1.5"
+  resolved "https://registry.yarnpkg.com/@types/chai-as-promised/-/chai-as-promised-7.1.5.tgz#6e016811f6c7a64f2eed823191c3a6955094e255"
+  integrity sha512-jStwss93SITGBwt/niYrkf2C+/1KTeZCZl1LaeezTlqppAKeoQC7jxyqYuP72sxBGKCIbw7oHgbYssIRzT5FCQ==
+  dependencies:
+    "@types/chai" "*"
+
+"@types/chai@*", "@types/chai@^4.3.3":
   version "4.3.3"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.3.tgz#3c90752792660c4b562ad73b3fbd68bf3bc7ae07"
   integrity sha512-hC7OMnszpxhZPduX+m+nrx+uFoLkWOMiR4oa/AZF3MuSETYTZmFfJAHqZEM8MVlvfG7BEUcgvtwoCTxBp6hm3g==
@@ -1714,6 +1721,13 @@ chai-exclude@^2.1.0:
   dependencies:
     fclone "^1.0.11"
 
+chai-match-pattern@^1.3.0:
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/chai-match-pattern/-/chai-match-pattern-1.3.0.tgz#cefd4437de465860f4f87922c31049eb9d979104"
+  integrity sha512-DflyfI8lZ56YuYAZMTBPWghjqFQfqY1IR0ZZXrjlGZJuRvtN0TjJMBpLsrMfc45kjivXJ06iayuP7lzG6ij1bQ==
+  dependencies:
+    lodash-match-pattern "^2.3.1"
+
 chai@^4.3.6:
   version "4.3.6"
   resolved "https://registry.yarnpkg.com/chai/-/chai-4.3.6.tgz#ffe4ba2d9fa9d6680cc0b370adae709ec9011e9c"
@@ -1748,6 +1762,14 @@ check-error@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/check-error/-/check-error-1.0.2.tgz#574d312edd88bb5dd8912e9286dd6c0aed4aac82"
   integrity sha512-BrgHpW9NURQgzoNyjfq0Wu6VFO6D7IZEmJNdtgNqpzGG8RuNFHt2jQxWlAs4HMe119chBnv+34syEZtc6IhLtA==
+
+checkit@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/checkit/-/checkit-0.7.0.tgz#14979abc93018346bfcfdcbabc19ab54c0bfd74a"
+  integrity sha512-QgiWB8gMdF/CbmWyuxCk+f2MPQe0G1DfJfHCTbrfZlY3FnJWdnW+EGsRJctcYz/IrXxPYJmjRjdgmKUkyIZl/Q==
+  dependencies:
+    inherits "^2.0.1"
+    lodash "^4.0.0"
 
 chokidar@3.5.3, chokidar@^3.5.2:
   version "3.5.3"
@@ -2653,7 +2675,7 @@ hash.js@^1.0.0, hash.js@^1.0.3, hash.js@^1.1.7:
     inherits "^2.0.3"
     minimalistic-assert "^1.0.1"
 
-he@1.2.0:
+he@1.2.0, he@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/he/-/he-1.2.0.tgz#84ae65fa7eafb165fddb61566ae14baf05664f0f"
   integrity sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==
@@ -2975,6 +2997,23 @@ locate-path@^6.0.0:
   dependencies:
     p-locate "^5.0.0"
 
+lodash-checkit@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/lodash-checkit/-/lodash-checkit-2.4.1.tgz#8b09c6b359a5d4de86f752ff9c231f1db5d23fd4"
+  integrity sha512-OAg5CqY04/dnsO8izxXqlleuj7z/dOk6yV0pm0TVtRaUwG5v2PGw4XWSIG/dLK0UWYk7g0/TCk8OCf50oVwv6w==
+  dependencies:
+    checkit "^0.7.0"
+    lodash "^4.17.21"
+
+lodash-match-pattern@^2.3.1:
+  version "2.3.1"
+  resolved "https://registry.yarnpkg.com/lodash-match-pattern/-/lodash-match-pattern-2.3.1.tgz#d38f455a8b310bd91f7b2b4378297102a9b473c8"
+  integrity sha512-dpltpxoTqs94gGFm24VwHDyFh3/eNtqNjKrlnifIBLtnzYq0nAlNM6BIeLdGAfCWC/BwNtiLL1eKZTQpLVnY6A==
+  dependencies:
+    chalk "^4.1.0"
+    he "^1.2.0"
+    lodash-checkit "^2.4.1"
+
 lodash.debounce@^4.0.8:
   version "4.0.8"
   resolved "https://registry.yarnpkg.com/lodash.debounce/-/lodash.debounce-4.0.8.tgz#82d79bff30a67c4005ffd5e2515300ad9ca4d7af"
@@ -2985,7 +3024,7 @@ lodash.merge@^4.6.2:
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.2.tgz#558aa53b43b661e1925a0afdfa36a9a1085fe57a"
   integrity sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ==
 
-lodash@^4.17.20:
+lodash@^4.0.0, lodash@^4.17.20, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
