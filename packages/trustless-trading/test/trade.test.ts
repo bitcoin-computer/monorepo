@@ -33,8 +33,8 @@ describe('Trade', () => {
     const payment = await buyerComputer.new(Payment, [buyerComputer.getPublicKey(), 100000])
     const tokenToBuyByUser = await buyerComputer.sync(tokenCreatedBySeller._rev)
     const swapTx = await buyerComputer.getCreateTx(Swap, [tokenToBuyByUser, payment])
-    sellerComputer.sign(swapTx.tx)
-    await sellerComputer.broadcast(swapTx.tx)
+    sellerComputer.sign(swapTx)
+    await sellerComputer.broadcast(swapTx)
     const tokenRev = await sellerComputer.getLatestRev(tokenCreatedBySeller._id)
     const paymentRev = await sellerComputer.getLatestRev(payment._id)
 
