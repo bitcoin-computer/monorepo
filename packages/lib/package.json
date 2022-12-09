@@ -1,7 +1,9 @@
 {
   "name": "@bitcoin-computer/lib",
-  "version": "0.10.1",
-  "description": "Client Side Library for the Bitcoin Computer",
+  "version": "0.11.0-beta.0",
+  "private": false,
+  "description": "Smart Contracts for Bitcoin",
+  "license": "CC-BY-ND-4.0",
   "contributors": [
     "Clemens Ley",
     "Laura Tardivo",
@@ -11,17 +13,35 @@
     "type": "git",
     "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib"
   },
-  "type": "module",
   "main": "src/bitcoin-computer-lib.es.mjs",
+  "browser": "src/browser.js",
   "homepage": "http://bitcoincomputer.io/",
   "author": {
     "name": "Clemens Ley",
-    "email": "clemens@bitcoincomputer.io"
+    "email": "clemens@bitcoincomputer.io",
+    "url": "https://github.com/bitcoin-computer"
   },
-  "private": false,
-  "license": "CC-BY-ND-4.0",
   "bugs": {
     "url": "https://github.com/bitcoin-computer/monorepo/issues"
+  },
+  "alias": {
+    "buffer": "buffer/index.js",
+    "crypto": "crypto-browserify",
+    "assert": "assert/build/assert.js",
+    "url": "url/url.js",
+    "process": "process/browser.js",
+    "events": "events/events.js",
+    "stream": "stream-browserify",
+    "string_decoder": "string_decoder/lib/string_decoder.js",
+    "querystring": "querystring-es3",
+    "punycode": "punycode/punycode.js"
+  },
+  "targets": {
+    "main": false,
+    "browser": {
+      "context": "browser",
+      "includeNodeModules": {}
+    }
   },
   "engines": {
     "node": ">=16"
@@ -29,32 +49,19 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "scripts": {
-    "start-setup": "node --experimental-specifier-resolution=node --loader ts-node/esm $(grep SETUP_ENTRY .package.paths | cut -d '=' -f2)",
-    "coverage": "npm test -- --coverage",
-    "cp-files": "./scripts/cp-files.sh",
-    "lib-clean": "./scripts/lib-clean.sh",
-    "postcoverage": "open-cli coverage/lcov-report/index.html",
-    "docs": "documentation readme src --section=API",
-    "clean": "rm -fr dist/*",
-    "prebuild": "npm run clean",
-    "build": "npm run rollup",
-    "decls": "tsc -p tsconfig.decls.json",
-    "watch": "npm-watch",
-    "patch": "npm version patch && npm publish",
-    "minor": "npm version minor && npm publish",
-    "major": "npm version major && npm publish",
-    "prepublish-only": "npm run lint && npm test && npm run build",
-    "reinstall": "rm -rf node_modules package-lock.json && npm install",
-    "count": "./scripts/count-errors.sh",
     "test": "./scripts/test.py"
   },
   "dependencies": {
     "@babel/core": "^7.18.0",
-    "@bitcoin-computer/bitcore-mnemonic-ltc": "8.25.42",
+    "@bitcoin-computer/bitcore-mnemonic-ltc": "8.25.44",
     "@endo/static-module-record": "^0.7.4",
+    "@types/chai-as-promised": "^7.1.5",
     "axios": "^0.27.2",
     "bitcoind-rpc": "^0.9.1",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
     "crypto-js": "^4.0.0",
     "dotenv": "^16.0.0",
     "eccrypto": "^1.1.3",
@@ -71,7 +78,7 @@
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-typescript": "^8.0.0",
-    "@types/chai": "^4.3.1",
+    "@types/chai": "^4.3.3",
     "@types/crypto-js": "^4.0.1",
     "@types/eccrypto": "^1.1.1",
     "@types/expect": "^24.3.0",
@@ -79,32 +86,36 @@
     "@types/node": "18.7.14",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
+    "assert": "^2.0.0",
     "babel-eslint": "^10.1.0",
     "bitcoind-rpc": "^0.9.1",
     "chai": "^4.3.6",
     "chai-exclude": "^2.1.0",
+    "chai-match-pattern": "^1.3.0",
     "eslint": "^8.7.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-disable": "^2.0.1",
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "events": "^3.3.0",
     "hash.js": "^1.1.7",
     "husky": "^7.0.4",
     "mocha": "^10.0.0",
     "mock-local-storage": "^1.1.22",
     "npm-watch": "^0.11.0",
+    "parcel": "^2.8.0",
     "prettier": "^2.1.2",
+    "punycode": "^2.1.1",
+    "querystring-es3": "^0.2.1",
     "rollup": "^2.36.1",
     "rollup-plugin-terser": "^7.0.2",
+    "stream-browserify": "^3.0.0",
+    "string_decoder": "^1.3.0",
     "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.0.3"
-  },
-  "watch": {
-    "test": "{src,test}/*.js",
-    "lint": "{src,test}/*.js",
-    "build": "src"
+    "typescript": "^4.7",
+    "url": "^0.11.0"
   },
   "keywords": [
     "Bitcoin",

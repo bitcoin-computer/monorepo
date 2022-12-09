@@ -8,3 +8,4 @@ src/temp
 test/temp
 .env
 errors.txt
+yarn.lock

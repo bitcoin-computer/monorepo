@@ -13,3 +13,5 @@ combined.log
 error.log
 bcn.config.json
 zmqlog.log
+yarn.lock
+scripts/__pycache__
