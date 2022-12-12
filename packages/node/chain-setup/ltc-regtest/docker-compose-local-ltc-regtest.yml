@@ -5,13 +5,14 @@ services:
     volumes:
       - ./chain-setup/ltc-regtest/db-data:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
+    restart: always
   node:
     # healthcheck:
     #  test: ["CMD", "/entrypoint.sh", "bitcoin-cli", "getblockchaininfo"]
     env_file: .env
     networks:
       - bitcoin
-    image: public.ecr.aws/j9i7w6o6/litecoin-docker-images:0.21
+    image: bcdb/litecoind:0.21
     ports:
       # 19444 for regtest, 19333 testnet, 9333 if running on mainnet
       - 19444:19444
@@ -22,6 +23,7 @@ services:
     volumes:
       # using a custom path for data dir
       - ./chain-setup/ltc-regtest/blockchain-data:/home/litecoin/.litecoin
+    restart: always
     command:
       [
         "litecoind",
@@ -54,3 +56,5 @@ services:
       - NETWORK=regtest
       - CHAIN=LTC
       - BCN_URL=http://127.0.0.1:3000
+    restart: always
+
