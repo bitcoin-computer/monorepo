@@ -4,7 +4,7 @@ services:
     image: postgres
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
-    command: ["postgres", "-c", "log_statement=all"]
+    # command: ["postgres", "-c", "log_statement=all"]
     ports:
       - "5432:5432"
     networks:
@@ -32,9 +32,9 @@ services:
       - RPC_PROTOCOL=http
       - RPC_USER=bcn-admin
       - RPC_PASSWORD=kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A=
+    working_dir: /src
     depends_on:
       - db
-    working_dir: /src
     networks:
       - bitcoin
       - bcn

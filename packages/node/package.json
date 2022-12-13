@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.10.1",
+  "version": "0.11.0-beta.1",
   "description": "Server Side Library for the Bitcoin Computer",
   "contributors": [
     "Clemens Ley",
@@ -58,9 +58,9 @@
   },
   "dependencies": {
     "@babel/core": "^7.18.5",
-    "@bitcoin-computer/bitcore-lib-ltc": "^8.25.37",
-    "@bitcoin-computer/bitcore-mnemonic-ltc": "^8.25.40",
-    "@bitcoin-computer/lib": "^0.10.1",
+    "@bitcoin-computer/bitcore-lib-ltc": "8.25.44",
+    "@bitcoin-computer/bitcore-mnemonic-ltc": "8.25.44",
+    "@bitcoin-computer/lib": "^0.11.0-beta.1",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
     "@types/sinon": "^10.0.11",
@@ -83,11 +83,12 @@
     "sinon": "^14.0.0",
     "sinon-chai": "^3.7.0",
     "winston": "^3.3.3",
-    "zeromq": "^6.0.0-beta.6"
+    "zeromq": "6.0.0-beta.6"
   },
   "devDependencies": {
     "@rollup/plugin-babel": "^5.1.0",
     "@rollup/plugin-commonjs": "^22.0.0",
+    "@types/bitcoin-computer__lib": "0.10.0",
     "@types/elliptic": "^6.4.12",
     "@typescript-eslint/eslint-plugin": "^5.2.0",
     "@typescript-eslint/parser": "^5.2.0",
@@ -101,7 +102,6 @@
     "husky": "^7.0.4",
     "mock-express-request": "^0.2.2",
     "mock-express-response": "^0.3.0",
-    "nodemon": "^2.0.6",
     "prettier": "^2.1.2",
     "rollup": "^2.36.1",
     "rollup-plugin-terser": "^7.0.2",
