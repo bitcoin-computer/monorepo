@@ -62,7 +62,7 @@ export default function Wallet({ computer, isOpen, setIsOpen }) {
         }
       >
         <article className="relative w-screen max-w-md pb-10 flex flex-col space-y-6 overflow-y-scroll h-full">
-          <div flex flex-row mb-2>
+          <div className="flex flex-row mb-2">
             <h2 className="mt-4 float-left font-bold text-xl ml-4">Wallet</h2>
             <GrClose
               onClick={() => {
@@ -71,15 +71,15 @@ export default function Wallet({ computer, isOpen, setIsOpen }) {
               className="float-right text-2xl mt-4 mr-4 hover:text-slate-500 cursor-pointer"
             ></GrClose>
           </div>
-          <div class="p-4 w-full mt-4">
-            <h5 class="mb-4 text-md text-center font-medium text-gray-700">
+          <div className="p-4 w-full mt-4">
+            <h5 className="mb-4 text-md text-center font-medium text-gray-700">
               Total Balance
             </h5>
-            <div class="flex flex-row place-items-center justify-center dark:text-black">
-              <span class=" text-center text-2xl font-extrabold">
+            <div className="flex flex-row place-items-center justify-center dark:text-black">
+              <span className=" text-center text-2xl font-extrabold">
                 {balance / 1e8}
               </span>
-              <span class="text-2xl ml-2 font-extrabold">LTC</span>
+              <span className="text-2xl ml-2 font-extrabold">LTC</span>
               <GrRefresh
                 onClick={refreshBalance}
                 className=" text-2xl ml-4 hover:text-slate-500 cursor-pointer"
