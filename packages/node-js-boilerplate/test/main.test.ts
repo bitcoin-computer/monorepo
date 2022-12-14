@@ -34,8 +34,8 @@ describe('Bitcoin Computer', () => {
       mnemonic: 'replace this seed',
 
       // uncomment to run locally
-      url: 'http://127.0.0.1:3000',
-      network: 'regtest',
+      // url: 'http://127.0.0.1:3000',
+      // network: 'regtest',
     })
 
     const counter = await computer.new(Counter)
@@ -51,8 +51,8 @@ describe('Bitcoin Computer', () => {
     const computer = new Computer({
       mnemonic: 'replace this seed',
       // uncomment to run locally
-      url: 'http://127.0.0.1:3000',
-      network: 'regtest',
+      // url: 'http://127.0.0.1:3000',
+      // network: 'regtest',
     })
 
     const counter = await computer.new(Counter)
