@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+// eslint-disable-next-line
 import { Computer, Contract } from '../src/bitcoin-computer-lib.es'
 
 describe('Should work with chai', () => {
@@ -8,7 +9,6 @@ describe('Should work with chai', () => {
   })
 
   it('Should create an smart object with a determined class', async () => {
-
     const computer1 = new Computer()
     const computer2 = new Computer()
 
@@ -18,7 +18,7 @@ describe('Should work with chai', () => {
 
     // Generate 100 blocks for computer1, so computer2 can spend the coinbase output
     await computer2.rpcCall('generatetoaddress', `100 ${computer1.getAddress()}`)
-    
+
     class Counter extends Contract {
       constructor() {
         super()
@@ -28,13 +28,11 @@ describe('Should work with chai', () => {
         this.count += 1
       }
     }
-    const counter = await computer2.new(Counter,[])
+    const counter = await computer2.new(Counter, [])
     expect(counter).to.be.an('object')
     expect(counter.count).eq(0)
 
     await counter.inc()
     expect(counter.count).eq(1)
-
   })
-
 })
