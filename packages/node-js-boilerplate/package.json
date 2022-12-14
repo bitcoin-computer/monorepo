@@ -3,12 +3,8 @@
   "version": "0.10.1",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "scripts": {
-    "start": "node build/src/main.js",
-    "prebuild": "npm run lint",
-    "build": "tsc -p tsconfig.release.json",
     "lint": "eslint --fix . --ext .ts,.tsx",
     "test": "mocha",
-    "test:watch": "jest --watch",
     "types": "tsc --noEmit"
   },
   "type": "module",
