@@ -101,6 +101,7 @@ You may receive an `insufficient balance` error. This is because your wallet doe
 * [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet)
 * [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token)
 * [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token)
+* [Bitcoin Computer Node.js Boilerplate](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate)
 
 ## Support
 
