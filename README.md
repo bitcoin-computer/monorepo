@@ -1,24 +1,24 @@
 # Bitcoin Computer Monorepo
 
-Infrastructure for building Smart Contracts on Litecoin, Bitcoin and other UTXOs-based blockchains.
+A smart contract system for Litecoin and Bitcoin.
 
 ## Smart Contract System
 
-* [Bitcoin Computer Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib): A library for building smart contracts on Litecoin/Bitcoin.
-* [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node): It provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib). It provides the backend infrastructure for running smart contract based applications. It consists of a Litecoin/Bitcoin node, a database for storing index structures and off-chain data, and a web server.
+* [Bitcoin Computer Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib): A client side non-custodial wallet that can read and write transactions encoding smart contracts.
+* [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node): Server side infrastructure to host trustless smart contract based web applications.
 
 ## Standard Smart Contracts
 
-* [BRC20 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC20): A Bitcoin Computer implementation of the ERC20 Fungible Token Standard. See the [documentation](https://docs.bitcoincomputer.io/advanced-examples/fungible-token/) for more information.
-* [BRC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC721): A Bitcoin Computer implementation of the ERC721 Non-Fungible Token Standard on Litecoin/Bitcoin. See the [documentation](https://docs.bitcoincomputer.io/advanced-examples/non-fungible-token/) for more information.
+* [BRC20 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC20): A Bitcoin Computer implementation of the ERC20 Fungible Token Standard.
+* [BRC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC721): A Bitcoin Computer implementation of the ERC721 Non-Fungible Token Standard on Litecoin/Bitcoin.
 
 
 ## Example Applications
 
-* [Chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat)
-* [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet)
-* [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token)
-* [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token)
+* [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet): A simple wallet using the Bitcoin Computer
+* [Chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat): A p2p chat application where messages are communicated over the blockchain.
+* [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token): An application for minting, sending, and storing NFTs
+* [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token): An application for minting, sending, and storing fungible tokens.
 
 ## Get Started
 

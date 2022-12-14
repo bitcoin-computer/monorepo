@@ -1,5 +1,8 @@
 # Bitcoin Chat
 
+A non-custodial LTC web wallet built with [Bitcoin Computer](https://www.bitcoincomputer.io/) and [Create React App](https://create-react-app.dev/).
+
+
 A hackable chat that runs on the blockchain. Intended as a starting point for developers to build on top of.
 
 The chat needs no database backend because all data is stored on the blockchain (currently runs on LTC, testnet). The interface between the chat and the blockchain is provided by [Bitcoin Computer](https://bitcoincomputer.io)

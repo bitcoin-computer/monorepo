@@ -8,11 +8,11 @@ function App() {
       mnemonic:
         "travel upgrade inside soda birth essence junk merit never twenty system opinion",
       chain: "LTC",
-      network: "testnet",
-      url: "https://node.bitcoincomputer.io",
+      // network: "testnet",
+      // url: "https://node.bitcoincomputer.io",
       // to run locally, change network and url:
-      // network: "regtest",
-      // url: "http://127.0.0.1:3000",
+      network: "regtest",
+      url: "http://127.0.0.1:3000",
     })
   );
   const [balance, setBalance] = useState(0);
@@ -69,12 +69,23 @@ function App() {
   return (
     <div className="App">
       <h2>Wallet</h2>
-      <b>Address</b>&nbsp;{computer.getAddress().toString()}
-      <br />
-      <b>Public Key</b>&nbsp;{computer.getPublicKey().toString()}
-      <br />
-      <b>Balance</b>&nbsp;{balance / 1e8} {computer.getChain()}
+
+      <div className="row">
+        <div className="col-25"><b>Address</b></div>
+        <div className="col-75">{computer.getAddress()}</div>
+      </div>
+      <div className="row">
+        <div className="col-25"><b>Public Key</b></div>
+        <div className="col-75">{computer.getPublicKey()}</div>
+      </div>
+
+      <div className="row">
+        <div className="col-25"><b>Balance</b></div>
+        <div className="col-75">{balance / 1e8} {computer.getChain()}</div>
+      </div>
+
       <h3>Send</h3>
+
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-25">
@@ -107,7 +118,10 @@ function App() {
           </div>
         </div>
         <div className="row">
-          <input type="submit" value="Send Litecoin"></input>
+          <div className="col-25">&nbsp;</div>
+          <div className="col-75">
+            <input type="submit" value="Send Litecoin"></input>
+          </div>
         </div>
       </form>
     </div>
