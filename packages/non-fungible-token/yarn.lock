@@ -1086,10 +1086,10 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@bitcoin-computer/bitcore-lib-ltc@^8.25.41":
-  version "8.25.41"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-lib-ltc/-/bitcore-lib-ltc-8.25.41.tgz#0797b88a3c58d9083b9a4e9f56fd5bb91e580bad"
-  integrity sha512-B/vvzEvC2XMr4SZs1LHL8Jc7xdN0ezdqAV7Hl/0QjaX9hle73YDfQDbEF5KNrAPCGBrYBatk1LzG5cX80ngcjQ==
+"@bitcoin-computer/bitcore-lib-ltc@^8.25.44":
+  version "8.25.44"
+  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-lib-ltc/-/bitcore-lib-ltc-8.25.44.tgz#569838a7d755048fd28b48bd558f38b389901387"
+  integrity sha512-MalHnA0fLvDY0dz7dqiQEOtHfItPRkS2udUSgzlU52EqXHluoNdkT/tOT9aXecvEK8yK5q3XAzet3NM4GDCCrw==
   dependencies:
     "@bitcoin-computer/bn.js" "^5.2.3"
     "@bitcoin-computer/elliptic" "^6.5.5"
@@ -1100,12 +1100,12 @@
     lodash "^4.17.20"
     scryptsy "2.1.0"
 
-"@bitcoin-computer/bitcore-mnemonic-ltc@8.25.41":
-  version "8.25.41"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-mnemonic-ltc/-/bitcore-mnemonic-ltc-8.25.41.tgz#9d8478513639bc574710dd0321def6572c21766d"
-  integrity sha512-vbdCRClWvX4UswywqvGzHhWICC3WsT4IL+hkbOIOPzxuXgC8jHfL8mQa/3NhxNzK5Cc78Qm+uRcN9AeAY9/YmA==
+"@bitcoin-computer/bitcore-mnemonic-ltc@8.25.44":
+  version "8.25.44"
+  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-mnemonic-ltc/-/bitcore-mnemonic-ltc-8.25.44.tgz#f948269e42998e3b4134ee8338b869f9de97a2fb"
+  integrity sha512-S8gmYXMdgIvUXcDYw2rtk3Su4NgoZZW/AxbqyMwqEmzAOsGPRk1AjaTr0SMP+wEMZYG6Csp13B1oD377oiLWYQ==
   dependencies:
-    "@bitcoin-computer/bitcore-lib-ltc" "^8.25.41"
+    "@bitcoin-computer/bitcore-lib-ltc" "^8.25.44"
     unorm "^1.4.1"
 
 "@bitcoin-computer/bn.js@^5.2.3":
@@ -1126,16 +1126,19 @@
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-"@bitcoin-computer/lib@0.10.0-beta.3":
-  version "0.10.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/lib/-/lib-0.10.0-beta.3.tgz#05869f414a57b9179b3e3174621d94b38014a871"
-  integrity sha512-3MSL1k45xrLPKCo/po+fkVO6avPYWYfiCckzvt2KT0lzwHbKpx1j50JW4/Dy3ISxxAuCPVD0t1o0rwbCdpM1+A==
+"@bitcoin-computer/lib@0.11.0-beta.2":
+  version "0.11.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@bitcoin-computer/lib/-/lib-0.11.0-beta.2.tgz#706348c89735ec87001369a6593a0bbdb9a0d18f"
+  integrity sha512-FU9MU0ZdVJzSkDLj5nirLL9lAubShN3LExliMadCCuogKI4RiK8AtK+K87oJkLTxfYTLsuH72yBexaqD2pXYBA==
   dependencies:
     "@babel/core" "^7.18.0"
-    "@bitcoin-computer/bitcore-mnemonic-ltc" "8.25.41"
+    "@bitcoin-computer/bitcore-mnemonic-ltc" "8.25.44"
     "@endo/static-module-record" "^0.7.4"
+    "@types/chai-as-promised" "^7.1.5"
     axios "^0.27.2"
     bitcoind-rpc "^0.9.1"
+    buffer "^6.0.3"
+    crypto-browserify "^3.12.0"
     crypto-js "^4.0.0"
     dotenv "^16.0.0"
     eccrypto "^1.1.3"
@@ -1864,6 +1867,18 @@
   integrity sha512-p7ienRMiS41Nu2/igbJxxLDWrSZ0WxM8UQgCeO9KhoVF7cOVFkrKsiDr1EsJIla8vV3oEEjGcz11jc5yimhzZw==
   dependencies:
     "@types/node" "*"
+
+"@types/chai-as-promised@^7.1.5":
+  version "7.1.5"
+  resolved "https://registry.yarnpkg.com/@types/chai-as-promised/-/chai-as-promised-7.1.5.tgz#6e016811f6c7a64f2eed823191c3a6955094e255"
+  integrity sha512-jStwss93SITGBwt/niYrkf2C+/1KTeZCZl1LaeezTlqppAKeoQC7jxyqYuP72sxBGKCIbw7oHgbYssIRzT5FCQ==
+  dependencies:
+    "@types/chai" "*"
+
+"@types/chai@*":
+  version "4.3.4"
+  resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.3.4.tgz#e913e8175db8307d78b4e8fa690408ba6b65dee4"
+  integrity sha512-KnRanxnpfpjUTqTCXslZSEdLfXExwgNxYPdiO2WGUj8+HDjFi8R3k5RVKPeSCzLjCcshCAtVO2QBbVuAV4kTnw==
 
 "@types/connect-history-api-fallback@^1.3.5":
   version "1.3.5"
