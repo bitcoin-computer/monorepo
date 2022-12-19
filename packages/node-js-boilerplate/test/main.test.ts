@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+/* eslint-disable import/no-extraneous-dependencies */
 import chai, { expect } from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
@@ -39,6 +40,7 @@ describe('Bitcoin Computer', () => {
     })
 
     const counter = await computer.new(Counter)
+    // @ts-ignore
     expect(counter).to.matchPattern({
       n: 0,
       _id: _.isString,
@@ -57,6 +59,7 @@ describe('Bitcoin Computer', () => {
 
     const counter = await computer.new(Counter)
     await counter.inc()
+    // @ts-ignore
     expect(counter).to.matchPattern({
       n: 1,
       _id: _.isString,
