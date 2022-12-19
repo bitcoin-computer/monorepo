@@ -8,7 +8,6 @@
     "build": "tsc -p tsconfig.release.json",
     "lint": "eslint --fix . --ext .ts,.tsx",
     "test": "mocha",
-    "test:watch": "jest --watch",
     "types": "tsc --noEmit"
   },
   "type": "module",
