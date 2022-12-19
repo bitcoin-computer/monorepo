@@ -1,5 +1,12 @@
-import { Computer } from 'bitcoin-computer-lib'
-import Counter from '../src/main'
+/* eslint-disable no-unused-expressions */
+/* eslint-disable import/no-extraneous-dependencies */
+import chai, { expect } from 'chai'
+import chaiMatchPattern from 'chai-match-pattern'
+import { Computer } from '@bitcoin-computer/lib'
+import { Counter } from '../src/main'
+
+chai.use(chaiMatchPattern)
+const _ = chaiMatchPattern.getLodashModule()
 
 describe('Bitcoin Computer', () => {
   it('should export a function', () => {
@@ -34,7 +41,8 @@ describe('Bitcoin Computer', () => {
     })
 
     const counter = await computer.new(Counter)
-    expect(counter).toEqual({
+    // @ts-ignore
+    expect(counter).to.matchPattern({
       n: 0,
       _id: expect.any(String),
       _rev: expect.any(String),
@@ -52,7 +60,8 @@ describe('Bitcoin Computer', () => {
 
     const counter = await computer.new(Counter)
     await counter.inc()
-    expect(counter).toEqual({
+    // @ts-ignore
+    expect(counter).to.matchPattern({
       n: 1,
       _id: expect.any(String),
       _rev: expect.any(String),
