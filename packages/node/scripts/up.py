@@ -83,14 +83,15 @@ def main():
             if(args.service == ''):
                 # All services: only run bcn, it will launch the dependencies node and db
                 subprocess.run(
-                    ['sh', '-c', commandLine+' run -d bcn']) 
+                    ['sh', '-c', commandLine+' run -d  -p 3000:3000 bcn']) 
                 # Launch sync in automatic parallel mode
                 runSync(args, commandLine)
             else:
                 # One service at time
+                bcnPortMap = ' -p 3000:3000 ' if args.service == 'bcn' else ''
                 if(args.service == 'db' or args.service == 'node' or args.service == 'bcn'):
                     subprocess.run(
-                        ['sh', '-c', commandLine+' run -d {0}'.format(args.service)]) 
+                        ['sh', '-c', commandLine+' run -d {0} {1}'.format(bcnPortMap, args.service)]) 
                     
                 if(args.service == 'sync'):   
                     runSync(args, commandLine)
