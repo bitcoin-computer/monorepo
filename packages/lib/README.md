@@ -82,10 +82,11 @@ Counter {
 Create file ``index.js``.
 
 ```
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib"; 
 
-class Counter {
+class Counter extends Contract {
   constructor() {
+    super()
     this.n = 0
   }
 
@@ -117,13 +118,12 @@ Create file ``index.html``
 </html>
 ```
 
-Run the following in an empty directory and open your browser at [http://localhost:1234](http://localhost:1234).
+Run the following in an empty directory and open your browser at the defaults [http://localhost:8080](http://localhost:8080).
 
 ```
 npm init -y
-npm i -s @bitcoin-computer/lib
-npm i -g parcel
-parcel index.html
+npm i http-server
+http-server
 ```
 
 ## Fund Your Computer Object

@@ -1,45 +1,54 @@
-# Non-Fungible Token Application
-
-An application for creating, storing and sending non-fungible tokens on Litecoin. Built using the [Bitcoin Computer](https://bitcoin-computer.gitbook.io/docs/).
-
-## Get Started
-
-To run the application on testnet use the following commands. The application will connect to a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#bitcoin-computer-node) provided by BCDB Inc.
-
-````
-yarn install
-yarn start
-````
-
-## Run With Your Own Node
-
-To run your own node, follow the instructions the [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#getting-started). Then change the file [App.js](https://github.com/bitcoin-computer/monorepo/blob/main/packages/non-fungible-token/src/App.js) as shown below.
-
-```javascript
-function App() {
-  const [config] = useState({
-    chain: "LTC",
-    ...getConf("regtest")   // <-- change this line to "testnet"
-  })
-  ...
-```
-
-## Troubleshooting
-
-If you get an error ``"Insuficient balance in address <your address>"``, take a look to the Bitcoin Computer Node [documentation](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet) for how to fund your wallet.
+# Non-Fungible Token
 
 
-## Screenshots
+An application for creating, storing and sending non-fungible tokens on Litecoin. Built using the [Bitcoin Computer](https://bitcoin-computer.gitbook.io/docs/). Also have a look at the [video](http://www.youtube.com/watch?feature=player_embedded&v=SnTwevzmRrs
+).)
 
 ![app image](./public/nft-main-page.png)
 
-## Video
+## Installation
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=SnTwevzmRrs
-" target="_blank"><img src="http://img.youtube.com/vi/SnTwevzmRrs/0.jpg"
-alt="IMAGE ALT TEXT HERE" width="300" border="10" /></a>
+Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/non-fungible-token``.
 
-# MIT License
+```bash
+git clone git@github.com:bitcoin-computer/monorepo.git
+cd monorepo
+lerna bootstrap
+cd packages/non-fungible-token
+```
+
+## Usage
+
+### Testnet
+
+To start the wallet on testnet run the command below and open [http://localhost:3001](http://localhost:3001) in a browser.
+
+```bash
+yarn start
+```
+
+To log into the chat you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/).
+
+To be able to send a message you need to fund the wallet using a [Litecoin](https://testnet-faucet.com/ltc-testnet/) [faucet](http://litecointf.salmen.website/).
+
+### Regtest
+
+To start the wallet in regtest mode you can run a [Bitcoin Computer Node](). Then have a look at the comment at the top of "App.js" to see how to configure the wallet to connect to the node.
+### Mainnet
+
+Coming soon.
+
+## Support
+
+For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+
+## Contributing
+
+This project is intended as a starting point for new development so we want to keep it simple. If you have found a bug please create an [issue](https://github.com/bitcoin-computer/monorepo/issues). If you have a bug fix or a UX improvement please create a pull request [here](https://github.com/bitcoin-computer/monorepo/pulls).
+
+If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
+
+## MIT License
 
 Copyright (c) 2022 BCDB Inc.
 
