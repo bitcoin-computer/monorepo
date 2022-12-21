@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/lib",
-  "version": "0.11.0-beta.2",
+  "version": "0.11.0-beta.3",
   "private": false,
   "description": "Smart Contracts for Bitcoin",
   "license": "CC-BY-ND-4.0",
@@ -39,7 +39,6 @@
     "@babel/core": "^7.18.0",
     "@bitcoin-computer/bitcore-mnemonic-ltc": "8.25.44",
     "@endo/static-module-record": "^0.7.4",
-    "@types/chai-as-promised": "^7.1.5",
     "axios": "^0.27.2",
     "bitcoind-rpc": "^0.9.1",
     "buffer": "^6.0.3",
