@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.11.0-beta.3",
+  "version": "0.11.0-beta.4",
   "description": "Server Side Library for the Bitcoin Computer",
   "contributors": [
     "Clemens Ley",
@@ -56,7 +56,7 @@
     "@babel/core": "^7.18.5",
     "@bitcoin-computer/bitcore-lib-ltc": "8.25.44",
     "@bitcoin-computer/bitcore-mnemonic-ltc": "8.25.44",
-    "@bitcoin-computer/lib": "^0.11.0-beta.3",
+    "@bitcoin-computer/lib": "^0.11.0-beta.4",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
     "@types/sinon": "^10.0.11",
@@ -89,5 +89,5 @@
     "Smart Contracts",
     "Javascript"
   ],
-  "gitHead": "8d86e4e5094dca3ac15374fb16b56e4da6d1c2b6"
+  "gitHead": "c224bf584f84ca69c392a02f508fbdc0f3d725f0"
 }
