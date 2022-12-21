@@ -1,11 +1,9 @@
 coverage/
-dist/
 logs/
 node_modules/
 chain-setup/**/blockchain-data
 chain-setup/**/db-data
 .env
-.env.aws
 .docker.config
 .DS_Store
 bcn-deploy.zip

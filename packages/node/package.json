@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.11.0-beta.4",
+  "version": "0.11.0-beta.5",
   "description": "Server Side Library for the Bitcoin Computer",
   "contributors": [
     "Clemens Ley",
@@ -12,7 +12,7 @@
     "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/node"
   },
   "type": "module",
-  "main": "src/bcn.es.mjs",
+  "main": "dist/bcn.es.mjs",
   "homepage": "http://bitcoincomputer.io/",
   "author": {
     "name": "Clemens Ley",
@@ -35,14 +35,8 @@
     "docker-hub-push": ". scripts/docker-setup.sh && docker_hub_push",
     "bitcoin-cli-ltc-regtest": ". scripts/bitcoin-cli-setup.sh && bitcoin_cli_ltc_regtest",
     "bitcoin-cli-btc-regtest": ". scripts/bitcoin-cli-setup.sh && bitcoin_cli_btc_regtest",
-    "docker-context-use": "./scripts/aws.py dockerContextUse",
     "docker-install": ". scripts/docker-setup.sh && docker_install",
     "docker-volume-rm-local": ". scripts/docker-setup.sh && docker_volume_remove_local",
-    "docker-volume-rm-aws": "./scripts/aws.py dockerVolumeRemoveAws",
-    "aws-login": "./scripts/aws.py awsLogin",
-    "aws-push-bcn-image": "./scripts/aws.py ecsPushImage",
-    "aws-ecr-login": "./scripts/aws.py awsEcrLogin",
-    "aws-tag": "./scripts/aws.py awsTag",
     "clean": "rm -rf ./dist",
     "reset": "yes | ./scripts/reset.sh",
     "clean-ltc-data": "rm -rf ./chain-setup/ltc-regtest/blockchain-data && rm -rf ./chain-setup/ltc-regtest/db-data",
@@ -56,7 +50,7 @@
     "@babel/core": "^7.18.5",
     "@bitcoin-computer/bitcore-lib-ltc": "8.25.44",
     "@bitcoin-computer/bitcore-mnemonic-ltc": "8.25.44",
-    "@bitcoin-computer/lib": "^0.11.0-beta.4",
+    "@bitcoin-computer/lib": "^0.11.0-beta.5",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
     "@types/sinon": "^10.0.11",
@@ -89,5 +83,5 @@
     "Smart Contracts",
     "Javascript"
   ],
-  "gitHead": "c224bf584f84ca69c392a02f508fbdc0f3d725f0"
+  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
 }

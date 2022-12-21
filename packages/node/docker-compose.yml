@@ -32,7 +32,7 @@ services:
       - RPC_PROTOCOL=http
       - RPC_USER=bcn-admin
       - RPC_PASSWORD=kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A=
-    working_dir: /src
+    working_dir: /dist
     depends_on:
       - db
     networks:
