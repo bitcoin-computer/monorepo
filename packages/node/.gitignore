@@ -1,5 +1,4 @@
 coverage/
-dist/
 logs/
 node_modules/
 chain-setup/**/blockchain-data

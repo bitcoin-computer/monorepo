@@ -12,7 +12,7 @@
     "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/node"
   },
   "type": "module",
-  "main": "src/bcn.es.mjs",
+  "main": "dist/bcn.es.mjs",
   "homepage": "http://bitcoincomputer.io/",
   "author": {
     "name": "Clemens Ley",
@@ -89,5 +89,5 @@
     "Smart Contracts",
     "Javascript"
   ],
-  "gitHead": "c224bf584f84ca69c392a02f508fbdc0f3d725f0"
+  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
 }

@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { Computer, Contract } from '../src/bitcoin-computer-lib.es'
+import { Computer, Contract } from '../dist/bitcoin-computer-lib.es'
 
 describe('Should work with chai', () => {
   it('Should be able to import the bitcoin computer', () => {
