@@ -1,5 +1,4 @@
 coverage/
-dist/
 logs/
 node_modules/
 chain-setup/**/blockchain-data
@@ -99,7 +98,6 @@ typings/
 
 # Nuxt.js build / generate output
 .nuxt
-dist
 
 # Gatsby files
 .cache/
