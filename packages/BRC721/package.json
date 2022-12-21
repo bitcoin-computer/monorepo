@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/BRC721",
-  "version": "0.11.0-beta.3",
+  "version": "0.11.0-beta.4",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "private": true,
   "type": "module",
