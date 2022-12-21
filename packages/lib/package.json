@@ -15,7 +15,6 @@
   },
   "main": "src/bitcoin-computer-lib.es.mjs",
   "module": "src/bitcoin-computer-lib.es.mjs",
-  "browser": "src/bitcoin-computer-lib-browser.min.js",
   "homepage": "http://bitcoincomputer.io/",
   "author": {
     "name": "Clemens Ley",
