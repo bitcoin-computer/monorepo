@@ -150,7 +150,6 @@
     "@babel/traverse" "^7.20.5"
     "@babel/types" "^7.20.5"
 
-
 "@babel/highlight@^7.18.6":
   version "7.18.6"
   resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.18.6.tgz#81158601e93e2563795adcbfbdf5d64be3f2ecdf"
@@ -230,8 +229,7 @@
   version "6.5.5"
   resolved "https://registry.yarnpkg.com/@bitcoin-computer/elliptic/-/elliptic-6.5.5.tgz#c60c13073d40b58f28b26c9d0b847925cb652dc9"
   integrity sha512-iAYnU+H8MaiqwNcGf9vaMy72dNKLPQXIXbr+5x32OSeS1EH4sJT1fGiSbYbmZPudK2LBT5zfINYzTnaQbb03zw==
-
-dependencies:
+  dependencies:
     "@bitcoin-computer/bn.js" "^5.2.3"
     brorand "^1.1.0"
     hash.js "^1.0.0"
@@ -253,65 +251,6 @@ dependencies:
     bitcoind-rpc "^0.9.1"
     buffer "^6.0.3"
     crypto-browserify "^3.12.0"
-    crypto-js "^4.0.0"
-    dotenv "^16.0.0"
-    eccrypto "^1.1.3"
-    eciesjs "^0.3.9"
-    exponential-backoff "^3.1.0"
-    ses "^0.15.9"
-    tweetnacl "^1.0.3"
-    tweetnacl-util "^0.15.1"
-
-"@bitcoin-computer/bitcore-lib-ltc@^8.25.41":
-  version "8.25.44"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-lib-ltc/-/bitcore-lib-ltc-8.25.44.tgz#569838a7d755048fd28b48bd558f38b389901387"
-  integrity sha512-MalHnA0fLvDY0dz7dqiQEOtHfItPRkS2udUSgzlU52EqXHluoNdkT/tOT9aXecvEK8yK5q3XAzet3NM4GDCCrw==
-  dependencies:
-    "@bitcoin-computer/bn.js" "^5.2.3"
-    "@bitcoin-computer/elliptic" "^6.5.5"
-    bech32 "=2.0.0"
-    bs58 "^4.0.1"
-    buffer-compare "=1.1.1"
-    inherits "=2.0.1"
-    lodash "^4.17.20"
-    scryptsy "2.1.0"
-
-"@bitcoin-computer/bitcore-mnemonic-ltc@8.25.41":
-  version "8.25.41"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bitcore-mnemonic-ltc/-/bitcore-mnemonic-ltc-8.25.41.tgz#9d8478513639bc574710dd0321def6572c21766d"
-  integrity sha512-vbdCRClWvX4UswywqvGzHhWICC3WsT4IL+hkbOIOPzxuXgC8jHfL8mQa/3NhxNzK5Cc78Qm+uRcN9AeAY9/YmA==
-  dependencies:
-    "@bitcoin-computer/bitcore-lib-ltc" "^8.25.41"
-    unorm "^1.4.1"
-
-"@bitcoin-computer/bn.js@^5.2.3":
-  version "5.2.3"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/bn.js/-/bn.js-5.2.3.tgz#a5f6b712f8c34bbf619308d2938d2e4987657ea9"
-  integrity sha512-wa3p4zN8c0zBD/2NLn6v5NT0voERQcN10vCgTDai5HqBytqFsQl/JdsL4DnO5R7+6oQOUXKkhB+U+Cj5xLfm8A==
-
-"@bitcoin-computer/elliptic@^6.5.5":
-  version "6.5.5"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/elliptic/-/elliptic-6.5.5.tgz#c60c13073d40b58f28b26c9d0b847925cb652dc9"
-  integrity sha512-iAYnU+H8MaiqwNcGf9vaMy72dNKLPQXIXbr+5x32OSeS1EH4sJT1fGiSbYbmZPudK2LBT5zfINYzTnaQbb03zw==
-  dependencies:
-    "@bitcoin-computer/bn.js" "^5.2.3"
-    brorand "^1.1.0"
-    hash.js "^1.0.0"
-    hmac-drbg "^1.0.1"
-    inherits "^2.0.4"
-    minimalistic-assert "^1.0.1"
-    minimalistic-crypto-utils "^1.0.1"
-
-"@bitcoin-computer/lib@0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/lib/-/lib-0.10.1.tgz#581bb8f0a433cc2e55019885a1b653e15691a759"
-  integrity sha512-BzAjMSMgOnxONEmcW8f0MZVfMysDpEkk3JA7bZKY33lz2CvZOZJImtq8qY1C7Awp6/1q52DWD+qD+QDQ9YZvoA==
-  dependencies:
-    "@babel/core" "^7.18.0"
-    "@bitcoin-computer/bitcore-mnemonic-ltc" "8.25.41"
-    "@endo/static-module-record" "^0.7.4"
-    axios "^0.27.2"
-    bitcoind-rpc "^0.9.1"
     crypto-js "^4.0.0"
     dotenv "^16.0.0"
     eccrypto "^1.1.3"
@@ -732,6 +671,11 @@ base-x@^3.0.2:
   dependencies:
     safe-buffer "^5.0.1"
 
+base64-js@^1.3.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/base64-js/-/base64-js-1.5.1.tgz#1b1b440160a5bf7ad40b650f095963481903930a"
+  integrity sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==
+
 bech32@=2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/bech32/-/bech32-2.0.0.tgz#078d3686535075c8c79709f054b1b226a133b355"
@@ -911,9 +855,9 @@ camelcase@^6.0.0:
   integrity sha512-Gmy6FhYlCY7uOElZUSbxo2UCDH8owEk996gkbrpsgGtrJLM3J7jGxl9Ic7Qwwj4ivOE5AWZWRMecDdF7hqGjFA==
 
 caniuse-lite@^1.0.30001400:
-  version "1.0.30001439"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001439.tgz#ab7371faeb4adff4b74dad1718a6fd122e45d9cb"
-  integrity sha512-1MgUzEkoMO6gKfXflStpYgZDlFM7M/ck/bgfVCACO5vnAf0fXoNVHdWtqGU+MYca+4bL9Z5bpOVmR33cWW9G2A==
+  version "1.0.30001441"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30001441.tgz#987437b266260b640a23cd18fbddb509d7f69f3e"
+  integrity sha512-OyxRR4Vof59I3yGWXws6i908EtGbMzVUi3ganaZQHmydk1iwDhRnvaPG2WaR0KcqrDFKrxVZHULT396LEPhXfg==
 
 chai-match-pattern@^1.3.0:
   version "1.3.0"
@@ -1249,11 +1193,6 @@ electron-to-chromium@^1.4.251:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.284.tgz#61046d1e4cab3a25238f6bf7413795270f125592"
   integrity sha512-M8WEXFuKXMYMVr45fo8mq0wUrrJHheiKZf6BArTKk9ZBYCKJEOU5H8cdWgDT+qCVZf7Na4lVUaZsA+h6uA9+PA==
 
-electron-to-chromium@^1.4.251:
-  version "1.4.284"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.4.284.tgz#61046d1e4cab3a25238f6bf7413795270f125592"
-  integrity sha512-M8WEXFuKXMYMVr45fo8mq0wUrrJHheiKZf6BArTKk9ZBYCKJEOU5H8cdWgDT+qCVZf7Na4lVUaZsA+h6uA9+PA==
-
 elliptic@6.5.4, elliptic@^6.4.1, elliptic@^6.5.3, elliptic@^6.5.4:
   version "6.5.4"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.5.4.tgz#da37cebd31e79a1367e941b592ed1fbebd58abbb"
@@ -1525,11 +1464,6 @@ evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
   dependencies:
     md5.js "^1.3.4"
     safe-buffer "^5.1.1"
-
-exponential-backoff@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/exponential-backoff/-/exponential-backoff-3.1.0.tgz#9409c7e579131f8bd4b32d7d8094a911040f2e68"
-  integrity sha512-oBuz5SYz5zzyuHINoe9ooePwSu0xApKWgeNzok4hZ5YKXFh9zrQBEM15CXqoZkJJPuI2ArvqjPQd8UKJA753XA==
 
 exponential-backoff@^3.1.0:
   version "3.1.0"
@@ -2592,11 +2526,6 @@ scryptsy@2.1.0:
   resolved "https://registry.yarnpkg.com/scryptsy/-/scryptsy-2.1.0.tgz#8d1e8d0c025b58fdd25b6fa9a0dc905ee8faa790"
   integrity sha512-1CdSqHQowJBnMAFyPEBRfqag/YP9OF394FV+4YREIJX4ljD7OxvQRDayyoyyCk+senRjSkP6VnUNQmVQqB6g7w==
 
-scryptsy@2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/scryptsy/-/scryptsy-2.1.0.tgz#8d1e8d0c025b58fdd25b6fa9a0dc905ee8faa790"
-  integrity sha512-1CdSqHQowJBnMAFyPEBRfqag/YP9OF394FV+4YREIJX4ljD7OxvQRDayyoyyCk+senRjSkP6VnUNQmVQqB6g7w==
-
 secp256k1@3.7.1:
   version "3.7.1"
   resolved "https://registry.yarnpkg.com/secp256k1/-/secp256k1-3.7.1.tgz#12e473e0e9a7c2f2d4d4818e722ad0e14cc1e2f1"
@@ -2643,11 +2572,6 @@ ses@^0.15.9:
   version "0.15.23"
   resolved "https://registry.yarnpkg.com/ses/-/ses-0.15.23.tgz#067a2d856ea1304093dff5d27eaa906c495962d8"
   integrity sha512-mFV5a0alaJkJcWU3AgT/2yRasEZZNv78PY6UmRdt6KhndtOMMkQl7vAvwWp9md8YBBG3zVJ5J82PT0uPY7atXw==
-
-ses@^0.18.0:
-  version "0.18.0"
-  resolved "https://registry.yarnpkg.com/ses/-/ses-0.18.0.tgz#9bc1f17712e2f2cf9a38c83156197a6fe722822e"
-  integrity sha512-WMEOltdIqYk11uZiD+0ANnTLcpAQXyLAPm5NneJSbSPEzxhSn4G7B/bs3dtSOcEicAlFI6WFXqXKDMu9BBCj+w==
 
 ses@^0.18.0:
   version "0.18.0"
@@ -2879,14 +2803,6 @@ unorm@^1.4.1:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/unorm/-/unorm-1.6.0.tgz#029b289661fba714f1a9af439eb51d9b16c205af"
   integrity sha512-b2/KCUlYZUeA7JFUuRJZPUtr4gZvBh7tavtv4fvk4+KV9pfGiR6CQAQAWl49ZpR3ts2dk4FYkP7EIgDJoiOLDA==
-
-update-browserslist-db@^1.0.9:
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/update-browserslist-db/-/update-browserslist-db-1.0.10.tgz#0f54b876545726f17d00cd9a2561e6dade943ff3"
-  integrity sha512-OztqDenkfFkbSG+tRxBeAnCVPckDBcvibKd35yDONx6OU8N7sqgwc7rCbkJ/WcYtVRZ4ba68d6byhC21GFh7sQ==
-  dependencies:
-    escalade "^3.1.1"
-    picocolors "^1.0.0"
 
 update-browserslist-db@^1.0.9:
   version "1.0.10"
