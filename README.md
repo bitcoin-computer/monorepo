@@ -19,6 +19,7 @@ Infrastructure for building Smart Contracts on Litecoin, Bitcoin and other UTXOs
 * [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet)
 * [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token)
 * [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token)
+* [Bitcoin Computer Node.js Boilerplate](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate)
 
 ## Get Started
 

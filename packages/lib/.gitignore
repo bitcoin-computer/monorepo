@@ -2,9 +2,7 @@
 node_modules
 coverage
 uls-scratch
-/dist
 *.log
-src/temp
-test/temp
 .env
 errors.txt
+scripts/__pycache__
