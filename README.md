@@ -19,6 +19,7 @@ A smart contract system for Litecoin and Bitcoin.
 * [Chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat): A p2p chat application where messages are communicated over the blockchain.
 * [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token): An application for minting, sending, and storing NFTs
 * [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token): An application for minting, sending, and storing fungible tokens.
+* [Bitcoin Computer Node.js Boilerplate](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate): A template for starting a new node.js application with Bitcoin Computer.
 
 ## Get Started
 

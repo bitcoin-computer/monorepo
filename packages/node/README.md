@@ -102,3 +102,15 @@ We are currently supporting LTC. Contributions are welcome. We have set up a sys
 ## Getting Help
 
 If you have any questions, please let us know on our <a href="https://t.me/thebitcoincomputer">Telegram group</a> or on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.
+
+## License
+
+[Attribution-NoDerivs 3.0 Unported](https://creativecommons.org/licenses/by-nd/3.0/)
+
+You are free to: share, copy, and redistribute the material in any medium or format
+for any purpose, even commercially under the following terms:
+
+* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+* NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
+
+This is a human-readable summary of (and not a substitute for) the [license](https://creativecommons.org/licenses/by-nd/3.0/legalcode).

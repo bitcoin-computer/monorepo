@@ -1,11 +1,9 @@
 coverage/
-dist/
 logs/
 node_modules/
 chain-setup/**/blockchain-data
 chain-setup/**/db-data
 .env
-.env.aws
 .docker.config
 .DS_Store
 bcn-deploy.zip
@@ -13,4 +11,4 @@ combined.log
 error.log
 bcn.config.json
 zmqlog.log
-__pycache__/
+scripts/__pycache__

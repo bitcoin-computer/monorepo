@@ -75,7 +75,7 @@ Counter {
 Create file ``index.js``.
 
 ```
-import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib";
+import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib"; 
 
 class Counter extends Contract {
   constructor() {
