@@ -8,3 +8,8 @@ src/temp
 test/temp
 .env
 errors.txt
+js-build
+.parcel-cache
+yarn.lock
+scripts/__pycache__
+parcel

@@ -4,14 +4,16 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '../src/nft'
 import { BRC721 } from '../src/brc721'
 
+/**
+ * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
+ * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ */
 const opts = {
   mnemonic:
     'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
-  network: 'testnet',
-  // url: 'http://127.0.0.1:3000',
-  // network: 'regtest',
+  network: 'testnet'
 }
 
 describe('BRC721', () => {
@@ -39,7 +41,7 @@ describe('BRC721', () => {
   })
 
   describe('balanceOf', () => {
-    it('Should computer the balance', async () => {
+    it('Should compute the balance', async () => {
       const computer = new Computer(opts)
       const brc721 = new BRC721(computer)
       const publicKey = computer.getPublicKey()

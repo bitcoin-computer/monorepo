@@ -3,19 +3,16 @@ import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '../src/nft'
 
-const randomOpts = {
+/**
+ * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
+ * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ */
+const opts = {
   mnemonic:
     'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
   network: 'testnet',
-  // url: 'http://127.0.0.1:3000',
-  // network: 'regtest',
-}
-
-const opts = {
-  mnemonic: 'opera deputy attitude upset royal keep',
-  ...randomOpts,
 }
 
 describe('NFT', () => {
@@ -47,7 +44,7 @@ describe('NFT', () => {
       const computer = new Computer(opts)
       const publicKeyString = computer.getPublicKey()
 
-      const computer2 = new Computer(randomOpts)
+      const computer2 = new Computer(opts)
       const publicKeyString2 = computer2.getPublicKey()
 
       const nft = await computer.new(NFT, [publicKeyString, 'name', 'symbol'])

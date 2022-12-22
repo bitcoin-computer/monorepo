@@ -1,5 +1,8 @@
-export default class Chat {
+import { Contract } from '@bitcoin-computer/lib'
+
+export default class Chat extends Contract {
   constructor(publicKey) {
+    super()
     this.messages = []
     this._owners = [publicKey]
   }
