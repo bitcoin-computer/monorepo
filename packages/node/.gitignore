@@ -13,3 +13,4 @@ combined.log
 error.log
 bcn.config.json
 zmqlog.log
+__pycache__/
