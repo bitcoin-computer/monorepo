@@ -2,7 +2,7 @@
 
 A minimal non-custodial Litecoin web wallet built with [Bitcoin Computer](https://www.bitcoincomputer.io/) and [Create React App](https://create-react-app.dev/).
 
-![Screenshot](https://i.ibb.co/6rG5f5H/Untitled-4.png)
+![Screenshot](public/screenshot.png)
 
 ## Installation
 
@@ -17,23 +17,37 @@ cd packages/wallet
 
 ## Usage
 
-### Testnet
+### Start the Server
 
-To start the wallet on testnet run the command below and open [http://localhost:3001](http://localhost:3001) in a browser.
-
+To start the application run
 ```bash
 yarn start
 ```
+and open [http://localhost:3001](http://localhost:3001) in a browser.
 
-If the balance is 0 you can fund the testnet Litecoin address ``mvFeNF9DAR7WMuCpBPbKuTtheihLyxzj8i`` with some testnet Litecoin from a [Litecoin faucet](https://testnet-faucet.com/ltc-testnet/). Once the wallet is funded you can send testnet Litecoin to other wallets.
+### Configuration
 
-### Regtest
+The application defaults to testnet mode. You can run it in regtest or mainnet mode you can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node). To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
 
-To start the wallet in regtest mode you can run a [Bitcoin Computer Node](). Then have a look at the comment at the top of "App.js" to see how to configure the wallet to connect to the node.
+### Log In
 
-### Mainnet
+This app is very bare bones and does not have a client side user log in. To change the logged in user you can change the ``mnemonic`` property of the ``opts`` object at the top of ``App.js``.
 
-Coming soon.
+### Fund the Wallet
+
+You need to send some cryptocurrency to your wallet address to mint or send a token. You can find the current wallet address at the top of the application.
+
+If you run the application in testnet mode you can fund the wallet for free using a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
+
+If you run on regtest mode you can run
+```
+yarn fund-ltc
+```
+to fund your wallet for free from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
+
+### Send Cryptocurrency
+
+Insert the destination address, select the amount (must be smaller than your balance), and click send
 ## Support
 
 For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).

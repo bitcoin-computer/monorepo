@@ -1,6 +1,6 @@
 # BRC20 Fungible Token Contract
 
-An implementation of the ERC20 [standard](https://eips.ethereum.org/EIPS/eip-20) on Bitcoin built on the [Bitcoin Computer](http://bitcoincomputer.io/). The following interface is implemented:
+An implementation of the [ERC20 standard](https://eips.ethereum.org/EIPS/eip-20) on Bitcoin built on the [Bitcoin Computer](http://bitcoincomputer.io/). The following interface is implemented.
 
 ```typescript
 interface IBRC20 {
@@ -13,23 +13,43 @@ interface IBRC20 {
 
 ## Installation
 
-Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/fungible-token``.
+Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/BRC20``.
 
 ```bash
 git clone git@github.com:bitcoin-computer/monorepo.git
 cd monorepo
 lerna bootstrap
-cd packages/fungible-token
+cd packages/BRC20
 ```
 
 ## Usage
 
-### Start the Server
+### Configuration
 
-```bash
-yarn start
+The library is pre-configured to run on testnet. You can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node) to use the library on regtest. To configure the library to connect to your own regtest node, have a look at the comment above the ``opts`` object at the top of ``brc2.test.ts". Support for mainnet will be added soon.
+
+### Fund the Wallet
+
+You need to send some cryptocurrency to your wallet address to run the tests.
+
+#### Testnet
+
+If you run the application in testnet mode you can fund the address below for free using a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
 ```
-Open [http://localhost:3001](http://localhost:3001) in a browser.
+muMDxiZUxLMQsa9uEfB6ctNShKtx7y8rbf
+```
+
+#### Regtest
+
+If you run on regtest mode you can run the command below to fund your wallet for free from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
+```
+yarn fund-ltc muMDxiZUxLMQsa9uEfB6ctNShKtx7y8rbf
+```
+
+#### Mainnet
+
+Coming soon.
+
 
 ### Run the Tests
 
@@ -48,33 +68,6 @@ yarn lint
 ```bash
 yarn types
 ```
-
-
-### Login
-
-You need a BIP39 pass phrase to log in. You can generate one [here](https://iancoleman.io/bip39/).
-
-### Fund the Wallet
-
-
-To be able to mint a token you need to fund the wallet using a [Litecoin](https://testnet-faucet.com/ltc-testnet/) [faucet](http://litecointf.salmen.website/).
-
-### Mint a Token
-
-Start the server and click ``mint``
-
-### Configuration
-
-#### Testnet
-
-The application defaults to testnet
-
-#### Regtest
-
-To start the wallet in regtest mode you can run a [Bitcoin Computer Node](). Then have a look at the comment at the top of "App.js" to see how to configure the wallet to connect to the node.
-#### Mainnet
-
-Coming soon.
 
 ## Support
 

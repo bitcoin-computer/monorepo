@@ -1,10 +1,5 @@
 # bitcoin-computer-node-js-boilerplate
 
-[![TypeScript version][ts-badge]][typescript-4-5]
-[![Node.js version][nodejs-badge]][nodejs]
-[![APLv2][license-badge]][license]
-<!-- [![Build Status - GitHub Actions][gha-badge]][gha-ci] -->
-
 👩🏻‍💻 A template for using the [Bitcoin Computer][bitcoin-computer] with [Node.js][nodejs]. Adapted from [node-typescript-boilerplate][node-typescript-boilerplate].
 
 🏃🏽 All basic tools included and configured:
@@ -19,35 +14,25 @@
 
 ✊ Free as in speech: available under the MIT license.
 
-## Getting Started
+[![TypeScript version][ts-badge]][typescript-4-5]
+[![Node.js version][nodejs-badge]][nodejs]
 
-This project is intended to be used with the latest Active LTS release of [Node.js][nodejs].
-
-### Use as a repository template
+## Installation
 
 To start, just click the **[Use template][repo-template-action]** link (or the green button). Start adding your code in the `src` and unit tests in the `test` directories.
 
-### Clone repository
+Alternatively, you can also clone the repository by downloading and installing the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo)
 
-To clone the repository, use the following commands:
-
-```sh
-git clone https://github.com/bitcoin-computer/bitcoin-computer-node-js-boilerplate
-cd bitcoin-computer-node-js-boilerplate
-yarn install
+```bash
+git clone git@github.com:bitcoin-computer/monorepo.git
+cd monorepo
+lerna bootstrap
+cd packages/node-js-boilerplate
 ```
-<!--
-### Download latest release
 
-Download and unzip the current **main** branch or one of the tags:
+## Usage
 
-```sh
-wget https://github.com/bitcoin-computer/bitcoin-computer-node-js-boilerplate/archive/main.zip -O bitcoin-computer-node-js-boilerplate.zip
-unzip bitcoin-computer-node-js-boilerplate.zip && rm bitcoin-computer-node-js-boilerplate.zip
-```
--->
-
-## Available Scripts
+The following scripts are available
 
 - `clean` - remove coverage data, Jest cache and transpiled files
 - `prebuild` - lint source files and tests before building

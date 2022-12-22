@@ -1,18 +1,11 @@
-<p align="center">
-  <img src="img/logo.jpg" alt="bitcoin-computer-logo" border="0"/>
-</p>
+<img src="imgs/banner@1x.png" alt="bitcoin-computer-logo" border="0"/>
 
-# Lightweight Smart Contracts for Litecoin and Bitcoin.
+# Bitcoin Computer Lib
+
 
 A smart contract system for Litecoin and Bitcoin. You can build fungible and non-fungible tokens (NFTs), games, social networks, stable coins, exchanges, auctions, voting, office applications, artificial intelligence, ... anything really. We currently support Litecoin and Bitcoin but will add more currencies soon.
 
 You can find more information in the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/).
-
-<br>
-
-[![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/bitcoin-computer/bitcoin-computer-lib.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bitcoin-computer/bitcoin-computer-lib/context:javascript) [![Total alerts](https://img.shields.io/lgtm/alerts/g/bitcoin-computer/bitcoin-computer-lib.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/bitcoin-computer/bitcoin-computer-lib/alerts/)
-
-<br>
 
 ## Quick start
 
@@ -82,7 +75,7 @@ Counter {
 Create file ``index.js``.
 
 ```
-import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib"; 
+import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib";
 
 class Counter extends Contract {
   constructor() {

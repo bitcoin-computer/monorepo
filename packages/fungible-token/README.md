@@ -1,12 +1,12 @@
 # Fungible Token
 
-A application for minting, storing, and sending fungible tokens on Litecoin. Build with the [Bitcoin Computer](http://bitcoincomputer.io) library. You can find more information in the accompanying [Medium Article](https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273).
+A application for minting, storing, and sending fungible tokens on Litecoin. Build with the [Bitcoin Computer](http://bitcoincomputer.io). You can find more information in the accompanying [Medium Article](https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273).
 
 ![chat-screen](https://i.ibb.co/hMqsDjQ/Screen-Shot-2020-09-23-at-00-16-18.png)
 
 ## Installation
 
-Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/wallet``.
+Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/fungible-token``.
 
 ```bash
 git clone git@github.com:bitcoin-computer/monorepo.git
@@ -17,28 +17,38 @@ cd packages/fungible-token
 
 ## Usage
 
-### Testnet
+### Start the Server
 
-To start the wallet on testnet run the command below and open [http://localhost:3001](http://localhost:3001) in a browser.
+To start the application run the command below and open [http://localhost:3001](http://localhost:3001) in a browser.
 
 ```bash
 yarn start
 ```
 
-To mint and send tokens you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/).
+### Log In
 
-To be able to send a message you need to fund the wallet using a [Litecoin](https://testnet-faucet.com/ltc-testnet/) [faucet](http://litecointf.salmen.website/).
+To log into the application you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/).
 
-### Regtest
+### Configuration
 
-To start the wallet in regtest mode you can run a [Bitcoin Computer Node](). Then have a look at the comment at the top of "App.js" to see how to configure the wallet to connect to the node.
-### Mainnet
+The application defaults to testnet mode. To run it in regtest or mainnet mode you can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node). To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
 
-Coming soon.
+### Fund the Wallet
+
+You need to send some cryptocurrency to your wallet address to mint or send a token. Click on "Wallet" to find your wallet address.
+
+If you run the application in testnet mode you can send free testnet coins to your wallet address from a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
+
+If you run on regtest mode you can send free regtest coins by running
+```
+yarn fund-ltc
+```
+from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
+
 
 ## Support
 
-For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
 
 ## Contributing
 
