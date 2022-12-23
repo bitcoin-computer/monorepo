@@ -1,5 +1,5 @@
 <div align="center">
-<img src="imgs/logo@1x.png" alt="bitcoin-computer-logo" border="0"/>
+<img src="imgs/logo@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 100px"/>
 
   <p>
     <h3><b>Smart Contracts for Litecoin and Bitcoin</b></h3>
