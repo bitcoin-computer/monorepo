@@ -36,7 +36,7 @@ lerna bootstrap
 
 ### Templates
 * [Bitcoin Computer Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate): A template for starting a new node.js application with Bitcoin Computer.
-* [Bitcoin Computer React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/create-react-app-template): A template for starting a new Create React App (CRA) application with Bitcoin Computer (coming soon).
+* [Bitcoin Computer React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/create-react-app-template): A template for starting a new Create React App (CRA) application with Bitcoin Computer.
 
 ## Price
 
