@@ -1,4 +1,4 @@
-<img src="imgs/banner@1x.png" alt="bitcoin-computer-logo" border="0"/>
+<img src="../../imgs/banner@1x.png" alt="bitcoin-computer-logo" border="0"/>
 
 # Bitcoin Computer Lib
 
@@ -75,7 +75,7 @@ Counter {
 Create file ``index.js``.
 
 ```
-import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib"; 
+import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib";
 
 class Counter extends Contract {
   constructor() {

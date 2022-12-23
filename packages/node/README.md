@@ -1,3 +1,5 @@
+<img src="../../imgs/banner@1x.png" alt="bitcoin-computer-logo" border="0"/>
+
 # Bitcoin Computer Node
 
 The Bitcoin Computer Node provides trustless access to the [Bitcoin Computer](https://github.com/bitcoin-computer/bc-lib).
@@ -67,7 +69,7 @@ yarn reset
 
 ## Syncing in parallel
 
-If your machine has more than 4 cores you can run the sync process in parallel to shorten the synchronization time. This is only required on testnet and mainnet. 
+If your machine has more than 4 cores you can run the sync process in parallel to shorten the synchronization time. This is only required on testnet and mainnet.
 
 By default synchronization process is carried out in parallel by using all your available cores. Also, you can use a flag to indicate an specific number of dedicated cores.
 
@@ -75,7 +77,7 @@ By default synchronization process is carried out in parallel by using all your 
 yarn up -t -cpus 16
 ```
 
-The synchronization process can be stopped at any time with the command ```yarn down```. When you restart the process, it will continue from the last block processed. 
+The synchronization process can be stopped at any time with the command ```yarn down```. When you restart the process, it will continue from the last block processed.
 
 ### Times and Costs Estimates
 
@@ -91,7 +93,7 @@ The following table shows the estimated times and costs for syncing a Litecoin n
 
 ## Price
 
-The Bitcoin Computer will be free forever on testnet. 
+The Bitcoin Computer will be free forever on testnet.
 
 The fees to support the development of the Bitcoin Computer are fixed values, calculated using an average transaction size of 500 bytes, and a fee rate of 10000 sat/kvB.
 
