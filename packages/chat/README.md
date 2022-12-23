@@ -1,32 +1,65 @@
 # Bitcoin Chat
 
-A hackable chat that runs on the blockchain. Intended as a starting point for developers to build on top of.
+A minimal chat that runs on Litecoin. Built with [Bitcoin Computer](https://www.bitcoincomputer.io/) and [Create React App](https://create-react-app.dev/).
 
-The chat needs no database backend because all data is stored on the blockchain (currently runs on LTC, testnet). The interface between the chat and the blockchain is provided by [Bitcoin Computer](https://bitcoincomputer.io)
+![chat-screen](https://i.ibb.co/WDSCCvb/Screen-Shot-2020-08-29-at-20-02-59.png)
+## Installation
 
-## Start the chat
+Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo) and navigate from the root folder of the monorepo to this folder.
 
-To run the code clone the project in a new folder, run ``yarn install`` and start the app using
+```bash
+git clone git@github.com:bitcoin-computer/monorepo.git
+cd monorepo
+lerna bootstrap
+cd packages/chat
+```
 
-````
+## Usage
+
+### Start the Server
+
+To start the application run
+```bash
 yarn start
-````
+```
+and open [http://localhost:3001](http://localhost:3001) in a browser.
 
-To log into the chat you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/). You then need to fund the wallet using a [this](https://testnet-faucet.com/ltc-testnet/) or [this LTC faucet](http://litecointf.salmen.website/).
+### Log In
+
+To log into the application you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/).
+
+### Configuration
+
+The application defaults to testnet mode. You can run it in regtest or mainnet mode you can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node). To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
+
+### Fund the Wallet
+
+You need to send some cryptocurrency to your wallet address to mint or send a token. Click on "Wallet" to find your wallet address.
+
+If you run the application in testnet mode you can fund the wallet for free using a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
+
+If you run on regtest mode you can run
+```
+yarn fund-ltc <your wallet address>
+```
+to fund your wallet for free from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
+
+## Video
+
+You can watch us writing the first version of this app in this [video](http://www.youtube.com/watch?feature=player_embedded&v=SnTwevzmRrs
+).
+
+## Support
 
 For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
 
 ## Contributing
 
-The chat is very bare bones and contributions are more than welcome. Have a look at the open issues, or make a pull request with a new feature. You can also request a feature request by creating an issue.
+This project is intended as a starting point for new development so we want to keep it simple. If you have found a bug please create an [issue](https://github.com/bitcoin-computer/monorepo/issues). If you have a bug fix or a UX improvement please create a pull request [here](https://github.com/bitcoin-computer/monorepo/pulls).
 
-## Screenshots
+If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
 
-![login-screen](https://i.ibb.co/RzHdPMS/Screen-Shot-2020-08-29-at-20-03-04.png)
-
-![chat-screen](https://i.ibb.co/WDSCCvb/Screen-Shot-2020-08-29-at-20-02-59.png)
-
-# MIT License
+## MIT License
 
 Copyright (c) 2022 BCDB Inc.
 

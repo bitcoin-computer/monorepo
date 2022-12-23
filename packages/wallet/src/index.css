@@ -12,14 +12,18 @@ code {
     monospace;
 }
 
+h3 {
+  margin: 150px 0 0
+}
+
 .col-25 {
   float: left;
-  width: 5%;
+  width: 10%;
   margin-top: 0px;
 }
 
 .col-75 {
   float: left;
-  width: 95%;
+  width: 90%;
   margin-top: 0px;
 }

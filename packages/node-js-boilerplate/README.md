@@ -22,8 +22,6 @@ Run the linter:
 Run the type checker:
 * ```yarn types```
 
-
-
 ## License
 
 Licensed under the MIT license. See the [LICENSE](https://github.com/bitcoin-computer/bitcoin-computer-node-js-boilerplate/blob/master/LICENSE) file for details.

@@ -1,18 +1,31 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Computer } from "@bitcoin-computer/lib";
+import { Computer, Contract } from "@bitcoin-computer/lib";
 import Wallet from "./Wallet";
 import Chat from "./Chat";
 import SideBar from "./SideBar";
 import useInterval from "./useInterval";
 
+/**
+ * This is a simple chat app that demonstrates how to use the @bitcoin-computer/lib.
+ *
+ * To connect the app to a local Bitcoin Computer node set "network" to "regtest" and
+ * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ */
 function App() {
+  const opts = {
+    mnemonic:
+      "travel upgrade inside soda birth essence junk merit never twenty system opinion",
+    chain: "LTC",
+    network: "regtest", // "testnet",
+    url: "http://127.0.0.1:3000" // "https://node.bitcoincomputer.io",
+  }
+
   const [computer, setComputer] = useState(null);
   const [chats, setChats] = useState([]);
   const [chain, setChain] = useState("LTC");
 
   useInterval(() => {
-    console.log(computer);
     // the BIP_39_KEY is set on login and we fetch it from local storage
     const password = window.localStorage.getItem("BIP_39_KEY");
     // the chain has also been stored in local storage on login, we need
@@ -23,18 +36,7 @@ function App() {
 
     // if you are currently logging in
     if (isLoggedIn && !computer) {
-      setComputer(
-        new Computer({
-          mnemonic: password,
-          chain: "LTC",
-          url: "https://node.bitcoincomputer.io",
-          network: "testnet",
-
-          // To run locally on regtest, uncomment the following lines:
-          // url: "http://127.0.0.1:3000",
-          // network: "regtest",
-        })
-      );
+      setComputer(new Computer(opts))
       console.log("Bitcoin Computer created on chain " + chain);
       // if you are currently logging out
     } else if (!isLoggedIn && computer) {
@@ -60,7 +62,7 @@ function App() {
       <div className="App">
         {/* bind the value of chain stored in the state to the child component */}
         <Wallet computer={computer} chain={chain}></Wallet>
-        <SideBar computer={computer} chats={chats}></SideBar>
+        <SideBar computer={computer} Contract={Contract} chats={chats}></SideBar>
 
         <div className="main">
           <Routes>

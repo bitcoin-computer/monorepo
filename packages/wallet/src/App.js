@@ -2,18 +2,22 @@ import React, { useState, useEffect, useRef } from "react";
 import { Computer } from "@bitcoin-computer/lib";
 import "./App.css";
 
+/**
+ * This is a simple wallet app that demonstrates how to use the @bitcoin-computer/lib.
+ *
+ * To connect the app to a local Bitcoin Computer node set "network to "regtest" and
+ * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ */
 function App() {
+  const opts = {
+    mnemonic:
+      "travel upgrade inside soda birth essence junk merit never twenty system opinion",
+    chain: "LTC",
+    network: "regtest", // "testnet",
+    url: "http://127.0.0.1:3000" // "https://node.bitcoincomputer.io",
+  }
   const [computer] = useState(
-    new Computer({
-      mnemonic:
-        "travel upgrade inside soda birth essence junk merit never twenty system opinion",
-      chain: "LTC",
-      network: "testnet",
-      url: "https://node.bitcoincomputer.io",
-      // to run locally, change network and url:
-      // network: "regtest",
-      // url: "http://127.0.0.1:3000",
-    })
+    new Computer(opts)
   );
   const [balance, setBalance] = useState(0);
   const [amount, setAmount] = useState(0);
@@ -69,16 +73,27 @@ function App() {
   return (
     <div className="App">
       <h2>Wallet</h2>
-      <b>Address</b>&nbsp;{computer.getAddress().toString()}
-      <br />
-      <b>Public Key</b>&nbsp;{computer.getPublicKey().toString()}
-      <br />
-      <b>Balance</b>&nbsp;{balance / 1e8} {computer.getChain()}
+
+      <div className="row">
+        <div className="col-25"><i>Address</i></div>
+        <div className="col-75">{computer.getAddress()}</div>
+      </div>
+      <div className="row">
+        <div className="col-25"><i>Public Key</i></div>
+        <div className="col-75">{computer.getPublicKey()}</div>
+      </div>
+
+      <div className="row">
+        <div className="col-25"><i>Balance</i></div>
+        <div className="col-75">{balance / 1e8} {computer.getChain()} ({computer.getNetwork()})</div>
+      </div>
+
       <h3>Send</h3>
+
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-25">
-            <label>Amount&nbsp;</label>
+            <label><i>Amount</i></label>
             <br />
           </div>
           <div className="col-75">
@@ -94,7 +109,7 @@ function App() {
         </div>
         <div className="row">
           <div className="col-25">
-            <label>To&nbsp;</label>
+            <label><i>To</i></label>
             <br />
           </div>
           <div className="col-75">
@@ -107,7 +122,10 @@ function App() {
           </div>
         </div>
         <div className="row">
-          <input type="submit" value="Send Litecoin"></input>
+          <div className="col-25">&nbsp;</div>
+          <div className="col-75">
+            <input type="submit" value="Send"></input>
+          </div>
         </div>
       </form>
     </div>

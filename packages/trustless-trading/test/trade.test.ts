@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-expressions */
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { Token, Payment, Swap } from '../src/trade'
 import Mnemonic from '@bitcoin-computer/bitcore-mnemonic-ltc'
+import { Token, Payment, Swap } from '../src/trade'
 
 const { Transaction, PrivateKey, Output } = Mnemonic.bitcore
 

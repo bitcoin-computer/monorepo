@@ -1,45 +1,67 @@
-# Non-Fungible Token Application
+# Non-Fungible Token
 
-An application for creating, storing and sending non-fungible tokens on Litecoin. Built using the [Bitcoin Computer](https://bitcoin-computer.gitbook.io/docs/).
 
-## Get Started
+A web application for creating, storing and sending non-fungible tokens on Litecoin. Built using the [Bitcoin Computer](http://bitcoincomputer.io/).
 
-To run the application on testnet use the following commands. The application will connect to a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#bitcoin-computer-node) provided by BCDB Inc.
+![app image](https://i.ibb.co/5TtGCJ3/Untitled-5.png)
 
-````
-yarn install
-yarn start
-````
+## Installation
 
-## Run With Your Own Node
+Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/non-fungible-token``.
 
-To run your own node, follow the instructions the [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#getting-started). Then change the file [App.js](https://github.com/bitcoin-computer/monorepo/blob/main/packages/non-fungible-token/src/App.js) as shown below.
-
-```javascript
-function App() {
-  const [config] = useState({
-    chain: "LTC",
-    ...getConf("regtest")   // <-- change this line to "testnet"
-  })
-  ...
+```bash
+git clone git@github.com:bitcoin-computer/monorepo.git
+cd monorepo
+lerna bootstrap
+cd packages/non-fungible-token
 ```
 
-## Troubleshooting
+## Usage
 
-If you get an error ``"Insuficient balance in address <your address>"``, take a look to the Bitcoin Computer Node [documentation](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet) for how to fund your wallet.
+### Start the Server
 
+To start the application run
+```bash
+yarn start
+```
+and open [http://localhost:3001](http://localhost:3001) in a browser.
 
-## Screenshots
+### Log In
 
-![app image](./public/nft-main-page.png)
+To log into the application you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/).
+
+### Configuration
+
+The application defaults to testnet mode. You can run it in regtest or mainnet mode you can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node). To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
+
+### Fund the Wallet
+
+You need to send some cryptocurrency to your wallet address to mint or send a token. Click on "Wallet" to find your wallet address.
+
+If you run the application in testnet mode you can fund the wallet for free using a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
+
+If you run on regtest mode you can run
+```
+yarn fund-ltc <your wallet address>
+```
+to fund your wallet for free from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
 
 ## Video
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=SnTwevzmRrs
-" target="_blank"><img src="http://img.youtube.com/vi/SnTwevzmRrs/0.jpg"
-alt="IMAGE ALT TEXT HERE" width="300" border="10" /></a>
+You can watch us writing the first version of this app in this [video](http://www.youtube.com/watch?feature=player_embedded&v=SnTwevzmRrs
+).
 
-# MIT License
+## Support
+
+For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+
+## Contributing
+
+This project is intended as a starting point for new development so we want to keep it simple. If you have found a bug please create an [issue](https://github.com/bitcoin-computer/monorepo/issues). If you have a bug fix or a UX improvement please create a pull request [here](https://github.com/bitcoin-computer/monorepo/pulls).
+
+If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
+
+## MIT License
 
 Copyright (c) 2022 BCDB Inc.
 

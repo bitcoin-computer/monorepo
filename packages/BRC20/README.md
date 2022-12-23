@@ -1,12 +1,8 @@
 # BRC20 Fungible Token Contract
 
-An implementation of the ERC20 [standard](https://eips.ethereum.org/EIPS/eip-20) on Bitcoin.
+An implementation of the [ERC20 standard](https://eips.ethereum.org/EIPS/eip-20) on Bitcoin built on the [Bitcoin Computer](http://bitcoincomputer.io/). The following interface is implemented.
 
-Built on the [Bitcoin Computer](http://bitcoincomputer.io/), a lightweight smart contract system for Litecoin. See the the [documentation](https://docs.bitcoincomputer.io/advanced-examples/fungible-token/) for more information.
-
-The following interface is implemented.
-
-```js
+```typescript
 interface IBRC20 {
   mint(publicKey: string, amount: number): Promise<string>
   totalSupply(): Promise<number>
@@ -15,24 +11,80 @@ interface IBRC20 {
 }
 ```
 
-The code is under active development. Do not use in production.
+## Installation
 
-## Types
+Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/BRC20``.
 
-```js
-yarn types
+```bash
+git clone git@github.com:bitcoin-computer/monorepo.git
+cd monorepo
+lerna bootstrap
+cd packages/BRC20
 ```
 
-## Lint
+## Usage
 
-```js
-yarn lint
+### Configuration
+
+The library is pre-configured to run on testnet. You can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node) to use the library on regtest. To configure the library to connect to your own regtest node, have a look at the comment above the ``opts`` object at the top of ``brc2.test.ts". Support for mainnet will be added soon.
+
+### Fund the Wallet
+
+You need to send some cryptocurrency to your wallet address to run the tests.
+
+#### Testnet
+
+If you run the application in testnet mode you can fund the address below for free using a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
+```
+muMDxiZUxLMQsa9uEfB6ctNShKtx7y8rbf
 ```
 
-## Test
+#### Regtest
 
-```js
+If you run on regtest mode you can run the command below to fund your wallet for free from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
+```
+yarn fund-ltc muMDxiZUxLMQsa9uEfB6ctNShKtx7y8rbf
+```
+
+#### Mainnet
+
+Coming soon.
+
+
+### Run the Tests
+
+```bash
 yarn test
 ```
 
-If you get an error "Insufficient balance ..." have a look at the [docs](https://docs.bitcoincomputer.io/troubleshoot/) for how to fund the wallet.
+### Run the Linter
+
+```bash
+yarn lint
+```
+
+### Check the Types
+
+```bash
+yarn types
+```
+
+## Support
+
+For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+
+## Contributing
+
+This project is intended as a starting point for new development so we want to keep it simple. If you have found a bug please create an [issue](https://github.com/bitcoin-computer/monorepo/issues). If you have a bug fix or a UX improvement please create a pull request [here](https://github.com/bitcoin-computer/monorepo/pulls).
+
+If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
+
+## MIT License
+
+Copyright (c) 2022 BCDB Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

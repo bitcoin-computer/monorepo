@@ -70,7 +70,7 @@ const Login: React.FC = () => {
               }}
               id="chain"
             >
-              <option value="LTC">LTC</option>
+              <option value="LTC">LTC testnet</option>
             </select>
             <button type="submit" className="button">
               Login

@@ -3,14 +3,17 @@ import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { BRC20 } from '../src/brc-20'
 
+
+/**
+ * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
+ * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ */
 const opts = {
   mnemonic:
     'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
-  network: 'testnet',
-  // url: 'http://127.0.0.1:3000',
-  // network: 'regtest',
+  network: 'testnet'
 }
 
 describe('BRC20', () => {
@@ -23,11 +26,12 @@ describe('BRC20', () => {
       expect(brc20.mintId).to.be.undefined
       expect(brc20.name).to.eq('test')
       expect(brc20.symbol).to.eq('TST')
+      console.log(computer.getAddress())
     })
   })
 
   describe('mint', () => {
-    it('Should mint tokens', async () => {
+    it('Should mint a token', async () => {
       const computer = new Computer(opts)
       const brc20 = new BRC20('test', 'TST', computer)
       const publicKey = brc20.computer.getPublicKey()

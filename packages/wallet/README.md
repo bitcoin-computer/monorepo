@@ -1,34 +1,62 @@
-# A Crypto Wallet in React
+# Bitcoin Computer Wallet
 
-A simple Crypto Wallet built using [Create React App](https://create-react-app.dev/). We are currently supporting LTC, and will add support to other currencies soon. You can make a deposit into the wallet by sending Litecoins to the address shown, using [this](https://testnet-faucet.com/ltc-testnet/) or [this LTC faucet](http://litecointf.salmen.website/). The wallet displays your balance and allows you to send Litecoins to a friend. Build using [Bitcoin Computer](https://bitcoin-computer.gitbook.io/docs/).
+A minimal non-custodial Litecoin web wallet built with [Bitcoin Computer](https://www.bitcoincomputer.io/) and [Create React App](https://create-react-app.dev/).
 
-To create a new wallet address you can change the seed, generating a new one from [here](https://iancoleman.io/bip39/). 
+![Screenshot](public/screenshot.png)
 
-<img src="https://i.ibb.co/pbMjShG/Screen-Shot-2019-10-17-at-17-01-12.png" alt="drawing" width="400"/>
+## Installation
 
-## Start the App
+Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/wallet``.
 
-To run the code clone the project in a new folder, run ``yarn install`` and start the app using
+```bash
+git clone git@github.com:bitcoin-computer/monorepo.git
+cd monorepo
+lerna bootstrap
+cd packages/wallet
+```
 
-````
+## Usage
+
+### Start the Server
+
+To start the application run
+```bash
 yarn start
-````
+```
+and open [http://localhost:3001](http://localhost:3001) in a browser.
 
-## More Docs and Video
+### Configuration
 
+The application defaults to testnet mode. You can run it in regtest or mainnet mode you can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node). To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
 
-You can find more information in the [docs](https://bitcoin-computer.gitbook.io/docs/). Also check out the corresponding [Youtube tutorial](https://www.youtube.com/watch?v=vcjzIFjt3VY).
+### Log In
 
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=vcjzIFjt3VY
-" target="_blank"><img src="http://img.youtube.com/vi/vcjzIFjt3VY/0.jpg"
-alt="IMAGE ALT TEXT HERE" width="300" border="10" /></a>
+This app is very bare bones and does not have a client side user log in. To change the logged in user you can change the ``mnemonic`` property of the ``opts`` object at the top of ``App.js``.
 
-# MIT License
+### Fund the Wallet
 
-Copyright (c) 2022 BCDB Inc.
+You need to send some cryptocurrency to your wallet address to mint or send a token. You can find the current wallet address at the top of the application.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+If you run the application in testnet mode you can fund the wallet for free using a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+If you run on regtest mode you can run
+```
+yarn fund-ltc
+```
+to fund your wallet for free from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+### Send Cryptocurrency
+
+Insert the destination address, select the amount (must be smaller than your balance), and click send
+## Support
+
+For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+
+## Contributing
+
+This project is intended as a starting point for new development so we want to keep it simple. If you have found a bug please create an [issue](https://github.com/bitcoin-computer/monorepo/issues). If you have a bug fix or a UX improvement please create a pull request [here](https://github.com/bitcoin-computer/monorepo/pulls).
+
+If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
+## License
+
+Licensed under the MIT license. See the [LICENSE](https://github.com/bitcoin-computer/monorepo/blob/main/packages/wallet/LICENSE) file for details.

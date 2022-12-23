@@ -8,7 +8,6 @@ describe('Should work with chai', () => {
   })
 
   it('Should create an smart object with a determined class', async () => {
-
     const computer1 = new Computer()
     const computer2 = new Computer()
 
