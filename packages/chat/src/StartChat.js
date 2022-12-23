@@ -1,6 +1,5 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-// import ChatSc from "./chat-sc"
 
 function StartChat({ computer, Contract }) {
   class ChatSc extends Contract {
