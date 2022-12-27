@@ -15,8 +15,8 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/bitcore-lib-ltc": "^8.25.42",
-    "@bitcoin-computer/bitcore-mnemonic-ltc": "^8.25.42",
+    "@bitcoin-computer/bitcore-lib-ltc": "^8.25.44",
+    "@bitcoin-computer/bitcore-mnemonic-ltc": "^8.25.44",
     "@bitcoin-computer/lib": "0.10.1",
     "eslint-plugin-prettier": "^4.0.0",
     "ts-node": "^10.8.1",
