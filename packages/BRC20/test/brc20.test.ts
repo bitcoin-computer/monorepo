@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-expressions */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { BRC20 } from '../src/brc-20'
-
 
 /**
  * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
@@ -26,7 +26,6 @@ describe('BRC20', () => {
       expect(brc20.mintId).to.be.undefined
       expect(brc20.name).to.eq('test')
       expect(brc20.symbol).to.eq('TST')
-      console.log(computer.getAddress())
     })
   })
 
