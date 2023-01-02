@@ -30,7 +30,7 @@ const MintToken: React.FC<IMintTokenProps> = ({ computer }) => {
     } catch (err: any) {
       if (err.message.startsWith('Insufficient balance in address'))
         alert(
-          `You need testnet coins to mint a token. To get free testnet coins open the your wallet. If you have just made a deposit you might have to reload the browser.`
+          `You need coins to mint a token. To get free testnet coins open the your wallet. If you have just made a deposit you might have to reload the browser.`
         )
     }
   }
