@@ -2,10 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import StartChat from './StartChat'
 
-function SideBar({ chats, computer, Contract }) {
+function SideBar({ chats, computer }) {
 
   return <div className="sidebar">
-    <StartChat computer={computer} Contract={Contract}></StartChat><br />
+    <StartChat computer={computer}></StartChat><br />
     {chats.map(object =>
       <small key={object._id}><Link to={`/chat/${object._id}`}>{object._id.substr(0, 16)}</Link><br /></small>
     )}

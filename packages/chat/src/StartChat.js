@@ -1,23 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import ChatSc from "./chat-sc";
 
-function StartChat({ computer, Contract }) {
-  class ChatSc extends Contract {
-    constructor(publicKey) {
-      super()
-      this.messages = []
-      this._owners = [publicKey]
-    }
-
-    post(message) {
-      this.messages.push(message)
-    }
-
-    invite(publicKey) {
-      this._owners.push(publicKey)
-    }
-  }
-
+function StartChat({ computer }) { 
   const navigate = useNavigate();
 
   const createChat = async (e) => {

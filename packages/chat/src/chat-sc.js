@@ -1,6 +1,6 @@
-import { Contract } from '@bitcoin-computer/lib'
 
-export default class Chat extends Contract {
+// eslint-disable-next-line no-undef
+export default class ChatSc extends Contract {
   constructor(publicKey) {
     super()
     this.messages = []
