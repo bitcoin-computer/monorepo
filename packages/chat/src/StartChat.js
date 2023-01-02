@@ -12,7 +12,6 @@ function StartChat({ computer }) {
       console.log('creating chat')
       let chat
       try {
-        console.log(`ChatSc ${ChatSc} ${publicKey}`)
         chat = await computer.new(ChatSc, [publicKey]);
       } catch (err) {
         console.log('error creating chat', err)
