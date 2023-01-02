@@ -1,5 +1,4 @@
-const { Contract } = require('@bitcoin-computer/lib')
-
+// eslint-disable-next-line no-undef
 export default class Artwork extends Contract {
   constructor(title, artist, url) {
     super()
