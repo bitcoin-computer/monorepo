@@ -13,6 +13,11 @@ import useInterval from "./useInterval";
  * "url" to "http://127.0.0.1:3000" in the "opts" object below.
  */
 function App() {
+  const opts = {
+    chain: "LTC",
+    network: "regtest", // "testnet",
+    url: "http://127.0.0.1:3000" // "https://node.bitcoincomputer.io",
+  }
 
   const [computer, setComputer] = useState(null);
   const [chats, setChats] = useState([]);
@@ -29,16 +34,7 @@ function App() {
 
     // if you are currently logging in
     if (isLoggedIn && !computer) {
-      setComputer(new Computer({
-        mnemonic: password,
-        chain: "LTC",
-        url: "https://node.bitcoincomputer.io",
-        network: "testnet",
-
-        // To run locally on regtest, uncomment the following lines:
-        // url: "http://127.0.0.1:3000",
-        // network: "regtest",
-      }))
+      setComputer(new Computer(opts))
       console.log("Bitcoin Computer created on chain " + chain);
       // if you are currently logging out
     } else if (!isLoggedIn && computer) {
