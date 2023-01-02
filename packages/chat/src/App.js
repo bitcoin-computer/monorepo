@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Computer, Contract } from "@bitcoin-computer/lib";
+import { Computer } from "@bitcoin-computer/lib";
 import Wallet from "./Wallet";
 import Chat from "./Chat";
 import SideBar from "./SideBar";
@@ -64,7 +64,7 @@ function App() {
       <div className="App">
         {/* bind the value of chain stored in the state to the child component */}
         <Wallet computer={computer} chain={chain}></Wallet>
-        <SideBar computer={computer} Contract={Contract} chats={chats}></SideBar>
+        <SideBar computer={computer} chats={chats}></SideBar>
 
         <div className="main">
           <Routes>
