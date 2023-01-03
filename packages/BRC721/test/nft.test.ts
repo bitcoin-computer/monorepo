@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '../src/nft'

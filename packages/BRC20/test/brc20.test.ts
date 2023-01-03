@@ -13,7 +13,7 @@ const opts = {
     'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
-  network: 'testnet'
+  network: 'testnet',
 }
 
 describe('BRC20', () => {
