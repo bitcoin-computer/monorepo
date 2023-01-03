@@ -15,8 +15,8 @@ import useInterval from "./useInterval";
 function App() {
   const opts = {
     chain: "LTC",
-    network: "regtest", // "testnet",
-    url: "http://127.0.0.1:3000" // "https://node.bitcoincomputer.io",
+    network: "testnet",
+    url: "https://node.bitcoincomputer.io",
   }
 
   const [computer, setComputer] = useState(null);
