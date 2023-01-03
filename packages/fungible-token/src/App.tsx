@@ -60,12 +60,14 @@ const App: React.FC = () => {
     const refresh = async () => {
       if (computer !== null) {
         // Get all revisions created with the Token contract and the current wallet public key
-        const revs = await computer.query({contract: Token, publicKey: computer.getPublicKey()})
+        const revs = await computer.query({
+          publicKey: computer.getPublicKey()
+        })
         setObjects(await Promise.all(revs.map(async (rev: string) => computer.sync(rev))))
       }
     }
     refresh()
-  }, 20000)
+  }, 10000)
 
   // todo: refactor this function
   const groupByRoot = (list: TokenType[]) =>
