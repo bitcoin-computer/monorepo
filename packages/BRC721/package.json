@@ -15,7 +15,7 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "0.10.0-beta.3",
+    "@bitcoin-computer/lib": "^0.11.0-beta.5",
     "eslint-plugin-prettier": "^4.0.0",
     "ts-node": "^10.8.1",
     "tslib": "~2.4.0"
