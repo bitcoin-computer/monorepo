@@ -27,7 +27,7 @@ export class BRC721 implements IBRC721 {
   }
 
   async balanceOf(publicKey: string): Promise<number> {
-    const revs = await this.computer.queryRevs({ publicKey, contract: NFT })
+    const revs = await this.computer.queryRevs({ publicKey })
     const objects: NFT[] = await Promise.all(revs.map((rev) => this.computer.sync(rev)))
     objects.flatMap((object) => (object._root === this.masterNFT._root ? [object] : []))
     return objects.length

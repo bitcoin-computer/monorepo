@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-expressions */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '../src/nft'
@@ -13,7 +14,7 @@ const opts = {
     'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
-  network: 'testnet'
+  network: 'testnet',
 }
 
 describe('BRC721', () => {
@@ -22,6 +23,9 @@ describe('BRC721', () => {
       const nft = new NFT('to', 'name', 'symbol')
       expect(nft).not.to.be.undefined
       expect(nft).to.deep.eq({
+        _id: undefined,
+        _root: undefined,
+        _rev: undefined,
         name: 'name',
         symbol: 'symbol',
         _owners: ['to'],

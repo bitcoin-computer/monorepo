@@ -1,4 +1,6 @@
-export class TokenBag {
+import { Contract } from '@bitcoin-computer/lib'
+
+export class TokenBag extends Contract {
   tokens: number
 
   name: string
@@ -8,6 +10,7 @@ export class TokenBag {
   _owners: string[]
 
   constructor(to: string, supply: number, name: string, symbol = '') {
+    super()
     this.tokens = supply
     this._owners = [to]
     this.name = name

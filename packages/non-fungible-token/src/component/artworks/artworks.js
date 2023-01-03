@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import Artwork from "./artwork";
 import Card from "./card";
 import { areEqual } from "../util/util";
 import Loader from "../util/loader";
@@ -17,7 +16,6 @@ function Artworks(props) {
       try {
         if (computer) {
           const newRevs = await computer.query({
-            contract: Artwork,
             publicKey: computer.getPublicKey(),
           });
 

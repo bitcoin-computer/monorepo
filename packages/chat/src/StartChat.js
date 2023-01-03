@@ -20,7 +20,7 @@ function StartChat({ computer }) {
       navigate(`/chat/${chat._id}`);
     } catch (err) {
       if (err.message.startsWith("Insufficient balance in address"))
-        alert("You have to fund your wallet https://faucet.bitcoincloud.net/");
+        alert("You have to fund your wallet");
     }
   };
   return (
