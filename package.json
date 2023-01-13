@@ -19,10 +19,11 @@
   },
   "private": false,
   "scripts": {
-    "publish-npm": "yarn ensure-clean-git-working-tree && yarn validate-branch-for-deploy && lerna publish from-package",
+    "publish-npm": "yarn check-obfuscation && yarn ensure-clean-git-working-tree && yarn validate-branch-for-deploy && lerna publish from-package",
     "ensure-clean-git-working-tree": "./scripts/ensure-clean-git-working-tree.sh",
     "prepare": "husky install",
     "create-version": "lerna version --force-publish",
+    "check-obfuscation": "./scripts/check-obfuscation.sh",
     "validate-branch": ". scripts/validate-branch.sh && validate_branch",
     "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch"
   },
