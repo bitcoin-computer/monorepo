@@ -1,16 +1,19 @@
 /* eslint-disable no-unused-expressions */
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { TokenBag } from '../src/token-bag'
 
+/**
+ * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
+ * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ */
 const opts = {
   mnemonic:
     'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
   network: 'testnet',
-  // url: 'http://127.0.0.1:3000',
-  // network: 'regtest',
 }
 
 describe('TokenBag', () => {
