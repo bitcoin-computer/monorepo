@@ -21,11 +21,15 @@ function Artworks(props) {
 
           // sync art work when revs are not same
           if (!areEqual(revs, newRevs)) {
-            const newArts = await Promise.all(
+            const dataArts = await Promise.allSettled(
               newRevs.map(async (rev) => computer.sync(rev))
             );
-            console.log(newArts);
-            setArtworks(newArts);
+
+            const parsedArts = dataArts
+            .filter((x) => x.status === 'fulfilled')
+            .map((x) => x.value)
+
+            setArtworks(parsedArts);
             setLoading(false);
           } else {
             console.log("no new art added");
