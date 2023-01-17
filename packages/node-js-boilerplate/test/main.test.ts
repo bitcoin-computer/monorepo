@@ -8,6 +8,17 @@ import { Counter } from '../src/main'
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
+/**
+ * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
+ * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ */
+const opts = {
+  mnemonic: 'replace this seed',
+  chain: 'LTC',
+  url: 'https://node.bitcoincomputer.io',
+  network: 'testnet',
+}
+
 describe('Bitcoin Computer', () => {
   it('should export a function', () => {
     expect(Computer).not.to.be.undefined
@@ -15,7 +26,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a computer object', () => {
-    const computer = new Computer({ mnemonic: 'replace this seed' })
+    const computer = new Computer(opts)
 
     expect(computer).not.to.be.undefined
     expect(typeof computer).eq('object')
@@ -31,13 +42,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a smart object', async () => {
-    const computer = new Computer({
-      mnemonic: 'replace this seed',
-
-      // uncomment to run locally
-      url: 'http://127.0.0.1:3000',
-      network: 'regtest',
-    })
+    const computer = new Computer(opts)
 
     const counter = await computer.new(Counter)
     // @ts-ignore
@@ -50,12 +55,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should update a smart object', async () => {
-    const computer = new Computer({
-      mnemonic: 'replace this seed',
-      // uncomment to run locally
-      url: 'http://127.0.0.1:3000',
-      network: 'regtest',
-    })
+    const computer = new Computer(opts)
 
     const counter = await computer.new(Counter)
     await counter.inc()

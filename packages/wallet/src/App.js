@@ -13,8 +13,8 @@ function App() {
     mnemonic:
       "travel upgrade inside soda birth essence junk merit never twenty system opinion",
     chain: "LTC",
-    network: "regtest", // "testnet",
-    url: "http://127.0.0.1:3000" // "https://node.bitcoincomputer.io",
+    network: "testnet",
+    url: "https://node.bitcoincomputer.io",
   }
   const [computer] = useState(
     new Computer(opts)
