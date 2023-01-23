@@ -47,7 +47,7 @@ services:
       - ZMQ_URL=tcp://node:28332
       - NETWORK=testnet
       - CHAIN=LTC
-      - BCN_URL=http://127.0.0.1:3000
+      - BCN_URL=https://node.bitcoincomputer.io
     depends_on:
       - db
       - node
@@ -64,7 +64,7 @@ services:
       - NETWORK=testnet
       - CHAIN=LTC
       - ZMQ_URL=tcp://node:28332
-      - BCN_URL=http://127.0.0.1:3000
+      - BCN_URL=https://node.bitcoincomputer.io
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
       - RPC_PROTOCOL=http

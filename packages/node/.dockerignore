@@ -1,10 +1,11 @@
+coverage/
+logs/
 node_modules/
 chain-setup/**/blockchain-data
 chain-setup/**/db-data
-npm-debug.log
-coverage/
 .env
 .DS_Store
-combined.log
-error.log
-bcn-deploy.zip
+src
+test
+*.log
+scripts/__pycache__

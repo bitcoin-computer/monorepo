@@ -85,7 +85,7 @@ By default synchronization process is carried out in parallel by using all your 
 yarn up -t -cpus 16
 ```
 
-The synchronization process can be stopped at any time with the command ```yarn down```. When you restart the process, it will continue from the last block processed.
+The synchronization process can be stopped at any time with the command ```yarn down -t```. When you restart the process, it will continue from the last block processed.
 
 ### Connect to Bitcoin Computer Lib
 
