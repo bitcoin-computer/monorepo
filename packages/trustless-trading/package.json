@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/trustless-trading",
-  "version": "0.12.0-beta.0",
+  "version": "0.13.0-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "private": true,
   "type": "module",
