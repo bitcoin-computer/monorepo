@@ -72,17 +72,19 @@ def main():
             ['sh', '-c', commandLine+' up {0}'.format(args.service)]) 
     else:
         # testnet or mainnet
+        url = subprocess.check_output("grep BCN_URL .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
+        bcnUrl = url if url != '' else 'https://node.bitcoincomputer.io'
         if(args.service == ''):
             # All services: only run bcn, it will launch the dependencies node and db
             subprocess.run(
-                ['sh', '-c', commandLine+' run -d bcn']) 
+                ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' bcn']) 
             # Launch sync in automatic parallel mode
             runSync(args, commandLine)
         else:
             # One service at time
             if(args.service == 'db' or args.service == 'node' or args.service == 'bcn'):
                 subprocess.run(
-                    ['sh', '-c', commandLine+' run -d  -p {0}:{0} bcn'.format(bcnPort)]) 
+                    ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
                 # Launch sync in automatic parallel mode
                 runSync(args, commandLine)
             else:
@@ -90,7 +92,7 @@ def main():
                 bcnPortMap = ' -p {0}:{0} '.format(bcnPort) if args.service == 'bcn' else ''
                 if(args.service == 'db' or args.service == 'node' or args.service == 'bcn'):
                     subprocess.run(
-                        ['sh', '-c', commandLine+' run -d {0} {1}'.format(bcnPortMap, args.service)]) 
+                        ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' {0} {1}'.format(bcnPortMap, args.service)]) 
                     
                 if(args.service == 'sync'):   
                     runSync(args, commandLine)

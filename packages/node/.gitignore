@@ -6,9 +6,6 @@ chain-setup/**/db-data
 .env
 .docker.config
 .DS_Store
-bcn-deploy.zip
-combined.log
-error.log
+*.log
 bcn.config.json
-zmqlog.log
 scripts/__pycache__

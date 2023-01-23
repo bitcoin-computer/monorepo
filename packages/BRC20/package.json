@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/BRC20",
-  "version": "0.12.0-beta.0",
+  "version": "0.13.0-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "private": true,
   "engines": {
@@ -36,10 +36,10 @@
     "types": "tsc --noEmit",
     "test": "mocha --config .mocharc.json"
   },
-  "author": "Jakub Synowiec <jsynowiec@users.noreply.github.com>",
+  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.12.0-beta.0",
+    "@bitcoin-computer/lib": "^0.13.0-beta.0",
     "eslint-plugin-prettier": "^4.0.0",
     "ts-node": "^10.8.1",
     "tslib": "~2.4.0"
