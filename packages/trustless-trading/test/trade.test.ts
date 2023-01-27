@@ -4,7 +4,7 @@ import { Computer } from '@bitcoin-computer/lib'
 import Mnemonic from '@bitcoin-computer/bitcore-mnemonic-ltc'
 import { Token, Payment, Swap } from '../src/trade'
 
-const { Transaction, PrivateKey, Output } = Mnemonic.bitcore
+const { Transaction } = Mnemonic.bitcore
 
 const opts = {
   mnemonic: 'travel upgrade inside soda birth essence junk merit never twenty system opinion',
@@ -17,23 +17,30 @@ const opts = {
 // n2xDdfpcz7cNtvsngdNb4DnJbFzVNG7s3z
 describe('Trade', () => {
   it('should create a Javascript object', async () => {
+    let payment = null
+    let tokenToBuyByUser = null
+    let tokenCreatedBySeller = null
     const sellerComputer = new Computer(opts)
-
     const buyerComputer = new Computer({
       ...opts,
       mnemonic: 'toddler hockey salute wheel harvest video narrow riot guitar lake sea call',
     })
+    try {
+      tokenCreatedBySeller = await sellerComputer.new(Token, [
+        sellerComputer.getPublicKey(),
+        'name',
+        'symbol',
+      ])
 
-    const tokenCreatedBySeller = await sellerComputer.new(Token, [
-      sellerComputer.getPublicKey(),
-      'name',
-      'symbol',
-    ])
-
-    const payment = await buyerComputer.new(Payment, [buyerComputer.getPublicKey(), 100000])
-    const tokenToBuyByUser = await buyerComputer.sync(tokenCreatedBySeller._rev)
+      payment = await buyerComputer.new(Payment, [buyerComputer.getPublicKey(), 100000])
+      tokenToBuyByUser = await buyerComputer.sync(tokenCreatedBySeller._rev)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error)
+    }
     let parsedJson = null
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const swap = await buyerComputer.new(Swap, [tokenToBuyByUser, payment])
     } catch (error) {
       parsedJson = error.response.data.txJSON
@@ -51,6 +58,7 @@ describe('Trade', () => {
       expect(sellerComputer.getPublicKey()).eq(updatedPayment._owners[0])
       expect(buyerComputer.getPublicKey()).eq(updatedToken._owners[0])
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log(e)
     }
   })

@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+/* eslint-disable no-param-reassign */
 export class Token {
   name: string
   symbol: string

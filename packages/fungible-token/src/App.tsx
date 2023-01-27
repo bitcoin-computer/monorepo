@@ -8,7 +8,6 @@ import Card from './Card'
 import useInterval from './useInterval'
 import styled from 'styled-components'
 import { TokenType } from './types'
-import Token from './token-sc'
 
 const Flex = styled.div`
   display: flex;

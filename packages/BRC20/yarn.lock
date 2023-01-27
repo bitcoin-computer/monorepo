@@ -239,10 +239,10 @@
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-"@bitcoin-computer/lib@^0.12.0-beta.0":
-  version "0.12.0-beta.0"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/lib/-/lib-0.12.0-beta.0.tgz#9199a56cfb80e025bc790df05fc25a7481fa4456"
-  integrity sha512-KjbSgbx7NRzRCpc/AwHMy3AXrc6idzxkMMWE+uL7KQP2KvmO5ByAh6g1qiT3jM1J/EbGoArGZFy0/+Fdzfr8Kg==
+"@bitcoin-computer/lib@^0.13.0-beta.0":
+  version "0.13.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@bitcoin-computer/lib/-/lib-0.13.0-beta.0.tgz#8723a3e6eaeb9d5fef295c5d1382cf8d12dac35a"
+  integrity sha512-tpQMkOu2RuakdiJ1RM7MIPt7uLk2jPuETII49GRArYXmc/WvlJAPo4oRVyrsuhN8sO4ek2m5XdW7F8jodxW5LA==
   dependencies:
     "@babel/core" "^7.18.0"
     "@bitcoin-computer/bitcore-mnemonic-ltc" "8.25.44"

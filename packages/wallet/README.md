@@ -6,7 +6,7 @@ A minimal non-custodial Litecoin web wallet built with [Bitcoin Computer](https:
 
 ## Installation
 
-Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/wallet``.
+Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/wallet``.
 
 ```bash
 git clone git@github.com:bitcoin-computer/monorepo.git
@@ -27,7 +27,7 @@ and open [http://localhost:3001](http://localhost:3001) in a browser.
 
 ### Configuration
 
-The application defaults to testnet mode. You can run it in regtest or mainnet mode you can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node). To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
+The application defaults to testnet mode. You can run it in regtest or mainnet mode you can run a [Bitcoin Computer Node][node]. To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
 
 ### Log In
 
@@ -43,14 +43,14 @@ If you run on regtest mode you can run
 ```
 yarn fund-ltc
 ```
-to fund your wallet for free from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
+to fund your wallet for free from the [Bitcoin Computer Node][node].
 
 ### Send Cryptocurrency
 
 Insert the destination address, select the amount (must be smaller than your balance), and click send
 ## Support
 
-For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
 
 ## Contributing
 
@@ -60,3 +60,5 @@ If you want to add a feature we recommend to create a fork. Let us know if you h
 ## License
 
 Licensed under the MIT license. See the [LICENSE](https://github.com/bitcoin-computer/monorepo/blob/main/packages/wallet/LICENSE) file for details.
+
+[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node 

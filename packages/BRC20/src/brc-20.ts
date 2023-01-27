@@ -35,9 +35,7 @@ export class BRC20 implements IBRC20 {
 
   private async getBags(publicKey): Promise<TokenBag[]> {
     if (!this.mintId) throw new Error('Please set a mint id.')
-    const revs = await this.computer.queryRevs({
-      publicKey,
-    })
+    const revs = await this.computer.query({ publicKey })
     const bags = await Promise.all(revs.map(async (rev: string) => this.computer.sync(rev)))
     return bags.flatMap((bag: TokenBag & { _root: string }) =>
       bag._root === this.mintId ? [bag] : []

@@ -12,7 +12,7 @@ function Chat({ computer }) {
   useEffect(() => {
     const refreshChat = async () => {
       if(computer) {
-        const rev = await computer.getLatestRev(`${id}/${outIndex}`)
+        const [rev] = await computer.query({ids:[`${id}/${outIndex}`]})
         setChat(await computer.sync(rev))
       }
     }

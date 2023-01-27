@@ -13,7 +13,7 @@ interface IBRC20 {
 
 ## Installation
 
-Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/BRC20``.
+Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/BRC20``.
 
 ```bash
 git clone git@github.com:bitcoin-computer/monorepo.git
@@ -26,7 +26,7 @@ cd packages/BRC20
 
 ### Configuration
 
-The library is pre-configured to run on testnet. You can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node) to use the library on regtest. To configure the library to connect to your own regtest node, have a look at the comment above the ``opts`` object at the top of ``brc2.test.ts". Support for mainnet will be added soon.
+The library is pre-configured to run on testnet. You can run a [Bitcoin Computer Node][node] to use the library on regtest. To configure the library to connect to your own regtest node, have a look at the comment above the ``opts`` object at the top of ``brc2.test.ts". Support for mainnet will be added soon.
 
 ### Fund the Wallet
 
@@ -41,7 +41,7 @@ muMDxiZUxLMQsa9uEfB6ctNShKtx7y8rbf
 
 #### Regtest
 
-If you run on regtest mode you can run the command below to fund your wallet for free from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
+If you run on regtest mode you can run the command below to fund your wallet for free from the [Bitcoin Computer Node][node].
 ```
 yarn fund-ltc muMDxiZUxLMQsa9uEfB6ctNShKtx7y8rbf
 ```
@@ -71,7 +71,7 @@ yarn types
 
 ## Support
 
-For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/getting-started/run-in-a-browser) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
 
 ## Contributing
 
@@ -88,3 +88,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node 

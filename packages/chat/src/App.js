@@ -46,7 +46,7 @@ function App() {
   useInterval(() => {
     const refresh = async () => {
       if (computer) {
-        const revs = await computer.getRevs(computer.getPublicKey());
+        const revs = await computer.query({ publicKey: computer.getPublicKey() })
         setChats(
           await Promise.all(revs.map(async (rev) => computer.sync(rev)))
         );

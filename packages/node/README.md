@@ -1,15 +1,18 @@
 <div align="center">
-
-  <img src="imgs/banner@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 180px"/>
-
-  <p>
-    <h1><b>Bitcoin Computer Node</b></h1>
-  </p>
+<img src="./imgs/bitcoin-computer-node@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 180px"/>
+    <h1>Bitcoin Computer Node</h1>
 </div>
 
-<h3><b>Server side infrastructure for running smart contracts on Litecoin</b></h3>
+A Litecoin node optimized for smart contract applications. The server-side component of the [Bitcoin Computer](http://bitcoincomputer.io/).
 
-This library is the server side counterpart to the [Bitcoin Computer Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib).
+* Includes a Litecoin node, a PostgreSQL database, and an REST API
+* Trustless access to Litecoin transactions created with the [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib)
+* Index structures for retrieving UTXOs storing smart contract data
+* Off-chain data storage
+* Docker integration for easy deployment
+* Exposes an [RPC](https://litecoin.info/index.php/Litecoin_API) API for traditional Litecoin development
+* Synchronizes in parallel for faster and more efficient performance
+* Support for Bitcoin and Dogecoin coming soon
 
 ## Installation
 
@@ -36,7 +39,7 @@ To start the Bitcoin Computer Node on Litecoin (LTC) regtest run:
 yarn up
 ```
 
-You will see the logs of the services that make up the Bitcoin Computer Node: a Litecoin Node called ``node``, a database called ``db`` and api server called ``bcn``. Until the database is up and running, messages indicating connection attempts are be logged.
+You will see the logs of the services that make up the Bitcoin Computer Node: a Litecoin Node called ``node``, a database called ``db`` and api server called ``bcn``. Until the database is up and running, messages indicating connection attempts are be logged. The node will be ready when the logs stop running (this can take a few minutes).
 
 Use the ``-t`` option to start the node on testnet. Type ``yarn up -h`` to get the list of all configuration options. The node will start to download and sync to the Litecoin testnet blockchain.
 
@@ -103,27 +106,23 @@ The following table shows the estimated times and costs for syncing to a Litecoi
 | 8    | 32GB | 7h 10m    | 239.62 USD     |
 | 16   | 32GB | 4h 44m    | 440.64 USD     |
 
-## Transaction Costs
+## Price
 
-While it is free to develop a Bitcoin Computer application, there is a small fee to run the application on the Bitcoin Computer on mainnet. The fees are used to support the development of the Bitcoin Computer.
+It is free to develop and test a Bitcoin Computer application on testnet and regtest.
 
-**Testnet and Regtest:** The Bitcoin Computer will be free forever on regtest and testnet.
-
-**Mainnet** The fees for the Bitcoin Computer are on average the same as the miners fees.
-
-For example, if the miner transaction fees is $0.01, then you will pay $0.02: one cent to the miners, and one cent to support the development of the Bitcoin Computer.
+On Mainnet the fees for using the Bitcoin Computer are on average the same as the transaction fees charged by miners fees. For example, if the miner transaction fee is one cent, then you  pay two cent in total: one cent to the miners, and one cent to support the development of the Bitcoin Computer.
 
 ## Development Status
 
-We are still aware of security issues so we do not recommend to use Bitcoin Computer in production yet. We are working on an internal audit to identify and fix all remaining security issues. We estimate that the audit and bug fixes will be completed in January 2023.
+We are not aware of security vulnerabilities but there is the possibility of unknown security vulnerabilities. We have performed two internal audits and have fixed all issues that were discovered. Each time the application was refactored heavily. We will will perform one more internal audit before we recommend to use the Bitcoin Computer in production.
 
 ## Documentation and Help
 
-Have a look at the [Bitcoin Computer Docs](https://bitcoin-computer.gitbook.io/docs/). If you find a bug or have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.
+Have a look at the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/). If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## License
 
-[Creative Commons Attribution-NoDerivs 3.0 Unported](https://creativecommons.org/licenses/by-nd/3.0/)
+This software is licensed under the [Creative Commons Attribution-NoDerivs 3.0 Unported](https://creativecommons.org/licenses/by-nd/3.0/) license.
 
 You are free to: share, copy, and redistribute the material in any medium or format for any purpose, even commercially under the following terms:
 

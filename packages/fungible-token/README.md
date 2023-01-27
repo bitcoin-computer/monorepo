@@ -6,7 +6,7 @@ A application for minting, storing, and sending fungible tokens on Litecoin. Bui
 
 ## Installation
 
-Install the [Bitcoin Computer  Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/fungible-token``.
+Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/fungible-token``.
 
 ```bash
 git clone git@github.com:bitcoin-computer/monorepo.git
@@ -31,7 +31,7 @@ To log into the application you need a BIP39 seed phrase. You can generate a new
 
 ### Configuration
 
-The application defaults to testnet mode. To run it in regtest or mainnet mode you can run a [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node). To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
+The application defaults to testnet mode. To run it in regtest or mainnet mode you can run a [Bitcoin Computer Node][node]. To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
 
 ### Fund the Wallet
 
@@ -43,7 +43,7 @@ If you run on regtest mode you can send free regtest coins by running
 ```
 yarn fund-ltc
 ```
-from the [Bitcoin Computer Node](https://www.npmjs.com/package/@bitcoin-computer/node).
+from the [Bitcoin Computer Node][node].
 
 
 ## Support
@@ -65,3 +65,5 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node 
