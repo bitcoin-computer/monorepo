@@ -64,7 +64,7 @@ function App() {
 
   const handleSubmit = async (evt) => {
     evt.preventDefault();
-    const txId = await computer.db.wallet.send(parseInt(amount * 1e8, 10), to);
+    const txId = await computer.send(parseInt(amount * 1e8, 10), to);
     const message = `Sent\n${amount}\n\nTo\n${to}\n\nTransaction id\n${txId}`;
     console.log(message);
     alert(message);

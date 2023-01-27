@@ -41,6 +41,8 @@ const SendToken: React.FC<ISendTokenProps> = ({ tokens }) => {
         .map((token) => `${token.coins} -> ${token._owners[0]}`)
         .join('\n')
     )
+    setAmountString('')
+    setTo('')
   }
 
   return (
@@ -54,7 +56,7 @@ const SendToken: React.FC<ISendTokenProps> = ({ tokens }) => {
           onChange={(e) => setAmountString(e.target.value)}
         />
         <br />
-        To
+        Public Key
         <br />
         <input
           type="string"

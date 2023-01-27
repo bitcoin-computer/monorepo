@@ -1,21 +1,6 @@
-# BRC721 Non-Fungible Token Contract
+# Trustless trading contract
 
-An implementation of the ERC721 [standard](https://eips.ethereum.org/EIPS/eip-721) on Bitcoin.
-
-Built on the [Bitcoin Computer](http://bitcoincomputer.io/), a lightweight smart contract system for Litecoin and Bitcoin. See the the [documentation](https://docs.bitcoincomputer.io/advanced-examples/fungible-token/) for more information.
-
-The following interface is currently implemented.
-
-```js
-interface IBRC721 {
-  mint(to: string, name?: string, symbol?: string): Promise<NFT>
-  balanceOf(publicKey: string): Promise<number>
-  ownerOf(tokenId: string): Promise<string[]>
-  transfer(to: string, tokenId: string)
-}
-```
-
-The interface and its implementation are under active development. Do not use in production.
+This is a simple example of a trustless trading contract. It is a [Bitcoin Computer](http://bitcoincomputer.io/) smart contract that implements the [ERC721](https://eips.ethereum.org/EIPS/eip-721) interface. It is a non-fungible token (NFT) that can be traded between two parties without a trusted third party.
 
 ## Types
 
@@ -34,5 +19,3 @@ yarn lint
 ```js
 yarn test
 ```
-
-If you get an error "Insufficient balance ..." have a look at the [docs](https://docs.bitcoincomputer.io/troubleshoot/) for how to fund the wallet.
