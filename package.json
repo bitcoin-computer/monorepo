@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer",
-  "version": "0.12.0-beta.0",
+  "version": "0.13.3-beta.0",
   "description": "Lightweight Smart Contracts for Bitcoin and Litecoin",
   "contributors": [
     "Clemens Ley",
@@ -22,6 +22,7 @@
     "prepare": "husky install",
     "create-version": "lerna version --force-publish",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
+    "prepublishOnly": "./scripts/check-obfuscation.sh",
     "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch"
   },
   "dependencies": {
