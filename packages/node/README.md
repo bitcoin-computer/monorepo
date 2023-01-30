@@ -14,75 +14,128 @@ A Litecoin node optimized for smart contract applications. The server-side compo
 * Synchronizes in parallel for faster and more efficient performance
 * Support for Bitcoin and Dogecoin coming soon
 
+## Prerequisites
+
+You need to have [node.js](https://nodejs.org/en/) and [Docker](https://www.docker.com/) installed.
+
 ## Installation
 
-Clone the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo.git) from GitHub. Move to ```monorepo/packages/node``` and copy the file ``.env.example`` into a file ``.env`` in the root folder.
-
-You need to have [Docker](https://www.docker.com/) and [yarn](https://yarnpkg.com/) installed. You can install them manually or run the script ``setup.sh`` in the folder ``scripts``.
-
-Then close and reopen the terminal window to make sure that the Docker daemon is running and run ``yarn install``.
-
-```shell
+```sh
+# Download the Bitcoin Computer Monorepo
 git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Move to the folder for the Bitcoin Computer Node
 cd monorepo/packages/node
+
+# Copy the .env.example file into a .env file
 cp .env.example .env
-./scripts/setup.sh
-yarn install
+
+# Install the dependencies
+npm install
 ```
 
 ## Usage
 
 ### Start the Node
-To start the Bitcoin Computer Node on Litecoin (LTC) regtest run:
 
-```shell
+Run the command below. The node will be up and running once you can see the message "Bitcoin Computer Node is ready" in the logs. You will need to search the logs as it is not the last message. By default the node will run Litecoin regtest mode. See the [Configuration](#configuration) section for more information.
+
+```sh
 yarn up
-```
-
-You will see the logs of the services that make up the Bitcoin Computer Node: a Litecoin Node called ``node``, a database called ``db`` and api server called ``bcn``. Until the database is up and running, messages indicating connection attempts are be logged. The node will be ready when the logs stop running (this can take a few minutes).
-
-Use the ``-t`` option to start the node on testnet. Type ``yarn up -h`` to get the list of all configuration options. The node will start to download and sync to the Litecoin testnet blockchain.
-
-```shell
-yarn up -t
 ```
 
 ### Fund the Wallet
 
-You need to fund the wallet before you can run the tests. On regtest you can run
+If you run the node in regtest mode, you can fund a wallet with the following command. This is very convenient for development.
 
-```shell
+```sh
 yarn fund-ltc <address1> [<address2> ... <addressN>]
 ```
-On mainnet you need to send Litecoin to the address in question (you can find the address in the error message).
 
 ### Run the Tests
 
 To run the tests, execute
 
-```shell
+```sh
 yarn test
 ```
 ### Stop the Node
 
 To stop the Bitcoin Computer Node run
 
-```shell
+```sh
 yarn down
 ```
 
+### Reset the database
+
 To stop the Bitcoin Computer Node, reset the database, delete all blockchain data, and stop all docker containers, run the following command
 
-```shell
+```sh
 yarn reset
 ```
 
+## Configuration
 
-### Syncing in parallel
+You can configure the chain and network of a node, as well as the level of paralellization of a node using the options below.
 
-If your machine has more than 4 cores you can run the sync process in parallel to shorten the synchronization time. This is only required on testnet and mainnet.
+<table>
+  <tr>
+    <th>&nbsp;</th>
+    <th>Option</th>
+    <th>Alternative</th>
+    <th>Description</th>
+  </tr>
 
-By default synchronization process is carried out in parallel by using all your available cores. Also, you can use a flag to indicate an specific number of dedicated cores.
+  <tr>
+    <td rowspan="2">Chain</td>
+    <td>--litecoin</td>
+    <td>-ltc</td>
+    <td>Start node on Litecoin</td>
+  </tr>
+
+  <tr>
+    <td>--bitcoin</td>
+    <td>-btc</td>
+    <td>Start node on Litecoin</td>
+  </tr>
+
+  <tr>
+    <td rowspan="3">Network</td>
+    <td>--testnet</td>
+    <td>-t</td>
+    <td>Start the node on testnet</td>
+  </tr>
+
+  <tr>
+    <td>--regtest</td>
+    <td>-r</td>
+    <td>Start the node on regtest</td>
+  </tr>
+
+  <tr>
+    <td>--mainnet</td>
+    <td>-m</td>
+    <td>Start the node on mainnet</td>
+  </tr>
+
+  <tr>
+    <td rowspan="3">Mode</td>
+    <td></td>
+    <td>-cpus</td>
+    <td>Synchronize in parallel</td>
+  </tr>
+</table>
+
+You can combine the options, for example, to start a node on testnet using Bitcoin, run
+
+```shell
+yarn up -t -btc
+```
+
+### Synchronizing in parallel
+
+If your machine has more than 4 cores you can run the sync process in parallel. By default all your available cores are used. You can use a flag to indicate an specific number of dedicated cores.
 
 ```shell
 yarn up -t -cpus 16
@@ -90,13 +143,9 @@ yarn up -t -cpus 16
 
 The synchronization process can be stopped at any time with the command ```yarn down -t```. When you restart the process, it will continue from the last block processed.
 
-### Connect to Bitcoin Computer Lib
+## Estimated Server Costs
 
-Have a look at the [documentation](https://docs.bitcoincomputer.io/library/api/) for how to connect a Bitcoin Computer Lib instance to your Bitcoin Computer Node.
-
-## Server Costs
-
-The following table shows the estimated times and costs for syncing to a Litecoin node on testnet. The costs are estimated using an AWS EC2 instance [prices](https://aws.amazon.com/ec2/pricing/on-demand/). All experiments were run using a 50GB SSD storage.
+The following table shows the estimated times and costs for syncing to a Litecoin node on testnet on [AWS EC2](https://aws.amazon.com/ec2/pricing/on-demand/). All experiments were run using 50GB SSD storage.
 
 
 | CPUs | RAM  | Sync Time | Monthly Costs  |
