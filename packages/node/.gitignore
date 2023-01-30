@@ -3,7 +3,6 @@ logs/
 node_modules/
 chain-setup/**/blockchain-data
 chain-setup/**/db-data
-dist/
 .env
 .docker.config
 .DS_Store
