@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer",
-  "version": "0.13.3-beta.0",
+  "version": "0.13.4-beta.0",
   "description": "Lightweight Smart Contracts for Bitcoin and Litecoin",
   "contributors": [
     "Clemens Ley",
