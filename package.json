@@ -7,6 +7,9 @@
     "Laura Tardivo",
     "Vivek Singh"
   ],
+  "bin": {
+    "bitcoin-computer": "./scripts/install.sh"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/bitcoin-computer/monorepo"
