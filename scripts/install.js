@@ -27,7 +27,8 @@ try {
         console.log('Copied .env.example to .env')
       }
       const args = process.argv.slice(3)
-      execSync(`npm run up ${args}`, { stdio: 'inherit' })
+      console.log(`Running 'npm run up -- ${args}`)
+      execSync(`npm run up -- ${args}`, { stdio: 'inherit' })
     } else execSync('npm run start', { stdio: 'inherit' })
      
   }
