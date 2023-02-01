@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/fungible-token",
-  "version": "0.13.4-beta.2",
+  "version": "0.13.4-beta.3",
   "private": true,
   "dependencies": {
     "@bitcoin-computer/lib": "^0.13.4-beta.0",
