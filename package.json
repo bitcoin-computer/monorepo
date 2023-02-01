@@ -8,8 +8,11 @@
     "Vivek Singh"
   ],
   "bin": {
-    "bitcoin-computer": "./scripts/install.sh"
+    "bitcoin-computer": "./scripts/install.js"
   },
+  "files": [
+    "scripts/install.js"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/bitcoin-computer/monorepo"
