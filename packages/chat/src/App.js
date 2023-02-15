@@ -21,20 +21,20 @@ function App() {
 
   const [computer, setComputer] = useState(null);
   const [chats, setChats] = useState([]);
-  const [chain, setChain] = useState("LTC");
+  const [chain, setChain] = useState(opts.chain);
 
   useInterval(() => {
     // the BIP_39_KEY is set on login and we fetch it from local storage
-    const password = window.localStorage.getItem("BIP_39_KEY");
+    const mnemonic = window.localStorage.getItem("BIP_39_KEY");
     // the chain has also been stored in local storage on login, we need
     // to store the chain in the state because we pass it to Wallet
     setChain(window.localStorage.getItem("CHAIN"));
 
-    const isLoggedIn = password && chain;
+    const isLoggedIn = mnemonic && chain;
 
     // if you are currently logging in
     if (isLoggedIn && !computer) {
-      setComputer(new Computer(opts))
+      setComputer(new Computer({ ...opts, mnemonic }))
       console.log("Bitcoin Computer created on chain " + chain);
       // if you are currently logging out
     } else if (!isLoggedIn && computer) {

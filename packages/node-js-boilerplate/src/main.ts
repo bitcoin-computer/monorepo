@@ -4,8 +4,7 @@ class Counter extends Contract {
   n: number
 
   constructor() {
-    super()
-    this.n = 0
+    super({ n: 0 })
   }
 
   inc() {

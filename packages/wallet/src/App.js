@@ -75,16 +75,16 @@ function App() {
       <h2>Wallet</h2>
 
       <div className="row">
-        <div className="col-25"><i>Address</i></div>
+        <div className="col-25"><b>Address</b></div>
         <div className="col-75">{computer.getAddress()}</div>
       </div>
       <div className="row">
-        <div className="col-25"><i>Public Key</i></div>
+        <div className="col-25"><b>Public Key</b></div>
         <div className="col-75">{computer.getPublicKey()}</div>
       </div>
 
       <div className="row">
-        <div className="col-25"><i>Balance</i></div>
+        <div className="col-25"><b>Balance</b></div>
         <div className="col-75">{balance / 1e8} {computer.getChain()} ({computer.getNetwork()})</div>
       </div>
 
@@ -93,7 +93,7 @@ function App() {
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-25">
-            <label><i>Amount</i></label>
+            <label><b>Amount</b></label>
             <br />
           </div>
           <div className="col-75">
@@ -109,7 +109,7 @@ function App() {
         </div>
         <div className="row">
           <div className="col-25">
-            <label><i>To</i></label>
+            <label><b>To</b></label>
             <br />
           </div>
           <div className="col-75">

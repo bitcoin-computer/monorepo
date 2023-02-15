@@ -8,10 +8,8 @@ A template for using the [Bitcoin Computer][bitcoin-computer] with [Typescript][
 
 ## Installation
 
-Follow the instructions to clone and install the Bitcoin Computer [```monorepo```](https://github.com/bitcoin-computer/monorepo.git#installation) from GitHub. 
+Follow the instructions to clone and install the Bitcoin Computer [```monorepo```](https://github.com/bitcoin-computer/monorepo.git#installation) from GitHub.
 ## Usage
-
-We provide the following scripts:
 
 Run the tests:
 * ```yarn test```
