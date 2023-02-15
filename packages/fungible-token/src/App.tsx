@@ -22,6 +22,18 @@ const Header = styled.div`
   }
 `
 
+/**
+ * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
+ * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ */
+const opts = {
+  mnemonic:
+    'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
+  chain: 'LTC',
+  url: 'https://node.bitcoincomputer.io',
+  network: 'testnet',
+}
+
 const App: React.FC = () => {
   const [computer, setComputer] = useState<typeof Computer | null>(null)
   const [objects, setObjects] = useState<TokenType[]>([])
@@ -29,23 +41,14 @@ const App: React.FC = () => {
 
   useInterval(() => {
     // BIP_39_KEY & CHAIN is set on login and we fetch it from local storage
-    const password = window.localStorage.getItem('BIP_39_KEY')
+    const mnemonic = window.localStorage.getItem('BIP_39_KEY')
     setChain(window.localStorage.getItem('CHAIN') || '')
 
-    const isLoggedIn = password && chain
+    const isLoggedIn = mnemonic && chain
     // if you are currently logging in
     if (isLoggedIn && !computer) {
       setComputer(
-        new Computer({
-          mnemonic: password,
-          chain: 'LTC',
-          url: 'https://node.bitcoincomputer.io',
-          network: 'testnet',
-
-          // To run locally on regtest, uncomment the following lines:
-          // url: 'http://127.0.0.1:3000',
-          // network: 'regtest',
-        })
+        new Computer({ ...opts, mnemonic, chain })
       )
       console.log('Bitcoin Computer created on ' + chain)
       // if you are currently logging out

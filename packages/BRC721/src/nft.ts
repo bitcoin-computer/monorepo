@@ -9,10 +9,11 @@ export class NFT extends Contract {
   readonly _root: string
 
   constructor(to: string, name: string, symbol: string) {
-    super()
-    this._owners = [to]
-    this.name = name
-    this.symbol = symbol
+    super({
+      _owners: [to],
+      name: name,
+      symbol: symbol
+    })
   }
 
   transfer(to: string) {

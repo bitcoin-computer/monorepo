@@ -2,9 +2,10 @@
 // eslint-disable-next-line no-undef
 export default class ChatSc extends Contract {
   constructor(publicKey) {
-    super()
-    this.messages = []
-    this._owners = [publicKey]
+    super({
+      messages: [],
+      _owners: [publicKey]
+    })
   }
 
   post(message) {

@@ -1,10 +1,11 @@
 // eslint-disable-next-line no-undef
 export default class Token extends Contract {
   constructor(to, supply, name) {
-    super()
-    this.coins = supply
-    this._owners = [to]
-    this.name = name
+    super({
+      coins: supply,
+      _owners: [to],
+      name: name
+    })
   }
 
   send(amount, to) {

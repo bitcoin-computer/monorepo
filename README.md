@@ -3,38 +3,31 @@
 <h1>Bitcoin Computer</h1>
 </div>
 
-The Bitcoin Computer is a powerful on-chain L2 smart contract system that is designed specifically for UTXO-based blockchains. 
+A smart contract system for UTXO-based blockchains. Key features:
+* Smart contract programming in Javascript and Typescript
+* Very low fees through client-side validation
+* Built-in privacy through encryption
+* Optional encrypted off-chain storage for efficient block space usage
+* ES6 compliant module system
+* Does not rely on a side-chain
+* Support for Litecoin with support for Bitcoin and Dogecoin coming soon.
 
-Some of the key features include:
+With the Bitcoin Computer, you can build decentralized applications. Examples include fungible and non-fungible tokens, exchanges, games, office applications, social networks, messengers, AI-based applications, and much more.
 
-* Low fees through client-side validation
-* The ability to write smart contracts in popular programming languages such as Javascript and Typescript
-* Seamless integration into web applications
-* Built-in privacy features such as off-chain storage and encryption
-* Support for non-custodial applications
-* Trustless and censorship-resistant design
-* Compliance with ES6 module system
-* Compatibility with both browser and node.js environments
-* Support for Litecoin, with support for Bitcoin and Dogecoin coming soon
 
-With the Bitcoin Computer, you can build a wide range of decentralized applications, such as fungible and non-fungible tokens, exchanges, games, office applications, social networks, messengers, AI-based applications, and much more.
+<b>NEW</b> [experimental support for ordinals](https://docs.bitcoincomputer.io/ordinals/) was added in version 0.14.
 
 ## Getting Started
 
-The best way to get started is to clone this repository and run one of the examples.
+To clone this monorepo and install the dependencies, run
 
 ```bash
-# download the code
-git clone git@github.com:bitcoin-computer/monorepo.git
-
-# install dependencies
-cd monorepo
-lerna bootstrap
+npx bitcoin-computer
 ```
 
 ## Examples
 
-The examples are in the `packages` folder. To run an example have a look at the `README.md` file in the corresponding folder.
+The examples are in the `packages` folder. To run an example look at the `README.md` file in the corresponding folder.
 
 ### Applications
 
@@ -59,6 +52,12 @@ The core smart contract library is based on two packages:
 * [Bitcoin Computer Lib](https://www.npmjs.com/package/@bitcoin-computer/lib) A non-custodial web wallet for reading and writing smart contracts
 * [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) Server side infrastructure for providing trustless access to smart contracts
 
+## Versioning
+
+If you run your own node, make sure to use the same versions of Lib and Node.
+
+We provide a free Bitcoin Computer Node on Litecoin testnet so you can try out Lib without having to run a node. This node always runs the latest version.
+
 ## Price
 
 It is free to develop and test a Bitcoin Computer application on testnet and regtest.
@@ -70,7 +69,9 @@ On Mainnet the fees for using the Bitcoin Computer are on average the same as th
 We have completed two internal audits and addressed any discovered issues. Currently, there are no known security vulnerabilities, however, it is possible that unknown vulnerabilities may exist. We plan to conduct one more thorough internal security audit prior to recommending the usage of the Bitcoin Computer in production environments.
 ## Documentation and Help
 
-Have a look at the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/). If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.
+Have a look at the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/).
+
+If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## License
 

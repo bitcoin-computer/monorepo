@@ -59,6 +59,7 @@ To run the tests, execute
 ```sh
 yarn test
 ```
+
 ### Stop the Node
 
 To stop the Bitcoin Computer Node run
@@ -73,6 +74,14 @@ To stop the Bitcoin Computer Node, reset the database, delete all blockchain dat
 
 ```sh
 yarn reset
+```
+
+### Connect to Bitcoin Computer Library
+
+To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib) object to your node you can set the ``url`` property.
+
+```js
+new Computer({ url: 'https://localhost:3000' })
 ```
 
 ## Configuration

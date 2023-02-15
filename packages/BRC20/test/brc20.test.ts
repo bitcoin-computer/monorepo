@@ -30,14 +30,27 @@ describe('BRC20', () => {
   })
 
   describe('mint', () => {
-    it('Should mint a token', async () => {
-      const computer = new Computer(opts)
-      const brc20 = new BRC20('test', 'TST', computer)
+    const computer = new Computer(opts)
+    const brc20 = new BRC20('test', 'TST', computer)
+    let mintId: string
+
+    it('Should create the brc20 object', async () => {
       const publicKey = brc20.computer.getPublicKey()
-      const rev = await brc20.mint(publicKey, 200)
-      expect(rev).not.to.be.undefined
-      expect(typeof rev).to.eq('string')
-      expect(rev.length).to.be.greaterThan(64)
+      mintId = await brc20.mint(publicKey, 200)
+      expect(mintId).not.to.be.undefined
+      expect(typeof mintId).to.eq('string')
+      expect(mintId.length).to.be.greaterThan(64)
+    })
+
+    it('Should mint a root token', async () => {
+      const rootToken = await computer.sync(mintId)
+      expect(rootToken).not.to.be.undefined
+      expect(rootToken._id).to.eq(mintId)
+      expect(rootToken._rev).to.eq(mintId)
+      expect(rootToken._root).to.eq(mintId)
+      expect(rootToken.tokens).to.eq(200)
+      expect(rootToken.name).to.eq('test')
+      expect(rootToken.symbol).to.eq('TST')
     })
   })
 

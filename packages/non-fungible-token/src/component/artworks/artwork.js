@@ -1,10 +1,7 @@
 // eslint-disable-next-line no-undef
 export default class Artwork extends Contract {
   constructor(title, artist, url) {
-    super()
-    this.title = title
-    this.artist = artist
-    this.url = url
+    super({ title, artist, url})
   }
 
   setOwner(owner) {
