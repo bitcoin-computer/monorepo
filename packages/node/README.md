@@ -3,15 +3,15 @@
     <h1>Bitcoin Computer Node</h1>
 </div>
 
-A Litecoin node optimized for smart contract applications. The server-side component of the [Bitcoin Computer](http://bitcoincomputer.io/).
+A Litecoin node optimized for smart contract applications. Also, the server-side component of the [Bitcoin Computer](http://bitcoincomputer.io/).
 
 * Includes a Litecoin node, a PostgreSQL database, and an REST API
-* Trustless access to Litecoin transactions created with the [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib)
+* Trustless access to smart contract data created with the [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib)
 * Index structures for retrieving UTXOs storing smart contract data
 * Off-chain data storage
-* Docker integration for easy deployment
 * Exposes an [RPC](https://litecoin.info/index.php/Litecoin_API) API for traditional Litecoin development
 * Synchronizes in parallel for faster and more efficient performance
+* Docker integration for easy deployment
 * Support for Bitcoin and Dogecoin coming soon
 
 ## Prerequisites
@@ -38,11 +38,13 @@ npm install
 
 ### Start the Node
 
-Run the command below. The node will be up and running once you can see the message "Bitcoin Computer Node is ready" in the logs. You will need to search the logs as it is not the last message. By default the node will run Litecoin regtest mode. See the [Configuration](#configuration) section for more information.
+To start the node run the command below. By default the node will run Litecoin regtest mode, see [Configuration](#configuration) for more information.
 
 ```sh
 yarn up
 ```
+
+The node is ready once it logs "Bitcoin Computer Node is ready" (you need to search the logs as it is not the last message).
 
 ### Fund the Wallet
 
@@ -78,7 +80,7 @@ yarn reset
 
 ### Connect to Bitcoin Computer Library
 
-To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib) object to your node you can set the ``url`` property.
+To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib) object to your node you have to set the ``url`` property.
 
 ```js
 new Computer({ url: 'https://localhost:3000' })

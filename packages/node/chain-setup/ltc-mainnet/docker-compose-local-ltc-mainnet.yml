@@ -3,7 +3,7 @@ services:
   db:
     env_file: .env
     volumes:
-      - ./chain-setup/ltc-testnet/db-data:/var/lib/postgresql/data
+      - ./chain-setup/ltc-mainnet/db-data:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
     restart: always
   node:
@@ -46,7 +46,7 @@ services:
       - ZMQ_URL=tcp://node:28332
       - NETWORK=mainnet
       - CHAIN=LTC
-      - BCN_URL=https://node.bitcoincomputer.io
+      - BCN_URL=https://ltc.node.bitcoincomputer.io
     depends_on:
       - db
       - node
@@ -63,7 +63,7 @@ services:
       - NETWORK=mainnet
       - CHAIN=LTC
       - ZMQ_URL=tcp://node:28332
-      - BCN_URL=https://node.bitcoincomputer.io
+      - BCN_URL=https://ltc.node.bitcoincomputer.io
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
       - RPC_PROTOCOL=http

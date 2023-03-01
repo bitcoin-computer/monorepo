@@ -1,5 +1,4 @@
-import { Contract } from '@bitcoin-computer/lib'
-
+// @ts-ignore
 export class NFT extends Contract {
   name: string
   symbol: string
@@ -9,18 +8,10 @@ export class NFT extends Contract {
   readonly _root: string
 
   constructor(to: string, name: string, symbol: string) {
-    super({
-      _owners: [to],
-      name: name,
-      symbol: symbol
-    })
+    super({ _owners: [to], name, symbol })
   }
 
   transfer(to: string) {
     this._owners = [to]
-  }
-
-  mint(to: string) {
-    return new NFT(to, this.name, this.symbol)
   }
 }

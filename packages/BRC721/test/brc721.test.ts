@@ -23,9 +23,6 @@ describe('BRC721', () => {
       const nft = new NFT('to', 'name', 'symbol')
       expect(nft).not.to.be.undefined
       expect(nft).to.deep.eq({
-        _id: undefined,
-        _root: undefined,
-        _rev: undefined,
         name: 'name',
         symbol: 'symbol',
         _owners: ['to'],

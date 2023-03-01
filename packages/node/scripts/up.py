@@ -87,15 +87,7 @@ def main():
                     ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
                 # Launch sync in automatic parallel mode
                 runSync(args, commandLine)
-            else:
-                # One service at time
-                bcnPortMap = ' -p {0}:{0} '.format(bcnPort) if args.service == 'bcn' else ''
-                if(args.service == 'db' or args.service == 'node' or args.service == 'bcn'):
-                    subprocess.run(
-                        ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' {0} {1}'.format(bcnPortMap, args.service)]) 
-                    
-                if(args.service == 'sync'):   
-                    runSync(args, commandLine)
 if __name__ == '__main__':
     main()
+    
     

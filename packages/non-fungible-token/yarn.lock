@@ -1140,10 +1140,10 @@
     minimalistic-assert "^1.0.1"
     minimalistic-crypto-utils "^1.0.1"
 
-"@bitcoin-computer/lib@^0.13.3-beta.0":
-  version "0.13.3-beta.0"
-  resolved "https://registry.yarnpkg.com/@bitcoin-computer/lib/-/lib-0.13.3-beta.0.tgz#f879e0b5ccac547257468cb655b3b557ebac009d"
-  integrity sha512-HJ66pThRHPYxDNORJqBiKzwIro+rka20IlPRGg2wBn4rsy+AfbPw5CTYBlWSkyUhboUobLmffC0g3eqTPfvnhw==
+"@bitcoin-computer/lib@^0.14.0-beta.0":
+  version "0.14.0-beta.0"
+  resolved "https://registry.yarnpkg.com/@bitcoin-computer/lib/-/lib-0.14.0-beta.0.tgz#8ab6785de9c04ec28227f5292f1628f828b5daf3"
+  integrity sha512-HEu0vtYEuHYpi+jEJZqTFxyfxu5u2UWx5Vlu+e0UXimrGnVmghn5URV+4JDNFWuVzwpSIm33o5pVREaFr8ZAaA==
   dependencies:
     "@babel/core" "^7.18.0"
     "@babel/parser" "^7.20.7"
@@ -4524,6 +4524,11 @@ exponential-backoff@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/exponential-backoff/-/exponential-backoff-3.1.0.tgz#9409c7e579131f8bd4b32d7d8094a911040f2e68"
   integrity sha512-oBuz5SYz5zzyuHINoe9ooePwSu0xApKWgeNzok4hZ5YKXFh9zrQBEM15CXqoZkJJPuI2ArvqjPQd8UKJA753XA==
+
+exponential-backoff@^3.1.1:
+  version "3.1.1"
+  resolved "https://registry.yarnpkg.com/exponential-backoff/-/exponential-backoff-3.1.1.tgz#64ac7526fe341ab18a39016cd22c787d01e00bf6"
+  integrity sha512-dX7e/LHVJ6W3DE1MHWi9S1EYzDESENfLrYohG2G++ovZrYOkm4Knwa0mc1cn84xJOR4KEU0WSchhLbd0UklbHw==
 
 express@^4.17.3:
   version "4.18.2"
