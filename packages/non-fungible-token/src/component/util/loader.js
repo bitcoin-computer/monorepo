@@ -1,6 +1,6 @@
 function Loader() {
   return (
-    <div className="fixed inset-1/2 h-12 w-12 text-slate-500">
+    <div className="grid place-items-center h-screen">
       <svg
         aria-hidden="true"
         className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
@@ -18,7 +18,7 @@ function Loader() {
         />
       </svg>
     </div>
-  );
+  )
 }
 
-export default Loader;
+export default Loader

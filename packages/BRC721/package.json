@@ -1,9 +1,10 @@
 {
   "name": "@bitcoin-computer/BRC721",
-  "version": "0.14.0-beta.0",
-  "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
+  "version": "0.14.1-beta.1",
+  "description": "Standard for non-fungible tokens on Bitcoin",
   "private": true,
   "type": "module",
+  "main": "build/src/index.js",
   "scripts": {
     "start": "node build/src/main.js",
     "clean": "rimraf coverage build tmp",
@@ -14,8 +15,11 @@
     "test": "mocha --config .mocharc.json",
     "types": "tsc --noEmit"
   },
+  "files": [
+    "build"
+  ],
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.14.0-beta.0",
+    "@bitcoin-computer/lib": "^0.14.1-beta.1",
     "eslint-plugin-prettier": "^4.0.0",
     "ts-node": "^10.8.1",
     "tslib": "~2.4.0"

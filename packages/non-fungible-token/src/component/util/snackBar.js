@@ -1,15 +1,15 @@
 function SnackBar(props) {
-  const { message, success, setShow, callback } = props;
+  const { message, success, setShow, callback } = props
 
   const closeMessage = (evt) => {
-    evt.preventDefault();
-    setShow(false);
-  };
+    evt.preventDefault()
+    setShow(false)
+  }
 
   setTimeout(async () => {
-    setShow(false);
-    if (callback) callback();
-  }, 4000);
+    setShow(false)
+    if (callback) callback()
+  }, 4000)
 
   return (
     <div
@@ -40,7 +40,7 @@ function SnackBar(props) {
         </svg>
       </span>
     </div>
-  );
+  )
 }
 
-export default SnackBar;
+export default SnackBar

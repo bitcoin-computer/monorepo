@@ -1,38 +1,37 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { Computer } from "@bitcoin-computer/lib";
-import SnackBar from "../component/util/snackBar";
+import React, { useState } from "react"
+import { useNavigate } from "react-router-dom"
+import { Computer } from "@bitcoin-computer/lib"
+import SnackBar from "../component/util/snackBar"
 
 function Login(props) {
-  const { config, setComputer } = props;
-  const [show, setShow] = useState(false);
-  const [succes, setSuccess] = useState(false);
-  const [message, setMessage] = useState("");
+  const { config, setComputer } = props
+  const [show, setShow] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [message, setMessage] = useState("")
   // Clear the local storage
-  localStorage.removeItem("BIP_39_KEY");
-  localStorage.removeItem("CHAIN");
+  localStorage.removeItem("BIP_39_KEY")
+  localStorage.removeItem("CHAIN")
 
-  const navigate = useNavigate();
-  const [password, setPassword] = useState("");
-  const [chain] = useState("LTC");
+  const navigate = useNavigate()
+  const [password, setPassword] = useState("")
+  const [chain] = useState("LTC")
 
   const login = () => {
     if (!password) {
-      setMessage("Please provide valid password");
-      setSuccess(false);
-      setShow(true);
-      return;
+      setMessage("Please provide valid password")
+      setSuccess(false)
+      setShow(true)
+      return
     }
-    localStorage.setItem("BIP_39_KEY", password);
-    localStorage.setItem("CHAIN", chain);
-    setComputer(
-      new Computer({
-        ...config,
-        mnemonic: localStorage.getItem("BIP_39_KEY"),
-      })
-    );
-    navigate("/");
-  };
+    localStorage.setItem("BIP_39_KEY", password)
+    localStorage.setItem("CHAIN", chain)
+    const computer = new Computer({
+      ...config,
+      mnemonic: localStorage.getItem("BIP_39_KEY"),
+    })
+    setComputer(computer)
+    navigate(`/`)
+  }
 
   return (
     <div className="h-screen w-screen max-h-screen max-w-screen flex justify-center items-center">
@@ -46,7 +45,7 @@ function Login(props) {
         </div>
         <div className="space-y-4">
           <p className="font-sans">
-            Don&apos;t forget to write down your seed.
+            Don&apost forget to write down your seed.
           </p>
           {/*link to generate BIP39 Seed*/}
           <small>
@@ -71,7 +70,7 @@ function Login(props) {
           {/* <select
             value={chain}
             onChange={(e) => {
-              setChain(e.target.value);
+              setChain(e.target.value)
             }}
             id="chain"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -90,10 +89,10 @@ function Login(props) {
         </div>
       </div>
       {show && (
-        <SnackBar message={message} success={succes} setShow={setShow} />
+        <SnackBar message={message} success={success} setShow={setShow} />
       )}
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login

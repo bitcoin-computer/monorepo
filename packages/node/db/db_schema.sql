@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS
     "rev" VARCHAR(70) NOT NULL PRIMARY KEY REFERENCES "Output"("rev") ON DELETE RESTRICT,
     "id" VARCHAR(70) NOT NULL,
     "publicKeys" VARCHAR(66)[],
-    "classHash" VARCHAR(64)
+    "classHash" VARCHAR(64),
+    "mod" VARCHAR(70)
   );
 
 CREATE OR REPLACE FUNCTION triggerSetTimestamp()
@@ -62,7 +63,7 @@ CREATE TABLE IF NOT EXISTS
     "workerId" INTEGER NOT NULL PRIMARY KEY
   );
 
-CREATE VIEW "Utxos" AS  
-SELECT "rev", "address", "satoshis", "scriptPubKey" 
-FROM "Output" WHERE NOT EXISTS 
+CREATE VIEW "Utxos" AS
+SELECT "rev", "address", "satoshis", "scriptPubKey"
+FROM "Output" WHERE NOT EXISTS
 (SELECT ip.rev FROM "Input" ip  WHERE ip.rev = "Output".rev)

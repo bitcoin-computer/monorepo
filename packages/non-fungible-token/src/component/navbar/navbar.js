@@ -1,83 +1,170 @@
-import { NavLink, useNavigate } from "react-router-dom";
-import { FaWallet } from "react-icons/fa";
-import { useState } from "react";
-import Wallet from "../wallet/wallet";
+import { NavLink, useNavigate } from "react-router-dom"
+import { useState, useEffect } from "react"
 
-export default function Navbar({ computer }) {
-  const navigate = useNavigate();
-  const loggedIn = localStorage.getItem("BIP_39_KEY") !== null;
+export default function Navbar({ setIsOpen, computer }) {
+  const [publicKeyInput, setPublicKeyInput] = useState("")
+  const navigate = useNavigate()
   const logout = () => {
-    localStorage.removeItem("BIP_39_KEY");
-    localStorage.removeItem("CHAIN");
-    navigate("/auth/login");
-  };
+    localStorage.removeItem("BIP_39_KEY")
+    localStorage.removeItem("CHAIN")
+    setPublicKeyInput("")
+    setLoggedIn(false)
+    setIsOpen(false)
+    navigate("/auth/login")
+  }
+  const [loggedIn, setLoggedIn] = useState(localStorage.getItem("BIP_39_KEY") !== null)
+  const [logInPage, setLogInPage] = useState(false)
 
-  const [isOpen, setIsOpen] = useState(false && loggedIn);
+  useEffect(() => {
+    setLoggedIn(localStorage.getItem("BIP_39_KEY") !== null)
+    if (window.location.pathname === "/auth/login") {
+      setLogInPage(true)
+    } else {
+      setLogInPage(false)
+    }
+  }, [loggedIn, computer])
+
+  const search = (event) => {
+    var code = event.keyCode || event.which
+    if (code === 13) {
+      navigate(`/${publicKeyInput}`)
+      window.location.reload()
+    }
+  }
+  const myArts = () => {
+    setPublicKeyInput("")
+  }
   return (
     <div>
       <nav className="bg-white fixed w-full z-20 top-0 left-0 border-b border-gray-200">
-        <div className="container flex flex-wrap justify-between items-center mx-auto">
-          <div className="flex items-center">
+        <div className="!p-0 w-full grid grid-cols-12 items-center mx-auto">
+          <div className="col-span-1 ml-10 items-center">
             <a href="/">
               <img
                 src="/logo.png"
-                className=" mt-2 mr-1 h-16"
+                className="max-w-16 max-h-16  h-auto w-auto block"
                 alt="Bitcoin Computer"
               />
             </a>
           </div>
-          {loggedIn && (
-            <div className="flex md:order-2">
-              <button
-                onClick={logout}
-                type="button"
-                className="text-white bg-blue-600 hover:bg-blue-700 rounded-lg focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium text-sm px-5 py-2.5 text-center mr-3 md:mr-0 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                Log Out
-              </button>
-            </div>
-          )}
-          {loggedIn && (
-            <div
-              className="hidden justify-between ml-auto mr-5 items-center w-full md:flex md:w-auto md:order-1"
-              id="navbar-sticky"
-            >
-              <ul className="flex flex-col p-4 mt-4 rounded-lg border border-gray-100 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 bg-white dark:border-gray-700">
-                <li>
-                  <NavLink
-                    to="/"
-                    className="block py-2 pr-4 text-gray-700 text-lg rounded hover:text-gray-900 cursor-pointer"
-                  >
-                    Artworks
-                  </NavLink>
+          <div className="col-span-11 mr-10">
+            <ul className="flex p-4 mt-4 justify-end rounded-lg mt-0 space-x-4 text-sm font-medium bg-white">
+              {!logInPage && (
+                <li className="grow">
+                  <div className="relative mr-8">
+                    <div className="flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none">
+                      <svg
+                        aria-hidden="true"
+                        className="w-5 h-5 text-gray-500 dark:text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        ></path>
+                      </svg>
+                    </div>
+                    <input
+                      type="search"
+                      className="block pl-10 p-2 w-full text-gray-900 bg-gray-50 border border-gray-300"
+                      placeholder="Search Public Key"
+                      value={publicKeyInput}
+                      onChange={(e) => setPublicKeyInput(e.target.value)}
+                      onKeyDown={(e) => search(e)}
+                    />
+                  </div>
                 </li>
+              )}
+              {loggedIn && (
+                <>
+                  <li>
+                    <NavLink
+                      reloadDocument
+                      to={`/${computer.getPublicKey()}`}
+                      onClick={myArts}
+                      className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
+                    >
+                      My Art
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/art/mint"
+                      className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
+                      onClick={() => setPublicKeyInput("")}
+                    >
+                      Mint
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/payments"
+                      className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
+                      onClick={() => setPublicKeyInput("")}
+                    >
+                      Payments
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/offers"
+                      className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
+                      onClick={() => setPublicKeyInput("")}
+                    >
+                      Offers
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="/royalties"
+                      className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
+                      onClick={() => setPublicKeyInput("")}
+                    >
+                      Royalties
+                    </NavLink>
+                  </li>
+                  <li>
+                    <span
+                      onClick={() => { setIsOpen(true) }}
+                      className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
+                    >
+                      Wallet
+                    </span>
+                  </li>
+                  <li>
+                    <button
+                      onClick={logout}
+                      type="button"
+                      className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
+                    >
+                      Log Out
+                    </button>
+                  </li>
+                </>
+              )}
+              {!loggedIn && !logInPage && (
                 <li>
-                  <NavLink
-                    to="/art/artworkform"
-                    className="block py-2 pr-4 text-gray-700 text-lg rounded hover:text-gray-900 cursor-pointer"
-                  >
-                    Create
-                  </NavLink>
-                </li>
-                <li>
-                  <span
+                  <button
                     onClick={() => {
-                      setIsOpen(true);
+                      setLogInPage(true)
+                      navigate("/auth/login")
                     }}
+                    type="button"
                     className="block py-2 pr-4 text-gray-700 rounded hover:text-gray-900 cursor-pointer"
                   >
-                    <FaWallet className="text-2xl"></FaWallet>
-                    {/* Wallet */}
-                  </span>
+                    Log In
+                  </button>
                 </li>
-              </ul>
-            </div>
-          )}
+              )}
+            </ul>
+          </div>
         </div>
       </nav>
-      {loggedIn && (
-        <Wallet computer={computer} isOpen={isOpen} setIsOpen={setIsOpen} />
-      )}
     </div>
-  );
+  )
 }
