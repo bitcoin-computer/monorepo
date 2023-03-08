@@ -2,7 +2,7 @@
 
 A minimal chat that runs on Litecoin. Built with [Bitcoin Computer](https://www.bitcoincomputer.io/) and [Create React App](https://create-react-app.dev/).
 
-![chat-screen](https://i.ibb.co/WDSCCvb/Screen-Shot-2020-08-29-at-20-02-59.png)
+![chat-screen](./imgs/chat-screen.png)
 ## Installation
 
 Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo) and navigate from the root folder of the monorepo to this folder.
@@ -16,7 +16,7 @@ cd packages/chat
 
 ## Usage
 
-### Start the Server
+### Start the Application
 
 To start the application run
 ```bash
@@ -69,4 +69,4 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node 
+[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node

@@ -2,7 +2,7 @@
 
 A minimal non-custodial Litecoin web wallet built with [Bitcoin Computer](https://www.bitcoincomputer.io/) and [Create React App](https://create-react-app.dev/).
 
-![Screenshot](public/screenshot.png)
+![Screenshot](imgs/wallet-screen.png)
 
 ## Installation
 
@@ -17,7 +17,7 @@ cd packages/wallet
 
 ## Usage
 
-### Start the Server
+### Start the Application
 
 To start the application run
 ```bash
@@ -61,4 +61,4 @@ If you want to add a feature we recommend to create a fork. Let us know if you h
 
 Licensed under the MIT license. See the [LICENSE](https://github.com/bitcoin-computer/monorepo/blob/main/packages/wallet/LICENSE) file for details.
 
-[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node 
+[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node

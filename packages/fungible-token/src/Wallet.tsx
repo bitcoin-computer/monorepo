@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import useInterval from './useInterval'
 import { Modal, ModalContent, Close } from './Modal'
 import type { Computer } from 'bitcoin-computer'
@@ -12,12 +12,15 @@ export interface IWalletProps {
 const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
   const [balance, setBalance] = useState(0)
   const [isVisible, setVisible] = useState(false)
-  useInterval(() => {
+
+
+  useEffect(() => {
     const getBalance = async () => {
       if (computer) setBalance(await computer?.getBalance())
     }
     getBalance()
-  }, 3000)
+  }, [])
+
   return (
     <>
       <button onClick={() => setVisible(true)}>Wallet</button>
@@ -47,15 +50,15 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
               </p>
             )}
             <b>Balance</b>
-            <br /> {balance / 1e8} {chain}
+            <br /> {computer ? `${balance / 1e8} ${chain}` : 'Loading...'}
             <br />
             <br />
             <b>Address</b>
-            <br /> {computer ? computer.getAddress().toString() : ''}
+            <br /> {computer ? computer.getAddress().toString() : 'Loading...'}
             <br />
             <br />
             <b>Public Key</b>
-            <br /> {computer ? computer.getPublicKey().toString() : ''}
+            <br /> {computer ? computer.getPublicKey().toString() : 'Loanding...'}
           </ModalContent>
         </Modal>
       )}

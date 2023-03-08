@@ -3,7 +3,10 @@
 
 A web application for creating, storing and sending non-fungible tokens on Litecoin. Built using the [Bitcoin Computer](http://bitcoincomputer.io/).
 
+**This app is under heavy development and not ready for production use.**
+
 ![app image](https://i.ibb.co/5TtGCJ3/Untitled-5.png)
+
 
 ## Installation
 
@@ -17,6 +20,17 @@ cd packages/non-fungible-token
 ```
 
 ## Usage
+
+### Deploy the Smart Contract
+
+Before you can run the app you need to deploy the smart contract. To do so run
+```bash
+yarn deploy
+```
+
+You will need to fund the wallet that is used to deploy the smart contract, see [here](../lib/README.md#fund-the-wallet).
+
+Once the smart contract is deployed the deploy script will give you instructions to copy some lines of code into the file "App.js". After that you can start the server.
 
 ### Start the Server
 
@@ -71,4 +85,4 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node 
+[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node

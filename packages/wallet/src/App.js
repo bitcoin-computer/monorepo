@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Computer } from "@bitcoin-computer/lib";
-import "./App.css";
+import React, { useState, useEffect } from "react"
+import { Computer } from "@bitcoin-computer/lib"
 
 /**
  * This is a simple wallet app that demonstrates how to use the @bitcoin-computer/lib.
@@ -16,84 +15,55 @@ function App() {
     network: "testnet",
     url: "https://node.bitcoincomputer.io",
   }
-  const [computer] = useState(
-    new Computer(opts)
-  );
-  const [balance, setBalance] = useState(0);
-  const [amount, setAmount] = useState(0);
-  const [to, setTo] = useState("");
-
-  function useInterval(callback, delay) {
-    const savedCallback = useRef();
-
-    // Remember the latest callback.
-    useEffect(() => {
-      savedCallback.current = callback;
-    }, [callback]);
-
-    // Set up the interval.
-    useEffect(() => {
-      function tick() {
-        savedCallback.current();
-      }
-      if (delay !== null) {
-        let id = setInterval(tick, delay);
-        return () => clearInterval(id);
-      }
-    }, [delay]);
-  }
+  const [computer] = useState(new Computer(opts))
+  const [balance, setBalance] = useState(null)
+  const [amount, setAmount] = useState(0)
+  const [to, setTo] = useState("")
 
   useEffect(() => {
     async function refresh() {
-      if (computer) setBalance(await computer.getBalance());
+      if (computer) setBalance(await computer.getBalance())
     }
-    refresh();
-  }, [computer]);
-
-  useInterval(async () => {
-    try {
-      if (computer) {
-        const newBalance = await computer.getBalance();
-        setBalance(newBalance);
-      }
-    } catch (err) {
-      console.log("error occurred while fetching wallet details: ", err);
-    }
-  }, 20000);
-
+    refresh()
+  }, [computer])
 
   const handleSubmit = async (evt) => {
-    evt.preventDefault();
-    const txId = await computer.send(parseInt(amount * 1e8, 10), to);
-    const message = `Sent\n${amount}\n\nTo\n${to}\n\nTransaction id\n${txId}`;
-    console.log(message);
-    alert(message);
-  };
+    evt.preventDefault()
+    const txId = await computer.send(parseInt(amount * 1e8, 10), to)
+    const message = `Sent\n${amount}\n\nTo\n${to}\n\nTransaction id\n${txId}`
+    console.log(message)
+    alert(message)
+    window.location.reload()
+  }
+
+  const Balance = () => {
+    if(balance === null) return <code>Loading...</code>
+    return <code>{balance / 1e8} {computer.getChain()} ({computer.getNetwork()})</code>
+  }
 
   return (
     <div className="App">
-      <h2>Wallet</h2>
+      <h1>Wallet</h1>
 
       <div className="row">
-        <div className="col-25"><b>Address</b></div>
-        <div className="col-75">{computer.getAddress()}</div>
+        <div className="col-25">Address</div>
+        <div className="col-75"><code>{computer.getAddress()}</code></div>
       </div>
       <div className="row">
-        <div className="col-25"><b>Public Key</b></div>
-        <div className="col-75">{computer.getPublicKey()}</div>
+        <div className="col-25">Public Key</div>
+        <div className="col-75"><code>{computer.getPublicKey()}</code></div>
       </div>
 
       <div className="row">
-        <div className="col-25"><b>Balance</b></div>
-        <div className="col-75">{balance / 1e8} {computer.getChain()} ({computer.getNetwork()})</div>
+        <div className="col-25">Balance</div>
+        <div className="col-75"><Balance /></div>
       </div>
 
-      <h3>Send</h3>
-
+      <h2>Send</h2>
       <form onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-25">
-            <label><b>Amount</b></label>
+            <label>Amount</label>
             <br />
           </div>
           <div className="col-75">
@@ -102,14 +72,13 @@ function App() {
               value={amount}
               min="0.00"
               step="0.001"
-              presicion={2}
               onChange={(e) => setAmount(e.target.value)}
             ></input>
           </div>
         </div>
         <div className="row">
           <div className="col-25">
-            <label><b>To</b></label>
+            <label>To</label>
             <br />
           </div>
           <div className="col-75">
@@ -124,12 +93,12 @@ function App() {
         <div className="row">
           <div className="col-25">&nbsp;</div>
           <div className="col-75">
-            <input type="submit" value="Send"></input>
+            <button type="submit">Send</button>
           </div>
         </div>
       </form>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App

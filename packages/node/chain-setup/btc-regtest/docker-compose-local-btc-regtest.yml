@@ -6,7 +6,7 @@ services:
       - ./chain-setup/btc-regtest/db-data:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
   node:
-    image: ruimarinho/bitcoin-core:22.0
+    image: ruimarinho/bitcoin-core:23.0
     # image: bitcoind-custom-regtest
     ports:
       - 8333:8333

@@ -19,7 +19,7 @@ function Wallet({ computer, chain }) {
         <br />
       </small>
       <small>
-        <b>Balance</b> {balance / 1e8} {chain}
+        <b>Balance</b> {balance / 1e8} T{chain}
       </small>
       <small>
         <b>Address</b> {computer ? computer.getAddress() : ""}

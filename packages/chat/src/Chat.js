@@ -7,17 +7,17 @@ function Chat({ computer }) {
   const [chat, setChat] = useState({ messages: [] })
   const [refresh, setRefresh] = useState(null)
 
-  const { id, outIndex } = useParams()
+  const { rev } = useParams()
 
   useEffect(() => {
     const refreshChat = async () => {
       if(computer) {
-        const [rev] = await computer.query({ids:[`${id}/${outIndex}`]})
-        setChat(await computer.sync(rev))
+        const [latestRev] = await computer.query({ids:[rev]})
+        setChat(await computer.sync(latestRev))
       }
     }
     refreshChat()
-  }, [id, outIndex, computer, refresh])
+  }, [rev, computer, refresh])
 
   useEffect(() => {
     setTimeout(() => setRefresh(refresh + 1), 5000)

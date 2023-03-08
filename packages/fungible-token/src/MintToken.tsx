@@ -23,9 +23,8 @@ const MintToken: React.FC<IMintTokenProps> = ({ computer }) => {
       e.preventDefault()
       const publicKey = computer.getPublicKey()
       const supply = parseInt(supplyString)
-      const token = await computer.new(Token, [publicKey, supply, name])
-      setVisible(false)
-      console.log(`Minted ${token.name} with supply ${supply} and id ${token._id}`)
+      await computer.new(Token, [publicKey, supply, name])
+      window.location.reload();
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (err: any) {
       if (err.message.startsWith('Insufficient balance in address'))

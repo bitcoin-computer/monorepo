@@ -1,9 +1,9 @@
 export class Offer extends Contract {
-  constructor(tx, recipient) {
+  constructor(tx, recipient, url) {
     super({
       tx,
       _owners: [recipient],
-      _url: 'http://127.0.0.1:3000'
+      _url: url
     })
   }
 }

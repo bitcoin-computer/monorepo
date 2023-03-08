@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Computer } from '@bitcoin-computer/lib'
 import Wallet from './Wallet'
 import Login from './Login'
 import MintToken from './MintToken'
 import Card from './Card'
-import useInterval from './useInterval'
 import styled from 'styled-components'
 import { TokenType } from './types'
 
@@ -28,7 +27,7 @@ const Header = styled.div`
  */
 const opts = {
   mnemonic:
-    'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
+    'athlete penalty eyebrow hurry actual hope body unfair trouble skin manual fold limb kid fox',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
   network: 'testnet',
@@ -39,7 +38,7 @@ const App: React.FC = () => {
   const [objects, setObjects] = useState<TokenType[]>([])
   const [chain, setChain] = useState('LTC')
 
-  useInterval(() => {
+  useEffect(() => {
     // BIP_39_KEY & CHAIN is set on login and we fetch it from local storage
     const mnemonic = window.localStorage.getItem('BIP_39_KEY')
     setChain(window.localStorage.getItem('CHAIN') || '')
@@ -47,18 +46,16 @@ const App: React.FC = () => {
     const isLoggedIn = mnemonic && chain
     // if you are currently logging in
     if (isLoggedIn && !computer) {
-      setComputer(
-        new Computer({ ...opts, mnemonic, chain })
-      )
+      setComputer(new Computer({ ...opts, mnemonic, chain }))
       console.log('Bitcoin Computer created on ' + chain)
       // if you are currently logging out
     } else if (!isLoggedIn && computer) {
       console.log('You have been logged out')
       setComputer(null)
     }
-  }, 20000)
+  }, [computer, chain])
 
-  useInterval(() => {
+  useEffect(() => {
     const refresh = async () => {
       if (computer !== null) {
         // Get all revisions created with the Token contract and the current wallet public key
@@ -69,7 +66,7 @@ const App: React.FC = () => {
       }
     }
     refresh()
-  }, 10000)
+  }, [computer])
 
   // todo: refactor this function
   const groupByRoot = (list: TokenType[]) =>
