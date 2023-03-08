@@ -45,6 +45,9 @@ ON "NonStandard"("publicKeys");
 CREATE INDEX "NonStandardClassHashIndex"
 ON "NonStandard"("classHash");
 
+CREATE INDEX "NonStandardModIndex"
+ON "NonStandard"("mod");
+
 CREATE TABLE IF NOT EXISTS
   "User" (
     "publicKey" VARCHAR(66) NOT NULL PRIMARY KEY,

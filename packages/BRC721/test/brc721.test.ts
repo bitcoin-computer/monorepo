@@ -11,7 +11,7 @@ import { BRC721 } from '../src/brc721'
  */
 const opts = {
   mnemonic:
-    'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
+    'finish giggle clay birth ceiling human any melt orange recall vendor sword occur olive focus',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
   network: 'testnet',

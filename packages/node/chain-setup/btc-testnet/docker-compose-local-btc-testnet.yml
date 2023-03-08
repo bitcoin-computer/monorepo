@@ -3,10 +3,10 @@ services:
   db:
     env_file: .env
     volumes:
-      - ./chain-setup/ltc-testnet/db-data:/var/lib/postgresql/data
+      - ./chain-setup/btc-testnet/db-data:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
   node:
-    image: ruimarinho/bitcoin-core
+    image: ruimarinho/bitcoin-core:23.0
     ports:
       # 8333 for regtest, 18333 testnet, 9333 if running on STN
       - 18333:18333
@@ -16,7 +16,7 @@ services:
       - 28332:28332
     volumes:
       # using a custom path for data dir
-      - ./chain-setup/btc-regtest/blockchain-data:/home/bitcoin/.bitcoin
+      - ./chain-setup/btc-testnet/blockchain-data:/home/bitcoin/.bitcoin
     networks:
       - bitcoin
     command:

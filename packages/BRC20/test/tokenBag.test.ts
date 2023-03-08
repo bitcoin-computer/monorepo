@@ -10,7 +10,7 @@ import { TokenBag } from '../src/token-bag'
  */
 const opts = {
   mnemonic:
-    'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
+    'churn balance smooth artist room habit inject speak okay say wall approve urban month foil',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
   network: 'testnet',

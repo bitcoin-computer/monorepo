@@ -1,9 +1,9 @@
 import { config } from 'dotenv';
 import { Computer } from '@bitcoin-computer/lib'
-import { Payment } from '../src/contracts/payment.mjs'
-import { Royalty } from '../src/contracts/royalty.mjs'
-import { Offer } from '../src/contracts/offer.mjs'
-import { NFT } from '../src/contracts/nft.mjs'
+import { Payment } from '../src/contracts/payment-contract.mjs'
+import { Royalty } from '../src/contracts/royalty-contract.mjs'
+import { Offer } from '../src/contracts/offer-contract.mjs'
+import { NFT } from '../src/contracts/nft-contract.mjs'
 import readline from 'readline';
 
 config()

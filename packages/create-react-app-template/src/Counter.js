@@ -17,11 +17,14 @@ function Counter({ computer }) {
 
   const createSmart = async (evt) => {
     evt.preventDefault()
-    const counter = await computer.new(Counter)
-    setCounter(counter)
-    setCount(counter.n)
-    console.log('Created smart object', counter)
-    alert("Created smart counter. Now you can increment it.")
+    try {
+      setCounter(await computer.new(Counter))
+      console.log('Created counter smart object', counter)
+      alert('Created counter smart object')
+    } catch (err) {
+      alert(err.message)
+      console.log(`Error: ${err.message}`)
+    }
   }
 
   const increment = async (evt) => {
@@ -34,12 +37,15 @@ function Counter({ computer }) {
     setCount(counter.n)
     console.log('Updated smart object', counter)
   }
+
   return (
     <div>
       <button onClick={createSmart}>Create Smart Object</button>
       <br /><br />
-      <button onClick={increment}>Increment</button>
-      <p>counter is {count}</p>
+      <button onClick={increment} disabled={!counter}>Increment</button>
+      <p><b>{counter ? `Count: ${count}` : ''}</b></p>
+      <p>{counter ? `Id: ${counter._id}` : ''}</p>
+      <p>{counter ? `Revision: ${counter._rev}` : ''}</p>
     </div>
   )
 }

@@ -48,12 +48,12 @@ def main():
     serviceGroup = parser.add_mutually_exclusive_group()
     serviceGroup.add_argument('-db', action="store_const", dest="service", const='db')
     serviceGroup.add_argument('-bcn', action="store_const", dest="service", const='bcn')
-    serviceGroup.add_argument('-sync', action="store_const", dest="service", const='sync')
     serviceGroup.add_argument('-node', action="store_const", dest="service", const='node')
 
     parser.set_defaults(service='')
 
     parser.add_argument('-cpus', dest="cpus",type=int)
+    parser.add_argument('-optimize', action="store_true")
 
     args = parser.parse_args()
 
@@ -74,19 +74,17 @@ def main():
         # testnet or mainnet
         url = subprocess.check_output("grep BCN_URL .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
         bcnUrl = url if url != '' else 'https://node.bitcoincomputer.io'
-        if(args.service == ''):
-            # All services: only run bcn, it will launch the dependencies node and db
+        if(args.optimize):
+            # Optimize for speed: skip launching bcn service (no port binding)
             subprocess.run(
                 ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' bcn']) 
             # Launch sync in automatic parallel mode
             runSync(args, commandLine)
         else:
-            # One service at time
-            if(args.service == 'db' or args.service == 'node' or args.service == 'bcn'):
-                subprocess.run(
-                    ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
-                # Launch sync in automatic parallel mode
-                runSync(args, commandLine)
+            subprocess.run(
+                ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
+            # Launch sync in automatic parallel mode
+            runSync(args, commandLine)
 if __name__ == '__main__':
     main()
     

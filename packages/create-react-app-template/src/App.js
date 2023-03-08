@@ -14,7 +14,7 @@ function App() {
         "travel upgrade inside soda birth essence junk merit never twenty system opinion",
       chain: 'LTC',
       url: 'https://node.bitcoincomputer.io',
-      network: "testnet",
+      network: 'testnet',
     })
   );
 

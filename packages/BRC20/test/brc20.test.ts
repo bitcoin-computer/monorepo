@@ -10,7 +10,7 @@ import { BRC20 } from '../src/brc-20'
  */
 const opts = {
   mnemonic:
-    'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
+    'machine mean impulse obscure layer prosper glance volume boring title room lesson save garlic hub',
   chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
   network: 'testnet',

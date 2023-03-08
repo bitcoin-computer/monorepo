@@ -55,7 +55,7 @@ function ArtworkDetails({ computer, nftModSpec, paymentModSpec, offerModSpec }) 
     // build the offer transaction
     const txJsonB = txB.toObject(true);
     const txStringB = JSON.stringify(txJsonB);
-    const txOfferB = await computer.encode({ exp: `new Offer('${txStringB}', '${artwork._owners[0]}')`, mod: offerModSpec })
+    const txOfferB = await computer.encode({ exp: `new Offer('${txStringB}', '${artwork._owners[0]}', 'https://node.bitcoincomputer.io')`, mod: offerModSpec })
 
 
     for(let tries = 0; tries < 3; tries++) {

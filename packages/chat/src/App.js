@@ -65,7 +65,7 @@ function App() {
         <div className="main">
           <Routes>
             <Route
-              path="/chat/:id/:outIndex"
+              path="/chat/:rev"
               element={<Chat computer={computer}></Chat>}
             />
           </Routes>

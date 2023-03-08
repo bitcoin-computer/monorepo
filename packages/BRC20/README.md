@@ -26,7 +26,7 @@ cd packages/BRC20
 
 ### Configuration
 
-The library is pre-configured to run on testnet. You can run a [Bitcoin Computer Node][node] to use the library on regtest. To configure the library to connect to your own regtest node, have a look at the comment above the ``opts`` object at the top of ``brc2.test.ts". Support for mainnet will be added soon.
+The library is pre-configured to run on testnet. You can run a [Bitcoin Computer Node][node] to use the library on regtest. To configure the library to connect to your own regtest node, have a look at the comment above the ``opts`` object at the top of ``brc20.test.ts". Support for mainnet will be added soon.
 
 ### Fund the Wallet
 
@@ -89,4 +89,4 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node 
+[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node

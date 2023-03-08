@@ -30,7 +30,7 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
       - RPC_PROTOCOL=http
-      - RPC_USER=bcn-admin
+      - RPC_USER=${RPC_USER}
       - RPC_PASSWORD=kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A=
     working_dir: /dist
     depends_on:

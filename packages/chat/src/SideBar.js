@@ -12,7 +12,7 @@ function SideBar({ chats, computer }) {
     <div className="branding">
       <small>This chat runs on the</small><br />
       <small><a className="clear" href='http://bitcoincomputer.io' target="_blank" rel="noopener noreferrer">Bitcoin Computer</a></small><br />
-      <small><a className="clear" href='https://github.com/bitcoin-computer/monorepo/tree/main/packages/bitcoin-chat'>Improve chat on Github</a></small>
+      <small><a className="clear" href='https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat'>View on Github</a></small>
     </div>
   </div>
 }
