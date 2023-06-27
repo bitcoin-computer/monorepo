@@ -16,7 +16,7 @@ bitcoin_cli_setup() {
 }
 
 bitcoin_cli_ltc_regtest() {
-  dockerImage=bcdb/litecoind:0.21
+  dockerImage=bcdb/litecoind:0.21.2.2
   cliType=litecoin-cli
   deamon=node
   regtest=$1

@@ -11,9 +11,7 @@ import { BRC20 } from '../src/brc-20'
 const opts = {
   mnemonic:
     'machine mean impulse obscure layer prosper glance volume boring title room lesson save garlic hub',
-  chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
-  network: 'testnet',
 }
 
 describe('BRC20', () => {
@@ -43,7 +41,7 @@ describe('BRC20', () => {
     })
 
     it('Should mint a root token', async () => {
-      const rootToken = await computer.sync(mintId)
+      const rootToken: any = await computer.sync(mintId)
       expect(rootToken).not.to.be.undefined
       expect(rootToken._id).to.eq(mintId)
       expect(rootToken._rev).to.eq(mintId)

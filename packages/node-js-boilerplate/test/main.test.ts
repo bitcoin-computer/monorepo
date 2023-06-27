@@ -14,9 +14,7 @@ const _ = chaiMatchPattern.getLodashModule()
  */
 const opts = {
   mnemonic: 'replace this seed',
-  chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
-  network: 'testnet',
 }
 
 describe('Bitcoin Computer', () => {

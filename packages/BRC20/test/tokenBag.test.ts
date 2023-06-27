@@ -11,9 +11,7 @@ import { TokenBag } from '../src/token-bag'
 const opts = {
   mnemonic:
     'churn balance smooth artist room habit inject speak okay say wall approve urban month foil',
-  chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
-  network: 'testnet',
 }
 
 describe('TokenBag', () => {

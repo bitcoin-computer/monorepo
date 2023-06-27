@@ -12,9 +12,7 @@ import { BRC721 } from '../src/brc721'
 const opts = {
   mnemonic:
     'finish giggle clay birth ceiling human any melt orange recall vendor sword occur olive focus',
-  chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
-  network: 'testnet',
 }
 
 describe('BRC721', () => {

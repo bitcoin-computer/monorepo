@@ -11,9 +11,7 @@ import { NFT } from '../src/nft'
 const opts = {
   mnemonic:
     'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
-  chain: 'LTC',
   url: 'https://node.bitcoincomputer.io',
-  network: 'testnet',
 }
 
 describe('NFT', () => {
@@ -56,7 +54,7 @@ describe('NFT', () => {
       expect(nft._rev).to.be.a('string')
       expect(nft._root).to.be.a('string')
 
-      await nft.transfer(publicKeyString2, 1)
+      await nft.transfer(publicKeyString2)
 
       expect(nft._owners).deep.equal([publicKeyString2])
       expect(nft.name).to.eq('name')

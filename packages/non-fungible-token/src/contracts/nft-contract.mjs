@@ -11,9 +11,9 @@ export class NFT extends Contract {
     const { _owners: tokenOwners } = this;
     const { _owners: paymentOwners } = payment;
     this._owners = paymentOwners;
-    payment.transfer(tokenOwners);
+    payment.transfer(tokenOwners[0]);
 
     // eslint-disable-next-line no-undef
-    return new Royalty(this.creator, this.royalty * payment._amount);
+    return new Royalty(this.creator, this.royalty * payment._amount, '');
   }
 }
