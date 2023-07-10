@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS
     "rev" VARCHAR(70) NOT NULL PRIMARY KEY REFERENCES "Output"("rev") ON DELETE RESTRICT,
     "id" VARCHAR(70) NOT NULL,
     "publicKeys" VARCHAR(66)[],
-    "classHash" VARCHAR(64),
+    "hash" VARCHAR(64),
     "mod" VARCHAR(70)
   );
 
@@ -42,8 +42,8 @@ ON "NonStandard"("id");
 CREATE INDEX "NonStandardPublicKeysIndex"
 ON "NonStandard"("publicKeys");
 
-CREATE INDEX "NonStandardClassHashIndex"
-ON "NonStandard"("classHash");
+CREATE INDEX "NonStandardHashIndex"
+ON "NonStandard"("hash");
 
 CREATE INDEX "NonStandardModIndex"
 ON "NonStandard"("mod");

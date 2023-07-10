@@ -3,7 +3,6 @@ logs/
 node_modules/
 chain-setup/**/blockchain-data
 chain-setup/**/db-data
-packages/lib*
 .env
 .env.aws
 .docker.config

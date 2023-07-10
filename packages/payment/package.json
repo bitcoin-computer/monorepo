@@ -1,0 +1,24 @@
+{
+  "name": "keys",
+  "version": "0.15.0-beta.0",
+  "main": "index.mjs",
+  "repository": "https://github.com/Bitcoin-Computer-Secrets/keys.git",
+  "author": "Clemens Ley <ley.clemens@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "test": "ZMQ_URL=tcp://127.0.0.1:28332 UN_P2SH_URL=http://127.0.0.1:3000 BCN_URL=http://127.0.0.1:3000 BCN_ENV=dev CHAIN=LTC NETWORK=regtest POSTGRES_HOST=127.0.0.1 RPC_HOST=127.0.0.1 RPC_PORT=19332 RPC_PROTOCOL=http RPC_USER=bcn-admin RPC_PASSWORD=kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A= ZMQ_URL=tcp://127.0.0.1:28332 UN_P2SH_URL=http://127.0.0.1:3000 mocha --config .mocharc.json"
+  },
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@bitcoin-computer/bitcore-mnemonic-ltc": "8.25.42",
+    "@bitcoin-computer/lib": "^0.15.0-beta.0",
+    "@types/chai": "^4.3.3",
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.0",
+    "dotenv": "^16.0.3"
+  }
+}

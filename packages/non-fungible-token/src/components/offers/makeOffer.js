@@ -1,4 +1,5 @@
 import React, { useState } from "react"
+import Button from "../util/button"
 
 function MakeOffer({
   computer,
@@ -13,7 +14,7 @@ function MakeOffer({
     await computer.send(amount * 1e8, computer.getAddress())
     // Create a payment owned by buyer
     const paymentTx = await computer.encode({
-      exp: `new Payment('${computer.getPublicKey()}', ${amount * 1e8})`,
+      exp: `new Payment('${computer.getPublicKey()}', ${amount * 1e8}, '${nft._rev}')`,
       mod: paymentModSpec
     })
     await computer.fund(paymentTx)
@@ -49,7 +50,7 @@ function MakeOffer({
   }
 
   return (<>
-    <h4 className="text-2xl font-bold dark:text-white pt-16">
+    <h4 className="text-2xl font-bold dark:text-white">
       Make an Offer
     </h4>
     <form>
@@ -70,13 +71,12 @@ function MakeOffer({
           Amount in LTC
         </label>
       </div>
-      <button
-        type="submit"
+      <Button
         onClick={handleSubmit}
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        disabled={!nft}
       >
         Submit
-      </button>
+      </Button>
     </form>
   </>)
 }

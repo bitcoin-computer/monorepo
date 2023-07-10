@@ -5,16 +5,17 @@ import Nfts from "./components/nfts/nfts"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import Nft from "./components/nfts/nft"
 import NavbarWrapper from "./components/navbar/navbarWrapper"
-import Payments from "./components/payments"
+import Payments from "./components/payments/payments"
+import Payment from "./components/payments/payment"
 import Offers from "./components/offers/offers"
 import Royalties from "./components/royalties"
 import OfferDetails from "./components/offers/offer"
 
 function App() {
-  const paymentModSpec = '40124396cf9f6fb42f5a0e92a6d611a737134fe4534fcc30a4abd35400da6a66:0'
-  const royaltyModSpec = '52b998460110a313afbf6fbbdd1571138ca7adc88eaccb7b49dd4dc8acb29bbb:0'
-  const nftModSpec = '39963c5c59d1753022a300accb5df229874fa093a9467994d1059192fbeffd2f:0'
-  const offerModSpec = '1db83b88f20cb067475cf009cd52088b8493300d90cdcde44ce9c51a45c8b5a8:0'
+  const paymentModSpec = '9f9fab13889062f6cd90b328777c0648a83238a2bb8396a42ff4bbc9540f7187:0'
+  const royaltyModSpec = '3ae01f554bf9c54bac7efda67d9caa8727285bcbeeb77c2dac1805c2bdc3e96f:0'
+  const nftModSpec = '52729d1f3a6897edca772345257a1ac3644877a6577caae3ecbaefa86b613c18:0'
+  const offerModSpec = 'c710bfa55e0dbec3868c98bcb4a56aca1af0cae26be3999ff073851c69157943:0'
 
   const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
   const chain = localStorage.getItem("CHAIN") || ""
@@ -52,6 +53,10 @@ function App() {
           <Route
             path="/payments"
             element={<Payments computer={computer} paymentModSpec={paymentModSpec} />}
+          />
+          <Route
+            path="/payment/:rev"
+            element={<Payment computer={computer} paymentModSpec={paymentModSpec} />}
           />
           <Route
             path="/offers"

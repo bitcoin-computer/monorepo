@@ -23,7 +23,7 @@ function Royalties({ computer, royaltyModSpec }) {
   useEffect(() => console.log("Royalties", royalties), [royalties])
 
   return (
-    <div className="relative overflow-x-auto">
+    <div className="m-16 relative overflow-x-auto">
       <h2 className="text-4xl font-extrabold dark:text-white mb-4">Royalties</h2>
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
