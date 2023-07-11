@@ -28,6 +28,7 @@
     "prepare": "husky install",
     "create-version": "lerna version --force-publish",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
+    "husky-checks": "./scripts/husky-checks.sh",
     "prepublishOnly": "./scripts/check-obfuscation.sh",
     "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch"
   },
