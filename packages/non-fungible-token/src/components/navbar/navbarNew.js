@@ -163,7 +163,7 @@ export default function NavbarNew({ setIsOpen, computer, setShowLogin }) {
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded md:bg-transparent hover:text-gray-900 cursor-pointer dark:text-white"
                       onClick={() => setPublicKeyInput("")}
                     >
-                      Payments
+                      Offers Sent
                     </NavLink>
                   </li>
                   <li>
@@ -172,7 +172,7 @@ export default function NavbarNew({ setIsOpen, computer, setShowLogin }) {
                       className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded md:bg-transparent hover:text-gray-900 cursor-pointer dark:text-white"
                       onClick={() => setPublicKeyInput("")}
                     >
-                      Offers
+                      Offers Received
                     </NavLink>
                   </li>
                   <li>

@@ -19,7 +19,7 @@ function Payments({ computer, offerModSpec }) {
 
   return (
     <div className="m-16 relative overflow-x-auto">
-      <h2 className="text-4xl font-extrabold dark:text-white mb-4">Offers</h2>
+      <h2 className="text-4xl font-extrabold dark:text-white mb-4">Offers Received</h2>
       <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
