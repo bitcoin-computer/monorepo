@@ -3,9 +3,6 @@
   "version": "0.15.0-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "private": true,
-  "engines": {
-    "node": ">= 16.13 <17"
-  },
   "type": "module",
   "devDependencies": {
     "@types/chai": "^4.3.1",

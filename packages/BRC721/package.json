@@ -43,9 +43,6 @@
     "tsutils": "~3.21.0",
     "typescript": "~4.7.2"
   },
-  "engines": {
-    "node": ">= 16.13 <17"
-  },
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "license": "MIT",
   "volta": {
