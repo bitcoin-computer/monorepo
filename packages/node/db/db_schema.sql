@@ -3,7 +3,8 @@ CREATE TABLE IF NOT EXISTS
     "rev" VARCHAR(70) NOT NULL PRIMARY KEY,
     "address" VARCHAR(66),
     "satoshis" BIGINT NOT NULL,
-    "scriptPubKey" TEXT NOT NULL
+    "scriptPubKey" TEXT NOT NULL,
+    "publicKeys" VARCHAR(66)[]
   );
 
 CREATE TABLE IF NOT EXISTS
@@ -67,6 +68,6 @@ CREATE TABLE IF NOT EXISTS
   );
 
 CREATE VIEW "Utxos" AS
-SELECT "rev", "address", "satoshis", "scriptPubKey"
+SELECT "rev", "address", "satoshis", "scriptPubKey", "publicKeys"
 FROM "Output" WHERE NOT EXISTS
 (SELECT ip.rev FROM "Input" ip  WHERE ip.rev = "Output".rev)

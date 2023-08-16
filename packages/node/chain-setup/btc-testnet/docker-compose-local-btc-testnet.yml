@@ -50,11 +50,10 @@ services:
       - RPC_PORT=18332
       - ZMQ_URL=tcp://node:28332
       - NETWORK=testnet
-      - CHAIN=LTC
+      - CHAIN=BTC
       - BCN_URL=http://127.0.0.1:3000
   sync:
     command: npm run sync
-    build: .
     image: bitcoin-computer-node
     env_file: .env
     depends_on:
@@ -65,7 +64,7 @@ services:
       - RPC_HOST=node
       - RPC_PORT=18332
       - NETWORK=testnet
-      - CHAIN=LTC
+      - CHAIN=BTC
       - ZMQ_URL=tcp://node:28332
       - BCN_URL=http://127.0.0.1:3000
       - POSTGRES_PORT=5432
@@ -73,6 +72,10 @@ services:
       - RPC_PROTOCOL=http
       - RPC_USER=${RPC_USER}
       - RPC_PASSWORD=${RPC_PASSWORD}
+      - WORKER_ID=${WORKER_ID}
+      - NUM_WORKERS=${NUM_WORKERS}
+      - SYNC_NON_STANDARD=${SYNC_NON_STANDARD}
+      - BC_START_HEIGHT=2500000
     networks:
       - bitcoin
       - bcn
