@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import useInterval from './useInterval'
 import { Modal, ModalContent, Close } from './Modal'
 import type { Computer } from 'bitcoin-computer'
 import PropTypes from 'prop-types'

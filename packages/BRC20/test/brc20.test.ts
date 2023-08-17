@@ -14,6 +14,12 @@ const opts = {
   url: 'https://node.bitcoincomputer.io',
 }
 
+function sleep(delay: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay)
+  })
+}
+
 describe('BRC20', () => {
   describe('Constructor', () => {
     it('Should create a new BRC20 object', async () => {
@@ -83,6 +89,7 @@ describe('BRC20', () => {
       const brc20 = new BRC20('test', 'TST', computer)
       const publicKey = brc20.computer.getPublicKey()
       await brc20.mint(publicKey, 200)
+      await sleep(200)
       const res = await brc20.balanceOf(publicKey)
       expect(res).to.eq(200)
     })
@@ -95,7 +102,9 @@ describe('BRC20', () => {
       const brc20 = new BRC20('test', 'TST', computer)
       const publicKey = brc20.computer.getPublicKey()
       await brc20.mint(publicKey, 200)
+      await sleep(200)
       await brc20.transfer(computer2.getPublicKey(), 20)
+      await sleep(200)
       const res = await brc20.balanceOf(publicKey)
       expect(res).to.eq(180)
     })
