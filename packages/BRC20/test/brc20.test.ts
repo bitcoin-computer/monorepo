@@ -96,8 +96,8 @@ describe('BRC20', () => {
   })
 
   describe('transfer', () => {
+    const computer = new Computer(opts)
     it('Should transfer a token', async () => {
-      const computer = new Computer(opts)
       const computer2 = new Computer()
       const brc20 = new BRC20('test', 'TST', computer)
       const publicKey = brc20.computer.getPublicKey()
@@ -107,6 +107,44 @@ describe('BRC20', () => {
       await sleep(200)
       const res = await brc20.balanceOf(publicKey)
       expect(res).to.eq(180)
+    })
+
+    it('Should transfer random amounts to different people', async () => {
+      const computer2 = new Computer()
+      const computer3 = new Computer()
+      const brc20 = new BRC20('multiple', 'MULT', computer)
+      const publicKey = brc20.computer.getPublicKey()
+      await brc20.mint(publicKey, 200)
+
+      const amount2 = Math.floor(Math.random() * 100)
+      const amount3 = Math.floor(Math.random() * 100)
+      await sleep(200)
+      await brc20.transfer(computer2.getPublicKey(), amount2)
+      await sleep(200)
+      await brc20.transfer(computer3.getPublicKey(), amount3)
+      await sleep(200)
+      const res = await brc20.balanceOf(publicKey)
+      expect(res).to.eq(200 - amount2 - amount3)
+
+      const res2 = await brc20.balanceOf(computer2.getPublicKey())
+      expect(res2).to.eq(amount2)
+
+      const res3 = await brc20.balanceOf(computer3.getPublicKey())
+      expect(res3).to.eq(amount3)
+    })
+
+    it('Should fail if the amount is greater than the balance', async () => {
+      const computer2 = new Computer()
+      const brc20 = new BRC20('test', 'TST', computer)
+      const publicKey = brc20.computer.getPublicKey()
+      await brc20.mint(publicKey, 200)
+      await sleep(200)
+      try {
+        await brc20.transfer(computer2.getPublicKey(), 201)
+        expect(true).to.eq('false')
+      } catch (err) {
+        expect(err.message).to.eq('Could not send entire amount')
+      }
     })
   })
 })
