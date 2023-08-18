@@ -52,11 +52,12 @@ export class BRC20 implements IBRC20 {
     const owner = this.computer.getPublicKey()
     const bags = await this.getBags(owner)
     const results = []
-    while (_amount > 0) {
+    while (_amount > 0 && bags.length > 0) {
       const [bag] = bags.splice(0, 1)
       const available = Math.min(_amount, bag.tokens)
-      results.push(bag.transfer(to, available))
-      _amount -= bag.tokens
+      // eslint-disable-next-line no-await-in-loop
+      results.push(await bag.transfer(to, available))
+      _amount -= available
     }
     if (_amount > 0) throw new Error('Could not send entire amount')
     await Promise.all(results)
