@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer",
-  "version": "0.15.0-beta.0",
+  "version": "0.16.0-beta.0",
   "description": "Lightweight Smart Contracts for Bitcoin and Litecoin",
   "contributors": [
     "Clemens Ley",
@@ -25,6 +25,8 @@
   },
   "private": false,
   "scripts": {
+    "start": "ls -l; cd monorepo/packages/node && yarn start",
+    "build-docker": "docker build -t bitcoin-computer-node .",
     "prepare": "husky install",
     "create-version": "lerna version --force-publish",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
