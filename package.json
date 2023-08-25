@@ -25,7 +25,7 @@
   },
   "private": false,
   "scripts": {
-    "start": "ls -l; cd monorepo/packages/node && yarn start",
+    "start": "cd /home/monorepo/packages/node && yarn start",
     "build-docker": "docker build -t bitcoin-computer-node .",
     "prepare": "husky install",
     "create-version": "lerna version --force-publish",

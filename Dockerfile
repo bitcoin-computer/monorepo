@@ -1,19 +1,21 @@
 #  We are using the latest Node.js distribution with Long Term Support (LTS) as of 11/04/2020.
 FROM node:16.14
 
-# Create app directory
-WORKDIR /monorepo
+# Set the working directory inside the container
+WORKDIR /home/monorepo
 
-COPY package.json /.
+# Copy the entire contents of the host's "monorepo" directory into the container's /home/monorepo directory
+COPY . /home/monorepo
 
-RUN yarn install
-# If you are building your code for production
-# RUN npm ci --only=production
+# Install dependencies for the monorepo using yarn
+RUN yarn install --cwd /home/monorepo
 
-# Includes source
-COPY . .
+# Set the working directory to "monorepo/packages/node"
+WORKDIR /home/monorepo/packages/node
 
+# Run lerna bootstrap
 RUN npx lerna bootstrap
 
 EXPOSE 3000
-CMD [ "yarn", "start" ]
+# Define the command to run when the container starts
+CMD ["yarn", "start"]
