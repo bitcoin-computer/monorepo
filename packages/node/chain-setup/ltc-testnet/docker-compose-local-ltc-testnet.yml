@@ -15,7 +15,6 @@ services:
       [
         "litecoind",
         "-testnet=1",
-        "-addnode=185.180.221.201",
         "-dbcache=4000",
         "-txindex=1",
         "-server=1",
