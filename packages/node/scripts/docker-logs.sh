@@ -2,7 +2,8 @@
 
 # Get list of running Docker containers
 container_ids=$(docker ps -q)
-export TZ="Europe/Paris"
+system_timezone=$(timedatectl show --property=Timezone --value)
+export TZ="$system_timezone"
 
 datestr=$(date +%Y-%m-%d)
 filepath="logs-${datestr}.log"
