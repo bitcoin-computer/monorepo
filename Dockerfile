@@ -13,6 +13,9 @@ RUN yarn install --cwd /home/monorepo
 # Set the working directory to "monorepo/packages/node"
 WORKDIR /home/monorepo/packages/node
 
+# Print package.json version
+RUN echo "Version: $(head ../lib/package.json)"
+
 # Run lerna bootstrap
 RUN npx lerna bootstrap
 
