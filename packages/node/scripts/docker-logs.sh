@@ -2,14 +2,16 @@
 
 # Get list of running Docker containers
 container_ids=$(docker ps -q)
+system_timezone=$(timedatectl show --property=Timezone --value)
+export TZ="$system_timezone"
 
 datestr=$(date +%Y-%m-%d)
-filepath="logs/debug-${datestr}.log"
+filepath="logs-${datestr}.log"
 
 # Iterate over each container ID and connect to it
 for container_id in $container_ids; do
     echo "Connecting to container $container_id..."
-    docker exec $container_id tail -n 1 $filepath
+    docker exec $container_id tail -n 10 $filepath
 done
 echo ''
 
