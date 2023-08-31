@@ -29,6 +29,7 @@
     "@types/expect": "^24.3.0",
     "@types/mocha": "^9.1.1",
     "@types/node": "~18.0.0",
+    "@types/bitcoin-computer__lib": "0.15.0",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
     "@typescript-eslint/parser": "^5.10.0",
     "chai": "^4.3.6",
