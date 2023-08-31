@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.15.0-beta.0",
+  "version": "0.16.0-beta.0",
   "description": "Server Side Library for the Bitcoin Computer",
   "contributors": [
     "Clemens Ley",

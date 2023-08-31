@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/BRC721",
-  "version": "0.15.0-beta.0",
+  "version": "0.16.0-beta.0",
   "description": "Standard for non-fungible tokens on Bitcoin",
   "private": true,
   "type": "module",
@@ -19,7 +19,7 @@
     "build"
   ],
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.15.0-beta.0",
+    "@bitcoin-computer/lib": "^0.16.0-beta.0",
     "eslint-plugin-prettier": "^4.0.0",
     "ts-node": "^10.8.1",
     "tslib": "~2.4.0"
