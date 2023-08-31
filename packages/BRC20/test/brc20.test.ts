@@ -5,14 +5,12 @@ import { Computer } from '@bitcoin-computer/lib'
 import { BRC20 } from '../src/brc-20'
 
 /**
- * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
- * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
  */
-const opts = {
-  mnemonic:
-    'machine mean impulse obscure layer prosper glance volume boring title room lesson save garlic hub',
-  url: 'https://node.bitcoincomputer.io',
-}
+const computer = new Computer({
+  url: 'http://127.0.0.1:3000',
+  network: 'regtest' as any,
+})
 
 function sleep(delay: number): Promise<void> {
   return new Promise((resolve) => {
@@ -20,10 +18,14 @@ function sleep(delay: number): Promise<void> {
   })
 }
 
+before(async () => {
+  // @ts-ignore
+  await computer.faucet(1e7)
+})
+
 describe('BRC20', () => {
   describe('Constructor', () => {
     it('Should create a new BRC20 object', async () => {
-      const computer = new Computer(opts)
       const brc20 = new BRC20('test', 'TST', computer)
       expect(brc20).not.to.be.undefined
       expect(brc20.computer).to.be.a('object')
@@ -34,7 +36,6 @@ describe('BRC20', () => {
   })
 
   describe('mint', () => {
-    const computer = new Computer(opts)
     const brc20 = new BRC20('test', 'TST', computer)
     let mintId: string
 
@@ -60,7 +61,6 @@ describe('BRC20', () => {
 
   describe('totalSupply', () => {
     it('Should return the supply of tokens', async () => {
-      const computer = new Computer(opts)
       const brc20 = new BRC20('test', 'TST', computer)
       const publicKey = brc20.computer.getPublicKey()
       await brc20.mint(publicKey, 200)
@@ -71,7 +71,6 @@ describe('BRC20', () => {
 
   describe('balanceOf', () => {
     it('Should throw an error if the mint id is not set', async () => {
-      const computer = new Computer(opts)
       const publicKeyString = computer.getPublicKey()
 
       const brc20 = new BRC20('test', 'TST', computer)
@@ -85,7 +84,6 @@ describe('BRC20', () => {
     })
 
     it('Should compute the balance', async () => {
-      const computer = new Computer(opts)
       const brc20 = new BRC20('test', 'TST', computer)
       const publicKey = brc20.computer.getPublicKey()
       await brc20.mint(publicKey, 200)
@@ -96,7 +94,6 @@ describe('BRC20', () => {
   })
 
   describe('transfer', () => {
-    const computer = new Computer(opts)
     it('Should transfer a token', async () => {
       const computer2 = new Computer()
       const brc20 = new BRC20('test', 'TST', computer)

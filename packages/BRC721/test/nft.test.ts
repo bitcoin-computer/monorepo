@@ -5,14 +5,22 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '../src/nft'
 
 /**
- * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
- * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
  */
 const opts = {
-  mnemonic:
-    'expect table donate festival slam distance rebuild river tuna funny unable assist float educate above',
-  url: 'https://node.bitcoincomputer.io',
+  url: 'http://127.0.0.1:3000',
+  network: 'regtest' as any,
 }
+
+const computer = new Computer(opts)
+const computer2 = new Computer(opts)
+
+before(async () => {
+  // @ts-ignore
+  await computer.faucet(1e7)
+  // @ts-ignore
+  await computer2.faucet(1e7)
+})
 
 describe('NFT', () => {
   describe('Constructor', () => {
@@ -25,7 +33,6 @@ describe('NFT', () => {
     })
 
     it('should create a smart object', async () => {
-      const computer = new Computer(opts)
       const publicKeyString = computer.getPublicKey()
 
       const nft = await computer.new(NFT, [publicKeyString, 'name', 'symbol'])
@@ -40,10 +47,8 @@ describe('NFT', () => {
 
   describe('transfer', () => {
     it('Should update a smart object', async () => {
-      const computer = new Computer(opts)
       const publicKeyString = computer.getPublicKey()
 
-      const computer2 = new Computer(opts)
       const publicKeyString2 = computer2.getPublicKey()
 
       const nft = await computer.new(NFT, [publicKeyString, 'name', 'symbol'])
