@@ -66,7 +66,7 @@ function Nft({
               />
             )}
           </div>
-          <div className="h-96 pr-32">
+          {/* <div className="h-96 pr-32">
             <div className="space-y-2">
               <MakeOffer
                 computer={computer}
@@ -75,7 +75,7 @@ function Nft({
                 offerModSpec={offerModSpec}
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
