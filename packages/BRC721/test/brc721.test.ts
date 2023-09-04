@@ -6,14 +6,17 @@ import { NFT } from '../src/nft'
 import { BRC721 } from '../src/brc721'
 
 /**
- * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
- * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
  */
-const opts = {
-  mnemonic:
-    'finish giggle clay birth ceiling human any melt orange recall vendor sword occur olive focus',
-  url: 'https://node.bitcoincomputer.io',
-}
+const computer = new Computer({
+  url: 'http://127.0.0.1:3000',
+  network: 'regtest' as any,
+})
+
+before(async () => {
+  // @ts-ignore
+  await computer.faucet(1e7)
+})
 
 describe('BRC721', () => {
   describe('Constructor', () => {
@@ -30,7 +33,6 @@ describe('BRC721', () => {
 
   describe('mint', () => {
     it('Should mint tokens', async () => {
-      const computer = new Computer(opts)
       const brc721 = new BRC721(computer)
       const publicKey = brc721.computer.getPublicKey()
       const rev = await brc721.mint(publicKey, 'name', 'symbol')
@@ -41,7 +43,6 @@ describe('BRC721', () => {
 
   describe('balanceOf', () => {
     it('Should compute the balance', async () => {
-      const computer = new Computer(opts)
       const brc721 = new BRC721(computer)
       const publicKey = computer.getPublicKey()
       brc721.mint(publicKey, 'name', 'symbol')
@@ -53,7 +54,6 @@ describe('BRC721', () => {
 
   describe('transfer', () => {
     it('Should transfer a token', async () => {
-      const computer = new Computer(opts)
       const computer2 = new Computer()
       const brc721 = new BRC721(computer)
       const publicKey = brc721.computer.getPublicKey()

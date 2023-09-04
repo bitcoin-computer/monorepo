@@ -45,7 +45,7 @@ command = "BCN_URL={nodeUrl} CHAIN={chain} NETWORK={network} BCN_ENV=test POSTGR
 
 # ltc, regtest and unit is default
 if(args.integration):
-    command = '{} .mocharc-async.json --parallel'.format(command)
+    command = '{} .mocharc-async.json '.format(command)
 elif(args.single):
     command = command + ' .mocharc-single.json ' + args.single
 else:

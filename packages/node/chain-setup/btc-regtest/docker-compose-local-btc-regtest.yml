@@ -14,7 +14,7 @@ services:
       - 28332:28332
     volumes:
       - ./chain-setup/btc-regtest/blockchain-data:/home/bitcoin/.bitcoin
-
+    restart: always
     networks:
       - bitcoin
     command:
@@ -24,6 +24,7 @@ services:
         "-dbcache=4000",
         "-txindex=1",
         "-server=1",
+        "-fallbackfee=0.0002",
         "-rpcbind=0.0.0.0",
         "-rpcworkqueue=512",
         "-rpcport=8332",
@@ -46,3 +47,5 @@ services:
       - ZMQ_URL=tcp://node:28332
       - NETWORK=regtest
       - CHAIN=BTC
+      - BCN_URL=http://127.0.0.1:3000
+    restart: always

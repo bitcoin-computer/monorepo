@@ -12,10 +12,10 @@ import Royalties from "./components/royalties"
 import OfferDetails from "./components/offers/offer"
 
 function App() {
-  const paymentModSpec = '9f9fab13889062f6cd90b328777c0648a83238a2bb8396a42ff4bbc9540f7187:0'
-  const royaltyModSpec = '3ae01f554bf9c54bac7efda67d9caa8727285bcbeeb77c2dac1805c2bdc3e96f:0'
-  const nftModSpec = '52729d1f3a6897edca772345257a1ac3644877a6577caae3ecbaefa86b613c18:0'
-  const offerModSpec = 'c710bfa55e0dbec3868c98bcb4a56aca1af0cae26be3999ff073851c69157943:0'
+  const paymentModSpec = '2f00bfcf0c143b77541ae693d6dc2e450b3ce6cad516c133eb6f0bac4429dcf1:0'
+  const royaltyModSpec = '7c07ae23b1b66d09a075a998d1e572a7d1369ffd523b802de87ac7c239a6e8b0:0'
+  const nftModSpec = 'e7a4700d01def7cf485f252cb5e23fd2dfded9dca2a14442e1c3ce6106cfd789:0'
+  const offerModSpec = 'f383920dbfee428380a2ddf237d4f3e0583dde3bfde00beb14058ec117a23b05:0'
 
   const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
   const chain = localStorage.getItem("CHAIN") || ""

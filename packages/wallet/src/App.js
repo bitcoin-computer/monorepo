@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 
-/**
- * This is a simple wallet app that demonstrates how to use the @bitcoin-computer/lib.
- *
- * To connect the app to a local Bitcoin Computer node set "network to "regtest" and
- * "url" to "http://127.0.0.1:3000" in the "opts" object below.
- */
 function App() {
   const opts = {
     mnemonic:
       "travel upgrade inside soda birth essence junk merit never twenty system opinion",
     chain: "LTC",
-    network: "testnet",
-    url: "https://node.bitcoincomputer.io",
+    network: "regtest",
+    url: "http://127.0.0.1:3000",
   }
+
+  /**
+   * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
+   */
   const [computer] = useState(new Computer(opts))
   const [balance, setBalance] = useState(null)
   const [amount, setAmount] = useState(0)

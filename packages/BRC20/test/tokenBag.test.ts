@@ -5,14 +5,23 @@ import { Computer } from '@bitcoin-computer/lib'
 import { TokenBag } from '../src/token-bag'
 
 /**
- * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
- * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
  */
+
 const opts = {
-  mnemonic:
-    'churn balance smooth artist room habit inject speak okay say wall approve urban month foil',
-  url: 'https://node.bitcoincomputer.io',
+  url: 'http://127.0.0.1:3000',
+  network: 'regtest' as any,
 }
+
+const computer = new Computer(opts)
+const computer2 = new Computer(opts)
+
+before(async () => {
+  // @ts-ignore
+  await computer.faucet(1e7)
+  // @ts-ignore
+  await computer2.faucet(1e7)
+})
 
 describe('TokenBag', () => {
   describe('Constructor', () => {
@@ -25,7 +34,6 @@ describe('TokenBag', () => {
     })
 
     it('should create a smart object', async () => {
-      const computer = new Computer(opts)
       const publicKeyString = computer.getPublicKey()
 
       const token = await computer.new(TokenBag, [publicKeyString, 3, 'test'])
@@ -41,10 +49,7 @@ describe('TokenBag', () => {
 
   describe('transfer', () => {
     it('Should update a smart object', async () => {
-      const computer = new Computer(opts)
       const publicKeyString = computer.getPublicKey()
-
-      const computer2 = new Computer(opts)
       const publicKeyString2 = computer2.getPublicKey()
 
       const token = await computer.new(TokenBag, [publicKeyString, 3, 'test'])
@@ -58,7 +63,7 @@ describe('TokenBag', () => {
       expect(token._root).to.be.a('string')
 
       expect(newToken.tokens).to.eq(1)
-      expect(newToken._owners).deep.equal([publicKeyString])
+      expect(newToken._owners).deep.equal([publicKeyString2])
       expect(newToken.name).to.eq('test')
       expect(newToken.symbol).to.eq('')
       expect(newToken._id).to.be.a('string')

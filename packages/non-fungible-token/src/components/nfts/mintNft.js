@@ -24,9 +24,7 @@ function Mint({ computer, nftModSpec }) {
 
       const creator = computer.getPublicKey()
       const exp = `new NFT('${title}', '${artist}', '${url}', '${creator}', ${royalty})`
-      const tx = await computer.encode({ exp, mod: nftModSpec })
-      await computer.fund(tx)
-      await computer.sign(tx)
+      const { tx } = await computer.encode({ exp, mod: nftModSpec })
       const txId = await computer.broadcast(tx)
       const nft = await computer.sync(`${txId}:0`)
       console.log("Minted NFT: ", nft)

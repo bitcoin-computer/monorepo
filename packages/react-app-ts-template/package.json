@@ -1,9 +1,9 @@
 {
   "name": "react-ts-template",
-  "version": "0.1.0",
+  "version": "0.16.0-beta.0",
   "private": true,
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.15.0-beta.0",
+    "@bitcoin-computer/lib": "^0.16.0-beta.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

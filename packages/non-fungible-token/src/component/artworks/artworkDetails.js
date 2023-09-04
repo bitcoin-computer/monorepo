@@ -101,7 +101,7 @@ function ArtworkDetails({ computer, nftModSpec, paymentModSpec, offerModSpec }) 
               <h2 className="text-4xl font-bold dark:text-white">
                 {artwork.artist}
               </h2>
-              <h4 className="text-2xl font-bold dark:text-white pt-16">
+              {/* <h4 className="text-2xl font-bold dark:text-white pt-16">
                 Make an Offer
               </h4>
               <form>
@@ -129,7 +129,7 @@ function ArtworkDetails({ computer, nftModSpec, paymentModSpec, offerModSpec }) 
                 >
                   Submit
                 </button>
-              </form>
+              </form> */}
             </div>
           </div>
         </div>

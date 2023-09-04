@@ -62,7 +62,7 @@ We provide a free Bitcoin Computer Node on Litecoin testnet so you can try out L
 
 It is free to develop and test a Bitcoin Computer application on testnet and regtest.
 
-On Mainnet the fees for using the Bitcoin Computer are on average the same as the transaction fees charged by miners fees. For example, if the miner transaction fee is one cent, then you  pay two cent in total: one cent to the miners, and one cent to support the development of the Bitcoin Computer.
+We charge a small fee on mainnet to support the development of the Bitcoin Computer. The fee for a function call is satoshis per byte * 475 (average transaction size). The fee for deploying a module is satoshis per byte * data size * 1/4 (making use of the segwit discount). The programer can configure satoshis per byte.
 
 ## Development Status
 

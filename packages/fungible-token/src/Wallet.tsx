@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import useInterval from './useInterval'
 import { Modal, ModalContent, Close } from './Modal'
 import type { Computer } from 'bitcoin-computer'
 import PropTypes from 'prop-types'
@@ -13,12 +12,19 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
   const [balance, setBalance] = useState(0)
   const [isVisible, setVisible] = useState(false)
 
+  const refreshBalance = async () => {
+    try {
+      if (computer) setBalance(await computer.getBalance())
+    } catch (err) {
+      console.log(err)
+      console.log("error occurred while fetching wallet details: ", err)
+    }
+  }
 
   useEffect(() => {
-    const getBalance = async () => {
-      if (computer) setBalance(await computer?.getBalance())
-    }
-    getBalance()
+    (async () => {
+      await refreshBalance()
+    })()
   }, [])
 
   return (
