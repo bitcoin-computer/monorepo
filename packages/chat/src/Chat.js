@@ -9,13 +9,13 @@ function Chat({ computer }) {
 
   const { rev } = useParams()
 
-  useEffect(() => {
-    const refreshChat = async () => {
-      if(computer) {
-        const [latestRev] = await computer.query({ids:[rev]})
-        setChat(await computer.sync(latestRev))
-      }
+  const refreshChat = async () => {
+    if(computer) {
+      const [latestRev] = await computer.query({ids:[rev]})
+      setChat(await computer.sync(latestRev))
     }
+  }
+  useEffect(() => { 
     refreshChat()
   }, [rev, computer, refresh])
 
@@ -27,8 +27,15 @@ function Chat({ computer }) {
     e.preventDefault()
     const username = window.localStorage.getItem('USER_NAME')
     const line = `${username}: ${message}`
-    await chat.post(line)
-    console.log(`Sent message ${line}\n  chat id  ${chat._id}\n  chat rev ${chat._rev}`)
+    try {
+      await chat.post(line)
+      console.log(`Sent message ${line}\n  chat id  ${chat._id}\n  chat rev ${chat._rev}`)
+    } catch (error) {
+      if (error.message.startsWith("Insufficient balance in address")){
+        alert("You have to fund your wallet");
+      }
+    }
+    await refreshChat();
     setMessage('')
   }
 
