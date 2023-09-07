@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { Computer, Contract } from '@bitcoin-computer/lib'
+import { Computer } from '@bitcoin-computer/lib'
 
 const conf = {
   network: 'regtest',
@@ -27,8 +27,7 @@ describe('Should work with chai', () => {
 
     class Counter extends Contract {
       constructor() {
-        super()
-        this.count = 0
+        super({ count: 0 })
       }
       inc() {
         this.count += 1
