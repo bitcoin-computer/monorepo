@@ -1,4 +1,4 @@
 #!/bin/bash
 
 # lerna run types
-yarn check-obfuscation
+yarn check-obfuscation || exit -1
