@@ -15,6 +15,12 @@ button {
   cursor: pointer;
 }
 
+.refresh-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
 button.small {
   padding: 3px;
   margin: 0;
