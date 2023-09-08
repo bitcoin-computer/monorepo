@@ -21,39 +21,32 @@ const Header = styled.div`
   }
 `
 
-/**
- * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
- * "url" to "http://127.0.0.1:3000" in the "opts" object below.
- */
-const opts = {
-  mnemonic:
-    'athlete penalty eyebrow hurry actual hope body unfair trouble skin manual fold limb kid fox',
-  chain: 'LTC',
-  url: 'https://node.bitcoincomputer.io',
-  network: 'testnet',
-}
+const getConf = (network: string) => ({
+  chain: window.localStorage.getItem("CHAIN") || '',
+  network,
+  // the BIP_39_KEY is set on login and we fetch it from local storage
+  mnemonic: window.localStorage.getItem("BIP_39_KEY"),
+  url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:3000",
+})
 
 const App: React.FC = () => {
+  // To connect the app to a local Bitcoin Computer node set "network" to "regtest"
+  const [config] = useState(getConf("regtest"))
   const [computer, setComputer] = useState<typeof Computer | null>(null)
   const [objects, setObjects] = useState<TokenType[]>([])
-  const [chain, setChain] = useState('LTC')
 
   useEffect(() => {
-    // BIP_39_KEY & CHAIN is set on login and we fetch it from local storage
-    const mnemonic = window.localStorage.getItem('BIP_39_KEY')
-    setChain(window.localStorage.getItem('CHAIN') || '')
-
-    const isLoggedIn = mnemonic && chain
+    const isLoggedIn = config.mnemonic && config.chain
     // if you are currently logging in
     if (isLoggedIn && !computer) {
-      setComputer(new Computer({ ...opts, mnemonic, chain }))
-      console.log('Bitcoin Computer created on ' + chain)
+      setComputer(new Computer(config))
+      console.log('Bitcoin Computer created on ' + config.chain)
       // if you are currently logging out
     } else if (!isLoggedIn && computer) {
       console.log('You have been logged out')
       setComputer(null)
     }
-  }, [computer, chain])
+  }, [computer, config.chain, config])
 
   useEffect(() => {
     const refresh = async () => {
@@ -84,7 +77,7 @@ const App: React.FC = () => {
     <Router>
       <Header>
         <MintToken computer={computer}></MintToken>
-        <Wallet computer={computer} chain={chain}></Wallet>
+        <Wallet computer={computer} chain={config.chain}></Wallet>
         <Login></Login>
       </Header>
       <Flex>
