@@ -9,13 +9,13 @@ function Chat({ computer }) {
 
   const { rev } = useParams()
 
-  const refreshChat = async () => {
-    if(computer) {
-      const [latestRev] = await computer.query({ids:[rev]})
-      setChat(await computer.sync(latestRev))
+  useEffect(() => {
+    const refreshChat = async () => {
+      if(computer) {
+        const [latestRev] = await computer.query({ids:[rev]})
+        setChat(await computer.sync(latestRev))
+      }
     }
-  }
-  useEffect(() => { 
     refreshChat()
   }, [rev, computer, refresh])
 
@@ -35,7 +35,6 @@ function Chat({ computer }) {
         alert("You have to fund your wallet");
       }
     }
-    await refreshChat();
     setMessage('')
   }
 
