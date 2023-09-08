@@ -8,13 +8,10 @@ import { Counter } from '../src/main'
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-/**
- * To run the tests with a local Bitcoin Computer node set "network" to "regtest" and
- * "url" to "http://127.0.0.1:3000" in the "opts" object below.
- */
 const opts = {
   mnemonic: 'replace this seed',
-  url: 'https://node.bitcoincomputer.io',
+  url: 'http://127.0.0.1:3000',
+  network: 'regtest' as any,
 }
 
 describe('Bitcoin Computer', () => {
@@ -24,6 +21,9 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a computer object', () => {
+    /**
+     * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
+     */
     const computer = new Computer(opts)
 
     expect(computer).not.to.be.undefined
@@ -42,6 +42,8 @@ describe('Bitcoin Computer', () => {
   it('should create a smart object', async () => {
     const computer = new Computer(opts)
 
+    // @ts-ignore
+    await computer.faucet(1e7)
     const counter = await computer.new(Counter)
     // @ts-ignore
     expect(counter).to.matchPattern({
@@ -57,6 +59,8 @@ describe('Bitcoin Computer', () => {
   it('should update a smart object', async () => {
     const computer = new Computer(opts)
 
+    // @ts-ignore
+    await computer.faucet(1e7)
     const counter = await computer.new(Counter)
     await counter.inc()
     // @ts-ignore

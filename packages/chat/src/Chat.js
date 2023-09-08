@@ -27,8 +27,14 @@ function Chat({ computer }) {
     e.preventDefault()
     const username = window.localStorage.getItem('USER_NAME')
     const line = `${username}: ${message}`
-    await chat.post(line)
-    console.log(`Sent message ${line}\n  chat id  ${chat._id}\n  chat rev ${chat._rev}`)
+    try {
+      await chat.post(line)
+      console.log(`Sent message ${line}\n  chat id  ${chat._id}\n  chat rev ${chat._rev}`)
+    } catch (error) {
+      if (error.message.startsWith("Insufficient balance in address")){
+        alert("You have to fund your wallet");
+      }
+    }
     setMessage('')
   }
 

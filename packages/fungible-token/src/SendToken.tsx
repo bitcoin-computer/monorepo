@@ -23,26 +23,32 @@ const SendToken: React.FC<ISendTokenProps> = ({ tokens }) => {
     tokens.sort((a, b) => parseInt(a.coins, 10) - parseInt(b.coins, 10))
     const newTokens: TokenType[] = []
     let leftToSpend = amount
-    for (const token of tokens) {
-      const tokenCoins = parseInt(token.coins, 10)
-      if (0 < leftToSpend && 0 < tokenCoins) {
-        newTokens.push(await token.send(Math.min(leftToSpend, tokenCoins), to))
-        leftToSpend -= tokenCoins
+    try {
+      for (const token of tokens) {
+        const tokenCoins = parseInt(token.coins, 10)
+        if (0 < leftToSpend && 0 < tokenCoins) {
+          newTokens.push(await token.send(Math.min(leftToSpend, tokenCoins), to))
+          leftToSpend -= tokenCoins
+        }
+      }
+      alert(`Sent tokens\n ${ 
+        newTokens
+          .map((token) => `${token.coins} -> ${token._owners[0]}`)
+          .join('\n')}`)
+  
+      console.log(
+        'Sent tokens\n',
+        newTokens
+          .map((token) => `${token.coins} -> ${token._owners[0]}`)
+          .join('\n')
+      )
+      setAmountString('')
+      setTo('')
+    } catch (err: any) {
+      if (err.message.startsWith("Insufficient balance in address")){
+        alert("You have to fund your wallet");
       }
     }
-    alert(`Sent tokens\n ${ 
-      newTokens
-        .map((token) => `${token.coins} -> ${token._owners[0]}`)
-        .join('\n')}`)
-
-    console.log(
-      'Sent tokens\n',
-      newTokens
-        .map((token) => `${token.coins} -> ${token._owners[0]}`)
-        .join('\n')
-    )
-    setAmountString('')
-    setTo('')
   }
 
   return (

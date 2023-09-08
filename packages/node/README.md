@@ -32,6 +32,11 @@ cp .env.example .env
 
 # Install the dependencies
 npm install
+
+# Build the docker image
+cd monorepo
+yarn build-docker
+
 ```
 
 ## Usage

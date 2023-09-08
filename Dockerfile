@@ -17,7 +17,7 @@ WORKDIR /dist/packages/node
 RUN echo "Version: $(head ../lib/package.json)"
 
 # Run lerna bootstrap
-RUN npx lerna bootstrap
+RUN npx lerna@5.2.0 bootstrap
 
 EXPOSE 3000
 # Define the command to run when the container starts

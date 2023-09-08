@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { GrRefresh } from "react-icons/gr"
 import { Modal, ModalContent, Close } from './Modal'
 import type { Computer } from 'bitcoin-computer'
 import PropTypes from 'prop-types'
@@ -11,8 +12,9 @@ export interface IWalletProps {
 const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
   const [balance, setBalance] = useState(0)
   const [isVisible, setVisible] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
-  const refreshBalance = async () => {
+  const refresh = async () => {
     try {
       if (computer) setBalance(await computer.getBalance())
     } catch (err) {
@@ -21,11 +23,17 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
     }
   }
 
+  const handleRefreshClick = async () => {
+    setRefreshing(true);
+    await refresh();
+    setRefreshing(false);
+  }
+
   useEffect(() => {
     (async () => {
-      await refreshBalance()
+      await refresh()
     })()
-  }, [])
+  }, [computer, chain])
 
   return (
     <>
@@ -56,8 +64,15 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
               </p>
             )}
             <b>Balance</b>
-            <br /> {computer ? `${balance / 1e8} ${chain}` : 'Loading...'}
-            <br />
+            <br /> 
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <span style={{ marginRight: '10px' }}>
+                  {refreshing ? 'Refreshing...' : computer ? `${balance / 1e8} ${chain}` : 'Loading...'}
+                </span>
+                <GrRefresh onClick={handleRefreshClick} className="refresh-button" />
+              </div>
+            </div>
             <br />
             <b>Address</b>
             <br /> {computer ? computer.getAddress().toString() : 'Loading...'}

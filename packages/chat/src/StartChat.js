@@ -14,13 +14,13 @@ function StartChat({ computer }) {
       try {
         chat = await computer.new(ChatSc, [publicKey]);
       } catch (err) {
-        console.log('error creating chat', err)
+        if (err.message.startsWith("Insufficient balance in address"))
+          alert("You have to fund your wallet");
       }
       console.log('created chat', chat)
       navigate(`/chat/${chat._id}`);
     } catch (err) {
-      if (err.message.startsWith("Insufficient balance in address"))
-        alert("You have to fund your wallet");
+      console.log('error creating chat', err)
     }
   };
   return (
