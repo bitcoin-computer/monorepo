@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import useInterval from './useInterval'
 import styled from 'styled-components'
+import { Computer } from "@bitcoin-computer/lib"
 
 const LoginScreen = styled.div`
   height: 100%;
@@ -14,25 +15,43 @@ const LoginScreen = styled.div`
   justify-content: center;
   align-items: center;
 `
-const Login: React.FC = () => {
+export interface ILoginProps {
+  config: any
+  setComputer: (computer: typeof Computer) => void
+}
+
+const Login: React.FC<ILoginProps> = (props) => {
+  const { config, setComputer } = props
   const [password, setPassword] = useState('')
   const [loggedIn, setLoggedIn] = useState(false)
   const [chain, setChain] = useState('LTC')
 
   useInterval(() => {
-    setLoggedIn(!!window.localStorage.getItem('BIP_39_KEY'))
-  }, 500)
+    if (window.localStorage.getItem('BIP_39_KEY')) {
+      setLoggedIn(true)
+    }
+  }, 1000)
 
   const login = (e: React.SyntheticEvent) => {
     e.preventDefault()
+    if (!password) return
     window.localStorage.setItem('BIP_39_KEY', password)
     window.localStorage.setItem('CHAIN', chain)
+    const computer = new Computer({
+      ...config,
+      chain: chain,
+      mnemonic: localStorage.getItem("BIP_39_KEY"),
+    })
+    setComputer(computer)
+    setLoggedIn(true)
   }
 
-  const logout = () => {
+  const logout = (e: React.SyntheticEvent) => {
+    e.preventDefault()
     window.localStorage.removeItem('BIP_39_KEY')
     window.localStorage.removeItem('USER_NAME')
     window.localStorage.removeItem('CHAIN')
+    setLoggedIn(false)
   }
 
   return loggedIn ? (

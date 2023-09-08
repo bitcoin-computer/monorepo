@@ -78,7 +78,10 @@ const App: React.FC = () => {
       <Header>
         <MintToken computer={computer}></MintToken>
         <Wallet computer={computer} chain={config.chain}></Wallet>
-        <Login></Login>
+        <Login 
+          config={config}
+          setComputer={setComputer}>
+        </Login>
       </Header>
       <Flex>
         {Object.values(groupByRoot(objects)).map((tokens) => (
