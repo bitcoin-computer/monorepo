@@ -42,7 +42,6 @@ services:
         "-wallet=${DEFAULT_WALLET}"
       ]
   bcn:
-    build: .
     image: bitcoin-computer-node
     env_file: .env
     depends_on:
