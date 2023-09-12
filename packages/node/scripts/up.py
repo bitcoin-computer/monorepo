@@ -83,8 +83,9 @@ def main():
         else:
             subprocess.run(
                 ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
-            # Launch sync in automatic parallel mode
-            runSync(args, commandLine)
+            # If -bcn is specified, don't launch sync services
+            if(args.service != 'bcn'):
+                runSync(args, commandLine)
 if __name__ == '__main__':
     main()
     

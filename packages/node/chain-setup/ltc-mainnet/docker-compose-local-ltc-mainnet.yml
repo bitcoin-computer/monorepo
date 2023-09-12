@@ -36,7 +36,6 @@ services:
   bcn:
     #image: bcdb/bcn:0.9.12
     image: bitcoin-computer-node
-    build: .
     env_file: .env
     restart: always
     environment:

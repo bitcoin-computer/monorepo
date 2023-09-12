@@ -13,6 +13,7 @@ services:
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
   bcn:
+    build: .
     healthcheck:
       test:
         [
