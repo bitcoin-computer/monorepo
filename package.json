@@ -25,6 +25,7 @@
   },
   "private": false,
   "scripts": {
+    "start": "cd /dist/packages/node && yarn start",
     "up": "cd packages/node && yarn up",
     "fund-ltc": "cd packages/node && yarn fund-ltc",
     "test": "cd packages/node && yarn test",
