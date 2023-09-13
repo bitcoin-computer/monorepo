@@ -26,7 +26,7 @@ cd packages/BRC20
 
 ### Configuration
 
-The library is pre-configured to run on testnet. You can run a [Bitcoin Computer Node][node] to use the library on regtest. To configure the library to connect to your own regtest node, have a look at the comment above the ``opts`` object at the top of ``brc20.test.ts". Support for mainnet will be added soon.
+The tests are pre-configured to run on regtest. You need to run a [Bitcoin Computer Node][node] to use the library on regtest. 
 
 ### Fund the Wallet
 
