@@ -31,7 +31,7 @@ const getConf = (network: string) => ({
 
 const App: React.FC = () => {
   // To connect the app to a local Bitcoin Computer node set "network" to "regtest"
-  const [config] = useState(getConf("regtest"))
+  const [config] = useState(getConf("testnet"))
   const [computer, setComputer] = useState<typeof Computer | null>(null)
   const [objects, setObjects] = useState<TokenType[]>([])
 

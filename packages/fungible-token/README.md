@@ -1,6 +1,6 @@
 # Fungible Token
 
-A application for minting, storing, and sending fungible tokens on Litecoin. Build with the [Bitcoin Computer](http://bitcoincomputer.io). You can find more information in the accompanying [Medium Article](https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273).
+An application for minting, storing, and sending fungible tokens on Litecoin. Build with the [Bitcoin Computer](http://bitcoincomputer.io). You can find more information in the accompanying [Medium Article](https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273).
 
 ![chat-screen](https://i.ibb.co/hMqsDjQ/Screen-Shot-2020-09-23-at-00-16-18.png)
 
@@ -13,6 +13,7 @@ git clone git@github.com:bitcoin-computer/monorepo.git
 cd monorepo
 lerna bootstrap
 cd packages/fungible-token
+cp .env.example .env
 ```
 
 ## Usage
@@ -31,7 +32,7 @@ To log into the application you need a BIP39 seed phrase. You can generate a new
 
 ### Configuration
 
-The application defaults to testnet mode. To run it in regtest or mainnet mode you can run a [Bitcoin Computer Node][node]. To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
+The application defaults to testnet mode. To run it in regtest or mainnet mode you can run a [Bitcoin Computer Node][node]. To configure the web app to connect to your own node, have a look at the comment at the top of "App.tsx". Support for mainnet will be added soon.
 
 ### Fund the Wallet
 

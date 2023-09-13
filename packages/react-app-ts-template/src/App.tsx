@@ -15,7 +15,7 @@ function App() {
     mnemonic,
     url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:3000",
   })
-  const config: Config = getConf("regtest")
+  const config: Config = getConf("testnet")
   const [computer, setComputer] = useState(new Computer(config))
   return (
     <>
