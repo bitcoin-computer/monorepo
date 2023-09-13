@@ -1,6 +1,6 @@
 {
   "name": "react-ts-template",
-  "version": "0.16.0-beta.0",
+  "version": "0.16.0-beta.1",
   "private": true,
   "dependencies": {
     "@bitcoin-computer/lib": "^0.16.0-beta.1",
