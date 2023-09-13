@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/BRC721",
-  "version": "0.16.0-beta.0",
+  "version": "0.16.0-beta.1",
   "description": "Standard for non-fungible tokens on Bitcoin",
   "private": true,
   "type": "module",

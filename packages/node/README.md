@@ -31,7 +31,7 @@ cd monorepo/packages/node
 cp .env.example .env
 
 # Install the dependencies
-npm install
+yarn install
 
 # Build the docker image into the monorepo folder
 cd ../../
