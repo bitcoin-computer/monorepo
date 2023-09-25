@@ -20,7 +20,6 @@ parser.set_defaults(network='regtest')
 serviceGroup = parser.add_mutually_exclusive_group()
 serviceGroup.add_argument('-db', action="store_const", dest="service", const='db')
 serviceGroup.add_argument('-bcn', action="store_const", dest="service", const='bcn')
-serviceGroup.add_argument('-sync', action="store_const", dest="service", const='sync')
 serviceGroup.add_argument('-node', action="store_const", dest="service", const='node')
 
 parser.set_defaults(service='')
@@ -33,4 +32,4 @@ commandLine = ' docker compose -f docker-compose.yml -f chain-setup/'+args.chain
 
 print(commandLine+' down')
 subprocess.run(
-    ['sh', '-c', commandLine+' down'])
+    ['sh', '-c', commandLine+' down --remove-orphans'])

@@ -78,13 +78,14 @@ def main():
             # Optimize for speed: skip launching bcn service (no port binding)
             subprocess.run(
                 ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' bcn']) 
-            # Launch sync in automatic parallel mode
-            runSync(args, commandLine)
+            # Launch sync in automatic parallel mode. If any service is specified, don't launch sync services
+            if(args.service.strip() == ''):
+                runSync(args, commandLine)
         else:
             subprocess.run(
                 ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
-            # If -bcn is specified, don't launch sync services
-            if(args.service != 'bcn'):
+            # If any service is specified, don't launch sync services
+            if(args.service.strip() == ''):
                 runSync(args, commandLine)
 if __name__ == '__main__':
     main()
