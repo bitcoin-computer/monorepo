@@ -1,15 +1,3 @@
-packages/node/coverage/
-packages/node/logs/
-packages/node/node_modules/
-packages/node/chain-setup/**/blockchain-data
-packages/node/chain-setup/**/db-data
-packages/node/.env
-packages/node/.DS_Store
-packages/node/src
-packages/node/test
-packages/node/*.log
-packages/node/scripts/__pycache__
-
 packages/BRC20
 packages/BRC721
 packages/chat
@@ -19,6 +7,7 @@ packages/node-js-boilerplate
 packages/non-fungible-token
 packages/react-app-ts-template
 packages/wallet
+packages/node
 
 Dockerfile.explorer
 Dockerfile.explorer.dockerignore
