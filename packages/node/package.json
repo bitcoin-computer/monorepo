@@ -36,7 +36,6 @@
     "node-clean": "./scripts/node-clean.sh",
     "dist-clean": "rm -rf dist",
     "build-rollup": "rollup -c",
-    "build-docker": "docker build -t bitcoin-computer-node .",
     "docker-hub-push": ". scripts/docker-setup.sh && docker_hub_push",
     "docker-context-use": "./scripts/aws.py dockerContextUse",
     "docker-install": ". scripts/docker-setup.sh && docker_install",
