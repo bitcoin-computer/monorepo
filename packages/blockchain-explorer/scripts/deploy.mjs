@@ -7,7 +7,7 @@ config()
 const mnemonic = process.env.MNEMONIC
 const chain = process.env.CHAIN || "LTC"
 const network = process.env.NETWORK || "regtest"
-const url = process.env.BCN_URL || "http://127.0.0.1:3000"
+const url = process.env.BCN_URL || "http://127.0.0.1:1031"
 
 if (!mnemonic) {
   throw new Error("Please set your MNEMONIC in a .env file")
@@ -93,7 +93,7 @@ rl.question(q, async (answer) => {
        */
       class D extends Contract {
         constructor(n) {
-          super({ n, _url: "http://127.0.0.1:3000" })
+          super({ n, _url: "http://127.0.0.1:1031" })
         }
 
         inc(n) {

@@ -8,7 +8,7 @@ import { BRC20 } from '../src/brc-20'
  * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
  */
 const computer = new Computer({
-  url: 'http://127.0.0.1:3000',
+  url: 'http://127.0.0.1:1031',
   network: 'regtest' as any,
 })
 

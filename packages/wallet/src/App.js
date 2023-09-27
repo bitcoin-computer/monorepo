@@ -6,7 +6,7 @@ import { Computer } from "@bitcoin-computer/lib"
  * This is a simple wallet app that demonstrates how to use the @bitcoin-computer/lib.
  *
  * To connect the app to a local Bitcoin Computer node set "network to "regtest" and
- * "url" to "http://127.0.0.1:3000" in the "opts" object below.
+ * "url" to "http://127.0.0.1:1031" in the "opts" object below.
  */
 function App() {
   const opts = {

@@ -15,7 +15,7 @@ function App() {
     network,
     // the BIP_39_KEY is set on login and we fetch it from local storage
     mnemonic: window.localStorage.getItem("BIP_39_KEY"),
-    url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:3000",
+    url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031",
   })
 
   // To connect the app to a local Bitcoin Computer node set "network" to "regtest"
