@@ -47,7 +47,7 @@ services:
       - ZMQ_URL=tcp://node:28332
       - NETWORK=mainnet
       - CHAIN=BTC
-      - BCN_URL=http://127.0.0.1:3000
+      - BCN_URL=http://127.0.0.1:1031
   sync:
     command: npm run sync
     build: .
@@ -63,7 +63,7 @@ services:
       - NETWORK=mainnet
       - CHAIN=BTC
       - ZMQ_URL=tcp://node:28332
-      - BCN_URL=http://127.0.0.1:3000
+      - BCN_URL=http://127.0.0.1:1031
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
       - RPC_PROTOCOL=http

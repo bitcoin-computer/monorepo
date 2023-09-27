@@ -54,7 +54,7 @@ services:
       - ../../.env
     restart: on-failure
     ports:
-      - "3000:3000"
+      - "1031:1031"
     depends_on:
       - db
     links:

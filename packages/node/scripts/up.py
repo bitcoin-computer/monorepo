@@ -60,7 +60,7 @@ def main():
     print(args)
 
     port = subprocess.check_output("grep PORT .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
-    bcnPort = port if port != '' else '3000'
+    bcnPort = port if port != '' else '1031'
 
     commandLine = ' docker compose -f docker-compose.yml -f chain-setup/'+args.chain+'-'+args.network+'/docker-compose-local-'+args.chain+'-'+args.network+'.yml '
 
@@ -78,14 +78,13 @@ def main():
             # Optimize for speed: skip launching bcn service (no port binding)
             subprocess.run(
                 ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' bcn']) 
-            # Launch sync in automatic parallel mode. If any service is specified, don't launch sync services
-            if(args.service.strip() == ''):
-                runSync(args, commandLine)
+            # Launch sync in automatic parallel mode
+            runSync(args, commandLine)
         else:
             subprocess.run(
                 ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
-            # If any service is specified, don't launch sync services
-            if(args.service.strip() == ''):
+            # If -bcn is specified, don't launch sync services
+            if(args.service != 'bcn'):
                 runSync(args, commandLine)
 if __name__ == '__main__':
     main()
