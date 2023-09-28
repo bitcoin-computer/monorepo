@@ -27,8 +27,6 @@
   "scripts": {
     "start": "cd /dist/packages/node && yarn start",
     "up": "cd packages/node && yarn up",
-    "up-node": "yarn up",
-    "up-explorer": "docker run -p 1032:1032 bitcoin-computer-explorer",
     "fund-ltc": "cd packages/node && yarn fund-ltc",
     "test": "cd packages/node && yarn test",
     "down": "cd packages/node && yarn down",
