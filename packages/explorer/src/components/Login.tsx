@@ -57,7 +57,7 @@ function Login(props: {
             <div className="relative bg-white rounded-lg dark:bg-gray-700">
               <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Litecoin ART
+                  Sign in
                 </h3>
                 <button
                   type="button"
@@ -83,7 +83,7 @@ function Login(props: {
               </div>
               <div className="p-6 space-y-6">
                 <div className="space-y-4">
-                  <p className="font-sans">Don&apost forget to write down your seed.</p>
+                  <p className="font-sans">Do not forget to write down your seed.</p>
                   {/*link to generate BIP39 Seed*/}
                   <small>
                     <a

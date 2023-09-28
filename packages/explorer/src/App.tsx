@@ -19,7 +19,7 @@ function App() {
     mnemonic,
     url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031",
   })
-  const config: Config = getConf("regtest")
+  const config: Config = getConf("testnet")
   const [computer, setComputer] = useState(new Computer(config))
   return (
     <div className="px-2 sm:px-4 py-2.5">
