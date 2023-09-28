@@ -21,8 +21,5 @@ packages/react-app-ts-template
 packages/wallet
 packages/blockchain-explorer
 
-Dockerfile.explorer
-Dockerfile.explorer.dockerignore
-
-Dockerfile.node
-Dockerfile.node.dockerignore
+Dockerfile
+.dockerignore
