@@ -46,7 +46,7 @@ To log into the application you need a BIP39 seed phrase. You can generate a new
 
 ### Configuration
 
-The application defaults to testnet mode. You have the flexibility to switch it to mainnet mode or run a local node in regtest mode, with detailed instructions available at [Bitcoin Computer Node][node]. If you wish to configure the web app to connect to your custom node, refer to the comment at the beginning of the 'App.tsx' file for guidance."
+The application defaults to testnet mode. You can configure it to run on mainnet or connect it to a local [Bitcoin Computer Node][node] in regtest mode. If you wish to configure the application to connect to your local node, refer to the comment at the beginning of the 'App.tsx' file.
 
 ### Fund the Wallet
 
