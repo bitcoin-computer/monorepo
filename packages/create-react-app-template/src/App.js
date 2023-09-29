@@ -5,14 +5,13 @@ import Counter from "./Counter";
 
 /**
  * To run with a local Bitcoin Computer node set "network" to "regtest"
- * and "url" to "http://127.0.0.1:3000" below.
  */
 function App() {
   const getConf = (network) => ({
     chain: 'LTC',
     network,
     mnemonic: 'travel upgrade inside soda birth essence junk merit never twenty system opinion',
-    url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:3000",
+    url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031",
   })
 
   const config = getConf("testnet")

@@ -20,7 +20,7 @@ cp .env.example .env
 
 ### Start the Server
 
-To start the application run the command below and open [http://localhost:3001](http://localhost:3001) in a browser.
+To start the application run the command below and open [http://localhost:3000](http://localhost:3000) in a browser.
 
 ```bash
 yarn start

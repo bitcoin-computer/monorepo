@@ -7,7 +7,7 @@ export async function fund(chain, addressesList: string[] = []) {
   const addresses = process.env.TEST_ADDRESS.split(';').concat(addressesList)
 
   const network = (process.env.NETWORK as any) || 'regtest'
-  const port = process.env.PORT || 3000
+  const port = process.env.PORT || 1031
   const url = process.env.BCN_URL || `http://localhost:${port}`
   const computer = new Computer({ chain, network, url })
 

@@ -19,3 +19,7 @@ packages/node-js-boilerplate
 packages/non-fungible-token
 packages/react-app-ts-template
 packages/wallet
+packages/blockchain-explorer
+
+Dockerfile
+.dockerignore

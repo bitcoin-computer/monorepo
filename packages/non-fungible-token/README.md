@@ -38,7 +38,7 @@ To start the application run
 ```bash
 yarn start
 ```
-and open [http://localhost:3001](http://localhost:3001) in a browser.
+and open [http://localhost:3000](http://localhost:3000) in a browser.
 
 ### Log In
 
@@ -46,7 +46,7 @@ To log into the application you need a BIP39 seed phrase. You can generate a new
 
 ### Configuration
 
-The application defaults to testnet mode. You can run it in regtest or mainnet mode you can run a [Bitcoin Computer Node][node]. To configure the web app to connect to your own node, have a look at the comment at the top of "App.js". Support for mainnet will be added soon.
+The application defaults to testnet mode. You can also configure it to run with a local [Bitcoin Computer Node][node]. In that case refer to the comment at the beginning of the 'App.tsx' file.
 
 ### Fund the Wallet
 

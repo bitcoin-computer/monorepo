@@ -9,6 +9,12 @@ A template for using the [Bitcoin Computer][bitcoin-computer] with [Typescript][
 ## Installation
 
 Follow the instructions to clone and install the Bitcoin Computer [```monorepo```](https://github.com/bitcoin-computer/monorepo.git#installation) from GitHub.
+
+Then run the following command to install the dependencies:
+
+```sh
+lerna bootstrap
+```
 ## Usage
 
 Run the tests:

@@ -26,7 +26,7 @@ To start the application run
 ```bash
 yarn start
 ```
-and open [http://localhost:3001](http://localhost:3001) in a browser.
+and open [http://localhost:3000](http://localhost:3000) in a browser.
 
 ### Run the tests
 

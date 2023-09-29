@@ -33,9 +33,9 @@ cp .env.example .env
 # Install the dependencies
 yarn install
 
-# Build the docker image into the monorepo folder
+# Build the Bitcoin Computer node docker image into the monorepo folder
 cd ../../
-yarn build-docker
+yarn build-node
 
 ```
 
@@ -88,7 +88,7 @@ yarn reset
 To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib) object to your node you have to set the ``url`` property.
 
 ```js
-new Computer({ url: 'https://localhost:3000' })
+new Computer({ url: 'https://localhost:1031' })
 ```
 
 ## Configuration

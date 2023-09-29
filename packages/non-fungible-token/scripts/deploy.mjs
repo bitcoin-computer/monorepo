@@ -11,7 +11,7 @@ config()
 const mnemonic = process.env.MNEMONIC;
 const chain = process.env.CHAIN || 'LTC'
 const network = process.env.NETWORK || 'regtest'
-const url = process.env.BCN_URL || 'http://127.0.0.1:3000'
+const url = process.env.BCN_URL || 'http://127.0.0.1:1031'
 
 if (!mnemonic) {
   throw new Error('Please set your MNEMONIC in a .env file')

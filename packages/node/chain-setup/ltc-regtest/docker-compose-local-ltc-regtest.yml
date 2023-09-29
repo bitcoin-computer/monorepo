@@ -54,6 +54,6 @@ services:
       - ZMQ_URL=tcp://node:28332
       - NETWORK=regtest
       - CHAIN=LTC
-      - BCN_URL=http://127.0.0.1:3000
+      - BCN_URL=http://127.0.0.1:1031
     restart: always
 

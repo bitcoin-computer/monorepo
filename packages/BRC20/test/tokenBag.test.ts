@@ -9,7 +9,7 @@ import { TokenBag } from '../src/token-bag'
  */
 
 const opts = {
-  url: 'http://127.0.0.1:3000',
+  url: 'http://127.0.0.1:1031',
   network: 'regtest' as any,
 }
 

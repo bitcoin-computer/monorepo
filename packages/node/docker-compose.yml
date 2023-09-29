@@ -26,13 +26,13 @@ services:
       start_period: 30s
     command: npm start
     ports:
-      - "3000:3000"
+      - "1031:1031"
     environment:
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
       - RPC_PROTOCOL=http
       - RPC_USER=${RPC_USER}
-      - RPC_PASSWORD=kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A=
+      - RPC_PASSWORD=${RPC_PASSWORD}
     working_dir: /dist
     depends_on:
       - db
