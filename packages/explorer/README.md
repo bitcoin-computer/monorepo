@@ -17,7 +17,7 @@ cd packages/explorer
 
 ### Configuration
 
-The application defaults to testnet mode. You have the flexibility to switch it to mainnet mode or run a local node in regtest mode, with detailed instructions available at [Bitcoin Computer Node][node]. If you wish to configure the web app to connect to your custom node, refer to the comment at the beginning of the 'App.tsx' file for guidance."
+The application defaults to testnet mode. You can also configure it to run with a local [Bitcoin Computer Node][node]. If you wish to configure the application to connect to your local node, refer to the comment at the beginning of the 'App.tsx' file.
 
 ### Deploy a test Smart Contract
 
