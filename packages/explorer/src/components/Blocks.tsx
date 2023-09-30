@@ -15,7 +15,6 @@ export default function Blocks(props: { computer: Computer }) {
   const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
   const [totalBlocks, setTotalBlocks] = useState(0)
   const [blocks, setBlocks] = useState<number[]>([])
-  console.log(isNextAvailable, isPrevAvailable)
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -26,7 +25,7 @@ export default function Blocks(props: { computer: Computer }) {
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
-        console.log(error)
+        console.log('Error getting blocks', error)
       }
     }
     fetch()
@@ -36,7 +35,6 @@ export default function Blocks(props: { computer: Computer }) {
     try {
       let length = blocksPerPage
       if (totalBlocks - (pageNum * blocksPerPage + blocksPerPage - 1) <= 0) {
-        console.log("here")
         setIsNextAvailable(false)
         length = totalBlocks - (pageNum * blocksPerPage + blocksPerPage - 1) + blocksPerPage - 1
       }
@@ -44,7 +42,7 @@ export default function Blocks(props: { computer: Computer }) {
         Array.from({ length: length }, (_, i) => totalBlocks - (pageNum * blocksPerPage + i))
       )
     } catch (error) {
-      console.log(error)
+      console.log('Error setting blocks', error)
     }
   }, [totalBlocks, pageNum])
 

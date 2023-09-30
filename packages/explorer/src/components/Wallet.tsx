@@ -14,8 +14,7 @@ export default function Wallet(props: {
     try {
       if (computer) setBalance(await computer.getBalance())
     } catch (err) {
-      console.log(err)
-      console.log("error occurred while fetching wallet details: ", err)
+      console.log("Error fetching wallet details", err)
     }
   }, [computer])
 

@@ -23,7 +23,7 @@ function Block(props: { computer: Computer }) {
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
-        console.log(error)
+        console.log('Error getting block', error)
       }
     }
     fetch()

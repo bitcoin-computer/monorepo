@@ -9,7 +9,7 @@ export default function Navbar(props: {
 }) {
   const navigate = useNavigate()
   const { setIsOpen, computer, setShowLogin } = props
-  const [transaction, setTransactionInput] = useState("")
+  const [searchInput, setSearchInput] = useState("")
   const [showNavBar, setShowNavBar] = useState(true)
   const [dropDownHidden, setDropDownHidden] = useState(true)
 
@@ -18,7 +18,7 @@ export default function Navbar(props: {
   const logout = () => {
     localStorage.removeItem("BIP_39_KEY")
     localStorage.removeItem("CHAIN")
-    setTransactionInput("")
+    setSearchInput("")
     setLoggedIn(false)
     setIsOpen(false)
     window.location.href = "/"
@@ -31,12 +31,12 @@ export default function Navbar(props: {
   const search = async (event: any) => {
     var code = event.keyCode || event.which
     if (code === 13) {
-      if (transaction === "") {
+      if (searchInput === "") {
         navigate("/")
-      } else if (transaction.includes(":")) {
-        navigate(`/outputs/${transaction}`)
+      } else if (searchInput.includes(":")) {
+        navigate(`/outputs/${searchInput}`)
       } else {
-        navigate(`/transactions/${transaction}`)
+        navigate(`/transactions/${searchInput}`)
       }
     }
   }
@@ -81,8 +81,8 @@ export default function Navbar(props: {
                 id="search-navbar"
                 className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search Transaction"
-                value={transaction}
-                onChange={(e) => setTransactionInput(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => search(e)}
               />
             </div>

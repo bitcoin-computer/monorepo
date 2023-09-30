@@ -32,7 +32,7 @@ export default function SmartContracts(props: { computer: Computer }) {
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
-        console.log(error)
+        console.log('Error loading revisions', error)
       }
     }
     fetch()

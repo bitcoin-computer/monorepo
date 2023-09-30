@@ -14,7 +14,7 @@ function Output(props: { computer: Computer }) {
   const location = useLocation()
   const { computer } = props
   const params = useParams()
-  const [rev] = useState(params.rev)
+  const [rev] = useState(params.rev || '')
   const [isLoading, setIsLoading] = useState(false)
   const [smartContract, setSmartContract] = useState<any | null>(null)
   const [outputData, setOutputData] = useState<any | null>(null)
@@ -29,28 +29,14 @@ function Output(props: { computer: Computer }) {
     const fetch = async () => {
       try {
         setIsLoading(true)
-        try {
-          console.log(rev)
-          // @ts-ignore
-          const res = await computer.sync(rev)
-          console.log("res: ", res)
-          setSmartContract(res)
-        } catch (error) {
-          console.log(error)
-        }
-
-        // @ts-ignore
-        const rpcRes = await computer.rpcCall(
-          "gettxout",
-          `${rev?.split(":")[0]} ${rev?.split(":")[1]} true`
-        )
-        console.log(rpcRes)
+        setSmartContract(await computer.sync(rev))
+        const string = `${rev?.split(":")[0]} ${rev?.split(":")[1]} true`
+        const rpcRes = await computer.rpcCall("gettxout", string)
         setOutputData(rpcRes.result)
-
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
-        console.log(error)
+        console.log('Error syncing to smart object', error)
       }
     }
     fetch()
@@ -125,7 +111,6 @@ function Output(props: { computer: Computer }) {
     setIsLoading(true)
     event.preventDefault()
     try {
-      console.log(params.map((param) => formState[`${fnName}-${param}`]))
       const res = await smartContract[fnName](
         ...params.map((param) => {
           return getValue(`${fnName}-${param}`)
@@ -136,7 +121,7 @@ function Output(props: { computer: Computer }) {
       setShow(true)
     } catch (error) {
       setIsLoading(false)
-      console.log(error)
+      console.log('Error', error)
     }
   }
 

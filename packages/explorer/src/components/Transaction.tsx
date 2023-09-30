@@ -12,7 +12,6 @@ function Transaction(props: { computer: Computer }) {
   const [txnData, setTxnData] = useState<any | null>(null)
   const [rpcTxnData, setRPCTxnData] = useState<any | null>(null)
   const [expr, setExpr] = useState<any | null>(null)
-  console.log("rpcTxnData", rpcTxnData)
   useEffect(() => {
     const fetch = async () => {
       try {
@@ -28,7 +27,7 @@ function Transaction(props: { computer: Computer }) {
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
-        console.log(error)
+        console.log('Error loading transaction', error)
       }
     }
     fetch()
@@ -47,7 +46,7 @@ function Transaction(props: { computer: Computer }) {
       } catch (error) {
         setExpr(null)
         setIsLoading(false)
-        console.log(error)
+        console.log('Error decoding transaction', error)
       }
     }
     fetch()
