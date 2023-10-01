@@ -11,19 +11,20 @@ function Transaction(props: { computer: Computer }) {
   const [isLoading, setIsLoading] = useState(false)
   const [txnData, setTxnData] = useState<any | null>(null)
   const [rpcTxnData, setRPCTxnData] = useState<any | null>(null)
-  const [expr, setExpr] = useState<any | null>(null)
+  const [transition, setTransition] = useState<any | null>(null)
+
   useEffect(() => {
     const fetch = async () => {
       try {
         setIsLoading(true)
         // @ts-ignore
         const [res] = await computer.wallet.restClient.getRawTxs([txn])
-
-        const rpcRes = await computer.rpcCall("getrawtransaction", `${txn} 2`)
         // @ts-ignore
         const tx = await computer.txFromHex({ hex: res })
-        setRPCTxnData(rpcRes.result)
         setTxnData(tx.tx)
+
+        const { result } = await computer.rpcCall("getrawtransaction", `${txn} 2`)
+        setRPCTxnData(result)
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
@@ -39,12 +40,11 @@ function Transaction(props: { computer: Computer }) {
         if (txnData) {
           setIsLoading(true)
           // @ts-ignore
-          const expr = await computer.decode(txnData)
-          setExpr(expr)
+          setTransition(await computer.decode(txnData))
           setIsLoading(false)
         }
       } catch (error) {
-        setExpr(null)
+        setTransition(null)
         setIsLoading(false)
         console.log('Error decoding transaction', error)
       }
@@ -55,54 +55,79 @@ function Transaction(props: { computer: Computer }) {
   return (
     <>
       {txn && txnData && (
-        <div className="pt-4">
-          {expr && (
-            <div className="pb-8 pl-2">
-              <h1 className="text-2xl font-bold pb-4">Expression</h1>
-              <dl className="text-gray-900 divide-y divide-gray-200">
-                <div className="flex flex-col pb-3">
-                  <dt className="mb-1 text-gray-500 md:text-md ">Expression</dt>
-                  <dd className="text-md">
-                    <pre>{expr.exp}</pre>
-                  </dd>
-                </div>
-                <div className="flex flex-col py-3">
-                  <dt className="mb-1 text-gray-500 md:text-md">Mod</dt>
-                  <dd className="text-md">{expr.mod}</dd>
-                </div>
-                <div className="flex flex-col pt-3">
-                  <dt className="mb-1 text-gray-500 md:text-md">Env</dt>
-                  <dd className="text-md">
-                    <pre>{JSON.stringify(expr.env, null, 2)}</pre>
-                  </dd>
-                </div>
-              </dl>
+        <div className="pt-8">
+          <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Transaction</h1>
+          <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">{txn}</p>
+
+
+          {transition && (
+            <div>
+              <h2 className="mb-2 text-4xl font-bold dark:text-white">Expression</h2>
+              <div className="highlight">
+                <pre className="mt-4 mb-8 p-6 overflow-x-auto leading-normal text-sm rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-blue-4">
+                  <code className=" language-javascript" data-lang="javascript">
+                  {transition.exp}
+                  </code>
+                </pre>
+              </div>
+
+              <h2 className="mb-2 text-4xl font-bold dark:text-white">Environment</h2>
+              <div className="highlight">
+                <pre className="mt-4 mb-8 p-6 overflow-x-auto leading-normal text-sm rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-blue-4">
+                  <code className=" language-javascript" data-lang="javascript">
+                  {JSON.stringify(transition.env, null, 2)}
+                  </code>
+                </pre>
+              </div>
+
+              {transition.mod && (<>
+                <h2 className="mb-2 text-4xl font-bold dark:text-white">Module Specifier</h2>
+                <div className="highlight">
+                  <pre className="chroma language-javascript">
+                    <code className=" language-javascript" data-lang="javascript">
+                      {transition.mod}
+                    </code>
+                  </pre>
+                </div></>)
+              }
             </div>
           )}
 
           {rpcTxnData?.vin && (
             <div className="relative overflow-x-auto sm:rounded-lg">
-              <h1 className="text-2xl font-bold pb-4">
-                {rpcTxnData.vin.length > 1 ? "Inputs" : "Input"}
-              </h1>
-              <table className="w-full text-sm text-left text-gray-500 ">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+              <h2 className="mb-2 text-4xl font-bold dark:text-white">Inputs</h2>
+
+              <table className="w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
                     <th scope="col" className="px-6 py-3">
-                      Script Sig
+                      Transaction Id
+                    </th>
+                    <th scope="col" className="px-6 py-3 break-keep">
+                      Output Number
+                    </th>
+                    <th scope="col" className="px-6 py-3">
+                      Script
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {rpcTxnData?.vin?.map((input: any) => {
                     return (
-                      <tr key={input.txid} className="bg-white border-b hover:bg-gray-50 ">
-                        <th
-                          scope="row"
-                          className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                        >
+                      <tr key={input.txid} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <td className="px-6 py-4">
+                          {input.txid}
+                        </td>
+
+                        <td className="px-6 py-4">
+                          <Link to={`/outputs/${input.txid}:${input.vout}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            #{input.vout}
+                          </Link>
+                        </td>
+
+                        <td className="px-6 py-4 break-all">
                           {input.scriptSig.asm}
-                        </th>
+                        </td>
                       </tr>
                     )
                   })}
@@ -110,15 +135,18 @@ function Transaction(props: { computer: Computer }) {
               </table>
             </div>
           )}
-          {rpcTxnData?.vout && (
-            <div className="relative overflow-x-auto sm:rounded-lg">
-              <h1 className="text-2xl font-bold pb-4">
-                {rpcTxnData.vout.length > 1 ? "Outputs" : "Output"}
-              </h1>
 
-              <table className="w-full text-sm text-left text-gray-500 ">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+          {rpcTxnData?.vout && (
+            <div className="relative overflow-x-auto">
+              <h2 className="mb-2 text-4xl font-bold dark:text-white">Outputs</h2>
+
+              <table className="w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
+                    <th scope="col" className="px-6 py-3">
+                      Number
+                    </th>
+
                     <th scope="col" className="px-6 py-3">
                       Value
                     </th>
@@ -133,21 +161,22 @@ function Transaction(props: { computer: Computer }) {
                 <tbody>
                   {rpcTxnData?.vout?.map((output: any) => {
                     return (
-                      <tr
-                        key={output.n}
-                        className="bg-white border-b text-gray-900 hover:bg-gray-50 hover:text-bit-blue"
-                      >
-                        <Link to={`/outputs/${txn}:${output.n}`}>
-                          <th scope="row" className="px-6 py-4 font-medium  whitespace-nowrap">
-                            {output.value}
-                          </th>
-                          <th scope="row" className="px-6 py-4 font-medium whitespace-nowrap">
-                            {output.scriptPubKey.type}
-                          </th>
-                          <th scope="row" className="px-6 py-4 font-medium whitespace-nowrap">
-                            {output.scriptPubKey.asm}
-                          </th>
-                        </Link>
+                      <tr key={output.n} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                        <td className="px-6 py-4 break-all">
+                          <Link to={`/outputs/${txn}:${output.n}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            #{output.n}
+                          </Link>
+                        </td>
+
+                        <td className="px-6 py-4">
+                          {output.value}
+                        </td>
+                        <td className="px-6 py-4">
+                          {output.scriptPubKey.type}
+                        </td>
+                        <td className="px-6 py-4 break-all">
+                          {output.scriptPubKey.asm}
+                        </td>
                       </tr>
                     )
                   })}
