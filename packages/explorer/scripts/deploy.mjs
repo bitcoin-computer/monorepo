@@ -45,78 +45,77 @@ rl.question(q, async (answer) => {
        * Contract #1
        * single property and single method
        */
-      class Counter extends Contract {
-        constructor() {
-          super({ n: 5, names: ["A", "B", "C"] })
-        }
-        inc(m) {
-          this.n += m
-        }
-      }
+class Counter extends Contract {
+  constructor() {
+    super({ n: 5, names: ["A", "B", "C"] })
+  }
+  inc(m) {
+    this.n += m
+  }
+}
       await computer.new(Counter)
 
       /**
        * Contract #2
        * multiple properties
        */
-      class A extends Contract {
-        constructor(n, s) {
-          super({ n, s })
-        }
+class A extends Contract {
+  constructor(n, s) {
+    super({ n, s })
+  }
 
-        newSmartObject(val, name) {
-          return new A(val, name)
-        }
-      }
+  newSmartObject(val, name) {
+    return new A(val, name)
+  }
+}
       const a = await computer.new(A, [Math.random(), "C"])
 
       /**
        * Contract #3
        * Contract takes another smart contract as param and access its method
        */
-      class B extends Contract {
-        constructor() {
-          super({ name: "b" })
-        }
+class B extends Contract {
+  constructor() {
+    super({ name: "b" })
+  }
 
-        setName(name) {
-          this.name = name
-          return this.name
-        }
-      }
-
+  setName(name) {
+    this.name = name
+    return this.name
+  }
+}
       await computer.new(B, [])
 
       /**
        * Contract #4
        * simple contract with hardcoded params
        */
-      class D extends Contract {
-        constructor(n) {
-          super({ n, _url: "http://127.0.0.1:1031" })
-        }
+class D extends Contract {
+  constructor(n) {
+    super({ n, _url: "http://127.0.0.1:1031" })
+  }
 
-        inc(n) {
-          this.n += n
-          return this.n
-        }
-      }
+  inc(n) {
+    this.n += n
+    return this.n
+  }
+}
       await computer.new(D, [2])
 
       /**
        * Contract #5
        * Takes another contract as param and sets it's own method as well
        */
-      class E extends Contract {
-        constructor(a) {
-          super({ a: a, test: "", age: 0, value: 0 })
-        }
-        setTest(test, age, value) {
-          this.test = test
-          this.age = age
-          this.value = value
-        }
-      }
+class E extends Contract {
+  constructor(a) {
+    super({ a: a, test: "", age: 0, value: 0 })
+  }
+  setTest(test, age, value) {
+    this.test = test
+    this.age = age
+    this.value = value
+  }
+}
       const e = await computer.new(E, [a])
       await e.setTest("testing", 27, 100)
       console.log(`Contracted deployed successfully`)
