@@ -7,59 +7,47 @@ function Transaction(props: { computer: Computer }) {
   const location = useLocation()
   const { computer } = props
   const params = useParams()
-  const [txn] = useState(params.txn)
-  const [isLoading, setIsLoading] = useState(false)
+  const [txn, setTxn] = useState(params.txn)
   const [txnData, setTxnData] = useState<any | null>(null)
   const [rpcTxnData, setRPCTxnData] = useState<any | null>(null)
   const [transition, setTransition] = useState<any | null>(null)
 
   useEffect(() => {
     const fetch = async () => {
-      try {
-        console.log('UseEffect')
-        setIsLoading(true)
-        // @ts-ignore
-        const [res] = await computer.wallet.restClient.getRawTxs([txn])
-        // @ts-ignore
-        const { tx } = await computer.txFromHex({ hex: res })
-        setTxnData(tx)
+      setTxn(params.txn)
+      // @ts-ignore
+      const [hex] = await computer.wallet.restClient.getRawTxs([params.txn])
+      // @ts-ignore
+      const { tx } = await computer.txFromHex({ hex })
+      setTxnData(tx)
 
-        const { result } = await computer.rpcCall("getrawtransaction", `${txn} 2`)
-        setRPCTxnData(result)
-        setIsLoading(false)
-      } catch (error) {
-        setIsLoading(false)
-        console.log('Error loading transaction', error)
-      }
+      const { result } = await computer.rpcCall("getrawtransaction", `${params.txn} 2`)
+      setRPCTxnData(result)
     }
     fetch()
-  }, [computer, txn, location])
+  }, [computer, txn, location, params.txn])
 
   useEffect(() => {
     const fetch = async () => {
-      try {
-        if (txnData) {
-          setIsLoading(true)
+        try {
           // @ts-ignore
           setTransition(await computer.decode(txnData))
-          setIsLoading(false)
+        } catch(err) {
+          if (err instanceof Error){
+            setTransition('')
+            console.log('Error parsing transaction', err.message)
+          }
         }
-      } catch (error) {
-        setTransition(null)
-        setIsLoading(false)
-        console.log('Error decoding transaction', error)
-      }
     }
     fetch()
-  }, [computer, txnData])
+  }, [computer, txnData, txn])
 
   return (
     <>
-      {txn && txnData && (
+      {
         <div className="pt-8">
           <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Transaction</h1>
           <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">{txn}</p>
-
 
           {transition && (
             <div>
@@ -67,7 +55,7 @@ function Transaction(props: { computer: Computer }) {
               <div className="highlight">
                 <pre className="mt-4 mb-8 p-6 overflow-x-auto leading-normal text-sm rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-blue-4">
                   <code className=" language-javascript" data-lang="javascript">
-                  {transition.exp}
+                    {transition.exp}
                   </code>
                 </pre>
               </div>
@@ -129,7 +117,7 @@ function Transaction(props: { computer: Computer }) {
                         </td>
 
                         <td className="px-6 py-4 break-all">
-                          {input.scriptSig.asm}
+                          {input.scriptSig?.asm}
                         </td>
                       </tr>
                     )
@@ -162,6 +150,7 @@ function Transaction(props: { computer: Computer }) {
                   </tr>
                 </thead>
                 <tbody>
+
                   {rpcTxnData?.vout?.map((output: any) => {
                     return (
                       <tr key={output.n} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
@@ -187,14 +176,8 @@ function Transaction(props: { computer: Computer }) {
               </table>
             </div>
           )}
-          {isLoading && <Loader />}
         </div>
-      )}
-      {!txnData && !isLoading && (
-        <div className="flex items-center pt-4 pt-2 w-full">
-          <h1 className="text-md">Not a valid transaction hash {txn}</h1>
-        </div>
-      )}
+      }
     </>
   )
 }
