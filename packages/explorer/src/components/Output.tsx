@@ -1,6 +1,5 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
-import { BsArrowUpRight } from "react-icons/bs"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { getFnParamNames } from "../utils"
 import Loader from "./Loader"
@@ -143,14 +142,14 @@ function Output(props: { computer: Computer }) {
     <>
       <div className="pt-4">
         {smartContract && (
-          <div className="pb-8 pl-2">
+          <div>
             {(propertiesExist || smartObjectsExist) && (
               <>
-                <h3 className="text-xl font-semibold leading-10 text-gray-900">Properties</h3>
+                <h3 className="text-3xl font-bold dark:text-white pb-2">Properties</h3>
 
                 <div className="relative overflow-x-auto sm:rounded-lg">
-                  <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                  <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400dark:text-gray-400">
+                    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:bg-gray-700 dark:text-gray-400">
                       <tr>
                         <th scope="col" className="px-6 py-3">
                           Key
@@ -190,10 +189,9 @@ function Output(props: { computer: Computer }) {
                                 <td className="px-6 py-4">
                                   <Link
                                     to={`/outputs/${smartContract[key]._rev}`}
-                                    className="hover:text-bit-blue"
+                                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                                   >
                                     {smartContract[key]._rev}
-                                    <BsArrowUpRight className="inline text-l ml-1 hover:text-slate-500" />
                                   </Link>
                                 </td>
                               </tr>
@@ -214,10 +212,10 @@ function Output(props: { computer: Computer }) {
                       !META_FIELDS.includes(key) &&
                       Array.isArray(smartContract[key]) ? (
                         <>
-                          <h3 className="text-xl font-semibold leading-10 text-gray-900">{key}</h3>
+                          <h3 className="text-3xl font-bold dark:text-white pb-2">{key}</h3>
                           <div className="relative overflow-x-auto sm:rounded-lg">
-                            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400dark:text-gray-400">
+                              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:bg-gray-700 dark:text-gray-400">
                                 <tr>
                                   <th scope="col" className="px-6 py-3">
                                     Value
@@ -257,7 +255,7 @@ function Output(props: { computer: Computer }) {
                       const paramList = getFnParamNames(Object.getPrototypeOf(smartContract)[key])
                       return (
                         <div className="flex flex-col py-3">
-                          <h3 className="text-xl font-semibold leading-10 text-gray-900">{key}</h3>
+                          <h3 className="text-3xl font-bold dark:text-white pb-2">{key}</h3>
                           <dd className="text-md font-normal">
                             <form id={`fn-index-${fnIndex}`}>
                               <div className="flex flex-row">
@@ -267,7 +265,7 @@ function Output(props: { computer: Computer }) {
                                       <label className="sr-only">Choose a state</label>
                                       <select
                                         id="types"
-                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg border-gray-100 border-2 focus:ring-blue-500 focus:border-blue-500 block p-2.5 mr-2"
+                                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         onChange={(e) => updateTypes(e, `${key}-${paramName}`)}
                                       >
                                         <option value="number" selected>
@@ -282,7 +280,7 @@ function Output(props: { computer: Computer }) {
                                       <div>
                                         <input
                                           type="text"
-                                          className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                                          className="block ml-4 py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer"
                                           placeholder=" "
                                           required
                                           id={`${key}-${paramName}`}
@@ -291,7 +289,7 @@ function Output(props: { computer: Computer }) {
                                             updateFormValue(e, `${key}-${paramName}`)
                                           }
                                         />
-                                        <label className="peer-focus:font-normal absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
+                                        <label className="peer-focus:font-normal ml-4 absolute text-sm text-gray-500 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6">
                                           {paramName}
                                         </label>
                                       </div>
@@ -315,10 +313,10 @@ function Output(props: { computer: Computer }) {
                 </dl>
               </>
             )}
-            <h3 className="text-xl font-semibold leading-10 text-gray-900">Meta Information</h3>
+            <h3 className="text-3xl font-bold dark:text-white pb-2">Meta Information</h3>
             <div className="relative overflow-x-auto sm:rounded-lg">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400dark:text-gray-400">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
                     <th scope="col" className="px-6 py-3">
                       Key
@@ -346,12 +344,11 @@ function Output(props: { computer: Computer }) {
               </table>
             </div>
             <dl className="text-gray-900 divide-y divide-gray-200 pt-6">
-              <h3 className="text-xl font-semibold leading-10 text-gray-900">Transaction</h3>
+              <h3 className="text-3xl font-bold dark:text-white pb-2">Transaction</h3>
               <div className="flex flex-col py-3">
                 <dd className="text-md font-normal">
-                  <Link to={`/transactions/${rev?.split(":")[0]}`} className="hover:text-bit-blue">
+                  <Link to={`/transactions/${rev?.split(":")[0]}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                     {rev?.split(":")[0]}
-                    <BsArrowUpRight className="inline text-l ml-1 hover:text-slate-500" />
                   </Link>
                 </dd>
               </div>
@@ -359,11 +356,11 @@ function Output(props: { computer: Computer }) {
           </div>
         )}
         {outputData && (
-          <div className="relative overflow-x-auto sm:rounded-lg pl-2">
-            <h3 className="text-xl font-semibold leading-10 text-gray-900">Output</h3>
+          <div className="relative overflow-x-auto sm:rounded-lg">
+            <h3 className="text-3xl font-bold dark:text-white pb-2">Output</h3>
 
-            <table className="w-full text-sm text-left text-gray-500 ">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="px-6 py-3">
                     Value
@@ -378,7 +375,7 @@ function Output(props: { computer: Computer }) {
               </thead>
               <tbody>
                 {outputData && (
-                  <tr key={outputData.n} className="bg-white border-b hover:bg-gray-50 ">
+                  <tr key={outputData.n} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
                     <th
                       scope="row"
                       className="px-6 py-4 font-normal text-gray-900 whitespace-nowrap"
@@ -390,11 +387,10 @@ function Output(props: { computer: Computer }) {
                       className="px-6 py-4 font-normal text-gray-900 whitespace-nowrap"
                     >
                       <button
-                        className="hover:text-bit-blue"
+                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                         // onClick={() => handleClick(txn, output.n)}
                       >
                         {outputData.scriptPubKey.asm}
-                        <BsArrowUpRight className="inline text-l ml-1 hover:text-slate-500" />
                       </button>
                     </th>
                     <th

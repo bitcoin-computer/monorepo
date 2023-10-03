@@ -67,7 +67,7 @@ function Modal(props: {
                 !Array.isArray(functionResult) &&
                 functionResult._rev ? (
                   <>
-                    <Link to={`/outputs/${functionResult._rev}`} className="hover:text-bit-blue">
+                    <Link to={`/outputs/${functionResult._rev}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                       {functionResult._rev}
                     </Link>
                   </>
