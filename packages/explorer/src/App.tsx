@@ -2,29 +2,32 @@ import { Computer } from "@bitcoin-computer/lib"
 import { useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import "./App.css"
-import NavbarWrapper from "./components/NavbarWrapper"
-import { Config } from "./types/common"
+import NavBar2 from "./components/Navbar"
+import Wallet2 from "./components/Wallet"
+import Login from "./components/Login"
 import Transaction from "./components/Transaction"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
 import Output from "./components/Output"
 import Home from "./components/Home"
 
+
 function App() {
   const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
   const chain = localStorage.getItem("CHAIN") || ""
-  const getConf = (network: string) => ({
-    chain,
-    network,
-    mnemonic,
-    url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031",
-  })
-  const config: Config = getConf("regtest")
+  const [showLogin, setShowLogin] = useState(false)
+
+  const url = (network: string) => network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
+  const getConf = (network: string) => ({ chain, network, mnemonic, url: url(network) })
+  const config = getConf("regtest")
   const [computer, setComputer] = useState(new Computer(config))
+
+  
   return (
     <BrowserRouter>
-      <NavbarWrapper computer={computer} config={config} setComputer={setComputer} />
-      <div className="p-8">
+      <NavBar2 setShowLogin={setShowLogin}/>
+      <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+        <Wallet2 computer={computer} />
         <Routes>
           <Route path="/" element={<Home computer={computer}></Home>} />
           <Route path="/blocks" element={<Blocks computer={computer}></Blocks>} />
@@ -36,6 +39,13 @@ function App() {
           <Route path="/outputs/:rev" element={<Output computer={computer}></Output>} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
         </Routes>
+
+        <Login
+          showLogin={showLogin}
+          config={config}
+          setComputer={setComputer}
+          setShowLogin={setShowLogin}
+        />
       </div>
     </BrowserRouter>
   )

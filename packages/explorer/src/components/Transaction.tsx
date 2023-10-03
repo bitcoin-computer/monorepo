@@ -16,12 +16,13 @@ function Transaction(props: { computer: Computer }) {
   useEffect(() => {
     const fetch = async () => {
       try {
+        console.log('UseEffect')
         setIsLoading(true)
         // @ts-ignore
         const [res] = await computer.wallet.restClient.getRawTxs([txn])
         // @ts-ignore
-        const tx = await computer.txFromHex({ hex: res })
-        setTxnData(tx.tx)
+        const { tx } = await computer.txFromHex({ hex: res })
+        setTxnData(tx)
 
         const { result } = await computer.rpcCall("getrawtransaction", `${txn} 2`)
         setRPCTxnData(result)
@@ -115,8 +116,10 @@ function Transaction(props: { computer: Computer }) {
                   {rpcTxnData?.vin?.map((input: any) => {
                     return (
                       <tr key={input.txid} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <td className="px-6 py-4">
-                          {input.txid}
+                        <td className="px-6 py-4 break-all">
+                          <Link to={`/transactions/${input.txid}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                            {input.txid}
+                          </Link>
                         </td>
 
                         <td className="px-6 py-4">

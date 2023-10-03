@@ -14,11 +14,6 @@ function Login(props: {
   const [success, setSuccess] = useState(false)
   const [message, setMessage] = useState("")
 
-  // Clear the local storage
-  localStorage.removeItem("BIP_39_KEY")
-  localStorage.removeItem("CHAIN")
-
-  // const navigate = useNavigate();
   const [password, setPassword] = useState("")
   const [chain, setChain] = useState("LTC")
 
@@ -40,6 +35,7 @@ function Login(props: {
       chain: chain as any,
       mnemonic: localStorage.getItem("BIP_39_KEY") as any,
     })
+    console.log('setting pwd', password)
     setComputer(computer)
     setShowLogin(false)
   }
