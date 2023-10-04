@@ -1,7 +1,6 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
-import Loader from "./Loader"
 
 function Transaction(props: { computer: Computer }) {
   const location = useLocation()
@@ -29,15 +28,15 @@ function Transaction(props: { computer: Computer }) {
 
   useEffect(() => {
     const fetch = async () => {
-        try {
-          // @ts-ignore
-          setTransition(await computer.decode(txnData))
-        } catch(err) {
-          if (err instanceof Error){
-            setTransition('')
-            console.log('Error parsing transaction', err.message)
-          }
+      try {
+        // @ts-ignore
+        setTransition(await computer.decode(txnData))
+      } catch(err) {
+        if (err instanceof Error){
+          setTransition('')
+          console.log('Error parsing transaction', err.message)
         }
+      }
     }
     fetch()
   }, [computer, txnData, txn])
