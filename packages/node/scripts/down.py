@@ -32,4 +32,4 @@ commandLine = ' docker compose -f docker-compose.yml -f chain-setup/'+args.chain
 
 print(commandLine+' down')
 subprocess.run(
-    ['sh', '-c', commandLine+' down'])
+    ['sh', '-c', commandLine+' down --remove-orphans'])
