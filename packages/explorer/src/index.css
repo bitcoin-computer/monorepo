@@ -11,6 +11,51 @@ body {
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+
+.WalletDrawer {
+  position: fixed;
+  z-index: 99;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  transform: translateX(100%);
+  display: grid;
+  grid-template-areas: 'MENU OVERLAY';
+  grid-template-columns: 275px 1fr;
+  direction: rtl;
+}
+
+.Menu {
+  display: block;
+  flex-flow: column wrap;
+  transform: translateX(30%);
+  opacity: 0;
+  transition: all 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
+  transition-delay: 0;
+  contain: content;
+  grid-area: 'MENU';
+  direction: ltr;
+}
+
+.MenuOverlay {
+  display: block;
+  grid-area: 'OVERLAY'
+}
+
+[data-menu]:checked ~ .WalletDrawer {
+  transform: none
+}
+
+[data-menu]:checked ~ .WalletDrawer .Menu {
+  transform: none;
+  opacity: 1;
+}
+
+[data-menu]:not(:checked) ~ .WalletDrawer .MenuOverlay {
+  pointer-events: none
 }

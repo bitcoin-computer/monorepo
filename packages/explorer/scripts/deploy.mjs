@@ -27,7 +27,7 @@ const balance = await computer.wallet.getBalance()
 console.log(`
 Chain \x1b[2m${chain}\x1b[0m
 Network \x1b[2m${network}\x1b[0m
-Url \x1b[2m${url}\x1b[0m
+Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
 Balance \x1b[2m${balance / 1e8}\x1b[0m
@@ -37,92 +37,50 @@ const q = `
 Do you want to deploy the contracts? (y/n)
 `
 rl.question(q, async (answer) => {
-  if (answer === "y") {
-    console.log("\n  Deploying contracts...")
+  if (answer !== "n") {
 
-    try {
-      /**
-       * Contract #1
-       * single property and single method
-       */
-      class Counter extends Contract {
-        constructor() {
-          super({ n: 5, names: ["A", "B", "C"] })
-        }
-        inc(m) {
-          this.n += m
-        }
-      }
-      await computer.new(Counter)
+try {
+console.log("Deploying User contract...")
+class User extends Contract {
+  constructor(firstName, lastName) {
+    super({ firstName, lastName })
+  }
+}
 
-      /**
-       * Contract #2
-       * multiple properties
-       */
-      class A extends Contract {
-        constructor(n, s) {
-          super({ n, s })
-        }
+console.log('Creating user Satoshi Nakamoto')
+const satoshi = await computer.new(User, ['Satoshi', 'Nakamoto'])
 
-        newSmartObject(val, name) {
-          return new A(val, name)
-        }
-      }
-      const a = await computer.new(A, [Math.random(), "C"])
+console.log('Creating user Alan Turing')
+const alan = await computer.new(User, ['Alan', 'Turing'])
 
-      /**
-       * Contract #3
-       * Contract takes another smart contract as param and access its method
-       */
-      class B extends Contract {
-        constructor() {
-          super({ name: "b" })
-        }
+console.log('Creating user Peter Landin')
+const peter = await computer.new(User, ['Peter', 'Landin'])
 
-        setName(name) {
-          this.name = name
-          return this.name
-        }
-      }
+console.log("Deploying Course contract...")
+class Course extends Contract {
+  constructor(name, instructor) {
+    super({ name, instructor, students: [] })
+  }
 
-      await computer.new(B, [])
+  addStudent(student) {
+    this.students.push(student)
+  }
+}
 
-      /**
-       * Contract #4
-       * simple contract with hardcoded params
-       */
-      class D extends Contract {
-        constructor(n) {
-          super({ n, _url: "http://127.0.0.1:1031" })
-        }
+console.log('Creating course on operational semantics with instructor Peter Landin')
+const course = await computer.new(Course, ['Operational Semantics', peter])
 
-        inc(n) {
-          this.n += n
-          return this.n
-        }
-      }
-      await computer.new(D, [2])
+console.log('Adding student Alan Turing')
+await course.addStudent(alan)
 
-      /**
-       * Contract #5
-       * Takes another contract as param and sets it's own method as well
-       */
-      class E extends Contract {
-        constructor(a) {
-          super({ a: a, test: "", age: 0, value: 0 })
-        }
-        setTest(test, age, value) {
-          this.test = test
-          this.age = age
-          this.value = value
-        }
-      }
-      const e = await computer.new(E, [a])
-      await e.setTest("testing", 27, 100)
-      console.log(`Contracted deployed successfully`)
-    } catch (error) {
-      console.log("error occurred while deploying contracts", error)
-    }
+console.log('Adding student Satoshi Nakamoto')
+await course.addStudent(satoshi)
+} catch(err) {
+  console.log(err)
+}
+
+      
+      console.log(`\nSuccessfully created smart objects`)
   } else {
     console.log("Aborting...")
   }
