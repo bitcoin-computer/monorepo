@@ -39,6 +39,7 @@ code {
   transition-delay: 0;
   contain: content;
   grid-area: 'MENU';
+  direction: ltr;
 }
 
 .MenuOverlay {

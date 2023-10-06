@@ -26,14 +26,19 @@ export default function Wallet2({ computer }: { computer: Computer }) {
     window.location.href = "/"
   }
 
-  const mnemonicWell = () => (<p className="mt-2 mb-2 p-6 overflow-x-auto leading-normal text-sm rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-blue-4">
-      {computer.getMnemonic()}
-    </p>)
+  const mnemonicWell = () => (<>
+      <p className="mt-2 mb-2 p-6 overflow-x-auto leading-normal text-sm rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-blue-4">
+        {computer.getMnemonic()}
+      </p>
+      <button onClick={() => setShowMnemonic(false)} className="mb-4 font-medium text-blue-600 dark:text-blue-500 hover:underline">
+        Hide Mnemonic
+      </button>
+    </>)
 
   const showMnemonicLink = () => (<>
-      <a href="#" onClick={() => setShowMnemonic(true)} className="mb-4 font-medium text-blue-600 dark:text-blue-500 hover:underline">
+      <button onClick={() => setShowMnemonic(true)} className="mb-4 font-medium text-blue-600 dark:text-blue-500 hover:underline">
         Show Mnemonic
-      </a>
+      </button>
       <br />
     </>)
 
@@ -44,7 +49,7 @@ export default function Wallet2({ computer }: { computer: Computer }) {
           {/* 
           <button type="button" data-drawer-hide="drawer-right-example" aria-controls="drawer-right-example" className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 absolute top-2.5 right-2.5 inline-flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white" >
             <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                <path stroke="currentColor" strokeLinecap="round" stroke-linejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
             </svg>
             <span className="sr-only">Close menu</span>
           </button>
@@ -63,6 +68,13 @@ export default function Wallet2({ computer }: { computer: Computer }) {
 
             <h6 className="mt-2 text-lg font-bold dark:text-white break-all">Mnemonic</h6>
             {showMnemonic ? (mnemonicWell()) : (showMnemonicLink())}
+
+
+            <h6 className="text-lg font-bold dark:text-white">Log out</h6>
+
+            <p className="mb-2">Logging out will delete your mnemonic from this browser and it is not stored anywhere else.</p>
+            
+            <p className="mb-2">Make sure to write it down before logging out.</p>
 
             <button onClick={logout} type="button" className="mt-2 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
               Log Out
