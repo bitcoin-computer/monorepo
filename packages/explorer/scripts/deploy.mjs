@@ -59,7 +59,7 @@ const peter = await computer.new(User, ['Peter', 'Landin'])
 console.log("Deploying Course contract...")
 class Course extends Contract {
   constructor(name, instructor) {
-    super({ name, instructor })
+    super({ name, instructor, students: [] })
   }
 
   addStudent(student) {
