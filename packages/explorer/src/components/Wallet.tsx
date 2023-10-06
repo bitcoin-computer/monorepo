@@ -1,10 +1,11 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useCallback, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
+import Well from "./Well"
 
 export default function Wallet2({ computer }: { computer: Computer }) {
-
   const [balance, setBalance] = useState(0)
+  const [showMnemonic, setShowMnemonic] = useState(false)
 
   const refreshBalance = useCallback(async () => {
     try {
@@ -26,6 +27,17 @@ export default function Wallet2({ computer }: { computer: Computer }) {
     window.location.href = "/"
   }
 
+  const mnemonicWell = () => (<p className="mt-2 mb-2 p-6 overflow-x-auto leading-normal text-sm rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-blue-4">
+      {computer.getMnemonic()}
+    </p>)
+
+  const showMnemonicLink = () => (<>
+      <a href="#" onClick={() => setShowMnemonic(true)} className="mb-4 font-medium text-blue-600 dark:text-blue-500 hover:underline">
+        Show Mnemonic
+      </a>
+      <br />
+    </>)
+
   return (<>
     <input type="checkbox" data-menu id="wallet-opener" hidden />
     <aside className="WalletDrawer" role="menu" id="menu" aria-labelledby="openmenu">
@@ -44,13 +56,16 @@ export default function Wallet2({ computer }: { computer: Computer }) {
             <HiRefresh onClick={refreshBalance} className="ml-2 inline hover:text-slate-500 cursor-pointer"></HiRefresh>
             {balance / 1e8} LTC
 
-            <h6 className="text-lg font-bold dark:text-white">Address</h6>
-            {computer ? computer.getAddress() : ""}
+            <h6 className="mt-2 text-lg font-bold dark:text-white">Address</h6>
+            {computer.getAddress()}
 
-            <h6 className="text-lg font-bold dark:text-white break-all">Public Key</h6>
-            {computer ? computer.getPublicKey() : ""}
+            <h6 className="mt-2 text-lg font-bold dark:text-white break-all">Public Key</h6>
+            {computer.getPublicKey()}
 
-            <button onClick={logout} type="button" className="mt-4 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+            <h6 className="mt-2 text-lg font-bold dark:text-white break-all">Mnemonic</h6>
+            {showMnemonic ? (mnemonicWell()) : (showMnemonicLink())}
+
+            <button onClick={logout} type="button" className="mt-2 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
               Log Out
             </button>
           </div>
