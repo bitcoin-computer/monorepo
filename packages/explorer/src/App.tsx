@@ -2,8 +2,8 @@ import { Computer } from "@bitcoin-computer/lib"
 import { useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import "./App.css"
-import NavBar2 from "./components/Navbar"
-import Wallet2 from "./components/Wallet"
+import NavBar from "./components/Navbar"
+import Wallet from "./components/Wallet"
 import Login from "./components/Login"
 import Transaction from "./components/Transaction"
 import Block from "./components/Block"
@@ -25,9 +25,9 @@ function App() {
   
   return (
     <BrowserRouter>
-      <NavBar2 setShowLogin={setShowLogin}/>
+      <NavBar setShowLogin={setShowLogin}/>
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-        <Wallet2 computer={computer} />
+        <Wallet computer={computer} />
         <Routes>
           <Route path="/" element={<Home computer={computer}></Home>} />
           <Route path="/blocks" element={<Blocks computer={computer}></Blocks>} />

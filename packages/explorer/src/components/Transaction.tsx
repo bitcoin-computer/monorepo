@@ -42,12 +42,41 @@ function Transaction(props: { computer: Computer }) {
     fetch()
   }, [computer, txnData, txn])
 
+  const envTable = (env: { [s: string]: string}) => (<table className="w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" className="px-6 py-3">
+            Name
+          </th>
+          <th scope="col" className="px-6 py-3 break-keep">
+            Output
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {Object.entries(env).map(([name, output]) => (
+          <tr key={output} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-6 py-4 break-all">
+                {name}
+            </td>
+            <td className="px-6 py-4">
+              <Link to={`/outputs/${output}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                {output}
+              </Link>
+            </td>
+          </tr>
+          )
+        )}
+      </tbody>
+    </table>)
+
   const transitionComponent = () => (<div>
       <h2 className="mb-2 text-4xl font-bold dark:text-white">Expression</h2>
       <Well content={transition.exp} />
 
       <h2 className="mb-2 text-4xl font-bold dark:text-white">Environment</h2>
-      <Well content={JSON.stringify(transition.env, null, 2)} />
+      {/* <Well content={JSON.stringify(transition.env, null, 2)} /> */}
+      {envTable(transition.env)}
 
       {transition.mod && (<>
         <h2 className="mb-2 text-4xl font-bold dark:text-white">Module Specifier</h2>
