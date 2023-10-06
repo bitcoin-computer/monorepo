@@ -15,7 +15,6 @@ function Login(props: {
   const [message, setMessage] = useState("")
 
   const [password, setPassword] = useState("")
-  const [chain, setChain] = useState("LTC")
 
   const closeModal = () => {
     setShowLogin(false)
@@ -29,106 +28,46 @@ function Login(props: {
       return
     }
     localStorage.setItem("BIP_39_KEY", password)
-    localStorage.setItem("CHAIN", chain)
+    localStorage.setItem("CHAIN", "LTC")
     const computer = new Computer({
       ...config,
-      chain: chain as any,
+      chain: "LTC",
       mnemonic: localStorage.getItem("BIP_39_KEY") as any,
     })
-    console.log('setting pwd', password)
     setComputer(computer)
     setShowLogin(false)
   }
 
-  return (
-    <>
-      {showLogin && (
-        <div
-          id="defaultModal"
-          tabIndex={-1}
-          aria-hidden="true"
-          className="fixed flex justify-center items-center top-0 left-0 right-0 z-50 w-full p-4 items-center overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full bg-slate-600	bg-opacity-40	"
-        >
-          <div className="relative w-full h-full max-w-xl md:h-auto m-auto">
-            <div className="relative bg-white rounded-lg dark:bg-gray-700">
-              <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-                  Sign in
-                </h3>
-                <button
-                  type="button"
-                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
-                  data-modal-hide="defaultModal"
-                  onClick={closeModal}
-                >
-                  <svg
-                    aria-hidden="true"
-                    className="w-5 h-5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                  <span className="sr-only">Close modal</span>
-                </button>
-              </div>
-              <div className="p-6 space-y-6">
-                <div className="space-y-4">
-                  <p className="font-sans">Do not forget to write down your seed.</p>
-                  {/*link to generate BIP39 Seed*/}
-                  <small>
-                    <a
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      href="https://iancoleman.io/bip39/"
-                      className="underline text-blue-600 hover:text-blue-800 visited:text-purple-600"
-                    >
-                      Generate BIP39 Seed
-                    </a>
-                  </small>
-                  {/*the input field for password*/}
-                  <input
-                    type="string"
-                    placeholder="Password (BIP39 Seed)"
-                    className="block  py-3 px-4 rounded-lg w-full border outline-none"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                  />
-                  {/*dropdown to select the crypto*/}
-                  <select
-                    value={chain}
-                    onChange={(e) => {
-                      setChain(e.target.value)
-                    }}
-                    id="chain"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  >
-                    <option value="LTC">LTC</option>
-                    <option value="BTC">BTC</option>
-                  </select>
+  return (<>
+    {showLogin && (
+      <div id="defaultModal" tabIndex={-1} aria-hidden="true" className="fixed flex justify-center items-center top-0 left-0 right-0 z-50 w-full p-4 items-center overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full bg-slate-600	bg-opacity-40">
+        <div className="relative w-full max-w-md max-h-full">
+          <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
+            <button onClick={closeModal} type="button" className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="authentication-modal">
+              <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+              </svg>
+              <span className="sr-only">Close modal</span>
+            </button>
+            <div className="px-6 py-6 lg:px-8">
+              <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">Sign in</h3>
+              <form className="space-y-6" action="#">
+                <div>
+                  <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sign in with a BIP 39 mnemonic code</label>
+                  <input value={password} onChange={(e) => setPassword(e.target.value)} type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
                 </div>
-                {/*login button*/}
-                <div className="text-center mt-6">
-                  <button
-                    onClick={login}
-                    className="py-3 w-64 text-xl text-white bg-blue-600 hover:bg-blue-700 rounded-lg"
-                  >
-                    Log In
-                  </button>
+                <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
+                  Don't have a mnemonic? <a href="https://iancoleman.io/bip39/" className="text-blue-700 hover:underline dark:text-blue-500">Generate one here</a>
                 </div>
-              </div>
+                <button onClick={login} type="submit" className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Log In</button>
+              </form>
             </div>
           </div>
         </div>
-      )}
-      {show && <SnackBar message={message} success={success} setShow={setShow} />}
-    </>
-  )
+      </div>
+    )}
+    {show && <SnackBar message={message} success={success} setShow={setShow} />}
+    </>)
 }
 
 export default Login
