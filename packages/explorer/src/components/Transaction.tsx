@@ -1,6 +1,7 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
+import Well from "./Well"
 
 function Transaction(props: { computer: Computer }) {
   const location = useLocation()
@@ -51,33 +52,15 @@ function Transaction(props: { computer: Computer }) {
           {transition && (
             <div>
               <h2 className="mb-2 text-4xl font-bold dark:text-white">Expression</h2>
-              <div className="highlight">
-                <pre className="mt-4 mb-8 p-6 overflow-x-auto leading-normal text-sm rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-blue-4">
-                  <code className=" language-javascript" data-lang="javascript">
-                    {transition.exp}
-                  </code>
-                </pre>
-              </div>
+              <Well content={transition.exp} />
 
               <h2 className="mb-2 text-4xl font-bold dark:text-white">Environment</h2>
-              <div className="highlight">
-                <pre className="mt-4 mb-8 p-6 overflow-x-auto leading-normal text-sm rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-blue-4">
-                  <code className=" language-javascript" data-lang="javascript">
-                  {JSON.stringify(transition.env, null, 2)}
-                  </code>
-                </pre>
-              </div>
+              <Well content={JSON.stringify(transition.env, null, 2)} />
 
               {transition.mod && (<>
                 <h2 className="mb-2 text-4xl font-bold dark:text-white">Module Specifier</h2>
-                <div className="highlight">
-                  <pre className="chroma language-javascript">
-                    <code className=" language-javascript" data-lang="javascript">
-                      {transition.mod}
-                    </code>
-                  </pre>
-                </div></>)
-              }
+                <Well content={transition.mod} />
+              </>)}
             </div>
           )}
 
