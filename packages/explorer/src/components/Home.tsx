@@ -5,7 +5,7 @@ import Loader from "./Loader"
 
 export default function Home(props: { computer: Computer }) {
   const { computer } = props
-  const contractsPerPage = 7
+  const contractsPerPage = 25
 
   const [isLoading, setIsLoading] = useState(false)
   const [pageNum, setPageNum] = useState(0)

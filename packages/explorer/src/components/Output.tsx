@@ -35,7 +35,7 @@ function Output(props: { computer: Computer }) {
   const isArray = (el: unknown) => Array.isArray(el)
   const isObject = (el: unknown) => typeof el === 'object' && !isArray(el)
   const isTable = (el: any) => isArray(el) && el.every((e: any) => isObject(e))
-  const revToId = (rev: string) => rev.split(':')[0]
+  const revToId = (rev: string) => rev?.split(':')[0]
 
   const revLink = (rev: string) => (<Link to={`/outputs/${rev}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">{rev}</Link>)
 

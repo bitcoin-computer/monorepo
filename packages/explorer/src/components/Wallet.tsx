@@ -1,7 +1,6 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useCallback, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
-import Well from "./Well"
 
 export default function Wallet2({ computer }: { computer: Computer }) {
   const [balance, setBalance] = useState(0)
