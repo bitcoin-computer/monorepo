@@ -47,13 +47,13 @@ class User extends Contract {
   }
 }
 
-console.log('Creating user "Satoshi Nakamoto"')
+console.log('Creating user Satoshi Nakamoto')
 const satoshi = await computer.new(User, ['Satoshi', 'Nakamoto'])
 
-console.log('Creating user "Alan Turing"')
+console.log('Creating user Alan Turing')
 const alan = await computer.new(User, ['Alan', 'Turing'])
 
-console.log('Creating user "Peter Landin"')
+console.log('Creating user Peter Landin')
 const peter = await computer.new(User, ['Peter', 'Landin'])
 
 console.log("Deploying Course contract...")
@@ -67,13 +67,13 @@ class Course extends Contract {
   }
 }
 
-console.log('Creating course on operational semantics')
+console.log('Creating course on operational semantics with instructor Peter Landin')
 const course = await computer.new(Course, ['Operational Semantics', peter])
 
-console.log('Adding student Alan')
+console.log('Adding student Alan Turing')
 await course.addStudent(alan)
 
-console.log('Adding student Satoshi')
+console.log('Adding student Satoshi Nakamoto')
 await course.addStudent(satoshi)
 } catch(err) {
   console.log(err)
