@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920px" height="1px" viewBox="0 0 1920 1" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Grid/H-Grid-line</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="Grid/H-Grid-line" stroke="#DFDFDF">
+            <line x1="1920" y1="0.5" x2="0" y2="0.5" id="H-Grid-line"></line>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>social/youtube</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="social/youtube" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M12,0 C5.373,0 0,5.373 0,12 C0,18.627 5.373,24 12,24 C18.627,24 24,18.627 24,12 C24,5.373 18.627,0 12,0 Z M16.441,16.892 C14.339,17.036 9.657,17.036 7.558,16.892 C5.282,16.736 5.017,15.622 5,12 C5.017,8.371 5.285,7.264 7.558,7.108 C9.657,6.964 14.34,6.964 16.441,7.108 C18.718,7.264 18.982,8.378 19,12 C18.982,15.629 18.715,16.736 16.441,16.892 Z M10,9.658 L14.917,11.996 L10,14.342 L10,9.658 L10,9.658 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

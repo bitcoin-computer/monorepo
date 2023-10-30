@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="314px" height="314px" viewBox="0 0 314 314" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Grid/grid-Cell-Sub</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="square">
+        <g id="Grid/grid-Cell-Sub" stroke="#DFDFDF">
+            <line x1="157.5" y1="0.5" x2="157.5" y2="313.5" id="Line-4"></line>
+            <line x1="156.750791" y1="-0.249208861" x2="156.750791" y2="313.250791" id="Line-4-Copy" transform="translate(157.000000, 156.250791) rotate(-90.000000) translate(-157.000000, -156.250791) "></line>
+        </g>
+    </g>
+</svg>
