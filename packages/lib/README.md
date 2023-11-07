@@ -5,40 +5,41 @@
 
 A non-custodial Javascript wallet that can read and write smart contract data from and to UTXO based blockchains. The client side component of the [Bitcoin Computer](http://bitcoincomputer.io/). You can
 
-* Deploy Javascript classes as smart contracts on UTXO-based blockchains
-* Create objects from these smart contracts and store them on the blockchain
-* Update and combine smart objects using function calls
-* Track updates in digitally signed and timestamped transactions
-* Check the validity and read the state of smart objects
-* Recover all historical states of an object
-* Encrypt data in the browser for end-to-end encrypted applications
-* Store data off-chain on a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node)
-* Use ES6 modules to decompose smart contracts
-* Currently support for Litecoin, support for Bitcoin and Dogecoin coming soon
+- Deploy Javascript classes as smart contracts on UTXO-based blockchains
+- Create objects from these smart contracts and store them on the blockchain
+- Update and combine smart objects using function calls
+- Track updates in digitally signed and timestamped transactions
+- Check the validity and read the state of smart objects
+- Recover all historical states of an object
+- Encrypt data in the browser for end-to-end encrypted applications
+- Store data off-chain on a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node)
+- Use ES6 modules to decompose smart contracts
+- Currently support for Litecoin, support for Bitcoin and Dogecoin coming soon
 
 ## Prerequisites
 
 It depends on the setup you are aiming for
-* Testnet: This is the easiest way to get started. You need to have [node.js](https://nodejs.org/en/) installed.
-* Regtest: This is the recommended setup for serious development. You need [node.js](https://nodejs.org/en/) installed and you need to run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node).
-* Mainnet: This is the setup for production. You need [node.js](https://nodejs.org/en/) installed, you need to run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node), and you need mainnet coins.
+
+- Testnet: This is the easiest way to get started. You need to have [node.js](https://nodejs.org/en/) installed.
+- Regtest: This is the recommended setup for serious development. You need [node.js](https://nodejs.org/en/) installed and you need to run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node).
+- Mainnet: This is the setup for production. You need [node.js](https://nodejs.org/en/) installed, you need to run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node), and you need mainnet coins.
 
 Below we explain how to use testnet. Have a look at the readme file for the [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) for how to run an app on regtest or mainnet.
-## Use with Node.js
 
+## Use with Node.js
 
 ### Install
 
 In an empty directory run.
 
-````
+```
 npm init -y
 npm add @bitcoin-computer/lib
-````
+```
 
 ### Write a Smart Contract
 
-Create file ``index.mjs``
+Create file `index.mjs`
 
 ```
 import { Computer, Contract } from '@bitcoin-computer/lib'
@@ -82,9 +83,9 @@ ms2Nd47NDmqqtNuajthkjh7p1b328XhVU8
 
 ### Run the Smart Contract
 
-````
+```
 node index.mjs
-````
+```
 
 The expected output is:
 
@@ -103,7 +104,7 @@ You can use smart objects to build decentralized applications. For more informat
 
 ### Write a Smart contract
 
-Create file ``index.js``.
+Create file `index.js`.
 
 ```
 import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs";
@@ -132,7 +133,7 @@ class Counter extends Contract {
 
 ### Embed in a Website
 
-Create file ``index.html``
+Create file `index.html`
 
 ```
 <html>
@@ -181,7 +182,7 @@ This software is licensed under the [Creative Commons Attribution-NoDerivs 3.0 U
 
 You are free to: share, copy, and redistribute the material in any medium or format for any purpose, even commercially under the following terms:
 
-* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-* NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
+- Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+- NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
 
 This is a human-readable summary of (and not a substitute for) the [license](https://creativecommons.org/licenses/by-nd/3.0/legalcode).

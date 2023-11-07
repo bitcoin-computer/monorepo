@@ -38,49 +38,71 @@ Do you want to deploy the contracts? (y/n)
 `
 rl.question(q, async (answer) => {
   if (answer !== "n") {
+    try {
+      console.log("Deploying User contract...")
+      class User extends Contract {
+        constructor(firstName, lastName) {
+          super({ firstName, lastName })
+        }
+      }
 
-try {
-console.log("Deploying User contract...")
-class User extends Contract {
-  constructor(firstName, lastName) {
-    super({ firstName, lastName })
-  }
-}
+      console.log("Creating user Satoshi Nakamoto")
+      const satoshi = await computer.new(User, ["Satoshi", "Nakamoto"])
 
-console.log('Creating user Satoshi Nakamoto')
-const satoshi = await computer.new(User, ['Satoshi', 'Nakamoto'])
+      console.log("Creating user Alan Turing")
+      const alan = await computer.new(User, ["Alan", "Turing"])
 
-console.log('Creating user Alan Turing')
-const alan = await computer.new(User, ['Alan', 'Turing'])
+      console.log("Creating user Peter Landin")
+      const peter = await computer.new(User, ["Peter", "Landin"])
 
-console.log('Creating user Peter Landin')
-const peter = await computer.new(User, ['Peter', 'Landin'])
+      console.log("Deploying Course contract...")
+      class Course extends Contract {
+        constructor(name, instructor) {
+          super({ name, instructor, students: [] })
+        }
 
-console.log("Deploying Course contract...")
-class Course extends Contract {
-  constructor(name, instructor) {
-    super({ name, instructor, students: [] })
-  }
+        addStudent(student) {
+          this.students.push(student)
+        }
+      }
 
-  addStudent(student) {
-    this.students.push(student)
-  }
-}
+      console.log("Creating course on operational semantics with instructor Peter Landin")
+      const course = await computer.new(Course, ["Operational Semantics", peter])
 
-console.log('Creating course on operational semantics with instructor Peter Landin')
-const course = await computer.new(Course, ['Operational Semantics', peter])
+      console.log("Adding student Alan Turing")
+      await course.addStudent(alan)
 
-console.log('Adding student Alan Turing')
-await course.addStudent(alan)
+      console.log("Adding student Satoshi Nakamoto")
+      await course.addStudent(satoshi)
 
-console.log('Adding student Satoshi Nakamoto')
-await course.addStudent(satoshi)
-} catch(err) {
-  console.log(err)
-}
+      // await computer.faucet(0.1e8)
 
-      
-      console.log(`\nSuccessfully created smart objects`)
+      class CourseExtended extends Contract {
+        constructor(name, longStringPropertyForContract, instuctor) {
+          super({ name, instuctor, longStringPropertyForContract, capacity: 0, students: [] })
+        }
+
+        updateCourseDetails(name, capacity) {
+          this.name = name
+          this.capacity = capacity
+        }
+
+        updateNameAndStringProp(name, longStringPropertyForContract) {
+          this.name = name
+          this.longStringPropertyForContract = longStringPropertyForContract
+        }
+
+        addStudent(student) {
+          this.students.push(student)
+        }
+      }
+      console.log("Creating test contract with multiple methods")
+      await computer.new(CourseExtended, ["Bitcoin Computer", "some random value", peter])
+    } catch (err) {
+      console.log(err)
+    }
+
+    console.log(`\nSuccessfully created smart objects`)
   } else {
     console.log("Aborting...")
   }
