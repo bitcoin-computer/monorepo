@@ -2,13 +2,15 @@ import { useState } from "react"
 
 interface DropdownProps {
   onSelectMethod: (option: string) => void
+  options: string[]
+  selectionTitle: string
 }
 
 const Dropdown = (props: DropdownProps) => {
-  const { onSelectMethod } = props
+  const { onSelectMethod, options, selectionTitle } = props
   const [isDropdownVisible, setIsDropdownVisible] = useState(false)
-  const [selectedOption, setSelectedOption] = useState("String")
-  const options = ["String", "Number", "Boolean", "Undefined", "NULL"]
+  const [selectedOption, setSelectedOption] = useState(selectionTitle.toString())
+  // const options = ["String", "Number", "Boolean", "Smart Object", "Undefined", "NULL"]
 
   const handleMouseEnter = () => {
     setIsDropdownVisible(true)

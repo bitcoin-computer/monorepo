@@ -11,7 +11,7 @@ import Block from "./components/Block"
 import Blocks from "./components/Blocks"
 import Output from "./components/Output"
 import Home from "./components/Home"
-import Test from "./components/Test"
+import Playground from "./components/Playground"
 
 function App() {
   const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
@@ -35,7 +35,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home computer={computer}></Home>} />
           <Route path="/blocks" element={<Blocks computer={computer}></Blocks>} />
-          <Route path="/test" element={<Test computer={computer}></Test>} />
+          <Route path="/playground" element={<Playground />} />
           <Route
             path="/transactions/:txn"
             element={<Transaction computer={computer}></Transaction>}

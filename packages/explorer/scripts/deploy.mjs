@@ -69,13 +69,11 @@ rl.question(q, async (answer) => {
       console.log("Creating course on operational semantics with instructor Peter Landin")
       const course = await computer.new(Course, ["Operational Semantics", peter])
 
-      console.log("Adding student Alan Turing")
-      await course.addStudent(alan)
+      // console.log("Adding student Alan Turing")
+      // await course.addStudent(alan)
 
-      console.log("Adding student Satoshi Nakamoto")
-      await course.addStudent(satoshi)
-
-      // await computer.faucet(0.1e8)
+      // console.log("Adding student Satoshi Nakamoto")
+      // await course.addStudent(satoshi)
 
       class CourseExtended extends Contract {
         constructor(name, longStringPropertyForContract, instuctor) {

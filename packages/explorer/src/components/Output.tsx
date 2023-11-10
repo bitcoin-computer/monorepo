@@ -1,39 +1,35 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
-import { Link, useLocation, useParams, useNavigate } from "react-router-dom"
+import { Link, useLocation, useParams } from "react-router-dom"
 import Well from "./Well"
-import { getFnParamNames } from "../utils"
+import { getFnParamNames, isValidRev, sleep } from "../utils"
 import Dropdown from "./Utils/Dropdown"
+import Modal from "./Modal"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 
 function Output(props: { computer: Computer }) {
   const location = useLocation()
-  const navigate = useNavigate()
   const { computer } = props
   const params = useParams()
   const [rev] = useState(params.rev || "")
   const [smartObject, setSmartObject] = useState<any | null>(null)
   const [outputData, setOutputData] = useState<any | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
   const [formState, setFormState] = useState<any>({})
-  const [smartObjectsExist, setSmartObjectsExist] = useState(false)
-  const [propertiesExist, setPropertiesExist] = useState(false)
   const [functionsExist, setFunctionsExist] = useState(false)
   const [show, setShow] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
+  const [functionCallSuccess, setFunctionCallSuccess] = useState(false)
+  const options = ["String", "Number", "Boolean", "Smart Object", "Undefined", "NULL"]
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        setIsLoading(true)
         setSmartObject(await computer.sync(rev))
         const string = `${rev?.split(":")[0]} ${rev?.split(":")[1]} true`
         const { result } = await computer.rpcCall("gettxout", string)
         setOutputData(result)
-        setIsLoading(false)
       } catch (error) {
-        setIsLoading(false)
         console.log("Error syncing to smart object", error)
       }
     }
@@ -42,22 +38,7 @@ function Output(props: { computer: Computer }) {
 
   useEffect(() => {
     let funcExist = false
-    let propExist = false
-    let smartExist = false
     if (smartObject) {
-      for (const key in smartObject) {
-        if (
-          (typeof smartObject[key] !== "object" || Array.isArray(smartObject[key])) &&
-          !keywords.includes(key)
-        ) {
-          propExist = true
-        }
-
-        if (typeof smartObject[key] === "object" && !Array.isArray(smartObject[key])) {
-          smartExist = true
-        }
-      }
-
       const filteredSmartObject = Object.getOwnPropertyNames(
         Object.getPrototypeOf(smartObject)
       ).filter(
@@ -71,9 +52,7 @@ function Output(props: { computer: Computer }) {
         }
       }
     }
-    setPropertiesExist(propExist)
     setFunctionsExist(funcExist)
-    setSmartObjectsExist(smartExist)
   }, [smartObject])
 
   const getValue = (key: string) => {
@@ -89,67 +68,79 @@ function Output(props: { computer: Computer }) {
         return undefined
       case "null":
         return null
+      case "smart object":
+        return stringValue
       default:
         return Number(stringValue)
     }
   }
 
-  const navigateToNewSmartObject = async () => {
-    const out = await computer.getLatestRev(smartObject._id)
-    navigate(`/outputs/${out}`)
-    window.location.reload()
-  }
-
-  const handleSmartContractMethod = async (
+  const handleSmartObjectMethod = async (
     event: any,
-    smartContract: any,
+    smartObject: any,
     fnName: string,
     params: string[]
   ) => {
-    setIsLoading(true)
     event.preventDefault()
     try {
-      // const res = await smartContract[fnName](
-      //   ...params.map((param) => {
-      //     return getValue(`${fnName}-${param}`)
-      //   })
-      // )
-      console.log(
-        smartContract,
-        fnName,
-        ...params.map((param) => {
-          return getValue(`${fnName}-${param}`)
-        })
-      )
+      const revMap: any = {}
 
-      // const obj: any = {}
-
-      // params.forEach((param) => {
-      //   obj[param] = getValue(`${fnName}-${param}`)
-      // })
+      params.forEach((param) => {
+        const paramValue = getValue(`${fnName}-${param}`)
+        if (isValidRev(paramValue)) {
+          revMap[param] = paramValue
+        }
+      })
 
       console.log({
-        exp: `smartContract.${fnName}(${params.map((param) => {
-          return getValue(`${fnName}-${param}`)
+        exp: `smartObject.${fnName}(${params.map((param) => {
+          const paramValue = getValue(`${fnName}-${param}`)
+          return isValidRev(paramValue)
+            ? param
+            : typeof paramValue === "string"
+            ? `'${paramValue}'`
+            : paramValue
         })})`,
-        env: { smartContract: smartContract._rev },
+        env: { smartObject: smartObject._rev, ...revMap },
+        fund: true,
+        sign: true,
       })
 
       // @ts-ignore
       const { tx } = await computer.encode({
-        exp: `smartContract.${fnName}(${params.map((param) => {
-          return getValue(`${fnName}-${param}`)
+        exp: `smartObject.${fnName}(${params.map((param) => {
+          const paramValue = getValue(`${fnName}-${param}`)
+          return isValidRev(paramValue)
+            ? param
+            : typeof paramValue === "string"
+            ? `'${paramValue}'`
+            : paramValue
         })})`,
-        env: { smartContract: smartContract._rev },
+        env: { smartObject: smartObject._rev, ...revMap },
+        fund: true,
+        sign: true,
       })
 
-      console.log(tx)
-      setIsLoading(false)
-      // setFunctionResult(res)
+      await computer.broadcast(tx)
+      await sleep(1000)
+      const res = await computer.query({ ids: [smartObject._id] })
+      setFunctionResult({ _rev: res[0] })
+      setFunctionCallSuccess(true)
       setShow(true)
-    } catch (error) {
-      setIsLoading(false)
-      console.log("Error", error)
+    } catch (error: any) {
+      console.log(error)
+      if (
+        error?.response?.data?.error ===
+        "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
+      ) {
+        setFunctionResult("You are not authorised to make changes to this smart object")
+      } else if (error?.response?.data?.error) {
+        setFunctionResult(error?.response?.data?.error)
+      } else {
+        setFunctionResult(error.message ? error.message : "Error occurred")
+      }
+      setFunctionCallSuccess(false)
+      setShow(true)
     }
   }
 
@@ -162,7 +153,6 @@ function Output(props: { computer: Computer }) {
 
   const updateTypes = (option: string, key: string) => {
     const value = { ...formState }
-    console.log("update types is being called, ", key, value[`${key}--types`], option)
     value[`${key}--types`] = option
     setFormState(value)
   }
@@ -214,7 +204,7 @@ function Output(props: { computer: Computer }) {
                         <form id={`fn-index-${fnIndex}`}>
                           {paramList.map((paramName, paramIndex) => (
                             <div key={paramIndex} className="mb-4">
-                              <div>
+                              <div className="mb-2">
                                 <label
                                   htmlFor={`${key}-${paramName}`}
                                   className="text-md bg-gray-50 dark:bg-gray-800 dark:text-blue-4 font-medium"
@@ -227,6 +217,8 @@ function Output(props: { computer: Computer }) {
                                   onSelectMethod={(option) =>
                                     updateTypes(option, `${key}-${paramName}`)
                                   }
+                                  options={options}
+                                  selectionTitle={"Select Type"}
                                 />
                                 <input
                                   type="text"
@@ -244,7 +236,7 @@ function Output(props: { computer: Computer }) {
                             <button
                               className="mr-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                               onClick={(evt) =>
-                                handleSmartContractMethod(evt, smartObject, key, paramList)
+                                handleSmartObjectMethod(evt, smartObject, key, paramList)
                               }
                             >
                               Call Function
@@ -311,6 +303,12 @@ function Output(props: { computer: Computer }) {
         <h3 className="text-xl font-bold dark:text-white">Script Type</h3>
         {outputData?.scriptPubKey.type}
       </div>
+      <Modal
+        show={show}
+        setShow={setShow}
+        functionResult={functionResult}
+        functionCallSuccess={functionCallSuccess}
+      ></Modal>
     </>
   )
 }

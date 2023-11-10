@@ -1,20 +1,20 @@
 import { Dispatch, SetStateAction } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 function Modal(props: {
   show: boolean
   setShow: Dispatch<SetStateAction<boolean>>
   functionResult: any
-  navigateToNewSmartObject: any
+  functionCallSuccess: boolean
 }) {
-  const { show, setShow, functionResult, navigateToNewSmartObject } = props
+  const { show, setShow, functionResult, functionCallSuccess } = props
+  const navigate = useNavigate()
   const toggleShow = async (event: any) => {
     event.preventDefault()
     try {
       setShow(false)
-      navigateToNewSmartObject()
     } catch (error) {
-      console.log('Error navigating to smart object', error)
+      console.log("Error navigating to smart object", error)
     }
   }
   return (
@@ -29,9 +29,9 @@ function Modal(props: {
         }
       >
         <div className="relative w-full ml-60 mr-60 max-h-full">
-          <div className="relative bg-white rounded-lg dark:bg-gray-700">
+          <div className="relative bg-white rounded-lg dark:bg-gray-700 border border-gray-300">
             <div className="flex items-start justify-between p-4 border-b rounded-t dark:border-gray-600">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Result</h3>
+              <h3>{functionCallSuccess ? "Success!!" : "Error!"}</h3>
               <button
                 type="button"
                 className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center dark:hover:bg-gray-600 dark:hover:text-white"
@@ -55,19 +55,24 @@ function Modal(props: {
               </button>
             </div>
             <div className="p-6 space-y-6">
-              <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-                {typeof functionResult === "object" &&
-                !Array.isArray(functionResult) &&
-                functionResult._rev
-                  ? "Function returned a smart object:"
-                  : "Following is the result of function call:"}
-              </p>
+              {typeof functionResult === "object" && functionResult && functionResult._rev && (
+                <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                  {"Check the latest state of your smart object by clicking the link below"}
+                </p>
+              )}
               <pre className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                 {typeof functionResult === "object" &&
                 !Array.isArray(functionResult) &&
                 functionResult._rev ? (
                   <>
-                    <Link to={`/outputs/${functionResult._rev}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+                    <Link
+                      to={`/outputs/${functionResult._rev}`}
+                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                      onClick={() => {
+                        navigate(`/outputs/${functionResult._rev}`)
+                        window.location.reload()
+                      }}
+                    >
                       {functionResult._rev}
                     </Link>
                   </>
@@ -78,22 +83,6 @@ function Modal(props: {
                 )}
               </pre>
             </div>
-            {/* <div className="flex items-center p-6 space-x-2 border-t border-gray-200 rounded-b dark:border-gray-600">
-              <button
-                data-modal-hide="defaultModal"
-                type="button"
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                I accept
-              </button>
-              <button
-                data-modal-hide="defaultModal"
-                type="button"
-                className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
-              >
-                Decline
-              </button>
-            </div> */}
           </div>
         </div>
       </div>

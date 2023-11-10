@@ -2,10 +2,33 @@ import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import Loader from "./Loader"
+import Well from "./Well"
+
+function ValueComponent({ rev, computer }: {rev: string, computer: Computer}) {
+  const [value, setValue] = useState('loading...')
+  const [errorMsg, setMsgError] = useState('')
+  
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        const synced = await computer.sync(rev)
+        setValue(synced)
+      } catch(err) {
+        if (err instanceof Error)
+          setMsgError(`Error: ${err.message}`)
+      }
+    }
+    fetch()
+  }, [computer, rev])
+
+  if(errorMsg)
+    return (<Well content={errorMsg} />)
+  return (<Well content={JSON.stringify(value, null, 2)} />)
+}
 
 export default function Home(props: { computer: Computer }) {
   const { computer } = props
-  const contractsPerPage = 25
+  const contractsPerPage = 10
 
   const [isLoading, setIsLoading] = useState(false)
   const [pageNum, setPageNum] = useState(0)
@@ -49,8 +72,9 @@ export default function Home(props: { computer: Computer }) {
     }
     setPageNum(pageNum - 1)
   }
+
   return (
-    <div className="relative overflow-x-auto sm:rounded-lg pt-4">
+    <div className="relative sm:rounded-lg pt-4">
       <h1 className="mb-4 text-5xl font-extrabold dark:text-white">Bitcoin Computer Explorer</h1>
 
       <h2 className="mb-2 text-4xl font-bold dark:text-white">Smart Objects</h2>
@@ -58,15 +82,22 @@ export default function Home(props: { computer: Computer }) {
       <table className="w-full mt-4 mb-4 text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
-            <th scope="col" className="px-6 py-3">
-              Output Identifier
+            <th scope="col" className="max-w-[50%] px-6 py-3">
+              Value
+            </th>
+            <th scope="col" className="max-w-[50%] px-6 py-3">
+              Details
             </th>
           </tr>
         </thead>
         <tbody>
           {revs.map((rev) => (
-            <tr key={rev} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <td className="px-6 py-4">
+            <tr key={rev} className="max-w-[50%] overflow-x-scroll bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <td className="px-6 py-4 overflow-x-scroll">
+                <ValueComponent rev={rev} computer={computer} />
+              </td>
+
+              <td className="max-w-[50%] px-6 py-4">
                 <Link to={`/outputs/${rev}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
                   {rev}
                 </Link>
