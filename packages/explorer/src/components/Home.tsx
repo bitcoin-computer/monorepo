@@ -4,6 +4,48 @@ import { Link } from "react-router-dom"
 import Loader from "./Loader"
 import Well from "./Well"
 
+type Json = JBasic | JObject | JArray
+type JBasic = undefined | null | boolean | number | string | symbol | bigint
+type JArray = Json[]
+type JObject = { [x: string]: Json }
+
+const isJUndefined = (a: any): a is undefined => typeof a === 'undefined'
+const isJNull = (a: any): a is null => a === null
+const isJBoolean = (a: any): a is boolean => typeof a === 'boolean'
+const isJNumber = (a: any): a is number => typeof a === 'number'
+const isJString = (a: any): a is string => typeof a === 'string'
+const isJSymbol = (a: any): a is symbol => typeof a === 'symbol'
+const isJBigInt = (a: any): a is bigint => typeof a === 'bigint'
+const isJBasic = (a: any): a is JBasic =>
+  isJNull(a) ||
+  isJUndefined(a) ||
+  isJNumber(a) ||
+  isJString(a) ||
+  isJBoolean(a) ||
+  isJSymbol(a) ||
+  isJBigInt(a)
+const isJObject = (a: any): a is JObject => !isJBasic(a) && !Array.isArray(a)
+const isJArray = (a: any): a is JArray => !isJBasic(a) && Array.isArray(a)
+
+const objectEntryMap =
+  (g: (el: [string, Json]) => [string, Json]) =>
+  (object: JObject): JObject =>
+    Object.fromEntries(Object.entries(object).map(g))
+
+const objectMap =
+  (f: (el: Json) => Json) =>
+  (object: JObject): JObject =>
+    objectEntryMap(([key, value]) => [key, f(value)])(object)
+
+const jsonMap =
+  (g: (el: Json) => Json) =>
+  (json: Json): Json => {
+    if (isJBasic(json)) return g(json)
+    if (isJArray(json)) return g(json.map(jsonMap(g)))
+    if (isJObject(json)) return g(objectMap(jsonMap(g))(json))
+    throw new Error('Unsupported type')
+  }
+
 function ValueComponent({ rev, computer }: {rev: string, computer: Computer}) {
   const [value, setValue] = useState('loading...')
   const [errorMsg, setMsgError] = useState('')
@@ -23,7 +65,16 @@ function ValueComponent({ rev, computer }: {rev: string, computer: Computer}) {
 
   if(errorMsg)
     return (<Well content={errorMsg} />)
-  return (<Well content={JSON.stringify(value, null, 2)} />)
+
+  // @ts-ignore
+  const strip = (value) => {
+    if (isJBasic(value)) return value
+    if (isJArray(value)) return value.map(strip)
+    const { _id, _root, _rev, _amount, _owners, ...rest } = value
+    return rest
+  }
+
+  return (<Well content={JSON.stringify(jsonMap(strip as any)(value as any), null, 2)} />)
 }
 
 export default function Home(props: { computer: Computer }) {
