@@ -69,33 +69,36 @@ rl.question(q, async (answer) => {
       console.log("Creating course on operational semantics with instructor Peter Landin")
       const course = await computer.new(Course, ["Operational Semantics", peter])
 
-      // console.log("Adding student Alan Turing")
-      // await course.addStudent(alan)
+      console.log("Adding student Alan Turing")
+      await course.addStudent(alan)
 
       // console.log("Adding student Satoshi Nakamoto")
       // await course.addStudent(satoshi)
 
-      class CourseExtended extends Contract {
-        constructor(name, longStringPropertyForContract, instuctor) {
-          super({ name, instuctor, longStringPropertyForContract, capacity: 0, students: [] })
-        }
+      // class CourseExtended extends Contract {
+      //   constructor(name, longStringPropertyForContract, instuctor) {
+      //     super({ name, instuctor, longStringPropertyForContract, capacity: 0, students: [] })
+      //   }
 
-        updateCourseDetails(name, capacity) {
-          this.name = name
-          this.capacity = capacity
-        }
+      //   updateCourseDetails(name, capacity) {
+      //     this.name = name
+      //     this.capacity = capacity
+      //   }
 
-        updateNameAndStringProp(name, longStringPropertyForContract) {
-          this.name = name
-          this.longStringPropertyForContract = longStringPropertyForContract
-        }
+      //   updateNameAndStringProp(name, longStringPropertyForContract) {
+      //     this.name = name
+      //     this.longStringPropertyForContract = longStringPropertyForContract
+      //   }
 
-        addStudent(student) {
-          this.students.push(student)
-        }
-      }
-      console.log("Creating test contract with multiple methods")
-      await computer.new(CourseExtended, ["Bitcoin Computer", "some random value", peter])
+      //   addStudent(student) {
+      //     this.students.push(student)
+      //   }
+      // }
+      // console.log("Creating test contract with multiple methods")
+      // const courseExtended = await computer.new(CourseExtended, ["Bitcoin Computer", "some random value", peter])
+
+      // console.log("Adding student to extended course", courseExtended)
+      // await courseExtended.addStudent(alan)
     } catch (err) {
       console.log(err)
     }
