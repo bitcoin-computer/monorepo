@@ -14,7 +14,6 @@ function Output(props: { computer: Computer }) {
   const params = useParams()
   const [rev] = useState(params.rev || "")
   const [smartObject, setSmartObject] = useState<any | null>(null)
-  const [outputData, setOutputData] = useState<any | null>(null)
   const [formState, setFormState] = useState<any>({})
   const [functionsExist, setFunctionsExist] = useState(false)
   const [show, setShow] = useState(false)
@@ -26,9 +25,6 @@ function Output(props: { computer: Computer }) {
     const fetch = async () => {
       try {
         setSmartObject(await computer.sync(rev))
-        const string = `${rev?.split(":")[0]} ${rev?.split(":")[1]} true`
-        const { result } = await computer.rpcCall("gettxout", string)
-        setOutputData(result)
       } catch (error) {
         console.log("Error syncing to smart object", error)
       }
@@ -161,6 +157,193 @@ function Output(props: { computer: Computer }) {
 
   const revToId = (rev: string) => rev?.split(":")[0]
 
+  const Functions = () => {
+    if (!functionsExist) return <></>
+    return (<>
+      <h2 className="mb-2 text-4xl font-bold dark:text-white">Functions</h2>
+      <div>
+        {Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
+          .filter(
+            (key) =>
+              key !== "constructor" &&
+              typeof Object.getPrototypeOf(smartObject)[key] === "function"
+          )
+          .map((key, fnIndex) => {
+            const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key])
+            return (
+              <div key={fnIndex}>
+                <h3 className="mt-2 text-xl font-bold dark:text-white">{key}</h3>
+                <div className="mb-6 mt-6">
+                  <form id={`fn-index-${fnIndex}`}>
+                    {paramList.map((paramName, paramIndex) => (
+                      <div key={paramIndex} className="mb-4">
+                        <div className="mb-2">
+                          <label 
+                            htmlFor={`${key}-${paramName}`}
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            {paramName}
+                          </label>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <Dropdown
+                            onSelectMethod={(option) =>
+                              updateTypes(option, `${key}-${paramName}`)
+                            }
+                            options={options}
+                            selectionTitle={"Select Type"}
+                          />
+                          <input
+                            type="text"
+                            className="block w-3/4 py-2 px-3 border border-gray-300 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-md"
+                            placeholder="Enter value"
+                            required
+                            id={`${key}-${paramName}`}
+                            value={formState[`${key}-${paramName}`]}
+                            onChange={(e) => updateFormValue(e, `${key}-${paramName}`)}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex justify-end">
+                      <button
+                        className="mr-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={(evt) =>
+                          handleSmartObjectMethod(evt, smartObject, key, paramList)
+                        }
+                      >
+                        Call Function
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )
+          })}
+      </div>
+    </>)
+  }
+
+  const MetaData = () => {
+    return (<>
+      <h2 className="mb-2 text-4xl font-bold dark:text-white">Meta Data</h2><table className="w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" className="px-6 py-3">
+              Key
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Short
+            </th>
+            <th scope="col" className="px-6 py-3">
+              Value
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-6 py-4 break-all">
+              Identity
+            </td>
+            <td className="px-6 py-4 break-all text-sm">
+              <pre>_id</pre>
+            </td>
+            <td className="px-6 py-4">
+              <Link
+                to={`/outputs/${smartObject?._id}`}
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                {smartObject?._id}
+              </Link>
+            </td>
+          </tr>
+
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-6 py-4 break-all">
+              Revision
+            </td>
+            <td className="px-6 py-4 break-all">
+              <pre>_rev</pre>
+            </td>
+            <td className="px-6 py-4">
+              <Link
+                to={`/outputs/${smartObject?._rev}`}
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                {smartObject?._rev}
+              </Link>
+            </td>
+          </tr>
+
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-6 py-4 break-all">
+              Root
+            </td>
+            <td className="px-6 py-4 break-all">
+              <pre>_root</pre>
+            </td>
+            <td className="px-6 py-4">
+              <Link
+                to={`/outputs/${smartObject?._root}`}
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                {smartObject?._root}
+              </Link>
+            </td>
+          </tr>
+
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-6 py-4 break-all">
+              Owners
+            </td>
+            <td className="px-6 py-4 break-all">
+              <pre>_owners</pre>
+            </td>
+            <td className="px-6 py-4">
+              <span
+                className="font-medium text-gray-900 dark:text-white"
+              >
+                {smartObject?._owners}
+              </span>
+            </td>
+          </tr>
+
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-6 py-4 break-all">
+              Amount
+            </td>
+            <td className="px-6 py-4 break-all">
+              <pre>_amount</pre>
+            </td>
+            <td className="px-6 py-4">
+              <span
+                className="font-medium text-gray-900 dark:text-white"
+              >
+                {smartObject?._amount}
+              </span>
+            </td>
+          </tr>
+
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-6 py-4 break-all">
+              Transaction
+            </td>
+            <td className="px-6 py-4 break-all">
+            </td>
+            <td className="px-6 py-4">
+              <Link
+                to={`/transactions/${revToId(smartObject?._rev)}`}
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                {revToId(smartObject?._rev)}
+              </Link>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </>)
+  }
+
   return (
     <>
       <div className="pt-4">
@@ -185,123 +368,9 @@ function Output(props: { computer: Computer }) {
               )
             })}
 
-        {functionsExist && (
-          <>
-            <h2 className="mb-2 text-4xl font-bold dark:text-white">Functions</h2>
-            <div>
-              {Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
-                .filter(
-                  (key) =>
-                    key !== "constructor" &&
-                    typeof Object.getPrototypeOf(smartObject)[key] === "function"
-                )
-                .map((key, fnIndex) => {
-                  const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key])
-                  return (
-                    <div key={fnIndex}>
-                      <h3 className="mt-2 text-xl font-bold dark:text-white">{key}</h3>
-                      <div className="mb-6 mt-6">
-                        <form id={`fn-index-${fnIndex}`}>
-                          {paramList.map((paramName, paramIndex) => (
-                            <div key={paramIndex} className="mb-4">
-                              <div className="mb-2">
-                                <label
-                                  htmlFor={`${key}-${paramName}`}
-                                  className="text-md bg-gray-50 dark:bg-gray-800 dark:text-blue-4 font-medium"
-                                >
-                                  {paramName}
-                                </label>
-                              </div>
-                              <div className="flex items-center space-x-4">
-                                <Dropdown
-                                  onSelectMethod={(option) =>
-                                    updateTypes(option, `${key}-${paramName}`)
-                                  }
-                                  options={options}
-                                  selectionTitle={"Select Type"}
-                                />
-                                <input
-                                  type="text"
-                                  className="block w-3/4 py-2 px-3 border border-gray-300 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-md"
-                                  placeholder="Enter value"
-                                  required
-                                  id={`${key}-${paramName}`}
-                                  value={formState[`${key}-${paramName}`]}
-                                  onChange={(e) => updateFormValue(e, `${key}-${paramName}`)}
-                                />
-                              </div>
-                            </div>
-                          ))}
-                          <div className="flex justify-end">
-                            <button
-                              className="mr-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                              onClick={(evt) =>
-                                handleSmartObjectMethod(evt, smartObject, key, paramList)
-                              }
-                            >
-                              Call Function
-                            </button>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  )
-                })}
-            </div>
-          </>
-        )}
+        <Functions />
 
-        {/* <h2 className="mb-2 text-4xl font-bold dark:text-white">Functions</h2>
-
-      <h3 className="mt-2 text-xl font-bold dark:text-white">AddStudent</h3>
-
-      {input()} */}
-
-        <h2 className="mb-2 text-4xl font-bold dark:text-white">Meta Data</h2>
-
-        <h3 className="text-xl font-bold dark:text-white">Id</h3>
-        <Link
-          to={`/outputs/${smartObject?._id}`}
-          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >
-          {smartObject?._id}
-        </Link>
-
-        <h3 className="text-xl font-bold dark:text-white">Revision</h3>
-        <Link
-          to={`/outputs/${smartObject?._rev}`}
-          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >
-          {smartObject?._rev}
-        </Link>
-
-        <h3 className="text-xl font-bold dark:text-white">Root</h3>
-        <Link
-          to={`/outputs/${smartObject?._root}`}
-          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >
-          {smartObject?._root}
-        </Link>
-
-        <h3 className="text-xl font-bold dark:text-white">Transaction</h3>
-        <Link
-          to={`/transactions/${revToId(smartObject?._rev)}`}
-          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >
-          {revToId(smartObject?._rev)}
-        </Link>
-
-        <h3 className="text-xl font-bold dark:text-white">Owners</h3>
-        {smartObject?._owners}
-
-        <h3 className="text-xl font-bold dark:text-white">Amount</h3>
-        {smartObject?._amount}
-
-        <h3 className="text-xl font-bold dark:text-white">Script</h3>
-        {outputData?.scriptPubKey.asm}
-
-        <h3 className="text-xl font-bold dark:text-white">Script Type</h3>
-        {outputData?.scriptPubKey.type}
+        <MetaData />
       </div>
       <Modal
         show={show}
