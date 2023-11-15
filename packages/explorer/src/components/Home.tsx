@@ -48,11 +48,11 @@ function Gallery({ revs, computer }: { revs: string[], computer: any }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4 mt-4">
       {chunk(revs).map(
-        (chunk) => (
-          <div className="grid gap-4">
+        (chunk, i) => (
+          <div key={chunk[0]+i} className="grid gap-4">
             {chunk.map((rev: string) => (
               <div>
-                <Link to={`/outputs/${rev}`} className="font-medium text-blue-600 dark:text-blue-500">
+                <Link key={rev} to={`/outputs/${rev}`} className="font-medium text-blue-600 dark:text-blue-500">
                   <ValueComponent rev={rev} computer={computer} />
                 </Link>
               </div>))
