@@ -2,9 +2,9 @@ import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import Loader from "./Loader"
-import { jsonMap, strip } from "../utils"
+import { chunk, jsonMap, strip } from "../utils"
 
-function Card({ content }: { content: string }) {
+function HomePageCard({ content }: { content: string }) {
   return (<div className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
     <pre className="font-normal text-gray-700 dark:text-gray-400 text-xs">
       {content}
@@ -29,19 +29,11 @@ function ValueComponent({ rev, computer }: {rev: string, computer: Computer}) {
     fetch()
   }, [computer, rev])
 
-  if(errorMsg) (<Card content={errorMsg} />)
+  if(errorMsg) (<HomePageCard content={errorMsg} />)
 
-  return (<Card content={JSON.stringify(jsonMap(strip as any)(value as any), null, 2)} />)
+  return (<HomePageCard content={JSON.stringify(jsonMap(strip as any)(value as any), null, 2)} />)
 }
 
-function chunk(arr: string[]): string[][] {
-  const chunkSize = 4;
-  const chunks = []
-  for (let i = 0; i < arr.length; i += chunkSize) {
-    chunks.push(arr.slice(i, i + chunkSize))
-  }
-  return chunks
-}
 
 function Gallery({ revs, computer }: { revs: string[], computer: any }) {
   return (

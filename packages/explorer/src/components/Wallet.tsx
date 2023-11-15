@@ -1,6 +1,15 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useCallback, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
+import { chunk } from "../utils"
+
+function Card({ content }: { content: string }) {
+  return (<div className="mt-2 mb-2 block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+    <pre className="font-normal text-gray-700 dark:text-gray-400 text-xs">
+      {content}
+    </pre>
+  </div>)
+}
 
 export default function Wallet2({ computer }: { computer: Computer }) {
   const [balance, setBalance] = useState(0)
@@ -26,14 +35,16 @@ export default function Wallet2({ computer }: { computer: Computer }) {
     window.location.href = "/"
   }
 
-  const mnemonicWell = () => (<>
-      <p className="mt-2 mb-2 p-6 overflow-x-auto leading-normal text-sm rounded-lg bg-gray-50 dark:bg-gray-800 dark:text-blue-4">
-        {computer.getMnemonic()}
-      </p>
+  const mnemonicWell = () => {
+    const mnemonicChunks = chunk(computer.getMnemonic().split(' '))
+    const mnemonicChunksString = (mnemonicChunks.map((chunk) => chunk.join(' ') + '\n')).join(' ')
+    return (<>
+      <Card content={' ' + mnemonicChunksString} />
       <button onClick={() => setShowMnemonic(false)} className="mb-4 font-medium text-blue-600 dark:text-blue-500 hover:underline">
         Hide Mnemonic
       </button>
     </>)
+    }
 
   const showMnemonicLink = () => (<>
       <button onClick={() => setShowMnemonic(true)} className="mb-4 font-medium text-blue-600 dark:text-blue-500 hover:underline">
@@ -69,12 +80,8 @@ export default function Wallet2({ computer }: { computer: Computer }) {
             <h6 className="mt-2 text-lg font-bold dark:text-white break-all">Mnemonic</h6>
             {showMnemonic ? (mnemonicWell()) : (showMnemonicLink())}
 
-
             <h6 className="text-lg font-bold dark:text-white">Log out</h6>
-
-            <p className="mb-2">Logging out will delete your mnemonic from this browser and it is not stored anywhere else.</p>
-            
-            <p className="mb-2">Make sure to write it down before logging out.</p>
+            <p className="mb-2">Logging out will delete your mnemonic, make sure to write it down before logging out.</p>
 
             <button onClick={logout} type="button" className="mt-2 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
               Log Out

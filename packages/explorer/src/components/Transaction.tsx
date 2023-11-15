@@ -2,7 +2,7 @@ import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import reactStringReplace from 'react-string-replace';
-import Well from "./Well"
+import { Card } from "./Card";
 
 function ExpressionCard({ content, env }: { content: string, env: { [s: string]: string } }) {
   const entries = Object.entries(env)
@@ -13,12 +13,7 @@ function ExpressionCard({ content, env }: { content: string, env: { [s: string]:
     const replacer = (name: string, i: number) => <Link key={rev} to={`/outputs/${rev}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">{name}</Link> 
     formattedContent = reactStringReplace(formattedContent, regExp, replacer)
   }
-  
-  return (<div className="block mt-4 mb-8 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-    <pre className="font-normal text-gray-700 dark:text-gray-400 text-xs">
-      {formattedContent}
-    </pre>
-  </div>)
+  return (<Card content={formattedContent} />)
 }
 
 function Transaction(props: { computer: Computer }) {
@@ -97,7 +92,7 @@ function Transaction(props: { computer: Computer }) {
 
       {transition.mod && (<>
         <h2 className="mb-2 text-4xl font-bold dark:text-white">Module Specifier</h2>
-        <Well content={transition.mod} />
+        <Card content={transition.mod} />
       </>)}
     </div>)
 
