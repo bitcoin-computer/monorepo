@@ -2,15 +2,14 @@ import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import Loader from "./Loader"
-import Well from "./Well"
 import { jsonMap, strip } from "../utils"
 
 function Card({ content }: { content: string }) {
-  return (<a href="#" className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+  return (<div className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
     <pre className="font-normal text-gray-700 dark:text-gray-400 text-xs">
       {content}
     </pre>
-  </a>)
+  </div>)
 }
 
 function ValueComponent({ rev, computer }: {rev: string, computer: Computer}) {
@@ -35,7 +34,7 @@ function ValueComponent({ rev, computer }: {rev: string, computer: Computer}) {
   return (<Card content={JSON.stringify(jsonMap(strip as any)(value as any), null, 2)} />)
 }
 
-function chunk(arr: string[]) {
+function chunk(arr: string[]): string[][] {
   const chunkSize = 4;
   const chunks = []
   for (let i = 0; i < arr.length; i += chunkSize) {
@@ -51,8 +50,8 @@ function Gallery({ revs, computer }: { revs: string[], computer: any }) {
         (chunk, i) => (
           <div key={chunk[0]+i} className="grid gap-4">
             {chunk.map((rev: string) => (
-              <div>
-                <Link key={rev} to={`/outputs/${rev}`} className="font-medium text-blue-600 dark:text-blue-500">
+              <div key={rev}>
+                <Link to={`/outputs/${rev}`} className="font-medium text-blue-600 dark:text-blue-500">
                   <ValueComponent rev={rev} computer={computer} />
                 </Link>
               </div>))
