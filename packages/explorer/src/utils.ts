@@ -62,3 +62,11 @@ export const strip = (value: Json): Json => {
     const { _id, _root, _rev, _amount, _owners, ...rest } = value
     return rest
   }
+
+export const chunk = (arr: string[], chunkSize = 4): string[][] => {
+  const chunks = []
+  for (let i = 0; i < arr.length; i += chunkSize) {
+    chunks.push(arr.slice(i, i + chunkSize))
+  }
+  return chunks
+}
