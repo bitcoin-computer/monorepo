@@ -1,12 +1,21 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
-import Well from "./Well"
 import { getFnParamNames, isValidRev, sleep } from "../utils"
 import Dropdown from "./Utils/Dropdown"
 import Modal from "./Modal"
+import reactStringReplace from 'react-string-replace'
+import { Card } from "./Card"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
+
+function ObjectValueCard({ content }: { content: string }) {
+  const isRev = /([0-9a-fA-F]{64}:[0-9]+)/g
+  const revLink = (rev: string, i: number) => (<Link key={i} to={`/outputs/${rev}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">{rev}</Link>)  
+  const formattedContent = reactStringReplace(content, isRev, revLink)
+
+  return <Card content={formattedContent} />
+}
 
 function Output(props: { computer: Computer }) {
   const location = useLocation()
@@ -363,12 +372,77 @@ function Output(props: { computer: Computer }) {
                   <h3 className="mt-2 text-xl font-bold dark:text-white">
                     {capitalizeFirstLetter(key)}
                   </h3>
-                  {<Well content={JSON.stringify(value, null, 2)} />}
+                  {<ObjectValueCard content={JSON.stringify(value, null, 2)} />}
                 </div>
               )
             })}
 
-        <Functions />
+        {/* <Functions /> */}
+
+
+        {functionsExist && <>
+      <h2 className="mb-2 text-4xl font-bold dark:text-white">Functions</h2>
+      <div>
+        {Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
+          .filter(
+            (key) =>
+              key !== "constructor" &&
+              typeof Object.getPrototypeOf(smartObject)[key] === "function"
+          )
+          .map((key, fnIndex) => {
+            const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key])
+            return (
+              <div key={fnIndex}>
+                <h3 className="mt-2 text-xl font-bold dark:text-white">{key}</h3>
+                <div className="mb-6 mt-6">
+                  <form id={`fn-index-${fnIndex}`}>
+                    {paramList.map((paramName, paramIndex) => (
+                      <div key={paramIndex} className="mb-4">
+                        <div className="mb-2">
+                          <label 
+                            htmlFor={`${key}-${paramName}`}
+                            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                          >
+                            {paramName}
+                          </label>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <Dropdown
+                            onSelectMethod={(option) =>
+                              updateTypes(option, `${key}-${paramName}`)
+                            }
+                            options={options}
+                            selectionTitle={"Select Type"}
+                          />
+                          <input
+                            type="text"
+                            className="block w-3/4 py-2 px-3 border border-gray-300 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-200 rounded-md"
+                            placeholder="Enter value"
+                            required
+                            id={`${key}-${paramName}`}
+                            value={formState[`${key}-${paramName}`]}
+                            onChange={(e) => updateFormValue(e, `${key}-${paramName}`)}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                    <div className="flex justify-end">
+                      <button
+                        className="mr-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        onClick={(evt) =>
+                          handleSmartObjectMethod(evt, smartObject, key, paramList)
+                        }
+                      >
+                        Call Function
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            )
+          })}
+      </div>
+    </>}
 
         <MetaData />
       </div>

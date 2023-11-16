@@ -31,11 +31,11 @@ You will need to fund the wallet that is used to deploy the smart contract, see 
 
 ### Start the Server
 
-To start the application run
+To start the application run:
 ```bash
 yarn start
 ```
-and open [http://localhost:3000](http://localhost:3000) in a browser.
+Then open [http://localhost:1032](http://localhost:1032) in a browser.
 
 ### Log In
 
