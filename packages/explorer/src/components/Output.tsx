@@ -2,8 +2,8 @@ import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import { getFnParamNames, isValidRev, sleep } from "../utils"
-import Dropdown from "./Utils/Dropdown"
 import Modal from "./Modal"
+// import { Modal2 } from "./Modal2"
 import reactStringReplace from 'react-string-replace'
 import { Card } from "./Card"
 import { TypeSelectionDropdown } from "./TypeSelectionDropdown"
@@ -388,6 +388,10 @@ function Output(props: { computer: Computer }) {
         functionResult={functionResult}
         functionCallSuccess={functionCallSuccess}
       ></Modal>
+
+      {/* <Modal2
+        show={true}
+      ></Modal2> */}
     </>
   )
 }
