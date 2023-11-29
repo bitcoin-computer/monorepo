@@ -19,13 +19,13 @@ type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]
 type JObject = { [x: string]: Json }
 
-const isJUndefined = (a: any): a is undefined => typeof a === 'undefined'
+const isJUndefined = (a: any): a is undefined => typeof a === "undefined"
 const isJNull = (a: any): a is null => a === null
-const isJBoolean = (a: any): a is boolean => typeof a === 'boolean'
-const isJNumber = (a: any): a is number => typeof a === 'number'
-const isJString = (a: any): a is string => typeof a === 'string'
-const isJSymbol = (a: any): a is symbol => typeof a === 'symbol'
-const isJBigInt = (a: any): a is bigint => typeof a === 'bigint'
+const isJBoolean = (a: any): a is boolean => typeof a === "boolean"
+const isJNumber = (a: any): a is number => typeof a === "number"
+const isJString = (a: any): a is string => typeof a === "string"
+const isJSymbol = (a: any): a is symbol => typeof a === "symbol"
+const isJBigInt = (a: any): a is bigint => typeof a === "bigint"
 const isJBasic = (a: any): a is JBasic =>
   isJNull(a) ||
   isJUndefined(a) ||
@@ -53,15 +53,15 @@ export const jsonMap =
     if (isJBasic(json)) return g(json)
     if (isJArray(json)) return g(json.map(jsonMap(g)))
     if (isJObject(json)) return g(objectMap(jsonMap(g))(json))
-    throw new Error('Unsupported type')
+    throw new Error("Unsupported type")
   }
 
 export const strip = (value: Json): Json => {
-    if (isJBasic(value)) return value
-    if (isJArray(value)) return value.map(strip)
-    const { _id, _root, _rev, _amount, _owners, ...rest } = value
-    return rest
-  }
+  if (isJBasic(value)) return value
+  if (isJArray(value)) return value.map(strip)
+  const { _id, _root, _rev, _amount, _owners, ...rest } = value
+  return rest
+}
 
 export const chunk = (arr: string[], chunkSize = 4): string[][] => {
   const chunks = []
@@ -70,3 +70,25 @@ export const chunk = (arr: string[], chunkSize = 4): string[][] => {
   }
   return chunks
 }
+
+export const getValueForType = (type: string, stringValue: string) => {
+  switch (type) {
+    case "number":
+      return Number(stringValue)
+    case "string":
+      return stringValue
+    case "boolean":
+      return true // make this dynamic
+    case "undefined":
+      return undefined
+    case "null":
+      return null
+    case "object":
+      return stringValue
+    default:
+      return Number(stringValue)
+  }
+}
+
+export const capitalizeFirstLetter = (string: string) =>
+  string.charAt(0).toUpperCase() + string.slice(1)

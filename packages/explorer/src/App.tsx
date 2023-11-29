@@ -9,9 +9,11 @@ import Login from "./components/Login"
 import Transaction from "./components/Transaction"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
-import Output from "./components/Output"
+import SmartObject from "./components/SmartObject"
 import Home from "./components/Home"
-import Playground from "./components/Playground"
+import Playground from "./playground/Playground"
+import { CustomDrawer } from "./components/Utils/Drawer"
+import Module from "./components/Module"
 
 function App() {
   const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
@@ -32,16 +34,18 @@ function App() {
       <NavBar setShowLogin={setShowLogin} />
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <Wallet computer={computer} />
+        <CustomDrawer id={"wallet"} computer={computer} />
         <Routes>
           <Route path="/" element={<Home computer={computer}></Home>} />
           <Route path="/blocks" element={<Blocks computer={computer}></Blocks>} />
-          <Route path="/playground" element={<Playground />} />
+          <Route path="/playground" element={<Playground computer={computer} />} />
           <Route
             path="/transactions/:txn"
             element={<Transaction computer={computer}></Transaction>}
           />
           <Route path="/blocks/:block" element={<Block computer={computer}></Block>} />
-          <Route path="/outputs/:rev" element={<Output computer={computer}></Output>} />
+          <Route path="/objects/:rev" element={<SmartObject computer={computer}></SmartObject>} />
+          <Route path="/modules/:rev" element={<Module computer={computer}></Module>} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
         </Routes>
         <Login

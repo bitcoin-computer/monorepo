@@ -5,53 +5,50 @@ import Loader from "./Loader"
 import { chunk, jsonMap, strip } from "../utils"
 
 function HomePageCard({ content }: { content: string }) {
-  return (<div className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-    <pre className="font-normal text-gray-700 dark:text-gray-400 text-xs">
-      {content}
-    </pre>
-  </div>)
+  return (
+    <div className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+      <pre className="font-normal text-gray-700 dark:text-gray-400 text-xs">{content}</pre>
+    </div>
+  )
 }
 
-function ValueComponent({ rev, computer }: {rev: string, computer: Computer}) {
-  const [value, setValue] = useState('loading...')
-  const [errorMsg, setMsgError] = useState('')
-  
+function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
+  const [value, setValue] = useState("loading...")
+  const [errorMsg, setMsgError] = useState("")
+
   useEffect(() => {
     const fetch = async () => {
       try {
         const synced = await computer.sync(rev)
         setValue(synced)
-      } catch(err) {
-        if (err instanceof Error)
-          setMsgError(`Error: ${err.message}`)
+      } catch (err) {
+        if (err instanceof Error) setMsgError(`Error: ${err.message}`)
       }
     }
     fetch()
   }, [computer, rev])
 
-  if(errorMsg) (<HomePageCard content={errorMsg} />)
+  if (errorMsg) <HomePageCard content={errorMsg} />
 
-  return (<HomePageCard content={JSON.stringify(jsonMap(strip as any)(value as any), null, 2)} />)
+  return <HomePageCard content={JSON.stringify(jsonMap(strip as any)(value as any), null, 2)} />
 }
 
-
-function Gallery({ revs, computer }: { revs: string[], computer: any }) {
+function Gallery({ revs, computer }: { revs: string[]; computer: any }) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4 mt-4">
-      {chunk(revs).map(
-        (chunk, i) => (
-          <div key={chunk[0]+i} className="grid gap-4">
-            {chunk.map((rev: string) => (
-              <div key={rev}>
-                <Link to={`/outputs/${rev}`} className="font-medium text-blue-600 dark:text-blue-500">
-                  <ValueComponent rev={rev} computer={computer} />
-                </Link>
-              </div>))
-            }
-          </div>
-        ))}
-      </div>
-    )
+      {chunk(revs).map((chunk, i) => (
+        <div key={chunk[0] + i} className="grid gap-4">
+          {chunk.map((rev: string) => (
+            <div key={rev}>
+              <Link to={`/objects/${rev}`} className="font-medium text-blue-600 dark:text-blue-500">
+                <ValueComponent rev={rev} computer={computer} />
+              </Link>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
 }
 
 function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }: any) {
@@ -65,8 +62,20 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
             className="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             <span className="sr-only">Previous</span>
-            <svg className="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 1 1 5l4 4"/>
+            <svg
+              className="w-2.5 h-2.5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 6 10"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M5 1 1 5l4 4"
+              />
             </svg>
           </button>
         </li>
@@ -77,8 +86,20 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
             className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             <span className="sr-only">Next</span>
-            <svg className="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4"/>
+            <svg
+              className="w-2.5 h-2.5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 6 10"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m1 9 4-4-4-4"
+              />
             </svg>
           </button>
         </li>
@@ -115,7 +136,7 @@ export default function Home(props: { computer: Computer }) {
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
-        console.log('Error loading revisions', error)
+        console.log("Error loading revisions", error)
       }
     }
     fetch()
@@ -137,10 +158,7 @@ export default function Home(props: { computer: Computer }) {
   return (
     <div className="relative sm:rounded-lg pt-4">
       <h2 className="mb-2 text-4xl font-bold dark:text-white">Smart Objects</h2>
-      <Gallery 
-        revs={revs}
-        computer={computer}
-      />
+      <Gallery revs={revs} computer={computer} />
       <Pagination
         revs={revs}
         isPrevAvailable={isPrevAvailable}

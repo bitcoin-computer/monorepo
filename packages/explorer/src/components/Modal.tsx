@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 function Modal(props: {
@@ -8,6 +8,7 @@ function Modal(props: {
   functionCallSuccess: boolean
 }) {
   const { show, setShow, functionResult, functionCallSuccess } = props
+
   const navigate = useNavigate()
   const toggleShow = async (event: any) => {
     event.preventDefault()
@@ -16,6 +17,10 @@ function Modal(props: {
     } catch (error) {
       console.log("Error navigating to smart object", error)
     }
+  }
+
+  const getType = (): string => {
+    return functionResult && functionResult?.type ? functionResult.type : "objects"
   }
   return (
     <>
@@ -55,6 +60,16 @@ function Modal(props: {
               </button>
             </div>
             <div className="p-6 space-y-6">
+              {functionResult?.res && (
+                <>
+                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    Data returned:
+                  </p>
+                  <pre className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    {functionResult.res.toString()}
+                  </pre>
+                </>
+              )}
               {typeof functionResult === "object" && functionResult && functionResult._rev && (
                 <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                   {"Check the latest state of your smart object by clicking the link below"}
@@ -62,25 +77,21 @@ function Modal(props: {
               )}
               <pre className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                 {typeof functionResult === "object" &&
-                !Array.isArray(functionResult) &&
-                functionResult._rev ? (
-                  <>
-                    <Link
-                      to={`/outputs/${functionResult._rev}`}
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                      onClick={() => {
-                        navigate(`/outputs/${functionResult._rev}`)
-                        window.location.reload()
-                      }}
-                    >
-                      {functionResult._rev}
-                    </Link>
-                  </>
-                ) : functionResult ? (
-                  functionResult.toString()
-                ) : (
-                  "No value returned"
-                )}
+                  !Array.isArray(functionResult) &&
+                  functionResult._rev && (
+                    <>
+                      <Link
+                        to={`/${getType()}/${functionResult._rev}`}
+                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        onClick={() => {
+                          navigate(`/${getType()}/${functionResult._rev}`)
+                          window.location.reload()
+                        }}
+                      >
+                        {functionResult._rev}
+                      </Link>
+                    </>
+                  )}
               </pre>
             </div>
           </div>
