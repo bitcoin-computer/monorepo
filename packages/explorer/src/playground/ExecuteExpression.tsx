@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { IoMdRemoveCircleOutline } from "react-icons/io"
 import { Computer } from "@bitcoin-computer/lib"
 import { isValidRev } from "../utils"
@@ -14,11 +14,16 @@ const ExecuteExpression = (props: {
   setShow: Dispatch<SetStateAction<boolean>>
   setFunctionResult: Dispatch<SetStateAction<any>>
   setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
+  exampleExpression: string
 }) => {
-  const { computer, setShow, setFunctionCallSuccess, setFunctionResult } = props
+  const { computer, exampleExpression, setShow, setFunctionCallSuccess, setFunctionResult } = props
 
   const [expression, setExpression] = useState<string>()
   const [expressionArgumentsList, setExpressoinArgumentsList] = useState<ExpressionArgument[]>([])
+
+  useEffect(() => {
+    setExpression(exampleExpression)
+  }, [exampleExpression])
 
   const handleExpressoinArgumentChange = (
     index: number,
@@ -71,7 +76,7 @@ const ExecuteExpression = (props: {
   return (
     <>
       <textarea
-        id="message"
+        id="expression-textarea"
         value={expression}
         onChange={(e) => setExpression(e.target.value)}
         placeholder="Enter expression here"

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 
 const DeployModule = (props: {
@@ -6,9 +6,14 @@ const DeployModule = (props: {
   setShow: Dispatch<SetStateAction<boolean>>
   setFunctionResult: Dispatch<SetStateAction<any>>
   setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
+  exampleModule: string
 }) => {
-  const { computer, setShow, setFunctionCallSuccess, setFunctionResult } = props
+  const { computer, exampleModule, setShow, setFunctionCallSuccess, setFunctionResult } = props
   const [module, setModule] = useState<string>()
+
+  useEffect(() => {
+    setModule(exampleModule)
+  }, [exampleModule])
 
   const handleModuleDeploy = async () => {
     try {
@@ -25,7 +30,7 @@ const DeployModule = (props: {
   return (
     <>
       <textarea
-        id="message"
+        id="module-textarea"
         value={module}
         onChange={(e) => setModule(e.target.value)}
         placeholder="Enter your module here"

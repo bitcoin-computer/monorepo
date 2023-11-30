@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { TypeSelectionDropdown } from "../components/TypeSelectionDropdown"
 import { IoMdRemoveCircleOutline } from "react-icons/io"
 import { Computer } from "@bitcoin-computer/lib"
@@ -15,11 +15,16 @@ const CreateNew = (props: {
   setShow: Dispatch<SetStateAction<boolean>>
   setFunctionResult: Dispatch<SetStateAction<any>>
   setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
+  exampleCode: string
 }) => {
-  const { computer, setShow, setFunctionCallSuccess, setFunctionResult } = props
+  const { computer, exampleCode, setShow, setFunctionCallSuccess, setFunctionResult } = props
   const [code, setCode] = useState<string>()
   const [argumentsList, setArgumentsList] = useState<Argument[]>([])
   const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
+
+  useEffect(() => {
+    setCode(exampleCode)
+  }, [exampleCode])
 
   const handleAddArgument = () => {
     setArgumentsList([...argumentsList, { type: "", value: "", hidden: false }])
@@ -113,7 +118,7 @@ const CreateNew = (props: {
   return (
     <>
       <textarea
-        id="message"
+        id="code-textarea"
         value={code}
         onChange={(e) => setCode(e.target.value)}
         placeholder="Enter your JS class and code here"

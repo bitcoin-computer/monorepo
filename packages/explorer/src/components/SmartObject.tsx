@@ -8,11 +8,11 @@ import {
   isValidRev,
   sleep,
 } from "../utils"
-import Modal from "./Modal"
-// import { Modal2 } from "./Modal2"
+
 import reactStringReplace from "react-string-replace"
 import { Card } from "./Card"
 import { TypeSelectionDropdown } from "./TypeSelectionDropdown"
+import { Modal } from "./Modal"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 
@@ -368,10 +368,6 @@ function SmartObject(props: { computer: Computer }) {
         functionResult={functionResult}
         functionCallSuccess={functionCallSuccess}
       ></Modal>
-
-      {/* <Modal2
-        show={true}
-      ></Modal2> */}
     </>
   )
 }
