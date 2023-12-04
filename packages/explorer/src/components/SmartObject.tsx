@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import {
   capitalizeFirstLetter,
+  getErrorMessage,
   getFnParamNames,
   getValueForType,
   isValidRev,
@@ -308,17 +309,7 @@ function SmartObject(props: { computer: Computer }) {
       setFunctionCallSuccess(true)
       setShow(true)
     } catch (error: any) {
-      console.log(error)
-      if (
-        error?.response?.data?.error ===
-        "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
-      ) {
-        setFunctionResult("You are not authorised to make changes to this smart object")
-      } else if (error?.response?.data?.error) {
-        setFunctionResult(error?.response?.data?.error)
-      } else {
-        setFunctionResult(error.message ? error.message : "Error occurred")
-      }
+      setFunctionResult(getErrorMessage(error))
       setFunctionCallSuccess(false)
       setShow(true)
     }

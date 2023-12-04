@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { IoMdRemoveCircleOutline } from "react-icons/io"
 import { Computer } from "@bitcoin-computer/lib"
-import { isValidRev } from "../utils"
+import { getErrorMessage, isValidRev } from "../../utils"
 
 interface ExpressionArgument {
   name: string
@@ -15,14 +15,32 @@ const ExecuteExpression = (props: {
   setFunctionResult: Dispatch<SetStateAction<any>>
   setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
   exampleExpression: string
+  exampleVars: { name: string; type: string }[]
 }) => {
-  const { computer, exampleExpression, setShow, setFunctionCallSuccess, setFunctionResult } = props
+  const {
+    computer,
+    exampleVars,
+    exampleExpression,
+    setShow,
+    setFunctionCallSuccess,
+    setFunctionResult,
+  } = props
 
   const [expression, setExpression] = useState<string>()
   const [expressionArgumentsList, setExpressoinArgumentsList] = useState<ExpressionArgument[]>([])
 
   useEffect(() => {
     setExpression(exampleExpression)
+    const newArgumentsList = [...expressionArgumentsList]
+    newArgumentsList.forEach((argument) => {
+      argument.hidden = true
+    })
+    if (exampleVars) {
+      exampleVars.forEach((exampleVar) => {
+        newArgumentsList.push({ name: exampleVar.name, value: "", hidden: false })
+      })
+    }
+    setExpressoinArgumentsList(newArgumentsList)
   }, [exampleExpression])
 
   const handleExpressoinArgumentChange = (
@@ -39,38 +57,41 @@ const ExecuteExpression = (props: {
     const newExpressionArgumentsList = [...expressionArgumentsList]
     newExpressionArgumentsList[index] = { ...newExpressionArgumentsList[index], hidden: true }
     setExpressoinArgumentsList(newExpressionArgumentsList)
-    console.log("newExpressionArgumentsList: ", newExpressionArgumentsList)
   }
 
   const handleAddExpressionArgument = () => {
     setExpressoinArgumentsList([...expressionArgumentsList, { name: "", value: "", hidden: false }])
   }
   const handleExpressionCall = async () => {
-    console.log(expressionArgumentsList, expression)
+    try {
+      const expressionCode = expression?.trim()
 
-    const expressionCode = expression?.trim()
+      const revMap: any = {}
+      expressionArgumentsList
+        .filter((argument) => !argument.hidden)
+        .forEach((argument, index) => {
+          const argValue = argument.value
+          if (isValidRev(argValue)) {
+            revMap[argument.name] = argValue
+          }
+        })
 
-    const revMap: any = {}
-    expressionArgumentsList
-      .filter((argument) => !argument.hidden)
-      .forEach((argument, index) => {
-        const argValue = argument.value
-        if (isValidRev(argValue)) {
-          revMap[argument.name] = argValue
-        }
+      // @ts-ignore
+      const { tx, effect } = await computer.encode({
+        exp: `${expressionCode}`,
+        env: { ...revMap },
+        fund: true,
+        sign: true,
       })
-
-    // @ts-ignore
-    const { tx, effect } = await computer.encode({
-      exp: `${expressionCode}`,
-      env: { ...revMap },
-      fund: true,
-      sign: true,
-    })
-    const txId = await computer.broadcast(tx)
-    setFunctionResult({ _rev: `${txId}:0`, type: "objects", res: effect.res })
-    setFunctionCallSuccess(true)
-    setShow(true)
+      const txId = await computer.broadcast(tx)
+      setFunctionResult({ _rev: `${txId}:0`, type: "objects", res: effect.res })
+      setFunctionCallSuccess(true)
+      setShow(true)
+    } catch (error: any) {
+      setFunctionResult(getErrorMessage(error))
+      setFunctionCallSuccess(false)
+      setShow(true)
+    }
   }
 
   return (
@@ -80,7 +101,7 @@ const ExecuteExpression = (props: {
         value={expression}
         onChange={(e) => setExpression(e.target.value)}
         placeholder="Enter expression here"
-        rows={10}
+        rows={16}
         className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" // Added font-mono for monospaced font
         style={{ tabSize: 2, MozTabSize: 2, OTabSize: 2, WebkitTabSize: 2 } as any} // Set tab size to 2 spaces
         spellCheck="false" // Disable spell check

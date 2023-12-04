@@ -11,9 +11,9 @@ import Block from "./components/Block"
 import Blocks from "./components/Blocks"
 import SmartObject from "./components/SmartObject"
 import Home from "./components/Home"
-import Playground from "./playground/Playground"
 import { CustomDrawer } from "./components/Utils/Drawer"
 import Module from "./components/Module"
+import Playground from "./components/playground/Playground"
 
 function App() {
   const mnemonic = localStorage.getItem("BIP_39_KEY") || ""

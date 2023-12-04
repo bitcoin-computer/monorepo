@@ -1,6 +1,6 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useLocation } from "react-router-dom"
 import Loader from "./Loader"
 import { chunk, jsonMap, strip } from "../utils"
 
@@ -116,15 +116,23 @@ export default function Home(props: { computer: Computer }) {
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(true)
   const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
+  const location = useLocation()
+  const publicKey = new URLSearchParams(location.search).get("public-key")
+
   const [revs, setRevs] = useState<string[]>([])
   useEffect(() => {
     const fetch = async () => {
       try {
         setIsLoading(true)
-        const queryRevs = await computer.query({
+        const queryParms: any = {
           offset: contractsPerPage * pageNum,
           limit: contractsPerPage + 1,
-        })
+        }
+        if (publicKey) {
+          queryParms["publicKey"] = publicKey
+        }
+
+        const queryRevs = await computer.query(queryParms)
 
         if (queryRevs.length <= contractsPerPage) {
           setIsNextAvailable(false)
@@ -140,7 +148,7 @@ export default function Home(props: { computer: Computer }) {
       }
     }
     fetch()
-  }, [computer, revs.length, pageNum])
+  }, [computer, revs.length, pageNum, publicKey])
 
   const handleNext = async () => {
     setIsPrevAvailable(true)

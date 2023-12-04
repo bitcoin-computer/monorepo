@@ -2,6 +2,7 @@ import { initFlowbite } from "flowbite"
 import { Dispatch, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
+import { isValidHexadecimalPrivateKey } from "../utils"
 
 export default function Navbar({ setShowLogin }: { setShowLogin: Dispatch<boolean> }) {
   const [searchInput, setSearchInput] = useState("")
@@ -16,6 +17,8 @@ export default function Navbar({ setShowLogin }: { setShowLogin: Dispatch<boolea
     var code = event.keyCode || event.which
     if (code === 13) {
       if (searchInput === "") navigate("/")
+      else if (isValidHexadecimalPrivateKey(searchInput))
+        navigate(`/?public-key=${searchInput.trim()}`)
       else if (searchInput.includes(":")) navigate(`/objects/${searchInput}`)
       else navigate(`/transactions/${searchInput}`)
     }
@@ -95,15 +98,15 @@ export default function Navbar({ setShowLogin }: { setShowLogin: Dispatch<boolea
           </ul>
         </div>
 
-        <div className="hidden w-full md:block md:w-auto" id="navbar-default">
-          <ul className="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+        <div className="hidden md:block w-80" id="navbar-default">
+          <ul className="font-medium w-80 flex flex-col p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
             <li>
               <input
                 onChange={(e) => setSearchInput(e.target.value)}
                 onKeyDown={(e) => search(e)}
                 type="text"
                 id="search-navbar"
-                className="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                className="block w-80 p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search..."
               />
             </li>

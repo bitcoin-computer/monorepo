@@ -64,6 +64,11 @@ export const Modal = ({
                     {"Check the latest state of your smart object by clicking the link below"}
                   </p>
                 )}
+                {typeof functionResult === "string" && (
+                  <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                    {functionResult}
+                  </p>
+                )}
                 <pre className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
                   {typeof functionResult === "object" &&
                     !Array.isArray(functionResult) &&

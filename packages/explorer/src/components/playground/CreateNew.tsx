@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { TypeSelectionDropdown } from "../components/TypeSelectionDropdown"
+import { TypeSelectionDropdown } from "../TypeSelectionDropdown"
 import { IoMdRemoveCircleOutline } from "react-icons/io"
 import { Computer } from "@bitcoin-computer/lib"
-import { getValueForType, isValidRev, sleep } from "../utils"
+import { getErrorMessage, getValueForType, isValidRev, sleep } from "../../utils"
 
 interface Argument {
   type: string
@@ -16,14 +16,27 @@ const CreateNew = (props: {
   setFunctionResult: Dispatch<SetStateAction<any>>
   setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
   exampleCode: string
+  exampleVars: { name: string; type: string }[]
 }) => {
-  const { computer, exampleCode, setShow, setFunctionCallSuccess, setFunctionResult } = props
+  const { computer, exampleVars, exampleCode, setShow, setFunctionCallSuccess, setFunctionResult } =
+    props
   const [code, setCode] = useState<string>()
   const [argumentsList, setArgumentsList] = useState<Argument[]>([])
   const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
 
   useEffect(() => {
     setCode(exampleCode)
+    const newArgumentsList = [...argumentsList]
+    newArgumentsList.forEach((argument) => {
+      argument.hidden = true
+    })
+    if (exampleVars) {
+      exampleVars.forEach((exampleVar) => {
+        newArgumentsList.push({ type: exampleVar.type, value: "", hidden: false })
+      })
+    }
+
+    setArgumentsList(newArgumentsList)
   }, [exampleCode])
 
   const handleAddArgument = () => {
@@ -40,7 +53,6 @@ const CreateNew = (props: {
     const newArgumentsList = [...argumentsList]
     newArgumentsList[index] = { ...newArgumentsList[index], hidden: true }
     setArgumentsList(newArgumentsList)
-    console.log("newArgumentsList: ", newArgumentsList)
   }
 
   const handleDeploy = async () => {
@@ -62,25 +74,6 @@ const CreateNew = (props: {
               revMap[`param${index}`] = argValue
             }
           })
-
-        console.log({
-          exp: `
-            ${dynamicClass} 
-            new ${dynamicClass.name}(${argumentsList
-            .filter((argument) => !argument.hidden)
-            .map((argument, index) => {
-              const argValue = getValueForType(argument.type, argument.value)
-              return isValidRev(argValue)
-                ? `param${index}`
-                : typeof argValue === "string"
-                ? `'${argValue}'`
-                : argValue
-            })})
-            `,
-          env: { ...revMap },
-          fund: true,
-          sign: true,
-        })
 
         // @ts-ignore
         const { tx } = await computer.encode({
@@ -108,10 +101,14 @@ const CreateNew = (props: {
         setFunctionCallSuccess(true)
         setShow(true)
       } else {
-        console.log("invalid string")
+        setFunctionResult("Please check the code you provided!")
+        setFunctionCallSuccess(false)
+        setShow(true)
       }
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      setFunctionResult(getErrorMessage(error))
+      setFunctionCallSuccess(false)
+      setShow(true)
     }
   }
 
@@ -122,7 +119,7 @@ const CreateNew = (props: {
         value={code}
         onChange={(e) => setCode(e.target.value)}
         placeholder="Enter your JS class and code here"
-        rows={10}
+        rows={16}
         className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" // Added font-mono for monospaced font
         style={{ tabSize: 2, MozTabSize: 2, OTabSize: 2, WebkitTabSize: 2 } as any} // Set tab size to 2 spaces
         spellCheck="false" // Disable spell check

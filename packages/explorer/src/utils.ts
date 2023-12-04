@@ -92,3 +92,22 @@ export const getValueForType = (type: string, stringValue: string) => {
 
 export const capitalizeFirstLetter = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
+
+export const isValidHexadecimalPrivateKey = (privateKey: string): boolean => {
+  if (!privateKey) return false
+  let trimmedPrivateKey = privateKey.trim()
+  return trimmedPrivateKey.length === 64 || trimmedPrivateKey.length === 66
+}
+
+export const getErrorMessage = (error: any): string => {
+  if (
+    error?.response?.data?.error ===
+    "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
+  ) {
+    return "You are not authorised to make changes to this smart object"
+  } else if (error?.response?.data?.error) {
+    return error?.response?.data?.error
+  } else {
+    return error.message ? error.message : "Error occurred"
+  }
+}

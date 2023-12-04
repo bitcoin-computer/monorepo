@@ -129,10 +129,10 @@ function Transaction(props: { computer: Computer }) {
           </tr>
         </thead>
         <tbody>
-          {rpcTxnData?.vin?.map((input: any) => {
+          {rpcTxnData?.vin?.map((input: any, ind: any) => {
             return (
               <tr
-                key={input.txid}
+                key={`${input.txid}|${ind}`}
                 className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
               >
                 <td className="px-6 py-4 break-all">

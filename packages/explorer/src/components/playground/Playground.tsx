@@ -8,14 +8,21 @@ import {
   chat,
   chatExport,
   chatExpresion,
+  chatVars,
+  counter,
+  counterExport,
+  counterExpresion,
+  counterVars,
   fungibleToken,
   fungibleTokenExport,
   fungibleTokenExpresion,
   nft,
   nftExport,
   nftExpresion,
+  nftVars,
+  tokenVars,
 } from "./examples"
-import { Modal } from "../components/Modal"
+import { Modal } from "../Modal"
 
 const Playground = (props: { computer: Computer }) => {
   const { computer } = props
@@ -25,20 +32,16 @@ const Playground = (props: { computer: Computer }) => {
   const [exampleCode, setExampleCode] = useState<string>("")
   const [exampleExpression, setExampleExpresion] = useState<string>("")
   const [exampleModule, setExampleModule] = useState<string>("")
+  const [exampleVars, setExampleVars] = useState<any[]>([])
   useEffect(() => {
     initFlowbite()
   }, [])
-
-  const [testShow, setTestShow] = useState(true)
-
-  const test = () => {
-    console.log("testing")
-  }
 
   const clearExamples = () => {
     setExampleCode("")
     setExampleExpresion("")
     setExampleModule("")
+    setExampleVars([])
   }
   const loadExamples = (type: string) => {
     switch (type) {
@@ -46,16 +49,25 @@ const Playground = (props: { computer: Computer }) => {
         setExampleCode(nft)
         setExampleExpresion(nftExpresion)
         setExampleModule(nftExport)
+        setExampleVars(nftVars)
         break
       case "token":
         setExampleCode(fungibleToken)
         setExampleExpresion(fungibleTokenExpresion)
         setExampleModule(fungibleTokenExport)
+        setExampleVars(tokenVars)
         break
       case "chat":
         setExampleCode(chat)
         setExampleExpresion(chatExpresion)
         setExampleModule(chatExport)
+        setExampleVars(chatVars)
+        break
+      case "counter":
+        setExampleCode(counter)
+        setExampleExpresion(counterExpresion)
+        setExampleModule(counterExport)
+        setExampleVars(counterVars)
         break
       default:
         console.log("Please select valid type")
@@ -121,6 +133,7 @@ const Playground = (props: { computer: Computer }) => {
               setFunctionCallSuccess={setFunctionCallSuccess}
               setFunctionResult={setFunctionResult}
               exampleCode={exampleCode}
+              exampleVars={exampleVars}
             />
           </div>
           <div
@@ -135,6 +148,7 @@ const Playground = (props: { computer: Computer }) => {
               setFunctionCallSuccess={setFunctionCallSuccess}
               setFunctionResult={setFunctionResult}
               exampleExpression={exampleExpression}
+              exampleVars={exampleVars}
             />
           </div>
           <div
@@ -154,29 +168,6 @@ const Playground = (props: { computer: Computer }) => {
         </div>
         <div className="flex mb-4">
           <h4 className="mt-4 text-xl font-bold dark:text-white">Load Examples</h4>
-          <button
-            type="button"
-            title="clear"
-            className="ml-4 mt-4 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 inline-flex items-center justify-center dark:hover:bg-gray-600 dark:hover:text-white"
-            onClick={() => clearExamples()}
-          >
-            <svg
-              className="w-3 h-3"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 14 14"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
-              />
-            </svg>
-            <span className="sr-only">Close menu</span>
-          </button>
         </div>
         <div className="inline-flex rounded-md shadow-sm" role="group">
           <button
@@ -195,12 +186,26 @@ const Playground = (props: { computer: Computer }) => {
           </button>
           <button
             type="button"
+            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-l border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
+            onClick={() => loadExamples("counter")}
+          >
+            Counter
+          </button>
+          <button
+            type="button"
             className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
             onClick={() => loadExamples("chat")}
           >
             Chat
           </button>
         </div>
+        <button
+          type="button"
+          className="ml-4 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
+          onClick={() => clearExamples()}
+        >
+          Clear
+        </button>
       </div>
       <Modal
         show={show}

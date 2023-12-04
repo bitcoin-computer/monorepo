@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
+import { getErrorMessage } from "../../utils"
 
 const DeployModule = (props: {
   computer: Computer
@@ -22,8 +23,10 @@ const DeployModule = (props: {
       setFunctionResult({ _rev: modSpec, type: "modules" })
       setFunctionCallSuccess(true)
       setShow(true)
-    } catch (error) {
-      console.log(error)
+    } catch (error: any) {
+      setFunctionResult(getErrorMessage(error))
+      setFunctionCallSuccess(false)
+      setShow(true)
     }
   }
 
@@ -34,7 +37,7 @@ const DeployModule = (props: {
         value={module}
         onChange={(e) => setModule(e.target.value)}
         placeholder="Enter your module here"
-        rows={10}
+        rows={16}
         className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" // Added font-mono for monospaced font
         style={{ tabSize: 2, MozTabSize: 2, OTabSize: 2, WebkitTabSize: 2 } as any} // Set tab size to 2 spaces
         spellCheck="false" // Disable spell check
