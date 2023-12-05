@@ -63,10 +63,11 @@ export const CustomDrawer = ({ id, computer }: any) => {
 
   return (
     <>
+      <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
       <div
         id={`drawer-${id}`}
         className="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform translate-x-full bg-white w-96 dark:bg-gray-800"
-        tab-index="-1"
+        tabIndex={-1}
         aria-labelledby={`drawer-${id}-label`}
         aria-hidden="true"
       >

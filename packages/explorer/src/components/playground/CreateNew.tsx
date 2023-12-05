@@ -8,6 +8,7 @@ interface Argument {
   type: string
   value: string
   hidden: boolean
+  placeholder?: string
 }
 
 const CreateNew = (props: {
@@ -16,7 +17,7 @@ const CreateNew = (props: {
   setFunctionResult: Dispatch<SetStateAction<any>>
   setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
   exampleCode: string
-  exampleVars: { name: string; type: string }[]
+  exampleVars: { name: string; type: string; placeholder: string }[]
 }) => {
   const { computer, exampleVars, exampleCode, setShow, setFunctionCallSuccess, setFunctionResult } =
     props
@@ -32,7 +33,12 @@ const CreateNew = (props: {
     })
     if (exampleVars) {
       exampleVars.forEach((exampleVar) => {
-        newArgumentsList.push({ type: exampleVar.type, value: "", hidden: false })
+        newArgumentsList.push({
+          type: exampleVar.type,
+          value: "",
+          hidden: false,
+          placeholder: exampleVar.placeholder,
+        })
       })
     }
 
@@ -140,7 +146,7 @@ const CreateNew = (props: {
                   value={argument.value}
                   onChange={(e) => handleArgumentChange(index, "value", e.target.value)}
                   className="sm:w-full md:w-2/3 lg:w-1/2 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Value"
+                  placeholder={argument.placeholder ? argument.placeholder : "Value"}
                   required
                 />
                 <TypeSelectionDropdown
@@ -149,6 +155,7 @@ const CreateNew = (props: {
                     argument.type = option
                   }}
                   dropdownList={options}
+                  selectedType={argument.type}
                 />
                 <IoMdRemoveCircleOutline
                   className="w-6 h-6 ml-2 text-red-500"

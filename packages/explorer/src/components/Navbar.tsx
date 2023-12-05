@@ -1,10 +1,17 @@
+import { Computer } from "@bitcoin-computer/lib"
 import { initFlowbite } from "flowbite"
 import { Dispatch, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { isValidHexadecimalPrivateKey } from "../utils"
 
-export default function Navbar({ setShowLogin }: { setShowLogin: Dispatch<boolean> }) {
+export default function Navbar({
+  setShowLogin,
+  computer,
+}: {
+  setShowLogin: Dispatch<boolean>
+  computer: Computer
+}) {
   const [searchInput, setSearchInput] = useState("")
   const navigate = useNavigate()
   useEffect(() => {
@@ -17,9 +24,16 @@ export default function Navbar({ setShowLogin }: { setShowLogin: Dispatch<boolea
     var code = event.keyCode || event.which
     if (code === 13) {
       if (searchInput === "") navigate("/")
-      else if (isValidHexadecimalPrivateKey(searchInput))
+      else if (searchInput.includes(":")) {
+        try {
+          // @ts-ignore
+          await computer.load(searchInput)
+          navigate(`/modules/${searchInput}`)
+        } catch (error) {
+          navigate(`/objects/${searchInput}`)
+        }
+      } else if (isValidHexadecimalPrivateKey(searchInput))
         navigate(`/?public-key=${searchInput.trim()}`)
-      else if (searchInput.includes(":")) navigate(`/objects/${searchInput}`)
       else navigate(`/transactions/${searchInput}`)
     }
   }
@@ -78,7 +92,7 @@ export default function Navbar({ setShowLogin }: { setShowLogin: Dispatch<boolea
             <li>
               {isLoggedIn ? (
                 <label
-                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent"
+                  className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent cursor-pointer"
                   data-drawer-target="drawer-wallet"
                   data-drawer-show="drawer-wallet"
                   aria-controls="drawer-wallet"

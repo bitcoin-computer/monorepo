@@ -31,16 +31,6 @@ const ExecuteExpression = (props: {
 
   useEffect(() => {
     setExpression(exampleExpression)
-    const newArgumentsList = [...expressionArgumentsList]
-    newArgumentsList.forEach((argument) => {
-      argument.hidden = true
-    })
-    if (exampleVars) {
-      exampleVars.forEach((exampleVar) => {
-        newArgumentsList.push({ name: exampleVar.name, value: "", hidden: false })
-      })
-    }
-    setExpressoinArgumentsList(newArgumentsList)
   }, [exampleExpression])
 
   const handleExpressoinArgumentChange = (

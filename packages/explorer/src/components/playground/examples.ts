@@ -19,7 +19,7 @@ export const nftExpresion = `class NFT extends Contract {
     this._owners = [to]
   }
 }
-new NFT(data)`
+new NFT("some data")`
 
 export const nftExport = `export class NFT extends Contract {
   constructor(data) {
@@ -36,6 +36,7 @@ export const nftVars = [
   {
     name: "data",
     type: "string",
+    placeholder: "some data",
   },
 ]
 
@@ -66,7 +67,7 @@ export const fungibleTokenExpresion = `class Token extends Contract {
     return new Token(amount, to)
   }
 }
-new Token(supply, to)`
+new Token(100, "Put a public key here")`
 
 export const fungibleTokenExport = `export class Token extends Contract {
   constructor(supply, to) {
@@ -86,10 +87,12 @@ export const tokenVars = [
   {
     name: "supply",
     type: "number",
+    placeholder: 100,
   },
   {
     name: "to",
     type: "string",
+    placeholder: "Put a public key here",
   },
 ]
 

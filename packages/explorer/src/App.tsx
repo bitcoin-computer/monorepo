@@ -31,7 +31,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <NavBar setShowLogin={setShowLogin} />
+      <NavBar setShowLogin={setShowLogin} computer={computer} />
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <Wallet computer={computer} />
         <CustomDrawer id={"wallet"} computer={computer} />
