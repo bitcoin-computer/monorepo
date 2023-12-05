@@ -24,6 +24,51 @@ import {
 } from "./examples"
 import { Modal } from "../Modal"
 
+const Examples = ({ loadExamples, clearExamples }: { loadExamples: any, clearExamples: any }) => {
+  return (<>
+  <div className="flex mb-4">
+          <h4 className="mt-4 text-xl font-bold dark:text-white">Load Examples</h4>
+        </div>
+        <div className="inline-flex rounded-md shadow-sm" role="group">
+          <button
+            type="button"
+            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
+            onClick={() => loadExamples("nft")}
+          >
+            NFT
+          </button>
+          <button
+            type="button"
+            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
+            onClick={() => loadExamples("token")}
+          >
+            Fungible Token
+          </button>
+          <button
+            type="button"
+            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-l border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
+            onClick={() => loadExamples("counter")}
+          >
+            Counter
+          </button>
+          <button
+            type="button"
+            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
+            onClick={() => loadExamples("chat")}
+          >
+            Chat
+          </button>
+        </div>
+        <button
+          type="button"
+          className="ml-4 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
+          onClick={() => clearExamples()}
+        >
+          Clear
+        </button>
+  </>)
+}
+
 const Playground = (props: { computer: Computer }) => {
   const { computer } = props
   const [show, setShow] = useState(false)
@@ -53,9 +98,9 @@ const Playground = (props: { computer: Computer }) => {
         break
       case "token":
         setExampleCode(fungibleToken)
-        setExampleExpresion(fungibleTokenExpresion)
+        setExampleExpresion(fungibleTokenExpresion(computer.getPublicKey()))
         setExampleModule(fungibleTokenExport)
-        setExampleVars(tokenVars)
+        setExampleVars(tokenVars(computer.getPublicKey()))
         break
       case "chat":
         setExampleCode(chat)
@@ -166,46 +211,7 @@ const Playground = (props: { computer: Computer }) => {
             />
           </div>
         </div>
-        <div className="flex mb-4">
-          <h4 className="mt-4 text-xl font-bold dark:text-white">Load Examples</h4>
-        </div>
-        <div className="inline-flex rounded-md shadow-sm" role="group">
-          <button
-            type="button"
-            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
-            onClick={() => loadExamples("nft")}
-          >
-            NFT
-          </button>
-          <button
-            type="button"
-            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
-            onClick={() => loadExamples("token")}
-          >
-            Fungible Token
-          </button>
-          <button
-            type="button"
-            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-l border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
-            onClick={() => loadExamples("counter")}
-          >
-            Counter
-          </button>
-          <button
-            type="button"
-            className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
-            onClick={() => loadExamples("chat")}
-          >
-            Chat
-          </button>
-        </div>
-        <button
-          type="button"
-          className="ml-4 px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
-          onClick={() => clearExamples()}
-        >
-          Clear
-        </button>
+        <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
       </div>
       <Modal
         show={show}

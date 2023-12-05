@@ -54,7 +54,7 @@ export const fungibleToken = `class Token extends Contract {
   }
 }`
 
-export const fungibleTokenExpresion = `class Token extends Contract {
+export const fungibleTokenExpresion = (pubKey: string) => `class Token extends Contract {
   constructor(supply, to) {
     super({
       tokens: supply,
@@ -67,7 +67,7 @@ export const fungibleTokenExpresion = `class Token extends Contract {
     return new Token(amount, to)
   }
 }
-new Token(100, "Put a public key here")`
+new Token(100, "${pubKey}")`
 
 export const fungibleTokenExport = `export class Token extends Contract {
   constructor(supply, to) {
@@ -83,7 +83,7 @@ export const fungibleTokenExport = `export class Token extends Contract {
   }
 }`
 
-export const tokenVars = [
+export const tokenVars = (pubKey: string) => [
   {
     name: "supply",
     type: "number",
@@ -93,6 +93,7 @@ export const tokenVars = [
     name: "to",
     type: "string",
     placeholder: "Put a public key here",
+    value: pubKey
   },
 ]
 
