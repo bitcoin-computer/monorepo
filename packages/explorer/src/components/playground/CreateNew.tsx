@@ -3,12 +3,12 @@ import { TypeSelectionDropdown } from "../TypeSelectionDropdown"
 import { IoMdRemoveCircleOutline } from "react-icons/io"
 import { Computer } from "@bitcoin-computer/lib"
 import { getErrorMessage, getValueForType, isValidRev, sleep } from "../../utils"
+import { ModSpec } from "./Modspec"
 
 interface Argument {
   type: string
   value: string
   hidden: boolean
-  placeholder?: string
 }
 
 const CreateNew = (props: {
@@ -17,11 +17,12 @@ const CreateNew = (props: {
   setFunctionResult: Dispatch<SetStateAction<any>>
   setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
   exampleCode: string
-  exampleVars: { name: string; type: string; placeholder: string }[]
+  exampleVars: { name: string; type: string; value: string }[]
 }) => {
   const { computer, exampleVars, exampleCode, setShow, setFunctionCallSuccess, setFunctionResult } =
     props
   const [code, setCode] = useState<string>()
+  const [modSpec, setModSpec] = useState<string>()
   const [argumentsList, setArgumentsList] = useState<Argument[]>([])
   const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
 
@@ -35,9 +36,8 @@ const CreateNew = (props: {
       exampleVars.forEach((exampleVar) => {
         newArgumentsList.push({
           type: exampleVar.type,
-          value: "",
+          value: exampleVar.value ? exampleVar.value : "",
           hidden: false,
-          placeholder: exampleVar.placeholder,
         })
       })
     }
@@ -81,8 +81,7 @@ const CreateNew = (props: {
             }
           })
 
-        // @ts-ignore
-        const { tx } = await computer.encode({
+        const encodeObject: any = {
           exp: `
           ${dynamicClass} 
           new ${dynamicClass.name}(${argumentsList
@@ -99,7 +98,13 @@ const CreateNew = (props: {
           env: { ...revMap },
           fund: true,
           sign: true,
-        })
+        }
+        if (modSpec) {
+          encodeObject["mod"] = modSpec
+        }
+
+        // @ts-ignore
+        const { tx } = await computer.encode(encodeObject)
         const txId = await computer.broadcast(tx)
         sleep(500)
         const { res } = await computer.sync(txId)
@@ -146,7 +151,7 @@ const CreateNew = (props: {
                   value={argument.value}
                   onChange={(e) => handleArgumentChange(index, "value", e.target.value)}
                   className="sm:w-full md:w-2/3 lg:w-1/2 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder={argument.placeholder ? argument.placeholder : "Value"}
+                  placeholder="Value"
                   required
                 />
                 <TypeSelectionDropdown
@@ -158,7 +163,7 @@ const CreateNew = (props: {
                   selectedType={argument.type}
                 />
                 <IoMdRemoveCircleOutline
-                  className="w-6 h-6 ml-2 text-red-500"
+                  className="w-6 h-6 ml-2 text-red-500 cursor-pointer"
                   onClick={() => removeArgument(index)}
                 />
               </div>
@@ -179,6 +184,7 @@ const CreateNew = (props: {
       >
         Call Deploy
       </button>
+      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
     </>
   )
 }

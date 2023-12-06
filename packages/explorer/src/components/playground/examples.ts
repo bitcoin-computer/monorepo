@@ -36,7 +36,7 @@ export const nftVars = [
   {
     name: "data",
     type: "string",
-    placeholder: "some data",
+    value: "some data",
   },
 ]
 
@@ -87,13 +87,12 @@ export const tokenVars = (pubKey: string) => [
   {
     name: "supply",
     type: "number",
-    placeholder: 100,
+    value: 100,
   },
   {
     name: "to",
     type: "string",
-    placeholder: "Put a public key here",
-    value: pubKey
+    value: pubKey,
   },
 ]
 

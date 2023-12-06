@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { IoMdRemoveCircleOutline } from "react-icons/io"
 import { Computer } from "@bitcoin-computer/lib"
 import { getErrorMessage, isValidRev } from "../../utils"
+import { ModSpec } from "./Modspec"
 
 interface ExpressionArgument {
   name: string
@@ -17,16 +18,10 @@ const ExecuteExpression = (props: {
   exampleExpression: string
   exampleVars: { name: string; type: string }[]
 }) => {
-  const {
-    computer,
-    exampleVars,
-    exampleExpression,
-    setShow,
-    setFunctionCallSuccess,
-    setFunctionResult,
-  } = props
+  const { computer, exampleExpression, setShow, setFunctionCallSuccess, setFunctionResult } = props
 
   const [expression, setExpression] = useState<string>()
+  const [modSpec, setModSpec] = useState<string>()
   const [expressionArgumentsList, setExpressoinArgumentsList] = useState<ExpressionArgument[]>([])
 
   useEffect(() => {
@@ -65,6 +60,16 @@ const ExecuteExpression = (props: {
             revMap[argument.name] = argValue
           }
         })
+
+      const encodeObject: any = {
+        exp: `${expressionCode}`,
+        env: { ...revMap },
+        fund: true,
+        sign: true,
+      }
+      if (modSpec) {
+        encodeObject["mod"] = modSpec
+      }
 
       // @ts-ignore
       const { tx, effect } = await computer.encode({
@@ -124,7 +129,7 @@ const ExecuteExpression = (props: {
                   required
                 />
                 <IoMdRemoveCircleOutline
-                  className="w-6 h-6 ml-2 text-red-500"
+                  className="w-6 h-6 ml-2 text-red-500 cursor-pointer"
                   onClick={() => removeExpressionArgument(index)}
                 />
               </div>
@@ -145,6 +150,7 @@ const ExecuteExpression = (props: {
       >
         Execute Expression
       </button>
+      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
     </>
   )
 }
