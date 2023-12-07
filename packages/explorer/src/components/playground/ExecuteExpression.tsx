@@ -105,7 +105,7 @@ const ExecuteExpression = (props: {
         autoCorrect="off" // Disable auto correction
         wrap="off" // Disable word wrapping
       ></textarea>
-      <div className="mt-4">
+      <div className="mt-4 mb-4">
         {expressionArgumentsList.map(
           (argument: ExpressionArgument, index) =>
             !argument.hidden && (
@@ -143,14 +143,14 @@ const ExecuteExpression = (props: {
       >
         Add Environment Vars
       </button>
+      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
       <button
         type="button"
         onClick={handleExpressionCall}
-        className="mt-2 text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+        className="mt-4 text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
       >
         Execute Expression
       </button>
-      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
     </>
   )
 }

@@ -4,7 +4,7 @@ export const ModSpec = ({ modSpec, setModSpec }: { modSpec: any; setModSpec: any
       <div>
         <div className="flex mb-2 mt-2">
           <h1 className="text-xl font-bold dark:text-white">
-            ModSpec
+            Module Specifier
             <small className="ms-2 font-semibold text-gray-500 dark:text-gray-400">Optional</small>
           </h1>
         </div>

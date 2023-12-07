@@ -140,7 +140,7 @@ const CreateNew = (props: {
         wrap="off" // Disable word wrapping
       ></textarea>
 
-      <div className="mt-4">
+      <div className="mt-4 mb-4">
         {argumentsList.map(
           (argument: Argument, index) =>
             !argument.hidden && (
@@ -177,14 +177,14 @@ const CreateNew = (props: {
       >
         Add Argument
       </button>
+      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
       <button
         type="button"
         onClick={handleDeploy}
-        className="mt-2 text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+        className="mt-4 text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
       >
         Call Deploy
       </button>
-      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
     </>
   )
 }

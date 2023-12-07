@@ -27,10 +27,10 @@ import { Modal } from "../Modal"
 const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => {
   return (
     <>
-      <div className="flex mb-4">
+      <div className="flex mb-2">
         <h4 className="mt-4 text-xl font-bold dark:text-white">Load Examples</h4>
       </div>
-      <div className="inline-flex rounded-md shadow-sm" role="group">
+      <div className="inline-flex rounded-md shadow-sm mb-2" role="group">
         <button
           type="button"
           className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
@@ -177,6 +177,8 @@ const Playground = (props: { computer: Computer }) => {
   return (
     <>
       <div className="pt-4 w-full relative">
+        <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
+
         <Tabs />
         <div id="default-tab-content">
           <div className="hidden" id="create-new" role="tabpanel" aria-labelledby="create-new-tab">
@@ -219,7 +221,6 @@ const Playground = (props: { computer: Computer }) => {
             />
           </div>
         </div>
-        <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
       </div>
       <Modal
         show={show}
