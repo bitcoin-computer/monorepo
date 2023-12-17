@@ -43,7 +43,7 @@ const CreateNew = (props: {
     }
 
     setArgumentsList(newArgumentsList)
-  }, [exampleCode])
+  }, [exampleCode, argumentsList, exampleVars])
 
   const handleAddArgument = () => {
     setArgumentsList([...argumentsList, { type: "", value: "", hidden: false }])

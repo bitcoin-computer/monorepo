@@ -177,9 +177,8 @@ const Playground = (props: { computer: Computer }) => {
   return (
     <>
       <div className="pt-4 w-full relative">
-        <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
-
         <Tabs />
+
         <div id="default-tab-content">
           <div className="hidden" id="create-new" role="tabpanel" aria-labelledby="create-new-tab">
             <CreateNew
@@ -221,6 +220,11 @@ const Playground = (props: { computer: Computer }) => {
             />
           </div>
         </div>
+
+        <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+
+        <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
+
       </div>
       <Modal
         show={show}
