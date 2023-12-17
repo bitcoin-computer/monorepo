@@ -2,7 +2,7 @@ import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import Loader from "./Loader"
-import { chunk, jsonMap, strip } from "../utils"
+import { chunk, jsonMap, strip, toObject } from "../utils"
 
 function HomePageCard({ content }: { content: string }) {
   return (
@@ -30,7 +30,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
 
   if (errorMsg) <HomePageCard content={errorMsg} />
 
-  return <HomePageCard content={JSON.stringify(jsonMap(strip as any)(value as any), null, 2)} />
+  return <HomePageCard content={toObject(jsonMap(strip as any)(value as any))} />
 }
 
 function Gallery({ revs, computer }: { revs: string[]; computer: any }) {

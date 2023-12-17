@@ -111,3 +111,7 @@ export const getErrorMessage = (error: any): string => {
     return error.message ? error.message : "Error occurred"
   }
 }
+
+// https://github.com/GoogleChromeLabs/jsbi/issues/30
+export const toObject = (obj: any) =>
+  JSON.stringify(obj, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2);

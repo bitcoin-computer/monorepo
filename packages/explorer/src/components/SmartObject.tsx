@@ -8,6 +8,7 @@ import {
   getValueForType,
   isValidRev,
   sleep,
+  toObject,
 } from "../utils"
 
 import reactStringReplace from "react-string-replace"
@@ -42,7 +43,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
         .map(([key, value], i) => (
           <div key={i}>
             <h3 className="mt-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
-            <ObjectValueCard content={JSON.stringify(value, null, 2)} />
+            <ObjectValueCard content={toObject(value)} />
           </div>
         ))}
     </>
