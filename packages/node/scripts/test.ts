@@ -41,7 +41,7 @@ if (args.integration) {
 } else if (args.single) {
   command = `${command} .mocharc-single.json ${args.single}`
 } else {
-  command = `${command} .mocharc-unit.json --parallel`
+  command = `${command} .mocharc-unit.json`
 }
 
 const childProcess = spawnSync(command, { shell: true, stdio: 'inherit' })
