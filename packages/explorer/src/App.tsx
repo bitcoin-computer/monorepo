@@ -1,24 +1,22 @@
+import "./App.css"
 import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import "./App.css"
 import { initFlowbite } from "flowbite"
 import NavBar from "./components/Navbar"
-import Wallet from "./components/Wallet"
 import Login from "./components/Login"
 import Transaction from "./components/Transaction"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
 import SmartObject from "./components/SmartObject"
 import Home from "./components/Home"
-import { CustomDrawer } from "./components/Utils/Drawer"
+import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 
 function App() {
   const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
   const chain = localStorage.getItem("CHAIN") || ""
-  const [showLogin, setShowLogin] = useState(false)
 
   const url = (network: string) =>
     network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
@@ -31,10 +29,9 @@ function App() {
 
   return (
     <BrowserRouter>
-      <NavBar setShowLogin={setShowLogin} computer={computer} />
+      <NavBar computer={computer} />
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-        <Wallet computer={computer} />
-        <CustomDrawer id={"wallet"} computer={computer} />
+        <Wallet id={"wallet"} computer={computer} />
         <Routes>
           <Route path="/" element={<Home computer={computer}></Home>} />
           <Route path="/blocks" element={<Blocks computer={computer}></Blocks>} />
@@ -49,10 +46,8 @@ function App() {
           <Route path="*" element={<Navigate to="/" replace={true} />} />
         </Routes>
         <Login
-          showLogin={showLogin}
           config={config}
           setComputer={setComputer}
-          setShowLogin={setShowLogin}
         />
       </div>
     </BrowserRouter>

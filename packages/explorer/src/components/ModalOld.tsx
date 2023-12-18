@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 
-export const Modal = ({
+export const ModalOld = ({
   customElement,
   show,
   setShow,
@@ -8,9 +8,8 @@ export const Modal = ({
   functionCallSuccess,
 }: any) => {
   const navigate = useNavigate()
-  const getType = (): string => {
-    return functionResult && functionResult?.type ? functionResult.type : "objects"
-  }
+  const getType = (): string => functionResult && functionResult?.type ? functionResult.type : "objects"
+
   return (
     <>
       {show && (

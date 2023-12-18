@@ -14,7 +14,7 @@ import {
 import reactStringReplace from "react-string-replace"
 import { Card } from "./Card"
 import { TypeSelectionDropdown } from "./TypeSelectionDropdown"
-import { Modal } from "./Modal"
+import { ModalOld } from "./ModalOld"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 
@@ -354,12 +354,12 @@ function SmartObject(props: { computer: Computer }) {
 
         <MetaData smartObject={smartObject} />
       </div>
-      <Modal
+      <ModalOld
         show={show}
         setShow={setShow}
         functionResult={functionResult}
         functionCallSuccess={functionCallSuccess}
-      ></Modal>
+      ></ModalOld>
     </>
   )
 }

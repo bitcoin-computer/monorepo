@@ -1,17 +1,12 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { initFlowbite } from "flowbite"
-import { Dispatch, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { isValidHexadecimalPrivateKey } from "../utils"
+import { ShowModal } from "./ModalNew"
 
-export default function Navbar({
-  setShowLogin,
-  computer,
-}: {
-  setShowLogin: Dispatch<boolean>
-  computer: Computer
-}) {
+export default function Navbar({ computer }: { computer: Computer }) {
   const [searchInput, setSearchInput] = useState("")
   const navigate = useNavigate()
   useEffect(() => {
@@ -101,12 +96,9 @@ export default function Navbar({
                   Wallet
                 </label>
               ) : (
-                <button
-                  className="block py-2 pl-3 pr-4 text-gray-700 rounded md:bg-transparent hover:text-gray-900 cursor-pointer md:p-0 dark:text-white"
-                  onClick={() => setShowLogin(true)}
-                >
-                  Sign In
-                </button>
+                <span className="block py-2 pl-3 pr-4 text-gray-700 rounded md:bg-transparent hover:text-gray-900 cursor-pointer md:p-0 dark:text-white">
+                  <ShowModal text="Sign in" id="sign-in-modal" />
+                </span>
               )}
             </li>
           </ul>

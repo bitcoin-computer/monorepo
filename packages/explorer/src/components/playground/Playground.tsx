@@ -22,7 +22,7 @@ import {
   nftVars,
   tokenVars,
 } from "./examples"
-import { Modal } from "../Modal"
+import { ModalOld } from "../ModalOld"
 
 const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => {
   return (
@@ -226,12 +226,12 @@ const Playground = (props: { computer: Computer }) => {
         <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
 
       </div>
-      <Modal
+      <ModalOld
         show={show}
         setShow={setShow}
         functionResult={functionResult}
         functionCallSuccess={functionCallSuccess}
-      ></Modal>
+      ></ModalOld>
     </>
   )
 }

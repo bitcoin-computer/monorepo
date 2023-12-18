@@ -24,7 +24,7 @@ export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, select
       override: true,
     }
     setDropdown(new Dropdown($targetEl, $triggerEl, options, instanceOptions))
-  }, [])
+  }, [id])
 
   const handleClick = (type: string) => {
     setType(type)
