@@ -12,12 +12,10 @@ import Home from "./components/Home"
 import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
-// import Drawer from "./components/Drawer"
 
 function App() {
   const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
   const chain = localStorage.getItem("CHAIN") || ""
-
   const url = (network: string) =>
     network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
   const getConf = (network: string) => ({ chain, network, mnemonic, url: url(network) })
