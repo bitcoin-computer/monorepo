@@ -1,5 +1,4 @@
-import { initFlowbite } from "flowbite"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 
 const Balance = ({ refreshBalance, balance }: any) => (<div className="mb-6">
@@ -90,10 +89,6 @@ export default function Wallet({ id, computer }: any) {
     localStorage.removeItem("CHAIN")
     window.location.href = "/"
   }
-
-  useEffect(() => {
-    initFlowbite()
-  }, [])
 
   const refreshBalance = useCallback(async () => {
     try {

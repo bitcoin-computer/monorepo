@@ -1,17 +1,13 @@
 import { Computer } from "@bitcoin-computer/lib"
-import { initFlowbite } from "flowbite"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { isValidHexadecimalPrivateKey } from "../utils"
-import { ShowModal } from "./ModalNew"
+import { ShowModal } from "./Modal"
 
 export default function Navbar({ computer }: { computer: Computer }) {
   const [searchInput, setSearchInput] = useState("")
   const navigate = useNavigate()
-  useEffect(() => {
-    initFlowbite()
-  }, [])
 
   const isLoggedIn = !!localStorage.getItem("BIP_39_KEY")
 

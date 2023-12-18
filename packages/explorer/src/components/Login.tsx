@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 import SnackBar from "./SnackBar"
 import { Config } from "../types/common"
-import { Modal } from "./ModalNew"
+import { Modal } from "./Modal"
 import { Modal as ModalClass } from 'flowbite';
 
 function Login({ config, setComputer }: {
