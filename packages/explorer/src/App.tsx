@@ -23,6 +23,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
       <Wallet id={"wallet"} computer={computer} />
       <Login config={config} setComputer={setComputer} />
       <NavBar computer={computer} />
