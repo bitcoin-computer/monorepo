@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { Drawer } from "./Drawer"
-import { getComputer } from "./Login"
+import { getComputer, logout } from "./Login"
 
 const Balance = ({ computer }: any) => {
   const [balance, setBalance] = useState<number>(0)
@@ -79,12 +79,6 @@ const Mnemonic = ({ computer }: any) => {
 }
 
 const LogOut = () => {
-  const logout = () => {
-    localStorage.removeItem("BIP_39_KEY")
-    localStorage.removeItem("CHAIN")
-    window.location.href = "/"
-  }
-
   return <>
     <div className="mb-6">
       <span className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
