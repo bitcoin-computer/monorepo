@@ -1,9 +1,8 @@
 import "./App.css"
-import { Computer } from "@bitcoin-computer/lib"
 import { useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import NavBar from "./components/Navbar"
-import Login from "./components/Login"
+import { Login, getComputer } from "./components/Login"
 import Transaction from "./components/Transaction"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
@@ -14,18 +13,13 @@ import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 
 function App() {
-  const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
-  const chain = localStorage.getItem("CHAIN") || ""
-  const url = (network: string) => network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
-  const getConf = (network: string) => ({ chain, network, mnemonic, url: url(network) })
-  const config = getConf("regtest")
-  const [computer, setComputer] = useState(new Computer(config))
+  const [computer, setComputer] = useState(getComputer())
 
   return (
     <BrowserRouter>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
       <Wallet id={"wallet"} computer={computer} />
-      <Login config={config} setComputer={setComputer} />
+      <Login setComputer={setComputer} />
       <NavBar computer={computer} />
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <Routes>

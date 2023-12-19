@@ -3,12 +3,25 @@ import { Computer } from "@bitcoin-computer/lib"
 import SnackBar from "./SnackBar"
 import { Config } from "../types/common"
 import { Modal } from "./Modal"
-import { Modal as ModalClass } from 'flowbite';
+import { Modal as ModalClass } from 'flowbite'
 
-function Login({ config, setComputer }: {
-  config: Config
-  setComputer: Dispatch<SetStateAction<Computer>>
-}) {
+export function getConf(network: string): Config {
+  const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
+  const chain = localStorage.getItem("CHAIN") || ""
+  const url = (network: string) => network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
+  return ({ chain, network, mnemonic, url: url(network) })
+}
+
+export function getComputer(): Computer {
+  const config = getConf("regtest")
+  return new Computer(config)
+}
+
+export function isLoggedIn(): boolean {
+  return !!localStorage.getItem("BIP_39_KEY") && !!localStorage.getItem("CHAIN")
+}
+
+export function Login({ setComputer }: { setComputer: Dispatch<SetStateAction<Computer>> }) {
   const [show, setShow] = useState(false)
   const [success, setSuccess] = useState(false)
   const [message, setMessage] = useState("")
@@ -23,6 +36,7 @@ function Login({ config, setComputer }: {
     }
     localStorage.setItem("BIP_39_KEY", password)
     localStorage.setItem("CHAIN", "LTC")
+    const config = getConf('regtest')
     const computer = new Computer({
       ...config,
       chain: "LTC",
@@ -55,5 +69,3 @@ function Login({ config, setComputer }: {
     {show && <SnackBar message={message} success={success} setShow={setShow} />}
   </>
 }
-
-export default Login
