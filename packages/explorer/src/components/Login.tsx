@@ -41,6 +41,7 @@ export function Login() {
     const instanceOptions = { id: 'sign-in-modal', override: true }    
     const modal = new ModalClass($targetEl, {}, instanceOptions)
     modal.hide()
+    window.location.href = "/"
   }
 
   const body = () =>

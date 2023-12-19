@@ -11,7 +11,7 @@ import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 
-function App() {
+export default function App() {
   return (
     <BrowserRouter>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
@@ -33,5 +33,3 @@ function App() {
     </BrowserRouter>
   )
 }
-
-export default App

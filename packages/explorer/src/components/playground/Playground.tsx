@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react"
-import { Computer } from "@bitcoin-computer/lib"
 import CreateNew from "./CreateNew"
 import ExecuteExpression from "./ExecuteExpression"
 import DeployModule from "./DeployModule"
