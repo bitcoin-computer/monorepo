@@ -4,6 +4,7 @@ import { Link, useLocation } from "react-router-dom"
 import Loader from "./Loader"
 import { chunk, jsonMap, strip, toObject } from "../utils"
 import { getComputer } from "./Login"
+import { initFlowbite } from "flowbite"
 
 function HomePageCard({ content }: { content: string }) {
   return (
@@ -119,6 +120,10 @@ export default function Home() {
   const [revs, setRevs] = useState<string[]>([])
   const location = useLocation()
   const publicKey = new URLSearchParams(location.search).get("public-key")
+
+  useEffect(() => {
+    initFlowbite()
+  }, [])
 
   useEffect(() => {
     const fetch = async () => {

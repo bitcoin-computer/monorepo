@@ -1,4 +1,5 @@
 import "./App.css"
+import { useEffect } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import NavBar from "./components/Navbar"
 import { Login } from "./components/Login"
@@ -10,8 +11,13 @@ import Home from "./components/Home"
 import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
+import { initFlowbite } from "flowbite"
 
 export default function App() {
+  useEffect(() => {
+    initFlowbite()
+  }, [])
+
   return (
     <BrowserRouter>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
