@@ -1,13 +1,13 @@
-import { Computer } from "@bitcoin-computer/lib"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { isValidHexadecimalPrivateKey } from "../utils"
 import { ShowModal } from "./Modal"
 import { ShowDrawer } from "./Drawer"
-import { isLoggedIn } from "./Login"
+import { getComputer, isLoggedIn } from "./Login"
 
-export default function Navbar({ computer }: { computer: Computer }) {
+export default function Navbar() {
+  const [computer] = useState(getComputer())
   const [searchInput, setSearchInput] = useState("")
   const navigate = useNavigate()
 

@@ -23,6 +23,7 @@ import {
   tokenVars,
 } from "./examples"
 import { ModalOld } from "../ModalOld"
+import { getComputer } from "../Login"
 
 const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => {
   return (
@@ -124,8 +125,9 @@ const Tabs = () => {
   )
 }
 
-const Playground = (props: { computer: Computer }) => {
-  const { computer } = props
+const Playground = () => {
+  console.log('Playground')
+  const [computer] = useState(getComputer())
   const [show, setShow] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
   const [functionCallSuccess, setFunctionCallSuccess] = useState(false)
@@ -133,6 +135,7 @@ const Playground = (props: { computer: Computer }) => {
   const [exampleExpression, setExampleExpresion] = useState<string>("")
   const [exampleModule, setExampleModule] = useState<string>("")
   const [exampleVars, setExampleVars] = useState<any[]>([])
+  
   useEffect(() => {
     initFlowbite()
   }, [])

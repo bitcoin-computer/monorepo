@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { Drawer } from "./Drawer"
+import { getComputer } from "./Login"
 
 const Balance = ({ computer }: any) => {
   const [balance, setBalance] = useState<number>(0)
@@ -103,7 +104,9 @@ const LogOut = () => {
   </>
 }
 
-export default function Wallet({ id, computer }: any) {
+export default function Wallet() {
+  const [computer] = useState(getComputer())
+
   const Content = () => <>
     <h4 className="text-2xl font-bold dark:text-white">Wallet</h4>
     <Balance computer={computer} />

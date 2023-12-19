@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import Loader from "./Loader"
 import { chunk, jsonMap, strip, toObject } from "../utils"
+import { getComputer } from "./Login"
 
 function HomePageCard({ content }: { content: string }) {
   return (
@@ -108,18 +109,17 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
   )
 }
 
-export default function Home(props: { computer: Computer }) {
-  const { computer } = props
+export default function Home() {
   const contractsPerPage = 12
-
+  const [computer] = useState(getComputer())
   const [isLoading, setIsLoading] = useState(false)
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(true)
   const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
+  const [revs, setRevs] = useState<string[]>([])
   const location = useLocation()
   const publicKey = new URLSearchParams(location.search).get("public-key")
 
-  const [revs, setRevs] = useState<string[]>([])
   useEffect(() => {
     const fetch = async () => {
       try {

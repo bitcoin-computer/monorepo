@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 import SnackBar from "./SnackBar"
 import { Config } from "../types/common"
@@ -21,7 +21,7 @@ export function isLoggedIn(): boolean {
   return !!localStorage.getItem("BIP_39_KEY") && !!localStorage.getItem("CHAIN")
 }
 
-export function Login({ setComputer }: { setComputer: Dispatch<SetStateAction<Computer>> }) {
+export function Login() {
   const [show, setShow] = useState(false)
   const [success, setSuccess] = useState(false)
   const [message, setMessage] = useState("")
@@ -36,13 +36,6 @@ export function Login({ setComputer }: { setComputer: Dispatch<SetStateAction<Co
     }
     localStorage.setItem("BIP_39_KEY", password)
     localStorage.setItem("CHAIN", "LTC")
-    const config = getConf('regtest')
-    const computer = new Computer({
-      ...config,
-      chain: "LTC",
-      mnemonic: localStorage.getItem("BIP_39_KEY") as any,
-    })
-    setComputer(computer)
 
     const $targetEl = document.getElementById('sign-in-modal');
     const instanceOptions = { id: 'sign-in-modal', override: true }    

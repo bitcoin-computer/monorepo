@@ -1,4 +1,3 @@
-import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import {
@@ -15,6 +14,7 @@ import reactStringReplace from "react-string-replace"
 import { Card } from "./Card"
 import { TypeSelectionDropdown } from "./TypeSelectionDropdown"
 import { ModalOld } from "./ModalOld"
+import { getComputer } from "./Login"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 
@@ -226,11 +226,11 @@ const MetaData = ({ smartObject }: any) => {
   )
 }
 
-function SmartObject(props: { computer: Computer }) {
+function SmartObject() {
   const location = useLocation()
-  const { computer } = props
   const params = useParams()
   const [rev] = useState(params.rev || "")
+  const [computer] = useState(getComputer())
   const [smartObject, setSmartObject] = useState<any | null>(null)
   const [formState, setFormState] = useState<any>({})
   const [functionsExist, setFunctionsExist] = useState(false)

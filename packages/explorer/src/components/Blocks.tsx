@@ -1,11 +1,11 @@
-import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Loader from "./Loader"
+import { getComputer } from "./Login"
 
-export default function Blocks(props: { computer: Computer }) {
+export default function Blocks() {
   const navigate = useNavigate()
-  const { computer } = props
+  const [computer] = useState(getComputer())
   const blocksPerPage = 100
 
   const [isLoading, setIsLoading] = useState(false)

@@ -1,11 +1,11 @@
-import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { capitalizeFirstLetter } from "../utils"
 import { Card } from "./Card"
+import { getComputer } from "./Login"
 
-function Module(props: { computer: Computer }) {
-  const { computer } = props
+function Module() {
+  const [computer] = useState(getComputer())
   const params = useParams()
   const [modSpec] = useState(params.rev)
   const [module, setModue] = useState<any>({})
