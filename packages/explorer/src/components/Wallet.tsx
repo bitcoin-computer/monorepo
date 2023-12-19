@@ -116,5 +116,5 @@ export default function Wallet() {
     <LogOut />
   </>
 
-  return <Drawer Content={Content} id="wallet" />
+  return <Drawer Content={Content} id="wallet-drawer" />
 }

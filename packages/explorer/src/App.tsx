@@ -12,7 +12,6 @@ import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 
 function App() {
-  console.log('App')
   return (
     <BrowserRouter>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
