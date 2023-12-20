@@ -1,73 +1,178 @@
-import { Dispatch, SetStateAction, useState } from "react"
+import { useEffect, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 import SnackBar from "./SnackBar"
 import { Config } from "../types/common"
+import { Modal } from "./Modal"
+import { Modal as ModalClass } from 'flowbite'
+import { initFlowbite } from "flowbite"
 
-function Login(props: {
-  config: Config
-  setComputer: Dispatch<SetStateAction<Computer>>
-  setShowLogin: Dispatch<SetStateAction<boolean>>
-  showLogin: boolean
-}) {
-  const { config, setComputer, showLogin, setShowLogin } = props
+export function getConf(): Config {
+  const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
+  const chain = localStorage.getItem("CHAIN") || ""
+  const network = localStorage.getItem("NETWORK") || ""
+  const url = (network: string) => network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
+  return ({ chain, network, mnemonic, url: url(network) })
+}
+
+export function getComputer(): Computer {
+  const config = getConf()
+  return new Computer(config)
+}
+
+export function isLoggedIn(): boolean {
+  return !!localStorage.getItem("BIP_39_KEY") && !!localStorage.getItem("CHAIN")
+}
+
+export function logout() {
+  localStorage.removeItem("BIP_39_KEY")
+  localStorage.removeItem("CHAIN")
+  localStorage.removeItem("NETWORK")
+  localStorage.removeItem("PATH")
+  // localStorage.removeItem("PASSPHRASE")
+  window.location.href = "/"
+}
+
+export function getCoinType(chain: string, network: string): number {
+  if (['testnet', 'regtest'].includes(network)) return 1
+
+  if (chain === 'BTC') return 0
+  if (chain === 'LTC') return 2
+  if (chain === 'DOGE') return 3
+  if (chain === 'BCH') return 145
+
+  throw new Error(`Unsupported chain ${chain} or network ${network}`)
+}
+
+export function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
+  return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
+}
+
+export function getPath(chain: string, network: string): string {
+  return getBip44Path({ coinType: getCoinType(chain, network) })
+}
+
+export function Login() {
   const [show, setShow] = useState(false)
   const [success, setSuccess] = useState(false)
   const [message, setMessage] = useState("")
+  const [mnemonic, setMnemonic] = useState("")
+  const [chain, setChain] = useState("LTC")
+  const [network, setNetwork] = useState("regtest")
+  const [path, setPath] = useState(getPath(chain, network))
+  // const [passphrase, setPassphrase] = useState('')
 
-  const [password, setPassword] = useState("")
-
-  const closeModal = () => {
-    setShowLogin(false)
-  }
+  useEffect(() => {
+    initFlowbite()
+  }, [])
 
   const login = () => {
-    if (!password) {
+    if (!mnemonic) {
       setMessage("Please provide valid password")
       setSuccess(false)
       setShow(true)
       return
     }
-    localStorage.setItem("BIP_39_KEY", password)
-    localStorage.setItem("CHAIN", "LTC")
-    const computer = new Computer({
-      ...config,
-      chain: "LTC",
-      mnemonic: localStorage.getItem("BIP_39_KEY") as any,
-    })
-    setComputer(computer)
-    setShowLogin(false)
+    localStorage.setItem("BIP_39_KEY", mnemonic)
+    localStorage.setItem("CHAIN", chain)
+    localStorage.setItem("NETWORK", network)
+    localStorage.setItem("PATH", path)
+    // localStorage.setItem("PASSPHRASE", passphrase)
+
+    const $targetEl = document.getElementById('sign-in-modal');
+    const instanceOptions = { id: 'sign-in-modal', override: true }    
+    const modal = new ModalClass($targetEl, {}, instanceOptions)
+    modal.hide()
+    window.location.href = "/"
   }
 
-  return (<>
-    {showLogin && (
-      <div id="defaultModal" tabIndex={-1} aria-hidden="true" className="fixed flex justify-center items-center top-0 left-0 right-0 z-50 w-full p-4 items-center overflow-x-hidden overflow-y-auto md:inset-0 h-modal md:h-full bg-slate-600	bg-opacity-40">
-        <div className="relative w-full max-w-md max-h-full">
-          <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
-            <button onClick={closeModal} type="button" className="absolute top-3 right-2.5 text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ml-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="authentication-modal">
-              <svg className="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                <path stroke="currentColor" strokeLinecap="round" stroke-linejoin="round" strokeWidth="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
-              </svg>
-              <span className="sr-only">Close modal</span>
-            </button>
-            <div className="px-6 py-6 lg:px-8">
-              <h3 className="mb-4 text-xl font-medium text-gray-900 dark:text-white">Sign in</h3>
-              <form className="space-y-6" action="#">
-                <div>
-                  <label htmlFor="email" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Sign in with a BIP 39 mnemonic code</label>
-                  <input value={password} onChange={(e) => setPassword(e.target.value)} type="email" name="email" id="email" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
-                </div>
-                <div className="text-sm font-medium text-gray-500 dark:text-gray-300">
-                  Don't have a mnemonic? <a href="https://iancoleman.io/bip39/" target="_blank" rel="noreferrer" className="text-blue-700 hover:underline dark:text-blue-500">Generate one here</a>
-                </div>
-                <button onClick={login} type="submit" className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Log In</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    )}
-    {show && <SnackBar message={message} success={success} setShow={setShow} />}
-    </>)
-}
+  const generateMnemonic = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setMnemonic(new Computer().getMnemonic())
+  }
+  
+  const setDefaultPath = (e: React.MouseEvent<HTMLElement>) => {
+    console.log('setDefaultPath', chain, network)
+    e.stopPropagation()
+    e.preventDefault()
+    setPath(getPath(chain, network))
+  }
 
-export default Login
+  const body = () =>
+    <form className="space-y-6" action="#">
+      <div>
+        {/* Mnemonic */}
+        <div className="flex justify-between">
+          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">BIP 39 Mnemonic</label>
+          <button onClick={generateMnemonic} className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Generate in Browser</button>
+        </div>
+        <input value={mnemonic} onChange={(e) => setMnemonic(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+
+        {/* Chain */}
+        <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Chain</label>
+        <fieldset className="flex">
+          <legend className="sr-only">Chain</legend>
+
+          <div className="flex items-center mr-4">
+            <input onChange={() => setChain('LTC')} checked={chain === 'LTC'} id="chain-ltc" type="radio" name="chain" value="LTC" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"/>
+            <label htmlFor="chain-ltc" className="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300">LTC</label>
+          </div>
+
+          <div className="flex items-center mr-4">
+            <input onChange={() => setChain('BTC')} checked={chain === 'BTC'} id="chain-btc" type="radio" name="chain" value="BTC" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"/>
+            <label htmlFor="chain-btc" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">BTC</label>
+          </div>
+
+          <div className="flex items-center mr-4">
+            <input onChange={() => setChain('DOGE')} id="chain-doge" type="radio" name="chain" value="DOGE" className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600" disabled />
+            <label htmlFor="chain-doge" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">DOGE</label>
+          </div>
+        </fieldset>
+
+        {/* Network */}
+        <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Network</label>
+        <fieldset className="flex">
+          <legend className="sr-only">Network</legend>
+
+          <div className="flex items-center mr-4">
+            <input onChange={() => setNetwork('mainnet')} checked={network === 'mainnet'} id="network-mainnet" type="radio" name="network" value="Mainnet" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
+            <label htmlFor="network-mainnet" className="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300">Mainnet</label>
+          </div>
+
+          <div className="flex items-center mr-4">
+            <input onChange={() => setNetwork('testnet')} checked={network === 'testnet'} id="network-testnet" type="radio" name="network" value="Testnet" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
+            <label htmlFor="network-testnet" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Testnet</label>
+          </div>
+
+          <div className="flex items-center mr-4">
+            <input onChange={() => setNetwork('regtest')} checked={network === 'regtest'} id="network-regtest" type="radio" name="network" value="Regtest" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
+            <label htmlFor="network-regtest" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Regtest</label>
+          </div>
+        </fieldset>
+
+        {/* Path */}
+        <div className="mt-4 flex justify-between">
+          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Path</label>
+          <button onClick={setDefaultPath} className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Update BIP 44 Path</button>
+        </div>
+        <input value={path} onChange={(e) => setPath(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
+
+        {/* Passphrase */}
+        {/* <div className="mt-4 flex justify-between">
+          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Passphrase</label>
+          <span className="mb-2 text-sm font-medium text-gray-900 dark:text-white">Optional</span>
+        </div>
+        <input value={passphrase} onChange={(e) => setPassphrase(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" /> */}
+
+
+      </div>
+    </form>
+
+  const footer = () =>
+    <button onClick={login} type="submit" className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Log In</button>
+
+  return <>
+    <Modal title="Sign in" body={body} footer={footer} id="sign-in-modal"/>
+    {show && <SnackBar message={message} success={success} setShow={setShow} />}
+  </>
+}

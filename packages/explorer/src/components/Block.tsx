@@ -1,13 +1,13 @@
-import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import Loader from "./Loader"
+import { getComputer } from "./Login"
 
-function Block(props: { computer: Computer }) {
+function Block() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { computer } = props
   const params = useParams()
+  const [computer] = useState(getComputer())
   const [block] = useState(params.block)
   const [isLoading, setIsLoading] = useState(false)
   const [blockData, setBlockData] = useState<any | null>(null)
