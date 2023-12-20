@@ -5,7 +5,7 @@ import "./App.css"
 import { initFlowbite } from "flowbite"
 import NavBar from "./components/Navbar"
 import Login from "./components/Login"
-import SmartObject from "./components/SmartObject"
+// import SmartObject from "./components/SmartObject"
 import Home from "./components/Home"
 import { CustomDrawer } from "./components/Utils/Drawer"
 import Module from "./components/Module"
@@ -20,7 +20,7 @@ function App() {
     network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
   const getConf = (network: string) => ({ chain, network, mnemonic, url: url(network) })
   const config = getConf("regtest")
-  const [computer, setComputer] = useState(new Computer(config))
+  const [computer, setComputer] = useState(new Computer(config as any))
   useEffect(() => {
     initFlowbite()
   }, [])
@@ -33,7 +33,7 @@ function App() {
         <Transfer id={"transfer"} computer={computer} />
         <Routes>
           <Route path="/" element={<Home computer={computer}></Home>} />
-          <Route path="/objects/:rev" element={<SmartObject computer={computer}></SmartObject>} />
+          {/* <Route path="/objects/:rev" element={<SmartObject computer={computer}></SmartObject>} /> */}
           <Route path="/modules/:rev" element={<Module computer={computer}></Module>} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
         </Routes>
