@@ -130,7 +130,7 @@ export function Login() {
         </fieldset>
 
         {/* Network */}
-        <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Chain</label>
+        <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Network</label>
         <fieldset className="flex">
           <legend className="sr-only">Network</legend>
 
