@@ -102,7 +102,7 @@ export default function Wallet() {
   const [computer] = useState(getComputer())
 
   const Content = () => <>
-    <h4 className="text-2xl font-bold dark:text-white">Wallet</h4>
+    <h4 className="mb-8 text-2xl font-bold dark:text-white">Wallet</h4>
     <Balance computer={computer} />
     <Address computer={computer} />
     <PublicKey computer={computer} />

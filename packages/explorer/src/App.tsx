@@ -21,8 +21,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
-      <Wallet />
       <Login />
+      <Wallet />
       <NavBar />
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <Routes>

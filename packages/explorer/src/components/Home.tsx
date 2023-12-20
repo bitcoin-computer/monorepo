@@ -170,7 +170,6 @@ export default function Home() {
 
   return (
     <div className="relative sm:rounded-lg pt-4">
-      <h2 className="mb-2 text-4xl font-bold dark:text-white">Smart Objects</h2>
       <Gallery revs={revs} computer={computer} />
       <Pagination
         revs={revs}
