@@ -14,33 +14,27 @@ const Balance = ({ computer }: any) => {
     }
   }, [computer])
 
-  return <div className="mb-6">
-      <span className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
+  return <div className="mb-4">
+      <h6 className="text-lg font-bold dark:text-white">
         Balance
-        <HiRefresh
-          onClick={refreshBalance}
-          className="w-4 h-4 ml-1 inline cursor-pointer text-gray-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-slate-100"
-        />
-      </span>
+        <HiRefresh onClick={refreshBalance} className="w-4 h-4 ml-1 inline cursor-pointer text-gray-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-slate-100" />
+      </h6>
+
       <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
         {balance / 1e8} LTC
       </p>
     </div>
   }
 
-const Address = ({ computer }: any) => (<div className="mb-6">
-    <span className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-      Address
-    </span>
+const Address = ({ computer }: any) => (<div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Address</h6>
     <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
       {computer.getAddress()}
     </p>
   </div>)
 
-const PublicKey = ({ computer }: any) => (<div className="mb-6">
-    <span className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-      Public Key
-    </span>
+const PublicKey = ({ computer }: any) => (<div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Public Key</h6>
     <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
       {computer.getPublicKey()}
     </p>
@@ -49,11 +43,9 @@ const PublicKey = ({ computer }: any) => (<div className="mb-6">
 const Mnemonic = ({ computer }: any) => {
   const [showMnemonic, setShowMnemonic] = useState(false)
 
-  const Heading = () => (<span className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-    Mnemonic
-  </span>)
+  const Heading = () => <h6 className="text-lg font-bold dark:text-white">Mnemonic</h6>
 
-  if (showMnemonic) return (<div className="mb-6">
+  if (showMnemonic) return (<div className="mb-4">
     <Heading />
     <p className="mb-1 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
       {computer.getMnemonic()}
@@ -66,7 +58,7 @@ const Mnemonic = ({ computer }: any) => {
       Hide
     </button>
   </div>)
-  else return (<div className="mb-6">
+  else return (<div className="mb-4">
     <Heading />
     <button
       onClick={() => setShowMnemonic(true)}
@@ -78,14 +70,26 @@ const Mnemonic = ({ computer }: any) => {
   </div>)
 }
 
+const Path = ({ computer }: any) => (<div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Path</h6>
+    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+      {computer.getPath()}
+    </p>
+  </div>)
+
+const Url = ({ computer }: any) => (<div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Node Url</h6>
+    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+      {computer.getUrl()}
+    </p>
+  </div>)
+
 const LogOut = () => {
   return <>
     <div className="mb-6">
-      <span className="block mb-1 text-sm font-medium text-gray-900 dark:text-white">
-        Log out
-      </span>
+      <h6 className="text-lg font-bold dark:text-white">Log out</h6>
       <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-        Logging out will delete your mnemonic, make sure to write it down before logging out.
+        Logging out will delete your mnemonic, make sure to write it down.
       </p>
     </div><div className="grid grid-cols-2 gap-4">
       <button
@@ -106,7 +110,10 @@ export default function Wallet() {
     <Balance computer={computer} />
     <Address computer={computer} />
     <PublicKey computer={computer} />
+    <Path computer={computer} />
+    <Url computer={computer} />
     <Mnemonic computer={computer} />
+    <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
     <LogOut />
   </>
 

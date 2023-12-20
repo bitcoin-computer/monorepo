@@ -2,7 +2,7 @@ import "./App.css"
 import { useEffect } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import NavBar from "./components/Navbar"
-import { Login } from "./components/Login"
+import { LoginModal } from "./components/Login"
 import Transaction from "./components/Transaction"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
@@ -21,7 +21,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
-      <Login />
+      <LoginModal />
       <Wallet />
       <NavBar />
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">

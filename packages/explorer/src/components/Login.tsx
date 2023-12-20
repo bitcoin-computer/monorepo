@@ -1,23 +1,10 @@
 import { useEffect, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 import SnackBar from "./SnackBar"
-import { Config } from "../types/common"
 import { Modal } from "./Modal"
 import { Modal as ModalClass } from 'flowbite'
 import { initFlowbite } from "flowbite"
-
-export function getConf(): Config {
-  const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
-  const chain = localStorage.getItem("CHAIN") || ""
-  const network = localStorage.getItem("NETWORK") || ""
-  const url = (network: string) => network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
-  return ({ chain, network, mnemonic, url: url(network) })
-}
-
-export function getComputer(): Computer {
-  const config = getConf()
-  return new Computer(config)
-}
+import type { Chain, Network } from "../types/common"
 
 export function isLoggedIn(): boolean {
   return !!localStorage.getItem("BIP_39_KEY") && !!localStorage.getItem("CHAIN")
@@ -28,7 +15,7 @@ export function logout() {
   localStorage.removeItem("CHAIN")
   localStorage.removeItem("NETWORK")
   localStorage.removeItem("PATH")
-  // localStorage.removeItem("PASSPHRASE")
+  localStorage.removeItem("URL")
   window.location.href = "/"
 }
 
@@ -51,19 +38,25 @@ export function getPath(chain: string, network: string): string {
   return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 
-export function Login() {
+export function getUrl(chain: string, network: string) {
+  if (chain !== 'LTC') return ''
+  return network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
+}
+
+export function getComputer(): Computer {
+  return new Computer({ 
+    mnemonic: localStorage.getItem("BIP_39_KEY") || "",
+    chain: localStorage.getItem("CHAIN") as Chain || "",
+    network: localStorage.getItem("NETWORK") as Network || "",
+    path: localStorage.getItem("PATH") || "",
+    url: localStorage.getItem("URL") || "",
+  })
+}
+
+export function LoginButton({ mnemonic, chain, network, path, url }: any) {
   const [show, setShow] = useState(false)
   const [success, setSuccess] = useState(false)
   const [message, setMessage] = useState("")
-  const [mnemonic, setMnemonic] = useState("")
-  const [chain, setChain] = useState("LTC")
-  const [network, setNetwork] = useState("regtest")
-  const [path, setPath] = useState(getPath(chain, network))
-  // const [passphrase, setPassphrase] = useState('')
-
-  useEffect(() => {
-    initFlowbite()
-  }, [])
 
   const login = () => {
     if (!mnemonic) {
@@ -76,7 +69,7 @@ export function Login() {
     localStorage.setItem("CHAIN", chain)
     localStorage.setItem("NETWORK", network)
     localStorage.setItem("PATH", path)
-    // localStorage.setItem("PASSPHRASE", passphrase)
+    localStorage.setItem("URL", url)
 
     const $targetEl = document.getElementById('sign-in-modal');
     const instanceOptions = { id: 'sign-in-modal', override: true }    
@@ -84,6 +77,25 @@ export function Login() {
     modal.hide()
     window.location.href = "/"
   }
+
+  return <>
+    <button onClick={login} type="submit" className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      Log In
+    </button>
+    {show && <SnackBar message={message} success={success} setShow={setShow} />}
+  </>
+}
+
+export function LoginForm() {
+  const [mnemonic, setMnemonic] = useState("")
+  const [chain, setChain] = useState("LTC")
+  const [network, setNetwork] = useState("regtest")
+  const [path, setPath] = useState(getPath(chain, network))
+  const [url, setUrl] = useState(getUrl(chain, network))
+
+  useEffect(() => {
+    initFlowbite()
+  }, [])
 
   const generateMnemonic = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
@@ -98,7 +110,14 @@ export function Login() {
     setPath(getPath(chain, network))
   }
 
-  const body = () =>
+  const setDefaultUrl = (e: React.MouseEvent<HTMLElement>) => {
+    console.log('setDefaultPath', chain, network)
+    e.stopPropagation()
+    e.preventDefault()
+    setUrl(getUrl(chain, network))
+  }
+
+  const body = () => <>
     <form className="space-y-6" action="#">
       <div>
         {/* Mnemonic */}
@@ -157,22 +176,28 @@ export function Login() {
         </div>
         <input value={path} onChange={(e) => setPath(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
 
-        {/* Passphrase */}
-        {/* <div className="mt-4 flex justify-between">
-          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Passphrase</label>
-          <span className="mb-2 text-sm font-medium text-gray-900 dark:text-white">Optional</span>
+        {/* URL */}
+        <div className="mt-4 flex justify-between">
+          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Node Url</label>
+          <button onClick={setDefaultUrl} className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Node Url</button>
         </div>
-        <input value={passphrase} onChange={(e) => setPassphrase(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" /> */}
-
-
+        <input value={url} onChange={(e) => setUrl(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
       </div>
     </form>
+  </>
 
-  const footer = () =>
-    <button onClick={login} type="submit" className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Log In</button>
+  const footer = () => <LoginButton mnemonic={mnemonic} chain={chain} network={network} path ={path} url={url} />
 
   return <>
-    <Modal title="Sign in" body={body} footer={footer} id="sign-in-modal"/>
-    {show && <SnackBar message={message} success={success} setShow={setShow} />}
+    <div className="p-4 md:p-5 space-y-4">
+      {body()}
+    </div>
+    <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+      {footer()}
+    </div>
   </>
+}
+
+export function LoginModal() {
+  return <Modal title="Sign in" content={LoginForm} id="sign-in-modal"/>
 }
