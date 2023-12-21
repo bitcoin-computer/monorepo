@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { capitalizeFirstLetter } from "../utils"
 import { Card } from "./Card"
-import { getComputer } from "./Login"
+import { getComputer } from "@bitcoin-computer/components"
 
 function Module() {
   const [computer] = useState(getComputer())

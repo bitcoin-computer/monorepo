@@ -14,7 +14,7 @@ import reactStringReplace from "react-string-replace"
 import { Card } from "./Card"
 import { TypeSelectionDropdown } from "./TypeSelectionDropdown"
 import { ModalOld } from "./ModalOld"
-import { getComputer } from "./Login"
+import { getComputer } from "@bitcoin-computer/components"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 
@@ -299,6 +299,7 @@ function SmartObject() {
             : paramValue
         })})`,
         env: { smartObject: smartObject._rev, ...revMap },
+        // @ts-ignore
         fund: true,
         sign: true,
       })

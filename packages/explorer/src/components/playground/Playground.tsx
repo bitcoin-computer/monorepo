@@ -22,7 +22,7 @@ import {
   tokenVars,
 } from "./examples"
 import { ModalOld } from "../ModalOld"
-import { getComputer } from "../Login"
+import { getComputer } from "@bitcoin-computer/components"
 
 const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => {
   return (
@@ -125,8 +125,8 @@ const Tabs = () => {
 }
 
 const Playground = () => {
-  console.log('Playground')
-  const [computer] = useState(getComputer())
+  console.log("Playground")
+  const [computer] = useState<any>(getComputer())
   const [show, setShow] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
   const [functionCallSuccess, setFunctionCallSuccess] = useState(false)
@@ -134,7 +134,7 @@ const Playground = () => {
   const [exampleExpression, setExampleExpresion] = useState<string>("")
   const [exampleModule, setExampleModule] = useState<string>("")
   const [exampleVars, setExampleVars] = useState<any[]>([])
-  
+
   useEffect(() => {
     initFlowbite()
   }, [])
@@ -226,7 +226,6 @@ const Playground = () => {
         <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
 
         <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
-
       </div>
       <ModalOld
         show={show}
