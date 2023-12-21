@@ -1,13 +1,13 @@
-import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import Loader from "./Loader"
+import { getComputer } from "@bitcoin-computer/components"
 
-function Block(props: { computer: Computer }) {
+function Block() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { computer } = props
   const params = useParams()
+  const [computer] = useState(getComputer())
   const [block] = useState(params.block)
   const [isLoading, setIsLoading] = useState(false)
   const [blockData, setBlockData] = useState<any | null>(null)
@@ -22,7 +22,7 @@ function Block(props: { computer: Computer }) {
         setIsLoading(false)
       } catch (error) {
         setIsLoading(false)
-        console.log('Error getting block', error)
+        console.log("Error getting block", error)
       }
     }
     fetch()
@@ -40,7 +40,10 @@ function Block(props: { computer: Computer }) {
             <div className="flex flex-col pb-3">
               <dt className="mb-1 text-gray-500 md:text-md ">Hash</dt>
               <dd className="text-md font-semibold">
-                <Link className="font-medium text-blue-600 dark:text-blue-500 hover:underline" to={`/blocks/${blockData.hash}`}>
+                <Link
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  to={`/blocks/${blockData.hash}`}
+                >
                   {blockData.hash}
                 </Link>
               </dd>
@@ -119,7 +122,10 @@ function Block(props: { computer: Computer }) {
               <tbody>
                 {blockData?.tx?.map((txn: any) => {
                   return (
-                    <tr key={txn.txid} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+                    <tr
+                      key={txn.txid}
+                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                    >
                       <th
                         scope="row"
                         className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"

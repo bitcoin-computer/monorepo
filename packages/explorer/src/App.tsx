@@ -1,54 +1,41 @@
-import { Computer } from "@bitcoin-computer/lib"
-import { useState } from "react"
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import "./App.css"
+import { useEffect } from "react"
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import NavBar from "./components/Navbar"
-import Wallet from "./components/Wallet"
-import Login from "./components/Login"
 import Transaction from "./components/Transaction"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
-import Output from "./components/Output"
+import SmartObject from "./components/SmartObject"
 import Home from "./components/Home"
+import Wallet from "./components/Wallet"
+import Module from "./components/Module"
+import Playground from "./components/playground/Playground"
+import { initFlowbite } from "flowbite"
+import { LoginModal } from "@bitcoin-computer/components"
 
+export default function App() {
+  useEffect(() => {
+    initFlowbite()
+  }, [])
 
-function App() {
-  const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
-  const chain = localStorage.getItem("CHAIN") || ""
-  const [showLogin, setShowLogin] = useState(false)
-
-  const url = (network: string) => network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
-  const getConf = (network: string) => ({ chain, network, mnemonic, url: url(network) })
-  const config = getConf("regtest")
-  const [computer, setComputer] = useState(new Computer(config))
-
-  
   return (
     <BrowserRouter>
-      <NavBar setShowLogin={setShowLogin}/>
+      <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
+      <LoginModal />
+      <Wallet />
+      <NavBar />
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-        <Wallet computer={computer} />
         <Routes>
-          <Route path="/" element={<Home computer={computer}></Home>} />
-          <Route path="/blocks" element={<Blocks computer={computer}></Blocks>} />
-          <Route
-            path="/transactions/:txn"
-            element={<Transaction computer={computer}></Transaction>}
-          />
-          <Route path="/blocks/:block" element={<Block computer={computer}></Block>} />
-          <Route path="/outputs/:rev" element={<Output computer={computer}></Output>} />
+          <Route path="/" element={<Home />} />
+          <Route path="/blocks" element={<Blocks />} />
+          <Route path="/playground" element={<Playground />} />
+          <Route path="/transactions/:txn" element={<Transaction />} />
+          <Route path="/blocks/:block" element={<Block />} />
+          <Route path="/objects/:rev" element={<SmartObject />} />
+          <Route path="/modules/:rev" element={<Module />} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
         </Routes>
-
-        <Login
-          showLogin={showLogin}
-          config={config}
-          setComputer={setComputer}
-          setShowLogin={setShowLogin}
-        />
       </div>
     </BrowserRouter>
   )
 }
-
-export default App
