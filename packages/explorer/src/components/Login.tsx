@@ -71,10 +71,6 @@ export function LoginButton({ mnemonic, chain, network, path, url }: any) {
     localStorage.setItem("PATH", path)
     localStorage.setItem("URL", url)
 
-    const $targetEl = document.getElementById('sign-in-modal');
-    const instanceOptions = { id: 'sign-in-modal', override: true }    
-    const modal = new ModalClass($targetEl, {}, instanceOptions)
-    modal.hide()
     window.location.href = "/"
   }
 
@@ -104,14 +100,12 @@ export function LoginForm() {
   }
   
   const setDefaultPath = (e: React.MouseEvent<HTMLElement>) => {
-    console.log('setDefaultPath', chain, network)
     e.stopPropagation()
     e.preventDefault()
     setPath(getPath(chain, network))
   }
 
   const setDefaultUrl = (e: React.MouseEvent<HTMLElement>) => {
-    console.log('setDefaultPath', chain, network)
     e.stopPropagation()
     e.preventDefault()
     setUrl(getUrl(chain, network))

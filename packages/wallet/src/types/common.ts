@@ -1,6 +1,7 @@
-export interface Config {
-  chain: any
-  network: any
-  mnemonic: any
-  url: any
+export type Chain = 'LTC' | 'BTC'
+export type Network = 'livenet' | 'testnet' | 'mainnet' | 'regtest'
+
+export type TxJson = {
+  txId: string,
+  satoshis: number
 }

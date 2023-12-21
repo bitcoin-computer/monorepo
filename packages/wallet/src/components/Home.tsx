@@ -23,7 +23,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
     const fetch = async () => {
       try {
         const synced = await computer.sync(rev)
-        setValue(synced)
+        setValue(synced as any)
       } catch (err) {
         if (err instanceof Error) setMsgError(`Error: ${err.message}`)
       }
