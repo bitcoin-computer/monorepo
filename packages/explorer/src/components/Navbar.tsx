@@ -2,9 +2,9 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Link } from "react-router-dom"
 import { isValidHexadecimalPrivateKey } from "../utils"
-import { ShowModal } from "./Modal"
+// import { ShowModal } from "./Modal"
 import { ShowDrawer } from "./Drawer"
-import { getComputer, isLoggedIn } from "./Login"
+import { getComputer, isLoggedIn, ShowModal } from "@bitcoin-computer/components"
 
 export default function Navbar() {
   const [computer] = useState(getComputer())
@@ -81,13 +81,15 @@ export default function Navbar() {
               )}
             </li>
             <li>
-              {isLoggedIn() ? 
-                (<label className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent cursor-pointer">
+              {isLoggedIn() ? (
+                <label className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent cursor-pointer">
                   <ShowDrawer id="wallet-drawer" text="Wallet" />
-                </label>)
-              : (<label className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent cursor-pointer">
-                <ShowModal text="Sign in" id="sign-in-modal" />
-                </label>)}
+                </label>
+              ) : (
+                <label className="block py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent cursor-pointer">
+                  <ShowModal text="Sign in" id="sign-in-modal" />
+                </label>
+              )}
             </li>
           </ul>
         </div>

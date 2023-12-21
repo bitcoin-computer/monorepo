@@ -2,7 +2,6 @@ import "./App.css"
 import { useEffect } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import NavBar from "./components/Navbar"
-import { LoginModal } from "./components/Login"
 import Transaction from "./components/Transaction"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
@@ -12,6 +11,7 @@ import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 import { initFlowbite } from "flowbite"
+import { LoginModal } from "@bitcoin-computer/components"
 
 export default function App() {
   useEffect(() => {

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import Loader from "./Loader"
 import { chunk, jsonMap, strip, toObject } from "../utils"
-import { getComputer } from "./Login"
+import { getComputer } from "@bitcoin-computer/components"
 import { initFlowbite } from "flowbite"
 
 function HomePageCard({ content }: { content: string }) {

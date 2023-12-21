@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import reactStringReplace from "react-string-replace"
 import { Card } from "./Card"
-import { getComputer } from "./Login"
+import { getComputer } from "@bitcoin-computer/components"
 
 function ExpressionCard({ content, env }: { content: string; env: { [s: string]: string } }) {
   const entries = Object.entries(env)
