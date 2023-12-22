@@ -126,7 +126,6 @@ const LogOut = () => {
 
 export default function Wallet() {
   const [computer] = useState(getComputer())
-  console.log(computer)
 
   const Content = () => (
     <>
