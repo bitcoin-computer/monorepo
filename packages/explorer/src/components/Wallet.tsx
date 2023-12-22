@@ -126,6 +126,7 @@ const LogOut = () => {
 
 export default function Wallet() {
   const [computer] = useState(getComputer())
+
   const Content = () => (
     <>
       <h4 className="mb-8 text-2xl font-bold dark:text-white">Wallet</h4>
