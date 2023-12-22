@@ -2,11 +2,11 @@
   "name": "@bitcoin-computer/components",
   "version": "1.0.0",
   "description": "",
-  "main": "dist-src/index.js",
-  "types": "dist-src/index.d.ts",
+  "main": "built/index.js",
+  "types": "built/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc-compile": "rm -rf dist/* && tsc"
+    "tsc-compile": "rm -rf built/* && tsc"
   },
   "author": "",
   "license": "ISC",

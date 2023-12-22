@@ -27,7 +27,6 @@ const CreateNew = (props: {
   const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
 
   useEffect(() => {
-    setCode(exampleCode)
     const newArgumentsList = [...argumentsList]
     newArgumentsList.forEach((argument) => {
       argument.hidden = true
@@ -41,9 +40,9 @@ const CreateNew = (props: {
         })
       })
     }
-
     setArgumentsList(newArgumentsList)
-  }, [exampleCode, argumentsList, exampleVars])
+    setCode(exampleCode)
+  }, [exampleCode, exampleVars])
 
   const handleAddArgument = () => {
     setArgumentsList([...argumentsList, { type: "", value: "", hidden: false }])

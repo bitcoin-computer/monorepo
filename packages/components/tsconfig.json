@@ -16,7 +16,7 @@
     "noEmit": false,
     "jsx": "react-jsx",
     "declaration": true,
-    "outDir": "./dist-src"
+    "outDir": "./built"
   },
   "include": ["src"]
 }
