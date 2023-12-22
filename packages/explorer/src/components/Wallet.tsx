@@ -87,8 +87,7 @@ const Path = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Path</h6>
     <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
-      {/* {computer.getPath()} */}
-      computer.getPath()
+      {computer.getPath()}
     </p>
   </div>
 )
@@ -97,8 +96,7 @@ const Url = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Node Url</h6>
     <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
-      {/* {computer.getUrl()} */}
-      computer.getUrl()
+      {computer.getUrl()}
     </p>
   </div>
 )

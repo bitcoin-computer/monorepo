@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { Dispatch, useEffect, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 import { SnackBar } from "./SnackBar"
 import { Modal } from "./Modal"
@@ -38,18 +38,134 @@ export function getPath(chain: string, network: string): string {
 }
 
 export function getUrl(chain: string, network: string) {
-  if (chain !== 'LTC') return ''
-  return network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031"
+  return chain === 'LTC' && network === "testnet"
+    ? "https://node.bitcoincomputer.io"
+    : "http://127.0.0.1:1031"
+}
+
+export function defaultConfiguration() {
+  return {
+    chain: 'LTC',
+    network: 'regtest',
+    url: 'http://127.0.0.1:1031'
+  }
+}
+
+export function browserConfiguration() {
+  const keys = ["BIP_39_KEY", "CHAIN", "NETWORK", "PATH", "URL"]
+  const someKeyIsUndefined = keys.some((key) => typeof localStorage.getItem(key) === 'undefined')
+  if(someKeyIsUndefined) throw new Error('Something went wrong, please log out and log in again')
+
+  return { 
+    mnemonic: localStorage.getItem("BIP_39_KEY"),
+    chain: localStorage.getItem("CHAIN") as Chain,
+    network: localStorage.getItem("NETWORK") as Network,
+    path: localStorage.getItem("PATH"),
+    url: localStorage.getItem("URL"),
+  }
 }
 
 export function getComputer(): Computer {
-  return new Computer({ 
-    mnemonic: localStorage.getItem("BIP_39_KEY") || "",
-    chain: localStorage.getItem("CHAIN") as Chain || "LTC",
-    network: localStorage.getItem("NETWORK") as Network || "regtest",
-    path: localStorage.getItem("PATH") || "",
-    url: localStorage.getItem("URL") || "http://127.0.0.1:1031",
-  })
+  const configuration = isLoggedIn()
+    ? browserConfiguration()
+    : defaultConfiguration()
+  return new Computer(configuration)
+}
+
+export function MnemonicInput({ mnemonic, setMnemonic }: { mnemonic: string, setMnemonic: Dispatch<string> }) {
+  const generateMnemonic = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setMnemonic(new Computer().getMnemonic())
+  }
+
+  return <>
+    <div className="flex justify-between">
+    <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">BIP 39 Mnemonic</label>
+    <button onClick={generateMnemonic} className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Generate in Browser</button>
+    </div>
+    <input value={mnemonic} onChange={(e) => setMnemonic(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
+  </>
+}
+
+export function ChainInput({ chain, setChain }: { chain: string, setChain: Dispatch<string> }) {
+  return <>
+    <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Chain</label>
+    <fieldset className="flex">
+      <legend className="sr-only">Chain</legend>
+
+      <div className="flex items-center mr-4">
+        <input onChange={() => setChain('LTC')} checked={chain === 'LTC'} id="chain-ltc" type="radio" name="chain" value="LTC" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"/>
+        <label htmlFor="chain-ltc" className="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300">LTC</label>
+      </div>
+
+      <div className="flex items-center mr-4">
+        <input onChange={() => setChain('BTC')} checked={chain === 'BTC'} id="chain-btc" type="radio" name="chain" value="BTC" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"/>
+        <label htmlFor="chain-btc" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">BTC</label>
+      </div>
+
+      <div className="flex items-center mr-4">
+        <input onChange={() => setChain('DOGE')} id="chain-doge" type="radio" name="chain" value="DOGE" className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600" disabled />
+        <label htmlFor="chain-doge" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">DOGE</label>
+      </div>
+    </fieldset>
+  </>
+}
+
+export function NetworkInput({ network, setNetwork }: { network: string, setNetwork: Dispatch<string> }) {
+  return <>
+    <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Network</label>
+    <fieldset className="flex">
+      <legend className="sr-only">Network</legend>
+
+      <div className="flex items-center mr-4">
+        <input onChange={() => setNetwork('mainnet')} checked={network === 'mainnet'} id="network-mainnet" type="radio" name="network" value="Mainnet" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
+        <label htmlFor="network-mainnet" className="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300">Mainnet</label>
+      </div>
+
+      <div className="flex items-center mr-4">
+        <input onChange={() => setNetwork('testnet')} checked={network === 'testnet'} id="network-testnet" type="radio" name="network" value="Testnet" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
+        <label htmlFor="network-testnet" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Testnet</label>
+      </div>
+
+      <div className="flex items-center mr-4">
+        <input onChange={() => setNetwork('regtest')} checked={network === 'regtest'} id="network-regtest" type="radio" name="network" value="Regtest" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
+        <label htmlFor="network-regtest" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Regtest</label>
+      </div>
+    </fieldset>
+  </>
+}
+
+export function PathInput({ chain, network, path, setPath }: { chain: string, network: string, path: string, setPath: Dispatch<string> }) {
+  const setDefaultPath = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setPath(getPath(chain, network))
+  }
+
+  return <>
+    <div className="mt-4 flex justify-between">
+      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Path</label>
+      <button onClick={setDefaultPath} className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Update BIP 44 Path</button>
+    </div>
+    <input value={path} onChange={(e) => setPath(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
+  </>
+}
+
+export function UrlInput({ chain, network, url, setUrl }: { chain: string, network: string, url: string, setUrl: Dispatch<string> }) {
+  const setDefaultUrl = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation()
+    e.preventDefault()
+    setUrl(getUrl(chain, network))
+  }
+
+  return <>
+    <div className="mt-4 flex justify-between">
+      <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Node Url</label>
+      <button onClick={setDefaultUrl} className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Node Url</button>
+    </div>
+    <input value={url} onChange={(e) => setUrl(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
+  </>
 }
 
 export function LoginButton({ mnemonic, chain, network, path, url }: any) {
@@ -57,11 +173,22 @@ export function LoginButton({ mnemonic, chain, network, path, url }: any) {
   const [success, setSuccess] = useState(false)
   const [message, setMessage] = useState("")
 
-  const login = () => {
-    if (!mnemonic) {
-      setMessage("Please provide valid password")
-      setSuccess(false)
-      setShow(true)
+  const login = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    try {
+      if (isLoggedIn())
+        throw new Error('A user is already logged in, please log out first.')
+
+      if (mnemonic.length === 0)
+        throw new Error ("Please don't use an empty mnemonic string.")
+
+      new Computer({ mnemonic, chain, network, path, url })
+    } catch(error) {
+      if (error instanceof Error) {
+        setMessage(error.message)
+        setSuccess(false)
+        setShow(true)
+      }
       return
     }
     localStorage.setItem("BIP_39_KEY", mnemonic)
@@ -92,101 +219,20 @@ export function LoginForm() {
     initFlowbite()
   }, [])
 
-  const generateMnemonic = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation()
-    e.preventDefault()
-    setMnemonic(new Computer().getMnemonic())
-  }
-  
-  const setDefaultPath = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation()
-    e.preventDefault()
-    setPath(getPath(chain, network))
-  }
-
-  const setDefaultUrl = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation()
-    e.preventDefault()
-    setUrl(getUrl(chain, network))
-  }
-
-  const body = () => <>
-    <form className="space-y-6" action="#">
-      <div>
-        {/* Mnemonic */}
-        <div className="flex justify-between">
-          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">BIP 39 Mnemonic</label>
-          <button onClick={generateMnemonic} className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Generate in Browser</button>
-        </div>
-        <input value={mnemonic} onChange={(e) => setMnemonic(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" required />
-
-        {/* Chain */}
-        <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Chain</label>
-        <fieldset className="flex">
-          <legend className="sr-only">Chain</legend>
-
-          <div className="flex items-center mr-4">
-            <input onChange={() => setChain('LTC')} checked={chain === 'LTC'} id="chain-ltc" type="radio" name="chain" value="LTC" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"/>
-            <label htmlFor="chain-ltc" className="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300">LTC</label>
-          </div>
-
-          <div className="flex items-center mr-4">
-            <input onChange={() => setChain('BTC')} checked={chain === 'BTC'} id="chain-btc" type="radio" name="chain" value="BTC" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"/>
-            <label htmlFor="chain-btc" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">BTC</label>
-          </div>
-
-          <div className="flex items-center mr-4">
-            <input onChange={() => setChain('DOGE')} id="chain-doge" type="radio" name="chain" value="DOGE" className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600" disabled />
-            <label htmlFor="chain-doge" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">DOGE</label>
-          </div>
-        </fieldset>
-
-        {/* Network */}
-        <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Network</label>
-        <fieldset className="flex">
-          <legend className="sr-only">Network</legend>
-
-          <div className="flex items-center mr-4">
-            <input onChange={() => setNetwork('mainnet')} checked={network === 'mainnet'} id="network-mainnet" type="radio" name="network" value="Mainnet" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
-            <label htmlFor="network-mainnet" className="block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300">Mainnet</label>
-          </div>
-
-          <div className="flex items-center mr-4">
-            <input onChange={() => setNetwork('testnet')} checked={network === 'testnet'} id="network-testnet" type="radio" name="network" value="Testnet" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
-            <label htmlFor="network-testnet" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Testnet</label>
-          </div>
-
-          <div className="flex items-center mr-4">
-            <input onChange={() => setNetwork('regtest')} checked={network === 'regtest'} id="network-regtest" type="radio" name="network" value="Regtest" className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" />
-            <label htmlFor="network-regtest" className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Regtest</label>
-          </div>
-        </fieldset>
-
-        {/* Path */}
-        <div className="mt-4 flex justify-between">
-          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Path</label>
-          <button onClick={setDefaultPath} className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Update BIP 44 Path</button>
-        </div>
-        <input value={path} onChange={(e) => setPath(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
-
-        {/* URL */}
-        <div className="mt-4 flex justify-between">
-          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Node Url</label>
-          <button onClick={setDefaultUrl} className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline">Update Node Url</button>
-        </div>
-        <input value={url} onChange={(e) => setUrl(e.target.value)} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" />
-      </div>
-    </form>
-  </>
-
-  const footer = () => <LoginButton mnemonic={mnemonic} chain={chain} network={network} path ={path} url={url} />
-
   return <>
     <div className="p-4 md:p-5 space-y-4">
-      {body()}
+      <form className="space-y-6">
+        <div>
+          <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
+          <ChainInput chain={chain} setChain={setChain} />
+          <NetworkInput network={network} setNetwork={setNetwork} />
+          <PathInput chain={chain} network={network} path={path} setPath={setPath} />
+          <UrlInput chain={chain} network={network} url={url} setUrl={setUrl} />
+        </div>
+      </form>
     </div>
     <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-      {footer()}
+      <LoginButton mnemonic={mnemonic} chain={chain} network={network} path ={path} url={url} />
     </div>
   </>
 }
