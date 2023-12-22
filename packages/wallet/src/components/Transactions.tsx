@@ -2,8 +2,9 @@ import { initFlowbite } from "flowbite"
 import { useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import TransactionTable from "./TransactionTable"
-import { getComputer } from "./Login"
 import { TableTxs } from "../types/common"
+import { getComputer } from "@bitcoin-computer/components"
+
 
 export default function Transactions() {
   const [computer] = useState(getComputer())

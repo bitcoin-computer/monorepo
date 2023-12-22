@@ -1,7 +1,6 @@
 import { useState } from "react"
-import { getComputer } from "./Login"
+import { getComputer } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
-
 
 export const Details = () => {
   const [computer] = useState<Computer>(getComputer())
