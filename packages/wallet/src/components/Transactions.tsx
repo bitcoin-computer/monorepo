@@ -1,5 +1,5 @@
 import { initFlowbite } from "flowbite"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import TransactionTable from "./TransactionTable"
 import { TableTxs } from "../types/common"
@@ -10,15 +10,15 @@ export default function Transactions() {
   const [computer] = useState(getComputer())
   const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
 
-  const updateTxs = async () => {
+  const updateTxs = useCallback(async () => {
     // @ts-ignore
     setTxs(await computer.listTxs())
-  }
+  }, [computer])
 
   useEffect(() => {
     initFlowbite()
     updateTxs()
-  }, [])
+  }, [updateTxs])
 
   return (
     <>

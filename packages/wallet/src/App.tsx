@@ -1,5 +1,5 @@
 import "./App.css"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate, Link } from "react-router-dom"
 import { initFlowbite } from "flowbite"
 import { LoginForm, LoginModal, getComputer, isLoggedIn, logout } from "@bitcoin-computer/components"
@@ -12,14 +12,14 @@ import { HiRefresh } from "react-icons/hi"
 function Balance({ computer }: { computer: Computer }) {
   const [balance, setBalance] = useState(0)
 
-  const updateBalance = async () => {
+  const updateBalance = useCallback(async () => {
     if (isLoggedIn()) setBalance(await computer.getBalance())
-  }
+  }, [computer])
 
   useEffect(() => {
     initFlowbite()
     updateBalance()
-  }, [computer])
+  }, [computer, updateBalance])
 
   return <div id="dropdown-cta" className="p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900" role="alert">
     <div className="text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400">

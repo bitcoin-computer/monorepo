@@ -1,5 +1,5 @@
 import { initFlowbite } from "flowbite"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { getComputer } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
 import { HiRefresh } from "react-icons/hi"
@@ -10,14 +10,14 @@ import { TableTxs } from "../types/common"
 export function SentTransactions({ computer }: { computer: Computer }) {
   const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
 
-  const updateTxs = async () => {
+  const updateTxs = useCallback(async () => {
     // @ts-ignore
     setTxs(await computer.listTxs())
-  }
+  }, [computer])
 
   useEffect(() => {
     updateTxs()
-  }, [])
+  }, [updateTxs])
 
   return <>
     <h4 className="mb-4 text-2xl font-bold dark:text-white">
