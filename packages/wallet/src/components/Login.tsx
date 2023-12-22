@@ -7,7 +7,7 @@ import { initFlowbite } from "flowbite"
 import type { Chain, Network } from "../types/common"
 
 export function isLoggedIn(): boolean {
-  return !!localStorage.getItem("BIP_39_KEY") && !!localStorage.getItem("CHAIN")
+  return !!localStorage.getItem("BIP_39_KEY")
 }
 
 export function logout() {
@@ -46,8 +46,8 @@ export function getUrl(chain: string, network: string) {
 export function getComputer(): Computer {
   return new Computer({ 
     mnemonic: localStorage.getItem("BIP_39_KEY") || "",
-    chain: localStorage.getItem("CHAIN") as Chain || "",
-    network: localStorage.getItem("NETWORK") as Network || "",
+    chain: localStorage.getItem("CHAIN") as Chain || "LTC",
+    network: localStorage.getItem("NETWORK") as Network || "regtest",
     path: localStorage.getItem("PATH") || "",
     url: localStorage.getItem("URL") || "",
   })

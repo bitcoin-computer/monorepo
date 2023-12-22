@@ -4,29 +4,57 @@ import { getComputer } from "./Login"
 import { Computer } from "@bitcoin-computer/lib"
 import { HiRefresh } from "react-icons/hi"
 import TransactionTable from "./TransactionTable"
+import SnackBar from "./SnackBar"
+import { TableTxs } from "../types/common"
 
 
 export const Send = () => {
   const [to, setTo] = useState<string>("")
   const [amount, setAmount] = useState<number>()
+  const [fee, setFee] = useState<number>(2)
   const [computer] = useState<Computer>(getComputer())
+  const [message, setMessage] = useState<string>('')
+  const [show, setShow] = useState<boolean>(false)
+  const [success, setSuccess] = useState<boolean>(false)
 
-  const transfer = async () => {
+  const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
+
+  const updateTxs = async () => {
     // @ts-ignore
-    if (amount && to) await computer.send(amount, to)
+    setTxs(await computer.listTxs())
+  }
+
+  useEffect(() => {
+    initFlowbite()
+    updateTxs()
+  }, [])
+
+  const transfer = async (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault()
+    // @ts-ignore
+    computer.setFee(fee)
+    try {
+      // @ts-ignore
+      const txId = await computer.send(amount * 1e8, to)
+      setMessage(`Sent ${amount} ${computer.getChain()} to ${to} via transaction ${txId}`)
+      setSuccess(true)
+      setShow(true)
+    } catch(err) {
+      setMessage(`Something went wrong ${err instanceof Error ? err.message : ''}`)
+      setSuccess(false)
+      setShow(true)
+    }
   }
 
   useEffect(() => {
     initFlowbite()
   }, [])
 
-  const updateTxs = () => {}
-
-  const txId = "abbacb462370d15af5ca4407b31ba7f043ff25d70aea19e255936848c00c2a5d"
+  const txId = (n: number) =>n + "abbacb462370d15af5ca4407b31ba7f043ff25d70aea19e255936848c00c2a5"
   const sentTxs = [
-    { txId, satoshis: 10000 },
-    { txId, satoshis: 20000 },
-    { txId, satoshis: 30000 },
+    { txId: txId(0), satoshis: 10000 },
+    { txId: txId(1), satoshis: 20000 },
+    { txId: txId(2), satoshis: 30000 },
   ]
 
   return (<>
@@ -34,14 +62,24 @@ export const Send = () => {
 
     <form className="max-w-lg">
       <div className="mb-5">
-        <label htmlFor="to" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">To Address</label>
+        <label htmlFor="to" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          To Address
+        </label>
         <input value={to} onChange={(e) => setTo(e.target.value)} type="text" id="to" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
       </div>
       <div className="mb-5">
-        <label htmlFor="amount" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">{`Amount (in ${computer.getChain()})`}</label>
-        <input value={amount} onChange={(e) => setAmount(parseFloat(e.target.value) * 1e8)} type="number" id="amount" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+        <label htmlFor="amount" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          {`Amount (in ${computer.getChain()})`}
+        </label>
+        <input value={amount} onChange={(e) => setAmount(parseFloat(e.target.value))} type="number" id="amount" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
       </div>
-      <button type="submit" onClick={() => transfer()} className="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      <div className="mb-5">
+        <label htmlFor="fee" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Fee (satoshi per byte)
+        </label>
+        <input value={fee} onChange={(e) => setFee(parseFloat(e.target.value))} type="number" id="amount" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required />
+      </div>
+      <button type="submit" onClick={transfer} className="mt-4 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
         Send
       </button>
     </form>
@@ -52,6 +90,8 @@ export const Send = () => {
       Recently Sent
       <HiRefresh onClick={updateTxs} className="w-4 h-4 ml-2 inline cursor-pointer dark:text-gray-400 hover:text-slate-700 dark:hover:text-slate-100" />
     </h4>
-    <TransactionTable txs={sentTxs} />
+    <TransactionTable txs={txs.sentTxs} />
+
+    {show && <SnackBar message={message} success={success} setShow={setShow} />}
   </>)
 }

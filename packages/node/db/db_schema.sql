@@ -9,7 +9,8 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE TABLE IF NOT EXISTS
   "Input" (
-    "rev" VARCHAR(70) NOT NULL PRIMARY KEY
+    "outputSpent" VARCHAR(70) NOT NULL PRIMARY KEY,
+    "spendingInput" VARCHAR(70) NOT NULL
   );
 
 CREATE TABLE IF NOT EXISTS
@@ -76,4 +77,4 @@ CREATE TABLE IF NOT EXISTS
 CREATE VIEW "Utxos" AS
 SELECT "rev", "address", "satoshis", "scriptPubKey", "publicKeys"
 FROM "Output" WHERE NOT EXISTS
-(SELECT ip.rev FROM "Input" ip  WHERE ip.rev = "Output".rev)
+(SELECT "ip"."outputSpent" FROM "Input" ip WHERE "ip"."outputSpent" = "Output".rev)

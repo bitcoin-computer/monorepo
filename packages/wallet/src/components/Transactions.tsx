@@ -1,25 +1,23 @@
 import { initFlowbite } from "flowbite"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import TransactionTable from "./TransactionTable"
+import { getComputer } from "./Login"
+import { TableTxs } from "../types/common"
 
 export default function Transactions() {
+  const [computer] = useState(getComputer())
+  const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
+
+  const updateTxs = async () => {
+    // @ts-ignore
+    setTxs(await computer.listTxs())
+  }
+
   useEffect(() => {
     initFlowbite()
+    updateTxs()
   }, [])
-
-  const txId = "abbacb462370d15af5ca4407b31ba7f043ff25d70aea19e255936848c00c2a5d"
-  const sentTxs = [
-    { txId, satoshis: 10000 },
-    { txId, satoshis: 20000 },
-    { txId, satoshis: 30000 },
-  ]
-
-  const receivedTxs = [
-    { txId, satoshis: 10000 },
-  ]
-
-  const updateTxs = () => {}
 
   return (
     <>
@@ -47,10 +45,10 @@ export default function Transactions() {
 
       <div id="default-tab-content">
           <div id="profile" role="tabpanel" aria-labelledby="sent-tab">
-            <TransactionTable txs={sentTxs} />
+            <TransactionTable txs={txs.sentTxs} />
           </div>
           <div id="dashboard" role="tabpanel" aria-labelledby="received-tab">
-            <TransactionTable txs={receivedTxs} />
+            <TransactionTable txs={txs.receivedTxs} />
           </div>
       </div>
     </>

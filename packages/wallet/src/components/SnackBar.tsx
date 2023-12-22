@@ -6,10 +6,10 @@ function SnackBar(props: any) {
     setShow(false)
   }
 
-  setTimeout(async () => {
-    setShow(false)
-    if (callback) callback()
-  }, 4000)
+  // setTimeout(async () => {
+  //   setShow(false)
+  //   if (callback) callback()
+  // }, 4000)
 
   return (
     <div
