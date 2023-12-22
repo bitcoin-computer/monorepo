@@ -6,7 +6,9 @@
   "types": "built/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc-compile": "rm -rf built/* && tsc"
+    "tsc-compile": "rm -rf built/* && tsc",
+    "install-monorepo": "cd ../../../ && yarn install && cd monorepo/packages/components",
+    "compile": "yarn tsc-compile && yarn install-monorepo"
   },
   "author": "",
   "license": "ISC",
