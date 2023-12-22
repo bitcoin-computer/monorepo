@@ -52,7 +52,7 @@ if (args.integration) {
 } else if (args.single) {
     command = `${command} .mocharc-single.json ${args.single}`
 } else {
-    command = `${command} .mocharc.json`
+    command = `${command} .mocharc.json --parallel`
 }
 
 console.log(command)
