@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
 import { SnackBar } from "./SnackBar";
 import { Modal } from "./Modal";
-import { Modal as ModalClass } from "flowbite";
 import { initFlowbite } from "flowbite";
 import type { Chain, Network } from "./types/common";
 
@@ -75,10 +74,6 @@ export function LoginButton({ mnemonic, chain, network, path, url }: any) {
     localStorage.setItem("PATH", path);
     localStorage.setItem("URL", url);
 
-    const $targetEl = document.getElementById("sign-in-modal");
-    const instanceOptions = { id: "sign-in-modal", override: true };
-    const modal = new ModalClass($targetEl, {}, instanceOptions);
-    modal.hide();
     window.location.href = "/";
   };
 

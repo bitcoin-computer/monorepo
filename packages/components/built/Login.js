@@ -14,7 +14,6 @@ import { useEffect, useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
 import { SnackBar } from "./SnackBar";
 import { Modal } from "./Modal";
-import { Modal as ModalClass } from "flowbite";
 import { initFlowbite } from "flowbite";
 export function isLoggedIn() {
     return (!!localStorage.getItem("BIP_39_KEY") && !!localStorage.getItem("CHAIN"));
@@ -80,10 +79,6 @@ export function LoginButton(_a) {
         localStorage.setItem("NETWORK", network);
         localStorage.setItem("PATH", path);
         localStorage.setItem("URL", url);
-        var $targetEl = document.getElementById("sign-in-modal");
-        var instanceOptions = { id: "sign-in-modal", override: true };
-        var modal = new ModalClass($targetEl, {}, instanceOptions);
-        modal.hide();
         window.location.href = "/";
     };
     return (_jsxs(_Fragment, { children: [_jsx("button", __assign({ onClick: login, type: "submit", className: "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Log In" })), show && (_jsx(SnackBar, { message: message, success: success, setShow: setShow }))] }));
