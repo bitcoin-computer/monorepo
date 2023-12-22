@@ -48,7 +48,7 @@ export function getComputer(): Computer {
     chain: localStorage.getItem("CHAIN") as Chain || "LTC",
     network: localStorage.getItem("NETWORK") as Network || "regtest",
     path: localStorage.getItem("PATH") || "",
-    url: localStorage.getItem("URL") || "",
+    url: localStorage.getItem("URL") || "http://127.0.0.1:1031",
   })
 }
 

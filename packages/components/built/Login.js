@@ -57,7 +57,7 @@ export function getComputer() {
         chain: localStorage.getItem("CHAIN") || "LTC",
         network: localStorage.getItem("NETWORK") || "regtest",
         path: localStorage.getItem("PATH") || "",
-        url: localStorage.getItem("URL") || "",
+        url: localStorage.getItem("URL") || "http://127.0.0.1:1031",
     });
 }
 export function LoginButton(_a) {
