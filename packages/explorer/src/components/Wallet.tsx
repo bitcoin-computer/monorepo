@@ -101,13 +101,31 @@ const Url = ({ computer }: any) => (
   </div>
 )
 
+const Chain = ({ computer }: any) => (
+  <div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Chain</h6>
+    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+      {computer.getChain()}
+    </p>
+  </div>
+)
+
+const Network = ({ computer }: any) => (
+  <div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Network</h6>
+    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+      {computer.getNetwork()}
+    </p>
+  </div>
+)
+
 const LogOut = () => {
   return (
     <>
       <div className="mb-6">
         <h6 className="text-lg font-bold dark:text-white">Log out</h6>
         <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-          Logging out will delete your mnemonic, make sure to write it down.
+          Logging out will delete your mnemonic. Make sure to write it down.
         </p>
       </div>
       <div className="grid grid-cols-2 gap-4">
@@ -132,9 +150,12 @@ export default function Wallet() {
       <Address computer={computer} />
       <PublicKey computer={computer} />
       <Path computer={computer} />
-      <Url computer={computer} />
       <Mnemonic computer={computer} />
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
+      <Chain computer={computer} />
+      <Network computer={computer} />
+      <Url computer={computer} />
+      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>
   )
