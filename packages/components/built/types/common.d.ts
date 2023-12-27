@@ -1,2 +1,2 @@
-export declare type Chain = "LTC" | "BTC";
-export declare type Network = "livenet" | "testnet" | "mainnet" | "regtest";
+export declare type Chain = "LTC" | "BTC" | "DOGE";
+export declare type Network = "testnet" | "mainnet" | "regtest";

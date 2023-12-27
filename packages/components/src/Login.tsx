@@ -37,18 +37,18 @@ export function getPath(chain: string, network: string): string {
   return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 
-export function getUrl(chain: string, network: string) {
-  return chain === 'LTC' && network === "testnet"
-    ? "https://node.bitcoincomputer.io"
-    : "http://127.0.0.1:1031"
+export function getUrl(chain: Chain, network: Network) {
+  const index = `REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL`
+  const url = process.env[index]
+  if(typeof url === 'undefined') throw new Error('Cannot find url')
+  return url
 }
 
 export function defaultConfiguration() {
-  return {
-    chain: 'LTC',
-    network: 'regtest',
-    url: 'http://127.0.0.1:1031'
-  }
+  const chain = localStorage.getItem("CHAIN") as Chain || 'LTC'
+  const network = localStorage.getItem("NETWORK") as Network || 'regtest'
+  const url = getUrl(chain, network)
+  return { chain, network, url }
 }
 
 export function browserConfiguration() {
@@ -88,7 +88,7 @@ export function MnemonicInput({ mnemonic, setMnemonic }: { mnemonic: string, set
   </>
 }
 
-export function ChainInput({ chain, setChain }: { chain: string, setChain: Dispatch<string> }) {
+export function ChainInput({ chain, setChain }: { chain: Chain, setChain: Dispatch<Chain> }) {
   return <>
     <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Chain</label>
     <fieldset className="flex">
@@ -112,7 +112,7 @@ export function ChainInput({ chain, setChain }: { chain: string, setChain: Dispa
   </>
 }
 
-export function NetworkInput({ network, setNetwork }: { network: string, setNetwork: Dispatch<string> }) {
+export function NetworkInput({ network, setNetwork }: { network: Network, setNetwork: Dispatch<Network> }) {
   return <>
     <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Network</label>
     <fieldset className="flex">
@@ -152,7 +152,7 @@ export function PathInput({ chain, network, path, setPath }: { chain: string, ne
   </>
 }
 
-export function UrlInput({ chain, network, url, setUrl }: { chain: string, network: string, url: string, setUrl: Dispatch<string> }) {
+export function UrlInput({ chain, network, url, setUrl }: { chain: Chain, network: Network, url: string, setUrl: Dispatch<string> }) {
   const setDefaultUrl = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     e.preventDefault()
@@ -209,11 +209,11 @@ export function LoginButton({ mnemonic, chain, network, path, url }: any) {
 }
 
 export function LoginForm() {
-  const [mnemonic, setMnemonic] = useState("")
-  const [chain, setChain] = useState("LTC")
-  const [network, setNetwork] = useState("regtest")
-  const [path, setPath] = useState(getPath(chain, network))
-  const [url, setUrl] = useState(getUrl(chain, network))
+  const [mnemonic, setMnemonic] = useState<string>("")
+  const [chain, setChain] = useState<Chain>("LTC")
+  const [network, setNetwork] = useState<Network>("regtest")
+  const [path, setPath] = useState<string>(getPath(chain, network))
+  const [url, setUrl] = useState<string>(getUrl(chain, network))
 
   useEffect(() => {
     initFlowbite()

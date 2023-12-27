@@ -11,10 +11,10 @@ export declare function getBip44Path({ purpose, coinType, account }?: {
     account?: number | undefined;
 }): string;
 export declare function getPath(chain: string, network: string): string;
-export declare function getUrl(chain: string, network: string): "https://node.bitcoincomputer.io" | "http://127.0.0.1:1031";
+export declare function getUrl(chain: Chain, network: Network): string;
 export declare function defaultConfiguration(): {
-    chain: string;
-    network: string;
+    chain: Chain;
+    network: Network;
     url: string;
 };
 export declare function browserConfiguration(): {
@@ -30,12 +30,12 @@ export declare function MnemonicInput({ mnemonic, setMnemonic }: {
     setMnemonic: Dispatch<string>;
 }): import("react/jsx-runtime").JSX.Element;
 export declare function ChainInput({ chain, setChain }: {
-    chain: string;
-    setChain: Dispatch<string>;
+    chain: Chain;
+    setChain: Dispatch<Chain>;
 }): import("react/jsx-runtime").JSX.Element;
 export declare function NetworkInput({ network, setNetwork }: {
-    network: string;
-    setNetwork: Dispatch<string>;
+    network: Network;
+    setNetwork: Dispatch<Network>;
 }): import("react/jsx-runtime").JSX.Element;
 export declare function PathInput({ chain, network, path, setPath }: {
     chain: string;
@@ -44,8 +44,8 @@ export declare function PathInput({ chain, network, path, setPath }: {
     setPath: Dispatch<string>;
 }): import("react/jsx-runtime").JSX.Element;
 export declare function UrlInput({ chain, network, url, setUrl }: {
-    chain: string;
-    network: string;
+    chain: Chain;
+    network: Network;
     url: string;
     setUrl: Dispatch<string>;
 }): import("react/jsx-runtime").JSX.Element;

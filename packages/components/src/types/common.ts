@@ -1,2 +1,2 @@
-export type Chain = "LTC" | "BTC";
-export type Network = "livenet" | "testnet" | "mainnet" | "regtest";
+export type Chain = "LTC" | "BTC" | "DOGE"
+export type Network = "testnet" | "mainnet" | "regtest";

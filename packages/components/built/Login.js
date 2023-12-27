@@ -47,16 +47,17 @@ export function getPath(chain, network) {
     return getBip44Path({ coinType: getCoinType(chain, network) });
 }
 export function getUrl(chain, network) {
-    return chain === 'LTC' && network === "testnet"
-        ? "https://node.bitcoincomputer.io"
-        : "http://127.0.0.1:1031";
+    var index = "REACT_APP_".concat(chain.toUpperCase(), "_").concat(network.toUpperCase(), "_URL");
+    var url = process.env[index];
+    if (typeof url === 'undefined')
+        throw new Error('Cannot find url');
+    return url;
 }
 export function defaultConfiguration() {
-    return {
-        chain: 'LTC',
-        network: 'regtest',
-        url: 'http://127.0.0.1:1031'
-    };
+    var chain = localStorage.getItem("CHAIN") || 'LTC';
+    var network = localStorage.getItem("NETWORK") || 'regtest';
+    var url = getUrl(chain, network);
+    return { chain: chain, network: network, url: url };
 }
 export function browserConfiguration() {
     var keys = ["BIP_39_KEY", "CHAIN", "NETWORK", "PATH", "URL"];
