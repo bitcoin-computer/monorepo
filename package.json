@@ -23,7 +23,10 @@
     "name": "Clemens Ley",
     "email": "clemens@bitcoincomputer.io"
   },
-  "private": false,
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "start": "cd /dist/packages/node && yarn start",
     "up": "cd packages/node && yarn up",
