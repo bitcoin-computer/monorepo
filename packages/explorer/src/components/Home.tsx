@@ -8,8 +8,10 @@ import { initFlowbite } from "flowbite"
 
 function HomePageCard({ content }: { content: string }) {
   return (
-    <div className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-      <pre className="font-normal text-gray-700 dark:text-gray-400 text-xs">{content}</pre>
+    <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+      <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
+        {content}
+      </pre>
     </div>
   )
 }
@@ -37,16 +39,15 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
 
 function Gallery({ revs, computer }: { revs: string[]; computer: any }) {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-4 mt-4">
-      {chunk(revs).map((chunk, i) => (
-        <div key={chunk[0] + i} className="grid gap-4">
-          {chunk.map((rev: string) => (
-            <div key={rev}>
-              <Link to={`/objects/${rev}`} className="font-medium text-blue-600 dark:text-blue-500">
-                <ValueComponent rev={rev} computer={computer} />
-              </Link>
-            </div>
-          ))}
+    <div className="flex flex-wrap gap-4 mb-4 mt-4">
+      {revs.map((rev, i) => (
+        <div key={i}>
+          <Link
+            to={`/objects/${rev}`}
+            className="block font-medium text-blue-600 dark:text-blue-500"
+          >
+            <ValueComponent rev={rev} computer={computer} />
+          </Link>
         </div>
       ))}
     </div>
@@ -171,13 +172,15 @@ export default function Home() {
   return (
     <div className="relative sm:rounded-lg pt-4">
       <Gallery revs={revs} computer={computer} />
-      <Pagination
-        revs={revs}
-        isPrevAvailable={isPrevAvailable}
-        handlePrev={handlePrev}
-        isNextAvailable={isNextAvailable}
-        handleNext={handleNext}
-      />
+      {!(pageNum === 0 && revs && revs.length === 0) && (
+        <Pagination
+          revs={revs}
+          isPrevAvailable={isPrevAvailable}
+          handlePrev={handlePrev}
+          isNextAvailable={isNextAvailable}
+          handleNext={handleNext}
+        />
+      )}
       {isLoading && <Loader />}
     </div>
   )
