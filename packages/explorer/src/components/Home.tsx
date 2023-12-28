@@ -8,7 +8,7 @@ import { initFlowbite } from "flowbite"
 
 function HomePageCard({ content }: { content: string }) {
   return (
-    <div className="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+    <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
         {content}
       </pre>
@@ -40,18 +40,14 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
 function Gallery({ revs, computer }: { revs: string[]; computer: any }) {
   return (
     <div className="flex flex-wrap gap-4 mb-4 mt-4">
-      {chunk(revs).map((chunk, i) => (
-        <div key={i} className="flex flex-wrap gap-4">
-          {chunk.map((rev: string) => (
-            <div key={rev} className="flex-1">
-              <Link
-                to={`/objects/${rev}`}
-                className="block w-full font-medium text-blue-600 dark:text-blue-500"
-              >
-                <ValueComponent rev={rev} computer={computer} />
-              </Link>
-            </div>
-          ))}
+      {revs.map((rev, i) => (
+        <div key={i}>
+          <Link
+            to={`/objects/${rev}`}
+            className="block font-medium text-blue-600 dark:text-blue-500"
+          >
+            <ValueComponent rev={rev} computer={computer} />
+          </Link>
         </div>
       ))}
     </div>
