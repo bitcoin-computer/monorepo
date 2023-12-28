@@ -1,16 +1,43 @@
-export const ShowModal = ({ id, text }: any) => (
+import { Modal as ModalClass } from 'flowbite';
+import type { ModalOptions, ModalInterface } from 'flowbite';
+import type { InstanceOptions } from 'flowbite';
+
+export const showModal = ({ id }: { id: string }) => {
+  const $modalElement = document.querySelector('#modalEl') as HTMLElement
+  const modalOptions: ModalOptions = {
+      placement: 'bottom-right',
+      backdrop: 'dynamic',
+      backdropClasses:
+          'bg-gray-900/50 dark:bg-gray-900/80 fixed inset-0 z-40',
+      closable: true,
+      onHide: () => {
+          console.log('modal is hidden');
+      },
+      onShow: () => {
+          console.log('modal is shown');
+      },
+      onToggle: () => {
+          console.log('modal has been toggled');
+      },
+  }
+  const instanceOptions: InstanceOptions = { id, override: true }
+  const modal: ModalInterface = new ModalClass($modalElement, modalOptions, instanceOptions)
+  modal.show()
+}
+
+export const ShowModalButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-show={id} type="button">
     {text}
   </button>
 )
 
-export const HideModal = ({ id, text }: any) => (
+export const HideModalButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-hide={id} type="button">
     {text}
   </button>
 )
 
-export const ToggleModal = ({ id, text }: any) => (
+export const ToggleModalButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-toggle={id} type="button">
     {text}
   </button>

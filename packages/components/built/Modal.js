@@ -10,15 +10,22 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-export var ShowModal = function (_a) {
+import { Modal as ModalClass } from 'flowbite';
+export var getModal = function (id) {
+    var $modalElement = document.querySelector("#".concat(id));
+    var modalOptions = {};
+    var instanceOptions = { id: id, override: true };
+    return new ModalClass($modalElement, modalOptions, instanceOptions);
+};
+export var ShowModalButton = function (_a) {
     var id = _a.id, text = _a.text;
     return (_jsx("button", __assign({ "data-modal-target": id, "data-modal-show": id, type: "button" }, { children: text })));
 };
-export var HideModal = function (_a) {
+export var HideModalButton = function (_a) {
     var id = _a.id, text = _a.text;
     return (_jsx("button", __assign({ "data-modal-target": id, "data-modal-hide": id, type: "button" }, { children: text })));
 };
-export var ToggleModal = function (_a) {
+export var ToggleModalButton = function (_a) {
     var id = _a.id, text = _a.text;
     return (_jsx("button", __assign({ "data-modal-target": id, "data-modal-toggle": id, type: "button" }, { children: text })));
 };
