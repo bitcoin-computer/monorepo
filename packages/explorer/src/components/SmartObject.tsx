@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useLocation, useParams } from "react-router-dom"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import {
   capitalizeFirstLetter,
   getErrorMessage,
@@ -229,6 +229,7 @@ const MetaData = ({ smartObject }: any) => {
 function SmartObject() {
   const location = useLocation()
   const params = useParams()
+  const navigate = useNavigate()
   const [rev] = useState(params.rev || "")
   const [computer] = useState(getComputer())
   const [smartObject, setSmartObject] = useState<any | null>(null)
@@ -244,11 +245,12 @@ function SmartObject() {
       try {
         setSmartObject(await computer.sync(rev))
       } catch (error) {
-        console.log("Error syncing to smart object", error)
+        const [txId] = rev.split(':')
+        navigate(`/transactions/${txId}`)
       }
     }
     fetch()
-  }, [computer, rev, location])
+  }, [computer, rev, location, navigate])
 
   useEffect(() => {
     let funcExist = false
