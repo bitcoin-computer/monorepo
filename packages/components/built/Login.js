@@ -156,5 +156,5 @@ export function LoginForm() {
     return _jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "p-4 md:p-5 space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), _jsx(ChainInput, { chain: chain, setChain: setChain }), _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), _jsx(PathInput, { chain: chain, network: network, path: path, setPath: setPath }), _jsx(UrlInput, { chain: chain, network: network, url: url, setUrl: setUrl })] }) })) })), _jsx("div", __assign({ className: "flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600" }, { children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, path: path, url: url }) }))] });
 }
 export function LoginModal() {
-    return _jsx(Modal, { title: "Sign in", content: LoginForm, id: "sign-in-modal" });
+    return _jsx(Modal.Component, { title: "Sign in", content: LoginForm, id: "sign-in-modal" });
 }

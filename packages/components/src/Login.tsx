@@ -238,5 +238,5 @@ export function LoginForm() {
 }
 
 export function LoginModal() {
-  return <Modal title="Sign in" content={LoginForm} id="sign-in-modal"/>
+  return <Modal.Component title="Sign in" content={LoginForm} id="sign-in-modal"/>
 }

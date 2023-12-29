@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { ShowDrawer } from "./Drawer"
-import { isLoggedIn, getModal, Modal, defaultConfiguration, getUrl, ShowModalButton } from "@bitcoin-computer/components"
+import { isLoggedIn, Modal, defaultConfiguration, getUrl } from "@bitcoin-computer/components"
 import { SearchBar } from "./SearchBar"
 import { useEffect, useState } from "react"
 import { initFlowbite } from "flowbite"
@@ -44,7 +44,7 @@ function ModalContent() {
   }
 
   function closeModal() {
-    getModal(modalId).hide()
+    Modal.get(modalId).hide()
   }
 
   return <form onSubmit={setNetwork}>
@@ -92,12 +92,12 @@ function NotLoggedMenu() {
       setDropDownLabel(formatChainAndNetwork(chain, network))
       window.location.href = "/"
     } catch (err) {
-      getModal(modalId).show()
+      Modal.get(modalId).show()
     }
   }
 
   return <>
-    <Modal title={modalTitle} content={ModalContent} id={modalId}/>
+    <Modal.Component title={modalTitle} content={ModalContent} id={modalId}/>
     <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
       <li className="py-2">
         <button id="dropdownNavbarLink" data-dropdown-toggle="dropdownNavbar" className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent">
@@ -134,7 +134,7 @@ function NotLoggedMenu() {
       
       <li className="py-2">
         <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-          <ShowModalButton text="Sign in" id="sign-in-modal" />
+          <Modal.ShowButton text="Sign in" id="sign-in-modal" />
         </label>
       </li>
 
