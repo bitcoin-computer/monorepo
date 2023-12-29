@@ -1,10 +1,10 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import Loader from "./Loader"
-import { jsonMap, strip, toObject } from "../utils"
-import { Auth } from "@bitcoin-computer/components"
+import { jsonMap, strip, toObject } from "./common/utils"
+import { Auth } from './Auth'
 import { initFlowbite } from "flowbite"
+import { Loader } from "./common/Components"
 
 function HomePageCard({ content }: any) {
   return (
@@ -47,11 +47,11 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
     : <HomePageCard content={() => errorMsg || value} />
 }
 
-function Gallery({ revs, computer }: { revs: string[]; computer: any }) {
+function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
   return (
     <div className="flex flex-wrap gap-4 mb-4 mt-4">
-      {revs.map((rev, i) => (
-        <div key={i}>
+      {revs.map((rev) => (
+        <div key={rev}>
           <Link to={`/objects/${rev}`} className="block font-medium text-blue-600 dark:text-blue-500">
             <ValueComponent rev={rev} computer={computer} />
           </Link>
@@ -66,50 +66,18 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
     <nav className="flex items-center justify-between" aria-label="Table navigation">
       <ul className="inline-flex items-center -space-x-px">
         <li>
-          <button
-            disabled={!isPrevAvailable}
-            onClick={handlePrev}
-            className="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          >
+          <button disabled={!isPrevAvailable} onClick={handlePrev} className="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
             <span className="sr-only">Previous</span>
-            <svg
-              className="w-2.5 h-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 6 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M5 1 1 5l4 4"
-              />
+            <svg className="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 1 1 5l4 4" />
             </svg>
           </button>
         </li>
         <li>
-          <button
-            disabled={!isNextAvailable}
-            onClick={handleNext}
-            className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-          >
+          <button disabled={!isNextAvailable} onClick={handleNext} className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
             <span className="sr-only">Next</span>
-            <svg
-              className="w-2.5 h-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 6 10"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 9 4-4-4-4"
-              />
+            <svg className="w-2.5 h-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 9 4-4-4-4" />
             </svg>
           </button>
         </li>
@@ -118,7 +86,7 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
   )
 }
 
-export default function Home() {
+export default function WithPagination() {
   const contractsPerPage = 12
   const [computer] = useState(Auth.getComputer())
   const [isLoading, setIsLoading] = useState(true)
@@ -136,26 +104,21 @@ export default function Home() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const offset = contractsPerPage * pageNum
-        const limit = contractsPerPage + 1
-        const queryParms: Record<string, string | number> = { offset, limit }
-        if (publicKey) queryParms["publicKey"] = publicKey
+        const queryParms: Record<string, string | number> = {}
+        queryParms['offset'] = contractsPerPage * pageNum
+        queryParms['limit'] = contractsPerPage + 1
+        if (publicKey) queryParms['publicKey'] = publicKey
         const queryRevs = await computer.query(queryParms)
-
-        if (queryRevs.length <= contractsPerPage) {
-          setIsNextAvailable(false)
-        } else {
-          queryRevs.splice(-1)
-          setIsNextAvailable(true)
-        }
+        setIsNextAvailable(queryRevs.length > contractsPerPage)
         setRevs(queryRevs)
       } catch (error) {
+        // todo: forward to error page here
         console.log("Error loading revisions", error)
       }
       setIsLoading(false)
     }
     fetch()
-  }, [computer, revs.length, pageNum, publicKey])
+  }, [computer, pageNum, publicKey])
 
   const handleNext = async () => {
     setIsPrevAvailable(true)
@@ -170,7 +133,7 @@ export default function Home() {
 
   return (
     <div className="relative sm:rounded-lg pt-4">
-      <Gallery revs={revs} computer={computer} />
+      <FromRevs revs={revs} computer={computer} />
       {!(pageNum === 0 && revs && revs.length === 0) && (
         <Pagination
           revs={revs}
@@ -183,4 +146,9 @@ export default function Home() {
       {isLoading && <Loader />}
     </div>
   )
+}
+
+export const Gallery = {
+  FromRevs,
+  WithPagination
 }

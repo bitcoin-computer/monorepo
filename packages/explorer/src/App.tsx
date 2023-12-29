@@ -6,12 +6,11 @@ import Transaction from "./components/Transaction"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
 import SmartObject from "./components/SmartObject"
-import Home from "./components/Home"
 import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 import { initFlowbite } from "flowbite"
-import { Auth } from "@bitcoin-computer/components"
+import { Auth, Gallery } from "@bitcoin-computer/components"
 
 export default function App() {
   useEffect(() => {
@@ -26,7 +25,7 @@ export default function App() {
       <NavBar />
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Gallery.WithPagination />} />
           <Route path="/blocks" element={<Blocks />} />
           <Route path="/playground" element={<Playground />} />
           <Route path="/transactions/:txn" element={<Transaction />} />

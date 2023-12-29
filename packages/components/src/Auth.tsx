@@ -3,13 +3,13 @@ import { Computer } from "@bitcoin-computer/lib"
 import { SnackBar } from "./SnackBar"
 import { Modal } from "./Modal"
 import { initFlowbite } from "flowbite"
-import type { Chain, Network } from "./types/common"
+import type { Chain, Network } from "./common/types"
 
-export function isLoggedIn(): boolean {
+function isLoggedIn(): boolean {
   return !!localStorage.getItem("BIP_39_KEY")
 }
 
-export function logout() {
+function logout() {
   localStorage.removeItem("BIP_39_KEY")
   localStorage.removeItem("CHAIN")
   localStorage.removeItem("NETWORK")
@@ -18,7 +18,7 @@ export function logout() {
   window.location.href = "/"
 }
 
-export function getCoinType(chain: string, network: string): number {
+function getCoinType(chain: string, network: string): number {
   if (['testnet', 'regtest'].includes(network)) return 1
 
   if (chain === 'BTC') return 0
@@ -29,29 +29,29 @@ export function getCoinType(chain: string, network: string): number {
   throw new Error(`Unsupported chain ${chain} or network ${network}`)
 }
 
-export function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
+function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
   return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
 }
 
-export function getPath(chain: string, network: string): string {
+function getPath(chain: string, network: string): string {
   return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 
-export function getUrl(chain: Chain, network: Network) {
+function getUrl(chain: Chain, network: Network) {
   const index = `REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL`
   const url = process.env[index]
   if(typeof url === 'undefined') throw new Error('Cannot find url')
   return url
 }
 
-export function defaultConfiguration() {
+function defaultConfiguration() {
   const chain = localStorage.getItem("CHAIN") as Chain || 'LTC'
   const network = localStorage.getItem("NETWORK") as Network || 'regtest'
   const url = getUrl(chain, network)
   return { chain, network, url }
 }
 
-export function browserConfiguration() {
+function browserConfiguration() {
   const keys = ["BIP_39_KEY", "CHAIN", "NETWORK", "PATH", "URL"]
   const someKeyIsUndefined = keys.some((key) => typeof localStorage.getItem(key) === 'undefined')
   if(someKeyIsUndefined) throw new Error('Something went wrong, please log out and log in again')
@@ -65,14 +65,14 @@ export function browserConfiguration() {
   }
 }
 
-export function getComputer(): Computer {
+function getComputer(): Computer {
   const configuration = isLoggedIn()
     ? browserConfiguration()
     : defaultConfiguration()
   return new Computer(configuration)
 }
 
-export function MnemonicInput({ mnemonic, setMnemonic }: { mnemonic: string, setMnemonic: Dispatch<string> }) {
+function MnemonicInput({ mnemonic, setMnemonic }: { mnemonic: string, setMnemonic: Dispatch<string> }) {
   const generateMnemonic = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     e.preventDefault()
@@ -88,7 +88,7 @@ export function MnemonicInput({ mnemonic, setMnemonic }: { mnemonic: string, set
   </>
 }
 
-export function ChainInput({ chain, setChain }: { chain: Chain, setChain: Dispatch<Chain> }) {
+function ChainInput({ chain, setChain }: { chain: Chain, setChain: Dispatch<Chain> }) {
   return <>
     <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Chain</label>
     <fieldset className="flex">
@@ -112,7 +112,7 @@ export function ChainInput({ chain, setChain }: { chain: Chain, setChain: Dispat
   </>
 }
 
-export function NetworkInput({ network, setNetwork }: { network: Network, setNetwork: Dispatch<Network> }) {
+function NetworkInput({ network, setNetwork }: { network: Network, setNetwork: Dispatch<Network> }) {
   return <>
     <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">Network</label>
     <fieldset className="flex">
@@ -136,7 +136,7 @@ export function NetworkInput({ network, setNetwork }: { network: Network, setNet
   </>
 }
 
-export function PathInput({ chain, network, path, setPath }: { chain: string, network: string, path: string, setPath: Dispatch<string> }) {
+function PathInput({ chain, network, path, setPath }: { chain: string, network: string, path: string, setPath: Dispatch<string> }) {
   const setDefaultPath = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     e.preventDefault()
@@ -152,7 +152,7 @@ export function PathInput({ chain, network, path, setPath }: { chain: string, ne
   </>
 }
 
-export function UrlInput({ chain, network, url, setUrl }: { chain: Chain, network: Network, url: string, setUrl: Dispatch<string> }) {
+function UrlInput({ chain, network, url, setUrl }: { chain: Chain, network: Network, url: string, setUrl: Dispatch<string> }) {
   const setDefaultUrl = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     e.preventDefault()
@@ -168,7 +168,7 @@ export function UrlInput({ chain, network, url, setUrl }: { chain: Chain, networ
   </>
 }
 
-export function LoginButton({ mnemonic, chain, network, path, url }: any) {
+function LoginButton({ mnemonic, chain, network, path, url }: any) {
   const [show, setShow] = useState(false)
   const [success, setSuccess] = useState(false)
   const [message, setMessage] = useState("")
@@ -208,7 +208,7 @@ export function LoginButton({ mnemonic, chain, network, path, url }: any) {
   </>
 }
 
-export function LoginForm() {
+function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>("")
   const [chain, setChain] = useState<Chain>("LTC")
   const [network, setNetwork] = useState<Network>("regtest")
@@ -237,7 +237,7 @@ export function LoginForm() {
   </>
 }
 
-export function LoginModal() {
+function LoginModal() {
   return <Modal.Component title="Sign in" content={LoginForm} id="sign-in-modal"/>
 }
 
