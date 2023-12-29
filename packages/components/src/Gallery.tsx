@@ -95,6 +95,7 @@ export default function WithPagination() {
   const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
   const [revs, setRevs] = useState<string[]>([])
   const location = useLocation()
+  console.log('location', location)
   const publicKey = new URLSearchParams(location.search).get("public-key")
 
   useEffect(() => {

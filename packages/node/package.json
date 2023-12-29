@@ -89,7 +89,7 @@
     "tiny-secp256k1": "^2.2.1",
     "ts-node": "^10.4.0",
     "typeforce": "^1.18.0",
-    "typescript": "^4.5.4",
+    "typescript": "^4.9.5",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.7.1",
     "yajrpc": "^1.4.4",
