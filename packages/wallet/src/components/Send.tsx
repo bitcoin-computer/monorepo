@@ -1,6 +1,6 @@
 import { initFlowbite } from "flowbite"
 import { useCallback, useEffect, useState } from "react"
-import { getComputer } from "@bitcoin-computer/components"
+import { Auth } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
 import { HiRefresh } from "react-icons/hi"
 import TransactionTable from "./TransactionTable"
@@ -92,7 +92,7 @@ export function SendForm({ computer }: { computer: Computer }) {
 }
 
 export const Send = () => {
-  const [computer] = useState<Computer>(getComputer())
+  const [computer] = useState<Computer>(Auth.getComputer())
 
   return (<>
     <SendForm computer={computer} />

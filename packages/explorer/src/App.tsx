@@ -11,7 +11,7 @@ import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 import { initFlowbite } from "flowbite"
-import { LoginModal } from "@bitcoin-computer/components"
+import { Auth } from "@bitcoin-computer/components"
 
 export default function App() {
   useEffect(() => {
@@ -21,7 +21,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
-      <LoginModal />
+      <Auth.LoginModal />
       <Wallet />
       <NavBar />
       <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">

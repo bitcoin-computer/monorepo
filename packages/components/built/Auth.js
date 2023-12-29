@@ -158,3 +158,15 @@ export function LoginForm() {
 export function LoginModal() {
     return _jsx(Modal.Component, { title: "Sign in", content: LoginForm, id: "sign-in-modal" });
 }
+export var Auth = {
+    isLoggedIn: isLoggedIn,
+    logout: logout,
+    getCoinType: getCoinType,
+    getBip44Path: getBip44Path,
+    getUrl: getUrl,
+    defaultConfiguration: defaultConfiguration,
+    browserConfiguration: browserConfiguration,
+    getComputer: getComputer,
+    LoginForm: LoginForm,
+    LoginModal: LoginModal
+};

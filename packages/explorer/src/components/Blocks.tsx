@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import Loader from "./Loader"
-import { getComputer } from "@bitcoin-computer/components"
+import { Auth } from "@bitcoin-computer/components"
 
 export default function Blocks() {
   const navigate = useNavigate()
-  const [computer] = useState(getComputer())
+  const [computer] = useState(Auth.getComputer())
   const blocksPerPage = 100
 
   const [isLoading, setIsLoading] = useState(false)

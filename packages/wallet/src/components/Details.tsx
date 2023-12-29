@@ -1,9 +1,9 @@
 import { useState } from "react"
-import { getComputer } from "@bitcoin-computer/components"
+import { Auth } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
 
 export const Details = () => {
-  const [computer] = useState<Computer>(getComputer())
+  const [computer] = useState<Computer>(Auth.getComputer())
 
   const Mnemonic = ({ computer }: any) => {
     const [showMnemonic, setShowMnemonic] = useState(false)

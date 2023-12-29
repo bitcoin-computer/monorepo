@@ -2,10 +2,10 @@ import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { capitalizeFirstLetter } from "../utils"
 import { Card } from "./Card"
-import { getComputer } from "@bitcoin-computer/components"
+import { Auth } from "@bitcoin-computer/components"
 
 function Module() {
-  const [computer] = useState(getComputer())
+  const [computer] = useState(Auth.getComputer())
   const params = useParams()
   const [modSpec] = useState(params.rev)
   const [module, setModue] = useState<any>({})

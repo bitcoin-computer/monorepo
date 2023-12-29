@@ -2,8 +2,8 @@ import { Computer } from "@bitcoin-computer/lib"
 import { useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
 import Loader from "./Loader"
-import { chunk, jsonMap, strip, toObject } from "../utils"
-import { getComputer } from "@bitcoin-computer/components"
+import { jsonMap, strip, toObject } from "../utils"
+import { Auth } from "@bitcoin-computer/components"
 import { initFlowbite } from "flowbite"
 
 function HomePageCard({ content }: any) {
@@ -120,7 +120,7 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
 
 export default function Home() {
   const contractsPerPage = 12
-  const [computer] = useState(getComputer())
+  const [computer] = useState(Auth.getComputer())
   const [isLoading, setIsLoading] = useState(true)
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(true)

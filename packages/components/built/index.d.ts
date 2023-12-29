@@ -1,3 +1,3 @@
 export { SnackBar } from "./SnackBar";
-export * from "./Login";
+export { Auth } from "./Auth";
 export { Modal } from "./Modal";

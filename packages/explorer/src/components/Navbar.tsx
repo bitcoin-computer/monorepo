@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom"
 import { ShowDrawer } from "./Drawer"
-import { isLoggedIn, Modal, defaultConfiguration, getUrl } from "@bitcoin-computer/components"
+import { Modal, Auth } from "@bitcoin-computer/components"
 import { SearchBar } from "./SearchBar"
 import { useEffect, useState } from "react"
 import { initFlowbite } from "flowbite"
@@ -80,13 +80,13 @@ function NotLoggedMenu() {
   useEffect(() => {
     initFlowbite()
 
-    const { chain, network } = defaultConfiguration()
+    const { chain, network } = Auth.defaultConfiguration()
     setDropDownLabel(formatChainAndNetwork(chain, network))
   }, [])
 
   const setChainAndNetwork = (chain: Chain, network: Network) => {
     try {
-      localStorage.setItem("URL", getUrl(chain, network))
+      localStorage.setItem("URL", Auth.getUrl(chain, network))
       localStorage.setItem("CHAIN", chain)
       localStorage.setItem("NETWORK", network)
       setDropDownLabel(formatChainAndNetwork(chain, network))
@@ -166,7 +166,7 @@ export default function Navbar() {
         </button>
 
         <div className="hidden w-full md:block md:w-auto" id="navbar-dropdown">
-          {isLoggedIn() ? <LoggedInMenu /> : <NotLoggedMenu />}
+          {Auth.isLoggedIn() ? <LoggedInMenu /> : <NotLoggedMenu />}
         </div>
       </div>
     </nav>

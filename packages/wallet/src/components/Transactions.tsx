@@ -3,11 +3,11 @@ import { useCallback, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import TransactionTable from "./TransactionTable"
 import { TableTxs } from "../types/common"
-import { getComputer } from "@bitcoin-computer/components"
+import { Auth } from "@bitcoin-computer/components"
 
 
 export default function Transactions() {
-  const [computer] = useState(getComputer())
+  const [computer] = useState(Auth.getComputer())
   const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
 
   const updateTxs = useCallback(async () => {

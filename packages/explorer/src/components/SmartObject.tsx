@@ -14,7 +14,7 @@ import reactStringReplace from "react-string-replace"
 import { Card } from "./Card"
 import { TypeSelectionDropdown } from "./TypeSelectionDropdown"
 import { ModalOld } from "./ModalOld"
-import { getComputer } from "@bitcoin-computer/components"
+import { Auth } from "@bitcoin-computer/components"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 
@@ -231,7 +231,7 @@ function SmartObject() {
   const params = useParams()
   const navigate = useNavigate()
   const [rev] = useState(params.rev || "")
-  const [computer] = useState(getComputer())
+  const [computer] = useState(Auth.getComputer())
   const [smartObject, setSmartObject] = useState<any | null>(null)
   const [formState, setFormState] = useState<any>({})
   const [functionsExist, setFunctionsExist] = useState(false)

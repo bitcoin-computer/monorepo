@@ -2,7 +2,7 @@ import "./App.css"
 import { useCallback, useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate, Link } from "react-router-dom"
 import { initFlowbite } from "flowbite"
-import { LoginForm, LoginModal, getComputer, isLoggedIn, logout } from "@bitcoin-computer/components"
+import { Auth } from "@bitcoin-computer/components"
 import { Send } from "./components/Send"
 import { Details } from "./components/Details"
 import { Computer } from "@bitcoin-computer/lib"
@@ -13,7 +13,7 @@ function Balance({ computer }: { computer: Computer }) {
   const [balance, setBalance] = useState(0)
 
   const updateBalance = useCallback(async () => {
-    if (isLoggedIn()) setBalance(await computer.getBalance())
+    if (Auth.isLoggedIn()) setBalance(await computer.getBalance())
   }, [computer])
 
   useEffect(() => {
@@ -32,7 +32,7 @@ function Balance({ computer }: { computer: Computer }) {
 }
 
 function SideBar() {
-  const [computer] = useState(getComputer())
+  const [computer] = useState(Auth.getComputer())
 
   return <>
     <button data-drawer-target="cta-button-sidebar" data-drawer-toggle="cta-button-sidebar" aria-controls="cta-button-sidebar" type="button" className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
@@ -80,7 +80,7 @@ function SideBar() {
             </Link>
           </li>
           <li>
-            <div onClick={logout} className="hover:cursor-pointer flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
+            <div onClick={Auth.logout} className="hover:cursor-pointer flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group">
               <svg className="flex-shrink-0 w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 18 20">
                 <path d="M17 5.923A1 1 0 0 0 16 5h-3V4a4 4 0 1 0-8 0v1H2a1 1 0 0 0-1 .923L.086 17.846A2 2 0 0 0 2.08 20h13.84a2 2 0 0 0 1.994-2.153L17 5.923ZM7 9a1 1 0 0 1-2 0V7h2v2Zm0-5a2 2 0 1 1 4 0v1H7V4Zm6 5a1 1 0 1 1-2 0V7h2v2Z" />
               </svg>
@@ -94,11 +94,11 @@ function SideBar() {
 }
 
 export default function App() {
-  if (!isLoggedIn()) return <div className="p-8 mt-16 max-w-screen-md mx-auto">
+  if (!Auth.isLoggedIn()) return <div className="p-8 mt-16 max-w-screen-md mx-auto">
     <h2 className="text-4xl mb-8 text-center font-bold dark:text-white">
       TBC Wallet
     </h2>
-    <LoginForm />
+    <Auth.LoginForm />
   </div>
 
   return <BrowserRouter>    
@@ -112,7 +112,7 @@ export default function App() {
           <Route path="/details" element={<Details />} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
         </Routes>
-        <LoginModal />
+        <Auth.LoginModal />
       </div>
     </div>
   </BrowserRouter>

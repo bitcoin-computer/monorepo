@@ -52,3 +52,15 @@ export declare function UrlInput({ chain, network, url, setUrl }: {
 export declare function LoginButton({ mnemonic, chain, network, path, url }: any): import("react/jsx-runtime").JSX.Element;
 export declare function LoginForm(): import("react/jsx-runtime").JSX.Element;
 export declare function LoginModal(): import("react/jsx-runtime").JSX.Element;
+export declare const Auth: {
+    isLoggedIn: typeof isLoggedIn;
+    logout: typeof logout;
+    getCoinType: typeof getCoinType;
+    getBip44Path: typeof getBip44Path;
+    getUrl: typeof getUrl;
+    defaultConfiguration: typeof defaultConfiguration;
+    browserConfiguration: typeof browserConfiguration;
+    getComputer: typeof getComputer;
+    LoginForm: typeof LoginForm;
+    LoginModal: typeof LoginModal;
+};

@@ -240,3 +240,16 @@ export function LoginForm() {
 export function LoginModal() {
   return <Modal.Component title="Sign in" content={LoginForm} id="sign-in-modal"/>
 }
+
+export const Auth = {
+  isLoggedIn,
+  logout,
+  getCoinType,
+  getBip44Path,
+  getUrl,
+  defaultConfiguration,
+  browserConfiguration,
+  getComputer,
+  LoginForm,
+  LoginModal
+}
