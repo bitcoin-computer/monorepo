@@ -8,6 +8,7 @@ import { Details } from "./components/Details"
 import { Computer } from "@bitcoin-computer/lib"
 import Transactions from "./components/Transactions"
 import { HiRefresh } from "react-icons/hi"
+import { Assets } from "./components/Assets"
 
 function Balance({ computer }: { computer: Computer }) {
   const [balance, setBalance] = useState(0)
@@ -109,6 +110,7 @@ export default function App() {
           <Route path="/" element={<Send />} />
           <Route path="/send" element={<Send />} />
           <Route path="/transactions" element={<Transactions />} />
+          <Route path="/assets" element={<Assets />} />
           <Route path="/details" element={<Details />} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
         </Routes>

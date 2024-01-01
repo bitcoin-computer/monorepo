@@ -100,18 +100,18 @@ function Pagination(_a) {
     var isPrevAvailable = _a.isPrevAvailable, handlePrev = _a.handlePrev, isNextAvailable = _a.isNextAvailable, handleNext = _a.handleNext;
     return (_jsx("nav", __assign({ className: "flex items-center justify-between", "aria-label": "Table navigation" }, { children: _jsxs("ul", __assign({ className: "inline-flex items-center -space-x-px" }, { children: [_jsx("li", { children: _jsxs("button", __assign({ disabled: !isPrevAvailable, onClick: handlePrev, className: "flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" }, { children: [_jsx("span", __assign({ className: "sr-only" }, { children: "Previous" })), _jsx("svg", __assign({ className: "w-2.5 h-2.5", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 6 10" }, { children: _jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M5 1 1 5l4 4" }) }))] })) }), _jsx("li", { children: _jsxs("button", __assign({ disabled: !isNextAvailable, onClick: handleNext, className: "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" }, { children: [_jsx("span", __assign({ className: "sr-only" }, { children: "Next" })), _jsx("svg", __assign({ className: "w-2.5 h-2.5", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 6 10" }, { children: _jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "m1 9 4-4-4-4" }) }))] })) })] })) })));
 }
-export default function WithPagination() {
+export default function WithPagination(_a) {
     var _this = this;
+    var publicKey = _a.publicKey;
     var contractsPerPage = 12;
     var computer = useState(Auth.getComputer())[0];
-    var _a = useState(true), isLoading = _a[0], setIsLoading = _a[1];
-    var _b = useState(0), pageNum = _b[0], setPageNum = _b[1];
-    var _c = useState(true), isNextAvailable = _c[0], setIsNextAvailable = _c[1];
-    var _d = useState(pageNum > 0), isPrevAvailable = _d[0], setIsPrevAvailable = _d[1];
-    var _e = useState([]), revs = _e[0], setRevs = _e[1];
+    var _b = useState(true), isLoading = _b[0], setIsLoading = _b[1];
+    var _c = useState(0), pageNum = _c[0], setPageNum = _c[1];
+    var _d = useState(true), isNextAvailable = _d[0], setIsNextAvailable = _d[1];
+    var _e = useState(pageNum > 0), isPrevAvailable = _e[0], setIsPrevAvailable = _e[1];
+    var _f = useState([]), revs = _f[0], setRevs = _f[1];
     var location = useLocation();
-    console.log('location', location);
-    var publicKey = new URLSearchParams(location.search).get("public-key");
+    var pubKey = publicKey || new URLSearchParams(location.search).get("public-key");
     useEffect(function () {
         initFlowbite();
     }, []);
@@ -125,8 +125,8 @@ export default function WithPagination() {
                         queryParms = {};
                         queryParms['offset'] = contractsPerPage * pageNum;
                         queryParms['limit'] = contractsPerPage + 1;
-                        if (publicKey)
-                            queryParms['publicKey'] = publicKey;
+                        if (pubKey)
+                            queryParms['publicKey'] = pubKey;
                         return [4 /*yield*/, computer.query(queryParms)];
                     case 1:
                         queryRevs = _a.sent();

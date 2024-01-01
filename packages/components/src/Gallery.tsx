@@ -86,7 +86,7 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
   )
 }
 
-export default function WithPagination() {
+export default function WithPagination({ publicKey }: { publicKey?: string }) {
   const contractsPerPage = 12
   const [computer] = useState(Auth.getComputer())
   const [isLoading, setIsLoading] = useState(true)
@@ -95,8 +95,7 @@ export default function WithPagination() {
   const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
   const [revs, setRevs] = useState<string[]>([])
   const location = useLocation()
-  console.log('location', location)
-  const publicKey = new URLSearchParams(location.search).get("public-key")
+  const pubKey = publicKey || new URLSearchParams(location.search).get("public-key")
 
   useEffect(() => {
     initFlowbite()
@@ -108,7 +107,7 @@ export default function WithPagination() {
         const queryParms: Record<string, string | number> = {}
         queryParms['offset'] = contractsPerPage * pageNum
         queryParms['limit'] = contractsPerPage + 1
-        if (publicKey) queryParms['publicKey'] = publicKey
+        if (pubKey) queryParms['publicKey'] = pubKey
         const queryRevs = await computer.query(queryParms)
         setIsNextAvailable(queryRevs.length > contractsPerPage)
         setRevs(queryRevs)
