@@ -243,7 +243,9 @@ function SmartObject() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        setSmartObject(await computer.sync(rev))
+        const synced = await computer.sync(rev)
+        console.log('synced.constructor.name', synced.constructor.name)
+        setSmartObject(synced)
       } catch (error) {
         const [txId] = rev.split(':')
         navigate(`/transactions/${txId}`)
@@ -333,12 +335,17 @@ function SmartObject() {
     setFormState(value)
   }
 
+  const [txId, outNum] = rev.split(':')
+
   return (
     <>
       <div>
         <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Output</h1>
         <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-          {rev}
+        <Link
+          to={`/transactions/${txId}`}
+          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+        >{txId}</Link>:{outNum}
         </p>
 
         <h2 className="mb-2 text-4xl font-bold dark:text-white">Data</h2>
