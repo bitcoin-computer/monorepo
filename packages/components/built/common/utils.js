@@ -63,3 +63,13 @@ export var strip = function (value) {
 export var toObject = function (obj) {
     return JSON.stringify(obj, function (key, value) { return typeof value === 'bigint' ? value.toString() : value; }, 2);
 };
+export var capitalizeFirstLetter = function (string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+};
+export function isValidRevString(outId) {
+    return /^[0-9A-Fa-f]{64}:\d+$/.test(outId);
+}
+export function isValidRev(value) {
+    return typeof value === "string" && isValidRevString(value);
+}
+export var sleep = function (ms) { return new Promise(function (resolve) { return setTimeout(resolve, ms); }); };

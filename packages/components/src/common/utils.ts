@@ -50,3 +50,16 @@ export const jsonMap =
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
 export const toObject = (obj: any) =>
   JSON.stringify(obj, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2);
+
+export const capitalizeFirstLetter = (string: string) =>
+  string.charAt(0).toUpperCase() + string.slice(1)
+
+export function isValidRevString(outId: string): boolean {
+  return /^[0-9A-Fa-f]{64}:\d+$/.test(outId)
+}
+
+export function isValidRev(value: any): boolean {
+  return typeof value === "string" && isValidRevString(value)
+}
+
+export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

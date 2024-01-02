@@ -1,31 +1,144 @@
 import { useEffect, useState } from "react"
+import { Dropdown, DropdownInterface, DropdownOptions, InstanceOptions, initFlowbite } from "flowbite"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
-import {
-  capitalizeFirstLetter,
-  getErrorMessage,
-  getFnParamNames,
-  getValueForType,
-  isValidRev,
-  sleep,
-  toObject,
-} from "../utils"
+import { capitalizeFirstLetter,  isValidRev,  sleep,  toObject } from "./common/utils"
 
 import reactStringReplace from "react-string-replace"
-import { Card } from "./Card"
-import { TypeSelectionDropdown } from "./TypeSelectionDropdown"
 import { ModalOld } from "./ModalOld"
-import { Auth } from "@bitcoin-computer/components"
+import { Auth } from "./Auth"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
+
+export const getErrorMessage = (error: any): string => {
+  if (
+    error?.response?.data?.error ===
+    "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
+  ) {
+    return "You are not authorized to make changes to this smart object"
+  } else if (error?.response?.data?.error) {
+    return error?.response?.data?.error
+  } else {
+    return error.message ? error.message : "Error occurred"
+  }
+}
+
+export const getFnParamNames = function (fn: string) {
+  const match = fn.toString().match(/\(.*?\)/)
+  return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
+}
+
+export const getValueForType = (type: string, stringValue: string) => {
+  switch (type) {
+    case "number":
+      return Number(stringValue)
+    case "string":
+      return stringValue
+    case "boolean":
+      return true // make this dynamic
+    case "undefined":
+      return undefined
+    case "null":
+      return null
+    case "object":
+      return stringValue
+    default:
+      return Number(stringValue)
+  }
+}
+
+export function Card({ content }: any) {
+  return (<div className="block mt-4 mb-8 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+      <pre className="font-normal text-gray-700 dark:text-gray-400 text-xs">
+        {content}
+      </pre>
+    </div>)
+}
+
+export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, selectedType }: any) => {
+  const [dropDown, setDropdown] = useState<DropdownInterface>()
+  const [type, setType] = useState(selectedType ? selectedType : "Type")
+  const [dropdownSelectionList] = useState(dropdownList)
+
+  useEffect(() => {
+    initFlowbite()
+    const $targetEl: HTMLElement = document.getElementById(`dropdownMenu${id}`) as HTMLElement
+    const $triggerEl: HTMLElement = document.getElementById(`dropdownButton${id}`) as HTMLElement
+    const options: DropdownOptions = {
+      placement: "bottom",
+      triggerType: "click",
+      offsetSkidding: 0,
+      offsetDistance: 10,
+      delay: 300,
+    }
+    const instanceOptions: InstanceOptions = {
+      id: `dropdownMenu${id}`,
+      override: true,
+    }
+    setDropdown(new Dropdown($targetEl, $triggerEl, options, instanceOptions))
+  }, [id])
+
+  const handleClick = (type: string) => {
+    setType(type)
+    onSelectMethod(type)
+    if (dropDown) dropDown.hide()
+  }
+
+  return (
+    <>
+      <button
+        id={`dropdownButton${id}`}
+        data-dropdown-toggle={`dropdownMenu${id}`}
+        className="flex justify-between w-32 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+        type="button"
+      >
+        {type}
+        <svg
+          className="w-2.5 h-2.5"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 10 6"
+        >
+          <path
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="m1 1 4 4 4-4"
+          ></path>
+        </svg>
+      </button>
+
+      <div
+        id={`dropdownMenu${id}`}
+        className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
+      >
+        <ul
+          className="py-2 text-sm text-gray-700 dark:text-gray-200"
+          aria-labelledby={`dropdownButton${id}`}
+        >
+          {dropdownSelectionList.map((option: string, index: number) => (
+            <li key={index}>
+              <span
+                onClick={() => {
+                  handleClick(option)
+                }}
+                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+              >
+                {option}
+              </span>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </>
+  )
+}
 
 function ObjectValueCard({ content }: { content: string }) {
   const isRev = /([0-9a-fA-F]{64}:[0-9]+)/g
   const revLink = (rev: string, i: number) => (
-    <Link
-      key={i}
-      to={`/objects/${rev}`}
-      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-    >
+    <Link key={i} to={`/objects/${rev}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
       {rev}
     </Link>
   )
@@ -226,7 +339,7 @@ const MetaData = ({ smartObject }: any) => {
   )
 }
 
-function SmartObject() {
+function Component() {
   const location = useLocation()
   const params = useParams()
   const navigate = useNavigate()
@@ -374,4 +487,6 @@ function SmartObject() {
   )
 }
 
-export default SmartObject
+export const SmartObject = {
+  Component
+}

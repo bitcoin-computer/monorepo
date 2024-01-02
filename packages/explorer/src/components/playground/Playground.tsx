@@ -21,8 +21,7 @@ import {
   nftVars,
   tokenVars,
 } from "./examples"
-import { ModalOld } from "../ModalOld"
-import { Auth } from "@bitcoin-computer/components"
+import { Auth, ModalOld } from "@bitcoin-computer/components"
 
 const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => {
   return (
