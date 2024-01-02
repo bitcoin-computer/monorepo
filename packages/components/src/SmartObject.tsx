@@ -2,10 +2,10 @@ import { useEffect, useState } from "react"
 import { Dropdown, DropdownInterface, DropdownOptions, InstanceOptions, initFlowbite } from "flowbite"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { capitalizeFirstLetter,  isValidRev,  sleep,  toObject } from "./common/utils"
-
 import reactStringReplace from "react-string-replace"
 import { ModalOld } from "./ModalOld"
 import { Auth } from "./Auth"
+import { Card } from "./Card"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 
@@ -44,14 +44,6 @@ export const getValueForType = (type: string, stringValue: string) => {
     default:
       return Number(stringValue)
   }
-}
-
-export function Card({ content }: any) {
-  return (<div className="block mt-4 mb-8 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
-      <pre className="font-normal text-gray-700 dark:text-gray-400 text-xs">
-        {content}
-      </pre>
-    </div>)
 }
 
 export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, selectedType }: any) => {

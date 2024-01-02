@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import reactStringReplace from "react-string-replace"
 import { Card } from "./Card"
-import { Auth } from "@bitcoin-computer/components"
+import { Auth } from "./Auth"
 
 function ExpressionCard({ content, env }: { content: string; env: { [s: string]: string } }) {
   const entries = Object.entries(env)
@@ -24,7 +24,7 @@ function ExpressionCard({ content, env }: { content: string; env: { [s: string]:
   return <Card content={formattedContent} />
 }
 
-function Transaction() {
+function Component() {
   const location = useLocation()
   const params = useParams()
   const [computer] = useState(Auth.getComputer())
@@ -229,4 +229,4 @@ function Transaction() {
   )
 }
 
-export default Transaction
+export const Transaction = { Component }

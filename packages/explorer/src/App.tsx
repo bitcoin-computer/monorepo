@@ -2,14 +2,13 @@ import "./App.css"
 import { useEffect } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import NavBar from "./components/Navbar"
-import Transaction from "./components/Transaction"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
 import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 import { initFlowbite } from "flowbite"
-import { Auth, Gallery, SmartObject } from "@bitcoin-computer/components"
+import { Auth, Gallery, SmartObject, Transaction } from "@bitcoin-computer/components"
 
 export default function App() {
   useEffect(() => {
@@ -27,7 +26,7 @@ export default function App() {
           <Route path="/" element={<Gallery.WithPagination />} />
           <Route path="/blocks" element={<Blocks />} />
           <Route path="/playground" element={<Playground />} />
-          <Route path="/transactions/:txn" element={<Transaction />} />
+          <Route path="/transactions/:txn" element={<Transaction.Component />} />
           <Route path="/blocks/:block" element={<Block />} />
           <Route path="/objects/:rev" element={<SmartObject.Component />} />
           <Route path="/modules/:rev" element={<Module />} />

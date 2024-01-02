@@ -53,6 +53,7 @@ import { capitalizeFirstLetter, isValidRev, sleep, toObject } from "./common/uti
 import reactStringReplace from "react-string-replace";
 import { ModalOld } from "./ModalOld";
 import { Auth } from "./Auth";
+import { Card } from "./Card";
 var keywords = ["_id", "_rev", "_owners", "_root", "_amount"];
 export var getErrorMessage = function (error) {
     var _a, _b, _c, _d, _e, _f;
@@ -89,10 +90,6 @@ export var getValueForType = function (type, stringValue) {
             return Number(stringValue);
     }
 };
-export function Card(_a) {
-    var content = _a.content;
-    return (_jsx("div", __assign({ className: "block mt-4 mb-8 p-6 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700" }, { children: _jsx("pre", __assign({ className: "font-normal text-gray-700 dark:text-gray-400 text-xs" }, { children: content })) })));
-}
 export var TypeSelectionDropdown = function (_a) {
     var id = _a.id, onSelectMethod = _a.onSelectMethod, dropdownList = _a.dropdownList, selectedType = _a.selectedType;
     var _b = useState(), dropDown = _b[0], setDropdown = _b[1];
