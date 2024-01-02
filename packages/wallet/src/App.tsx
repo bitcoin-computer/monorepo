@@ -2,7 +2,7 @@ import "./App.css"
 import { useCallback, useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate, Link } from "react-router-dom"
 import { initFlowbite } from "flowbite"
-import { Auth, SmartObject } from "@bitcoin-computer/components"
+import { Auth, SmartObject, Transaction } from "@bitcoin-computer/components"
 import { Send } from "./components/Send"
 import { Details } from "./components/Details"
 import { Computer } from "@bitcoin-computer/lib"
@@ -112,6 +112,7 @@ export default function App() {
           <Route path="/transactions" element={<Transactions />} />
           <Route path="/assets" element={<Assets />} />
           <Route path="/objects/:rev" element={<SmartObject.Component />} />
+          <Route path="/transactions/:txn" element={<Transaction.Component />} />
           <Route path="/details" element={<Details />} />
           <Route path="*" element={<Navigate to="/" replace={true} />} />
         </Routes>
