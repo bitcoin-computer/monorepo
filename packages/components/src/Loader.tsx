@@ -1,4 +1,4 @@
-function Loader() {
+export function Loader() {
   return (
     <div className="grid place-items-center h-screen w-full top-0 left-0 fixed">
       <svg
@@ -20,5 +20,3 @@ function Loader() {
     </div>
   )
 }
-
-export default Loader

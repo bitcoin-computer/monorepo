@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react"
-import { Dropdown, DropdownInterface, DropdownOptions, InstanceOptions, initFlowbite } from "flowbite"
+import {
+  Dropdown,
+  DropdownInterface,
+  DropdownOptions,
+  InstanceOptions,
+  initFlowbite,
+} from "flowbite"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
-import { capitalizeFirstLetter,  isValidRev,  sleep,  toObject } from "./common/utils"
+import { capitalizeFirstLetter, isValidRev, sleep, toObject } from "./common/utils"
 import reactStringReplace from "react-string-replace"
 import { ModalOld } from "./ModalOld"
 import { Auth } from "./Auth"
@@ -130,7 +136,11 @@ export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, select
 function ObjectValueCard({ content }: { content: string }) {
   const isRev = /([0-9a-fA-F]{64}:[0-9]+)/g
   const revLink = (rev: string, i: number) => (
-    <Link key={i} to={`/objects/${rev}`} className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
+    <Link
+      key={i}
+      to={`/objects/${rev}`}
+      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+    >
       {rev}
     </Link>
   )
@@ -349,10 +359,9 @@ function Component() {
     const fetch = async () => {
       try {
         const synced = await computer.sync(rev)
-        console.log('synced.constructor.name', synced.constructor.name)
         setSmartObject(synced)
       } catch (error) {
-        const [txId] = rev.split(':')
+        const [txId] = rev.split(":")
         navigate(`/transactions/${txId}`)
       }
     }
@@ -440,17 +449,20 @@ function Component() {
     setFormState(value)
   }
 
-  const [txId, outNum] = rev.split(':')
+  const [txId, outNum] = rev.split(":")
 
   return (
     <>
       <div>
         <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Output</h1>
         <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-        <Link
-          to={`/transactions/${txId}`}
-          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >{txId}</Link>:{outNum}
+          <Link
+            to={`/transactions/${txId}`}
+            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+          >
+            {txId}
+          </Link>
+          :{outNum}
         </p>
 
         <h2 className="mb-2 text-4xl font-bold dark:text-white">Data</h2>
@@ -480,5 +492,5 @@ function Component() {
 }
 
 export const SmartObject = {
-  Component
+  Component,
 }

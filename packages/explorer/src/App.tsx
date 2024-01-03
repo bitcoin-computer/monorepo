@@ -8,8 +8,7 @@ import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 import { initFlowbite } from "flowbite"
-import { Auth, Gallery, SmartObject, Transaction } from "@bitcoin-computer/components"
-
+import { Auth, Gallery, SmartObject, Transaction, Error404 } from "@bitcoin-computer/components"
 export default function App() {
   useEffect(() => {
     initFlowbite()
@@ -30,7 +29,7 @@ export default function App() {
           <Route path="/blocks/:block" element={<Block />} />
           <Route path="/objects/:rev" element={<SmartObject.Component />} />
           <Route path="/modules/:rev" element={<Module />} />
-          <Route path="*" element={<Navigate to="/" replace={true} />} />
+          <Route path="*" element={<Error404 />} />
         </Routes>
       </div>
     </BrowserRouter>

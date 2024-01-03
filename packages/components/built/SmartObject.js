@@ -47,7 +47,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
-import { Dropdown, initFlowbite } from "flowbite";
+import { Dropdown, initFlowbite, } from "flowbite";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { capitalizeFirstLetter, isValidRev, sleep, toObject } from "./common/utils";
 import reactStringReplace from "react-string-replace";
@@ -187,12 +187,11 @@ function Component() {
                         return [4 /*yield*/, computer.sync(rev)];
                     case 1:
                         synced = _a.sent();
-                        console.log('synced.constructor.name', synced.constructor.name);
                         setSmartObject(synced);
                         return [3 /*break*/, 3];
                     case 2:
                         error_1 = _a.sent();
-                        txId_1 = rev.split(':')[0];
+                        txId_1 = rev.split(":")[0];
                         navigate("/transactions/".concat(txId_1));
                         return [3 /*break*/, 3];
                     case 3: return [2 /*return*/];
@@ -284,9 +283,9 @@ function Component() {
         value["".concat(key, "--types")] = option;
         setFormState(value);
     };
-    var _g = rev.split(':'), txId = _g[0], outNum = _g[1];
+    var _g = rev.split(":"), txId = _g[0], outNum = _g[1];
     return (_jsxs(_Fragment, { children: [_jsxs("div", { children: [_jsx("h1", __assign({ className: "mb-2 text-5xl font-extrabold dark:text-white" }, { children: "Output" })), _jsxs("p", __assign({ className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400" }, { children: [_jsx(Link, __assign({ to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: txId })), ":", outNum] })), _jsx("h2", __assign({ className: "mb-2 text-4xl font-bold dark:text-white" }, { children: "Data" })), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(Functions, { smartObject: smartObject, functionsExist: functionsExist, formState: formState, updateFormValue: updateFormValue, updateTypes: updateTypes, handleSmartObjectMethod: handleSmartObjectMethod, options: options }), _jsx(MetaData, { smartObject: smartObject })] }), _jsx(ModalOld, { show: show, setShow: setShow, functionResult: functionResult, functionCallSuccess: functionCallSuccess })] }));
 }
 export var SmartObject = {
-    Component: Component
+    Component: Component,
 };

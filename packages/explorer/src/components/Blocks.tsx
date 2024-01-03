@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import Loader from "./Loader"
-import { Auth } from "@bitcoin-computer/components"
+import { Auth, Loader } from "@bitcoin-computer/components"
 
 export default function Blocks() {
   const navigate = useNavigate()
