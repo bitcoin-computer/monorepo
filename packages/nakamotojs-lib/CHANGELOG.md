@@ -1,25 +1,33 @@
+# 6.2.0
+**added**
+- ``sign`` method to ``Transaction`` class. This method allows to sign an individual input of a transaction. It is useful when the transaction is built manually and the inputs are not signed yet.
+
+**changed**
+- Using @bitcoin-computer/tiny-secp256k1 version ^2.2.0 instead of tiny-secp256k1
+- The prototype of ``updateInput`` and ``updateOutput`` from ``Transaction`` class has changed. The new prototype simplifies signing a single input. 
+
 # 6.1.4
-__fixed__
+**fixed**
 - ``inputFinalizeGetAmts`` now includes an extra parameter to disable the fee check.  
 - Add getters for input and output amounts of psbt transactions.
 
 # 6.1.3
-__added__
+**added**
 - ``bufferUtils``export. 
 
 # 6.1.2
-__added__
+**added**
 - ``bip371``export. 
 
 # 6.1.1
-__added__
+**added**
 - Litecoin support.
 
-__changed__
+**changed**
 - Using from @bitcoin-computer/nakamotojs-client instead of regtest-client
 
 # 6.1.0
-__added__
+**added**
 - taproot support for payments (p2tr) and PSBT. See taproot.spec.ts integration test for examples. (#1742)
 
 # 6.0.2
