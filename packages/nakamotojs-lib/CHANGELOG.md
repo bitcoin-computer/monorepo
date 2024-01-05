@@ -1,23 +1,23 @@
 # 6.2.0
 **added**
-- ``sign`` method to ``Transaction`` class. This method allows to sign an individual input of a transaction. It is useful when the transaction is built manually and the inputs are not signed yet.
-
+- Adds a `sign` method to the `Transaction` class. This method allows to sign an individual input of a transaction. This is useful as unlike PSBTs, Bitcoin transactions can be modified after signing.
+- Adds the functions `updateInput` and `updateOutput` to `Transaction` class.
+  
 **changed**
-- Using @bitcoin-computer/tiny-secp256k1 version ^2.2.0 instead of tiny-secp256k1
-- The prototype of ``updateInput`` and ``updateOutput`` from ``Transaction`` class has changed. The new prototype simplifies signing a single input. 
+- Now using `@bitcoin-computer/tiny-secp256k1` version ^2.2.0 instead of `tiny-secp256k1`
 
 # 6.1.4
 **fixed**
-- ``inputFinalizeGetAmts`` now includes an extra parameter to disable the fee check.  
+- `inputFinalizeGetAmts` now includes an extra parameter to disable the fee check.  
 - Add getters for input and output amounts of psbt transactions.
 
 # 6.1.3
 **added**
-- ``bufferUtils``export. 
+- `bufferUtils` export. 
 
 # 6.1.2
 **added**
-- ``bip371``export. 
+- `bip371` export. 
 
 # 6.1.1
 **added**
