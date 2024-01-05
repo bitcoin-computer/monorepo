@@ -1,4 +1,3 @@
-import { bufferUtils } from '.';
 import {
   BufferReader,
   BufferWriter,
@@ -189,43 +188,30 @@ export class Transaction {
 
   updateInput(
     inputIndex: number,
-    opts: {
-      hash?: Buffer;
-      txId?: string;
-      index?: number;
-      sequence?: number;
-      scriptSig?: Buffer;
-      witness?: Buffer;
-    },
+    hash?: Buffer,
+    outputIndex?: number,
+    sequence?: number,
+    scriptSig?: Buffer,
+    witness?: Buffer,
   ): void {
     typeforce(
-      types.tuple(types.Number, {
-        hash: types.maybe(types.Hash256bit),
-        txId: types.maybe(types.String),
-        index: types.maybe(types.UInt32),
-        sequence: types.maybe(types.UInt32),
-        scriptSig: types.maybe(types.Buffer),
-        witness: types.maybe(types.Buffer),
-      }),
+      types.tuple(
+        types.Number,
+        types.maybe(types.Hash256bit),
+        types.maybe(types.UInt32),
+        types.maybe(types.UInt32),
+        types.maybe(types.Buffer),
+      ),
       arguments,
     );
-
-    const { hash, txId, index, sequence, scriptSig, witness } = opts;
 
     if (inputIndex >= this.ins.length)
       throw new Error('No input at index: ' + inputIndex);
 
-    if (hash && txId)
-      throw new Error('Cannot provide hash and txId simultaneously');
-
     if (typeof hash !== 'undefined') this.ins[inputIndex].hash = hash;
 
-    if (typeof txId !== 'undefined')
-      this.ins[inputIndex].hash = bufferUtils.reverseBuffer(
-        Buffer.from(txId, 'hex'),
-      );
-
-    if (typeof index !== 'undefined') this.ins[inputIndex].index = index;
+    if (typeof outputIndex !== 'undefined')
+      this.ins[inputIndex].index = outputIndex;
 
     if (typeof sequence !== 'undefined')
       this.ins[inputIndex].sequence = sequence;
@@ -251,20 +237,17 @@ export class Transaction {
 
   updateOutput(
     outputIndex: number,
-    opts: {
-      scriptPubKey?: Buffer;
-      value?: number;
-    },
+    scriptPubKey?: Buffer,
+    value?: number,
   ): void {
     typeforce(
-      types.tuple(types.Number, {
-        scriptPubKey: types.maybe(types.Buffer),
-        value: types.maybe(types.Satoshi),
-      }),
+      types.tuple(
+        types.Number,
+        types.maybe(types.Buffer),
+        types.maybe(types.Satoshi),
+      ),
       arguments,
     );
-
-    const { scriptPubKey, value } = opts;
 
     if (outputIndex >= this.outs.length)
       throw new Error('No output at index: ' + outputIndex);
@@ -343,6 +326,7 @@ export class Transaction {
     sighashType: number,
     prevOutScript: Buffer,
   ) {
+    const prevOutIdx = this.ins[inIndex].index;
     const hash = this.hashForSignature(
       inIndex,
       prevOutScript as Buffer,
@@ -366,10 +350,14 @@ export class Transaction {
       isP2SH,
       isP2WSH,
     );
-    this.updateInput(inIndex, {
-      scriptSig: finalScriptSig,
-      witness: finalScriptWitness,
-    });
+    this.updateInput(
+      inIndex,
+      undefined,
+      prevOutIdx,
+      undefined,
+      finalScriptSig,
+      finalScriptWitness,
+    );
     return this;
   }
 

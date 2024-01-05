@@ -59,10 +59,9 @@ export function fromBase58Check(address: string): Base58CheckResult {
   if (payload.length < 21) throw new TypeError(address + ' is too short');
   if (payload.length > 21) throw new TypeError(address + ' is too long');
 
-  // @ts-ignore
-  const version = payload.readUint8(0, true);
-
+  const version = payload.readUint8(0);
   const hash = payload.slice(1);
+
   return { version, hash };
 }
 

@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import * as ecc from 'tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import { describe, it } from 'mocha';
 import { PaymentCreator } from '../src/payments';
 import * as u from './payments.utils';
