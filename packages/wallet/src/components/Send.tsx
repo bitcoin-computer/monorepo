@@ -1,6 +1,6 @@
 import { initFlowbite } from "flowbite"
 import { useCallback, useEffect, useState } from "react"
-import { Auth, SnackBar } from "@bitcoin-computer/components"
+import { Auth, UtilsContext } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
 import { HiRefresh } from "react-icons/hi"
 import TransactionTable from "./TransactionTable"
@@ -36,9 +36,7 @@ export function SendForm({ computer }: { computer: Computer }) {
   const [to, setTo] = useState<string>("")
   const [amount, setAmount] = useState<string>("")
   const [fee, setFee] = useState<string>("2")
-  const [message, setMessage] = useState<string>("")
-  const [show, setShow] = useState<boolean>(false)
-  const [success, setSuccess] = useState<boolean>(false)
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     initFlowbite()
@@ -51,13 +49,9 @@ export function SendForm({ computer }: { computer: Computer }) {
     try {
       // @ts-ignore
       const txId = await computer.send(Number(amount) * 1e8, to)
-      setMessage(`Sent ${amount} ${computer.getChain()} to ${to} via transaction ${txId}`)
-      setSuccess(true)
-      setShow(true)
+      showSnackBar(`Sent ${amount} ${computer.getChain()} to ${to} via transaction ${txId}`, true)
     } catch (err) {
-      setMessage(`Something went wrong ${err instanceof Error ? err.message : ""}`)
-      setSuccess(false)
-      setShow(true)
+      showSnackBar(`Something went wrong ${err instanceof Error ? err.message : ""}`, false)
     }
   }
 
@@ -124,7 +118,6 @@ export function SendForm({ computer }: { computer: Computer }) {
           Send
         </button>
       </form>
-      {show && <SnackBar message={message} success={success} setShow={setShow} />}
     </>
   )
 }

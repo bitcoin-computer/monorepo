@@ -51,7 +51,7 @@ import { Link, useLocation } from "react-router-dom";
 import { jsonMap, strip, toObject } from "./common/utils";
 import { Auth } from "./Auth";
 import { initFlowbite } from "flowbite";
-import { Loader } from "./common/Components";
+import { useUtilsComponents } from "./UtilsContext";
 function HomePageCard(_a) {
     var content = _a.content;
     return (_jsx("div", __assign({ className: "block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" }, { children: _jsx("pre", __assign({ className: "font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs" }, { children: content() })) })));
@@ -103,11 +103,11 @@ export default function WithPagination(_a) {
     var publicKey = _a.publicKey;
     var contractsPerPage = 12;
     var computer = useState(Auth.getComputer())[0];
-    var _b = useState(true), isLoading = _b[0], setIsLoading = _b[1];
-    var _c = useState(0), pageNum = _c[0], setPageNum = _c[1];
-    var _d = useState(true), isNextAvailable = _d[0], setIsNextAvailable = _d[1];
-    var _e = useState(pageNum > 0), isPrevAvailable = _e[0], setIsPrevAvailable = _e[1];
-    var _f = useState([]), revs = _f[0], setRevs = _f[1];
+    var showLoader = useUtilsComponents().showLoader;
+    var _b = useState(0), pageNum = _b[0], setPageNum = _b[1];
+    var _c = useState(true), isNextAvailable = _c[0], setIsNextAvailable = _c[1];
+    var _d = useState(pageNum > 0), isPrevAvailable = _d[0], setIsPrevAvailable = _d[1];
+    var _e = useState([]), revs = _e[0], setRevs = _e[1];
     var location = useLocation();
     var pubKey = publicKey || new URLSearchParams(location.search).get("public-key");
     useEffect(function () {
@@ -119,25 +119,28 @@ export default function WithPagination(_a) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
+                        showLoader(true);
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 3, , 4]);
                         queryParms = {};
                         queryParms["offset"] = contractsPerPage * pageNum;
                         queryParms["limit"] = contractsPerPage + 1;
                         if (pubKey)
                             queryParms["publicKey"] = pubKey;
                         return [4 /*yield*/, computer.query(queryParms)];
-                    case 1:
+                    case 2:
                         queryRevs = _a.sent();
                         setIsNextAvailable(queryRevs.length > contractsPerPage);
                         setRevs(queryRevs);
-                        return [3 /*break*/, 3];
-                    case 2:
+                        return [3 /*break*/, 4];
+                    case 3:
                         error_1 = _a.sent();
                         // todo: forward to error page here
                         console.log("Error loading revisions", error_1);
-                        return [3 /*break*/, 3];
-                    case 3:
-                        setIsLoading(false);
+                        return [3 /*break*/, 4];
+                    case 4:
+                        showLoader(false);
                         return [2 /*return*/];
                 }
             });
@@ -160,7 +163,7 @@ export default function WithPagination(_a) {
             return [2 /*return*/];
         });
     }); };
-    return (_jsxs("div", __assign({ className: "relative sm:rounded-lg pt-4" }, { children: [_jsx(FromRevs, { revs: revs, computer: computer }), !(pageNum === 0 && revs && revs.length === 0) && (_jsx(Pagination, { revs: revs, isPrevAvailable: isPrevAvailable, handlePrev: handlePrev, isNextAvailable: isNextAvailable, handleNext: handleNext })), isLoading && _jsx(Loader, {})] })));
+    return (_jsxs("div", __assign({ className: "relative sm:rounded-lg pt-4" }, { children: [_jsx(FromRevs, { revs: revs, computer: computer }), !(pageNum === 0 && revs && revs.length === 0) && (_jsx(Pagination, { revs: revs, isPrevAvailable: isPrevAvailable, handlePrev: handlePrev, isNextAvailable: isNextAvailable, handleNext: handleNext }))] })));
 }
 export var Gallery = {
     FromRevs: FromRevs,

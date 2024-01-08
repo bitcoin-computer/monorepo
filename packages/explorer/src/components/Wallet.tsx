@@ -1,15 +1,17 @@
 import { useCallback, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { Drawer } from "./Drawer"
-import { Auth } from "@bitcoin-computer/components"
+import { Auth, UtilsContext } from "@bitcoin-computer/components"
 
 const Balance = ({ computer }: any) => {
   const [balance, setBalance] = useState<number>(0)
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   const refreshBalance = useCallback(async () => {
     try {
       if (computer) setBalance(await computer.getBalance())
     } catch (err) {
+      showSnackBar("Error fetching wallet details", false)
       console.log("Error fetching wallet details", err)
     }
   }, [computer])

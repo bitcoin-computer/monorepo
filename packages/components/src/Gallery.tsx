@@ -4,7 +4,7 @@ import { Link, useLocation } from "react-router-dom"
 import { jsonMap, strip, toObject } from "./common/utils"
 import { Auth } from "./Auth"
 import { initFlowbite } from "flowbite"
-import { Loader } from "./common/Components"
+import { useUtilsComponents } from "./UtilsContext"
 
 function HomePageCard({ content }: any) {
   return (
@@ -141,7 +141,7 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
 export default function WithPagination({ publicKey }: { publicKey?: string }) {
   const contractsPerPage = 12
   const [computer] = useState(Auth.getComputer())
-  const [isLoading, setIsLoading] = useState(true)
+  const { showLoader } = useUtilsComponents()
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(true)
   const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
@@ -155,6 +155,7 @@ export default function WithPagination({ publicKey }: { publicKey?: string }) {
 
   useEffect(() => {
     const fetch = async () => {
+      showLoader(true)
       try {
         const queryParms: Record<string, string | number> = {}
         queryParms["offset"] = contractsPerPage * pageNum
@@ -167,7 +168,7 @@ export default function WithPagination({ publicKey }: { publicKey?: string }) {
         // todo: forward to error page here
         console.log("Error loading revisions", error)
       }
-      setIsLoading(false)
+      showLoader(false)
     }
     fetch()
   }, [computer, pageNum, publicKey])
@@ -195,7 +196,6 @@ export default function WithPagination({ publicKey }: { publicKey?: string }) {
           handleNext={handleNext}
         />
       )}
-      {isLoading && <Loader />}
     </div>
   )
 }

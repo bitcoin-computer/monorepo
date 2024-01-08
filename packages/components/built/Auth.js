@@ -12,7 +12,7 @@ var __assign = (this && this.__assign) || function () {
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
-import { SnackBar } from "./SnackBar";
+import { useUtilsComponents } from "./UtilsContext";
 import { Modal } from "./Modal";
 import { initFlowbite } from "flowbite";
 function isLoggedIn() {
@@ -113,9 +113,7 @@ function UrlInput(_a) {
 }
 function LoginButton(_a) {
     var mnemonic = _a.mnemonic, chain = _a.chain, network = _a.network, path = _a.path, url = _a.url;
-    var _b = useState(false), show = _b[0], setShow = _b[1];
-    var _c = useState(false), success = _c[0], setSuccess = _c[1];
-    var _d = useState(""), message = _d[0], setMessage = _d[1];
+    var showSnackBar = useUtilsComponents().showSnackBar;
     var login = function (e) {
         e.preventDefault();
         try {
@@ -127,9 +125,7 @@ function LoginButton(_a) {
         }
         catch (error) {
             if (error instanceof Error) {
-                setMessage(error.message);
-                setSuccess(false);
-                setShow(true);
+                showSnackBar(error.message, false);
             }
             return;
         }
@@ -140,7 +136,7 @@ function LoginButton(_a) {
         localStorage.setItem("URL", url);
         window.location.href = "/";
     };
-    return (_jsxs(_Fragment, { children: [_jsx("button", __assign({ onClick: login, type: "submit", className: "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Log In" })), show && _jsx(SnackBar, { message: message, success: success, setShow: setShow })] }));
+    return (_jsx(_Fragment, { children: _jsx("button", __assign({ onClick: login, type: "submit", className: "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Log In" })) }));
 }
 function LoginForm() {
     var _a = useState(""), mnemonic = _a[0], setMnemonic = _a[1];

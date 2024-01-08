@@ -1,6 +1,6 @@
 import { Dispatch, useEffect, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
-import { SnackBar } from "./SnackBar"
+import { useUtilsComponents } from "./UtilsContext"
 import { Modal } from "./Modal"
 import { initFlowbite } from "flowbite"
 import type { Chain, Network } from "./common/types"
@@ -323,9 +323,7 @@ function UrlInput({
 }
 
 function LoginButton({ mnemonic, chain, network, path, url }: any) {
-  const [show, setShow] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [message, setMessage] = useState("")
+  const { showSnackBar } = useUtilsComponents()
 
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
@@ -337,9 +335,7 @@ function LoginButton({ mnemonic, chain, network, path, url }: any) {
       new Computer({ mnemonic, chain, network, path, url })
     } catch (error) {
       if (error instanceof Error) {
-        setMessage(error.message)
-        setSuccess(false)
-        setShow(true)
+        showSnackBar(error.message, false)
       }
       return
     }
@@ -361,7 +357,7 @@ function LoginButton({ mnemonic, chain, network, path, url }: any) {
       >
         Log In
       </button>
-      {show && <SnackBar message={message} success={success} setShow={setShow} />}
+      {/* {show && <SnackBar message={message} success={success} hideSnackBar={setShow} />} */}
     </>
   )
 }

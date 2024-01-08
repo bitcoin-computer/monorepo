@@ -2,7 +2,13 @@ import "./App.css"
 import { useCallback, useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate, Link } from "react-router-dom"
 import { initFlowbite } from "flowbite"
-import { Auth, SmartObject, Transaction, Error404 } from "@bitcoin-computer/components"
+import {
+  Auth,
+  SmartObject,
+  Transaction,
+  Error404,
+  UtilsContext,
+} from "@bitcoin-computer/components"
 import { Send } from "./components/Send"
 import { Details } from "./components/Details"
 import { Computer } from "@bitcoin-computer/lib"
@@ -178,22 +184,24 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <SideBar />
-      <div className="p-4 sm:ml-64">
-        <div className="p-8 max-w-screen-xl">
-          <Routes>
-            <Route path="/" element={<Send />} />
-            <Route path="/send" element={<Send />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/assets" element={<Assets />} />
-            <Route path="/objects/:rev" element={<SmartObject.Component />} />
-            <Route path="/transactions/:txn" element={<Transaction.Component />} />
-            <Route path="/details" element={<Details />} />
-            <Route path="*" element={<Error404 />} />
-          </Routes>
-          <Auth.LoginModal />
+      <UtilsContext.UtilsProvider>
+        <SideBar />
+        <div className="p-4 sm:ml-64">
+          <div className="p-8 max-w-screen-xl">
+            <Routes>
+              <Route path="/" element={<Send />} />
+              <Route path="/send" element={<Send />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/assets" element={<Assets />} />
+              <Route path="/objects/:rev" element={<SmartObject.Component />} />
+              <Route path="/transactions/:txn" element={<Transaction.Component />} />
+              <Route path="/details" element={<Details />} />
+              <Route path="*" element={<Error404 />} />
+            </Routes>
+            <Auth.LoginModal />
+          </div>
         </div>
-      </div>
+      </UtilsContext.UtilsProvider>
     </BrowserRouter>
   )
 }
