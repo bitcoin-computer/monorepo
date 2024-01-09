@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import BIP32Factory from 'bip32';
-import * as ecc from 'tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import ECPairFactory from 'ecpair';
 import { describe, it } from 'mocha';
 import * as bitcoin from '../..';
@@ -263,7 +263,11 @@ describe('nakamotojs-lib (transactions with psbt)', () => {
       network: regtestLitecoinUtils.network,
     });
 
-    buyerTx.updateInput(0, buyerPayment0); // N + MIN
+    buyerTx.updateInput(
+      0,
+      bitcoin.bufferUtils.reverseBuffer(Buffer.from(buyerPayment0.hash, 'hex')),
+      buyerPayment0.index,
+    ); // N + MIN
     // miners fee
     buyerTx.addInput(
       bitcoin.bufferUtils.reverseBuffer(
@@ -271,7 +275,7 @@ describe('nakamotojs-lib (transactions with psbt)', () => {
       ),
       buyerPaymentToMiners.index,
     );
-    buyerTx.updateOutput(0, { scriptPubKey: buyerOutput0.output!, value: MIN }); // Output 0
+    buyerTx.updateOutput(0, buyerOutput0.output!, MIN); // Output 0
     buyerTx.addOutput(buyerOutput0.output!, MIN); // Output 2
 
     buyerTx.sign(
