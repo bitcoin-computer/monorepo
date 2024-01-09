@@ -45,8 +45,10 @@ function getUrl(chain: Chain, network: Network) {
 }
 
 function defaultConfiguration() {
-  const chain = (localStorage.getItem("CHAIN") as Chain) || "LTC"
-  const network = (localStorage.getItem("NETWORK") as Network) || "regtest"
+  const chain = (process.env[`REACT_APP_CHAIN`] || localStorage.getItem("CHAIN") || "LTC") as Chain
+  const network = (process.env[`REACT_APP_NETWORK`] ||
+    localStorage.getItem("NETWORK") ||
+    "regtest") as Network
   const url = getUrl(chain, network)
   return { chain, network, url }
 }
