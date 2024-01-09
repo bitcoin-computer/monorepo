@@ -2,4 +2,4 @@
 
 ## Building
 
-- To build the code run `yarn tsc-compile`
+To re-build the code run `yarn compile`. You might have to restart the applications.

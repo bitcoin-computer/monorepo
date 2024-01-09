@@ -6,7 +6,9 @@
   "types": "built/index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc-compile": "rm -rf built/* && tsc"
+    "tsc-compile": "rm -rf built/* && tsc",
+    "install-monorepo": "cd ../../ && yarn install && cd packages/components",
+    "compile": "yarn tsc-compile && yarn install-monorepo"
   },
   "author": "",
   "license": "ISC",
@@ -15,5 +17,8 @@
     "flowbite": "^2.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@babel/preset-react": "^7.23.3"
   }
 }

@@ -1,15 +1,17 @@
 import { useCallback, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { Drawer } from "./Drawer"
-import { getComputer, logout } from "@bitcoin-computer/components"
+import { Auth, UtilsContext } from "@bitcoin-computer/components"
 
 const Balance = ({ computer }: any) => {
   const [balance, setBalance] = useState<number>(0)
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   const refreshBalance = useCallback(async () => {
     try {
       if (computer) setBalance(await computer.getBalance())
     } catch (err) {
+      showSnackBar("Error fetching wallet details", false)
       console.log("Error fetching wallet details", err)
     }
   }, [computer])
@@ -87,8 +89,7 @@ const Path = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Path</h6>
     <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
-      {/* {computer.getPath()} */}
-      computer.getPath()
+      {computer.getPath()}
     </p>
   </div>
 )
@@ -97,8 +98,25 @@ const Url = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Node Url</h6>
     <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
-      {/* {computer.getUrl()} */}
-      computer.getUrl()
+      {computer.getUrl()}
+    </p>
+  </div>
+)
+
+const Chain = ({ computer }: any) => (
+  <div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Chain</h6>
+    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+      {computer.getChain()}
+    </p>
+  </div>
+)
+
+const Network = ({ computer }: any) => (
+  <div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Network</h6>
+    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+      {computer.getNetwork()}
     </p>
   </div>
 )
@@ -109,12 +127,12 @@ const LogOut = () => {
       <div className="mb-6">
         <h6 className="text-lg font-bold dark:text-white">Log out</h6>
         <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-          Logging out will delete your mnemonic, make sure to write it down.
+          Logging out will delete your mnemonic. Make sure to write it down.
         </p>
       </div>
       <div className="grid grid-cols-2 gap-4">
         <button
-          onClick={logout}
+          onClick={Auth.logout}
           className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
         >
           Log out
@@ -125,7 +143,7 @@ const LogOut = () => {
 }
 
 export default function Wallet() {
-  const [computer] = useState(getComputer())
+  const [computer] = useState(Auth.getComputer())
 
   const Content = () => (
     <>
@@ -134,9 +152,12 @@ export default function Wallet() {
       <Address computer={computer} />
       <PublicKey computer={computer} />
       <Path computer={computer} />
-      <Url computer={computer} />
       <Mnemonic computer={computer} />
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
+      <Chain computer={computer} />
+      <Network computer={computer} />
+      <Url computer={computer} />
+      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>
   )

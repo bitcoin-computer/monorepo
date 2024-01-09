@@ -1,5 +1,9 @@
 export { SnackBar } from "./SnackBar";
-// export { LoginModal } from "./Login";
-export * from "./Login";
-export * from "./Modal";
-export { Simple } from "./Simple";
+export { Auth } from "./Auth";
+export { Modal } from "./Modal";
+export { Gallery } from "./Gallery";
+export { SmartObject } from "./SmartObject";
+export { ModalOld } from "./ModalOld";
+export { Transaction } from "./Transaction";
+export { Error404 } from "./Error404";
+export { UtilsContext } from "./UtilsContext";

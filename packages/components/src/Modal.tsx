@@ -1,22 +1,34 @@
-export const ShowModal = ({ id, text }: any) => (
+import { Modal as ModalClass } from 'flowbite';
+import type { ModalOptions, ModalInterface } from 'flowbite';
+import type { InstanceOptions } from 'flowbite';
+import { useState } from 'react';
+
+const get = (id: string) => {
+  const $modalElement = document.querySelector(`#${id}`) as HTMLElement
+  const modalOptions: ModalOptions = {}
+  const instanceOptions: InstanceOptions = { id, override: true }
+  return new ModalClass($modalElement, modalOptions, instanceOptions)
+}
+
+const ShowButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-show={id} type="button">
     {text}
   </button>
 );
 
-export const HideModal = ({ id, text }: any) => (
+const HideButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-hide={id} type="button">
     {text}
   </button>
 );
 
-export const ToggleModal = ({ id, text }: any) => (
+const ToggleButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-toggle={id} type="button">
     {text}
   </button>
 );
 
-export const Modal = ({ title, content, id }: any) => (
+const Component = ({ title, content, id }: any) => (
   <div
     id={id}
     tabIndex={-1}
@@ -57,3 +69,11 @@ export const Modal = ({ title, content, id }: any) => (
     </div>
   </div>
 );
+
+export const Modal = {
+  get,
+  ShowButton,
+  HideButton,
+  ToggleButton,
+  Component, 
+}

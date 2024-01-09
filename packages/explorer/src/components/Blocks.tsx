@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import Loader from "./Loader"
-import { getComputer } from "@bitcoin-computer/components"
+import { Auth, UtilsContext } from "@bitcoin-computer/components"
 
 export default function Blocks() {
   const navigate = useNavigate()
-  const [computer] = useState(getComputer())
+  const [computer] = useState(Auth.getComputer())
   const blocksPerPage = 100
 
-  const [isLoading, setIsLoading] = useState(false)
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(true)
   const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
@@ -17,14 +16,15 @@ export default function Blocks() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        setIsLoading(true)
+        showLoader(true)
         // @ts-ignore
         const res = await computer.rpcCall("getblockchaininfo", "")
         setTotalBlocks(res.result.blocks)
-        setIsLoading(false)
+        showLoader(false)
       } catch (error) {
-        setIsLoading(false)
+        showLoader(false)
         console.log("Error getting blocks", error)
+        showSnackBar("Error getting blocks", false)
       }
     }
     fetch()
@@ -41,6 +41,7 @@ export default function Blocks() {
         Array.from({ length: length }, (_, i) => totalBlocks - (pageNum * blocksPerPage + i))
       )
     } catch (error) {
+      showSnackBar("Error setting blocks", false)
       console.log("Error setting blocks", error)
     }
   }, [totalBlocks, pageNum])
@@ -145,7 +146,6 @@ export default function Blocks() {
           </ul>
         </nav>
       )}
-      {isLoading && <Loader />}
     </div>
   )
 }

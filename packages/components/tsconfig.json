@@ -16,7 +16,11 @@
     "noEmit": false,
     "jsx": "react-jsx",
     "declaration": true,
-    "outDir": "./built"
+    "outDir": "./built",
+    "paths": {
+      "react": [ "./node_modules/@types/react" ]
+    }
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["./built/*"]
 }

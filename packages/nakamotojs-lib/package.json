@@ -90,7 +90,7 @@
     "randombytes": "^2.1.0",
     "rimraf": "^2.6.3",
     "ts-node": "^8.3.0",
-    "typescript": "^4.4.4"
+    "typescript": "^4.9.5"
   },
   "license": "MIT"
 }
