@@ -1,6 +1,7 @@
 'use strict';
 Object.defineProperty(exports, '__esModule', { value: true });
 exports.Transaction = void 0;
+const _1 = require('.');
 const bufferutils_1 = require('./bufferutils');
 const bcrypto = require('./crypto');
 const psbt_1 = require('./psbt');
@@ -132,22 +133,29 @@ class Transaction {
       }) - 1
     );
   }
-  updateInput(inputIndex, hash, outputIndex, sequence, scriptSig, witness) {
+  updateInput(inputIndex, opts) {
     typeforce(
-      types.tuple(
-        types.Number,
-        types.maybe(types.Hash256bit),
-        types.maybe(types.UInt32),
-        types.maybe(types.UInt32),
-        types.maybe(types.Buffer),
-      ),
+      types.tuple(types.Number, {
+        hash: types.maybe(types.Hash256bit),
+        txId: types.maybe(types.String),
+        index: types.maybe(types.UInt32),
+        sequence: types.maybe(types.UInt32),
+        scriptSig: types.maybe(types.Buffer),
+        witness: types.maybe(types.Buffer),
+      }),
       arguments,
     );
+    const { hash, txId, index, sequence, scriptSig, witness } = opts;
     if (inputIndex >= this.ins.length)
       throw new Error('No input at index: ' + inputIndex);
+    if (hash && txId)
+      throw new Error('Cannot provide hash and txId simultaneously');
     if (typeof hash !== 'undefined') this.ins[inputIndex].hash = hash;
-    if (typeof outputIndex !== 'undefined')
-      this.ins[inputIndex].index = outputIndex;
+    if (typeof txId !== 'undefined')
+      this.ins[inputIndex].hash = _1.bufferUtils.reverseBuffer(
+        Buffer.from(txId, 'hex'),
+      );
+    if (typeof index !== 'undefined') this.ins[inputIndex].index = index;
     if (typeof sequence !== 'undefined')
       this.ins[inputIndex].sequence = sequence;
     if (typeof scriptSig !== 'undefined')
@@ -165,15 +173,15 @@ class Transaction {
       }) - 1
     );
   }
-  updateOutput(outputIndex, scriptPubKey, value) {
+  updateOutput(outputIndex, opts) {
     typeforce(
-      types.tuple(
-        types.Number,
-        types.maybe(types.Buffer),
-        types.maybe(types.Satoshi),
-      ),
+      types.tuple(types.Number, {
+        scriptPubKey: types.maybe(types.Buffer),
+        value: types.maybe(types.Satoshi),
+      }),
       arguments,
     );
+    const { scriptPubKey, value } = opts;
     if (outputIndex >= this.outs.length)
       throw new Error('No output at index: ' + outputIndex);
     if (typeof scriptPubKey !== 'undefined')
@@ -234,7 +242,6 @@ class Transaction {
     return newTx;
   }
   sign(inIndex, keyPair, sighashType, prevOutScript) {
-    const prevOutIdx = this.ins[inIndex].index;
     const hash = this.hashForSignature(inIndex, prevOutScript, sighashType);
     const scriptType = (0, psbt_1.classifyScript)(prevOutScript);
     const partialSig = [
@@ -255,14 +262,10 @@ class Transaction {
       isP2SH,
       isP2WSH,
     );
-    this.updateInput(
-      inIndex,
-      undefined,
-      prevOutIdx,
-      undefined,
-      finalScriptSig,
-      finalScriptWitness,
-    );
+    this.updateInput(inIndex, {
+      scriptSig: finalScriptSig,
+      witness: finalScriptWitness,
+    });
     return this;
   }
   /**

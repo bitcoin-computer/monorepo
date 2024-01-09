@@ -198,6 +198,8 @@ describe('Transaction', () => {
   describe('updateInput', () => {
     let prevTxHash: Buffer;
     let prevTxHash2: Buffer;
+    let prevTxId2: string;
+
     beforeEach(() => {
       prevTxHash = Buffer.from(
         'ffffffff00ffff000000000000000000000000000000000000000000101010ff',
@@ -208,15 +210,36 @@ describe('Transaction', () => {
         'ffffffff00ffff000000000000000000000000000000000000000000101010aa',
         'hex',
       );
+      prevTxId2 =
+        'aa101010000000000000000000000000000000000000000000ffff00ffffffff';
     });
 
-    it('updates an index', () => {
+    it('updates an index with a hash', () => {
       const tx = new Transaction();
       assert.strictEqual(tx.addInput(prevTxHash, 0), 0);
       assert.strictEqual(tx.ins[0].index, 0);
-      tx.updateInput(0, prevTxHash2, 1);
+      tx.updateInput(0, { hash: prevTxHash2, index: 1 });
       assert.strictEqual(tx.ins[0].index, 1);
       assert.strictEqual(tx.ins[0].hash, prevTxHash2);
+    });
+    it('updates an index with a txId', () => {
+      const tx = new Transaction();
+      assert.strictEqual(tx.addInput(prevTxHash, 0), 0);
+      assert.strictEqual(tx.ins[0].index, 0);
+      tx.updateInput(0, { txId: prevTxId2, index: 1 });
+      assert.strictEqual(tx.ins[0].index, 1);
+      assert.deepStrictEqual(tx.ins[0].hash, prevTxHash2);
+    });
+
+    it('throws an error txId', () => {
+      const tx = new Transaction();
+      assert.strictEqual(tx.addInput(prevTxHash, 0), 0);
+      assert.strictEqual(tx.ins[0].index, 0);
+      tx.updateInput(0, { txId: prevTxId2, index: 1 });
+
+      assert.throws(() => {
+        tx.updateInput(0, { hash: prevTxHash2, txId: prevTxId2 });
+      }, /Cannot provide hash and txId simultaneously/);
     });
   });
 
@@ -232,7 +255,7 @@ describe('Transaction', () => {
     it('returns an index', () => {
       const tx = new Transaction();
       assert.strictEqual(tx.addOutput(Buffer.alloc(0), 0), 0);
-      tx.updateOutput(0, Buffer.alloc(1), 1);
+      tx.updateOutput(0, { scriptPubKey: Buffer.alloc(1), value: 1 });
       assert.strictEqual(tx.outs[0].value, 1);
       assert.strictEqual(
         tx.outs[0].script.toString(),
