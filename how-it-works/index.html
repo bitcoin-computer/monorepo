@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758125003619">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 3.5.0">
+
+    <!-- Primary Meta Tags -->
+    <title>How it Works</title>
+    <meta name="title" content="How it Works">
+    <meta name="description" content="We recommend to read the tutorial first.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="/how-it-works/">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="/how-it-works/">
+    <meta property="og:title" content="How it Works">
+    <meta property="og:description" content="We recommend to read the tutorial first.">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="/how-it-works/">
+    <meta property="twitter:title" content="How it Works">
+    <meta property="twitter:description" content="We recommend to read the tutorial first.">
+
+    <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
+
+    <link href="../static/favicon.ico" rel="icon">
+    <link href="../resources/css/retype.css?v=3.5.0.758125003619" rel="stylesheet">
+
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.758125003619" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.758125003619" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.5.0.758125003619" defer></script>
+    <link href="../resources/css/katex.css?v=3.5.0" rel="stylesheet">
+    <script id="katex-js" data-cfasync="false" src="../resources/js/katex.js?v=3.5.0" defer></script>
+</head>
+<body>
+    <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
+        <div class="absolute bottom-0 left-0 bg-gray-100 dark:bg-dark-800" style="top: 5rem; right: 50%"></div>
+    
+        <header id="docs-site-header" class="sticky top-0 z-30 flex w-full h-16 bg-white border-b border-gray-200 md:h-20 dark:bg-dark-850 dark:border-dark-650">
+            <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+                <!-- Mobile menu button skeleton -->
+                <button v-cloak class="skeleton docs-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-none rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+                <div v-cloak id="docs-sidebar-toggle"></div>
+        
+                <!-- Logo -->
+                <div class="flex items-center justify-between h-full py-2 md:w-75">
+                    <div class="flex items-center px-2 md:px-6">
+                        <a id="docs-site-logo" href="../" class="flex items-center leading-snug text-xl">
+                            <span class="dark:text-white font-semibold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
+                        </a><span class="hidden px-2 py-1 ml-4 text-sm font-semibold leading-none text-root-logo-label-text bg-root-logo-label-bg rounded-sm md:inline-block">0.17.0</span>
+                    </div>
+        
+                    <span class="hidden h-8 border-r md:inline-block dark:border-dark-650"></span>
+                </div>
+        
+                <div class="flex justify-between md:grow">
+                    <!-- Top Nav -->
+                    <nav class="hidden md:flex">
+                        <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                            
+                        </ul>
+                    </nav>
+        
+                    <!-- Header Right Skeleton -->
+                    <div v-cloak class="flex justify-end grow skeleton">
+        
+                        <!-- Search input mock -->
+                        <div class="relative hidden w-40 lg:block lg:max-w-sm lg:ml-auto">
+                            <div class="absolute flex items-center justify-center h-full pl-3 dark:text-dark-300">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-base" width="16" height="16" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 1px;"><g fill="currentColor" ><path d="M21.71 20.29l-3.68-3.68A8.963 8.963 0 0020 11c0-4.96-4.04-9-9-9s-9 4.04-9 9 4.04 9 9 9c2.12 0 4.07-.74 5.61-1.97l3.68 3.68c.2.19.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.03 0-1.42zM4 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 1.92-.78 3.66-2.04 4.93-.01.01-.02.01-.02.01-.01.01-.01.01-.01.02A6.98 6.98 0 0111 18c-3.86 0-7-3.14-7-7z" ></path></g></svg>
+                            </div>
+                            <input class="w-full h-10 placeholder-gray-400 transition-colors duration-200 ease-in bg-gray-200 border border-transparent rounded md:text-sm hover:bg-white hover:border-gray-300 focus:outline-none focus:bg-white focus:border-gray-500 dark:bg-dark-600 dark:border-dark-600 dark:placeholder-dark-400" style="padding: 0.625rem 0.75rem 0.625rem 2rem" type="text" placeholder="Search">
+                        </div>
+        
+                        <!-- Mobile search button -->
+                        <div class="flex items-center justify-center w-10 h-10 lg:hidden">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 icon-base" width="20" height="20" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor" ><path d="M21.71 20.29l-3.68-3.68A8.963 8.963 0 0020 11c0-4.96-4.04-9-9-9s-9 4.04-9 9 4.04 9 9 9c2.12 0 4.07-.74 5.61-1.97l3.68 3.68c.2.19.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.03 0-1.42zM4 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 1.92-.78 3.66-2.04 4.93-.01.01-.02.01-.02.01-.01.01-.01.01-.01.02A6.98 6.98 0 0111 18c-3.86 0-7-3.14-7-7z" ></path></g></svg>
+                        </div>
+        
+                        <!-- Dark mode switch placeholder -->
+                        <div class="w-10 h-10 lg:ml-2"></div>
+        
+                        <!-- History button -->
+                        <div class="flex items-center justify-center w-10 h-10" style="margin-right: -0.625rem;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 icon-base" width="22" height="22" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor" ><g ><path d="M12.01 6.01c-.55 0-1 .45-1 1V12a1 1 0 00.4.8l3 2.22a.985.985 0 001.39-.2.996.996 0 00-.21-1.4l-2.6-1.92V7.01c.02-.55-.43-1-.98-1z"></path><path d="M12.01 1.91c-5.33 0-9.69 4.16-10.05 9.4l-.29-.26a.997.997 0 10-1.34 1.48l1.97 1.79c.19.17.43.26.67.26s.48-.09.67-.26l1.97-1.79a.997.997 0 10-1.34-1.48l-.31.28c.34-4.14 3.82-7.41 8.05-7.41 4.46 0 8.08 3.63 8.08 8.09s-3.63 8.08-8.08 8.08c-2.18 0-4.22-.85-5.75-2.4a.996.996 0 10-1.42 1.4 10.02 10.02 0 007.17 2.99c5.56 0 10.08-4.52 10.08-10.08.01-5.56-4.52-10.09-10.08-10.09z"></path></g></g></svg>
+                        </div>
+                    </div>
+        
+                    <div v-cloak class="flex justify-end grow">
+                        <div id="docs-mobile-search-button"></div>
+                        <doc-search-desktop></doc-search-desktop>
+        
+                        <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                        <doc-history></doc-history>
+                    </div>
+                </div>
+            </div>
+        </header>
+    
+        <div class="container relative flex bg-white">
+            <!-- Sidebar Skeleton -->
+            <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-gray-100 border-gray-200 sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton dark:bg-dark-800 dark:border-dark-650">
+            
+                <!-- Render this div, if config.showSidebarFilter is `true` -->
+                <div class="flex items-center h-16 px-6">
+                    <input class="w-full h-8 px-3 py-2 transition-colors duration-200 ease-linear bg-white border border-gray-200 rounded shadow-none text-sm focus:outline-none focus:border-gray-600 dark:bg-dark-600 dark:border-dark-600" type="text" placeholder="Filter">
+                </div>
+            
+                <div class="pl-6 mt-1 mb-4">
+                    <div class="w-32 h-3 mb-4 bg-gray-200 rounded-full loading dark:bg-dark-600"></div>
+                    <div class="w-48 h-3 mb-4 bg-gray-200 rounded-full loading dark:bg-dark-600"></div>
+                    <div class="w-40 h-3 mb-4 bg-gray-200 rounded-full loading dark:bg-dark-600"></div>
+                    <div class="w-32 h-3 mb-4 bg-gray-200 rounded-full loading dark:bg-dark-600"></div>
+                    <div class="w-48 h-3 mb-4 bg-gray-200 rounded-full loading dark:bg-dark-600"></div>
+                    <div class="w-40 h-3 mb-4 bg-gray-200 rounded-full loading dark:bg-dark-600"></div>
+                </div>
+            
+                <div class="shrink-0 mt-auto bg-transparent dark:border-dark-650">
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-400 dark:text-dark-400 hover:text-gray-700 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Sidebar component -->
+            <doc-sidebar v-cloak>
+                <template #sidebar-footer>
+                    <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-dark-650">
+            
+                        <a class="flex items-center justify-center flex-nowrap h-16 text-gray-400 dark:text-dark-400 hover:text-gray-700 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                            <span class="text-xs whitespace-nowrap">Powered by</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                        </a>
+                    </div>
+                </template>
+            </doc-sidebar>
+    
+            <div class="grow min-w-0 dark:bg-dark-850">
+                <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+                <div class="flex">
+                    <div class="min-w-0 p-4 grow md:px-16">
+                        <main class="relative pb-12 lg:pt-2">
+                            <div class="docs-markdown" id="docs-content">
+                                <!-- Rendered if sidebar right is enabled -->
+                                <div id="docs-sidebar-right-toggle"></div>
+                                <!-- Page content  -->
+<doc-anchor-target id="how-it-works" class="break-words">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#how-it-works">#</doc-anchor-trigger>
+        <span>How it Works</span>
+    </h1>
+</doc-anchor-target>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-blue-300"></div>
+    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-blue-300" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>We recommend to read the <a href="../tutorial/">tutorial</a> first.</p>
+        </div>
+    </div>
+</div>
+<p>The Bitcoin Computer is a Javascript <a href="https://en.wikipedia.org/wiki/Runtime_system" target="_blank">runtime environment</a> that uses Bitcoin as a <a href="https://en.wikipedia.org/wiki/Persistence_(computer_science)" target="_blank">persistence</a> layer.</p>
+<doc-anchor-target id="storing-values">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#storing-values">#</doc-anchor-trigger>
+        <span>Storing Values</span>
+    </h2>
+</doc-anchor-target>
+<p>When an expression is evaluated with the Bitcoin Computer, the expression is inscribed into a Bitcoin transaction. If the value of the expression has object type, this object is considered a &quot;smart object&quot; and an output of the transaction is considered the object&#x27;s <em>id</em>. If the value has multiple sub-objects, each sub-object is assigned a separate output as its id.</p>
+<p>To determine the value of a given smart object id, the Bitcoin Computer library will download the corresponding transaction and compute the value of the expression. As the mapping from sub-objects to outputs is deterministic and one-to-one, the software can determine which sub-object of the value is the smart object for the given id.</p>
+<doc-anchor-target id="updating-values">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#updating-values">#</doc-anchor-trigger>
+        <span>Updating Values</span>
+    </h2>
+</doc-anchor-target>
+<p>In order to explain how updating values works we need the notions of &quot;free variable&quot;, &quot;environment&quot;, and &quot;closure&quot;. Consider the Javascript expression:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">const x = 1;
+counter.add(x);</code></pre>
+</doc-codeblock></div>
+<p>It contains two variables, <code v-pre>x</code> and <code v-pre>counter</code>. The variable <code v-pre>x</code> is defined in the expression and one can determine that the value of <code v-pre>x</code> is <code v-pre>1</code>. The variable <code v-pre>counter</code> is not defined so it is impossible to tell what the value of <code v-pre>counter</code> is. Such variables are called <em>free variables</em>. In order to evaluate an expression with free variables, a definition of the values of the free variables is required. This is what an <em>environment</em> does: it maps free variables to values. A <em><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures" target="_blank">closure</a></em> is a pair consisting of an expression and an environment.</p>
+<p>To evaluate an expression <span class="math">e</span> containing free variables <span class="math">x_1\ ...\ x_n</span> with the Bitcoin Computer, the user needs to provide a <em>Bitcoin environment</em> <span class="math">\{ x_1: o_1\ ...\ x_n: o_n \}</span> that maps the free variables of <span class="math">e</span> to outputs <span class="math">o_1\ ...\ o_n</span>. The Bitcoin Computer will recursively determine the values <span class="math">v_1\ ...\ v_n</span> of the outputs <span class="math">o_1\ ...\ o_n</span> respectively. It then creates a closure consisting of the expression <span class="math">e</span> and the environment <span class="math">\{ x_1: v_1\ ...\ x_n: v_n \}</span> and evaluates this closure with a standard Javascript runtime.</p>
+<p>All sub-objects of the value returned are designated one output of the transaction. We refer to both the outputs as well as the values they represent as <em>revisions</em>. Note that when a closure is evaluated, the values <span class="math">v_1\ ...\ v_n</span> can change (for example if <span class="math">e</span> is a function call <span class="math">f(x_1\ ...\ x_n)</span> with side effects). Therefore a these transactions must have outputs that represent the new revisions for these values as well.</p>
+<p>The Bitcoin Computer protocol requires that a transaction spends all outputs in the environment. A practical advantage is that this provides a space efficient way to store the environment: Only a list of variable names needs to be stored as meta data and the full environment can be reconstructed from the inputs. It also has two important consequences: It provides a notion of data ownership as it is necessary to be able to spend an output in order to update it&#x27;s value. And it makes it possible to run the Bitcoin Computer as a light client as the inputs of a transaction contain pointers to the transactions that contain the expressions that need to be evaluated first.</p>
+<doc-anchor-target id="smart-contract-language">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract-language">#</doc-anchor-trigger>
+        <span>Smart Contract Language</span>
+    </h2>
+</doc-anchor-target>
+<p>The programming language used for the Bitcoin Computer has the exact same syntax as Javascript. However there is one important semantic difference:</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-blue-500 dark:bg-blue-400"></div>
+    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-blue-500 dark:text-blue-400" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>All values returned from evaluating an expression that have object type must inherit from <code v-pre>Contract</code>.</p>
+        </div>
+    </div>
+</div>
+<p>The class <code v-pre>Contract</code> is exported from the library. It enforces the following properties, which we think turn Javascript into a viable smart contract language.</p>
+<doc-anchor-target id="assigning-properties-outside-of-function-calls-is-prohibited">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#assigning-properties-outside-of-function-calls-is-prohibited">#</doc-anchor-trigger>
+        <span>Assigning Properties Outside of Function Calls is Prohibited</span>
+    </h3>
+</doc-anchor-target>
+<p>Assigning to a property outside of a function call throws an error.</p>
+<p>This makes it possible to write classes that impose constraints on all future values of an object. Consider for example the class <code v-pre>Even</code> below. The condition guarantees that all instances of the class will always have an even value.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">class Even extends Contract {
+  inc() {
+    if (typeof this.n === 'undefined') this.n = 0
+    else this.n = this.n + 2
+  }
+}</code></pre>
+</doc-codeblock></div>
+<p>While this is not a very useful example for a constraint, all smart contracts are based on constraints to future values in a similar way.</p>
+<doc-anchor-target id="keyword-properties-control-the-transaction-being-built">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#keyword-properties-control-the-transaction-being-built">#</doc-anchor-trigger>
+        <span>Keyword Properties Control the Transaction Being Built</span>
+    </h3>
+</doc-anchor-target>
+<p>The <code v-pre>Contract</code> class enforces certain types for the properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code>, <code v-pre>_amount</code>, <code v-pre>_owners</code>, <code v-pre>_readers</code>, and <code v-pre>_url</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">type SmartObject = {
+  readonly _id: string // output where object was created
+  readonly _rev: string // output where object is currently stored
+  readonly _root: string // useful for building fungible tokens
+  _owners?: string[] // determines data ownership
+  _amount?: number // determines number of Satoshis stored in the current output
+  _readers?: string[] // determines whether object is encrypted and who can decrypt is so
+  _url?: string // determines if data is stores off-chain
+}</code></pre>
+</doc-codeblock></div>
+<p>The properties <code v-pre>_id</code>, <code v-pre>_rev</code>, and <code v-pre>_root</code> are read only and set by the runtime to relay information about which transaction created the object and where it is currently stored.</p>
+<ul>
+<li>The value of the <code v-pre>_id</code> property is the output (encoded as &lt;transaction id&gt;:&lt;output index&gt;) that represented the object immediately after it was created.</li>
+<li>The value of the <code v-pre>_rev</code> property is the output of the currently representing the object (that is, the object&#x27;s revision).</li>
+<li>The value of the <code v-pre>_root</code> property is assigned once when the object is created and is never modified subsequently. If the expression that creates the object is of the form <code v-pre>new C(...)</code> then its root is equal to its id. If the expression is of the form <code v-pre>x.f(...)</code> then the root of the new object is equal to the id of <code v-pre>x</code>. Otherwise the root is set to <code v-pre>n/a</code>. The root property is useful for building fungible tokens.</li>
+</ul>
+<p>The properties <code v-pre>_amount</code>, <code v-pre>_owners</code>, <code v-pre>_readers</code>, and <code v-pre>_url</code> can be set by the smart contract developer to influence how the transaction is built.</p>
+<ul>
+<li>If a property <code v-pre>_amount</code> is set it needs to be set to a number. It determines the amount of Satoshi stored in the output representing the current revision. If it is not set the revision will have a minimal (non-dust) amount of Satoshi.</li>
+<li>If a property <code v-pre>_owners</code> is set it needs to be set to an array of strings <span class="math">[p_1\ ...\ p_n]</span>. These determine the output script of the current revision. Specifically, the script for the current revision is a 1-of-n multisig script with the public keys <span class="math">p_1\ ...\ p_n</span>. This guarantees that only a user that has a private key corresponding to one of the public keys can update the object. If the property is not set it defaults to the public key of the computer that created the object.</li>
+<li>If a property <code v-pre>_readers</code> is set it needs to be set to an array of strings <span class="math">[p_1\ ...\ p_n]</span>. If this property is set the meta data in the corresponding transaction is encrypted such that only users with corresponding private keys can decrypt the expression and compute the value of the smart object. If the <code v-pre>_readers</code> property is not set the meta data is not encrypted and any user can compute the value of the smart object.</li>
+<li>If a property <code v-pre>_url</code> is set it needs to be set to the url of a Bitcoin Computer node. If it is set the expression is not stored in the transaction but on the node instead. The transaction only contains a hash of the expression and the location where the expression can be obtained from the node. This is convenient if the expression is large, for example because it contains a lot of data.</li>
+</ul>
+<doc-anchor-target id="assigning-to-this-in-constructors-is-prohibited">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#assigning-to-this-in-constructors-is-prohibited">#</doc-anchor-trigger>
+        <span>Assigning to <code v-pre>this</code> in Constructors is Prohibited</span>
+    </h3>
+</doc-anchor-target>
+<p>This is not a property that we think this will make Javascript a better smart contract language, it is just a consequence how we enforce the properties above. In order to have useful constructors it is possible to pass an initialization object into the constructor:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">class A extends Contract {
+  constructor() {
+    super({ k1: v1, ... kn: vn })
+  }
+}</code></pre>
+</doc-codeblock></div>
+<p>This has the same effect as setting assigning to <code v-pre>this</code> in a normal Javascript program</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">// not a smart contract, for illustration purposes only
+class A {
+  constructor() {
+    this.k1 = v1
+    ...
+    this.kn = vn
+  }
+}</code></pre>
+</doc-codeblock></div>
+<!-- 
+## An Example
+
+We will use some visual notion in the example that we describe first.
+
+### Notation
+
+![](/static/legend@1x.png)-
+White boxes represent transactions and grey boxes represent expressions that are inscribed into the transactions. Inputs and outputs are displayed as circles and spending relations are shown as arrows. A blockchain environment that maps a free variable $x$ to an output $o$ is shown as a label $x$ in the arrow indicating the spending of $o$.
+<div style="clear: right;"></div>
+
+### Storing Values
+
+Consider the code in the picture below. It defines a class `NFT` with two properties `_owners` and `url` and a method to update the `_owners`. The `_owners` property of a smart contract can be set to an array of string encoded public keys. The output that will store that 
+
+
+
+To allocate a memory cell and to store a new smart object in it, a transaction that contains a Javascript expression <code>e<sub>1</sub>; e<sub>2</sub> ... e<sub>n</sub></code> where <code>e<sub>n</sub></code> is of the form `new C(...)` must be broadcast. The class `C` can be defined in the expression or it can be passed in from a module.
+
+![](/static/nft-create@1x.png)
+
+The function `computer.sync` computes Javascript objects from outputs as shown in the figure. Note that `_id`, `_rev`, and `_root` are all set to the same output.
+
+### Updating Values
+
+To update a smart object stored in the shared global memory, a Bitcoin transaction must be broadcast that includes a Javascript expression of the form of `x.f(...)`. To determine which memory cell the free variable `x` is stored in, the blockchain environment must associate `x` with an input. In the example this input is shown as `nft`.
+
+![](/static/nft-update@1x.png)
+
+The transaction will create corresponding outputs to these inputs, which represent the updated state of the memory cells. These outputs are called the *revisions* of a smart object, and the most recent revision is stored in the `_rev` property of the smart object.
+
+The `computer.sync` function can be called with each revision of a smart object. This provides access to all historical states of a smart object.
+
+### Sub-Objects
+
+When a function call on a smart object returns a value of type object, a new memory cell is allocated to store the returned value.
+
+The figure below illustrates the minting and sending of 100 fungible tokens. The blue user, with public key 03a1d..., mints the tokens in the first transaction, producing one output that represents the 100 newly minted tokens. The second transaction represents the distribution of tokens after the blue user sends 3 tokens to the green user, with public key 03f0b....
+
+![](/static/ft-create@1x.png)
+
+The blue output of the second transaction represents the 97 tokens that the blue user still holds, while the green output represents the three tokens now owned by the green user. The _root property of both outputs in the second transaction is linked to the output of the first transaction, as the memory cell for the three tokens was allocated within a function call.
+
+This setup prevents forgery, as any two tokens with the same root can be traced back to the same mint. To mint a second token with the same root, one would have to broadcast a transaction with the transaction id of the first transaction, which is impossible. -->
+<!-- ## Passing Objects as Arguments
+
+Swap
+
+## Creating Sub Objects
+
+Game -->
+
+                                
+                                <!-- Required only on API pages -->
+                                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+                            </div>
+                            <footer class="clear-both">
+                            
+                                <nav class="flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../tutorial/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
+                                                <span class="block mt-1">Tutorial</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../api/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
+                                                <span class="block mt-1">Computer API</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
+                            </footer>
+                        </main>
+                
+                        <div class="border-t dark:border-dark-650 pt-6 mb-8">
+                            <footer class="flex flex-wrap items-center justify-between">
+                                <div>
+                                    <ul class="flex flex-wrap items-center text-sm">
+                                    </ul>
+                                </div>
+                                <div class="docs-copyright py-2 text-gray-500 dark:text-dark-350 text-sm leading-relaxed"><p>© Copyright BCDB Inc. 2024. All rights reserved.</p></div>
+                            </footer>
+                        </div>
+                    </div>
+                
+                    <!-- Rendered if sidebar right is enabled -->
+                    <!-- Sidebar right skeleton-->
+                    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-white border-gray-200 lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:transform-none sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton dark:bg-dark-850 dark:border-dark-650">
+                        <div class="pl-5">
+                            <div class="w-32 h-3 mb-4 bg-gray-200 dark:bg-dark-600 rounded-full loading"></div>
+                            <div class="w-48 h-3 mb-4 bg-gray-200 dark:bg-dark-600 rounded-full loading"></div>
+                            <div class="w-40 h-3 mb-4 bg-gray-200 dark:bg-dark-600 rounded-full loading"></div>
+                        </div>
+                    </div>
+                
+                    <!-- User should be able to hide sidebar right -->
+                    <doc-sidebar-right v-cloak></doc-sidebar-right>
+                </div>
+
+            </div>
+        </div>
+    
+        <doc-search-mobile></doc-search-mobile>
+        <doc-back-to-top></doc-back-to-top>
+    </div>
+
+
+    <div id="docs-overlay-target"></div>
+
+    <script data-cfasync="false">window.__DOCS__ = { "title": "How it Works", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: true, tocDepth: 23 }</script>
+</body>
+</html>
