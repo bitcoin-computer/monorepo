@@ -263,11 +263,7 @@ describe('nakamotojs-lib (transactions with psbt)', () => {
       network: regtestLitecoinUtils.network,
     });
 
-    buyerTx.updateInput(
-      0,
-      bitcoin.bufferUtils.reverseBuffer(Buffer.from(buyerPayment0.hash, 'hex')),
-      buyerPayment0.index,
-    ); // N + MIN
+    buyerTx.updateInput(0, buyerPayment0); // N + MIN
     // miners fee
     buyerTx.addInput(
       bitcoin.bufferUtils.reverseBuffer(
@@ -275,7 +271,7 @@ describe('nakamotojs-lib (transactions with psbt)', () => {
       ),
       buyerPaymentToMiners.index,
     );
-    buyerTx.updateOutput(0, buyerOutput0.output!, MIN); // Output 0
+    buyerTx.updateOutput(0, { scriptPubKey: buyerOutput0.output!, value: MIN }); // Output 0
     buyerTx.addOutput(buyerOutput0.output!, MIN); // Output 2
 
     buyerTx.sign(
