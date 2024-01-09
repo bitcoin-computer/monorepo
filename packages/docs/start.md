@@ -5,19 +5,22 @@ order: -10
 
 # Start
 
+## Quick Start
 
-If you are trying out the Bitcoin Computer for the first time, or you want to integrate it into a new or existing application, we recommend to follow the readme file of the Bitcoin Computer Library.
+To try out the Bitcoin Computer please follow the instructions on NPM.
 
 [!ref target="blank" text="Bitcoin Computer Library"](https://www.npmjs.com/package/@bitcoin-computer/lib)
 
+You will be connected to a Bitcoin Computer Node on testnet that we run so you don't have to deal with setting it up.
+
 ## Run a Node
 
-You can run a Bitcoin Computer Node through docker. You need to run a node if you want to run an application on mainnet. It also offers a great development experience.
+If you want to run an application on mainnet or regtest (recommended for serious development) you can run your own node.
 
 [!ref target="blank" text="Bitcoin Computer Node"](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme)
 
-## Host an Application
+## Build an Application
 
-You can run one of the example applications by cloning the monorepo.
+The easiest way to get started is to clone our monorepo and start from one of the example applications (look for the package called Wallet for example).
 
 [!ref target="blank" text="Bitcoin Computer Monorepo"](https://github.com/bitcoin-computer/monorepo#readme)
