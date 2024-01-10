@@ -13,13 +13,16 @@ packages/node/scripts/__pycache__
 packages/BRC20
 packages/BRC721
 packages/chat
+packages/components
 packages/create-react-app-template
+packages/docs
+packages/explorer
 packages/fungible-token
 packages/node-js-boilerplate
 packages/non-fungible-token
 packages/react-app-ts-template
 packages/wallet
-packages/blockchain-explorer
+packages/website
 
 Dockerfile
 .dockerignore
