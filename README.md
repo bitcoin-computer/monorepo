@@ -27,11 +27,20 @@ npx bitcoin-computer
 
 ## Examples
 
-The examples are in the `packages` folder. To run an example look at the `README.md` file in the corresponding folder.
+The examples are in the `packages` folder. To run an example look at the `README.md` file in the corresponding folder. All the examples are open source and MIT licensed. You can use them as a starting point for your own applications, or you can contribute to them creating pull requests.
+
+## Core Library
+
+The core smart contract library is based on two packages:
+
+* [Bitcoin Computer Lib](https://www.npmjs.com/package/@bitcoin-computer/lib) A non-custodial web wallet for reading and writing smart contracts
+* [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) Server side infrastructure for providing trustless access to smart contracts
+* [Bitcoin Computer NakamotoJS-lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs-lib) A fork of the [bitcoinJS-lib](https://github.com/bitcoinjs/bitcoinjs-lib) library with support for BTC and LTC
 
 ### Applications
 
-* [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet): A minimal non-custodial wallet
+* [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet): A non-custodial wallet for BTC and LTC
+* [Blockchain Explorer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/explorer): A web application for exploring the blockchain and interacting with the Bitcoin Computer smart contracts.
 * [Chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat): A p2p chat application where messages are communicated over the blockchain
 * [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token): An application for minting, sending, and storing fungible tokens
 * [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token): An application for minting, sending, and storing non-fungible tokens (NFTs)
@@ -42,15 +51,9 @@ The examples are in the `packages` folder. To run an example look at the `README
 * [BRC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC721): A implementation of the ERC721 Non-Fungible Token Standard
 
 ### Templates
+* [React components for the Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/components): A collection of React components for building Bitcoin Computer applications
 * [Bitcoin Computer Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate): A template for starting a new Bitcoin Computer application with [node.js](https://nodejs.org/en/)
 * [Bitcoin Computer React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/create-react-app-template): A template for starting a new Bitcoin Computer application with [Create React App](https://create-react-app.dev/)
-
-## Core Library
-
-The core smart contract library is based on two packages:
-
-* [Bitcoin Computer Lib](https://www.npmjs.com/package/@bitcoin-computer/lib) A non-custodial web wallet for reading and writing smart contracts
-* [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) Server side infrastructure for providing trustless access to smart contracts
 
 ## Versioning
 
