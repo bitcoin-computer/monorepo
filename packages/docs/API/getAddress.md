@@ -2,21 +2,16 @@
 
 Returns a string encoding Bitcoin address.
 
-### Syntax
-```js
-const address = computer.getAddress()
-```
-
 ### Type
 ```ts
 () => string
 ```
 
+### Syntax
+```js
+computer.getAddress()
+```
+
 ### Return value
 
-Returns a string encoding Bitcoin address.
-
-### Examples
-```ts
-const address = computer.getAddress()
-```
+Returns a string encoded Bitcoin address.

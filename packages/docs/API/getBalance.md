@@ -2,21 +2,16 @@
 
 Returns the current balance in satoshi.
 
-### Syntax
-```js
-const balance = await computer.getBalance()
-```
-
 ### Type
 ```ts
-() => string
+() => Promise<string>
+```
+
+### Syntax
+```js
+await computer.getBalance()
 ```
 
 ### Return value
 
-Returns the current balance in satoshi.
-
-### Examples
-```ts
-const balance = await computer.getBalance()
-```
+Returns the current balance in Satoshi.

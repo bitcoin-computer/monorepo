@@ -2,14 +2,14 @@
 
 Calls a Bitcoin RPC method with the given parameters.
 
-### Syntax
-```js
-const result = await computer.rpcCall(method,params)
-```
-
 ### Type
 ```ts
 (method: string, params: string) => Promise<any>
+```
+
+### Syntax
+```js
+await computer.rpcCall(method,params)
 ```
 
 ### Parameters

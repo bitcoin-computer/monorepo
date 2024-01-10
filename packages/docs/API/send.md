@@ -2,14 +2,14 @@
 
 Sends a payment.
 
-### Syntax
-```js
-const txId = await computer.send(satoshis, address)
-```
-
 ### Type
 ```ts
 (amount: number, address: string) => Promise<string>
+```
+
+### Syntax
+```js
+await computer.send(satoshis, address)
 ```
 
 ### Parameters
@@ -21,7 +21,7 @@ A number representing the amount of satoshis to be sent.
 An string encoding the receiver address.
 
 ### Return value
-If successful, it returns an string encoding the transaction id of the payment.
+If successful, it returns the id of the transaction broadcast.
 
 ### Examples
 ```ts

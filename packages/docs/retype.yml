@@ -1,0 +1,11 @@
+input: .
+output: .retype
+url: # Add your website address here
+branding:
+  title: Bitcoin Computer
+  label: 0.17.0
+links:
+- text: Bitcoin Computer Docs
+  link: https://docs.bitcoincomputer.io/
+footer:
+  copyright: "&copy; Copyright {{ year }}. All rights reserved."

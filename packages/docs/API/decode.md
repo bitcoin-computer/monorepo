@@ -1,6 +1,6 @@
 # decode
 
-Parses a Bitcoin transaction to determine if it is a Bitcoin Computer transaction. If so it returns an expression `exp`, a blockchain environment `env`, and a module specifier `mod`. The inverse of ``encode`` when the latter was invoked providing ``exp``, ``env``, and ``mod``.
+The `decode` function parses a Bitcoin transaction to determine if it is a Bitcoin Computer transaction. If so it returns an expression `exp`, a blockchain environment `env`, and a module specifier `mod`. The function `decode` is the inverse of `encode` when the latter is called with `exp`, `env`, and `mod`.
 
 
 ### Type
@@ -28,7 +28,7 @@ A [Bitcoin transaction](https://github.com/bitcoin-computer/monorepo/blob/main/p
 
 It returns a [Bitcoin transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs-lib/ts_src/transaction.ts) and an object of type Effect.
 
-The object of type ``Effect`` captures the changes induced by evaluating the expression: It contains the result of the evaluation (property ``res``) and the side effects of the evaluation (property ``env``). The object of type ``Effect`` can be used to determine if the evaluation had the desired effect. If it did, the transaction can be broadcast to commit the update to the blockchain. If the transaction is not broadcast, the state on the blockchain does not change. The transaction can be broadcast at an arbitrarily long delay after calling ``encode``. If during the time between calling ``encode`` and broadcasting the transaction the blockchain undergoes any updates that could affect the evaluation, the miners will reject the transaction. However, if the transaction is accepted by the miners, it is guaranteed to have the effect indicated by object of type ``Effect``.
+The object of type `Effect` captures the changes induced by evaluating the expression: It contains the result of the evaluation (property `res`) and the side effects of the evaluation (property `env`). The object of type `Effect` can be used to determine if the evaluation had the desired effect. If it did, the transaction can be broadcast to commit the update to the blockchain. If the transaction is not broadcast, the state on the blockchain does not change. The transaction can be broadcast at an arbitrarily long delay after calling `encode`. If during the time between calling `encode` and broadcasting the transaction the blockchain undergoes any updates that could affect the evaluation, the miners will reject the transaction. However, if the transaction is accepted by the miners, it is guaranteed to have the effect indicated by object of type `Effect`.
 
 ```js
 type EncodeResult = { tx: BitcoinLib.Transaction, effect: Effect }

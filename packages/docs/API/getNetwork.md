@@ -2,22 +2,16 @@
 
 Returns the network.
 
-### Syntax
-```js
-const network = computer.getNetwork()
-```
-
 ### Type
 ```ts
-() => string
+() => 'mainnet' | 'testnet' | 'regtest'
+```
+
+### Syntax
+```js
+computer.getNetwork()
 ```
 
 ### Return value
 
 Returns a string encoding the network.
-
-### Examples
-```ts
-const network = computer.getNetwork()
-expect(network === 'regtest')
-```
