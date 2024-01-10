@@ -12,7 +12,7 @@ try {
     console.log('Not able to clone monorepo')  
   }
   process.chdir('monorepo')
-  execSync('lerna bootstrap', { stdio: 'inherit' })
+  execSync('yarn install', { stdio: 'inherit' })
   console.log('Repository cloned and bootstrapped successfully!')  
   const app = process.argv[2]
 
