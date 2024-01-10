@@ -1,9 +1,0 @@
-input: .
-output: .retype
-url: # Add your website address here
-branding:
-  title: Bitcoin Computer
-  label: 0.17.0
-favicon: static/favicon.ico
-footer:
-  copyright: "&copy; Copyright BCDB Inc. {{ year }}. All rights reserved."
