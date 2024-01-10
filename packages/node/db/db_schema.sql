@@ -56,6 +56,9 @@ ON "NonStandard"("hash");
 CREATE INDEX "NonStandardModIndex"
 ON "NonStandard"("mod");
 
+CREATE INDEX "OutputAddressIndex"
+ON "Output"("address");
+
 CREATE TABLE IF NOT EXISTS
   "User" (
     "publicKey" VARCHAR(66) NOT NULL PRIMARY KEY,

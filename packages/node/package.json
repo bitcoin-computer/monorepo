@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.16.0-beta.1",
+  "version": "0.17.0-beta.0",
   "description": "Server Side Library for the Bitcoin Computer",
   "contributors": [
     "Clemens Ley",
@@ -56,8 +56,8 @@
   },
   "dependencies": {
     "@babel/core": "^7.18.5",
-    "@bitcoin-computer/lib": "^0.16.0-beta.1",
-    "@bitcoin-computer/nakamotojs-lib": "^6.1.4",
+    "@bitcoin-computer/lib": "^0.17.0-beta.0",
+    "@bitcoin-computer/nakamotojs-lib": "^6.2.1",
     "@bitcoin-computer/tiny-secp256k1": "^2.2.1",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
@@ -78,21 +78,17 @@
     "express": "^4.17.1",
     "express-rate-limit": "^6.2.0",
     "hash.js": "^1.1.7",
-    "indexd": "^0.9.1",
-    "leveldown": "^6.1.1",
     "mocha": "^10.0.0",
     "pg-monitor": "^1.4.0",
     "pg-promise": "^10.11.1",
     "run-parallel": "^1.2.0",
     "sinon": "^14.0.0",
     "sinon-chai": "^3.7.0",
-    "tiny-secp256k1": "^2.2.1",
     "ts-node": "^10.4.0",
     "typeforce": "^1.18.0",
     "typescript": "^4.9.5",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.7.1",
-    "yajrpc": "^1.4.4",
     "zeromq": "6.0.0-beta.6"
   },
   "keywords": [
