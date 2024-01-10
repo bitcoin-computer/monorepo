@@ -21,8 +21,7 @@ import {
   nftVars,
   tokenVars,
 } from "./examples"
-import { ModalOld } from "../ModalOld"
-import { getComputer } from "@bitcoin-computer/components"
+import { Auth, ModalOld } from "@bitcoin-computer/components"
 
 const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => {
   return (
@@ -126,7 +125,7 @@ const Tabs = () => {
 
 const Playground = () => {
   console.log("Playground")
-  const [computer] = useState<any>(getComputer())
+  const [computer] = useState<any>(Auth.getComputer())
   const [show, setShow] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
   const [functionCallSuccess, setFunctionCallSuccess] = useState(false)

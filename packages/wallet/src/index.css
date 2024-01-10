@@ -1,45 +1,60 @@
-.App {
-  line-height: 25px;
-}
-
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 body {
-  margin: 0 20px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu",
+    "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-button {
-  /* font-size: 1rem; */
-  padding: 0.3rem 0.6rem;
+.WalletDrawer {
+  position: fixed;
+  z-index: 99;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  transform: translateX(100%);
+  display: grid;
+  grid-template-areas: "MENU OVERLAY";
+  grid-template-columns: 275px 1fr;
+  direction: rtl;
 }
 
-input,
-progress {
-  padding: 0.3rem 0.6rem;
+.Menu {
+  display: block;
+  flex-flow: column wrap;
+  transform: translateX(30%);
+  opacity: 0;
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  transition-delay: 0;
+  contain: content;
+  grid-area: "MENU";
+  direction: ltr;
 }
 
-.row {
-  display: flex;
-  flex-direction: row;
-  margin: 0.5rem 0;
+.MenuOverlay {
+  display: block;
+  grid-area: "OVERLAY";
 }
 
-.col-25 {
-  float: left;
-  width: 10%;
-  margin-top: 0px;
+[data-menu]:checked ~ .WalletDrawer {
+  transform: none;
 }
 
-.col-75 {
-  float: left;
-  width: 90%;
-  margin-top: 0px;
+[data-menu]:checked ~ .WalletDrawer .Menu {
+  transform: none;
+  opacity: 1;
+}
+
+[data-menu]:not(:checked) ~ .WalletDrawer .MenuOverlay {
+  pointer-events: none;
 }

@@ -222,7 +222,6 @@ describe('Transaction', () => {
       assert.strictEqual(tx.ins[0].index, 1);
       assert.strictEqual(tx.ins[0].hash, prevTxHash2);
     });
-
     it('updates an index with a txId', () => {
       const tx = new Transaction();
       assert.strictEqual(tx.addInput(prevTxHash, 0), 0);

@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import BIP32Factory from 'bip32';
-import * as ecc from 'tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import ECPairFactory from 'ecpair';
 import { describe, it } from 'mocha';
 import * as bitcoin from '../..';

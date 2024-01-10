@@ -1,0 +1,108 @@
+
+<svg width="593px" height="319px" viewBox="0 0 593 319" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <g id="BitcoinComputer-Landingpage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Network–BlueAndOrange" transform="translate(-664.000000, -5834.000000)">
+            <g id="EXAMPLES" transform="translate(0.000000, 5023.949069)">
+                <g id="Group" transform="translate(663.750000, 805.381090)">
+                    <g transform="translate(574.250000, 26.669841)" id="Selected-Button/notselected">
+                        <path d="M9,18 C4.02948,18 0,13.97052 0,9 C0,4.02948 4.02948,4.52970994e-13 9,4.52970994e-13 C13.97052,4.52970994e-13 18,4.02948 18,9 C18,13.97052 13.97052,18 9,18 Z" id="Fill-2" fill="#0046FF" transform="translate(9.000000, 9.000000) rotate(-270.000000) translate(-9.000000, -9.000000) "></path>
+                        <polygon id="Fill-14" fill="#A7BFFF" transform="translate(9.422361, 8.990253) rotate(-270.000000) translate(-9.422361, -8.990253) " points="6.563646 11.753748 12.280986 11.753748 12.613356 11.178198 9.754596 6.226758 9.090036 6.226758 6.231366 11.178198"></polygon>
+                    </g>
+                    <g transform="translate(574.250000, 224.669841)" id="Selected-Button/notselected">
+                        <path d="M18.233616,9.11796453 C18.233616,14.153431 14.151118,18.2359291 9.1156515,18.2359291 C4.08249807,18.2359291 1.87096053e-12,14.153431 1.87096053e-12,9.11796453 C1.87096053e-12,4.08249807 4.08249807,0 9.1156515,0 C14.151118,0 18.233616,4.08249807 18.233616,9.11796453" id="Fill-18" fill="#A7BFFF"></path>
+                        <polygon id="Fill-14" fill="#002A99" transform="translate(9.422361, 8.990253) rotate(-270.000000) translate(-9.422361, -8.990253) " points="6.563646 11.753748 12.280986 11.753748 12.613356 11.178198 9.754596 6.226758 9.090036 6.226758 6.231366 11.178198"></polygon>
+                    </g>
+                    <g transform="translate(574.250000, 128.669841)" id="Selected-Button/notselected">
+                        <path d="M18.233616,9.11796453 C18.233616,14.153431 14.151118,18.2359291 9.1156515,18.2359291 C4.08249807,18.2359291 1.87096053e-12,14.153431 1.87096053e-12,9.11796453 C1.87096053e-12,4.08249807 4.08249807,0 9.1156515,0 C14.151118,0 18.233616,4.08249807 18.233616,9.11796453" id="Fill-18" fill="#A7BFFF"></path>
+                        <polygon id="Fill-14" fill="#002A99" transform="translate(9.422361, 8.990253) rotate(-270.000000) translate(-9.422361, -8.990253) " points="6.563646 11.753748 12.280986 11.753748 12.613356 11.178198 9.754596 6.226758 9.090036 6.226758 6.231366 11.178198"></polygon>
+                    </g>
+                    <g id="Code-Block" font-family="IBMPlexMono-Regular, IBM Plex Mono" font-size="20" font-weight="normal">
+                        <text id="class-Token-{-constr">
+                            <tspan x="42" y="20" fill="#FFCF00">class</tspan>
+                            <tspan x="102" y="20" fill="#14003C"> </tspan>
+                            <tspan x="114" y="20" font-family="IBMPlexMono-Medium, IBM Plex Mono" font-weight="400" fill="#FFA500">Token</tspan>
+                            <tspan x="174" y="20" fill="#14003C"> </tspan>
+                            <tspan x="186" y="20" fill="#A2A2A2">{</tspan>
+                            <tspan x="198" y="20" fill="#14003C"></tspan>
+                            <tspan x="42" y="45" fill="#14003C">   </tspan>
+                            <tspan x="78" y="45" fill="#002A99">constructor</tspan>
+                            <tspan x="210" y="45" fill="#A2A2A2">(</tspan>
+                            <tspan x="222" y="45" fill="#6B93FF">state</tspan>
+                            <tspan x="282" y="45" fill="#A2A2A2">)</tspan>
+                            <tspan x="294" y="45" fill="#14003C"> </tspan>
+                            <tspan x="306" y="45" fill="#A2A2A2">{</tspan>
+                            <tspan x="318" y="45" fill="#14003C"></tspan>
+                            <tspan x="42" y="70" fill="#14003C">      </tspan>
+                            <tspan x="114" y="70" font-family="IBMPlexMono-Italic, IBM Plex Mono" font-style="italic" fill="#0046FF">this</tspan>
+                            <tspan x="162" y="70" fill="#14003C">.</tspan>
+                            <tspan x="174" y="70" fill="#002A99">state</tspan>
+                            <tspan x="234" y="70" fill="#14003C"> </tspan>
+                            <tspan x="246" y="70" fill="#A2A2A2">=</tspan>
+                            <tspan x="258" y="70" fill="#14003C"> </tspan>
+                            <tspan x="270" y="70" fill="#002A99">state</tspan>
+                            <tspan x="330" y="70" fill="#14003C"></tspan>
+                            <tspan x="42" y="95" fill="#14003C">   </tspan>
+                            <tspan x="78" y="95" fill="#A2A2A2">}</tspan>
+                            <tspan x="90" y="95" fill="#14003C"></tspan>
+                            <tspan x="42" y="120" fill="#14003C"> </tspan>
+                            <tspan x="42" y="145" fill="#14003C">   </tspan>
+                            <tspan x="78" y="145" fill="#002A99">setState</tspan>
+                            <tspan x="174" y="145" fill="#A2A2A2">(</tspan>
+                            <tspan x="186" y="145" fill="#6B93FF">state</tspan>
+                            <tspan x="246" y="145" fill="#A2A2A2">)</tspan>
+                            <tspan x="258" y="145" fill="#14003C"> </tspan>
+                            <tspan x="270" y="145" fill="#A2A2A2">{</tspan>
+                            <tspan x="282" y="145" fill="#14003C"></tspan>
+                            <tspan x="42" y="170" fill="#14003C">      </tspan>
+                            <tspan x="114" y="170" font-family="IBMPlexMono-Italic, IBM Plex Mono" font-style="italic" fill="#0046FF">this</tspan>
+                            <tspan x="162" y="170" fill="#14003C">.</tspan>
+                            <tspan x="174" y="170" fill="#002A99">state</tspan>
+                            <tspan x="234" y="170" fill="#14003C"> </tspan>
+                            <tspan x="246" y="170" fill="#A2A2A2">=</tspan>
+                            <tspan x="258" y="170" fill="#14003C"> </tspan>
+                            <tspan x="270" y="170" fill="#002A99">state</tspan>
+                            <tspan x="330" y="170" fill="#14003C"></tspan>
+                            <tspan x="42" y="195" fill="#14003C">   </tspan>
+                            <tspan x="78" y="195" fill="#A2A2A2">}</tspan>
+                            <tspan x="90" y="195" fill="#14003C"></tspan>
+                            <tspan x="42" y="220" fill="#14003C">   </tspan>
+                            <tspan x="42" y="245" fill="#14003C">   </tspan>
+                            <tspan x="78" y="245" fill="#002A99">send</tspan>
+                            <tspan x="126" y="245" fill="#A2A2A2">(</tspan>
+                            <tspan x="138" y="245" fill="#6B93FF">to</tspan>
+                            <tspan x="162" y="245" fill="#A2A2A2">) {</tspan>
+                            <tspan x="198" y="245" fill="#14003C"></tspan>
+                            <tspan x="42" y="270" fill="#14003C">      </tspan>
+                            <tspan x="114" y="270" font-family="IBMPlexMono-Italic, IBM Plex Mono" font-style="italic" fill="#0046FF">this</tspan>
+                            <tspan x="162" y="270" fill="#14003C">.</tspan>
+                            <tspan x="174" y="270" fill="#002A99">_owners</tspan>
+                            <tspan x="258" y="270" fill="#14003C"> </tspan>
+                            <tspan x="270" y="270" fill="#A2A2A2">= [</tspan>
+                            <tspan x="306" y="270" fill="#002A99">to</tspan>
+                            <tspan x="330" y="270" fill="#A2A2A2">]</tspan>
+                            <tspan x="342" y="270" fill="#14003C"></tspan>
+                            <tspan x="42" y="295" fill="#14003C">   </tspan>
+                            <tspan x="78" y="295" fill="#A2A2A2">}</tspan>
+                            <tspan x="42" y="320" fill="#A2A2A2">}</tspan>
+                        </text>
+                        <text id="1-2-3-4-5-6-7-8-9-10" line-spacing="25" fill="#A2A2A2">
+                            <tspan x="12" y="20">1</tspan>
+                            <tspan x="12" y="45">2</tspan>
+                            <tspan x="12" y="70">3</tspan>
+                            <tspan x="12" y="95">4</tspan>
+                            <tspan x="12" y="120">5</tspan>
+                            <tspan x="12" y="145">6</tspan>
+                            <tspan x="12" y="170">7</tspan>
+                            <tspan x="12" y="195">8</tspan>
+                            <tspan x="12" y="220">9</tspan>
+                            <tspan x="0" y="245">10</tspan>
+                            <tspan x="0" y="270">11</tspan>
+                            <tspan x="0" y="295">12</tspan>
+                            <tspan x="0" y="320">13</tspan>
+                        </text>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

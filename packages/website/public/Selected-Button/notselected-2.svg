@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="19px" height="19px" viewBox="0 0 19 19" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Selected-Button/notselected</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Code-Section" transform="translate(-574.000000, -224.000000)">
+            <g id="Selected-Button/notselected" transform="translate(574.250000, 224.669841)">
+                <path d="M18.233616,9.11796453 C18.233616,14.153431 14.151118,18.2359291 9.1156515,18.2359291 C4.08249807,18.2359291 1.87096053e-12,14.153431 1.87096053e-12,9.11796453 C1.87096053e-12,4.08249807 4.08249807,0 9.1156515,0 C14.151118,0 18.233616,4.08249807 18.233616,9.11796453" id="Fill-18" fill="#A7BFFF"></path>
+                <polygon id="Fill-14" fill="#002A99" transform="translate(9.422361, 8.990253) rotate(-270.000000) translate(-9.422361, -8.990253) " points="6.563646 11.753748 12.280986 11.753748 12.613356 11.178198 9.754596 6.226758 9.090036 6.226758 6.231366 11.178198"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

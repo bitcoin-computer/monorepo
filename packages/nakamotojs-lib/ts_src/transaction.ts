@@ -263,7 +263,6 @@ export class Transaction {
       }),
       arguments,
     );
-
     const { scriptPubKey, value } = opts;
 
     if (outputIndex >= this.outs.length)

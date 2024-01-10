@@ -1,28 +1,31 @@
 import { useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
-import Loader from "./Loader"
-import { getComputer } from "@bitcoin-computer/components"
+import { Auth, UtilsContext } from "@bitcoin-computer/components"
 
 function Block() {
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
-  const [computer] = useState(getComputer())
+  const [computer] = useState(Auth.getComputer())
   const [block] = useState(params.block)
   const [isLoading, setIsLoading] = useState(false)
   const [blockData, setBlockData] = useState<any | null>(null)
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        setIsLoading(true)
+        // setIsLoading(true)
+        showLoader(true)
         // @ts-ignore
         const res = await computer.rpcCall("getblock", `${block} 2`)
         setBlockData(res.result)
-        setIsLoading(false)
+        // setIsLoading(false)
+        showLoader(false)
       } catch (error) {
-        setIsLoading(false)
-        console.log("Error getting block", error)
+        // setIsLoading(false)
+        showLoader(false)
+        showSnackBar("Error getting block", false)
       }
     }
     fetch()
@@ -142,7 +145,6 @@ function Block() {
                 })}
               </tbody>
             </table>
-            {isLoading && <Loader />}
           </div>
         </div>
       )}

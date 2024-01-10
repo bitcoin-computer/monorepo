@@ -1,15 +1,28 @@
-export function SnackBar(props: any) {
-  const { message, success, setShow, callback } = props;
+import { useEffect } from "react"
+
+interface SnackBarProps {
+  message: string
+  success: boolean
+  hideSnackBar: () => void
+}
+
+export function SnackBar(props: SnackBarProps) {
+  const { message, success, hideSnackBar } = props
 
   const closeMessage = (evt: any) => {
-    evt.preventDefault();
-    setShow(false);
-  };
+    evt.preventDefault()
+    hideSnackBar()
+  }
 
-  setTimeout(async () => {
-    setShow(false);
-    if (callback) callback();
-  }, 4000);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      hideSnackBar()
+    }, 3000)
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [hideSnackBar])
 
   return (
     <div
@@ -21,15 +34,10 @@ export function SnackBar(props: any) {
       role="alert"
     >
       <strong className="font-bold pr-6">{message}</strong>
-      <span
-        className="absolute top-0 bottom-0 right-0 px-4 py-3"
-        onClick={closeMessage}
-      >
+      <span className="absolute top-0 bottom-0 right-0 px-4 py-3" onClick={closeMessage}>
         <svg
           className={
-            success
-              ? `fill-current h-6 w-6 text-green-500`
-              : `fill-current h-6 w-6 text-red-500`
+            success ? `fill-current h-6 w-6 text-green-500` : `fill-current h-6 w-6 text-red-500`
           }
           role="button"
           xmlns="http://www.w3.org/2000/svg"
@@ -40,5 +48,5 @@ export function SnackBar(props: any) {
         </svg>
       </span>
     </div>
-  );
+  )
 }

@@ -1,13 +1,11 @@
 export function ShowDrawer({ text, id }: { text: string, id: string }) {
-  return (<div className="text-center">
-  <button
+  return <button
     data-drawer-target={id}
     data-drawer-show={id}
     data-drawer-placement="right"
     aria-controls={id}>
     {text}
   </button>
-</div>)
 }
 
 export function Drawer({ Content, id }: any) {

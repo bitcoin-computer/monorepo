@@ -1,0 +1,238 @@
+.GridBGFirst {
+  /* background-image: url("/public/Grid/Grid-Module-6x6.svg"); */
+  height: 97.6vw;
+  width: 100%;
+  position: relative;
+}
+
+.TuringCompleteGraph1 {
+  background-image: url("/public/Turning-Complete-Graph.png");
+  height: 97.6vw;
+  width: 100%;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  z-index: 1;
+}
+
+.cross-grid-1 {
+  background-image: url("/public/Grid/grid-Cell-Sub.png");
+  width: 16.3%;
+  height: 16.67%;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  left: 50%;
+}
+
+.cross-grid-2 {
+  background-image: url("/public/Grid/grid-Cell-Sub.png");
+  width: 16.3%;
+  height: 16.67%;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  left: 66.3%;
+  top: 50%;
+}
+
+.cross-grid-3 {
+  background-image: url("/public/Grid/grid-Cell-Sub.png");
+  width: 16.3%;
+  height: 16.67%;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  left: 66.3%;
+  top: 66.67%;
+}
+
+.cross-grid-4 {
+  background-image: url("/public/Grid/grid-Cell-Sub.png");
+  width: 16.3%;
+  height: 16.67%;
+  position: absolute;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  top: 83.33%;
+  left: 82.66%;
+}
+
+.features {
+  z-index: 1;
+  top: 83%;
+  left: 2%;
+  position: absolute;
+  font-size: 7.3vw;
+  text-align: left;
+}
+
+.headingWrapper {
+  position: absolute;
+  top: 33.4%;
+  left: 17.3%;
+  width: 80%;
+  text-align: left;
+  z-index: 1;
+  padding: 1.4%;
+}
+
+.headline {
+  font-size: 2.3vw;
+  color: #000f38;
+  padding-bottom: 2%;
+}
+
+.subHeading {
+  font-size: 1.2vw;
+  color: #000f38;
+}
+
+.headingWrapper p {
+  margin: 0;
+}
+
+.horizontal-grid-line-1 {
+  background-image: url("/public/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 16.67%;
+  left: 0px;
+  position: absolute;
+}
+
+.horizontal-grid-line-2 {
+  background-image: url("/public/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 33.33%;
+  left: 0px;
+  position: absolute;
+}
+
+.horizontal-grid-line-3 {
+  background-image: url("/public/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 50%;
+  left: 0px;
+  position: absolute;
+}
+
+.horizontal-grid-line-4 {
+  background-image: url("/public/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 66.67%;
+  left: 0px;
+  position: absolute;
+}
+
+.horizontal-grid-line-5 {
+  background-image: url("/public/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 83.33%;
+  left: 0px;
+  position: absolute;
+}
+
+.horizontal-grid-line-6 {
+  background-image: url("/public/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 51.2%;
+  left: 0px;
+  position: absolute;
+}
+
+.horizontal-grid-line-7 {
+  background-image: url("/public/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 100%;
+  left: 0px;
+  position: absolute;
+}
+
+
+.vertical-grid-line-1 {
+  background-image: url("/public/Grid/V-Grid-line.svg");
+  height: 100%;
+  width: 1px;
+  z-index: 1;
+  top: 0px;
+  left: 1%;
+  position: absolute;
+}
+
+.vertical-grid-line-2 {
+  background-image: url("/public/Grid/V-Grid-line.svg");
+  height: 100%;
+  width: 1px;
+  z-index: 1;
+  top: 0px;
+  left: 17.3%;
+  position: absolute;
+}
+
+.vertical-grid-line-3 {
+  background-image: url("/public/Grid/V-Grid-line.svg");
+  height: 100%;
+  width: 1px;
+  z-index: 1;
+  top: 0px;
+  left: 33.66%;
+  position: absolute;
+}
+
+.vertical-grid-line-4 {
+  background-image: url("/public/Grid/V-Grid-line.svg");
+  height: 100%;
+  width: 1px;
+  z-index: 1;
+  top: 0px;
+  left: 49.99%;
+  position: absolute;
+}
+
+.vertical-grid-line-5 {
+  background-image: url("/public/Grid/V-Grid-line.svg");
+  height: 100%;
+  width: 1px;
+  z-index: 1;
+  top: 0px;
+  left: 66.3%;
+  position: absolute;
+}
+
+.vertical-grid-line-6 {
+  background-image: url("/public/Grid/V-Grid-line.svg");
+  height: 100%;
+  width: 1px;
+  z-index: 1;
+  top: 0px;
+  left: 82.66%;
+  position: absolute;
+}
+
+.vertical-grid-line-7 {
+  background-image: url("/public/Grid/V-Grid-line.svg");
+  height: 100%;
+  width: 1px;
+  z-index: 1;
+  top: 0px;
+  left: 98.99%;
+  position: absolute;
+}
+
+.grid-opacity {
+  opacity: 0.5;
+}

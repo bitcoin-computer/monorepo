@@ -33,6 +33,7 @@ export const TAGS = [
   'KeyAgg list',
   'KeyAgg coefficient',
 ] as const;
+// prettier-ignore
 export type TaggedHashPrefix = (typeof TAGS)[number];
 type TaggedHashPrefixes = {
   [key in TaggedHashPrefix]: Buffer;
