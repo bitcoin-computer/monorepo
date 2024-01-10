@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="628px" height="630px" viewBox="0 0 628 630" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Wire-2@2x</title>
+    <g id="BitcoinComputer-Landingpage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Network–BlueAndOrange-ColorsSlightlyChanged" transform="translate(-960.000000, 0.000000)">
+            <g id="Wire-2" transform="translate(960.000000, 0.000000)">
+                <rect id="Rectangle" x="0" y="0" width="628" height="629.166888"></rect>
+                <polyline id="Path-5" stroke="#A7BFFF" points="543.594757 628.666755 322.517929 628.666755 314 620.596148 314 246.065269 306 238.063147 228.548904 238.063147"></polyline>
+                <polygon id="Fill-10" fill="#0046FF" transform="translate(315.000000, 567.150493) scale(1, -1) rotate(-315.000000) translate(-315.000000, -567.150493) " points="315.389393 570.651064 318.500516 567.53994 318.500413 566.762084 315.388464 563.650135 314.610607 563.649922 311.499484 566.761155 311.499587 567.539012 314.611536 570.65096"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

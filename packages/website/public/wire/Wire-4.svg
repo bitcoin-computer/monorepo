@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="295px" height="73px" viewBox="0 0 295 73" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Wire-4</title>
+    <g id="BitcoinComputer-Landingpage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Network–BlueAndOrange-ColorsSlightlyChanged" transform="translate(-1118.000000, -1027.000000)">
+            <g id="Wire-4" transform="translate(1118.000000, 1028.272751)">
+                <polyline id="Path-4" stroke="#A7BFFF" points="295 0 164.537617 0 156.037617 8.00212258 156.037617 63.0494312 148.537617 70.8161918 0 70.8161918"></polyline>
+                <path d="M156,50.2133192 C154.067079,50.2133192 152.5,48.6458249 152.5,46.7123906 C152.5,44.7789562 154.067079,43.2114619 156,43.2114619 C157.933061,43.2114619 159.5,44.7789562 159.5,46.7123906 C159.5,48.6458249 157.933061,50.2133192 156,50.2133192 Z" id="Fill-8" fill="#0046FF"></path>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,38 @@
+.code-section-container {
+    z-index: 1;
+    position: absolute;
+}
+
+.code-block {
+    font-family: 'IBMPlexMono-Regular';
+    font-size: 1vw;
+    letter-spacing: 0;
+    color: #A2A2A2;
+    font-weight: lighter;
+    margin: 0;
+}
+
+.code-yellow {
+    color: #FFCF00;
+}
+
+.code-dark-yellow {
+    color: #FFA500;
+    font-weight: bolder;
+}
+
+.code-gray {
+    color: #A2A2A2;
+}
+
+.code-dark-blue {
+    color: #002A99;
+}
+
+.code-light-blue {
+    color: #6B93FF;
+}
+
+.code-blue {
+    color: #0046FF;
+}

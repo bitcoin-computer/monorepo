@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>social/linkedin</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="social/linkedin" fill="#FFFFFF" fill-rule="nonzero">
+            <path d="M12,0 C5.373,0 0,5.373 0,12 C0,18.627 5.373,24 12,24 C18.627,24 24,18.627 24,12 C24,5.373 18.627,0 12,0 Z M10,16 L8,16 L8,10 L10,10 L10,16 Z M9,9.109 C8.393,9.109 7.9,8.613 7.9,8 C7.9,7.388 8.392,6.891 9,6.891 C9.608,6.891 10.1,7.388 10.1,8 C10.1,8.613 9.607,9.109 9,9.109 Z M17,16 L15.002,16 L15.002,13.139 C15.002,11.258 13,11.417 13,13.139 L13,16 L11,16 L11,10 L13,10 L13,11.093 C13.872,9.477 17,9.357 17,12.641 L17,16 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

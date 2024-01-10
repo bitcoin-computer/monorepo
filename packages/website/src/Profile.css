@@ -1,0 +1,71 @@
+.profile-container {
+    z-index: 1;
+    position: absolute;
+    text-align: left;
+}
+
+.profile-picture {
+    width: 7.6vw;
+    height: 7.6vw;
+    text-align: left;
+}
+
+.profile-name {
+    width: 100%;
+    color: white;
+    font-size: 1.8vw;
+    letter-spacing: 0;
+    text-align: left;
+}
+
+.profile-name a {
+    color: white;
+    text-decoration: none;
+}
+
+.profile-text {
+    left: 18px;
+    width: 100%;
+    color: white;
+    font-size: 1.3vw;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    text-align: left;
+    margin-top: 7%;
+}
+
+.social-links-about {
+    position: absolute;
+    top: 94%;
+    width: 80%;
+    display: flex;
+    align-items: center;
+}
+
+.social-1 {
+    background-image: url("/public/social/github.svg");
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+}
+
+.social-2 {
+    background-image: url("/public/social/insta.svg");
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+}
+
+.social-3 {
+    background-image: url("/public/social/linkedin.svg");
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+}
+
+.social-4 {
+    background-image: url("/public/social/medium.svg");
+    width: 40px;
+    height: 40px;
+    background-repeat: no-repeat;
+}
