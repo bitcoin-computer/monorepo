@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1119px" height="944px" viewBox="0 0 1119 944" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Wire-1</title>
+    <g id="BitcoinComputer-Landingpage" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Network–BlueAndOrange-ColorsSlightlyChanged" transform="translate(0.000000, -314.000000)">
+            <g id="Wire-1" transform="translate(0.000000, 315.083577)">
+                <polyline id="Path-11" stroke="#A7BFFF" points="0 2.95297093e-13 9.93276978 2.95297093e-13 17.9327698 8.00212258 17.9327698 305.080923 25.973877 313.083046 324.5 313.083046 332.5 321.085168 332.5 933.997745 340.5 941.999867 1110.5 941.999867 1118.5 933.747678 1118.5 856.593756"></polyline>
+                <path d="M21.5,50.5133988 C21.5,52.4468331 19.9330614,54.0143274 18,54.0143274 C16.0670785,54.0143274 14.5,52.4468331 14.5,50.5133988 C14.5,48.5799645 16.0670785,47.0124702 18,47.0124702 C19.9330614,47.0124702 21.5,48.5799645 21.5,50.5133988" id="Fill-8" fill="#0046FF"></path>
+                <polygon id="Fill-10" fill="#0046FF" transform="translate(332.000000, 872.731549) scale(1, -1) translate(-332.000000, -872.731549) " points="332.388877 876.232532 335.5 873.120584 335.5 872.342624 332.388877 869.230675 331.611123 869.230565 328.5 872.342624 328.5 873.120584 331.611123 876.232532"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="35px" height="35px" viewBox="0 0 35 35" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Selected-Button/notselected</title>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Selected-Button/notselected">
+            <path d="M35.4542534,17.7293755 C35.4542534,27.5205603 27.5160627,35.458751 17.7248779,35.458751 C7.9381907,35.458751 3.63797881e-12,27.5205603 3.63797881e-12,17.7293755 C3.63797881e-12,7.9381907 7.9381907,0 17.7248779,0 C27.5160627,0 35.4542534,7.9381907 35.4542534,17.7293755" id="Fill-18" fill="#A7BFFF"></path>
+            <polygon id="Fill-14" fill="#002A99" transform="translate(18.321257, 17.481048) rotate(-270.000000) translate(-18.321257, -17.481048) " points="12.762645 22.85451 23.879695 22.85451 24.52597 21.735385 18.96727 12.107585 17.67507 12.107585 12.116545 21.735385"></polygon>
+        </g>
+    </g>
+</svg>

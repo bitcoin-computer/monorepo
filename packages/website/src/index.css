@@ -1,0 +1,18 @@
+@font-face {
+  font-family: 'Formular';
+  src: local('Formular'), url('./fonts/Formular.ttf') format('ttf');
+}
+
+body {
+  margin: 0;
+  font-family: Formular, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: Formular, source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

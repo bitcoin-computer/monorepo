@@ -1,0 +1,121 @@
+.about-container {
+    height: 81.33vw;
+    width: 100%;
+    z-index: 1;
+    position: relative;
+    background-color: #000F38;
+}
+
+.about-heading {
+    font-size: 7.3vw;
+    color: #FFFFFF;
+    z-index: 1;
+    top: 20%;
+    left: 2%;
+    position: absolute;
+    text-align: left;
+}
+
+.text-1 {
+    font-size: 2vw;
+    color: #FFFFFF;
+    letter-spacing: 0;
+    z-index: 1;
+    top: 33%;
+    left: 2%;
+    position: absolute;
+    text-align: left;
+}
+
+.text-2 {
+    font-size: 1.4vw;
+    color: #787878;
+    letter-spacing: 0;
+    width: 62%;
+    z-index: 1;
+    top: 38%;
+    left: 2%;
+    position: absolute;
+    text-align: left;
+}
+
+.cv-1 {
+    width: 30%;
+    height: 33%;
+    z-index: 1;
+    top: 41%;
+    left: 2%;
+    position: absolute;
+    background-repeat: no-repeat;
+}
+
+.cv-2 {
+    width: 30%;
+    height: 33%;
+    z-index: 1;
+    top: 41%;
+    left: 35%;
+    position: absolute;
+    background-repeat: no-repeat;
+
+}
+
+.cv-3 {
+    width: 30%;
+    height: 33%;
+    z-index: 1;
+    top: 41%;
+    left: 68%;
+    position: absolute;
+    background-repeat: no-repeat;
+}
+
+.horizontal-about-grid-line-1 {
+    background-image: url("/public/Grid/H-Grid-line.svg");
+    height: 1px;
+    width: 100%;
+    z-index: 1;
+    top: 20%;
+    left: 0px;
+    position: absolute;
+  }
+
+  .horizontal-about-grid-line-2 {
+    background-image: url("/public/Grid/H-Grid-line.svg");
+    height: 1px;
+    width: 100%;
+    z-index: 1;
+    top: 40%;
+    left: 0px;
+    position: absolute;
+  }
+
+  .horizontal-about-grid-line-3 {
+    background-image: url("/public/Grid/H-Grid-line.svg");
+    height: 1px;
+    width: 100%;
+    z-index: 1;
+    top: 60%;
+    left: 0px;
+    position: absolute;
+  }
+
+  .horizontal-about-grid-line-4 {
+    background-image: url("/public/Grid/H-Grid-line.svg");
+    height: 1px;
+    width: 100%;
+    z-index: 1;
+    top: 80%;
+    left: 0px;
+    position: absolute;
+  }
+
+  .horizontal-about-grid-line-5 {
+    background-image: url("/public/Grid/H-Grid-line.svg");
+    height: 1px;
+    width: 100%;
+    z-index: 1;
+    top: 100%;
+    left: 0px;
+    position: absolute;
+  }

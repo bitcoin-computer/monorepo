@@ -1,0 +1,26 @@
+.featureDot {
+    display: inline-block;
+    z-index: 1;
+    width: 1.2vw;
+    height: auto;
+}
+
+.featureHeading {
+    width: 80%;
+    z-index: 1;
+    font-size: 1.4vw;
+    color: #000000;
+    text-align: left;
+    padding-left: 2%;
+    display: inline-block;
+    margin-top: 0;
+}
+
+.featureText {
+    width: 70%;
+    z-index: 1;
+    font-size: 1.1vw;
+    color: #787878;
+    text-align: left;
+    padding-left: 6%;
+}

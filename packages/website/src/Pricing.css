@@ -1,0 +1,114 @@
+.pricing-container {
+    height: 67.46vw;
+    width: 100%;
+    z-index: 1;
+    position: relative;
+    background-color: #0046FF;
+}
+
+.pricing-heading {
+    z-index: 2;
+    top: 24.7%;
+    left: 2%;
+    position: absolute;
+    font-size: 7.3vw;
+    color: #ffffff;
+    text-align: left;
+}
+
+.pricing-explainer {
+    height: 86px;
+    width: 591px;
+    z-index: 2;
+    top: 338px;
+    left: 664.5px;
+    position: absolute;
+    font-size: 43px;
+    color: #ffffff;
+    text-align: left;
+}
+
+.pricing-option-1 {
+    width: 13%;
+    z-index: 2;
+    top: 52%;
+    left: 19%;
+    position: absolute;
+    font-size: 1.7vw;
+    color: #ffffff;
+    text-align: left;
+}
+
+.pricing-option-2 {
+    width: 13%;
+    z-index: 2;
+    top: 52%;
+    left: 35.4%;
+    position: absolute;
+    font-size: 1.7vw;
+    color: #ffffff;
+    text-align: left;
+}
+
+.pricing-option-3 {
+    width: 15%;
+    z-index: 2;
+    top: 52%;
+    left: 51.8%;
+    position: absolute;
+    font-size: 1.7vw;
+    color: #ffffff;
+    text-align: left;
+}
+
+.graph3 {
+    background-image: url("/public/Graph-3.svg");
+    top: 62.73%;
+    left: 74.4%;
+    position: absolute;
+    background-repeat: no-repeat;
+    z-index: 2;
+    width: 25.9%;
+    height: 24vw;
+    background-size: 100%;
+}
+
+.horizontal-pricing-grid-line-1 {
+    background-image: url("/public/Grid/H-Grid-line.svg");
+    height: 1px;
+    width: 100%;
+    z-index: 1;
+    top: 25%;
+    left: 0px;
+    position: absolute;
+  }
+
+  .horizontal-pricing-grid-line-2 {
+    background-image: url("/public/Grid/H-Grid-line.svg");
+    height: 1px;
+    width: 100%;
+    z-index: 1;
+    top: 50%;
+    left: 0px;
+    position: absolute;
+  }
+
+  .horizontal-pricing-grid-line-3 {
+    background-image: url("/public/Grid/H-Grid-line.svg");
+    height: 1px;
+    width: 100%;
+    z-index: 1;
+    top: 75%;
+    left: 0px;
+    position: absolute;
+  }
+
+  .horizontal-pricing-grid-line-4 {
+    background-image: url("/public/Grid/H-Grid-line.svg");
+    height: 1px;
+    width: 100%;
+    z-index: 1;
+    top: 100%;
+    left: 0px;
+    position: absolute;
+  }
