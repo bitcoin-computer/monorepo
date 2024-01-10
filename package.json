@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer",
-  "version": "0.16.0-beta.1",
+  "version": "0.17.0-beta.0",
   "description": "Lightweight Smart Contracts for Bitcoin and Litecoin",
   "contributors": [
     "Clemens Ley",
@@ -23,7 +23,10 @@
     "name": "Clemens Ley",
     "email": "clemens@bitcoincomputer.io"
   },
-  "private": false,
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "start": "cd /dist/packages/node && yarn start",
     "up": "cd packages/node && yarn up",

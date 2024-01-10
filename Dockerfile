@@ -1,5 +1,9 @@
-#  We are using the latest Node.js distribution with Long Term Support (LTS) as of 11/04/2020.
-FROM node:16.14
+#  We are using the alpine distribution with Long Term Support (LTS) as of 11/04/2020.
+FROM node:16.14-alpine
+
+RUN apk add --no-cache cmake make gcc g++ python3
+# insall dependencies to run cmake
+RUN apk add --no-cache libstdc++ libgcc curl
 
 # Set the working directory inside the container
 WORKDIR /dist
@@ -8,16 +12,17 @@ WORKDIR /dist
 COPY . /dist
 
 # Install dependencies for the monorepo using yarn
-RUN yarn install --cwd /dist
+RUN yarn install
 
 # Set the working directory to "monorepo/packages/node"
 WORKDIR /dist/packages/node
 
+# Install dependencies for the node using yarn
+RUN yarn install
+
 # Print package.json version
 RUN echo "Version: $(head ../lib/package.json)"
 
-# Run lerna bootstrap
-RUN npx lerna@5.2.0 bootstrap
 
 EXPOSE 1031
 # Define the command to run when the container starts
