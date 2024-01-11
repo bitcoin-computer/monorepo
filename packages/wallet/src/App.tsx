@@ -176,10 +176,12 @@ function SideBar() {
 export default function App() {
   if (!Auth.isLoggedIn())
     return (
-      <div className="p-8 mt-16 max-w-screen-md mx-auto">
-        <h2 className="text-4xl mb-8 text-center font-bold dark:text-white">TBC Wallet</h2>
-        <Auth.LoginForm />
-      </div>
+      <UtilsContext.UtilsProvider>
+        <div className="p-8 mt-16 max-w-screen-md mx-auto">
+          <h2 className="text-4xl mb-8 text-center font-bold dark:text-white">TBC Wallet</h2>
+          <Auth.LoginForm />
+        </div>
+      </UtilsContext.UtilsProvider>
     )
 
   return (
