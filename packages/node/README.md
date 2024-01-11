@@ -24,12 +24,11 @@ You need to have [node.js](https://nodejs.org/en/) and [Docker](https://www.dock
 # Download the Bitcoin Computer Monorepo
 git clone https://github.com/bitcoin-computer/monorepo.git
 
-# Install the dependencies
-cd monorepo
-yarn install
-
 # Move to the folder for the Bitcoin Computer Node
 cd packages/node
+
+# Install the dependencies
+yarn install
 
 # Copy the .env.example file into a .env file
 cp .env.example .env
