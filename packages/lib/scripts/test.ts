@@ -41,16 +41,7 @@ const testEnv = args.react ? 'react' : args.browser ? 'browser' : args.main ? 'm
 
 const jsDom = testEnv === 'browser' || testEnv === 'react' ? '--require jsdom-global/register' : ''
 
-let command = `TS_NODE_FILES=true 
-  RPC_HOST=${rpcHost} 
-  RPC_PORT=${nodePort} 
-  RPC_PROTOCOL=http  
-  RPC_USER=${rpcUser} 
-  RPC_PASSWORD=${rpcPass} 
-  CHAIN=${chain} 
-  NETWORK=${network} 
-  BCN_URL=${bcnUrl} 
-  TEST_ENV=${testEnv} mocha --exit ${jsDom} --config`
+let command = `TS_NODE_FILES=true RPC_HOST=${rpcHost} RPC_PORT=${nodePort} RPC_PROTOCOL=http  RPC_USER=${rpcUser} RPC_PASSWORD=${rpcPass} CHAIN=${chain} NETWORK=${network} BCN_URL=${bcnUrl} TEST_ENV=${testEnv} mocha --exit ${jsDom} --config`
 
 // ltc, regtest, and unit are default
 
