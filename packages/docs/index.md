@@ -1,13 +1,23 @@
 ---
 layout: page
-description: This is a custom description for this page
 ---
 
 ![](/static/bitcoin-computer@1x.png)
 # Bitcoin Computer
 
-A smart contract system for UTXO-based blockchains. Key features include:
-* Clients validate instead of trusting the operator 
+A Turing-complete smart contract system for Bitcoin and Litecoin. High level, it works as follows:
+
+* Inscribe a Javascript class to create a smart contract
+* Inscribe a constructor call to create a smart object from a smart contract
+* Inscribe a function call to update a smart object
+* Smart objects live in UTXOs, the owner of the UTXO iss the owner of the object
+* Only the owner can update a smart object by spending the UTXO
+* All historical states are recorded in spent UTXOs
+* Read access can be restricted via end-to-end encryption
+* Data can be stored off-chain on a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node)
+* Smart contracts can be decomposed using ES6 modules
+
+<!-- * Clients validate instead of trusting the operator 
 * Transaction fee are low and independent of time and space complexity
 * Smart contract are written in Javascript or Typescript
 * Access to all historical states
@@ -16,7 +26,7 @@ A smart contract system for UTXO-based blockchains. Key features include:
 * ES6 module system based on inscriptions
 * No side-chain
 * No extra token
-* Support for Litecoin with support for Bitcoin and Dogecoin coming soon.
+* Support for Litecoin with support for Bitcoin and Dogecoin coming soon. -->
 
 You can build decentralized applications, such as tokens, exchanges, games, social networks, and more.
 
@@ -30,26 +40,27 @@ To run an example have a look at the `README.md` file in the corresponding folde
 
 ### Applications
 
-* [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet): A minimal non-custodial wallet
-* [Chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat): A p2p chat application where messages are communicated over the blockchain
-* [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token): An application for minting, sending, and storing fungible tokens
-* [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token): An application for minting, sending, and storing non-fungible tokens (NFTs)
+* [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet#readme): A minimal non-custodial wallet
+* [Explorer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/explorer#readme): A minimal non-custodial wallet
+* [Chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat#readme): A p2p chat application where messages are communicated over the blockchain
+* [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token#readme): An application for minting, sending, and storing fungible tokens
+* [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token#readme): An application for minting, sending, and storing non-fungible tokens (NFTs)
 
 ### Standard Smart Contracts
 
-* [BRC20 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC20): A implementation of the ERC20 Fungible Token Standard
-* [BRC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC721): A implementation of the ERC721 Non-Fungible Token Standard
+* [BRC20 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC20#readme): A implementation of the ERC20 Fungible Token Standard
+* [BRC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC721#readme): A implementation of the ERC721 Non-Fungible Token Standard
 
 ### Templates
-* [Bitcoin Computer Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate): A template for starting a new Bitcoin Computer application with [node.js](https://nodejs.org/en/)
-* [Bitcoin Computer React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/create-react-app-template): A template for starting a new Bitcoin Computer application with [Create React App](https://create-react-app.dev/)
+* [Bitcoin Computer Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate#readme): A template for starting a new Bitcoin Computer application with [node.js](https://nodejs.org/en/)
+* [Bitcoin Computer React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/create-react-app-template#readme): A template for starting a new Bitcoin Computer application with [Create React App](https://create-react-app.dev/)
 
 ## Core Library
 
 The core smart contract library is based on two packages:
 
-* [Bitcoin Computer Lib](https://www.npmjs.com/package/@bitcoin-computer/lib) A non-custodial web wallet for reading and writing smart contracts
-* [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) Server side infrastructure for providing trustless access to smart contracts
+* [Bitcoin Computer Lib](https://www.npmjs.com/package/@bitcoin-computer/lib#readme) A non-custodial web wallet for reading and writing smart contracts
+* [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) Server side infrastructure for providing trustless access to smart contracts
 
 ## Price
 
