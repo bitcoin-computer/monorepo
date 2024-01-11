@@ -9,11 +9,19 @@ Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/mono
 ```bash
 git clone git@github.com:bitcoin-computer/monorepo.git
 cd monorepo
-lerna bootstrap
+yarn install
 cd packages/explorer
+cp .env.example .env
 ```
 
-## Usage
+## Start the Server
+
+To start the application run:
+```bash
+yarn start
+```
+Then open [http://localhost:1032](http://localhost:1032) in a browser.
+
 
 ### Configuration
 
@@ -29,13 +37,6 @@ yarn deploy
 
 You will need to fund the wallet that is used to deploy the smart contract, see [here](../lib/README.md#fund-the-wallet). After that you can start the server.
 
-### Start the Server
-
-To start the application run:
-```bash
-yarn start
-```
-Then open [http://localhost:1032](http://localhost:1032) in a browser.
 
 ### Log In
 
