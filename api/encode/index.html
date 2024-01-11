@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758232250102">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758295695660">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>encode</title>
     <meta name="title" content="encode">
-    <meta name="description" content="The functions encode and decode provide the core functionality of the Bitcoin Computer: recording Javascript expressions on the blockchain and...">
+    <meta name="description" content="The encode function builds a Bitcoin transaction from a Javascript expression according to the Bitcoin Computer protocol">
 
     <!-- Canonical -->
     <link rel="canonical" href="/api/encode/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/api/encode/">
     <meta property="og:title" content="encode">
-    <meta property="og:description" content="The functions encode and decode provide the core functionality of the Bitcoin Computer: recording Javascript expressions on the blockchain and...">
+    <meta property="og:description" content="The encode function builds a Bitcoin transaction from a Javascript expression according to the Bitcoin Computer protocol">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/api/encode/">
     <meta property="twitter:title" content="encode">
-    <meta property="twitter:description" content="The functions encode and decode provide the core functionality of the Bitcoin Computer: recording Javascript expressions on the blockchain and...">
+    <meta property="twitter:description" content="The encode function builds a Bitcoin transaction from a Javascript expression according to the Bitcoin Computer protocol">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.758232250102" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.758295695660" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758232250102" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758295695660" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -157,20 +157,30 @@
         <span>encode</span>
     </h1>
 </doc-anchor-target>
-<p>The functions <code v-pre>encode</code> and <code v-pre>decode</code> provide the core functionality of the Bitcoin Computer: recording Javascript expressions on the blockchain and computing their values. The basic interface is syntactic sugar on top of the basic interface. The advanced interface is a more efficient than the basic interface and it provides access to advanced features.</p>
-<p>The <code v-pre>encode</code> function evaluates a Javascript expression on a blockchain. It returns a <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs-lib/ts_src/transaction.ts">Bitcoin transaction</a> and an object of type Effect (see <doc-anchor-trigger to="#return-value">return type</doc-anchor-trigger>).</p>
-<p>If the expression to encode contains free variables (for example the variable <code v-pre>x</code> in the expression <code v-pre>x.f()</code>) an environment must be passed in to define where the free variables are defined. Specifically, an environment is a JSON object that maps variables to their respective revisions.</p>
-<p>If a <doc-anchor-trigger to="#modules">module specifier</doc-anchor-trigger> is provided, the exports of that module are imported when the expression is evaluated. The module specifier can also be used to <doc-anchor-trigger to="#query">query</doc-anchor-trigger> for all objects that were created in expressions that imported that module specifier.</p>
+<p>The <code v-pre>encode</code> function builds a Bitcoin transaction from a Javascript expression according to the <a href="../../how-it-works/">Bitcoin Computer protocol</a>. In addition to the transaction, this function also returns the value of the expression.</p>
+<p>If the expression contains free variables (for example the variable <code v-pre>x</code> in the expression <code v-pre>x.f()</code>) a &quot;blockchain environment&quot; must be passed. A blockchain environment is a JSON object that maps variable names to the latest revisions of smart objects.</p>
+<p>A <doc-anchor-trigger to="#modules">module specifier</doc-anchor-trigger> can be provided in order to make the exports of that module are available to the evaluation.</p>
 <p>Other options can customize the funding and signing process.</p>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const { effect, tx } = await computer.encode(opts)</code></pre>
-</doc-codeblock></div>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-green-500"></div>
+    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-green-500" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M21 9.09c-.55 0-1 .45-1 1v.92c0 4.96-4.04 8.99-9 8.99-4.97 0-9-4.04-9-9s4.04-9 9-9c1.27 0 2.5.26 3.66.78.51.22 1.1 0 1.32-.51.23-.5 0-1.1-.51-1.32C14.06.32 12.56 0 11.01 0H11C4.94 0 0 4.93 0 10.99 0 17.06 4.93 22 10.99 22H11c6.06 0 11-4.93 11-10.99v-.92c0-.56-.45-1-1-1z"></path>
+                    <path d="M8.71 9.31a.996.996 0 10-1.41 1.41l3 3c.19.19.44.29.71.29.27 0 .52-.11.71-.29l10-10.01a.996.996 0 10-1.41-1.41L11 11.6 8.71 9.31z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>The state update effected by a Bitcoin Computer transaction is completely predictable:</p>
+<ul>
+<li>If the transaction is included in a block the new state will be exactly the state returned from the <code v-pre>effect</code> function.</li>
+<li>If the transaction is not included the state is not updated.</li>
+</ul>
+        </div>
+    </div>
+</div>
 <doc-anchor-target id="type">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
@@ -179,22 +189,39 @@
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">(opts: {
-  exp: string,
-  env?: { [s: string]: string },
-  mod?: string
-  fund?: boolean
-  include?: string[]
-  exclude?: string[]
-  sign?: boolean
-  sighashType?: number
-  index?: number
-  script?: Buffer
+  exp: string, // an expression
+  env?: Record&lt;string, string&gt;, // a blockchain environment
+  mod?: string // a module specifier
+
+  // Funding options
+  fund?: boolean // whether to fund the transaction
+  include?: string[] // include specific UTXOs when funding
+  exclude?: string[] // exclude specific UTXOs when funding
+  
+  // Signing options
+  sign?: boolean // whether to sign the transaction
+  sighashType?: number // Sighash type to use
+  index?: number // input index to be signed
+  inputScript?: Buffer // use input script (instead of signing)
 }) =&gt; Promise&lt;{
-  // the changes caused by evaluating exp
-  effect: Effect
-  // transaction to commit the changes
-  tx: BitcoinLib.Transaction
+  // the transaction with the expression inscribed
+  tx: BitcoinLib.Transaction,
+  // the result of the evaluation
+  effect: { res: Json; env: Json }
 }&gt; </code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="syntax">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
+        <span>Syntax</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">await computer.encode({ exp })
+await computer.encode({ exp, env })
+await computer.encode({ exp, env, mod })
+await computer.encode({ exp, fund, sign })
+...</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="parameters">
     <h3>
@@ -209,70 +236,94 @@
     </h4>
 </doc-anchor-target>
 <p>An object with the basic configuration parameters to encode the expression in a transaction.</p>
-<div align="center" style="font-size: 14px;">
-  <table>
-    <tr>
-      <th>option</th>
-      <th>description</th>
-    </tr>
-    <tr>
-      <td>exp</td>
-      <td>Javascript expression</td>
-    </tr>
-    <tr>
-      <td>env</td>
-      <td>Environment, maps free variables to revisions</td>
-    </tr>
-    <tr>
-      <td>mod</td>
-      <td>An string for the module specifier</td>
-    </tr>
-    <tr>
-      <td>fund</td>
-      <td>A boolean value to indicate whether the transaction must be funded (defaults to true) </td>
-    </tr>
-    <tr>
-      <td>include</td>
-      <td>An array of strings with specific utxos (transaction id and output number) to include when funding (defaults to [])</td>
-    </tr>
-    <tr>
-      <td>exclude</td>
-      <td>An array of string with specific utxos  (transaction id and output number) to skip when funding (defaults to [])</td>
-    </tr>
-    <tr>
-      <td>sign</td>
-      <td>A boolean value indicating if the transaction needs to be signed with the computer private key (defaults to true)</td>
-    </tr>
-    <tr>
-      <td>sighashType</td>
-      <td>A number that specifies which part of transaction to sign (defaults to 1, sighash_all)</td>
-    </tr>
-    <tr>
-      <td>index</td>
-      <td>If sign is required, this is the index of a single input to be signed (defaults to undefined, i.e., sign all inputs)</td>
-    </tr>
-    <tr>
-      <td>script</td>
-      <td>If sign is required, a custom input script can be provided</td>
-    </tr>
-  </table>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>exp</td>
+<td>string</td>
+<td>A Javascript expression</td>
+<td></td>
+</tr>
+<tr>
+<td>env</td>
+<td>Record&lt;string, string&gt;</td>
+<td>A Blockchain environment, maps free variables to latest revisions</td>
+<td>{}</td>
+</tr>
+<tr>
+<td>mod</td>
+<td>string</td>
+<td>A module specifier</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>fund</td>
+<td>boolean</td>
+<td>Whether the transaction should be funded</td>
+<td>true</td>
+</tr>
+<tr>
+<td>include</td>
+<td>string[]</td>
+<td>UTXOs to include when funding</td>
+<td>[]</td>
+</tr>
+<tr>
+<td>exclude</td>
+<td>string[]</td>
+<td>UTXOs to exclude when funding</td>
+<td>[]</td>
+</tr>
+<tr>
+<td>sign</td>
+<td>boolean</td>
+<td>Whether to sign the transaction</td>
+<td>true</td>
+</tr>
+<tr>
+<td>sighashType</td>
+<td>number</td>
+<td>The sighash type</td>
+<td>1=SIGHASH_ALL</td>
+</tr>
+<tr>
+<td>index</td>
+<td>number</td>
+<td>If set to an number the corresponding input is signed. If undefined all inputs are signed.</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>inputScript</td>
+<td>string</td>
+<td>If set to a string a custom input script can be provided. If undefined a signature script is generated</td>
+<td>undefined</td>
+</tr>
+</tbody>
+</table>
 </div>
-<br>
+<p>Module specifiers and UTXOs are encoded as strings of the form &lt;transaction id&gt;:&lt;output number&gt;</p>
 <doc-anchor-target id="return-value">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#return-value">#</doc-anchor-trigger>
         <span>Return value</span>
     </h3>
 </doc-anchor-target>
-<p>It returns a <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs-lib/ts_src/transaction.ts">Bitcoin transaction</a> and an object of type Effect.</p>
-<p>The object of type <code v-pre>Effect</code> captures the changes induced by evaluating the expression: It contains the result of the evaluation (property <code v-pre>res</code>) and the side effects of the evaluation (property <code v-pre>env</code>). The object of type <code v-pre>Effect</code> can be used to determine if the evaluation had the desired effect. If it did, the transaction can be broadcast to commit the update to the blockchain. If the transaction is not broadcast, the state on the blockchain does not change. The transaction can be broadcast at an arbitrarily long delay after calling <code v-pre>encode</code>. If during the time between calling <code v-pre>encode</code> and broadcasting the transaction the blockchain undergoes any updates that could affect the evaluation, the miners will reject the transaction. However, if the transaction is accepted by the miners, it is guaranteed to have the effect indicated by object of type <code v-pre>Effect</code>.</p>
+<p>It returns an object <code v-pre>{ tx, effect }</code> where <code v-pre>tx</code> is a Bitcoin transaction and <code v-pre>effect</code> is an object with keys <code v-pre>res</code> and <code v-pre>env</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">type EncodeResult = { tx: BitcoinLib.Transaction, effect: Effect }
-type Effect = { res: unknown, env: unknown }</code></pre>
+<pre class="language-typescript"><code v-pre class="language-typescript">{ tx: BitcoinLib.Transaction, effect: { res: Json; env: Json } }</code></pre>
 </doc-codeblock></div>
-<p>If fund is required, and the wallet has insufficient funds, an error is thrown.
-If sign is required, the default behavior is to sign all inputs.
-The encode function will make a best effort to sign all inputs, but will not throw any error if the signature cannot be added due to hash mismatch. This is useful in the case of partially signed transactions, where a user can encode an expression, sign with the user private key and send the generated partially signed transaction to another user. Then, the receiver can sign other inputs.</p>
+<p>The transaction <code v-pre>tx</code> is an object from the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs-lib#nakamotojs-nakamotojs-lib">NakamotoJS</a> library - a <a href="https://github.com/bitcoinjs/bitcoinjs-lib?tab=readme-ov-file#bitcoinjs-bitcoinjs-lib">BitcoinJS</a> clone that supports LTC and BTC and has some extra features that make is easier to build advanced applications like exchanges.</p>
+<p>The <code v-pre>res</code> object contains the result of the evaluation.</p>
+<p>The <code v-pre>env</code> object has the same keys as the blockchain environment. However, whereas the values of the blockchain environment are revision strings, the values of <code v-pre>env</code> and the smart object at these revisions <em>after</em> evaluating the expression.</p>
 <!-- TODO: describe that when signing, some errors are swallowed in order to enable partially signed transactions -->
 <doc-anchor-target id="examples">
     <h3>
@@ -281,19 +332,23 @@ The encode function will make a best effort to sign all inputs, but will not thr
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">// The code below works for any smart contract.
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer, Contract } from '@bitcoin-computer/lib'
+
+// A smart contract
 class C extends Contract {
   constructor(n) {
     this.n = n
   }
 }
 
-// Calling encode will not change the global memory.
+// Calling encode will not broadcast a transaction
+// or change state of smart objects
 const { effect, tx } = await computer.encode({
   exp: `${C} new C(1)`
 })
 
-// Effect captures change caused by evaluation.
+// Effect captures state of smart objects
+// if the transaction is broadcast
 expect(effect).deep.eq({
   res: { 
     n:1
@@ -307,14 +362,12 @@ expect(effect).deep.eq({
 })
 
 // The tx can be broadcast to commit the change
-// to the global memory. Will be rejected by
-// miners if another update might change the effect
 const txId = await computer.broadcast(tx)
 
-// Read the latest state.
+// Read the latest state
 const synced = await computer.sync(txId)
 
-// The new state in memory will always equal effect.
+// The new state in memory will always equal effect
 expect(synced).deep.eq(effect)
 </code></pre>
 </doc-codeblock></div>

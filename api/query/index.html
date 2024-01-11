@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758232250102">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758295695660">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.758232250102" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.758295695660" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758232250102" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758295695660" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -158,15 +158,6 @@
     </h1>
 </doc-anchor-target>
 <p>Returns the latest revisions of smart objects. Conditions can be passed in to determine the smart objects. When multiple conditions are passed in, the latest revisions of the smart objects that satisfy all conditions are returned.</p>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const revsArray = await computer.query(params)</code></pre>
-</doc-codeblock></div>
 <doc-anchor-target id="type">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
@@ -174,18 +165,29 @@
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">(query: {
+<pre class="language-typescript"><code v-pre class="language-typescript">&lt;T extends new (...args: any) =&gt; any&gt;(query: {
   publicKey?: string
   ids?: string[]
   mod?: string
-  contract?: &lt;T extends new (...args: any) =&gt; any&gt;{
-    class: T,
-    args?: ConstructorParameters&lt;T&gt;;
-  }
-  order?: 'ASC' | 'DEC',
-  limit?: number,
-  offset?: number,
+  limit?: number
+  offset?: number
+  order?: 'ASC' | 'DEC'
+  contract?: { class: T, args?: ConstructorParameters&lt;T&gt; }
 }) =&gt; Promise&lt;string[]&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="syntax">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
+        <span>Syntax</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">await computer.query({ publicKey })
+await computer.query({ ids })
+await computer.query({ mod })
+await computer.query({ contract })
+await computer.query({ publicKey, contract, order })
+...</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="parameters">
     <h3>
@@ -200,41 +202,53 @@
     </h4>
 </doc-anchor-target>
 <p>An object with the query parameters.</p>
-<div align="center" style="font-size: 14px;">
-  <table>
-    <tr>
-      <th>parameter</th>
-      <th>functionality</th>
-    </tr>
-    <tr>
-      <td>publicKey</td>
-      <td>Return all unspent revisions currently owned by a public key</td>
-    </tr>
-    <tr>
-      <td>ids</td>
-      <td>Return all unspent revision of smart objects with these ids in order</td>
-    </tr>
-    <tr>
-      <td>mod</td>
-      <td>Return the latest revision of smart objects created with this module specifier</td>
-    </tr>
-    <tr>
-      <td>contract</td>
-      <td>Return all unspent revisions of smart objects from a class</td>
-    </tr>
-    <tr>
-      <td>order</td>
-      <td>Order results in 'ASC' or 'DEC' order</td>
-    </tr>
-    <tr>
-      <td>limit</td>
-      <td>Return only limited number of revisions</td>
-    </tr>
-    <tr>
-      <td>offset</td>
-      <td>Return results starting from offset</td>
-    </tr>
-  </table>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>publicKey</td>
+<td>string</td>
+<td>Return latest revisions of smart objects owned by a public key</td>
+</tr>
+<tr>
+<td>ids</td>
+<td>string[]</td>
+<td>Return latest revision of smart objects with ids in order</td>
+</tr>
+<tr>
+<td>mod</td>
+<td>string</td>
+<td>Return the latest revision of smart objects created with this module specifier</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>number</td>
+<td>Return only limited number of revisions</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>number</td>
+<td>Return results starting from offset</td>
+</tr>
+<tr>
+<td>order</td>
+<td>&#x27;ASC&#x27; | &#x27;DEC&#x27;</td>
+<td>Order results in ascending or descending order</td>
+</tr>
+<tr>
+<td>contract</td>
+<td>{ class: T, args?: ConstructorParameters&lt;T&gt; }</td>
+<td>Return latest revisions of smart objects from a class</td>
+</tr>
+</tbody>
+</table>
 </div>
 <doc-anchor-target id="return-value">
     <h3>

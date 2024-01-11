@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758232250102">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758295695660">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>encodeNew</title>
     <meta name="title" content="encodeNew">
-    <meta name="description" content="Encodes a smart object creation.">
+    <meta name="description" content="Encodes a constructor call. This function is syntactic sugar for encode.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/api/encodenew/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/api/encodenew/">
     <meta property="og:title" content="encodeNew">
-    <meta property="og:description" content="Encodes a smart object creation.">
+    <meta property="og:description" content="Encodes a constructor call. This function is syntactic sugar for encode.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/api/encodenew/">
     <meta property="twitter:title" content="encodeNew">
-    <meta property="twitter:description" content="Encodes a smart object creation.">
+    <meta property="twitter:description" content="Encodes a constructor call. This function is syntactic sugar for encode.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.758232250102" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.758295695660" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758232250102" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758295695660" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -157,16 +157,7 @@
         <span>encodeNew</span>
     </h1>
 </doc-anchor-target>
-<p>Encodes a smart object creation.</p>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const { tx, effect } = await computer.encodeNew(params)</code></pre>
-</doc-codeblock></div>
+<p>Encodes a constructor call. This function is syntactic sugar for <a href="../encode/">encode</a>.</p>
 <doc-anchor-target id="type">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
@@ -174,14 +165,25 @@
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">&lt;T extends new (...args: any) =&gt; any&gt;({
+<pre class="language-typescript"><code v-pre class="language-typescript">&lt;T extends new (...args: any) =&gt; any&gt;(params: {
   constructor: T,
   args?: ConstructorParameters&lt;T&gt;,
   mod?: string
 }) =&gt; Promise&lt;{
-  tx: BitcoinLib.Transaction
-  effect: Effect
-}&gt; </code></pre>
+  tx: BitcoinLib.Transaction,
+  effect: { res: Json; env: Json }
+}&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="syntax">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
+        <span>Syntax</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">await computer.encodeNew({ constructor })
+await computer.encodeNew({ constructor, args })
+await computer.encodeNew({ constructor, args, mod })</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="parameters">
     <h3>
@@ -189,34 +191,49 @@
         <span>Parameters</span>
     </h3>
 </doc-anchor-target>
-<doc-anchor-target id="constructor">
+<doc-anchor-target id="params">
     <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#constructor">#</doc-anchor-trigger>
-        <span>constructor</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#params">#</doc-anchor-trigger>
+        <span>params</span>
     </h4>
 </doc-anchor-target>
-<p>A named Javascript class that extends from <code v-pre>Contract</code></p>
-<doc-anchor-target id="args">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#args">#</doc-anchor-trigger>
-        <span>args</span>
-    </h4>
-</doc-anchor-target>
-<p>Arguments to the constructor of <code v-pre>T</code></p>
-<doc-anchor-target id="mod">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#mod">#</doc-anchor-trigger>
-        <span>mod</span>
-    </h4>
-</doc-anchor-target>
-<p>A module specifier, i.e., the revision string of an already deployed module (see <a href="/api.md#deploy">deploy</a>).</p>
+<p>An object with the configuration parameters to encode the expression in a transaction.</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>constructor</td>
+<td>T extends new (...args: any) =&gt; any</td>
+<td>A Javascript class that extends from <code v-pre>Contract</code></td>
+</tr>
+<tr>
+<td>args</td>
+<td>ConstructorParameters&lt;T&gt;</td>
+<td>Arguments to the constructor of the class</td>
+</tr>
+<tr>
+<td>mod</td>
+<td>string</td>
+<td>A module specifier</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Module specifiers are encoded as strings of the form &lt;transaction id&gt;:&lt;output number&gt;</p>
 <doc-anchor-target id="return-value">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#return-value">#</doc-anchor-trigger>
         <span>Return value</span>
     </h3>
 </doc-anchor-target>
-<p>It returns a <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs-lib/ts_src/transaction.ts">Bitcoin transaction</a> and an object of type Effect (see <a href="../encode/#return-value">encode return type</a>).</p>
+<p>It returns an object <code v-pre>{ tx, effect }</code> where <code v-pre>tx</code> is a Bitcoin transaction and <code v-pre>effect</code> is an object with keys <code v-pre>res</code> and <code v-pre>env</code>. For more details see the description of the return type of <a href="../encode/">encode</a>.</p>
 <doc-anchor-target id="examples">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
@@ -224,18 +241,25 @@
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">class C extends Contract { }
+<pre class="language-typescript"><code v-pre class="language-typescript">// A smart contract
+class C extends Contract {}
+
+// Encode a constructor call
 const computer = new Computer()
 const { tx } = await computer.encodeNew({
   constructor: C
 })
-const decoded = await computer.decode(tx)
 
+// Decode meta data
+const decoded = await computer.decode(tx)
 expect(decoded).to.deep.eq({
   exp: `${C} new C()`,
   env: {},
   mod: ''
-})</code></pre>
+})
+
+// Broadcast the tx to create the smart object
+const txId = await computer.broadcast(tx)</code></pre>
 </doc-codeblock></div>
 
                                 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758232250102">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758295695660">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.758232250102" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.758295695660" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758232250102" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758295695660" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -158,15 +158,6 @@
     </h1>
 </doc-anchor-target>
 <p>Returns the current balance in satoshi.</p>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const balance = await computer.getBalance()</code></pre>
-</doc-codeblock></div>
 <doc-anchor-target id="type">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
@@ -174,7 +165,16 @@
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">() =&gt; string</code></pre>
+<pre class="language-typescript"><code v-pre class="language-typescript">() =&gt; Promise&lt;string&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="syntax">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
+        <span>Syntax</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">await computer.getBalance()</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="return-value">
     <h3>
@@ -182,16 +182,7 @@
         <span>Return value</span>
     </h3>
 </doc-anchor-target>
-<p>Returns the current balance in satoshi.</p>
-<doc-anchor-target id="examples">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const balance = await computer.getBalance()</code></pre>
-</doc-codeblock></div>
+<p>Returns the current balance in Satoshi.</p>
 
                                 
                                 <!-- Required only on API pages -->

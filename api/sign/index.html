@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758232250102">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758295695660">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.758232250102" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.758295695660" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758232250102" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758295695660" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -158,15 +158,6 @@
     </h1>
 </doc-anchor-target>
 <p>Signs a Bitcoin transaction. Options can be passed in that determine which inputs to sign, the sigHash type to use, and which script to use.</p>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">computer.sign(tx, opts)</code></pre>
-</doc-codeblock></div>
 <doc-anchor-target id="type">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
@@ -182,6 +173,15 @@
     inputScript?: Buffer
   }
 ) =&gt; void</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="syntax">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
+        <span>Syntax</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">computer.sign(tx, opts)</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="parameters">
     <h3>
@@ -203,25 +203,33 @@
     </h4>
 </doc-anchor-target>
 <p>An object with specific parameters to use when signing</p>
-<div align="center" style="font-size: 14px;">
-  <table>
-    <tr>
-      <th>option</th>
-      <th>description</th>
-    </tr>
-    <tr>
-      <td>inputIndex</td>
-      <td>The input index to be signed</td>
-    </tr>
-    <tr>
-      <td>sighashType</td>
-      <td>A valid <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs-lib/src/transaction.d.ts" > sighash type number </a> </td>
-    </tr>
-    <tr>
-      <td>inputScript</td>
-      <td>A buffer encoding the signature</td>
-    </tr>
-  </table>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>inputIndex</td>
+<td>number</td>
+<td>The input index to be signed</td>
+</tr>
+<tr>
+<td>sighashType</td>
+<td>number</td>
+<td>A valid <a target="_blank" href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs-lib/src/transaction.d.ts">sighash type number</a></td>
+</tr>
+<tr>
+<td>inputScript</td>
+<td>Buffer</td>
+<td>A buffer encoding the signature</td>
+</tr>
+</tbody>
+</table>
 </div>
 <doc-anchor-target id="return-value">
     <h3>
@@ -229,7 +237,8 @@
         <span>Return value</span>
     </h3>
 </doc-anchor-target>
-<p>By default, the <code v-pre>sign</code> function will make a best effort to sign all inputs, but will not throw any error if the signature cannot be added due to hash mismatch. This is useful in the case of partially signed transactions, where a user can encode an expression, sign with the user private key and send the generated partially signed transaction to another user. Then, the receiver can sign other inputs.</p>
+<p>By default, the <code v-pre>sign</code> function will make a best effort to sign all inputs, but will not throw an error if the signature cannot be added due to hash mismatch.</p>
+<p>This is useful in the case of partially signed transactions, where a user can encode an expression, sign with the user private key and send the generated partially signed transaction to another user. Then, the receiver can sign other inputs.</p>
 <doc-anchor-target id="examples">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758232250102">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758295695660">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>load</title>
     <meta name="title" content="load">
-    <meta name="description" content="Imports a ES6 module from a module specifier.">
+    <meta name="description" content="Imports a ES6 module from a module specifier encoded as a string <transaction id>:<output number>.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/api/load/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/api/load/">
     <meta property="og:title" content="load">
-    <meta property="og:description" content="Imports a ES6 module from a module specifier.">
+    <meta property="og:description" content="Imports a ES6 module from a module specifier encoded as a string <transaction id>:<output number>.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/api/load/">
     <meta property="twitter:title" content="load">
-    <meta property="twitter:description" content="Imports a ES6 module from a module specifier.">
+    <meta property="twitter:description" content="Imports a ES6 module from a module specifier encoded as a string <transaction id>:<output number>.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.758232250102" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.758295695660" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758232250102" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758295695660" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -157,16 +157,7 @@
         <span>load</span>
     </h1>
 </doc-anchor-target>
-<p>Imports a ES6 module from a module specifier.</p>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const { A } = await computer.load(rev, computer.wallet)</code></pre>
-</doc-codeblock></div>
+<p>Imports a ES6 module from a module specifier encoded as a string &lt;transaction id&gt;:&lt;output number&gt;.</p>
 <doc-anchor-target id="type">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
@@ -174,7 +165,16 @@
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">(rev: string, wallet: Wallet) =&gt; Promise&lt;new (...args: any) =&gt; any&gt;;</code></pre>
+<pre class="language-typescript"><code v-pre class="language-typescript">(rev: string) =&gt; Promise&lt;ModuleExportsNamespace&gt;</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="syntax">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
+        <span>Syntax</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">await computer.load(rev, wallet)</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="parameters">
     <h3>
@@ -188,14 +188,7 @@
         <span>rev</span>
     </h4>
 </doc-anchor-target>
-<p>A string encoding a javascript class that extends from <code v-pre>Contract</code>.</p>
-<doc-anchor-target id="wallet">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#wallet">#</doc-anchor-trigger>
-        <span>wallet</span>
-    </h4>
-</doc-anchor-target>
-<p>A wallet object.</p>
+<p>A string encoding a module specifier.</p>
 <doc-anchor-target id="return-value">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#return-value">#</doc-anchor-trigger>
@@ -211,10 +204,8 @@
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">class A extends Contract {}
-const module = `export ${A}`
-const rev = await computer.export(module)
-const { A: AA } = await computer.import(rev)
-
+const rev = await computer.deploy(`export ${A}`)
+const { A: AA } = await computer.load(rev)
 expect(AA).to.equal(A)</code></pre>
 </doc-codeblock></div>
 

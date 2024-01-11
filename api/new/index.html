@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758232250102">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758295695660">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.758232250102" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.758295695660" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758232250102" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758232250102" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758295695660" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758295695660" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -158,15 +158,6 @@
     </h1>
 </doc-anchor-target>
 <p>Creates a new smart object. The parameters are a smart contract (a Javascript class inheriting from <code v-pre>Contract</code>), a list of arguments for the constructor of the class and an optional module specifier. The arguments of the constructor can be of basic data type or smart objects. The <code v-pre>new</code> function builds a transaction that records the creation of a new smart object, signs it and broadcasts it. Smart objects can be updated by calling their functions, see <a href="../../tutorial/#update-a-smart-object">here</a>.</p>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const obj = await computer.new(A, [10], '9128ab1232...18ba:0')</code></pre>
-</doc-codeblock></div>
 <doc-anchor-target id="type">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
@@ -178,11 +169,11 @@
   constructor: T,
   args?: ConstructorParameters&lt;T&gt;,
   mod?: string
-) =&gt; Promise&lt;InstanceType&lt;T&gt; &amp; Location&gt;;</code></pre>
+) =&gt; Promise&lt;InstanceType&lt;T&gt; &amp; MetaData&gt;;</code></pre>
 </doc-codeblock></div>
-<p>Here a <code v-pre>Location</code> is the type</p>
+<p>Here a <code v-pre>MetaData</code> is the type</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">type Location = { 
+<pre class="language-typescript"><code v-pre class="language-typescript">type MetaData = { 
   _id: string, 
   _rev: string, 
   _root: string, 
@@ -191,6 +182,17 @@
   _readers?: string[], 
   _url?: string 
 }</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="syntax">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
+        <span>Syntax</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">await computer.new(A)
+await computer.new(A, [10])
+await computer.new(A, ['a'], '9128ab1232...18ba:0')</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="parameters">
     <h3>
@@ -204,21 +206,21 @@
         <span>constructor</span>
     </h4>
 </doc-anchor-target>
-<p>A named Javascript class that extends from <code v-pre>Contract</code></p>
+<p>A named Javascript class that extends from <code v-pre>Contract</code>.</p>
 <doc-anchor-target id="args">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#args">#</doc-anchor-trigger>
         <span>args</span>
     </h4>
 </doc-anchor-target>
-<p>Arguments to the constructor of <code v-pre>T</code></p>
+<p>Arguments to the constructor of the class.</p>
 <doc-anchor-target id="mod">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#mod">#</doc-anchor-trigger>
         <span>mod</span>
     </h4>
 </doc-anchor-target>
-<p>A module specifier, i.e., the revision string of an already deployed module (see <a href="/api.md#deploy">deploy</a>).</p>
+<p>A module specifier, i.e., the revision string of a deployed module (see <a href="/api.md#deploy">deploy</a>).</p>
 <doc-anchor-target id="return-value">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#return-value">#</doc-anchor-trigger>
@@ -233,7 +235,7 @@
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">import { Contract } from '@bitcoin-computer/lib'
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Contract, Computer } from '@bitcoin-computer/lib'
 
 // A smart contract
 class A extends Contract {
@@ -243,15 +245,14 @@ class A extends Contract {
 }
 
 // Create a smart object
+const computer = new Computer({ mnemonic: ... })
 const a = await computer.new(A, [1])
-
-// Evaluates to true
 expect(a).to.deep.equal({
   n: 1,
   _id: '667c...2357:0',
   _rev: '667c...2357:0',
   _root: '667c...2357:0',
-  _owners: ['03...'],
+  _owners: [computer.getPublicKey()],
   _amount: 5820
 })</code></pre>
 </doc-codeblock></div>
