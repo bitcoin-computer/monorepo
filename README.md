@@ -22,7 +22,9 @@ With the Bitcoin Computer, you can build decentralized applications. Examples in
 To clone this monorepo and install the dependencies, run
 
 ```bash
-npx bitcoin-computer
+git clone https://github.com/bitcoin-computer/monorepo.git
+cd monorepo
+yarn install
 ```
 
 ## Examples

@@ -34,14 +34,23 @@ const chain = args.bitcoin ? 'BTC' : 'LTC'
 const network = args.regtest ? 'regtest' : 'testnet'
 const bcnPort = process.env.PORT ?? 1031
 const bcnUrl = args.regtest ? 'http://127.0.0.1:' + bcnPort : 'https://node.bitcoincomputer.io'
-const rpcHost = process.env.RPC_HOST ?? 'node.bitcoincomputer.io'
-const rpcUser = process.env.RPC_USER ?? 'bcn-admin'
-const rpcPass = process.env.PRC_PASSWORD ?? 'kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
+const rpcHost = args.regtest ? '127.0.0.1' : 'node.bitcoincomputer.io'
+const rpcUser = 'bcn-admin'
+const rpcPass = 'kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
 const testEnv = args.react ? 'react' : args.browser ? 'browser' : args.main ? 'main' : 'source'
 
 const jsDom = testEnv === 'browser' || testEnv === 'react' ? '--require jsdom-global/register' : ''
 
-let command = `TS_NODE_FILES=true RPC_HOST=${rpcHost} RPC_PORT=${nodePort} RPC_PROTOCOL=http  RPC_USER=${rpcUser} RPC_PASSWORD=${rpcPass} CHAIN=${chain} NETWORK=${network} BCN_URL=${bcnUrl} TEST_ENV=${testEnv} mocha --exit ${jsDom} --config`
+let command = `TS_NODE_FILES=true 
+  RPC_HOST=${rpcHost} 
+  RPC_PORT=${nodePort} 
+  RPC_PROTOCOL=http  
+  RPC_USER=${rpcUser} 
+  RPC_PASSWORD=${rpcPass} 
+  CHAIN=${chain} 
+  NETWORK=${network} 
+  BCN_URL=${bcnUrl} 
+  TEST_ENV=${testEnv} mocha --exit ${jsDom} --config`
 
 // ltc, regtest, and unit are default
 

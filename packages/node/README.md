@@ -25,15 +25,16 @@ You need to have [node.js](https://nodejs.org/en/) and [Docker](https://www.dock
 git clone https://github.com/bitcoin-computer/monorepo.git
 
 # Install the dependencies
+cd monorepo
 yarn install
 
 # Move to the folder for the Bitcoin Computer Node
-cd monorepo/packages/node
+cd packages/node
 
 # Copy the .env.example file into a .env file
 cp .env.example .env
 
-# Build the Bitcoin Computer node docker image into the monorepo folder
+# Build the Bitcoin Computer node docker image
 cd ../../
 yarn build-node
 

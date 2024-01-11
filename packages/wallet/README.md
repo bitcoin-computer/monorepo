@@ -1,19 +1,32 @@
-# Bitcoin Computer Explorer
+# Bitcoin Computer Wallet
 
-A web application for exploring the blockchain and interacting with the Bitcoin Computer smart contracts. Built using the [Bitcoin Computer](http://bitcoincomputer.io/).
+A Bitcoin and Litecoin wallet to store cryptocurrency and on chain assets, that includes:
+  * Select the blockchain (BTC and LTC) and network mode (mainnet, testnet, regtest)
+  * Login using BIP39 mnemonic
+  * Show the balance
+  * Send and receive transactions and view sent and received transactions
+  * View and update all smart objects owned by the wallet
 
 ## Installation
 
-Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/explorer``.
+Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/wallet``.
 
 ```bash
 git clone git@github.com:bitcoin-computer/monorepo.git
 cd monorepo
-lerna bootstrap
-cd packages/explorer
+yarn install
+cd packages/wallet
+cp .env.example .env
 ```
 
-## Usage
+## Start the Server
+
+To start the application run:
+```bash
+yarn start
+```
+Then open [http://localhost:1032](http://localhost:1032) in a browser.
+
 
 ### Configuration
 
@@ -28,14 +41,6 @@ yarn deploy
 ```
 
 You will need to fund the wallet that is used to deploy the smart contract, see [here](../lib/README.md#fund-the-wallet). After that you can start the server.
-
-### Start the Server
-
-To start the application run:
-```bash
-yarn start
-```
-Then open [http://localhost:1032](http://localhost:1032) in a browser.
 
 ### Log In
 
