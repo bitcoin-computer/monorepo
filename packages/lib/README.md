@@ -3,21 +3,11 @@
   <h1>Bitcoin Computer Library</h1>
 </div>
 
-[A smart contract system for Bitcoin and Litecoin.](http://bitcoincomputer.io/)
-* Inscribe a Javascript class to create a smart contract
-* Inscribe a constructor call to create a smart object from a smart contract
-* Inscribe a function call to update a smart object
-* Smart objects live in UTXOs, the owner of the UTXO iss the owner of the object
-* Only the owner can update a smart object by spending the UTXO
-* All historical states are recorded in spent UTXOs
-* Read access can be restricted via end-to-end encryption
-* Data can be stored off-chain on a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node)
-* Smart contracts can be decomposed using ES6 modules
-
+A Javascript library for smart contracts on Bitcoin and Litecoin.
 
 ## Use with Node.js
 
-Below we explain how to use testnet (recommended to try it out). Have a look at the readme file for the [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) for how to run an app on regtest or mainnet.
+Below we explain how to use testnet (recommended to try it out). See [below](#use-on-mainnet-or-regtest) for how to use on mainnet or regtest.
 
 ### Install
 
@@ -27,7 +17,7 @@ In an empty directory run.
 
 ```bash
 npm init -y
-npm add @bitcoin-computer/lib
+npm install @bitcoin-computer/lib
 ```
 
 </font>
@@ -41,7 +31,7 @@ Create file `index.mjs`
 ```js
 import { Computer, Contract } from '@bitcoin-computer/lib'
 
-// Define a smart contract
+// A smart contract
 class Counter extends Contract {
   constructor() {
     super({ n: 0 })
@@ -52,35 +42,32 @@ class Counter extends Contract {
   }
 }
 
+// Create a Bitcoin Computer wallet
+const computer = new Computer({ mnemonic: 'old lake fun' })
 
-;(async () => {
-  // Create a Bitcoin Computer wallet
-  const computer = new Computer({ mnemonic: 'old lake fun' })
+// Deploy a smart contract and create a smart object
+const counter = await computer.new(Counter)
 
-  // Deploy a smart contract and create a smart object
-  const counter = await computer.new(Counter)
+// Update the smart object
+await counter.inc()
 
-  // Update the smart object
-  await counter.inc()
-
-  // Log the state
-  console.log(counter)
-})()
+// Log the smart object
+console.log(counter)
 ```
 
 </font>
 
 ### Fund the Wallet
 
-In order to execute the smart contract, you must send an amount of testnet coins to the address associated with the mnemonic seed of the Computer object. The easiest way to find out which address you need to fund is to run the smart contract (see below) and use the address from the error message.
+You need to send testnet coins to the address associated with the the Computer object. We recommend to run the smart contract (see below) and fund the address in the error message.
 
-You can get free testnet Litecoin from a faucet, for example [here](https://testnet.help/en/ltcfaucet/testnet) or [here](https://tltc.bitaps.com/).
+You can use a faucet (for example [here](https://testnet.help/en/ltcfaucet/testnet) or [here](https://litecointf.salmen.website/)) to get free testnet coins.
 
 ### Run the Smart Contract
 
 <font size=1>
 
-```
+```bash
 node index.mjs
 ```
 
@@ -93,9 +80,11 @@ The expected output is:
 ```js
 Counter {
   n: 1,
-  _id: '8136e4 ... d67:0',
-  _rev: '290923 ... 48d:0',
-  _root: '8136e4 ... d67:0'
+  _id: '656...024:0',
+  _rev: '90f...73f:0',
+  _root: '656...024:0',
+  _amount: 7860,
+  _owners: ['037...954']
 }
 ```
 
@@ -105,7 +94,7 @@ Counter {
 
 ### Write a Smart contract
 
-Create file `index.js`.
+Create file `index.mjs`.
 
 <font size=1>
 
@@ -122,21 +111,18 @@ class Counter extends Contract {
   }
 }
 
+const computer = new Computer({ mnemonic: 'old lake fun' })
 
-;(async () => {
-  const computer = new Computer({ mnemonic: 'replace this seed' })
+const counter = await computer.new(Counter)
+document.getElementById("el").innerHTML = counter.n
 
-  const counter = await computer.new(Counter)
-  document.getElementById("el").innerHTML = `Counter is ${counter.n}`
-
-  await counter.inc()
-  document.getElementById("el").innerHTML = `Counter is ${counter.n}`
-})()
+await counter.inc()
+document.getElementById("el").innerHTML = counter.n
 ```
 
 </font>
 
-### Embed in a Website
+### Run in a Website
 
 Create file `index.html`
 
@@ -145,15 +131,15 @@ Create file `index.html`
 ```html
 <html>
   <body>
-    <div id='el'></div>
-    <script type="module" src="./index.js"></script>
+    <script type="module" src="./index.mjs"></script>
+    Counter value: <span id='el'></span>
   </body>
 </html>
 ```
 
 </font>
 
-### Start a Local Web Server
+### Start a Web Server
 
 <font size=1>
 
@@ -169,23 +155,35 @@ http-server
 
 See [above](#fund-the-wallet).
 
-### View Website
+### View the App
 
 Open [http://localhost:8080](http://localhost:8080) in your browser.
 
+## Use on Mainnet or Regtest
+
+You need to run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) and configure your `computer` object to connect to your node:
+
+```js
+const computer = new Computer({
+  url: 'http://localhost:1031',
+  network: 'regtest', // or mainnet
+  chain: 'LTC' // or BTC
+})
+```
+
 ## Price
 
-It is free to develop and test a Bitcoin Computer application on testnet and regtest.
+It is free to develop and test on testnet and regtest.
 
-We charge a small fee on mainnet to support the development of the Bitcoin Computer. The fee for a function call is satoshis per byte * 475 (average transaction size). The fee for deploying a module is satoshis per byte * data size * 1/4 (making use of the segwit discount). The programer can configure satoshis per byte.
+On mainnet we charge a small fee to support the development of the Bitcoin Computer. The fee for a constructor or function call is satoshis-per-byte * 475 (average transaction size). The fee for deploying a module is satoshis-per-byte * data size * 1/4 (making use of the segwit discount). You can configure satoshis per byte.
 
 ## Development Status
 
-We have completed two internal audits and addressed any discovered issues. Currently, there are no known security vulnerabilities, however, it is possible that unknown vulnerabilities may exist. We plan to conduct one more thorough internal security audit prior to recommending the usage of the Bitcoin Computer in production environments.
+Currently, there are no known security vulnerabilities, however, it is possible that unknown vulnerabilities may exist. We do not yet recommend to use the Bitcoin Computer in production.
 
 ## Documentation and Help
 
-Have a look at the [Docs](https://docs.bitcoincomputer.io/). If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.
+Have a look at the [docs](https://docs.bitcoincomputer.io/). If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## License
 

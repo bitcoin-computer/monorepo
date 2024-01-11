@@ -1,9 +1,9 @@
 {
   "name": "@bitcoin-computer/fungible-token",
-  "version": "0.17.0-beta.0",
+  "version": "0.17.0-beta.1",
   "private": true,
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.17.0-beta.0",
+    "@bitcoin-computer/lib": "^0.17.0-beta.1",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^13.2.0",
