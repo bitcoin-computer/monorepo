@@ -1,28 +1,30 @@
 # sync
 
-Returns the smart object stored at a given location (revision or transaction id).
-
-### Syntax
-```js
-const location = '0324ba3...ba2:0'
-const result = await computer.sync(location)
-```
+Returns smart objects given a location on the blockchain. The location can either be a revision (a string of the for \<transaction id\>:\<output number\>) or a transaction id.
 
 ### Type
 ```ts
-<T extends new (...args: any) => any>(
-  location: string
-) => Promise<unknown>;
+(location: string) => Promise<unknown>
+```
+
+### Syntax
+```js
+await computer.sync('0324ba3...ba2')
+await computer.sync('0324ba3...ba2:0')
 ```
 
 ### Parameters
 #### location
-An string encoding a revision (transaction id `:` output number) where the smart object is located; or an string encoding a transaction id.
+An string encoding a revision or a transaction id.
 
 ### Return value
-If a revision is provided as parameter, returns the smart object stored at the provided `location`. 
-If a transaction id is provided as parameter, returns an object of type `Effect` encoding the result and the environment of the expression encoded in that transaction. In this case, the `sync` function will try to find any smart object over the outputs list.
+
+If the function is called with a revision, it returns the smart object stored at the provided revision. Note that the revision must not be a latest revision. In that case a historical state of the revision is returned.
+
+If the function is called with a transaction id, it returns an object of type `{ res: Json; env: Json }`. The value of `res` is the result of evaluating the expression inscribed into the transaction. The `env` object has the same keys as the blockchain environment of the transaction, the values of `env` are the smart objects at these revisions *after* evaluating the expression.
+
 If the parameter is not a valid revision or transaction id, an error is thrown.
+
 <!-- TODO: explain other type of errors:
 - inconsistent state if the smart object synced or any other smart object on the environment was not created with the library 
 - code validation errors like super not allowed
@@ -31,17 +33,53 @@ If the parameter is not a valid revision or transaction id, an error is thrown.
 -  -->
 
 ### Examples
+
+#### Sync to a Revision
+
+Synchronizing to the revision returns a smart object.
+
 ```ts
-// Compute smart object from revision
-const synced = await computer.sync(a._rev)
+import { Contract, Computer } from '@bitcoin-computer/lib'
 
-// Evaluates to true for all smart objects "a"
-expect(synced).to.deep.equal(a)
+// A smart contract
+class A extends Contract {
+  constructor(n) {
+    this.n = n
+  }
+}
 
-// Compute smart object from a transaction id
-const txId = getTxId(a._rev)
-const effect = await computer.sync(txId)
+// Create a smart object
+const computer = new Computer({ mnemonic: ... })
+const a = await computer.new(A, [1])
 
-expect(effect).to.deep.eq({ res: a, env: {} })
+// Synchronizing to the revision of a smart object always
+// returns a value that is deep equal the smart object
+expect(await computer.sync(a._rev)).to.deep.equal(a)
+```
 
+#### Sync to a transaction id
+
+Synchronizing to a transaction id returns all smart objects on that transaction.
+
+```ts
+import { Computer, Contract } from '@bitcoin-computer/lib'
+
+// A smart contract
+class C extends Contract {
+  constructor(n) {
+    this.n = n
+  }
+}
+
+// Encode the expression into a transaction
+const { effect, tx } = await computer.encode({
+  exp: `${C} new C(1)`
+})
+
+// The tx can be broadcast to commit the change
+const txId = await computer.broadcast(tx)
+
+// Synchronizing to a transaction id is always equal
+// to the effect object returned from encode.
+expect(await computer.sync(txId)).to.deep.eq(effect)
 ```

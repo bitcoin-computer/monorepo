@@ -1,22 +1,17 @@
 # getUtxos
 
-Returns an array of unspent transaction outputs (UTXOs).
+Returns an array of unspent transaction outputs (UTXOs). Each UTXO is encoded as a string of the form \<transaction id\>:\<output number\>
 
 ### Syntax
 ```js
-const utxos = await computer.getUtxos()
+await computer.getUtxos()
 ```
 
 ### Type
 ```ts
-() => Promise<BitcoinLib.Transaction.UnspentOutput[]>
+() => Promise<string[]>
 ```
 
 ### Return value
 
 Returns an array of unspent transaction outputs (UTXOs).
-
-### Examples
-```ts
-const utxos = await computer.getUtxos()
-```

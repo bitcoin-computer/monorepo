@@ -1,6 +1,6 @@
 # broadcast
 
-Broadcasts a Bitcoin transaction to the Bitcoin mining network.
+The `broadcast` function broadcasts a Bitcoin transaction to the Bitcoin mining network.
 
 ### Type
 ```ts

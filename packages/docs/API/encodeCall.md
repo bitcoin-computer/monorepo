@@ -1,81 +1,79 @@
 # encodeCall
 
-Encodes a function call on a smart object.
-
-### Syntax
-```js
-const { tx, effect } = await computer.encodeCall(params)
-```
+Encodes a function call. This function is syntactic sugar for [encode](./encode.md).
 
 ### Type
 ```ts
-({
-  target: InstanceType<T> & Location,
-  property: string,
-  args: Parameters<InstanceType<T>[K]>,
+<T extends new (...args: any) => any, K extends keyof InstanceType<T>>(params: {
+  target: InstanceType<T>
+  property: string
+  args: Parameters<InstanceType<T>[K]>
   mod?: string
-}) => Promise<BitcoinLib.Transaction>
+}) => Promise<{
+  tx: BitcoinLib.Transaction,
+  effect: { res: Json; env: Json }
+}>
+```
+
+### Syntax
+```js
+await computer.encodeCall({ target, property, args })
+await computer.encodeCall({ target, property, args, mod })
 ```
 
 ### Parameters
 
 #### params
-An object with the basic configuration parameters to encode the expression in a transaction.
+An object with the configuration parameters to encode the expression in a transaction.
 
-<div align="center" style="font-size: 14px;">
-  <table>
-    <tr>
-      <th>parameter</th>
-      <th>description</th>
-    </tr>
-    <tr>
-      <td>target</td>
-      <td>A smart object to which the function will be applied</td>
-    </tr>
-    <tr>
-      <td>property</td>
-      <td>The name of the function being called</td>
-    </tr>
-    <tr>
-      <td>args</td>
-      <td>The argument list fo the function being called</td>
-    </tr>
-    <tr>
-      <td>mod</td>
-      <td>If the function call creates a object using a class from a module already deployed, the string with the location of that module</td>
-    </tr>
-  </table>
-</div>
+{.compact}
+| Key      | Type                               | Description                                    |
+|----------|------------------------------------|------------------------------------------------|
+| target   | InstanceType\<T\>                  | The smart object on which to call the function |
+| property | string                             | The name of the function being called          |
+| args     | Parameters\<InstanceType\<T\>[K]\> | The arguments to the function call             |
+| mod      | string                             | A module specifier                             |
 
-<br>
+Module specifiers are encoded as strings of the form \<transaction id\>:\<output number\>
 
 ### Return value
-It returns a [Bitcoin transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs-lib/ts_src/transaction.ts) and an object of type Effect (see [encode return type](/api/encode/#return-value)).
+
+It returns an object `{ tx, effect }` where `tx` is a Bitcoin transaction and `effect` is an object with keys `res` and `env`. For more details see the description of the return type of [encode](./encode.md).
+
 
 ### Examples
 ```ts
+// A smart contract
 class Counter extends Contract {
   n: number
   constructor() {
     super({ n: 0 })
   }
+
   inc(m) {
     this.n += m
   }
 }
-const computer = new Computer()
+
+// Create a smart object from the smart contract
+const computer = new Computer({ mnemonic: ... })
 const counter = await computer.new(Counter)
 
+// Encode a function call
 const { tx } = await computer.encodeCall({
   target: counter,
   property: 'inc',
   args: [1]
 })
-const decoded = await computer.decode(tx)
 
+// Decode the meta data
+const decoded = await computer.decode(tx)
 expect(decoded).to.deep.eq({
   exp: `__bc__.inc(1)`,
   env: { __bc__: counter._rev },
   mod: ''
 })
+
+// Broadcast the tx to commit the change
+const txId = await computer.broadcast(tx)
 ```
