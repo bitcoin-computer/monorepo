@@ -1,77 +1,24 @@
 ---
-order: 0
-visibility: hidden
+order: -21
 ---
 
 # Examples
 
-## Non-Fungible Tokens (NFTs)
+We have several example applications in varying stages of development. To run an example have a look at the `README.md` file in the corresponding folder.
 
-A non-fungible token is an object that stores an image url, the title of an artwork, and the name of a artist.
+### Applications
 
-A keyword property ``_owners`` is set to a public key. The holder of that public key is the owner of the object in the sense that the corresponding private key is required to update the object. To send the NFT to another user, the current owner can reassign the ``_owners`` property to the new owner's public key.
+* [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet#readme): A minimal non-custodial wallet
+* [Explorer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/explorer#readme): A minimal non-custodial wallet
+* [Chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat#readme): A p2p chat application where messages are communicated over the blockchain
+* [Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token#readme): An application for minting, sending, and storing fungible tokens
+* [Non Fungible Token](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token#readme): An application for minting, sending, and storing non-fungible tokens (NFTs)
 
+### Standard Smart Contracts
 
-```javascript
-class NFT {
-  constructor(url, title, artist, owner) {
-    this.url = url
-    this.title = title
-    this.artist = artist
-    this._owners = [to]
-  }
+* [BRC20 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC20#readme): A implementation of the ERC20 Fungible Token Standard
+* [BRC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC721#readme): A implementation of the ERC721 Non-Fungible Token Standard
 
-  send(to) {
-    this._owners = [to]
-  }
-}
-```
-
-You can find a working implementation for minting, storing, and sending NFTs on [Github](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token).
-
-## Fungible Tokens
-
-A fungible token is initialized to a fixed supply and an initial owner.
-
-The only function is a ``send`` function. This function checks if the supply of the token is above the amount to be sent. If so, the amount stored in this instance is decreased by ```amount```. Then, a new instance of the token class is created. The owner of the new token is set to the recipient.
-
-
-``` javascript
-class Token {
-  constructor(supply, to) {
-    this.tokens = supply
-    this._owners = [to]
-  }
-
-  send(amount, to) {
-    if(this.tokens < amount) throw new Error()
-    this.tokens -= amount
-    return new Token(amount, to)
-  }
-}
-```
-
-See [Github](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token) for more information.
-
-## Chat
-
-A chat is an object that stores a list of messages that is initially empty. It has a function ```invite``` that adds another user to the ``_owners`` array thereby giving them write access. (Only the creator of the chat can post and invite users initially.) Once invited, a user can call ```post``` function to send a message to the chat and invite other users.
-
-
-```javascript
-class Chat {
-  constructor() {
-    this.messages = []
-  }
-
-  invite(pubKey) {
-    this._owners.push(pubKey)
-  }
-
-  post(messages) {
-    this.messages.push(message)
-  }
-}
-```
-
-Try it out on [Github](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat).
+### Templates
+* [Bitcoin Computer Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate#readme): A template for starting a new Bitcoin Computer application with [node.js](https://nodejs.org/en/)
+* [Bitcoin Computer React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/create-react-app-template#readme): A template for starting a new Bitcoin Computer application with [Create React App](https://create-react-app.dev/)
