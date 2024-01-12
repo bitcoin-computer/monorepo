@@ -8,7 +8,9 @@ export const ModalOld = ({
   functionCallSuccess,
 }: any) => {
   const navigate = useNavigate()
-  const getType = (): string => functionResult && functionResult?.type ? functionResult.type : "objects"
+  const getType = (): string =>
+    functionResult && functionResult?.type ? functionResult.type : "objects"
+  console.log("function result old: ", functionResult)
 
   return (
     <>

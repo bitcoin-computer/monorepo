@@ -51,10 +51,12 @@ import { Dropdown, initFlowbite, } from "flowbite";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { capitalizeFirstLetter, isValidRev, sleep, toObject } from "./common/utils";
 import reactStringReplace from "react-string-replace";
-import { ModalOld } from "./ModalOld";
 import { Auth } from "./Auth";
 import { Card } from "./Card";
+import { Modal } from "./Modal";
+import { FunctionResultModalContent } from "./common/SmartCallExecutionResult";
 var keywords = ["_id", "_rev", "_owners", "_root", "_amount"];
+var modalId = "smart-object-info-modal";
 export var getErrorMessage = function (error) {
     var _a, _b, _c, _d, _e, _f;
     if (((_b = (_a = error === null || error === void 0 ? void 0 : error.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.error) ===
@@ -173,10 +175,14 @@ function Component() {
     var _a = useState(null), smartObject = _a[0], setSmartObject = _a[1];
     var _b = useState({}), formState = _b[0], setFormState = _b[1];
     var _c = useState(false), functionsExist = _c[0], setFunctionsExist = _c[1];
-    var _d = useState(false), show = _d[0], setShow = _d[1];
-    var _e = useState({}), functionResult = _e[0], setFunctionResult = _e[1];
-    var _f = useState(false), functionCallSuccess = _f[0], setFunctionCallSuccess = _f[1];
+    var _d = useState({}), functionResult = _d[0], setFunctionResult = _d[1];
+    var _e = useState(false), functionCallSuccess = _e[0], setFunctionCallSuccess = _e[1];
     var options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"];
+    var _f = useState(""), modalTitle = _f[0], setModalTitle = _f[1];
+    var setShow = function (flag) {
+        functionCallSuccess ? setModalTitle("Sucess!") : setModalTitle("Error!");
+        flag ? Modal.get(modalId).show() : Modal.get(modalId).hide();
+    };
     useEffect(function () {
         var fetch = function () { return __awaiter(_this, void 0, void 0, function () {
             var synced, error_1, txId_1;
@@ -284,7 +290,7 @@ function Component() {
         setFormState(value);
     };
     var _g = rev.split(":"), txId = _g[0], outNum = _g[1];
-    return (_jsxs(_Fragment, { children: [_jsxs("div", { children: [_jsx("h1", __assign({ className: "mb-2 text-5xl font-extrabold dark:text-white" }, { children: "Output" })), _jsxs("p", __assign({ className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400" }, { children: [_jsx(Link, __assign({ to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: txId })), ":", outNum] })), _jsx("h2", __assign({ className: "mb-2 text-4xl font-bold dark:text-white" }, { children: "Data" })), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(Functions, { smartObject: smartObject, functionsExist: functionsExist, formState: formState, updateFormValue: updateFormValue, updateTypes: updateTypes, handleSmartObjectMethod: handleSmartObjectMethod, options: options }), _jsx(MetaData, { smartObject: smartObject })] }), _jsx(ModalOld, { show: show, setShow: setShow, functionResult: functionResult, functionCallSuccess: functionCallSuccess })] }));
+    return (_jsxs(_Fragment, { children: [_jsxs("div", { children: [_jsx("h1", __assign({ className: "mb-2 text-5xl font-extrabold dark:text-white" }, { children: "Output" })), _jsxs("p", __assign({ className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400" }, { children: [_jsx(Link, __assign({ to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: txId })), ":", outNum] })), _jsx("h2", __assign({ className: "mb-2 text-4xl font-bold dark:text-white" }, { children: "Data" })), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(Functions, { smartObject: smartObject, functionsExist: functionsExist, formState: formState, updateFormValue: updateFormValue, updateTypes: updateTypes, handleSmartObjectMethod: handleSmartObjectMethod, options: options }), _jsx(MetaData, { smartObject: smartObject })] }), _jsx(Modal.Component, { title: modalTitle, content: FunctionResultModalContent, contentData: { functionResult: functionResult }, id: modalId })] }));
 }
 export var SmartObject = {
     Component: Component,

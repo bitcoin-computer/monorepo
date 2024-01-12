@@ -9,11 +9,13 @@ import {
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { capitalizeFirstLetter, isValidRev, sleep, toObject } from "./common/utils"
 import reactStringReplace from "react-string-replace"
-import { ModalOld } from "./ModalOld"
 import { Auth } from "./Auth"
 import { Card } from "./Card"
+import { Modal } from "./Modal"
+import { FunctionResultModalContent } from "./common/SmartCallExecutionResult"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
+const modalId = "smart-object-info-modal"
 
 export const getErrorMessage = (error: any): string => {
   if (
@@ -350,10 +352,16 @@ function Component() {
   const [smartObject, setSmartObject] = useState<any | null>(null)
   const [formState, setFormState] = useState<any>({})
   const [functionsExist, setFunctionsExist] = useState(false)
-  const [show, setShow] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
   const [functionCallSuccess, setFunctionCallSuccess] = useState(false)
   const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
+
+  const [modalTitle, setModalTitle] = useState("")
+
+  const setShow: any = (flag: boolean) => {
+    functionCallSuccess ? setModalTitle("Sucess!") : setModalTitle("Error!")
+    flag ? Modal.get(modalId).show() : Modal.get(modalId).hide()
+  }
 
   useEffect(() => {
     const fetch = async () => {
@@ -481,12 +489,12 @@ function Component() {
 
         <MetaData smartObject={smartObject} />
       </div>
-      <ModalOld
-        show={show}
-        setShow={setShow}
-        functionResult={functionResult}
-        functionCallSuccess={functionCallSuccess}
-      ></ModalOld>
+      <Modal.Component
+        title={modalTitle}
+        content={FunctionResultModalContent}
+        contentData={{ functionResult }}
+        id={modalId}
+      />
     </>
   )
 }

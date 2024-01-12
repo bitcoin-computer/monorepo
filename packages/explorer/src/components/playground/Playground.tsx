@@ -21,7 +21,9 @@ import {
   nftVars,
   tokenVars,
 } from "./examples"
-import { Auth, ModalOld } from "@bitcoin-computer/components"
+import { Auth, Modal, FunctionResultModalContent } from "@bitcoin-computer/components"
+
+const modalId = "playground-info-modal"
 
 const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => {
   return (
@@ -124,15 +126,19 @@ const Tabs = () => {
 }
 
 const Playground = () => {
-  console.log("Playground")
   const [computer] = useState<any>(Auth.getComputer())
-  const [show, setShow] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
   const [functionCallSuccess, setFunctionCallSuccess] = useState(false)
   const [exampleCode, setExampleCode] = useState<string>("")
   const [exampleExpression, setExampleExpresion] = useState<string>("")
   const [exampleModule, setExampleModule] = useState<string>("")
   const [exampleVars, setExampleVars] = useState<any[]>([])
+  const [modalTitle, setModalTitle] = useState("")
+
+  const setShow: any = (flag: boolean) => {
+    functionCallSuccess ? setModalTitle("Sucess!") : setModalTitle("Error!")
+    flag ? Modal.get(modalId).show() : Modal.get(modalId).hide()
+  }
 
   useEffect(() => {
     initFlowbite()
@@ -226,12 +232,12 @@ const Playground = () => {
 
         <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
       </div>
-      <ModalOld
-        show={show}
-        setShow={setShow}
-        functionResult={functionResult}
-        functionCallSuccess={functionCallSuccess}
-      ></ModalOld>
+      <Modal.Component
+        title={modalTitle}
+        content={FunctionResultModalContent}
+        contentData={{ functionResult }}
+        id={modalId}
+      />
     </>
   )
 }

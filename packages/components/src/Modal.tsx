@@ -1,7 +1,6 @@
-import { Modal as ModalClass } from 'flowbite';
-import type { ModalOptions, ModalInterface } from 'flowbite';
-import type { InstanceOptions } from 'flowbite';
-import { useState } from 'react';
+import { Modal as ModalClass } from "flowbite"
+import type { ModalOptions } from "flowbite"
+import type { InstanceOptions } from "flowbite"
 
 const get = (id: string) => {
   const $modalElement = document.querySelector(`#${id}`) as HTMLElement
@@ -14,21 +13,25 @@ const ShowButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-show={id} type="button">
     {text}
   </button>
-);
+)
 
 const HideButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-hide={id} type="button">
     {text}
   </button>
-);
+)
+
+const hideModal = (id: string) => {
+  get(id).hide()
+}
 
 const ToggleButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-toggle={id} type="button">
     {text}
   </button>
-);
+)
 
-const Component = ({ title, content, id }: any) => (
+const Component = ({ title, content, contentData, id }: any) => (
   <div
     id={id}
     tabIndex={-1}
@@ -38,13 +41,13 @@ const Component = ({ title, content, id }: any) => (
     <div className="relative p-4 w-full max-w-2xl max-h-full">
       <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
         <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
-            {title}
-          </h3>
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">{title}</h3>
           <button
             type="button"
             className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
             data-modal-hide={id}
+            data-modal-target={id}
+            onClick={() => hideModal(id)}
           >
             <svg
               className="w-3 h-3"
@@ -64,16 +67,16 @@ const Component = ({ title, content, id }: any) => (
             <span className="sr-only">Close modal</span>
           </button>
         </div>
-        {content()}
+        {content(contentData)}
       </div>
     </div>
   </div>
-);
+)
 
 export const Modal = {
   get,
   ShowButton,
   HideButton,
   ToggleButton,
-  Component, 
+  Component,
 }
