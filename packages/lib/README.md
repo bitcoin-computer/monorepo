@@ -1,22 +1,21 @@
 <div align="center">
   <img src="./imgs/bitcoin-computer-lib@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 180px"/>
   <h1>Bitcoin Computer Library</h1>
+  A Javascript library for smart contracts on Bitcoin and Litecoin<br />
+  <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
 </div>
 
-A Javascript library for smart contracts on Bitcoin and Litecoin.
 
 ## Use with Node.js
 
-Below we explain how to use testnet (recommended to try it out). See [below](#use-on-mainnet-or-regtest) for how to use on mainnet or regtest.
+The recommended way to get started is to use testnet (described below). See [here](#use-on-mainnet-or-regtest) for how to use mainnet or regtest.
 
 ### Install
-
-In an empty directory run.
 
 <font size=1>
 
 ```bash
-npm init -y
+npm init
 npm install @bitcoin-computer/lib
 ```
 
@@ -43,7 +42,7 @@ class Counter extends Contract {
 }
 
 // Create a Bitcoin Computer wallet
-const computer = new Computer({ mnemonic: 'old lake fun' })
+const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
 
 // Deploy a smart contract and create a smart object
 const counter = await computer.new(Counter)
@@ -59,9 +58,11 @@ console.log(counter)
 
 ### Fund the Wallet
 
-You need to send testnet coins to the address associated with the the Computer object. We recommend to run the smart contract (see below) and fund the address in the error message.
+Use a faucet (for example [here](https://testnet.help/en/ltcfaucet/testnet) or [here](https://litecointf.salmen.website/)) to fund the address
 
-You can use a faucet (for example [here](https://testnet.help/en/ltcfaucet/testnet) or [here](https://litecointf.salmen.website/)) to get free testnet coins.
+```
+mvbAVZJF68WASLbqteTToE45r69L53Q1vL
+```
 
 ### Run the Smart Contract
 
@@ -111,18 +112,18 @@ class Counter extends Contract {
   }
 }
 
-const computer = new Computer({ mnemonic: 'old lake fun' })
+const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
 
 const counter = await computer.new(Counter)
-document.getElementById("el").innerHTML = counter.n
+document.getElementById("count").innerHTML = counter.n
 
 await counter.inc()
-document.getElementById("el").innerHTML = counter.n
+document.getElementById("count").innerHTML = counter.n
 ```
 
 </font>
 
-### Run in a Website
+### Make a Website
 
 Create file `index.html`
 
@@ -132,7 +133,7 @@ Create file `index.html`
 <html>
   <body>
     <script type="module" src="./index.mjs"></script>
-    Counter value: <span id='el'></span>
+    Counter value: <span id='count'></span>
   </body>
 </html>
 ```
@@ -157,7 +158,7 @@ See [above](#fund-the-wallet).
 
 ### View the App
 
-Open [http://localhost:8080](http://localhost:8080) in your browser.
+Open [http://localhost:8080](http://localhost:8080)
 
 ## Use on Mainnet or Regtest
 
@@ -171,19 +172,25 @@ const computer = new Computer({
 })
 ```
 
+## Documentation
+
+Have a look at the [docs](https://docs.bitcoincomputer.io/).
+
+## Getting Help
+
+If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
+
 ## Price
 
-It is free to develop and test on testnet and regtest.
+It is free to develop and test on testnet and regtest. On mainnet we charge a small fee to support the development:
+* The fee for a constructor or function call is satoshis-per-byte * 475. This is about as much as the average transaction fee for a payment.
+* The fee for deploying a module makes use of the segwit discount. It is satoshis-per-byte * data size * 1/4.
 
-On mainnet we charge a small fee to support the development of the Bitcoin Computer. The fee for a constructor or function call is satoshis-per-byte * 475 (average transaction size). The fee for deploying a module is satoshis-per-byte * data size * 1/4 (making use of the segwit discount). You can configure satoshis per byte.
+You can configure satoshis per byte. This fee is in addition to the mining fee.
 
 ## Development Status
 
-Currently, there are no known security vulnerabilities, however, it is possible that unknown vulnerabilities may exist. We do not yet recommend to use the Bitcoin Computer in production.
-
-## Documentation and Help
-
-Have a look at the [docs](https://docs.bitcoincomputer.io/). If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.
+There are no known security vulnerabilities. However we do not yet recommend to use the Bitcoin Computer in production yet.
 
 ## License
 
