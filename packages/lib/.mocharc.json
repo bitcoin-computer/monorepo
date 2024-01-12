@@ -5,6 +5,6 @@
     "loader=ts-node/esm"
   ],
   "require": ["dotenv/config"],
-  "spec": "test/*.js",
+  "spec": "test/*.ts",
   "timeout": "30000000"
 }
