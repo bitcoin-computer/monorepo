@@ -1,7 +1,5 @@
 // @ts-nocheck
 
-// eslint-disable-next-line @typescript-eslint/triple-slash-reference
-/// <reference path="../chai.d.ts"/>
 import chai, { expect } from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer, Contract } from '@bitcoin-computer/lib'
