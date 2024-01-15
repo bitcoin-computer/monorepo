@@ -1,189 +1,170 @@
 <div align="center">
-<img src="./imgs/bitcoin-computer-node@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 180px"/>
-    <h1>Bitcoin Computer Node</h1>
+  <img src="./imgs/bitcoin-computer-node@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 180px"/>
+  <h1>Bitcoin Computer Node</h1>
+  <p>
+    A Bitcoin and Litecoin node with support for smart contracts.
+    <br />
+    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+  </p>
 </div>
-
-A Litecoin node optimized for smart contract applications. Also, the server-side component of the [Bitcoin Computer](http://bitcoincomputer.io/).
-
-* Includes a Litecoin node, a PostgreSQL database, and an REST API
-* Trustless access to smart contract data created with the [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib)
-* Index structures for retrieving UTXOs storing smart contract data
-* Off-chain data storage
-* Exposes an [RPC](https://litecoin.info/index.php/Litecoin_API) API for traditional Litecoin development
-* Synchronizes in parallel for faster and more efficient performance
-* Docker integration for easy deployment
-* Support for Bitcoin and Dogecoin coming soon
 
 ## Prerequisites
 
-You need to have [node.js](https://nodejs.org/en/) and [Docker](https://www.docker.com/) installed.
+You need to have [node.js](https://nodejs.org/en/) and [docker](https://www.docker.com/) installed.
 
 ## Installation
 
+<font size=1>
+
 ```sh
-# Download the Bitcoin Computer Monorepo
+# Download the code
 git clone https://github.com/bitcoin-computer/monorepo.git
 
-# Move to the folder for the Bitcoin Computer Node
-cd packages/node
+# Move to the package node
+cd monorepo/packages/node
+
+# Create a .env file
+cp .env.example .env
 
 # Install the dependencies
 yarn install
-
-# Copy the .env.example file into a .env file
-cp .env.example .env
-
-# Build the Bitcoin Computer node docker image
-cd ../../
-yarn build-node
-
 ```
+
+</font>
 
 ## Usage
 
+By default the node will run Litecoin regtest mode, see [Configuration](#configuration) for more information.
+
+
 ### Start the Node
 
-To start the node run the command below. By default the node will run Litecoin regtest mode, see [Configuration](#configuration) for more information.
+In the folder `monorepo/packages/node` run the following command below to start the node.
+
+<font size=1>
 
 ```sh
-yarn up
+yarn up -ltc -r
 ```
 
-The node is ready once it logs "Bitcoin Computer Node is ready" (you need to search the logs as it is not the last message).
+</font>
+
+The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
+
+You can use the options below. The `-cpus` option configures the level of parallelization used, see [below](#synchronizing-in-parallel).
+
+| Option     | Alternative             | Description               |
+|------------|-------------------------|---------------------------|
+| --litecoin | -ltc                    | Start node on Litecoin    |
+| --bitcoin  | -btc                    | Start node on Bitcoin     |
+| --testnet  | -t                      | Start the node on testnet |
+| --regtest  | -r                      | Start the node on regtest |
+| --mainnet  | -m                      | Start the node on mainnet |
+|            | -cpus                   | Synchronize in parallel   |
 
 ### Fund the Wallet
 
-If you run the node in regtest mode, you can fund a wallet with the following command. This is very convenient for development.
+If you run the node in regtest mode, you can fund a wallet with the following commands.
+
+<font size=1>
 
 ```sh
+# Fund Litecoin regtest wallet
 yarn fund-ltc <address1> [<address2> ... <addressN>]
+
+# Fund Bitcoin regtest wallet
+yarn fund-btc <address1> [<address2> ... <addressN>]
 ```
+
+</font>
 
 ### Run the Tests
 
-To run the tests, execute
+<font size=1>
 
 ```sh
 yarn test
 ```
 
+</font>
+
 ### Stop the Node
 
-To stop the Bitcoin Computer Node run
+<font size=1>
 
 ```sh
 yarn down
 ```
 
+</font>
+
 ### Reset the database
 
-To stop the Bitcoin Computer Node, reset the database, delete all blockchain data, and stop all docker containers, run the following command
+The command below will reset the database, delete all blockchain data, and stop all docker containers.
+
+<font size=1>
 
 ```sh
 yarn reset
 ```
 
+</font>
+
 ### Connect to Bitcoin Computer Library
 
 To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib) object to your node you have to set the ``url`` property.
+
+<font size=1>
 
 ```js
 new Computer({ url: 'https://localhost:1031' })
 ```
 
-## Configuration
-
-You can configure the chain and network of a node, as well as the level of paralellization of a node using the options below.
-
-<table>
-  <tr>
-    <th>&nbsp;</th>
-    <th>Option</th>
-    <th>Alternative</th>
-    <th>Description</th>
-  </tr>
-
-  <tr>
-    <td rowspan="2">Chain</td>
-    <td>--litecoin</td>
-    <td>-ltc</td>
-    <td>Start node on Litecoin</td>
-  </tr>
-
-  <tr>
-    <td>--bitcoin</td>
-    <td>-btc</td>
-    <td>Start node on Litecoin</td>
-  </tr>
-
-  <tr>
-    <td rowspan="3">Network</td>
-    <td>--testnet</td>
-    <td>-t</td>
-    <td>Start the node on testnet</td>
-  </tr>
-
-  <tr>
-    <td>--regtest</td>
-    <td>-r</td>
-    <td>Start the node on regtest</td>
-  </tr>
-
-  <tr>
-    <td>--mainnet</td>
-    <td>-m</td>
-    <td>Start the node on mainnet</td>
-  </tr>
-
-  <tr>
-    <td rowspan="3">Mode</td>
-    <td></td>
-    <td>-cpus</td>
-    <td>Synchronize in parallel</td>
-  </tr>
-</table>
-
-You can combine the options, for example, to start a node on testnet using Bitcoin, run
-
-```shell
-yarn up -t -btc
-```
+</font>
 
 ### Synchronizing in parallel
 
 If your machine has more than 4 cores you can run the sync process in parallel. By default all your available cores are used. You can use a flag to indicate an specific number of dedicated cores.
 
+<font size=1>
+
 ```shell
 yarn up -t -cpus 16
 ```
 
+</font>
+
 The synchronization process can be stopped at any time with the command ```yarn down -t```. When you restart the process, it will continue from the last block processed.
 
-## Estimated Server Costs
+## AWS Server Costs
 
-The following table shows the estimated times and costs for syncing to a Litecoin node on testnet on [AWS EC2](https://aws.amazon.com/ec2/pricing/on-demand/). All experiments were run using 50GB SSD storage.
+The following table shows the times and costs for syncing to a Litecoin node on testnet on [AWS EC2](https://aws.amazon.com/ec2/pricing/on-demand/). All experiments were run in spring 2022 using 50GB SSD storage.
 
 
 | CPUs | RAM  | Sync Time | Monthly Costs  |
 |------|------|-----------|----------------|
-| 2    | 16GB | 28h       | 66.82 USD      |
-| 4    | 16GB | 10h 30m   | 108.28 USD     |
-| 8    | 32GB | 7h 10m    | 239.62 USD     |
-| 16   | 32GB | 4h 44m    | 440.64 USD     |
+| 2    | 8GB  | 28h       | $65            |
+| 4    | 16GB | 10h 30m   | $110           |
+| 8    | 32GB | 7h 15m    | $240           |
+| 16   | 32GB | 4h 45m    | $440           |
+
+## Versioning
+
+If you run your own node, make sure to use the same versions of Lib and Node.
+
+We provide a free Bitcoin Computer Node on Litecoin testnet at `https://tltc.node.bitcoincomputer.io/`. This node always runs the latest version.
+
+## Documentation
+
+Have a look at the [docs](https://docs.bitcoincomputer.io/).
+
+## Getting Help
+
+If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Price
 
-It is free to develop and test a Bitcoin Computer application on testnet and regtest.
-
-We charge a small fee on mainnet to support the development of the Bitcoin Computer. The fee for a function call is satoshis per byte * 475 (average transaction size). The fee for deploying a module is satoshis per byte * data size * 1/4 (making use of the segwit discount). The programer can configure satoshis per byte.
-
-## Development Status
-
-We are not aware of security vulnerabilities but there is the possibility of unknown security vulnerabilities. We have performed two internal audits and have fixed all issues that were discovered. Each time the application was refactored heavily. We will will perform one more internal audit before we recommend to use the Bitcoin Computer in production.
-
-## Documentation and Help
-
-Have a look at the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io/). If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken">Twitter</a>, or by email clemens@bitcoincomputer.io.
+See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
 
 ## License
 
