@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/lib",
-  "version": "0.17.0-beta.2",
+  "version": "0.17.0-beta.3",
   "private": false,
   "description": "Smart Contracts for Bitcoin",
   "license": "CC-BY-ND-4.0",

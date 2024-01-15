@@ -1,12 +1,17 @@
 <div align="center">
   <img src="./imgs/bitcoin-computer-lib@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 180px"/>
   <h1>Bitcoin Computer Library</h1>
-  A Javascript library for smart contracts on Bitcoin and Litecoin<br />
-  <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+  <p>
+    A Javascript library for smart contracts on Bitcoin and Litecoin<br />
+    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+  </p>
 </div>
 
+## Prerequisites
 
-## Use with Node.js
+You need to have [node.js](https://nodejs.org/en/) installed.
+
+## Use on a Server
 
 The recommended way to get started is to use testnet (described below). See [here](#use-on-mainnet-or-regtest) for how to use mainnet or regtest.
 
