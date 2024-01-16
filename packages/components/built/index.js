@@ -3,7 +3,6 @@ export { Auth } from "./Auth";
 export { Modal } from "./Modal";
 export { Gallery } from "./Gallery";
 export { SmartObject } from "./SmartObject";
-export { ModalOld } from "./ModalOld";
 export { Transaction } from "./Transaction";
 export { Error404 } from "./Error404";
 export { UtilsContext } from "./UtilsContext";

@@ -1,7 +1,7 @@
 import { useRef, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { Auth } from "@bitcoin-computer/components"
-import { isValidHexadecimalPrivateKey } from "../utils"
+import { isValidHexadecimalPublicKey } from "../utils"
 
 export function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -26,7 +26,7 @@ export function SearchBar() {
         } catch (error) {
           navigate(`/objects/${searchInput}`)
         }
-      } else if (isValidHexadecimalPrivateKey(searchInput))
+      } else if (isValidHexadecimalPublicKey(searchInput))
         navigate(`/?public-key=${searchInput.trim()}`)
       else navigate(`/transactions/${searchInput}`)
     }
