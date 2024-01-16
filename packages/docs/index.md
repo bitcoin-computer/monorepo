@@ -7,7 +7,7 @@ layout: page
 
 The Bitcoin Computer (TBC) is a Turing-complete smart contract system for Bitcoin and Litecoin. You can build decentralized applications, such as tokens, exchanges, games, social networks, and more.
 
-**Free Computation.** The most important feature of TBC is that the execution cost is independent of the computational complexity of the smart contract. For most other systems, the cost of execution increases with each computational step. Instead, the cost on TBC is fixed for an unlimited number of computational steps.
+**Free Computation.** The most important feature of TBC is that the execution cost is independent of the computational complexity of the smart contract. For most other smart contract systems, the execution cost increases with each computational step. Instead, the cost on TBC is fixed for an unlimited number of computational steps.
 
 **Javascript.** Smart contracts are JavaScript or TypeScript classes. This makes it seamless to integrate smart contracts into web applications and makes development easy due to the existing Javascript ecosystem.
 
