@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758680009379">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.758853059635">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Fungible Token</title>
     <meta name="title" content="Fungible Token">
-    <meta name="description" content="We explore how ERC20 style fungible token contracts can be built on Bitcoin. The BRC20 class implements the interface described in ">
+    <meta name="description" content="We explore how ERC20 style fungible token contracts can be built on Bitcoin. The TBC20 class implements the interface described in ">
 
     <!-- Canonical -->
     <link rel="canonical" href="/examples/fungible-token/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/examples/fungible-token/">
     <meta property="og:title" content="Fungible Token">
-    <meta property="og:description" content="We explore how ERC20 style fungible token contracts can be built on Bitcoin. The BRC20 class implements the interface described in ">
+    <meta property="og:description" content="We explore how ERC20 style fungible token contracts can be built on Bitcoin. The TBC20 class implements the interface described in ">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/examples/fungible-token/">
     <meta property="twitter:title" content="Fungible Token">
-    <meta property="twitter:description" content="We explore how ERC20 style fungible token contracts can be built on Bitcoin. The BRC20 class implements the interface described in ">
+    <meta property="twitter:description" content="We explore how ERC20 style fungible token contracts can be built on Bitcoin. The TBC20 class implements the interface described in ">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.758680009379" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.758853059635" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758680009379" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.758853059635" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758680009379" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758680009379" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.758853059635" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.758853059635" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -157,7 +157,7 @@
         <span>Fungible Token</span>
     </h1>
 </doc-anchor-target>
-<p>We explore how ERC20 style fungible token contracts can be built on Bitcoin. The <code v-pre>BRC20</code> class implements the interface described in <a href="https://eips.ethereum.org/EIPS/eip-20">EIP20</a>.</p>
+<p>We explore how ERC20 style fungible token contracts can be built on Bitcoin. The <code v-pre>TBC20</code> class implements the interface described in <a href="https://eips.ethereum.org/EIPS/eip-20">EIP20</a>.</p>
 <p>We use two classes: a <code v-pre>TokenBag</code> encapsulates the minimal amount of data that needs to be stored on the blockchain. A token bag can be thought of as the equivalent to unspent transaction output (utxo) in the token world: while a utxo stores a number of satoshi, a token bag stores a number of tokens. The <code v-pre>ERC20</code> class helps manage multiple token bags, in the same way that a wallet deals with multiple unspent outputs.</p>
 <doc-anchor-target id="token-bag">
     <h2>
@@ -237,18 +237,18 @@
   }
 }</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="brc20">
+<doc-anchor-target id="tbc20">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#brc20">#</doc-anchor-trigger>
-        <span>BRC20</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#tbc20">#</doc-anchor-trigger>
+        <span>TBC20</span>
     </h2>
 </doc-anchor-target>
-<p>In general, each user will own several token bags, in the same way that users generally own multiple unspent outputs. The <code v-pre>BRC20</code> class adds functionality for sending tokens from multiple bags and for computing their balance across multiple bags. This is similar to the functionality of a traditional Bitcoin <a href="../wallet/">wallet</a>.</p>
+<p>In general, each user will own several token bags, in the same way that users generally own multiple unspent outputs. The <code v-pre>TBC20</code> class adds functionality for sending tokens from multiple bags and for computing their balance across multiple bags. This is similar to the functionality of a traditional Bitcoin <a href="../wallet/">wallet</a>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">import { Computer } from 'bitcoin-computer-lib'
 import { TokenBag } from './token-bag'
 
-export class BRC20 {
+export class TBC20 {
   name: string
   symbol: string
   computer: Computer
@@ -318,7 +318,7 @@ export class BRC20 {
             </svg>
         </div>
         <div class="pr-5 ml-3 w-full">
-<p>Check out a working version of the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC20">BRC721</a> contract and a <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token">NFT application</a>.</p>
+<p>Check out a working version of the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20">TBC721</a> contract and a <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token">NFT application</a>.</p>
         </div>
     </div>
 </div>
