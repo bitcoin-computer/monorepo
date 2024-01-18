@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/BRC20",
+  "name": "@bitcoin-computer/TBC20",
   "version": "0.17.0-beta.3",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "private": true,
@@ -32,7 +32,7 @@
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "lint": "eslint src test --ext .ts,.tsx",
-    "types": "tsc --noEmit",
+    "types": "tsc",
     "test": "mocha --config .mocharc.json"
   },
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",

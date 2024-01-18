@@ -1,13 +1,13 @@
 import { TokenBag } from './token-bag'
 
-interface IBRC20 {
+interface ITBC20 {
   mint(publicKey: string, amount: number): Promise<string>
   totalSupply(): Promise<number>
   balanceOf(publicKey: string): Promise<number>
   transfer(to: string, amount: number): Promise<void>
 }
 
-export class BRC20 implements IBRC20 {
+export class TBC20 implements ITBC20 {
   name: string
   symbol: string
   computer: any
