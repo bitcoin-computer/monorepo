@@ -4,7 +4,7 @@ order: -21
 
 # Examples
 
-We have several example applications in varying stages of development.xxs All examples are published under MIT license.
+We have several example applications in varying stages of development. All examples are published under MIT license.
 
 ## Applications
 * [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet#readme) - A non-custodial wallet
