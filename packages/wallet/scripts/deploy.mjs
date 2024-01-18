@@ -1,5 +1,5 @@
 import { config } from "dotenv"
-import { Computer } from "@bitcoin-computer/lib"
+import { Computer, Contract } from "@bitcoin-computer/lib"
 import readline from "readline"
 
 config()
