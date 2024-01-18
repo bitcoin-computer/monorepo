@@ -8,6 +8,8 @@ This API describes the functionality of the `Computer` class, exported from [`@b
 
 ## Basic
 
+You can build almost all smart contracts with following methods.
+
 {.compact}
 | Method                          | Description                                                |
 |---------------------------------|------------------------------------------------------------|
@@ -17,6 +19,8 @@ This API describes the functionality of the `Computer` class, exported from [`@b
 | [sync](./sync.md)               | Computes the state of a smart object from a given revision |
 
 ## Advanced
+
+To build advanced applications like swaps have a look at the following.
 
 {.compact}
 | Method                        | Description                                                                                                  |
@@ -28,6 +32,8 @@ This API describes the functionality of the `Computer` class, exported from [`@b
 
 ## Modules
 
+You can save transaction fees by using our ES6 module system.
+
 {.compact}
 | Method                | Description                             |
 |-----------------------|-----------------------------------------|
@@ -35,6 +41,8 @@ This API describes the functionality of the `Computer` class, exported from [`@b
 | [load](./load.md)     | Loads an ES6 module from the blockchain |
 
 ## Wallet
+
+The wallet functionality within a `Computer` instance can be accessed using the following.
 
 {.compact}
 | Method                              | Description                                        |

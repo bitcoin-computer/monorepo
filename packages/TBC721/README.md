@@ -1,61 +1,47 @@
-# BRC20 Fungible Token Contract
-
-An implementation of the [ERC20 standard](https://eips.ethereum.org/EIPS/eip-20) on Bitcoin built on the [Bitcoin Computer](http://bitcoincomputer.io/). The following interface is implemented.
+<div align="center">
+  <h1>TBC721</h1>
+  <p>
+    An implementation of Ethereum's ERC721 standard on Bitcoin
+    <br />
+    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+  </p>
+</div>
 
 ```typescript
-interface IBRC20 {
-  mint(publicKey: string, amount: number): Promise<string>
-  totalSupply(): Promise<number>
+interface ITBC721 {
+  mint(to: string, name?: string, symbol?: string): Promise<NFT>
   balanceOf(publicKey: string): Promise<number>
-  transfer(to: string, amount: number): Promise<void>
+  ownerOf(tokenId: string): Promise<string[]>
+  transfer(to: string, tokenId: string)
 }
 ```
 
+
+## Prerequisites
+
+You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
+
 ## Installation
 
-Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/BRC20``.
+<font size=1>
 
-```bash
-git clone git@github.com:bitcoin-computer/monorepo.git
-cd monorepo
-lerna bootstrap
-cd packages/BRC20
+```sh
+# Download the code
+git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Move to the package
+cd monorepo/packages/TBC721
+
+# Create a .env file
+cp .env.example .env
+
+# Install the dependencies
+yarn install
 ```
+
+</font>
 
 ## Usage
-
-### Configuration
-
-The tests are pre-configured to run on regtest. You need to run a [Bitcoin Computer Node][node] to use the library on regtest. 
-
-### Fund the Wallet
-
-You need to send some cryptocurrency to your wallet address to run the tests.
-
-#### Testnet
-
-If you run the application in testnet mode you can fund the address below for free using a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
-```
-muMDxiZUxLMQsa9uEfB6ctNShKtx7y8rbf
-```
-
-#### Regtest
-
-If you run on regtest mode you can run the command below to fund your wallet for free from the [Bitcoin Computer Node][node].
-```
-yarn fund-ltc muMDxiZUxLMQsa9uEfB6ctNShKtx7y8rbf
-```
-
-#### Mainnet
-
-Coming soon.
-
-
-### Run the Tests
-
-```bash
-yarn test
-```
 
 ### Run the Linter
 
@@ -69,9 +55,27 @@ yarn lint
 yarn types
 ```
 
-## Support
+### Run the Tests
 
-For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+```bash
+yarn test
+```
+
+### Fund the Wallet
+
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet).
+
+## Documentation
+
+Have a look at the [docs](https://docs.bitcoincomputer.io/).
+
+## Getting Help
+
+If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
+
+## Price
+
+See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
 
 ## Contributing
 

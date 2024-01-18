@@ -20,8 +20,8 @@ The core smart contract library is based on two packages:
 
 ### Standard Smart Contracts
 
-* [BRC20 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC20): A implementation of the ERC20 Fungible Token Standard
-* [BRC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC721): A implementation of the ERC721 Non-Fungible Token Standard
+* [TBC20 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20): A implementation of the ERC20 Fungible Token Standard
+* [TBC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721): A implementation of the ERC721 Non-Fungible Token Standard
 
 ### Templates
 * [React components for the Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/components): A collection of React components for building Bitcoin Computer applications
