@@ -1,55 +1,69 @@
-# Fungible Token
-
-An application for minting, storing, and sending fungible tokens on Litecoin. Build with the [Bitcoin Computer](http://bitcoincomputer.io). You can find more information in the accompanying [Medium Article](https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273).
+<div align="center">
+  <h1>TBC Fungible Token</h1>
+  <p>
+    An application for minting, storing, and sending fungible tokens
+    <br />
+    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+  </p>
+</div>
 
 ![chat-screen](https://i.ibb.co/hMqsDjQ/Screen-Shot-2020-09-23-at-00-16-18.png)
 
+Have a look at the accompanying [Medium Article](https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273).
+
+## Prerequisites
+
+You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
+
+
 ## Installation
 
-Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/fungible-token``.
+Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/explorer``.
 
-```bash
-git clone git@github.com:bitcoin-computer/monorepo.git
-cd monorepo
-lerna bootstrap
-cd packages/fungible-token
-cp .env.example .env
+<font size=1>
+
+```sh
+# Download the monorepo
+git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Move to the package
+cd monorepo/packages/fungible-token
+
+# Install the dependencies
+yarn install
 ```
+
+</font>
 
 ## Usage
 
 ### Start the Server
 
-To start the application run the command below and open [http://localhost:3000](http://localhost:3000) in a browser.
+Run the command below and open [http://localhost:1032](http://localhost:1032)
+
+<font size=1>
 
 ```bash
 yarn start
 ```
 
-### Log In
-
-To log into the application you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/).
-
-### Configuration
-
-The application defaults to testnet mode. To run it in regtest or mainnet mode you can run a [Bitcoin Computer Node][node]. To configure the web app to connect to your own node, have a look at the comment at the top of "App.tsx". Support for mainnet will be added soon.
+</font>
 
 ### Fund the Wallet
 
-You need to send some cryptocurrency to your wallet address to mint or send a token. Click on "Wallet" to find your wallet address.
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet).
 
-If you run the application in testnet mode you can send free testnet coins to your wallet address from a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
+## Documentation
 
-If you run on regtest mode you can send free regtest coins by running
-```
-yarn fund-ltc
-```
-from the [Bitcoin Computer Node][node].
+Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Computer.
 
+## Getting Help
 
-## Support
+If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
-For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+## Price
+
+See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
 
 ## Contributing
 
@@ -67,4 +81,4 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node 
+[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node
