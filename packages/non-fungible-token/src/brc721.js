@@ -1,6 +1,6 @@
 import { NFT } from "./nft";
 
-export class BRC721 {
+export class TBC721 {
   computer;
   masterNFT;
 

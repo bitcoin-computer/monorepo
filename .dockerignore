@@ -10,8 +10,8 @@ packages/node/test
 packages/node/*.log
 packages/node/scripts/__pycache__
 
-packages/BRC20
-packages/BRC721
+packages/TBC20
+packages/TBC721
 packages/chat
 packages/components
 packages/create-react-app-template

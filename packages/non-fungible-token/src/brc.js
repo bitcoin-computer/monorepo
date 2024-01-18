@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { BRC721 } from "./brc721";
+import { TBC721 } from "./tbc721";
 
 function BRCTest(props) {
   const { computer } = props;
-  const [brc721] = useState(new BRC721(computer));
+  const [tbc721] = useState(new TBC721(computer));
   const [balace, setBalance] = useState(0);
 
   const mint = async () => {
-    await brc721.mint(computer.getPublicKey(), "Vivek", "VIV");
-    setBalance(await brc721.balanceOf(computer.getPublicKey()));
+    await tbc721.mint(computer.getPublicKey(), "Vivek", "VIV");
+    setBalance(await tbc721.balanceOf(computer.getPublicKey()));
   };
 
   return (

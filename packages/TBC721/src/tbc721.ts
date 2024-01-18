@@ -1,13 +1,13 @@
 import { NFT } from './nft'
 
-interface IBRC721 {
+interface ITBC721 {
   mint(to: string, name?: string, symbol?: string): Promise<NFT>
   balanceOf(publicKey: string): Promise<number>
   ownerOf(tokenId: string): Promise<string[]>
   transfer(to: string, tokenId: string)
 }
 
-export class BRC721 implements IBRC721 {
+export class TBC721 implements ITBC721 {
   computer: any
 
   constructor(computer: any) {
