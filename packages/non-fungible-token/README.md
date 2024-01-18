@@ -1,23 +1,40 @@
-# Non-Fungible Token
-
-
-A web application for creating, storing and sending non-fungible tokens on Litecoin. Built using the [Bitcoin Computer](http://bitcoincomputer.io/).
-
-**This app is under heavy development and not ready for production use.**
+<div align="center">
+  <h1>TBC NFT App</h1>
+  <p>
+    A web application for creating, storing and sending non-fungible tokens
+    <br />
+    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+  </p>
+</div>
 
 ![app image](https://i.ibb.co/5TtGCJ3/Untitled-5.png)
 
+> [!WARNING]
+> This app needs refactoring and is not ready for use
+
+## Prerequisites
+
+You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
 
 ## Installation
 
-Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/non-fungible-token``.
+<font size=1>
 
-```bash
-git clone git@github.com:bitcoin-computer/monorepo.git
-cd monorepo
-lerna bootstrap
-cd packages/non-fungible-token
+```sh
+# Download the monorepo
+git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Move to the package
+cd monorepo/packages/non-fungible-token
+
+# Create a .env file
+cp .env.example .env
+
+# Install the dependencies
+yarn install
 ```
+
+</font>
 
 ## Usage
 
@@ -40,34 +57,27 @@ yarn start
 ```
 and open [http://localhost:3000](http://localhost:3000) in a browser.
 
-### Log In
-
-To log into the application you need a BIP39 seed phrase. You can generate a new seed for example from [here](https://iancoleman.io/bip39/).
-
-### Configuration
-
-The application defaults to testnet mode. You can also configure it to run with a local [Bitcoin Computer Node][node]. In that case refer to the comment at the beginning of the 'App.tsx' file.
-
-### Fund the Wallet
-
-You need to send some cryptocurrency to your wallet address to mint or send a token. Click on "Wallet" to find your wallet address.
-
-If you run the application in testnet mode you can fund the wallet for free using a Litecoin faucet ([here](https://testnet-faucet.com/ltc-testnet/) or [here](http://litecointf.salmen.website/)).
-
-If you run on regtest mode you can run
-```
-yarn fund-ltc <your wallet address>
-```
-to fund your wallet for free from the [Bitcoin Computer Node][node].
-
 ## Video
 
 You can watch us writing the first version of this app in this [video](http://www.youtube.com/watch?feature=player_embedded&v=SnTwevzmRrs
 ).
 
-## Support
 
-For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+### Fund the Wallet
+
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet).
+
+## Documentation
+
+Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Computer.
+
+## Getting Help
+
+If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
+
+## Price
+
+See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
 
 ## Contributing
 
