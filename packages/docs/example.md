@@ -4,7 +4,7 @@ order: -21
 
 # Examples
 
-We have several example applications in varying stages of development. To run an example have a look at the `README.md` file in the corresponding folder.
+We have several example applications in varying stages of development. All examples are published under MIT license.
 
 ## Applications
 * [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet#readme) - A non-custodial wallet
@@ -18,5 +18,5 @@ We have several example applications in varying stages of development. To run an
 * [TBC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721#readme) - An implementation of the ERC721 Non-Fungible Token Standard
 
 ## Templates
-* [Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate#readme) - A template for starting a new server side app
-* [React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/create-react-app-template#readme) - A template for starting a new client side app
+* [Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template#readme) - A template for starting a new server side app
+* [React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/cra-template#readme) - A template for starting a new client side app

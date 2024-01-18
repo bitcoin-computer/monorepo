@@ -1,8 +1,11 @@
----
-visibility: hidden
----
-
-# Bitcoin Computer Docs
+<div align="center">
+  <h1>TBC Documentation</h1>
+  <p>
+    The official documentation of the Bitcoin Computer
+    <br />
+    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+  </p>
+</div>
 
 ## Install
 
@@ -15,7 +18,6 @@ yarn global add retypeapp
 ```shell
 retype watch --verbose
 ```
-
 
 ## Update the Website
 

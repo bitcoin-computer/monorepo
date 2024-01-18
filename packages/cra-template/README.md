@@ -1,24 +1,20 @@
 <div align="center">
-  <h1>TBC Fungible Token</h1>
+  <h1>TBC CRA Template</h1>
   <p>
-    An application for minting, storing, and sending fungible tokens
+    A template for Create React App with TypeScript and the Bitcoin Computer
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
 </div>
 
-![chat-screen](https://i.ibb.co/hMqsDjQ/Screen-Shot-2020-09-23-at-00-16-18.png)
-
-Have a look at the accompanying [Medium Article](https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273).
+> [!WARNING]
+>This template is very buggy and needs refactoring
 
 ## Prerequisites
 
 You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
 
-
 ## Installation
-
-Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/explorer``.
 
 <font size=1>
 
@@ -27,7 +23,7 @@ Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/mono
 git clone https://github.com/bitcoin-computer/monorepo.git
 
 # Move to the package
-cd monorepo/packages/fungible-token
+cd monorepo/packages/cra-template
 
 # Install the dependencies
 yarn install
@@ -37,9 +33,11 @@ yarn install
 
 ## Usage
 
-### Start the Server
+Most of the api is documented in the [Create React App Readme](https://github.com/facebook/create-react-app).
 
-Run the command below and open [http://localhost:1032](http://localhost:1032)
+### Start the Application
+
+To start the application run the command below and open [http://localhost:3000](http://localhost:3000).
 
 <font size=1>
 
