@@ -46,23 +46,35 @@ yarn install
 
 ## Usage
 
-### Run the Linter
+### Run the Tests
+
+<font size=1>
 
 ```bash
-yarn lint
+yarn test
 ```
 
+</font>
+
 ### Check the Types
+
+<font size=1>
 
 ```bash
 yarn types
 ```
 
-### Run the Tests
+</font>
+
+### Run the Linter
+
+<font size=1>
 
 ```bash
-yarn test
+yarn lint
 ```
+
+</font>
 
 ### Fund the Wallet
 
@@ -70,7 +82,7 @@ See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#
 
 ## Documentation
 
-Have a look at the [docs](https://docs.bitcoincomputer.io/).
+Have a look at the [docs](https://docs.bitcoincomputer.io/) of the Bitcoin Computer.
 
 ## Getting Help
 
