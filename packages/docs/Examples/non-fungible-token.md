@@ -22,11 +22,11 @@ class NFT {
 ```
 
 
-## BRC721
+## TBC721
 
-BRC721 is the ERC721 standard built on Bitcoin. It currently implements the ```IBRC721``` interface.
+TBC721 is the ERC721 standard built on Bitcoin. It currently implements the ```ITBC721``` interface.
 
-The ```BRC721``` class has the following functions: ```mint```, ```balanceOf```, ```ownerOf```, and ```transfer```. The ```mint``` function mints a new non-fungible token. It first checks whether or not there is a ```masterNFT```. If not, and a name and a symbol are inputted, the computer generates a new NFT, which includes the name and symbol and a new owner's information, and sets it as this BRC721's ```masterNFT```. If there's already a ```masterNFT```, but its name does not match the name inputted, or the symbol does not match, throw an error. Otherwise, the ```masterNFT``` will mint a new token with the new owner's information.
+The ```TBC721``` class has the following functions: ```mint```, ```balanceOf```, ```ownerOf```, and ```transfer```. The ```mint``` function mints a new non-fungible token. It first checks whether or not there is a ```masterNFT```. If not, and a name and a symbol are inputted, the computer generates a new NFT, which includes the name and symbol and a new owner's information, and sets it as this TBC721's ```masterNFT```. If there's already a ```masterNFT```, but its name does not match the name inputted, or the symbol does not match, throw an error. Otherwise, the ```masterNFT``` will mint a new token with the new owner's information.
 
 ```js
 async mint(to: string, name?: string, symbol?: string): Promise<NFT> {
@@ -65,5 +65,5 @@ async transfer(to: string, tokenId: string) {
 ```
 
 !!!
-Check out a working version of the [BRC721](https://github.com/bitcoin-computer/monorepo/tree/main/packages/BRC721) contract and a [NFT application](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token).
+Check out a working version of the [TBC721](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721) contract and a [NFT application](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token).
 !!!
