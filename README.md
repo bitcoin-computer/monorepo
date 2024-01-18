@@ -54,8 +54,8 @@ The core smart contract library is based on two packages:
 
 ### Templates
 * [React components for the Bitcoin Computer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/components): A collection of React components for building Bitcoin Computer applications
-* [Bitcoin Computer Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node-js-boilerplate): A template for starting a new Bitcoin Computer application with [node.js](https://nodejs.org/en/)
-* [Bitcoin Computer React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/create-react-app-template): A template for starting a new Bitcoin Computer application with [Create React App](https://create-react-app.dev/)
+* [Bitcoin Computer Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template): A template for starting a new Bitcoin Computer application with [node.js](https://nodejs.org/en/)
+* [Bitcoin Computer React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/cra-template): A template for starting a new Bitcoin Computer application with [Create React App](https://create-react-app.dev/)
 
 ## Versioning
 

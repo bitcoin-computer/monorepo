@@ -19,7 +19,7 @@ try {
   if (app) {
     process.chdir(`packages/${app}`)
     console.log(`Changing directory to ${app}...`)
-    if (app === 'TBC20' || app === 'TBC721' || app === 'node-js-boilerplate') {
+    if (app === 'TBC20' || app === 'TBC721' || app === 'nodejs-template') {
       execSync('npm run test', { stdio: 'inherit' })
     } else if (app && app === 'node') {
       if (!fs.existsSync('.env')) {
