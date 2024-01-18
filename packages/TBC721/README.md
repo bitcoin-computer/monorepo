@@ -16,7 +16,6 @@ interface ITBC721 {
 }
 ```
 
-
 ## Prerequisites
 
 You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
@@ -26,7 +25,7 @@ You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/m
 <font size=1>
 
 ```sh
-# Download the code
+# Download the monorepo
 git clone https://github.com/bitcoin-computer/monorepo.git
 
 # Move to the package
@@ -43,23 +42,35 @@ yarn install
 
 ## Usage
 
-### Run the Linter
+### Run the Tests
+
+<font size=1>
 
 ```bash
-yarn lint
+yarn test
 ```
 
+</font>
+
 ### Check the Types
+
+<font size=1>
 
 ```bash
 yarn types
 ```
 
-### Run the Tests
+</font>
+
+### Run the Linter
+
+<font size=1>
 
 ```bash
-yarn test
+yarn lint
 ```
+
+</font>
 
 ### Fund the Wallet
 
@@ -67,7 +78,7 @@ See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#
 
 ## Documentation
 
-Have a look at the [docs](https://docs.bitcoincomputer.io/).
+Have a look at the [docs](https://docs.bitcoincomputer.io/) of the Bitcoin Computer.
 
 ## Getting Help
 
