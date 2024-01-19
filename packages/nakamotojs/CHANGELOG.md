@@ -1,7 +1,7 @@
 # 0.17.0-beta.3
 **changed**
 - Renamed package name to `@bitcoin-computer/nakamotojs`
-- Updated `@bitcoin-computer/nakamotojs` to version 0.17.0-beta.3
+- Updated `@bitcoin-computer/nakamotojs` to version 0.17.0-beta.3 to match the rest of the packages in the monorepo.
 
 # 6.2.0
 **added**
