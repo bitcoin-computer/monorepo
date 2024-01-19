@@ -8,7 +8,7 @@ The core smart contract library is based on two packages:
 
 * [Bitcoin Computer Lib](https://www.npmjs.com/package/@bitcoin-computer/lib) A non-custodial web wallet for reading and writing smart contracts
 * [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) Server side infrastructure for providing trustless access to smart contracts
-* [Bitcoin Computer NakamotoJS-lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs-lib) A fork of the [bitcoinJS-lib](https://github.com/bitcoinjs/bitcoinjs-lib) library with support for BTC and LTC
+* [Bitcoin Computer NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs) A fork of the [bitcoinJS-lib](https://github.com/bitcoinjs/bitcoinjs-lib) library with support for BTC and LTC
 
 ### Applications
 

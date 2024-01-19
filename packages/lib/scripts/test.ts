@@ -48,7 +48,7 @@ let command = `TS_NODE_FILES=true RPC_HOST=${rpcHost} RPC_PORT=${nodePort} RPC_P
 if (args.integration) {
     command = `${command} .mocharc-async.json`
 } else if (args.nakamotojs) {
-    command = `${command} .mocharc-nakamoto-lib.json`
+    command = `${command} .mocharc-nakamotojs.json`
 } else if (args.single) {
     command = `${command} .mocharc-single.json ${args.single}`
 } else {

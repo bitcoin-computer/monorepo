@@ -79,7 +79,7 @@ It returns an object `{ tx, effect }` where `tx` is a Bitcoin transaction and `e
 { tx: BitcoinLib.Transaction, effect: { res: Json; env: Json } }
 ```
 
-The transaction `tx` is an object from the [NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs-lib#nakamotojs-nakamotojs-lib) library - a [BitcoinJS](https://github.com/bitcoinjs/bitcoinjs-lib?tab=readme-ov-file#bitcoinjs-bitcoinjs-lib) clone that supports LTC and BTC and has some extra features that make is easier to build advanced applications like exchanges.
+The transaction `tx` is an object from the [NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs#nakamotojs-nakamotojs) library - a [BitcoinJS](https://github.com/bitcoinjs/bitcoinjs-lib?tab=readme-ov-file#bitcoinjs-bitcoinjs-lib) clone that supports LTC and BTC and has some extra features that make is easier to build advanced applications like exchanges.
 
 The `res` object contains the result of the evaluation.
 
