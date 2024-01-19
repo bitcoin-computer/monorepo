@@ -169,6 +169,8 @@ Open [http://localhost:8080](http://localhost:8080)
 
 You need to run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) and configure your `computer` object to connect to your node:
 
+<font size=1>
+
 ```js
 const computer = new Computer({
   url: 'http://localhost:1031',
@@ -176,6 +178,8 @@ const computer = new Computer({
   chain: 'LTC' // or BTC
 })
 ```
+
+</font>
 
 ## Documentation
 

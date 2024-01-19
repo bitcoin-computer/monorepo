@@ -41,27 +41,35 @@ yarn install
 ### Deploy the Smart Contract
 
 Before you can run the app you need to deploy the smart contract. To do so run
+
+<font size=1>
+
 ```bash
 yarn deploy
 ```
 
-You will need to fund the wallet that is used to deploy the smart contract, see [here](../lib/README.md#fund-the-wallet).
+</font>
 
 Once the smart contract is deployed the deploy script will give you instructions to copy some lines of code into the file "App.js". After that you can start the server.
 
 ### Start the Server
 
 To start the application run
+
+<font size=1>
+
 ```bash
 yarn start
 ```
+
+</font>
+
 and open [http://localhost:3000](http://localhost:3000) in a browser.
 
 ## Video
 
 You can watch us writing the first version of this app in this [video](http://www.youtube.com/watch?feature=player_embedded&v=SnTwevzmRrs
 ).
-
 
 ### Fund the Wallet
 

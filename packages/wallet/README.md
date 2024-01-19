@@ -37,9 +37,14 @@ yarn install
 ### Start the Server
 
 To start the application run the command below and open [http://localhost:1032](http://localhost:1032).
+
+<font size=1>
+
 ```bash
 yarn start
 ```
+
+</font>
 
 ### Fund the Wallet
 

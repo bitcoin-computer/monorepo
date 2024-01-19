@@ -9,18 +9,30 @@
 
 ## Install
 
+<font size=1>
+
 ```shell
 yarn global add retypeapp
 ```
 
+</font>
+
 ## Run Locally
+
+<font size=1>
 
 ```shell
 retype watch --verbose
 ```
 
+</font>
+
 ## Update the Website
+
+<font size=1>
 
 ```shell
 git push origin main
 ```
+
+</font>

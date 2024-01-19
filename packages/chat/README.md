@@ -36,10 +36,13 @@ yarn install
 
 Run the command below and open [http://localhost:3000](http://localhost:3000)
 
+<font size=1>
+
 ```bash
 yarn start
 ```
 
+</font>
 
 ### Fund the Wallet
 
