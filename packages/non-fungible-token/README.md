@@ -31,7 +31,7 @@ cd monorepo/packages/non-fungible-token
 cp .env.example .env
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
@@ -45,7 +45,7 @@ Before you can run the app you need to deploy the smart contract. To do so run
 <font size=1>
 
 ```bash
-yarn deploy
+npm run deploy
 ```
 
 </font>
@@ -59,7 +59,7 @@ To start the application run
 <font size=1>
 
 ```bash
-yarn start
+npm run start
 ```
 
 </font>

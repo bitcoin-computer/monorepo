@@ -13,7 +13,7 @@ You need to have [node.js](https://nodejs.org/en/) installed.
 
 ## Use on a Server
 
-The recommended way to get started is to use testnet (described below). See [here](#use-on-mainnet-or-regtest) for how to use mainnet or regtest.
+This section describes the recommended way to get started (testnet on a server). See [here](#use-in-a-browser) for how to use the library in a web browser and [here](#use-on-mainnet-or-regtest) for how to use mainnet or regtest.
 
 ### Install
 
@@ -63,11 +63,13 @@ console.log(counter)
 
 ### Fund the Wallet
 
-Use a faucet (for example [here](https://testnet.help/en/ltcfaucet/testnet) or [here](https://litecointf.salmen.website/)) to fund the address
+Use a Litecoin testnet faucet (for example [here](https://testnet.help/en/ltcfaucet/testnet) or [here](https://litecointf.salmen.website/)) to fund the address. 
 
 ```
 mvbAVZJF68WASLbqteTToE45r69L53Q1vL
 ```
+
+If none of a faucets work you can run your own [node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) on regtest to fund the wallet.
 
 ### Run the Smart Contract
 
@@ -167,9 +169,7 @@ Open [http://localhost:8080](http://localhost:8080)
 
 ## Use on Mainnet or Regtest
 
-You need to run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node) and configure your `computer` object to connect to your node:
-
-<font size=1>
+You need to run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) and configure your `computer` object to connect to your node:
 
 ```js
 const computer = new Computer({
@@ -178,8 +178,6 @@ const computer = new Computer({
   chain: 'LTC' // or BTC
 })
 ```
-
-</font>
 
 ## Documentation
 
@@ -192,10 +190,8 @@ If you have any questions, please let us know in our <a href="https://t.me/thebi
 ## Price
 
 It is free to develop and test on testnet and regtest. On mainnet we charge a small fee to support the development:
-
 * The fee for a constructor or function call is satoshis-per-byte * 475. This is about as much as the average transaction fee for a payment.
 * The fee for deploying a module makes use of the segwit discount. It is satoshis-per-byte * data size * 1/4.
-
 
 You can configure satoshis per byte. This fee is in addition to the mining fee.
 

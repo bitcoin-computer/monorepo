@@ -33,7 +33,7 @@ git clone https://github.com/bitcoin-computer/monorepo.git
 cd monorepo/packages/nakamotojs-lib
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
@@ -45,7 +45,7 @@ yarn install
 <font size=1>
 
 ```bash
-yarn test
+npm run test
 ```
 
 </font>
@@ -55,7 +55,7 @@ yarn test
 <font size=1>
 
 ```bash
-yarn lint
+npm run lint
 ```
 
 </font>
@@ -65,7 +65,7 @@ yarn lint
 <font size=1>
 
 ```bash
-yarn build
+npm run build
 ```
 
 </font>

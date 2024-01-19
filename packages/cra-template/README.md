@@ -26,7 +26,7 @@ git clone https://github.com/bitcoin-computer/monorepo.git
 cd monorepo/packages/cra-template
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
@@ -42,7 +42,7 @@ To start the application run the command below and open [http://localhost:3000](
 <font size=1>
 
 ```bash
-yarn start
+npm run start
 ```
 
 </font>

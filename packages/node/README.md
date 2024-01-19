@@ -20,14 +20,14 @@ You need to have [node.js](https://nodejs.org/en/) and [docker](https://www.dock
 # Download the code
 git clone https://github.com/bitcoin-computer/monorepo.git
 
-# Move to the package node
+# Move to the package
 cd monorepo/packages/node
 
 # Create a .env file
 cp .env.example .env
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
@@ -44,14 +44,12 @@ In the folder `monorepo/packages/node` run the following command below to start 
 <font size=1>
 
 ```sh
-yarn up -ltc -r
+npm run up -- -ltc -r
 ```
 
 </font>
 
-The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
-
-You can use the options below. The `-cpus` option configures the level of parallelization used, see [below](#synchronizing-in-parallel).
+The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware. You can use the options below.
 
 | Option     | Alternative             | Description               |
 |------------|-------------------------|---------------------------|
@@ -62,6 +60,8 @@ You can use the options below. The `-cpus` option configures the level of parall
 | --mainnet  | -m                      | Start the node on mainnet |
 |            | -cpus                   | Synchronize in parallel   |
 
+You can find more information on the `-cpus` option [here](#synchronizing-in-parallel).
+
 ### Fund the Wallet
 
 If you run the node in regtest mode, you can fund a wallet with the following commands.
@@ -70,10 +70,10 @@ If you run the node in regtest mode, you can fund a wallet with the following co
 
 ```sh
 # Fund Litecoin regtest wallet
-yarn fund-ltc <address1> [<address2> ... <addressN>]
+npm run fund-ltc -- <address1> [<address2> ... <addressN>]
 
 # Fund Bitcoin regtest wallet
-yarn fund-btc <address1> [<address2> ... <addressN>]
+npm run fund-btc -- <address1> [<address2> ... <addressN>]
 ```
 
 </font>
@@ -83,7 +83,7 @@ yarn fund-btc <address1> [<address2> ... <addressN>]
 <font size=1>
 
 ```sh
-yarn test
+npm run test
 ```
 
 </font>
@@ -93,7 +93,7 @@ yarn test
 <font size=1>
 
 ```sh
-yarn down
+npm run down
 ```
 
 </font>
@@ -105,19 +105,23 @@ The command below will reset the database, delete all blockchain data, and stop 
 <font size=1>
 
 ```sh
-yarn reset
+npm run reset
 ```
 
 </font>
 
 ### Connect to Bitcoin Computer Library
 
-To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib) object to your node you have to set the ``url`` property.
+To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib) object to your node you have to set the ``url`` property. Make sure that the chain and network match your node configuration
 
 <font size=1>
 
 ```js
-new Computer({ url: 'https://localhost:1031' })
+new Computer({
+  url: 'https://localhost:1031'
+  chain: 'LTC',
+  network: 'regtest',
+})
 ```
 
 </font>
@@ -129,12 +133,12 @@ If your machine has more than 4 cores you can run the sync process in parallel. 
 <font size=1>
 
 ```shell
-yarn up -t -cpus 16
+npm run up -- -t -cpus 16
 ```
 
 </font>
 
-The synchronization process can be stopped at any time with the command ```yarn down -t```. When you restart the process, it will continue from the last block processed.
+The synchronization process can be stopped at any time with the command `npm run down -- -t`. When you restart the process, it will continue from the last block processed.
 
 ## AWS Server Costs
 

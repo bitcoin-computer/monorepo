@@ -12,7 +12,7 @@
 <font size=1>
 
 ```shell
-yarn global add retypeapp
+npm run global add retypeapp
 ```
 
 </font>

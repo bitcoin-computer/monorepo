@@ -17,7 +17,7 @@ To re-build the code run
 <font size=1>
 
 ```js
-yarn compile
+npm run compile
 ```
 
 </font>

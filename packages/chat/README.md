@@ -25,7 +25,7 @@ git clone https://github.com/bitcoin-computer/monorepo.git
 cd monorepo/packages/chat
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
@@ -39,7 +39,7 @@ Run the command below and open [http://localhost:3000](http://localhost:3000)
 <font size=1>
 
 ```bash
-yarn start
+npm run start
 ```
 
 </font>

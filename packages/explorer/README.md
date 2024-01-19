@@ -29,7 +29,7 @@ cd monorepo/packages/explorer
 cp .env.example .env
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
@@ -43,7 +43,7 @@ Run the command below and open [http://localhost:1032](http://localhost:1032)
 <font size=1>
 
 ```bash
-yarn start
+npm run start
 ```
 
 </font>
@@ -55,7 +55,7 @@ If you are running on regtest mode, we provide a test smart contract that you ca
 <font size=1>
 
 ```bash
-yarn deploy
+npm run deploy
 ```
 
 </font>

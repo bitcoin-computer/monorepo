@@ -26,7 +26,7 @@ cd monorepo/packages/wallet
 cp .env.example .env
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
@@ -41,7 +41,7 @@ To start the application run the command below and open [http://localhost:1032](
 <font size=1>
 
 ```bash
-yarn start
+npm run start
 ```
 
 </font>
