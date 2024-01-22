@@ -21,7 +21,7 @@ While PSBTs are a great for serialization, they are restrictive as they cannot b
 
 ## Installation
 
-Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/explorer``.
+Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder `packages/explorer`.
 
 <font size=1>
 
@@ -30,22 +30,24 @@ Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/mono
 git clone https://github.com/bitcoin-computer/monorepo.git
 
 # Move to the package
-cd monorepo/packages/nakamotojs
+cd monorepo
 
 # Install the dependencies
-yarn install
-```
+npm install
+
 
 </font>
 
 ## Usage
+
+The following commands can be run from the folder packages/nakamotojs/
 
 ### Run the Tests
 
 <font size=1>
 
 ```bash
-yarn test
+npm run test
 ```
 
 </font>
@@ -55,7 +57,7 @@ yarn test
 <font size=1>
 
 ```bash
-yarn lint
+npm run lint
 ```
 
 </font>
@@ -65,7 +67,7 @@ yarn lint
 <font size=1>
 
 ```bash
-yarn build
+npm run build
 ```
 
 </font>
@@ -80,43 +82,44 @@ See [here](https://github.com/bitcoinjs/bitcoinjs-lib).
 The below examples are implemented as integration tests, they should be very easy to understand.
 Otherwise, pull requests are appreciated.
 Some examples interact (via HTTPS) with a 3rd Party Blockchain Provider (3PBP).
-
-- [Taproot Key Spend](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/taproot.spec.ts)
-- [Generate a random address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Import an address via WIF](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Generate a 2-of-3 P2SH multisig address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Generate a SegWit address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Generate a SegWit P2SH address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Generate a SegWit 3-of-4 multisig address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Generate a SegWit 2-of-2 P2SH multisig address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Support the retrieval of transactions for an address (3rd party blockchain)](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Generate a Testnet address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Generate a Litecoin address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/addresses.spec.ts)
-- [Create a 1-to-1 Transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/transactions.spec.ts)
-- [Create (and broadcast via 3PBP) a typical Transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/transactions.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction with an OP_RETURN output](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/transactions.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction with a 2-of-4 P2SH(multisig) input](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/transactions.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction with a SegWit P2SH(P2WPKH) input](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/transactions.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction with a SegWit P2WPKH input](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/transactions.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction with a SegWit P2PK input](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/transactions.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction with a SegWit 3-of-4 P2SH(P2WSH(multisig)) input](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/transactions.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction and sign with an HDSigner interface (bip32)](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/transactions.spec.ts)
-- [Import a BIP32 testnet xpriv and export to WIF](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/bip32.spec.ts)
-- [Export a BIP32 xpriv, then import it](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/bip32.spec.ts)
-- [Export a BIP32 xpub](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/bip32.spec.ts)
-- [Create a BIP32, bitcoin, account 0, external address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/bip32.spec.ts)
-- [Create a BIP44, bitcoin, account 0, external address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/bip32.spec.ts)
-- [Create a BIP49, bitcoin testnet, account 0, external address](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/bip32.spec.ts)
-- [Use BIP39 to generate BIP32 addresses](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/bip32.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction where Alice can redeem the output after the expiry (in the past)](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/cltv.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction where Alice can redeem the output after the expiry (in the future)](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/cltv.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction where Alice and Bob can redeem the output at any time](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/cltv.spec.ts)
-- [Create (but fail to broadcast via 3PBP) a Transaction where Alice attempts to redeem before the expiry](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/cltv.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction where Alice can redeem the output after the expiry (in the future) (simple CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/csv.spec.ts)
-- [Create (but fail to broadcast via 3PBP) a Transaction where Alice attempts to redeem before the expiry (simple CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/csv.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction where Bob and Charles can send (complex CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/csv.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction where Alice (mediator) and Bob can send after 2 blocks (complex CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/csv.spec.ts)
-- [Create (and broadcast via 3PBP) a Transaction where Alice (mediator) can send after 5 blocks (complex CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/test/integration/csv.spec.ts)
+17:29
+- [Taproot Key Spend](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/taproot.spec.ts)
+- [Generate a random address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Import an address via WIF](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Generate a 2-of-3 P2SH multisig address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Generate a SegWit address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Generate a SegWit P2SH address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Generate a SegWit 3-of-4 multisig address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Generate a SegWit 2-of-2 P2SH multisig address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Support the retrieval of transactions for an address (3rd party blockchain)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Generate a Testnet address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Generate a Litecoin address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
+- [Create a 1-to-1 Transaction](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/transactions.spec.ts)
+- [Create (and broadcast via 3PBP) a typical Transaction](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/transactions.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction with an OP_RETURN output](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/transactions.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction with a 2-of-4 P2SH(multisig) input](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/transactions.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction with a SegWit P2SH(P2WPKH) input](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/transactions.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction with a SegWit P2WPKH input](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/transactions.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction with a SegWit P2PK input](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/transactions.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction with a SegWit 3-of-4 P2SH(P2WSH(multisig)) input](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/transactions.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction and sign with an HDSigner interface (bip32)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/transactions.spec.ts)
+- [Import a BIP32 testnet xpriv and export to WIF](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
+- [Export a BIP32 xpriv, then import it](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
+- [Export a BIP32 xpub](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
+- [Create a BIP32, bitcoin, account 0, external address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
+- [Create a BIP44, bitcoin, account 0, external address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
+- [Create a BIP49, bitcoin testnet, account 0, external address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
+17:29
+- [Use BIP39 to generate BIP32 addresses](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction where Alice can redeem the output after the expiry (in the past)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/cltv.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction where Alice can redeem the output after the expiry (in the future)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/cltv.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction where Alice and Bob can redeem the output at any time](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/cltv.spec.ts)
+- [Create (but fail to broadcast via 3PBP) a Transaction where Alice attempts to redeem before the expiry](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/cltv.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction where Alice can redeem the output after the expiry (in the future) (simple CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/csv.spec.ts)
+- [Create (but fail to broadcast via 3PBP) a Transaction where Alice attempts to redeem before the expiry (simple CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/csv.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction where Bob and Charles can send (complex CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/csv.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction where Alice (mediator) and Bob can send after 2 blocks (complex CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/csv.spec.ts)
+- [Create (and broadcast via 3PBP) a Transaction where Alice (mediator) can send after 5 blocks (complex CHECKSEQUENCEVERIFY)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/csv.spec.ts)
 
 If you have a use case that you feel could be listed here, please [ask for it](https://github.com/bitcoinjs/bitcoinjs-lib/issues/new)!
 
