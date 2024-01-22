@@ -6,10 +6,10 @@ const DeployModule = (props: {
   computer: Computer
   setShow: Dispatch<SetStateAction<boolean>>
   setFunctionResult: Dispatch<SetStateAction<any>>
-  setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
+  setModalTitle: Dispatch<SetStateAction<string>>
   exampleModule: string
 }) => {
-  const { computer, exampleModule, setShow, setFunctionCallSuccess, setFunctionResult } = props
+  const { computer, exampleModule, setShow, setModalTitle, setFunctionResult } = props
   const [module, setModule] = useState<string>()
 
   useEffect(() => {
@@ -21,11 +21,11 @@ const DeployModule = (props: {
       // @ts-ignore
       const modSpec = await computer.deploy(module?.trim())
       setFunctionResult({ _rev: modSpec, type: "modules" })
-      setFunctionCallSuccess(true)
+      setModalTitle("Success!")
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
-      setFunctionCallSuccess(false)
+      setModalTitle("Error!")
       setShow(true)
     }
   }

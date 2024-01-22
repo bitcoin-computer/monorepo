@@ -14,11 +14,11 @@ const ExecuteExpression = (props: {
   computer: Computer
   setShow: Dispatch<SetStateAction<boolean>>
   setFunctionResult: Dispatch<SetStateAction<any>>
-  setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
+  setModalTitle: Dispatch<SetStateAction<string>>
   exampleExpression: string
   exampleVars: { name: string; type: string }[]
 }) => {
-  const { computer, exampleExpression, setShow, setFunctionCallSuccess, setFunctionResult } = props
+  const { computer, exampleExpression, setShow, setModalTitle, setFunctionResult } = props
 
   const [expression, setExpression] = useState<string>()
   const [modSpec, setModSpec] = useState<string>()
@@ -80,11 +80,11 @@ const ExecuteExpression = (props: {
       })
       const txId = await computer.broadcast(tx)
       setFunctionResult({ _rev: `${txId}:0`, type: "objects", res: effect.res })
-      setFunctionCallSuccess(true)
+      setModalTitle("Success!")
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
-      setFunctionCallSuccess(false)
+      setModalTitle("Error!")
       setShow(true)
     }
   }
