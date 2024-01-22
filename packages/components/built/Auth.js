@@ -50,7 +50,7 @@ function getUrl(chain, network) {
     var index = "REACT_APP_".concat(chain.toUpperCase(), "_").concat(network.toUpperCase(), "_URL");
     var url = process.env[index];
     if (typeof url === "undefined")
-        throw new Error("Cannot find url ".concat(chain.toUpperCase(), " ").concat(network.toUpperCase(), ", please provide it in .env config"));
+        throw new Error("Cannot find a url for ".concat(chain.toUpperCase(), " ").concat(network.toUpperCase(), ", please provide a variable \"REACT_APP_").concat(chain.toUpperCase(), "_").concat(network.toUpperCase(), "_URL\" in your .env file"));
     return url;
 }
 function defaultConfiguration() {
