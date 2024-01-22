@@ -31,7 +31,7 @@ An object with specific parameters to use when signing
 | Key         | Type   | Description                                                                                                                                                   |
 |-------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | inputIndex  | number | The input index to be signed                                                                                                                                  |
-| sighashType | number | A valid <a target="_blank" href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs-lib/src/transaction.d.ts">sighash type number</a> |
+| sighashType | number | A valid <a target="_blank" href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/src/transaction.d.ts">sighash type number</a> |
 | inputScript | Buffer | A buffer encoding the signature                                                                                                                               |
 
 

@@ -22,7 +22,7 @@ await computer.fund(tx)
 
 #### tx
 
-A Bitcoin transaction object from the [NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs-lib#nakamotojs-nakamotojs-lib) library.
+A Bitcoin transaction object from the [NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs#nakamotojs-nakamotojs) library.
 
 #### opts
 

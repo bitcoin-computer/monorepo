@@ -25,7 +25,7 @@ before(async () => {
       : regtestUtils.network;
 });
 
-describe('nakamotojs-lib (transaction with taproot)', () => {
+describe('nakamotojs (transaction with taproot)', () => {
   it('can verify the BIP86 HD wallet vectors for taproot single sig (& sending example)', async () => {
     // Values taken from BIP86 document
     const mnemonic =

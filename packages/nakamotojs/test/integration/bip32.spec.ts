@@ -11,7 +11,7 @@ function getAddress(node: any, network?: any): string {
   return bitcoin.payments.p2pkh({ pubkey: node.publicKey, network }).address!;
 }
 
-describe('nakamotojs-lib (BIP32)', () => {
+describe('nakamotojs (BIP32)', () => {
   it('can import a BIP32 testnet xpriv and export to WIF', () => {
     const xpriv =
       'tprv8ZgxMBicQKsPd7Uf69XL1XwhmjHopUGep8GuEiJDZmbQz6o58LninorQAfcKZWARbtRtfnLcJ5MQ2AtHcQJCCRUcMRvmDUjyEmNUWwx8UbK';

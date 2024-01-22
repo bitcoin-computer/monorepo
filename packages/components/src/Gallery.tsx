@@ -145,6 +145,7 @@ export default function WithPagination({ publicKey }: { publicKey?: string }) {
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(true)
   const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
+  const [showNoAsset, setShowNoAsset] = useState(false)
   const [revs, setRevs] = useState<string[]>([])
   const location = useLocation()
   const pubKey = publicKey || new URLSearchParams(location.search).get("public-key")
@@ -164,6 +165,9 @@ export default function WithPagination({ publicKey }: { publicKey?: string }) {
         const queryRevs = await computer.query(queryParms)
         setIsNextAvailable(queryRevs.length > contractsPerPage)
         setRevs(queryRevs)
+        if (pageNum === 0 && queryRevs?.length === 0) {
+          setShowNoAsset(true)
+        }
       } catch (error) {
         // todo: forward to error page here
         console.log("Error loading revisions", error)
@@ -185,7 +189,7 @@ export default function WithPagination({ publicKey }: { publicKey?: string }) {
   }
 
   return (
-    <div className="relative sm:rounded-lg pt-4">
+    <div className="relative sm:rounded-lg pt-4 w-full">
       <FromRevs revs={revs} computer={computer} />
       {!(pageNum === 0 && revs && revs.length === 0) && (
         <Pagination
@@ -195,6 +199,11 @@ export default function WithPagination({ publicKey }: { publicKey?: string }) {
           isNextAvailable={isNextAvailable}
           handleNext={handleNext}
         />
+      )}
+      {pageNum === 0 && revs && revs.length === 0 && showNoAsset && (
+        <h1 className="w-full mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white text-center mx-auto">
+          No Assets
+        </h1>
       )}
     </div>
   )
