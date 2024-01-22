@@ -30,22 +30,24 @@ Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/mono
 git clone https://github.com/bitcoin-computer/monorepo.git
 
 # Move to the package
-cd monorepo/packages/nakamotojs
+cd monorepo
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
 
 ## Usage
 
+The following commands can be run from the folder `packages/nakamotojs/`
+
 ### Run the Tests
 
 <font size=1>
 
 ```bash
-yarn test
+npm run test
 ```
 
 </font>
@@ -55,7 +57,7 @@ yarn test
 <font size=1>
 
 ```bash
-yarn lint
+npm run lint
 ```
 
 </font>
@@ -65,7 +67,7 @@ yarn lint
 <font size=1>
 
 ```bash
-yarn build
+npm run build
 ```
 
 </font>

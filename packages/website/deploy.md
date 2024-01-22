@@ -1,4 +1,4 @@
 # Deploy
 
-* Run ``yarn deploy``
-* Goto [https://github.com/bitcoin-computer/website/settings/pages](https://github.com/bitcoin-computer/website/settings/pages) and set "Custom domain" to "www.bitcoincomputer.io"
+* Run ``npm run deploy``
+* Goto [https://github.com/bitcoin-computer/monorepo/settings/pages](https://github.com/bitcoin-computer/monorepo/settings/pages) and set "Custom domain" to "www.bitcoincomputer.io"

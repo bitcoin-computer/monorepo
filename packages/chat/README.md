@@ -21,11 +21,11 @@ You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/m
 # Download the monorepo
 git clone https://github.com/bitcoin-computer/monorepo.git
 
-# Move to the package
-cd monorepo/packages/chat
+# Move into monorepo folder
+cd monorepo
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
@@ -36,10 +36,17 @@ yarn install
 
 Run the command below and open [http://localhost:3000](http://localhost:3000)
 
+<font size=1>
+
 ```bash
-yarn start
+# Move to the package
+cd packages/chat
+
+# Start the app
+npm run start
 ```
 
+</font>
 
 ### Fund the Wallet
 
@@ -51,7 +58,7 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Comp
 
 ## Getting Help
 
-If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
+If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Price
 

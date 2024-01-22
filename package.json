@@ -28,12 +28,12 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "cd /dist/packages/node && yarn start",
-    "up": "cd packages/node && yarn up",
-    "fund-ltc": "cd packages/node && yarn fund-ltc",
-    "test": "cd packages/node && yarn test",
-    "down": "cd packages/node && yarn down",
-    "reset": "cd packages/node && yarn reset",
+    "start": "cd /dist/packages/node && npm run start",
+    "up": "cd packages/node && npm run up",
+    "fund-ltc": "cd packages/node && npm run fund-ltc",
+    "test": "cd packages/node && npm run test",
+    "down": "cd packages/node && npm run down",
+    "reset": "cd packages/node && npm run reset",
     "build-node": "docker build -t bitcoin-computer-node .",
     "prepare": "husky install",
     "create-version": "lerna version --force-publish",

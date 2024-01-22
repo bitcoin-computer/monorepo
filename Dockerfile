@@ -11,14 +11,14 @@ WORKDIR /dist
 # Copy the entire contents of the host's "monorepo" directory into the container's /dist directory
 COPY . /dist
 
-# Install dependencies for the monorepo using yarn
-RUN yarn install
+# Install dependencies for the monorepo
+RUN npm install
 
 # Set the working directory to "monorepo/packages/node"
 WORKDIR /dist/packages/node
 
-# Install dependencies for the node using yarn
-RUN yarn install
+# Install dependencies for the node
+RUN npm install
 
 # Print package.json version
 RUN echo "Version: $(head ../lib/package.json)"
@@ -26,4 +26,4 @@ RUN echo "Version: $(head ../lib/package.json)"
 
 EXPOSE 1031
 # Define the command to run when the container starts
-CMD ["yarn", "start"]
+CMD ["npm run", "start"]

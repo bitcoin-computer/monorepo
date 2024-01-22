@@ -9,18 +9,38 @@
 
 ## Install
 
-```shell
-yarn global add retypeapp
+<font size=1>
+
+```sh
+# Download the monorepo
+git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Move into monorepo folder
+cd monorepo
+
+# Install the dependencies
+npm install
+
+# install retype globally
+npm run global add retypeapp
 ```
+
+</font>
 
 ## Run Locally
 
+<font size=1>
+
 ```shell
+# Move to the package
+cd packages/docs
+
+# Start the app
 retype watch --verbose
 ```
 
+</font>
+
 ## Update the Website
 
-```shell
-git push origin main
-```
+Create a pull request and merge into main
