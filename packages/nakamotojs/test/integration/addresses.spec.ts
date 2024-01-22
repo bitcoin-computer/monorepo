@@ -9,7 +9,7 @@ const ECPair = ECPairFactory(ecc);
 const dhttp = regtestUtils.dhttp;
 const TESTNET = bitcoin.networks.testnet;
 
-describe('nakamotojs-lib (addresses)', () => {
+describe('nakamotojs (addresses)', () => {
   it(
     'can generate a random address [and support the retrieval of ' +
       'transactions for that address (via 3PBP)]',

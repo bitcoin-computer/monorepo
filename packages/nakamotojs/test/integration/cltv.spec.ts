@@ -26,7 +26,7 @@ const bob = ECPair.fromWIF(
   regtest,
 );
 
-describe('nakamotojs-lib (transactions w/ CLTV)', () => {
+describe('nakamotojs (transactions w/ CLTV)', () => {
   // force update MTP
   before(async () => {
     await regtestUtils.mine(11);

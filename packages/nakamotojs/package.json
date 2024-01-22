@@ -1,6 +1,6 @@
 {
-  "name": "@bitcoin-computer/nakamotojs-lib",
-  "version": "6.2.1",
+  "name": "@bitcoin-computer/nakamotojs",
+  "version": "0.17.0-beta.3",
   "description": "Client-side Bitcoin and Litecoin JavaScript library",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
@@ -45,7 +45,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bitcoin-computer/nakamotojs-lib.git"
+    "url": "https://github.com/bitcoin-computer/monorepo.git"
   },
   "files": [
     "src"
