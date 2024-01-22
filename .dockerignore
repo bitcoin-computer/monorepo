@@ -10,8 +10,6 @@ packages/node/test
 packages/node/*.log
 packages/node/scripts/__pycache__
 
-packages/TBC20
-packages/TBC721
 packages/chat
 packages/components
 packages/cra-template
@@ -20,6 +18,8 @@ packages/explorer
 packages/fungible-token
 packages/nodejs-template
 packages/non-fungible-token
+packages/TBC20
+packages/TBC721
 packages/wallet
 packages/website
 
