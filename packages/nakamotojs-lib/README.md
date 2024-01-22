@@ -30,7 +30,7 @@ Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/mono
 git clone https://github.com/bitcoin-computer/monorepo.git
 
 # Move to the package
-cd monorepo/packages/nakamotojs-lib
+cd monorepo
 
 # Install the dependencies
 npm install
@@ -39,6 +39,8 @@ npm install
 </font>
 
 ## Usage
+
+The following commands can be run from the folder `packages/nakamotojs/`
 
 ### Run the Tests
 

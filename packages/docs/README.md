@@ -11,7 +11,17 @@
 
 <font size=1>
 
-```shell
+```sh
+# Download the monorepo
+git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Move into monorepo folder
+cd monorepo
+
+# Install the dependencies
+npm install
+
+# install retype globally
 npm run global add retypeapp
 ```
 
@@ -22,6 +32,10 @@ npm run global add retypeapp
 <font size=1>
 
 ```shell
+# Move to the package
+cd packages/docs
+
+# Start the app
 retype watch --verbose
 ```
 
@@ -29,10 +43,4 @@ retype watch --verbose
 
 ## Update the Website
 
-<font size=1>
-
-```shell
-git push origin main
-```
-
-</font>
+Create a pull request and merge into main

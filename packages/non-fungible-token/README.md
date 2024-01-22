@@ -24,11 +24,8 @@ You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/m
 # Download the monorepo
 git clone https://github.com/bitcoin-computer/monorepo.git
 
-# Move to the package
-cd monorepo/packages/non-fungible-token
-
-# Create a .env file
-cp .env.example .env
+# Move into monorepo folder
+cd monorepo
 
 # Install the dependencies
 npm install
@@ -38,7 +35,24 @@ npm install
 
 ## Usage
 
-### Deploy the Smart Contract
+
+### Start the Server
+
+Run the command below and open [http://localhost:3000](http://localhost:3000).
+
+<font size=1>
+
+```bash
+# Move to the package
+cd packages/fungible-token
+
+# Start the app
+npm run start
+```
+
+</font>
+
+<!-- ### Deploy the Smart Contract
 
 Before you can run the app you need to deploy the smart contract. To do so run
 
@@ -50,21 +64,7 @@ npm run deploy
 
 </font>
 
-Once the smart contract is deployed the deploy script will give you instructions to copy some lines of code into the file "App.js". After that you can start the server.
-
-### Start the Server
-
-To start the application run
-
-<font size=1>
-
-```bash
-npm run start
-```
-
-</font>
-
-and open [http://localhost:3000](http://localhost:3000) in a browser.
+Once the smart contract is deployed the deploy script will give you instructions to copy some lines of code into the file "App.js". After that you can start the server. -->
 
 ## Video
 
@@ -81,7 +81,7 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Comp
 
 ## Getting Help
 
-If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
+If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Price
 

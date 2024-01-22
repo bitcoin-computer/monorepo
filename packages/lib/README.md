@@ -185,7 +185,7 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/).
 
 ## Getting Help
 
-If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
+If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Price
 
