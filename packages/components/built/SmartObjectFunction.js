@@ -131,7 +131,7 @@ export var SmartObjectFunction = function (_a) {
                 case 5:
                     res = _a.sent();
                     setFunctionResult({ _rev: res[0] });
-                    setModalTitle("Sucess!");
+                    setModalTitle("Success!");
                     setShow(true);
                     return [3 /*break*/, 7];
                 case 6:
