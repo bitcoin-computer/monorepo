@@ -40,7 +40,10 @@ function getPath(chain: string, network: string): string {
 function getUrl(chain: Chain, network: Network) {
   const index = `REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL`
   const url = process.env[index]
-  if (typeof url === "undefined") throw new Error("Cannot find url")
+  if (typeof url === "undefined")
+    throw new Error(
+      `Cannot find a url for ${chain.toUpperCase()} ${network.toUpperCase()}, please provide a variable "REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL" in your .env file`
+    )
   return url
 }
 

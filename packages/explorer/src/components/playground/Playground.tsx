@@ -128,7 +128,6 @@ const Tabs = () => {
 const Playground = () => {
   const [computer] = useState<any>(Auth.getComputer())
   const [functionResult, setFunctionResult] = useState<any>({})
-  const [functionCallSuccess, setFunctionCallSuccess] = useState(false)
   const [exampleCode, setExampleCode] = useState<string>("")
   const [exampleExpression, setExampleExpresion] = useState<string>("")
   const [exampleModule, setExampleModule] = useState<string>("")
@@ -136,7 +135,6 @@ const Playground = () => {
   const [modalTitle, setModalTitle] = useState("")
 
   const setShow: any = (flag: boolean) => {
-    functionCallSuccess ? setModalTitle("Sucess!") : setModalTitle("Error!")
     flag ? Modal.get(modalId).show() : Modal.get(modalId).hide()
   }
 
@@ -191,7 +189,7 @@ const Playground = () => {
             <CreateNew
               computer={computer}
               setShow={setShow}
-              setFunctionCallSuccess={setFunctionCallSuccess}
+              setModalTitle={setModalTitle}
               setFunctionResult={setFunctionResult}
               exampleCode={exampleCode}
               exampleVars={exampleVars}
@@ -206,7 +204,7 @@ const Playground = () => {
             <ExecuteExpression
               computer={computer}
               setShow={setShow}
-              setFunctionCallSuccess={setFunctionCallSuccess}
+              setModalTitle={setModalTitle}
               setFunctionResult={setFunctionResult}
               exampleExpression={exampleExpression}
               exampleVars={exampleVars}
@@ -221,7 +219,7 @@ const Playground = () => {
             <DeployModule
               computer={computer}
               setShow={setShow}
-              setFunctionCallSuccess={setFunctionCallSuccess}
+              setModalTitle={setModalTitle}
               setFunctionResult={setFunctionResult}
               exampleModule={exampleModule}
             />

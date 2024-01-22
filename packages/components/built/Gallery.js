@@ -107,7 +107,8 @@ export default function WithPagination(_a) {
     var _b = useState(0), pageNum = _b[0], setPageNum = _b[1];
     var _c = useState(true), isNextAvailable = _c[0], setIsNextAvailable = _c[1];
     var _d = useState(pageNum > 0), isPrevAvailable = _d[0], setIsPrevAvailable = _d[1];
-    var _e = useState([]), revs = _e[0], setRevs = _e[1];
+    var _e = useState(false), showNoAsset = _e[0], setShowNoAsset = _e[1];
+    var _f = useState([]), revs = _f[0], setRevs = _f[1];
     var location = useLocation();
     var pubKey = publicKey || new URLSearchParams(location.search).get("public-key");
     useEffect(function () {
@@ -133,6 +134,9 @@ export default function WithPagination(_a) {
                         queryRevs = _a.sent();
                         setIsNextAvailable(queryRevs.length > contractsPerPage);
                         setRevs(queryRevs);
+                        if (pageNum === 0 && (queryRevs === null || queryRevs === void 0 ? void 0 : queryRevs.length) === 0) {
+                            setShowNoAsset(true);
+                        }
                         return [3 /*break*/, 4];
                     case 3:
                         error_1 = _a.sent();
@@ -163,7 +167,7 @@ export default function WithPagination(_a) {
             return [2 /*return*/];
         });
     }); };
-    return (_jsxs("div", __assign({ className: "relative sm:rounded-lg pt-4" }, { children: [_jsx(FromRevs, { revs: revs, computer: computer }), !(pageNum === 0 && revs && revs.length === 0) && (_jsx(Pagination, { revs: revs, isPrevAvailable: isPrevAvailable, handlePrev: handlePrev, isNextAvailable: isNextAvailable, handleNext: handleNext }))] })));
+    return (_jsxs("div", __assign({ className: "relative sm:rounded-lg pt-4 w-full" }, { children: [_jsx(FromRevs, { revs: revs, computer: computer }), !(pageNum === 0 && revs && revs.length === 0) && (_jsx(Pagination, { revs: revs, isPrevAvailable: isPrevAvailable, handlePrev: handlePrev, isNextAvailable: isNextAvailable, handleNext: handleNext })), pageNum === 0 && revs && revs.length === 0 && showNoAsset && (_jsx("h1", __assign({ className: "w-full mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white text-center mx-auto" }, { children: "No Assets" })))] })));
 }
 export var Gallery = {
     FromRevs: FromRevs,

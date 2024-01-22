@@ -15,12 +15,11 @@ const CreateNew = (props: {
   computer: Computer
   setShow: Dispatch<SetStateAction<boolean>>
   setFunctionResult: Dispatch<SetStateAction<any>>
-  setFunctionCallSuccess: Dispatch<SetStateAction<boolean>>
+  setModalTitle: Dispatch<SetStateAction<string>>
   exampleCode: string
   exampleVars: { name: string; type: string; value: string }[]
 }) => {
-  const { computer, exampleVars, exampleCode, setShow, setFunctionCallSuccess, setFunctionResult } =
-    props
+  const { computer, exampleVars, exampleCode, setShow, setModalTitle, setFunctionResult } = props
   const [code, setCode] = useState<string>()
   const [modSpec, setModSpec] = useState<string>()
   const [argumentsList, setArgumentsList] = useState<Argument[]>([])
@@ -108,16 +107,16 @@ const CreateNew = (props: {
         sleep(500)
         const { res } = await computer.sync(txId)
         setFunctionResult({ _rev: res._rev, type: "objects" })
-        setFunctionCallSuccess(true)
+        setModalTitle("Success!")
         setShow(true)
       } else {
         setFunctionResult("Please check the code you provided!")
-        setFunctionCallSuccess(false)
+        setModalTitle("Error!")
         setShow(true)
       }
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
-      setFunctionCallSuccess(false)
+      setModalTitle("Error!")
       setShow(true)
     }
   }
