@@ -5,7 +5,7 @@ This monorepo contains the following packages.
 ## Core
 * [Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme) - A Javascript library for smart contracts
 * [Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) - Server side infrastructure for smart contracts
-* [NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs-lib#readme) - A Javascript library for building and parsing transactions
+* [NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs#readme) - A Javascript library for building and parsing transactions
 
 ## Applications
 * [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet#readme) - A non-custodial wallet
