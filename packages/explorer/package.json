@@ -1,5 +1,5 @@
 {
-  "name": "explorer",
+  "name": "@bitcoin-computer/explorer",
   "version": "0.17.0-beta.3",
   "private": true,
   "dependencies": {
