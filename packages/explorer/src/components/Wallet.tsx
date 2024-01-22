@@ -5,11 +5,15 @@ import { Auth, UtilsContext } from "@bitcoin-computer/components"
 
 const Balance = ({ computer }: any) => {
   const [balance, setBalance] = useState<number>(0)
+  const [chain, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
   const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   const refreshBalance = useCallback(async () => {
     try {
-      if (computer) setBalance(await computer.getBalance())
+      if (computer) {
+        setBalance(await computer.getBalance())
+        setChain(computer.getChain())
+      }
     } catch (err) {
       showSnackBar("Error fetching wallet details", false)
       console.log("Error fetching wallet details", err)
@@ -30,7 +34,7 @@ const Balance = ({ computer }: any) => {
         />
       </h6>
 
-      <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">{balance / 1e8} LTC</p>
+      <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">{balance / 1e8} {chain} </p>
     </div>
   )
 }

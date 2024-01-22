@@ -10,17 +10,16 @@ packages/node/test
 packages/node/*.log
 packages/node/scripts/__pycache__
 
-packages/BRC20
-packages/BRC721
+packages/TBC20
+packages/TBC721
 packages/chat
 packages/components
-packages/create-react-app-template
+packages/cra-template
 packages/docs
 packages/explorer
 packages/fungible-token
-packages/node-js-boilerplate
+packages/nodejs-template
 packages/non-fungible-token
-packages/react-app-ts-template
 packages/wallet
 packages/website
 

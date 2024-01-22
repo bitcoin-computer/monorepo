@@ -1,33 +1,42 @@
 <div align="center">
-  <h1>TBC Fungible Token</h1>
+  <h1>TBC20</h1>
   <p>
-    An application for minting, storing, and sending fungible tokens
+    An implementation of Ethereum's ERC20 standard on Bitcoin
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
 </div>
 
-![chat-screen](https://i.ibb.co/hMqsDjQ/Screen-Shot-2020-09-23-at-00-16-18.png)
+<font size=1>
 
-Have a look at the accompanying [Medium Article](https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273).
+```typescript
+interface ITBC20 {
+  mint(publicKey: string, amount: number): Promise<string>
+  totalSupply(): Promise<number>
+  balanceOf(publicKey: string): Promise<number>
+  transfer(to: string, amount: number): Promise<void>
+}
+```
+
+</font>
 
 ## Prerequisites
 
 You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
 
-
 ## Installation
-
-Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/explorer``.
 
 <font size=1>
 
 ```sh
-# Download the monorepo
+# Download the code
 git clone https://github.com/bitcoin-computer/monorepo.git
 
 # Move to the package
-cd monorepo/packages/fungible-token
+cd monorepo/packages/TBC20
+
+# Create a .env file
+cp .env.example .env
 
 # Install the dependencies
 yarn install
@@ -37,14 +46,32 @@ yarn install
 
 ## Usage
 
-### Start the Server
-
-Run the command below and open [http://localhost:1032](http://localhost:1032)
+### Run the Tests
 
 <font size=1>
 
 ```bash
-yarn start
+yarn test
+```
+
+</font>
+
+### Check the Types
+
+<font size=1>
+
+```bash
+yarn types
+```
+
+</font>
+
+### Run the Linter
+
+<font size=1>
+
+```bash
+yarn lint
 ```
 
 </font>
@@ -55,7 +82,7 @@ See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#
 
 ## Documentation
 
-Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Computer.
+Have a look at the [docs](https://docs.bitcoincomputer.io/) of the Bitcoin Computer.
 
 ## Getting Help
 

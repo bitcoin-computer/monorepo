@@ -188,8 +188,10 @@ If you have any questions, please let us know in our <a href="https://t.me/thebi
 ## Price
 
 It is free to develop and test on testnet and regtest. On mainnet we charge a small fee to support the development:
+
 * The fee for a constructor or function call is satoshis-per-byte * 475. This is about as much as the average transaction fee for a payment.
 * The fee for deploying a module makes use of the segwit discount. It is satoshis-per-byte * data size * 1/4.
+
 
 You can configure satoshis per byte. This fee is in addition to the mining fee.
 

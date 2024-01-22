@@ -93,10 +93,10 @@ export const getValueForType = (type: string, stringValue: string) => {
 export const capitalizeFirstLetter = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
 
-export const isValidHexadecimalPrivateKey = (privateKey: string): boolean => {
-  if (!privateKey) return false
-  let trimmedPrivateKey = privateKey.trim()
-  return trimmedPrivateKey.length === 64 || trimmedPrivateKey.length === 66
+export const isValidHexadecimalPublicKey = (publicKey: string): boolean => {
+  if (!publicKey) return false
+  let trimmedPublicKey = publicKey.trim()
+  return trimmedPublicKey.length === 64 || trimmedPublicKey.length === 66
 }
 
 export const getErrorMessage = (error: any): string => {
@@ -114,4 +114,4 @@ export const getErrorMessage = (error: any): string => {
 
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
 export const toObject = (obj: any) =>
-  JSON.stringify(obj, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2);
+  JSON.stringify(obj, (key, value) => (typeof value === "bigint" ? value.toString() : value), 2)

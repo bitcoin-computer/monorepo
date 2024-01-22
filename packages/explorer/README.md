@@ -1,53 +1,82 @@
-# Bitcoin Computer Explorer
+<div align="center">
+  <h1>TBC Explorer</h1>
+  <p>
+    A web application for exploring and interacting with smart contracts
+    <br />
+    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+  </p>
+</div>
 
-A web application for exploring the blockchain and interacting with the Bitcoin Computer smart contracts. Built using the [Bitcoin Computer](http://bitcoincomputer.io/).
+## Prerequisites
+
+You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
+
 
 ## Installation
 
 Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/explorer``.
 
-```bash
-git clone git@github.com:bitcoin-computer/monorepo.git
-cd monorepo
-yarn install
-cd packages/explorer
+<font size=1>
+
+```sh
+# Download the monorepo
+git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Move to the package
+cd monorepo/packages/explorer
+
+# Create a .env file
 cp .env.example .env
+
+# Install the dependencies
+yarn install
 ```
 
-## Start the Server
+</font>
 
-To start the application run:
+## Use
+
+### Start the Application
+
+Run the command below and open [http://localhost:1032](http://localhost:1032)
+
+<font size=1>
+
 ```bash
 yarn start
 ```
-Then open [http://localhost:1032](http://localhost:1032) in a browser.
 
+</font>
 
-### Configuration
-
-The application defaults to testnet mode. You can also configure it to run with a local [Bitcoin Computer Node][node]. If you wish to configure the application to connect to your local node, refer to the comment at the beginning of the 'App.tsx' file.
-
-### Deploy a test Smart Contract
+### Deploy a Test Smart Contract
 
 If you are running on regtest mode, we provide a test smart contract that you can deploy to test the explorer. To do so run
+
+<font size=1>
 
 ```bash
 yarn deploy
 ```
 
-You will need to fund the wallet that is used to deploy the smart contract, see [here](../lib/README.md#fund-the-wallet). After that you can start the server.
+</font>
 
+You will need to fund the wallet.
 
-### Log In
+### Fund the Wallet
 
-You can log into the application with a BIP39 seed phrase. Being logged in allows you to manipulate the smart contract, executing functions that require a signature.
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet).
 
-You can generate a new seed for example from [here](https://iancoleman.io/bip39/).
+## Documentation
 
-## Support
+Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Computer.
 
-For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
+## Getting Help
 
+If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
+
+## Price
+
+See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
 
 ## Contributing
 
@@ -55,10 +84,9 @@ This project is intended as a starting point for new development so we want to k
 
 If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
 
-
 ## MIT License
 
-Copyright (c) 2023 BCDB Inc.
+Copyright (c) 2022 BCDB Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

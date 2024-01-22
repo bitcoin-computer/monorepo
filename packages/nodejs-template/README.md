@@ -1,24 +1,23 @@
+
 <div align="center">
-  <h1>TBC Fungible Token</h1>
+  <h1>TBC Node.js Template</h1>
   <p>
-    An application for minting, storing, and sending fungible tokens
+    A template for Node.js with TypeScript and the Bitcoin Computer
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
+
+  <a href="">[![TypeScript version][ts-badge]][typescript-4-5]</a>
+  <a href="">[![Node.js version][nodejs-badge]][nodejs]
+</a>
+
 </div>
-
-![chat-screen](https://i.ibb.co/hMqsDjQ/Screen-Shot-2020-09-23-at-00-16-18.png)
-
-Have a look at the accompanying [Medium Article](https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273).
 
 ## Prerequisites
 
 You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
 
-
 ## Installation
-
-Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/explorer``.
 
 <font size=1>
 
@@ -27,7 +26,7 @@ Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/mono
 git clone https://github.com/bitcoin-computer/monorepo.git
 
 # Move to the package
-cd monorepo/packages/fungible-token
+cd monorepo/packages/nodejs-template
 
 # Install the dependencies
 yarn install
@@ -37,14 +36,32 @@ yarn install
 
 ## Usage
 
-### Start the Server
-
-Run the command below and open [http://localhost:1032](http://localhost:1032)
+### Run the Tests
 
 <font size=1>
 
 ```bash
-yarn start
+yarn test
+```
+
+</font>
+
+### Check the Types
+
+<font size=1>
+
+```bash
+yarn types
+```
+
+</font>
+
+### Run the Linter
+
+<font size=1>
+
+```bash
+yarn lint
 ```
 
 </font>
@@ -82,3 +99,16 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node
+
+
+[ts-badge]: https://img.shields.io/badge/TypeScript-4.5-blue.svg
+[nodejs-badge]: https://img.shields.io/badge/Node.js->=%2016.13-blue.svg
+[nodejs]: https://nodejs.org/dist/latest-v14.x/docs/api/
+[gha-badge]: https://github.com/bitcoin-computer/bitcoin-computer-nodejs-template/actions/workflows/nodejs.yml/badge.svg
+[bitcoin-computer]: http://bitcoincomputer.io/
+[node-typescript-boilerplate]: https://github.com/jsynowiec/node-typescript-boilerplate
+[typescript]: https://www.typescriptlang.org/
+[typescript-4-5]: https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-5.html
+[license-badge]: https://img.shields.io/badge/license-APLv2-blue.svg
+[license]: https://github.com/bitcoin-computer/bitcoin-computer-nodejs-template/blob/main/LICENSE
+[eslint]: https://eslint.org

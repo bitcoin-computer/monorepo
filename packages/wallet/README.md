@@ -1,57 +1,61 @@
-# Bitcoin Computer Wallet
+<div align="center">
+  <h1>TBC Wallet</h1>
+  <p>
+    A Bitcoin and Litecoin Wallet for Payments and Smart Contracts
+    <br />
+    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+  </p>
+</div>
 
-A Bitcoin and Litecoin wallet to store cryptocurrency and on chain assets, that includes:
-  * Select the blockchain (BTC and LTC) and network mode (mainnet, testnet, regtest)
-  * Login using BIP39 mnemonic
-  * Show the balance
-  * Send and receive transactions and view sent and received transactions
-  * View and update all smart objects owned by the wallet
+## Prerequisites
+
+You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
 
 ## Installation
 
-Install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo). Then navigate from the root folder of the monorepo to the folder ``packages/wallet``.
+<font size=1>
 
-```bash
-git clone git@github.com:bitcoin-computer/monorepo.git
-cd monorepo
-yarn install
-cd packages/wallet
+```sh
+# Download the monorepo
+git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Move to the package
+cd monorepo/packages/wallet
+
+# Create a .env file
 cp .env.example .env
+
+# Install the dependencies
+yarn install
 ```
 
-## Start the Server
+</font>
 
-To start the application run:
+## Usage
+
+
+### Start the Server
+
+To start the application run the command below and open [http://localhost:1032](http://localhost:1032).
 ```bash
 yarn start
 ```
-Then open [http://localhost:1032](http://localhost:1032) in a browser.
 
+### Fund the Wallet
 
-### Configuration
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet).
 
-The application defaults to testnet mode. You can also configure it to run with a local [Bitcoin Computer Node][node]. If you wish to configure the application to connect to your local node, refer to the comment at the beginning of the 'App.tsx' file.
+## Documentation
 
-### Deploy a test Smart Contract
+Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Computer.
 
-If you are running on regtest mode, we provide a test smart contract that you can deploy to test the explorer. To do so run
+## Getting Help
 
-```bash
-yarn deploy
-```
+If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
-You will need to fund the wallet that is used to deploy the smart contract, see [here](../lib/README.md#fund-the-wallet). After that you can start the server.
+## Price
 
-### Log In
-
-You can log into the application with a BIP39 seed phrase. Being logged in allows you to manipulate the smart contract, executing functions that require a signature.
-
-You can generate a new seed for example from [here](https://iancoleman.io/bip39/).
-
-## Support
-
-For more information see the [Bitcoin Computer Docs](https://docs.bitcoincomputer.io) or ask in the [Telegram Group](https://t.me/joinchat/FMrjOUWRuUkNuIt7zJL8tg).
-
+See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
 
 ## Contributing
 
@@ -59,10 +63,9 @@ This project is intended as a starting point for new development so we want to k
 
 If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
 
-
 ## MIT License
 
-Copyright (c) 2023 BCDB Inc.
+Copyright (c) 2022 BCDB Inc.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

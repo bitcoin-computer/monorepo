@@ -49,7 +49,7 @@ export const fungibleToken = `class Token extends Contract {
   }
   send(amount, to) {
     if (this.tokens < amount) throw new Error()
-    this._amount -= amount
+    this.tokens -= amount
     return new Token(amount, to)
   }
 }`
@@ -63,7 +63,7 @@ export const fungibleTokenExpresion = (pubKey: string) => `class Token extends C
   }
   send(amount, to) {
     if (this.tokens < amount) throw new Error()
-    this._amount -= amount
+    this.tokens -= amount
     return new Token(amount, to)
   }
 }
@@ -78,7 +78,7 @@ export const fungibleTokenExport = `export class Token extends Contract {
   }
   send(amount, to) {
     if (this.tokens < amount) throw new Error()
-    this._amount -= amount
+    this.tokens -= amount
     return new Token(amount, to)
   }
 }`
