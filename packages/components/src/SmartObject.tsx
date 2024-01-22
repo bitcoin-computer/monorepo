@@ -13,126 +13,15 @@ import { Auth } from "./Auth"
 import { Card } from "./Card"
 import { Modal } from "./Modal"
 import { FunctionResultModalContent } from "./common/SmartCallExecutionResult"
+import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown"
+import { SmartObjectFunction } from "./SmartObjectFunction"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 const modalId = "smart-object-info-modal"
 
-export const getErrorMessage = (error: any): string => {
-  if (
-    error?.response?.data?.error ===
-    "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
-  ) {
-    return "You are not authorized to make changes to this smart object"
-  } else if (error?.response?.data?.error) {
-    return error?.response?.data?.error
-  } else {
-    return error.message ? error.message : "Error occurred"
-  }
-}
-
 export const getFnParamNames = function (fn: string) {
   const match = fn.toString().match(/\(.*?\)/)
   return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
-}
-
-export const getValueForType = (type: string, stringValue: string) => {
-  switch (type) {
-    case "number":
-      return Number(stringValue)
-    case "string":
-      return stringValue
-    case "boolean":
-      return true // make this dynamic
-    case "undefined":
-      return undefined
-    case "null":
-      return null
-    case "object":
-      return stringValue
-    default:
-      return Number(stringValue)
-  }
-}
-
-export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, selectedType }: any) => {
-  const [dropDown, setDropdown] = useState<DropdownInterface>()
-  const [type, setType] = useState(selectedType ? selectedType : "Type")
-  const [dropdownSelectionList] = useState(dropdownList)
-
-  useEffect(() => {
-    initFlowbite()
-    const $targetEl: HTMLElement = document.getElementById(`dropdownMenu${id}`) as HTMLElement
-    const $triggerEl: HTMLElement = document.getElementById(`dropdownButton${id}`) as HTMLElement
-    const options: DropdownOptions = {
-      placement: "bottom",
-      triggerType: "click",
-      offsetSkidding: 0,
-      offsetDistance: 10,
-      delay: 300,
-    }
-    const instanceOptions: InstanceOptions = {
-      id: `dropdownMenu${id}`,
-      override: true,
-    }
-    setDropdown(new Dropdown($targetEl, $triggerEl, options, instanceOptions))
-  }, [id])
-
-  const handleClick = (type: string) => {
-    setType(type)
-    onSelectMethod(type)
-    if (dropDown) dropDown.hide()
-  }
-
-  return (
-    <>
-      <button
-        id={`dropdownButton${id}`}
-        data-dropdown-toggle={`dropdownMenu${id}`}
-        className="flex justify-between w-32 text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-        type="button"
-      >
-        {type}
-        <svg
-          className="w-2.5 h-2.5"
-          aria-hidden="true"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 10 6"
-        >
-          <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="m1 1 4 4 4-4"
-          ></path>
-        </svg>
-      </button>
-
-      <div
-        id={`dropdownMenu${id}`}
-        className="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
-      >
-        <ul
-          className="py-2 text-sm text-gray-700 dark:text-gray-200"
-          aria-labelledby={`dropdownButton${id}`}
-        >
-          {dropdownSelectionList.map((option: string, index: number) => (
-            <li key={index}>
-              <span
-                onClick={() => {
-                  handleClick(option)
-                }}
-                className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-              >
-                {option}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
-  )
 }
 
 function ObjectValueCard({ content }: { content: string }) {
@@ -163,74 +52,6 @@ const SmartObjectValues = ({ smartObject }: any) => {
             <ObjectValueCard content={toObject(value)} />
           </div>
         ))}
-    </>
-  )
-}
-
-const Functions = ({
-  smartObject,
-  functionsExist,
-  formState,
-  updateFormValue,
-  updateTypes,
-  handleSmartObjectMethod,
-  options,
-}: any) => {
-  if (!functionsExist) return <></>
-  return (
-    <>
-      <h2 className="mb-2 text-4xl font-bold dark:text-white">Functions</h2>
-      {Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
-        .filter(
-          (key) =>
-            key !== "constructor" && typeof Object.getPrototypeOf(smartObject)[key] === "function"
-        )
-        .map((key, fnIndex) => {
-          const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key])
-          return (
-            <div className="mt-6 mb-6" key={fnIndex}>
-              <h3 className="mt-2 text-xl font-bold dark:text-white">{key}</h3>
-              <form id={`fn-index-${fnIndex}`}>
-                {paramList.map((paramName, paramIndex) => (
-                  <div key={paramIndex} className="mb-4">
-                    <div className="mb-2">
-                      <label
-                        htmlFor={`${key}-${paramName}`}
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                      >
-                        {paramName}
-                      </label>
-                    </div>
-                    <div className="flex items-center space-x-4">
-                      <input
-                        type="text"
-                        id={`${key}-${paramName}`}
-                        value={formState[`${key}-${paramName}`]}
-                        onChange={(e) => updateFormValue(e, `${key}-${paramName}`)}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                        placeholder="Value"
-                        required
-                      />
-                      <TypeSelectionDropdown
-                        id={`${key}${paramName}`}
-                        dropdownList={options}
-                        onSelectMethod={(option: string) =>
-                          updateTypes(option, `${key}-${paramName}`)
-                        }
-                      />
-                    </div>
-                  </div>
-                ))}
-                <button
-                  className="mr-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  onClick={(evt) => handleSmartObjectMethod(evt, smartObject, key, paramList)}
-                >
-                  Call Function
-                </button>
-              </form>
-            </div>
-          )
-        })}
     </>
   )
 }
@@ -350,16 +171,13 @@ function Component() {
   const [rev] = useState(params.rev || "")
   const [computer] = useState(Auth.getComputer())
   const [smartObject, setSmartObject] = useState<any | null>(null)
-  const [formState, setFormState] = useState<any>({})
   const [functionsExist, setFunctionsExist] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
-  const [functionCallSuccess, setFunctionCallSuccess] = useState(false)
   const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
 
   const [modalTitle, setModalTitle] = useState("")
 
   const setShow: any = (flag: boolean) => {
-    functionCallSuccess ? setModalTitle("Sucess!") : setModalTitle("Error!")
     flag ? Modal.get(modalId).show() : Modal.get(modalId).hide()
   }
 
@@ -395,68 +213,6 @@ function Component() {
     setFunctionsExist(funcExist)
   }, [smartObject])
 
-  const handleSmartObjectMethod = async (
-    event: any,
-    smartObject: any,
-    fnName: string,
-    params: string[]
-  ) => {
-    event.preventDefault()
-    try {
-      const revMap: any = {}
-
-      params.forEach((param) => {
-        const key = `${fnName}-${param}`
-        const paramValue = getValueForType(formState[`${key}--types`], formState[key])
-        if (isValidRev(paramValue)) {
-          revMap[param] = paramValue
-        }
-      })
-
-      // @ts-ignore
-      const { tx } = await computer.encode({
-        exp: `smartObject.${fnName}(${params.map((param) => {
-          const key = `${fnName}-${param}`
-          const paramValue = getValueForType(formState[`${key}--types`], formState[key])
-          return isValidRev(paramValue)
-            ? param
-            : typeof paramValue === "string"
-            ? `'${paramValue}'`
-            : paramValue
-        })})`,
-        env: { smartObject: smartObject._rev, ...revMap },
-        // @ts-ignore
-        fund: true,
-        sign: true,
-      })
-
-      await computer.broadcast(tx)
-      await sleep(1000)
-      const res = await computer.query({ ids: [smartObject._id] })
-      setFunctionResult({ _rev: res[0] })
-      setFunctionCallSuccess(true)
-      setShow(true)
-    } catch (error: any) {
-      setFunctionResult(getErrorMessage(error))
-      setFunctionCallSuccess(false)
-      setShow(true)
-    }
-  }
-
-  const updateFormValue = (e: any, key: string) => {
-    e.preventDefault()
-    console.log(e, key)
-    const value = { ...formState }
-    value[key] = e.target.value
-    setFormState(value)
-  }
-
-  const updateTypes = (option: string, key: string) => {
-    const value = { ...formState }
-    value[`${key}--types`] = option
-    setFormState(value)
-  }
-
   const [txId, outNum] = rev.split(":")
 
   return (
@@ -477,14 +233,14 @@ function Component() {
 
         <SmartObjectValues smartObject={smartObject} />
 
-        <Functions
+        <SmartObjectFunction
+          computer={computer}
           smartObject={smartObject}
           functionsExist={functionsExist}
-          formState={formState}
-          updateFormValue={updateFormValue}
-          updateTypes={updateTypes}
-          handleSmartObjectMethod={handleSmartObjectMethod}
           options={options}
+          setFunctionResult={setFunctionResult}
+          setShow={setShow}
+          setModalTitle={setModalTitle}
         />
 
         <MetaData smartObject={smartObject} />

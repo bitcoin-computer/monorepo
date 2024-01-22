@@ -12,4 +12,4 @@
 
 ## Usage
 
-To deploy a new version merge a branch into master
+To deploy a new version merge a pull request into main.

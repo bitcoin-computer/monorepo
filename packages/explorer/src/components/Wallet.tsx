@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { Drawer } from "./Drawer"
 import { Auth, UtilsContext } from "@bitcoin-computer/components"
@@ -19,6 +19,10 @@ const Balance = ({ computer }: any) => {
       console.log("Error fetching wallet details", err)
     }
   }, [computer])
+
+  useEffect(() => {
+    refreshBalance()
+  }, [])
 
   return (
     <div className="mb-4">

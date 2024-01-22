@@ -2,9 +2,8 @@
 
 sudo apt-get update
 
-# install npm and yarn
+# install npm
 sudo apt install npm
-sudo npm install --global yarn
 
 # install node.js
 sudo apt-get purge --auto-remove nodejs
@@ -12,7 +11,7 @@ curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # install bitcoin-computer-dependencies
-yarn install
+npm install
 
 # install docker
 sudo apt-get install ca-certificates curl  gnupg 

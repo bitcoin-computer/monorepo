@@ -1,3 +1,0 @@
-yarn run v1.22.17
-$ node --experimental-modules scripts/deploy.mjs
-info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.

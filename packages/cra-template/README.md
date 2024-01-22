@@ -8,7 +8,7 @@
 </div>
 
 > [!WARNING]
->This template is very buggy and needs refactoring
+>This template needs refactoring, check back soon.
 
 ## Prerequisites
 
@@ -22,11 +22,11 @@ You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/m
 # Download the monorepo
 git clone https://github.com/bitcoin-computer/monorepo.git
 
-# Move to the package
-cd monorepo/packages/cra-template
+# Move into monorepo folder
+cd monorepo
 
 # Install the dependencies
-yarn install
+npm install
 ```
 
 </font>
@@ -42,7 +42,11 @@ To start the application run the command below and open [http://localhost:3000](
 <font size=1>
 
 ```bash
-yarn start
+# Move to the package
+cd packages/cra-template
+
+# Start the app
+npm run start
 ```
 
 </font>
@@ -57,7 +61,7 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Comp
 
 ## Getting Help
 
-If you have any questions, please let us know in our <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram group</a>, on <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
+If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Price
 

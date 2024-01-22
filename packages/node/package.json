@@ -30,7 +30,7 @@
     "start": "node $(grep SRC_ENTRY .package.paths | cut -d '=' -f2)",
     "start-test": "node --loader ts-node/esm  ./scripts/dev-setup.ts",
     "sync": "$(grep SYNC_START .package.paths | cut -d '=' -f2)",
-    "build": "yarn dist-clean && yarn build-rollup && yarn node-clean && yarn cp-files",
+    "build": "npm run dist-clean && npm run build-rollup && npm run node-clean && npm run cp-files",
     "setup": "./scripts/setup.py",
     "cp-files": "./scripts/cp-files.sh",
     "node-clean": "./scripts/node-clean.sh",
@@ -52,7 +52,7 @@
     "test": "node --loader ts-node/esm  ./scripts/test.ts",
     "up": "./scripts/up.py",
     "down": "./scripts/down.py",
-    "test-unit": "yarn test -u"
+    "test-unit": "npm run test -- -u"
   },
   "dependencies": {
     "@babel/core": "^7.18.5",

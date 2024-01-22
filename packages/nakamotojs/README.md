@@ -34,13 +34,13 @@ cd monorepo
 
 # Install the dependencies
 npm install
-
+```
 
 </font>
 
 ## Usage
 
-The following commands can be run from the folder packages/nakamotojs/
+The following commands can be run from the folder `packages/nakamotojs/`
 
 ### Run the Tests
 
