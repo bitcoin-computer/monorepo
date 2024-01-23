@@ -41,6 +41,9 @@ To start your node at `http://localhost:1031` run the command below.
 # Move to the package
 cd packages/node
 
+# Create a .env file
+cp .env.example .env
+
 # Run the node on litecoin regtest
 npm run up -- -ltc -r
 ```
