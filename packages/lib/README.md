@@ -16,7 +16,7 @@ You need to have [node.js](https://nodejs.org/en/) installed.
 
 ### Install
 
-Run in an empty folder.
+Run the commands below in an empty folder.
 
 <font size=1>
 
@@ -32,7 +32,7 @@ npm install @bitcoin-computer/lib
 
 ### Write a Smart Contract
 
-Create file `index.mjs`
+Create a file `index.mjs`.
 
 <font size=1>
 
@@ -67,7 +67,7 @@ console.log(counter)
 
 ### Fund the Wallet
 
-On Litecoin with testnet (as configured in the example) you can use a [Litecoin testnet faucet](https://www.google.com/search?q=litecoin+testnet+faucet) to fund the address of the `computer` object:
+On Litecoin with testnet (as configured in the example above) you can use a [Litecoin testnet faucet](https://www.google.com/search?q=litecoin+testnet+faucet) to fund the address of the `computer` object:
 
 <font size=1>
 
@@ -77,7 +77,7 @@ mvbAVZJF68WASLbqteTToE45r69L53Q1vL
 
 </font>
 
-If run your own [node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) you can refill the wallet from the command line on regtest.
+You can also run your own [node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme). In this case you can refill the wallet from the command line on regtest.
 
 <font size=1>
 
@@ -118,7 +118,7 @@ Counter {
 
 ### Write a Smart contract
 
-Create file `index.mjs`.
+Create a file `index.mjs`.
 
 <font size=1>
 
@@ -148,7 +148,7 @@ document.getElementById("count").innerHTML = counter.n
 
 ### Make a Website
 
-Create file `index.html`
+Create a file `index.html`
 
 <font size=1>
 
@@ -165,6 +165,8 @@ Create file `index.html`
 
 ### Start a Web Server
 
+Run the following code in an empty directory and open [http://localhost:8080](http://localhost:8080).
+
 <font size=1>
 
 ```bash
@@ -180,32 +182,29 @@ http-server
 
 </font>
 
-Open [http://localhost:8080](http://localhost:8080)
-
 ### Fund Wallet
 
 See [above](#fund-the-wallet).
 
 ## Use on Mainnet or Regtest
 
-Run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme).
+Install a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) and run it with the command below:
 
 <font size=1>
 
 ```bash
-# Start a node, configuration options are:
-# -litecoin or -bitcoin
-# -regtest, -testnet or -mainnet 
+# Start a node
 npm run up -- -litecoin -regtest
 ```
 
 </font>
 
-On the client, pass in a `url` parameter to the `Computer` constructor with the node's url. Make sure that `chain` and `network` match your node's configuration.
+When you call the `Computer` constructor on the client, pass the url of your node to the `url` parameter. Make sure that `chain` and `network` match your node's configuration.
 
 <font size=1>
 
 ```js
+// Connect computer object to node url
 const computer = new Computer({
   url: 'http://localhost:1031', // Bitcoin Computer Node node url
   chain: 'LTC' // LTC or BTC
