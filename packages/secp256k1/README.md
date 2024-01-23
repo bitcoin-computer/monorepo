@@ -13,12 +13,6 @@
 npm install @bitcoin-computer/secp256k1
 ```
 
-### yarn
-
-```bash
-yarn add @bitcoin-computer/secp256k1
-```
-
 ## WebAssembly and Node.js version
 
 Previous version of `tiny-secp256k1` implement [C++ addon](https://nodejs.org/api/addons.html) through [NAN (Native Abstractions for Node.js)](https://github.com/nodejs/nan) and [elliptic](https://github.com/indutny/elliptic) as fallback when addon can not be built or in browser-like environment.
