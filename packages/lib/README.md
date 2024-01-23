@@ -207,7 +207,7 @@ When you call the `Computer` constructor on the client, pass the url of your nod
 // Connect computer object to node url
 const computer = new Computer({
   url: 'http://localhost:1031', // Bitcoin Computer Node node url
-  chain: 'LTC' // LTC or BTC
+  chain: 'LTC', // LTC or BTC
   network: 'regtest', // regtest, testnet, or mainnet
   mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike', // BIP 39 mnemonic sentence
 })
