@@ -201,15 +201,15 @@ npm run up -- -litecoin -regtest
 
 </font>
 
-On the client, configure your `computer` object to connect to your node.
+On the client, pass in a `url` parameter to the `Computer` constructor with the node's url. Make sure that `chain` and `network` match your node's configuration.
 
 <font size=1>
 
 ```js
 const computer = new Computer({
+  url: 'http://localhost:1031', // Bitcoin Computer Node node url
   chain: 'LTC' // LTC or BTC
   network: 'regtest', // regtest, testnet, or mainnet
-  url: 'http://localhost:1031', // TBC node url
   mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike', // BIP 39 mnemonic sentence
 })
 ```

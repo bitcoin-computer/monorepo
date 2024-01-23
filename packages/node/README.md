@@ -33,11 +33,13 @@ npm install
 
 ### Run the Node
 
+To start your node at `http://localhost:1031` run the command below.
+
 <font size=1>
 
 ```sh
 # Move to the package
-cd packages/chat
+cd packages/node
 
 # Run the node on litecoin regtest
 npm run up -- -ltc -r
