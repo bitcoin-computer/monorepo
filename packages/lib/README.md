@@ -13,14 +13,18 @@ You need to have [node.js](https://nodejs.org/en/) installed.
 
 ## Use on a Server
 
-This section describes the recommended way to get started (testnet on a server). See [here](#use-in-a-browser) for how to use the library in a web browser and [here](#use-on-mainnet-or-regtest) for how to use mainnet or regtest.
 
 ### Install
+
+Run in an empty folder.
 
 <font size=1>
 
 ```bash
+# Create packages.json file
 npm init
+
+# Install library
 npm install @bitcoin-computer/lib
 ```
 
@@ -63,13 +67,25 @@ console.log(counter)
 
 ### Fund the Wallet
 
-Use a Litecoin testnet faucet (for example [here](https://testnet.help/en/ltcfaucet/testnet) or [here](https://litecointf.salmen.website/)) to fund the address. 
+On Litecoin with testnet (as configured in the example) you can use a [Litecoin testnet faucet](https://www.google.com/search?q=litecoin+testnet+faucet) to fund the address of the `computer` object:
 
-```
+<font size=1>
+
+```js
 mvbAVZJF68WASLbqteTToE45r69L53Q1vL
 ```
 
-If none of a faucets work you can run your own [node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) on regtest to fund the wallet.
+</font>
+
+If run your own [node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) you can refill the wallet from the command line on regtest.
+
+<font size=1>
+
+```bash
+npm run fund-ltc -- mvbAVZJF68WASLbqteTToE45r69L53Q1vL
+```
+
+</font>
 
 ### Run the Smart Contract
 
@@ -152,32 +168,53 @@ Create file `index.html`
 <font size=1>
 
 ```bash
+# Create a packages.json file
 npm init -y
+
+# Install web server
 npm i http-server
+
+# Start web server
 http-server
 ```
 
 </font>
 
+Open [http://localhost:8080](http://localhost:8080)
+
 ### Fund Wallet
 
 See [above](#fund-the-wallet).
 
-### View the App
-
-Open [http://localhost:8080](http://localhost:8080)
-
 ## Use on Mainnet or Regtest
 
-You need to run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) and configure your `computer` object to connect to your node:
+Run a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme).
+
+<font size=1>
+
+```bash
+# Start a node, configuration options are:
+# -litecoin or -bitcoin
+# -regtest, -testnet or -mainnet 
+npm run up -- -litecoin -regtest
+```
+
+</font>
+
+On the client, configure your `computer` object to connect to your node.
+
+<font size=1>
 
 ```js
 const computer = new Computer({
-  url: 'http://localhost:1031',
-  network: 'regtest', // or mainnet
-  chain: 'LTC' // or BTC
+  chain: 'LTC' // LTC or BTC
+  network: 'regtest', // regtest, testnet, or mainnet
+  url: 'http://localhost:1031', // TBC node url
+  mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike', // BIP 39 mnemonic sentence
 })
 ```
+
+</font>
 
 ## Documentation
 
