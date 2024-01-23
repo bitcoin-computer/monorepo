@@ -10,7 +10,7 @@
 
 ## Prerequisites
 
-You need to have [node.js](https://nodejs.org/en/) and [docker](https://www.docker.com/) installed.
+You need to have [git](https://www.git-scm.com/), [node.js](https://nodejs.org/) and [docker](https://www.docker.com/) installed.
 
 ## Installation
 
@@ -20,11 +20,8 @@ You need to have [node.js](https://nodejs.org/en/) and [docker](https://www.dock
 # Download the monorepo
 git clone https://github.com/bitcoin-computer/monorepo.git
 
-# Move to the package
-cd monorepo/packages/node
-
-# Create a .env file
-cp .env.example .env
+# Move into monorepo folder
+cd monorepo
 
 # Install the dependencies
 npm install
@@ -34,33 +31,43 @@ npm install
 
 ## Usage
 
-By default the node will run Litecoin regtest mode, see [Configuration](#configuration) for more information.
-
-
-### Start the Node
-
-In the folder `monorepo/packages/node` run the following command below to start the node.
+### Run the Node
 
 <font size=1>
 
 ```sh
+# Move to the package
+cd packages/chat
+
+# Run the node on litecoin regtest
 npm run up -- -ltc -r
 ```
 
 </font>
 
-The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware. You can use the options below.
+The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
 
-| Option     | Alternative             | Description               |
-|------------|-------------------------|---------------------------|
-| --litecoin | -ltc                    | Start node on Litecoin    |
-| --bitcoin  | -btc                    | Start node on Bitcoin     |
-| --testnet  | -t                      | Start the node on testnet |
-| --regtest  | -r                      | Start the node on regtest |
-| --mainnet  | -m                      | Start the node on mainnet |
-|            | -cpus                   | Synchronize in parallel   |
+You can use the following options.
 
-You can find more information on the `-cpus` option [here](#synchronizing-in-parallel).
+| Option     | Short       | Default       |
+|------------|-------------|---------------|
+| --litecoin | -ltc        | Yes           |
+| --bitcoin  | -btc        | No            |
+| --regtest  | -r          | Yes           |
+| --testnet  | -t          | No            |
+| --mainnet  | -m          | No            |
+|            | -cpus       | Use all cores |
+
+
+By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
+
+<font size=1>
+
+```shell
+npm run up -- -t -cpus 16
+```
+
+</font>
 
 ### Fund the Wallet
 
@@ -80,6 +87,8 @@ npm run fund-btc -- <address1> [<address2> ... <addressN>]
 
 ### Run the Tests
 
+You can run the tests with the command below.
+
 <font size=1>
 
 ```sh
@@ -90,13 +99,16 @@ npm run test
 
 ### Stop the Node
 
+You can stop the node with the command below. When you restart the process, it will resume from the last block processed.
+
 <font size=1>
 
 ```sh
-npm run down
+npm run down -- -t
 ```
 
 </font>
+
 
 ### Reset the database
 
@@ -110,7 +122,7 @@ npm run reset
 
 </font>
 
-### Connect to Bitcoin Computer Library
+### Connect a Bitcoin Computer Library
 
 To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib) object to your node you have to set the ``url`` property. Make sure that the chain and network match your node configuration
 
@@ -118,29 +130,23 @@ To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-c
 
 ```js
 new Computer({
-  url: 'https://localhost:1031'
   chain: 'LTC',
   network: 'regtest',
+  url: 'https://localhost:1031'
 })
 ```
 
 </font>
 
-### Synchronizing in parallel
+If you do not specify a url property it will default to 
 
-If your machine has more than 4 cores you can run the sync process in parallel. By default all your available cores are used. You can use a flag to indicate an specific number of dedicated cores.
-
-<font size=1>
-
-```shell
-npm run up -- -t -cpus 16
+```
+https://tltc.node.bitcoincomputer.io
 ```
 
-</font>
+This node runs Litecoin with testnet and uses the latest version of the Bitcoin Computer Node software.
 
-The synchronization process can be stopped at any time with the command `npm run down -- -t`. When you restart the process, it will continue from the last block processed.
-
-## AWS Server Costs
+## Estimated Server Costs
 
 The following table shows the times and costs for syncing to a Litecoin node on testnet on [AWS EC2](https://aws.amazon.com/ec2/pricing/on-demand/). All experiments were run in spring 2022 using 50GB SSD storage.
 
@@ -155,8 +161,6 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 ## Versioning
 
 If you run your own node, make sure to use the same versions of Lib and Node.
-
-We provide a free Bitcoin Computer Node on Litecoin testnet at `https://tltc.node.bitcoincomputer.io/`. This node always runs the latest version.
 
 ## Documentation
 
