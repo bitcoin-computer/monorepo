@@ -44,6 +44,10 @@ cd packages/node
 # Create a .env file
 cp .env.example .env
 
+# Build the docker image for the node
+cd ../../
+npm run build-node
+
 # Run the node on litecoin regtest
 npm run up -- -ltc -r
 ```
