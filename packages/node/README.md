@@ -38,11 +38,11 @@ To start your node at `http://localhost:1031` run the command below.
 <font size=1>
 
 ```sh
-# Move to the package
-cd packages/node
-
 # Create a .env file
-cp .env.example .env
+cp packages/node/.env.example packages/node/.env
+
+# Build the docker image
+npm run build-node
 
 # Run the node on litecoin regtest
 npm run up -- -ltc -r
