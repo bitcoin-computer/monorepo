@@ -1,9 +1,8 @@
 #  We are using the alpine distribution with Long Term Support (LTS) as of 11/04/2020.
 FROM node:20-alpine
 
-RUN apk add --no-cache cmake make gcc g++ python3
-# insall dependencies to run cmake
-RUN apk add --no-cache libstdc++ libgcc curl
+# install dependencies to run cmake
+RUN apk add --no-cache cmake make gcc g++ python3 libstdc++ libgcc curl
 
 # Set the working directory inside the container
 WORKDIR /dist
