@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 import { getErrorMessage } from "../../utils"
+import { UtilsContext } from "@bitcoin-computer/components"
 
 const DeployModule = (props: {
   computer: Computer
@@ -11,6 +12,7 @@ const DeployModule = (props: {
 }) => {
   const { computer, exampleModule, setShow, setModalTitle, setFunctionResult } = props
   const [module, setModule] = useState<string>()
+  const { showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     setModule(exampleModule)
@@ -18,14 +20,17 @@ const DeployModule = (props: {
 
   const handleModuleDeploy = async () => {
     try {
+      showLoader(true)
       // @ts-ignore
       const modSpec = await computer.deploy(module?.trim())
       setFunctionResult({ _rev: modSpec, type: "modules" })
       setModalTitle("Success!")
+      showLoader(false)
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
       setModalTitle("Error!")
+      showLoader(false)
       setShow(true)
     }
   }

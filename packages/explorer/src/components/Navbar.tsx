@@ -122,6 +122,13 @@ function NotLoggedMenu() {
       localStorage.setItem("CHAIN", chain)
       localStorage.setItem("NETWORK", network)
       setDropDownLabel(formatChainAndNetwork(chain, network))
+      console.log(
+        chain,
+        network,
+        formatChainAndNetwork(chain, network),
+        localStorage.getItem("CHAIN"),
+        localStorage.getItem("NETWORK")
+      )
       window.location.href = "/"
     } catch (err) {
       showSnackBar("Error setting chain and network", false)
@@ -161,7 +168,7 @@ function NotLoggedMenu() {
             className="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
           >
             <ul
-              className="py-2 text-sm text-gray-700 dark:text-gray-400"
+              className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
               <li>
@@ -190,7 +197,7 @@ function NotLoggedMenu() {
               </li>
             </ul>
             <ul
-              className="py-2 text-sm text-gray-700 dark:text-gray-400"
+              className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
               <li>

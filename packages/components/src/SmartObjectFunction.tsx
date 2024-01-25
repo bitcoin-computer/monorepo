@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown"
 import { isValidRev, sleep } from "./common/utils"
+import { UtilsContext } from "./UtilsContext"
 
 export const getErrorMessage = (error: any): string => {
   if (
@@ -49,6 +50,7 @@ export const SmartObjectFunction = ({
   setModalTitle,
 }: any) => {
   const [formState, setFormState] = useState<any>({})
+  const { showLoader } = UtilsContext.useUtilsComponents()
 
   const handleSmartObjectMethod = async (
     event: any,
@@ -57,6 +59,7 @@ export const SmartObjectFunction = ({
     params: string[]
   ) => {
     event.preventDefault()
+    showLoader(true)
     try {
       const revMap: any = {}
 
@@ -90,10 +93,12 @@ export const SmartObjectFunction = ({
       const res = await computer.query({ ids: [smartObject._id] })
       setFunctionResult({ _rev: res[0] })
       setModalTitle("Success!")
+      showLoader(false)
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
       setModalTitle("Error!")
+      showLoader(false)
       setShow(true)
     }
   }
@@ -140,7 +145,7 @@ export const SmartObjectFunction = ({
                       <input
                         type="text"
                         id={`${key}-${paramName}`}
-                        value={formState[`${key}-${paramName}`]}
+                        value={formState[`${key}-${paramName}`] || ""}
                         onChange={(e) => updateFormValue(e, `${key}-${paramName}`)}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder="Value"
