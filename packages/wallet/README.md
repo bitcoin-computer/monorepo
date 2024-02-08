@@ -40,6 +40,9 @@ To start the application run the command below and open [http://localhost:1033](
 # Move to the package
 cd packages/wallet
 
+# Create .env file
+cp .env.example .env
+
 # Start the app
 npm run start
 ```
