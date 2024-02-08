@@ -93,13 +93,13 @@ export const SmartObjectFunction = ({
       const res = await computer.query({ ids: [smartObject._id] })
       setFunctionResult({ _rev: res[0] })
       setModalTitle("Success!")
-      showLoader(false)
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
       setModalTitle("Error!")
-      showLoader(false)
       setShow(true)
+    } finally {
+      showLoader(false)
     }
   }
 

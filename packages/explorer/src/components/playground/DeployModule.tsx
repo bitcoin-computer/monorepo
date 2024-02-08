@@ -25,13 +25,13 @@ const DeployModule = (props: {
       const modSpec = await computer.deploy(module?.trim())
       setFunctionResult({ _rev: modSpec, type: "modules" })
       setModalTitle("Success!")
-      showLoader(false)
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
       setModalTitle("Error!")
-      showLoader(false)
       setShow(true)
+    } finally {
+      showLoader(false)
     }
   }
 

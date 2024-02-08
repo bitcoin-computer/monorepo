@@ -122,13 +122,6 @@ function NotLoggedMenu() {
       localStorage.setItem("CHAIN", chain)
       localStorage.setItem("NETWORK", network)
       setDropDownLabel(formatChainAndNetwork(chain, network))
-      console.log(
-        chain,
-        network,
-        formatChainAndNetwork(chain, network),
-        localStorage.getItem("CHAIN"),
-        localStorage.getItem("NETWORK")
-      )
       window.location.href = "/"
     } catch (err) {
       showSnackBar("Error setting chain and network", false)

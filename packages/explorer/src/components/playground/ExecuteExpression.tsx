@@ -84,13 +84,13 @@ const ExecuteExpression = (props: {
       const txId = await computer.broadcast(tx)
       setFunctionResult({ _rev: `${txId}:0`, type: "objects", res: effect.res })
       setModalTitle("Success!")
-      showLoader(false)
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
       setModalTitle("Error!")
-      showLoader(false)
       setShow(true)
+    } finally {
+      showLoader(false)
     }
   }
 

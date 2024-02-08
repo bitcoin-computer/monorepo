@@ -111,18 +111,18 @@ const CreateNew = (props: {
         const { res } = await computer.sync(txId)
         setFunctionResult({ _rev: res._rev, type: "objects" })
         setModalTitle("Success!")
-        showLoader(false)
         setShow(true)
       } else {
         setFunctionResult("Please check the code you provided!")
         setModalTitle("Error!")
-        showLoader(false)
         setShow(true)
       }
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
       setModalTitle("Error!")
       setShow(true)
+    } finally {
+      showLoader(false)
     }
   }
 
