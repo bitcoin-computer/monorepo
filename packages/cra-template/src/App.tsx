@@ -1,33 +1,30 @@
-import { Computer } from "@bitcoin-computer/lib"
-import { useState } from "react"
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import "./App.css"
-import NavbarWrapper from "./components/NavbarWrapper"
+import { useEffect } from "react"
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
+import NavBar from "./components/Navbar"
+import { initFlowbite } from "flowbite"
+import { Auth, Error404, UtilsContext, Wallet } from "@bitcoin-computer/components"
 import Counter from "./components/Counter"
-import { Config } from "./types/common"
+export default function App() {
+  useEffect(() => {
+    initFlowbite()
+  }, [])
 
-function App() {
-  const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
-  const chain = localStorage.getItem("CHAIN") || ""
-  const getConf = (network: string) => ({
-    chain,
-    network,
-    mnemonic,
-    url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031",
-  })
-  const config: Config = getConf("testnet")
-  const [computer, setComputer] = useState(new Computer(config))
   return (
-    <>
-      <BrowserRouter>
-        <NavbarWrapper computer={computer} config={config} setComputer={setComputer} />
-        <Routes>
-          <Route path="/" element={<Counter computer={computer}></Counter>} />
-          <Route path="*" element={<Navigate to="/" replace={true} />} />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <span className="bg-gray-900/50 dark:bg-gray-900/80 z-30 inset-0 sr-only"></span>
+      <UtilsContext.UtilsProvider>
+        <Auth.LoginModal />
+        <Wallet />
+        <NavBar />
+        <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+          <Routes>
+            <Route path="/" element={<Counter />} />
+            <Route path="*" element={<Navigate to="/" replace={true} />} />
+            <Route path="*" element={<Error404 />} />
+          </Routes>
+        </div>
+      </UtilsContext.UtilsProvider>
+    </BrowserRouter>
   )
 }
-
-export default App

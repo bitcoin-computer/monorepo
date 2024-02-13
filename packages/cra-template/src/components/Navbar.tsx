@@ -1,180 +1,269 @@
-import { Computer } from "@bitcoin-computer/lib"
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { NavLink } from "react-router-dom"
+import { Link } from "react-router-dom"
+import { Modal, Auth, UtilsContext, Drawer } from "@bitcoin-computer/components"
+import { useEffect, useState } from "react"
+import { initFlowbite } from "flowbite"
+import { Chain, Network } from "../types/common"
 
-export default function Navbar(props: {
-  computer: Computer
-  setIsOpen: Dispatch<SetStateAction<boolean>>
-  setShowLogin: Dispatch<SetStateAction<boolean>>
-}) {
-  const { setIsOpen, computer, setShowLogin } = props
-  const [showNavBar, setShowNavBar] = useState(true)
-  const [dropDownHidden, setDropDownHidden] = useState(true)
+const modalTitle = "Connect to Node"
+const modalId = "unsupported-config-modal"
 
-  const [loggedIn, setLoggedIn] = useState(localStorage.getItem("BIP_39_KEY") !== null)
+function LoggedInMenu() {
+  return (
+    <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+      <li className="py-2">
+        <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+          <Drawer.ShowDrawer text="Wallet" id="wallet-drawer" />
+        </label>
+      </li>
+    </ul>
+  )
+}
 
-  const logout = () => {
-    localStorage.removeItem("BIP_39_KEY")
-    localStorage.removeItem("CHAIN")
-    setLoggedIn(false)
-    setIsOpen(false)
-    window.location.href = "/"
+function formatChainAndNetwork(chain: string, network: string) {
+  const prefix = {
+    mainnet: "",
+    testnet: "t",
+    regtest: "r",
+  }[network]
+  return `${prefix}${chain}`
+}
+
+function ModalContent() {
+  const [url, setUrl] = useState<string>("")
+  function setNetwork(e: React.SyntheticEvent) {
+    e.preventDefault()
+    localStorage.setItem("URL", url)
   }
 
-  useEffect(() => {
-    setLoggedIn(localStorage.getItem("BIP_39_KEY") !== null)
-  }, [loggedIn, computer])
-
-  const openMenu = (evt: any) => {
-    evt.preventDefault()
-    setShowNavBar(!showNavBar)
-  }
-
-  const openDrowdown = (evt: any) => {
-    evt.preventDefault()
-    setDropDownHidden(!dropDownHidden)
+  function closeModal() {
+    Modal.get(modalId).hide()
   }
 
   return (
-    <nav className="bg-white border-gray-200 px-2 sm:px-4 py-2.5 rounded dark:bg-gray-900">
-      <div className="flex items-center justify-between mx-auto">
-        <div className="flex grow md:order-1">
-          <>
-            <button
-              data-collapse-toggle="navbar-search"
-              type="button"
-              className="inline-flex items-center p-2 ml-4 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-              aria-controls="navbar-search"
-              aria-expanded="false"
-              onClick={openMenu}
-            >
-              <span className="sr-only">Open menu</span>
-              <svg
-                className="w-6 h-6"
-                aria-hidden="true"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                  clipRule="evenodd"
-                ></path>
-              </svg>
-            </button>
-          </>
-        </div>
-        <div
-          className="absolute items-center justify-between w-full mt-60 md:flex md:w-auto md:order-2 md:mt-0 md:relative "
-          id="navbar-search"
-          hidden={showNavBar}
-        >
-          <ul className="flex flex-col p-4 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 md:mt-0 md:text-sm md:font-medium md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-            {!loggedIn && (
-              <li>
-                <button
-                  className="block py-2 pl-3 pr-4 text-gray-700 rounded md:bg-transparent hover:text-gray-900 cursor-pointer md:p-0 dark:text-white"
-                  onClick={() => setShowLogin(true)}
-                >
-                  Sign In
-                </button>
-              </li>
-            )}
-            {loggedIn && (
-              <>
-                <li
-                  onMouseEnter={() => setDropDownHidden(false)}
-                  onMouseLeave={() => setDropDownHidden(true)}
-                >
-                  <button
-                    id="dropdownNavbarLink"
-                    data-dropdown-toggle="dropdownNavbar"
-                    className="flex items-center justify-between w-full py-2 pl-3 pr-4 font-medium text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-gray-400 dark:hover:text-white dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
-                    onClick={openDrowdown}
-                  >
-                    <svg
-                      height="1.4rem"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
-                      ></path>
-                    </svg>
-                    <svg
-                      className="w-5 h-5 ml-1"
-                      aria-hidden="true"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                        clipRule="evenodd"
-                      ></path>
-                    </svg>
-                  </button>
-                  <div
-                    id="dropdownNavbar"
-                    className="z-10 absolute font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-                    hidden={dropDownHidden}
-                  >
-                    <ul
-                      className="py-2 text-sm text-gray-700 dark:text-gray-400"
-                      aria-labelledby="dropdownLargeButton"
-                    >
-                      <li>
-                        <NavLink
-                          to="/"
-                          className="block px-4 py-2 text-gray-700 hover:bg-gray-100 rounded md:bg-transparent hover:text-gray-900 cursor-pointer dark:text-white"
-                          onClick={() => {
-                            logout()
-                          }}
-                        >
-                          Log Out
-                        </NavLink>
-                      </li>
-                    </ul>
-                  </div>
-                </li>
+    <form onSubmit={setNetwork}>
+      <div className="p-4 md:p-5">
+        <div>
+          <label
+            htmlFor="url"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Please insert the URL of a node for your desired configuration
+          </label>
 
-                <li>
-                  <span
-                    onClick={() => {
-                      setIsOpen(true)
-                    }}
-                    className="block py-2 pl-3 pr-4 text-gray-700 rounded md:bg-transparent hover:text-gray-900 cursor-pointer md:p-0 dark:text-white"
-                  >
-                    <svg
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                      aria-hidden="true"
-                      height="1.4rem"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"
-                      ></path>
-                    </svg>
-                  </span>
-                </li>
-              </>
-            )}
-          </ul>
+          <input
+            onChange={(e) => setUrl(e.target.value)}
+            value={url}
+            type="text"
+            name="url"
+            id="url"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="http://127.0.0.1:1031"
+            required
+          />
+
+          <label className="block mt-4 text-sm font-medium text-gray-900 dark:text-white">
+            Want to run your own node? Click&nbsp;
+            <Link
+              to="https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme"
+              target="_blank"
+              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            >
+              here
+            </Link>
+          </label>
         </div>
       </div>
-    </nav>
+
+      <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Connect
+        </button>
+        <button
+          onClick={closeModal}
+          className="ms-3 text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+  )
+}
+
+function NotLoggedMenu() {
+  const [dropDownLabel, setDropDownLabel] = useState<string>("LTC")
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
+
+  useEffect(() => {
+    initFlowbite()
+
+    const { chain, network } = Auth.defaultConfiguration()
+    setDropDownLabel(formatChainAndNetwork(chain, network))
+  }, [])
+
+  const setChainAndNetwork = (chain: Chain, network: Network) => {
+    try {
+      localStorage.setItem("URL", Auth.getUrl(chain, network))
+      localStorage.setItem("CHAIN", chain)
+      localStorage.setItem("NETWORK", network)
+      setDropDownLabel(formatChainAndNetwork(chain, network))
+      window.location.href = "/"
+    } catch (err) {
+      showSnackBar("Error setting chain and network", false)
+      Modal.get(modalId).show()
+    }
+  }
+
+  return (
+    <>
+      <Modal.Component title={modalTitle} content={ModalContent} id={modalId} />
+      <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+        <li className="py-2">
+          <button
+            id="dropdownNavbarLink"
+            data-dropdown-toggle="dropdownNavbar"
+            className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
+          >
+            {dropDownLabel}
+            <svg
+              className="w-2.5 h-2.5 ms-2.5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 10 6"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m1 1 4 4 4-4"
+              />
+            </svg>
+          </button>
+          <div
+            id="dropdownNavbar"
+            className="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
+          >
+            <ul
+              className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
+              aria-labelledby="dropdownLargeButton"
+            >
+              <li>
+                <div
+                  onClick={() => setChainAndNetwork("LTC", "mainnet")}
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Litecoin
+                </div>
+              </li>
+              <li>
+                <div
+                  onClick={() => setChainAndNetwork("LTC", "testnet")}
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Litecoin Testnet
+                </div>
+              </li>
+              <li>
+                <div
+                  onClick={() => setChainAndNetwork("LTC", "regtest")}
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Litecoin Regtest
+                </div>
+              </li>
+            </ul>
+            <ul
+              className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
+              aria-labelledby="dropdownLargeButton"
+            >
+              <li>
+                <div
+                  onClick={() => setChainAndNetwork("BTC", "mainnet")}
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Bitcoin
+                </div>
+              </li>
+              <li>
+                <div
+                  onClick={() => setChainAndNetwork("BTC", "testnet")}
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Bitcoin Testnet
+                </div>
+              </li>
+              <li>
+                <div
+                  onClick={() => setChainAndNetwork("BTC", "regtest")}
+                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  Bitcoin Regtest
+                </div>
+              </li>
+            </ul>
+          </div>
+        </li>
+
+        <li className="py-2">
+          <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+            <Modal.ShowButton text="Sign in" id="sign-in-modal" />
+          </label>
+        </li>
+      </ul>
+    </>
+  )
+}
+
+export default function Navbar() {
+  useEffect(() => {
+    initFlowbite()
+  }, [])
+
+  return (
+    <>
+      <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
+        <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+          <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
+            <img src="/logo.png" className="h-10" alt="Bitcoin Computer Logo" />
+            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+              TBC Explorer
+            </span>
+          </Link>
+
+          <button
+            data-collapse-toggle="navbar-dropdown"
+            type="button"
+            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+            aria-controls="navbar-dropdown"
+            aria-expanded="false"
+          >
+            <span className="sr-only">Open main menu</span>
+            <svg
+              className="w-5 h-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 17 14"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M1 1h15M1 7h15M1 13h15"
+              />
+            </svg>
+          </button>
+
+          <div className="hidden w-full md:block md:w-auto" id="navbar-dropdown">
+            {Auth.isLoggedIn() ? <LoggedInMenu /> : <NotLoggedMenu />}
+          </div>
+        </div>
+      </nav>
+    </>
   )
 }
