@@ -68,6 +68,8 @@ function Counter() {
         >
           Increment
         </button>
+        <br />
+        <br />
         <p>
           <b>{counter ? `Count: ${count}` : ""}</b>
         </p>
