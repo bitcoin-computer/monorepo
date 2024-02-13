@@ -15,7 +15,7 @@
     "@bitcoin-computer/lib": "^0.17.1-beta.0"
   },
   "devDependencies": {
-    "@types/bitcoin-computer__lib": "^0.17.0",
+    "@types/bitcoin-computer__lib": "0.15.0",
     "@types/mocha": "^9.1.1",
     "@types/node": "~18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.10.0",
