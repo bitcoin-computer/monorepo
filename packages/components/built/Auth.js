@@ -54,9 +54,9 @@ function getUrl(chain, network) {
     return url;
 }
 function defaultConfiguration() {
-    var chain = (process.env["REACT_APP_CHAIN"] || localStorage.getItem("CHAIN") || "LTC");
-    var network = (process.env["REACT_APP_NETWORK"] ||
-        localStorage.getItem("NETWORK") ||
+    var chain = (localStorage.getItem("CHAIN") || process.env["REACT_APP_CHAIN"] || "LTC");
+    var network = (localStorage.getItem("NETWORK") ||
+        process.env["REACT_APP_NETWORK"] ||
         "regtest");
     var url = getUrl(chain, network);
     return { chain: chain, network: network, url: url };

@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import NavBar from "./components/Navbar"
 import Block from "./components/Block"
 import Blocks from "./components/Blocks"
-import Wallet from "./components/Wallet"
 import Module from "./components/Module"
 import Playground from "./components/playground/Playground"
 import { initFlowbite } from "flowbite"
@@ -15,6 +14,7 @@ import {
   Transaction,
   Error404,
   UtilsContext,
+  Wallet,
 } from "@bitcoin-computer/components"
 export default function App() {
   useEffect(() => {

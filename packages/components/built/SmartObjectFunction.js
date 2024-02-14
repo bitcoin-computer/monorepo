@@ -24,7 +24,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+        while (_) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -49,6 +49,7 @@ import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-run
 import { useState } from "react";
 import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown";
 import { isValidRev, sleep } from "./common/utils";
+import { UtilsContext } from "./UtilsContext";
 export var getErrorMessage = function (error) {
     var _a, _b, _c, _d, _e, _f;
     if (((_b = (_a = error === null || error === void 0 ? void 0 : error.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.error) ===
@@ -87,15 +88,17 @@ export var getValueForType = function (type, stringValue) {
 export var SmartObjectFunction = function (_a) {
     var computer = _a.computer, smartObject = _a.smartObject, functionsExist = _a.functionsExist, options = _a.options, setFunctionResult = _a.setFunctionResult, setShow = _a.setShow, setModalTitle = _a.setModalTitle;
     var _b = useState({}), formState = _b[0], setFormState = _b[1];
+    var showLoader = UtilsContext.useUtilsComponents().showLoader;
     var handleSmartObjectMethod = function (event, smartObject, fnName, params) { return __awaiter(void 0, void 0, void 0, function () {
         var revMap_1, tx, res, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     event.preventDefault();
+                    showLoader(true);
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 6, , 7]);
+                    _a.trys.push([1, 6, 7, 8]);
                     revMap_1 = {};
                     params.forEach(function (param) {
                         var key = "".concat(fnName, "-").concat(param);
@@ -133,14 +136,17 @@ export var SmartObjectFunction = function (_a) {
                     setFunctionResult({ _rev: res[0] });
                     setModalTitle("Success!");
                     setShow(true);
-                    return [3 /*break*/, 7];
+                    return [3 /*break*/, 8];
                 case 6:
                     error_1 = _a.sent();
                     setFunctionResult(getErrorMessage(error_1));
                     setModalTitle("Error!");
                     setShow(true);
-                    return [3 /*break*/, 7];
-                case 7: return [2 /*return*/];
+                    return [3 /*break*/, 8];
+                case 7:
+                    showLoader(false);
+                    return [7 /*endfinally*/];
+                case 8: return [2 /*return*/];
             }
         });
     }); };
@@ -163,7 +169,7 @@ export var SmartObjectFunction = function (_a) {
             })
                 .map(function (key, fnIndex) {
                 var paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key]);
-                return (_jsxs("div", __assign({ className: "mt-6 mb-6" }, { children: [_jsx("h3", __assign({ className: "mt-2 text-xl font-bold dark:text-white" }, { children: key })), _jsxs("form", __assign({ id: "fn-index-".concat(fnIndex) }, { children: [paramList.map(function (paramName, paramIndex) { return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("div", __assign({ className: "mb-2" }, { children: _jsx("label", __assign({ htmlFor: "".concat(key, "-").concat(paramName), className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: paramName })) })), _jsxs("div", __assign({ className: "flex items-center space-x-4" }, { children: [_jsx("input", { type: "text", id: "".concat(key, "-").concat(paramName), value: formState["".concat(key, "-").concat(paramName)], onChange: function (e) { return updateFormValue(e, "".concat(key, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: "Value", required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(key).concat(paramName), dropdownList: options, onSelectMethod: function (option) {
+                return (_jsxs("div", __assign({ className: "mt-6 mb-6" }, { children: [_jsx("h3", __assign({ className: "mt-2 text-xl font-bold dark:text-white" }, { children: key })), _jsxs("form", __assign({ id: "fn-index-".concat(fnIndex) }, { children: [paramList.map(function (paramName, paramIndex) { return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("div", __assign({ className: "mb-2" }, { children: _jsx("label", __assign({ htmlFor: "".concat(key, "-").concat(paramName), className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: paramName })) })), _jsxs("div", __assign({ className: "flex items-center space-x-4" }, { children: [_jsx("input", { type: "text", id: "".concat(key, "-").concat(paramName), value: formState["".concat(key, "-").concat(paramName)] || "", onChange: function (e) { return updateFormValue(e, "".concat(key, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: "Value", required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(key).concat(paramName), dropdownList: options, onSelectMethod: function (option) {
                                                         return updateTypes(option, "".concat(key, "-").concat(paramName));
                                                     } })] }))] }), paramIndex)); }), _jsx("button", __assign({ className: "mr-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800", onClick: function (evt) { return handleSmartObjectMethod(evt, smartObject, key, paramList); } }, { children: "Call Function" }))] }))] }), fnIndex));
             })] }));

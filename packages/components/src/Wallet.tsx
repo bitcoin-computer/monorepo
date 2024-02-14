@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
+import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
-import { Auth, UtilsContext } from "@bitcoin-computer/components"
+import { UtilsContext } from "./UtilsContext"
 
 const Balance = ({ computer }: any) => {
   const [balance, setBalance] = useState<number>(0)
@@ -34,7 +35,9 @@ const Balance = ({ computer }: any) => {
         />
       </h6>
 
-      <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">{balance / 1e8} {chain} </p>
+      <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
+        {balance / 1e8} {chain}{" "}
+      </p>
     </div>
   )
 }
@@ -150,7 +153,7 @@ const LogOut = () => {
   )
 }
 
-export default function Wallet() {
+export function Wallet() {
   const [computer] = useState(Auth.getComputer())
 
   const Content = () => (
@@ -170,5 +173,5 @@ export default function Wallet() {
     </>
   )
 
-  return <Drawer Content={Content} id="wallet-drawer" />
+  return <Drawer.Component Content={Content} id="wallet-drawer" />
 }

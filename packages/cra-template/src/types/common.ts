@@ -1,6 +1,2 @@
-export interface Config {
-  chain: string
-  network: string
-  mnemonic: string
-  url: string
-}
+export type Chain = "LTC" | "BTC" | "DOGE"
+export type Network = "testnet" | "mainnet" | "regtest"

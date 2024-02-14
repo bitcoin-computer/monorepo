@@ -1,15 +1,9 @@
-import { Computer } from "@bitcoin-computer/lib"
 import { useState } from "react"
-import Loader from "./Loader"
-import SnackBar from "./SnackBar"
+import { Auth, UtilsContext } from "@bitcoin-computer/components"
 
-function Counter(props: { computer: Computer }) {
-  const { computer } = props
-  console.log(computer)
-  const [show, setShow] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [success, setSuccess] = useState(false)
-  const [message, setMessage] = useState("")
+function Counter() {
+  const [computer] = useState(Auth.getComputer())
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   const [counter, setCounter] = useState<Counter | null>(null)
   // eslint-disable-next-line no-undef
@@ -27,31 +21,32 @@ function Counter(props: { computer: Computer }) {
 
   const createSmart = async (evt: any) => {
     evt.preventDefault()
-    setLoading(true)
+    showLoader(true)
     try {
       setCounter(await computer.new(Counter))
-      setLoading(false)
-      setMessage("Created counter smart object")
-      setSuccess(true)
-      setShow(true)
+      showSnackBar("Created counter smart object", true)
     } catch (err: any) {
-      setLoading(false)
-      setMessage(err.message)
-      setSuccess(false)
-      setShow(true)
+      showSnackBar(err && err.message ? err.message : "Error occurred", false)
+    } finally {
+      showLoader(false)
     }
   }
 
   const increment = async (evt: any) => {
     evt.preventDefault()
-    if (!counter) {
-      setMessage("smart counter not present")
-      setSuccess(false)
-      setShow(true)
-      return
+    try {
+      showLoader(false)
+      if (!counter) {
+        showSnackBar("smart counter not present", false)
+        return
+      }
+      await counter.inc()
+      setCount(counter.n)
+    } catch (err: any) {
+      showSnackBar(err && err.message ? err.message : "Error occurred", false)
+    } finally {
+      showLoader(false)
     }
-    await counter.inc()
-    setCount(counter.n)
   }
 
   return (
@@ -73,13 +68,13 @@ function Counter(props: { computer: Computer }) {
         >
           Increment
         </button>
+        <br />
+        <br />
         <p>
           <b>{counter ? `Count: ${count}` : ""}</b>
         </p>
         <p>{counter ? `Id: ${counter._id}` : ""}</p>
         <p>{counter ? `Revision: ${counter._rev}` : ""}</p>
-        {show && <SnackBar message={message} success={success} setShow={setShow} />}
-        {loading && <Loader />}
       </div>
     </>
   )
