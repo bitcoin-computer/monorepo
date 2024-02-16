@@ -34,8 +34,8 @@
   "type": "module",
   "scripts": {
     "prepublishOnly": "./scripts/check-obfuscation.sh",
-    "test": "mocha --require ts-node/register 'test/**/*.ts'",
-    "publish-lib": "npm publish"
+    "publish-lib": "npm publish",
+    "test": "mocha --require ts-node/register 'test/**/*.ts'"
   },
   "dependencies": {
     "@babel/parser": "^7.20.7",
