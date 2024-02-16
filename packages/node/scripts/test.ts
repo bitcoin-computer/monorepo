@@ -60,4 +60,3 @@ if (childProcess.status === 0) {
   process.exit(1)
 }
 // If we get here, the command succeeded
-
