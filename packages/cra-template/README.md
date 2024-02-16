@@ -7,9 +7,6 @@
   </p>
 </div>
 
-> [!WARNING]
->This template needs refactoring, check back soon.
-
 ## Prerequisites
 
 You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
