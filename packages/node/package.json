@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.17.1-beta.0",
+  "version": "0.17.2-beta.0",
   "description": "Server Side Library for the Bitcoin Computer",
   "contributors": [
     "Clemens Ley",
@@ -27,10 +27,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "./scripts/build.sh",
     "build-node": "docker build -t bitcoin-computer-node .",
-    "cp-files": "./scripts/cp-files.sh",
-    "clean-ltc-data": "rm -rf ./chain-setup/ltc-regtest/blockchain-data && rm -rf ./chain-setup/ltc-regtest/db-data",
     "dist-clean": "rm -rf dist",
     "down": "./scripts/down.py",
     "fund-ltc": "node --loader ts-node/esm ./scripts/fund.ts ltc",
@@ -45,14 +42,13 @@
     "setup": "./scripts/setup.py",
     "types": "tsc -p tsconfig.json",
     "test": "node --loader ts-node/esm  ./scripts/test.ts",
-    "test-integration": "node --loader ts-node/esm ./scripts/test.ts",
     "test-unit": "npm run test -- -u",
     "up": "./scripts/up.py"
   },
   "dependencies": {
     "@babel/core": "^7.18.5",
-    "@bitcoin-computer/lib": "^0.17.1-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.17.1-beta.0",
+    "@bitcoin-computer/lib": "^0.17.2-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.17.2-beta.0",
     "@bitcoin-computer/tiny-secp256k1": "^2.2.1",
     "@types/chai": "^4.3.1",
     "@types/mocha": "^9.1.1",
