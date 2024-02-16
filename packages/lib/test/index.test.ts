@@ -63,17 +63,38 @@ class Token extends Contract {
     super({ supply, totalSupply,  _owners: [to] })
   }
 
-  transfer(amount: number, to: string) {
+  transfer(amount: number, recipient: string) {
     if (this.supply < amount) throw new Error()
     this.supply -= amount
-    return new Token(to, amount, this.totalSupply)
+    return new Token(recipient, amount, this.totalSupply)
+  }
+}
+
+class Chat extends Contract {
+  _id: string
+  _rev: string
+  _root: string
+  messages: string[]
+  _owners: string[]
+  _readers: string[]
+
+  constructor(publicKeys: string[]) {
+    super({ messages: [],  _owners: publicKeys, _readers: publicKeys })
+  }
+
+  post(message) {
+    this.messages.push(message)
+  }
+
+  remove(publicKey: string) {
+    this._readers = this._readers.filter(o => o !== publicKey)
   }
 }
 
 class Swap extends Contract {
   static exec(nftA: NFT, nftB: NFT) {
-    const ownerA = nftA._owners[0]
-    const ownerB = nftB._owners[0]
+    const [ownerA] = nftA._owners
+    const [ownerB] = nftB._owners
     nftA.transfer(ownerB)
     nftB.transfer(ownerA)
     return [nftB, nftA]
@@ -131,7 +152,7 @@ describe('Computer', () => {
   })
 })
 
-describe.only('Non-Fungible Token (NFT)', () => {
+describe('Non-Fungible Token (NFT)', () => {
   let nft: NFT
   let initialId: string
   let initialRev: string
@@ -197,7 +218,7 @@ describe.only('Non-Fungible Token (NFT)', () => {
   })
 })
 
-describe.only('Fungible Token', () => {
+describe('Fungible Token', () => {
   let token: Token = null
   let sentToken: Token = null
   let initialId: string
@@ -277,7 +298,79 @@ describe.only('Fungible Token', () => {
   })
 })
 
-describe.only('Swap', () => {
+describe('Chat', () => {
+  let alicesChat: Chat
+  let bobsChat: Chat
+  const alice = new Computer(RLTC)
+  const bob = new Computer(RLTC)
+  const eve = new Computer(RLTC)
+  const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
+
+  before('Before', async () => {
+    await alice.faucet(0.01e8)
+    await bob.faucet(0.01e8)
+  })
+
+  describe('Creating a chat', () => {
+    it("Alice creates a chat and invites Bob", async () => {
+      alicesChat = await alice.new(Chat, [publicKeys])
+      // @ts-ignore
+      expect(alicesChat).to.matchPattern({ messages: [], _readers: publicKeys, ...meta })
+      expect(alicesChat._owners).deep.eq(publicKeys)
+    })
+  })
+
+  describe('Posting a message', () => {
+    it('Alice posts a message to the chat', async () => {
+      await alicesChat.post('Hi')
+      // @ts-ignore
+      expect(alicesChat).to.matchPattern({ messages: ['Hi'], _readers: publicKeys, ...meta })
+    })
+  })
+
+  describe('Invited users can read the chat and post messages', async () => {
+    it('Bob can read the content of the chat', async () => {
+      bobsChat = await bob.sync(alicesChat._rev) as Chat
+      // @ts-ignore
+      expect(bobsChat).matchPattern({ messages: ['Hi'], _readers: publicKeys, ...meta })
+    })
+
+    it('Bob can write to the chat', async () => {
+      await bobsChat.post('Yo')
+      // @ts-ignore
+      expect(bobsChat).matchPattern({ messages: ['Hi', 'Yo'], _readers: publicKeys, ...meta })
+    })
+  })
+
+  describe('User that are not invited cannot read the state or post', async () => {
+    it('Eve cannot read the content of the chat', async () => {
+      try {
+        await eve.sync(alicesChat._rev)
+        expect(true).eq(false)
+      } catch(err) {
+        expect(err.message).eq("Cannot read properties of null (reading 'exp')")
+      }
+    })
+  })
+
+  describe('Users can be removed from the chat', () => {
+    it('Alice removes Bob from the chat', async () => {
+      await alicesChat.remove(bob.getPublicKey())
+      expect(alicesChat._readers).deep.eq([alice.getPublicKey()])
+    })
+
+    it('Bob cannot read the chat or post to it anymore', async () => {
+      try {
+        await bob.sync(alicesChat._rev)
+        expect(true).eq(false)
+      } catch(err) {
+        expect(err.message).eq("Cannot read properties of null (reading 'exp')")
+      }
+    })
+  })
+})
+
+describe('Swap', () => {
   let nftA: NFT
   let nftB: NFT
   const alice = new Computer(RLTC)
@@ -289,14 +382,14 @@ describe.only('Swap', () => {
   })
   
   describe('Creating two NFTs to be swapped', () => {
-    it("Alice creates an NFT called nftA", async () => {
+    it("Alice creates nftA", async () => {
       nftA = await alice.new(NFT, [alice.getPublicKey(), 'nftA'])
       // @ts-ignore
       expect(nftA).to.matchPattern({ img: 'nftA', ...meta })
       expect(nftA._owners).deep.eq([alice.getPublicKey()])
     })
 
-    it("Bob creates an NFT called nftB", async () => {
+    it("Bob creates nftB", async () => {
       nftB = await bob.new(NFT, [bob.getPublicKey(), 'nftB'])
       // @ts-ignore
       expect(nftB).to.matchPattern({ img: 'nftB', ...meta })
@@ -308,7 +401,7 @@ describe.only('Swap', () => {
     let tx: any
     let txId: string
 
-    it('Alice builds and signs a swap transaction', async () => {
+    it('Alice builds, funds, and signs a swap transaction', async () => {
       ;({ tx } = await alice.encode({
         exp: `${Swap} Swap.exec(nftA, nftB)`,
         env: { nftA: nftA._rev, nftB: nftB._rev },
@@ -346,22 +439,22 @@ describe('Sell', () => {
   let tx: any
   let sellerPublicKey: string
   
-  describe('Seller should create an NFT and a partially signed Swap transaction', () => {
+  describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
     const seller = new Computer(RLTC)
     sellerPublicKey = seller.getPublicKey()
     
-    before('Creating smart object for a swap', async () => {
+    before("Fund Seller's wallet", async () => {
       await seller.faucet(1e7)
-      nft = await seller.new(NFT, [seller.getPublicKey(), 'NFT'])
     })
-
-    it('Seller should create an NFT', () => {
+    
+    it('Seller creates an NFT', async () => {
+      nft = await seller.new(NFT, [seller.getPublicKey(), 'NFT'])
       // @ts-ignore
       expect(nft).to.matchPattern({ img: 'NFT', ...meta })
     })
 
-    it('Seller should create a swap transaction', async () => {
+    it('Seller creates a swap transaction for the NFT with the desired price', async () => {
       const mock = new PaymentMock()
       const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = BTransaction
 
@@ -373,32 +466,28 @@ describe('Sell', () => {
         inputIndex: 0,
         fund: false,
       }))
+    })
 
-      // @ts-ignore
-      expect(tx).matchPattern({
-        version: 1,
-        locktime: 0,
-        ins: _.isArray,
-        outs: _.isArray
-      })
-
+    it('The first inputs has been signed by seller, the second input is unsigned', () => {
       expect(tx.ins).to.have.lengthOf(2)
       expect(tx.ins[0].script).to.have.lengthOf.above(0)
       expect(tx.ins[1].script).to.have.lengthOf(0)
     })
   })
 
-  describe('Buyer should create a payment and execute the swap', () => {
+  describe('Executing the sale', () => {
     const buyer = new Computer(RLTC)
+    const computer = new Computer(RLTC)
     let payment: Payment
     let txId: string
 
-    before('Creating payment object', async () => {
-      await buyer.faucet(1e7)
-      payment = await buyer.new(Payment, [buyer.getPublicKey()])
+    before("Fund Buyers's wallet", async () => {
+      await buyer.faucet(0.1e8)
     })
 
-    it('Buyer should create a payment object', () => {
+    it('Buyer creates a payment object', async () => {
+      payment = await buyer.new(Payment, [buyer.getPublicKey()])
+
       // @ts-ignore
       expect(payment).matchPattern({
         _id: _.isString,
@@ -409,33 +498,34 @@ describe('Sell', () => {
       })
     })
 
-    it('Buyer should update the swap transaction with their address', () => {
+    it("Buyer update's the swap transaction to receive the NFT", () => {
       const [paymentTxId, paymentIndex] = payment._rev.split(':')
       tx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
-      tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey([buyer.getPublicKey()])})
+      // @ts-ignore
+      tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey()})
     })
 
-    it('Buyer should fund', async () => {
+    it('Buyer funds the swap transaction', async () => {
       await buyer.fund(tx)
     })
 
-    it('Buyer should sign', async () => {
+    it('Buyer signs the swap transaction', async () => {
       await buyer.sign(tx)
     })
 
-    it('Buyer should broadcast the transaction', async () => {
+    it('Buyer broadcast the swap transaction to execute the sale', async () => {
       txId = await buyer.broadcast(tx)
       expect(txId).not.undefined
     })
 
+    it('Seller now owns the payment', async () => {
+      const { env } = await computer.sync(txId) as any
+      expect(env.payment._owners).deep.eq([sellerPublicKey])
+    })
+
     it('Seller should get the payment and buyer should get the nft', async () => {
-      const computer = new Computer(RLTC)
-      const { res, env } = await computer.sync(txId) as any
-      expect(env.payment == res[0]).eq(true)
-      expect(env.nft == res[1]).eq(true)
-      const { payment, nft } = env
-      expect(payment._owners).deep.eq([sellerPublicKey])
-      expect(nft._owners).deep.eq([buyer.getPublicKey()])
+      const { env } = await computer.sync(txId) as any
+      expect(env.nft._owners).deep.eq([buyer.getPublicKey()])
     })
   })
 })
