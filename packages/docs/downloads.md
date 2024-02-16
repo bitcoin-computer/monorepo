@@ -1,10 +1,22 @@
 ---
 order: -20
+icon: download
 ---
 
-# Code
+# Downloads
 
-We have several example applications in varying stages of development. All examples are published under MIT license.
+All of our code is in the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo/tree/main#readme) on Github. To download it run:
+
+```bash
+git clone https://github.com/bitcoin-computer/monorepo.git
+```
+
+The monorepo contains the following packages
+
+## Core
+* [Lib](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme) - A Javascript library for smart contracts
+* [Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) - Server side infrastructure for smart contracts
+* [NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs#readme) - A Javascript library for building and parsing transactions
 
 ## Applications
 * [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet#readme) - A non-custodial wallet
@@ -20,3 +32,7 @@ We have several example applications in varying stages of development. All examp
 ## Templates
 * [Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template#readme) - A template for starting a new server side app
 * [React Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/cra-template#readme) - A template for starting a new client side app
+
+## Documentation
+* [Docs](https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme) - The sources for the documentation
+* [Website](https://github.com/bitcoin-computer/monorepo/tree/main/packages/website#readme) - The sources for the website
