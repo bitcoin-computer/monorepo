@@ -1,5 +1,6 @@
 ---
 order: -20
+icon: comment-discussion
 ---
 
 # Encrypted Chat

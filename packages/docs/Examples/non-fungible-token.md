@@ -1,12 +1,13 @@
 ---
 order: 0
+icon: image
 ---
 
-# Non Fungible Tokens (NFTs)
-
-A non-fungible token has two properties [`_owners`](./how-it-works.md#keyword-properties-control-the-transaction-being-built) and `img`. It has one function `transfer` that updates the `_owners` property.
+# Non Fungible Token (NFT)
 
 ## Smart Contract
+
+A non-fungible token has two properties [`_owners`](./how-it-works.md#keyword-properties-control-the-transaction-being-built) and `img`. It has one function `transfer` that updates the `_owners` property.
 
 ```ts
 class NFT extends Contract {

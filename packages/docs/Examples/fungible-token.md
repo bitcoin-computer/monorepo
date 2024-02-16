@@ -1,8 +1,9 @@
 ---
 order: -10
+icon: database
 ---
 
-# Fungible Tokens
+# Fungible Token
 
 ## Smart Contract
 

@@ -1,5 +1,6 @@
 ---
 order: -40
+icon: flame
 ---
 
 # Sale
