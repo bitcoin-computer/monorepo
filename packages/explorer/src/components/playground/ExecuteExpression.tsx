@@ -3,6 +3,7 @@ import { IoMdRemoveCircleOutline } from "react-icons/io"
 import { Computer } from "@bitcoin-computer/lib"
 import { getErrorMessage, isValidRev } from "../../utils"
 import { ModSpec } from "./Modspec"
+import { UtilsContext } from "@bitcoin-computer/components"
 
 interface ExpressionArgument {
   name: string
@@ -23,6 +24,7 @@ const ExecuteExpression = (props: {
   const [expression, setExpression] = useState<string>()
   const [modSpec, setModSpec] = useState<string>()
   const [expressionArgumentsList, setExpressoinArgumentsList] = useState<ExpressionArgument[]>([])
+  const { showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     setExpression(exampleExpression)
@@ -49,6 +51,7 @@ const ExecuteExpression = (props: {
   }
   const handleExpressionCall = async () => {
     try {
+      showLoader(true)
       const expressionCode = expression?.trim()
 
       const revMap: any = {}
@@ -86,6 +89,8 @@ const ExecuteExpression = (props: {
       setFunctionResult(getErrorMessage(error))
       setModalTitle("Error!")
       setShow(true)
+    } finally {
+      showLoader(false)
     }
   }
 

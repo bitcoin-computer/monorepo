@@ -4,6 +4,7 @@ import { IoMdRemoveCircleOutline } from "react-icons/io"
 import { Computer } from "@bitcoin-computer/lib"
 import { getErrorMessage, getValueForType, isValidRev, sleep } from "../../utils"
 import { ModSpec } from "./Modspec"
+import { UtilsContext } from "@bitcoin-computer/components"
 
 interface Argument {
   type: string
@@ -24,6 +25,7 @@ const CreateNew = (props: {
   const [modSpec, setModSpec] = useState<string>()
   const [argumentsList, setArgumentsList] = useState<Argument[]>([])
   const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
+  const { showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     const newArgumentsList = [...argumentsList]
@@ -61,6 +63,7 @@ const CreateNew = (props: {
 
   const handleDeploy = async () => {
     try {
+      showLoader(true)
       const createClassFunction = new Function(`return ${code?.trim()}`)
       const dynamicClass = createClassFunction()
       if (
@@ -118,6 +121,8 @@ const CreateNew = (props: {
       setFunctionResult(getErrorMessage(error))
       setModalTitle("Error!")
       setShow(true)
+    } finally {
+      showLoader(false)
     }
   }
 

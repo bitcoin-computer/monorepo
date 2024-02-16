@@ -42,6 +42,12 @@ To start the application run the command below and open [http://localhost:3000](
 # Move to the package
 cd packages/cra-template
 
+# Install the dependencies for cra-template
+npm install
+
+# Use the default environment variables
+cp .env.example .env
+
 # Start the app
 npm run start
 ```

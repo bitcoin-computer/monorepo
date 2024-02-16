@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/nakamotojs",
-  "version": "0.17.1-beta.0",
+  "version": "0.17.2-beta.0",
   "description": "Client-side Bitcoin and Litecoin JavaScript library",
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
