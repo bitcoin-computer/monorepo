@@ -1,4 +1,4 @@
-import { TokenBag } from './token-bag'
+import { Token } from './token'
 
 interface ITBC20 {
   mint(publicKey: string, amount: number): Promise<string>
@@ -22,8 +22,8 @@ export class TBC20 implements ITBC20 {
 
   async mint(publicKey: string, amount: number): Promise<string> {
     const args = [publicKey, amount, this.name, this.symbol]
-    const tokenBag = await this.computer.new(TokenBag, args)
-    this.mintId = tokenBag._root
+    const token = await this.computer.new(Token, args)
+    this.mintId = token._root
     return this.mintId
   }
 
@@ -33,11 +33,11 @@ export class TBC20 implements ITBC20 {
     return rootBag.tokens
   }
 
-  private async getBags(publicKey): Promise<TokenBag[]> {
+  private async getBags(publicKey): Promise<Token[]> {
     if (!this.mintId) throw new Error('Please set a mint id.')
     const revs = await this.computer.query({ publicKey })
     const bags = await Promise.all(revs.map(async (rev: string) => this.computer.sync(rev)))
-    return bags.flatMap((bag: TokenBag & { _root: string }) =>
+    return bags.flatMap((bag: Token & { _root: string }) =>
       bag._root === this.mintId ? [bag] : []
     )
   }

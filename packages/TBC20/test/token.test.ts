@@ -2,7 +2,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { TokenBag } from '../src/token-bag'
+import { Token } from '../src/token'
 
 /**
  * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
@@ -23,20 +23,20 @@ before(async () => {
   await computer2.faucet(1e7)
 })
 
-describe('TokenBag', () => {
+describe('Token', () => {
   describe('Constructor', () => {
     it('should create a Javascript object', () => {
-      expect(TokenBag).not.to.be.undefined
-      expect(typeof TokenBag).to.eq('function')
+      expect(Token).not.to.be.undefined
+      expect(typeof Token).to.eq('function')
 
-      const token = new TokenBag('to', 3, 'test')
+      const token = new Token('to', 3, 'test')
       expect(token).not.to.be.undefined
     })
 
     it('should create a smart object', async () => {
       const publicKeyString = computer.getPublicKey()
 
-      const token = await computer.new(TokenBag, [publicKeyString, 3, 'test'])
+      const token = await computer.new(Token, [publicKeyString, 3, 'test'])
       expect(token.tokens).to.eq(3)
       expect(token._owners).deep.equal([publicKeyString])
       expect(token.name).to.eq('test')
@@ -52,7 +52,7 @@ describe('TokenBag', () => {
       const publicKeyString = computer.getPublicKey()
       const publicKeyString2 = computer2.getPublicKey()
 
-      const token = await computer.new(TokenBag, [publicKeyString, 3, 'test'])
+      const token = await computer.new(Token, [publicKeyString, 3, 'test'])
       const newToken = await token.transfer(publicKeyString2, 1)
       expect(token.tokens).to.eq(2)
       expect(token._owners).deep.equal([publicKeyString])
