@@ -10,6 +10,7 @@ const _ = chaiMatchPattern.getLodashModule()
 const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa8bc54db8fed'
 const randomRev = '0000000000000000000000000000000000000000000000000000000000000000:0'
 const mockedRev = `mock:${randomRev}`
+const symbol = ''
 
 const isLocation = (string: string): boolean => {
   const [txId, num] = string.split(':')
@@ -36,14 +37,15 @@ const meta = {
 }
 
 class NFT extends Contract {
-  img: string
+  name: string
+  symbol: string
   _id: string
   _rev: string
   _root: string
   _owners: string[]
 
-  constructor(publicKey: string, img: string) {
-    super({ _owners: [publicKey], img })
+  constructor(publicKey: string, name = '', symbol = '') {
+    super({ _owners: [publicKey], name, symbol })
   }
 
   transfer(to: string) {
@@ -168,7 +170,7 @@ describe('Non-Fungible Token (NFT)', () => {
     it('Sender mints an NFT', async () => {
       nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
       // @ts-ignore
-      expect(nft).matchPattern({ img: 'Test', ...meta })
+      expect(nft).matchPattern({ name: 'Test', symbol, ...meta })
     })
 
     it('Property _owners is a singleton array with minters public key', () => {
@@ -193,7 +195,7 @@ describe('Non-Fungible Token (NFT)', () => {
     it('Sender transfers the NFT to receiver', async () => {
       await nft.transfer(receiver.getPublicKey())
       // @ts-ignore
-      expect(nft).to.matchPattern({ img: 'Test', ...meta })
+      expect(nft).to.matchPattern({ name: 'Test', symbol, ...meta })
     })
 
     it('The id does not change', () => {
@@ -385,14 +387,14 @@ describe('Swap', () => {
     it("Alice creates nftA", async () => {
       nftA = await alice.new(NFT, [alice.getPublicKey(), 'nftA'])
       // @ts-ignore
-      expect(nftA).to.matchPattern({ img: 'nftA', ...meta })
+      expect(nftA).to.matchPattern({ name: 'nftA', symbol, ...meta })
       expect(nftA._owners).deep.eq([alice.getPublicKey()])
     })
 
     it("Bob creates nftB", async () => {
       nftB = await bob.new(NFT, [bob.getPublicKey(), 'nftB'])
       // @ts-ignore
-      expect(nftB).to.matchPattern({ img: 'nftB', ...meta })
+      expect(nftB).to.matchPattern({ name: 'nftB', symbol, ...meta })
       expect(nftB._owners).deep.eq([bob.getPublicKey()])
     })
   })
@@ -421,7 +423,7 @@ describe('Swap', () => {
       const { env } = await bob.sync(txId) as { env: { nftA: NFT, nftB: NFT } }
       const nftASwapped = env.nftA
       // @ts-ignore
-      expect(nftASwapped).to.matchPattern({ img: 'nftA', ...meta })
+      expect(nftASwapped).to.matchPattern({ name: 'nftA', symbol, ...meta })
       expect(nftASwapped._owners).deep.eq([bob.getPublicKey()])
     })
 
@@ -429,7 +431,7 @@ describe('Swap', () => {
       const { env } = await alice.sync(txId) as { env: { nftA: NFT, nftB: NFT } }
       const nftBSwapped = env.nftB
       // @ts-ignore
-      expect(nftBSwapped).to.matchPattern({ img: 'nftB', ...meta })
+      expect(nftBSwapped).to.matchPattern({ name: 'nftB', symbol, ...meta })
       expect(nftBSwapped._owners).deep.eq([alice.getPublicKey()])
     })
   })
@@ -451,7 +453,7 @@ describe('Sell', () => {
     it('Seller creates an NFT', async () => {
       nft = await seller.new(NFT, [seller.getPublicKey(), 'NFT'])
       // @ts-ignore
-      expect(nft).to.matchPattern({ img: 'NFT', ...meta })
+      expect(nft).to.matchPattern({ name: 'NFT', symbol, ...meta })
     })
 
     it('Seller creates a swap transaction for the NFT with the desired price', async () => {
