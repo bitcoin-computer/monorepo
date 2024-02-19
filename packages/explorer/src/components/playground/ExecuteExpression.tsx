@@ -74,13 +74,12 @@ const ExecuteExpression = (props: {
         encodeObject["mod"] = modSpec
       }
 
-      // @ts-ignore
-      const { tx, effect } = await computer.encode({
+      const { tx, effect } = (await computer.encode({
         exp: `${expressionCode}`,
         env: { ...revMap },
         fund: true,
         sign: true,
-      })
+      })) as any
       const txId = await computer.broadcast(tx)
       setFunctionResult({ _rev: `${txId}:0`, type: "objects", res: effect.res })
       setModalTitle("Success!")
