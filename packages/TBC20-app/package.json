@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/fungible-token",
+  "name": "@bitcoin-computer/TBC20-app",
   "version": "0.17.2-beta.0",
   "private": true,
   "dependencies": {

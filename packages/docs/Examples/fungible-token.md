@@ -154,5 +154,5 @@ export class TBC20 {
 There is plenty of room for improvement with this class: one issue is that when a payment is made from multiple bags, all payments are sent in separate transactions. In addition, the running time can be vastly improved through the use of caching. Both issues can be solved at the smart contract level and do not require any changes to the Bitcoin Computer.
 
 !!!
-Check out a working version of the [TBC721](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20) contract and a [NFT application](https://github.com/bitcoin-computer/monorepo/tree/main/packages/fungible-token).
+Check out a working version of the [TBC20](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20) contract and a [TBC20-app](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721-app).
 !!!

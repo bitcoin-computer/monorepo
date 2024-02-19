@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/non-fungible-token",
+  "name": "@bitcoin-computer/TBC721-app",
   "version": "0.17.2-beta.0",
   "private": true,
   "dependencies": {

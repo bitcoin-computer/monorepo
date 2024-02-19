@@ -65,5 +65,5 @@ async transfer(to: string, tokenId: string) {
 ```
 
 !!!
-Check out a working version of the [TBC721](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721) contract and a [NFT application](https://github.com/bitcoin-computer/monorepo/tree/main/packages/non-fungible-token).
+Check out a working version of the [TBC721](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721) contract and a [TBC721 App](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721-app).
 !!!
