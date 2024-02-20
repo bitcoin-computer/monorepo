@@ -27,7 +27,6 @@
     "node": ">=16"
   },
   "scripts": {
-    "build-node": "docker build -t bitcoin-computer-node .",
     "dist-clean": "rm -rf dist",
     "down": "./scripts/down.py",
     "fund-ltc": "node --loader ts-node/esm ./scripts/fund.ts ltc",
