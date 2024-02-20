@@ -23,12 +23,13 @@ You can build almost all smart contracts with following methods.
 To build advanced applications like swaps have a look at the following.
 
 {.compact}
-| Method                        | Description                                                                                                  |
-|-------------------------------|--------------------------------------------------------------------------------------------------------------|
-| [encode](./encode.md)         | Encodes a Javascript expression into a Bitcoin transaction                                                   |
-| [encodeNew](./encodeNew.md)   | Encodes a constructor call into a Bitcoin transaction                                                        |
-| [encodeCall](./encodeCall.md) | Encodes a function call into a Bitcoin transaction                                                           |
-| [decode](./decode.md)         | Parses a Bitcoin transaction and returns Javascript expression in the case of a Bitcoin Computer transaction |
+| Method                        | Description                                                    |
+|-------------------------------|----------------------------------------------------------------|
+| [encode](./encode.md)         | Encodes a Javascript expression into a Bitcoin transaction     |
+| [encodeNew](./encodeNew.md)   | Encodes a constructor call into a Bitcoin transaction          |
+| [encodeCall](./encodeCall.md) | Encodes a function call into a Bitcoin transaction             |
+| [decode](./decode.md)         | Parses a Bitcoin transaction and returns Javascript expression |
+| [faucet](./faucet)            | Fund a computer object on Regtest                              |
 
 ## Modules
 

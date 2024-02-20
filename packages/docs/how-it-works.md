@@ -1,5 +1,6 @@
 ---
 order: -40
+icon: light-bulb
 ---
 
 # How it Works

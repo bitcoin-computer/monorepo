@@ -1,33 +1,85 @@
 ---
-order: -10
+order: -20
+icon: comment-discussion
 ---
 
-# Chat
+# Encrypted Chat
 
-The Bitcoin Chat presented here is a hackable chat that runs on the blockchain. The chat does not need a database backend because all data is stored on the blockchain (currently runs on LTC testnet). The interface between the chat and the blockchain is provided by [Bitcoin Computer](https://www.bitcoincomputer.io).
+## Smart Contract
 
-The ```Chat``` class has a constructor and two functions, ```post``` and ```invite```.
+A chat is just a smart object with a property `messages` of type `string[]`. Like all smart objects it has an `_owners` property set to the current data owner. The [`_readers`](./how-it-works.md#keyword-properties-control-the-transaction-being-built) property can be used to restrict read access. 
 
-The constructor initializes a owner of the chat and an empty ```messages``` array. The ```post``` function stores the new messages, and the ```invite``` function records the users who join the chat.
-
-```js
+```ts
 class Chat extends Contract {
-  constructor(publicKey: string) {
-    super()
-    this.messages = []
-    this._owners = [publicKey]
+  messages: string[]
+  _owners: string[]
+  _readers: string[]
+
+  constructor(publicKeys: string[]) {
+    super({
+      messages: [],
+      _owners: publicKeys,
+      _readers: publicKeys
+    })
   }
 
-  post(message: string) {
+  post(message) {
     this.messages.push(message)
   }
 
-  invite(publicKey: string) {
-    this._owners.push(publicKey)
+  remove(publicKey: string) {
+    this._readers = this._readers.filter(o => o !== publicKey)
+    this._owners_ = this._owners_.filter(o => o !== publicKey)
   }
 }
 ```
 
-!!!
-Check out a working version on [Github](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat).
-!!!
+## Usage
+
+A new chat can be created using the [`new`](./API/new.md) function. Note that Bob can initially post to the chat and read it's state as Bob's public key was added to the `_owners` array and `_readers` array by Alice upon creation of the chat. 
+
+Later, Alice called the `remove` function removing Bob's public key from these arrays. After this point Bob cannot read or write anymore.
+
+Eve was never part of the `_readers` array so she cannot read the content of the chat, nor write to it.
+
+```ts
+// Create and fund wallets
+const alice = new Computer()
+const bob = new Computer()
+const eve = new Computer()
+await alice.faucet(0.01e8)
+await bob.faucet(0.01e8)
+
+// Alice creates a chat with Bob and posts a message
+const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
+const alicesChat = await alice.new(Chat, [publicKeys])
+
+// Alice can post to the chat
+await alicesChat.post('Hi')
+
+// Bob can read the current state of the chat and post a message
+const bobsChat = await bob.sync(alicesChat._rev) as Chat
+await bobsChat.post('Yo')
+expect(bobsChat.messages).deep.eq(['Hi', 'Yo'])
+
+// Eve was not invited and can neither read nor write
+try {
+  // This line throws an error
+  await eve.sync(alicesChat._rev)
+  expect(true).eq(false)
+} catch(err) {
+  expect(err.message).not.undefined
+}
+
+// Alice removes Bob's public key from the _readers array
+await alicesChat.remove(bob.getPublicKey())
+
+// Now Bob cannot read the latest state of the chat anymore
+try {
+  // This line throws an error
+  await bob.sync(alicesChat._rev)
+  expect(true).eq(false)
+} catch(err) {
+  expect(err.message).not.undefined
+}
+```
