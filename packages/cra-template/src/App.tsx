@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import NavBar from "./components/Navbar"
 import { initFlowbite } from "flowbite"
 import { Auth, Error404, UtilsContext, Wallet } from "@bitcoin-computer/components"
-import Counter from "./components/Counter"
+import Mint from "./components/Mint"
 export default function App() {
   useEffect(() => {
     initFlowbite()
@@ -19,7 +19,8 @@ export default function App() {
         <NavBar />
         <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
           <Routes>
-            <Route path="/" element={<Counter />} />
+            <Route path="/" element={<Mint />} />
+            <Route path="/mint" element={<Mint />} />
             <Route path="*" element={<Navigate to="/" replace={true} />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
