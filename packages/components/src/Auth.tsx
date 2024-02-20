@@ -37,21 +37,22 @@ function getPath(chain: string, network: string): string {
   return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 
-function getUrl(chain: Chain, network: Network) {
-  const index = `REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL`
-  const url = process.env[index]
-  if (typeof url === "undefined")
+function getEnvVariable(name: string) {
+  const res = process.env[name]
+  if (typeof res === "undefined")
     throw new Error(
-      `Cannot find a url for ${chain.toUpperCase()} ${network.toUpperCase()}, please provide a variable "REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL" in your .env file`
+      `Cannot find environment variable "${name}".\nDid you forget to copy the .env.example file into a .env file?`
     )
-  return url
+  else return res
+}
+
+function getUrl(chain: Chain, network: Network) {
+  return getEnvVariable(`REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL`)
 }
 
 function defaultConfiguration() {
-  const chain = (localStorage.getItem("CHAIN") || process.env[`REACT_APP_CHAIN`] || "LTC") as Chain
-  const network = (localStorage.getItem("NETWORK") ||
-    process.env[`REACT_APP_NETWORK`] ||
-    "regtest") as Network
+  const chain = (localStorage.getItem("CHAIN") || getEnvVariable(`REACT_APP_CHAIN`) || "LTC") as Chain
+  const network = (localStorage.getItem("NETWORK") || getEnvVariable(`REACT_APP_NETWORK`) || "regtest") as Network
   const url = getUrl(chain, network)
   return { chain, network, url }
 }
