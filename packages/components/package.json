@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "tsc-compile": "rm -rf built/* && tsc",
     "install-monorepo": "cd ../../ && npm install && cd packages/components",
-    "compile": "npm run tsc-compile && npm install-monorepo"
+    "compile": "npm run tsc-compile && npm run install-monorepo"
   },
   "author": "",
   "license": "ISC",
