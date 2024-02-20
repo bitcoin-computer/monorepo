@@ -9,24 +9,24 @@
     <meta name="generator" content="Retype 3.5.0">
 
     <!-- Primary Meta Tags -->
-    <title>getAddress</title>
-    <meta name="title" content="getAddress">
-    <meta name="description" content="Returns a string encoding Bitcoin address.">
+    <title>Sale</title>
+    <meta name="title" content="Sale">
+    <meta name="description" content="In the previous example both smart objects as well as their owners had to be known before the swap transaction could be built.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/api/getaddress/">
+    <link rel="canonical" href="/examples/sale/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/api/getaddress/">
-    <meta property="og:title" content="getAddress">
-    <meta property="og:description" content="Returns a string encoding Bitcoin address.">
+    <meta property="og:url" content="/examples/sale/">
+    <meta property="og:title" content="Sale">
+    <meta property="og:description" content="In the previous example both smart objects as well as their owners had to be known before the swap transaction could be built.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/api/getaddress/">
-    <meta property="twitter:title" content="getAddress">
-    <meta property="twitter:description" content="Returns a string encoding Bitcoin address.">
+    <meta property="twitter:url" content="/examples/sale/">
+    <meta property="twitter:title" content="Sale">
+    <meta property="twitter:description" content="In the previous example both smart objects as well as their owners had to be known before the swap transaction could be built.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
@@ -151,38 +151,105 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="getaddress" class="break-words">
+<doc-anchor-target id="sale" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#getaddress">#</doc-anchor-trigger>
-        <span>getAddress</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#sale">#</doc-anchor-trigger>
+        <span>Sale</span>
     </h1>
 </doc-anchor-target>
-<p>Returns a string encoding Bitcoin address.</p>
-<doc-anchor-target id="type">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
-        <span>Type</span>
-    </h3>
+<p>In the previous example both smart objects as well as their owners had to be known before the swap transaction could be built. In this section we show how a sale offer can be built by a seller with needing to know the buyer in advance.</p>
+<doc-anchor-target id="smart-contract">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract">#</doc-anchor-trigger>
+        <span>Smart Contract</span>
+    </h2>
 </doc-anchor-target>
+<p>We will be reusing the <code v-pre>Swap</code> smart contract from above, but we also need a new smart contract <code v-pre>Payment</code> below. Buyer will use this contract to create a smart object holding the satoshis to pay for the NFT</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">() =&gt; string</code></pre>
+<pre class="language-typescript"><code v-pre class="language-typescript">class Payment extends Contract {
+  _owners: string[]
+
+  constructor(owner: string) {
+    super({ _owners: [owner] })
+  }
+
+  transfer(to: string) {
+    this._owners = [to]
+  }
+}</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
+<doc-anchor-target id="helper-class">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#helper-class">#</doc-anchor-trigger>
+        <span>Helper Class</span>
+    </h2>
 </doc-anchor-target>
+<p>Alice will use this helper class to mock up the input that will later be used to spend Bob&#x27;s payment object.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">computer.getAddress()</code></pre>
+<pre class="language-typescript"><code v-pre class="language-typescript">const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa8bc54db8fed'
+const mockedRev = 'mock:0000000000000000000000000000000000000000000000000000000000000000:0'
+
+class PaymentMock {
+  _amount: number
+  _owners: string[]
+
+  constructor() {
+    this._id = mockedRev
+    this._rev = mockedRev
+    this._root = mockedRev
+    this._owners = [randomPublicKey]
+    this._amount = 7860
+  }
+
+  transfer(to: string) {
+    this._owners = [to]
+  }
+}</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="return-value">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#return-value">#</doc-anchor-trigger>
-        <span>Return value</span>
-    </h3>
+<doc-anchor-target id="usage">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#usage">#</doc-anchor-trigger>
+        <span>Usage</span>
+    </h2>
 </doc-anchor-target>
-<p>Returns a string encoded Bitcoin address.</p>
+<p>Todo: add description here.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund wallet
+const seller = new Computer()
+const buyer = new Computer()
+await seller.faucet(0.1e8)
+await buyer.faucet(0.1e8)
+
+// Seller mints an NFT
+const nft = await seller.new(NFT, [seller.getPublicKey(), 'NFT'])
+
+// Seller creates partially signed swap as a sale offer
+const mock = new PaymentMock()
+const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = BTransaction
+const { tx } = await seller.encode({
+  exp: `${Swap} Swap.exec(nft, payment)`,
+  env: { nft: nft._rev, payment: mock._rev },
+  mocks: { payment: mock },
+  sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+  inputIndex: 0,
+  fund: false,
+})
+
+// Buyer creates a payment object with the asking price
+const payment = await buyer.new(Payment, [buyer.getPublicKey()])
+const [paymentTxId, paymentIndex] = payment._rev.split(':')
+
+// Buyer set's the payment object as the second input of the swap tx
+tx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
+
+// Buyer updates the second output of the swap tx to receive the NFT
+tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey()})
+
+// Buyer funds, signs, and broadcasts to execute the sale
+await buyer.fund(tx)
+await buyer.sign(tx)
+await buyer.broadcast(tx)</code></pre>
+</doc-codeblock></div>
 
                                 
                                 <!-- Required only on API pages -->
@@ -192,20 +259,20 @@
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../api/fund/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../examples/swap/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">fund</span>
+                                                <span class="block mt-1">Swap</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../api/getbalance/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../api/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">get​Balance</span>
+                                                <span class="block mt-1">API</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
@@ -249,6 +316,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "getAddress", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Sale", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

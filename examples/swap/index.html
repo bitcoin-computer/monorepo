@@ -3,39 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.761434406678">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.761760447193">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
 
     <!-- Primary Meta Tags -->
-    <title>How it works</title>
-    <meta name="title" content="How it works">
-    <meta name="description" content="Bitcoin had support for tokens before Ethereum existed. Tokens were built on colored coin protocols.">
+    <title>Swap</title>
+    <meta name="title" content="Swap">
+    <meta name="description" content="A swap is a class with a single static function that takes two smart objects as inputs and returns the same objects as outputs.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/how/">
+    <link rel="canonical" href="/examples/swap/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/how/">
-    <meta property="og:title" content="How it works">
-    <meta property="og:description" content="Bitcoin had support for tokens before Ethereum existed. Tokens were built on colored coin protocols.">
+    <meta property="og:url" content="/examples/swap/">
+    <meta property="og:title" content="Swap">
+    <meta property="og:description" content="A swap is a class with a single static function that takes two smart objects as inputs and returns the same objects as outputs.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/how/">
-    <meta property="twitter:title" content="How it works">
-    <meta property="twitter:description" content="Bitcoin had support for tokens before Ethereum existed. Tokens were built on colored coin protocols.">
+    <meta property="twitter:url" content="/examples/swap/">
+    <meta property="twitter:title" content="Swap">
+    <meta property="twitter:description" content="A swap is a class with a single static function that takes two smart objects as inputs and returns the same objects as outputs.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
-    <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.5.0.761434406678" rel="stylesheet">
+    <link href="../../static/favicon.ico" rel="icon">
+    <link href="../../resources/css/retype.css?v=3.5.0.761760447193" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.761434406678" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.761434406678" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.761760447193" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.761760447193" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.761760447193" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -50,7 +51,7 @@
                 <!-- Logo -->
                 <div class="flex items-center justify-between h-full py-2 md:w-75">
                     <div class="flex items-center px-2 md:px-6">
-                        <a id="docs-site-logo" href="../" class="flex items-center leading-snug text-xl">
+                        <a id="docs-site-logo" href="../../" class="flex items-center leading-snug text-xl">
                             <span class="dark:text-white font-semibold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
                         </a><span class="hidden px-2 py-1 ml-4 text-sm font-semibold leading-none text-root-logo-label-text bg-root-logo-label-bg rounded-sm md:inline-block">0.17.0</span>
                     </div>
@@ -150,20 +151,62 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="how-it-works" class="break-words">
+<doc-anchor-target id="swap" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#how-it-works">#</doc-anchor-trigger>
-        <span>How it works</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swap">#</doc-anchor-trigger>
+        <span>Swap</span>
     </h1>
 </doc-anchor-target>
-<p>Bitcoin had support for tokens before Ethereum existed. Tokens were built on colored coin protocols. Colored coins allow users to encode updates to data structures in Bitcoin transactions. Other users can parse these transactions to compute the latest state of the data structure. Each colored coin protocol comes with a fixed set of update types and only protocol developers can add new transaction types. This limits the speed at which applications can evolve.
-The Bitcoin Computer is an improvement over previous colored coin protocols by supporting arbitrary user defined data types and all computable updates. This is achieved by simulating memory cells in unspent transaction outputs (utxos). When a memory cell is updated a Bitcoin transaction spends the utxo representing the old state of that memory cell and creates an utxo representing the new state.</p>
-<p>The Bitcoin Computer creates a shared memory on the blockchain. This utxo based memory can do things that normal memory cannot do: utxos can store satoshis so that money can be stored in an atomic unit with data. Only users that can unlock the output script can spend a utxo. Thus the right to update data in the Bitcoin memory can also be restricted by Bitcoin Script. This leads to a natural notion of data ownership, enforced by Bitcoin&#x27;s mining network.</p>
-<p>Data structures and updates are specified in Javascript. When a new object is created, a transaction encoding the class and the arguments to the constructor is broadcast. When a function is called, the name of the function as well as its parameters are stored as metadata on a transaction. Other users can parse the transactions and compute the latest state of the data structure, just like in a traditional colored coin.</p>
-<p>The computation required to evaluate smart contracts is shifted from the most expensive computing devices (blockchains) to the cheapest ones (user hardware). Users do not consider electricity cost for computation, even when running demanding software like games or video editing. Client side validation enables arbitrary computation at a fixed cost. This is the biggest advantage of smart contracts on Bitcoin as it will make it possible to build all applications, even compute intense ones, as smart contracts.</p>
-<p>Like for all colored coins, users only need to perform computation for objects they are interested in. This makes it possible to run a smart contract that requires a supercomputer to evaluate without bothering other users.</p>
-<p>Application development with the Bitcoin Computer can be compared to web development. The biggest difference is that Javascript objects can be persisted directly on the blockchain via the client side Bitcoin Computer library. This makes it possible to build applications without a server.
-Plus it&#x27;s cool to run smart contracts on Bitcoin.</p>
+<doc-anchor-target id="smart-contract">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract">#</doc-anchor-trigger>
+        <span>Smart Contract</span>
+    </h2>
+</doc-anchor-target>
+<p>A swap is a class with a single static function that takes two smart objects as inputs and returns the same objects as outputs. The body of the function exchanges the owners of the object.</p>
+<p>While this example uses NFTs, the same function can be used to swap any pair of smart objects.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">class Swap extends Contract {
+  static exec(nftA: NFT, nftB: NFT) {
+    const [ownerA] = nftA._owners
+    const [ownerB] = nftB._owners
+    nftA.transfer(ownerB)
+    nftB.transfer(ownerA)
+    return [nftB, nftA]
+  }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="usage">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#usage">#</doc-anchor-trigger>
+        <span>Usage</span>
+    </h2>
+</doc-anchor-target>
+<p>The <a href="./api/encode.md"><code v-pre>encode</code></a> function is used to evaluate the <code v-pre>swap</code> function. The first arguments to the <code v-pre>encode</code> function is an expression containing both the code of the <code v-pre>Swap</code> class and the expression <code v-pre>Swap.exec(nftA, nftB)</code>. The second argument is an environment that determines that the smart objects corresponding to the names <code v-pre>nftA</code> and <code v-pre>nftB</code> are stored ar reviwions <code v-pre>nftA._rev</code> and <code v-pre>nftB._rev</code>.</p>
+<p>The <code v-pre>encode</code> function returns a transaction with two inputs and two outputs. Each input spends the outputs (<code v-pre>nftA._rev</code> and <code v-pre>nftB._rev</code>) representing the two NFTs that are arguments to the function. The two outputs represent the new state of the NFTs after the function call.</p>
+<p>The <code v-pre>encode</code> function will automatically sign all inputs of the transaction that can be signed with the private key of the computer object on which the function is called. In this case, this is the input as revision <code v-pre>nftA._rev</code>.</p>
+<p>Subsequently Bob signs the input <code v-pre>nftB._rev</code> and broadcasts the transaction, thereby executing the swap. After the transaction has been broadcast, the owners of the two NFTs are reversed.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund the wallets
+const alice = new Computer()
+const bob = new Computer()
+await alice.faucet(0.01e8)
+await bob.faucet(0.001e8)
+
+// Alice and Bob create one NFT each
+const nftA = await alice.new(NFT, [alice.getPublicKey(), 'nftA'])
+const nftB = await bob.new(NFT, [bob.getPublicKey(), 'nftB'])
+
+// Alice builds a partially signed swap transaction
+const { tx } = await alice.encode({
+  exp: `${Swap} Swap.exec(nftA, nftB)`,
+  env: { nftA: nftA._rev, nftB: nftB._rev },
+})
+
+// Bob signs and broadcasts the swap transaction
+await bob.sign(tx)
+await bob.broadcast(tx)</code></pre>
+</doc-codeblock></div>
 
                                 
                                 <!-- Required only on API pages -->
@@ -171,6 +214,27 @@ Plus it&#x27;s cool to run smart contracts on Bitcoin.</p>
                             </div>
                             <footer class="clear-both">
                             
+                                <nav class="flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../examples/chat/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
+                                                <span class="block mt-1">Encrypted Chat</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../examples/sale/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
+                                                <span class="block mt-1">Sale</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
                             </footer>
                         </main>
                 
@@ -209,6 +273,6 @@ Plus it&#x27;s cool to run smart contracts on Bitcoin.</p>
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "How it works", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Swap", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

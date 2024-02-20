@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.761434406678">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.761760447193">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
 
     <!-- Primary Meta Tags -->
-    <title>Chat</title>
-    <meta name="title" content="Chat">
-    <meta name="description" content="The Bitcoin Chat presented here is a hackable chat that runs on the blockchain.">
+    <title>Encrypted Chat</title>
+    <meta name="title" content="Encrypted Chat">
+    <meta name="description" content="A chat is just a smart object with a property messages of type string[]. Like all smart objects it has an ">
 
     <!-- Canonical -->
     <link rel="canonical" href="/examples/chat/">
@@ -19,24 +19,24 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="/examples/chat/">
-    <meta property="og:title" content="Chat">
-    <meta property="og:description" content="The Bitcoin Chat presented here is a hackable chat that runs on the blockchain.">
+    <meta property="og:title" content="Encrypted Chat">
+    <meta property="og:description" content="A chat is just a smart object with a property messages of type string[]. Like all smart objects it has an ">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/examples/chat/">
-    <meta property="twitter:title" content="Chat">
-    <meta property="twitter:description" content="The Bitcoin Chat presented here is a hackable chat that runs on the blockchain.">
+    <meta property="twitter:title" content="Encrypted Chat">
+    <meta property="twitter:description" content="A chat is just a smart object with a property messages of type string[]. Like all smart objects it has an ">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.761434406678" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.761760447193" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.761434406678" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.761760447193" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.761434406678" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.761434406678" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.761760447193" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.761760447193" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -151,49 +151,93 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="chat" class="break-words">
+<doc-anchor-target id="encrypted-chat" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#chat">#</doc-anchor-trigger>
-        <span>Chat</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#encrypted-chat">#</doc-anchor-trigger>
+        <span>Encrypted Chat</span>
     </h1>
 </doc-anchor-target>
-<p>The Bitcoin Chat presented here is a hackable chat that runs on the blockchain. The chat does not need a database backend because all data is stored on the blockchain (currently runs on LTC testnet). The interface between the chat and the blockchain is provided by <a href="https://www.bitcoincomputer.io">Bitcoin Computer</a>.</p>
-<p>The <code v-pre>Chat</code> class has a constructor and two functions, <code v-pre>post</code> and <code v-pre>invite</code>.</p>
-<p>The constructor initializes a owner of the chat and an empty <code v-pre>messages</code> array. The <code v-pre>post</code> function stores the new messages, and the <code v-pre>invite</code> function records the users who join the chat.</p>
+<doc-anchor-target id="smart-contract">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract">#</doc-anchor-trigger>
+        <span>Smart Contract</span>
+    </h2>
+</doc-anchor-target>
+<p>A chat is just a smart object with a property <code v-pre>messages</code> of type <code v-pre>string[]</code>. Like all smart objects it has an <code v-pre>_owners</code> property set to the current data owner. The <a href="./how-it-works.md#keyword-properties-control-the-transaction-being-built"><code v-pre>_readers</code></a> property can be used to restrict read access.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">class Chat extends Contract {
-  constructor(publicKey: string) {
-    super()
-    this.messages = []
-    this._owners = [publicKey]
+<pre class="language-typescript"><code v-pre class="language-typescript">class Chat extends Contract {
+  messages: string[]
+  _owners: string[]
+  _readers: string[]
+
+  constructor(publicKeys: string[]) {
+    super({
+      messages: [],
+      _owners: publicKeys,
+      _readers: publicKeys
+    })
   }
 
-  post(message: string) {
+  post(message) {
     this.messages.push(message)
   }
 
-  invite(publicKey: string) {
-    this._owners.push(publicKey)
+  remove(publicKey: string) {
+    this._readers = this._readers.filter(o =&gt; o !== publicKey)
+    this._owners_ = this._owners_.filter(o =&gt; o !== publicKey)
   }
 }</code></pre>
 </doc-codeblock></div>
-<div class="flex mb-6">
-    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-blue-500 dark:bg-blue-400"></div>
-    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
-        <div class="flex items-center ml-4 h-7">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-blue-500 dark:text-blue-400" width="22" height="22" viewBox="0 0 24 24" role="presentation">
-                <g fill="currentColor"><g>
-                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
-                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
-                    <path fill="none" d="M0 0h24v24H0z"></path>
-                </g></g>
-            </svg>
-        </div>
-        <div class="pr-5 ml-3 w-full">
-<p>Check out a working version on <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat">Github</a>.</p>
-        </div>
-    </div>
-</div>
+<doc-anchor-target id="usage">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#usage">#</doc-anchor-trigger>
+        <span>Usage</span>
+    </h2>
+</doc-anchor-target>
+<p>A new chat can be created using the <a href="./api/new.md"><code v-pre>new</code></a> function. Note that Bob can initially post to the chat and read it&#x27;s state as Bob&#x27;s public key was added to the <code v-pre>_owners</code> array and <code v-pre>_readers</code> array by Alice upon creation of the chat.</p>
+<p>Later, Alice called the <code v-pre>remove</code> function removing Bob&#x27;s public key from these arrays. After this point Bob cannot read or write anymore.</p>
+<p>Eve was never part of the <code v-pre>_readers</code> array so she cannot read the content of the chat, nor write to it.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund wallets
+const alice = new Computer()
+const bob = new Computer()
+const eve = new Computer()
+await alice.faucet(0.01e8)
+await bob.faucet(0.01e8)
+
+// Alice creates a chat with Bob and posts a message
+const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
+const alicesChat = await alice.new(Chat, [publicKeys])
+
+// Alice can post to the chat
+await alicesChat.post('Hi')
+
+// Bob can read the current state of the chat and post a message
+const bobsChat = await bob.sync(alicesChat._rev) as Chat
+await bobsChat.post('Yo')
+expect(bobsChat.messages).deep.eq(['Hi', 'Yo'])
+
+// Eve was not invited and can neither read nor write
+try {
+  // This line throws an error
+  await eve.sync(alicesChat._rev)
+  expect(true).eq(false)
+} catch(err) {
+  expect(err.message).not.undefined
+}
+
+// Alice removes Bob's public key from the _readers array
+await alicesChat.remove(bob.getPublicKey())
+
+// Now Bob cannot read the latest state of the chat anymore
+try {
+  // This line throws an error
+  await bob.sync(alicesChat._rev)
+  expect(true).eq(false)
+} catch(err) {
+  expect(err.message).not.undefined
+}</code></pre>
+</doc-codeblock></div>
 
                                 
                                 <!-- Required only on API pages -->
@@ -201,6 +245,27 @@
                             </div>
                             <footer class="clear-both">
                             
+                                <nav class="flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../examples/fungible-token/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
+                                                <span class="block mt-1">Fungible Token</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../examples/swap/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
+                                                <span class="block mt-1">Swap</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
                             </footer>
                         </main>
                 
@@ -239,6 +304,6 @@
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Chat", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Encrypted Chat", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
