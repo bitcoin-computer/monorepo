@@ -13,10 +13,12 @@
 This package contains components that are used in several applications. Have a look at the other packages for how to use.
 
 Currently it contains the following:
-* [Auth](./src/Auth.tsx) - A component for login and logout
+* [Auth](./src/Auth.tsx) - Login and logout
+* [Wallet](./src/Wallet.tsx) - Deposit cryptocurrency 
 * [Gallery](./src/Gallery.tsx) - displays a grid of smart objects
-* [SmartObject](./src/SmartObject.tsx) - displays a smart object and has a form for each method
-* [Transaction](./src/Transaction.tsx) - displays a transaction including it's expression if it has one
+* [SmartObject](./src/SmartObject.tsx) - displays a smart object and has a form for each of its methods
+* [Transaction](./src/Transaction.tsx) - displays a transaction including its TBC expression if it has one
+* [Modal](./src/Wallet.tsx) - displays a modal window
 
 
 ## Use
