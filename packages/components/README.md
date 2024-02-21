@@ -20,7 +20,6 @@ Currently it contains the following:
 * [Transaction](./src/Transaction.tsx) - displays a transaction including its TBC expression if it has one
 * [Modal](./src/Wallet.tsx) - displays a modal window
 
-
 ## Use
 
 To re-build the code run 
