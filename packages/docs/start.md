@@ -1,5 +1,6 @@
 ---
 order: -10
+icon: rocket
 ---
 
 
@@ -7,18 +8,19 @@ order: -10
 
 ## Try it Out
 
-To try out the Bitcoin Computer we recommend to follow the instructions on NPM.
+To try out the Bitcoin Computer (TBC) we recommend to follow the instructions of the library.
 
-[!ref target="blank" text="Bitcoin Computer Library"](https://www.npmjs.com/package/@bitcoin-computer/lib)
+[!ref target="blank" icon="book" text="TBC Library"](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme)
 
-## Run a Node
+## Develop
 
-If you want to run an application on mainnet or regtest you can run your own node. Regtest is recommended for serious development as you can refund your application.
+For serious development we recommend to run your own node. This has the advantage that you can fund an application through the command line.
 
-[!ref target="blank" text="Bitcoin Computer Node"](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme)
+[!ref target="blank" icon="package" text="TBC Node"](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme)
 
-## Build an App
+We provide templates for development for the browser and node.js
 
-To build your own app we recommend to clone our monorepo and start from one of the example applications.
+[!ref target="blank" icon="file-code" text="Browser Template"](https://github.com/bitcoin-computer/monorepo/tree/main/packages/cra-template#readme)
+[!ref target="blank" icon="file-binary" text="Node.js Template"](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template#readme)
 
-[!ref target="blank" text="Bitcoin Computer Monorepo"](https://github.com/bitcoin-computer/monorepo#readme)
+
