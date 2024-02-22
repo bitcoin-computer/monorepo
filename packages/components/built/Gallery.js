@@ -115,7 +115,7 @@ export default function WithPagination(q) {
     }, []);
     useEffect(function () {
         var fetch = function () { return __awaiter(_this, void 0, void 0, function () {
-            var query, queryRevs;
+            var query, result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -125,10 +125,10 @@ export default function WithPagination(q) {
                         query["limit"] = contractsPerPage + 1;
                         return [4 /*yield*/, computer.query(query)];
                     case 1:
-                        queryRevs = _a.sent();
-                        setIsNextAvailable(queryRevs.length > contractsPerPage);
-                        setRevs(queryRevs);
-                        if (pageNum === 0 && (queryRevs === null || queryRevs === void 0 ? void 0 : queryRevs.length) === 0) {
+                        result = _a.sent();
+                        setIsNextAvailable(result.length > contractsPerPage);
+                        setRevs(result);
+                        if (pageNum === 0 && (result === null || result === void 0 ? void 0 : result.length) === 0) {
                             setShowNoAsset(true);
                         }
                         showLoader(false);
