@@ -1,7 +1,7 @@
-declare type Json = JBasic | JObject | JArray;
-declare type JBasic = undefined | null | boolean | number | string | symbol | bigint;
-declare type JArray = Json[];
-declare type JObject = {
+type Json = JBasic | JObject | JArray;
+type JBasic = undefined | null | boolean | number | string | symbol | bigint;
+type JArray = Json[];
+type JObject = {
     [x: string]: Json;
 };
 export declare const jsonMap: (g: (el: Json) => Json) => (json: Json) => Json;

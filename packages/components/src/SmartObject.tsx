@@ -1,19 +1,11 @@
 import { useEffect, useState } from "react"
-import {
-  Dropdown,
-  DropdownInterface,
-  DropdownOptions,
-  InstanceOptions,
-  initFlowbite,
-} from "flowbite"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
-import { capitalizeFirstLetter, isValidRev, sleep, toObject } from "./common/utils"
+import { capitalizeFirstLetter, toObject } from "./common/utils"
 import reactStringReplace from "react-string-replace"
 import { Auth } from "./Auth"
 import { Card } from "./Card"
 import { Modal } from "./Modal"
 import { FunctionResultModalContent } from "./common/SmartCallExecutionResult"
-import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown"
 import { SmartObjectFunction } from "./SmartObjectFunction"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]

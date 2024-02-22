@@ -17,6 +17,15 @@ var get = function (id) {
     var instanceOptions = { id: id, override: true };
     return new ModalClass($modalElement, modalOptions, instanceOptions);
 };
+var showModal = function (id) {
+    get(id).show();
+};
+var hideModal = function (id) {
+    get(id).hide();
+};
+var toggleModal = function (id) {
+    get(id).toggle();
+};
 var ShowButton = function (_a) {
     var id = _a.id, text = _a.text;
     return (_jsx("button", __assign({ "data-modal-target": id, "data-modal-show": id, type: "button" }, { children: text })));
@@ -24,9 +33,6 @@ var ShowButton = function (_a) {
 var HideButton = function (_a) {
     var id = _a.id, text = _a.text;
     return (_jsx("button", __assign({ "data-modal-target": id, "data-modal-hide": id, type: "button" }, { children: text })));
-};
-var hideModal = function (id) {
-    get(id).hide();
 };
 var ToggleButton = function (_a) {
     var id = _a.id, text = _a.text;
@@ -38,6 +44,9 @@ var Component = function (_a) {
 };
 export var Modal = {
     get: get,
+    showModal: showModal,
+    hideModal: hideModal,
+    toggleModal: toggleModal,
     ShowButton: ShowButton,
     HideButton: HideButton,
     ToggleButton: ToggleButton,

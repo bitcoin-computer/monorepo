@@ -9,6 +9,18 @@ const get = (id: string) => {
   return new ModalClass($modalElement, modalOptions, instanceOptions)
 }
 
+const showModal = (id: string) => {
+  get(id).show()
+}
+
+const hideModal = (id: string) => {
+  get(id).hide()
+}
+
+const toggleModal = (id: string) => {
+  get(id).toggle()
+}
+
 const ShowButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-show={id} type="button">
     {text}
@@ -20,10 +32,6 @@ const HideButton = ({ id, text }: any) => (
     {text}
   </button>
 )
-
-const hideModal = (id: string) => {
-  get(id).hide()
-}
 
 const ToggleButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-toggle={id} type="button">
@@ -75,6 +83,9 @@ const Component = ({ title, content, contentData, id }: any) => (
 
 export const Modal = {
   get,
+  showModal,
+  hideModal,
+  toggleModal,
   ShowButton,
   HideButton,
   ToggleButton,

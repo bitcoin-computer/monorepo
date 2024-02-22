@@ -24,7 +24,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
-        while (_) try {
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
             if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
             if (y = 0, t) op = [op[0] & 2, t.value];
             switch (op[0]) {
@@ -98,59 +98,46 @@ function Pagination(_a) {
     var isPrevAvailable = _a.isPrevAvailable, handlePrev = _a.handlePrev, isNextAvailable = _a.isNextAvailable, handleNext = _a.handleNext;
     return (_jsx("nav", __assign({ className: "flex items-center justify-between", "aria-label": "Table navigation" }, { children: _jsxs("ul", __assign({ className: "inline-flex items-center -space-x-px" }, { children: [_jsx("li", { children: _jsxs("button", __assign({ disabled: !isPrevAvailable, onClick: handlePrev, className: "flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" }, { children: [_jsx("span", __assign({ className: "sr-only" }, { children: "Previous" })), _jsx("svg", __assign({ className: "w-2.5 h-2.5", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 6 10" }, { children: _jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M5 1 1 5l4 4" }) }))] })) }), _jsx("li", { children: _jsxs("button", __assign({ disabled: !isNextAvailable, onClick: handleNext, className: "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white" }, { children: [_jsx("span", __assign({ className: "sr-only" }, { children: "Next" })), _jsx("svg", __assign({ className: "w-2.5 h-2.5", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 6 10" }, { children: _jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "m1 9 4-4-4-4" }) }))] })) })] })) })));
 }
-export default function WithPagination(_a) {
+export default function WithPagination(q) {
     var _this = this;
-    var publicKey = _a.publicKey;
     var contractsPerPage = 12;
     var computer = useState(Auth.getComputer())[0];
     var showLoader = useUtilsComponents().showLoader;
-    var _b = useState(0), pageNum = _b[0], setPageNum = _b[1];
-    var _c = useState(true), isNextAvailable = _c[0], setIsNextAvailable = _c[1];
-    var _d = useState(pageNum > 0), isPrevAvailable = _d[0], setIsPrevAvailable = _d[1];
-    var _e = useState(false), showNoAsset = _e[0], setShowNoAsset = _e[1];
-    var _f = useState([]), revs = _f[0], setRevs = _f[1];
+    var _a = useState(0), pageNum = _a[0], setPageNum = _a[1];
+    var _b = useState(true), isNextAvailable = _b[0], setIsNextAvailable = _b[1];
+    var _c = useState(pageNum > 0), isPrevAvailable = _c[0], setIsPrevAvailable = _c[1];
+    var _d = useState(false), showNoAsset = _d[0], setShowNoAsset = _d[1];
+    var _e = useState([]), revs = _e[0], setRevs = _e[1];
     var location = useLocation();
-    var pubKey = publicKey || new URLSearchParams(location.search).get("public-key");
+    var params = Object.fromEntries(new URLSearchParams(location.search));
     useEffect(function () {
         initFlowbite();
     }, []);
     useEffect(function () {
         var fetch = function () { return __awaiter(_this, void 0, void 0, function () {
-            var queryParms, queryRevs, error_1;
+            var query, result;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         showLoader(true);
-                        _a.label = 1;
+                        query = __assign(__assign({}, q), params);
+                        query["offset"] = contractsPerPage * pageNum;
+                        query["limit"] = contractsPerPage + 1;
+                        return [4 /*yield*/, computer.query(query)];
                     case 1:
-                        _a.trys.push([1, 3, , 4]);
-                        queryParms = {};
-                        queryParms["offset"] = contractsPerPage * pageNum;
-                        queryParms["limit"] = contractsPerPage + 1;
-                        if (pubKey)
-                            queryParms["publicKey"] = pubKey;
-                        return [4 /*yield*/, computer.query(queryParms)];
-                    case 2:
-                        queryRevs = _a.sent();
-                        setIsNextAvailable(queryRevs.length > contractsPerPage);
-                        setRevs(queryRevs);
-                        if (pageNum === 0 && (queryRevs === null || queryRevs === void 0 ? void 0 : queryRevs.length) === 0) {
+                        result = _a.sent();
+                        setIsNextAvailable(result.length > contractsPerPage);
+                        setRevs(result);
+                        if (pageNum === 0 && (result === null || result === void 0 ? void 0 : result.length) === 0) {
                             setShowNoAsset(true);
                         }
-                        return [3 /*break*/, 4];
-                    case 3:
-                        error_1 = _a.sent();
-                        // todo: forward to error page here
-                        console.log("Error loading revisions", error_1);
-                        return [3 /*break*/, 4];
-                    case 4:
                         showLoader(false);
                         return [2 /*return*/];
                 }
             });
         }); };
         fetch();
-    }, [computer, pageNum, publicKey]);
+    }, [computer, pageNum]);
     var handleNext = function () { return __awaiter(_this, void 0, void 0, function () {
         return __generator(this, function (_a) {
             setIsPrevAvailable(true);

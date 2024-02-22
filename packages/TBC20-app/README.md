@@ -45,7 +45,7 @@ Run the command below and open [http://localhost:1032](http://localhost:1032)
 
 ```bash
 # Move to the package
-cd packages/fungible-token
+cd packages/TBC20-app
 
 # Start the app
 npm run start

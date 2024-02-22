@@ -1,10 +1,12 @@
 import "./App.css"
 import { useEffect } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import NavBar from "./components/Navbar"
+import { Navbar } from "./components/Navbar"
 import { initFlowbite } from "flowbite"
-import { Auth, Error404, UtilsContext, Wallet } from "@bitcoin-computer/components"
-import Counter from "./components/Counter"
+import { Auth, Error404, UtilsContext, Wallet, SmartObject, Transaction } from "@bitcoin-computer/components"
+import Mint from "./components/Mint"
+import { AllAssets, MyAssets } from "./components/Assets"
+
 export default function App() {
   useEffect(() => {
     initFlowbite()
@@ -16,10 +18,14 @@ export default function App() {
       <UtilsContext.UtilsProvider>
         <Auth.LoginModal />
         <Wallet />
-        <NavBar />
+        <Navbar />
         <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
           <Routes>
-            <Route path="/" element={<Counter />} />
+            <Route path="/" element={<AllAssets />} />
+            <Route path="/mine" element={<MyAssets />} />
+            <Route path="/mint" element={<Mint />} />
+            <Route path="/objects/:rev" element={<SmartObject.Component />} />
+            <Route path="/transactions/:txn" element={<Transaction.Component />} />
             <Route path="*" element={<Navigate to="/" replace={true} />} />
             <Route path="*" element={<Error404 />} />
           </Routes>
