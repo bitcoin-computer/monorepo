@@ -27,11 +27,12 @@ function SuccessContent(rev: string) {
   </>
 }
 
-function ErrorContent() {
+function ErrorContent(msg: string) {
   return <>
     <div className="p-4 md:p-5">
       <div>
-        Something went wrong
+        Something went wrong.<br /><br />
+        {msg}
       </div>
     </div>
     <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -50,6 +51,7 @@ function ErrorContent() {
 export default function Mint() {
   const [computer] = useState(Auth.getComputer())
   const [successRev, setSuccessRev] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -58,10 +60,12 @@ export default function Mint() {
       setSuccessRev(counter._id)
       Modal.showModal('success-modal')
     } catch(err) {
-      if (err instanceof Error) Modal.showModal('error-modal')
+      if (err instanceof Error) {
+        setErrorMsg(err.message)
+        Modal.showModal('error-modal')
+      }
     }
   }
-
 
   return (
     <>
@@ -69,7 +73,7 @@ export default function Mint() {
         <button type="submit" className="mt-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Mint Counter</button>
       </form>
       <Modal.Component title={"Success"} content={SuccessContent} contentData={successRev} id={"success-modal"} />
-      <Modal.Component title={"Error"} content={ErrorContent} contentData={''} id={"error-modal"} />
+      <Modal.Component title={"Error"} content={ErrorContent} contentData={errorMsg} id={"error-modal"} />
     </>
   )
 }
