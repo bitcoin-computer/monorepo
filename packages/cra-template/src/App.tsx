@@ -1,7 +1,7 @@
 import "./App.css"
 import { useEffect } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import NavBar from "./components/Navbar"
+import { Navbar } from "./components/Navbar"
 import { initFlowbite } from "flowbite"
 import { Auth, Error404, UtilsContext, Wallet, SmartObject, Transaction } from "@bitcoin-computer/components"
 import Mint from "./components/Mint"
@@ -18,7 +18,7 @@ export default function App() {
       <UtilsContext.UtilsProvider>
         <Auth.LoginModal />
         <Wallet />
-        <NavBar />
+        <Navbar />
         <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
           <Routes>
             <Route path="/" element={<AllAssets />} />
