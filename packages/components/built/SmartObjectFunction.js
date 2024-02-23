@@ -161,16 +161,15 @@ export var SmartObjectFunction = function (_a) {
         value["".concat(key, "--types")] = option;
         setFormState(value);
     };
+    var capitalizeFirstLetter = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
     if (!functionsExist)
         return _jsx(_Fragment, {});
-    return (_jsxs(_Fragment, { children: [_jsx("h2", __assign({ className: "mb-2 text-4xl font-bold dark:text-white" }, { children: "Functions" })), Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
-                .filter(function (key) {
-                return key !== "constructor" && typeof Object.getPrototypeOf(smartObject)[key] === "function";
-            })
-                .map(function (key, fnIndex) {
-                var paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key]);
-                return (_jsxs("div", __assign({ className: "mt-6 mb-6" }, { children: [_jsx("h3", __assign({ className: "mt-2 text-xl font-bold dark:text-white" }, { children: key })), _jsxs("form", __assign({ id: "fn-index-".concat(fnIndex) }, { children: [paramList.map(function (paramName, paramIndex) { return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("div", __assign({ className: "mb-2" }, { children: _jsx("label", __assign({ htmlFor: "".concat(key, "-").concat(paramName), className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: paramName })) })), _jsxs("div", __assign({ className: "flex items-center space-x-4" }, { children: [_jsx("input", { type: "text", id: "".concat(key, "-").concat(paramName), value: formState["".concat(key, "-").concat(paramName)] || "", onChange: function (e) { return updateFormValue(e, "".concat(key, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: "Value", required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(key).concat(paramName), dropdownList: options, onSelectMethod: function (option) {
-                                                        return updateTypes(option, "".concat(key, "-").concat(paramName));
-                                                    } })] }))] }), paramIndex)); }), _jsx("button", __assign({ className: "mr-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800", onClick: function (evt) { return handleSmartObjectMethod(evt, smartObject, key, paramList); } }, { children: "Call Function" }))] }))] }), fnIndex));
-            })] }));
+    return (_jsx(_Fragment, { children: Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
+            .filter(function (key) {
+            return key !== "constructor" && typeof Object.getPrototypeOf(smartObject)[key] === "function";
+        })
+            .map(function (key, fnIndex) {
+            var paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key]);
+            return (_jsxs("div", __assign({ className: "mt-6 mb-6" }, { children: [_jsx("h3", __assign({ className: "my-2 text-xl font-bold dark:text-white" }, { children: capitalizeFirstLetter(key) })), _jsxs("form", __assign({ id: "fn-index-".concat(fnIndex) }, { children: [paramList.map(function (paramName, paramIndex) { return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("div", __assign({ className: "mb-2" }, { children: _jsx("label", __assign({ htmlFor: "".concat(key, "-").concat(paramName), className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: paramName })) })), _jsxs("div", __assign({ className: "flex items-center space-x-4" }, { children: [_jsx("input", { type: "text", id: "".concat(key, "-").concat(paramName), value: formState["".concat(key, "-").concat(paramName)] || "", onChange: function (e) { return updateFormValue(e, "".concat(key, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: "Value", required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(key).concat(paramName), dropdownList: options, onSelectMethod: function (option) { return updateTypes(option, "".concat(key, "-").concat(paramName)); } })] }))] }), paramIndex)); }), _jsx("button", __assign({ className: "mr-8 text-white bg-blue-700 hover:bg-blue-800 focus:outline-none focus:ring-4 focus:ring-blue-300 font-medium rounded-md text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800", onClick: function (evt) { return handleSmartObjectMethod(evt, smartObject, key, paramList); } }, { children: "Call Function" }))] }))] }), fnIndex));
+        }) }));
 };
