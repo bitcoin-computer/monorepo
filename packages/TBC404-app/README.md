@@ -1,11 +1,13 @@
 <div align="center">
-  <h1>TBC CRA Template</h1>
+  <h1>TBC404 App</h1>
   <p>
-    A template for Create React App with TypeScript and the Bitcoin Computer
+    An app for minting, storing, and trading fungible tokens with multiple owners
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
 </div>
+
+Ethereum's [ERC404](https://github.com/Pandora-Labs-Org/erc404) contract is a mixed [ERC-20](https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC20/ERC20.sol)/[ERC-721](https://github.com/OpenZeppelin/openzeppelin-contracts/tree/master/contracts/token/ERC721) implementation with native liquidity and fractionalization. This package contains an app for a similar contract on Bitcoin.
 
 ## Prerequisites
 
