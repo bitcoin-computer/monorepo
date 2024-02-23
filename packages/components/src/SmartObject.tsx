@@ -210,7 +210,7 @@ function Component() {
   return (
     <>
       <div>
-        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Output</h1>
+        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Object</h1>
         <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
           <Link
             to={`/transactions/${txId}`}
@@ -220,8 +220,6 @@ function Component() {
           </Link>
           :{outNum}
         </p>
-
-        <h2 className="mb-2 text-4xl font-bold dark:text-white">Data</h2>
 
         <SmartObjectValues smartObject={smartObject} />
 
@@ -235,7 +233,7 @@ function Component() {
           setModalTitle={setModalTitle}
         />
 
-        <MetaData smartObject={smartObject} />
+        {/* <MetaData smartObject={smartObject} /> */}
       </div>
       <Modal.Component
         title={modalTitle}
