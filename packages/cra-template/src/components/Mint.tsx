@@ -54,7 +54,7 @@ export default function Mint() {
   const [errorMsg, setErrorMsg] = useState('')
 
   const onSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
+    e.preventDefault()
     try {
       const counter = await computer.new(Counter)
       setSuccessRev(counter._id)
