@@ -7,24 +7,13 @@ import { Chain, Network } from "../types/common"
 const modalTitle = "Connect to Node"
 const modalId = "unsupported-config-modal"
 
-function LoggedInMenu() {
-  return (
-    <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-      <li className="py-2">
-        <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-          <Drawer.ShowDrawer text="Wallet" id="wallet-drawer" />
-        </label>
-      </li>
-    </ul>
-  )
-}
-
-function formatChainAndNetwork(chain: string, network: string) {
-  const prefix = {
+function formatChainAndNetwork(chain: Chain, network: Network) {
+  const map = {
     mainnet: "",
     testnet: "t",
     regtest: "r",
-  }[network]
+  }
+  const prefix = map[network]
   return `${prefix}${chain}`
 }
 
@@ -92,7 +81,15 @@ function ModalContent() {
   )
 }
 
-function NotLoggedMenu() {
+function SignInItem() {
+  return <li className="py-2">
+    <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+      <Modal.ShowButton text="Sign in" id="sign-in-modal" />
+    </label>
+  </li>
+}
+
+export function NotLoggedMenu() {
   const [dropDownLabel, setDropDownLabel] = useState<string>("LTC")
   const { showSnackBar } = UtilsContext.useUtilsComponents()
 
@@ -114,6 +111,17 @@ function NotLoggedMenu() {
       showSnackBar("Error setting chain and network", false)
       Modal.get(modalId).show()
     }
+  }
+  
+  function CoinSelectionItem({ chain, network }: { chain: Chain, network: Network }) {
+    return <li>
+        <div
+          onClick={() => setChainAndNetwork(chain, network)}
+          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+        >
+          {chain} {network}
+        </div>
+      </li>
   }
 
   return (
@@ -151,74 +159,92 @@ function NotLoggedMenu() {
               className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
-              <li>
-                <div
-                  onClick={() => setChainAndNetwork("LTC", "mainnet")}
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Litecoin
-                </div>
-              </li>
-              <li>
-                <div
-                  onClick={() => setChainAndNetwork("LTC", "testnet")}
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Litecoin Testnet
-                </div>
-              </li>
-              <li>
-                <div
-                  onClick={() => setChainAndNetwork("LTC", "regtest")}
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Litecoin Regtest
-                </div>
-              </li>
+              <CoinSelectionItem chain={'LTC'} network={'mainnet'} />
+              <CoinSelectionItem chain={'LTC'} network={'testnet'} />
+              <CoinSelectionItem chain={'LTC'} network={'regtest'} />
             </ul>
             <ul
               className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
-              <li>
-                <div
-                  onClick={() => setChainAndNetwork("BTC", "mainnet")}
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Bitcoin
-                </div>
-              </li>
-              <li>
-                <div
-                  onClick={() => setChainAndNetwork("BTC", "testnet")}
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Bitcoin Testnet
-                </div>
-              </li>
-              <li>
-                <div
-                  onClick={() => setChainAndNetwork("BTC", "regtest")}
-                  className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                >
-                  Bitcoin Regtest
-                </div>
-              </li>
+              <CoinSelectionItem chain={'BTC'} network={'mainnet'} />
+              <CoinSelectionItem chain={'BTC'} network={'testnet'} />
+              <CoinSelectionItem chain={'BTC'} network={'regtest'} />
             </ul>
           </div>
         </li>
 
-        <li className="py-2">
-          <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-            <Modal.ShowButton text="Sign in" id="sign-in-modal" />
-          </label>
-        </li>
+        <SignInItem />
       </ul>
     </>
   )
 }
 
-export default function Navbar() {
+function WalletItem() {
+  return <li className="py-2">
+    <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+      <Drawer.ShowDrawer text="Wallet" id="wallet-drawer" />
+    </label>
+  </li>
+}
+
+const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+function Item({ dest }: { dest: string }) {
+  return <Link to={`/${dest}`} className="flex items-center space-x-3 rtl:space-x-reverse">
+  <span className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+    {capitalizeFirstLetter(dest)}
+  </span>
+</Link>
+}
+
+export function LoggedInMenu() {
+  return (
+    <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
+      <Item dest={'mine'} />
+      <Item dest={'mint'} />
+      <WalletItem />
+    </ul>
+  )
+}
+
+function NavbarDropdownButton() {
+  return <button
+      data-collapse-toggle="navbar-dropdown"
+      type="button"
+      className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+      aria-controls="navbar-dropdown"
+      aria-expanded="false"
+    >
+      <span className="sr-only">Open main menu</span>
+      <svg
+        className="w-5 h-5"
+        aria-hidden="true"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 17 14"
+      >
+        <path
+          stroke="currentColor"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M1 1h15M1 7h15M1 13h15"
+        />
+      </svg>
+    </button>
+}
+
+export function Logo({ name = 'TBC CRA Template' }) {
+  return <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
+      <img src="/logo.png" className="h-10" alt="Bitcoin Computer Logo" />
+      <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+        {name}
+      </span>
+    </Link>
+}
+
+export function Navbar() {
   useEffect(() => {
     initFlowbite()
   }, [])
@@ -227,38 +253,8 @@ export default function Navbar() {
     <>
       <nav className="bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-          <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="/logo.png" className="h-10" alt="Bitcoin Computer Logo" />
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              TBC CRA template
-            </span>
-          </Link>
-
-          <button
-            data-collapse-toggle="navbar-dropdown"
-            type="button"
-            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-            aria-controls="navbar-dropdown"
-            aria-expanded="false"
-          >
-            <span className="sr-only">Open main menu</span>
-            <svg
-              className="w-5 h-5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 17 14"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 1h15M1 7h15M1 13h15"
-              />
-            </svg>
-          </button>
-
+          <Logo />
+          <NavbarDropdownButton />
           <div className="hidden w-full md:block md:w-auto" id="navbar-dropdown">
             {Auth.isLoggedIn() ? <LoggedInMenu /> : <NotLoggedMenu />}
           </div>

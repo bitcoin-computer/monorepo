@@ -44,7 +44,7 @@ Run the command below and open [http://localhost:3000](http://localhost:3000).
 
 ```bash
 # Move to the package
-cd packages/non-fungible-token
+cd packages/TBC721-app
 
 # Start the app
 npm run start

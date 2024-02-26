@@ -1,72 +1,98 @@
 /* eslint-disable no-unused-expressions */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { expect } from 'chai'
+import chai, { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '../src/nft'
+import chaiMatchPattern from 'chai-match-pattern'
+
+chai.use(chaiMatchPattern)
+const _ = chaiMatchPattern.getLodashModule()
 
 /**
  * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
  */
-const opts = {
-  url: 'http://127.0.0.1:1031',
-  network: 'regtest' as any,
+const RLTC: {
+  network: 'regtest',
+  chain: 'LTC',
+  url: string
+} = {
+  network: 'regtest',
+  chain: 'LTC',
+  url: 'http://localhost:1031',
 }
 
-const computer = new Computer(opts)
-const computer2 = new Computer(opts)
+const meta = {
+  _id: _.isString,
+  _rev: _.isString,
+  _root: _.isString,
+  _owners: _.isArray,
+  _amount: _.isNumber,
+}
 
-before(async () => {
-  // @ts-ignore
-  await computer.faucet(1e7)
-  // @ts-ignore
-  await computer2.faucet(1e7)
-})
+const symbol = ''
 
-describe('NFT', () => {
-  describe('Constructor', () => {
-    it('should create a Javascript object', () => {
-      expect(NFT).not.to.be.undefined
-      expect(typeof NFT).to.eq('function')
+describe('Non-Fungible Token (NFT)', () => {
+  let nft: NFT
+  let initialId: string
+  let initialRev: string
+  let initialRoot: string
+  let sender = new Computer(RLTC)
+  let receiver = new Computer(RLTC)
+  
+  before("Fund sender's wallet", async () => {
+    await sender.faucet(0.001e8)
+  })
 
-      const token = new NFT('to', 'name', 'symbol')
-      expect(token).not.to.be.undefined
+  describe('Minting an NFT', () => {
+    it('Sender mints an NFT', async () => {
+      nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
+      // @ts-ignore
+      expect(nft).matchPattern({ name: 'Test', symbol, ...meta })
     })
 
-    it('should create a smart object', async () => {
-      const publicKeyString = computer.getPublicKey()
+    it('Property _owners is a singleton array with minters public key', () => {
+      expect(nft._owners).deep.eq([sender.getPublicKey()])
+    })
 
-      const nft = await computer.new(NFT, [publicKeyString, 'name', 'symbol'])
-      expect(nft._owners).deep.equal([publicKeyString])
-      expect(nft.name).to.eq('name')
-      expect(nft.symbol).to.eq('symbol')
-      expect(nft._id).to.be.a('string')
-      expect(nft._rev).to.be.a('string')
-      expect(nft._root).to.be.a('string')
+    it('Properties _id, _rev, and _root have the same value', () => {
+      expect(nft._id).eq(nft._rev).eq(nft._root)
+
+      initialId = nft._id
+      initialRev = nft._rev
+      initialRoot = nft._root
+    })
+
+    it("The nft is returned when syncing against it's revision", async () => {
+      expect(await sender.sync(nft._rev)).deep.eq(nft)
     })
   })
 
-  describe('transfer', () => {
-    it('Should update a smart object', async () => {
-      const publicKeyString = computer.getPublicKey()
 
-      const publicKeyString2 = computer2.getPublicKey()
+  describe('Transferring an NFT', async () => {
+    it('Sender transfers the NFT to receiver', async () => {
+      await nft.transfer(receiver.getPublicKey())
+      // @ts-ignore
+      expect(nft).to.matchPattern({ name: 'Test', symbol, ...meta })
+    })
 
-      const nft = await computer.new(NFT, [publicKeyString, 'name', 'symbol'])
-      expect(nft._owners).deep.equal([publicKeyString])
-      expect(nft.name).to.eq('name')
-      expect(nft.symbol).to.eq('symbol')
-      expect(nft._id).to.be.a('string')
-      expect(nft._rev).to.be.a('string')
-      expect(nft._root).to.be.a('string')
+    it('The id does not change', () => {
+      expect(initialId).eq(nft._id)
+    })
 
-      await nft.transfer(publicKeyString2)
+    it('The revision is updated', () => {
+      expect(initialRev).not.eq(nft._rev)
+    })
 
-      expect(nft._owners).deep.equal([publicKeyString2])
-      expect(nft.name).to.eq('name')
-      expect(nft.symbol).to.eq('symbol')
-      expect(nft._id).to.be.a('string')
-      expect(nft._rev).to.be.a('string')
-      expect(nft._root).to.be.a('string')
+    it('The root does not change', () => {
+      expect(initialRoot).eq(nft._root)
+    })
+
+    it("The _owners are updated to receiver's public key", () => {
+      expect(nft._owners).deep.eq([receiver.getPublicKey()])
+    })
+
+    it("Syncing to the NFT's revision returns an object that is equal to the NFT", async () => {
+      expect(await receiver.sync(nft._rev)).deep.eq(nft)
     })
   })
 })

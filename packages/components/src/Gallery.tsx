@@ -6,6 +6,21 @@ import { Auth } from "./Auth"
 import { initFlowbite } from "flowbite"
 import { useUtilsComponents } from "./UtilsContext"
 
+export type Class = new (...args: any) => any
+
+export type UserQuery<T extends Class> = Partial<{
+  mod: string
+  publicKey: string
+  limit: number
+  offset: number
+  order: 'ASC' | 'DESC'
+  ids: string[]
+  contract: {
+    class: T
+    args?: ConstructorParameters<T>
+  }
+}>
+
 function HomePageCard({ content }: any) {
   return (
     <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
@@ -138,7 +153,7 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
   )
 }
 
-export default function WithPagination({ publicKey }: { publicKey?: string }) {
+export default function WithPagination<T extends Class>(q: UserQuery<T>) {
   const contractsPerPage = 12
   const [computer] = useState(Auth.getComputer())
   const { showLoader } = useUtilsComponents()
@@ -148,7 +163,7 @@ export default function WithPagination({ publicKey }: { publicKey?: string }) {
   const [showNoAsset, setShowNoAsset] = useState(false)
   const [revs, setRevs] = useState<string[]>([])
   const location = useLocation()
-  const pubKey = publicKey || new URLSearchParams(location.search).get("public-key")
+  const params = Object.fromEntries(new URLSearchParams(location.search))
 
   useEffect(() => {
     initFlowbite()
@@ -157,25 +172,19 @@ export default function WithPagination({ publicKey }: { publicKey?: string }) {
   useEffect(() => {
     const fetch = async () => {
       showLoader(true)
-      try {
-        const queryParms: Record<string, string | number> = {}
-        queryParms["offset"] = contractsPerPage * pageNum
-        queryParms["limit"] = contractsPerPage + 1
-        if (pubKey) queryParms["publicKey"] = pubKey
-        const queryRevs = await computer.query(queryParms)
-        setIsNextAvailable(queryRevs.length > contractsPerPage)
-        setRevs(queryRevs)
-        if (pageNum === 0 && queryRevs?.length === 0) {
-          setShowNoAsset(true)
-        }
-      } catch (error) {
-        // todo: forward to error page here
-        console.log("Error loading revisions", error)
+      const query = { ...q, ...params }
+      query["offset"] = contractsPerPage * pageNum
+      query["limit"] = contractsPerPage + 1
+      const result = await computer.query(query)
+      setIsNextAvailable(result.length > contractsPerPage)
+      setRevs(result)
+      if (pageNum === 0 && result?.length === 0) {
+        setShowNoAsset(true)
       }
       showLoader(false)
     }
     fetch()
-  }, [computer, pageNum, publicKey])
+  }, [computer, pageNum])
 
   const handleNext = async () => {
     setIsPrevAvailable(true)

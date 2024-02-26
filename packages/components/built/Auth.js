@@ -46,18 +46,19 @@ function getBip44Path(_a) {
 function getPath(chain, network) {
     return getBip44Path({ coinType: getCoinType(chain, network) });
 }
+function getEnvVariable(name) {
+    var res = process.env[name];
+    if (typeof res === "undefined")
+        throw new Error("Cannot find environment variable \"".concat(name, "\".\nDid you forget to copy the .env.example file into a .env file?"));
+    else
+        return res;
+}
 function getUrl(chain, network) {
-    var index = "REACT_APP_".concat(chain.toUpperCase(), "_").concat(network.toUpperCase(), "_URL");
-    var url = process.env[index];
-    if (typeof url === "undefined")
-        throw new Error("Cannot find a url for ".concat(chain.toUpperCase(), " ").concat(network.toUpperCase(), ", please provide a variable \"REACT_APP_").concat(chain.toUpperCase(), "_").concat(network.toUpperCase(), "_URL\" in your .env file"));
-    return url;
+    return getEnvVariable("REACT_APP_".concat(chain.toUpperCase(), "_").concat(network.toUpperCase(), "_URL"));
 }
 function defaultConfiguration() {
-    var chain = (localStorage.getItem("CHAIN") || process.env["REACT_APP_CHAIN"] || "LTC");
-    var network = (localStorage.getItem("NETWORK") ||
-        process.env["REACT_APP_NETWORK"] ||
-        "regtest");
+    var chain = (localStorage.getItem("CHAIN") || getEnvVariable("REACT_APP_CHAIN") || "LTC");
+    var network = (localStorage.getItem("NETWORK") || getEnvVariable("REACT_APP_NETWORK") || "regtest");
     var url = getUrl(chain, network);
     return { chain: chain, network: network, url: url };
 }

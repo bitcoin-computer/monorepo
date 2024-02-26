@@ -7,9 +7,6 @@
   </p>
 </div>
 
-> [!WARNING]
->This template needs refactoring, check back soon.
-
 ## Prerequisites
 
 You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
@@ -45,7 +42,7 @@ To start the application run the command below and open [http://localhost:3000](
 # Move to the package
 cd packages/cra-template
 
-# Install the dependencies for cra-template
+# Install the dependencies
 npm install
 
 # Use the default environment variables

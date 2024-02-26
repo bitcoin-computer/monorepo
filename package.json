@@ -28,19 +28,20 @@
     "packages/*"
   ],
   "scripts": {
-    "start": "cd /dist/packages/node && npm run start",
-    "up": "cd packages/node && npm run up",
-    "fund-ltc": "cd packages/node && npm run fund-ltc",
-    "test": "cd packages/node && npm run test; cd ../lib && npm run test",
-    "down": "cd packages/node && npm run down",
-    "reset": "cd packages/node && npm run reset",
     "build-node": "docker build -t bitcoin-computer-node .",
-    "prepare": "husky install",
-    "create-version": "lerna version --force-publish",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
+    "create-version": "lerna version --force-publish",
+    "down": "cd packages/node && npm run down",
+    "fund-ltc": "cd packages/node && npm run fund-ltc",
+    "fund-btc": "cd packages/node && npm run fund-btc",
     "husky-checks": "./scripts/husky-checks.sh",
+    "install-all": "npm install",
+    "prepare": "husky install",
     "prepublishOnly": "./scripts/check-obfuscation.sh",
-    "validate-branch-for-deploy": ". scripts/validate-branch-for-deploy.sh && validate_branch"
+    "reset": "cd packages/node && npm run reset",
+    "start": "cd /dist/packages/node && npm run start",
+    "test": "cd packages/node && npm run test; cd ../lib && npm run test",
+    "up": "cd packages/node && npm run up"
   },
   "dependencies": {
     "@endo/static-module-record": "^0.7.6"

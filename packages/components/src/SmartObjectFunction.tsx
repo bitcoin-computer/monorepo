@@ -116,10 +116,11 @@ export const SmartObjectFunction = ({
     setFormState(value)
   }
 
+  const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
   if (!functionsExist) return <></>
   return (
     <>
-      <h2 className="mb-2 text-4xl font-bold dark:text-white">Functions</h2>
       {Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
         .filter(
           (key) =>
@@ -129,7 +130,7 @@ export const SmartObjectFunction = ({
           const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key])
           return (
             <div className="mt-6 mb-6" key={fnIndex}>
-              <h3 className="mt-2 text-xl font-bold dark:text-white">{key}</h3>
+              <h3 className="my-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
               <form id={`fn-index-${fnIndex}`}>
                 {paramList.map((paramName, paramIndex) => (
                   <div key={paramIndex} className="mb-4">
@@ -154,9 +155,7 @@ export const SmartObjectFunction = ({
                       <TypeSelectionDropdown
                         id={`${key}${paramName}`}
                         dropdownList={options}
-                        onSelectMethod={(option: string) =>
-                          updateTypes(option, `${key}-${paramName}`)
-                        }
+                        onSelectMethod={(option: string) => updateTypes(option, `${key}-${paramName}`)}
                       />
                     </div>
                   </div>

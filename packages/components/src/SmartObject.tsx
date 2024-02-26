@@ -1,19 +1,11 @@
 import { useEffect, useState } from "react"
-import {
-  Dropdown,
-  DropdownInterface,
-  DropdownOptions,
-  InstanceOptions,
-  initFlowbite,
-} from "flowbite"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
-import { capitalizeFirstLetter, isValidRev, sleep, toObject } from "./common/utils"
+import { capitalizeFirstLetter, toObject } from "./common/utils"
 import reactStringReplace from "react-string-replace"
 import { Auth } from "./Auth"
 import { Card } from "./Card"
 import { Modal } from "./Modal"
 import { FunctionResultModalContent } from "./common/SmartCallExecutionResult"
-import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown"
 import { SmartObjectFunction } from "./SmartObjectFunction"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
@@ -218,7 +210,7 @@ function Component() {
   return (
     <>
       <div>
-        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Output</h1>
+        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Object</h1>
         <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
           <Link
             to={`/transactions/${txId}`}
@@ -228,8 +220,6 @@ function Component() {
           </Link>
           :{outNum}
         </p>
-
-        <h2 className="mb-2 text-4xl font-bold dark:text-white">Data</h2>
 
         <SmartObjectValues smartObject={smartObject} />
 
@@ -243,7 +233,7 @@ function Component() {
           setModalTitle={setModalTitle}
         />
 
-        <MetaData smartObject={smartObject} />
+        {/* <MetaData smartObject={smartObject} /> */}
       </div>
       <Modal.Component
         title={modalTitle}
