@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@types/bitcoin-computer__lib": "0.15.0",
+    "@types/bitcoin-computer__lib": "^0.17.1",
     "@types/chai": "^4.3.1",
     "@types/expect": "^24.3.0",
     "@types/mocha": "^9.1.1",

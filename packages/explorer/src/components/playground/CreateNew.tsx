@@ -104,11 +104,10 @@ const CreateNew = (props: {
           encodeObject["mod"] = modSpec
         }
 
-        // @ts-ignore
-        const { tx } = await computer.encode(encodeObject)
+        const { tx } = (await computer.encode(encodeObject)) as any
         const txId = await computer.broadcast(tx)
         sleep(500)
-        const { res } = await computer.sync(txId)
+        const { res } = (await computer.sync(txId)) as any
         setFunctionResult({ _rev: res._rev, type: "objects" })
         setModalTitle("Success!")
         setShow(true)
