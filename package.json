@@ -44,16 +44,16 @@
     "up": "cd packages/node && npm run up"
   },
   "dependencies": {
-    "@endo/static-module-record": "^0.7.6"
+    "@endo/static-module-record": "^1.0.4"
   },
   "devDependencies": {
-    "@types/node": "^17.0.35",
-    "edit-json-file": "^1.7.0",
-    "husky": "^8.0.1",
-    "lerna": "5.1.2",
+    "@types/node": "^20.11.21",
+    "edit-json-file": "^1.8.0",
+    "husky": "^9.0.11",
+    "lerna": "8.1.2",
     "path": "^0.12.7",
-    "ts-node": "^10.8.0",
-    "typescript": "^4.9.5",
-    "url": "^0.11.0"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3",
+    "url": "^0.11.3"
   }
 }
