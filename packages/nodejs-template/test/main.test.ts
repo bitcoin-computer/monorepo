@@ -8,10 +8,14 @@ import { Counter } from '../src/main'
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-const opts = {
-  mnemonic: 'replace this seed',
-  url: 'http://127.0.0.1:1031',
-  network: 'regtest' as any,
+const RLTC: {
+  network: 'regtest',
+  chain: 'LTC',
+  url: string
+} = {
+  network: 'regtest',
+  chain: 'LTC',
+  url: 'http://localhost:1031',
 }
 
 describe('Bitcoin Computer', () => {
@@ -21,11 +25,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a computer object', () => {
-    /**
-     * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
-     */
-    const computer = new Computer(opts)
-
+    const computer = new Computer(RLTC)
     expect(computer).not.to.be.undefined
     expect(typeof computer).eq('object')
   })
@@ -33,14 +33,12 @@ describe('Bitcoin Computer', () => {
   it('should create a Javascript object', () => {
     expect(Counter).not.to.be.undefined
     expect(typeof Counter).eq('function')
-
     const counter = new Counter()
-
     expect(counter.n).eq(0)
   })
 
   it('should create a smart object', async () => {
-    const computer = new Computer(opts)
+    const computer = new Computer(RLTC)
 
     // @ts-ignore
     await computer.faucet(1e7)
@@ -57,7 +55,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should update a smart object', async () => {
-    const computer = new Computer(opts)
+    const computer = new Computer(RLTC)
 
     // @ts-ignore
     await computer.faucet(1e7)

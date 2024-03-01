@@ -1,3 +1,4 @@
+// @ts-ignore
 import { Contract } from '@bitcoin-computer/lib'
 
 class Counter extends Contract {
