@@ -30,12 +30,10 @@
   "scripts": {
     "build-node": "docker build -t bitcoin-computer-node .",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
-    "create-version": "lerna version --force-publish",
     "down": "cd packages/node && npm run down",
     "fund-ltc": "cd packages/node && npm run fund-ltc",
     "fund-btc": "cd packages/node && npm run fund-btc",
     "husky-checks": "./scripts/husky-checks.sh",
-    "install-all": "npm install",
     "prepare": "husky install",
     "prepublishOnly": "./scripts/check-obfuscation.sh",
     "reset": "cd packages/node && npm run reset",
