@@ -21,12 +21,11 @@ before(async () => {
 describe('TBC721', () => {
   describe('Constructor', () => {
     it('Should create a new TBC721 object', async () => {
-      const nft = new NFT('to', 'name', 'symbol')
+      const nft = new NFT('name', 'symbol')
       expect(nft).not.to.be.undefined
       expect(nft).to.deep.eq({
         name: 'name',
         symbol: 'symbol',
-        _owners: ['to'],
       })
     })
   })

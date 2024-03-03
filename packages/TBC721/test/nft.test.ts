@@ -40,12 +40,13 @@ describe('Non-Fungible Token (NFT)', () => {
   let receiver = new Computer(RLTC)
   
   before("Fund sender's wallet", async () => {
+    // @ts-ignore
     await sender.faucet(0.001e8)
   })
 
   describe('Minting an NFT', () => {
     it('Sender mints an NFT', async () => {
-      nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
+      nft = await sender.new(NFT, ['Test'])
       // @ts-ignore
       expect(nft).matchPattern({ name: 'Test', symbol, ...meta })
     })
