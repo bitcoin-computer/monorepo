@@ -13,6 +13,7 @@
     "type": "git",
     "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib"
   },
+  "types": "./computer.d.ts",
   "main": "dist/bc-lib.main.es.mjs",
   "module": "dist/bc-lib.module.es.mjs",
   "browser": "dist/bc-lib.browser.es.mjs",
