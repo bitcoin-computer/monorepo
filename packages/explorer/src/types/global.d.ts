@@ -1,1 +1,1 @@
-declare var Contract: any;
+declare var Contract: any

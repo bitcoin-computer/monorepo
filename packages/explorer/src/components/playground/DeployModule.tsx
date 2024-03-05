@@ -1,7 +1,7 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { Computer } from "@bitcoin-computer/lib"
-import { getErrorMessage } from "../../utils"
-import { UtilsContext } from "@bitcoin-computer/components"
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Computer } from '@bitcoin-computer/lib'
+import { getErrorMessage } from '../../utils'
+import { UtilsContext } from '@bitcoin-computer/components'
 
 const DeployModule = (props: {
   computer: Computer
@@ -23,12 +23,12 @@ const DeployModule = (props: {
       showLoader(true)
       // @ts-ignore
       const modSpec = await computer.deploy(module?.trim())
-      setFunctionResult({ _rev: modSpec, type: "modules" })
-      setModalTitle("Success!")
+      setFunctionResult({ _rev: modSpec, type: 'modules' })
+      setModalTitle('Success!')
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
-      setModalTitle("Error!")
+      setModalTitle('Error!')
       setShow(true)
     } finally {
       showLoader(false)

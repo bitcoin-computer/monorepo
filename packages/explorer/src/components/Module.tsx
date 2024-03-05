@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
-import { useParams } from "react-router-dom"
-import { capitalizeFirstLetter } from "../utils"
-import { Card } from "./Card"
-import { Auth, UtilsContext } from "@bitcoin-computer/components"
+import { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { capitalizeFirstLetter } from '../utils'
+import { Card } from './Card'
+import { Auth, UtilsContext } from '@bitcoin-computer/components'
 
 function Module() {
   const [computer] = useState(Auth.getComputer())
@@ -17,8 +17,8 @@ function Module() {
         // @ts-ignore
         setModue(await computer.load(modSpec))
       } catch (error) {
-        showSnackBar("Error fetching module object", false)
-        console.log("Error fetching module object", error)
+        showSnackBar('Error fetching module object', false)
+        console.log('Error fetching module object', error)
       }
     }
     fetch()
