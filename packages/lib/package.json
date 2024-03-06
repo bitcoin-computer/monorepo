@@ -37,6 +37,20 @@
     "publish-lib": "npm publish",
     "test": "mocha --require ts-node/register 'test/**/*.ts'"
   },
+  "devDependencies": {
+    "@types/bitcoin-computer__lib": "0.17.0",
+    "@types/mocha": "^10.0.6",
+    "chai": "^4.3.6",
+    "mocha": "^10.0.0",
+    "ts-node": "^10.9.1"
+  },
+  "keywords": [
+    "Bitcoin",
+    "Litecoin",
+    "Smart Contracts",
+    "Javascript"
+  ],
+  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027",
   "dependencies": {
     "@babel/parser": "^7.20.7",
     "@bitcoin-computer/nakamotojs": "^0.17.2-beta.0",
@@ -72,19 +86,5 @@
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1",
     "varuint-bitcoin": "^1.1.2"
-  },
-  "devDependencies": {
-    "@types/bitcoin-computer__lib": "0.17.0",
-    "@types/mocha": "^10.0.6",
-    "chai": "^4.3.6",
-    "mocha": "^10.0.0",
-    "ts-node": "^10.9.1"
-  },
-  "keywords": [
-    "Bitcoin",
-    "Litecoin",
-    "Smart Contracts",
-    "Javascript"
-  ],
-  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
+  }
 }
