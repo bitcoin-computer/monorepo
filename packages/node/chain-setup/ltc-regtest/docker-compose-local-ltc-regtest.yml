@@ -12,7 +12,7 @@ services:
     env_file: .env
     networks:
       - bitcoin
-    image: bcdb/litecoind:0.21.2.2
+    image: bcdb/litecoind-regtest:0.21.2.2
     ports:
       # 19444 for regtest, 19333 testnet, 9333 if running on mainnet
       - 19444:19444
