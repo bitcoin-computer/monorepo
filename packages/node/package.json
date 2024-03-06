@@ -44,6 +44,13 @@
     "test-unit": "npm run test -- -u",
     "up": "./scripts/up.py"
   },
+  "keywords": [
+    "Bitcoin",
+    "Litecoin",
+    "Smart Contracts",
+    "Javascript"
+  ],
+  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027",
   "dependencies": {
     "@babel/core": "^7.18.5",
     "@bitcoin-computer/lib": "^0.17.2-beta.0",
@@ -80,12 +87,5 @@
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.7.1",
     "zeromq": "6.0.0-beta.6"
-  },
-  "keywords": [
-    "Bitcoin",
-    "Litecoin",
-    "Smart Contracts",
-    "Javascript"
-  ],
-  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
+  }
 }
