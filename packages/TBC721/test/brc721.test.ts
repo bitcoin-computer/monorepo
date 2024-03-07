@@ -5,6 +5,8 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '../src/nft'
 import { TBC721 } from '../src/tbc721'
 
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
 /**
  * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
  */
@@ -34,7 +36,7 @@ describe('TBC721', () => {
     it('Should mint tokens', async () => {
       const tbc721 = new TBC721(computer)
       const publicKey = tbc721.computer.getPublicKey()
-      const rev = await tbc721.mint(publicKey, 'name', 'symbol')
+      const rev = await tbc721.mint('name', 'symbol')
       expect(rev).not.to.be.undefined
       expect(typeof rev).to.eq('object')
     })
@@ -44,8 +46,9 @@ describe('TBC721', () => {
     it('Should compute the balance', async () => {
       const tbc721 = new TBC721(computer)
       const publicKey = computer.getPublicKey()
-      tbc721.mint(publicKey, 'name', 'symbol')
+      tbc721.mint('name', 'symbol')
       expect(tbc721).not.to.be.undefined
+      await sleep(500)
       const balance = await tbc721.balanceOf(publicKey)
       expect(balance).to.be.greaterThanOrEqual(1)
     })
@@ -56,7 +59,7 @@ describe('TBC721', () => {
       const computer2 = new Computer()
       const tbc721 = new TBC721(computer)
       const publicKey = tbc721.computer.getPublicKey()
-      const token = await tbc721.mint(publicKey, 'name', 'symbol')
+      const token = await tbc721.mint('name', 'symbol')
       const publicKey2 = computer2.getPublicKey()
       await tbc721.transfer(publicKey2, token._id)
       const res = await tbc721.balanceOf(publicKey)

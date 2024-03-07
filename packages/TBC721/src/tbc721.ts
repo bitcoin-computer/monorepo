@@ -14,8 +14,8 @@ export class TBC721 implements ITBC721 {
     this.computer = computer
   }
 
-  async mint(to: string, name?: string, symbol?: string, url?: string): Promise<NFT> {
-    return this.computer.new(NFT, [to, name, symbol, url])
+  async mint(name?: string, symbol?: string): Promise<NFT> {
+    return this.computer.new(NFT, [name, symbol])
   }
 
   async balanceOf(publicKey: string): Promise<number> {
