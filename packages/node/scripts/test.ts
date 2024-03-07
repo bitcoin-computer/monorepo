@@ -44,8 +44,6 @@ if (args.integration) {
   command = `${command} .mocharc-unit.json`
 }
 
-console.log(command)
-
 const childProcess = spawnSync(command, { shell: true, stdio: 'inherit' })
 
 // Check for errors and log them
