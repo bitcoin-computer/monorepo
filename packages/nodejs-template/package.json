@@ -15,7 +15,6 @@
     "@bitcoin-computer/lib": "^0.17.2-beta.0"
   },
   "devDependencies": {
-    "@types/bitcoin-computer__lib": "^0.17.2",
     "@types/mocha": "^10.0.6",
     "@types/node": "~20.11.21",
     "chai": "^5.1.0",

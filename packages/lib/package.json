@@ -75,7 +75,6 @@
     "varuint-bitcoin": "^1.1.2"
   },
   "devDependencies": {
-    "@types/bitcoin-computer__lib": "0.17.2",
     "@types/mocha": "^10.0.6",
     "chai": "^4.3.6",
     "mocha": "^10.0.0",
