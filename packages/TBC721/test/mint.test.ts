@@ -2,6 +2,7 @@ import { expect } from 'chai'
 import { mint } from '../src/mint'
 import { NFT } from '../src/nft'
 import { Computer } from '@bitcoin-computer/lib'
+import { deploy } from '../src/deploy'
 
 let computer = new Computer({
   network: 'regtest',
@@ -18,14 +19,15 @@ before(async () => {
 describe('mint', () => {
   let nft: NFT
   before('Mint a NFT smart object', async () => {
-    nft = await mint(computer, 'name', 'symbol')
+    const mod = await deploy(computer)
+    nft = await mint(computer, 'name', 'symbol', mod)
   })
 
   it('Should mint an NFT smart object', () => {
     expect(Object.keys(nft)).deep.eq(['name', 'symbol', '_root', '_rev', '_id', '_amount', '_owners'])
   })
 
-  it('Should set name and symbo', () => {
+  it('Should set name and symbol', () => {
     expect(nft.name).eq('name')
     expect(nft.symbol).eq('symbol')
   })
