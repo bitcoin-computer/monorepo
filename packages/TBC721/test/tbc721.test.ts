@@ -4,6 +4,7 @@ import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '../src/nft'
 import { TBC721 } from '../src/tbc721'
+import { mint } from '../src/mint'
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
@@ -23,46 +24,39 @@ before(async () => {
 describe('TBC721', () => {
   describe('Constructor', () => {
     it('Should create a new TBC721 object', async () => {
-      const nft = new NFT('name', 'symbol')
-      expect(nft).not.to.be.undefined
-      expect(nft).to.deep.eq({
-        name: 'name',
-        symbol: 'symbol',
-      })
-    })
-  })
-
-  describe('mint', () => {
-    it('Should mint tokens', async () => {
       const tbc721 = new TBC721(computer)
-      const publicKey = tbc721.computer.getPublicKey()
-      const rev = await tbc721.mint('name', 'symbol')
-      expect(rev).not.to.be.undefined
-      expect(typeof rev).to.eq('object')
+      expect(tbc721.computer).deep.eq(computer)
     })
   })
 
   describe('balanceOf', () => {
     it('Should compute the balance', async () => {
       const tbc721 = new TBC721(computer)
-      const publicKey = computer.getPublicKey()
-      tbc721.mint('name', 'symbol')
-      expect(tbc721).not.to.be.undefined
+      await mint(computer, 'name', 'symbol')
       await sleep(500)
-      const balance = await tbc721.balanceOf(publicKey)
+      const balance = await tbc721.balanceOf(computer.getPublicKey())
       expect(balance).to.be.greaterThanOrEqual(1)
     })
   })
 
+  describe('ownerOf', () => {
+    it('Should compute the balance', async () => {
+      const tbc721 = new TBC721(computer)
+      const nft = await mint(computer, 'name', 'symbol')
+      await sleep(500)
+      const owners = await tbc721.ownersOf(nft._id)
+      expect(owners).deep.eq([computer.getPublicKey()])
+    })
+  })
+
   describe('transfer', () => {
-    it('Should transfer a token', async () => {
+    it('Should transfer an NFT', async () => {
       const computer2 = new Computer()
       const tbc721 = new TBC721(computer)
-      const publicKey = tbc721.computer.getPublicKey()
-      const token = await tbc721.mint('name', 'symbol')
+      const nft = await mint(computer, 'name', 'symbol')
       const publicKey2 = computer2.getPublicKey()
-      await tbc721.transfer(publicKey2, token._id)
-      const res = await tbc721.balanceOf(publicKey)
+      await tbc721.transfer(publicKey2, nft._id)
+      const res = await tbc721.balanceOf(computer.getPublicKey())
       expect(res).to.be.greaterThanOrEqual(1)
     })
   })
