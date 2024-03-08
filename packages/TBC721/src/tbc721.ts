@@ -8,13 +8,16 @@ interface ITBC721 {
 
 export class TBC721 implements ITBC721 {
   computer: any
+  mod: string
 
-  constructor(computer: any) {
+  constructor(computer: any, mod: string) {
     this.computer = computer
+    this.mod = mod
   }
 
   async balanceOf(publicKey: string): Promise<number> {
-    const revs = await this.computer.query({ publicKey })
+    const { mod } = this
+    const revs = await this.computer.query({ publicKey, mod })
     const objects: NFT[] = await Promise.all(revs.map((rev) => this.computer.sync(rev)))
     return objects.length
   }

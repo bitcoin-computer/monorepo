@@ -28,14 +28,14 @@ before(async () => {
 describe('TBC721', () => {
   describe('Constructor', () => {
     it('Should create a new TBC721 object', async () => {
-      const tbc721 = new TBC721(computer)
+      const tbc721 = new TBC721(computer, mod)
       expect(tbc721.computer).deep.eq(computer)
     })
   })
 
   describe('balanceOf', () => {
     it('Should compute the balance', async () => {
-      const tbc721 = new TBC721(computer)
+      const tbc721 = new TBC721(computer, mod)
       await mint(computer, 'name', 'symbol', mod)
       await sleep(500)
       const balance = await tbc721.balanceOf(computer.getPublicKey())
@@ -45,7 +45,7 @@ describe('TBC721', () => {
 
   describe('ownerOf', () => {
     it('Should compute the balance', async () => {
-      const tbc721 = new TBC721(computer)
+      const tbc721 = new TBC721(computer, mod)
       const nft = await mint(computer, 'name', 'symbol', mod)
       await sleep(500)
       const owners = await tbc721.ownersOf(nft._id)
@@ -56,9 +56,10 @@ describe('TBC721', () => {
   describe('transfer', () => {
     it('Should transfer an NFT', async () => {
       const computer2 = new Computer()
-      const tbc721 = new TBC721(computer)
+      const tbc721 = new TBC721(computer, mod)
       const nft = await mint(computer, 'name', 'symbol', mod)
       const publicKey2 = computer2.getPublicKey()
+      await sleep(500)
       await tbc721.transfer(publicKey2, nft._id)
       const res = await tbc721.balanceOf(computer.getPublicKey())
       expect(res).to.be.greaterThanOrEqual(1)
