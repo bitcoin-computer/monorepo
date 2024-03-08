@@ -31,7 +31,7 @@ const meta = {
 
 const symbol = ''
 
-describe('Non-Fungible Token (NFT)', () => {
+describe('NFT', () => {
   let nft: NFT
   let initialId: string
   let initialRev: string
@@ -44,7 +44,7 @@ describe('Non-Fungible Token (NFT)', () => {
     await sender.faucet(0.001e8)
   })
 
-  describe('Minting an NFT', () => {
+  describe('Constructor', () => {
     it('Sender mints an NFT', async () => {
       nft = await sender.new(NFT, ['Test'])
       // @ts-ignore
@@ -69,7 +69,7 @@ describe('Non-Fungible Token (NFT)', () => {
   })
 
 
-  describe('Transferring an NFT', async () => {
+  describe('transfer', async () => {
     it('Sender transfers the NFT to receiver', async () => {
       await nft.transfer(receiver.getPublicKey())
       // @ts-ignore

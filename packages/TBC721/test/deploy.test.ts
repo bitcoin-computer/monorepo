@@ -1,5 +1,5 @@
 import { deploy } from '../src/deploy'
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 
 let computer = new Computer({
