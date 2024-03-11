@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@bitcoin-computer/lib": "^0.17.2-beta.0",
-    "flowbite": "^2.2.1",
+    "flowbite": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
