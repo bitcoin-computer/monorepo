@@ -871,9 +871,7 @@ class Psbt {
     );
     if (!hashesForSig || !hashesForSig.length)
       throw new Error(
-        `Can not sign for input #${inputIndex} with the key ${keyPair.publicKey.toString(
-          'hex',
-        )}`,
+        `Can not sign for input #${inputIndex} with the key ${keyPair.publicKey.toString('hex')}`,
       );
     return hashesForSig;
   }
@@ -1727,10 +1725,10 @@ function getMeaningfulScript(
     type: isP2SHP2WSH
       ? 'p2sh-p2wsh'
       : isP2SH
-      ? 'p2sh'
-      : isP2WSH
-      ? 'p2wsh'
-      : 'raw',
+        ? 'p2sh'
+        : isP2WSH
+          ? 'p2wsh'
+          : 'raw',
   };
 }
 function checkInvalidP2WSH(script) {

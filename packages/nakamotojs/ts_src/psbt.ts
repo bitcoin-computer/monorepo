@@ -906,7 +906,7 @@ export class Psbt {
               input.sighashType,
             ),
             leafHash: h.leafHash,
-          } as TapScriptSig),
+          }) as TapScriptSig,
       );
 
     if (tapKeySig) {
@@ -1670,8 +1670,9 @@ function getHashForSig(
     );
   } else if (isP2WPKH(meaningfulScript)) {
     // P2WPKH uses the P2PKH template for prevoutScript when signing
-    const signingScript = payments.p2pkh({ hash: meaningfulScript.slice(2) })
-      .output!;
+    const signingScript = payments.p2pkh({
+      hash: meaningfulScript.slice(2),
+    }).output!;
     hash = unsignedTx.hashForWitnessV0(
       inputIndex,
       signingScript,
@@ -2233,10 +2234,10 @@ function getMeaningfulScript(
     type: isP2SHP2WSH
       ? 'p2sh-p2wsh'
       : isP2SH
-      ? 'p2sh'
-      : isP2WSH
-      ? 'p2wsh'
-      : 'raw',
+        ? 'p2sh'
+        : isP2WSH
+          ? 'p2wsh'
+          : 'raw',
   };
 }
 

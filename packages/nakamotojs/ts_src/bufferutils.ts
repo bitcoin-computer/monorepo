@@ -62,7 +62,10 @@ export class BufferWriter {
     return new BufferWriter(Buffer.alloc(size));
   }
 
-  constructor(public buffer: Buffer, public offset: number = 0) {
+  constructor(
+    public buffer: Buffer,
+    public offset: number = 0,
+  ) {
     typeforce(types.tuple(types.Buffer, types.UInt32), [buffer, offset]);
   }
 
@@ -116,7 +119,10 @@ export class BufferWriter {
  * Helper class for reading of bitcoin data types from a buffer.
  */
 export class BufferReader {
-  constructor(public buffer: Buffer, public offset: number = 0) {
+  constructor(
+    public buffer: Buffer,
+    public offset: number = 0,
+  ) {
     typeforce(types.tuple(types.Buffer, types.UInt32), [buffer, offset]);
   }
 
