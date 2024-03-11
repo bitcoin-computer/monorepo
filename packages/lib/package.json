@@ -13,6 +13,7 @@
     "type": "git",
     "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib"
   },
+  "types": "./computer.d.ts",
   "main": "dist/bc-lib.main.es.mjs",
   "module": "dist/bc-lib.module.es.mjs",
   "browser": "dist/bc-lib.browser.es.mjs",
@@ -74,7 +75,6 @@
     "varuint-bitcoin": "^1.1.2"
   },
   "devDependencies": {
-    "@types/bitcoin-computer__lib": "0.17.2",
     "@types/mocha": "^10.0.6",
     "chai": "^4.3.6",
     "mocha": "^10.0.0",

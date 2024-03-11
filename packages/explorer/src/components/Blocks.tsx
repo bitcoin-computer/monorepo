@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Auth, UtilsContext } from "@bitcoin-computer/components"
+import { useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Auth, UtilsContext } from '@bitcoin-computer/components'
 
 export default function Blocks() {
   const navigate = useNavigate()
@@ -18,13 +18,13 @@ export default function Blocks() {
       try {
         showLoader(true)
         // @ts-ignore
-        const res = await computer.rpcCall("getblockchaininfo", "")
+        const res = await computer.rpcCall('getblockchaininfo', '')
         setTotalBlocks(res.result.blocks)
         showLoader(false)
       } catch (error) {
         showLoader(false)
-        console.log("Error getting blocks", error)
-        showSnackBar("Error getting blocks", false)
+        console.log('Error getting blocks', error)
+        showSnackBar('Error getting blocks', false)
       }
     }
     fetch()
@@ -38,17 +38,17 @@ export default function Blocks() {
         length = totalBlocks - (pageNum * blocksPerPage + blocksPerPage - 1) + blocksPerPage - 1
       }
       setBlocks(
-        Array.from({ length: length }, (_, i) => totalBlocks - (pageNum * blocksPerPage + i))
+        Array.from({ length: length }, (_, i) => totalBlocks - (pageNum * blocksPerPage + i)),
       )
     } catch (error) {
-      showSnackBar("Error setting blocks", false)
-      console.log("Error setting blocks", error)
+      showSnackBar('Error setting blocks', false)
+      console.log('Error setting blocks', error)
     }
   }, [totalBlocks, pageNum])
 
   const handleClick = async (block: number) => {
     // @ts-ignore
-    const res = await computer.wallet.restClient.rpc("getblockhash", `${block}`)
+    const res = await computer.wallet.restClient.rpc('getblockhash', `${block}`)
     const blockHash = res.result.result
     navigate(`/blocks/${blockHash}`)
   }

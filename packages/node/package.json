@@ -81,9 +81,7 @@
     "winston-daily-rotate-file": "^5.0.0",
     "zeromq": "6.0.0-beta.6"
   },
-  "devDependencies": {
-    "@types/bitcoin-computer__lib": "^0.17.2"
-  },
+  "devDependencies": {},
   "keywords": [
     "Bitcoin",
     "Litecoin",

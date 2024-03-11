@@ -1,12 +1,12 @@
-import { Link } from "react-router-dom"
-import { Modal, Auth, UtilsContext, Drawer } from "@bitcoin-computer/components"
-import { SearchBar } from "./SearchBar"
-import { useEffect, useState } from "react"
-import { initFlowbite } from "flowbite"
-import { Chain, Network } from "../types/common"
+import { Link } from 'react-router-dom'
+import { Modal, Auth, UtilsContext, Drawer } from '@bitcoin-computer/components'
+import { SearchBar } from './SearchBar'
+import { useEffect, useState } from 'react'
+import { initFlowbite } from 'flowbite'
+import { Chain, Network } from '../types/common'
 
-const modalTitle = "Connect to Node"
-const modalId = "unsupported-config-modal"
+const modalTitle = 'Connect to Node'
+const modalId = 'unsupported-config-modal'
 
 function LoggedInMenu() {
   return (
@@ -33,18 +33,18 @@ function LoggedInMenu() {
 
 function formatChainAndNetwork(chain: string, network: string) {
   const prefix = {
-    mainnet: "",
-    testnet: "t",
-    regtest: "r",
+    mainnet: '',
+    testnet: 't',
+    regtest: 'r',
   }[network]
   return `${prefix}${chain}`
 }
 
 function ModalContent() {
-  const [url, setUrl] = useState<string>("")
+  const [url, setUrl] = useState<string>('')
   function setNetwork(e: React.SyntheticEvent) {
     e.preventDefault()
-    localStorage.setItem("URL", url)
+    localStorage.setItem('URL', url)
   }
 
   function closeModal() {
@@ -105,7 +105,7 @@ function ModalContent() {
 }
 
 function NotLoggedMenu() {
-  const [dropDownLabel, setDropDownLabel] = useState<string>("LTC")
+  const [dropDownLabel, setDropDownLabel] = useState<string>('LTC')
   const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
@@ -117,13 +117,13 @@ function NotLoggedMenu() {
 
   const setChainAndNetwork = (chain: Chain, network: Network) => {
     try {
-      localStorage.setItem("URL", Auth.getUrl(chain, network))
-      localStorage.setItem("CHAIN", chain)
-      localStorage.setItem("NETWORK", network)
+      localStorage.setItem('URL', Auth.getUrl(chain, network))
+      localStorage.setItem('CHAIN', chain)
+      localStorage.setItem('NETWORK', network)
       setDropDownLabel(formatChainAndNetwork(chain, network))
-      window.location.href = "/"
+      window.location.href = '/'
     } catch (err) {
-      showSnackBar("Error setting chain and network", false)
+      showSnackBar('Error setting chain and network', false)
       Modal.get(modalId).show()
     }
   }
@@ -165,7 +165,7 @@ function NotLoggedMenu() {
             >
               <li>
                 <div
-                  onClick={() => setChainAndNetwork("LTC", "mainnet")}
+                  onClick={() => setChainAndNetwork('LTC', 'mainnet')}
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   Litecoin
@@ -173,7 +173,7 @@ function NotLoggedMenu() {
               </li>
               <li>
                 <div
-                  onClick={() => setChainAndNetwork("LTC", "testnet")}
+                  onClick={() => setChainAndNetwork('LTC', 'testnet')}
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   Litecoin Testnet
@@ -181,7 +181,7 @@ function NotLoggedMenu() {
               </li>
               <li>
                 <div
-                  onClick={() => setChainAndNetwork("LTC", "regtest")}
+                  onClick={() => setChainAndNetwork('LTC', 'regtest')}
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   Litecoin Regtest
@@ -194,7 +194,7 @@ function NotLoggedMenu() {
             >
               <li>
                 <div
-                  onClick={() => setChainAndNetwork("BTC", "mainnet")}
+                  onClick={() => setChainAndNetwork('BTC', 'mainnet')}
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   Bitcoin
@@ -202,7 +202,7 @@ function NotLoggedMenu() {
               </li>
               <li>
                 <div
-                  onClick={() => setChainAndNetwork("BTC", "testnet")}
+                  onClick={() => setChainAndNetwork('BTC', 'testnet')}
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   Bitcoin Testnet
@@ -210,7 +210,7 @@ function NotLoggedMenu() {
               </li>
               <li>
                 <div
-                  onClick={() => setChainAndNetwork("BTC", "regtest")}
+                  onClick={() => setChainAndNetwork('BTC', 'regtest')}
                   className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
                 >
                   Bitcoin Regtest

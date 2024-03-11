@@ -1,7 +1,7 @@
-import { useRef, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Auth } from "@bitcoin-computer/components"
-import { isValidHexadecimalPublicKey } from "../utils"
+import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { Auth } from '@bitcoin-computer/components'
+import { isValidHexadecimalPublicKey } from '../utils'
 
 export function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -10,15 +10,15 @@ export function SearchBar() {
   const navigate = useNavigate()
 
   const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === "Enter") {
+    if (event.key === 'Enter') {
       search(inputRef?.current?.value)
     }
   }
 
   const search = async (searchInput: string | undefined) => {
     if (searchInput) {
-      if (searchInput === "") navigate("/")
-      else if (searchInput.includes(":")) {
+      if (searchInput === '') navigate('/')
+      else if (searchInput.includes(':')) {
         try {
           // @ts-ignore
           await computer.load(searchInput)
