@@ -10,7 +10,7 @@ chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
 const opts = {
-  mnemonic: 'replace this seed',
+  mnemonic: 'play cousin message bronze deposit paddle please limit sibling flight assault found system food search',
   url: 'http://127.0.0.1:1031',
   network: 'regtest' as any,
 }
@@ -43,7 +43,6 @@ describe('Bitcoin Computer', () => {
   it('should create a smart object', async () => {
     const computer = new Computer(opts)
 
-    // @ts-ignore
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)
     // @ts-ignore
@@ -60,7 +59,6 @@ describe('Bitcoin Computer', () => {
   it('should update a smart object', async () => {
     const computer = new Computer(opts)
 
-    // @ts-ignore
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)
     await counter.inc()
