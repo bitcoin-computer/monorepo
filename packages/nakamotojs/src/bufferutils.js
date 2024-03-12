@@ -39,15 +39,13 @@ function writeUInt64LE(buffer, value, offset) {
 exports.writeUInt64LE = writeUInt64LE;
 function reverseBuffer(buffer) {
   if (buffer.length < 1) return buffer;
+  const reversedBuffer = Buffer.alloc(buffer.length);
   let j = buffer.length - 1;
-  let tmp = 0;
-  for (let i = 0; i < buffer.length / 2; i++) {
-    tmp = buffer[i];
-    buffer[i] = buffer[j];
-    buffer[j] = tmp;
+  for (let i = 0; i < buffer.length; i++) {
+    reversedBuffer[i] = buffer[j];
     j--;
   }
-  return buffer;
+  return reversedBuffer;
 }
 exports.reverseBuffer = reverseBuffer;
 function cloneBuffer(buffer) {
