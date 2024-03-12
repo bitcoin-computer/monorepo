@@ -70,4 +70,5 @@ export declare class Transaction {
     private __toBuffer;
     serialize(): string;
     static deserialize(s: string): Transaction;
+    getInRevs(): string[];
 }

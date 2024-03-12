@@ -611,6 +611,11 @@ class Transaction {
     const buf = Buffer.from(s, 'base64');
     return Transaction.fromBuffer(buf);
   }
+  getInRevs() {
+    return this.ins.map(
+      i => `${_1.bufferUtils.reverseBuffer(i.hash).toString('hex')}:${i.index}`,
+    );
+  }
 }
 exports.Transaction = Transaction;
 Transaction.DEFAULT_SEQUENCE = 0xffffffff;

@@ -795,4 +795,8 @@ export class Transaction {
     const buf = Buffer.from(s, 'base64')
     return Transaction.fromBuffer(buf)
   }
+
+  getInRevs() {
+    return this.ins.map((i: any) => `${bufferUtils.reverseBuffer(i.hash).toString('hex')}:${i.index}`)
+  }
 }
