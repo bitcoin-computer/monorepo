@@ -68,4 +68,6 @@ export declare class Transaction {
     setInputScript(index: number, scriptSig: Buffer): void;
     setWitness(index: number, witness: Buffer[]): void;
     private __toBuffer;
+    serialize(): string;
+    static deserialize(s: string): Transaction;
 }

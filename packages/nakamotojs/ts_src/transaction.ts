@@ -785,4 +785,14 @@ export class Transaction {
       return buffer.slice(initialOffset, bufferWriter.offset);
     return buffer;
   }
+
+  serialize(): string {
+    const buf = this.toBuffer()
+    return buf.toString('base64')
+  }
+
+  static deserialize(s: string): Transaction {
+    const buf = Buffer.from(s, 'base64')
+    return Transaction.fromBuffer(buf)
+  }
 }
