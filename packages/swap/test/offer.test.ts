@@ -69,15 +69,12 @@ describe.only('Offer', () => {
     })
 
     it('Alice creates an offer transaction', async () => {
-      const buf = aliceTx.toBuffer()
-      const str = buf.toString('base64')
-
       const inRevs = aliceTx.ins.map((i: any) => `${bufferUtils.reverseBuffer(i.hash).toString('hex')}:${i.index}`)
       // @ts-ignore
       await alice.faucet(1e8)
       // @ts-ignore
       const { tx: offerTx } = await alice.encode({
-        exp: `${Offer} new Offer("${bob.getPublicKey()}", "${(bob as any).getUrl()}", "${str}")`,
+        exp: `${Offer} new Offer("${bob.getPublicKey()}", "${(bob as any).getUrl()}", "${aliceTx.serialize()}")`,
         exclude: inRevs
       })
       offerId = await alice.broadcast(offerTx)
@@ -91,8 +88,7 @@ describe.only('Offer', () => {
     it('Bob syncs to the offer transaction and extracts the swap transaction', async () => {
       const { res: syncedOffer } = await bob.sync(offerId)
       const { json } = syncedOffer
-      const buf = Buffer.from(json, 'base64')
-      bobsTx = Transaction.fromBuffer(buf)
+      bobsTx = Transaction.deserialize(json)
     })
 
     it('Bob signs the swap transaction', async () => {
