@@ -1,10 +1,11 @@
 /* eslint-disable no-unused-expressions */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import chai, { expect } from 'chai'
+import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '../src/nft'
 import chaiMatchPattern from 'chai-match-pattern'
 
+const { expect } = chai
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
@@ -12,8 +13,8 @@ const _ = chaiMatchPattern.getLodashModule()
  * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
  */
 const RLTC: {
-  network: 'regtest',
-  chain: 'LTC',
+  network: 'regtest'
+  chain: 'LTC'
   url: string
 } = {
   network: 'regtest',
@@ -38,7 +39,7 @@ describe('Non-Fungible Token (NFT)', () => {
   let initialRoot: string
   let sender = new Computer(RLTC)
   let receiver = new Computer(RLTC)
-  
+
   before("Fund sender's wallet", async () => {
     await sender.faucet(0.001e8)
   })
@@ -66,7 +67,6 @@ describe('Non-Fungible Token (NFT)', () => {
       expect(await sender.sync(nft._rev)).deep.eq(nft)
     })
   })
-
 
   describe('Transferring an NFT', async () => {
     it('Sender transfers the NFT to receiver', async () => {

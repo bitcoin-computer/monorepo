@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react"
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
-import { Auth, UtilsContext } from "@bitcoin-computer/components"
+import { useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Auth, UtilsContext } from '@bitcoin-computer/components'
 
 function Block() {
   const navigate = useNavigate()
@@ -18,14 +18,14 @@ function Block() {
         // setIsLoading(true)
         showLoader(true)
         // @ts-ignore
-        const res = await computer.rpcCall("getblock", `${block} 2`)
+        const res = await computer.rpcCall('getblock', `${block} 2`)
         setBlockData(res.result)
         // setIsLoading(false)
         showLoader(false)
       } catch (error) {
         // setIsLoading(false)
         showLoader(false)
-        showSnackBar("Error getting block", false)
+        showSnackBar('Error getting block', false)
       }
     }
     fetch()
