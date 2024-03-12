@@ -1,17 +1,20 @@
 
 <div align="center">
-  <h1>TBC Node.js Template</h1>
+  <h1>TBC Swaps</h1>
   <p>
-    A template for Node.js with TypeScript and the Bitcoin Computer
+    A collection of swap smart contracts for the Bitcoin Computer
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
-
-  <a href="">[![TypeScript version][ts-badge]][typescript-4-5]</a>
-  <a href="">[![Node.js version][nodejs-badge]][nodejs]
 </a>
-
 </div>
+
+This package contains the following smart contracts
+* [Swap](./src/swap.ts). A static swap function for two smart objects that are known in advance
+* [Swappable](./src/swappable.ts). A NFT contract with a built in swap method to swap against a known smart object.
+* [Offer](./src/offer.ts). A contract for creating a buy offer and communicating the offer over the blockchain
+* [Sale](./src/sale.ts). A contract for selling a smart object for a pre-determined amount of satoshis.
+* [OrdSale](./src/ord-sale.ts). An ordinals safe contract for selling a smart object for a pre-determined amount of satoshis.
 
 ## Prerequisites
 
@@ -36,7 +39,7 @@ npm install
 
 ## Usage
 
-You can use the commands below in the folder `packages/nodejs-template`.
+You can use the commands below in the folder `packages/swap`.
 
 ### Run the Tests
 
