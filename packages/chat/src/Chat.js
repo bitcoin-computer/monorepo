@@ -11,8 +11,8 @@ function Chat({ computer }) {
 
   useEffect(() => {
     const refreshChat = async () => {
-      if(computer) {
-        const [latestRev] = await computer.query({ids:[rev]})
+      if (computer) {
+        const [latestRev] = await computer.query({ ids: [rev] })
         setChat(await computer.sync(latestRev))
       }
     }
@@ -31,21 +31,24 @@ function Chat({ computer }) {
       await chat.post(line)
       console.log(`Sent message ${line}\n  chat id  ${chat._id}\n  chat rev ${chat._rev}`)
     } catch (error) {
-      if (error.message.startsWith("Insufficient balance in address")){
-        alert("You have to fund your wallet");
+      if (error.message.startsWith('Insufficient balance in address')) {
+        alert('You have to fund your wallet')
       }
     }
     setMessage('')
   }
 
-  return <div>
-    <InviteUser chat={chat}></InviteUser><br />
-    <textarea rows="12" cols="60" value={chat.messages.join('\n')} readOnly></textarea>
-    <form onSubmit={send}>
-      <input type="string" value={message} onChange={(e) => setMessage(e.target.value)} />
-      <button type="submit">Send</button>
-    </form>
-  </div>
+  return (
+    <div>
+      <InviteUser chat={chat}></InviteUser>
+      <br />
+      <textarea rows="12" cols="60" value={chat.messages.join('\n')} readOnly></textarea>
+      <form onSubmit={send}>
+        <input type="string" value={message} onChange={(e) => setMessage(e.target.value)} />
+        <button type="submit">Send</button>
+      </form>
+    </div>
+  )
 }
 
 export default Chat

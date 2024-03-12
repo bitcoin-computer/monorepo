@@ -10,7 +10,11 @@ function InviteUser({ chat }) {
       console.log(err)
     }
   }
-  return <div><button onClick={inviteUser}>Invite User</button></div>
+  return (
+    <div>
+      <button onClick={inviteUser}>Invite User</button>
+    </div>
+  )
 }
 
 export default InviteUser

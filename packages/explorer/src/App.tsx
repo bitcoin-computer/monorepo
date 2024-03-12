@@ -1,12 +1,12 @@
-import "./App.css"
-import { useEffect } from "react"
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import NavBar from "./components/Navbar"
-import Block from "./components/Block"
-import Blocks from "./components/Blocks"
-import Module from "./components/Module"
-import Playground from "./components/playground/Playground"
-import { initFlowbite } from "flowbite"
+import './App.css'
+import { useEffect } from 'react'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import NavBar from './components/Navbar'
+import Block from './components/Block'
+import Blocks from './components/Blocks'
+import Module from './components/Module'
+import Playground from './components/playground/Playground'
+import { initFlowbite } from 'flowbite'
 import {
   Auth,
   Gallery,
@@ -15,7 +15,7 @@ import {
   Error404,
   UtilsContext,
   Wallet,
-} from "@bitcoin-computer/components"
+} from '@bitcoin-computer/components'
 export default function App() {
   useEffect(() => {
     initFlowbite()
