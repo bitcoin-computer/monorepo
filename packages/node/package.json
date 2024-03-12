@@ -27,6 +27,7 @@
     "node": ">=16"
   },
   "scripts": {
+    "clean-logs": "rm *.log",
     "dist-clean": "rm -rf dist",
     "down": "./scripts/down.py",
     "fund-ltc": "node --loader ts-node/esm ./scripts/fund.ts ltc",
@@ -41,6 +42,7 @@
     "setup": "./scripts/setup.py",
     "types": "tsc -p tsconfig.json",
     "test": "node --loader ts-node/esm  ./scripts/test.ts",
+    "test-async-and-show": "npm run test &> node-test.log || true ; open node-test.log &",
     "test-unit": "npm run test -- -u",
     "up": "./scripts/up.py"
   },

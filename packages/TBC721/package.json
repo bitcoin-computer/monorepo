@@ -6,15 +6,17 @@
   "type": "module",
   "main": "build/src/index.js",
   "scripts": {
-    "start": "node build/src/main.js",
-    "clean": "rimraf coverage build tmp",
-    "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
+    "clean": "rimraf coverage build tmp",
+    "clean-logs": "rm *.log",
+    "deploy": "npx tsx src/deploy.ts",
     "lint": "eslint --fix . --ext .ts,.tsx",
+    "prebuild": "npm run lint",
+    "start": "node build/src/main.js",
     "test": "mocha --config .mocharc.json",
-    "types": "tsc --noEmit",
-    "deploy": "npx tsx src/deploy.ts"
+    "test-async-and-show": "npm run test &> tbc721-test.log || true ; open tbc721-test.log &",
+    "types": "tsc --noEmit"
   },
   "files": [
     "build"

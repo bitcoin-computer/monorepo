@@ -41,7 +41,6 @@ describe('Bitcoin Computer', () => {
   it('should create a smart object', async () => {
     const computer = new Computer(RLTC)
 
-    // @ts-ignore
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)
     // @ts-ignore
@@ -58,7 +57,6 @@ describe('Bitcoin Computer', () => {
   it('should update a smart object', async () => {
     const computer = new Computer(RLTC)
 
-    // @ts-ignore
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)
     await counter.inc()
