@@ -69,13 +69,12 @@ describe.only('Offer', () => {
     })
 
     it('Alice creates an offer transaction', async () => {
-      const inRevs = aliceTx.ins.map((i: any) => `${bufferUtils.reverseBuffer(i.hash).toString('hex')}:${i.index}`)
       // @ts-ignore
       await alice.faucet(1e8)
       // @ts-ignore
       const { tx: offerTx } = await alice.encode({
         exp: `${Offer} new Offer("${bob.getPublicKey()}", "${(bob as any).getUrl()}", "${aliceTx.serialize()}")`,
-        exclude: inRevs
+        exclude: aliceTx.getInRevs()
       })
       offerId = await alice.broadcast(offerTx)
     })
