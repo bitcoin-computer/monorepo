@@ -29,7 +29,7 @@ const meta = {
   _amount: _.isNumber,
 }
 
-describe.only('Offer', () => {
+describe('Offer', () => {
   let a: NFT
   let b: NFT
   const alice = new Computer(RLTC)
@@ -85,7 +85,7 @@ describe.only('Offer', () => {
     let txId: string
 
     it('Bob syncs to the offer transaction and extracts the swap transaction', async () => {
-      const { res: syncedOffer } = await bob.sync(offerId)
+      const { res: syncedOffer } = await bob.sync(offerId) as { res: { json: string }}
       const { json } = syncedOffer
       bobsTx = Transaction.deserialize(json)
     })
