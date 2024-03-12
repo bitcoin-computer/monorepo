@@ -3,17 +3,17 @@
 import chai, { expect } from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '../../TBC721/src/nft'
+import { Transaction } from '@bitcoin-computer/nakamotojs'
+import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Swap } from '../src/swap'
 import { Offer } from '../src/offer'
-import { Transaction, bufferUtils } from '@bitcoin-computer/nakamotojs'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
 const RLTC: {
-  network: 'regtest',
-  chain: 'LTC',
+  network: 'regtest'
+  chain: 'LTC'
   url: string
 } = {
   network: 'regtest',
@@ -42,18 +42,28 @@ describe('Offer', () => {
     // @ts-ignore
     await bob.faucet(0.001e8)
   })
-  
+
   describe('Alice and Bob create the NFTs they want to swap', () => {
-    it("Alice creates an NFT", async () => {
+    it('Alice creates an NFT', async () => {
       a = await alice.new(NFT, ['A', 'AAA'])
       // @ts-ignore
-      expect(a).to.matchPattern({ ...meta, name: 'A', symbol: 'AAA', _owners: [alice.getPublicKey()] })
+      expect(a).to.matchPattern({
+        ...meta,
+        name: 'A',
+        symbol: 'AAA',
+        _owners: [alice.getPublicKey()],
+      })
     })
 
-    it("Bob creates b", async () => {
+    it('Bob creates b', async () => {
       b = await bob.new(NFT, ['B', 'BBB'])
       // @ts-ignore
-      expect(b).to.matchPattern({ ...meta, name: 'B', symbol: 'BBB', _owners: [bob.getPublicKey()] })
+      expect(b).to.matchPattern({
+        ...meta,
+        name: 'B',
+        symbol: 'BBB',
+        _owners: [bob.getPublicKey()],
+      })
     })
   })
 
@@ -74,7 +84,7 @@ describe('Offer', () => {
       // @ts-ignore
       const { tx: offerTx } = await alice.encode({
         exp: `${Offer} new Offer("${bob.getPublicKey()}", "${(bob as any).getUrl()}", "${aliceTx.serialize()}")`,
-        exclude: aliceTx.getInRevs()
+        exclude: aliceTx.getInRevs(),
       })
       offerId = await alice.broadcast(offerTx)
     })
@@ -85,7 +95,7 @@ describe('Offer', () => {
     let txId: string
 
     it('Bob syncs to the offer transaction and extracts the swap transaction', async () => {
-      const { res: syncedOffer } = await bob.sync(offerId) as { res: { json: string }}
+      const { res: syncedOffer } = (await bob.sync(offerId)) as { res: { json: string } }
       const { json } = syncedOffer
       bobsTx = Transaction.deserialize(json)
     })
@@ -101,17 +111,27 @@ describe('Offer', () => {
     })
 
     it('a is now owned by Bob', async () => {
-      const { env } = await bob.sync(txId) as { env: { a: NFT, b: NFT } }
+      const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
       const aSwapped = env.a
       // @ts-ignore
-      expect(aSwapped).to.matchPattern({ ...meta, name: 'A', symbol: 'AAA', _owners: [bob.getPublicKey()] })
+      expect(aSwapped).to.matchPattern({
+        ...meta,
+        name: 'A',
+        symbol: 'AAA',
+        _owners: [bob.getPublicKey()],
+      })
     })
 
     it('b is now owned by Alice', async () => {
-      const { env } = await alice.sync(txId) as { env: { a: NFT, b: NFT } }
+      const { env } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
       const bSwapped = env.b
       // @ts-ignore
-      expect(bSwapped).to.matchPattern({ ...meta, name: 'B', symbol: 'BBB', _owners: [alice.getPublicKey()] })
+      expect(bSwapped).to.matchPattern({
+        ...meta,
+        name: 'B',
+        symbol: 'BBB',
+        _owners: [alice.getPublicKey()],
+      })
     })
   })
 })

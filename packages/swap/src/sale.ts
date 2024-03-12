@@ -1,5 +1,5 @@
 import { Contract } from '@bitcoin-computer/lib'
-import { NFT } from '../../TBC721/src/nft'
+import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 
 export class Sale extends Contract {
   static exec(a: NFT, b: NFT) {

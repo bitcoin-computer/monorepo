@@ -3,10 +3,10 @@
 import chai, { expect } from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '../../TBC721/src/nft'
+import { Transaction } from '@bitcoin-computer/nakamotojs'
+import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Sale } from '../src/sale'
 import { Payment } from '../src/payment'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -16,8 +16,8 @@ const randomRev = '0000000000000000000000000000000000000000000000000000000000000
 const mockedRev = `mock:${randomRev}`
 
 const RLTC: {
-  network: 'regtest',
-  chain: 'LTC',
+  network: 'regtest'
+  chain: 'LTC'
   url: string
 } = {
   network: 'regtest',
@@ -59,7 +59,7 @@ describe('Sale', () => {
   let sellerPublicKey: string
   const nftPrice = 0.1e8
   const fee = 100000
-  
+
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
     const seller = new Computer(RLTC)
@@ -83,6 +83,7 @@ describe('Sale', () => {
         exp: `${Sale} Sale.exec(nft, payment)`,
         env: { nft: nft._rev, payment: mock._rev },
         mocks: { payment: mock },
+        // eslint-disable-next-line no-bitwise
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
         inputIndex: 0,
         fund: false,
@@ -148,9 +149,11 @@ describe('Sale', () => {
       try {
         txId = await thief.broadcast(txClone)
         expect(true).eq(false)
-      } catch(err) {
-        if(err instanceof Error)
-          expect(err.message).eq('mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)')
+      } catch (err) {
+        if (err instanceof Error)
+          expect(err.message).eq(
+            'mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)',
+          )
       }
     })
   })
@@ -163,7 +166,6 @@ describe('Sale', () => {
 
     before("Fund Buyers's wallet", async () => {
       await buyer.faucet(nftPrice + fee)
-
     })
 
     it('Buyer creates a payment object', async () => {
@@ -208,7 +210,7 @@ describe('Sale', () => {
     })
 
     it('Buyer now owns the nft', async () => {
-      const { env } = await computer.sync(txId) as any
+      const { env } = (await computer.sync(txId)) as any
       expect(env.nft._owners).deep.eq([buyer.getPublicKey()])
     })
   })

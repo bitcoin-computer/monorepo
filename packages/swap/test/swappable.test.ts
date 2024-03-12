@@ -9,8 +9,8 @@ chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
 const RLTC: {
-  network: 'regtest',
-  chain: 'LTC',
+  network: 'regtest'
+  chain: 'LTC'
   url: string
 } = {
   network: 'regtest',
@@ -38,19 +38,28 @@ describe('Swapppable', () => {
     // @ts-ignore
     await bob.faucet(0.001e8)
   })
-  
+
   describe('Creating two NFTs to be swapped', () => {
-    it("Alice creates a", async () => {
+    it('Alice creates a', async () => {
       a = await alice.new(Swappable, ['A', 'AAA'])
       // @ts-ignore
-      expect(a).to.matchPattern({ ...meta, name: 'A', symbol: 'AAA', _owners: [alice.getPublicKey()] })
-
+      expect(a).to.matchPattern({
+        ...meta,
+        name: 'A',
+        symbol: 'AAA',
+        _owners: [alice.getPublicKey()],
+      })
     })
 
-    it("Bob creates b", async () => {
+    it('Bob creates b', async () => {
       b = await bob.new(Swappable, ['B', 'BBB'])
       // @ts-ignore
-      expect(b).to.matchPattern({ ...meta, name: 'B', symbol: 'BBB', _owners: [bob.getPublicKey()] })
+      expect(b).to.matchPattern({
+        ...meta,
+        name: 'B',
+        symbol: 'BBB',
+        _owners: [bob.getPublicKey()],
+      })
     })
   })
 
@@ -77,17 +86,27 @@ describe('Swapppable', () => {
     })
 
     it('a is now owned by Bob', async () => {
-      const { env } = await bob.sync(txId) as { env: { a: Swappable, b: Swappable } }
+      const { env } = (await bob.sync(txId)) as { env: { a: Swappable; b: Swappable } }
       const aSwapped = env.a
       // @ts-ignore
-      expect(aSwapped).to.matchPattern({ ...meta, name: 'A', symbol: 'AAA', _owners: [bob.getPublicKey()] })
+      expect(aSwapped).to.matchPattern({
+        ...meta,
+        name: 'A',
+        symbol: 'AAA',
+        _owners: [bob.getPublicKey()],
+      })
     })
 
     it('b is now owned by Alice', async () => {
-      const { env } = await alice.sync(txId) as { env: { a: Swappable, b: Swappable } }
+      const { env } = (await alice.sync(txId)) as { env: { a: Swappable; b: Swappable } }
       const bSwapped = env.b
       // @ts-ignore
-      expect(bSwapped).to.matchPattern({ ...meta, name: 'B', symbol: 'BBB', _owners: [alice.getPublicKey()] })
+      expect(bSwapped).to.matchPattern({
+        ...meta,
+        name: 'B',
+        symbol: 'BBB',
+        _owners: [alice.getPublicKey()],
+      })
     })
   })
 })
