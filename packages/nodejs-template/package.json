@@ -3,11 +3,13 @@
   "version": "0.17.2-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "scripts": {
-    "start": "node build/src/main.js",
-    "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.release.json",
+    "clean-logs": "rm *.log",
     "lint": "eslint --fix . --ext .ts,.tsx",
+    "prebuild": "npm run lint",
+    "start": "node build/src/main.js",
     "test": "mocha  --config .mocharc.json",
+    "test-async-and-show": "npm run test &> nodejs-template-test.log || true ; open nodejs-template-test.log &",
     "types": "tsc --noEmit"
   },
   "type": "module",

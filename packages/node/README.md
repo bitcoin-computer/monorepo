@@ -90,9 +90,9 @@ npm run fund-btc -- <address1> [<address2> ... <addressN>]
 
 </font>
 
-### Run the Tests
+### Run integration tests
 
-You can run the tests with the command below.
+You can run the integration tests with the command below.
 
 <font size=1>
 

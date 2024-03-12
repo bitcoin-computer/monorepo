@@ -34,9 +34,11 @@
   ],
   "type": "module",
   "scripts": {
+    "clean-logs": "rm *.log",
     "prepublishOnly": "./scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
-    "test": "mocha --require ts-node/register 'test/**/*.ts'"
+    "test": "mocha --require ts-node/register 'test/**/*.ts'",
+    "test-async-and-show": "npm run test &> lib-test.log || true; open lib-test.log &"
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
