@@ -6,15 +6,16 @@
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
+  <br />
 </a>
 </div>
 
-This package contains the following smart contracts
-* [Swap](./src/swap.ts). A static swap function for two smart objects that are known in advance
-* [Swappable](./src/swappable.ts). A NFT contract with a built in swap method to swap against a known smart object.
-* [Offer](./src/offer.ts). A contract for creating a buy offer and communicating the offer over the blockchain
-* [Sale](./src/sale.ts). A contract for selling a smart object for a pre-determined amount of satoshis.
-* [OrdSale](./src/ord-sale.ts). An ordinals safe contract for selling a smart object for a pre-determined amount of satoshis.
+This package contains the following smart contracts:
+* [Swap](./src/swap.ts). A static swap function for two smart objects.
+* [Swappable](./src/swappable.ts). A NFT contract with a built in swap method.
+* [Sale](./src/sale.ts). A contract for selling a smart object for a pre-determined amount of satoshis. This contract does not preserve ordinal ranges so it cannot be used to sell ordinals.
+* [OrdSale](./src/ord-sale.ts). An contract for selling an ordinal for a pre-determined amount of satoshis.
+* [Offer](./src/offer.ts). A contract for creating a buy or sell offer and communicating it over the blockchain. Can be used in combination with any of the swaps above.
 
 ## Prerequisites
 
