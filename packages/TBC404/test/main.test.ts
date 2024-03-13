@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
+import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { Counter } from '../src/main'
@@ -40,7 +41,6 @@ describe('Bitcoin Computer', () => {
   it('should create a smart object', async () => {
     const computer = new Computer(RLTC)
 
-    // @ts-ignore
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)
     // @ts-ignore
@@ -57,7 +57,6 @@ describe('Bitcoin Computer', () => {
   it('should update a smart object', async () => {
     const computer = new Computer(RLTC)
 
-    // @ts-ignore
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)
     await counter.inc()

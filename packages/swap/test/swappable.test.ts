@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
+import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { Swappable } from '../src/swappable'
@@ -33,9 +34,7 @@ describe('Swapppable', () => {
   const bob = new Computer(RLTC)
 
   before('Before', async () => {
-    // @ts-ignore
     await alice.faucet(0.01e8)
-    // @ts-ignore
     await bob.faucet(0.001e8)
   })
 
@@ -68,7 +67,6 @@ describe('Swapppable', () => {
     let txId: string
 
     it('Alice builds, funds, and signs a swap transaction', async () => {
-      // @ts-ignore
       ;({ tx } = await alice.encode({
         exp: `a.swap(b)`,
         env: { a: a._rev, b: b._rev },
@@ -76,7 +74,6 @@ describe('Swapppable', () => {
     })
 
     it('Bob signs the swap transaction', async () => {
-      // @ts-ignore
       await bob.sign(tx)
     })
 

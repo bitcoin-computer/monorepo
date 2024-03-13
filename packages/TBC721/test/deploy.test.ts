@@ -19,7 +19,6 @@ describe('deploy', () => {
   })
 
   it('Should point to the correct smart contract', async () => {
-    // @ts-ignore
     const { NFT } = await computer.load(rev)
     expect(NFT.toString().startsWith('class        NFT extends Contract {')).eq(true)
   })

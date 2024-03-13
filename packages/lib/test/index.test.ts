@@ -1,6 +1,6 @@
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
+import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-// @ts-ignore
 import { Computer, Contract } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 
@@ -530,7 +530,6 @@ describe('Sell', () => {
     it("Thief update's the swap transaction maliciously to receive the NFT at half the price", () => {
       const [paymentTxId, paymentIndex] = tooLowPayment._rev.split(':')
       txClone.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
-      // @ts-ignore
       txClone.updateOutput(1, { scriptPubKey: thief.toScriptPubKey() })
 
       // this is where the thief tries to alter the transaction in order

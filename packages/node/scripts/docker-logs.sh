@@ -30,10 +30,3 @@ fi
 node_container_image=$(docker compose -f docker-compose.yml -f chain-setup/${chain}-${network}/docker-compose-local-${chain}-${network}.yml ps -q node | xargs docker inspect --format='{{.Image}}' | sed -e 's/^sha256:/\'$'\n/g')
 node_container_id=$(docker ps -qf "ancestor=$node_container_image")
 docker exec $node_container_id tail -n 5 $logpath
-
-echo 'Checking errors...'
-for container_id in $container_ids; do
-    echo "Connecting to container $container_id..."
-    docker exec $container_id sh -c "cat *.log | grep error"
-done
-echo ''

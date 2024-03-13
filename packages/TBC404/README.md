@@ -2,15 +2,10 @@
 <div align="center">
   <h1>TBC Node.js Template</h1>
   <p>
-    A template for Node.js with TypeScript and the Bitcoin Computer
+    A smart contract for NFTs with partial ownership
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
-
-  <a href="">[![TypeScript version][ts-badge]][typescript-4-5]</a>
-  <a href="">[![Node.js version][nodejs-badge]][nodejs]
-</a>
-
 </div>
 
 ## Prerequisites

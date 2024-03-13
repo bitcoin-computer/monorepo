@@ -44,10 +44,8 @@ export function SendForm({ computer }: { computer: Computer }) {
 
   const transfer = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault()
-    // @ts-ignore
     computer.setFee(Number(fee))
     try {
-      // @ts-ignore
       const txId = await computer.send(Number(amount) * 1e8, to)
       showSnackBar(`Sent ${amount} ${computer.getChain()} to ${to} via transaction ${txId}`, true)
     } catch (err) {

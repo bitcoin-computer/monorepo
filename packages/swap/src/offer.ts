@@ -1,4 +1,3 @@
-// @ts-ignore
 import { Contract } from '@bitcoin-computer/lib'
 
 export class Offer extends Contract {

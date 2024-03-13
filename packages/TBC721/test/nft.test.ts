@@ -41,7 +41,6 @@ describe('NFT', () => {
   let receiver = new Computer(RLTC)
 
   before("Fund sender's wallet", async () => {
-    // @ts-ignore
     await sender.faucet(0.001e8)
   })
 

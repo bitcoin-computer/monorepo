@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
+import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/nakamotojs'

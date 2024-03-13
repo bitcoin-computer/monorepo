@@ -3,7 +3,6 @@ import { NFT } from './nft'
 
 export async function deploy(computer: Computer) {  
   if (computer.getNetwork() === 'regtest')
-    // @ts-ignore
     await computer.faucet(0.1e8)
   
   return computer.deploy(`export ${NFT}`)

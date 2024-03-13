@@ -36,9 +36,7 @@ function Component() {
   useEffect(() => {
     const fetch = async () => {
       setTxn(params.txn)
-      // @ts-ignore
-      const [hex] = await computer.wallet.restClient.getRawTxs([params.txn])
-      // @ts-ignore
+      const [hex] = await computer.wallet.restClient.getRawTxs([params.txn as string])
       const { tx } = await computer.txFromHex({ hex })
       setTxnData(tx)
 
@@ -51,7 +49,6 @@ function Component() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        // @ts-ignore
         setTransition(await computer.decode(txnData))
       } catch (err) {
         if (err instanceof Error) {

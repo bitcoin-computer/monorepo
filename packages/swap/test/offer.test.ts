@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
-import chai, { expect } from 'chai'
+import { expect } from 'chai'
+import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
@@ -37,9 +38,7 @@ describe('Offer', () => {
   let offerId: string
 
   before('Before', async () => {
-    // @ts-ignore
     await alice.faucet(1e8)
-    // @ts-ignore
     await bob.faucet(0.001e8)
   })
 
@@ -71,7 +70,6 @@ describe('Offer', () => {
     let aliceTx: any
 
     it('Alice builds, funds, and signs a swap transaction', async () => {
-      // @ts-ignore
       ;({ tx: aliceTx } = await alice.encode({
         exp: `${Swap} Swap.exec(a, b)`,
         env: { a: a._rev, b: b._rev },
@@ -79,9 +77,7 @@ describe('Offer', () => {
     })
 
     it('Alice creates an offer transaction', async () => {
-      // @ts-ignore
       await alice.faucet(1e8)
-      // @ts-ignore
       const { tx: offerTx } = await alice.encode({
         exp: `${Offer} new Offer("${bob.getPublicKey()}", "${(bob as any).getUrl()}", "${aliceTx.serialize()}")`,
         exclude: aliceTx.getInRevs(),
@@ -101,7 +97,6 @@ describe('Offer', () => {
     })
 
     it('Bob signs the swap transaction', async () => {
-      // @ts-ignore
       await bob.sign(bobsTx)
     })
 

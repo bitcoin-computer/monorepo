@@ -1,7 +1,4 @@
-// @ts-ignore
 import { Contract } from '@bitcoin-computer/lib'
-
-// @ts-ignore
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 
 export class Swappable extends Contract {

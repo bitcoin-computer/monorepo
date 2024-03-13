@@ -12,7 +12,6 @@ let computer = new Computer({
 
 before(async () => {
   if (computer.getNetwork() === 'regtest')
-    // @ts-ignore
     await computer.faucet(0.1e8)
 })
 

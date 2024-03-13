@@ -20,7 +20,6 @@ const computer = new Computer({
 let mod
 
 before(async () => {
-  // @ts-ignore
   await computer.faucet(1e7)
   mod = await deploy(computer)
 })

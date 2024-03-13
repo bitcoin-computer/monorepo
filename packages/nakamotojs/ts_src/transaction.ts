@@ -787,16 +787,19 @@ export class Transaction {
   }
 
   serialize(): string {
-    const buf = this.toBuffer()
-    return buf.toString('base64')
+    const buf = this.toBuffer();
+    return buf.toString('base64');
   }
 
   static deserialize(s: string): Transaction {
-    const buf = Buffer.from(s, 'base64')
-    return Transaction.fromBuffer(buf)
+    const buf = Buffer.from(s, 'base64');
+    return Transaction.fromBuffer(buf);
   }
 
   getInRevs() {
-    return this.ins.map((i: any) => `${bufferUtils.reverseBuffer(i.hash).toString('hex')}:${i.index}`)
+    return this.ins.map(
+      (i: any) =>
+        `${bufferUtils.reverseBuffer(i.hash).toString('hex')}:${i.index}`,
+    );
   }
 }
