@@ -70,8 +70,11 @@ describe('Offer', () => {
     let offerHelper
 
     before('Before creating an offer', async () => {
-      await alice.faucet(0.1e8)
       offerHelper = new OfferHelper(alice)
+    })
+
+    it('Alice deploys the offer contract', async () => {
+      await alice.faucet(0.1e8)
       await offerHelper.deploy()
     })
 

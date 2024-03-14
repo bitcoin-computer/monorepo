@@ -5,7 +5,7 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { Swap } from '../src/swap'
+import { Swap, SwapHelper } from '../src/swap'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -28,7 +28,7 @@ const meta = {
   _amount: _.isNumber,
 }
 
-describe('Static Swap', () => {
+describe.only('Static Swap', () => {
   let a: NFT
   let b: NFT
   const alice = new Computer(RLTC)
@@ -40,7 +40,7 @@ describe('Static Swap', () => {
   })
 
   describe('Creating two NFTs to be swapped', () => {
-    it('Alice creates a', async () => {
+    it('Alice creates an NFT', async () => {
       a = await alice.new(NFT, ['A', 'AAA'])
       // @ts-ignore
       expect(a).to.matchPattern({
@@ -51,7 +51,7 @@ describe('Static Swap', () => {
       })
     })
 
-    it('Bob creates b', async () => {
+    it('Bob creates an NFT', async () => {
       b = await bob.new(NFT, ['B', 'BBB'])
       // @ts-ignore
       expect(b).to.matchPattern({
@@ -66,17 +66,23 @@ describe('Static Swap', () => {
   describe('Executing a swap', async () => {
     let tx: any
     let txId: string
+    let swapHelper: SwapHelper
+
+    before('Before creating an offer', async () => {
+      swapHelper = new SwapHelper(alice)
+    })
+
+    it('Alice deploys a swap contract', async () => {
+      await swapHelper.deploy()
+    })
 
     it('Alice builds, funds, and signs a swap transaction', async () => {
-      ;({ tx } = await alice.encode({
-        exp: `${Swap} Swap.exec(a, b)`,
-        env: { a: a._rev, b: b._rev },
-      }))
+      ;({ tx } = await swapHelper.createSwapTx(a, b))
     })
 
     it('Bob checks and signs the swap transaction', async () => {
       const decoded = await bob.decode(tx)
-      expect(decoded.exp).eq(`${Swap} Swap.exec(a, b)`)
+      expect(decoded.exp).eq(`Swap.exec(a, b)`)
 
       await bob.sign(tx)
     })
