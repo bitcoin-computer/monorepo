@@ -4,9 +4,8 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { Sale } from '../src/sale'
+import { SaleHelper } from '../src/sale'
 import { Payment } from '../src/payment'
 
 chai.use(chaiMatchPattern)
@@ -65,9 +64,15 @@ describe('Sale', () => {
     let nft: NFT
     const seller = new Computer(RLTC)
     sellerPublicKey = seller.getPublicKey()
+    let saleHelper: SaleHelper
 
     before("Fund Seller's wallet", async () => {
       await seller.faucet(1e8)
+      saleHelper = new SaleHelper(seller)
+    })
+
+    it('Seller deploys a sale smart contract', async () => {
+      await saleHelper.deploy()
     })
 
     it('Seller creates an NFT', async () => {
@@ -78,18 +83,7 @@ describe('Sale', () => {
 
     it('Seller creates a swap transaction for the NFT with the desired price', async () => {
       const mock = new PaymentMock(nftPrice)
-      const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
-
-      ;({ tx } = await seller.encode({
-        exp: `${Sale} Sale.exec(nft, payment)`,
-        env: { nft: nft._rev, payment: mock._rev },
-        mocks: { payment: mock },
-        // eslint-disable-next-line no-bitwise
-        sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
-        inputIndex: 0,
-        fund: false,
-      }))
-
+      ;({ tx } = await saleHelper.createSaleTx(nft, mock))
       txClone = tx.clone()
     })
 
@@ -160,11 +154,13 @@ describe('Sale', () => {
   describe('Executing the sale', () => {
     const buyer = new Computer(RLTC)
     const computer = new Computer(RLTC)
+    let saleHelper: SaleHelper
     let payment: Payment
     let txId: string
 
     before("Fund Buyers's wallet", async () => {
       await buyer.faucet(nftPrice + fee)
+      saleHelper = new SaleHelper(buyer)
     })
 
     it('Buyer creates a payment object', async () => {
@@ -181,12 +177,7 @@ describe('Sale', () => {
     })
 
     it("Buyer update's the swap transaction to receive the NFT", () => {
-      const [paymentTxId, paymentIndex] = payment._rev.split(':')
-      tx.updateInput(1, {
-        txId: paymentTxId,
-        index: parseInt(paymentIndex, 10),
-      })
-      tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
+      tx = saleHelper.finalizeSaleTx(tx, payment, buyer.toScriptPubKey())
     })
 
     it('Buyer funds the swap transaction', async () => {

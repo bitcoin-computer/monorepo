@@ -5,7 +5,7 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { Swap, SwapHelper } from '../src/swap'
+import { SwapHelper } from '../src/swap'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -28,7 +28,7 @@ const meta = {
   _amount: _.isNumber,
 }
 
-describe.only('Static Swap', () => {
+describe('Static Swap', () => {
   let a: NFT
   let b: NFT
   const alice = new Computer(RLTC)
