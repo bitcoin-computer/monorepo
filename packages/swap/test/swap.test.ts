@@ -80,10 +80,11 @@ describe.only('Static Swap', () => {
       ;({ tx } = await swapHelper.createSwapTx(a, b))
     })
 
-    it('Bob checks and signs the swap transaction', async () => {
-      const decoded = await bob.decode(tx)
-      expect(decoded.exp).eq(`Swap.exec(a, b)`)
+    it('Bob checks the swap transaction', async () => {
+      await swapHelper.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
+    })
 
+    it('Bob signs the swap transaction', async () => {
       await bob.sign(tx)
     })
 
