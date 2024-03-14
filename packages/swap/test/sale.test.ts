@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
-import { expect } from 'chai'
-import * as chai from 'chai'
+import chai, { expect } from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
@@ -108,7 +107,6 @@ describe('Sale', () => {
   describe('Failing to underpay', () => {
     const thief = new Computer(RLTC)
     let tooLowPayment: Payment
-    let txId: string
 
     before("Fund Thief's wallet", async () => {
       await thief.faucet(nftPrice + fee)
@@ -147,7 +145,7 @@ describe('Sale', () => {
 
     it('When Thief broadcast the swap transaction an error is thrown', async () => {
       try {
-        txId = await thief.broadcast(txClone)
+        await thief.broadcast(txClone)
         expect(true).eq(false)
       } catch (err) {
         if (err instanceof Error)

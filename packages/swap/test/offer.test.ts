@@ -4,10 +4,9 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Swap } from '../src/swap'
-import { Offer } from '../src/offer'
+import { OfferHelper } from '../src/offer'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -30,7 +29,7 @@ const meta = {
   _amount: _.isNumber,
 }
 
-describe('Offer', () => {
+describe.only('Offer', () => {
   let a: NFT
   let b: NFT
   const alice = new Computer(RLTC)
@@ -68,6 +67,13 @@ describe('Offer', () => {
 
   describe('Alice creates an offer', async () => {
     let aliceTx: any
+    let offerHelper
+
+    before('Before creating an offer', async () => {
+      await alice.faucet(0.1e8)
+      offerHelper = new OfferHelper(alice)
+      await offerHelper.deploy()
+    })
 
     it('Alice builds, funds, and signs a swap transaction', async () => {
       ;({ tx: aliceTx } = await alice.encode({
@@ -78,22 +84,26 @@ describe('Offer', () => {
 
     it('Alice creates an offer transaction', async () => {
       await alice.faucet(1e8)
-      const { tx: offerTx } = await alice.encode({
-        exp: `${Offer} new Offer("${bob.getPublicKey()}", "${(bob as any).getUrl()}", "${aliceTx.serialize()}")`,
-        exclude: aliceTx.getInRevs(),
-      })
+      const { tx: offerTx } = await offerHelper.createOfferTx(
+        bob.getPublicKey(),
+        bob.getUrl(),
+        aliceTx,
+      )
       offerId = await alice.broadcast(offerTx)
     })
   })
 
   describe('Bob accepts the offer', () => {
+    let offerHelper
     let bobsTx: any
     let txId: string
 
+    before('Before accepting the offer', () => {
+      offerHelper = new OfferHelper(bob)
+    })
+
     it('Bob syncs to the offer transaction and extracts the swap transaction', async () => {
-      const { res: syncedOffer } = (await bob.sync(offerId)) as { res: { json: string } }
-      const { json } = syncedOffer
-      bobsTx = Transaction.deserialize(json)
+      bobsTx = await offerHelper.decodeOfferTx(offerId)
     })
 
     it('Bob signs the swap transaction', async () => {
