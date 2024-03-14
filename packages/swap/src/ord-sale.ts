@@ -2,12 +2,7 @@
 
 import { Contract } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-
-export class Valuable extends Contract {
-  setAmount(amount: number) {
-    this._amount = amount
-  }
-}
+import { Valuable } from './valuable'
 
 export class Sale extends Contract {
   static exec(b1: Valuable, b2: Valuable, t: NFT, p: NFT) {

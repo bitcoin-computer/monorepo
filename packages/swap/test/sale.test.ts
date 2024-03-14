@@ -6,52 +6,11 @@ import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { SaleHelper } from '../src/sale'
-import { Payment } from '../src/payment'
+import { Payment, PaymentMock } from '../src/payment'
+import { RLTC, meta } from '../src/utils'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
-
-const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa8bc54db8fed'
-const randomRev = '0000000000000000000000000000000000000000000000000000000000000000:0'
-const mockedRev = `mock:${randomRev}`
-
-const RLTC: {
-  network: 'regtest'
-  chain: 'LTC'
-  url: string
-} = {
-  network: 'regtest',
-  chain: 'LTC',
-  url: 'http://localhost:1031',
-}
-
-const meta = {
-  _id: _.isString,
-  _rev: _.isString,
-  _root: _.isString,
-  _owners: _.isArray,
-  _amount: _.isNumber,
-}
-
-class PaymentMock {
-  _id: string
-  _rev: string
-  _root: string
-  _amount: number
-  _owners: string[]
-
-  constructor(amount: number) {
-    this._id = mockedRev
-    this._rev = mockedRev
-    this._root = mockedRev
-    this._owners = [randomPublicKey]
-    this._amount = amount
-  }
-
-  transfer(to: string) {
-    this._owners = [to]
-  }
-}
 
 describe('Sale', () => {
   let tx: any
@@ -82,7 +41,7 @@ describe('Sale', () => {
     })
 
     it('Seller creates a swap transaction for the NFT with the desired price', async () => {
-      const mock = new PaymentMock(nftPrice)
+      const mock = new PaymentMock(seller.getPublicKey(), nftPrice)
       ;({ tx } = await saleHelper.createSaleTx(nft, mock))
       txClone = tx.clone()
     })
