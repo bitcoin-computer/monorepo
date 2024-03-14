@@ -4,7 +4,7 @@
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "scripts": {
     "build": "tsc -p tsconfig.release.json",
-    "clean-logs": "rm *.log",
+    "clean-logs": "rm *.log 2> /dev/null",
     "lint": "eslint --fix . --ext .ts,.tsx",
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
