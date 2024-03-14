@@ -23,6 +23,7 @@
   ],
   "dependencies": {
     "@bitcoin-computer/lib": "^0.17.2-beta.0",
+    "chai-match-pattern": "^1.3.0",
     "eslint-plugin-prettier": "^5.1.3",
     "ts-node": "^10.9.2",
     "tslib": "~2.6.2"

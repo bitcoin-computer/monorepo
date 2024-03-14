@@ -10,9 +10,23 @@ export class TBC721 implements ITBC721 {
   computer: any
   mod: string
 
-  constructor(computer: any, mod: string) {
+  constructor(computer: any, mod?: string) {
     this.computer = computer
     this.mod = mod
+  }
+
+  async deploy() {
+    this.mod = await this.computer.deploy(`export ${NFT}`)
+    return this.mod
+  }
+
+  async mint(name: string, symbol: string): Promise<NFT> {
+    const { tx, effect } = await this.computer.encode({
+      exp: `new NFT("${name}", "${symbol}")`,
+      mod: this.mod,
+    })
+    await this.computer.broadcast(tx)
+    return effect.res
   }
 
   async balanceOf(publicKey: string): Promise<number> {

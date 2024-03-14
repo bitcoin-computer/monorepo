@@ -29,7 +29,7 @@ const meta = {
   _amount: _.isNumber,
 }
 
-describe.only('Offer', () => {
+describe('Offer', () => {
   let a: NFT
   let b: NFT
   const alice = new Computer(RLTC)

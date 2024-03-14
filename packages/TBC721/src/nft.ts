@@ -1,6 +1,6 @@
 import { Contract } from '@bitcoin-computer/lib'
 
-export class  NFT extends Contract {
+export class NFT extends Contract {
   name: string
   symbol: string
   _id: string
