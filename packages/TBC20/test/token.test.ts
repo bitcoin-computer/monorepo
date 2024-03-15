@@ -17,9 +17,7 @@ const computer = new Computer(opts)
 const computer2 = new Computer(opts)
 
 before(async () => {
-  // @ts-ignore
   await computer.faucet(1e7)
-  // @ts-ignore
   await computer2.faucet(1e7)
 })
 

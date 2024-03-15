@@ -115,9 +115,7 @@ function tweakInternalPubKey(inputIndex, input) {
     (0, bip341_1.tweakKey)(tapInternalKey, input.tapMerkleRoot);
   if (!outputKey)
     throw new Error(
-      `Cannot tweak tap internal key for input #${inputIndex}. Public key: ${
-        tapInternalKey && tapInternalKey.toString('hex')
-      }`,
+      `Cannot tweak tap internal key for input #${inputIndex}. Public key: ${tapInternalKey && tapInternalKey.toString('hex')}`,
     );
   return outputKey.x;
 }

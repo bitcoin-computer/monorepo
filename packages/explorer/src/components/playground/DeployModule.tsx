@@ -21,8 +21,7 @@ const DeployModule = (props: {
   const handleModuleDeploy = async () => {
     try {
       showLoader(true)
-      // @ts-ignore
-      const modSpec = await computer.deploy(module?.trim())
+      const modSpec = await computer.deploy(module?.trim() as string)
       setFunctionResult({ _rev: modSpec, type: 'modules' })
       setModalTitle('Success!')
       setShow(true)

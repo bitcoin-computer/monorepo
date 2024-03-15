@@ -37,15 +37,15 @@ export function writeUInt64LE(
 
 export function reverseBuffer(buffer: Buffer): Buffer {
   if (buffer.length < 1) return buffer;
+  const reversedBuffer = Buffer.alloc(buffer.length);
+
   let j = buffer.length - 1;
-  let tmp = 0;
-  for (let i = 0; i < buffer.length / 2; i++) {
-    tmp = buffer[i];
-    buffer[i] = buffer[j];
-    buffer[j] = tmp;
+  for (let i = 0; i < buffer.length; i++) {
+    reversedBuffer[i] = buffer[j];
     j--;
   }
-  return buffer;
+
+  return reversedBuffer;
 }
 
 export function cloneBuffer(buffer: Buffer): Buffer {
@@ -62,7 +62,10 @@ export class BufferWriter {
     return new BufferWriter(Buffer.alloc(size));
   }
 
-  constructor(public buffer: Buffer, public offset: number = 0) {
+  constructor(
+    public buffer: Buffer,
+    public offset: number = 0,
+  ) {
     typeforce(types.tuple(types.Buffer, types.UInt32), [buffer, offset]);
   }
 
@@ -116,7 +119,10 @@ export class BufferWriter {
  * Helper class for reading of bitcoin data types from a buffer.
  */
 export class BufferReader {
-  constructor(public buffer: Buffer, public offset: number = 0) {
+  constructor(
+    public buffer: Buffer,
+    public offset: number = 0,
+  ) {
     typeforce(types.tuple(types.Buffer, types.UInt32), [buffer, offset]);
   }
 

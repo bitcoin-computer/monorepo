@@ -17,7 +17,6 @@ function Block() {
       try {
         // setIsLoading(true)
         showLoader(true)
-        // @ts-ignore
         const res = await computer.rpcCall('getblock', `${block} 2`)
         setBlockData(res.result)
         // setIsLoading(false)

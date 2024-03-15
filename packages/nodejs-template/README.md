@@ -6,11 +6,6 @@
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
-
-  <a href="">[![TypeScript version][ts-badge]][typescript-4-5]</a>
-  <a href="">[![Node.js version][nodejs-badge]][nodejs]
-</a>
-
 </div>
 
 ## Prerequisites

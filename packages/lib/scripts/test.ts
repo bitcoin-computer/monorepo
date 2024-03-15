@@ -55,7 +55,7 @@ if (args.integration) {
   command = `${command} .mocharc.json --parallel`
 }
 
-console.log('command: ', command)
+console.log(command)
 
 // Use spawnSync with stdio: 'inherit' to display output in real-time
 const childProcess = spawnSync(command, { shell: true, stdio: 'inherit' })
