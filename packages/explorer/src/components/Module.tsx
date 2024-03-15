@@ -8,14 +8,13 @@ function Module() {
   const [computer] = useState(Auth.getComputer())
   const params = useParams()
   const [modSpec] = useState(params.rev)
-  const [module, setModue] = useState<any>({})
+  const [module, setModule] = useState<any>({})
   const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        // @ts-ignore
-        setModue(await computer.load(modSpec))
+        setModule(await computer.load(modSpec as string))
       } catch (error) {
         showSnackBar('Error fetching module object', false)
         console.log('Error fetching module object', error)

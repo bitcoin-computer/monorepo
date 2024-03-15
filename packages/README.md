@@ -15,8 +15,9 @@ This monorepo contains the following packages.
 * [TBC721 App](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721-app#readme) - An app for minting, sending, and storing non-fungible tokens
 
 ## Standard Contracts
-* [TBC20 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20#readme) - An implementation of the ERC20 Fungible Token Standard
-* [TBC721 contract](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721#readme) - An implementation of the ERC721 Non-Fungible Token Standard
+* [TBC20](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20#readme) - An implementation of the ERC20 Fungible Token Standard
+* [TBC721](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721#readme) - An implementation of the ERC721 Non-Fungible Token Standard
+* [Swap](https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme) - An implementation of TBC721 swap and sale contracts
 
 ## Templates
 * [Node.js Template](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template#readme) - A template for starting a new server side app

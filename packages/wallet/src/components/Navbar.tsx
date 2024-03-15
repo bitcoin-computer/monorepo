@@ -27,7 +27,6 @@ export default function Navbar({
       if (searchInput === "") navigate("/")
       else if (searchInput.includes(":")) {
         try {
-          // @ts-ignore
           await computer.load(searchInput)
           navigate(`/modules/${searchInput}`)
         } catch (error) {

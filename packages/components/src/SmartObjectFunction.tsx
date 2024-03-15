@@ -71,7 +71,6 @@ export const SmartObjectFunction = ({
         }
       })
 
-      // @ts-ignore
       const { tx } = await computer.encode({
         exp: `smartObject.${fnName}(${params.map((param) => {
           const key = `${fnName}-${param}`
@@ -83,7 +82,6 @@ export const SmartObjectFunction = ({
             : paramValue
         })})`,
         env: { smartObject: smartObject._rev, ...revMap },
-        // @ts-ignore
         fund: true,
         sign: true,
       })

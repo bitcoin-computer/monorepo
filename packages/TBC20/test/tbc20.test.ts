@@ -19,7 +19,6 @@ function sleep(delay: number): Promise<void> {
 }
 
 before(async () => {
-  // @ts-ignore
   await computer.faucet(1e7)
 })
 

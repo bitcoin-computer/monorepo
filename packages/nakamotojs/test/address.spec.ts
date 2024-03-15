@@ -38,9 +38,12 @@ describe('address', () => {
 
     fixtures.invalid.fromBase58Check.forEach(f => {
       it('throws on ' + f.exception, () => {
-        assert.throws(() => {
-          baddress.fromBase58Check(f.address);
-        }, new RegExp(f.address + ' ' + f.exception));
+        assert.throws(
+          () => {
+            baddress.fromBase58Check(f.address);
+          },
+          new RegExp(f.address + ' ' + f.exception),
+        );
       });
     });
   });

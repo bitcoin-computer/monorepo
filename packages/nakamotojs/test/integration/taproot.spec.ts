@@ -541,7 +541,7 @@ describe('nakamotojs (transaction with taproot)', () => {
           depth: 3,
           leafVersion: 192,
           script: bitcoin.script.fromASM(`OP_ADD OP_${index * 2} OP_EQUAL`),
-        } as TapLeaf),
+        }) as TapLeaf,
     );
     const scriptTree = tapTreeFromList(leaves);
 

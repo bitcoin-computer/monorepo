@@ -8,17 +8,17 @@ dotenv.config()
 
 const parser = new ArgumentParser()
 const chainGroup = parser.add_mutually_exclusive_group()
-chainGroup.add_argument('-btc', '--bitcoin', { action: 'store_true' })
-chainGroup.add_argument('-ltc', '--litecoin', { action: 'store_true', default: true })
+chainGroup.add_argument("-btc", "--bitcoin", { action: "store_true" })
+chainGroup.add_argument("-ltc", "--litecoin", { action: "store_true", default: true })
 
 const networkGroup = parser.add_mutually_exclusive_group()
-networkGroup.add_argument('-r', '--regtest', { action: 'store_true', default: true })
-networkGroup.add_argument('-t', '--testnet', { action: 'store_true' })
+networkGroup.add_argument("-r", "--regtest", { action: "store_true", default: true })
+networkGroup.add_argument("-t", "--testnet", { action: "store_true" })
 
 const testTypeGroup = parser.add_mutually_exclusive_group()
-testTypeGroup.add_argument('-s', '--single', { action: 'store' })
-testTypeGroup.add_argument('-i', '--integration', { action: 'store_true' })
-testTypeGroup.add_argument('-u', '--unit', { action: 'store_true', default: true })
+testTypeGroup.add_argument("-s", "--single", { action: "store" })
+testTypeGroup.add_argument("-i", "--integration", { action: "store_true" })
+testTypeGroup.add_argument("-u", "--unit", { action: "store_true", default: true })
 
 const args = parser.parse_args()
 

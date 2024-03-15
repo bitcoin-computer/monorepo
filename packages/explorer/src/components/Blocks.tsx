@@ -17,7 +17,6 @@ export default function Blocks() {
     const fetch = async () => {
       try {
         showLoader(true)
-        // @ts-ignore
         const res = await computer.rpcCall('getblockchaininfo', '')
         setTotalBlocks(res.result.blocks)
         showLoader(false)
@@ -47,7 +46,6 @@ export default function Blocks() {
   }, [totalBlocks, pageNum])
 
   const handleClick = async (block: number) => {
-    // @ts-ignore
     const res = await computer.wallet.restClient.rpc('getblockhash', `${block}`)
     const blockHash = res.result.result
     navigate(`/blocks/${blockHash}`)

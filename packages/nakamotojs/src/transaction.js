@@ -603,6 +603,19 @@ class Transaction {
       return buffer.slice(initialOffset, bufferWriter.offset);
     return buffer;
   }
+  serialize() {
+    const buf = this.toBuffer();
+    return buf.toString('base64');
+  }
+  static deserialize(s) {
+    const buf = Buffer.from(s, 'base64');
+    return Transaction.fromBuffer(buf);
+  }
+  getInRevs() {
+    return this.ins.map(
+      i => `${_1.bufferUtils.reverseBuffer(i.hash).toString('hex')}:${i.index}`,
+    );
+  }
 }
 exports.Transaction = Transaction;
 Transaction.DEFAULT_SEQUENCE = 0xffffffff;

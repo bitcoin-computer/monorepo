@@ -2,8 +2,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '../src/nft'
 import chaiMatchPattern from 'chai-match-pattern'
+import { NFT } from '../src/nft'
 
 const { expect } = chai
 chai.use(chaiMatchPattern)
@@ -32,21 +32,21 @@ const meta = {
 
 const symbol = ''
 
-describe('Non-Fungible Token (NFT)', () => {
+describe('NFT', () => {
   let nft: NFT
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new Computer(RLTC)
-  let receiver = new Computer(RLTC)
+  const sender = new Computer(RLTC)
+  const receiver = new Computer(RLTC)
 
   before("Fund sender's wallet", async () => {
     await sender.faucet(0.001e8)
   })
 
-  describe('Minting an NFT', () => {
+  describe('Constructor', () => {
     it('Sender mints an NFT', async () => {
-      nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
+      nft = await sender.new(NFT, ['Test'])
       // @ts-ignore
       expect(nft).matchPattern({ name: 'Test', symbol, ...meta })
     })
@@ -68,7 +68,7 @@ describe('Non-Fungible Token (NFT)', () => {
     })
   })
 
-  describe('Transferring an NFT', async () => {
+  describe('transfer', async () => {
     it('Sender transfers the NFT to receiver', async () => {
       await nft.transfer(receiver.getPublicKey())
       // @ts-ignore
