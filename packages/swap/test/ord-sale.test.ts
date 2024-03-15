@@ -4,9 +4,8 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { Sale } from '../src/ord-sale'
+import { OrdSaleHelper, Sale } from '../src/ord-sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { RLTC, meta } from '../src/utils'
 import { Valuable, ValuableMock } from '../src/valuable'
@@ -24,12 +23,15 @@ describe('Ord Sale', () => {
     let nft: NFT
     const seller = new Computer(RLTC)
     sellerPublicKey = seller.getPublicKey()
-
-    before("Fund Seller's wallet", async () => {
-      await seller.faucet(1e8)
+    const saleHelper = new OrdSaleHelper(seller)
+    
+    it('Seller deploys the smart contract', async () => {
+      await seller.faucet(2e8)
+      saleHelper.deploy()
     })
 
     it('Seller creates an NFT', async () => {
+      await seller.faucet(1e8)
       nft = await seller.new(NFT, ['name', 'symbol'])
       // @ts-ignore
       expect(nft).to.matchPattern({ name: 'name', symbol: 'symbol', ...meta })
@@ -39,32 +41,22 @@ describe('Ord Sale', () => {
       const b1Mock = new ValuableMock()
       const b2Mock = new ValuableMock()
       const paymentMock = new PaymentMock(seller.getPublicKey(), nftPrice)
-      const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
-
-      ;({ tx } = await seller.encode({
-        exp: `${Sale} Sale.exec(b1, b2, nft, payment)`,
-        env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
-        mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
-        // eslint-disable-next-line no-bitwise
-        sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
-        inputIndex: 2,
-        fund: false,
-      }))
+      ;({ tx } = await saleHelper.createSaleTx(b1Mock, b2Mock, nft, paymentMock))
     })
 
-    it('The third input has been signed by seller, the second input is unsigned', () => {
+    it('The third input representing the nft has been signed by seller, the other inputs are unsigned', () => {
       expect(tx.ins).to.have.lengthOf(4)
-      expect(tx.ins[0].script).to.have.lengthOf(0)
-      expect(tx.ins[1].script).to.have.lengthOf(0)
-      expect(tx.ins[2].script).to.have.lengthOf.above(0)
-      expect(tx.ins[3].script).to.have.lengthOf(0)
+      expect(tx.ins[0].script).to.have.lengthOf(0) // b1 before
+      expect(tx.ins[1].script).to.have.lengthOf(0) // b2 before
+      expect(tx.ins[2].script).to.have.lengthOf.above(0) // nft before
+      expect(tx.ins[3].script).to.have.lengthOf(0) // payment
     })
 
-    it("The first output's value is nftPrice, the second is min-non-dust amount", () => {
-      expect(tx.outs[0].value).eq(7860 * 2)
-      expect(tx.outs[1].value).eq(7860)
-      expect(tx.outs[2].value).eq(nftPrice)
-      expect(tx.outs[3].value).eq(7860)
+    it("The third output's value is nftPrice, the others are according to the _amounts in the returned objects", () => {
+      expect(tx.outs[0].value).eq(7860 * 2) // b1 after
+      expect(tx.outs[1].value).eq(7860) // t after
+      expect(tx.outs[2].value).eq(nftPrice) // p after
+      expect(tx.outs[3].value).eq(7860) // b2 after
     })
   })
 
@@ -75,6 +67,7 @@ describe('Ord Sale', () => {
     let b2: Valuable
     let payment: Payment
     let txId: string
+    let saleHelper = new OrdSaleHelper(buyer)
 
     before("Fund Buyers's wallet", async () => {
       await buyer.faucet(nftPrice + fee + 1e8)
@@ -96,27 +89,7 @@ describe('Ord Sale', () => {
     })
 
     it("Buyer update's the swap transaction to receive the NFT", () => {
-      const [b1TxId, b1Index] = b1._rev.split(':')
-      tx.updateInput(0, {
-        txId: b1TxId,
-        index: parseInt(b1Index, 10),
-      })
-
-      const [b2TxId, b2Index] = b2._rev.split(':')
-      tx.updateInput(1, {
-        txId: b2TxId,
-        index: parseInt(b2Index, 10),
-      })
-
-      const [paymentTxId, paymentIndex] = payment._rev.split(':')
-      tx.updateInput(3, {
-        txId: paymentTxId,
-        index: parseInt(paymentIndex, 10),
-      })
-
-      tx.updateOutput(0, { scriptPubKey: buyer.toScriptPubKey() })
-      tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
-      tx.updateOutput(3, { scriptPubKey: buyer.toScriptPubKey() })
+      tx = saleHelper.finalizeSaleTx(tx, b1, b2, payment, buyer.toScriptPubKey())
     })
 
     it('Buyer funds the swap transaction', async () => {
