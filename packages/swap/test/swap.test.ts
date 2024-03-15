@@ -6,27 +6,10 @@ import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { SwapHelper } from '../src/swap'
+import { RLTC, meta } from '../src/utils'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
-
-const RLTC: {
-  network: 'regtest'
-  chain: 'LTC'
-  url: string
-} = {
-  network: 'regtest',
-  chain: 'LTC',
-  url: 'http://localhost:1031',
-}
-
-const meta = {
-  _id: _.isString,
-  _rev: _.isString,
-  _root: _.isString,
-  _owners: _.isArray,
-  _amount: _.isNumber,
-}
 
 describe('Static Swap', () => {
   let a: NFT
