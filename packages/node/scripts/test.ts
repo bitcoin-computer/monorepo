@@ -4,7 +4,7 @@ import { ArgumentParser } from 'argparse'
 import { spawnSync } from 'child_process'
 import dotenv from 'dotenv'
 
-dotenv.config();
+dotenv.config()
 
 const parser = new ArgumentParser()
 const chainGroup = parser.add_mutually_exclusive_group()
