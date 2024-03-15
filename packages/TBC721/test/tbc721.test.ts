@@ -2,7 +2,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { TBC721 } from '../src/tbc721'
+import { TBC721 } from '../src/nft'
 
 export const sleep = (ms: number) =>
   new Promise<void>((resolve) => {
