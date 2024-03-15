@@ -27,7 +27,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "clean-logs": "rm *.log 2> /dev/null",
+    "clean-logs": "rm -f *.log 2> /dev/null",
     "dist-clean": "rm -rf dist",
     "down": "./scripts/down.py",
     "fund-ltc": "node --loader ts-node/esm ./scripts/fund.ts ltc",
