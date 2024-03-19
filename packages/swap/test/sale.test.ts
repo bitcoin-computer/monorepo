@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
 import { SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { RLTC, meta } from '../src/utils'
@@ -18,6 +18,58 @@ describe('Sale', () => {
   let sellerPublicKey: string
   const nftPrice = 0.1e8
   const fee = 100000
+
+  describe('Example from docs', () => {
+    const alice = new Computer(RLTC)
+    const bob = new Computer(RLTC)
+
+    before('Before sale example from docs', async () => {
+      await alice.faucet(1e8)
+      await bob.faucet(1e8)
+    })
+
+    it('Should work', async () => {
+      // Alice creates helper objects
+      const tbc721A = new TBC721(alice)
+      const saleHelperA = new SaleHelper(alice)
+
+      // Alice deploys the smart contracts
+      await tbc721A.deploy()
+      await saleHelperA.deploy()
+
+      // Alice mints an NFT
+      const nftA = await tbc721A.mint('a', 'AAA')
+
+      // Alice creates a payment mock
+      const mock = new PaymentMock(alice.getPublicKey(), nftPrice)
+
+      // Alice creates a swap transaction
+      const { tx } = await saleHelperA.createSaleTx(nftA, mock)
+
+      // Bob creates helper objects from the module specifiers
+      const saleHelperB = new SaleHelper(bob, saleHelperA.mod)
+
+      // Bob checks the swap transaction
+      saleHelperB.checkSaleTx()
+
+      // Bob creates the payment and finalizes the transaction
+      const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
+      const finalTx = saleHelperB.finalizeSaleTx(tx, payment, bob.toScriptPubKey())
+
+      // Bob signs an broadcasts the transaction to execute the swap
+      await bob.fund(finalTx)
+      await bob.sign(finalTx)
+      await bob.broadcast(finalTx)
+
+      // Bob reads the updated state from the blockchain
+      const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      const { nft: n, payment: p } = env
+
+      expect(p._amount).eq(nftPrice)
+      expect(n._owners).deep.eq([bob.getPublicKey()])
+      expect(p._owners).deep.eq([alice.getPublicKey()])
+    })
+  })
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT

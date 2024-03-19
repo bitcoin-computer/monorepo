@@ -1,7 +1,7 @@
 import { Contract } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { Payment } from './payment'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
+import { Payment } from './payment'
 
 export class Sale extends Contract {
   static exec(a: NFT, b: NFT) {
@@ -37,7 +37,7 @@ export class SaleHelper {
       sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
       inputIndex: 0,
       fund: false,
-      mod: this.mod
+      mod: this.mod,
     })
   }
 
