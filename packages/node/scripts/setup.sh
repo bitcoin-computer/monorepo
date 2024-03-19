@@ -7,7 +7,7 @@ sudo apt install npm
 
 # install node.js
 sudo apt-get purge --auto-remove nodejs
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
 # install bitcoin-computer-dependencies
