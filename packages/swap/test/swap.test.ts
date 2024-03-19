@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
 import { SwapHelper } from '../src/swap'
 import { meta } from '../src/utils'
 import dotenv from 'dotenv'
@@ -24,7 +24,48 @@ describe('Static Swap', () => {
 
   before('Before', async () => {
     await alice.faucet(0.01e8)
-    await bob.faucet(0.001e8)
+    await bob.faucet(0.01e8)
+  })
+
+  describe('Example from docs', () => {
+    it('Should work', async () => {
+      // Alice creates helper objects
+      const tbc721A = new TBC721(alice)
+      const swapHelperA = new SwapHelper(alice)
+
+      // Alice deploys the smart contracts
+      await tbc721A.deploy()
+      await swapHelperA.deploy()
+
+      // Alice mints an NFT
+      const nftA = await tbc721A.mint('a', 'AAA')
+
+      // Bob creates helper objects from the module specifiers
+      const tbc721B = new TBC721(bob, tbc721A.mod)
+      const swapHelperB = new SwapHelper(bob, swapHelperA.mod)
+
+      // Bob mints an NFT to pay for Alice's's NFT
+      const nftB = await tbc721B.mint('b', 'BBB')
+
+      // Bob creates a swap transaction
+      const { tx } = await swapHelperB.createSwapTx(nftA, nftB)
+
+      // Alice checks the swap transaction
+      swapHelperA.checkSwapTx(tx, bob.getPublicKey(), alice.getPublicKey())
+
+      // Alice signs an broadcasts the transaction to execute the swap
+      await alice.sign(tx)
+      await alice.broadcast(tx)
+
+      // Bob reads the updated state from the blockchain
+      const {
+        env: { a, b },
+      } = (await bob.sync(tx.getId())) as { env: { a: NFT; b: NFT } }
+      expect(a.name).deep.eq('a')
+      expect(a._owners).deep.eq([bob.getPublicKey()])
+      expect(b.name).deep.eq('b')
+      expect(b._owners).deep.eq([alice.getPublicKey()])
+    })
   })
 
   describe('Creating two NFTs to be swapped', () => {
