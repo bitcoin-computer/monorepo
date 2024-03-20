@@ -5,6 +5,7 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
+import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { RLTC, meta } from '../src/utils'
@@ -13,8 +14,8 @@ chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
 describe('Sale', () => {
-  let tx: any
-  let txClone: any
+  let tx: Transaction
+  let txClone: Transaction
   let sellerPublicKey: string
   const nftPrice = 0.1e8
   const fee = 100000
@@ -44,17 +45,14 @@ describe('Sale', () => {
       const mock = new PaymentMock(alice.getPublicKey(), nftPrice)
 
       // Alice creates a swap transaction
-      const { tx } = await saleHelperA.createSaleTx(nftA, mock)
-
-      // Bob creates helper objects from the module specifiers
-      const saleHelperB = new SaleHelper(bob, saleHelperA.mod)
+      const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
 
       // Bob checks the swap transaction
-      saleHelperB.checkSaleTx()
+      SaleHelper.checkSaleTx()
 
       // Bob creates the payment and finalizes the transaction
       const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
-      const finalTx = saleHelperB.finalizeSaleTx(tx, payment, bob.toScriptPubKey())
+      const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
 
       // Bob signs an broadcasts the transaction to execute the swap
       await bob.fund(finalTx)
@@ -165,13 +163,11 @@ describe('Sale', () => {
   describe('Executing the sale', () => {
     const buyer = new Computer(RLTC)
     const computer = new Computer(RLTC)
-    let saleHelper: SaleHelper
     let payment: Payment
     let txId: string
 
     before("Fund Buyers's wallet", async () => {
       await buyer.faucet(nftPrice + fee)
-      saleHelper = new SaleHelper(buyer)
     })
 
     it('Buyer creates a payment object', async () => {
@@ -188,7 +184,7 @@ describe('Sale', () => {
     })
 
     it("Buyer update's the swap transaction to receive the NFT", () => {
-      tx = saleHelper.finalizeSaleTx(tx, payment, buyer.toScriptPubKey())
+      tx = SaleHelper.finalizeSaleTx(tx, payment, buyer.toScriptPubKey())
     })
 
     it('Buyer funds the swap transaction', async () => {

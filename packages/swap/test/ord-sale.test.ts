@@ -5,7 +5,7 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { OrdSaleHelper, Sale } from '../src/ord-sale'
+import { OrdSaleHelper } from '../src/ord-sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { RLTC, meta } from '../src/utils'
 import { Valuable, ValuableMock } from '../src/valuable'
@@ -24,7 +24,7 @@ describe('Ord Sale', () => {
     const seller = new Computer(RLTC)
     sellerPublicKey = seller.getPublicKey()
     const saleHelper = new OrdSaleHelper(seller)
-    
+
     it('Seller deploys the smart contract', async () => {
       await seller.faucet(2e8)
       saleHelper.deploy()
@@ -67,7 +67,6 @@ describe('Ord Sale', () => {
     let b2: Valuable
     let payment: Payment
     let txId: string
-    let saleHelper = new OrdSaleHelper(buyer)
 
     before("Fund Buyers's wallet", async () => {
       await buyer.faucet(nftPrice + fee + 1e8)
@@ -89,7 +88,7 @@ describe('Ord Sale', () => {
     })
 
     it("Buyer update's the swap transaction to receive the NFT", () => {
-      tx = saleHelper.finalizeSaleTx(tx, b1, b2, payment, buyer.toScriptPubKey())
+      tx = OrdSaleHelper.finalizeSaleTx(tx, b1, b2, payment, buyer.toScriptPubKey())
     })
 
     it('Buyer funds the swap transaction', async () => {
