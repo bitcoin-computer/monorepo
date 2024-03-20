@@ -48,7 +48,7 @@ describe('TBC721', () => {
   })
 
   describe('balanceOf', () => {
-    it('Should compute the balance', async () => {
+    it('Should return the balance', async () => {
       await sleep(500)
       const balance = await tbc721.balanceOf(computer.getPublicKey())
       expect(balance).to.be.greaterThanOrEqual(1)
@@ -56,7 +56,7 @@ describe('TBC721', () => {
   })
 
   describe('ownerOf', () => {
-    it('Should compute the balance', async () => {
+    it('Should return the owner', async () => {
       const owners = await tbc721.ownersOf(nft._id)
       expect(owners).deep.eq([computer.getPublicKey()])
     })
@@ -68,7 +68,7 @@ describe('TBC721', () => {
       const nft2 = await tbc721.mint('name', 'symbol')
       const publicKey2 = computer2.getPublicKey()
       await sleep(500)
-      await tbc721.transfer(publicKey2, nft2._id)
+      await tbc721.transfer(nft2._id, publicKey2)
       const res = await tbc721.balanceOf(computer.getPublicKey())
       expect(res).to.be.greaterThanOrEqual(1)
     })
