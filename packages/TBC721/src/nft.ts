@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import { Contract } from '@bitcoin-computer/lib'
 
 export class NFT extends Contract {
@@ -20,7 +22,7 @@ export class NFT extends Contract {
 interface ITBC721 {
   balanceOf(publicKey: string): Promise<number>
   ownersOf(tokenId: string): Promise<string[]>
-  transfer(to: string, tokenId: string)
+  transfer(tokenId: string, to: string)
 }
 
 export class TBC721 implements ITBC721 {
@@ -59,7 +61,7 @@ export class TBC721 implements ITBC721 {
     return obj._owners
   }
 
-  async transfer(to: string, tokenId: string) {
+  async transfer(tokenId: string, to: string) {
     const [rev] = await this.computer.query({ ids: [tokenId] })
     const obj = await this.computer.sync(rev)
     await obj.transfer(to)
