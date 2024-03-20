@@ -1,8 +1,6 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
-import * as chai from 'chai'
-import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
 import { SwapHelper } from '../src/swap'
@@ -13,12 +11,9 @@ dotenv.config({ path: '../../.env'})
 
 const url = process.env.BCN_URL
 
-chai.use(chaiMatchPattern)
-const _ = chaiMatchPattern.getLodashModule()
-
 describe('Static Swap', () => {
-  let a: NFT
-  let b: NFT
+  let nftA: NFT
+  let nftB: NFT
   const alice = new Computer({ url })
   const bob = new Computer({ url })
 
@@ -38,14 +33,14 @@ describe('Static Swap', () => {
       await swapHelperA.deploy()
 
       // Alice mints an NFT
-      const nftA = await tbc721A.mint('a', 'AAA')
+      nftA = await tbc721A.mint('a', 'AAA')
 
       // Bob creates helper objects from the module specifiers
       const tbc721B = new TBC721(bob, tbc721A.mod)
       const swapHelperB = new SwapHelper(bob, swapHelperA.mod)
 
       // Bob mints an NFT to pay for Alice's's NFT
-      const nftB = await tbc721B.mint('b', 'BBB')
+      nftB = await tbc721B.mint('b', 'BBB')
 
       // Bob creates a swap transaction
       const { tx } = await swapHelperB.createSwapTx(nftA, nftB)
@@ -70,9 +65,9 @@ describe('Static Swap', () => {
 
   describe('Creating two NFTs to be swapped', () => {
     it('Alice creates an NFT', async () => {
-      a = await alice.new(NFT, ['A', 'AAA'])
+      nftA = await alice.new(NFT, ['A', 'AAA'])
       // @ts-ignore
-      expect(a).to.matchPattern({
+      expect(nftA).to.matchPattern({
         ...meta,
         name: 'A',
         symbol: 'AAA',
@@ -81,9 +76,9 @@ describe('Static Swap', () => {
     })
 
     it('Bob creates an NFT', async () => {
-      b = await bob.new(NFT, ['B', 'BBB'])
+      nftB = await bob.new(NFT, ['B', 'BBB'])
       // @ts-ignore
-      expect(b).to.matchPattern({
+      expect(nftB).to.matchPattern({
         ...meta,
         name: 'B',
         symbol: 'BBB',
@@ -106,7 +101,7 @@ describe('Static Swap', () => {
     })
 
     it('Alice builds, funds, and signs a swap transaction', async () => {
-      ;({ tx } = await swapHelper.createSwapTx(a, b))
+      ;({ tx } = await swapHelper.createSwapTx(nftA, nftB))
     })
 
     it('Bob checks the swap transaction', async () => {

@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import { Contract } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
@@ -41,11 +43,11 @@ export class SaleHelper {
     })
   }
 
-  checkSaleTx() {
+  static checkSaleTx() {
     // todo
   }
 
-  finalizeSaleTx(tx: Transaction, payment: Payment, scriptPubKey: Buffer) {
+  static finalizeSaleTx(tx: Transaction, payment: Payment, scriptPubKey: Buffer) {
     const [paymentTxId, paymentIndex] = payment._rev.split(':')
     tx.updateInput(1, {
       txId: paymentTxId,

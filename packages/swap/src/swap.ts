@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import { Contract } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'

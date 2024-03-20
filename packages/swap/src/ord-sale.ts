@@ -2,9 +2,9 @@
 
 import { Contract } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Valuable, ValuableMock } from './valuable'
 import { Payment, PaymentMock } from './payment'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
 
 export class Sale extends Contract {
   static exec(b1: Valuable, b2: Valuable, t: NFT, p: NFT) {
@@ -31,7 +31,12 @@ export class OrdSaleHelper {
     return this.mod
   }
 
-  async createSaleTx(b1Mock: ValuableMock, b2Mock: ValuableMock, nft: NFT, paymentMock: PaymentMock) {
+  async createSaleTx(
+    b1Mock: ValuableMock,
+    b2Mock: ValuableMock,
+    nft: NFT,
+    paymentMock: PaymentMock,
+  ) {
     const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 
     return this.computer.encode({
@@ -42,15 +47,21 @@ export class OrdSaleHelper {
       sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
       inputIndex: 2,
       fund: false,
-      mod: this.mod
+      mod: this.mod,
     })
   }
 
-  checkSaleTx() {
+  static checkSaleTx() {
     // todo
   }
 
-  finalizeSaleTx(tx: Transaction, b1: Valuable, b2: Valuable, payment: Payment, scriptPubKey: Buffer) {
+  static finalizeSaleTx(
+    tx: Transaction,
+    b1: Valuable,
+    b2: Valuable,
+    payment: Payment,
+    scriptPubKey: Buffer,
+  ) {
     const [b1TxId, b1Index] = b1._rev.split(':')
     tx.updateInput(0, {
       txId: b1TxId,
