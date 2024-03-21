@@ -4,7 +4,7 @@ import { Contract } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 
-export class Swap extends Contract {
+export class StaticSwap extends Contract {
   static exec(a: NFT, b: NFT) {
     const [ownerA] = a._owners
     const [ownerB] = b._owners
@@ -13,7 +13,7 @@ export class Swap extends Contract {
   }
 }
 
-export class SwapHelper {
+export class StaticSwapHelper {
   computer: any
   mod?: string
 
@@ -23,13 +23,13 @@ export class SwapHelper {
   }
 
   async deploy() {
-    this.mod = await this.computer.deploy(`export ${Swap}`)
+    this.mod = await this.computer.deploy(`export ${StaticSwap}`)
     return this.mod
   }
 
   async createSwapTx(a: NFT, b: NFT) {
     return this.computer.encode({
-      exp: `Swap.exec(a, b)`,
+      exp: `StaticSwap.exec(a, b)`,
       env: { a: a._rev, b: b._rev },
       mod: this.mod,
     })
@@ -37,7 +37,7 @@ export class SwapHelper {
 
   async checkSwapTx(tx: Transaction, pubKeyA: string, pubKeyB: string) {
     const { exp, env, mod } = await this.computer.decode(tx)
-    if (exp !== 'Swap.exec(a, b)') throw new Error('Unexpected expression')
+    if (exp !== 'StaticSwap.exec(a, b)') throw new Error('Unexpected expression')
     if (mod !== this.mod) throw new Error('Unexpected module specifier')
 
     const {
