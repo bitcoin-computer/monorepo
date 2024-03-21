@@ -1,18 +1,12 @@
-import { Contract } from '@bitcoin-computer/lib'
+/* eslint-disable max-classes-per-file */
+const { Contract } = await import('@bitcoin-computer/lib')
 
 export class NFT extends Contract {
-  name: string
-  symbol: string
-  _id: string
-  _rev: string
-  _root: string
-  _owners: string[]
-
   constructor(name = '', symbol = '') {
     super({ name, symbol })
   }
 
-  transfer(to: string) {
+  transfer(to: string): void {
     this._owners = [to]
   }
 }
@@ -20,12 +14,12 @@ export class NFT extends Contract {
 interface ITBC721 {
   balanceOf(publicKey: string): Promise<number>
   ownersOf(tokenId: string): Promise<string[]>
-  transfer(to: string, tokenId: string)
+  transfer(to: string, tokenId: string): Promise<void>
 }
 
 export class TBC721 implements ITBC721 {
   computer: any
-  mod: string
+  mod: string | undefined
 
   constructor(computer: any, mod?: string) {
     this.computer = computer
@@ -49,7 +43,7 @@ export class TBC721 implements ITBC721 {
   async balanceOf(publicKey: string): Promise<number> {
     const { mod } = this
     const revs = await this.computer.query({ publicKey, mod })
-    const objects: NFT[] = await Promise.all(revs.map((rev) => this.computer.sync(rev)))
+    const objects: NFT[] = await Promise.all(revs.map((rev: string) => this.computer.sync(rev)))
     return objects.length
   }
 
@@ -59,7 +53,7 @@ export class TBC721 implements ITBC721 {
     return obj._owners
   }
 
-  async transfer(to: string, tokenId: string) {
+  async transfer(to: string, tokenId: string): Promise<void> {
     const [rev] = await this.computer.query({ ids: [tokenId] })
     const obj = await this.computer.sync(rev)
     await obj.transfer(to)
