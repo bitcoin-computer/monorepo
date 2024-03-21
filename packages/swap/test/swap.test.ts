@@ -3,10 +3,10 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
-import { SwapHelper } from '../src/swap'
+import { Swap, SwapHelper } from '../src/swap'
 import { RLTC, meta } from '../src/utils'
 
-describe.only('Swap', () => {
+describe('Swap', () => {
   let nftA: NFT
   let nftB: NFT
   const alice = new Computer(RLTC)
@@ -17,8 +17,30 @@ describe.only('Swap', () => {
     await bob.faucet(0.01e8)
   })
 
-  describe('Example from docs', () => {
-    it('Should work', async () => {
+  describe('Examples from docs', () => {
+    it('Should work without helper classes', async () => {
+      // Create and fund the wallets
+      const alice = new Computer(RLTC)
+      const bob = new Computer(RLTC)
+      await alice.faucet(0.01e8)
+      await bob.faucet(0.01e8)
+
+      // Alice and Bob create one NFT each
+      const nftA = await alice.new(NFT, ['a', 'AAA'])
+      const nftB = await bob.new(NFT, ['b', 'BBB'])
+
+      // Alice builds a partially signed swap transaction
+      const { tx } = await alice.encode({
+        exp: `${Swap} new Swap(nftA, nftB)`,
+        env: { nftA: nftA._rev, nftB: nftB._rev },
+      })
+
+      // Bob signs and broadcasts the swap transaction
+      await bob.sign(tx)
+      await bob.broadcast(tx)
+    })
+
+    it('Should work with helper classes', async () => {
       // Alice creates helper objects
       const tbc721A = new TBC721(alice)
       const swapHelperA = new SwapHelper(alice)
