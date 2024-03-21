@@ -9,16 +9,6 @@ const { expect } = chai
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-const RLTC: {
-  network: 'regtest',
-  chain: 'LTC',
-  url: string
-} = {
-  network: 'regtest',
-  chain: 'LTC',
-  url: 'http://localhost:1031',
-}
-
 describe('Bitcoin Computer', () => {
   it('should export a function', () => {
     expect(Computer).not.to.be.undefined
@@ -26,7 +16,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a computer object', () => {
-    const computer = new Computer(RLTC)
+    const computer = new Computer()
     expect(computer).not.to.be.undefined
     expect(typeof computer).eq('object')
   })
@@ -39,7 +29,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a smart object', async () => {
-    const computer = new Computer(RLTC)
+    const computer = new Computer()
 
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)
@@ -55,7 +45,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should update a smart object', async () => {
-    const computer = new Computer(RLTC)
+    const computer = new Computer()
 
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)

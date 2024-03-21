@@ -9,13 +9,7 @@ export const sleep = (ms: number) =>
     setTimeout(() => resolve(), ms)
   })
 
-/**
- * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
- */
-const computer = new Computer({
-  url: 'http://127.0.0.1:1031',
-  network: 'regtest',
-})
+const computer = new Computer()
 
 let tbc721
 let nft

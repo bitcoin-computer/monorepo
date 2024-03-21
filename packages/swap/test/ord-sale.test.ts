@@ -7,7 +7,7 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { OrdSaleHelper, Sale } from '../src/ord-sale'
 import { Payment, PaymentMock } from '../src/payment'
-import { RLTC, meta } from '../src/utils'
+import { meta } from '../src/utils'
 import { Valuable, ValuableMock } from '../src/valuable'
 
 chai.use(chaiMatchPattern)
@@ -21,7 +21,7 @@ describe('Ord Sale', () => {
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer(RLTC)
+    const seller = new Computer()
     sellerPublicKey = seller.getPublicKey()
     const saleHelper = new OrdSaleHelper(seller)
     
@@ -61,8 +61,8 @@ describe('Ord Sale', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer(RLTC)
-    const computer = new Computer(RLTC)
+    const buyer = new Computer()
+    const computer = new Computer()
     let b1: Valuable
     let b2: Valuable
     let payment: Payment

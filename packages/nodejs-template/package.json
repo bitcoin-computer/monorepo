@@ -9,7 +9,7 @@
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
     "test": "mocha  --config .mocharc.json",
-    "test-async-and-show": "npm run test &> nodejs-template-test.log || true ; open nodejs-template-test.log &",
+    "test-and-show": "npm run test &> nodejs-template-test.log || true ; open nodejs-template-test.log &",
     "types": "tsc --noEmit"
   },
   "type": "module",

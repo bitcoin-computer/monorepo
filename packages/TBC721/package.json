@@ -15,7 +15,7 @@
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
     "test": "mocha --config .mocharc.json",
-    "test-async-and-show": "npm run test &> tbc721-test.log || true ; open tbc721-test.log &",
+    "test-and-show": "npm run test &> tbc721-test.log || true ; open tbc721-test.log &",
     "types": "tsc --noEmit"
   },
   "files": [

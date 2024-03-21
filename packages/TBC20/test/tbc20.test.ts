@@ -4,13 +4,7 @@ import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { TBC20 } from '../src/tbc-20'
 
-/**
- * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
- */
-const computer = new Computer({
-  url: 'http://127.0.0.1:1031',
-  network: 'regtest' as any,
-})
+const computer = new Computer()
 
 function sleep(delay: number): Promise<void> {
   return new Promise((resolve) => {

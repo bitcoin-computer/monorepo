@@ -7,7 +7,7 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
-import { RLTC, meta } from '../src/utils'
+import { meta } from '../src/utils'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -21,7 +21,7 @@ describe('Sale', () => {
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer(RLTC)
+    const seller = new Computer()
     sellerPublicKey = seller.getPublicKey()
     let saleHelper: SaleHelper
 
@@ -59,7 +59,7 @@ describe('Sale', () => {
   })
 
   describe('Failing to underpay', () => {
-    const thief = new Computer(RLTC)
+    const thief = new Computer()
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
@@ -111,8 +111,8 @@ describe('Sale', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer(RLTC)
-    const computer = new Computer(RLTC)
+    const buyer = new Computer()
+    const computer = new Computer()
     let saleHelper: SaleHelper
     let payment: Payment
     let txId: string

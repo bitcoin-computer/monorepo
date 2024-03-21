@@ -9,19 +9,6 @@ const { expect } = chai
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-/**
- * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
- */
-const RLTC: {
-  network: 'regtest'
-  chain: 'LTC'
-  url: string
-} = {
-  network: 'regtest',
-  chain: 'LTC',
-  url: 'http://localhost:1031',
-}
-
 const meta = {
   _id: _.isString,
   _rev: _.isString,
@@ -37,8 +24,8 @@ describe('NFT', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  const sender = new Computer(RLTC)
-  const receiver = new Computer(RLTC)
+  const sender = new Computer()
+  const receiver = new Computer()
 
   before("Fund sender's wallet", async () => {
     await sender.faucet(0.001e8)

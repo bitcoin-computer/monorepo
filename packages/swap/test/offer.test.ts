@@ -11,16 +11,6 @@ import { OfferHelper } from '../src/offer'
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-const RLTC: {
-  network: 'regtest'
-  chain: 'LTC'
-  url: string
-} = {
-  network: 'regtest',
-  chain: 'LTC',
-  url: 'http://localhost:1031',
-}
-
 const meta = {
   _id: _.isString,
   _rev: _.isString,
@@ -32,8 +22,8 @@ const meta = {
 describe('Offer', () => {
   let a: NFT
   let b: NFT
-  const alice = new Computer(RLTC)
-  const bob = new Computer(RLTC)
+  const alice = new Computer()
+  const bob = new Computer()
   let offerId: string
 
   before('Before', async () => {

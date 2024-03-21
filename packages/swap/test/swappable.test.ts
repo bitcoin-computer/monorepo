@@ -9,16 +9,6 @@ import { Swappable } from '../src/swappable'
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-const RLTC: {
-  network: 'regtest'
-  chain: 'LTC'
-  url: string
-} = {
-  network: 'regtest',
-  chain: 'LTC',
-  url: 'http://localhost:1031',
-}
-
 const meta = {
   _id: _.isString,
   _rev: _.isString,
@@ -30,8 +20,8 @@ const meta = {
 describe('Swapppable', () => {
   let a: Swappable
   let b: Swappable
-  const alice = new Computer(RLTC)
-  const bob = new Computer(RLTC)
+  const alice = new Computer()
+  const bob = new Computer()
 
   before('Before', async () => {
     await alice.faucet(0.01e8)

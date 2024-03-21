@@ -4,17 +4,8 @@ import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { Token } from '../src/token'
 
-/**
- * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
- */
-
-const opts = {
-  url: 'http://127.0.0.1:1031',
-  network: 'regtest' as any,
-}
-
-const computer = new Computer(opts)
-const computer2 = new Computer(opts)
+const computer = new Computer()
+const computer2 = new Computer()
 
 before(async () => {
   await computer.faucet(1e7)
