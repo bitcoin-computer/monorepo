@@ -3,7 +3,7 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
-import { SwapHelper } from '../src/swap'
+import { StaticSwapHelper } from '../src/static-swap'
 import { RLTC, meta } from '../src/utils'
 
 describe('Static Swap', () => {
@@ -21,7 +21,7 @@ describe('Static Swap', () => {
     it('Should work', async () => {
       // Alice creates helper objects
       const tbc721A = new TBC721(alice)
-      const swapHelperA = new SwapHelper(alice)
+      const swapHelperA = new StaticSwapHelper(alice)
 
       // Alice deploys the smart contracts
       await tbc721A.deploy()
@@ -32,7 +32,7 @@ describe('Static Swap', () => {
 
       // Bob creates helper objects from the module specifiers
       const tbc721B = new TBC721(bob, tbc721A.mod)
-      const swapHelperB = new SwapHelper(bob, swapHelperA.mod)
+      const swapHelperB = new StaticSwapHelper(bob, swapHelperA.mod)
 
       // Bob mints an NFT to pay for Alice's's NFT
       nftB = await tbc721B.mint('b', 'BBB')
@@ -85,10 +85,10 @@ describe('Static Swap', () => {
   describe('Executing a swap', async () => {
     let tx: any
     let txId: string
-    let swapHelper: SwapHelper
+    let swapHelper: StaticSwapHelper
 
     before('Before creating an offer', async () => {
-      swapHelper = new SwapHelper(alice)
+      swapHelper = new StaticSwapHelper(alice)
     })
 
     it('Alice deploys a swap contract', async () => {
