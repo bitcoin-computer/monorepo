@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>TBC CRA Template</h1>
+  <h1>TBC NFT</h1>
   <p>
     A template for Create React App with TypeScript and the Bitcoin Computer
     <br />

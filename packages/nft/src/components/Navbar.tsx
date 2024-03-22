@@ -82,11 +82,13 @@ function ModalContent() {
 }
 
 function SignInItem() {
-  return <li className="py-2">
-    <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-      <Modal.ShowButton text="Sign in" id="sign-in-modal" />
-    </label>
-  </li>
+  return (
+    <li className="py-2">
+      <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+        <Modal.ShowButton text="Sign in" id="sign-in-modal" />
+      </label>
+    </li>
+  )
 }
 
 export function NotLoggedMenu() {
@@ -112,9 +114,10 @@ export function NotLoggedMenu() {
       Modal.get(modalId).show()
     }
   }
-  
-  function CoinSelectionItem({ chain, network }: { chain: Chain, network: Network }) {
-    return <li>
+
+  function CoinSelectionItem({ chain, network }: { chain: Chain; network: Network }) {
+    return (
+      <li>
         <div
           onClick={() => setChainAndNetwork(chain, network)}
           className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -122,6 +125,7 @@ export function NotLoggedMenu() {
           {chain} {network}
         </div>
       </li>
+    )
   }
 
   return (
@@ -159,17 +163,17 @@ export function NotLoggedMenu() {
               className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
-              <CoinSelectionItem chain={'LTC'} network={'mainnet'} />
-              <CoinSelectionItem chain={'LTC'} network={'testnet'} />
-              <CoinSelectionItem chain={'LTC'} network={'regtest'} />
+              <CoinSelectionItem chain={"LTC"} network={"mainnet"} />
+              <CoinSelectionItem chain={"LTC"} network={"testnet"} />
+              <CoinSelectionItem chain={"LTC"} network={"regtest"} />
             </ul>
             <ul
               className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
-              <CoinSelectionItem chain={'BTC'} network={'mainnet'} />
-              <CoinSelectionItem chain={'BTC'} network={'testnet'} />
-              <CoinSelectionItem chain={'BTC'} network={'regtest'} />
+              <CoinSelectionItem chain={"BTC"} network={"mainnet"} />
+              <CoinSelectionItem chain={"BTC"} network={"testnet"} />
+              <CoinSelectionItem chain={"BTC"} network={"regtest"} />
             </ul>
           </div>
         </li>
@@ -181,35 +185,40 @@ export function NotLoggedMenu() {
 }
 
 function WalletItem() {
-  return <li className="py-2">
-    <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-      <Drawer.ShowDrawer text="Wallet" id="wallet-drawer" />
-    </label>
-  </li>
+  return (
+    <li className="py-2">
+      <label className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+        <Drawer.ShowDrawer text="Wallet" id="wallet-drawer" />
+      </label>
+    </li>
+  )
 }
 
-const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
 function Item({ dest }: { dest: string }) {
-  return <Link to={`/${dest}`} className="flex items-center space-x-3 rtl:space-x-reverse">
-  <span className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
-    {capitalizeFirstLetter(dest)}
-  </span>
-</Link>
+  return (
+    <Link to={`/${dest}`} className="flex items-center space-x-3 rtl:space-x-reverse">
+      <span className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
+        {capitalizeFirstLetter(dest)}
+      </span>
+    </Link>
+  )
 }
 
 export function LoggedInMenu() {
   return (
     <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-      <Item dest={'mine'} />
-      <Item dest={'mint'} />
+      <Item dest={"mine"} />
+      <Item dest={"mint"} />
       <WalletItem />
     </ul>
   )
 }
 
 function NavbarDropdownButton() {
-  return <button
+  return (
+    <button
       data-collapse-toggle="navbar-dropdown"
       type="button"
       className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -233,15 +242,18 @@ function NavbarDropdownButton() {
         />
       </svg>
     </button>
+  )
 }
 
-export function Logo({ name = 'TBC CRA Template' }) {
-  return <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
+export function Logo({ name = "TBC NFT" }) {
+  return (
+    <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
       <img src="/logo.png" className="h-10" alt="Bitcoin Computer Logo" />
       <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
         {name}
       </span>
     </Link>
+  )
 }
 
 export function Navbar() {
