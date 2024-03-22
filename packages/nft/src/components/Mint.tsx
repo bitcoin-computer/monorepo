@@ -62,12 +62,14 @@ export default function Mint() {
   const [computer] = useState(Auth.getComputer())
   const [successRev, setSuccessRev] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
+  const [name, setName] = useState("")
+  const [symbol, setSymbol] = useState("")
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
       const tbc721 = new TBC721(computer, nftModSpec)
-      const nft = await tbc721.mint("vivek", "TBC")
+      const nft = await tbc721.mint(name, symbol)
       setSuccessRev(nft._id)
       Modal.showModal("success-modal")
     } catch (err) {
@@ -89,6 +91,8 @@ export default function Mint() {
             <input
               type="text"
               id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="Bitcoin Computer"
               required
@@ -101,6 +105,8 @@ export default function Mint() {
             <input
               type="text"
               id="symbol"
+              value={symbol}
+              onChange={(e) => setSymbol(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               placeholder="TBC"
               required
