@@ -3,6 +3,7 @@ import { Auth, Modal } from "@bitcoin-computer/components"
 import { TBC721 } from "@bitcoin-computer/TBC721"
 import { Link } from "react-router-dom"
 import { nftModSpec } from "../constants/modSpecs"
+import { Computer } from "@bitcoin-computer/lib"
 
 function SuccessContent(rev: string) {
   return (
@@ -58,10 +59,12 @@ function ErrorContent(msg: string) {
   )
 }
 
-export default function Mint() {
-  const [computer] = useState(Auth.getComputer())
-  const [successRev, setSuccessRev] = useState("")
-  const [errorMsg, setErrorMsg] = useState("")
+function MintForm(props: {
+  computer: Computer
+  setSuccessRev: React.Dispatch<React.SetStateAction<string>>
+  setErrorMsg: React.Dispatch<React.SetStateAction<string>>
+}) {
+  const { computer, setSuccessRev, setErrorMsg } = props
   const [name, setName] = useState("")
   const [symbol, setSymbol] = useState("")
 
@@ -69,6 +72,7 @@ export default function Mint() {
     e.preventDefault()
     try {
       const tbc721 = new TBC721(computer, nftModSpec)
+      console.log(name, symbol)
       const nft = await tbc721.mint(name, symbol)
       setSuccessRev(nft._id)
       Modal.showModal("success-modal")
@@ -79,7 +83,6 @@ export default function Mint() {
       }
     }
   }
-
   return (
     <>
       <form onSubmit={onSubmit} className="w-full">
@@ -120,6 +123,18 @@ export default function Mint() {
           Mint NFT
         </button>
       </form>
+    </>
+  )
+}
+
+export default function Mint() {
+  const [computer] = useState(Auth.getComputer())
+  const [successRev, setSuccessRev] = useState("")
+  const [errorMsg, setErrorMsg] = useState("")
+
+  return (
+    <>
+      <MintForm computer={computer} setSuccessRev={setSuccessRev} setErrorMsg={setErrorMsg} />
       <Modal.Component
         title={"Success"}
         content={SuccessContent}
