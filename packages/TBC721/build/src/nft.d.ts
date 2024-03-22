@@ -1,5 +1,7 @@
 declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class NFT extends Contract {
+    name: string;
+    symbol: string;
     constructor(name?: string, symbol?: string);
     transfer(to: string): void;
 }

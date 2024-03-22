@@ -8,8 +8,6 @@ export class NFT extends Contract {
     }
 }
 export class TBC721 {
-    computer;
-    mod;
     constructor(computer, mod) {
         this.computer = computer;
         this.mod = mod;
