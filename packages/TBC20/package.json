@@ -29,7 +29,7 @@
     "start": "node build/src/main.js",
     "types": "tsc",
     "test": "mocha --config .mocharc.json",
-    "test-and-show": "npm run test &> tbc20-test.log || true ; open tbc20-test.log &"
+    "test-and-show": "../../scripts/test-and-show.sh tbc20-test.log "
   },
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "license": "Apache-2.0",
