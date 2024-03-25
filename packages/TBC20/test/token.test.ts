@@ -3,18 +3,14 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { Token } from '../src/token'
+import dotenv from 'dotenv'
 
-/**
- * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
- */
+dotenv.config({ path: '../../.env'})
 
-const opts = {
-  url: 'http://127.0.0.1:1031',
-  network: 'regtest' as any,
-}
+const url = process.env.BCN_URL
 
-const computer = new Computer(opts)
-const computer2 = new Computer(opts)
+const computer = new Computer({ url })
+const computer2 = new Computer({ url })
 
 before(async () => {
   await computer.faucet(1e7)

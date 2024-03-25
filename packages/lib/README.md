@@ -53,6 +53,9 @@ class Counter extends Contract {
 // Create a Bitcoin Computer wallet
 const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
 
+// Fund the computer wallet
+await computer.faucet(1e7)
+
 // Deploy a smart contract and create a smart object
 const counter = await computer.new(Counter)
 
@@ -61,28 +64,6 @@ await counter.inc()
 
 // Log the smart object
 console.log(counter)
-```
-
-</font>
-
-### Fund the Wallet
-
-On Litecoin with testnet (as configured in the example above) you can use a [Litecoin testnet faucet](https://www.google.com/search?q=litecoin+testnet+faucet) to fund the address of the `computer` object:
-
-<font size=1>
-
-```js
-mvbAVZJF68WASLbqteTToE45r69L53Q1vL
-```
-
-</font>
-
-You can also run your own [node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme). In this case you can refill the wallet from the command line on regtest.
-
-<font size=1>
-
-```bash
-npm run fund-ltc -- mvbAVZJF68WASLbqteTToE45r69L53Q1vL
 ```
 
 </font>
@@ -137,6 +118,8 @@ class Counter extends Contract {
 
 const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
 
+await computer.faucet(1e7)
+
 const counter = await computer.new(Counter)
 document.getElementById("count").innerHTML = counter.n
 
@@ -182,11 +165,7 @@ http-server
 
 </font>
 
-### Fund Wallet
-
-See [above](#fund-the-wallet).
-
-## Use on Mainnet or Regtest
+## Use locally on regtest or connect to a mainnet node
 
 Install a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) and run it with the command below:
 

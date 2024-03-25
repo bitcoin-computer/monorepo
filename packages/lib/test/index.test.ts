@@ -3,6 +3,11 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer, Contract } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -11,16 +16,6 @@ const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa
 const randomRev = '0000000000000000000000000000000000000000000000000000000000000000:0'
 const mockedRev = `mock:${randomRev}`
 const symbol = ''
-
-const RLTC: {
-  network: 'regtest'
-  chain: 'LTC'
-  url: string
-} = {
-  network: 'regtest',
-  chain: 'LTC',
-  url: 'http://localhost:1031',
-}
 
 const meta = {
   _id: _.isString,
@@ -134,18 +129,21 @@ class Payment extends Contract {
 }
 
 describe('Computer', () => {
-  it('Should default to LTC testnet', async () => {
+  it('Should default to public LTC regtest node', async () => {
     const computer = new Computer()
     expect(computer.getChain()).eq('LTC')
-    expect(computer.getNetwork()).eq('testnet')
-    expect(computer.getUrl()).eq('https://node.bitcoincomputer.io')
+    expect(computer.getNetwork()).eq('regtest')
+    expect(computer.getUrl()).eq('https://rltc.node.bitcoincomputer.io')
   })
 
   it('Should instantiate a computer object', async () => {
-    const computer = new Computer(RLTC)
-    expect(computer.getChain()).eq(RLTC.chain)
-    expect(computer.getNetwork()).eq(RLTC.network)
-    expect(computer.getUrl()).eq(RLTC.url)
+    const chain = 'BTC'
+    const network = 'mainnet'
+    const url = 'https://btc.node.bitcoincomputer.io' 
+    const computer = new Computer({ chain, network, url})
+    expect(computer.getChain()).eq(chain)
+    expect(computer.getNetwork()).eq(network)
+    expect(computer.getUrl()).eq(url)
   })
 })
 
@@ -154,8 +152,8 @@ describe('Non-Fungible Token (NFT)', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new Computer(RLTC)
-  let receiver = new Computer(RLTC)
+  let sender = new Computer({ url })
+  let receiver = new Computer({ url })
 
   before("Fund sender's wallet", async () => {
     await sender.faucet(0.001e8)
@@ -220,8 +218,8 @@ describe('Fungible Token', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new Computer(RLTC)
-  let receiver = new Computer(RLTC)
+  let sender = new Computer({ url })
+  let receiver = new Computer({ url })
 
   before('Fund senders wallet', async () => {
     await sender.faucet(0.01e8)
@@ -301,9 +299,9 @@ describe('Fungible Token', () => {
 describe('Chat', () => {
   let alicesChat: Chat
   let bobsChat: Chat
-  const alice = new Computer(RLTC)
-  const bob = new Computer(RLTC)
-  const eve = new Computer(RLTC)
+  const alice = new Computer({ url })
+  const bob = new Computer({ url })
+  const eve = new Computer({ url })
   const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
 
   before('Before', async () => {
@@ -389,8 +387,8 @@ describe('Chat', () => {
 describe('Swap', () => {
   let nftA: NFT
   let nftB: NFT
-  const alice = new Computer(RLTC)
-  const bob = new Computer(RLTC)
+  const alice = new Computer({ url })
+  const bob = new Computer({ url })
 
   before('Before', async () => {
     await alice.faucet(0.01e8)
@@ -464,7 +462,7 @@ describe('Sell', () => {
   
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer(RLTC)
+    const seller = new Computer({ url })
     sellerPublicKey = seller.getPublicKey()
 
     before("Fund Seller's wallet", async () => {
@@ -506,7 +504,7 @@ describe('Sell', () => {
   })
 
   describe('Failing to steal the nft', () => {
-    const thief = new Computer(RLTC)
+    const thief = new Computer({ url })
     let tooLowPayment: Payment
     let txId: string
 
@@ -557,8 +555,8 @@ describe('Sell', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer(RLTC)
-    const computer = new Computer(RLTC)
+    const buyer = new Computer({ url })
+    const computer = new Computer({ url })
     let payment: Payment
     let txId: string
 

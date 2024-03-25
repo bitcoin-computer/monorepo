@@ -9,7 +9,7 @@
 
 ## Prerequisites
 
-You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
+You need to have [git](https://www.git-scm.com/) and [node.js](https://nodejs.org/) installed.
 
 ## Installation
 
@@ -53,10 +53,6 @@ npm run start
 ```
 
 </font>
-
-### Fund the Wallet
-
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet).
 
 ## Documentation
 

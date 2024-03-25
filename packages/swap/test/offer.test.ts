@@ -7,19 +7,14 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Swap } from '../src/swap'
 import { OfferHelper } from '../src/offer'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
-
-const RLTC: {
-  network: 'regtest'
-  chain: 'LTC'
-  url: string
-} = {
-  network: 'regtest',
-  chain: 'LTC',
-  url: 'http://localhost:1031',
-}
 
 const meta = {
   _id: _.isString,
@@ -32,8 +27,8 @@ const meta = {
 describe('Offer', () => {
   let a: NFT
   let b: NFT
-  const alice = new Computer(RLTC)
-  const bob = new Computer(RLTC)
+  const alice = new Computer({ url })
+  const bob = new Computer({ url })
   let offerId: string
 
   before('Before', async () => {
