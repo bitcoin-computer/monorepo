@@ -6,7 +6,7 @@ import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Valuable, ValuableMock } from './valuable'
 import { Payment, PaymentMock } from './payment'
 
-export class Sale extends Contract {
+export class OrdSale extends Contract {
   static exec(b1: Valuable, b2: Valuable, t: NFT, p: NFT) {
     const [ownerT] = t._owners
     const [ownerP] = p._owners
@@ -27,7 +27,7 @@ export class OrdSaleHelper {
   }
 
   async deploy() {
-    this.mod = await this.computer.deploy(`export ${Sale}`)
+    this.mod = await this.computer.deploy(`export ${OrdSale}`)
     return this.mod
   }
 
@@ -40,7 +40,7 @@ export class OrdSaleHelper {
     const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 
     return this.computer.encode({
-      exp: `Sale.exec(b1, b2, nft, payment)`,
+      exp: `OrdSale.exec(b1, b2, nft, payment)`,
       env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
       mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
       // eslint-disable-next-line no-bitwise
