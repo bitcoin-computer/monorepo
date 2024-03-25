@@ -152,7 +152,7 @@ describe('NFT', () => {
     })
   })
 
-  describe.only('Examples from docs', () => {
+  describe('Examples from docs', () => {
     it('Should work without the TBC721 helper class', async () => {
       // Create the sender wallet
       const sender = new Computer({ url })
