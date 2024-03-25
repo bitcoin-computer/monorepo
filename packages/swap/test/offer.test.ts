@@ -7,6 +7,11 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Swap } from '../src/swap'
 import { OfferHelper } from '../src/offer'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -22,8 +27,8 @@ const meta = {
 describe('Offer', () => {
   let a: NFT
   let b: NFT
-  const alice = new Computer()
-  const bob = new Computer()
+  const alice = new Computer({ url })
+  const bob = new Computer({ url })
   let offerId: string
 
   before('Before', async () => {

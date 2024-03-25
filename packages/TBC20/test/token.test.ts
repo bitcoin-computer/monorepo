@@ -3,9 +3,14 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { Token } from '../src/token'
+import dotenv from 'dotenv'
 
-const computer = new Computer()
-const computer2 = new Computer()
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
+
+const computer = new Computer({ url })
+const computer2 = new Computer({ url })
 
 before(async () => {
   await computer.faucet(1e7)

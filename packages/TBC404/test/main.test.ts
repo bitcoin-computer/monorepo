@@ -5,6 +5,11 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { Counter } from '../src/main'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -16,7 +21,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a computer object', () => {
-    const computer = new Computer()
+    const computer = new Computer({ url })
     expect(computer).not.to.be.undefined
     expect(typeof computer).eq('object')
   })
@@ -29,7 +34,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a smart object', async () => {
-    const computer = new Computer()
+    const computer = new Computer({ url })
 
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)
@@ -45,7 +50,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should update a smart object', async () => {
-    const computer = new Computer()
+    const computer = new Computer({ url })
 
     await computer.faucet(1e7)
     const counter = await computer.new(Counter)

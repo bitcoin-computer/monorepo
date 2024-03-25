@@ -8,6 +8,11 @@ import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -21,7 +26,7 @@ describe('Sale', () => {
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer()
+    const seller = new Computer({ url })
     sellerPublicKey = seller.getPublicKey()
     let saleHelper: SaleHelper
 
@@ -59,7 +64,7 @@ describe('Sale', () => {
   })
 
   describe('Failing to underpay', () => {
-    const thief = new Computer()
+    const thief = new Computer({ url })
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
@@ -111,8 +116,8 @@ describe('Sale', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer()
-    const computer = new Computer()
+    const buyer = new Computer({ url })
+    const computer = new Computer({ url })
     let saleHelper: SaleHelper
     let payment: Payment
     let txId: string

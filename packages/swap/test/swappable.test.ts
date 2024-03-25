@@ -5,6 +5,11 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { Swappable } from '../src/swappable'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -20,8 +25,8 @@ const meta = {
 describe('Swapppable', () => {
   let a: Swappable
   let b: Swappable
-  const alice = new Computer()
-  const bob = new Computer()
+  const alice = new Computer({ url })
+  const bob = new Computer({ url })
 
   before('Before', async () => {
     await alice.faucet(0.01e8)

@@ -3,8 +3,13 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { TBC20 } from '../src/tbc-20'
+import dotenv from 'dotenv'
 
-const computer = new Computer()
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
+
+const computer = new Computer({ url })
 
 function sleep(delay: number): Promise<void> {
   return new Promise((resolve) => {
@@ -88,7 +93,7 @@ describe('TBC20', () => {
 
   describe('transfer', () => {
     it('Should transfer a token', async () => {
-      const computer2 = new Computer()
+      const computer2 = new Computer({ url })
       const tbc20 = new TBC20('test', 'TST', computer)
       const publicKey = tbc20.computer.getPublicKey()
       await tbc20.mint(publicKey, 200)
@@ -100,8 +105,8 @@ describe('TBC20', () => {
     })
 
     it('Should transfer random amounts to different people', async () => {
-      const computer2 = new Computer()
-      const computer3 = new Computer()
+      const computer2 = new Computer({ url })
+      const computer3 = new Computer({ url })
       const tbc20 = new TBC20('multiple', 'MULT', computer)
       const publicKey = tbc20.computer.getPublicKey()
       await tbc20.mint(publicKey, 200)
@@ -124,7 +129,7 @@ describe('TBC20', () => {
     })
 
     it('Should fail if the amount is greater than the balance', async () => {
-      const computer2 = new Computer()
+      const computer2 = new Computer({ url })
       const tbc20 = new TBC20('test', 'TST', computer)
       const publicKey = tbc20.computer.getPublicKey()
       await tbc20.mint(publicKey, 200)

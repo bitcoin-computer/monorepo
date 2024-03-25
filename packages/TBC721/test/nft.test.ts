@@ -4,6 +4,11 @@ import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import chaiMatchPattern from 'chai-match-pattern'
 import { NFT } from '../src/nft'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 const { expect } = chai
 chai.use(chaiMatchPattern)
@@ -24,8 +29,8 @@ describe('NFT', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  const sender = new Computer()
-  const receiver = new Computer()
+  const sender = new Computer({ url })
+  const receiver = new Computer({ url })
 
   before("Fund sender's wallet", async () => {
     await sender.faucet(0.001e8)

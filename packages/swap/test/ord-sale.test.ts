@@ -9,6 +9,11 @@ import { OrdSaleHelper, Sale } from '../src/ord-sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
 import { Valuable, ValuableMock } from '../src/valuable'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -21,13 +26,13 @@ describe('Ord Sale', () => {
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer()
+    const seller = new Computer({ url })
     sellerPublicKey = seller.getPublicKey()
     const saleHelper = new OrdSaleHelper(seller)
     
     it('Seller deploys the smart contract', async () => {
       await seller.faucet(2e8)
-      saleHelper.deploy()
+      await saleHelper.deploy()
     })
 
     it('Seller creates an NFT', async () => {
@@ -61,8 +66,8 @@ describe('Ord Sale', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer()
-    const computer = new Computer()
+    const buyer = new Computer({ url })
+    const computer = new Computer({ url })
     let b1: Valuable
     let b2: Valuable
     let payment: Payment

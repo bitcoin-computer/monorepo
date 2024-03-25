@@ -3,13 +3,18 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { TBC721 } from '../src/nft'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 export const sleep = (ms: number) =>
   new Promise<void>((resolve) => {
     setTimeout(() => resolve(), ms)
   })
 
-const computer = new Computer()
+const computer = new Computer({ url })
 
 let tbc721
 let nft
@@ -55,7 +60,7 @@ describe('TBC721', () => {
 
   describe('transfer', () => {
     it('Should transfer an NFT', async () => {
-      const computer2 = new Computer()
+      const computer2 = new Computer({ url })
       const nft2 = await tbc721.mint('name', 'symbol')
       const publicKey2 = computer2.getPublicKey()
       await sleep(500)
