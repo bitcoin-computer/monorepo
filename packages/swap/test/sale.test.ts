@@ -6,7 +6,7 @@ import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
-import { SaleHelper } from '../src/sale'
+import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
 import dotenv from 'dotenv'
@@ -25,16 +25,53 @@ describe('Sale', () => {
   const nftPrice = 0.1e8
   const fee = 100000
 
-  describe('Example from docs', () => {
-    const alice = new Computer({ url })
-    const bob = new Computer({ url })
+  describe('Examples from docs', () => {
+    it('Should work without helper classes', async () => {
+      // Create and fund wallets
+      const seller = new Computer({ url })
+      const buyer = new Computer({ url })
+      await seller.faucet(1e8)
+      await buyer.faucet(2e8)
 
-    before('Before sale example from docs', async () => {
-      await alice.faucet(1e8)
-      await bob.faucet(1e8)
+      // Seller mints an NFT
+      const nft = await seller.new(NFT, ['name', 'symbol'])
+
+      // Seller creates partially signed swap as a sale offer
+      const mock = new PaymentMock(seller.getPublicKey(), 7860)
+      const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
+      const { tx: saleTx } = await seller.encode({
+        exp: `${Sale} Sale.exec(nft, payment)`,
+        env: { nft: nft._rev, payment: mock._rev },
+        mocks: { payment: mock },
+        // eslint-disable-next-line no-bitwise
+        sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+        inputIndex: 0,
+        fund: false,
+      })
+
+      // Buyer creates a payment object with the asking price
+      const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
+      const [paymentTxId, paymentIndex] = payment._rev.split(':')
+
+      // Buyer set's the payment object as the second input of the swap tx
+      saleTx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
+
+      // Buyer updates the second output of the swap tx to receive the NFT
+      saleTx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
+
+      // Buyer funds, signs, and broadcasts to execute the sale
+      await buyer.fund(saleTx)
+      await buyer.sign(saleTx)
+      await buyer.broadcast(saleTx)
     })
 
-    it('Should work', async () => {
+    it('Should work with helper classes', async () => {
+      // Create and fund wallets
+      const alice = new Computer({ url })
+      const bob = new Computer({ url })
+      await alice.faucet(1e8)
+      await bob.faucet(1e8)
+
       // Alice creates helper objects
       const tbc721A = new TBC721(alice)
       const saleHelperA = new SaleHelper(alice)
