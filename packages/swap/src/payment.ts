@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
-
-import { Contract } from '@bitcoin-computer/lib'
 import { getTestRev } from './utils'
+
+const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Payment extends Contract {
   _id: string
