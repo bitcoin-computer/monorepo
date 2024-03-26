@@ -6,7 +6,7 @@ import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
 import { Swap, SwapHelper } from '../src/swap'
 import { RLTC, meta } from '../src/utils'
 
-describe.only('Swap', () => {
+describe('Swap', () => {
   let nftA: NFT
   let nftB: NFT
   const alice = new Computer(RLTC)

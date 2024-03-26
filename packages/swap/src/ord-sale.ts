@@ -63,22 +63,13 @@ export class OrdSaleHelper {
     scriptPubKey: Buffer,
   ) {
     const [b1TxId, b1Index] = b1._rev.split(':')
-    tx.updateInput(0, {
-      txId: b1TxId,
-      index: parseInt(b1Index, 10),
-    })
+    tx.updateInput(0, { txId: b1TxId, index: parseInt(b1Index, 10) })
 
     const [b2TxId, b2Index] = b2._rev.split(':')
-    tx.updateInput(1, {
-      txId: b2TxId,
-      index: parseInt(b2Index, 10),
-    })
+    tx.updateInput(1, { txId: b2TxId, index: parseInt(b2Index, 10) })
 
     const [paymentTxId, paymentIndex] = payment._rev.split(':')
-    tx.updateInput(3, {
-      txId: paymentTxId,
-      index: parseInt(paymentIndex, 10),
-    })
+    tx.updateInput(3, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
 
     tx.updateOutput(0, { scriptPubKey })
     tx.updateOutput(1, { scriptPubKey })
