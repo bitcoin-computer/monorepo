@@ -1,0 +1,57 @@
+import { Transaction } from '@bitcoin-computer/nakamotojs';
+const { Contract } = await import('@bitcoin-computer/lib');
+export class OrdSale extends Contract {
+    static exec(b1, b2, t, p) {
+        const [ownerT] = t._owners;
+        const [ownerP] = p._owners;
+        t.transfer(ownerP);
+        p.transfer(ownerT);
+        b1.setAmount(b1._amount + b2._amount);
+        return [b1, t, p, b2];
+    }
+}
+export class OrdSaleHelper {
+    constructor(computer, mod) {
+        this.computer = computer;
+        this.mod = mod;
+    }
+    async deploy() {
+        this.mod = await this.computer.deploy(`export ${OrdSale}`);
+        return this.mod;
+    }
+    async createSaleTx(b1Mock, b2Mock, nft, paymentMock) {
+        const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction;
+        return this.computer.encode({
+            exp: `OrdSale.exec(b1, b2, nft, payment)`,
+            env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
+            mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
+            sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+            inputIndex: 2,
+            fund: false,
+            mod: this.mod,
+        });
+    }
+    static checkSaleTx() {
+    }
+    static finalizeSaleTx(tx, b1, b2, payment, scriptPubKey) {
+        const [b1TxId, b1Index] = b1._rev.split(':');
+        tx.updateInput(0, {
+            txId: b1TxId,
+            index: parseInt(b1Index, 10),
+        });
+        const [b2TxId, b2Index] = b2._rev.split(':');
+        tx.updateInput(1, {
+            txId: b2TxId,
+            index: parseInt(b2Index, 10),
+        });
+        const [paymentTxId, paymentIndex] = payment._rev.split(':');
+        tx.updateInput(3, {
+            txId: paymentTxId,
+            index: parseInt(paymentIndex, 10),
+        });
+        tx.updateOutput(0, { scriptPubKey });
+        tx.updateOutput(1, { scriptPubKey });
+        tx.updateOutput(3, { scriptPubKey });
+        return tx;
+    }
+}
