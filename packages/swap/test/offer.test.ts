@@ -1,34 +1,17 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
-import * as chai from 'chai'
-import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { Swap } from '../src/swap'
+import { StaticSwap } from '../src/static-swap'
 import { OfferHelper } from '../src/offer'
-import dotenv from 'dotenv'
-
-dotenv.config({ path: '../../.env'})
-
-const url = process.env.BCN_URL
-
-chai.use(chaiMatchPattern)
-const _ = chaiMatchPattern.getLodashModule()
-
-const meta = {
-  _id: _.isString,
-  _rev: _.isString,
-  _root: _.isString,
-  _owners: _.isArray,
-  _amount: _.isNumber,
-}
+import { RLTC, meta } from '../src/utils'
 
 describe('Offer', () => {
   let a: NFT
   let b: NFT
-  const alice = new Computer({ url })
-  const bob = new Computer({ url })
+  const alice = new Computer(RLTC)
+  const bob = new Computer(RLTC)
   let offerId: string
 
   before('Before', async () => {
@@ -75,7 +58,7 @@ describe('Offer', () => {
 
     it('Alice builds, funds, and signs a swap transaction', async () => {
       ;({ tx: aliceTx } = await alice.encode({
-        exp: `${Swap} Swap.exec(a, b)`,
+        exp: `${StaticSwap} StaticSwap.exec(a, b)`,
         env: { a: a._rev, b: b._rev },
       }))
     })

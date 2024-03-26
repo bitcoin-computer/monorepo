@@ -77,7 +77,7 @@ npm run lint
 
 ## Documentation
 
-Have a look at the [docs](https://docs.bitcoincomputer.io/) of the Bitcoin Computer.
+Have a look at the [docs](https://docs.bitcoincomputer.io/examples/non-fungible-token/) for using swaps with the Bitcoin Computer.
 
 ## Getting Help
 

@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import { Contract } from '@bitcoin-computer/lib'
 import { getTestRev } from './utils'
 

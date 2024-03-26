@@ -1,37 +1,84 @@
 /* eslint-disable no-unused-expressions */
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
-import * as chai from 'chai'
-import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { SwapHelper } from '../src/swap'
-import { meta } from '../src/utils'
-import dotenv from 'dotenv'
+import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
+import { Swap, SwapHelper } from '../src/swap'
+import { RLTC, meta } from '../src/utils'
 
-dotenv.config({ path: '../../.env'})
-
-const url = process.env.BCN_URL
-
-chai.use(chaiMatchPattern)
-const _ = chaiMatchPattern.getLodashModule()
-
-describe('Static Swap', () => {
-  let a: NFT
-  let b: NFT
-  const alice = new Computer({ url })
-  const bob = new Computer({ url })
+describe.only('Swap', () => {
+  let nftA: NFT
+  let nftB: NFT
+  const alice = new Computer(RLTC)
+  const bob = new Computer(RLTC)
 
   before('Before', async () => {
     await alice.faucet(0.01e8)
-    await bob.faucet(0.001e8)
+    await bob.faucet(0.01e8)
+  })
+
+  describe('Examples from docs', () => {
+    it('Should work without helper classes', async () => {
+      // Alice and Bob create one NFT each
+      nftA = await alice.new(NFT, ['a', 'AAA'])
+      nftB = await bob.new(NFT, ['b', 'BBB'])
+
+      // Alice builds a partially signed swap transaction
+      const { tx } = await alice.encode({
+        exp: `${Swap} new Swap(nftA, nftB)`,
+        env: { nftA: nftA._rev, nftB: nftB._rev },
+      })
+
+      // Bob signs and broadcasts the swap transaction
+      await bob.sign(tx)
+      await bob.broadcast(tx)
+    })
+
+    it('Should work with helper classes', async () => {
+      // Alice creates helper objects
+      const tbc721A = new TBC721(alice)
+      const swapHelperA = new SwapHelper(alice)
+
+      // Alice deploys the smart contracts
+      await tbc721A.deploy()
+      await swapHelperA.deploy()
+
+      // Alice mints an NFT
+      nftA = await tbc721A.mint('a', 'AAA')
+
+      // Bob creates helper objects from the module specifiers
+      const tbc721B = new TBC721(bob, tbc721A.mod)
+      const swapHelperB = new SwapHelper(bob, swapHelperA.mod)
+
+      // Bob mints an NFT to pay for Alice's's NFT
+      nftB = await tbc721B.mint('b', 'BBB')
+
+      // Bob creates a swap transaction
+      const { tx } = await swapHelperB.createSwapTx(nftA, nftB)
+
+      // Alice checks the swap transaction
+      swapHelperA.checkSwapTx(tx, bob.getPublicKey(), alice.getPublicKey())
+
+      // Alice signs an broadcasts the transaction to execute the swap
+      await alice.sign(tx)
+      await alice.broadcast(tx)
+
+      // Bob reads the updated state from the blockchain
+      const {
+        env: { a, b },
+      } = (await bob.sync(tx.getId())) as { env: { a: NFT; b: NFT } }
+      expect(a.name).deep.eq('a')
+      expect(a._owners).deep.eq([bob.getPublicKey()])
+      expect(b.name).deep.eq('b')
+      expect(b._owners).deep.eq([alice.getPublicKey()])
+    })
   })
 
   describe('Creating two NFTs to be swapped', () => {
     it('Alice creates an NFT', async () => {
-      a = await alice.new(NFT, ['A', 'AAA'])
+      nftA = await alice.new(NFT, ['A', 'AAA'])
       // @ts-ignore
-      expect(a).to.matchPattern({
+      expect(nftA).to.matchPattern({
         ...meta,
         name: 'A',
         symbol: 'AAA',
@@ -40,9 +87,9 @@ describe('Static Swap', () => {
     })
 
     it('Bob creates an NFT', async () => {
-      b = await bob.new(NFT, ['B', 'BBB'])
+      nftB = await bob.new(NFT, ['B', 'BBB'])
       // @ts-ignore
-      expect(b).to.matchPattern({
+      expect(nftB).to.matchPattern({
         ...meta,
         name: 'B',
         symbol: 'BBB',
@@ -65,7 +112,7 @@ describe('Static Swap', () => {
     })
 
     it('Alice builds, funds, and signs a swap transaction', async () => {
-      ;({ tx } = await swapHelper.createSwapTx(a, b))
+      ;({ tx } = await swapHelper.createSwapTx(nftA, nftB))
     })
 
     it('Bob checks the swap transaction', async () => {

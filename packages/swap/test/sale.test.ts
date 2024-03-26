@@ -4,29 +4,111 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { SaleHelper } from '../src/sale'
+import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
+import { Transaction } from '@bitcoin-computer/nakamotojs'
+import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
-import { meta } from '../src/utils'
-import dotenv from 'dotenv'
-
-dotenv.config({ path: '../../.env'})
-
-const url = process.env.BCN_URL
+import { RLTC, meta } from '../src/utils'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
 describe('Sale', () => {
-  let tx: any
-  let txClone: any
+  let tx: Transaction
+  let txClone: Transaction
   let sellerPublicKey: string
   const nftPrice = 0.1e8
   const fee = 100000
 
+  describe('Examples from docs', () => {
+    it('Should work without helper classes', async () => {
+      // Create and fund wallets
+      const seller = new Computer(RLTC)
+      const buyer = new Computer(RLTC)
+      await seller.faucet(1e8)
+      await buyer.faucet(2e8)
+
+      // Seller mints an NFT
+      const nft = await seller.new(NFT, ['name', 'symbol'])
+
+      // Seller creates partially signed swap as a sale offer
+      const mock = new PaymentMock(seller.getPublicKey(), 7860)
+      const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
+      const { tx: saleTx } = await seller.encode({
+        exp: `${Sale} Sale.exec(nft, payment)`,
+        env: { nft: nft._rev, payment: mock._rev },
+        mocks: { payment: mock },
+        // eslint-disable-next-line no-bitwise
+        sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+        inputIndex: 0,
+        fund: false,
+      })
+
+      // Buyer creates a payment object with the asking price
+      const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
+      const [paymentTxId, paymentIndex] = payment._rev.split(':')
+
+      // Buyer set's the payment object as the second input of the swap tx
+      saleTx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
+
+      // Buyer updates the second output of the swap tx to receive the NFT
+      saleTx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
+
+      // Buyer funds, signs, and broadcasts to execute the sale
+      await buyer.fund(saleTx)
+      await buyer.sign(saleTx)
+      await buyer.broadcast(saleTx)
+    })
+
+    it('Should work with helper classes', async () => {
+      // Create and fund wallets
+      const alice = new Computer(RLTC)
+      const bob = new Computer(RLTC)
+      await alice.faucet(1e8)
+      await bob.faucet(1e8)
+
+      // Alice creates helper objects
+      const tbc721A = new TBC721(alice)
+      const saleHelperA = new SaleHelper(alice)
+
+      // Alice deploys the smart contracts
+      await tbc721A.deploy()
+      await saleHelperA.deploy()
+
+      // Alice mints an NFT
+      const nftA = await tbc721A.mint('a', 'AAA')
+
+      // Alice creates a payment mock
+      const mock = new PaymentMock(alice.getPublicKey(), nftPrice)
+
+      // Alice creates a swap transaction
+      const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
+
+      // Bob checks the swap transaction
+      SaleHelper.checkSaleTx()
+
+      // Bob creates the payment and finalizes the transaction
+      const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
+      const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
+
+      // Bob signs an broadcasts the transaction to execute the swap
+      await bob.fund(finalTx)
+      await bob.sign(finalTx)
+      await bob.broadcast(finalTx)
+
+      // Bob reads the updated state from the blockchain
+      const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      const { nft: n, payment: p } = env
+
+      expect(p._amount).eq(nftPrice)
+      expect(n._owners).deep.eq([bob.getPublicKey()])
+      expect(p._owners).deep.eq([alice.getPublicKey()])
+    })
+  })
+
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer({ url })
+    const seller = new Computer(RLTC)
     sellerPublicKey = seller.getPublicKey()
     let saleHelper: SaleHelper
 
@@ -64,7 +146,7 @@ describe('Sale', () => {
   })
 
   describe('Failing to underpay', () => {
-    const thief = new Computer({ url })
+    const thief = new Computer(RLTC)
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
@@ -116,15 +198,13 @@ describe('Sale', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer({ url })
-    const computer = new Computer({ url })
-    let saleHelper: SaleHelper
+    const buyer = new Computer(RLTC)
+    const computer = new Computer(RLTC)
     let payment: Payment
     let txId: string
 
     before("Fund Buyers's wallet", async () => {
       await buyer.faucet(nftPrice + fee)
-      saleHelper = new SaleHelper(buyer)
     })
 
     it('Buyer creates a payment object', async () => {
@@ -141,7 +221,7 @@ describe('Sale', () => {
     })
 
     it("Buyer update's the swap transaction to receive the NFT", () => {
-      tx = saleHelper.finalizeSaleTx(tx, payment, buyer.toScriptPubKey())
+      tx = SaleHelper.finalizeSaleTx(tx, payment, buyer.toScriptPubKey())
     })
 
     it('Buyer funds the swap transaction', async () => {

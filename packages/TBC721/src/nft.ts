@@ -13,7 +13,7 @@ export class NFT extends Contract {
   }
 }
 
-interface ITBC721 {
+export interface ITBC721 {
   balanceOf(publicKey: string): Promise<number>
   ownersOf(tokenId: string): Promise<string[]>
   transfer(to: string, tokenId: string): Promise<void>
