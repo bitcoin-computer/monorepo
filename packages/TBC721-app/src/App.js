@@ -19,13 +19,11 @@ function App() {
 
   const mnemonic = localStorage.getItem("BIP_39_KEY") || ""
   const chain = localStorage.getItem("CHAIN") || ""
-  const getConf = (network) => ({
+  const getConf = () => ({
     chain,
-    network,
     mnemonic,
-    url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031",
   })
-  const config = getConf("testnet")
+  const config = getConf()
   const [computer, setComputer] = useState(mnemonic ? new Computer(config) : null)
 
   return (

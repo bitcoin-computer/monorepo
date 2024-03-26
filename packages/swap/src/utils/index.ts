@@ -18,16 +18,6 @@ export function getTestRev(txId = 0, outNum = 0): string {
   return `${getTestTxId(txId)}:${outNum}`
 }
 
-export const RLTC: {
-  network: 'regtest'
-  chain: 'LTC'
-  url: string
-} = {
-  network: 'regtest',
-  chain: 'LTC',
-  url: 'http://localhost:1031',
-}
-
 export const meta = {
   _id: _.isString,
   _rev: _.isString,

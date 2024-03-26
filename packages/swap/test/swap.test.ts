@@ -6,7 +6,12 @@ import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { SwapHelper } from '../src/swap'
-import { RLTC, meta } from '../src/utils'
+import { meta } from '../src/utils'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -14,8 +19,8 @@ const _ = chaiMatchPattern.getLodashModule()
 describe('Static Swap', () => {
   let a: NFT
   let b: NFT
-  const alice = new Computer(RLTC)
-  const bob = new Computer(RLTC)
+  const alice = new Computer({ url })
+  const bob = new Computer({ url })
 
   before('Before', async () => {
     await alice.faucet(0.01e8)

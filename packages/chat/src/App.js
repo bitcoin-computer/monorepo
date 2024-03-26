@@ -10,16 +10,14 @@ import useInterval from './useInterval'
  * This is a simple chat app that demonstrates how to use the @bitcoin-computer/lib.
  */
 function App() {
-  const getConf = (network) => ({
+  const getConf = () => ({
     chain: window.localStorage.getItem('CHAIN'),
-    network,
     // the BIP_39_KEY is set on login and we fetch it from local storage
-    mnemonic: window.localStorage.getItem('BIP_39_KEY'),
-    url: network === 'testnet' ? 'https://node.bitcoincomputer.io' : 'http://127.0.0.1:1031',
+    mnemonic: window.localStorage.getItem('BIP_39_KEY')
   })
 
   // To connect the app to a local Bitcoin Computer node set "network" to "regtest"
-  const [config] = useState(getConf('testnet'))
+  const [config] = useState(getConf())
   const [computer, setComputer] = useState(null)
   const [chats, setChats] = useState([])
 
