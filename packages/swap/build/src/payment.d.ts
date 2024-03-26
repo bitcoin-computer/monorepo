@@ -1,4 +1,4 @@
-import { Contract } from '@bitcoin-computer/lib';
+declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Payment extends Contract {
     _id: string;
     _rev: string;
@@ -17,3 +17,4 @@ export declare class PaymentMock {
     constructor(owner: string, amount: number);
     transfer(to: string): void;
 }
+export {};
