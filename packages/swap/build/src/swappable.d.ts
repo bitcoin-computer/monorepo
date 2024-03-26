@@ -1,5 +1,5 @@
-import { Contract } from '@bitcoin-computer/lib';
 import { NFT } from '@bitcoin-computer/TBC721/src/nft';
+declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Swappable extends Contract {
     name: string;
     symbol: string;
@@ -11,3 +11,4 @@ export declare class Swappable extends Contract {
     transfer(to: string): void;
     swap(that: NFT): void;
 }
+export {};
