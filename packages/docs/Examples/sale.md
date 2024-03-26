@@ -7,11 +7,35 @@ icon: flame
 
 In the case of a swap, both smart objects have to be known before the swap transaction can be built. In this section we show how a single smart object can be offered for sale at a specified price.
 
-## Smart Object Sale
+## Sale
+
+We first explain how to execute the sale of a smart object. The smart contract is quite simple but the swap does not preserving ordinal ranges of the smart object being sold. It is therefore not safe to use with ordinals. In the next section we explain a slightly more complicated swap that can be used with ordinals. 
 
 ### Smart Contract
 
-We will be reusing the `Swap` smart contract from the Section on [Swaps](./swap.md#swap-using-a-static-function). 
+```ts
+class Sale extends Contract {
+  static exec(a: NFT, b: NFT) {
+    const [ownerA] = a._owners
+    const [ownerB] = b._owners
+    a.transfer(ownerB)
+    b.transfer(ownerA)
+    return [b, a]
+  }
+}
+```
+
+#### Sighash Types
+
+The idea is to create a transaction with two inputs and two outputs. The inputs spend the smart object `a` to be sold as well as another smart object `b` that is used for the payment. Like in the case of a swap the smart contract exchanges the owners of the smart objects. However unlike the swap smart contract it returns `[b, a]`. This has the effect that the first output of the transaction will represent `b` after the call and the second will represent `a`.
+
+Seller then builds the swap transaction and signs it with the [sighash type](https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types) `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY` and the input index `0`. This means that Sellers signature remains valid even when arbitrary inputs and outputs are added to the transaction. In particular, another user could change or remove the Bitcoin Computer specific meta data that is located in output 3.
+
+Essentially Seller is saying: you can do with this inputs-output pair whatever you want as long as you spend the output indicated in the first input and you keep the locking script and the amount of the first output the same. Seller can confidentially publish such a partially signed transaction as he wants to sell the nft spent by the fist inputs for the amount indicated in the first output and both are signed.
+
+#### Partially Signed Transactions
+
+Todo.
 
 ### Helper Classes
 
