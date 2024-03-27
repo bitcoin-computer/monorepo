@@ -10,11 +10,7 @@ class Counter extends Contract {
   }
 }
 
-const computer = new Computer({
-  mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike',
-  network: 'regtest',
-  url: 'http://localhost:1031',
-})
+const computer = new Computer()
 
 await computer.faucet(1e6)
 const counter = await computer.new(Counter)

@@ -4,10 +4,10 @@ import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { TBC20, Token } from '../src/token'
 
-const RLTC = {
-  url: 'http://127.0.0.1:1031',
-  network: 'regtest' as any,
-}
+import dotenv from 'dotenv'
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 function sleep(delay: number): Promise<void> {
   return new Promise((resolve) => {
@@ -15,8 +15,8 @@ function sleep(delay: number): Promise<void> {
   })
 }
 
-const sender = new Computer(RLTC)
-const receiver = new Computer(RLTC)
+const sender = new Computer({ url })
+const receiver = new Computer({ url })
 
 before(async () => {
   await sender.faucet(1e7)

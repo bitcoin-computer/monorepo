@@ -8,7 +8,12 @@ import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
-import { RLTC, meta } from '../src/utils'
+import { meta } from '../src/utils'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -23,8 +28,8 @@ describe('Sale', () => {
   describe('Examples from docs', () => {
     it('Should work without helper classes', async () => {
       // Create and fund wallets
-      const seller = new Computer(RLTC)
-      const buyer = new Computer(RLTC)
+      const seller = new Computer({ url })
+      const buyer = new Computer({ url })
       await seller.faucet(1e8)
       await buyer.faucet(2e8)
 
@@ -62,8 +67,8 @@ describe('Sale', () => {
 
     it('Should work with helper classes', async () => {
       // Create and fund wallets
-      const alice = new Computer(RLTC)
-      const bob = new Computer(RLTC)
+      const alice = new Computer({ url })
+      const bob = new Computer({ url })
       await alice.faucet(1e8)
       await bob.faucet(1e8)
 
@@ -108,7 +113,7 @@ describe('Sale', () => {
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer(RLTC)
+    const seller = new Computer({ url })
     sellerPublicKey = seller.getPublicKey()
     let saleHelper: SaleHelper
 
@@ -146,7 +151,7 @@ describe('Sale', () => {
   })
 
   describe('Failing to underpay', () => {
-    const thief = new Computer(RLTC)
+    const thief = new Computer({ url })
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
@@ -198,8 +203,8 @@ describe('Sale', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer(RLTC)
-    const computer = new Computer(RLTC)
+    const buyer = new Computer({ url })
+    const computer = new Computer({ url })
     let payment: Payment
     let txId: string
 

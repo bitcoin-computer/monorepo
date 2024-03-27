@@ -12,6 +12,9 @@ function StartChat({ computer }) {
       console.log('creating chat')
       let chat
       try {
+        if (await computer.getBalance() < 100) {
+          await computer.faucet(1e7)
+        }
         chat = await computer.new(ChatSc, [publicKey])
       } catch (err) {
         if (err.message.startsWith('Insufficient balance in address'))

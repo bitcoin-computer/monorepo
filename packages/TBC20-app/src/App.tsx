@@ -21,17 +21,15 @@ const Header = styled.div`
   }
 `
 
-const getConf = (network: string) => ({
+const getConf = () => ({
   chain: window.localStorage.getItem("CHAIN") || '',
-  network,
   // the BIP_39_KEY is set on login and we fetch it from local storage
   mnemonic: window.localStorage.getItem("BIP_39_KEY"),
-  url: network === "testnet" ? "https://node.bitcoincomputer.io" : "http://127.0.0.1:1031",
 })
 
 const App: React.FC = () => {
   // To connect the app to a local Bitcoin Computer node set "network" to "regtest"
-  const [config] = useState(getConf("testnet"))
+  const [config] = useState(getConf())
   const [computer, setComputer] = useState<typeof Computer | null>(null)
   const [objects, setObjects] = useState<TokenType[]>([])
 

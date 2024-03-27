@@ -14,7 +14,7 @@
 
 ## Prerequisites
 
-You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running.
+You need to have [git](https://www.git-scm.com/) and [node.js](https://nodejs.org/) installed.
 
 ## Installation
 
@@ -70,10 +70,6 @@ Once the smart contract is deployed the deploy script will give you instructions
 
 You can watch us writing the first version of this app in this [video](http://www.youtube.com/watch?feature=player_embedded&v=SnTwevzmRrs
 ).
-
-### Fund the Wallet
-
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet).
 
 ## Documentation
 

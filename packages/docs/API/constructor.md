@@ -48,10 +48,10 @@ An instance of the Computer class
 ```ts
 import { Computer } from '@bitcoin-computer/lib'
 
-// Bitcoin Computer on LTC testnet
+// Bitcoin Computer on LTC regtest connected to the public node https://rltc.node.bitcoincomputer.io
 const computer1 = new Computer()
 
-// Bitcoin Computer on BTC testnet
+// Bitcoin Computer on BTC regtest
 const computer2 = new Computer({
   chain: 'BTC'
 })
@@ -59,7 +59,7 @@ const computer2 = new Computer({
 // Bitcoin Computer with custom parameters
 const computer3 = new Computer({
   chain: 'LTC'
-  network: 'regtest',
+  network: 'mainnet',
   mnemonic: 'replace this seed'
   path: "m/44'/0'/0'/0",
   url: 'https://my-ltc-node.com',
