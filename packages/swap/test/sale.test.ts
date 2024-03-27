@@ -6,12 +6,12 @@ import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
+import dotenv from 'dotenv'
 import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
-import dotenv from 'dotenv'
 
-dotenv.config({ path: '../../.env'})
+dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 

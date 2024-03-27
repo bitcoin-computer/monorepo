@@ -3,11 +3,11 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
-import { Swap, SwapHelper } from '../src/swap'
-import { RLTC, meta } from '../src/utils'
-
 import dotenv from 'dotenv'
-dotenv.config({ path: '../../.env'})
+import { Swap, SwapHelper } from '../src/swap'
+import { meta } from '../src/utils'
+
+dotenv.config({ path: '../../.env' })
 
 describe('Swap', () => {
   let nftA: NFT

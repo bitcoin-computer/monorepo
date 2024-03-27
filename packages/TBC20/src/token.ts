@@ -1,3 +1,5 @@
+/* eslint-disable max-classes-per-file */
+
 import { Contract } from '@bitcoin-computer/lib'
 
 export class Token extends Contract {
@@ -55,7 +57,7 @@ export class TBC20 implements ITBC20 {
     const revs = await this.computer.query({ publicKey })
     const bags = await Promise.all(revs.map(async (rev: string) => this.computer.sync(rev)))
     return bags.flatMap((bag: Token & { _root: string }) =>
-      bag._root === this.mintId ? [bag] : []
+      bag._root === this.mintId ? [bag] : [],
     )
   }
 

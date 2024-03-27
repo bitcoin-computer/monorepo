@@ -3,12 +3,12 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import dotenv from 'dotenv'
 import { StaticSwap } from '../src/static-swap'
 import { OfferHelper } from '../src/offer'
 import { meta } from '../src/utils'
-import dotenv from 'dotenv'
 
-dotenv.config({ path: '../../.env'})
+dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 

@@ -6,13 +6,13 @@ import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
+import dotenv from 'dotenv'
 import { OrdSale, OrdSaleHelper } from '../src/ord-sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
 import { Valuable, ValuableMock } from '../src/valuable'
-import dotenv from 'dotenv'
 
-dotenv.config({ path: '../../.env'})
+dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 
@@ -77,8 +77,8 @@ describe('Ord Sale', () => {
 
     it('Should work with helper classes', async () => {
       // Create and fund wallets
-      const alice = new Computer(RLTC)
-      const bob = new Computer(RLTC)
+      const alice = new Computer({ url })
+      const bob = new Computer({ url })
       await alice.faucet(0.1e8)
       await bob.faucet(1.1e8)
 
@@ -171,8 +171,8 @@ describe('Ord Sale', () => {
     })
 
     describe('Executing the sale', () => {
-      const buyer = new Computer(RLTC)
-      const computer = new Computer(RLTC)
+      const buyer = new Computer({ url })
+      const computer = new Computer({ url })
       let b1: Valuable
       let b2: Valuable
       let payment: Payment

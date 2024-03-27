@@ -2,10 +2,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
+import dotenv from 'dotenv'
 import { TBC20, Token } from '../src/token'
 
-import dotenv from 'dotenv'
-dotenv.config({ path: '../../.env'})
+dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 
@@ -45,7 +45,7 @@ describe('Token', () => {
     describe('Transferring the NFT', () => {
       let newToken: Token
 
-      it('Sender transfers the NFT to receiver', async () => {      
+      it('Sender transfers the NFT to receiver', async () => {
         newToken = await token.transfer(receiver.getPublicKey(), 1)
       })
 
@@ -75,7 +75,7 @@ describe('Token', () => {
     describe('mint', () => {
       const tbc20 = new TBC20('test', 'TST', sender)
       let mintId: string
-  
+
       it('Should create the tbc20 object', async () => {
         const publicKey = tbc20.computer.getPublicKey()
         mintId = await tbc20.mint(publicKey, 200)
@@ -83,7 +83,7 @@ describe('Token', () => {
         expect(typeof mintId).to.eq('string')
         expect(mintId.length).to.be.greaterThan(64)
       })
-  
+
       it('Should mint a root token', async () => {
         const rootToken: any = await sender.sync(mintId)
         expect(rootToken).not.to.be.undefined
@@ -95,7 +95,7 @@ describe('Token', () => {
         expect(rootToken.symbol).to.eq('TST')
       })
     })
-  
+
     describe('totalSupply', () => {
       it('Should return the supply of tokens', async () => {
         const tbc20 = new TBC20('test', 'TST', sender)
@@ -105,11 +105,11 @@ describe('Token', () => {
         expect(supply).to.eq(200)
       })
     })
-  
+
     describe('balanceOf', () => {
       it('Should throw an error if the mint id is not set', async () => {
         const publicKeyString = sender.getPublicKey()
-  
+
         const tbc20 = new TBC20('test', 'TST', sender)
         expect(tbc20).not.to.be.undefined
         try {
@@ -119,7 +119,7 @@ describe('Token', () => {
           expect(err.message).to.eq('Please set a mint id.')
         }
       })
-  
+
       it('Should compute the balance', async () => {
         const tbc20 = new TBC20('test', 'TST', sender)
         const publicKey = tbc20.computer.getPublicKey()
@@ -129,7 +129,7 @@ describe('Token', () => {
         expect(res).to.eq(200)
       })
     })
-  
+
     describe('transfer', () => {
       it('Should transfer a token', async () => {
         const computer2 = new Computer()
@@ -142,14 +142,14 @@ describe('Token', () => {
         const res = await tbc20.balanceOf(publicKey)
         expect(res).to.eq(180)
       })
-  
+
       it('Should transfer random amounts to different people', async () => {
         const computer2 = new Computer()
         const computer3 = new Computer()
         const tbc20 = new TBC20('multiple', 'MULT', sender)
         const publicKey = tbc20.computer.getPublicKey()
         await tbc20.mint(publicKey, 200)
-  
+
         const amount2 = Math.floor(Math.random() * 100)
         const amount3 = Math.floor(Math.random() * 100)
         await sleep(200)
@@ -159,14 +159,14 @@ describe('Token', () => {
         await sleep(200)
         const res = await tbc20.balanceOf(publicKey)
         expect(res).to.eq(200 - amount2 - amount3)
-  
+
         const res2 = await tbc20.balanceOf(computer2.getPublicKey())
         expect(res2).to.eq(amount2)
-  
+
         const res3 = await tbc20.balanceOf(computer3.getPublicKey())
         expect(res3).to.eq(amount3)
       })
-  
+
       it('Should fail if the amount is greater than the balance', async () => {
         const computer2 = new Computer()
         const tbc20 = new TBC20('test', 'TST', sender)
