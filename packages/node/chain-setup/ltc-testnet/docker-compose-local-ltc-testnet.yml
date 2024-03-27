@@ -46,7 +46,8 @@ services:
       - ZMQ_URL=tcp://node:28332
       - NETWORK=testnet
       - CHAIN=LTC
-      - BCN_URL=https://node.bitcoincomputer.io
+      - BCN_URL=https://tltc.node.bitcoincomputer.io
+      - BC_START_HEIGHT=${BC_START_HEIGHT}
     depends_on:
       - db
       - node
@@ -63,7 +64,7 @@ services:
       - NETWORK=testnet
       - CHAIN=LTC
       - ZMQ_URL=tcp://node:28332
-      - BCN_URL=https://node.bitcoincomputer.io
+      - BCN_URL=https://tltc.node.bitcoincomputer.io
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
       - RPC_PROTOCOL=http
@@ -72,7 +73,7 @@ services:
       - WORKER_ID=${WORKER_ID}
       - NUM_WORKERS=${NUM_WORKERS}
       - SYNC_NON_STANDARD=${SYNC_NON_STANDARD}
-      - BC_START_HEIGHT=2500000
+      - BC_START_HEIGHT=${BC_START_HEIGHT}
     depends_on:
       - db
       - node
