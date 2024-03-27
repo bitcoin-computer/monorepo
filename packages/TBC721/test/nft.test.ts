@@ -24,6 +24,10 @@ const meta = {
 
 const { expect } = chai
 
+// If you want to connect to your local Bitcoin Computer Node, create a .env file 
+// in the monorepo root level and add the following line:
+// BCN_URL=http://localhost:1031
+
 dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
