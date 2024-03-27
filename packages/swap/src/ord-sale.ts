@@ -1,10 +1,10 @@
 /* eslint-disable max-classes-per-file */
-
-import { Contract } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Valuable, ValuableMock } from './valuable'
 import { Payment, PaymentMock } from './payment'
+
+const { Contract } = await import('@bitcoin-computer/lib')
 
 export class OrdSale extends Contract {
   static exec(b1: Valuable, b2: Valuable, t: NFT, p: NFT) {
