@@ -146,10 +146,10 @@ new Computer({
 If you do not specify a url property it will default to 
 
 ```
-https://tltc.node.bitcoincomputer.io
+https://rltc.node.bitcoincomputer.io
 ```
 
-This node runs Litecoin with testnet and uses the latest version of the Bitcoin Computer Node software.
+This node runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software. 
 
 ## Estimated Server Costs
 
