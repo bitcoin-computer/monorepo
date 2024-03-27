@@ -47,7 +47,8 @@ services:
       - ZMQ_URL=tcp://node:28332
       - NETWORK=mainnet
       - CHAIN=BTC
-      - BCN_URL=http://127.0.0.1:1031
+      - BCN_URL=https://btc.node.bitcoincomputer.io
+      - BC_START_HEIGHT=${BC_START_HEIGHT}
   sync:
     command: npm run sync
     build: .
@@ -63,12 +64,16 @@ services:
       - NETWORK=mainnet
       - CHAIN=BTC
       - ZMQ_URL=tcp://node:28332
-      - BCN_URL=http://127.0.0.1:1031
+      - BCN_URL=https://btc.node.bitcoincomputer.io
       - POSTGRES_PORT=5432
       - POSTGRES_HOST=db
       - RPC_PROTOCOL=http
       - RPC_USER=${RPC_USER}
       - RPC_PASSWORD=${RPC_PASSWORD}
+      - WORKER_ID=${WORKER_ID}
+      - NUM_WORKERS=${NUM_WORKERS}
+      - SYNC_NON_STANDARD=${SYNC_NON_STANDARD}
+      - BC_START_HEIGHT=${BC_START_HEIGHT}
     networks:
       - bitcoin
       - bcn
