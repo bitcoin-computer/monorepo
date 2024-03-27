@@ -48,3 +48,8 @@ const token = await sender.new(Token, [sender.getPublicKey(), 10, 10])
 // token will have a supply of 8.
 const sentToken = await token.transfer(2, receiver.getPublicKey())
 ```
+
+## Code
+
+You can find the code [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20#readme).
+

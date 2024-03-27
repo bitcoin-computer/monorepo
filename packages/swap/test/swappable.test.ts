@@ -4,10 +4,10 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { Swappable } from '../src/swappable'
 import dotenv from 'dotenv'
+import { Swappable } from '../src/swappable'
 
-dotenv.config({ path: '../../.env'})
+dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 

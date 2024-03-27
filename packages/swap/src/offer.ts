@@ -1,7 +1,7 @@
 /* eslint max-classes-per-file: ["error", 2] */
-
-import { Contract } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
+
+const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Offer extends Contract {
   constructor(owner: string, url: string, json: string) {

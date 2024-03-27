@@ -7,15 +7,12 @@ icon: image
 
 ## Smart Contract
 
-A non-fungible token has two properties [`_owners`](./how-it-works.md#keyword-properties-control-the-transaction-being-built) and `img`. It has one function `transfer` that updates the `_owners` property.
+Our example class for a non-fungible token only has two properties `name` and `symbol`. It has one function `transfer` that updates the `_owners` property.
 
 ```ts
 class NFT extends Contract {
-  img: string
-  _owners: string[]
-
-  constructor(publicKey: string, img: string) {
-    super({ _owners: [publicKey], img })
+  constructor(name = '', symbol = '') {
+    super({ name, symbol })
   }
 
   transfer(to: string) {
@@ -26,19 +23,44 @@ class NFT extends Contract {
 
 ## Usage
 
-To create a non-fungible token you can call the [`new`](./API/new.md) function as shown below. The [`faucet`](./API/faucet.md) function is used to fund the `sender` object when connected to a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) in regtest mode.
+To create a non-fungible token you can call the [`new`](./API/new.md) function as shown below. The [`faucet`](./API/faucet.md) function funds the `sender` object when the `sender` object is configured to `regtest`. The `sender.new` function mints a new NFT and the `transfer` function send the NFT to another user.
 
 ```ts
-// Create wallets
+// Create the sender wallet
 const sender = new Computer()
-const receiver = new Computer()
 
 // Fund the senders wallet
 await sender.faucet(0.001e8)
 
 // Create a new NFT
-const nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
+const nft = await sender.new(NFT, ['name', 'symbol'])
 
 // Send the NFT
-await nft.transfer(receiver.getPublicKey())
+await nft.transfer(new Computer().getPublicKey())
 ```
+
+If more than one NFT are broadcast one can save transaction fees by broadcasting a module containing the NFT smart contract first. The class `TCB721` is a helper class for that purpose.
+
+```ts
+// Create wallet
+const sender = new Computer(RLTC)
+
+// Fund wallet
+await sender.faucet(0.001e8)
+
+// Create helper object
+const tbc721 = new TBC721(sender)
+
+// Deploy smart contract
+await tbc721.deploy()
+
+// Mint nft
+nft = await tbc721.mint('name', 'symbol')
+
+// Transfer NFT
+await tbc721.transfer(nft._id, new Computer().getPublicKey())
+```
+
+## Code
+
+You can find the code [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721#readme).
