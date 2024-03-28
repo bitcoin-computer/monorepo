@@ -3,8 +3,8 @@
 import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
-import { NFT, TBC721 } from '../src/nft'
 import chaiMatchPattern from 'chai-match-pattern'
+import { NFT, TBC721 } from '../src/nft'
 
 const isString = (x: any) => typeof x === 'string'
 const isNumber = (x: any) => typeof x === 'number'
@@ -19,7 +19,6 @@ export const meta = {
 }
 
 chai.use(chaiMatchPattern)
-const _ = chaiMatchPattern.getLodashModule()
 
 const { expect } = chai
 
