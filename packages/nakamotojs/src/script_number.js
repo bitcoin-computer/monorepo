@@ -1,7 +1,4 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.encode = exports.decode = void 0;
-function decode(buffer, maxLength, minimal) {
+export function decode(buffer, maxLength, minimal) {
   maxLength = maxLength || 4;
   minimal = minimal === undefined ? true : minimal;
   const length = buffer.length;
@@ -29,7 +26,6 @@ function decode(buffer, maxLength, minimal) {
     return -(result & ~(0x80 << (8 * (length - 1))));
   return result;
 }
-exports.decode = decode;
 function scriptNumSize(i) {
   return i > 0x7fffffff
     ? 5
@@ -43,7 +39,7 @@ function scriptNumSize(i) {
             ? 1
             : 0;
 }
-function encode(_number) {
+export function encode(_number) {
   let value = Math.abs(_number);
   const size = scriptNumSize(value);
   const buffer = Buffer.allocUnsafe(size);
@@ -59,4 +55,3 @@ function encode(_number) {
   }
   return buffer;
 }
-exports.encode = encode;

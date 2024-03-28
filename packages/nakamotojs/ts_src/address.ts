@@ -1,8 +1,8 @@
-import { Network } from './networks';
-import * as networks from './networks';
-import * as payments from './payments';
-import * as bscript from './script';
-import { typeforce, tuple, Hash160bit, UInt8 } from './types';
+import { Network } from './networks.js';
+import * as networks from './networks.js';
+import * as payments from './payments/index.js';
+import * as bscript from './script.js';
+import { typeforce, tuple, Hash160bit, UInt8 } from './types.js';
 import { bech32, bech32m } from 'bech32';
 import * as bs58check from 'bs58check';
 export interface Base58CheckResult {

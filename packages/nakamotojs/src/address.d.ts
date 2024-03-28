@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { Network } from './networks';
+import { Network } from './networks.js';
 export interface Base58CheckResult {
     hash: Buffer;
     version: number;

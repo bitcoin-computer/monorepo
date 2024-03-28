@@ -5,19 +5,19 @@ import * as crypto from 'crypto';
 import ECPairFactory from 'ecpair';
 import { describe, it } from 'mocha';
 
-import { convertScriptTree } from './payments.utils';
-import { LEAF_VERSION_TAPSCRIPT } from '../src/payments/bip341';
-import { tapTreeToList, tapTreeFromList } from '../src/psbt/bip371';
-import { Taptree } from '../src/types';
-import { initEccLib } from '../src';
+import { convertScriptTree } from './payments.utils.js';
+import { LEAF_VERSION_TAPSCRIPT } from '../src/payments/bip341.js';
+import { tapTreeToList, tapTreeFromList } from '../src/psbt/bip371.js';
+import { Taptree } from '../src/types.js';
+import { initEccLib } from '../src/index.js';
 
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);
 
 import { networks as NETWORKS, payments, Psbt, Signer, SignerAsync } from '..';
 
-import * as preFixtures from './fixtures/psbt.json';
-import * as taprootFixtures from './fixtures/p2tr.json';
+import * as preFixtures from './fixtures/psbt.json' assert { type: 'json' };
+import * as taprootFixtures from './fixtures/p2tr.json' assert { type: 'json' };
 
 const validator = (
   pubkey: Buffer,

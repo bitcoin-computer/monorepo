@@ -1,9 +1,9 @@
 import * as assert from 'assert';
 import { describe, it } from 'mocha';
-import * as bufferutils from '../src/bufferutils';
-import { BufferReader, BufferWriter } from '../src/bufferutils';
+import * as bufferutils from '../src/bufferutils.js';
+import { BufferReader, BufferWriter } from '../src/bufferutils.js';
 
-import * as fixtures from './fixtures/bufferutils.json';
+import * as fixtures from './fixtures/bufferutils.json' assert { type: 'json' };
 const varuint = require('varuint-bitcoin');
 
 describe('bufferutils', () => {

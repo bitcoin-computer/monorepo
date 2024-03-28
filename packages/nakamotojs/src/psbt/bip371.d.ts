@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { Taptree } from '../types';
+import { Taptree } from '../types.js';
 import { PsbtInput, PsbtOutput, TapLeaf } from 'bip174/src/lib/interfaces';
 export declare const toXOnly: (pubKey: Buffer) => Buffer;
 /**

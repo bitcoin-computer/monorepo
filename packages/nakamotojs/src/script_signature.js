@@ -1,8 +1,5 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.encode = exports.decode = void 0;
-const bip66 = require('./bip66');
-const types = require('./types');
+import * as bip66 from './bip66.js';
+import * as types from './types.js';
 const { typeforce } = types;
 const ZERO = Buffer.alloc(1, 0);
 function toDER(x) {
@@ -21,7 +18,7 @@ function fromDER(x) {
   return buffer;
 }
 // BIP62: 1 byte hashType flag (only 0x01, 0x02, 0x03, 0x81, 0x82 and 0x83 are allowed)
-function decode(buffer) {
+export function decode(buffer) {
   const hashType = buffer.readUInt8(buffer.length - 1);
   const hashTypeMod = hashType & ~0x80;
   if (hashTypeMod <= 0 || hashTypeMod >= 4)
@@ -32,8 +29,7 @@ function decode(buffer) {
   const signature = Buffer.concat([r, s], 64);
   return { signature, hashType };
 }
-exports.decode = decode;
-function encode(signature, hashType) {
+export function encode(signature, hashType) {
   typeforce(
     {
       signature: types.BufferN(64),
@@ -50,4 +46,3 @@ function encode(signature, hashType) {
   const s = toDER(signature.slice(32, 64));
   return Buffer.concat([bip66.encode(r, s), hashTypeBuffer]);
 }
-exports.encode = encode;

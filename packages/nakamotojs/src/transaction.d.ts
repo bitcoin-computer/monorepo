@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { Signer } from './psbt';
+import { Signer } from './psbt.js';
 export interface Output {
     script: Buffer;
     value: number;
