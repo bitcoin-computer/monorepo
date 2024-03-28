@@ -1,4 +1,4 @@
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT } from '@bitcoin-computer/TBC721'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 

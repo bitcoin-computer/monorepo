@@ -5,13 +5,13 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
+import dotenv from 'dotenv'
 import { OrdSaleHelper } from '../src/ord-sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
 import { Valuable, ValuableMock } from '../src/valuable'
-import dotenv from 'dotenv'
 
-dotenv.config({ path: '../../.env'})
+dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 
