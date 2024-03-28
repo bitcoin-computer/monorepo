@@ -1,1 +1,1 @@
-export const nftModSpec = "d1fba4a33c8f1152013551bf7460e2f3ae58173e9804aa610b02b4c9ae059365:0"
+export const nftModSpec = "d1f5f24bf1dd898812f0e8aa181729e3d08dc4b789ffe11ac90a5b9ce77d9b53:0"

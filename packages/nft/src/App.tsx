@@ -3,9 +3,17 @@ import { useEffect } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import { Navbar } from "./components/Navbar"
 import { initFlowbite } from "flowbite"
-import { Auth, Error404, UtilsContext, Wallet, SmartObject, Transaction } from "@bitcoin-computer/components"
+import {
+  Auth,
+  Error404,
+  UtilsContext,
+  Wallet,
+  SmartObject,
+  Transaction,
+} from "@bitcoin-computer/components"
 import Mint from "./components/Mint"
 import { AllAssets, MyAssets } from "./components/Assets"
+import { NftView } from "./components/Nft"
 
 export default function App() {
   useEffect(() => {
@@ -24,7 +32,7 @@ export default function App() {
             <Route path="/" element={<AllAssets />} />
             <Route path="/mine" element={<MyAssets />} />
             <Route path="/mint" element={<Mint />} />
-            <Route path="/objects/:rev" element={<SmartObject.Component />} />
+            <Route path="/objects/:rev" element={<NftView />} />
             <Route path="/transactions/:txn" element={<Transaction.Component />} />
             <Route path="*" element={<Navigate to="/" replace={true} />} />
             <Route path="*" element={<Error404 />} />
