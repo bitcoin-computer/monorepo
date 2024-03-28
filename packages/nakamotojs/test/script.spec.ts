@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import { describe, it } from 'mocha';
-import * as bscript from '../src/script';
-import * as fixtures from './fixtures/script.json';
+import * as bscript from '../src/script.js';
+import * as fixtures from './fixtures/script.json' assert { type: 'json' };
 const minimalData = require('minimaldata');
 
 describe('script', () => {

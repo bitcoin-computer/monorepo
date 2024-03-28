@@ -1,18 +1,13 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
+    "module": "esnext",
+    "moduleResolution": "node",
     "outDir": "../",
     "declaration": false,
     "rootDir": "../",
-    "rootDirs": [
-      "../src",
-      "../types"
-    ],
-    "types": [
-      "node",
-      "mocha"
-    ],
+    "rootDirs": ["../src", "../types"],
+    "types": ["node", "mocha"],
     "allowJs": false,
     "resolveJsonModule": true,
     "strict": true,
@@ -31,10 +26,6 @@
       "../src/*": ["../ts_src/*"]
     }
   },
-  "include": [
-      "./**/*.ts"
-  ],
-  "exclude": [
-      "../ts_src/**/*.ts"
-  ]
+  "include": ["./**/*.ts"],
+  "exclude": ["../ts_src/**/*.ts"]
 }

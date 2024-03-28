@@ -1,11 +1,11 @@
 import * as assert from 'assert';
 import { describe, it } from 'mocha';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
-import * as baddress from '../src/address';
-import * as bscript from '../src/script';
-import * as fixtures from './fixtures/address.json';
+import * as baddress from '../src/address.js';
+import * as bscript from '../src/script.js';
+import * as fixtures from './fixtures/address.json' assert { type: 'json' };
 
-import { initEccLib } from '../src';
+import { initEccLib } from '../src/index.js';
 
 const NETWORKS = Object.assign(
   {

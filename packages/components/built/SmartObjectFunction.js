@@ -118,7 +118,6 @@ export var SmartObjectFunction = function (_a) {
                                         : paramValue;
                             }), ")"),
                             env: __assign({ smartObject: smartObject._rev }, revMap_1),
-                            // @ts-ignore
                             fund: true,
                             sign: true,
                         })];

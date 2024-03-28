@@ -1,11 +1,13 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.Block = void 0;
-const bufferutils_1 = require('./bufferutils');
-const bcrypto = require('./crypto');
-const merkle_1 = require('./merkle');
-const transaction_1 = require('./transaction');
-const types = require('./types');
+import {
+  BufferReader,
+  BufferWriter,
+  reverseBuffer,
+  varuint,
+} from './bufferutils.js';
+import * as bcrypto from './crypto.js';
+import { fastMerkleRoot } from './merkle.js';
+import { Transaction } from './transaction.js';
+import * as types from './types.js';
 const { typeforce } = types;
 const errorMerkleNoTxes = new TypeError(
   'Cannot compute merkle root for zero transactions',
@@ -13,7 +15,7 @@ const errorMerkleNoTxes = new TypeError(
 const errorWitnessNotSegwit = new TypeError(
   'Cannot compute witness commit for non-segwit block',
 );
-class Block {
+export class Block {
   constructor() {
     this.version = 1;
     this.prevHash = undefined;
@@ -26,7 +28,7 @@ class Block {
   }
   static fromBuffer(buffer) {
     if (buffer.length < 80) throw new Error('Buffer too small (< 80 bytes)');
-    const bufferReader = new bufferutils_1.BufferReader(buffer);
+    const bufferReader = new BufferReader(buffer);
     const block = new Block();
     block.version = bufferReader.readInt32();
     block.prevHash = bufferReader.readSlice(32);
@@ -36,7 +38,7 @@ class Block {
     block.nonce = bufferReader.readUInt32();
     if (buffer.length === 80) return block;
     const readTransaction = () => {
-      const tx = transaction_1.Transaction.fromBuffer(
+      const tx = Transaction.fromBuffer(
         bufferReader.buffer.slice(bufferReader.offset),
         true,
       );
@@ -72,7 +74,7 @@ class Block {
     const hashes = transactions.map(transaction =>
       transaction.getHash(forWitness),
     );
-    const rootHash = (0, merkle_1.fastMerkleRoot)(hashes, bcrypto.hash256);
+    const rootHash = fastMerkleRoot(hashes, bcrypto.hash256);
     return forWitness
       ? bcrypto.hash256(
           Buffer.concat([rootHash, transactions[0].ins[0].witness[0]]),
@@ -117,7 +119,7 @@ class Block {
     if (headersOnly || !this.transactions) return 80;
     return (
       80 +
-      bufferutils_1.varuint.encodingLength(this.transactions.length) +
+      varuint.encodingLength(this.transactions.length) +
       this.transactions.reduce((a, x) => a + x.byteLength(allowWitness), 0)
     );
   }
@@ -125,7 +127,7 @@ class Block {
     return bcrypto.hash256(this.toBuffer(true));
   }
   getId() {
-    return (0, bufferutils_1.reverseBuffer)(this.getHash()).toString('hex');
+    return reverseBuffer(this.getHash()).toString('hex');
   }
   getUTCDate() {
     const date = new Date(0); // epoch
@@ -135,7 +137,7 @@ class Block {
   // TODO: buffer, offset compatibility
   toBuffer(headersOnly) {
     const buffer = Buffer.allocUnsafe(this.byteLength(headersOnly));
-    const bufferWriter = new bufferutils_1.BufferWriter(buffer);
+    const bufferWriter = new BufferWriter(buffer);
     bufferWriter.writeInt32(this.version);
     bufferWriter.writeSlice(this.prevHash);
     bufferWriter.writeSlice(this.merkleRoot);
@@ -143,12 +145,8 @@ class Block {
     bufferWriter.writeUInt32(this.bits);
     bufferWriter.writeUInt32(this.nonce);
     if (headersOnly || !this.transactions) return buffer;
-    bufferutils_1.varuint.encode(
-      this.transactions.length,
-      buffer,
-      bufferWriter.offset,
-    );
-    bufferWriter.offset += bufferutils_1.varuint.encode.bytes;
+    varuint.encode(this.transactions.length, buffer, bufferWriter.offset);
+    bufferWriter.offset += varuint.encode.bytes;
     this.transactions.forEach(tx => {
       const txSize = tx.byteLength(); // TODO: extract from toBuffer?
       tx.toBuffer(buffer, bufferWriter.offset);
@@ -170,7 +168,7 @@ class Block {
     );
   }
   checkProofOfWork() {
-    const hash = (0, bufferutils_1.reverseBuffer)(this.getHash());
+    const hash = reverseBuffer(this.getHash());
     const target = Block.calculateTarget(this.bits);
     return hash.compare(target) <= 0;
   }
@@ -189,7 +187,6 @@ class Block {
     return this.witnessCommit.compare(actualWitnessCommit) === 0;
   }
 }
-exports.Block = Block;
 function txesHaveWitnessCommit(transactions) {
   return (
     transactions instanceof Array &&

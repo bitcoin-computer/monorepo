@@ -1,4 +1,4 @@
-import { Taptree, Tapleaf, isTapleaf, isTaptree } from '../types';
+import { Taptree, Tapleaf, isTapleaf, isTaptree } from '../types.js';
 import {
   PsbtInput,
   PsbtOutput,
@@ -9,23 +9,23 @@ import {
   TapInternalKey,
 } from 'bip174/src/lib/interfaces';
 
-import { Transaction } from '../transaction';
+import { Transaction } from '../transaction.js';
 
 import {
   witnessStackToScriptWitness,
   pubkeyPositionInScript,
   isP2TR,
-} from './psbtutils';
+} from './psbtutils.js';
 import {
   tweakKey,
   tapleafHash,
   rootHashFromPath,
   LEAF_VERSION_TAPSCRIPT,
   MAX_TAPTREE_DEPTH,
-} from '../payments/bip341';
-import { p2tr } from '../payments';
+} from '../payments/bip341.js';
+import { p2tr } from '../payments/index.js';
 
-import { signatureBlocksAction } from './psbtutils';
+import { signatureBlocksAction } from './psbtutils.js';
 
 export const toXOnly = (pubKey: Buffer) =>
   pubKey.length === 32 ? pubKey : pubKey.slice(1, 33);

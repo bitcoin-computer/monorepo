@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import { describe, it } from 'mocha';
-import { signature as bscriptSig } from '../src/script';
-import * as fixtures from './fixtures/signature.json';
+import { signature as bscriptSig } from '../src/script.js';
+import * as fixtures from './fixtures/signature.json' assert { type: 'json' };
 
 describe('Script Signatures', () => {
   function fromRaw(signature: { r: string; s: string }): Buffer {

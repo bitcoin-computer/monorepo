@@ -1,23 +1,8 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.signatureBlocksAction =
-  exports.checkInputForSig =
-  exports.pubkeyInScript =
-  exports.pubkeyPositionInScript =
-  exports.witnessStackToScriptWitness =
-  exports.isP2TR =
-  exports.isP2SHScript =
-  exports.isP2WSHScript =
-  exports.isP2WPKH =
-  exports.isP2PKH =
-  exports.isP2PK =
-  exports.isP2MS =
-    void 0;
-const varuint = require('bip174/src/lib/converter/varint');
-const bscript = require('../script');
-const transaction_1 = require('../transaction');
-const crypto_1 = require('../crypto');
-const payments = require('../payments');
+import * as varuint from 'bip174/src/lib/converter/varint.js';
+import * as bscript from '../script.js';
+import { Transaction } from '../transaction.js';
+import { hash160 } from '../crypto.js';
+import * as payments from '../payments/index.js';
 function isPaymentFactory(payment) {
   return script => {
     try {
@@ -28,14 +13,14 @@ function isPaymentFactory(payment) {
     }
   };
 }
-exports.isP2MS = isPaymentFactory(payments.p2ms);
-exports.isP2PK = isPaymentFactory(payments.p2pk);
-exports.isP2PKH = isPaymentFactory(payments.p2pkh);
-exports.isP2WPKH = isPaymentFactory(payments.p2wpkh);
-exports.isP2WSHScript = isPaymentFactory(payments.p2wsh);
-exports.isP2SHScript = isPaymentFactory(payments.p2sh);
-exports.isP2TR = isPaymentFactory(payments.p2tr);
-function witnessStackToScriptWitness(witness) {
+export const isP2MS = isPaymentFactory(payments.p2ms);
+export const isP2PK = isPaymentFactory(payments.p2pk);
+export const isP2PKH = isPaymentFactory(payments.p2pkh);
+export const isP2WPKH = isPaymentFactory(payments.p2wpkh);
+export const isP2WSHScript = isPaymentFactory(payments.p2wsh);
+export const isP2SHScript = isPaymentFactory(payments.p2sh);
+export const isP2TR = isPaymentFactory(payments.p2tr);
+export function witnessStackToScriptWitness(witness) {
   let buffer = Buffer.allocUnsafe(0);
   function writeSlice(slice) {
     buffer = Buffer.concat([buffer, Buffer.from(slice)]);
@@ -57,9 +42,8 @@ function witnessStackToScriptWitness(witness) {
   writeVector(witness);
   return buffer;
 }
-exports.witnessStackToScriptWitness = witnessStackToScriptWitness;
-function pubkeyPositionInScript(pubkey, script) {
-  const pubkeyHash = (0, crypto_1.hash160)(pubkey);
+export function pubkeyPositionInScript(pubkey, script) {
+  const pubkeyHash = hash160(pubkey);
   const pubkeyXOnly = pubkey.slice(1, 33); // slice before calling?
   const decompiled = bscript.decompile(script);
   if (decompiled === null) throw new Error('Unknown script error');
@@ -72,30 +56,26 @@ function pubkeyPositionInScript(pubkey, script) {
     );
   });
 }
-exports.pubkeyPositionInScript = pubkeyPositionInScript;
-function pubkeyInScript(pubkey, script) {
+export function pubkeyInScript(pubkey, script) {
   return pubkeyPositionInScript(pubkey, script) !== -1;
 }
-exports.pubkeyInScript = pubkeyInScript;
-function checkInputForSig(input, action) {
+export function checkInputForSig(input, action) {
   const pSigs = extractPartialSigs(input);
   return pSigs.some(pSig =>
     signatureBlocksAction(pSig, bscript.signature.decode, action),
   );
 }
-exports.checkInputForSig = checkInputForSig;
-function signatureBlocksAction(signature, signatureDecodeFn, action) {
+export function signatureBlocksAction(signature, signatureDecodeFn, action) {
   const { hashType } = signatureDecodeFn(signature);
   const whitelist = [];
-  const isAnyoneCanPay =
-    hashType & transaction_1.Transaction.SIGHASH_ANYONECANPAY;
+  const isAnyoneCanPay = hashType & Transaction.SIGHASH_ANYONECANPAY;
   if (isAnyoneCanPay) whitelist.push('addInput');
   const hashMod = hashType & 0x1f;
   switch (hashMod) {
-    case transaction_1.Transaction.SIGHASH_ALL:
+    case Transaction.SIGHASH_ALL:
       break;
-    case transaction_1.Transaction.SIGHASH_SINGLE:
-    case transaction_1.Transaction.SIGHASH_NONE:
+    case Transaction.SIGHASH_SINGLE:
+    case Transaction.SIGHASH_NONE:
       whitelist.push('addOutput');
       whitelist.push('setInputSequence');
       break;
@@ -105,7 +85,6 @@ function signatureBlocksAction(signature, signatureDecodeFn, action) {
   }
   return false;
 }
-exports.signatureBlocksAction = signatureBlocksAction;
 function extractPartialSigs(input) {
   let pSigs = [];
   if ((input.partialSig || []).length === 0) {

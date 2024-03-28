@@ -1,9 +1,9 @@
 /// <reference types="node" />
 import { Psbt as PsbtBase } from 'bip174';
-import { KeyValue, PartialSig, PsbtGlobalUpdate, PsbtInput, PsbtInputUpdate, PsbtOutput, PsbtOutputUpdate } from 'bip174/src/lib/interfaces';
-import { Network } from './networks';
-import * as payments from './payments';
-import { Transaction } from './transaction';
+import { KeyValue, PartialSig, PsbtGlobalUpdate, PsbtInput, PsbtInputUpdate, PsbtOutput, PsbtOutputUpdate } from 'bip174/src/lib/interfaces.js';
+import { Network } from './networks.js';
+import * as payments from './payments/index.js';
+import { Transaction } from './transaction.js';
 export interface TransactionInput {
     hash: string | Buffer;
     index: number;

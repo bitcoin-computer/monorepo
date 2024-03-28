@@ -1,7 +1,7 @@
 import * as assert from 'assert';
 import { describe, it } from 'mocha';
-import * as scriptNumber from '../src/script_number';
-import * as fixtures from './fixtures/script_number.json';
+import * as scriptNumber from '../src/script_number.js';
+import * as fixtures from './fixtures/script_number.json' assert { type: 'json' };
 
 describe('script-number', () => {
   describe('decode', () => {

@@ -1,15 +1,15 @@
-import * as bcrypto from '../crypto';
-import { bitcoin as BITCOIN_NETWORK } from '../networks';
-import * as bscript from '../script';
-import { typeforce as typef } from '../types';
+import * as bcrypto from '../crypto.js';
+import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
+import * as bscript from '../script.js';
+import { typeforce as typef } from '../types.js';
 import {
   Payment,
   PaymentFunction,
   PaymentOpts,
   Stack,
   StackFunction,
-} from './index';
-import * as lazy from './lazy';
+} from './index.js';
+import * as lazy from './lazy.js';
 import * as bs58check from 'bs58check';
 const OPS = bscript.OPS;
 

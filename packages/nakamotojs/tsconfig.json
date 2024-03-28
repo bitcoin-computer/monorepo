@@ -1,24 +1,18 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "commonjs",
+    "module": "esnext",
+    "moduleResolution": "node",
     "outDir": "./src",
     "declaration": true,
     "rootDir": "./ts_src",
-    "types": [
-      "node"
-    ],
+    "types": ["node"],
     "allowJs": false,
     "strict": true,
     "esModuleInterop": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": [
-      "ts_src/**/*.ts"
-  ],
-  "exclude": [
-      "**/*.spec.ts",
-      "node_modules/**/*"
-  ]
+  "include": ["ts_src/**/*.ts"],
+  "exclude": ["**/*.spec.ts", "node_modules/**/*"]
 }

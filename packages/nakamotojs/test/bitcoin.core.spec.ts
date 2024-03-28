@@ -1,15 +1,15 @@
 import * as assert from 'assert';
 import * as base58 from 'bs58';
 import { describe, it } from 'mocha';
-import * as bitcoin from '..';
-import * as base58EncodeDecode from './fixtures/core/base58_encode_decode.json';
-import * as base58KeysInvalid from './fixtures/core/base58_keys_invalid.json';
-import * as base58KeysValid from './fixtures/core/base58_keys_valid.json';
-import * as blocksValid from './fixtures/core/blocks.json';
-import * as sigCanonical from './fixtures/core/sig_canonical.json';
-import * as sigNoncanonical from './fixtures/core/sig_noncanonical.json';
-import * as sigHash from './fixtures/core/sighash.json';
-import * as txValid from './fixtures/core/tx_valid.json';
+import * as bitcoin from '../src/index.js';
+import * as base58EncodeDecode from './fixtures/core/base58_encode_decode.json' assert { type: 'json' };
+import * as base58KeysInvalid from './fixtures/core/base58_keys_invalid.json' assert { type: 'json' };
+import * as base58KeysValid from './fixtures/core/base58_keys_valid.json' assert { type: 'json' };
+import * as blocksValid from './fixtures/core/blocks.json' assert { type: 'json' };
+import * as sigCanonical from './fixtures/core/sig_canonical.json' assert { type: 'json' };
+import * as sigNoncanonical from './fixtures/core/sig_noncanonical.json' assert { type: 'json' };
+import * as sigHash from './fixtures/core/sighash.json' assert { type: 'json' };
+import * as txValid from './fixtures/core/tx_valid.json' assert { type: 'json' };
 
 describe('Bitcoin-core', () => {
   // base58EncodeDecode

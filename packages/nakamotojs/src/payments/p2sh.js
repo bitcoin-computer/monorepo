@@ -1,12 +1,9 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.p2sh = void 0;
-const bcrypto = require('../crypto');
-const networks_1 = require('../networks');
-const bscript = require('../script');
-const types_1 = require('../types');
-const lazy = require('./lazy');
-const bs58check = require('bs58check');
+import * as bcrypto from '../crypto.js';
+import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
+import * as bscript from '../script.js';
+import { typeforce as typef } from '../types.js';
+import * as lazy from './lazy.js';
+import * as bs58check from 'bs58check';
 const OPS = bscript.OPS;
 function stacksEqual(a, b) {
   if (a.length !== b.length) return false;
@@ -17,34 +14,30 @@ function stacksEqual(a, b) {
 // input: [redeemScriptSig ...] {redeemScript}
 // witness: <?>
 // output: OP_HASH160 {hash160(redeemScript)} OP_EQUAL
-function p2sh(a, opts) {
+export function p2sh(a, opts) {
   if (!a.address && !a.hash && !a.output && !a.redeem && !a.input)
     throw new TypeError('Not enough data');
   opts = Object.assign({ validate: true }, opts || {});
-  (0, types_1.typeforce)(
+  typef(
     {
-      network: types_1.typeforce.maybe(types_1.typeforce.Object),
-      address: types_1.typeforce.maybe(types_1.typeforce.String),
-      hash: types_1.typeforce.maybe(types_1.typeforce.BufferN(20)),
-      output: types_1.typeforce.maybe(types_1.typeforce.BufferN(23)),
-      redeem: types_1.typeforce.maybe({
-        network: types_1.typeforce.maybe(types_1.typeforce.Object),
-        output: types_1.typeforce.maybe(types_1.typeforce.Buffer),
-        input: types_1.typeforce.maybe(types_1.typeforce.Buffer),
-        witness: types_1.typeforce.maybe(
-          types_1.typeforce.arrayOf(types_1.typeforce.Buffer),
-        ),
+      network: typef.maybe(typef.Object),
+      address: typef.maybe(typef.String),
+      hash: typef.maybe(typef.BufferN(20)),
+      output: typef.maybe(typef.BufferN(23)),
+      redeem: typef.maybe({
+        network: typef.maybe(typef.Object),
+        output: typef.maybe(typef.Buffer),
+        input: typef.maybe(typef.Buffer),
+        witness: typef.maybe(typef.arrayOf(typef.Buffer)),
       }),
-      input: types_1.typeforce.maybe(types_1.typeforce.Buffer),
-      witness: types_1.typeforce.maybe(
-        types_1.typeforce.arrayOf(types_1.typeforce.Buffer),
-      ),
+      input: typef.maybe(typef.Buffer),
+      witness: typef.maybe(typef.arrayOf(typef.Buffer)),
     },
     a,
   );
   let network = a.network;
   if (!network) {
-    network = (a.redeem && a.redeem.network) || networks_1.bitcoin;
+    network = (a.redeem && a.redeem.network) || BITCOIN_NETWORK;
   }
   const o = { network };
   const _address = lazy.value(() => {
@@ -195,4 +188,3 @@ function p2sh(a, opts) {
   }
   return Object.assign(o, a);
 }
-exports.p2sh = p2sh;

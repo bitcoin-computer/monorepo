@@ -1,5 +1,5 @@
-import * as bip66 from './bip66';
-import * as types from './types';
+import * as bip66 from './bip66.js';
+import * as types from './types.js';
 const { typeforce } = types;
 
 const ZERO = Buffer.alloc(1, 0);

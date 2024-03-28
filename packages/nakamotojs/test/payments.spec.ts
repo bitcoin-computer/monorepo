@@ -1,9 +1,9 @@
 import * as assert from 'assert';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import { describe, it } from 'mocha';
-import { PaymentCreator } from '../src/payments';
-import * as u from './payments.utils';
-import { initEccLib } from '../src';
+import { PaymentCreator } from '../src/payments/index.js';
+import * as u from './payments.utils.js';
+import { initEccLib } from '../src/index.js';
 
 ['embed', 'p2ms', 'p2pk', 'p2pkh', 'p2sh', 'p2wpkh', 'p2wsh', 'p2tr'].forEach(
   p => {
