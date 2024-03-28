@@ -3,15 +3,20 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import dotenv from 'dotenv'
 import { StaticSwap } from '../src/static-swap'
 import { OfferHelper } from '../src/offer'
-import { RLTC, meta } from '../src/utils'
+import { meta } from '../src/utils'
+
+dotenv.config({ path: '../../.env' })
+
+const url = process.env.BCN_URL
 
 describe('Offer', () => {
   let a: NFT
   let b: NFT
-  const alice = new Computer(RLTC)
-  const bob = new Computer(RLTC)
+  const alice = new Computer({ url })
+  const bob = new Computer({ url })
   let offerId: string
 
   before('Before', async () => {

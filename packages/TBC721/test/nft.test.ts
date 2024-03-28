@@ -2,43 +2,43 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import chaiMatchPattern from 'chai-match-pattern'
+import dotenv from 'dotenv'
 import { NFT, TBC721 } from '../src/nft'
+import chaiMatchPattern from 'chai-match-pattern'
 
-const { expect } = chai
+const isString = (x: any) => typeof x === 'string'
+const isNumber = (x: any) => typeof x === 'number'
+const isArray = (x: any) => Array.isArray(x)
+
+export const meta = {
+  _id: isString,
+  _rev: isString,
+  _root: isString,
+  _owners: isArray,
+  _amount: isNumber,
+}
+
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-/**
- * To run the tests with the Bitcoin Computer testnet node remove the opts argument.
- */
-const RLTC: {
-  network: 'regtest'
-  url: string
-} = {
-  network: 'regtest',
-  url: 'http://localhost:1031',
-}
+const { expect } = chai
 
-const meta = {
-  _id: _.isString,
-  _rev: _.isString,
-  _root: _.isString,
-  _owners: _.isArray,
-  _amount: _.isNumber,
-}
+dotenv.config({ path: '../../.env' })
+
+const url = process.env.BCN_URL
 
 const symbol = ''
 
 describe('NFT', () => {
-  let nft: NFT
   let initialId: string
   let initialRev: string
   let initialRoot: string
 
   describe('Using NFTs without an helper class', () => {
+    let nft: NFT
+
     describe('Minting an NFT', () => {
-      const sender = new Computer(RLTC)
+      const sender = new Computer({ url })
 
       before("Fund sender's wallet", async () => {
         await sender.faucet(0.001e8)
@@ -68,7 +68,7 @@ describe('NFT', () => {
     })
 
     describe('Transferring an NFT', async () => {
-      const receiver = new Computer(RLTC)
+      const receiver = new Computer({ url })
 
       it('Sender transfers the NFT to receiver', async () => {
         await nft.transfer(receiver.getPublicKey())
@@ -99,9 +99,10 @@ describe('NFT', () => {
   })
 
   describe('Using NFTs with the TBC721 helper class', () => {
-    const computer = new Computer(RLTC)
+    const computer = new Computer({ url })
 
-    let tbc721
+    let tbc721: TBC721
+    let nft: NFT
 
     before(async () => {
       await computer.faucet(1e7)
@@ -155,13 +156,13 @@ describe('NFT', () => {
   describe('Examples from docs', () => {
     it('Should work without the TBC721 helper class', async () => {
       // Create the sender wallet
-      const sender = new Computer(RLTC)
+      const sender = new Computer({ url })
 
       // Fund the senders wallet
       await sender.faucet(0.001e8)
 
       // Create a new NFT
-      nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
+      const nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
 
       // Send the NFT
       await nft.transfer(new Computer().getPublicKey())
@@ -169,7 +170,7 @@ describe('NFT', () => {
 
     it('Should work with the TBC721 helper class', async () => {
       // Create wallet
-      const sender = new Computer(RLTC)
+      const sender = new Computer({ url })
 
       // Fund wallet
       await sender.faucet(0.001e8)
@@ -181,7 +182,7 @@ describe('NFT', () => {
       await tbc721.deploy()
 
       // Mint nft
-      nft = await tbc721.mint('name', 'symbol')
+      const nft = await tbc721.mint('name', 'symbol')
 
       // Transfer NFT
       await tbc721.transfer(nft._id, new Computer().getPublicKey())
