@@ -3,11 +3,10 @@
 import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
-import { NFT, TBC721 } from '../src/nft'
 import chaiMatchPattern from 'chai-match-pattern'
+import { NFT, TBC721 } from '../src/nft'
 
 chai.use(chaiMatchPattern)
-const _ = chaiMatchPattern.getLodashModule()
 
 // If you want to connect to your local Bitcoin Computer Node, create a .env file 
 // in the monorepo root level and add the following line:
