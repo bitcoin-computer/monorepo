@@ -1,4 +1,4 @@
-import { getTestRev } from './utils';
+import { getTestRev } from './utils/index.js';
 const { Contract } = await import('@bitcoin-computer/lib');
 export class Payment extends Contract {
     constructor(owner, _amount) {
