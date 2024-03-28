@@ -47,7 +47,7 @@ describe('Static Swap', () => {
       const { tx } = await swapHelperB.createSwapTx(nftA, nftB)
 
       // Alice checks the swap transaction
-      swapHelperA.checkSwapTx(tx, bob.getPublicKey(), alice.getPublicKey())
+      await swapHelperA.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
 
       // Alice signs an broadcasts the transaction to execute the swap
       await alice.sign(tx)

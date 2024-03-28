@@ -2,22 +2,18 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import chaiMatchPattern from 'chai-match-pattern'
-import { NFT, TBC721 } from '../src/nft'
-
 import dotenv from 'dotenv'
+import { NFT, TBC721 } from '../src/nft'
+import chaiMatchPattern from 'chai-match-pattern'
+
+chai.use(chaiMatchPattern)
+const _ = chaiMatchPattern.getLodashModule()
 
 // If you want to connect to your local Bitcoin Computer Node, create a .env file 
 // in the monorepo root level and add the following line:
 // BCN_URL=http://localhost:1031
 
 dotenv.config({ path: '../../.env'})
-
-const url = process.env.BCN_URL
-
-const { expect } = chai
-chai.use(chaiMatchPattern)
-const _ = chaiMatchPattern.getLodashModule()
 
 const meta = {
   _id: _.isString,
@@ -27,15 +23,22 @@ const meta = {
   _amount: _.isNumber,
 }
 
+const { expect } = chai
+
+dotenv.config({ path: '../../.env' })
+
+const url = process.env.BCN_URL
+
 const symbol = ''
 
 describe('NFT', () => {
-  let nft: NFT
   let initialId: string
   let initialRev: string
   let initialRoot: string
 
   describe('Using NFTs without an helper class', () => {
+    let nft: NFT
+
     describe('Minting an NFT', () => {
       const sender = new Computer({ url })
       
@@ -68,7 +71,6 @@ describe('NFT', () => {
   
     describe('Transferring an NFT', async () => {
       const receiver = new Computer({ url })
-  
       it('Sender transfers the NFT to receiver', async () => {
         await nft.transfer(receiver.getPublicKey())
         // @ts-ignore
@@ -99,9 +101,9 @@ describe('NFT', () => {
 
   describe('Using NFTs with the TBC721 helper class', () => {
     const computer = new Computer({ url })
-    
-    let tbc721
-    let nft
+
+    let tbc721: TBC721
+    let nft: NFT
 
     before(async () => {
       await computer.faucet(1e7)
@@ -161,7 +163,7 @@ describe('NFT', () => {
       await sender.faucet(0.001e8)
 
       // Create a new NFT
-      nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
+      const nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
 
       // Send the NFT
       await nft.transfer(new Computer().getPublicKey())
@@ -181,7 +183,7 @@ describe('NFT', () => {
       await tbc721.deploy()
 
       // Mint nft
-      nft = await tbc721.mint('name', 'symbol')
+      const nft = await tbc721.mint('name', 'symbol')
 
       // Transfer NFT
       await tbc721.transfer(nft._id, new Computer().getPublicKey())

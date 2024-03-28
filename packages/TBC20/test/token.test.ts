@@ -2,9 +2,8 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { TBC20, Token } from '../src/token'
-
 import dotenv from 'dotenv'
+import { TBC20, Token } from '../src/token'
 
 // If you want to connect to your local Bitcoin Computer Node, create a .env file 
 // in the monorepo root level and add the following line:
@@ -14,14 +13,14 @@ dotenv.config({ path: '../../.env'})
 
 const url = process.env.BCN_URL
 
-const sender = new Computer({ url })
-const receiver = new Computer({ url })
-
 function sleep(delay: number): Promise<void> {
   return new Promise((resolve) => {
     setTimeout(resolve, delay)
   })
 }
+
+const sender = new Computer({ url })
+const receiver = new Computer({ url })
 
 before(async () => {
   await sender.faucet(1e7)

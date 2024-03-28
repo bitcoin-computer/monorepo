@@ -3,14 +3,18 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
+import dotenv from 'dotenv'
 import { Swap, SwapHelper } from '../src/swap'
-import { RLTC, meta } from '../src/utils'
+import { meta } from '../src/utils'
 
-describe.only('Swap', () => {
+dotenv.config({ path: '../../.env' })
+
+describe('Swap', () => {
   let nftA: NFT
   let nftB: NFT
-  const alice = new Computer(RLTC)
-  const bob = new Computer(RLTC)
+  const url = process.env.BCN_URL
+  const alice = new Computer({ url })
+  const bob = new Computer({ url })
 
   before('Before', async () => {
     await alice.faucet(0.01e8)
@@ -57,7 +61,7 @@ describe.only('Swap', () => {
       const { tx } = await swapHelperB.createSwapTx(nftA, nftB)
 
       // Alice checks the swap transaction
-      swapHelperA.checkSwapTx(tx, bob.getPublicKey(), alice.getPublicKey())
+      await swapHelperA.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
 
       // Alice signs an broadcasts the transaction to execute the swap
       await alice.sign(tx)
