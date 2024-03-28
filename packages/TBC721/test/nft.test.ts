@@ -102,7 +102,6 @@ describe('NFT', () => {
     const computer = new Computer(RLTC)
 
     let tbc721
-    let nft
 
     before(async () => {
       await computer.faucet(1e7)
@@ -162,7 +161,7 @@ describe('NFT', () => {
       await sender.faucet(0.001e8)
 
       // Create a new NFT
-      const nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
+      nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
 
       // Send the NFT
       await nft.transfer(new Computer().getPublicKey())
