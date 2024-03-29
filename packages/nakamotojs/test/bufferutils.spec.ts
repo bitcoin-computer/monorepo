@@ -1,10 +1,17 @@
-import * as assert from 'assert';
+import * as assertModule from 'assert';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const assert: typeof import('assert') = assertModule.default || assertModule;
 import { describe, it } from 'mocha';
 import * as bufferutils from '../src/bufferutils.js';
 import { BufferReader, BufferWriter } from '../src/bufferutils.js';
 
-import * as fixtures from './fixtures/bufferutils.json' assert { type: 'json' };
-const varuint = require('varuint-bitcoin');
+import * as fixturesModule from './fixtures/bufferutils.json' assert { type: 'json' };
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const fixtures = fixturesModule.default || fixturesModule;
+
+import * as varuint from 'varuint-bitcoin';
 
 describe('bufferutils', () => {
   function concatToBuffer(values: number[][]): Buffer {
@@ -12,7 +19,7 @@ describe('bufferutils', () => {
   }
 
   describe('readUInt64LE', () => {
-    fixtures.valid.forEach(f => {
+    fixtures.valid.forEach((f: any) => {
       it('decodes ' + f.hex, () => {
         const buffer = Buffer.from(f.hex, 'hex');
         const num = bufferutils.readUInt64LE(buffer, 0);
@@ -21,7 +28,7 @@ describe('bufferutils', () => {
       });
     });
 
-    fixtures.invalid.readUInt64LE.forEach(f => {
+    fixtures.invalid.readUInt64LE.forEach((f: any) => {
       it('throws on ' + f.description, () => {
         const buffer = Buffer.from(f.hex, 'hex');
 
@@ -33,7 +40,7 @@ describe('bufferutils', () => {
   });
 
   describe('writeUInt64LE', () => {
-    fixtures.valid.forEach(f => {
+    fixtures.valid.forEach((f: any) => {
       it('encodes ' + f.dec, () => {
         const buffer = Buffer.alloc(8, 0);
 
@@ -42,7 +49,7 @@ describe('bufferutils', () => {
       });
     });
 
-    fixtures.invalid.writeUInt64LE.forEach(f => {
+    fixtures.invalid.writeUInt64LE.forEach((f: any) => {
       it('throws on ' + f.description, () => {
         const buffer = Buffer.alloc(8, 0);
 

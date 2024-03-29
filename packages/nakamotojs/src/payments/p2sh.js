@@ -3,6 +3,7 @@ import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
 import * as bscript from '../script.js';
 import { typeforce as typef } from '../types.js';
 import * as lazy from './lazy.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import bs58check from 'bs58check';
 import { Buffer } from 'buffer';

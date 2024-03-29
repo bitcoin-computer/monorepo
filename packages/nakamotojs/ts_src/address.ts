@@ -4,6 +4,7 @@ import * as payments from './payments/index.js';
 import * as bscript from './script.js';
 import { typeforce, tuple, Hash160bit, UInt8 } from './types.js';
 import { bech32, bech32m } from 'bech32';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import bs58check from 'bs58check';
 import { Buffer } from 'buffer';

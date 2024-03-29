@@ -1,5 +1,8 @@
-import * as assert from 'assert';
-import ECPairFactory from 'ecpair';
+import * as assertModule from 'assert';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const assert: typeof import('assert') = assertModule.default || assertModule;
+import { ECPairFactory } from 'ecpair';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import { describe, it } from 'mocha';
 import * as bitcoin from '../../src/index.js';

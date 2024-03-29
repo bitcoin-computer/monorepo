@@ -10,6 +10,7 @@ import {
   StackFunction,
 } from './index.js';
 import * as lazy from './lazy.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import bs58check from 'bs58check';
 import { Buffer } from 'buffer';

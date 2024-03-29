@@ -4,6 +4,7 @@ import * as bscript from '../script.js';
 import { isPoint, typeforce as typef } from '../types.js';
 import { Payment, PaymentOpts, StackFunction } from './index.js';
 import * as lazy from './lazy.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import bs58check from 'bs58check';
 const OPS = bscript.OPS;
