@@ -3,8 +3,10 @@ import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
 import * as bscript from '../script.js';
 import { isPoint, typeforce as typef } from '../types.js';
 import * as lazy from './lazy.js';
-import * as bs58check from 'bs58check';
+// @ts-ignore
+import bs58check from 'bs58check';
 const OPS = bscript.OPS;
+import { Buffer } from 'buffer';
 // input: {signature} {pubkey}
 // output: OP_DUP OP_HASH160 {hash160(pubkey)} OP_EQUALVERIFY OP_CHECKSIG
 export function p2pkh(a, opts) {

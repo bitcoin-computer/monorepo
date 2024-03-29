@@ -1,7 +1,7 @@
 import { Buffer as NBuffer } from 'buffer';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import * as typeforceModule from 'typeforce';
+import typeforceModule from 'typeforce';
 const typeforce: any = typeforceModule;
 export { typeforce };
 
@@ -109,8 +109,6 @@ export interface TinySecp256k1Interface {
     tweak: Uint8Array,
   ): XOnlyPointAddTweakResult | null;
 }
-
-console.log('typeforce: ', typeforce);
 
 export const Buffer256bit = typeforce.BufferN(32);
 export const Hash160bit = typeforce.BufferN(20);

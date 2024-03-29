@@ -4,8 +4,10 @@ import * as bscript from '../script.js';
 import { isPoint, typeforce as typef } from '../types.js';
 import { Payment, PaymentOpts, StackFunction } from './index.js';
 import * as lazy from './lazy.js';
-import * as bs58check from 'bs58check';
+// @ts-ignore
+import bs58check from 'bs58check';
 const OPS = bscript.OPS;
+import { Buffer } from 'buffer';
 
 // input: {signature} {pubkey}
 // output: OP_DUP OP_HASH160 {hash160(pubkey)} OP_EQUALVERIFY OP_CHECKSIG

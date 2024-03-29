@@ -29,6 +29,7 @@ import {
   isP2WSHScript,
   isP2SHScript,
 } from './psbt/psbtutils.js';
+import { Buffer } from 'buffer';
 /**
  * These are the default arguments for a Psbt instance.
  */

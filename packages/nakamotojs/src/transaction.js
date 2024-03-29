@@ -12,6 +12,7 @@ import * as bscript from './script.js';
 import { OPS as opcodes } from './script.js';
 import * as types from './types.js';
 const { typeforce } = types;
+import { Buffer } from 'buffer';
 function varSliceSize(someScript) {
   const length = someScript.length;
   return varuint.encodingLength(length) + length;

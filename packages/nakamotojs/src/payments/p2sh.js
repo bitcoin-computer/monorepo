@@ -3,7 +3,9 @@ import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
 import * as bscript from '../script.js';
 import { typeforce as typef } from '../types.js';
 import * as lazy from './lazy.js';
-import * as bs58check from 'bs58check';
+// @ts-ignore
+import bs58check from 'bs58check';
+import { Buffer } from 'buffer';
 const OPS = bscript.OPS;
 function stacksEqual(a, b) {
   if (a.length !== b.length) return false;

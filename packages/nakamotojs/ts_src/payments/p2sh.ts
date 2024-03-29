@@ -10,7 +10,10 @@ import {
   StackFunction,
 } from './index.js';
 import * as lazy from './lazy.js';
-import * as bs58check from 'bs58check';
+// @ts-ignore
+import bs58check from 'bs58check';
+import { Buffer } from 'buffer';
+
 const OPS = bscript.OPS;
 
 function stacksEqual(a: Buffer[], b: Buffer[]): boolean {

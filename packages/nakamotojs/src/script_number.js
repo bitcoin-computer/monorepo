@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 export function decode(buffer, maxLength, minimal) {
   maxLength = maxLength || 4;
   minimal = minimal === undefined ? true : minimal;

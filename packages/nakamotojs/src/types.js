@@ -1,7 +1,7 @@
 import { Buffer as NBuffer } from 'buffer';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import * as typeforceModule from 'typeforce';
+import typeforceModule from 'typeforce';
 const typeforce = typeforceModule;
 export { typeforce };
 const ZERO32 = NBuffer.alloc(32, 0);
@@ -72,7 +72,6 @@ export function isTaptree(scriptTree) {
   if (scriptTree.length !== 2) return false;
   return scriptTree.every(t => isTaptree(t));
 }
-console.log('typeforce: ', typeforce);
 export const Buffer256bit = typeforce.BufferN(32);
 export const Hash160bit = typeforce.BufferN(20);
 export const Hash256bit = typeforce.BufferN(32);

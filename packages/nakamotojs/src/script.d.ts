@@ -3,6 +3,7 @@ import { OPS } from './ops.js';
 import { Stack } from './payments/index.js';
 import * as scriptNumber from './script_number.js';
 import * as scriptSignature from './script_signature.js';
+import { Buffer } from 'buffer';
 export { OPS };
 export declare function isPushOnly(value: Stack): boolean;
 export declare function countNonPushOnlyOPs(value: Stack): number;

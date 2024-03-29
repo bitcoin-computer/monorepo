@@ -8,6 +8,7 @@ import {
   TapTree,
   TapInternalKey,
 } from 'bip174/src/lib/interfaces';
+import { Buffer } from 'buffer';
 
 import { Transaction } from '../transaction.js';
 
