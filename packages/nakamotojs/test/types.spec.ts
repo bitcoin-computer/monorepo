@@ -1,7 +1,14 @@
-import * as assert from 'assert';
+import * as assertModule from 'assert';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const assert: typeof import('assert') = assertModule.default || assertModule;
 import { describe, it } from 'mocha';
-import * as types from '../src/types';
-const typeforce = require('typeforce');
+import * as types from '../src/types.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import typeforceModule from 'typeforce';
+const typeforce: any = typeforceModule;
+// const typeforce = require('typeforce');
 
 describe('types', () => {
   describe('Buffer Hash160/Hash256', () => {

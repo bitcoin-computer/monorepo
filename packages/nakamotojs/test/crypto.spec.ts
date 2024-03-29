@@ -1,13 +1,19 @@
-import * as assert from 'assert';
+import * as assertModule from 'assert';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const assert: typeof import('assert') = assertModule.default || assertModule;
 import { describe, it } from 'mocha';
 import { crypto as bcrypto, TaggedHashPrefix } from '../src/index.js';
-import * as fixtures from './fixtures/crypto.json' assert { type: 'json' };
+import * as fixturesModule from './fixtures/crypto.json' assert { type: 'json' };
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const fixtures = fixturesModule.default || fixturesModule;
 import { sha256, TAGS, TAGGED_HASH_PREFIXES } from '../src/crypto.js';
 
 describe('crypto', () => {
   ['hash160', 'hash256', 'ripemd160', 'sha1', 'sha256'].forEach(algorithm => {
     describe(algorithm, () => {
-      fixtures.hashes.forEach(f => {
+      fixtures.hashes.forEach((f: any) => {
         const fn = (bcrypto as any)[algorithm];
         const expected = (f as any)[algorithm];
 
@@ -22,7 +28,7 @@ describe('crypto', () => {
   });
 
   describe('taggedHash', () => {
-    fixtures.taggedHash.forEach(f => {
+    fixtures.taggedHash.forEach((f: any) => {
       const bytes = Buffer.from(f.hex, 'hex');
       const expected = Buffer.from(f.result, 'hex');
       it(`returns ${f.result} for taggedHash "${f.tag}" of ${f.hex}`, () => {

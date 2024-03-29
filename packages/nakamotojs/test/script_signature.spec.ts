@@ -1,7 +1,13 @@
-import * as assert from 'assert';
+import * as assertModule from 'assert';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const assert: typeof import('assert') = assertModule.default || assertModule;
 import { describe, it } from 'mocha';
 import { signature as bscriptSig } from '../src/script.js';
-import * as fixtures from './fixtures/signature.json' assert { type: 'json' };
+import * as fixturesModule from './fixtures/signature.json' assert { type: 'json' };
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const fixtures: any = fixturesModule.default || fixturesModule;
 
 describe('Script Signatures', () => {
   function fromRaw(signature: { r: string; s: string }): Buffer {
@@ -22,7 +28,7 @@ describe('Script Signatures', () => {
   }
 
   describe('encode', () => {
-    fixtures.valid.forEach(f => {
+    fixtures.valid.forEach((f: any) => {
       it('encodes ' + f.hex, () => {
         const buffer = bscriptSig.encode(fromRaw(f.raw), f.hashType);
 
@@ -30,7 +36,7 @@ describe('Script Signatures', () => {
       });
     });
 
-    fixtures.invalid.forEach(f => {
+    fixtures.invalid.forEach((f: any) => {
       if (!f.raw) return;
 
       it('throws ' + f.exception, () => {
@@ -44,7 +50,7 @@ describe('Script Signatures', () => {
   });
 
   describe('decode', () => {
-    fixtures.valid.forEach(f => {
+    fixtures.valid.forEach((f: any) => {
       it('decodes ' + f.hex, () => {
         const decode = bscriptSig.decode(Buffer.from(f.hex, 'hex'));
 
@@ -53,7 +59,7 @@ describe('Script Signatures', () => {
       });
     });
 
-    fixtures.invalid.forEach(f => {
+    fixtures.invalid.forEach((f: any) => {
       it('throws on ' + f.hex, () => {
         const buffer = Buffer.from(f.hex, 'hex');
 

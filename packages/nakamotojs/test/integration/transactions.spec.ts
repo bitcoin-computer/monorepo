@@ -1,7 +1,10 @@
-import * as assert from 'assert';
-import BIP32Factory from 'bip32';
+import * as assertModule from 'assert';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const assert: typeof import('assert') = assertModule.default || assertModule;
+import { BIP32Factory } from 'bip32';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
-import ECPairFactory from 'ecpair';
+import { ECPairFactory } from 'ecpair';
 import { describe, it } from 'mocha';
 import * as bitcoin from '../../src/index.js';
 import { regtestUtils, regtestLitecoinUtils } from './_regtest.js';
