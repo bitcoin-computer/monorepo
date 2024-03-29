@@ -3,6 +3,7 @@ import * as bscript from '../script.js';
 import { Transaction } from '../transaction.js';
 import { hash160 } from '../crypto.js';
 import * as payments from '../payments/index.js';
+import { Buffer } from 'buffer';
 function isPaymentFactory(payment) {
   return script => {
     try {

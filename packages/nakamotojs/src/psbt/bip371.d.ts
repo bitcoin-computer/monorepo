@@ -1,6 +1,7 @@
 /// <reference types="node" />
 import { Taptree } from '../types.js';
 import { PsbtInput, PsbtOutput, TapLeaf } from 'bip174/src/lib/interfaces';
+import { Buffer } from 'buffer';
 export declare const toXOnly: (pubKey: Buffer) => Buffer;
 /**
  * Default tapscript finalizer. It searches for the `tapLeafHashToFinalize` if provided.

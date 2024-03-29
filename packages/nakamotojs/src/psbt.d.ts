@@ -4,6 +4,7 @@ import { KeyValue, PartialSig, PsbtGlobalUpdate, PsbtInput, PsbtInputUpdate, Psb
 import { Network } from './networks.js';
 import * as payments from './payments/index.js';
 import { Transaction } from './transaction.js';
+import { Buffer } from 'buffer';
 export interface TransactionInput {
     hash: string | Buffer;
     index: number;

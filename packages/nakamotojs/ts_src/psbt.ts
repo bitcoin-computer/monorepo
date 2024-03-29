@@ -43,6 +43,7 @@ import {
   isP2WSHScript,
   isP2SHScript,
 } from './psbt/psbtutils.js';
+import { Buffer } from 'buffer';
 
 export interface TransactionInput {
   hash: string | Buffer;

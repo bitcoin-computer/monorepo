@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 const _ECCLIB_CACHE = {};
 export function initEccLib(eccLib) {
   if (!eccLib) {

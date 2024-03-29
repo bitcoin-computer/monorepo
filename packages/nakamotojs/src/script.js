@@ -4,6 +4,7 @@ import * as pushdata from './push_data.js';
 import * as scriptNumber from './script_number.js';
 import * as scriptSignature from './script_signature.js';
 import * as types from './types.js';
+import { Buffer } from 'buffer';
 const { typeforce } = types;
 const OP_INT_BASE = OPS.OP_RESERVED; // OP_1 - 1
 export { OPS };

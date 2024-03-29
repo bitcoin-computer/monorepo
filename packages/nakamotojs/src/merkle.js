@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 export function fastMerkleRoot(values, digestFn) {
   if (!Array.isArray(values)) throw TypeError('Expected values Array');
   if (typeof digestFn !== 'function')

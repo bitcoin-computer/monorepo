@@ -1,4 +1,5 @@
 import { isTapleaf, isTaptree } from '../types.js';
+import { Buffer } from 'buffer';
 import { Transaction } from '../transaction.js';
 import {
   witnessStackToScriptWitness,
