@@ -14,6 +14,7 @@ import { meta } from '../src/utils'
 dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
+const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -36,9 +37,10 @@ describe('Sale', () => {
       // Seller mints an NFT
       const nft = await seller.new(NFT, ['name', 'symbol'])
 
-      // Seller creates partially signed swap as a sale offer
+      // Seller creates a mock for the eventual payment
       const mock = new PaymentMock(seller.getPublicKey(), 7860)
-      const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
+
+      // Seller creates partially signed swap as a sale offer
       const { tx: saleTx } = await seller.encode({
         exp: `${Sale} Sale.exec(nft, payment)`,
         env: { nft: nft._rev, payment: mock._rev },
