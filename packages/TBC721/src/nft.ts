@@ -5,9 +5,6 @@ import { Contract } from '@bitcoin-computer/lib'
 export class NFT extends Contract {
   name: string
   symbol: string
-  _id: string
-  _rev: string
-  _root: string
   _owners: string[]
 
   constructor(name = '', symbol = '') {
@@ -20,6 +17,8 @@ export class NFT extends Contract {
 }
 
 export interface ITBC721 {
+  deploy(): Promise<string>
+  mint(name: string, symbol: string): Promise<NFT>
   balanceOf(publicKey: string): Promise<number>
   ownersOf(tokenId: string): Promise<string[]>
   transfer(tokenId: string, to: string)
