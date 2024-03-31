@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { getTestRev } from './utils'
+import { getMockedRev } from './utils'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 
@@ -25,10 +25,9 @@ export class ValuableMock {
   _owners: string[]
 
   constructor() {
-    const r = Math.floor(Math.random() * 100000)
-    this._id = getTestRev(1, r)
-    this._rev = getTestRev(1, r)
-    this._root = getTestRev(1, r)
+    this._id = getMockedRev()
+    this._rev = getMockedRev()
+    this._root = getMockedRev()
     this._owners = [randomPublicKey]
     this._amount = 7860
   }
