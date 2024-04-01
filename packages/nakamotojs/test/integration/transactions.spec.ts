@@ -1,7 +1,6 @@
-import * as assertModule from 'assert';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-const assert: typeof import('assert') = assertModule.default || assertModule;
+import assert from 'assert';
 import { BIP32Factory } from 'bip32';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import { ECPairFactory } from 'ecpair';

@@ -1,15 +1,14 @@
-import * as assertModule from 'assert';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-const assert: typeof import('assert') = assertModule.default || assertModule;
+import assert from 'assert';
 import { beforeEach, describe, it } from 'mocha';
 import { Block } from '../src/index.js';
 
 import * as fixturesModule from './fixtures/block.json' assert { type: 'json' };
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const fixtures = fixturesModule.default || fixturesModule;
+const fixtures: typeof import('./fixtures/block.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
 
 describe('Block', () => {
   describe('version', () => {
@@ -25,7 +24,7 @@ describe('Block', () => {
   });
 
   describe('calculateTarget', () => {
-    fixtures.targets.forEach((f: any) => {
+    fixtures.targets.forEach(f => {
       it('returns ' + f.expected + ' for 0x' + f.bits, () => {
         const bits = parseInt(f.bits, 16);
 
@@ -38,7 +37,7 @@ describe('Block', () => {
   });
 
   describe('fromBuffer/fromHex', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       it('imports ' + f.description, () => {
         const block = Block.fromHex(f.hex);
 
@@ -63,7 +62,7 @@ describe('Block', () => {
       });
     });
 
-    fixtures.invalid.forEach((f: any) => {
+    fixtures.invalid.forEach(f => {
       it('throws on ' + f.exception, () => {
         assert.throws(() => {
           Block.fromHex(f.hex);
@@ -73,7 +72,7 @@ describe('Block', () => {
   });
 
   describe('toBuffer/toHex', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       let block: Block;
 
       beforeEach(() => {
@@ -88,7 +87,7 @@ describe('Block', () => {
   });
 
   describe('getHash/getId', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       let block: Block;
 
       beforeEach(() => {
@@ -103,7 +102,7 @@ describe('Block', () => {
   });
 
   describe('getUTCDate', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       let block: Block;
 
       beforeEach(() => {
@@ -125,7 +124,7 @@ describe('Block', () => {
       }, /Cannot compute merkle root for zero transactions/);
     });
 
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       if (f.hex.length === 160) return;
 
       let block: Block;
@@ -155,7 +154,7 @@ describe('Block', () => {
   });
 
   describe('checkTxRoots', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       if (f.hex.length === 160) return;
 
       let block: Block;
@@ -171,7 +170,7 @@ describe('Block', () => {
   });
 
   describe('checkProofOfWork', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       let block: Block;
 
       beforeEach(() => {
