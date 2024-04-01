@@ -34,7 +34,7 @@ describe('Ord Sale', () => {
       const nft = await seller.new(NFT, ['name', 'symbol'])
 
       // Seller creates partially signed swap as a sale offer
-      const paymentMock = new PaymentMock(seller.getPublicKey(), 7860)
+      const paymentMock = new PaymentMock(7860)
       const b1Mock = new ValuableMock()
       const b2Mock = new ValuableMock()
 
@@ -50,7 +50,7 @@ describe('Ord Sale', () => {
       })
 
       // Buyer creates a payment object with the asking price
-      const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
+      const payment = await buyer.new(Payment, [1e8])
       const b1 = await buyer.new(Valuable, [])
       const b2 = await buyer.new(Valuable, [])
 
@@ -94,7 +94,7 @@ describe('Ord Sale', () => {
       const nftA = await tbc721A.mint('a', 'AAA')
 
       // Alice creates a payment mock
-      const paymentMock = new PaymentMock(alice.getPublicKey(), nftPrice)
+      const paymentMock = new PaymentMock(nftPrice)
       const b1Mock = new ValuableMock()
       const b2Mock = new ValuableMock()
 
@@ -105,7 +105,7 @@ describe('Ord Sale', () => {
       OrdSaleHelper.checkSaleTx()
 
       // Bob creates the payment and finalizes the transaction
-      const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
+      const payment = await bob.new(Payment, [nftPrice])
       const b1 = await bob.new(Valuable, [])
       const b2 = await bob.new(Valuable, [])
       const finalTx = OrdSaleHelper.finalizeSaleTx(tx, b1, b2, payment, bob.toScriptPubKey())
@@ -150,7 +150,7 @@ describe('Ord Sale', () => {
       it('Seller creates a swap transaction for the NFT with the desired price', async () => {
         const b1Mock = new ValuableMock()
         const b2Mock = new ValuableMock()
-        const paymentMock = new PaymentMock(seller.getPublicKey(), nftPrice)
+        const paymentMock = new PaymentMock(nftPrice)
         ;({ tx } = await saleHelper.createSaleTx(b1Mock, b2Mock, nft, paymentMock))
       })
 
@@ -185,7 +185,7 @@ describe('Ord Sale', () => {
       it('Buyer creates a payment object', async () => {
         b1 = await buyer.new(Valuable, [])
         b2 = await buyer.new(Valuable, [])
-        payment = await buyer.new(Payment, [buyer.getPublicKey(), nftPrice])
+        payment = await buyer.new(Payment, [nftPrice])
 
         // @ts-ignore
         expect(payment).matchPattern({

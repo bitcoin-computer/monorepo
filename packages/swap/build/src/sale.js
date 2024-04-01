@@ -1,12 +1,12 @@
 import { Transaction } from '@bitcoin-computer/nakamotojs';
 const { Contract } = await import('@bitcoin-computer/lib');
 export class Sale extends Contract {
-    static exec(a, b) {
-        const [ownerA] = a._owners;
-        const [ownerB] = b._owners;
-        a.transfer(ownerB);
-        b.transfer(ownerA);
-        return [b, a];
+    static exec(n, p) {
+        const [ownerN] = n._owners;
+        const [ownerP] = p._owners;
+        n.transfer(ownerP);
+        p.transfer(ownerN);
+        return [p, n];
     }
 }
 export class SaleHelper {
@@ -34,10 +34,8 @@ export class SaleHelper {
     }
     static finalizeSaleTx(tx, payment, scriptPubKey) {
         const [paymentTxId, paymentIndex] = payment._rev.split(':');
-        tx.updateInput(1, {
-            txId: paymentTxId,
-            index: parseInt(paymentIndex, 10),
-        });
+        const index = parseInt(paymentIndex, 10);
+        tx.updateInput(1, { txId: paymentTxId, index });
         tx.updateOutput(1, { scriptPubKey });
         return tx;
     }

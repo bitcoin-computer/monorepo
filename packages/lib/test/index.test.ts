@@ -119,8 +119,8 @@ class Payment extends Contract {
   _amount: number
   _owners: string[]
 
-  constructor(owner: string, _amount: number) {
-    super({ _owners: [owner], _amount })
+  constructor(_amount: number) {
+    super({ _amount })
   }
 
   transfer(to: string) {
@@ -506,14 +506,13 @@ describe('Sell', () => {
   describe('Failing to steal the nft', () => {
     const thief = new Computer({ url })
     let tooLowPayment: Payment
-    let txId: string
 
     before("Fund Thief's wallet", async () => {
       await thief.faucet(nftPrice + fee)
     })
 
     it('Thief creates a payment object with half the asking price', async () => {
-      tooLowPayment = await thief.new(Payment, [thief.getPublicKey(), nftPrice / 2])
+      tooLowPayment = await thief.new(Payment, [nftPrice / 2])
 
       // @ts-ignore
       expect(tooLowPayment).matchPattern({
@@ -566,7 +565,7 @@ describe('Sell', () => {
     })
 
     it('Buyer creates a payment object', async () => {
-      payment = await buyer.new(Payment, [buyer.getPublicKey(), nftPrice])
+      payment = await buyer.new(Payment, [nftPrice])
 
       // @ts-ignore
       expect(payment).matchPattern({

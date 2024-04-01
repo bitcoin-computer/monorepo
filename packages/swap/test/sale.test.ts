@@ -38,7 +38,7 @@ describe('Sale', () => {
       const nft = await seller.new(NFT, ['name', 'symbol'])
 
       // Seller creates a mock for the eventual payment
-      const mock = new PaymentMock(seller.getPublicKey(), 7860)
+      const mock = new PaymentMock(7860)
 
       // Seller creates partially signed swap as a sale offer
       const { tx: saleTx } = await seller.encode({
@@ -52,7 +52,7 @@ describe('Sale', () => {
       })
 
       // Buyer creates a payment object with the asking price
-      const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
+      const payment = await buyer.new(Payment, [1e8])
       const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
       // Buyer set's the payment object as the second input of the swap tx
@@ -86,7 +86,7 @@ describe('Sale', () => {
       const nftA = await tbc721A.mint('a', 'AAA')
 
       // Alice creates a payment mock
-      const mock = new PaymentMock(alice.getPublicKey(), nftPrice)
+      const mock = new PaymentMock(nftPrice)
 
       // Alice creates a swap transaction
       const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
@@ -95,7 +95,7 @@ describe('Sale', () => {
       SaleHelper.checkSaleTx()
 
       // Bob creates the payment and finalizes the transaction
-      const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
+      const payment = await bob.new(Payment, [nftPrice])
       const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
 
       // Bob signs an broadcasts the transaction to execute the swap
@@ -135,7 +135,7 @@ describe('Sale', () => {
     })
 
     it('Seller creates a swap transaction for the NFT with the desired price', async () => {
-      const mock = new PaymentMock(seller.getPublicKey(), nftPrice)
+      const mock = new PaymentMock(nftPrice)
       ;({ tx } = await saleHelper.createSaleTx(nft, mock))
       txClone = tx.clone()
     })
@@ -161,7 +161,7 @@ describe('Sale', () => {
     })
 
     it('Thief creates a payment object with half the asking price', async () => {
-      tooLowPayment = await thief.new(Payment, [thief.getPublicKey(), nftPrice / 2])
+      tooLowPayment = await thief.new(Payment, [nftPrice / 2])
 
       // @ts-ignore
       expect(tooLowPayment).matchPattern({
@@ -215,7 +215,7 @@ describe('Sale', () => {
     })
 
     it('Buyer creates a payment object', async () => {
-      payment = await buyer.new(Payment, [buyer.getPublicKey(), nftPrice])
+      payment = await buyer.new(Payment, [nftPrice])
 
       // @ts-ignore
       expect(payment).matchPattern({

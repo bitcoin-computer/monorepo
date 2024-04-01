@@ -10,8 +10,8 @@ export class Payment extends Contract {
   _amount: number
   _owners: string[]
 
-  constructor(owner: string, _amount: number) {
-    super({ _owners: [owner], _amount })
+  constructor(_amount: number) {
+    super({ _amount })
   }
 
   transfer(to: string) {
@@ -26,12 +26,12 @@ export class PaymentMock {
   _amount: number
   _owners: string[]
 
-  constructor(owner: string, amount: number) {
+  constructor(amount: number) {
     this._id = getMockedRev()
     this._rev = getMockedRev()
     this._root = getMockedRev()
-    this._owners = [owner]
     this._amount = amount
+    this._owners = ['023a06bc3ca20170b8202737316a29923f5b0e47f39c6517990f3c75f3b3d4484c']
   }
 
   transfer(to: string) {
