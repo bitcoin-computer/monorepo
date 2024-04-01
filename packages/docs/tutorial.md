@@ -215,10 +215,8 @@ Each smart object can store an amount of cryptocurrency. By default a smart obje
 
 ```js
 class Payment extends Contract {
-  constructor(to: string, amount: number) {
-    super()
-    this._owners = [to]
-    this._amount = amount
+  constructor(amount: number) {
+    super({ _amount })
   }
 
   cashOut() {
@@ -231,7 +229,7 @@ If a user *A* wants to send 210000 satoshis to a user *B*, the user *A* can setu
 
 ```js
 const computerA = new Computer({ mnemonic: <A's mnemonic> })
-const payment = computerA.new(Payment, [<B's public key>, 210000])
+const payment = computerA.new(Payment, [210000])
 ```
 
 When the ``payment`` smart object is created, the wallet inside the ``computerA`` object funds the 210000 satoshi that are stored in the ``payment`` object. Once user *B* becomes aware of the payment, he can withdraw by syncing against the object and calling the ``cashOut`` function.

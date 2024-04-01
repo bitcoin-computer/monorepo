@@ -87,11 +87,10 @@ The following code shows the class to create the payment mock as well as Seller 
 
 ```ts
 class PaymentMock {
-  constructor(owner: string, amount: number) {
+  constructor(amount: number) {
     this._id = `mock:${'0'.repeat(64)}:${Math.floor(Math.random() * 10000)}`
     this._rev = `mock:${'0'.repeat(64)}:${Math.floor(Math.random() * 10000)}`
     this._root = `mock:${'0'.repeat(64)}:${Math.floor(Math.random() * 10000)}`
-    this._owners = [owner]
     this._amount = amount
   }
 
@@ -100,7 +99,7 @@ class PaymentMock {
   }
 }
 
-const mock = new PaymentMock(seller.getPublicKey(), 7860)
+const mock = new PaymentMock(7860)
 ```
 
 Now Seller is ready to create and sign the sale transaction using `computer.encode` as shown below. There is a lot going on, so we will break down the arguments below.
@@ -151,7 +150,7 @@ Seller can publish the sales transaction to interested buyers. An interested buy
 First Buyer creates a smart object that can be used in the sale.
 
 ```ts
-const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
+const payment = await buyer.new(Payment, [1e8])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 ```
 
@@ -190,7 +189,7 @@ await buyer.faucet(2e8)
 const nft = await seller.new(NFT, ['name', 'symbol'])
 
 // Seller creates a mock for the eventual payment
-const mock = new PaymentMock(seller.getPublicKey(), 7860)
+const mock = new PaymentMock(7860)
 
 // Seller creates partially signed swap as a sale offer
 const { tx: saleTx } = await seller.encode({
@@ -204,7 +203,7 @@ const { tx: saleTx } = await seller.encode({
 })
 
 // Buyer creates a payment object with the asking price
-const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
+const payment = await buyer.new(Payment, [1e8])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
 // Buyer set's the payment object as the second input of the swap tx
@@ -256,7 +255,7 @@ await saleHelperA.deploy()
 const nftA = await tbc721A.mint('a', 'AAA')
 
 // Alice creates a payment mock
-const mock = new PaymentMock(alice.getPublicKey(), nftPrice)
+const mock = new PaymentMock(nftPrice)
 
 // Alice creates a swap transaction
 const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
@@ -265,7 +264,7 @@ const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
 SaleHelper.checkSaleTx()
 
 // Bob creates the payment and finalizes the transaction
-const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
+const payment = await bob.new(Payment, [nftPrice])
 const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
 
 // Bob signs an broadcasts the transaction to execute the swap
@@ -327,7 +326,7 @@ await buyer.faucet(2e8)
 const nft = await seller.new(NFT, ['name', 'symbol'])
 
 // Seller creates partially signed swap as a sale offer
-const paymentMock = new PaymentMock(seller.getPublicKey(), 7860)
+const paymentMock = new PaymentMock(7860)
 const b1Mock = new ValuableMock()
 const b2Mock = new ValuableMock()
 
@@ -343,7 +342,7 @@ const { tx } = await seller.encode({
 })
 
 // Buyer creates a payment object with the asking price
-const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
+const payment = await buyer.new(Payment, [1e8])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
 // Buyer set's the payment object as the second input of the swap tx
@@ -379,7 +378,7 @@ await saleHelperA.deploy()
 const nftA = await tbc721A.mint('a', 'AAA')
 
 // Alice creates a payment mock
-const paymentMock = new PaymentMock(alice.getPublicKey(), nftPrice)
+const paymentMock = new PaymentMock(nftPrice)
 const b1Mock = new ValuableMock()
 const b2Mock = new ValuableMock()
 
@@ -390,7 +389,7 @@ const { tx: saleTx } = await saleHelperA.createSaleTx(b1Mock, b2Mock, nftA, paym
 OrdSaleHelper.checkSaleTx()
 
 // Bob creates the payment and finalizes the transaction
-const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
+const payment = await bob.new(Payment, [nftPrice])
 const b1 = await bob.new(Valuable, [])
 const b2 = await bob.new(Valuable, [])
 const finalTx = OrdSaleHelper.finalizeSaleTx(saleTx, b1, b2, payment, bob.toScriptPubKey())
