@@ -1,19 +1,14 @@
-import * as assertModule from 'assert';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-const assert: typeof import('assert') = assertModule.default || assertModule;
+import assert from 'assert';
 import { describe, it } from 'mocha';
 import * as bscript from '../src/script.js';
 import * as fixturesModule from './fixtures/script.json' assert { type: 'json' };
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+const fixtures: typeof import('./fixtures/script.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
 // @ts-ignore
-const fixtures: any = fixturesModule.default || fixturesModule;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import * as minimalDataModule from 'minimaldata';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const minimalData: any = minimalDataModule.default || minimalDataModule;
+import minimalData from 'minimaldata';
 
 describe('script', () => {
   // TODO
@@ -35,14 +30,14 @@ describe('script', () => {
   });
 
   describe('fromASM/toASM', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       it('encodes/decodes ' + f.asm, () => {
         const script = bscript.fromASM(f.asm);
         assert.strictEqual(bscript.toASM(script), f.asm);
       });
     });
 
-    fixtures.invalid.fromASM.forEach((f: any) => {
+    fixtures.invalid.fromASM.forEach(f => {
       it('throws ' + f.description, () => {
         assert.throws(() => {
           bscript.fromASM(f.script);
@@ -67,7 +62,7 @@ describe('script', () => {
   });
 
   describe('fromASM/toASM (templates)', () => {
-    fixtures.valid2.forEach((f: any) => {
+    fixtures.valid2.forEach(f => {
       if (f.inputHex) {
         const ih = bscript.toASM(Buffer.from(f.inputHex, 'hex'));
 
@@ -89,7 +84,7 @@ describe('script', () => {
   });
 
   describe('isPushOnly', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       it('returns ' + !!f.stack + ' for ' + f.asm, () => {
         const script = bscript.fromASM(f.asm);
         const chunks = bscript.decompile(script);
@@ -100,7 +95,7 @@ describe('script', () => {
   });
 
   describe('toStack', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       it('returns ' + !!f.stack + ' for ' + f.asm, () => {
         if (!f.stack || !f.asm) return;
 
@@ -124,7 +119,7 @@ describe('script', () => {
   });
 
   describe('compile (via fromASM)', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       it('compiles ' + f.asm, () => {
         const scriptSig = bscript.fromASM(f.asm);
 
@@ -140,7 +135,7 @@ describe('script', () => {
   });
 
   describe('decompile', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       it('decompiles ' + f.asm, () => {
         const chunks = bscript.decompile(Buffer.from(f.script, 'hex'));
 
@@ -163,7 +158,7 @@ describe('script', () => {
       });
     });
 
-    fixtures.invalid.decompile.forEach((f: any) => {
+    fixtures.invalid.decompile.forEach(f => {
       it(
         'fails to decompile ' + f.script + ',  because "' + f.description + '"',
         () => {
@@ -176,7 +171,7 @@ describe('script', () => {
   });
 
   describe('SCRIPT_VERIFY_MINIMALDATA policy', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       it('compliant for scriptSig ' + f.asm, () => {
         const script = Buffer.from(f.script, 'hex');
 

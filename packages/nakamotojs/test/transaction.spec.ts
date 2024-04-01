@@ -1,4 +1,6 @@
-import * as assertModule from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { beforeEach, describe, it } from 'mocha';
 import { Transaction } from '../src/index.js';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
@@ -7,12 +9,9 @@ import * as bscript from '../src/script.js';
 import * as payments from '../src/payments/index.js';
 
 import * as fixturesModule from './fixtures/transaction.json' assert { type: 'json' };
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const fixtures: any = fixturesModule.default || fixturesModule;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const assert: typeof import('assert') = assertModule.default || assertModule;
+const fixtures: typeof import('./fixtures/transaction.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
 
 const ECPair = ECPairFactory(ecc);
 
@@ -82,7 +81,7 @@ describe('Transaction', () => {
     fixtures.hashForSignature.forEach(importExport);
     fixtures.hashForWitnessV0.forEach(importExport);
 
-    fixtures.invalid.fromBuffer.forEach((f: any) => {
+    fixtures.invalid.fromBuffer.forEach(f => {
       it('throws on ' + f.exception, () => {
         assert.throws(() => {
           Transaction.fromHex(f.hex);
@@ -99,7 +98,7 @@ describe('Transaction', () => {
   });
 
   describe('toBuffer/toHex', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       it('exports ' + f.description + ' (' + f.id + ')', () => {
         const actual = fromRaw(f.raw, true);
         assert.strictEqual(actual.toHex(), f.hex);
@@ -133,7 +132,7 @@ describe('Transaction', () => {
   });
 
   describe('hasWitnesses', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       it(
         'detects if the transaction has witnesses: ' +
           (f.whex ? 'true' : 'false'),
@@ -149,7 +148,7 @@ describe('Transaction', () => {
 
   describe('weight/virtualSize', () => {
     it('computes virtual size', () => {
-      fixtures.valid.forEach((f: any) => {
+      fixtures.valid.forEach(f => {
         const transaction = Transaction.fromHex(f.whex ? f.whex : f.hex);
 
         assert.strictEqual(transaction.virtualSize(), f.virtualSize);
@@ -157,7 +156,7 @@ describe('Transaction', () => {
     });
 
     it('computes weight', () => {
-      fixtures.valid.forEach((f: any) => {
+      fixtures.valid.forEach(f => {
         const transaction = Transaction.fromHex(f.whex ? f.whex : f.hex);
 
         assert.strictEqual(transaction.weight(), f.weight);
@@ -189,7 +188,7 @@ describe('Transaction', () => {
       assert.strictEqual(tx.ins[0].sequence, 0xffffffff);
     });
 
-    fixtures.invalid.addInput.forEach((f: any) => {
+    fixtures.invalid.addInput.forEach(f => {
       it('throws on ' + f.exception, () => {
         const tx = new Transaction();
         const hash = Buffer.from(f.hash, 'hex');
@@ -271,7 +270,7 @@ describe('Transaction', () => {
   });
 
   describe('clone', () => {
-    fixtures.valid.forEach((f: any) => {
+    fixtures.valid.forEach(f => {
       let actual: Transaction;
       let expected: Transaction;
 
@@ -360,7 +359,7 @@ describe('Transaction', () => {
       });
     });
 
-    fixtures.hashForSignature.forEach((f: any) => {
+    fixtures.hashForSignature.forEach(f => {
       it(
         'should return ' +
           f.hash +
@@ -380,7 +379,7 @@ describe('Transaction', () => {
   });
 
   describe('hashForWitnessV0', () => {
-    fixtures.hashForWitnessV0.forEach((f: any) => {
+    fixtures.hashForWitnessV0.forEach(f => {
       it(
         'should return ' +
           f.hash +
@@ -402,14 +401,14 @@ describe('Transaction', () => {
   });
 
   describe('taprootSigning', () => {
-    fixtures.taprootSigning.forEach((f: any) => {
+    fixtures.taprootSigning.forEach(f => {
       const tx = Transaction.fromHex(f.txHex);
-      const prevOutScripts = f.utxos.map(({ scriptHex }: any) =>
+      const prevOutScripts = f.utxos.map(({ scriptHex }) =>
         Buffer.from(scriptHex, 'hex'),
       );
-      const values = f.utxos.map(({ value }: any) => value);
+      const values = f.utxos.map(({ value }) => value);
 
-      f.cases.forEach((c: any) => {
+      f.cases.forEach(c => {
         let hash: Buffer;
 
         it(`should hash to ${c.hash} for ${f.description}:${c.vin}`, () => {

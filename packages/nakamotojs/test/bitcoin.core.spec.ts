@@ -1,11 +1,8 @@
-import * as assertModule from 'assert';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-const assert: typeof import('assert') = assertModule.default || assertModule;
-import * as base58Module from 'bs58';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import assert from 'assert';
 // @ts-ignore
-const base58 = base58Module.default || base58Module;
+import base58 from 'bs58';
 import { describe, it } from 'mocha';
 import * as bitcoin from '../src/index.js';
 import * as base58EncodeDecodeModule from './fixtures/core/base58_encode_decode.json' assert { type: 'json' };
@@ -17,38 +14,39 @@ import * as sigNoncanonicalModule from './fixtures/core/sig_noncanonical.json' a
 import * as sigHashModule from './fixtures/core/sighash.json' assert { type: 'json' };
 import * as txValidModule from './fixtures/core/tx_valid.json' assert { type: 'json' };
 
-const base58EncodeDecode =
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+const base58EncodeDecode: typeof import('./fixtures/core/base58_encode_decode.json') =
   // @ts-ignore
   base58EncodeDecodeModule.default || base58EncodeDecodeModule;
 
-const base58KeysInvalid =
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+const base58KeysInvalid: typeof import('./fixtures/core/base58_keys_invalid.json') =
   // @ts-ignore
   base58KeysInvalidModule.default || base58KeysInvalidModule;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const base58KeysValid = base58KeysValidModule.default || base58KeysValidModule;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const blocksValid = blocksValidModule.default || blocksValidModule;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const sigCanonical = sigCanonicalModule.default || sigCanonicalModule;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const sigNoncanonical = sigNoncanonicalModule.default || sigNoncanonicalModule;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const sigHash = sigHashModule.default || sigHashModule;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const txValid = txValidModule.default || txValidModule;
+const base58KeysValid: typeof import('./fixtures/core/base58_keys_valid.json') =
+  // @ts-ignore
+  base58KeysValidModule.default || base58KeysValidModule;
+
+const blocksValid: typeof import('./fixtures/core/blocks.json') =
+  // @ts-ignore
+  blocksValidModule.default || blocksValidModule;
+const sigCanonical: typeof import('./fixtures/core/sig_canonical.json') =
+  // @ts-ignore
+  sigCanonicalModule.default || sigCanonicalModule;
+
+const sigNoncanonical: typeof import('./fixtures/core/sig_noncanonical.json') =
+  // @ts-ignore
+  sigNoncanonicalModule.default || sigNoncanonicalModule;
+
+const sigHash: typeof import('./fixtures/core/sighash.json') =
+  // @ts-ignore
+  sigHashModule.default || sigHashModule;
+const txValid: typeof import('./fixtures/core/tx_valid.json') =
+  // @ts-ignore
+  txValidModule.default || txValidModule;
 
 describe('Bitcoin-core', () => {
   // base58EncodeDecode
   describe('base58', () => {
-    base58EncodeDecode.forEach((f: any) => {
+    base58EncodeDecode.forEach(f => {
       const fhex = f[0];
       const fb58 = f[1];
 
@@ -75,7 +73,7 @@ describe('Bitcoin-core', () => {
       script: 'scriptHash',
     };
 
-    base58KeysValid.forEach((f: any) => {
+    base58KeysValid.forEach(f => {
       const expected = f[0];
       const hash = Buffer.from(f[1] as any, 'hex');
       const params = f[2] as any;
@@ -105,7 +103,7 @@ describe('Bitcoin-core', () => {
       bitcoin.networks.testnet.scriptHash,
     ];
 
-    base58KeysInvalid.forEach((f: any) => {
+    base58KeysInvalid.forEach(f => {
       const strng = f[0];
 
       it('throws on ' + strng, () => {
@@ -123,7 +121,7 @@ describe('Bitcoin-core', () => {
   });
 
   describe('Block.fromHex', () => {
-    blocksValid.forEach((f: any) => {
+    blocksValid.forEach(f => {
       it('can parse ' + f.id, () => {
         const block = bitcoin.Block.fromHex(f.hex);
 
@@ -135,7 +133,7 @@ describe('Bitcoin-core', () => {
 
   // txValid
   describe('Transaction.fromHex', () => {
-    txValid.forEach((f: any) => {
+    txValid.forEach(f => {
       // Objects that are only a single string are ignored
       if (f.length === 1) return;
 
@@ -164,7 +162,7 @@ describe('Bitcoin-core', () => {
 
   // sighash
   describe('Transaction', () => {
-    sigHash.forEach((f: any) => {
+    sigHash.forEach(f => {
       // Objects that are only a single string are ignored
       if (f.length === 1) return;
 
@@ -221,7 +219,7 @@ describe('Bitcoin-core', () => {
   });
 
   describe('script.signature.decode', () => {
-    sigCanonical.forEach((hex: any) => {
+    sigCanonical.forEach(hex => {
       const buffer = Buffer.from(hex, 'hex');
 
       it('can parse ' + hex, () => {
@@ -235,7 +233,7 @@ describe('Bitcoin-core', () => {
       });
     });
 
-    sigNoncanonical.forEach((hex: any, i: any) => {
+    sigNoncanonical.forEach((hex, i) => {
       if (i === 0) return;
       if (i % 2 !== 0) return;
 

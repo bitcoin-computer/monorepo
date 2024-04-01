@@ -1,7 +1,6 @@
-import * as assertModule from 'assert';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-const assert: typeof import('assert') = assertModule.default || assertModule;
+import assert from 'assert';
 import { PsbtInput } from 'bip174/src/lib/interfaces';
 import { ECPairFactory } from 'ecpair';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
@@ -11,7 +10,6 @@ import { regtestUtils } from './_regtest.js';
 
 const ECPair = ECPairFactory(ecc);
 const regtest = regtestUtils.network;
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import * as bip68 from 'bip68';
 import * as varuint from 'varuint-bitcoin';

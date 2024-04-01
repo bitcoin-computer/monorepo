@@ -1,7 +1,6 @@
-import * as assertModule from 'assert';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
-const assert: typeof import('assert') = assertModule.default || assertModule;
+import assert from 'assert';
 import { BIP32Factory } from 'bip32';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import * as crypto from 'crypto';
@@ -23,14 +22,13 @@ import {
   Signer,
   SignerAsync,
 } from '../src/index.js';
-
 import * as preFixturesModule from './fixtures/psbt.json' assert { type: 'json' };
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const preFixtures: any = preFixturesModule.default || preFixturesModule;
 import * as taprootFixturesModule from './fixtures/p2tr.json' assert { type: 'json' };
-const taprootFixtures: any =
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+
+const preFixtures: typeof import('./fixtures/psbt.json') =
+  // @ts-ignore
+  preFixturesModule.default || preFixturesModule;
+const taprootFixtures: typeof import('./fixtures/p2tr.json') =
   // @ts-ignore
   taprootFixturesModule.default || taprootFixturesModule;
 
@@ -101,7 +99,7 @@ describe(`Psbt`, () => {
     initEccLib(undefined);
   });
   describe('BIP174 Test Vectors', () => {
-    fixtures.bip174.invalid.forEach((f: any) => {
+    fixtures.bip174.invalid.forEach(f => {
       it(`Invalid: ${f.description}`, () => {
         assert.throws(() => {
           Psbt.fromBase64(f.psbt);
@@ -109,7 +107,7 @@ describe(`Psbt`, () => {
       });
     });
 
-    fixtures.bip174.valid.forEach((f: any) => {
+    fixtures.bip174.valid.forEach(f => {
       it(`Valid: ${f.description}`, () => {
         assert.doesNotThrow(() => {
           Psbt.fromBase64(f.psbt);
@@ -117,7 +115,7 @@ describe(`Psbt`, () => {
       });
     });
 
-    fixtures.bip174.failSignChecks.forEach((f: any) => {
+    fixtures.bip174.failSignChecks.forEach(f => {
       const keyPair = ECPair.makeRandom();
       it(`Fails Signer checks: ${f.description}`, () => {
         const psbt = Psbt.fromBase64(f.psbt);
@@ -127,7 +125,7 @@ describe(`Psbt`, () => {
       });
     });
 
-    fixtures.bip174.creator.forEach((f: any) => {
+    fixtures.bip174.creator.forEach(f => {
       it('Creates expected PSBT', () => {
         const psbt = new Psbt();
         for (const input of f.inputs) {
@@ -141,7 +139,7 @@ describe(`Psbt`, () => {
       });
     });
 
-    fixtures.bip174.updater.forEach((f: any) => {
+    fixtures.bip174.updater.forEach(f => {
       it('Updates PSBT to the expected result', () => {
         if (f.isTaproot) initEccLib(ecc);
         const psbt = Psbt.fromBase64(f.psbt);
@@ -160,7 +158,7 @@ describe(`Psbt`, () => {
       });
     });
 
-    fixtures.bip174.signer.forEach((f: any) => {
+    fixtures.bip174.signer.forEach(f => {
       it('Signs PSBT to the expected result', () => {
         if (f.isTaproot) initEccLib(ecc);
         const psbt = Psbt.fromBase64(f.psbt);
@@ -182,9 +180,9 @@ describe(`Psbt`, () => {
       });
     });
 
-    fixtures.bip174.combiner.forEach((f: any) => {
+    fixtures.bip174.combiner.forEach(f => {
       it('Combines two PSBTs to the expected result', () => {
-        const psbts = f.psbts.map((psbt: any) => Psbt.fromBase64(psbt));
+        const psbts = f.psbts.map(psbt => Psbt.fromBase64(psbt));
 
         psbts[0].combine(psbts[1]);
 
@@ -196,7 +194,7 @@ describe(`Psbt`, () => {
       });
     });
 
-    fixtures.bip174.finalizer.forEach((f: any) => {
+    fixtures.bip174.finalizer.forEach(f => {
       it('Finalizes inputs and gives the expected PSBT', () => {
         if (f.isTaproot) initEccLib(ecc);
         const psbt = Psbt.fromBase64(f.psbt);
@@ -207,7 +205,7 @@ describe(`Psbt`, () => {
       });
     });
 
-    fixtures.bip174.extractor.forEach((f: any) => {
+    fixtures.bip174.extractor.forEach(f => {
       it('Extracts the expected transaction from a PSBT', () => {
         const psbt1 = Psbt.fromBase64(f.psbt);
         const transaction1 = psbt1.extractTransaction(true).toHex();
@@ -246,7 +244,7 @@ describe(`Psbt`, () => {
   });
 
   describe('signInputAsync', () => {
-    fixtures.signInput.checks.forEach((f: any) => {
+    fixtures.signInput.checks.forEach(f => {
       it(f.description, async () => {
         if (f.isTaproot) initEccLib(ecc);
         if (f.shouldSign) {
@@ -302,7 +300,7 @@ describe(`Psbt`, () => {
   });
 
   describe('signInput', () => {
-    fixtures.signInput.checks.forEach((f: any) => {
+    fixtures.signInput.checks.forEach(f => {
       it(f.description, () => {
         if (f.isTaproot) initEccLib(ecc);
         if (f.shouldSign) {
@@ -334,7 +332,7 @@ describe(`Psbt`, () => {
   });
 
   describe('signAllInputsAsync', () => {
-    fixtures.signInput.checks.forEach((f: any) => {
+    fixtures.signInput.checks.forEach(f => {
       if (f.description === 'checks the input exists') return;
       it(f.description, async () => {
         if (f.isTaproot) initEccLib(ecc);
@@ -365,7 +363,7 @@ describe(`Psbt`, () => {
   });
 
   describe('signAllInputs', () => {
-    fixtures.signInput.checks.forEach((f: any) => {
+    fixtures.signInput.checks.forEach(f => {
       if (f.description === 'checks the input exists') return;
       it(f.description, () => {
         if (f.isTaproot) initEccLib(ecc);
@@ -396,7 +394,7 @@ describe(`Psbt`, () => {
   });
 
   describe('signInputHDAsync', () => {
-    fixtures.signInputHD.checks.forEach((f: any) => {
+    fixtures.signInputHD.checks.forEach(f => {
       it(f.description, async () => {
         if (f.shouldSign) {
           const psbtThatShouldsign = Psbt.fromBase64(f.shouldSign.psbt);
@@ -429,7 +427,7 @@ describe(`Psbt`, () => {
   });
 
   describe('signInputHD', () => {
-    fixtures.signInputHD.checks.forEach((f: any) => {
+    fixtures.signInputHD.checks.forEach(f => {
       it(f.description, () => {
         if (f.shouldSign) {
           const psbtThatShouldsign = Psbt.fromBase64(f.shouldSign.psbt);
@@ -462,7 +460,7 @@ describe(`Psbt`, () => {
   });
 
   describe('signAllInputsHDAsync', () => {
-    fixtures.signInputHD.checks.forEach((f: any) => {
+    fixtures.signInputHD.checks.forEach(f => {
       it(f.description, async () => {
         if (f.shouldSign) {
           const psbtThatShouldsign = Psbt.fromBase64(f.shouldSign.psbt);
@@ -491,7 +489,7 @@ describe(`Psbt`, () => {
   });
 
   describe('signAllInputsHD', () => {
-    fixtures.signInputHD.checks.forEach((f: any) => {
+    fixtures.signInputHD.checks.forEach(f => {
       it(f.description, () => {
         if (f.shouldSign) {
           const psbtThatShouldsign = Psbt.fromBase64(f.shouldSign.psbt);
@@ -555,7 +553,7 @@ describe(`Psbt`, () => {
   });
 
   describe('finalizeAllInputs', () => {
-    fixtures.finalizeAllInputs.forEach((f: any) => {
+    fixtures.finalizeAllInputs.forEach(f => {
       it(`Finalizes inputs of type "${f.type}"`, () => {
         const psbt = Psbt.fromBase64(f.psbt);
 
@@ -589,7 +587,7 @@ describe(`Psbt`, () => {
   });
 
   describe('addInput', () => {
-    fixtures.addInput.checks.forEach((f: any) => {
+    fixtures.addInput.checks.forEach(f => {
       it(f.description, () => {
         const psbt = new Psbt();
 
@@ -616,7 +614,7 @@ describe(`Psbt`, () => {
   });
 
   describe('updateInput', () => {
-    fixtures.updateInput.checks.forEach((f: any) => {
+    fixtures.updateInput.checks.forEach(f => {
       it(f.description, () => {
         const psbt = Psbt.fromBase64(f.psbt);
 
@@ -630,7 +628,7 @@ describe(`Psbt`, () => {
   });
 
   describe('addOutput', () => {
-    fixtures.addOutput.checks.forEach((f: any) => {
+    fixtures.addOutput.checks.forEach(f => {
       it(f.description, () => {
         if (f.isTaproot) initEccLib(ecc);
         const psbt = f.psbt ? Psbt.fromBase64(f.psbt) : new Psbt();
@@ -1115,9 +1113,9 @@ describe(`Psbt`, () => {
   describe('tapTreeToList/tapTreeFromList', () => {
     it('Correctly converts a Taptree to a Tapleaf list and back', () => {
       taprootFixtures.valid
-        .filter((f: any) => f.arguments.scriptTree)
-        .map((f: any) => f.arguments.scriptTree)
-        .forEach((scriptTree: any) => {
+        .filter(f => f.arguments.scriptTree)
+        .map(f => f.arguments.scriptTree)
+        .forEach(scriptTree => {
           const originalTree = convertScriptTree(
             scriptTree,
             LEAF_VERSION_TAPSCRIPT,
