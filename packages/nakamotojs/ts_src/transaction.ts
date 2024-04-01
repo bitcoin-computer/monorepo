@@ -1,17 +1,18 @@
-import { bufferUtils } from '.';
+import { bufferUtils } from './index.js';
 import {
   BufferReader,
   BufferWriter,
   reverseBuffer,
   varuint,
-} from './bufferutils';
-import * as bcrypto from './crypto';
-import { Signer, classifyScript, prepareFinalScripts } from './psbt';
-import { isP2SHScript, isP2WPKH, isP2WSHScript } from './psbt/psbtutils';
-import * as bscript from './script';
-import { OPS as opcodes } from './script';
-import * as types from './types';
+} from './bufferutils.js';
+import * as bcrypto from './crypto.js';
+import { Signer, classifyScript, prepareFinalScripts } from './psbt.js';
+import { isP2SHScript, isP2WPKH, isP2WSHScript } from './psbt/psbtutils.js';
+import * as bscript from './script.js';
+import { OPS as opcodes } from './script.js';
+import * as types from './types.js';
 const { typeforce } = types;
+import { Buffer } from 'buffer';
 
 function varSliceSize(someScript: Buffer): number {
   const length = someScript.length;

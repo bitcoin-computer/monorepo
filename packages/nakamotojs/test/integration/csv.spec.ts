@@ -1,15 +1,18 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { PsbtInput } from 'bip174/src/lib/interfaces';
-import ECPairFactory from 'ecpair';
+import { ECPairFactory } from 'ecpair';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import { before, describe, it } from 'mocha';
-import * as bitcoin from '../..';
-import { regtestUtils } from './_regtest';
+import * as bitcoin from '../../src/index.js';
+import { regtestUtils } from './_regtest.js';
 
 const ECPair = ECPairFactory(ecc);
 const regtest = regtestUtils.network;
-const bip68 = require('bip68');
-const varuint = require('varuint-bitcoin');
+// @ts-ignore
+import * as bip68 from 'bip68';
+import * as varuint from 'varuint-bitcoin';
 
 function toOutputScript(address: string): Buffer {
   return bitcoin.address.toOutputScript(address, regtest);

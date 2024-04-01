@@ -1,10 +1,13 @@
-import { Network } from './networks';
-import * as networks from './networks';
-import * as payments from './payments';
-import * as bscript from './script';
-import { typeforce, tuple, Hash160bit, UInt8 } from './types';
+import { Network } from './networks.js';
+import * as networks from './networks.js';
+import * as payments from './payments/index.js';
+import * as bscript from './script.js';
+import { typeforce, tuple, Hash160bit, UInt8 } from './types.js';
 import { bech32, bech32m } from 'bech32';
-import * as bs58check from 'bs58check';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import bs58check from 'bs58check';
+import { Buffer } from 'buffer';
 export interface Base58CheckResult {
   hash: Buffer;
   version: number;

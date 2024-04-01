@@ -1,8 +1,14 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { describe, it } from 'mocha';
-import * as bscript from '../src/script';
-import * as fixtures from './fixtures/script.json';
-const minimalData = require('minimaldata');
+import * as bscript from '../src/script.js';
+import * as fixturesModule from './fixtures/script.json' assert { type: 'json' };
+const fixtures: typeof import('./fixtures/script.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
+// @ts-ignore
+import minimalData from 'minimaldata';
 
 describe('script', () => {
   // TODO

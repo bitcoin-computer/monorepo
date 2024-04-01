@@ -1,8 +1,6 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.getEccLib = exports.initEccLib = void 0;
+import { Buffer } from 'buffer';
 const _ECCLIB_CACHE = {};
-function initEccLib(eccLib) {
+export function initEccLib(eccLib) {
   if (!eccLib) {
     // allow clearing the library
     _ECCLIB_CACHE.eccLib = eccLib;
@@ -12,15 +10,13 @@ function initEccLib(eccLib) {
     _ECCLIB_CACHE.eccLib = eccLib;
   }
 }
-exports.initEccLib = initEccLib;
-function getEccLib() {
+export function getEccLib() {
   if (!_ECCLIB_CACHE.eccLib)
     throw new Error(
       'No ECC Library provided. You must call initEccLib() with a valid TinySecp256k1Interface instance',
     );
   return _ECCLIB_CACHE.eccLib;
 }
-exports.getEccLib = getEccLib;
 const h = hex => Buffer.from(hex, 'hex');
 function verifyEcc(ecc) {
   assert(typeof ecc.isXOnlyPoint === 'function');

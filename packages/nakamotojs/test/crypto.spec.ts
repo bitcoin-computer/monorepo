@@ -1,8 +1,13 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { describe, it } from 'mocha';
-import { crypto as bcrypto, TaggedHashPrefix } from '..';
-import * as fixtures from './fixtures/crypto.json';
-import { sha256, TAGS, TAGGED_HASH_PREFIXES } from '../src/crypto';
+import { crypto as bcrypto, TaggedHashPrefix } from '../src/index.js';
+import * as fixturesModule from './fixtures/crypto.json' assert { type: 'json' };
+const fixtures: typeof import('./fixtures/crypto.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
+import { sha256, TAGS, TAGGED_HASH_PREFIXES } from '../src/crypto.js';
 
 describe('crypto', () => {
   ['hash160', 'hash256', 'ripemd160', 'sha1', 'sha256'].forEach(algorithm => {

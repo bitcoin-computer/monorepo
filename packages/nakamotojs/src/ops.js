@@ -1,6 +1,3 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.REVERSE_OPS = exports.OPS = void 0;
 const OPS = {
   OP_FALSE: 0,
   OP_0: 0,
@@ -122,10 +119,9 @@ const OPS = {
   OP_PUBKEY: 254,
   OP_INVALIDOPCODE: 255,
 };
-exports.OPS = OPS;
 const REVERSE_OPS = {};
-exports.REVERSE_OPS = REVERSE_OPS;
 for (const op of Object.keys(OPS)) {
   const code = OPS[op];
   REVERSE_OPS[code] = op;
 }
+export { OPS, REVERSE_OPS };

@@ -1,8 +1,14 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { beforeEach, describe, it } from 'mocha';
-import { Block } from '..';
+import { Block } from '../src/index.js';
 
-import * as fixtures from './fixtures/block.json';
+import * as fixturesModule from './fixtures/block.json' assert { type: 'json' };
+
+const fixtures: typeof import('./fixtures/block.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
 
 describe('Block', () => {
   describe('version', () => {

@@ -1,27 +1,44 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { describe, it } from 'mocha';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
-import * as baddress from '../src/address';
-import * as bscript from '../src/script';
-import * as fixtures from './fixtures/address.json';
+import * as baddress from '../src/address.js';
+import * as bscript from '../src/script.js';
+import {
+  bitcoin,
+  regtest,
+  testnet,
+  litecoin,
+  litecoinregtest,
+  litecointestnet,
+} from '../src/networks.js';
+import * as fixturesModule from './fixtures/address.json' assert { type: 'json' };
 
-import { initEccLib } from '../src';
+const fixtures: typeof import('./fixtures/address.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
 
-const NETWORKS = Object.assign(
-  {
-    litecoin: {
-      messagePrefix: '\x19Litecoin Signed Message:\n',
-      bip32: {
-        public: 0x019da462,
-        private: 0x019d9cfe,
-      },
-      pubKeyHash: 0x30,
-      scriptHash: 0x32,
-      wif: 0xb0,
+import { initEccLib } from '../src/index.js';
+
+const NETWORKS = Object.assign({
+  litecoin: {
+    messagePrefix: '\x19Litecoin Signed Message:\n',
+    bip32: {
+      public: 0x019da462,
+      private: 0x019d9cfe,
     },
+    pubKeyHash: 0x30,
+    scriptHash: 0x32,
+    wif: 0xb0,
   },
-  require('../src/networks'),
-);
+  bitcoin,
+  regtest,
+  testnet,
+  litecoinregtest,
+  litecointestnet,
+});
+NETWORKS.litecoin = litecoin;
 
 describe('address', () => {
   describe('fromBase58Check', () => {

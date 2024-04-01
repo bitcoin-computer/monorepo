@@ -1,10 +1,12 @@
-import * as bip66 from './bip66';
-import { OPS, REVERSE_OPS } from './ops';
-import { Stack } from './payments';
-import * as pushdata from './push_data';
-import * as scriptNumber from './script_number';
-import * as scriptSignature from './script_signature';
-import * as types from './types';
+import * as bip66 from './bip66.js';
+import { OPS, REVERSE_OPS } from './ops.js';
+import { Stack } from './payments/index.js';
+import * as pushdata from './push_data.js';
+import * as scriptNumber from './script_number.js';
+import * as scriptSignature from './script_signature.js';
+import * as types from './types.js';
+import { Buffer } from 'buffer';
+
 const { typeforce } = types;
 
 const OP_INT_BASE = OPS.OP_RESERVED; // OP_1 - 1

@@ -1,7 +1,12 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { describe, it } from 'mocha';
-import { signature as bscriptSig } from '../src/script';
-import * as fixtures from './fixtures/signature.json';
+import { signature as bscriptSig } from '../src/script.js';
+import * as fixturesModule from './fixtures/signature.json' assert { type: 'json' };
+const fixtures: typeof import('./fixtures/signature.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
 
 describe('Script Signatures', () => {
   function fromRaw(signature: { r: string; s: string }): Buffer {

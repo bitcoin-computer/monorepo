@@ -1,6 +1,9 @@
 import { Buffer as NBuffer } from 'buffer';
-
-export const typeforce = require('typeforce');
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import typeforceModule from 'typeforce';
+const typeforce: any = typeforceModule;
+export { typeforce };
 
 const ZERO32 = NBuffer.alloc(32, 0);
 const EC_P = NBuffer.from(

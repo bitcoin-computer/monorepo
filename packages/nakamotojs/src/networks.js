@@ -1,13 +1,4 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.litecointestnet =
-  exports.litecoinregtest =
-  exports.litecoin =
-  exports.testnet =
-  exports.regtest =
-  exports.bitcoin =
-    void 0;
-exports.bitcoin = {
+export const bitcoin = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: 'bc',
   bip32: {
@@ -18,7 +9,7 @@ exports.bitcoin = {
   scriptHash: 0x05,
   wif: 0x80,
 };
-exports.regtest = {
+export const regtest = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: 'bcrt',
   bip32: {
@@ -29,7 +20,7 @@ exports.regtest = {
   scriptHash: 0xc4,
   wif: 0xef,
 };
-exports.testnet = {
+export const testnet = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: 'tb',
   bip32: {
@@ -40,7 +31,7 @@ exports.testnet = {
   scriptHash: 0xc4,
   wif: 0xef,
 };
-exports.litecoin = {
+export const litecoin = {
   messagePrefix: '\x18Litecoin Signed Message:\n',
   bech32: 'ltc',
   bip32: {
@@ -51,7 +42,7 @@ exports.litecoin = {
   scriptHash: 0x32,
   wif: 0x80,
 };
-exports.litecoinregtest = {
+export const litecoinregtest = {
   messagePrefix: '\x18Litecoin Signed Message:\n',
   bech32: 'rltc',
   bip32: {
@@ -62,7 +53,7 @@ exports.litecoinregtest = {
   scriptHash: 0x3a,
   wif: 0xef,
 };
-exports.litecointestnet = {
+export const litecointestnet = {
   messagePrefix: '\x18Litecoin Signed Message:\n',
   bech32: 'tltc',
   bip32: {

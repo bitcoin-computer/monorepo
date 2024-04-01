@@ -1,64 +1,14 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.bip371 =
-  exports.initEccLib =
-  exports.Transaction =
-  exports.opcodes =
-  exports.Psbt =
-  exports.Block =
-  exports.bufferUtils =
-  exports.script =
-  exports.payments =
-  exports.networks =
-  exports.crypto =
-  exports.address =
-    void 0;
-const address = require('./address');
-exports.address = address;
-const crypto = require('./crypto');
-exports.crypto = crypto;
-const networks = require('./networks');
-exports.networks = networks;
-const payments = require('./payments');
-exports.payments = payments;
-const script = require('./script');
-exports.script = script;
-const bip371 = require('./psbt/bip371');
-exports.bip371 = bip371;
-const bufferUtils = require('./bufferutils');
-exports.bufferUtils = bufferUtils;
-var block_1 = require('./block');
-Object.defineProperty(exports, 'Block', {
-  enumerable: true,
-  get: function () {
-    return block_1.Block;
-  },
-});
-var psbt_1 = require('./psbt');
-Object.defineProperty(exports, 'Psbt', {
-  enumerable: true,
-  get: function () {
-    return psbt_1.Psbt;
-  },
-});
-var ops_1 = require('./ops');
-Object.defineProperty(exports, 'opcodes', {
-  enumerable: true,
-  get: function () {
-    return ops_1.OPS;
-  },
-});
-var transaction_1 = require('./transaction');
-Object.defineProperty(exports, 'Transaction', {
-  enumerable: true,
-  get: function () {
-    return transaction_1.Transaction;
-  },
-});
-var ecc_lib_1 = require('./ecc_lib');
-Object.defineProperty(exports, 'initEccLib', {
-  enumerable: true,
-  get: function () {
-    return ecc_lib_1.initEccLib;
-  },
-});
+import * as address from './address.js';
+import * as crypto from './crypto.js';
+import * as networks from './networks.js';
+import * as payments from './payments/index.js';
+import * as script from './script.js';
+import * as bip371 from './psbt/bip371.js';
+import * as bufferUtils from './bufferutils.js';
+export { address, crypto, networks, payments, script, bufferUtils };
+export { Block } from './block.js';
+export { Psbt } from './psbt.js';
+export { OPS as opcodes } from './ops.js';
+export { Transaction } from './transaction.js';
+export { initEccLib } from './ecc_lib.js';
+export { bip371 };

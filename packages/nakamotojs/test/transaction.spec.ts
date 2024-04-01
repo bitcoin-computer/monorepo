@@ -1,12 +1,17 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { beforeEach, describe, it } from 'mocha';
-import { Transaction } from '..';
+import { Transaction } from '../src/index.js';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import { ECPairFactory } from 'ecpair';
-import * as bscript from '../src/script';
-import * as payments from '../src/payments';
+import * as bscript from '../src/script.js';
+import * as payments from '../src/payments/index.js';
 
-import * as fixtures from './fixtures/transaction.json';
+import * as fixturesModule from './fixtures/transaction.json' assert { type: 'json' };
+const fixtures: typeof import('./fixtures/transaction.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
 
 const ECPair = ECPairFactory(ecc);
 
