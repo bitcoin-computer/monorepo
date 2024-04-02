@@ -1,17 +1,8 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.BufferReader =
-  exports.BufferWriter =
-  exports.cloneBuffer =
-  exports.reverseBuffer =
-  exports.writeUInt64LE =
-  exports.readUInt64LE =
-  exports.varuint =
-    void 0;
-const types = require('./types');
+import * as types from './types.js';
 const { typeforce } = types;
-const varuint = require('varuint-bitcoin');
-exports.varuint = varuint;
+import * as varuint from 'varuint-bitcoin';
+export { varuint };
+import { Buffer } from 'buffer';
 // https://github.com/feross/buffer/blob/master/index.js#L1127
 function verifuint(value, max) {
   if (typeof value !== 'number')
@@ -22,22 +13,20 @@ function verifuint(value, max) {
   if (Math.floor(value) !== value)
     throw new Error('value has a fractional component');
 }
-function readUInt64LE(buffer, offset) {
+export function readUInt64LE(buffer, offset) {
   const a = buffer.readUInt32LE(offset);
   let b = buffer.readUInt32LE(offset + 4);
   b *= 0x100000000;
   verifuint(b + a, 0x001fffffffffffff);
   return b + a;
 }
-exports.readUInt64LE = readUInt64LE;
-function writeUInt64LE(buffer, value, offset) {
+export function writeUInt64LE(buffer, value, offset) {
   verifuint(value, 0x001fffffffffffff);
   buffer.writeInt32LE(value & -1, offset);
   buffer.writeUInt32LE(Math.floor(value / 0x100000000), offset + 4);
   return offset + 8;
 }
-exports.writeUInt64LE = writeUInt64LE;
-function reverseBuffer(buffer) {
+export function reverseBuffer(buffer) {
   if (buffer.length < 1) return buffer;
   const reversedBuffer = Buffer.alloc(buffer.length);
   let j = buffer.length - 1;
@@ -47,17 +36,15 @@ function reverseBuffer(buffer) {
   }
   return reversedBuffer;
 }
-exports.reverseBuffer = reverseBuffer;
-function cloneBuffer(buffer) {
+export function cloneBuffer(buffer) {
   const clone = Buffer.allocUnsafe(buffer.length);
   buffer.copy(clone);
   return clone;
 }
-exports.cloneBuffer = cloneBuffer;
 /**
  * Helper class for serialization of bitcoin data types into a pre-allocated buffer.
  */
-class BufferWriter {
+export class BufferWriter {
   static withCapacity(size) {
     return new BufferWriter(Buffer.alloc(size));
   }
@@ -103,11 +90,10 @@ class BufferWriter {
     throw new Error(`buffer size ${this.buffer.length}, offset ${this.offset}`);
   }
 }
-exports.BufferWriter = BufferWriter;
 /**
  * Helper class for reading of bitcoin data types from a buffer.
  */
-class BufferReader {
+export class BufferReader {
   constructor(buffer, offset = 0) {
     this.buffer = buffer;
     this.offset = offset;
@@ -156,4 +142,3 @@ class BufferReader {
     return vector;
   }
 }
-exports.BufferReader = BufferReader;

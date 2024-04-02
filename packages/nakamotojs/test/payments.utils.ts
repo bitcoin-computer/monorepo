@@ -1,6 +1,6 @@
 import * as t from 'assert';
-import * as BNETWORKS from '../src/networks';
-import * as bscript from '../src/script';
+import * as BNETWORKS from '../src/networks.js';
+import * as bscript from '../src/script.js';
 
 function tryHex(x: Buffer | Buffer[]): string | string[] {
   if (Buffer.isBuffer(x)) return x.toString('hex');

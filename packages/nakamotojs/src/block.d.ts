@@ -1,5 +1,6 @@
 /// <reference types="node" />
-import { Transaction } from './transaction';
+import { Transaction } from './transaction.js';
+import { Buffer } from 'buffer';
 export declare class Block {
     static fromBuffer(buffer: Buffer): Block;
     static fromHex(hex: string): Block;

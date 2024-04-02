@@ -1,5 +1,6 @@
-import { Contract } from '@bitcoin-computer/lib'
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT } from '@bitcoin-computer/TBC721'
+
+const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Swappable extends Contract {
   name: string
@@ -17,10 +18,10 @@ export class Swappable extends Contract {
     this._owners = [to]
   }
 
-  swap(b: NFT) {
-    const [ownerA] = this._owners
-    const [ownerB] = b._owners
-    this.transfer(ownerB)
-    b.transfer(ownerA)
+  swap(that: NFT) {
+    const [thisOwner] = this._owners
+    const [thatOwner] = that._owners
+    this.transfer(thatOwner)
+    that.transfer(thisOwner)
   }
 }

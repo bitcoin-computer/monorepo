@@ -1,4 +1,3 @@
-/// <reference types="bitcoin-computer__lib" />
 import { Computer } from "@bitcoin-computer/lib";
 import type { Chain, Network } from "./common/types";
 declare function isLoggedIn(): boolean;

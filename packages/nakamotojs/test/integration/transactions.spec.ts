@@ -1,11 +1,13 @@
-import * as assert from 'assert';
-import BIP32Factory from 'bip32';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
+import { BIP32Factory } from 'bip32';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
-import ECPairFactory from 'ecpair';
+import { ECPairFactory } from 'ecpair';
 import { describe, it } from 'mocha';
-import * as bitcoin from '../..';
-import { regtestUtils, regtestLitecoinUtils } from './_regtest';
-import { Transaction } from '../..';
+import * as bitcoin from '../../src/index.js';
+import { regtestUtils, regtestLitecoinUtils } from './_regtest.js';
+import { Transaction } from '../../src/index.js';
 
 const ECPair = ECPairFactory(ecc);
 const rng = require('randombytes');

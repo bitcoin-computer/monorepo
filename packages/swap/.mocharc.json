@@ -1,10 +1,7 @@
 {
   "extension": ["ts"],
-  "node-option": [
-    "experimental-specifier-resolution=node",
-    "loader=ts-node/esm"
-  ],
+  "node-option": ["experimental-specifier-resolution=node", "loader=ts-node/esm"],
   "require": ["dotenv/config"],
-  "spec": "test/*.test.ts",
+  "spec": "test/*.ts",
   "timeout": "30000000"
 }

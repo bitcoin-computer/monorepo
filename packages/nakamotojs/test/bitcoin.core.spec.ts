@@ -1,15 +1,47 @@
-import * as assert from 'assert';
-import * as base58 from 'bs58';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
+// @ts-ignore
+import base58 from 'bs58';
 import { describe, it } from 'mocha';
-import * as bitcoin from '..';
-import * as base58EncodeDecode from './fixtures/core/base58_encode_decode.json';
-import * as base58KeysInvalid from './fixtures/core/base58_keys_invalid.json';
-import * as base58KeysValid from './fixtures/core/base58_keys_valid.json';
-import * as blocksValid from './fixtures/core/blocks.json';
-import * as sigCanonical from './fixtures/core/sig_canonical.json';
-import * as sigNoncanonical from './fixtures/core/sig_noncanonical.json';
-import * as sigHash from './fixtures/core/sighash.json';
-import * as txValid from './fixtures/core/tx_valid.json';
+import * as bitcoin from '../src/index.js';
+import * as base58EncodeDecodeModule from './fixtures/core/base58_encode_decode.json' assert { type: 'json' };
+import * as base58KeysInvalidModule from './fixtures/core/base58_keys_invalid.json' assert { type: 'json' };
+import * as base58KeysValidModule from './fixtures/core/base58_keys_valid.json' assert { type: 'json' };
+import * as blocksValidModule from './fixtures/core/blocks.json' assert { type: 'json' };
+import * as sigCanonicalModule from './fixtures/core/sig_canonical.json' assert { type: 'json' };
+import * as sigNoncanonicalModule from './fixtures/core/sig_noncanonical.json' assert { type: 'json' };
+import * as sigHashModule from './fixtures/core/sighash.json' assert { type: 'json' };
+import * as txValidModule from './fixtures/core/tx_valid.json' assert { type: 'json' };
+
+const base58EncodeDecode: typeof import('./fixtures/core/base58_encode_decode.json') =
+  // @ts-ignore
+  base58EncodeDecodeModule.default || base58EncodeDecodeModule;
+
+const base58KeysInvalid: typeof import('./fixtures/core/base58_keys_invalid.json') =
+  // @ts-ignore
+  base58KeysInvalidModule.default || base58KeysInvalidModule;
+const base58KeysValid: typeof import('./fixtures/core/base58_keys_valid.json') =
+  // @ts-ignore
+  base58KeysValidModule.default || base58KeysValidModule;
+
+const blocksValid: typeof import('./fixtures/core/blocks.json') =
+  // @ts-ignore
+  blocksValidModule.default || blocksValidModule;
+const sigCanonical: typeof import('./fixtures/core/sig_canonical.json') =
+  // @ts-ignore
+  sigCanonicalModule.default || sigCanonicalModule;
+
+const sigNoncanonical: typeof import('./fixtures/core/sig_noncanonical.json') =
+  // @ts-ignore
+  sigNoncanonicalModule.default || sigNoncanonicalModule;
+
+const sigHash: typeof import('./fixtures/core/sighash.json') =
+  // @ts-ignore
+  sigHashModule.default || sigHashModule;
+const txValid: typeof import('./fixtures/core/tx_valid.json') =
+  // @ts-ignore
+  txValidModule.default || txValidModule;
 
 describe('Bitcoin-core', () => {
   // base58EncodeDecode

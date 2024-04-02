@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { Tapleaf, Taptree } from '../types';
+import { Tapleaf, Taptree } from '../types.js';
 export declare const LEAF_VERSION_TAPSCRIPT = 192;
 export declare const MAX_TAPTREE_DEPTH = 128;
 interface HashLeaf {

@@ -1,16 +1,20 @@
-import * as bcrypto from '../crypto';
-import { bitcoin as BITCOIN_NETWORK } from '../networks';
-import * as bscript from '../script';
-import { typeforce as typef } from '../types';
+import * as bcrypto from '../crypto.js';
+import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
+import * as bscript from '../script.js';
+import { typeforce as typef } from '../types.js';
 import {
   Payment,
   PaymentFunction,
   PaymentOpts,
   Stack,
   StackFunction,
-} from './index';
-import * as lazy from './lazy';
-import * as bs58check from 'bs58check';
+} from './index.js';
+import * as lazy from './lazy.js';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+import bs58check from 'bs58check';
+import { Buffer } from 'buffer';
+
 const OPS = bscript.OPS;
 
 function stacksEqual(a: Buffer[], b: Buffer[]): boolean {

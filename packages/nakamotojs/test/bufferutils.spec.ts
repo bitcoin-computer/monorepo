@@ -1,10 +1,16 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { describe, it } from 'mocha';
-import * as bufferutils from '../src/bufferutils';
-import { BufferReader, BufferWriter } from '../src/bufferutils';
+import * as bufferutils from '../src/bufferutils.js';
+import { BufferReader, BufferWriter } from '../src/bufferutils.js';
 
-import * as fixtures from './fixtures/bufferutils.json';
-const varuint = require('varuint-bitcoin');
+import * as fixturesModule from './fixtures/bufferutils.json' assert { type: 'json' };
+const fixtures: typeof import('./fixtures/bufferutils.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
+
+import * as varuint from 'varuint-bitcoin';
 
 describe('bufferutils', () => {
   function concatToBuffer(values: number[][]): Buffer {

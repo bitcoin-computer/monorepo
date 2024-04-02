@@ -1,7 +1,4 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.value = exports.prop = void 0;
-function prop(object, name, f) {
+export function prop(object, name, f) {
   Object.defineProperty(object, name, {
     configurable: true,
     enumerable: true,
@@ -20,8 +17,7 @@ function prop(object, name, f) {
     },
   });
 }
-exports.prop = prop;
-function value(f) {
+export function value(f) {
   let _value;
   return () => {
     if (_value !== undefined) return _value;
@@ -29,4 +25,3 @@ function value(f) {
     return _value;
   };
 }
-exports.value = value;

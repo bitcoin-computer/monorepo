@@ -1,9 +1,12 @@
-import { Contract } from '@bitcoin-computer/lib'
+/* eslint-disable max-classes-per-file */
 import { Transaction } from '@bitcoin-computer/nakamotojs'
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT } from '@bitcoin-computer/TBC721'
+
+const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Swap extends Contract {
-  static exec(a: NFT, b: NFT) {
+  constructor(a: NFT, b: NFT) {
+    super()
     const [ownerA] = a._owners
     const [ownerB] = b._owners
     a.transfer(ownerB)
@@ -27,26 +30,28 @@ export class SwapHelper {
 
   async createSwapTx(a: NFT, b: NFT) {
     return this.computer.encode({
-      exp: `Swap.exec(a, b)`,
+      exp: `new Swap(a, b)`,
       env: { a: a._rev, b: b._rev },
-      mod: this.mod
+      mod: this.mod,
     })
   }
 
-  async checkSwapTx(tx: Transaction, sellerPublicKey: string, buyerPublicKey: string) {
+  async checkSwapTx(tx: Transaction, pubKeyA: string, pubKeyB: string) {
     const { exp, env, mod } = await this.computer.decode(tx)
-    if (exp !== 'Swap.exec(a, b)') throw new Error('Unexpected expression')
+    if (exp !== 'new Swap(a, b)') throw new Error('Unexpected expression')
     if (mod !== this.mod) throw new Error('Unexpected module specifier')
 
-    const { effect: { res: r, env: e } } = await this.computer.encode({ exp, env, mod })
+    const {
+      effect: { res: r, env: e },
+    } = await this.computer.encode({ exp, env, mod })
 
-    if (r !== undefined) throw new Error('Unexpected result')
+    if (r === undefined) throw new Error('Unexpected result')
     if (Object.keys(e).toString() !== 'a,b') throw new Error('Unexpected environment')
 
     const { a, b } = e
 
-    if (a._owners.toString() !== buyerPublicKey) throw new Error('Unexpected owner')
-    if (b._owners.toString() !== sellerPublicKey) throw new Error('Unexpected owner')
+    if (a._owners.toString() !== pubKeyB) throw new Error('Unexpected owner')
+    if (b._owners.toString() !== pubKeyA) throw new Error('Unexpected owner')
 
     return e
   }

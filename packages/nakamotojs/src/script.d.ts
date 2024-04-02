@@ -1,8 +1,9 @@
 /// <reference types="node" />
-import { OPS } from './ops';
-import { Stack } from './payments';
-import * as scriptNumber from './script_number';
-import * as scriptSignature from './script_signature';
+import { OPS } from './ops.js';
+import { Stack } from './payments/index.js';
+import * as scriptNumber from './script_number.js';
+import * as scriptSignature from './script_signature.js';
+import { Buffer } from 'buffer';
 export { OPS };
 export declare function isPushOnly(value: Stack): boolean;
 export declare function countNonPushOnlyOPs(value: Stack): number;

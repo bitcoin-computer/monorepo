@@ -1,5 +1,7 @@
-import { Contract } from '@bitcoin-computer/lib'
-import { getTestRev } from './utils'
+/* eslint-disable max-classes-per-file */
+import { getTestRev } from './utils/index.js'
+
+const { Contract } = await import('@bitcoin-computer/lib')
 
 const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa8bc54db8fed'
 

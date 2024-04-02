@@ -1,14 +1,17 @@
-import * as assert from 'assert';
-import BIP32Factory from 'bip32';
+import * as assertModule from 'assert';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const assert: typeof import('assert') = assertModule.default || assertModule;
+import { BIP32Factory } from 'bip32';
 import * as bip39 from 'bip39';
-import ECPairFactory from 'ecpair';
+import { ECPairFactory } from 'ecpair';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import { describe, it } from 'mocha';
 import { PsbtInput, TapLeafScript } from 'bip174/src/lib/interfaces';
-import * as bitcoin from '../..';
-import { Taptree } from '../../src/types';
-import { regtestUtils, regtestLitecoinUtils } from './_regtest';
-import { witnessStackToScriptWitness } from '../../src/psbt/psbtutils';
+import * as bitcoin from '../../src/index.js';
+import { Taptree } from '../../src/types.js';
+import { regtestUtils, regtestLitecoinUtils } from './_regtest.js';
+import { witnessStackToScriptWitness } from '../../src/psbt/psbtutils.js';
 import { TapLeaf } from 'bip174/src/lib/interfaces';
 const { toXOnly, tapTreeToList, tapTreeFromList } = bitcoin.bip371;
 

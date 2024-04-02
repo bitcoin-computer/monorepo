@@ -1,8 +1,12 @@
 import { Buffer as NBuffer } from 'buffer';
-import { bitcoin as BITCOIN_NETWORK } from '../networks';
-import * as bscript from '../script';
-import { typeforce as typef, isTaptree, TAPLEAF_VERSION_MASK } from '../types';
-import { getEccLib } from '../ecc_lib';
+import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
+import * as bscript from '../script.js';
+import {
+  typeforce as typef,
+  isTaptree,
+  TAPLEAF_VERSION_MASK,
+} from '../types.js';
+import { getEccLib } from '../ecc_lib.js';
 import {
   toHashTree,
   rootHashFromPath,
@@ -10,9 +14,9 @@ import {
   tapleafHash,
   tweakKey,
   LEAF_VERSION_TAPSCRIPT,
-} from './bip341';
-import { Payment, PaymentOpts } from './index';
-import * as lazy from './lazy';
+} from './bip341.js';
+import { Payment, PaymentOpts } from './index.js';
+import * as lazy from './lazy.js';
 import { bech32m } from 'bech32';
 
 const OPS = bscript.OPS;

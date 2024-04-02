@@ -1,7 +1,9 @@
-import { Contract } from '@bitcoin-computer/lib'
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
-import { Payment } from './payment'
+/* eslint-disable max-classes-per-file */
+import { NFT } from '@bitcoin-computer/TBC721'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
+import { Payment } from './payment.js'
+
+const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Sale extends Contract {
   static exec(a: NFT, b: NFT) {
@@ -37,20 +39,18 @@ export class SaleHelper {
       sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
       inputIndex: 0,
       fund: false,
-      mod: this.mod
+      mod: this.mod,
     })
   }
 
-  checkSaleTx() {
+  static checkSaleTx() {
     // todo
   }
 
-  finalizeSaleTx(tx: Transaction, payment: Payment, scriptPubKey: Buffer) {
+  static finalizeSaleTx(tx: Transaction, payment: Payment, scriptPubKey: Buffer) {
     const [paymentTxId, paymentIndex] = payment._rev.split(':')
-    tx.updateInput(1, {
-      txId: paymentTxId,
-      index: parseInt(paymentIndex, 10),
-    })
+    const index = parseInt(paymentIndex, 10)
+    tx.updateInput(1, { txId: paymentTxId, index })
     tx.updateOutput(1, { scriptPubKey })
     return tx
   }

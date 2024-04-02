@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 export function fastMerkleRoot(
   values: Buffer[],
   digestFn: (b: Buffer) => Buffer,

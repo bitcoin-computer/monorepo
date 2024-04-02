@@ -1,7 +1,10 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { describe, it } from 'mocha';
-import * as types from '../src/types';
-const typeforce = require('typeforce');
+import * as types from '../src/types.js';
+// @ts-ignore
+import typeforce from 'typeforce';
 
 describe('types', () => {
   describe('Buffer Hash160/Hash256', () => {
