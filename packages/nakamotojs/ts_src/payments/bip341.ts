@@ -1,9 +1,9 @@
 import { Buffer as NBuffer } from 'buffer';
-import { getEccLib } from '../ecc_lib';
-import * as bcrypto from '../crypto';
+import { getEccLib } from '../ecc_lib.js';
+import * as bcrypto from '../crypto.js';
 
-import { varuint } from '../bufferutils';
-import { Tapleaf, Taptree, isTapleaf } from '../types';
+import { varuint } from '../bufferutils.js';
+import { Tapleaf, Taptree, isTapleaf } from '../types.js';
 
 export const LEAF_VERSION_TAPSCRIPT = 0xc0;
 export const MAX_TAPTREE_DEPTH = 128;

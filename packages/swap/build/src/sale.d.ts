@@ -1,7 +1,7 @@
 /// <reference types="node" />
-import { NFT } from '@bitcoin-computer/TBC721/src/nft';
+import { NFT } from '@bitcoin-computer/TBC721';
 import { Transaction } from '@bitcoin-computer/nakamotojs';
-import { Payment } from './payment';
+import { Payment } from './payment.js';
 declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Sale extends Contract {
     static exec(n: NFT, p: Payment): (NFT | Payment)[];

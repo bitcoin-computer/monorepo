@@ -1,7 +1,12 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import { describe, it } from 'mocha';
-import * as scriptNumber from '../src/script_number';
-import * as fixtures from './fixtures/script_number.json';
+import * as scriptNumber from '../src/script_number.js';
+import * as fixturesModule from './fixtures/script_number.json' assert { type: 'json' };
+const fixtures: typeof import('./fixtures/script_number.json') =
+  // @ts-ignore
+  fixturesModule.default || fixturesModule;
 
 describe('script-number', () => {
   describe('decode', () => {

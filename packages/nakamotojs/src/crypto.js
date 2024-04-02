@@ -1,42 +1,23 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.taggedHash =
-  exports.TAGGED_HASH_PREFIXES =
-  exports.TAGS =
-  exports.hash256 =
-  exports.hash160 =
-  exports.sha256 =
-  exports.sha1 =
-  exports.ripemd160 =
-    void 0;
-const ripemd160_1 = require('@noble/hashes/ripemd160');
-const sha1_1 = require('@noble/hashes/sha1');
-const sha256_1 = require('@noble/hashes/sha256');
-function ripemd160(buffer) {
-  return Buffer.from((0, ripemd160_1.ripemd160)(Uint8Array.from(buffer)));
+import { ripemd160 as _ripemd160 } from '@noble/hashes/ripemd160';
+import { sha1 as _sha1 } from '@noble/hashes/sha1';
+import { sha256 as _sha256 } from '@noble/hashes/sha256';
+import { Buffer } from 'buffer';
+export function ripemd160(buffer) {
+  return Buffer.from(_ripemd160(Uint8Array.from(buffer)));
 }
-exports.ripemd160 = ripemd160;
-function sha1(buffer) {
-  return Buffer.from((0, sha1_1.sha1)(Uint8Array.from(buffer)));
+export function sha1(buffer) {
+  return Buffer.from(_sha1(Uint8Array.from(buffer)));
 }
-exports.sha1 = sha1;
-function sha256(buffer) {
-  return Buffer.from((0, sha256_1.sha256)(Uint8Array.from(buffer)));
+export function sha256(buffer) {
+  return Buffer.from(_sha256(Uint8Array.from(buffer)));
 }
-exports.sha256 = sha256;
-function hash160(buffer) {
-  return Buffer.from(
-    (0, ripemd160_1.ripemd160)((0, sha256_1.sha256)(Uint8Array.from(buffer))),
-  );
+export function hash160(buffer) {
+  return Buffer.from(_ripemd160(_sha256(Uint8Array.from(buffer))));
 }
-exports.hash160 = hash160;
-function hash256(buffer) {
-  return Buffer.from(
-    (0, sha256_1.sha256)((0, sha256_1.sha256)(Uint8Array.from(buffer))),
-  );
+export function hash256(buffer) {
+  return Buffer.from(_sha256(_sha256(Uint8Array.from(buffer))));
 }
-exports.hash256 = hash256;
-exports.TAGS = [
+export const TAGS = [
   'BIP0340/challenge',
   'BIP0340/aux',
   'BIP0340/nonce',
@@ -48,7 +29,7 @@ exports.TAGS = [
   'KeyAgg coefficient',
 ];
 /** An object mapping tags to their tagged hash prefix of [SHA256(tag) | SHA256(tag)] */
-exports.TAGGED_HASH_PREFIXES = {
+export const TAGGED_HASH_PREFIXES = {
   'BIP0340/challenge': Buffer.from([
     123, 181, 45, 122, 159, 239, 88, 50, 62, 177, 191, 122, 64, 125, 179, 130,
     210, 243, 242, 216, 27, 177, 34, 79, 73, 254, 81, 143, 109, 72, 211, 124,
@@ -104,7 +85,6 @@ exports.TAGGED_HASH_PREFIXES = {
     78, 214, 66, 114, 129, 192, 145, 0, 249, 77, 205, 82, 201, 129,
   ]),
 };
-function taggedHash(prefix, data) {
-  return sha256(Buffer.concat([exports.TAGGED_HASH_PREFIXES[prefix], data]));
+export function taggedHash(prefix, data) {
+  return sha256(Buffer.concat([TAGGED_HASH_PREFIXES[prefix], data]));
 }
-exports.taggedHash = taggedHash;

@@ -1,5 +1,5 @@
 import { Transaction } from '@bitcoin-computer/nakamotojs';
-import { NFT } from '@bitcoin-computer/TBC721/src/nft';
+import { NFT } from '@bitcoin-computer/TBC721';
 declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Swap extends Contract {
     constructor(a: NFT, b: NFT);

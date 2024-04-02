@@ -1,6 +1,9 @@
-import * as assert from 'assert';
+import * as assertModule from 'assert';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const assert: typeof import('assert') = assertModule.default || assertModule;
 import { describe, it } from 'mocha';
-import * as bitcoin from '../..';
+import * as bitcoin from '../../src/index.js';
 
 describe('nakamotojs (blocks)', () => {
   it('can extract a height from a CoinBase transaction', () => {

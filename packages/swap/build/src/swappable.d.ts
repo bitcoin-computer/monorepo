@@ -1,4 +1,4 @@
-import { NFT } from '@bitcoin-computer/TBC721/src/nft';
+import { NFT } from '@bitcoin-computer/TBC721';
 declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Swappable extends Contract {
     name: string;

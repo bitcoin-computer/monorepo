@@ -1,8 +1,9 @@
 /* eslint-disable max-classes-per-file */
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT } from '@bitcoin-computer/TBC721'
+// import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
-import { Valuable, ValuableMock } from './valuable'
-import { Payment, PaymentMock } from './payment'
+import { Valuable, ValuableMock } from './valuable.js'
+import { Payment, PaymentMock } from './payment.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 

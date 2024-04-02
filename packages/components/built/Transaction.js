@@ -83,9 +83,7 @@ function Component() {
                 switch (_a.label) {
                     case 0:
                         setTxn(params.txn);
-                        return [4 /*yield*/, computer.wallet.restClient.getRawTxs([params.txn])
-                            // @ts-ignore
-                        ];
+                        return [4 /*yield*/, computer.wallet.restClient.getRawTxs([params.txn])];
                     case 1:
                         hex = (_a.sent())[0];
                         return [4 /*yield*/, computer.txFromHex({ hex: hex })];
@@ -109,11 +107,9 @@ function Component() {
                 switch (_b.label) {
                     case 0:
                         _b.trys.push([0, 2, , 3]);
-                        // @ts-ignore
                         _a = setTransition;
                         return [4 /*yield*/, computer.decode(txnData)];
                     case 1:
-                        // @ts-ignore
                         _a.apply(void 0, [_b.sent()]);
                         return [3 /*break*/, 3];
                     case 2:

@@ -1,25 +1,31 @@
-import * as assert from 'assert';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import { describe, it } from 'mocha';
-import { PaymentCreator } from '../src/payments';
-import * as u from './payments.utils';
-import { initEccLib } from '../src';
+import { PaymentCreator } from '../src/payments/index.js';
+import * as u from './payments.utils.js';
+import { initEccLib } from '../src/index.js';
 
 ['embed', 'p2ms', 'p2pk', 'p2pkh', 'p2sh', 'p2wpkh', 'p2wsh', 'p2tr'].forEach(
   p => {
-    describe(p, () => {
+    describe(p, async () => {
       beforeEach(() => {
         initEccLib(p === 'p2tr' ? ecc : undefined);
       });
       let fn: PaymentCreator;
-      const payment = require('../src/payments/' + p);
+      const paymentModule = await import(`../src/payments/${p}.js`);
+      const payment = paymentModule.default || paymentModule;
       if (p === 'embed') {
         fn = payment.p2data;
       } else {
         fn = payment[p];
       }
 
-      const fixtures = require('./fixtures/' + p);
+      const fixturesModule = await import(`./fixtures/${p}.json`, {
+        assert: { type: 'json' },
+      });
+      const fixtures = fixturesModule.default || fixturesModule;
 
       fixtures.valid.forEach((f: any) => {
         it(f.description + ' as expected', () => {
@@ -58,8 +64,8 @@ import { initEccLib } from '../src';
       });
 
       if (p === 'p2sh') {
-        const p2wsh = require('../src/payments/p2wsh').p2wsh;
-        const p2pk = require('../src/payments/p2pk').p2pk;
+        const p2wsh = (await import(`../src/payments/p2wsh.js`)).p2wsh;
+        const p2pk = (await import(`../src/payments/p2pk.js`)).p2pk;
         it('properly assembles nested p2wsh with names', () => {
           const actual = fn({
             redeem: p2wsh({

@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 export function decode(
   buffer: Buffer,
   maxLength?: number,

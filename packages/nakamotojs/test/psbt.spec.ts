@@ -1,23 +1,36 @@
-import * as assert from 'assert';
-import BIP32Factory from 'bip32';
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+// @ts-ignore
+import assert from 'assert';
+import { BIP32Factory } from 'bip32';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import * as crypto from 'crypto';
-import ECPairFactory from 'ecpair';
+import { ECPairFactory } from 'ecpair';
 import { describe, it } from 'mocha';
 
-import { convertScriptTree } from './payments.utils';
-import { LEAF_VERSION_TAPSCRIPT } from '../src/payments/bip341';
-import { tapTreeToList, tapTreeFromList } from '../src/psbt/bip371';
-import { Taptree } from '../src/types';
-import { initEccLib } from '../src';
-
+import { convertScriptTree } from './payments.utils.js';
+import { LEAF_VERSION_TAPSCRIPT } from '../src/payments/bip341.js';
+import { tapTreeToList, tapTreeFromList } from '../src/psbt/bip371.js';
+import { Taptree } from '../src/types.js';
+import { initEccLib } from '../src/index.js';
 const bip32 = BIP32Factory(ecc);
 const ECPair = ECPairFactory(ecc);
 
-import { networks as NETWORKS, payments, Psbt, Signer, SignerAsync } from '..';
+import {
+  networks as NETWORKS,
+  payments,
+  Psbt,
+  Signer,
+  SignerAsync,
+} from '../src/index.js';
+import * as preFixturesModule from './fixtures/psbt.json' assert { type: 'json' };
+import * as taprootFixturesModule from './fixtures/p2tr.json' assert { type: 'json' };
 
-import * as preFixtures from './fixtures/psbt.json';
-import * as taprootFixtures from './fixtures/p2tr.json';
+const preFixtures: typeof import('./fixtures/psbt.json') =
+  // @ts-ignore
+  preFixturesModule.default || preFixturesModule;
+const taprootFixtures: typeof import('./fixtures/p2tr.json') =
+  // @ts-ignore
+  taprootFixturesModule.default || taprootFixturesModule;
 
 const validator = (
   pubkey: Buffer,

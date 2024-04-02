@@ -1,10 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.p2data = void 0;
-const networks_1 = require('../networks');
-const bscript = require('../script');
-const types_1 = require('../types');
-const lazy = require('./lazy');
+import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
+import * as bscript from '../script.js';
+import { typeforce as typef } from '../types.js';
+import * as lazy from './lazy.js';
 const OPS = bscript.OPS;
 function stacksEqual(a, b) {
   if (a.length !== b.length) return false;
@@ -13,20 +10,18 @@ function stacksEqual(a, b) {
   });
 }
 // output: OP_RETURN ...
-function p2data(a, opts) {
+export function p2data(a, opts) {
   if (!a.data && !a.output) throw new TypeError('Not enough data');
   opts = Object.assign({ validate: true }, opts || {});
-  (0, types_1.typeforce)(
+  typef(
     {
-      network: types_1.typeforce.maybe(types_1.typeforce.Object),
-      output: types_1.typeforce.maybe(types_1.typeforce.Buffer),
-      data: types_1.typeforce.maybe(
-        types_1.typeforce.arrayOf(types_1.typeforce.Buffer),
-      ),
+      network: typef.maybe(typef.Object),
+      output: typef.maybe(typef.Buffer),
+      data: typef.maybe(typef.arrayOf(typef.Buffer)),
     },
     a,
   );
-  const network = a.network || networks_1.bitcoin;
+  const network = a.network || BITCOIN_NETWORK;
   const o = { name: 'embed', network };
   lazy.prop(o, 'output', () => {
     if (!a.data) return;
@@ -41,7 +36,7 @@ function p2data(a, opts) {
     if (a.output) {
       const chunks = bscript.decompile(a.output);
       if (chunks[0] !== OPS.OP_RETURN) throw new TypeError('Output is invalid');
-      if (!chunks.slice(1).every(types_1.typeforce.Buffer))
+      if (!chunks.slice(1).every(typef.Buffer))
         throw new TypeError('Output is invalid');
       if (a.data && !stacksEqual(a.data, o.data))
         throw new TypeError('Data mismatch');
@@ -49,4 +44,3 @@ function p2data(a, opts) {
   }
   return Object.assign(o, a);
 }
-exports.p2data = p2data;

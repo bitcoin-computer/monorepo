@@ -3,11 +3,12 @@ import {
   BufferWriter,
   reverseBuffer,
   varuint,
-} from './bufferutils';
-import * as bcrypto from './crypto';
-import { fastMerkleRoot } from './merkle';
-import { Transaction } from './transaction';
-import * as types from './types';
+} from './bufferutils.js';
+import * as bcrypto from './crypto.js';
+import { fastMerkleRoot } from './merkle.js';
+import { Transaction } from './transaction.js';
+import { Buffer } from 'buffer';
+import * as types from './types.js';
 const { typeforce } = types;
 
 const errorMerkleNoTxes = new TypeError(

@@ -1,10 +1,7 @@
-'use strict';
-Object.defineProperty(exports, '__esModule', { value: true });
-exports.p2ms = void 0;
-const networks_1 = require('../networks');
-const bscript = require('../script');
-const types_1 = require('../types');
-const lazy = require('./lazy');
+import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
+import * as bscript from '../script.js';
+import { isPoint, typeforce as typef } from '../types.js';
+import * as lazy from './lazy.js';
 const OPS = bscript.OPS;
 const OP_INT_BASE = OPS.OP_RESERVED; // OP_1 - 1
 function stacksEqual(a, b) {
@@ -15,7 +12,7 @@ function stacksEqual(a, b) {
 }
 // input: OP_0 [signatures ...]
 // output: m [pubKeys ...] n OP_CHECKMULTISIG
-function p2ms(a, opts) {
+export function p2ms(a, opts) {
   if (
     !a.input &&
     !a.output &&
@@ -30,23 +27,19 @@ function p2ms(a, opts) {
       (opts.allowIncomplete && x === OPS.OP_0) !== undefined
     );
   }
-  (0, types_1.typeforce)(
+  typef(
     {
-      network: types_1.typeforce.maybe(types_1.typeforce.Object),
-      m: types_1.typeforce.maybe(types_1.typeforce.Number),
-      n: types_1.typeforce.maybe(types_1.typeforce.Number),
-      output: types_1.typeforce.maybe(types_1.typeforce.Buffer),
-      pubkeys: types_1.typeforce.maybe(
-        types_1.typeforce.arrayOf(types_1.isPoint),
-      ),
-      signatures: types_1.typeforce.maybe(
-        types_1.typeforce.arrayOf(isAcceptableSignature),
-      ),
-      input: types_1.typeforce.maybe(types_1.typeforce.Buffer),
+      network: typef.maybe(typef.Object),
+      m: typef.maybe(typef.Number),
+      n: typef.maybe(typef.Number),
+      output: typef.maybe(typef.Buffer),
+      pubkeys: typef.maybe(typef.arrayOf(isPoint)),
+      signatures: typef.maybe(typef.arrayOf(isAcceptableSignature)),
+      input: typef.maybe(typef.Buffer),
     },
     a,
   );
-  const network = a.network || networks_1.bitcoin;
+  const network = a.network || BITCOIN_NETWORK;
   const o = { network };
   let chunks = [];
   let decoded = false;
@@ -105,15 +98,14 @@ function p2ms(a, opts) {
   if (opts.validate) {
     if (a.output) {
       decode(a.output);
-      if (!types_1.typeforce.Number(chunks[0]))
-        throw new TypeError('Output is invalid');
-      if (!types_1.typeforce.Number(chunks[chunks.length - 2]))
+      if (!typef.Number(chunks[0])) throw new TypeError('Output is invalid');
+      if (!typef.Number(chunks[chunks.length - 2]))
         throw new TypeError('Output is invalid');
       if (chunks[chunks.length - 1] !== OPS.OP_CHECKMULTISIG)
         throw new TypeError('Output is invalid');
       if (o.m <= 0 || o.n > 16 || o.m > o.n || o.n !== chunks.length - 3)
         throw new TypeError('Output is invalid');
-      if (!o.pubkeys.every(x => (0, types_1.isPoint)(x)))
+      if (!o.pubkeys.every(x => isPoint(x)))
         throw new TypeError('Output is invalid');
       if (a.m !== undefined && a.m !== o.m) throw new TypeError('m mismatch');
       if (a.n !== undefined && a.n !== o.n) throw new TypeError('n mismatch');
@@ -147,4 +139,3 @@ function p2ms(a, opts) {
   }
   return Object.assign(o, a);
 }
-exports.p2ms = p2ms;

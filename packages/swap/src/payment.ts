@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { getMockedRev } from './utils'
+import { getMockedRev } from './utils/index.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 

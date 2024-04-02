@@ -1,8 +1,8 @@
-import ECPairFactory from 'ecpair';
+import { ECPairFactory } from 'ecpair';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import { describe, it } from 'mocha';
-import * as bitcoin from '../..';
-import { regtestUtils } from './_regtest';
+import * as bitcoin from '../../src/index.js';
+import { regtestUtils } from './_regtest.js';
 
 const ECPair = ECPairFactory(ecc);
 const NETWORK = regtestUtils.network;
@@ -46,8 +46,10 @@ async function buildAndSign(
   );
 }
 
-['p2ms', 'p2pk', 'p2pkh', 'p2wpkh'].forEach(k => {
-  const fixtures = require('../fixtures/' + k);
+['p2ms', 'p2pk', 'p2pkh', 'p2wpkh'].forEach(async k => {
+  const fixturesModule = await import('../fixtures/' + k);
+  const fixtures = fixturesModule.default || fixturesModule;
+  // const fixtures = require('../fixtures/' + k);
   const { depends } = fixtures.dynamic;
   const fn: any = (bitcoin.payments as any)[k];
 
