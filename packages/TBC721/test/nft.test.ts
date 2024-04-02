@@ -8,31 +8,29 @@ import { NFT, TBC721 } from '../src/nft'
 
 chai.use(chaiMatchPattern)
 
-// If you want to connect to your local Bitcoin Computer Node, create a .env file 
-// in the monorepo root level and add the following line:
-// BCN_URL=http://localhost:1031
-
-dotenv.config({ path: '../../.env'})
-
-const meta = {
-  _id: _.isString,
-  _rev: _.isString,
-  _root: _.isString,
-  _owners: _.isArray,
-  _amount: _.isNumber,
-}
-
 const { expect } = chai
 
 // If you want to connect to your local Bitcoin Computer Node, create a .env file 
 // in the monorepo root level and add the following line:
 // BCN_URL=http://localhost:1031
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../../.env'})
 
 const url = process.env.BCN_URL
 
 const symbol = ''
+
+const isString = (x: any) => typeof x === 'string'
+const isNumber = (x: any) => typeof x === 'number'
+const isArray = (x: any) => Array.isArray(x)
+
+export const meta = {
+  _id: isString,
+  _rev: isString,
+  _root: isString,
+  _owners: isArray,
+  _amount: isNumber,
+}
 
 describe('NFT', () => {
   let initialId: string
@@ -189,7 +187,7 @@ describe('NFT', () => {
       const nft = await tbc721.mint('name', 'symbol')
 
       // Transfer NFT
-      await tbc721.transfer(nft._id, new Computer().getPublicKey())
+      await tbc721.transfer(new Computer().getPublicKey(), nft._id)
     })
   })
 })
