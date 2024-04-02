@@ -3,14 +3,20 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
+
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../../.env'})
+
+const url = process.env.BCN_URL
 import { StaticSwapHelper } from '../src/static-swap'
-import { RLTC, meta } from '../src/utils'
+import { meta } from '../src/utils'
 
 describe('Static Swap', () => {
   let nftA: NFT
   let nftB: NFT
-  const alice = new Computer(RLTC)
-  const bob = new Computer(RLTC)
+  const alice = new Computer({ url })
+  const bob = new Computer({ url })
 
   before('Before', async () => {
     await alice.faucet(0.01e8)

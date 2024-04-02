@@ -6,6 +6,19 @@ import dotenv from 'dotenv'
 import chaiMatchPattern from 'chai-match-pattern'
 import { NFT, TBC721 } from '../src/nft'
 
+chai.use(chaiMatchPattern)
+const { expect } = chai
+
+// If you want to connect to your local Bitcoin Computer Node, create a .env file 
+// in the monorepo root level and add the following line:
+// BCN_URL=http://localhost:1031
+
+dotenv.config({ path: '../../.env' })
+
+const url = process.env.BCN_URL
+
+const symbol = ''
+
 const isString = (x: any) => typeof x === 'string'
 const isNumber = (x: any) => typeof x === 'number'
 const isArray = (x: any) => Array.isArray(x)
@@ -18,16 +31,6 @@ export const meta = {
   _amount: isNumber,
 }
 
-chai.use(chaiMatchPattern)
-
-const { expect } = chai
-
-dotenv.config({ path: '../../.env' })
-
-const url = process.env.BCN_URL
-
-const symbol = ''
-
 describe('NFT', () => {
   let initialId: string
   let initialRev: string
@@ -38,29 +41,28 @@ describe('NFT', () => {
 
     describe('Minting an NFT', () => {
       const sender = new Computer({ url })
-
+      
       before("Fund sender's wallet", async () => {
         await sender.faucet(0.001e8)
       })
-
+  
       it('Sender mints an NFT', async () => {
         nft = await sender.new(NFT, ['Test'])
         // @ts-ignore
         expect(nft).matchPattern({ name: 'Test', symbol, ...meta })
       })
-
+  
       it('Property _owners is a singleton array with minters public key', () => {
         expect(nft._owners).deep.eq([sender.getPublicKey()])
       })
-
+  
       it('Properties _id, _rev, and _root have the same value', () => {
         expect(nft._id).eq(nft._rev).eq(nft._root)
-
+  
         initialId = nft._id
         initialRev = nft._rev
         initialRoot = nft._root
       })
-
       it("The nft is returned when syncing against it's revision", async () => {
         expect(await sender.sync(nft._rev)).deep.eq(nft)
       })
@@ -145,7 +147,7 @@ describe('NFT', () => {
         const computer2 = new Computer()
         const nft2 = await tbc721.mint('name', 'symbol')
         const publicKey2 = computer2.getPublicKey()
-        await tbc721.transfer(nft2._id, publicKey2)
+        await tbc721.transfer(publicKey2, nft2._id)
         const res = await tbc721.balanceOf(computer.getPublicKey())
         expect(res).to.be.greaterThanOrEqual(1)
       })
@@ -184,7 +186,9 @@ describe('NFT', () => {
       const nft = await tbc721.mint('name', 'symbol')
 
       // Transfer NFT
-      await tbc721.transfer(nft._id, new Computer().getPublicKey())
+      await tbc721.transfer(new Computer().getPublicKey(), nft._id)
     })
   })
 })
+
+

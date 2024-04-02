@@ -15,16 +15,30 @@ for container_id in $container_ids; do
 done
 echo ''
 
-# Read argument from command line
+# Read chain and network from the arguments
 if [ $# -eq 0 ]; then
     chain='ltc'
     network='testnet'
-    logpath='/home/litecoin/.litecoin/testnet4/debug.log'
 else
     chain=$1
     network=$2
-    logpath=$3
 fi
+
+# Log paths are predefined for Bitcoin and Litecoin
+if [ $chain == 'btc' ]; then
+    if [ $network == 'mainnet' ]; then
+        logpath='/home/bitcoin/.bitcoin/debug.log'
+    else
+        logpath='/home/bitcoin/.bitcoin/testnet4/debug.log'
+    fi
+else
+    if [ $network == 'mainnet' ]; then
+        logpath='/home/litecoin/.litecoin/debug.log'
+    else
+        logpath='/home/litecoin/.litecoin/testnet4/debug.log'
+    fi
+fi
+
 
 # Get the logs from the bitcoin node (default LTC testnet)
 node_container_image=$(docker compose -f docker-compose.yml -f chain-setup/${chain}-${network}/docker-compose-local-${chain}-${network}.yml ps -q node | xargs docker inspect --format='{{.Image}}' | sed -e 's/^sha256:/\'$'\n/g')
