@@ -148,7 +148,7 @@ describe('NFT', () => {
         const computer2 = new Computer()
         const nft2 = await tbc721.mint('name', 'symbol')
         const publicKey2 = computer2.getPublicKey()
-        await tbc721.transfer(nft2._id, publicKey2)
+        await tbc721.transfer(publicKey2, nft2._id)
         const res = await tbc721.balanceOf(computer.getPublicKey())
         expect(res).to.be.greaterThanOrEqual(1)
       })
