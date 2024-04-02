@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.764714474837">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.765332435231">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
 
     <!-- Primary Meta Tags -->
-    <title>Swap</title>
-    <meta name="title" content="Swap">
-    <meta name="description" content="A swap is a class with a single static function that takes two smart objects as inputs and returns the same objects as outputs.">
+    <title>Swaps</title>
+    <meta name="title" content="Swaps">
+    <meta name="description" content="The simplest way to build a swap is to use a class whose constructor exchanges the owners of it's arguments.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/examples/swap/">
@@ -19,24 +19,24 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="/examples/swap/">
-    <meta property="og:title" content="Swap">
-    <meta property="og:description" content="A swap is a class with a single static function that takes two smart objects as inputs and returns the same objects as outputs.">
+    <meta property="og:title" content="Swaps">
+    <meta property="og:description" content="The simplest way to build a swap is to use a class whose constructor exchanges the owners of it's arguments.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/examples/swap/">
-    <meta property="twitter:title" content="Swap">
-    <meta property="twitter:description" content="A swap is a class with a single static function that takes two smart objects as inputs and returns the same objects as outputs.">
+    <meta property="twitter:title" content="Swaps">
+    <meta property="twitter:description" content="The simplest way to build a swap is to use a class whose constructor exchanges the owners of it's arguments.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.764714474837" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.765332435231" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.764714474837" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.765332435231" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.764714474837" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.764714474837" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.765332435231" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.765332435231" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -151,55 +151,58 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="swap" class="break-words">
+<doc-anchor-target id="swaps" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#swap">#</doc-anchor-trigger>
-        <span>Swap</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swaps">#</doc-anchor-trigger>
+        <span>Swaps</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="smart-contract">
+<doc-anchor-target id="swap-using-a-constructor">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract">#</doc-anchor-trigger>
-        <span>Smart Contract</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-using-a-constructor">#</doc-anchor-trigger>
+        <span>Swap using a Constructor</span>
     </h2>
 </doc-anchor-target>
-<p>A swap is a class with a single static function that takes two smart objects as inputs and returns the same objects as outputs. The body of the function exchanges the owners of the object.</p>
-<p>While this example uses NFTs, the same function can be used to swap any pair of smart objects.</p>
+<p>The simplest way to build a swap is to use a class whose constructor exchanges the owners of it&#x27;s arguments.</p>
+<doc-anchor-target id="smart-contract">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract">#</doc-anchor-trigger>
+        <span>Smart Contract</span>
+    </h3>
+</doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">class Swap extends Contract {
-  static exec(nftA: NFT, nftB: NFT) {
-    const [ownerA] = nftA._owners
-    const [ownerB] = nftB._owners
-    nftA.transfer(ownerB)
-    nftB.transfer(ownerA)
-    return [nftB, nftA]
+<pre class="language-typescript"><code v-pre class="language-typescript">export class Swap extends Contract {
+  constructor(a: NFT, b: NFT) {
+    super()
+    const [ownerA] = a._owners
+    const [ownerB] = b._owners
+    a.transfer(ownerB)
+    b.transfer(ownerA)
   }
 }</code></pre>
 </doc-codeblock></div>
+<p>While this example uses NFTs, the same function can be used to swap any pair of smart objects that have a transfer function.</p>
 <doc-anchor-target id="usage">
-    <h2>
+    <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#usage">#</doc-anchor-trigger>
         <span>Usage</span>
-    </h2>
+    </h3>
 </doc-anchor-target>
-<p>The <a href="./api/encode.md"><code v-pre>encode</code></a> function is used to evaluate the <code v-pre>swap</code> function. The first arguments to the <code v-pre>encode</code> function is an expression containing both the code of the <code v-pre>Swap</code> class and the expression <code v-pre>Swap.exec(nftA, nftB)</code>. The second argument is an environment that determines that the smart objects corresponding to the names <code v-pre>nftA</code> and <code v-pre>nftB</code> are stored ar reviwions <code v-pre>nftA._rev</code> and <code v-pre>nftB._rev</code>.</p>
-<p>The <code v-pre>encode</code> function returns a transaction with two inputs and two outputs. Each input spends the outputs (<code v-pre>nftA._rev</code> and <code v-pre>nftB._rev</code>) representing the two NFTs that are arguments to the function. The two outputs represent the new state of the NFTs after the function call.</p>
-<p>The <code v-pre>encode</code> function will automatically sign all inputs of the transaction that can be signed with the private key of the computer object on which the function is called. In this case, this is the input as revision <code v-pre>nftA._rev</code>.</p>
-<p>Subsequently Bob signs the input <code v-pre>nftB._rev</code> and broadcasts the transaction, thereby executing the swap. After the transaction has been broadcast, the owners of the two NFTs are reversed.</p>
+<p>The code snippet below shows how to create two nfts and swap them using the smart contract above.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund the wallets
 const alice = new Computer()
 const bob = new Computer()
 await alice.faucet(0.01e8)
-await bob.faucet(0.001e8)
+await bob.faucet(0.01e8)
 
 // Alice and Bob create one NFT each
-const nftA = await alice.new(NFT, [alice.getPublicKey(), 'nftA'])
-const nftB = await bob.new(NFT, [bob.getPublicKey(), 'nftB'])
+const nftA = await alice.new(NFT, ['a', 'AAA'])
+const nftB = await bob.new(NFT, ['b', 'BBB'])
 
 // Alice builds a partially signed swap transaction
 const { tx } = await alice.encode({
-  exp: `${Swap} Swap.exec(nftA, nftB)`,
+  exp: `${Swap} new Swap(nftA, nftB)`,
   env: { nftA: nftA._rev, nftB: nftB._rev },
 })
 
@@ -207,6 +210,121 @@ const { tx } = await alice.encode({
 await bob.sign(tx)
 await bob.broadcast(tx)</code></pre>
 </doc-codeblock></div>
+<p>An expression containing both the code of the <code v-pre>Swap</code> class and the expression <code v-pre>Swap.exec(nftA, nftB)</code> is passed to the <a href="./api/encode.md"><code v-pre>encode</code></a> function. The second argument is an environment that determines that the smart objects corresponding to the names <code v-pre>nftA</code> and <code v-pre>nftB</code> are stored at revisions <code v-pre>nftA._rev</code> and <code v-pre>nftB._rev</code>.</p>
+<p>The return value is a transaction <code v-pre>tx</code> with two inputs and two outputs. The inputs spend the outputs <code v-pre>nftA._rev</code> and <code v-pre>nftB._rev</code> representing the two NFTs that are arguments to the function. The two outputs represent the new state of the NFTs after the function call.</p>
+<p>The <code v-pre>encode</code> function will automatically sign all inputs of the transaction that can be signed with the private key of the computer object on which the function is called. In this case, this is the input as revision <code v-pre>nftA._rev</code>.</p>
+<p>Subsequently Bob signs the input <code v-pre>nftB._rev</code> and broadcasts the transaction. When the transaction is included in the blockchain the swap is executed and the owners of the two NFTs are reversed.</p>
+<doc-anchor-target id="reducing-fees">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#reducing-fees">#</doc-anchor-trigger>
+        <span>Reducing Fees</span>
+    </h4>
+</doc-anchor-target>
+<p>The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the <code v-pre>Swap</code> function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class <code v-pre>SwapHelper</code> for swaps and <code v-pre>TBC721</code> for NFTs that can be used as follows:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">// Alice creates helper objects
+const tbc721A = new TBC721(alice)
+const swapHelperA = new SwapHelper(alice)
+
+// Alice deploys the smart contracts as modules
+await tbc721A.deploy()
+await swapHelperA.deploy()
+
+// Alice mints an NFT
+nftA = await tbc721A.mint('a', 'AAA')
+
+// Bob creates helper objects from the module specifiers
+const tbc721B = new TBC721(bob, tbc721A.mod)
+const swapHelperB = new SwapHelper(bob, swapHelperA.mod)
+
+// Bob mints an NFT to pay for Alice's's NFT
+nftB = await tbc721B.mint('b', 'BBB')
+
+// Bob creates a swap transaction
+const { tx } = await swapHelperB.createSwapTx(nftA, nftB)
+
+// Alice checks the swap transaction
+swapHelperA.checkSwapTx(tx, bob.getPublicKey(), alice.getPublicKey())
+
+// Alice signs an broadcasts the transaction to execute the swap
+await alice.sign(tx)
+await alice.broadcast(tx)</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="swap-using-a-static-function">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-using-a-static-function">#</doc-anchor-trigger>
+        <span>Swap using a Static Function</span>
+    </h2>
+</doc-anchor-target>
+<p>The basic swap described above has the disadvantage that it creates a smart object for the swap that is not useful after the swap was executed and that has to be paid for. To avoid creating the superfluous object in the first place a static function can be used as described next.</p>
+<doc-anchor-target id="smart-contract-1">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract-1">#</doc-anchor-trigger>
+        <span>Smart Contract</span>
+    </h3>
+</doc-anchor-target>
+<p>When the static <code v-pre>exec</code> is executed, a transaction is created that updates the two smart object in the arguments without creating an extra object. When the transaction is included in the blockchain the owners of the arguments are exchanged.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">export class StaticSwap extends Contract {
+  static exec(a: NFT, b: NFT) {
+    const [ownerA] = a._owners
+    const [ownerB] = b._owners
+    a.transfer(ownerB)
+    b.transfer(ownerA)
+  }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="usage-1">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#usage-1">#</doc-anchor-trigger>
+        <span>Usage</span>
+    </h3>
+</doc-anchor-target>
+<p>The usage is almost identical to the usage of the basic swap. The biggest difference is the expression encoded as shown below. See <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme">here</a> for details.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">const tx = await computer.encode({
+  exp: `${StaticSwap} StaticSwap.exec(a, b)`,
+  env: { a: a._rev, b: b._rev },
+})</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="swap-using-a-method">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-using-a-method">#</doc-anchor-trigger>
+        <span>Swap using a Method</span>
+    </h2>
+</doc-anchor-target>
+<p>It is also possible to add a swap function to an NFT contract as shown below. Like the example of a static swap this avoids creating an useless smart object.</p>
+<doc-anchor-target id="smart-contract-2">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract-2">#</doc-anchor-trigger>
+        <span>Smart Contract</span>
+    </h3>
+</doc-anchor-target>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">class Swappable extends Contract {
+  constructor(name = '', symbol = '') {
+    super({ name, symbol })
+  }
+
+  transfer(to: string) {
+    this._owners = [to]
+  }
+
+  swap(that: NFT) {
+    const [thisOwner] = this._owners
+    const [thatOwner] = that._owners
+    this.transfer(thatOwner)
+    that.transfer(thisOwner)
+  }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="usage-2">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#usage-2">#</doc-anchor-trigger>
+        <span>Usage</span>
+    </h3>
+</doc-anchor-target>
+<p>The usage is similar to above, see <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme">here</a> for details.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -229,7 +347,7 @@ await bob.broadcast(tx)</code></pre>
                                         <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../examples/sale/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">Sale</span>
+                                                <span class="block mt-1">Sales</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
@@ -273,6 +391,6 @@ await bob.broadcast(tx)</code></pre>
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Swap", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Swaps", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
