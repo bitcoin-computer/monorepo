@@ -13,9 +13,9 @@ In a swap, the smart objects to be swapped are known before the swap transaction
 
 ## Smart Object Sale
 
-We first explain how to execute the sale of a smart object. The smart contract is quite simple but does not preserving the ordinal ranges of the smart object being sold. It is therefore not safe to use with ordinals. The [next](#ordinals-sale) section explains a slightly more complicated swap that can be used with ordinals.
+We first explain how to execute the sale of a smart object. The smart contract is quite simple but does not preserve the ordinal ranges of the smart object being sold. It is therefore not safe to use with ordinals. The [next](#ordinals-sale) section explains a slightly more complicated swap that can be used with ordinals.
 
-The idea is to build a "crossover" transaction with two inputs and two outputs where the first inputs spends the NFT `n`, the second output spends a payment smart object `p`, the first output represents `p` after the swap and the second output represents `n` after the swap. 
+The idea is to build a "crossover" transaction with two inputs and two outputs where the first inputs spends the NFT `n`, the second output spends a payment smart object `p`, the first output is `p` after the swap and the second output is `n` after the swap. 
 
 Seller signs the first input and output with the sighash type `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY` so that any other user can modify the second input and output or add arbitrary inputs and outputs as longs as the input-output pair signed by Seller have the same index. As the input-output pair is signed, Seller is guaranteed that if a transaction containing the pair is included in the blockchain then Seller will get paid. 
 
@@ -220,7 +220,7 @@ await buyer.broadcast(saleTx)
 
 ### Using a Module to Reduce the Fee
 
-The example before is wasteful if many sales are executed because the source code of the `Sale` class is written into the blockchain on every sale. To avoid this, it is possible to deploy the `Sale` class and refer to this module from every sale executed.
+The example before is wasteful if many sales are executed because the source code of the `Sale` class is written into the blockchain on every sale. To avoid this, it is possible to [deploy](../API/deploy.md) the `Sale` class and refer to this module from every sale executed.
 
 We provide a class `TBC721` that helps with deploying the smart contract as a module, minting the nfts with a reference to the deployed module, transferring NFTs, and returning the balance and owner of an NFT.
 
