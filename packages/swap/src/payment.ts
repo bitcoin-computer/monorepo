@@ -17,6 +17,10 @@ export class Payment extends Contract {
   transfer(to: string) {
     this._owners = [to]
   }
+
+  setAmount(a: number) {
+    this._amount = a
+  }
 }
 
 export class PaymentMock {
@@ -36,5 +40,9 @@ export class PaymentMock {
 
   transfer(to: string) {
     this._owners = [to]
+  }
+
+  setAmount(a: number) {
+    this._amount = a
   }
 }

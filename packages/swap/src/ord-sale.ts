@@ -2,13 +2,12 @@
 import { NFT } from '@bitcoin-computer/TBC721'
 // import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
-import { Valuable, ValuableMock } from './valuable.js'
 import { Payment, PaymentMock } from './payment.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 
 export class OrdSale extends Contract {
-  static exec(b1: Valuable, b2: Valuable, n: NFT, p: Payment) {
+  static exec(b1: Payment, b2: Payment, n: NFT, p: Payment) {
     const [ownerT] = n._owners
     const [ownerP] = p._owners
     n.transfer(ownerP)
@@ -33,8 +32,8 @@ export class OrdSaleHelper {
   }
 
   async createSaleTx(
-    b1Mock: ValuableMock,
-    b2Mock: ValuableMock,
+    b1Mock: PaymentMock,
+    b2Mock: PaymentMock,
     nft: NFT,
     paymentMock: PaymentMock,
   ) {
@@ -58,8 +57,8 @@ export class OrdSaleHelper {
 
   static finalizeSaleTx(
     tx: Transaction,
-    b1: Valuable,
-    b2: Valuable,
+    b1: Payment,
+    b2: Payment,
     payment: Payment,
     scriptPubKey: Buffer,
   ) {
