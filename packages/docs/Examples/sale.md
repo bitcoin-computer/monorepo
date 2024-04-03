@@ -57,12 +57,16 @@ The second argument is created by Buyer to pay for the nft.
 
 ```ts
 class Payment extends Contract {
-  constructor(owner: string, _amount: number) {
-    super({ _owners: [owner], _amount })
+  constructor(_amount: number) {
+    super({ _amount })
   }
 
   transfer(to: string) {
     this._owners = [to]
+  }
+
+  setAmount(a: number) {
+    this._amount = a
   }
 }
 ```
@@ -96,6 +100,10 @@ class PaymentMock {
 
   transfer(to: string) {
     this._owners = [to]
+  }
+
+  setAmount(a: number) {
+    this._amount = a
   }
 }
 
@@ -218,9 +226,9 @@ await buyer.sign(saleTx)
 await buyer.broadcast(saleTx)
 ```
 
-### Using a Module to Reduce the Fee
+### Reducing Fees
 
-The example before is wasteful if many sales are executed because the source code of the `Sale` class is written into the blockchain on every sale. To avoid this, it is possible to [deploy](../API/deploy.md) the `Sale` class and refer to this module from every sale executed.
+The example before is wasteful because the source code of the `Sale` class is written into the blockchain on every sale. To avoid this, we recommend to [deploy](../API/deploy.md) the `Sale` class and refer to the module when executing a sale.
 
 We provide a class `TBC721` that helps with deploying the smart contract as a module, minting the nfts with a reference to the deployed module, transferring NFTs, and returning the balance and owner of an NFT.
 
@@ -275,20 +283,18 @@ await bob.broadcast(finalTx)
 
 ## Ordinals Sale
 
-The `Sale` smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call. That's because the order of inputs is determined by the order the objects in the environment and the order of outputs is determined by their occurrence in the return value.
-
-To preserve the ordinal ranges the expression must not use the `_amount` keyword and must not return an object or an array containing an object.
+The `Sale` smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call. To preserve the ordinal ranges the expression must not use the `_amount` keyword and must not return an object or an array containing an object.
 
 Building a sale contract for ordinals is more complicated than for smart objects. A very clever construction was proposed by Rodarmor [here](https://github.com/ordinals/ord/issues/802) and later [refined](https://github.com/ordinals/ord/issues/802#issuecomment-1498030294). Our smart contract below implements this exact idea. 
 
 
-### Smart Contract
+### Smart Contracts
 
 The `exec` function of the `OrdSale` class swaps the owners just like in the `Sale` class. However it then proceeds to double the amount of `b1` and return `[b1, t, p, b2]`.
 
 ```ts
 class OrdSale extends Contract {
-  static exec(b1: Valuable, b2: Valuable, n: NFT, p: Payment) {
+  static exec(b1: Payment, b2: Payment, n: NFT, p: Payment) {
     const [ownerT] = n._owners
     const [ownerP] = p._owners
     n.transfer(ownerP)
@@ -300,20 +306,47 @@ class OrdSale extends Contract {
 }
 ```
 
- Note that our smart contract is not safe for ordinals according to the above rule. We will see that it does preserve the ordinal ranges of `b1`, `n`, and `p` but not of `b2`.
-
- ### Building the Sales Transaction
-
-Seller will broadcast the sale transaction with an environment in which the variables occur in the order `b1, b2, t, p`. As the order in the environment determine the inputs, and the order in the return value determine the outputs, the transaction that is built has the following form:
+When the `exec` function is evaluated, a transaction of the following form is built:
 
 ```
 Inputs: b1, b2, t, p
 Outputs: b1, t, p, b2
 ```
 
-The amount of `b1` after the call is the sum of the amounts of `b1` and `b2` before combined. The smart object `b1` therefor absorbs the entire ordinals range of `b2`. Hence the NFT `n` containing the ordinal will be at the second output and the payment will be at the third. The object `b2` will be at the fourth output but it's ordinal range will not be as before the call.
+The amount of `b1` after the call is the sum of the amounts of `b1` and `b2` before combined. The smart object `b1` therefor absorbs the entire ordinals range of `b2`. The objects `n` and `p` do not change their amounts during the call, therefore these objects preserver their ordinal ranges.
 
-### Usage
+We now explain the whole process of minting an NFT, listing it for sale, and processing a purchase. We skip the step for minting as it was described above.
+
+### Building the Sales Transaction
+
+In order to build the sale transaction, Seller first needs to create the objects `b1`, `b2`, and `p`:
+
+```ts
+const paymentMock = new PaymentMock(7860)
+const b1Mock = new PaymentMock()
+const b2Mock = new PaymentMock()
+```
+
+Next Seller can build the sales transaction by executing the following code:
+
+```ts
+const { tx } = await seller.encode({
+  exp: `${OrdSale} OrdSale.exec(b1, b2, nft, payment)`,
+  env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
+  mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
+  sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+  inputIndex: 2,
+  fund: false,
+})
+```
+
+Conceptually this is very similar to the use of `encode` above. Note however, that Seller signs the third input output pair this time. This is because the NFT is spent by the third inputs and the payment that Seller wants to obtain is in the third output.
+
+### Buying the Ordinal NFT
+
+This process is similar to the case of a smart object sale above. See the example blow.
+
+### Full Example
 
 ```ts
 // Create and fund wallets
@@ -327,8 +360,8 @@ const nft = await seller.new(NFT, ['name', 'symbol'])
 
 // Seller creates partially signed swap as a sale offer
 const paymentMock = new PaymentMock(7860)
-const b1Mock = new ValuableMock()
-const b2Mock = new ValuableMock()
+const b1Mock = new PaymentMock()
+const b2Mock = new PaymentMock()
 
 const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 const { tx } = await seller.encode({
@@ -357,7 +390,9 @@ await buyer.sign(tx)
 await buyer.broadcast(tx)
 ```
 
-#### Reducing Fees
+### Reducing Fees
+
+Just like in the case of selling smart object sales, one can save transaction fees by using the module system through a helper class as shown below.
 
 ```ts
 // Create and fund wallets
