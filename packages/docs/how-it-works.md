@@ -15,6 +15,8 @@ The Bitcoin Computer is a Javascript <a href="https://en.wikipedia.org/wiki/Runt
 
 When an expression is evaluated with the Bitcoin Computer, the expression is inscribed into a Bitcoin transaction. If the value of the expression has object type, this object is considered a "smart object" and an output of the transaction is considered the object's *id*. If the value has multiple sub-objects, each sub-object is assigned a separate output as its id.
 
+## Reading Values
+
 To determine the value of a given smart object id, the Bitcoin Computer library will download the corresponding transaction and compute the value of the expression. As the mapping from sub-objects to outputs is deterministic and one-to-one, the software can determine which sub-object of the value is the smart object for the given id.
 
 ## Updating Values
