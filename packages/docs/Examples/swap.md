@@ -7,9 +7,9 @@ icon: arrow-switch
 
 ## Swap using a Constructor
 
-The simplest way to build a swap is to use a class whose constructor exchanges the owners of it's arguments.
+The simplest way to build a swap is to use a class whose constructor exchanges the owners of it's arguments. This method preserves ordinal ranges, so it is safe to use this smart objects that contain ordinals.
 
-### Smart Contract
+### Smart Contracts
 
 ```ts
 export class Swap extends Contract {
@@ -23,10 +23,49 @@ export class Swap extends Contract {
 }
 ```
 
-While this example uses NFTs, the same function can be used to swap any pair of smart objects that have a transfer function.
+While this example uses NFTs, the same function can be used to swap any pair of smart objects that have a transfer function. The `NFT` class is as defined previously.
 
+```ts
+export class NFT extends Contract {
+  constructor(name = '', symbol = '') {
+    super({ name, symbol })
+  }
 
-### Usage
+  transfer(to: string) {
+    this._owners = [to]
+  }
+}
+```
+
+### Minting an NFT
+
+To mint an nft, Alice can use the `computer.new` function.
+
+```ts
+const nft = await alice.new(NFT, ['name', 'symbol'])
+```
+
+### Building the Swap Transaction
+
+A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The two outputs of the transaction are the NFTs after the swap with their owners exchanged. To build the swap transaction, Alice calls the [`encode`](../API/encode.md) function as shown below.
+
+```ts
+const { tx } = await alice.encode({
+  exp: `${Swap} new Swap(nftA, nftB)`,
+  env: { nftA: nftA._rev, nftB: nftB._rev },
+})
+```
+
+### Executing the Swap
+
+To execute the swap, Bob signs and broadcasts the transaction.
+
+```ts
+await bob.sign(tx)
+await bob.broadcast(tx)
+```
+
+### Full Example
 
 The code snippet below shows how to create two nfts and swap them using the smart contract above.
 
