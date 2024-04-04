@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         version:
-          - '0.18.0-beta.0'
+          - '0.17.2-beta.0'
         folder:
           - '.'
       fail-fast: false
@@ -34,7 +34,7 @@ jobs:
 
           BCN_VERSION=${{matrix.version}}
           PLATFORMS="linux/amd64,linux/arm64/v8,linux/arm/v7"
-          PUSH=false
+          PUSH=true
           DOCKER_REPO=bcdb/bcn
 
           TAGS=("$DOCKER_REPO:${BCN_VERSION} $DOCKER_REPO:latest")
