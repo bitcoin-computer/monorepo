@@ -3,6 +3,8 @@ import { getMockedRev } from './utils/index.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 
+const randomPublicKey = '023a06bc3ca20170b8202737316a29923f5b0e47f39c6517990f3c75f3b3d4484c'
+
 export class Payment extends Contract {
   _id: string
   _rev: string
@@ -35,7 +37,7 @@ export class PaymentMock {
     this._rev = getMockedRev()
     this._root = getMockedRev()
     this._amount = amount
-    this._owners = ['023a06bc3ca20170b8202737316a29923f5b0e47f39c6517990f3c75f3b3d4484c']
+    this._owners = [randomPublicKey]
   }
 
   transfer(to: string) {

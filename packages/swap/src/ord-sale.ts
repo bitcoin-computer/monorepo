@@ -1,6 +1,5 @@
 /* eslint-disable max-classes-per-file */
 import { NFT } from '@bitcoin-computer/TBC721'
-// import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Payment, PaymentMock } from './payment.js'
 
