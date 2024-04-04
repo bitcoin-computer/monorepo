@@ -4,7 +4,6 @@ import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { NFT, TBC721 } from '../src/nft'
-import chaiMatchPattern from 'chai-match-pattern'
 
 const isString = (x: any) => typeof x === 'string'
 const isNumber = (x: any) => typeof x === 'number'
@@ -17,9 +16,6 @@ export const meta = {
   _owners: isArray,
   _amount: isNumber,
 }
-
-chai.use(chaiMatchPattern)
-const _ = chaiMatchPattern.getLodashModule()
 
 const { expect } = chai
 
@@ -107,7 +103,7 @@ describe('NFT', () => {
     before(async () => {
       await computer.faucet(1e7)
     })
-    
+
     describe('Constructor', () => {
       it('Should create a new TBC721 object', async () => {
         tbc721 = new TBC721(computer)
