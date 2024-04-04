@@ -96,7 +96,7 @@ await bob.broadcast(tx)
 
 #### Reducing Fees
 
-The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the `Swap` function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class `SwapHelper` for swaps and `TBC721` for NFTs that can be used as follows:
+The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the `Swap` function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class [`SwapHelper`](../../swap/src/swap.ts) for swaps and `TBC721` for NFTs that can be used as follows:
 
 ```ts
 // Alice creates helper objects
@@ -150,23 +150,6 @@ class Swappable extends Contract {
   }
 }
 ```
-
-### Swap Using a Constructor
-
-We don't recommend this method because it creates an extra output for the swap itself.
-
-```ts
-export class Swap extends Contract {
-  constructor(a: NFT, b: NFT) {
-    super()
-    const [ownerA] = a._owners
-    const [ownerB] = b._owners
-    a.transfer(ownerB)
-    b.transfer(ownerA)
-  }
-}
-```
-
 
 ## Code
 
