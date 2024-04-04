@@ -1,7 +1,7 @@
 name: build
 on: 
   push:
-    branches: [ bcn-multiplatform ]
+    branches: [ feat/build-bcn-multiplatform ]
 
 jobs:
   build:
@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         version:
-          - '0.10.0-alpha.4'
+          - '0.18.0-beta.0'
         folder:
           - 'packages/node'
       fail-fast: false
@@ -34,7 +34,7 @@ jobs:
 
           BCN_VERSION=${{matrix.version}}
           PLATFORMS="linux/amd64,linux/arm64/v8,linux/arm/v7"
-          PUSH=true
+          PUSH=false
           DOCKER_REPO=bcdb/bcn
 
           TAGS=("$DOCKER_REPO:${BCN_VERSION} $DOCKER_REPO:latest")
