@@ -548,7 +548,7 @@ describe('Sell', () => {
 
     it('When Thief broadcast the swap transaction an error is thrown', async () => {
       try {
-        txId = await thief.broadcast(txClone)
+        await thief.broadcast(txClone)
         expect(true).eq(false)
       } catch(err) {
         if(err instanceof Error)
