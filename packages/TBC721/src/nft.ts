@@ -4,12 +4,19 @@ const { Contract } = await import('@bitcoin-computer/lib')
 export class NFT extends Contract {
   name: string
   symbol: string
+  offerTxRev: string
   constructor(name = '', symbol = '') {
     super({ name, symbol })
   }
-
-  transfer(to: string): void {
+  transfer(to) {
     this._owners = [to]
+    this.unList()
+  }
+  list(rev) {
+    this.offerTxRev = rev
+  }
+  unList() {
+    this.offerTxRev = null
   }
 }
 

@@ -5,6 +5,13 @@ export class NFT extends Contract {
     }
     transfer(to) {
         this._owners = [to];
+        this.unList();
+    }
+    list(rev) {
+        this.offerTxRev = rev;
+    }
+    unList() {
+        this.offerTxRev = null;
     }
 }
 export class TBC721 {
