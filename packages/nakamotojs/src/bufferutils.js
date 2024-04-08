@@ -51,7 +51,7 @@ export class BufferWriter {
   constructor(buffer, offset = 0) {
     this.buffer = buffer;
     this.offset = offset;
-    typeforce(types.tuple(types.Buffer, types.UInt32), [buffer, offset]);
+    typeforce(types.tuple(types.BufferN, types.UInt32), [buffer, offset]);
   }
   writeUInt8(i) {
     this.offset = this.buffer.writeUInt8(i, this.offset);
@@ -97,7 +97,7 @@ export class BufferReader {
   constructor(buffer, offset = 0) {
     this.buffer = buffer;
     this.offset = offset;
-    typeforce(types.tuple(types.Buffer, types.UInt32), [buffer, offset]);
+    typeforce(types.tuple(types.BufferN, types.UInt32), [buffer, offset]);
   }
   readUInt8() {
     const result = this.buffer.readUInt8(this.offset);

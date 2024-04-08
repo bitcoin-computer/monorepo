@@ -1822,7 +1822,6 @@ export function getPayment(
   partialSig: PartialSig[],
 ): payments.Payment {
   let payment: payments.Payment;
-  console.log(scriptType);
   switch (scriptType) {
     case 'multisig':
       const sigs = getSortedSigs(script, partialSig);

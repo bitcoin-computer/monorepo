@@ -17,13 +17,13 @@ export function p2wpkh(a, opts) {
   typef(
     {
       address: typef.maybe(typef.String),
-      hash: typef.maybe(typef.BufferN(20)),
-      input: typef.maybe(typef.BufferN(0)),
+      hash: typef.maybe(typef.BufferN),
+      input: typef.maybe(typef.BufferN),
       network: typef.maybe(typef.Object),
-      output: typef.maybe(typef.BufferN(22)),
+      output: typef.maybe(typef.BufferN),
       pubkey: typef.maybe(isPoint),
       signature: typef.maybe(bscript.isCanonicalScriptSignature),
-      witness: typef.maybe(typef.arrayOf(typef.Buffer)),
+      witness: typef.maybe(typef.arrayOf(typef.BufferN)),
     },
     a,
   );
