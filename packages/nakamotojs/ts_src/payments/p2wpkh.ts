@@ -22,13 +22,13 @@ export function p2wpkh(a: Payment, opts?: PaymentOpts): Payment {
   typef(
     {
       address: typef.maybe(typef.String),
-      hash: typef.maybe(typef.BufferN),
-      input: typef.maybe(typef.BufferN),
+      hash: typef.maybe(typef.BufferN(20)),
+      input: typef.maybe(typef.BufferN(0)),
       network: typef.maybe(typef.Object),
-      output: typef.maybe(typef.BufferN),
+      output: typef.maybe(typef.BufferN(22)),
       pubkey: typef.maybe(isPoint),
       signature: typef.maybe(bscript.isCanonicalScriptSignature),
-      witness: typef.maybe(typef.arrayOf(typef.BufferN)),
+      witness: typef.maybe(typef.arrayOf(typef.Buffer)),
     },
     a,
   );

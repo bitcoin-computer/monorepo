@@ -21,12 +21,12 @@ export function p2pkh(a: Payment, opts?: PaymentOpts): Payment {
     {
       network: typef.maybe(typef.Object),
       address: typef.maybe(typef.String),
-      hash: typef.maybe(typef.BufferN),
-      output: typef.maybe(typef.BufferN),
+      hash: typef.maybe(typef.BufferN(20)),
+      output: typef.maybe(typef.BufferN(25)),
 
       pubkey: typef.maybe(isPoint),
       signature: typef.maybe(bscript.isCanonicalScriptSignature),
-      input: typef.maybe(typef.BufferN),
+      input: typef.maybe(typef.Buffer),
     },
     a,
   );

@@ -45,12 +45,12 @@ export function p2tr(a: Payment, opts?: PaymentOpts): Payment {
       hash: typef.maybe(typef.BufferN(32)), // merkle root hash, the tweak
       pubkey: typef.maybe(typef.BufferN(32)), // tweaked with `hash` from `internalPubkey`
       signature: typef.maybe(typef.BufferN(64)),
-      witness: typef.maybe(typef.arrayOf(typef.BufferN)),
+      witness: typef.maybe(typef.arrayOf(typef.Buffer)),
       scriptTree: typef.maybe(isTaptree),
       redeem: typef.maybe({
-        output: typef.maybe(typef.BufferN), // tapleaf script
+        output: typef.maybe(typef.Buffer), // tapleaf script
         redeemVersion: typef.maybe(typef.Number), // tapleaf version
-        witness: typef.maybe(typef.arrayOf(typef.BufferN)),
+        witness: typef.maybe(typef.arrayOf(typef.Buffer)),
       }),
       redeemVersion: typef.maybe(typef.Number),
     },

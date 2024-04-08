@@ -33,7 +33,7 @@ export function decode(buffer) {
 export function encode(signature, hashType) {
   typeforce(
     {
-      signature: types.BufferN,
+      signature: types.BufferN(64),
       hashType: types.UInt8,
     },
     { signature, hashType },

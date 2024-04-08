@@ -32,10 +32,10 @@ export function p2ms(a, opts) {
       network: typef.maybe(typef.Object),
       m: typef.maybe(typef.Number),
       n: typef.maybe(typef.Number),
-      output: typef.maybe(typef.BufferN),
+      output: typef.maybe(typef.Buffer),
       pubkeys: typef.maybe(typef.arrayOf(isPoint)),
       signatures: typef.maybe(typef.arrayOf(isAcceptableSignature)),
-      input: typef.maybe(typef.BufferN),
+      input: typef.maybe(typef.Buffer),
     },
     a,
   );

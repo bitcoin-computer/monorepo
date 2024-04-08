@@ -67,7 +67,7 @@ export class BufferWriter {
     public buffer: Buffer,
     public offset: number = 0,
   ) {
-    typeforce(types.tuple(types.BufferN, types.UInt32), [buffer, offset]);
+    typeforce(types.tuple(types.Buffer, types.UInt32), [buffer, offset]);
   }
 
   writeUInt8(i: number): void {
@@ -124,7 +124,7 @@ export class BufferReader {
     public buffer: Buffer,
     public offset: number = 0,
   ) {
-    typeforce(types.tuple(types.BufferN, types.UInt32), [buffer, offset]);
+    typeforce(types.tuple(types.Buffer, types.UInt32), [buffer, offset]);
   }
 
   readUInt8(): number {

@@ -3,7 +3,6 @@ import * as bscript from '../script.js';
 import { isPoint, typeforce as typef } from '../types.js';
 import { Payment, PaymentOpts, StackFunction } from './index.js';
 import * as lazy from './lazy.js';
-import { Buffer } from 'buffer';
 const OPS = bscript.OPS;
 
 // input: {signature}
@@ -16,11 +15,11 @@ export function p2pk(a: Payment, opts?: PaymentOpts): Payment {
   typef(
     {
       network: typef.maybe(typef.Object),
-      output: typef.maybe(typef.BufferN),
+      output: typef.maybe(typef.Buffer),
       pubkey: typef.maybe(isPoint),
 
       signature: typef.maybe(bscript.isCanonicalScriptSignature),
-      input: typef.maybe(typef.BufferN),
+      input: typef.maybe(typef.Buffer),
     },
     a,
   );
