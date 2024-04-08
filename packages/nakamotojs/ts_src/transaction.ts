@@ -164,10 +164,10 @@ export class Transaction {
   ): number {
     typeforce(
       types.tuple(
-        types.BufferN,
+        types.Hash256bit,
         types.UInt32,
         types.maybe(types.UInt32),
-        types.maybe(types.BufferN),
+        types.maybe(types.Buffer),
       ),
       arguments,
     );
@@ -205,8 +205,8 @@ export class Transaction {
         txId: types.maybe(types.String),
         index: types.maybe(types.UInt32),
         sequence: types.maybe(types.UInt32),
-        scriptSig: types.maybe(types.BufferN),
-        witness: types.maybe(types.BufferN),
+        scriptSig: types.maybe(types.Buffer),
+        witness: types.maybe(types.Buffer),
       }),
       arguments,
     );
@@ -239,7 +239,7 @@ export class Transaction {
   }
 
   addOutput(scriptPubKey: Buffer, value: number): number {
-    typeforce(types.tuple(types.BufferN, types.Satoshi), arguments);
+    typeforce(types.tuple(types.Buffer, types.Satoshi), arguments);
 
     // Add the output and return the output's index
     return (
@@ -259,7 +259,7 @@ export class Transaction {
   ): void {
     typeforce(
       types.tuple(types.Number, {
-        scriptPubKey: types.maybe(types.BufferN),
+        scriptPubKey: types.maybe(types.Buffer),
         value: types.maybe(types.Satoshi),
       }),
       arguments,
@@ -387,7 +387,7 @@ export class Transaction {
     hashType: number,
   ): Buffer {
     typeforce(
-      types.tuple(types.UInt32, types.BufferN, /* types.UInt8 */ types.Number),
+      types.tuple(types.UInt32, types.Buffer, /* types.UInt8 */ types.Number),
       arguments,
     );
 
@@ -469,7 +469,7 @@ export class Transaction {
     typeforce(
       types.tuple(
         types.UInt32,
-        typeforce.arrayOf(types.BufferN),
+        typeforce.arrayOf(types.Buffer),
         typeforce.arrayOf(types.Satoshi),
         types.UInt32,
       ),
@@ -616,7 +616,7 @@ export class Transaction {
     hashType: number,
   ): Buffer {
     typeforce(
-      types.tuple(types.UInt32, types.BufferN, types.Satoshi, types.UInt32),
+      types.tuple(types.UInt32, types.Buffer, types.Satoshi, types.UInt32),
       arguments,
     );
 
@@ -723,7 +723,7 @@ export class Transaction {
   }
 
   setInputScript(index: number, scriptSig: Buffer): void {
-    typeforce(types.tuple(types.Number, types.BufferN), arguments);
+    typeforce(types.tuple(types.Number, types.Buffer), arguments);
 
     this.ins[index].script = scriptSig;
   }
