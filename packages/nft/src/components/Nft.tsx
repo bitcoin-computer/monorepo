@@ -10,16 +10,80 @@ import {
   UtilsContext,
 } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
-import { PaymentMock } from "@bitcoin-computer/swap"
+import {
+  Offer,
+  OfferHelper,
+  Payment,
+  PaymentMock,
+  Sale,
+  SaleHelper,
+  OfferNHelper,
+  OfferN,
+} from "@bitcoin-computer/swap"
+import { Transaction } from "@bitcoin-computer/nakamotojs"
+import { NFT } from "@bitcoin-computer/TBC721"
+import { offerModSpec, saleModSpec } from "../constants/modSpecs"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 const modalId = "smart-object-info-modal"
 
-const CreateSellOffer = ({ computer, amount }: { computer: Computer; amount: string }) => {
-  console.log(computer, amount, typeof amount)
-  // console.log(computer.getPublicKey())
-  const mock = new PaymentMock(computer.getPublicKey(), parseFloat(amount))
-  // console.log(mock)
+const BuyNFT = async ({
+  computer,
+  nft,
+  showSnackBar,
+}: {
+  computer: Computer
+  nft: NFT
+  showSnackBar: (message: string, success: boolean) => void
+}) => {
+  // Should we use this or define a new Contract
+  const [offerRev] = await computer.query({ ids: [nft.offerTxRev] })
+  const offer = (await computer.sync(offerRev)) as OfferN
+  console.log(offer)
+  const saleTxn = Transaction.deserialize(offer.json)
+  // const offerHelper = new OfferHelper(computer, offerModSpec)
+  // const tx = await offerHelper.decodeOfferTx(nft.offerTxRev)
+  // console.log({ tx })
+
+  const payment = await computer.new(Payment, [computer.getPublicKey(), 7860])
+  const finalTx = await SaleHelper.finalizeSaleTx(saleTxn, payment, computer.toScriptPubKey())
+
+  console.log({ finalTx })
+
+  // // Buyer funds, signs, and broadcasts to execute the sale
+  await computer.fund(finalTx)
+  await computer.sign(finalTx)
+  await computer.broadcast(finalTx)
+}
+
+const CreateSellOffer = async ({
+  computer,
+  amount,
+  nft,
+  showSnackBar,
+}: {
+  computer: Computer
+  amount: string
+  nft: NFT
+  showSnackBar: (message: string, success: boolean) => void
+}) => {
+  const offer = await computer.new(OfferN, [computer.getPublicKey(), computer.getUrl()])
+  // this is the issue.
+  await nft.list(offer._id)
+
+  const saleHelper = new SaleHelper(computer, saleModSpec)
+  const mock = new PaymentMock(computer.getPublicKey(), 7860)
+  const { tx: saleTx } = await saleHelper.createSaleTx(nft, mock)
+  console.log({ mock, saleTx })
+  if (!saleTx) {
+    showSnackBar("Failed to list NFT for sale.", false)
+    return
+  }
+  console.log({ saleTx: saleTx.serialize() })
+
+  await offer.addSaleTx(saleTx.serialize())
+
+  showSnackBar("Successfully listed NFT for sale.", true)
 }
 
 function ObjectValueCard({ content }: { content: string }) {
@@ -54,9 +118,23 @@ const SmartObjectValues = ({ smartObject }: any) => {
   )
 }
 
-const CreateSellOfferComponent = ({ computer }: any) => {
+const CreateSellOfferComponent = ({
+  computer,
+  smartObject,
+}: {
+  computer: Computer
+  smartObject: NFT
+}) => {
   const [amount, setAmount] = useState<string>("")
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+
+  if (!smartObject) {
+    return <></>
+  }
+
+  if (computer.getPublicKey() !== smartObject._owners[0]) {
+    return <></>
+  }
 
   return (
     <div className="flex">
@@ -73,15 +151,55 @@ const CreateSellOfferComponent = ({ computer }: any) => {
       />
       <button
         type="button"
-        onClick={(e) => {
+        onClick={async (e) => {
           if (!amount) {
             showSnackBar("Provide valid amount", false)
           }
-          CreateSellOffer({ computer, amount })
+          try {
+            showLoader(true)
+            await CreateSellOffer({ computer, amount, nft: smartObject, showSnackBar })
+            showLoader(false)
+          } catch (error) {
+            showLoader(false)
+            console.log(error)
+            showSnackBar("Failed to create sell offer", false)
+          }
         }}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
       >
         List for Sale
+      </button>
+    </div>
+  )
+}
+
+const BuyNftComponent = ({ computer, smartObject }: { computer: Computer; smartObject: NFT }) => {
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+  if (!smartObject) {
+    return <></>
+  }
+  if (computer.getPublicKey() === smartObject._owners[0] || !smartObject.offerTxRev) {
+    return <></>
+  }
+
+  return (
+    <div className="flex">
+      <button
+        type="button"
+        onClick={async (e) => {
+          try {
+            showLoader(true)
+            await BuyNFT({ computer, nft: smartObject, showSnackBar })
+            showLoader(false)
+          } catch (error) {
+            showLoader(false)
+            console.log(error)
+            showSnackBar("Failed to buy nft", false)
+          }
+        }}
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+      >
+        Buy
       </button>
     </div>
   )
@@ -145,7 +263,8 @@ function NftView() {
     <>
       <div>
         <SmartObjectValues smartObject={smartObject} />
-        <CreateSellOfferComponent computer={computer} />
+        <CreateSellOfferComponent computer={computer} smartObject={smartObject} />
+        <BuyNftComponent computer={computer} smartObject={smartObject} />
         <Modal.Component
           title={"Success"}
           content={SuccessContent}
