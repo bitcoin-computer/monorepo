@@ -1,6 +1,7 @@
 /// <reference types="node" />
 import { NFT } from '@bitcoin-computer/TBC721';
 import { Transaction } from '@bitcoin-computer/nakamotojs';
+import { Buffer } from 'buffer';
 import { Valuable, ValuableMock } from './valuable.js';
 import { Payment, PaymentMock } from './payment.js';
 declare const Contract: typeof import("@bitcoin-computer/lib").Contract;

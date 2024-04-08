@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { NFT } from '@bitcoin-computer/TBC721'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
+import { Buffer } from 'buffer'
 import { Payment } from './payment.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')

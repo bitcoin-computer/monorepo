@@ -2,6 +2,7 @@
 import { NFT } from '@bitcoin-computer/TBC721'
 // import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
+import { Buffer } from 'buffer'
 import { Valuable, ValuableMock } from './valuable.js'
 import { Payment, PaymentMock } from './payment.js'
 

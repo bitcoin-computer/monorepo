@@ -34,10 +34,8 @@ export class SaleHelper {
     }
     static finalizeSaleTx(tx, payment, scriptPubKey) {
         const [paymentTxId, paymentIndex] = payment._rev.split(':');
-        tx.updateInput(1, {
-            txId: paymentTxId,
-            index: parseInt(paymentIndex, 10),
-        });
+        const index = parseInt(paymentIndex, 10);
+        tx.updateInput(1, { txId: paymentTxId, index });
         tx.updateOutput(1, { scriptPubKey });
         return tx;
     }
