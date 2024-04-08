@@ -44,7 +44,7 @@ export function decode(buffer: Buffer): ScriptSignature {
 export function encode(signature: Buffer, hashType: number): Buffer {
   typeforce(
     {
-      signature: types.BufferN(64),
+      signature: types.BufferN,
       hashType: types.UInt8,
     },
     { signature, hashType },

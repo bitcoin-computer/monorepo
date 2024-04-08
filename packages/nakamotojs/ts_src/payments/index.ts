@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 import { Network } from '../networks.js';
 import { Taptree } from '../types.js';
 import { p2data as embed } from './embed.js';

@@ -45,17 +45,17 @@ export function p2wsh(a: Payment, opts?: PaymentOpts): Payment {
       network: typef.maybe(typef.Object),
 
       address: typef.maybe(typef.String),
-      hash: typef.maybe(typef.BufferN(32)),
-      output: typef.maybe(typef.BufferN(34)),
+      hash: typef.maybe(typef.BufferN),
+      output: typef.maybe(typef.BufferN),
 
       redeem: typef.maybe({
-        input: typef.maybe(typef.Buffer),
+        input: typef.maybe(typef.BufferN),
         network: typef.maybe(typef.Object),
-        output: typef.maybe(typef.Buffer),
-        witness: typef.maybe(typef.arrayOf(typef.Buffer)),
+        output: typef.maybe(typef.BufferN),
+        witness: typef.maybe(typef.arrayOf(typef.BufferN)),
       }),
-      input: typef.maybe(typef.BufferN(0)),
-      witness: typef.maybe(typef.arrayOf(typef.Buffer)),
+      input: typef.maybe(typef.BufferN),
+      witness: typef.maybe(typef.arrayOf(typef.BufferN)),
     },
     a,
   );

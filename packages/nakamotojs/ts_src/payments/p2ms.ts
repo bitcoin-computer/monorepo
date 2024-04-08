@@ -3,6 +3,7 @@ import * as bscript from '../script.js';
 import { isPoint, typeforce as typef } from '../types.js';
 import { Payment, PaymentOpts, Stack } from './index.js';
 import * as lazy from './lazy.js';
+import { Buffer } from 'buffer';
 const OPS = bscript.OPS;
 
 const OP_INT_BASE = OPS.OP_RESERVED; // OP_1 - 1
@@ -39,11 +40,11 @@ export function p2ms(a: Payment, opts?: PaymentOpts): Payment {
       network: typef.maybe(typef.Object),
       m: typef.maybe(typef.Number),
       n: typef.maybe(typef.Number),
-      output: typef.maybe(typef.Buffer),
+      output: typef.maybe(typef.BufferN),
       pubkeys: typef.maybe(typef.arrayOf(isPoint)),
 
       signatures: typef.maybe(typef.arrayOf(isAcceptableSignature)),
-      input: typef.maybe(typef.Buffer),
+      input: typef.maybe(typef.BufferN),
     },
     a,
   );

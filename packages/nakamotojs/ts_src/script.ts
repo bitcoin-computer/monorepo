@@ -108,7 +108,7 @@ export function decompile(
   // TODO: remove me
   if (chunksIsArray(buffer)) return buffer;
 
-  typeforce(types.Buffer, buffer);
+  typeforce(types.BufferN, buffer);
 
   const chunks: Array<number | Buffer> = [];
   let i = 0;
