@@ -9,7 +9,7 @@ import { NFT, TBC721 } from '../src/nft'
 chai.use(chaiMatchPattern)
 const { expect } = chai
 
-// If you want to connect to your local Bitcoin Computer Node, create a .env file 
+// If you want to connect to your local Bitcoin Computer Node, create a .env file
 // in the monorepo root level and add the following line:
 // BCN_URL=http://localhost:1031
 
@@ -41,24 +41,24 @@ describe('NFT', () => {
 
     describe('Minting an NFT', () => {
       const sender = new Computer({ url })
-      
+
       before("Fund sender's wallet", async () => {
         await sender.faucet(0.001e8)
       })
-  
+
       it('Sender mints an NFT', async () => {
         nft = await sender.new(NFT, ['Test'])
         // @ts-ignore
         expect(nft).matchPattern({ name: 'Test', symbol, ...meta })
       })
-  
+
       it('Property _owners is a singleton array with minters public key', () => {
         expect(nft._owners).deep.eq([sender.getPublicKey()])
       })
-  
+
       it('Properties _id, _rev, and _root have the same value', () => {
         expect(nft._id).eq(nft._rev).eq(nft._root)
-  
+
         initialId = nft._id
         initialRev = nft._rev
         initialRoot = nft._root
@@ -190,5 +190,3 @@ describe('NFT', () => {
     })
   })
 })
-
-
