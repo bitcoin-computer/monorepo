@@ -12,10 +12,10 @@ export function p2pk(a, opts) {
   typef(
     {
       network: typef.maybe(typef.Object),
-      output: typef.maybe(typef.BufferN),
+      output: typef.maybe(typef.Buffer),
       pubkey: typef.maybe(isPoint),
       signature: typef.maybe(bscript.isCanonicalScriptSignature),
-      input: typef.maybe(typef.BufferN),
+      input: typef.maybe(typef.Buffer),
     },
     a,
   );
