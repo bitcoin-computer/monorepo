@@ -10,7 +10,6 @@ import dotenv from 'dotenv'
 import { OrdSale, OrdSaleHelper } from '../src/ord-sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
-import { Valuable, ValuableMock } from '../src/valuable'
 
 dotenv.config({ path: '../../.env' })
 
@@ -34,9 +33,9 @@ describe('Ord Sale', () => {
       const nft = await seller.new(NFT, ['name', 'symbol'])
 
       // Seller creates partially signed swap as a sale offer
-      const paymentMock = new PaymentMock(seller.getPublicKey(), 7860)
-      const b1Mock = new ValuableMock()
-      const b2Mock = new ValuableMock()
+      const paymentMock = new PaymentMock(7860)
+      const b1Mock = new PaymentMock(7860)
+      const b2Mock = new PaymentMock(7860)
 
       const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
       const { tx } = await seller.encode({
@@ -50,9 +49,9 @@ describe('Ord Sale', () => {
       })
 
       // Buyer creates a payment object with the asking price
-      const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
-      const b1 = await buyer.new(Valuable, [])
-      const b2 = await buyer.new(Valuable, [])
+      const payment = await buyer.new(Payment, [1e8])
+      const b1 = await buyer.new(Payment, [7860])
+      const b2 = await buyer.new(Payment, [7860])
 
       const [b1TxId, b1Index] = b1._rev.split(':')
       tx.updateInput(0, { txId: b1TxId, index: parseInt(b1Index, 10) })
@@ -94,9 +93,9 @@ describe('Ord Sale', () => {
       const nftA = await tbc721A.mint('a', 'AAA')
 
       // Alice creates a payment mock
-      const paymentMock = new PaymentMock(alice.getPublicKey(), nftPrice)
-      const b1Mock = new ValuableMock()
-      const b2Mock = new ValuableMock()
+      const paymentMock = new PaymentMock(nftPrice)
+      const b1Mock = new PaymentMock(7860)
+      const b2Mock = new PaymentMock(7860)
 
       // Alice creates a swap transaction
       const { tx } = await saleHelperA.createSaleTx(b1Mock, b2Mock, nftA, paymentMock)
@@ -105,9 +104,9 @@ describe('Ord Sale', () => {
       OrdSaleHelper.checkSaleTx()
 
       // Bob creates the payment and finalizes the transaction
-      const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
-      const b1 = await bob.new(Valuable, [])
-      const b2 = await bob.new(Valuable, [])
+      const payment = await bob.new(Payment, [nftPrice])
+      const b1 = await bob.new(Payment, [7860])
+      const b2 = await bob.new(Payment, [7860])
       const finalTx = OrdSaleHelper.finalizeSaleTx(tx, b1, b2, payment, bob.toScriptPubKey())
 
       // Bob signs an broadcasts the transaction to execute the swap
@@ -148,9 +147,9 @@ describe('Ord Sale', () => {
       })
 
       it('Seller creates a swap transaction for the NFT with the desired price', async () => {
-        const b1Mock = new ValuableMock()
-        const b2Mock = new ValuableMock()
-        const paymentMock = new PaymentMock(seller.getPublicKey(), nftPrice)
+        const b1Mock = new PaymentMock(7860)
+        const b2Mock = new PaymentMock(7860)
+        const paymentMock = new PaymentMock(nftPrice)
         ;({ tx } = await saleHelper.createSaleTx(b1Mock, b2Mock, nft, paymentMock))
       })
 
@@ -173,8 +172,8 @@ describe('Ord Sale', () => {
     describe('Executing the sale', () => {
       const buyer = new Computer({ url })
       const computer = new Computer({ url })
-      let b1: Valuable
-      let b2: Valuable
+      let b1: Payment
+      let b2: Payment
       let payment: Payment
       let txId: string
 
@@ -183,9 +182,9 @@ describe('Ord Sale', () => {
       })
 
       it('Buyer creates a payment object', async () => {
-        b1 = await buyer.new(Valuable, [])
-        b2 = await buyer.new(Valuable, [])
-        payment = await buyer.new(Payment, [buyer.getPublicKey(), nftPrice])
+        b1 = await buyer.new(Payment, [7860])
+        b2 = await buyer.new(Payment, [7860])
+        payment = await buyer.new(Payment, [nftPrice])
 
         // @ts-ignore
         expect(payment).matchPattern({

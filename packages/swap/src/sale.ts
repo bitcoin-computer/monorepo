@@ -1,17 +1,17 @@
 /* eslint-disable max-classes-per-file */
 import { NFT } from '@bitcoin-computer/TBC721'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
-import { Payment } from './payment.js'
+import { Payment, PaymentMock } from './payment.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Sale extends Contract {
-  static exec(a: NFT, b: NFT) {
-    const [ownerA] = a._owners
-    const [ownerB] = b._owners
-    a.transfer(ownerB)
-    b.transfer(ownerA)
-    return [b, a]
+  static exec(n: NFT, p: Payment) {
+    const [ownerN] = n._owners
+    const [ownerP] = p._owners
+    n.transfer(ownerP)
+    p.transfer(ownerN)
+    return [p, n]
   }
 }
 
@@ -29,7 +29,7 @@ export class SaleHelper {
     return this.mod
   }
 
-  createSaleTx(nft: NFT, payment: Payment) {
+  createSaleTx(nft: NFT, payment: PaymentMock) {
     const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
     return this.computer.encode({
       exp: `Sale.exec(nft, payment)`,

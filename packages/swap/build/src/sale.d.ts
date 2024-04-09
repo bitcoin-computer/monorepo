@@ -4,7 +4,7 @@ import { Transaction } from '@bitcoin-computer/nakamotojs';
 import { Payment } from './payment.js';
 declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Sale extends Contract {
-    static exec(a: NFT, b: NFT): NFT[];
+    static exec(n: NFT, p: Payment): (NFT | Payment)[];
 }
 export declare class SaleHelper {
     computer: any;
