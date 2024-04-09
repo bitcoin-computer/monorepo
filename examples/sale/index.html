@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.765412480953">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.766018582952">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Sales</title>
     <meta name="title" content="Sales">
-    <meta name="description" content="In the case of a swap, both smart objects have to be known before the swap transaction can be built.">
+    <meta name="description" content="These examples use several advanced features (sighash types, mocking, and controlling the order of inputs and outputs, ordinal safe programming) that...">
 
     <!-- Canonical -->
     <link rel="canonical" href="/examples/sale/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/examples/sale/">
     <meta property="og:title" content="Sales">
-    <meta property="og:description" content="In the case of a swap, both smart objects have to be known before the swap transaction can be built.">
+    <meta property="og:description" content="These examples use several advanced features (sighash types, mocking, and controlling the order of inputs and outputs, ordinal safe programming) that...">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/examples/sale/">
     <meta property="twitter:title" content="Sales">
-    <meta property="twitter:description" content="In the case of a swap, both smart objects have to be known before the swap transaction can be built.">
+    <meta property="twitter:description" content="These examples use several advanced features (sighash types, mocking, and controlling the order of inputs and outputs, ordinal safe programming) that...">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.765412480953" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.766018582952" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.765412480953" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.766018582952" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.765412480953" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.765412480953" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.766018582952" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.766018582952" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -157,135 +157,242 @@
         <span>Sales</span>
     </h1>
 </doc-anchor-target>
-<p>In the case of a swap, both smart objects have to be known before the swap transaction can be built. In this section we show how a single smart object can be offered for sale at a specified price.</p>
-<doc-anchor-target id="sale">
+<div class="flex mb-6">
+    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-blue-500 dark:bg-blue-400"></div>
+    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-blue-500 dark:text-blue-400" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>These examples use several advanced features (sighash types, mocking, and controlling the order of inputs and outputs, ordinal safe programming) that are not sufficiently documented elsewhere. If you would like to use these features we suggest to ask about their safe use <a href="https://t.me/thebitcoincomputer">here</a>.</p>
+        </div>
+    </div>
+</div>
+<p>In this section we explain how a smart object can be sold at a predetermined price without requiring trust between seller and buyer. Unlike in a swap where both objects are known in advance, the output that the buyer will provide later is unknown at the time of initiating the swap transaction. To address this problem, the Bitcoin Computer offers a feature called &#x27;mocking,&#x27; which enables the Seller to create a mock-up of the payment object that the buyer will create later.</p>
+<doc-anchor-target id="smart-object-sale">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#sale">#</doc-anchor-trigger>
-        <span>Sale</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-object-sale">#</doc-anchor-trigger>
+        <span>Smart Object Sale</span>
     </h2>
 </doc-anchor-target>
-<p>We first explain how to execute the sale of a smart object. The smart contract is quite simple but the swap does not preserving ordinal ranges of the smart object being sold. It is therefore not safe to use with ordinals. In the next section we explain a slightly more complicated swap that can be used with ordinals.</p>
-<doc-anchor-target id="smart-contract">
+<p>We first explain how to execute the sale of a smart object. The smart contract is quite simple but does not preserve the ordinal ranges of the smart object being sold. It is therefore not safe to use with ordinals. The <doc-anchor-trigger to="#ordinals-sale">next</doc-anchor-trigger> section explains a slightly more complicated swap that can be used with ordinals.</p>
+<p>The idea is to build a &quot;crossover&quot; transaction with two inputs and two outputs. The first input of the transaction spends the NFT <code v-pre>n</code>, and the second input will spend the payment <code v-pre>p</code>. The first output of the transaction will be <code v-pre>p</code>, and the second output will be <code v-pre>n</code> after the swap.</p>
+<p>Seller signs the first input and output with the <a href="https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types">sighash type</a> <code v-pre>SIGHASH_SINGLE | SIGHASH_ANYONECANPAY</code> so that any other user can modify the second input and output or add arbitrary inputs and outputs as longs as the input-output pair signed by Seller have the same index. As the input-output pair is signed, Seller is guaranteed that if a transaction containing the pair is included in the blockchain then Seller will get paid.</p>
+<p>Buyer on the other hand wants to obtain the NFT in the first input so Buyer is incentivized to build the transaction according to the protocol. If the Buyer misbehaves, the worst thing that can happen is that Buyer destroys the NFT and pays the Seller (for example buy broadcasting a transaction with meta data that is invalid under the Bitcoin Computer protocol).</p>
+<doc-anchor-target id="smart-contracts">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract">#</doc-anchor-trigger>
-        <span>Smart Contract</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contracts">#</doc-anchor-trigger>
+        <span>Smart Contracts</span>
     </h3>
 </doc-anchor-target>
+<p>The first challenge is to build a &quot;crossover&quot; transaction where we have to control the order of inputs and outputs. This is possible with the Bitcoin Computer because the order of inputs is determined by the order of objects in the environment and the order of outputs is determined by the order of objects in the value returned from the expression.</p>
+<p>Seller calls <code v-pre>encode</code> with an environment <code v-pre>{ n: ..., p: ... }</code>, indicating that the first input will spend <code v-pre>n</code> and the second input will spend <code v-pre>p</code>. Seller will use the expression <code v-pre>${Sale} Sale.exec(n, p)</code>. As the <code v-pre>exec</code> function of the <code v-pre>Sale</code> contract returns an array <code v-pre>[p, n]</code> the first output wil represent <code v-pre>p</code> and the second output will represent <code v-pre>n</code>. This is exactly the &quot;crossover&quot; transaction described above.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">class Sale extends Contract {
-  static exec(a: NFT, b: NFT) {
-    const [ownerA] = a._owners
-    const [ownerB] = b._owners
-    a.transfer(ownerB)
-    b.transfer(ownerA)
-    return [b, a]
+<pre class="language-typescript"><code v-pre class="language-typescript">export class Sale extends Contract {
+  static exec(n: NFT, p: Payment) {
+    const [ownerN] = n._owners
+    const [ownerP] = p._owners
+    n.transfer(ownerP)
+    p.transfer(ownerN)
+    return [p, n]
   }
 }</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="sighash-types">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#sighash-types">#</doc-anchor-trigger>
-        <span>Sighash Types</span>
-    </h4>
-</doc-anchor-target>
-<p>The idea is to create a transaction with two inputs and two outputs. The inputs spend the smart object <code v-pre>a</code> to be sold as well as another smart object <code v-pre>b</code> that is used for the payment. Like in the case of a swap the smart contract exchanges the owners of the smart objects. However unlike the swap smart contract it returns <code v-pre>[b, a]</code>. This has the effect that the first output of the transaction will represent <code v-pre>b</code> after the call and the second will represent <code v-pre>a</code>.</p>
-<p>Seller then builds the swap transaction and signs it with the <a href="https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types">sighash type</a> <code v-pre>SIGHASH_SINGLE | SIGHASH_ANYONECANPAY</code> and the input index <code v-pre>0</code>. This means that Sellers signature remains valid even when arbitrary inputs and outputs are added to the transaction. In particular, another user could change or remove the Bitcoin Computer specific meta data that is located in output 3.</p>
-<p>Essentially Seller is saying: you can do with this inputs-output pair whatever you want as long as you spend the output indicated in the first input and you keep the locking script and the amount of the first output the same. Seller can confidentially publish such a partially signed transaction as he wants to sell the nft spent by the fist inputs for the amount indicated in the first output and both are signed.</p>
-<doc-anchor-target id="partially-signed-transactions">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#partially-signed-transactions">#</doc-anchor-trigger>
-        <span>Partially Signed Transactions</span>
-    </h4>
-</doc-anchor-target>
-<p>Todo.</p>
-<doc-anchor-target id="helper-classes">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#helper-classes">#</doc-anchor-trigger>
-        <span>Helper Classes</span>
-    </h3>
-</doc-anchor-target>
-<p>Buyer will use the smart contract below to create a smart object holding the satoshis to pay for the NFT.</p>
+<p>The first argument to the <code v-pre>exec</code> function is an nft of the following class.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">export class NFT extends Contract {
+  constructor(name = '', symbol = '') {
+    super({ name, symbol })
+  }
+
+  transfer(to: string) {
+    this._owners = [to]
+  }
+}</code></pre>
+</doc-codeblock></div>
+<p>The second argument is created by Buyer to pay for the nft.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">class Payment extends Contract {
-  constructor(owner: string, _amount: number) {
-    super({ _owners: [owner], _amount })
+  constructor(_amount: number) {
+    super({ _amount })
   }
 
   transfer(to: string) {
     this._owners = [to]
   }
-}</code></pre>
-</doc-codeblock></div>
-<p>Seller will use this helper class to mock up the input that will later be used to spend Buyers&#x27;s payment object.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa8bc54db8fed'
-const mockedRev = 'mock:0000000000000000000000000000000000000000000000000000000000000000:0'
 
-class PaymentMock {
-  constructor(owner: string, amount: number) {
-    this._id = mockedRev
-    this._rev = mockedRev
-    this._root = mockedRev
-    this._owners = [owner]
-    this._amount = amount
-  }
-
-  transfer(to: string) {
-    this._owners = [to]
+  setAmount(a: number) {
+    this._amount = a
   }
 }</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="usage">
+<p>In the following sections, we explain the process of seller minting an NFT and creating a sales transaction as well as a buyer going through a purchase.</p>
+<doc-anchor-target id="minting-an-nft">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#usage">#</doc-anchor-trigger>
-        <span>Usage</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#minting-an-nft">#</doc-anchor-trigger>
+        <span>Minting an NFT</span>
     </h3>
 </doc-anchor-target>
-<p>Todo: add description here.</p>
+<p>To mint an nft, Seller can use the <code v-pre>computer.new</code> function.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund wallet
-const seller = new Computer(RLTC)
-const buyer = new Computer(RLTC)
+<pre class="language-typescript"><code v-pre class="language-typescript">const nft = await seller.new(NFT, ['name', 'symbol'])</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="building-the-sales-transaction">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#building-the-sales-transaction">#</doc-anchor-trigger>
+        <span>Building the Sales Transaction</span>
+    </h3>
+</doc-anchor-target>
+<p>The challenge in creating the sales transaction arises from the fact that the output containing the payment is not yet created at the time of building the transaction. This is a problem because, in order to evaluate an expression on the Bitcoin Computer, either a smart object or a revision of an existing smart object is required for all parameters of the call.</p>
+<p>To handle such scenarios the Bitcoin Computer provides a feature called mocking. A mock is a class that has the properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code>, <code v-pre>_amount</code>, and <code v-pre>_owners</code>, and sets them to strings of the form <code v-pre>mock:&lt;transaction-id&gt;:&lt;output-number&gt;</code>. A mock does not have to extend from <code v-pre>Contract</code>. Each mocked object must have a distinct transaction id and output number.</p>
+<p>The following code shows the class to create the payment mock as well as Seller creating a new instance with the standard Javascript <code v-pre>new</code> keyword.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">class PaymentMock {
+  constructor(amount: number) {
+    this._id = `mock:${'0'.repeat(64)}:${Math.floor(Math.random() * 10000)}`
+    this._rev = `mock:${'0'.repeat(64)}:${Math.floor(Math.random() * 10000)}`
+    this._root = `mock:${'0'.repeat(64)}:${Math.floor(Math.random() * 10000)}`
+    this._amount = amount
+    this._owners = [&lt;some public key&gt;]
+  }
+
+  transfer(to: string) {
+    this._owners = [to]
+  }
+
+  setAmount(a: number) {
+    this._amount = a
+  }
+}
+
+const mock = new PaymentMock(7860)</code></pre>
+</doc-codeblock></div>
+<p>Now Seller is ready to create and sign the sale transaction using <code v-pre>computer.encode</code> as shown below. There is a lot going on, so we will break down the arguments below.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">const { tx } = await seller.encode({
+  exp: `${Sale} Sale.exec(n, p)`,
+  env: { n: nft._rev, p: mock._rev },
+  mocks: { payment: mock },
+  sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+  inputIndex: 0,
+  fund: false,
+})</code></pre>
+</doc-codeblock></div>
+<p>The expression contains the source code of the <code v-pre>Sale</code> class and an expression that calls the static <code v-pre>exec</code> function. Note that every time a sale transaction is created, the source code of the <code v-pre>Sale</code> class is written into the blockchain again. A more efficient approach is to deploy the <code v-pre>Sale</code> class as a module first. This is described <doc-anchor-trigger to="#reducing-fees">here</doc-anchor-trigger>.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">  exp: `${Sale} Sale.exec(nft, payment)`,</code></pre>
+</doc-codeblock></div>
+<p>The next two lines contain the instructions for the mocking system. Seller can use the <code v-pre>mock</code> object that was created earlier as shown in the code below. The revision of the mock is passed in as the payment revision to the environment; and an object is passed to the <code v-pre>mocks</code> key that maps the name <code v-pre>payment</code> to the <code v-pre>mock</code> object. If an object is mocked up, the Bitcoin Computer will build a transaction without checking that mocked up objects exist on the blockchain and will assume that the value is as in the object passed into <code v-pre>mocks</code>. Later buyer will update the input that spends the revision of the payment mock with the revision and output number of an actual payment.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">  env: { nft: nft._rev, payment: mock._rev },
+  mocks: { payment: mock },</code></pre>
+</doc-codeblock></div>
+<p>To enable Buyer to modify Seller&#x27;s transaction later, Seller signs the first input with the <a href="https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types">sighash type</a> <code v-pre>SIGHASH_SINGLE | SIGHASH_ANYONECANPAY</code>. This means that Seller&#x27;s signature remains valid even when arbitrary inputs and outputs are added to the transaction as long as the input and the output that Seller has signed have the same index. As the input-output pair is signed, the Seller is guaranteed that if a transaction containing the pair is included in the blockchain, then the Seller will get paid.</p>
+<p>Essentially, the Seller is stating: you can spend the output containing the NFT as long as you maintain the locking script and the amount of the first output unchanged. The Seller can confidently publish such a partially signed transaction as Seller intendeds to sell the NFT spent by the first input for the amount indicated in the first output, and both are signed.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">  sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+  inputIndex: 0,</code></pre>
+</doc-codeblock></div>
+<p>Finally, Seller set&#x27;s <code v-pre>funding</code> to false to prevent the transaction from being funded by the <code v-pre>encode</code> function as he wants the Buyer to cover the transaction fees.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">  fund: false,</code></pre>
+</doc-codeblock></div>
+<p>Seller can publish the sales transaction to interested buyers. An interested buyer can create a payment object and broadcast the sale transaction to purchase the nft. This is described in the next section.</p>
+<doc-anchor-target id="buying-the-nft">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#buying-the-nft">#</doc-anchor-trigger>
+        <span>Buying the NFT</span>
+    </h3>
+</doc-anchor-target>
+<p>First, Buyer creates a smart object that can be used in the sale.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">const payment = await buyer.new(Payment, [1e8])
+const [paymentTxId, paymentIndex] = payment._rev.split(':')</code></pre>
+</doc-codeblock></div>
+<p>Next, Buyer updates the second input of the transaction that currently spends the payment swap. This is possible without invalidating Sellers signature as the special signhash type was used.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">tx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })</code></pre>
+</doc-codeblock></div>
+<p>Then Buyer updates the second output to contain Buyer&#x27;s public key. This ensures that Buyer will be new owner of the nft.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey()})</code></pre>
+</doc-codeblock></div>
+<p>Finally Buyer funds, signs, and broadcasts to execute the sale.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">await buyer.fund(tx)
+await buyer.sign(tx)
+await buyer.broadcast(tx)</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="full-example">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#full-example">#</doc-anchor-trigger>
+        <span>Full Example</span>
+    </h3>
+</doc-anchor-target>
+<p>The code below shows the whole process of minting an nft, listing it for sale, and a purchase. Working code can be found <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme">here</a></p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund wallets
+const seller = new Computer({ url })
+const buyer = new Computer({ url })
 await seller.faucet(1e8)
 await buyer.faucet(2e8)
 
 // Seller mints an NFT
 const nft = await seller.new(NFT, ['name', 'symbol'])
 
+// Seller creates a mock for the eventual payment
+const mock = new PaymentMock(7860)
+
 // Seller creates partially signed swap as a sale offer
-const mock = new PaymentMock(seller.getPublicKey(), 7860)
-const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
-const { tx } = await seller.encode({
+const { tx: saleTx } = await seller.encode({
   exp: `${Sale} Sale.exec(nft, payment)`,
   env: { nft: nft._rev, payment: mock._rev },
   mocks: { payment: mock },
+  // eslint-disable-next-line no-bitwise
   sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
   inputIndex: 0,
   fund: false,
 })
 
 // Buyer creates a payment object with the asking price
-const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
+const payment = await buyer.new(Payment, [1e8])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
 // Buyer set's the payment object as the second input of the swap tx
-tx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
+saleTx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
 
 // Buyer updates the second output of the swap tx to receive the NFT
-tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey()})
+saleTx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
 
 // Buyer funds, signs, and broadcasts to execute the sale
-await buyer.fund(tx)
-await buyer.sign(tx)
-await buyer.broadcast(tx)</code></pre>
+await buyer.fund(saleTx)
+await buyer.sign(saleTx)
+await buyer.broadcast(saleTx)</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="reducing-fees">
-    <h4>
+    <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#reducing-fees">#</doc-anchor-trigger>
         <span>Reducing Fees</span>
-    </h4>
+    </h3>
 </doc-anchor-target>
-<p>The example before is wasteful if many sales are executed because the source code of the <code v-pre>Sale</code> class is written into the blockchain on every sale. To avoid this waste of blockspace and fees, it is possible to use our module system to inscribe the <code v-pre>Sale</code> smart contract once as a module so that is can be referred to every time a swap is executed. The usage of the helper classes is shown below.</p>
+<p>The example before is wasteful because the source code of the <code v-pre>Sale</code> class is written into the blockchain on every sale. To avoid this, we recommend to <a href="../../api/deploy/">deploy</a> the <code v-pre>Sale</code> class and refer to the module when executing a sale.</p>
+<p>We provide a class <code v-pre>TBC721</code> that helps with deploying the smart contract as a module, minting the nfts with a reference to the deployed module, transferring NFTs, and returning the balance and owner of an NFT.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">interface ITBC721 {
+  deploy(): Promise&lt;string&gt;
+  mint(name: string, symbol: string): Promise&lt;NFT&gt;
+  balanceOf(publicKey: string): Promise&lt;number&gt;
+  ownersOf(tokenId: string): Promise&lt;string[]&gt;
+  transfer(tokenId: string, to: string)
+}</code></pre>
+</doc-codeblock></div>
+<p>The code below shows how the same flow as above can be implemented using the <code v-pre>TBC721</code> class.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund wallets
 const alice = new Computer(RLTC)
@@ -305,7 +412,7 @@ await saleHelperA.deploy()
 const nftA = await tbc721A.mint('a', 'AAA')
 
 // Alice creates a payment mock
-const mock = new PaymentMock(alice.getPublicKey(), nftPrice)
+const mock = new PaymentMock(nftPrice)
 
 // Alice creates a swap transaction
 const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
@@ -314,7 +421,7 @@ const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
 SaleHelper.checkSaleTx()
 
 // Bob creates the payment and finalizes the transaction
-const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
+const payment = await bob.new(Payment, [nftPrice])
 const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
 
 // Bob signs an broadcasts the transaction to execute the swap
@@ -328,29 +435,70 @@ await bob.broadcast(finalTx)</code></pre>
         <span>Ordinals Sale</span>
     </h2>
 </doc-anchor-target>
-<p>The <code v-pre>Sale</code> smart contract does not preserver ordinal ranges. That is, the ordinal range of the NFT before the sale will not be the same as the ordinal range after the swap.</p>
-<doc-anchor-target id="smart-contract-1">
+<p>The <code v-pre>Sale</code> smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call. To preserve the ordinal ranges the expression must not use the <code v-pre>_amount</code> keyword and must not return an object or an array containing an object.</p>
+<p>Building a sale contract for ordinals is more complicated than for smart objects. A very clever construction was proposed by Rodarmor <a href="https://github.com/ordinals/ord/issues/802">here</a> and later <a href="https://github.com/ordinals/ord/issues/802#issuecomment-1498030294">refined</a>. Our smart contract below implements this exact idea.</p>
+<doc-anchor-target id="smart-contracts-1">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract-1">#</doc-anchor-trigger>
-        <span>Smart Contract</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contracts-1">#</doc-anchor-trigger>
+        <span>Smart Contracts</span>
     </h3>
 </doc-anchor-target>
+<p>The <code v-pre>exec</code> function of the <code v-pre>OrdSale</code> class swaps the owners just like in the <code v-pre>Sale</code> class. However it then proceeds to double the amount of <code v-pre>b1</code> and return <code v-pre>[b1, t, p, b2]</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">export class Sale extends Contract {
-  static exec(b1: Valuable, b2: Valuable, t: NFT, p: NFT) {
-    const [ownerT] = t._owners
+<pre class="language-typescript"><code v-pre class="language-typescript">class OrdSale extends Contract {
+  static exec(b1: Payment, b2: Payment, n: NFT, p: Payment) {
+    const [ownerT] = n._owners
     const [ownerP] = p._owners
-    t.transfer(ownerP)
+    n.transfer(ownerP)
     p.transfer(ownerT)
+
     b1.setAmount(b1._amount + b2._amount)
-    return [b1, t, p, b2]
+    return [b1, n, p, b2]
   }
 }</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="usage-1">
+<p>When the <code v-pre>exec</code> function is evaluated, a transaction of the following form is built:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-none"><code v-pre class="language-none">Inputs: b1, b2, t, p
+Outputs: b1, t, p, b2</code></pre>
+</doc-codeblock></div>
+<p>The amount of <code v-pre>b1</code> after the call is the sum of the amounts of <code v-pre>b1</code> and <code v-pre>b2</code> before combined. The smart object <code v-pre>b1</code> therefore absorbs the entire ordinals range of <code v-pre>b2</code>. The objects <code v-pre>n</code> and <code v-pre>p</code> do not change their amounts during the call, these objects preserve their ordinal ranges.</p>
+<p>We now explain the whole process of minting an NFT, listing it for sale, and processing a purchase. We skip the step for minting as it was described above.</p>
+<doc-anchor-target id="building-the-sales-transaction-1">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#usage-1">#</doc-anchor-trigger>
-        <span>Usage</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#building-the-sales-transaction-1">#</doc-anchor-trigger>
+        <span>Building the Sales Transaction</span>
+    </h3>
+</doc-anchor-target>
+<p>In order to build the sale transaction, Seller first needs to create the objects <code v-pre>b1</code>, <code v-pre>b2</code>, and <code v-pre>p</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">const paymentMock = new PaymentMock(7860)
+const b1Mock = new PaymentMock()
+const b2Mock = new PaymentMock()</code></pre>
+</doc-codeblock></div>
+<p>Next Seller can build the sales transaction by executing the following code:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">const { tx } = await seller.encode({
+  exp: `${OrdSale} OrdSale.exec(b1, b2, nft, payment)`,
+  env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
+  mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
+  sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+  inputIndex: 2,
+  fund: false,
+})</code></pre>
+</doc-codeblock></div>
+<p>Conceptually this is very similar to the use of <code v-pre>encode</code> above. Note however, that Seller signs the third input output pair this time. This is because the NFT is spent by the third input and the payment that Seller wants to obtain is in the third output.</p>
+<doc-anchor-target id="buying-the-ordinal-nft">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#buying-the-ordinal-nft">#</doc-anchor-trigger>
+        <span>Buying the Ordinal NFT</span>
+    </h3>
+</doc-anchor-target>
+<p>This process is similar to the case of a smart object sale above. See the example blow.</p>
+<doc-anchor-target id="full-example-1">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#full-example-1">#</doc-anchor-trigger>
+        <span>Full Example</span>
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
@@ -364,9 +512,9 @@ await buyer.faucet(2e8)
 const nft = await seller.new(NFT, ['name', 'symbol'])
 
 // Seller creates partially signed swap as a sale offer
-const paymentMock = new PaymentMock(seller.getPublicKey(), 7860)
-const b1Mock = new ValuableMock()
-const b2Mock = new ValuableMock()
+const paymentMock = new PaymentMock(7860)
+const b1Mock = new PaymentMock()
+const b2Mock = new PaymentMock()
 
 const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 const { tx } = await seller.encode({
@@ -380,7 +528,7 @@ const { tx } = await seller.encode({
 })
 
 // Buyer creates a payment object with the asking price
-const payment = await buyer.new(Payment, [buyer.getPublicKey(), 1e8])
+const payment = await buyer.new(Payment, [1e8])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
 // Buyer set's the payment object as the second input of the swap tx
@@ -395,11 +543,12 @@ await buyer.sign(tx)
 await buyer.broadcast(tx)</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="reducing-fees-1">
-    <h4>
+    <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#reducing-fees-1">#</doc-anchor-trigger>
         <span>Reducing Fees</span>
-    </h4>
+    </h3>
 </doc-anchor-target>
+<p>Just like in the case of selling smart object sales, one can save transaction fees by using the module system through a helper class as shown below.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund wallets
 const alice = new Computer(RLTC)
@@ -419,7 +568,7 @@ await saleHelperA.deploy()
 const nftA = await tbc721A.mint('a', 'AAA')
 
 // Alice creates a payment mock
-const paymentMock = new PaymentMock(alice.getPublicKey(), nftPrice)
+const paymentMock = new PaymentMock(nftPrice)
 const b1Mock = new ValuableMock()
 const b2Mock = new ValuableMock()
 
@@ -430,7 +579,7 @@ const { tx: saleTx } = await saleHelperA.createSaleTx(b1Mock, b2Mock, nftA, paym
 OrdSaleHelper.checkSaleTx()
 
 // Bob creates the payment and finalizes the transaction
-const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
+const payment = await bob.new(Payment, [nftPrice])
 const b1 = await bob.new(Valuable, [])
 const b2 = await bob.new(Valuable, [])
 const finalTx = OrdSaleHelper.finalizeSaleTx(saleTx, b1, b2, payment, bob.toScriptPubKey())

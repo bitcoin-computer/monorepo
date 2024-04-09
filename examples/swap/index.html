@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.765412480953">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.766018582952">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Swaps</title>
     <meta name="title" content="Swaps">
-    <meta name="description" content="The simplest way to build a swap is to use a class whose constructor exchanges the owners of it's arguments.">
+    <meta name="description" content="The recommended way to build a swap is to use a static function that takes two arguments and exchanges their owners.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/examples/swap/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/examples/swap/">
     <meta property="og:title" content="Swaps">
-    <meta property="og:description" content="The simplest way to build a swap is to use a class whose constructor exchanges the owners of it's arguments.">
+    <meta property="og:description" content="The recommended way to build a swap is to use a static function that takes two arguments and exchanges their owners.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/examples/swap/">
     <meta property="twitter:title" content="Swaps">
-    <meta property="twitter:description" content="The simplest way to build a swap is to use a class whose constructor exchanges the owners of it's arguments.">
+    <meta property="twitter:description" content="The recommended way to build a swap is to use a static function that takes two arguments and exchanges their owners.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.765412480953" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.766018582952" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.765412480953" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.766018582952" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.765412480953" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.765412480953" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.766018582952" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.766018582952" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -157,23 +157,22 @@
         <span>Swaps</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="swap-using-a-constructor">
+<doc-anchor-target id="swap-using-a-static-function">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-using-a-constructor">#</doc-anchor-trigger>
-        <span>Swap using a Constructor</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-using-a-static-function">#</doc-anchor-trigger>
+        <span>Swap Using a Static Function</span>
     </h2>
 </doc-anchor-target>
-<p>The simplest way to build a swap is to use a class whose constructor exchanges the owners of it&#x27;s arguments.</p>
-<doc-anchor-target id="smart-contract">
+<p>The recommended way to build a swap is to use a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this smart objects that contain ordinals.</p>
+<doc-anchor-target id="smart-contracts">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract">#</doc-anchor-trigger>
-        <span>Smart Contract</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contracts">#</doc-anchor-trigger>
+        <span>Smart Contracts</span>
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">export class Swap extends Contract {
-  constructor(a: NFT, b: NFT) {
-    super()
+<pre class="language-typescript"><code v-pre class="language-typescript">export class StaticSwap extends Contract {
+  static exec(a: NFT, b: NFT) {
     const [ownerA] = a._owners
     const [ownerB] = b._owners
     a.transfer(ownerB)
@@ -181,11 +180,59 @@
   }
 }</code></pre>
 </doc-codeblock></div>
-<p>While this example uses NFTs, the same function can be used to swap any pair of smart objects that have a transfer function.</p>
-<doc-anchor-target id="usage">
+<p>The code below shows the <code v-pre>NFT</code> class. While this example uses NFTs as arguments, the same function can be used to swap any pair of smart objects that have a <code v-pre>transfer</code> function.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">export class NFT extends Contract {
+  constructor(name = '', symbol = '') {
+    super({ name, symbol })
+  }
+
+  transfer(to: string) {
+    this._owners = [to]
+  }
+}</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="minting-the-nfts">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#usage">#</doc-anchor-trigger>
-        <span>Usage</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#minting-the-nfts">#</doc-anchor-trigger>
+        <span>Minting the NFTs</span>
+    </h3>
+</doc-anchor-target>
+<p>Alice and Bob mint NFTs using the <code v-pre>computer.new</code> function.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">const a = await alice.new(NFT, ['A', 'AAA'])
+const b = await alice.new(NFT, ['B', 'BBB'])</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="building-the-swap-transaction">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#building-the-swap-transaction">#</doc-anchor-trigger>
+        <span>Building the Swap Transaction</span>
+    </h3>
+</doc-anchor-target>
+<p>A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The two outputs of the transaction are the NFTs after the swap with their owners exchanged.</p>
+<p>Alice passes an expression containing both the code of the <code v-pre>StaticSwap</code> class and the expression <code v-pre>StaticSwap.exec(a, b)</code> to the <a href="./api/encode.md"><code v-pre>encode</code></a> function. The second argument is an environment that determines that the smart objects <code v-pre>a</code> and <code v-pre>b</code> are stored at revisions <code v-pre>a._rev</code> and <code v-pre>b._rev</code>.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">const { tx } = await alice.encode({
+  exp: `${StaticSwap} StaticSwap.exec(a, b)`,
+  env: { a: a._rev, b: b._rev },
+})</code></pre>
+</doc-codeblock></div>
+<p>The <code v-pre>encode</code> function will automatically sign all inputs of the transaction that can be signed with the private key of the computer object on which the function is called. In this case, this is the input as revision <code v-pre>a._rev</code>.</p>
+<doc-anchor-target id="executing-the-swap">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#executing-the-swap">#</doc-anchor-trigger>
+        <span>Executing the Swap</span>
+    </h3>
+</doc-anchor-target>
+<p>Then Bob signs the input <code v-pre>b._rev</code> and broadcasts the transaction. When the transaction is included in the blockchain the swap is executed and the owners of the two NFTs are reversed.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">await bob.sign(tx)
+await bob.broadcast(tx)</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="full-example">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#full-example">#</doc-anchor-trigger>
+        <span>Full Example</span>
     </h3>
 </doc-anchor-target>
 <p>The code snippet below shows how to create two nfts and swap them using the smart contract above.</p>
@@ -210,23 +257,19 @@ const { tx } = await alice.encode({
 await bob.sign(tx)
 await bob.broadcast(tx)</code></pre>
 </doc-codeblock></div>
-<p>An expression containing both the code of the <code v-pre>Swap</code> class and the expression <code v-pre>Swap.exec(nftA, nftB)</code> is passed to the <a href="./api/encode.md"><code v-pre>encode</code></a> function. The second argument is an environment that determines that the smart objects corresponding to the names <code v-pre>nftA</code> and <code v-pre>nftB</code> are stored at revisions <code v-pre>nftA._rev</code> and <code v-pre>nftB._rev</code>.</p>
-<p>The return value is a transaction <code v-pre>tx</code> with two inputs and two outputs. The inputs spend the outputs <code v-pre>nftA._rev</code> and <code v-pre>nftB._rev</code> representing the two NFTs that are arguments to the function. The two outputs represent the new state of the NFTs after the function call.</p>
-<p>The <code v-pre>encode</code> function will automatically sign all inputs of the transaction that can be signed with the private key of the computer object on which the function is called. In this case, this is the input as revision <code v-pre>nftA._rev</code>.</p>
-<p>Subsequently Bob signs the input <code v-pre>nftB._rev</code> and broadcasts the transaction. When the transaction is included in the blockchain the swap is executed and the owners of the two NFTs are reversed.</p>
 <doc-anchor-target id="reducing-fees">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#reducing-fees">#</doc-anchor-trigger>
         <span>Reducing Fees</span>
     </h4>
 </doc-anchor-target>
-<p>The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the <code v-pre>Swap</code> function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class <code v-pre>SwapHelper</code> for swaps and <code v-pre>TBC721</code> for NFTs that can be used as follows:</p>
+<p>The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the <code v-pre>Swap</code> function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts"><code v-pre>SwapHelper</code></a> for swaps and <code v-pre>TBC721</code> for NFTs that can be used as follows:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">// Alice creates helper objects
 const tbc721A = new TBC721(alice)
-const swapHelperA = new SwapHelper(alice)
+const swapHelperA = new StaticSwapHelper(alice)
 
-// Alice deploys the smart contracts as modules
+// Alice deploys the smart contracts
 await tbc721A.deploy()
 await swapHelperA.deploy()
 
@@ -235,7 +278,7 @@ nftA = await tbc721A.mint('a', 'AAA')
 
 // Bob creates helper objects from the module specifiers
 const tbc721B = new TBC721(bob, tbc721A.mod)
-const swapHelperB = new SwapHelper(bob, swapHelperA.mod)
+const swapHelperB = new StaticSwapHelper(bob, swapHelperA.mod)
 
 // Bob mints an NFT to pay for Alice's's NFT
 nftB = await tbc721B.mint('b', 'BBB')
@@ -244,62 +287,19 @@ nftB = await tbc721B.mint('b', 'BBB')
 const { tx } = await swapHelperB.createSwapTx(nftA, nftB)
 
 // Alice checks the swap transaction
-swapHelperA.checkSwapTx(tx, bob.getPublicKey(), alice.getPublicKey())
+await swapHelperA.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
 
 // Alice signs an broadcasts the transaction to execute the swap
 await alice.sign(tx)
 await alice.broadcast(tx)</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="swap-using-a-static-function">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-using-a-static-function">#</doc-anchor-trigger>
-        <span>Swap using a Static Function</span>
-    </h2>
-</doc-anchor-target>
-<p>The basic swap described above has the disadvantage that it creates a smart object for the swap that is not useful after the swap was executed and that has to be paid for. To avoid creating the superfluous object in the first place a static function can be used as described next.</p>
-<doc-anchor-target id="smart-contract-1">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract-1">#</doc-anchor-trigger>
-        <span>Smart Contract</span>
-    </h3>
-</doc-anchor-target>
-<p>When the static <code v-pre>exec</code> is executed, a transaction is created that updates the two smart object in the arguments without creating an extra object. When the transaction is included in the blockchain the owners of the arguments are exchanged.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">export class StaticSwap extends Contract {
-  static exec(a: NFT, b: NFT) {
-    const [ownerA] = a._owners
-    const [ownerB] = b._owners
-    a.transfer(ownerB)
-    b.transfer(ownerA)
-  }
-}</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="usage-1">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#usage-1">#</doc-anchor-trigger>
-        <span>Usage</span>
-    </h3>
-</doc-anchor-target>
-<p>The usage is almost identical to the usage of the basic swap. The biggest difference is the expression encoded as shown below. See <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme">here</a> for details.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const tx = await computer.encode({
-  exp: `${StaticSwap} StaticSwap.exec(a, b)`,
-  env: { a: a._rev, b: b._rev },
-})</code></pre>
-</doc-codeblock></div>
 <doc-anchor-target id="swap-using-a-method">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#swap-using-a-method">#</doc-anchor-trigger>
-        <span>Swap using a Method</span>
+        <span>Swap Using a Method</span>
     </h2>
 </doc-anchor-target>
-<p>It is also possible to add a swap function to an NFT contract as shown below. Like the example of a static swap this avoids creating an useless smart object.</p>
-<doc-anchor-target id="smart-contract-2">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract-2">#</doc-anchor-trigger>
-        <span>Smart Contract</span>
-    </h3>
-</doc-anchor-target>
+<p>Another possibility is to add a swap function directly to an <code v-pre>NFT</code>. The use is similar to above.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">class Swappable extends Contract {
   constructor(name = '', symbol = '') {
@@ -318,13 +318,13 @@ await alice.broadcast(tx)</code></pre>
   }
 }</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="usage-2">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#usage-2">#</doc-anchor-trigger>
-        <span>Usage</span>
-    </h3>
+<doc-anchor-target id="code">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#code">#</doc-anchor-trigger>
+        <span>Code</span>
+    </h2>
 </doc-anchor-target>
-<p>The usage is similar to above, see <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme">here</a> for details.</p>
+<p>Have a look at the code on  <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme">Github</a> for details.</p>
 
                                 
                                 <!-- Required only on API pages -->

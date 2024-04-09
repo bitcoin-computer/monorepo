@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.765412480953">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.766018582952">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.5.0.765412480953" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.5.0.766018582952" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.765412480953" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.766018582952" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.765412480953" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.5.0.765412480953" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.766018582952" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.5.0.766018582952" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -364,10 +364,8 @@ const obj = await computer.sync(rev)</code></pre>
 <p>Each smart object can store an amount of cryptocurrency. By default a smart object stores a minimal (non-dust) amount. If the <code v-pre>_amount</code> property of a smart object is set to a number, the output storing that smart object will contain that number of satoshis. For example, consider the class <code v-pre>Payment</code> below.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">class Payment extends Contract {
-  constructor(to: string, amount: number) {
-    super()
-    this._owners = [to]
-    this._amount = amount
+  constructor(amount: number) {
+    super({ _amount })
   }
 
   cashOut() {
@@ -378,7 +376,7 @@ const obj = await computer.sync(rev)</code></pre>
 <p>If a user <em>A</em> wants to send 210000 satoshis to a user <em>B</em>, the user <em>A</em> can setup the payment as follows:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const computerA = new Computer({ mnemonic: &lt;A's mnemonic&gt; })
-const payment = computerA.new(Payment, [&lt;B's public key&gt;, 210000])</code></pre>
+const payment = computerA.new(Payment, [210000])</code></pre>
 </doc-codeblock></div>
 <p>When the <code v-pre>payment</code> smart object is created, the wallet inside the <code v-pre>computerA</code> object funds the 210000 satoshi that are stored in the <code v-pre>payment</code> object. Once user <em>B</em> becomes aware of the payment, he can withdraw by syncing against the object and calling the <code v-pre>cashOut</code> function.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
