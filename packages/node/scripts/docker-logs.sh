@@ -6,7 +6,7 @@ system_timezone=$(timedatectl show --property=Timezone --value)
 export TZ="$system_timezone"
 
 datestr=$(date +%Y-%m-%d)
-filepath="logs-${datestr}.log"
+filepath="logs/debug-${datestr}.log"
 
 # Iterate over each container ID and connect to it
 for container_id in $container_ids; do
@@ -29,7 +29,7 @@ if [ $chain == 'btc' ]; then
     if [ $network == 'mainnet' ]; then
         logpath='/home/bitcoin/.bitcoin/debug.log'
     else
-        logpath='/home/bitcoin/.bitcoin/testnet4/debug.log'
+        logpath='/home/bitcoin/.bitcoin/testnet3/debug.log'
     fi
 else
     if [ $network == 'mainnet' ]; then
@@ -48,6 +48,6 @@ docker exec $node_container_id tail -n 5 $logpath
 echo 'Checking errors...'
 for container_id in $container_ids; do
     echo "Connecting to container $container_id..."
-    docker exec $container_id sh -c "cat *.log | grep error"
+    docker exec $container_id sh -c "cat logs/*.log | grep error"
 done
 echo ''
