@@ -17,7 +17,7 @@ We first explain how to execute the sale of a smart object. The smart contract i
 
 The idea is to build a "crossover" transaction with two inputs and two outputs. The first input of the transaction spends the NFT `n`, and the second input will spend the payment `p`. The first output of the transaction will be `p`, and the second output will be `n` after the swap.
 
-Seller signs the first input and output with the sighash type `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY` so that any other user can modify the second input and output or add arbitrary inputs and outputs as longs as the input-output pair signed by Seller have the same index. As the input-output pair is signed, Seller is guaranteed that if a transaction containing the pair is included in the blockchain then Seller will get paid. 
+Seller signs the first input and output with the [sighash type](https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types) `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY` so that any other user can modify the second input and output or add arbitrary inputs and outputs as longs as the input-output pair signed by Seller have the same index. As the input-output pair is signed, Seller is guaranteed that if a transaction containing the pair is included in the blockchain then Seller will get paid. 
 
 Buyer on the other hand wants to obtain the NFT in the first input so Buyer is incentivized to build the transaction according to the protocol. If the Buyer misbehaves, the worst thing that can happen is that Buyer destroys the NFT and pays the Seller (for example buy broadcasting a transaction with meta data that is invalid under the Bitcoin Computer protocol).
 
