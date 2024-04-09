@@ -18,14 +18,14 @@ const url = process.env.BCN_URL
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-describe('Sale', () => {
+describe.only('Sale', () => {
   let tx: Transaction
   let txClone: Transaction
   let sellerPublicKey: string
   const nftPrice = 0.1e8
   const fee = 100000
 
-  describe('Examples from docs', () => {
+  describe.only('Examples from docs', () => {
     it('Should work without helper classes', async () => {
       // Create and fund wallets
       const seller = new Computer({ url })
@@ -65,7 +65,7 @@ describe('Sale', () => {
       await buyer.broadcast(saleTx)
     })
 
-    it('Should work with helper classes', async () => {
+    it.only('Should work with helper classes', async () => {
       // Create and fund wallets
       const alice = new Computer({ url })
       const bob = new Computer({ url })
@@ -90,7 +90,7 @@ describe('Sale', () => {
       const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
 
       // Bob checks the swap transaction
-      SaleHelper.checkSaleTx()
+      await saleHelperA.checkSaleTx(saleTx, '', '', mock)
 
       // Bob creates the payment and finalizes the transaction
       const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])

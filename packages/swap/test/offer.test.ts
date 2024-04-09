@@ -50,7 +50,7 @@ describe('Offer', () => {
 
   describe('Alice creates an offer', async () => {
     let aliceTx: any
-    let offerHelper
+    let offerHelper: OfferHelper
 
     before('Before creating an offer', async () => {
       offerHelper = new OfferHelper(alice)
@@ -70,11 +70,12 @@ describe('Offer', () => {
 
     it('Alice creates an offer transaction', async () => {
       await alice.faucet(1e8)
-      const { tx: offerTx } = await offerHelper.createOfferTx(
+      const { tx: offerTx, effect } = await offerHelper.createOfferTx(
         bob.getPublicKey(),
         bob.getUrl(),
         aliceTx,
       )
+      console.log('effect: ', effect)
       offerId = await alice.broadcast(offerTx)
     })
   })
