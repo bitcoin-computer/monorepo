@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/TBC404",
-  "version": "0.17.2-beta.0",
+  "version": "0.18.0-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "scripts": {
     "start": "node build/src/main.js",
@@ -13,7 +13,7 @@
   },
   "type": "module",
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.17.2-beta.0"
+    "@bitcoin-computer/lib": "^0.18.0-beta.0"
   },
   "devDependencies": {
     "@types/mocha": "^9.1.1",
