@@ -13,11 +13,18 @@
 
 </div>
 
-This fork makes the following changes to <a href="https://github.com/bitcoinjs/bitcoinjs-lib/" target="_blank">BitcoinJS</a>
-* Adds support for Litecoin (support for Dogecoin coming soon)
+This fork makes the following changes to <a href="https://github.com/bitcoinjs/bitcoinjs-lib/" target="_blank">BitcoinJS</a>:
+* Works in the browser
+* Supports Litecoin in addition to Bitcoin (support for Dogecoin coming soon)
 * Adds support for signing transactions (BitcoinJS can only sign PSBTs).
+* Adds support for updating inputs and outputs
+* Adds support for serializing and deserializing transactions
+
+## Why
 
 While PSBTs are a great for serialization, they are restrictive as they cannot be modified after the first signature is added. This is an issue for applications like swaps where multiple users need to build a transaction collaboratively. In these cases users can take advantage of SIGHASH types that allow the modifications of part of a transaction after a signature is added.
+
+You can find more information on building [swap transactions](https://docs.bitcoincomputer.io/examples/swap/) and [sale transactions](https://docs.bitcoincomputer.io/examples/sale/) in our docs.
 
 ## Installation
 
