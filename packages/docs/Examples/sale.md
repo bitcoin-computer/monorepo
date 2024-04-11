@@ -282,7 +282,7 @@ await bob.sign(finalTx)
 await bob.broadcast(finalTx)
 ```
 
-## Ordinals Sale
+## Ordinal Sale
 
 The `Sale` smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call. To preserve the ordinal ranges the expression must not use the `_amount` keyword and must not return an object or an array containing an object.
 
