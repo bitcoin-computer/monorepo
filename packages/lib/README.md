@@ -13,10 +13,7 @@ You need to have [node.js](https://nodejs.org/en/) installed.
 
 ## Use on a Server
 
-
-### Install
-
-Run the commands below in an empty folder.
+To install, run the commands below
 
 <font size=1>
 
@@ -30,9 +27,7 @@ npm install @bitcoin-computer/lib
 
 </font>
 
-### Write a Smart Contract
-
-Create a file `index.mjs`.
+Create a file `index.mjs` containing the smart contract
 
 <font size=1>
 
@@ -68,7 +63,7 @@ console.log(counter)
 
 </font>
 
-### Run the Smart Contract
+Execute the smart contract.
 
 <font size=1>
 
@@ -97,48 +92,37 @@ Counter {
 
 ## Use in a Browser
 
-### Write a Smart contract
-
-Create a file `index.mjs`.
-
-<font size=1>
-
-```js
-import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs";
-
-class Counter extends Contract {
-  constructor() {
-    super({ n: 0 })
-  }
-
-  inc() {
-    this.n += 1
-  }
-}
-
-const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
-
-await computer.faucet(1e7)
-
-const counter = await computer.new(Counter)
-document.getElementById("count").innerHTML = counter.n
-
-await counter.inc()
-document.getElementById("count").innerHTML = counter.n
-```
-
-</font>
-
-### Make a Website
-
-Create a file `index.html`
+Create a file `index.html` containing the smart contract.
 
 <font size=1>
 
 ```html
 <html>
+  <head>
+    <script type="module">
+      import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs";
+
+      class Counter extends Contract {
+        constructor() {
+          super({ n: 0 })
+        }
+
+        inc() {
+          this.n += 1
+        }
+      }
+
+      const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
+      await computer.faucet(0.0001e8)
+
+      const counter = await computer.new(Counter)
+      document.getElementById("count").innerHTML = counter.n
+
+      await counter.inc()
+      document.getElementById("count").innerHTML = counter.n
+    </script>
+  </head>
   <body>
-    <script type="module" src="./index.mjs"></script>
     Counter value: <span id='count'></span>
   </body>
 </html>
@@ -146,24 +130,18 @@ Create a file `index.html`
 
 </font>
 
-### Start a Web Server
-
-Run the following code in an empty directory and open [http://localhost:8080](http://localhost:8080).
+Open the HTML file in your browser.
 
 <font size=1>
 
 ```bash
-# Create a packages.json file
-npm init -y
-
-# Install web server
-npm i http-server
-
-# Start web server
-http-server
+# Open html file in browser
+open index.html
 ```
 
 </font>
+
+You should see "Counter value: x" where x is blank at first, then 0 and then 1.
 
 ## Use locally on regtest or connect to a mainnet node
 
@@ -183,12 +161,20 @@ When you call the `Computer` constructor on the client, pass the url of your nod
 <font size=1>
 
 ```js
-// Connect computer object to node url
+// connect to local node
 const computer = new Computer({
-  url: 'http://localhost:1031', // Bitcoin Computer Node node url
-  chain: 'LTC', // LTC or BTC
-  network: 'regtest', // regtest, testnet, or mainnet
-  mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike', // BIP 39 mnemonic sentence
+
+  // node url
+  url: 'http://localhost:1031',
+
+  // LTC or BTC
+  chain: 'LTC',
+  
+  // regtest, testnet, or mainnet
+  network: 'regtest', 
+
+  // BIP 39 mnemonic sentence
+  mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike'
 })
 ```
 
@@ -208,7 +194,7 @@ It is free to develop and test on testnet and regtest. On mainnet we charge a sm
 * The fee for a constructor or function call is satoshis-per-byte * 475. This is about as much as the average transaction fee for a payment.
 * The fee for deploying a module makes use of the segwit discount. It is satoshis-per-byte * data size * 1/4.
 
-You can configure satoshis per byte. This fee is in addition to the mining fee.
+This fee is in addition to the mining fee. You can configure satoshis per byte.
 
 ## Development Status
 
