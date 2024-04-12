@@ -46,7 +46,7 @@ class Counter extends Contract {
 }
 
 // Create a Bitcoin Computer wallet
-const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
+const computer = new Computer()
 
 // Fund the computer wallet
 await computer.faucet(1e7)
@@ -112,7 +112,7 @@ Create a file `index.html` containing the smart contract.
         }
       }
 
-      const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
+      const computer = new Computer()
       await computer.faucet(0.0001e8)
 
       const counter = await computer.new(Counter)
@@ -122,8 +122,9 @@ Create a file `index.html` containing the smart contract.
       document.getElementById("count").innerHTML = counter.n
     </script>
   </head>
+
   <body>
-    Counter value: <span id='count'></span>
+    Counter value: <span id='count'>*</span>
   </body>
 </html>
 ```
@@ -141,7 +142,7 @@ open index.html
 
 </font>
 
-You should see "Counter value: x" where x is blank at first, then 0 and then 1.
+You should see "Counter value: x" where x is * at first, then 0 and then 1.
 
 ## Connect to a Bitcoin Computer Node
 
