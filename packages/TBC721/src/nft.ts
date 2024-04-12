@@ -5,6 +5,7 @@ export class NFT extends Contract {
   name: string
   symbol: string
   offerTxRev: string
+
   constructor(name = '', symbol = '') {
     super({ name, symbol })
   }
@@ -20,6 +21,8 @@ export class NFT extends Contract {
 }
 
 export interface ITBC721 {
+  deploy(): Promise<string>
+  mint(name: string, symbol: string): Promise<NFT>
   balanceOf(publicKey: string): Promise<number>
   ownersOf(tokenId: string): Promise<string[]>
   transfer(to: string, tokenId: string): Promise<void>

@@ -5,8 +5,9 @@ export declare class Payment extends Contract {
     _root: string;
     _amount: number;
     _owners: string[];
-    constructor(owner: string, _amount: number);
+    constructor(_amount: number);
     transfer(to: string): void;
+    setAmount(a: number): void;
 }
 export declare class PaymentMock {
     _id: string;
@@ -14,7 +15,8 @@ export declare class PaymentMock {
     _root: string;
     _amount: number;
     _owners: string[];
-    constructor(owner: string, amount: number);
+    constructor(amount: number);
     transfer(to: string): void;
+    setAmount(a: number): void;
 }
 export {};

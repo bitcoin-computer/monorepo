@@ -1,21 +1,19 @@
 /* eslint-disable max-classes-per-file */
 import { NFT } from '@bitcoin-computer/TBC721'
-// import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Buffer } from 'buffer'
-import { Valuable, ValuableMock } from './valuable.js'
 import { Payment, PaymentMock } from './payment.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 
 export class OrdSale extends Contract {
-  static exec(b1: Valuable, b2: Valuable, t: NFT, p: NFT) {
-    const [ownerT] = t._owners
+  static exec(b1: Payment, b2: Payment, n: NFT, p: Payment) {
+    const [ownerT] = n._owners
     const [ownerP] = p._owners
-    t.transfer(ownerP)
+    n.transfer(ownerP)
     p.transfer(ownerT)
     b1.setAmount(b1._amount + b2._amount)
-    return [b1, t, p, b2]
+    return [b1, n, p, b2]
   }
 }
 
@@ -33,12 +31,7 @@ export class OrdSaleHelper {
     return this.mod
   }
 
-  async createSaleTx(
-    b1Mock: ValuableMock,
-    b2Mock: ValuableMock,
-    nft: NFT,
-    paymentMock: PaymentMock,
-  ) {
+  async createSaleTx(b1Mock: PaymentMock, b2Mock: PaymentMock, nft: NFT, paymentMock: PaymentMock) {
     const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 
     return this.computer.encode({
@@ -59,8 +52,8 @@ export class OrdSaleHelper {
 
   static finalizeSaleTx(
     tx: Transaction,
-    b1: Valuable,
-    b2: Valuable,
+    b1: Payment,
+    b2: Payment,
     payment: Payment,
     scriptPubKey: Buffer,
   ) {

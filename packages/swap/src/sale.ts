@@ -7,12 +7,12 @@ import { Payment, PaymentMock } from './payment.js'
 const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Sale extends Contract {
-  static exec(a: NFT, b: NFT) {
-    const [ownerA] = a._owners
-    const [ownerB] = b._owners
-    a.transfer(ownerB)
-    b.transfer(ownerA)
-    return [b, a]
+  static exec(n: NFT, p: Payment) {
+    const [ownerN] = n._owners
+    const [ownerP] = p._owners
+    n.transfer(ownerP)
+    p.transfer(ownerN)
+    return [p, n]
   }
 }
 
@@ -30,7 +30,7 @@ export class SaleHelper {
     return this.mod
   }
 
-  createSaleTx(nft: NFT, payment: Payment) {
+  createSaleTx(nft: NFT, payment: PaymentMock) {
     const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
     return this.computer.encode({
       exp: `Sale.exec(nft, payment)`,
@@ -50,7 +50,7 @@ export class SaleHelper {
     if (mod !== this.mod) throw new Error('Unexpected module specifier')
 
     // As this is a mock for checking saleTx, it can be with any public key
-    const payment = new PaymentMock(this.computer.getPublicKey(), tx.outs[0].value)
+    const payment = new PaymentMock(tx.outs[0].value)
     env.payment = payment._rev
 
     const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
