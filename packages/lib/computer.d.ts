@@ -334,7 +334,7 @@ declare class Contract {
 }
 
 declare class Computer {
-  walletBITCOIN: Wallet;
+  wallet: Wallet;
   constructor(params?: ComputerOptions);
   new<T extends Class>(
     constructor: T,
