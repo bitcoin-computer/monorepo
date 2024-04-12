@@ -326,5 +326,107 @@
         "paymentException": "TypeError: Invalid pubkey for p2tr"
       }
     ]
-  }
+  },
+  "valid": [
+    {
+      "network": "bitcoin",
+      "publicKey": "029143dbd1a870e4498901c35d800671f20e21f1aec3c1df014c7f8cb74e72cdf9",
+      "types": [
+        {
+          "scriptType": "p2pkh",
+          "address": "1FU7tCdYESrudBsELdFMY7EiM8iv7hc434",
+          "script": "OP_DUP OP_HASH160 9eb2bcc5576fefd4e555ad31fa5f7a3f4c94bf5f OP_EQUALVERIFY OP_CHECKSIG"
+        },
+        {
+          "scriptType": "p2wpkh",
+          "address": "bc1qn6ete32hdlhafe2445cl5hm68axff06lyyzw4f",
+          "script": "OP_0 9eb2bcc5576fefd4e555ad31fa5f7a3f4c94bf5f"
+        },
+        {
+          "scriptType": "p2tr",
+          "address": "bc1p9f2jgradpf2s2jdsue2lmfja55daktft3j5zxcyl7rrl7q63cm5s7g6thy",
+          "script": "OP_1 2a55240fad0a550549b0e655fda65da51bdb2d2b8ca823609ff0c7ff0351c6e9"
+        },
+        {
+          "scriptType": "p2pk",
+          "script": "029143dbd1a870e4498901c35d800671f20e21f1aec3c1df014c7f8cb74e72cdf9 OP_CHECKSIG"
+        }
+      ]
+    },
+    {
+      "network": "litecoin",
+      "publicKey": "029143dbd1a870e4498901c35d800671f20e21f1aec3c1df014c7f8cb74e72cdf9",
+      "types": [
+        {
+          "scriptType": "p2pkh",
+          "address": "LZh59QwNK76xszZPWmEep8JUZM6CGy6mx3",
+          "script": "OP_DUP OP_HASH160 9eb2bcc5576fefd4e555ad31fa5f7a3f4c94bf5f OP_EQUALVERIFY OP_CHECKSIG"
+        },
+        {
+          "scriptType": "p2wpkh",
+          "address": "ltc1qn6ete32hdlhafe2445cl5hm68axff06lqcc2de",
+          "script": "OP_0 9eb2bcc5576fefd4e555ad31fa5f7a3f4c94bf5f"
+        },
+        {
+          "scriptType": "p2tr",
+          "address": "ltc1p9f2jgradpf2s2jdsue2lmfja55daktft3j5zxcyl7rrl7q63cm5sav5mdp",
+          "script": "OP_1 2a55240fad0a550549b0e655fda65da51bdb2d2b8ca823609ff0c7ff0351c6e9"
+        },
+        {
+          "scriptType": "p2pk",
+          "script": "029143dbd1a870e4498901c35d800671f20e21f1aec3c1df014c7f8cb74e72cdf9 OP_CHECKSIG"
+        }
+      ]
+    },
+    {
+      "network": "testnet",
+      "publicKey": "029143dbd1a870e4498901c35d800671f20e21f1aec3c1df014c7f8cb74e72cdf9",
+      "types": [
+        {
+          "scriptType": "p2pkh",
+          "address": "muz5BFiX3UJAQJLr4CDjN2T3D8KczqP7p7",
+          "script": "OP_DUP OP_HASH160 9eb2bcc5576fefd4e555ad31fa5f7a3f4c94bf5f OP_EQUALVERIFY OP_CHECKSIG"
+        },
+        {
+          "scriptType": "p2wpkh",
+          "address": "tb1qn6ete32hdlhafe2445cl5hm68axff06lwzeaw6",
+          "script": "OP_0 9eb2bcc5576fefd4e555ad31fa5f7a3f4c94bf5f"
+        },
+        {
+          "scriptType": "p2tr",
+          "address": "tb1p9f2jgradpf2s2jdsue2lmfja55daktft3j5zxcyl7rrl7q63cm5sfqvydt",
+          "script": "OP_1 2a55240fad0a550549b0e655fda65da51bdb2d2b8ca823609ff0c7ff0351c6e9"
+        },
+        {
+          "scriptType": "p2pk",
+          "script": "029143dbd1a870e4498901c35d800671f20e21f1aec3c1df014c7f8cb74e72cdf9 OP_CHECKSIG"
+        }
+      ]
+    },
+    {
+      "network": "litecointestnet",
+      "publicKey": "029143dbd1a870e4498901c35d800671f20e21f1aec3c1df014c7f8cb74e72cdf9",
+      "types": [
+        {
+          "scriptType": "p2pkh",
+          "address": "muz5BFiX3UJAQJLr4CDjN2T3D8KczqP7p7",
+          "script": "OP_DUP OP_HASH160 9eb2bcc5576fefd4e555ad31fa5f7a3f4c94bf5f OP_EQUALVERIFY OP_CHECKSIG"
+        },
+        {
+          "scriptType": "p2wpkh",
+          "address": "tltc1qn6ete32hdlhafe2445cl5hm68axff06lh2mr7n",
+          "script": "OP_0 9eb2bcc5576fefd4e555ad31fa5f7a3f4c94bf5f"
+        },
+        {
+          "scriptType": "p2tr",
+          "address": "tltc1p9f2jgradpf2s2jdsue2lmfja55daktft3j5zxcyl7rrl7q63cm5skrs9j5",
+          "script": "OP_1 2a55240fad0a550549b0e655fda65da51bdb2d2b8ca823609ff0c7ff0351c6e9"
+        },
+        {
+          "scriptType": "p2pk",
+          "script": "029143dbd1a870e4498901c35d800671f20e21f1aec3c1df014c7f8cb74e72cdf9 OP_CHECKSIG"
+        }
+      ]
+    }
+  ]
 }
