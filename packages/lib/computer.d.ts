@@ -104,6 +104,7 @@ declare class RestClient {
   readonly mnemonic: string;
   readonly path: string;
   readonly passphrase: string;
+  readonly addressType: AddressType;
   readonly bcn: UrlFetch;
   readonly dustRelayTxFee: number;
   readonly _keyPair: any;
@@ -115,6 +116,7 @@ declare class RestClient {
     mnemonic,
     path,
     passphrase,
+    addressType,
     url,
     satPerByte,
     dustRelayFee,
@@ -182,6 +184,8 @@ type Network = "testnet" | "mainnet" | "regtest";
 type Fee = Partial<{
   fee: number;
 }>;
+type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
+
 type ProgramMetaData = JObject &
   Partial<{
     _amount: number;
@@ -330,7 +334,7 @@ declare class Contract {
 }
 
 declare class Computer {
-  wallet: Wallet;
+  walletBITCOIN: Wallet;
   constructor(params?: ComputerOptions);
   new<T extends Class>(
     constructor: T,
