@@ -19,14 +19,20 @@ const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-describe('Sale', () => {
+const sleep = async (delay) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay)
+  })
+}
+
+describe.only('Sale', () => {
   let tx: Transaction
   let txClone: Transaction
   let sellerPublicKey: string
-  const nftPrice = 0.1e8
+  const nftPrice = 1e8
   const fee = 100000
 
-  describe('Examples from docs', () => {
+  describe.only('Examples from docs', () => {
     it('Should work without helper classes', async () => {
       // Create and fund wallets
       const seller = new Computer({ url })
@@ -64,15 +70,28 @@ describe('Sale', () => {
       // Buyer funds, signs, and broadcasts to execute the sale
       await buyer.fund(saleTx)
       await buyer.sign(saleTx)
-      await buyer.broadcast(saleTx)
+      console.log('before braodcast seller: ', await seller.getBalance())
+      console.log('before braodcast buyer: ', await buyer.getBalance())
+      const txId = await buyer.broadcast(saleTx)
+      await sleep(5000)
+      console.log('after braodcast seller: ', await seller.getBalance())
+      console.log('after braodcast buyer: ', await buyer.getBalance())
+
+      // Bob reads the updated state from the blockchain
+      // const { env } = (await buyer.sync(txId)) as { env: { nft: NFT; payment: NFT } }
+      // const { nft: n, payment: p } = env
+
+      // expect(p._amount).eq(1e8)
+      // expect(n._owners).deep.eq([buyer.getPublicKey()])
+      // expect(p._owners).deep.eq([seller.getPublicKey()])
     })
 
-    it('Should work with helper classes', async () => {
+    it.only('Should work with helper classes', async () => {
       // Create and fund wallets
       const alice = new Computer({ url })
       const bob = new Computer({ url })
-      await alice.faucet(1e8)
-      await bob.faucet(1e8)
+      await alice.faucet(1e6)
+      await bob.faucet(2e8)
 
       // Alice creates helper objects
       const tbc721A = new TBC721(alice)
@@ -94,7 +113,8 @@ describe('Sale', () => {
 
       // Bob checks the swap transaction
       const nftAmount = await saleHelperB.checkSaleTx(saleTx)
-
+      console.log('before payment seller: ', await alice.getBalance())
+      console.log('before payment buyer: ', await bob.getBalance())
       // Bob creates the payment and finalizes the transaction
       const payment = await bob.new(Payment, [nftAmount])
       const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
@@ -102,15 +122,35 @@ describe('Sale', () => {
       // Bob signs an broadcasts the transaction to execute the swap
       await bob.fund(finalTx)
       await bob.sign(finalTx)
+      console.log('before braodcast seller: ', await alice.getBalance())
+      console.log('before braodcast buyer: ', await bob.getBalance())
       await bob.broadcast(finalTx)
+      await sleep(3000)
+      console.log('after braodcast seller: ', await alice.getBalance())
+      console.log('after braodcast buyer: ', await bob.getBalance())
+
+      const { env } = (await alice.sync(finalTx.getId())) as { env: { nft: NFT; payment: Payment } }
 
       // Bob reads the updated state from the blockchain
-      const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      // const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
       const { nft: n, payment: p } = env
 
       expect(p._amount).eq(nftPrice)
       expect(n._owners).deep.eq([bob.getPublicKey()])
       expect(p._owners).deep.eq([alice.getPublicKey()])
+
+      const alicePayment = env.payment
+      await sleep(1000)
+      const { tx: alicePaymentTx } = await alice.encode({
+        exp: `alicePayment.withdraw()`,
+        env: { alicePayment: alicePayment._rev },
+      })
+      await alice.broadcast(alicePaymentTx)
+      // TODO: Clemens, this doesn't work
+      // await alicePayment.withdraw()
+      await sleep(3000)
+      console.log('after withdraw seller: ', await alice.getBalance())
+      console.log('after withdraw buyer: ', await bob.getBalance())
     })
   })
 

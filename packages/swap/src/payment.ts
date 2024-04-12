@@ -23,6 +23,10 @@ export class Payment extends Contract {
   setAmount(a: number) {
     this._amount = a
   }
+
+  withdraw() {
+    this._amount = 8000
+  }
 }
 
 export class PaymentMock {
