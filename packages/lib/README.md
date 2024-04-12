@@ -46,7 +46,7 @@ class Counter extends Contract {
 }
 
 // Create a Bitcoin Computer wallet
-const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
+const computer = new Computer()
 
 // Fund the computer wallet
 await computer.faucet(1e7)
@@ -112,7 +112,7 @@ Create a file `index.html` containing the smart contract.
         }
       }
 
-      const computer = new Computer({ mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike' })
+      const computer = new Computer()
       await computer.faucet(0.0001e8)
 
       const counter = await computer.new(Counter)
@@ -122,8 +122,9 @@ Create a file `index.html` containing the smart contract.
       document.getElementById("count").innerHTML = counter.n
     </script>
   </head>
+
   <body>
-    Counter value: <span id='count'></span>
+    Counter value: <span id='count'>*</span>
   </body>
 </html>
 ```
@@ -141,11 +142,11 @@ open index.html
 
 </font>
 
-You should see "Counter value: x" where x is blank at first, then 0 and then 1.
+You should see "Counter value: x" where x is * at first, then 0 and then 1.
 
-## Use locally on regtest or connect to a mainnet node
+## Connect to a Bitcoin Computer Node
 
-Install a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) and run it with the command below:
+By default, a `computer` object will connect to a Bitcoin Computer Node in regtest mode that we provide. You can connect to your own node by installing the [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) and starting it with the command below:
 
 <font size=1>
 
@@ -156,26 +157,13 @@ npm run up -- -litecoin -regtest
 
 </font>
 
-When you call the `Computer` constructor on the client, pass the url of your node to the `url` parameter. Make sure that `chain` and `network` match your node's configuration.
+You can use the `url` parameter for the `Computer` constructor call to specify which node to connect to. Make sure that `chain` and `network` match your node's configuration.
 
 <font size=1>
 
 ```js
-// connect to local node
-const computer = new Computer({
-
-  // node url
-  url: 'http://localhost:1031',
-
-  // LTC or BTC
-  chain: 'LTC',
-  
-  // regtest, testnet, or mainnet
-  network: 'regtest', 
-
-  // BIP 39 mnemonic sentence
-  mnemonic: 'drip audit speed belt gallery tribe bus poet used scrub view spike'
-})
+// connect to a specific node url
+const computer = new Computer({ url: 'http://localhost:1031' })
 ```
 
 </font>
@@ -198,7 +186,7 @@ This fee is in addition to the mining fee. You can configure satoshis per byte.
 
 ## Development Status
 
-There are no known security vulnerabilities. However we do not yet recommend to use the Bitcoin Computer in production yet.
+We do not yet recommend to use the Bitcoin Computer in production.
 
 ## License
 
