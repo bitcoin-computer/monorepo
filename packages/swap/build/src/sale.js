@@ -1,4 +1,5 @@
 import { Transaction } from '@bitcoin-computer/nakamotojs';
+import { PaymentMock } from './payment.js';
 const { Contract } = await import('@bitcoin-computer/lib');
 export class Sale extends Contract {
     static exec(a, b) {
@@ -30,7 +31,29 @@ export class SaleHelper {
             mod: this.mod,
         });
     }
-    static checkSaleTx() {
+    async checkSaleTx(tx) {
+        const { exp, env, mod } = await this.computer.decode(tx);
+        if (exp !== 'Sale.exec(nft, payment)')
+            throw new Error('Unexpected expression');
+        if (mod !== this.mod)
+            throw new Error('Unexpected module specifier');
+        const payment = new PaymentMock(this.computer.getPublicKey(), tx.outs[0].value);
+        env.payment = payment._rev;
+        const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction;
+        const { effect: { res: r, env: e }, } = await this.computer.encode({
+            exp,
+            env,
+            mod,
+            mocks: { payment },
+            fund: false,
+            sign: false,
+            sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+        });
+        if (r === undefined)
+            throw new Error('Unexpected result');
+        if (Object.keys(e).toString() !== 'nft,payment')
+            throw new Error('Unexpected environment');
+        return tx.outs[0].value;
     }
     static finalizeSaleTx(tx, payment, scriptPubKey) {
         const [paymentTxId, paymentIndex] = payment._rev.split(':');

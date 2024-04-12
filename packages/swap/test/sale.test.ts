@@ -18,14 +18,14 @@ const url = process.env.BCN_URL
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-describe.only('Sale', () => {
+describe('Sale', () => {
   let tx: Transaction
   let txClone: Transaction
   let sellerPublicKey: string
   const nftPrice = 0.1e8
   const fee = 100000
 
-  describe.only('Examples from docs', () => {
+  describe('Examples from docs', () => {
     it('Should work without helper classes', async () => {
       // Create and fund wallets
       const seller = new Computer({ url })
@@ -65,7 +65,7 @@ describe.only('Sale', () => {
       await buyer.broadcast(saleTx)
     })
 
-    it.only('Should work with helper classes', async () => {
+    it('Should work with helper classes', async () => {
       // Create and fund wallets
       const alice = new Computer({ url })
       const bob = new Computer({ url })
@@ -78,7 +78,8 @@ describe.only('Sale', () => {
 
       // Alice deploys the smart contracts
       await tbc721A.deploy()
-      await saleHelperA.deploy()
+      const saleSpecMod = await saleHelperA.deploy()
+      const saleHelperB = new SaleHelper(bob, saleSpecMod)
 
       // Alice mints an NFT
       const nftA = await tbc721A.mint('a', 'AAA')
@@ -90,10 +91,10 @@ describe.only('Sale', () => {
       const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
 
       // Bob checks the swap transaction
-      await saleHelperA.checkSaleTx(saleTx, '', '', mock)
+      const nftAmount = await saleHelperB.checkSaleTx(saleTx)
 
       // Bob creates the payment and finalizes the transaction
-      const payment = await bob.new(Payment, [bob.getPublicKey(), nftPrice])
+      const payment = await bob.new(Payment, [bob.getPublicKey(), nftAmount])
       const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
 
       // Bob signs an broadcasts the transaction to execute the swap

@@ -2,7 +2,7 @@
 import { NFT } from '@bitcoin-computer/TBC721'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Buffer } from 'buffer'
-import { Payment } from './payment.js'
+import { Payment, PaymentMock } from './payment.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 
@@ -44,32 +44,33 @@ export class SaleHelper {
     })
   }
 
-  // static checkSaleTx() {
-  //   // todo
-  // }
-
-  async checkSaleTx(tx: Transaction, pubKeyA: string, pubKeyB: string, payment: Payment) {
+  async checkSaleTx(tx: Transaction): Promise<number> {
     const { exp, env, mod } = await this.computer.decode(tx)
-    // if (exp !== 'new Swap(a, b)') throw new Error('Unexpected expression')
-    // if (mod !== this.mod) throw new Error('Unexpected module specifier')
-    env.payment = 'mock:' + env.payment
-    console.log({ exp, env, mod })
+    if (exp !== 'Sale.exec(nft, payment)') throw new Error('Unexpected expression')
+    if (mod !== this.mod) throw new Error('Unexpected module specifier')
 
+    // As this is a mock for checking saleTx, it can be with any public key
+    const payment = new PaymentMock(this.computer.getPublicKey(), tx.outs[0].value)
+    env.payment = payment._rev
+
+    const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
     const {
       effect: { res: r, env: e },
-    } = await this.computer.encode({ exp, env, mod, mocks: { payment }, fund: false })
+    } = await this.computer.encode({
+      exp,
+      env,
+      mod,
+      mocks: { payment },
+      fund: false,
+      sign: false,
+      // eslint-disable-next-line no-bitwise
+      sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+    })
 
-    console.log('r, e: ', { r, e })
+    if (r === undefined) throw new Error('Unexpected result')
+    if (Object.keys(e).toString() !== 'nft,payment') throw new Error('Unexpected environment')
 
-    // if (r === undefined) throw new Error('Unexpected result')
-    // if (Object.keys(e).toString() !== 'a,b') throw new Error('Unexpected environment')
-
-    const { a, b } = e
-
-    // if (a._owners.toString() !== pubKeyB) throw new Error('Unexpected owner')
-    // if (b._owners.toString() !== pubKeyA) throw new Error('Unexpected owner')
-
-    return e
+    return tx.outs[0].value
   }
 
   static finalizeSaleTx(tx: Transaction, payment: Payment, scriptPubKey: Buffer) {

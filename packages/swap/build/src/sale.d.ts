@@ -13,7 +13,7 @@ export declare class SaleHelper {
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
     createSaleTx(nft: NFT, payment: Payment): any;
-    static checkSaleTx(): void;
+    checkSaleTx(tx: Transaction): Promise<number>;
     static finalizeSaleTx(tx: Transaction, payment: Payment, scriptPubKey: Buffer): Transaction;
 }
 export {};
