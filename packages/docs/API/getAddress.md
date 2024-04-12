@@ -1,6 +1,6 @@
 # getAddress
 
-Returns a string encoding Bitcoin address.
+Returns a string encoding Bitcoin address. Will return an address according to the type set in the Computer constructor.
 
 ### Type
 ```ts
