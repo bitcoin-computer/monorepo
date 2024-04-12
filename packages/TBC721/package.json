@@ -7,7 +7,7 @@
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.release.json",
+    "build": "rm -rf build && tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf coverage build tmp",
     "clean-logs": "rm -f *.log 2> /dev/null",
