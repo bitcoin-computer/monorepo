@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react"
+import { initFlowbite } from "flowbite"
+import { Dispatch, useCallback, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
-import { UtilsContext } from "./UtilsContext"
+import { useUtilsComponents, UtilsContext } from "./UtilsContext"
 
 const Balance = ({ computer }: any) => {
   const [balance, setBalance] = useState<number>(0)
@@ -153,6 +154,122 @@ const LogOut = () => {
   )
 }
 
+function AmountInput({
+  chain,
+  amount,
+  setAmount,
+}: {
+  chain: string
+  amount: string
+  setAmount: Dispatch<string>
+}) {
+  return (
+    <>
+      <div className="mt-4 flex justify-between">
+        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Amount ({chain})
+        </label>
+      </div>
+      <input
+        value={amount}
+        onChange={(e) => setAmount(e.target.value)}
+        placeholder={`1 ${chain}`}
+        className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </>
+  )
+}
+
+function AddressInput({ address, setAddress }: { address: string; setAddress: Dispatch<string> }) {
+  return (
+    <>
+      <div className="mt-4 flex justify-between">
+        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          User Address
+        </label>
+      </div>
+      <input
+        value={address}
+        placeholder={"Address"}
+        onChange={(e) => setAddress(e.target.value)}
+        className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+      />
+    </>
+  )
+}
+
+function SendMoneyButton({ computer, amount, address, setAmount, setAddress }: any) {
+  const { showSnackBar } = useUtilsComponents()
+
+  const send = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault()
+    try {
+      if (!Auth.isLoggedIn()) throw new Error("Please log in first.")
+      if (!address) {
+        showSnackBar("Please enter a valid address", false)
+        return
+      }
+      const floatAmount = Number(amount)
+      if (!floatAmount) {
+        showSnackBar("Please enter a valid amount", false)
+        return
+      }
+      await computer.send(floatAmount * 1e8, address)
+      showSnackBar(`${amount} ${computer.getChain()} trasferred successfully.`, true)
+      setAmount("")
+      setAddress("")
+    } catch (error) {
+      if (error instanceof Error) {
+        showSnackBar(error.message, false)
+      }
+      return
+    }
+  }
+
+  return (
+    <>
+      <button
+        onClick={send}
+        type="submit"
+        className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+      >
+        Send (To Address)
+      </button>
+    </>
+  )
+}
+
+function SendMoneyForm({ computer }: any) {
+  const [address, setAddress] = useState<string>("")
+  const [amount, setAmount] = useState<string>("")
+
+  useEffect(() => {
+    initFlowbite()
+  }, [])
+
+  return (
+    <>
+      <div className="space-y-4">
+        <form className="space-y-6">
+          <div>
+            <AddressInput address={address} setAddress={setAddress} />
+            <AmountInput chain={computer.getChain()} amount={amount} setAmount={setAmount} />
+          </div>
+        </form>
+      </div>
+      <div className="flex items-center pt-4 rounded-b dark:border-gray-600">
+        <SendMoneyButton
+          address={address}
+          amount={amount}
+          computer={computer}
+          setAddress={setAddress}
+          setAmount={setAmount}
+        />
+      </div>
+    </>
+  )
+}
+
 export function Wallet() {
   const [computer] = useState(Auth.getComputer())
 
@@ -169,9 +286,24 @@ export function Wallet() {
       <Network computer={computer} />
       <Url computer={computer} />
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
+      <SendMoneyForm computer={computer} />
+      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>
   )
 
   return <Drawer.Component Content={Content} id="wallet-drawer" />
+}
+
+export const WalletComponents = {
+  Balance,
+  Address,
+  PublicKey,
+  Path,
+  Mnemonic,
+  Chain,
+  Network,
+  Url,
+  SendMoneyForm,
+  LogOut,
 }

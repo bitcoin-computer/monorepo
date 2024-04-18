@@ -127,7 +127,7 @@ export default function WithPagination(q) {
                     case 1:
                         result = _a.sent();
                         setIsNextAvailable(result.length > contractsPerPage);
-                        setRevs(result);
+                        setRevs(result.slice(0, contractsPerPage));
                         if (pageNum === 0 && (result === null || result === void 0 ? void 0 : result.length) === 0) {
                             setShowNoAsset(true);
                         }
