@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Get list of running Docker containers
-container_ids=$(docker ps -q)
+# Get all containers from bitcoin-computer-node service
+container_ids=$(docker ps -qf "ancestor=bitcoin-computer-node")
 system_timezone=$(timedatectl show --property=Timezone --value)
 export TZ="$system_timezone"
 
@@ -39,13 +39,24 @@ else
     fi
 fi
 
+echo '------ node ------'
 
 # Get the logs from the bitcoin node (default LTC testnet)
 node_container_image=$(docker compose -f docker-compose.yml -f chain-setup/${chain}-${network}/docker-compose-local-${chain}-${network}.yml ps -q node | xargs docker inspect --format='{{.Image}}' | sed -e 's/^sha256:/\'$'\n/g')
 node_container_id=$(docker ps -qf "ancestor=$node_container_image")
 docker exec $node_container_id tail -n 5 $logpath
 
-echo 'Checking errors...'
+echo '------ postgress ------'
+
+# Get the logs from the postgres container
+postgres_container_id=$(docker ps -qf "ancestor=postgres")
+docker logs --tail 5 $postgres_container_id
+
+echo ''
+
+echo '------ Checking errors ------'
+# Get all containers created by the sync service
+container_ids=$(docker ps -qf "ancestor=bitcoin-computer-node")
 for container_id in $container_ids; do
     echo "Connecting to container $container_id..."
     docker exec $container_id sh -c "cat logs/*.log | grep error"
