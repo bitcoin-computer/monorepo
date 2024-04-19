@@ -73,7 +73,7 @@ def main():
     else:
         # testnet or mainnet
         url = subprocess.check_output("grep BCN_URL .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
-        bcnUrl = url if url != '' else 'https://node.bitcoincomputer.io'
+        bcnUrl = url if url != '' else 'https://rltc.node.bitcoincomputer.io'
         if(args.optimize):
             # Optimize for speed: skip launching bcn service (no port binding)
             subprocess.run(

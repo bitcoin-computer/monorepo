@@ -24,11 +24,11 @@ const args = parser.parse_args()
 
 const port = args.bitcoin ? 8332 : 19332
 const chain = args.bitcoin ? 'BTC' : 'LTC'
-const network = args.regtest ? 'regtest' : 'testnet'
+const network = args.testnet ? 'testnet' : 'regtest'
 const bcnPort = process.env.PORT ?? 1031
-const nodeUrl = args.regtest ? 'http://127.0.0.1:' + bcnPort : 'https://node.bitcoincomputer.io'
+const nodeUrl = args.network === 'regtest' ? 'http://127.0.0.1:' + bcnPort : 'https://rltc.node.bitcoincomputer.io'
 const postgresHost = '127.0.0.1'
-const rpcHost = args.regtest ? process.env.RPC_HOST : 'node.bitcoincomputer.io'
+const rpcHost = args.testnet ? 'rltc.node.bitcoincomputer.io' : process.env.RPC_HOST
 const rpcUser = process.env.RPC_USER ?? 'bcn-admin'
 const rpcPass = process.env.RPC_PASSWORD ?? 'kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
 const zmqUrl = 'tcp://127.0.0.1:28332'
