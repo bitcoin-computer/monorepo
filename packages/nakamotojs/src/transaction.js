@@ -605,6 +605,12 @@ export class Transaction {
       i => `${bufferUtils.reverseBuffer(i.hash).toString('hex')}:${i.index}`,
     );
   }
+  static hashBufToId(hash) {
+    return bufferUtils.reverseBuffer(hash).toString('hex');
+  }
+  static idToHashBuf(txId) {
+    return Buffer.from(txId, 'hex').reverse();
+  }
 }
 Transaction.DEFAULT_SEQUENCE = 0xffffffff;
 Transaction.SIGHASH_DEFAULT = 0x00;

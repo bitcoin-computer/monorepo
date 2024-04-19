@@ -72,4 +72,6 @@ export declare class Transaction {
     serialize(): string;
     static deserialize(s: string): Transaction;
     getInRevs(): string[];
+    static hashBufToId(hash: Buffer): string;
+    static idToHashBuf(txId: string): Buffer;
 }

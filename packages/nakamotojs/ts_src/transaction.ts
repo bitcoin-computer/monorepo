@@ -803,4 +803,12 @@ export class Transaction {
         `${bufferUtils.reverseBuffer(i.hash).toString('hex')}:${i.index}`,
     );
   }
+
+  static hashBufToId(hash: Buffer): string {
+    return bufferUtils.reverseBuffer(hash).toString('hex');
+  }
+
+  static idToHashBuf(txId: string): Buffer {
+    return Buffer.from(txId, 'hex').reverse();
+  }
 }
