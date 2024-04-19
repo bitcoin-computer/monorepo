@@ -3,7 +3,7 @@ import { Computer } from '@bitcoin-computer/lib'
 
 const conf = {
   network: 'regtest',
-  url: 'http://127.0.0.1:1031',
+  url: 'https://rltc.node.bitcoincomputer.io',
   chain: 'LTC'
 }
 
