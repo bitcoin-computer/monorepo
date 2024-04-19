@@ -11,6 +11,7 @@ new (config: {
   mnemonic?: string,
   path?: string,
   passphrase?: string
+  addressType?: 'p2pkh' | 'p2wpkh' | 'p2tr',
   url?: string,
   satPerByte?: number
   dustRelayFee?: number
@@ -28,16 +29,17 @@ new Computer(config)
 A configuration object
 
 {.compact}
-| Key          | Description                                                 | Default Value                        |
-|--------------|-------------------------------------------------------------|--------------------------------------|
-| chain        | Target blockchain. Values can be 'LTC' or 'BTC'             | LTC                                  |
-| network      | Target network. Values in 'testnet', 'regtest' or 'mainnet' | testnet                              |
-| mnemonic     | BIP39 mnemonic phrase                                       | Random phrase                        |
-| path         | BIP32 path                                                  | m/44'/0'/0'                          |
-| passphrase   | BIP32 passphrase                                            | The empty string                     |
-| url          | Url of a Bitcoin Computer Node                              | https://rltc.node.bitcoincomputer.io |
-| satPerByte   | Fee in satoshi per byte                                     | 2                                    |
-| dustRelayFee | Dust relay fee                                              | 30000 on LTC and 3000 on BTC         |
+| Key          | Description                                                  | Default Value                        |
+|--------------|--------------------------------------------------------------|--------------------------------------|
+| chain        | Target blockchain. Values can be 'LTC' or 'BTC'              | LTC                                  |
+| network      | Target network. Values in 'testnet', 'regtest' or 'mainnet'  | regtest                              |
+| mnemonic     | BIP39 mnemonic phrase                                        | Random phrase                        |
+| path         | BIP32 path                                                   | m/44'/0'/0'                          |
+| passphrase   | BIP32 passphrase                                             | The empty string                     |
+| addressType  | The address script type. Values in 'p2pkh', 'p2wpkh', 'p2tr' | p2pkh                                |
+| url          | Url of a Bitcoin Computer Node                               | https://rltc.node.bitcoincomputer.io |
+| satPerByte   | Fee in satoshi per byte                                      | 2                                    |
+| dustRelayFee | Dust relay fee                                               | 30000 on LTC and 3000 on BTC         |
 
 
 ### Return Value
@@ -61,6 +63,7 @@ const computer3 = new Computer({
   chain: 'LTC'
   network: 'mainnet',
   mnemonic: 'replace this seed'
+  addressType: 'p2wpkh',
   path: "m/44'/0'/0'/0",
   url: 'https://my-ltc-node.com',
   satPerByte: 1

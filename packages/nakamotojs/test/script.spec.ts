@@ -3,6 +3,8 @@
 import assert from 'assert';
 import { describe, it } from 'mocha';
 import * as bscript from '../src/script.js';
+import * as ecc from '@bitcoin-computer/tiny-secp256k1';
+import { initEccLib } from '../src/ecc_lib.js';
 import * as fixturesModule from './fixtures/script.json' assert { type: 'json' };
 const fixtures: typeof import('./fixtures/script.json') =
   // @ts-ignore
@@ -80,6 +82,33 @@ describe('script', () => {
           assert.strictEqual(bscript.toASM(script), f.output);
         });
       }
+    });
+  });
+
+  describe('fromPublicKey', () => {
+    before('Before', () => {
+      initEccLib(ecc);
+    });
+    const types = Object.assign({
+      pubkey: 'p2pk',
+      pubkeyhash: 'p2pkh',
+      scripthash: 'p2sh',
+      multisig: 'p2ms',
+      witnesspubkeyhash: 'p2wpkh',
+      witnessscripthash: 'p2wsh',
+      taproot: 'p2tr',
+      nonstandard: 'nonstandard',
+    });
+    fixtures.valid2.forEach(f => {
+      if (!f.pubKey) return;
+      it('decodes ' + f.pubKey.slice(0, 10) + '... to ' + types[f.type], () => {
+        const script = bscript.fromPublicKey(
+          Buffer.from(f.pubKey, 'hex'),
+          types[f.type],
+        );
+
+        assert.strictEqual(bscript.toASM(script), f.output);
+      });
     });
   });
 

@@ -80,4 +80,7 @@ CREATE TABLE IF NOT EXISTS
 CREATE VIEW "Utxos" AS
 SELECT "rev", "address", "satoshis", "scriptPubKey", "publicKeys"
 FROM "Output" WHERE NOT EXISTS
-(SELECT "ip"."outputSpent" FROM "Input" ip WHERE "ip"."outputSpent" = "Output".rev)
+(SELECT 1 FROM "Input" ip WHERE "ip"."outputSpent" = "Output".rev
+union
+select 1 from "NonStandard" ns where "ns"."rev" = "Output".rev)
+

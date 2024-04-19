@@ -5,14 +5,7 @@ import { describe, it } from 'mocha';
 import * as ecc from '@bitcoin-computer/tiny-secp256k1';
 import * as baddress from '../src/address.js';
 import * as bscript from '../src/script.js';
-import {
-  bitcoin,
-  regtest,
-  testnet,
-  litecoin,
-  litecoinregtest,
-  litecointestnet,
-} from '../src/networks.js';
+import { NETWORKS } from '../src/networks.js';
 import * as fixturesModule from './fixtures/address.json' assert { type: 'json' };
 
 const fixtures: typeof import('./fixtures/address.json') =
@@ -20,25 +13,6 @@ const fixtures: typeof import('./fixtures/address.json') =
   fixturesModule.default || fixturesModule;
 
 import { initEccLib } from '../src/index.js';
-
-const NETWORKS = Object.assign({
-  litecoin: {
-    messagePrefix: '\x19Litecoin Signed Message:\n',
-    bip32: {
-      public: 0x019da462,
-      private: 0x019d9cfe,
-    },
-    pubKeyHash: 0x30,
-    scriptHash: 0x32,
-    wif: 0xb0,
-  },
-  bitcoin,
-  regtest,
-  testnet,
-  litecoinregtest,
-  litecointestnet,
-});
-NETWORKS.litecoin = litecoin;
 
 describe('address', () => {
   describe('fromBase58Check', () => {
@@ -167,6 +141,31 @@ describe('address', () => {
         assert.throws(() => {
           baddress.toOutputScript(f.address, f.network as any);
         }, new RegExp(exception));
+      });
+    });
+  });
+
+  describe('fromPublicKey', () => {
+    fixtures.valid.forEach(f => {
+      f.types.forEach(t => {
+        if (!t.address) return;
+        it(
+          'decodes ' +
+            f.publicKey.slice(0, 10) +
+            '... (' +
+            f.network +
+            ') to ' +
+            t.scriptType,
+          () => {
+            const addr = baddress.fromPublicKey(
+              Buffer.from(f.publicKey, 'hex'),
+              t.scriptType,
+              NETWORKS[f.network],
+            );
+
+            assert.strictEqual(addr, t.address);
+          },
+        );
       });
     });
   });
