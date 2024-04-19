@@ -7,13 +7,53 @@
   </p>
 </div>
 
-## Prerequisites
+## Use in a Browser
 
-You need to have [node.js](https://nodejs.org/en/) installed.
+Create a file `index.html` and open it in your browser.
+
+
+<font size=1>
+
+```html
+<html>
+  <head>
+    <script type="module">
+      import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs";
+
+      class Counter extends Contract {
+        constructor() {
+          super({ n: 0 })
+        }
+
+        inc() {
+          this.n += 1
+        }
+      }
+
+      const computer = new Computer()
+      await computer.faucet(0.0001e8)
+
+      const counter = await computer.new(Counter)
+      document.getElementById("count").innerHTML = counter.n
+
+      await counter.inc()
+      document.getElementById("count").innerHTML = counter.n
+    </script>
+  </head>
+
+  <body>
+    Counter value: <span id='count'>*</span>
+  </body>
+</html>
+```
+
+</font>
+
+You should see "Counter value: x" where x is '*' at first, then '0' and then '1'. Have a look [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/cra-template#readme) for a full example using React.
 
 ## Use on a Server
 
-To install, run the commands below
+You need to have [node.js](https://nodejs.org/en/) installed. First install the Bitcoin Computer library.
 
 <font size=1>
 
@@ -27,7 +67,7 @@ npm install @bitcoin-computer/lib
 
 </font>
 
-Create a file `index.mjs` containing the smart contract
+Then create a file `index.mjs`.
 
 <font size=1>
 
@@ -90,59 +130,7 @@ Counter {
 
 </font>
 
-## Use in a Browser
-
-Create a file `index.html` containing the smart contract.
-
-<font size=1>
-
-```html
-<html>
-  <head>
-    <script type="module">
-      import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs";
-
-      class Counter extends Contract {
-        constructor() {
-          super({ n: 0 })
-        }
-
-        inc() {
-          this.n += 1
-        }
-      }
-
-      const computer = new Computer()
-      await computer.faucet(0.0001e8)
-
-      const counter = await computer.new(Counter)
-      document.getElementById("count").innerHTML = counter.n
-
-      await counter.inc()
-      document.getElementById("count").innerHTML = counter.n
-    </script>
-  </head>
-
-  <body>
-    Counter value: <span id='count'>*</span>
-  </body>
-</html>
-```
-
-</font>
-
-Open the HTML file in your browser.
-
-<font size=1>
-
-```bash
-# Open html file in browser
-open index.html
-```
-
-</font>
-
-You should see "Counter value: x" where x is * at first, then 0 and then 1.
+You can find a full example [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template#readme).
 
 ## Connect to a Bitcoin Computer Node
 
@@ -186,7 +174,7 @@ This fee is in addition to the mining fee. You can configure satoshis per byte.
 
 ## Development Status
 
-We do not yet recommend to use the Bitcoin Computer in production.
+We are in beta, so there is a possibility of unknown bugs.
 
 ## License
 
