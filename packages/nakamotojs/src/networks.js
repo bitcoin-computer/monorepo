@@ -64,11 +64,11 @@ export const litecointestnet = {
   scriptHash: 0x3a,
   wif: 0xef,
 };
-export const NETWORKS = Object.assign({
+export const NETWORKS = {
   litecoin,
   bitcoin,
   regtest,
   testnet,
   litecoinregtest,
   litecointestnet,
-});
+};

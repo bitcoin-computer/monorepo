@@ -16,5 +16,5 @@ export declare const testnet: Network;
 export declare const litecoin: Network;
 export declare const litecoinregtest: Network;
 export declare const litecointestnet: Network;
-export declare const NETWORKS: any;
+export declare const NETWORKS: Record<string, any>;
 export {};

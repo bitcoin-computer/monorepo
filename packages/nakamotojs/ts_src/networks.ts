@@ -84,11 +84,11 @@ export const litecointestnet: Network = {
   wif: 0xef,
 };
 
-export const NETWORKS = Object.assign({
+export const NETWORKS: Record<string, any> = {
   litecoin,
   bitcoin,
   regtest,
   testnet,
   litecoinregtest,
   litecointestnet,
-});
+};
