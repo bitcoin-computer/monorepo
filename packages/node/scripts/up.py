@@ -4,7 +4,6 @@
 
 import argparse
 import subprocess
-from subprocess import Popen
 import multiprocessing
 
 def runSync(args, commandLine):
@@ -71,19 +70,17 @@ def main():
         subprocess.run(
             ['sh', '-c', commandLine+' up {0}'.format(args.service)]) 
     else:
-        # testnet or mainnet
-        url = subprocess.check_output("grep BCN_URL .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
-        bcnUrl = url if url != '' else 'https://rltc.node.bitcoincomputer.io'
+        # testnet or mainnet 
         if(args.optimize):
             # Optimize for speed: skip launching bcn service (no port binding)
             subprocess.run(
-                ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' bcn']) 
+                ['sh', '-c', commandLine+' run -d bcn']) 
             # Launch sync in automatic parallel mode. If any service is specified, don't launch sync services
             if(args.service.strip() == ''):
                 runSync(args, commandLine)
         else:
             subprocess.run(
-                ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
+                ['sh', '-c', commandLine+' run -d -p {0}:{0} bcn'.format(bcnPort)]) 
             # If any service is specified, don't launch sync services
             if(args.service.strip() == ''):
                 runSync(args, commandLine)
