@@ -58,7 +58,7 @@ def main():
 
     print(args)
 
-    port = subprocess.check_output("grep PORT .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
+    port = subprocess.check_output("grep -w PORT .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
     bcnPort = port if port != '' else '1031'
 
     commandLine = ' docker compose -f docker-compose.yml -f chain-setup/'+args.chain+'-'+args.network+'/docker-compose-local-'+args.chain+'-'+args.network+'.yml '
