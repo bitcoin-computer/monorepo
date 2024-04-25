@@ -11,12 +11,10 @@ export class NFT extends Contract {
   }
   transfer(to) {
     this._owners = [to]
+    this.offerTxRev = undefined
   }
   list(rev) {
     this.offerTxRev = rev
-  }
-  unList() {
-    this.offerTxRev = null
   }
 }
 

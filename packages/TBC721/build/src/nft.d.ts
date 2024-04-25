@@ -6,7 +6,6 @@ export declare class NFT extends Contract {
     constructor(name?: string, symbol?: string);
     transfer(to: any): void;
     list(rev: any): void;
-    unList(): void;
 }
 export interface ITBC721 {
     deploy(): Promise<string>;
