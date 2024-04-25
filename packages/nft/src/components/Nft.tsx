@@ -12,7 +12,7 @@ import {
 import { Computer } from "@bitcoin-computer/lib"
 import { OfferHelper, Payment, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
 import { NFT } from "@bitcoin-computer/TBC721"
-import { offerModSpec, saleModSpec } from "../constants/modSpecs"
+import { offerModSpec, paymentModSpec, saleModSpec } from "../constants/modSpecs"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 const modalId = "smart-object-bought-modal"
@@ -30,17 +30,16 @@ const BuyNFT = async ({
   const saleHelper = new SaleHelper(computer, saleModSpec)
   const saleTxn = await offerHelper.decodeOfferTx(nft.offerTxRev)
   const nftAmount = await saleHelper.checkSaleTx(saleTxn)
-  const payment = await computer.new(Payment, [nftAmount])
+  const payment = await computer.new(Payment, [nftAmount], paymentModSpec)
   const finalTx = await SaleHelper.finalizeSaleTx(saleTxn, payment, computer.toScriptPubKey())
 
   // Buyer funds, signs, and broadcasts to execute the sale
   await computer.fund(finalTx)
   await computer.sign(finalTx)
-  const txId = await computer.broadcast(finalTx)
+  await computer.broadcast(finalTx)
   // const test = await computer.sync(txId)
   // need to have a sleep on this to get latest reve
   const [updatedRev] = await computer.query({ ids: [nft._id] })
-  // console.log(updatedRev, test)
   setFunctionResult(updatedRev)
   Modal.showModal(modalId)
 }
@@ -65,7 +64,12 @@ const CreateSellOffer = async ({
   await nft.list(offerTxId)
 
   const saleHelper = new SaleHelper(computer, saleModSpec)
-  const mock = new PaymentMock(parseFloat(amount))
+  const parsedAmount = Number(amount) * 1e8
+  if (!parsedAmount) {
+    showSnackBar("Please provide a valid amount.", false)
+    return
+  }
+  const mock = new PaymentMock(parsedAmount)
   const { tx: saleTx } = await saleHelper.createSaleTx(nft, mock)
   if (!saleTx) {
     showSnackBar("Failed to list NFT for sale.", false)
@@ -99,7 +103,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
   return (
     <>
       {Object.entries(smartObject)
-        .filter(([k]) => !keywords.includes(k))
+        .filter(([k, v]) => v !== undefined && !keywords.includes(k))
         .map(([key, value], i) => (
           <div key={i} className="sm:w-full">
             <h3 className="mt-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
@@ -131,7 +135,7 @@ const CreateSellOfferComponent = ({
             setAmount(e.target.value)
           }}
           className="flex-1 sm:w-full md:w-2/3 lg:w-1/2 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Amount"
+          placeholder={`Amount ${computer.getChain()}`}
           required
         />
         <button
@@ -278,6 +282,7 @@ function NftView() {
       try {
         showLoader(true)
         const synced = await computer.sync(rev)
+        console.log({ synced })
         setSmartObject(synced)
         showLoader(false)
       } catch (error) {

@@ -1,3 +1,4 @@
-export const nftModSpec = "abf9dfa8897e97e33c227018e1c99a73a228bf53679c803bdc7c42137b3c4877:0"
-export const offerModSpec = "18255263c4f1a7c11135f1a3f004ca977683a76ceae7673f93c4b3e452c0470a:0"
-export const saleModSpec = "fbea0d199f84d2c971165fa9ef6e56b9680dbeb28d3db8c9e43fe98666a8c1bd:0"
+export const nftModSpec = "8d8ccfc260cfd72038ac8f1017abc1d269c3959e88b70c55c5551799149f440c:0"
+export const offerModSpec = "3b877587ce1c8c3a06c5cb38c446c84566c2dd84c26d431feb5f48765ee08129:0"
+export const saleModSpec = "c13a78bbc39f2e216f37b1b4d0b2dc0c010185424cb05f48656c559b60108716:0"
+export const paymentModSpec = "7f7a8db09453adfbe44de2c9296c98c245d47e026777935ec07e8ef2166a6cec:0"

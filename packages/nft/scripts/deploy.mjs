@@ -1,7 +1,14 @@
 import { config } from "dotenv"
 import readline from "readline"
 import { NFT, TBC721 } from "@bitcoin-computer/TBC721"
-import { Offer, OfferHelper, Sale, SaleHelper } from "@bitcoin-computer/swap"
+import {
+  Offer,
+  OfferHelper,
+  Payment,
+  PaymentHelper,
+  Sale,
+  SaleHelper,
+} from "@bitcoin-computer/swap"
 const { Computer } = await import("@bitcoin-computer/lib")
 
 config()
@@ -56,12 +63,18 @@ rl.question(q, async (answer) => {
       const saleHelper = new SaleHelper(computer)
       const saleModSpec = await saleHelper.deploy()
 
+      console.log("Deploying Payment contract...")
+      console.log(`export ${Payment}`)
+      const paymentHelper = new PaymentHelper(computer)
+      const paymentModSpec = await paymentHelper.deploy()
+
       console.log(`
       Deploy successful
       \x1b[2mYou can copy this module specifier\x1b[0m
-      const nftModSpec = \x1b[2m'${modSpec}'\x1b[0m
-      const offerModSpec = \x1b[2m'${offerModSpec}'\x1b[0m
-      const saleModSpec = \x1b[2m'${saleModSpec}'\x1b[0m
+      export const nftModSpec = \x1b[2m'${modSpec}'\x1b[0m
+      export const offerModSpec = \x1b[2m'${offerModSpec}'\x1b[0m
+      export const saleModSpec = \x1b[2m'${saleModSpec}'\x1b[0m
+      export const paymentModSpec = \x1b[2m'${paymentModSpec}'\x1b[0m
       `)
     } catch (err) {
       console.log(err)
