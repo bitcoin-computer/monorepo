@@ -23,10 +23,6 @@ export class Payment extends Contract {
   setAmount(a: number) {
     this._amount = a
   }
-
-  withdraw() {
-    this._amount = 8000
-  }
 }
 
 export class PaymentMock {
@@ -50,5 +46,20 @@ export class PaymentMock {
 
   setAmount(a: number) {
     this._amount = a
+  }
+}
+
+export class PaymentHelper {
+  computer: any
+  mod?: string
+
+  constructor(computer: any, mod?: string) {
+    this.computer = computer
+    this.mod = mod
+  }
+
+  async deploy() {
+    this.mod = await this.computer.deploy(`export ${Payment}`)
+    return this.mod
   }
 }

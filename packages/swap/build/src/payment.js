@@ -27,3 +27,13 @@ export class PaymentMock {
         this._amount = a;
     }
 }
+export class PaymentHelper {
+    constructor(computer, mod) {
+        this.computer = computer;
+        this.mod = mod;
+    }
+    async deploy() {
+        this.mod = await this.computer.deploy(`export ${Payment}`);
+        return this.mod;
+    }
+}

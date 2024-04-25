@@ -19,4 +19,10 @@ export declare class PaymentMock {
     transfer(to: string): void;
     setAmount(a: number): void;
 }
+export declare class PaymentHelper {
+    computer: any;
+    mod?: string;
+    constructor(computer: any, mod?: string);
+    deploy(): Promise<string>;
+}
 export {};
