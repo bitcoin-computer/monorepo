@@ -42,7 +42,7 @@
     "prettier": "prettier \"ts_src/**/*.ts\" \"test/**/*.ts\" --ignore-path ./.prettierignore --write",
     "prettierjs": "prettier \"src/**/*.js\" --ignore-path ./.prettierignore",
     "test": "npm run build && npm run format:ci && npm run lint && npm run nobuild:coverage",
-    "test-unit-and-show": "npm run test &> nakamotojs-test.log || true ; open nakamotojs-test.log &",
+    "test-unit-and-show": "../../scripts/test-and-show.sh nakamotojs-test.log",
     "unit": "npm run build && npm run nobuild:unit"
   },
   "repository": {
