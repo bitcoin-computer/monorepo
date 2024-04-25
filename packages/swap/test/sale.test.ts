@@ -138,7 +138,7 @@ describe('Sale', () => {
       })
       await alice.broadcast(alicePaymentTx)
       // TODO: Clemens, this doesn't work
-      // await alicePayment.withdraw()
+      // await alicePayment.setAmount(7860)
       await sleep(3000)
     })
   })
