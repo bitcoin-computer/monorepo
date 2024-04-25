@@ -53,30 +53,47 @@ import { Auth } from "./Auth";
 import { Drawer } from "./Drawer";
 import { useUtilsComponents, UtilsContext } from "./UtilsContext";
 var Balance = function (_a) {
-    var computer = _a.computer;
+    var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
     var _b = useState(0), balance = _b[0], setBalance = _b[1];
     var _c = useState(localStorage.getItem("CHAIN") || "LTC"), chain = _c[0], setChain = _c[1];
     var showSnackBar = UtilsContext.useUtilsComponents().showSnackBar;
     var refreshBalance = useCallback(function () { return __awaiter(void 0, void 0, void 0, function () {
-        var _a, err_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var paymentRevs, payments, amountsInPaymentToken_1, availableWalletBalance, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
-                    _b.trys.push([0, 3, , 4]);
-                    if (!computer) return [3 /*break*/, 2];
-                    _a = setBalance;
-                    return [4 /*yield*/, computer.getBalance()];
+                    _a.trys.push([0, 5, , 6]);
+                    if (!computer) return [3 /*break*/, 4];
+                    return [4 /*yield*/, computer.query({
+                            publicKey: computer.getPublicKey(),
+                            mod: paymentModSpec,
+                        })];
                 case 1:
-                    _a.apply(void 0, [_b.sent()]);
-                    setChain(computer.getChain());
-                    _b.label = 2;
-                case 2: return [3 /*break*/, 4];
+                    paymentRevs = _a.sent();
+                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                case 2:
+                    payments = (_a.sent());
+                    console.log(payments);
+                    amountsInPaymentToken_1 = 0;
+                    if (payments && payments.length) {
+                        payments.forEach(function (pay) {
+                            // hardcoded for LTC
+                            amountsInPaymentToken_1 += pay._amount - 7860;
+                        });
+                    }
+                    return [4 /*yield*/, computer.getBalance()];
                 case 3:
-                    err_1 = _b.sent();
+                    availableWalletBalance = _a.sent();
+                    setBalance(availableWalletBalance + amountsInPaymentToken_1);
+                    setChain(computer.getChain());
+                    _a.label = 4;
+                case 4: return [3 /*break*/, 6];
+                case 5:
+                    err_1 = _a.sent();
                     showSnackBar("Error fetching wallet details", false);
                     console.log("Error fetching wallet details", err_1);
-                    return [3 /*break*/, 4];
-                case 4: return [2 /*return*/];
+                    return [3 /*break*/, 6];
+                case 6: return [2 /*return*/];
             }
         });
     }); }, [computer]);
@@ -131,59 +148,111 @@ function AddressInput(_a) {
 }
 function SendMoneyButton(_a) {
     var _this = this;
-    var computer = _a.computer, amount = _a.amount, address = _a.address, setAmount = _a.setAmount, setAddress = _a.setAddress;
+    var computer = _a.computer, amount = _a.amount, address = _a.address, setAmount = _a.setAmount, setAddress = _a.setAddress, paymentModSpec = _a.paymentModSpec;
     var showSnackBar = useUtilsComponents().showSnackBar;
     var send = function (e) { return __awaiter(_this, void 0, void 0, function () {
-        var floatAmount, error_1;
+        var floatAmount, availableWalletBalance, requiredAmountToBeTransferred, paymentRevs, payments, amountsInPaymentToken_2, sortedPayments, paymentsToBeWithdraw, newAvailableAmount, i, pay, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     e.preventDefault();
                     _a.label = 1;
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    _a.trys.push([1, 10, , 11]);
                     if (!Auth.isLoggedIn())
                         throw new Error("Please log in first.");
                     if (!address) {
                         showSnackBar("Please enter a valid address", false);
                         return [2 /*return*/];
                     }
+                    console.log({ paymentModSpec: paymentModSpec });
                     floatAmount = Number(amount);
                     if (!floatAmount) {
                         showSnackBar("Please enter a valid amount", false);
                         return [2 /*return*/];
                     }
-                    return [4 /*yield*/, computer.send(floatAmount * 1e8, address)];
+                    return [4 /*yield*/, computer.getBalance()];
                 case 2:
+                    availableWalletBalance = _a.sent();
+                    requiredAmountToBeTransferred = floatAmount * 1e8;
+                    console.log("required: ", requiredAmountToBeTransferred + 7860, "available: ", availableWalletBalance);
+                    if (!(requiredAmountToBeTransferred + 7860 < availableWalletBalance)) return [3 /*break*/, 4];
+                    return [4 /*yield*/, computer.send(requiredAmountToBeTransferred, address)];
+                case 3:
                     _a.sent();
+                    return [3 /*break*/, 9];
+                case 4: return [4 /*yield*/, computer.query({
+                        publicKey: computer.getPublicKey(),
+                        mod: paymentModSpec,
+                    })];
+                case 5:
+                    paymentRevs = _a.sent();
+                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                case 6:
+                    payments = (_a.sent());
+                    amountsInPaymentToken_2 = 0;
+                    if (payments && payments.length) {
+                        payments.forEach(function (pay) {
+                            // hardcoded for LTC
+                            amountsInPaymentToken_2 += pay._amount - 7860;
+                        });
+                    }
+                    if (requiredAmountToBeTransferred + 7860 > availableWalletBalance + amountsInPaymentToken_2) {
+                        showSnackBar("Insufficient Balance.", false);
+                        setAmount("");
+                        setAddress("");
+                        return [2 /*return*/];
+                    }
+                    sortedPayments = payments.slice().sort(function (a, b) { return b._amount - a._amount; });
+                    paymentsToBeWithdraw = [];
+                    newAvailableAmount = 0;
+                    for (i = 0; i < sortedPayments.length; i++) {
+                        pay = sortedPayments[i];
+                        // hardcoded for LTC
+                        newAvailableAmount += pay._amount - 7860;
+                        // hardcoded for LTC
+                        paymentsToBeWithdraw.push(pay.setAmount(7860));
+                        if (requiredAmountToBeTransferred + 7860 < availableWalletBalance + newAvailableAmount) {
+                            break;
+                        }
+                    }
+                    return [4 /*yield*/, Promise.all(paymentsToBeWithdraw)];
+                case 7:
+                    _a.sent();
+                    return [4 /*yield*/, computer.send(requiredAmountToBeTransferred, address)];
+                case 8:
+                    _a.sent();
+                    _a.label = 9;
+                case 9:
                     showSnackBar("".concat(amount, " ").concat(computer.getChain(), " trasferred successfully."), true);
                     setAmount("");
                     setAddress("");
-                    return [3 /*break*/, 4];
-                case 3:
+                    return [3 /*break*/, 11];
+                case 10:
                     error_1 = _a.sent();
                     if (error_1 instanceof Error) {
                         showSnackBar(error_1.message, false);
                     }
                     return [2 /*return*/];
-                case 4: return [2 /*return*/];
+                case 11: return [2 /*return*/];
             }
         });
     }); };
     return (_jsx(_Fragment, { children: _jsx("button", __assign({ onClick: send, type: "submit", className: "px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Send (To Address)" })) }));
 }
 function SendMoneyForm(_a) {
-    var computer = _a.computer;
+    var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
     var _b = useState(""), address = _b[0], setAddress = _b[1];
     var _c = useState(""), amount = _c[0], setAmount = _c[1];
     useEffect(function () {
         initFlowbite();
     }, []);
-    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(AddressInput, { address: address, setAddress: setAddress }), _jsx(AmountInput, { chain: computer.getChain(), amount: amount, setAmount: setAmount })] }) })) })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsx(SendMoneyButton, { address: address, amount: amount, computer: computer, setAddress: setAddress, setAmount: setAmount }) }))] }));
+    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(AddressInput, { address: address, setAddress: setAddress }), _jsx(AmountInput, { chain: computer.getChain(), amount: amount, setAmount: setAmount })] }) })) })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsx(SendMoneyButton, { address: address, amount: amount, computer: computer, paymentModSpec: paymentModSpec, setAddress: setAddress, setAmount: setAmount }) }))] }));
 }
-export function Wallet() {
+export function Wallet(_a) {
+    var paymentModSpec = _a.paymentModSpec;
     var computer = useState(Auth.getComputer())[0];
-    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(SendMoneyForm, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
+    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(SendMoneyForm, { computer: computer, paymentModSpec: paymentModSpec }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export var WalletComponents = {

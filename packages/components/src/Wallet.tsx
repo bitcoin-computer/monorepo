@@ -5,7 +5,10 @@ import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
 import { useUtilsComponents, UtilsContext } from "./UtilsContext"
 
-const Balance = ({ computer }: any) => {
+// hardcoded for LTC
+const TRANSACTION_FEE = 7860 // Constant for transaction fee
+
+const Balance = ({ computer, paymentModSpec }: any) => {
   const [balance, setBalance] = useState<number>(0)
   const [chain, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
   const { showSnackBar } = UtilsContext.useUtilsComponents()
@@ -13,12 +16,27 @@ const Balance = ({ computer }: any) => {
   const refreshBalance = useCallback(async () => {
     try {
       if (computer) {
-        setBalance(await computer.getBalance())
+        const paymentRevs = await computer.query({
+          publicKey: computer.getPublicKey(),
+          mod: paymentModSpec,
+        })
+        const payments = (await Promise.all(
+          paymentRevs.map((rev: string) => computer.sync(rev)),
+        )) as any[]
+
+        let amountsInPaymentToken = 0
+
+        if (payments && payments.length) {
+          payments.forEach((pay) => {
+            amountsInPaymentToken += pay._amount - TRANSACTION_FEE
+          })
+        }
+        let availableWalletBalance = await computer.getBalance()
+        setBalance(availableWalletBalance + amountsInPaymentToken)
         setChain(computer.getChain())
       }
     } catch (err) {
       showSnackBar("Error fetching wallet details", false)
-      console.log("Error fetching wallet details", err)
     }
   }, [computer])
 
@@ -198,7 +216,14 @@ function AddressInput({ address, setAddress }: { address: string; setAddress: Di
   )
 }
 
-function SendMoneyButton({ computer, amount, address, setAmount, setAddress }: any) {
+function SendMoneyButton({
+  computer,
+  amount,
+  address,
+  setAmount,
+  setAddress,
+  paymentModSpec,
+}: any) {
   const { showSnackBar } = useUtilsComponents()
 
   const send = async (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -209,12 +234,66 @@ function SendMoneyButton({ computer, amount, address, setAmount, setAddress }: a
         showSnackBar("Please enter a valid address", false)
         return
       }
-      const floatAmount = Number(amount)
+      const floatAmount = Math.round(Number(amount))
       if (!floatAmount) {
         showSnackBar("Please enter a valid amount", false)
         return
       }
-      await computer.send(floatAmount * 1e8, address)
+
+      let availableWalletBalance = await computer.getBalance()
+      const requiredAmountToBeTransferred = floatAmount * 1e8
+      // hardcoded for LTC
+      if (requiredAmountToBeTransferred + TRANSACTION_FEE < availableWalletBalance) {
+        await computer.send(requiredAmountToBeTransferred, address)
+      } else {
+        const paymentRevs = await computer.query({
+          publicKey: computer.getPublicKey(),
+          mod: paymentModSpec,
+        })
+        const payments = (await Promise.all(
+          paymentRevs.map((rev: string) => computer.sync(rev)),
+        )) as any[] // should import payment class
+
+        let amountsInPaymentToken = 0
+
+        if (payments && payments.length) {
+          payments.forEach((pay) => {
+            // hardcoded for LTC
+            amountsInPaymentToken += pay._amount - TRANSACTION_FEE
+          })
+        }
+
+        if (
+          requiredAmountToBeTransferred + TRANSACTION_FEE >
+          availableWalletBalance + amountsInPaymentToken
+        ) {
+          showSnackBar(`Insufficient Balance.`, false)
+          setAmount("")
+          setAddress("")
+          return
+        }
+
+        const sortedPayments = payments.slice().sort((a, b) => b._amount - a._amount)
+        const paymentsToBeWithdraw = []
+        let newAvailableAmount = 0
+        for (let i = 0; i < sortedPayments.length; i++) {
+          const pay = sortedPayments[i]
+          // hardcoded for LTC
+          newAvailableAmount += pay._amount - TRANSACTION_FEE
+          // hardcoded for LTC
+          paymentsToBeWithdraw.push(pay.setAmount(TRANSACTION_FEE))
+          if (
+            requiredAmountToBeTransferred + TRANSACTION_FEE <
+            availableWalletBalance + newAvailableAmount
+          ) {
+            break
+          }
+        }
+
+        await Promise.all(paymentsToBeWithdraw)
+        await computer.send(requiredAmountToBeTransferred, address)
+      }
+
       showSnackBar(`${amount} ${computer.getChain()} trasferred successfully.`, true)
       setAmount("")
       setAddress("")
@@ -239,7 +318,7 @@ function SendMoneyButton({ computer, amount, address, setAmount, setAddress }: a
   )
 }
 
-function SendMoneyForm({ computer }: any) {
+function SendMoneyForm({ computer, paymentModSpec }: { computer: any; paymentModSpec: string }) {
   const [address, setAddress] = useState<string>("")
   const [amount, setAmount] = useState<string>("")
 
@@ -262,6 +341,7 @@ function SendMoneyForm({ computer }: any) {
           address={address}
           amount={amount}
           computer={computer}
+          paymentModSpec={paymentModSpec}
           setAddress={setAddress}
           setAmount={setAmount}
         />
@@ -270,13 +350,13 @@ function SendMoneyForm({ computer }: any) {
   )
 }
 
-export function Wallet() {
+export function Wallet({ paymentModSpec }: { paymentModSpec: string }) {
   const [computer] = useState(Auth.getComputer())
 
   const Content = () => (
     <>
       <h4 className="mb-8 text-2xl font-bold dark:text-white">Wallet</h4>
-      <Balance computer={computer} />
+      <Balance computer={computer} paymentModSpec={paymentModSpec} />
       <Address computer={computer} />
       <PublicKey computer={computer} />
       <Path computer={computer} />
@@ -286,7 +366,7 @@ export function Wallet() {
       <Network computer={computer} />
       <Url computer={computer} />
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
-      <SendMoneyForm computer={computer} />
+      <SendMoneyForm computer={computer} paymentModSpec={paymentModSpec} />
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>
