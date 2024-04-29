@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.18.0-beta.0",
+  "version": "0.19.0-beta.0",
   "description": "Server Side Library for the Bitcoin Computer",
   "contributors": [
     "Clemens Ley",
@@ -48,7 +48,7 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@bitcoin-computer/lib": "^0.18.0-beta.0",
+    "@bitcoin-computer/lib": "^0.19.0-beta.0",
     "@bitcoin-computer/nakamotojs": "^0.18.0-beta.0",
     "@bitcoin-computer/tiny-secp256k1": "^2.2.1",
     "@types/chai": "^4.3.1",
