@@ -7,7 +7,6 @@ import { Auth, Error404, UtilsContext, Transaction, Wallet } from "@bitcoin-comp
 import Mint from "./components/Mint"
 import { AllAssets, MyAssets } from "./components/Assets"
 import { NftView } from "./components/Nft"
-// import { Wallet } from "./components/Wallet"
 import { paymentModSpec } from "./constants/modSpecs"
 
 export default function App() {
