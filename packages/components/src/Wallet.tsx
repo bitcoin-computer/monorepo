@@ -5,37 +5,35 @@ import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
 import { useUtilsComponents, UtilsContext } from "./UtilsContext"
 
-// hardcoded for LTC
-const TRANSACTION_FEE = 7860 // Constant for transaction fee
-
 const Balance = ({ computer, paymentModSpec }: any) => {
   const [balance, setBalance] = useState<number>(0)
   const [chain, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   const refreshBalance = useCallback(async () => {
     try {
+      showLoader(true)
       if (computer) {
         const paymentRevs = await computer.query({
           publicKey: computer.getPublicKey(),
           mod: paymentModSpec,
         })
-        const payments = (await Promise.all(
-          paymentRevs.map((rev: string) => computer.sync(rev)),
-        )) as any[]
+        const payments = (await Promise.all(paymentRevs.map(computer.sync))) as any[]
 
         let amountsInPaymentToken = 0
 
         if (payments && payments.length) {
           payments.forEach((pay) => {
-            amountsInPaymentToken += pay._amount - TRANSACTION_FEE
+            amountsInPaymentToken += pay._amount - computer.getMinimumFees()
           })
         }
         let availableWalletBalance = await computer.getBalance()
         setBalance(availableWalletBalance + amountsInPaymentToken)
         setChain(computer.getChain())
       }
+      showLoader(false)
     } catch (err) {
+      showLoader(false)
       showSnackBar("Error fetching wallet details", false)
     }
   }, [computer])
@@ -224,10 +222,11 @@ function SendMoneyButton({
   setAddress,
   paymentModSpec,
 }: any) {
-  const { showSnackBar } = useUtilsComponents()
+  const { showSnackBar, showLoader } = useUtilsComponents()
 
   const send = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
+    const TRANSACTION_FEE = computer.getMinimumFees()
     try {
       if (!Auth.isLoggedIn()) throw new Error("Please log in first.")
       if (!address) {
@@ -250,9 +249,7 @@ function SendMoneyButton({
           publicKey: computer.getPublicKey(),
           mod: paymentModSpec,
         })
-        const payments = (await Promise.all(
-          paymentRevs.map((rev: string) => computer.sync(rev)),
-        )) as any[] // should import payment class
+        const payments = (await Promise.all(paymentRevs.map(computer.sync))) as any[] // should import payment class
 
         let amountsInPaymentToken = 0
 
@@ -308,7 +305,15 @@ function SendMoneyButton({
   return (
     <>
       <button
-        onClick={send}
+        onClick={async (e) => {
+          try {
+            showLoader(true)
+            await send(e)
+            showLoader(false)
+          } catch (error) {
+            showLoader(false)
+          }
+        }}
         type="submit"
         className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
       >

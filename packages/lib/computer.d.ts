@@ -412,6 +412,7 @@ declare class Computer {
   getLatestRevs(ids: string[]): Promise<string[]>;
   getLatestRev(id: string): Promise<string>;
   idsToRevs(ids: string[]): Promise<string[]>;
+  getMinimumFees(): number;
   faucet(amount: number, address?: string): Promise<_Unspent>;
   toScriptPubKey(publicKeys?: string[]): Buffer;
 }

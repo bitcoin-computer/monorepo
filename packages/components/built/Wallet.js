@@ -56,13 +56,14 @@ var Balance = function (_a) {
     var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
     var _b = useState(0), balance = _b[0], setBalance = _b[1];
     var _c = useState(localStorage.getItem("CHAIN") || "LTC"), chain = _c[0], setChain = _c[1];
-    var showSnackBar = UtilsContext.useUtilsComponents().showSnackBar;
+    var _d = UtilsContext.useUtilsComponents(), showSnackBar = _d.showSnackBar, showLoader = _d.showLoader;
     var refreshBalance = useCallback(function () { return __awaiter(void 0, void 0, void 0, function () {
         var paymentRevs, payments, amountsInPaymentToken_1, availableWalletBalance, err_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     _a.trys.push([0, 5, , 6]);
+                    showLoader(true);
                     if (!computer) return [3 /*break*/, 4];
                     return [4 /*yield*/, computer.query({
                             publicKey: computer.getPublicKey(),
@@ -73,12 +74,10 @@ var Balance = function (_a) {
                     return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
                 case 2:
                     payments = (_a.sent());
-                    console.log(payments);
                     amountsInPaymentToken_1 = 0;
                     if (payments && payments.length) {
                         payments.forEach(function (pay) {
-                            // hardcoded for LTC
-                            amountsInPaymentToken_1 += pay._amount - 7860;
+                            amountsInPaymentToken_1 += pay._amount - computer.getMinimumFees();
                         });
                     }
                     return [4 /*yield*/, computer.getBalance()];
@@ -87,11 +86,13 @@ var Balance = function (_a) {
                     setBalance(availableWalletBalance + amountsInPaymentToken_1);
                     setChain(computer.getChain());
                     _a.label = 4;
-                case 4: return [3 /*break*/, 6];
+                case 4:
+                    showLoader(false);
+                    return [3 /*break*/, 6];
                 case 5:
                     err_1 = _a.sent();
+                    showLoader(false);
                     showSnackBar("Error fetching wallet details", false);
-                    console.log("Error fetching wallet details", err_1);
                     return [3 /*break*/, 6];
                 case 6: return [2 /*return*/];
             }
@@ -149,13 +150,14 @@ function AddressInput(_a) {
 function SendMoneyButton(_a) {
     var _this = this;
     var computer = _a.computer, amount = _a.amount, address = _a.address, setAmount = _a.setAmount, setAddress = _a.setAddress, paymentModSpec = _a.paymentModSpec;
-    var showSnackBar = useUtilsComponents().showSnackBar;
+    var _b = useUtilsComponents(), showSnackBar = _b.showSnackBar, showLoader = _b.showLoader;
     var send = function (e) { return __awaiter(_this, void 0, void 0, function () {
-        var floatAmount, availableWalletBalance, requiredAmountToBeTransferred, paymentRevs, payments, amountsInPaymentToken_2, sortedPayments, paymentsToBeWithdraw, newAvailableAmount, i, pay, error_1;
+        var TRANSACTION_FEE, floatAmount, availableWalletBalance, requiredAmountToBeTransferred, paymentRevs, payments, amountsInPaymentToken_2, sortedPayments, paymentsToBeWithdraw, newAvailableAmount, i, pay, error_1;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     e.preventDefault();
+                    TRANSACTION_FEE = computer.getMinimumFees();
                     _a.label = 1;
                 case 1:
                     _a.trys.push([1, 10, , 11]);
@@ -165,8 +167,7 @@ function SendMoneyButton(_a) {
                         showSnackBar("Please enter a valid address", false);
                         return [2 /*return*/];
                     }
-                    console.log({ paymentModSpec: paymentModSpec });
-                    floatAmount = Number(amount);
+                    floatAmount = Math.round(Number(amount));
                     if (!floatAmount) {
                         showSnackBar("Please enter a valid amount", false);
                         return [2 /*return*/];
@@ -175,8 +176,7 @@ function SendMoneyButton(_a) {
                 case 2:
                     availableWalletBalance = _a.sent();
                     requiredAmountToBeTransferred = floatAmount * 1e8;
-                    console.log("required: ", requiredAmountToBeTransferred + 7860, "available: ", availableWalletBalance);
-                    if (!(requiredAmountToBeTransferred + 7860 < availableWalletBalance)) return [3 /*break*/, 4];
+                    if (!(requiredAmountToBeTransferred + TRANSACTION_FEE < availableWalletBalance)) return [3 /*break*/, 4];
                     return [4 /*yield*/, computer.send(requiredAmountToBeTransferred, address)];
                 case 3:
                     _a.sent();
@@ -189,15 +189,17 @@ function SendMoneyButton(_a) {
                     paymentRevs = _a.sent();
                     return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
                 case 6:
-                    payments = (_a.sent());
+                    payments = (_a.sent()) // should import payment class
+                    ;
                     amountsInPaymentToken_2 = 0;
                     if (payments && payments.length) {
                         payments.forEach(function (pay) {
                             // hardcoded for LTC
-                            amountsInPaymentToken_2 += pay._amount - 7860;
+                            amountsInPaymentToken_2 += pay._amount - TRANSACTION_FEE;
                         });
                     }
-                    if (requiredAmountToBeTransferred + 7860 > availableWalletBalance + amountsInPaymentToken_2) {
+                    if (requiredAmountToBeTransferred + TRANSACTION_FEE >
+                        availableWalletBalance + amountsInPaymentToken_2) {
                         showSnackBar("Insufficient Balance.", false);
                         setAmount("");
                         setAddress("");
@@ -209,10 +211,11 @@ function SendMoneyButton(_a) {
                     for (i = 0; i < sortedPayments.length; i++) {
                         pay = sortedPayments[i];
                         // hardcoded for LTC
-                        newAvailableAmount += pay._amount - 7860;
+                        newAvailableAmount += pay._amount - TRANSACTION_FEE;
                         // hardcoded for LTC
-                        paymentsToBeWithdraw.push(pay.setAmount(7860));
-                        if (requiredAmountToBeTransferred + 7860 < availableWalletBalance + newAvailableAmount) {
+                        paymentsToBeWithdraw.push(pay.setAmount(TRANSACTION_FEE));
+                        if (requiredAmountToBeTransferred + TRANSACTION_FEE <
+                            availableWalletBalance + newAvailableAmount) {
                             break;
                         }
                     }
@@ -238,7 +241,26 @@ function SendMoneyButton(_a) {
             }
         });
     }); };
-    return (_jsx(_Fragment, { children: _jsx("button", __assign({ onClick: send, type: "submit", className: "px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Send (To Address)" })) }));
+    return (_jsx(_Fragment, { children: _jsx("button", __assign({ onClick: function (e) { return __awaiter(_this, void 0, void 0, function () {
+                var error_2;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            _a.trys.push([0, 2, , 3]);
+                            showLoader(true);
+                            return [4 /*yield*/, send(e)];
+                        case 1:
+                            _a.sent();
+                            showLoader(false);
+                            return [3 /*break*/, 3];
+                        case 2:
+                            error_2 = _a.sent();
+                            showLoader(false);
+                            return [3 /*break*/, 3];
+                        case 3: return [2 /*return*/];
+                    }
+                });
+            }); }, type: "submit", className: "px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Send (To Address)" })) }));
 }
 function SendMoneyForm(_a) {
     var computer = _a.computer, paymentModSpec = _a.paymentModSpec;

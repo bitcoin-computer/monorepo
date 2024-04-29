@@ -10,6 +10,7 @@ import {
   SaleHelper,
 } from "@bitcoin-computer/swap"
 const { Computer } = await import("@bitcoin-computer/lib")
+import fs from "fs"
 
 config()
 
@@ -68,14 +69,16 @@ rl.question(q, async (answer) => {
       const paymentHelper = new PaymentHelper(computer)
       const paymentModSpec = await paymentHelper.deploy()
 
-      console.log(`
-      Deploy successful
-      \x1b[2mYou can copy this module specifier\x1b[0m
-      export const nftModSpec = \x1b[2m'${modSpec}'\x1b[0m
-      export const offerModSpec = \x1b[2m'${offerModSpec}'\x1b[0m
-      export const saleModSpec = \x1b[2m'${saleModSpec}'\x1b[0m
-      export const paymentModSpec = \x1b[2m'${paymentModSpec}'\x1b[0m
-      `)
+      // Write deployment results to file
+      const modSpecsContent = `// This file contains module specifiers for deployed contracts
+export const nftModSpec = '${modSpec}';
+export const offerModSpec = '${offerModSpec}';
+export const saleModSpec = '${saleModSpec}';
+export const paymentModSpec = '${paymentModSpec}';
+`
+      fs.writeFileSync("src/constants/modSpecs.ts", modSpecsContent)
+
+      console.log("\nDeployment successful. Results written to src/constants/modSpecs.ts")
     } catch (err) {
       console.log(err)
     }
