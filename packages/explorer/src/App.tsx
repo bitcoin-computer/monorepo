@@ -1,5 +1,5 @@
 import './App.css'
-import { useEffect } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import NavBar from './components/Navbar'
 import Block from './components/Block'
@@ -15,8 +15,12 @@ import {
   Error404,
   UtilsContext,
   Wallet,
+  ComputerContext
 } from '@bitcoin-computer/components'
+
 export default function App() {
+  const [computer] = useState(Auth.getComputer())
+
   useEffect(() => {
     initFlowbite()
   }, [])
@@ -25,21 +29,23 @@ export default function App() {
     <BrowserRouter>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 z-30 inset-0 sr-only"></span>
       <UtilsContext.UtilsProvider>
-        <Auth.LoginModal />
-        <Wallet />
-        <NavBar />
-        <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-          <Routes>
-            <Route path="/" element={<Gallery.WithPagination />} />
-            <Route path="/blocks" element={<Blocks />} />
-            <Route path="/playground" element={<Playground />} />
-            <Route path="/transactions/:txn" element={<Transaction.Component />} />
-            <Route path="/blocks/:block" element={<Block />} />
-            <Route path="/objects/:rev" element={<SmartObject.Component />} />
-            <Route path="/modules/:rev" element={<Module />} />
-            <Route path="*" element={<Error404 />} />
-          </Routes>
-        </div>
+        <ComputerContext.Provider value={computer}>
+          <Auth.LoginModal />
+          <Wallet />
+          <NavBar />
+          <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+            <Routes>
+              <Route path="/" element={<Gallery.WithPagination />} />
+              <Route path="/blocks" element={<Blocks />} />
+              <Route path="/playground" element={<Playground />} />
+              <Route path="/transactions/:txn" element={<Transaction.Component />} />
+              <Route path="/blocks/:block" element={<Block />} />
+              <Route path="/objects/:rev" element={<SmartObject.Component />} />
+              <Route path="/modules/:rev" element={<Module />} />
+              <Route path="*" element={<Error404 />} />
+            </Routes>
+          </div>
+        </ComputerContext.Provider>
       </UtilsContext.UtilsProvider>
     </BrowserRouter>
   )

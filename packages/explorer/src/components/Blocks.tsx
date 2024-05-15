@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Auth, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
 
 export default function Blocks() {
   const navigate = useNavigate()
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const blocksPerPage = 100
 
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()

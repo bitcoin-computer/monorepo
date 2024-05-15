@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Auth, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
 
 function Block() {
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const [block] = useState(params.block)
   const [isLoading, setIsLoading] = useState(false)
   const [blockData, setBlockData] = useState<any | null>(null)

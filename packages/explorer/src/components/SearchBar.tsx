@@ -1,12 +1,12 @@
-import { useRef, useState } from 'react'
+import { useContext, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Auth } from '@bitcoin-computer/components'
+import { ComputerContext } from '@bitcoin-computer/components'
 import { isValidHexadecimalPublicKey } from '../utils'
 
 export function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const navigate = useNavigate()
 
   const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
