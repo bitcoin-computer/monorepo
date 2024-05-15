@@ -46,11 +46,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import reactStringReplace from "react-string-replace";
 import { Card } from "./Card";
-import { Auth } from "./Auth";
+import { ComputerContext } from "./ComputerContext";
 function ExpressionCard(_a) {
     var content = _a.content, env = _a.env;
     var entries = Object.entries(env);
@@ -71,7 +71,7 @@ function Component() {
     var _this = this;
     var location = useLocation();
     var params = useParams();
-    var computer = useState(Auth.getComputer())[0];
+    var computer = useContext(ComputerContext);
     var _a = useState(params.txn), txn = _a[0], setTxn = _a[1];
     var _b = useState(null), txnData = _b[0], setTxnData = _b[1];
     var _c = useState(null), rpcTxnData = _c[0], setRPCTxnData = _c[1];

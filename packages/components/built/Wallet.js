@@ -46,11 +46,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { HiRefresh } from "react-icons/hi";
 import { Auth } from "./Auth";
 import { Drawer } from "./Drawer";
 import { UtilsContext } from "./UtilsContext";
+import { ComputerContext } from "./ComputerContext";
 var Balance = function (_a) {
     var computer = _a.computer;
     var _b = useState(0), balance = _b[0], setBalance = _b[1];
@@ -121,7 +122,7 @@ var LogOut = function () {
     return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mb-6" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Log out" })), _jsx("p", __assign({ className: "mb-1 text-sm text-gray-500 dark:text-gray-400" }, { children: "Logging out will delete your mnemonic. Make sure to write it down." }))] })), _jsx("div", __assign({ className: "grid grid-cols-2 gap-4" }, { children: _jsx("button", __assign({ onClick: Auth.logout, className: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700" }, { children: "Log out" })) }))] }));
 };
 export function Wallet() {
-    var computer = useState(Auth.getComputer())[0];
+    var computer = useContext(ComputerContext);
     var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }

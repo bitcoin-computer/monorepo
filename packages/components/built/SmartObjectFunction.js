@@ -46,10 +46,11 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown";
 import { isValidRev, sleep } from "./common/utils";
 import { UtilsContext } from "./UtilsContext";
+import { ComputerContext } from "./ComputerContext";
 export var getErrorMessage = function (error) {
     var _a, _b, _c, _d, _e, _f;
     if (((_b = (_a = error === null || error === void 0 ? void 0 : error.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.error) ===
@@ -86,9 +87,10 @@ export var getValueForType = function (type, stringValue) {
     }
 };
 export var SmartObjectFunction = function (_a) {
-    var computer = _a.computer, smartObject = _a.smartObject, functionsExist = _a.functionsExist, options = _a.options, setFunctionResult = _a.setFunctionResult, setShow = _a.setShow, setModalTitle = _a.setModalTitle;
+    var smartObject = _a.smartObject, functionsExist = _a.functionsExist, options = _a.options, setFunctionResult = _a.setFunctionResult, setShow = _a.setShow, setModalTitle = _a.setModalTitle;
     var _b = useState({}), formState = _b[0], setFormState = _b[1];
     var showLoader = UtilsContext.useUtilsComponents().showLoader;
+    var computer = useContext(ComputerContext);
     var handleSmartObjectMethod = function (event, smartObject, fnName, params) { return __awaiter(void 0, void 0, void 0, function () {
         var revMap_1, tx, res, error_1;
         return __generator(this, function (_a) {

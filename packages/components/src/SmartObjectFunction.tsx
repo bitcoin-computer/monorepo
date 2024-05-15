@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown"
 import { isValidRev, sleep } from "./common/utils"
 import { UtilsContext } from "./UtilsContext"
+import { ComputerContext } from "./ComputerContext"
 
 export const getErrorMessage = (error: any): string => {
   if (
@@ -41,7 +42,6 @@ export const getValueForType = (type: string, stringValue: string) => {
 }
 
 export const SmartObjectFunction = ({
-  computer,
   smartObject,
   functionsExist,
   options,
@@ -51,6 +51,8 @@ export const SmartObjectFunction = ({
 }: any) => {
   const [formState, setFormState] = useState<any>({})
   const { showLoader } = UtilsContext.useUtilsComponents()
+  const computer = useContext(ComputerContext)
+
 
   const handleSmartObjectMethod = async (
     event: any,
@@ -86,7 +88,7 @@ export const SmartObjectFunction = ({
         sign: true,
       })
 
-      await computer.broadcast(tx)
+      await computer.broadcast(tx!)
       await sleep(1000)
       const res = await computer.query({ ids: [smartObject._id] })
       setFunctionResult({ _rev: res[0] })

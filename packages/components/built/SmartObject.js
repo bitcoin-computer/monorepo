@@ -46,15 +46,15 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { capitalizeFirstLetter, toObject } from "./common/utils";
 import reactStringReplace from "react-string-replace";
-import { Auth } from "./Auth";
 import { Card } from "./Card";
 import { Modal } from "./Modal";
 import { FunctionResultModalContent } from "./common/SmartCallExecutionResult";
 import { SmartObjectFunction } from "./SmartObjectFunction";
+import { ComputerContext } from "./ComputerContext";
 var keywords = ["_id", "_rev", "_owners", "_root", "_amount"];
 var modalId = "smart-object-info-modal";
 export var getFnParamNames = function (fn) {
@@ -93,7 +93,7 @@ function Component() {
     var params = useParams();
     var navigate = useNavigate();
     var rev = useState(params.rev || "")[0];
-    var computer = useState(Auth.getComputer())[0];
+    var computer = useContext(ComputerContext);
     var _a = useState(null), smartObject = _a[0], setSmartObject = _a[1];
     var _b = useState(false), functionsExist = _b[0], setFunctionsExist = _b[1];
     var _c = useState({}), functionResult = _c[0], setFunctionResult = _c[1];
@@ -140,7 +140,7 @@ function Component() {
         setFunctionsExist(funcExist);
     }, [smartObject]);
     var _e = rev.split(":"), txId = _e[0], outNum = _e[1];
-    return (_jsxs(_Fragment, { children: [_jsxs("div", { children: [_jsx("h1", __assign({ className: "mb-2 text-5xl font-extrabold dark:text-white" }, { children: "Object" })), _jsxs("p", __assign({ className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400" }, { children: [_jsx(Link, __assign({ to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: txId })), ":", outNum] })), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(SmartObjectFunction, { computer: computer, smartObject: smartObject, functionsExist: functionsExist, options: options, setFunctionResult: setFunctionResult, setShow: setShow, setModalTitle: setModalTitle })] }), _jsx(Modal.Component, { title: modalTitle, content: FunctionResultModalContent, contentData: { functionResult: functionResult }, id: modalId })] }));
+    return (_jsxs(_Fragment, { children: [_jsxs("div", { children: [_jsx("h1", __assign({ className: "mb-2 text-5xl font-extrabold dark:text-white" }, { children: "Object" })), _jsxs("p", __assign({ className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400" }, { children: [_jsx(Link, __assign({ to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: txId })), ":", outNum] })), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(SmartObjectFunction, { smartObject: smartObject, functionsExist: functionsExist, options: options, setFunctionResult: setFunctionResult, setShow: setShow, setModalTitle: setModalTitle })] }), _jsx(Modal.Component, { title: modalTitle, content: FunctionResultModalContent, contentData: { functionResult: functionResult }, id: modalId })] }));
 }
 export var SmartObject = {
     Component: Component,
