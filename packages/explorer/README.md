@@ -82,6 +82,9 @@ This project is intended as a starting point for new development so we want to k
 
 If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
 
+## Development Status
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
+
 ## MIT License
 
 Copyright (c) 2022 BCDB Inc.

@@ -175,6 +175,7 @@ This fee is in addition to the mining fee. You can configure satoshis per byte.
 ## Development Status
 
 We are in beta, so there is a possibility of unknown bugs.
+Currently, mainnet is disabled in all jurisdictions.
 
 ## License
 
