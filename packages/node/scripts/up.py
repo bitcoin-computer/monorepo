@@ -9,27 +9,25 @@ import multiprocessing
 
 def runSync(args, commandLine):
     if(args.cpus is not None):
-        # numWorkers = cpus - db, node + nonSt
-        numWorkers = args.cpus - 3 if args.cpus - 3 > 0 else 1
+        # numWorkers = #cpus - dbService + nodeSercice + nonStandardWorker
+        numStandardWorkers = args.cpus - 3 if args.cpus - 3 > 0 else 1
     else:
-        numWorkers = multiprocessing.cpu_count() - 3 if multiprocessing.cpu_count() - 3 > 0 else 1
+        numStandardWorkers = multiprocessing.cpu_count() - 3 if multiprocessing.cpu_count() - 3 > 0 else 1
 
     standardTxCommand = ''
-    print('Launching '+str(numWorkers+1)+' workers.')
-    for worker in range(numWorkers):  
+    numWorkers = numStandardWorkers + 1
+    print('Launching '+str(numStandardWorkers)+' standard workers and 1 non-standard worker. ')
+    for worker in range(numStandardWorkers):  
         standardTxCommand+=syncCommandLine('false', str(worker+1), str(numWorkers), commandLine)+ ' && '
     
-    nonStandardTxCommand = syncCommandLine('true', str(numWorkers+1), '1', commandLine)
+    nonStandardTxCommand = syncCommandLine('true', str(numWorkers), str(numWorkers), commandLine)
 
     parallelCommand = standardTxCommand + nonStandardTxCommand
     p = subprocess.run(
         ['sh', '-c', parallelCommand], ) 
 
 def syncCommandLine(nonStandard, workerId, numWorkers, commandLine):
-    if (nonStandard == 'true'):
-        return 'export SYNC_NON_STANDARD='+nonStandard+' WORKER_ID='+str(workerId)+' ; '+ commandLine+' run -d sync'
-    else:
-        return 'export SYNC_NON_STANDARD='+nonStandard+' WORKER_ID='+str(workerId)+' NUM_WORKERS='+str(numWorkers)+'; '+ commandLine+' run -d sync'
+    return 'export SYNC_NON_STANDARD='+nonStandard+' WORKER_ID='+str(workerId)+' NUM_WORKERS='+str(numWorkers)+'; '+ commandLine+' run -d sync'
 
 def main():
     
@@ -53,7 +51,6 @@ def main():
     parser.set_defaults(service='')
 
     parser.add_argument('-cpus', dest="cpus",type=int)
-    parser.add_argument('-optimize', action="store_true")
 
     args = parser.parse_args()
 
@@ -74,19 +71,12 @@ def main():
         # testnet or mainnet
         url = subprocess.check_output("grep BCN_URL .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
         bcnUrl = url if url != '' else 'https://rltc.node.bitcoincomputer.io'
-        if(args.optimize):
-            # Optimize for speed: skip launching bcn service (no port binding)
-            subprocess.run(
-                ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' bcn']) 
-            # Launch sync in automatic parallel mode. If any service is specified, don't launch sync services
-            if(args.service.strip() == ''):
-                runSync(args, commandLine)
-        else:
-            subprocess.run(
-                ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
-            # If any service is specified, don't launch sync services
-            if(args.service.strip() == ''):
-                runSync(args, commandLine)
+        
+        subprocess.run(
+            ['sh', '-c', commandLine+' run -d -e BCN_URL='+bcnUrl+' -p {0}:{0} bcn'.format(bcnPort)]) 
+        # If any service is specified, don't launch sync services
+        if(args.service.strip() == ''):
+            runSync(args, commandLine)
 if __name__ == '__main__':
     main()
     

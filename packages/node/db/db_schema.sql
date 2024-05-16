@@ -73,8 +73,9 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE TABLE IF NOT EXISTS
   "SyncStatus" (
-    "syncedHeight" INTEGER NOT NULL,
-    "workerId" INTEGER NOT NULL PRIMARY KEY
+    "blockToSync" INTEGER NOT NULL,
+    "workerId" INTEGER NOT NULL PRIMARY KEY,
+    "nonStandard" BOOLEAN NOT NULL
   );
 
 CREATE VIEW "Utxos" AS
