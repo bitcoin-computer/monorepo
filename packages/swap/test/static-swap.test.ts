@@ -5,12 +5,12 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
 
 import dotenv from 'dotenv'
-
-dotenv.config({ path: '../../.env'})
-
-const url = process.env.BCN_URL
 import { StaticSwapHelper } from '../src/static-swap'
 import { meta } from '../src/utils'
+
+dotenv.config({ path: '../../.env' })
+
+const url = process.env.BCN_URL
 
 describe('Static Swap', () => {
   let nftA: NFT

@@ -48,8 +48,9 @@ function getPath(chain, network) {
 }
 function getEnvVariable(name) {
     var res = process.env[name];
-    if (typeof res === "undefined")
-        throw new Error("Cannot find environment variable \"".concat(name, "\".\nDid you forget to copy the .env.example file into a .env file?"));
+    if (typeof res === "undefined") {
+        throw new Error("Cannot find environment variable \"".concat(name, "\" in the .env file."));
+    }
     else
         return res;
 }

@@ -30,12 +30,7 @@ export class OrdSaleHelper {
     return this.mod
   }
 
-  async createSaleTx(
-    b1Mock: PaymentMock,
-    b2Mock: PaymentMock,
-    nft: NFT,
-    paymentMock: PaymentMock,
-  ) {
+  async createSaleTx(b1Mock: PaymentMock, b2Mock: PaymentMock, nft: NFT, paymentMock: PaymentMock) {
     const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 
     return this.computer.encode({

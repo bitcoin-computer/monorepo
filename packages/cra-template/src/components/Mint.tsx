@@ -1,5 +1,5 @@
-import { useState } from "react"
-import { Auth, Modal } from "@bitcoin-computer/components"
+import { useContext, useState } from "react"
+import { ComputerContext, Modal } from "@bitcoin-computer/components"
 import { Counter } from "../contracts/counter"
 import { Link } from "react-router-dom"
 
@@ -49,7 +49,7 @@ function ErrorContent(msg: string) {
 }
 
 export default function Mint() {
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const [successRev, setSuccessRev] = useState('')
   const [errorMsg, setErrorMsg] = useState('')
 

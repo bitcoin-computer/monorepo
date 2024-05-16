@@ -1,13 +1,13 @@
 import { initFlowbite } from "flowbite"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import TransactionTable from "./TransactionTable"
 import { TableTxs } from "../types/common"
-import { Auth } from "@bitcoin-computer/components"
+import { ComputerContext } from "@bitcoin-computer/components"
 
 
 export default function Transactions() {
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
 
   const updateTxs = useCallback(async () => {

@@ -39,10 +39,9 @@ function getPath(chain: string, network: string): string {
 
 function getEnvVariable(name: string) {
   const res = process.env[name]
-  if (typeof res === "undefined")
-    throw new Error(
-      `Cannot find environment variable "${name}".\nDid you forget to copy the .env.example file into a .env file?`
-    )
+    if (typeof res === "undefined") {
+      throw new Error(`Cannot find environment variable "${name}" in the .env file.`)
+  }
   else return res
 }
 

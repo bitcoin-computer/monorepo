@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
 import { UtilsContext } from "./UtilsContext"
+import { ComputerContext } from "./ComputerContext"
 
 const Balance = ({ computer }: any) => {
   const [balance, setBalance] = useState<number>(0)
@@ -154,7 +155,8 @@ const LogOut = () => {
 }
 
 export function Wallet() {
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
+
 
   const Content = () => (
     <>

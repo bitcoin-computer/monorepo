@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import reactStringReplace from "react-string-replace"
 import { Card } from "./Card"
-import { Auth } from "./Auth"
+import { ComputerContext } from "./ComputerContext"
 
 function ExpressionCard({ content, env }: { content: string; env: { [s: string]: string } }) {
   const entries = Object.entries(env)
@@ -27,7 +27,7 @@ function ExpressionCard({ content, env }: { content: string; env: { [s: string]:
 function Component() {
   const location = useLocation()
   const params = useParams()
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const [txn, setTxn] = useState(params.txn)
   const [txnData, setTxnData] = useState<any | null>(null)
   const [rpcTxnData, setRPCTxnData] = useState<any | null>(null)

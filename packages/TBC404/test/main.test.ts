@@ -4,14 +4,14 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
-import { Counter } from '../src/main'
 import dotenv from 'dotenv'
+import { Counter } from '../src/main'
 
-// If you want to connect to your local Bitcoin Computer Node, create a .env file 
+// If you want to connect to your local Bitcoin Computer Node, create a .env file
 // in the monorepo root level and add the following line:
 // BCN_URL=http://localhost:1031
 
-dotenv.config({ path: '../../.env'})
+dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 

@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import { capitalizeFirstLetter, toObject } from "./common/utils"
 import reactStringReplace from "react-string-replace"
-import { Auth } from "./Auth"
 import { Card } from "./Card"
 import { Modal } from "./Modal"
 import { FunctionResultModalContent } from "./common/SmartCallExecutionResult"
 import { SmartObjectFunction } from "./SmartObjectFunction"
+import { ComputerContext } from "./ComputerContext"
 
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 const modalId = "smart-object-info-modal"
@@ -161,7 +161,7 @@ function Component() {
   const params = useParams()
   const navigate = useNavigate()
   const [rev] = useState(params.rev || "")
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const [smartObject, setSmartObject] = useState<any | null>(null)
   const [functionsExist, setFunctionsExist] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
@@ -224,7 +224,6 @@ function Component() {
         <SmartObjectValues smartObject={smartObject} />
 
         <SmartObjectFunction
-          computer={computer}
           smartObject={smartObject}
           functionsExist={functionsExist}
           options={options}
