@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
-    "@bitcoin-computer/nakamotojs": "^0.18.0-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.19.0-beta.0",
     "@bitcoin-computer/tiny-secp256k1": "^2.2.1",
     "@endo/static-module-record": "^1.0.4",
     "axios": "1.6.7",

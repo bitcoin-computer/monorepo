@@ -4,12 +4,11 @@
 
 import argparse
 import subprocess
-from subprocess import Popen
 import multiprocessing
 
 def runSync(args, commandLine):
     if(args.cpus is not None):
-        # numWorkers = #cpus - dbService + nodeSercice + nonStandardWorker
+        # We reserve 3 cpus, one for the db-service, one for the node-service, and one for the non-standard-worker
         numStandardWorkers = args.cpus - 3 if args.cpus - 3 > 0 else 1
     else:
         numStandardWorkers = multiprocessing.cpu_count() - 3 if multiprocessing.cpu_count() - 3 > 0 else 1
@@ -56,7 +55,7 @@ def main():
 
     print(args)
 
-    port = subprocess.check_output("grep PORT .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
+    port = subprocess.check_output("grep -w PORT .env | cut -d '=' -f2", shell=True).decode("utf-8").strip()
     bcnPort = port if port != '' else '1031'
 
     commandLine = ' docker compose -f docker-compose.yml -f chain-setup/'+args.chain+'-'+args.network+'/docker-compose-local-'+args.chain+'-'+args.network+'.yml '

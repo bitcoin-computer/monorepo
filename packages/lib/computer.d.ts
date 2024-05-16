@@ -228,6 +228,7 @@ type ComputerOptions = Partial<{
   url: string;
   satPerByte: number;
   dustRelayFee: number;
+  addressType: AddressType;
 }>;
 
 interface SecretOutput {
