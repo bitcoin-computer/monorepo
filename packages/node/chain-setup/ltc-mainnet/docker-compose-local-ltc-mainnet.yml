@@ -1,4 +1,3 @@
-version: "3"
 services:
   db:
     env_file: .env
@@ -71,7 +70,7 @@ services:
       - WORKER_ID=${WORKER_ID}
       - NUM_WORKERS=${NUM_WORKERS}
       - SYNC_NON_STANDARD=${SYNC_NON_STANDARD}
-      - BC_START_HEIGHT=2413791
+      - BC_START_HEIGHT=${BC_START_HEIGHT}
     depends_on:
       - db
       - node
