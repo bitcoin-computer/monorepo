@@ -8,7 +8,7 @@ import multiprocessing
 
 def runSync(args, commandLine):
     if(args.cpus is not None):
-        # numWorkers = #cpus - dbService + nodeSercice + nonStandardWorker
+        # We reserve 3 cpus, one for the db-service, one for the node-service, and one for the non-standard-worker
         numStandardWorkers = args.cpus - 3 if args.cpus - 3 > 0 else 1
     else:
         numStandardWorkers = multiprocessing.cpu_count() - 3 if multiprocessing.cpu_count() - 3 > 0 else 1

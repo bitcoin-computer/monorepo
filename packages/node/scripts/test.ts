@@ -27,9 +27,11 @@ const chain = process.env.CHAIN || args.bitcoin ? 'BTC' : 'LTC'
 
 const network = process.env.NETWORK || 'regtest'
 const bcnPort = process.env.PORT ?? 1031
+
 const nodeUrl = args.cloud ? 'https://rltc.node.bitcoincomputer.io' : 'http://127.0.0.1:' + bcnPort 
 const postgresHost = process.env.POSTGRES_HOST || '127.0.0.1'
 const rpcHost = args.cloud ? 'rltc.node.bitcoincomputer.io' : process.env.RPC_HOST
+
 const rpcUser = process.env.RPC_USER ?? 'bcn-admin'
 const rpcPass = process.env.RPC_PASSWORD ?? 'kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
 const zmqUrl = 'tcp://127.0.0.1:28332'
