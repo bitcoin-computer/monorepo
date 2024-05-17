@@ -269,18 +269,21 @@ type Query = Partial<{
   ids: string[];
   hash: string;
 }>;
-type UserQuery<T extends Class> = Partial<{
+type UserQuery<T extends Class> = {
+  ids: string[];
+} | (Partial<{
   mod: string;
   publicKey: string;
   limit: number;
   offset: number;
-  order: "ASC" | "DESC";
-  ids: string[];
+  order: 'ASC' | 'DESC';
   contract: {
-    class: T;
-    args?: ConstructorParameters<T>;
+      class: T;
+      args?: ConstructorParameters<T>;
   };
-}>;
+}> & {
+  ids?: never;
+});
 
 interface _Unspent {
   txId: string;
