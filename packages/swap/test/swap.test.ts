@@ -30,7 +30,7 @@ describe('Swap', () => {
       // Alice builds a partially signed swap transaction
       const { tx } = await alice.encode({
         exp: `${Swap} new Swap(nftA, nftB)`,
-        env: { nftA: nftA._rev, nftB: nftB._rev },
+        env: { nftA: nftA._rev, nftB: nftB._rev }
       })
 
       // Bob signs and broadcasts the swap transaction
@@ -69,7 +69,7 @@ describe('Swap', () => {
 
       // Bob reads the updated state from the blockchain
       const {
-        env: { a, b },
+        env: { a, b }
       } = (await bob.sync(tx.getId())) as { env: { a: NFT; b: NFT } }
       expect(a.name).deep.eq('a')
       expect(a._owners).deep.eq([bob.getPublicKey()])
@@ -86,7 +86,7 @@ describe('Swap', () => {
         ...meta,
         name: 'A',
         symbol: 'AAA',
-        _owners: [alice.getPublicKey()],
+        _owners: [alice.getPublicKey()]
       })
     })
 
@@ -97,7 +97,7 @@ describe('Swap', () => {
         ...meta,
         name: 'B',
         symbol: 'BBB',
-        _owners: [bob.getPublicKey()],
+        _owners: [bob.getPublicKey()]
       })
     })
   })
@@ -140,7 +140,7 @@ describe('Swap', () => {
         ...meta,
         name: 'A',
         symbol: 'AAA',
-        _owners: [bob.getPublicKey()],
+        _owners: [bob.getPublicKey()]
       })
     })
 
@@ -152,7 +152,7 @@ describe('Swap', () => {
         ...meta,
         name: 'B',
         symbol: 'BBB',
-        _owners: [alice.getPublicKey()],
+        _owners: [alice.getPublicKey()]
       })
     })
   })

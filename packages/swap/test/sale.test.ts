@@ -48,7 +48,7 @@ describe('Sale', () => {
         // eslint-disable-next-line no-bitwise
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
         inputIndex: 0,
-        fund: false,
+        fund: false
       })
 
       // Buyer creates a payment object with the asking price
@@ -169,7 +169,7 @@ describe('Sale', () => {
         _rev: _.isString,
         _root: _.isString,
         _owners: [thief.getPublicKey()],
-        _amount: nftPrice / 2,
+        _amount: nftPrice / 2
       })
     })
 
@@ -198,7 +198,7 @@ describe('Sale', () => {
       } catch (err) {
         if (err instanceof Error)
           expect(err.message).eq(
-            'mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)',
+            'mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)'
           )
       }
     })
@@ -223,7 +223,7 @@ describe('Sale', () => {
         _rev: _.isString,
         _root: _.isString,
         _owners: [buyer.getPublicKey()],
-        _amount: nftPrice,
+        _amount: nftPrice
       })
     })
 

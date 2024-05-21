@@ -1,6 +1,5 @@
 import { Modal as ModalClass } from "flowbite"
-import type { ModalOptions } from "flowbite"
-import type { InstanceOptions } from "flowbite"
+import type { ModalOptions, InstanceOptions } from "flowbite"
 
 const get = (id: string) => {
   const $modalElement = document.querySelector(`#${id}`) as HTMLElement
@@ -89,5 +88,5 @@ export const Modal = {
   ShowButton,
   HideButton,
   ToggleButton,
-  Component,
+  Component
 }

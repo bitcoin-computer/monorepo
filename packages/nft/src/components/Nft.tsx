@@ -7,7 +7,7 @@ import {
   capitalizeFirstLetter,
   Modal,
   UtilsContext,
-  ComputerContext,
+  ComputerContext
 } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
 import { PaymentMock } from "@bitcoin-computer/swap"

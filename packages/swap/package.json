@@ -8,9 +8,11 @@
     "start": "node build/src/main.js",
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.release.json",
-    "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
+    "lint": "eslint . --ext .ts,.tsx --ignore-pattern build/",
+    "lint-fix": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
     "test": "mocha  --config .mocharc.json",
     "test-and-show": "../../scripts/test-and-show.sh swap-test.log",
+    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "types": "tsc --noEmit"
   },
   "type": "module",

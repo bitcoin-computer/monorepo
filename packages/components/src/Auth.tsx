@@ -39,10 +39,9 @@ function getPath(chain: string, network: string): string {
 
 function getEnvVariable(name: string) {
   const res = process.env[name]
-    if (typeof res === "undefined") {
-      throw new Error(`Cannot find environment variable "${name}" in the .env file.`)
-  }
-  else return res
+  if (typeof res === "undefined") {
+    throw new Error(`Cannot find environment variable "${name}" in the .env file.`)
+  } else return res
 }
 
 function getUrl(chain: Chain, network: Network) {
@@ -50,8 +49,12 @@ function getUrl(chain: Chain, network: Network) {
 }
 
 function defaultConfiguration() {
-  const chain = (localStorage.getItem("CHAIN") || getEnvVariable(`REACT_APP_CHAIN`) || "LTC") as Chain
-  const network = (localStorage.getItem("NETWORK") || getEnvVariable(`REACT_APP_NETWORK`) || "regtest") as Network
+  const chain = (localStorage.getItem("CHAIN") ||
+    getEnvVariable(`REACT_APP_CHAIN`) ||
+    "LTC") as Chain
+  const network = (localStorage.getItem("NETWORK") ||
+    getEnvVariable(`REACT_APP_NETWORK`) ||
+    "regtest") as Network
   const url = getUrl(chain, network)
   return { chain, network, url }
 }
@@ -66,7 +69,7 @@ function browserConfiguration() {
     chain: localStorage.getItem("CHAIN") as Chain,
     network: localStorage.getItem("NETWORK") as Network,
     path: localStorage.getItem("PATH"),
-    url: localStorage.getItem("URL"),
+    url: localStorage.getItem("URL")
   }
 }
 
@@ -77,7 +80,7 @@ function getComputer(): Computer {
 
 function MnemonicInput({
   mnemonic,
-  setMnemonic,
+  setMnemonic
 }: {
   mnemonic: string
   setMnemonic: Dispatch<string>
@@ -180,7 +183,7 @@ function ChainInput({ chain, setChain }: { chain: Chain; setChain: Dispatch<Chai
 
 function NetworkInput({
   network,
-  setNetwork,
+  setNetwork
 }: {
   network: Network
   setNetwork: Dispatch<Network>
@@ -255,7 +258,7 @@ function PathInput({
   chain,
   network,
   path,
-  setPath,
+  setPath
 }: {
   chain: string
   network: string
@@ -292,7 +295,7 @@ function UrlInput({
   chain,
   network,
   url,
-  setUrl,
+  setUrl
 }: {
   chain: Chain
   network: Network
@@ -412,5 +415,5 @@ export const Auth = {
   browserConfiguration,
   getComputer,
   LoginForm,
-  LoginModal,
+  LoginModal
 }

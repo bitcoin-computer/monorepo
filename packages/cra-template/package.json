@@ -30,7 +30,7 @@
     "chai": "^5.1.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.0",
-    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "~9.1.0",
     "eslint-plugin-import": "^2.29.1",
     "mocha": "^10.3.0",
@@ -41,7 +41,11 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix",
+    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
+    "types": "tsc --noEmit"
   },
   "eslintConfig": {
     "extends": [

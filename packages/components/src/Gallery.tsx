@@ -1,8 +1,8 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { useContext, useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { jsonMap, strip, toObject } from "./common/utils"
 import { initFlowbite } from "flowbite"
+import { jsonMap, strip, toObject } from "./common/utils"
 import { useUtilsComponents } from "./UtilsContext"
 import { ComputerContext } from "./ComputerContext"
 
@@ -13,7 +13,7 @@ export type UserQuery<T extends Class> = Partial<{
   publicKey: string
   limit: number
   offset: number
-  order: 'ASC' | 'DESC'
+  order: "ASC" | "DESC"
   ids: string[]
   contract: {
     class: T
@@ -173,8 +173,8 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
     const fetch = async () => {
       showLoader(true)
       const query = { ...q, ...params }
-      query["offset"] = contractsPerPage * pageNum
-      query["limit"] = contractsPerPage + 1
+      query.offset = contractsPerPage * pageNum
+      query.limit = contractsPerPage + 1
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
       setRevs(result)
@@ -220,5 +220,5 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
 
 export const Gallery = {
   FromRevs,
-  WithPagination,
+  WithPagination
 }

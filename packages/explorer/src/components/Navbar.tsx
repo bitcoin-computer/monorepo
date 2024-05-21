@@ -35,7 +35,7 @@ function formatChainAndNetwork(chain: string, network: string) {
   const prefix = {
     mainnet: '',
     testnet: 't',
-    regtest: 'r',
+    regtest: 'r'
   }[network]
   return `${prefix}${chain}`
 }
@@ -46,7 +46,7 @@ function ModalContent() {
   const [url, setUrl] = useState<string>('')
   const { showSnackBar } = UtilsContext.useUtilsComponents()
 
-  function submit(e: React.SyntheticEvent) {    
+  function submit(e: React.SyntheticEvent) {
     e.preventDefault()
 
     const isValidChain = ['LTC', 'BTC', 'DOGE'].includes(chain)
@@ -58,9 +58,8 @@ function ModalContent() {
       localStorage.setItem('URL', url)
       localStorage.setItem('CHAIN', chain)
       localStorage.setItem('NETWORK', network)
-      window.location.href = "/"
+      window.location.href = '/'
     }
-
   }
 
   function closeModal() {
@@ -181,8 +180,20 @@ function NotLoggedMenu() {
             className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
           >
             {dropDownLabel}
-            <svg className="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 10 6">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m1 1 4 4 4-4"/>
+            <svg
+              className="w-2.5 h-2.5 ms-2.5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 10 6"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m1 1 4 4 4-4"
+              />
             </svg>
           </button>
           <div
@@ -288,8 +299,20 @@ export default function Navbar() {
             aria-expanded="false"
           >
             <span className="sr-only">Open main menu</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-              <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M1 1h15M1 7h15M1 13h15" />
+            <svg
+              className="w-5 h-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 17 14"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M1 1h15M1 7h15M1 13h15"
+              />
             </svg>
           </button>
 

@@ -5,11 +5,11 @@
     "plugin:prettier/recommended",
     "prettier",
     "plugin:@typescript-eslint/recommended",
-    "plugin:import/typescript",
+    "plugin:import/typescript"
   ],
   "plugins": ["@typescript-eslint"],
   "env": {
-    "jest": true,
+    "jest": true
   },
   "rules": {
     "semi": ["error", "never"],
@@ -24,8 +24,8 @@
       "error",
       {
         "allowAfterThis": true,
-        "allow": ["_readers", "_owners", "_amount", "_id", "_rev", "_root"],
-      },
-    ],
-  },
+        "allow": ["_readers", "_owners", "_amount", "_id", "_rev", "_root"]
+      }
+    ]
+  }
 }

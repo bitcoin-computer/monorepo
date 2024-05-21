@@ -7,7 +7,7 @@ export const RLTC: {
 } = {
   network: 'regtest',
   chain: 'LTC',
-  url: 'http://localhost:1031',
+  url: 'http://localhost:1031'
 }
 
 const isString = (x: any) => typeof x === 'string'
@@ -19,5 +19,5 @@ export const meta = {
   _rev: isString,
   _root: isString,
   _owners: isArray,
-  _amount: isNumber,
+  _amount: isNumber
 }

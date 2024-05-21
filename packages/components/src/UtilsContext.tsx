@@ -55,5 +55,5 @@ export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
 
 export const UtilsContext = {
   UtilsProvider,
-  useUtilsComponents,
+  useUtilsComponents
 }

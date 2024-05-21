@@ -40,16 +40,16 @@ export const jsonMap =
     throw new Error("Unsupported type")
   }
 
-  export const strip = (value: Json): Json => {
-    if (isJBasic(value)) return value
-    if (isJArray(value)) return value.map(strip)
-    const { _id, _root, _rev, _amount, _owners, ...rest } = value
-    return rest
-  }
+export const strip = (value: Json): Json => {
+  if (isJBasic(value)) return value
+  if (isJArray(value)) return value.map(strip)
+  const { _id, _root, _rev, _amount, _owners, ...rest } = value
+  return rest
+}
 
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
 export const toObject = (obj: any) =>
-  JSON.stringify(obj, (key, value) => typeof value === 'bigint' ? value.toString() : value, 2);
+  JSON.stringify(obj, (key, value) => (typeof value === "bigint" ? value.toString() : value), 2)
 
 export const capitalizeFirstLetter = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
