@@ -80,7 +80,7 @@ export default function BasicTabs() {
             </Box>
             <br />
             <Box className="example-1-subtext-tab">
-              A keyword property "_owners" is set to a public key. The holder of that public key is the owner of the object in the sense the corresponding private key is required to update the object. To send the NFT to another user, the current owner can reassign the "_owners" property to the new owner's public key. More on <a href='https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721-app' rel="noreferrer" target="_blank" className="docsLinkExamples">Github</a>.
+              A keyword property "_owners" is set to a public key. The holder of that public key is the owner of the object in the sense the corresponding private key is required to update the object. To send the NFT to another user, the current owner can reassign the "_owners" property to the new owner's public key. More on <a href='https://github.com/bitcoin-computer/monorepo/tree/main/packages/nft' rel="noreferrer" target="_blank" className="docsLinkExamples">Github</a>.
             </Box>
           </Grid>
           <Grid item xs={4} className="infoGridExample">
@@ -98,7 +98,7 @@ export default function BasicTabs() {
             </Box>
             <br />
             <Box className="example-1-subtext-tab">
-              The only function is a "send" function. This function checks that the supply of the token is above the amount to be sent. If so the amount stored in this instance is decreased by "amount". Then a new instance of the token class is created. The owner of the new token is set to the recipient. The full code is available on <a href='https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20-app' rel="noreferrer" target="_blank" className="docsLinkExamples">Github</a>.
+              The only function is a "send" function. This function checks that the supply of the token is above the amount to be sent. If so the amount stored in this instance is decreased by "amount". Then a new instance of the token class is created. The owner of the new token is set to the recipient. The full code is available on <a href='https://github.com/bitcoin-computer/monorepo/tree/main/packages/ft' rel="noreferrer" target="_blank" className="docsLinkExamples">Github</a>.
             </Box>
           </Grid>
           <Grid item xs={4} className="infoGridExample">
