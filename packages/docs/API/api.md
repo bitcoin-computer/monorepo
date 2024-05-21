@@ -4,7 +4,7 @@ order: -40
 
 # API
 
-This API describes the functionality of the `Computer` class, exported from [`@bitcoin-computer/lib`](https://www.npmjs.com/package/@bitcoin-computer/lib).
+This API describes the functionality of the `Computer` [library](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme).
 
 ## Basic
 

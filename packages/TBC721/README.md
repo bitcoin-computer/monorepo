@@ -88,7 +88,7 @@ See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#d
 
 ## Price
 
-See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price).
 
 ## Contributing
 
