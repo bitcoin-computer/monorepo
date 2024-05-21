@@ -18,8 +18,8 @@ This monorepo contains everything you need to build smart contract based applica
 * [Wallet](https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet#readme) - A non-custodial wallet
 * [Blockchain Explorer](https://github.com/bitcoin-computer/monorepo/tree/main/packages/explorer#readme) - A block explorer with smart contract support
 * [Chat](https://github.com/bitcoin-computer/monorepo/tree/main/packages/chat#readme) - A p2p chat via Bitcoin and Litecoin
-* [TBC20 App](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20-app#readme) - An app for minting, sending, and storing fungible tokens
-* [TBC721 App](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721-app#readme) - An app for minting, sending, and storing non-fungible tokens
+* [Fungible Token App](https://github.com/bitcoin-computer/monorepo/tree/main/packages/ft#readme) - An app for minting, sending, and storing fungible tokens
+* [Non Fungible Token App](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nft#readme) - An app for minting, sending, and storing non-fungible tokens
 
 ## Standard Contracts
 * [TBC20](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20#readme) - An implementation of the ERC20 Fungible Token Standard
