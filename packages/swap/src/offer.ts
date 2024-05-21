@@ -27,7 +27,7 @@ export class OfferHelper {
     return this.computer.encode({
       exp: `new Offer("${publicKey}", "${url}", "${tx.serialize()}")`,
       exclude: tx.getInRevs(),
-      mod: this.mod,
+      mod: this.mod
     })
   }
 

@@ -11,6 +11,10 @@
     "@types/node": "^20.11.21",
     "@types/react": "^18.2.60",
     "@types/react-dom": "^18.2.19",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "~9.1.0",
+    "eslint-plugin-import": "^2.29.1",
     "flowbite": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -27,7 +31,11 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "node --experimental-modules scripts/deploy.mjs"
+    "deploy": "node --experimental-modules scripts/deploy.mjs",
+    "lint": "eslint src",
+    "lint-fix": "eslint src --fix",
+    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
+    "types": "tsc --noEmit"
   },
   "eslintConfig": {
     "extends": [

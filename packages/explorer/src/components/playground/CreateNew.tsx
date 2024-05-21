@@ -37,7 +37,7 @@ const CreateNew = (props: {
         newArgumentsList.push({
           type: exampleVar.type,
           value: exampleVar.value ? exampleVar.value : '',
-          hidden: false,
+          hidden: false
         })
       })
     }
@@ -98,7 +98,7 @@ const CreateNew = (props: {
           `,
           env: { ...revMap },
           fund: true,
-          sign: true,
+          sign: true
         }
         if (modSpec) {
           encodeObject['mod'] = modSpec
@@ -169,7 +169,7 @@ const CreateNew = (props: {
                   onClick={() => removeArgument(index)}
                 />
               </div>
-            ),
+            )
         )}
       </div>
       <button

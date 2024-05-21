@@ -37,7 +37,7 @@ export default function Blocks() {
         length = totalBlocks - (pageNum * blocksPerPage + blocksPerPage - 1) + blocksPerPage - 1
       }
       setBlocks(
-        Array.from({ length: length }, (_, i) => totalBlocks - (pageNum * blocksPerPage + i)),
+        Array.from({ length: length }, (_, i) => totalBlocks - (pageNum * blocksPerPage + i))
       )
     } catch (error) {
       showSnackBar('Error setting blocks', false)

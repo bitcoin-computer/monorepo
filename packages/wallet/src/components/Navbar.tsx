@@ -8,7 +8,7 @@ import { isValidHexadecimalPrivateKey } from "../utils"
 
 export default function Navbar({
   setShowLogin,
-  computer,
+  computer
 }: {
   setShowLogin: Dispatch<boolean>
   computer: Computer

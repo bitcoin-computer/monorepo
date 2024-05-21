@@ -45,7 +45,7 @@ describe('Ord Sale', () => {
         // eslint-disable-next-line no-bitwise
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
         inputIndex: 2,
-        fund: false,
+        fund: false
       })
 
       // Buyer creates a payment object with the asking price
@@ -192,7 +192,7 @@ describe('Ord Sale', () => {
           _rev: _.isString,
           _root: _.isString,
           _owners: [buyer.getPublicKey()],
-          _amount: nftPrice,
+          _amount: nftPrice
         })
       })
 

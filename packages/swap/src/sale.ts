@@ -39,7 +39,7 @@ export class SaleHelper {
       sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
       inputIndex: 0,
       fund: false,
-      mod: this.mod,
+      mod: this.mod
     })
   }
 

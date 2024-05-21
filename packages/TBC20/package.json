@@ -25,8 +25,10 @@
     "clean": "rimraf coverage build tmp",
     "clean-logs": "rm -f *.log 2> /dev/null",
     "lint": "eslint src test --ext .ts,.tsx",
+    "lint-fix": "eslint src test --ext .ts,.tsx --fix",
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
+    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "types": "tsc",
     "test": "mocha --config .mocharc.json",
     "test-and-show": "../../scripts/test-and-show.sh tbc20-test.log "

@@ -10,11 +10,11 @@ export const getErrorMessage = (error: any): string => {
     "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
   ) {
     return "You are not authorized to make changes to this smart object"
-  } else if (error?.response?.data?.error) {
-    return error?.response?.data?.error
-  } else {
-    return error.message ? error.message : "Error occurred"
   }
+  if (error?.response?.data?.error) {
+    return error?.response?.data?.error
+  }
+  return error.message ? error.message : "Error occurred"
 }
 
 export const getFnParamNames = function (fn: string) {
@@ -47,12 +47,11 @@ export const SmartObjectFunction = ({
   options,
   setFunctionResult,
   setShow,
-  setModalTitle,
+  setModalTitle
 }: any) => {
   const [formState, setFormState] = useState<any>({})
   const { showLoader } = UtilsContext.useUtilsComponents()
   const computer = useContext(ComputerContext)
-
 
   const handleSmartObjectMethod = async (
     event: any,
@@ -80,12 +79,12 @@ export const SmartObjectFunction = ({
           return isValidRev(paramValue)
             ? param
             : typeof paramValue === "string"
-            ? `'${paramValue}'`
-            : paramValue
+              ? `'${paramValue}'`
+              : paramValue
         })})`,
         env: { smartObject: smartObject._rev, ...revMap },
         fund: true,
-        sign: true,
+        sign: true
       })
 
       await computer.broadcast(tx!)
@@ -116,7 +115,7 @@ export const SmartObjectFunction = ({
     setFormState(value)
   }
 
-  const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
   if (!functionsExist) return <></>
   return (
@@ -130,7 +129,9 @@ export const SmartObjectFunction = ({
           const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key])
           return (
             <div className="mt-6 mb-6" key={fnIndex}>
-              <h3 className="my-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
+              <h3 className="my-2 text-xl font-bold dark:text-white">
+                {capitalizeFirstLetter(key)}
+              </h3>
               <form id={`fn-index-${fnIndex}`}>
                 {paramList.map((paramName, paramIndex) => (
                   <div key={paramIndex} className="mb-4">
@@ -155,7 +156,9 @@ export const SmartObjectFunction = ({
                       <TypeSelectionDropdown
                         id={`${key}${paramName}`}
                         dropdownList={options}
-                        onSelectMethod={(option: string) => updateTypes(option, `${key}-${paramName}`)}
+                        onSelectMethod={(option: string) =>
+                          updateTypes(option, `${key}-${paramName}`)
+                        }
                       />
                     </div>
                   </div>

@@ -32,7 +32,7 @@ describe('Offer', () => {
         ...meta,
         name: 'A',
         symbol: 'AAA',
-        _owners: [alice.getPublicKey()],
+        _owners: [alice.getPublicKey()]
       })
     })
 
@@ -43,7 +43,7 @@ describe('Offer', () => {
         ...meta,
         name: 'B',
         symbol: 'BBB',
-        _owners: [bob.getPublicKey()],
+        _owners: [bob.getPublicKey()]
       })
     })
   })
@@ -64,7 +64,7 @@ describe('Offer', () => {
     it('Alice builds, funds, and signs a swap transaction', async () => {
       ;({ tx: aliceTx } = await alice.encode({
         exp: `${StaticSwap} StaticSwap.exec(a, b)`,
-        env: { a: a._rev, b: b._rev },
+        env: { a: a._rev, b: b._rev }
       }))
     })
 
@@ -73,7 +73,7 @@ describe('Offer', () => {
       const { tx: offerTx } = await offerHelper.createOfferTx(
         bob.getPublicKey(),
         bob.getUrl(),
-        aliceTx,
+        aliceTx
       )
       offerId = await alice.broadcast(offerTx)
     })
@@ -109,7 +109,7 @@ describe('Offer', () => {
         ...meta,
         name: 'A',
         symbol: 'AAA',
-        _owners: [bob.getPublicKey()],
+        _owners: [bob.getPublicKey()]
       })
     })
 
@@ -121,7 +121,7 @@ describe('Offer', () => {
         ...meta,
         name: 'B',
         symbol: 'BBB',
-        _owners: [alice.getPublicKey()],
+        _owners: [alice.getPublicKey()]
       })
     })
   })

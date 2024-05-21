@@ -19,7 +19,7 @@ import {
   nftExport,
   nftExpresion,
   nftVars,
-  tokenVars,
+  tokenVars
 } from './examples'
 import { Auth, Modal, FunctionResultModalContent } from '@bitcoin-computer/components'
 

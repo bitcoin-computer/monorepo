@@ -33,7 +33,7 @@ const ExecuteExpression = (props: {
   const handleExpressoinArgumentChange = (
     index: number,
     field: 'name' | 'value',
-    value: string,
+    value: string
   ) => {
     const updatedExpressionArguments = [...expressionArgumentsList]
     updatedExpressionArguments[index][field] = value
@@ -68,7 +68,7 @@ const ExecuteExpression = (props: {
         exp: `${expressionCode}`,
         env: { ...revMap },
         fund: true,
-        sign: true,
+        sign: true
       }
       if (modSpec) {
         encodeObject['mod'] = modSpec
@@ -78,7 +78,7 @@ const ExecuteExpression = (props: {
         exp: `${expressionCode}`,
         env: { ...revMap },
         fund: true,
-        sign: true,
+        sign: true
       })) as any
       const txId = await computer.broadcast(tx)
       setFunctionResult({ _rev: `${txId}:0`, type: 'objects', res: effect.res })
@@ -137,7 +137,7 @@ const ExecuteExpression = (props: {
                   onClick={() => removeExpressionArgument(index)}
                 />
               </div>
-            ),
+            )
         )}
       </div>
       <button

@@ -49,5 +49,5 @@ function Component({ Content, id }: any) {
 
 export const Drawer = {
   Component,
-  ShowDrawer,
+  ShowDrawer
 }

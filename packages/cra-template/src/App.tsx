@@ -3,7 +3,15 @@ import { useContext, useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
 import { Navbar } from "./components/Navbar"
 import { initFlowbite } from "flowbite"
-import { Auth, Error404, UtilsContext, Wallet, SmartObject, Transaction, ComputerContext } from "@bitcoin-computer/components"
+import {
+  Auth,
+  Error404,
+  UtilsContext,
+  Wallet,
+  SmartObject,
+  Transaction,
+  ComputerContext
+} from "@bitcoin-computer/components"
 import Mint from "./components/Mint"
 import { AllAssets, MyAssets } from "./components/Assets"
 
