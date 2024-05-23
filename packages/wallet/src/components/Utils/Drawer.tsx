@@ -1,10 +1,8 @@
 import { initFlowbite } from "flowbite"
-import { useCallback, useEffect, useState } from "react"
-import { HiRefresh } from "react-icons/hi"
+import { useEffect, useState } from "react"
 import { chunk } from "../../utils"
 
 export const CustomDrawer = ({ id, computer }: any) => {
-  const [balance, setBalance] = useState<number>(0)
   const [showMnemonic, setShowMnemonic] = useState(false)
 
   function Card({ content }: { content: string }) {
@@ -23,10 +21,11 @@ export const CustomDrawer = ({ id, computer }: any) => {
 
   const mnemonicWell = () => {
     const mnemonicChunks = chunk(computer.getMnemonic().split(" "))
-    const mnemonicChunksString = mnemonicChunks.map((chunk) => chunk.join(" ") + "\n").join(" ")
+    const mnemonicChunksString = mnemonicChunks.map((batch) => `${batch.join(" ")}\n`).join(" ")
+
     return (
       <>
-        <Card content={" " + mnemonicChunksString} />
+        <Card content={` ${mnemonicChunksString}`} />
         <button
           onClick={() => setShowMnemonic(false)}
           className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -52,14 +51,6 @@ export const CustomDrawer = ({ id, computer }: any) => {
   useEffect(() => {
     initFlowbite()
   }, [])
-
-  const refreshBalance = useCallback(async () => {
-    try {
-      if (computer) setBalance(await computer.getBalance())
-    } catch (err) {
-      console.log("Error fetching wallet details", err)
-    }
-  }, [computer])
 
   return (
     <>

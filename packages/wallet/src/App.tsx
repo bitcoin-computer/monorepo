@@ -8,12 +8,12 @@ import {
   UtilsContext,
   ComputerContext
 } from "@bitcoin-computer/components"
+import { useState } from "react"
 import { Send } from "./components/Send"
 import { Details } from "./components/Details"
 import Transactions from "./components/Transactions"
 import { Assets } from "./components/Assets"
 import { SideBar } from "./components/Sidebar"
-import { useState } from "react"
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
