@@ -1,8 +1,8 @@
 import { Dispatch, useEffect, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
+import { initFlowbite } from "flowbite"
 import { useUtilsComponents } from "./UtilsContext"
 import { Modal } from "./Modal"
-import { initFlowbite } from "flowbite"
 import type { Chain, Network } from "./common/types"
 
 function isLoggedIn(): boolean {
@@ -339,8 +339,6 @@ function LoginButton({ mnemonic, chain, network, path, url }: any) {
       if (isLoggedIn()) throw new Error("A user is already logged in, please log out first.")
 
       if (mnemonic.length === 0) throw new Error("Please don't use an empty mnemonic string.")
-
-      new Computer({ mnemonic, chain, network, path, url })
     } catch (error) {
       if (error instanceof Error) {
         showSnackBar(error.message, false)

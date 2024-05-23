@@ -4,7 +4,7 @@ export type UserQuery<T extends Class> = Partial<{
     publicKey: string;
     limit: number;
     offset: number;
-    order: 'ASC' | 'DESC';
+    order: "ASC" | "DESC";
     ids: string[];
     contract: {
         class: T;

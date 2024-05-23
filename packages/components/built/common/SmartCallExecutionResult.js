@@ -15,9 +15,9 @@ export function FunctionResultModalContent(_a) {
     var functionResult = _a.functionResult;
     var navigate = useNavigate();
     if (functionResult && typeof functionResult === "object" && !Array.isArray(functionResult))
-        return _jsx(_Fragment, { children: _jsxs("div", __assign({ className: "p-4 md:p-5" }, { children: ["You created a\u00A0", _jsx(Link, __assign({ to: "/objects/".concat(functionResult._rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", onClick: function () {
+        return (_jsx(_Fragment, { children: _jsxs("div", __assign({ className: "p-4 md:p-5" }, { children: ["You created a\u00A0", _jsx(Link, __assign({ to: "/objects/".concat(functionResult._rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", onClick: function () {
                             navigate("/objects/".concat(functionResult._rev));
                             window.location.reload();
-                        } }, { children: "smart object" })), "."] })) });
-    return _jsxs("p", __assign({ className: "text-base leading-relaxed text-gray-500 dark:text-gray-400" }, { children: ["You created the value below at Revision ", functionResult._rev, _jsx("pre", { children: functionResult.res.toString() })] }));
+                        } }, { children: "smart object" })), "."] })) }));
+    return (_jsxs("p", __assign({ className: "text-base leading-relaxed text-gray-500 dark:text-gray-400" }, { children: ["You created the value below at Revision ", functionResult._rev, _jsx("pre", { children: functionResult.res.toString() })] })));
 }

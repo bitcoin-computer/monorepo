@@ -12,9 +12,9 @@ var __assign = (this && this.__assign) || function () {
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
+import { initFlowbite } from "flowbite";
 import { useUtilsComponents } from "./UtilsContext";
 import { Modal } from "./Modal";
-import { initFlowbite } from "flowbite";
 function isLoggedIn() {
     return !!localStorage.getItem("BIP_39_KEY");
 }
@@ -58,8 +58,12 @@ function getUrl(chain, network) {
     return getEnvVariable("REACT_APP_".concat(chain.toUpperCase(), "_").concat(network.toUpperCase(), "_URL"));
 }
 function defaultConfiguration() {
-    var chain = (localStorage.getItem("CHAIN") || getEnvVariable("REACT_APP_CHAIN") || "LTC");
-    var network = (localStorage.getItem("NETWORK") || getEnvVariable("REACT_APP_NETWORK") || "regtest");
+    var chain = (localStorage.getItem("CHAIN") ||
+        getEnvVariable("REACT_APP_CHAIN") ||
+        "LTC");
+    var network = (localStorage.getItem("NETWORK") ||
+        getEnvVariable("REACT_APP_NETWORK") ||
+        "regtest");
     var url = getUrl(chain, network);
     return { chain: chain, network: network, url: url };
 }
@@ -73,7 +77,7 @@ function browserConfiguration() {
         chain: localStorage.getItem("CHAIN"),
         network: localStorage.getItem("NETWORK"),
         path: localStorage.getItem("PATH"),
-        url: localStorage.getItem("URL"),
+        url: localStorage.getItem("URL")
     };
 }
 function getComputer() {
@@ -125,7 +129,6 @@ function LoginButton(_a) {
                 throw new Error("A user is already logged in, please log out first.");
             if (mnemonic.length === 0)
                 throw new Error("Please don't use an empty mnemonic string.");
-            new Computer({ mnemonic: mnemonic, chain: chain, network: network, path: path, url: url });
         }
         catch (error) {
             if (error instanceof Error) {
@@ -166,5 +169,5 @@ export var Auth = {
     browserConfiguration: browserConfiguration,
     getComputer: getComputer,
     LoginForm: LoginForm,
-    LoginModal: LoginModal,
+    LoginModal: LoginModal
 };

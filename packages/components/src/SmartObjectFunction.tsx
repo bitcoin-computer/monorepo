@@ -17,7 +17,7 @@ export const getErrorMessage = (error: any): string => {
   return error.message ? error.message : "Error occurred"
 }
 
-export const getFnParamNames = function (fn: string) {
+export const getFnParamNames = (fn: string) => {
   const match = fn.toString().match(/\(.*?\)/)
   return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
 }
@@ -55,7 +55,7 @@ export const SmartObjectFunction = ({
 
   const handleSmartObjectMethod = async (
     event: any,
-    smartObject: any,
+    smartObj: any,
     fnName: string,
     params: string[]
   ) => {
@@ -76,13 +76,16 @@ export const SmartObjectFunction = ({
         exp: `smartObject.${fnName}(${params.map((param) => {
           const key = `${fnName}-${param}`
           const paramValue = getValueForType(formState[`${key}--types`], formState[key])
-          return isValidRev(paramValue)
-            ? param
-            : typeof paramValue === "string"
-              ? `'${paramValue}'`
-              : paramValue
+
+          if (isValidRev(paramValue)) {
+            return param
+          }
+          if (typeof paramValue === "string") {
+            return `'${paramValue}'`
+          }
+          return paramValue
         })})`,
-        env: { smartObject: smartObject._rev, ...revMap },
+        env: { smartObject: smartObj._rev, ...revMap },
         fund: true,
         sign: true
       })
