@@ -1,3 +1,1 @@
-export const Error404 = () => {
-  return <></>
-}
+export const Error404 = () => <></>

@@ -1,11 +1,6 @@
 import './App.css'
-import { useContext, useEffect, useState } from 'react'
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
-import NavBar from './components/Navbar'
-import Block from './components/Block'
-import Blocks from './components/Blocks'
-import Module from './components/Module'
-import Playground from './components/playground/Playground'
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { initFlowbite } from 'flowbite'
 import {
   Auth,
@@ -17,6 +12,11 @@ import {
   Wallet,
   ComputerContext
 } from '@bitcoin-computer/components'
+import NavBar from './components/Navbar'
+import Block from './components/Block'
+import Blocks from './components/Blocks'
+import Module from './components/Module'
+import Playground from './components/playground/Playground'
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
