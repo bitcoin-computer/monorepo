@@ -48,8 +48,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import { capitalizeFirstLetter, toObject } from "./common/utils";
 import reactStringReplace from "react-string-replace";
+import { capitalizeFirstLetter, toObject } from "./common/utils";
 import { Card } from "./Card";
 import { Modal } from "./Modal";
 import { FunctionResultModalContent } from "./common/SmartCallExecutionResult";
@@ -82,11 +82,7 @@ var SmartObjectValues = function (_a) {
             return (_jsxs("div", { children: [_jsx("h3", __assign({ className: "mt-2 text-xl font-bold dark:text-white" }, { children: capitalizeFirstLetter(key) })), _jsx(ObjectValueCard, { content: toObject(value) })] }, i));
         }) }));
 };
-var revToId = function (rev) { return rev === null || rev === void 0 ? void 0 : rev.split(":")[0]; };
-var MetaData = function (_a) {
-    var smartObject = _a.smartObject;
-    return (_jsxs(_Fragment, { children: [_jsx("h2", __assign({ className: "mb-2 text-4xl font-bold dark:text-white" }, { children: "Meta Data" })), _jsxs("table", __assign({ className: "w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400" }, { children: [_jsx("thead", __assign({ className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" }, { children: _jsxs("tr", { children: [_jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Key" })), _jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Short" })), _jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Value" }))] }) })), _jsxs("tbody", { children: [_jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: "Identity" })), _jsx("td", __assign({ className: "px-6 py-4 break-all text-sm" }, { children: _jsx("pre", { children: "_id" }) })), _jsx("td", __assign({ className: "px-6 py-4" }, { children: _jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._id), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._id })) }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: "Revision" })), _jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: _jsx("pre", { children: "_rev" }) })), _jsx("td", __assign({ className: "px-6 py-4" }, { children: _jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev })) }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: "Root" })), _jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: _jsx("pre", { children: "_root" }) })), _jsx("td", __assign({ className: "px-6 py-4" }, { children: _jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._root), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._root })) }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: "Owners" })), _jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: _jsx("pre", { children: "_owners" }) })), _jsx("td", __assign({ className: "px-6 py-4" }, { children: _jsx("span", __assign({ className: "font-medium text-gray-900 dark:text-white" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._owners })) }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: "Amount" })), _jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: _jsx("pre", { children: "_amount" }) })), _jsx("td", __assign({ className: "px-6 py-4" }, { children: _jsx("span", __assign({ className: "font-medium text-gray-900 dark:text-white" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._amount })) }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: "Transaction" })), _jsx("td", { className: "px-6 py-4 break-all" }), _jsx("td", __assign({ className: "px-6 py-4" }, { children: _jsx(Link, __assign({ to: "/transactions/".concat(revToId(smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev)), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: revToId(smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev) })) }))] }))] })] }))] }));
-};
+// const revToId = (rev: string) => rev?.split(":")[0]
 function Component() {
     var _this = this;
     var location = useLocation();
@@ -100,7 +96,12 @@ function Component() {
     var options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"];
     var _d = useState(""), modalTitle = _d[0], setModalTitle = _d[1];
     var setShow = function (flag) {
-        flag ? Modal.get(modalId).show() : Modal.get(modalId).hide();
+        if (flag) {
+            Modal.get(modalId).show();
+        }
+        else {
+            Modal.get(modalId).hide();
+        }
     };
     useEffect(function () {
         var fetch = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -131,11 +132,11 @@ function Component() {
             var filteredSmartObject = Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject)).filter(function (key) {
                 return key !== "constructor" && typeof Object.getPrototypeOf(smartObject)[key] === "function";
             });
-            for (var key in filteredSmartObject) {
+            Object.keys(filteredSmartObject).forEach(function (key) {
                 if (key) {
                     funcExist = true;
                 }
-            }
+            });
         }
         setFunctionsExist(funcExist);
     }, [smartObject]);
@@ -143,5 +144,5 @@ function Component() {
     return (_jsxs(_Fragment, { children: [_jsxs("div", { children: [_jsx("h1", __assign({ className: "mb-2 text-5xl font-extrabold dark:text-white" }, { children: "Object" })), _jsxs("p", __assign({ className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400" }, { children: [_jsx(Link, __assign({ to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: txId })), ":", outNum] })), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(SmartObjectFunction, { smartObject: smartObject, functionsExist: functionsExist, options: options, setFunctionResult: setFunctionResult, setShow: setShow, setModalTitle: setModalTitle })] }), _jsx(Modal.Component, { title: modalTitle, content: FunctionResultModalContent, contentData: { functionResult: functionResult }, id: modalId })] }));
 }
 export var SmartObject = {
-    Component: Component,
+    Component: Component
 };

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Modal, Auth, UtilsContext, Drawer } from '@bitcoin-computer/components'
-import { SearchBar } from './SearchBar'
 import { useEffect, useState } from 'react'
 import { initFlowbite } from 'flowbite'
+import { SearchBar } from './SearchBar'
 import { Chain, Network } from '../types/common'
 
 const modalTitle = 'Connect to Node'
@@ -146,7 +146,6 @@ function ModalContent() {
 
 function NotLoggedMenu() {
   const [dropDownLabel, setDropDownLabel] = useState<string>('LTC')
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     initFlowbite()

@@ -30,9 +30,9 @@ export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, select
     setDropdown(new Dropdown($targetEl, $triggerEl, options, instanceOptions))
   }, [id])
 
-  const handleClick = (type: string) => {
-    setType(type)
-    onSelectMethod(type)
+  const handleClick = (clickType: string) => {
+    setType(clickType)
+    onSelectMethod(clickType)
     if (dropDown) dropDown.hide()
   }
 

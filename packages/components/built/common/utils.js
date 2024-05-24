@@ -56,12 +56,13 @@ export var strip = function (value) {
         return value;
     if (isJArray(value))
         return value.map(strip);
+    // eslint-disable-next-line
     var _id = value._id, _root = value._root, _rev = value._rev, _amount = value._amount, _owners = value._owners, rest = __rest(value, ["_id", "_root", "_rev", "_amount", "_owners"]);
     return rest;
 };
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
 export var toObject = function (obj) {
-    return JSON.stringify(obj, function (key, value) { return typeof value === 'bigint' ? value.toString() : value; }, 2);
+    return JSON.stringify(obj, function (key, value) { return (typeof value === "bigint" ? value.toString() : value); }, 2);
 };
 export var capitalizeFirstLetter = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -72,4 +73,5 @@ export function isValidRevString(outId) {
 export function isValidRev(value) {
     return typeof value === "string" && isValidRevString(value);
 }
+// eslint-disable-next-line
 export var sleep = function (ms) { return new Promise(function (resolve) { return setTimeout(resolve, ms); }); };

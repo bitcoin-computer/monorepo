@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { IoMdRemoveCircleOutline } from 'react-icons/io'
 import { Computer } from '@bitcoin-computer/lib'
+import { UtilsContext } from '@bitcoin-computer/components'
 import { getErrorMessage, isValidRev } from '../../utils'
 import { ModSpec } from './Modspec'
-import { UtilsContext } from '@bitcoin-computer/components'
 
 interface ExpressionArgument {
   name: string
@@ -57,7 +57,7 @@ const ExecuteExpression = (props: {
       const revMap: any = {}
       expressionArgumentsList
         .filter((argument) => !argument.hidden)
-        .forEach((argument, index) => {
+        .forEach((argument) => {
           const argValue = argument.value
           if (isValidRev(argValue)) {
             revMap[argument.name] = argValue
@@ -71,7 +71,7 @@ const ExecuteExpression = (props: {
         sign: true
       }
       if (modSpec) {
-        encodeObject['mod'] = modSpec
+        encodeObject.mod = modSpec
       }
 
       const { tx, effect } = (await computer.encode({

@@ -1,8 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
 import { capitalizeFirstLetter } from '../utils'
 import { Card } from './Card'
-import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
 
 function Module() {
   const computer = useContext(ComputerContext)

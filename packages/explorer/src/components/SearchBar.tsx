@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from 'react'
+import { useContext, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ComputerContext } from '@bitcoin-computer/components'
 import { isValidHexadecimalPublicKey } from '../utils'
@@ -8,12 +8,6 @@ export function SearchBar() {
 
   const computer = useContext(ComputerContext)
   const navigate = useNavigate()
-
-  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Enter') {
-      search(inputRef?.current?.value)
-    }
-  }
 
   const search = async (searchInput: string | undefined) => {
     if (searchInput) {
@@ -28,6 +22,12 @@ export function SearchBar() {
       } else if (isValidHexadecimalPublicKey(searchInput))
         navigate(`/?public-key=${searchInput.trim()}`)
       else navigate(`/transactions/${searchInput}`)
+    }
+  }
+
+  const handleSearch = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Enter') {
+      search(inputRef?.current?.value)
     }
   }
 
