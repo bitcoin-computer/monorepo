@@ -74,7 +74,7 @@ If you have any questions, please let us know on <a href="https://t.me/thebitcoi
 
 ## Price
 
-See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price).
 
 ## Contributing
 
