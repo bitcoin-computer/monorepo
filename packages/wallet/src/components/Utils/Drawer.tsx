@@ -52,6 +52,14 @@ export const CustomDrawer = ({ id, computer }: any) => {
     initFlowbite()
   }, [])
 
+  // const refreshBalance = useCallback(async () => {
+  //   try {
+  //     if (computer) setBalance(await computer.getBalance())
+  //   } catch (err) {
+  //     console.log("Error fetching wallet details", err)
+  //   }
+  // }, [computer])
+
   return (
     <>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 sr-only"></span>
