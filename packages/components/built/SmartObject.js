@@ -82,6 +82,7 @@ var SmartObjectValues = function (_a) {
             return (_jsxs("div", { children: [_jsx("h3", __assign({ className: "mt-2 text-xl font-bold dark:text-white" }, { children: capitalizeFirstLetter(key) })), _jsx(ObjectValueCard, { content: toObject(value) })] }, i));
         }) }));
 };
+// const revToId = (rev: string) => rev?.split(":")[0]
 function Component() {
     var _this = this;
     var location = useLocation();

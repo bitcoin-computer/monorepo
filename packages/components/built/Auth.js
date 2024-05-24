@@ -124,18 +124,10 @@ function LoginButton(_a) {
     var showSnackBar = useUtilsComponents().showSnackBar;
     var login = function (e) {
         e.preventDefault();
-        try {
-            if (isLoggedIn())
-                throw new Error("A user is already logged in, please log out first.");
-            if (mnemonic.length === 0)
-                throw new Error("Please don't use an empty mnemonic string.");
-        }
-        catch (error) {
-            if (error instanceof Error) {
-                showSnackBar(error.message, false);
-            }
-            return;
-        }
+        if (isLoggedIn())
+            showSnackBar("A user is already logged in, please log out first.", false);
+        if (mnemonic.length === 0)
+            showSnackBar("Please don't use an empty mnemonic string.", false);
         localStorage.setItem("BIP_39_KEY", mnemonic);
         localStorage.setItem("CHAIN", chain);
         localStorage.setItem("NETWORK", network);

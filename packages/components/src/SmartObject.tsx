@@ -48,6 +48,8 @@ const SmartObjectValues = ({ smartObject }: any) => {
   )
 }
 
+// const revToId = (rev: string) => rev?.split(":")[0]
+
 function Component() {
   const location = useLocation()
   const params = useParams()
