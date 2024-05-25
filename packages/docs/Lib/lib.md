@@ -2,7 +2,7 @@
 order: -40
 ---
 
-# API
+# Lib
 
 This API describes the functionality of the `Computer` [library](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme).
 

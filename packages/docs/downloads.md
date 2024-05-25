@@ -1,11 +1,12 @@
 ---
 order: -20
 icon: download
+visibility: hidden
 ---
 
 # Downloads
 
-All of our code is in the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo/tree/main#readme) on Github. To download it run:
+All code is in the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo/tree/main#readme) on Github. To download it run:
 
 ```bash
 git clone https://github.com/bitcoin-computer/monorepo.git

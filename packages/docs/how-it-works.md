@@ -1,15 +1,55 @@
 ---
-order: -40
+order: -30
 icon: light-bulb
 ---
 
 # How it Works
 
-!!!info
-We recommend to read the [tutorial](/tutorial.md) first.
-!!!
+## Intuition
 
-The Bitcoin Computer is a Javascript <a href="https://en.wikipedia.org/wiki/Runtime_system" target="_blank">runtime environment</a> that uses Bitcoin as a <a href="https://en.wikipedia.org/wiki/Persistence_(computer_science)" target="_blank">persistence</a> layer.
+A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed. The value of the expression is associated with the first output of the transaction. If the value is an object or array that has sub-objects, then each sub-object is associated with a distinct output of the transaction.
+
+If the expression contains a free variable (for example the variable `x` is free in the expression `x + 1`), then that free variable has to be associated with an input of the transaction. To determine the values of the outputs, the Bitcoin Computer will recursively determine the values of each output spent. The free variable is then substituted with the value before the expression is evaluated.
+
+### Notation
+
+![](/static/legend@1x.png)-
+We will use some visual notion in the example that we describe first. White boxes represent transactions and grey boxes represent expressions that are inscribed into the transactions. Inputs and outputs are displayed as circles and spending relations are shown as arrows. 
+
+To keep the explanation simple, we will pretend that any user (not just miners) can create transactions without inputs.
+<div style="clear: right;"></div>
+
+### Example
+
+-![](/static/int-example@1x.png)
+Now consider a transaction with one output and the expression `1+2` inscribed. As this expression evaluates to `3`, the Bitcoin Computer will associate the first output with the value `3`.
+
+If this output is then spent by a transaction with an inscription `x+4` and the first input is labelled by `x`, the Bitcoin Computer will first determine the value of the output spent by that input. As described above that output is has the value `3`. Hence, the output of the second transaction has the value `7`.
+<div style="clear: left;"></div>
+
+## Data Ownership
+
+The method of associating data values to outputs described above gives rise to a natural notion of data ownership: A piece of data that is stored in an output is owned by all users that can spend that output. This is analogous to how satoshis are owned by the users that can spend the output that store the satoshis.
+
+In the case that a value is an object (as opposed to an array or a basic type), the Bitcoin Computer will add an extra property `_owners` to the object that contains the list of public keys that are owners. Conversely, if an object is created with a property `_owners` that is set to an array of string encoded public keys, the Bitcoin Computer will arrange the transaction so that the Bitcoin script of the output that represents that object can only be spent by the users that control the public keys in the array.
+
+## Creating Objects and Object Identity
+
+One advantage of associating values with transaction outputs is that the transaction id and output number can be used as an identity for the object. Specifically, whenever an object is created (as in a new memory is allocated) we assign the transaction id and output number to a property called `_id`. The id cannot be reassigned and remains immutable throughout the lifetime of the object.
+
+## Updating Objects and Object Revisions
+
+Whenever a smart object is updated, it's new state is stored in a new output. The transaction id and output number is assigned to a property `_rev` of the object. As any two Bitcoin transactions have distinct ids, each new version of a smart object has a fresh revision.
+
+## Roots and Families of Objects
+
+When a new object is created in an expression that is either a constructor call (that is of the form `new C(...)`) or a function call (that is of the form `x.f(...)`) we can keep track of this occurrence. Specifically, the root of an object is it's id if it is not created within a constructor or function call. If it is created in a constructor call it's root is the id of the newly created object. If an object `y` is created within a function call `x.f(...)` the the root of `y` is the root of `x`.
+
+<!-- 
+## Example
+
+Consider a transaction that has the expression `1+2` inscribed. The Bitcoin Computer will associate the value `3` to it's first output. If we spend this transaction with a transaction that is inscribed with the expression `x+4`.
+
 
 ## Storing Values
 
@@ -35,103 +75,14 @@ To evaluate an expression $e$ containing free variables $x_1\ ...\ x_n$ with the
 All sub-objects of the value returned are designated one output of the transaction. We refer to both the outputs as well as the values they represent as *revisions*. Note that when a closure is evaluated, the values $v_1\ ...\ v_n$ can change (for example if $e$ is a function call $f(x_1\ ...\ x_n)$ with side effects). Therefore a these transactions must have outputs that represent the new revisions for these values as well.
 
 The Bitcoin Computer protocol requires that a transaction spends all outputs in the environment. A practical advantage is that this provides a space efficient way to store the environment: Only a list of variable names needs to be stored as meta data and the full environment can be reconstructed from the inputs. It also has two important consequences: It provides a notion of data ownership as it is necessary to be able to spend an output in order to update it's value. And it makes it possible to run the Bitcoin Computer as a light client as the inputs of a transaction contain pointers to the transactions that contain the expressions that need to be evaluated first.
+ -->
 
-## Smart Contract Language
 
-The programming language used for the Bitcoin Computer has the exact same syntax as Javascript. However there is one important semantic difference: 
 
-!!!
-All values returned from evaluating an expression that have object type must inherit from `Contract`.
-!!!
 
-The class `Contract` is exported from the library. It enforces the following properties, which we think turn Javascript into a viable smart contract language.
-
-### Assigning Properties Outside of Function Calls is Prohibited
-
-Assigning to a property outside of a function call throws an error.
-
-This makes it possible to write classes that impose constraints on all future values of an object. Consider for example the class `Even` below. The condition guarantees that all instances of the class will always have an even value.
-
-```js
-class Even extends Contract {
-  inc() {
-    if (typeof this.n === 'undefined') this.n = 0
-    else this.n = this.n + 2
-  }
-}
-```
-
-While this is not a very useful example for a constraint, all smart contracts are based on constraints to future values in a similar way. 
-
-### Keyword Properties Control the Transaction Being Built
-
-The `Contract` class enforces certain types for the properties `_id`, `_rev`, `_root`, `_amount`, `_owners`, `_readers`, and `_url`:
-
-```ts
-type SmartObject = {
-  readonly _id: string // output where object was created
-  readonly _rev: string // output where object is currently stored
-  readonly _root: string // useful for building fungible tokens
-  _owners?: string[] // determines data ownership
-  _amount?: number // determines number of Satoshis stored in the current output
-  _readers?: string[] // determines whether object is encrypted and who can decrypt is so
-  _url?: string // determines if data is stores off-chain
-}
-```
-
-The properties `_id`, `_rev`, and `_root` are read only and set by the runtime to relay information about which transaction created the object and where it is currently stored.
-
-* The value of the `_id` property is the output (encoded as \<transaction id\>:\<output index\>) that represented the object immediately after it was created.
-* The value of the `_rev` property is the output of the currently representing the object (that is, the object's revision).
-* The value of the `_root` property is assigned once when the object is created and is never modified subsequently. If the expression that creates the object is of the form `new C(...)` then its root is equal to its id. If the expression is of the form `x.f(...)` then the root of the new object is equal to the id of `x`. Otherwise the root is set to `n/a`. The root property is useful for building fungible tokens.
-
-The properties `_amount`, `_owners`, `_readers`, and `_url` can be set by the smart contract developer to influence how the transaction is built.
-
-* If a property `_amount` is set it needs to be set to a number. It determines the amount of Satoshi stored in the output representing the current revision. If it is not set the revision will have a minimal (non-dust) amount of Satoshi.
-* If a property `_owners` is set it needs to be set to an array of strings $[p_1\ ...\ p_n]$. These determine the output script of the current revision. Specifically, the script for the current revision is a 1-of-n multisig script with the public keys $p_1\ ...\ p_n$. This guarantees that only a user that has a private key corresponding to one of the public keys can update the object. If the property is not set it defaults to the public key of the computer that created the object.
-* If a property `_readers` is set it needs to be set to an array of strings $[p_1\ ...\ p_n]$. If this property is set the meta data in the corresponding transaction is encrypted such that only users with corresponding private keys can decrypt the expression and compute the value of the smart object. If the `_readers` property is not set the meta data is not encrypted and any user can compute the value of the smart object.
-* If a property `_url` is set it needs to be set to the url of a Bitcoin Computer node. If it is set the expression is not stored in the transaction but on the node instead. The transaction only contains a hash of the expression and the location where the expression can be obtained from the node. This is convenient if the expression is large, for example because it contains a lot of data.
-
-### Assigning to `this` in Constructors is Prohibited
-
-This is not a property that we think this will make Javascript a better smart contract language, it is just a consequence how we enforce the properties above. In order to have useful constructors it is possible to pass an initialization object into the constructor:
-
-```js
-class A extends Contract {
-  constructor() {
-    super({ k1: v1, ... kn: vn })
-  }
-}
-```
-
-This has the same effect as setting assigning to `this` in a normal Javascript program
-
-```js
-// not a smart contract, for illustration purposes only
-class A {
-  constructor() {
-    this.k1 = v1
-    ...
-    this.kn = vn
-  }
-}
-```
-<!-- 
-## An Example
-
-We will use some visual notion in the example that we describe first.
-
-### Notation
-
-![](/static/legend@1x.png)-
-White boxes represent transactions and grey boxes represent expressions that are inscribed into the transactions. Inputs and outputs are displayed as circles and spending relations are shown as arrows. A blockchain environment that maps a free variable $x$ to an output $o$ is shown as a label $x$ in the arrow indicating the spending of $o$.
-<div style="clear: right;"></div>
-
-### Storing Values
+<!-- ### Storing Values
 
 Consider the code in the picture below. It defines a class `NFT` with two properties `_owners` and `url` and a method to update the `_owners`. The `_owners` property of a smart contract can be set to an array of string encoded public keys. The output that will store that 
-
-
 
 To allocate a memory cell and to store a new smart object in it, a transaction that contains a Javascript expression <code>e<sub>1</sub>; e<sub>2</sub> ... e<sub>n</sub></code> where <code>e<sub>n</sub></code> is of the form `new C(...)` must be broadcast. The class `C` can be defined in the expression or it can be passed in from a module.
 

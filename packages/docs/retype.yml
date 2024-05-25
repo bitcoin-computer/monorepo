@@ -1,0 +1,13 @@
+input: .
+output: .retype
+url: http://bitcoincomputer.io/
+branding:
+  title: Bitcoin Computer
+  label: 0.19
+links:
+- text: Code
+  link: https://github.com/bitcoin-computer/monorepo#readme
+- text: Community
+  link: https://t.me/thebitcoincomputer
+footer:
+  copyright: "&copy; Copyright {{ year }}. All rights reserved."
