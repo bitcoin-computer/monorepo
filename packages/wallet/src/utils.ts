@@ -1,4 +1,4 @@
-export const getFnParamNames = function (fn: string) {
+export const getFnParamNames = (fn: string) => {
   const match = fn.toString().match(/\(.*?\)/)
   return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
 }
@@ -14,6 +14,7 @@ export function isValidRev(value: any): boolean {
 // eslint-disable-next-line
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
+// eslint-disable-next-line
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]
@@ -59,6 +60,7 @@ export const jsonMap =
 export const strip = (value: Json): Json => {
   if (isJBasic(value)) return value
   if (isJArray(value)) return value.map(strip)
+  // eslint-disable-next-line
   const { _id, _root, _rev, _amount, _owners, ...rest } = value
   return rest
 }
@@ -95,7 +97,7 @@ export const capitalizeFirstLetter = (string: string) =>
 
 export const isValidHexadecimalPrivateKey = (privateKey: string): boolean => {
   if (!privateKey) return false
-  let trimmedPrivateKey = privateKey.trim()
+  const trimmedPrivateKey = privateKey.trim()
   return trimmedPrivateKey.length === 64 || trimmedPrivateKey.length === 66
 }
 
@@ -105,9 +107,9 @@ export const getErrorMessage = (error: any): string => {
     "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
   ) {
     return "You are not authorised to make changes to this smart object"
-  } else if (error?.response?.data?.error) {
-    return error?.response?.data?.error
-  } else {
-    return error.message ? error.message : "Error occurred"
   }
+  if (error?.response?.data?.error) {
+    return error?.response?.data?.error
+  }
+  return error.message ? error.message : "Error occurred"
 }

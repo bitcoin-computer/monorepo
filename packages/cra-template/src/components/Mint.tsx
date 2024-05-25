@@ -1,7 +1,7 @@
 import { useContext, useState } from "react"
 import { ComputerContext, Modal } from "@bitcoin-computer/components"
-import { Counter } from "../contracts/counter"
 import { Link } from "react-router-dom"
+import { Counter } from "../contracts/counter"
 
 function SuccessContent(rev: string) {
   return (

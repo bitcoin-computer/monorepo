@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { TypeSelectionDropdown } from '../TypeSelectionDropdown'
 import { IoMdRemoveCircleOutline } from 'react-icons/io'
 import { Computer } from '@bitcoin-computer/lib'
+import { UtilsContext } from '@bitcoin-computer/components'
+import { TypeSelectionDropdown } from '../TypeSelectionDropdown'
 import { getErrorMessage, getValueForType, isValidRev, sleep } from '../../utils'
 import { ModSpec } from './Modspec'
-import { UtilsContext } from '@bitcoin-computer/components'
 
 interface Argument {
   type: string
@@ -30,6 +30,7 @@ const CreateNew = (props: {
   useEffect(() => {
     const newArgumentsList = [...argumentsList]
     newArgumentsList.forEach((argument) => {
+      // eslint-disable-next-line
       argument.hidden = true
     })
     if (exampleVars) {
@@ -64,6 +65,7 @@ const CreateNew = (props: {
   const handleDeploy = async () => {
     try {
       showLoader(true)
+      // eslint-disable-next-line
       const createClassFunction = new Function(`return ${code?.trim()}`)
       const dynamicClass = createClassFunction()
       if (
@@ -89,11 +91,15 @@ const CreateNew = (props: {
             .filter((argument) => !argument.hidden)
             .map((argument, index) => {
               const argValue = getValueForType(argument.type, argument.value)
-              return isValidRev(argValue)
-                ? `param${index}`
-                : typeof argValue === 'string'
-                  ? `'${argValue}'`
-                  : argValue
+              if (isValidRev(argValue)) {
+                return `param${index}`
+              }
+
+              if (typeof argValue === 'string') {
+                return `'${argValue}'`
+              }
+
+              return argValue
             })})
           `,
           env: { ...revMap },
@@ -101,7 +107,7 @@ const CreateNew = (props: {
           sign: true
         }
         if (modSpec) {
-          encodeObject['mod'] = modSpec
+          encodeObject.mod = modSpec
         }
 
         const { tx } = (await computer.encode(encodeObject)) as any
@@ -159,6 +165,7 @@ const CreateNew = (props: {
                 <TypeSelectionDropdown
                   id={`playground-dropdown-${index}`}
                   onSelectMethod={(option: string) => {
+                    // eslint-disable-next-line
                     argument.type = option
                   }}
                   dropdownList={options}

@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]
@@ -43,6 +44,7 @@ export const jsonMap =
 export const strip = (value: Json): Json => {
   if (isJBasic(value)) return value
   if (isJArray(value)) return value.map(strip)
+  // eslint-disable-next-line
   const { _id, _root, _rev, _amount, _owners, ...rest } = value
   return rest
 }
@@ -62,4 +64,5 @@ export function isValidRev(value: any): boolean {
   return typeof value === "string" && isValidRevString(value)
 }
 
+// eslint-disable-next-line
 export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

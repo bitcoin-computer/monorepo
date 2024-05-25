@@ -11,11 +11,11 @@ var __assign = (this && this.__assign) || function () {
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useEffect, useState } from "react";
-import { Dropdown, initFlowbite, } from "flowbite";
+import { Dropdown, initFlowbite } from "flowbite";
 export var TypeSelectionDropdown = function (_a) {
     var id = _a.id, onSelectMethod = _a.onSelectMethod, dropdownList = _a.dropdownList, selectedType = _a.selectedType;
     var _b = useState(), dropDown = _b[0], setDropdown = _b[1];
-    var _c = useState(selectedType ? selectedType : "Type"), type = _c[0], setType = _c[1];
+    var _c = useState(selectedType || "Type"), type = _c[0], setType = _c[1];
     var dropdownSelectionList = useState(dropdownList)[0];
     useEffect(function () {
         initFlowbite();
@@ -26,17 +26,17 @@ export var TypeSelectionDropdown = function (_a) {
             triggerType: "click",
             offsetSkidding: 0,
             offsetDistance: 10,
-            delay: 300,
+            delay: 300
         };
         var instanceOptions = {
             id: "dropdownMenu".concat(id),
-            override: true,
+            override: true
         };
         setDropdown(new Dropdown($targetEl, $triggerEl, options, instanceOptions));
     }, [id]);
-    var handleClick = function (type) {
-        setType(type);
-        onSelectMethod(type);
+    var handleClick = function (clickType) {
+        setType(clickType);
+        onSelectMethod(clickType);
         if (dropDown)
             dropDown.hide();
     };

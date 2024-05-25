@@ -129,7 +129,7 @@ npm run reset
 
 ### Connect a Bitcoin Computer Library
 
-To connect a [Bitcoin Computer Library](https://www.npmjs.com/package/@bitcoin-computer/lib) object to your node you have to set the ``url`` property. Make sure that the chain and network match your node configuration
+To connect a [Bitcoin Computer Library](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme) object to your node you have to set the ``url`` property. Make sure that the chain and network match your node configuration
 
 <font size=1>
 
@@ -180,7 +180,7 @@ See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#d
 
 ## Price
 
-See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price).
 
 ## License
 

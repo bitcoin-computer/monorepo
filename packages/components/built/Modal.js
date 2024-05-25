@@ -50,5 +50,5 @@ export var Modal = {
     ShowButton: ShowButton,
     HideButton: HideButton,
     ToggleButton: ToggleButton,
-    Component: Component,
+    Component: Component
 };

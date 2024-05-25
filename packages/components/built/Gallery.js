@@ -48,8 +48,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { jsonMap, strip, toObject } from "./common/utils";
 import { initFlowbite } from "flowbite";
+import { jsonMap, strip, toObject } from "./common/utils";
 import { useUtilsComponents } from "./UtilsContext";
 import { ComputerContext } from "./ComputerContext";
 function HomePageCard(_a) {
@@ -121,8 +121,8 @@ export default function WithPagination(q) {
                     case 0:
                         showLoader(true);
                         query = __assign(__assign({}, q), params);
-                        query["offset"] = contractsPerPage * pageNum;
-                        query["limit"] = contractsPerPage + 1;
+                        query.offset = contractsPerPage * pageNum;
+                        query.limit = contractsPerPage + 1;
                         return [4 /*yield*/, computer.query(query)];
                     case 1:
                         result = _a.sent();
@@ -158,5 +158,5 @@ export default function WithPagination(q) {
 }
 export var Gallery = {
     FromRevs: FromRevs,
-    WithPagination: WithPagination,
+    WithPagination: WithPagination
 };

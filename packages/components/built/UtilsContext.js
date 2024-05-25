@@ -38,5 +38,5 @@ export var UtilsProvider = function (_a) {
 };
 export var UtilsContext = {
     UtilsProvider: UtilsProvider,
-    useUtilsComponents: useUtilsComponents,
+    useUtilsComponents: useUtilsComponents
 };

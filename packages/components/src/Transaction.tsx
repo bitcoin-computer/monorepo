@@ -7,20 +7,20 @@ import { ComputerContext } from "./ComputerContext"
 function ExpressionCard({ content, env }: { content: string; env: { [s: string]: string } }) {
   const entries = Object.entries(env)
   let formattedContent = content as any
-  for (const entry of entries) {
+  entries.forEach((entry) => {
     const [name, rev] = entry
     const regExp = new RegExp(`(${name})`, "g")
-    const replacer = (name: string, i: number) => (
+    const replacer = (n: string) => (
       <Link
         key={rev}
         to={`/objects/${rev}`}
         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
       >
-        {name}
+        {n}
       </Link>
     )
     formattedContent = reactStringReplace(formattedContent, regExp, replacer)
-  }
+  })
   return <Card content={formattedContent} />
 }
 

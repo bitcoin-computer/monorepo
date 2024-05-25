@@ -55,16 +55,12 @@ function ExpressionCard(_a) {
     var content = _a.content, env = _a.env;
     var entries = Object.entries(env);
     var formattedContent = content;
-    var _loop_1 = function (entry) {
-        var name_1 = entry[0], rev = entry[1];
-        var regExp = new RegExp("(".concat(name_1, ")"), "g");
-        var replacer = function (name, i) { return (_jsx(Link, __assign({ to: "/objects/".concat(rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: name }), rev)); };
+    entries.forEach(function (entry) {
+        var name = entry[0], rev = entry[1];
+        var regExp = new RegExp("(".concat(name, ")"), "g");
+        var replacer = function (n) { return (_jsx(Link, __assign({ to: "/objects/".concat(rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: n }), rev)); };
         formattedContent = reactStringReplace(formattedContent, regExp, replacer);
-    };
-    for (var _i = 0, entries_1 = entries; _i < entries_1.length; _i++) {
-        var entry = entries_1[_i];
-        _loop_1(entry);
-    }
+    });
     return _jsx(Card, { content: formattedContent });
 }
 function Component() {
@@ -139,9 +135,7 @@ function Component() {
     };
     var outputsComponent = function () {
         var _a;
-        return (_jsxs("div", __assign({ className: "relative overflow-x-auto" }, { children: [_jsx("h2", __assign({ className: "mb-2 text-4xl font-bold dark:text-white" }, { children: "Objects" })), _jsxs("table", __assign({ className: "w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400" }, { children: [_jsx("thead", __assign({ className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" }, { children: _jsxs("tr", { children: [_jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Number" })), _jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Value" })), _jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Type" })), _jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Script PubKey" }))] }) })), _jsx("tbody", { children: (_a = rpcTxnData === null || rpcTxnData === void 0 ? void 0 : rpcTxnData.vout) === null || _a === void 0 ? void 0 : _a.map(function (output) {
-                                return (_jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: _jsxs(Link, __assign({ to: "/objects/".concat(txn, ":").concat(output.n), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: ["#", output.n] })) })), _jsx("td", __assign({ className: "px-6 py-4" }, { children: output.value })), _jsx("td", __assign({ className: "px-6 py-4" }, { children: output.scriptPubKey.type })), _jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: output.scriptPubKey.asm }))] }), output.n));
-                            }) })] }))] })));
+        return (_jsxs("div", __assign({ className: "relative overflow-x-auto" }, { children: [_jsx("h2", __assign({ className: "mb-2 text-4xl font-bold dark:text-white" }, { children: "Objects" })), _jsxs("table", __assign({ className: "w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400" }, { children: [_jsx("thead", __assign({ className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" }, { children: _jsxs("tr", { children: [_jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Number" })), _jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Value" })), _jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Type" })), _jsx("th", __assign({ scope: "col", className: "px-6 py-3" }, { children: "Script PubKey" }))] }) })), _jsx("tbody", { children: (_a = rpcTxnData === null || rpcTxnData === void 0 ? void 0 : rpcTxnData.vout) === null || _a === void 0 ? void 0 : _a.map(function (output) { return (_jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: _jsxs(Link, __assign({ to: "/objects/".concat(txn, ":").concat(output.n), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: ["#", output.n] })) })), _jsx("td", __assign({ className: "px-6 py-4" }, { children: output.value })), _jsx("td", __assign({ className: "px-6 py-4" }, { children: output.scriptPubKey.type })), _jsx("td", __assign({ className: "px-6 py-4 break-all" }, { children: output.scriptPubKey.asm }))] }), output.n)); }) })] }))] })));
     };
     return (_jsx(_Fragment, { children: _jsxs("div", __assign({ className: "pt-8" }, { children: [_jsx("h1", __assign({ className: "mb-2 text-5xl font-extrabold dark:text-white" }, { children: "Transaction" })), _jsx("p", __assign({ className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400" }, { children: txn })), transition && transitionComponent(), (rpcTxnData === null || rpcTxnData === void 0 ? void 0 : rpcTxnData.vin) && inputsComponent(), (rpcTxnData === null || rpcTxnData === void 0 ? void 0 : rpcTxnData.vout) && outputsComponent()] })) }));
 }
