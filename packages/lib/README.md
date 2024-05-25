@@ -11,7 +11,6 @@
 
 Create a file `index.html` and open it in your browser.
 
-
 <font size=1>
 
 ```html
