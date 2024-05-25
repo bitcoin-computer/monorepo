@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.769875606085">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.769918194208">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>How it Works</title>
     <meta name="title" content="How it Works">
-    <meta name="description" content="We recommend to read the tutorial first.">
+    <meta name="description" content="A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/how-it-works/">
@@ -20,25 +20,22 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/how-it-works/">
     <meta property="og:title" content="How it Works">
-    <meta property="og:description" content="We recommend to read the tutorial first.">
+    <meta property="og:description" content="A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/how-it-works/">
     <meta property="twitter:title" content="How it Works">
-    <meta property="twitter:description" content="We recommend to read the tutorial first.">
+    <meta property="twitter:description" content="A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.5.0.769875606085" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.5.0.769918194208" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.769875606085" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.769918194208" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.769875606085" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.5.0.769875606085" defer></script>
-    <link href="../resources/css/katex.css?v=3.5.0" rel="stylesheet">
-    <script id="katex-js" data-cfasync="false" src="../resources/js/katex.js?v=3.5.0" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.769918194208" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -159,167 +156,103 @@
         <span>How it Works</span>
     </h1>
 </doc-anchor-target>
-<div class="flex mb-6">
-    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-blue-300"></div>
-    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
-        <div class="flex items-center ml-4 h-7">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-blue-300" width="22" height="22" viewBox="0 0 24 24" role="presentation">
-                <g fill="currentColor"><g>
-                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
-                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
-                    <path fill="none" d="M0 0h24v24H0z"></path>
-                </g></g>
-            </svg>
-        </div>
-        <div class="pr-5 ml-3 w-full">
-<p>We recommend to read the <a href="../tutorial/">tutorial</a> first.</p>
-        </div>
-    </div>
-</div>
-<p>The Bitcoin Computer is a Javascript <a href="https://en.wikipedia.org/wiki/Runtime_system" target="_blank">runtime environment</a> that uses Bitcoin as a <a href="https://en.wikipedia.org/wiki/Persistence_(computer_science)" target="_blank">persistence</a> layer.</p>
-<doc-anchor-target id="storing-values">
+<doc-anchor-target id="intuition">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#storing-values">#</doc-anchor-trigger>
-        <span>Storing Values</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#intuition">#</doc-anchor-trigger>
+        <span>Intuition</span>
     </h2>
 </doc-anchor-target>
-<p>When an expression is evaluated with the Bitcoin Computer, the expression is inscribed into a Bitcoin transaction. If the value of the expression has object type, this object is considered a &quot;smart object&quot; and an output of the transaction is considered the object&#x27;s <em>id</em>. If the value has multiple sub-objects, each sub-object is assigned a separate output as its id.</p>
-<doc-anchor-target id="reading-values">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#reading-values">#</doc-anchor-trigger>
-        <span>Reading Values</span>
-    </h2>
-</doc-anchor-target>
-<p>To determine the value of a given smart object id, the Bitcoin Computer library will download the corresponding transaction and compute the value of the expression. As the mapping from sub-objects to outputs is deterministic and one-to-one, the software can determine which sub-object of the value is the smart object for the given id.</p>
-<doc-anchor-target id="updating-values">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#updating-values">#</doc-anchor-trigger>
-        <span>Updating Values</span>
-    </h2>
-</doc-anchor-target>
-<p>In order to explain how updating values works we need the notions of &quot;free variable&quot;, &quot;environment&quot;, and &quot;closure&quot;. Consider the Javascript expression:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const x = 1;
-counter.add(x);</code></pre>
-</doc-codeblock></div>
-<p>It contains two variables, <code v-pre>x</code> and <code v-pre>counter</code>. The variable <code v-pre>x</code> is defined in the expression and one can determine that the value of <code v-pre>x</code> is <code v-pre>1</code>. The variable <code v-pre>counter</code> is not defined so it is impossible to tell what the value of <code v-pre>counter</code> is. Such variables are called <em>free variables</em>. In order to evaluate an expression with free variables, a definition of the values of the free variables is required. This is what an <em>environment</em> does: it maps free variables to values. A <em><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures" target="_blank">closure</a></em> is a pair consisting of an expression and an environment.</p>
-<p>To evaluate an expression <span class="math">e</span> containing free variables <span class="math">x_1\ ...\ x_n</span> with the Bitcoin Computer, the user needs to provide a <em>Bitcoin environment</em> <span class="math">\{ x_1: o_1\ ...\ x_n: o_n \}</span> that maps the free variables of <span class="math">e</span> to outputs <span class="math">o_1\ ...\ o_n</span>. The Bitcoin Computer will recursively determine the values <span class="math">v_1\ ...\ v_n</span> of the outputs <span class="math">o_1\ ...\ o_n</span> respectively. It then creates a closure consisting of the expression <span class="math">e</span> and the environment <span class="math">\{ x_1: v_1\ ...\ x_n: v_n \}</span> and evaluates this closure with a standard Javascript runtime.</p>
-<p>All sub-objects of the value returned are designated one output of the transaction. We refer to both the outputs as well as the values they represent as <em>revisions</em>. Note that when a closure is evaluated, the values <span class="math">v_1\ ...\ v_n</span> can change (for example if <span class="math">e</span> is a function call <span class="math">f(x_1\ ...\ x_n)</span> with side effects). Therefore a these transactions must have outputs that represent the new revisions for these values as well.</p>
-<p>The Bitcoin Computer protocol requires that a transaction spends all outputs in the environment. A practical advantage is that this provides a space efficient way to store the environment: Only a list of variable names needs to be stored as meta data and the full environment can be reconstructed from the inputs. It also has two important consequences: It provides a notion of data ownership as it is necessary to be able to spend an output in order to update it&#x27;s value. And it makes it possible to run the Bitcoin Computer as a light client as the inputs of a transaction contain pointers to the transactions that contain the expressions that need to be evaluated first.</p>
-<doc-anchor-target id="smart-contract-language">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract-language">#</doc-anchor-trigger>
-        <span>Smart Contract Language</span>
-    </h2>
-</doc-anchor-target>
-<p>The programming language used for the Bitcoin Computer has the exact same syntax as Javascript. However there is one important semantic difference:</p>
-<div class="flex mb-6">
-    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-blue-500 dark:bg-blue-400"></div>
-    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
-        <div class="flex items-center ml-4 h-7">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-blue-500 dark:text-blue-400" width="22" height="22" viewBox="0 0 24 24" role="presentation">
-                <g fill="currentColor"><g>
-                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
-                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
-                    <path fill="none" d="M0 0h24v24H0z"></path>
-                </g></g>
-            </svg>
-        </div>
-        <div class="pr-5 ml-3 w-full">
-<p>All values returned from evaluating an expression that have object type must inherit from <code v-pre>Contract</code>.</p>
-        </div>
-    </div>
-</div>
-<p>The class <code v-pre>Contract</code> is exported from the library. It enforces the following properties, which we think turn Javascript into a viable smart contract language.</p>
-<doc-anchor-target id="assigning-properties-outside-of-function-calls-is-prohibited">
+<p>A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed. The value of the expression is associated with the first output of the transaction. If the value is an object or array that has sub-objects, then each sub-object is associated with a distinct output of the transaction.</p>
+<p>If the expression contains a free variable (for example the variable <code v-pre>x</code> is free in the expression <code v-pre>x + 1</code>), then that free variable has to be associated with an input of the transaction. To determine the values of the outputs, the Bitcoin Computer will recursively determine the values of each output spent. The free variable is then substituted with the value before the expression is evaluated.</p>
+<doc-anchor-target id="notation">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#assigning-properties-outside-of-function-calls-is-prohibited">#</doc-anchor-trigger>
-        <span>Assigning Properties Outside of Function Calls is Prohibited</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#notation">#</doc-anchor-trigger>
+        <span>Notation</span>
     </h3>
 </doc-anchor-target>
-<p>Assigning to a property outside of a function call throws an error.</p>
-<p>This makes it possible to write classes that impose constraints on all future values of an object. Consider for example the class <code v-pre>Even</code> below. The condition guarantees that all instances of the class will always have an even value.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">class Even extends Contract {
-  inc() {
-    if (typeof this.n === 'undefined') this.n = 0
-    else this.n = this.n + 2
-  }
-}</code></pre>
-</doc-codeblock></div>
-<p>While this is not a very useful example for a constraint, all smart contracts are based on constraints to future values in a similar way.</p>
-<doc-anchor-target id="keyword-properties-control-the-transaction-being-built">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#keyword-properties-control-the-transaction-being-built">#</doc-anchor-trigger>
-        <span>Keyword Properties Control the Transaction Being Built</span>
-    </h3>
-</doc-anchor-target>
-<p>The <code v-pre>Contract</code> class enforces certain types for the properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code>, <code v-pre>_amount</code>, <code v-pre>_owners</code>, <code v-pre>_readers</code>, and <code v-pre>_url</code>:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">type SmartObject = {
-  readonly _id: string // output where object was created
-  readonly _rev: string // output where object is currently stored
-  readonly _root: string // useful for building fungible tokens
-  _owners?: string[] // determines data ownership
-  _amount?: number // determines number of Satoshis stored in the current output
-  _readers?: string[] // determines whether object is encrypted and who can decrypt is so
-  _url?: string // determines if data is stores off-chain
-}</code></pre>
-</doc-codeblock></div>
-<p>The properties <code v-pre>_id</code>, <code v-pre>_rev</code>, and <code v-pre>_root</code> are read only and set by the runtime to relay information about which transaction created the object and where it is currently stored.</p>
-<ul>
-<li>The value of the <code v-pre>_id</code> property is the output (encoded as &lt;transaction id&gt;:&lt;output index&gt;) that represented the object immediately after it was created.</li>
-<li>The value of the <code v-pre>_rev</code> property is the output of the currently representing the object (that is, the object&#x27;s revision).</li>
-<li>The value of the <code v-pre>_root</code> property is assigned once when the object is created and is never modified subsequently. If the expression that creates the object is of the form <code v-pre>new C(...)</code> then its root is equal to its id. If the expression is of the form <code v-pre>x.f(...)</code> then the root of the new object is equal to the id of <code v-pre>x</code>. Otherwise the root is set to <code v-pre>n/a</code>. The root property is useful for building fungible tokens.</li>
-</ul>
-<p>The properties <code v-pre>_amount</code>, <code v-pre>_owners</code>, <code v-pre>_readers</code>, and <code v-pre>_url</code> can be set by the smart contract developer to influence how the transaction is built.</p>
-<ul>
-<li>If a property <code v-pre>_amount</code> is set it needs to be set to a number. It determines the amount of Satoshi stored in the output representing the current revision. If it is not set the revision will have a minimal (non-dust) amount of Satoshi.</li>
-<li>If a property <code v-pre>_owners</code> is set it needs to be set to an array of strings <span class="math">[p_1\ ...\ p_n]</span>. These determine the output script of the current revision. Specifically, the script for the current revision is a 1-of-n multisig script with the public keys <span class="math">p_1\ ...\ p_n</span>. This guarantees that only a user that has a private key corresponding to one of the public keys can update the object. If the property is not set it defaults to the public key of the computer that created the object.</li>
-<li>If a property <code v-pre>_readers</code> is set it needs to be set to an array of strings <span class="math">[p_1\ ...\ p_n]</span>. If this property is set the meta data in the corresponding transaction is encrypted such that only users with corresponding private keys can decrypt the expression and compute the value of the smart object. If the <code v-pre>_readers</code> property is not set the meta data is not encrypted and any user can compute the value of the smart object.</li>
-<li>If a property <code v-pre>_url</code> is set it needs to be set to the url of a Bitcoin Computer node. If it is set the expression is not stored in the transaction but on the node instead. The transaction only contains a hash of the expression and the location where the expression can be obtained from the node. This is convenient if the expression is large, for example because it contains a lot of data.</li>
-</ul>
-<doc-anchor-target id="assigning-to-this-in-constructors-is-prohibited">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#assigning-to-this-in-constructors-is-prohibited">#</doc-anchor-trigger>
-        <span>Assigning to <code v-pre>this</code> in Constructors is Prohibited</span>
-    </h3>
-</doc-anchor-target>
-<p>This is not a property that we think this will make Javascript a better smart contract language, it is just a consequence how we enforce the properties above. In order to have useful constructors it is possible to pass an initialization object into the constructor:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">class A extends Contract {
-  constructor() {
-    super({ k1: v1, ... kn: vn })
-  }
-}</code></pre>
-</doc-codeblock></div>
-<p>This has the same effect as setting assigning to <code v-pre>this</code> in a normal Javascript program</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">// not a smart contract, for illustration purposes only
-class A {
-  constructor() {
-    this.k1 = v1
-    ...
-    this.kn = vn
-  }
-}</code></pre>
-</doc-codeblock></div>
-<!-- 
-## An Example
-
-We will use some visual notion in the example that we describe first.
-
-### Notation
-
-![](/static/legend@1x.png)-
-White boxes represent transactions and grey boxes represent expressions that are inscribed into the transactions. Inputs and outputs are displayed as circles and spending relations are shown as arrows. A blockchain environment that maps a free variable $x$ to an output $o$ is shown as a label $x$ in the arrow indicating the spending of $o$.
+<p><figure class="content-right">
+    <img src="../static/legend1x.png" alt="">
+    <figcaption class="caption caption-float"></figcaption>
+</figure>
+We will use some visual notion in the example that we describe first. White boxes represent transactions and grey boxes represent expressions that are inscribed into the transactions. Inputs and outputs are displayed as circles and spending relations are shown as arrows.</p>
+<p>To keep the explanation simple, we will pretend that any user (not just miners) can create transactions without inputs.</p>
 <div style="clear: right;"></div>
+<doc-anchor-target id="example">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
+        <span>Example</span>
+    </h3>
+</doc-anchor-target>
+<p><figure class="content-left">
+    <img src="../static/int-example1x.png" alt="">
+    <figcaption class="caption caption-float"></figcaption>
+</figure>
+Now consider a transaction with one output and the expression <code v-pre>1+2</code> inscribed. As this expression evaluates to <code v-pre>3</code>, the Bitcoin Computer will associate the first output with the value <code v-pre>3</code>.</p>
+<p>If this output is then spent by a transaction with an inscription <code v-pre>x+4</code> and the first input is labelled by <code v-pre>x</code>, the Bitcoin Computer will first determine the value of the output spent by that input. As described above that output is has the value <code v-pre>3</code>. Hence, the output of the second transaction has the value <code v-pre>7</code>.</p>
+<div style="clear: left;"></div>
+<doc-anchor-target id="data-ownership">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#data-ownership">#</doc-anchor-trigger>
+        <span>Data Ownership</span>
+    </h2>
+</doc-anchor-target>
+<p>The method of associating data values to outputs described above gives rise to a natural notion of data ownership: A piece of data that is stored in an output is owned by all users that can spend that output. This is analogous to how satoshis are owned by the users that can spend the output that store the satoshis.</p>
+<p>In the case that a value is an object (as opposed to an array or a basic type), the Bitcoin Computer will add an extra property <code v-pre>_owners</code> to the object that contains the list of public keys that are owners. Conversely, if an object is created with a property <code v-pre>_owners</code> that is set to an array of string encoded public keys, the Bitcoin Computer will arrange the transaction so that the Bitcoin script of the output that represents that object can only be spent by the users that control the public keys in the array.</p>
+<doc-anchor-target id="creating-objects-and-object-identity">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#creating-objects-and-object-identity">#</doc-anchor-trigger>
+        <span>Creating Objects and Object Identity</span>
+    </h2>
+</doc-anchor-target>
+<p>One advantage of associating values with transaction outputs is that the transaction id and output number can be used as an identity for the object. Specifically, whenever an object is created (as in a new memory is allocated) we assign the transaction id and output number to a property called <code v-pre>_id</code>. The id cannot be reassigned and remains immutable throughout the lifetime of the object.</p>
+<doc-anchor-target id="updating-objects-and-object-revisions">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#updating-objects-and-object-revisions">#</doc-anchor-trigger>
+        <span>Updating Objects and Object Revisions</span>
+    </h2>
+</doc-anchor-target>
+<p>Whenever a smart object is updated, it&#x27;s new state is stored in a new output. The transaction id and output number is assigned to a property <code v-pre>_rev</code> of the object. As any two Bitcoin transactions have distinct ids, each new version of a smart object has a fresh revision.</p>
+<doc-anchor-target id="roots-and-families-of-objects">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#roots-and-families-of-objects">#</doc-anchor-trigger>
+        <span>Roots and Families of Objects</span>
+    </h2>
+</doc-anchor-target>
+<p>When a new object is created in an expression that is either a constructor call (that is of the form <code v-pre>new C(...)</code>) or a function call (that is of the form <code v-pre>x.f(...)</code>) we can keep track of this occurrence. Specifically, the root of an object is it&#x27;s id if it is not created within a constructor or function call. If it is created in a constructor call it&#x27;s root is the id of the newly created object. If an object <code v-pre>y</code> is created within a function call <code v-pre>x.f(...)</code> the the root of <code v-pre>y</code> is the root of <code v-pre>x</code>.</p>
+<!-- 
+## Example
 
-### Storing Values
+Consider a transaction that has the expression `1+2` inscribed. The Bitcoin Computer will associate the value `3` to it's first output. If we spend this transaction with a transaction that is inscribed with the expression `x+4`.
+
+
+## Storing Values
+
+When an expression is evaluated with the Bitcoin Computer, the expression is inscribed into a Bitcoin transaction. If the value of the expression has object type, this object is considered a "smart object" and an output of the transaction is considered the object's *id*. If the value has multiple sub-objects, each sub-object is assigned a separate output as its id.
+
+## Reading Values
+
+To determine the value of a given smart object id, the Bitcoin Computer library will download the corresponding transaction and compute the value of the expression. As the mapping from sub-objects to outputs is deterministic and one-to-one, the software can determine which sub-object of the value is the smart object for the given id.
+
+## Updating Values
+
+In order to explain how updating values works we need the notions of "free variable", "environment", and "closure". Consider the Javascript expression:
+
+```js
+const x = 1;
+counter.add(x);
+```
+
+It contains two variables, `x` and `counter`. The variable `x` is defined in the expression and one can determine that the value of `x` is `1`. The variable `counter` is not defined so it is impossible to tell what the value of `counter` is. Such variables are called *free variables*. In order to evaluate an expression with free variables, a definition of the values of the free variables is required. This is what an *environment* does: it maps free variables to values. A *<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures" target="_blank">closure</a>* is a pair consisting of an expression and an environment.
+
+To evaluate an expression $e$ containing free variables $x_1\ ...\ x_n$ with the Bitcoin Computer, the user needs to provide a *Bitcoin environment* $\{ x_1: o_1\ ...\ x_n: o_n \}$ that maps the free variables of $e$ to outputs $o_1\ ...\ o_n$. The Bitcoin Computer will recursively determine the values $v_1\ ...\ v_n$ of the outputs $o_1\ ...\ o_n$ respectively. It then creates a closure consisting of the expression $e$ and the environment $\{ x_1: v_1\ ...\ x_n: v_n \}$ and evaluates this closure with a standard Javascript runtime.
+
+All sub-objects of the value returned are designated one output of the transaction. We refer to both the outputs as well as the values they represent as *revisions*. Note that when a closure is evaluated, the values $v_1\ ...\ v_n$ can change (for example if $e$ is a function call $f(x_1\ ...\ x_n)$ with side effects). Therefore a these transactions must have outputs that represent the new revisions for these values as well.
+
+The Bitcoin Computer protocol requires that a transaction spends all outputs in the environment. A practical advantage is that this provides a space efficient way to store the environment: Only a list of variable names needs to be stored as meta data and the full environment can be reconstructed from the inputs. It also has two important consequences: It provides a notion of data ownership as it is necessary to be able to spend an output in order to update it's value. And it makes it possible to run the Bitcoin Computer as a light client as the inputs of a transaction contain pointers to the transactions that contain the expressions that need to be evaluated first.
+ -->
+<!-- ### Storing Values
 
 Consider the code in the picture below. It defines a class `NFT` with two properties `_owners` and `url` and a method to update the `_owners`. The `_owners` property of a smart contract can be set to an array of string encoded public keys. The output that will store that 
-
-
 
 To allocate a memory cell and to store a new smart object in it, a transaction that contains a Javascript expression <code>e<sub>1</sub>; e<sub>2</sub> ... e<sub>n</sub></code> where <code>e<sub>n</sub></code> is of the form `new C(...)` must be broadcast. The class `C` can be defined in the expression or it can be passed in from a module.
 
@@ -374,10 +307,10 @@ Game -->
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../examples/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../language/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">Examples</span>
+                                                <span class="block mt-1">Smart Contract Language</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
@@ -421,6 +354,6 @@ Game -->
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "How it Works", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: true, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "How it Works", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.769875606085">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.769918194208">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.5.0.769875606085" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.5.0.769918194208" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.769875606085" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.769918194208" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.769875606085" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.5.0.769875606085" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.769918194208" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.5.0.769918194208" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -190,14 +190,14 @@ class Chat extends Contract {
 
 const computer = new Computer({ mnemonic: 'replace this seed' })</code></pre>
 </doc-codeblock></div>
-<p>You can pass in a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic to initialize the wallet in the computer object. To securely generate a random mnemonic leave the <code v-pre>mnemonic</code> key undefined. You can find more configuration options <a href="../api/constructor/">here</a>.</p>
+<p>You can pass in a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic to initialize the wallet in the computer object. To securely generate a random mnemonic leave the <code v-pre>mnemonic</code> key undefined. You can find more configuration options <a href="/api/constructor/">here</a>.</p>
 <doc-anchor-target id="create-a-smart-object">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#create-a-smart-object">#</doc-anchor-trigger>
         <span>Create a Smart Object</span>
     </h2>
 </doc-anchor-target>
-<p>The <a href="../api/new/"><code v-pre>computer.new</code></a> function creates a smart object from a smart contract.</p>
+<p>The <a href="/api/new"><code v-pre>computer.new</code></a> function creates a smart object from a smart contract.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const chat = await computer.new(Chat, ['hello'])</code></pre>
 </doc-codeblock></div>
@@ -234,7 +234,7 @@ new Chat('hello')</code></pre>
         <span>Read a Smart Object</span>
     </h2>
 </doc-anchor-target>
-<p>The <a href="../api/sync/"><code v-pre>computer.sync</code></a> function computes the state of smart object. For example, synchronizing to <code v-pre>667c...2357:0</code> will return an object with the same value as <code v-pre>chat</code>.</p>
+<p>The <a href="/api/sync"><code v-pre>computer.sync</code></a> function computes the state of smart object. For example, synchronizing to <code v-pre>667c...2357:0</code> will return an object with the same value as <code v-pre>chat</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">expect(await computer.sync('667c...2357:0')).to.deep.equal(chat)</code></pre>
 </doc-codeblock></div>
@@ -277,7 +277,7 @@ expect(newChat.messages).to.deep.equal(['hello', 'world'])</code></pre>
         <span>Find a Smart Object</span>
     </h2>
 </doc-anchor-target>
-<p>The <a href="../api/query/"><code v-pre>computer.query</code></a> function returns the latest revision of a smart objects. It can be called with many different kinds of arguments, for example object one or more ids:</p>
+<p>The <a href="/api/query"><code v-pre>computer.query</code></a> function returns the latest revision of a smart objects. It can be called with many different kinds of arguments, for example object one or more ids:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const [rev] = await computer.query({ ids: ['667c...2357:0']})
 expect(rev).to.equal('de43...818a:0')</code></pre>
@@ -394,11 +394,11 @@ await paymentB.cashOut()</code></pre>
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../downloads/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../start/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">Downloads</span>
+                                                <span class="block mt-1">Start</span>
                                             </span>
                                         </a>
                                     </div>
