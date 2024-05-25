@@ -2,7 +2,7 @@
 order: -40
 ---
 
-# API
+# Lib
 
 This API describes the functionality of the `Computer` class, exported from [`@bitcoin-computer/lib`](https://www.npmjs.com/package/@bitcoin-computer/lib).
 
