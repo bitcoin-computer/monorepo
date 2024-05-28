@@ -76,6 +76,9 @@ be withdrawn immediately. [1]
 * [BOB](https://docs.gobob.xyz/)
 * [Citrea](https://docs.citrea.xyz/)
 * [Alpen](https://www.alpenlabs.io/)
+* [Merlin](https://docs.merlinchain.io/merlin-docs)
+* [Dovi](https://dovil2.com/)
+* [SatoshiVM](https://docs.satoshivm.io/)
 
 ## Layer 1
 
@@ -99,6 +102,10 @@ be withdrawn immediately. [1]
 * https://www.hiro.so/blog/building-on-bitcoin-project-comparison
 * https://www.hiro.so/
 
+## Videos
+
+[BitVM: Smarter Bitcoin Contracts - Robin Linus (zerosync)](https://www.youtube.com/live/VIg7BjX_lJw)
+
 ## Articles
 [1] [SoK: Applications of Sketches and Rollups in Blockchain Networks](https://drive.google.com/file/d/1dJ2OsAc4QvIWzxR1JFFmMfMVYIrnXOWW/view), Arad Kotzer, Daniel Gandelman and Ori Rottenstreich; Technion, Florida State University
 * [Blockchain Scaling Using Rollups: A Comprehensive Survey](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9862815), LOUIS TREMBLAY THIBAULT, TOM SARRY, AND ABDELHAKIM SENHAJI HAFID; Montreal
@@ -112,6 +119,8 @@ Roberto Zunino
 * [SoK: Decentralized Finance (DeFi)](https://dl.acm.org/doi/pdf/10.1145/3558535.3559780)
 * [SoK: Communication Across Distributed Ledgers](https://eprint.iacr.org/2019/1128.pdf)
 * [Colored Coins whitepaper](https://www.etoro.com/wp-content/uploads/2022/03/Colored-Coins-white-paper-Digital-Assets.pdf), Yoni Assia, Vitalik Buterin, liorhakiLior, Meni Rosenfeld, Rotem Lev
+* [BitSNARK & Grail - Bitcoin Rails for Unlimited Smart Contracts & Scalability](https://assets-global.website-files.com/661e3b1622f7c56970b07a4c/662a7a89ce097389c876db57_BitSNARK__Grail.pdf)
+* [BitVMX: A CPU for Universal Computation on Bitcoin](https://bitvmx.org/files/bitvmx-whitepaper.pdf)
 
 
 

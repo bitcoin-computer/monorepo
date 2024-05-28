@@ -3,7 +3,7 @@ order: 0
 icon: image
 ---
 
-# Non Fungible Token (NFT)
+# Non Fungible Token
 
 ## Smart Contract
 
