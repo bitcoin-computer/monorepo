@@ -26,7 +26,7 @@ const port = args.bitcoin ? 8332 : 19332
 const chain = process.env.CHAIN || args.bitcoin ? 'BTC' : 'LTC'
 
 const network = process.env.NETWORK || 'regtest'
-const bcnPort = process.env.PORT ?? 1031
+const bcnPort = process.env.PORT ?? '1031'
 
 const nodeUrl = args.cloud ? 'https://rltc.node.bitcoincomputer.io' : 'http://127.0.0.1:' + bcnPort 
 const postgresHost = process.env.POSTGRES_HOST || '127.0.0.1'
