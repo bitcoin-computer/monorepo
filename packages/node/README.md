@@ -36,7 +36,7 @@ npm run build-node
 
 ### Run the Node
 
-To start your node at `http://localhost:1031` run the command below.
+To start your node at `http://localhost:1031` run the command below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
 
 <font size=1>
 
@@ -53,7 +53,47 @@ npm run up -- -ltc -r
 
 </font>
 
-The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
+### Run the Tests
+
+You can run the integration tests with the command below.
+
+<font size=1>
+
+```sh
+npm run test
+```
+
+</font>
+
+### Fund the Wallet
+
+If you run the node in regtest mode, you can fund a wallet with the following commands.
+
+<font size=1>
+
+```sh
+# Fund Litecoin regtest wallet
+npm run fund-ltc -- <address_1> ... <address_n>
+
+# Fund Bitcoin regtest wallet
+npm run fund-btc -- <address_1> ... <address_n>
+```
+
+</font>
+
+### Stop the Node
+
+You can stop the node with the command below. When you restart the process, it will resume from the last block processed.
+
+<font size=1>
+
+```sh
+npm run down -- -t
+```
+
+</font>
+
+### Configure Node
 
 #### Configure Chain
 
@@ -81,48 +121,60 @@ npm run up -- -t -cpus 16
 
 #### Other Configurations
 
-
-
-### Fund the Wallet
-
-If you run the node in regtest mode, you can fund a wallet with the following commands.
+You can configure several other options by editing your `.env` file.
 
 <font size=1>
 
-```sh
-# Fund Litecoin regtest wallet
-npm run fund-ltc -- <address_1> ... <address_n>
+```bash
+# Port for Bitcoin Computer Node
+PORT='1031'
 
-# Fund Bitcoin regtest wallet
-npm run fund-btc -- <address_1> ... <address_n>
+# Postgres Connection Credentials
+POSTGRES_USER='bcn'
+POSTGRES_PASSWORD='bcn'
+POSTGRES_DB='bcn'
+POSTGRES_HOST='127.0.0.1'
+POSTGRES_PORT='5432'
+
+# Node Settings
+# RPC Client Credentials
+RPC_USER='bcn-admin'
+RPC_PASSWORD='kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
+RPC_AUTH='bcn-admin:c71460f0f08e4eeec90e033c04f7bb82$c36e8561d46abbf3bf13da6b88612c19d758d46d02c45cd2716f06a13ec407af'
+RPC_HOST='127.0.0.1'  # should this be node?
+RPC_PORT='19332'
+RPC_PROTOCOL='http'
+ZMQ_URL='tcp://node:28332'
+
+# Default wallet name
+DEFAULT_WALLET='defaultwallet'
+
+# Allowed RPC Methods
+ALLOWED_RPC_METHODS='^get|^gen|^send|^lis'
+
+# Winston Logger Settings
+# Debug mode
+# 0: Error logs only
+# 1: Error and warning logs
+# 2: Error, warning and info logs
+# 3: Error, warning, info and http logs
+# 4: Error, warning, info, http and debug logs
+DEBUG_MODE='4'
+# Maximum number of logs to keep. If not set, no logs will be removed. This can be
+# a number of files or number of days. If using days, add 'd' as the suffix.
+LOG_MAX_FILES='14d'
+# Maximum log file size. You can use 'k' for KB, 'm' for MB, and 'g' for GB. Once
+# the size of the log file exceeds the specified size, the log is rotated. If no
+# size is specified the log is not ratated.
+LOG_MAX_SIZE='20m'
+# A boolean to define whether or not to gzip archived log files.
+LOG_ZIP=false
+
+# Comman separated list of banned countries
+BANNED_COUNTRIES=''
 ```
 
 </font>
-
-### Run the Tests
-
-You can run the integration tests with the command below.
-
-<font size=1>
-
-```sh
-npm run test
-```
-
-</font>
-
-### Stop the Node
-
-You can stop the node with the command below. When you restart the process, it will resume from the last block processed.
-
-<font size=1>
-
-```sh
-npm run down -- -t
-```
-
-</font>
-
 
 ### Reset the database
 
