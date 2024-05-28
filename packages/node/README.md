@@ -25,6 +25,9 @@ cd monorepo
 
 # Install the dependencies
 npm install
+
+# Build the docker image
+npm run build-node
 ```
 
 </font>
@@ -38,11 +41,11 @@ To start your node at `http://localhost:1031` run the command below.
 <font size=1>
 
 ```sh
-# Create a .env file
-cp packages/node/.env.example packages/node/.env
+# Move to node folder
+cd packages/node
 
-# Build the docker image
-npm run build-node
+# Create a .env file
+cp .env.example .env
 
 # Run the node on litecoin regtest
 npm run up -- -ltc -r
@@ -52,17 +55,19 @@ npm run up -- -ltc -r
 
 The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
 
+#### Configure Chain
+
 You can use the following options.
 
 | Option     | Short       | Default       |
 |------------|-------------|---------------|
-| --litecoin | -ltc        | Yes           |
-| --bitcoin  | -btc        | No            |
-| --regtest  | -r          | Yes           |
-| --testnet  | -t          | No            |
-| --mainnet  | -m          | No            |
-|            | -cpus       | Use all cores |
+| --litecoin | -ltc        | yes           |
+| --bitcoin  | -btc        | no            |
+| --regtest  | -r          | yes           |
+| --testnet  | -t          | no            |
+| --mainnet  | -m          | no            |
 
+#### Configure Parallelism
 
 By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
 
@@ -74,6 +79,10 @@ npm run up -- -t -cpus 16
 
 </font>
 
+#### Other Configurations
+
+
+
 ### Fund the Wallet
 
 If you run the node in regtest mode, you can fund a wallet with the following commands.
@@ -82,15 +91,15 @@ If you run the node in regtest mode, you can fund a wallet with the following co
 
 ```sh
 # Fund Litecoin regtest wallet
-npm run fund-ltc -- <address1> [<address2> ... <addressN>]
+npm run fund-ltc -- <address_1> ... <address_n>
 
 # Fund Bitcoin regtest wallet
-npm run fund-btc -- <address1> [<address2> ... <addressN>]
+npm run fund-btc -- <address_1> ... <address_n>
 ```
 
 </font>
 
-### Run integration tests
+### Run the Tests
 
 You can run the integration tests with the command below.
 
@@ -134,6 +143,8 @@ To connect a [Bitcoin Computer Library](https://github.com/bitcoin-computer/mono
 <font size=1>
 
 ```js
+import { Computer } from '@bitcoin-computer/lib`
+
 new Computer({
   chain: 'LTC',
   network: 'regtest',
