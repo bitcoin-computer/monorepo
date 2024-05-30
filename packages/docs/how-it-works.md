@@ -31,7 +31,7 @@ We will refer to a Javascript expression that is inscribed in a transaction as a
 
 ### Data Ownership
 
-The method of associating data values to outputs described above gives rise to a natural notion of data ownership: A smart value that s *owned* by the users that can spend that output. This is analogous to how satoshis are owned by the users that can spend the output that store the satoshis.
+The method of associating data values to outputs described above gives rise to a natural notion of data ownership: A smart value that is *owned* by the users that can spend that output. This is analogous to how satoshis in an output are owned by the users that can spend the output.
 
 The Bitcoin Computer adds a property `_owners` to every smart object. It is set to the array of the public keys of the owners. Conversely, if an object is created with a property `_owners` that is set to an array of *n* string encoded public keys, then the output that represents the object has a *1*-of-*n* multisig script with these public keys.
 
@@ -41,7 +41,7 @@ One advantage of associating values with transaction outputs is that the transac
 
 ### Updating Objects and Object Revisions
 
-Whenever a smart object is updated a transaction is broadcast that spends the outputs representing the object's old state. The outputs of the transaction as associated with the new state of the object. The transaction id and output number that is associated with the new state of an object is referred to as it's *revision*. The revision is assigned to a property `_rev` of the object.
+Whenever a smart object is updated a transaction is broadcast that spends the outputs representing the object's old state. The outputs of the transaction are associated with the new state of the object. The transaction id and output number that is associated with the new state of an object is referred to as it's *revision*. The revision is assigned to a property `_rev` of the object.
 
 ### Ancestors and Roots of Objects
 
