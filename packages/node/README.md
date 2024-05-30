@@ -2,11 +2,25 @@
   <img src="./imgs/bitcoin-computer-node@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 180px"/>
   <h1>Bitcoin Computer Node</h1>
   <p>
-    A Bitcoin and Litecoin node with support for smart contracts.
+    A Bitcoin and Litecoin Node Optimized for Applications
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
 </div>
+
+## Features
+
+* Supports queries for the balance, the UTXO set, and the list of transactions of any address.
+* Multiplatform Docker images work on all major computer architectures (linux/amd64, linux/arm/v7, linux/arm64)
+* You can start the node in a single line of code.
+* Allow and deny access to Bitcoin RPC endpoints using a regular expression
+* Filter IP addresses by country
+* Enforce allowlist and denylist
+* Optimized for running large test suites on regtest
+* Synchronizes in parallel and makes use of all cores of a machine.
+* Simple architecture, consisting of bitcoind and a psql database
+* All functionality of a Bitcoin node (build, sign, and broadcast txs)
+
 
 ## Prerequisites
 
@@ -34,9 +48,9 @@ npm run build-node
 
 ## Usage
 
-### Run the Node
+### Start the Node
 
-To start your node at `http://localhost:1031` run the command below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
+To start your node at `http://localhost:1031` run the commands below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
 
 <font size=1>
 
@@ -48,7 +62,7 @@ cd packages/node
 cp .env.example .env
 
 # Run the node on litecoin regtest
-npm run up -- -ltc -r
+npm run up
 ```
 
 </font>
@@ -65,9 +79,11 @@ npm run test
 
 </font>
 
+On regtest, the halving period is set to infinity. This makes it possible to run a large number of tests without having to restart the node.
+
 ### Fund the Wallet
 
-If you run the node in regtest mode, you can fund a wallet with the following commands.
+In regtest mode, you can fund a wallet with the following commands.
 
 <font size=1>
 
@@ -88,44 +104,88 @@ You can stop the node with the command below. When you restart the process, it w
 <font size=1>
 
 ```sh
-npm run down -- -t
+npm run down -- -r
 ```
 
 </font>
 
-### Configure Node
+### Reset the Node
 
-#### Configure Chain
-
-You can use the following options.
-
-| Option     | Short       | Default       |
-|------------|-------------|---------------|
-| --litecoin | -ltc        | yes           |
-| --bitcoin  | -btc        | no            |
-| --regtest  | -r          | yes           |
-| --testnet  | -t          | no            |
-| --mainnet  | -m          | no            |
-
-#### Configure Parallelism
-
-By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
+The command below will reset the database, delete all blockchain data, and stop all docker containers.
 
 <font size=1>
 
-```shell
-npm run up -- -t -cpus 16
+```sh
+npm run reset
 ```
 
 </font>
 
-#### Other Configurations
+### Client Side Library
 
-You can configure several other options by editing your `.env` file.
+The [Bitcoin Computer Library](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme) can connect to a Bitcoin Computer Node to provides access to its functionality.
+
+<font size=1>
+
+```js
+// Import client side library
+import { Computer } from '@bitcoin-computer/lib'
+
+// Configuration to connect to node on localhost
+const conf = {
+  chain: 'LTC',
+  network: 'regtest',
+  url: 'http://localhost:1031',
+}
+
+// Create instance of client side library
+const computer = new Computer(conf)
+const address = computer.getAddress()
+
+// Fund client side library
+const { txId, vout } = await computer.faucet(1e4)
+
+// Return the utxos
+expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
+
+// Return the balance
+expect(await new Computer(conf).getBalance(address)).eq(1e4)
+
+// Return the transactions
+expect(await new Computer(conf).listTxs(address)).deep.eq({
+  sentTxs: [],
+  receivedTxs: [
+    {
+      txId,
+      inputsSatoshis: 0,
+      outputsSatoshis: 1e4,
+      satoshis: 1e4
+    }
+  ]
+})
+```
+
+</font>
+
+If you do not specify a `url` property it will default to the url below. The node at that url runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software. 
+
+```
+https://rltc.node.bitcoincomputer.io
+```
+
+## Configuration
+
+You can configure several options by editing the `.env` file.
 
 <font size=1>
 
 ```bash
+# BTC or LTC
+CHAIN='LTC'
+
+# mainnet, testnet, or regtest
+NETWORK='regtest'
+
 # Port for Bitcoin Computer Node
 PORT='1031'
 
@@ -165,7 +225,7 @@ DEBUG_MODE='4'
 LOG_MAX_FILES='14d'
 # Maximum log file size. You can use 'k' for KB, 'm' for MB, and 'g' for GB. Once
 # the size of the log file exceeds the specified size, the log is rotated. If no
-# size is specified the log is not ratated.
+# size is specified the log is not rotated.
 LOG_MAX_SIZE='20m'
 # A boolean to define whether or not to gzip archived log files.
 LOG_ZIP=false
@@ -176,43 +236,17 @@ BANNED_COUNTRIES=''
 
 </font>
 
-### Reset the database
+### Configure Parallelism
 
-The command below will reset the database, delete all blockchain data, and stop all docker containers.
-
-<font size=1>
-
-```sh
-npm run reset
-```
-
-</font>
-
-### Connect a Bitcoin Computer Library
-
-To connect a [Bitcoin Computer Library](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme) object to your node you have to set the ``url`` property. Make sure that the chain and network match your node configuration
+By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
 
 <font size=1>
 
-```js
-import { Computer } from '@bitcoin-computer/lib`
-
-new Computer({
-  chain: 'LTC',
-  network: 'regtest',
-  url: 'https://localhost:1031'
-})
+```shell
+npm run up -- -t -cpus 16
 ```
 
 </font>
-
-If you do not specify a url property it will default to 
-
-```
-https://rltc.node.bitcoincomputer.io
-```
-
-This node runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software. 
 
 ## Estimated Server Costs
 
