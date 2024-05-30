@@ -230,8 +230,9 @@ LOG_MAX_SIZE='20m'
 # A boolean to define whether or not to gzip archived log files.
 LOG_ZIP=false
 
-# Comman separated list of banned countries
-BANNED_COUNTRIES=''
+# Comma separated list of banned countries encoded as ISO-3166 alpha2 country
+# codes (see https://www.geonames.org/countries/)
+BANNED_COUNTRIES=
 ```
 
 </font>
