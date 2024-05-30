@@ -345,7 +345,7 @@ declare class Computer {
     args?: ConstructorParameters<T>,
     mod?: string
   ): Promise<InstanceType<T> & Location>;
-  lockdown(opts?: any): void;
+  static lockdown(opts?: any): void;
   delete(inRevs: string[]): Promise<string>;
   decode(transaction: Transaction): Promise<TransitionJSON>;
   encode(
