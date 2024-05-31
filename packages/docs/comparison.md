@@ -13,8 +13,8 @@ out of the blockchain (layer-1) and can ultimately settle
 back efficiently to the blockchain.
 
 ### Side Chains
-* [Stacks](https://docs.stacks.co/)
 * [Rootstock](https://dev.rootstock.io/)
+* [Stacks](https://docs.stacks.co/)
 * [Internet Computer](https://internetcomputer.org/docs/current/home)
 
 ### Payment Channel Networks
@@ -73,18 +73,18 @@ fraud proof, the users need to wait (usually a week) until their
 deposits can be withdrawn, while in ZK-rollups, deposits can
 be withdrawn immediately. [1]
 
+* [BitVM](https://bitvm.org/) (is this L2?)
+* [SatoshiVM](https://docs.satoshivm.io/)
 * [BOB](https://docs.gobob.xyz/)
 * [Citrea](https://docs.citrea.xyz/)
 * [Alpen](https://www.alpenlabs.io/)
 * [Merlin](https://docs.merlinchain.io/merlin-docs)
 * [Dovi](https://dovil2.com/)
-* [SatoshiVM](https://docs.satoshivm.io/)
 
 ## Layer 1
 
 ### Miner Validated
 * [Bitcoin Script]()
-* [BitVM](https://bitvm.org/) (is this L2?)
 
 ### Client Validated
 * [EPOBC](https://github.com/chromaway/ngcccbase/wiki/EPOBC_simple)
