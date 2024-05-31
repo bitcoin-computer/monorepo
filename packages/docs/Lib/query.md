@@ -16,7 +16,6 @@ Returns the latest revisions of smart objects. Conditions can be passed in to de
         limit?: number;
         offset?: number;
         order?: "ASC" | "DEC";
-        contract?: { class: T; args?: ConstructorParameters<T> };
       }
 ) => Promise<string[]>;
 ```
@@ -27,8 +26,7 @@ Returns the latest revisions of smart objects. Conditions can be passed in to de
 await computer.query({ publicKey })
 await computer.query({ ids })
 await computer.query({ mod })
-await computer.query({ contract })
-await computer.query({ publicKey, contract, order })
+await computer.query({ publicKey, order })
 ...
 ```
 
@@ -47,7 +45,6 @@ An object with the query parameters.
 | limit | number | Return only limited number of revisions |
 | offset | number | Return results starting from offset |
 | order | 'ASC' \| 'DEC' | Order results in ascending or descending order |
-| contract | { class: T, args?: ConstructorParameters\<T\> } | Return latest revisions of smart objects from a class |
 
 ### Return value
 
@@ -75,16 +72,11 @@ const b = await computer.new(A, [], mod)
 const [rev3] = await computer.query({ mod })
 expect(rev3).to.equal(b._rev)
 
-// query by class
-const contract = { class: A }
-const [rev4] = await computer.query({ contract })
-expect(rev4).to.equal(a._rev)
-
 // query by multiple parameters
 const [revs5] = await computer.query({
   limit: 10,
   order: 'ASC',
-  contract: { class: A }
+  publicKey: { computer.getPublicKey() }
 })
 expect(rev5).to.equal(a._rev)
 ```
