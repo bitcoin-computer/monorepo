@@ -7,26 +7,25 @@ import subprocess
 import multiprocessing
 
 def runSync(args, commandLine):
-    if(args.cpus is not None):
-        # We reserve 3 cpus, one for the db-service, one for the node-service, and one for the non-standard-worker
-        numStandardWorkers = args.cpus - 3 if args.cpus - 3 > 0 else 1
+    numWorkers = 1
+    if(args.cpus is None):
+        cpus = multiprocessing.cpu_count()
     else:
-        numStandardWorkers = multiprocessing.cpu_count() - 3 if multiprocessing.cpu_count() - 3 > 0 else 1
+        cpus = args.cpus
 
-    standardTxCommand = ''
-    numWorkers = numStandardWorkers + 1
-    print('Launching '+str(numStandardWorkers)+' standard workers and 1 non-standard worker. ')
-    for worker in range(numStandardWorkers):  
-        standardTxCommand+=syncCommandLine('false', str(worker+1), str(numWorkers), commandLine)+ ' && '
+    # We reserve 2 cpus, one for the db-service, one for the node-service
+    if cpus - 2 > 0:
+        numWorkers = cpus - 2   
+
+    standardTxCommand = 'true '
+    print('Launching '+str(numWorkers)+' workers. ')
+    for workerId in range(numWorkers):  
+        standardTxCommand+=' && export WORKER_ID='+str(workerId+1)+' NUM_WORKERS='+str(numWorkers)+'; '+ commandLine+' run -d sync'
     
-    nonStandardTxCommand = syncCommandLine('true', str(numWorkers), str(numWorkers), commandLine)
-
-    parallelCommand = standardTxCommand + nonStandardTxCommand
+    print(standardTxCommand)
+    parallelCommand = standardTxCommand 
     p = subprocess.run(
         ['sh', '-c', parallelCommand], ) 
-
-def syncCommandLine(nonStandard, workerId, numWorkers, commandLine):
-    return 'export SYNC_NON_STANDARD='+nonStandard+' WORKER_ID='+str(workerId)+' NUM_WORKERS='+str(numWorkers)+'; '+ commandLine+' run -d sync'
 
 def main():
     
