@@ -69,6 +69,7 @@
     "exponential-backoff": "^3.1.1",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
+    "geoip-lite": "^1.4.10",
     "hash.js": "^1.1.7",
     "mocha": "^10.3.0",
     "pg-monitor": "^2.0.0",
