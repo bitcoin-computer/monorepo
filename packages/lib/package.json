@@ -17,6 +17,19 @@
   "main": "dist/bc-lib.main.es.mjs",
   "module": "dist/bc-lib.module.es.mjs",
   "browser": "dist/bc-lib.browser.es.mjs",
+  "cjs": "dist/bc-lib.commonjs.min.cjs",
+  "exports": {
+    ".": {
+      "node": {
+        "import": "./dist/bc-lib.main.es.mjs",
+        "require": "./dist/bc-lib.commonjs.min.cjs"
+      },
+      "browser": {
+        "import": "./dist/bc-lib.module.es.mjs"
+      },
+      "default": "./dist/bc-lib.main.es.mjs"
+    }
+  },
   "homepage": "http://bitcoincomputer.io/",
   "author": {
     "name": "Clemens Ley",
@@ -71,7 +84,6 @@
     "path": "^0.12.7",
     "randombytes": "^2.1.0",
     "ses": "1.3.0",
-    "tiny-secp256k1": "^2.2.3",
     "tweetnacl": "^1.0.3",
     "tweetnacl-util": "^0.15.1",
     "varuint-bitcoin": "^1.1.2"
