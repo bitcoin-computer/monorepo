@@ -38,7 +38,7 @@ services:
     env_file: .env
     restart: always
     environment:
-      - BCN_ENV=prod
+      - BCN_ENV=dev
       - RPC_HOST=node
       - RPC_PORT=9332
       - ZMQ_URL=tcp://node:28332
@@ -55,7 +55,7 @@ services:
     env_file: .env
     restart: always
     environment:
-      - BCN_ENV=prod
+      - BCN_ENV=dev
       - RPC_HOST=node
       - RPC_PORT=9332
       - NETWORK=mainnet
@@ -69,8 +69,8 @@ services:
       - RPC_PASSWORD=${RPC_PASSWORD}
       - WORKER_ID=${WORKER_ID}
       - NUM_WORKERS=${NUM_WORKERS}
-      - SYNC_NON_STANDARD=${SYNC_NON_STANDARD}
-      - BC_START_HEIGHT=${BC_START_HEIGHT}
+    volumes:
+      - ./logs:/dist/packages/node/logs
     depends_on:
       - db
       - node
