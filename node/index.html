@@ -9,34 +9,34 @@
     <meta name="generator" content="Retype 3.5.0">
 
     <!-- Primary Meta Tags -->
-    <title>fund</title>
-    <meta name="title" content="fund">
-    <meta name="description" content="Funds a Bitcoin transaction.">
+    <title>Node (Under Construction)</title>
+    <meta name="title" content="Node (Under Construction)">
+    <meta name="description" content="Supports queries for the balance, the UTXO set, and the list of transactions of any address.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/lib/fund/">
+    <link rel="canonical" href="/node/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/lib/fund/">
-    <meta property="og:title" content="fund">
-    <meta property="og:description" content="Funds a Bitcoin transaction.">
+    <meta property="og:url" content="/node/">
+    <meta property="og:title" content="Node (Under Construction)">
+    <meta property="og:description" content="Supports queries for the balance, the UTXO set, and the list of transactions of any address.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/lib/fund/">
-    <meta property="twitter:title" content="fund">
-    <meta property="twitter:description" content="Funds a Bitcoin transaction.">
+    <meta property="twitter:url" content="/node/">
+    <meta property="twitter:title" content="Node (Under Construction)">
+    <meta property="twitter:description" content="Supports queries for the balance, the UTXO set, and the list of transactions of any address.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
-    <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.770766719448" rel="stylesheet">
+    <link href="../static/favicon.ico" rel="icon">
+    <link href="../resources/css/retype.css?v=3.5.0.770766719448" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.770766719448" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.770766719448" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.770766719448" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.770766719448" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.770766719448" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.5.0.770766719448" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -51,7 +51,7 @@
                 <!-- Logo -->
                 <div class="flex items-center justify-between h-full py-2 md:w-75">
                     <div class="flex items-center px-2 md:px-6">
-                        <a id="docs-site-logo" href="../../" class="flex items-center leading-snug text-xl">
+                        <a id="docs-site-logo" href="../" class="flex items-center leading-snug text-xl">
                             <span class="dark:text-white font-semibold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
                         </a><span class="hidden px-2 py-1 ml-4 text-sm font-semibold leading-none text-root-logo-label-text bg-root-logo-label-bg rounded-sm md:inline-block">0.18.0</span>
                     </div>
@@ -151,114 +151,355 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="fund" class="break-words">
+<doc-anchor-target id="node-under-construction" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#fund">#</doc-anchor-trigger>
-        <span>fund</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#node-under-construction">#</doc-anchor-trigger>
+        <span>Node (Under Construction)</span>
     </h1>
 </doc-anchor-target>
-<p>Funds a Bitcoin transaction.</p>
-<doc-anchor-target id="type">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
-        <span>Type</span>
-    </h3>
+<doc-anchor-target id="features">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#features">#</doc-anchor-trigger>
+        <span>Features</span>
+    </h2>
 </doc-anchor-target>
+<ul>
+<li>Supports queries for the balance, the UTXO set, and the list of transactions of any address.</li>
+<li>Multiplatform Docker images work on all major computer architectures (linux/amd64, linux/arm/v7, linux/arm64)</li>
+<li>You can start the node in a single line of code.</li>
+<li>Allow and deny access to Bitcoin RPC endpoints using a regular expression</li>
+<li>Filter IP addresses by country</li>
+<li>Enforce allowlist and denylist</li>
+<li>Optimized for running large test suites on regtest</li>
+<li>Synchronizes in parallel and makes use of all cores of a machine.</li>
+<li>Simple architecture, consisting of bitcoind and a psql database</li>
+<li>All functionality of a Bitcoin node (build, sign, and broadcast txs)</li>
+</ul>
+<doc-anchor-target id="prerequisites">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#prerequisites">#</doc-anchor-trigger>
+        <span>Prerequisites</span>
+    </h2>
+</doc-anchor-target>
+<p>You need to have <a href="https://www.git-scm.com/">git</a>, <a href="https://nodejs.org/">node.js</a> and <a href="https://www.docker.com/">docker</a> installed.</p>
+<doc-anchor-target id="installation">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#installation">#</doc-anchor-trigger>
+        <span>Installation</span>
+    </h2>
+</doc-anchor-target>
+<font size=1>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">(
-  tx: BitcoinLib.Transaction,
-  opts?: { 
-    include?: string[]
-    exclude?: string[]
-  }
-): Promise&lt;void&gt;</code></pre>
+<pre class="language-bash"><code v-pre class="language-bash"># Download the monorepo
+git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Move into monorepo folder
+cd monorepo
+
+# Install the dependencies
+npm install
+
+# Build the docker image
+npm run build-node</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="syntax">
+</font>
+<doc-anchor-target id="usage">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#usage">#</doc-anchor-trigger>
+        <span>Usage</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="start-the-node">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#start-the-node">#</doc-anchor-trigger>
+        <span>Start the Node</span>
     </h3>
 </doc-anchor-target>
+<p>To start your node at <code v-pre>http://localhost:1031</code> run the commands below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.</p>
+<font size=1>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">await computer.fund(tx)</code></pre>
+<pre class="language-bash"><code v-pre class="language-bash"># Move to node folder
+cd packages/node
+
+# Create a .env file
+cp .env.example .env
+
+# Run the node on litecoin regtest
+npm run up</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="parameters">
+</font>
+<doc-anchor-target id="run-the-tests">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#parameters">#</doc-anchor-trigger>
-        <span>Parameters</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#run-the-tests">#</doc-anchor-trigger>
+        <span>Run the Tests</span>
     </h3>
 </doc-anchor-target>
-<doc-anchor-target id="tx">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#tx">#</doc-anchor-trigger>
-        <span>tx</span>
-    </h4>
+<p>You can run the integration tests with the command below.</p>
+<font size=1>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">npm run test</code></pre>
+</doc-codeblock></div>
+</font>
+<p>On regtest, the halving period is set to infinity. This makes it possible to run a large number of tests without having to restart the node.</p>
+<doc-anchor-target id="fund-the-wallet">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#fund-the-wallet">#</doc-anchor-trigger>
+        <span>Fund the Wallet</span>
+    </h3>
 </doc-anchor-target>
-<p>A Bitcoin transaction object from the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs#nakamotojs-nakamotojs">NakamotoJS</a> library.</p>
-<doc-anchor-target id="opts">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#opts">#</doc-anchor-trigger>
-        <span>opts</span>
-    </h4>
+<p>In regtest mode, you can fund a wallet with the following commands.</p>
+<font size=1>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash"># Fund Litecoin regtest wallet
+npm run fund-ltc -- &lt;address_1&gt; ... &lt;address_n&gt;
+
+# Fund Bitcoin regtest wallet
+npm run fund-btc -- &lt;address_1&gt; ... &lt;address_n&gt;</code></pre>
+</doc-codeblock></div>
+</font>
+<doc-anchor-target id="stop-the-node">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#stop-the-node">#</doc-anchor-trigger>
+        <span>Stop the Node</span>
+    </h3>
 </doc-anchor-target>
-<p>An optional object can be passed as parameter to <code v-pre>include</code> or <code v-pre>exclude</code> certain UTXOs. When using <code v-pre>include</code>, the transaction will be funded with the UTXOs specified as the first inputs.</p>
+<p>You can stop the node with the command below. When you restart the process, it will resume from the last block processed.</p>
+<font size=1>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">npm run down -- -r</code></pre>
+</doc-codeblock></div>
+</font>
+<doc-anchor-target id="reset-the-node">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#reset-the-node">#</doc-anchor-trigger>
+        <span>Reset the Node</span>
+    </h3>
+</doc-anchor-target>
+<p>The command below will reset the database, delete all blockchain data, and stop all docker containers.</p>
+<font size=1>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">npm run reset</code></pre>
+</doc-codeblock></div>
+</font>
+<doc-anchor-target id="client-side-library">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#client-side-library">#</doc-anchor-trigger>
+        <span>Client Side Library</span>
+    </h3>
+</doc-anchor-target>
+<p>The <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme">Bitcoin Computer Library</a> can connect to a Bitcoin Computer Node to provides access to its functionality.</p>
+<font size=1>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">// Import client side library
+import { Computer } from '@bitcoin-computer/lib'
+
+// Configuration to connect to node on localhost
+const conf = {
+  chain: 'LTC',
+  network: 'regtest',
+  url: 'http://localhost:1031',
+}
+
+// Create instance of client side library
+const computer = new Computer(conf)
+const address = computer.getAddress()
+
+// Fund client side library
+const { txId, vout } = await computer.faucet(1e4)
+
+// Return the utxos
+expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
+
+// Return the balance
+expect(await new Computer(conf).getBalance(address)).eq(1e4)
+
+// Return the transactions
+expect(await new Computer(conf).listTxs(address)).deep.eq({
+  sentTxs: [],
+  receivedTxs: [
+    {
+      txId,
+      inputsSatoshis: 0,
+      outputsSatoshis: 1e4,
+      satoshis: 1e4
+    }
+  ]
+})</code></pre>
+</doc-codeblock></div>
+</font>
+<p>If you do not specify a <code v-pre>url</code> property it will default to the url below. The node at that url runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-none"><code v-pre class="language-none">https://rltc.node.bitcoincomputer.io</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="configuration">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#configuration">#</doc-anchor-trigger>
+        <span>Configuration</span>
+    </h2>
+</doc-anchor-target>
+<p>You can configure several options by editing the <code v-pre>.env</code> file.</p>
+<font size=1>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash"># BTC or LTC
+CHAIN='LTC'
+
+# mainnet, testnet, or regtest
+NETWORK='regtest'
+
+# Port for Bitcoin Computer Node
+PORT='1031'
+
+# Postgres Connection Credentials
+POSTGRES_USER='bcn'
+POSTGRES_PASSWORD='bcn'
+POSTGRES_DB='bcn'
+POSTGRES_HOST='127.0.0.1'
+POSTGRES_PORT='5432'
+
+# Node Settings
+# RPC Client Credentials
+RPC_USER='bcn-admin'
+RPC_PASSWORD='kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
+RPC_AUTH='bcn-admin:c71460f0f08e4eeec90e033c04f7bb82$c36e8561d46abbf3bf13da6b88612c19d758d46d02c45cd2716f06a13ec407af'
+RPC_HOST='127.0.0.1'  # should this be node?
+RPC_PORT='19332'
+RPC_PROTOCOL='http'
+ZMQ_URL='tcp://node:28332'
+
+# Default wallet name
+DEFAULT_WALLET='defaultwallet'
+
+# Allowed RPC Methods
+ALLOWED_RPC_METHODS='^get|^gen|^send|^lis'
+
+# Winston Logger Settings
+# Debug mode
+# 0: Error logs only
+# 1: Error and warning logs
+# 2: Error, warning and info logs
+# 3: Error, warning, info and http logs
+# 4: Error, warning, info, http and debug logs
+DEBUG_MODE='4'
+# Maximum number of logs to keep. If not set, no logs will be removed. This can be
+# a number of files or number of days. If using days, add 'd' as the suffix.
+LOG_MAX_FILES='14d'
+# Maximum log file size. You can use 'k' for KB, 'm' for MB, and 'g' for GB. Once
+# the size of the log file exceeds the specified size, the log is rotated. If no
+# size is specified the log is not rotated.
+LOG_MAX_SIZE='20m'
+# A boolean to define whether or not to gzip archived log files.
+LOG_ZIP=false
+
+# Comma separated list of banned countries encoded as ISO-3166 alpha2 country
+# codes (see https://www.geonames.org/countries/)
+BANNED_COUNTRIES=</code></pre>
+</doc-codeblock></div>
+</font>
+<doc-anchor-target id="configure-parallelism">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#configure-parallelism">#</doc-anchor-trigger>
+        <span>Configure Parallelism</span>
+    </h3>
+</doc-anchor-target>
+<p>By default the synchronization runs in parallel and uses all cores of your machine. You can use the <code v-pre>-cpus</code> flag to limit the number of cores used.</p>
+<font size=1>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">npm run up -- -t -cpus 16</code></pre>
+</doc-codeblock></div>
+</font>
+<doc-anchor-target id="estimated-server-costs">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#estimated-server-costs">#</doc-anchor-trigger>
+        <span>Estimated Server Costs</span>
+    </h2>
+</doc-anchor-target>
+<p>The following table shows the times and costs for syncing to a Litecoin node on testnet on <a href="https://aws.amazon.com/ec2/pricing/on-demand/">AWS EC2</a>. All experiments were run in spring 2022 using 50GB SSD storage.</p>
 <div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
+<table class="comfortable">
 <thead>
 <tr>
-<th>Key</th>
-<th>Type</th>
-<th>Description</th>
-<th>Default Value</th>
+<th>CPUs</th>
+<th>RAM</th>
+<th>Sync Time</th>
+<th>Monthly Costs</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>include</td>
-<td>string[]</td>
-<td>UTXOs to include</td>
-<td>[]</td>
+<td>2</td>
+<td>8GB</td>
+<td>28h</td>
+<td>$65</td>
 </tr>
 <tr>
-<td>exclude</td>
-<td>string[]</td>
-<td>UTXOs to exclude</td>
-<td>[]</td>
+<td>4</td>
+<td>16GB</td>
+<td>10h 30m</td>
+<td>$110</td>
+</tr>
+<tr>
+<td>8</td>
+<td>32GB</td>
+<td>7h 15m</td>
+<td>$240</td>
+</tr>
+<tr>
+<td>16</td>
+<td>32GB</td>
+<td>4h 45m</td>
+<td>$440</td>
 </tr>
 </tbody>
 </table>
 </div>
-<doc-anchor-target id="return-value">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#return-value">#</doc-anchor-trigger>
-        <span>Return value</span>
-    </h3>
+<doc-anchor-target id="versioning">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#versioning">#</doc-anchor-trigger>
+        <span>Versioning</span>
+    </h2>
 </doc-anchor-target>
-<p>If the wallet does not have sufficient funds, an error is thrown.</p>
-<doc-anchor-target id="examples">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
-    </h3>
+<p>If you run your own node, make sure to use the same versions of Lib and Node.</p>
+<doc-anchor-target id="documentation">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#documentation">#</doc-anchor-trigger>
+        <span>Documentation</span>
+    </h2>
 </doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">// A smart contract
-class C extends Contract {}
-
-// Encode a constructor call without funding the transaction
-const computer1 = new Computer({ mnemonic: ... })
-const { tx } = await computer1.encode({
-  exp: `${C} new ${C.name}()`
-  fund: false
-})
-
-// Fund the transactions (can be another computer)
-const computer2 = new Computer({ mnemonic: ... })
-await computer1.fund(tx)
-
-// Broadcast the tx
-const txId = await computer2.broadcast(tx)</code></pre>
-</doc-codeblock></div>
+<p>Have a look at the <a href="https://docs.bitcoincomputer.io/">docs</a>.</p>
+<doc-anchor-target id="getting-help">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#getting-help">#</doc-anchor-trigger>
+        <span>Getting Help</span>
+    </h2>
+</doc-anchor-target>
+<p>If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email <a href="mailto:clemens@bitcoincomputer.io">clemens@bitcoincomputer.io</a>.</p>
+<doc-anchor-target id="development-status">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#development-status">#</doc-anchor-trigger>
+        <span>Development Status</span>
+    </h2>
+</doc-anchor-target>
+<p>See <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status">here</a>.</p>
+<doc-anchor-target id="price">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#price">#</doc-anchor-trigger>
+        <span>Price</span>
+    </h2>
+</doc-anchor-target>
+<p>See <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price">here</a>.</p>
+<doc-anchor-target id="license">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#license">#</doc-anchor-trigger>
+        <span>License</span>
+    </h2>
+</doc-anchor-target>
+<p>This software is licensed under the <a href="https://creativecommons.org/licenses/by-nd/3.0/">Creative Commons Attribution-NoDerivs 3.0 Unported</a> license.</p>
+<p>You are free to: share, copy, and redistribute the material in any medium or format for any purpose, even commercially under the following terms:</p>
+<ul>
+<li>Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.</li>
+<li>NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.</li>
+</ul>
+<p>This is a human-readable summary of (and not a substitute for) the <a href="https://creativecommons.org/licenses/by-nd/3.0/legalcode">license</a>.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -266,27 +507,6 @@ const txId = await computer2.broadcast(tx)</code></pre>
                             </div>
                             <footer class="clear-both">
                             
-                                <nav class="flex mt-14">
-                                    <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../lib/faucet/">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
-                                            <span>
-                                                <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">faucet</span>
-                                            </span>
-                                        </a>
-                                    </div>
-                            
-                                    <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../lib/getaddress/">
-                                            <span>
-                                                <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">get​Address</span>
-                                            </span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
-                                        </a>
-                                    </div>
-                                </nav>
                             </footer>
                         </main>
                 
@@ -325,6 +545,6 @@ const txId = await computer2.broadcast(tx)</code></pre>
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "fund", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Node (Under Construction)", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
