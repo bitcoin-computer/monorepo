@@ -1,6 +1,6 @@
 ---
 order: -10
-icon: database
+icon: circle
 ---
 
 # Fungible Token

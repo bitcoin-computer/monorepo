@@ -362,7 +362,7 @@ describe('Chat', () => {
         await eve.sync(alicesChat._rev)
         expect(true).eq(false)
       } catch (err) {
-        expect(err.message).eq("Cannot read properties of null (reading 'exp')")
+        expect(err.message).eq("Decryption failure")
       }
     })
   })
@@ -378,7 +378,7 @@ describe('Chat', () => {
         await bob.sync(alicesChat._rev)
         expect(true).eq(false)
       } catch (err) {
-        expect(err.message).eq("Cannot read properties of null (reading 'exp')")
+        expect(err.message).eq("Decryption failure")
       }
     })
   })

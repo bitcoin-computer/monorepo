@@ -126,8 +126,7 @@ declare class RestClient {
   getBalance(address: string): Promise<number>;
   getTransactions(txIds: string[]): Promise<_Transaction[]>;
   getRawTxs(txIds: string[]): Promise<string[]>;
-  get RANDOM_ADDRESS(): string;
-  getUtxosByAddress(address: string): Promise<_Unspent[]>;
+  getUtxos(address: string): Promise<_Unspent[]>;
   query({
     publicKey,
     hash,
@@ -168,11 +167,11 @@ declare class RestClient {
   }): Promise<void>;
   get url(): string;
   broadcast(txHex: string): Promise<string>;
-  fetch(txId: string): Promise<_Transaction>;
-  fetchAll(txIds: string[]): Promise<_Transaction[]>;
+  getTx(txId: string): Promise<_Transaction>;
+  getTxs(txIds: string[]): Promise<_Transaction[]>;
   unspents(address: string): Promise<_Unspent[]>;
   faucet(address: string, value: number): Promise<_Unspent>;
-  faucetComplex(output: Buffer, value: number): Promise<_Unspent>;
+  faucetScript(output: Buffer, value: number): Promise<_Unspent>;
   verify(txo: _Unspent): Promise<void>;
   mine(count: number): Promise<void>;
   height(): Promise<number>;
@@ -345,7 +344,7 @@ declare class Computer {
     args?: ConstructorParameters<T>,
     mod?: string
   ): Promise<InstanceType<T> & Location>;
-  lockdown(opts?: any): void;
+  static lockdown(opts?: any): void;
   delete(inRevs: string[]): Promise<string>;
   decode(transaction: Transaction): Promise<TransitionJSON>;
   encode(
