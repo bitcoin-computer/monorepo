@@ -3,7 +3,7 @@ order: -20
 icon: comment-discussion
 ---
 
-# Encrypted Chat
+# Chat
 
 ## Smart Contract
 
