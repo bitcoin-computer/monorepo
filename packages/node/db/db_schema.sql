@@ -21,12 +21,6 @@ CREATE TABLE IF NOT EXISTS
 CREATE INDEX "OutputAddressIndex"
 ON "Output"("address");
 
-CREATE INDEX "OutputPublicKeysIndex"
-ON "Output"("publicKeys");
-
-CREATE INDEX "OutputModIndex"
-ON "Output"("mod");
-
 CREATE INDEX "OutputPreviousIndex"
 ON "Output"("previous");
 
