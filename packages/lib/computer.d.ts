@@ -46,17 +46,17 @@ declare class Wallet {
   readonly restClient: RestClient;
   constructor(params?: ComputerOptions);
   derive(subpath?: string): Wallet;
-  getBalance(): Promise<number>;
-  getUtxos(): Promise<_Unspent[]>;
+  getBalance(address?: string): Promise<number>;
+  getUtxos(address?: string): Promise<_Unspent[]>;
   getDustThreshold(isWitnessProgram: boolean, script?: Buffer): number;
   getAmountThreshold(isWitnessProgram: boolean, script: Buffer): number;
   getUtxosWithOpts({ include, exclude }?: FundOptions): Promise<_Unspent[]>;
-  fetchUtxo: (utxo: _Unspent) => Promise<Utxo>;
+  fetchUtxo: ({ txId, vout }: _Unspent) => Promise<Utxo>;
   checkFee(fee: number, size: number): void;
   getSigOpCount(script: Buffer): number;
   getLegacySigOpCount(tx: Transaction): Promise<number>;
   getTransactionSigOpCost(tx: Transaction): Promise<number>;
-  getTxSize(txSize: any, nSigOpCost: any, bytesPerSigOp: any): number;
+  getTxSize(txSize: number, nSigOpCost: number, bytesPerSigOp: number): number;
   estimatePsbtSize(tx: Psbt): number;
   fundPsbt(tx: Psbt, opts?: FundOptions): Promise<void>;
   getOutputSpent: (input: TxInput) => Promise<TxOutput>;
@@ -65,19 +65,16 @@ declare class Wallet {
   estimateSize(tx: any): Promise<number>;
   estimateFee(tx: any): Promise<number>;
   fund(tx: Transaction, opts?: FundOptions): Promise<void>;
-  sign(
-    transaction: Transaction,
-    { inputIndex, sighashType, inputScript }?: SigOptions
-  ): Promise<void>;
+  sign(transaction: Transaction, { inputIndex, sighashType, inputScript }?: SigOptions): Promise<void>;
   broadcast(tx: Transaction): Promise<string>;
   send(satoshis: number, address: string): Promise<string>;
-  get hdPrivateKey(): any;
+  get hdPrivateKey(): BIP32Interface;
   get privateKey(): Buffer;
   get publicKey(): Buffer;
   get passphrase(): string;
   get path(): string;
-  get chain(): Chain;
-  get network(): Network;
+  get chain(): TBCChain;
+  get network(): TBCNetwork;
   get url(): string;
   get mnemonic(): string;
   get address(): string;
@@ -98,89 +95,54 @@ declare class UrlFetch {
 }
 
 declare class RestClient {
-  readonly chain: Chain;
-  readonly network: Network;
+  readonly chain: TBCChain;
+  readonly network: TBCNetwork;
   readonly networkObj: any;
   readonly mnemonic: string;
   readonly path: string;
   readonly passphrase: string;
   readonly addressType: AddressType;
+  readonly keyPair: BIP32Interface;
   readonly bcn: UrlFetch;
   readonly dustRelayTxFee: number;
-  readonly _keyPair: any;
   satPerByte: number;
-  private randomAddress;
-  constructor({
-    chain,
-    network,
-    mnemonic,
-    path,
-    passphrase,
-    addressType,
-    url,
-    satPerByte,
-    dustRelayFee,
-  }?: ComputerOptions);
-  get privateKey(): Buffer;
-  get keyPair(): any;
+  constructor({ chain, network, mnemonic, path, passphrase, addressType, url, satPerByte, dustRelayFee }?: ComputerOptions);
+  rpc(method: string, params: string): Promise<any>;
+  broadcast(txHex: string): Promise<string>;
   getBalance(address: string): Promise<number>;
-  getTransactions(txIds: string[]): Promise<_Transaction[]>;
+  listTxs(address: string): Promise<_Transaction>;
+  getUtxos(address: string): Promise<_Unspent[]>;
+  getFormattedUtxos(address: string): Promise<_Unspent[]>;
   getRawTxs(txIds: string[]): Promise<string[]>;
-  get RANDOM_ADDRESS(): string;
-  getUtxosByAddress(address: string): Promise<_Unspent[]>;
-  query({
-    publicKey,
-    hash,
-    limit,
-    offset,
-    order,
-    ids,
-    mod,
-  }: Partial<Query>): Promise<string[]>;
+  getTx(txId: string): Promise<_Transaction>;
+  query({ publicKey, hash, limit, offset, order, ids, mod }: Partial<Query>): Promise<string[]>;
   idsToRevs(outIds: string[]): Promise<string[]>;
   revToId(rev: string): Promise<string>;
-  rpc(method: string, params: string): Promise<any>;
-  static getSecretOutput({
-    _url,
-    keyPair,
-  }: {
-    _url: string;
-    keyPair: any;
+  static getSecretOutput({ _url, keyPair }: {
+      _url: string;
+      keyPair: BIP32Interface;
   }): Promise<{
-    host: string;
-    data: string;
+      host: string;
+      data: string;
   }>;
-  static setSecretOutput({
-    secretOutput,
-    host,
-    keyPair,
-  }: {
-    secretOutput: SecretOutput;
-    host: string;
-    keyPair: any;
+  static setSecretOutput({ secretOutput, host, keyPair }: {
+      secretOutput: SecretOutput;
+      host: string;
+      keyPair: BIP32Interface;
   }): Promise<Data & (Encrypted | Stored)>;
-  static deleteSecretOutput({
-    _url,
-    keyPair,
-  }: {
-    _url: string;
-    keyPair: any;
+  static deleteSecretOutput({ _url, keyPair }: {
+      _url: string;
+      keyPair: BIP32Interface;
   }): Promise<void>;
-  get url(): string;
-  broadcast(txHex: string): Promise<string>;
-  fetch(txId: string): Promise<_Transaction>;
-  fetchAll(txIds: string[]): Promise<_Transaction[]>;
-  unspents(address: string): Promise<_Unspent[]>;
   faucet(address: string, value: number): Promise<_Unspent>;
-  faucetComplex(output: Buffer, value: number): Promise<_Unspent>;
-  verify(txo: _Unspent): Promise<void>;
+  faucetScript(output: Buffer, value: number): Promise<_Unspent>;
   mine(count: number): Promise<void>;
+  verify(txo: _Unspent): Promise<void>;
   height(): Promise<number>;
-  listTxs(address: string): Promise<_Transaction>;
 }
 
-type Chain = "LTC" | "BTC";
-type Network = "testnet" | "mainnet" | "regtest";
+type TBCChain = "LTC" | "BTC";
+type TBCNetwork = "testnet" | "mainnet" | "regtest";
 type Fee = Partial<{
   fee: number;
 }>;
@@ -340,53 +302,47 @@ declare class Contract {
 declare class Computer {
   wallet: Wallet;
   constructor(params?: ComputerOptions);
-  new<T extends Class>(
-    constructor: T,
-    args?: ConstructorParameters<T>,
-    mod?: string
-  ): Promise<InstanceType<T> & Location>;
-  lockdown(opts?: any): void;
-  delete(inRevs: string[]): Promise<string>;
-  decode(transaction: Transaction): Promise<TransitionJSON>;
-  encode(
-    json: Partial<TransitionJSON & FundOptions & SigOptions & MockOptions>
-  ): Promise<{
-    tx?: Transaction;
-    effect: Effect;
-  }>;
-  encodeNew<T extends Class>({
-    constructor,
-    args,
-    mod,
-  }: {
-    constructor: T;
-    args: ConstructorParameters<T>;
-    mod?: string;
-    root?: string;
-  }): Promise<{
-    tx?: Transaction;
-    effect: Effect;
-  }>;
-  getUtxos(address?: string): Promise<string[]>;
-  encodeCall<T extends Class, K extends keyof InstanceType<T>>({
-    target,
-    property,
-    args,
-    mod,
-  }: {
-    target: InstanceType<T> & Location;
-    property: string;
-    args: Parameters<InstanceType<T>[K]>;
-    mod?: string;
-  }): Promise<{
-    tx?: Transaction;
-    effect: Effect;
-  }>;
+  new<T extends Class>(constructor: T, args?: ConstructorParameters<T>, mod?: string): Promise<InstanceType<T> & Location>;
   query<T extends Class>(q: UserQuery<T>): Promise<string[]>;
+  sync(rev: string): Promise<unknown>;
+  encode(json: Partial<TransitionJSON & FundOptions & SigOptions & MockOptions>): Promise<{
+      tx: Transaction;
+      effect: Effect;
+  }>;
+  encodeNew<T extends Class>({ constructor, args, mod }: {
+      constructor: T;
+      args: ConstructorParameters<T>;
+      mod?: string;
+      root?: string;
+  }): Promise<{
+      tx: Transaction;
+      effect: Effect;
+  }>;
+  encodeCall<T extends Class, K extends keyof InstanceType<T>>({ target, property, args, mod }: {
+      target: InstanceType<T> & Location;
+      property: string;
+      args: Parameters<InstanceType<T>[K]>;
+      mod?: string;
+  }): Promise<{
+      tx: Transaction;
+      effect: Effect;
+  }>;
+  decode(transaction: Transaction): Promise<TransitionJSON>;
   deploy(module: string, opts?: Partial<InscriptionOptions>): Promise<string>;
-  load(rev: string): Promise<any>;
-  getChain(): Chain;
-  getNetwork(): Network;
+  load(rev: string): Promise<ModuleExportsNamespace>;
+  listTxs(address?: string): Promise<import("./types")._Transaction>;
+  getUtxos(address?: string): Promise<string[]>;
+  getBalance(address?: string): Promise<number>;
+  sign(transaction: Transaction, opts?: SigOptions): Promise<void>;
+  fund(tx: Transaction, opts?: Fee & FundOptions): Promise<void>;
+  send(satoshis: number, address: string): Promise<string>;
+  broadcast(tx: Transaction): Promise<string>;
+  rpcCall(method: string, params: string): Promise<any>;
+  txFromHex({ hex }: {
+      hex: string;
+  }): Promise<TBCTransaction>;
+  getChain(): TBCChain;
+  getNetwork(): TBCNetwork;
   getMnemonic(): string;
   getPrivateKey(): string;
   getPassphrase(): string;
@@ -394,34 +350,26 @@ declare class Computer {
   getUrl(): string;
   getPublicKey(): string;
   getAddress(): string;
-  setFee(fee: number): void;
+  getAddressType(): string;
   getFee(): number;
-  getBalance(): Promise<number>;
-  sign(transaction: Transaction, opts?: SigOptions): Promise<void>;
-  fund(tx: Transaction, opts?: Fee & FundOptions): Promise<void>;
-  broadcast(tx: Transaction): Promise<string>;
-  sync(rev: string): Promise<unknown>;
-  send(satoshis: number, address: string): Promise<string>;
-  rpcCall(method: string, params: string): Promise<any>;
-  txFromHex({ hex }: { hex?: string | undefined }): Promise<any>;
-  getInscription(
-    rawTx: string,
-    index: number
-  ): {
-    contentType: string;
-    body: string;
+  setFee(fee: number): void;
+  faucet(amount: number, address?: string): Promise<_Unspent>;
+  static getInscription(rawTx: string, index: number): {
+      contentType: string;
+      body: string;
   };
-  listTxs(address?: string): Promise<_Transaction>;
+  toScriptPubKey(publicKeys?: string[]): Buffer | undefined;
+  static lockdown(opts?: any): void;
+  delete(inRevs: string[]): Promise<string>;
   export(module: string, opts?: Partial<InscriptionOptions>): Promise<string>;
-  import(rev: string): Promise<any>;
+  import(rev: string): Promise<ModuleExportsNamespace>;
   queryRevs(q: Query): Promise<string[]>;
   getOwnedRevs(publicKey?: Buffer): Promise<string[]>;
   getRevs(publicKey?: Buffer): Promise<string[]>;
   getLatestRevs(ids: string[]): Promise<string[]>;
   getLatestRev(id: string): Promise<string>;
   idsToRevs(ids: string[]): Promise<string[]>;
-  faucet(amount: number, address?: string): Promise<_Unspent>;
-  toScriptPubKey(publicKeys?: string[]): Buffer;
+  getMinimumFees(): number;
 }
 
 export { Computer, Contract, Mock };
