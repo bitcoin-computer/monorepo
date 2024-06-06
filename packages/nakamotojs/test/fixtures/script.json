@@ -288,6 +288,17 @@
       ]
     },
     {
+      "type": "taproot",
+      "pubKey": "02359c6e3f04cefbf089cf1d6670dc47c3fb4df68e2bad1fa5a369f9ce4b42bbd1",
+      "signature": "304402207515cf147d201f411092e6be5a64a6006f9308fad7b2a8fdaab22cd86ce764c202200974b8aca7bf51dbf54150d3884e1ae04f675637b926ec33bf75939446f6ca2801",
+      "output": "OP_1 a7622c736ca5945b66773e7a5cdfbaad03a148e6bf40f79b4c2ec91d1da24773",
+      "outputHex": "5120a7622c736ca5945b66773e7a5cdfbaad03a148e6bf40f79b4c2ec91d1da24773",
+      "inputStack": [
+        "304402207515cf147d201f411092e6be5a64a6006f9308fad7b2a8fdaab22cd86ce764c202200974b8aca7bf51dbf54150d3884e1ae04f675637b926ec33bf75939446f6ca2801",
+        "02359c6e3f04cefbf089cf1d6670dc47c3fb4df68e2bad1fa5a369f9ce4b42bbd1"
+      ]
+    },
+    {
       "type": "nulldata",
       "data": [
         "06deadbeef03f895a2ad89fb6d696497af486cb7c644a27aa568c7a18dd06113401115185474"

@@ -36,7 +36,7 @@ export class OfferHelper {
     return this.computer.encode({
       exp,
       exclude,
-      mod: this.mod,
+      mod: this.mod
     })
   }
 
@@ -45,7 +45,7 @@ export class OfferHelper {
     return this.computer.encode({
       exp: `offer.addSaleTx("${tx.serialize()}")`,
       exclude: tx.getInRevs(),
-      env: { offer: syncedOffer._rev },
+      env: { offer: syncedOffer._rev }
     })
   }
 

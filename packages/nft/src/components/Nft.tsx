@@ -1,13 +1,13 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import reactStringReplace from "react-string-replace"
 import {
-  Auth,
   Card,
   toObject,
   capitalizeFirstLetter,
   Modal,
   UtilsContext,
+  ComputerContext
 } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
 import { OfferHelper, Payment, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
@@ -273,7 +273,7 @@ function NftView() {
   const params = useParams()
   const navigate = useNavigate()
   const [rev] = useState(params.rev || "")
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const [smartObject, setSmartObject] = useState<any | null>(null)
   const [functionResult, setFunctionResult] = useState<any>({})
 

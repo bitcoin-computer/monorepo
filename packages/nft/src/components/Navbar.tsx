@@ -11,7 +11,7 @@ function formatChainAndNetwork(chain: Chain, network: Network) {
   const map = {
     mainnet: "",
     testnet: "t",
-    regtest: "r",
+    regtest: "r"
   }
   const prefix = map[network]
   return `${prefix}${chain}`

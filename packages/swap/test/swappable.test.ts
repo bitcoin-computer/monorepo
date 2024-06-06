@@ -19,7 +19,7 @@ const meta = {
   _rev: _.isString,
   _root: _.isString,
   _owners: _.isArray,
-  _amount: _.isNumber,
+  _amount: _.isNumber
 }
 
 describe('Swapppable', () => {
@@ -41,7 +41,7 @@ describe('Swapppable', () => {
         ...meta,
         name: 'A',
         symbol: 'AAA',
-        _owners: [alice.getPublicKey()],
+        _owners: [alice.getPublicKey()]
       })
     })
 
@@ -52,7 +52,7 @@ describe('Swapppable', () => {
         ...meta,
         name: 'B',
         symbol: 'BBB',
-        _owners: [bob.getPublicKey()],
+        _owners: [bob.getPublicKey()]
       })
     })
   })
@@ -64,7 +64,7 @@ describe('Swapppable', () => {
     it('Alice builds, funds, and signs a swap transaction', async () => {
       ;({ tx } = await alice.encode({
         exp: `a.swap(b)`,
-        env: { a: a._rev, b: b._rev },
+        env: { a: a._rev, b: b._rev }
       }))
     })
 
@@ -85,7 +85,7 @@ describe('Swapppable', () => {
         ...meta,
         name: 'A',
         symbol: 'AAA',
-        _owners: [bob.getPublicKey()],
+        _owners: [bob.getPublicKey()]
       })
     })
 
@@ -97,7 +97,7 @@ describe('Swapppable', () => {
         ...meta,
         name: 'B',
         symbol: 'BBB',
-        _owners: [alice.getPublicKey()],
+        _owners: [alice.getPublicKey()]
       })
     })
   })

@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom'
 import { Modal, Auth, UtilsContext, Drawer } from '@bitcoin-computer/components'
-import { SearchBar } from './SearchBar'
 import { useEffect, useState } from 'react'
 import { initFlowbite } from 'flowbite'
+import { SearchBar } from './SearchBar'
 import { Chain, Network } from '../types/common'
 
 const modalTitle = 'Connect to Node'
@@ -35,16 +35,31 @@ function formatChainAndNetwork(chain: string, network: string) {
   const prefix = {
     mainnet: '',
     testnet: 't',
-    regtest: 'r',
+    regtest: 'r'
   }[network]
   return `${prefix}${chain}`
 }
 
 function ModalContent() {
+  const [chain, setChain] = useState<string>('')
+  const [network, setNetwork] = useState<string>('')
   const [url, setUrl] = useState<string>('')
-  function setNetwork(e: React.SyntheticEvent) {
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
+
+  function submit(e: React.SyntheticEvent) {
     e.preventDefault()
-    localStorage.setItem('URL', url)
+
+    const isValidChain = ['LTC', 'BTC', 'DOGE'].includes(chain)
+    const isValidNetwork = ['mainnet', 'testnet', 'regtest'].includes(network)
+
+    if (!isValidChain || !isValidNetwork) {
+      showSnackBar('Error setting chain, network, or url', false)
+    } else {
+      localStorage.setItem('URL', url)
+      localStorage.setItem('CHAIN', chain)
+      localStorage.setItem('NETWORK', network)
+      window.location.href = '/'
+    }
   }
 
   function closeModal() {
@@ -52,14 +67,14 @@ function ModalContent() {
   }
 
   return (
-    <form onSubmit={setNetwork}>
+    <form onSubmit={submit}>
       <div className="p-4 md:p-5">
         <div>
           <label
             htmlFor="url"
             className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
           >
-            Please insert the URL of a node for your desired configuration
+            Url
           </label>
 
           <input
@@ -68,21 +83,46 @@ function ModalContent() {
             type="text"
             name="url"
             id="url"
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            className="mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
             placeholder="http://127.0.0.1:1031"
             required
           />
 
-          <label className="block mt-4 text-sm font-medium text-gray-900 dark:text-white">
-            Want to run your own node? Click&nbsp;
-            <Link
-              to="https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme"
-              target="_blank"
-              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            >
-              here
-            </Link>
+          <label
+            htmlFor="chain"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Chain
           </label>
+
+          <input
+            onChange={(e) => setChain(e.target.value)}
+            value={chain}
+            type="text"
+            name="chain"
+            id="chain"
+            className="mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="LTC"
+            required
+          />
+
+          <label
+            htmlFor="network"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+          >
+            Network
+          </label>
+
+          <input
+            onChange={(e) => setNetwork(e.target.value)}
+            value={network}
+            type="text"
+            name="network"
+            id="network"
+            className="mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+            placeholder="regtest"
+            required
+          />
         </div>
       </div>
 
@@ -106,7 +146,6 @@ function ModalContent() {
 
 function NotLoggedMenu() {
   const [dropDownLabel, setDropDownLabel] = useState<string>('LTC')
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     initFlowbite()
@@ -123,7 +162,8 @@ function NotLoggedMenu() {
       setDropDownLabel(formatChainAndNetwork(chain, network))
       window.location.href = '/'
     } catch (err) {
-      showSnackBar('Error setting chain and network', false)
+      if (err instanceof Error && !err.message.startsWith('Cannot find environment variable '))
+        throw err
       Modal.get(modalId).show()
     }
   }

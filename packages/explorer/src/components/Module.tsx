@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
 import { capitalizeFirstLetter } from '../utils'
 import { Card } from './Card'
-import { Auth, UtilsContext } from '@bitcoin-computer/components'
 
 function Module() {
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const params = useParams()
   const [modSpec] = useState(params.rev)
   const [module, setModule] = useState<any>({})

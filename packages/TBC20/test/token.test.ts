@@ -5,7 +5,7 @@ import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { TBC20, Token } from '../src/token'
 
-// If you want to connect to your local Bitcoin Computer Node, create a .env file 
+// If you want to connect to your local Bitcoin Computer Node, create a .env file
 // in the monorepo root level and add the following line:
 // BCN_URL=http://localhost:1031
 
@@ -49,7 +49,7 @@ describe('Token', () => {
     describe('Transferring the NFT', () => {
       let newToken: Token
 
-      it('Sender transfers the NFT to receiver', async () => {      
+      it('Sender transfers the NFT to receiver', async () => {
         newToken = await token.transfer(receiver.getPublicKey(), 1)
       })
 

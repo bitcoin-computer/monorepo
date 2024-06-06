@@ -1,28 +1,24 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Auth, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
 
 function Block() {
   const navigate = useNavigate()
   const location = useLocation()
   const params = useParams()
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const [block] = useState(params.block)
-  const [isLoading, setIsLoading] = useState(false)
   const [blockData, setBlockData] = useState<any | null>(null)
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        // setIsLoading(true)
         showLoader(true)
         const res = await computer.rpcCall('getblock', `${block} 2`)
         setBlockData(res.result)
-        // setIsLoading(false)
         showLoader(false)
       } catch (error) {
-        // setIsLoading(false)
         showLoader(false)
         showSnackBar('Error getting block', false)
       }
@@ -122,32 +118,30 @@ function Block() {
                 </tr>
               </thead>
               <tbody>
-                {blockData?.tx?.map((txn: any) => {
-                  return (
-                    <tr
-                      key={txn.txid}
-                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                {blockData?.tx?.map((txn: any) => (
+                  <tr
+                    key={txn.txid}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
                     >
-                      <th
-                        scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+                      <button
+                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                        onClick={() => handleClick(txn.txid)}
                       >
-                        <button
-                          className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                          onClick={() => handleClick(txn.txid)}
-                        >
-                          {txn.txid}
-                        </button>
-                      </th>
-                    </tr>
-                  )
-                })}
+                        {txn.txid}
+                      </button>
+                    </th>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </div>
       )}
-      {!blockData && !isLoading && (
+      {!blockData && (
         <div className="flex items-center pt-4 pt-2 w-full">
           <h1 className="text-md">Not a valid block hash {block}</h1>
         </div>

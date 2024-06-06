@@ -74,13 +74,16 @@ If you have any questions, please let us know on <a href="https://t.me/thebitcoi
 
 ## Price
 
-See [here](https://www.npmjs.com/package/@bitcoin-computer/lib#price).
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price).
 
 ## Contributing
 
 This project is intended as a starting point for new development so we want to keep it simple. If you have found a bug please create an [issue](https://github.com/bitcoin-computer/monorepo/issues). If you have a bug fix or a UX improvement please create a pull request [here](https://github.com/bitcoin-computer/monorepo/pulls).
 
 If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
+
+## Development Status
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
 ## MIT License
 

@@ -1,14 +1,13 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { initFlowbite } from "flowbite"
 import { Dispatch, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { Link } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 import { explorerURL } from "../config"
 import { isValidHexadecimalPrivateKey } from "../utils"
 
 export default function Navbar({
   setShowLogin,
-  computer,
+  computer
 }: {
   setShowLogin: Dispatch<boolean>
   computer: Computer
@@ -22,7 +21,7 @@ export default function Navbar({
   const isLoggedIn = !!localStorage.getItem("BIP_39_KEY")
 
   const search = async (event: any) => {
-    var code = event.keyCode || event.which
+    const code = event.keyCode || event.which
     if (code === 13) {
       if (searchInput === "") navigate("/")
       else if (searchInput.includes(":")) {

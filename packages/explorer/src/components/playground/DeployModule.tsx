@@ -1,7 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Computer } from '@bitcoin-computer/lib'
-import { getErrorMessage } from '../../utils'
 import { UtilsContext } from '@bitcoin-computer/components'
+import { getErrorMessage } from '../../utils'
 
 const DeployModule = (props: {
   computer: Computer

@@ -1,9 +1,10 @@
 import { initFlowbite } from "flowbite"
-import { Dispatch, useCallback, useEffect, useState } from "react"
+import { Dispatch, useCallback, useContext, useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
 import { useUtilsComponents, UtilsContext } from "./UtilsContext"
+import { ComputerContext } from "./ComputerContext"
 
 const Balance = ({ computer, paymentModSpec }: any) => {
   const [balance, setBalance] = useState<number>(0)
@@ -16,7 +17,7 @@ const Balance = ({ computer, paymentModSpec }: any) => {
       if (computer) {
         const paymentRevs = await computer.query({
           publicKey: computer.getPublicKey(),
-          mod: paymentModSpec,
+          mod: paymentModSpec
         })
         const payments = (await Promise.all(paymentRevs.map(computer.sync))) as any[]
 
@@ -98,19 +99,18 @@ const Mnemonic = ({ computer }: any) => {
         </button>
       </div>
     )
-  else
-    return (
-      <div className="mb-4">
-        <Heading />
-        <button
-          onClick={() => setShowMnemonic(true)}
-          className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline"
-        >
-          Show
-        </button>
-        <br />
-      </div>
-    )
+  return (
+    <div className="mb-4">
+      <Heading />
+      <button
+        onClick={() => setShowMnemonic(true)}
+        className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline"
+      >
+        Show
+      </button>
+      <br />
+    </div>
+  )
 }
 
 const Path = ({ computer }: any) => (
@@ -149,31 +149,29 @@ const Network = ({ computer }: any) => (
   </div>
 )
 
-const LogOut = () => {
-  return (
-    <>
-      <div className="mb-6">
-        <h6 className="text-lg font-bold dark:text-white">Log out</h6>
-        <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-          Logging out will delete your mnemonic. Make sure to write it down.
-        </p>
-      </div>
-      <div className="grid grid-cols-2 gap-4">
-        <button
-          onClick={Auth.logout}
-          className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
-        >
-          Log out
-        </button>
-      </div>
-    </>
-  )
-}
+const LogOut = () => (
+  <>
+    <div className="mb-6">
+      <h6 className="text-lg font-bold dark:text-white">Log out</h6>
+      <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
+        Logging out will delete your mnemonic. Make sure to write it down.
+      </p>
+    </div>
+    <div className="grid grid-cols-2 gap-4">
+      <button
+        onClick={Auth.logout}
+        className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
+      >
+        Log out
+      </button>
+    </div>
+  </>
+)
 
 function AmountInput({
   chain,
   amount,
-  setAmount,
+  setAmount
 }: {
   chain: string
   amount: string
@@ -220,7 +218,7 @@ function SendMoneyButton({
   address,
   setAmount,
   setAddress,
-  paymentModSpec,
+  paymentModSpec
 }: any) {
   const { showSnackBar, showLoader } = useUtilsComponents()
 
@@ -247,7 +245,7 @@ function SendMoneyButton({
       } else {
         const paymentRevs = await computer.query({
           publicKey: computer.getPublicKey(),
-          mod: paymentModSpec,
+          mod: paymentModSpec
         })
         const payments = (await Promise.all(paymentRevs.map(computer.sync))) as any[] // should import payment class
 
@@ -356,7 +354,7 @@ function SendMoneyForm({ computer, paymentModSpec }: { computer: any; paymentMod
 }
 
 export function Wallet({ paymentModSpec }: { paymentModSpec: string }) {
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
 
   const Content = () => (
     <>
@@ -390,5 +388,5 @@ export const WalletComponents = {
   Network,
   Url,
   SendMoneyForm,
-  LogOut,
+  LogOut
 }

@@ -1,7 +1,8 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
 import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown"
 import { isValidRev, sleep } from "./common/utils"
 import { UtilsContext } from "./UtilsContext"
+import { ComputerContext } from "./ComputerContext"
 
 export const getErrorMessage = (error: any): string => {
   if (
@@ -9,14 +10,14 @@ export const getErrorMessage = (error: any): string => {
     "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
   ) {
     return "You are not authorized to make changes to this smart object"
-  } else if (error?.response?.data?.error) {
-    return error?.response?.data?.error
-  } else {
-    return error.message ? error.message : "Error occurred"
   }
+  if (error?.response?.data?.error) {
+    return error?.response?.data?.error
+  }
+  return error.message ? error.message : "Error occurred"
 }
 
-export const getFnParamNames = function (fn: string) {
+export const getFnParamNames = (fn: string) => {
   const match = fn.toString().match(/\(.*?\)/)
   return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
 }
@@ -41,20 +42,20 @@ export const getValueForType = (type: string, stringValue: string) => {
 }
 
 export const SmartObjectFunction = ({
-  computer,
   smartObject,
   functionsExist,
   options,
   setFunctionResult,
   setShow,
-  setModalTitle,
+  setModalTitle
 }: any) => {
   const [formState, setFormState] = useState<any>({})
   const { showLoader } = UtilsContext.useUtilsComponents()
+  const computer = useContext(ComputerContext)
 
   const handleSmartObjectMethod = async (
     event: any,
-    smartObject: any,
+    smartObj: any,
     fnName: string,
     params: string[]
   ) => {
@@ -75,18 +76,21 @@ export const SmartObjectFunction = ({
         exp: `smartObject.${fnName}(${params.map((param) => {
           const key = `${fnName}-${param}`
           const paramValue = getValueForType(formState[`${key}--types`], formState[key])
-          return isValidRev(paramValue)
-            ? param
-            : typeof paramValue === "string"
-            ? `'${paramValue}'`
-            : paramValue
+
+          if (isValidRev(paramValue)) {
+            return param
+          }
+          if (typeof paramValue === "string") {
+            return `'${paramValue}'`
+          }
+          return paramValue
         })})`,
-        env: { smartObject: smartObject._rev, ...revMap },
+        env: { smartObject: smartObj._rev, ...revMap },
         fund: true,
-        sign: true,
+        sign: true
       })
 
-      await computer.broadcast(tx)
+      await computer.broadcast(tx!)
       await sleep(1000)
       const res = await computer.query({ ids: [smartObject._id] })
       setFunctionResult({ _rev: res[0] })
@@ -114,7 +118,7 @@ export const SmartObjectFunction = ({
     setFormState(value)
   }
 
-  const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+  const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
   if (!functionsExist) return <></>
   return (
@@ -128,7 +132,9 @@ export const SmartObjectFunction = ({
           const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key])
           return (
             <div className="mt-6 mb-6" key={fnIndex}>
-              <h3 className="my-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
+              <h3 className="my-2 text-xl font-bold dark:text-white">
+                {capitalizeFirstLetter(key)}
+              </h3>
               <form id={`fn-index-${fnIndex}`}>
                 {paramList.map((paramName, paramIndex) => (
                   <div key={paramIndex} className="mb-4">
@@ -153,7 +159,9 @@ export const SmartObjectFunction = ({
                       <TypeSelectionDropdown
                         id={`${key}${paramName}`}
                         dropdownList={options}
-                        onSelectMethod={(option: string) => updateTypes(option, `${key}-${paramName}`)}
+                        onSelectMethod={(option: string) =>
+                          updateTypes(option, `${key}-${paramName}`)
+                        }
                       />
                     </div>
                   </div>

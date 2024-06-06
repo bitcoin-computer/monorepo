@@ -28,7 +28,7 @@ const bcnPort = process.env.PORT || '1031'
 const rpcUser = process.env.RPC_USER || 'bcn-admin'
 const rpcPassword = process.env.RPC_PASSWORD || 'kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
 
-const command = `BCN_ENV=dev CHAIN=${args.chain} NETWORK=${args.network} POSTGRES_HOST=127.0.0.1 RPC_HOST=127.0.0.1 RPC_PORT=${nodePort} RPC_PROTOCOL=http RPC_USER=${rpcUser} RPC_PASSWORD=${rpcPassword} ZMQ_URL=tcp://127.0.0.1:28332 UN_P2SH_URL=http://127.0.0.1:${bcnPort} BCN_URL=http://127.0.0.1:${bcnPort} node --loader ts-node/esm $(grep START_PATH .package.paths | cut -d '=' -f2)`
+const command = `BCN_ENV=dev CHAIN=${args.chain} NETWORK=${args.network} POSTGRES_HOST=127.0.0.1 RPC_HOST=127.0.0.1 RPC_PORT=${nodePort} RPC_PROTOCOL=http RPC_USER=${rpcUser} RPC_PASSWORD=${rpcPassword} ZMQ_URL=tcp://127.0.0.1:28332 BCN_URL=http://127.0.0.1:${bcnPort} node --loader ts-node/esm $(grep START_PATH .package.paths | cut -d '=' -f2)`
 
 console.log(command)
 

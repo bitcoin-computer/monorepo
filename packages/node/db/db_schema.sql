@@ -73,11 +73,15 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE TABLE IF NOT EXISTS
   "SyncStatus" (
-    "syncedHeight" INTEGER NOT NULL,
-    "workerId" INTEGER NOT NULL PRIMARY KEY
+    "blockToSync" INTEGER NOT NULL,
+    "workerId" INTEGER NOT NULL PRIMARY KEY,
+    "nonStandard" BOOLEAN NOT NULL
   );
 
 CREATE VIEW "Utxos" AS
 SELECT "rev", "address", "satoshis", "scriptPubKey", "publicKeys"
 FROM "Output" WHERE NOT EXISTS
-(SELECT "ip"."outputSpent" FROM "Input" ip WHERE "ip"."outputSpent" = "Output".rev)
+(SELECT 1 FROM "Input" ip WHERE "ip"."outputSpent" = "Output".rev
+union
+select 1 from "NonStandard" ns where "ns"."rev" = "Output".rev)
+

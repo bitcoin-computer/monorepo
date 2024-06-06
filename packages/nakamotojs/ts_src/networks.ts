@@ -83,3 +83,12 @@ export const litecointestnet: Network = {
   scriptHash: 0x3a,
   wif: 0xef,
 };
+
+export const NETWORKS: Record<string, any> = {
+  litecoin,
+  bitcoin,
+  regtest,
+  testnet,
+  litecoinregtest,
+  litecointestnet,
+};

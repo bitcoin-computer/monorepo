@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Auth, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
 
 export default function Blocks() {
   const navigate = useNavigate()
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const blocksPerPage = 100
 
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
@@ -36,9 +36,7 @@ export default function Blocks() {
         setIsNextAvailable(false)
         length = totalBlocks - (pageNum * blocksPerPage + blocksPerPage - 1) + blocksPerPage - 1
       }
-      setBlocks(
-        Array.from({ length: length }, (_, i) => totalBlocks - (pageNum * blocksPerPage + i)),
-      )
+      setBlocks(Array.from({ length }, (_, i) => totalBlocks - (pageNum * blocksPerPage + i)))
     } catch (error) {
       showSnackBar('Error setting blocks', false)
       console.log('Error setting blocks', error)
@@ -74,20 +72,18 @@ export default function Blocks() {
           </tr>
         </thead>
         <tbody>
-          {blocks.map((block) => {
-            return (
-              <tr key={block} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                  <button
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                    onClick={() => handleClick(block)}
-                  >
-                    Block #{block}
-                  </button>
-                </th>
-              </tr>
-            )
-          })}
+          {blocks.map((block) => (
+            <tr key={block} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                <button
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  onClick={() => handleClick(block)}
+                >
+                  Block #{block}
+                </button>
+              </th>
+            </tr>
+          ))}
         </tbody>
       </table>
       {blocks.length > 0 && (

@@ -2,8 +2,8 @@ import { Link } from "react-router-dom"
 import { Computer } from "@bitcoin-computer/lib"
 import { HiRefresh } from "react-icons/hi"
 import { initFlowbite } from "flowbite"
-import { useCallback, useEffect, useState } from "react"
-import { Auth } from "@bitcoin-computer/components"
+import { useCallback, useContext, useEffect, useState } from "react"
+import { Auth, ComputerContext } from "@bitcoin-computer/components"
 
 function Balance({ computer }: { computer: Computer }) {
   const [balance, setBalance] = useState(0)
@@ -34,7 +34,7 @@ function Balance({ computer }: { computer: Computer }) {
 }
 
 export function SideBar() {
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
 
   return (
     <>

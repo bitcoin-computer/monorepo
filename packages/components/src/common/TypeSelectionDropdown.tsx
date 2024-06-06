@@ -4,12 +4,12 @@ import {
   DropdownInterface,
   DropdownOptions,
   InstanceOptions,
-  initFlowbite,
+  initFlowbite
 } from "flowbite"
 
 export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, selectedType }: any) => {
   const [dropDown, setDropdown] = useState<DropdownInterface>()
-  const [type, setType] = useState(selectedType ? selectedType : "Type")
+  const [type, setType] = useState(selectedType || "Type")
   const [dropdownSelectionList] = useState(dropdownList)
 
   useEffect(() => {
@@ -21,18 +21,18 @@ export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, select
       triggerType: "click",
       offsetSkidding: 0,
       offsetDistance: 10,
-      delay: 300,
+      delay: 300
     }
     const instanceOptions: InstanceOptions = {
       id: `dropdownMenu${id}`,
-      override: true,
+      override: true
     }
     setDropdown(new Dropdown($targetEl, $triggerEl, options, instanceOptions))
   }, [id])
 
-  const handleClick = (type: string) => {
-    setType(type)
-    onSelectMethod(type)
+  const handleClick = (clickType: string) => {
+    setType(clickType)
+    onSelectMethod(clickType)
     if (dropDown) dropDown.hide()
   }
 

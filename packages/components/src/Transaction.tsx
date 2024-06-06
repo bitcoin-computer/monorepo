@@ -1,33 +1,33 @@
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link, useLocation, useParams } from "react-router-dom"
 import reactStringReplace from "react-string-replace"
 import { Card } from "./Card"
-import { Auth } from "./Auth"
+import { ComputerContext } from "./ComputerContext"
 
 function ExpressionCard({ content, env }: { content: string; env: { [s: string]: string } }) {
   const entries = Object.entries(env)
   let formattedContent = content as any
-  for (let entry of entries) {
+  entries.forEach((entry) => {
     const [name, rev] = entry
     const regExp = new RegExp(`(${name})`, "g")
-    const replacer = (name: string, i: number) => (
+    const replacer = (n: string) => (
       <Link
         key={rev}
         to={`/objects/${rev}`}
         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
       >
-        {name}
+        {n}
       </Link>
     )
     formattedContent = reactStringReplace(formattedContent, regExp, replacer)
-  }
+  })
   return <Card content={formattedContent} />
 }
 
 function Component() {
   const location = useLocation()
   const params = useParams()
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const [txn, setTxn] = useState(params.txn)
   const [txnData, setTxnData] = useState<any | null>(null)
   const [rpcTxnData, setRPCTxnData] = useState<any | null>(null)
@@ -126,34 +126,32 @@ function Component() {
           </tr>
         </thead>
         <tbody>
-          {rpcTxnData?.vin?.map((input: any, ind: any) => {
-            return (
-              <tr
-                key={`${input.txid}|${ind}`}
-                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-              >
-                <td className="px-6 py-4 break-all">
-                  <Link
-                    to={`/transactions/${input.txid}`}
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  >
-                    {input.txid}
-                  </Link>
-                </td>
+          {rpcTxnData?.vin?.map((input: any, ind: any) => (
+            <tr
+              key={`${input.txid}|${ind}`}
+              className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+            >
+              <td className="px-6 py-4 break-all">
+                <Link
+                  to={`/transactions/${input.txid}`}
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >
+                  {input.txid}
+                </Link>
+              </td>
 
-                <td className="px-6 py-4">
-                  <Link
-                    to={`/objects/${input.txid}:${input.vout}`}
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  >
-                    #{input.vout}
-                  </Link>
-                </td>
+              <td className="px-6 py-4">
+                <Link
+                  to={`/objects/${input.txid}:${input.vout}`}
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >
+                  #{input.vout}
+                </Link>
+              </td>
 
-                <td className="px-6 py-4 break-all">{input.scriptSig?.asm}</td>
-              </tr>
-            )
-          })}
+              <td className="px-6 py-4 break-all">{input.scriptSig?.asm}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
@@ -182,27 +180,22 @@ function Component() {
           </tr>
         </thead>
         <tbody>
-          {rpcTxnData?.vout?.map((output: any) => {
-            return (
-              <tr
-                key={output.n}
-                className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-              >
-                <td className="px-6 py-4 break-all">
-                  <Link
-                    to={`/objects/${txn}:${output.n}`}
-                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  >
-                    #{output.n}
-                  </Link>
-                </td>
+          {rpcTxnData?.vout?.map((output: any) => (
+            <tr key={output.n} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <td className="px-6 py-4 break-all">
+                <Link
+                  to={`/objects/${txn}:${output.n}`}
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >
+                  #{output.n}
+                </Link>
+              </td>
 
-                <td className="px-6 py-4">{output.value}</td>
-                <td className="px-6 py-4">{output.scriptPubKey.type}</td>
-                <td className="px-6 py-4 break-all">{output.scriptPubKey.asm}</td>
-              </tr>
-            )
-          })}
+              <td className="px-6 py-4">{output.value}</td>
+              <td className="px-6 py-4">{output.scriptPubKey.type}</td>
+              <td className="px-6 py-4 break-all">{output.scriptPubKey.asm}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>

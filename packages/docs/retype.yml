@@ -1,8 +1,15 @@
 input: .
 output: .retype
-url: # Add your website address here
+url: http://bitcoincomputer.io/
 branding:
   title: Bitcoin Computer
-  label: 0.18.1
+  label: 0.19
+links:
+- text: Github
+  link: https://github.com/bitcoin-computer/monorepo#readme
+- text: Twitter
+  link: https://x.com/thebitcointoken
+- text: Telegram
+  link: https://t.me/thebitcoincomputer
 footer:
   copyright: "&copy; Copyright {{ year }}. All rights reserved."

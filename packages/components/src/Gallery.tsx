@@ -1,10 +1,10 @@
 import { Computer } from "@bitcoin-computer/lib"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { jsonMap, strip, toObject } from "./common/utils"
-import { Auth } from "./Auth"
 import { initFlowbite } from "flowbite"
+import { jsonMap, strip, toObject } from "./common/utils"
 import { useUtilsComponents } from "./UtilsContext"
+import { ComputerContext } from "./ComputerContext"
 
 export type Class = new (...args: any) => any
 
@@ -155,7 +155,7 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
 
 export default function WithPagination<T extends Class>(q: UserQuery<T>) {
   const contractsPerPage = 12
-  const [computer] = useState(Auth.getComputer())
+  const computer = useContext(ComputerContext)
   const { showLoader } = useUtilsComponents()
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(true)
@@ -173,8 +173,8 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
     const fetch = async () => {
       showLoader(true)
       const query = { ...q, ...params }
-      query["offset"] = contractsPerPage * pageNum
-      query["limit"] = contractsPerPage + 1
+      query.offset = contractsPerPage * pageNum
+      query.limit = contractsPerPage + 1
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
       setRevs(result.slice(0, contractsPerPage))
@@ -220,5 +220,5 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
 
 export const Gallery = {
   FromRevs,
-  WithPagination,
+  WithPagination
 }

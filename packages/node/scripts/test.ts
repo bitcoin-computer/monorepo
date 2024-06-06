@@ -11,9 +11,9 @@ const chainGroup = parser.add_mutually_exclusive_group()
 chainGroup.add_argument('-btc', '--bitcoin', { action: 'store_true' })
 chainGroup.add_argument('-ltc', '--litecoin', { action: 'store_true', default: true })
 
-const networkGroup = parser.add_mutually_exclusive_group()
-networkGroup.add_argument('-r', '--regtest', { action: 'store_true', default: true })
-networkGroup.add_argument('-t', '--testnet', { action: 'store_true' })
+const connectionGroup = parser.add_mutually_exclusive_group()
+connectionGroup.add_argument('-l', '--local', { action: 'store_true', default: true })
+connectionGroup.add_argument('-c', '--cloud', { action: 'store_true' })
 
 const testTypeGroup = parser.add_mutually_exclusive_group()
 testTypeGroup.add_argument('-s', '--single', { action: 'store' })
@@ -23,18 +23,20 @@ testTypeGroup.add_argument('-u', '--unit', { action: 'store_true', default: true
 const args = parser.parse_args()
 
 const port = args.bitcoin ? 8332 : 19332
-const chain = args.bitcoin ? 'BTC' : 'LTC'
-const network = args.regtest ? 'regtest' : 'testnet'
-const bcnPort = process.env.PORT ?? 1031
-const nodeUrl = args.regtest ? 'http://127.0.0.1:' + bcnPort : 'https://node.bitcoincomputer.io'
-const postgresHost = '127.0.0.1'
-const rpcHost = args.regtest ? process.env.RPC_HOST : 'node.bitcoincomputer.io'
+const chain = process.env.CHAIN || (args.bitcoin ? 'BTC' : 'LTC')
+
+const network = process.env.NETWORK || 'regtest'
+const bcnPort = process.env.PORT ?? '1031'
+
+const nodeUrl = args.cloud ? 'https://rltc.node.bitcoincomputer.io' : `http://127.0.0.1:${bcnPort}`
+const postgresHost = process.env.POSTGRES_HOST || '127.0.0.1'
+const rpcHost = args.cloud ? 'rltc.node.bitcoincomputer.io' : process.env.RPC_HOST
+
 const rpcUser = process.env.RPC_USER ?? 'bcn-admin'
 const rpcPass = process.env.RPC_PASSWORD ?? 'kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
 const zmqUrl = 'tcp://127.0.0.1:28332'
-const unP2shUrl = `http://127.0.0.1:${bcnPort}`
 
-let command = `BCN_URL=${nodeUrl} CHAIN=${chain} NETWORK=${network} BCN_ENV=test POSTGRES_PORT=5432 POSTGRES_HOST=${postgresHost} RPC_HOST=${rpcHost} RPC_PORT=${port} RPC_PROTOCOL=http RPC_USER=${rpcUser} RPC_PASSWORD=${rpcPass} ZMQ_URL=${zmqUrl} UN_P2SH_URL=${unP2shUrl} mocha --config`
+let command = `BCN_URL=${nodeUrl} CHAIN=${chain} NETWORK=${network} BCN_ENV=test POSTGRES_PORT=5432 POSTGRES_HOST=${postgresHost} RPC_HOST=${rpcHost} RPC_PORT=${port} RPC_PROTOCOL=http RPC_USER=${rpcUser} RPC_PASSWORD=${rpcPass} ZMQ_URL=${zmqUrl} mocha --config`
 
 if (args.integration) {
   command = `${command} .mocharc-async.json`

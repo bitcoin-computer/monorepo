@@ -140,14 +140,10 @@ describe('Computer', () => {
     expect(computer.getUrl()).eq('https://rltc.node.bitcoincomputer.io')
   })
 
-  it('Should instantiate a computer object', async () => {
+  it('Should throw an error for mainnet', async () => {
     const chain = 'BTC'
     const network = 'mainnet'
-    const url = 'https://btc.node.bitcoincomputer.io' 
-    const computer = new Computer({ chain, network, url})
-    expect(computer.getChain()).eq(chain)
-    expect(computer.getNetwork()).eq(network)
-    expect(computer.getUrl()).eq(url)
+    expect(() => new Computer({ chain, network, url })).to.throw('Mainnet is disabled in your jurisdiction')
   })
 })
 
@@ -366,7 +362,7 @@ describe('Chat', () => {
         await eve.sync(alicesChat._rev)
         expect(true).eq(false)
       } catch (err) {
-        expect(err.message).eq("Cannot read properties of null (reading 'exp')")
+        expect(err.message).eq("Decryption failure")
       }
     })
   })
@@ -382,7 +378,7 @@ describe('Chat', () => {
         await bob.sync(alicesChat._rev)
         expect(true).eq(false)
       } catch (err) {
-        expect(err.message).eq("Cannot read properties of null (reading 'exp')")
+        expect(err.message).eq("Decryption failure")
       }
     })
   })

@@ -1,9 +1,9 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { IoMdRemoveCircleOutline } from 'react-icons/io'
 import { Computer } from '@bitcoin-computer/lib'
+import { UtilsContext } from '@bitcoin-computer/components'
 import { getErrorMessage, isValidRev } from '../../utils'
 import { ModSpec } from './Modspec'
-import { UtilsContext } from '@bitcoin-computer/components'
 
 interface ExpressionArgument {
   name: string
@@ -33,7 +33,7 @@ const ExecuteExpression = (props: {
   const handleExpressoinArgumentChange = (
     index: number,
     field: 'name' | 'value',
-    value: string,
+    value: string
   ) => {
     const updatedExpressionArguments = [...expressionArgumentsList]
     updatedExpressionArguments[index][field] = value
@@ -57,7 +57,7 @@ const ExecuteExpression = (props: {
       const revMap: any = {}
       expressionArgumentsList
         .filter((argument) => !argument.hidden)
-        .forEach((argument, index) => {
+        .forEach((argument) => {
           const argValue = argument.value
           if (isValidRev(argValue)) {
             revMap[argument.name] = argValue
@@ -68,17 +68,17 @@ const ExecuteExpression = (props: {
         exp: `${expressionCode}`,
         env: { ...revMap },
         fund: true,
-        sign: true,
+        sign: true
       }
       if (modSpec) {
-        encodeObject['mod'] = modSpec
+        encodeObject.mod = modSpec
       }
 
       const { tx, effect } = (await computer.encode({
         exp: `${expressionCode}`,
         env: { ...revMap },
         fund: true,
-        sign: true,
+        sign: true
       })) as any
       const txId = await computer.broadcast(tx)
       setFunctionResult({ _rev: `${txId}:0`, type: 'objects', res: effect.res })
@@ -137,7 +137,7 @@ const ExecuteExpression = (props: {
                   onClick={() => removeExpressionArgument(index)}
                 />
               </div>
-            ),
+            )
         )}
       </div>
       <button

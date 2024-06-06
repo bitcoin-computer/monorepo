@@ -18,8 +18,6 @@ TRUNCATE TABLE "Output";
 TRUNCATE TABLE "User";
 TRUNCATE TABLE "OffChain";
 TRUNCATE TABLE "SyncStatus";
-
-INSERT INTO "SyncStatus" ("syncedHeight", "workerId") VALUES (-1, 1);
 EOF
 
 # stop all docker containers and networks

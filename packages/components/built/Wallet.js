@@ -47,11 +47,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { initFlowbite } from "flowbite";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { HiRefresh } from "react-icons/hi";
 import { Auth } from "./Auth";
 import { Drawer } from "./Drawer";
 import { useUtilsComponents, UtilsContext } from "./UtilsContext";
+import { ComputerContext } from "./ComputerContext";
 var Balance = function (_a) {
     var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
     var _b = useState(0), balance = _b[0], setBalance = _b[1];
@@ -67,11 +68,11 @@ var Balance = function (_a) {
                     if (!computer) return [3 /*break*/, 4];
                     return [4 /*yield*/, computer.query({
                             publicKey: computer.getPublicKey(),
-                            mod: paymentModSpec,
+                            mod: paymentModSpec
                         })];
                 case 1:
                     paymentRevs = _a.sent();
-                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                    return [4 /*yield*/, Promise.all(paymentRevs.map(computer.sync))];
                 case 2:
                     payments = (_a.sent());
                     amountsInPaymentToken_1 = 0;
@@ -117,8 +118,7 @@ var Mnemonic = function (_a) {
     var Heading = function () { return _jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Mnemonic" })); };
     if (showMnemonic)
         return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx(Heading, {}), _jsx("p", __assign({ className: "mb-1 font-mono text-xs text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getMnemonic() })), _jsx("button", __assign({ onClick: function () { return setShowMnemonic(false); }, className: "text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline" }, { children: "Hide" }))] })));
-    else
-        return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx(Heading, {}), _jsx("button", __assign({ onClick: function () { return setShowMnemonic(true); }, className: "text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline" }, { children: "Show" })), _jsx("br", {})] })));
+    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx(Heading, {}), _jsx("button", __assign({ onClick: function () { return setShowMnemonic(true); }, className: "text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline" }, { children: "Show" })), _jsx("br", {})] })));
 };
 var Path = function (_a) {
     var computer = _a.computer;
@@ -136,9 +136,7 @@ var Network = function (_a) {
     var computer = _a.computer;
     return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Network" })), _jsx("p", __assign({ className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getNetwork() }))] })));
 };
-var LogOut = function () {
-    return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mb-6" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Log out" })), _jsx("p", __assign({ className: "mb-1 text-sm text-gray-500 dark:text-gray-400" }, { children: "Logging out will delete your mnemonic. Make sure to write it down." }))] })), _jsx("div", __assign({ className: "grid grid-cols-2 gap-4" }, { children: _jsx("button", __assign({ onClick: Auth.logout, className: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700" }, { children: "Log out" })) }))] }));
-};
+var LogOut = function () { return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mb-6" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Log out" })), _jsx("p", __assign({ className: "mb-1 text-sm text-gray-500 dark:text-gray-400" }, { children: "Logging out will delete your mnemonic. Make sure to write it down." }))] })), _jsx("div", __assign({ className: "grid grid-cols-2 gap-4" }, { children: _jsx("button", __assign({ onClick: Auth.logout, className: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700" }, { children: "Log out" })) }))] })); };
 function AmountInput(_a) {
     var chain = _a.chain, amount = _a.amount, setAmount = _a.setAmount;
     return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "mt-4 flex justify-between" }, { children: _jsxs("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: ["Amount (", chain, ")"] })) })), _jsx("input", { value: amount, onChange: function (e) { return setAmount(e.target.value); }, placeholder: "1 ".concat(chain), className: "block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" })] }));
@@ -183,11 +181,11 @@ function SendMoneyButton(_a) {
                     return [3 /*break*/, 9];
                 case 4: return [4 /*yield*/, computer.query({
                         publicKey: computer.getPublicKey(),
-                        mod: paymentModSpec,
+                        mod: paymentModSpec
                     })];
                 case 5:
                     paymentRevs = _a.sent();
-                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                    return [4 /*yield*/, Promise.all(paymentRevs.map(computer.sync))];
                 case 6:
                     payments = (_a.sent()) // should import payment class
                     ;
@@ -273,7 +271,7 @@ function SendMoneyForm(_a) {
 }
 export function Wallet(_a) {
     var paymentModSpec = _a.paymentModSpec;
-    var computer = useState(Auth.getComputer())[0];
+    var computer = useContext(ComputerContext);
     var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(SendMoneyForm, { computer: computer, paymentModSpec: paymentModSpec }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
@@ -287,5 +285,5 @@ export var WalletComponents = {
     Network: Network,
     Url: Url,
     SendMoneyForm: SendMoneyForm,
-    LogOut: LogOut,
+    LogOut: LogOut
 };

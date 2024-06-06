@@ -3,6 +3,7 @@ import * as networks from './networks.js';
 import * as payments from './payments/index.js';
 import * as bscript from './script.js';
 import { typeforce, tuple, Hash160bit, UInt8 } from './types.js';
+import { toXOnly } from './psbt/bip371.js';
 import { bech32, bech32m } from 'bech32';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -189,4 +190,24 @@ export function toOutputScript(address: string, network?: Network): Buffer {
   }
 
   throw new Error(address + ' has no matching Script');
+}
+
+export function fromPublicKey(
+  publicKey: Buffer,
+  type: string,
+  network?: Network,
+): string {
+  network = network || networks.bitcoin;
+
+  if (type === 'p2pkh')
+    return payments.p2pkh({ pubkey: publicKey, network }).address as string;
+  if (type === 'p2wpkh')
+    return payments.p2wpkh({ pubkey: publicKey, network }).address as string;
+  if (type === 'p2tr')
+    return payments.p2tr({
+      internalPubkey: toXOnly(publicKey),
+      network,
+    }).address as string;
+
+  throw new Error('Unknown or unsupported type');
 }

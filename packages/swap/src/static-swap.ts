@@ -31,7 +31,7 @@ export class StaticSwapHelper {
     return this.computer.encode({
       exp: `StaticSwap.exec(a, b)`,
       env: { a: a._rev, b: b._rev },
-      mod: this.mod,
+      mod: this.mod
     })
   }
 
@@ -41,7 +41,7 @@ export class StaticSwapHelper {
     if (mod !== this.mod) throw new Error('Unexpected module specifier')
 
     const {
-      effect: { res: r, env: e },
+      effect: { res: r, env: e }
     } = await this.computer.encode({ exp, env, mod })
 
     if (r !== undefined) throw new Error('Unexpected result')

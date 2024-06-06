@@ -46,12 +46,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { jsonMap, strip, toObject } from "./common/utils";
-import { Auth } from "./Auth";
 import { initFlowbite } from "flowbite";
+import { jsonMap, strip, toObject } from "./common/utils";
 import { useUtilsComponents } from "./UtilsContext";
+import { ComputerContext } from "./ComputerContext";
 function HomePageCard(_a) {
     var content = _a.content;
     return (_jsx("div", __assign({ className: "block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" }, { children: _jsx("pre", __assign({ className: "font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs" }, { children: content() })) })));
@@ -101,7 +101,7 @@ function Pagination(_a) {
 export default function WithPagination(q) {
     var _this = this;
     var contractsPerPage = 12;
-    var computer = useState(Auth.getComputer())[0];
+    var computer = useContext(ComputerContext);
     var showLoader = useUtilsComponents().showLoader;
     var _a = useState(0), pageNum = _a[0], setPageNum = _a[1];
     var _b = useState(true), isNextAvailable = _b[0], setIsNextAvailable = _b[1];
@@ -121,8 +121,8 @@ export default function WithPagination(q) {
                     case 0:
                         showLoader(true);
                         query = __assign(__assign({}, q), params);
-                        query["offset"] = contractsPerPage * pageNum;
-                        query["limit"] = contractsPerPage + 1;
+                        query.offset = contractsPerPage * pageNum;
+                        query.limit = contractsPerPage + 1;
                         return [4 /*yield*/, computer.query(query)];
                     case 1:
                         result = _a.sent();
@@ -158,5 +158,5 @@ export default function WithPagination(q) {
 }
 export var Gallery = {
     FromRevs: FromRevs,
-    WithPagination: WithPagination,
+    WithPagination: WithPagination
 };

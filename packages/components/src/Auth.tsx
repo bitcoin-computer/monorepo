@@ -1,8 +1,8 @@
 import { Dispatch, useEffect, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
+import { initFlowbite } from "flowbite"
 import { useUtilsComponents } from "./UtilsContext"
 import { Modal } from "./Modal"
-import { initFlowbite } from "flowbite"
 import type { Chain, Network } from "./common/types"
 
 function isLoggedIn(): boolean {
@@ -39,11 +39,9 @@ function getPath(chain: string, network: string): string {
 
 function getEnvVariable(name: string) {
   const res = process.env[name]
-  if (typeof res === "undefined")
-    throw new Error(
-      `Cannot find environment variable "${name}".\nDid you forget to copy the .env.example file into a .env file?`
-    )
-  else return res
+  if (typeof res === "undefined") {
+    throw new Error(`Cannot find environment variable "${name}" in the .env file.`)
+  } else return res
 }
 
 function getUrl(chain: Chain, network: Network) {
@@ -51,8 +49,12 @@ function getUrl(chain: Chain, network: Network) {
 }
 
 function defaultConfiguration() {
-  const chain = (localStorage.getItem("CHAIN") || getEnvVariable(`REACT_APP_CHAIN`) || "LTC") as Chain
-  const network = (localStorage.getItem("NETWORK") || getEnvVariable(`REACT_APP_NETWORK`) || "regtest") as Network
+  const chain = (localStorage.getItem("CHAIN") ||
+    getEnvVariable(`REACT_APP_CHAIN`) ||
+    "LTC") as Chain
+  const network = (localStorage.getItem("NETWORK") ||
+    getEnvVariable(`REACT_APP_NETWORK`) ||
+    "regtest") as Network
   const url = getUrl(chain, network)
   return { chain, network, url }
 }
@@ -67,7 +69,7 @@ function browserConfiguration() {
     chain: localStorage.getItem("CHAIN") as Chain,
     network: localStorage.getItem("NETWORK") as Network,
     path: localStorage.getItem("PATH"),
-    url: localStorage.getItem("URL"),
+    url: localStorage.getItem("URL")
   }
 }
 
@@ -78,7 +80,7 @@ function getComputer(): Computer {
 
 function MnemonicInput({
   mnemonic,
-  setMnemonic,
+  setMnemonic
 }: {
   mnemonic: string
   setMnemonic: Dispatch<string>
@@ -181,7 +183,7 @@ function ChainInput({ chain, setChain }: { chain: Chain; setChain: Dispatch<Chai
 
 function NetworkInput({
   network,
-  setNetwork,
+  setNetwork
 }: {
   network: Network
   setNetwork: Dispatch<Network>
@@ -256,7 +258,7 @@ function PathInput({
   chain,
   network,
   path,
-  setPath,
+  setPath
 }: {
   chain: string
   network: string
@@ -293,7 +295,7 @@ function UrlInput({
   chain,
   network,
   url,
-  setUrl,
+  setUrl
 }: {
   chain: Chain
   network: Network
@@ -333,18 +335,8 @@ function LoginButton({ mnemonic, chain, network, path, url }: any) {
 
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    try {
-      if (isLoggedIn()) throw new Error("A user is already logged in, please log out first.")
-
-      if (mnemonic.length === 0) throw new Error("Please don't use an empty mnemonic string.")
-
-      new Computer({ mnemonic, chain, network, path, url })
-    } catch (error) {
-      if (error instanceof Error) {
-        showSnackBar(error.message, false)
-      }
-      return
-    }
+    if (isLoggedIn()) showSnackBar("A user is already logged in, please log out first.", false)
+    if (mnemonic.length === 0) showSnackBar("Please don't use an empty mnemonic string.", false)
     localStorage.setItem("BIP_39_KEY", mnemonic)
     localStorage.setItem("CHAIN", chain)
     localStorage.setItem("NETWORK", network)
@@ -413,5 +405,5 @@ export const Auth = {
   browserConfiguration,
   getComputer,
   LoginForm,
-  LoginModal,
+  LoginModal
 }

@@ -10,23 +10,22 @@ packages/node/test
 packages/node/*.log
 packages/node/scripts/__pycache__
 
+packages/lib/*.log
+
 packages/chat
-packages/components/
+packages/components
 packages/cra-template
 packages/docs
 packages/explorer
 packages/nft
+packages/ft
 packages/nodejs-template
 packages/secp256k1
-packages/swap
-packages/TBC20/
-packages/TBC20-app
-packages/TBC404
-packages/TBC404-app
-packages/TBC721/
-packages/TBC721-app
+packages/swap/
+packages/TBC*/
 packages/wallet
 packages/website
 
+.env
 Dockerfile
 .dockerignore
