@@ -2,7 +2,7 @@ export const getMockedRev = () => `mock:${'0'.repeat(64)}:${Math.floor(Math.rand
 export const RLTC = {
     network: 'regtest',
     chain: 'LTC',
-    url: 'http://localhost:1031',
+    url: 'http://localhost:1031'
 };
 const isString = (x) => typeof x === 'string';
 const isNumber = (x) => typeof x === 'number';
@@ -12,5 +12,5 @@ export const meta = {
     _rev: isString,
     _root: isString,
     _owners: isArray,
-    _amount: isNumber,
+    _amount: isNumber
 };

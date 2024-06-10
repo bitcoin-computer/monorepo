@@ -1,4 +1,4 @@
-import { Transaction } from '@bitcoin-computer/nakamotojs';
+import { Transaction } from '@bitcoin-computer/lib';
 const { Contract } = await import('@bitcoin-computer/lib');
 export class OrdSale extends Contract {
     static exec(b1, b2, n, p) {
@@ -28,7 +28,7 @@ export class OrdSaleHelper {
             sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
             inputIndex: 2,
             fund: false,
-            mod: this.mod,
+            mod: this.mod
         });
     }
     static checkSaleTx() {

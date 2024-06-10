@@ -1,7 +1,8 @@
 /* eslint max-classes-per-file: ["error", 2] */
-import { Transaction } from '@bitcoin-computer/nakamotojs'
 
-const { Contract } = await import('@bitcoin-computer/lib')
+import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
+
+const { Contract, Transaction } = await import('@bitcoin-computer/lib')
 
 export class Offer extends Contract {
   txHex: string
@@ -28,7 +29,7 @@ export class OfferHelper {
     return this.mod
   }
 
-  async createOfferTx(publicKey: string, url: string, tx?: Transaction) {
+  async createOfferTx(publicKey: string, url: string, tx?: TransactionType) {
     const exp = tx
       ? `new Offer("${publicKey}", "${url}", "${tx.serialize()}")`
       : `new Offer("${publicKey}", "${url}")`
@@ -40,7 +41,7 @@ export class OfferHelper {
     })
   }
 
-  async addSaleTx(offerTxId: string, tx: Transaction) {
+  async addSaleTx(offerTxId: string, tx: TransactionType) {
     const { res: syncedOffer } = (await this.computer.sync(offerTxId)) as { res: Offer }
     return this.computer.encode({
       exp: `offer.addSaleTx("${tx.serialize()}")`,

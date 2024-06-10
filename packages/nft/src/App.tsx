@@ -1,7 +1,6 @@
 import "./App.css"
 import { useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import { Navbar } from "./components/Navbar"
 import { initFlowbite } from "flowbite"
 import {
   Auth,
@@ -11,6 +10,7 @@ import {
   Transaction,
   ComputerContext
 } from "@bitcoin-computer/components"
+import { Navbar } from "./components/Navbar"
 import Mint from "./components/Mint"
 import { AllAssets, MyAssets } from "./components/Assets"
 import { NftView } from "./components/Nft"

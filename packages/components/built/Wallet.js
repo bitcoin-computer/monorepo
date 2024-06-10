@@ -72,7 +72,7 @@ var Balance = function (_a) {
                         })];
                 case 1:
                     paymentRevs = _a.sent();
-                    return [4 /*yield*/, Promise.all(paymentRevs.map(computer.sync))];
+                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
                 case 2:
                     payments = (_a.sent());
                     amountsInPaymentToken_1 = 0;
@@ -185,7 +185,7 @@ function SendMoneyButton(_a) {
                     })];
                 case 5:
                     paymentRevs = _a.sent();
-                    return [4 /*yield*/, Promise.all(paymentRevs.map(computer.sync))];
+                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
                 case 6:
                     payments = (_a.sent()) // should import payment class
                     ;

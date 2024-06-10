@@ -1,4 +1,4 @@
-import { Transaction } from '@bitcoin-computer/nakamotojs';
+import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
 declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Offer extends Contract {
     txHex: string;
@@ -10,8 +10,8 @@ export declare class OfferHelper {
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
-    createOfferTx(publicKey: string, url: string, tx?: Transaction): Promise<any>;
-    addSaleTx(offerTxId: string, tx: Transaction): Promise<any>;
-    decodeOfferTx(offerTxId: string): Promise<Transaction>;
+    createOfferTx(publicKey: string, url: string, tx?: TransactionType): Promise<any>;
+    addSaleTx(offerTxId: string, tx: TransactionType): Promise<any>;
+    decodeOfferTx(offerTxId: string): Promise<TransactionType>;
 }
 export {};

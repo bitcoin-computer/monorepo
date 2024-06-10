@@ -5,8 +5,9 @@ import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
 import { useUtilsComponents, UtilsContext } from "./UtilsContext"
 import { ComputerContext } from "./ComputerContext"
+import { Computer } from "@bitcoin-computer/lib"
 
-const Balance = ({ computer, paymentModSpec }: any) => {
+const Balance = ({ computer, paymentModSpec }: { computer: Computer; paymentModSpec: any }) => {
   const [balance, setBalance] = useState<number>(0)
   const [chain, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
@@ -19,8 +20,7 @@ const Balance = ({ computer, paymentModSpec }: any) => {
           publicKey: computer.getPublicKey(),
           mod: paymentModSpec
         })
-        const payments = (await Promise.all(paymentRevs.map(computer.sync))) as any[]
-
+        const payments = (await Promise.all(paymentRevs.map((rev) => computer.sync(rev)))) as any[]
         let amountsInPaymentToken = 0
 
         if (payments && payments.length) {
@@ -247,7 +247,9 @@ function SendMoneyButton({
           publicKey: computer.getPublicKey(),
           mod: paymentModSpec
         })
-        const payments = (await Promise.all(paymentRevs.map(computer.sync))) as any[] // should import payment class
+        const payments = (await Promise.all(
+          paymentRevs.map((rev: string) => computer.sync(rev))
+        )) as any[] // should import payment class
 
         let amountsInPaymentToken = 0
 

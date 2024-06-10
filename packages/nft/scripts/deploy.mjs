@@ -7,7 +7,7 @@ import {
   Payment,
   PaymentHelper,
   Sale,
-  SaleHelper,
+  SaleHelper
 } from "@bitcoin-computer/swap"
 const { Computer } = await import("@bitcoin-computer/lib")
 import fs from "fs"
@@ -28,7 +28,7 @@ const computer = new Computer({ mnemonic, chain, network, url })
 // Prompt the user to confirm an action
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout,
+  output: process.stdout
 })
 
 const balance = await computer.wallet.getBalance()
@@ -71,10 +71,10 @@ rl.question(q, async (answer) => {
 
       // Write deployment results to file
       const modSpecsContent = `// This file contains module specifiers for deployed contracts
-export const nftModSpec = '${modSpec}';
-export const offerModSpec = '${offerModSpec}';
-export const saleModSpec = '${saleModSpec}';
-export const paymentModSpec = '${paymentModSpec}';
+export const nftModSpec = '${modSpec}'
+export const offerModSpec = '${offerModSpec}'
+export const saleModSpec = '${saleModSpec}'
+export const paymentModSpec = '${paymentModSpec}'
 `
       fs.writeFileSync("src/constants/modSpecs.ts", modSpecsContent)
 

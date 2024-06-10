@@ -20,7 +20,7 @@ const modalId = "smart-object-bought-modal"
 const BuyNFT = async ({
   computer,
   nft,
-  setFunctionResult,
+  setFunctionResult
 }: {
   computer: Computer
   nft: NFT
@@ -31,7 +31,11 @@ const BuyNFT = async ({
   const saleTxn = await offerHelper.decodeOfferTx(nft.offerTxRev)
   const nftAmount = await saleHelper.checkSaleTx(saleTxn)
   const payment = await computer.new(Payment, [nftAmount], paymentModSpec)
-  const finalTx = await SaleHelper.finalizeSaleTx(saleTxn, payment, computer.toScriptPubKey())
+  const finalTx = await SaleHelper.finalizeSaleTx(
+    saleTxn,
+    payment,
+    computer.toScriptPubKey() as any
+  )
 
   // Buyer funds, signs, and broadcasts to execute the sale
   await computer.fund(finalTx)
@@ -48,7 +52,7 @@ const CreateSellOffer = async ({
   computer,
   amount,
   nft,
-  showSnackBar,
+  showSnackBar
 }: {
   computer: Computer
   amount: string
@@ -58,7 +62,7 @@ const CreateSellOffer = async ({
   const offerHelper = new OfferHelper(computer, offerModSpec)
   const { tx: offerTx } = await offerHelper.createOfferTx(
     computer.getPublicKey(),
-    computer.getUrl(),
+    computer.getUrl()
   )
   const offerTxId = await computer.broadcast(offerTx)
   await nft.list(offerTxId)
@@ -116,7 +120,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
 
 const CreateSellOfferComponent = ({
   computer,
-  smartObject,
+  smartObject
 }: {
   computer: Computer
   smartObject: NFT
@@ -140,7 +144,7 @@ const CreateSellOfferComponent = ({
         />
         <button
           type="button"
-          onClick={async (e) => {
+          onClick={async () => {
             if (!amount) {
               showSnackBar("Provide valid amount", false)
             }
@@ -188,8 +192,10 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
     <>
       {nftAmount !== 0 && (
         <div className="sm:w-full">
-          <h3 className="mt-2 text-xl font-bold dark:text-white">NFT Listed At (Satoshi)</h3>
-          <ObjectValueCard content={toObject(nftAmount)} />
+          <h3 className="mt-2 text-xl font-bold dark:text-white">
+            NFT Listed At ({computer.getChain()})
+          </h3>
+          <ObjectValueCard content={toObject(nftAmount / 1e8)} />
         </div>
       )}
     </>
@@ -199,7 +205,7 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
 const BuyNftComponent = ({
   computer,
   smartObject,
-  setFunctionResult,
+  setFunctionResult
 }: {
   computer: Computer
   smartObject: NFT
@@ -211,7 +217,7 @@ const BuyNftComponent = ({
     <div className="flex">
       <button
         type="button"
-        onClick={async (e) => {
+        onClick={async () => {
           try {
             showLoader(true)
             await BuyNFT({ computer, nft: smartObject, setFunctionResult })

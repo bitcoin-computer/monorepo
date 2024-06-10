@@ -1,6 +1,5 @@
-import { Transaction } from '@bitcoin-computer/nakamotojs';
 import { PaymentMock } from './payment.js';
-const { Contract } = await import('@bitcoin-computer/lib');
+const { Contract, Transaction } = await import('@bitcoin-computer/lib');
 export class Sale extends Contract {
     static exec(n, p) {
         const [ownerN] = n._owners;
@@ -28,7 +27,7 @@ export class SaleHelper {
             sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
             inputIndex: 0,
             fund: false,
-            mod: this.mod,
+            mod: this.mod
         });
     }
     async checkSaleTx(tx) {
@@ -40,14 +39,14 @@ export class SaleHelper {
         const payment = new PaymentMock(tx.outs[0].value);
         env.payment = payment._rev;
         const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction;
-        const { effect: { res: r, env: e }, } = await this.computer.encode({
+        const { effect: { res: r, env: e } } = await this.computer.encode({
             exp,
             env,
             mod,
             mocks: { payment },
             fund: false,
             sign: false,
-            sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+            sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY
         });
         if (r === undefined)
             throw new Error('Unexpected result');

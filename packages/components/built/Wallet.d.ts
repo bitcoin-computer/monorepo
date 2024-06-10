@@ -1,3 +1,4 @@
+import { Computer } from "@bitcoin-computer/lib";
 declare function SendMoneyForm({ computer, paymentModSpec }: {
     computer: any;
     paymentModSpec: string;
@@ -6,7 +7,10 @@ export declare function Wallet({ paymentModSpec }: {
     paymentModSpec: string;
 }): import("react/jsx-runtime").JSX.Element;
 export declare const WalletComponents: {
-    Balance: ({ computer, paymentModSpec }: any) => import("react/jsx-runtime").JSX.Element;
+    Balance: ({ computer, paymentModSpec }: {
+        computer: Computer;
+        paymentModSpec: any;
+    }) => import("react/jsx-runtime").JSX.Element;
     Address: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
     PublicKey: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
     Path: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;

@@ -1,4 +1,5 @@
-export const nftModSpec = "8d8ccfc260cfd72038ac8f1017abc1d269c3959e88b70c55c5551799149f440c:0"
-export const offerModSpec = "3b877587ce1c8c3a06c5cb38c446c84566c2dd84c26d431feb5f48765ee08129:0"
-export const saleModSpec = "c13a78bbc39f2e216f37b1b4d0b2dc0c010185424cb05f48656c559b60108716:0"
-export const paymentModSpec = "7f7a8db09453adfbe44de2c9296c98c245d47e026777935ec07e8ef2166a6cec:0"
+// This file contains module specifiers for deployed contracts
+export const nftModSpec = "da11af3d280eb73fecd4be1da216223e7110b1a699978c5fe26a2c51f063074f:0"
+export const offerModSpec = "94de29b6d69d216b1b6724e087c4502c93357326d63d4a32887653c90108bdff:0"
+export const saleModSpec = "1f54cca7e7c4d8fa5e2463e0c203e17bfbe54413f9619e78cc8735ad9471df25:0"
+export const paymentModSpec = "c83ac16e4eaff921aee1e1c8154727c887ad27f7db955a8eb6a7791f8dac2145:0"

@@ -1,7 +1,7 @@
 /// <reference types="node" />
 import { NFT } from '@bitcoin-computer/TBC721';
-import { Transaction } from '@bitcoin-computer/nakamotojs';
 import { Buffer } from 'buffer';
+import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
 import { Payment, PaymentMock } from './payment.js';
 declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Sale extends Contract {
@@ -13,7 +13,7 @@ export declare class SaleHelper {
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
     createSaleTx(nft: NFT, payment: PaymentMock): any;
-    checkSaleTx(tx: Transaction): Promise<number>;
-    static finalizeSaleTx(tx: Transaction, payment: Payment, scriptPubKey: Buffer): Transaction;
+    checkSaleTx(tx: TransactionType): Promise<number>;
+    static finalizeSaleTx(tx: TransactionType, payment: Payment, scriptPubKey: Buffer): TransactionType;
 }
 export {};

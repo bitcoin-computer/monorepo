@@ -3,9 +3,8 @@
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
 import dotenv from 'dotenv'
 import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
@@ -134,7 +133,7 @@ describe('Sale', () => {
       // TODO: Hardcodeed for LTC
       const { tx: alicePaymentTx } = await alice.encode({
         exp: `alicePayment.setAmount(7860)`,
-        env: { alicePayment: alicePayment._rev },
+        env: { alicePayment: alicePayment._rev }
       })
       await alice.broadcast(alicePaymentTx)
       // TODO: Clemens, this doesn't work

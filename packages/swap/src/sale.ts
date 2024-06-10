@@ -1,10 +1,10 @@
 /* eslint-disable max-classes-per-file */
 import { NFT } from '@bitcoin-computer/TBC721'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Buffer } from 'buffer'
+import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
 
-const { Contract } = await import('@bitcoin-computer/lib')
+const { Contract, Transaction } = await import('@bitcoin-computer/lib')
 
 export class Sale extends Contract {
   static exec(n: NFT, p: Payment) {
@@ -44,7 +44,7 @@ export class SaleHelper {
     })
   }
 
-  async checkSaleTx(tx: Transaction): Promise<number> {
+  async checkSaleTx(tx: TransactionType): Promise<number> {
     const { exp, env, mod } = await this.computer.decode(tx)
     if (exp !== 'Sale.exec(nft, payment)') throw new Error('Unexpected expression')
     if (mod !== this.mod) throw new Error('Unexpected module specifier')
@@ -55,7 +55,7 @@ export class SaleHelper {
 
     const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
     const {
-      effect: { res: r, env: e },
+      effect: { res: r, env: e }
     } = await this.computer.encode({
       exp,
       env,
@@ -64,7 +64,7 @@ export class SaleHelper {
       fund: false,
       sign: false,
       // eslint-disable-next-line no-bitwise
-      sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+      sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY
     })
 
     if (r === undefined) throw new Error('Unexpected result')
@@ -73,7 +73,7 @@ export class SaleHelper {
     return tx.outs[0].value
   }
 
-  static finalizeSaleTx(tx: Transaction, payment: Payment, scriptPubKey: Buffer) {
+  static finalizeSaleTx(tx: TransactionType, payment: Payment, scriptPubKey: Buffer) {
     const [paymentTxId, paymentIndex] = payment._rev.split(':')
     const index = parseInt(paymentIndex, 10)
     tx.updateInput(1, { txId: paymentTxId, index })

@@ -1,5 +1,4 @@
-import { Transaction } from '@bitcoin-computer/nakamotojs';
-const { Contract } = await import('@bitcoin-computer/lib');
+const { Contract, Transaction } = await import('@bitcoin-computer/lib');
 export class Offer extends Contract {
     constructor(owner, url, txHex) {
         super({ _owners: [owner], _url: url, txHex });
@@ -25,7 +24,7 @@ export class OfferHelper {
         return this.computer.encode({
             exp,
             exclude,
-            mod: this.mod,
+            mod: this.mod
         });
     }
     async addSaleTx(offerTxId, tx) {
@@ -33,7 +32,7 @@ export class OfferHelper {
         return this.computer.encode({
             exp: `offer.addSaleTx("${tx.serialize()}")`,
             exclude: tx.getInRevs(),
-            env: { offer: syncedOffer._rev },
+            env: { offer: syncedOffer._rev }
         });
     }
     async decodeOfferTx(offerTxId) {
