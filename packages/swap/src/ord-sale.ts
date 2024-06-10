@@ -1,6 +1,8 @@
 /* eslint-disable max-classes-per-file */
 import { NFT } from '@bitcoin-computer/TBC721'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
+import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
+import { Transaction } from '@bitcoin-computer/lib'
+import { Buffer } from 'buffer'
 import { Payment, PaymentMock } from './payment.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
@@ -50,7 +52,7 @@ export class OrdSaleHelper {
   }
 
   static finalizeSaleTx(
-    tx: Transaction,
+    tx: TransactionType,
     b1: Payment,
     b2: Payment,
     payment: Payment,

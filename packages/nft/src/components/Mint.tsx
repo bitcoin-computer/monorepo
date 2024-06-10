@@ -2,8 +2,8 @@ import { useContext, useState } from "react"
 import { ComputerContext, Modal } from "@bitcoin-computer/components"
 import { TBC721 } from "@bitcoin-computer/TBC721"
 import { Link } from "react-router-dom"
-import { nftModSpec } from "../constants/modSpecs"
 import { Computer } from "@bitcoin-computer/lib"
+import { nftModSpec } from "../constants/modSpecs"
 
 function SuccessContent(rev: string) {
   return (

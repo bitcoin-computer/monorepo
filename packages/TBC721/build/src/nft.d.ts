@@ -2,12 +2,10 @@ declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class NFT extends Contract {
     name: string;
     symbol: string;
-    _id: string;
-    _rev: string;
-    _root: string;
-    _owners: string[];
+    offerTxRev: string;
     constructor(name?: string, symbol?: string);
-    transfer(to: string): void;
+    transfer(to: any): void;
+    list(rev: any): void;
 }
 export interface ITBC721 {
     deploy(): Promise<string>;

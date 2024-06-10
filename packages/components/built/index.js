@@ -9,6 +9,6 @@ export { UtilsContext } from "./UtilsContext";
 export { ComputerContext } from "./ComputerContext";
 export { FunctionResultModalContent } from "./common/SmartCallExecutionResult";
 export { Drawer } from "./Drawer";
-export { Wallet } from "./Wallet";
+export { Wallet, WalletComponents } from "./Wallet";
 export { Card } from "./Card";
 export * from "./common/utils";

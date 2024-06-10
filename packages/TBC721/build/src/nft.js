@@ -5,6 +5,10 @@ export class NFT extends Contract {
     }
     transfer(to) {
         this._owners = [to];
+        this.offerTxRev = undefined;
+    }
+    list(rev) {
+        this.offerTxRev = rev;
     }
 }
 export class TBC721 {

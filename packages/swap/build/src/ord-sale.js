@@ -1,13 +1,13 @@
-import { Transaction } from '@bitcoin-computer/nakamotojs';
+import { Transaction } from '@bitcoin-computer/lib';
 const { Contract } = await import('@bitcoin-computer/lib');
 export class OrdSale extends Contract {
-    static exec(b1, b2, t, p) {
-        const [ownerT] = t._owners;
+    static exec(b1, b2, n, p) {
+        const [ownerT] = n._owners;
         const [ownerP] = p._owners;
-        t.transfer(ownerP);
+        n.transfer(ownerP);
         p.transfer(ownerT);
         b1.setAmount(b1._amount + b2._amount);
-        return [b1, t, p, b2];
+        return [b1, n, p, b2];
     }
 }
 export class OrdSaleHelper {
@@ -28,7 +28,7 @@ export class OrdSaleHelper {
             sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
             inputIndex: 2,
             fund: false,
-            mod: this.mod,
+            mod: this.mod
         });
     }
     static checkSaleTx() {

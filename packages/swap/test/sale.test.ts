@@ -3,9 +3,8 @@
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
 import dotenv from 'dotenv'
 import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
@@ -19,11 +18,17 @@ const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
+const sleep = async (delay) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, delay)
+  })
+}
+
 describe('Sale', () => {
   let tx: Transaction
   let txClone: Transaction
   let sellerPublicKey: string
-  const nftPrice = 0.1e8
+  const nftPrice = 1e8
   const fee = 100000
 
   describe('Examples from docs', () => {
@@ -65,14 +70,23 @@ describe('Sale', () => {
       await buyer.fund(saleTx)
       await buyer.sign(saleTx)
       await buyer.broadcast(saleTx)
+      // txId of above broadcast
+      // TODO: Clemens this code below doesn't work, but next test passes which uses the similar logic
+      // Bob reads the updated state from the blockchain
+      // const { env } = (await buyer.sync(txId)) as { env: { nft: NFT; payment: NFT } }
+      // const { nft: n, payment: p } = env
+
+      // expect(p._amount).eq(1e8)
+      // expect(n._owners).deep.eq([buyer.getPublicKey()])
+      // expect(p._owners).deep.eq([seller.getPublicKey()])
     })
 
     it('Should work with helper classes', async () => {
       // Create and fund wallets
       const alice = new Computer({ url })
       const bob = new Computer({ url })
-      await alice.faucet(1e8)
-      await bob.faucet(1e8)
+      await alice.faucet(1e6)
+      await bob.faucet(2e8)
 
       // Alice creates helper objects
       const tbc721A = new TBC721(alice)
@@ -80,7 +94,8 @@ describe('Sale', () => {
 
       // Alice deploys the smart contracts
       await tbc721A.deploy()
-      await saleHelperA.deploy()
+      const saleSpecMod = await saleHelperA.deploy()
+      const saleHelperB = new SaleHelper(bob, saleSpecMod)
 
       // Alice mints an NFT
       const nftA = await tbc721A.mint('a', 'AAA')
@@ -92,24 +107,38 @@ describe('Sale', () => {
       const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
 
       // Bob checks the swap transaction
-      SaleHelper.checkSaleTx()
-
+      const nftAmount = await saleHelperB.checkSaleTx(saleTx)
       // Bob creates the payment and finalizes the transaction
-      const payment = await bob.new(Payment, [nftPrice])
+      const payment = await bob.new(Payment, [nftAmount])
       const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
 
       // Bob signs an broadcasts the transaction to execute the swap
       await bob.fund(finalTx)
       await bob.sign(finalTx)
       await bob.broadcast(finalTx)
+      await sleep(3000)
+
+      const { env } = (await alice.sync(finalTx.getId())) as { env: { nft: NFT; payment: Payment } }
 
       // Bob reads the updated state from the blockchain
-      const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      // const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
       const { nft: n, payment: p } = env
 
       expect(p._amount).eq(nftPrice)
       expect(n._owners).deep.eq([bob.getPublicKey()])
       expect(p._owners).deep.eq([alice.getPublicKey()])
+
+      const alicePayment = env.payment
+      await sleep(1000)
+      // TODO: Hardcodeed for LTC
+      const { tx: alicePaymentTx } = await alice.encode({
+        exp: `alicePayment.setAmount(7860)`,
+        env: { alicePayment: alicePayment._rev }
+      })
+      await alice.broadcast(alicePaymentTx)
+      // TODO: Clemens, this doesn't work
+      // await alicePayment.setAmount(7860)
+      await sleep(3000)
     })
   })
 

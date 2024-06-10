@@ -177,7 +177,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       query.limit = contractsPerPage + 1
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
-      setRevs(result)
+      setRevs(result.slice(0, contractsPerPage))
       if (pageNum === 0 && result?.length === 0) {
         setShowNoAsset(true)
       }

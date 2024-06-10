@@ -1,5 +1,4 @@
-export declare function getTestTxId(i?: number): string;
-export declare function getTestRev(txId?: number, outNum?: number): string;
+export declare const getMockedRev: () => string;
 export declare const RLTC: {
     network: 'regtest';
     chain: 'LTC';

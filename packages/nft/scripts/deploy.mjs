@@ -1,7 +1,16 @@
 import { config } from "dotenv"
 import readline from "readline"
 import { NFT, TBC721 } from "@bitcoin-computer/TBC721"
+import {
+  Offer,
+  OfferHelper,
+  Payment,
+  PaymentHelper,
+  Sale,
+  SaleHelper
+} from "@bitcoin-computer/swap"
 const { Computer } = await import("@bitcoin-computer/lib")
+import fs from "fs"
 
 config()
 
@@ -19,7 +28,7 @@ const computer = new Computer({ mnemonic, chain, network, url })
 // Prompt the user to confirm an action
 const rl = readline.createInterface({
   input: process.stdin,
-  output: process.stdout,
+  output: process.stdout
 })
 
 const balance = await computer.wallet.getBalance()
@@ -44,11 +53,32 @@ rl.question(q, async (answer) => {
       console.log(`export ${NFT}`)
       const tbc721 = new TBC721(computer)
       const modSpec = await tbc721.deploy()
-      console.log(`
-      Deploy successful
-      \x1b[2mYou can copy this module specifier\x1b[0m
-      const nftModSpec = \x1b[2m'${modSpec}'\x1b[0m
-      `)
+
+      console.log("Deploying Offer contract...")
+      console.log(`export ${Offer}`)
+      const offerHelper = new OfferHelper(computer)
+      const offerModSpec = await offerHelper.deploy()
+
+      console.log("Deploying Sale contract...")
+      console.log(`export ${Sale}`)
+      const saleHelper = new SaleHelper(computer)
+      const saleModSpec = await saleHelper.deploy()
+
+      console.log("Deploying Payment contract...")
+      console.log(`export ${Payment}`)
+      const paymentHelper = new PaymentHelper(computer)
+      const paymentModSpec = await paymentHelper.deploy()
+
+      // Write deployment results to file
+      const modSpecsContent = `// This file contains module specifiers for deployed contracts
+export const nftModSpec = '${modSpec}'
+export const offerModSpec = '${offerModSpec}'
+export const saleModSpec = '${saleModSpec}'
+export const paymentModSpec = '${paymentModSpec}'
+`
+      fs.writeFileSync("src/constants/modSpecs.ts", modSpecsContent)
+
+      console.log("\nDeployment successful. Results written to src/constants/modSpecs.ts")
     } catch (err) {
       console.log(err)
     }
