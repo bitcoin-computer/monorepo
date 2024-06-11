@@ -3,15 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.771343042904">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.771449496780">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
 
     <!-- Primary Meta Tags -->
-    <title>Swaps</title>
-    <meta name="title" content="Swaps">
-    <meta name="description" content="The recommended way to build a swap is to use a static function that takes two arguments and exchanges their owners.">
+    <title>Token Swap</title>
+    <meta name="title" content="Token Swap">
+    <meta name="description" content="A token swap is the direct and immediate exchange of ownership of two tokens on the same chain.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/examples/swap/">
@@ -19,24 +19,24 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="/examples/swap/">
-    <meta property="og:title" content="Swaps">
-    <meta property="og:description" content="The recommended way to build a swap is to use a static function that takes two arguments and exchanges their owners.">
+    <meta property="og:title" content="Token Swap">
+    <meta property="og:description" content="A token swap is the direct and immediate exchange of ownership of two tokens on the same chain.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/examples/swap/">
-    <meta property="twitter:title" content="Swaps">
-    <meta property="twitter:description" content="The recommended way to build a swap is to use a static function that takes two arguments and exchanges their owners.">
+    <meta property="twitter:title" content="Token Swap">
+    <meta property="twitter:description" content="A token swap is the direct and immediate exchange of ownership of two tokens on the same chain.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.771343042904" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.771449496780" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.771343042904" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.771449496780" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.771343042904" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.771343042904" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.771449496780" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.771449496780" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -151,12 +151,31 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="swaps" class="break-words">
+<doc-anchor-target id="token-swap" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#swaps">#</doc-anchor-trigger>
-        <span>Swaps</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#token-swap">#</doc-anchor-trigger>
+        <span>Token Swap</span>
     </h1>
 </doc-anchor-target>
+<p>A token swap is the direct and immediate exchange of ownership of two tokens on the same chain. The swaps described below are atomic in the sense that either both assets change their owner or none of them. This enables trustless exchange, as the situation where the other party does not pay cannot arise.</p>
+<p>A token swap is similar to an atomic swap, the difference being that atomic swaps usually refer to the exchange of cryptocurrency on two different chains, whereas token swaps exchange tokens on the same chain.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-blue-500 dark:bg-blue-400"></div>
+    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-blue-500 dark:text-blue-400" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>We note that the definition of a token swap differs wildly from the legal definition of a swap. While a token swap is the immediate exchange of two tokens, a swap in the legal sense involves an option to buy or sell an asset at a later point in time.</p>
+        </div>
+    </div>
+</div>
 <doc-anchor-target id="swap-using-a-static-function">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#swap-using-a-static-function">#</doc-anchor-trigger>
@@ -391,6 +410,6 @@ await alice.broadcast(tx)</code></pre>
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Swaps", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Token Swap", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

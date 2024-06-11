@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.771343042904">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.771449496780">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Comparison</title>
     <meta name="title" content="Comparison">
-    <meta name="description" content="In layer-2 solutions, transactions are performed out of the blockchain (layer-1) and can ultimately settle">
+    <meta name="description" content="We give an overview over the existing smart contract systems on Bitcoin. We break down the analysis into Layer 1 and Layer 2 systems.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/comparison/">
@@ -20,22 +20,22 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/comparison/">
     <meta property="og:title" content="Comparison">
-    <meta property="og:description" content="In layer-2 solutions, transactions are performed out of the blockchain (layer-1) and can ultimately settle">
+    <meta property="og:description" content="We give an overview over the existing smart contract systems on Bitcoin. We break down the analysis into Layer 1 and Layer 2 systems.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/comparison/">
     <meta property="twitter:title" content="Comparison">
-    <meta property="twitter:description" content="In layer-2 solutions, transactions are performed out of the blockchain (layer-1) and can ultimately settle">
+    <meta property="twitter:description" content="We give an overview over the existing smart contract systems on Bitcoin. We break down the analysis into Layer 1 and Layer 2 systems.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.5.0.771343042904" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.5.0.771449496780" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.771343042904" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.771449496780" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.771343042904" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.771449496780" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -156,35 +156,78 @@
         <span>Comparison</span>
     </h1>
 </doc-anchor-target>
+<p>We give an overview over the existing smart contract systems on Bitcoin. We break down the analysis into Layer 1 and Layer 2 systems. We call a smart contract system Layer 1 if the users communicate only via the Bitcoin blockchain and Layer2 otherwise.</p>
 <doc-anchor-target id="layer-2">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#layer-2">#</doc-anchor-trigger>
         <span>Layer 2</span>
     </h2>
 </doc-anchor-target>
-<p>In layer-2 solutions, transactions are performed
-out of the blockchain (layer-1) and can ultimately settle
-back efficiently to the blockchain.</p>
+<doc-anchor-target id="state-channels-and-networks">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#state-channels-and-networks">#</doc-anchor-trigger>
+        <span>State Channels and Networks</span>
+    </h3>
+</doc-anchor-target>
+<!-- Payment channels and networks do not enable smart contract on Bitcoin, however they use smart contracts to increase the throughput of Bitcoin. -->
+<p>The problem of scaling blockchains is in part caused by the need for all nodes to update if one user broadcasts a transaction. State channels allow two users to exchange transactions off-chain of which only the last one needs to be broadcast. This makes it possible to update a payment an unlimited number of times while only having to pay a fixed number number of transaction fees. In most designs, users need to broadcast one transaction to open a channel and one transaction to close the channel and commit to the last payment.</p>
+<p>To extend this design to an arbitrary number of users, state networks have been designed. Smart contracts called <a href="">HTLC</a>s can be used to chain state channels, without requiring the intermediate nodes to obtain custody of the payment. This enables efficient hub and spoke architectures where a central hub can forward payments between users.</p>
+<doc-anchor-target id="security-considerations">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#security-considerations">#</doc-anchor-trigger>
+        <span>Security Considerations</span>
+    </h4>
+</doc-anchor-target>
+<doc-anchor-target id="examples">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
+        <span>Examples</span>
+    </h4>
+</doc-anchor-target>
+<ul>
+<li><p><a href="https://lightning.network/">Lightning Network</a> The lightning network extends the hub and spoke model to a decentralized network of payment channels. The key challenge is to solve the routing problem: in order to send a payment between two users a path of channels needs to be determined where each channel has sufficient liquidity to forward the payment. Critics of the lightning network would argue that this problem is similar to the problem that scaling blockchains via payment channels seeks to solve to begin with.</p>
+</li>
+<li><p><a href="https://ark-protocol.org/">Ark</a></p>
+</li>
+<li><p><a href="https://docs.rgb.info/">RGB</a></p>
+</li>
+</ul>
 <doc-anchor-target id="side-chains">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#side-chains">#</doc-anchor-trigger>
         <span>Side Chains</span>
     </h3>
 </doc-anchor-target>
-<ul>
-<li><a href="https://dev.rootstock.io/">Rootstock</a></li>
-<li><a href="https://docs.stacks.co/">Stacks</a></li>
-<li><a href="https://internetcomputer.org/docs/current/home">Internet Computer</a></li>
-</ul>
-<doc-anchor-target id="payment-channel-networks">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#payment-channel-networks">#</doc-anchor-trigger>
-        <span>Payment Channel Networks</span>
-    </h3>
+<p>A sidechain is an independent blockchain that is tied to Bitcoin via a two-way-peg. The consensus of the side chain can differ from the consensus mechanism of Bitcoin, thereby potentially enhancing it&#x27;s throughput, smart contract capabilities, or privacy.</p>
+<p>To use the side chain a user can send Bitcoin to an address that is controlled by a federation. Once the Bitcoin is confirmed, the user is allowed to create an equivalent amount of tokens on the side chain. These token then can be used to access the enhanced functionality of the side chain. The user can use the peg-out mechanism to convert the coins on the sidechain back to tokens in the main chain.</p>
+<doc-anchor-target id="security-considerations-1">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#security-considerations-1">#</doc-anchor-trigger>
+        <span>Security Considerations</span>
+    </h4>
+</doc-anchor-target>
+<p>Side chains are less secure than Bitcoin for two reasons. The consensus mechanism of the side chain is typically less secure than the consensus of Bitcoin. This enable attackers to exploit the side chain consensus. On the other hand the</p>
+<doc-anchor-target id="examples-1">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#examples-1">#</doc-anchor-trigger>
+        <span>Examples</span>
+    </h4>
 </doc-anchor-target>
 <ul>
-<li><a href="https://ark-protocol.org/">Ark</a></li>
-<li><a href="https://docs.rgb.info/">RGB</a></li>
+<li><a href="https://docs.liquid.net/docs/technical-overview">Liquid</a>.
+<ul>
+<li>The federation consists of a fixed group of members that is defined at launch. The identities of its members is not public, however it is stated that they are large exchanges, financial institutions, and Bitcoin-focused companies.</li>
+<li>Developed by Blockstream</li>
+<li>The peg is enforced by means of ordinary multisignature transactions. It does require a consortium to exist, and for participants of the system to trust that at least 2/3 of the federation is acting honestly.</li>
+<li>The federation members also maintain the consensus of the side chain by signing blocks in a round robin fashion.</li>
+<li>The Liquid side chain is based on the Bitcoin code base. However, it&#x27;s throughput is 10x higher than Bitcoin&#x27;s throughput as the block time was reduced to 1 minute.</li>
+<li>Liquid allows for users to create and transfer other assets using a feature called Issued Assets.</li>
+<li>One of the main features of Liquid is its default use of Confidential Transactions. Confidential Transactions on Liquid allows any two parties to transact without anyone else being able to view the asset and amount transacted, not even the Liquid Federation members and functionaries.</li>
+</ul>
+</li>
+<li><a href="https://rootstock.io/static/a79b27d4889409602174df4710102056/RS-whitepaper.pdf">Rootstock</a></li>
+<li><a href="https://docs.stacks.co/">Stacks</a></li>
+<li><a href="https://internetcomputer.org/docs/current/home">Internet Computer</a></li>
 </ul>
 <doc-anchor-target id="rollups">
     <h3>
@@ -192,45 +235,23 @@ back efficiently to the blockchain.</p>
         <span>Rollups</span>
     </h3>
 </doc-anchor-target>
-<p><em>Rollups</em> execute batches of transactions outside the main blockchain,
-convert them into one single piece of data and submit it to the
-main blockchain. [1]</p>
+<p><em>Rollups</em> execute batches of transactions outside the main blockchain, convert them into one single piece of data and submit it to the main blockchain. [1]</p>
 <doc-anchor-target id="optimistic-rollups">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#optimistic-rollups">#</doc-anchor-trigger>
         <span>Optimistic Rollups</span>
     </h4>
 </doc-anchor-target>
-<p><em>Optimistic rollups</em> assume transactions
-are valid. For a period of time, each user has the opportunity
-to challenge the transaction and, in such a case, must present a
-fraud proof. [1]</p>
-<p>Optimistic rollups have two main
-entities participating: aggregators and verifiers. Once an
-aggregator publishes a transaction, there is a period of
-time when each node acting as a verifier can monitor data
-published by the aggregator. If the verifier disagrees with
-the published data, she can challenge the transaction. To
-discourage aggregators and verifiers from acting maliciously,
-both the aggregator and verifier need to stake a bond. If the
-verifier can provide a fraud proof, the aggregator is fined.
-Otherwise, the verifier gets fined. [...] Only one honest verifier is needed to guarantee that the
-aggregator did not act maliciously.[1]</p>
+<p><em>Optimistic rollups</em> assume transactions are valid. For a period of time, each user has the opportunity to challenge the transaction and, in such a case, must present a fraud proof. [1]</p>
+<p>Optimistic rollups have two main entities participating: aggregators and verifiers. Once an aggregator publishes a transaction, there is a period of time when each node acting as a verifier can monitor data published by the aggregator. If the verifier disagrees with the published data, she can challenge the transaction. To discourage aggregators and verifiers from acting maliciously, both the aggregator and verifier need to stake a bond. If the verifier can provide a fraud proof, the aggregator is fined. Otherwise, the verifier gets fined. [...] Only one honest verifier is needed to guarantee that the aggregator did not act maliciously.[1]</p>
 <doc-anchor-target id="zero-knowledge-rollups">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#zero-knowledge-rollups">#</doc-anchor-trigger>
         <span>Zero-knowledge Rollups</span>
     </h4>
 </doc-anchor-target>
-<p><em>Zero-knowledge rollups</em> do not assume fair play, and together with transaction
-data, the aggregator provides a validity proof. [1]</p>
-<p>While optimistic rollups use fraud proofs
-for security, Zero-Knowledge (ZK) rollups use validity
-proofs. Instead of allowing the aggregator
-to publish a transaction and then question it, in ZK
-rollups, the aggregator must prove the post-state root is
-the correct result of the batch execution using a validity
-proof.</p>
+<p><em>Zero-knowledge rollups</em> do not assume fair play, and together with transaction data, the aggregator provides a validity proof. [1]</p>
+<p>While optimistic rollups use fraud proofs for security, Zero-Knowledge (ZK) rollups use validity proofs. Instead of allowing the aggregator to publish a transaction and then question it, in ZK rollups, the aggregator must prove the post-state root is the correct result of the batch execution using a validity proof.</p>
 <doc-anchor-target id="optimistic-vs-zk-rollups">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#optimistic-vs-zk-rollups">#</doc-anchor-trigger>
@@ -238,23 +259,12 @@ proof.</p>
     </h4>
 </doc-anchor-target>
 <p>Building
-a validity proof requires heavy computations; hence, ZK
-rollups’ offchain fees are higher than optimistic rollups. Additionally, a ZK rollup layer-1 transaction has a much
-higher fixed fee since it requires a validity proof verification
-hence gas fees are higher. [1]</p>
-<p>Though, since optimistic rollups
-have a period where verifiers have an opportunity to publish a
-fraud proof, the users need to wait (usually a week) until their
-deposits can be withdrawn, while in ZK-rollups, deposits can
-be withdrawn immediately. [1]</p>
+a validity proof requires heavy computations; hence, ZK rollups’ offchain fees are higher than optimistic rollups. Additionally, a ZK rollup layer-1 transaction has a much higher fixed fee since it requires a validity proof verification hence gas fees are higher. [1]</p>
+<p>Though, since optimistic rollups have a period where verifiers have an opportunity to publish a fraud proof, the users need to wait (usually a week) until their deposits can be withdrawn, while in ZK-rollups, deposits can be withdrawn immediately. [1]</p>
 <ul>
-<li><a href="https://bitvm.org/">BitVM</a> (is this L2?)</li>
-<li><a href="https://docs.satoshivm.io/">SatoshiVM</a></li>
 <li><a href="https://docs.gobob.xyz/">BOB</a></li>
 <li><a href="https://docs.citrea.xyz/">Citrea</a></li>
 <li><a href="https://www.alpenlabs.io/">Alpen</a></li>
-<li><a href="https://docs.merlinchain.io/merlin-docs">Merlin</a></li>
-<li><a href="https://dovil2.com/">Dovi</a></li>
 </ul>
 <doc-anchor-target id="layer-1">
     <h2>
@@ -270,6 +280,7 @@ be withdrawn immediately. [1]</p>
 </doc-anchor-target>
 <ul>
 <li><a href="">Bitcoin Script</a></li>
+<li><a href="https://bitvm.org/">BitVM</a> (is this L2?)</li>
 </ul>
 <doc-anchor-target id="client-validated">
     <h3>
@@ -297,13 +308,6 @@ be withdrawn immediately. [1]</p>
 <li><a href="https://www.hiro.so/blog/building-on-bitcoin-project-comparison">https://www.hiro.so/blog/building-on-bitcoin-project-comparison</a></li>
 <li><a href="https://www.hiro.so/">https://www.hiro.so/</a></li>
 </ul>
-<doc-anchor-target id="videos">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#videos">#</doc-anchor-trigger>
-        <span>Videos</span>
-    </h2>
-</doc-anchor-target>
-<p><a href="https://www.youtube.com/live/VIg7BjX_lJw">BitVM: Smarter Bitcoin Contracts - Robin Linus (zerosync)</a></p>
 <doc-anchor-target id="articles">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#articles">#</doc-anchor-trigger>
@@ -323,8 +327,6 @@ Roberto Zunino</li>
 <li><a href="https://dl.acm.org/doi/pdf/10.1145/3558535.3559780">SoK: Decentralized Finance (DeFi)</a></li>
 <li><a href="https://eprint.iacr.org/2019/1128.pdf">SoK: Communication Across Distributed Ledgers</a></li>
 <li><a href="https://www.etoro.com/wp-content/uploads/2022/03/Colored-Coins-white-paper-Digital-Assets.pdf">Colored Coins whitepaper</a>, Yoni Assia, Vitalik Buterin, liorhakiLior, Meni Rosenfeld, Rotem Lev</li>
-<li><a href="https://assets-global.website-files.com/661e3b1622f7c56970b07a4c/662a7a89ce097389c876db57_BitSNARK__Grail.pdf">BitSNARK &amp; Grail - Bitcoin Rails for Unlimited Smart Contracts &amp; Scalability</a></li>
-<li><a href="https://bitvmx.org/files/bitvmx-whitepaper.pdf">BitVMX: A CPU for Universal Computation on Bitcoin</a></li>
 </ul>
 
                                 
