@@ -180,10 +180,9 @@ You can configure several options by editing the `.env` file.
 <font size=1>
 
 ```bash
-# BTC or LTC
+# Chain: BTC or LTC
 CHAIN='LTC'
-
-# mainnet, testnet, or regtest
+# Network: mainnet, testnet, or regtest
 NETWORK='regtest'
 
 # Port for Bitcoin Computer Node
@@ -201,7 +200,7 @@ POSTGRES_PORT='5432'
 RPC_USER='bcn-admin'
 RPC_PASSWORD='kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
 RPC_AUTH='bcn-admin:c71460f0f08e4eeec90e033c04f7bb82$c36e8561d46abbf3bf13da6b88612c19d758d46d02c45cd2716f06a13ec407af'
-RPC_HOST='127.0.0.1'  # should this be node?
+RPC_HOST='127.0.0.1'
 RPC_PORT='19332'
 RPC_PROTOCOL='http'
 ZMQ_URL='tcp://node:28332'
@@ -228,7 +227,17 @@ LOG_MAX_FILES='14d'
 # size is specified the log is not rotated.
 LOG_MAX_SIZE='20m'
 # A boolean to define whether or not to gzip archived log files.
-LOG_ZIP=false
+LOG_ZIP='false'
+
+# Show logs attached to the Console transport
+SHOW_CONSOLE_LOGS='true'
+
+# Rate Limiting Settings
+RATE_LIMIT_ENABLED='false'
+RATE_LIMIT_WINDOW='900000'
+RATE_LIMIT_MAX='300'
+RATE_LIMIT_STANDARD_HEADERS='true'
+RATE_LIMIT_LEGACY_HEADERS='false'
 
 # Comma separated list of banned countries encoded as ISO-3166 alpha2 country
 # codes (see https://www.geonames.org/countries/)
