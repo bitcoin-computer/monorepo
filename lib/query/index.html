@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.771449496780">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.771452156746">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.771449496780" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.771452156746" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.771449496780" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.771452156746" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.771449496780" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.771449496780" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.771452156746" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.771452156746" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -176,7 +176,6 @@
         limit?: number;
         offset?: number;
         order?: &quot;ASC&quot; | &quot;DEC&quot;;
-        contract?: { class: T; args?: ConstructorParameters&lt;T&gt; };
       }
 ) =&gt; Promise&lt;string[]&gt;;</code></pre>
 </doc-codeblock></div>
@@ -190,8 +189,7 @@
 <pre class="language-javascript"><code v-pre class="language-javascript">await computer.query({ publicKey })
 await computer.query({ ids })
 await computer.query({ mod })
-await computer.query({ contract })
-await computer.query({ publicKey, contract, order })
+await computer.query({ publicKey, order })
 ...</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="parameters">
@@ -247,11 +245,6 @@ await computer.query({ publicKey, contract, order })
 <td>&#x27;ASC&#x27; | &#x27;DEC&#x27;</td>
 <td>Order results in ascending or descending order</td>
 </tr>
-<tr>
-<td>contract</td>
-<td>{ class: T, args?: ConstructorParameters&lt;T&gt; }</td>
-<td>Return latest revisions of smart objects from a class</td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -288,16 +281,11 @@ const b = await computer.new(A, [], mod)
 const [rev3] = await computer.query({ mod })
 expect(rev3).to.equal(b._rev)
 
-// query by class
-const contract = { class: A }
-const [rev4] = await computer.query({ contract })
-expect(rev4).to.equal(a._rev)
-
 // query by multiple parameters
 const [revs5] = await computer.query({
   limit: 10,
   order: 'ASC',
-  contract: { class: A }
+  publicKey: { computer.getPublicKey() }
 })
 expect(rev5).to.equal(a._rev)</code></pre>
 </doc-codeblock></div>
