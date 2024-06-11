@@ -6,85 +6,82 @@ visibility: hidden
 
 # Comparison
 
+We give an overview over the existing smart contract systems on Bitcoin. We break down the analysis into Layer 1 and Layer 2 systems. We call a smart contract system Layer 1 if the users communicate only via the Bitcoin blockchain and Layer2 otherwise.
+
 ## Layer 2
 
-In layer-2 solutions, transactions are performed
-out of the blockchain (layer-1) and can ultimately settle
-back efficiently to the blockchain.
+### State Channels and Networks
 
-### Side Chains
-* [Rootstock](https://dev.rootstock.io/)
-* [Stacks](https://docs.stacks.co/)
-* [Internet Computer](https://internetcomputer.org/docs/current/home)
+<!-- Payment channels and networks do not enable smart contract on Bitcoin, however they use smart contracts to increase the throughput of Bitcoin. -->
 
-### Payment Channel Networks
+The problem of scaling blockchains is in part caused by the need for all nodes to update if one user broadcasts a transaction. State channels allow two users to exchange transactions off-chain of which only the last one needs to be broadcast. This makes it possible to update a payment an unlimited number of times while only having to pay a fixed number number of transaction fees. In most designs, users need to broadcast one transaction to open a channel and one transaction to close the channel and commit to the last payment.
+
+To extend this design to an arbitrary number of users, state networks have been designed. Smart contracts called [HTLC]()s can be used to chain state channels, without requiring the intermediate nodes to obtain custody of the payment. This enables efficient hub and spoke architectures where a central hub can forward payments between users.
+
+#### Security Considerations
+
+#### Examples
+* [Lightning Network](https://lightning.network/) The lightning network extends the hub and spoke model to a decentralized network of payment channels. The key challenge is to solve the routing problem: in order to send a payment between two users a path of channels needs to be determined where each channel has sufficient liquidity to forward the payment. Critics of the lightning network would argue that this problem is similar to the problem that scaling blockchains via payment channels seeks to solve to begin with.
+
 * [Ark](https://ark-protocol.org/)
 * [RGB](https://docs.rgb.info/)
 
+### Side Chains
+
+A sidechain is an independent blockchain that is tied to Bitcoin via a two-way-peg. The consensus of the side chain can differ from the consensus mechanism of Bitcoin, thereby potentially enhancing it's throughput, smart contract capabilities, or privacy.
+
+To use the side chain a user can send Bitcoin to an address that is controlled by a federation. Once the Bitcoin is confirmed, the user is allowed to create an equivalent amount of tokens on the side chain. These token then can be used to access the enhanced functionality of the side chain. The user can use the peg-out mechanism to convert the coins on the sidechain back to tokens in the main chain.
+
+#### Security Considerations
+
+Side chains are less secure than Bitcoin for two reasons. The consensus mechanism of the side chain is typically less secure than the consensus of Bitcoin. This enable attackers to exploit the side chain consensus. On the other hand the 
+
+#### Examples
+
+* [Liquid](https://docs.liquid.net/docs/technical-overview).
+  * The federation consists of a fixed group of members that is defined at launch. The identities of its members is not public, however it is stated that they are large exchanges, financial institutions, and Bitcoin-focused companies. 
+  * Developed by Blockstream
+  * The peg is enforced by means of ordinary multisignature transactions. It does require a consortium to exist, and for participants of the system to trust that at least 2/3 of the federation is acting honestly.
+  * The federation members also maintain the consensus of the side chain by signing blocks in a round robin fashion.
+  * The Liquid side chain is based on the Bitcoin code base. However, it's throughput is 10x higher than Bitcoin's throughput as the block time was reduced to 1 minute.
+  * Liquid allows for users to create and transfer other assets using a feature called Issued Assets. 
+  * One of the main features of Liquid is its default use of Confidential Transactions. Confidential Transactions on Liquid allows any two parties to transact without anyone else being able to view the asset and amount transacted, not even the Liquid Federation members and functionaries.
+* [Rootstock](https://rootstock.io/static/a79b27d4889409602174df4710102056/RS-whitepaper.pdf)
+* [Stacks](https://docs.stacks.co/)
+* [Internet Computer](https://internetcomputer.org/docs/current/home)
+
 ### Rollups
 
-*Rollups* execute batches of transactions outside the main blockchain,
-convert them into one single piece of data and submit it to the
-main blockchain. [1]
+*Rollups* execute batches of transactions outside the main blockchain, convert them into one single piece of data and submit it to the main blockchain. [1]
 
 #### Optimistic Rollups
 
-*Optimistic rollups* assume transactions
-are valid. For a period of time, each user has the opportunity
-to challenge the transaction and, in such a case, must present a
-fraud proof. [1]
+*Optimistic rollups* assume transactions are valid. For a period of time, each user has the opportunity to challenge the transaction and, in such a case, must present a fraud proof. [1]
 
-Optimistic rollups have two main
-entities participating: aggregators and verifiers. Once an
-aggregator publishes a transaction, there is a period of
-time when each node acting as a verifier can monitor data
-published by the aggregator. If the verifier disagrees with
-the published data, she can challenge the transaction. To
-discourage aggregators and verifiers from acting maliciously,
-both the aggregator and verifier need to stake a bond. If the
-verifier can provide a fraud proof, the aggregator is fined.
-Otherwise, the verifier gets fined. [...] Only one honest verifier is needed to guarantee that the
-aggregator did not act maliciously.[1]
+Optimistic rollups have two main entities participating: aggregators and verifiers. Once an aggregator publishes a transaction, there is a period of time when each node acting as a verifier can monitor data published by the aggregator. If the verifier disagrees with the published data, she can challenge the transaction. To discourage aggregators and verifiers from acting maliciously, both the aggregator and verifier need to stake a bond. If the verifier can provide a fraud proof, the aggregator is fined. Otherwise, the verifier gets fined. [...] Only one honest verifier is needed to guarantee that the aggregator did not act maliciously.[1]
 
 #### Zero-knowledge Rollups
 
-*Zero-knowledge rollups* do not assume fair play, and together with transaction
-data, the aggregator provides a validity proof. [1]
+*Zero-knowledge rollups* do not assume fair play, and together with transaction data, the aggregator provides a validity proof. [1]
 
-While optimistic rollups use fraud proofs
-for security, Zero-Knowledge (ZK) rollups use validity
-proofs. Instead of allowing the aggregator
-to publish a transaction and then question it, in ZK
-rollups, the aggregator must prove the post-state root is
-the correct result of the batch execution using a validity
-proof. 
+While optimistic rollups use fraud proofs for security, Zero-Knowledge (ZK) rollups use validity proofs. Instead of allowing the aggregator to publish a transaction and then question it, in ZK rollups, the aggregator must prove the post-state root is the correct result of the batch execution using a validity proof. 
 
 #### Optimistic vs ZK Rollups
 
  Building
-a validity proof requires heavy computations; hence, ZK
-rollups’ offchain fees are higher than optimistic rollups. Additionally, a ZK rollup layer-1 transaction has a much
-higher fixed fee since it requires a validity proof verification
-hence gas fees are higher. [1]
+a validity proof requires heavy computations; hence, ZK rollups’ offchain fees are higher than optimistic rollups. Additionally, a ZK rollup layer-1 transaction has a much higher fixed fee since it requires a validity proof verification hence gas fees are higher. [1]
 
-Though, since optimistic rollups
-have a period where verifiers have an opportunity to publish a
-fraud proof, the users need to wait (usually a week) until their
-deposits can be withdrawn, while in ZK-rollups, deposits can
-be withdrawn immediately. [1]
+Though, since optimistic rollups have a period where verifiers have an opportunity to publish a fraud proof, the users need to wait (usually a week) until their deposits can be withdrawn, while in ZK-rollups, deposits can be withdrawn immediately. [1]
 
-* [BitVM](https://bitvm.org/) (is this L2?)
-* [SatoshiVM](https://docs.satoshivm.io/)
 * [BOB](https://docs.gobob.xyz/)
 * [Citrea](https://docs.citrea.xyz/)
 * [Alpen](https://www.alpenlabs.io/)
-* [Merlin](https://docs.merlinchain.io/merlin-docs)
-* [Dovi](https://dovil2.com/)
 
 ## Layer 1
 
 ### Miner Validated
 * [Bitcoin Script]()
+* [BitVM](https://bitvm.org/) (is this L2?)
 
 ### Client Validated
 * [EPOBC](https://github.com/chromaway/ngcccbase/wiki/EPOBC_simple)
@@ -102,10 +99,6 @@ be withdrawn immediately. [1]
 * https://www.hiro.so/blog/building-on-bitcoin-project-comparison
 * https://www.hiro.so/
 
-## Videos
-
-[BitVM: Smarter Bitcoin Contracts - Robin Linus (zerosync)](https://www.youtube.com/live/VIg7BjX_lJw)
-
 ## Articles
 [1] [SoK: Applications of Sketches and Rollups in Blockchain Networks](https://drive.google.com/file/d/1dJ2OsAc4QvIWzxR1JFFmMfMVYIrnXOWW/view), Arad Kotzer, Daniel Gandelman and Ori Rottenstreich; Technion, Florida State University
 * [Blockchain Scaling Using Rollups: A Comprehensive Survey](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9862815), LOUIS TREMBLAY THIBAULT, TOM SARRY, AND ABDELHAKIM SENHAJI HAFID; Montreal
@@ -119,8 +112,7 @@ Roberto Zunino
 * [SoK: Decentralized Finance (DeFi)](https://dl.acm.org/doi/pdf/10.1145/3558535.3559780)
 * [SoK: Communication Across Distributed Ledgers](https://eprint.iacr.org/2019/1128.pdf)
 * [Colored Coins whitepaper](https://www.etoro.com/wp-content/uploads/2022/03/Colored-Coins-white-paper-Digital-Assets.pdf), Yoni Assia, Vitalik Buterin, liorhakiLior, Meni Rosenfeld, Rotem Lev
-* [BitSNARK & Grail - Bitcoin Rails for Unlimited Smart Contracts & Scalability](https://assets-global.website-files.com/661e3b1622f7c56970b07a4c/662a7a89ce097389c876db57_BitSNARK__Grail.pdf)
-* [BitVMX: A CPU for Universal Computation on Bitcoin](https://bitvmx.org/files/bitvmx-whitepaper.pdf)
+
 
 
 
