@@ -1,7 +1,6 @@
 import "./App.css"
 import { useEffect, useState } from "react"
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import { Navbar } from "./components/Navbar"
 import { initFlowbite } from "flowbite"
 import {
   Auth,
@@ -11,9 +10,11 @@ import {
   Transaction,
   ComputerContext
 } from "@bitcoin-computer/components"
+import { Navbar } from "./components/Navbar"
 import Mint from "./components/Mint"
 import { AllAssets, MyAssets } from "./components/Assets"
 import { NftView } from "./components/Nft"
+import { paymentModSpec } from "./constants/modSpecs"
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -28,7 +29,7 @@ export default function App() {
       <UtilsContext.UtilsProvider>
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />
-          <Wallet />
+          <Wallet paymentModSpec={paymentModSpec} />
           <Navbar />
           <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
             <Routes>

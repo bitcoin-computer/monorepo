@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { Transaction } from '@bitcoin-computer/nakamotojs'
+import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
 
 const { Contract } = await import('@bitcoin-computer/lib')
@@ -36,7 +36,7 @@ export class SwapHelper {
     })
   }
 
-  async checkSwapTx(tx: Transaction, pubKeyA: string, pubKeyB: string) {
+  async checkSwapTx(tx: TransactionType, pubKeyA: string, pubKeyB: string) {
     const { exp, env, mod } = await this.computer.decode(tx)
     if (exp !== 'new Swap(a, b)') throw new Error('Unexpected expression')
     if (mod !== this.mod) throw new Error('Unexpected module specifier')

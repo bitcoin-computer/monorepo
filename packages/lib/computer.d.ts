@@ -372,4 +372,4 @@ declare class Computer {
   getMinimumFees(): number;
 }
 
-export { Computer, Contract, Mock };
+export { Computer, Contract, Mock, Transaction };
