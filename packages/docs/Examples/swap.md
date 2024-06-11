@@ -3,7 +3,15 @@ order: -30
 icon: arrow-switch
 ---
 
-# Swaps
+# Token Swap
+
+A token swap is the direct and immediate exchange of ownership of two tokens on the same chain. The swaps described below are atomic in the sense that either both assets change their owner or none of them. This enables trustless exchange, as the situation where the other party does not pay cannot arise.
+
+A token swap is similar to an atomic swap, the difference being that atomic swaps usually refer to the exchange of cryptocurrency on two different chains, whereas token swaps exchange tokens on the same chain.
+
+!!!
+We note that the definition of a token swap differs wildly from the legal definition of a swap. While a token swap is the immediate exchange of two tokens, a swap in the legal sense involves an option to buy or sell an asset at a later point in time.
+!!!
 
 ## Swap Using a Static Function
 
