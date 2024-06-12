@@ -165,7 +165,7 @@ If you have any questions, please let us know on <a href="https://t.me/thebitcoi
 
 ## Price
 
-The Bitcoin Computer is and will always be free to develop and test on testnet and regtest. It is free on mainnet for a limited time, currently only miner fees applies. We reserve the right to charge for the service in the future.
+The Bitcoin Computer is and will always be free on testnet and regtest. It is free on mainnet for a limited time, but we reserve the right to charge in the future. Currently only miner fees applies.
 
 ## Development Status
 
