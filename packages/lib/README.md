@@ -165,16 +165,11 @@ If you have any questions, please let us know on <a href="https://t.me/thebitcoi
 
 ## Price
 
-It is free to develop and test on testnet and regtest. On mainnet we charge a small fee to support the development:
-* The fee for a constructor or function call is satoshis-per-byte * 475. This is about as much as the average transaction fee for a payment.
-* The fee for deploying a module makes use of the segwit discount. It is satoshis-per-byte * data size * 1/4.
-
-This fee is in addition to the mining fee. You can configure satoshis per byte.
+The Bitcoin Computer is and will always be free on testnet and regtest. This version is free on mainnet, but we reserve the right to charge a small amount per transaction in future versions. Currently only miner fees apply.
 
 ## Development Status
 
-We are in beta, so there is a possibility of unknown bugs.
-Currently, mainnet is disabled in all jurisdictions.
+We are in beta, so there is a possibility of bugs.
 
 ## Legal Notice
 

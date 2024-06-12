@@ -140,10 +140,14 @@ describe('Computer', () => {
     expect(computer.getUrl()).eq('https://rltc.node.bitcoincomputer.io')
   })
 
-  it('Should throw an error for mainnet', async () => {
+  it('Should instantiate a computer object', async () => {
     const chain = 'BTC'
     const network = 'mainnet'
-    expect(() => new Computer({ chain, network, url })).to.throw('Mainnet is disabled in your jurisdiction')
+    const url = 'https://btc.node.bitcoincomputer.io' 
+    const computer = new Computer({ chain, network, url})
+    expect(computer.getChain()).eq(chain)
+    expect(computer.getNetwork()).eq(network)
+    expect(computer.getUrl()).eq(url)
   })
 })
 
