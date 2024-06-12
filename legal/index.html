@@ -9,34 +9,33 @@
     <meta name="generator" content="Retype 3.5.0">
 
     <!-- Primary Meta Tags -->
-    <title>query</title>
-    <meta name="title" content="query">
-    <meta name="description" content="Returns the latest revisions of smart objects. Conditions can be passed in to determine the smart objects.">
+    <title>Legal Notice</title>
+    <meta name="title" content="Legal Notice">
+    <meta name="description" content="Sanctioned Users are Prohibited. You may not access or use software developed and published by us if you are (i) a resident of any country with which...">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/lib/query/">
+    <link rel="canonical" href="/legal/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/lib/query/">
-    <meta property="og:title" content="query">
-    <meta property="og:description" content="Returns the latest revisions of smart objects. Conditions can be passed in to determine the smart objects.">
+    <meta property="og:url" content="/legal/">
+    <meta property="og:title" content="Legal Notice">
+    <meta property="og:description" content="Sanctioned Users are Prohibited. You may not access or use software developed and published by us if you are (i) a resident of any country with which...">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/lib/query/">
-    <meta property="twitter:title" content="query">
-    <meta property="twitter:description" content="Returns the latest revisions of smart objects. Conditions can be passed in to determine the smart objects.">
+    <meta property="twitter:url" content="/legal/">
+    <meta property="twitter:title" content="Legal Notice">
+    <meta property="twitter:description" content="Sanctioned Users are Prohibited. You may not access or use software developed and published by us if you are (i) a resident of any country with which...">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
-    <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.771529332233" rel="stylesheet">
+    <link href="../static/favicon.ico" rel="icon">
+    <link href="../resources/css/retype.css?v=3.5.0.771529332233" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.771529332233" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.771529332233" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.771529332233" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.771529332233" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.771529332233" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -51,7 +50,7 @@
                 <!-- Logo -->
                 <div class="flex items-center justify-between h-full py-2 md:w-75">
                     <div class="flex items-center px-2 md:px-6">
-                        <a id="docs-site-logo" href="../../" class="flex items-center leading-snug text-xl">
+                        <a id="docs-site-logo" href="../" class="flex items-center leading-snug text-xl">
                             <span class="dark:text-white font-semibold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
                         </a><span class="hidden px-2 py-1 ml-4 text-sm font-semibold leading-none text-root-logo-label-text bg-root-logo-label-bg rounded-sm md:inline-block">0.18.0</span>
                     </div>
@@ -151,144 +150,15 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="query" class="break-words">
+<doc-anchor-target id="legal-notice" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#query">#</doc-anchor-trigger>
-        <span>query</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#legal-notice">#</doc-anchor-trigger>
+        <span>Legal Notice</span>
     </h1>
 </doc-anchor-target>
-<p>Returns the latest revisions of smart objects. Conditions can be passed in to determine the smart objects. When multiple conditions are passed in, the latest revisions of the smart objects that satisfy all conditions are returned.</p>
-<doc-anchor-target id="type">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
-        <span>Type</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">&lt;T extends new (...args: any) =&gt; any&gt;(
-  query:
-    | {
-        ids: string[];
-      }
-    | {
-        publicKey?: string;
-        mod?: string;
-        limit?: number;
-        offset?: number;
-        order?: &quot;ASC&quot; | &quot;DEC&quot;;
-      }
-) =&gt; Promise&lt;string[]&gt;;</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">await computer.query({ publicKey })
-await computer.query({ ids })
-await computer.query({ mod })
-await computer.query({ publicKey, order })
-...</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="parameters">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#parameters">#</doc-anchor-trigger>
-        <span>Parameters</span>
-    </h3>
-</doc-anchor-target>
-<doc-anchor-target id="params">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#params">#</doc-anchor-trigger>
-        <span>params</span>
-    </h4>
-</doc-anchor-target>
-<p>An object with the query parameters.</p>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Key</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>publicKey</td>
-<td>string</td>
-<td>Return latest revisions of smart objects owned by a public key</td>
-</tr>
-<tr>
-<td>ids</td>
-<td>string[]</td>
-<td>Return latest revision of smart objects with ids in order</td>
-</tr>
-<tr>
-<td>mod</td>
-<td>string</td>
-<td>Return the latest revision of smart objects created with this module specifier</td>
-</tr>
-<tr>
-<td>limit</td>
-<td>number</td>
-<td>Return only limited number of revisions</td>
-</tr>
-<tr>
-<td>offset</td>
-<td>number</td>
-<td>Return results starting from offset</td>
-</tr>
-<tr>
-<td>order</td>
-<td>&#x27;ASC&#x27; | &#x27;DEC&#x27;</td>
-<td>Order results in ascending or descending order</td>
-</tr>
-</tbody>
-</table>
-</div>
-<doc-anchor-target id="return-value">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#return-value">#</doc-anchor-trigger>
-        <span>Return value</span>
-    </h3>
-</doc-anchor-target>
-<p>Given the query parameters, returns an array of strings encoding the latest revisions of smart objects that matches the specified conditions.</p>
-<doc-anchor-target id="examples">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">class A extends Contract { ... }
-a = await computer.new(A)
-
-// query by public key
-const publicKey = computer.getPublicKey()
-const [rev1] = await computer.query({ publicKey })
-expect(rev1).to.equal(a._rev)
-
-// query by id
-const ids = [a._id]
-const [rev2] = await computer.query({ ids })
-expect(rev2).to.equal(a._rev)
-
-// query by module specifier
-const mod = await computer.export(`export ${A}`)
-const b = await computer.new(A, [], mod)
-const [rev3] = await computer.query({ mod })
-expect(rev3).to.equal(b._rev)
-
-// query by multiple parameters
-const [revs5] = await computer.query({
-  limit: 10,
-  order: 'ASC',
-  publicKey: { computer.getPublicKey() }
-})
-expect(rev5).to.equal(a._rev)</code></pre>
-</doc-codeblock></div>
+<p><em>Sanctioned Users are Prohibited</em>. You may not access or use software developed and published by us if you are (i) a resident of any country with which transactions or dealings are prohibited by governmental sanctions imposed by the U.S., the United Nations, the European Union, the United Kingdom, or any other applicable jurisdiction (collectively, “Sanctions Regimes”); (ii) a person, entity or government prohibited under an applicable Sanctions Regime (“Sanctioned Person”), including the Office of Foreign Assets Control, Specially Designated Nationals and Blocked Persons List; or (iii) prohibited from accessing or using the Software pursuant to the laws, rules, and regulations in the jurisdiction in which you reside or otherwise access and use the Software.</p>
+<p><em>Users Must Comply with Applicable Law</em>. You may only access or use the Software in compliance with laws, rules, and regulations in the jurisdiction in which you reside or otherwise access and use the Software, including, as applicable, Sanctions Regimes, anti-money laundering laws and regulations, and securities laws and regulations.</p>
+<p><em>BCDB Does Not Endorse or Promote User Software Activity</em>.  We are publishing certain portions of the Software, on an open-source basis, to demonstrate the utility of the Bitcoin Computer.  As this Software is open-source, it may be modified and deployed for a wide range of uses that we may not have intended.  We do not endorse or promote, and expressly disclaim liability for, any non-BCDB use or modification of the Software.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -298,23 +168,16 @@ expect(rev5).to.equal(a._rev)</code></pre>
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../lib/new/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../lib/sync/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">new</span>
+                                                <span class="block mt-1">sync</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../lib/rpccall/">
-                                            <span>
-                                                <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">rpc​Call</span>
-                                            </span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
-                                        </a>
                                     </div>
                                 </nav>
                             </footer>
@@ -355,6 +218,6 @@ expect(rev5).to.equal(a._rev)</code></pre>
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "query", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Legal Notice", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
