@@ -33,3 +33,7 @@ npm run compile
 </font>
 
 You might have to restart the applications.
+
+## Legal Notice
+
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).

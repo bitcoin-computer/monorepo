@@ -289,6 +289,10 @@ See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#d
 
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price).
 
+## Legal Notice
+
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
+
 ## License
 
 This software is licensed under the [Creative Commons Attribution-NoDerivs 3.0 Unported](https://creativecommons.org/licenses/by-nd/3.0/) license.

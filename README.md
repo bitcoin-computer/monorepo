@@ -34,6 +34,10 @@ This monorepo contains everything you need to build smart contract based applica
 * [Docs](https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme) - The sources for the documentation
 * [Website](https://github.com/bitcoin-computer/monorepo/tree/main/packages/website#readme) - The sources for the website
 
+## Legal Notice
+
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
+
 ## Getting Help
 
 Have a look at the [docs](https://docs.bitcoincomputer.io/). If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
