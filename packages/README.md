@@ -26,3 +26,7 @@ This monorepo contains the following packages.
 ## Documentation
 * [Docs](https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme) - The sources for the documentation
 * [Website](https://github.com/bitcoin-computer/monorepo/tree/main/packages/website#readme) - The sources for the website
+
+## Legal Notice
+
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).

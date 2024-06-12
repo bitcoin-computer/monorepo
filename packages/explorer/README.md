@@ -85,6 +85,10 @@ If you want to add a feature we recommend to create a fork. Let us know if you h
 ## Development Status
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
+## Legal Notice
+
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
+
 ## MIT License
 
 Copyright (c) 2022 BCDB Inc.
