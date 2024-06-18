@@ -101,7 +101,7 @@ export function fromOutputScript(output, network) {
   try {
     return _toFutureSegwitAddress(output, network);
   } catch (e) {}
-  throw new Error(bscript.toASM(output) + ' has no matching Address');
+  return null;
 }
 export function toOutputScript(address, network) {
   network = network || networks.bitcoin;
