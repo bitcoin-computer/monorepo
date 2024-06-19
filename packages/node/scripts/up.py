@@ -22,7 +22,6 @@ def runSync(args, commandLine):
     for workerId in range(numWorkers):  
         standardTxCommand+=' && export WORKER_ID='+str(workerId+1)+' NUM_WORKERS='+str(numWorkers)+'; '+ commandLine+' run -d sync'
     
-    print(standardTxCommand)
     parallelCommand = standardTxCommand 
     p = subprocess.run(
         ['sh', '-c', parallelCommand], ) 

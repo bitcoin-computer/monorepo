@@ -338,9 +338,7 @@ declare class Computer {
   send(satoshis: number, address: string): Promise<string>;
   broadcast(tx: Transaction): Promise<string>;
   rpcCall(method: string, params: string): Promise<any>;
-  txFromHex({ hex }: {
-      hex: string;
-  }): Promise<TBCTransaction>;
+  static txFromHex({ hex }: { hex: string }): TBCTransaction;
   getChain(): TBCChain;
   getNetwork(): TBCNetwork;
   getMnemonic(): string;

@@ -4,11 +4,11 @@ CREATE TABLE IF NOT EXISTS
     "address" VARCHAR(66),
     "satoshis" BIGINT NOT NULL,
     "scriptPubKey" TEXT NOT NULL,
-    "publicKeys" VARCHAR(66)[],
-    "hash" VARCHAR(64),
-    "mod" VARCHAR(70),
     "isTbcOutput" BOOLEAN NOT NULL,
+    "publicKeys" VARCHAR(66)[],
+    "mod" VARCHAR(70),
     "previous" VARCHAR(70),
+    "hash" VARCHAR(64),
     "timestamp" timestamp default CURRENT_TIMESTAMP not null
   );
 
