@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.772135620429">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.772136263575">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Comparison</title>
     <meta name="title" content="Comparison">
-    <meta name="description" content="We give an overview over the existing smart contract systems on Bitcoin. We break down the analysis into Layer 1 and Layer 2 systems.">
+    <meta name="description" content="We compare the Bitcoin Computer to other smart contract systems.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/comparison/">
@@ -20,22 +20,22 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/comparison/">
     <meta property="og:title" content="Comparison">
-    <meta property="og:description" content="We give an overview over the existing smart contract systems on Bitcoin. We break down the analysis into Layer 1 and Layer 2 systems.">
+    <meta property="og:description" content="We compare the Bitcoin Computer to other smart contract systems.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/comparison/">
     <meta property="twitter:title" content="Comparison">
-    <meta property="twitter:description" content="We give an overview over the existing smart contract systems on Bitcoin. We break down the analysis into Layer 1 and Layer 2 systems.">
+    <meta property="twitter:description" content="We compare the Bitcoin Computer to other smart contract systems.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.5.0.772135620429" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.5.0.772136263575" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.772135620429" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.772136263575" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.772135620429" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.772136263575" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -156,7 +156,24 @@
         <span>Comparison</span>
     </h1>
 </doc-anchor-target>
-<p>We give an overview over the existing smart contract systems on Bitcoin. We break down the analysis into Layer 1 and Layer 2 systems. We call a smart contract system Layer 1 if the users communicate only via the Bitcoin blockchain and Layer2 otherwise.</p>
+<p>We compare the Bitcoin Computer to other smart contract systems. We classify smart contract systems into &quot;layer 1&quot; and &quot;layer 2&quot;, the distinction being that a layer 1 system communicate all data via the Bitcoin blockchain, whereas a layer 2 system makes use of some other storage device.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-blue-500 dark:bg-blue-400"></div>
+    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-blue-500 dark:text-blue-400" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>This section is under Construction</p>
+        </div>
+    </div>
+</div>
 <doc-anchor-target id="layer-2">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#layer-2">#</doc-anchor-trigger>
@@ -170,28 +187,29 @@
     </h3>
 </doc-anchor-target>
 <!-- Payment channels and networks do not enable smart contract on Bitcoin, however they use smart contracts to increase the throughput of Bitcoin. -->
-<p>The problem of scaling blockchains is in part caused by the need for all nodes to update if one user broadcasts a transaction. State channels allow two users to exchange transactions off-chain of which only the last one needs to be broadcast. This makes it possible to update a payment an unlimited number of times while only having to pay a fixed number number of transaction fees. In most designs, users need to broadcast one transaction to open a channel and one transaction to close the channel and commit to the last payment.</p>
-<p>To extend this design to an arbitrary number of users, state networks have been designed. Smart contracts called <a href="">HTLC</a>s can be used to chain state channels, without requiring the intermediate nodes to obtain custody of the payment. This enables efficient hub and spoke architectures where a central hub can forward payments between users.</p>
-<doc-anchor-target id="security-considerations">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#security-considerations">#</doc-anchor-trigger>
-        <span>Security Considerations</span>
-    </h4>
-</doc-anchor-target>
+<p>State (and payment) channels and networks were first introduced to lower fees and increase throughput. However, as they have recently been used to build smart contract systems, we briefly cover them here.</p>
+<p>State channels allow two users to exchange transactions off-chain of which only the last one needs to be broadcast. This makes it possible to update a payment an unlimited number of times while only having to pay a fixed number of transaction fees. In most designs, users need to broadcast one transaction to open a channel and one transaction to close the channel and commit to the last payment.</p>
+<p>To extend this design to an arbitrary number of users, state networks have been designed. Smart contracts called Hashed Timelock Contract (HTLCs) can be used to chain state channels, without requiring the intermediate nodes to obtain custody of the payment. This enables efficient hub and spoke architectures where a central hub can forward payments between users.</p>
 <doc-anchor-target id="examples">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
         <span>Examples</span>
     </h4>
 </doc-anchor-target>
-<ul>
-<li><p><a href="https://lightning.network/">Lightning Network</a> The lightning network extends the hub and spoke model to a decentralized network of payment channels. The key challenge is to solve the routing problem: in order to send a payment between two users a path of channels needs to be determined where each channel has sufficient liquidity to forward the payment. Critics of the lightning network would argue that this problem is similar to the problem that scaling blockchains via payment channels seeks to solve to begin with.</p>
-</li>
-<li><p><a href="https://ark-protocol.org/">Ark</a></p>
-</li>
-<li><p><a href="https://docs.rgb.info/">RGB</a></p>
-</li>
-</ul>
+<doc-panels>
+   <doc-panel id="lightning-network" collapsed>
+       <template #title>Lightning Network</template>
+<p>The lightning network extends the hub and spoke model to a decentralized network of payment channels. The key challenge is to solve the routing problem: in order to send a payment between two users a path of channels needs to be determined where each channel has sufficient liquidity to forward the payment. Critics of the lightning network would argue that this problem is similar to the problem that scaling blockchains via payment channels seeks to solve to begin with. <a href="https://lightning.network/">More info</a></p>
+   </doc-panel>
+   <doc-panel id="ark" collapsed>
+       <template #title>Ark</template>
+<p>Todo. <a href="https://ark-protocol.org/">More info</a></p>
+   </doc-panel>
+   <doc-panel id="rgb" collapsed>
+       <template #title>RGB</template>
+<p>Todo. <a href="https://docs.rgb.info/">More info</a></p>
+   </doc-panel>
+</doc-panels>
 <doc-anchor-target id="side-chains">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#side-chains">#</doc-anchor-trigger>
@@ -200,9 +218,9 @@
 </doc-anchor-target>
 <p>A sidechain is an independent blockchain that is tied to Bitcoin via a two-way-peg. The consensus of the side chain can differ from the consensus mechanism of Bitcoin, thereby potentially enhancing it&#x27;s throughput, smart contract capabilities, or privacy.</p>
 <p>To use the side chain a user can send Bitcoin to an address that is controlled by a federation. Once the Bitcoin is confirmed, the user is allowed to create an equivalent amount of tokens on the side chain. These token then can be used to access the enhanced functionality of the side chain. The user can use the peg-out mechanism to convert the coins on the sidechain back to tokens in the main chain.</p>
-<doc-anchor-target id="security-considerations-1">
+<doc-anchor-target id="security-considerations">
     <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#security-considerations-1">#</doc-anchor-trigger>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#security-considerations">#</doc-anchor-trigger>
         <span>Security Considerations</span>
     </h4>
 </doc-anchor-target>
@@ -213,8 +231,9 @@
         <span>Examples</span>
     </h4>
 </doc-anchor-target>
-<ul>
-<li><a href="https://docs.liquid.net/docs/technical-overview">Liquid</a>.
+<doc-panels>
+   <doc-panel id="liquid" collapsed>
+       <template #title>Liquid</template>
 <ul>
 <li>The federation consists of a fixed group of members that is defined at launch. The identities of its members is not public, however it is stated that they are large exchanges, financial institutions, and Bitcoin-focused companies.</li>
 <li>Developed by Blockstream</li>
@@ -222,20 +241,25 @@
 <li>The federation members also maintain the consensus of the side chain by signing blocks in a round robin fashion.</li>
 <li>The Liquid side chain is based on the Bitcoin code base. However, it&#x27;s throughput is 10x higher than Bitcoin&#x27;s throughput as the block time was reduced to 1 minute.</li>
 <li>Liquid allows for users to create and transfer other assets using a feature called Issued Assets.</li>
-<li>One of the main features of Liquid is its default use of Confidential Transactions. Confidential Transactions on Liquid allows any two parties to transact without anyone else being able to view the asset and amount transacted, not even the Liquid Federation members and functionaries.</li>
+<li>One of the main features of Liquid is its default use of Confidential Transactions. Confidential Transactions on Liquid allows any two parties to transact without anyone else being able to view the asset and amount transacted, not even the Liquid Federation members and functionaries. <a href="https://docs.liquid.net/docs/technical-overview">More info</a>.</li>
 </ul>
-</li>
-<li><a href="https://rootstock.io/static/a79b27d4889409602174df4710102056/RS-whitepaper.pdf">Rootstock</a></li>
-<li><a href="https://docs.stacks.co/">Stacks</a></li>
-<li><a href="https://internetcomputer.org/docs/current/home">Internet Computer</a></li>
-</ul>
+   </doc-panel>
+   <doc-panel id="rootstock" collapsed>
+       <template #title>Rootstock</template>
+<p>Todo. <a href="https://rootstock.io/static/a79b27d4889409602174df4710102056/RS-whitepaper.pdf">More info</a></p>
+   </doc-panel>
+   <doc-panel id="stacks" collapsed>
+       <template #title>Stacks</template>
+<p>Todo. <a href="https://docs.stacks.co/">More info</a></p>
+   </doc-panel>
+</doc-panels>
 <doc-anchor-target id="rollups">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#rollups">#</doc-anchor-trigger>
         <span>Rollups</span>
     </h3>
 </doc-anchor-target>
-<p><em>Rollups</em> execute batches of transactions outside the main blockchain, convert them into one single piece of data and submit it to the main blockchain. [1]</p>
+<p>Rollups execute batches of transactions outside the main blockchain, convert them into one single piece of data and submit it to the main blockchain. [1]</p>
 <doc-anchor-target id="optimistic-rollups">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#optimistic-rollups">#</doc-anchor-trigger>
@@ -261,41 +285,79 @@
 <p>Building
 a validity proof requires heavy computations; hence, ZK rollups’ offchain fees are higher than optimistic rollups. Additionally, a ZK rollup layer-1 transaction has a much higher fixed fee since it requires a validity proof verification hence gas fees are higher. [1]</p>
 <p>Though, since optimistic rollups have a period where verifiers have an opportunity to publish a fraud proof, the users need to wait (usually a week) until their deposits can be withdrawn, while in ZK-rollups, deposits can be withdrawn immediately. [1]</p>
-<ul>
-<li><a href="https://docs.gobob.xyz/">BOB</a></li>
-<li><a href="https://docs.citrea.xyz/">Citrea</a></li>
-<li><a href="https://www.alpenlabs.io/">Alpen</a></li>
-</ul>
+<doc-anchor-target id="examples-2">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#examples-2">#</doc-anchor-trigger>
+        <span>Examples</span>
+    </h4>
+</doc-anchor-target>
+<doc-panels>
+   <doc-panel id="bitvm" collapsed>
+       <template #title>BitVM</template>
+<p>Todo. <a href="https://bitvm.org/">More info</a></p>
+   </doc-panel>
+   <doc-panel id="citrea" collapsed>
+       <template #title>Citrea</template>
+<p>Todo. <a href="https://docs.citrea.xyz/">More info</a></p>
+   </doc-panel>
+   <doc-panel id="alpen" collapsed>
+       <template #title>Alpen</template>
+<p>Todo. <a href="https://www.alpenlabs.io/">More info</a></p>
+   </doc-panel>
+</doc-panels>
 <doc-anchor-target id="layer-1">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#layer-1">#</doc-anchor-trigger>
         <span>Layer 1</span>
     </h2>
 </doc-anchor-target>
-<doc-anchor-target id="miner-validated">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#miner-validated">#</doc-anchor-trigger>
-        <span>Miner Validated</span>
-    </h3>
+<p>Layer 1 smart contract systems generally label transactions with expressions. Users can evaluate these expressions and associate values with the outputs of the transactions. These protocols have the advantage that they inherit all the good properties of the underlying blockchain.</p>
+<p>Therefore layer 1 smart contracts are mostly distinguished by the set of programs they can express.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-blue-500 dark:bg-blue-400"></div>
+    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-blue-500 dark:text-blue-400" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>The Bitcoin Computer is to the best of our knowledge the only layer 1 smart contract system for Bitcoin that can express all computable programs.</p>
+        </div>
+    </div>
+</div>
+<doc-anchor-target id="examples-3">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#examples-3">#</doc-anchor-trigger>
+        <span>Examples</span>
+    </h4>
 </doc-anchor-target>
-<ul>
-<li><a href="">Bitcoin Script</a></li>
-<li><a href="https://bitvm.org/">BitVM</a> (is this L2?)</li>
-</ul>
-<doc-anchor-target id="client-validated">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#client-validated">#</doc-anchor-trigger>
-        <span>Client Validated</span>
-    </h3>
-</doc-anchor-target>
-<ul>
-<li><a href="https://github.com/chromaway/ngcccbase/wiki/EPOBC_simple">EPOBC</a></li>
-<li><a href="https://docs.counterparty.io/docs/basics/what-is-counterparty/">CounterParty</a></li>
-<li><a href="https://docs.ordinals.com/">Ordinals</a></li>
-<li><a href="https://domo-2.gitbook.io/brc-20-experiment">BRC20</a></li>
-<li><a href="https://docs.ordinals.com/runes.html">Runes</a></li>
-<li><a href="https://docs.bitcoincomputer.io/">Bitcoin Computer</a></li>
-</ul>
+<doc-panels>
+   <doc-panel id="epobc" collapsed>
+       <template #title>EPOBC</template>
+<p><a href="https://github.com/chromaway/ngcccbase/wiki/EPOBC_simple">More info</a></p>
+   </doc-panel>
+   <doc-panel id="counterparty" collapsed>
+       <template #title>CounterParty</template>
+<p><a href="https://docs.counterparty.io/docs/basics/what-is-counterparty/">More info</a></p>
+   </doc-panel>
+   <doc-panel id="brc20" collapsed>
+       <template #title>BRC20</template>
+<p><a href="https://domo-2.gitbook.io/brc-20-experiment">More info</a></p>
+   </doc-panel>
+   <doc-panel id="ordinals-runes" collapsed>
+       <template #title>Ordinals &amp; Runes</template>
+<p><a href="https://docs.ordinals.com/">More info</a></p>
+   </doc-panel>
+   <doc-panel id="bitcoin-computer" collapsed>
+       <template #title>Bitcoin Computer</template>
+<p><a href="https://docs.bitcoincomputer.io/">More info</a></p>
+   </doc-panel>
+</doc-panels>
 <doc-anchor-target id="references">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#references">#</doc-anchor-trigger>
@@ -314,20 +376,17 @@ a validity proof requires heavy computations; hence, ZK rollups’ offchain fees
         <span>Articles</span>
     </h2>
 </doc-anchor-target>
-<p>[1] <a href="https://drive.google.com/file/d/1dJ2OsAc4QvIWzxR1JFFmMfMVYIrnXOWW/view">SoK: Applications of Sketches and Rollups in Blockchain Networks</a>, Arad Kotzer, Daniel Gandelman and Ori Rottenstreich; Technion, Florida State University</p>
-<ul>
-<li><a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=9862815">Blockchain Scaling Using Rollups: A Comprehensive Survey</a>, LOUIS TREMBLAY THIBAULT, TOM SARRY, AND ABDELHAKIM SENHAJI HAFID; Montreal</li>
-<li><a href="https://eprint.iacr.org/2018/192.pdf">SoK: unraveling Bitcoin smart contracts</a>, Nicola Atzei, Massimo Bartoletti, Tiziana Cimoli, Stefano Lande; Cagliari, Trento
-Roberto Zunino</li>
-<li><a href="https://www.researchgate.net/publication/373825700_Beyond_Bitcoin_A_Review_Study_on_the_Diverse_Future_of_Cryptocurrency">Beyond Bitcoin: A Review Study on the Diverse Future of Cryptocurrency</a>, Mohammed Faez Hasan, University of Kerbala</li>
-<li><a href="https://eprint.iacr.org/2018/122.pdf">BitML: A Calculus for Bitcoin Smart Contracts</a>, Massimo Bartoletti, Roberto Zunino; Cagliari, Trento</li>
-<li><a href="https://www.researchgate.net/profile/Bhabendu-Mohanta/publication/328581609_An_Overview_of_Smart_Contract_and_Use_Cases_in_Blockchain_Technology/links/5bf398a592851c6b27cbfeac/An-Overview-of-Smart-Contract-and-Use-Cases-in-Blockchain-Technology.pdf">An Overview of Smart Contract and Use cases in Blockchain Technology</a>, Bhabendu Kumar Mohanta, Soumyashree S Panda, Debasish Jena; IIIT Bhubaneswar</li>
-<li><a href="https://arxiv.org/pdf/2107.10881">Layer 2 Blockchain Scaling: a Survey</a>, Cosimo Sguanci, Roberto Spatafora, Andrea Mario Vergani; Polytechnico Milano</li>
-<li><a href="https://arxiv.org/pdf/2404.16150">A Rollup Comparison Framework</a>, Jan Gorzny, Martin Derka; Zircuit</li>
-<li><a href="https://dl.acm.org/doi/pdf/10.1145/3558535.3559780">SoK: Decentralized Finance (DeFi)</a></li>
-<li><a href="https://eprint.iacr.org/2019/1128.pdf">SoK: Communication Across Distributed Ledgers</a></li>
-<li><a href="https://www.etoro.com/wp-content/uploads/2022/03/Colored-Coins-white-paper-Digital-Assets.pdf">Colored Coins whitepaper</a>, Yoni Assia, Vitalik Buterin, liorhakiLior, Meni Rosenfeld, Rotem Lev</li>
-</ul>
+<p>[1] <a href="https://drive.google.com/file/d/1dJ2OsAc4QvIWzxR1JFFmMfMVYIrnXOWW/view">SoK: Applications of Sketches and Rollups in Blockchain Networks</a>, Arad Kotzer, Daniel Gandelman and Ori Rottenstreich; Technion, Florida State University<br />
+[2] <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=9862815">Blockchain Scaling Using Rollups: A Comprehensive Survey</a>, Louis Tremblay Thibault, Tom Sarry, and Abdelhakim Senhaji Hafid; Montreal<br />
+[3] <a href="https://eprint.iacr.org/2018/192.pdf">SoK: unraveling Bitcoin smart contracts</a>, Nicola Atzei, Massimo Bartoletti, Tiziana Cimoli, Stefano Lande, Roberto Zunino; Cagliari, Trento<br />
+[4] <a href="https://www.researchgate.net/publication/373825700_Beyond_Bitcoin_A_Review_Study_on_the_Diverse_Future_of_Cryptocurrency">Beyond Bitcoin: A Review Study on the Diverse Future of Cryptocurrency</a>, Mohammed Faez Hasan, University of Kerbala<br />
+[5] <a href="https://eprint.iacr.org/2018/122.pdf">BitML: A Calculus for Bitcoin Smart Contracts</a>, Massimo Bartoletti, Roberto Zunino; Cagliari, Trento<br />
+[6] <a href="https://www.researchgate.net/profile/Bhabendu-Mohanta/publication/328581609_An_Overview_of_Smart_Contract_and_Use_Cases_in_Blockchain_Technology/links/5bf398a592851c6b27cbfeac/An-Overview-of-Smart-Contract-and-Use-Cases-in-Blockchain-Technology.pdf">An Overview of Smart Contract and Use cases in Blockchain Technology</a>, Bhabendu Kumar Mohanta, Soumyashree S Panda, Debasish Jena; IIIT Bhubaneswar<br />
+[7] <a href="https://arxiv.org/pdf/2107.10881">Layer 2 Blockchain Scaling: a Survey</a>, Cosimo Sguanci, Roberto Spatafora, Andrea Mario Vergani; Polytechnico Milano<br />
+[8] <a href="https://arxiv.org/pdf/2404.16150">A Rollup Comparison Framework</a>, Jan Gorzny, Martin Derka; Zircuit<br />
+[9] <a href="https://dl.acm.org/doi/pdf/10.1145/3558535.3559780">SoK: Decentralized Finance (DeFi)</a><br />
+[10] <a href="https://eprint.iacr.org/2019/1128.pdf">SoK: Communication Across Distributed Ledgers</a><br />
+[11] <a href="https://www.etoro.com/wp-content/uploads/2022/03/Colored-Coins-white-paper-Digital-Assets.pdf">Colored Coins whitepaper</a>, Yoni Assia, Vitalik Buterin, liorhakiLior, Meni Rosenfeld, Rotem Lev<br /></p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -335,6 +394,27 @@ Roberto Zunino</li>
                             </div>
                             <footer class="clear-both">
                             
+                                <nav class="flex mt-14">
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../format/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                            <span>
+                                                <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
+                                                <span class="block mt-1">Transaction Format</span>
+                                            </span>
+                                        </a>
+                                    </div>
+                            
+                                    <div class="w-1/2">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../examples/">
+                                            <span>
+                                                <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
+                                                <span class="block mt-1">Examples</span>
+                                            </span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                                        </a>
+                                    </div>
+                                </nav>
                             </footer>
                         </main>
                 
