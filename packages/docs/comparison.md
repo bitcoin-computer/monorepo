@@ -17,9 +17,9 @@ This section is under Construction
 
 <!-- Payment channels and networks do not enable smart contract on Bitcoin, however they use smart contracts to increase the throughput of Bitcoin. -->
 
-State (and payment) channels and networks were first introduced to lower fees and increase throughput. However, as they have recently they have been used to build smart contract systems, we briefly cover them here.
+State (and payment) channels and networks were first introduced to lower fees and increase throughput. However, as they have recently been used to build smart contract systems, we briefly cover them here.
 
-State channels allow two users to exchange transactions off-chain of which only the last one needs to be broadcast. This makes it possible to update a payment an unlimited number of times while only having to pay a fixed number number of transaction fees. In most designs, users need to broadcast one transaction to open a channel and one transaction to close the channel and commit to the last payment.
+State channels allow two users to exchange transactions off-chain of which only the last one needs to be broadcast. This makes it possible to update a payment an unlimited number of times while only having to pay a fixed number of transaction fees. In most designs, users need to broadcast one transaction to open a channel and one transaction to close the channel and commit to the last payment.
 
 To extend this design to an arbitrary number of users, state networks have been designed. Smart contracts called Hashed Timelock Contract (HTLCs) can be used to chain state channels, without requiring the intermediate nodes to obtain custody of the payment. This enables efficient hub and spoke architectures where a central hub can forward payments between users.
 
