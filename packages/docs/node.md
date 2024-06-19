@@ -1,23 +1,9 @@
 ---
 order: -50
 icon: package
-visibility: hidden
 ---
 
-# Node (Under Construction)
-
-## Features
-
-* Supports queries for the balance, the UTXO set, and the list of transactions of any address.
-* Multiplatform Docker images work on all major computer architectures (linux/amd64, linux/arm/v7, linux/arm64)
-* You can start the node in a single line of code.
-* Allow and deny access to Bitcoin RPC endpoints using a regular expression
-* Filter IP addresses by country
-* Enforce allowlist and denylist
-* Optimized for running large test suites on regtest
-* Synchronizes in parallel and makes use of all cores of a machine.
-* Simple architecture, consisting of bitcoind and a psql database
-* All functionality of a Bitcoin node (build, sign, and broadcast txs)
+# Node
 
 
 ## Prerequisites
