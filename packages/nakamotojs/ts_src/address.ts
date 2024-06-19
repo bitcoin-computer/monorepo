@@ -117,10 +117,7 @@ export function toBech32(
     : bech32m.encode(prefix, words);
 }
 
-export function fromOutputScript(
-  output: Buffer,
-  network?: Network,
-): string | null {
+export function fromOutputScript(output: Buffer, network?: Network): string {
   // TODO: Network
   network = network || networks.bitcoin;
 
@@ -143,7 +140,7 @@ export function fromOutputScript(
     return _toFutureSegwitAddress(output, network);
   } catch (e) {}
 
-  return null;
+  throw new Error(bscript.toASM(output) + ' has no matching Address');
 }
 
 export function toOutputScript(address: string, network?: Network): Buffer {

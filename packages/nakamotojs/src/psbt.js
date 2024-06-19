@@ -146,11 +146,10 @@ export class Psbt {
   }
   get txOutputs() {
     return this.__CACHE.__TX.outs.map(output => {
-      const address = fromOutputScript(output.script, this.opts.network);
-      if (address === null)
-        throw new Error(
-          bscript.toASM(output.script) + ' has no matching Address',
-        );
+      let address;
+      try {
+        address = fromOutputScript(output.script, this.opts.network);
+      } catch (_) {}
       return {
         script: cloneBuffer(output.script),
         value: output.value,
