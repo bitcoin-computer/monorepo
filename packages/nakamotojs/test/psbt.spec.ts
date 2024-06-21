@@ -2,7 +2,7 @@
 // @ts-ignore
 import assert from 'assert';
 import { BIP32Factory } from 'bip32';
-import * as ecc from '@bitcoin-computer/tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/secp256k1';
 import * as crypto from 'crypto';
 import { ECPairFactory } from 'ecpair';
 import { describe, it } from 'mocha';

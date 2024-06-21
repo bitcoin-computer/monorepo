@@ -3,7 +3,7 @@
 import assert from 'assert';
 import { PsbtInput } from 'bip174/src/lib/interfaces';
 import { ECPairFactory } from 'ecpair';
-import * as ecc from '@bitcoin-computer/tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/secp256k1';
 import { before, describe, it } from 'mocha';
 import * as bitcoin from '../../src/index.js';
 import { regtestUtils } from './_regtest.js';

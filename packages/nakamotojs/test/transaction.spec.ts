@@ -3,7 +3,7 @@
 import assert from 'assert';
 import { beforeEach, describe, it } from 'mocha';
 import { Transaction } from '../src/index.js';
-import * as ecc from '@bitcoin-computer/tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/secp256k1';
 import { ECPairFactory } from 'ecpair';
 import * as bscript from '../src/script.js';
 import * as payments from '../src/payments/index.js';
