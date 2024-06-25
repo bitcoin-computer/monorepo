@@ -7,7 +7,13 @@ import { useUtilsComponents, UtilsContext } from "./UtilsContext"
 import { ComputerContext } from "./ComputerContext"
 import { Computer } from "@bitcoin-computer/lib"
 
-const Balance = ({ computer, paymentModSpec }: { computer: Computer; paymentModSpec: any }) => {
+const Balance = ({
+  computer,
+  paymentModSpec
+}: {
+  computer: Computer
+  paymentModSpec: string | undefined
+}) => {
   const [balance, setBalance] = useState<number>(0)
   const [chain, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
@@ -16,10 +22,12 @@ const Balance = ({ computer, paymentModSpec }: { computer: Computer; paymentModS
     try {
       showLoader(true)
       if (computer) {
-        const paymentRevs = await computer.query({
-          publicKey: computer.getPublicKey(),
-          mod: paymentModSpec
-        })
+        const paymentRevs = paymentModSpec
+          ? await computer.query({
+              publicKey: computer.getPublicKey(),
+              mod: paymentModSpec
+            })
+          : []
         const payments = (await Promise.all(paymentRevs.map((rev) => computer.sync(rev)))) as any[]
         let amountsInPaymentToken = 0
 
@@ -243,10 +251,12 @@ function SendMoneyButton({
       if (requiredAmountToBeTransferred + TRANSACTION_FEE < availableWalletBalance) {
         await computer.send(requiredAmountToBeTransferred, address)
       } else {
-        const paymentRevs = await computer.query({
-          publicKey: computer.getPublicKey(),
-          mod: paymentModSpec
-        })
+        const paymentRevs = paymentModSpec
+          ? await computer.query({
+              publicKey: computer.getPublicKey(),
+              mod: paymentModSpec
+            })
+          : []
         const payments = (await Promise.all(
           paymentRevs.map((rev: string) => computer.sync(rev))
         )) as any[] // should import payment class
@@ -323,7 +333,13 @@ function SendMoneyButton({
   )
 }
 
-function SendMoneyForm({ computer, paymentModSpec }: { computer: any; paymentModSpec: string }) {
+function SendMoneyForm({
+  computer,
+  paymentModSpec
+}: {
+  computer: any
+  paymentModSpec: string | undefined
+}) {
   const [address, setAddress] = useState<string>("")
   const [amount, setAmount] = useState<string>("")
 
@@ -355,7 +371,7 @@ function SendMoneyForm({ computer, paymentModSpec }: { computer: any; paymentMod
   )
 }
 
-export function Wallet({ paymentModSpec }: { paymentModSpec: string }) {
+export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
   const computer = useContext(ComputerContext)
 
   const Content = () => (
