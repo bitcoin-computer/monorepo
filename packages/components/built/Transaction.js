@@ -49,6 +49,7 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-run
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import reactStringReplace from "react-string-replace";
+import { Computer } from "@bitcoin-computer/lib";
 import { Card } from "./Card";
 import { ComputerContext } from "./ComputerContext";
 function ExpressionCard(_a) {
@@ -82,12 +83,10 @@ function Component() {
                         return [4 /*yield*/, computer.wallet.restClient.getRawTxs([params.txn])];
                     case 1:
                         hex = (_a.sent())[0];
-                        return [4 /*yield*/, computer.txFromHex({ hex: hex })];
-                    case 2:
-                        tx = (_a.sent()).tx;
+                        tx = Computer.txFromHex({ hex: hex }).tx;
                         setTxnData(tx);
                         return [4 /*yield*/, computer.rpcCall("getrawtransaction", "".concat(params.txn, " 2"))];
-                    case 3:
+                    case 2:
                         result = (_a.sent()).result;
                         setRPCTxnData(result);
                         return [2 /*return*/];
