@@ -3,7 +3,7 @@
 import assert from 'assert';
 import { describe, it } from 'mocha';
 import * as bscript from '../src/script.js';
-import * as ecc from '@bitcoin-computer/tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/secp256k1';
 import { initEccLib } from '../src/ecc_lib.js';
 import * as fixturesModule from './fixtures/script.json' assert { type: 'json' };
 const fixtures: typeof import('./fixtures/script.json') =

@@ -2,7 +2,7 @@
 // @ts-ignore
 import assert from 'assert';
 import { describe, it } from 'mocha';
-import * as ecc from '@bitcoin-computer/tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/secp256k1';
 import * as baddress from '../src/address.js';
 import * as bscript from '../src/script.js';
 import { NETWORKS } from '../src/networks.js';
