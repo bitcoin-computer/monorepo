@@ -59,22 +59,29 @@ var Balance = function (_a) {
     var _c = useState(localStorage.getItem("CHAIN") || "LTC"), chain = _c[0], setChain = _c[1];
     var _d = UtilsContext.useUtilsComponents(), showSnackBar = _d.showSnackBar, showLoader = _d.showLoader;
     var refreshBalance = useCallback(function () { return __awaiter(void 0, void 0, void 0, function () {
-        var paymentRevs, payments, amountsInPaymentToken_1, availableWalletBalance, err_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var paymentRevs, _a, payments, amountsInPaymentToken_1, availableWalletBalance, err_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
-                    _a.trys.push([0, 5, , 6]);
+                    _b.trys.push([0, 7, , 8]);
                     showLoader(true);
-                    if (!computer) return [3 /*break*/, 4];
+                    if (!computer) return [3 /*break*/, 6];
+                    if (!paymentModSpec) return [3 /*break*/, 2];
                     return [4 /*yield*/, computer.query({
                             publicKey: computer.getPublicKey(),
                             mod: paymentModSpec
                         })];
                 case 1:
-                    paymentRevs = _a.sent();
-                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                    _a = _b.sent();
+                    return [3 /*break*/, 3];
                 case 2:
-                    payments = (_a.sent());
+                    _a = [];
+                    _b.label = 3;
+                case 3:
+                    paymentRevs = _a;
+                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                case 4:
+                    payments = (_b.sent());
                     amountsInPaymentToken_1 = 0;
                     if (payments && payments.length) {
                         payments.forEach(function (pay) {
@@ -82,20 +89,20 @@ var Balance = function (_a) {
                         });
                     }
                     return [4 /*yield*/, computer.getBalance()];
-                case 3:
-                    availableWalletBalance = _a.sent();
+                case 5:
+                    availableWalletBalance = _b.sent();
                     setBalance(availableWalletBalance + amountsInPaymentToken_1);
                     setChain(computer.getChain());
-                    _a.label = 4;
-                case 4:
+                    _b.label = 6;
+                case 6:
                     showLoader(false);
-                    return [3 /*break*/, 6];
-                case 5:
-                    err_1 = _a.sent();
+                    return [3 /*break*/, 8];
+                case 7:
+                    err_1 = _b.sent();
                     showLoader(false);
                     showSnackBar("Error fetching wallet details", false);
-                    return [3 /*break*/, 6];
-                case 6: return [2 /*return*/];
+                    return [3 /*break*/, 8];
+                case 8: return [2 /*return*/];
             }
         });
     }); }, [computer]);
@@ -150,15 +157,15 @@ function SendMoneyButton(_a) {
     var computer = _a.computer, amount = _a.amount, address = _a.address, setAmount = _a.setAmount, setAddress = _a.setAddress, paymentModSpec = _a.paymentModSpec;
     var _b = useUtilsComponents(), showSnackBar = _b.showSnackBar, showLoader = _b.showLoader;
     var send = function (e) { return __awaiter(_this, void 0, void 0, function () {
-        var TRANSACTION_FEE, floatAmount, availableWalletBalance, requiredAmountToBeTransferred, paymentRevs, payments, amountsInPaymentToken_2, sortedPayments, paymentsToBeWithdraw, newAvailableAmount, i, pay, error_1;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
+        var TRANSACTION_FEE, floatAmount, availableWalletBalance, requiredAmountToBeTransferred, paymentRevs, _a, payments, amountsInPaymentToken_2, sortedPayments, paymentsToBeWithdraw, newAvailableAmount, i, pay, error_1;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
                 case 0:
                     e.preventDefault();
                     TRANSACTION_FEE = computer.getMinimumFees();
-                    _a.label = 1;
+                    _b.label = 1;
                 case 1:
-                    _a.trys.push([1, 10, , 11]);
+                    _b.trys.push([1, 12, , 13]);
                     if (!Auth.isLoggedIn())
                         throw new Error("Please log in first.");
                     if (!address) {
@@ -172,22 +179,30 @@ function SendMoneyButton(_a) {
                     }
                     return [4 /*yield*/, computer.getBalance()];
                 case 2:
-                    availableWalletBalance = _a.sent();
+                    availableWalletBalance = _b.sent();
                     requiredAmountToBeTransferred = floatAmount * 1e8;
                     if (!(requiredAmountToBeTransferred + TRANSACTION_FEE < availableWalletBalance)) return [3 /*break*/, 4];
                     return [4 /*yield*/, computer.send(requiredAmountToBeTransferred, address)];
                 case 3:
-                    _a.sent();
-                    return [3 /*break*/, 9];
-                case 4: return [4 /*yield*/, computer.query({
-                        publicKey: computer.getPublicKey(),
-                        mod: paymentModSpec
-                    })];
+                    _b.sent();
+                    return [3 /*break*/, 11];
+                case 4:
+                    if (!paymentModSpec) return [3 /*break*/, 6];
+                    return [4 /*yield*/, computer.query({
+                            publicKey: computer.getPublicKey(),
+                            mod: paymentModSpec
+                        })];
                 case 5:
-                    paymentRevs = _a.sent();
-                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                    _a = _b.sent();
+                    return [3 /*break*/, 7];
                 case 6:
-                    payments = (_a.sent()) // should import payment class
+                    _a = [];
+                    _b.label = 7;
+                case 7:
+                    paymentRevs = _a;
+                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                case 8:
+                    payments = (_b.sent()) // should import payment class
                     ;
                     amountsInPaymentToken_2 = 0;
                     if (payments && payments.length) {
@@ -218,24 +233,24 @@ function SendMoneyButton(_a) {
                         }
                     }
                     return [4 /*yield*/, Promise.all(paymentsToBeWithdraw)];
-                case 7:
-                    _a.sent();
-                    return [4 /*yield*/, computer.send(requiredAmountToBeTransferred, address)];
-                case 8:
-                    _a.sent();
-                    _a.label = 9;
                 case 9:
+                    _b.sent();
+                    return [4 /*yield*/, computer.send(requiredAmountToBeTransferred, address)];
+                case 10:
+                    _b.sent();
+                    _b.label = 11;
+                case 11:
                     showSnackBar("".concat(amount, " ").concat(computer.getChain(), " trasferred successfully."), true);
                     setAmount("");
                     setAddress("");
-                    return [3 /*break*/, 11];
-                case 10:
-                    error_1 = _a.sent();
+                    return [3 /*break*/, 13];
+                case 12:
+                    error_1 = _b.sent();
                     if (error_1 instanceof Error) {
                         showSnackBar(error_1.message, false);
                     }
                     return [2 /*return*/];
-                case 11: return [2 /*return*/];
+                case 13: return [2 /*return*/];
             }
         });
     }); };

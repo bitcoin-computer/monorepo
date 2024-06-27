@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 // @ts-ignore
 import assert from 'assert';
-import * as ecc from '@bitcoin-computer/tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/secp256k1';
 import { describe, it } from 'mocha';
 import { PaymentCreator } from '../src/payments/index.js';
 import * as u from './payments.utils.js';

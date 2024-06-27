@@ -5,7 +5,7 @@ const assert: typeof import('assert') = assertModule.default || assertModule;
 import { BIP32Factory } from 'bip32';
 import * as bip39 from 'bip39';
 import { ECPairFactory } from 'ecpair';
-import * as ecc from '@bitcoin-computer/tiny-secp256k1';
+import * as ecc from '@bitcoin-computer/secp256k1';
 import { describe, it } from 'mocha';
 import { PsbtInput, TapLeafScript } from 'bip174/src/lib/interfaces';
 import * as bitcoin from '../../src/index.js';
