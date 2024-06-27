@@ -10,7 +10,6 @@ import {
   SaleHelper
 } from "@bitcoin-computer/swap"
 const { Computer } = await import("@bitcoin-computer/lib")
-import fs from "fs"
 
 config()
 
@@ -69,16 +68,15 @@ rl.question(q, async (answer) => {
       const paymentHelper = new PaymentHelper(computer)
       const paymentModSpec = await paymentHelper.deploy()
 
-      // Write deployment results to file
-      const modSpecsContent = `// This file contains module specifiers for deployed contracts
-export const nftModSpec = '${modSpec}'
-export const offerModSpec = '${offerModSpec}'
-export const saleModSpec = '${saleModSpec}'
-export const paymentModSpec = '${paymentModSpec}'
-`
-      fs.writeFileSync("src/constants/modSpecs.ts", modSpecsContent)
+      // Log the module specifiers
+      console.log(`// Updaate env variables/file with module specifiers for deployed contracts
+REACT_APP_NFT_MOD_SPEC=${modSpec}
+REACT_APP_OFFER_MOD_SPEC=${offerModSpec}
+REACT_APP_SALE_MOD_SPEC=${saleModSpec}
+REACT_APP_PAYMENT_MOD_SPEC=${paymentModSpec}
+`)
 
-      console.log("\nDeployment successful. Results written to src/constants/modSpecs.ts")
+      console.log("\nDeployment successful. Please update your env variables.")
     } catch (err) {
       console.log(err)
     }
