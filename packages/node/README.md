@@ -230,7 +230,8 @@ LOG_MAX_SIZE='20m'
 LOG_ZIP='false'
 
 # Show logs attached to the Console transport
-SHOW_CONSOLE_LOGS='true'
+SHOW_CONSOLE_LOGS='dev'
+SHOW_DB_LOGS='false'
 
 # Rate Limiting Settings
 RATE_LIMIT_ENABLED='false'
@@ -248,14 +249,14 @@ BANNED_COUNTRIES=
 
 ### Configure Parallelism
 
-By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
+By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-threads` flag to limit the number of cores used.
 
 <font size=1>
 
 ```shell
-npm run up -- -t -cpus 16
+npm run up -- -t -threads 16
 ```
-
+A minimum of four threads is the basic configuration to distribute the services of a bitcoin computer node. Scaling the number of threads can speed up the synchronization process. The table below shows the synchronization times for different architectures.
 </font>
 
 ## Estimated Server Costs

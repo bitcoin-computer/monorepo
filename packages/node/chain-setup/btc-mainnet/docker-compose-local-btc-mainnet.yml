@@ -71,8 +71,7 @@ services:
       - RPC_PROTOCOL=http
       - RPC_USER=${RPC_USER}
       - RPC_PASSWORD=${RPC_PASSWORD}
-      - WORKER_ID=${WORKER_ID}
-      - NUM_WORKERS=${NUM_WORKERS}
+      - THREADS=${THREADS}
     volumes:
       - ./logs:/dist/packages/node/logs
     networks:
