@@ -379,14 +379,10 @@ function FaucetForm({ computer }: { computer: Computer }) {
 
   return (
     <>
-      <h6 className="text-lg font-bold dark:text-white">Faucet Your Wallet</h6>
-      {/* <div className="space-y-4">
-        <form className="space-y-6">
-          <div>
-            <AmountInput chain={computer.getChain()} amount={amount} setAmount={setAmount} />
-          </div>
-        </form>
-      </div> */}
+      <h6 className="text-lg font-bold dark:text-white">Fund Your Wallet</h6>
+      <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
+        Click below to get free regtest coins.
+      </p>
       <div className="flex items-center pt-4 rounded-b dark:border-gray-600">
         <button
           onClick={async (e) => {
@@ -401,7 +397,7 @@ function FaucetForm({ computer }: { computer: Computer }) {
           type="submit"
           className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
-          Get {computer.getChain()}(s)
+          Fund
         </button>
       </div>
     </>
