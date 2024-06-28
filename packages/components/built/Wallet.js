@@ -207,7 +207,6 @@ function SendMoneyButton(_a) {
                     amountsInPaymentToken_2 = 0;
                     if (payments && payments.length) {
                         payments.forEach(function (pay) {
-                            // hardcoded for LTC
                             amountsInPaymentToken_2 += pay._amount - TRANSACTION_FEE;
                         });
                     }
@@ -223,9 +222,7 @@ function SendMoneyButton(_a) {
                     newAvailableAmount = 0;
                     for (i = 0; i < sortedPayments.length; i++) {
                         pay = sortedPayments[i];
-                        // hardcoded for LTC
                         newAvailableAmount += pay._amount - TRANSACTION_FEE;
-                        // hardcoded for LTC
                         paymentsToBeWithdraw.push(pay.setAmount(TRANSACTION_FEE));
                         if (requiredAmountToBeTransferred + TRANSACTION_FEE <
                             availableWalletBalance + newAvailableAmount) {
@@ -282,12 +279,41 @@ function SendMoneyForm(_a) {
     useEffect(function () {
         initFlowbite();
     }, []);
-    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(AddressInput, { address: address, setAddress: setAddress }), _jsx(AmountInput, { chain: computer.getChain(), amount: amount, setAmount: setAmount })] }) })) })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsx(SendMoneyButton, { address: address, amount: amount, computer: computer, paymentModSpec: paymentModSpec, setAddress: setAddress, setAmount: setAmount }) }))] }));
+    return (_jsxs(_Fragment, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Transfer" })), _jsx("div", __assign({ className: "space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(AddressInput, { address: address, setAddress: setAddress }), _jsx(AmountInput, { chain: computer.getChain(), amount: amount, setAmount: setAmount })] }) })) })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsx(SendMoneyButton, { address: address, amount: amount, computer: computer, paymentModSpec: paymentModSpec, setAddress: setAddress, setAmount: setAmount }) }))] }));
+}
+function FaucetForm(_a) {
+    var _this = this;
+    var computer = _a.computer;
+    var _b = useState(""), amount = _b[0], setAmount = _b[1];
+    useEffect(function () {
+        initFlowbite();
+    }, []);
+    var showLoader = useUtilsComponents().showLoader;
+    return (_jsxs(_Fragment, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Faucet Your Wallet" })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsxs("button", __assign({ onClick: function (e) { return __awaiter(_this, void 0, void 0, function () {
+                        var error_3;
+                        return __generator(this, function (_a) {
+                            switch (_a.label) {
+                                case 0:
+                                    _a.trys.push([0, 2, , 3]);
+                                    showLoader(true);
+                                    return [4 /*yield*/, computer.faucet(1e7)];
+                                case 1:
+                                    _a.sent();
+                                    showLoader(false);
+                                    return [3 /*break*/, 3];
+                                case 2:
+                                    error_3 = _a.sent();
+                                    showLoader(false);
+                                    return [3 /*break*/, 3];
+                                case 3: return [2 /*return*/];
+                            }
+                        });
+                    }); }, type: "submit", className: "px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: ["Get ", computer.getChain(), "(s)"] })) }))] }));
 }
 export function Wallet(_a) {
     var paymentModSpec = _a.paymentModSpec;
     var computer = useContext(ComputerContext);
-    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(SendMoneyForm, { computer: computer, paymentModSpec: paymentModSpec }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
+    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(FaucetForm, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(SendMoneyForm, { computer: computer, paymentModSpec: paymentModSpec }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export var WalletComponents = {
