@@ -381,14 +381,14 @@ function FaucetForm({ computer }: { computer: Computer }) {
     <>
       <h6 className="text-lg font-bold dark:text-white">Fund Your Wallet</h6>
       <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-        Click below to get free regtest coins.
+        Click below to get 1 free regtest coin.
       </p>
       <div className="flex items-center pt-4 rounded-b dark:border-gray-600">
         <button
           onClick={async (e) => {
             try {
               showLoader(true)
-              await computer.faucet(1e7)
+              await computer.faucet(1e8)
               showLoader(false)
             } catch (error) {
               showLoader(false)
