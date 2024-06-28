@@ -247,7 +247,6 @@ function SendMoneyButton({
 
       let availableWalletBalance = await computer.getBalance()
       const requiredAmountToBeTransferred = floatAmount * 1e8
-      // hardcoded for LTC
       if (requiredAmountToBeTransferred + TRANSACTION_FEE < availableWalletBalance) {
         await computer.send(requiredAmountToBeTransferred, address)
       } else {
@@ -265,7 +264,6 @@ function SendMoneyButton({
 
         if (payments && payments.length) {
           payments.forEach((pay) => {
-            // hardcoded for LTC
             amountsInPaymentToken += pay._amount - TRANSACTION_FEE
           })
         }
@@ -285,9 +283,7 @@ function SendMoneyButton({
         let newAvailableAmount = 0
         for (let i = 0; i < sortedPayments.length; i++) {
           const pay = sortedPayments[i]
-          // hardcoded for LTC
           newAvailableAmount += pay._amount - TRANSACTION_FEE
-          // hardcoded for LTC
           paymentsToBeWithdraw.push(pay.setAmount(TRANSACTION_FEE))
           if (
             requiredAmountToBeTransferred + TRANSACTION_FEE <
@@ -349,6 +345,7 @@ function SendMoneyForm({
 
   return (
     <>
+      <h6 className="text-lg font-bold dark:text-white">Transfer</h6>
       <div className="space-y-4">
         <form className="space-y-6">
           <div>
@@ -371,6 +368,46 @@ function SendMoneyForm({
   )
 }
 
+function FaucetForm({ computer }: { computer: Computer }) {
+  const [amount, setAmount] = useState<string>("")
+
+  useEffect(() => {
+    initFlowbite()
+  }, [])
+
+  const { showLoader } = useUtilsComponents()
+
+  return (
+    <>
+      <h6 className="text-lg font-bold dark:text-white">Faucet Your Wallet</h6>
+      {/* <div className="space-y-4">
+        <form className="space-y-6">
+          <div>
+            <AmountInput chain={computer.getChain()} amount={amount} setAmount={setAmount} />
+          </div>
+        </form>
+      </div> */}
+      <div className="flex items-center pt-4 rounded-b dark:border-gray-600">
+        <button
+          onClick={async (e) => {
+            try {
+              showLoader(true)
+              await computer.faucet(1e7)
+              showLoader(false)
+            } catch (error) {
+              showLoader(false)
+            }
+          }}
+          type="submit"
+          className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Get {computer.getChain()}(s)
+        </button>
+      </div>
+    </>
+  )
+}
+
 export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
   const computer = useContext(ComputerContext)
 
@@ -386,6 +423,12 @@ export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
       <Chain computer={computer} />
       <Network computer={computer} />
       <Url computer={computer} />
+      {computer.getNetwork() === "regtest" && (
+        <>
+          <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
+          <FaucetForm computer={computer} />
+        </>
+      )}
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <SendMoneyForm computer={computer} paymentModSpec={paymentModSpec} />
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
