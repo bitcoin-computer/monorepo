@@ -247,7 +247,7 @@ BANNED_COUNTRIES=
 
 </font>
 
-### Configure Parallelism
+<!-- ### Configure Parallelism
 
 By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-threads` flag to limit the number of cores used.
 
@@ -269,7 +269,7 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 | 2    | 8GB  | 28h       | $65            |
 | 4    | 16GB | 10h 30m   | $110           |
 | 8    | 32GB | 7h 15m    | $240           |
-| 16   | 32GB | 4h 45m    | $440           |
+| 16   | 32GB | 4h 45m    | $440           | -->
 
 ## Versioning
 
