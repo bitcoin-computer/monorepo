@@ -231,6 +231,7 @@ LOG_ZIP='false'
 
 # Show logs attached to the Console transport
 SHOW_CONSOLE_LOGS='true'
+SHOW_DB_LOGS='false'
 
 # Rate Limiting Settings
 RATE_LIMIT_ENABLED='false'
@@ -246,16 +247,16 @@ BANNED_COUNTRIES=
 
 </font>
 
-### Configure Parallelism
+<!-- ### Configure Parallelism
 
-By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
+By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-threads` flag to limit the number of cores used.
 
 <font size=1>
 
 ```shell
-npm run up -- -t -cpus 16
+npm run up -- -t -threads 16
 ```
-
+A minimum of four threads is the basic configuration to distribute the services of a bitcoin computer node. Scaling the number of threads can speed up the synchronization process. The table below shows the synchronization times for different architectures.
 </font>
 
 ## Estimated Server Costs
@@ -268,7 +269,7 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 | 2    | 8GB  | 28h       | $65            |
 | 4    | 16GB | 10h 30m   | $110           |
 | 8    | 32GB | 7h 15m    | $240           |
-| 16   | 32GB | 4h 45m    | $440           |
+| 16   | 32GB | 4h 45m    | $440           | -->
 
 ## Versioning
 
