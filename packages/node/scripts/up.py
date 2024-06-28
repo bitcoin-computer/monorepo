@@ -23,6 +23,7 @@ def main():
     serviceGroup.add_argument('-db', action="store_const", dest="service", const='db')
     serviceGroup.add_argument('-bcn', action="store_const", dest="service", const='bcn')
     serviceGroup.add_argument('-node', action="store_const", dest="service", const='node')
+    serviceGroup.add_argument('-sync', action="store_const", dest="service", const='sync')
 
     parser.set_defaults(service='')
 
