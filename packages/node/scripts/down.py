@@ -28,7 +28,7 @@ args = parser.parse_args()
 
 print(args)
 
-commandLine = ' docker compose -f docker-compose.yml -f chain-setup/'+args.chain+'-'+args.network+'/docker-compose-local-'+args.chain+'-'+args.network+'.yml '
+commandLine = ' docker compose -f docker-compose.yml -f chain-setup/'+args.chain+'-'+args.network+'/docker-compose.yml '
 
 print(commandLine+' down')
 subprocess.run(

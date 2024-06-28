@@ -34,7 +34,7 @@ def main():
 
     threadsString = f" export THREADS={args.threads} && " if args.threads is not None else ""
 
-    commandLine = f" {threadsString} docker compose -f docker-compose.yml -f chain-setup/{args.chain}-{args.network}/docker-compose-local-{args.chain}-{args.network}.yml"
+    commandLine = f" {threadsString} docker compose -f docker-compose.yml -f chain-setup/{args.chain}-{args.network}/docker-compose.yml"
     print(commandLine)
 
     # launch the services
