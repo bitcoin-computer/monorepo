@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser()
 chainGroup = parser.add_mutually_exclusive_group()
 chainGroup.add_argument("-btc", "--bitcoin", action="store_const", dest="chain", const='btc')
 chainGroup.add_argument("-ltc", "--litecoin", action="store_const", dest="chain", const='ltc')
+chainGroup.add_argument("-pepe", "--pepecoin", action="store_const", dest="chain", const='pepe')
 parser.set_defaults(chain='ltc')
 
 networkGroup = parser.add_mutually_exclusive_group()

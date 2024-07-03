@@ -84,11 +84,53 @@ export const litecointestnet: Network = {
   wif: 0xef,
 };
 
+export const pepecoin: Network = {
+  messagePrefix: '\x18Pepecoin Signed Message:\n',
+  bech32: 'pepe',
+  bip32: {
+    public: 0x02facafd,
+    private: 0x02fac398,
+  },
+  pubKeyHash: 0x38,
+  scriptHash: 0x16,
+  wif: 0x9e,
+};
+
+export const pepecoinregtest: Network = {
+  messagePrefix: '\x18Pepecoin Signed Message:\n',
+  bech32: 'rpepe',
+  bip32: {
+    public: 0x043587cf,
+    private: 0x04358394,
+  },
+  pubKeyHash: 0x6f,
+  scriptHash: 0xc4,
+  wif: 0xef,
+};
+
+export const pepecointestnet: Network = {
+  messagePrefix: '\x18Pepecoin Signed Message:\n',
+  bech32: 'tpepe',
+  bip32: {
+    public: 0x043587cf,
+    private: 0x04358394,
+  },
+  pubKeyHash: 0x71,
+  scriptHash: 0xc4,
+  wif: 0xf1,
+};
+
 export const NETWORKS: Record<string, any> = {
-  litecoin,
+  // Bitcoin
   bitcoin,
   regtest,
   testnet,
+  // Litecoin
+  litecoin,
   litecoinregtest,
   litecointestnet,
+  // Pepecoin
+  pepecoin,
+  pepecoinregtest,
+  pepecointestnet,
 };

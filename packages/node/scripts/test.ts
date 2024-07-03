@@ -10,6 +10,7 @@ const parser = new ArgumentParser()
 const chainGroup = parser.add_mutually_exclusive_group()
 chainGroup.add_argument('-btc', '--bitcoin', { action: 'store_true' })
 chainGroup.add_argument('-ltc', '--litecoin', { action: 'store_true', default: true })
+chainGroup.add_argument('-pepe', '--pepecoin', { action: 'store_true' })
 
 const connectionGroup = parser.add_mutually_exclusive_group()
 connectionGroup.add_argument('-l', '--local', { action: 'store_true', default: true })
@@ -22,7 +23,14 @@ testTypeGroup.add_argument('-u', '--unit', { action: 'store_true', default: true
 
 const args = parser.parse_args()
 
-const port = args.bitcoin ? 8332 : 19332
+let port = 19332; // LTC
+
+if (args.bitcoin) {
+  port = 8332
+} else if (args.pepecoin) {
+  port = 18332
+}
+
 const chain = process.env.CHAIN || (args.bitcoin ? 'BTC' : 'LTC')
 
 const network = process.env.NETWORK || 'regtest'
