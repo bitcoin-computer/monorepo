@@ -22,7 +22,7 @@ if (!mnemonic) {
   throw new Error("Please set your MNEMONIC in a .env file")
 }
 
-const computer = new Computer({ mnemonic, chain, network, url })
+const computer = new Computer({ chain, network, url })
 
 // Prompt the user to confirm an action
 const rl = readline.createInterface({
@@ -30,6 +30,7 @@ const rl = readline.createInterface({
   output: process.stdout
 })
 
+await computer.faucet(2e8)
 const balance = await computer.wallet.getBalance()
 
 // Summary
