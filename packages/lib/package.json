@@ -16,7 +16,7 @@
   "types": "./computer.d.ts",
   "main": "dist/bc-lib.main.es.mjs",
   "module": "dist/bc-lib.module.es.mjs",
-  "browser": "dist/bc-lib.browser.es.mjs",
+  "browser": "dist/bc-lib.browser.min.mjs",
   "cjs": "dist/bc-lib.commonjs.min.cjs",
   "exports": {
     ".": {
