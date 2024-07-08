@@ -3,60 +3,65 @@ order: -37
 icon: diff
 ---
 
-# Comparison
-
-We compare the Bitcoin Computer to other smart contract systems. We classify smart contract systems into "layer 1" and "layer 2", the distinction being that a layer 1 system communicate all data via the Bitcoin blockchain, whereas a layer 2 system makes use of some other storage device.
-
 !!!
 This section is under Construction
 !!!
+
+# Comparison
+
+We compare the Bitcoin Computer to other smart contract systems for Bitcoin. We will call a system "Layer 1" if it stores all data on Bitcoin and "Layer 2" otherwise. We begin by reviewing Layer 2 systems, specifically state channels like the lightning network, interoperable blockchains like Stacks, sidechains like RSK, and finally Rollups like BitVM. In the second section we review Layer 1 systems like Ordinals, Runes and the Bitcoin Computer.
 
 ## Layer 2
 
 ### State Channels and Networks
 
-<!-- Payment channels and networks do not enable smart contract on Bitcoin, however they use smart contracts to increase the throughput of Bitcoin. -->
+State channels, originally designed to reduce fees and transaction times on blockchains, have recently found applications in building smart contract systems. These channels allow two parties to conduct transactions off-chain. Only the final agreed-upon state needs to be recorded on the blockchain. This enables an unlimited number of updates within a channel for a fixed cost (typically the opening and closing transactions).
 
-State (and payment) channels and networks were first introduced to lower fees and increase throughput. However, as they have recently been used to build smart contract systems, we briefly cover them here.
-
-State channels allow two users to exchange transactions off-chain of which only the last one needs to be broadcast. This makes it possible to update a payment an unlimited number of times while only having to pay a fixed number of transaction fees. In most designs, users need to broadcast one transaction to open a channel and one transaction to close the channel and commit to the last payment.
-
-To extend this design to an arbitrary number of users, state networks have been designed. Smart contracts called Hashed Timelock Contract (HTLCs) can be used to chain state channels, without requiring the intermediate nodes to obtain custody of the payment. This enables efficient hub and spoke architectures where a central hub can forward payments between users.
+While state channels work well between two users, they do not scale efficiently for large groups because creating channels between all users becomes uneconomical. To address this, channel networks have been developed. These networks use smart contracts called Hashed Timelock Contracts (HTLCs) to create chains of payment channels that securely forward payments, ensuring that intermediate nodes cannot steal the funds as long as users are online. This enables efficient hub-and-spoke architectures where a central hub forwards payments between users. One downside of this approach is that the hub is a central point of failure.
 
 #### Examples
 
 ==- Lightning Network
-The lightning network extends the hub and spoke model to a decentralized network of payment channels. The key challenge is to solve the routing problem: in order to send a payment between two users a path of channels needs to be determined where each channel has sufficient liquidity to forward the payment. Critics of the lightning network would argue that this problem is similar to the problem that scaling blockchains via payment channels seeks to solve to begin with. [More info](https://lightning.network/) 
+The Lightning Network extends the hub-and-spoke model to a decentralized network of payment channels. The key challenge is solving the routing problem: to send a payment between two users, a path of channels must be determined where each channel has sufficient liquidity to forward the payment. To determine such a path, users must know the balances of each channel. If a user's knowledge of channel balances is outdated, the payment might fail. 
+
+In addition lightning network researchers have worked on the problem that users need to be online in order to securely receive a payment. Watchtowers are thrid party services that monitor end users channels for spicious activity and react accordingly. This allows users to be offline when receiving a payment, however it introduces a trusted third party. [More info](https://lightning.network/) 
 ==- Ark
-Todo. [More info](https://ark-protocol.org/)
+The ARK protocol is a layer-two solution designed for off-chain Bitcoin transactions, aiming to provide a low-cost, setup-free payment system. ARK relies on trusted intermediaries called ARK Service Providers (ASPs) to manage shared UTXOs. In ARK, transactions are conducted using virtual UTXOs (VTXOs), which are off-chain transaction outputs that can be converted into on-chain UTXOs when needed. Payments within ARK are coordinated by an ASP through periodic "rounds," where users exchange their VTXOs for new ones off-chain. Additionally, ARK offers out-of-round (OOR) payments for faster, direct transactions between parties. [More info](https://ark-protocol.org/)
 ==- RGB
-Todo. [More info](https://docs.rgb.info/)
+The RGB protocol is a layer 2 protocol that enables smart contracts. It uses client-side validation but keeps all meta data outside of bitcoin transactions. RGB uses Bitcoin's transaction outputs as "single-use seals", ensuring that only the owner can modify the contract state. RGB uses specially-designed functional registry-based RISC virtual machine AluVM, which is Turing-equivalent (that is nearly computationally universal, bound by number of operation steps, measured by gas consumption in Ethereum-like systems, and by accumulated computational complexity measure in case of AluVM). RGB has a strong privacy-preserving emphasize, using modified form of Blockstream’s confidential transaction technology. [More info](https://docs.rgb.info/)
+===
+
+### Interoperable Blockchains
+
+An interoperable blockchain is a separate blockchain that connects to Bitcoin in various ways, for example by being able to read and write data to Bitcoin from a smart contract in the other chain. In some cases, Bitcoin is used in the consensus of the interoperable blockchain.
+
+#### Examples
+
+==- Stacks
+Stacks enables smart contracts and decentralized applications to use Bitcoin as an asset in a trust-minimized way and settle transactions on the Bitcoin blockchain. It has its own native asset called STX. The Stacks layer relies on STX and on BTC for its novel consensus mechanism, called Proof of Transfer (PoX). Stacks PoX miners spend (already mined) BTC and are rewarded in STX. PoX miners bid by spending BTC, and they have a bid-weighted random probability of becoming a leader. Leader election happens on the Bitcoin chain and new blocks are written on the Stacks layer. Anyone can be a Stacks miner, as long as they are willing to spend BTC. Also, any STX holder can lock their STX (called “stacking”) to participate in PoX consensus, and earn Bitcoin rewards for doing useful work for the system. The nature of PoX consensus is such that the price ratio between BTC and STX is continually recorded and available on-chain, serving as an on-chain Bitcoin price oracle. Stacks's smart contract language is a non-Turing complete language called Clarity. Developers can build any application using BTC as their asset/money and settling their transactions on the Bitcoin blockchain. [More info](https://docs.stacks.co/)
+==- Internet Computer
+Todo. [More info](https://internetcomputer.org/docs/current/developer-docs/getting-started/overview-of-icp)
 ===
 
 ### Side Chains
 
-A sidechain is an independent blockchain that is tied to Bitcoin via a two-way-peg. The consensus of the side chain can differ from the consensus mechanism of Bitcoin, thereby potentially enhancing it's throughput, smart contract capabilities, or privacy.
+A sidechain is a separate blockchain linked to Bitcoin through a two-way peg. This allows the sidechain to have its own consensus mechanism, potentially increasing transaction throughput, enabling smart contracts, or enhancing privacy compared to Bitcoin's limitations.
 
-To use the side chain a user can send Bitcoin to an address that is controlled by a federation. Once the Bitcoin is confirmed, the user is allowed to create an equivalent amount of tokens on the side chain. These token then can be used to access the enhanced functionality of the side chain. The user can use the peg-out mechanism to convert the coins on the sidechain back to tokens in the main chain.
+To interact with the sidechain, users send Bitcoin to a federation-controlled address. Once confirmed, an equivalent amount of tokens is created on the sidechain for the user. These tokens grant access to the sidechain's functionalities. Users can then convert their sidechain tokens back to Bitcoin on the main chain using a peg-out mechanism.
 
-#### Security Considerations
-
-Side chains are less secure than Bitcoin for two reasons. The consensus mechanism of the side chain is typically less secure than the consensus of Bitcoin. This enable attackers to exploit the side chain consensus. On the other hand the 
+However, sidechains are generally considered less secure than Bitcoin for two reasons. First, the consensus mechanism of the sidechain is typically less secure than Bitcoin's, making it more vulnerable to attacks. More importantly, the federation holds user assets on the main chain, introducing reliance on a trusted third party and a central point of failure.
 
 #### Examples
 
 ==- Liquid
-* The federation consists of a fixed group of members that is defined at launch. The identities of its members is not public, however it is stated that they are large exchanges, financial institutions, and Bitcoin-focused companies. 
-* Developed by Blockstream
-* The peg is enforced by means of ordinary multisignature transactions. It does require a consortium to exist, and for participants of the system to trust that at least 2/3 of the federation is acting honestly.
-* The federation members also maintain the consensus of the side chain by signing blocks in a round robin fashion.
-* The Liquid side chain is based on the Bitcoin code base. However, it's throughput is 10x higher than Bitcoin's throughput as the block time was reduced to 1 minute.
-* Liquid allows for users to create and transfer other assets using a feature called Issued Assets. 
-* One of the main features of Liquid is its default use of Confidential Transactions. Confidential Transactions on Liquid allows any two parties to transact without anyone else being able to view the asset and amount transacted, not even the Liquid Federation members and functionaries. [More info](https://docs.liquid.net/docs/technical-overview).
+The Liquid sidechain, developed by Blockstream, connects to Bitcoin via a two-way peg. The peg is enforced through multisignature transactions and is maintained by a federation of large exchanges, financial institutions, and Bitcoin-focused companies. While the identities of the federation members are not public, the system relies on the trust that at least two-thirds of the federation is acting honestly to ensure security. The federation also maintains the consensus of the sidechain by signing blocks in a round-robin fashion.
+
+Liquid is based on the Bitcoin codebase, however it has a 10x higher throughput due its block time of just one minute. Liquid supports the creation of on chain assets as well as enhanced privacy through confidential transactions. [More info](https://docs.liquid.net/docs/technical-overview).
+
 ==- Rootstock
-Todo. [More info](https://rootstock.io/static/a79b27d4889409602174df4710102056/RS-whitepaper.pdf)
-==- Stacks
-Todo. [More info](https://docs.stacks.co/)
+RSK (Rootstock) is a smart contract platform that operates as a Bitcoin sidechain, aiming to bring Ethereum-compatible smart contract functionality to Bitcoin. RSK uses a two-way peg to link to Bitcoin, allowing BTC to be transferred to the RSK side chain where it is converted to "Smart Bitcoin" (RBTC). This RBTC is used to pay for transaction fees and execute smart contracts on the RSK platform. The RSK sidechain itself is based on the EVM
+
+RSK employs a federated consensus model involving a group of pre-selected notaries who manage the peg and secure the network. It also integrates merge-mining, enabling Bitcoin miners to simultaneously mine both Bitcoin and RSK. [More info](https://rootstock.io/static/a79b27d4889409602174df4710102056/RS-whitepaper.pdf)
 ===
 
 ### Rollups
