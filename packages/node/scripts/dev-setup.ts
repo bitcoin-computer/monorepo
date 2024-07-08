@@ -13,6 +13,7 @@ const parser = new ArgumentParser()
 const chainGroup = parser.add_mutually_exclusive_group()
 chainGroup.add_argument("-btc", "--bitcoin", { action: "store_const", dest: "chain", constant: 'BTC' })
 chainGroup.add_argument("-ltc", "--litecoin", { action: "store_const", dest: "chain", constant: 'LTC' })
+chainGroup.add_argument("-pepe", "--pepecoin", { action: "store_const", dest: "chain", constant: 'PEPE' })
 parser.set_defaults({ chain: 'LTC' })
 
 const networkGroup = parser.add_mutually_exclusive_group()
@@ -23,7 +24,20 @@ parser.set_defaults({ network: 'regtest' })
 
 const args = parser.parse_args()
 
-const nodePort = args.chain === 'BTC' ? '8332' : '19332'
+let nodePort: String;
+
+switch (args.chain) {
+  case 'BTC':
+    nodePort = '8332'
+    break
+  case 'PEPE':
+    nodePort = '18332'
+    break
+  default: // LTC
+    nodePort = '19332'
+    break
+}
+
 const bcnPort = process.env.PORT || '1031'
 const rpcUser = process.env.RPC_USER || 'bcn-admin'
 const rpcPassword = process.env.RPC_PASSWORD || 'kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='

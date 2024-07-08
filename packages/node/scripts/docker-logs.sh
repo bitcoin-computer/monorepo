@@ -24,12 +24,18 @@ else
     network=$2
 fi
 
-# Log paths are predefined for Bitcoin and Litecoin
+# Log paths are predefined for Bitcoin, Litecoin and Pepecoin
 if [ $chain == 'btc' ]; then
     if [ $network == 'mainnet' ]; then
         logpath='/home/bitcoin/.bitcoin/debug.log'
     else
         logpath='/home/bitcoin/.bitcoin/testnet3/debug.log'
+    fi
+else if [ $chain == 'pepe' ]; then
+    if [ $network == 'mainnet' ]; then
+        logpath='/home/pepecoin/.pepecoin/debug.log'
+    else
+        logpath='/home/pepecoin/.pepecoin/testnet3/debug.log'
     fi
 else
     if [ $network == 'mainnet' ]; then
