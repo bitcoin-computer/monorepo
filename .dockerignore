@@ -20,7 +20,6 @@ packages/explorer
 packages/nft
 packages/ft
 packages/nodejs-template
-packages/secp256k1
 packages/swap/
 packages/TBC*/
 packages/wallet

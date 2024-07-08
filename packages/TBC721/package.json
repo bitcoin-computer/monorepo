@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/TBC721",
-  "version": "0.20.0-beta.0",
+  "version": "0.20.1-beta.0",
   "description": "Standard for non-fungible tokens on Bitcoin",
   "private": true,
   "type": "module",
@@ -23,7 +23,7 @@
     "build"
   ],
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.20.0-beta.0",
+    "@bitcoin-computer/lib": "^0.20.1-beta.0",
     "chai-match-pattern": "^1.3.0",
     "eslint-plugin-prettier": "^5.1.3",
     "ts-node": "^10.9.2",

@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/lib",
-  "version": "0.20.0-beta.0",
+  "version": "0.20.1-beta.0",
   "private": false,
   "description": "Smart Contracts for Bitcoin",
   "license": "CC-BY-ND-4.0",
@@ -55,8 +55,8 @@
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
-    "@bitcoin-computer/nakamotojs": "^0.20.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.20.0-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.20.1-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.20.1-beta.0",
     "@endo/static-module-record": "^1.0.4",
     "axios": "1.6.7",
     "bip174": "^2.1.1",
