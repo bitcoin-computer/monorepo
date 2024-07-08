@@ -15,6 +15,7 @@ services:
         "pepecoind",
         "-dbcache=4000",
         "-txindex=1",
+        "-printtoconsole=1",
         "-server=1",
         "-rpcbind=0.0.0.0",
         "-rpcworkqueue=512",

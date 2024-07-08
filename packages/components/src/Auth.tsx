@@ -24,6 +24,7 @@ function getCoinType(chain: string, network: string): number {
   if (chain === "BTC") return 0
   if (chain === "LTC") return 2
   if (chain === "DOGE") return 3
+  if (chain === "PEPE") return 3434
   if (chain === "BCH") return 145
 
   throw new Error(`Unsupported chain ${chain} or network ${network}`)
@@ -156,6 +157,23 @@ function ChainInput({ chain, setChain }: { chain: Chain; setChain: Dispatch<Chai
             className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
           >
             BTC
+          </label>
+        </div>
+
+        <div className="flex items-center mr-4">
+          <input
+            onChange={() => setChain("PEPE")}
+            id="chain-pepe"
+            type="radio"
+            name="chain"
+            value="PEPE"
+            className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
+          />
+          <label
+            htmlFor="chain-pepe"
+            className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >
+            PEPE
           </label>
         </div>
 
