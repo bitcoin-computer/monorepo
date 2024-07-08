@@ -31,7 +31,7 @@ if (args.bitcoin) {
   port = 18332
 }
 
-const chain = process.env.CHAIN || (args.bitcoin ? 'BTC' : 'LTC')
+const chain = process.env.CHAIN || (args.bitcoin ? 'BTC' : args.pepecoin ? 'PEPE' : 'LTC')
 
 const network = process.env.NETWORK || 'regtest'
 const bcnPort = process.env.PORT ?? '1031'

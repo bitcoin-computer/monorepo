@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/swap",
-  "version": "0.20.0-beta.0",
+  "version": "0.20.1-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
@@ -17,9 +17,9 @@
   },
   "type": "module",
   "dependencies": {
-    "@bitcoin-computer/TBC721": "^0.20.0-beta.0",
-    "@bitcoin-computer/lib": "^0.20.0-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.20.0-beta.0"
+    "@bitcoin-computer/TBC721": "^0.20.1-beta.0",
+    "@bitcoin-computer/lib": "^0.20.1-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.20.1-beta.0"
   },
   "devDependencies": {
     "@types/mocha": "^9.1.1",
