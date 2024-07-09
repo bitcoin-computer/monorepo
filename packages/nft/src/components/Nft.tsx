@@ -10,7 +10,7 @@ import {
   ComputerContext
 } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
-import { OfferHelper, Payment, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
+import { OfferHelper, PaymentHelper, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
 import { NFT } from "@bitcoin-computer/TBC721"
 import { offerModSpec, paymentModSpec, saleModSpec } from "../constants/modSpecs"
 
@@ -28,9 +28,13 @@ const BuyNFT = async ({
 }) => {
   const offerHelper = new OfferHelper(computer, offerModSpec)
   const saleHelper = new SaleHelper(computer, saleModSpec)
+  const paymentHelper = new PaymentHelper(computer, paymentModSpec)
   const saleTxn = await offerHelper.decodeOfferTx(nft.offerTxRev)
   const nftAmount = await saleHelper.checkSaleTx(saleTxn)
-  const payment = await computer.new(Payment, [nftAmount], paymentModSpec)
+  const { tx: paymentTx } = await paymentHelper.createPaymentTx(nftAmount)
+  const paymentTxId = await computer.broadcast(paymentTx)
+  const payment = await paymentHelper.getPayment(paymentTxId)
+  // const payment = await computer.new(Payment, [nftAmount], paymentModSpec)
   const finalTx = await SaleHelper.finalizeSaleTx(
     saleTxn,
     payment,
