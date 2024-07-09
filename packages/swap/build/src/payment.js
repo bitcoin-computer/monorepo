@@ -36,4 +36,16 @@ export class PaymentHelper {
         this.mod = await this.computer.deploy(`export ${Payment}`);
         return this.mod;
     }
+    async createPaymentTx(amount) {
+        const exp = `new Payment(${amount})`;
+        return this.computer.encode({
+            exp,
+            mod: this.mod
+        });
+    }
+    async getPayment(paymentTxId) {
+        const [rev] = await this.computer.query({ ids: [`${paymentTxId}:0`] });
+        const syncedPayment = await this.computer.sync(rev);
+        return syncedPayment;
+    }
 }

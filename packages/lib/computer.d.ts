@@ -141,7 +141,7 @@ declare class RestClient {
   height(): Promise<number>;
 }
 
-type TBCChain = "LTC" | "BTC";
+type TBCChain = "LTC" | "BTC" | "DOGE" | "PEPE";
 type TBCNetwork = "testnet" | "mainnet" | "regtest";
 type Fee = Partial<{
   fee: number;

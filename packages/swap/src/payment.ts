@@ -62,4 +62,18 @@ export class PaymentHelper {
     this.mod = await this.computer.deploy(`export ${Payment}`)
     return this.mod
   }
+
+  async createPaymentTx(amount: number) {
+    const exp = `new Payment(${amount})`
+    return this.computer.encode({
+      exp,
+      mod: this.mod
+    })
+  }
+
+  async getPayment(paymentTxId: string): Promise<Payment> {
+    const [rev] = await this.computer.query({ ids: [`${paymentTxId}:0`] })
+    const syncedPayment: Payment = await this.computer.sync(rev)
+    return syncedPayment
+  }
 }

@@ -24,5 +24,7 @@ export declare class PaymentHelper {
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
+    createPaymentTx(amount: number): Promise<any>;
+    getPayment(paymentTxId: string): Promise<Payment>;
 }
 export {};

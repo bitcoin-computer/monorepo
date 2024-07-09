@@ -18,11 +18,16 @@ const chain = process.env.CHAIN || "LTC"
 const network = process.env.NETWORK || "regtest"
 const url = process.env.BCN_URL || "http://127.0.0.1:1031"
 
-if (!mnemonic) {
-  throw new Error("Please set your MNEMONIC in a .env file")
-}
+const computerProps = { chain, network, url }
 
-const computer = new Computer({ chain, network, url })
+if (network !== "regtest") {
+  if (!mnemonic) {
+    throw new Error("Please set your MNEMONIC in a .env file")
+  }
+  computerProps["mnemonic"] = mnemonic
+}
+ 
+const computer = new Computer(computerProps)
 
 // Prompt the user to confirm an action
 const rl = readline.createInterface({
