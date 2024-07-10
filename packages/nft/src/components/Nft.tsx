@@ -34,7 +34,6 @@ const BuyNFT = async ({
   const { tx: paymentTx } = await paymentHelper.createPaymentTx(nftAmount)
   const paymentTxId = await computer.broadcast(paymentTx)
   const payment = await paymentHelper.getPayment(paymentTxId)
-  // const payment = await computer.new(Payment, [nftAmount], paymentModSpec)
   const finalTx = await SaleHelper.finalizeSaleTx(
     saleTxn,
     payment,
@@ -155,6 +154,7 @@ const CreateSellOfferComponent = ({
             try {
               showLoader(true)
               await CreateSellOffer({ computer, amount, nft: smartObject, showSnackBar })
+              setAmount("")
               showLoader(false)
             } catch (error) {
               showLoader(false)
