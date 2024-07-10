@@ -1,7 +1,7 @@
 const { Contract } = await import('@bitcoin-computer/lib');
 export class NFT extends Contract {
-    constructor(name = '', symbol = '') {
-        super({ name, symbol });
+    constructor(name = '', symbol = '', url = '') {
+        super({ name, symbol, url });
     }
     transfer(to) {
         this._owners = [to];
@@ -20,10 +20,10 @@ export class TBC721 {
         this.mod = await this.computer.deploy(`export ${NFT}`);
         return this.mod;
     }
-    async mint(name, symbol) {
+    async mint(name, symbol, url) {
         const { tx, effect } = await this.computer.encode({
-            exp: `new NFT("${name}", "${symbol}")`,
-            mod: this.mod,
+            exp: `new NFT("${name}", "${symbol}", "${url}")`,
+            mod: this.mod
         });
         await this.computer.broadcast(tx);
         return effect.res;

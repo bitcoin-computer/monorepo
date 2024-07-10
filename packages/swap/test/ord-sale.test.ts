@@ -89,7 +89,7 @@ describe('Ord Sale', () => {
       await saleHelperA.deploy()
 
       // Alice mints an NFT
-      const nftA = await tbc721A.mint('a', 'AAA')
+      const nftA = await tbc721A.mint('a', 'AAA', 'URL')
 
       // Alice creates a payment mock
       const paymentMock = new PaymentMock(nftPrice)
@@ -140,9 +140,9 @@ describe('Ord Sale', () => {
       })
 
       it('Seller creates an NFT', async () => {
-        nft = await seller.new(NFT, ['name', 'symbol'])
+        nft = await seller.new(NFT, ['name', 'symbol', 'URL'])
         // @ts-ignore
-        expect(nft).to.matchPattern({ name: 'name', symbol: 'symbol', ...meta })
+        expect(nft).to.matchPattern({ name: 'name', symbol: 'symbol', url: 'URL', ...meta })
       })
 
       it('Seller creates a swap transaction for the NFT with the desired price', async () => {

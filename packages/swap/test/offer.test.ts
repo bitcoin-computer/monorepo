@@ -33,23 +33,25 @@ describe('Offer', () => {
     let offerTxId: string
     describe('Alice and Bob create the NFTs they want to swap', () => {
       it('Alice creates an NFT', async () => {
-        a = await alice.new(NFT, ['A', 'AAA'])
+        a = await alice.new(NFT, ['A', 'AAA', 'URL'])
         // @ts-ignore
         expect(a).to.matchPattern({
           ...meta,
           name: 'A',
           symbol: 'AAA',
+          url: 'URL',
           _owners: [alice.getPublicKey()]
         })
       })
 
       it('Bob creates b', async () => {
-        b = await bob.new(NFT, ['B', 'BBB'])
+        b = await bob.new(NFT, ['B', 'BBB', 'URL'])
         // @ts-ignore
         expect(b).to.matchPattern({
           ...meta,
           name: 'B',
           symbol: 'BBB',
+          url: 'URL',
           _owners: [bob.getPublicKey()]
         })
       })
@@ -118,6 +120,7 @@ describe('Offer', () => {
           ...meta,
           name: 'A',
           symbol: 'AAA',
+          url: 'URL',
           _owners: [bob.getPublicKey()]
         })
       })
@@ -130,6 +133,7 @@ describe('Offer', () => {
           ...meta,
           name: 'B',
           symbol: 'BBB',
+          url: 'URL',
           _owners: [alice.getPublicKey()]
         })
       })
@@ -149,23 +153,25 @@ describe('Offer', () => {
       })
 
       it('Alice creates an NFT', async () => {
-        a = await alice.new(NFT, ['A', 'AAA'])
+        a = await alice.new(NFT, ['A', 'AAA', 'URL'])
         // @ts-ignore
         expect(a).to.matchPattern({
           ...meta,
           name: 'A',
           symbol: 'AAA',
+          url: 'URL',
           _owners: [alice.getPublicKey()]
         })
       })
 
       it('Bob creates b', async () => {
-        b = await bob.new(NFT, ['B', 'BBB'])
+        b = await bob.new(NFT, ['B', 'BBB', 'URL'])
         // @ts-ignore
         expect(b).to.matchPattern({
           ...meta,
           name: 'B',
           symbol: 'BBB',
+          url: 'URL',
           _owners: [bob.getPublicKey()]
         })
       })
@@ -228,6 +234,7 @@ describe('Offer', () => {
           ...meta,
           name: 'A',
           symbol: 'AAA',
+          url: 'URL',
           _owners: [bob.getPublicKey()]
         })
       })
@@ -240,6 +247,7 @@ describe('Offer', () => {
           ...meta,
           name: 'B',
           symbol: 'BBB',
+          url: 'URL',
           _owners: [alice.getPublicKey()]
         })
       })

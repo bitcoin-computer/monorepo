@@ -4,10 +4,11 @@ const { Contract } = await import('@bitcoin-computer/lib')
 export class NFT extends Contract {
   name: string
   symbol: string
+  url: string
   offerTxRev: string
 
-  constructor(name = '', symbol = '') {
-    super({ name, symbol })
+  constructor(name = '', symbol = '', url = '') {
+    super({ name, symbol, url })
   }
   transfer(to) {
     this._owners = [to]
@@ -20,7 +21,7 @@ export class NFT extends Contract {
 
 export interface ITBC721 {
   deploy(): Promise<string>
-  mint(name: string, symbol: string): Promise<NFT>
+  mint(name: string, symbol: string, url: string): Promise<NFT>
   balanceOf(publicKey: string): Promise<number>
   ownersOf(tokenId: string): Promise<string[]>
   transfer(to: string, tokenId: string): Promise<void>
@@ -40,10 +41,10 @@ export class TBC721 implements ITBC721 {
     return this.mod
   }
 
-  async mint(name: string, symbol: string): Promise<NFT> {
+  async mint(name: string, symbol: string, url: string): Promise<NFT> {
     const { tx, effect } = await this.computer.encode({
-      exp: `new NFT("${name}", "${symbol}")`,
-      mod: this.mod,
+      exp: `new NFT("${name}", "${symbol}", "${url}")`,
+      mod: this.mod
     })
     await this.computer.broadcast(tx)
     return effect.res

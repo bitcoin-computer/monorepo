@@ -72,7 +72,7 @@ function MintForm(props: {
     e.preventDefault()
     try {
       const tbc721 = new TBC721(computer, nftModSpec)
-      const nft = await tbc721.mint(name, symbol)
+      const nft = await tbc721.mint(name, symbol, "")
       setSuccessRev(nft._id)
       Modal.showModal("success-modal")
     } catch (err) {
