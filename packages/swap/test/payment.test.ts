@@ -10,7 +10,7 @@ dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 
-describe.only('Payment', () => {
+describe('Payment', () => {
   const alice = new Computer({ url })
   const bob = new Computer({ url })
 
