@@ -14,7 +14,6 @@ import { OfferHelper, PaymentHelper, PaymentMock, SaleHelper } from "@bitcoin-co
 import { NFT } from "@bitcoin-computer/TBC721"
 import { offerModSpec, paymentModSpec, saleModSpec } from "../constants/modSpecs"
 
-const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 const modalId = "smart-object-bought-modal"
 
 const BuyNFT = async ({
@@ -110,14 +109,21 @@ const SmartObjectValues = ({ smartObject }: any) => {
   if (!smartObject) return <></>
   return (
     <>
-      {Object.entries(smartObject)
-        .filter(([k, v]) => v !== undefined && !keywords.includes(k))
-        .map(([key, value], i) => (
-          <div key={i} className="sm:w-full">
-            <h3 className="mt-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
-            <ObjectValueCard content={toObject(value)} />
-          </div>
-        ))}
+      {smartObject.url && (
+        <div className="mt-2 mb-4 flex justify-center items-center">
+          <img src={smartObject.url} alt="Image Preview" className="max-w-full h-60 object-cover" />
+        </div>
+      )}
+      {smartObject.name && (
+        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          {smartObject.name}
+        </h5>
+      )}
+      {smartObject.artist && (
+        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+          {capitalizeFirstLetter(smartObject.artist)}
+        </p>
+      )}
     </>
   )
 }

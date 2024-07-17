@@ -17,7 +17,7 @@ dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 
-const symbol = ''
+const artist = ''
 const imageUrl = ''
 
 const isString = (x: any) => typeof x === 'string'
@@ -50,7 +50,7 @@ describe('NFT', () => {
       it('Sender mints an NFT', async () => {
         nft = await sender.new(NFT, ['Test'])
         // @ts-ignore
-        expect(nft).matchPattern({ name: 'Test', symbol, url: imageUrl, ...meta })
+        expect(nft).matchPattern({ name: 'Test', artist, url: imageUrl, ...meta })
       })
 
       it('Property _owners is a singleton array with minters public key', () => {
@@ -75,7 +75,7 @@ describe('NFT', () => {
       it('Sender transfers the NFT to receiver', async () => {
         await nft.transfer(receiver.getPublicKey())
         // @ts-ignore
-        expect(nft).to.matchPattern({ name: 'Test', symbol, url: imageUrl, ...meta })
+        expect(nft).to.matchPattern({ name: 'Test', artist, url: imageUrl, ...meta })
       })
 
       it('The id does not change', () => {
@@ -125,7 +125,7 @@ describe('NFT', () => {
 
     describe('mint', () => {
       it('Should mint an NFT', async () => {
-        nft = await tbc721.mint('name', 'symbol', 'url')
+        nft = await tbc721.mint('name', 'artist', 'url')
       })
     })
 
@@ -184,7 +184,7 @@ describe('NFT', () => {
       await tbc721.deploy()
 
       // Mint nft
-      const nft = await tbc721.mint('name', 'symbol', 'url')
+      const nft = await tbc721.mint('name', 'artist', 'url')
 
       // Transfer NFT
       await tbc721.transfer(new Computer().getPublicKey(), nft._id)

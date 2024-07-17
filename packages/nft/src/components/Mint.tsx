@@ -67,12 +67,13 @@ function MintForm(props: {
   const { computer, setSuccessRev, setErrorMsg } = props
   const [name, setName] = useState("")
   const [symbol, setSymbol] = useState("")
+  const [url, setUrl] = useState("")
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
       const tbc721 = new TBC721(computer, nftModSpec)
-      const nft = await tbc721.mint(name, symbol, "")
+      const nft = await tbc721.mint(name, symbol, url)
       setSuccessRev(nft._id)
       Modal.showModal("success-modal")
     } catch (err) {
@@ -85,7 +86,7 @@ function MintForm(props: {
   return (
     <>
       <form onSubmit={onSubmit} className="w-full">
-        <div className="grid gap-6 mb-6 md:grid-cols-2">
+        <div className="grid gap-6 mb-6">
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Name
@@ -102,7 +103,7 @@ function MintForm(props: {
           </div>
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Symbol
+              Artist
             </label>
             <input
               type="text"
@@ -113,6 +114,26 @@ function MintForm(props: {
               placeholder="TBC"
               required
             />
+          </div>
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              Image URL
+            </label>
+            <input
+              type="text"
+              id="imageUrl"
+              value={url}
+              onChange={(e) => {
+                setUrl(e.target.value)
+              }}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="https://example.com/image.jpg"
+            />
+            {url && (
+              <div className="mt-4 flex justify-center items-center">
+                <img src={url} alt="Image Preview" className="max-w-full h-48 object-cover" />
+              </div>
+            )}
           </div>
         </div>
         <button

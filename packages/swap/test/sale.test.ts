@@ -40,7 +40,7 @@ describe('Sale', () => {
       await buyer.faucet(2e8)
 
       // Seller mints an NFT
-      const nft = await seller.new(NFT, ['name', 'symbol', 'URL'])
+      const nft = await seller.new(NFT, ['name', 'artist', 'URL'])
 
       // Seller creates a mock for the eventual payment
       const mock = new PaymentMock(7860)
@@ -158,9 +158,9 @@ describe('Sale', () => {
     })
 
     it('Seller creates an NFT', async () => {
-      nft = await seller.new(NFT, ['name', 'symbol', 'URL'])
+      nft = await seller.new(NFT, ['name', 'artist', 'URL'])
       // @ts-ignore
-      expect(nft).to.matchPattern({ name: 'name', symbol: 'symbol', url: 'URL', ...meta })
+      expect(nft).to.matchPattern({ name: 'name', artist: 'artist', url: 'URL', ...meta })
     })
 
     it('Seller creates a swap transaction for the NFT with the desired price', async () => {

@@ -38,7 +38,7 @@ describe('Offer', () => {
         expect(a).to.matchPattern({
           ...meta,
           name: 'A',
-          symbol: 'AAA',
+          artist: 'AAA',
           url: 'URL',
           _owners: [alice.getPublicKey()]
         })
@@ -50,7 +50,7 @@ describe('Offer', () => {
         expect(b).to.matchPattern({
           ...meta,
           name: 'B',
-          symbol: 'BBB',
+          artist: 'BBB',
           url: 'URL',
           _owners: [bob.getPublicKey()]
         })
@@ -119,7 +119,7 @@ describe('Offer', () => {
         expect(aSwapped).to.matchPattern({
           ...meta,
           name: 'A',
-          symbol: 'AAA',
+          artist: 'AAA',
           url: 'URL',
           _owners: [bob.getPublicKey()]
         })
@@ -132,7 +132,7 @@ describe('Offer', () => {
         expect(bSwapped).to.matchPattern({
           ...meta,
           name: 'B',
-          symbol: 'BBB',
+          artist: 'BBB',
           url: 'URL',
           _owners: [alice.getPublicKey()]
         })
@@ -158,7 +158,7 @@ describe('Offer', () => {
         expect(a).to.matchPattern({
           ...meta,
           name: 'A',
-          symbol: 'AAA',
+          artist: 'AAA',
           url: 'URL',
           _owners: [alice.getPublicKey()]
         })
@@ -170,7 +170,7 @@ describe('Offer', () => {
         expect(b).to.matchPattern({
           ...meta,
           name: 'B',
-          symbol: 'BBB',
+          artist: 'BBB',
           url: 'URL',
           _owners: [bob.getPublicKey()]
         })
@@ -233,7 +233,7 @@ describe('Offer', () => {
         expect(aSwapped).to.matchPattern({
           ...meta,
           name: 'A',
-          symbol: 'AAA',
+          artist: 'AAA',
           url: 'URL',
           _owners: [bob.getPublicKey()]
         })
@@ -246,7 +246,7 @@ describe('Offer', () => {
         expect(bSwapped).to.matchPattern({
           ...meta,
           name: 'B',
-          symbol: 'BBB',
+          artist: 'BBB',
           url: 'URL',
           _owners: [alice.getPublicKey()]
         })

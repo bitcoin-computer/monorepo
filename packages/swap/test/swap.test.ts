@@ -85,7 +85,7 @@ describe('Swap', () => {
       expect(nftA).to.matchPattern({
         ...meta,
         name: 'A',
-        symbol: 'AAA',
+        artist: 'AAA',
         url: 'URL',
         _owners: [alice.getPublicKey()]
       })
@@ -97,7 +97,7 @@ describe('Swap', () => {
       expect(nftB).to.matchPattern({
         ...meta,
         name: 'B',
-        symbol: 'BBB',
+        artist: 'BBB',
         url: 'URL',
         _owners: [bob.getPublicKey()]
       })
@@ -141,7 +141,7 @@ describe('Swap', () => {
       expect(aSwapped).to.matchPattern({
         ...meta,
         name: 'A',
-        symbol: 'AAA',
+        artist: 'AAA',
         url: 'URL',
         _owners: [bob.getPublicKey()]
       })
@@ -154,7 +154,7 @@ describe('Swap', () => {
       expect(bSwapped).to.matchPattern({
         ...meta,
         name: 'B',
-        symbol: 'BBB',
+        artist: 'BBB',
         url: 'URL',
         _owners: [alice.getPublicKey()]
       })
