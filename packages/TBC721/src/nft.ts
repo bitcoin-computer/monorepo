@@ -17,6 +17,9 @@ export class NFT extends Contract {
   list(rev) {
     this.offerTxRev = rev
   }
+  unlist() {
+    this.offerTxRev = undefined
+  }
 }
 
 export interface ITBC721 {

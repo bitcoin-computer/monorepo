@@ -45,7 +45,7 @@ function HomePageCard({ content }: any) {
   return (
     <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
-        {content()}
+        {typeof content === "function" ? content() : ""}
       </pre>
     </div>
   )

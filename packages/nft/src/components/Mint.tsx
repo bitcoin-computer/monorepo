@@ -89,7 +89,7 @@ function MintForm(props: {
   }
   return (
     <>
-      <form onSubmit={onSubmit} className="w-full">
+      <form onSubmit={onSubmit} className="w-full lg:w-1/2">
         <div className="grid gap-6 mb-6">
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -134,8 +134,10 @@ function MintForm(props: {
               placeholder="https://example.com/image.jpg"
             />
             {url && (
-              <div className="mt-4 flex justify-center items-center">
-                <img src={url} alt="Image Preview" className="max-w-full h-48 object-cover" />
+              <div className="w-full h-64 flex items-center justify-center">
+                <div className="w-4/5 md:w-1/2 lg:w-1/2 h-full bg-gray-200 flex items-center justify-center mt-8">
+                  <img className="max-h-full max-w-full object-contain" src={url} alt="" />
+                </div>
               </div>
             )}
           </div>

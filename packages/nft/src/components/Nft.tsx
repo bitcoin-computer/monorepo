@@ -48,6 +48,7 @@ const BuyNFT = async ({
   const [updatedRev] = await computer.query({ ids: [nft._id] })
   setFunctionResult(updatedRev)
   Modal.showModal(modalId)
+  return nftAmount
 }
 
 const CreateSellOffer = async ({
@@ -109,8 +110,14 @@ const SmartObjectValues = ({ smartObject }: any) => {
   return (
     <>
       {smartObject.url && (
-        <div className="mt-2 mb-4 flex justify-center items-center">
-          <img src={smartObject.url} alt="Image Preview" className="max-w-full h-60 object-cover" />
+        <div className="w-full h-80 flex items-center justify-center my-4">
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <img
+              className="max-h-full max-w-full object-contain"
+              src={smartObject.url}
+              alt="Image Preview"
+            />
+          </div>
         </div>
       )}
       {smartObject.name && (
@@ -162,6 +169,7 @@ const CreateSellOfferComponent = ({
               await CreateSellOffer({ computer, amount, nft: smartObject, showSnackBar })
               setAmount("")
               showLoader(false)
+              showSnackBar(`You listed this NFT for ${amount} ${computer.getChain()}`, true)
             } catch (error) {
               showLoader(false)
               showSnackBar("Failed to create sell offer", false)
@@ -212,6 +220,33 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
   )
 }
 
+const UnlistNftComponent = ({ smartObject }: { smartObject: NFT }) => {
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+
+  return (
+    <div className="flex">
+      <button
+        type="button"
+        onClick={async () => {
+          try {
+            showLoader(true)
+            await smartObject.unlist()
+            showSnackBar(`You unlisted this NFT.`, true)
+            showLoader(false)
+          } catch (error) {
+            showLoader(false)
+            console.log(error)
+            showSnackBar("Failed to unlist nft", false)
+          }
+        }}
+        className="text-white mt-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+      >
+        Unlist this NFT
+      </button>
+    </div>
+  )
+}
+
 const BuyNftComponent = ({
   computer,
   smartObject,
@@ -230,7 +265,8 @@ const BuyNftComponent = ({
         onClick={async () => {
           try {
             showLoader(true)
-            await BuyNFT({ computer, nft: smartObject, setFunctionResult })
+            const nftAmount = await BuyNFT({ computer, nft: smartObject, setFunctionResult })
+            showSnackBar(`You bought this NFT for ${nftAmount / 1e8} ${computer.getChain()}`, true)
             showLoader(false)
           } catch (error) {
             showLoader(false)
@@ -240,7 +276,7 @@ const BuyNftComponent = ({
         }}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
       >
-        Buy
+        Buy this NFT
       </button>
     </div>
   )
@@ -312,12 +348,16 @@ function NftView() {
   return (
     <>
       <div>
+        <h2 className="text-2xl font-bold dark:text-white">List For Sale</h2>
         <SmartObjectValues smartObject={smartObject} />
         {smartObject && smartObject.offerTxRev && (
           <ShowSaleOfferComponent computer={computer} nft={smartObject} />
         )}
         {showCreateOffer(computer, smartObject) && (
           <CreateSellOfferComponent computer={computer} smartObject={smartObject} />
+        )}
+        {showCreateOffer(computer, smartObject) && smartObject.offerTxRev && (
+          <UnlistNftComponent smartObject={smartObject} />
         )}
         {showBuyOffer(computer, smartObject) && (
           <BuyNftComponent
