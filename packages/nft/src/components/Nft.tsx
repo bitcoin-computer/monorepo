@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
-import reactStringReplace from "react-string-replace"
 import {
-  Card,
   toObject,
   capitalizeFirstLetter,
   Modal,
@@ -14,7 +12,6 @@ import { OfferHelper, PaymentHelper, PaymentMock, SaleHelper } from "@bitcoin-co
 import { NFT } from "@bitcoin-computer/TBC721"
 import { offerModSpec, paymentModSpec, saleModSpec } from "../constants/modSpecs"
 
-const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 const modalId = "smart-object-bought-modal"
 
 const BuyNFT = async ({
@@ -49,6 +46,7 @@ const BuyNFT = async ({
   const [updatedRev] = await computer.query({ ids: [nft._id] })
   setFunctionResult(updatedRev)
   Modal.showModal(modalId)
+  return nftAmount
 }
 
 const CreateSellOffer = async ({
@@ -89,34 +87,31 @@ const CreateSellOffer = async ({
   showSnackBar("Successfully listed NFT for sale.", true)
 }
 
-function ObjectValueCard({ content }: { content: string }) {
-  const isRev = /([0-9a-fA-F]{64}:[0-9]+)/g
-  const revLink = (rev: string, i: number) => (
-    <Link
-      key={i}
-      to={`/objects/${rev}`}
-      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-    >
-      {rev}
-    </Link>
-  )
-  const formattedContent = reactStringReplace(content, isRev, revLink)
-
-  return <Card content={formattedContent} />
-}
-
 const SmartObjectValues = ({ smartObject }: any) => {
   if (!smartObject) return <></>
   return (
     <>
-      {Object.entries(smartObject)
-        .filter(([k, v]) => v !== undefined && !keywords.includes(k))
-        .map(([key, value], i) => (
-          <div key={i} className="sm:w-full">
-            <h3 className="mt-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
-            <ObjectValueCard content={toObject(value)} />
+      {smartObject.name && (
+        <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          {smartObject.name}
+        </h2>
+      )}
+      {smartObject.artist && (
+        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+          {capitalizeFirstLetter(smartObject.artist)}
+        </p>
+      )}
+      {smartObject.url && (
+        <div className="w-full h-80 flex items-center justify-center my-4">
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+            <img
+              className="max-h-full max-w-full object-contain"
+              src={smartObject.url}
+              alt="Image Preview"
+            />
           </div>
-        ))}
+        </div>
+      )}
     </>
   )
 }
@@ -133,6 +128,7 @@ const CreateSellOfferComponent = ({
 
   return (
     <>
+      <h2 className="text-xl font-bold dark:text-white mb-2 mt-4">List For Sale</h2>
       <div className="flex">
         <input
           type="number"
@@ -156,6 +152,7 @@ const CreateSellOfferComponent = ({
               await CreateSellOffer({ computer, amount, nft: smartObject, showSnackBar })
               setAmount("")
               showLoader(false)
+              showSnackBar(`You listed this NFT for ${amount} ${computer.getChain()}`, true)
             } catch (error) {
               showLoader(false)
               showSnackBar("Failed to create sell offer", false)
@@ -196,13 +193,38 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
     <>
       {nftAmount !== 0 && (
         <div className="sm:w-full">
-          <h3 className="mt-2 text-xl font-bold dark:text-white">
-            NFT Listed At ({computer.getChain()})
-          </h3>
-          <ObjectValueCard content={toObject(nftAmount / 1e8)} />
+          <h2 className="mt-3 text-l font-bold dark:text-white">
+            NFT Listed At {toObject(nftAmount / 1e8)} {computer.getChain()}
+          </h2>
         </div>
       )}
     </>
+  )
+}
+
+const UnlistNftComponent = ({ smartObject }: { smartObject: NFT }) => {
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+
+  return (
+    <div className="flex">
+      <button
+        type="button"
+        onClick={async () => {
+          try {
+            showLoader(true)
+            await smartObject.unlist()
+            showSnackBar(`You unlisted this NFT.`, true)
+            showLoader(false)
+          } catch (error) {
+            showLoader(false)
+            showSnackBar("Failed to unlist nft", false)
+          }
+        }}
+        className="text-white mt-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+      >
+        Unlist this NFT
+      </button>
+    </div>
   )
 }
 
@@ -224,17 +246,17 @@ const BuyNftComponent = ({
         onClick={async () => {
           try {
             showLoader(true)
-            await BuyNFT({ computer, nft: smartObject, setFunctionResult })
+            const nftAmount = await BuyNFT({ computer, nft: smartObject, setFunctionResult })
+            showSnackBar(`You bought this NFT for ${nftAmount / 1e8} ${computer.getChain()}`, true)
             showLoader(false)
           } catch (error) {
             showLoader(false)
-            console.log(error)
             showSnackBar("Failed to buy nft", false)
           }
         }}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
       >
-        Buy
+        Buy this NFT
       </button>
     </div>
   )
@@ -310,8 +332,11 @@ function NftView() {
         {smartObject && smartObject.offerTxRev && (
           <ShowSaleOfferComponent computer={computer} nft={smartObject} />
         )}
-        {showCreateOffer(computer, smartObject) && (
+        {showCreateOffer(computer, smartObject) && !smartObject.offerTxRev && (
           <CreateSellOfferComponent computer={computer} smartObject={smartObject} />
+        )}
+        {showCreateOffer(computer, smartObject) && smartObject.offerTxRev && (
+          <UnlistNftComponent smartObject={smartObject} />
         )}
         {showBuyOffer(computer, smartObject) && (
           <BuyNftComponent

@@ -34,14 +34,14 @@ describe('Static Swap', () => {
       await swapHelperA.deploy()
 
       // Alice mints an NFT
-      nftA = await tbc721A.mint('a', 'AAA')
+      nftA = await tbc721A.mint('a', 'AAA', 'URL')
 
       // Bob creates helper objects from the module specifiers
       const tbc721B = new TBC721(bob, tbc721A.mod)
       const swapHelperB = new StaticSwapHelper(bob, swapHelperA.mod)
 
       // Bob mints an NFT to pay for Alice's's NFT
-      nftB = await tbc721B.mint('b', 'BBB')
+      nftB = await tbc721B.mint('b', 'BBB', 'URL')
 
       // Bob creates a swap transaction
       const { tx } = await swapHelperB.createSwapTx(nftA, nftB)
@@ -66,23 +66,25 @@ describe('Static Swap', () => {
 
   describe('Creating two NFTs to be swapped', () => {
     it('Alice creates an NFT', async () => {
-      nftA = await alice.new(NFT, ['A', 'AAA'])
+      nftA = await alice.new(NFT, ['A', 'AAA', 'URL'])
       // @ts-ignore
       expect(nftA).to.matchPattern({
         ...meta,
         name: 'A',
-        symbol: 'AAA',
+        artist: 'AAA',
+        url: 'URL',
         _owners: [alice.getPublicKey()]
       })
     })
 
     it('Bob creates an NFT', async () => {
-      nftB = await bob.new(NFT, ['B', 'BBB'])
+      nftB = await bob.new(NFT, ['B', 'BBB', 'URL'])
       // @ts-ignore
       expect(nftB).to.matchPattern({
         ...meta,
         name: 'B',
-        symbol: 'BBB',
+        artist: 'BBB',
+        url: 'URL',
         _owners: [bob.getPublicKey()]
       })
     })
@@ -125,7 +127,8 @@ describe('Static Swap', () => {
       expect(aSwapped).to.matchPattern({
         ...meta,
         name: 'A',
-        symbol: 'AAA',
+        artist: 'AAA',
+        url: 'URL',
         _owners: [bob.getPublicKey()]
       })
     })
@@ -137,7 +140,8 @@ describe('Static Swap', () => {
       expect(bSwapped).to.matchPattern({
         ...meta,
         name: 'B',
-        symbol: 'BBB',
+        artist: 'BBB',
+        url: 'URL',
         _owners: [alice.getPublicKey()]
       })
     })

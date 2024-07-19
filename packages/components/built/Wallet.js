@@ -289,7 +289,7 @@ function FaucetForm(_a) {
         initFlowbite();
     }, []);
     var showLoader = useUtilsComponents().showLoader;
-    return (_jsxs(_Fragment, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Fund Your Wallet" })), _jsx("p", __assign({ className: "mb-1 text-sm text-gray-500 dark:text-gray-400" }, { children: "Click below to get 1 free regtest coin." })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsx("button", __assign({ onClick: function (e) { return __awaiter(_this, void 0, void 0, function () {
+    return (_jsxs(_Fragment, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Fund Your Wallet" })), _jsx("p", __assign({ className: "mb-1 text-sm text-gray-500 dark:text-gray-400" }, { children: "Click below to get 1 free regtest coin (Click the balance reload button after funding)." })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsx("button", __assign({ onClick: function (e) { return __awaiter(_this, void 0, void 0, function () {
                         var error_3;
                         return __generator(this, function (_a) {
                             switch (_a.label) {

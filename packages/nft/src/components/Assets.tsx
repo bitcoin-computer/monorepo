@@ -1,5 +1,6 @@
-import { Auth, Gallery } from "@bitcoin-computer/components"
+import { Auth } from "@bitcoin-computer/components"
 import { nftModSpec } from "../constants/modSpecs"
+import { Gallery } from "./Gallery"
 
 const publicKey = Auth.getComputer().getPublicKey()
 

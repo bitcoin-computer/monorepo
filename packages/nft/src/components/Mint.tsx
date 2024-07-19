@@ -10,7 +10,7 @@ function SuccessContent(rev: string) {
     <>
       <div className="p-4 md:p-5">
         <div>
-          You created a{" "}
+          Congratiolations! You minted an nft. Click{" "}
           <Link
             to={`/objects/${rev}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -18,8 +18,9 @@ function SuccessContent(rev: string) {
               Modal.hideModal("success-modal")
             }}
           >
-            nft
-          </Link>
+            here
+          </Link>{" "}
+          to see it.
         </div>
       </div>
       <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -67,6 +68,7 @@ function MintForm(props: {
   const { computer, setSuccessRev, setErrorMsg } = props
   const [name, setName] = useState("")
   const [symbol, setSymbol] = useState("")
+  const [url, setUrl] = useState("")
   const { showLoader } = UtilsContext.useUtilsComponents()
 
   const onSubmit = async (e: React.SyntheticEvent) => {
@@ -74,7 +76,7 @@ function MintForm(props: {
     try {
       showLoader(true)
       const tbc721 = new TBC721(computer, nftModSpec)
-      const nft = await tbc721.mint(name, symbol)
+      const nft = await tbc721.mint(name, symbol, url)
       setSuccessRev(nft._id)
       showLoader(false)
       Modal.showModal("success-modal")
@@ -88,8 +90,9 @@ function MintForm(props: {
   }
   return (
     <>
-      <form onSubmit={onSubmit} className="w-full">
-        <div className="grid gap-6 mb-6 md:grid-cols-2">
+      <form onSubmit={onSubmit} className="w-full lg:w-1/2">
+        <div className="grid gap-6 mb-6">
+          <h2 className="text-2xl font-bold dark:text-white">Mint NFT</h2>
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Name
@@ -106,7 +109,7 @@ function MintForm(props: {
           </div>
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-              Symbol
+              Artist
             </label>
             <input
               type="text"
@@ -117,6 +120,28 @@ function MintForm(props: {
               placeholder="TBC"
               required
             />
+          </div>
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              Image URL
+            </label>
+            <input
+              type="text"
+              id="imageUrl"
+              value={url}
+              onChange={(e) => {
+                setUrl(e.target.value)
+              }}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="https://example.com/image.jpg"
+            />
+            {url && (
+              <div className="w-full h-64 flex items-center justify-center">
+                <div className="w-4/5 md:w-1/2 lg:w-1/2 h-full bg-gray-200 flex items-center justify-center mt-8">
+                  <img className="max-h-full max-w-full object-contain" src={url} alt="" />
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <button

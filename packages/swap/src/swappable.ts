@@ -4,7 +4,7 @@ const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Swappable extends Contract {
   name: string
-  symbol: string
+  artist: string
   _id: string
   _rev: string
   _root: string
