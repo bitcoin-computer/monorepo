@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
-import reactStringReplace from "react-string-replace"
 import {
-  Card,
   toObject,
   capitalizeFirstLetter,
   Modal,
@@ -89,26 +87,20 @@ const CreateSellOffer = async ({
   showSnackBar("Successfully listed NFT for sale.", true)
 }
 
-function ObjectValueCard({ content }: { content: string }) {
-  const isRev = /([0-9a-fA-F]{64}:[0-9]+)/g
-  const revLink = (rev: string, i: number) => (
-    <Link
-      key={i}
-      to={`/objects/${rev}`}
-      className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-    >
-      {rev}
-    </Link>
-  )
-  const formattedContent = reactStringReplace(content, isRev, revLink)
-
-  return <Card content={formattedContent} />
-}
-
 const SmartObjectValues = ({ smartObject }: any) => {
   if (!smartObject) return <></>
   return (
     <>
+      {smartObject.name && (
+        <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          {smartObject.name}
+        </h2>
+      )}
+      {smartObject.artist && (
+        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+          {capitalizeFirstLetter(smartObject.artist)}
+        </p>
+      )}
       {smartObject.url && (
         <div className="w-full h-80 flex items-center justify-center my-4">
           <div className="w-full h-full bg-gray-200 flex items-center justify-center">
@@ -119,16 +111,6 @@ const SmartObjectValues = ({ smartObject }: any) => {
             />
           </div>
         </div>
-      )}
-      {smartObject.name && (
-        <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-          {smartObject.name}
-        </h5>
-      )}
-      {smartObject.artist && (
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-          {capitalizeFirstLetter(smartObject.artist)}
-        </p>
       )}
     </>
   )
@@ -146,6 +128,7 @@ const CreateSellOfferComponent = ({
 
   return (
     <>
+      <h2 className="text-xl font-bold dark:text-white mb-2 mt-4">List For Sale</h2>
       <div className="flex">
         <input
           type="number"
@@ -210,10 +193,9 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
     <>
       {nftAmount !== 0 && (
         <div className="sm:w-full">
-          <h3 className="mt-2 text-xl font-bold dark:text-white">
-            NFT Listed At ({computer.getChain()})
-          </h3>
-          <ObjectValueCard content={toObject(nftAmount / 1e8)} />
+          <h2 className="mt-3 text-l font-bold dark:text-white">
+            NFT Listed At {toObject(nftAmount / 1e8)} {computer.getChain()}
+          </h2>
         </div>
       )}
     </>
@@ -235,7 +217,6 @@ const UnlistNftComponent = ({ smartObject }: { smartObject: NFT }) => {
             showLoader(false)
           } catch (error) {
             showLoader(false)
-            console.log(error)
             showSnackBar("Failed to unlist nft", false)
           }
         }}
@@ -270,7 +251,6 @@ const BuyNftComponent = ({
             showLoader(false)
           } catch (error) {
             showLoader(false)
-            console.log(error)
             showSnackBar("Failed to buy nft", false)
           }
         }}
@@ -348,12 +328,11 @@ function NftView() {
   return (
     <>
       <div>
-        <h2 className="text-2xl font-bold dark:text-white">List For Sale</h2>
         <SmartObjectValues smartObject={smartObject} />
         {smartObject && smartObject.offerTxRev && (
           <ShowSaleOfferComponent computer={computer} nft={smartObject} />
         )}
-        {showCreateOffer(computer, smartObject) && (
+        {showCreateOffer(computer, smartObject) && !smartObject.offerTxRev && (
           <CreateSellOfferComponent computer={computer} smartObject={smartObject} />
         )}
         {showCreateOffer(computer, smartObject) && smartObject.offerTxRev && (

@@ -10,7 +10,7 @@ function SuccessContent(rev: string) {
     <>
       <div className="p-4 md:p-5">
         <div>
-          You created a{" "}
+          Congratiolations! You minted an nft. Click{" "}
           <Link
             to={`/objects/${rev}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -18,8 +18,9 @@ function SuccessContent(rev: string) {
               Modal.hideModal("success-modal")
             }}
           >
-            nft
-          </Link>
+            here
+          </Link>{" "}
+          to see it.
         </div>
       </div>
       <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -91,6 +92,7 @@ function MintForm(props: {
     <>
       <form onSubmit={onSubmit} className="w-full lg:w-1/2">
         <div className="grid gap-6 mb-6">
+          <h2 className="text-2xl font-bold dark:text-white">Mint NFT</h2>
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Name
