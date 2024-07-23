@@ -9,34 +9,35 @@
     <meta name="generator" content="Retype 3.5.0">
 
     <!-- Primary Meta Tags -->
-    <title>sign</title>
-    <meta name="title" content="sign">
-    <meta name="description" content="Signs a Bitcoin transaction. Options can be passed in that determine which inputs to sign, the sigHash type to use, and which script to use.">
+    <title>Apps</title>
+    <meta name="title" content="Apps">
+    <meta name="description" content="The following are examples of open source applications builded with the Bitcoin Computer.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/lib/sign/">
+    <link rel="canonical" href="/apps/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/lib/sign/">
-    <meta property="og:title" content="sign">
-    <meta property="og:description" content="Signs a Bitcoin transaction. Options can be passed in that determine which inputs to sign, the sigHash type to use, and which script to use.">
+    <meta property="og:url" content="/apps/">
+    <meta property="og:title" content="Apps">
+    <meta property="og:description" content="The following are examples of open source applications builded with the Bitcoin Computer.">
+    <meta property="og:image" content="/images/wallet.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/lib/sign/">
-    <meta property="twitter:title" content="sign">
-    <meta property="twitter:description" content="Signs a Bitcoin transaction. Options can be passed in that determine which inputs to sign, the sigHash type to use, and which script to use.">
+    <meta property="twitter:url" content="/apps/">
+    <meta property="twitter:title" content="Apps">
+    <meta property="twitter:description" content="The following are examples of open source applications builded with the Bitcoin Computer.">
+    <meta property="twitter:image" content="/images/wallet.jpg">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
-    <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.775093049516" rel="stylesheet">
+    <link href="../static/favicon.ico" rel="icon">
+    <link href="../resources/css/retype.css?v=3.5.0.775093049516" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.775093049516" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.775093049516" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.775093049516" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.775093049516" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.775093049516" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -51,7 +52,7 @@
                 <!-- Logo -->
                 <div class="flex items-center justify-between h-full py-2 md:w-75">
                     <div class="flex items-center px-2 md:px-6">
-                        <a id="docs-site-logo" href="../../" class="flex items-center leading-snug text-xl">
+                        <a id="docs-site-logo" href="../" class="flex items-center leading-snug text-xl">
                             <span class="dark:text-white font-semibold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
                         </a><span class="hidden px-2 py-1 ml-4 text-sm font-semibold leading-none text-root-logo-label-text bg-root-logo-label-bg rounded-sm md:inline-block">0.18.0</span>
                     </div>
@@ -151,109 +152,55 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="sign" class="break-words">
+<doc-anchor-target id="apps" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#sign">#</doc-anchor-trigger>
-        <span>sign</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#apps">#</doc-anchor-trigger>
+        <span>Apps</span>
     </h1>
 </doc-anchor-target>
-<p>Signs a Bitcoin transaction. Options can be passed in that determine which inputs to sign, the sigHash type to use, and which script to use.</p>
-<doc-anchor-target id="type">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
-        <span>Type</span>
-    </h3>
+<p>The following are examples of open source applications builded with the Bitcoin Computer. They are all published under MIT licence so you can clone, copy, modify, contribute or use them as a starting point for you project.</p>
+<doc-anchor-target id="wallet">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#wallet">#</doc-anchor-trigger>
+        <span>Wallet</span>
+    </h2>
 </doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">(
-  tx: BitcoinLib.Transaction,
-  opts: {
-    inputIndex?: number
-    sighashType?: number
-    inputScript?: Buffer
-  }
-) =&gt; void</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="syntax">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#syntax">#</doc-anchor-trigger>
-        <span>Syntax</span>
-    </h3>
+<p>Non custodial, open source wallet for Bitcoin and Litecoin. You can send cryptocurrency to a friend and see your balance, and the transactions sent and received.</p>
+<p><figure class="content-center">
+    <a href="https://wallet.bitcoincomputer.io">
+        <img src="../images/wallet.jpg" alt="wallet.bitcoincomputer.io">
+    </a>
+    <figcaption class="caption">wallet.bitcoincomputer.io</figcaption>
+</figure>
+</p>
+<doc-anchor-target id="explorer">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#explorer">#</doc-anchor-trigger>
+        <span>Explorer</span>
+    </h2>
 </doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">computer.sign(tx, opts)</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="parameters">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#parameters">#</doc-anchor-trigger>
-        <span>Parameters</span>
-    </h3>
+<p>Bitcoin Computer Explorer. You can explore all objects created, or log in to update your smart objects using the UI. Use the playground to create any smart contract you can imagine!</p>
+<p><figure class="content-center">
+    <a href="https://explorer.bitcoincomputer.io">
+        <img src="../images/explorer.jpg" alt="explorer.bitcoincomputer.io">
+    </a>
+    <figcaption class="caption">explorer.bitcoincomputer.io</figcaption>
+</figure>
+</p>
+<doc-anchor-target id="non-fungible-token">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#non-fungible-token">#</doc-anchor-trigger>
+        <span>Non Fungible Token</span>
+    </h2>
 </doc-anchor-target>
-<doc-anchor-target id="tx">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#tx">#</doc-anchor-trigger>
-        <span>tx</span>
-    </h4>
-</doc-anchor-target>
-<p>A Bitcoin transaction, possibly partially signed.</p>
-<doc-anchor-target id="opts">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#opts">#</doc-anchor-trigger>
-        <span>opts</span>
-    </h4>
-</doc-anchor-target>
-<p>An object with specific parameters to use when signing</p>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Key</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>inputIndex</td>
-<td>number</td>
-<td>The input index to be signed</td>
-</tr>
-<tr>
-<td>sighashType</td>
-<td>number</td>
-<td>A valid <a target="_blank" href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/src/transaction.d.ts">sighash type number</a></td>
-</tr>
-<tr>
-<td>inputScript</td>
-<td>Buffer</td>
-<td>A buffer encoding the signature</td>
-</tr>
-</tbody>
-</table>
-</div>
-<doc-anchor-target id="return-value">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#return-value">#</doc-anchor-trigger>
-        <span>Return value</span>
-    </h3>
-</doc-anchor-target>
-<p>By default, the <code v-pre>sign</code> function will make a best effort to sign all inputs, but will not throw an error if the signature cannot be added due to hash mismatch.</p>
-<p>This is useful in the case of partially signed transactions, where a user can encode an expression, sign with the user private key and send the generated partially signed transaction to another user. Then, the receiver can sign other inputs.</p>
-<doc-anchor-target id="examples">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
-    </h3>
-</doc-anchor-target>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">class C extends Contract {}
-const tx = await computer.encode({
-  exp: `${C} new ${C.name}()`
-  sign: false
-})
-await computer.fund(tx)
-computer.sign(tx)</code></pre>
-</doc-codeblock></div>
+<p>You can mint an NFT and trustless list it for sale. You also can see your own NFTs or buy any NFT listed.</p>
+<p><figure class="content-center">
+    <a href="https://nft.bitcoincomputer.io">
+        <img src="../images/nft.jpg" alt="nft.bitcoincomputer.io">
+    </a>
+    <figcaption class="caption">nft.bitcoincomputer.io</figcaption>
+</figure>
+</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -263,20 +210,20 @@ computer.sign(tx)</code></pre>
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../lib/send/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../format/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">send</span>
+                                                <span class="block mt-1">Transaction Format</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../lib/sync/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../examples/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">sync</span>
+                                                <span class="block mt-1">Examples</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
@@ -320,6 +267,6 @@ computer.sign(tx)</code></pre>
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "sign", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Apps", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
