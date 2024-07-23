@@ -123,6 +123,7 @@ export default function WithPagination(q) {
                         query = __assign(__assign({}, q), params);
                         query.offset = contractsPerPage * pageNum;
                         query.limit = contractsPerPage + 1;
+                        query.order = 'DESC';
                         return [4 /*yield*/, computer.query(query)];
                     case 1:
                         result = _a.sent();
