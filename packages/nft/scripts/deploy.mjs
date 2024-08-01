@@ -1,29 +1,22 @@
 import { config } from "dotenv"
 import readline from "readline"
-import { NFT, TBC721 } from "@bitcoin-computer/TBC721"
-import {
-  Offer,
-  OfferHelper,
-  Payment,
-  PaymentHelper,
-  Sale,
-  SaleHelper
-} from "@bitcoin-computer/swap"
+import { TBC721 } from "@bitcoin-computer/TBC721"
+import { OfferHelper, PaymentHelper, SaleHelper } from "@bitcoin-computer/swap"
+
 const { Computer } = await import("@bitcoin-computer/lib")
 
 config()
 
-const mnemonic = process.env.MNEMONIC
-const chain = process.env.CHAIN || "LTC"
-const network = process.env.NETWORK || "regtest"
-const url = process.env.BCN_URL || "http://127.0.0.1:1031"
+const { REACT_APP_CHAIN, REACT_APP_NETWORK, MNEMONIC, REACT_APP_LTC_REGTEST_URL } = process.env
+const mnemonic = MNEMONIC
+const chain = REACT_APP_CHAIN
+const network = REACT_APP_NETWORK
+const url = REACT_APP_LTC_REGTEST_URL
 
-const computerProps = { chain, network, url }
+const computerProps = { chain, network, mnemonic, url }
 
 if (network !== "regtest") {
-  if (!mnemonic) {
-    throw new Error("Please set your MNEMONIC in a .env file")
-  }
+  if (!mnemonic) throw new Error("Please set MNEMONIC in the .env file")
   computerProps["mnemonic"] = mnemonic
 }
  
@@ -39,14 +32,12 @@ await computer.faucet(2e8)
 const balance = await computer.wallet.getBalance()
 
 // Summary
-console.log(`
-Chain \x1b[2m${chain}\x1b[0m
+console.log(`Chain \x1b[2m${chain}\x1b[0m
 Network \x1b[2m${network}\x1b[0m
 Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
-Balance \x1b[2m${balance / 1e8}\x1b[0m
-`)
+Balance \x1b[2m${balance / 1e8}\x1b[0m`)
 
 const q = `
 Do you want to deploy the contracts? (y/n)
@@ -54,40 +45,42 @@ Do you want to deploy the contracts? (y/n)
 rl.question(q, async (answer) => {
   if (answer !== "n") {
     try {
-      console.log("Deploying NFT contract...")
-      console.log(`export ${NFT}`)
+      console.log(" * Deploying NFT contract...")
       const tbc721 = new TBC721(computer)
       const modSpec = await tbc721.deploy()
 
-      console.log("Deploying Offer contract...")
-      console.log(`export ${Offer}`)
+      console.log(" * Deploying Offer contract...")
       const offerHelper = new OfferHelper(computer)
       const offerModSpec = await offerHelper.deploy()
 
-      console.log("Deploying Sale contract...")
-      console.log(`export ${Sale}`)
+      console.log(" * Deploying Sale contract...")
       const saleHelper = new SaleHelper(computer)
       const saleModSpec = await saleHelper.deploy()
 
-      console.log("Deploying Payment contract...")
-      console.log(`export ${Payment}`)
+      console.log(" * Deploying Payment contract...")
       const paymentHelper = new PaymentHelper(computer)
       const paymentModSpec = await paymentHelper.deploy()
 
       // Log the module specifiers
-      console.log(`// Updaate env variables/file with module specifiers for deployed contracts
+      console.log(`
+Successfully deployed smart contracts.
+  
+-----------------
+ ACTION REQUIRED
+-----------------
+Update the following rows in your .env file.
+
 REACT_APP_NFT_MOD_SPEC=${modSpec}
 REACT_APP_OFFER_MOD_SPEC=${offerModSpec}
 REACT_APP_SALE_MOD_SPEC=${saleModSpec}
-REACT_APP_PAYMENT_MOD_SPEC=${paymentModSpec}
-`)
-
-      console.log("\nDeployment successful. Please update your env variables.")
+REACT_APP_PAYMENT_MOD_SPEC=${paymentModSpec}`)
     } catch (err) {
       console.log(err)
     }
 
-    console.log(`\nSuccessfully created smart objects`)
+    console.log(`
+Run 'npm start' to start the application.
+`)
   } else {
     console.log("Aborting...")
   }
