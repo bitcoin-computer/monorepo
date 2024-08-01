@@ -14,7 +14,7 @@ import { Navbar } from "./components/Navbar"
 import Mint from "./components/Mint"
 import { AllAssets, MyAssets } from "./components/Assets"
 import { NftView } from "./components/Nft"
-import { paymentModSpec } from "./constants/modSpecs"
+import { REACT_APP_PAYMENT_MOD_SPEC } from "./constants/modSpecs"
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -25,13 +25,13 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <span className="bg-gray-900/50 dark:bg-gray-900/80 z-30 inset-0 sr-only"></span>
+      {/* <span className="bg-gray-900/50 dark:bg-gray-900/80 z-30 inset-0 sr-only"></span> */}
       <UtilsContext.UtilsProvider>
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />
-          <Wallet paymentModSpec={paymentModSpec} />
+          <Wallet paymentModSpec={REACT_APP_PAYMENT_MOD_SPEC} />
           <Navbar />
-          <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+          {/* <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto"> */}
             <Routes>
               <Route path="/" element={<AllAssets />} />
               <Route path="/mine" element={<MyAssets />} />
@@ -41,7 +41,7 @@ export default function App() {
               <Route path="*" element={<Navigate to="/" replace={true} />} />
               <Route path="*" element={<Error404 />} />
             </Routes>
-          </div>
+          {/* </div> */}
         </ComputerContext.Provider>
       </UtilsContext.UtilsProvider>
     </BrowserRouter>

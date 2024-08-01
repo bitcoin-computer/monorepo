@@ -3,7 +3,7 @@ import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/componen
 import { TBC721 } from "@bitcoin-computer/TBC721"
 import { Link } from "react-router-dom"
 import { Computer } from "@bitcoin-computer/lib"
-import { nftModSpec } from "../constants/modSpecs"
+import { REACT_APP_NFT_MOD_SPEC } from "../constants/modSpecs"
 
 function SuccessContent(rev: string) {
   return (
@@ -75,7 +75,7 @@ function MintForm(props: {
     e.preventDefault()
     try {
       showLoader(true)
-      const tbc721 = new TBC721(computer, nftModSpec)
+      const tbc721 = new TBC721(computer, REACT_APP_NFT_MOD_SPEC)
       const nft = await tbc721.mint(name, symbol, url)
       setSuccessRev(nft._id)
       showLoader(false)

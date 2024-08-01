@@ -195,9 +195,6 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
   useEffect(() => {
     const fetch = async () => {
       showLoader(true)
-
-console.log('query parameters', { ...q, ...params })
-
       const query = { ...q, ...params }
       query.offset = contractsPerPage * pageNum
       query.limit = contractsPerPage + 1
