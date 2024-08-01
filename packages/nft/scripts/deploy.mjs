@@ -8,35 +8,36 @@ const { Computer } = await import("@bitcoin-computer/lib")
 
 config()
 
-const { REACT_APP_CHAIN, REACT_APP_NETWORK, MNEMONIC, REACT_APP_LTC_REGTEST_URL } = process.env
+const rl = readline.createInterface({ input, output })
+
+const { REACT_APP_CHAIN, REACT_APP_NETWORK, MNEMONIC } = process.env
 const mnemonic = MNEMONIC
 const chain = REACT_APP_CHAIN
 const network = REACT_APP_NETWORK
-const url = REACT_APP_LTC_REGTEST_URL
+const url = process.env[`REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL`]
 
-const computerProps = { chain, network, mnemonic, url }
+console.log(url)
 
 if (network !== "regtest") {
   if (!mnemonic) throw new Error("Please set MNEMONIC in the .env file")
   computerProps["mnemonic"] = mnemonic
 }
  
-const computer = new Computer(computerProps)
+const computer = new Computer({ chain, network, mnemonic, url })
 await computer.faucet(2e8)
 const balance = await computer.wallet.getBalance()
 
 // Summary
-console.log(`Chain \x1b[2m${chain}\x1b[0m
+console.log(`\nChain \x1b[2m${chain}\x1b[0m
 Network \x1b[2m${network}\x1b[0m
 Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
 Balance \x1b[2m${balance / 1e8}\x1b[0m`)
 
-const rl = readline.createInterface({ input, output })
-const answer = await rl.question('\nDo you want to deploy the contracts? (y/n)')
+const answer = await rl.question('\nDo you want to deploy the contracts? \x1b[2m(y/n)\x1b[0m')
 if (answer === 'n') {
-  console.log("Aborting...")
+  console.log("\n Aborting...\n")
 } else {
   console.log("\n * Deploying NFT contract...")
   const tbc721 = new TBC721(computer)
@@ -58,16 +59,20 @@ if (answer === 'n') {
 Successfully deployed smart contracts.
 
 -----------------
-ACTION REQUIRED
+ ACTION REQUIRED
 -----------------
-Update the following rows in your .env file.
 
-REACT_APP_NFT_MOD_SPEC=${modSpec}
-REACT_APP_OFFER_MOD_SPEC=${offerModSpec}
-REACT_APP_SALE_MOD_SPEC=${saleModSpec}
-REACT_APP_PAYMENT_MOD_SPEC=${paymentModSpec}
+(1) Update the following rows in your .env file.
 
-Run 'npm start' to start the application.`)
+REACT_APP_NFT_MOD_SPEC\x1b[2m=${modSpec}\x1b[0m
+REACT_APP_OFFER_MOD_SPEC\x1b[2m=${offerModSpec}\x1b[0m
+REACT_APP_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
+REACT_APP_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m
+
+(2) Run 'npm start' to start the application.
+
+(3) Log in using ${chain} ${network}.
+`)
 }
 
 rl.close()
