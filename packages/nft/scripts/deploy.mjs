@@ -39,30 +39,26 @@ Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
 Balance \x1b[2m${balance / 1e8}\x1b[0m`)
 
-const q = `
-Do you want to deploy the contracts? (y/n)
-`
-rl.question(q, async (answer) => {
+
+rl.question(`\nDo you want to deploy the contracts? (y/n)`, async (answer) => {
   if (answer !== "n") {
-    try {
-      console.log(" * Deploying NFT contract...")
-      const tbc721 = new TBC721(computer)
-      const modSpec = await tbc721.deploy()
+    console.log("\n * Deploying NFT contract...")
+    const tbc721 = new TBC721(computer)
+    const modSpec = await tbc721.deploy()
 
-      console.log(" * Deploying Offer contract...")
-      const offerHelper = new OfferHelper(computer)
-      const offerModSpec = await offerHelper.deploy()
+    console.log(" * Deploying Offer contract...")
+    const offerHelper = new OfferHelper(computer)
+    const offerModSpec = await offerHelper.deploy()
 
-      console.log(" * Deploying Sale contract...")
-      const saleHelper = new SaleHelper(computer)
-      const saleModSpec = await saleHelper.deploy()
+    console.log(" * Deploying Sale contract...")
+    const saleHelper = new SaleHelper(computer)
+    const saleModSpec = await saleHelper.deploy()
 
-      console.log(" * Deploying Payment contract...")
-      const paymentHelper = new PaymentHelper(computer)
-      const paymentModSpec = await paymentHelper.deploy()
+    console.log(" * Deploying Payment contract...")
+    const paymentHelper = new PaymentHelper(computer)
+    const paymentModSpec = await paymentHelper.deploy()
 
-      // Log the module specifiers
-      console.log(`
+    console.log(`
 Successfully deployed smart contracts.
   
 -----------------
@@ -73,14 +69,9 @@ Update the following rows in your .env file.
 REACT_APP_NFT_MOD_SPEC=${modSpec}
 REACT_APP_OFFER_MOD_SPEC=${offerModSpec}
 REACT_APP_SALE_MOD_SPEC=${saleModSpec}
-REACT_APP_PAYMENT_MOD_SPEC=${paymentModSpec}`)
-    } catch (err) {
-      console.log(err)
-    }
+REACT_APP_PAYMENT_MOD_SPEC=${paymentModSpec}
 
-    console.log(`
-Run 'npm start' to start the application.
-`)
+Run 'npm start' to start the application.`)
   } else {
     console.log("Aborting...")
   }
