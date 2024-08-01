@@ -1,5 +1,6 @@
 import { config } from "dotenv"
-import readline from "readline"
+import * as readline from 'node:readline/promises'
+import { stdin as input, stdout as output } from 'node:process'
 import { TBC721 } from "@bitcoin-computer/TBC721"
 import { OfferHelper, PaymentHelper, SaleHelper } from "@bitcoin-computer/swap"
 
@@ -21,13 +22,6 @@ if (network !== "regtest") {
 }
  
 const computer = new Computer(computerProps)
-
-// Prompt the user to confirm an action
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout
-})
-
 await computer.faucet(2e8)
 const balance = await computer.wallet.getBalance()
 
@@ -39,30 +33,32 @@ Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
 Balance \x1b[2m${balance / 1e8}\x1b[0m`)
 
+const rl = readline.createInterface({ input, output })
+const answer = await rl.question('\nDo you want to deploy the contracts? (y/n)')
+if (answer === 'n') {
+  console.log("Aborting...")
+} else {
+  console.log("\n * Deploying NFT contract...")
+  const tbc721 = new TBC721(computer)
+  const modSpec = await tbc721.deploy()
 
-rl.question(`\nDo you want to deploy the contracts? (y/n)`, async (answer) => {
-  if (answer !== "n") {
-    console.log("\n * Deploying NFT contract...")
-    const tbc721 = new TBC721(computer)
-    const modSpec = await tbc721.deploy()
+  console.log(" * Deploying Offer contract...")
+  const offerHelper = new OfferHelper(computer)
+  const offerModSpec = await offerHelper.deploy()
 
-    console.log(" * Deploying Offer contract...")
-    const offerHelper = new OfferHelper(computer)
-    const offerModSpec = await offerHelper.deploy()
+  console.log(" * Deploying Sale contract...")
+  const saleHelper = new SaleHelper(computer)
+  const saleModSpec = await saleHelper.deploy()
 
-    console.log(" * Deploying Sale contract...")
-    const saleHelper = new SaleHelper(computer)
-    const saleModSpec = await saleHelper.deploy()
+  console.log(" * Deploying Payment contract...")
+  const paymentHelper = new PaymentHelper(computer)
+  const paymentModSpec = await paymentHelper.deploy()
 
-    console.log(" * Deploying Payment contract...")
-    const paymentHelper = new PaymentHelper(computer)
-    const paymentModSpec = await paymentHelper.deploy()
-
-    console.log(`
+  console.log(`
 Successfully deployed smart contracts.
-  
+
 -----------------
- ACTION REQUIRED
+ACTION REQUIRED
 -----------------
 Update the following rows in your .env file.
 
@@ -72,8 +68,6 @@ REACT_APP_SALE_MOD_SPEC=${saleModSpec}
 REACT_APP_PAYMENT_MOD_SPEC=${paymentModSpec}
 
 Run 'npm start' to start the application.`)
-  } else {
-    console.log("Aborting...")
-  }
-  rl.close()
-})
+}
+
+rl.close()
