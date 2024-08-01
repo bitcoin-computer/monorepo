@@ -380,8 +380,8 @@ function FaucetForm({ computer }: { computer: Computer }) {
   return (
     <>
       <h6 className="text-lg font-bold dark:text-white">Fund Your Wallet</h6>
-      <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
-        Click below to get 1 free regtest coin (Click the balance reload button after funding).
+      <p className="text-sm text-gray-500 dark:text-gray-400">
+        Click "Fund" to get 1 free regtest coin, then click on "reload" next to your balance.
       </p>
       <div className="flex items-center pt-4 rounded-b dark:border-gray-600">
         <button
