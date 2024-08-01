@@ -314,7 +314,6 @@ function NftView() {
       try {
         showLoader(true)
         const synced = await computer.sync(rev)
-        console.log({ synced })
         setSmartObject(synced)
         showLoader(false)
       } catch (error) {

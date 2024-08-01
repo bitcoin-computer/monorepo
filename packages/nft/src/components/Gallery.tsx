@@ -21,7 +21,6 @@ export type UserQuery<T extends Class> = Partial<{
 }>
 
 function NFTCard({ nft }: { nft: NFT }) {
-  console.log(nft)
   return (
     <div className="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 overflow-hidden mb-4">
       <a href="#">
@@ -196,6 +195,9 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
   useEffect(() => {
     const fetch = async () => {
       showLoader(true)
+
+console.log('query parameters', { ...q, ...params })
+
       const query = { ...q, ...params }
       query.offset = contractsPerPage * pageNum
       query.limit = contractsPerPage + 1
