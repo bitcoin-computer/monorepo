@@ -19,5 +19,7 @@ export function FunctionResultModalContent(_a) {
                             navigate("/objects/".concat(functionResult._rev));
                             window.location.reload();
                         } }, { children: "smart object" })), "."] })) }));
-    return (_jsxs("p", __assign({ className: "text-base leading-relaxed text-gray-500 dark:text-gray-400" }, { children: ["You created the value below at Revision ", functionResult._rev, _jsx("pre", { children: functionResult.res.toString() })] })));
+    if (functionResult._rev && functionResult.res.toString())
+        return (_jsxs("p", __assign({ className: "text-base leading-relaxed text-gray-500 dark:text-gray-400" }, { children: ["You created the value below at Revision ", functionResult._rev, _jsx("pre", { children: functionResult.res.toString() })] })));
+    return (_jsx("p", __assign({ className: "text-base leading-relaxed text-gray-500 dark:text-gray-400 p-2" }, { children: functionResult })));
 }

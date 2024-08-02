@@ -54,7 +54,7 @@ import { useUtilsComponents } from "./UtilsContext";
 import { ComputerContext } from "./ComputerContext";
 function HomePageCard(_a) {
     var content = _a.content;
-    return (_jsx("div", __assign({ className: "block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" }, { children: _jsx("pre", __assign({ className: "font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs" }, { children: content() })) })));
+    return (_jsx("div", __assign({ className: "block w-72 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" }, { children: _jsx("pre", __assign({ className: "font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs" }, { children: content() })) })));
 }
 function ValueComponent(_a) {
     var _this = this;
@@ -92,7 +92,7 @@ function ValueComponent(_a) {
 }
 function FromRevs(_a) {
     var revs = _a.revs, computer = _a.computer;
-    return (_jsx("div", __assign({ className: "flex flex-wrap gap-4 mb-4 mt-4" }, { children: revs.map(function (rev) { return (_jsx("div", { children: _jsx(Link, __assign({ to: "/objects/".concat(rev), className: "block font-medium text-blue-600 dark:text-blue-500" }, { children: _jsx(ValueComponent, { rev: rev, computer: computer }) })) }, rev)); }) })));
+    return (_jsx("div", __assign({ className: "flex flex-wrap flex-col max-h-[75vh] gap-4 mb-4 mt-4" }, { children: revs.map(function (rev) { return (_jsx("div", { children: _jsx(Link, __assign({ to: "/objects/".concat(rev), className: "block font-medium text-blue-600 dark:text-blue-500" }, { children: _jsx(ValueComponent, { rev: rev, computer: computer }) })) }, rev)); }) })));
 }
 function Pagination(_a) {
     var isPrevAvailable = _a.isPrevAvailable, handlePrev = _a.handlePrev, isNextAvailable = _a.isNextAvailable, handleNext = _a.handleNext;

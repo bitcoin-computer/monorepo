@@ -23,10 +23,17 @@ export function FunctionResultModalContent({ functionResult }: any) {
       </>
     )
 
+  if (functionResult._rev && functionResult.res.toString())
+    return (
+      <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+        You created the value below at Revision {functionResult._rev}
+        <pre>{functionResult.res.toString()}</pre>
+      </p>
+    )
+
   return (
-    <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
-      You created the value below at Revision {functionResult._rev}
-      <pre>{functionResult.res.toString()}</pre>
+    <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400 p-2">
+      {functionResult}
     </p>
   )
 }
