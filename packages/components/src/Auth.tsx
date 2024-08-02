@@ -58,16 +58,12 @@ function loggedOutConfiguration() {
 }
 
 function loggedInConfiguration() {
-  const keys = ["BIP_39_KEY", "CHAIN", "NETWORK", "PATH", "URL"]
-  const someKeyIsUndefined = keys.some((key) => typeof localStorage.getItem(key) === "undefined")
-  if (someKeyIsUndefined) throw new Error("Something went wrong, please log out and log in again")
-
   return {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: localStorage.getItem("CHAIN") as Chain,
-    network: localStorage.getItem("NETWORK") as Network,
-    path: localStorage.getItem("PATH"),
-    url: localStorage.getItem("URL")
+    chain: (process.env['REACT_APP_CHAIN'] || localStorage.getItem("CHAIN")) as Chain,
+    network: (process.env['REACT_APP_NETWORK'] || localStorage.getItem("NETWORK")) as Network,
+    path: process.env['REACT_APP_PATH'] || localStorage.getItem("PATH"),
+    url: process.env['REACT_APP_URL'] || localStorage.getItem("URL")
   }
 }
 

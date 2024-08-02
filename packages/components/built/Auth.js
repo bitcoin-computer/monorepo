@@ -67,16 +67,12 @@ function loggedOutConfiguration() {
     };
 }
 function loggedInConfiguration() {
-    var keys = ["BIP_39_KEY", "CHAIN", "NETWORK", "PATH", "URL"];
-    var someKeyIsUndefined = keys.some(function (key) { return typeof localStorage.getItem(key) === "undefined"; });
-    if (someKeyIsUndefined)
-        throw new Error("Something went wrong, please log out and log in again");
     return {
         mnemonic: localStorage.getItem("BIP_39_KEY"),
-        chain: localStorage.getItem("CHAIN"),
-        network: localStorage.getItem("NETWORK"),
-        path: localStorage.getItem("PATH"),
-        url: localStorage.getItem("URL")
+        chain: (process.env['REACT_APP_CHAIN'] || localStorage.getItem("CHAIN")),
+        network: (process.env['REACT_APP_NETWORK'] || localStorage.getItem("NETWORK")),
+        path: process.env['REACT_APP_PATH'] || localStorage.getItem("PATH"),
+        url: process.env['REACT_APP_URL'] || localStorage.getItem("URL")
     };
 }
 function getComputer() {
