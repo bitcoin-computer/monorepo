@@ -45,22 +45,19 @@ function getEnvVariable(name: string) {
   } else return res
 }
 
-function getUrl(chain: Chain, network: Network) {
-  return getEnvVariable(`REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL`)
+function getUrl() {
+  return getEnvVariable(`REACT_APP_URL`)
 }
 
-function defaultConfiguration() {
-  const chain = (localStorage.getItem("CHAIN") ||
-    getEnvVariable(`REACT_APP_CHAIN`) ||
-    "LTC") as Chain
-  const network = (localStorage.getItem("NETWORK") ||
-    getEnvVariable(`REACT_APP_NETWORK`) ||
-    "regtest") as Network
-  const url = getUrl(chain, network)
-  return { chain, network, url }
+function loggedOutConfiguration() {
+  return { 
+    chain: getEnvVariable(`REACT_APP_CHAIN`) as Chain,
+    network: getEnvVariable(`REACT_APP_NETWORK`) as Network,
+    url: getEnvVariable(`REACT_APP_URL`)
+  }
 }
 
-function browserConfiguration() {
+function loggedInConfiguration() {
   const keys = ["BIP_39_KEY", "CHAIN", "NETWORK", "PATH", "URL"]
   const someKeyIsUndefined = keys.some((key) => typeof localStorage.getItem(key) === "undefined")
   if (someKeyIsUndefined) throw new Error("Something went wrong, please log out and log in again")
@@ -75,7 +72,7 @@ function browserConfiguration() {
 }
 
 function getComputer(): Computer {
-  const configuration: any = isLoggedIn() ? browserConfiguration() : defaultConfiguration()
+  const configuration: any = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration()
   return new Computer(configuration)
 }
 
@@ -309,12 +306,7 @@ function PathInput({
   )
 }
 
-function UrlInput({
-  chain,
-  network,
-  url,
-  setUrl
-}: {
+function UrlInput({ url, setUrl }: {
   chain: Chain
   network: Network
   url: string
@@ -323,7 +315,7 @@ function UrlInput({
   const setDefaultUrl = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation()
     e.preventDefault()
-    setUrl(getUrl(chain, network))
+    setUrl(getUrl())
   }
 
   return (
@@ -383,7 +375,7 @@ function LoginForm() {
   const [chain, setChain] = useState<Chain>("LTC")
   const [network, setNetwork] = useState<Network>("regtest")
   const [path, setPath] = useState<string>(getPath(chain, network))
-  const [url, setUrl] = useState<string>(getUrl(chain, network))
+  const [url, setUrl] = useState<string>(getUrl())
 
   useEffect(() => {
     initFlowbite()
@@ -419,8 +411,8 @@ export const Auth = {
   getCoinType,
   getBip44Path,
   getUrl,
-  defaultConfiguration,
-  browserConfiguration,
+  defaultConfiguration: loggedOutConfiguration,
+  browserConfiguration: loggedInConfiguration,
   getComputer,
   LoginForm,
   LoginModal

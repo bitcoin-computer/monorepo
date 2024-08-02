@@ -56,20 +56,17 @@ function getEnvVariable(name) {
     else
         return res;
 }
-function getUrl(chain, network) {
-    return getEnvVariable("REACT_APP_".concat(chain.toUpperCase(), "_").concat(network.toUpperCase(), "_URL"));
+function getUrl() {
+    return getEnvVariable("REACT_APP_URL");
 }
-function defaultConfiguration() {
-    var chain = (localStorage.getItem("CHAIN") ||
-        getEnvVariable("REACT_APP_CHAIN") ||
-        "LTC");
-    var network = (localStorage.getItem("NETWORK") ||
-        getEnvVariable("REACT_APP_NETWORK") ||
-        "regtest");
-    var url = getUrl(chain, network);
-    return { chain: chain, network: network, url: url };
+function loggedOutConfiguration() {
+    return {
+        chain: getEnvVariable("REACT_APP_CHAIN"),
+        network: getEnvVariable("REACT_APP_NETWORK"),
+        url: getEnvVariable("REACT_APP_URL")
+    };
 }
-function browserConfiguration() {
+function loggedInConfiguration() {
     var keys = ["BIP_39_KEY", "CHAIN", "NETWORK", "PATH", "URL"];
     var someKeyIsUndefined = keys.some(function (key) { return typeof localStorage.getItem(key) === "undefined"; });
     if (someKeyIsUndefined)
@@ -83,7 +80,7 @@ function browserConfiguration() {
     };
 }
 function getComputer() {
-    var configuration = isLoggedIn() ? browserConfiguration() : defaultConfiguration();
+    var configuration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration();
     return new Computer(configuration);
 }
 function MnemonicInput(_a) {
@@ -113,11 +110,11 @@ function PathInput(_a) {
     return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mt-4 flex justify-between" }, { children: [_jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Path" })), _jsx("button", __assign({ onClick: setDefaultPath, className: "mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: "Update BIP 44 Path" }))] })), _jsx("input", { value: path, onChange: function (e) { return setPath(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
 }
 function UrlInput(_a) {
-    var chain = _a.chain, network = _a.network, url = _a.url, setUrl = _a.setUrl;
+    var url = _a.url, setUrl = _a.setUrl;
     var setDefaultUrl = function (e) {
         e.stopPropagation();
         e.preventDefault();
-        setUrl(getUrl(chain, network));
+        setUrl(getUrl());
     };
     return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mt-4 flex justify-between" }, { children: [_jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Node Url" })), _jsx("button", __assign({ onClick: setDefaultUrl, className: "mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: "Update Node Url" }))] })), _jsx("input", { value: url, onChange: function (e) { return setUrl(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
 }
@@ -144,7 +141,7 @@ function LoginForm() {
     var _b = useState("LTC"), chain = _b[0], setChain = _b[1];
     var _c = useState("regtest"), network = _c[0], setNetwork = _c[1];
     var _d = useState(getPath(chain, network)), path = _d[0], setPath = _d[1];
-    var _e = useState(getUrl(chain, network)), url = _e[0], setUrl = _e[1];
+    var _e = useState(getUrl()), url = _e[0], setUrl = _e[1];
     useEffect(function () {
         initFlowbite();
     }, []);
@@ -159,8 +156,8 @@ export var Auth = {
     getCoinType: getCoinType,
     getBip44Path: getBip44Path,
     getUrl: getUrl,
-    defaultConfiguration: defaultConfiguration,
-    browserConfiguration: browserConfiguration,
+    defaultConfiguration: loggedOutConfiguration,
+    browserConfiguration: loggedInConfiguration,
     getComputer: getComputer,
     LoginForm: LoginForm,
     LoginModal: LoginModal

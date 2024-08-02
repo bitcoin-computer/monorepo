@@ -8,13 +8,13 @@ declare function getBip44Path({ purpose, coinType, account }?: {
     coinType?: number | undefined;
     account?: number | undefined;
 }): string;
-declare function getUrl(chain: Chain, network: Network): string;
-declare function defaultConfiguration(): {
+declare function getUrl(): string;
+declare function loggedOutConfiguration(): {
     chain: Chain;
     network: Network;
     url: string;
 };
-declare function browserConfiguration(): {
+declare function loggedInConfiguration(): {
     mnemonic: string | null;
     chain: Chain;
     network: Network;
@@ -30,8 +30,8 @@ export declare const Auth: {
     getCoinType: typeof getCoinType;
     getBip44Path: typeof getBip44Path;
     getUrl: typeof getUrl;
-    defaultConfiguration: typeof defaultConfiguration;
-    browserConfiguration: typeof browserConfiguration;
+    defaultConfiguration: typeof loggedOutConfiguration;
+    browserConfiguration: typeof loggedInConfiguration;
     getComputer: typeof getComputer;
     LoginForm: typeof LoginForm;
     LoginModal: typeof LoginModal;

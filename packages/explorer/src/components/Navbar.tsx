@@ -156,7 +156,7 @@ function NotLoggedMenu() {
 
   const setChainAndNetwork = (chain: Chain, network: Network) => {
     try {
-      localStorage.setItem('URL', Auth.getUrl(chain, network))
+      localStorage.setItem('URL', Auth.getUrl())
       localStorage.setItem('CHAIN', chain)
       localStorage.setItem('NETWORK', network)
       setDropDownLabel(formatChainAndNetwork(chain, network))
