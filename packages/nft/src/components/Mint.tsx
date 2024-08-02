@@ -3,7 +3,7 @@ import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/componen
 import { TBC721 } from "@bitcoin-computer/TBC721"
 import { Link } from "react-router-dom"
 import { Computer } from "@bitcoin-computer/lib"
-import { nftModSpec } from "../constants/modSpecs"
+import { REACT_APP_NFT_MOD_SPEC } from "../constants/modSpecs"
 
 function SuccessContent(rev: string) {
   return (
@@ -75,7 +75,7 @@ function MintForm(props: {
     e.preventDefault()
     try {
       showLoader(true)
-      const tbc721 = new TBC721(computer, nftModSpec)
+      const tbc721 = new TBC721(computer, REACT_APP_NFT_MOD_SPEC)
       const nft = await tbc721.mint(name, symbol, url)
       setSuccessRev(nft._id)
       showLoader(false)
@@ -103,8 +103,6 @@ function MintForm(props: {
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Bitcoin Computer"
-              required
             />
           </div>
           <div>
@@ -117,8 +115,6 @@ function MintForm(props: {
               value={symbol}
               onChange={(e) => setSymbol(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="TBC"
-              required
             />
           </div>
           <div>
