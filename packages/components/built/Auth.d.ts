@@ -8,18 +8,16 @@ declare function getBip44Path({ purpose, coinType, account }?: {
     coinType?: number | undefined;
     account?: number | undefined;
 }): string;
-declare function getUrl(): string;
 declare function loggedOutConfiguration(): {
     chain: Chain;
     network: Network;
-    url: string;
+    url: string | undefined;
 };
 declare function loggedInConfiguration(): {
     mnemonic: string | null;
     chain: Chain;
     network: Network;
-    path: string | null;
-    url: string | null;
+    url: string | undefined;
 };
 declare function getComputer(): Computer;
 declare function LoginForm(): import("react/jsx-runtime").JSX.Element;
@@ -29,7 +27,6 @@ export declare const Auth: {
     logout: typeof logout;
     getCoinType: typeof getCoinType;
     getBip44Path: typeof getBip44Path;
-    getUrl: typeof getUrl;
     defaultConfiguration: typeof loggedOutConfiguration;
     browserConfiguration: typeof loggedInConfiguration;
     getComputer: typeof getComputer;

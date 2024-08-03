@@ -15,6 +15,7 @@ import { Computer } from "@bitcoin-computer/lib";
 import { initFlowbite } from "flowbite";
 import { useUtilsComponents } from "./UtilsContext";
 import { Modal } from "./Modal";
+import { HiRefresh } from "react-icons/hi";
 function isLoggedIn() {
     return !!localStorage.getItem("BIP_39_KEY");
 }
@@ -45,48 +46,27 @@ function getBip44Path(_a) {
     var _b = _a === void 0 ? {} : _a, _c = _b.purpose, purpose = _c === void 0 ? 44 : _c, _d = _b.coinType, coinType = _d === void 0 ? 2 : _d, _e = _b.account, account = _e === void 0 ? 0 : _e;
     return "m/".concat(purpose.toString(), "'/").concat(coinType.toString(), "'/").concat(account.toString(), "'");
 }
-function getPath(chain, network) {
-    return getBip44Path({ coinType: getCoinType(chain, network) });
-}
-function getEnvVariable(name) {
-    var res = process.env[name];
-    if (typeof res === "undefined") {
-        throw new Error("Cannot find environment variable \"".concat(name, "\" in the .env file."));
-    }
-    else
-        return res;
-}
-function getUrl() {
-    return getEnvVariable("REACT_APP_URL");
-}
 function loggedOutConfiguration() {
     return {
-        chain: getEnvVariable("REACT_APP_CHAIN"),
-        network: getEnvVariable("REACT_APP_NETWORK"),
-        url: getEnvVariable("REACT_APP_URL")
+        chain: process.env["REACT_APP_CHAIN"],
+        network: process.env["REACT_APP_NETWORK"],
+        url: process.env["REACT_APP_URL"]
     };
 }
 function loggedInConfiguration() {
     return {
         mnemonic: localStorage.getItem("BIP_39_KEY"),
-        chain: (process.env['REACT_APP_CHAIN'] || localStorage.getItem("CHAIN")),
-        network: (process.env['REACT_APP_NETWORK'] || localStorage.getItem("NETWORK")),
-        path: process.env['REACT_APP_PATH'] || localStorage.getItem("PATH"),
-        url: process.env['REACT_APP_URL'] || localStorage.getItem("URL")
+        chain: (localStorage.getItem("CHAIN") || process.env['REACT_APP_CHAIN']),
+        network: (localStorage.getItem("NETWORK") || process.env['REACT_APP_NETWORK']),
+        url: localStorage.getItem("URL") || process.env['REACT_APP_URL']
     };
 }
 function getComputer() {
-    var configuration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration();
-    return new Computer(configuration);
+    return new Computer(isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration());
 }
 function MnemonicInput(_a) {
     var mnemonic = _a.mnemonic, setMnemonic = _a.setMnemonic;
-    var generateMnemonic = function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        setMnemonic(new Computer().getMnemonic());
-    };
-    return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "flex justify-between" }, { children: [_jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "BIP 39 Mnemonic" })), _jsx("button", __assign({ onClick: generateMnemonic, className: "mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: "Generate in Browser" }))] })), _jsx("input", { value: mnemonic, onChange: function (e) { return setMnemonic(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white", required: true })] }));
+    return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "flex justify-between" }, { children: [_jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "BIP 39 Mnemonic" })), _jsx(HiRefresh, { onClick: function () { return setMnemonic(new Computer().getMnemonic()); }, className: "w-4 h-4 ml-2 text-sm font-medium text-gray-900 dark:text-white inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] })), _jsx("input", { value: mnemonic, onChange: function (e) { return setMnemonic(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white", required: true })] }));
 }
 function ChainInput(_a) {
     var chain = _a.chain, setChain = _a.setChain;
@@ -96,23 +76,9 @@ function NetworkInput(_a) {
     var network = _a.network, setNetwork = _a.setNetwork;
     return (_jsxs(_Fragment, { children: [_jsx("label", __assign({ className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Network" })), _jsxs("fieldset", __assign({ className: "flex" }, { children: [_jsx("legend", __assign({ className: "sr-only" }, { children: "Network" })), _jsxs("div", __assign({ className: "flex items-center mr-4" }, { children: [_jsx("input", { onChange: function () { return setNetwork("mainnet"); }, checked: network === "mainnet", id: "network-mainnet", type: "radio", name: "network", value: "Mainnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", __assign({ htmlFor: "network-mainnet", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300" }, { children: "Mainnet" }))] })), _jsxs("div", __assign({ className: "flex items-center mr-4" }, { children: [_jsx("input", { onChange: function () { return setNetwork("testnet"); }, checked: network === "testnet", id: "network-testnet", type: "radio", name: "network", value: "Testnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", __assign({ htmlFor: "network-testnet", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300" }, { children: "Testnet" }))] })), _jsxs("div", __assign({ className: "flex items-center mr-4" }, { children: [_jsx("input", { onChange: function () { return setNetwork("regtest"); }, checked: network === "regtest", id: "network-regtest", type: "radio", name: "network", value: "Regtest", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", __assign({ htmlFor: "network-regtest", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300" }, { children: "Regtest" }))] }))] }))] }));
 }
-function PathInput(_a) {
-    var chain = _a.chain, network = _a.network, path = _a.path, setPath = _a.setPath;
-    var setDefaultPath = function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        setPath(getPath(chain, network));
-    };
-    return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mt-4 flex justify-between" }, { children: [_jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Path" })), _jsx("button", __assign({ onClick: setDefaultPath, className: "mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: "Update BIP 44 Path" }))] })), _jsx("input", { value: path, onChange: function (e) { return setPath(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
-}
 function UrlInput(_a) {
-    var url = _a.url, setUrl = _a.setUrl;
-    var setDefaultUrl = function (e) {
-        e.stopPropagation();
-        e.preventDefault();
-        setUrl(getUrl());
-    };
-    return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mt-4 flex justify-between" }, { children: [_jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Node Url" })), _jsx("button", __assign({ onClick: setDefaultUrl, className: "mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: "Update Node Url" }))] })), _jsx("input", { value: url, onChange: function (e) { return setUrl(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
+    var setUrl = _a.setUrl;
+    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "mt-4 flex justify-between" }, { children: _jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Node Url" })) })), _jsx("input", { onChange: function (e) { return setUrl(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
 }
 function LoginButton(_a) {
     var mnemonic = _a.mnemonic, chain = _a.chain, network = _a.network, path = _a.path, url = _a.url;
@@ -133,15 +99,14 @@ function LoginButton(_a) {
     return (_jsx(_Fragment, { children: _jsx("button", __assign({ onClick: login, type: "submit", className: "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Log In" })) }));
 }
 function LoginForm() {
-    var _a = useState(""), mnemonic = _a[0], setMnemonic = _a[1];
-    var _b = useState("LTC"), chain = _b[0], setChain = _b[1];
-    var _c = useState("regtest"), network = _c[0], setNetwork = _c[1];
-    var _d = useState(getPath(chain, network)), path = _d[0], setPath = _d[1];
-    var _e = useState(getUrl()), url = _e[0], setUrl = _e[1];
+    var _a = useState(new Computer().getMnemonic()), mnemonic = _a[0], setMnemonic = _a[1];
+    var _b = useState(process.env['REACT_APP_CHAIN']), chain = _b[0], setChain = _b[1];
+    var _c = useState(process.env['REACT_APP_NETWORK']), network = _c[0], setNetwork = _c[1];
+    var _d = useState(process.env['REACT_APP_URL']), url = _d[0], setUrl = _d[1];
     useEffect(function () {
         initFlowbite();
     }, []);
-    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "p-4 md:p-5 space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), _jsx(ChainInput, { chain: chain, setChain: setChain }), _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), _jsx(PathInput, { chain: chain, network: network, path: path, setPath: setPath }), _jsx(UrlInput, { chain: chain, network: network, url: url, setUrl: setUrl })] }) })) })), _jsx("div", __assign({ className: "flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600" }, { children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, path: path, url: url }) }))] }));
+    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "max-w-sm mx-auto p-4 md:p-5 space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !process.env['REACT_APP_CHAIN'] && _jsx(ChainInput, { chain: chain, setChain: setChain }), !process.env['REACT_APP_NETWORK'] && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !process.env['REACT_APP_URL'] && _jsx(UrlInput, { setUrl: setUrl })] }) })) })), _jsx("div", __assign({ className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600" }, { children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url }) }))] }));
 }
 function LoginModal() {
     return _jsx(Modal.Component, { title: "Sign in", content: LoginForm, id: "sign-in-modal" });
@@ -151,7 +116,6 @@ export var Auth = {
     logout: logout,
     getCoinType: getCoinType,
     getBip44Path: getBip44Path,
-    getUrl: getUrl,
     defaultConfiguration: loggedOutConfiguration,
     browserConfiguration: loggedInConfiguration,
     getComputer: getComputer,
