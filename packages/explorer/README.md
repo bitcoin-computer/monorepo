@@ -11,7 +11,6 @@
 
 You need to have [git](https://www.git-scm.com/) and [node.js](https://nodejs.org/) installed.
 
-
 ## Installation
 
 Follow the instructions below to install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo).
