@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
 import { initFlowbite } from "flowbite";
 import { useUtilsComponents } from "./UtilsContext";
@@ -56,9 +56,9 @@ function loggedOutConfiguration() {
 function loggedInConfiguration() {
     return {
         mnemonic: localStorage.getItem("BIP_39_KEY"),
-        chain: (localStorage.getItem("CHAIN") || process.env['REACT_APP_CHAIN']),
-        network: (localStorage.getItem("NETWORK") || process.env['REACT_APP_NETWORK']),
-        url: localStorage.getItem("URL") || process.env['REACT_APP_URL']
+        chain: (localStorage.getItem("CHAIN") || process.env["REACT_APP_CHAIN"]),
+        network: (localStorage.getItem("NETWORK") || process.env["REACT_APP_NETWORK"]),
+        url: localStorage.getItem("URL") || process.env["REACT_APP_URL"]
     };
 }
 function getComputer() {
@@ -77,13 +77,15 @@ function NetworkInput(_a) {
     return (_jsxs(_Fragment, { children: [_jsx("label", __assign({ className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Network" })), _jsxs("fieldset", __assign({ className: "flex" }, { children: [_jsx("legend", __assign({ className: "sr-only" }, { children: "Network" })), _jsxs("div", __assign({ className: "flex items-center mr-4" }, { children: [_jsx("input", { onChange: function () { return setNetwork("mainnet"); }, checked: network === "mainnet", id: "network-mainnet", type: "radio", name: "network", value: "Mainnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", __assign({ htmlFor: "network-mainnet", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300" }, { children: "Mainnet" }))] })), _jsxs("div", __assign({ className: "flex items-center mr-4" }, { children: [_jsx("input", { onChange: function () { return setNetwork("testnet"); }, checked: network === "testnet", id: "network-testnet", type: "radio", name: "network", value: "Testnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", __assign({ htmlFor: "network-testnet", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300" }, { children: "Testnet" }))] })), _jsxs("div", __assign({ className: "flex items-center mr-4" }, { children: [_jsx("input", { onChange: function () { return setNetwork("regtest"); }, checked: network === "regtest", id: "network-regtest", type: "radio", name: "network", value: "Regtest", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", __assign({ htmlFor: "network-regtest", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300" }, { children: "Regtest" }))] }))] }))] }));
 }
 function UrlInput(_a) {
-    var setUrl = _a.setUrl;
-    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "mt-4 flex justify-between" }, { children: _jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Node Url" })) })), _jsx("input", { onChange: function (e) { return setUrl(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
+    var urlInputRef = _a.urlInputRef;
+    var _b = useState(process.env["REACT_APP_URL"] || ""), url = _b[0], setUrl = _b[1];
+    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "mt-4 flex justify-between" }, { children: _jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Node Url" })) })), _jsx("input", { ref: urlInputRef, value: url, onChange: function (e) { return setUrl(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
 }
 function LoginButton(_a) {
-    var mnemonic = _a.mnemonic, chain = _a.chain, network = _a.network, path = _a.path, url = _a.url;
+    var mnemonic = _a.mnemonic, chain = _a.chain, network = _a.network, path = _a.path, url = _a.url, urlInputRef = _a.urlInputRef;
     var showSnackBar = useUtilsComponents().showSnackBar;
     var login = function (e) {
+        var _a;
         e.preventDefault();
         if (isLoggedIn())
             showSnackBar("A user is already logged in, please log out first.", false);
@@ -93,20 +95,21 @@ function LoginButton(_a) {
         localStorage.setItem("CHAIN", chain);
         localStorage.setItem("NETWORK", network);
         localStorage.setItem("PATH", path);
-        localStorage.setItem("URL", url);
+        localStorage.setItem("URL", ((_a = urlInputRef.current) === null || _a === void 0 ? void 0 : _a.value) || url);
         window.location.href = "/";
     };
     return (_jsx(_Fragment, { children: _jsx("button", __assign({ onClick: login, type: "submit", className: "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Log In" })) }));
 }
 function LoginForm() {
     var _a = useState(new Computer().getMnemonic()), mnemonic = _a[0], setMnemonic = _a[1];
-    var _b = useState(process.env['REACT_APP_CHAIN']), chain = _b[0], setChain = _b[1];
-    var _c = useState(process.env['REACT_APP_NETWORK']), network = _c[0], setNetwork = _c[1];
-    var _d = useState(process.env['REACT_APP_URL']), url = _d[0], setUrl = _d[1];
+    var _b = useState(process.env["REACT_APP_CHAIN"]), chain = _b[0], setChain = _b[1];
+    var _c = useState(process.env["REACT_APP_NETWORK"]), network = _c[0], setNetwork = _c[1];
+    var _d = useState(process.env["REACT_APP_URL"]), url = _d[0], _ = _d[1];
+    var urlInputRef = useRef(null);
     useEffect(function () {
         initFlowbite();
-    }, []);
-    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "max-w-sm mx-auto p-4 md:p-5 space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !process.env['REACT_APP_CHAIN'] && _jsx(ChainInput, { chain: chain, setChain: setChain }), !process.env['REACT_APP_NETWORK'] && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !process.env['REACT_APP_URL'] && _jsx(UrlInput, { setUrl: setUrl })] }) })) })), _jsx("div", __assign({ className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600" }, { children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url }) }))] }));
+    }, [urlInputRef.current]);
+    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "max-w-sm mx-auto p-4 md:p-5 space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !process.env["REACT_APP_CHAIN"] && _jsx(ChainInput, { chain: chain, setChain: setChain }), !process.env["REACT_APP_NETWORK"] && (_jsx(NetworkInput, { network: network, setNetwork: setNetwork })), !process.env["REACT_APP_URL"] && _jsx(UrlInput, { urlInputRef: urlInputRef })] }) })) })), _jsx("div", __assign({ className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600" }, { children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, urlInputRef: urlInputRef }) }))] }));
 }
 function LoginModal() {
     return _jsx(Modal.Component, { title: "Sign in", content: LoginForm, id: "sign-in-modal" });
