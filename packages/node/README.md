@@ -2,24 +2,25 @@
   <img src="./imgs/bitcoin-computer-node@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 180px"/>
   <h1>Bitcoin Computer Node</h1>
   <p>
-    A Bitcoin and Litecoin Node Optimized for Applications
+    A Bitcoin and Litecoin Node Optimized for Advanced Applications
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
 </div>
 
+The Bitcoin Computer Node is the backend for the Bitcoin Computer, a trustless general purpose smart contracts protocol for Bitcoin. The node consists of a Bitcoin node and a psql database with index structures.
+
 ## Features
 
-* Supports queries for the balance, the UTXO set, and the list of transactions of any address.
-* Multiplatform Docker images work on all major computer architectures (linux/amd64, linux/arm/v7, linux/arm64)
-* You can start the node in a single line of code.
+* Query for the balance, the UTXO set, and the list of transactions of an address
+* Multiplatform Docker images (linux/amd64, linux/arm/v7, linux/arm64)
 * Allow and deny access to Bitcoin RPC endpoints using a regular expression
 * Filter IP addresses by country
 * Enforce allowlist and denylist
-* Optimized for running large test suites on regtest
-* Synchronizes in parallel and makes use of all cores of a machine.
-* Simple architecture, consisting of bitcoind and a psql database
-* All functionality of a Bitcoin node (build, sign, and broadcast txs)
+* Optimized for development, you can run large test suites on regtest
+* Synchronizes in parallel
+* All functionality of a Bitcoin node (build, sign, and broadcast txs, rpc)
+* Easy to use an powerful [client side library](../lib/README.md).
 
 
 ## Prerequisites

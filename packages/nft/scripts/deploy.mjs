@@ -10,13 +10,7 @@ config()
 
 const rl = readline.createInterface({ input, output })
 
-const { REACT_APP_CHAIN, REACT_APP_NETWORK, MNEMONIC } = process.env
-const mnemonic = MNEMONIC
-const chain = REACT_APP_CHAIN
-const network = REACT_APP_NETWORK
-const url = process.env[`REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL`]
-
-console.log(url)
+const { REACT_APP_CHAIN: chain, REACT_APP_NETWORK: network, REACT_APP_URL: url, REACT_APP_MNEMONIC: mnemonic } = process.env
 
 if (network !== "regtest") {
   if (!mnemonic) throw new Error("Please set MNEMONIC in the .env file")
@@ -28,7 +22,7 @@ await computer.faucet(2e8)
 const balance = await computer.wallet.getBalance()
 
 // Summary
-console.log(`\nChain \x1b[2m${chain}\x1b[0m
+console.log(`Chain \x1b[2m${chain}\x1b[0m
 Network \x1b[2m${network}\x1b[0m
 Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.wallet.address}\x1b[0m
@@ -70,8 +64,6 @@ REACT_APP_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
 REACT_APP_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m
 
 (2) Run 'npm start' to start the application.
-
-(3) Log in using ${chain} ${network}.
 `)
 }
 
