@@ -303,7 +303,7 @@ function LoginForm() {
 
   useEffect(() => {
     initFlowbite()
-  }, [urlInputRef.current])
+  }, [])
 
   return (
     <>

@@ -108,7 +108,7 @@ function LoginForm() {
     var urlInputRef = useRef(null);
     useEffect(function () {
         initFlowbite();
-    }, [urlInputRef.current]);
+    }, []);
     return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "max-w-sm mx-auto p-4 md:p-5 space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !process.env["REACT_APP_CHAIN"] && _jsx(ChainInput, { chain: chain, setChain: setChain }), !process.env["REACT_APP_NETWORK"] && (_jsx(NetworkInput, { network: network, setNetwork: setNetwork })), !process.env["REACT_APP_URL"] && _jsx(UrlInput, { urlInputRef: urlInputRef })] }) })) })), _jsx("div", __assign({ className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600" }, { children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, urlInputRef: urlInputRef }) }))] }));
 }
 function LoginModal() {
