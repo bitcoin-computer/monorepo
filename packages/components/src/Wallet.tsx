@@ -47,23 +47,30 @@ const Balance = ({
     }
   }, [computer])
 
+  const fund = async () => {
+    await computer.faucet(1e8)
+    setBalance(await computer.getBalance())
+  }
+
   useEffect(() => {
     refreshBalance()
   }, [])
 
   return (
-    <div className="mb-4">
-      <h6 className="text-lg font-bold dark:text-white">
-        Balance
+    <div id="dropdown-cta" className="relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900" role="alert">
+      <div className="text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400">
+        {balance / 1e8} {computer.getChain()}{" "}
         <HiRefresh
           onClick={refreshBalance}
-          className="w-4 h-4 ml-1 inline cursor-pointer text-gray-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-slate-100"
-        />
-      </h6>
-
-      <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
-        {balance / 1e8} {chain}{" "}
-      </p>
+          className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+          />
+      </div>
+      <div className="text-center uppercase text-xs text-blue-800 dark:text-blue-400">
+        {computer.getNetwork()}
+      </div>
+      <button type="button" onClick={fund} className="absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+        Fund
+      </button>    
     </div>
   )
 }

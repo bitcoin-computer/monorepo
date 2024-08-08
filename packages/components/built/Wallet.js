@@ -106,10 +106,38 @@ var Balance = function (_a) {
             }
         });
     }); }, [computer]);
+    var fund = function () { return __awaiter(void 0, void 0, void 0, function () {
+        var _a;
+        return __generator(this, function (_b) {
+            switch (_b.label) {
+                case 0: return [4 /*yield*/, computer.faucet(1e8)];
+                case 1:
+                    _b.sent();
+                    _a = setBalance;
+                    return [4 /*yield*/, computer.getBalance()];
+                case 2:
+                    _a.apply(void 0, [_b.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    }); };
     useEffect(function () {
         refreshBalance();
     }, []);
-    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsxs("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: ["Balance", _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 inline cursor-pointer text-gray-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-slate-100" })] })), _jsxs("p", __assign({ className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400" }, { children: [balance / 1e8, " ", chain, " "] }))] })));
+    return (_jsxs("div", __assign({ id: "dropdown-cta", className: "relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900", role: "alert" }, { children: [_jsxs("div", __assign({ className: "text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400" }, { children: [balance / 1e8, " ", computer.getChain(), " ", _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] })), _jsx("div", __assign({ className: "text-center uppercase text-xs text-blue-800 dark:text-blue-400" }, { children: computer.getNetwork() })), _jsx("button", __assign({ type: "button", onClick: fund, className: "absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800" }, { children: "Fund" }))] }))
+    // <div className="mb-4">
+    //   <h6 className="text-lg font-bold dark:text-white">
+    //     Balance
+    //     <HiRefresh
+    //       onClick={refreshBalance}
+    //       className="w-4 h-4 ml-1 inline cursor-pointer text-gray-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-slate-100"
+    //     />
+    //   </h6>
+    //   <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
+    //     {balance / 1e8} {chain}{" "}
+    //   </p>
+    // </div>
+    );
 };
 var Address = function (_a) {
     var computer = _a.computer;
