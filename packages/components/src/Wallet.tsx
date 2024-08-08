@@ -5,6 +5,7 @@ import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
 import { useUtilsComponents, UtilsContext } from "./UtilsContext"
 import { ComputerContext } from "./ComputerContext"
+import { BalanceContext } from "./BalanceContext"
 import { Computer } from "@bitcoin-computer/lib"
 
 const Balance = ({
@@ -14,9 +15,9 @@ const Balance = ({
   computer: Computer
   paymentModSpec: string | undefined
 }) => {
-  const [balance, setBalance] = useState<number>(0)
   const [chain, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+  const { balance, setBalance } = BalanceContext.useBalance()
 
   const refreshBalance = useCallback(async () => {
     try {
@@ -369,8 +370,6 @@ function SendMoneyForm({
 }
 
 function FaucetForm({ computer }: { computer: Computer }) {
-  const [amount, setAmount] = useState<string>("")
-
   useEffect(() => {
     initFlowbite()
   }, [])
