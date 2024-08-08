@@ -1,8 +1,4 @@
 import { Computer } from "@bitcoin-computer/lib";
-declare function SendMoneyForm({ computer, paymentModSpec }: {
-    computer: any;
-    paymentModSpec: string | undefined;
-}): import("react/jsx-runtime").JSX.Element;
 export declare function Wallet({ paymentModSpec }: {
     paymentModSpec?: string;
 }): import("react/jsx-runtime").JSX.Element;
@@ -18,7 +14,5 @@ export declare const WalletComponents: {
     Chain: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
     Network: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
     Url: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
-    SendMoneyForm: typeof SendMoneyForm;
     LogOut: () => import("react/jsx-runtime").JSX.Element;
 };
-export {};

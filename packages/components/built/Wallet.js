@@ -46,31 +46,29 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { initFlowbite } from "flowbite";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { HiRefresh } from "react-icons/hi";
 import { Auth } from "./Auth";
 import { Drawer } from "./Drawer";
-import { useUtilsComponents, UtilsContext } from "./UtilsContext";
+import { UtilsContext } from "./UtilsContext";
 import { ComputerContext } from "./ComputerContext";
 var Balance = function (_a) {
     var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
     var _b = useState(0), balance = _b[0], setBalance = _b[1];
-    var _c = useState(localStorage.getItem("CHAIN") || "LTC"), _ = _c[0], setChain = _c[1];
+    var _c = useState(localStorage.getItem("CHAIN") || "LTC"), setChain = _c[1];
     var _d = UtilsContext.useUtilsComponents(), showSnackBar = _d.showSnackBar, showLoader = _d.showLoader;
     var refreshBalance = useCallback(function () { return __awaiter(void 0, void 0, void 0, function () {
-        var paymentRevs, _a, payments, amountsInPaymentToken_1, availableWalletBalance, err_1;
+        var publicKey, mod, paymentRevs, _a, payments, amountsInPaymentToken, availableWalletBalance, err_1;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
                     _b.trys.push([0, 7, , 8]);
                     showLoader(true);
                     if (!computer) return [3 /*break*/, 6];
+                    publicKey = computer.getPublicKey();
+                    mod = paymentModSpec;
                     if (!paymentModSpec) return [3 /*break*/, 2];
-                    return [4 /*yield*/, computer.query({
-                            publicKey: computer.getPublicKey(),
-                            mod: paymentModSpec
-                        })];
+                    return [4 /*yield*/, computer.query({ publicKey: publicKey, mod: mod })];
                 case 1:
                     _a = _b.sent();
                     return [3 /*break*/, 3];
@@ -82,16 +80,13 @@ var Balance = function (_a) {
                     return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
                 case 4:
                     payments = (_b.sent());
-                    amountsInPaymentToken_1 = 0;
-                    if (payments && payments.length) {
-                        payments.forEach(function (pay) {
-                            amountsInPaymentToken_1 += pay._amount - computer.getMinimumFees();
-                        });
-                    }
+                    amountsInPaymentToken = payments && payments.length
+                        ? payments.reduce(function (total, pay) { return total + (pay._amount - computer.getMinimumFees()); }, 0)
+                        : 0;
                     return [4 /*yield*/, computer.getBalance()];
                 case 5:
                     availableWalletBalance = _b.sent();
-                    setBalance(availableWalletBalance + amountsInPaymentToken_1);
+                    setBalance(availableWalletBalance + amountsInPaymentToken);
                     setChain(computer.getChain());
                     _b.label = 6;
                 case 6:
@@ -159,147 +154,10 @@ var Network = function (_a) {
     return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Network" })), _jsx("p", __assign({ className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getNetwork() }))] })));
 };
 var LogOut = function () { return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mb-6" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Log out" })), _jsx("p", __assign({ className: "mb-1 text-sm text-gray-500 dark:text-gray-400" }, { children: "Logging out will delete your mnemonic. Make sure to write it down." }))] })), _jsx("div", __assign({ className: "grid grid-cols-2 gap-4" }, { children: _jsx("button", __assign({ onClick: Auth.logout, className: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700" }, { children: "Log out" })) }))] })); };
-function AmountInput(_a) {
-    var chain = _a.chain, amount = _a.amount, setAmount = _a.setAmount;
-    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "mt-4 flex justify-between" }, { children: _jsxs("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: ["Amount (", chain, ")"] })) })), _jsx("input", { value: amount, onChange: function (e) { return setAmount(e.target.value); }, placeholder: "1 ".concat(chain), className: "block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" })] }));
-}
-function AddressInput(_a) {
-    var address = _a.address, setAddress = _a.setAddress;
-    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "mt-4 flex justify-between" }, { children: _jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "User Address" })) })), _jsx("input", { value: address, placeholder: "Address", onChange: function (e) { return setAddress(e.target.value); }, className: "block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" })] }));
-}
-function SendMoneyButton(_a) {
-    var _this = this;
-    var computer = _a.computer, amount = _a.amount, address = _a.address, setAmount = _a.setAmount, setAddress = _a.setAddress, paymentModSpec = _a.paymentModSpec;
-    var _b = useUtilsComponents(), showSnackBar = _b.showSnackBar, showLoader = _b.showLoader;
-    var send = function (e) { return __awaiter(_this, void 0, void 0, function () {
-        var TRANSACTION_FEE, floatAmount, availableWalletBalance, requiredAmountToBeTransferred, paymentRevs, _a, payments, amountsInPaymentToken_2, sortedPayments, paymentsToBeWithdraw, newAvailableAmount, i, pay, error_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
-                case 0:
-                    e.preventDefault();
-                    TRANSACTION_FEE = computer.getMinimumFees();
-                    _b.label = 1;
-                case 1:
-                    _b.trys.push([1, 12, , 13]);
-                    if (!Auth.isLoggedIn())
-                        throw new Error("Please log in first.");
-                    if (!address) {
-                        showSnackBar("Please enter a valid address", false);
-                        return [2 /*return*/];
-                    }
-                    floatAmount = Math.round(Number(amount));
-                    if (!floatAmount) {
-                        showSnackBar("Please enter a valid amount", false);
-                        return [2 /*return*/];
-                    }
-                    return [4 /*yield*/, computer.getBalance()];
-                case 2:
-                    availableWalletBalance = _b.sent();
-                    requiredAmountToBeTransferred = floatAmount * 1e8;
-                    if (!(requiredAmountToBeTransferred + TRANSACTION_FEE < availableWalletBalance)) return [3 /*break*/, 4];
-                    return [4 /*yield*/, computer.send(requiredAmountToBeTransferred, address)];
-                case 3:
-                    _b.sent();
-                    return [3 /*break*/, 11];
-                case 4:
-                    if (!paymentModSpec) return [3 /*break*/, 6];
-                    return [4 /*yield*/, computer.query({
-                            publicKey: computer.getPublicKey(),
-                            mod: paymentModSpec
-                        })];
-                case 5:
-                    _a = _b.sent();
-                    return [3 /*break*/, 7];
-                case 6:
-                    _a = [];
-                    _b.label = 7;
-                case 7:
-                    paymentRevs = _a;
-                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
-                case 8:
-                    payments = (_b.sent()) // should import payment class
-                    ;
-                    amountsInPaymentToken_2 = 0;
-                    if (payments && payments.length) {
-                        payments.forEach(function (pay) {
-                            amountsInPaymentToken_2 += pay._amount - TRANSACTION_FEE;
-                        });
-                    }
-                    if (requiredAmountToBeTransferred + TRANSACTION_FEE >
-                        availableWalletBalance + amountsInPaymentToken_2) {
-                        showSnackBar("Insufficient Balance.", false);
-                        setAmount("");
-                        setAddress("");
-                        return [2 /*return*/];
-                    }
-                    sortedPayments = payments.slice().sort(function (a, b) { return b._amount - a._amount; });
-                    paymentsToBeWithdraw = [];
-                    newAvailableAmount = 0;
-                    for (i = 0; i < sortedPayments.length; i++) {
-                        pay = sortedPayments[i];
-                        newAvailableAmount += pay._amount - TRANSACTION_FEE;
-                        paymentsToBeWithdraw.push(pay.setAmount(TRANSACTION_FEE));
-                        if (requiredAmountToBeTransferred + TRANSACTION_FEE <
-                            availableWalletBalance + newAvailableAmount) {
-                            break;
-                        }
-                    }
-                    return [4 /*yield*/, Promise.all(paymentsToBeWithdraw)];
-                case 9:
-                    _b.sent();
-                    return [4 /*yield*/, computer.send(requiredAmountToBeTransferred, address)];
-                case 10:
-                    _b.sent();
-                    _b.label = 11;
-                case 11:
-                    showSnackBar("".concat(amount, " ").concat(computer.getChain(), " trasferred successfully."), true);
-                    setAmount("");
-                    setAddress("");
-                    return [3 /*break*/, 13];
-                case 12:
-                    error_1 = _b.sent();
-                    if (error_1 instanceof Error) {
-                        showSnackBar(error_1.message, false);
-                    }
-                    return [2 /*return*/];
-                case 13: return [2 /*return*/];
-            }
-        });
-    }); };
-    return (_jsx(_Fragment, { children: _jsx("button", __assign({ onClick: function (e) { return __awaiter(_this, void 0, void 0, function () {
-                var error_2;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            _a.trys.push([0, 2, , 3]);
-                            showLoader(true);
-                            return [4 /*yield*/, send(e)];
-                        case 1:
-                            _a.sent();
-                            showLoader(false);
-                            return [3 /*break*/, 3];
-                        case 2:
-                            error_2 = _a.sent();
-                            showLoader(false);
-                            return [3 /*break*/, 3];
-                        case 3: return [2 /*return*/];
-                    }
-                });
-            }); }, type: "submit", className: "px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Send (To Address)" })) }));
-}
-function SendMoneyForm(_a) {
-    var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
-    var _b = useState(""), address = _b[0], setAddress = _b[1];
-    var _c = useState(""), amount = _c[0], setAmount = _c[1];
-    useEffect(function () {
-        initFlowbite();
-    }, []);
-    return (_jsxs(_Fragment, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Transfer" })), _jsx("div", __assign({ className: "space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(AddressInput, { address: address, setAddress: setAddress }), _jsx(AmountInput, { chain: computer.getChain(), amount: amount, setAmount: setAmount })] }) })) })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsx(SendMoneyButton, { address: address, amount: amount, computer: computer, paymentModSpec: paymentModSpec, setAddress: setAddress, setAmount: setAmount }) }))] }));
-}
 export function Wallet(_a) {
     var paymentModSpec = _a.paymentModSpec;
     var computer = useContext(ComputerContext);
-    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(SendMoneyForm, { computer: computer, paymentModSpec: paymentModSpec }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
+    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export var WalletComponents = {
@@ -311,6 +169,5 @@ export var WalletComponents = {
     Chain: Chain,
     Network: Network,
     Url: Url,
-    SendMoneyForm: SendMoneyForm,
     LogOut: LogOut
 };
