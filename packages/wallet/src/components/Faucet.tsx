@@ -1,11 +1,12 @@
 import { initFlowbite } from "flowbite"
 import { useEffect, useState } from "react"
-import { Auth, UtilsContext } from "@bitcoin-computer/components"
+import { Auth, BalanceContext, UtilsContext } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
 
 export function FaucetForm({ computer }: { computer: Computer }) {
   const [amount, setAmount] = useState<string>("")
   const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
+  const { setBalance } = BalanceContext.useBalance()
 
   useEffect(() => {
     initFlowbite()
@@ -16,6 +17,7 @@ export function FaucetForm({ computer }: { computer: Computer }) {
     try {
       showLoader(true)
       await computer.faucet(Number(amount) * 1e8)
+      setBalance(await computer.getBalance())
       showLoader(false)
       showSnackBar(`${amount} ${computer.getChain()} funded to your wallet`, true)
     } catch (err) {

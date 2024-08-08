@@ -53,11 +53,12 @@ import { Auth } from "./Auth";
 import { Drawer } from "./Drawer";
 import { useUtilsComponents, UtilsContext } from "./UtilsContext";
 import { ComputerContext } from "./ComputerContext";
+import { BalanceContext } from "./BalanceContext";
 var Balance = function (_a) {
     var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
-    var _b = useState(0), balance = _b[0], setBalance = _b[1];
-    var _c = useState(localStorage.getItem("CHAIN") || "LTC"), chain = _c[0], setChain = _c[1];
-    var _d = UtilsContext.useUtilsComponents(), showSnackBar = _d.showSnackBar, showLoader = _d.showLoader;
+    var _b = useState(localStorage.getItem("CHAIN") || "LTC"), chain = _b[0], setChain = _b[1];
+    var _c = UtilsContext.useUtilsComponents(), showSnackBar = _c.showSnackBar, showLoader = _c.showLoader;
+    var _d = BalanceContext.useBalance(), balance = _d.balance, setBalance = _d.setBalance;
     var refreshBalance = useCallback(function () { return __awaiter(void 0, void 0, void 0, function () {
         var paymentRevs, _a, payments, amountsInPaymentToken_1, availableWalletBalance, err_1;
         return __generator(this, function (_b) {
@@ -284,7 +285,6 @@ function SendMoneyForm(_a) {
 function FaucetForm(_a) {
     var _this = this;
     var computer = _a.computer;
-    var _b = useState(""), amount = _b[0], setAmount = _b[1];
     useEffect(function () {
         initFlowbite();
     }, []);
