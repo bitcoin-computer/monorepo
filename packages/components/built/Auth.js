@@ -78,8 +78,7 @@ function NetworkInput(_a) {
 }
 function UrlInput(_a) {
     var urlInputRef = _a.urlInputRef;
-    var _b = useState(process.env["REACT_APP_URL"] || ""), url = _b[0], setUrl = _b[1];
-    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "mt-4 flex justify-between" }, { children: _jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Node Url" })) })), _jsx("input", { ref: urlInputRef, value: url, onChange: function (e) { return setUrl(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
+    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "mt-4 flex justify-between" }, { children: _jsx("label", __assign({ className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white" }, { children: "Node Url" })) })), _jsx("input", { ref: urlInputRef, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
 }
 function LoginButton(_a) {
     var mnemonic = _a.mnemonic, chain = _a.chain, network = _a.network, path = _a.path, url = _a.url, urlInputRef = _a.urlInputRef;
