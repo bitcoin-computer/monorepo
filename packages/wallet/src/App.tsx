@@ -14,7 +14,6 @@ import { Details } from "./components/Details"
 import Transactions from "./components/Transactions"
 import { Assets } from "./components/Assets"
 import { SideBar } from "./components/Sidebar"
-import { Faucet } from "./components/Faucet"
 
 export default function App() {
   try {
@@ -45,7 +44,6 @@ export default function App() {
                   <Route path="/objects/:rev" element={<SmartObject.Component />} />
                   <Route path="/transactions/:txn" element={<Transaction.Component />} />
                   <Route path="/details" element={<Details />} />
-                  <Route path="/faucet" element={<Faucet />} />
                   <Route path="*" element={<Error404 />} />
                 </Routes>
                 <Auth.LoginModal />
