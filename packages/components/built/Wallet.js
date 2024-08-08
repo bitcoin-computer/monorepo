@@ -137,10 +137,6 @@ var Mnemonic = function (_a) {
         return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx(Heading, {}), _jsx("p", __assign({ className: "mb-1 font-mono text-xs text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getMnemonic() })), _jsx("button", __assign({ onClick: function () { return setShowMnemonic(false); }, className: "text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline" }, { children: "Hide" }))] })));
     return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx(Heading, {}), _jsx("button", __assign({ onClick: function () { return setShowMnemonic(true); }, className: "text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline" }, { children: "Show" })), _jsx("br", {})] })));
 };
-var Path = function (_a) {
-    var computer = _a.computer;
-    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Path" })), _jsx("p", __assign({ className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getPath() }))] })));
-};
 var Url = function (_a) {
     var computer = _a.computer;
     return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Node Url" })), _jsx("p", __assign({ className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getUrl() }))] })));
@@ -157,14 +153,13 @@ var LogOut = function () { return (_jsxs(_Fragment, { children: [_jsxs("div", __
 export function Wallet(_a) {
     var paymentModSpec = _a.paymentModSpec;
     var computer = useContext(ComputerContext);
-    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
+    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !process.env['REACT_APP_CHAIN'] && _jsx(Chain, { computer: computer }), !process.env['REACT_APP_CHAIN'] && _jsx(Network, { computer: computer }), !process.env['REACT_APP_CHAIN'] && _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export var WalletComponents = {
     Balance: Balance,
     Address: Address,
     PublicKey: PublicKey,
-    Path: Path,
     Mnemonic: Mnemonic,
     Chain: Chain,
     Network: Network,

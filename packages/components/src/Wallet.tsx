@@ -121,15 +121,6 @@ const Mnemonic = ({ computer }: any) => {
   )
 }
 
-const Path = ({ computer }: any) => (
-  <div className="mb-4">
-    <h6 className="text-lg font-bold dark:text-white">Path</h6>
-    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
-      {computer.getPath()}
-    </p>
-  </div>
-)
-
 const Url = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Node Url</h6>
@@ -185,12 +176,10 @@ export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
       <Balance computer={computer} paymentModSpec={paymentModSpec} />
       <Address computer={computer} />
       <PublicKey computer={computer} />
-      <Path computer={computer} />
       <Mnemonic computer={computer} />
-      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
-      <Chain computer={computer} />
-      <Network computer={computer} />
-      <Url computer={computer} />
+      {!process.env['REACT_APP_CHAIN'] && <Chain computer={computer} />}
+      {!process.env['REACT_APP_NETWORK'] && <Network computer={computer} />}
+      {!process.env['REACT_APP_URL'] && <Url computer={computer} />}
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>
@@ -203,7 +192,6 @@ export const WalletComponents = {
   Balance,
   Address,
   PublicKey,
-  Path,
   Mnemonic,
   Chain,
   Network,
