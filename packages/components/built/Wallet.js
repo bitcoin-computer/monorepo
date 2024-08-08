@@ -56,7 +56,7 @@ import { ComputerContext } from "./ComputerContext";
 var Balance = function (_a) {
     var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
     var _b = useState(0), balance = _b[0], setBalance = _b[1];
-    var _c = useState(localStorage.getItem("CHAIN") || "LTC"), chain = _c[0], setChain = _c[1];
+    var _c = useState(localStorage.getItem("CHAIN") || "LTC"), _ = _c[0], setChain = _c[1];
     var _d = UtilsContext.useUtilsComponents(), showSnackBar = _d.showSnackBar, showLoader = _d.showLoader;
     var refreshBalance = useCallback(function () { return __awaiter(void 0, void 0, void 0, function () {
         var paymentRevs, _a, payments, amountsInPaymentToken_1, availableWalletBalance, err_1;
@@ -124,20 +124,7 @@ var Balance = function (_a) {
     useEffect(function () {
         refreshBalance();
     }, []);
-    return (_jsxs("div", __assign({ id: "dropdown-cta", className: "relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900", role: "alert" }, { children: [_jsxs("div", __assign({ className: "text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400" }, { children: [balance / 1e8, " ", computer.getChain(), " ", _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] })), _jsx("div", __assign({ className: "text-center uppercase text-xs text-blue-800 dark:text-blue-400" }, { children: computer.getNetwork() })), _jsx("button", __assign({ type: "button", onClick: fund, className: "absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800" }, { children: "Fund" }))] }))
-    // <div className="mb-4">
-    //   <h6 className="text-lg font-bold dark:text-white">
-    //     Balance
-    //     <HiRefresh
-    //       onClick={refreshBalance}
-    //       className="w-4 h-4 ml-1 inline cursor-pointer text-gray-500 dark:text-gray-400 hover:text-slate-700 dark:hover:text-slate-100"
-    //     />
-    //   </h6>
-    //   <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
-    //     {balance / 1e8} {chain}{" "}
-    //   </p>
-    // </div>
-    );
+    return (_jsxs("div", __assign({ id: "dropdown-cta", className: "relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900", role: "alert" }, { children: [_jsxs("div", __assign({ className: "text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400" }, { children: [balance / 1e8, " ", computer.getChain(), " ", _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] })), _jsx("div", __assign({ className: "text-center uppercase text-xs text-blue-800 dark:text-blue-400" }, { children: computer.getNetwork() })), _jsx("button", __assign({ type: "button", onClick: fund, className: "absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800" }, { children: "Fund" }))] })));
 };
 var Address = function (_a) {
     var computer = _a.computer;
@@ -309,39 +296,10 @@ function SendMoneyForm(_a) {
     }, []);
     return (_jsxs(_Fragment, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Transfer" })), _jsx("div", __assign({ className: "space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(AddressInput, { address: address, setAddress: setAddress }), _jsx(AmountInput, { chain: computer.getChain(), amount: amount, setAmount: setAmount })] }) })) })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsx(SendMoneyButton, { address: address, amount: amount, computer: computer, paymentModSpec: paymentModSpec, setAddress: setAddress, setAmount: setAmount }) }))] }));
 }
-function FaucetForm(_a) {
-    var _this = this;
-    var computer = _a.computer;
-    var _b = useState(""), amount = _b[0], setAmount = _b[1];
-    useEffect(function () {
-        initFlowbite();
-    }, []);
-    var showLoader = useUtilsComponents().showLoader;
-    return (_jsxs(_Fragment, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Fund Your Wallet" })), _jsx("p", __assign({ className: "text-sm text-gray-500 dark:text-gray-400" }, { children: "Click \"Fund\" to get 1 free regtest coin, then click on \"reload\" next to your balance." })), _jsx("div", __assign({ className: "flex items-center pt-4 rounded-b dark:border-gray-600" }, { children: _jsx("button", __assign({ onClick: function (e) { return __awaiter(_this, void 0, void 0, function () {
-                        var error_3;
-                        return __generator(this, function (_a) {
-                            switch (_a.label) {
-                                case 0:
-                                    _a.trys.push([0, 2, , 3]);
-                                    showLoader(true);
-                                    return [4 /*yield*/, computer.faucet(1e8)];
-                                case 1:
-                                    _a.sent();
-                                    showLoader(false);
-                                    return [3 /*break*/, 3];
-                                case 2:
-                                    error_3 = _a.sent();
-                                    showLoader(false);
-                                    return [3 /*break*/, 3];
-                                case 3: return [2 /*return*/];
-                            }
-                        });
-                    }); }, type: "submit", className: "px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Fund" })) }))] }));
-}
 export function Wallet(_a) {
     var paymentModSpec = _a.paymentModSpec;
     var computer = useContext(ComputerContext);
-    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), computer.getNetwork() === "regtest" && (_jsxs(_Fragment, { children: [_jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(FaucetForm, { computer: computer })] })), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(SendMoneyForm, { computer: computer, paymentModSpec: paymentModSpec }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
+    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "mb-8 text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Path, { computer: computer }), _jsx(Mnemonic, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(Chain, { computer: computer }), _jsx(Network, { computer: computer }), _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(SendMoneyForm, { computer: computer, paymentModSpec: paymentModSpec }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export var WalletComponents = {

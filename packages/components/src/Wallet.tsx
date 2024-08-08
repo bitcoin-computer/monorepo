@@ -15,7 +15,7 @@ const Balance = ({
   paymentModSpec: string | undefined
 }) => {
   const [balance, setBalance] = useState<number>(0)
-  const [chain, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
+  const [_, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   const refreshBalance = useCallback(async () => {
@@ -375,42 +375,6 @@ function SendMoneyForm({
   )
 }
 
-function FaucetForm({ computer }: { computer: Computer }) {
-  const [amount, setAmount] = useState<string>("")
-
-  useEffect(() => {
-    initFlowbite()
-  }, [])
-
-  const { showLoader } = useUtilsComponents()
-
-  return (
-    <>
-      <h6 className="text-lg font-bold dark:text-white">Fund Your Wallet</h6>
-      <p className="text-sm text-gray-500 dark:text-gray-400">
-        Click "Fund" to get 1 free regtest coin, then click on "reload" next to your balance.
-      </p>
-      <div className="flex items-center pt-4 rounded-b dark:border-gray-600">
-        <button
-          onClick={async (e) => {
-            try {
-              showLoader(true)
-              await computer.faucet(1e8)
-              showLoader(false)
-            } catch (error) {
-              showLoader(false)
-            }
-          }}
-          type="submit"
-          className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Fund
-        </button>
-      </div>
-    </>
-  )
-}
-
 export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
   const computer = useContext(ComputerContext)
 
@@ -426,12 +390,6 @@ export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
       <Chain computer={computer} />
       <Network computer={computer} />
       <Url computer={computer} />
-      {computer.getNetwork() === "regtest" && (
-        <>
-          <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
-          <FaucetForm computer={computer} />
-        </>
-      )}
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <SendMoneyForm computer={computer} paymentModSpec={paymentModSpec} />
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
