@@ -1,4 +1,4 @@
-import { Dispatch, useEffect, useState } from "react"
+import { Dispatch, useEffect, useRef, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 import { initFlowbite } from "flowbite"
 import { useUtilsComponents } from "./UtilsContext"
@@ -36,7 +36,7 @@ function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
 }
 
 function loggedOutConfiguration() {
-  return { 
+  return {
     chain: process.env[`REACT_APP_CHAIN`] as Chain,
     network: process.env[`REACT_APP_NETWORK`] as Network,
     url: process.env[`REACT_APP_URL`]
@@ -46,9 +46,9 @@ function loggedOutConfiguration() {
 function loggedInConfiguration() {
   return {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: (localStorage.getItem("CHAIN") || process.env['REACT_APP_CHAIN']) as Chain,
-    network: (localStorage.getItem("NETWORK") || process.env['REACT_APP_NETWORK']) as Network,
-    url: localStorage.getItem("URL") || process.env['REACT_APP_URL']
+    chain: (localStorage.getItem("CHAIN") || process.env["REACT_APP_CHAIN"]) as Chain,
+    network: (localStorage.getItem("NETWORK") || process.env["REACT_APP_NETWORK"]) as Network,
+    url: localStorage.getItem("URL") || process.env["REACT_APP_URL"]
   }
 }
 
@@ -241,7 +241,7 @@ function NetworkInput({
   )
 }
 
-function UrlInput({ setUrl }: { setUrl: Dispatch<string> }) {
+function UrlInput({ urlInputRef }: { urlInputRef: React.RefObject<HTMLInputElement> }) {
   return (
     <>
       <div className="mt-4 flex justify-between">
@@ -250,14 +250,14 @@ function UrlInput({ setUrl }: { setUrl: Dispatch<string> }) {
         </label>
       </div>
       <input
-        onChange={(e) => setUrl(e.target.value)}
+        ref={urlInputRef}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
       />
     </>
   )
 }
 
-function LoginButton({ mnemonic, chain, network, path, url }: any) {
+function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) {
   const { showSnackBar } = useUtilsComponents()
 
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -268,7 +268,7 @@ function LoginButton({ mnemonic, chain, network, path, url }: any) {
     localStorage.setItem("CHAIN", chain)
     localStorage.setItem("NETWORK", network)
     localStorage.setItem("PATH", path)
-    localStorage.setItem("URL", url)
+    localStorage.setItem("URL", urlInputRef.current?.value || url)
 
     window.location.href = "/"
   }
@@ -289,9 +289,14 @@ function LoginButton({ mnemonic, chain, network, path, url }: any) {
 
 function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
-  const [chain, setChain] = useState<Chain | undefined>(process.env['REACT_APP_CHAIN'] as Chain | undefined)
-  const [network, setNetwork] = useState<Network | undefined>(process.env['REACT_APP_NETWORK'] as Network | undefined)
-  const [url, setUrl] = useState<string | undefined>(process.env['REACT_APP_URL'])
+  const [chain, setChain] = useState<Chain | undefined>(
+    process.env["REACT_APP_CHAIN"] as Chain | undefined
+  )
+  const [network, setNetwork] = useState<Network | undefined>(
+    process.env["REACT_APP_NETWORK"] as Network | undefined
+  )
+  const [url, _] = useState<string | undefined>(process.env["REACT_APP_URL"])
+  const urlInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     initFlowbite()
@@ -303,18 +308,22 @@ function LoginForm() {
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {!process.env['REACT_APP_CHAIN'] && <ChainInput chain={chain} setChain={setChain} />}
-            {!process.env['REACT_APP_NETWORK'] && <NetworkInput network={network} setNetwork={setNetwork} />}
-            {!process.env['REACT_APP_URL'] && <UrlInput setUrl={setUrl} />}
+            {!process.env["REACT_APP_CHAIN"] && <ChainInput chain={chain} setChain={setChain} />}
+            {!process.env["REACT_APP_NETWORK"] && (
+              <NetworkInput network={network} setNetwork={setNetwork} />
+            )}
+            {!process.env["REACT_APP_URL"] && <UrlInput urlInputRef={urlInputRef} />}
           </div>
         </form>
       </div>
       <div className="max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-        <LoginButton 
+        <LoginButton
           mnemonic={mnemonic}
           chain={chain}
           network={network}
-          url={url} />
+          url={url}
+          urlInputRef={urlInputRef}
+        />
       </div>
     </>
   )
