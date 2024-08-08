@@ -56,7 +56,7 @@ export default function Navbar() {
           <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
             <img src="/logo.png" className="h-10" alt="Bitcoin Computer Logo" />
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              TBC Explorer
+              Bitcoin Computer Explorer
             </span>
           </Link>
 

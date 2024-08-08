@@ -23,7 +23,7 @@ export default function App() {
       return (
         <UtilsContext.UtilsProvider>
           <div className="p-8 mt-16 max-w-screen-md mx-auto">
-            <h2 className="text-4xl mb-24 text-center font-bold dark:text-white">TBC Wallet</h2>
+            <h2 className="text-4xl mb-24 text-center font-bold dark:text-white">Bitcoin Computer Wallet</h2>
             <Auth.LoginForm />
           </div>
         </UtilsContext.UtilsProvider>
