@@ -148,11 +148,13 @@ const CreateNew = (props: {
         wrap="off" // Disable word wrapping
       ></textarea>
 
-      <div className="mt-4 mb-4">
+      <h6 className="mt-4 text-lg font-bold dark:text-white">Arguments</h6>
+
+      <div>
         {argumentsList.map(
           (argument: Argument, index) =>
             !argument.hidden && (
-              <div key={index} className="mt-2 flex items-center mb-2">
+              <div key={index} className="py-2 flex items-center">
                 <input
                   type="text"
                   id={`playground-argument-${index}`}
@@ -179,18 +181,25 @@ const CreateNew = (props: {
             )
         )}
       </div>
+
       <button
         type="button"
         onClick={handleAddArgument}
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center my-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
       >
         Add Argument
       </button>
+
+      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+
       <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
+
+      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+
       <button
         type="button"
         onClick={handleDeploy}
-        className="mt-4 text-white bg-green-500 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 focus:outline-none dark:focus:ring-green-800"
+        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
       >
         Call Deploy
       </button>
