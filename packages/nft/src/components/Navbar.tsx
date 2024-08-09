@@ -157,7 +157,7 @@ function NavbarDropdownButton() {
   )
 }
 
-export function Logo({ name = "TBC NFT" }) {
+export function Logo({ name = "Bitcoin Computer NFT" }) {
   return (
     <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
       <img src="/logo.png" className="h-10" alt="Bitcoin Computer Logo" />

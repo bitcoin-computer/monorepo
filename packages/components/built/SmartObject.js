@@ -79,7 +79,7 @@ var SmartObjectValues = function (_a) {
         })
             .map(function (_a, i) {
             var key = _a[0], value = _a[1];
-            return (_jsxs("div", { children: [_jsx("h3", __assign({ className: "mt-2 text-xl font-bold dark:text-white" }, { children: capitalizeFirstLetter(key) })), _jsx(ObjectValueCard, { content: toObject(value ? value : "") })] }, i));
+            return (_jsxs("div", { children: [_jsx("h3", __assign({ className: "mt-2 text-xl font-bold dark:text-white" }, { children: capitalizeFirstLetter(key) })), _jsx(ObjectValueCard, { content: toObject(value || "") })] }, i));
         }) }));
 };
 // const revToId = (rev: string) => rev?.split(":")[0]

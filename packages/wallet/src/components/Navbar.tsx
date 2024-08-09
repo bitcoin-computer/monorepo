@@ -43,7 +43,7 @@ export default function Navbar({
         <Link to={`/`} className="flex items-center">
           <img src="/logo.png" className="h-8 mr-3 sm:h-9" alt="Bitcoin Computer" />
           <span className="self-center text-2xl font-extrabold whitespace-nowrap dark:text-white">
-            TBC Wallet
+            Bitcoin Computer Wallet
           </span>
         </Link>
         <button

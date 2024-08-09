@@ -111,6 +111,7 @@ function Component() {
                         err_1 = _b.sent();
                         if (err_1 instanceof Error) {
                             setTransition("");
+                            // eslint-disable-next-line no-console
                             console.log("Error parsing transaction", err_1.message);
                         }
                         return [3 /*break*/, 3];

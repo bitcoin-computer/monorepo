@@ -11,7 +11,7 @@ import { ComputerContext } from "./ComputerContext"
 const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
 const modalId = "smart-object-info-modal"
 
-export const getFnParamNames = function (fn: string) {
+export const getFnParamNames = (fn: string) => {
   const match = fn.toString().match(/\(.*?\)/)
   return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
 }
@@ -41,7 +41,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
         .map(([key, value], i) => (
           <div key={i}>
             <h3 className="mt-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
-            <ObjectValueCard content={toObject(value ? value : "")} />
+            <ObjectValueCard content={toObject(value || "")} />
           </div>
         ))}
     </>
