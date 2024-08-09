@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom"
+
+import { Link, useNavigate } from "react-router-dom"
 import { Modal, Auth, Drawer } from "@bitcoin-computer/components"
 import { useEffect, useState } from "react"
 import { initFlowbite } from "flowbite"
@@ -158,8 +159,16 @@ function NavbarDropdownButton() {
 }
 
 export function Logo({ name = "Bitcoin Computer NFT" }) {
+  const navigate = useNavigate()
   return (
-    <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
+    <Link
+      to={`/`}
+      onClick={() => {
+        navigate(`/`)
+        window.location.reload()
+      }}
+      className="flex items-center space-x-3 rtl:space-x-reverse"
+    >
       <img src="/logo.png" className="h-10" alt="Bitcoin Computer Logo" />
       <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
         {name}

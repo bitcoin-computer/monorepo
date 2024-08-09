@@ -112,6 +112,21 @@ const SmartObjectValues = ({ smartObject }: any) => {
           </div>
         </div>
       )}
+      {smartObject._owners && smartObject._owners[0] && (
+        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
+          {capitalizeFirstLetter("owned by:")}{" "}
+          <Link
+            to={`/?publicKey=${smartObject._owners[0]}`}
+            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            onClick={() => {
+              Modal.hideModal(modalId)
+            }}
+          >
+            {smartObject._owners[0].substring(0, 8)}...
+            {smartObject._owners[0].substring(smartObject._owners[0].length - 2)}
+          </Link>
+        </p>
+      )}
     </>
   )
 }

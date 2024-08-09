@@ -22,7 +22,7 @@ export type UserQuery<T extends Class> = Partial<{
 
 function NFTCard({ nft }: { nft: NFT }) {
   return (
-    <div className="w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 overflow-hidden mb-4">
+    <div className="w-full max-w-80 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4">
       <a href="#">
         <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
           <img className="max-h-full max-w-full object-contain" src={nft.url} alt="" />
@@ -30,11 +30,19 @@ function NFTCard({ nft }: { nft: NFT }) {
       </a>
       <div className="p-5">
         <a href="#">
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h5
+            className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white truncate"
+            title={nft.name}
+          >
             {nft.name}
           </h5>
         </a>
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">{nft.artist}</p>
+        <p
+          className="mb-3 font-normal text-gray-700 dark:text-gray-400 truncate"
+          title={nft.artist}
+        >
+          {nft.artist}
+        </p>
       </div>
     </div>
   )
