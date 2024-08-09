@@ -1,10 +1,10 @@
 import { Dispatch, useEffect, useRef, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 import { initFlowbite } from "flowbite"
+import { HiRefresh } from "react-icons/hi"
 import { useUtilsComponents } from "./UtilsContext"
 import { Modal } from "./Modal"
 import type { Chain, Network } from "./common/types"
-import { HiRefresh } from "react-icons/hi"
 
 function isLoggedIn(): boolean {
   return !!localStorage.getItem("BIP_39_KEY")
@@ -37,18 +37,18 @@ function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
 
 function loggedOutConfiguration() {
   return {
-    chain: process.env[`REACT_APP_CHAIN`] as Chain,
-    network: process.env[`REACT_APP_NETWORK`] as Network,
-    url: process.env[`REACT_APP_URL`]
+    chain: process.env.REACT_APP_CHAIN as Chain,
+    network: process.env.REACT_APP_NETWORK as Network,
+    url: process.env.REACT_APP_URL
   }
 }
 
 function loggedInConfiguration() {
   return {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: (localStorage.getItem("CHAIN") || process.env["REACT_APP_CHAIN"]) as Chain,
-    network: (localStorage.getItem("NETWORK") || process.env["REACT_APP_NETWORK"]) as Network,
-    url: localStorage.getItem("URL") || process.env["REACT_APP_URL"]
+    chain: (localStorage.getItem("CHAIN") || process.env.REACT_APP_CHAIN) as Chain,
+    network: (localStorage.getItem("NETWORK") || process.env.REACT_APP_NETWORK) as Network,
+    url: localStorage.getItem("URL") || process.env.REACT_APP_URL
   }
 }
 
@@ -290,12 +290,12 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
   const [chain, setChain] = useState<Chain | undefined>(
-    process.env["REACT_APP_CHAIN"] as Chain | undefined
+    process.env.REACT_APP_CHAIN as Chain | undefined
   )
   const [network, setNetwork] = useState<Network | undefined>(
-    process.env["REACT_APP_NETWORK"] as Network | undefined
+    process.env.REACT_APP_NETWORK as Network | undefined
   )
-  const [url, _] = useState<string | undefined>(process.env["REACT_APP_URL"])
+  const [url] = useState<string | undefined>(process.env.REACT_APP_URL)
   const urlInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -308,11 +308,11 @@ function LoginForm() {
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {!process.env["REACT_APP_CHAIN"] && <ChainInput chain={chain} setChain={setChain} />}
-            {!process.env["REACT_APP_NETWORK"] && (
+            {!process.env.REACT_APP_CHAIN && <ChainInput chain={chain} setChain={setChain} />}
+            {!process.env.REACT_APP_NETWORK && (
               <NetworkInput network={network} setNetwork={setNetwork} />
             )}
-            {!process.env["REACT_APP_URL"] && <UrlInput urlInputRef={urlInputRef} />}
+            {!process.env.REACT_APP_URL && <UrlInput urlInputRef={urlInputRef} />}
           </div>
         </form>
       </div>

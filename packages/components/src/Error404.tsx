@@ -1,5 +1,4 @@
-export const Error404 = ({ message }: { message?: string }) => {
-
+export const Error404 = ({ message: m }: { message?: string }) => {
   const Missing = () => (<>
     <h1 className="mb-4 text-6xl tracking-tight font-extrabold text-blue-700 dark:text-blue-600">
       404
@@ -18,7 +17,7 @@ export const Error404 = ({ message }: { message?: string }) => {
     </a>
   </>)
 
-  const Err = ({ message }: {message: string}) => (<>
+  const Err = ({ message }: { message: string }) => (<>
     <h1 className="mb-4 text-6xl tracking-tight font-extrabold text-blue-700 dark:text-blue-600">
       400
     </h1>
@@ -33,7 +32,7 @@ export const Error404 = ({ message }: { message?: string }) => {
   return (<section className="w-full bg-white dark:bg-gray-900">
     <div className="py-8 px-4 mx-auto max-w-screen-xl lg:py-16 lg:px-6">
       <div className="mx-auto max-w-screen-sm text-center">
-        { message ? <Err message={message} /> : <Missing />}
+        { m ? <Err message={m} /> : <Missing />}
       </div>
     </div>
   </section>)

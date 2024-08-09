@@ -27,9 +27,6 @@ const modalId = 'playground-info-modal'
 
 const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => (
   <>
-    <div className="flex mb-2">
-      <h4 className="mt-4 text-xl font-bold dark:text-white">Load Examples</h4>
-    </div>
     <div className="inline-flex rounded-md shadow-sm mb-2" role="group">
       <button
         type="button"
@@ -148,6 +145,7 @@ const Playground = () => {
     setExampleModule('')
     setExampleVars([])
   }
+
   const loadExamples = (type: string) => {
     switch (type) {
       case 'nft':
@@ -182,8 +180,14 @@ const Playground = () => {
   return (
     <>
       <div className="pt-4 w-full relative">
-        <Tabs />
+  
+        <h5 className="my-4 text-xl font-bold dark:text-white">Load Examples</h5>
+        <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
 
+        <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+
+        <h5 className="mt-4 text-xl font-bold dark:text-white">Insert Javascript Code</h5>
+        <Tabs />
         <div id="default-tab-content">
           <div className="hidden" id="create-new" role="tabpanel" aria-labelledby="create-new-tab">
             <CreateNew
@@ -225,10 +229,6 @@ const Playground = () => {
             />
           </div>
         </div>
-
-        <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-        <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
       </div>
       <Modal.Component
         title={modalTitle}

@@ -54,6 +54,7 @@ function Component() {
       } catch (err) {
         if (err instanceof Error) {
           setTransition("")
+          // eslint-disable-next-line no-console
           console.log("Error parsing transaction", err.message)
         }
       }

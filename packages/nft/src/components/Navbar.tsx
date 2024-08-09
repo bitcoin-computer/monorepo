@@ -158,9 +158,8 @@ function NavbarDropdownButton() {
   )
 }
 
-export function Logo({ name = "TBC NFT" }) {
+export function Logo({ name = "Bitcoin Computer NFT" }) {
   const navigate = useNavigate()
-
   return (
     <Link
       to={`/`}

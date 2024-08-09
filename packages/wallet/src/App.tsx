@@ -14,7 +14,6 @@ import { Details } from "./components/Details"
 import Transactions from "./components/Transactions"
 import { Assets } from "./components/Assets"
 import { SideBar } from "./components/Sidebar"
-import { Faucet } from "./components/Faucet"
 
 export default function App() {
   try {
@@ -24,7 +23,7 @@ export default function App() {
       return (
         <UtilsContext.UtilsProvider>
           <div className="p-8 mt-16 max-w-screen-md mx-auto">
-            <h2 className="text-4xl mb-24 text-center font-bold dark:text-white">TBC Wallet</h2>
+            <h2 className="text-4xl mb-24 text-center font-bold dark:text-white">Bitcoin Computer Wallet</h2>
             <Auth.LoginForm />
           </div>
         </UtilsContext.UtilsProvider>
@@ -45,7 +44,6 @@ export default function App() {
                   <Route path="/objects/:rev" element={<SmartObject.Component />} />
                   <Route path="/transactions/:txn" element={<Transaction.Component />} />
                   <Route path="/details" element={<Details />} />
-                  <Route path="/faucet" element={<Faucet />} />
                   <Route path="*" element={<Error404 />} />
                 </Routes>
                 <Auth.LoginModal />
