@@ -80,45 +80,28 @@ const Address = ({ computer }: any) => (
 const PublicKey = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Public Key</h6>
-    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+    <p className="mb-4 text-xs font-mono text-gray-500 dark:text-gray-400 break-words">
       {computer.getPublicKey()}
     </p>
   </div>
 )
 
 const Mnemonic = ({ computer }: any) => {
-  const [showMnemonic, setShowMnemonic] = useState(false)
-
-  const Heading = () => <h6 className="text-lg font-bold dark:text-white">Mnemonic</h6>
-
-  if (showMnemonic)
-    return (
-      <div className="mb-4">
-        <Heading />
-        <p className="mb-1 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
-          {computer.getMnemonic()}
-        </p>
-
+  const [mnemonicShown, setMnemonicShown] = useState(false)
+  return <div className="mb-4">
+      <h6 className="text-lg font-bold dark:text-white">
+        Mnemonic&nbsp;
         <button
-          onClick={() => setShowMnemonic(false)}
-          className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline"
+          onClick={() => setMnemonicShown(!mnemonicShown)}
+          className="text-xs font-mono font-normal text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline"
         >
-          Hide
+          {mnemonicShown ? 'hide' : 'show'}
         </button>
-      </div>
-    )
-  return (
-    <div className="mb-4">
-      <Heading />
-      <button
-        onClick={() => setShowMnemonic(true)}
-        className="text-sm text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline"
-      >
-        Show
-      </button>
-      <br />
+      </h6>
+      <p className="text-xs font-mono text-gray-500 dark:text-gray-400 break-words">
+        { mnemonicShown ? computer.getMnemonic() : '' }
+      </p>
     </div>
-  )
 }
 
 const Url = ({ computer }: any) => (
