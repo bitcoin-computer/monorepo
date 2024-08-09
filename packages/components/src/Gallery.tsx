@@ -23,7 +23,7 @@ export type UserQuery<T extends Class> = Partial<{
 
 function HomePageCard({ content }: any) {
   return (
-    <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+    <div className="block w-72 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
         {content()}
       </pre>
@@ -81,7 +81,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
 
 function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
   return (
-    <div className="flex flex-wrap gap-4 mb-4 mt-4">
+    <div className="flex flex-wrap flex-col max-h-[75vh] gap-4 mb-4 mt-4">
       {revs.map((rev) => (
         <div key={rev}>
           <Link
@@ -175,6 +175,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       const query = { ...q, ...params }
       query.offset = contractsPerPage * pageNum
       query.limit = contractsPerPage + 1
+      query.order = 'DESC'
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
       setRevs(result.slice(0, contractsPerPage))

@@ -1,21 +1,11 @@
+
 import { Link, useNavigate } from "react-router-dom"
-import { Modal, Auth, UtilsContext, Drawer } from "@bitcoin-computer/components"
+import { Modal, Auth, Drawer } from "@bitcoin-computer/components"
 import { useEffect, useState } from "react"
 import { initFlowbite } from "flowbite"
-import { Chain, Network } from "../types/common"
 
 const modalTitle = "Connect to Node"
 const modalId = "unsupported-config-modal"
-
-function formatChainAndNetwork(chain: Chain, network: Network) {
-  const map = {
-    mainnet: "",
-    testnet: "t",
-    regtest: "r"
-  }
-  const prefix = map[network]
-  return `${prefix}${chain}`
-}
 
 function ModalContent() {
   const [url, setUrl] = useState<string>("")
@@ -92,92 +82,15 @@ function SignInItem() {
 }
 
 export function NotLoggedMenu() {
-  const [dropDownLabel, setDropDownLabel] = useState<string>("LTC")
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
-
   useEffect(() => {
     initFlowbite()
-
-    const { chain, network } = Auth.defaultConfiguration()
-    setDropDownLabel(formatChainAndNetwork(chain, network))
   }, [])
 
-  const setChainAndNetwork = (chain: Chain, network: Network) => {
-    try {
-      localStorage.setItem("URL", Auth.getUrl(chain, network))
-      localStorage.setItem("CHAIN", chain)
-      localStorage.setItem("NETWORK", network)
-      setDropDownLabel(formatChainAndNetwork(chain, network))
-      window.location.href = "/"
-    } catch (err) {
-      showSnackBar("Error setting chain and network", false)
-      Modal.get(modalId).show()
-    }
-  }
-
-  function CoinSelectionItem({ chain, network }: { chain: Chain; network: Network }) {
-    return (
-      <li>
-        <div
-          onClick={() => setChainAndNetwork(chain, network)}
-          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-        >
-          {chain} {network}
-        </div>
-      </li>
-    )
-  }
 
   return (
     <>
       <Modal.Component title={modalTitle} content={ModalContent} id={modalId} />
       <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-        <li className="py-2">
-          <button
-            id="dropdownNavbarLink"
-            data-dropdown-toggle="dropdownNavbar"
-            className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
-          >
-            {dropDownLabel}
-            <svg
-              className="w-2.5 h-2.5 ms-2.5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 10 6"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="m1 1 4 4 4-4"
-              />
-            </svg>
-          </button>
-          <div
-            id="dropdownNavbar"
-            className="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-          >
-            <ul
-              className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
-              aria-labelledby="dropdownLargeButton"
-            >
-              <CoinSelectionItem chain={"LTC"} network={"mainnet"} />
-              <CoinSelectionItem chain={"LTC"} network={"testnet"} />
-              <CoinSelectionItem chain={"LTC"} network={"regtest"} />
-            </ul>
-            <ul
-              className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
-              aria-labelledby="dropdownLargeButton"
-            >
-              <CoinSelectionItem chain={"BTC"} network={"mainnet"} />
-              <CoinSelectionItem chain={"BTC"} network={"testnet"} />
-              <CoinSelectionItem chain={"BTC"} network={"regtest"} />
-            </ul>
-          </div>
-        </li>
-
         <SignInItem />
       </ul>
     </>

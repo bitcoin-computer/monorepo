@@ -7,6 +7,11 @@
   </p>
 </div>
 
+The Bitcoin Computer is a protocol for general purpose smart contract on Bitcoin and Litecoin. It does not rely on a separate token, a separate blockchain or any trusted intermediaries. It works similar to ordinals, runes, and BRC20: a users adds metadata to a transaction to encode a smart contract interaction, such as minting a token. This software can parse the metadata back into smart contract data, for example which users owns how many tokens.
+
+We did not invent a new meta data format, instead we are using Javascript expressions. This makes it possible to build not just tokens but all applications directly on Bitcoin.
+
+
 ## Use in a Browser
 
 Create a file `index.html` and open it in your browser.
@@ -17,8 +22,10 @@ Create a file `index.html` and open it in your browser.
 <html>
   <head>
     <script type="module">
-      import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs";
+      // Import the library
+      import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs"
 
+      // Create a counter smart contract
       class Counter extends Contract {
         constructor() {
           super({ n: 0 })
@@ -29,44 +36,43 @@ Create a file `index.html` and open it in your browser.
         }
       }
 
+      // Create a wallet and fund it
       const computer = new Computer()
       await computer.faucet(0.0001e8)
 
+      // Mint a new on-chain object
       const counter = await computer.new(Counter)
       document.getElementById("count").innerHTML = counter.n
 
+      // Update the on-chain object
       await counter.inc()
       document.getElementById("count").innerHTML = counter.n
     </script>
   </head>
 
   <body>
-    Counter value: <span id='count'>*</span>
+    Count: <span id='count'>*</span>
   </body>
 </html>
 ```
 
 </font>
 
-You should see "Counter value: x" where x is '*' at first, then '0' and then '1'. Have a look [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/cra-template#readme) for a full example using React.
+You should see `Count: *` at first, then `Count: 0` and then `Count: 1`.
 
-## Use on a Server
+## Use with Node.js
 
 You need to have [node.js](https://nodejs.org/en/) installed. First install the Bitcoin Computer library.
 
 <font size=1>
 
 ```bash
-# Create packages.json file
-npm init
-
-# Install library
 npm install @bitcoin-computer/lib
 ```
 
 </font>
 
-Then create a file `index.mjs`.
+Then create a file `index.mjs` containing a script that defines a `Counter` smart contract, mints a `Counter` object and the updates it.
 
 <font size=1>
 
@@ -84,25 +90,23 @@ class Counter extends Contract {
   }
 }
 
-// Create a Bitcoin Computer wallet
+// Create and fund a Bitcoin Computer wallet
 const computer = new Computer()
-
-// Fund the computer wallet
 await computer.faucet(1e7)
 
-// Deploy a smart contract and create a smart object
+// Deploy a smart contract and create an object
 const counter = await computer.new(Counter)
 
-// Update the smart object
+// Update the object
 await counter.inc()
 
-// Log the smart object
+// Log the object
 console.log(counter)
 ```
 
 </font>
 
-Execute the smart contract.
+Execute the script.
 
 <font size=1>
 
@@ -129,31 +133,78 @@ Counter {
 
 </font>
 
-You can find a full example [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template#readme).
+## Run Your Own Node
 
-## Connect to a Bitcoin Computer Node
+By default, an instance of the `Computer` class will connect to a Bitcoin Computer Node on regtest LTC at `https://rltc.node.bitcoincomputer.io`. You can run your own Bitcoin Computer node, see [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) for instructions.
 
-By default, a `computer` object will connect to a Bitcoin Computer Node in regtest mode that we provide. You can connect to your own node by installing the [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) and starting it with the command below:
-
-<font size=1>
-
-```bash
-# Start a node
-npm run up -- -litecoin -regtest
-```
-
-</font>
-
-You can use the `url` parameter for the `Computer` constructor call to specify which node to connect to. Make sure that `chain` and `network` match your node's configuration.
+To connect to your node, set the `url` parameter as shown below (see [here](https://docs.bitcoincomputer.io/lib/constructor/) for more configuration options). Make sure that the parameters `chain` and `network` match your node's configuration.
 
 <font size=1>
 
 ```js
-// connect to a specific node url
-const computer = new Computer({ url: 'http://localhost:1031' })
+// Connect Bitcoin Computer wallet to a Bitcoin Computer node url
+const computer = new Computer({ 
+  url: 'http://localhost:1031',
+  chain: 'LTC',
+  network: 'regtest'
+})
 ```
 
 </font>
+
+## Api
+
+### Constructor
+
+Creates a new client side wallet. You can pass a mnemonic as well a chain and network to the constructor. The object returned has the methods below.
+
+### New
+
+Creates a smart object from a class and arguments to the constructor. An output of a Bitcoin transaction, that is inscribed with the constructor call, represents the smart object. The transaction id and output number is the id of the smart object.
+
+A smart object can be updated through function calls. Function calls are also recorded in transactions. The new state of the object is represented by an output of this transaction that is inscribed with the function call. This output is the revision of a smart object.
+
+### Sync
+
+Compute the value of a smart object given its revision.
+
+### Deploy
+
+Deploys an ES6 module to Bitcoin. The module is inscribed in a Bitcoin transaction and the transaction id is the module specifier.
+
+### Load
+
+Loads an ES6 module from the blockchain given a modules specifier.
+
+### Encode
+
+Inputs a Javascript expression, possibly a module specifier, and possibly a "blockchain environment" that maps the (free) variables of the expression to utxos. The expression is evaluated in the scope of the module, substituting the (free) variables for the values computed for the respective utxo. A transaction is broadcast that spends the utxos, has one output for each object in the new state, and is inscribed with the expression, the module specifier and the blockchain environment. Returns the changed state after the evaluation.
+
+### Decode
+
+Inputs a revision (transaction id and output number) and returns a Javascript expression, a module specifier, and a blockchain environment, if present.
+
+### Query
+
+Finds smart objects by module specifier or by owner. Also finds the latest revision of a smart object.
+
+### Faucet
+
+Fund a client side library object on regtest. This is practical for testing.
+
+### RPC
+
+Access the RPC interface of the Bitcoin node
+
+### Wallet Functionality
+
+* *sign*.	Signs a Bitcoin transaction
+* *broadcast*.	Broadcasts a Bitcoin transaction
+* *send*.	Sends satoshis to an address
+* *rpcCall*.	Access Bitcoin's RPC interface
+* *getAddress*.	Returns the Bitcoin address of the computer wallet
+* *getBalance*.	Returns the balance in satoshi
+
 
 ## Documentation
 
@@ -165,7 +216,7 @@ If you have any questions, please let us know on <a href="https://t.me/thebitcoi
 
 ## Price
 
-The Bitcoin Computer is and will always be free on testnet and regtest. This version is free on mainnet, but we reserve the right to charge a small amount per transaction in future versions. Currently only miner fees apply.
+The Bitcoin Computer is, and will always be, free on testnet and regtest. This version of the Bitcoin Computer library is also free on mainnet, but we reserve the right to charge a small amount per transaction in future versions. Currently only miner fees apply.
 
 ## Development Status
 
@@ -178,8 +229,6 @@ We are in beta, so there is a possibility of bugs.
 *Users Must Comply with Applicable Law*. You may only access or use the Software in compliance with laws, rules, and regulations in the jurisdiction in which you reside or otherwise access and use the Software, including, as applicable, Sanctions Regimes, anti-money laundering laws and regulations, and securities laws and regulations.
 
 *BCDB Does Not Endorse or Promote User Software Activity*.  We are publishing certain portions of the Software, on an open-source basis, to demonstrate the utility of the Bitcoin Computer.  As this Software is open-source, it may be modified and deployed for a wide range of uses that we may not have intended.  We do not endorse or promote, and expressly disclaim liability for, any non-BCDB use or modification of the Software.
-
- 
 
 ## License
 

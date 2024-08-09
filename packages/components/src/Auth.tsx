@@ -1,9 +1,10 @@
-import { Dispatch, useEffect, useState } from "react"
+import { Dispatch, useEffect, useRef, useState } from "react"
 import { Computer } from "@bitcoin-computer/lib"
 import { initFlowbite } from "flowbite"
 import { useUtilsComponents } from "./UtilsContext"
 import { Modal } from "./Modal"
 import type { Chain, Network } from "./common/types"
+import { HiRefresh } from "react-icons/hi"
 
 function isLoggedIn(): boolean {
   return !!localStorage.getItem("BIP_39_KEY")
@@ -34,49 +35,25 @@ function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
   return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
 }
 
-function getPath(chain: string, network: string): string {
-  return getBip44Path({ coinType: getCoinType(chain, network) })
+function loggedOutConfiguration() {
+  return {
+    chain: process.env[`REACT_APP_CHAIN`] as Chain,
+    network: process.env[`REACT_APP_NETWORK`] as Network,
+    url: process.env[`REACT_APP_URL`]
+  }
 }
 
-function getEnvVariable(name: string) {
-  const res = process.env[name]
-  if (typeof res === "undefined") {
-    throw new Error(`Cannot find environment variable "${name}" in the .env file.`)
-  } else return res
-}
-
-function getUrl(chain: Chain, network: Network) {
-  return getEnvVariable(`REACT_APP_${chain.toUpperCase()}_${network.toUpperCase()}_URL`)
-}
-
-function defaultConfiguration() {
-  const chain = (localStorage.getItem("CHAIN") ||
-    getEnvVariable(`REACT_APP_CHAIN`) ||
-    "LTC") as Chain
-  const network = (localStorage.getItem("NETWORK") ||
-    getEnvVariable(`REACT_APP_NETWORK`) ||
-    "regtest") as Network
-  const url = getUrl(chain, network)
-  return { chain, network, url }
-}
-
-function browserConfiguration() {
-  const keys = ["BIP_39_KEY", "CHAIN", "NETWORK", "PATH", "URL"]
-  const someKeyIsUndefined = keys.some((key) => typeof localStorage.getItem(key) === "undefined")
-  if (someKeyIsUndefined) throw new Error("Something went wrong, please log out and log in again")
-
+function loggedInConfiguration() {
   return {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: localStorage.getItem("CHAIN") as Chain,
-    network: localStorage.getItem("NETWORK") as Network,
-    path: localStorage.getItem("PATH"),
-    url: localStorage.getItem("URL")
+    chain: (localStorage.getItem("CHAIN") || process.env["REACT_APP_CHAIN"]) as Chain,
+    network: (localStorage.getItem("NETWORK") || process.env["REACT_APP_NETWORK"]) as Network,
+    url: localStorage.getItem("URL") || process.env["REACT_APP_URL"]
   }
 }
 
 function getComputer(): Computer {
-  const configuration: any = isLoggedIn() ? browserConfiguration() : defaultConfiguration()
-  return new Computer(configuration)
+  return new Computer(isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration())
 }
 
 function MnemonicInput({
@@ -86,24 +63,16 @@ function MnemonicInput({
   mnemonic: string
   setMnemonic: Dispatch<string>
 }) {
-  const generateMnemonic = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation()
-    e.preventDefault()
-    setMnemonic(new Computer().getMnemonic())
-  }
-
   return (
     <>
       <div className="flex justify-between">
         <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
           BIP 39 Mnemonic
         </label>
-        <button
-          onClick={generateMnemonic}
-          className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >
-          Generate in Browser
-        </button>
+        <HiRefresh
+          onClick={() => setMnemonic(new Computer().getMnemonic())}
+          className="w-4 h-4 ml-2 text-sm font-medium text-gray-900 dark:text-white inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+        />
       </div>
       <input
         value={mnemonic}
@@ -115,7 +84,7 @@ function MnemonicInput({
   )
 }
 
-function ChainInput({ chain, setChain }: { chain: Chain; setChain: Dispatch<Chain> }) {
+function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: Dispatch<Chain> }) {
   return (
     <>
       <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -203,7 +172,7 @@ function NetworkInput({
   network,
   setNetwork
 }: {
-  network: Network
+  network: Network | undefined
   setNetwork: Dispatch<Network>
 }) {
   return (
@@ -272,83 +241,23 @@ function NetworkInput({
   )
 }
 
-function PathInput({
-  chain,
-  network,
-  path,
-  setPath
-}: {
-  chain: string
-  network: string
-  path: string
-  setPath: Dispatch<string>
-}) {
-  const setDefaultPath = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation()
-    e.preventDefault()
-    setPath(getPath(chain, network))
-  }
-
-  return (
-    <>
-      <div className="mt-4 flex justify-between">
-        <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Path</label>
-        <button
-          onClick={setDefaultPath}
-          className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >
-          Update BIP 44 Path
-        </button>
-      </div>
-      <input
-        value={path}
-        onChange={(e) => setPath(e.target.value)}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-      />
-    </>
-  )
-}
-
-function UrlInput({
-  chain,
-  network,
-  url,
-  setUrl
-}: {
-  chain: Chain
-  network: Network
-  url: string
-  setUrl: Dispatch<string>
-}) {
-  const setDefaultUrl = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation()
-    e.preventDefault()
-    setUrl(getUrl(chain, network))
-  }
-
+function UrlInput({ urlInputRef }: { urlInputRef: React.RefObject<HTMLInputElement> }) {
   return (
     <>
       <div className="mt-4 flex justify-between">
         <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
           Node Url
         </label>
-        <button
-          onClick={setDefaultUrl}
-          className="mb-2 text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        >
-          Update Node Url
-        </button>
       </div>
       <input
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
+        ref={urlInputRef}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
       />
     </>
   )
 }
 
-function LoginButton({ mnemonic, chain, network, path, url }: any) {
+function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) {
   const { showSnackBar } = useUtilsComponents()
 
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -359,7 +268,7 @@ function LoginButton({ mnemonic, chain, network, path, url }: any) {
     localStorage.setItem("CHAIN", chain)
     localStorage.setItem("NETWORK", network)
     localStorage.setItem("PATH", path)
-    localStorage.setItem("URL", url)
+    localStorage.setItem("URL", urlInputRef.current?.value || url)
 
     window.location.href = "/"
   }
@@ -379,11 +288,15 @@ function LoginButton({ mnemonic, chain, network, path, url }: any) {
 }
 
 function LoginForm() {
-  const [mnemonic, setMnemonic] = useState<string>("")
-  const [chain, setChain] = useState<Chain>("LTC")
-  const [network, setNetwork] = useState<Network>("regtest")
-  const [path, setPath] = useState<string>(getPath(chain, network))
-  const [url, setUrl] = useState<string>(getUrl(chain, network))
+  const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
+  const [chain, setChain] = useState<Chain | undefined>(
+    process.env["REACT_APP_CHAIN"] as Chain | undefined
+  )
+  const [network, setNetwork] = useState<Network | undefined>(
+    process.env["REACT_APP_NETWORK"] as Network | undefined
+  )
+  const [url, _] = useState<string | undefined>(process.env["REACT_APP_URL"])
+  const urlInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     initFlowbite()
@@ -391,19 +304,26 @@ function LoginForm() {
 
   return (
     <>
-      <div className="p-4 md:p-5 space-y-4">
+      <div className="max-w-sm mx-auto p-4 md:p-5 space-y-4">
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            <ChainInput chain={chain} setChain={setChain} />
-            <NetworkInput network={network} setNetwork={setNetwork} />
-            <PathInput chain={chain} network={network} path={path} setPath={setPath} />
-            <UrlInput chain={chain} network={network} url={url} setUrl={setUrl} />
+            {!process.env["REACT_APP_CHAIN"] && <ChainInput chain={chain} setChain={setChain} />}
+            {!process.env["REACT_APP_NETWORK"] && (
+              <NetworkInput network={network} setNetwork={setNetwork} />
+            )}
+            {!process.env["REACT_APP_URL"] && <UrlInput urlInputRef={urlInputRef} />}
           </div>
         </form>
       </div>
-      <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-        <LoginButton mnemonic={mnemonic} chain={chain} network={network} path={path} url={url} />
+      <div className="max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+        <LoginButton
+          mnemonic={mnemonic}
+          chain={chain}
+          network={network}
+          url={url}
+          urlInputRef={urlInputRef}
+        />
       </div>
     </>
   )
@@ -418,9 +338,8 @@ export const Auth = {
   logout,
   getCoinType,
   getBip44Path,
-  getUrl,
-  defaultConfiguration,
-  browserConfiguration,
+  defaultConfiguration: loggedOutConfiguration,
+  browserConfiguration: loggedInConfiguration,
   getComputer,
   LoginForm,
   LoginModal

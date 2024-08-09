@@ -10,7 +10,7 @@ import {
 import { Computer } from "@bitcoin-computer/lib"
 import { OfferHelper, PaymentHelper, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
 import { NFT } from "@bitcoin-computer/TBC721"
-import { offerModSpec, paymentModSpec, saleModSpec } from "../constants/modSpecs"
+import { REACT_APP_OFFER_MOD_SPEC, REACT_APP_PAYMENT_MOD_SPEC, REACT_APP_SALE_MOD_SPEC } from "../constants/modSpecs"
 
 const modalId = "smart-object-bought-modal"
 
@@ -23,9 +23,9 @@ const BuyNFT = async ({
   nft: NFT
   setFunctionResult: any
 }) => {
-  const offerHelper = new OfferHelper(computer, offerModSpec)
-  const saleHelper = new SaleHelper(computer, saleModSpec)
-  const paymentHelper = new PaymentHelper(computer, paymentModSpec)
+  const offerHelper = new OfferHelper(computer, REACT_APP_OFFER_MOD_SPEC)
+  const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
+  const paymentHelper = new PaymentHelper(computer, REACT_APP_PAYMENT_MOD_SPEC)
   const saleTxn = await offerHelper.decodeOfferTx(nft.offerTxRev)
   const nftAmount = await saleHelper.checkSaleTx(saleTxn)
   const { tx: paymentTx } = await paymentHelper.createPaymentTx(nftAmount)
@@ -60,7 +60,7 @@ const CreateSellOffer = async ({
   nft: NFT
   showSnackBar: (message: string, success: boolean) => void
 }) => {
-  const offerHelper = new OfferHelper(computer, offerModSpec)
+  const offerHelper = new OfferHelper(computer, REACT_APP_OFFER_MOD_SPEC)
   const { tx: offerTx } = await offerHelper.createOfferTx(
     computer.getPublicKey(),
     computer.getUrl()
@@ -68,7 +68,7 @@ const CreateSellOffer = async ({
   const offerTxId = await computer.broadcast(offerTx)
   await nft.list(offerTxId)
 
-  const saleHelper = new SaleHelper(computer, saleModSpec)
+  const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
   const parsedAmount = Number(amount) * 1e8
   if (!parsedAmount) {
     showSnackBar("Please provide a valid amount.", false)
@@ -190,8 +190,8 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
     const fetch = async () => {
       try {
         showLoader(true)
-        const offerHelper = new OfferHelper(computer, offerModSpec)
-        const saleHelper = new SaleHelper(computer, saleModSpec)
+        const offerHelper = new OfferHelper(computer, REACT_APP_OFFER_MOD_SPEC)
+        const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
         const saleTxn = await offerHelper.decodeOfferTx(nft.offerTxRev)
         const amount = await saleHelper.checkSaleTx(saleTxn)
         setNftAmount(amount)
@@ -329,7 +329,6 @@ function NftView() {
       try {
         showLoader(true)
         const synced = await computer.sync(rev)
-        console.log({ synced })
         setSmartObject(synced)
         showLoader(false)
       } catch (error) {
