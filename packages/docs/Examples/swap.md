@@ -10,12 +10,12 @@ A token swap is the direct and immediate exchange of ownership of two tokens on 
 A token swap is similar to an atomic swap, the difference being that atomic swaps usually refer to the exchange of cryptocurrency on two different chains, whereas token swaps exchange tokens on the same chain.
 
 !!!
-We note that the definition of a token swap differs wildly from the legal definition of a swap. While a token swap is the immediate exchange of two tokens, a swap in the legal sense involves an option to buy or sell an asset at a later point in time.
+We note that the definition of a token swap differs wildly from the legal definition of a swap. While a token swap is the immediate exchange of two tokens, a swap in the legal sense involves an option to buy or sell an asset in the future.
 !!!
 
 ## Swap Using a Static Function
 
-The recommended way to build a swap is to use a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this smart objects that contain ordinals.
+You can build a swap as a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this smart objects that contain ordinals.
 
 ### Smart Contracts
 
@@ -54,9 +54,9 @@ const b = await alice.new(NFT, ['B', 'BBB'])
 
 ### Building the Swap Transaction
 
-A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The two outputs of the transaction are the NFTs after the swap with their owners exchanged. 
+A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The outputs are the NFTs after the swap with their owners exchanged. 
 
-Alice passes an expression containing both the code of the `StaticSwap` class and the expression `StaticSwap.exec(a, b)` to the [`encode`](./API/encode.md) function. The second argument is an environment that determines that the smart objects `a` and `b` are stored at revisions `a._rev` and `b._rev`. 
+Alice passes an expression containing both the code of the `StaticSwap` class and the expression `StaticSwap.exec(a, b)` to the [`encode`](./API/encode.md) function. The second argument is an environment that determines that the values to be used for `a` and `b` are stored at revisions `a._rev` and `b._rev`. 
 
 ```ts
 const { tx } = await alice.encode({
@@ -134,29 +134,6 @@ await swapHelperA.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
 // Alice signs an broadcasts the transaction to execute the swap
 await alice.sign(tx)
 await alice.broadcast(tx)
-```
-
-## Swap Using a Method
-
-Another possibility is to add a swap function directly to an `NFT`. The use is similar to above.
-
-```ts
-class Swappable extends Contract {
-  constructor(name = '', symbol = '') {
-    super({ name, symbol })
-  }
-
-  transfer(to: string) {
-    this._owners = [to]
-  }
-
-  swap(that: NFT) {
-    const [thisOwner] = this._owners
-    const [thatOwner] = that._owners
-    this.transfer(thatOwner)
-    that.transfer(thisOwner)
-  }
-}
 ```
 
 ## Code

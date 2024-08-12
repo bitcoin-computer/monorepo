@@ -3,29 +3,27 @@ order: -40
 icon: flame
 ---
 
-# Sales
+# Sale
+
+We explain how to sell a smart object to an unknown buyer atomically and trustlessly. Whereas both objects are known in advance in a [swap](./swap.md), the output containing the payment that Buyer will use in the sale is unknown when Seller is building the swap transaction. Seller builds a partial transaction consisting of only one input for the asset and one output for the payment received. Buyer can later add an input for the payment and an output for the asset after the sale.
 
 !!!
 These examples use several advanced features (sighash types, mocking, and controlling the order of inputs and outputs, ordinal safe programming) that are not sufficiently documented elsewhere. If you would like to use these features we suggest to ask about their safe use [here](https://t.me/thebitcoincomputer).
 !!!
 
-In this section we explain how a smart object can be sold at a predetermined price without requiring trust between seller and buyer. Unlike in a swap where both objects are known in advance, the output that the buyer will provide later is unknown at the time of initiating the swap transaction. To address this problem, the Bitcoin Computer offers a feature called 'mocking,' which enables the Seller to create a mock-up of the payment object that the buyer will create later.
-
 ## Smart Object Sale
 
-We first explain how to execute the sale of a smart object. The smart contract is quite simple but does not preserve the ordinal ranges of the smart object being sold. It is therefore not safe to use with ordinals. The [next](#ordinals-sale) section explains a slightly more complicated swap that can be used with ordinals.
+We first explain a simpler version that works for the Bitcoin Computer but not for ordinals. The [next](#ordinals-sale) section explains a version that can be used with ordinals.
 
-The idea is to build a "crossover" transaction with two inputs and two outputs. The first input of the transaction spends the NFT `n`, and the second input will spend the payment `p`. The first output of the transaction will be `p`, and the second output will be `n` after the swap.
+Seller needs to build a partial transaction containing an input spending the asset and an output for receiving the payment. The [sighash type](https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types) `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY` allows Seller to sign only the first input and output. 
 
-Seller signs the first input and output with the [sighash type](https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types) `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY` so that any other user can modify the second input and output or add arbitrary inputs and outputs as longs as the input-output pair signed by Seller have the same index. As the input-output pair is signed, Seller is guaranteed that if a transaction containing the pair is included in the blockchain then Seller will get paid. 
-
-Buyer on the other hand wants to obtain the NFT in the first input so Buyer is incentivized to build the transaction according to the protocol. If the Buyer misbehaves, the worst thing that can happen is that Buyer destroys the NFT and pays the Seller (for example buy broadcasting a transaction with meta data that is invalid under the Bitcoin Computer protocol).
+Buyer wants to obtain the smart object in the first input so Buyer is incentivized to build the transaction according to the protocol. If he broadcasts transaction that is invalid in the Bitcoin Computer protocol, Buyer destroys the smart object but pays the Seller.
 
 ### Smart Contracts
 
-The first challenge is to build a "crossover" transaction where we have to control the order of inputs and outputs. This is possible with the Bitcoin Computer because the order of inputs is determined by the order of objects in the environment and the order of outputs is determined by the order of objects in the value returned from the expression.
+We call this transaction described above the "crossover" transaction because the asset passes from the first input to the second output and the payment passes from the second input to the first output. In order to build it with the Bitcoin Computer, one needs to know that the order of inputs is determined by the order of objects in the environment and the order of outputs is determined by the order of objects in the value returned from the expression.
 
-Seller calls `encode` with an environment `{ n: ..., p: ... }`, indicating that the first input will spend `n` and the second input will spend `p`. Seller will use the expression `${Sale} Sale.exec(n, p)`. As the `exec` function of the `Sale` contract returns an array `[p, n]` the first output wil represent `p` and the second output will represent `n`. This is exactly the "crossover" transaction described above.
+Seller uses an environment `{ n: ..., p: ... }`, indicating that the first input will spend the NFT `n` and the second input will spend the payment `p`. Seller will use the expression `${Sale} Sale.exec(n, p)`. As the `exec` function of the `Sale` contract returns an array `[p, n]` the first output wil represent `p` and the second output will represent `n`. This is exactly the "crossover" transaction described above.
 
 ```ts
 export class Sale extends Contract {
@@ -111,7 +109,7 @@ class PaymentMock {
 const mock = new PaymentMock(7860)
 ```
 
-Now Seller is ready to create and sign the sale transaction using `computer.encode` as shown below. There is a lot going on, so we will break down the arguments below.
+Now Seller is ready to create and sign the partial sale transaction using as shown below. There is a lot going on, so we will break down the arguments below.
 
 ```ts
 const { tx } = await seller.encode({
@@ -124,7 +122,7 @@ const { tx } = await seller.encode({
 })
 ```
 
-The expression contains the source code of the `Sale` class and an expression that calls the static `exec` function. Note that every time a sale transaction is created, the source code of the `Sale` class is written into the blockchain again. A more efficient approach is to deploy the `Sale` class as a module first. This is described [here](#reducing-fees).
+The expression contains the source code of the `Sale` class and an expression that calls the static `exec` function.
 
 ```ts
   exp: `${Sale} Sale.exec(nft, payment)`,
@@ -137,22 +135,20 @@ The next two lines contain the instructions for the mocking system. Seller can u
   mocks: { payment: mock },
 ```
 
-To enable Buyer to modify Seller's transaction later, Seller signs the first input with the [sighash type](https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types) `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY`. This means that Seller's signature remains valid even when arbitrary inputs and outputs are added to the transaction as long as the input and the output that Seller has signed have the same index. As the input-output pair is signed, the Seller is guaranteed that if a transaction containing the pair is included in the blockchain, then the Seller will get paid.
-
-Essentially, the Seller is stating: you can spend the output containing the NFT as long as you maintain the locking script and the amount of the first output unchanged. The Seller can confidently publish such a partially signed transaction as Seller intendeds to sell the NFT spent by the first input for the amount indicated in the first output, and both are signed.
+To enable Buyer to modify Seller's transaction later, Seller signs the first input with the [sighash type](https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types) `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY`. This means that Seller's signature remains valid even when arbitrary inputs and outputs are added to the transaction as long as the input and the output that Seller has signed have the same index. This guarantees that any transaction that contains the input that spends Sellers NFT will also contain the output that pays Seller. This is how Seller is guaranteed to always get paid. Essentially, the Seller is stating: "you can spend the output containing the NFT as long as you include the output that pays me".
 
 ```ts
   sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
   inputIndex: 0,
 ```
 
-Finally, Seller set's `funding` to false to prevent the transaction from being funded by the `encode` function as he wants the Buyer to cover the transaction fees.
+Finally, Seller set's `funding` to false to prevent the transaction from being funded by the `encode` function as Seller wants Buyer to cover the transaction fees.
 
 ```ts
   fund: false,
 ```
 
-Seller can publish the sales transaction to interested buyers. An interested buyer can create a payment object and broadcast the sale transaction to purchase the nft. This is described in the next section.
+Seller can publish the sales transaction to the general public. An interested buyer can create a payment object and complete and broadcast the sale transaction to purchase the nft. This is described in the next section.
 
 ### Buying the NFT
 
@@ -163,7 +159,7 @@ const payment = await buyer.new(Payment, [1e8])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 ```
 
-Next, Buyer updates the second input of the transaction that currently spends the payment swap. This is possible without invalidating Sellers signature as the special signhash type was used.
+Next, Buyer updates the second input of the transaction that currently spends the payment swap.
 
 ```ts
 tx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })

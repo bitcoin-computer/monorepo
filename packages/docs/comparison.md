@@ -5,18 +5,18 @@ icon: diff
 
 # Comparison
 
-We compare the Bitcoin Computer to other systems according to the following properties:
-* **Trustlessness.** We call a system trustless if trust in a third party is not required for its operation. This is arguably the most important property as observed by Satoshi in second sentence of the Bitcoin white paper: "the main benefits are lost if a trusted third party is still required".
+We explain how smart contract systems for Bitcoin work in simple terms. We then compare the Bitcoin Computer to other systems according to the following properties:
+* **Trustlessness.** We call a system trustless if no trusted third party is required for its operation. Trustlessness is the main point of the entire crypto endeavour as Satoshi pointed out in the second sentence of the Bitcoin white paper: "the main benefits are lost if a trusted third party is still required".
 * **Expressiveness.** A system is expressive if it can express all computable smart contracts, formally if it is Turing Complete. Assets created in such general purpose protocols can be freely composed and moved between applications.
 * **Efficiency.** A system is efficient if it is possible to compute some smart contract data without having to parse all transactions in the blockchain. This is important for two reasons: the obvious one is that it is faster to compute some values. The other is that it is possible to compute values in parallel.
 
 !!!
-We gave a presentation on the same topic at the Litecoin Summit 2024. You can find the slides [here](./static/litecoin-summit-2024-slides.pdf) and a video recording [here](https://www.youtube.com/live/Sn_Hl2Q5cIw?t=15767s).
+This writeup is based on a presentation we gave at the Litecoin Summit in 2024. You can find the slides [here](./static/litecoin-summit-2024-slides.pdf) and a video recording [here](https://www.youtube.com/live/Sn_Hl2Q5cIw?t=15767s).
 !!!
 
 ## Results
 
-The table below captures the results, these are explained in detail in the following sections.
+The table below captures the results of our comparison. Each result is explained in detail in the following sections.
 
 |    &nbsp;        | Trustless                              | Expressive                             | Efficient                              |
 |------------------|----------------------------------------|----------------------------------------|----------------------------------------|
@@ -30,23 +30,25 @@ The table below captures the results, these are explained in detail in the follo
 | UTXO based       | <span style="color: green;">Yes</span> | <span style="color: red;">No</span>    | <span style="color: green;">Yes</span> |
 | Bitcoin Computer | <span style="color: green;">Yes</span> | <span style="color: green;">Yes</span> | <span style="color: green;">Yes</span> |
 
+## Blockchains
+
 For context we briefly discuss to what extent Bitcoin and Ethereum have the three properties we are interested in.
 
-## Bitcoin
+### Bitcoin
 
 Bitcoin is a trustless peer-to-peer currency. We will assume familiarity with the basic working of Bitcoin and focus on the three properties from above.
 
-Bitcoin is assumed to be trustless as long as a majority of the hash power is honest. However it is not expressive as it only supports one application: a currency. It is also not efficient as one needs to validate all transactions and check the proof of work of every block in order to determine if the amount stated in a transaction output is valid.
+Bitcoin is assumed to be trustless as long as a majority of the hash power is honest. However it is not expressive as it only supports one application: a currency. It is also not efficient as one needs to validate all transactions and check the proof of work of every block in order to determine if the amount in an output is unspent and the transaction containing the output is valid.
 
-## Ethereum
+### Ethereum
 
-Ethereum is the first blockchain to popularize general purpose smart contracts. It assumed to be trustless as longs as a majority of the staked cryptocurrency is owned by honest validators. In addition it is expressive due to its native smart contract support. However, it is not the most efficient: to determine the storage of one address, a full node needs to synchronize with the entire blockchain, validating all transactions and computing all smart contract invocations. 
+Ethereum is the first blockchain to popularize general purpose smart contracts. It assumed to be trustless as longs as a majority of the staked cryptocurrency is owned by honest validators. In addition it is expressive due to its native smart contract support. However, it is not efficient: to determine the storage of one address, a full node needs to synchronize with the entire blockchain, validating all transactions and computing all smart contract invocations. 
 
 ## State Channels and Networks
 
 State channels, originally designed to reduce fees, have recently found applications in smart contract systems. They allow two parties to conduct transactions off-chain with only the final agreed-upon state recorded on the blockchain. Two parties can send payments back and forth an unlimited number of times at a constant cost. However the fee reduction is less pronounced for unidirectional payments.
 
-While state channels work well between two users, they do not scale to large groups of users, because creating channels between all parties quickly becomes uneconomical. To address this shortcoming, channel networks have been developed. These use smart contracts called Hashed Timelock Contracts (HTLCs) to create chains of channels that securely forward payments, ensuring that intermediate nodes cannot steal funds. This enables efficient hub-and-spoke architectures where a central hub forwards payments between users. One downside is the existence of a central point of failure in the form of the hub; another is that users need to be online to receive payments securely.
+While state channels work well between two users, they do not scale to a large number of users, because creating channels between all users quickly becomes uneconomical. To address this shortcoming, channel networks have been developed. These use smart contracts called Hashed-Timelock-Contracts (HTLCs) to create chains of channels that securely forward payments, ensuring that intermediate nodes cannot steal funds. This enables efficient hub-and-spoke architectures where a central hub forwards payments between users. One downside is the existence of a central point of failure in the form of the hub; another is that users need to be online to receive payments securely.
 
 ### Examples
 
@@ -57,7 +59,7 @@ Watchtowers allow users to accept payments whilst offline. These are third party
 +++ Ark
 The ARK protocol is a layer-two solution designed for off-chain Bitcoin transactions, aiming to provide a low-cost, setup-free payment system. ARK relies on trusted intermediaries called ARK Service Providers (ASPs) to manage shared UTXOs. In ARK, transactions are conducted using virtual UTXOs (VTXOs), which are off-chain transaction outputs that can be converted into on-chain UTXOs when needed. Payments within ARK are coordinated by the ASPs through periodic "rounds," where users exchange their VTXOs for new ones off-chain. Additionally, ARK offers "out-of-round" payments for faster, direct transactions between parties. [More info](https://ark-protocol.org/)
 +++RGB
-The RGB protocol is a protocol that enables smart contracts. All meta data is stored offline, which lowers availability guarantees. RGB uses transaction outputs as "single-use seals" that ensure that only the owner can modify the contract state. RGB uses specially-designed virtual machine called AluVM, which is is nearly computationally universal, bound by number of operation steps, similar to in Ethereum-like systems. RGB has support for for enhanced privacy via a modified form of Blockstream's confidential transactions. RGB can operate over regular Bitcoin transactions and over the lightning network. [More info](https://docs.rgb.info/)
+The RGB protocol enables smart contracts. All meta data is stored offline, which lowers availability guarantees. RGB uses transaction outputs as "single-use seals" that ensure that only the owner can modify the contract state. RGB uses specially-designed virtual machine called AluVM, which is is nearly computationally universal, but with a bounded by number of operation steps, similar to in Ethereum-like systems. RGB has support for for enhanced privacy via a modified form of confidential transactions. RGB can operate over regular Bitcoin transactions and over the lightning network. [More info](https://docs.rgb.info/)
 +++ Bitcoin Computer
 The Bitcoin Computer currently does not support channels networks. However we mention it here as an integration could be built in principal. The Bitcoin Computer will be further discussed [here](#example-bitcoin-computer).
 +++
@@ -66,7 +68,7 @@ The Bitcoin Computer currently does not support channels networks. However we me
 
 **Trustlessness.** State channels and networks are trustless as long as users are online. When users are not online they need to trust watchtowers to keep user funds safe. Smart contract systems that rely on channel networks inherit these properties.
 
-**Expressiveness.** Most channel networks are geared towards payments, therefor they cannot express any smart contracts. However some smart contract protocols can integrate with state channels, in which case all smart contracts of the respective protocol can be expressed. 
+**Expressiveness.** Most channel networks are geared towards payments, therefor they cannot express smart contracts. However some smart contract protocols can integrate with state channels, in which case all smart contracts of the respective protocol can be expressed. 
 
 **Efficiency.** Our definition of efficiency only makes sense for smart contract systems, so this property does not apply to payment networks.
 
@@ -77,16 +79,16 @@ An interoperable blockchain is a separate blockchain that connects to Bitcoin in
 ### Examples
 
 +++ Stacks
-Stacks enables smart contracts that use Bitcoin as an asset in a trust-minimized way. It has its own native asset called STX. The Stacks blockchain relies on STX and BTC for its consensus mechanism called Proof of Transfer (PoX). Stacks miners bid by spending BTC, and their probability of mining the next block on the STX chain is proportional to the amount bid. The amount that is bid by the Stacks miners is paid to STX holders that lock up or "stack" their STX. As a consequence the price ratio between BTC and STX is continually recorded and available on-chain. Stacks's smart contract language is a non-Turing complete language called Clarity. [More info](https://docs.stacks.co/)
+Stacks enables smart contracts that use Bitcoin as an asset in a trust-minimized way. It has its own native asset called STX. The Stacks blockchain relies on STX and BTC for its consensus mechanism called Proof of Transfer (PoX). Stacks miners bid by spending BTC, and their probability of mining the next block on the STX chain is proportional to the amount bid. This amount is paid to STX holders that lock up or "stack" their STX. As a consequence the price ratio between BTC and STX is continually recorded and available on-chain. Stacks's smart contract language is a non-Turing complete language called Clarity. [More info](https://docs.stacks.co/)
 +++ Internet Computer
 Todo. [More info](https://internetcomputer.org/docs/current/developer-docs/getting-started/overview-of-icp)
 +++
 
 ### Evaluation
 
-**Trustlessness.** Interoperable blockchains are as trustless as the underlying blockchain
+**Trustlessness.** Interoperable blockchains are as trustless as the blockchain that is connected to Bitcoin.
 
-**Expressiveness.** All smart contract systems can be expressed.
+**Expressiveness.** Typically, all smart contract systems can be expressed.
 
 **Efficiency.** Interoperable blockchains that support smart contracts are typically based on the account model like Ethereum and are therefore not efficient.
 
@@ -96,7 +98,7 @@ A sidechain is a separate blockchain linked to Bitcoin through a two-way peg.
 
 A user sends their Bitcoin to a dedicated address controlled by the group of users that maintain the peg. These users then create the corresponding value of tokens on the sidechain. Those tokens can be used to access the functionality of the sidechain. Later, the sidechain user can transfer tokens back to the maintainers the peg, who will hopefully send the corresponding amount of tokens back to the sidechain user.
 
-Two-way pegs can be centralized, federation based, or SPV-based. In centralized two-way pegs a trusted third party controls the Bitcoin in the peg and is responsible for locking and unlocking the Bitcoin. In a federated peg, the locked Bitcoins are at the custody of a group of users called the federation. A common implementation is to use a multisignature address, in which a quorum of participants is required to spend the funds. Simplified Payment Verification (SPV) makes it possible to verify the inclusion of a transaction in a blockchain without verifying the entire blockchain. A SPV two-way peg scheme could work as follows: The locked Bitcoin are stored in an output that can only be spent if an SPV proof is provided that a corresponding number of tokens have been burnt on the sidechain. 
+Two-way pegs can be centralized, federation-based, or SPV-based. In centralized two-way pegs a trusted third party controls the Bitcoin in the peg and is responsible for locking and unlocking the Bitcoin. In a federated peg, the locked Bitcoins are at the custody of a group of users called the federation. A common implementation is to use a multisignature address, in which a quorum of participants is required to spend the funds. Simplified Payment Verification (SPV) makes it possible to verify the inclusion of a transaction in a blockchain without verifying the entire blockchain. A SPV two-way peg scheme could work as follows: The locked Bitcoin are stored in an output that can only be spent if an SPV proof is provided that a corresponding number of tokens have been burnt on the sidechain. 
 
 ### Examples
 
@@ -107,7 +109,7 @@ The members of the federation maintain the consensus of the sidechain by signing
 
 The sidechain Liquid is based on the Bitcoin codebase, however it has a 10x higher throughput due its block time of just one minute. Liquid supports the creation of on chain assets as well as enhanced privacy through confidential transactions. [More info](https://docs.liquid.net/docs/technical-overview).
 +++ Rootstock
-Rootstock (RSK) is a smart contract platform with a native token called Smart Bitcoin (RBTC) that is pegged 1:1 with Bitcoin (BTC) and is used to pay for gas when executing smart contracts on the RSK network. RSK is merge-mined with Bitcoin, meaning that Bitcoin miners can simultaneously mine Bitcoin and RSK.
+Rootstock (RSK) is a smart contract platform with a native token called Smart Bitcoin (RBTC) that is pegged 1:1 with Bitcoin (BTC) and is used to pay for gas when executing smart contracts on the RSK network. RSK is merge-mined with Bitcoin, meaning that RSK miners also mine Bitcoin but not vice versa.
 
 RSK relies on a combination of a federated two-way peg and an SPV (Simplified Payment Verification) scheme. Users can send Bitcoin to the peg and they are issued RBTC on the RSK sidechain. Each transfer between the sidechain and the main chain requires a multi-signature by the RSK federation to complete the transferring process. Federation members use hardware security modules to protect their private keys and enforce transaction validation. [More info](https://rootstock.io/static/a79b27d4889409602174df4710102056/RS-whitepaper.pdf)
 +++
@@ -116,15 +118,13 @@ RSK relies on a combination of a federated two-way peg and an SPV (Simplified Pa
 
 Both centralized and federation based sidechains have the disadvantage of introducing trusted third parties, arguably defeating the purpose of a blockchain solution. SPV based solutions have the advantage of being trustless, however users have to wait for lengthy confirmation periods. The second problem is that the consensus mechanism of the sidechain is typically less secure than Bitcoin's, making it the weakest link in the system and prone to attacks.
 
-The expressivity depends on the sidechain: if it is UTXO based as in the case of Liquid it is not expressive but efficient. If it uses the account model it is expressive but not efficient.
-
-**Trustlessness.** Only for SPV based solutions.<br />
+**Trustlessness.** Only for pure SPV based solutions.<br />
 **Expressiveness.** If the sidechain uses the account model.<br />
-**Efficiency.** No.
+**Efficiency.** No as the sidechain typically uses the account model.
 
 ## Rollups
 
-A rollup is similar to a sidechain but (a) the federation is replaced by a smart contract and (b) transaction data is stored on the main chain instead of a separate blockchain. The rollup can have a different transaction format and we will refer to these transactions as L2 transactions.
+A rollup is similar to a sidechain but (a) the federation is replaced by a smart contract and (b) transaction data is stored on the main chain instead of a separate blockchain. The rollup can have its own transaction format independent from the main chain and we will refer to these transactions as L2 transactions.
 
 To use a rollup, a user deposits funds to the rollup smart contract on the main chain. These funds can then be used in L2 transactions. To use the rollup, a user sends a L2 transaction to a designated user called aggregator. Periodically, the aggregator selects a batch of L2 transactions, creates a main chain transaction and publishes it. This main chain transaction contains the L2 transactions in compressed form and the hash of the new state. The rollup’s smart contract on the main chain assures the aggregator posted the hash of the correct new state. There are different ways that this check occurs, optimistically or using zero knowledge proofs, as discussed below. When users wish to redeem their deposit, they transact with the rollup’s smart contract on the main chain and receive funds equal to the amount of their balance on the L2.
 
@@ -138,15 +138,26 @@ To discourage aggregators and verifiers from acting maliciously, both the aggreg
 
 While optimistic rollups use fraud proofs, zero-knowledge (ZK) rollups, and validity rollups more generally, use validity proofs. Instead of allowing the aggregator to publish a transaction and then question it, in ZK rollups, the aggregator must prove that the state hash is the correct using a validity proof.
 
-Similarly to optimistic rollups, an aggregator evaluates L2 transactions and published compressed transactions an the new state hash to the main chain. However they add a ZK proof that is evaluated by a smart contract on the main chain. The smart contract ensures that only correct executions are recorded on the main chain. In contrast to optimistic rollups, ZK rollups do not require second layer verifiers and there is no dispute resolution. This means transactions achieve finality rapidly; there is no extended period of time where verifiers can trigger a dispute phase.
+Similarly to optimistic rollups, an aggregator (sometimes called sequencer)  evaluates L2 transactions and published compressed transaction data and the new state hash to the main chain. However they add a ZK proof that is evaluated by a smart contract on the main chain. The smart contract ensures that only correct executions are recorded on the main chain. In contrast to optimistic rollups, ZK rollups do not require second layer verifiers and there is no dispute resolution. This means transactions achieve finality rapidly; there is no extended period of time where verifiers can trigger a dispute phase.
 
-The two most commonly used ZK proofs used for rollups are called SNARKs and STARKs. SNARKs are computationally efficient: The time needed to verify a SNARK grows slower than the time of the computation itself. However, they require a trusted setup. STARKs require no trusted setup, but require much more time for proof generation and verification.
+The two most commonly used ZK proofs used for rollups are called SNARKs and STARKs. SNARKs are computationally efficient: the time needed to verify a SNARK grows slower than the time of the computation itself. However, they require a trusted setup. STARKs require no trusted setup, but require much more time for proof generation and verification.
 
 ### Examples
 
 +++ BitVM
-BitVM is an optimistic rollup. The aggregator (called prover in BitVM) commits a large program to a Taproot address, creating a commitment to the entire program. Both the aggregator and the validators pre-sign a large set of transactions that enable the challenge-response protocol. If a verifier disputes the prover's results, they can trigger a challenge transaction that forces the prover to reveal the necessary data to prove the computation's correctness. If the prover makes a false claim, the verifier can prove it on-chain, leading to penalties for the prover and ensuring the system's integrity.
- [More info](https://bitvm.org/)
+BitVM is an optimistic rollup. Its primary purpose is facilitating trust minimized bridges between Bitcoin and other chains.
+
+A federation of 1000 members engage in a trusted setup and users trust that at least 1 participant is honest, otherwise the federation can steal all funds. Peg-ins can be censored by any federation member as a peg in requires the collaboration of all federation members. In addition all federation members need to pre-sign 100 peg-out transactions each (100.000 transactions in total), therefore peg-ins only occur every 6 months.
+
+There are 100 operators and users trust that at least one online operator is honest, otherwise the user can be prevented from pegging out. Operators must be able to front the money for a peg out for two weeks, so only well capitalized institutions can be operators. Withdraws can take months to give validators the chance to go through the challenge process. Any user can be a validator.
+
+![The transactions that are broadcast in the BitVM protocol](/static/bitvm.png)
+
+To "peg in", a user called Bob sends 100 Bitcoin to a n-of-n multisig address controlled by the federation. In exchange, the federation will issue Bob tokens on the destination blockchain. When Bob want's to "peg out", Bob signals his wish to the federation by burning tokens on the destination blockchain. Operators can front the 100 Bitcoin to Bob in a "Peg Out" transaction. The operator then broadcasts the "kick-off" transaction. If all goes well, and there is no dispute, the federation will broadcast the "Take 1" transaction that spends 100 Bitcoin to the operator.
+
+In the case of a dispute, any validator will broadcast the "Challenge" transaction. Once this transaction is broadcast, the "Take 1" transaction cannot be spend anymore, as both transaction spend the same output (this is called a connector output). Once the "Challenge" transaction is broadcast the operator will broadcast the "Assert" transaction that breaks down the high level statement that the operator originally made, into smaller, easily disprovable statements. If any of these lower level statements are incorrect, any verifier can broadcast a "Disprove" transaction that points to the false statement by the operator. If no validator broadcasts a Disprove transaction, the operator can broadcast a "Take 2" transaction to regain control of the original 100 Bitcoin. More info [here](https://bitvm.org/) and [here](https://www.youtube.com/watch?v=nhR_g9hPnqM).
++++ BitVMX
+Todo. [More info](https://bitvmx.org/)
 +++ Citrea
 Todo. [More info](https://docs.citrea.xyz/)
 +++ Alpen
@@ -155,13 +166,29 @@ Todo. [More info](https://www.alpenlabs.io/)
 
 ### Evaluation
 
-As building a validity proof requires heavy computations ZK rollups’ L2 fees are higher than optimistic rollups. Additionally, a ZK rollup main chain transaction fees are higher as the validity proof needs to be validated on the main chain for every batch.
+Rollups rely on smart contracts on the main chain, therefore it is easier to make them trustless and practical on chains with strong native smart contract support like Ethereum. By understanding the properties of rollups on Ethereum, we can understand how rollups on Bitcoin can work in the best case.
 
-On the other hand, optimistic rollups have a period where verifiers have an opportunity to publish a fraud proof. Thus users need to wait (usually a week on Ethereum, on Bitcoin it will likely be longer) until their deposits can be withdrawn. In ZK-rollups, deposits can be withdrawn immediately.
 
-Rollups rely on smart contracts on the main chain, therefore it is easier to make them trustless and practical on chains with strong native smart contract support like Ethereum. Nonetheless, even on Ethereum rollups typically introduce trusted third parties and involve long lock up periods before funds can be withdrawn.
+On Ethereum rollups generally introduce trusted third parties, central points of failures, and lockup periods.
 
-**Trustlessness.** In optimistic rollups users need to trust that one honest validator is online at all times. STARKs are trustless, SNARKS are not.
+As building a validity proof requires heavy computations ZK rollups’ L2 fees are higher than optimistic rollups. Additionally, ZK rollup main chain transaction fees are higher as the validity proof needs to be validated on the main chain for every batch.
+
+On the other hand, optimistic rollups have a period where verifiers have an opportunity to publish a fraud proof. Thus users need to wait (usually a week on Ethereum, on Bitcoin it will likely be longer) until their deposits can be withdrawn. In ZK-rollups, deposits could be withdrawn immediately, however in many cases users have to wait for 24h due to safety concerns. In most cases there is only one aggregator and a very small number of validators and users trust that they do not collude.
+
+=== Complexity of SNARKs and STARKs
+The Big-O notation is used in Computer Science to describe the upper bound of the runtime of an algorithm in terms of the size of its input. An algorithm is said to run in time $O(f(n))$ if for sufficiently large input sizes $n$, the algorithm's runtime will not exceed $c * f(n)$ steps.
+
+Prover Complexity refers to the computational complexity associated with generating a proof for a given computation. Verifier Complexity refers to the computational complexity associated with verifying the correctness of a proof for a given computation. The table below is obtained from [here](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9862815)
+
+| Type | Trustless | Prover Complexity | Verifier Complexity | 
+| - | - |
+| SNARKs | <span style="color: red;">No</span>| $O(n \cdot \text{log}(n))$ | $O(1)$
+| STARKs | <span style="color: green;">Yes</span> |$O(n \cdot \text{log}(n)^c)$ | $O(\text{log}(n)^c)$
+
+Verifier complexity for SNARKs is $O(1)$ meaning that the time to verify a computation can be take longer for small inputs but is faster (even constant) for large enough inputs. Verifier complexity for STARKs is $O(\text{log}(n)^c)$ meaning that it can take much longer to verify a short computation but for very large computations verification is faster than computation.
+===
+
+**Trustlessness.** In optimistic rollups users trust that one honest validator is online at all times. STARKs are trustless, SNARKS are not.
 
 **Expressiveness.** Depends on the expressiveness of the L2.
 
