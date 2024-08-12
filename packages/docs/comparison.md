@@ -124,7 +124,7 @@ Both centralized and federation based sidechains have the disadvantage of introd
 
 ## Rollups
 
-A rollup is similar to a sidechain but (a) the federation is replaced by a smart contract and (b) transaction data is stored on the main chain instead of a separate blockchain. The rollup can have a its own transaction format independent from the main chain and we will refer to these transactions as L2 transactions.
+A rollup is similar to a sidechain but (a) the federation is replaced by a smart contract and (b) transaction data is stored on the main chain instead of a separate blockchain. The rollup can have its own transaction format independent from the main chain and we will refer to these transactions as L2 transactions.
 
 To use a rollup, a user deposits funds to the rollup smart contract on the main chain. These funds can then be used in L2 transactions. To use the rollup, a user sends a L2 transaction to a designated user called aggregator. Periodically, the aggregator selects a batch of L2 transactions, creates a main chain transaction and publishes it. This main chain transaction contains the L2 transactions in compressed form and the hash of the new state. The rollup’s smart contract on the main chain assures the aggregator posted the hash of the correct new state. There are different ways that this check occurs, optimistically or using zero knowledge proofs, as discussed below. When users wish to redeem their deposit, they transact with the rollup’s smart contract on the main chain and receive funds equal to the amount of their balance on the L2.
 
