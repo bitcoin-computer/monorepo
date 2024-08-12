@@ -7,10 +7,9 @@
   </p>
 </div>
 
-The Bitcoin Computer is a protocol for general purpose smart contract on Bitcoin and Litecoin. It does not rely on a separate token, a separate blockchain or any trusted intermediaries. It works similar to ordinals, runes, and BRC20: a users adds metadata to a transaction to encode a smart contract interaction, such as minting a token. This software can parse the metadata back into smart contract data, for example which users owns how many tokens.
+The Bitcoin Computer is a protocol for general purpose smart contracts on Bitcoin and Litecoin. It does not rely on a separate token, a separate blockchain or any trusted intermediaries. It works similar to ordinals, runes, and BRC20: you can build applications where users add metadata to a transaction to encode a smart contract interaction, such as minting a token. The software can parse the metadata back into smart contract data, for example which users owns how many tokens.
 
-We did not invent a new meta data format, instead we are using Javascript expressions. This makes it possible to build not just tokens but all applications directly on Bitcoin.
-
+Our metadata format consists mostly of Javascript expressions to define the state updates. This makes it possible to build not just tokens but all applications directly on Bitcoin.
 
 ## Use in a Browser
 
@@ -156,7 +155,19 @@ const computer = new Computer({
 
 ### Constructor
 
-Creates a new client side wallet. You can pass a mnemonic as well a chain and network to the constructor. The object returned has the methods below.
+Creates a new client side wallet. You can pass a mnemonic as well a chain and network to the constructor as well as other optional parameters.
+
+```ts
+const computer = new Computer({
+  chain: 'LTC'
+  network: 'mainnet',
+  mnemonic: 'replace this seed'
+  addressType: 'p2wpkh',
+  path: "m/44'/0'/0'/0",
+  url: 'https://my-ltc-node.com',
+  satPerByte: 1
+})
+```
 
 ### New
 
@@ -164,44 +175,105 @@ Creates a smart object from a class and arguments to the constructor. An output 
 
 A smart object can be updated through function calls. Function calls are also recorded in transactions. The new state of the object is represented by an output of this transaction that is inscribed with the function call. This output is the revision of a smart object.
 
+```ts
+class A extends Contract {
+  constructor(n) {
+    this.n = n
+  }
+}
+const a = await computer.new(A, [1])
+expect(a).to.deep.equal({
+  n: 1,
+  _id: '667c...2357:0',
+  _rev: '667c...2357:0',
+  _root: '667c...2357:0',
+  _owners: [computer.getPublicKey()],
+  _amount: 5820
+})
+```
+
 ### Sync
 
 Compute the value of a smart object given its revision.
+
+```ts
+const synced = await computer.sync(a._rev)
+expect(synced).to.deep.equal(a)
+```
 
 ### Deploy
 
 Deploys an ES6 module to Bitcoin. The module is inscribed in a Bitcoin transaction and the transaction id is the module specifier.
 
+```ts
+const revA = await computer.deploy(
+  `export class A {}`
+)
+
+const revB = await computer.deploy(`
+  import { A } from '${revA}'
+  export class B extends A {}
+`)
+```
+
 ### Load
 
 Loads an ES6 module from the blockchain given a modules specifier.
 
+```ts
+class A {}
+const rev = await computer.deploy(`export ${A}`)
+const { A: Loaded } = await computer.load(rev)
+expect(Loaded).to.equal(A)
+```
+
 ### Encode
 
-Inputs a Javascript expression, possibly a module specifier, and possibly a "blockchain environment" that maps the (free) variables of the expression to utxos. The expression is evaluated in the scope of the module, substituting the (free) variables for the values computed for the respective utxo. A transaction is broadcast that spends the utxos, has one output for each object in the new state, and is inscribed with the expression, the module specifier and the blockchain environment. Returns the changed state after the evaluation.
+Inputs a Javascript expression, possibly a module specifier, and possibly a "blockchain environment" that maps the (free) variables of the expression to utxos. The expression is evaluated in the scope of the module, substituting the (free) variables for the values computed for the respective utxo. A transaction is broadcast that spends the utxos, has one output for each object in the new state, and is inscribed with the expression, the module specifier and the blockchain environment. Returns the changed state after the evaluation and a transaction.
+
+```ts
+const { effect, tx } = await computer.encode({ exp: `${A} new A()` })
+```
 
 ### Decode
 
 Inputs a revision (transaction id and output number) and returns a Javascript expression, a module specifier, and a blockchain environment, if present.
 
+```ts
+const decoded = await computer.decode(tx)
+expect(decoded).to.deep.equal({ exp: `${A} new A()` })
+```
+
 ### Query
 
 Finds smart objects by module specifier or by owner. Also finds the latest revision of a smart object.
+
+```ts
+const revs = await computer.query({ publicKey })
+expect(revs).eq(/* all revisions owned by publicKey */)
+```
 
 ### Faucet
 
 Fund a client side library object on regtest. This is practical for testing.
 
+```ts
+await computer.faucet(0.001e8)
+```
+
 ### RPC
 
 Access the RPC interface of the Bitcoin node
+
+```ts
+await computer.rpcCall('getBlockchainInfo', '')
+```
 
 ### Wallet Functionality
 
 * *sign*.	Signs a Bitcoin transaction
 * *broadcast*.	Broadcasts a Bitcoin transaction
 * *send*.	Sends satoshis to an address
-* *rpcCall*.	Access Bitcoin's RPC interface
 * *getAddress*.	Returns the Bitcoin address of the computer wallet
 * *getBalance*.	Returns the balance in satoshi
 
