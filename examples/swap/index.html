@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.776544336201">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.776811718103">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.776544336201" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.776811718103" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.776544336201" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.776811718103" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.776544336201" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.776544336201" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.776811718103" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.776811718103" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -172,7 +172,7 @@
             </svg>
         </div>
         <div class="pr-5 ml-3 w-full">
-<p>We note that the definition of a token swap differs wildly from the legal definition of a swap. While a token swap is the immediate exchange of two tokens, a swap in the legal sense involves an option to buy or sell an asset at a later point in time.</p>
+<p>We note that the definition of a token swap differs wildly from the legal definition of a swap. While a token swap is the immediate exchange of two tokens, a swap in the legal sense involves an option to buy or sell an asset in the future.</p>
         </div>
     </div>
 </div>
@@ -182,7 +182,7 @@
         <span>Swap Using a Static Function</span>
     </h2>
 </doc-anchor-target>
-<p>The recommended way to build a swap is to use a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this smart objects that contain ordinals.</p>
+<p>You can build a swap as a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this smart objects that contain ordinals.</p>
 <doc-anchor-target id="smart-contracts">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contracts">#</doc-anchor-trigger>
@@ -228,8 +228,8 @@ const b = await alice.new(NFT, ['B', 'BBB'])</code></pre>
         <span>Building the Swap Transaction</span>
     </h3>
 </doc-anchor-target>
-<p>A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The two outputs of the transaction are the NFTs after the swap with their owners exchanged.</p>
-<p>Alice passes an expression containing both the code of the <code v-pre>StaticSwap</code> class and the expression <code v-pre>StaticSwap.exec(a, b)</code> to the <a href="./api/encode.md"><code v-pre>encode</code></a> function. The second argument is an environment that determines that the smart objects <code v-pre>a</code> and <code v-pre>b</code> are stored at revisions <code v-pre>a._rev</code> and <code v-pre>b._rev</code>.</p>
+<p>A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The outputs are the NFTs after the swap with their owners exchanged.</p>
+<p>Alice passes an expression containing both the code of the <code v-pre>StaticSwap</code> class and the expression <code v-pre>StaticSwap.exec(a, b)</code> to the <a href="./api/encode.md"><code v-pre>encode</code></a> function. The second argument is an environment that determines that the values to be used for <code v-pre>a</code> and <code v-pre>b</code> are stored at revisions <code v-pre>a._rev</code> and <code v-pre>b._rev</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">const { tx } = await alice.encode({
   exp: `${StaticSwap} StaticSwap.exec(a, b)`,
@@ -312,31 +312,6 @@ await swapHelperA.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
 await alice.sign(tx)
 await alice.broadcast(tx)</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="swap-using-a-method">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#swap-using-a-method">#</doc-anchor-trigger>
-        <span>Swap Using a Method</span>
-    </h2>
-</doc-anchor-target>
-<p>Another possibility is to add a swap function directly to an <code v-pre>NFT</code>. The use is similar to above.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">class Swappable extends Contract {
-  constructor(name = '', symbol = '') {
-    super({ name, symbol })
-  }
-
-  transfer(to: string) {
-    this._owners = [to]
-  }
-
-  swap(that: NFT) {
-    const [thisOwner] = this._owners
-    const [thatOwner] = that._owners
-    this.transfer(thatOwner)
-    that.transfer(thisOwner)
-  }
-}</code></pre>
-</doc-codeblock></div>
 <doc-anchor-target id="code">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#code">#</doc-anchor-trigger>
@@ -366,7 +341,7 @@ await alice.broadcast(tx)</code></pre>
                                         <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../examples/sale/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">Sales</span>
+                                                <span class="block mt-1">Sale</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
