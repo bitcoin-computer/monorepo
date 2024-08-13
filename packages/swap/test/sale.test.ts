@@ -9,6 +9,7 @@ import dotenv from 'dotenv'
 import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
+import exp from 'constants'
 
 dotenv.config({ path: '../../.env' })
 
@@ -43,7 +44,7 @@ describe('Sale', () => {
       const nft = await seller.new(NFT, ['name', 'artist', 'URL'])
 
       // Seller creates a mock for the eventual payment
-      const mock = new PaymentMock(7860)
+      const mock = new PaymentMock(nftPrice)
 
       // Seller creates partially signed swap as a sale offer
       const { tx: saleTx } = await seller.encode({
@@ -70,23 +71,20 @@ describe('Sale', () => {
       await buyer.fund(saleTx)
       await buyer.sign(saleTx)
       await buyer.broadcast(saleTx)
-      // txId of above broadcast
-      // TODO: Clemens this code below doesn't work, but next test passes which uses the similar logic
-      // Bob reads the updated state from the blockchain
-      // const { env } = (await buyer.sync(txId)) as { env: { nft: NFT; payment: NFT } }
-      // const { nft: n, payment: p } = env
+      const { env } = (await buyer.sync(saleTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      const { nft: n, payment: p } = env
 
-      // expect(p._amount).eq(1e8)
-      // expect(n._owners).deep.eq([buyer.getPublicKey()])
-      // expect(p._owners).deep.eq([seller.getPublicKey()])
+      expect(p._amount).eq(1e8)
+      expect(n._owners).deep.eq([buyer.getPublicKey()])
+      expect(p._owners).deep.eq([seller.getPublicKey()])
     })
 
     it('Should work with helper classes', async () => {
       // Create and fund wallets
       const alice = new Computer({ url })
       const bob = new Computer({ url })
-      await alice.faucet(1e6)
-      await bob.faucet(2e8)
+      await alice.faucet(1e5)
+      await bob.faucet(1e8 + 1e5)
 
       // Alice creates helper objects
       const tbc721A = new TBC721(alice)
@@ -118,27 +116,22 @@ describe('Sale', () => {
       await bob.broadcast(finalTx)
       await sleep(3000)
 
-      const { env } = (await alice.sync(finalTx.getId())) as { env: { nft: NFT; payment: Payment } }
-
       // Bob reads the updated state from the blockchain
-      // const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
       const { nft: n, payment: p } = env
 
       expect(p._amount).eq(nftPrice)
       expect(n._owners).deep.eq([bob.getPublicKey()])
       expect(p._owners).deep.eq([alice.getPublicKey()])
 
-      const alicePayment = env.payment
-      await sleep(1000)
-      // TODO: Hardcodeed for LTC
+      // Alice withdraws her payment object
       const { tx: alicePaymentTx } = await alice.encode({
         exp: `alicePayment.setAmount(7860)`,
-        env: { alicePayment: alicePayment._rev }
+        env: { alicePayment: p._rev }
       })
-      await alice.broadcast(alicePaymentTx)
-      // TODO: Clemens, this doesn't work
-      // await alicePayment.setAmount(7860)
-      await sleep(3000)
+
+      expect(await alice.broadcast(alicePaymentTx)).a('string')
+      expect(await alice.getBalance()).gte(1e8)
     })
   })
 
