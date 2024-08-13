@@ -1,9 +1,11 @@
 {
   "name": "@bitcoin-computer/TBC20",
   "version": "0.20.1-beta.0",
-  "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
+  "description": "Standard for fungible tokens on Bitcoin",
   "private": true,
   "type": "module",
+  "main": "./build/src/token.js",
+  "types": "./build/src/token.d.ts",
   "devDependencies": {
     "@types/chai": "^4.3.12",
     "@types/expect": "^24.3.0",
@@ -20,7 +22,7 @@
     "typescript": "~5.3.3"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.release.json",
+    "build": "rm -rf build && tsc -p tsconfig.release.json",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf coverage build tmp",
     "clean-logs": "rm -f *.log 2> /dev/null",
