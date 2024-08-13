@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import { Contract } from '@bitcoin-computer/lib'
+const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Token extends Contract {
   tokens: number
@@ -38,7 +38,7 @@ export class TBC20 implements ITBC20 {
   }
 
   async deploy() {
-    this.mod = (await this.computer.deploy(`export ${Token}`))
+    this.mod = await this.computer.deploy(`export ${Token}`)
     return this.mod
   }
 
