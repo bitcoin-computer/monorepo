@@ -9,7 +9,6 @@ import dotenv from 'dotenv'
 import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
-import exp from 'constants'
 
 dotenv.config({ path: '../../.env' })
 
@@ -117,11 +116,11 @@ describe('Sale', () => {
       await sleep(3000)
 
       // Bob reads the updated state from the blockchain
-      const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
-      const { nft: n, payment: p } = env
+      const { env } = (await bob.sync(finalTx.getId())) as { env: { o: any; p: Payment } }
+      const { o, p } = env
 
       expect(p._amount).eq(nftPrice)
-      expect(n._owners).deep.eq([bob.getPublicKey()])
+      expect(o._owners).deep.eq([bob.getPublicKey()])
       expect(p._owners).deep.eq([alice.getPublicKey()])
 
       // Alice withdraws her payment object
@@ -268,12 +267,12 @@ describe('Sale', () => {
 
     it('Seller now owns the payment', async () => {
       const { env } = (await computer.sync(txId)) as any
-      expect(env.payment._owners).deep.eq([sellerPublicKey])
+      expect(env.p._owners).deep.eq([sellerPublicKey])
     })
 
     it('Buyer now owns the nft', async () => {
       const { env } = (await computer.sync(txId)) as any
-      expect(env.nft._owners).deep.eq([buyer.getPublicKey()])
+      expect(env.o._owners).deep.eq([buyer.getPublicKey()])
     })
   })
 })
