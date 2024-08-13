@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@bitcoin-computer/TBC20": "^0.20.1-beta.0",
     "@bitcoin-computer/components": "^0.20.1-beta.0",
     "@bitcoin-computer/lib": "^0.20.1-beta.0",
     "@testing-library/jest-dom": "^6.4.2",
