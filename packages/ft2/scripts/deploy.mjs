@@ -1,19 +1,8 @@
 import { config } from "dotenv"
 import * as readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
-import { Contract } from "@bitcoin-computer/lib"
-
-// todo: import from file instead of defining the class here
-// import { Counter } from "../src/contracts/counter"
-export class Counter extends Contract {
-  constructor() {
-    super({ count: 0 })
-  }
-
-  inc() {
-    this.count += 1
-  }
-}
+import { TBC20 } from "@bitcoin-computer/TBC20"
+import { OfferHelper, PaymentHelper, SaleHelper } from "@bitcoin-computer/swap"
 
 const { Computer } = await import("@bitcoin-computer/lib")
 
@@ -39,8 +28,21 @@ const answer = await rl.question('\nDo you want to deploy the contracts? \x1b[2m
 if (answer === 'n') {
   console.log("\n Aborting...\n")
 } else {
-  console.log("\n * Deploying counter contract...")
-  const counterModSpec = await computer.deploy(Counter)
+  console.log("\n * Deploying Token contract...")
+  const tbc721 = new TBC20(computer)
+  const tokenModSpec = await tbc721.deploy()
+
+  console.log(" * Deploying Offer contract...")
+  const offerHelper = new OfferHelper(computer)
+  const offerModSpec = await offerHelper.deploy()
+
+  console.log(" * Deploying Sale contract...")
+  const saleHelper = new SaleHelper(computer)
+  const saleModSpec = await saleHelper.deploy()
+
+  console.log(" * Deploying Payment contract...")
+  const paymentHelper = new PaymentHelper(computer)
+  const paymentModSpec = await paymentHelper.deploy()
 
   console.log(`
 Successfully deployed smart contracts.
@@ -51,7 +53,10 @@ Successfully deployed smart contracts.
 
 (1) Update the following row in your .env file.
 
-REACT_APP_COUNTER_MOD_SPEC\x1b[2m=${counterModSpec}\x1b[0m
+REACT_APP_TOKEN_MOD_SPEC\x1b[2m=${tokenModSpec}\x1b[0m
+REACT_APP_OFFER_MOD_SPEC\x1b[2m=${offerModSpec}\x1b[0m
+REACT_APP_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
+REACT_APP_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m
 
 (2) Run 'npm start' to start the application.
 `)
