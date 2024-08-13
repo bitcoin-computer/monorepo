@@ -54,6 +54,10 @@ npm run start
 
 </font>
 
+### Create a New Package
+
+Copy this folder into the packages folder and change the name in the `package.json` file. You can change the name of the app in Navbar.tsx.
+
 ## Documentation
 
 Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Computer.
