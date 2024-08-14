@@ -1,7 +1,25 @@
 import { OfferHelper, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
-import { ComputerContext } from "@bitcoin-computer/components"
+import { ComputerContext, Gallery } from "@bitcoin-computer/components"
 import { useContext, useState } from "react"
 import { REACT_APP_OFFER_MOD_SPEC, REACT_APP_SALE_MOD_SPEC } from "../constants/modSpecs"
+
+export function MyOrders({ publicKey }: { publicKey: string }) {
+  return (
+    <>
+      <h2 className="text-4xl font-bold dark:text-white">My Sell Orders</h2>
+      <Gallery.WithPagination mod={REACT_APP_OFFER_MOD_SPEC} publicKey={publicKey} />
+    </>
+  )
+}
+
+export function AllOrders() {
+  return (
+    <div>
+      <h2 className="text-4xl font-bold dark:text-white">All Sell Orders</h2>
+      <Gallery.WithPagination mod={REACT_APP_OFFER_MOD_SPEC} />
+    </div>
+  )
+}
 
 export default function Orders() {
   const computer = useContext(ComputerContext)
@@ -10,20 +28,18 @@ export default function Orders() {
   const [rev, setRev] = useState('')
   const [amount, setAmount] = useState('')
 
-
-
   const onClick = async (e: any) => {
     e.preventDefault()
     const mock = new PaymentMock(parseInt(amount, 10) * 1e8)
     const publicKey = computer.getPublicKey()
     const url = computer.getUrl()
     const { tx: saleTx } = await saleHelper.createSaleTx({ _rev: rev }, mock)
-    const { tx: offerTx } = await offerHelper.createOfferTx( publicKey, url, saleTx)
+    const { tx: offerTx } = await offerHelper.createOfferTx(publicKey, url, saleTx)
     const offerTxId = await computer.broadcast(offerTx)
-    console.log('created offer', offerTxId)
+    console.log('created offer', offerTxId, offerHelper.mod, REACT_APP_OFFER_MOD_SPEC)
   }
 
-  return (
+  return (<div>
     <form>
       <div className="mb-5">
         <label htmlFor="revision" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -41,5 +57,10 @@ export default function Orders() {
         Create Sell Order
       </button>
     </form>
+    <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+    <AllOrders />
+    <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+    <MyOrders publicKey={computer.getPublicKey()} />
+  </div>
   )
 }

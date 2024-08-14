@@ -6,8 +6,9 @@ const { Contract, Transaction } = await import('@bitcoin-computer/lib')
 
 export class Offer extends Contract {
   txHex: string
+
   constructor(owner: string, url: string, txHex?: string) {
-    super({ _owners: [owner], _url: url, txHex })
+    super({ _owners: [owner], txHex })
   }
 
   addSaleTx(txHex: string) {
