@@ -37,8 +37,7 @@ export class OfferHelper {
     }
     async decodeOfferTx(offerTxId) {
         const [rev] = await this.computer.query({ ids: [`${offerTxId}:0`] });
-        const syncedOffer = await this.computer.sync(rev);
-        const { txHex } = syncedOffer;
+        const { txHex } = await this.computer.sync(rev);
         return Transaction.deserialize(txHex);
     }
 }
