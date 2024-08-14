@@ -14,6 +14,7 @@ import {
 import { Navbar } from "./components/Navbar"
 import Mint from "./components/Mint"
 import { AllAssets, MyAssets } from "./components/Assets"
+import Orders from "./components/Orders"
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -35,6 +36,7 @@ export default function App() {
               <Route path="/" element={<AllAssets />} />
               <Route path="/mine" element={<MyAssets />} />
               <Route path="/mint" element={<Mint />} />
+              <Route path="/orders/:symbol" element={<Orders />} />
               <Route path="/objects/:rev" element={<SmartObject.Component />} />
               <Route path="/transactions/:txn" element={<Transaction.Component />} />
               <Route path="*" element={<Navigate to="/" replace={true} />} />
