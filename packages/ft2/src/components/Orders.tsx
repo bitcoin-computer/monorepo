@@ -1,8 +1,30 @@
 import { Computer, Transaction } from "@bitcoin-computer/lib"
-import { OfferHelper, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
+import { OfferHelper, PaymentMock, SaleHelper, Payment } from "@bitcoin-computer/swap"
 import { ComputerContext } from "@bitcoin-computer/components"
 import { useContext, useEffect, useState } from "react"
 import { REACT_APP_OFFER_MOD_SPEC, REACT_APP_SALE_MOD_SPEC } from "../constants/modSpecs"
+
+function BuyButton({ computer, deserialized, price }: { computer: Computer, deserialized: any, price: number }) {
+  useEffect(() => {
+    const fetch = async () => {
+
+    }
+    fetch()
+  }, [computer])
+
+  async function onClick() {
+    const payment = await computer.new(Payment, [price])
+    const finalTx = SaleHelper.finalizeSaleTx(deserialized, payment, computer.toScriptPubKey()!)
+    await computer.fund(finalTx)
+    await computer.sign(finalTx)
+    const txId = await computer.broadcast(finalTx)
+    console.log('broadcast swap transaction', txId)
+  }
+
+  return <button type="button" onClick={onClick} className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+    Buy
+  </button>
+}
 
 function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
   const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
@@ -10,13 +32,15 @@ function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
   const [available, setAvailable] = useState(0)
   const [name, setName] = useState(0)
   const [symbol, setSymbol] = useState(0)
+  const [deserialized, setDeserialized] = useState(new Transaction()) 
 
   useEffect(() => {
     const fetch = async () => {
       const { txHex } = await computer.sync(rev) as { txHex: any }
-      const deserialized = Transaction.deserialize(txHex)
-      setPrice(await saleHelper.checkSaleTx(deserialized))
-      const { env } = await computer.decode(deserialized)
+      const d = Transaction.deserialize(txHex)
+      setDeserialized(d)
+      setPrice(await saleHelper.checkSaleTx(d))
+      const { env } = await computer.decode(d)
       const objectRev = env.o
       const object = await computer.sync(objectRev) as any
       setName(object.name)
@@ -40,7 +64,7 @@ function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
         {available}
     </td>
     <td className="px-6 py-4">
-        
+    <BuyButton computer={computer} deserialized={deserialized} price={price} />
     </td>
   </tr>)
 }
@@ -75,7 +99,6 @@ function SellOrderTable({ computer }: { computer: Computer }) {
 export function AllOrders({ computer }: { computer: Computer }) {
   return (
     <div>
-      <h2 className="text-4xl font-bold dark:text-white">All Sell Orders</h2>
       <div className="mt-4 relative overflow-x-auto">
         <SellOrderTable computer={computer}/> 
       </div>
@@ -92,12 +115,13 @@ export default function Orders() {
 
   const onClick = async (e: any) => {
     e.preventDefault()
-    const mock = new PaymentMock(parseInt(amount, 10) * 1e8)
+    const mock = new PaymentMock(parseFloat(amount) * 1e8)
     const publicKey = computer.getPublicKey()
     const url = computer.getUrl()
     const { tx: saleTx } = await saleHelper.createSaleTx({ _rev: rev }, mock)
     const { tx: offerTx } = await offerHelper.createOfferTx(publicKey, url, saleTx)
     await computer.broadcast(offerTx)
+    console.log('created offer tx', offerTx.getId())
   }
 
   return (<div>
