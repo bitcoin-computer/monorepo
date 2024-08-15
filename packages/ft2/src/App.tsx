@@ -36,7 +36,7 @@ export default function App() {
               <Route path="/" element={<AllAssets />} />
               <Route path="/mine" element={<MyAssets />} />
               <Route path="/mint" element={<Mint />} />
-              <Route path="/orders/:symbol" element={<Orders />} />
+              <Route path="/orders" element={<Orders />} />
               <Route path="/objects/:rev" element={<SmartObject.Component />} />
               <Route path="/transactions/:txn" element={<Transaction.Component />} />
               <Route path="*" element={<Navigate to="/" replace={true} />} />
