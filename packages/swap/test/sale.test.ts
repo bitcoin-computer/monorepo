@@ -83,7 +83,7 @@ describe('Sale', () => {
       const alice = new Computer({ url })
       const bob = new Computer({ url })
       await alice.faucet(1e5)
-      await bob.faucet(1e8 + 1e5)
+      await bob.faucet(nftPrice + 1e5)
 
       // Alice creates helper objects
       const tbc721A = new TBC721(alice)
@@ -104,9 +104,10 @@ describe('Sale', () => {
       const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
 
       // Bob checks the swap transaction
-      const nftAmount = await saleHelperB.checkSaleTx(saleTx)
+      expect(await saleHelperB.checkSaleTx(saleTx)).eq(nftPrice)
+
       // Bob creates the payment and finalizes the transaction
-      const payment = await bob.new(Payment, [nftAmount])
+      const payment = await bob.new(Payment, [nftPrice])
       const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
 
       // Bob signs an broadcasts the transaction to execute the swap
