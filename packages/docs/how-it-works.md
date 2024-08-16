@@ -7,20 +7,19 @@ icon: light-bulb
 
 ## Intuition
 
-A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed. The value of the expression is associated with the first output of the transaction. If the value is an object or array that has sub-objects, then each sub-object is associated with a distinct output of the transaction.
+In a Bitcoin Computer transaction, a JavaScript expression is embedded within a standard Bitcoin transaction. The result of evaluating this expression is linked to an output. If the result contains objects, each of these objects is assigned to a separate output.
 
-If the expression contains a free variable (for example the variable `x` is free in the expression `x + 1`), then that free variable has to be associated with an input of the transaction. To determine the values of the outputs, the Bitcoin Computer  recursively determines the values of each output spent. The free variable is then substituted with the value before the expression is evaluated.
+For expressions with an undefined variable (for example, the variable x is undefined in the expression x + 1), the smart contract developer can associate that variables with an input of the transaction. The Bitcoin Computer then recursively calculates the values of these outputs, and replaces the undefined variables with their computed values from previous transactions to evaluate the expression.
 
 ### Basic Example
 
 ![](/static/legend@1x.png)-
-In the examples below, white boxes represent transactions and grey boxes represent expressions inscribed. Inputs and outputs are displayed as circles and spending relations are shown as arrows. 
-<div style="clear: right;"></div>
+ 
 
 -![](/static/int-example@1x.png)
-Consider a transaction with the expression `1+2` inscribed. As this expression evaluates to `3`, the Bitcoin Computer will associate the first output with the value `3`.
 
-If this output is spent by a transaction with an inscription `x+4` and the first input is associated with `x`, the Bitcoin Computer determines the value of the output spent by that input. In the example that output has the value `3`. Hence, the output of the second transaction has the value `7`.
+In this example, the transaction is inscribed with the arithmetic expression 1+2, which evaluates to 3. This value is then associated with the transaction’s first output. In a subsequent transaction, an expression x+4 uses this output's value as its variable “x”. Given that the output from the first transaction was 3, the expression in the second transaction evaluates to 7, and this new value is assigned to its output. This demonstrates how values can be propagated and transformed across transactions in the Bitcoin Computer system.
+
 <div style="clear: left;"></div>
 
 ## Detailed Description
@@ -29,23 +28,25 @@ If this output is spent by a transaction with an inscription `x+4` and the first
 
 We will refer to a Javascript expression that is inscribed in a transaction as a *smart contract*. The value that such an expression evaluates to is called a *smart value*. If a smart value is of object type we refer to it as a *smart object*.
 
+In the Bitcoin Computer system, JavaScript expressions embedded within transactions are called smart contracts. The values of these expressions is known as a smart values. When a smart value is of an object type, it is referred to as a smart object. This terminology is borrowed from object oriented programming and helps distinguish between a class and the objects created from such a class.
+
 ### Data Ownership
 
-The method of associating data values to outputs described above gives rise to a natural notion of data ownership: A smart value that is *owned* by the users that can spend that output. This is analogous to how satoshis in an output are owned by the users that can spend the output.
-
-The Bitcoin Computer adds a property `_owners` to every smart object. It is set to the array of the public keys of the owners. Conversely, if an object is created with a property `_owners` that is set to an array of *n* string encoded public keys, then the output that represents the object has a *1*-of-*n* multisig script with these public keys.
+In the TBC system, data ownership is linked to the ability to spend an output, similar to the ownership of Bitcoin. A “smart object embedded in a transaction is the property of the user(s) who can spend that output. For enhanced security and ownership clarity, every “smart object” includes an `_owners` property, listing the public keys of its owners. Conversely, if an object is created with a property `_owners` that is set to an array of $n$ string encoded public keys, then the output that represents the object has a $1$-of-$n$ multisig script with these public keys.
 
 ### Creating Objects and Object Identity
 
-One advantage of associating values with transaction outputs is that the transaction id and output number can be used as an *identity* for the object. Whenever a smart object is created the Bitcoin Computer assigns the identity to a property `_id` of the object. The object identity cannot be reassigned and remains fixed throughout the lifetime of the object.
+Associating values with transaction outputs facilitates the use of the transaction ID and output number as a unique identifier for each smart object. This identifier is assigned to the _id property of the smart object upon its creation and remains unchanged for the object’s entire lifespan.
 
 ### Updating Objects and Object Revisions
 
-Whenever a smart object is updated a transaction is broadcast that spends the outputs representing the object's old state. The outputs of the transaction are associated with the new state of the object. The transaction id and output number that is associated with the new state of an object is referred to as it's *revision*. The revision is assigned to a property `_rev` of the object.
+When a smart object is updated, a transaction is broadcast that spends the old state’s utxo with new one, reflecting the object’s updated state. This transaction ID and output number are designated as the object’s revision and stored in the `_rev` property of the object. This mechanism ensures that each update is traceable and securely linked to the specific transaction.
 
 ### Ancestors and Roots of Objects
 
-If an object is created in a function call of the form `x.f(...)` we say that `x` is its parent. We say that an object `x1` is the ancestor of an object `xn` if there is a sequence of objects `z2 ... zn-1` such that `xi` is the parent of `xi_1` for all `i`. The *root* of an object is its (unique) ancestor that does not have a parent. The Bitcoin Computer assigns the root of an smart object to the property `_root`. The root can be used to create fungible tokens with the Bitcoin Computer.
+If an object is created in a function call of the form $x.f(\ldots)$ we say that $x$ is its parent. We say that an object $x_1$ is the ancestor of an object $x_n$ if there is a sequence of objects $x_2 \ldots x_{n-1}$ such that $x_i$ is the parent of $x_{i+1}$ for all $i$. The root of an object is its (unique) ancestor that does not have a parent. The Bitcoin Computer assigns the root of a smart object to the property `_root`. The root can be used to create fungible tokens with the Bitcoin Computer.
+
+In other words, an object’s lineage is defined by its function calls. If an object is created within a function, the object calling the function is deemed the parent. An ancestor of an object is defined by a lineage of parent-child relationships leading back to a unique ancestor with no parent, which is called the root. The root identity is critical for creating fungible tokens, as it provides a stable reference point for all transactions and interactions related to that object.
 
 ## Examples
 
