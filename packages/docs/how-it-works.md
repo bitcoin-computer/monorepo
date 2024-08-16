@@ -9,7 +9,7 @@ icon: light-bulb
 
 In a Bitcoin Computer transaction, a JavaScript expression is embedded within a standard Bitcoin transaction. The result of evaluating this expression is linked to an output. If the result contains objects, each of these objects is assigned to a separate output.
 
-For expressions with an undefined variable (for example, the variable x is undefined in the expression x + 1), the smart contract developer can associate that variables with an input of the transaction. The Bitcoin Computer then recursively calculates the values of these outputs, and replaces the undefined variables with their computed values from previous transactions to evaluate the expression.
+For expressions with an undefined variable (for example, the variable `x` is undefined in the expression `x + 1`), the smart contract developer can associate that variables with an input of the transaction. The Bitcoin Computer then recursively calculates the values of these outputs, and replaces the undefined variables with their computed values from previous transactions to evaluate the expression.
 
 ### Basic Example
 
@@ -18,7 +18,7 @@ For expressions with an undefined variable (for example, the variable x is undef
 
 -![](/static/int-example@1x.png)
 
-In this example, the transaction is inscribed with the arithmetic expression 1+2, which evaluates to 3. This value is then associated with the transaction’s first output. In a subsequent transaction, an expression x+4 uses this output's value as its variable “x”. Given that the output from the first transaction was 3, the expression in the second transaction evaluates to 7, and this new value is assigned to its output. This demonstrates how values can be propagated and transformed across transactions in the Bitcoin Computer system.
+In this example, the transaction is inscribed with the arithmetic expression `1+2`, which evaluates to `3`. This value is then associated with the transaction’s first output. In a subsequent transaction, an expression `x+4` uses this output's value as its variable `x`. Given that the output from the first transaction was `3`, the expression in the second transaction evaluates to `7`, and this new value is assigned to its output. This demonstrates how values can be propagated and transformed across transactions in the Bitcoin Computer system.
 
 <div style="clear: left;"></div>
 
