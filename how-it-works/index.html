@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.776811808281">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.777163137887">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>How it Works</title>
     <meta name="title" content="How it Works">
-    <meta name="description" content="A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed.">
+    <meta name="description" content="In a Bitcoin Computer transaction, a JavaScript expression is embedded within a standard Bitcoin transaction.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/how-it-works/">
@@ -20,22 +20,24 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/how-it-works/">
     <meta property="og:title" content="How it Works">
-    <meta property="og:description" content="A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed.">
+    <meta property="og:description" content="In a Bitcoin Computer transaction, a JavaScript expression is embedded within a standard Bitcoin transaction.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/how-it-works/">
     <meta property="twitter:title" content="How it Works">
-    <meta property="twitter:description" content="A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed.">
+    <meta property="twitter:description" content="In a Bitcoin Computer transaction, a JavaScript expression is embedded within a standard Bitcoin transaction.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.5.0.776811808281" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.5.0.777163137887" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.776811808281" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.5.0.777163137887" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.776811808281" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.5.0.777163137887" data-turbo-eval="false" defer></script>
+    <link href="../resources/css/katex.css?v=3.5.0" rel="stylesheet">
+    <script id="katex-js" data-cfasync="false" src="../resources/js/katex.js?v=3.5.0" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -162,8 +164,8 @@
         <span>Intuition</span>
     </h2>
 </doc-anchor-target>
-<p>A Bitcoin Computer transaction is a Bitcoin transaction with a Javascript expression inscribed. The value of the expression is associated with the first output of the transaction. If the value is an object or array that has sub-objects, then each sub-object is associated with a distinct output of the transaction.</p>
-<p>If the expression contains a free variable (for example the variable <code v-pre>x</code> is free in the expression <code v-pre>x + 1</code>), then that free variable has to be associated with an input of the transaction. To determine the values of the outputs, the Bitcoin Computer  recursively determines the values of each output spent. The free variable is then substituted with the value before the expression is evaluated.</p>
+<p>In a Bitcoin Computer transaction, a JavaScript expression is embedded within a standard Bitcoin transaction. The result of evaluating this expression is linked to an output. If the result contains objects, each of these objects is assigned to a separate output.</p>
+<p>For expressions with an undefined variable (for example, the variable <code v-pre>x</code> is undefined in the expression <code v-pre>x + 1</code>), the smart contract developer can associate that variables with an input of the transaction. The Bitcoin Computer then recursively calculates the values of these outputs, and replaces the undefined variables with their computed values from previous transactions to evaluate the expression.</p>
 <doc-anchor-target id="basic-example">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#basic-example">#</doc-anchor-trigger>
@@ -174,14 +176,13 @@
     <img src="../static/legend1x.png" alt="">
     <figcaption class="caption caption-float"></figcaption>
 </figure>
-In the examples below, white boxes represent transactions and grey boxes represent expressions inscribed. Inputs and outputs are displayed as circles and spending relations are shown as arrows.</p>
-<div style="clear: right;"></div>
+</p>
 <p><figure class="content-left">
     <img src="../static/int-example1x.png" alt="">
     <figcaption class="caption caption-float"></figcaption>
 </figure>
-Consider a transaction with the expression <code v-pre>1+2</code> inscribed. As this expression evaluates to <code v-pre>3</code>, the Bitcoin Computer will associate the first output with the value <code v-pre>3</code>.</p>
-<p>If this output is spent by a transaction with an inscription <code v-pre>x+4</code> and the first input is associated with <code v-pre>x</code>, the Bitcoin Computer determines the value of the output spent by that input. In the example that output has the value <code v-pre>3</code>. Hence, the output of the second transaction has the value <code v-pre>7</code>.</p>
+</p>
+<p>In this example, the transaction is inscribed with the arithmetic expression <code v-pre>1+2</code>, which evaluates to <code v-pre>3</code>. This value is then associated with the transaction’s first output. In a subsequent transaction, an expression <code v-pre>x+4</code> uses this output&#x27;s value as its variable <code v-pre>x</code>. Given that the output from the first transaction was <code v-pre>3</code>, the expression in the second transaction evaluates to <code v-pre>7</code>, and this new value is assigned to its output. This demonstrates how values can be propagated and transformed across transactions in the Bitcoin Computer system.</p>
 <div style="clear: left;"></div>
 <doc-anchor-target id="detailed-description">
     <h2>
@@ -196,35 +197,36 @@ Consider a transaction with the expression <code v-pre>1+2</code> inscribed. As 
     </h3>
 </doc-anchor-target>
 <p>We will refer to a Javascript expression that is inscribed in a transaction as a <em>smart contract</em>. The value that such an expression evaluates to is called a <em>smart value</em>. If a smart value is of object type we refer to it as a <em>smart object</em>.</p>
+<p>In the Bitcoin Computer system, JavaScript expressions embedded within transactions are called smart contracts. The values of these expressions is known as a smart values. When a smart value is of an object type, it is referred to as a smart object. This terminology is borrowed from object oriented programming and helps distinguish between a class and the objects created from such a class.</p>
 <doc-anchor-target id="data-ownership">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#data-ownership">#</doc-anchor-trigger>
         <span>Data Ownership</span>
     </h3>
 </doc-anchor-target>
-<p>The method of associating data values to outputs described above gives rise to a natural notion of data ownership: A smart value that is <em>owned</em> by the users that can spend that output. This is analogous to how satoshis in an output are owned by the users that can spend the output.</p>
-<p>The Bitcoin Computer adds a property <code v-pre>_owners</code> to every smart object. It is set to the array of the public keys of the owners. Conversely, if an object is created with a property <code v-pre>_owners</code> that is set to an array of <em>n</em> string encoded public keys, then the output that represents the object has a <em>1</em>-of-<em>n</em> multisig script with these public keys.</p>
+<p>In the TBC system, data ownership is linked to the ability to spend an output, similar to the ownership of Bitcoin. A “smart object embedded in a transaction is the property of the user(s) who can spend that output. For enhanced security and ownership clarity, every “smart object” includes an <code v-pre>_owners</code> property, listing the public keys of its owners. Conversely, if an object is created with a property <code v-pre>_owners</code> that is set to an array of <span class="math">n</span> string encoded public keys, then the output that represents the object has a <span class="math">1</span>-of-<span class="math">n</span> multisig script with these public keys.</p>
 <doc-anchor-target id="creating-objects-and-object-identity">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#creating-objects-and-object-identity">#</doc-anchor-trigger>
         <span>Creating Objects and Object Identity</span>
     </h3>
 </doc-anchor-target>
-<p>One advantage of associating values with transaction outputs is that the transaction id and output number can be used as an <em>identity</em> for the object. Whenever a smart object is created the Bitcoin Computer assigns the identity to a property <code v-pre>_id</code> of the object. The object identity cannot be reassigned and remains fixed throughout the lifetime of the object.</p>
+<p>Associating values with transaction outputs facilitates the use of the transaction ID and output number as a unique identifier for each smart object. This identifier is assigned to the _id property of the smart object upon its creation and remains unchanged for the object’s entire lifespan.</p>
 <doc-anchor-target id="updating-objects-and-object-revisions">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#updating-objects-and-object-revisions">#</doc-anchor-trigger>
         <span>Updating Objects and Object Revisions</span>
     </h3>
 </doc-anchor-target>
-<p>Whenever a smart object is updated a transaction is broadcast that spends the outputs representing the object&#x27;s old state. The outputs of the transaction are associated with the new state of the object. The transaction id and output number that is associated with the new state of an object is referred to as it&#x27;s <em>revision</em>. The revision is assigned to a property <code v-pre>_rev</code> of the object.</p>
+<p>When a smart object is updated, a transaction is broadcast that spends the old state’s utxo with new one, reflecting the object’s updated state. This transaction ID and output number are designated as the object’s revision and stored in the <code v-pre>_rev</code> property of the object. This mechanism ensures that each update is traceable and securely linked to the specific transaction.</p>
 <doc-anchor-target id="ancestors-and-roots-of-objects">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#ancestors-and-roots-of-objects">#</doc-anchor-trigger>
         <span>Ancestors and Roots of Objects</span>
     </h3>
 </doc-anchor-target>
-<p>If an object is created in a function call of the form <code v-pre>x.f(...)</code> we say that <code v-pre>x</code> is its parent. We say that an object <code v-pre>x1</code> is the ancestor of an object <code v-pre>xn</code> if there is a sequence of objects <code v-pre>z2 ... zn-1</code> such that <code v-pre>xi</code> is the parent of <code v-pre>xi_1</code> for all <code v-pre>i</code>. The <em>root</em> of an object is its (unique) ancestor that does not have a parent. The Bitcoin Computer assigns the root of an smart object to the property <code v-pre>_root</code>. The root can be used to create fungible tokens with the Bitcoin Computer.</p>
+<p>If an object is created in a function call of the form <span class="math">x.f(\ldots)</span> we say that <span class="math">x</span> is its parent. We say that an object <span class="math">x_1</span> is the ancestor of an object <span class="math">x_n</span> if there is a sequence of objects <span class="math">x_2 \ldots x_{n-1}</span> such that <span class="math">x_i</span> is the parent of <span class="math">x_{i+1}</span> for all <span class="math">i</span>. The root of an object is its (unique) ancestor that does not have a parent. The Bitcoin Computer assigns the root of a smart object to the property <code v-pre>_root</code>. The root can be used to create fungible tokens with the Bitcoin Computer.</p>
+<p>In other words, an object’s lineage is defined by its function calls. If an object is created within a function, the object calling the function is deemed the parent. An ancestor of an object is defined by a lineage of parent-child relationships leading back to a unique ancestor with no parent, which is called the root. The root identity is critical for creating fungible tokens, as it provides a stable reference point for all transactions and interactions related to that object.</p>
 <doc-anchor-target id="examples">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
@@ -338,6 +340,6 @@ Game -->
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "How it Works", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "How it Works", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: true, tocDepth: 23 }</script>
 </body>
 </html>
