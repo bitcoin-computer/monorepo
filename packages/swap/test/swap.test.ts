@@ -2,7 +2,8 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT, TBC721 } from '@bitcoin-computer/TBC721'
+import { Token } from '@bitcoin-computer/TBC20'
 import dotenv from 'dotenv'
 import { Swap, SwapHelper } from '../src/swap'
 import { meta } from '../src/utils'
@@ -158,6 +159,33 @@ describe('Swap', () => {
         url: 'URL',
         _owners: [alice.getPublicKey()]
       })
+    })
+  })
+
+  describe('Should work with fungible tokens', async () => {      
+    it('Should work for tokens', async () => {
+      // Alice and Bob create one NFT each
+      const tokenA = await alice.new(Token, [alice.getPublicKey(), 10, 'A'])
+      const tokenB = await bob.new(Token, [bob.getPublicKey(), 100, 'B'])
+
+      // Alice builds a partially signed swap transaction
+      const { tx } = await alice.encode({
+        exp: `${Swap} new Swap(tA, tB)`,
+        env: { tA: tokenA._rev, tB: tokenB._rev }
+      })
+
+      // Bob signs and broadcasts the swap transaction
+      await bob.sign(tx)
+      const txId = await bob.broadcast(tx)
+      expect(txId).a.string
+
+      const { env: { tA, tB } } = await alice.sync(txId) as { env: { tA: Token, tB: Token }}
+      // const { tA, tB } = env
+      expect(tA._owners).deep.eq([bob.getPublicKey()])
+      expect(tB._owners).deep.eq([alice.getPublicKey()])
+
+      expect(tA.tokens).eq(10)
+      expect(tB.tokens).eq(100)
     })
   })
 })

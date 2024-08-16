@@ -11,10 +11,19 @@ export class Token extends Contract {
     super({ _owners: [to], tokens, name, symbol })
   }
 
-  transfer(to: string, amount: number): Token {
-    if (this.tokens < amount) throw new Error()
-    this.tokens -= amount
-    return new Token(to, amount, this.name, this.symbol)
+  transfer(to: string, amount?: number): Token | null {
+    // Send entire amount
+    if (typeof amount === 'undefined') {
+      this._owners = [to]
+      return null
+    }
+    // Send partial amount in a new object
+    if (this.tokens >= amount) {
+      this.tokens -= amount
+      return new Token(to, amount, this.name, this.symbol)
+    }
+
+    throw new Error('Insufficient funds')
   }
 }
 
