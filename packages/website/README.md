@@ -12,4 +12,12 @@
 
 ## Usage
 
+### Run Locally
+
+```
+npm start
+```
+
+### Deploy
+
 To deploy a new version merge a pull request into main.
