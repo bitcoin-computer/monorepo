@@ -16,7 +16,7 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
 
   const refresh = async () => {
     try {
-      if (computer) setBalance(await computer.getBalance())
+      if (computer) setBalance((await computer.getBalance()).balance)
     } catch (err) {
       console.log(err)
       console.log("error occurred while fetching wallet details: ", err)

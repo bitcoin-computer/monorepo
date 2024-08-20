@@ -46,7 +46,7 @@ declare class Wallet {
   readonly restClient: RestClient;
   constructor(params?: ComputerOptions);
   derive(subpath?: string): Wallet;
-  getBalance(address?: string): Promise<number>;
+  getBalance(address?: string): Promise<{balance: number, confirmed: number, unconfirmed: number}>;
   getUtxos(address?: string): Promise<_Unspent[]>;
   getDustThreshold(isWitnessProgram: boolean, script?: Buffer): number;
   getAmountThreshold(isWitnessProgram: boolean, script: Buffer): number;
@@ -109,7 +109,7 @@ declare class RestClient {
   constructor({ chain, network, mnemonic, path, passphrase, addressType, url, satPerByte, dustRelayFee }?: ComputerOptions);
   rpc(method: string, params: string): Promise<any>;
   broadcast(txHex: string): Promise<string>;
-  getBalance(address: string): Promise<number>;
+  getBalance(address: string): Promise<{balance: number, confirmed: number, unconfirmed: number}>;
   listTxs(address: string): Promise<_Transaction>;
   getUtxos(address: string): Promise<_Unspent[]>;
   getFormattedUtxos(address: string): Promise<_Unspent[]>;
@@ -332,7 +332,7 @@ declare class Computer {
   load(rev: string): Promise<ModuleExportsNamespace>;
   listTxs(address?: string): Promise<import("./types")._Transaction>;
   getUtxos(address?: string): Promise<string[]>;
-  getBalance(address?: string): Promise<number>;
+  getBalance(address?: string): Promise<{balance: number, confirmed: number, unconfirmed: number}>;
   sign(transaction: Transaction, opts?: SigOptions): Promise<void>;
   fund(tx: Transaction, opts?: Fee & FundOptions): Promise<void>;
   send(satoshis: number, address: string): Promise<string>;

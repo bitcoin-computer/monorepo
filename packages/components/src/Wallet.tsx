@@ -30,7 +30,7 @@ const Balance = ({
           : 0
 
         const availableWalletBalance = await computer.getBalance()
-        setBalance(availableWalletBalance + amountsInPaymentToken)
+        setBalance(availableWalletBalance.balance + amountsInPaymentToken)
         setChain(computer.getChain())
       }
       showLoader(false)
@@ -42,7 +42,7 @@ const Balance = ({
 
   const fund = async () => {
     await computer.faucet(1e8)
-    setBalance(await computer.getBalance())
+    setBalance((await computer.getBalance()).balance)
   }
 
   useEffect(() => {
