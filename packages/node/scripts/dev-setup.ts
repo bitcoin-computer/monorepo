@@ -11,15 +11,15 @@ dotenv.config()
 const parser = new ArgumentParser()
 
 const chainGroup = parser.add_mutually_exclusive_group()
-chainGroup.add_argument("-btc", "--bitcoin", { action: "store_const", dest: "chain", constant: 'BTC' })
-chainGroup.add_argument("-ltc", "--litecoin", { action: "store_const", dest: "chain", constant: 'LTC' })
-chainGroup.add_argument("-pepe", "--pepecoin", { action: "store_const", dest: "chain", constant: 'PEPE' })
+chainGroup.add_argument("-btc", "--bitcoin", { action: "store_const", dest: "chain", const: 'BTC' })
+chainGroup.add_argument("-ltc", "--litecoin", { action: "store_const", dest: "chain", const: 'LTC' })
+chainGroup.add_argument("-pepe", "--pepecoin", { action: "store_const", dest: "chain", const: 'PEPE' })
 parser.set_defaults({ chain: 'LTC' })
 
 const networkGroup = parser.add_mutually_exclusive_group()
-networkGroup.add_argument("-t", "--testnet", { action: "store_const", dest: "network", constant: 'testnet' })
-networkGroup.add_argument("-m", "--mainnet", { action: "store_const", dest: "network", constant: 'mainnet' })
-networkGroup.add_argument("-r", "--regtest", { action: "store_const", dest: "network", constant: 'regtest' })
+networkGroup.add_argument("-t", "--testnet", { action: "store_const", dest: "network", const: 'testnet' })
+networkGroup.add_argument("-m", "--mainnet", { action: "store_const", dest: "network", const: 'mainnet' })
+networkGroup.add_argument("-r", "--regtest", { action: "store_const", dest: "network", const: 'regtest' })
 parser.set_defaults({ network: 'regtest' })
 
 const args = parser.parse_args()
@@ -42,7 +42,8 @@ const bcnPort = process.env.PORT || '1031'
 const rpcUser = process.env.RPC_USER || 'bcn-admin'
 const rpcPassword = process.env.RPC_PASSWORD || 'kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
 
-const command = `BCN_ENV=dev CHAIN=${args.chain} NETWORK=${args.network} POSTGRES_HOST=127.0.0.1 RPC_HOST=127.0.0.1 RPC_PORT=${nodePort} RPC_PROTOCOL=http RPC_USER=${rpcUser} RPC_PASSWORD=${rpcPassword} ZMQ_URL=tcp://127.0.0.1:28332 BCN_URL=http://127.0.0.1:${bcnPort} node --loader ts-node/esm $(grep START_PATH .package.paths | cut -d '=' -f2)`
+const sourcePath = process.env.SYNC ? 'SYNC_PATH' : 'START_PATH'
+const command = `BCN_ENV=dev CHAIN=${args.chain} NETWORK=${args.network} THREADS=8 POSTGRES_HOST=127.0.0.1 RPC_HOST=127.0.0.1 RPC_PORT=${nodePort} RPC_PROTOCOL=http RPC_USER=${rpcUser} RPC_PASSWORD=${rpcPassword} ZMQ_URL=tcp://127.0.0.1:28332 BCN_URL=http://127.0.0.1:${bcnPort} node --loader ts-node/esm $(grep ${sourcePath} .package.paths | cut -d '=' -f2)`
 
 console.log(command)
 

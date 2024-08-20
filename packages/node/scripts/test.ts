@@ -20,6 +20,7 @@ const testTypeGroup = parser.add_mutually_exclusive_group()
 testTypeGroup.add_argument('-s', '--single', { action: 'store' })
 testTypeGroup.add_argument('-i', '--integration', { action: 'store_true' })
 testTypeGroup.add_argument('-u', '--unit', { action: 'store_true', default: true })
+testTypeGroup.add_argument('-sync', '--synchronize', { action: 'store_true' })
 
 const args = parser.parse_args()
 
@@ -50,6 +51,8 @@ if (args.integration) {
   command = `${command} .mocharc-async.json`
 } else if (args.single) {
   command = `${command} .mocharc-single.json ${args.single}`
+} else if (args.synchronize) {
+  command = `${command} .mocharc-sync.json`
 } else {
   command = `${command} .mocharc-unit.json`
 }
