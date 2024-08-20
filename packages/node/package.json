@@ -37,6 +37,8 @@
     "lint-fix": "eslint --fix",
     "node-clean": "./scripts/node-clean.sh",
     "reset": "yes | ./scripts/reset.sh",
+    "start": "node dist/bcn.es.mjs",
+    "sync": "node dist/bcn.sync.es.mjs",
     "setup": "./scripts/setup.py",
     "types": "tsc -p tsconfig.json",
     "test": "node --loader ts-node/esm  ./scripts/test.ts",
