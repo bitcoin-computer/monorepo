@@ -14,9 +14,12 @@ HOSTNAME=localhost
 psql "postgresql://$USERNAME:$PASSWORD@$HOSTNAME/$DATABASE" << EOF
 TRUNCATE TABLE "Input";
 TRUNCATE TABLE "Output";
+TRUNCATE TABLE "Block";
+TRUNCATE TABLE "Orphan";
 TRUNCATE TABLE "User";
 TRUNCATE TABLE "OffChain";
-TRUNCATE TABLE "SyncStatus";
+TRUNCATE TABLE "TxStatus";
+TRUNCATE TABLE "BlockStatus";
 EOF
 
 # stop all docker containers and networks

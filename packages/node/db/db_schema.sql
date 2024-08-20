@@ -9,20 +9,43 @@ CREATE TABLE IF NOT EXISTS
     "mod" VARCHAR(70),
     "previous" VARCHAR(70),
     "hash" VARCHAR(64),
+    "blockHash" VARCHAR(64),
     "timestamp" timestamp default CURRENT_TIMESTAMP not null
   );
 
 CREATE TABLE IF NOT EXISTS
   "Input" (
     "outputSpent" VARCHAR(70) NOT NULL PRIMARY KEY,
-    "spendingInput" VARCHAR(70) NOT NULL
+    "spendingInput" VARCHAR(70) NOT NULL,
+    "blockHash" VARCHAR(64)
   );
+
+CREATE TABLE IF NOT EXISTS
+  "Block" (
+    "hash" VARCHAR(64) NOT NULL PRIMARY KEY,
+    "height" INTEGER NOT NULL,
+    "previousHash" VARCHAR(64) NOT NULL
+  );
+
+CREATE TABLE IF NOT EXISTS
+  "Orphan" (
+    "hash" VARCHAR(64) NOT NULL PRIMARY KEY
+  );
+
+CREATE INDEX "BlockIndex"
+ON "Block"("height");
 
 CREATE INDEX "OutputAddressIndex"
 ON "Output"("address");
 
 CREATE INDEX "OutputPreviousIndex"
 ON "Output"("previous");
+
+CREATE INDEX "OutputBlockHashIndex"
+ON "Output"("blockHash");
+
+CREATE INDEX "InputOutputSpentIndex"
+ON "Input"("blockHash");
 
 CREATE TABLE IF NOT EXISTS
   "User" (
@@ -37,13 +60,18 @@ CREATE TABLE IF NOT EXISTS
   );
 
 CREATE TABLE IF NOT EXISTS
-  "SyncStatus" (
+  "TxStatus" (
     "blockToSync" INTEGER NOT NULL,
     "workerId" INTEGER NOT NULL PRIMARY KEY
   );
 
+CREATE TABLE IF NOT EXISTS
+  "BlockStatus" (
+    "blockToSync" INTEGER NOT NULL PRIMARY KEY
+  );
+
 CREATE VIEW "Utxos" AS
-SELECT "rev", "address", "satoshis", "scriptPubKey", "publicKeys", "timestamp"
+SELECT "rev", "address", "satoshis", "scriptPubKey", "publicKeys", "timestamp", "blockHash"
 FROM "Output" WHERE "isTbcOutput" = false AND NOT EXISTS
 (SELECT 1 FROM "Input" ip WHERE "ip"."outputSpent" = "Output"."rev")
 

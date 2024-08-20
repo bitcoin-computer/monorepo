@@ -150,7 +150,8 @@ const { txId, vout } = await computer.faucet(1e4)
 expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
 
 // Return the balance
-expect(await new Computer(conf).getBalance(address)).eq(1e4)
+const res = await new Computer(conf).getBalance(address)
+expect(res.balance).eq(1e4)
 
 // Return the transactions
 expect(await new Computer(conf).listTxs(address)).deep.eq({

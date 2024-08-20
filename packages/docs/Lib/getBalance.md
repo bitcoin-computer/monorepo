@@ -1,10 +1,10 @@
 # getBalance
 
-Returns the current balance in satoshi.
+Returns an object with the current balance in Satoshi, the confirmed balance in Satoshi (at least 1 confirmation), and the unconfirmed balance in Satoshi.
 
 ### Type
 ```ts
-() => Promise<string>
+() => Promise<{balance: number, confirmed: number, unconfirmed: number}>
 ```
 
 ### Syntax

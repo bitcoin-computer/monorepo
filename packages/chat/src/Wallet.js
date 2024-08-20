@@ -7,7 +7,7 @@ function Wallet({ computer, chain }) {
 
   useInterval(() => {
     const getBalance = async () => {
-      if (computer) setBalance(await computer.getBalance())
+      if (computer) setBalance((await computer.getBalance()).balance)
     }
     getBalance()
   }, 3000)

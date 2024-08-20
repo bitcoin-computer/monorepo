@@ -1,4 +1,0 @@
-
-SRC_ENTRY=dist/bcn.es.mjs
-SYNC_START=ts-node dist/bcn.sync.es.mjs
-START_PATH=dist/bcn.es.mjs

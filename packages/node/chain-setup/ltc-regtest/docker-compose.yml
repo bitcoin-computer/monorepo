@@ -55,4 +55,31 @@ services:
       - CHAIN=LTC
       - BCN_URL=http://127.0.0.1:1031
     restart: always
-
+  sync:
+    command: npm run sync
+    image: bitcoin-computer-node
+    env_file: .env
+    restart: always
+    environment:
+      - BCN_ENV=dev
+      - RPC_HOST=node
+      - RPC_PORT=19332
+      - NETWORK=regtest
+      - CHAIN=LTC
+      - ZMQ_URL=tcp://node:28332
+      - BCN_URL=http://127.0.0.1:1031
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=db
+      - RPC_PROTOCOL=http
+      - RPC_USER=${RPC_USER}
+      - RPC_PASSWORD=${RPC_PASSWORD}
+      - THREADS=${THREADS}
+    volumes:
+      - ./logs:/dist/packages/node/logs
+    depends_on:
+      - db
+      - node
+    networks:
+      - bitcoin
+      - bcn
+  

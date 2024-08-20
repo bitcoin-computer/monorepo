@@ -12,7 +12,7 @@ function StartChat({ computer }) {
       console.log('creating chat')
       let chat
       try {
-        if (await computer.getBalance() < 100) {
+        if ((await computer.getBalance()).balance < 100) {
           await computer.faucet(1e7)
         }
         chat = await computer.new(ChatSc, [publicKey])
