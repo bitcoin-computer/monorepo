@@ -2,9 +2,8 @@
 import { NFT } from '@bitcoin-computer/TBC721'
 import { Buffer } from 'buffer'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
+import { Transaction } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
-
-const { Contract, Transaction } = await import('@bitcoin-computer/lib')
 
 export class Sale extends Contract {
   static exec(n: NFT, p: Payment) {

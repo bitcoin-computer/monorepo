@@ -2,7 +2,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import dotenv from 'dotenv'
 import { Payment, PaymentHelper } from '../src'
 
@@ -10,7 +9,7 @@ dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 
-describe.only('Payment', () => {
+describe('Payment', () => {
   const alice = new Computer({ url })
 
   before('Before', async () => {

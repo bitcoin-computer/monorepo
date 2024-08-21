@@ -1,4 +1,3 @@
-const { Contract } = await import('@bitcoin-computer/lib');
 export class Swap extends Contract {
     constructor(a, b) {
         super();

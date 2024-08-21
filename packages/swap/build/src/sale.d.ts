@@ -3,7 +3,6 @@ import { NFT } from '@bitcoin-computer/TBC721';
 import { Buffer } from 'buffer';
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
 import { Payment, PaymentMock } from './payment.js';
-declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Sale extends Contract {
     static exec(n: NFT, p: Payment): (Payment | NFT)[];
 }
@@ -16,4 +15,3 @@ export declare class SaleHelper {
     checkSaleTx(tx: TransactionType): Promise<number>;
     static finalizeSaleTx(tx: TransactionType, payment: Payment, scriptPubKey: Buffer): TransactionType;
 }
-export {};

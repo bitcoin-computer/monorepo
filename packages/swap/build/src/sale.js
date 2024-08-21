@@ -1,5 +1,5 @@
+import { Transaction } from '@bitcoin-computer/lib';
 import { PaymentMock } from './payment.js';
-const { Contract, Transaction } = await import('@bitcoin-computer/lib');
 export class Sale extends Contract {
     static exec(n, p) {
         const [ownerN] = n._owners;

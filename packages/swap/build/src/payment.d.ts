@@ -1,4 +1,3 @@
-declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Payment extends Contract {
     _id: string;
     _rev: string;
@@ -27,4 +26,3 @@ export declare class PaymentHelper {
     createPaymentTx(amount: number): Promise<any>;
     getPayment(paymentTxId: string): Promise<Payment>;
 }
-export {};
