@@ -1,12 +1,12 @@
 {
   "name": "@bitcoin-computer/nft",
-  "version": "0.20.2-beta.0",
+  "version": "0.21.0-beta.0",
   "private": true,
   "dependencies": {
-    "@bitcoin-computer/TBC721": "^0.20.2-beta.0",
-    "@bitcoin-computer/components": "^0.20.2-beta.0",
-    "@bitcoin-computer/lib": "^0.20.2-beta.0",
-    "@bitcoin-computer/swap": "^0.20.2-beta.0",
+    "@bitcoin-computer/TBC721": "^0.21.0-beta.0",
+    "@bitcoin-computer/components": "^0.21.0-beta.0",
+    "@bitcoin-computer/lib": "^0.21.0-beta.0",
+    "@bitcoin-computer/swap": "^0.21.0-beta.0",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",
     "@testing-library/user-event": "^14.5.2",
