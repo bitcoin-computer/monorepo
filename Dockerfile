@@ -2,7 +2,7 @@
 FROM node:20-alpine
 
 # install dependencies to run cmake
-RUN apk add --no-cache cmake make gcc g++ python3 libstdc++ libgcc curl
+RUN apk add --no-cache python3 cmake make g++ curl
 
 # Set the working directory inside the container
 WORKDIR /dist
@@ -13,14 +13,11 @@ COPY . /dist
 # Remove the existing node_modules directory
 RUN rm -rf node_modules
 
-# Install dependencies for the monorepo, including zeromq with --build-from-source
-RUN npm install --build-from-source
+# Install dependencies for the monorepo
+RUN npm install
 
 # Set the working directory to "monorepo/packages/node"
 WORKDIR /dist/packages/node
-
-# Print package.json version
-RUN echo "Version: $(head ../lib/package.json)"
 
 EXPOSE 1031
 # Define the command to run when the container starts
