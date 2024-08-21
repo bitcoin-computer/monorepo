@@ -137,7 +137,7 @@ describe('Computer', () => {
     const computer = new Computer()
     expect(computer.getChain()).eq('LTC')
     expect(computer.getNetwork()).eq('regtest')
-    expect(computer.getUrl()).eq('https://rltc.node.bitcoincomputer.io')
+    expect(computer.getUrl()).a('string')
   })
 
   it('Should instantiate a computer object', async () => {

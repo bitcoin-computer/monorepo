@@ -1,7 +1,7 @@
 {
   "name": "@bitcoin-computer/website",
   "homepage": "https://wwww.bitcoincomputer.io",
-  "version": "0.20.1-beta.0",
+  "version": "0.20.2-beta.0",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.4",
