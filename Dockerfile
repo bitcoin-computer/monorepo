@@ -2,7 +2,6 @@
 FROM node:20-alpine
 
 # install dependencies to run cmake
-# RUN apk add --no-cache cmake make gcc g++ python3 libstdc++ libgcc curl
 RUN apk add --no-cache python3 cmake make g++ curl
 
 # Set the working directory inside the container
