@@ -62,9 +62,9 @@ export default function Mint() {
   const computer = useContext(ComputerContext)
   const [successRev, setSuccessRev] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
-  const [amount, setAmount] = useState("")
-  const [name, setName] = useState("")
-  const [symbol, setSymbol] = useState("")
+  const [amount, setAmount] = useState("100")
+  const [name, setName] = useState("a")
+  const [symbol, setSymbol] = useState("AAA")
   const { showLoader } = UtilsContext.useUtilsComponents()
 
 
