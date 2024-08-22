@@ -2,7 +2,7 @@ import { config } from "dotenv"
 import * as readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { TBC20 } from "@bitcoin-computer/TBC20"
-import { OfferHelper, PaymentHelper, SaleHelper } from "@bitcoin-computer/swap"
+import { OfferHelper, PaymentHelper, SaleHelper, SwapHelper, BuyHelper } from "@bitcoin-computer/swap"
 
 const { Computer } = await import("@bitcoin-computer/lib")
 
@@ -36,9 +36,17 @@ if (answer === 'n') {
   const offerHelper = new OfferHelper(computer)
   const offerModSpec = await offerHelper.deploy()
 
+  console.log(" * Deploying Buy contract...")
+  const buyHelper = new BuyHelper(computer)
+  const buyModSpec = await buyHelper.deploy()
+
   console.log(" * Deploying Sale contract...")
   const saleHelper = new SaleHelper(computer)
   const saleModSpec = await saleHelper.deploy()
+
+  console.log(" * Deploying Swap contract...")
+  const swapHelper = new SwapHelper(computer)
+  const swapModSpec = await swapHelper.deploy()
 
   console.log(" * Deploying Payment contract...")
   const paymentHelper = new PaymentHelper(computer)
@@ -55,7 +63,9 @@ Successfully deployed smart contracts.
 
 REACT_APP_TOKEN_MOD_SPEC\x1b[2m=${tokenModSpec}\x1b[0m
 REACT_APP_OFFER_MOD_SPEC\x1b[2m=${offerModSpec}\x1b[0m
+REACT_APP_BUY_MOD_SPEC\x1b[2m=${buyModSpec}\x1b[0m
 REACT_APP_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
+REACT_APP_SWAP_MOD_SPEC\x1b[2m=${swapModSpec}\x1b[0m
 REACT_APP_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m
 
 (2) Run 'npm start' to start the application.
