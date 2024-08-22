@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { Transaction } from '@bitcoin-computer/lib'
-import { SwapHelper } from './swap'
+import { StaticSwapHelper } from './static-swap.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 
@@ -16,13 +16,13 @@ export class Buy extends Contract {
 
 export class BuyHelper {
   computer: any
-  swapHelper: SwapHelper
+  swapHelper: StaticSwapHelper
   mod?: string
   buyOrder: Transaction
 
   constructor(computer: any, swapMod: string, buyMod?: string) {
     this.computer = computer
-    this.swapHelper = new SwapHelper(computer, swapMod)
+    this.swapHelper = new StaticSwapHelper(computer, swapMod)
     this.mod = buyMod
   }
 

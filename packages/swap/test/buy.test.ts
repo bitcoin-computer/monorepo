@@ -5,10 +5,11 @@ import dotenv from 'dotenv'
 import { Token } from '@bitcoin-computer/TBC20'
 import { Buy, BuyHelper } from '../src/buy'
 import { SwapHelper } from '../src/swap'
+import { StaticSwapHelper } from '../src'
 
 dotenv.config({ path: '../../.env' })
 
-describe.only('Sale', () => {
+describe('Sale', () => {
   const nftPrice = 1e8
   const fee = 100000
 
@@ -23,7 +24,7 @@ describe.only('Sale', () => {
       const token = await seller.new(Token, [seller.getPublicKey(), 100, 'a', 'AAA'])
 
       // Buyer creates an order
-      const swapHelperB = new SwapHelper(buyer)
+      const swapHelperB = new StaticSwapHelper(buyer)
       const swapMod = await swapHelperB.deploy()
       const buyHelperB = new BuyHelper(buyer, swapMod)
       await buyHelperB.deploy()
