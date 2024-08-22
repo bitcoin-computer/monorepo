@@ -28,7 +28,7 @@ export class SwapHelper {
     return this.mod
   }
 
-  async createSwapTx(a: NFT, b: NFT) {
+  async createSwapTx(a: any, b: any) {
     return this.computer.encode({
       exp: `new Swap(a, b)`,
       env: { a: a._rev, b: b._rev },

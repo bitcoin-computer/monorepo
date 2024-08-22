@@ -162,7 +162,7 @@ describe('Swap', () => {
     })
   })
 
-  describe('Should work with fungible tokens', async () => {      
+  describe('Should work with fungible tokens', async () => {
     it('Should work for tokens', async () => {
       // Alice and Bob create one NFT each
       const tokenA = await alice.new(Token, [alice.getPublicKey(), 10, 'A'])
@@ -179,7 +179,9 @@ describe('Swap', () => {
       const txId = await bob.broadcast(tx)
       expect(txId).a.string
 
-      const { env: { tA, tB } } = await alice.sync(txId) as { env: { tA: Token, tB: Token }}
+      const {
+        env: { tA, tB }
+      } = (await alice.sync(txId)) as { env: { tA: Token; tB: Token } }
       // const { tA, tB } = env
       expect(tA._owners).deep.eq([bob.getPublicKey()])
       expect(tB._owners).deep.eq([alice.getPublicKey()])
