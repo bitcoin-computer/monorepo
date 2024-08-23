@@ -145,9 +145,15 @@ export function SellOrderForm({ computer }: { computer: Computer }) {
       </label>
       <input value={rev} onChange={(e) => { setRev(e.target.value) }} type="string" id="revision" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
     </div>
+    <div className="mb-5"> 
+      <label htmlFor="amount" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+        Amount
+      </label>
+      <input  value={100} type="text" id="disabled-input" aria-label="disabled input" className="mb-5 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 cursor-not-allowed dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-gray-400 dark:focus:ring-blue-500 dark:focus:border-blue-500" disabled />
+    </div>
     <div className="mb-5">
       <label htmlFor="amount" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        Price
+        Price 
       </label>
       <input value={amount} onChange={(e) => { setAmount(e.target.value) }} type="number" id="amount" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
     </div>
