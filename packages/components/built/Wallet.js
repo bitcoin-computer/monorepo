@@ -86,7 +86,7 @@ var Balance = function (_a) {
                     return [4 /*yield*/, computer.getBalance()];
                 case 5:
                     availableWalletBalance = _b.sent();
-                    setBalance(availableWalletBalance + amountsInPaymentToken);
+                    setBalance(availableWalletBalance.balance + amountsInPaymentToken);
                     setChain(computer.getChain());
                     _b.label = 6;
                 case 6:
@@ -111,7 +111,7 @@ var Balance = function (_a) {
                     _a = setBalance;
                     return [4 /*yield*/, computer.getBalance()];
                 case 2:
-                    _a.apply(void 0, [_b.sent()]);
+                    _a.apply(void 0, [(_b.sent()).balance]);
                     return [2 /*return*/];
             }
         });

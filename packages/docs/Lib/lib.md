@@ -57,7 +57,7 @@ The wallet functionality within a `Computer` instance can be accessed using the 
 | [send](./send.md)                   | Sends satoshis to an address                       |
 | [rpcCall](./rpcCall.md)             | Access Bitcoin's RPC interface                     |
 | [getAddress](./getAddress.md)       | Returns the Bitcoin address of the computer wallet |
-| [getBalance](./getBalance.md)       | Returns the balance in satoshi                     |
+| [getBalance](./getBalance.md)       | Confirmed, unconfirmed and total balance in sats   |
 | [getChain](./getChain.md)           | Returns the blockchain                             |
 | [getNetwork](./getNetwork.md)       | Returns the network                                |
 | [getMnemonic](./getMnemonic.md)     | Returns a BIP39 mnemonic sentence                  |

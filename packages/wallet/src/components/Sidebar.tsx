@@ -9,12 +9,12 @@ function Balance({ computer }: { computer: Computer }) {
   const [balance, setBalance] = useState(0)
 
   const updateBalance = useCallback(async () => {
-    if (Auth.isLoggedIn()) setBalance(await computer.getBalance())
+    if (Auth.isLoggedIn()) setBalance((await computer.getBalance()).balance)
   }, [computer])
 
   const fund = async () => {
     await computer.faucet(1e8)
-    setBalance(await computer.getBalance())
+    setBalance((await computer.getBalance()).balance)
   }
 
   useEffect(() => {

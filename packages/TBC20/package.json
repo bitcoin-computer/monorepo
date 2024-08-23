@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/TBC20",
-  "version": "0.20.1-beta.0",
+  "version": "0.21.0-beta.0",
   "description": "Standard for fungible tokens on Bitcoin",
   "private": true,
   "type": "module",
@@ -38,7 +38,7 @@
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.20.1-beta.0",
+    "@bitcoin-computer/lib": "^0.21.0-beta.0",
     "eslint-plugin-prettier": "^5.1.3",
     "ts-node": "^10.9.2",
     "tslib": "~2.6.2"

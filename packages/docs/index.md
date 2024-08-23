@@ -6,20 +6,21 @@ layout: page
 
 # Introduction
 
-The Bitcoin Computer (TBC) is a Turing-complete smart contract system for Bitcoin and Litecoin. You can build decentralized applications, such as tokens, exchanges, games, social networks, and more.
+The Bitcoin Computer (TBC) is a Turing-complete smart contract system for Bitcoin and Litecoin, designed for creating decentralized applications. With TBC, you can create tokens, exchanges, games, social networks, and more.
 
-**Free Computation.** The most important feature of TBC is that the execution cost is independent of the computational complexity of the smart contract. For most other smart contract systems, the execution cost increases with each computational step. Instead, the cost on TBC is fixed for an unlimited number of computational steps.
+**Free Computation.** A key feature of TBC is that execution costs do not depend on the computational complexity of the smart contract itself. Unlike other systems where costs escalate with computational intensity, TBC maintains a fixed cost for an unlimited number of computational steps.
 
-**JavaScript.** Smart contracts are JavaScript or TypeScript classes. This makes it seamless to integrate smart contracts into web applications and makes development easy due to the existing JavaScript ecosystem.
+**JavaScript and TypeScript Support.** Smart contracts on TBC are built using JavaScript or TypeScript classes, ensuring fluid integration with web applications. This compatibility leverages the robust JavaScript ecosystem, simplifying development and enhancing functionality.
 
-**How it works.** You can inscribe a JavaScript class to deploy a smart contract. Then, you can inscribe a constructor call to create a smart object and a function call to update a smart object.
+**How it works.** To deploy a smart contract on TBC, simply inscribe a JavaScript class. You can then instantiate your smart contract by inscribing a constructor call, creating a “smart object”. Updates to this object are managed through subsequent inscribed function calls, enabling dynamic interactions within your application.
 
-**Data Ownership.** Conceptually, a smart object is stored in a UTXO, and only the owner of the UTXO can update its state. This captures a natural notion of data ownership that is as secure as ownership of Bitcoin.
 
-**Historical States.** As every update is recorded in a separate transaction, every historical state of a smart object can be recovered, together with information about who updated it and when.
+**Data Ownership.** In TBC, each smart object resides within a UTXO (Unspent Transaction Output). The owner of the UTXO is the only entity authorized to modify the object’s state, reflecting a natural approach to data ownership that mirrors the security associated with Bitcoin transactions.
 
-**Encryption and Off Chain Storage.** By default, every user can read all states of all smart objects. However, TBC has support for end-to-end encryption and storing data off-chain built-in. These properties make it easy to build applications that comply with consumer protection laws such as CCPA and GDPR.
+**Historical States.** Every transaction on TBC records an update, allowing for the recovery of every historical state of a smart object. This history includes details on who made updates and when, providing a comprehensive audit trail for each object.
 
-**Pure Bitcoin.** Finally, TBC relies only on Bitcoin. It does not require a side-chain or an extra token. This makes it possible to build applications that are as stable as Bitcoin.
+**Encryption and Off Chain Storage.** By default, every user can read the states of smart objects on TBC. However, the platform includes built-in support for end-to-end encryption and off-chain data storage. These features facilitate the development of applications that adhere to consumer protection regulations such as the CCPA and GDPR, ensuring both security and compliance.
+
+**Pure Bitcoin.** Finally, TBC relies only on Bitcoin. It does not require a side-chain or an extra token. This makes it possible to build applications that are as trustless as Bitcoin.
 
 **Contact.** TBC is being developed by BCDB Inc. If you have any questions, please let us know in our [Telegram group](https://t.me/thebitcoincomputer), on [Twitter](https://twitter.com/TheBitcoinToken), or by email at clemens@bitcoincomputer.io.

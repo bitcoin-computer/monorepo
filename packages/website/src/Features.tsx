@@ -22,44 +22,43 @@ function Features() {
         <Grid item xs={4} className="feature featuresGridItem">
           <Feature
             heading="Easy to Use"
-            text="Smart contracts are written in Javascript. If you know Javascript you can write smart contracts."
+            text="Smart contracts on the Bitcoin Computer are written in JavaScript. If you are familiar with JavaScript, you can easily develop your own smart contracts using our platform."
           />
         </Grid>
         <Grid item xs={4} className="feature featuresGridItem">
           <Feature
             heading="Free computation"
-            text="On other blockchains almost all algorithms are prohibitively expensive. On Bitcoin all algorithms have the same cost: the cost of a payment.
-          This makes it possible, for the first time, to run compute intense algorithms as smart contracts."
+            text="Unlike other platforms where computation is prohibitively expensive, Bitcoin Computer standardizes costs: every algorithm incurs only the cost of a payment. This unique cost structure opens up new possibilities for deploying compute-intensive algorithms within smart contracts."
           />
         </Grid>
         <Grid item xs={4} className="feature featuresGridItem">
           <Feature
             heading="Pure Bitcoin"
-            text="Smart contracts on Bitcoin are as decentralized as Bitcoin itself. The Bitcoin Computer does not depend on a side-chain, this means that smart contracts will continue to work as long as Bitcoin is available."
+            text="Smart contracts on Bitcoin boast the same level of decentralization as Bitcoin itself. The Bitcoin Computer operates without relying on a side-chain, ensuring that smart contracts remain functional as long as Bitcoin exists."
           />
         </Grid>
         <Grid item xs={4} className="feature featuresGridItem">
           <Feature
             heading="Off-Chain storage"
-            text="Which data needs to be stored on-chain vs securely hashed and off-chain is application dependent. We make it easy for the programmer to store data off-chain."
+            text="The choice between storing data on-chain or securely hashing it off-chain depends on the application. Our platform simplifies the process for programmers to store data off-chain efficiently, allowing for tailored data management strategies."
           />
         </Grid>
         <Grid item xs={4} className="feature featuresGridItem">
           <Feature
             heading="Encryption"
-            text="Built to balance privacy with compliance: all smart contract data can be encrypted but flows of money are un-encrypted to enable anti-money laundering efforts."
+            text="Designed to balance privacy with compliance, our platform ensures that while all smart contract data can be encrypted for privacy, monetary transactions remain transparent to support anti-money laundering initiatives."
           />
         </Grid>
         <Grid item xs={4} className="feature featuresGridItem">
           <Feature
             heading="Cross-Chain"
-            text="We want the Bitcoin Computer to work on all Bitcoin-like currencies. We are launching on Litecoin and will add support for other currencies over time."
+            text="Our goal is for the Bitcoin Computer to be compatible with all Bitcoin-like currencies. Initially launching with support for Litecoin, we plan to progressively include additional currencies to enhance accessibility and versatility."
           />
         </Grid>
         <Grid item xs={4} className="feature featuresGridItem">
           <Feature
             heading="Trustless"
-            text="You can run your own Bitcoin Computer Node to gain trustless access to the blockchain. You can deploy a node locally with one line of code."
+            text="Operate your own Bitcoin Computer Node for trustless blockchain access. Deploy a node locally with just a single line of code, ensuring full control and direct interaction with the blockchain."
           />
         </Grid>
       </Grid>

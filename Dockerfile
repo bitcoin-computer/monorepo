@@ -1,7 +1,7 @@
 # We are using the alpine distribution with Node.js 20 (LTS).
 FROM node:20-alpine
 
-# Install dependencies to run cmake and build native modules
+# install dependencies to run cmake
 RUN apk add --no-cache python3 cmake make g++ curl
 
 # Install node-gyp and node-gyp-build globally to avoid issues during build

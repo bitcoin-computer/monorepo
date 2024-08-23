@@ -30,7 +30,7 @@ Network \x1b[2m${network}\x1b[0m
 Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
-Balance \x1b[2m${balance / 1e8}\x1b[0m
+Balance \x1b[2m${balance.balance / 1e8}\x1b[0m
 `)
 
 const q = `
