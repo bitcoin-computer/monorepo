@@ -1,4 +1,3 @@
-const { Contract } = await import('@bitcoin-computer/lib');
 export class NFT extends Contract {
     constructor(name = '', artist = '', url = '') {
         super({ name, artist, url });
