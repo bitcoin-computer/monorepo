@@ -2,6 +2,7 @@ import { Computer, Transaction } from "@bitcoin-computer/lib"
 import { Buy, BuyHelper, Offer, OfferHelper } from "@bitcoin-computer/swap"
 import { Token } from "@bitcoin-computer/TBC20"
 import { useEffect, useState } from "react"
+import { HiRefresh } from "react-icons/hi"
 import { REACT_APP_BUY_MOD_SPEC, REACT_APP_OFFER_MOD_SPEC, REACT_APP_SWAP_MOD_SPEC, REACT_APP_TOKEN_MOD_SPEC } from "../constants/modSpecs"
 
 function ActionButton({ computer, rev, buy }: { computer: Computer, rev: string, buy: any }) {
@@ -51,10 +52,11 @@ function BuyOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
     tokenRoot: ''
   } as any)
 
+  const fetch = async () => {
+    setBuy(await computer.sync(rev))
+  }
+
   useEffect(() => {
-    const fetch = async () => {
-      setBuy(await computer.sync(rev))
-    }
     fetch()
   }, [computer])
 
@@ -71,16 +73,23 @@ function BuyOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
     <td className="px-6 py-4">
     <ActionButton computer={computer} rev={rev} buy={buy} />
     </td>
+    <td className="px-6 py-4">
+      <HiRefresh
+          onClick={fetch}
+          className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+        />
+      </td>
   </tr>)
 }
 
 export function BuyOrders({ computer }: { computer: Computer }) {
   const [revs, setRevs] = useState([] as string[])
 
+  const fetch = async () => {
+    setRevs(await computer.query({ mod: REACT_APP_BUY_MOD_SPEC }))
+  }
+
   useEffect(() => {
-    const fetch = async () => {
-      setRevs(await computer.query({ mod: REACT_APP_BUY_MOD_SPEC }))
-    }
     fetch()
   }, [computer])
 
@@ -92,6 +101,12 @@ export function BuyOrders({ computer }: { computer: Computer }) {
             <th scope="col" className="px-6 py-3">Amount</th>
             <th scope="col" className="px-6 py-3">TokenRoot</th>
             <th scope="col" className="px-6 py-3">Sell</th>
+            <th scope="col" className="px-6 py-3">
+              <HiRefresh
+                onClick={fetch}
+                className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+              />
+            </th>
           </tr>
         </thead>
         <tbody>

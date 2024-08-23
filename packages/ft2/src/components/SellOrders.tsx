@@ -1,6 +1,7 @@
 import { Computer, Transaction } from "@bitcoin-computer/lib"
 import { OfferHelper, PaymentMock, SaleHelper, Payment } from "@bitcoin-computer/swap"
 import { useEffect, useState } from "react"
+import { HiRefresh } from "react-icons/hi"
 import { REACT_APP_OFFER_MOD_SPEC, REACT_APP_SALE_MOD_SPEC } from "../constants/modSpecs"
 
 function BuyButton({ computer, deserialized, price }: { computer: Computer, deserialized: any, price: number }) {
@@ -26,18 +27,19 @@ function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
   const [symbol, setSymbol] = useState(0)
   const [deserialized, setDeserialized] = useState(new Transaction()) 
 
+  const fetch = async () => {
+    const { txHex } = await computer.sync(rev) as { txHex: any }
+    const d = Transaction.deserialize(txHex)
+    setDeserialized(d)
+    setPrice(await saleHelper.checkSaleTx(d))
+    const { env } = await computer.decode(d)
+    const object = await computer.sync(env.o) as any
+    setName(object.name)
+    setSymbol(object.symbol)
+    setAvailable(object.tokens)
+  }
+
   useEffect(() => {
-    const fetch = async () => {
-      const { txHex } = await computer.sync(rev) as { txHex: any }
-      const d = Transaction.deserialize(txHex)
-      setDeserialized(d)
-      setPrice(await saleHelper.checkSaleTx(d))
-      const { env } = await computer.decode(d)
-      const object = await computer.sync(env.o) as any
-      setName(object.name)
-      setSymbol(object.symbol)
-      setAvailable(object.tokens)
-    }
     fetch()
   }, [computer])
 
@@ -57,6 +59,12 @@ function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
     <td className="px-6 py-4">
     <BuyButton computer={computer} deserialized={deserialized} price={price} />
     </td>
+    <td className="px-6 py-4">
+      <HiRefresh
+        onClick={fetch}
+        className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+        />
+    </td>
   </tr>)
 }
 
@@ -64,22 +72,23 @@ function SellOrderTable({ computer }: { computer: Computer }) {
   const [revs, setRevs] = useState([] as string[])
   const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
 
+  const fetch = async () => {
+    const r = await computer.query({ mod: REACT_APP_OFFER_MOD_SPEC })
+    const results = await Promise.all(r.map(async (rev) => {
+      const { txHex } = await computer.sync(rev) as { txHex: any }
+      const d = Transaction.deserialize(txHex)
+      try {
+        return await saleHelper.checkSaleTx(d)
+      } catch(err) {
+        if (err instanceof Error && err.message === 'Unexpected expression')
+          return false
+        throw err
+      }
+    }))
+    setRevs(r.filter((_, i) => results[i]))
+  }
+
   useEffect(() => {
-    const fetch = async () => {
-      const r = await computer.query({ mod: REACT_APP_OFFER_MOD_SPEC })
-      const results = await Promise.all(r.map(async (rev) => {
-        const { txHex } = await computer.sync(rev) as { txHex: any }
-        const d = Transaction.deserialize(txHex)
-        try {
-          return await saleHelper.checkSaleTx(d)
-        } catch(err) {
-          if (err instanceof Error && err.message === 'Unexpected expression')
-            return false
-          throw err
-        }
-      }))
-      setRevs(r.filter((_, i) => results[i]))
-    }
     fetch()
   }, [computer])
 
@@ -91,6 +100,12 @@ function SellOrderTable({ computer }: { computer: Computer }) {
         <th scope="col" className="px-6 py-3">Price</th>
         <th scope="col" className="px-6 py-3">Available</th>
         <th scope="col" className="px-6 py-3">Buy</th>
+        <th scope="col" className="px-6 py-3">
+          <HiRefresh
+            onClick={fetch}
+            className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+          />
+        </th>
       </tr>
     </thead>
     <tbody>
@@ -132,7 +147,7 @@ export function SellOrderForm({ computer }: { computer: Computer }) {
     </div>
     <div className="mb-5">
       <label htmlFor="amount" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-        Amount
+        Price
       </label>
       <input value={amount} onChange={(e) => { setAmount(e.target.value) }} type="number" id="amount" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" />
     </div>
