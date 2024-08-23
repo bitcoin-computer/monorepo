@@ -23,27 +23,28 @@ export type UserQuery<T extends Class> = Partial<{
 function NFTCard({ nft }: { nft: NFT }) {
   return (
     <div className="w-full max-w-80 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4">
-      <a href="#">
+      <Link
+        to={`/objects/${nft._id}`}
+        className="block font-medium text-blue-600 dark:text-blue-500 w-full"
+      >
         <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
           <img className="max-h-full max-w-full object-contain" src={nft.url} alt="" />
         </div>
-      </a>
-      <div className="p-5">
-        <a href="#">
+        <div className="p-5">
           <h5
             className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white truncate"
             title={nft.name}
           >
             {nft.name}
           </h5>
-        </a>
-        <p
-          className="mb-3 font-normal text-gray-700 dark:text-gray-400 truncate"
-          title={nft.artist}
-        >
-          {nft.artist}
-        </p>
-      </div>
+          <p
+            className="mb-3 font-normal text-gray-700 dark:text-gray-400 truncate"
+            title={nft.artist}
+          >
+            {nft.artist}
+          </p>
+        </div>
+      </Link>
     </div>
   )
 }
@@ -115,12 +116,7 @@ function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
     <div className="flex flex-wrap gap-4 mb-4 mt-4">
       {revs.map((rev) => (
         <div key={rev}>
-          <Link
-            to={`/objects/${rev}`}
-            className="block font-medium text-blue-600 dark:text-blue-500 w-full"
-          >
-            <ValueComponent rev={rev} computer={computer} />
-          </Link>
+          <ValueComponent rev={rev} computer={computer} />
         </div>
       ))}
     </div>
@@ -206,7 +202,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       const query = { ...q, ...params }
       query.offset = contractsPerPage * pageNum
       query.limit = contractsPerPage + 1
-      query.order = 'DESC'
+      query.order = "DESC"
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
       setRevs(result.slice(0, contractsPerPage))

@@ -10,7 +10,11 @@ import {
 import { Computer } from "@bitcoin-computer/lib"
 import { OfferHelper, PaymentHelper, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
 import { NFT } from "@bitcoin-computer/TBC721"
-import { REACT_APP_OFFER_MOD_SPEC, REACT_APP_PAYMENT_MOD_SPEC, REACT_APP_SALE_MOD_SPEC } from "../constants/modSpecs"
+import {
+  REACT_APP_OFFER_MOD_SPEC,
+  REACT_APP_PAYMENT_MOD_SPEC,
+  REACT_APP_SALE_MOD_SPEC
+} from "../constants/modSpecs"
 
 const modalId = "smart-object-bought-modal"
 
@@ -43,8 +47,8 @@ const BuyNFT = async ({
   await computer.broadcast(finalTx)
   // const test = await computer.sync(txId)
   // need to have a sleep on this to get latest reve
-  const [updatedRev] = await computer.query({ ids: [nft._id] })
-  setFunctionResult(updatedRev)
+  // const [updatedRev] = await computer.query({ ids: [nft._id] })
+  setFunctionResult(nft._id)
   Modal.showModal(modalId)
   return nftAmount
 }
@@ -285,14 +289,14 @@ function showBuyOffer(computer: Computer, smartObject: NFT) {
   return smartObject && smartObject._owners[0] !== computer.getPublicKey() && smartObject.offerTxRev
 }
 
-function SuccessContent(rev: string) {
+function SuccessContent(id: string) {
   return (
     <>
       <div className="p-4 md:p-5">
         <div>
           You bought this NFT{" "}
           <Link
-            to={`/objects/${rev}`}
+            to={`/objects/${id}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             onClick={() => {
               Modal.hideModal(modalId)
@@ -319,7 +323,7 @@ function NftView() {
   const location = useLocation()
   const params = useParams()
   const navigate = useNavigate()
-  const [rev] = useState(params.rev || "")
+  const [id] = useState(params.id || "")
   const computer = useContext(ComputerContext)
   const [smartObject, setSmartObject] = useState<any | null>(null)
   const [functionResult, setFunctionResult] = useState<any>({})
@@ -328,7 +332,8 @@ function NftView() {
     const fetch = async () => {
       try {
         showLoader(true)
-        const synced = await computer.sync(rev)
+        const latesRev = await computer.getLatestRev(id)
+        const synced = (await computer.sync(latesRev)) as any
         setSmartObject(synced)
         showLoader(false)
       } catch (error) {
@@ -337,7 +342,7 @@ function NftView() {
       }
     }
     fetch()
-  }, [computer, rev, location, navigate])
+  }, [computer, id, location, navigate])
 
   return (
     <>
