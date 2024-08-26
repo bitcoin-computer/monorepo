@@ -82,9 +82,7 @@ describe('Sale', () => {
       } = (await seller.sync(txId)) as { env: { a: Token; b: Buy } }
       expect(tokenAfter._owners).deep.eq([buyer.getPublicKey()])
       expect(buyAfter._owners).deep.eq([seller.getPublicKey()])
-      expect(tokenAfter.tokens).eq(100)
-      // @ts-ignore
-      expect(typeof buyAfter.tokens).eq('undefined')
+      expect(tokenAfter.amount).eq(100)
     })
   })
 })

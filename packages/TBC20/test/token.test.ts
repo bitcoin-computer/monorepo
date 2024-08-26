@@ -31,7 +31,7 @@ describe('Token', () => {
       })
 
       it('The meta data should be set', async () => {
-        expect(token.tokens).to.eq(3)
+        expect(token.amount).to.eq(3)
         expect(token._owners).deep.equal([sender.getPublicKey()])
         expect(token.name).to.eq('test')
         expect(token.symbol).to.eq('')
@@ -49,7 +49,7 @@ describe('Token', () => {
       })
 
       it('The meta data of token should be set correctly', () => {
-        expect(token.tokens).to.eq(2)
+        expect(token.amount).to.eq(2)
         expect(token._owners).deep.equal([sender.getPublicKey()])
         expect(token.name).to.eq('test')
         expect(token.symbol).to.eq('')
@@ -59,7 +59,7 @@ describe('Token', () => {
       })
 
       it('The meta data of newToken should be set correctly', () => {
-        expect(newToken.tokens).to.eq(1)
+        expect(newToken.amount).to.eq(1)
         expect(newToken._owners).deep.equal([receiver.getPublicKey()])
         expect(newToken.name).to.eq('test')
         expect(newToken.symbol).to.eq('')
@@ -88,7 +88,7 @@ describe('Token', () => {
         expect(rootToken._id).to.eq(root)
         expect(rootToken._rev).to.eq(root)
         expect(rootToken._root).to.eq(root)
-        expect(rootToken.tokens).to.eq(200)
+        expect(rootToken.amount).to.eq(200)
         expect(rootToken.name).to.eq('test')
         expect(rootToken.symbol).to.eq('TST')
       })

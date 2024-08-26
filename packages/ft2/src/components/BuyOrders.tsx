@@ -15,7 +15,7 @@ function ActionButton({ computer, rev, buy }: { computer: Computer, rev: string,
       const buyOrder = await computer.sync(rev) as Buy
       const revs = await computer.query({ mod: REACT_APP_TOKEN_MOD_SPEC, publicKey: computer.getPublicKey() })
       const tokens = await Promise.all(revs.map((r) => computer.sync(r))) as Token[]
-      const matches = tokens.filter((token: Token) => token.tokens === buy.amount)
+      const matches = tokens.filter((token: Token) => token.amount === buy.amount)
       if (matches.length === 0) console.log('No matches found')
       const { tx: swapTx } = await buyHelper.acceptBuyOrder(matches[0], buyOrder)
       const { tx: offerTx } = await offerHelper.createOfferTx(buy._owners[0], computer.getUrl(), swapTx)

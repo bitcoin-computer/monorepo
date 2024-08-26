@@ -186,8 +186,8 @@ describe('Swap', () => {
       expect(tA._owners).deep.eq([bob.getPublicKey()])
       expect(tB._owners).deep.eq([alice.getPublicKey()])
 
-      expect(tA.tokens).eq(10)
-      expect(tB.tokens).eq(100)
+      expect(tA.amount).eq(10)
+      expect(tB.amount).eq(100)
     })
   })
 })

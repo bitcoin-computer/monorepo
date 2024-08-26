@@ -2,13 +2,13 @@
 const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Token extends Contract {
-  tokens: number
+  amount: number
   name: string
   symbol: string
   _owners: string[]
 
-  constructor(to: string, tokens: number, name: string, symbol = '') {
-    super({ _owners: [to], tokens, name, symbol })
+  constructor(to: string, amount: number, name: string, symbol = '') {
+    super({ _owners: [to], amount, name, symbol })
   }
 
   transfer(to: string, amount?: number): Token | null {
@@ -18,8 +18,8 @@ export class Token extends Contract {
       return null
     }
     // Send partial amount in a new object
-    if (this.tokens >= amount) {
-      this.tokens -= amount
+    if (this.amount >= amount) {
+      this.amount -= amount
       return new Token(to, amount, this.name, this.symbol)
     }
 
@@ -64,7 +64,7 @@ export class TBC20 implements ITBC20 {
 
   async totalSupply(root: string): Promise<number> {
     const rootBag = await this.computer.sync(root)
-    return rootBag.tokens
+    return rootBag.amount
   }
 
   private async getBags(publicKey: string, root: string): Promise<Token[]> {
@@ -76,7 +76,7 @@ export class TBC20 implements ITBC20 {
   async balanceOf(publicKey: string, root: string): Promise<number> {
     if (typeof root === 'undefined') throw new Error('Please pass a root into balanceOf.')
     const bags = await this.getBags(publicKey, root)
-    return bags.reduce((prev, curr) => prev + curr.tokens, 0)
+    return bags.reduce((prev, curr) => prev + curr.amount, 0)
   }
 
   async transfer(to: string, amount: number, root: string): Promise<void> {
@@ -86,7 +86,7 @@ export class TBC20 implements ITBC20 {
     const results = []
     while (_amount > 0 && bags.length > 0) {
       const [bag] = bags.splice(0, 1)
-      const available = Math.min(_amount, bag.tokens)
+      const available = Math.min(_amount, bag.amount)
       // eslint-disable-next-line no-await-in-loop
       results.push(await bag.transfer(to, available))
       _amount -= available

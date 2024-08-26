@@ -36,7 +36,7 @@ function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
     const object = await computer.sync(env.o) as any
     setName(object.name)
     setSymbol(object.symbol)
-    setAvailable(object.tokens)
+    setAvailable(object.amount)
   }
 
   useEffect(() => {
