@@ -131,7 +131,7 @@ describe('Sale', () => {
       })
 
       expect(await alice.broadcast(alicePaymentTx)).a('string')
-      expect(await alice.getBalance()).gte(1e8)
+      expect((await alice.getBalance()).balance).gte(1e8)
     })
   })
 
