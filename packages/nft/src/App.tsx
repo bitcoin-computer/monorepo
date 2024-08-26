@@ -8,8 +8,7 @@ import {
   UtilsContext,
   Wallet,
   Transaction,
-  ComputerContext,
-  BalanceContext
+  ComputerContext
 } from "@bitcoin-computer/components"
 import { Navbar } from "./components/Navbar"
 import Mint from "./components/Mint"
@@ -29,22 +28,20 @@ export default function App() {
       <span className="bg-gray-900/50 dark:bg-gray-900/80 z-30 inset-0 sr-only"></span>
       <UtilsContext.UtilsProvider>
         <ComputerContext.Provider value={computer}>
-          <BalanceContext.BalanceProvider>
-            <Auth.LoginModal />
-            <Wallet paymentModSpec={REACT_APP_PAYMENT_MOD_SPEC} />
-            <Navbar />
-            <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-              <Routes>
-                <Route path="/" element={<AllAssets />} />
-                <Route path="/mine" element={<MyAssets />} />
-                <Route path="/mint" element={<Mint />} />
-                <Route path="/objects/:rev" element={<NftView />} />
-                <Route path="/transactions/:txn" element={<Transaction.Component />} />
-                <Route path="*" element={<Navigate to="/" replace={true} />} />
-                <Route path="*" element={<Error404 />} />
-              </Routes>
-            </div>
-          </BalanceContext.BalanceProvider>
+          <Auth.LoginModal />
+          <Wallet paymentModSpec={REACT_APP_PAYMENT_MOD_SPEC} />
+          <Navbar />
+          <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+            <Routes>
+              <Route path="/" element={<AllAssets />} />
+              <Route path="/mine" element={<MyAssets />} />
+              <Route path="/mint" element={<Mint />} />
+              <Route path="/objects/:rev" element={<NftView />} />
+              <Route path="/transactions/:txn" element={<Transaction.Component />} />
+              <Route path="*" element={<Navigate to="/" replace={true} />} />
+              <Route path="*" element={<Error404 />} />
+            </Routes>
+          </div>
         </ComputerContext.Provider>
       </UtilsContext.UtilsProvider>
     </BrowserRouter>

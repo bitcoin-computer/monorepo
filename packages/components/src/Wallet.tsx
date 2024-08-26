@@ -5,7 +5,6 @@ import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
 import { UtilsContext } from "./UtilsContext"
 import { ComputerContext } from "./ComputerContext"
-import { BalanceContext } from "./BalanceContext"
 
 const Balance = ({
   computer,
@@ -14,7 +13,7 @@ const Balance = ({
   computer: Computer
   paymentModSpec: string | undefined
 }) => {
-  const { balance, setBalance } = BalanceContext.useBalance()
+  const [balance, setBalance] = useState<number>(0)
   const [, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 

@@ -52,10 +52,9 @@ import { Auth } from "./Auth";
 import { Drawer } from "./Drawer";
 import { UtilsContext } from "./UtilsContext";
 import { ComputerContext } from "./ComputerContext";
-import { BalanceContext } from "./BalanceContext";
 var Balance = function (_a) {
     var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
-    var _b = BalanceContext.useBalance(), balance = _b.balance, setBalance = _b.setBalance;
+    var _b = useState(0), balance = _b[0], setBalance = _b[1];
     var _c = useState(localStorage.getItem("CHAIN") || "LTC"), setChain = _c[1];
     var _d = UtilsContext.useUtilsComponents(), showSnackBar = _d.showSnackBar, showLoader = _d.showLoader;
     var refreshBalance = useCallback(function () { return __awaiter(void 0, void 0, void 0, function () {

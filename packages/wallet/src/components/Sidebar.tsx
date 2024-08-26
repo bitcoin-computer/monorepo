@@ -3,7 +3,8 @@ import { Computer } from "@bitcoin-computer/lib"
 import { HiRefresh } from "react-icons/hi"
 import { initFlowbite } from "flowbite"
 import { useCallback, useContext, useEffect } from "react"
-import { Auth, BalanceContext, ComputerContext } from "@bitcoin-computer/components"
+import { Auth, ComputerContext } from "@bitcoin-computer/components"
+import { BalanceContext } from "./Utils/BalanceContext"
 
 function Balance({ computer }: { computer: Computer }) {
   const { balance, setBalance } = BalanceContext.useBalance()

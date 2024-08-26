@@ -6,8 +6,7 @@ import {
   Transaction,
   Error404,
   UtilsContext,
-  ComputerContext,
-  BalanceContext
+  ComputerContext
 } from "@bitcoin-computer/components"
 import { useState } from "react"
 import { Send } from "./components/Send"
@@ -15,6 +14,7 @@ import { Details } from "./components/Details"
 import Transactions from "./components/Transactions"
 import { Assets } from "./components/Assets"
 import { SideBar } from "./components/Sidebar"
+import { BalanceContext } from "./components/Utils/BalanceContext"
 
 export default function App() {
   try {
