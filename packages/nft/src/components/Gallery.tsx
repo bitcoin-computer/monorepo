@@ -23,9 +23,9 @@ export type UserQuery<T extends Class> = Partial<{
 function NFTCard({ nft }: { nft: NFT }) {
   return (
     <>
-      <div className="border">
-        <img className="h-auto max-w-full" src={nft.url} alt="" />
-        <div className="p-5">
+      <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4">
+        <img className="h-auto rounded-lg max-w-full" src={nft.url} alt="" />
+        <div className="p-4 border-t">
           <h5
             className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white break-words"
             title={nft.name}
