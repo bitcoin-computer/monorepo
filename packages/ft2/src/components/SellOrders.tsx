@@ -22,10 +22,10 @@ function BuyButton({ computer, deserialized, price }: { computer: Computer, dese
 function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
   const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
   const [price, setPrice] = useState(0)
-  const [available, setAvailable] = useState(0)
-  const [name, setName] = useState(0)
-  const [symbol, setSymbol] = useState(0)
-  const [deserialized, setDeserialized] = useState(new Transaction()) 
+  const [amount, setAmount] = useState(0)
+  const [name, setName] = useState('')
+  const [symbol, setSymbol] = useState('')
+  const [deserialized, setDeserialized] = useState(new Transaction())
 
   const fetch = async () => {
     const { txHex } = await computer.sync(rev) as { txHex: any }
@@ -33,58 +33,55 @@ function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
     setDeserialized(d)
     setPrice(await saleHelper.checkSaleTx(d))
     const { env } = await computer.decode(d)
-    const object = await computer.sync(env.o) as any
-    setName(object.name)
-    setSymbol(object.symbol)
-    setAvailable(object.amount)
+    const token = (await computer.sync(env.o)) as any
+    setName(token.name)
+    setSymbol(token.symbol)
+    setAmount(token.amount)
   }
 
   useEffect(() => {
     fetch()
   }, [computer])
 
-  return (<tr key={rev} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-    <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+  return (
+    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
         {name}
-    </th>
-    <td className="px-6 py-4">
-        {symbol}
-    </td>
-    <td className="px-6 py-4">
-        {price/1e8}
-    </td>
-    <td className="px-6 py-4">
-        {available}
-    </td>
-    <td className="px-6 py-4">
-    <BuyButton computer={computer} deserialized={deserialized} price={price} />
-    </td>
-    <td className="px-6 py-4">
-      <HiRefresh
-        onClick={fetch}
-        className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+      </td>
+      <td className="px-6 py-4">{symbol}</td>
+      <td className="px-6 py-4">{price / 1e8}</td>
+      <td className="px-6 py-4">{amount}</td>
+      <td className="px-6 py-4">
+        <BuyButton computer={computer} deserialized={deserialized} price={price} />
+      </td>
+      <td className="px-6 py-4">
+        <HiRefresh
+          onClick={fetch}
+          className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
         />
-    </td>
-  </tr>)
+      </td>
+    </tr>
+  )
 }
 
-function SellOrderTable({ computer }: { computer: Computer }) {
+export function SellOrders({ computer }: { computer: Computer }) {
   const [revs, setRevs] = useState([] as string[])
   const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
 
   const fetch = async () => {
     const r = await computer.query({ mod: REACT_APP_OFFER_MOD_SPEC })
-    const results = await Promise.all(r.map(async (rev) => {
-      const { txHex } = await computer.sync(rev) as { txHex: any }
-      const d = Transaction.deserialize(txHex)
-      try {
-        return await saleHelper.checkSaleTx(d)
-      } catch(err) {
-        if (err instanceof Error && err.message === 'Unexpected expression')
-          return false
-        throw err
-      }
-    }))
+    const results = await Promise.all(
+      r.map(async (rev) => {
+        const { txHex } = (await computer.sync(rev)) as { txHex: any }
+        const d = Transaction.deserialize(txHex)
+        try {
+          return await saleHelper.checkSaleTx(d)
+        } catch (err) {
+          if (err instanceof Error && err.message === "Unexpected expression") return false
+          throw err
+        }
+      })
+    )
     setRevs(r.filter((_, i) => results[i]))
   }
 
@@ -92,32 +89,29 @@ function SellOrderTable({ computer }: { computer: Computer }) {
     fetch()
   }, [computer])
 
-  return (<table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-    <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-      <tr>
-        <th scope="col" className="px-6 py-3">Name</th>
-        <th scope="col" className="px-6 py-3">Symbol</th>
-        <th scope="col" className="px-6 py-3">Price</th>
-        <th scope="col" className="px-6 py-3">Available</th>
-        <th scope="col" className="px-6 py-3">Buy</th>
-        <th scope="col" className="px-6 py-3">
-          <HiRefresh
-            onClick={fetch}
-            className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
-          />
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      {revs.map((rev) => <SellOrderRow rev={rev} computer={computer} />)}
-    </tbody>
-  </table>
-  )
-}
-
-export function SellOrders({ computer }: { computer: Computer }) {
   return (<div className="mt-4 relative overflow-x-auto">
-    <SellOrderTable computer={computer}/> 
+    <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+      <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" className="px-6 py-3">Name</th>
+          <th scope="col" className="px-6 py-3">Symbol</th>
+          <th scope="col" className="px-6 py-3">Price</th>
+          <th scope="col" className="px-6 py-3">Amount</th>
+          <th scope="col" className="px-6 py-3">Buy</th>
+          <th scope="col" className="px-6 py-3">
+            <HiRefresh
+              onClick={fetch}
+              className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+            />
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {revs.map((rev) => (
+          <SellOrderRow key={rev} rev={rev} computer={computer} />
+        ))}
+      </tbody>
+    </table>
   </div>)
 }
 
