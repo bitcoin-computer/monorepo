@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-expressions */
 import { expect } from 'chai'
-import { Computer, Transaction } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
+import { Computer } from '@bitcoin-computer/lib'
 import { Token } from '@bitcoin-computer/TBC20'
 import { Buy, BuyHelper } from '../src/buy'
 import { SwapHelper } from '../src/swap'
@@ -28,20 +28,20 @@ describe('Sale', () => {
       const swapMod = await swapHelperB.deploy()
       const buyHelperB = new BuyHelper(buyer, swapMod)
       await buyHelperB.deploy()
-      const buyOrder = await buyHelperB.broadcastBuyOrder(100000, 100, token._root)
+      const buy = await buyHelperB.broadcastBuyOrder(100000, 100, token._root)
 
       expect(token._owners).deep.eq([seller.getPublicKey()])
-      expect(buyOrder._owners).deep.eq([buyer.getPublicKey()])
+      expect(buy._owners).deep.eq([buyer.getPublicKey()])
 
       // Seller accepts the buy order
       const buyHelperS = new BuyHelper(seller, swapMod, buyHelperB.mod)
-      const { tx: swapTx } = (await buyHelperS.acceptBuyOrder(token, buyOrder)) as {
-        tx: Transaction
-      }
+      const { tx: swapTx } = await buyHelperS.acceptBuyOrder(token, buy)
+      expect(await buyHelperB.isOpen(buy)).eq(true)
 
       // Buyer closes the buy order
       const txId = await buyHelperB.settleBuyOrder(swapTx)
       expect(txId).a.string
+      expect(await buyHelperB.isOpen(buy)).eq(false)
 
       const {
         env: { a: tokenAfter, b: buyAfter }
