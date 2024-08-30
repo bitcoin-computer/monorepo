@@ -2,7 +2,7 @@
 FROM node:20-alpine
 
 # install dependencies to run cmake
-RUN apk add --no-cache python3 cmake make g++ curl
+RUN apk add --no-cache cmake make gcc g++ python3 libstdc++ libgcc curl bash zeromq zeromq-dev
 
 # Install node-gyp and node-gyp-build globally to avoid issues during build
 RUN npm install -g node-gyp node-gyp-build
@@ -17,7 +17,7 @@ COPY . /dist
 RUN rm -rf node_modules
 
 # Install dependencies
-RUN npm install
+RUN npm install --build-from-source
 
 # Ensure that the necessary binaries are in the PATH
 ENV PATH="/dist/node_modules/.bin:${PATH}"
