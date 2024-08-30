@@ -1,23 +1,25 @@
 import { Computer, Transaction } from "@bitcoin-computer/lib"
-import { Buy, BuyHelper, Offer, OfferHelper } from "@bitcoin-computer/swap"
+import { BuyHelper, Offer, OfferHelper } from "@bitcoin-computer/swap"
 import { Token } from "@bitcoin-computer/TBC20"
 import { useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { REACT_APP_BUY_MOD_SPEC, REACT_APP_OFFER_MOD_SPEC, REACT_APP_SWAP_MOD_SPEC, REACT_APP_TOKEN_MOD_SPEC } from "../constants/modSpecs"
 
-function ActionButton({ computer, rev, buy }: { computer: Computer, rev: string, buy: any }) {
+function ActionButton({ computer, buy }: { computer: Computer, buy: any }) {
   const [tx, setTx] = useState<Transaction>()
   
   async function onClick() {
     const buyHelper = new BuyHelper(computer, REACT_APP_SWAP_MOD_SPEC!, REACT_APP_BUY_MOD_SPEC)
     const offerHelper = new OfferHelper(computer, REACT_APP_OFFER_MOD_SPEC)
     if (tx === undefined) {
-      const buyOrder = await computer.sync(rev) as Buy
+      // Find my tokens that match the offer
       const revs = await computer.query({ mod: REACT_APP_TOKEN_MOD_SPEC, publicKey: computer.getPublicKey() })
-      const tokens = await Promise.all(revs.map((r) => computer.sync(r))) as Token[]
+      const tokens = await Promise.all(revs.map((rev) => computer.sync(rev))) as Token[]
       const matches = tokens.filter((token: Token) => token.amount === buy.amount)
+      
+      // If a match is found, make an offer
       if (matches.length === 0) console.log('No matches found')
-      const { tx: swapTx } = await buyHelper.acceptBuyOrder(matches[0], buyOrder)
+      const { tx: swapTx } = await buyHelper.acceptBuyOrder(matches[0], buy)
       const { tx: offerTx } = await offerHelper.createOfferTx(buy._owners[0], computer.getUrl(), swapTx)
       const txId = await computer.broadcast(offerTx)
       console.log('broadcast offer tx', txId)
@@ -29,11 +31,12 @@ function ActionButton({ computer, rev, buy }: { computer: Computer, rev: string,
 
   useEffect(() => {
     const fetch = async () => {
+      // Look for an acceptable offer
       const revs = await computer.query({ mod: REACT_APP_OFFER_MOD_SPEC, publicKey: buy && buy._owners ? buy._owners[0] : '' })
-      const offers = await Promise.all(revs.map((r) => computer.sync(r))) as Offer[]
+      const offers = await Promise.all(revs.map((rev) => computer.sync(rev))) as Offer[]
       const hexes = offers.map((s) => s.txHex)
-      const transactions = hexes.map((hex) => Transaction.deserialize(hex)) 
-      const decoded = await Promise.all(transactions.map(async (t) =>  computer.decode(t)))
+      const transactions = hexes.map((t) => Transaction.deserialize(t)) 
+      const decoded = await Promise.all(transactions.map((t) => computer.decode(t)))
       const index = decoded.findIndex((d) => d.env.a === buy.tokenRoot)
       setTx(transactions[index])
     }
@@ -46,11 +49,8 @@ function ActionButton({ computer, rev, buy }: { computer: Computer, rev: string,
 }
 
 function BuyOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
-  const [buy, setBuy] = useState({
-    _amount: 0,
-    amount: 0,
-    tokenRoot: ''
-  } as any)
+  const [open, setOpen] = useState(false)
+  const [buy, setBuy] = useState({ _amount: 0, amount: 0, tokenRoot: '' } as any)
 
   const fetch = async () => {
     setBuy(await computer.sync(rev))
@@ -60,22 +60,35 @@ function BuyOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
     fetch()
   }, [computer])
 
-  return (<tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-    <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-        {buy._amount/1e8}
-    </td>
-    <td className="px-6 py-4">{buy.amount}</td>
-    <td className="px-6 py-4">{`...${buy.tokenRoot.slice(-12)}`}</td>
-    <td className="px-6 py-4">
-      <ActionButton computer={computer} rev={rev} buy={buy} />
-    </td>
-    <td className="px-6 py-4">
-      <HiRefresh
-          onClick={fetch}
-          className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
-        />
+  useEffect(() => {
+    (async () => {
+      if (buy._id) {
+        const [txId, outNum] = buy._id.split(':')
+        const { result } = await computer.rpcCall('gettxout', `${txId} ${outNum} true`)
+        setOpen(!!result)
+      }
+    })()
+  }, [computer, buy])
+
+  return open ?
+    (<tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+          {buy._amount/1e8}
       </td>
-  </tr>)
+      <td className="px-6 py-4">{buy.amount}</td>
+      <td className="px-6 py-4">{`...${buy.tokenRoot.slice(-12)}`}</td>
+      <td className="px-6 py-4">
+        <ActionButton computer={computer} buy={buy} />
+      </td>
+      <td className="px-6 py-4">
+        <HiRefresh
+            onClick={fetch}
+            className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+          />
+        </td>
+    </tr>
+  )
+  : <></>
 }
 
 export function BuyOrders({ computer }: { computer: Computer }) {
