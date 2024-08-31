@@ -25,24 +25,39 @@ function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
   const [amount, setAmount] = useState(0)
   const [name, setName] = useState('')
   const [symbol, setSymbol] = useState('')
-  const [deserialized, setDeserialized] = useState(new Transaction())
+  const [deserialized, setDeserialized] = useState<Transaction>()
+  const [open, setOpen] = useState(false)
 
   const fetch = async () => {
     const { txHex } = await computer.sync(rev) as { txHex: any }
-    const d = Transaction.deserialize(txHex)
-    setDeserialized(d)
-    setPrice(await saleHelper.checkSaleTx(d))
-    const { env } = await computer.decode(d)
-    const token = (await computer.sync(env.o)) as any
-    setName(token.name)
-    setSymbol(token.symbol)
-    setAmount(token.amount)
+    setDeserialized(Transaction.deserialize(txHex))
   }
 
   useEffect(() => {
     fetch()
   }, [computer])
 
+  useEffect(() => {
+    (async () => {
+      if (deserialized) {
+        setPrice(await saleHelper.checkSaleTx(deserialized))
+        const res = await computer.decode(deserialized)
+        const { env } = res
+        console.log('checking for unspent',  env.o)
+
+        const [txId, outNum] = env.o.split(':')
+        const { result } = await computer.rpcCall('gettxout', `${txId} ${outNum} true`)
+        setOpen(!!result)
+
+        const token = (await computer.sync(env.o)) as any
+        setName(token.name)
+        setSymbol(token.symbol)
+        setAmount(token.amount)
+      }
+    })()
+  }, [computer, deserialized])
+
+  if (!open) return <></>
   return (
     <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -70,6 +85,7 @@ export function SellOrders({ computer }: { computer: Computer }) {
 
   const fetch = async () => {
     const r = await computer.query({ mod: REACT_APP_OFFER_MOD_SPEC })
+    console.log('fetched all sell orders', r)
     const results = await Promise.all(
       r.map(async (rev) => {
         const { txHex } = (await computer.sync(rev)) as { txHex: any }
