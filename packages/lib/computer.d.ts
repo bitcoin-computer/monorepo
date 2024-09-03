@@ -99,6 +99,7 @@ declare class RestClient {
   readonly network: TBCNetwork;
   readonly networkObj: any;
   readonly mnemonic: string;
+  readonly moduleStorageType: ModuleStorageType;
   readonly path: string;
   readonly passphrase: string;
   readonly addressType: AddressType;
@@ -106,7 +107,7 @@ declare class RestClient {
   readonly bcn: UrlFetch;
   readonly dustRelayTxFee: number;
   satPerByte: number;
-  constructor({ chain, network, mnemonic, path, passphrase, addressType, url, satPerByte, dustRelayFee }?: ComputerOptions);
+  constructor({ chain, network, mnemonic, moduleStorageType, path, passphrase, addressType, url, satPerByte, dustRelayFee }?: ComputerOptions);
   rpc(method: string, params: string): Promise<any>;
   broadcast(txHex: string): Promise<string>;
   getBalance(address: string): Promise<{balance: number, confirmed: number, unconfirmed: number}>;
@@ -172,13 +173,16 @@ interface MockOptions {
     [s: string]: Mock;
   };
 }
-type InscriptionOptions = Partial<{
+export type ModuleStorageType = 'legacy' | 'taproot';
+
+type ModuleOptions = Partial<{
   commitAmount: number;
   commitFee: number;
   revealAmount: number;
   revealFee: number;
   include: string[];
   exclude: string[];
+  storageType: ModuleStorageType;
 }>;
 type ComputerOptions = Partial<{
   chain: Chain;
@@ -328,7 +332,7 @@ declare class Computer {
       effect: Effect;
   }>;
   decode(transaction: Transaction): Promise<TransitionJSON>;
-  deploy(module: string, opts?: Partial<InscriptionOptions>): Promise<string>;
+  deploy(module: string, opts?: Partial<ModuleOptions>): Promise<string>;
   load(rev: string): Promise<ModuleExportsNamespace>;
   listTxs(address?: string): Promise<import("./types")._Transaction>;
   getUtxos(address?: string): Promise<string[]>;
@@ -359,7 +363,7 @@ declare class Computer {
   toScriptPubKey(publicKeys?: string[]): Buffer | undefined;
   static lockdown(opts?: any): void;
   delete(inRevs: string[]): Promise<string>;
-  export(module: string, opts?: Partial<InscriptionOptions>): Promise<string>;
+  export(module: string, opts?: Partial<ModuleOptions>): Promise<string>;
   import(rev: string): Promise<ModuleExportsNamespace>;
   queryRevs(q: Query): Promise<string[]>;
   getOwnedRevs(publicKey?: Buffer): Promise<string[]>;
