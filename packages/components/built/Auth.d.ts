@@ -12,12 +12,14 @@ declare function loggedOutConfiguration(): {
     chain: Chain;
     network: Network;
     url: string | undefined;
+    moduleStorageType: string | undefined;
 };
 declare function loggedInConfiguration(): {
     mnemonic: string | null;
     chain: Chain;
     network: Network;
     url: string | undefined;
+    moduleStorageType: string | undefined;
 };
 declare function getComputer(): Computer;
 declare function LoginForm(): import("react/jsx-runtime").JSX.Element;

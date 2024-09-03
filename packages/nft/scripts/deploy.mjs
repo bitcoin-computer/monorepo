@@ -13,7 +13,8 @@ const {
   REACT_APP_CHAIN: chain,
   REACT_APP_NETWORK: network,
   REACT_APP_URL: url,
-  REACT_APP_MNEMONIC: mnemonic
+  REACT_APP_MNEMONIC: mnemonic,
+  REACT_APP_MODULE_STORAGE_TYPE: moduleStorageType,
 } = process.env
 
 if (network !== "regtest") {
@@ -21,7 +22,7 @@ if (network !== "regtest") {
   computerProps["mnemonic"] = mnemonic
 }
 
-const computer = new Computer({ chain, network, mnemonic, url })
+const computer = new Computer({ chain, network, mnemonic, url, moduleStorageType })
 await computer.faucet(2e8)
 const balance = await computer.wallet.getBalance()
 
@@ -31,7 +32,8 @@ Network \x1b[2m${network}\x1b[0m
 Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
-Balance \x1b[2m${balance.balance / 1e8}\x1b[0m`)
+Balance \x1b[2m${balance.balance / 1e8}\x1b[0m
+Module Storage Type \x1b[2m${computer.wallet.restClient.moduleStorageType}\x1b[0m`)
 
 const answer = await rl.question("\nDo you want to deploy the contracts? \x1b[2m(y/n)\x1b[0m")
 if (answer === "n") {
