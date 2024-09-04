@@ -16,7 +16,6 @@ import Mint from "./components/Mint"
 import { AllAssets, MyAssets } from "./components/Assets"
 
 export default function App() {
-  console.log(import.meta.env.VITE_CHAIN)
   const [computer] = useState(Auth.getComputer())
 
   useEffect(() => {

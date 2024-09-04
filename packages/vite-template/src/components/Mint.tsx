@@ -65,6 +65,7 @@ export default function Mint() {
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
+      console.log(Counter.toString())
       const counter = await computer.new(Counter)
       setSuccessRev(counter._id)
       Modal.showModal("success-modal")
