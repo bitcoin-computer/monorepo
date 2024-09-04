@@ -2,8 +2,6 @@
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
 
-const { Contract } = await import('@bitcoin-computer/lib')
-
 export class Swap extends Contract {
   constructor(a: NFT, b: NFT) {
     super()

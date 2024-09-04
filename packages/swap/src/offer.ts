@@ -1,8 +1,7 @@
 /* eslint max-classes-per-file: ["error", 2] */
 
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
-
-const { Contract, Transaction } = await import('@bitcoin-computer/lib')
+import { Transaction } from '@bitcoin-computer/lib'
 
 export class Offer extends Contract {
   txHex: string
