@@ -182,7 +182,6 @@ type ModuleOptions = Partial<{
   revealFee: number;
   include: string[];
   exclude: string[];
-  storageType: ModuleStorageType;
 }>;
 type ComputerOptions = Partial<{
   chain: Chain;
@@ -195,6 +194,7 @@ type ComputerOptions = Partial<{
   satPerByte: number;
   dustRelayFee: number;
   addressType: AddressType;
+  moduleStorageType: ModuleStorageType;
 }>;
 
 interface SecretOutput {
