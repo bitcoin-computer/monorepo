@@ -1,5 +1,5 @@
 {
-  "name": "vite-project",
+  "name": "nft-vite",
   "private": true,
   "version": "0.21.0-beta.0",
   "type": "module",
@@ -8,11 +8,14 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "deploy": "node --experimental-modules scripts/deploy.mjs"
   },
   "dependencies": {
+    "@bitcoin-computer/TBC721": "^0.21.0-beta.0",
     "@bitcoin-computer/components": "^0.21.0-beta.0",
     "@bitcoin-computer/lib": "^0.21.0-beta.0",
+    "@bitcoin-computer/swap": "^0.21.0-beta.0",
     "flowbite": "^2.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
