@@ -1,7 +1,7 @@
 import { ComputerContext } from "@bitcoin-computer/components"
 import { useContext } from "react"
-import { SellOrders, SellOrderForm } from "./SellOrders"
-import { BuyOrderForm, BuyOrders } from "./BuyOrders"
+import { SellOrderTable, SellOrderForm } from "./SellOrders"
+import { BuyOrderForm, BuyOrderTable } from "./BuyOrders"
 
 export default function Orders() {
   const computer = useContext(ComputerContext)
@@ -9,12 +9,12 @@ export default function Orders() {
   return <div className="container mx-auto p-6">
     <div className="grid grid-cols-2 gap-4 my-4">
       <div className="bg-white dark:bg-gray-800 p-6 rounded shadow">
-        <h4 className="text-2xl mb-2 font-bold dark:text-white">New Sell Limit Order</h4>
+        <h4 className="text-2xl mb-2 font-bold dark:text-white">New Sell Order</h4>
         <SellOrderForm computer={computer} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 p-6 rounded shadow">
-        <h4 className="text-2xl mb-2 font-bold dark:text-white">New Buy Limit Orders</h4>
+        <h4 className="text-2xl mb-2 font-bold dark:text-white">New Buy Orders</h4>
         <BuyOrderForm computer={computer} />
       </div>
     </div>
@@ -22,12 +22,12 @@ export default function Orders() {
     <div className="grid grid-cols-2 gap-4  my-4">
       <div className="bg-white dark:bg-gray-800 p-6 rounded shadow">
         <h4 className="text-2xl mb-2 font-bold dark:text-white">Sell Orders</h4>
-        <SellOrders computer={computer} />
+        <SellOrderTable computer={computer} />
       </div>
 
       <div className="bg-white dark:bg-gray-800 p-6 rounded shadow">
         <h4 className="text-2xl mb-2 font-bold dark:text-white">Buy Orders</h4>
-        <BuyOrders computer={computer} />
+        <BuyOrderTable computer={computer} />
       </div>
     </div>
   </div>
