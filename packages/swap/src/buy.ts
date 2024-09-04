@@ -5,6 +5,8 @@ import { StaticSwapHelper } from './static-swap.js'
 const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Buy extends Contract {
+  amount: number
+
   constructor(price: number, amount: number, tokenRoot: string) {
     super({ _amount: price, amount, tokenRoot })
   }

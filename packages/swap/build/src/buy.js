@@ -1,4 +1,4 @@
-import { SwapHelper } from './swap.js';
+import { StaticSwapHelper } from './static-swap.js';
 const { Contract } = await import('@bitcoin-computer/lib');
 export class Buy extends Contract {
     constructor(price, amount, tokenRoot) {
@@ -11,7 +11,7 @@ export class Buy extends Contract {
 export class BuyHelper {
     constructor(computer, swapMod, buyMod) {
         this.computer = computer;
-        this.swapHelper = new SwapHelper(computer, swapMod);
+        this.swapHelper = new StaticSwapHelper(computer, swapMod);
         this.mod = buyMod;
     }
     async deploy() {
@@ -23,6 +23,12 @@ export class BuyHelper {
     }
     async acceptBuyOrder(token, buyOrder) {
         return this.swapHelper.createSwapTx(token, buyOrder);
+    }
+    async isOpen(buy) {
+        const { _id } = await this.computer.sync(buy._rev);
+        const [txId, outNum] = _id.split(':');
+        const { result } = await this.computer.rpcCall('gettxout', `${txId} ${outNum} true`);
+        return !!result;
     }
     async settleBuyOrder(swapTx) {
         await this.computer.sign(swapTx);

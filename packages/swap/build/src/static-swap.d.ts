@@ -1,4 +1,4 @@
-import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
+import type { Transaction } from '@bitcoin-computer/nakamotojs';
 import { NFT } from '@bitcoin-computer/TBC721';
 declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class StaticSwap extends Contract {
@@ -9,7 +9,13 @@ export declare class StaticSwapHelper {
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
-    createSwapTx(a: NFT, b: NFT): Promise<any>;
-    checkSwapTx(tx: TransactionType, pubKeyA: string, pubKeyB: string): Promise<any>;
+    createSwapTx(a: any, b: any): Promise<{
+        tx: Transaction;
+        effect: {
+            res: any;
+            env: any;
+        };
+    }>;
+    checkSwapTx(tx: Transaction, pubKeyA: string, pubKeyB: string): Promise<any>;
 }
 export {};
