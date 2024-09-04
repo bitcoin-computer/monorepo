@@ -37,18 +37,27 @@ function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
 
 function loggedOutConfiguration() {
   return {
-    chain: process.env.REACT_APP_CHAIN as Chain,
-    network: process.env.REACT_APP_NETWORK as Network,
-    url: process.env.REACT_APP_URL
+    chain: ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+      import.meta.env.VITE_CHAIN) as Chain,
+    network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+      import.meta.env.VITE_NETWORK) as Network,
+    url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL
   }
 }
 
 function loggedInConfiguration() {
   return {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: (localStorage.getItem("CHAIN") || process.env.REACT_APP_CHAIN) as Chain,
-    network: (localStorage.getItem("NETWORK") || process.env.REACT_APP_NETWORK) as Network,
-    url: localStorage.getItem("URL") || process.env.REACT_APP_URL
+    chain: (localStorage.getItem("CHAIN") ||
+      (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+      import.meta.env.VITE_CHAIN) as Chain,
+    network: (localStorage.getItem("NETWORK") ||
+      (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+      import.meta.env.VITE_NETWORK) as Network,
+    url:
+      localStorage.getItem("URL") ||
+      (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
+      import.meta.env.VITE_URL
   }
 }
 
@@ -290,12 +299,16 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
   const [chain, setChain] = useState<Chain | undefined>(
-    process.env.REACT_APP_CHAIN as Chain | undefined
+    ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+      import.meta.env.VITE_CHAIN) as Chain | undefined
   )
   const [network, setNetwork] = useState<Network | undefined>(
-    process.env.REACT_APP_NETWORK as Network | undefined
+    ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+      import.meta.env.VITE_NETWORK) as Network | undefined
   )
-  const [url] = useState<string | undefined>(process.env.REACT_APP_URL)
+  const [url] = useState<string | undefined>(
+    (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL
+  )
   const urlInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -308,11 +321,9 @@ function LoginForm() {
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {!process.env.REACT_APP_CHAIN && <ChainInput chain={chain} setChain={setChain} />}
-            {!process.env.REACT_APP_NETWORK && (
-              <NetworkInput network={network} setNetwork={setNetwork} />
-            )}
-            {!process.env.REACT_APP_URL && <UrlInput urlInputRef={urlInputRef} />}
+            {!chain && <ChainInput chain={chain} setChain={setChain} />}
+            {!network && <NetworkInput network={network} setNetwork={setNetwork} />}
+            {!url && <UrlInput urlInputRef={urlInputRef} />}
           </div>
         </form>
       </div>

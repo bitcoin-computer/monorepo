@@ -48,17 +48,25 @@ function getBip44Path(_a) {
 }
 function loggedOutConfiguration() {
     return {
-        chain: process.env.REACT_APP_CHAIN,
-        network: process.env.REACT_APP_NETWORK,
-        url: process.env.REACT_APP_URL
+        chain: ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+            import.meta.env.VITE_CHAIN),
+        network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+            import.meta.env.VITE_NETWORK),
+        url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL
     };
 }
 function loggedInConfiguration() {
     return {
         mnemonic: localStorage.getItem("BIP_39_KEY"),
-        chain: (localStorage.getItem("CHAIN") || process.env.REACT_APP_CHAIN),
-        network: (localStorage.getItem("NETWORK") || process.env.REACT_APP_NETWORK),
-        url: localStorage.getItem("URL") || process.env.REACT_APP_URL
+        chain: (localStorage.getItem("CHAIN") ||
+            (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+            import.meta.env.VITE_CHAIN),
+        network: (localStorage.getItem("NETWORK") ||
+            (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+            import.meta.env.VITE_NETWORK),
+        url: localStorage.getItem("URL") ||
+            (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
+            import.meta.env.VITE_URL
     };
 }
 function getComputer() {
@@ -101,14 +109,16 @@ function LoginButton(_a) {
 }
 function LoginForm() {
     var _a = useState(new Computer().getMnemonic()), mnemonic = _a[0], setMnemonic = _a[1];
-    var _b = useState(process.env.REACT_APP_CHAIN), chain = _b[0], setChain = _b[1];
-    var _c = useState(process.env.REACT_APP_NETWORK), network = _c[0], setNetwork = _c[1];
-    var url = useState(process.env.REACT_APP_URL)[0];
+    var _b = useState(((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+        import.meta.env.VITE_CHAIN)), chain = _b[0], setChain = _b[1];
+    var _c = useState(((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+        import.meta.env.VITE_NETWORK)), network = _c[0], setNetwork = _c[1];
+    var url = useState((typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL)[0];
     var urlInputRef = useRef(null);
     useEffect(function () {
         initFlowbite();
     }, []);
-    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "max-w-sm mx-auto p-4 md:p-5 space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !process.env.REACT_APP_CHAIN && _jsx(ChainInput, { chain: chain, setChain: setChain }), !process.env.REACT_APP_NETWORK && (_jsx(NetworkInput, { network: network, setNetwork: setNetwork })), !process.env.REACT_APP_URL && _jsx(UrlInput, { urlInputRef: urlInputRef })] }) })) })), _jsx("div", __assign({ className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600" }, { children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, urlInputRef: urlInputRef }) }))] }));
+    return (_jsxs(_Fragment, { children: [_jsx("div", __assign({ className: "max-w-sm mx-auto p-4 md:p-5 space-y-4" }, { children: _jsx("form", __assign({ className: "space-y-6" }, { children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !chain && _jsx(ChainInput, { chain: chain, setChain: setChain }), !network && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !url && _jsx(UrlInput, { urlInputRef: urlInputRef })] }) })) })), _jsx("div", __assign({ className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600" }, { children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, urlInputRef: urlInputRef }) }))] }));
 }
 function LoginModal() {
     return _jsx(Modal.Component, { title: "Sign in", content: LoginForm, id: "sign-in-modal" });
