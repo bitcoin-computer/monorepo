@@ -1,6 +1,8 @@
+import { Transaction } from '@bitcoin-computer/lib';
 import { PaymentMock } from './payment.js';
 const { Contract, Transaction } = await import('@bitcoin-computer/lib');
 const sighashType = Transaction.SIGHASH_SINGLE | Transaction.SIGHASH_ANYONECANPAY;
+
 export class Sale extends Contract {
     static exec(o, p) {
         const [ownerN] = o._owners;
@@ -29,6 +31,10 @@ export class SaleHelper {
             fund: false,
             mod: this.mod
         });
+    }
+    async isSaleTx(tx) {
+        const { exp, mod } = await this.computer.decode(tx);
+        return exp === 'Sale.exec(o, p)' && mod === this.mod;
     }
     async checkSaleTx(tx) {
         const { exp, env, mod } = await this.computer.decode(tx);

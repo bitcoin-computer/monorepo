@@ -1,5 +1,4 @@
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
-declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class Offer extends Contract {
     txHex: string;
     constructor(owner: string, url: string, txHex?: string);
@@ -14,4 +13,3 @@ export declare class OfferHelper {
     addSaleTx(offerTxId: string, tx: TransactionType): Promise<any>;
     decodeOfferTx(offerTxId: string): Promise<TransactionType>;
 }
-export {};

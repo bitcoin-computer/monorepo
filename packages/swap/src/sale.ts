@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { Buffer } from 'buffer'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
+import { Transaction } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
 
 const { Contract, Transaction } = await import('@bitcoin-computer/lib')
@@ -42,6 +43,11 @@ export class SaleHelper {
       fund: false,
       mod: this.mod
     })
+  }
+
+  async isSaleTx(tx: TransactionType): Promise<boolean> {
+    const { exp, mod } = await this.computer.decode(tx)
+    return exp === 'Sale.exec(o, p)' && mod === this.mod
   }
 
   async checkSaleTx(tx: TransactionType): Promise<number> {

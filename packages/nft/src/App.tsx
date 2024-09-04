@@ -36,7 +36,7 @@ export default function App() {
               <Route path="/" element={<AllAssets />} />
               <Route path="/mine" element={<MyAssets />} />
               <Route path="/mint" element={<Mint />} />
-              <Route path="/objects/:rev" element={<NftView />} />
+              <Route path="/objects/:id" element={<NftView />} />
               <Route path="/transactions/:txn" element={<Transaction.Component />} />
               <Route path="*" element={<Navigate to="/" replace={true} />} />
               <Route path="*" element={<Error404 />} />

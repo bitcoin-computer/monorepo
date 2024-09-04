@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { Computer } from '@bitcoin-computer/lib'
+import styled from 'styled-components'
 import Wallet from './Wallet'
 import Login from './Login'
 import MintToken from './MintToken'
 import Card from './Card'
-import styled from 'styled-components'
 import { TokenType } from './types'
 
 const Flex = styled.div`
@@ -38,7 +38,7 @@ const App: React.FC = () => {
     // if you are currently logging in
     if (isLoggedIn && !computer) {
       setComputer(new Computer(config))
-      console.log('Bitcoin Computer created on ' + config.chain)
+      console.log(`Bitcoin Computer created on ${  config.chain}`)
       // if you are currently logging out
     } else if (!isLoggedIn && computer) {
       console.log('You have been logged out')
@@ -66,7 +66,7 @@ const App: React.FC = () => {
         ...acc,
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        [obj['_root']]: (acc[obj['_root']] || []).concat(obj),
+        [obj._root]: (acc[obj._root] || []).concat(obj),
       }),
       {}
     )
