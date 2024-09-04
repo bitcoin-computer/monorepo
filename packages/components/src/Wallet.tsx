@@ -160,9 +160,9 @@ export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
       <Address computer={computer} />
       <PublicKey computer={computer} />
       <Mnemonic computer={computer} />
-      {!process.env['REACT_APP_CHAIN'] && <Chain computer={computer} />}
-      {!process.env['REACT_APP_NETWORK'] && <Network computer={computer} />}
-      {!process.env['REACT_APP_URL'] && <Url computer={computer} />}
+      {!process.env.REACT_APP_CHAIN && <Chain computer={computer} />}
+      {!process.env.REACT_APP_NETWORK && <Network computer={computer} />}
+      {!process.env.REACT_APP_URL && <Url computer={computer} />}
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>

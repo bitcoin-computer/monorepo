@@ -30,6 +30,10 @@ export class SaleHelper {
             mod: this.mod
         });
     }
+    async isSaleTx(tx) {
+        const { exp, mod } = await this.computer.decode(tx);
+        return exp === 'Sale.exec(o, p)' && mod === this.mod;
+    }
     async checkSaleTx(tx) {
         const { exp, env, mod } = await this.computer.decode(tx);
         if (exp !== 'Sale.exec(nft, payment)')
