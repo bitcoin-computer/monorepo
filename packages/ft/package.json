@@ -24,6 +24,10 @@
     "typescript": "~5.3.3",
     "web-vitals": "^3.5.2"
   },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/parser": "^7.9.0"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

@@ -17,16 +17,18 @@ const SendToken: React.FC<ISendTokenProps> = ({ tokens }) => {
       (acc, token) => acc + parseInt(token.coins, 10),
       0
     )
-    const amount = parseInt(amountString)
+    const amount = parseInt(amountString, 10)
     if (amount > balance) throw new Error('Insufficient Funds')
 
     tokens.sort((a, b) => parseInt(a.coins, 10) - parseInt(b.coins, 10))
     const newTokens: TokenType[] = []
     let leftToSpend = amount
     try {
+      // eslint-disable-next-line no-restricted-syntax
       for (const token of tokens) {
         const tokenCoins = parseInt(token.coins, 10)
-        if (0 < leftToSpend && 0 < tokenCoins) {
+        if (leftToSpend > 0 && tokenCoins > 0) {
+          // eslint-disable-next-line no-await-in-loop
           newTokens.push(await token.send(Math.min(leftToSpend, tokenCoins), to))
           leftToSpend -= tokenCoins
         }
@@ -46,7 +48,7 @@ const SendToken: React.FC<ISendTokenProps> = ({ tokens }) => {
       setTo('')
     } catch (err: any) {
       if (err.message.startsWith("Insufficient balance in address")){
-        alert("You have to fund your wallet");
+        alert("You have to fund your wallet")
       }
     }
   }

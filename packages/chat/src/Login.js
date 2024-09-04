@@ -19,6 +19,7 @@ function Login() {
   }
 
   const logout = (e) => {
+    e.preventDefault()
     window.localStorage.removeItem('BIP_39_KEY')
     window.localStorage.removeItem('USER_NAME')
     window.localStorage.removeItem('CHAIN')
