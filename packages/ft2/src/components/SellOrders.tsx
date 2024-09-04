@@ -11,7 +11,7 @@ function BuyButton({ computer, deserialized, price }: { computer: Computer, dese
     await computer.fund(finalTx)
     await computer.sign(finalTx)
     const txId = await computer.broadcast(finalTx)
-    console.log('broadcast swap transaction', txId)
+    console.log('broadcast swap transaction', txId.slice(-6))
   }
 
   return <button type="button" onClick={onClick} className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -21,41 +21,59 @@ function BuyButton({ computer, deserialized, price }: { computer: Computer, dese
 
 function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
   const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
+  const [deserialized, setDeserialized] = useState<Transaction>()
   const [price, setPrice] = useState(0)
+  const [tokenRev, setTokenRev] = useState('')
   const [amount, setAmount] = useState(0)
   const [name, setName] = useState('')
   const [symbol, setSymbol] = useState('')
-  const [deserialized, setDeserialized] = useState<Transaction>()
   const [open, setOpen] = useState(false)
 
+  // fetch offer tx containing saleTxHex and deserialize
   const fetch = async () => {
-    const { txHex } = await computer.sync(rev) as { txHex: any }
-    setDeserialized(Transaction.deserialize(txHex))
+    const { txHex: saleTxHex } = await computer.sync(rev) as any
+    const tx = Transaction.deserialize(saleTxHex)
+    if (await saleHelper.isSaleTx(tx))
+    setDeserialized(Transaction.deserialize(saleTxHex))
   }
 
   useEffect(() => {
     fetch()
   }, [computer])
 
+  // Check deserialized sale tx, set price and token revision
   useEffect(() => {
     (async () => {
       if (deserialized) {
         setPrice(await saleHelper.checkSaleTx(deserialized))
-        const res = await computer.decode(deserialized)
-        const { env } = res
-        console.log('checking for unspent',  env.o)
+        const { env } = await computer.decode(deserialized)
+        setTokenRev(env.o)
+      }
+    })()
+  }, [computer, deserialized])
 
-        const [txId, outNum] = env.o.split(':')
+  // Check if token rev is still unspent
+  useEffect(() => {
+    (async () => {
+      if (tokenRev) {
+        const [txId, outNum] = tokenRev.split(':')
         const { result } = await computer.rpcCall('gettxout', `${txId} ${outNum} true`)
         setOpen(!!result)
+      }
+    })()
+  }, [computer, tokenRev])
 
-        const token = (await computer.sync(env.o)) as any
+  // Sync to token, set name, amount and symbol
+  useEffect(() => {
+    (async () => {
+      if (open) {
+        const token = (await computer.sync(tokenRev)) as any
         setName(token.name)
         setSymbol(token.symbol)
         setAmount(token.amount)
       }
     })()
-  }, [computer, deserialized])
+  }, [computer, open])
 
   if (!open) return <></>
   return (
@@ -79,26 +97,12 @@ function SellOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
   )
 }
 
-export function SellOrders({ computer }: { computer: Computer }) {
-  const [revs, setRevs] = useState([] as string[])
-  const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
+export function SellOrderTable({ computer }: { computer: Computer }) {
+  const [offerRevs, setOfferRevs] = useState([] as string[])
 
   const fetch = async () => {
-    const r = await computer.query({ mod: REACT_APP_OFFER_MOD_SPEC })
-    console.log('fetched all sell orders', r)
-    const results = await Promise.all(
-      r.map(async (rev) => {
-        const { txHex } = (await computer.sync(rev)) as { txHex: any }
-        const d = Transaction.deserialize(txHex)
-        try {
-          return await saleHelper.checkSaleTx(d)
-        } catch (err) {
-          if (err instanceof Error && err.message === "Unexpected expression") return false
-          throw err
-        }
-      })
-    )
-    setRevs(r.filter((_, i) => results[i]))
+    const mod = REACT_APP_OFFER_MOD_SPEC
+    setOfferRevs(await computer.query({ mod }))
   }
 
   useEffect(() => {
@@ -123,9 +127,7 @@ export function SellOrders({ computer }: { computer: Computer }) {
         </tr>
       </thead>
       <tbody>
-        {revs.map((rev) => (
-          <SellOrderRow key={rev} rev={rev} computer={computer} />
-        ))}
+        {offerRevs.map((rev) => <SellOrderRow key={rev} rev={rev} computer={computer} /> )}
       </tbody>
     </table>
   </div>)
@@ -140,12 +142,12 @@ export function SellOrderForm({ computer }: { computer: Computer }) {
   const onClick = async (e: any) => {
     e.preventDefault()
     const mock = new PaymentMock(parseFloat(amount) * 1e8)
+    const { tx: saleTx } = await saleHelper.createSaleTx({ _rev: rev }, mock)
     const publicKey = computer.getPublicKey()
     const url = computer.getUrl()
-    const { tx: saleTx } = await saleHelper.createSaleTx({ _rev: rev }, mock)
     const { tx: offerTx } = await offerHelper.createOfferTx(publicKey, url, saleTx)
     await computer.broadcast(offerTx)
-    console.log('created offer tx', offerTx.getId())
+    console.log(`created sale offer\ntoken ${rev.slice(-6)}\namount ${amount}\nsale tx ${saleTx.getId().slice(-6)}\noffer tx ${offerTx.getId().slice(-6)}`)
   }
 
   return <form>
