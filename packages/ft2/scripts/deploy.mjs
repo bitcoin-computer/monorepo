@@ -2,7 +2,7 @@ import { config } from "dotenv"
 import * as readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { TBC20 } from "@bitcoin-computer/TBC20"
-import { OfferHelper, PaymentHelper, SaleHelper, SwapHelper, BuyHelper } from "@bitcoin-computer/swap"
+import { OfferHelper, PaymentHelper, SaleHelper, StaticSwapHelper, BuyHelper } from "@bitcoin-computer/swap"
 
 const { Computer } = await import("@bitcoin-computer/lib")
 
@@ -14,7 +14,7 @@ const { REACT_APP_CHAIN: chain, REACT_APP_NETWORK: network, REACT_APP_URL: url, 
  
 const computer = new Computer({ chain, network, mnemonic, url })
 await computer.faucet(2e8)
-const balance = await computer.wallet.getBalance()
+const { balance } = await computer.wallet.getBalance()
 
 // Summary
 console.log(`Chain \x1b[2m${chain}\x1b[0m
@@ -22,7 +22,7 @@ Network \x1b[2m${network}\x1b[0m
 Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
-Balance \x1b[2m${balance / 1e8}\x1b[0m`)
+Balance \x1b[2m${balance / 1e8} ${computer.getNetwork()} ${computer.getChain()} \x1b[0m`)
 
 const answer = await rl.question('\nDo you want to deploy the contracts? \x1b[2m(y/n)\x1b[0m')
 if (answer === 'n') {
@@ -45,7 +45,7 @@ if (answer === 'n') {
   const saleModSpec = await saleHelper.deploy()
 
   console.log(" * Deploying Swap contract...")
-  const swapHelper = new SwapHelper(computer)
+  const swapHelper = new StaticSwapHelper(computer)
   const swapModSpec = await swapHelper.deploy()
 
   console.log(" * Deploying Payment contract...")
