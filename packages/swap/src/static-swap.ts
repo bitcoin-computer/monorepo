@@ -1,5 +1,5 @@
 /* eslint-disable max-classes-per-file */
-import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
+import type { Transaction } from '@bitcoin-computer/nakamotojs'
 import { NFT } from '@bitcoin-computer/TBC721'
 
 export class StaticSwap extends Contract {
@@ -25,7 +25,7 @@ export class StaticSwapHelper {
     return this.mod
   }
 
-  async createSwapTx(a: NFT, b: NFT) {
+  async createSwapTx(a: any, b: any): Promise<{ tx: Transaction; effect: { res: any; env: any } }> {
     return this.computer.encode({
       exp: `StaticSwap.exec(a, b)`,
       env: { a: a._rev, b: b._rev },
@@ -33,7 +33,7 @@ export class StaticSwapHelper {
     })
   }
 
-  async checkSwapTx(tx: TransactionType, pubKeyA: string, pubKeyB: string) {
+  async checkSwapTx(tx: Transaction, pubKeyA: string, pubKeyB: string) {
     const { exp, env, mod } = await this.computer.decode(tx)
     if (exp !== 'StaticSwap.exec(a, b)') throw new Error('Unexpected expression')
     if (mod !== this.mod) throw new Error('Unexpected module specifier')

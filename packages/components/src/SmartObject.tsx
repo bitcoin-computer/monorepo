@@ -48,111 +48,111 @@ const SmartObjectValues = ({ smartObject }: any) => {
   )
 }
 
-// const revToId = (rev: string) => rev?.split(":")[0]
+const revToId = (rev: string) => rev?.split(":")[0]
 
-// const MetaData = ({ smartObject }: any) => (
-//   <>
-//     <h2 className="mb-2 text-4xl font-bold dark:text-white">Meta Data</h2>
-//     <table className="w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400">
-//       <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-//         <tr>
-//           <th scope="col" className="px-6 py-3">
-//             Key
-//           </th>
-//           <th scope="col" className="px-6 py-3">
-//             Short
-//           </th>
-//           <th scope="col" className="px-6 py-3">
-//             Value
-//           </th>
-//         </tr>
-//       </thead>
-//       <tbody>
-//         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-//           <td className="px-6 py-4 break-all">Identity</td>
-//           <td className="px-6 py-4 break-all text-sm">
-//             <pre>_id</pre>
-//           </td>
-//           <td className="px-6 py-4">
-//             <Link
-//               to={`/objects/${smartObject?._id}`}
-//               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-//             >
-//               {smartObject?._id}
-//             </Link>
-//           </td>
-//         </tr>
+const MetaData = ({ smartObject }: any) => (
+  <>
+    <h2 className="mb-2 text-4xl font-bold dark:text-white">Meta Data</h2>
+    <table className="w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400">
+      <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <tr>
+          <th scope="col" className="px-6 py-3">
+            Key
+          </th>
+          <th scope="col" className="px-6 py-3">
+            Short
+          </th>
+          <th scope="col" className="px-6 py-3">
+            Value
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td className="px-6 py-4 break-all">Identity</td>
+          <td className="px-6 py-4 break-all text-sm">
+            <pre>_id</pre>
+          </td>
+          <td className="px-6 py-4">
+            <Link
+              to={`/objects/${smartObject?._id}`}
+              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            >
+              {smartObject?._id}
+            </Link>
+          </td>
+        </tr>
 
-//         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-//           <td className="px-6 py-4 break-all">Revision</td>
-//           <td className="px-6 py-4 break-all">
-//             <pre>_rev</pre>
-//           </td>
-//           <td className="px-6 py-4">
-//             <Link
-//               to={`/objects/${smartObject?._rev}`}
-//               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-//             >
-//               {smartObject?._rev}
-//             </Link>
-//           </td>
-//         </tr>
+        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td className="px-6 py-4 break-all">Revision</td>
+          <td className="px-6 py-4 break-all">
+            <pre>_rev</pre>
+          </td>
+          <td className="px-6 py-4">
+            <Link
+              to={`/objects/${smartObject?._rev}`}
+              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            >
+              {smartObject?._rev}
+            </Link>
+          </td>
+        </tr>
 
-//         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-//           <td className="px-6 py-4 break-all">Root</td>
-//           <td className="px-6 py-4 break-all">
-//             <pre>_root</pre>
-//           </td>
-//           <td className="px-6 py-4">
-//             <Link
-//               to={`/objects/${smartObject?._root}`}
-//               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-//             >
-//               {smartObject?._root}
-//             </Link>
-//           </td>
-//         </tr>
+        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td className="px-6 py-4 break-all">Root</td>
+          <td className="px-6 py-4 break-all">
+            <pre>_root</pre>
+          </td>
+          <td className="px-6 py-4">
+            <Link
+              to={`/objects/${smartObject?._root}`}
+              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            >
+              {smartObject?._root}
+            </Link>
+          </td>
+        </tr>
 
-//         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-//           <td className="px-6 py-4 break-all">Owners</td>
-//           <td className="px-6 py-4 break-all">
-//             <pre>_owners</pre>
-//           </td>
-//           <td className="px-6 py-4">
-//             <span className="font-medium text-gray-900 dark:text-white">
-//               {smartObject?._owners}
-//             </span>
-//           </td>
-//         </tr>
+        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td className="px-6 py-4 break-all">Owners</td>
+          <td className="px-6 py-4 break-all">
+            <pre>_owners</pre>
+          </td>
+          <td className="px-6 py-4">
+            <span className="font-medium text-gray-900 dark:text-white">
+              {smartObject?._owners}
+            </span>
+          </td>
+        </tr>
 
-//         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-//           <td className="px-6 py-4 break-all">Amount</td>
-//           <td className="px-6 py-4 break-all">
-//             <pre>_amount</pre>
-//           </td>
-//           <td className="px-6 py-4">
-//             <span className="font-medium text-gray-900 dark:text-white">
-//               {smartObject?._amount}
-//             </span>
-//           </td>
-//         </tr>
+        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td className="px-6 py-4 break-all">Amount</td>
+          <td className="px-6 py-4 break-all">
+            <pre>_amount</pre>
+          </td>
+          <td className="px-6 py-4">
+            <span className="font-medium text-gray-900 dark:text-white">
+              {smartObject?._amount}
+            </span>
+          </td>
+        </tr>
 
-//         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-//           <td className="px-6 py-4 break-all">Transaction</td>
-//           <td className="px-6 py-4 break-all"></td>
-//           <td className="px-6 py-4">
-//             <Link
-//               to={`/transactions/${revToId(smartObject?._rev)}`}
-//               className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-//             >
-//               {revToId(smartObject?._rev)}
-//             </Link>
-//           </td>
-//         </tr>
-//       </tbody>
-//     </table>
-//   </>
-// )
+        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+          <td className="px-6 py-4 break-all">Transaction</td>
+          <td className="px-6 py-4 break-all"></td>
+          <td className="px-6 py-4">
+            <Link
+              to={`/transactions/${revToId(smartObject?._rev)}`}
+              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+            >
+              {revToId(smartObject?._rev)}
+            </Link>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </>
+)
 
 function Component() {
   const location = useLocation()
@@ -234,7 +234,7 @@ function Component() {
           setModalTitle={setModalTitle}
         />
 
-        {/* <MetaData smartObject={smartObject} /> */}
+        <MetaData smartObject={smartObject} />
       </div>
       <Modal.Component
         title={modalTitle}

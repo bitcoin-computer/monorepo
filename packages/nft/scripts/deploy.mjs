@@ -39,7 +39,7 @@ if (answer === "n") {
 } else {
   console.log("\n * Deploying NFT contract...")
   const tbc721 = new TBC721(computer)
-  const modSpec = await tbc721.deploy()
+  const nftModSpec = await tbc721.deploy()
 
   console.log(" * Deploying Offer contract...")
   const offerHelper = new OfferHelper(computer)
@@ -62,7 +62,7 @@ Successfully deployed smart contracts.
 
 (1) Update the following rows in your .env file.
 
-REACT_APP_NFT_MOD_SPEC\x1b[2m=${modSpec}\x1b[0m
+REACT_APP_NFT_MOD_SPEC\x1b[2m=${nftModSpec}\x1b[0m
 REACT_APP_OFFER_MOD_SPEC\x1b[2m=${offerModSpec}\x1b[0m
 REACT_APP_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
 REACT_APP_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m

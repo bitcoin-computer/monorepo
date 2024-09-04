@@ -8,6 +8,6 @@ export declare class SwapHelper {
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
-    createSwapTx(a: NFT, b: NFT): Promise<any>;
+    createSwapTx(a: any, b: any): Promise<any>;
     checkSwapTx(tx: TransactionType, pubKeyA: string, pubKeyB: string): Promise<any>;
 }
