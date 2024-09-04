@@ -1,56 +1,78 @@
 import { Computer, Transaction } from "@bitcoin-computer/lib"
-import { BuyHelper, Offer, OfferHelper } from "@bitcoin-computer/swap"
+import { Buy, BuyHelper, Offer, OfferHelper } from "@bitcoin-computer/swap"
 import { Token } from "@bitcoin-computer/TBC20"
 import { useEffect, useState } from "react"
 import { HiRefresh } from "react-icons/hi"
 import { REACT_APP_BUY_MOD_SPEC, REACT_APP_OFFER_MOD_SPEC, REACT_APP_SWAP_MOD_SPEC, REACT_APP_TOKEN_MOD_SPEC } from "../constants/modSpecs"
 
-function ActionButton({ computer, buy }: { computer: Computer, buy: any }) {
-  const [tx, setTx] = useState<Transaction>()
-  
+function CloseButton({ swapTx, computer }: { swapTx: Transaction, computer: Computer }) {
   async function onClick() {
     const buyHelper = new BuyHelper(computer, REACT_APP_SWAP_MOD_SPEC!, REACT_APP_BUY_MOD_SPEC)
-    const offerHelper = new OfferHelper(computer, REACT_APP_OFFER_MOD_SPEC)
-    if (tx === undefined) {
-      // Find my tokens that match the offer
-      const revs = await computer.query({ mod: REACT_APP_TOKEN_MOD_SPEC, publicKey: computer.getPublicKey() })
-      const tokens = await Promise.all(revs.map((rev) => computer.sync(rev))) as Token[]
-      const matches = tokens.filter((token: Token) => token.amount === buy.amount)
-      
-      // If a match is found, make an offer
-      if (matches.length === 0) console.log('No matches found')
+    const txId = await buyHelper.settleBuyOrder(swapTx)
+    console.log('Closed buy', txId.slice(-6))
+  }
+  return <button type="button" onClick={onClick} className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      Close
+    </button>
+}
+
+function SellButton({ buy, computer }: { buy: Buy, computer: Computer }) {
+  const buyHelper = new BuyHelper(computer, REACT_APP_SWAP_MOD_SPEC!, REACT_APP_BUY_MOD_SPEC)
+  const offerHelper = new OfferHelper(computer, REACT_APP_OFFER_MOD_SPEC)
+
+  async function onClick() {
+    // Find owned tokens that match the offer
+    const tokenRevs = await computer.query({ mod: REACT_APP_TOKEN_MOD_SPEC, publicKey: computer.getPublicKey() })
+    const tokens = await Promise.all(tokenRevs.map((rev) => computer.sync(rev))) as Token[]
+    const matches = tokens.filter((token: Token) => token.amount === buy.amount)
+    
+    // If a match is found, make an offer to sell
+    if (matches.length) {
       const { tx: swapTx } = await buyHelper.acceptBuyOrder(matches[0], buy)
       const { tx: offerTx } = await offerHelper.createOfferTx(buy._owners[0], computer.getUrl(), swapTx)
       const txId = await computer.broadcast(offerTx)
-      console.log('broadcast offer tx', txId)
-    } else {
-      const txId = await buyHelper.settleBuyOrder(tx)
-      console.log('Closed buy', txId)
+      console.log('broadcast offer tx', txId.slice(-6))
     }
   }
+  return <button type="button" onClick={onClick} className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+      Sell
+    </button>
+}
+
+function ActionButton({ computer, buy }: { computer: Computer, buy: any }) {
+  const [swapTx, setSwapTx] = useState<Transaction>()
 
   useEffect(() => {
     const fetch = async () => {
-      // Look for an acceptable offer
+      // Buyer looks for an acceptable swap for their offer in the buy object
       const revs = await computer.query({ mod: REACT_APP_OFFER_MOD_SPEC, publicKey: buy && buy._owners ? buy._owners[0] : '' })
       const offers = await Promise.all(revs.map((rev) => computer.sync(rev))) as Offer[]
-      const hexes = offers.map((s) => s.txHex)
-      const transactions = hexes.map((t) => Transaction.deserialize(t)) 
-      const decoded = await Promise.all(transactions.map((t) => computer.decode(t)))
-      const index = decoded.findIndex((d) => d.env.a === buy.tokenRoot)
-      setTx(transactions[index])
+      const swapHexes = offers.map((s) => s.txHex)
+      const swapTxs = swapHexes.map((t) => Transaction.deserialize(t)) 
+      const swaps = await Promise.all(swapTxs.map((t) => computer.decode(t)))
+      
+      const matchingSwapsIndex = await Promise.all(swaps.map(async (swap) => {
+        const { a: tokenRev, b: buyRev } = swap.env
+        if (buy._rev !== buyRev) return false
+        const [txId, outNum] = tokenRev.split(':')
+        const { result } = await computer.rpcCall('gettxout', `${txId} ${outNum} true`)
+        if (!result) return false
+        const token = await computer.sync(tokenRev) as any
+        return buy.amount === token.amount
+      }))
+      const index = swaps.findIndex((swap, i) => matchingSwapsIndex[i])
+      if (swapTxs[index]) setSwapTx(swapTxs[index])
     }
     fetch()
   }, [computer, buy])
 
-  return <button type="button" onClick={onClick} className="px-3 py-2 text-xs font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-    {tx ? 'Close' : 'Sell'}
-  </button>
+  return swapTx
+    ? <CloseButton computer={computer} swapTx={swapTx} />
+    : <SellButton computer={computer} buy={buy} />
 }
 
 function BuyOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
-  const [open, setOpen] = useState(false)
-  const [buy, setBuy] = useState({ _amount: 0, amount: 0, tokenRoot: '' } as any)
+  const [buy, setBuy] = useState({ _amount: 0, amount: 0, tokenRoot: '', open: false } as any)
 
   const fetch = async () => {
     setBuy(await computer.sync(rev))
@@ -60,23 +82,14 @@ function BuyOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
     fetch()
   }, [computer])
 
-  useEffect(() => {
-    (async () => {
-      if (buy._id) {
-        const [txId, outNum] = buy._id.split(':')
-        const { result } = await computer.rpcCall('gettxout', `${txId} ${outNum} true`)
-        setOpen(!!result)
-      }
-    })()
-  }, [computer, buy])
-
-  return open ?
-    (<tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+  if (!buy.open) return <></>
+  return (
+    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
       <td scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
           {buy._amount/1e8}
       </td>
       <td className="px-6 py-4">{buy.amount}</td>
-      <td className="px-6 py-4">{`...${buy.tokenRoot.slice(-12)}`}</td>
+      <td className="px-6 py-4">{`...${buy.tokenRoot.slice(-10)}`}</td>
       <td className="px-6 py-4">
         <ActionButton computer={computer} buy={buy} />
       </td>
@@ -88,14 +101,13 @@ function BuyOrderRow({ rev, computer }: { rev: string, computer: Computer }) {
         </td>
     </tr>
   )
-  : <></>
 }
 
-export function BuyOrders({ computer }: { computer: Computer }) {
-  const [revs, setRevs] = useState([] as string[])
+export function BuyOrderTable({ computer }: { computer: Computer }) {
+  const [offerRevs, setOfferRevs] = useState([] as string[])
 
   const fetch = async () => {
-    setRevs(await computer.query({ mod: REACT_APP_BUY_MOD_SPEC }))
+    setOfferRevs(await computer.query({ mod: REACT_APP_BUY_MOD_SPEC }))
   }
 
   useEffect(() => {
@@ -119,26 +131,26 @@ export function BuyOrders({ computer }: { computer: Computer }) {
           </tr>
         </thead>
         <tbody>
-          {revs.map((rev) => <BuyOrderRow key={rev} rev={rev} computer={computer} />)}
+          {offerRevs.map((rev) => <BuyOrderRow key={rev} rev={rev} computer={computer} />)}
         </tbody>
       </table> 
     </div>)
 }
 
 export function BuyOrderForm({ computer }: { computer: Computer }) {
-  const [price, setPrice] = useState('1')
+  const [price, setPrice] = useState('0.1')
   const [amount, setAmount] = useState('100')
   const [root, setRoot] = useState('')
   
   const onClick = async (e: any) => {
     e.preventDefault()
     const buyHelper = new BuyHelper(computer, REACT_APP_SWAP_MOD_SPEC!, REACT_APP_BUY_MOD_SPEC)
-    const buyOrder = await buyHelper.broadcastBuyOrder(
+    const buy = await buyHelper.broadcastBuyOrder(
       parseFloat(price) * 1e8, 
       parseInt(amount, 10), 
       root
     )
-    console.log('Created buy order', buyOrder)
+    console.log(`Created buy offer ${buy._rev.slice(-6)}\nprice ${price}\namount ${amount}\nroot ${root.slice(-6)}`)
   }
 
   return <form>
