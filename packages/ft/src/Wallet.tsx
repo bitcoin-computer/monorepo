@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { GrRefresh } from "react-icons/gr"
-import { Modal, ModalContent, Close } from './Modal'
 import type { Computer } from 'bitcoin-computer'
 import PropTypes from 'prop-types'
+import { Modal, ModalContent, Close } from './Modal'
 
 export interface IWalletProps {
   computer: typeof Computer
@@ -24,9 +24,9 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
   }
 
   const handleRefreshClick = async () => {
-    setRefreshing(true);
-    await refresh();
-    setRefreshing(false);
+    setRefreshing(true)
+    await refresh()
+    setRefreshing(false)
   }
 
   useEffect(() => {
@@ -68,7 +68,10 @@ const Wallet: React.FC<IWalletProps> = ({ computer, chain }) => {
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'left' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <span style={{ marginRight: '10px' }}>
-                  {refreshing ? 'Refreshing...' : computer ? `${balance / 1e8} ${chain}` : 'Loading...'}
+                  {
+                  // eslint-disable-next-line no-nested-ternary, no-nested-ternary
+                  refreshing ? 'Refreshing...' : computer ? `${balance / 1e8} ${chain}` : 'Loading...'
+                  }
                 </span>
                 <GrRefresh onClick={handleRefreshClick} className="refresh-button" />
               </div>

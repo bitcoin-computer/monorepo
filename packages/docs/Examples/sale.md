@@ -106,7 +106,7 @@ class PaymentMock {
   }
 }
 
-const mock = new PaymentMock(7860)
+const mock = new PaymentMock(1e8)
 ```
 
 Now Seller is ready to create and sign the partial sale transaction using as shown below. There is a lot going on, so we will break down the arguments below.

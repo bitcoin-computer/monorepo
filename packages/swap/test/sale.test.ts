@@ -43,7 +43,7 @@ describe('Sale', () => {
       const nft = await seller.new(NFT, ['name', 'artist', 'URL'])
 
       // Seller creates a mock for the eventual payment
-      const mock = new PaymentMock(7860)
+      const mock = new PaymentMock(nftPrice)
 
       // Seller creates partially signed swap as a sale offer
       const { tx: saleTx } = await seller.encode({
@@ -70,23 +70,20 @@ describe('Sale', () => {
       await buyer.fund(saleTx)
       await buyer.sign(saleTx)
       await buyer.broadcast(saleTx)
-      // txId of above broadcast
-      // TODO: Clemens this code below doesn't work, but next test passes which uses the similar logic
-      // Bob reads the updated state from the blockchain
-      // const { env } = (await buyer.sync(txId)) as { env: { nft: NFT; payment: NFT } }
-      // const { nft: n, payment: p } = env
+      const { env } = (await buyer.sync(saleTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      const { nft: n, payment: p } = env
 
-      // expect(p._amount).eq(1e8)
-      // expect(n._owners).deep.eq([buyer.getPublicKey()])
-      // expect(p._owners).deep.eq([seller.getPublicKey()])
+      expect(p._amount).eq(1e8)
+      expect(n._owners).deep.eq([buyer.getPublicKey()])
+      expect(p._owners).deep.eq([seller.getPublicKey()])
     })
 
     it('Should work with helper classes', async () => {
       // Create and fund wallets
       const alice = new Computer({ url })
       const bob = new Computer({ url })
-      await alice.faucet(1e6)
-      await bob.faucet(2e8)
+      await alice.faucet(1e5)
+      await bob.faucet(nftPrice + 1e5)
 
       // Alice creates helper objects
       const tbc721A = new TBC721(alice)
@@ -107,9 +104,10 @@ describe('Sale', () => {
       const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
 
       // Bob checks the swap transaction
-      const nftAmount = await saleHelperB.checkSaleTx(saleTx)
+      expect(await saleHelperB.checkSaleTx(saleTx)).eq(nftPrice)
+
       // Bob creates the payment and finalizes the transaction
-      const payment = await bob.new(Payment, [nftAmount])
+      const payment = await bob.new(Payment, [nftPrice])
       const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, bob.toScriptPubKey())
 
       // Bob signs an broadcasts the transaction to execute the swap
@@ -118,27 +116,22 @@ describe('Sale', () => {
       await bob.broadcast(finalTx)
       await sleep(3000)
 
-      const { env } = (await alice.sync(finalTx.getId())) as { env: { nft: NFT; payment: Payment } }
-
       // Bob reads the updated state from the blockchain
-      // const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
-      const { nft: n, payment: p } = env
+      const { env } = (await bob.sync(finalTx.getId())) as { env: { o: any; p: Payment } }
+      const { o, p } = env
 
       expect(p._amount).eq(nftPrice)
-      expect(n._owners).deep.eq([bob.getPublicKey()])
+      expect(o._owners).deep.eq([bob.getPublicKey()])
       expect(p._owners).deep.eq([alice.getPublicKey()])
 
-      const alicePayment = env.payment
-      await sleep(1000)
-      // TODO: Hardcodeed for LTC
+      // Alice withdraws her payment object
       const { tx: alicePaymentTx } = await alice.encode({
         exp: `alicePayment.setAmount(7860)`,
-        env: { alicePayment: alicePayment._rev }
+        env: { alicePayment: p._rev }
       })
-      await alice.broadcast(alicePaymentTx)
-      // TODO: Clemens, this doesn't work
-      // await alicePayment.setAmount(7860)
-      await sleep(3000)
+
+      expect(await alice.broadcast(alicePaymentTx)).a('string')
+      expect((await alice.getBalance()).balance).gte(1e8)
     })
   })
 
@@ -275,12 +268,12 @@ describe('Sale', () => {
 
     it('Seller now owns the payment', async () => {
       const { env } = (await computer.sync(txId)) as any
-      expect(env.payment._owners).deep.eq([sellerPublicKey])
+      expect(env.p._owners).deep.eq([sellerPublicKey])
     })
 
     it('Buyer now owns the nft', async () => {
       const { env } = (await computer.sync(txId)) as any
-      expect(env.nft._owners).deep.eq([buyer.getPublicKey()])
+      expect(env.o._owners).deep.eq([buyer.getPublicKey()])
     })
   })
 })

@@ -1,7 +1,7 @@
 import React from 'react'
-import SendToken from './SendToken'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+import SendToken from './SendToken'
 import { TokenType } from './types'
 
 const CardStyle = styled.div`
