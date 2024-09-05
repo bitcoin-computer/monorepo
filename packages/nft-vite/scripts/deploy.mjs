@@ -9,7 +9,7 @@ config()
 
 const rl = readline.createInterface({ input, output })
 
-const { CHAIN: chain, NETWORK: network, URL: url, MNEMONIC: mnemonic } = process.env
+const { VITE_CHAIN: chain, VITE_NETWORK: network, VITE_URL: url, MNEMONIC: mnemonic } = process.env
 
 if (network !== "regtest") {
   if (!mnemonic) throw new Error("Please set MNEMONIC in the .env file")
