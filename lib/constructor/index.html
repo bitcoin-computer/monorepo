@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.778807437789">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.778973090993">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.778807437789" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.778973090993" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.778807437789" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.778973090993" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.778807437789" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.778807437789" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.778973090993" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.778973090993" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -173,8 +173,9 @@
   passphrase?: string
   addressType?: 'p2pkh' | 'p2wpkh' | 'p2tr',
   url?: string,
-  satPerByte?: number
-  dustRelayFee?: number
+  satPerByte?: number,
+  dustRelayFee?: number,
+  moduleStorageType?: 'taproot' | 'multisig'
 }) =&gt; Computer</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="syntax">
@@ -253,6 +254,11 @@
 <td>dustRelayFee</td>
 <td>Dust relay fee</td>
 <td>30000 on LTC and 3000 on BTC</td>
+</tr>
+<tr>
+<td>moduleStorageType</td>
+<td>Store ES6 modules on Taproot or multisig scripts</td>
+<td>taproot</td>
 </tr>
 </tbody>
 </table>

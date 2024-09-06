@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.778807437789">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.5.0.778973090993">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.5.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.5.0.778807437789" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.5.0.778973090993" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.778807437789" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.5.0.778973090993" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.5.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.778807437789" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.778807437789" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.5.0.778973090993" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.5.0.778973090993" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -176,6 +176,7 @@
         </div>
     </div>
 </div>
+<p>There are two different modes to store a module on the blockchain: <code v-pre>taproot</code> or <code v-pre>multisig</code> mode. The default mode is <code v-pre>taproot</code>. The mode can be changed by passing the option <code v-pre>moduleStorageType</code> into the constructor of the <code v-pre>Computer</code> class. In Taproot mode, the module is stored in a Taproot script. This is cheeper and it enables you to store larger Javascript programs in a module. The multisig mode stores the module in multisig scripts. This is more expensive but compatible with chains that do not support Taproot.</p>
 <doc-anchor-target id="type">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#type">#</doc-anchor-trigger>
