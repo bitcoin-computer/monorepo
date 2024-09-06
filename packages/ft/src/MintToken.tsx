@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { Modal, ModalContent, Close } from './Modal'
 import styled from 'styled-components'
 import type { Computer } from 'bitcoin-computer'
 import PropTypes from 'prop-types'
+import { Modal, ModalContent, Close } from './Modal'
 import Token  from './token-sc'
 
 const Input = styled.input`
@@ -22,9 +22,9 @@ const MintToken: React.FC<IMintTokenProps> = ({ computer }) => {
     try {
       e.preventDefault()
       const publicKey = computer.getPublicKey()
-      const supply = parseInt(supplyString)
+      const supply = parseInt(supplyString, 10)
       await computer.new(Token, [publicKey, supply, name])
-      window.location.reload();
+      window.location.reload()
       /* eslint-disable @typescript-eslint/no-explicit-any */
     } catch (err: any) {
       if (err.message.startsWith('Insufficient balance in address'))

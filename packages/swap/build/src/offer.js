@@ -1,7 +1,7 @@
-const { Contract, Transaction } = await import('@bitcoin-computer/lib');
+import { Transaction } from '@bitcoin-computer/lib';
 export class Offer extends Contract {
     constructor(owner, url, txHex) {
-        super({ _owners: [owner], _url: url, txHex });
+        super({ _owners: [owner], txHex });
     }
     addSaleTx(txHex) {
         this.txHex = txHex;
@@ -37,8 +37,7 @@ export class OfferHelper {
     }
     async decodeOfferTx(offerTxId) {
         const [rev] = await this.computer.query({ ids: [`${offerTxId}:0`] });
-        const syncedOffer = await this.computer.sync(rev);
-        const { txHex } = syncedOffer;
+        const { txHex } = await this.computer.sync(rev);
         return Transaction.deserialize(txHex);
     }
 }

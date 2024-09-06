@@ -24,6 +24,9 @@ cd monorepo
 
 # Install the dependencies
 npm install
+
+# Move to the package
+cd packages/cra-template
 ```
 
 </font>
@@ -39,9 +42,6 @@ To start the application run the command below and open [http://localhost:3000](
 <font size=1>
 
 ```bash
-# Move to the package
-cd packages/cra-template
-
 # Install the dependencies
 npm install
 
@@ -53,6 +53,10 @@ npm run start
 ```
 
 </font>
+
+### Create a New Package
+
+Copy this folder into the packages folder and change the name in the `package.json` file. You can change the name of the app in Navbar.tsx.
 
 ## Documentation
 

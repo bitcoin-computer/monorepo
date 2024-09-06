@@ -1,13 +1,13 @@
 /* eslint max-classes-per-file: ["error", 2] */
 
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
-
-const { Contract, Transaction } = await import('@bitcoin-computer/lib')
+import { Transaction } from '@bitcoin-computer/lib'
 
 export class Offer extends Contract {
   txHex: string
+
   constructor(owner: string, url: string, txHex?: string) {
-    super({ _owners: [owner], _url: url, txHex })
+    super({ _owners: [owner], txHex })
   }
 
   addSaleTx(txHex: string) {
@@ -52,8 +52,7 @@ export class OfferHelper {
 
   async decodeOfferTx(offerTxId: string) {
     const [rev] = await this.computer.query({ ids: [`${offerTxId}:0`] })
-    const syncedOffer: Offer = await this.computer.sync(rev)
-    const { txHex } = syncedOffer
+    const { txHex } = await this.computer.sync(rev)
     return Transaction.deserialize(txHex)
   }
 }

@@ -4,7 +4,7 @@ export default class Token extends Contract {
     super({
       coins: supply,
       _owners: [to],
-      name: name
+      name
     })
   }
 
