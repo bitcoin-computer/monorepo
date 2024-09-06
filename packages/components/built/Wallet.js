@@ -150,7 +150,7 @@ var LogOut = function () { return (_jsxs(_Fragment, { children: [_jsxs("div", __
 export function Wallet(_a) {
     var paymentModSpec = _a.paymentModSpec;
     var computer = useContext(ComputerContext);
-    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !process.env['REACT_APP_CHAIN'] && _jsx(Chain, { computer: computer }), !process.env['REACT_APP_NETWORK'] && _jsx(Network, { computer: computer }), !process.env['REACT_APP_URL'] && _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
+    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !process.env.REACT_APP_CHAIN && _jsx(Chain, { computer: computer }), !process.env.REACT_APP_NETWORK && _jsx(Network, { computer: computer }), !process.env.REACT_APP_URL && _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export var WalletComponents = {

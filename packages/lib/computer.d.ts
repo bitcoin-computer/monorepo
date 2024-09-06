@@ -156,7 +156,7 @@ type ProgramMetaData = JObject &
     _readers?: string[];
     _url?: string;
   }>;
-type ModuleStorageType = 'legacy' | 'taproot';
+type ModuleStorageType = 'multisig' | 'taproot';
 interface FundOptions {
   fund?: boolean;
   include?: string[];
