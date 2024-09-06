@@ -49,7 +49,7 @@ describe('Bitcoin Computer', () => {
       _rev: _.isString,
       _root: _.isString,
       _amount: _.isNumber,
-      _owners: _.isArray,
+      _owners: _.isArray
     })
   })
 
@@ -66,7 +66,7 @@ describe('Bitcoin Computer', () => {
       _rev: _.isString,
       _root: _.isString,
       _amount: _.isNumber,
-      _owners: _.isArray,
+      _owners: _.isArray
     })
   })
 })
