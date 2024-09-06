@@ -105,6 +105,7 @@ declare class RestClient {
   readonly keyPair: BIP32Interface;
   readonly bcn: UrlFetch;
   readonly dustRelayTxFee: number;
+  readonly moduleStorageType: ModuleStorageType;
   satPerByte: number;
   constructor({ chain, network, mnemonic, path, passphrase, addressType, url, satPerByte, dustRelayFee }?: ComputerOptions);
   rpc(method: string, params: string): Promise<any>;
@@ -155,7 +156,7 @@ type ProgramMetaData = JObject &
     _readers?: string[];
     _url?: string;
   }>;
-
+type ModuleStorageType = 'legacy' | 'taproot';
 interface FundOptions {
   fund?: boolean;
   include?: string[];
@@ -172,7 +173,7 @@ interface MockOptions {
     [s: string]: Mock;
   };
 }
-type InscriptionOptions = Partial<{
+type ModuleOptions = Partial<{
   commitAmount: number;
   commitFee: number;
   revealAmount: number;
@@ -191,6 +192,7 @@ type ComputerOptions = Partial<{
   satPerByte: number;
   dustRelayFee: number;
   addressType: AddressType;
+  moduleStorageType: ModuleStorageType;
 }>;
 
 interface SecretOutput {
