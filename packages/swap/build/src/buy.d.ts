@@ -3,6 +3,7 @@ import { StaticSwapHelper } from './static-swap.js';
 declare const Contract: typeof import("@bitcoin-computer/lib/computer.js").Contract;
 export declare class Buy extends Contract {
     amount: number;
+    open: boolean;
     constructor(price: number, amount: number, tokenRoot: string);
     transfer(to: any): void;
 }

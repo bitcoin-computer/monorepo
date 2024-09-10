@@ -2,9 +2,10 @@ import { StaticSwapHelper } from './static-swap.js';
 const { Contract } = await import('@bitcoin-computer/lib');
 export class Buy extends Contract {
     constructor(price, amount, tokenRoot) {
-        super({ _amount: price, amount, tokenRoot });
+        super({ _amount: price, amount, tokenRoot, open: true });
     }
     transfer(to) {
+        this.open = false;
         this._owners = [to];
     }
 }
