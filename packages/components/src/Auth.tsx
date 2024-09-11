@@ -4,7 +4,7 @@ import { initFlowbite } from "flowbite"
 import { HiRefresh } from "react-icons/hi"
 import { useUtilsComponents } from "./UtilsContext"
 import { Modal } from "./Modal"
-import type { Chain, Network } from "./common/types"
+import type { Chain, Network, ModuleStorageType } from "./common/types"
 
 function isLoggedIn(): boolean {
   return !!localStorage.getItem("BIP_39_KEY")
@@ -41,7 +41,9 @@ function loggedOutConfiguration() {
       import.meta.env.VITE_CHAIN) as Chain,
     network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
       import.meta.env.VITE_NETWORK) as Network,
-    url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL
+    url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL,
+    moduleStorageType: (process.env.REACT_APP_MODULE_STORAGE_TYPE ||
+      import.meta.env.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
   }
 }
 
@@ -57,7 +59,9 @@ function loggedInConfiguration() {
     url:
       localStorage.getItem("URL") ||
       (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
-      import.meta.env.VITE_URL
+      import.meta.env.VITE_URL,
+    moduleStorageType: (process.env.REACT_APP_MODULE_STORAGE_TYPE ||
+      import.meta.env.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
   }
 }
 
