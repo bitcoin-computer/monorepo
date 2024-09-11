@@ -168,12 +168,12 @@ const LogOut = () => (
 export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
   const computer = useContext(ComputerContext)
   const chain =
-    (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) || import.meta.env.VITE_CHAIN
+    (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) || import.meta.env?.VITE_CHAIN
   const network =
     (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-    import.meta.env.VITE_NETWORK
+    import.meta.env?.VITE_NETWORK
   const url =
-    (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL
+    (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env?.VITE_URL
 
   const Content = () => (
     <>

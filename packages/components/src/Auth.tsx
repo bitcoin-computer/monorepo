@@ -38,12 +38,13 @@ function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
 function loggedOutConfiguration() {
   return {
     chain: ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-      import.meta.env.VITE_CHAIN) as Chain,
+      import.meta.env?.VITE_CHAIN) as Chain,
     network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-      import.meta.env.VITE_NETWORK) as Network,
-    url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL,
-    moduleStorageType: (process.env.REACT_APP_MODULE_STORAGE_TYPE ||
-      import.meta.env.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
+      import.meta.env?.VITE_NETWORK) as Network,
+    url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env?.VITE_URL,
+    moduleStorageType: ((typeof process !== "undefined" &&
+      process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
+      import.meta.env?.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
   }
 }
 
@@ -52,16 +53,17 @@ function loggedInConfiguration() {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
     chain: (localStorage.getItem("CHAIN") ||
       (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-      import.meta.env.VITE_CHAIN) as Chain,
+      import.meta.env?.VITE_CHAIN) as Chain,
     network: (localStorage.getItem("NETWORK") ||
       (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-      import.meta.env.VITE_NETWORK) as Network,
+      import.meta.env?.VITE_NETWORK) as Network,
     url:
       localStorage.getItem("URL") ||
       (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
-      import.meta.env.VITE_URL,
-    moduleStorageType: (process.env.REACT_APP_MODULE_STORAGE_TYPE ||
-      import.meta.env.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
+      import.meta.env?.VITE_URL,
+    moduleStorageType: ((typeof process !== "undefined" &&
+      process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
+      import.meta.env?.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
   }
 }
 
@@ -304,14 +306,14 @@ function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
   const [chain, setChain] = useState<Chain | undefined>(
     ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-      import.meta.env.VITE_CHAIN) as Chain | undefined
+      import.meta.env?.VITE_CHAIN) as Chain | undefined
   )
   const [network, setNetwork] = useState<Network | undefined>(
     ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-      import.meta.env.VITE_NETWORK) as Network | undefined
+      import.meta.env?.VITE_NETWORK) as Network | undefined
   )
   const [url] = useState<string | undefined>(
-    (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL
+    (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env?.VITE_URL
   )
   const urlInputRef = useRef<HTMLInputElement>(null)
 
