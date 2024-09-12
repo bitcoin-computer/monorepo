@@ -5,6 +5,7 @@ import { HiRefresh } from "react-icons/hi"
 import { useUtilsComponents } from "./UtilsContext"
 import { Modal } from "./Modal"
 import type { Chain, Network, ModuleStorageType } from "./common/types"
+import { getEnv } from "./common/utils"
 
 function isLoggedIn(): boolean {
   return !!localStorage.getItem("BIP_39_KEY")
@@ -37,20 +38,20 @@ function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
 
 function loggedOutConfiguration() {
   return {
-    chain: process.env.REACT_APP_CHAIN as Chain,
-    network: process.env.REACT_APP_NETWORK as Network,
-    url: process.env.REACT_APP_URL,
-    moduleStorageType: process.env.REACT_APP_MODULE_STORAGE_TYPE as ModuleStorageType
+    chain: getEnv('CHAIN') as Chain,
+    network: getEnv('NETWORK') as Network,
+    url: getEnv('URL'),
+    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType
   }
 }
 
 function loggedInConfiguration() {
   return {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: (localStorage.getItem("CHAIN") || process.env.REACT_APP_CHAIN) as Chain,
-    network: (localStorage.getItem("NETWORK") || process.env.REACT_APP_NETWORK) as Network,
-    url: localStorage.getItem("URL") || process.env.REACT_APP_URL,
-    moduleStorageType: process.env.REACT_APP_MODULE_STORAGE_TYPE as ModuleStorageType
+    chain: (localStorage.getItem("CHAIN") || getEnv('CHAIN')) as Chain,
+    network: (localStorage.getItem("NETWORK") || getEnv('NETWORK')) as Network,
+    url: localStorage.getItem("URL") || getEnv('URL'),
+    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType
   }
 }
 
@@ -291,13 +292,9 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 
 function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
-  const [chain, setChain] = useState<Chain | undefined>(
-    process.env.REACT_APP_CHAIN as Chain | undefined
-  )
-  const [network, setNetwork] = useState<Network | undefined>(
-    process.env.REACT_APP_NETWORK as Network | undefined
-  )
-  const [url] = useState<string | undefined>(process.env.REACT_APP_URL)
+  const [chain, setChain] = useState<Chain | undefined>(getEnv('CHAIN') as Chain | undefined)
+  const [network, setNetwork] = useState<Network | undefined>(getEnv('NETWORK') as Network | undefined)
+  const [url] = useState<string | undefined>(getEnv('URL'))
   const urlInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -310,11 +307,9 @@ function LoginForm() {
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {!process.env.REACT_APP_CHAIN && <ChainInput chain={chain} setChain={setChain} />}
-            {!process.env.REACT_APP_NETWORK && (
-              <NetworkInput network={network} setNetwork={setNetwork} />
-            )}
-            {!process.env.REACT_APP_URL && <UrlInput urlInputRef={urlInputRef} />}
+            {!chain && <ChainInput chain={chain} setChain={setChain} />}
+            {!network && <NetworkInput network={network} setNetwork={setNetwork} />}
+            {!url && <UrlInput urlInputRef={urlInputRef} />}
           </div>
         </form>
       </div>
