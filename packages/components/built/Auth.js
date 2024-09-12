@@ -50,34 +50,20 @@ function getEnv(name) {
     return (typeof process !== "undefined" && process.env["REACT_APP_".concat(name)]) || import.meta.env["VITE_".concat(name)];
 }
 function loggedOutConfiguration() {
-    var _a, _b, _c, _d;
     return {
-        chain: ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-            ((_a = import.meta.env) === null || _a === void 0 ? void 0 : _a.VITE_CHAIN)),
-        network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-            ((_b = import.meta.env) === null || _b === void 0 ? void 0 : _b.VITE_NETWORK)),
-        url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || ((_c = import.meta.env) === null || _c === void 0 ? void 0 : _c.VITE_URL),
-        moduleStorageType: ((typeof process !== "undefined" &&
-            process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
-            ((_d = import.meta.env) === null || _d === void 0 ? void 0 : _d.VITE_MODULE_STORAGE_TYPE))
+        chain: getEnv('CHAIN'),
+        network: getEnv('NETWORK'),
+        url: getEnv('URL'),
+        moduleStorageType: getEnv('MODULE_STORAGE_TYPE')
     };
 }
 function loggedInConfiguration() {
-    var _a, _b, _c, _d;
     return {
         mnemonic: localStorage.getItem("BIP_39_KEY"),
-        chain: (localStorage.getItem("CHAIN") ||
-            (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-            ((_a = import.meta.env) === null || _a === void 0 ? void 0 : _a.VITE_CHAIN)),
-        network: (localStorage.getItem("NETWORK") ||
-            (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-            ((_b = import.meta.env) === null || _b === void 0 ? void 0 : _b.VITE_NETWORK)),
-        url: localStorage.getItem("URL") ||
-            (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
-            ((_c = import.meta.env) === null || _c === void 0 ? void 0 : _c.VITE_URL),
-        moduleStorageType: ((typeof process !== "undefined" &&
-            process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
-            ((_d = import.meta.env) === null || _d === void 0 ? void 0 : _d.VITE_MODULE_STORAGE_TYPE))
+        chain: (localStorage.getItem("CHAIN") || getEnv('CHAIN')),
+        network: (localStorage.getItem("NETWORK") || getEnv('NETWORK')),
+        url: localStorage.getItem("URL") || getEnv('URL'),
+        moduleStorageType: getEnv('MODULE_STORAGE_TYPE')
     };
 }
 function getComputer() {

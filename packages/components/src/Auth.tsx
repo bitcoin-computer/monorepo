@@ -41,33 +41,20 @@ function getEnv(name: string) {
 
 function loggedOutConfiguration() {
   return {
-    chain: ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-      import.meta.env?.VITE_CHAIN) as Chain,
-    network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-      import.meta.env?.VITE_NETWORK) as Network,
-    url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env?.VITE_URL,
-    moduleStorageType: ((typeof process !== "undefined" &&
-      process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
-      import.meta.env?.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
+    chain: getEnv('CHAIN') as Chain,
+    network: getEnv('NETWORK') as Network,
+    url: getEnv('URL'),
+    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType
   }
 }
 
 function loggedInConfiguration() {
   return {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: (localStorage.getItem("CHAIN") ||
-      (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-      import.meta.env?.VITE_CHAIN) as Chain,
-    network: (localStorage.getItem("NETWORK") ||
-      (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-      import.meta.env?.VITE_NETWORK) as Network,
-    url:
-      localStorage.getItem("URL") ||
-      (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
-      import.meta.env?.VITE_URL,
-    moduleStorageType: ((typeof process !== "undefined" &&
-      process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
-      import.meta.env?.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
+    chain: (localStorage.getItem("CHAIN") || getEnv('CHAIN')) as Chain,
+    network: (localStorage.getItem("NETWORK") || getEnv('NETWORK')) as Network,
+    url: localStorage.getItem("URL") || getEnv('URL'),
+    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType
   }
 }
 
