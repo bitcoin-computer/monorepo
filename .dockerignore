@@ -19,6 +19,7 @@ packages/docs
 packages/explorer
 packages/nft
 packages/ft
+packages/ft2
 packages/nodejs-template
 packages/swap/
 packages/TBC*/

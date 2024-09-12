@@ -1,18 +1,20 @@
 /* eslint-disable max-classes-per-file */
-import { NFT } from '@bitcoin-computer/TBC721'
 import { Buffer } from 'buffer'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
 
 const { Contract, Transaction } = await import('@bitcoin-computer/lib')
 
+// eslint-disable-next-line no-bitwise
+const sighashType = Transaction.SIGHASH_SINGLE | Transaction.SIGHASH_ANYONECANPAY
+
 export class Sale extends Contract {
-  static exec(n: NFT, p: Payment) {
-    const [ownerN] = n._owners
+  static exec(o: any, p: Payment) {
+    const [ownerN] = o._owners
     const [ownerP] = p._owners
-    n.transfer(ownerP)
+    o.transfer(ownerP)
     p.transfer(ownerN)
-    return [p, n]
+    return [p, o]
   }
 }
 
@@ -30,46 +32,38 @@ export class SaleHelper {
     return this.mod
   }
 
-  createSaleTx(nft: NFT, payment: PaymentMock) {
-    const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
+  createSaleTx(object: any, payment: PaymentMock) {
     return this.computer.encode({
-      exp: `Sale.exec(nft, payment)`,
-      env: { nft: nft._rev, payment: payment._rev },
+      exp: `Sale.exec(o, p)`,
+      env: { o: object._rev, p: payment._rev },
       mocks: { payment },
-      // eslint-disable-next-line no-bitwise
-      sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+      sighashType,
       inputIndex: 0,
       fund: false,
       mod: this.mod
     })
   }
 
+  async isSaleTx(tx: TransactionType): Promise<boolean> {
+    const { exp, mod } = await this.computer.decode(tx)
+    return exp === 'Sale.exec(o, p)' && mod === this.mod
+  }
+
   async checkSaleTx(tx: TransactionType): Promise<number> {
     const { exp, env, mod } = await this.computer.decode(tx)
-    if (exp !== 'Sale.exec(nft, payment)') throw new Error('Unexpected expression')
+    if (exp !== 'Sale.exec(o, p)') throw new Error('Unexpected expression')
     if (mod !== this.mod) throw new Error('Unexpected module specifier')
 
     // As this is a mock for checking saleTx, it can be with any public key
-    const payment = new PaymentMock(tx.outs[0].value)
-    env.payment = payment._rev
+    const p = new PaymentMock(tx.outs[0].value)
+    env.p = p._rev
+    const mocks = { p }
+    const fund = false
+    const sign = false
+    const { effect } = await this.computer.encode({ exp, env, mod, mocks, fund, sign, sighashType })
 
-    const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
-    const {
-      effect: { res: r, env: e }
-    } = await this.computer.encode({
-      exp,
-      env,
-      mod,
-      mocks: { payment },
-      fund: false,
-      sign: false,
-      // eslint-disable-next-line no-bitwise
-      sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY
-    })
-
-    if (r === undefined) throw new Error('Unexpected result')
-    if (Object.keys(e).toString() !== 'nft,payment') throw new Error('Unexpected environment')
-
+    if (effect.res === undefined) throw new Error('Unexpected result')
+    if (Object.keys(effect.env).toString() !== 'o,p') throw new Error('Unexpected environment')
     return tx.outs[0].value
   }
 

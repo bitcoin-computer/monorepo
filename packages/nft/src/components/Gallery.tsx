@@ -22,29 +22,25 @@ export type UserQuery<T extends Class> = Partial<{
 
 function NFTCard({ nft }: { nft: NFT }) {
   return (
-    <div className="w-full max-w-80 bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4">
-      <a href="#">
-        <div className="w-full h-64 bg-gray-200 flex items-center justify-center">
-          <img className="max-h-full max-w-full object-contain" src={nft.url} alt="" />
-        </div>
-      </a>
-      <div className="p-5">
-        <a href="#">
+    <>
+      <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4">
+        <img className="h-auto rounded-t-lg max-w-full" src={nft.url} alt="" />
+        <div className="p-4 border-t">
           <h5
-            className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white truncate"
+            className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white break-words"
             title={nft.name}
           >
             {nft.name}
           </h5>
-        </a>
-        <p
-          className="mb-3 font-normal text-gray-700 dark:text-gray-400 truncate"
-          title={nft.artist}
-        >
-          {nft.artist}
-        </p>
+          <p
+            className="mb-3 font-normal text-gray-700 dark:text-gray-400 break-words"
+            title={nft.artist}
+          >
+            {nft.artist}
+          </p>
+        </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -111,19 +107,65 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
 }
 
 function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
+  const cols: string[][] = [[], [], [], []]
+
+  revs.forEach((rev, index) => {
+    const colNumber = index % 4
+    cols[colNumber].push(rev)
+  })
   return (
-    <div className="flex flex-wrap gap-4 mb-4 mt-4">
-      {revs.map((rev) => (
-        <div key={rev}>
-          <Link
-            to={`/objects/${rev}`}
-            className="block font-medium text-blue-600 dark:text-blue-500 w-full"
-          >
-            <ValueComponent rev={rev} computer={computer} />
-          </Link>
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid gap-4">
+          {cols[0].map((rev) => (
+            <div key={rev}>
+              <Link
+                to={`/objects/${rev}`}
+                className="block font-medium text-blue-600 dark:text-blue-500"
+              >
+                <ValueComponent rev={rev} computer={computer} />
+              </Link>
+            </div>
+          ))}
         </div>
-      ))}
-    </div>
+        <div className="grid gap-4">
+          {cols[1].map((rev) => (
+            <div key={rev}>
+              <Link
+                to={`/objects/${rev}`}
+                className="block font-medium text-blue-600 dark:text-blue-500"
+              >
+                <ValueComponent rev={rev} computer={computer} />
+              </Link>
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-4">
+          {cols[2].map((rev) => (
+            <div key={rev}>
+              <Link
+                to={`/objects/${rev}`}
+                className="block font-medium text-blue-600 dark:text-blue-500 w-full"
+              >
+                <ValueComponent rev={rev} computer={computer} />
+              </Link>
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-4">
+          {cols[3].map((rev) => (
+            <div key={rev}>
+              <Link
+                to={`/objects/${rev}`}
+                className="block font-medium text-blue-600 dark:text-blue-500 w-full"
+              >
+                <ValueComponent rev={rev} computer={computer} />
+              </Link>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
   )
 }
 
@@ -206,7 +248,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       const query = { ...q, ...params }
       query.offset = contractsPerPage * pageNum
       query.limit = contractsPerPage + 1
-      query.order = 'DESC'
+      query.order = "DESC"
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
       setRevs(result.slice(0, contractsPerPage))

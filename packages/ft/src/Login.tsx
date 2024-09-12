@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
-import useInterval from './useInterval'
 import styled from 'styled-components'
 import { Computer } from "@bitcoin-computer/lib"
+import useInterval from './useInterval'
 
 const LoginScreen = styled.div`
   height: 100%;
@@ -39,7 +39,7 @@ const Login: React.FC<ILoginProps> = (props) => {
     window.localStorage.setItem('CHAIN', chain)
     const computer = new Computer({
       ...config,
-      chain: chain,
+      chain,
       mnemonic: localStorage.getItem("BIP_39_KEY"),
     })
     setComputer(computer)

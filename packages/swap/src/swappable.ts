@@ -1,7 +1,5 @@
 import { NFT } from '@bitcoin-computer/TBC721'
 
-const { Contract } = await import('@bitcoin-computer/lib')
-
 export class Swappable extends Contract {
   name: string
   artist: string

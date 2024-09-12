@@ -3,9 +3,8 @@ import { NFT } from '@bitcoin-computer/TBC721';
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
 import { Buffer } from 'buffer';
 import { Payment, PaymentMock } from './payment.js';
-declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class OrdSale extends Contract {
-    static exec(b1: Payment, b2: Payment, n: NFT, p: Payment): (Payment | NFT)[];
+    static exec(b1: Payment, b2: Payment, n: NFT, p: Payment): (NFT | Payment)[];
 }
 export declare class OrdSaleHelper {
     computer: any;
@@ -16,4 +15,3 @@ export declare class OrdSaleHelper {
     static checkSaleTx(): void;
     static finalizeSaleTx(tx: TransactionType, b1: Payment, b2: Payment, payment: Payment, scriptPubKey: Buffer): TransactionType;
 }
-export {};

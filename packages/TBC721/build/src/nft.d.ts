@@ -1,4 +1,3 @@
-declare const Contract: typeof import("@bitcoin-computer/lib").Contract;
 export declare class NFT extends Contract {
     name: string;
     artist: string;
@@ -26,4 +25,3 @@ export declare class TBC721 implements ITBC721 {
     ownersOf(tokenId: string): Promise<string[]>;
     transfer(to: string, tokenId: string): Promise<void>;
 }
-export {};

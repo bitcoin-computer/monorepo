@@ -29,9 +29,11 @@ function Chat({ computer }) {
     const line = `${username}: ${message}`
     try {
       await chat.post(line)
+      // eslint-disable-next-line no-console
       console.log(`Sent message ${line}\n  chat id  ${chat._id}\n  chat rev ${chat._rev}`)
     } catch (error) {
       if (error.message.startsWith('Insufficient balance in address')) {
+        // eslint-disable-next-line no-alert, no-undef
         alert('You have to fund your wallet')
       }
     }

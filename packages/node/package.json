@@ -40,7 +40,6 @@
     "start": "node dist/bcn.es.mjs",
     "sync": "node dist/bcn.sync.es.mjs",
     "setup": "./scripts/setup.py",
-    "types": "tsc -p tsconfig.json",
     "test": "node --loader ts-node/esm  ./scripts/test.ts",
     "test-node-and-show": "../../scripts/test-and-show.sh node-test.log",
     "test-unit": "npm run test -- -u",
