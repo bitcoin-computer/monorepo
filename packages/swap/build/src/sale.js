@@ -1,4 +1,4 @@
-import { Transaction } from '@bitcoin-computer/lib';
+import { Transaction } from '@bitcoin-computer/nakamotojs';
 import { PaymentMock } from './payment.js';
 const sighashType = Transaction.SIGHASH_SINGLE | Transaction.SIGHASH_ANYONECANPAY;
 export class Sale extends Contract {

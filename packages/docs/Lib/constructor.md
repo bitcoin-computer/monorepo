@@ -13,8 +13,9 @@ new (config: {
   passphrase?: string
   addressType?: 'p2pkh' | 'p2wpkh' | 'p2tr',
   url?: string,
-  satPerByte?: number
-  dustRelayFee?: number
+  satPerByte?: number,
+  dustRelayFee?: number,
+  moduleStorageType?: 'taproot' | 'multisig'
 }) => Computer
 ````
 
@@ -40,6 +41,7 @@ A configuration object
 | url          | Url of a Bitcoin Computer Node                               | https://rltc.node.bitcoincomputer.io |
 | satPerByte   | Fee in satoshi per byte                                      | 2                                    |
 | dustRelayFee | Dust relay fee                                               | 30000 on LTC and 3000 on BTC         |
+| moduleStorageType | Store ES6 modules on Taproot or multisig scripts        | taproot                              |
 
 
 ### Return Value

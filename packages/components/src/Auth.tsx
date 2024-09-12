@@ -4,7 +4,7 @@ import { initFlowbite } from "flowbite"
 import { HiRefresh } from "react-icons/hi"
 import { useUtilsComponents } from "./UtilsContext"
 import { Modal } from "./Modal"
-import type { Chain, Network } from "./common/types"
+import type { Chain, Network, ModuleStorageType } from "./common/types"
 
 function isLoggedIn(): boolean {
   return !!localStorage.getItem("BIP_39_KEY")
@@ -41,18 +41,33 @@ function getEnv(name: string) {
 
 function loggedOutConfiguration() {
   return {
-    chain: getEnv('CHAIN') as Chain,
-    network: getEnv('NETWORK') as Network,
-    url: getEnv('URL')
+    chain: ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+      import.meta.env?.VITE_CHAIN) as Chain,
+    network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+      import.meta.env?.VITE_NETWORK) as Network,
+    url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env?.VITE_URL,
+    moduleStorageType: ((typeof process !== "undefined" &&
+      process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
+      import.meta.env?.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
   }
 }
 
 function loggedInConfiguration() {
   return {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: (localStorage.getItem("CHAIN") || getEnv('CHAIN')) as Chain,
-    network: (localStorage.getItem("NETWORK") || getEnv('NETWORK')) as Network,
-    url: localStorage.getItem("URL") || getEnv('URL')
+    chain: (localStorage.getItem("CHAIN") ||
+      (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+      import.meta.env?.VITE_CHAIN) as Chain,
+    network: (localStorage.getItem("NETWORK") ||
+      (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+      import.meta.env?.VITE_NETWORK) as Network,
+    url:
+      localStorage.getItem("URL") ||
+      (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
+      import.meta.env?.VITE_URL,
+    moduleStorageType: ((typeof process !== "undefined" &&
+      process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
+      import.meta.env?.VITE_MODULE_STORAGE_TYPE) as ModuleStorageType
   }
 }
 
@@ -295,14 +310,14 @@ function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
   const [chain, setChain] = useState<Chain | undefined>(
     ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-      import.meta.env.VITE_CHAIN) as Chain | undefined
+      import.meta.env?.VITE_CHAIN) as Chain | undefined
   )
   const [network, setNetwork] = useState<Network | undefined>(
     ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-      import.meta.env.VITE_NETWORK) as Network | undefined
+      import.meta.env?.VITE_NETWORK) as Network | undefined
   )
   const [url] = useState<string | undefined>(
-    (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL
+    (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env?.VITE_URL
   )
   const urlInputRef = useRef<HTMLInputElement>(null)
 

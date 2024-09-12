@@ -1,5 +1,5 @@
 import { Computer } from "@bitcoin-computer/lib";
-import type { Chain, Network } from "./common/types";
+import type { Chain, Network, ModuleStorageType } from "./common/types";
 declare function isLoggedIn(): boolean;
 declare function logout(): void;
 declare function getCoinType(chain: string, network: string): number;
@@ -12,12 +12,14 @@ declare function loggedOutConfiguration(): {
     chain: Chain;
     network: Network;
     url: any;
+    moduleStorageType: ModuleStorageType;
 };
 declare function loggedInConfiguration(): {
     mnemonic: string | null;
     chain: Chain;
     network: Network;
     url: any;
+    moduleStorageType: ModuleStorageType;
 };
 declare function getComputer(): Computer;
 declare function LoginForm(): import("react/jsx-runtime").JSX.Element;

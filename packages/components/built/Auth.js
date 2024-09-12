@@ -50,18 +50,34 @@ function getEnv(name) {
     return (typeof process !== "undefined" && process.env["REACT_APP_".concat(name)]) || import.meta.env["VITE_".concat(name)];
 }
 function loggedOutConfiguration() {
+    var _a, _b, _c, _d;
     return {
-        chain: getEnv('CHAIN'),
-        network: getEnv('NETWORK'),
-        url: getEnv('URL')
+        chain: ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+            ((_a = import.meta.env) === null || _a === void 0 ? void 0 : _a.VITE_CHAIN)),
+        network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+            ((_b = import.meta.env) === null || _b === void 0 ? void 0 : _b.VITE_NETWORK)),
+        url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || ((_c = import.meta.env) === null || _c === void 0 ? void 0 : _c.VITE_URL),
+        moduleStorageType: ((typeof process !== "undefined" &&
+            process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
+            ((_d = import.meta.env) === null || _d === void 0 ? void 0 : _d.VITE_MODULE_STORAGE_TYPE))
     };
 }
 function loggedInConfiguration() {
+    var _a, _b, _c, _d;
     return {
         mnemonic: localStorage.getItem("BIP_39_KEY"),
-        chain: (localStorage.getItem("CHAIN") || getEnv('CHAIN')),
-        network: (localStorage.getItem("NETWORK") || getEnv('NETWORK')),
-        url: localStorage.getItem("URL") || getEnv('URL')
+        chain: (localStorage.getItem("CHAIN") ||
+            (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+            ((_a = import.meta.env) === null || _a === void 0 ? void 0 : _a.VITE_CHAIN)),
+        network: (localStorage.getItem("NETWORK") ||
+            (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+            ((_b = import.meta.env) === null || _b === void 0 ? void 0 : _b.VITE_NETWORK)),
+        url: localStorage.getItem("URL") ||
+            (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
+            ((_c = import.meta.env) === null || _c === void 0 ? void 0 : _c.VITE_URL),
+        moduleStorageType: ((typeof process !== "undefined" &&
+            process.env.REACT_APP_MODULE_STORAGE_TYPE) ||
+            ((_d = import.meta.env) === null || _d === void 0 ? void 0 : _d.VITE_MODULE_STORAGE_TYPE))
     };
 }
 function getComputer() {
@@ -103,12 +119,13 @@ function LoginButton(_a) {
     return (_jsx(_Fragment, { children: _jsx("button", __assign({ onClick: login, type: "submit", className: "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" }, { children: "Log In" })) }));
 }
 function LoginForm() {
-    var _a = useState(new Computer().getMnemonic()), mnemonic = _a[0], setMnemonic = _a[1];
-    var _b = useState(((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-        import.meta.env.VITE_CHAIN)), chain = _b[0], setChain = _b[1];
-    var _c = useState(((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-        import.meta.env.VITE_NETWORK)), network = _c[0], setNetwork = _c[1];
-    var url = useState((typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL)[0];
+    var _a, _b, _c;
+    var _d = useState(new Computer().getMnemonic()), mnemonic = _d[0], setMnemonic = _d[1];
+    var _e = useState(((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
+        ((_a = import.meta.env) === null || _a === void 0 ? void 0 : _a.VITE_CHAIN))), chain = _e[0], setChain = _e[1];
+    var _f = useState(((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
+        ((_b = import.meta.env) === null || _b === void 0 ? void 0 : _b.VITE_NETWORK))), network = _f[0], setNetwork = _f[1];
+    var url = useState((typeof process !== "undefined" && process.env.REACT_APP_URL) || ((_c = import.meta.env) === null || _c === void 0 ? void 0 : _c.VITE_URL))[0];
     var urlInputRef = useRef(null);
     useEffect(function () {
         initFlowbite();
