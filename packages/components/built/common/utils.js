@@ -75,3 +75,6 @@ export function isValidRev(value) {
 }
 // eslint-disable-next-line
 export var sleep = function (ms) { return new Promise(function (resolve) { return setTimeout(resolve, ms); }); };
+export function getEnv(name) {
+    return (typeof process !== "undefined" && process.env["REACT_APP_".concat(name)]) || import.meta.env["VITE_".concat(name)];
+}

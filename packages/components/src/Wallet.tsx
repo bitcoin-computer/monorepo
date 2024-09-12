@@ -5,6 +5,7 @@ import { Auth } from "./Auth"
 import { Drawer } from "./Drawer"
 import { UtilsContext } from "./UtilsContext"
 import { ComputerContext } from "./ComputerContext"
+import { getEnv } from "./common/utils"
 
 const Balance = ({
   computer,
@@ -167,7 +168,6 @@ const LogOut = () => (
 
 export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
   const computer = useContext(ComputerContext)
-
   const Content = () => (
     <>
       <h4 className="text-2xl font-bold dark:text-white">Wallet</h4>
@@ -175,9 +175,9 @@ export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
       <Address computer={computer} />
       <PublicKey computer={computer} />
       <Mnemonic computer={computer} />
-      {!process.env["REACT_APP_CHAIN"] && <Chain computer={computer} />}
-      {!process.env["REACT_APP_NETWORK"] && <Network computer={computer} />}
-      {!process.env["REACT_APP_URL"] && <Url computer={computer} />}
+      {!getEnv('CHAIN') && <Chain computer={computer} />}
+      {!getEnv('NETWORK') && <Network computer={computer} />}
+      {!getEnv('URL') && <Url computer={computer} />}
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>
