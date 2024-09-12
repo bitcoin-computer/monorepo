@@ -295,17 +295,9 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 
 function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
-  const [chain, setChain] = useState<Chain | undefined>(
-    ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-      import.meta.env?.VITE_CHAIN) as Chain | undefined
-  )
-  const [network, setNetwork] = useState<Network | undefined>(
-    ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-      import.meta.env?.VITE_NETWORK) as Network | undefined
-  )
-  const [url] = useState<string | undefined>(
-    (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env?.VITE_URL
-  )
+  const [chain, setChain] = useState<Chain | undefined>(getEnv('CHAIN') as Chain | undefined)
+  const [network, setNetwork] = useState<Network | undefined>(getEnv('NETWORK') as Network | undefined)
+  const [url] = useState<string | undefined>(getEnv('URL'))
   const urlInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
