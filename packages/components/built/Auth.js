@@ -16,6 +16,7 @@ import { initFlowbite } from "flowbite";
 import { HiRefresh } from "react-icons/hi";
 import { useUtilsComponents } from "./UtilsContext";
 import { Modal } from "./Modal";
+import { getEnv } from "./common/utils";
 function isLoggedIn() {
     return !!localStorage.getItem("BIP_39_KEY");
 }
@@ -45,9 +46,6 @@ function getCoinType(chain, network) {
 function getBip44Path(_a) {
     var _b = _a === void 0 ? {} : _a, _c = _b.purpose, purpose = _c === void 0 ? 44 : _c, _d = _b.coinType, coinType = _d === void 0 ? 2 : _d, _e = _b.account, account = _e === void 0 ? 0 : _e;
     return "m/".concat(purpose.toString(), "'/").concat(coinType.toString(), "'/").concat(account.toString(), "'");
-}
-function getEnv(name) {
-    return (typeof process !== "undefined" && process.env["REACT_APP_".concat(name)]) || import.meta.env["VITE_".concat(name)];
 }
 function loggedOutConfiguration() {
     return {

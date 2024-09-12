@@ -52,6 +52,7 @@ import { Auth } from "./Auth";
 import { Drawer } from "./Drawer";
 import { UtilsContext } from "./UtilsContext";
 import { ComputerContext } from "./ComputerContext";
+import { getEnv } from "./common/utils";
 var Balance = function (_a) {
     var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
     var _b = useState(0), balance = _b[0], setBalance = _b[1];
@@ -148,14 +149,9 @@ var Network = function (_a) {
 };
 var LogOut = function () { return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mb-6" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Log out" })), _jsx("p", __assign({ className: "mb-1 text-sm text-gray-500 dark:text-gray-400" }, { children: "Logging out will delete your mnemonic. Make sure to write it down." }))] })), _jsx("div", __assign({ className: "grid grid-cols-2 gap-4" }, { children: _jsx("button", __assign({ onClick: Auth.logout, className: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700" }, { children: "Log out" })) }))] })); };
 export function Wallet(_a) {
-    var _b, _c, _d;
     var paymentModSpec = _a.paymentModSpec;
     var computer = useContext(ComputerContext);
-    var chain = (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) || ((_b = import.meta.env) === null || _b === void 0 ? void 0 : _b.VITE_CHAIN);
-    var network = (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-        ((_c = import.meta.env) === null || _c === void 0 ? void 0 : _c.VITE_NETWORK);
-    var url = (typeof process !== "undefined" && process.env.REACT_APP_URL) || ((_d = import.meta.env) === null || _d === void 0 ? void 0 : _d.VITE_URL);
-    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !chain && _jsx(Chain, { computer: computer }), !network && _jsx(Network, { computer: computer }), !url && _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
+    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !getEnv('CHAIN') && _jsx(Chain, { computer: computer }), !getEnv('NETWORK') && _jsx(Network, { computer: computer }), !getEnv('URL') && _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export var WalletComponents = {

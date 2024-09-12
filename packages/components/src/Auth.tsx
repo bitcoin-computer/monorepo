@@ -5,6 +5,7 @@ import { HiRefresh } from "react-icons/hi"
 import { useUtilsComponents } from "./UtilsContext"
 import { Modal } from "./Modal"
 import type { Chain, Network, ModuleStorageType } from "./common/types"
+import { getEnv } from "./common/utils"
 
 function isLoggedIn(): boolean {
   return !!localStorage.getItem("BIP_39_KEY")
@@ -33,10 +34,6 @@ function getCoinType(chain: string, network: string): number {
 
 function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
   return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
-}
-
-function getEnv(name: string) {
-  return (typeof process !== "undefined" && process.env[`REACT_APP_${name}`]) || import.meta.env[`VITE_${name}`]
 }
 
 function loggedOutConfiguration() {
