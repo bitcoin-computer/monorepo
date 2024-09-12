@@ -46,27 +46,22 @@ function getBip44Path(_a) {
     var _b = _a === void 0 ? {} : _a, _c = _b.purpose, purpose = _c === void 0 ? 44 : _c, _d = _b.coinType, coinType = _d === void 0 ? 2 : _d, _e = _b.account, account = _e === void 0 ? 0 : _e;
     return "m/".concat(purpose.toString(), "'/").concat(coinType.toString(), "'/").concat(account.toString(), "'");
 }
+function getEnv(name) {
+    return (typeof process !== "undefined" && process.env["REACT_APP_".concat(name)]) || import.meta.env["VITE_".concat(name)];
+}
 function loggedOutConfiguration() {
     return {
-        chain: ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-            import.meta.env.VITE_CHAIN),
-        network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-            import.meta.env.VITE_NETWORK),
-        url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL
+        chain: getEnv('CHAIN'),
+        network: getEnv('NETWORK'),
+        url: getEnv('URL')
     };
 }
 function loggedInConfiguration() {
     return {
         mnemonic: localStorage.getItem("BIP_39_KEY"),
-        chain: (localStorage.getItem("CHAIN") ||
-            (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-            import.meta.env.VITE_CHAIN),
-        network: (localStorage.getItem("NETWORK") ||
-            (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-            import.meta.env.VITE_NETWORK),
-        url: localStorage.getItem("URL") ||
-            (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
-            import.meta.env.VITE_URL
+        chain: (localStorage.getItem("CHAIN") || getEnv('CHAIN')),
+        network: (localStorage.getItem("NETWORK") || getEnv('NETWORK')),
+        url: localStorage.getItem("URL") || getEnv('URL')
     };
 }
 function getComputer() {

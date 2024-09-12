@@ -35,29 +35,24 @@ function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
   return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
 }
 
+function getEnv(name: string) {
+  return (typeof process !== "undefined" && process.env[`REACT_APP_${name}`]) || import.meta.env[`VITE_${name}`]
+}
+
 function loggedOutConfiguration() {
   return {
-    chain: ((typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-      import.meta.env.VITE_CHAIN) as Chain,
-    network: ((typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-      import.meta.env.VITE_NETWORK) as Network,
-    url: (typeof process !== "undefined" && process.env.REACT_APP_URL) || import.meta.env.VITE_URL
+    chain: getEnv('CHAIN') as Chain,
+    network: getEnv('NETWORK') as Network,
+    url: getEnv('URL')
   }
 }
 
 function loggedInConfiguration() {
   return {
     mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: (localStorage.getItem("CHAIN") ||
-      (typeof process !== "undefined" && process.env.REACT_APP_CHAIN) ||
-      import.meta.env.VITE_CHAIN) as Chain,
-    network: (localStorage.getItem("NETWORK") ||
-      (typeof process !== "undefined" && process.env.REACT_APP_NETWORK) ||
-      import.meta.env.VITE_NETWORK) as Network,
-    url:
-      localStorage.getItem("URL") ||
-      (typeof process !== "undefined" && process.env.REACT_APP_URL) ||
-      import.meta.env.VITE_URL
+    chain: (localStorage.getItem("CHAIN") || getEnv('CHAIN')) as Chain,
+    network: (localStorage.getItem("NETWORK") || getEnv('NETWORK')) as Network,
+    url: localStorage.getItem("URL") || getEnv('URL')
   }
 }
 
