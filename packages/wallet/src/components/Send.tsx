@@ -5,6 +5,7 @@ import { Computer } from "@bitcoin-computer/lib"
 import { HiRefresh } from "react-icons/hi"
 import TransactionTable from "./TransactionTable"
 import { TableTxs } from "../types/common"
+import { BalanceContext } from "./Utils/BalanceContext"
 
 export function SentTransactions({ computer }: { computer: Computer }) {
   const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
@@ -36,6 +37,7 @@ export function SendForm({ computer }: { computer: Computer }) {
   const [amount, setAmount] = useState<string>("")
   const [fee, setFee] = useState<string>("2")
   const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const { setBalance } = BalanceContext.useBalance()
 
   useEffect(() => {
     initFlowbite()
@@ -46,6 +48,7 @@ export function SendForm({ computer }: { computer: Computer }) {
     computer.setFee(Number(fee))
     try {
       const txId = await computer.send(Number(amount) * 1e8, to)
+      setBalance((await computer.getBalance()).balance)
       showSnackBar(`Sent ${amount} ${computer.getChain()} to ${to} via transaction ${txId}`, true)
     } catch (err) {
       showSnackBar(`Something went wrong ${err instanceof Error ? err.message : ""}`, false)
