@@ -1,6 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { StaticSwapHelper } from './static-swap.js'
+import { OfferHelper } from './offer.js'
 
 const { Contract } = await import('@bitcoin-computer/lib')
 
@@ -44,6 +45,17 @@ export class BuyHelper {
     buyOrder: Buy
   ): Promise<{ tx: Transaction; effect: { res: any; env: any } }> {
     return this.swapHelper.createSwapTx(token, buyOrder)
+  }
+
+  async close(token: any, buy: Buy, mod: string) {
+    const offerHelper = new OfferHelper(this.computer, mod)
+    const { tx: swapTx } = await this.acceptBuyOrder(token, buy)
+    const { tx: offerTx } = await offerHelper.createOfferTx(
+      buy._owners[0],
+      this.computer.getUrl(),
+      swapTx
+    )
+    return this.computer.broadcast(offerTx)
   }
 
   async isOpen(buy: Buy): Promise<boolean> {

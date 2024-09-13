@@ -22,6 +22,7 @@ export declare class BuyHelper {
             env: any;
         };
     }>;
+    close(token: any, buy: Buy, mod: string): Promise<any>;
     isOpen(buy: Buy): Promise<boolean>;
     settleBuyOrder(swapTx: Transaction): Promise<string>;
 }

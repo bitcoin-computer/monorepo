@@ -1,4 +1,5 @@
 import { StaticSwapHelper } from './static-swap.js';
+import { OfferHelper } from './offer.js';
 const { Contract } = await import('@bitcoin-computer/lib');
 export class Buy extends Contract {
     constructor(price, amount, tokenRoot) {
@@ -24,6 +25,12 @@ export class BuyHelper {
     }
     async acceptBuyOrder(token, buyOrder) {
         return this.swapHelper.createSwapTx(token, buyOrder);
+    }
+    async close(token, buy, mod) {
+        const offerHelper = new OfferHelper(this.computer, mod);
+        const { tx: swapTx } = await this.acceptBuyOrder(token, buy);
+        const { tx: offerTx } = await offerHelper.createOfferTx(buy._owners[0], this.computer.getUrl(), swapTx);
+        return this.computer.broadcast(offerTx);
     }
     async isOpen(buy) {
         const { _id } = await this.computer.sync(buy._rev);
