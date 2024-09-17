@@ -1,4 +1,3 @@
-declare const Contract: typeof import("@bitcoin-computer/lib/computer").Contract;
 export declare class Token extends Contract {
     amount: number;
     name: string;
@@ -27,4 +26,3 @@ export declare class TBC20 implements ITBC20 {
     balanceOf(publicKey: string, root: string): Promise<number>;
     transfer(to: string, amount: number, root: string): Promise<void>;
 }
-export {};
