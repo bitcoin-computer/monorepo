@@ -1,5 +1,4 @@
 /* eslint-disable max-classes-per-file */
-const { Contract } = await import('@bitcoin-computer/lib')
 
 export class Token extends Contract {
   amount: number
