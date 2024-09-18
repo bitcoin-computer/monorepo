@@ -1,4 +1,5 @@
 import { Transaction } from '@bitcoin-computer/nakamotojs';
+import { Token } from '@bitcoin-computer/TBC20';
 import { StaticSwapHelper } from './static-swap.js';
 export declare class Buy extends Contract {
     amount: number;
@@ -14,7 +15,9 @@ export declare class BuyHelper {
     constructor(computer: any, swapMod: string, buyMod?: string);
     deploy(): Promise<string>;
     broadcastBuyOrder(price: number, amount: number, tokenRoot: string): Promise<Buy>;
-    close(token: any, buy: Buy, offerMod: string): Promise<any>;
+    closeBuyOrder(token: any, buy: Buy, offerMod: string): Promise<any>;
+    findMatchingSwapTx(buy: Buy, offerModSpec: string): Promise<Transaction>;
+    findMatchingToken(buy: Buy, tokenMod: string): Promise<Token>;
     isOpen(buy: Buy): Promise<boolean>;
     settleBuyOrder(swapTx: Transaction): Promise<string>;
 }

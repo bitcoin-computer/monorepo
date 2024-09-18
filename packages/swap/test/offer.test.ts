@@ -144,7 +144,7 @@ describe('Offer', () => {
     let a: NFT
     let b: NFT
     let offerTxId: string
-    describe('Alice creates an offer and add tx using addSaleTx', async () => {
+    it('Alice creates an offer and add tx using addSaleTx', async () => {
       let aliceTx: any
       let offerHelper: OfferHelper
 
@@ -204,7 +204,7 @@ describe('Offer', () => {
       })
     })
 
-    describe('Bob accepts the offer after alice add sale txn', () => {
+    it('Bob accepts the offer after alice add sale txn', () => {
       let offerHelper
       let bobsTx: any
       let txId: string
