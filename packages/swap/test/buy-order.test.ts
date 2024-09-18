@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import dotenv from 'dotenv'
 import { Computer } from '@bitcoin-computer/lib'
 import { Token } from '@bitcoin-computer/TBC20'
-import { Buy, BuyHelper } from '../src/buy'
+import { Buy, BuyHelper } from '../src/buy-order'
 import { SwapHelper } from '../src/swap'
 import { StaticSwapHelper } from '../src'
 
@@ -34,8 +34,8 @@ describe('Sale', () => {
       expect(buy._owners).deep.eq([buyer.getPublicKey()])
 
       // Seller accepts the buy order
-      const buyHelperS = new BuyHelper(seller, swapMod, buyHelperB.mod)
-      const { tx: swapTx } = await buyHelperS.acceptBuyOrder(token, buy)
+      const swapHelperS = new StaticSwapHelper(seller, swapMod)
+      const { tx: swapTx } = await swapHelperS.createSwapTx(token, buy)
       expect(await buyHelperB.isOpen(buy)).eq(true)
 
       // Buyer closes the buy order

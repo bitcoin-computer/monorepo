@@ -3,8 +3,6 @@ import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { StaticSwapHelper } from './static-swap.js'
 import { OfferHelper } from './offer.js'
 
-const { Contract } = await import('@bitcoin-computer/lib')
-
 export class Buy extends Contract {
   amount: number
   open: boolean
@@ -40,16 +38,9 @@ export class BuyHelper {
     return this.computer.new(Buy, [price, amount, tokenRoot], this.mod)
   }
 
-  async acceptBuyOrder(
-    token: any,
-    buyOrder: Buy
-  ): Promise<{ tx: Transaction; effect: { res: any; env: any } }> {
-    return this.swapHelper.createSwapTx(token, buyOrder)
-  }
-
-  async close(token: any, buy: Buy, mod: string) {
-    const offerHelper = new OfferHelper(this.computer, mod)
-    const { tx: swapTx } = await this.acceptBuyOrder(token, buy)
+  async close(token: any, buy: Buy, offerMod: string) {
+    const offerHelper = new OfferHelper(this.computer, offerMod)
+    const { tx: swapTx } = await this.swapHelper.createSwapTx(token, buy)
     const { tx: offerTx } = await offerHelper.createOfferTx(
       buy._owners[0],
       this.computer.getUrl(),
