@@ -28,7 +28,7 @@ You can try the Bitcoin Computer without installing or downloading any software.
 
       // Initialize and fund smart contract wallet
       const computer = new Computer()
-      await computer.faucet(0.0001e8)
+      await computer.faucet(1e5)
 
       // Create a smart object from smart contract
       const counter = await computer.new(Counter)
@@ -86,7 +86,7 @@ class Counter extends Contract {
 const computer = new Computer()
 
 // Fund the computer wallet
-await computer.faucet(1e7)
+await computer.faucet(1e5)
 
 // Deploy a smart contract and create a smart object
 const counter = await computer.new(Counter)
