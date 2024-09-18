@@ -59,13 +59,15 @@ To start your node at `http://localhost:1031` run the commands below. The node i
 # Move to node folder
 cd packages/node
 
-# Create a .env file
-cp .env.example .env
+# Create a .env file and a litecoin.conf file
+cp chain-setup/ltc-regtest/.env.ltc.regtest .env
+cp chain-setup/ltc-regtest/litecoin.conf .
 
 # Run the node on litecoin regtest
 npm run up
 ```
 
+The node will create a `data` folder in the `packages/node` directory. This folder contains the blockchain data and the database.
 </font>
 
 ### Run the Tests
@@ -182,36 +184,48 @@ You can configure several options by editing the `.env` file.
 <font size=1>
 
 ```bash
-# Chain: BTC or LTC
-CHAIN='LTC'
+# Chain: BTC, LTC or PEPE
+BCN_CHAIN='LTC'
 # Network: mainnet, testnet, or regtest
-NETWORK='regtest'
-
-# Port for Bitcoin Computer Node
-PORT='1031'
+BCN_NETWORK='regtest'
 
 # Postgres Connection Credentials
 POSTGRES_USER='bcn'
 POSTGRES_PASSWORD='bcn'
 POSTGRES_DB='bcn'
-POSTGRES_HOST='127.0.0.1'
+POSTGRES_HOST='db'
 POSTGRES_PORT='5432'
+
+# Bitcoin Node Settings
+BITCOIN_IMAGE='litecoinproject/litecoin-core:0.21'
+BITCOIN_DATA_DIR='/home/litecoin/.litecoin'
+BITCOIN_CONF_FILE='litecoin.conf'
 
 # Node Settings
 # RPC Client Credentials
-RPC_USER='bcn-admin'
-RPC_PASSWORD='kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
-RPC_AUTH='bcn-admin:c71460f0f08e4eeec90e033c04f7bb82$c36e8561d46abbf3bf13da6b88612c19d758d46d02c45cd2716f06a13ec407af'
-RPC_HOST='127.0.0.1'
-RPC_PORT='19332'
-RPC_PROTOCOL='http'
-ZMQ_URL='tcp://node:28332'
+BITCOIN_RPC_USER='bcn-admin'
+BITCOIN_RPC_PASSWORD='kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
+BITCOIN_RPC_HOST='node'
+BITCOIN_RPC_PORT='19332'
+BITCOIN_P2P_PORT='19444'
+BITCOIN_RPC_PROTOCOL='http'
 
 # Default wallet name
-DEFAULT_WALLET='defaultwallet'
+BITCOIN_DEFAULT_WALLET='defaultwallet'
+
+# Port for Bitcoin Computer Node
+BCN_PORT='1031'
+
+# Setup the environment to prod or dev
+BCN_ENV=dev
+BCN_ZMQ_URL='tcp://node:28332'
+BCN_ZMQ_PORT='28332'
+
+# Url of the Bitcoin Computer Node, defaults to localhost
+BCN_URL='http://127.0.0.1:1031'
 
 # Allowed RPC Methods
-ALLOWED_RPC_METHODS='^get|^gen|^send|^lis'
+BCN_ALLOWED_RPC_METHODS='^get|^gen|^send|^lis'
 
 # Winston Logger Settings
 # Debug mode
@@ -220,31 +234,34 @@ ALLOWED_RPC_METHODS='^get|^gen|^send|^lis'
 # 2: Error, warning and info logs
 # 3: Error, warning, info and http logs
 # 4: Error, warning, info, http and debug logs
-DEBUG_MODE='4'
+BCN_DEBUG_MODE='4'
 # Maximum number of logs to keep. If not set, no logs will be removed. This can be
 # a number of files or number of days. If using days, add 'd' as the suffix.
-LOG_MAX_FILES='14d'
+BCN_LOG_MAX_FILES='14d'
 # Maximum log file size. You can use 'k' for KB, 'm' for MB, and 'g' for GB. Once
 # the size of the log file exceeds the specified size, the log is rotated. If no
 # size is specified the log is not rotated.
-LOG_MAX_SIZE='20m'
+BCN_LOG_MAX_SIZE='20m'
 # A boolean to define whether or not to gzip archived log files.
-LOG_ZIP='false'
+BCN_LOG_ZIP='false'
 
-# Show logs attached to the Console transport
-SHOW_CONSOLE_LOGS='true'
-SHOW_DB_LOGS='false'
+# Show logs attached to the Console transport.
+BCN_SHOW_CONSOLE_LOGS='true'
+BCN_SHOW_DB_LOGS='false'
 
 # Rate Limiting Settings
-RATE_LIMIT_ENABLED='false'
-RATE_LIMIT_WINDOW='900000'
-RATE_LIMIT_MAX='300'
-RATE_LIMIT_STANDARD_HEADERS='true'
-RATE_LIMIT_LEGACY_HEADERS='false'
+BCN_RATE_LIMIT_ENABLED='false'
+BCN_RATE_LIMIT_WINDOW='900000'
+BCN_RATE_LIMIT_MAX='300'
+BCN_RATE_LIMIT_STANDARD_HEADERS='true'
+BCN_RATE_LIMIT_LEGACY_HEADERS='false'
 
-# Comma separated list of banned countries encoded as ISO-3166 alpha2 country
+# Comma separated list of banned countries, encoded as ISO-3166 alpha2 country.
 # codes (see https://www.geonames.org/countries/)
-BANNED_COUNTRIES=
+BCN_BANNED_COUNTRIES=
+
+# Default value for protocol in the _url parameter. Set to https if behind a load balancer.
+BCN_OFFCHAIN_PROTOCOL=
 ```
 
 </font>

@@ -45,7 +45,7 @@ const rpcUser = process.env.RPC_USER ?? 'bcn-admin'
 const rpcPass = process.env.RPC_PASSWORD ?? 'kH4nU5Okm6-uyC0_mA5ztVNacJqZbYd_KGLl6mx722A='
 const zmqUrl = 'tcp://127.0.0.1:28332'
 
-let command = `BCN_URL=${nodeUrl} CHAIN=${chain} NETWORK=${network} BCN_ENV=test POSTGRES_PORT=5432 POSTGRES_HOST=${postgresHost} RPC_HOST=${rpcHost} RPC_PORT=${port} RPC_PROTOCOL=http RPC_USER=${rpcUser} RPC_PASSWORD=${rpcPass} ZMQ_URL=${zmqUrl} mocha --config`
+let command = `BCN_URL=${nodeUrl} BCN_CHAIN=${chain} BCN_NETWORK=${network} BCN_ENV=test POSTGRES_PORT=5432 POSTGRES_HOST=${postgresHost} BITCOIN_RPC_HOST=${rpcHost} BITCOIN_RPC_PORT=${port} BITCOIN_RPC_PROTOCOL=http BITCOIN_RPC_USER=${rpcUser} BITCOIN_RPC_PASSWORD=${rpcPass} BCN_ZMQ_URL=${zmqUrl} mocha --config`
 
 if (args.integration) {
   command = `${command} .mocharc-async.json`

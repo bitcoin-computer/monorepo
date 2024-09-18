@@ -29,8 +29,5 @@ args = parser.parse_args()
 
 print(args)
 
-commandLine = ' docker compose -f docker-compose.yml -f chain-setup/'+args.chain+'-'+args.network+'/docker-compose.yml '
-
-print(commandLine+' down')
 subprocess.run(
-    ['sh', '-c', commandLine+' down --remove-orphans'])
+    ['sh', '-c', 'docker compose -f docker-compose.yml down --remove-orphans'])
