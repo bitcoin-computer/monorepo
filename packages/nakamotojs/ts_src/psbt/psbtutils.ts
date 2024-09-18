@@ -3,7 +3,15 @@ import { PartialSig, PsbtInput } from 'bip174/src/lib/interfaces.js';
 import * as bscript from '../script.js';
 import { Transaction } from '../transaction.js';
 import { hash160 } from '../crypto.js';
-import * as payments from '../payments/index.js';
+import {
+  p2ms,
+  p2pk,
+  p2pkh,
+  p2wpkh,
+  p2wsh,
+  p2sh,
+  p2tr,
+} from '../payments/index.js';
 import { Buffer } from 'buffer';
 
 function isPaymentFactory(payment: any): (script: Buffer) => boolean {
@@ -16,13 +24,13 @@ function isPaymentFactory(payment: any): (script: Buffer) => boolean {
     }
   };
 }
-export const isP2MS = isPaymentFactory(payments.p2ms);
-export const isP2PK = isPaymentFactory(payments.p2pk);
-export const isP2PKH = isPaymentFactory(payments.p2pkh);
-export const isP2WPKH = isPaymentFactory(payments.p2wpkh);
-export const isP2WSHScript = isPaymentFactory(payments.p2wsh);
-export const isP2SHScript = isPaymentFactory(payments.p2sh);
-export const isP2TR = isPaymentFactory(payments.p2tr);
+export const isP2MS = isPaymentFactory(p2ms);
+export const isP2PK = isPaymentFactory(p2pk);
+export const isP2PKH = isPaymentFactory(p2pkh);
+export const isP2WPKH = isPaymentFactory(p2wpkh);
+export const isP2WSHScript = isPaymentFactory(p2wsh);
+export const isP2SHScript = isPaymentFactory(p2sh);
+export const isP2TR = isPaymentFactory(p2tr);
 
 export function witnessStackToScriptWitness(witness: Buffer[]): Buffer {
   let buffer = Buffer.allocUnsafe(0);

@@ -1,6 +1,6 @@
 import { Network } from './networks.js';
 import * as networks from './networks.js';
-import * as payments from './payments/index.js';
+import { p2pkh, p2sh, p2wpkh, p2wsh, p2tr } from './payments/index.js';
 import * as bscript from './script.js';
 import { typeforce, tuple, Hash160bit, UInt8 } from './types.js';
 import { toXOnly } from './psbt/bip371.js';
@@ -122,19 +122,19 @@ export function fromOutputScript(output: Buffer, network?: Network): string {
   network = network || networks.bitcoin;
 
   try {
-    return payments.p2pkh({ output, network }).address as string;
+    return p2pkh({ output, network }).address as string;
   } catch (e) {}
   try {
-    return payments.p2sh({ output, network }).address as string;
+    return p2sh({ output, network }).address as string;
   } catch (e) {}
   try {
-    return payments.p2wpkh({ output, network }).address as string;
+    return p2wpkh({ output, network }).address as string;
   } catch (e) {}
   try {
-    return payments.p2wsh({ output, network }).address as string;
+    return p2wsh({ output, network }).address as string;
   } catch (e) {}
   try {
-    return payments.p2tr({ output, network }).address as string;
+    return p2tr({ output, network }).address as string;
   } catch (e) {}
   try {
     return _toFutureSegwitAddress(output, network);
@@ -154,9 +154,9 @@ export function toOutputScript(address: string, network?: Network): Buffer {
 
   if (decodeBase58) {
     if (decodeBase58.version === network.pubKeyHash)
-      return payments.p2pkh({ hash: decodeBase58.hash }).output as Buffer;
+      return p2pkh({ hash: decodeBase58.hash }).output as Buffer;
     if (decodeBase58.version === network.scriptHash)
-      return payments.p2sh({ hash: decodeBase58.hash }).output as Buffer;
+      return p2sh({ hash: decodeBase58.hash }).output as Buffer;
   } else {
     try {
       decodeBech32 = fromBech32(address);
@@ -167,12 +167,12 @@ export function toOutputScript(address: string, network?: Network): Buffer {
         throw new Error(address + ' has an invalid prefix');
       if (decodeBech32.version === 0) {
         if (decodeBech32.data.length === 20)
-          return payments.p2wpkh({ hash: decodeBech32.data }).output as Buffer;
+          return p2wpkh({ hash: decodeBech32.data }).output as Buffer;
         if (decodeBech32.data.length === 32)
-          return payments.p2wsh({ hash: decodeBech32.data }).output as Buffer;
+          return p2wsh({ hash: decodeBech32.data }).output as Buffer;
       } else if (decodeBech32.version === 1) {
         if (decodeBech32.data.length === 32)
-          return payments.p2tr({ pubkey: decodeBech32.data }).output as Buffer;
+          return p2tr({ pubkey: decodeBech32.data }).output as Buffer;
       } else if (
         decodeBech32.version >= FUTURE_SEGWIT_MIN_VERSION &&
         decodeBech32.version <= FUTURE_SEGWIT_MAX_VERSION &&
@@ -200,11 +200,11 @@ export function fromPublicKey(
   network = network || networks.bitcoin;
 
   if (type === 'p2pkh')
-    return payments.p2pkh({ pubkey: publicKey, network }).address as string;
+    return p2pkh({ pubkey: publicKey, network }).address as string;
   if (type === 'p2wpkh')
-    return payments.p2wpkh({ pubkey: publicKey, network }).address as string;
+    return p2wpkh({ pubkey: publicKey, network }).address as string;
   if (type === 'p2tr')
-    return payments.p2tr({
+    return p2tr({
       internalPubkey: toXOnly(publicKey),
       network,
     }).address as string;
