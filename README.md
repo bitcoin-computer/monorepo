@@ -35,7 +35,26 @@ This monorepo contains everything you need to build smart contract based applica
 * [Website](https://github.com/bitcoin-computer/monorepo/tree/main/packages/website#readme) - The sources for the website
 
 ## Getting Started
-Take a look to [this](https://docs.bitcoincomputer.io/start/) example that defines, deploys and executes a simple smart contract in your browser.
+
+There are three easy ways to get started with Bitcoin Computer smart contracts:
+
+1. Online example:  See how it works without any installation requirements! [This](https://docs.bitcoincomputer.io/start/) simple example defines, deploys, and executes a smart contract in your browser.
+
+2. Online tools: Try out the Bitcoin Computer functionality directly with our online [Explorer](https://explorer.bitcoincomputer.io) and [Playgorund](https://explorer.bitcoincomputer.io/playground).
+
+3. Local development:
+
+* Clone this monorepo. 
+
+```bash
+git clone https://github.com/bitcoin-computer/monorepo.git
+cd monorepo
+npm install
+```
+
+* Run the applications locally by following the instructions in each application's readme file.
+
+Check the latest version of the Bitcoin Computer monorepo on the [releases](https://github.com/bitcoin-computer/monorepo/releases) page.
 
 ## Getting Help
 
