@@ -59,9 +59,8 @@ To start your node at `http://localhost:1031` run the commands below. The node i
 # Move to node folder
 cd packages/node
 
-# Create a .env file and a litecoin.conf file
+# Create a .env file
 cp chain-setup/ltc-regtest/.env.ltc.regtest .env
-cp chain-setup/ltc-regtest/litecoin.conf .
 
 # Run the node on litecoin regtest
 npm run up
@@ -262,6 +261,7 @@ BCN_BANNED_COUNTRIES=
 
 # Default value for protocol in the _url parameter. Set to https if behind a load balancer.
 BCN_OFFCHAIN_PROTOCOL=
+
 ```
 
 </font>
