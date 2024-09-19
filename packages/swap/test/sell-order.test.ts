@@ -7,7 +7,7 @@ import { OfferHelper, PaymentHelper, SaleHelper } from '../src'
 
 dotenv.config({ path: '../../.env' })
 
-describe.only('SellOrder', () => {
+describe('SellOrder', () => {
   const nftPrice = 1e8
   const fee = 100000
 
@@ -52,7 +52,7 @@ describe.only('SellOrder', () => {
       expect(token).deep.eq(t)
 
       // Seller settles the order
-      const saleTxId = await sellOrderHelperS.settleSellOrder(price, saleTx)
+      const saleTxId = await sellOrderHelperS.closeAndSettleSellOrder(price, saleTx)
       expect(saleTxId).a('string')
     })
   })

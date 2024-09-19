@@ -3,7 +3,7 @@ import { expect } from 'chai'
 import dotenv from 'dotenv'
 import { Computer } from '@bitcoin-computer/lib'
 import { Token } from '@bitcoin-computer/TBC20'
-import { Buy, BuyHelper } from '../src/buy-order'
+import { BuyOrder, BuyHelper } from '../src/buy-order'
 import { SwapHelper } from '../src/swap'
 import { StaticSwapHelper } from '../src'
 
@@ -45,7 +45,7 @@ describe('Sale', () => {
 
       const {
         env: { a: tokenAfter, b: buyAfter }
-      } = (await seller.sync(txId)) as { env: { a: Token; b: Buy } }
+      } = (await seller.sync(txId)) as { env: { a: Token; b: BuyOrder } }
       expect(tokenAfter._owners).deep.eq([buyer.getPublicKey()])
       expect(buyAfter._owners).deep.eq([seller.getPublicKey()])
     })
@@ -62,8 +62,8 @@ describe('Sale', () => {
       // Buyer creates an order
       const swapHelperB = new SwapHelper(buyer)
       const swapMod = await swapHelperB.deploy()
-      const buyMod = await buyer.deploy(`export ${Buy}`)
-      const buyOrder = await buyer.new(Buy, [100000, 100, token._root], buyMod)
+      const buyMod = await buyer.deploy(`export ${BuyOrder}`)
+      const buyOrder = await buyer.new(BuyOrder, [100000, 100, token._root], buyMod)
 
       expect(token._owners).deep.eq([seller.getPublicKey()])
       expect(buyOrder._owners).deep.eq([buyer.getPublicKey()])
@@ -79,7 +79,7 @@ describe('Sale', () => {
 
       const {
         env: { a: tokenAfter, b: buyAfter }
-      } = (await seller.sync(txId)) as { env: { a: Token; b: Buy } }
+      } = (await seller.sync(txId)) as { env: { a: Token; b: BuyOrder } }
       expect(tokenAfter._owners).deep.eq([buyer.getPublicKey()])
       expect(buyAfter._owners).deep.eq([seller.getPublicKey()])
       expect(tokenAfter.amount).eq(100)

@@ -15,6 +15,7 @@ export declare class SellOrderHelper {
     constructor(computer: any, saleMod: string, offerMod: string, paymentMod: string, sellMod?: string);
     deploy(): Promise<string>;
     broadcastSellOrder(amount: number, tokenRev: string): Promise<string>;
+    closeAndSettleSellOrder(price: number, deserialized: Transaction): Promise<any>;
     getSaleTx(sellOrderRev: string): Promise<Transaction>;
     parseSellOrder(sellOrderRev: string): Promise<{
         saleTx: any;
@@ -22,5 +23,4 @@ export declare class SellOrderHelper {
         open: boolean;
         token: any;
     }>;
-    settleSellOrder(price: number, deserialized: Transaction): Promise<any>;
 }

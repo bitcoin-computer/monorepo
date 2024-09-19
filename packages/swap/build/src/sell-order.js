@@ -27,6 +27,14 @@ export class SellOrderHelper {
         const { tx: offerTx } = await this.offerHelper.createOfferTx(publicKey, url, saleTx);
         return this.computer.broadcast(offerTx);
     }
+    async closeAndSettleSellOrder(price, deserialized) {
+        const payment = await this.computer.new(Payment, [price], this.paymentHelper.mod);
+        const scriptPubKey = this.computer.toScriptPubKey();
+        const finalTx = SaleHelper.finalizeSaleTx(deserialized, payment, scriptPubKey);
+        await this.computer.fund(finalTx);
+        await this.computer.sign(finalTx);
+        return this.computer.broadcast(finalTx);
+    }
     async getSaleTx(sellOrderRev) {
         const { txHex: saleTxHex } = (await this.computer.sync(sellOrderRev));
         return Transaction.deserialize(saleTxHex);
@@ -41,12 +49,5 @@ export class SellOrderHelper {
         const open = await this.computer.isUnspent(tokenRev);
         const token = await this.computer.sync(tokenRev);
         return { saleTx, price, open, token };
-    }
-    async settleSellOrder(price, deserialized) {
-        const payment = await this.computer.new(Payment, [price], this.paymentHelper.mod);
-        const finalTx = SaleHelper.finalizeSaleTx(deserialized, payment, this.computer.toScriptPubKey());
-        await this.computer.fund(finalTx);
-        await this.computer.sign(finalTx);
-        return this.computer.broadcast(finalTx);
     }
 }

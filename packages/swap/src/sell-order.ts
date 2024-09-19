@@ -47,6 +47,15 @@ export class SellOrderHelper {
     return this.computer.broadcast(offerTx)
   }
 
+  async closeAndSettleSellOrder(price: number, deserialized: Transaction) {
+    const payment = await this.computer.new(Payment, [price], this.paymentHelper.mod)
+    const scriptPubKey = this.computer.toScriptPubKey()
+    const finalTx = SaleHelper.finalizeSaleTx(deserialized, payment, scriptPubKey)
+    await this.computer.fund(finalTx)
+    await this.computer.sign(finalTx)
+    return this.computer.broadcast(finalTx)
+  }
+
   async getSaleTx(sellOrderRev: string) {
     const { txHex: saleTxHex } = (await this.computer.sync(sellOrderRev)) as any
     return Transaction.deserialize(saleTxHex)
@@ -63,17 +72,5 @@ export class SellOrderHelper {
     const open = await this.computer.isUnspent(tokenRev)
     const token = await this.computer.sync(tokenRev)
     return { saleTx, price, open, token }
-  }
-
-  async settleSellOrder(price: number, deserialized: Transaction) {
-    const payment = await this.computer.new(Payment, [price], this.paymentHelper.mod)
-    const finalTx = SaleHelper.finalizeSaleTx(
-      deserialized,
-      payment,
-      this.computer.toScriptPubKey()!
-    )
-    await this.computer.fund(finalTx)
-    await this.computer.sign(finalTx)
-    return this.computer.broadcast(finalTx)
   }
 }
