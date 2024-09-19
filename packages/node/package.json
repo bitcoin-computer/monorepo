@@ -38,7 +38,7 @@
     "start": "node dist/bcn.es.mjs",
     "sync": "node dist/bcn.sync.es.mjs",
     "setup": "./scripts/setup.py",
-    "test": "node --loader ts-node/esm  ./scripts/test.ts",
+    "test": "mocha --config .mocharc.json ",
     "test-node-and-show": "../../scripts/test-and-show.sh node-test.log",
     "test-unit": "npm run test -- -u",
     "up": "node --loader ts-node/esm  ./scripts/up.ts"

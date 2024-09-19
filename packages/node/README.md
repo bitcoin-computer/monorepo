@@ -59,8 +59,9 @@ To start your node at `http://localhost:1031` run the commands below. The node i
 # Move to node folder
 cd packages/node
 
-# Create a .env file
-cp chain-setup/ltc-regtest/.env.ltc.regtest .env
+# Copy the .env file and litecoin.conf file from the examples
+cp chain-setup/ltc/regtest/.env.example .env
+cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
 
 # Run the node on litecoin regtest
 npm run up

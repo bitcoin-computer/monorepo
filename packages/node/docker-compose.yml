@@ -26,7 +26,7 @@ services:
       - ${BCN_ZMQ_PORT}:${BCN_ZMQ_PORT}
     volumes:
       - ./data/blockchain-data:${BITCOIN_DATA_DIR}
-      - ./chain-setup/${BCN_CHAIN}-${BCN_NETWORK}/${BITCOIN_CONF_FILE}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}
+      - ./${BITCOIN_CONF_FILE}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}
   bcn:
     image: bitcoin-computer-node
     env_file: .env
