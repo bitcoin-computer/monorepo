@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Transaction as BCTransaction } from '@bitcoin-computer/lib'
-import { Token } from '@bitcoin-computer/TBC20'
+import { Token, TBC20 } from '@bitcoin-computer/TBC20'
 import { StaticSwapHelper } from './static-swap.js'
 import { TxWrapper, TxWrapperHelper } from './tx-wrapper.js'
 
@@ -23,13 +23,22 @@ export class BuyOrder extends Contract {
 export class BuyHelper {
   computer: any
   swapHelper: StaticSwapHelper
+  txWrapperHelper: TxWrapperHelper
+  tbc20: TBC20
   mod?: string
-  buyOrder: Transaction
 
-  constructor(computer: any, swapMod: string, buyMod?: string) {
+  constructor(
+    computer: any,
+    swapMod: string,
+    txWrapperMod: string,
+    tokenMod: string,
+    buyOrderMod?: string
+  ) {
     this.computer = computer
     this.swapHelper = new StaticSwapHelper(computer, swapMod)
-    this.mod = buyMod
+    this.txWrapperHelper = new TxWrapperHelper(computer, txWrapperMod)
+    this.tbc20 = new TBC20(computer, tokenMod)
+    this.mod = buyOrderMod
   }
 
   async deploy(): Promise<string> {
@@ -41,10 +50,9 @@ export class BuyHelper {
     return this.computer.new(BuyOrder, [price, amount, tokenRoot], this.mod)
   }
 
-  async closeBuyOrder(token: any, buyOrder: BuyOrder, txWrapperMod: string) {
-    const txWrapperHelper = new TxWrapperHelper(this.computer, txWrapperMod)
+  async closeBuyOrder(token: Token, buyOrder: BuyOrder) {
     const { tx: swapTx } = await this.swapHelper.createSwapTx(token, buyOrder)
-    const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
+    const { tx: wrappedTx } = await this.txWrapperHelper.createWrappedTx(
       buyOrder._owners[0],
       this.computer.getUrl(),
       swapTx
@@ -57,8 +65,8 @@ export class BuyHelper {
     return this.computer.broadcast(swapTx)
   }
 
-  async findMatchingSwapTx(buyOrder: BuyOrder, txWrapperMod: string) {
-    // Buyer looks for an acceptable swap for their order in the buy object
+  // Buyer can use this function to look for an acceptable swap for their buy order
+  async findMatchingSwapTx(buyOrder: BuyOrder, txWrapperMod: string): Promise<Transaction> {
     const mod = txWrapperMod
     const publicKey = buyOrder._owners[0]
     const wrappedTxRevs = await this.computer.query({ mod, publicKey })
@@ -86,14 +94,14 @@ export class BuyHelper {
     return swapTxs[index]
   }
 
-  async findMatchingToken(buyOrder: BuyOrder, tokenMod: string) {
+  async findMatchingToken(buyOrder: BuyOrder): Promise<Token | undefined> {
     const tokenRevs = await this.computer.query({
-      mod: tokenMod,
+      mod: this.tbc20.mod,
       publicKey: this.computer.getPublicKey()
     })
     const tokens = (await Promise.all(tokenRevs.map((rev) => this.computer.sync(rev)))) as Token[]
     const matches = tokens.filter((token: Token) => token.amount === buyOrder.amount)
-    return matches[0] || null
+    return matches[0] || undefined
   }
 
   async isOpen(buyOrder: BuyOrder): Promise<boolean> {

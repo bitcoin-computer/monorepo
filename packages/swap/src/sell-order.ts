@@ -7,7 +7,7 @@ import { SaleHelper } from './sale.js'
 export class SellOrder extends Contract {
   txHex: string
 
-  constructor(owner: string, txHex?: string) {
+  constructor(owner: string, txHex: string) {
     super({ _owners: [owner], txHex })
   }
 }
@@ -43,28 +43,25 @@ export class SellOrderHelper {
     const { tx: saleTx } = await this.saleHelper.createSaleTx({ _rev: tokenRev }, mock)
     const publicKey = this.computer.getPublicKey()
     const url = this.computer.getUrl()
-    const { tx: wrappedTx } = await this.txWrapperHelper.createWrappedTx(publicKey, url, saleTx)
-    return this.computer.broadcast(wrappedTx)
+    const { tx: wrappedSaleTx } = await this.txWrapperHelper.createWrappedTx(publicKey, url, saleTx)
+    return this.computer.broadcast(wrappedSaleTx)
   }
 
-  async closeAndSettleSellOrder(price: number, deserialized: Transaction) {
+  async closeAndSettleSellOrder(price: number, saleTx: Transaction) {
+    // todo: look for existing payment object
     const payment = await this.computer.new(Payment, [price], this.paymentHelper.mod)
     const scriptPubKey = this.computer.toScriptPubKey()
-    const finalTx = SaleHelper.finalizeSaleTx(deserialized, payment, scriptPubKey)
+    const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, scriptPubKey)
     await this.computer.fund(finalTx)
     await this.computer.sign(finalTx)
     return this.computer.broadcast(finalTx)
   }
 
-  async getSaleTx(sellOrderRev: string) {
-    const { txHex: saleTxHex } = (await this.computer.sync(sellOrderRev)) as any
-    return Transaction.deserialize(saleTxHex)
-  }
-
   async parseSellOrder(
     sellOrderRev: string
   ): Promise<{ saleTx: any; price: number; open: boolean; token: any }> {
-    const saleTx = await this.getSaleTx(sellOrderRev)
+    const { txHex: saleTxHex } = (await this.computer.sync(sellOrderRev)) as { txHex: string }
+    const saleTx = Transaction.deserialize(saleTxHex)
     if (!(await this.saleHelper.isSaleTx(saleTx))) return {} as any
     const price = await this.saleHelper.checkSaleTx(saleTx)
     const { env } = await this.computer.decode(saleTx)
