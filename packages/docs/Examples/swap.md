@@ -104,26 +104,26 @@ await bob.broadcast(tx)
 
 #### Reducing Fees
 
-The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the `Swap` function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class [`SwapHelper`](https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts) for swaps and `TBC721` for NFTs that can be used as follows:
+The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the `Swap` function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class [`SwapHelper`](https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts) for swaps and `NftHelper` for NFTs that can be used as follows:
 
 ```ts
 // Alice creates helper objects
-const tbc721A = new TBC721(alice)
+const nftHelperA = new NftHelper(alice)
 const swapHelperA = new StaticSwapHelper(alice)
 
 // Alice deploys the smart contracts
-await tbc721A.deploy()
+await nftHelperA.deploy()
 await swapHelperA.deploy()
 
 // Alice mints an NFT
 nftA = await tbc721A.mint('a', 'AAA')
 
 // Bob creates helper objects from the module specifiers
-const tbc721B = new TBC721(bob, tbc721A.mod)
+const nftHelperB = new NftHelper(bob, tbc721A.mod)
 const swapHelperB = new StaticSwapHelper(bob, swapHelperA.mod)
 
 // Bob mints an NFT to pay for Alice's's NFT
-nftB = await tbc721B.mint('b', 'BBB')
+nftB = await nftHelperB.mint('b', 'BBB')
 
 // Bob creates a swap transaction
 const { tx } = await swapHelperB.createSwapTx(nftA, nftB)

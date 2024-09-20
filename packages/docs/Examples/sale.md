@@ -227,7 +227,7 @@ await buyer.broadcast(saleTx)
 
 The example before is wasteful because the source code of the `Sale` class is written into the blockchain on every sale. To avoid this, we recommend to [deploy](../API/deploy.md) the `Sale` class and refer to the module when executing a sale.
 
-We provide a class `TBC721` that helps with deploying the smart contract as a module, minting the nfts with a reference to the deployed module, transferring NFTs, and returning the balance and owner of an NFT.
+We provide a class `NftHelper` that helps with deploying the smart contract as a module, minting the nfts with a reference to the deployed module, transferring NFTs, and returning the balance and owner of an NFT.
 
 ```ts
 interface ITBC721 {
@@ -239,7 +239,7 @@ interface ITBC721 {
 }
 ```
 
-The code below shows how the same flow as above can be implemented using the `TBC721` class.
+The code below shows how the same flow as above can be implemented using the `NftHelper` class.
 
 ```ts
 // Create and fund wallets
@@ -249,15 +249,15 @@ await alice.faucet(1e8)
 await bob.faucet(1e8)
 
 // Alice creates helper objects
-const tbc721A = new TBC721(alice)
+const nftHelper = new NftHelper(alice)
 const saleHelperA = new SaleHelper(alice)
 
 // Alice deploys the smart contracts
-await tbc721A.deploy()
+await nftHelper.deploy()
 await saleHelperA.deploy()
 
 // Alice mints an NFT
-const nftA = await tbc721A.mint('a', 'AAA')
+const nftA = await nftHelper.mint('a', 'AAA')
 
 // Alice creates a payment mock
 const mock = new PaymentMock(nftPrice)
@@ -399,15 +399,15 @@ await alice.faucet(1e8)
 await bob.faucet(1e8)
 
 // Alice creates helper objects
-const tbc721A = new TBC721(alice)
+const nftHelper = new NftHelper(alice)
 const saleHelperA = new OrdSaleHelper(alice)
 
 // Alice deploys the smart contracts
-await tbc721A.deploy()
+await nftHelper.deploy()
 await saleHelperA.deploy()
 
 // Alice mints an NFT
-const nftA = await tbc721A.mint('a', 'AAA')
+const nftA = await nftHelper.mint('a', 'AAA')
 
 // Alice creates a payment mock
 const paymentMock = new PaymentMock(nftPrice)

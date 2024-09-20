@@ -2,7 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT, TBC721 } from '@bitcoin-computer/TBC721'
+import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 import { Token } from '@bitcoin-computer/TBC20'
 import dotenv from 'dotenv'
 import { Swap, SwapHelper } from '../src/swap'
@@ -41,22 +41,22 @@ describe('Swap', () => {
 
     it('Should work with helper classes', async () => {
       // Alice creates helper objects
-      const tbc721A = new TBC721(alice)
+      const nftHelperA = new NftHelper(alice)
       const swapHelperA = new SwapHelper(alice)
 
       // Alice deploys the smart contracts
-      await tbc721A.deploy()
+      await nftHelperA.deploy()
       await swapHelperA.deploy()
 
       // Alice mints an NFT
-      nftA = await tbc721A.mint('a', 'AAA', 'URL')
+      nftA = await nftHelperA.mint('a', 'AAA', 'URL')
 
       // Bob creates helper objects from the module specifiers
-      const tbc721B = new TBC721(bob, tbc721A.mod)
+      const nftHelperB = new NftHelper(bob, nftHelperA.mod)
       const swapHelperB = new SwapHelper(bob, swapHelperA.mod)
 
       // Bob mints an NFT to pay for Alice's's NFT
-      nftB = await tbc721B.mint('b', 'BBB', 'URL')
+      nftB = await nftHelperB.mint('b', 'BBB', 'URL')
 
       // Bob creates a swap transaction
       const { tx } = await swapHelperB.createSwapTx(nftA, nftB)

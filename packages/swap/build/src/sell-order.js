@@ -24,23 +24,20 @@ export class SellOrderHelper {
         const { tx: saleTx } = await this.saleHelper.createSaleTx({ _rev: tokenRev }, mock);
         const publicKey = this.computer.getPublicKey();
         const url = this.computer.getUrl();
-        const { tx: offerTx } = await this.txWrapperHelper.createWrappedTx(publicKey, url, saleTx);
-        return this.computer.broadcast(offerTx);
+        const { tx: wrappedSaleTx } = await this.txWrapperHelper.createWrappedTx(publicKey, url, saleTx);
+        return this.computer.broadcast(wrappedSaleTx);
     }
-    async closeAndSettleSellOrder(price, deserialized) {
+    async closeAndSettleSellOrder(price, saleTx) {
         const payment = await this.computer.new(Payment, [price], this.paymentHelper.mod);
         const scriptPubKey = this.computer.toScriptPubKey();
-        const finalTx = SaleHelper.finalizeSaleTx(deserialized, payment, scriptPubKey);
+        const finalTx = SaleHelper.finalizeSaleTx(saleTx, payment, scriptPubKey);
         await this.computer.fund(finalTx);
         await this.computer.sign(finalTx);
         return this.computer.broadcast(finalTx);
     }
-    async getSaleTx(sellOrderRev) {
-        const { txHex: saleTxHex } = (await this.computer.sync(sellOrderRev));
-        return Transaction.deserialize(saleTxHex);
-    }
     async parseSellOrder(sellOrderRev) {
-        const saleTx = await this.getSaleTx(sellOrderRev);
+        const { txHex: saleTxHex } = (await this.computer.sync(sellOrderRev));
+        const saleTx = Transaction.deserialize(saleTxHex);
         if (!(await this.saleHelper.isSaleTx(saleTx)))
             return {};
         const price = await this.saleHelper.checkSaleTx(saleTx);

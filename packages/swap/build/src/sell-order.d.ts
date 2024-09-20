@@ -4,7 +4,7 @@ import { PaymentHelper } from './payment.js';
 import { SaleHelper } from './sale.js';
 export declare class SellOrder extends Contract {
     txHex: string;
-    constructor(owner: string, txHex?: string);
+    constructor(owner: string, txHex: string);
 }
 export declare class SellOrderHelper {
     computer: any;
@@ -15,8 +15,7 @@ export declare class SellOrderHelper {
     constructor(computer: any, saleMod: string, txWrapperMod: string, paymentMod: string, sellMod?: string);
     deploy(): Promise<string>;
     broadcastSellOrder(amount: number, tokenRev: string): Promise<string>;
-    closeAndSettleSellOrder(price: number, deserialized: Transaction): Promise<any>;
-    getSaleTx(sellOrderRev: string): Promise<Transaction>;
+    closeAndSettleSellOrder(price: number, saleTx: Transaction): Promise<any>;
     parseSellOrder(sellOrderRev: string): Promise<{
         saleTx: any;
         price: number;

@@ -1,4 +1,4 @@
-import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
+import { Transaction } from '@bitcoin-computer/lib';
 export declare class TxWrapper extends Contract {
     txHex: string;
     constructor(owner: string, url: string, txHex?: string);
@@ -9,7 +9,7 @@ export declare class TxWrapperHelper {
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
-    createWrappedTx(publicKey: string, url: string, tx?: TransactionType): Promise<any>;
-    addSaleTx(offerTxId: string, tx: TransactionType): Promise<any>;
-    decodeOfferTx(offerTxId: string): Promise<TransactionType>;
+    createWrappedTx(publicKey: string, url: string, tx?: Transaction): Promise<any>;
+    addSaleTx(txWrapperTxId: string, tx: Transaction): Promise<any>;
+    decodeTx(txWrapperTxId: string): Promise<Transaction>;
 }

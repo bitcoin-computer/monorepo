@@ -2,7 +2,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
 import { StaticSwap } from '../src/static-swap'
 import { TxWrapperHelper } from '../src/tx-wrapper'

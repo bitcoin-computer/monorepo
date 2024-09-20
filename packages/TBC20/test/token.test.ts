@@ -2,7 +2,7 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
-import { TokenHelper, Token } from '../src/token'
+import { Token, TokenHelper } from '../src/token'
 
 dotenv.config({ path: '../../.env' })
 

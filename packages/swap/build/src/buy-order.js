@@ -1,4 +1,5 @@
 import { Transaction as BCTransaction } from '@bitcoin-computer/lib';
+import { TokenHelper } from '@bitcoin-computer/TBC20';
 import { StaticSwapHelper } from './static-swap.js';
 import { TxWrapperHelper } from './tx-wrapper.js';
 export class BuyOrder extends Contract {
@@ -11,10 +12,12 @@ export class BuyOrder extends Contract {
     }
 }
 export class BuyHelper {
-    constructor(computer, swapMod, buyMod) {
+    constructor(computer, swapMod, txWrapperMod, tokenMod, buyOrderMod) {
         this.computer = computer;
         this.swapHelper = new StaticSwapHelper(computer, swapMod);
-        this.mod = buyMod;
+        this.txWrapperHelper = new TxWrapperHelper(computer, txWrapperMod);
+        this.tokenHelper = new TokenHelper(computer, tokenMod);
+        this.mod = buyOrderMod;
     }
     async deploy() {
         this.mod = await this.computer.deploy(`export ${BuyOrder}`);
@@ -23,22 +26,21 @@ export class BuyHelper {
     async broadcastBuyOrder(price, amount, tokenRoot) {
         return this.computer.new(BuyOrder, [price, amount, tokenRoot], this.mod);
     }
-    async closeBuyOrder(token, buyOrder, offerMod) {
-        const txWrapperHelper = new TxWrapperHelper(this.computer, offerMod);
+    async closeBuyOrder(token, buyOrder) {
         const { tx: swapTx } = await this.swapHelper.createSwapTx(token, buyOrder);
-        const { tx: offerTx } = await txWrapperHelper.createWrappedTx(buyOrder._owners[0], this.computer.getUrl(), swapTx);
-        return this.computer.broadcast(offerTx);
+        const { tx: wrappedTx } = await this.txWrapperHelper.createWrappedTx(buyOrder._owners[0], this.computer.getUrl(), swapTx);
+        return this.computer.broadcast(wrappedTx);
     }
     async settleBuyOrder(swapTx) {
         await this.computer.sign(swapTx);
         return this.computer.broadcast(swapTx);
     }
-    async findMatchingSwapTx(buyOrder, offerModSpec) {
-        const mod = offerModSpec;
+    async findMatchingSwapTx(buyOrder, txWrapperMod) {
+        const mod = txWrapperMod;
         const publicKey = buyOrder._owners[0];
-        const offerRevs = await this.computer.query({ mod, publicKey });
-        const offers = (await Promise.all(offerRevs.map((rev) => this.computer.sync(rev))));
-        const swapHexes = offers.map((s) => s.txHex);
+        const wrappedTxRevs = await this.computer.query({ mod, publicKey });
+        const wrappedTxs = (await Promise.all(wrappedTxRevs.map((rev) => this.computer.sync(rev))));
+        const swapHexes = wrappedTxs.map((s) => s.txHex);
         const swapTxs = swapHexes.map((t) => BCTransaction.deserialize(t));
         const swaps = await Promise.all(swapTxs.map((t) => this.computer.decode(t)));
         const matchingSwapsIndex = await Promise.all(swaps.map(async (swap) => {
@@ -55,14 +57,14 @@ export class BuyHelper {
             return null;
         return swapTxs[index];
     }
-    async findMatchingToken(buyOrder, tokenMod) {
+    async findMatchingToken(buyOrder) {
         const tokenRevs = await this.computer.query({
-            mod: tokenMod,
+            mod: this.tokenHelper.mod,
             publicKey: this.computer.getPublicKey()
         });
         const tokens = (await Promise.all(tokenRevs.map((rev) => this.computer.sync(rev))));
         const matches = tokens.filter((token) => token.amount === buyOrder.amount);
-        return matches[0] || null;
+        return matches[0] || undefined;
     }
     async isOpen(buyOrder) {
         return this.computer.isUnspent(buyOrder._id);

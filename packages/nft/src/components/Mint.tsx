@@ -1,6 +1,6 @@
 import { useContext, useState } from "react"
 import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
-import { TBC721 } from "@bitcoin-computer/TBC721"
+import { NftHelper } from "@bitcoin-computer/TBC721"
 import { Link } from "react-router-dom"
 import { Computer } from "@bitcoin-computer/lib"
 import { REACT_APP_NFT_MOD_SPEC } from "../constants/modSpecs"
@@ -75,8 +75,8 @@ function MintForm(props: {
     e.preventDefault()
     try {
       showLoader(true)
-      const tbc721 = new TBC721(computer, REACT_APP_NFT_MOD_SPEC)
-      const nft = await tbc721.mint(name, symbol, url)
+      const nftHelper = new NftHelper(computer, REACT_APP_NFT_MOD_SPEC)
+      const nft = await nftHelper.mint(name, symbol, url)
       setSuccessRev(nft._id)
       showLoader(false)
       Modal.showModal("success-modal")

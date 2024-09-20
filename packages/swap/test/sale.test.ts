@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer, Transaction } from '@bitcoin-computer/lib'
-import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
 import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
@@ -86,16 +86,16 @@ describe('Sale', () => {
       await bob.faucet(nftPrice + 1e5)
 
       // Alice creates helper objects
-      const tbc721A = new TBC721(alice)
+      const nftHelperA = new NftHelper(alice)
       const saleHelperA = new SaleHelper(alice)
 
       // Alice deploys the smart contracts
-      await tbc721A.deploy()
+      await nftHelperA.deploy()
       const saleSpecMod = await saleHelperA.deploy()
       const saleHelperB = new SaleHelper(bob, saleSpecMod)
 
       // Alice mints an NFT
-      const nftA = await tbc721A.mint('a', 'AAA', 'URL')
+      const nftA = await nftHelperA.mint('a', 'AAA', 'URL')
 
       // Alice creates a payment mock
       const mock = new PaymentMock(nftPrice)

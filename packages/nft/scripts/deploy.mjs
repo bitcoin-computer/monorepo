@@ -2,7 +2,7 @@ import { config } from "dotenv"
 import * as readline from "node:readline/promises"
 import { stdin as input, stdout as output } from "node:process"
 import { Computer } from "@bitcoin-computer/lib"
-import { TBC721 } from "@bitcoin-computer/TBC721"
+import { NftHelper } from "@bitcoin-computer/TBC721"
 import { TxWrapperHelper, PaymentHelper, SaleHelper } from "@bitcoin-computer/swap"
 
 config()
@@ -40,8 +40,8 @@ if (answer === "n") {
   console.log("\n Aborting...\n")
 } else {
   console.log("\n * Deploying NFT contract...")
-  const tbc721 = new TBC721(computer)
-  const nftModSpec = await tbc721.deploy()
+  const nftHelper = new NftHelper(computer)
+  const nftModSpec = await nftHelper.deploy()
 
   console.log(" * Deploying TxWrapper contract...")
   const txWrapperHelper = new TxWrapperHelper(computer)

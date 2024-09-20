@@ -27,16 +27,16 @@ export class TxWrapperHelper {
             mod: this.mod
         });
     }
-    async addSaleTx(offerTxId, tx) {
-        const { res: syncedOffer } = (await this.computer.sync(offerTxId));
+    async addSaleTx(txWrapperTxId, tx) {
+        const { res: txWrapper } = (await this.computer.sync(txWrapperTxId));
         return this.computer.encode({
-            exp: `offer.addSaleTx("${tx.serialize()}")`,
+            exp: `txWrapper.addSaleTx("${tx.serialize()}")`,
             exclude: tx.getInRevs(),
-            env: { offer: syncedOffer._rev }
+            env: { txWrapper: txWrapper._rev }
         });
     }
-    async decodeOfferTx(offerTxId) {
-        const [rev] = await this.computer.query({ ids: [`${offerTxId}:0`] });
+    async decodeTx(txWrapperTxId) {
+        const [rev] = await this.computer.query({ ids: [`${txWrapperTxId}:0`] });
         const { txHex } = await this.computer.sync(rev);
         return Transaction.deserialize(txHex);
     }
