@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { Transaction as BCTransaction } from '@bitcoin-computer/lib'
-import { Token, TBC20 } from '@bitcoin-computer/TBC20'
+import { Token, TokenHelper } from '@bitcoin-computer/TBC20'
 import { StaticSwapHelper } from './static-swap.js'
 import { TxWrapper, TxWrapperHelper } from './tx-wrapper.js'
 
@@ -24,7 +24,7 @@ export class BuyHelper {
   computer: any
   swapHelper: StaticSwapHelper
   txWrapperHelper: TxWrapperHelper
-  tbc20: TBC20
+  tokenHelper: TokenHelper
   mod?: string
 
   constructor(
@@ -37,7 +37,7 @@ export class BuyHelper {
     this.computer = computer
     this.swapHelper = new StaticSwapHelper(computer, swapMod)
     this.txWrapperHelper = new TxWrapperHelper(computer, txWrapperMod)
-    this.tbc20 = new TBC20(computer, tokenMod)
+    this.tokenHelper = new TokenHelper(computer, tokenMod)
     this.mod = buyOrderMod
   }
 
@@ -96,7 +96,7 @@ export class BuyHelper {
 
   async findMatchingToken(buyOrder: BuyOrder): Promise<Token | undefined> {
     const tokenRevs = await this.computer.query({
-      mod: this.tbc20.mod,
+      mod: this.tokenHelper.mod,
       publicKey: this.computer.getPublicKey()
     })
     const tokens = (await Promise.all(tokenRevs.map((rev) => this.computer.sync(rev)))) as Token[]

@@ -2,7 +2,7 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
-import { TBC20, Token } from '../src/token'
+import { TokenHelper, Token } from '../src/token'
 
 dotenv.config({ path: '../../.env' })
 
@@ -72,11 +72,11 @@ describe('Token', () => {
 
   describe('Using fungible tokens with a helper class', () => {
     describe('mint', () => {
-      const tbc20 = new TBC20(sender)
+      const tokenHelper = new TokenHelper(sender)
       let root: string
-      it('Should create the tbc20 object', async () => {
-        const publicKey = tbc20.computer.getPublicKey()
-        root = await tbc20.mint(publicKey, 200, 'test', 'TST')
+      it('Should create the tokenHelper object', async () => {
+        const publicKey = tokenHelper.computer.getPublicKey()
+        root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
         expect(root).not.to.be.undefined
         expect(typeof root).to.eq('string')
         expect(root.length).to.be.greaterThan(64)
@@ -96,10 +96,10 @@ describe('Token', () => {
 
     describe('totalSupply', () => {
       it('Should return the supply of tokens', async () => {
-        const tbc20 = new TBC20(sender)
-        const publicKey = tbc20.computer.getPublicKey()
-        const root = await tbc20.mint(publicKey, 200, 'test', 'TST')
-        const supply = await tbc20.totalSupply(root)
+        const tokenHelper = new TokenHelper(sender)
+        const publicKey = tokenHelper.computer.getPublicKey()
+        const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
+        const supply = await tokenHelper.totalSupply(root)
         expect(supply).to.eq(200)
       })
     })
@@ -108,10 +108,10 @@ describe('Token', () => {
       it('Should throw an error if the root is not set', async () => {
         const publicKeyString = sender.getPublicKey()
 
-        const tbc20 = new TBC20(sender)
-        expect(tbc20).not.to.be.undefined
+        const tokenHelper = new TokenHelper(sender)
+        expect(tokenHelper).not.to.be.undefined
         try {
-          await tbc20.balanceOf(publicKeyString, undefined)
+          await tokenHelper.balanceOf(publicKeyString, undefined)
           expect(true).to.eq(false)
         } catch (err) {
           expect(err.message).to.eq('Please pass a root into balanceOf.')
@@ -119,11 +119,11 @@ describe('Token', () => {
       })
 
       it('Should compute the balance', async () => {
-        const tbc20 = new TBC20(sender)
-        const publicKey = tbc20.computer.getPublicKey()
-        const root = await tbc20.mint(publicKey, 200, 'test', 'TST')
+        const tokenHelper = new TokenHelper(sender)
+        const publicKey = tokenHelper.computer.getPublicKey()
+        const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
         await sleep(200)
-        const res = await tbc20.balanceOf(publicKey, root)
+        const res = await tokenHelper.balanceOf(publicKey, root)
         expect(res).to.eq(200)
       })
     })
@@ -131,47 +131,47 @@ describe('Token', () => {
     describe('transfer', () => {
       it('Should transfer a token', async () => {
         const computer2 = new Computer()
-        const tbc20 = new TBC20(sender)
-        const publicKey = tbc20.computer.getPublicKey()
-        const root = await tbc20.mint(publicKey, 200, 'test', 'TST')
+        const tokenHelper = new TokenHelper(sender)
+        const publicKey = tokenHelper.computer.getPublicKey()
+        const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
         await sleep(200)
-        await tbc20.transfer(computer2.getPublicKey(), 20, root)
+        await tokenHelper.transfer(computer2.getPublicKey(), 20, root)
         await sleep(200)
-        const res = await tbc20.balanceOf(publicKey, root)
+        const res = await tokenHelper.balanceOf(publicKey, root)
         expect(res).to.eq(180)
       })
 
       it('Should transfer random amounts to different people', async () => {
         const computer2 = new Computer()
         const computer3 = new Computer()
-        const tbc20 = new TBC20(sender)
-        const publicKey = tbc20.computer.getPublicKey()
-        const root = await tbc20.mint(publicKey, 200, 'multiple', 'MULT')
+        const tokenHelper = new TokenHelper(sender)
+        const publicKey = tokenHelper.computer.getPublicKey()
+        const root = await tokenHelper.mint(publicKey, 200, 'multiple', 'MULT')
         const amount2 = Math.floor(Math.random() * 100)
         const amount3 = Math.floor(Math.random() * 100)
         await sleep(200)
-        await tbc20.transfer(computer2.getPublicKey(), amount2, root)
+        await tokenHelper.transfer(computer2.getPublicKey(), amount2, root)
         await sleep(200)
-        await tbc20.transfer(computer3.getPublicKey(), amount3, root)
+        await tokenHelper.transfer(computer3.getPublicKey(), amount3, root)
         await sleep(200)
-        const res = await tbc20.balanceOf(publicKey, root)
+        const res = await tokenHelper.balanceOf(publicKey, root)
         expect(res).to.eq(200 - amount2 - amount3)
 
-        const res2 = await tbc20.balanceOf(computer2.getPublicKey(), root)
+        const res2 = await tokenHelper.balanceOf(computer2.getPublicKey(), root)
         expect(res2).to.eq(amount2)
 
-        const res3 = await tbc20.balanceOf(computer3.getPublicKey(), root)
+        const res3 = await tokenHelper.balanceOf(computer3.getPublicKey(), root)
         expect(res3).to.eq(amount3)
       })
 
       it('Should fail if the amount is greater than the balance', async () => {
         const computer2 = new Computer()
-        const tbc20 = new TBC20(sender)
-        const publicKey = tbc20.computer.getPublicKey()
-        const root = await tbc20.mint(publicKey, 200, 'test', 'TST')
+        const tokenHelper = new TokenHelper(sender)
+        const publicKey = tokenHelper.computer.getPublicKey()
+        const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
         await sleep(200)
         try {
-          await tbc20.transfer(computer2.getPublicKey(), 201, root)
+          await tokenHelper.transfer(computer2.getPublicKey(), 201, root)
           expect(true).to.eq('false')
         } catch (err) {
           expect(err.message).to.eq('Could not send entire amount')

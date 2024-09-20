@@ -2,7 +2,7 @@
 import { expect } from 'chai'
 import dotenv from 'dotenv'
 import { Computer } from '@bitcoin-computer/lib'
-import { Token, TBC20 } from '@bitcoin-computer/TBC20'
+import { Token, TokenHelper } from '@bitcoin-computer/TBC20'
 import { BuyOrder, BuyHelper } from '../src/buy-order'
 import { SwapHelper } from '../src/swap'
 import { StaticSwapHelper, TxWrapperHelper } from '../src'
@@ -28,8 +28,8 @@ describe('Sale', () => {
       const swapMod = await swapHelperB.deploy()
       const txWrapperHelperB = new TxWrapperHelper(buyer)
       const txWrapperMod = await txWrapperHelperB.deploy()
-      const tbc20 = new TBC20(buyer)
-      const tokenMod = await tbc20.deploy()
+      const tokenHelper = new TokenHelper(buyer)
+      const tokenMod = await tokenHelper.deploy()
       const buyHelperB = new BuyHelper(buyer, swapMod, txWrapperMod, tokenMod)
       await buyHelperB.deploy()
       const buy = await buyHelperB.broadcastBuyOrder(100000, 100, token._root)

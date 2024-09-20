@@ -35,7 +35,7 @@ export interface ITBC20 {
   transfer(to: string, amount: number, root: string): Promise<void>
 }
 
-export class TBC20 implements ITBC20 {
+export class TokenHelper implements ITBC20 {
   name: string
   symbol: string
   computer: any
