@@ -9,7 +9,7 @@
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
     "test": "mocha  --config .mocharc.json",
-    "test-and-show": "../../scripts/test-and-show.sh nodejs-template.log",
+    "test-and-show": "npm run test 2>&1 | tee nodejs-template.log && open nodejs-template.log",
     "types": "tsc --noEmit"
   },
   "type": "module",
