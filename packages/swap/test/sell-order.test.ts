@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import { Token } from '@bitcoin-computer/TBC20'
 import { Computer } from '@bitcoin-computer/lib'
 import { SellOrderHelper } from '../src/sell-order'
-import { OfferHelper, PaymentHelper, SaleHelper } from '../src'
+import { TxWrapperHelper, PaymentHelper, SaleHelper } from '../src'
 
 dotenv.config({ path: '../../.env' })
 
@@ -23,11 +23,11 @@ describe('SellOrder', () => {
       // Deploy smart contracts
       const saleHelperS = new SaleHelper(seller)
       const saleMod = await saleHelperS.deploy()
-      const offerHelperS = new OfferHelper(seller)
-      const offerMod = await offerHelperS.deploy()
+      const txWrapperHelperS = new TxWrapperHelper(seller)
+      const txWrapperMod = await txWrapperHelperS.deploy()
       const paymentHelperS = new PaymentHelper(seller)
       const paymentMod = await paymentHelperS.deploy()
-      const sellOrderHelperS = new SellOrderHelper(seller, saleMod, offerMod, paymentMod)
+      const sellOrderHelperS = new SellOrderHelper(seller, saleMod, txWrapperMod, paymentMod)
       await sellOrderHelperS.deploy()
 
       // Seller deploys the SellOrder contract and creates an Token
@@ -37,12 +37,12 @@ describe('SellOrder', () => {
       const txId = await sellOrderHelperS.broadcastSellOrder(p, t._rev)
       expect(txId).a('string')
 
-      const { res: offer } = (await seller.sync(txId)) as any
-      expect(offer && offer.txHex && typeof offer.txHex === 'string').eq(true)
+      const { res: txWrapper } = (await seller.sync(txId)) as any
+      expect(txWrapper && txWrapper.txHex && typeof txWrapper.txHex === 'string').eq(true)
       expect(await seller.isUnspent(t._rev)).eq(true)
 
       // Buyer closes the order
-      const sellOrderHelperB = new SellOrderHelper(buyer, saleMod, offerMod, paymentMod)
+      const sellOrderHelperB = new SellOrderHelper(buyer, saleMod, txWrapperMod, paymentMod)
       const res = await sellOrderHelperB.parseSellOrder(`${txId}:0`)
       expect(Object.keys(res)).deep.eq(['saleTx', 'price', 'open', 'token'])
       const { saleTx, price, open, token } = res

@@ -1,4 +1,4 @@
-export * from './offer.js'
+export * from './tx-wrapper.js'
 export * from './ord-sale.js'
 export * from './payment.js'
 export * from './buy-order.js'

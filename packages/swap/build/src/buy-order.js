@@ -1,6 +1,6 @@
 import { Transaction as BCTransaction } from '@bitcoin-computer/lib';
 import { StaticSwapHelper } from './static-swap.js';
-import { OfferHelper } from './offer.js';
+import { TxWrapperHelper } from './tx-wrapper.js';
 export class BuyOrder extends Contract {
     constructor(price, amount, tokenRoot) {
         super({ _amount: price, amount, tokenRoot, open: true });
@@ -24,9 +24,9 @@ export class BuyHelper {
         return this.computer.new(BuyOrder, [price, amount, tokenRoot], this.mod);
     }
     async closeBuyOrder(token, buyOrder, offerMod) {
-        const offerHelper = new OfferHelper(this.computer, offerMod);
+        const txWrapperHelper = new TxWrapperHelper(this.computer, offerMod);
         const { tx: swapTx } = await this.swapHelper.createSwapTx(token, buyOrder);
-        const { tx: offerTx } = await offerHelper.createOfferTx(buyOrder._owners[0], this.computer.getUrl(), swapTx);
+        const { tx: offerTx } = await txWrapperHelper.createWrappedTx(buyOrder._owners[0], this.computer.getUrl(), swapTx);
         return this.computer.broadcast(offerTx);
     }
     async settleBuyOrder(swapTx) {

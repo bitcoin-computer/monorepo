@@ -1,5 +1,5 @@
 import { Transaction } from '@bitcoin-computer/lib';
-export class Offer extends Contract {
+export class TxWrapper extends Contract {
     constructor(owner, url, txHex) {
         super({ _owners: [owner], txHex });
     }
@@ -7,19 +7,19 @@ export class Offer extends Contract {
         this.txHex = txHex;
     }
 }
-export class OfferHelper {
+export class TxWrapperHelper {
     constructor(computer, mod) {
         this.computer = computer;
         this.mod = mod;
     }
     async deploy() {
-        this.mod = await this.computer.deploy(`export ${Offer}`);
+        this.mod = await this.computer.deploy(`export ${TxWrapper}`);
         return this.mod;
     }
-    async createOfferTx(publicKey, url, tx) {
+    async createWrappedTx(publicKey, url, tx) {
         const exp = tx
-            ? `new Offer("${publicKey}", "${url}", "${tx.serialize()}")`
-            : `new Offer("${publicKey}", "${url}")`;
+            ? `new TxWrapper("${publicKey}", "${url}", "${tx.serialize()}")`
+            : `new TxWrapper("${publicKey}", "${url}")`;
         const exclude = tx ? tx.getInRevs() : [];
         return this.computer.encode({
             exp,

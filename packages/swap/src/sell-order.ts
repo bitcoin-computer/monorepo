@@ -1,6 +1,6 @@
 /* eslint max-classes-per-file: ["error", 2] */
 import { Transaction } from '@bitcoin-computer/lib'
-import { OfferHelper } from './offer.js'
+import { TxWrapperHelper } from './tx-wrapper.js'
 import { Payment, PaymentHelper, PaymentMock } from './payment.js'
 import { SaleHelper } from './sale.js'
 
@@ -16,19 +16,19 @@ export class SellOrderHelper {
   computer: any
   mod?: string
   saleHelper: SaleHelper
-  offerHelper: OfferHelper
+  txWrapperHelper: TxWrapperHelper
   paymentHelper: PaymentHelper
 
   constructor(
     computer: any,
     saleMod: string,
-    offerMod: string,
+    txWrapperMod: string,
     paymentMod: string,
     sellMod?: string
   ) {
     this.computer = computer
     this.saleHelper = new SaleHelper(computer, saleMod)
-    this.offerHelper = new OfferHelper(computer, offerMod)
+    this.txWrapperHelper = new TxWrapperHelper(computer, txWrapperMod)
     this.paymentHelper = new PaymentHelper(computer, paymentMod)
     this.mod = sellMod
   }
@@ -43,8 +43,8 @@ export class SellOrderHelper {
     const { tx: saleTx } = await this.saleHelper.createSaleTx({ _rev: tokenRev }, mock)
     const publicKey = this.computer.getPublicKey()
     const url = this.computer.getUrl()
-    const { tx: offerTx } = await this.offerHelper.createOfferTx(publicKey, url, saleTx)
-    return this.computer.broadcast(offerTx)
+    const { tx: wrappedTx } = await this.txWrapperHelper.createWrappedTx(publicKey, url, saleTx)
+    return this.computer.broadcast(wrappedTx)
   }
 
   async closeAndSettleSellOrder(price: number, deserialized: Transaction) {

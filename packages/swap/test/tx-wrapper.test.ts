@@ -5,7 +5,7 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721/src/nft'
 import dotenv from 'dotenv'
 import { StaticSwap } from '../src/static-swap'
-import { OfferHelper } from '../src/offer'
+import { TxWrapperHelper } from '../src/tx-wrapper'
 import { meta } from '../src/utils'
 
 dotenv.config({ path: '../../.env' })
@@ -18,7 +18,7 @@ const sleep = async (delay) => {
   })
 }
 
-describe('Offer', () => {
+describe('TxWrapper', () => {
   const alice = new Computer({ url })
   const bob = new Computer({ url })
 
@@ -30,7 +30,7 @@ describe('Offer', () => {
   describe('Alice and Bob Creates and swap NFTs', () => {
     let a: NFT
     let b: NFT
-    let offerTxId: string
+    let wrappedTxId: string
     describe('Alice and Bob create the NFTs they want to swap', () => {
       it('Alice creates an NFT', async () => {
         a = await alice.new(NFT, ['A', 'AAA', 'URL'])
@@ -59,15 +59,15 @@ describe('Offer', () => {
 
     describe('Alice creates an offer', async () => {
       let aliceTx: any
-      let offerHelper: OfferHelper
+      let txWrapperHelper: TxWrapperHelper
 
       before('Before creating an offer', async () => {
-        offerHelper = new OfferHelper(alice)
+        txWrapperHelper = new TxWrapperHelper(alice)
       })
 
       it('Alice deploys the offer contract', async () => {
         await alice.faucet(0.1e8)
-        await offerHelper.deploy()
+        await txWrapperHelper.deploy()
       })
 
       it('Alice builds, funds, and signs a swap transaction', async () => {
@@ -79,28 +79,28 @@ describe('Offer', () => {
 
       it('Alice creates an offer transaction', async () => {
         await alice.faucet(1e8)
-        const { tx: offerTx } = await offerHelper.createOfferTx(
+        const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
           bob.getPublicKey(),
           bob.getUrl(),
           aliceTx
         )
 
-        offerTxId = await alice.broadcast(offerTx)
+        wrappedTxId = await alice.broadcast(wrappedTx)
         await sleep(1000)
       })
     })
 
     describe('Bob accepts the offer', () => {
-      let offerHelper
+      let txWrapperHelper
       let bobsTx: any
       let txId: string
 
       before('Before accepting the offer', () => {
-        offerHelper = new OfferHelper(bob)
+        txWrapperHelper = new TxWrapperHelper(bob)
       })
 
       it('Bob syncs to the offer transaction and extracts the swap transaction', async () => {
-        bobsTx = await offerHelper.decodeOfferTx(offerTxId)
+        bobsTx = await txWrapperHelper.decodeTx(wrappedTxId)
       })
 
       it('Bob signs the swap transaction', async () => {
@@ -143,13 +143,13 @@ describe('Offer', () => {
   describe('Alice and Bob Creates and swap NFTs using addSaleTx', () => {
     let a: NFT
     let b: NFT
-    let offerTxId: string
+    let wrappedTxId: string
     it('Alice creates an offer and add tx using addSaleTx', async () => {
       let aliceTx: any
-      let offerHelper: OfferHelper
+      let txWrapperHelper: TxWrapperHelper
 
       before('Before creating an offer', async () => {
-        offerHelper = new OfferHelper(alice)
+        txWrapperHelper = new TxWrapperHelper(alice)
       })
 
       it('Alice creates an NFT', async () => {
@@ -178,7 +178,7 @@ describe('Offer', () => {
 
       it('Alice deploys the offer contract', async () => {
         await alice.faucet(0.1e8)
-        await offerHelper.deploy()
+        await txWrapperHelper.deploy()
       })
 
       it('Alice builds, funds, and signs a swap transaction', async () => {
@@ -190,14 +190,14 @@ describe('Offer', () => {
 
       it('Alice creates an offer transaction', async () => {
         await alice.faucet(1e8)
-        const { tx: offerTx } = await offerHelper.createOfferTx(
+        const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
           alice.getPublicKey(),
           alice.getUrl()
         )
 
-        offerTxId = await alice.broadcast(offerTx)
+        wrappedTxId = await alice.broadcast(wrappedTx)
 
-        const { tx: offerTxWithAliceTx } = await offerHelper.addSaleTx(offerTxId, aliceTx)
+        const { tx: offerTxWithAliceTx } = await txWrapperHelper.addSaleTx(wrappedTxId, aliceTx)
 
         await alice.broadcast(offerTxWithAliceTx)
         await sleep(1000)
@@ -205,16 +205,16 @@ describe('Offer', () => {
     })
 
     it('Bob accepts the offer after alice add sale txn', () => {
-      let offerHelper
+      let txWrapperHelper
       let bobsTx: any
       let txId: string
 
       before('Before accepting the offer', () => {
-        offerHelper = new OfferHelper(bob)
+        txWrapperHelper = new TxWrapperHelper(bob)
       })
 
       it('Bob syncs to the offer transaction and extracts the swap transaction', async () => {
-        bobsTx = await offerHelper.decodeOfferTx(offerTxId)
+        bobsTx = await txWrapperHelper.decodeTx(wrappedTxId)
       })
 
       it('Bob signs the swap transaction', async () => {

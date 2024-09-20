@@ -1,5 +1,5 @@
 import { Transaction } from '@bitcoin-computer/lib';
-import { OfferHelper } from './offer.js';
+import { TxWrapperHelper } from './tx-wrapper.js';
 import { PaymentHelper } from './payment.js';
 import { SaleHelper } from './sale.js';
 export declare class SellOrder extends Contract {
@@ -10,9 +10,9 @@ export declare class SellOrderHelper {
     computer: any;
     mod?: string;
     saleHelper: SaleHelper;
-    offerHelper: OfferHelper;
+    txWrapperHelper: TxWrapperHelper;
     paymentHelper: PaymentHelper;
-    constructor(computer: any, saleMod: string, offerMod: string, paymentMod: string, sellMod?: string);
+    constructor(computer: any, saleMod: string, txWrapperMod: string, paymentMod: string, sellMod?: string);
     deploy(): Promise<string>;
     broadcastSellOrder(amount: number, tokenRev: string): Promise<string>;
     closeAndSettleSellOrder(price: number, deserialized: Transaction): Promise<any>;

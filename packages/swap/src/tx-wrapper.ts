@@ -1,9 +1,8 @@
 /* eslint max-classes-per-file: ["error", 2] */
 
-import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/lib'
 
-export class Offer extends Contract {
+export class TxWrapper extends Contract {
   txHex: string
 
   constructor(owner: string, url: string, txHex?: string) {
@@ -15,7 +14,7 @@ export class Offer extends Contract {
   }
 }
 
-export class OfferHelper {
+export class TxWrapperHelper {
   computer: any
   mod?: string
 
@@ -25,14 +24,14 @@ export class OfferHelper {
   }
 
   async deploy() {
-    this.mod = await this.computer.deploy(`export ${Offer}`)
+    this.mod = await this.computer.deploy(`export ${TxWrapper}`)
     return this.mod
   }
 
-  async createOfferTx(publicKey: string, url: string, tx?: TransactionType) {
+  async createWrappedTx(publicKey: string, url: string, tx?: Transaction) {
     const exp = tx
-      ? `new Offer("${publicKey}", "${url}", "${tx.serialize()}")`
-      : `new Offer("${publicKey}", "${url}")`
+      ? `new TxWrapper("${publicKey}", "${url}", "${tx.serialize()}")`
+      : `new TxWrapper("${publicKey}", "${url}")`
     const exclude = tx ? tx.getInRevs() : []
     return this.computer.encode({
       exp,
@@ -41,17 +40,17 @@ export class OfferHelper {
     })
   }
 
-  async addSaleTx(offerTxId: string, tx: TransactionType) {
-    const { res: syncedOffer } = (await this.computer.sync(offerTxId)) as { res: Offer }
+  async addSaleTx(txWrapperTxId: string, tx: Transaction) {
+    const { res: txWrapper } = (await this.computer.sync(txWrapperTxId)) as { res: TxWrapper }
     return this.computer.encode({
-      exp: `offer.addSaleTx("${tx.serialize()}")`,
+      exp: `txWrapper.addSaleTx("${tx.serialize()}")`,
       exclude: tx.getInRevs(),
-      env: { offer: syncedOffer._rev }
+      env: { txWrapper: txWrapper._rev }
     })
   }
 
-  async decodeOfferTx(offerTxId: string) {
-    const [rev] = await this.computer.query({ ids: [`${offerTxId}:0`] })
+  async decodeTx(txWrapperTxId: string) {
+    const [rev] = await this.computer.query({ ids: [`${txWrapperTxId}:0`] })
     const { txHex } = await this.computer.sync(rev)
     return Transaction.deserialize(txHex)
   }
