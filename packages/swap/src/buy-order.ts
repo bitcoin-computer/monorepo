@@ -41,15 +41,18 @@ export class BuyHelper {
     this.mod = buyOrderMod
   }
 
+  // Deploy the buy order contract as a module
   async deploy(): Promise<string> {
     this.mod = await this.computer.deploy(`export ${BuyOrder}`)
     return this.mod
   }
 
+  // Buyer uses this function to create a buy order
   async broadcastBuyOrder(price: number, amount: number, tokenRoot: string): Promise<BuyOrder> {
     return this.computer.new(BuyOrder, [price, amount, tokenRoot], this.mod)
   }
 
+  // Seller uses this function to close a sell order
   async closeBuyOrder(token: Token, buyOrder: BuyOrder) {
     const { tx: swapTx } = await this.swapHelper.createSwapTx(token, buyOrder)
     const { tx: wrappedTx } = await this.txWrapperHelper.createWrappedTx(
@@ -60,12 +63,13 @@ export class BuyHelper {
     return this.computer.broadcast(wrappedTx)
   }
 
+  // Buyer uses this function to settle a closed buy order
   async settleBuyOrder(swapTx: Transaction): Promise<string> {
     await this.computer.sign(swapTx)
     return this.computer.broadcast(swapTx)
   }
 
-  // Buyer can use this function to look for an acceptable swap for their buy order
+  // Buyer uses this function to look for an acceptable swap for their buy order
   async findMatchingSwapTx(buyOrder: BuyOrder, txWrapperMod: string): Promise<Transaction> {
     const mod = txWrapperMod
     const publicKey = buyOrder._owners[0]
@@ -94,6 +98,7 @@ export class BuyHelper {
     return swapTxs[index]
   }
 
+  // Seller uses this function to check if Seller owns a token matching the buy order
   async findMatchingToken(buyOrder: BuyOrder): Promise<Token | undefined> {
     const tokenRevs = await this.computer.query({
       mod: this.tokenHelper.mod,
@@ -104,6 +109,7 @@ export class BuyHelper {
     return matches[0] || undefined
   }
 
+  // Returns whether a given buy order is open
   async isOpen(buyOrder: BuyOrder): Promise<boolean> {
     return this.computer.isUnspent(buyOrder._id)
   }

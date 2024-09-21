@@ -33,11 +33,13 @@ export class SellOrderHelper {
     this.mod = sellMod
   }
 
+  // Deploy the sell order contract as a module
   async deploy(): Promise<string> {
     this.mod = await this.computer.deploy(`export ${SellOrder}`)
     return this.mod
   }
 
+  // Seller uses this function to create a sell order
   async broadcastSellOrder(amount: number, tokenRev: string): Promise<string> {
     const mock = new PaymentMock(amount)
     const { tx: saleTx } = await this.saleHelper.createSaleTx({ _rev: tokenRev }, mock)
@@ -47,6 +49,7 @@ export class SellOrderHelper {
     return this.computer.broadcast(wrappedSaleTx)
   }
 
+  // Buyer uses this function to close and settle a sell order
   async closeAndSettleSellOrder(price: number, saleTx: Transaction) {
     // todo: look for existing payment object
     const payment = await this.computer.new(Payment, [price], this.paymentHelper.mod)
@@ -57,6 +60,7 @@ export class SellOrderHelper {
     return this.computer.broadcast(finalTx)
   }
 
+  // Buyer uses this function to compute the properties of a sell order
   async parseSellOrder(
     sellOrderRev: string
   ): Promise<{ saleTx: any; price: number; open: boolean; token: any }> {
