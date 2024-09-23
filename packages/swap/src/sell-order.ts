@@ -40,8 +40,8 @@ export class SellOrderHelper {
   }
 
   // Seller uses this function to create a sell order
-  async broadcastSellOrder(amount: number, tokenRev: string): Promise<string> {
-    const mock = new PaymentMock(amount)
+  async broadcastSellOrder(total: number, tokenRev: string): Promise<string> {
+    const mock = new PaymentMock(total)
     const { tx: saleTx } = await this.saleHelper.createSaleTx({ _rev: tokenRev }, mock)
     const publicKey = this.computer.getPublicKey()
     const url = this.computer.getUrl()
@@ -63,15 +63,15 @@ export class SellOrderHelper {
   // Buyer uses this function to compute the properties of a sell order
   async parseSellOrder(
     sellOrderRev: string
-  ): Promise<{ saleTx: any; price: number; open: boolean; token: any }> {
+  ): Promise<{ saleTx: any; total: number; open: boolean; token: any }> {
     const { txHex: saleTxHex } = (await this.computer.sync(sellOrderRev)) as { txHex: string }
     const saleTx = Transaction.deserialize(saleTxHex)
     if (!(await this.saleHelper.isSaleTx(saleTx))) return {} as any
-    const price = await this.saleHelper.checkSaleTx(saleTx)
+    const total = await this.saleHelper.checkSaleTx(saleTx)
     const { env } = await this.computer.decode(saleTx)
     const tokenRev = env.o
     const open = await this.computer.isUnspent(tokenRev)
     const token = await this.computer.sync(tokenRev)
-    return { saleTx, price, open, token }
+    return { saleTx, total, open, token } // price is actually total
   }
 }

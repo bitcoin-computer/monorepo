@@ -44,8 +44,8 @@ describe('SellOrder', () => {
       // Buyer closes the order
       const sellOrderHelperB = new SellOrderHelper(buyer, saleMod, txWrapperMod, paymentMod)
       const res = await sellOrderHelperB.parseSellOrder(`${txId}:0`)
-      expect(Object.keys(res)).deep.eq(['saleTx', 'price', 'open', 'token'])
-      const { saleTx, price, open, token } = res
+      expect(Object.keys(res)).deep.eq(['saleTx', 'total', 'open', 'token'])
+      const { saleTx, total: price, open, token } = res
       expect(typeof saleTx).eq('object')
       expect(price).eq(p)
       expect(open).eq(true)

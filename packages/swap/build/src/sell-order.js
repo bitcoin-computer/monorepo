@@ -19,8 +19,8 @@ export class SellOrderHelper {
         this.mod = await this.computer.deploy(`export ${SellOrder}`);
         return this.mod;
     }
-    async broadcastSellOrder(amount, tokenRev) {
-        const mock = new PaymentMock(amount);
+    async broadcastSellOrder(total, tokenRev) {
+        const mock = new PaymentMock(total);
         const { tx: saleTx } = await this.saleHelper.createSaleTx({ _rev: tokenRev }, mock);
         const publicKey = this.computer.getPublicKey();
         const url = this.computer.getUrl();
@@ -40,11 +40,11 @@ export class SellOrderHelper {
         const saleTx = Transaction.deserialize(saleTxHex);
         if (!(await this.saleHelper.isSaleTx(saleTx)))
             return {};
-        const price = await this.saleHelper.checkSaleTx(saleTx);
+        const total = await this.saleHelper.checkSaleTx(saleTx);
         const { env } = await this.computer.decode(saleTx);
         const tokenRev = env.o;
         const open = await this.computer.isUnspent(tokenRev);
         const token = await this.computer.sync(tokenRev);
-        return { saleTx, price, open, token };
+        return { saleTx, total, open, token };
     }
 }

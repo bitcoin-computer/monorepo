@@ -14,11 +14,11 @@ export declare class SellOrderHelper {
     paymentHelper: PaymentHelper;
     constructor(computer: any, saleMod: string, txWrapperMod: string, paymentMod: string, sellMod?: string);
     deploy(): Promise<string>;
-    broadcastSellOrder(amount: number, tokenRev: string): Promise<string>;
+    broadcastSellOrder(total: number, tokenRev: string): Promise<string>;
     closeAndSettleSellOrder(price: number, saleTx: Transaction): Promise<any>;
     parseSellOrder(sellOrderRev: string): Promise<{
         saleTx: any;
-        price: number;
+        total: number;
         open: boolean;
         token: any;
     }>;

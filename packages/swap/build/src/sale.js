@@ -31,8 +31,13 @@ export class SaleHelper {
         });
     }
     async isSaleTx(tx) {
-        const { exp, mod } = await this.computer.decode(tx);
-        return exp === 'Sale.exec(o, p)' && mod === this.mod;
+        try {
+            const { exp, mod } = await this.computer.decode(tx);
+            return exp === 'Sale.exec(o, p)' && mod === this.mod;
+        }
+        catch (_a) {
+            return false;
+        }
     }
     async checkSaleTx(tx) {
         const { exp, env, mod } = await this.computer.decode(tx);
