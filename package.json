@@ -36,7 +36,7 @@
     "husky-checks": "./scripts/husky-checks.sh",
     "prepare": "husky install",
     "prepublishOnly": "./scripts/check-obfuscation.sh",
-    "reset": "cd packages/node && npm run reset",
+    "reset": "cd packages/node && npm run reset ; rm -rf packages/node/data",
     "start": "cd /dist/packages/node && npm run start",
     "test": "cd packages/node && npm run test; cd ../lib && npm run test",
     "up": "cd packages/node && npm run up -- $@"
