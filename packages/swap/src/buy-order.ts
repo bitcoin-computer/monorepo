@@ -10,8 +10,8 @@ export class BuyOrder extends Contract {
   open: boolean
   _owners: string[]
 
-  constructor(price: number, amount: number, tokenRoot: string) {
-    super({ _amount: price, amount, tokenRoot, open: true })
+  constructor(total: number, amount: number, tokenRoot: string) {
+    super({ _amount: total, amount, tokenRoot, open: true })
   }
 
   transfer(to) {
@@ -48,8 +48,8 @@ export class BuyHelper {
   }
 
   // Buyer uses this function to create a buy order
-  async broadcastBuyOrder(price: number, amount: number, tokenRoot: string): Promise<BuyOrder> {
-    return this.computer.new(BuyOrder, [price, amount, tokenRoot], this.mod)
+  async broadcastBuyOrder(total: number, amount: number, tokenRoot: string): Promise<BuyOrder> {
+    return this.computer.new(BuyOrder, [total, amount, tokenRoot], this.mod)
   }
 
   // Seller uses this function to close a sell order

@@ -58,46 +58,56 @@ var Balance = function (_a) {
     var _c = useState(localStorage.getItem("CHAIN") || "LTC"), setChain = _c[1];
     var _d = UtilsContext.useUtilsComponents(), showSnackBar = _d.showSnackBar, showLoader = _d.showLoader;
     var refreshBalance = useCallback(function () { return __awaiter(void 0, void 0, void 0, function () {
-        var publicKey, mod, paymentRevs, _a, payments, amountsInPaymentToken, availableWalletBalance, err_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var publicKey_1, balances, amountsInPayments, walletBalance, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
-                    _b.trys.push([0, 7, , 8]);
+                    _a.trys.push([0, 3, , 4]);
                     showLoader(true);
-                    if (!computer) return [3 /*break*/, 6];
-                    publicKey = computer.getPublicKey();
-                    mod = modSpecs[0];
-                    if (!modSpecs) return [3 /*break*/, 2];
-                    return [4 /*yield*/, computer.query({ publicKey: publicKey, mod: mod })];
+                    publicKey_1 = computer.getPublicKey();
+                    return [4 /*yield*/, Promise.all(modSpecs.map(function (mod) { return __awaiter(void 0, void 0, void 0, function () {
+                            var paymentRevs, _a, payments;
+                            return __generator(this, function (_b) {
+                                switch (_b.label) {
+                                    case 0:
+                                        if (!modSpecs) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, computer.query({ publicKey: publicKey_1, mod: mod })];
+                                    case 1:
+                                        _a = _b.sent();
+                                        return [3 /*break*/, 3];
+                                    case 2:
+                                        _a = [];
+                                        _b.label = 3;
+                                    case 3:
+                                        paymentRevs = _a;
+                                        return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                                    case 4:
+                                        payments = (_b.sent());
+                                        return [2 /*return*/, payments && payments.length
+                                                ? payments.reduce(function (total, pay) { return total + (pay._amount - computer.getMinimumFees()); }, 0)
+                                                : 0];
+                                }
+                            });
+                        }); }))];
                 case 1:
-                    _a = _b.sent();
-                    return [3 /*break*/, 3];
-                case 2:
-                    _a = [];
-                    _b.label = 3;
-                case 3:
-                    paymentRevs = _a;
-                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
-                case 4:
-                    payments = (_b.sent());
-                    amountsInPaymentToken = payments && payments.length
-                        ? payments.reduce(function (total, pay) { return total + (pay._amount - computer.getMinimumFees()); }, 0)
-                        : 0;
+                    balances = _a.sent();
+                    amountsInPayments = balances.reduce(function (acc, curr) { return acc + curr; }, 0);
                     return [4 /*yield*/, computer.getBalance()];
-                case 5:
-                    availableWalletBalance = _b.sent();
-                    setBalance(availableWalletBalance.balance + amountsInPaymentToken);
+                case 2:
+                    walletBalance = _a.sent();
+                    console.log('balance in sat', walletBalance.balance / 1e8);
+                    console.log('balance in payment', balances[0] / 1e8);
+                    console.log('balance in buy order', balances[1] / 1e8);
+                    setBalance(walletBalance.balance + amountsInPayments);
                     setChain(computer.getChain());
-                    _b.label = 6;
-                case 6:
                     showLoader(false);
-                    return [3 /*break*/, 8];
-                case 7:
-                    err_1 = _b.sent();
+                    return [3 /*break*/, 4];
+                case 3:
+                    err_1 = _a.sent();
                     showLoader(false);
                     showSnackBar("Error fetching wallet details", false);
-                    return [3 /*break*/, 8];
-                case 8: return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     }); }, [computer]);

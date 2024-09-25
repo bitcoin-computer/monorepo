@@ -6,7 +6,7 @@ export declare class BuyOrder extends Contract {
     amount: number;
     open: boolean;
     _owners: string[];
-    constructor(price: number, amount: number, tokenRoot: string);
+    constructor(total: number, amount: number, tokenRoot: string);
     transfer(to: any): void;
 }
 export declare class BuyHelper {
@@ -17,7 +17,7 @@ export declare class BuyHelper {
     mod?: string;
     constructor(computer: any, swapMod: string, txWrapperMod: string, tokenMod: string, buyOrderMod?: string);
     deploy(): Promise<string>;
-    broadcastBuyOrder(price: number, amount: number, tokenRoot: string): Promise<BuyOrder>;
+    broadcastBuyOrder(total: number, amount: number, tokenRoot: string): Promise<BuyOrder>;
     closeBuyOrder(token: Token, buyOrder: BuyOrder): Promise<any>;
     settleBuyOrder(swapTx: Transaction): Promise<string>;
     findMatchingSwapTx(buyOrder: BuyOrder, txWrapperMod: string): Promise<Transaction>;

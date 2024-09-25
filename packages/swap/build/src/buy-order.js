@@ -3,8 +3,8 @@ import { TokenHelper } from '@bitcoin-computer/TBC20';
 import { StaticSwapHelper } from './static-swap.js';
 import { TxWrapperHelper } from './tx-wrapper.js';
 export class BuyOrder extends Contract {
-    constructor(price, amount, tokenRoot) {
-        super({ _amount: price, amount, tokenRoot, open: true });
+    constructor(total, amount, tokenRoot) {
+        super({ _amount: total, amount, tokenRoot, open: true });
     }
     transfer(to) {
         this.open = false;
@@ -23,8 +23,8 @@ export class BuyHelper {
         this.mod = await this.computer.deploy(`export ${BuyOrder}`);
         return this.mod;
     }
-    async broadcastBuyOrder(price, amount, tokenRoot) {
-        return this.computer.new(BuyOrder, [price, amount, tokenRoot], this.mod);
+    async broadcastBuyOrder(total, amount, tokenRoot) {
+        return this.computer.new(BuyOrder, [total, amount, tokenRoot], this.mod);
     }
     async closeBuyOrder(token, buyOrder) {
         const { tx: swapTx } = await this.swapHelper.createSwapTx(token, buyOrder);
