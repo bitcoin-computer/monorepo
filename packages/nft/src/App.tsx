@@ -29,7 +29,7 @@ export default function App() {
       <UtilsContext.UtilsProvider>
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />
-          <Wallet paymentModSpec={REACT_APP_PAYMENT_MOD_SPEC} />
+          <Wallet modSpecs={[REACT_APP_PAYMENT_MOD_SPEC]} />
           <Navbar />
           <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
             <Routes>

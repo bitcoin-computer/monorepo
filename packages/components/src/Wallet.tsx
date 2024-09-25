@@ -8,10 +8,10 @@ import { ComputerContext } from "./ComputerContext"
 
 const Balance = ({
   computer,
-  paymentModSpec
+  modSpecs
 }: {
   computer: Computer
-  paymentModSpec: string | undefined
+  modSpecs: string[]
 }) => {
   const [balance, setBalance] = useState<number>(0)
   const [, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
@@ -20,19 +20,19 @@ const Balance = ({
   const refreshBalance = useCallback(async () => {
     try {
       showLoader(true)
-      if (computer) {
-        const publicKey = computer.getPublicKey()
-        const mod = paymentModSpec
-        const paymentRevs = paymentModSpec ? await computer.query({ publicKey, mod }) : []
+      const publicKey = computer.getPublicKey()
+      const balances = await Promise.all(modSpecs.map(async (mod) => {
+        const paymentRevs = modSpecs ? await computer.query({ publicKey, mod }) : []
         const payments = (await Promise.all(paymentRevs.map((rev: string) => computer.sync(rev)))) as any[]
-        const amountsInPaymentToken = payments && payments.length
+        return payments && payments.length
           ? payments.reduce((total, pay) => total + (pay._amount - computer.getMinimumFees()), 0)
           : 0
+      }))
+      const amountsInPayments = balances.reduce((acc, curr) => acc + curr, 0)
 
-        const availableWalletBalance = await computer.getBalance()
-        setBalance(availableWalletBalance.balance + amountsInPaymentToken)
-        setChain(computer.getChain())
-      }
+      const walletBalance = await computer.getBalance()
+      setBalance(walletBalance.balance + amountsInPayments)
+      setChain(computer.getChain())
       showLoader(false)
     } catch (err) {
       showLoader(false)
@@ -150,13 +150,13 @@ const LogOut = () => (
   </>
 )
 
-export function Wallet({ paymentModSpec }: { paymentModSpec?: string }) {
+export function Wallet({ modSpecs }: { modSpecs?: string[] }) {
   const computer = useContext(ComputerContext)
 
   const Content = () => (
     <>
       <h4 className="text-2xl font-bold dark:text-white">Wallet</h4>
-      <Balance computer={computer} paymentModSpec={paymentModSpec} />
+      <Balance computer={computer} modSpecs={modSpecs || []} />
       <Address computer={computer} />
       <PublicKey computer={computer} />
       <Mnemonic computer={computer} />
