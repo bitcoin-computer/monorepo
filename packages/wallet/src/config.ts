@@ -1,3 +1,3 @@
-export const explorerURL = process.env.REACT_APP_EXPLORER_URL
-  ? process.env.REACT_APP_EXPLORER_URL
+export const explorerURL = import.meta.env.VITE_EXPLORER_URL
+  ? import.meta.env.VITE_EXPLORER_URL
   : ""

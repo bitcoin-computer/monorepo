@@ -14,7 +14,7 @@ import { Navbar } from "./components/Navbar"
 import Mint from "./components/Mint"
 import { AllAssets, MyAssets } from "./components/Assets"
 import { NftView } from "./components/Nft"
-import { REACT_APP_PAYMENT_MOD_SPEC } from "./constants/modSpecs"
+import { VITE_PAYMENT_MOD_SPEC } from "./constants/modSpecs"
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -29,7 +29,7 @@ export default function App() {
       <UtilsContext.UtilsProvider>
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />
-          <Wallet paymentModSpec={REACT_APP_PAYMENT_MOD_SPEC} />
+          <Wallet paymentModSpec={VITE_PAYMENT_MOD_SPEC} />
           <Navbar />
           <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
             <Routes>

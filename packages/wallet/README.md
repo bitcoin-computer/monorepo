@@ -1,7 +1,7 @@
 <div align="center">
-  <h1>Bitcoin Computer Wallet</h1>
+  <h1>TBC CRA Template</h1>
   <p>
-    A Bitcoin and Litecoin Wallet for Payments and Smart Contracts
+    A template for Create React App with TypeScript and the Bitcoin Computer
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
@@ -12,8 +12,6 @@
 You need to have [git](https://www.git-scm.com/) and [node.js](https://nodejs.org/) installed.
 
 ## Installation
-
-Follow the instructions below to install the [Bitcoin Computer Monorepo](https://github.com/bitcoin-computer/monorepo).
 
 <font size=1>
 
@@ -26,91 +24,56 @@ cd monorepo
 
 # Install the dependencies
 npm install
-
-# Move to the package
-cd packages/wallet
 ```
 
 </font>
 
 ## Usage
 
-### Start the Application Connecting to a Remote Node
+Most of the api is documented in the [Create React App Readme](https://github.com/facebook/create-react-app).
 
-Run the commands below and open [http://localhost:1033](http://localhost:1033).
+### Start the Application
+
+To start the application run the command below and open [http://localhost:3000](http://localhost:3000).
 
 <font size=1>
 
 ```bash
-# Create a .env file
-cp .env.remote.example .env
+# Move to the package
+cd packages/cra-template
+
+# Install the dependencies
+npm install
+
+# Use the default environment variables
+cp .env.example .env
 
 # Start the app
 npm run start
-```
-
-</font>
-
-### Start the Application Connecting to a Local Node
-
-You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running. Then run the commands below and open [http://localhost:1033](http://localhost:1033).
-
-
-<font size=1>
-
-```bash
-# Create a .env file
-cp .env.local.example .env
-
-# Start the app
-npm run start
-```
-
-</font>
-
-### Fund the Wallet
-
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#fund-the-wallet).
-
-### Configuration
-
-To change the configuration please edit the `.env` file.
-
-<font size=1>
-
-```bash
-# Application configuration
-REACT_APP_CHAIN=LTC
-REACT_APP_NETWORK=regtest
-REACT_APP_URL=https://rltc.node.bitcoincomputer.io
-
-# Application Port
-PORT=1033
-
-REACT_APP_EXPLORER_URL=https://explorer.bitcoincomputer.io/
-
 ```
 
 </font>
 
 ## Documentation
 
-Have a look at the [documentation](https://docs.bitcoincomputer.io/).
+Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Computer.
 
 ## Getting Help
 
 If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
-
-## Contributing
-
-Contributions are most welcome! If you have found a bug or have an idea for an improvement please create an [issue](https://github.com/bitcoin-computer/monorepo/issues) or a [pull request](https://github.com/bitcoin-computer/monorepo/pulls).
 
 ## Development Status
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
 ## Price
 
-Free for a limited time only. See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price) for details.
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price).
+
+## Contributing
+
+This project is intended as a starting point for new development so we want to keep it simple. If you have found a bug please create an [issue](https://github.com/bitcoin-computer/monorepo/issues). If you have a bug fix or a UX improvement please create a pull request [here](https://github.com/bitcoin-computer/monorepo/pulls).
+
+If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
 
 ## Legal Notice
 
