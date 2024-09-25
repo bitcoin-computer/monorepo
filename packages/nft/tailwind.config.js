@@ -1,7 +1,6 @@
-/** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "../components/built/**/*.{js,jsx,ts,tsx}"],
-  darkMode: "media",
+  darkMode: 'media',
   theme: {
     extend: {
       colors: {
@@ -12,5 +11,6 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  // eslint-disable-next-line global-require
+  plugins: [require('flowbite/plugin')],
 }
