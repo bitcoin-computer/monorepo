@@ -8,7 +8,7 @@ import dotenv from 'dotenv'
 import { Swap, SwapHelper } from '../src/swap'
 import { meta } from '../src/utils'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 describe('Swap', () => {
   let nftA: NFT

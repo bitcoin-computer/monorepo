@@ -4,7 +4,7 @@ import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { Payment, PaymentHelper } from '../src'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
 

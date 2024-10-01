@@ -8,7 +8,7 @@ import dotenv from 'dotenv'
 import { StaticSwapHelper } from '../src/static-swap'
 import { meta } from '../src/utils'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
 

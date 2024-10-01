@@ -10,7 +10,7 @@ import { OrdSale, OrdSaleHelper } from '../src/ord-sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
 

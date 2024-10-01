@@ -10,7 +10,7 @@ import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
 const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction

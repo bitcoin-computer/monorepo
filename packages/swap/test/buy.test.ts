@@ -7,7 +7,7 @@ import { Buy, BuyHelper } from '../src/buy'
 import { SwapHelper } from '../src/swap'
 import { StaticSwapHelper } from '../src'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 describe('Sale', () => {
   const nftPrice = 1e8

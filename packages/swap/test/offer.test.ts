@@ -8,7 +8,7 @@ import { StaticSwap } from '../src/static-swap'
 import { OfferHelper } from '../src/offer'
 import { meta } from '../src/utils'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
 

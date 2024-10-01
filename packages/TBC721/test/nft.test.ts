@@ -13,7 +13,7 @@ const { expect } = chai
 // in the monorepo root level and add the following line:
 // BCN_URL=http://localhost:1031
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
 

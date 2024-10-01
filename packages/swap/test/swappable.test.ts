@@ -7,7 +7,7 @@ import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { Swappable } from '../src/swappable'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
 
