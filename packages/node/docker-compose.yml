@@ -65,6 +65,8 @@ services:
     networks:
       - bitcoin
       - bcn
+    volumes:
+      - ./logs:/dist/logs
   sync:
     command: npm run sync
     image: bitcoin-computer-node
@@ -85,7 +87,7 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
     volumes:
-      - ./logs:/dist/packages/node/logs
+      - ./logs:/dist/logs
     depends_on:
       - db
       - node
