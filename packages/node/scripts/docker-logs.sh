@@ -15,42 +15,35 @@ for container_id in $container_ids; do
 done
 echo ''
 
-# Read chain and network from the arguments
-if [ $# -eq 0 ]; then
-    chain='ltc'
-    network='testnet'
+# Define .env path
+env_path='../.env'
+
+# Read chain and network from env_path
+chain=$(grep 'BCN_CHAIN=' $env_path | cut -d '=' -f2)
+network=$(grep 'BCN_NETWORK=' $env_path | cut -d '=' -f2)
+
+if [ "$network" = "mainnet" ]; then
+    debug="/debug.log"
 else
-    chain=$1
-    network=$2
+    if [ "$network" = "testnet" ]; then
+        debug="/testnet3/debug.log"
+    else
+        debug="/regtest/debug.log"
+    fi
 fi
 
-# Log paths are predefined for Bitcoin, Litecoin and Pepecoin
-if [ $chain == 'btc' ]; then
-    if [ $network == 'mainnet' ]; then
-        logpath='/home/bitcoin/.bitcoin/debug.log'
-    else
-        logpath='/home/bitcoin/.bitcoin/testnet3/debug.log'
-    fi
-else if [ $chain == 'pepe' ]; then
-    if [ $network == 'mainnet' ]; then
-        logpath='/home/pepecoin/.pepecoin/debug.log'
-    else
-        logpath='/home/pepecoin/.pepecoin/testnet3/debug.log'
-    fi
-else
-    if [ $network == 'mainnet' ]; then
-        logpath='/home/litecoin/.litecoin/debug.log'
-    else
-        logpath='/home/litecoin/.litecoin/testnet4/debug.log'
-    fi
-fi
+# Get bitcoin data directory from .env
+logpath=$(grep 'BITCOIN_DATA_DIR=' $env_path | cut -d '=' -f2)
+
+# Remove single quotes from the logpath
+logpath=$(echo $logpath | tr -d "'")
 
 echo '------ node ------'
 
 # Get the logs from the bitcoin node (default LTC testnet)
-node_container_image=$(docker compose -f docker-compose.yml ps -q node | xargs docker inspect --format='{{.Image}}' | sed -e 's/^sha256:/\'$'\n/g')
+node_container_image=$(docker compose -f ../docker-compose.yml ps -q node | xargs docker inspect --format='{{.Image}}' | sed -e 's/^sha256:/\'$'\n/g')
 node_container_id=$(docker ps -qf "ancestor=$node_container_image")
-docker exec $node_container_id tail -n 5 $logpath
+docker exec $node_container_id tail -n 5 $logpath$debug
 
 echo '------ postgress ------'
 
