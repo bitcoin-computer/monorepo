@@ -1,10 +1,13 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
+import dotenv from 'dotenv'
+
+dotenv.config({ path: '../.env' })
 
 const conf = {
-  chain: 'LTC',
-  network: 'regtest',
-  url: 'http://localhost:1031',
+  chain: process.env?.BCN_CHAIN,
+  network: process.env?.BCN_NETWORK,
+  url: process.env?.BCN_URL,
 }
 
 describe('Should work with chai', () => {
