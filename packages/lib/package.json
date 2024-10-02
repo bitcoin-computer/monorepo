@@ -46,6 +46,7 @@
     "dist"
   ],
   "type": "module",
+  "runkitExampleFilename": "example/bitcoin-computer-lib.js",
   "scripts": {
     "clean-logs": "rm -f *.log 2> /dev/null",
     "prepublishOnly": "./scripts/check-obfuscation.sh",

@@ -1,6 +1,5 @@
 import { Transaction } from '@bitcoin-computer/nakamotojs';
 import { StaticSwapHelper } from './static-swap.js';
-declare const Contract: typeof import("@bitcoin-computer/lib/computer.js").Contract;
 export declare class Buy extends Contract {
     amount: number;
     constructor(price: number, amount: number, tokenRoot: string);
@@ -24,4 +23,3 @@ export declare class BuyHelper {
     isOpen(buy: Buy): Promise<boolean>;
     settleBuyOrder(swapTx: Transaction): Promise<string>;
 }
-export {};

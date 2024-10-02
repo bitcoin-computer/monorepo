@@ -11,14 +11,14 @@ declare function getBip44Path({ purpose, coinType, account }?: {
 declare function loggedOutConfiguration(): {
     chain: Chain;
     network: Network;
-    url: string | undefined;
+    url: any;
     moduleStorageType: ModuleStorageType;
 };
 declare function loggedInConfiguration(): {
     mnemonic: string | null;
     chain: Chain;
     network: Network;
-    url: string | undefined;
+    url: any;
     moduleStorageType: ModuleStorageType;
 };
 declare function getComputer(): Computer;

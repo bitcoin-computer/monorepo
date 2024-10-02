@@ -12,8 +12,6 @@
     "@types/react": "^18.2.60",
     "@types/react-dom": "^18.2.19",
     "@types/styled-components": "^5.1.34",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-prettier": "^5.1.3",
     "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

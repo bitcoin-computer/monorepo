@@ -17,8 +17,9 @@
     "jsx": "react-jsx",
     "declaration": true,
     "outDir": "./built",
+    "types": ["vite/client"],
     "paths": {
-      "react": [ "./node_modules/@types/react" ]
+      "react": ["./node_modules/@types/react"]
     }
   },
   "include": ["src"],

@@ -1,9 +1,8 @@
 /* eslint-disable max-classes-per-file */
 import { Buffer } from 'buffer'
+import { Transaction } from '@bitcoin-computer/nakamotojs'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
-
-const { Contract, Transaction } = await import('@bitcoin-computer/lib')
 
 // eslint-disable-next-line no-bitwise
 const sighashType = Transaction.SIGHASH_SINGLE | Transaction.SIGHASH_ANYONECANPAY
