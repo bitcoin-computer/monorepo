@@ -13,6 +13,8 @@ import { meta } from '../src/utils'
 dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
+const network = process.env.BCN_NETWORK
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -23,8 +25,8 @@ describe('Ord Sale', () => {
   describe('Examples from docs', () => {
     it('Should work without helper classes', async () => {
       // Create and fund wallets
-      const seller = new Computer({ url })
-      const buyer = new Computer({ url })
+      const seller = new Computer({ url, chain, network })
+      const buyer = new Computer({ url, chain, network })
       await seller.faucet(0.1e8)
       await buyer.faucet(1.1e8)
 
@@ -75,8 +77,8 @@ describe('Ord Sale', () => {
 
     it('Should work with helper classes', async () => {
       // Create and fund wallets
-      const alice = new Computer({ url })
-      const bob = new Computer({ url })
+      const alice = new Computer({ url, chain, network })
+      const bob = new Computer({ url, chain, network })
       await alice.faucet(0.1e8)
       await bob.faucet(1.1e8)
 
@@ -130,7 +132,7 @@ describe('Ord Sale', () => {
 
     describe('Creating an NFT and an offer to sell', () => {
       let nft: NFT
-      const seller = new Computer({ url })
+      const seller = new Computer({ url, chain, network })
       sellerPublicKey = seller.getPublicKey()
       const saleHelper = new OrdSaleHelper(seller)
 
@@ -169,8 +171,8 @@ describe('Ord Sale', () => {
     })
 
     describe('Executing the sale', () => {
-      const buyer = new Computer({ url })
-      const computer = new Computer({ url })
+      const buyer = new Computer({ url, chain, network })
+      const computer = new Computer({ url, chain, network })
       let b1: Payment
       let b2: Payment
       let payment: Payment

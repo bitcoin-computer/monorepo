@@ -11,12 +11,14 @@ import { meta } from '../src/utils'
 dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
+const network = process.env.BCN_NETWORK
 
 describe('Static Swap', () => {
   let nftA: NFT
   let nftB: NFT
-  const alice = new Computer({ url })
-  const bob = new Computer({ url })
+  const alice = new Computer({ url, chain, network })
+  const bob = new Computer({ url, chain, network })
 
   before('Before', async () => {
     await alice.faucet(0.01e8)

@@ -7,9 +7,11 @@ import { Payment, PaymentHelper } from '../src'
 dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
+const network = process.env.BCN_NETWORK
 
 describe('Payment', () => {
-  const alice = new Computer({ url })
+  const alice = new Computer({ url, chain, network })
 
   before('Before', async () => {
     await alice.faucet(4e8)

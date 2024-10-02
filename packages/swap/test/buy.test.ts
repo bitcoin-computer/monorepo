@@ -9,15 +9,19 @@ import { StaticSwapHelper } from '../src'
 
 dotenv.config({ path: '../node/.env' })
 
+const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
+const network = process.env.BCN_NETWORK
+
 describe('Sale', () => {
   const nftPrice = 1e8
   const fee = 100000
 
   describe('Buying a Token', () => {
     it('Should work with helper classes', async () => {
-      const buyer = new Computer()
+      const buyer = new Computer({ url, chain, network })
       await buyer.faucet(nftPrice + fee)
-      const seller = new Computer()
+      const seller = new Computer({ url, chain, network })
       await seller.faucet(nftPrice + fee)
 
       // Seller creates an Token
@@ -51,9 +55,9 @@ describe('Sale', () => {
     })
 
     it('It should work without helper classes', async () => {
-      const buyer = new Computer()
+      const buyer = new Computer({ url, chain, network })
       await buyer.faucet(nftPrice + fee)
-      const seller = new Computer()
+      const seller = new Computer({ url, chain, network })
       await seller.faucet(nftPrice + fee)
 
       // Seller creates an Token

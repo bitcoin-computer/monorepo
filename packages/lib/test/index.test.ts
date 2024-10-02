@@ -12,6 +12,8 @@ import dotenv from 'dotenv'
 dotenv.config({ path: '../node/.env'})
 
 const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
+const network = process.env.BCN_NETWORK
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -156,8 +158,8 @@ describe('Non-Fungible Token (NFT)', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new Computer({ url })
-  let receiver = new Computer({ url })
+  let sender = new Computer({ chain, network, url})
+  let receiver = new Computer({ chain, network, url})
 
   before("Fund sender's wallet", async () => {
     await sender.faucet(0.001e8)
@@ -222,8 +224,8 @@ describe('Fungible Token', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new Computer({ url })
-  let receiver = new Computer({ url })
+  let sender = new Computer({ chain, network, url})
+  let receiver = new Computer({ chain, network, url})
 
   before('Fund senders wallet', async () => {
     await sender.faucet(0.01e8)
@@ -303,9 +305,9 @@ describe('Fungible Token', () => {
 describe('Chat', () => {
   let alicesChat: Chat
   let bobsChat: Chat
-  const alice = new Computer({ url })
-  const bob = new Computer({ url })
-  const eve = new Computer({ url })
+  const alice = new Computer({ chain, network, url})
+  const bob = new Computer({ chain, network, url})
+  const eve = new Computer({ chain, network, url})
   const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
 
   before('Before', async () => {
@@ -391,8 +393,8 @@ describe('Chat', () => {
 describe('Swap', () => {
   let nftA: NFT
   let nftB: NFT
-  const alice = new Computer({ url })
-  const bob = new Computer({ url })
+  const alice = new Computer({ chain, network, url})
+  const bob = new Computer({ chain, network, url})
 
   before('Before', async () => {
     await alice.faucet(0.01e8)
@@ -466,7 +468,7 @@ describe('Sell', () => {
   
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer({ url })
+    const seller = new Computer({ chain, network, url})
     sellerPublicKey = seller.getPublicKey()
 
     before("Fund Seller's wallet", async () => {
@@ -508,7 +510,7 @@ describe('Sell', () => {
   })
 
   describe('Failing to steal the nft', () => {
-    const thief = new Computer({ url })
+    const thief = new Computer({ chain, network, url})
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
@@ -558,8 +560,8 @@ describe('Sell', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer({ url })
-    const computer = new Computer({ url })
+    const buyer = new Computer({ chain, network, url})
+    const computer = new Computer({ chain, network, url})
     let payment: Payment
     let txId: string
 
