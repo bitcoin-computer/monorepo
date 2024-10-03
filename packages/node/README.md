@@ -41,6 +41,9 @@ cd monorepo
 # Install the dependencies
 npm install
 
+# Move to node folder
+cd packages/node
+
 # Build the docker image
 npm run build-node
 ```
