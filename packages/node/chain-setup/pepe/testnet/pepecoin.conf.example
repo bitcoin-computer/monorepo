@@ -2,7 +2,6 @@ testnet=1
 
 printtoconsole=1
 
-[test]
 dbcache=4000
 txindex=1
 
@@ -12,7 +11,7 @@ server=1
 # Username for JSON-RPC connections
 rpcauth=bcn-admin:c71460f0f08e4eeec90e033c04f7bb82$c36e8561d46abbf3bf13da6b88612c19d758d46d02c45cd2716f06a13ec407af
 rpcallowip=0.0.0.0/0
-[testnet]
+
 rpcbind=0.0.0.0
 
 # [wallet]
@@ -26,6 +25,7 @@ prematurewitness=1
 
 # Rpc work queue increase
 rpcworkqueue=512
+
 [testnet]
 rpcport=44873
 port=44874
