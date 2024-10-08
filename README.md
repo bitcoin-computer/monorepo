@@ -34,10 +34,32 @@ This monorepo contains everything you need to build smart contract based applica
 * [Docs](https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme) - The sources for the documentation
 * [Website](https://github.com/bitcoin-computer/monorepo/tree/main/packages/website#readme) - The sources for the website
 
-## Legal Notice
+## Getting Started
 
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
+There are three easy ways to get started with Bitcoin Computer smart contracts:
+
+1. Online example:  See how it works without any installation requirements! [This](https://docs.bitcoincomputer.io/start/) simple example defines, deploys, and executes a smart contract in your browser.
+
+2. Online tools: Try out the Bitcoin Computer functionality directly with our online [Explorer](https://explorer.bitcoincomputer.io) and [Playgorund](https://explorer.bitcoincomputer.io/playground).
+
+3. Local development:
+
+* Clone this monorepo. 
+
+```bash
+git clone https://github.com/bitcoin-computer/monorepo.git
+cd monorepo
+npm install
+```
+
+* Run the applications locally by following the instructions in each application's readme file.
+
+Check the latest version of the Bitcoin Computer monorepo on the [releases](https://github.com/bitcoin-computer/monorepo/releases) page.
 
 ## Getting Help
 
 Have a look at the [docs](https://docs.bitcoincomputer.io/). If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
+
+## Legal Notice
+
+See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).

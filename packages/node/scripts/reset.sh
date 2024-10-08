@@ -41,9 +41,7 @@ docker volume prune
 # docker system prune -a
 
 # delete data files
-rm -rf ./chain-setup/**/blockchain-data
-rm -rf ./chain-setup/**/db-data
-
+rm -rf ./data/
 # delete the logs
 yes | rm -r logs
 rm error.log

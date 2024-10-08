@@ -1,23 +1,42 @@
 services:
   db:
     image: postgres
+    env_file: .env
+    restart: always
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
     # command: ["postgres", "-c", "log_statement=all"]
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     networks:
       - bcn
     environment:
-      - POSTGRES_PORT=5432
-      - POSTGRES_HOST=db
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+    volumes:
+      - ./data/db-data:/var/lib/postgresql/data
+      - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
+  node:
+    image: ${BITCOIN_IMAGE}
+    networks:
+      - bitcoin
+    restart: always
+    ports:
+      - ${BITCOIN_RPC_PORT}:${BITCOIN_RPC_PORT}
+      - ${BCN_ZMQ_PORT}:${BCN_ZMQ_PORT}
+    volumes:
+      - ./data/blockchain-data:${BITCOIN_DATA_DIR}
+      - ./${BITCOIN_CONF_FILE}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}
   bcn:
+    image: bitcoin-computer-node
+    env_file: .env
+    restart: always
     build: .
     healthcheck:
       test:
         [
           "CMD-SHELL",
-          "curl -f http://localhost:${PORT}/ || exit 1"
+          "curl -f http://localhost:${BCN_PORT}/ || exit 1"
         ]
       interval: 30s
       timeout: 10s
@@ -25,16 +44,53 @@ services:
       start_period: 30s
     command: npm start
     ports:
-      - "1031:1031"
+      - ${BCN_PORT}:${BCN_PORT}
     environment:
-      - POSTGRES_PORT=5432
-      - POSTGRES_HOST=db
-      - RPC_PROTOCOL=http
-      - RPC_USER=${RPC_USER}
-      - RPC_PASSWORD=${RPC_PASSWORD}
+      - BCN_CHAIN=${BCN_CHAIN}
+      - BCN_NETWORK=${BCN_NETWORK}
+      - BCN_ENV=${BCN_ENV}
+      - BCN_URL=${BCN_URL}
+      - BCN_ZMQ_URL=${BCN_ZMQ_URL}
+      - BITCOIN_RPC_HOST=${BITCOIN_RPC_HOST}
+      - BITCOIN_RPC_PORT=${BITCOIN_RPC_PORT}
+      - BITCOIN_RPC_PROTOCOL=${BITCOIN_RPC_PROTOCOL}
+      - BITCOIN_RPC_USER=${BITCOIN_RPC_USER}
+      - BITCOIN_RPC_PASSWORD=${BITCOIN_RPC_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
     working_dir: /dist
     depends_on:
       - db
+      - node
+    networks:
+      - bitcoin
+      - bcn
+    volumes:
+      - ./logs:/dist/logs
+  sync:
+    command: npm run sync
+    image: bitcoin-computer-node
+    env_file: .env
+    restart: always
+    environment:
+      - BCN_CHAIN=${BCN_CHAIN}
+      - BCN_NETWORK=${BCN_NETWORK}
+      - BCN_ENV=${BCN_ENV}
+      - BCN_URL=${BCN_URL}
+      - BCN_ZMQ_URL=${BCN_ZMQ_URL}
+      - BCN_THREADS=${BCN_THREADS}
+      - BITCOIN_RPC_HOST=${BITCOIN_RPC_HOST}
+      - BITCOIN_RPC_PORT=${BITCOIN_RPC_PORT}
+      - BITCOIN_RPC_PROTOCOL=${BITCOIN_RPC_PROTOCOL}
+      - BITCOIN_RPC_USER=${BITCOIN_RPC_USER}
+      - BITCOIN_RPC_PASSWORD=${BITCOIN_RPC_PASSWORD}
+      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_HOST=${POSTGRES_HOST}
+    volumes:
+      - ./logs:/dist/logs
+    depends_on:
+      - db
+      - node
     networks:
       - bitcoin
       - bcn

@@ -1,11 +1,12 @@
+.DS_Store
 coverage/
 logs/
 node_modules/
-chain-setup/**/blockchain-data
-chain-setup/**/db-data
+data
 .env
 .docker.config
 .DS_Store
 *.log
 bcn.config.json
 scripts/__pycache__
+*.conf
