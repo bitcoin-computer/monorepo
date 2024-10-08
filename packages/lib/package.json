@@ -52,7 +52,7 @@
     "prepublishOnly": "./scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
     "test": "mocha --require ts-node/register 'test/**/*.ts'",
-    "test-and-show": "../../scripts/test-and-show.sh lib-test.log"
+    "test-and-show": "npm run test 2>&1 | tee lib-test.log && open lib-test.log"
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
