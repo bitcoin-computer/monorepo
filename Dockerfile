@@ -23,7 +23,7 @@ RUN npm install --build-from-source
 ENV PATH="/dist/node_modules/.bin:${PATH}"
 
 # Set the working directory to "monorepo/packages/node"
-WORKDIR /dist/packages/node
+WORKDIR packages/node
 
 # Expose the necessary port
 EXPOSE 1031
