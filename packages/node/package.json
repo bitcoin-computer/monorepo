@@ -41,7 +41,6 @@
     "reset": "yes | ./scripts/reset.sh  ; rm -rf data",
     "test": "mocha --config .mocharc.json ",
     "test-and-show": "npm run test 2>&1 | tee node-test.log && open node-test.log",
-    "test-unit": "mocha --config .mocharc.json ",
     "up": "node --loader ts-node/esm  ./scripts/up.ts"
   },
   "dependencies": {
