@@ -1,5 +1,5 @@
 {
-  "name": "wallet-vite",
+  "name": "@bitcoin-computer/wallet-vite",
   "private": true,
   "version": "0.21.0-beta.0",
   "type": "module",
