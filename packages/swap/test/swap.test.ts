@@ -8,14 +8,16 @@ import dotenv from 'dotenv'
 import { Swap, SwapHelper } from '../src/swap'
 import { meta } from '../src/utils'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 describe('Swap', () => {
   let nftA: NFT
   let nftB: NFT
   const url = process.env.BCN_URL
-  const alice = new Computer({ url })
-  const bob = new Computer({ url })
+  const chain = process.env.BCN_CHAIN
+  const network = process.env.BCN_NETWORK
+  const alice = new Computer({ url, chain, network })
+  const bob = new Computer({ url, chain, network })
 
   before('Before', async () => {
     await alice.faucet(0.01e8)

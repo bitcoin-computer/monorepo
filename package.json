@@ -28,18 +28,10 @@
     "packages/*"
   ],
   "scripts": {
-    "build-node": "docker build -t bitcoin-computer-node .",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
-    "down": "cd packages/node && npm run down",
-    "fund-ltc": "cd packages/node && npm run fund-ltc -- $@",
-    "fund-btc": "cd packages/node && npm run fund-btc -- $@",
     "husky-checks": "./scripts/husky-checks.sh",
     "prepare": "husky install",
-    "prepublishOnly": "./scripts/check-obfuscation.sh",
-    "reset": "cd packages/node && npm run reset",
-    "start": "cd /dist/packages/node && npm run start",
-    "test": "cd packages/node && npm run test; cd ../lib && npm run test",
-    "up": "cd packages/node && npm run up -- $@"
+    "prepublishOnly": "./scripts/check-obfuscation.sh"
   },
   "dependencies": {
     "@endo/static-module-record": "^1.0.4"

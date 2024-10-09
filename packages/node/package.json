@@ -27,22 +27,22 @@
     "node": ">=16"
   },
   "scripts": {
+    "build-node": "docker build -t bitcoin-computer-node .",
     "clean-logs": "rm -f *.log 2> /dev/null",
-    "dist-clean": "rm -rf dist",
-    "down": "./scripts/down.py",
+    "down": "node --loader ts-node/esm  ./scripts/down.ts",
     "fund-ltc": "node --loader ts-node/esm ./scripts/fund.ts ltc",
     "fund-btc": "node --loader ts-node/esm ./scripts/fund.ts btc",
     "fund-pepe": "node --loader ts-node/esm ./scripts/fund.ts pepe",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
-    "node-clean": "./scripts/node-clean.sh",
-    "reset": "yes | ./scripts/reset.sh",
     "start": "node dist/bcn.es.mjs",
     "sync": "node dist/bcn.sync.es.mjs",
     "setup": "./scripts/setup.py",
-    "test": "node --loader ts-node/esm  ./scripts/test.ts",
-    "test-node-and-show": "../../scripts/test-and-show.sh node-test.log",
-    "up": "./scripts/up.py"
+    "reset": "yes | ./scripts/reset.sh",
+    "test": "mocha --config .mocharc.json ",
+    "test-and-show": "npm run test 2>&1 | tee node-test.log && open node-test.log",
+    "test-unit": "mocha --config .mocharc.json ",
+    "up": "node --loader ts-node/esm  ./scripts/up.ts"
   },
   "dependencies": {
     "@babel/core": "^7.23.9",

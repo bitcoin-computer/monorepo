@@ -1,8 +1,6 @@
 coverage/
 logs/
 node_modules/
-chain-setup/**/blockchain-data
-chain-setup/**/db-data
 .env
 .env.aws
 .docker.config
@@ -14,8 +12,8 @@ error.log
 bcn.config.json
 zmqlog.log
 packages/**/node_modules/
-packages/**/chain-setup/**/blockchain-data/
-packages/**/chain-setup/**/db-data/
+packages/**/chain-setup/**/blockchain-data
+packages/**/chain-setup/**/db-data
 # Logs
 logs
 *.log
