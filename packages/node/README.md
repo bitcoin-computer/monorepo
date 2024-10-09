@@ -67,8 +67,9 @@ cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
 npm run up
 ```
 
-The node will create a `data` folder in the `packages/node` directory. This folder contains the blockchain data and the database.
 </font>
+
+The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database.
 
 ### Run the Tests
 
