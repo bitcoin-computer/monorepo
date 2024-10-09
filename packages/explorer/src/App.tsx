@@ -33,7 +33,7 @@ export default function App() {
           <Auth.LoginModal />
           <Wallet />
           <NavBar />
-          <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+          <div className="p-8 max-w-screen-lg flex flex-wrap items-center justify-between mx-auto">
             <Routes>
               <Route path="/" element={<Gallery.WithPagination />} />
               <Route path="/blocks" element={<Blocks />} />
