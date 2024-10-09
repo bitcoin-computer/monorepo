@@ -1,6 +1,6 @@
 import { Auth, ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
 import { useContext, useEffect, useState } from "react"
-import { useNavigate, useParams, Link } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { HiPlusCircle } from "react-icons/hi"
 
 import { VITE_CHAT_MOD_SPEC } from "../constants/modSpecs"
@@ -93,8 +93,14 @@ export function Chats() {
         chatsPromise.push(computer.sync(rev) as Promise<ChatSc>)
       })
 
-      Promise.all(chatsPromise).then((data) => {
-        setChats(data)
+      Promise.allSettled(chatsPromise).then((results) => {
+        const successfulChats = results
+          .filter(
+            (result): result is PromiseFulfilledResult<ChatSc> => result.status === "fulfilled"
+          )
+          .map((result) => result.value)
+
+        setChats(successfulChats)
       })
     }
     fetch()

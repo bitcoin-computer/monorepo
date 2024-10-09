@@ -13,6 +13,7 @@ import {
 } from "@bitcoin-computer/components"
 import Mint from "./components/Mint"
 import { Chats } from "./components/Chats"
+import { Navbar } from "./components/Navbar"
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -28,6 +29,7 @@ export default function App() {
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />
           <Wallet />
+          <Navbar />
           <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
             <Routes>
               <Route path="/" element={<Chats />} />

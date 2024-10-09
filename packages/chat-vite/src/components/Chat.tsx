@@ -2,7 +2,6 @@ import { ComputerContext, Modal, sleep, UtilsContext } from "@bitcoin-computer/c
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { HiRefresh, HiUserAdd } from "react-icons/hi"
-import { HiWallet } from "react-icons/hi2"
 
 import { ChatSc } from "../contracts/chat"
 const addUserModal = "add-user-modal"
@@ -199,14 +198,6 @@ const ChatHeader = ({
           className="w-6 h-6 cursor-pointer hover:opacity-80 dark:hover:opacity-80"
           style={{ color: "#999999" }}
         />
-        <HiWallet
-          data-drawer-target={"wallet-drawer"}
-          data-drawer-show={"wallet-drawer"}
-          data-drawer-placement="right"
-          aria-controls={"wallet-drawer"}
-          className="w-6 h-6 cursor-pointer hover:opacity-80 dark:hover:opacity-80"
-          style={{ color: "#999999" }}
-        />
       </div>
       <Modal.Component
         title={"Add new user to chat"}
@@ -220,10 +211,10 @@ const ChatHeader = ({
 
 const ChatInput = ({
   disabled,
-  chatObj,
-  refreshChat
+  refreshChat,
+  chatId
 }: {
-  chatObj: ChatSc | null
+  chatId: string
   disabled: boolean
   refreshChat: () => Promise<void>
 }) => {
@@ -241,7 +232,9 @@ const ChatInput = ({
         publicKey: computer.getPublicKey(),
         time: Date.now().toString()
       }
-      await chatObj?.post(JSON.stringify(messageData))
+      const latesRev = await computer.getLatestRev(chatId)
+      const chatObj = (await computer.sync(latesRev)) as ChatSc
+      await chatObj.post(JSON.stringify(messageData))
       await sleep(2000)
       await refreshChat()
       setMessage("")
@@ -341,7 +334,7 @@ export function Chat({ chatId }: { chatId: string }) {
               </div>
 
               <ChatInput
-                chatObj={chatObj}
+                chatId={id}
                 disabled={!chatObj?._owners.includes(computer.getPublicKey())}
                 refreshChat={refreshChat}
               />
