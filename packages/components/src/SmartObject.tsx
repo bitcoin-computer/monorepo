@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import reactStringReplace from "react-string-replace"
+import { HiOutlineClipboard } from "react-icons/hi"
 import { capitalizeFirstLetter, toObject } from "./common/utils"
 import { Card } from "./Card"
 import { Modal } from "./Modal"
@@ -14,6 +15,16 @@ const modalId = "smart-object-info-modal"
 export const getFnParamNames = (fn: string) => {
   const match = fn.toString().match(/\(.*?\)/)
   return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
+}
+
+function Copy ({ text }: { text: string }) {
+  return (<button
+    onClick={() => navigator.clipboard.writeText(text)}
+    className="cursor-pointer pl-2 text-gray-600 hover:text-gray-800 focus:outline-none"
+    aria-label="Copy Transaction ID"
+  >
+    <HiOutlineClipboard />
+  </button>)
 }
 
 function ObjectValueCard({ content }: { content: string }) {
@@ -48,113 +59,119 @@ const SmartObjectValues = ({ smartObject }: any) => {
   )
 }
 
-const revToId = (rev: string) => rev?.split(":")[0]
+function MetaData({ smartObject }: any) {
+ const [isVisible, setIsVisible] = useState(false)
 
-const MetaData = ({ smartObject }: any) => (
-  <>
-    <h2 className="mb-2 text-4xl font-bold dark:text-white">Meta Data</h2>
-    <table className="w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400">
-      <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-        <tr>
-          <th scope="col" className="px-6 py-3">
-            Key
-          </th>
-          <th scope="col" className="px-6 py-3">
-            Short
-          </th>
-          <th scope="col" className="px-6 py-3">
-            Value
-          </th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4 break-all">Identity</td>
-          <td className="px-6 py-4 break-all text-sm">
-            <pre>_id</pre>
-          </td>
-          <td className="px-6 py-4">
-            <Link
-              to={`/objects/${smartObject?._id}`}
-              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            >
-              {smartObject?._id}
-            </Link>
-          </td>
-        </tr>
+ const toggleVisibility = () => {
+   setIsVisible(!isVisible)
+ }
 
-        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4 break-all">Revision</td>
-          <td className="px-6 py-4 break-all">
-            <pre>_rev</pre>
-          </td>
-          <td className="px-6 py-4">
-            <Link
-              to={`/objects/${smartObject?._rev}`}
-              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            >
-              {smartObject?._rev}
-            </Link>
-          </td>
-        </tr>
+ return (
+   <div>
+     <button
+       onClick={toggleVisibility}
+       className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 my-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+     >
+       {isVisible ? 'Hide Metadata' : 'Show Metadata'}
+     </button>
 
-        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4 break-all">Root</td>
-          <td className="px-6 py-4 break-all">
-            <pre>_root</pre>
-          </td>
-          <td className="px-6 py-4">
-            <Link
-              to={`/objects/${smartObject?._root}`}
-              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            >
-              {smartObject?._root}
-            </Link>
-          </td>
-        </tr>
+     {isVisible && (
+        <table className="w-full mt-4 mb-8 text-[12px] text-left text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th scope="col" className="px-4 py-2">
+              Key
+            </th>
+            <th scope="col" className="px-4 py-2">
+              Short
+            </th>
+            <th scope="col" className="px-4 py-2">
+              Value
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-4 py-2">Identity</td>
+            <td className="px-4 py-2">
+              <pre>_id</pre>
+            </td>
+            <td className="px-4 py-2">
+              <Link
+                to={`/objects/${smartObject?._id}`}
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                {smartObject?._id}
+              </Link>
+              <Copy text={smartObject?._id} />
+            </td>
+          </tr>
 
-        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4 break-all">Owners</td>
-          <td className="px-6 py-4 break-all">
-            <pre>_owners</pre>
-          </td>
-          <td className="px-6 py-4">
-            <span className="font-medium text-gray-900 dark:text-white">
-              {smartObject?._owners}
-            </span>
-          </td>
-        </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-4 py-2">Revision</td>
+            <td className="px-4 py-2">
+              <pre>_rev</pre>
+            </td>
+            <td className="px-4 py-2">
+              <Link
+                to={`/objects/${smartObject?._rev}`}
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                {smartObject?._rev}
+              </Link>
+              <Copy text={smartObject?._rev} />
+            </td>
+          </tr>
 
-        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4 break-all">Amount</td>
-          <td className="px-6 py-4 break-all">
-            <pre>_amount</pre>
-          </td>
-          <td className="px-6 py-4">
-            <span className="font-medium text-gray-900 dark:text-white">
-              {smartObject?._amount}
-            </span>
-          </td>
-        </tr>
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-4 py-2">Root</td>
+            <td className="px-4 py-2">
+              <pre>_root</pre>
+            </td>
+            <td className="px-4 py-2">
+              <Link
+                to={`/objects/${smartObject?._root}`}
+                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+              >
+                {smartObject?._root}
+              </Link>
+              <Copy text={smartObject?._root} />
+            </td>
+          </tr>
 
-        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-          <td className="px-6 py-4 break-all">Transaction</td>
-          <td className="px-6 py-4 break-all"></td>
-          <td className="px-6 py-4">
-            <Link
-              to={`/transactions/${revToId(smartObject?._rev)}`}
-              className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            >
-              {revToId(smartObject?._rev)}
-            </Link>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-  </>
-)
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-4 py-2">Owners</td>
+            <td className="px-4 py-2">
+              <pre>_owners</pre>
+            </td>
+            <td className="px-4 py-2">
+              <span className="font-medium text-gray-900 dark:text-white">
+                {smartObject?._owners}
+              </span>
+              <Copy text={JSON.stringify(smartObject?._owners)} />
+            </td>
+          </tr>
 
-function Component() {
+          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+            <td className="px-4 py-2">Amount</td>
+            <td className="px-4 py-2">
+              <pre>_amount</pre>
+            </td>
+            <td className="px-4 py-2">
+              <span className="font-medium text-gray-900 dark:text-white">
+                {smartObject?._amount} Satoshi
+              </span>
+              <Copy text={smartObject?._amount} />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    )}
+   </div>
+  )
+}
+
+function Component({ title }: { title?: string }) {
   const location = useLocation()
   const params = useParams()
   const navigate = useNavigate()
@@ -211,17 +228,18 @@ function Component() {
 
   return (
     <>
-      <div>
-        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Object</h1>
-        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
+      <div className="max-w-screen-md mx-auto">        
+        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">{title || 'Object'}</h1>
+        <div className="mb-8">
           <Link
             to={`/transactions/${txId}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
           >
             {txId}
           </Link>
-          :{outNum}
-        </p>
+          <span>:{outNum}</span>
+          <Copy text={`${txId}:${outNum}`} />
+        </div>
 
         <SmartObjectValues smartObject={smartObject} />
 
