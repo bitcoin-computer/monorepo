@@ -58,7 +58,6 @@ services:
       - BITCOIN_RPC_PASSWORD=${BITCOIN_RPC_PASSWORD}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
-    working_dir: /dist
     depends_on:
       - db
       - node
