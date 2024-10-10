@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/nft-vite",
+  "name": "@bitcoin-computer/nft",
   "private": true,
   "version": "0.22.0-beta.0",
   "type": "module",
