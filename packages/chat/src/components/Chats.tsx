@@ -112,9 +112,15 @@ export function Chats() {
 
   return (
     <>
-      <div className="grid grid-cols-3 gap-4 w-full h-screen max-h-screen">
+      <div
+        className="grid grid-cols-3 gap-4 w-full"
+        style={{ height: "calc(100vh - 10vh)", maxHeight: "calc(100vh - 10vh)" }}
+      >
         <div className="max-w">
-          <div className="relative overflow-x-auto overflow-y-auto max-h-screen shadow-md sm:rounded-lg">
+          <div
+            className="relative overflow-x-auto overflow-y-auto max-h-screen shadow-md sm:rounded-lg"
+            style={{ maxHeight: "calc(100vh - 10vh)" }}
+          >
             <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
@@ -153,7 +159,7 @@ export function Chats() {
             </table>
           </div>
         </div>
-        <div className="col-span-2 max-h-screen">
+        <div className="col-span-2" style={{ maxHeight: "calc(100vh - 10vh)" }}>
           {chatId ? (
             <Chat chatId={chatId}></Chat>
           ) : (

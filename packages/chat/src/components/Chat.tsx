@@ -62,15 +62,15 @@ const formatTime = (str: string) => {
 
 const ReceivedMessage = ({ message }: { message: messageI }) => {
   return (
-    <div className="flex items-start gap-2.5 mb-4">
+    <div className="flex items-start gap-2 mb-2">
       <div
         className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold"
         style={{ backgroundColor: getColor(message.publicKey) }}
       >
         {getInitialsFromPublicKey(message.publicKey)}
       </div>
-      <div className="flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
-        <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{message.text}</p>
+      <div className="flex flex-col w-full max-w-[320px] leading-1.5 p-2 border-gray-200 bg-gray-100 rounded-e-xl rounded-es-xl dark:bg-gray-700">
+        <p className="text-sm font-normal py-1 text-gray-900 dark:text-white">{message.text}</p>
         <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
           {formatTime(message.time)}
         </span>
@@ -81,9 +81,9 @@ const ReceivedMessage = ({ message }: { message: messageI }) => {
 
 const SentMessage = ({ message }: { message: messageI }) => {
   return (
-    <div className="flex items-start justify-end gap-2.5 mb-4">
-      <div className="flex flex-col items-end w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-blue-100 rounded-s-xl rounded-es-xl dark:bg-gray-700">
-        <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">{message.text}</p>
+    <div className="flex items-start justify-end gap-2 mb-2">
+      <div className="flex flex-col items-end w-full max-w-[320px] leading-1.5 p-2 border-gray-200 bg-blue-100 rounded-s-xl rounded-es-xl dark:bg-gray-700">
+        <p className="text-sm font-normal py-1 text-gray-900 dark:text-white">{message.text}</p>
         <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
           {formatTime(message.time)}
         </span>
@@ -313,8 +313,11 @@ export function Chat({ chatId }: { chatId: string }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 max-w max-h-screen">
-        <div className="flex flex-col bg-gray-50 dark:bg-gray-800 max-w min-h-screen max-h-screen">
+      <div className="grid grid-cols-1 gap-4 max-w" style={{ maxHeight: "calc(100vh - 10vh)" }}>
+        <div
+          className="flex flex-col bg-gray-50 dark:bg-gray-800 max-w"
+          style={{ minHeight: "calc(100vh - 10vh)", maxHeight: "calc(100vh - 10vh)" }}
+        >
           {chatObj && (
             <>
               <ChatHeader
