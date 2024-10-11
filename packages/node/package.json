@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.21.0-beta.0",
+  "version": "0.22.0-beta.0",
   "description": "Server Side Library for the Bitcoin Computer",
   "contributors": [
     "Clemens Ley",
@@ -38,7 +38,7 @@
     "start": "node dist/bcn.es.mjs",
     "sync": "node dist/bcn.sync.es.mjs",
     "setup": "./scripts/setup.py",
-    "reset": "yes | ./scripts/reset.sh  ; rm -rf data",
+    "reset": "yes | ./scripts/reset.sh",
     "test": "mocha --config .mocharc.json ",
     "test-and-show": "npm run test 2>&1 | tee node-test.log && open node-test.log",
     "test-unit": "mocha --config .mocharc.json ",
@@ -46,9 +46,9 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@bitcoin-computer/lib": "^0.21.0-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.21.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.21.0-beta.0",
+    "@bitcoin-computer/lib": "^0.22.0-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.22.0-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.22.0-beta.0",
     "@types/node": "^20.11.20",
     "argparse": "^2.0.1",
     "axios-mock-adapter": "^1.22.0",

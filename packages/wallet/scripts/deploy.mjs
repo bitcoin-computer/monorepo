@@ -1,111 +1,69 @@
 import { config } from "dotenv"
-import { Computer, Contract } from "@bitcoin-computer/lib"
-import readline from "readline"
+import * as readline from "node:readline/promises"
+import { stdin as input, stdout as output } from "node:process"
+import { Computer } from "@bitcoin-computer/lib"
+import { TBC721 } from "@bitcoin-computer/TBC721"
+import { OfferHelper, PaymentHelper, SaleHelper } from "@bitcoin-computer/swap"
 
 config()
 
-const mnemonic = process.env.MNEMONIC
-const chain = process.env.CHAIN || "LTC"
-const network = process.env.NETWORK || "regtest"
-const url = process.env.BCN_URL || "http://127.0.0.1:1031"
+const rl = readline.createInterface({ input, output })
 
-if (!mnemonic) {
-  throw new Error("Please set your MNEMONIC in a .env file")
+const { VITE_CHAIN: chain, VITE_NETWORK: network, VITE_URL: url, MNEMONIC: mnemonic } = process.env
+
+if (network !== "regtest") {
+  if (!mnemonic) throw new Error("Please set MNEMONIC in the .env file")
+  computerProps["mnemonic"] = mnemonic
 }
 
-const computer = new Computer({ mnemonic, chain, network, url })
-
-// Prompt the user to confirm an action
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-})
-
+const computer = new Computer({ chain, network, mnemonic, url })
+await computer.faucet(2e8)
 const balance = await computer.wallet.getBalance()
 
 // Summary
-console.log(`
-Chain \x1b[2m${chain}\x1b[0m
+console.log(`Chain \x1b[2m${chain}\x1b[0m
 Network \x1b[2m${network}\x1b[0m
 Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
-Balance \x1b[2m${balance.balance / 1e8}\x1b[0m
+Balance \x1b[2m${balance.balance / 1e8}\x1b[0m`)
+
+const answer = await rl.question("\nDo you want to deploy the contracts? \x1b[2m(y/n)\x1b[0m")
+if (answer === "n") {
+  console.log("\n Aborting...\n")
+} else {
+  console.log("\n * Deploying NFT contract...")
+  const tbc721 = new TBC721(computer)
+  const modSpec = await tbc721.deploy()
+
+  console.log(" * Deploying Offer contract...")
+  const offerHelper = new OfferHelper(computer)
+  const offerModSpec = await offerHelper.deploy()
+
+  console.log(" * Deploying Sale contract...")
+  const saleHelper = new SaleHelper(computer)
+  const saleModSpec = await saleHelper.deploy()
+
+  console.log(" * Deploying Payment contract...")
+  const paymentHelper = new PaymentHelper(computer)
+  const paymentModSpec = await paymentHelper.deploy()
+
+  console.log(`
+Successfully deployed smart contracts.
+
+-----------------
+ ACTION REQUIRED
+-----------------
+
+(1) Update the following rows in your .env file.
+
+VITE_NFT_MOD_SPEC\x1b[2m=${modSpec}\x1b[0m
+VITE_OFFER_MOD_SPEC\x1b[2m=${offerModSpec}\x1b[0m
+VITE_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
+VITE_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m
+
+(2) Run 'npm start' to start the application.
 `)
+}
 
-const q = `
-Do you want to deploy the contracts? (y/n)
-`
-rl.question(q, async (answer) => {
-  if (answer !== "n") {
-    try {
-      console.log("Deploying User contract...")
-      class User extends Contract {
-        constructor(firstName, lastName) {
-          super({ firstName, lastName })
-        }
-      }
-
-      console.log("Creating user Satoshi Nakamoto")
-      const satoshi = await computer.new(User, ["Satoshi", "Nakamoto"])
-
-      console.log("Creating user Alan Turing")
-      const alan = await computer.new(User, ["Alan", "Turing"])
-
-      console.log("Creating user Peter Landin")
-      const peter = await computer.new(User, ["Peter", "Landin"])
-
-      console.log("Deploying Course contract...")
-      class Course extends Contract {
-        constructor(name, instructor) {
-          super({ name, instructor, students: [] })
-        }
-
-        addStudent(student) {
-          this.students.push(student)
-        }
-      }
-
-      console.log("Creating course on operational semantics with instructor Peter Landin")
-      const course = await computer.new(Course, ["Operational Semantics", peter])
-
-      console.log("Adding student Alan Turing")
-      await course.addStudent(alan)
-
-      // console.log("Adding student Satoshi Nakamoto")
-      // await course.addStudent(satoshi)
-
-      // class CourseExtended extends Contract {
-      //   constructor(name, longStringPropertyForContract, instuctor) {
-      //     super({ name, instuctor, longStringPropertyForContract, capacity: 0, students: [] })
-      //   }
-
-      //   updateCourseDetails(name, capacity) {
-      //     this.name = name
-      //     this.capacity = capacity
-      //   }
-
-      //   updateNameAndStringProp(name, longStringPropertyForContract) {
-      //     this.name = name
-      //     this.longStringPropertyForContract = longStringPropertyForContract
-      //   }
-
-      //   addStudent(student) {
-      //     this.students.push(student)
-      //   }
-      // }
-      // console.log("Creating test contract with multiple methods")
-      // const courseExtended = await computer.new(CourseExtended, ["Bitcoin Computer", "some random value", peter])
-
-      // console.log("Adding student to extended course", courseExtended)
-      // await courseExtended.addStudent(alan)
-    } catch (err) {
-      console.log(err)
-    }
-
-    console.log(`\nSuccessfully created smart objects`)
-  } else {
-    console.log("Aborting...")
-  }
-  rl.close()
-})
+rl.close()

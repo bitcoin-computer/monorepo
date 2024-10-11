@@ -14,7 +14,7 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
     volumes:
-      - ./data/db-data:/var/lib/postgresql/data
+      - ./chain-setup/${BCN_CHAIN}/${BCN_NETWORK}/db-data:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
   node:
     image: ${BITCOIN_IMAGE}
@@ -25,7 +25,7 @@ services:
       - ${BITCOIN_RPC_PORT}:${BITCOIN_RPC_PORT}
       - ${BCN_ZMQ_PORT}:${BCN_ZMQ_PORT}
     volumes:
-      - ./data/blockchain-data:${BITCOIN_DATA_DIR}
+      - ./chain-setup/${BCN_CHAIN}/${BCN_NETWORK}/blockchain-data:${BITCOIN_DATA_DIR}
       - ./${BITCOIN_CONF_FILE}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}
   bcn:
     image: bitcoin-computer-node
@@ -58,7 +58,6 @@ services:
       - BITCOIN_RPC_PASSWORD=${BITCOIN_RPC_PASSWORD}
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
-    working_dir: /dist
     depends_on:
       - db
       - node

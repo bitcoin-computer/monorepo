@@ -28,6 +28,7 @@
     "packages/*"
   ],
   "scripts": {
+    "build-node": "docker build -t bitcoin-computer-node .",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
     "husky-checks": "./scripts/husky-checks.sh",
     "prepare": "husky install",

@@ -55,7 +55,6 @@ npm run start
 
 You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running. Then run the commands below and open [http://localhost:1032](http://localhost:1032).
 
-
 <font size=1>
 
 ```bash
@@ -103,6 +102,7 @@ If you have any questions, please let us know on <a href="https://t.me/thebitcoi
 Contributions are most welcome! If you have found a bug or have an idea for an improvement please create an [issue](https://github.com/bitcoin-computer/monorepo/issues) or a [pull request](https://github.com/bitcoin-computer/monorepo/pulls).
 
 ## Development Status
+
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
 ## Price

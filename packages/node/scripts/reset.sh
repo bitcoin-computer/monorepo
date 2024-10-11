@@ -26,22 +26,19 @@ EOF
 # docker ps -a --format="{{.ID}}" | xargs docker update --restart=no | xargs docker stop
 docker stop $(docker ps -a -q) & docker update --restart=no $(docker ps -a -q) & systemctl restart docker
 
-# Delete all volumes:
-docker volume rm $(docker volume ls -q)
-
 # Delete all containers:
 docker rm -f $(docker ps -a -q)
 
-# delete all dangling containers, images, volumes, networks
+# delete all dangling containers, images, networks
 docker system prune
 docker network prune
-docker volume prune
 
 # uncomment to delete all stopped containers and unused images
 # docker system prune -a
 
 # delete data files
-rm -rf ./data/
+rm -rf ./chain-setup/**/**/db-data/
+
 # delete the logs
 yes | rm -r logs
 rm error.log

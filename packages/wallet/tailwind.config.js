@@ -7,8 +7,7 @@ module.exports = {
       colors: {
         "blue-1": "#000F38",
         "blue-2": "#002A99",
-        tbc: "#0046FF",
-        "tbc-blue": "#0046FF",
+        "blue-3": "#0046FF",
         "blue-4": "#A7BFFF",
       },
     },

@@ -1,7 +1,6 @@
 coverage/
 logs/
 node_modules/
-data
 .env
 .env.aws
 .docker.config
@@ -13,8 +12,8 @@ error.log
 bcn.config.json
 zmqlog.log
 packages/**/node_modules/
-packages/**/data/blockchain-data/
-packages/**/data/db-data/
+packages/**/chain-setup/**/blockchain-data
+packages/**/chain-setup/**/db-data
 # Logs
 logs
 *.log
@@ -114,3 +113,4 @@ typings/
 
 # TernJS port file
 .tern-port
+workspace.code-workspace

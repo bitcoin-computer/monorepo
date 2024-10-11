@@ -14,7 +14,6 @@ import { Details } from "./components/Details"
 import Transactions from "./components/Transactions"
 import { Assets } from "./components/Assets"
 import { SideBar } from "./components/Sidebar"
-import { BalanceContext } from "./components/Utils/BalanceContext"
 
 export default function App() {
   try {
@@ -36,24 +35,22 @@ export default function App() {
       <BrowserRouter>
         <UtilsContext.UtilsProvider>
           <ComputerContext.Provider value={computer}>
-            <BalanceContext.BalanceProvider>
-              <SideBar />
-              <div className="p-4 sm:ml-64">
-                <div className="p-8 max-w-screen-xl">
-                  <Routes>
-                    <Route path="/" element={<Send />} />
-                    <Route path="/send" element={<Send />} />
-                    <Route path="/transactions" element={<Transactions />} />
-                    <Route path="/assets" element={<Assets />} />
-                    <Route path="/objects/:rev" element={<SmartObject.Component />} />
-                    <Route path="/transactions/:txn" element={<Transaction.Component />} />
-                    <Route path="/details" element={<Details />} />
-                    <Route path="*" element={<Error404 />} />
-                  </Routes>
-                  <Auth.LoginModal />
-                </div>
+            <SideBar />
+            <div className="p-4 sm:ml-64">
+              <div className="p-8 max-w-screen-xl">
+                <Routes>
+                  <Route path="/" element={<Send />} />
+                  <Route path="/send" element={<Send />} />
+                  <Route path="/transactions" element={<Transactions />} />
+                  <Route path="/assets" element={<Assets />} />
+                  <Route path="/objects/:rev" element={<SmartObject.Component />} />
+                  <Route path="/transactions/:txn" element={<Transaction.Component />} />
+                  <Route path="/details" element={<Details />} />
+                  <Route path="*" element={<Error404 />} />
+                </Routes>
+                <Auth.LoginModal />
               </div>
-            </BalanceContext.BalanceProvider>
+            </div>
           </ComputerContext.Provider>
         </UtilsContext.UtilsProvider>
       </BrowserRouter>
