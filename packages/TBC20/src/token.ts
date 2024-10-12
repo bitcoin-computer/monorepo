@@ -11,19 +11,31 @@ export class Token extends Contract {
     super({ _owners: [to], amount, name, symbol })
   }
 
+  // eslint-disable-next-line consistent-return
   transfer(to: string, amount?: number): Token | null {
     // Send entire amount
     if (typeof amount === 'undefined') {
       this._owners = [to]
-      return null
-    }
-    // Send partial amount in a new object
-    if (this.amount >= amount) {
+    } else if (this.amount >= amount) {
+      // Send partial amount in a new object
       this.amount -= amount
       return new Token(to, amount, this.name, this.symbol)
+    } else {
+      throw new Error('Insufficient funds')
     }
+  }
 
-    throw new Error('Insufficient funds')
+  burn() {
+    this.amount = 0
+  }
+
+  merge(tokens: Token[]) {
+    let total = 0
+    tokens.forEach((token) => {
+      total += token.amount
+      token.burn()
+    })
+    this.amount += total
   }
 }
 

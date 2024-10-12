@@ -23,49 +23,115 @@ before(async () => {
 
 describe('Token', () => {
   describe('Using fungible tokens without a helper class', () => {
-    let token: Token
+    let token1: Token
 
     describe('Minting a fungible token', async () => {
-      it('Sender mints a token', async () => {
-        token = await sender.new(Token, [sender.getPublicKey(), 3, 'test'])
+      it('Sender mints 3 tokens', async () => {
+        token1 = await sender.new(Token, [sender.getPublicKey(), 3, 'test'])
       })
 
       it('The meta data should be set', async () => {
-        expect(token.amount).to.eq(3)
-        expect(token._owners).deep.equal([sender.getPublicKey()])
-        expect(token.name).to.eq('test')
-        expect(token.symbol).to.eq('')
-        expect(token._id).to.be.a('string')
-        expect(token._rev).to.be.a('string')
-        expect(token._root).to.be.a('string')
+        expect(token1.amount).to.eq(3)
+        expect(token1._owners).deep.equal([sender.getPublicKey()])
+        expect(token1.name).to.eq('test')
+        expect(token1.symbol).to.eq('')
+        expect(token1._id).to.be.a('string')
+        expect(token1._rev).to.be.a('string')
+        expect(token1._root).to.be.a('string')
       })
     })
 
-    describe('Transferring the NFT', () => {
-      let newToken: Token
+    describe('Transferring the token', () => {
+      let token2: Token
+      let token2After: Token
 
-      it('Sender transfers the NFT to receiver', async () => {
-        newToken = await token.transfer(receiver.getPublicKey(), 1)
+      it('Sender transfers 1 token to Receiver', async () => {
+        token2 = await token1.transfer(receiver.getPublicKey(), 1)
       })
 
       it('The meta data of token should be set correctly', () => {
-        expect(token.amount).to.eq(2)
-        expect(token._owners).deep.equal([sender.getPublicKey()])
-        expect(token.name).to.eq('test')
-        expect(token.symbol).to.eq('')
-        expect(token._id).to.be.a('string')
-        expect(token._rev).to.be.a('string')
-        expect(token._root).to.be.a('string')
+        expect(token1.amount).to.eq(2)
+        expect(token1._owners).deep.equal([sender.getPublicKey()])
+        expect(token1.name).to.eq('test')
+        expect(token1.symbol).to.eq('')
+        expect(token1._id).to.be.a('string')
+        expect(token1._rev).to.be.a('string')
+        expect(token1._root).to.be.a('string')
       })
 
       it('The meta data of newToken should be set correctly', () => {
-        expect(newToken.amount).to.eq(1)
-        expect(newToken._owners).deep.equal([receiver.getPublicKey()])
-        expect(newToken.name).to.eq('test')
-        expect(newToken.symbol).to.eq('')
-        expect(newToken._id).to.be.a('string')
-        expect(newToken._rev).to.be.a('string')
-        expect(newToken._root).to.be.a('string')
+        expect(token2.amount).to.eq(1)
+        expect(token2._owners).deep.equal([receiver.getPublicKey()])
+        expect(token2.name).to.eq('test')
+        expect(token2.symbol).to.eq('')
+        expect(token2._id).to.be.a('string')
+        expect(token2._rev).to.be.a('string')
+        expect(token2._root).to.be.a('string')
+      })
+
+      it('computer.query should return the tokens', async () => {
+        const senderRevs = await sender.query({ publicKey: sender.getPublicKey() })
+        expect(senderRevs.length).eq(1)
+        const senderToken = (await sender.sync(senderRevs[0])) as Token
+        expect(senderToken.amount).eq(2)
+
+        const receiverRevs = await receiver.query({ publicKey: receiver.getPublicKey() })
+        expect(receiverRevs.length).eq(1)
+        const receiverTokens = (await receiver.sync(receiverRevs[0])) as Token
+        expect(receiverTokens.amount).eq(1)
+      })
+
+      it('Receiver send token2 back to sender', async () => {
+        // Here we would like to call
+        //
+        //   await token2.transfer(sender.getPublicKey())
+        //
+        // However, the writer of token2 is sender as token2 was created by token1
+        // which was created by sender. As token2 is owned by receiver the transaction
+        // would be rejected as sender cannot spend an output owned by receiver.
+        //
+        // We could execute the call by creating an object associated with receiver.
+        //
+        //   const token2Receiver = (await receiver.sync(token2._rev)) as any
+        //   await token2Receiver.transfer(sender.getPublicKey())
+        //
+        // Alternatively we can use encodeCall
+        const { tx, effect } = await receiver.encodeCall({
+          target: token2,
+          property: 'transfer',
+          args: [sender.getPublicKey()]
+        })
+        await receiver.broadcast(tx)
+
+        const { env } = effect
+        const { __bc__ } = env
+        token2After = __bc__ as unknown as Token
+
+        expect(token1._owners).deep.eq([sender.getPublicKey()])
+        expect(token2After._owners).deep.eq([sender.getPublicKey()])
+
+        expect(token2._id).eq(token2After._id)
+        expect(token2._rev).not.eq(token2After._rev)
+
+        expect(await sender.query({ ids: [token1._id] })).deep.eq([token1._rev])
+        expect(await sender.query({ ids: [token2._id] })).deep.eq([token2After._rev])
+      })
+
+      it('Sender merges their two tokens', async () => {
+        await token1.merge([token2After])
+        expect(token1.amount).eq(3)
+        expect(token2After.amount).eq(0)
+      })
+
+      it('Should burn a token', async () => {
+        await token1.burn()
+        expect(token1.amount).eq(0)
+
+        await token2.burn()
+        expect(token2.amount).eq(0)
+
+        await token2After.burn()
+        expect(token2After.amount).eq(0)
       })
     })
   })
