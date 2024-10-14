@@ -12,11 +12,10 @@ dotenv.config({ path: '../../.env' })
 
 const url = process.env.BCN_URL
 
-const sleep = async (delay) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, delay)
+export const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms)
   })
-}
 
 describe('TxWrapper', () => {
   const alice = new Computer({ url })
