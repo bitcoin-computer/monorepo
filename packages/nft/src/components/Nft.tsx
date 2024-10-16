@@ -107,7 +107,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
       )}
       {smartObject.url && (
         <div className="w-full h-80 flex items-center justify-center my-4">
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center dark:bg-gray-700">
             <img
               className="max-h-full max-w-full object-contain"
               src={smartObject.url}
@@ -293,7 +293,7 @@ function SuccessContent(id: string) {
   return (
     <>
       <div className="p-4 md:p-5">
-        <div>
+        <div className="dark:text-gray-400">
           You bought this NFT{" "}
           <Link
             to={`/objects/${id}`}

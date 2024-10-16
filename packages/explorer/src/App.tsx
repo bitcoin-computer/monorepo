@@ -32,18 +32,20 @@ export default function App() {
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />
           <Wallet />
-          <NavBar />
-          <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
-            <Routes>
-              <Route path="/" element={<Gallery.WithPagination />} />
-              <Route path="/blocks" element={<Blocks />} />
-              <Route path="/playground" element={<Playground />} />
-              <Route path="/transactions/:txn" element={<Transaction.Component />} />
-              <Route path="/blocks/:block" element={<Block />} />
-              <Route path="/objects/:rev" element={<SmartObject.Component />} />
-              <Route path="/modules/:rev" element={<Module />} />
-              <Route path="*" element={<Error404 />} />
-            </Routes>
+          <div className="dark:bg-gray-800 min-h-screen">
+            <NavBar />
+            <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+              <Routes>
+                <Route path="/" element={<Gallery.WithPagination />} />
+                <Route path="/blocks" element={<Blocks />} />
+                <Route path="/playground" element={<Playground />} />
+                <Route path="/transactions/:txn" element={<Transaction.Component />} />
+                <Route path="/blocks/:block" element={<Block />} />
+                <Route path="/objects/:rev" element={<SmartObject.Component />} />
+                <Route path="/modules/:rev" element={<Module />} />
+                <Route path="*" element={<Error404 />} />
+              </Routes>
+            </div>
           </div>
         </ComputerContext.Provider>
       </UtilsContext.UtilsProvider>

@@ -25,7 +25,7 @@ function NFTCard({ nft }: { nft: NFT }) {
     <>
       <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4">
         <img className="h-auto rounded-t-lg max-w-full w-full" src={nft.url} alt="" />
-        <div className="p-4 border-t">
+        <div className="p-4">
           <h5
             className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white break-words"
             title={nft.name}

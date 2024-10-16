@@ -22,7 +22,7 @@ export default function App() {
     if (!Auth.isLoggedIn())
       return (
         <UtilsContext.UtilsProvider>
-          <div className="p-8 mt-16 max-w-screen-md mx-auto">
+          <div className="p-8 mx-auto max-w-screen w-screen dark:bg-gray-800 min-h-screen h-screen">
             <h2 className="text-4xl mb-24 text-center font-bold dark:text-white">
               Bitcoin Computer Wallet
             </h2>
@@ -36,8 +36,8 @@ export default function App() {
         <UtilsContext.UtilsProvider>
           <ComputerContext.Provider value={computer}>
             <SideBar />
-            <div className="p-4 sm:ml-64">
-              <div className="p-8 max-w-screen-xl">
+            <div className="p-4 sm:ml-64 dark:bg-gray-800">
+              <div className="p-8 max-w-screen-xl min-h-screen">
                 <Routes>
                   <Route path="/" element={<Send />} />
                   <Route path="/send" element={<Send />} />

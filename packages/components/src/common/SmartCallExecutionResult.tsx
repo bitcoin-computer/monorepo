@@ -6,7 +6,7 @@ export function FunctionResultModalContent({ functionResult }: any) {
   if (functionResult && typeof functionResult === "object" && !Array.isArray(functionResult))
     return (
       <>
-        <div className="p-4 md:p-5">
+        <div className="p-4 md:p-5 dark:text-gray-400">
           You created a&nbsp;
           <Link
             to={`/objects/${functionResult._rev}`}
