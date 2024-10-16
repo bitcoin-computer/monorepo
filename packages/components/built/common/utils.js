@@ -73,5 +73,6 @@ export function isValidRevString(outId) {
 export function isValidRev(value) {
     return typeof value === "string" && isValidRevString(value);
 }
-// eslint-disable-next-line
-export var sleep = function (ms) { return new Promise(function (resolve) { return setTimeout(resolve, ms); }); };
+export var sleep = function (ms) {
+    return new Promise(function (resolve) { setTimeout(resolve, ms); });
+};

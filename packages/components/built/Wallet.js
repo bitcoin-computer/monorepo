@@ -95,9 +95,6 @@ var Balance = function (_a) {
                     return [4 /*yield*/, computer.getBalance()];
                 case 2:
                     walletBalance = _a.sent();
-                    console.log('balance in sat', walletBalance.balance / 1e8);
-                    console.log('balance in payment', balances[0] / 1e8);
-                    console.log('balance in buy order', balances[1] / 1e8);
                     setBalance(walletBalance.balance + amountsInPayments);
                     setChain(computer.getChain());
                     showLoader(false);
