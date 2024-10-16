@@ -12,7 +12,7 @@
     "deploy": "node --loader ts-node/esm scripts/deploy.ts"
   },
   "dependencies": {
-    "@bitcoin-computer/components": "^0.21.0-beta.0",
+    "@bitcoin-computer/components": "^0.22.0-beta.0",
     "@bitcoin-computer/lib": "^0.21.0-beta.0",
     "flowbite": "^2.3.0",
     "react": "^18.3.1",
