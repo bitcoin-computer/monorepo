@@ -41,11 +41,6 @@ ON "Output"("address");
 CREATE INDEX "OutputPreviousIndex"
 ON "Output"("previous");
 
-CREATE INDEX "OutputBlockHashIndex"
-ON "Output"("blockHash");
-
-CREATE INDEX "InputOutputSpentIndex"
-ON "Input"("blockHash");
 
 CREATE TABLE IF NOT EXISTS
   "User" (
