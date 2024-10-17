@@ -36,7 +36,7 @@
     "lint": "eslint",
     "lint-fix": "eslint --fix",
     "start": "node dist/bcn.es.mjs",
-    "sync": "node dist/bcn.sync.es.mjs",
+    "sync": "BCN_NUM_WORKERS=4 BCN_WORKER_ID=1 node ./dist/bcn.sync.es.mjs & BCN_NUM_WORKERS=4 BCN_WORKER_ID=2 node ./dist/bcn.sync.es.mjs & BCN_NUM_WORKERS=4 BCN_WORKER_ID=3 node ./dist/bcn.sync.es.mjs & BCN_NUM_WORKERS=4 BCN_WORKER_ID=4 node ./dist/bcn.sync.es.mjs ",
     "setup": "./scripts/setup.py",
     "reset": "yes | ./scripts/reset.sh",
     "test": "mocha --config .mocharc.json ",
