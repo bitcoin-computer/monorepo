@@ -19,6 +19,7 @@
   },
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.release.json",
+    "build:turbo": "turbo run build",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf coverage build tmp",
     "clean-logs": "rm -f *.log 2> /dev/null",
