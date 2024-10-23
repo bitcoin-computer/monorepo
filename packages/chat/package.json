@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest run",
     "deploy": "node --loader ts-node/esm scripts/deploy.ts"
   },
   "dependencies": {
