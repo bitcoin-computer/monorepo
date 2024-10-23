@@ -8,6 +8,7 @@
     "start": "node build/src/main.js",
     "prebuild": "npm run lint",
     "build": "rm -rf build && tsc -p tsconfig.release.json",
+    "build:turbo": "turbo run build",
     "lint": "eslint . --ext .ts,.tsx --ignore-pattern build/",
     "lint-fix": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
     "test": "mocha  --config .mocharc.json",
