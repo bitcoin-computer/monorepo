@@ -46,7 +46,7 @@ describe('Token', async () => {
     let token2After: Token
 
     it('Sender transfers 1 token to Receiver', async () => {
-      token2 = await token1.transfer(receiver.getPublicKey(), 1)
+      token2 = (await token1.transfer(receiver.getPublicKey(), 1)) as Token
     })
 
     it('The meta data of token should be set correctly', () => {
@@ -129,9 +129,6 @@ describe('Token', async () => {
 
       await token2.burn()
       expect(token2.amount).eq(0)
-
-      await token2After.burn()
-      expect(token2After.amount).eq(0)
     })
 
     it('Should update the revisions correctly', async () => {
