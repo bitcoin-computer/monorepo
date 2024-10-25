@@ -14,7 +14,7 @@ export function isValidRev(value: any): boolean {
 export const sleep = (ms: number): Promise<void> => 
   new Promise((resolve) => { setTimeout(resolve, ms) })
 
-// eslint-disable-next-line
+ 
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]

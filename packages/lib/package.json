@@ -56,7 +56,6 @@
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
-    "@bitcoin-computer/TBC20": "^0.22.0-beta.0",
     "@bitcoin-computer/nakamotojs": "^0.22.0-beta.0",
     "@bitcoin-computer/secp256k1": "^0.22.0-beta.0",
     "@endo/static-module-record": "^1.0.4",
