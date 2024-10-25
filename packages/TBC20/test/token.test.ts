@@ -255,13 +255,13 @@ describe('TokenHelper', () => {
       }
 
       it('Should fail if the amount is greater than the balance', async () => {
-        const computer2 = new Computer({ url, chain, network })
-        const tbc20 = new TBC20(sender)
-        const publicKey = tbc20.computer.getPublicKey()
-        const root = await tbc20.mint(publicKey, 200, 'test', 'TST')
+        const computer3 = new Computer({ url, chain, network })
+        const tbc20 = new TokenHelper(sender)
+        const pKey = tbc20.computer.getPublicKey()
+        const r = await tbc20.mint(pKey, 200, 'test', 'TST')
         await sleep(200)
         try {
-          await tbc20.transfer(computer2.getPublicKey(), 201, root)
+          await tbc20.transfer(computer3.getPublicKey(), 201, r)
           expect(true).to.eq('false')
         } catch (err) {
           expect(err.message).to.eq('Could not send entire amount')

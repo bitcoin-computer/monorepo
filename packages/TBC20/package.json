@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/TBC20",
+  "name": "@bitcoin-computer/tbc20",
   "version": "0.22.0-beta.0",
   "description": "Standard for fungible tokens on Bitcoin",
   "private": true,

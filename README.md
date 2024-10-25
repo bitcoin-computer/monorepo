@@ -22,7 +22,7 @@ This monorepo contains everything you need to build smart contract based applica
 * [Non Fungible Token App](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nft#readme) - An app for minting, sending, and storing non-fungible tokens
 
 ## Standard Contracts
-* [TBC20](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20#readme) - An implementation of the ERC20 Fungible Token Standard
+* [TBC20](https://github.com/bitcoin-computer/monorepo/tree/main/packages/tbc20#readme) - An implementation of the ERC20 Fungible Token Standard
 * [TBC721](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721#readme) - An implementation of the ERC721 Non-Fungible Token Standard
 * [Swap](https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme) - An implementation of TBC721 swap and sale contracts
 
