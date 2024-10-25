@@ -10,9 +10,12 @@ import { Sale, SaleHelper } from '../src/sale'
 import { Payment, PaymentMock } from '../src/payment'
 import { meta } from '../src/utils'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
+const network = process.env.BCN_NETWORK
+
 const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 
 chai.use(chaiMatchPattern)
@@ -33,8 +36,8 @@ describe('Sale', () => {
   describe('Examples from docs', () => {
     it('Should work without helper classes', async () => {
       // Create and fund wallets
-      const seller = new Computer({ url })
-      const buyer = new Computer({ url })
+      const seller = new Computer({ url, chain, network })
+      const buyer = new Computer({ url, chain, network })
       await seller.faucet(1e8)
       await buyer.faucet(2e8)
 
@@ -79,8 +82,8 @@ describe('Sale', () => {
 
     it('Should work with helper classes', async () => {
       // Create and fund wallets
-      const alice = new Computer({ url })
-      const bob = new Computer({ url })
+      const alice = new Computer({ url, chain, network })
+      const bob = new Computer({ url, chain, network })
       await alice.faucet(1e5)
       await bob.faucet(nftPrice + 1e5)
 
@@ -136,7 +139,7 @@ describe('Sale', () => {
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer({ url })
+    const seller = new Computer({ url, chain, network })
     sellerPublicKey = seller.getPublicKey()
     let saleHelper: SaleHelper
 
@@ -174,7 +177,7 @@ describe('Sale', () => {
   })
 
   describe('Failing to underpay', () => {
-    const thief = new Computer({ url })
+    const thief = new Computer({ url, chain, network })
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
@@ -226,8 +229,8 @@ describe('Sale', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer({ url })
-    const computer = new Computer({ url })
+    const buyer = new Computer({ url, chain, network })
+    const computer = new Computer({ url, chain, network })
     let payment: Payment
     let txId: string
 

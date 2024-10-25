@@ -13,9 +13,11 @@ const { expect } = chai
 // in the monorepo root level and add the following line:
 // BCN_URL=http://localhost:1031
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
+const network = process.env.BCN_NETWORK
 
 const artist = ''
 const imageUrl = ''
@@ -41,7 +43,7 @@ describe('NFT', () => {
     let nft: NFT
 
     describe('Minting an NFT', () => {
-      const sender = new Computer({ url })
+      const sender = new Computer({ url, chain, network})
 
       before("Fund sender's wallet", async () => {
         await sender.faucet(0.001e8)
@@ -70,7 +72,7 @@ describe('NFT', () => {
     })
 
     describe('Transferring an NFT', async () => {
-      const receiver = new Computer({ url })
+      const receiver = new Computer({ url, chain, network})
 
       it('Sender transfers the NFT to receiver', async () => {
         await nft.transfer(receiver.getPublicKey())
@@ -101,7 +103,7 @@ describe('NFT', () => {
   })
 
   describe('Using NFTs with the NftHelper class', () => {
-    const computer = new Computer({ url })
+    const computer = new Computer({ url, chain, network})
 
     let nftHelper: NftHelper
     let nft: NFT
@@ -145,7 +147,7 @@ describe('NFT', () => {
 
     describe('transfer', () => {
       it('Should transfer an NFT', async () => {
-        const computer2 = new Computer()
+        const computer2 = new Computer({ url, chain, network})
         expect(await nftHelper.balanceOf(computer.getPublicKey())).eq(1)
         expect(await nftHelper.balanceOf(computer2.getPublicKey())).eq(0)
         await nftHelper.transfer(computer2.getPublicKey(), nft._id)
@@ -158,7 +160,7 @@ describe('NFT', () => {
   describe('Examples from docs', () => {
     it('Should work without the NftHelper class', async () => {
       // Create the sender wallet
-      const sender = new Computer({ url })
+      const sender = new Computer({ url, chain, network})
 
       // Fund the senders wallet
       await sender.faucet(0.001e8)
@@ -172,7 +174,7 @@ describe('NFT', () => {
 
     it('Should work with the NftHelper class', async () => {
       // Create wallet
-      const sender = new Computer({ url })
+      const sender = new Computer({ url, chain, network})
 
       // Fund wallet
       await sender.faucet(0.001e8)
@@ -187,7 +189,7 @@ describe('NFT', () => {
       const nft = await nftHelper.mint('name', 'artist', 'url')
 
       // Transfer NFT
-      await nftHelper.transfer(new Computer().getPublicKey(), nft._id)
+      await nftHelper.transfer(new Computer({ url, chain, network}).getPublicKey(), nft._id)
     })
   })
 })

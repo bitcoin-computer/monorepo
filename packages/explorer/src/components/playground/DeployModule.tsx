@@ -57,7 +57,6 @@ const DeployModule = (props: {
       >
         Deploy Module
       </button>
-      <div className="bg-white h-64"></div>
     </>
   )
 }

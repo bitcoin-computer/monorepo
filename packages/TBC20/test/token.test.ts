@@ -4,9 +4,11 @@ import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { Token, TokenHelper } from '../src/token'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
+const network = process.env.BCN_NETWORK
 
 function sleep(delay: number): Promise<void> {
   return new Promise((resolve) => {
@@ -14,8 +16,8 @@ function sleep(delay: number): Promise<void> {
   })
 }
 
-const sender = new Computer({ url })
-const receiver = new Computer({ url })
+const sender = new Computer({ url, chain, network })
+const receiver = new Computer({ url, chain, network })
 
 before(async () => {
   await sender.faucet(1e8)
@@ -251,6 +253,20 @@ describe('TokenHelper', () => {
       } catch (err) {
         expect(err.message).to.eq('Could not send entire amount')
       }
+
+      it('Should fail if the amount is greater than the balance', async () => {
+        const computer2 = new Computer({ url, chain, network })
+        const tbc20 = new TBC20(sender)
+        const publicKey = tbc20.computer.getPublicKey()
+        const root = await tbc20.mint(publicKey, 200, 'test', 'TST')
+        await sleep(200)
+        try {
+          await tbc20.transfer(computer2.getPublicKey(), 201, root)
+          expect(true).to.eq('false')
+        } catch (err) {
+          expect(err.message).to.eq('Could not send entire amount')
+        }
+      })
     })
   })
 })

@@ -52,6 +52,7 @@ import { Auth } from "./Auth";
 import { Drawer } from "./Drawer";
 import { UtilsContext } from "./UtilsContext";
 import { ComputerContext } from "./ComputerContext";
+import { getEnv } from "./common/utils";
 var Balance = function (_a) {
     var computer = _a.computer, modSpecs = _a.modSpecs;
     var _b = useState(0), balance = _b[0], setBalance = _b[1];
@@ -126,7 +127,7 @@ var Balance = function (_a) {
     useEffect(function () {
         refreshBalance();
     }, []);
-    return (_jsxs("div", __assign({ id: "dropdown-cta", className: "relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900", role: "alert" }, { children: [_jsxs("div", __assign({ className: "text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400" }, { children: [balance / 1e8, " ", computer.getChain(), " ", _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] })), _jsx("div", __assign({ className: "text-center uppercase text-xs text-blue-800 dark:text-blue-400" }, { children: computer.getNetwork() })), computer.getNetwork() === 'regtest' && _jsx("button", __assign({ type: "button", onClick: fund, className: "absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800" }, { children: "Fund" }))] })));
+    return (_jsxs("div", __assign({ id: "dropdown-cta", className: "relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900", role: "alert" }, { children: [_jsxs("div", __assign({ className: "text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400" }, { children: [balance / 1e8, " ", computer.getChain(), " ", _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] })), _jsx("div", __assign({ className: "text-center uppercase text-xs text-blue-800 dark:text-blue-400" }, { children: computer.getNetwork() })), computer.getNetwork() === "regtest" && (_jsx("button", __assign({ type: "button", onClick: fund, className: "absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800" }, { children: "Fund" })))] })));
 };
 var Address = function (_a) {
     var computer = _a.computer;
@@ -139,7 +140,7 @@ var PublicKey = function (_a) {
 var Mnemonic = function (_a) {
     var computer = _a.computer;
     var _b = useState(false), mnemonicShown = _b[0], setMnemonicShown = _b[1];
-    return _jsxs("div", __assign({ className: "mb-4" }, { children: [_jsxs("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: ["Mnemonic\u00A0", _jsx("button", __assign({ onClick: function () { return setMnemonicShown(!mnemonicShown); }, className: "text-xs font-mono font-normal text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline" }, { children: mnemonicShown ? 'hide' : 'show' }))] })), _jsx("p", __assign({ className: "text-xs font-mono text-gray-500 dark:text-gray-400 break-words" }, { children: mnemonicShown ? computer.getMnemonic() : '' }))] }));
+    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsxs("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: ["Mnemonic\u00A0", _jsx("button", __assign({ onClick: function () { return setMnemonicShown(!mnemonicShown); }, className: "text-xs font-mono font-normal text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline" }, { children: mnemonicShown ? "hide" : "show" }))] })), _jsx("p", __assign({ className: "text-xs font-mono text-gray-500 dark:text-gray-400 break-words" }, { children: mnemonicShown ? computer.getMnemonic() : "" }))] })));
 };
 var Url = function (_a) {
     var computer = _a.computer;

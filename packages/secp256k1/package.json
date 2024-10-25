@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/secp256k1",
-  "version": "0.21.0-beta.0",
+  "version": "0.22.0-beta.0",
   "description": "A tiny secp256k1 JS",
   "homepage": "https://github.com/bitcoin-computer/monorepo/tree/main",
   "bugs": {
@@ -41,9 +41,6 @@
     "@typescript-eslint/parser": "^7.9.0",
     "browser-run": "^10.1.0",
     "buffer": "^6.0.3",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-prettier": "^3.3.1",
     "nyc": "^15.1.0",
     "path-browserify": "^1.0.1",
     "prettier": "^2.2.1",

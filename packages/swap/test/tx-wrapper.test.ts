@@ -8,9 +8,11 @@ import { StaticSwap } from '../src/static-swap'
 import { TxWrapperHelper } from '../src/tx-wrapper'
 import { meta } from '../src/utils'
 
-dotenv.config({ path: '../../.env' })
+dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
+const network = process.env.BCN_NETWORK
 
 export const sleep = (ms: number): Promise<void> =>
   new Promise((resolve) => {
@@ -18,8 +20,8 @@ export const sleep = (ms: number): Promise<void> =>
   })
 
 describe('TxWrapper', () => {
-  const alice = new Computer({ url })
-  const bob = new Computer({ url })
+  const alice = new Computer({ url, chain, network })
+  const bob = new Computer({ url, chain, network })
 
   before('Before', async () => {
     await alice.faucet(1e8)

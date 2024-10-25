@@ -43,13 +43,13 @@ export const nftVars = [
 export const fungibleToken = `class Token extends Contract {
   constructor(supply, to) {
     super({
-      amount: supply,
+      tokens: supply,
       _owners: [to],
     })
   }
   send(amount, to) {
-    if (this.amount < amount) throw new Error()
-    this.amount -= amount
+    if (this.tokens < amount) throw new Error()
+    this.tokens -= amount
     return new Token(amount, to)
   }
 }`
@@ -57,13 +57,13 @@ export const fungibleToken = `class Token extends Contract {
 export const fungibleTokenExpresion = (pubKey: string) => `class Token extends Contract {
   constructor(supply, to) {
     super({
-      amount: supply,
+      tokens: supply,
       _owners: [to],
     })
   }
   send(amount, to) {
-    if (this.amount < amount) throw new Error()
-    this.amount -= amount
+    if (this.tokens < amount) throw new Error()
+    this.tokens -= amount
     return new Token(amount, to)
   }
 }
@@ -72,13 +72,13 @@ new Token(100, "${pubKey}")`
 export const fungibleTokenExport = `export class Token extends Contract {
   constructor(supply, to) {
     super({
-      amount: supply,
+      tokens: supply,
       _owners: [to],
     })
   }
   send(amount, to) {
-    if (this.amount < amount) throw new Error()
-    this.amount -= amount
+    if (this.tokens < amount) throw new Error()
+    this.tokens -= amount
     return new Token(amount, to)
   }
 }`

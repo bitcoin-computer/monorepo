@@ -37,7 +37,7 @@ Create a file `index.html` and open it in your browser.
 
       // Create a wallet and fund it
       const computer = new Computer()
-      await computer.faucet(0.0001e8)
+      await computer.faucet(1e5)
 
       // Mint a new on-chain object
       const counter = await computer.new(Counter)
@@ -91,7 +91,7 @@ class Counter extends Contract {
 
 // Create and fund a Bitcoin Computer wallet
 const computer = new Computer()
-await computer.faucet(1e7)
+await computer.faucet(1e5)
 
 // Deploy a smart contract and create an object
 const counter = await computer.new(Counter)

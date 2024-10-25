@@ -4,7 +4,7 @@ const getEnvVar = (key: string): string => {
   throw new Error(`Please create a .env file.`)
 }
 
-export const REACT_APP_NFT_MOD_SPEC: string = getEnvVar('REACT_APP_NFT_MOD_SPEC')
-export const REACT_APP_TX_WRAPPER_MOD_SPEC: string = getEnvVar('REACT_APP_TX_WRAPPER_MOD_SPEC')
-export const REACT_APP_SALE_MOD_SPEC: string = getEnvVar('REACT_APP_SALE_MOD_SPEC')
-export const REACT_APP_PAYMENT_MOD_SPEC: string = getEnvVar('REACT_APP_PAYMENT_MOD_SPEC')
+export const VITE_NFT_MOD_SPEC: string = getEnvVar('VITE_NFT_MOD_SPEC')
+export const VITE_TX_WRAPPER_MOD_SPEC: string = getEnvVar('VITE_TX_WRAPPER_MOD_SPEC')
+export const VITE_SALE_MOD_SPEC: string = getEnvVar('VITE_SALE_MOD_SPEC')
+export const VITE_PAYMENT_MOD_SPEC: string = getEnvVar('VITE_PAYMENT_MOD_SPEC')

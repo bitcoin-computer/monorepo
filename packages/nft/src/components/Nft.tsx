@@ -11,9 +11,9 @@ import { Computer } from "@bitcoin-computer/lib"
 import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
 import { NFT } from "@bitcoin-computer/TBC721"
 import {
-  REACT_APP_TX_WRAPPER_MOD_SPEC,
-  REACT_APP_PAYMENT_MOD_SPEC,
-  REACT_APP_SALE_MOD_SPEC
+  VITE_TX_WRAPPER_MOD_SPEC,
+  VITE_PAYMENT_MOD_SPEC,
+  VITE_SALE_MOD_SPEC
 } from "../constants/modSpecs"
 
 const modalId = "smart-object-bought-modal"
@@ -27,9 +27,9 @@ const BuyNFT = async ({
   nft: NFT
   setFunctionResult: any
 }) => {
-  const txWrapperHelper = new TxWrapperHelper(computer, REACT_APP_TX_WRAPPER_MOD_SPEC)
-  const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
-  const paymentHelper = new PaymentHelper(computer, REACT_APP_PAYMENT_MOD_SPEC)
+  const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
+  const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
+  const paymentHelper = new PaymentHelper(computer, VITE_PAYMENT_MOD_SPEC)
   const saleTxn = await txWrapperHelper.decodeTx(nft.offerTxRev)
   const nftAmount = await saleHelper.checkSaleTx(saleTxn)
   const { tx: paymentTx } = await paymentHelper.createPaymentTx(nftAmount)
@@ -64,7 +64,7 @@ const CreateSellOffer = async ({
   nft: NFT
   showSnackBar: (message: string, success: boolean) => void
 }) => {
-  const txWrapperHelper = new TxWrapperHelper(computer, REACT_APP_TX_WRAPPER_MOD_SPEC)
+  const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
   const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
     computer.getPublicKey(),
     computer.getUrl()
@@ -72,7 +72,7 @@ const CreateSellOffer = async ({
   const offerTxId = await computer.broadcast(wrappedTx)
   await nft.list(offerTxId)
 
-  const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
+  const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
   const parsedAmount = Number(amount) * 1e8
   if (!parsedAmount) {
     showSnackBar("Please provide a valid amount.", false)
@@ -107,7 +107,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
       )}
       {smartObject.url && (
         <div className="w-full h-80 flex items-center justify-center my-4">
-          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+          <div className="w-full h-full bg-gray-200 flex items-center justify-center dark:bg-gray-700">
             <img
               className="max-h-full max-w-full object-contain"
               src={smartObject.url}
@@ -194,8 +194,8 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
     const fetch = async () => {
       try {
         showLoader(true)
-        const txWrapperHelper = new TxWrapperHelper(computer, REACT_APP_TX_WRAPPER_MOD_SPEC)
-        const saleHelper = new SaleHelper(computer, REACT_APP_SALE_MOD_SPEC)
+        const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
+        const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
         const saleTxn = await txWrapperHelper.decodeTx(nft.offerTxRev)
         const amount = await saleHelper.checkSaleTx(saleTxn)
         setNftAmount(amount)
@@ -293,7 +293,7 @@ function SuccessContent(id: string) {
   return (
     <>
       <div className="p-4 md:p-5">
-        <div>
+        <div className="dark:text-gray-400">
           You bought this NFT{" "}
           <Link
             to={`/objects/${id}`}

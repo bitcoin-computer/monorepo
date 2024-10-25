@@ -55,7 +55,6 @@ npm run start
 
 You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running. Then run the commands below and open [http://localhost:1034](http://localhost:1034).
 
-
 <font size=1>
 
 ```bash

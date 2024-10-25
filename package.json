@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer",
-  "version": "0.21.0-beta.0",
+  "version": "0.22.0-beta.0",
   "description": "Lightweight Smart Contracts for Bitcoin and Litecoin",
   "contributors": [
     "Clemens Ley",
@@ -30,16 +30,9 @@
   "scripts": {
     "build-node": "docker build -t bitcoin-computer-node .",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
-    "down": "cd packages/node && npm run down",
-    "fund-ltc": "cd packages/node && npm run fund-ltc -- $@",
-    "fund-btc": "cd packages/node && npm run fund-btc -- $@",
     "husky-checks": "./scripts/husky-checks.sh",
     "prepare": "husky install",
-    "prepublishOnly": "./scripts/check-obfuscation.sh",
-    "reset": "cd packages/node && npm run reset",
-    "start": "cd /dist/packages/node && npm run start",
-    "test": "cd packages/node && npm run test; cd ../lib && npm run test",
-    "up": "cd packages/node && npm run up -- $@"
+    "prepublishOnly": "./scripts/check-obfuscation.sh"
   },
   "dependencies": {
     "@endo/static-module-record": "^1.0.4"
@@ -47,6 +40,11 @@
   "devDependencies": {
     "@types/node": "^20.11.21",
     "edit-json-file": "^1.8.0",
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "~9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-prettier": "^5.1.3",
     "husky": "^9.0.11",
     "path": "^0.12.7",
     "ts-node": "^10.9.2",

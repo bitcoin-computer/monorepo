@@ -1,72 +1,44 @@
 {
   "name": "@bitcoin-computer/nft",
-  "version": "0.21.0-beta.0",
   "private": true,
+  "version": "0.22.0-beta.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "test": "vitest",
+    "deploy": "node --experimental-modules scripts/deploy.mjs"
+  },
   "dependencies": {
-    "@bitcoin-computer/TBC721": "^0.21.0-beta.0",
-    "@bitcoin-computer/components": "^0.21.0-beta.0",
-    "@bitcoin-computer/lib": "^0.21.0-beta.0",
-    "@bitcoin-computer/swap": "^0.21.0-beta.0",
-    "@testing-library/jest-dom": "^6.4.2",
-    "@testing-library/react": "^14.2.1",
-    "@testing-library/user-event": "^14.5.2",
-    "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.21",
-    "@types/react": "^18.2.60",
-    "@types/react-dom": "^18.2.19",
+    "@bitcoin-computer/TBC721": "^0.22.0-beta.0",
+    "@bitcoin-computer/components": "^0.22.0-beta.0",
+    "@bitcoin-computer/lib": "^0.22.0-beta.0",
+    "@bitcoin-computer/swap": "^0.22.0-beta.0",
     "flowbite": "^2.3.0",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-icons": "^5.0.1",
-    "react-router-dom": "^6.22.1",
-    "react-scripts": "5.0.1",
-    "react-string-replace": "^1.1.1",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^4.9.5",
-    "web-vitals": "^3.5.2"
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.12",
-    "@types/expect": "^24.3.0",
-    "@types/mocha": "^10.0.6",
-    "@types/node": "~18.0.0",
-    "chai": "^5.1.0",
-    "dotenv": "^16.4.5",
-    "eslint": "^8.57.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "~9.1.0",
-    "eslint-plugin-import": "^2.29.1",
-    "mocha": "^10.3.0",
-    "prettier": "~3.2.5",
-    "typescript": "~5.3.3"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "deploy": "node --experimental-modules scripts/deploy.mjs",
-    "lint": "eslint src",
-    "lint-fix": "eslint src --fix",
-    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
-    "types": "tsc --noEmit"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "@eslint/js": "^9.9.0",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.9.0",
+    "eslint-plugin-react-hooks": "^5.1.0-rc.0",
+    "eslint-plugin-react-refresh": "^0.4.9",
+    "globals": "^15.9.0",
+    "jsdom": "^25.0.0",
+    "postcss": "^8.4.44",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.3",
+    "typescript-eslint": "^8.0.1",
+    "vite": "^5.4.1",
+    "vitest": "^2.0.5"
   }
 }
