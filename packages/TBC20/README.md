@@ -43,7 +43,7 @@ npm install
 
 ## Usage
 
-You can use the commands below in the folder `packages/tbc20`.
+You can use the commands below in the folder `packages/TBC20`.
 
 ### Run the Tests
 

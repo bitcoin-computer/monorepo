@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/tbc20",
+  "name": "@bitcoin-computer/TBC20",
   "version": "0.22.0-beta.0",
   "description": "Standard for fungible tokens on Bitcoin",
   "private": true,
@@ -29,7 +29,7 @@
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "types": "tsc",
     "test": "mocha --config .mocharc.json",
-    "test-and-show": "npm run test 2>&1 | tee tbc20-test.log && open tbc20-test.log"
+    "test-and-show": "npm run test 2>&1 | tee TBC20-test.log && open TBC20-test.log"
   },
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "license": "Apache-2.0",

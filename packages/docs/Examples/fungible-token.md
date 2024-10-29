@@ -51,5 +51,5 @@ const sentToken = await token.transfer(2, receiver.getPublicKey())
 
 ## Code
 
-You can find the code [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/tbc20#readme).
+You can find the code [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC20#readme).
 
