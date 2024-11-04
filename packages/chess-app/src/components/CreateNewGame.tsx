@@ -66,7 +66,7 @@ function MintForm(props: {
 }) {
   const { computer, setSuccessRev, setErrorMsg } = props
   const [name, setName] = useState("")
-  const [color, setColor] = useState("")
+  const [color, setColor] = useState("black")
   const [secondPlayerPublicKey, setSecondPlayerPublicKey] = useState("")
   const [secondPlayerUserName, setSecondPlayerUserName] = useState("")
   const { showLoader } = UtilsContext.useUtilsComponents()
@@ -98,10 +98,10 @@ function MintForm(props: {
   }
   return (
     <>
-      <form onSubmit={onSubmit} className="w-full lg:w-1/2">
+      <form onSubmit={onSubmit} className="w-full lg:w-1/2 px-8">
         <div className="grid gap-6 mb-6">
           <h2 className="text-2xl font-bold dark:text-white">Let's Play</h2>
-          <p className="my-4 text-lg text-gray-500">Start a new game and invite your friend.</p>
+          <p className="text-lg text-gray-500">Start a new game and invite your friend.</p>
 
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -148,8 +148,8 @@ function MintForm(props: {
             onChange={(e) => setColor(e.target.value)}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           >
-            <option>Black</option>
-            <option>White</option>
+            <option value={"black"}>Black</option>
+            <option value={"white"}>White</option>
           </select>
         </div>
         <button
