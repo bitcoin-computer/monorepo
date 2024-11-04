@@ -6,7 +6,7 @@ import { Counter } from "../contracts/counter"
 function SuccessContent(rev: string) {
   return (
     <>
-      <div className="p-4 md:p-5">
+      <div className="p-4 md:p-5 dark:text-gray-400">
         <div>
           You created a{" "}
           <Link
@@ -35,7 +35,7 @@ function SuccessContent(rev: string) {
 function ErrorContent(msg: string) {
   return (
     <>
-      <div className="p-4 md:p-5">
+      <div className="p-4 md:p-5 dark:text-gray-400">
         <div>
           Something went wrong.
           <br />
