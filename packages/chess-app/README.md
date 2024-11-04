@@ -1,7 +1,7 @@
 <div align="center">
-  <h1>TBC CRA Template</h1>
+  <h1>TBC Chess</h1>
   <p>
-    A template for Create React App with TypeScript and the Bitcoin Computer
+    A decentralised Chess App based on Bitcoin Computer.
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
@@ -40,7 +40,7 @@ To start the application run the command below and open [http://localhost:3000](
 
 ```bash
 # Move to the package
-cd packages/cra-template
+cd packages/chess-app
 
 # Install the dependencies
 npm install
@@ -48,8 +48,13 @@ npm install
 # Use the default environment variables
 cp .env.example .env
 
+# Deploy the contracts
+npm run deploy
+
+# Copy the mod-specs to env
+
 # Start the app
-npm run start
+npm run dev
 ```
 
 </font>
@@ -63,6 +68,7 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Comp
 If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Development Status
+
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
 ## Price
