@@ -150,6 +150,7 @@ export function ChessBoard() {
       const chessMovePromise = chessContract.move(result.san) as unknown as Promise<void>
       chessMovePromise.catch((err: any) => {
         showSnackBar(err.message, false)
+        setSkipSync(false)
         syncChessContract()
       })
       setSkipSync(true)
