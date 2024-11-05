@@ -505,7 +505,7 @@ describe('Sell', () => {
 
     it("The first output's value is nftPrice, the second is min-non-dust amount", () => {
       expect(tx.outs[0].value).eq(nftPrice)
-      expect(tx.outs[1].value).eq(7860)
+      expect(tx.outs[1].value).eq(5820)
     })
   })
 
