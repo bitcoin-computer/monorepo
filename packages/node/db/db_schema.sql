@@ -15,8 +15,8 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE TABLE IF NOT EXISTS
   "Input" (
-    "outputSpent" VARCHAR(70) NOT NULL PRIMARY KEY,
-    "spendingInput" VARCHAR(70) NOT NULL,
+    "spendingInput" VARCHAR(70) NOT NULL PRIMARY KEY,
+    "outputSpent" VARCHAR(70) NOT NULL,
     "blockHash" VARCHAR(64)
   );
 
@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE TABLE IF NOT EXISTS
   "Orphan" (
-    "hash" VARCHAR(64) NOT NULL PRIMARY KEY
+    "hash" VARCHAR(64) NOT NULL PRIMARY KEY,
+    "height" INTEGER NOT NULL
   );
 
 CREATE INDEX "BlockIndex"
