@@ -167,7 +167,7 @@ export function ChessBoard() {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-4 gap-12 px-24 dark:bg-gray-900">
+      <div className="grid grid-cols-4 gap-12 dark:bg-gray-900">
         {/* Game Info Column */}
         {game && (
           <div className="col-span-1 space-y-4 text-gray-900 dark:text-gray-200">

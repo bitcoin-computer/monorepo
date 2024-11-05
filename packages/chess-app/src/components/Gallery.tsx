@@ -35,7 +35,7 @@ function GameCard({ chessGame }: { chessGame: ChessGame }) {
             : "border-gray-200 dark:border-gray-700"
         }`}
       >
-        <div className="p-4 border-t">
+        <div className="p-4">
           <p className="text-center text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
             {getGameState(c)}
           </p>
