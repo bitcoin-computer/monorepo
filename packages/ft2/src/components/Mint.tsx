@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
 import { TBC20 } from "@bitcoin-computer/TBC20"
 import { Link } from "react-router-dom"
-import { REACT_APP_TOKEN_MOD_SPEC } from "../constants/modSpecs"
+import { VITE_TOKEN_MOD_SPEC } from "../constants/modSpecs"
 
 function SuccessContent(rev: string) {
   return (
@@ -71,7 +71,7 @@ export default function Mint() {
     e.preventDefault()
     try {
       showLoader(true)
-      const tbc20 = new TBC20(computer, REACT_APP_TOKEN_MOD_SPEC)
+      const tbc20 = new TBC20(computer, VITE_TOKEN_MOD_SPEC)
       const mintId = await tbc20.mint(computer.getPublicKey(), parseInt(amount, 10), name, symbol)
       setSuccessRev(mintId || "")
       showLoader(false)

@@ -1,16 +1,15 @@
 import { config } from "dotenv"
 import * as readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
+import { Computer } from "@bitcoin-computer/lib"
 import { TBC20 } from "@bitcoin-computer/TBC20"
 import { OfferHelper, PaymentHelper, SaleHelper, StaticSwapHelper, BuyHelper } from "@bitcoin-computer/swap"
-
-const { Computer } = await import("@bitcoin-computer/lib")
 
 config()
 
 const rl = readline.createInterface({ input, output })
 
-const { REACT_APP_CHAIN: chain, REACT_APP_NETWORK: network, REACT_APP_URL: url, REACT_APP_MNEMONIC: mnemonic } = process.env
+const { VITE_CHAIN: chain, VITE_NETWORK: network, VITE_URL: url, MNEMONIC: mnemonic } = process.env
  
 const computer = new Computer({ chain, network, mnemonic, url })
 await computer.faucet(2e8)
@@ -61,12 +60,12 @@ Successfully deployed smart contracts.
 
 (1) Update the following row in your .env file.
 
-REACT_APP_TOKEN_MOD_SPEC\x1b[2m=${tokenModSpec}\x1b[0m
-REACT_APP_OFFER_MOD_SPEC\x1b[2m=${offerModSpec}\x1b[0m
-REACT_APP_BUY_MOD_SPEC\x1b[2m=${buyModSpec}\x1b[0m
-REACT_APP_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
-REACT_APP_SWAP_MOD_SPEC\x1b[2m=${swapModSpec}\x1b[0m
-REACT_APP_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m
+VITE_TOKEN_MOD_SPEC\x1b[2m=${tokenModSpec}\x1b[0m
+VITE_OFFER_MOD_SPEC\x1b[2m=${offerModSpec}\x1b[0m
+VITE_BUY_MOD_SPEC\x1b[2m=${buyModSpec}\x1b[0m
+VITE_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
+VITE_SWAP_MOD_SPEC\x1b[2m=${swapModSpec}\x1b[0m
+VITE_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m
 
 (2) Run 'npm start' to start the application.
 `)
