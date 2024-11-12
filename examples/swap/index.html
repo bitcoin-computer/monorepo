@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.784380732079">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.784756349712">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.784380732079" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.784756349712" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.784380732079" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.784756349712" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.784380732079" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.784380732079" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.784756349712" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.784756349712" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -282,25 +282,25 @@ await bob.broadcast(tx)</code></pre>
         <span>Reducing Fees</span>
     </h4>
 </doc-anchor-target>
-<p>The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the <code v-pre>Swap</code> function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts"><code v-pre>SwapHelper</code></a> for swaps and <code v-pre>TBC721</code> for NFTs that can be used as follows:</p>
+<p>The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the <code v-pre>Swap</code> function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts"><code v-pre>SwapHelper</code></a> for swaps and <code v-pre>NftHelper</code> for NFTs that can be used as follows:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">// Alice creates helper objects
-const tbc721A = new TBC721(alice)
+const nftHelperA = new NftHelper(alice)
 const swapHelperA = new StaticSwapHelper(alice)
 
 // Alice deploys the smart contracts
-await tbc721A.deploy()
+await nftHelperA.deploy()
 await swapHelperA.deploy()
 
 // Alice mints an NFT
 nftA = await tbc721A.mint('a', 'AAA')
 
 // Bob creates helper objects from the module specifiers
-const tbc721B = new TBC721(bob, tbc721A.mod)
+const nftHelperB = new NftHelper(bob, tbc721A.mod)
 const swapHelperB = new StaticSwapHelper(bob, swapHelperA.mod)
 
 // Bob mints an NFT to pay for Alice's's NFT
-nftB = await tbc721B.mint('b', 'BBB')
+nftB = await nftHelperB.mint('b', 'BBB')
 
 // Bob creates a swap transaction
 const { tx } = await swapHelperB.createSwapTx(nftA, nftB)

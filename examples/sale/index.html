@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.784380732079">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.784756349712">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.784380732079" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.784756349712" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.784380732079" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.784756349712" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.784380732079" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.784380732079" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.784756349712" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.784756349712" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -380,7 +380,7 @@ await buyer.broadcast(saleTx)</code></pre>
     </h3>
 </doc-anchor-target>
 <p>The example before is wasteful because the source code of the <code v-pre>Sale</code> class is written into the blockchain on every sale. To avoid this, we recommend to <a href="../api/deploy.md">deploy</a> the <code v-pre>Sale</code> class and refer to the module when executing a sale.</p>
-<p>We provide a class <code v-pre>TBC721</code> that helps with deploying the smart contract as a module, minting the nfts with a reference to the deployed module, transferring NFTs, and returning the balance and owner of an NFT.</p>
+<p>We provide a class <code v-pre>NftHelper</code> that helps with deploying the smart contract as a module, minting the nfts with a reference to the deployed module, transferring NFTs, and returning the balance and owner of an NFT.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">interface ITBC721 {
   deploy(): Promise&lt;string&gt;
@@ -390,7 +390,7 @@ await buyer.broadcast(saleTx)</code></pre>
   transfer(tokenId: string, to: string)
 }</code></pre>
 </doc-codeblock></div>
-<p>The code below shows how the same flow as above can be implemented using the <code v-pre>TBC721</code> class.</p>
+<p>The code below shows how the same flow as above can be implemented using the <code v-pre>NftHelper</code> class.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund wallets
 const alice = new Computer(RLTC)
@@ -399,15 +399,15 @@ await alice.faucet(1e8)
 await bob.faucet(1e8)
 
 // Alice creates helper objects
-const tbc721A = new TBC721(alice)
+const nftHelper = new NftHelper(alice)
 const saleHelperA = new SaleHelper(alice)
 
 // Alice deploys the smart contracts
-await tbc721A.deploy()
+await nftHelper.deploy()
 await saleHelperA.deploy()
 
 // Alice mints an NFT
-const nftA = await tbc721A.mint('a', 'AAA')
+const nftA = await nftHelper.mint('a', 'AAA')
 
 // Alice creates a payment mock
 const mock = new PaymentMock(nftPrice)
@@ -555,15 +555,15 @@ await alice.faucet(1e8)
 await bob.faucet(1e8)
 
 // Alice creates helper objects
-const tbc721A = new TBC721(alice)
+const nftHelper = new NftHelper(alice)
 const saleHelperA = new OrdSaleHelper(alice)
 
 // Alice deploys the smart contracts
-await tbc721A.deploy()
+await nftHelper.deploy()
 await saleHelperA.deploy()
 
 // Alice mints an NFT
-const nftA = await tbc721A.mint('a', 'AAA')
+const nftA = await nftHelper.mint('a', 'AAA')
 
 // Alice creates a payment mock
 const paymentMock = new PaymentMock(nftPrice)
