@@ -2,8 +2,8 @@ import { config } from "dotenv"
 import * as readline from "node:readline/promises"
 import { stdin as input, stdout as output } from "node:process"
 import { Computer } from "@bitcoin-computer/lib"
-import { TBC721 } from "@bitcoin-computer/TBC721"
-import { OfferHelper, PaymentHelper, SaleHelper } from "@bitcoin-computer/swap"
+import { NftHelper } from "@bitcoin-computer/TBC721"
+import { TxWrapperHelper, PaymentHelper, SaleHelper } from "@bitcoin-computer/swap"
 
 config()
 
@@ -33,12 +33,12 @@ if (answer === "n") {
   console.log("\n Aborting...\n")
 } else {
   console.log("\n * Deploying NFT contract...")
-  const tbc721 = new TBC721(computer)
-  const modSpec = await tbc721.deploy()
+  const nftHelper = new NftHelper(computer)
+  const nftModSpec = await nftHelper.deploy()
 
-  console.log(" * Deploying Offer contract...")
-  const offerHelper = new OfferHelper(computer)
-  const offerModSpec = await offerHelper.deploy()
+  console.log(" * Deploying TxWrapper contract...")
+  const txWrapperHelper = new TxWrapperHelper(computer)
+  const txWrapperModSpec = await txWrapperHelper.deploy()
 
   console.log(" * Deploying Sale contract...")
   const saleHelper = new SaleHelper(computer)
@@ -57,8 +57,8 @@ Successfully deployed smart contracts.
 
 (1) Update the following rows in your .env file.
 
-VITE_NFT_MOD_SPEC\x1b[2m=${modSpec}\x1b[0m
-VITE_OFFER_MOD_SPEC\x1b[2m=${offerModSpec}\x1b[0m
+VITE_NFT_MOD_SPEC\x1b[2m=${nftModSpec}\x1b[0m
+VITE_TX_WRAPPER_MOD_SPEC\x1b[2m=${txWrapperModSpec}\x1b[0m
 VITE_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
 VITE_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m
 

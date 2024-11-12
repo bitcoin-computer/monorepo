@@ -1,7 +1,6 @@
 import type { Transaction } from '@bitcoin-computer/nakamotojs';
-import { NFT } from '@bitcoin-computer/TBC721';
 export declare class StaticSwap extends Contract {
-    static exec(a: NFT, b: NFT): void;
+    static exec(a: any, b: any): void;
 }
 export declare class StaticSwapHelper {
     computer: any;

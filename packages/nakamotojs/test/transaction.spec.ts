@@ -6,7 +6,7 @@ import { Transaction } from '../src/index.js';
 import * as ecc from '@bitcoin-computer/secp256k1';
 import { ECPairFactory } from 'ecpair';
 import * as bscript from '../src/script.js';
-import * as payments from '../src/payments/index.js';
+import { p2pkh } from '../src/payments/index.js';
 
 import * as fixturesModule from './fixtures/transaction.json' assert { type: 'json' };
 const fixtures: typeof import('./fixtures/transaction.json') =
@@ -433,7 +433,7 @@ describe('Transaction', () => {
     const keyPair = ECPair.makeRandom();
     const { publicKey } = keyPair;
     const txToSpend = new Transaction();
-    const payment = payments.p2pkh({ pubkey: publicKey });
+    const payment = p2pkh({ pubkey: publicKey });
     txToSpend.addOutput(payment.output!, 100000);
     const randScript = Buffer.from('6a', 'hex');
     const tx = new Transaction();

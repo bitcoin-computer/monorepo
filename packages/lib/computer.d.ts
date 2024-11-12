@@ -370,6 +370,7 @@ declare class Computer {
   getLatestRev(id: string): Promise<string>;
   idsToRevs(ids: string[]): Promise<string[]>;
   getMinimumFees(): number;
+  isUnspent(rev: string): Promise<boolean>;
 }
 
 export { Computer, Contract, Mock, Transaction };

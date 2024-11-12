@@ -18,7 +18,15 @@ import { checkForInput, checkForOutput } from 'bip174/src/lib/utils.js';
 import { fromOutputScript, toOutputScript } from './address.js';
 import { cloneBuffer, reverseBuffer } from './bufferutils.js';
 import { bitcoin as btcNetwork, Network } from './networks.js';
-import * as payments from './payments/index.js';
+import {
+  p2pkh,
+  p2sh,
+  p2wpkh,
+  p2wsh,
+  p2tr,
+  p2ms,
+  p2pk,
+} from './payments/index.js';
 import { tapleafHash } from './payments/bip341.js';
 import * as bscript from './script.js';
 import { Output, Transaction } from './transaction.js';
@@ -473,7 +481,7 @@ export class Psbt {
 
     // Check key spend first. Increased privacy and reduced block space.
     if (input.tapKeySig) {
-      const payment = payments.p2tr({
+      const payment = p2tr({
         output: input.witnessUtxo.script,
         signature: input.tapKeySig,
       });
@@ -1309,8 +1317,8 @@ function canFinalize(
     case 'witnesspubkeyhash':
       return hasSigs(1, input.partialSig);
     case 'multisig':
-      const p2ms = payments.p2ms({ output: script });
-      return hasSigs(p2ms.m!, input.partialSig, p2ms.pubkeys);
+      const p2msPayment = p2ms({ output: script });
+      return hasSigs(p2msPayment.m!, input.partialSig, p2msPayment.pubkeys);
     default:
       return false;
   }
@@ -1466,11 +1474,8 @@ function scriptCheckerFactory(
     }
   };
 }
-const checkRedeemScript = scriptCheckerFactory(payments.p2sh, 'Redeem script');
-const checkWitnessScript = scriptCheckerFactory(
-  payments.p2wsh,
-  'Witness script',
-);
+const checkRedeemScript = scriptCheckerFactory(p2sh, 'Redeem script');
+const checkWitnessScript = scriptCheckerFactory(p2wsh, 'Witness script');
 
 type TxCacheNumberKey = '__FEE_RATE' | '__FEE';
 function getTxCacheValue(
@@ -1559,23 +1564,24 @@ export function prepareFinalScripts(
   let finalScriptSig: Buffer | undefined;
   let finalScriptWitness: Buffer | undefined;
 
-  // Wow, the payments API is very handy
-  const payment: payments.Payment = getPayment(script, scriptType, partialSig);
-  const p2wsh = !isP2WSH ? null : payments.p2wsh({ redeem: payment });
-  const p2sh = !isP2SH ? null : payments.p2sh({ redeem: p2wsh || payment });
+  const payment = getPayment(script, scriptType, partialSig);
+  const p2wshPayment = !isP2WSH ? null : p2wsh({ redeem: payment });
+  const p2shPayment = !isP2SH
+    ? null
+    : p2sh({ redeem: p2wshPayment || payment });
 
   if (isSegwit) {
-    if (p2wsh) {
-      finalScriptWitness = witnessStackToScriptWitness(p2wsh.witness!);
+    if (p2wshPayment) {
+      finalScriptWitness = witnessStackToScriptWitness(p2wshPayment.witness!);
     } else {
       finalScriptWitness = witnessStackToScriptWitness(payment.witness!);
     }
-    if (p2sh) {
-      finalScriptSig = p2sh.input;
+    if (p2shPayment) {
+      finalScriptSig = p2shPayment.input;
     }
   } else {
-    if (p2sh) {
-      finalScriptSig = p2sh.input;
+    if (p2shPayment) {
+      finalScriptSig = p2shPayment.input;
     } else {
       finalScriptSig = payment.input;
     }
@@ -1671,7 +1677,7 @@ function getHashForSig(
     );
   } else if (isP2WPKH(meaningfulScript)) {
     // P2WPKH uses the P2PKH template for prevoutScript when signing
-    const signingScript = payments.p2pkh({
+    const signingScript = p2pkh({
       hash: meaningfulScript.slice(2),
     }).output!;
     hash = unsignedTx.hashForWitnessV0(
@@ -1820,31 +1826,31 @@ export function getPayment(
   script: Buffer,
   scriptType: string,
   partialSig: PartialSig[],
-): payments.Payment {
-  let payment: payments.Payment;
+) {
+  let payment: any;
   switch (scriptType) {
     case 'multisig':
       const sigs = getSortedSigs(script, partialSig);
-      payment = payments.p2ms({
+      payment = p2ms({
         output: script,
         signatures: sigs,
       });
       break;
     case 'pubkey':
-      payment = payments.p2pk({
+      payment = p2pk({
         output: script,
         signature: partialSig[0].signature,
       });
       break;
     case 'pubkeyhash':
-      payment = payments.p2pkh({
+      payment = p2pkh({
         output: script,
         pubkey: partialSig[0].pubkey,
         signature: partialSig[0].signature,
       });
       break;
     case 'witnesspubkeyhash':
-      payment = payments.p2wpkh({
+      payment = p2wpkh({
         output: script,
         pubkey: partialSig[0].pubkey,
         signature: partialSig[0].signature,
@@ -1931,9 +1937,9 @@ function getSignersFromHD(
 }
 
 function getSortedSigs(script: Buffer, partialSig: PartialSig[]): Buffer[] {
-  const p2ms = payments.p2ms({ output: script });
+  const p2msPayment = p2ms({ output: script });
   // for each pubkey in order of p2ms script
-  return p2ms
+  return p2msPayment
     .pubkeys!.map(pk => {
       // filter partialSig array by pubkey being equal
       return (

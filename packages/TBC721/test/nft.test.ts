@@ -4,7 +4,7 @@ import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import chaiMatchPattern from 'chai-match-pattern'
-import { NFT, TBC721 } from '../src/nft'
+import { NFT, NftHelper } from '../src/nft'
 
 chai.use(chaiMatchPattern)
 const { expect } = chai
@@ -43,7 +43,7 @@ describe('NFT', () => {
     let nft: NFT
 
     describe('Minting an NFT', () => {
-      const sender = new Computer({ url, chain, network})
+      const sender = new Computer({ url, chain, network })
 
       before("Fund sender's wallet", async () => {
         await sender.faucet(0.001e8)
@@ -72,7 +72,7 @@ describe('NFT', () => {
     })
 
     describe('Transferring an NFT', async () => {
-      const receiver = new Computer({ url, chain, network})
+      const receiver = new Computer({ url, chain, network })
 
       it('Sender transfers the NFT to receiver', async () => {
         await nft.transfer(receiver.getPublicKey())
@@ -102,10 +102,10 @@ describe('NFT', () => {
     })
   })
 
-  describe('Using NFTs with the TBC721 helper class', () => {
-    const computer = new Computer({ url, chain, network})
+  describe('Using NFTs with the NftHelper class', () => {
+    const computer = new Computer({ url, chain, network })
 
-    let tbc721: TBC721
+    let nftHelper: NftHelper
     let nft: NFT
 
     before(async () => {
@@ -113,54 +113,54 @@ describe('NFT', () => {
     })
 
     describe('Constructor', () => {
-      it('Should create a new TBC721 object', async () => {
-        tbc721 = new TBC721(computer)
-        expect(tbc721.computer).deep.eq(computer)
+      it('Should create a new NftHelper object', async () => {
+        nftHelper = new NftHelper(computer)
+        expect(nftHelper.computer).deep.eq(computer)
       })
     })
 
     describe('deploy', () => {
       it('Should deploy a contract', async () => {
-        await tbc721.deploy()
+        await nftHelper.deploy()
       })
     })
 
     describe('mint', () => {
       it('Should mint an NFT', async () => {
-        nft = await tbc721.mint('name', 'artist', 'url')
+        nft = await nftHelper.mint('name', 'artist', 'url')
       })
     })
 
     describe('balanceOf', () => {
       it('Should return the balance', async () => {
-        const balance = await tbc721.balanceOf(computer.getPublicKey())
+        const balance = await nftHelper.balanceOf(computer.getPublicKey())
         expect(balance).to.be.greaterThanOrEqual(1)
       })
     })
 
     describe('ownerOf', () => {
       it('Should return the owner', async () => {
-        const owners = await tbc721.ownersOf(nft._id)
+        const owners = await nftHelper.ownersOf(nft._id)
         expect(owners).deep.eq([computer.getPublicKey()])
       })
     })
 
     describe('transfer', () => {
       it('Should transfer an NFT', async () => {
-        const computer2 = new Computer({ url, chain, network})
-        expect(await tbc721.balanceOf(computer.getPublicKey())).eq(1)
-        expect(await tbc721.balanceOf(computer2.getPublicKey())).eq(0)
-        await tbc721.transfer(computer2.getPublicKey(), nft._id)
-        expect(await tbc721.balanceOf(computer.getPublicKey())).eq(0)
-        expect(await tbc721.balanceOf(computer2.getPublicKey())).eq(1)
+        const computer2 = new Computer({ url, chain, network })
+        expect(await nftHelper.balanceOf(computer.getPublicKey())).eq(1)
+        expect(await nftHelper.balanceOf(computer2.getPublicKey())).eq(0)
+        await nftHelper.transfer(computer2.getPublicKey(), nft._id)
+        expect(await nftHelper.balanceOf(computer.getPublicKey())).eq(0)
+        expect(await nftHelper.balanceOf(computer2.getPublicKey())).eq(1)
       })
     })
   })
 
   describe('Examples from docs', () => {
-    it('Should work without the TBC721 helper class', async () => {
+    it('Should work without the NftHelper class', async () => {
       // Create the sender wallet
-      const sender = new Computer({ url, chain, network})
+      const sender = new Computer({ url, chain, network })
 
       // Fund the senders wallet
       await sender.faucet(0.001e8)
@@ -172,24 +172,24 @@ describe('NFT', () => {
       await nft.transfer(new Computer().getPublicKey())
     })
 
-    it('Should work with the TBC721 helper class', async () => {
+    it('Should work with the NftHelper class', async () => {
       // Create wallet
-      const sender = new Computer({ url, chain, network})
+      const sender = new Computer({ url, chain, network })
 
       // Fund wallet
       await sender.faucet(0.001e8)
 
       // Create helper object
-      const tbc721 = new TBC721(sender)
+      const nftHelper = new NftHelper(sender)
 
       // Deploy smart contract
-      await tbc721.deploy()
+      await nftHelper.deploy()
 
       // Mint nft
-      const nft = await tbc721.mint('name', 'artist', 'url')
+      const nft = await nftHelper.mint('name', 'artist', 'url')
 
       // Transfer NFT
-      await tbc721.transfer(new Computer({ url, chain, network}).getPublicKey(), nft._id)
+      await nftHelper.transfer(new Computer({ url, chain, network }).getPublicKey(), nft._id)
     })
   })
 })

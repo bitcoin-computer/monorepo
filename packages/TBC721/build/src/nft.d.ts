@@ -15,7 +15,7 @@ export interface ITBC721 {
     ownersOf(tokenId: string): Promise<string[]>;
     transfer(to: string, tokenId: string): Promise<void>;
 }
-export declare class TBC721 implements ITBC721 {
+export declare class NftHelper implements ITBC721 {
     computer: any;
     mod: string | undefined;
     constructor(computer: any, mod?: string);

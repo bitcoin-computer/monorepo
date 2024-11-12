@@ -2,7 +2,6 @@
 import { Psbt as PsbtBase } from 'bip174';
 import { KeyValue, PartialSig, PsbtGlobalUpdate, PsbtInput, PsbtInputUpdate, PsbtOutput, PsbtOutputUpdate } from 'bip174/src/lib/interfaces.js';
 import { Network } from './networks.js';
-import * as payments from './payments/index.js';
 import { Transaction } from './transaction.js';
 import { Buffer } from 'buffer';
 export interface TransactionInput {
@@ -205,7 +204,7 @@ export declare function prepareFinalScripts(script: Buffer, scriptType: string, 
     finalScriptSig: Buffer | undefined;
     finalScriptWitness: Buffer | undefined;
 };
-export declare function getPayment(script: Buffer, scriptType: string, partialSig: PartialSig[]): payments.Payment;
+export declare function getPayment(script: Buffer, scriptType: string, partialSig: PartialSig[]): any;
 type AllScriptType = 'witnesspubkeyhash' | 'pubkeyhash' | 'multisig' | 'pubkey' | 'nonstandard' | 'p2sh-witnesspubkeyhash' | 'p2sh-pubkeyhash' | 'p2sh-multisig' | 'p2sh-pubkey' | 'p2sh-nonstandard' | 'p2wsh-pubkeyhash' | 'p2wsh-multisig' | 'p2wsh-pubkey' | 'p2wsh-nonstandard' | 'p2sh-p2wsh-pubkeyhash' | 'p2sh-p2wsh-multisig' | 'p2sh-p2wsh-pubkey' | 'p2sh-p2wsh-nonstandard';
 type ScriptType = 'witnesspubkeyhash' | 'pubkeyhash' | 'multisig' | 'pubkey' | 'nonstandard';
 export declare function classifyScript(script: Buffer): ScriptType;
