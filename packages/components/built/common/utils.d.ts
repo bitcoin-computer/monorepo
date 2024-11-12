@@ -10,6 +10,5 @@ export declare const toObject: (obj: any) => string;
 export declare const capitalizeFirstLetter: (string: string) => string;
 export declare function isValidRevString(outId: string): boolean;
 export declare function isValidRev(value: any): boolean;
-export declare const sleep: (ms: number) => Promise<unknown>;
-export declare function getEnv(name: string): any;
+export declare const sleep: (ms: number) => Promise<void>;
 export {};

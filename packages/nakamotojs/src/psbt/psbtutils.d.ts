@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="node" />
 import { PsbtInput } from 'bip174/src/lib/interfaces.js';
 import { Buffer } from 'buffer';
 export declare const isP2MS: (script: Buffer) => boolean;

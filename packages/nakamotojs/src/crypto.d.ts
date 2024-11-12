@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="node" />
 import { Buffer } from 'buffer';
 export declare function ripemd160(buffer: Buffer): Buffer;
 export declare function sha1(buffer: Buffer): Buffer;

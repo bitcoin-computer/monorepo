@@ -11,7 +11,8 @@ export function isValidRev(value: any): boolean {
   return typeof value === "string" && isValidRevString(value)
 }
 
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+export const sleep = (ms: number): Promise<void> => 
+  new Promise((resolve) => { setTimeout(resolve, ms) })
 
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint

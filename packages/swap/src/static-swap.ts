@@ -1,9 +1,8 @@
 /* eslint-disable max-classes-per-file */
 import type { Transaction } from '@bitcoin-computer/nakamotojs'
-import { NFT } from '@bitcoin-computer/TBC721'
 
 export class StaticSwap extends Contract {
-  static exec(a: NFT, b: NFT) {
+  static exec(a: any, b: any) {
     const [ownerA] = a._owners
     const [ownerB] = b._owners
     a.transfer(ownerB)

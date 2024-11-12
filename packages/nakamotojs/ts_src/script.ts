@@ -2,9 +2,8 @@ import * as bip66 from './bip66.js';
 import { OPS, REVERSE_OPS } from './ops.js';
 import { Network } from './networks.js';
 import { toXOnly } from './psbt/bip371.js';
-import { Stack } from './payments/index.js';
+import { Stack, p2pkh, p2wpkh, p2tr, p2pk } from './payments/index.js';
 import * as networks from './networks.js';
-import * as payments from './payments/index.js';
 import * as pushdata from './push_data.js';
 import * as scriptNumber from './script_number.js';
 import * as scriptSignature from './script_signature.js';
@@ -196,16 +195,16 @@ export function fromPublicKey(
   network = network || networks.bitcoin;
 
   if (type === 'p2pkh')
-    return payments.p2pkh({ pubkey: publicKey, network }).output as Buffer;
+    return p2pkh({ pubkey: publicKey, network }).output as Buffer;
   if (type === 'p2wpkh')
-    return payments.p2wpkh({ pubkey: publicKey, network }).output as Buffer;
+    return p2wpkh({ pubkey: publicKey, network }).output as Buffer;
   if (type === 'p2tr')
-    return payments.p2tr({
+    return p2tr({
       internalPubkey: toXOnly(publicKey),
       network,
     }).output as Buffer;
   if (type === 'p2pk')
-    return payments.p2pk({
+    return p2pk({
       pubkey: publicKey,
       network,
     }).output as Buffer;

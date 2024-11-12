@@ -29,10 +29,10 @@ export default function App() {
       <UtilsContext.UtilsProvider>
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />
-          <Wallet paymentModSpec={VITE_PAYMENT_MOD_SPEC} />
+          <Wallet modSpecs={[VITE_PAYMENT_MOD_SPEC]} />
           <div className="dark:bg-gray-800 min-h-screen">
             <Navbar />
-            <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto ">
+            <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
               <Routes>
                 <Route path="/" element={<AllAssets />} />
                 <Route path="/mine" element={<MyAssets />} />
