@@ -108,7 +108,7 @@ export function NotLoggedMenu() {
       localStorage.setItem("NETWORK", network)
       setDropDownLabel(formatChainAndNetwork(chain, network))
       window.location.href = "/"
-    } catch (err) {
+    } catch {
       showSnackBar("Error setting chain and network", false)
       Modal.get(modalId).show()
     }

@@ -30,8 +30,8 @@ const getInitialsFromPublicKey = (publicKey: string) => {
 
 const formatTime = (str: string) => {
   const date = new Date(parseInt(str))
-  let hours = date.getHours()
-  let minutes = date.getMinutes()
+  const hours = date.getHours()
+  const minutes = date.getMinutes()
 
   // Format time
   const formattedTime = `${hours < 10 ? "0" + hours : hours}:${minutes < 10 ? "0" + minutes : minutes}`
@@ -298,7 +298,7 @@ export function Chat({ chatId }: { chatId: string }) {
       })
       setMessages(messagesData)
       showLoader(false)
-    } catch (error) {
+    } catch {
       showLoader(false)
       showSnackBar("Not a valid Chat", false)
     }

@@ -30,7 +30,7 @@ const CreateNew = (props: {
   useEffect(() => {
     const newArgumentsList = [...argumentsList]
     newArgumentsList.forEach((argument) => {
-      // eslint-disable-next-line
+       
       argument.hidden = true
     })
     if (exampleVars) {
@@ -65,7 +65,7 @@ const CreateNew = (props: {
   const handleDeploy = async () => {
     try {
       showLoader(true)
-      // eslint-disable-next-line
+       
       const createClassFunction = new Function(`return ${code?.trim()}`)
       const dynamicClass = createClassFunction()
       if (
@@ -167,7 +167,7 @@ const CreateNew = (props: {
                 <TypeSelectionDropdown
                   id={`playground-dropdown-${index}`}
                   onSelectMethod={(option: string) => {
-                    // eslint-disable-next-line
+                     
                     argument.type = option
                   }}
                   dropdownList={options}

@@ -172,7 +172,7 @@ const CreateSellOfferComponent = ({
               setAmount("")
               showLoader(false)
               showSnackBar(`You listed this NFT for ${amount} ${computer.getChain()}`, true)
-            } catch (error) {
+            } catch {
               showLoader(false)
               showSnackBar("Failed to create sell offer", false)
             }
@@ -200,7 +200,7 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
         const amount = await saleHelper.checkSaleTx(saleTxn)
         setNftAmount(amount)
         showLoader(false)
-      } catch (error) {
+      } catch {
         showLoader(false)
         showSnackBar("Failed to fetch price of NFT.", false)
       }
@@ -234,7 +234,7 @@ const UnlistNftComponent = ({ smartObject }: { smartObject: NFT }) => {
             await smartObject.unlist()
             showSnackBar(`You unlisted this NFT.`, true)
             showLoader(false)
-          } catch (error) {
+          } catch {
             showLoader(false)
             showSnackBar("Failed to unlist nft", false)
           }
@@ -336,7 +336,7 @@ function NftView() {
         const synced = (await computer.sync(latesRev)) as any
         setSmartObject(synced)
         showLoader(false)
-      } catch (error) {
+      } catch {
         showLoader(false)
         showSnackBar("Not a valid NFT rev", false)
       }
