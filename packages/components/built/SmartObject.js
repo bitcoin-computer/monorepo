@@ -49,19 +49,23 @@ import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-run
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import reactStringReplace from "react-string-replace";
+import { HiOutlineClipboard } from "react-icons/hi";
 import { capitalizeFirstLetter, toObject } from "./common/utils";
 import { Card } from "./Card";
 import { Modal } from "./Modal";
 import { FunctionResultModalContent } from "./common/SmartCallExecutionResult";
 import { SmartObjectFunction } from "./SmartObjectFunction";
 import { ComputerContext } from "./ComputerContext";
-import { HiOutlineClipboard } from "react-icons/hi";
 var keywords = ["_id", "_rev", "_owners", "_root", "_amount"];
 var modalId = "smart-object-info-modal";
 export var getFnParamNames = function (fn) {
     var match = fn.toString().match(/\(.*?\)/);
     return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : [];
 };
+function Copy(_a) {
+    var text = _a.text;
+    return (_jsx("button", __assign({ onClick: function () { return navigator.clipboard.writeText(text); }, className: "cursor-pointer pl-2 text-gray-600 hover:text-gray-800 focus:outline-none", "aria-label": "Copy Transaction ID" }, { children: _jsx(HiOutlineClipboard, {}) })));
+}
 function ObjectValueCard(_a) {
     var content = _a.content;
     var isRev = /([0-9a-fA-F]{64}:[0-9]+)/g;
@@ -90,10 +94,6 @@ function MetaData(_a) {
         setIsVisible(!isVisible);
     };
     return (_jsxs("div", { children: [_jsx("button", __assign({ onClick: toggleVisibility, className: "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 my-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" }, { children: isVisible ? 'Hide Metadata' : 'Show Metadata' })), isVisible && (_jsxs("table", __assign({ className: "w-full mt-4 mb-8 text-[12px] text-left text-gray-500 dark:text-gray-400" }, { children: [_jsx("thead", __assign({ className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" }, { children: _jsxs("tr", { children: [_jsx("th", __assign({ scope: "col", className: "px-4 py-2" }, { children: "Key" })), _jsx("th", __assign({ scope: "col", className: "px-4 py-2" }, { children: "Short" })), _jsx("th", __assign({ scope: "col", className: "px-4 py-2" }, { children: "Value" }))] }) })), _jsxs("tbody", { children: [_jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Identity" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_id" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._id), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._id })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._id })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Revision" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_rev" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Root" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_root" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._root), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._root })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._root })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Owners" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_owners" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx("span", __assign({ className: "font-medium text-gray-900 dark:text-white" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._owners })), _jsx(Copy, { text: JSON.stringify(smartObject === null || smartObject === void 0 ? void 0 : smartObject._owners) })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Amount" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_amount" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsxs("span", __assign({ className: "font-medium text-gray-900 dark:text-white" }, { children: [smartObject === null || smartObject === void 0 ? void 0 : smartObject._amount, " Satoshi"] })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._amount })] }))] }))] })] })))] }));
-}
-function Copy(_a) {
-    var text = _a.text;
-    return (_jsx("button", __assign({ onClick: function () { return navigator.clipboard.writeText(text); }, className: "cursor-pointer pl-2 text-gray-600 hover:text-gray-800 focus:outline-none", "aria-label": "Copy Transaction ID" }, { children: _jsx(HiOutlineClipboard, {}) })));
 }
 function Component(_a) {
     var _this = this;

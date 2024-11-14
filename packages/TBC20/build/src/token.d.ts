@@ -4,7 +4,7 @@ export declare class Token extends Contract {
     symbol: string;
     _owners: string[];
     constructor(to: string, amount: number, name: string, symbol?: string);
-    transfer(to: string, amount?: number): Token | null;
+    transfer(to: string, amount?: number): Token | undefined;
     burn(): void;
     merge(tokens: Token[]): void;
 }
