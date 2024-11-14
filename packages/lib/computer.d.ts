@@ -1,10 +1,11 @@
 /// <reference types="node" />
 import {
   Psbt,
-  Transaction,
   TxInput,
   TxOutput,
 } from "@bitcoin-computer/nakamotojs";
+
+import { Transaction } from '@bitcoin-computer/lib'
 
 type Json = JBasic | JObject | JArray;
 type JBasic = undefined | null | boolean | number | string | symbol | bigint;
@@ -340,7 +341,6 @@ declare class Computer {
   send(satoshis: number, address: string): Promise<string>;
   broadcast(tx: Transaction): Promise<string>;
   rpcCall(method: string, params: string): Promise<any>;
-  static txFromHex({ hex }: { hex: string }): TBCTransaction;
   getChain(): TBCChain;
   getNetwork(): TBCNetwork;
   getMnemonic(): string;
@@ -354,6 +354,7 @@ declare class Computer {
   getFee(): number;
   setFee(fee: number): void;
   faucet(amount: number, address?: string): Promise<_Unspent>;
+  static txFromHex(hex): Transaction;
   static getInscription(rawTx: string, index: number): {
       contentType: string;
       body: string;
@@ -370,6 +371,7 @@ declare class Computer {
   getLatestRev(id: string): Promise<string>;
   idsToRevs(ids: string[]): Promise<string[]>;
   getMinimumFees(): number;
+  isUnspent(rev: string): Promise<boolean>;
 }
 
 export { Computer, Contract, Mock, Transaction };

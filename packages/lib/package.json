@@ -74,7 +74,7 @@
     "crypto-js": "^4.2.0",
     "dotenv": "^16.4.5",
     "eccrypto": "^1.1.6",
-    "eciesjs": "^0.4.6",
+    "eciesjs": "0.4.7",
     "ecpair": "^2.1.0",
     "elliptic": "^6.5.4",
     "exponential-backoff": "^3.1.1",

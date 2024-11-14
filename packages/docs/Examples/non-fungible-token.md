@@ -49,16 +49,16 @@ const sender = new Computer(RLTC)
 await sender.faucet(0.001e8)
 
 // Create helper object
-const tbc721 = new TBC721(sender)
+const tokenHelper = new TokenHelper(sender)
 
 // Deploy smart contract
-await tbc721.deploy()
+await tokenHelper.deploy()
 
 // Mint nft
-nft = await tbc721.mint('name', 'symbol')
+nft = await tokenHelper.mint('name', 'symbol')
 
 // Transfer NFT
-await tbc721.transfer(nft._id, new Computer().getPublicKey())
+await tokenHelper.transfer(nft._id, new Computer().getPublicKey())
 ```
 
 ## Code

@@ -76,10 +76,15 @@ export class Transaction {
   static readonly ADVANCED_TRANSACTION_MARKER = 0x00;
   static readonly ADVANCED_TRANSACTION_FLAG = 0x01;
 
+  ins: Input[] = [];
+  outs: Output[] = [];
+  version: number = 1;
+  locktime: number = 0;
+
   static fromBuffer(buffer: Buffer, _NO_STRICT?: boolean): Transaction {
     const bufferReader = new BufferReader(buffer);
 
-    const tx = new Transaction();
+    const tx = new this();
     tx.version = bufferReader.readInt32();
 
     const marker = bufferReader.readUInt8();
@@ -134,7 +139,7 @@ export class Transaction {
   }
 
   static fromHex(hex: string): Transaction {
-    return Transaction.fromBuffer(Buffer.from(hex, 'hex'), false);
+    return this.fromBuffer(Buffer.from(hex, 'hex'), false);
   }
 
   static isCoinbaseHash(buffer: Buffer): boolean {
@@ -144,11 +149,6 @@ export class Transaction {
     }
     return true;
   }
-
-  version: number = 1;
-  locktime: number = 0;
-  ins: Input[] = [];
-  outs: Output[] = [];
 
   isCoinbase(): boolean {
     return (

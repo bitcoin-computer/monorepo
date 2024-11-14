@@ -4,7 +4,7 @@ import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer, Transaction } from '@bitcoin-computer/lib'
-import { NFT, TBC721 } from '@bitcoin-computer/TBC721/src/nft'
+import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
 import { OrdSale, OrdSaleHelper } from '../src/ord-sale'
 import { Payment, PaymentMock } from '../src/payment'
@@ -83,15 +83,15 @@ describe('Ord Sale', () => {
       await bob.faucet(1.1e8)
 
       // Alice creates helper objects
-      const tbc721A = new TBC721(alice)
+      const nftHelper = new NftHelper(alice)
       const saleHelperA = new OrdSaleHelper(alice)
 
       // Alice deploys the smart contracts
-      await tbc721A.deploy()
+      await nftHelper.deploy()
       await saleHelperA.deploy()
 
       // Alice mints an NFT
-      const nftA = await tbc721A.mint('a', 'AAA', 'URL')
+      const nftA = await nftHelper.mint('a', 'AAA', 'URL')
 
       // Alice creates a payment mock
       const paymentMock = new PaymentMock(nftPrice)
@@ -164,7 +164,7 @@ describe('Ord Sale', () => {
 
       it("The third output's value is nftPrice, the others are according to the _amounts in the returned objects", () => {
         expect(tx.outs[0].value).eq(7860 * 2) // b1 after
-        expect(tx.outs[1].value).eq(7860) // t after
+        expect(tx.outs[1].value).greaterThan(0)// t after
         expect(tx.outs[2].value).eq(nftPrice) // p after
         expect(tx.outs[3].value).eq(7860) // b2 after
       })

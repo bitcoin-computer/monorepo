@@ -8,10 +8,10 @@ import {
   ComputerContext
 } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
-import { OfferHelper, PaymentHelper, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
+import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
 import { NFT } from "@bitcoin-computer/TBC721"
 import {
-  VITE_OFFER_MOD_SPEC,
+  VITE_TX_WRAPPER_MOD_SPEC,
   VITE_PAYMENT_MOD_SPEC,
   VITE_SALE_MOD_SPEC
 } from "../constants/modSpecs"
@@ -27,10 +27,10 @@ const BuyNFT = async ({
   nft: NFT
   setFunctionResult: any
 }) => {
-  const offerHelper = new OfferHelper(computer, VITE_OFFER_MOD_SPEC)
+  const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
   const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
   const paymentHelper = new PaymentHelper(computer, VITE_PAYMENT_MOD_SPEC)
-  const saleTxn = await offerHelper.decodeOfferTx(nft.offerTxRev)
+  const saleTxn = await txWrapperHelper.decodeTx(nft.offerTxRev)
   const nftAmount = await saleHelper.checkSaleTx(saleTxn)
   const { tx: paymentTx } = await paymentHelper.createPaymentTx(nftAmount)
   const paymentTxId = await computer.broadcast(paymentTx)
@@ -64,12 +64,12 @@ const CreateSellOffer = async ({
   nft: NFT
   showSnackBar: (message: string, success: boolean) => void
 }) => {
-  const offerHelper = new OfferHelper(computer, VITE_OFFER_MOD_SPEC)
-  const { tx: offerTx } = await offerHelper.createOfferTx(
+  const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
+  const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
     computer.getPublicKey(),
     computer.getUrl()
   )
-  const offerTxId = await computer.broadcast(offerTx)
+  const offerTxId = await computer.broadcast(wrappedTx)
   await nft.list(offerTxId)
 
   const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
@@ -85,7 +85,7 @@ const CreateSellOffer = async ({
     return
   }
 
-  const { tx: offerTxWithSaleTx } = await offerHelper.addSaleTx(offerTxId, saleTx)
+  const { tx: offerTxWithSaleTx } = await txWrapperHelper.addSaleTx(offerTxId, saleTx)
 
   await computer.broadcast(offerTxWithSaleTx)
   showSnackBar("Successfully listed NFT for sale.", true)
@@ -172,7 +172,7 @@ const CreateSellOfferComponent = ({
               setAmount("")
               showLoader(false)
               showSnackBar(`You listed this NFT for ${amount} ${computer.getChain()}`, true)
-            } catch (error) {
+            } catch {
               showLoader(false)
               showSnackBar("Failed to create sell offer", false)
             }
@@ -194,13 +194,13 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
     const fetch = async () => {
       try {
         showLoader(true)
-        const offerHelper = new OfferHelper(computer, VITE_OFFER_MOD_SPEC)
+        const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
         const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
-        const saleTxn = await offerHelper.decodeOfferTx(nft.offerTxRev)
+        const saleTxn = await txWrapperHelper.decodeTx(nft.offerTxRev)
         const amount = await saleHelper.checkSaleTx(saleTxn)
         setNftAmount(amount)
         showLoader(false)
-      } catch (error) {
+      } catch {
         showLoader(false)
         showSnackBar("Failed to fetch price of NFT.", false)
       }
@@ -234,7 +234,7 @@ const UnlistNftComponent = ({ smartObject }: { smartObject: NFT }) => {
             await smartObject.unlist()
             showSnackBar(`You unlisted this NFT.`, true)
             showLoader(false)
-          } catch (error) {
+          } catch {
             showLoader(false)
             showSnackBar("Failed to unlist nft", false)
           }
@@ -336,7 +336,7 @@ function NftView() {
         const synced = (await computer.sync(latesRev)) as any
         setSmartObject(synced)
         showLoader(false)
-      } catch (error) {
+      } catch {
         showLoader(false)
         showSnackBar("Not a valid NFT rev", false)
       }

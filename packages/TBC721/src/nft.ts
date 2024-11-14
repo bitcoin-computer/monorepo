@@ -29,7 +29,7 @@ export interface ITBC721 {
   transfer(to: string, tokenId: string): Promise<void>
 }
 
-export class TBC721 implements ITBC721 {
+export class NftHelper implements ITBC721 {
   computer: any
   mod: string | undefined
 

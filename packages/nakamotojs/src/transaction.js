@@ -46,14 +46,14 @@ function isOutput(out) {
 }
 export class Transaction {
   constructor() {
-    this.version = 1;
-    this.locktime = 0;
     this.ins = [];
     this.outs = [];
+    this.version = 1;
+    this.locktime = 0;
   }
   static fromBuffer(buffer, _NO_STRICT) {
     const bufferReader = new BufferReader(buffer);
-    const tx = new Transaction();
+    const tx = new this();
     tx.version = bufferReader.readInt32();
     const marker = bufferReader.readUInt8();
     const flag = bufferReader.readUInt8();
@@ -98,7 +98,7 @@ export class Transaction {
     return tx;
   }
   static fromHex(hex) {
-    return Transaction.fromBuffer(Buffer.from(hex, 'hex'), false);
+    return this.fromBuffer(Buffer.from(hex, 'hex'), false);
   }
   static isCoinbaseHash(buffer) {
     typeforce(types.Hash256bit, buffer);
