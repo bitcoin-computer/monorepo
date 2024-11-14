@@ -6,6 +6,7 @@ export class ChessGame extends Contract {
   firstPlayerName!: string
   secondPlayerName!: string
   fen!: string
+
   constructor(
     color: string,
     firstUserPubKey: string,
