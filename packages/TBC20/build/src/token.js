@@ -5,14 +5,13 @@ export class Token extends Contract {
     transfer(to, amount) {
         if (typeof amount === 'undefined') {
             this._owners = [to];
+            return undefined;
         }
-        else if (this.amount >= amount) {
+        if (this.amount >= amount) {
             this.amount -= amount;
             return new Token(to, amount, this.name, this.symbol);
         }
-        else {
-            throw new Error('Insufficient funds');
-        }
+        throw new Error('Insufficient funds');
     }
     burn() {
         this.amount = 0;

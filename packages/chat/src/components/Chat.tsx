@@ -298,7 +298,7 @@ export function Chat({ chatId }: { chatId: string }) {
       })
       setMessages(messagesData)
       showLoader(false)
-    } catch (error) {
+    } catch {
       showLoader(false)
       showSnackBar("Not a valid Chat", false)
     }

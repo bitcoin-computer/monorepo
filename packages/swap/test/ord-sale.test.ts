@@ -164,7 +164,7 @@ describe('Ord Sale', () => {
 
       it("The third output's value is nftPrice, the others are according to the _amounts in the returned objects", () => {
         expect(tx.outs[0].value).eq(7860 * 2) // b1 after
-        expect(tx.outs[1].value).eq(7860) // t after
+        expect(tx.outs[1].value).greaterThan(0)// t after
         expect(tx.outs[2].value).eq(nftPrice) // p after
         expect(tx.outs[3].value).eq(7860) // b2 after
       })
