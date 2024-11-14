@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./build-contract",
+    "noEmit": false,
+    "declaration": false,
+    "allowImportingTsExtensions": false
+  },
+  "include": ["src/contracts/chess-module.ts"]
+}
