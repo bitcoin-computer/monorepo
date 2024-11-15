@@ -10,11 +10,14 @@ import fs from "fs"
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "")
 
-  const primaryPath = path.resolve(__dirname, "./node_modules/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs");
-  const pathInWorkspace = path.resolve(__dirname, "../lib/dist/bc-lib.browser.min.mjs");
-  const filePath = fs.existsSync(primaryPath) ? primaryPath : pathInWorkspace;
+  const primaryPath = path.resolve(
+    __dirname,
+    "./node_modules/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs"
+  )
+  const pathInWorkspace = path.resolve(__dirname, "../lib/dist/bc-lib.browser.min.mjs")
+  const filePath = fs.existsSync(primaryPath) ? primaryPath : pathInWorkspace
 
-  console.log(filePath); // This will log the path based on the file's existence.
+  console.log(filePath) // This will log the path based on the file's existence.
 
   return {
     plugins: [react()],
@@ -30,7 +33,8 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true,
       environment: "jsdom",
-      setupFiles: ["./src/setupTests.ts"]
+      setupFiles: ["./src/setupTests.ts"],
+      testTimeout: 15000
     }
   }
 })

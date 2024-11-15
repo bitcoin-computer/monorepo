@@ -135,6 +135,20 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
 }
 
 function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
+  const [games, setGames] = useState<ChessGame[]>([])
+
+  useEffect(() => {
+    const fetch = async () => {
+      const gamesPromise: Promise<ChessGame>[] = []
+      revs.forEach((rev: string) => {
+        gamesPromise.push(computer.sync(rev))
+      })
+      const gamesData = await Promise.all(gamesPromise)
+      setGames(gamesData)
+    }
+    fetch()
+  }, [computer, revs])
+
   const cols: string[][] = [[], [], [], []]
 
   revs.forEach((rev, index) => {
@@ -143,36 +157,84 @@ function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
   })
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="grid gap-4">
-          {cols[0].map((rev) => (
-            <div key={rev}>
-              <ValueComponent rev={rev} computer={computer} />
-            </div>
-          ))}
+      {games.length ? (
+        <div className="relative overflow-x-auto">
+          <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <tr>
+                <th scope="col" className="px-6 py-3">
+                  Status
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  First Player
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  Second Player
+                </th>
+                <th scope="col" className="px-6 py-3">
+                  View
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {games.map((game) => {
+                const c = new Chess(game.fen)
+                const publicKey = Auth.getComputer().getPublicKey()
+
+                return (
+                  <tr
+                    key={game._id}
+                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  >
+                    <th
+                      scope="row"
+                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    >
+                      <p className="text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
+                        {getGameState(c)}
+                      </p>
+                    </th>
+                    <td className="px-6 py-4">
+                      <p
+                        className={`mb-1 font-normal break-words ${
+                          game.firstUserPubKey === publicKey
+                            ? "text-blue-600 dark:text-blue-500"
+                            : "text-gray-700 dark:text-gray-400"
+                        }`}
+                        title={game.firstPlayerName}
+                      >
+                        {truncateName(game.firstPlayerName)}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p
+                        className={`mb-1 font-normal break-words ${
+                          game.secondUserPubKey === publicKey
+                            ? "text-blue-600 dark:text-blue-500"
+                            : "text-gray-700 dark:text-gray-400"
+                        }`}
+                        title={game.secondPlayerName}
+                      >
+                        {truncateName(game.secondPlayerName)}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <Link
+                        to={`/game/${game._id}`}
+                        className="block font-medium text-blue-600 dark:text-blue-500"
+                      >
+                        Let's Play
+                      </Link>
+                    </td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
         </div>
-        <div className="grid gap-4">
-          {cols[1].map((rev) => (
-            <div key={rev}>
-              <ValueComponent rev={rev} computer={computer} />
-            </div>
-          ))}
-        </div>
-        <div className="grid gap-4">
-          {cols[2].map((rev) => (
-            <div key={rev}>
-              <ValueComponent rev={rev} computer={computer} />
-            </div>
-          ))}
-        </div>
-        <div className="grid gap-4">
-          {cols[3].map((rev) => (
-            <div key={rev}>
-              <ValueComponent rev={rev} computer={computer} />
-            </div>
-          ))}
-        </div>
-      </div>
+      ) : (
+        <div></div>
+      )}
     </>
   )
 }
