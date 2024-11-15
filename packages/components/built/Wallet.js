@@ -54,51 +54,58 @@ import { UtilsContext } from "./UtilsContext";
 import { ComputerContext } from "./ComputerContext";
 import { getEnv } from "./common/utils";
 var Balance = function (_a) {
-    var computer = _a.computer, paymentModSpec = _a.paymentModSpec;
+    var computer = _a.computer, modSpecs = _a.modSpecs;
     var _b = useState(0), balance = _b[0], setBalance = _b[1];
     var _c = useState(localStorage.getItem("CHAIN") || "LTC"), setChain = _c[1];
     var _d = UtilsContext.useUtilsComponents(), showSnackBar = _d.showSnackBar, showLoader = _d.showLoader;
     var refreshBalance = useCallback(function () { return __awaiter(void 0, void 0, void 0, function () {
-        var publicKey, mod, paymentRevs, _a, payments, amountsInPaymentToken, availableWalletBalance, err_1;
-        return __generator(this, function (_b) {
-            switch (_b.label) {
+        var publicKey_1, balances, amountsInPayments, walletBalance, err_1;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
                 case 0:
-                    _b.trys.push([0, 7, , 8]);
+                    _a.trys.push([0, 3, , 4]);
                     showLoader(true);
-                    if (!computer) return [3 /*break*/, 6];
-                    publicKey = computer.getPublicKey();
-                    mod = paymentModSpec;
-                    if (!paymentModSpec) return [3 /*break*/, 2];
-                    return [4 /*yield*/, computer.query({ publicKey: publicKey, mod: mod })];
+                    publicKey_1 = computer.getPublicKey();
+                    return [4 /*yield*/, Promise.all(modSpecs.map(function (mod) { return __awaiter(void 0, void 0, void 0, function () {
+                            var paymentRevs, _a, payments;
+                            return __generator(this, function (_b) {
+                                switch (_b.label) {
+                                    case 0:
+                                        if (!modSpecs) return [3 /*break*/, 2];
+                                        return [4 /*yield*/, computer.query({ publicKey: publicKey_1, mod: mod })];
+                                    case 1:
+                                        _a = _b.sent();
+                                        return [3 /*break*/, 3];
+                                    case 2:
+                                        _a = [];
+                                        _b.label = 3;
+                                    case 3:
+                                        paymentRevs = _a;
+                                        return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
+                                    case 4:
+                                        payments = (_b.sent());
+                                        return [2 /*return*/, payments && payments.length
+                                                ? payments.reduce(function (total, pay) { return total + (pay._amount - computer.getMinimumFees()); }, 0)
+                                                : 0];
+                                }
+                            });
+                        }); }))];
                 case 1:
-                    _a = _b.sent();
-                    return [3 /*break*/, 3];
-                case 2:
-                    _a = [];
-                    _b.label = 3;
-                case 3:
-                    paymentRevs = _a;
-                    return [4 /*yield*/, Promise.all(paymentRevs.map(function (rev) { return computer.sync(rev); }))];
-                case 4:
-                    payments = (_b.sent());
-                    amountsInPaymentToken = payments && payments.length
-                        ? payments.reduce(function (total, pay) { return total + (pay._amount - computer.getMinimumFees()); }, 0)
-                        : 0;
+                    balances = _a.sent();
+                    amountsInPayments = balances.reduce(function (acc, curr) { return acc + curr; }, 0);
                     return [4 /*yield*/, computer.getBalance()];
-                case 5:
-                    availableWalletBalance = _b.sent();
-                    setBalance(availableWalletBalance.balance + amountsInPaymentToken);
+                case 2:
+                    walletBalance = _a.sent();
+                    setBalance(walletBalance.balance + amountsInPayments);
                     setChain(computer.getChain());
-                    _b.label = 6;
-                case 6:
                     showLoader(false);
-                    return [3 /*break*/, 8];
-                case 7:
-                    err_1 = _b.sent();
+                    return [3 /*break*/, 4];
+                case 3:
+                    err_1 = _a.sent();
                     showLoader(false);
                     showSnackBar("Error fetching wallet details", false);
-                    return [3 /*break*/, 8];
-                case 8: return [2 /*return*/];
+                    return [3 /*break*/, 4];
+                case 4: return [2 /*return*/];
             }
         });
     }); }, [computer]);
@@ -149,9 +156,9 @@ var Network = function (_a) {
 };
 var LogOut = function () { return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mb-6" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Log out" })), _jsx("p", __assign({ className: "mb-1 text-sm text-gray-500 dark:text-gray-400" }, { children: "Logging out will delete your mnemonic. Make sure to write it down." }))] })), _jsx("div", __assign({ className: "grid grid-cols-2 gap-4" }, { children: _jsx("button", __assign({ onClick: Auth.logout, className: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700" }, { children: "Log out" })) }))] })); };
 export function Wallet(_a) {
-    var paymentModSpec = _a.paymentModSpec;
+    var modSpecs = _a.modSpecs;
     var computer = useContext(ComputerContext);
-    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, paymentModSpec: paymentModSpec }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !getEnv('CHAIN') && _jsx(Chain, { computer: computer }), !getEnv('NETWORK') && _jsx(Network, { computer: computer }), !getEnv('URL') && _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
+    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, modSpecs: modSpecs || [] }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !getEnv('CHAIN') && _jsx(Chain, { computer: computer }), !getEnv('NETWORK') && _jsx(Network, { computer: computer }), !getEnv('URL') && _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export var WalletComponents = {

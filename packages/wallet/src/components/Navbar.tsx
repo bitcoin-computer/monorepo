@@ -28,7 +28,7 @@ export default function Navbar({
         try {
           await computer.load(searchInput)
           navigate(`/modules/${searchInput}`)
-        } catch (error) {
+        } catch {
           navigate(`/objects/${searchInput}`)
         }
       } else if (isValidHexadecimalPrivateKey(searchInput))

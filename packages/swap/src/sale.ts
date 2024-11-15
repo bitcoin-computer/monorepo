@@ -44,8 +44,12 @@ export class SaleHelper {
   }
 
   async isSaleTx(tx: TransactionType): Promise<boolean> {
-    const { exp, mod } = await this.computer.decode(tx)
-    return exp === 'Sale.exec(o, p)' && mod === this.mod
+    try {
+      const { exp, mod } = await this.computer.decode(tx)
+      return exp === 'Sale.exec(o, p)' && mod === this.mod
+    } catch {
+      return false
+    }
   }
 
   async checkSaleTx(tx: TransactionType): Promise<number> {

@@ -13,7 +13,7 @@ export class NFT extends Contract {
         this.offerTxRev = undefined;
     }
 }
-export class TBC721 {
+export class NftHelper {
     constructor(computer, mod) {
         this.computer = computer;
         this.mod = mod;

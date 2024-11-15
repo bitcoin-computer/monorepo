@@ -1,6 +1,6 @@
 import { useContext, useState } from "react"
 import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
-import { TBC721 } from "@bitcoin-computer/TBC721"
+import { NftHelper } from "@bitcoin-computer/TBC721"
 import { Link } from "react-router-dom"
 import { Computer } from "@bitcoin-computer/lib"
 import { VITE_NFT_MOD_SPEC } from "../constants/modSpecs"
@@ -9,7 +9,7 @@ function SuccessContent(id: string) {
   return (
     <>
       <div className="p-4 md:p-5">
-        <div>
+        <div className="dark:text-gray-400">
           Congratiolations! You minted an nft. Click{" "}
           <Link
             to={`/objects/${id}`}
@@ -75,8 +75,8 @@ function MintForm(props: {
     e.preventDefault()
     try {
       showLoader(true)
-      const tbc721 = new TBC721(computer, VITE_NFT_MOD_SPEC)
-      const nft = await tbc721.mint(name, symbol, url)
+      const nftHelper = new NftHelper(computer, VITE_NFT_MOD_SPEC)
+      const nft = await nftHelper.mint(name, symbol, url)
       setSuccessRev(nft._id)
       showLoader(false)
       Modal.showModal("success-modal")
@@ -133,7 +133,7 @@ function MintForm(props: {
             />
             {url && (
               <div className="w-full h-64 flex items-center justify-center">
-                <div className="w-4/5 md:w-1/2 lg:w-1/2 h-full bg-gray-200 flex items-center justify-center mt-8">
+                <div className="w-4/5 md:w-1/2 lg:w-1/2 h-full bg-gray-200 flex items-center justify-center mt-8 dark:bg-gray-700">
                   <img className="max-h-full max-w-full object-contain" src={url} alt="" />
                 </div>
               </div>

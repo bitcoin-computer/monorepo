@@ -8,7 +8,7 @@ function Block() {
   const params = useParams()
   const computer = useContext(ComputerContext)
   const [block] = useState(params.block)
-  const [blockData, setBlockData] = useState<any | null>(null)
+  const [blockData, setBlockData] = useState<unknown | null>(null)
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
@@ -18,7 +18,7 @@ function Block() {
         const res = await computer.rpcCall('getblock', `${block} 2`)
         setBlockData(res.result)
         showLoader(false)
-      } catch (error) {
+      } catch {
         showLoader(false)
         showSnackBar('Error getting block', false)
       }

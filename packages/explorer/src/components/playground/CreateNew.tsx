@@ -30,7 +30,6 @@ const CreateNew = (props: {
   useEffect(() => {
     const newArgumentsList = [...argumentsList]
     newArgumentsList.forEach((argument) => {
-      // eslint-disable-next-line
       argument.hidden = true
     })
     if (exampleVars) {
@@ -65,7 +64,7 @@ const CreateNew = (props: {
   const handleDeploy = async () => {
     try {
       showLoader(true)
-      // eslint-disable-next-line
+       
       const createClassFunction = new Function(`return ${code?.trim()}`)
       const dynamicClass = createClassFunction()
       if (
@@ -91,14 +90,8 @@ const CreateNew = (props: {
             .filter((argument) => !argument.hidden)
             .map((argument, index) => {
               const argValue = getValueForType(argument.type, argument.value)
-              if (isValidRev(argValue)) {
-                return `param${index}`
-              }
-
-              if (typeof argValue === 'string') {
-                return `'${argValue}'`
-              }
-
+              if (isValidRev(argValue)) return `param${index}`
+              if (typeof argValue === 'string') return `'${argValue}'`
               return argValue
             })})
           `,
@@ -167,7 +160,7 @@ const CreateNew = (props: {
                 <TypeSelectionDropdown
                   id={`playground-dropdown-${index}`}
                   onSelectMethod={(option: string) => {
-                    // eslint-disable-next-line
+                     
                     argument.type = option
                   }}
                   dropdownList={options}
@@ -201,7 +194,7 @@ const CreateNew = (props: {
         onClick={handleDeploy}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
       >
-        Call Deploy
+        Call
       </button>
     </>
   )

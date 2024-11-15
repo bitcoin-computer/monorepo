@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="node" />
 import { OPS } from './ops.js';
 import { Network } from './networks.js';
 import { Stack } from './payments/index.js';
