@@ -10,19 +10,31 @@ export class Token extends Contract {
     super({ _owners: [to], amount, name, symbol })
   }
 
-  transfer(to: string, amount?: number): Token | null {
-    // Send entire amount
+  transfer(to: string, amount?: number): Token | undefined {
     if (typeof amount === 'undefined') {
+      // Send entire amount
       this._owners = [to]
-      return null
+      return undefined
     }
-    // Send partial amount in a new object
     if (this.amount >= amount) {
+      // Send partial amount in a new object
       this.amount -= amount
       return new Token(to, amount, this.name, this.symbol)
     }
-
     throw new Error('Insufficient funds')
+  }
+
+  burn() {
+    this.amount = 0
+  }
+
+  merge(tokens: Token[]) {
+    let total = 0
+    tokens.forEach((token) => {
+      total += token.amount
+      token.burn()
+    })
+    this.amount += total
   }
 }
 
@@ -34,7 +46,7 @@ export interface ITBC20 {
   transfer(to: string, amount: number, root: string): Promise<void>
 }
 
-export class TBC20 implements ITBC20 {
+export class TokenHelper implements ITBC20 {
   name: string
   symbol: string
   computer: any

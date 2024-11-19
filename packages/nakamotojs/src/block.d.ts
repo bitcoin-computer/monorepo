@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="node" />
 import { Transaction } from './transaction.js';
 import { Buffer } from 'buffer';
 export declare class Block {

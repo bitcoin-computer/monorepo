@@ -64,9 +64,8 @@ export function isValidRev(value: any): boolean {
   return typeof value === "string" && isValidRevString(value)
 }
 
-// eslint-disable-next-line
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
-
+export const sleep = (ms: number): Promise<void> => 
+  new Promise((resolve) => { setTimeout(resolve, ms) })
 
 export function getEnv(name: string) {
   return (typeof process !== "undefined" && process.env[`REACT_APP_${name}`]) || (import.meta.env && import.meta.env[`VITE_${name}`])

@@ -5,7 +5,7 @@ export class Token extends Contract {
     transfer(to, amount) {
         if (typeof amount === 'undefined') {
             this._owners = [to];
-            return null;
+            return undefined;
         }
         if (this.amount >= amount) {
             this.amount -= amount;
@@ -13,8 +13,19 @@ export class Token extends Contract {
         }
         throw new Error('Insufficient funds');
     }
+    burn() {
+        this.amount = 0;
+    }
+    merge(tokens) {
+        let total = 0;
+        tokens.forEach((token) => {
+            total += token.amount;
+            token.burn();
+        });
+        this.amount += total;
+    }
 }
-export class TBC20 {
+export class TokenHelper {
     constructor(computer, mod) {
         this.computer = computer;
         this.mod = mod;

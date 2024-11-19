@@ -11,10 +11,9 @@ export function isValidRev(value: any): boolean {
   return typeof value === "string" && isValidRevString(value)
 }
 
-// eslint-disable-next-line
-export const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+export const sleep = (ms: number): Promise<void> => 
+  new Promise((resolve) => { setTimeout(resolve, ms) })
 
-// eslint-disable-next-line
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]
