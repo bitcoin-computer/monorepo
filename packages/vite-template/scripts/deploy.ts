@@ -1,5 +1,5 @@
-import { Computer } from '@bitcoin-computer/lib'
-import {Counter} from '../src/contracts/counter.js'
+import { Computer } from "@bitcoin-computer/lib"
+import { Counter } from "../src/contracts/counter.js"
 import { config } from "dotenv"
 import * as readline from "node:readline/promises"
 import { stdin as input, stdout as output } from "node:process"

@@ -39,6 +39,7 @@
     "@endo/static-module-record": "^1.0.4"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.3",
     "@types/node": "^20.11.21",
     "edit-json-file": "^1.8.0",
     "eslint": "^8.57.0",
