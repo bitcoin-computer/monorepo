@@ -54,7 +54,7 @@
     "axios-mock-adapter": "^1.22.0",
     "bitcoind-rpc": "^0.9.1",
     "body-parser": "^1.20.2",
-    "chai": "^4.3.6",
+    "chai": "^5.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ecpair": "^2.1.0",
