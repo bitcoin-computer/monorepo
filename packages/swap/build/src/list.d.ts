@@ -1,4 +1,3 @@
-declare const Contract: typeof import("@bitcoin-computer/lib/computer").Contract;
 export declare class List extends Contract {
     elements: string[];
     constructor();
@@ -11,4 +10,3 @@ export declare class ListHelper {
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
 }
-export {};
