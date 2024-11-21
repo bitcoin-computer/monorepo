@@ -8,6 +8,7 @@
     "tsc-compile": "rm -rf built/* && tsc",
     "install-monorepo": "cd ../../../ && npm run delete-node-modules && npm install && cd monorepo/packages/components",
     "build": "npm run tsc-compile",
+    "build-turbo": "turbo run build",
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern built/",
     "lint-fix": "eslint src --fix",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",

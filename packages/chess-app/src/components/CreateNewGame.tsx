@@ -3,6 +3,7 @@ import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/componen
 import { Link } from "react-router-dom"
 import { Computer } from "@bitcoin-computer/lib"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
+import { createGame } from "../services/game.service"
 
 function SuccessContent(id: string) {
   return (
@@ -66,7 +67,6 @@ function MintForm(props: {
 }) {
   const { computer, setSuccessRev, setErrorMsg } = props
   const [name, setName] = useState("")
-  const [color, setColor] = useState("black")
   const [secondPlayerPublicKey, setSecondPlayerPublicKey] = useState("")
   const [secondPlayerUserName, setSecondPlayerUserName] = useState("")
   const { showLoader } = UtilsContext.useUtilsComponents()
@@ -75,17 +75,19 @@ function MintForm(props: {
     e.preventDefault()
     try {
       showLoader(true)
-      console.log(
-        `new ChessGame("${color}", "${computer.getPublicKey()}", "${secondPlayerPublicKey}", "${name}", "${secondPlayerUserName}")`
-      )
       const { tx, effect }: any = await computer.encode({
-        exp: `new ChessGame("${color}", "${computer.getPublicKey()}", "${secondPlayerPublicKey}", "${name}", "${secondPlayerUserName}")`,
+        exp: `new ChessGame("white", "${computer.getPublicKey()}", "${secondPlayerPublicKey}", "${name}", "${secondPlayerUserName}")`,
         mod: VITE_CHESS_GAME_MOD_SPEC
       })
 
-      const data = await computer.broadcast(tx)
-      console.log(data, effect)
+      await computer.broadcast(tx)
       setSuccessRev(effect.res?._id)
+      await createGame({
+        gameId: effect.res?._id,
+        firstPlayerPubKey: computer.getPublicKey(),
+        secondPlayerPubKey: secondPlayerPublicKey
+      })
+
       showLoader(false)
       Modal.showModal("success-modal")
     } catch (err) {
@@ -139,18 +141,6 @@ function MintForm(props: {
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
           </div>
-          <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
-            Select your color
-          </label>
-          <select
-            id="firstPlayerColor"
-            value={color}
-            onChange={(e) => setColor(e.target.value)}
-            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          >
-            <option value={"black"}>Black</option>
-            <option value={"white"}>White</option>
-          </select>
         </div>
         <button
           type="submit"
