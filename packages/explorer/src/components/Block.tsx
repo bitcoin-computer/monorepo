@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
+import { useContext, useEffect, useState } from "react"
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
+import { ComputerContext, UtilsContext } from "@bitcoin-computer/components"
 
 function Block() {
   const navigate = useNavigate()
@@ -8,19 +8,19 @@ function Block() {
   const params = useParams()
   const computer = useContext(ComputerContext)
   const [block] = useState(params.block)
-  const [blockData, setBlockData] = useState<unknown | null>(null)
+  const [blockData, setBlockData] = useState<any | null>(null)
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     const fetch = async () => {
       try {
         showLoader(true)
-        const res = await computer.rpcCall('getblock', `${block} 2`)
+        const res = await computer.rpcCall("getblock", `${block} 2`)
         setBlockData(res.result)
         showLoader(false)
       } catch {
         showLoader(false)
-        showSnackBar('Error getting block', false)
+        showSnackBar("Error getting block", false)
       }
     }
     fetch()

@@ -33,7 +33,8 @@
     "check-obfuscation": "./scripts/check-obfuscation.sh",
     "husky-checks": "./scripts/husky-checks.sh",
     "prepare": "husky install",
-    "prepublishOnly": "./scripts/check-obfuscation.sh"
+    "prepublishOnly": "./scripts/check-obfuscation.sh",
+    "build-all-packages": "turbo run build"
   },
   "dependencies": {
     "@endo/static-module-record": "^1.0.4"
