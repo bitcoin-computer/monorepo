@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS
 CREATE TABLE IF NOT EXISTS
   "Orphan" (
     "hash" VARCHAR(64) NOT NULL PRIMARY KEY,
-    "height" INTEGER NOT NULL
+    "height" INTEGER NOT NULL,
+    "processed" BOOLEAN NOT NULL
   );
 
 CREATE INDEX "BlockIndex"
