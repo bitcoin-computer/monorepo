@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build-turbo": "turbo run build",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "node --loader ts-node/esm  ./scripts/deploy.ts",

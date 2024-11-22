@@ -115,4 +115,5 @@ typings/
 .tern-port
 workspace.code-workspace
 
+# turbo
 .turbo

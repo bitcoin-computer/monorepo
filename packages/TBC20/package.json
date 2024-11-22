@@ -18,6 +18,7 @@
   },
   "scripts": {
     "build": "rm -rf build && tsc -p tsconfig.release.json",
+    "build-turbo": "turbo run build",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf coverage build tmp",
     "clean-logs": "rm -f *.log 2> /dev/null",
@@ -26,7 +27,7 @@
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
     "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
-    "types": "tsc",
+    "types": "tsc --noEmit",
     "test": "mocha --config .mocharc.json",
     "test-and-show": "npm run test 2>&1 | tee TBC20-test.log && open TBC20-test.log"
   },
