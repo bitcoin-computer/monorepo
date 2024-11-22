@@ -7,7 +7,7 @@
   "main": "./build/src/token.js",
   "types": "./build/src/token.d.ts",
   "devDependencies": {
-    "@types/chai": "^4.3.12",
+    "@types/chai": "^5.0.1",
     "@types/expect": "^24.3.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "~20.11.21",

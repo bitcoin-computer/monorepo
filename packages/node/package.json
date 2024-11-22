@@ -79,7 +79,7 @@
     "zeromq": "6.0.0-beta.6"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.1",
+    "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.6",
     "@types/sinon": "^10.0.11",
     "@types/sinon-chai": "^3.2.8"
