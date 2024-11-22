@@ -1,40 +1,36 @@
-import "./App.css";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import { ReactComponent as Telegram } from "./social/telegram.svg";
-import { ReactComponent as YouTube } from "./social/youtube.svg";
-// import { ReactComponent as Discord } from "./social/discord.svg";
-import { ReactComponent as GitHub } from "./social/github.svg";
-import { ReactComponent as Twitter } from "./social/twitter.svg";
-import Features from "./Features";
-import Pricing from "./Pricing";
-import Examples from "./Examples";
-import About from "./About";
-import Introduction from "./Introduction";
-import { ReactComponent as ArrowLink } from "./social/arrow.svg";
+import "./App.css"
+import Grid from "@mui/material/Grid"
+import Box from "@mui/material/Box"
+// @ts-ignore
+import Telegram from "./social/telegram.svg?react"
+// @ts-ignore
+import YouTube from "./social/youtube.svg?react"
+// @ts-ignore
+import GitHub from "./social/github.svg?react"
+// @ts-ignore
+import Twitter from "./social/twitter.svg?react"
+import Features from "./Features"
+import Pricing from "./Pricing"
+import Examples from "./Examples"
+import About from "./About"
+import Introduction from "./Introduction"
+// @ts-ignore
+import ArrowLink from "./social/arrow.svg?react"
 
 function App() {
   return (
     <div className="App">
       <header className="header">
-        <Grid container sx={{height: "6vw"}}>
+        <Grid container sx={{ height: "6vw" }}>
           <Grid item xs={3} sx={{ textAlign: "left" }}>
-            <img
-              src="/logo/BitcoinComputer-Logo.png"
-              height="40px"
-              alt="logo"
-            />
+            <img src="/logo/BitcoinComputer-Logo.png" height="40px" alt="logo" />
           </Grid>
           <Grid item xs={9} className="navigation">
             <nav>
               <a href="#features">Features</a>
               <a href="#pricing">Pricing</a>
               <a href="#examples">Examples</a>
-              <a
-                href="https://docs.bitcoincomputer.io"
-                target="_blank"
-                rel="noreferrer"
-              >
+              <a href="https://docs.bitcoincomputer.io" target="_blank" rel="noreferrer">
                 Docs
                 <ArrowLink className="docsLink" />
               </a>
@@ -58,42 +54,23 @@ function App() {
         <Box className="vertical-grid-line-5 grid-opacity" />
         <Box className="vertical-grid-line-6 grid-opacity" />
         <Box className="vertical-grid-line-7 grid-opacity" />
-        <Grid
-          container
-          rowSpacing={1}
-          columnSpacing={{ xs: 1 }}
-          className="ContentBox ColorWhite"
-        >
+        <Grid container rowSpacing={1} columnSpacing={{ xs: 1 }} className="ContentBox ColorWhite">
           <Grid item xs={4} className="contact-email-wrapper">
             <p className="contact-email-wrapper-first">Get in touch</p>
             <p className="contact-email-wrapper-second">
-              <a href="mailto:clemens@bitcoincomputer.io">
-                clemens@bitcoincomputer.io
-              </a>
+              <a href="mailto:clemens@bitcoincomputer.io">clemens@bitcoincomputer.io</a>
             </p>
           </Grid>
           <Grid item xs={4} className="social-links">
             <Grid item xs={12}>
               <a href="https://twitter.com/thebitcointoken" rel="noreferrer" target="_blank">
-                <Twitter
-                  height="50px"
-                  width="50px"
-                  viewBox="0 0 26 26"
-                ></Twitter>
+                <Twitter height="50px" width="50px" viewBox="0 0 26 26"></Twitter>
               </a>
               <a href="https://t.me/thebitcoincomputer" rel="noreferrer" target="_blank">
-                <Telegram
-                  height="50px"
-                  width="50px"
-                  viewBox="0 0 26 26"
-                ></Telegram>
+                <Telegram height="50px" width="50px" viewBox="0 0 26 26"></Telegram>
               </a>
               <a href="https://www.youtube.com/c/ClemensLey" rel="noreferrer" target="_blank">
-                <YouTube
-                  height="50px"
-                  width="50px"
-                  viewBox="0 0 26 26"
-                ></YouTube>
+                <YouTube height="50px" width="50px" viewBox="0 0 26 26"></YouTube>
               </a>
               <a href="https://github.com/bitcoin-computer" rel="noreferrer" target="_blank">
                 <GitHub height="50px" width="50px" viewBox="0 0 26 26"></GitHub>
@@ -106,7 +83,7 @@ function App() {
         </Grid>
       </Box>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
