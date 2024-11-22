@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of folders to skip
-skip_folders=("chat" "chess-app" "explorer" "nft" "vite-template" "wallet")
+skip_folders=("vite-template" "nft" "explorer" "wallet" "chat" "website")
 
 # Check if the obfuscation was successful on all dist folders
 msg="Checking obfuscation ..."

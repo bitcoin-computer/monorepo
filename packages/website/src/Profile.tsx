@@ -1,18 +1,21 @@
-import { Link } from "@mui/material";
-import Box from "@mui/material/Box";
-import "./Profile.css";
+import Box from "@mui/material/Box"
+import "./Profile.css"
 
 export interface ProfileProps {
-  name: string;
-  text: string;
-  link?: string;
-  imgPath?: string;
+  name: string
+  text: string
+  link?: string
+  imgPath?: string
 }
 
 function Profile(props: ProfileProps) {
   const Name = () => <Box className="profile-name">{props.name}</Box>
   const NameWithLink = props.link
-    ? () => <Box className="profile-name"><a href={props.link}>{props.name}</a></Box>
+    ? () => (
+        <Box className="profile-name">
+          <a href={props.link}>{props.name}</a>
+        </Box>
+      )
     : Name
 
   return (
@@ -49,7 +52,7 @@ function Profile(props: ProfileProps) {
         />
       </Box> */}
     </Box>
-  );
+  )
 }
 
-export default Profile;
+export default Profile

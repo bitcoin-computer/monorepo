@@ -1,224 +1,224 @@
 .examples-container {
-    height: 84.33vw;
-    width: 100%;
-    z-index: 1;
-    position: relative;
+  height: 84.33vw;
+  width: 100%;
+  z-index: 1;
+  position: relative;
 }
 
 .docsLinkExamples {
-    text-decoration: underline;
-    color: #000F38;
-    font-size: 1.2vw;
+  text-decoration: underline;
+  color: #000f38;
+  font-size: 1.2vw;
 }
 
 .docsLinkExamples:active,
 .docsLinkExamples:visited,
 .docsLinkExamples:focus {
-    text-decoration: underline;
-    color: #000F38;
-    font-size: 24px;
+  text-decoration: underline;
+  color: #000f38;
+  font-size: 24px;
 }
 
 .example-1-text-tab {
-    font-size: 1.1vw;
-    color: #000F38;
-    width: 80%;
-    z-index: 2;
-    margin-bottom: 7%;
+  font-size: 1.1vw;
+  color: #000f38;
+  width: 80%;
+  z-index: 2;
+  margin-bottom: 7%;
 }
 
 .example-1-subtext-tab {
-    font-size: 1.1vw;
-    color: #787878;
-    width: 80%;
-    z-index: 2;
+  font-size: 1.1vw;
+  color: #787878;
+  width: 80%;
+  z-index: 2;
 }
 
 .examples-heading-tab {
-    height: 50px;
-    width: 33.33%;
-    z-index: 2;
-    top: 19.7%;
-    left: 2%;
-    position: absolute;
-    font-size: 7.3vw;
-    color: #000f38;
-    text-align: left;
+  height: 50px;
+  width: 33.33%;
+  z-index: 2;
+  top: 19.7%;
+  left: 2%;
+  position: absolute;
+  font-size: 7.3vw;
+  color: #000f38;
+  text-align: left;
 }
 
 .infoGridExample {
-    background-color: white;
-    z-index: 3;
-    height: 24.21vw;
-    padding: 1%;
+  background-color: white;
+  z-index: 3;
+  height: 24.21vw;
+  padding: 1%;
 }
 
 .tabPanelPadding {
-    padding: 24px 20px;
+  padding: 24px 20px;
 }
 
 .example-1-subtext {
-    font-size: 24px;
-    color: #787878;
-    letter-spacing: 0;
-    line-height: 31px;
-    height: 349px;
-    width: 432px;
-    z-index: 2;
-    top: 881px;
-    left: 39.25px;
-    position: absolute;
+  font-size: 24px;
+  color: #787878;
+  letter-spacing: 0;
+  line-height: 31px;
+  height: 349px;
+  width: 432px;
+  z-index: 2;
+  top: 881px;
+  left: 39.25px;
+  position: absolute;
 }
 
 .example-heading-2 {
-    height: 31px;
-    width: 177px;
-    z-index: 2;
-    top: 577.8px;
-    left: 663.5px;
-    position: absolute;
-    font-size: 24px;
-    color: #787878;
-    text-align: left;
+  height: 31px;
+  width: 177px;
+  z-index: 2;
+  top: 577.8px;
+  left: 663.5px;
+  position: absolute;
+  font-size: 24px;
+  color: #787878;
+  text-align: left;
 }
 
 .example-heading-3 {
-    height: 31px;
-    width: 55px;
-    z-index: 2;
-    top: 577.8px;
-    left: 1291px;
-    position: absolute;
-    font-size: 24px;
-    color: #787878;
-    text-align: left;
+  height: 31px;
+  width: 55px;
+  z-index: 2;
+  top: 577.8px;
+  left: 1291px;
+  position: absolute;
+  font-size: 24px;
+  color: #787878;
+  text-align: left;
 }
 
 .line4 {
-    width: 98%;
-    top: 786.5px;
-    left: 17.5px;
-    position: absolute;
-    font-size: 150px;
-    color: #000f38;
-    text-align: left;
+  width: 98%;
+  top: 786.5px;
+  left: 17.5px;
+  position: absolute;
+  font-size: 150px;
+  color: #000f38;
+  text-align: left;
 }
 
 .information-text {
-    font-size: 1.1vw;
-    color: #000F38;
-    letter-spacing: 0;
-    text-align: center;
-    width: 100%;
-    z-index: 2;
-    top: 88%;
-    /* left: 2%; */
-    position: absolute;
+  font-size: 1.1vw;
+  color: #000f38;
+  letter-spacing: 0;
+  text-align: center;
+  width: 100%;
+  z-index: 2;
+  top: 88%;
+  /* left: 2%; */
+  position: absolute;
 }
 
 .code-section {
-    background-image: url("/public/code-section.svg");
-    height: 325px;
-    width: 33.33%;
-    z-index: 2;
-    top: 805.38px;
-    left: 663.75px;
-    position: absolute;
-    background-repeat: no-repeat;
+  background-image: url("/code-section.svg");
+  height: 325px;
+  width: 33.33%;
+  z-index: 2;
+  top: 805.38px;
+  left: 663.75px;
+  position: absolute;
+  background-repeat: no-repeat;
 }
 
 .example-rectangle {
-    background-color: #FFFFFF;
-    height: 468px;
-    z-index: 2;
-    width: 100%;
-    top: 787px;
-    left: 18px;
-    position: absolute;
+  background-color: #ffffff;
+  height: 468px;
+  z-index: 2;
+  width: 100%;
+  top: 787px;
+  left: 18px;
+  position: absolute;
 }
 
 .examples-tab {
-    align-items: start !important;
+  align-items: start !important;
 }
 
 #simple-tabpanel-0 .MuiBox-root,
 #simple-tabpanel-1 .MuiBox-root,
 #simple-tabpanel-2 .MuiBox-root {
-    padding: 0 1px !important;
+  padding: 0 1px !important;
 }
 
 .example-grid-wrapper {
-    margin-top: 9.55%;
-    border-bottom: #dfdfdf 1px solid;
+  margin-top: 9.55%;
+  border-bottom: #dfdfdf 1px solid;
 }
 
 .horizontal-examples-grid-line-1 {
-    background-image: url("/public/Grid/H-Grid-line.svg");
-    height: 1px;
-    width: 100%;
-    z-index: 1;
-    top: 20%;
-    left: 0px;
-    position: absolute;
-  }
+  background-image: url("/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 20%;
+  left: 0px;
+  position: absolute;
+}
 
-  .horizontal-examples-grid-line-2 {
-    background-image: url("/public/Grid/H-Grid-line.svg");
-    height: 1px;
-    width: 100%;
-    z-index: 1;
-    top: 40%;
-    left: 0px;
-    position: absolute;
-  }
+.horizontal-examples-grid-line-2 {
+  background-image: url("/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 40%;
+  left: 0px;
+  position: absolute;
+}
 
-  .horizontal-examples-grid-line-3 {
-    background-image: url("/public/Grid/H-Grid-line.svg");
-    height: 1px;
-    width: 100%;
-    z-index: 1;
-    top: 60%;
-    left: 0px;
-    position: absolute;
-  }
+.horizontal-examples-grid-line-3 {
+  background-image: url("/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 60%;
+  left: 0px;
+  position: absolute;
+}
 
-  .horizontal-examples-grid-line-4 {
-    background-image: url("/public/Grid/H-Grid-line.svg");
-    height: 1px;
-    width: 100%;
-    z-index: 1;
-    top: 80%;
-    left: 0px;
-    position: absolute;
-  }
+.horizontal-examples-grid-line-4 {
+  background-image: url("/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 80%;
+  left: 0px;
+  position: absolute;
+}
 
-  .horizontal-examples-grid-line-5 {
-    background-image: url("/public/Grid/H-Grid-line.svg");
-    height: 1px;
-    width: 100%;
-    z-index: 1;
-    top: 100%;
-    left: 0px;
-    position: absolute;
-  }
+.horizontal-examples-grid-line-5 {
+  background-image: url("/Grid/H-Grid-line.svg");
+  height: 1px;
+  width: 100%;
+  z-index: 1;
+  top: 100%;
+  left: 0px;
+  position: absolute;
+}
 
 .button-lb {
-    background-color: #0046ff;
-    border: none;
-    color: white;
-    padding: 1% 2%;
-    width: 30%;
-    text-align: left;
-    text-decoration: none;
-    display: inline-block;
-    clip-path:
-    polygon(0% 10%, /* top left */
-        1% 0%, /* top left */
-        99% 0%, /* top right */
-        100% 10%, /* top right */
-        100% 90%, /* bottom right */
-        99% 100%, /* bottom right */
-        1% 100%, /* bottom left */
-        0 90% /* bottom left */
-    );
+  background-color: #0046ff;
+  border: none;
+  color: white;
+  padding: 1% 2%;
+  width: 30%;
+  text-align: left;
+  text-decoration: none;
+  display: inline-block;
+  clip-path: polygon(
+    0% 10%,
+    /* top left */ 1% 0%,
+    /* top left */ 99% 0%,
+    /* top right */ 100% 10%,
+    /* top right */ 100% 90%,
+    /* bottom right */ 99% 100%,
+    /* bottom right */ 1% 100%,
+    /* bottom left */ 0 90% /* bottom left */
+  );
 }

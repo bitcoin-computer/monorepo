@@ -3,13 +3,12 @@ import * as assertModule from 'assert';
 // @ts-ignore
 const assert: typeof import('assert') = assertModule.default || assertModule;
 import { ECPairFactory } from 'ecpair';
+import axios from 'axios';
 import * as ecc from '@bitcoin-computer/secp256k1';
 import { describe, it } from 'mocha';
 import * as bitcoin from '../../src/index.js';
-import { regtestUtils } from './_regtest.js';
 
 const ECPair = ECPairFactory(ecc);
-const dhttp = regtestUtils.dhttp;
 const TESTNET = bitcoin.networks.testnet;
 
 describe('nakamotojs (addresses)', () => {
@@ -23,10 +22,9 @@ describe('nakamotojs (addresses)', () => {
       // bitcoin P2PKH addresses start with a '1'
       assert.strictEqual(address!.startsWith('1'), true);
 
-      const result = await dhttp({
-        method: 'GET',
-        url: 'https://blockchain.info/rawaddr/' + address,
-      });
+      const result = await axios.get(
+        `https://blockchain.info/rawaddr/${address}`,
+      );
 
       // random private keys [probably!] have no transactions
       assert.strictEqual((result as any).n_tx, 0);
@@ -49,10 +47,9 @@ describe('nakamotojs (addresses)', () => {
       // bitcoin P2PKH addresses start with a '1'
       assert.strictEqual(address!.startsWith('L'), true);
 
-      const result = await dhttp({
-        method: 'GET',
-        url: 'https://blockchain.info/rawaddr/' + address,
-      });
+      const result = await axios.get(
+        `https://blockchain.info/rawaddr/${address}`,
+      );
 
       // random private keys [probably!] have no transactions
       assert.strictEqual((result as any).n_tx, 0);
