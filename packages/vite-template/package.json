@@ -9,6 +9,7 @@
     "build-turbo": "turbo run build",
     "lint": "eslint .",
     "preview": "vite preview",
+    "start": "vite",
     "deploy": "node --loader ts-node/esm  ./scripts/deploy.ts",
     "test": "vitest run"
   },
