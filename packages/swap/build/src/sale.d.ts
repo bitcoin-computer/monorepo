@@ -1,6 +1,7 @@
 /// <reference types="node" />
 import { Buffer } from 'buffer';
-import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
+import { Transaction } from '@bitcoin-computer/nakamotojs';
+import type { Transaction as TransactionType } from '@bitcoin-computer/nakamotojs';
 import { Payment, PaymentMock } from './payment.js';
 export declare class Sale extends Contract {
     static exec(o: any, p: Payment): any[];
@@ -13,5 +14,5 @@ export declare class SaleHelper {
     createSaleTx(object: any, payment: PaymentMock): any;
     isSaleTx(tx: TransactionType): Promise<boolean>;
     checkSaleTx(tx: TransactionType): Promise<number>;
-    static finalizeSaleTx(tx: TransactionType, payment: Payment, scriptPubKey: Buffer): TransactionType;
+    static finalizeSaleTx(tx: TransactionType, payment: Payment, scriptPubKey: Buffer): Transaction;
 }

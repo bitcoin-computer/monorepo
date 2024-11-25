@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { Buffer } from 'buffer'
 import { Transaction } from '@bitcoin-computer/nakamotojs'
-import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
+import type { Transaction as TransactionType } from '@bitcoin-computer/nakamotojs'
 import { Payment, PaymentMock } from './payment.js'
 
 // eslint-disable-next-line no-bitwise

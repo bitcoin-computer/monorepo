@@ -3,7 +3,8 @@
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Computer, Transaction } from '@bitcoin-computer/lib'
+import { Computer } from '@bitcoin-computer/lib'
+import { Transaction } from '@bitcoin-computer/nakamotojs'
 import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
 import { Sale, SaleHelper } from '../src/sale'
@@ -252,7 +253,7 @@ describe('Sale', () => {
     })
 
     it("Buyer update's the swap transaction to receive the NFT", () => {
-      tx = SaleHelper.finalizeSaleTx(tx, payment, buyer.toScriptPubKey())
+      tx = SaleHelper.finalizeSaleTx(tx as any, payment, buyer.toScriptPubKey())
     })
 
     it('Buyer funds the swap transaction', async () => {

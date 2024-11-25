@@ -38,7 +38,7 @@ function Component() {
     const fetch = async () => {
       setTxn(params.txn)
       const [hex] = await computer.wallet.restClient.getRawTxs([params.txn as string])
-      const { tx } = Computer.txFromHex({ hex })
+      const { tx } = Computer.txFromHex({ hex }) as any
       setTxnData(tx)
 
       const { result } = await computer.rpcCall("getrawtransaction", `${params.txn} 2`)
