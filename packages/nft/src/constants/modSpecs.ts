@@ -1,5 +1,5 @@
 const getEnvVar = (key: string): string => {
-  const value = process.env[key]
+  const value = import.meta.env[key]
   if (value) return value
   throw new Error(`Please create a .env file.`)
 }
