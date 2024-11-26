@@ -1,6 +1,6 @@
 /* eslint max-classes-per-file: ["error", 2] */
 
-import { Transaction } from '@bitcoin-computer/nakamotojs'
+import { Transaction } from '@bitcoin-computer/lib'
 
 export class TxWrapper extends Contract {
   txHex: string

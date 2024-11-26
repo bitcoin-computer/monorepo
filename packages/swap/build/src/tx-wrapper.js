@@ -1,4 +1,4 @@
-import { Transaction } from '@bitcoin-computer/nakamotojs';
+import { Transaction } from '@bitcoin-computer/lib';
 export class TxWrapper extends Contract {
     constructor(owner, url, txHex) {
         super({ _owners: [owner], txHex });
