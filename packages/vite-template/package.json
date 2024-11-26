@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "build-turbo": "turbo run build",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "node --loader ts-node/esm  ./scripts/deploy.ts",
@@ -23,6 +24,7 @@
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
+    "@types/dotenv": "^8.2.3",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

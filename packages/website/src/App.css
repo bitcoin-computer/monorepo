@@ -7,7 +7,7 @@
 }
 
 .GridBG {
-  background-image: url("/public/Grid/grid-Cell-Sub.svg");
+  background-image: url("/Grid/grid-Cell-Sub.svg");
   background-position: right 162px center;
   height: 100vh;
   width: 100%;
@@ -79,9 +79,8 @@
   pointer-events: none;
 }
 
-
 .navigation {
-    display: flex;
+  display: flex;
   justify-content: right;
   align-items: center;
 }
@@ -90,7 +89,7 @@
   text-decoration: none;
   padding: 0.6vw 1.1vw;
   color: black;
-  font-size: .9vw;
+  font-size: 0.9vw;
   font-weight: bold;
   vertical-align: middle;
 }
@@ -193,7 +192,7 @@
 
 .contact-container p {
   margin: 0;
-  font-size: .8vw;
+  font-size: 0.8vw;
 }
 
 .contact-email-wrapper {
@@ -210,7 +209,7 @@
 
 .contact-email-wrapper-first {
   font-size: 1.3vw;
-  color: #A7BFFF;
+  color: #a7bfff;
 }
 
 .contact-email-wrapper-first p {
@@ -234,17 +233,17 @@
 .social-links {
   display: flex;
   align-items: center;
-  color: #A7BFFF;
+  color: #a7bfff;
 }
 
 .copyright {
-  color: #A7BFFF;
+  color: #a7bfff;
   display: flex;
   align-items: center;
 }
 
 .social-links svg {
-  margin: .7vw;
+  margin: 0.7vw;
   height: 2.8vw;
   width: 2.8vw;
 }

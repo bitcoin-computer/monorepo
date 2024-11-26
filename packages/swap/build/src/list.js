@@ -1,4 +1,3 @@
-const { Contract } = await import('@bitcoin-computer/lib');
 export class List extends Contract {
     constructor() {
         super({ elements: [] });

@@ -5,20 +5,15 @@ import { defineConfig, loadEnv } from "vite"
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import react from "@vitejs/plugin-react"
 import path from "path"
-import fs from "fs"
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "")
-
-  const primaryPath = path.resolve(__dirname, "./node_modules/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs")
-  const pathInWorkspace = path.resolve(__dirname, "../lib/dist/bc-lib.browser.min.mjs")
-  const filePath = fs.existsSync(primaryPath) ? primaryPath : pathInWorkspace
 
   return {
     plugins: [react()],
     resolve: {
       alias: { 
-        "@bitcoin-computer/lib": filePath,
+        "@bitcoin-computer/lib": path.resolve(__dirname, "../lib/dist/bc-lib.browser.min.mjs"),
         buffer: 'buffer'
       }
     },
