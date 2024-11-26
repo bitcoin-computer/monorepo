@@ -45,7 +45,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import reactStringReplace from "react-string-replace";
@@ -73,6 +73,14 @@ function ObjectValueCard(_a) {
     var formattedContent = reactStringReplace(content, isRev, revLink);
     return _jsx(Card, { content: formattedContent });
 }
+var ObjectHistory = function (_a) {
+    var prev = _a.prev, next = _a.next;
+    return (_jsxs("div", __assign({ className: "pt-6 pb-6 space-y-4 border-t border-gray-300 dark:border-gray-700" }, { children: [_jsx("h2", __assign({ className: "text-xl font-semibold text-gray-800 dark:text-white" }, { children: "Object History" })), _jsxs("div", __assign({ className: "flex" }, { children: [_jsx("a", __assign({ href: prev ? "/objects/".concat(prev) : undefined, className: "flex items-center justify-center px-4 h-10 text-sm font-medium border rounded-lg transition \n            ".concat(prev
+                            ? "bg-blue-600 text-white hover:bg-blue-700"
+                            : "bg-gray-200 text-gray-400 cursor-not-allowed"), "aria-disabled": !prev }, { children: "Previous" })), _jsx("a", __assign({ href: next ? "/objects/".concat(next) : undefined, className: "flex items-center justify-center px-4 h-10 text-sm font-medium border rounded-lg ms-3 transition \n            ".concat(next
+                            ? "bg-blue-600 text-white hover:bg-blue-700"
+                            : "bg-gray-200 text-gray-400 cursor-not-allowed"), "aria-disabled": !next }, { children: "Next" }))] }))] })));
+};
 var SmartObjectValues = function (_a) {
     var smartObject = _a.smartObject;
     if (!smartObject)
@@ -93,7 +101,7 @@ function MetaData(_a) {
     var toggleVisibility = function () {
         setIsVisible(!isVisible);
     };
-    return (_jsxs("div", { children: [_jsx("button", __assign({ onClick: toggleVisibility, className: "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 my-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" }, { children: isVisible ? 'Hide Metadata' : 'Show Metadata' })), isVisible && (_jsxs("table", __assign({ className: "w-full mt-4 mb-8 text-[12px] text-left text-gray-500 dark:text-gray-400" }, { children: [_jsx("thead", __assign({ className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" }, { children: _jsxs("tr", { children: [_jsx("th", __assign({ scope: "col", className: "px-4 py-2" }, { children: "Key" })), _jsx("th", __assign({ scope: "col", className: "px-4 py-2" }, { children: "Short" })), _jsx("th", __assign({ scope: "col", className: "px-4 py-2" }, { children: "Value" }))] }) })), _jsxs("tbody", { children: [_jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Identity" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_id" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._id), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._id })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._id })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Revision" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_rev" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Root" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_root" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._root), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._root })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._root })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Owners" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_owners" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx("span", __assign({ className: "font-medium text-gray-900 dark:text-white" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._owners })), _jsx(Copy, { text: JSON.stringify(smartObject === null || smartObject === void 0 ? void 0 : smartObject._owners) })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Amount" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_amount" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsxs("span", __assign({ className: "font-medium text-gray-900 dark:text-white" }, { children: [smartObject === null || smartObject === void 0 ? void 0 : smartObject._amount, " Satoshi"] })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._amount })] }))] }))] })] })))] }));
+    return (_jsxs("div", { children: [_jsx("button", __assign({ onClick: toggleVisibility, className: "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 my-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700" }, { children: isVisible ? "Hide Metadata" : "Show Metadata" })), isVisible && (_jsxs("table", __assign({ className: "w-full mt-4 mb-8 text-[12px] text-left text-gray-500 dark:text-gray-400" }, { children: [_jsx("thead", __assign({ className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400" }, { children: _jsxs("tr", { children: [_jsx("th", __assign({ scope: "col", className: "px-4 py-2" }, { children: "Key" })), _jsx("th", __assign({ scope: "col", className: "px-4 py-2" }, { children: "Short" })), _jsx("th", __assign({ scope: "col", className: "px-4 py-2" }, { children: "Value" }))] }) })), _jsxs("tbody", { children: [_jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Identity" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_id" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._id), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._id })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._id })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Revision" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_rev" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._rev })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Root" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_root" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx(Link, __assign({ to: "/objects/".concat(smartObject === null || smartObject === void 0 ? void 0 : smartObject._root), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._root })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._root })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Owners" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_owners" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsx("span", __assign({ className: "font-medium text-gray-900 dark:text-white" }, { children: smartObject === null || smartObject === void 0 ? void 0 : smartObject._owners })), _jsx(Copy, { text: JSON.stringify(smartObject === null || smartObject === void 0 ? void 0 : smartObject._owners) })] }))] })), _jsxs("tr", __assign({ className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700" }, { children: [_jsx("td", __assign({ className: "px-4 py-2" }, { children: "Amount" })), _jsx("td", __assign({ className: "px-4 py-2" }, { children: _jsx("pre", { children: "_amount" }) })), _jsxs("td", __assign({ className: "px-4 py-2" }, { children: [_jsxs("span", __assign({ className: "font-medium text-gray-900 dark:text-white" }, { children: [smartObject === null || smartObject === void 0 ? void 0 : smartObject._amount, " Satoshi"] })), _jsx(Copy, { text: smartObject === null || smartObject === void 0 ? void 0 : smartObject._amount })] }))] }))] })] })))] }));
 }
 function Component(_a) {
     var _this = this;
@@ -104,10 +112,12 @@ function Component(_a) {
     var rev = useState(params.rev || "")[0];
     var computer = useContext(ComputerContext);
     var _b = useState(null), smartObject = _b[0], setSmartObject = _b[1];
-    var _c = useState(false), functionsExist = _c[0], setFunctionsExist = _c[1];
-    var _d = useState({}), functionResult = _d[0], setFunctionResult = _d[1];
+    var _c = useState(undefined), next = _c[0], setNext = _c[1];
+    var _d = useState(undefined), prev = _d[0], setPrev = _d[1];
+    var _e = useState(false), functionsExist = _e[0], setFunctionsExist = _e[1];
+    var _f = useState({}), functionResult = _f[0], setFunctionResult = _f[1];
     var options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"];
-    var _e = useState(""), modalTitle = _e[0], setModalTitle = _e[1];
+    var _g = useState(""), modalTitle = _g[0], setModalTitle = _g[1];
     var setShow = function (flag) {
         if (flag) {
             Modal.get(modalId).show();
@@ -118,7 +128,7 @@ function Component(_a) {
     };
     useEffect(function () {
         var fetch = function () { return __awaiter(_this, void 0, void 0, function () {
-            var synced, error_1, txId_1;
+            var synced, error_1, txId_1, next_1, prev_1, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -133,7 +143,23 @@ function Component(_a) {
                         txId_1 = rev.split(":")[0];
                         navigate("/transactions/".concat(txId_1));
                         return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                    case 3:
+                        _a.trys.push([3, 6, , 7]);
+                        return [4 /*yield*/, computer.next(rev)];
+                    case 4:
+                        next_1 = _a.sent();
+                        return [4 /*yield*/, computer.prev(rev)];
+                    case 5:
+                        prev_1 = _a.sent();
+                        console.log(prev_1, next_1);
+                        setPrev(prev_1.rev);
+                        setNext(next_1.rev);
+                        return [3 /*break*/, 7];
+                    case 6:
+                        error_2 = _a.sent();
+                        console.log({ error: error_2 });
+                        return [3 /*break*/, 7];
+                    case 7: return [2 /*return*/];
                 }
             });
         }); };
@@ -153,8 +179,8 @@ function Component(_a) {
         }
         setFunctionsExist(funcExist);
     }, [smartObject]);
-    var _f = rev.split(":"), txId = _f[0], outNum = _f[1];
-    return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "max-w-screen-md mx-auto" }, { children: [_jsx("h1", __assign({ className: "mb-2 text-5xl font-extrabold dark:text-white" }, { children: title || 'Object' })), _jsxs("div", __assign({ className: "mb-8" }, { children: [_jsx(Link, __assign({ to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: txId })), _jsxs("span", { children: [":", outNum] }), _jsx(Copy, { text: "".concat(txId, ":").concat(outNum) })] })), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(SmartObjectFunction, { smartObject: smartObject, functionsExist: functionsExist, options: options, setFunctionResult: setFunctionResult, setShow: setShow, setModalTitle: setModalTitle }), _jsx(MetaData, { smartObject: smartObject })] })), _jsx(Modal.Component, { title: modalTitle, content: FunctionResultModalContent, contentData: { functionResult: functionResult }, id: modalId })] }));
+    var _h = rev.split(":"), txId = _h[0], outNum = _h[1];
+    return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "max-w-screen-md mx-auto" }, { children: [_jsx("h1", __assign({ className: "mb-2 text-5xl font-extrabold dark:text-white" }, { children: title || "Object" })), _jsxs("div", __assign({ className: "mb-8" }, { children: [_jsx(Link, __assign({ to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: txId })), _jsxs("span", { children: [":", outNum] }), _jsx(Copy, { text: "".concat(txId, ":").concat(outNum) })] })), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(SmartObjectFunction, { smartObject: smartObject, functionsExist: functionsExist, options: options, setFunctionResult: setFunctionResult, setShow: setShow, setModalTitle: setModalTitle }), _jsx(ObjectHistory, { prev: prev, next: next }), _jsx(MetaData, { smartObject: smartObject })] })), _jsx(Modal.Component, { title: modalTitle, content: FunctionResultModalContent, contentData: { functionResult: functionResult }, id: modalId })] }));
 }
 export var SmartObject = {
     Component: Component
