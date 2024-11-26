@@ -45,39 +45,37 @@ function ObjectValueCard({ content }: { content: string }) {
   return <Card content={formattedContent} />
 }
 
-const ObjectHistory = ({ prev, next }: { prev: string | undefined; next: string | undefined }) => {
-  return (
-    <div className="pt-6 pb-6 space-y-4 border-t border-gray-300 dark:border-gray-700">
-      <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Object History</h2>
-      <div className="flex">
-        <a
-          href={prev ? `/objects/${prev}` : undefined}
-          className={`flex items-center justify-center px-4 h-10 text-sm font-medium border rounded-lg transition 
+const ObjectHistory = ({ prev, next }: { prev: string | undefined; next: string | undefined }) => (
+  <div className="pt-6 pb-6 space-y-4 border-t border-gray-300 dark:border-gray-700">
+    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Object History</h2>
+    <div className="flex">
+      <a
+        href={prev ? `/objects/${prev}` : undefined}
+        className={`flex items-center justify-center px-4 h-10 text-sm font-medium border rounded-lg transition 
             ${
               prev
                 ? "bg-blue-600 text-white hover:bg-blue-700"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
-          aria-disabled={!prev}
-        >
-          Previous
-        </a>
-        <a
-          href={next ? `/objects/${next}` : undefined}
-          className={`flex items-center justify-center px-4 h-10 text-sm font-medium border rounded-lg ms-3 transition 
+        aria-disabled={!prev}
+      >
+        Previous
+      </a>
+      <a
+        href={next ? `/objects/${next}` : undefined}
+        className={`flex items-center justify-center px-4 h-10 text-sm font-medium border rounded-lg ms-3 transition 
             ${
               next
                 ? "bg-blue-600 text-white hover:bg-blue-700"
                 : "bg-gray-200 text-gray-400 cursor-not-allowed"
             }`}
-          aria-disabled={!next}
-        >
-          Next
-        </a>
-      </div>
+        aria-disabled={!next}
+      >
+        Next
+      </a>
     </div>
-  )
-}
+  </div>
+)
 
 const SmartObjectValues = ({ smartObject }: any) => {
   if (!smartObject) return <></>
@@ -241,11 +239,10 @@ function Component({ title }: { title?: string }) {
       }
 
       try {
-        const next = await (computer as any).next(rev)
-        const prev = await (computer as any).prev(rev)
-        console.log(prev, next)
-        setPrev(prev.rev)
-        setNext(next.rev)
+        const nextRef = await (computer as any).next(rev)
+        const prevRef = await (computer as any).prev(rev)
+        setPrev(prevRef.rev)
+        setNext(nextRef.rev)
       } catch (error) {
         console.log({ error })
       }

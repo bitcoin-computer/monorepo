@@ -128,7 +128,7 @@ function Component(_a) {
     };
     useEffect(function () {
         var fetch = function () { return __awaiter(_this, void 0, void 0, function () {
-            var synced, error_1, txId_1, next_1, prev_1, error_2;
+            var synced, error_1, txId_1, nextRef, prevRef, error_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -147,13 +147,12 @@ function Component(_a) {
                         _a.trys.push([3, 6, , 7]);
                         return [4 /*yield*/, computer.next(rev)];
                     case 4:
-                        next_1 = _a.sent();
+                        nextRef = _a.sent();
                         return [4 /*yield*/, computer.prev(rev)];
                     case 5:
-                        prev_1 = _a.sent();
-                        console.log(prev_1, next_1);
-                        setPrev(prev_1.rev);
-                        setNext(next_1.rev);
+                        prevRef = _a.sent();
+                        setPrev(prevRef.rev);
+                        setNext(nextRef.rev);
                         return [3 /*break*/, 7];
                     case 6:
                         error_2 = _a.sent();
