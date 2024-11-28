@@ -13,32 +13,13 @@ export function currentPlayer(fen: string) {
   }
   throw new Error("Invalid FEN: Unknown active color")
 }
-export function getOrientation(firstPlayerColor: string, isFirst: boolean): "white" | "black" {
-  let result: "white" | "black"
-  if (isFirst) {
-    if (firstPlayerColor === "w") {
-      result = "white"
-    } else {
-      result = "black"
-    }
-  } else if (firstPlayerColor === "w") {
-    result = "black"
-  } else {
-    result = "white"
-  }
-  return result
-}
 
 export function getWinnerPubKey(chessInstance: Chess, cc: ChessGame) {
   if (!chessInstance || !cc) {
     return null
   }
   if (chessInstance.isCheckmate()) {
-    const winner = chessInstance.turn() === "w" ? "b" : "w"
-    if (cc.firstPlayerColor === winner) {
-      return cc.firstUserPubKey
-    }
-    return cc.secondUserPubKey
+    return chessInstance.turn() === 'w' ? cc.publicKeyW : cc.publicKeyB
   }
   return null
 }

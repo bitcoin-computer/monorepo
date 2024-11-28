@@ -66,9 +66,9 @@ function MintForm(props: {
   setErrorMsg: React.Dispatch<React.SetStateAction<string>>
 }) {
   const { computer, setSuccessRev, setErrorMsg } = props
-  const [name, setName] = useState("")
-  const [secondPlayerPublicKey, setSecondPlayerPublicKey] = useState("")
-  const [secondPlayerUserName, setSecondPlayerUserName] = useState("")
+  const [name, setName] = useState("W")
+  const [secondPlayerPublicKey, setSecondPlayerPublicKey] = useState("0272ccb97e82d62703bae213d3da4d3b2878ee302b0c1760c50d089c4bf383a041")
+  const [secondPlayerUserName, setSecondPlayerUserName] = useState("B")
   const { showLoader } = UtilsContext.useUtilsComponents()
 
   const onSubmit = async (e: React.SyntheticEvent) => {
@@ -76,7 +76,7 @@ function MintForm(props: {
     try {
       showLoader(true)
       const { tx, effect }: any = await computer.encode({
-        exp: `new ChessGame("white", "${computer.getPublicKey()}", "${secondPlayerPublicKey}", "${name}", "${secondPlayerUserName}")`,
+        exp: `new ChessGame("${computer.getPublicKey()}", "${secondPlayerPublicKey}", "${name}", "${secondPlayerUserName}")`,
         mod: VITE_CHESS_GAME_MOD_SPEC
       })
 
@@ -93,7 +93,8 @@ function MintForm(props: {
     } catch (err) {
       showLoader(false)
       if (err instanceof Error) {
-        setErrorMsg(err.message)
+        if(err.message.startsWith('Failed to load module')) setErrorMsg("Run 'npm run deploy' to deploy the smart contracts.")
+        else setErrorMsg(err.message)
         Modal.showModal("error-modal")
       }
     }

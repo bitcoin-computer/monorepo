@@ -1,39 +1,33 @@
 export class ChessGame extends Contract {
-  firstPlayerColor!: string
   sans!: string[]
-  firstUserPubKey!: string
-  secondUserPubKey!: string
-  firstPlayerName!: string
-  secondPlayerName!: string
+  publicKeyW!: string
+  publicKeyB!: string
+  nameW!: string
+  nameB!: string
   fen!: string
 
   constructor(
-    color: string,
-    firstUserPubKey: string,
-    secondUserPubKey: string,
-    firstPlayerName: string,
-    secondPlayerName: string
+    publicKeyW: string,
+    publicKeyB: string,
+    nameW: string,
+    nameB: string
   ) {
     super({
-      firstPlayerColor: color.toLocaleLowerCase() === "black" ? "b" : "w",
       sans: [],
-      firstUserPubKey: firstUserPubKey,
-      secondUserPubKey: secondUserPubKey,
-      fen:
-        color.toLocaleLowerCase() === "black"
-          ? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1"
-          : "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-      firstPlayerName: firstPlayerName,
-      secondPlayerName: secondPlayerName
+      publicKeyW,
+      publicKeyB,
+      fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+      nameW,
+      nameB
     })
   }
 
   addFirstPlayer(pubKey: string) {
-    this.firstUserPubKey = pubKey
+    this.publicKeyW = pubKey
   }
 
   addSecondPlayer(pubKey: string) {
-    this.secondUserPubKey = pubKey
+    this.publicKeyB = pubKey
   }
 
   move(san: string) {
@@ -42,18 +36,18 @@ export class ChessGame extends Contract {
     const game = new Chess(this.fen)
     game.move(san)
     this.fen = game.fen()
-    if (this._owners[0] === this.firstUserPubKey) {
-      this._owners = [this.secondUserPubKey]
+    if (this._owners[0] === this.publicKeyW) {
+      this._owners = [this.publicKeyB]
     } else {
-      this._owners = [this.firstUserPubKey]
+      this._owners = [this.publicKeyW]
     }
   }
 
   changeOwner() {
-    if (this._owners[0] === this.firstUserPubKey) {
-      this._owners = [this.secondUserPubKey]
+    if (this._owners[0] === this.publicKeyW) {
+      this._owners = [this.publicKeyB]
     } else {
-      this._owners = [this.firstUserPubKey]
+      this._owners = [this.publicKeyW]
     }
   }
 

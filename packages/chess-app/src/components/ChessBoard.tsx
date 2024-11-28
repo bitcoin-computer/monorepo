@@ -4,7 +4,7 @@ import { useParams, Link } from "react-router-dom"
 import { Chessboard } from "react-chessboard"
 import { Chess, Square } from "../contracts/chess-module"
 import { ChessGame } from "../contracts/chess-game"
-import { currentPlayer, getGameState, getOrientation, getWinnerPubKey } from "./utils"
+import { currentPlayer, getGameState, getWinnerPubKey } from "./utils"
 
 function ListLayout(props: { listOfMoves: string[] }) {
   const { listOfMoves } = props
@@ -119,9 +119,7 @@ export function ChessBoard() {
       setSans(cc.sans)
       setChessContract(cc)
       setGame(new Chess(cc.fen))
-      setOrientation(
-        getOrientation(cc.firstPlayerColor, cc.firstUserPubKey === computer.getPublicKey())
-      )
+      setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
       await setWinner()
     }
     fetch()
@@ -189,16 +187,14 @@ export function ChessBoard() {
         )}
 
         {/* Chessboard Column */}
-        <div className="col-span-2 flex flex-col items-center space-y-3 px-12">
+        <div className="col-span-2 flex flex-col items-center space-y-2 px-4">
           {game && (
             <>
               <div className="bg-white dark:bg-gray-900 w-full">
                 <dl className="text-gray-900 dark:text-gray-200">
                   <div className="flex justify-between">
                     <dt className="text-lg font-bold text-gray-500 dark:text-gray-400">
-                      {chessContract?.firstPlayerColor === orientation[0]
-                        ? chessContract.secondPlayerName
-                        : chessContract?.firstPlayerColor}
+                      { orientation === 'white' ? chessContract!.nameB : chessContract!.nameW }
                     </dt>
                   </div>
                 </dl>
@@ -216,9 +212,7 @@ export function ChessBoard() {
                 <dl className="text-gray-900 dark:text-gray-200">
                   <div className="flex justify-between">
                     <dt className="text-lg font-bold text-gray-500 dark:text-gray-400">
-                      {chessContract?.firstPlayerColor === orientation[0]
-                        ? chessContract.firstPlayerName
-                        : chessContract?.secondPlayerName}
+                    { orientation === 'white' ? chessContract!.nameW : chessContract!.nameB }
                     </dt>
                   </div>
                 </dl>

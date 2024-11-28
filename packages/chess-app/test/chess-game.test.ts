@@ -13,7 +13,7 @@ describe("ChessGame", () => {
   const white = new Computer()
   const black = new Computer()
   const computer = new Computer()
-  let mod = ''
+  let mod
 
   beforeAll(async () => {
     await white.faucet(1e8)
@@ -29,7 +29,7 @@ describe("ChessGame", () => {
 
   describe("constructor", () => {
     it('Should create a smart object', async () => {
-      const chessGame = await white.new(ChessGame, ['white', white.getPublicKey(), black.getPublicKey(), 'w', 'b'])
+      const chessGame = await white.new(ChessGame, [white.getPublicKey(), black.getPublicKey(), 'w', 'b'])
       expect(chessGame).toBeDefined()
       expect(chessGame.fen).toEqual('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     }, 30000)
@@ -37,7 +37,7 @@ describe("ChessGame", () => {
 
   describe('move', () => {
     test('Should perform a move', async () => {
-      const chessGame = await white.new(ChessGame, ['white', white.getPublicKey(), black.getPublicKey(), 'w', 'b'], mod)
+      const chessGame = await white.new(ChessGame, [white.getPublicKey(), black.getPublicKey(), 'w', 'b'], mod)
       const fenBefore = chessGame.fen
       await chessGame.move('e4')
       expect(chessGame.fen).toEqual('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1')

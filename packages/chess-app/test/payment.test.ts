@@ -14,39 +14,24 @@ export function sleep(delay: number): Promise<void> {
 
 describe("PaymentHelper", () => {
   const amount = 1e8
+  const secretW = 'secretW'
+  const secretB = 'secretB'
+  const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW)))
+  const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB)))
+  const secretHexW = secretHashW.toString('hex')
+  const secretHexB = secretHashB.toString('hex')
 
-  let secretW
-  let secretB
   let computerW
   let computerB
   let paymentHelperW
   let paymentHelperB
-
-  let secretHexW
-  let secretHexB
-  let publicKeyHexW
-  let publicKeyHexB
   
   beforeEach(async () => {
-    secretW = 'secretW'
-    secretB = 'secretB'
-    const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW)))
-    const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB)))
-    secretHexW = secretHashW.toString('hex')
-    secretHexB = secretHashB.toString('hex')
-
     computerW = new Computer({ chain: CHAIN, network: NETWORK, url: BCN_URL })
     computerB = new Computer({ chain: CHAIN, network: NETWORK, url: BCN_URL })
 
-    const publicKeyW = computerW.wallet.publicKey
-    const publicKeyB = computerB.wallet.publicKey
-    const pubkeyHashW = crypto.hash160(publicKeyW)
-    const pubkeyHashB = crypto.hash160(publicKeyB)
-    publicKeyHexW = pubkeyHashW.toString('hex')
-    publicKeyHexB = pubkeyHashB.toString('hex')
-
-    paymentHelperB = new PaymentHelper(computerB, amount, publicKeyHexW, secretHexW, publicKeyHexB, secretHexB)
-    paymentHelperW = new PaymentHelper(computerW, amount, publicKeyHexW, secretHexW, publicKeyHexB, secretHexB)
+    paymentHelperB = new PaymentHelper(computerB, amount, computerW.getPublicKey(), secretHexW, computerB.getPublicKey(), secretHexB)
+    paymentHelperW = new PaymentHelper(computerW, amount, computerW.getPublicKey(), secretHexW, computerB.getPublicKey(), secretHexB)
     await computerW.faucet(1.5e8)
     await computerB.faucet(1.5e8)
     await paymentHelperW.deploy()
@@ -54,7 +39,7 @@ describe("PaymentHelper", () => {
 
   describe('constructor', () => {
     it('Should create a smart object', async () => {
-      const payment = await computerW.new(Payment, [{ amount, publicKeyHexW, secretHexW, publicKeyHexB, secretHexB }])
+      const payment = await computerW.new(Payment, [{ amount, publicKeyW: computerW.getPublicKey(), secretHexW, publicKeyB: computerB.getPublicKey(), secretHexB }])
       expect(payment).toBeDefined()
       expect(typeof payment._id).toBe('string')
     })
@@ -93,11 +78,11 @@ describe("PaymentHelper", () => {
       expect(typeof txId2).toEqual('string')
     })
 
-    it.only('Should throw an error when trying to spend with the wrong secret', async () => {
+    it('Should throw an error when trying to spend with the wrong secret', async () => {
       const tx = await paymentHelperW.makeTx()
       const txId = await paymentHelperB.completeTx(tx)
       await expect(paymentHelperW.spend(txId, secretB, 0)).rejects.toThrow('mandatory-script-verify-flag-failed (Script evaluated without error but finished with a false/empty top stack element)')
-      await expect(paymentHelperW.spend(txId, secretB, 1)).rejects.toThrow('mandatory-script-verify-flag-failed (Script failed an OP_EQUALVERIFY operation)')
+      await expect(paymentHelperW.spend(txId, secretB, 1)).rejects.toThrow('mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)')
     }, 20000)
   })
 })

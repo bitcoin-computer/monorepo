@@ -7,29 +7,23 @@ global.Buffer = Buffer
 
 type PaymentType = { 
   amount: number, 
-  publicKeyHexW: string, 
+  publicKeyW: string, 
   secretHexW: string, 
-  publicKeyHexB: string, 
+  publicKeyB: string, 
   secretHexB: string
 }
 
 export class Payment extends Contract {
-  constructor({ amount, publicKeyHexW, secretHexW, publicKeyHexB, secretHexB }: PaymentType) {
+  constructor({ amount, publicKeyW, secretHexW, publicKeyB, secretHexB }: PaymentType) {
     super({
       _amount: amount,
       _owners: `OP_IF
-        OP_DUP OP_HASH160 ${publicKeyHexW} OP_EQUALVERIFY OP_CHECKSIG
-        OP_VERIFY
-        OP_HASH256
-        ${secretHexW}
-        OP_EQUAL
+        ${publicKeyW} OP_CHECKSIGVERIFY
+        OP_HASH256 ${secretHexW} OP_EQUAL
       OP_ELSE
-        OP_DUP OP_HASH160 ${publicKeyHexB} OP_EQUALVERIFY OP_CHECKSIG
-        OP_VERIFY
-        OP_HASH256
-        ${secretHexB}
-        OP_EQUAL
-      OP_ENDIF`.trim().replace(/\s+/g, ' ')
+        ${publicKeyB} OP_CHECKSIGVERIFY
+        OP_HASH256 ${secretHexB} OP_EQUAL
+      OP_ENDIF`.replace(/\s+/g, ' ')
     })
   }
 }
@@ -38,27 +32,27 @@ export class PaymentHelper {
   computer: Computer
   mod?: string
   amount: number
-  publicKeyHexW: string
+  publicKeyW: string
   secretHexW: string
-  publicKeyHexB: string
+  publicKeyB: string
   secretHexB: string
 
   constructor(
     computer: Computer,
     amount: number,
-    publicKeyHexW: string,
+    publicKeyW: string,
     secretHexW: string,
-    bobPubkeyHex: string,
-    bobSecretHex: string,
+    publicKeyB: string,
+    secretHexB: string,
     mod?: string
   ) {
     this.computer = computer
     this.mod = mod
     this.amount = amount
-    this.publicKeyHexW = publicKeyHexW
+    this.publicKeyW = publicKeyW
     this.secretHexW = secretHexW
-    this.publicKeyHexB = bobPubkeyHex
-    this.secretHexB = bobSecretHex
+    this.publicKeyB = publicKeyB
+    this.secretHexB = secretHexB
   }
 
   async deploy(): Promise<string> {
@@ -68,18 +62,12 @@ export class PaymentHelper {
 
   getASM(): string {
     return `OP_IF
-      OP_DUP OP_HASH160 ${this.publicKeyHexW} OP_EQUALVERIFY OP_CHECKSIG
-      OP_VERIFY
-      OP_HASH256
-      ${this.secretHexW}
-      OP_EQUAL
+      ${this.publicKeyW} OP_CHECKSIGVERIFY
+      OP_HASH256 ${this.secretHexW} OP_EQUAL
     OP_ELSE
-      OP_DUP OP_HASH160 ${this.publicKeyHexB} OP_EQUALVERIFY OP_CHECKSIG
-      OP_VERIFY
-      OP_HASH256
-      ${this.secretHexB}
-      OP_EQUAL
-    OP_ENDIF`.trim().replace(/\s+/g, ' ')
+      ${this.publicKeyB} OP_CHECKSIGVERIFY
+      OP_HASH256 ${this.secretHexB} OP_EQUAL
+    OP_ENDIF`.replace(/\s+/g, ' ')
   }
 
   async makeTx(): Promise<Transaction> {
@@ -87,9 +75,9 @@ export class PaymentHelper {
     const { tx } = await this.computer.encode({
       exp: `new Payment({
         "amount": ${this.amount},
-        publicKeyHexW: "${this.publicKeyHexW}",
+        publicKeyW: "${this.publicKeyW}",
         secretHexW: "${this.secretHexW}",
-        publicKeyHexB: "${this.publicKeyHexB}",
+        publicKeyB: "${this.publicKeyB}",
         secretHexB: "${this.secretHexB}"
       })`,
       mod: this.mod,
@@ -97,8 +85,7 @@ export class PaymentHelper {
       sign: false,
     })
 
-
-    // Fund
+    // Fund with this.amount / 2
     const chain = this.computer.getChain()
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)
@@ -116,7 +103,7 @@ export class PaymentHelper {
     const fee = await this.computer.wallet.estimateFee(tx)
     const publicKeyBuffer = this.computer.wallet.publicKey
     const { output } = payments.p2pkh({ pubkey: publicKeyBuffer, network: n })
-    const changeAmount = paid - (this.amount / 2) - (5 * fee) // todo: optimize the fee
+    const changeAmount = (paid - (this.amount / 2)) - (5 * fee) // todo: optimize the fee
     tx.addOutput(output, changeAmount)
     
     // Sign
@@ -132,10 +119,8 @@ export class PaymentHelper {
     const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
     tx.addInput(txHash, 0)
 
-    // Sign
+    // Sign and broadcast
     await this.computer.sign(tx)
-
-    // Broadcast
     return this.computer.broadcast(tx)
   }
 
@@ -149,7 +134,6 @@ export class PaymentHelper {
     const asmFromBuf = (sigHash: Buffer) => [
       Buffer.from(secret),
       bscript.signature.encode(hdPrivateKey.sign(sigHash), Transaction.SIGHASH_ALL),
-      hdPrivateKey.publicKey,
       spendingPath === 0 ? opcodes.OP_TRUE : opcodes.OP_FALSE
     ]
 

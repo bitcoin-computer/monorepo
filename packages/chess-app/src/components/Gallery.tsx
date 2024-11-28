@@ -30,7 +30,7 @@ function GameCard({ chessGame }: { chessGame: ChessGame }) {
     <>
       <div
         className={`bg-white border rounded-lg shadow mb-4 ${
-          chessGame.firstUserPubKey === publicKey || chessGame.secondUserPubKey === publicKey
+          chessGame.publicKeyW === publicKey || chessGame.publicKeyB === publicKey
             ? "border-blue-600 dark:border-blue-500"
             : "border-gray-200 dark:border-gray-700"
         }`}
@@ -41,26 +41,26 @@ function GameCard({ chessGame }: { chessGame: ChessGame }) {
           </p>
           <p
             className={`mb-1 font-normal break-words ${
-              chessGame.firstUserPubKey === publicKey
+              chessGame.publicKeyW === publicKey
                 ? "text-blue-600 dark:text-blue-500"
                 : "text-gray-700 dark:text-gray-400"
             }`}
-            title={chessGame.firstPlayerName}
+            title={chessGame.nameW}
           >
-            {truncateName(chessGame.firstPlayerName)}
+            {truncateName(chessGame.nameW)}
           </p>
           <div className="flex justify-center items-center my-1 text-gray-500 dark:text-gray-400">
             <BiGitCompare size={20} />
           </div>
           <p
             className={`mb-1 font-normal break-words ${
-              chessGame.secondUserPubKey === publicKey
+              chessGame.publicKeyB === publicKey
                 ? "text-blue-600 dark:text-blue-500"
                 : "text-gray-700 dark:text-gray-400"
             }`}
-            title={chessGame.secondPlayerName}
+            title={chessGame.nameB}
           >
-            {truncateName(chessGame.secondPlayerName)}
+            {truncateName(chessGame.nameB)}
           </p>
         </div>
       </div>
