@@ -5,10 +5,10 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL
 export interface Game {
   id: string
   gameId: string
-  firstPlayerPubKey: string
-  secondPlayerPubKey: string
-  firstPlayerHash?: string
-  secondPlayerHash?: string
+  publicKeyW: string
+  publicKeyB: string
+  secretW?: string
+  secretB?: string
 }
 
 export const getGame = async (gameId: string): Promise<Game | null> => {

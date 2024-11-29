@@ -28,14 +28,14 @@ app.get('/games/:gameId', async (req: Request, res: Response) => {
 
 app.post('/games', async (req, res) => {
   try {
-    const { gameId, firstPlayerPubKey, secondPlayerPubKey } = req.body
+    const { gameId, publicKeyW, publicKeyB } = req.body
 
     // You can perform validation here before updating the data
     const id = uuidv4()
 
     await db.none(
-      `INSERT INTO "Games" (id, "gameId", "firstPlayerPubKey", "secondPlayerPubKey", "firstPlayerHash", "secondPlayerHash") VALUES ($1, $2, $3, $4, $5, $6);`,
-      [id, gameId, firstPlayerPubKey, secondPlayerPubKey, 'hash1', 'hash2']
+      `INSERT INTO "Games" (id, "gameId", "publicKeyW", "publicKeyB", "secretW", "secretB") VALUES ($1, $2, $3, $4, $5, $6);`,
+      [id, gameId, publicKeyW, publicKeyB, 'hash1', 'hash2']
     )
 
     res.status(201).json({ message: 'Game added successfully' })

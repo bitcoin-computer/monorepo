@@ -1,15 +1,15 @@
 import { Computer } from "@bitcoin-computer/lib"
 import { ChessGame } from "../src/contracts/chess-game.js"
 import { config } from "dotenv"
-import * as readline from "node:readline/promises"
+import { createInterface } from "node:readline/promises"
 import { stdin as input, stdout as output } from "node:process"
-import * as fs from "fs/promises"
+import { readFile } from "fs/promises"
 
 config()
 
 const { VITE_CHAIN: chain, VITE_NETWORK: network, VITE_URL: url, MNEMONIC: mnemonic } = process.env
 
-const rl = readline.createInterface({ input, output })
+const rl = createInterface({ input, output })
 
 if (network !== "regtest" && !mnemonic) throw new Error("Please set MNEMONIC in the .env file")
 
@@ -32,7 +32,7 @@ if (answer === "n") {
   process.exit(0)
 }
 
-const chessFile = await fs.readFile("./src/contracts/chess.mjs", "utf-8")
+const chessFile = await readFile("./src/contracts/chess.mjs", "utf-8")
 const chessModSpec = await computer.deploy(`${chessFile}`)
 const chessGameModSpec = await computer.deploy(`
   import { Chess } from "${chessModSpec}"

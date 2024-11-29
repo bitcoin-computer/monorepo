@@ -65,27 +65,32 @@ function MintForm(props: {
   setSuccessRev: React.Dispatch<React.SetStateAction<string>>
   setErrorMsg: React.Dispatch<React.SetStateAction<string>>
 }) {
-  const { computer, setSuccessRev, setErrorMsg } = props
-  const [name, setName] = useState("W")
-  const [secondPlayerPublicKey, setSecondPlayerPublicKey] = useState("0272ccb97e82d62703bae213d3da4d3b2878ee302b0c1760c50d089c4bf383a041")
-  const [secondPlayerUserName, setSecondPlayerUserName] = useState("B")
+  const { computer: computerW, setSuccessRev, setErrorMsg } = props
+  const [nameW, setName] = useState("W")
+  const [publicKeyB, setSecondPlayerPublicKey] = useState("0272ccb97e82d62703bae213d3da4d3b2878ee302b0c1760c50d089c4bf383a041")
+  const [nameB, setNameB] = useState("B")
   const { showLoader } = UtilsContext.useUtilsComponents()
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
       showLoader(true)
-      const { tx, effect }: any = await computer.encode({
-        exp: `new ChessGame("${computer.getPublicKey()}", "${secondPlayerPublicKey}", "${name}", "${secondPlayerUserName}")`,
+      const { tx, effect }: any = await computerW.encode({
+        exp: `new ChessGame(
+          "${computerW.getPublicKey()}",
+          "${publicKeyB}",
+          "${nameW}",
+          "${nameB}"
+        )`,
         mod: VITE_CHESS_GAME_MOD_SPEC
       })
 
-      await computer.broadcast(tx)
+      await computerW.broadcast(tx)
       setSuccessRev(effect.res?._id)
       await createGame({
         gameId: effect.res?._id,
-        firstPlayerPubKey: computer.getPublicKey(),
-        secondPlayerPubKey: secondPlayerPublicKey
+        publicKeyW: computerW.getPublicKey(),
+        publicKeyB: publicKeyB
       })
 
       showLoader(false)
@@ -113,7 +118,7 @@ function MintForm(props: {
             <input
               type="text"
               id="name"
-              value={name}
+              value={nameW}
               onChange={(e) => setName(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
@@ -125,8 +130,8 @@ function MintForm(props: {
             <input
               type="text"
               id="name"
-              value={secondPlayerUserName}
-              onChange={(e) => setSecondPlayerUserName(e.target.value)}
+              value={nameB}
+              onChange={(e) => setNameB(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
           </div>
@@ -137,7 +142,7 @@ function MintForm(props: {
             <input
               type="text"
               id="name"
-              value={secondPlayerPublicKey}
+              value={publicKeyB}
               onChange={(e) => setSecondPlayerPublicKey(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />

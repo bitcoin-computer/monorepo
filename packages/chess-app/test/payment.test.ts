@@ -16,10 +16,8 @@ describe("PaymentHelper", () => {
   const amount = 1e8
   const secretW = 'secretW'
   const secretB = 'secretB'
-  const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW)))
-  const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB)))
-  const secretHexW = secretHashW.toString('hex')
-  const secretHexB = secretHashB.toString('hex')
+  const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW))).toString('hex')
+  const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB))).toString('hex')
 
   let computerW
   let computerB
@@ -30,8 +28,8 @@ describe("PaymentHelper", () => {
     computerW = new Computer({ chain: CHAIN, network: NETWORK, url: BCN_URL })
     computerB = new Computer({ chain: CHAIN, network: NETWORK, url: BCN_URL })
 
-    paymentHelperB = new PaymentHelper(computerB, amount, computerW.getPublicKey(), secretHexW, computerB.getPublicKey(), secretHexB)
-    paymentHelperW = new PaymentHelper(computerW, amount, computerW.getPublicKey(), secretHexW, computerB.getPublicKey(), secretHexB)
+    paymentHelperB = new PaymentHelper(computerB, amount, computerW.getPublicKey(), secretHashW, computerB.getPublicKey(), secretHashB)
+    paymentHelperW = new PaymentHelper(computerW, amount, computerW.getPublicKey(), secretHashW, computerB.getPublicKey(), secretHashB)
     await computerW.faucet(1.5e8)
     await computerB.faucet(1.5e8)
     await paymentHelperW.deploy()
@@ -39,7 +37,7 @@ describe("PaymentHelper", () => {
 
   describe('constructor', () => {
     it('Should create a smart object', async () => {
-      const payment = await computerW.new(Payment, [{ amount, publicKeyW: computerW.getPublicKey(), secretHexW, publicKeyB: computerB.getPublicKey(), secretHexB }])
+      const payment = await computerW.new(Payment, [{ amount, publicKeyW: computerW.getPublicKey(), secretHashW, publicKeyB: computerB.getPublicKey(), secretHashB }])
       expect(payment).toBeDefined()
       expect(typeof payment._id).toBe('string')
     })

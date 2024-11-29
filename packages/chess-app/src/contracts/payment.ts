@@ -8,21 +8,21 @@ global.Buffer = Buffer
 type PaymentType = { 
   amount: number, 
   publicKeyW: string, 
-  secretHexW: string, 
+  secretHashW: string, 
   publicKeyB: string, 
-  secretHexB: string
+  secretHashB: string
 }
 
 export class Payment extends Contract {
-  constructor({ amount, publicKeyW, secretHexW, publicKeyB, secretHexB }: PaymentType) {
+  constructor({ amount, publicKeyW, secretHashW, publicKeyB, secretHashB }: PaymentType) {
     super({
       _amount: amount,
       _owners: `OP_IF
         ${publicKeyW} OP_CHECKSIGVERIFY
-        OP_HASH256 ${secretHexW} OP_EQUAL
+        OP_HASH256 ${secretHashW} OP_EQUAL
       OP_ELSE
         ${publicKeyB} OP_CHECKSIGVERIFY
-        OP_HASH256 ${secretHexB} OP_EQUAL
+        OP_HASH256 ${secretHashB} OP_EQUAL
       OP_ENDIF`.replace(/\s+/g, ' ')
     })
   }
@@ -33,26 +33,26 @@ export class PaymentHelper {
   mod?: string
   amount: number
   publicKeyW: string
-  secretHexW: string
+  secretHashW: string
   publicKeyB: string
-  secretHexB: string
+  secretHashB: string
 
   constructor(
     computer: Computer,
     amount: number,
     publicKeyW: string,
-    secretHexW: string,
+    secretHashW: string,
     publicKeyB: string,
-    secretHexB: string,
+    secretHashB: string,
     mod?: string
   ) {
     this.computer = computer
     this.mod = mod
     this.amount = amount
     this.publicKeyW = publicKeyW
-    this.secretHexW = secretHexW
+    this.secretHashW = secretHashW
     this.publicKeyB = publicKeyB
-    this.secretHexB = secretHexB
+    this.secretHashB = secretHashB
   }
 
   async deploy(): Promise<string> {
@@ -63,10 +63,10 @@ export class PaymentHelper {
   getASM(): string {
     return `OP_IF
       ${this.publicKeyW} OP_CHECKSIGVERIFY
-      OP_HASH256 ${this.secretHexW} OP_EQUAL
+      OP_HASH256 ${this.secretHashW} OP_EQUAL
     OP_ELSE
       ${this.publicKeyB} OP_CHECKSIGVERIFY
-      OP_HASH256 ${this.secretHexB} OP_EQUAL
+      OP_HASH256 ${this.secretHashB} OP_EQUAL
     OP_ENDIF`.replace(/\s+/g, ' ')
   }
 
@@ -76,9 +76,9 @@ export class PaymentHelper {
       exp: `new Payment({
         "amount": ${this.amount},
         publicKeyW: "${this.publicKeyW}",
-        secretHexW: "${this.secretHexW}",
+        secretHashW: "${this.secretHashW}",
         publicKeyB: "${this.publicKeyB}",
-        secretHexB: "${this.secretHexB}"
+        secretHashB: "${this.secretHashB}"
       })`,
       mod: this.mod,
       fund: false,
