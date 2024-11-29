@@ -80,8 +80,7 @@ export function ChessBoard() {
 
   const fetchChessContract = async (): Promise<ChessGame> => {
     const [latestRev] = await computer.query({ ids: [gameId] })
-    const cc = (await computer.sync(latestRev)) as ChessGame
-    return cc
+    return computer.sync(latestRev) as Promise<ChessGame> 
   }
   const computer = useContext(ComputerContext)
   const [game, setGame] = useState<Chess | null>(null)

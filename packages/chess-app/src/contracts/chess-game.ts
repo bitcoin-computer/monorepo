@@ -1,24 +1,37 @@
+import { Computer } from "@bitcoin-computer/lib"
+import { readFile } from "fs/promises"
+import { Payment } from "./payment"
+
 export class ChessGame extends Contract {
-  sans!: string[]
-  publicKeyW!: string
-  publicKeyB!: string
+  amount!: number
   nameW!: string
   nameB!: string
+  publicKeyW!: string
+  publicKeyB!: string
+  secretHashW!: string
+  secretHashB!: string
+  sans!: string[]
   fen!: string
 
   constructor(
+    amount: number,
+    nameW: string,
+    nameB: string,
     publicKeyW: string,
     publicKeyB: string,
-    nameW: string,
-    nameB: string
+    secretHashW: string,
+    secretHashB: string
   ) {
     super({
-      sans: [],
+      amount,
+      nameW,
+      nameB,
       publicKeyW,
       publicKeyB,
+      secretHashW,
+      secretHashB,
+      sans: [],
       fen: "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
-      nameW,
-      nameB
     })
   }
 
@@ -62,5 +75,43 @@ export class ChessGame extends Contract {
 
   getFen() {
     return this.fen
+  }
+}
+
+export class ChessGameHelper {
+  computer: Computer
+  mod?: string
+  amount: number
+  publicKeyW: string
+  secretHashW: string
+  publicKeyB: string
+  secretHashB: string
+  
+  constructor(
+    computer: Computer,
+    amount: number,
+    publicKeyW: string,
+    secretHashW: string,
+    publicKeyB: string,
+    secretHashB: string,
+    mod?: string
+  ) {
+    this.computer = computer
+    this.mod = mod
+    this.amount = amount
+    this.publicKeyW = publicKeyW
+    this.secretHashW = secretHashW
+    this.publicKeyB = publicKeyB
+    this.secretHashB = secretHashB
+  }
+
+  async deploy(): Promise<string> {
+    const chessFile = await readFile("./src/contracts/chess.mjs", "utf-8")
+    this.mod = await this.computer.deploy(`
+      ${chessFile}
+      ${Payment}
+      export ${ChessGame}
+    `)
+    return this.mod
   }
 }

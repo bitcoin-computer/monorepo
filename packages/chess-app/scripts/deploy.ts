@@ -3,7 +3,7 @@ import { ChessGame } from "../src/contracts/chess-game.js"
 import { config } from "dotenv"
 import { createInterface } from "node:readline/promises"
 import { stdin as input, stdout as output } from "node:process"
-import { readFile } from "fs/promises"
+import { readFile, writeFile } from "fs/promises"
 
 config()
 
@@ -55,7 +55,7 @@ VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${chessGameModSpec}\x1b[0m
 `)
 } else {
   // Update module specifiers in the .env file
-  const lines = (await fs.readFile('.env', 'utf-8')).split('\n')
+  const lines = (await readFile('.env', 'utf-8')).split('\n')
   for (let i = 0; i < lines.length; i++) {
     if (lines[i].startsWith('VITE_CHESS_MODULE_MOD_SPEC')) {
       lines[i] = `VITE_CHESS_MODULE_MOD_SPEC=${chessModSpec}`
@@ -64,7 +64,7 @@ VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${chessGameModSpec}\x1b[0m
       lines[i] = `VITE_CHESS_GAME_MOD_SPEC=${chessGameModSpec}`
     }
   }
-  await fs.writeFile('.env', lines.join('\n'), 'utf-8')
+  await writeFile('.env', lines.join('\n'), 'utf-8')
   console.log(' \x1b[2m- Successfully updated .env file\x1b[0m')
 }
 

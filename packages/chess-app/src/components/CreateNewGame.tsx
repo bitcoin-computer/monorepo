@@ -69,7 +69,11 @@ function MintForm(props: {
   const [nameW, setName] = useState("W")
   const [publicKeyB, setSecondPlayerPublicKey] = useState("0272ccb97e82d62703bae213d3da4d3b2878ee302b0c1760c50d089c4bf383a041")
   const [nameB, setNameB] = useState("B")
+  const [amount, setAmount] = useState(`0.1`)
   const { showLoader } = UtilsContext.useUtilsComponents()
+
+  const secretHashW = ''
+  const secretHashB = ''
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
@@ -77,10 +81,13 @@ function MintForm(props: {
       showLoader(true)
       const { tx, effect }: any = await computerW.encode({
         exp: `new ChessGame(
+          ${parseInt(amount, 10)},
+          "${nameW}",
+          "${nameB}",
           "${computerW.getPublicKey()}",
           "${publicKeyB}",
-          "${nameW}",
-          "${nameB}"
+          "${secretHashW}",
+          "${secretHashB}",
         )`,
         mod: VITE_CHESS_GAME_MOD_SPEC
       })
@@ -111,6 +118,18 @@ function MintForm(props: {
           <h2 className="text-2xl font-bold dark:text-white">Let's Play</h2>
           <p className="text-lg text-gray-500">Start a new game and invite your friend.</p>
 
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              Amount
+            </label>
+            <input
+              type="number"
+              id="name"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Your User Name
