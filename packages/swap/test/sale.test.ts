@@ -252,7 +252,7 @@ describe('Sale', () => {
     })
 
     it("Buyer update's the swap transaction to receive the NFT", () => {
-      tx = SaleHelper.finalizeSaleTx(tx as any, payment, buyer.toScriptPubKey())
+      tx = SaleHelper.finalizeSaleTx(tx, payment, buyer.toScriptPubKey())
     })
 
     it('Buyer funds the swap transaction', async () => {
