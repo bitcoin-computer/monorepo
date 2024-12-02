@@ -1,5 +1,5 @@
 import { Computer } from "@bitcoin-computer/lib"
-import { ChessGame } from "../src/contracts/chess-game.js"
+import { ChessGameHelper } from "../src/contracts/chess-game.js"
 import { config } from "dotenv"
 import { createInterface } from "node:readline/promises"
 import { stdin as input, stdout as output } from "node:process"
@@ -32,13 +32,8 @@ if (answer === "n") {
   process.exit(0)
 }
 
-const chessFile = await readFile("./src/contracts/chess.mjs", "utf-8")
-const chessModSpec = await computer.deploy(`${chessFile}`)
-const chessGameModSpec = await computer.deploy(`
-  import { Chess } from "${chessModSpec}"
-  export ${ChessGame}
-`)
-
+const chessGameHelper = new ChessGameHelper(computer)
+const mod = await chessGameHelper.deploy()
 console.log(' \x1b[2m- Successfully deployed smart contracts\x1b[0m')
 
 const answer2 = await rl.question("\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m")
@@ -50,18 +45,14 @@ ACTION REQUIRED
     
 Update the following rows in your .env file.
 
-VITE_CHESS_MODULE_MOD_SPEC\x1b[2m=${chessModSpec}\x1b[0m
-VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${chessGameModSpec}\x1b[0m
+VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${mod}\x1b[0m
 `)
 } else {
   // Update module specifiers in the .env file
   const lines = (await readFile('.env', 'utf-8')).split('\n')
   for (let i = 0; i < lines.length; i++) {
-    if (lines[i].startsWith('VITE_CHESS_MODULE_MOD_SPEC')) {
-      lines[i] = `VITE_CHESS_MODULE_MOD_SPEC=${chessModSpec}`
-    }
     if (lines[i].startsWith('VITE_CHESS_GAME_MOD_SPEC')) {
-      lines[i] = `VITE_CHESS_GAME_MOD_SPEC=${chessGameModSpec}`
+      lines[i] = `VITE_CHESS_GAME_MOD_SPEC=${mod}`
     }
   }
   await writeFile('.env', lines.join('\n'), 'utf-8')
