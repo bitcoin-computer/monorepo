@@ -1,5 +1,5 @@
 /// <reference types="node" />
-import { Psbt, TxInput, TxOutput, Transaction } from '@bitcoin-computer/nakamotojs'
+import { Psbt, TxInput, TxOutput, Transaction as nTransaction } from '@bitcoin-computer/nakamotojs'
 import { BIP32Interface } from 'bip32'
 
 type TxType = {
@@ -109,8 +109,8 @@ declare class Update {
   get ioMap(): number[]
   zip(): [string, string][]
   static fromTxId(txId: string, wallet: Wallet): Promise<Update>
-  static fromTx(tx: TBCTransaction, { keyPair }: RestClient): Promise<Update>
-  toTx(wallet: Wallet): Promise<TBCTransaction>
+  static fromTx(tx: Transaction, { keyPair }: RestClient): Promise<Update>
+  toTx(wallet: Wallet): Promise<Transaction>
   broadcast(wallet: Wallet): Promise<string[]>
   isValid(fromTx: Update): boolean
 }
@@ -313,7 +313,7 @@ type Effect = {
   env: JObject
 }
 
-class RestClient {
+declare class RestClient {
   readonly chain: TBCChain
   readonly network: TBCNetwork
   readonly networkObj: Network
@@ -376,7 +376,7 @@ class RestClient {
   height(): Promise<number>
 }
 
-class Wallet {
+declare class Wallet {
   readonly restClient: RestClient
   constructor(params?: ComputerOptions)
   derive(subpath?: string): Wallet
@@ -414,7 +414,7 @@ class Wallet {
   get address(): string
 }
 
-declare class TBCTransaction extends Transaction {
+declare class Transaction extends nTransaction {
   constructor({ ins, outs, version, locktime }?: TxType)
   get txId(): string
   get inputs(): string[]
@@ -437,16 +437,18 @@ declare class TBCTransaction extends Transaction {
   get zip(): string[][]
   spendFromData(inputRevs: string[]): void
   createDataOuts(ownerData: ProgramMetaData[], metaData: any, wallet: Wallet): void
-  static fromBuffer(buffer: Buffer): TBCTransaction
-  static fromHex(hex: string): TBCTransaction
-  static fromTransaction(tx: Transaction): TBCTransaction
+  static fromBuffer(buffer: Buffer): Transaction
+  static fromHex(hex: string): Transaction
+  static fromTransaction(tx: nTransaction): Transaction
   static fromTxId({
     txId,
     restClient,
   }: {
     txId: string
     restClient: RestClient
-  }): Promise<TBCTransaction>
+  }): Promise<Transaction>
+  clone(): Transaction
+  static deserialize(s: string): Transaction
 }
 
 declare class Contract {
@@ -519,7 +521,7 @@ declare class Computer {
   send(satoshis: number, address: string): Promise<string>
   broadcast(tx: Transaction): Promise<string>
   rpcCall(method: string, params: string): Promise<any>
-  static txFromHex({ hex }: { hex: string }): TBCTransaction
+  static txFromHex({ hex }: { hex: string }): Transaction
   getChain(): TBCChain
   getNetwork(): TBCNetwork
   getMnemonic(): string
@@ -555,4 +557,4 @@ declare class Computer {
   getMinimumFees(): number
 }
 
-export { Computer, Contract, Mock, TBCTransaction as Transaction }
+export { Computer, Contract, Mock, Transaction }
