@@ -74,7 +74,7 @@ export class PaymentHelper {
     // Create output with non-standard script
     const { tx } = await this.computer.encode({
       exp: `new Payment({
-        "amount": ${this.amount},
+        amount: ${this.amount},
         publicKeyW: "${this.publicKeyW}",
         secretHashW: "${this.secretHashW}",
         publicKeyB: "${this.publicKeyB}",
