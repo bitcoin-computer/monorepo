@@ -9,8 +9,6 @@ type TxType = {
   locktime?: number
 }
 
-declare const outputProps: string[]
-declare const keywordsProps: string[]
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]
@@ -29,47 +27,6 @@ type SJObject = {
   _readers?: string[]
   _url?: string
 }
-declare const isJUndefined: (a: Json) => a is undefined
-declare const isJNull: (a: Json) => a is null
-declare const isJBoolean: (a: Json) => a is boolean
-declare const isJNumber: (a: Json) => a is number
-declare const isJString: (a: Json) => a is string
-declare const isJSymbol: (a: Json) => a is symbol
-declare const isJBigInt: (a: Json) => a is bigint
-declare const isJBasic: (a: Json) => a is JBasic
-declare const isJObject: (a: Json) => a is JObject
-declare const isJArray: (a: Json) => a is JArray
-declare const isJson: (a: Json) => a is Json
-type ArraysOf<T> = T | Array<ArraysOf<T>>
-declare function isArraysOfBasic(value: Json): value is ArraysOf<JBasic>
-declare const isSJArray: (a: Json) => a is SJArray
-declare const isSJObject: (a: Json) => a is SJObject
-declare const objectProject: (keys: string[]) => (obj: Json) => Json
-declare const objectEntryFilter: (
-  g: (el: [string, Json]) => boolean,
-) => (object: JObject) => JObject
-declare const objectEntryMap: (
-  g: (el: [string, Json]) => [string, Json],
-) => (object: JObject) => JObject
-declare const objectMap: (f: (el: Json) => Json) => (object: JObject) => JObject
-declare const jsonMap: (g: (el: Json) => Json) => (json: Json) => Json
-declare const jsonMapTopDown: (g: (el: Json) => Json) => (json: Json) => Json
-declare const objectFilter: (f: (el: Json) => boolean) => (object: JObject) => JObject
-declare const jsonFilter: (g: (el: Json) => boolean) => (json: Json) => Json
-declare const clone: (x: Json) => Json
-declare const objectEntryMapImpure: (g: (el: [string, Json]) => void) => (object: JObject) => void
-declare const objectMapImpure: (f: (el: Json) => void) => (object: JObject) => void
-declare const jsonMapImpure: (g: (el: Json) => void) => (visited?: Json[]) => (json: Json) => void
-declare const treeFold: (
-  leafF: (x: Json) => Json,
-) => (nodeF: (arr: Json[]) => Json) => (visited: Json[]) => (x: Json) => Json
-declare const jsonQuery: (q: (y: Json) => boolean) => (x: Json) => Json
-declare const not: (f: (x: Json) => boolean) => (x: Json) => boolean
-declare const keywordsProject: (x: Json) => Json[]
-declare const updateFromEnv: (env: any) => (arg: any) => void
-declare const getRevs: (obj: any) => string[]
-declare const getIds: (obj: any) => string[]
-declare const findByRev: (rev: string) => (obj: Json) => Json[]
 
 declare class Mock {
   _id: string
@@ -238,11 +195,6 @@ type UserQuery = Partial<{
   order: 'ASC' | 'DESC'
   ids: string[]
 }>
-declare function isStored(obj: Json): obj is Stored
-declare function isEncrypted(obj: Json): obj is Encrypted
-declare function isRevObject(obj: Json): obj is Rev
-declare function isTxId(s: string): boolean
-declare function isRev(s: string): boolean
 interface Tapleaf {
   output: Buffer
   version?: number
@@ -275,7 +227,6 @@ interface _Unspent {
   address?: string
   height?: number
 }
-type DhttpResponse = _Unspent[] | Request | string | number | void | null
 interface _Input {
   txId: string
   vout: number
