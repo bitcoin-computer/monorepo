@@ -3,9 +3,8 @@ CREATE TABLE IF NOT EXISTS
     "rev" VARCHAR(70) NOT NULL PRIMARY KEY,
     "address" VARCHAR(66),
     "satoshis" BIGINT NOT NULL,
-    "scriptPubKey" TEXT NOT NULL,
+    "asm" TEXT NOT NULL,
     "isTbcOutput" BOOLEAN NOT NULL,
-    "publicKeys" VARCHAR(66)[],
     "mod" VARCHAR(70),
     "previous" VARCHAR(70),
     "hash" VARCHAR(64),
@@ -68,7 +67,7 @@ CREATE TABLE IF NOT EXISTS
   );
 
 CREATE VIEW "Utxos" AS
-SELECT "rev", "address", "satoshis", "scriptPubKey", "publicKeys", "timestamp", "blockHash"
+SELECT "rev", "address", "satoshis", "asm", "timestamp", "blockHash"
 FROM "Output" WHERE "isTbcOutput" = false AND NOT EXISTS
 (SELECT 1 FROM "Input" ip WHERE "ip"."outputSpent" = "Output"."rev")
 
