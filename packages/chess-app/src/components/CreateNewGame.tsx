@@ -3,7 +3,8 @@ import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/componen
 import { Link } from "react-router-dom"
 import { Computer } from "@bitcoin-computer/lib"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
-import { createGame } from "../services/game.service"
+import { getSecret as getHash } from "../services/secret.service"
+import { ChessGameHelper } from "../contracts/chess-game"
 
 function SuccessContent(id: string) {
   return (
@@ -70,39 +71,49 @@ function MintForm(props: {
   const [publicKeyB, setSecondPlayerPublicKey] = useState("0272ccb97e82d62703bae213d3da4d3b2878ee302b0c1760c50d089c4bf383a041")
   const [nameB, setNameB] = useState("B")
   const [amount, setAmount] = useState(`0.1`)
+  const [serializedTx, setSerializedTx] = useState('')
   const { showLoader } = UtilsContext.useUtilsComponents()
 
-  const secretHashW = ''
-  const secretHashB = ''
+  // const secretHashW = ''
+  // const secretHashB = ''
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
       showLoader(true)
-      const { tx, effect }: any = await computerW.encode({
-        exp: `new ChessGame(
-          ${parseInt(amount, 10)},
-          "${nameW}",
-          "${nameB}",
-          "${computerW.getPublicKey()}",
-          "${publicKeyB}",
-          "${secretHashW}",
-          "${secretHashB}",
-        )`,
-        mod: VITE_CHESS_GAME_MOD_SPEC
-      })
+      const secretHashW = await getHash()
+      const secretHashB = await getHash()
 
-      await computerW.broadcast(tx)
-      setSuccessRev(effect.res?._id)
-      await createGame({
-        gameId: effect.res?._id,
-        publicKeyW: computerW.getPublicKey(),
-        publicKeyB: publicKeyB
-      })
+      if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
+
+      const publicKeyW = computerW.getPublicKey()
+      const chessGameHelper = new ChessGameHelper(computerW,
+        nameW,
+        nameB,
+        parseFloat(amount) * 1e8,
+        publicKeyW,
+        publicKeyB,
+        secretHashW,
+        secretHashB,
+        VITE_CHESS_GAME_MOD_SPEC
+      )
+      const tx = await chessGameHelper.makeTx()
+
+      console.log('transaction', tx.serialize())
+
+
+
+      // setSuccessRev(effect.res?._id)
+      // await createGame({
+      //   gameId: effect.res?._id,
+      //   publicKeyW: computerW.getPublicKey(),
+      //   publicKeyB: publicKeyB
+      // })
 
       showLoader(false)
       Modal.showModal("success-modal")
     } catch (err) {
+      console.log('Err', err)
       showLoader(false)
       if (err instanceof Error) {
         if(err.message.startsWith('Failed to load module')) setErrorMsg("Run 'npm run deploy' to deploy the smart contracts.")

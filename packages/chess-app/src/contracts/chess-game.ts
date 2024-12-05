@@ -1,12 +1,11 @@
 import { Computer, Transaction } from "@bitcoin-computer/lib"
-import { readFile } from "fs/promises"
 import { address, bufferUtils, networks, payments, script as bscript, opcodes} from "@bitcoin-computer/nakamotojs"
 import { script } from "@bitcoin-computer/nakamotojs"
 import { Buffer } from 'buffer'
 
 const { fromASM, toASM } = script
 
-global.Buffer = Buffer
+if (typeof global !== 'undefined') global.Buffer = Buffer
 
 type PaymentType = { 
   amount: number, 
@@ -16,7 +15,7 @@ type PaymentType = {
   secretHashB: string
 }
 
-class Payment extends Contract {
+export class Payment extends Contract {
   constructor({ amount, publicKeyW, publicKeyB, secretHashW, secretHashB }: PaymentType) {
     super({
       _amount: amount,
@@ -142,16 +141,6 @@ export class ChessGameHelper {
     this.mod = mod
   }
 
-  async deploy(): Promise<string> {
-    const chessFile = await readFile("./src/contracts/chess.mjs", "utf-8")
-    this.mod = await this.computer.deploy(`
-      ${chessFile}
-      export ${Payment}
-      export ${ChessGame}
-    `)
-    return this.mod
-  }
-
   getASM(): string {
     return `OP_IF
       ${this.publicKeyW} OP_CHECKSIGVERIFY
@@ -193,6 +182,8 @@ export class ChessGameHelper {
       paid += satoshis
     }
 
+    if (paid < this.amount) throw new Error('Not enough funds to create chess game.')
+
     // Add change
     const fee = await this.computer.wallet.estimateFee(tx)
     const publicKeyBuffer = this.computer.wallet.publicKey
@@ -215,7 +206,6 @@ export class ChessGameHelper {
 
     // Sign and broadcast
     await this.computer.sign(tx)
-    console.log('tx', tx)
     return this.computer.broadcast(tx)
   }
 

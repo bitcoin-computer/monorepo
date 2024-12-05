@@ -1,6 +1,7 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { ChessGame, ChessGameHelper } from '../src/contracts/chess-game'
 import { crypto } from '@bitcoin-computer/nakamotojs'
+import { deploy } from '../scripts/lib'
 
 const CHAIN = 'LTC'
 const NETWORK = 'regtest'
@@ -27,8 +28,7 @@ describe("ChessGame", () => {
   beforeAll(async () => {
     await computerW.faucet(1e8)
     await computer.faucet(1e8)
-    const chessGameHelper = new ChessGameHelper(computer, '', '', 1e8, '', '', '', '')
-    mod = await chessGameHelper.deploy()
+    mod = await deploy(computer)
   }, 20000)
 
 
@@ -56,7 +56,7 @@ describe('ChessGameHelper', () => {
   let computerB
   let chessGameHelperW
   let chessGameHelperB
-  const amount = 1e8
+  const amount = 1e6
 
   beforeEach(async () => {
     computerW = new Computer({ chain: CHAIN, network: NETWORK, url: BCN_URL })
@@ -82,7 +82,7 @@ describe('ChessGameHelper', () => {
       secretHashW,
       secretHashB
     )
-    await chessGameHelperW.deploy()
+    chessGameHelperW.mod = await deploy(computerW)
   }, 20000)
 
   describe('makeTx', () => {

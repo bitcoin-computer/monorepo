@@ -1,9 +1,9 @@
 import { Computer } from "@bitcoin-computer/lib"
-import { ChessGameHelper } from "../src/contracts/chess-game.js"
 import { config } from "dotenv"
 import { createInterface } from "node:readline/promises"
 import { stdin as input, stdout as output } from "node:process"
 import { readFile, writeFile } from "fs/promises"
+import { deploy } from "./lib.ts"
 
 config()
 
@@ -32,8 +32,7 @@ if (answer === "n") {
   process.exit(0)
 }
 
-const chessGameHelper = new ChessGameHelper(computer)
-const mod = await chessGameHelper.deploy()
+const mod = await deploy(computer)
 console.log(' \x1b[2m- Successfully deployed smart contracts\x1b[0m')
 
 const answer2 = await rl.question("\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m")
