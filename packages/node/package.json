@@ -54,7 +54,6 @@
     "axios-mock-adapter": "^1.22.0",
     "bitcoind-rpc": "^0.9.1",
     "body-parser": "^1.20.2",
-    "chai": "^4.3.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ecpair": "^2.1.0",
@@ -65,12 +64,9 @@
     "express-rate-limit": "^7.1.5",
     "geoip-lite": "^1.4.10",
     "hash.js": "^1.1.7",
-    "mocha": "^10.3.0",
     "pg-monitor": "^2.0.0",
     "pg-promise": "^11.5.4",
     "run-parallel": "^1.2.0",
-    "sinon": "^17.0.1",
-    "sinon-chai": "^3.7.0",
     "ts-node": "^10.9.2",
     "typeforce": "^1.18.0",
     "typescript": "^5.3.3",
@@ -81,8 +77,8 @@
   "devDependencies": {
     "@types/chai": "^4.3.1",
     "@types/mocha": "^10.0.6",
-    "@types/sinon": "^10.0.11",
-    "@types/sinon-chai": "^3.2.8"
+    "chai": "^5.1.0",
+    "mocha": "^10.3.0"
   },
   "keywords": [
     "Bitcoin",
