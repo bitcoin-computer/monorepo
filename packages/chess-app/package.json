@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test": "vitest",
+    "test": "vitest run",
     "deploy": "npm run build-contract && node --loader ts-node/esm  ./scripts/deploy.ts",
     "build-contract": "tsc --project tsconfig.build.json && mv ./build-contract/chess-module.js ./src/contracts/chess.mjs && rm -rf build-contract"
   },
