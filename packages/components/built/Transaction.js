@@ -59,7 +59,7 @@ function ExpressionCard(_a) {
     entries.forEach(function (entry) {
         var name = entry[0], rev = entry[1];
         var regExp = new RegExp("(".concat(name, ")"), "g");
-        var replacer = function (n) { return (_jsx(Link, __assign({ to: "/objects/".concat(rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: n }), rev)); };
+        var replacer = function (n, ind) { return (_jsx(Link, __assign({ to: "/objects/".concat(rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline" }, { children: n }), "".concat(rev, "|").concat(ind))); };
         formattedContent = reactStringReplace(formattedContent, regExp, replacer);
     });
     return _jsx(Card, { content: formattedContent });
@@ -83,7 +83,7 @@ function Component() {
                         return [4 /*yield*/, computer.wallet.restClient.getRawTxs([params.txn])];
                     case 1:
                         hex = (_a.sent())[0];
-                        tx = Computer.txFromHex({ hex: hex }).tx;
+                        tx = Computer.txFromHex({ hex: hex });
                         setTxnData(tx);
                         return [4 /*yield*/, computer.rpcCall("getrawtransaction", "".concat(params.txn, " 2"))];
                     case 2:
@@ -101,21 +101,23 @@ function Component() {
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _b.trys.push([0, 2, , 3]);
+                        _b.trys.push([0, 3, , 4]);
+                        if (!txnData) return [3 /*break*/, 2];
                         _a = setTransition;
                         return [4 /*yield*/, computer.decode(txnData)];
                     case 1:
                         _a.apply(void 0, [_b.sent()]);
-                        return [3 /*break*/, 3];
-                    case 2:
+                        _b.label = 2;
+                    case 2: return [3 /*break*/, 4];
+                    case 3:
                         err_1 = _b.sent();
                         if (err_1 instanceof Error) {
                             setTransition("");
                             // eslint-disable-next-line no-console
                             console.log("Error parsing transaction", err_1.message);
                         }
-                        return [3 /*break*/, 3];
-                    case 3: return [2 /*return*/];
+                        return [3 /*break*/, 4];
+                    case 4: return [2 /*return*/];
                 }
             });
         }); };
