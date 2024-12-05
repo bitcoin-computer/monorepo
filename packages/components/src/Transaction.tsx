@@ -11,9 +11,9 @@ function ExpressionCard({ content, env }: { content: string; env: { [s: string]:
   entries.forEach((entry) => {
     const [name, rev] = entry
     const regExp = new RegExp(`(${name})`, "g")
-    const replacer = (n: string) => (
+    const replacer = (n: string, ind: number) => (
       <Link
-        key={rev}
+        key={`${rev}|${ind}`}
         to={`/objects/${rev}`}
         className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
       >
@@ -38,7 +38,7 @@ function Component() {
     const fetch = async () => {
       setTxn(params.txn)
       const [hex] = await computer.wallet.restClient.getRawTxs([params.txn as string])
-      const { tx } = Computer.txFromHex({ hex })
+      const tx = Computer.txFromHex({ hex })
       setTxnData(tx)
 
       const { result } = await computer.rpcCall("getrawtransaction", `${params.txn} 2`)
@@ -50,7 +50,7 @@ function Component() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        setTransition(await computer.decode(txnData))
+        if (txnData) setTransition(await computer.decode(txnData))
       } catch (err) {
         if (err instanceof Error) {
           setTransition("")

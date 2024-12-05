@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { Buffer } from 'buffer'
-import { Transaction } from '@bitcoin-computer/nakamotojs'
+import { Transaction } from '@bitcoin-computer/lib'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
 

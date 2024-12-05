@@ -224,7 +224,7 @@ export class Transaction {
     );
   }
   clone() {
-    const newTx = new Transaction();
+    const newTx = new this.constructor();
     newTx.version = this.version;
     newTx.locktime = this.locktime;
     newTx.ins = this.ins.map(txIn => {
@@ -598,7 +598,7 @@ export class Transaction {
   }
   static deserialize(s) {
     const buf = Buffer.from(s, 'base64');
-    return Transaction.fromBuffer(buf);
+    return this.fromBuffer(buf);
   }
   getInRevs() {
     return this.ins.map(
