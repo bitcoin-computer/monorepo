@@ -45,38 +45,6 @@ function ObjectValueCard({ content }: { content: string }) {
   return <Card content={formattedContent} />
 }
 
-const ObjectHistory = ({ prev, next }: { prev: string | undefined; next: string | undefined }) => (
-  <div className="pt-6 pb-6 space-y-4 border-t border-gray-300 dark:border-gray-700">
-    <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Object History</h2>
-    <div className="flex">
-      <a
-        href={prev ? `/objects/${prev}` : undefined}
-        className={`flex items-center justify-center px-4 h-10 text-sm font-medium border rounded-lg transition 
-            ${
-              prev
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-        aria-disabled={!prev}
-      >
-        Previous
-      </a>
-      <a
-        href={next ? `/objects/${next}` : undefined}
-        className={`flex items-center justify-center px-4 h-10 text-sm font-medium border rounded-lg ms-3 transition 
-            ${
-              next
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-            }`}
-        aria-disabled={!next}
-      >
-        Next
-      </a>
-    </div>
-  </div>
-)
-
 const SmartObjectValues = ({ smartObject }: any) => {
   if (!smartObject) return <></>
   return (
@@ -93,7 +61,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
   )
 }
 
-function MetaData({ smartObject }: any) {
+function MetaData({ smartObject, prev, next }: any) {
   const [isVisible, setIsVisible] = useState(false)
 
   const toggleVisibility = () => {
@@ -102,12 +70,41 @@ function MetaData({ smartObject }: any) {
 
   return (
     <div>
-      <button
-        onClick={toggleVisibility}
-        className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 my-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-      >
-        {isVisible ? "Hide Metadata" : "Show Metadata"}
-      </button>
+      <div className="pt-6 pb-6 space-y-4 border-t border-gray-300 dark:border-gray-700">
+        <div className="flex">
+          <a
+            href={prev ? `/objects/${prev}` : undefined}
+            className={`flex items-center justify-center px-4 h-10 ms-3 text-sm font-medium border rounded-lg transition 
+      ${
+        prev
+          ? "bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+      }`}
+            aria-disabled={!prev}
+          >
+            Previous
+          </a>
+          <a
+            href={next ? `/objects/${next}` : undefined}
+            className={`flex items-center justify-center px-4 h-10 ms-3 text-sm font-medium border rounded-lg transition 
+      ${
+        next
+          ? "bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+      }`}
+            aria-disabled={!next}
+          >
+            Next
+          </a>
+          <button
+            onClick={toggleVisibility}
+            className={`flex items-center justify-center px-4 h-10 ms-3 text-sm font-medium border rounded-lg transition 
+      bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700`}
+          >
+            {isVisible ? "Hide Metadata" : "Show Metadata"}
+          </button>
+        </div>
+      </div>
 
       {isVisible && (
         <table className="w-full mt-4 mb-8 text-[12px] text-left text-gray-500 dark:text-gray-400">
@@ -239,8 +236,8 @@ function Component({ title }: { title?: string }) {
       }
 
       try {
-        const nextRef = await (computer as any).next(rev)
-        const prevRef = await (computer as any).prev(rev)
+        const nextRef = await computer.next(rev)
+        const prevRef = await computer.prev(rev)
         setPrev(prevRef.rev)
         setNext(nextRef.rev)
       } catch (error) {
@@ -297,9 +294,7 @@ function Component({ title }: { title?: string }) {
           setModalTitle={setModalTitle}
         />
 
-        <ObjectHistory prev={prev} next={next} />
-
-        <MetaData smartObject={smartObject} />
+        <MetaData smartObject={smartObject} prev={prev} next={next} />
       </div>
       <Modal.Component
         title={modalTitle}
