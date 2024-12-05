@@ -11,5 +11,5 @@ export declare class TxWrapperHelper {
     deploy(): Promise<string>;
     createWrappedTx(publicKey: string, url: string, tx?: Transaction): Promise<any>;
     addSaleTx(txWrapperTxId: string, tx: Transaction): Promise<any>;
-    decodeTx(txWrapperTxId: string): Promise<any>;
+    decodeTx(txWrapperTxId: string): Promise<Transaction>;
 }

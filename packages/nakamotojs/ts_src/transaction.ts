@@ -313,7 +313,7 @@ export class Transaction {
   }
 
   clone(): Transaction {
-    const newTx = new Transaction();
+    const newTx = new (this.constructor as { new (): Transaction })();
     newTx.version = this.version;
     newTx.locktime = this.locktime;
 
@@ -794,7 +794,7 @@ export class Transaction {
 
   static deserialize(s: string): Transaction {
     const buf = Buffer.from(s, 'base64');
-    return Transaction.fromBuffer(buf);
+    return this.fromBuffer(buf);
   }
 
   getInRevs() {
