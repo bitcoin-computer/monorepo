@@ -109,6 +109,7 @@ export function NotLoggedMenu() {
       setDropDownLabel(formatChainAndNetwork(chain, network))
       window.location.href = "/"
     } catch (err) {
+      console.log(err)
       showSnackBar("Error setting chain and network", false)
       Modal.get(modalId).show()
     }
