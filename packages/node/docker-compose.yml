@@ -43,6 +43,7 @@ services:
       retries: 3
       start_period: 30s
     command: npm start
+    working_dir: /dist/packages/node
     ports:
       - ${BCN_PORT}:${BCN_PORT}
     environment:
@@ -77,7 +78,8 @@ services:
       - BCN_ENV=${BCN_ENV}
       - BCN_URL=${BCN_URL}
       - BCN_ZMQ_URL=${BCN_ZMQ_URL}
-      - BCN_THREADS=${BCN_THREADS}
+      - BCN_WORKER_ID=${BCN_WORKER_ID}
+      - BCN_NUM_WORKERS=${BCN_NUM_WORKERS}
       - BITCOIN_RPC_HOST=${BITCOIN_RPC_HOST}
       - BITCOIN_RPC_PORT=${BITCOIN_RPC_PORT}
       - BITCOIN_RPC_PROTOCOL=${BITCOIN_RPC_PROTOCOL}

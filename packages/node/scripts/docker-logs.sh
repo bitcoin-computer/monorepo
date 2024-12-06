@@ -16,21 +16,27 @@ done
 echo ''
 
 # Define .env path
-env_path='../.env'
+env_path='.env'
 
-# Read chain and network from env_path
-chain=$(grep 'BCN_CHAIN=' $env_path | cut -d '=' -f2)
-network=$(grep 'BCN_NETWORK=' $env_path | cut -d '=' -f2)
+# Read network from env_path
+network=$(grep 'BCN_NETWORK=' $env_path | cut -d '=' -f2 | tr -d "'")
 
-if [ "$network" = "mainnet" ]; then
-    debug="/debug.log"
-else
-    if [ "$network" = "testnet" ]; then
-        debug="/testnet3/debug.log"
-    else
+# Set debug path based on network
+case "$network" in
+    mainnet)
+        debug="/debug.log"
+        ;;
+    testnet)
+        debug="/testnet4/debug.log"
+        ;;
+    regtest)
         debug="/regtest/debug.log"
-    fi
-fi
+        ;;
+    *)
+        echo "Invalid network: $network"
+        exit 1
+        ;;
+esac
 
 # Get bitcoin data directory from .env
 logpath=$(grep 'BITCOIN_DATA_DIR=' $env_path | cut -d '=' -f2)
@@ -41,7 +47,7 @@ logpath=$(echo $logpath | tr -d "'")
 echo '------ node ------'
 
 # Get the logs from the bitcoin node (default LTC testnet)
-node_container_image=$(docker compose -f ../docker-compose.yml ps -q node | xargs docker inspect --format='{{.Image}}' | sed -e 's/^sha256:/\'$'\n/g')
+node_container_image=$(docker compose -f docker-compose.yml ps -q node | xargs docker inspect --format='{{.Image}}' | sed -e 's/^sha256:/\'$'\n/g')
 node_container_id=$(docker ps -qf "ancestor=$node_container_image")
 docker exec $node_container_id tail -n 5 $logpath$debug
 

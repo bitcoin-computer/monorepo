@@ -28,17 +28,11 @@ function main() {
   serviceGroup.add_argument('-node', { action: 'store_const', const: 'node' })
   serviceGroup.add_argument('-sync', { action: 'store_const', const: 'sync' })
 
-  parser.add_argument('-threads', { type: 'int' })
-
   // Determine the service to launch
   const args = parser.parse_args()
   const selectedService = args.db || args.bcn || args.node || args.sync
   
-  const threadsString = args.threads !== undefined ? ` export BCN_THREADS=${args.threads} && ` : ''
-  const commandLine = `${threadsString} docker compose -f docker-compose.yml `
-  
-  console.log(commandLine)
-
+  const commandLine = `docker compose -f docker-compose.yml `
   execSync(`sh -c "${commandLine} up ${selectedService || ''}"`, { stdio: 'inherit' })
 }
 
