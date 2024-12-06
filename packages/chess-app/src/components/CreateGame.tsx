@@ -164,7 +164,7 @@ function MintForm(props: {
   )
 }
 
-export default function CreateNewGame() {
+export default function CreateGame() {
   const computer = useContext(ComputerContext)
   const [errorMsg, setErrorMsg] = useState("")
 

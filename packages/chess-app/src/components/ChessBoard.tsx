@@ -46,7 +46,7 @@ function WinnerModal(data: any) {
             : `Sorry! You have lost the game. `}
           Click{" "}
           <Link
-            to={`/new-game`}
+            to={`/new`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             onClick={() => {
               Modal.hideModal("winner-modal")

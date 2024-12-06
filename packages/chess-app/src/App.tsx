@@ -7,7 +7,7 @@ import { ChessBoard } from "./components/ChessBoard"
 
 import { Navbar } from "./components/Navbar"
 import { MyGames } from "./components/Assets"
-import CreateNewGame from "./components/CreateNewGame"
+import CreateGame from "./components/CreateGame"
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -27,7 +27,7 @@ export default function App() {
           <div className="w-full h-screen bg-white border-gray-200 dark:bg-gray-900 px-28">
             <Routes>
               <Route path="/" element={<MyGames />} />
-              <Route path="/new-game" element={<CreateNewGame />} />
+              <Route path="/new" element={<CreateGame />} />
               <Route path="/game/:id" element={<ChessBoard />} />
               <Route path="*" element={<Navigate to="/" replace={true} />} />
             </Routes>
