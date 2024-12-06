@@ -1,51 +1,15 @@
 import { useContext, useState } from "react"
 import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
-import { Link } from "react-router-dom"
 import { Computer } from "@bitcoin-computer/lib"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
 import { getSecret as getHash } from "../services/secret.service"
 import { ChessGameHelper } from "../contracts/chess-game"
 
-function SuccessContent(id: string) {
-  return (
-    <>
-      <div className="p-4 md:p-5">
-        <div>
-          Congratiolations! You have created a new game. Click{" "}
-          <Link
-            to={`/game/${id}`}
-            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            onClick={() => {
-              Modal.hideModal("success-modal")
-            }}
-          >
-            here
-          </Link>{" "}
-          to start playing it.
-        </div>
-      </div>
-      <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-        <button
-          onClick={() => Modal.hideModal("success-modal")}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Close
-        </button>
-      </div>
-    </>
-  )
-}
-
 function ErrorContent(msg: string) {
   return (
     <>
       <div className="p-4 md:p-5">
-        <div>
-          Something went wrong.
-          <br />
-          <br />
-          {msg}
-        </div>
+        Something went wrong.<br />{msg}
       </div>
       <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
         <button
@@ -63,19 +27,17 @@ function ErrorContent(msg: string) {
 
 function MintForm(props: {
   computer: Computer
-  setSuccessRev: React.Dispatch<React.SetStateAction<string>>
   setErrorMsg: React.Dispatch<React.SetStateAction<string>>
 }) {
-  const { computer: computerW, setSuccessRev, setErrorMsg } = props
+  const { computer: computerW, setErrorMsg } = props
   const [nameW, setName] = useState("W")
   const [publicKeyB, setSecondPlayerPublicKey] = useState("0272ccb97e82d62703bae213d3da4d3b2878ee302b0c1760c50d089c4bf383a041")
   const [nameB, setNameB] = useState("B")
   const [amount, setAmount] = useState(`0.1`)
   const [serializedTx, setSerializedTx] = useState('')
-  const { showLoader } = UtilsContext.useUtilsComponents()
+  const [copied, setCopied] = useState(false)
 
-  // const secretHashW = ''
-  // const secretHashB = ''
+  const { showLoader } = UtilsContext.useUtilsComponents()
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
@@ -98,20 +60,9 @@ function MintForm(props: {
         VITE_CHESS_GAME_MOD_SPEC
       )
       const tx = await chessGameHelper.makeTx()
-
-      console.log('transaction', tx.serialize())
-
-
-
-      // setSuccessRev(effect.res?._id)
-      // await createGame({
-      //   gameId: effect.res?._id,
-      //   publicKeyW: computerW.getPublicKey(),
-      //   publicKeyB: publicKeyB
-      // })
+      setSerializedTx(tx.serialize())
 
       showLoader(false)
-      Modal.showModal("success-modal")
     } catch (err) {
       console.log('Err', err)
       showLoader(false)
@@ -122,6 +73,15 @@ function MintForm(props: {
       }
     }
   }
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(serializedTx)
+      .then(() => setCopied(true))
+      .catch(() => setCopied(false))
+
+    setTimeout(() => setCopied(false), 2000)
+  };
+
   return (
     <>
       <form onSubmit={onSubmit} className="w-full lg:w-1/2">
@@ -185,24 +145,32 @@ function MintForm(props: {
           Create Game
         </button>
       </form>
+
+      <div className="flex flex-col items-start p-4 mt-4 border rounded-lg shadow-md bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
+      <p
+        className="break-all text-sm text-blue-600 underline cursor-pointer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 border-0 focus:ring-0"
+        onClick={handleCopy}
+      >
+        {serializedTx}
+      </p>
+      <button
+        className="mt-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+        onClick={handleCopy}
+      >
+        {copied ? "Copied!" : "Copy Link"}
+      </button>
+    </div>
     </>
   )
 }
 
 export default function CreateNewGame() {
   const computer = useContext(ComputerContext)
-  const [successRev, setSuccessRev] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
 
   return (
     <>
-      <MintForm computer={computer} setSuccessRev={setSuccessRev} setErrorMsg={setErrorMsg} />
-      <Modal.Component
-        title={"Success"}
-        content={SuccessContent}
-        contentData={successRev}
-        id={"success-modal"}
-      />
+      <MintForm computer={computer} setErrorMsg={setErrorMsg} />
       <Modal.Component
         title={"Error"}
         content={ErrorContent}
