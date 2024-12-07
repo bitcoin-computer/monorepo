@@ -789,12 +789,13 @@ export class Transaction {
 
   serialize(): string {
     const buf = this.toBuffer();
-    return buf.toString('base64');
+    return encodeURIComponent(buf.toString('base64'));
   }
 
   static deserialize(s: string): Transaction {
-    const buf = Buffer.from(s, 'base64');
-    return Transaction.fromBuffer(buf);
+    const base64 = decodeURIComponent(s);
+    const buf = Buffer.from(base64, 'base64');
+    return this.fromBuffer(buf);
   }
 
   getInRevs() {
