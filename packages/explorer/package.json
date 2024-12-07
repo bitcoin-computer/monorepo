@@ -10,6 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
+    "start": "vite",
     "deploy": "node --experimental-modules scripts/deploy.mjs"
   },
   "dependencies": {

@@ -224,7 +224,7 @@ export class Transaction {
     );
   }
   clone() {
-    const newTx = new Transaction();
+    const newTx = new this.constructor();
     newTx.version = this.version;
     newTx.locktime = this.locktime;
     newTx.ins = this.ins.map(txIn => {

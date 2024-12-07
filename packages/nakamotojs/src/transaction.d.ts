@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 import { Signer } from './psbt.js';
 import { Buffer } from 'buffer';
 export interface Output {

@@ -2,7 +2,6 @@
 FROM node:20-alpine
 
 # install dependencies to run cmake
-# RUN apk add --no-cache cmake make git gcc g++ python3 libstdc++ libgcc curl bash ninja zeromq zeromq-dev
 RUN apk add --no-cache cmake make git gcc g++ python3 libstdc++ libgcc curl bash ninja zeromq zeromq-dev zip unzip
 
 # Install node-gyp and node-gyp-build globally to avoid issues during build

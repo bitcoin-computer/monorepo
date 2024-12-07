@@ -37,14 +37,14 @@ export function p2tr(a, opts) {
       network: typef.maybe(typef.Object),
       output: typef.maybe(typef.BufferN(34)),
       internalPubkey: typef.maybe(typef.BufferN(32)),
-      hash: typef.maybe(typef.BufferN(32)),
-      pubkey: typef.maybe(typef.BufferN(32)),
+      hash: typef.maybe(typef.BufferN(32)), // merkle root hash, the tweak
+      pubkey: typef.maybe(typef.BufferN(32)), // tweaked with `hash` from `internalPubkey`
       signature: typef.maybe(typef.BufferN(64)),
       witness: typef.maybe(typef.arrayOf(typef.Buffer)),
       scriptTree: typef.maybe(isTaptree),
       redeem: typef.maybe({
-        output: typef.maybe(typef.Buffer),
-        redeemVersion: typef.maybe(typef.Number),
+        output: typef.maybe(typef.Buffer), // tapleaf script
+        redeemVersion: typef.maybe(typef.Number), // tapleaf version
         witness: typef.maybe(typef.arrayOf(typef.Buffer)),
       }),
       redeemVersion: typef.maybe(typef.Number),

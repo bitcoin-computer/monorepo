@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 import { Buffer } from 'buffer';
 interface ScriptSignature {
     signature: Buffer;

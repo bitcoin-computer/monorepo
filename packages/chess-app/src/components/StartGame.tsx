@@ -41,8 +41,10 @@ function StartForm(props: {
     try {
       showLoader(true)
 
+      if (!serialized) throw new Error('Invalid link')
+
       const tx = Transaction.deserialize(serialized) as Transaction
-      const { effect } = await computer.encode(tx.onChainMetaData)
+      const { effect } = await computer.encode(tx.onChainMetaData as never)
       const { res } = effect
       const game = res as unknown as ChessGame
       const chessGameHelper = ChessGameHelper.fromGame(game, computer, VITE_CHESS_GAME_MOD_SPEC)

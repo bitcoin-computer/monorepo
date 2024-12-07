@@ -104,7 +104,7 @@ export class PaymentHelper {
     const publicKeyBuffer = this.computer.wallet.publicKey
     const { output } = payments.p2pkh({ pubkey: publicKeyBuffer, network: n })
     const changeAmount = (paid - (this.amount / 2)) - (5 * fee) // todo: optimize the fee
-    tx.addOutput(output, changeAmount)
+    tx.addOutput(output!, changeAmount)
     
     // Sign
     const { SIGHASH_ALL, SIGHASH_ANYONECANPAY } = Transaction
@@ -141,7 +141,7 @@ export class PaymentHelper {
     const redeemTx = new Transaction()
     redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), 0)
     const { output } = payments.p2pkh({ pubkey: hdPrivateKey.publicKey, ...n })
-    redeemTx.addOutput(output, this.amount - fee)
+    redeemTx.addOutput(output!, this.amount - fee)
     const redeemScript = bscript.fromASM(this.getASM())
     const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
     const inScript = fromASM(toASM(asmFromBuf(sigHash)))

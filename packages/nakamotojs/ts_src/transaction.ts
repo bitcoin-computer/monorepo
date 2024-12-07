@@ -313,7 +313,7 @@ export class Transaction {
   }
 
   clone(): Transaction {
-    const newTx = new Transaction();
+    const newTx = new (this.constructor as { new (): Transaction })();
     newTx.version = this.version;
     newTx.locktime = this.locktime;
 
