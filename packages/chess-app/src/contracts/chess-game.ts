@@ -141,6 +141,19 @@ export class ChessGameHelper {
     this.mod = mod
   }
 
+  static fromGame(game: ChessGame, computer: Computer, mod?: string) {
+    return new this(computer,
+      game.nameW,
+      game.nameB,
+      game.amount,
+      game.publicKeyW,
+      game.publicKeyB,
+      game.secretHashW,
+      game.secretHashB,
+      mod
+    )
+  }
+
   getASM(): string {
     return `OP_IF
       ${this.publicKeyW} OP_CHECKSIGVERIFY

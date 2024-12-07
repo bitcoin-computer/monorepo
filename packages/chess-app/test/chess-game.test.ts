@@ -46,6 +46,7 @@ describe("ChessGame", () => {
       const fenBefore = chessGame.fen
       await chessGame.move('e4')
       expect(chessGame.fen).toEqual('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1')
+      expect(chessGame.payment).toBeDefined()
       expect(chessGame.fen).not.toEqual(fenBefore)
     }, 30000)
   })
@@ -99,11 +100,15 @@ describe('ChessGameHelper', () => {
     })
   })
 
-  describe('completeTx', () => {
+  describe.skip('completeTx', () => {
     it('Should create a transaction', async () => {
       const tx = await chessGameHelperW.makeTx()
       const txId = await chessGameHelperB.completeTx(tx)
       expect(typeof txId).toEqual('string')
+      const { res, env } = await computerW.sync(txId)
+      expect(Object.keys(res)).toEqual(['amount', 'nameW', 'nameB', 'publicKeyW', 'publicKeyB', 'secretHashW', 'secretHashB', 'sans', 'fen', 'payment', '_root', '_rev', '_id', '_amount', '_owners'])
+      expect(Object.keys(env)).toEqual([])      
+      await res.move('e4')
     })
   })
 

@@ -60,7 +60,7 @@ function MintForm(props: {
         VITE_CHESS_GAME_MOD_SPEC
       )
       const tx = await chessGameHelper.makeTx()
-      setSerializedTx(tx.serialize())
+      setSerializedTx(`http://localhost:1032/start/${tx.serialize()}`)
 
       showLoader(false)
     } catch (err) {
@@ -80,7 +80,7 @@ function MintForm(props: {
       .catch(() => setCopied(false))
 
     setTimeout(() => setCopied(false), 2000)
-  };
+  }
 
   return (
     <>
@@ -147,19 +147,19 @@ function MintForm(props: {
       </form>
 
       <div className="flex flex-col items-start p-4 mt-4 border rounded-lg shadow-md bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
-      <p
-        className="break-all text-sm text-blue-600 underline cursor-pointer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 border-0 focus:ring-0"
-        onClick={handleCopy}
-      >
-        {serializedTx}
-      </p>
-      <button
-        className="mt-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
-        onClick={handleCopy}
-      >
-        {copied ? "Copied!" : "Copy Link"}
-      </button>
-    </div>
+        <p
+          className="break-all text-sm text-blue-600 underline cursor-pointer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 border-0 focus:ring-0"
+          onClick={handleCopy}
+        >
+          {serializedTx}
+        </p>
+        <button
+          className="mt-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          onClick={handleCopy}
+        >
+          {copied ? "Copied!" : "Copy Link"}
+        </button>
+      </div>
     </>
   )
 }

@@ -8,6 +8,7 @@ import { ChessBoard } from "./components/ChessBoard"
 import { Navbar } from "./components/Navbar"
 import { MyGames } from "./components/Assets"
 import CreateGame from "./components/CreateGame"
+import StartGame from "./components/StartGame"
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -28,6 +29,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<MyGames />} />
               <Route path="/new" element={<CreateGame />} />
+              <Route path="/start/:serialized" element={<StartGame />} />
               <Route path="/game/:id" element={<ChessBoard />} />
               <Route path="*" element={<Navigate to="/" replace={true} />} />
             </Routes>
