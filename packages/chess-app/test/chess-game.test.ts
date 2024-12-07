@@ -100,7 +100,7 @@ describe('ChessGameHelper', () => {
     })
   })
 
-  describe.skip('completeTx', () => {
+  describe('completeTx', () => {
     it('Should create a transaction', async () => {
       const tx = await chessGameHelperW.makeTx()
       const txId = await chessGameHelperB.completeTx(tx)
@@ -109,7 +109,7 @@ describe('ChessGameHelper', () => {
       expect(Object.keys(res)).toEqual(['amount', 'nameW', 'nameB', 'publicKeyW', 'publicKeyB', 'secretHashW', 'secretHashB', 'sans', 'fen', 'payment', '_root', '_rev', '_id', '_amount', '_owners'])
       expect(Object.keys(env)).toEqual([])      
       await res.move('e4')
-    })
+    }, 10000)
   })
 
   describe('spend', () => {
