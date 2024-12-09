@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { IoMdRemoveCircleOutline } from 'react-icons/io'
-import { Computer } from '@bitcoin-computer/lib'
-import { UtilsContext } from '@bitcoin-computer/components'
-import { getErrorMessage, isValidRev } from '../../utils'
-import { ModSpec } from './Modspec'
+import { Dispatch, SetStateAction, useEffect, useState } from "react"
+import { IoMdRemoveCircleOutline } from "react-icons/io"
+import { Computer } from "@bitcoin-computer/lib"
+import { UtilsContext } from "@bitcoin-computer/components"
+import { getErrorMessage, isValidRev } from "../../utils"
+import { ModSpec } from "./Modspec"
 
 interface ExpressionArgument {
   name: string
@@ -32,7 +32,7 @@ const ExecuteExpression = (props: {
 
   const handleExpressoinArgumentChange = (
     index: number,
-    field: 'name' | 'value',
+    field: "name" | "value",
     value: string
   ) => {
     const updatedExpressionArguments = [...expressionArgumentsList]
@@ -47,7 +47,7 @@ const ExecuteExpression = (props: {
   }
 
   const handleAddExpressionArgument = () => {
-    setExpressoinArgumentsList([...expressionArgumentsList, { name: '', value: '', hidden: false }])
+    setExpressoinArgumentsList([...expressionArgumentsList, { name: "", value: "", hidden: false }])
   }
   const handleExpressionCall = async () => {
     try {
@@ -81,12 +81,12 @@ const ExecuteExpression = (props: {
         sign: true
       })) as any
       const txId = await computer.broadcast(tx)
-      setFunctionResult({ _rev: `${txId}:0`, type: 'objects', res: effect.res })
-      setModalTitle('Success!')
+      setFunctionResult({ _rev: `${txId}:0`, type: "objects", res: effect.res })
+      setModalTitle("Success!")
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
-      setModalTitle('Error!')
+      setModalTitle("Error!")
       setShow(true)
     } finally {
       showLoader(false)
@@ -121,7 +121,7 @@ const ExecuteExpression = (props: {
                   type="text"
                   id={`playground-expression-argument-name-${index}`}
                   value={argument.name}
-                  onChange={(e) => handleExpressoinArgumentChange(index, 'name', e.target.value)}
+                  onChange={(e) => handleExpressoinArgumentChange(index, "name", e.target.value)}
                   className="sm:w-1/4 md:w-1/4 lg:w-1/3 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Name"
                   required
@@ -130,7 +130,7 @@ const ExecuteExpression = (props: {
                   type="text"
                   id={`playground-expression-argument-${index}`}
                   value={argument.value}
-                  onChange={(e) => handleExpressoinArgumentChange(index, 'value', e.target.value)}
+                  onChange={(e) => handleExpressoinArgumentChange(index, "value", e.target.value)}
                   className="sm:w-full md:w-2/3 lg:w-1/2 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Value"
                   required

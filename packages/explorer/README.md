@@ -79,12 +79,12 @@ To change the configuration please edit the `.env` file.
 
 ```bash
 # Application configuration
-REACT_APP_CHAIN=LTC
-REACT_APP_NETWORK=regtest
-REACT_APP_URL=https://rltc.node.bitcoincomputer.io
+VITE_URL=https://rltc.node.bitcoincomputer.io
+VITE_CHAIN=LTC
+VITE_NETWORK=regtest
 
 # Application Port
-PORT=1032
+VITE_PORT=1032
 ```
 
 </font>

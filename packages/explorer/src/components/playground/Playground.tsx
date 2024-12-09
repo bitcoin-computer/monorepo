@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
-import { initFlowbite } from 'flowbite'
-import { Auth, Modal, FunctionResultModalContent } from '@bitcoin-computer/components'
-import CreateNew from './CreateNew'
-import ExecuteExpression from './ExecuteExpression'
-import DeployModule from './DeployModule'
+import { useEffect, useState } from "react"
+import { initFlowbite } from "flowbite"
+import { Auth, Modal, FunctionResultModalContent } from "@bitcoin-computer/components"
+import CreateNew from "./CreateNew"
+import ExecuteExpression from "./ExecuteExpression"
+import DeployModule from "./DeployModule"
 import {
   chat,
   chatExport,
@@ -21,9 +21,10 @@ import {
   nftExpresion,
   nftVars,
   tokenVars
-} from './examples'
+} from "./examples"
+import { Computer } from "@bitcoin-computer/lib"
 
-const modalId = 'playground-info-modal'
+const modalId = "playground-info-modal"
 
 const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => (
   <>
@@ -31,28 +32,28 @@ const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExa
       <button
         type="button"
         className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-s-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
-        onClick={() => loadExamples('nft')}
+        onClick={() => loadExamples("nft")}
       >
         NFT
       </button>
       <button
         type="button"
         className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
-        onClick={() => loadExamples('token')}
+        onClick={() => loadExamples("token")}
       >
         Fungible Token
       </button>
       <button
         type="button"
         className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border-t border-l border-b border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
-        onClick={() => loadExamples('counter')}
+        onClick={() => loadExamples("counter")}
       >
         Counter
       </button>
       <button
         type="button"
         className="px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-e-lg hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-blue-500 dark:focus:text-white"
-        onClick={() => loadExamples('chat')}
+        onClick={() => loadExamples("chat")}
       >
         Chat
       </button>
@@ -119,13 +120,13 @@ const Tabs = () => (
 )
 
 const Playground = () => {
-  const [computer] = useState<any>(Auth.getComputer())
+  const [computer] = useState<Computer>(Auth.getComputer())
   const [functionResult, setFunctionResult] = useState<any>({})
-  const [exampleCode, setExampleCode] = useState<string>('')
-  const [exampleExpression, setExampleExpresion] = useState<string>('')
-  const [exampleModule, setExampleModule] = useState<string>('')
+  const [exampleCode, setExampleCode] = useState<string>("")
+  const [exampleExpression, setExampleExpresion] = useState<string>("")
+  const [exampleModule, setExampleModule] = useState<string>("")
   const [exampleVars, setExampleVars] = useState<any[]>([])
-  const [modalTitle, setModalTitle] = useState('')
+  const [modalTitle, setModalTitle] = useState("")
 
   const setShow: any = (flag: boolean) => {
     if (flag) {
@@ -140,47 +141,46 @@ const Playground = () => {
   }, [])
 
   const clearExamples = () => {
-    setExampleCode('')
-    setExampleExpresion('')
-    setExampleModule('')
+    setExampleCode("")
+    setExampleExpresion("")
+    setExampleModule("")
     setExampleVars([])
   }
 
   const loadExamples = (type: string) => {
     switch (type) {
-      case 'nft':
+      case "nft":
         setExampleCode(nft)
         setExampleExpresion(nftExpresion)
         setExampleModule(nftExport)
         setExampleVars(nftVars)
         break
-      case 'token':
+      case "token":
         setExampleCode(fungibleToken)
         setExampleExpresion(fungibleTokenExpresion(computer.getPublicKey()))
         setExampleModule(fungibleTokenExport)
         setExampleVars(tokenVars(computer.getPublicKey()))
         break
-      case 'chat':
+      case "chat":
         setExampleCode(chat)
         setExampleExpresion(chatExpresion)
         setExampleModule(chatExport)
         setExampleVars(chatVars)
         break
-      case 'counter':
+      case "counter":
         setExampleCode(counter)
         setExampleExpresion(counterExpresion)
         setExampleModule(counterExport)
         setExampleVars(counterVars)
         break
       default:
-        console.log('Please select valid type')
+        console.log("Please select valid type")
     }
   }
 
   return (
     <>
       <div className="pt-4 w-full relative">
-  
         <h5 className="my-4 text-xl font-bold dark:text-white">Load Examples</h5>
         <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
 

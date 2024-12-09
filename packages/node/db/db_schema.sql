@@ -3,9 +3,8 @@ CREATE TABLE IF NOT EXISTS
     "rev" VARCHAR(70) NOT NULL PRIMARY KEY,
     "address" VARCHAR(66),
     "satoshis" BIGINT NOT NULL,
-    "scriptPubKey" TEXT NOT NULL,
+    "asm" TEXT NOT NULL,
     "isTbcOutput" BOOLEAN NOT NULL,
-    "publicKeys" VARCHAR(66)[],
     "mod" VARCHAR(70),
     "previous" VARCHAR(70),
     "hash" VARCHAR(64),
@@ -15,8 +14,8 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE TABLE IF NOT EXISTS
   "Input" (
-    "outputSpent" VARCHAR(70) NOT NULL PRIMARY KEY,
-    "spendingInput" VARCHAR(70) NOT NULL,
+    "spendingInput" VARCHAR(70) NOT NULL PRIMARY KEY,
+    "outputSpent" VARCHAR(70) NOT NULL,
     "blockHash" VARCHAR(64)
   );
 
@@ -29,7 +28,9 @@ CREATE TABLE IF NOT EXISTS
 
 CREATE TABLE IF NOT EXISTS
   "Orphan" (
-    "hash" VARCHAR(64) NOT NULL PRIMARY KEY
+    "hash" VARCHAR(64) NOT NULL PRIMARY KEY,
+    "height" INTEGER NOT NULL,
+    "processed" BOOLEAN NOT NULL
   );
 
 CREATE INDEX "BlockIndex"
@@ -41,11 +42,6 @@ ON "Output"("address");
 CREATE INDEX "OutputPreviousIndex"
 ON "Output"("previous");
 
-CREATE INDEX "OutputBlockHashIndex"
-ON "Output"("blockHash");
-
-CREATE INDEX "InputOutputSpentIndex"
-ON "Input"("blockHash");
 
 CREATE TABLE IF NOT EXISTS
   "User" (
@@ -71,7 +67,7 @@ CREATE TABLE IF NOT EXISTS
   );
 
 CREATE VIEW "Utxos" AS
-SELECT "rev", "address", "satoshis", "scriptPubKey", "publicKeys", "timestamp", "blockHash"
+SELECT "rev", "address", "satoshis", "asm", "timestamp", "blockHash"
 FROM "Output" WHERE "isTbcOutput" = false AND NOT EXISTS
 (SELECT 1 FROM "Input" ip WHERE "ip"."outputSpent" = "Output"."rev")
 

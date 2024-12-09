@@ -54,7 +54,7 @@ npm run deploy
 # Copy the mod-specs to env
 
 # Start the app
-npm run dev
+npm run start
 ```
 
 </font>
