@@ -14,12 +14,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Install .NET 7
-        run: |
-          curl -sSL https://raw.githubusercontent.com/dotnet/installer/main/scripts/microsoft.dotnet.install.sh -o dotnet-install.sh
-          chmod +x dotnet-install.sh
-          ./dotnet-install.sh -c 7.0.0
-
       - uses: retypeapp/action-build@latest
         with:
           input: packages/docs
