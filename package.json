@@ -34,7 +34,11 @@
     "husky-checks": "./scripts/husky-checks.sh",
     "prepare": "husky install",
     "prepublishOnly": "./scripts/check-obfuscation.sh",
-    "build-all-packages": "turbo run build --concurrency=1"
+    "build-all-packages": "turbo run build --concurrency=1",
+    "types": "npm run types --if-present --workspaces",
+    "lint": "npm run lint --if-present --workspaces",
+    "lint-fix": "npm run lint --if-present --workspaces -- --fix",
+    "test": "npm run test --if-present --workspaces"
   },
   "dependencies": {
     "@endo/static-module-record": "^1.0.4"

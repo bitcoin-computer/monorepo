@@ -36,7 +36,7 @@ function ListLayout(props: { listOfMoves: string[] }) {
   return <div className="space-y-2">{rows}</div>
 }
 
-function WinnerModal(data: any) {
+function WinnerModal(data: { winnerPubKey: string; userPubKey: string }) {
   return (
     <>
       <div className="p-4 md:p-5">

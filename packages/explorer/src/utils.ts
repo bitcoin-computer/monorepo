@@ -7,12 +7,14 @@ export function isValidRevString(outId: string): boolean {
   return /^[0-9A-Fa-f]{64}:\d+$/.test(outId)
 }
 
-export function isValidRev(value: any): boolean {
+export function isValidRev(value: string | number | true | null | undefined): boolean {
   return typeof value === "string" && isValidRevString(value)
 }
 
-export const sleep = (ms: number): Promise<void> => 
-  new Promise((resolve) => { setTimeout(resolve, ms) })
+export const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
 
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint
