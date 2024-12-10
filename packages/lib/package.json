@@ -49,7 +49,7 @@
   "runkitExampleFilename": "example/bitcoin-computer-lib.js",
   "scripts": {
     "clean-logs": "rm -f *.log 2> /dev/null",
-    "prepublishOnly": "./scripts/check-obfuscation.sh",
+    "prepublishOnly": "../../scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
     "test": "mocha --require ts-node/register 'test/**/*.ts'",
     "test-and-show": "npm run test 2>&1 | tee lib-test.log && open lib-test.log"
