@@ -13,7 +13,7 @@ const rl = createInterface({ input, output })
 
 if (network !== "regtest" && !mnemonic) throw new Error("Please set MNEMONIC in the .env file")
 
-const computer = new Computer({ chain, network, mnemonic, url })
+const computer = new Computer({ chain, network, mnemonic, url }) as any
 await computer.faucet(2e8)
 const { balance } = await computer.getBalance()
 

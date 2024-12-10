@@ -1,5 +1,5 @@
 import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
-import { useContext, useEffect, useState } from "react"
+import { useCallback, useContext, useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
 import { Chessboard } from "react-chessboard"
 import { Chess, Square } from "../contracts/chess-module"
@@ -36,7 +36,7 @@ function ListLayout(props: { listOfMoves: string[] }) {
   return <div className="space-y-2">{rows}</div>
 }
 
-function WinnerModal(data: any) {
+function WinnerModal(data: { winnerPubKey: string, userPubKey: string }) {
   return (
     <>
       <div className="p-4 md:p-5">
@@ -77,16 +77,16 @@ export function ChessBoard() {
   const [sans, setSans] = useState<string[]>([])
   const [skipSync, setSkipSync] = useState(false)
   const [winnerData, setWinnerData] = useState({})
-
-  const fetchChessContract = async (): Promise<ChessGame> => {
-    const [latestRev] = await computer.query({ ids: [gameId] })
-    return computer.sync(latestRev) as Promise<ChessGame> 
-  }
-  const computer = useContext(ComputerContext)
   const [game, setGame] = useState<Chess | null>(null)
   const [chessContract, setChessContract] = useState<ChessGame | null>(null)
 
-  const setWinner = async () => {
+  const computer = useContext(ComputerContext)
+  const fetchChessContract = useCallback(async (): Promise<ChessGame> => {
+    const [latestRev] = await computer.query({ ids: [gameId] })
+    return computer.sync(latestRev) as Promise<ChessGame>
+  }, [computer, gameId])
+
+  const setWinner = useCallback(async () => {
     if (!game || !chessContract) return
     const winnerPubKey = getWinnerPubKey(game, chessContract)
     if (!winnerPubKey) {
@@ -94,9 +94,9 @@ export function ChessBoard() {
     }
     setWinnerData({ winnerPubKey: winnerPubKey, userPubKey: computer.getPublicKey() })
     Modal.showModal("winner-modal")
-  }
+  }, [game, chessContract, computer])
 
-  const syncChessContract = async () => {
+  const syncChessContract = useCallback(async () => {
     try {
       const cc = await fetchChessContract()
       setSans(cc.sans)
@@ -110,7 +110,7 @@ export function ChessBoard() {
     } catch (error) {
       console.error("Error fetching contract:", error)
     }
-  }
+  }, [fetchChessContract, setWinner, skipSync])
 
   useEffect(() => {
     const fetch = async () => {
@@ -122,7 +122,7 @@ export function ChessBoard() {
       await setWinner()
     }
     fetch()
-  }, [computer, gameId])
+  }, [computer, fetchChessContract, setWinner])
 
   // Update the chess state by polling
   useEffect(() => {
@@ -131,7 +131,7 @@ export function ChessBoard() {
     }, 6000)
 
     return () => clearInterval(intervalId)
-  }, [chessContract, skipSync])
+  }, [syncChessContract])
 
   // OnDrop action for chess game
   function onDrop(sourceSquare: Square, targetSquare: Square) {
@@ -145,11 +145,14 @@ export function ChessBoard() {
         promotion: "q" // always promote to a queen for example simplicity
       })
       const chessMovePromise = chessContract.move(result.san) as unknown as Promise<void>
-      chessMovePromise.catch((err: any) => {
-        showSnackBar(err.message, false)
-        setSkipSync(false)
-        syncChessContract()
+      chessMovePromise.catch((err) => {
+        if (err instanceof Error) {
+          showSnackBar(err.message, false)
+          setSkipSync(false)
+          syncChessContract()
+        }
       })
+      
       setSkipSync(true)
       const newSan = [...sans]
       newSan.push(result.san)
