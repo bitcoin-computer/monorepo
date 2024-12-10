@@ -17,14 +17,16 @@ export const getFnParamNames = (fn: string) => {
   return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
 }
 
-function Copy ({ text }: { text: string }) {
-  return (<button
-    onClick={() => navigator.clipboard.writeText(text)}
-    className="cursor-pointer pl-2 text-gray-600 hover:text-gray-800 focus:outline-none"
-    aria-label="Copy Transaction ID"
-  >
-    <HiOutlineClipboard />
-  </button>)
+function Copy({ text }: { text: string }) {
+  return (
+    <button
+      onClick={() => navigator.clipboard.writeText(text)}
+      className="cursor-pointer pl-2 text-gray-600 hover:text-gray-800 focus:outline-none"
+      aria-label="Copy Transaction ID"
+    >
+      <HiOutlineClipboard />
+    </button>
+  )
 }
 
 function ObjectValueCard({ content }: { content: string }) {
@@ -59,115 +61,144 @@ const SmartObjectValues = ({ smartObject }: any) => {
   )
 }
 
-function MetaData({ smartObject }: any) {
- const [isVisible, setIsVisible] = useState(false)
+function MetaData({ smartObject, prev, next }: any) {
+  const [isVisible, setIsVisible] = useState(false)
 
- const toggleVisibility = () => {
-   setIsVisible(!isVisible)
- }
+  const toggleVisibility = () => {
+    setIsVisible(!isVisible)
+  }
 
- return (
-   <div>
-     <button
-       onClick={toggleVisibility}
-       className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 my-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-     >
-       {isVisible ? 'Hide Metadata' : 'Show Metadata'}
-     </button>
+  return (
+    <div>
+      <div className="pt-6 pb-6 space-y-4 border-t border-gray-300 dark:border-gray-700">
+        <div className="flex">
+          <a
+            href={prev ? `/objects/${prev}` : undefined}
+            className={`flex items-center justify-center px-4 h-10 ms-3 text-sm font-medium border rounded-lg transition 
+      ${
+        prev
+          ? "bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+      }`}
+            aria-disabled={!prev}
+          >
+            Previous
+          </a>
+          <a
+            href={next ? `/objects/${next}` : undefined}
+            className={`flex items-center justify-center px-4 h-10 ms-3 text-sm font-medium border rounded-lg transition 
+      ${
+        next
+          ? "bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+      }`}
+            aria-disabled={!next}
+          >
+            Next
+          </a>
+          <button
+            onClick={toggleVisibility}
+            className={`flex items-center justify-center px-4 h-10 ms-3 text-sm font-medium border rounded-lg transition 
+      bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700`}
+          >
+            {isVisible ? "Hide Metadata" : "Show Metadata"}
+          </button>
+        </div>
+      </div>
 
-     {isVisible && (
+      {isVisible && (
         <table className="w-full mt-4 mb-8 text-[12px] text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th scope="col" className="px-4 py-2">
-              Key
-            </th>
-            <th scope="col" className="px-4 py-2">
-              Short
-            </th>
-            <th scope="col" className="px-4 py-2">
-              Value
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <td className="px-4 py-2">Identity</td>
-            <td className="px-4 py-2">
-              <pre>_id</pre>
-            </td>
-            <td className="px-4 py-2">
-              <Link
-                to={`/objects/${smartObject?._id}`}
-                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >
-                {smartObject?._id}
-              </Link>
-              <Copy text={smartObject?._id} />
-            </td>
-          </tr>
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+              <th scope="col" className="px-4 py-2">
+                Key
+              </th>
+              <th scope="col" className="px-4 py-2">
+                Short
+              </th>
+              <th scope="col" className="px-4 py-2">
+                Value
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <td className="px-4 py-2">Identity</td>
+              <td className="px-4 py-2">
+                <pre>_id</pre>
+              </td>
+              <td className="px-4 py-2">
+                <Link
+                  to={`/objects/${smartObject?._id}`}
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >
+                  {smartObject?._id}
+                </Link>
+                <Copy text={smartObject?._id} />
+              </td>
+            </tr>
 
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <td className="px-4 py-2">Revision</td>
-            <td className="px-4 py-2">
-              <pre>_rev</pre>
-            </td>
-            <td className="px-4 py-2">
-              <Link
-                to={`/objects/${smartObject?._rev}`}
-                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >
-                {smartObject?._rev}
-              </Link>
-              <Copy text={smartObject?._rev} />
-            </td>
-          </tr>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <td className="px-4 py-2">Revision</td>
+              <td className="px-4 py-2">
+                <pre>_rev</pre>
+              </td>
+              <td className="px-4 py-2">
+                <Link
+                  to={`/objects/${smartObject?._rev}`}
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >
+                  {smartObject?._rev}
+                </Link>
+                <Copy text={smartObject?._rev} />
+              </td>
+            </tr>
 
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <td className="px-4 py-2">Root</td>
-            <td className="px-4 py-2">
-              <pre>_root</pre>
-            </td>
-            <td className="px-4 py-2">
-              <Link
-                to={`/objects/${smartObject?._root}`}
-                className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-              >
-                {smartObject?._root}
-              </Link>
-              <Copy text={smartObject?._root} />
-            </td>
-          </tr>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <td className="px-4 py-2">Root</td>
+              <td className="px-4 py-2">
+                <pre>_root</pre>
+              </td>
+              <td className="px-4 py-2">
+                <Link
+                  to={`/objects/${smartObject?._root}`}
+                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                >
+                  {smartObject?._root}
+                </Link>
+                <Copy text={smartObject?._root} />
+              </td>
+            </tr>
 
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <td className="px-4 py-2">Owners</td>
-            <td className="px-4 py-2">
-              <pre>_owners</pre>
-            </td>
-            <td className="px-4 py-2">
-              <span className="font-medium text-gray-900 dark:text-white">
-                {smartObject?._owners}
-              </span>
-              <Copy text={JSON.stringify(smartObject?._owners)} />
-            </td>
-          </tr>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <td className="px-4 py-2">Owners</td>
+              <td className="px-4 py-2">
+                <pre>_owners</pre>
+              </td>
+              <td className="px-4 py-2">
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {smartObject?._owners}
+                </span>
+                <Copy text={JSON.stringify(smartObject?._owners)} />
+              </td>
+            </tr>
 
-          <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-            <td className="px-4 py-2">Amount</td>
-            <td className="px-4 py-2">
-              <pre>_amount</pre>
-            </td>
-            <td className="px-4 py-2">
-              <span className="font-medium text-gray-900 dark:text-white">
-                {smartObject?._amount} Satoshi
-              </span>
-              <Copy text={smartObject?._amount} />
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    )}
-   </div>
+            <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+              <td className="px-4 py-2">Amount</td>
+              <td className="px-4 py-2">
+                <pre>_amount</pre>
+              </td>
+              <td className="px-4 py-2">
+                <span className="font-medium text-gray-900 dark:text-white">
+                  {smartObject?._amount} Satoshi
+                </span>
+                <Copy text={smartObject?._amount} />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      )}
+    </div>
   )
 }
 
@@ -178,6 +209,8 @@ function Component({ title }: { title?: string }) {
   const [rev] = useState(params.rev || "")
   const computer = useContext(ComputerContext)
   const [smartObject, setSmartObject] = useState<any | null>(null)
+  const [next, setNext] = useState<string | undefined>(undefined)
+  const [prev, setPrev] = useState<string | undefined>(undefined)
   const [functionsExist, setFunctionsExist] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
   const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
@@ -200,6 +233,15 @@ function Component({ title }: { title?: string }) {
       } catch (error) {
         const [txId] = rev.split(":")
         navigate(`/transactions/${txId}`)
+      }
+
+      try {
+        const nextRef = await computer.next(rev)
+        const prevRef = await computer.prev(rev)
+        setPrev(prevRef.rev)
+        setNext(nextRef.rev)
+      } catch (error) {
+        console.log({ error })
       }
     }
     fetch()
@@ -228,8 +270,8 @@ function Component({ title }: { title?: string }) {
 
   return (
     <>
-      <div className="max-w-screen-md mx-auto">        
-        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">{title || 'Object'}</h1>
+      <div className="max-w-screen-md mx-auto">
+        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">{title || "Object"}</h1>
         <div className="mb-8">
           <Link
             to={`/transactions/${txId}`}
@@ -252,7 +294,7 @@ function Component({ title }: { title?: string }) {
           setModalTitle={setModalTitle}
         />
 
-        <MetaData smartObject={smartObject} />
+        <MetaData smartObject={smartObject} prev={prev} next={next} />
       </div>
       <Modal.Component
         title={modalTitle}
