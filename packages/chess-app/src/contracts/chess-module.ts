@@ -1253,6 +1253,7 @@
            const offset = PIECE_OFFSETS[type][j]
            to = from
  
+           // eslint-disable-next-line no-constant-condition
            while (true) {
              to += offset
              if (to & 0x88) break
@@ -2299,6 +2300,7 @@
        reversedHistory.push(this._undoMove())
      }
  
+     // eslint-disable-next-line no-constant-condition
      while (true) {
        const move = reversedHistory.pop()
        if (!move) {
@@ -2360,6 +2362,7 @@
  
      copyComment(this.fen())
  
+     // eslint-disable-next-line no-constant-condition
      while (true) {
        const move = reversedHistory.pop()
        if (!move) {

@@ -40,19 +40,16 @@ function StartForm(props: {
     e.preventDefault()
     try {
       showLoader(true)
-
+      console.log('on submit')
       if (!serialized) throw new Error('Invalid link')
 
-      const tx = Transaction.deserialize(serialized) as Transaction
+      const tx = Transaction.deserialize(serialized)
       const { effect } = await computer.encode(tx.onChainMetaData as never)
       const { res } = effect
       const game = res as unknown as ChessGame
       const chessGameHelper = ChessGameHelper.fromGame(game, computer, VITE_CHESS_GAME_MOD_SPEC)
       const txId = await chessGameHelper.completeTx(tx)
       setLink(`http://localhost:1032/game/${txId}:0`)
-
-      console.log(txId)
-
       showLoader(false)
     } catch (err) {
       console.log('Err', err)
@@ -65,13 +62,14 @@ function StartForm(props: {
     }
   }
 
-  const handleCopy = () => {
+  const handleCopy = (e: React.SyntheticEvent) => {
+    e.preventDefault()
     navigator.clipboard.writeText(link)
       .then(() => setCopied(true))
       .catch(() => setCopied(false))
 
     setTimeout(() => setCopied(false), 2000)
-  };
+  }
 
   return (
     <>

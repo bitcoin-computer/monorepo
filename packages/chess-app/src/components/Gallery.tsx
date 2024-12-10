@@ -1,5 +1,5 @@
 import { Computer } from "@bitcoin-computer/lib"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { Link, useLocation, useNavigate } from "react-router-dom"
 import { initFlowbite } from "flowbite"
 import { Auth, ComputerContext, UtilsContext } from "@bitcoin-computer/components"
@@ -8,7 +8,7 @@ import { ChessGame } from "../contracts/chess-game"
 import { Chess } from "../contracts/chess-module"
 import { getGameState, truncateName } from "./utils"
 
-export type Class = new (...args: any) => any
+export type Class = new (...args: unknown[]) => unknown
 
 export type UserQuery<T extends Class> = Partial<{
   mod: string
@@ -68,7 +68,7 @@ function GameCard({ chessGame }: { chessGame: ChessGame }) {
   )
 }
 
-function HomePageCard({ content }: any) {
+function HomePageCard({ content }: { content: string | (() => string) }) {
   return (
     <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
@@ -79,7 +79,7 @@ function HomePageCard({ content }: any) {
 }
 
 function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
-  const [value, setValue] = useState<any>("loading...")
+  const [value, setValue] = useState<unknown>("loading...")
   const [errorMsg, setMsgError] = useState("")
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -134,7 +134,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
   )
 }
 
-function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
+function FromRevs({ revs, computer }: { revs: string[]; computer: Computer }) {
   const cols: string[][] = [[], [], [], []]
 
   revs.forEach((rev, index) => {
@@ -177,7 +177,13 @@ function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
   )
 }
 
-function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }: any) {
+type PaginationType = {
+  isPrevAvailable: boolean,
+  isNextAvailable: boolean,
+  handlePrev: React.MouseEventHandler<HTMLButtonElement>,
+  handleNext: React.MouseEventHandler<HTMLButtonElement>
+}
+function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }: PaginationType) {
   return (
     <nav className="flex items-center justify-between" aria-label="Table navigation">
       <ul className="inline-flex items-center -space-x-px">
@@ -234,7 +240,7 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
   )
 }
 
-export default function WithPagination<T extends Class>(q: UserQuery<T>) {
+export function WithPagination<T extends Class>(q: UserQuery<T>) {
   const navigate = useNavigate()
   const { showLoader } = UtilsContext.useUtilsComponents()
   const contractsPerPage = 12
@@ -245,8 +251,12 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
   const [showNoAsset, setShowNoAsset] = useState(false)
   const [revs, setRevs] = useState<string[]>([])
   const location = useLocation()
-  const params = Object.fromEntries(new URLSearchParams(location.search))
 
+  const params = useMemo(
+    () => Object.fromEntries(new URLSearchParams(location.search)),
+    [location.search]
+  )
+  
   useEffect(() => {
     initFlowbite()
   }, [])
@@ -267,7 +277,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       showLoader(false)
     }
     fetch()
-  }, [computer, pageNum])
+  }, [computer, pageNum, q, params, showLoader])
 
   const handleNext = async () => {
     setIsPrevAvailable(true)
@@ -305,9 +315,4 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       )}
     </div>
   )
-}
-
-export const Gallery = {
-  FromRevs,
-  WithPagination
 }
