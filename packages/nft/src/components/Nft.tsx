@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react"
+import { Dispatch, useContext, useEffect, useState } from "react"
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
 import {
   toObject,
@@ -25,7 +25,7 @@ const BuyNFT = async ({
 }: {
   computer: Computer
   nft: NFT
-  setFunctionResult: any
+  setFunctionResult: Dispatch<React.SetStateAction<string>>
 }) => {
   const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
   const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
@@ -38,7 +38,7 @@ const BuyNFT = async ({
   const finalTx = await SaleHelper.finalizeSaleTx(
     saleTxn,
     payment,
-    computer.toScriptPubKey() as any
+    computer.toScriptPubKey() as Buffer
   )
 
   // Buyer funds, signs, and broadcasts to execute the sale
@@ -91,7 +91,7 @@ const CreateSellOffer = async ({
   showSnackBar("Successfully listed NFT for sale.", true)
 }
 
-const SmartObjectValues = ({ smartObject }: any) => {
+const SmartObjectValues = ({ smartObject }: { smartObject: NFT }) => {
   if (!smartObject) return <></>
   return (
     <>
@@ -254,7 +254,7 @@ const BuyNftComponent = ({
 }: {
   computer: Computer
   smartObject: NFT
-  setFunctionResult: any
+  setFunctionResult: Dispatch<React.SetStateAction<string>>
 }) => {
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
@@ -325,15 +325,15 @@ function NftView() {
   const navigate = useNavigate()
   const [id] = useState(params.id || "")
   const computer = useContext(ComputerContext)
-  const [smartObject, setSmartObject] = useState<any | null>(null)
-  const [functionResult, setFunctionResult] = useState<any>({})
+  const [smartObject, setSmartObject] = useState<NFT | null>(null)
+  const [functionResult, setFunctionResult] = useState<string>("")
 
   useEffect(() => {
     const fetch = async () => {
       try {
         showLoader(true)
         const latesRev = await computer.getLatestRev(id)
-        const synced = (await computer.sync(latesRev)) as any
+        const synced = (await computer.sync(latesRev)) as NFT
         setSmartObject(synced)
         showLoader(false)
       } catch {
@@ -347,23 +347,28 @@ function NftView() {
   return (
     <>
       <div>
-        <SmartObjectValues smartObject={smartObject} />
-        {smartObject && smartObject.offerTxRev && (
-          <ShowSaleOfferComponent computer={computer} nft={smartObject} />
+        {smartObject && (
+          <>
+            <SmartObjectValues smartObject={smartObject} />
+            {smartObject.offerTxRev && (
+              <ShowSaleOfferComponent computer={computer} nft={smartObject} />
+            )}
+            {showCreateOffer(computer, smartObject) && !smartObject.offerTxRev && (
+              <CreateSellOfferComponent computer={computer} smartObject={smartObject} />
+            )}
+            {showCreateOffer(computer, smartObject) && smartObject.offerTxRev && (
+              <UnlistNftComponent smartObject={smartObject} />
+            )}
+            {showBuyOffer(computer, smartObject) && (
+              <BuyNftComponent
+                computer={computer}
+                smartObject={smartObject}
+                setFunctionResult={setFunctionResult}
+              />
+            )}
+          </>
         )}
-        {showCreateOffer(computer, smartObject) && !smartObject.offerTxRev && (
-          <CreateSellOfferComponent computer={computer} smartObject={smartObject} />
-        )}
-        {showCreateOffer(computer, smartObject) && smartObject.offerTxRev && (
-          <UnlistNftComponent smartObject={smartObject} />
-        )}
-        {showBuyOffer(computer, smartObject) && (
-          <BuyNftComponent
-            computer={computer}
-            smartObject={smartObject}
-            setFunctionResult={setFunctionResult}
-          />
-        )}
+
         <Modal.Component
           title={"Success"}
           content={SuccessContent}

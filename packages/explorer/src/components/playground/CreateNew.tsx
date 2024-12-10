@@ -73,7 +73,7 @@ const CreateNew = (props: {
         dynamicClass.prototype &&
         dynamicClass.prototype instanceof Contract
       ) {
-        const revMap: any = {}
+        const revMap: { [key: string]: string } = {}
         argumentsList
           .filter((argument) => !argument.hidden)
           .forEach((argument, index) => {
@@ -83,7 +83,13 @@ const CreateNew = (props: {
             }
           })
 
-        const encodeObject: any = {
+        const encodeObject: {
+          exp: string
+          env: { [key: string]: string }
+          fund: boolean
+          sign: boolean
+          mod?: string
+        } = {
           exp: `
           ${dynamicClass} 
           new ${dynamicClass.name}(${argumentsList

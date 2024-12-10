@@ -4,7 +4,6 @@ import { Link } from "react-router-dom"
 import { Computer } from "@bitcoin-computer/lib"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
 import { createGame } from "../services/game.service"
-import { ChessGame } from "../contracts/chess-game"
 
 function SuccessContent(id: string) {
   return (

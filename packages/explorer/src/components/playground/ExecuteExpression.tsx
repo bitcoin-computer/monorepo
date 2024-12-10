@@ -54,7 +54,7 @@ const ExecuteExpression = (props: {
       showLoader(true)
       const expressionCode = expression?.trim()
 
-      const revMap: any = {}
+      const revMap: { [key: string]: string } = {}
       expressionArgumentsList
         .filter((argument) => !argument.hidden)
         .forEach((argument) => {
@@ -64,7 +64,13 @@ const ExecuteExpression = (props: {
           }
         })
 
-      const encodeObject: any = {
+      const encodeObject: {
+        exp: string
+        env: { [key: string]: string }
+        fund: boolean
+        sign: boolean
+        mod?: string
+      } = {
         exp: `${expressionCode}`,
         env: { ...revMap },
         fund: true,
@@ -74,12 +80,12 @@ const ExecuteExpression = (props: {
         encodeObject.mod = modSpec
       }
 
-      const { tx, effect } = (await computer.encode({
+      const { tx, effect } = await computer.encode({
         exp: `${expressionCode}`,
         env: { ...revMap },
         fund: true,
         sign: true
-      })) as any
+      })
       const txId = await computer.broadcast(tx)
       setFunctionResult({ _rev: `${txId}:0`, type: "objects", res: effect.res })
       setModalTitle("Success!")

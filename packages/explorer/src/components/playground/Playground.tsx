@@ -26,7 +26,13 @@ import { Computer } from "@bitcoin-computer/lib"
 
 const modalId = "playground-info-modal"
 
-const Examples = ({ loadExamples, clearExamples }: { loadExamples: any; clearExamples: any }) => (
+const Examples = ({
+  loadExamples,
+  clearExamples
+}: {
+  loadExamples: (type: string) => void
+  clearExamples: () => void
+}) => (
   <>
     <div className="inline-flex rounded-md shadow-sm mb-2" role="group">
       <button

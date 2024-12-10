@@ -79,7 +79,7 @@ function HomePageCard({ content }: any) {
 }
 
 function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
-  const [value, setValue] = useState<any>("loading...")
+  const [value, setValue] = useState<ChessGame | null>(null)
   const [errorMsg, setMsgError] = useState("")
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -128,13 +128,13 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
   }
 
   return (
-    <Link to={`/game/${value._id}`} className="block font-medium text-blue-600 dark:text-blue-500">
-      <GameCard chessGame={value} />
+    <Link to={`/game/${value?._id}`} className="block font-medium text-blue-600 dark:text-blue-500">
+      {value ? <GameCard chessGame={value} /> : <></>}
     </Link>
   )
 }
 
-function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
+function FromRevs({ revs, computer }: { revs: string[]; computer: Computer }) {
   const cols: string[][] = [[], [], [], []]
 
   revs.forEach((rev, index) => {
