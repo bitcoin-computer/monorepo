@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "test": "vitest run",
     "start": "vite",
-    "deploy": "node --experimental-modules scripts/deploy.mjs"
+    "deploy": "node --experimental-modules scripts/deploy.mjs",
+    "types": "tsc --noEmit"
   },
   "dependencies": {
     "@bitcoin-computer/TBC721": "^0.22.0-beta.0",

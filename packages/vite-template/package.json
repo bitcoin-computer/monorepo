@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "start": "vite",
     "deploy": "node --loader ts-node/esm  ./scripts/deploy.ts",
-    "test": "vitest run"
+    "test": "vitest run",
+    "types": "tsc --noEmit"
   },
   "dependencies": {
     "@bitcoin-computer/components": "^0.22.0-beta.0",
