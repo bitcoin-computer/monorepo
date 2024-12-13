@@ -1,7 +1,7 @@
 {
   "name": "@bitcoin-computer/chess-app",
   "private": true,
-  "version": "0.22.0-beta.0",
+  "version": "0.23.0-beta.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,8 +14,8 @@
     "build-contract": "tsc --project tsconfig.build.json && mv ./build-contract/chess-module.js ./src/contracts/chess.mjs && rm -rf build-contract"
   },
   "dependencies": {
-    "@bitcoin-computer/components": "^0.22.0-beta.0",
-    "@bitcoin-computer/lib": "^0.22.0-beta.0",
+    "@bitcoin-computer/components": "^0.23.0-beta.0",
+    "@bitcoin-computer/lib": "^0.23.0-beta.0",
     "flowbite": "^2.3.0",
     "react": "^18.3.1",
     "react-chessboard": "^4.7.2",
