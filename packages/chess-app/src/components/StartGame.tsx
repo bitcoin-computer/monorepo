@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
 import { Computer, Transaction } from "@bitcoin-computer/lib"
 import { useParams } from "react-router-dom"
-import { ChessGame, ChessGameHelper } from "../contracts/chess-game"
+import { ChessGame, ChessGameHelper } from "../contracts/chess-contract"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
 
 function ErrorContent(msg: string) {

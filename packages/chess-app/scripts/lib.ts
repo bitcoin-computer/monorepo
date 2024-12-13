@@ -1,11 +1,16 @@
-import { ChessGame, Payment } from "../src/contracts/chess-game.js"
+import { ChessGame, Payment } from "../src/contracts/chess-contract.js"
 import { readFile } from "fs/promises"
 import { Computer } from "@bitcoin-computer/lib"
+import { transpileModule, ScriptTarget, ModuleKind } from 'typescript'
 
 export const deploy = async (computer: Computer) => {
-  const chessFile = await readFile("./src/contracts/chess.mjs", "utf-8")
+  const chessTS = await readFile("./src/contracts/chess.ts", "utf-8")
+
+  const compilerOptions = { module: ModuleKind.ESNext, target: ScriptTarget.ES2020 }
+  const { outputText: chessJS } = transpileModule(chessTS, { compilerOptions })
+
   const mod = await computer.deploy(`
-    ${chessFile}
+    ${chessJS}
     export ${Payment}
     export ${ChessGame}
   `)

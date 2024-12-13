@@ -1,5 +1,5 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { ChessGame, ChessGameHelper } from '../src/contracts/chess-game'
+import { ChessGame, ChessGameHelper } from '../src/contracts/chess-contract'
 import { crypto } from '@bitcoin-computer/nakamotojs'
 import { deploy } from '../scripts/lib'
 

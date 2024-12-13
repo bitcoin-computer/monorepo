@@ -1,5 +1,5 @@
-import { Chess } from "../../contracts/chess-module"
-import { ChessGame } from "../../contracts/chess-game"
+import { Chess } from "../../contracts/chess"
+import { ChessGame } from "../../contracts/chess-contract"
 
 export function currentPlayer(fen: string) {
   const parts = fen.split(" ")

@@ -2,8 +2,8 @@ import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/componen
 import { useCallback, useContext, useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
 import { Chessboard } from "react-chessboard"
-import { Chess, Square } from "../contracts/chess-module"
-import { ChessGame } from "../contracts/chess-game"
+import { Chess, Square } from "../contracts/chess"
+import { ChessGame } from "../contracts/chess-contract"
 import { currentPlayer, getGameState, getWinnerPubKey } from "./utils"
 
 function ListLayout(props: { listOfMoves: string[] }) {
@@ -134,16 +134,12 @@ export function ChessBoard() {
   }, [syncChessContract])
 
   // OnDrop action for chess game
-  function onDrop(sourceSquare: Square, targetSquare: Square) {
+  function onDrop(from: Square, to: Square) {
     if (!chessContract) return false
 
     try {
       const chessGame = new Chess(chessContract.fen)
-      const result = chessGame.move({
-        from: sourceSquare,
-        to: targetSquare,
-        promotion: "q" // always promote to a queen for example simplicity
-      })
+      const result = chessGame.move({ from, to, promotion: "q" })
       const chessMovePromise = chessContract.move(result.san) as unknown as Promise<void>
       chessMovePromise.catch((err) => {
         if (err instanceof Error) {

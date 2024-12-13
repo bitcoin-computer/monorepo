@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express'
 import { db } from '../db/db.js'
+import { Computer } from '@bitcoin-computer/lib'
 import * as crypto from 'node:crypto'
 import cors from 'cors'
 
@@ -20,6 +21,19 @@ app.get('/hash', async (req: Request, res: Response) => {
       [secret, hash]
     )
     res.json(hash)
+  } catch (error) {
+    if (error instanceof Error)
+      res.status(500).json({ error: `Internal server error: ${error.message}` })
+  }
+})
+
+app.get('/secret/:id', async (req: Request, res: Response) => {
+  try {
+    const id = req.params.id
+    const computer = new Computer()
+    const game = await computer.sync(id)
+    
+    
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ error: `Internal server error: ${error.message}` })

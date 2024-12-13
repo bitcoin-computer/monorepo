@@ -65,46 +65,25 @@ export class ChessGame extends Contract {
     })
   }
 
-  addFirstPlayer(pubKey: string) {
-    this.publicKeyW = pubKey
-  }
-
-  addSecondPlayer(pubKey: string) {
-    this.publicKeyB = pubKey
-  }
-
   move(san: string) {
     this.sans.push(san)
     // @ts-expect-error type error
     const game = new Chess(this.fen)
     game.move(san)
     this.fen = game.fen()
-    if (this._owners[0] === this.publicKeyW) {
-      this._owners = [this.publicKeyB]
-    } else {
-      this._owners = [this.publicKeyW]
-    }
-  }
 
-  changeOwner() {
-    if (this._owners[0] === this.publicKeyW) {
-      this._owners = [this.publicKeyB]
-    } else {
-      this._owners = [this.publicKeyW]
+    if (!game.isCheckmate()) {
+      if (this._owners[0] === this.publicKeyW) {
+        this._owners = [this.publicKeyB]
+      } else {
+        this._owners = [this.publicKeyW]
+      }  
     }
   }
 
   isGameOver() {
     // @ts-expect-error type error
     return new Chess(this.fen).isGameOver()
-  }
-
-  getSans() {
-    return this.sans
-  }
-
-  getFen() {
-    return this.fen
   }
 }
 
