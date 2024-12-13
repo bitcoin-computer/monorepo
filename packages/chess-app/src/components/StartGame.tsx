@@ -47,7 +47,7 @@ function StartForm(props: {
       const { effect } = await computer.encode(tx.onChainMetaData as never)
       const { res } = effect
       const game = res as unknown as ChessContract
-      const chessContractHelper = ChessContractHelper.fromGame(game, computer, VITE_CHESS_GAME_MOD_SPEC)
+      const chessContractHelper = ChessContractHelper.fromContract(game, computer, VITE_CHESS_GAME_MOD_SPEC)
       const txId = await chessContractHelper.completeTx(tx)
       setLink(`http://localhost:1032/game/${txId}:0`)
       showLoader(false)

@@ -120,7 +120,7 @@ export class ChessContractHelper {
     this.mod = mod
   }
 
-  static fromGame(game: ChessContract, computer: Computer, mod?: string) {
+  static fromContract(game: ChessContract, computer: Computer, mod?: string) {
     return new this(computer,
       game.nameW,
       game.nameB,

@@ -6,7 +6,7 @@ import { Auth, ComputerContext, UtilsContext } from "@bitcoin-computer/component
 import { BiGitCompare } from "react-icons/bi"
 import { ChessContract } from "../contracts/chess-contract"
 import { Chess as ChessLib } from "../contracts/chess"
-import { getGameState, truncateName } from "./utils"
+import { getGameState } from "./utils"
 
 export type Class = new (...args: unknown[]) => unknown
 
@@ -22,6 +22,9 @@ export type UserQuery<T extends Class> = Partial<{
     args?: ConstructorParameters<T>
   }
 }>
+
+const truncateName = (name: string, maxLength: number = 15) =>
+  name.length > maxLength ? name.slice(0, maxLength) + "..." : name
 
 function GameCard({ chessContract }: { chessContract: ChessContract }) {
   const chessLib = new ChessLib(chessContract.fen)

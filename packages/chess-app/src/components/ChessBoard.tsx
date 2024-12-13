@@ -2,9 +2,24 @@ import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/componen
 import { useCallback, useContext, useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
 import { Chessboard } from "react-chessboard"
-import { Chess, Square } from "../contracts/chess"
 import { ChessContract } from "../contracts/chess-contract"
-import { currentPlayer, getGameState, getWinnerPubKey } from "./utils"
+import { Chess as ChessLib, Square } from "../contracts/chess"
+import { getGameState } from "./utils"
+
+function currentPlayer(fen: string) {
+  const parts = fen.split(" ")
+  const activeColor = parts[1]
+
+  if (activeColor === "w") return "White"
+  if (activeColor === "b") return "Black"
+  throw new Error("Invalid FEN: Unknown active color")
+}
+
+function getWinnerPubKey(chessLibrary: ChessLib, { publicKeyW, publicKeyB }: ChessContract) {
+  if (chessLibrary.isCheckmate())
+    return chessLibrary.turn() === 'w' ? publicKeyW : publicKeyB
+  return null
+}
 
 function ListLayout(props: { listOfMoves: string[] }) {
   const { listOfMoves } = props
@@ -77,7 +92,7 @@ export function ChessBoard() {
   const [sans, setSans] = useState<string[]>([])
   const [skipSync, setSkipSync] = useState(false)
   const [winnerData, setWinnerData] = useState({})
-  const [game, setGame] = useState<Chess | null>(null)
+  const [game, setGame] = useState<ChessLib | null>(null)
   const [chessContract, setChessContract] = useState<ChessContract | null>(null)
 
   const computer = useContext(ComputerContext)
@@ -105,7 +120,7 @@ export function ChessBoard() {
         return
       }
       setChessContract(cc)
-      setGame(new Chess(cc.fen))
+      setGame(new ChessLib(cc.fen))
       await setWinner()
     } catch (error) {
       console.error("Error fetching contract:", error)
@@ -117,7 +132,7 @@ export function ChessBoard() {
       const cc = await fetchChessContract()
       setSans(cc.sans)
       setChessContract(cc)
-      setGame(new Chess(cc.fen))
+      setGame(new ChessLib(cc.fen))
       setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
       await setWinner()
     }
@@ -138,7 +153,7 @@ export function ChessBoard() {
     if (!chessContract) return false
 
     try {
-      const chessLib = new Chess(chessContract.fen)
+      const chessLib = new ChessLib(chessContract.fen)
       const result = chessLib.move({ from, to, promotion: "q" })
       const chessMovePromise = chessContract.move(result.san) as unknown as Promise<void>
       chessMovePromise.catch((err) => {
