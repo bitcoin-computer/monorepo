@@ -30,7 +30,7 @@ export class Payment extends Contract {
   }
 }
 
-export class ChessGame extends Contract {
+export class ChessContract extends Contract {
   amount!: number
   nameW!: string
   nameB!: string
@@ -87,7 +87,7 @@ export class ChessGame extends Contract {
   }
 }
 
-export class ChessGameHelper {
+export class ChessContractHelper {
   computer: Computer
   nameW: string
   nameB: string
@@ -120,7 +120,7 @@ export class ChessGameHelper {
     this.mod = mod
   }
 
-  static fromGame(game: ChessGame, computer: Computer, mod?: string) {
+  static fromGame(game: ChessContract, computer: Computer, mod?: string) {
     return new this(computer,
       game.nameW,
       game.nameB,
@@ -146,7 +146,7 @@ export class ChessGameHelper {
   async makeTx(): Promise<Transaction> {
     // Create output with non-standard script
     const { tx } = await this.computer.encode({
-      exp: `new ChessGame(
+      exp: `new ChessContract(
         ${this.amount},
         "${this.nameW}",
         "${this.nameB}",

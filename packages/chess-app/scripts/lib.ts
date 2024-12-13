@@ -1,4 +1,4 @@
-import { ChessGame, Payment } from "../src/contracts/chess-contract.js"
+import { ChessContract, Payment } from "../src/contracts/chess-contract.js"
 import { readFile } from "fs/promises"
 import { Computer } from "@bitcoin-computer/lib"
 import { transpileModule, ScriptTarget, ModuleKind } from 'typescript'
@@ -12,7 +12,7 @@ export const deploy = async (computer: Computer) => {
   const mod = await computer.deploy(`
     ${chessJS}
     export ${Payment}
-    export ${ChessGame}
+    export ${ChessContract}
   `)
   return mod
 }

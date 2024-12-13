@@ -3,7 +3,7 @@ import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/componen
 import { Computer } from "@bitcoin-computer/lib"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
 import { getHash as getHash } from "../services/secret.service"
-import { ChessGameHelper } from "../contracts/chess-contract"
+import { ChessContractHelper } from "../contracts/chess-contract"
 
 function ErrorContent(msg: string) {
   return (
@@ -49,7 +49,7 @@ function MintForm(props: {
       if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
 
       const publicKeyW = computerW.getPublicKey()
-      const chessGameHelper = new ChessGameHelper(computerW,
+      const chessContractHelper = new ChessContractHelper(computerW,
         nameW,
         nameB,
         parseFloat(amount) * 1e8,
@@ -59,7 +59,7 @@ function MintForm(props: {
         secretHashB,
         VITE_CHESS_GAME_MOD_SPEC
       )
-      const tx = await chessGameHelper.makeTx()
+      const tx = await chessContractHelper.makeTx()
       setSerializedTx(`http://localhost:1032/start/${tx.serialize()}`)
 
       showLoader(false)

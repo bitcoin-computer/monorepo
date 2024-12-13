@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
 import { Computer, Transaction } from "@bitcoin-computer/lib"
 import { useParams } from "react-router-dom"
-import { ChessGame, ChessGameHelper } from "../contracts/chess-contract"
+import { ChessContract, ChessContractHelper } from "../contracts/chess-contract"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
 
 function ErrorContent(msg: string) {
@@ -46,9 +46,9 @@ function StartForm(props: {
       const tx = Transaction.deserialize(serialized)
       const { effect } = await computer.encode(tx.onChainMetaData as never)
       const { res } = effect
-      const game = res as unknown as ChessGame
-      const chessGameHelper = ChessGameHelper.fromGame(game, computer, VITE_CHESS_GAME_MOD_SPEC)
-      const txId = await chessGameHelper.completeTx(tx)
+      const game = res as unknown as ChessContract
+      const chessContractHelper = ChessContractHelper.fromGame(game, computer, VITE_CHESS_GAME_MOD_SPEC)
+      const txId = await chessContractHelper.completeTx(tx)
       setLink(`http://localhost:1032/game/${txId}:0`)
       showLoader(false)
     } catch (err) {

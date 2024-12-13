@@ -4,8 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 import { initFlowbite } from "flowbite"
 import { Auth, ComputerContext, UtilsContext } from "@bitcoin-computer/components"
 import { BiGitCompare } from "react-icons/bi"
-import { ChessGame } from "../contracts/chess-contract"
-import { Chess } from "../contracts/chess"
+import { ChessContract } from "../contracts/chess-contract"
+import { Chess as ChessLib } from "../contracts/chess"
 import { getGameState, truncateName } from "./utils"
 
 export type Class = new (...args: unknown[]) => unknown
@@ -23,44 +23,44 @@ export type UserQuery<T extends Class> = Partial<{
   }
 }>
 
-function GameCard({ chessGame }: { chessGame: ChessGame }) {
-  const c = new Chess(chessGame.fen)
+function GameCard({ chessContract }: { chessContract: ChessContract }) {
+  const chessLib = new ChessLib(chessContract.fen)
   const publicKey = Auth.getComputer().getPublicKey()
   return (
     <>
       <div
         className={`bg-white border rounded-lg shadow mb-4 ${
-          chessGame.publicKeyW === publicKey || chessGame.publicKeyB === publicKey
+          chessContract.publicKeyW === publicKey || chessContract.publicKeyB === publicKey
             ? "border-blue-600 dark:border-blue-500"
             : "border-gray-200 dark:border-gray-700"
         }`}
       >
         <div className="p-4">
           <p className="text-center text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
-            {getGameState(c)}
+            {getGameState(chessLib)}
           </p>
           <p
             className={`mb-1 font-normal break-words ${
-              chessGame.publicKeyW === publicKey
+              chessContract.publicKeyW === publicKey
                 ? "text-blue-600 dark:text-blue-500"
                 : "text-gray-700 dark:text-gray-400"
             }`}
-            title={chessGame.nameW}
+            title={chessContract.nameW}
           >
-            {truncateName(chessGame.nameW)}
+            {truncateName(chessContract.nameW)}
           </p>
           <div className="flex justify-center items-center my-1 text-gray-500 dark:text-gray-400">
             <BiGitCompare size={20} />
           </div>
           <p
             className={`mb-1 font-normal break-words ${
-              chessGame.publicKeyB === publicKey
+              chessContract.publicKeyB === publicKey
                 ? "text-blue-600 dark:text-blue-500"
                 : "text-gray-700 dark:text-gray-400"
             }`}
-            title={chessGame.nameB}
+            title={chessContract.nameB}
           >
-            {truncateName(chessGame.nameB)}
+            {truncateName(chessContract.nameB)}
           </p>
         </div>
       </div>
@@ -86,7 +86,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const synced: ChessGame = (await computer.sync(rev)) as ChessGame
+        const synced: ChessContract = (await computer.sync(rev)) as ChessContract
         setValue(synced)
       } catch (err) {
         if (err instanceof Error) setMsgError(`Error: ${err.message}`)
@@ -129,7 +129,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
 
   return (
     <Link to={`/game/${value._id}`} className="block font-medium text-blue-600 dark:text-blue-500">
-      <GameCard chessGame={value} />
+      <GameCard chessContract={value} />
     </Link>
   )
 }

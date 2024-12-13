@@ -3,7 +3,7 @@ import { useCallback, useContext, useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
 import { Chessboard } from "react-chessboard"
 import { Chess, Square } from "../contracts/chess"
-import { ChessGame } from "../contracts/chess-contract"
+import { ChessContract } from "../contracts/chess-contract"
 import { currentPlayer, getGameState, getWinnerPubKey } from "./utils"
 
 function ListLayout(props: { listOfMoves: string[] }) {
@@ -78,12 +78,12 @@ export function ChessBoard() {
   const [skipSync, setSkipSync] = useState(false)
   const [winnerData, setWinnerData] = useState({})
   const [game, setGame] = useState<Chess | null>(null)
-  const [chessContract, setChessContract] = useState<ChessGame | null>(null)
+  const [chessContract, setChessContract] = useState<ChessContract | null>(null)
 
   const computer = useContext(ComputerContext)
-  const fetchChessContract = useCallback(async (): Promise<ChessGame> => {
+  const fetchChessContract = useCallback(async (): Promise<ChessContract> => {
     const [latestRev] = await computer.query({ ids: [gameId] })
-    return computer.sync(latestRev) as Promise<ChessGame>
+    return computer.sync(latestRev) as Promise<ChessContract>
   }, [computer, gameId])
 
   const setWinner = useCallback(async () => {
@@ -138,8 +138,8 @@ export function ChessBoard() {
     if (!chessContract) return false
 
     try {
-      const chessGame = new Chess(chessContract.fen)
-      const result = chessGame.move({ from, to, promotion: "q" })
+      const chessLib = new Chess(chessContract.fen)
+      const result = chessLib.move({ from, to, promotion: "q" })
       const chessMovePromise = chessContract.move(result.san) as unknown as Promise<void>
       chessMovePromise.catch((err) => {
         if (err instanceof Error) {
@@ -153,7 +153,7 @@ export function ChessBoard() {
       const newSan = [...sans]
       newSan.push(result.san)
       setSans(newSan)
-      setGame(chessGame)
+      setGame(chessLib)
       return true
     } catch (error) {
       showSnackBar(error instanceof Error ? error.message : "Error Occurred", false)
