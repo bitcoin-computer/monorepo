@@ -34,10 +34,15 @@
     "husky-checks": "./scripts/husky-checks.sh",
     "prepare": "husky install",
     "prepublishOnly": "./scripts/check-obfuscation.sh",
-    "build-all-packages": "turbo run build --concurrency=1"
+    "build-all-packages": "turbo run build --concurrency=1",
+    "types": "npm run types --if-present --workspaces",
+    "lint": "npm run lint --if-present --workspaces",
+    "lint-fix": "npm run lint --if-present --workspaces -- --fix",
+    "test": "npm run test --if-present --workspaces"
   },
   "dependencies": {
-    "@endo/static-module-record": "^1.0.4"
+    "@endo/static-module-record": "^1.0.4",
+    "esbuild": "^0.24.0"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.3",
@@ -54,5 +59,8 @@
     "turbo": "^2.1.3",
     "typescript": "^5.7.2",
     "url": "^0.11.3"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.28.1"
   }
 }

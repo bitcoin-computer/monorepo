@@ -5,7 +5,7 @@ describe("App", () => {
   // todo: make this test work
   it.skip("renders the App component", () => {
     render(<App />)
-    const linkElement = screen.getByText(/All Counters/i)
+    const linkElement = screen.getByText(/All Games/i)
     expect(linkElement).toBeInTheDocument()
   })
 })
