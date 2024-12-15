@@ -89,7 +89,6 @@ export function ChessBoard() {
   const { showSnackBar } = UtilsContext.useUtilsComponents()
   const [gameId] = useState<string>(params.id || "")
   const [orientation, setOrientation] = useState<"white" | "black">("white")
-  const [sans, setSans] = useState<string[]>([])
   const [skipSync, setSkipSync] = useState(false)
   const [winnerData, setWinnerData] = useState({})
   const [game, setGame] = useState<ChessLib | null>(null)
@@ -113,14 +112,14 @@ export function ChessBoard() {
 
   const syncChessContract = useCallback(async () => {
     try {
-      const cc = await fetchChessContract()
-      setSans(cc.sans)
+      const chessContract = await fetchChessContract()
+      // setSans(chessContract.sans)
       if (skipSync) {
         setSkipSync(false)
         return
       }
-      setChessContract(cc)
-      setGame(new ChessLib(cc.fen))
+      setChessContract(chessContract)
+      setGame(new ChessLib(chessContract.fen))
       await setWinner()
     } catch (error) {
       console.error("Error fetching contract:", error)
@@ -130,14 +129,13 @@ export function ChessBoard() {
   useEffect(() => {
     const fetch = async () => {
       const cc = await fetchChessContract()
-      setSans(cc.sans)
       setChessContract(cc)
       setGame(new ChessLib(cc.fen))
       setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
       await setWinner()
     }
     fetch()
-  }, [computer, fetchChessContract, setWinner])
+  }, [computer, fetchChessContract])
 
   // Update the chess state by polling
   useEffect(() => {
@@ -149,31 +147,28 @@ export function ChessBoard() {
   }, [syncChessContract])
 
   // OnDrop action for chess game
-  function onDrop(from: Square, to: Square) {
-    if (!chessContract) return false
+  const onDropSync = (from: Square, to: Square) => {
+    let dropResult = false;
+    (async () => {
+      if (!chessContract) return false
 
-    try {
       const chessLib = new ChessLib(chessContract.fen)
-      const result = chessLib.move({ from, to, promotion: "q" })
-      const chessMovePromise = chessContract.move(result.san) as unknown as Promise<void>
-      chessMovePromise.catch((err) => {
-        if (err instanceof Error) {
-          showSnackBar(err.message, false)
-          setSkipSync(false)
-          syncChessContract()
-        }
-      })
-      
+      const { san } = chessLib.move({ from, to, promotion: "q" })
+      await chessContract.move(san)
+      // await chessContract.move2(from, to)
+
       setSkipSync(true)
-      const newSan = [...sans]
-      newSan.push(result.san)
-      setSans(newSan)
-      setGame(chessLib)
-      return true
-    } catch (error) {
+      setGame(new ChessLib(chessContract.fen))
+      dropResult = true
+
+    })()
+    .catch((error) => {
+      console.log(error.stack)
       showSnackBar(error instanceof Error ? error.message : "Error Occurred", false)
-      return false
-    }
+      setSkipSync(false)
+      syncChessContract()
+    })
+    return dropResult
   }
 
   return (
@@ -216,7 +211,7 @@ export function ChessBoard() {
               <div className="bg-white dark:bg-gray-800 w-full">
                 <Chessboard
                   position={game.fen()}
-                  onPieceDrop={onDrop}
+                  onPieceDrop={onDropSync}
                   boardOrientation={orientation}
                 />
               </div>
@@ -235,11 +230,11 @@ export function ChessBoard() {
         </div>
 
         {/* Moves List Column */}
-        {game && (
+        {chessContract && (
           <div className="col-span-1 pt-4">
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
               <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">Move History</h3>
-              <ListLayout listOfMoves={sans} />
+              <ListLayout listOfMoves={chessContract.sans} />
             </div>
           </div>
         )}

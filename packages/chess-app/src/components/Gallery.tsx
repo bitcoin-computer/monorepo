@@ -281,7 +281,7 @@ export function WithPagination<T extends Class>(q: UserQuery<T>) {
       showLoader(false)
     }
     fetch()
-  }, [computer, pageNum, q, params, showLoader])
+  }, [computer, pageNum, q, params])
 
   const handleNext = async () => {
     setIsPrevAvailable(true)

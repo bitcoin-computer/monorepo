@@ -31,7 +31,7 @@ function MintForm(props: {
 }) {
   const { computer: computerW, setErrorMsg } = props
   const [nameW, setName] = useState("W")
-  const [publicKeyB, setSecondPlayerPublicKey] = useState("0272ccb97e82d62703bae213d3da4d3b2878ee302b0c1760c50d089c4bf383a041")
+  const [publicKeyB, setSecondPlayerPublicKey] = useState("0207e38e74f08c8a0105cad4e3e1f02aa4b81c9d914280edd30366b30802771c03")
   const [nameB, setNameB] = useState("B")
   const [amount, setAmount] = useState(`0.1`)
   const [serializedTx, setSerializedTx] = useState('')

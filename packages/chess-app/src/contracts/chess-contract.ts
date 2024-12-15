@@ -81,6 +81,25 @@ export class ChessContract extends Contract {
     }
   }
 
+  move2(from: string, to: string) {
+    // @ts-expect-error type error
+    const chessLib = new Chess(this.fen)
+    const { san } = chessLib.move({ from, to, promotion: "q" })
+
+    this.sans.push(san)
+    chessLib.move(san)
+    this.fen = chessLib.fen()
+
+    if (!chessLib.isCheckmate()) {
+      if (this._owners[0] === this.publicKeyW) {
+        this._owners = [this.publicKeyB]
+      } else {
+        this._owners = [this.publicKeyW]
+      }  
+    }
+    return san
+  }
+
   isGameOver() {
     // @ts-expect-error type error
     return new Chess(this.fen).isGameOver()
