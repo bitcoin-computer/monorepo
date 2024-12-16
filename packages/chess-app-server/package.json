@@ -10,7 +10,7 @@
     "rollback": "migrate down",
     "create-migration": "migrate create",
     "lint": "tslint -p tsconfig.json --fix",
-    "start-postgres": "docker-compose up postgres",
+    "start-postgres": "docker compose up postgres",
     "up": "docker compose up",
     "build-docker": "docker build -t chess-app-server .",
     "clean": "rm -rf db/db-data"
