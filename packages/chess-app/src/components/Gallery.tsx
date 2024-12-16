@@ -71,7 +71,7 @@ function GameCard({ chessContract }: { chessContract: ChessContract }) {
   )
 }
 
-function HomePageCard({ content }: { content: string | (() => string) }) {
+function HomePageCard({ content }: { content: () => JSX.Element }) {
   return (
     <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
@@ -82,7 +82,7 @@ function HomePageCard({ content }: { content: string | (() => string) }) {
 }
 
 function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
-  const [value, setValue] = useState<unknown>("loading...")
+  const [value, setValue] = useState<ChessContract>({ _id: '' } as ChessContract)
   const [errorMsg, setMsgError] = useState("")
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -127,7 +127,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
   }
 
   if (errorMsg) {
-    return <HomePageCard content={errorMsg} />
+    return <HomePageCard content={() => <>errorMsg</>} />
   }
 
   return (
@@ -299,7 +299,6 @@ export function WithPagination<T extends Class>(q: UserQuery<T>) {
       <FromRevs revs={revs} computer={computer} />
       {!(pageNum === 0 && revs && revs.length === 0) && (
         <Pagination
-          revs={revs}
           isPrevAvailable={isPrevAvailable}
           handlePrev={handlePrev}
           isNextAvailable={isNextAvailable}
