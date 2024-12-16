@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/chess-app-server",
+  "name": "@bitcoin-computer/chess-server",
   "version": "0.23.0-beta.0",
   "type": "module",
   "private": true,
@@ -12,7 +12,7 @@
     "lint": "tslint -p tsconfig.json --fix",
     "start-postgres": "docker compose up postgres",
     "up": "docker compose up",
-    "build-docker": "docker build -t chess-app-server .",
+    "build-docker": "docker build -t chess-server .",
     "clean": "rm -rf db/db-data"
   },
   "dependencies": {

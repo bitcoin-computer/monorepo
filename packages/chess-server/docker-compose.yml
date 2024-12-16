@@ -6,7 +6,7 @@ services:
       - DB_HOST=postgres
       - DB_PORT=5432
     build: .
-    image: chess-app-server
+    image: chess-server
     volumes:
       - ./src:/app/src
     ports:
