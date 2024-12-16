@@ -150,12 +150,8 @@ export function ChessBoard() {
   const onDropSync = (from: Square, to: Square) => {
     let dropResult = false;
     (async () => {
-      if (!chessContract) return false
-
-      const chessLib = new ChessLib(chessContract.fen)
-      const { san } = chessLib.move({ from, to, promotion: "q" })
-      await chessContract.move(san)
-      // await chessContract.move2(from, to)
+      if (!chessContract) throw new Error('Chess contract is not defined.')
+      await chessContract.move(from, to)
 
       setSkipSync(true)
       setGame(new ChessLib(chessContract.fen))

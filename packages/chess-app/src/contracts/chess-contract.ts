@@ -65,29 +65,11 @@ export class ChessContract extends Contract {
     })
   }
 
-  move(san: string) {
-    this.sans.push(san)
-    // @ts-expect-error type error
-    const game = new Chess(this.fen)
-    game.move(san)
-    this.fen = game.fen()
-
-    if (!game.isCheckmate()) {
-      if (this._owners[0] === this.publicKeyW) {
-        this._owners = [this.publicKeyB]
-      } else {
-        this._owners = [this.publicKeyW]
-      }  
-    }
-  }
-
-  move2(from: string, to: string) {
+  move(from: string, to: string) {
     // @ts-expect-error type error
     const chessLib = new Chess(this.fen)
     const { san } = chessLib.move({ from, to, promotion: "q" })
-
     this.sans.push(san)
-    chessLib.move(san)
     this.fen = chessLib.fen()
 
     if (!chessLib.isCheckmate()) {
