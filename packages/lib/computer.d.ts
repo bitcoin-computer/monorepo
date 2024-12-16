@@ -497,6 +497,12 @@ declare class Computer {
   static lockdown(opts?: any): void
   delete(inRevs: string[]): Promise<string>
   isUnspent(rev: string): Promise<boolean>
+  next(rev: string): Promise<{
+    rev: string | undefined
+  }>
+  prev(rev: string): Promise<{
+    rev: string | undefined
+  }>
   export(module: string, opts?: Partial<ModuleOptions>): Promise<string>
   import(rev: string): Promise<ModuleExportsNamespace>
   queryRevs(q: Query): Promise<string[]>

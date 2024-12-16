@@ -1,7 +1,7 @@
 {
   "name": "@bitcoin-computer/nft",
   "private": true,
-  "version": "0.22.0-beta.0",
+  "version": "0.23.0-beta.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,10 +14,10 @@
     "deploy": "node --experimental-modules scripts/deploy.mjs"
   },
   "dependencies": {
-    "@bitcoin-computer/TBC721": "^0.22.0-beta.0",
-    "@bitcoin-computer/components": "^0.22.0-beta.0",
-    "@bitcoin-computer/lib": "^0.22.0-beta.0",
-    "@bitcoin-computer/swap": "^0.22.0-beta.0",
+    "@bitcoin-computer/TBC721": "^0.23.0-beta.0",
+    "@bitcoin-computer/components": "^0.23.0-beta.0",
+    "@bitcoin-computer/lib": "^0.23.0-beta.0",
+    "@bitcoin-computer/swap": "^0.23.0-beta.0",
     "flowbite": "^2.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# List of folders to skip
-check_folders=("lib" "node")
-
 script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Define the base directory for the packages
