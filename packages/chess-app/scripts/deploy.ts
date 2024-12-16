@@ -3,7 +3,7 @@ import { config } from "dotenv"
 import { createInterface } from "node:readline/promises"
 import { stdin as input, stdout as output } from "node:process"
 import { readFile, writeFile } from "fs/promises"
-import { deploy } from "./lib.ts"
+import { deploy } from "./lib.js"
 
 config()
 
