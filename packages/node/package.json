@@ -34,6 +34,7 @@
     "fund-ltc": "node --loader ts-node/esm ./scripts/fund.ts ltc",
     "fund-btc": "node --loader ts-node/esm ./scripts/fund.ts btc",
     "fund-pepe": "node --loader ts-node/esm ./scripts/fund.ts pepe",
+    "fund-doge": "node --loader ts-node/esm ./scripts/fund.ts doge",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
     "start": "node dist/bcn.es.mjs",
@@ -84,6 +85,7 @@
     "Bitcoin",
     "Litecoin",
     "Pepecoin",
+    "Dogecoin",
     "Smart Contracts",
     "Javascript"
   ],

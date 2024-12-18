@@ -120,6 +120,41 @@ export const pepecointestnet: Network = {
   wif: 0xf1,
 };
 
+export const dogecoin: Network = {
+  messagePrefix: '\x19Dogecoin Signed Message:\n',
+  bech32: 'doge', // TODO: Dogecoin doesn't use bech32, make type optional
+  bip32: {
+    public: 0x02facafd,
+    private: 0x02fac398,
+  },
+  pubKeyHash: 0x1e,
+  scriptHash: 0x16,
+  wif: 0x9e,
+};
+
+export const dogecoinregtest: Network = {
+  messagePrefix: '\x19Dogecoin Signed Message:\n',
+  bech32: 'rdoge',
+  bip32: {
+    public: 0x043587cf,
+    private: 0x04358394,
+  },
+  pubKeyHash: 0x6f,
+  scriptHash: 0xc4,
+  wif: 0xef,
+};
+
+export const dogecointestnet: Network = {
+  messagePrefix: '\x19Dogecoin Signed Message:\n',
+  bech32: 'tdoge',
+  bip32: {
+    public: 0x0432a9a8,
+    private: 0x0432a243,
+  },
+  pubKeyHash: 0x71,
+  scriptHash: 0xc4,
+  wif: 0xf1,
+};
 export const NETWORKS: Record<string, any> = {
   // Bitcoin
   bitcoin,
@@ -133,4 +168,8 @@ export const NETWORKS: Record<string, any> = {
   pepecoin,
   pepecoinregtest,
   pepecointestnet,
+  // Dogecoin
+  dogecoin,
+  dogecoinregtest,
+  dogecointestnet,
 };
