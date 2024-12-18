@@ -1,8 +1,9 @@
+import { Computer } from "@bitcoin-computer/lib"
 import { initFlowbite } from "flowbite"
 import { useEffect, useState } from "react"
 import { chunk } from "../../utils"
 
-export const CustomDrawer = ({ id, computer }: any) => {
+export const CustomDrawer = ({ id, computer }: { id: string; computer: Computer }) => {
   const [showMnemonic, setShowMnemonic] = useState(false)
 
   function Card({ content }: { content: string }) {

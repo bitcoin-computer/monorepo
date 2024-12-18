@@ -65,7 +65,7 @@ export class PaymentHelper {
     const exp = `new Payment(${amount})`
     return this.computer.encode({
       exp,
-      mod: this.mod
+      mod: this.mod,
     })
   }
 

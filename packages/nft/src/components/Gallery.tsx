@@ -20,26 +20,28 @@ export type UserQuery<T extends Class> = Partial<{
   }
 }>
 
-function NFTCard({ nft }: { nft: NFT }) {
+function NFTCard({ nft }: { nft: NFT | undefined }) {
   return (
     <>
-      <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4">
-        <img className="h-auto rounded-t-lg max-w-full w-full" src={nft.url} alt="" />
-        <div className="p-4">
-          <h5
-            className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white break-words"
-            title={nft.name}
-          >
-            {nft.name}
-          </h5>
-          <p
-            className="mb-3 font-normal text-gray-700 dark:text-gray-400 break-words"
-            title={nft.artist}
-          >
-            {nft.artist}
-          </p>
+      {nft && (
+        <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4">
+          <img className="h-auto rounded-t-lg max-w-full w-full" src={nft.url} alt="" />
+          <div className="p-4">
+            <h5
+              className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white break-words"
+              title={nft.name}
+            >
+              {nft.name}
+            </h5>
+            <p
+              className="mb-3 font-normal text-gray-700 dark:text-gray-400 break-words"
+              title={nft.artist}
+            >
+              {nft.artist}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
     </>
   )
 }
@@ -55,7 +57,7 @@ function HomePageCard({ content }: any) {
 }
 
 function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
-  const [value, setValue] = useState<any>("loading...")
+  const [value, setValue] = useState<NFT>()
   const [errorMsg, setMsgError] = useState("")
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -106,7 +108,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
   return <NFTCard nft={value} />
 }
 
-function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
+function FromRevs({ revs, computer }: { revs: string[]; computer: Computer }) {
   const cols: string[][] = [[], [], [], []]
 
   revs.forEach((rev, index) => {

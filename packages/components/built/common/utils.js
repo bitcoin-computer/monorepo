@@ -74,8 +74,11 @@ export function isValidRev(value) {
     return typeof value === "string" && isValidRevString(value);
 }
 export var sleep = function (ms) {
-    return new Promise(function (resolve) { setTimeout(resolve, ms); });
+    return new Promise(function (resolve) {
+        setTimeout(resolve, ms);
+    });
 };
 export function getEnv(name) {
-    return (typeof process !== "undefined" && process.env["REACT_APP_".concat(name)]) || (import.meta.env && import.meta.env["VITE_".concat(name)]);
+    return ((typeof process !== "undefined" && process.env["REACT_APP_".concat(name)]) ||
+        (import.meta.env && import.meta.env["VITE_".concat(name)]));
 }

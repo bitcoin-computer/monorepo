@@ -5,7 +5,7 @@ import { Computer } from "@bitcoin-computer/lib"
 export const Details = () => {
   const [computer] = useState<Computer>(Auth.getComputer())
 
-  const Mnemonic = ({ computer: comp }: any) => {
+  const Mnemonic = ({ computer: comp }: { computer: Computer }) => {
     const [showMnemonic, setShowMnemonic] = useState(false)
 
     const Heading = () => <h4 className="mt-4 text-2xl font-bold dark:text-white">Mnemonic</h4>
@@ -55,10 +55,10 @@ export const Details = () => {
       <p className="font-mono text-gray-500 dark:text-gray-400">{computer.getNetwork()}</p>
 
       <h4 className="mt-4 text-2xl font-bold dark:text-white">Path</h4>
-      <p className="font-mono text-gray-500 dark:text-gray-400">{computer.getPath() as any}</p>
+      <p className="font-mono text-gray-500 dark:text-gray-400">{computer.getPath()}</p>
 
       <h4 className="mt-4 text-2xl font-bold dark:text-white">Url</h4>
-      <p className="font-mono text-gray-500 dark:text-gray-400">{computer.getUrl() as any}</p>
+      <p className="font-mono text-gray-500 dark:text-gray-400">{computer.getUrl()}</p>
 
       <Mnemonic computer={computer} />
     </>

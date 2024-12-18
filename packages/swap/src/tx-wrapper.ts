@@ -36,7 +36,7 @@ export class TxWrapperHelper {
     return this.computer.encode({
       exp,
       exclude,
-      mod: this.mod
+      mod: this.mod,
     })
   }
 
@@ -45,7 +45,7 @@ export class TxWrapperHelper {
     return this.computer.encode({
       exp: `txWrapper.addSaleTx("${tx.serialize()}")`,
       exclude: tx.getInRevs(),
-      env: { txWrapper: txWrapper._rev }
+      env: { txWrapper: txWrapper._rev },
     })
   }
 

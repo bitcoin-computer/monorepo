@@ -25,7 +25,7 @@ export class NftHelper {
     async mint(name, artist, url) {
         const { tx, effect } = await this.computer.encode({
             exp: `new NFT("${name}", "${artist}", "${url}")`,
-            mod: this.mod
+            mod: this.mod,
         });
         await this.computer.broadcast(tx);
         return effect.res;

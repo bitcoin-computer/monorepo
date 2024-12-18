@@ -464,7 +464,7 @@ declare class Computer {
   decode(tx: Transaction): Promise<TransitionJSON>
   deploy(module: string, opts?: Partial<ModuleOptions>): Promise<string>
   load(rev: string): Promise<ModuleExportsNamespace>
-  listTxs(address?: string): Promise<import('./types')._Transaction>
+  listTxs(address?: string): Promise<{ sentTxs: TxIdAmountType[]; receivedTxs: TxIdAmountType[] }>
   getUtxos(address?: string): Promise<string[]>
   getBalance(address?: string): Promise<_Balance>
   sign(transaction: Transaction, opts?: SigOptions): Promise<void>

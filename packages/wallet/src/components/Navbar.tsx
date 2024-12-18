@@ -20,7 +20,7 @@ export default function Navbar({
 
   const isLoggedIn = !!localStorage.getItem("BIP_39_KEY")
 
-  const search = async (event: any) => {
+  const search = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     const code = event.keyCode || event.which
     if (code === 13) {
       if (searchInput === "") navigate("/")
