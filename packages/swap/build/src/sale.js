@@ -27,7 +27,7 @@ export class SaleHelper {
             sighashType,
             inputIndex: 0,
             fund: false,
-            mod: this.mod
+            mod: this.mod,
         });
     }
     async isSaleTx(tx) {

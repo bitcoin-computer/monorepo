@@ -27,7 +27,7 @@ export class OrdSaleHelper {
             sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
             inputIndex: 2,
             fund: false,
-            mod: this.mod
+            mod: this.mod,
         });
     }
     static checkSaleTx() {

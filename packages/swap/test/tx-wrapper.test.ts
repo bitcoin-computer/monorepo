@@ -41,7 +41,7 @@ describe('TxWrapper', () => {
           name: 'A',
           artist: 'AAA',
           url: 'URL',
-          _owners: [alice.getPublicKey()]
+          _owners: [alice.getPublicKey()],
         })
       })
 
@@ -53,7 +53,7 @@ describe('TxWrapper', () => {
           name: 'B',
           artist: 'BBB',
           url: 'URL',
-          _owners: [bob.getPublicKey()]
+          _owners: [bob.getPublicKey()],
         })
       })
     })
@@ -74,7 +74,7 @@ describe('TxWrapper', () => {
       it('Alice builds, funds, and signs a swap transaction', async () => {
         ;({ tx: aliceTx } = await alice.encode({
           exp: `${StaticSwap} StaticSwap.exec(a, b)`,
-          env: { a: a._rev, b: b._rev }
+          env: { a: a._rev, b: b._rev },
         }))
       })
 
@@ -83,7 +83,7 @@ describe('TxWrapper', () => {
         const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
           bob.getPublicKey(),
           bob.getUrl(),
-          aliceTx
+          aliceTx,
         )
 
         wrappedTxId = await alice.broadcast(wrappedTx)
@@ -122,7 +122,7 @@ describe('TxWrapper', () => {
           name: 'A',
           artist: 'AAA',
           url: 'URL',
-          _owners: [bob.getPublicKey()]
+          _owners: [bob.getPublicKey()],
         })
       })
 
@@ -135,7 +135,7 @@ describe('TxWrapper', () => {
           name: 'B',
           artist: 'BBB',
           url: 'URL',
-          _owners: [alice.getPublicKey()]
+          _owners: [alice.getPublicKey()],
         })
       })
     })
@@ -161,7 +161,7 @@ describe('TxWrapper', () => {
           name: 'A',
           artist: 'AAA',
           url: 'URL',
-          _owners: [alice.getPublicKey()]
+          _owners: [alice.getPublicKey()],
         })
       })
 
@@ -173,7 +173,7 @@ describe('TxWrapper', () => {
           name: 'B',
           artist: 'BBB',
           url: 'URL',
-          _owners: [bob.getPublicKey()]
+          _owners: [bob.getPublicKey()],
         })
       })
 
@@ -185,7 +185,7 @@ describe('TxWrapper', () => {
       it('Alice builds, funds, and signs a swap transaction', async () => {
         ;({ tx: aliceTx } = await alice.encode({
           exp: `${StaticSwap} StaticSwap.exec(a, b)`,
-          env: { a: a._rev, b: b._rev }
+          env: { a: a._rev, b: b._rev },
         }))
       })
 
@@ -193,7 +193,7 @@ describe('TxWrapper', () => {
         await alice.faucet(1e8)
         const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
           alice.getPublicKey(),
-          alice.getUrl()
+          alice.getUrl(),
         )
 
         wrappedTxId = await alice.broadcast(wrappedTx)
@@ -236,7 +236,7 @@ describe('TxWrapper', () => {
           name: 'A',
           artist: 'AAA',
           url: 'URL',
-          _owners: [bob.getPublicKey()]
+          _owners: [bob.getPublicKey()],
         })
       })
 
@@ -249,7 +249,7 @@ describe('TxWrapper', () => {
           name: 'B',
           artist: 'BBB',
           url: 'URL',
-          _owners: [alice.getPublicKey()]
+          _owners: [alice.getPublicKey()],
         })
       })
     })
