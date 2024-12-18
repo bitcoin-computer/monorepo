@@ -101,7 +101,7 @@ describe('Token', async () => {
       const { tx, effect } = await receiver.encodeCall({
         target: token2,
         property: 'transfer',
-        args: [sender.getPublicKey()]
+        args: [sender.getPublicKey()],
       })
       await receiver.broadcast(tx)
 
