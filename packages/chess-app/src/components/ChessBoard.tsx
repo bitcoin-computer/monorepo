@@ -2,9 +2,10 @@ import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/componen
 import { useCallback, useContext, useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
 import { Chessboard } from "react-chessboard"
-import { ChessContract } from "../contracts/chess-contract"
+import { ChessContract, ChessContractHelper } from "../contracts/chess-contract"
 import { Chess as ChessLib, Square } from "../contracts/chess"
 import { getGameState } from "./utils"
+import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
 
 function currentPlayer(fen: string) {
   const parts = fen.split(" ")
@@ -151,7 +152,8 @@ export function ChessBoard() {
     let dropResult = false;
     (async () => {
       if (!chessContract) throw new Error('Chess contract is not defined.')
-      await chessContract.move(from, to)
+      const chessHelper = ChessContractHelper.fromContract(chessContract, computer, VITE_CHESS_GAME_MOD_SPEC)
+      await chessHelper.move(chessContract, from, to)
 
       setSkipSync(true)
       setGame(new ChessLib(chessContract.fen))
@@ -159,10 +161,11 @@ export function ChessBoard() {
 
     })()
     .catch((error) => {
-      console.log(error.stack)
-      showSnackBar(error instanceof Error ? error.message : "Error Occurred", false)
-      setSkipSync(false)
-      syncChessContract()
+      if (error instanceof Error) {
+        showSnackBar(error.message, false)
+        setSkipSync(false)
+        syncChessContract()
+      }
     })
     return dropResult
   }

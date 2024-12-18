@@ -3,6 +3,7 @@ import { db } from '../db/db.js'
 import { Computer } from '@bitcoin-computer/lib'
 import * as crypto from 'node:crypto'
 import cors from 'cors'
+import { Chess } from './chess.js'
 
 const app = express()
 const PORT = 4000
@@ -30,10 +31,22 @@ app.get('/hash', async (req: Request, res: Response) => {
 app.get('/secret/:id', async (req: Request, res: Response) => {
   try {
     const id = req.params.id
-    const computer = new Computer()
-    const game = await computer.sync(id)
+    const computer = new Computer({ chain: 'LTC', network: 'regtest', url: 'http://127.0.0.1:1031' })
+    const game = await computer.sync(id) as any
+
+    if (new Chess(game.fen).isGameOver()) {
+      const winner = game._owners[0]
+      const hash = winner === game.publicKeyW ? game.secretHashW : game.secretHashB
     
-    
+      const { secret } = await db.one(
+        `SELECT secret FROM "Secrets" WHERE "hash"=$1;`,
+        [hash]
+      )
+      res.json(secret)
+    } else {
+      res.json('')
+    }
+
   } catch (error) {
     if (error instanceof Error)
       res.status(500).json({ error: `Internal server error: ${error.message}` })

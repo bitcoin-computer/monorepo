@@ -2,6 +2,8 @@ import { Computer, Transaction } from "@bitcoin-computer/lib"
 import { address, bufferUtils, networks, payments, script as bscript, opcodes} from "@bitcoin-computer/nakamotojs"
 import { script } from "@bitcoin-computer/nakamotojs"
 import { Buffer } from 'buffer'
+import { getSecret } from "../services/secret.service.js"
+// import { Chess } from "./chess.js"
 
 const { fromASM, toASM } = script
 
@@ -72,7 +74,7 @@ export class ChessContract extends Contract {
     this.sans.push(san)
     this.fen = chessLib.fen()
 
-    if (!chessLib.isCheckmate()) {
+    if (!chessLib.isGameOver()) {
       if (this._owners[0] === this.publicKeyW) {
         this._owners = [this.publicKeyB]
       } else {
@@ -200,6 +202,18 @@ export class ChessContractHelper {
     // Sign and broadcast
     await this.computer.sign(tx)
     return this.computer.broadcast(tx)
+  }
+
+  async move(chessContract: ChessContract, from: string, to: string) {
+    await chessContract.move(from, to)
+    // @ts-expect-error type error
+    if (new Chess(chessContract.fen).isGameOver()) {
+      const secret = await getSecret(chessContract._id)
+      const spendingPath = chessContract._owners[0] === this.publicKeyW ? 0 : 1
+      const txId = chessContract._id.split(':')[0]
+      const spendingTxId = await this.spend(txId, secret!, spendingPath)
+      console.log('You won!', spendingTxId)
+    }
   }
 
   async spend(txId: string, secret: string, spendingPath: number, fee = 10000): Promise<string> {

@@ -14,7 +14,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: { 
         "@bitcoin-computer/lib": path.resolve(__dirname, "../lib/dist/bc-lib.browser.min.mjs"),
-        buffer: 'buffer'
+        buffer: 'buffer',
+        crypto: "crypto-browserify/index.js",
       }
     },
     server: {

@@ -44,7 +44,7 @@ describe("ChessContract", () => {
     test('Should perform a move', async () => {
       const chessContract = await computerW.new(ChessContract, [amount, 'w', 'b', computerW.getPublicKey(), computerB.getPublicKey(), secretHashW, secretHashB], mod)
       const fenBefore = chessContract.fen
-      await chessContract.move('e4')
+      await chessContract.move('e2', 'e4')
       expect(chessContract.fen).toEqual('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1')
       expect(chessContract.payment).toBeDefined()
       expect(chessContract.fen).not.toEqual(fenBefore)
@@ -108,7 +108,7 @@ describe('ChessContractHelper', () => {
       const { res, env } = await computerW.sync(txId)
       expect(Object.keys(res)).toEqual(['amount', 'nameW', 'nameB', 'publicKeyW', 'publicKeyB', 'secretHashW', 'secretHashB', 'sans', 'fen', 'payment', '_root', '_rev', '_id', '_amount', '_owners'])
       expect(Object.keys(env)).toEqual([])      
-      await res.move('e4')
+      await res.move('e2', 'e4')
     }, 10000)
   })
 
