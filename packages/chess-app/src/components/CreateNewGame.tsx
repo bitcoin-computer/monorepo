@@ -75,15 +75,15 @@ function MintForm(props: {
     e.preventDefault()
     try {
       showLoader(true)
-      const { tx, effect }: any = await computer.encode({
+      const { tx, effect } = await computer.encode({
         exp: `new ChessGame("white", "${computer.getPublicKey()}", "${secondPlayerPublicKey}", "${name}", "${secondPlayerUserName}")`,
         mod: VITE_CHESS_GAME_MOD_SPEC
       })
 
       await computer.broadcast(tx)
-      setSuccessRev(effect.res?._id)
+      setSuccessRev((effect.res as { _id: string })?._id)
       await createGame({
-        gameId: effect.res?._id,
+        gameId: (effect.res as { _id: string })?._id,
         firstPlayerPubKey: computer.getPublicKey(),
         secondPlayerPubKey: secondPlayerPublicKey
       })
