@@ -41,7 +41,7 @@ export class OrdSaleHelper {
       sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
       inputIndex: 2,
       fund: false,
-      mod: this.mod
+      mod: this.mod,
     })
   }
 
@@ -54,7 +54,7 @@ export class OrdSaleHelper {
     b1: Payment,
     b2: Payment,
     payment: Payment,
-    scriptPubKey: Buffer
+    scriptPubKey: Buffer,
   ) {
     const [b1TxId, b1Index] = b1._rev.split(':')
     tx.updateInput(0, { txId: b1TxId, index: parseInt(b1Index, 10) })

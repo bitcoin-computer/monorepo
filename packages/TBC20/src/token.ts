@@ -66,7 +66,7 @@ export class TokenHelper implements ITBC20 {
     publicKey: string,
     amount: number,
     name: string,
-    symbol: string
+    symbol: string,
   ): Promise<string | undefined> {
     const args = [publicKey, amount, name, symbol]
     const token = await this.computer.new(Token, args, this.mod)

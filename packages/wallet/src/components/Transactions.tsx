@@ -10,7 +10,7 @@ export default function Transactions() {
   const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
 
   const updateTxs = useCallback(async () => {
-    setTxs((await computer.listTxs()) as any)
+    setTxs(await computer.listTxs())
   }, [computer])
 
   useEffect(() => {

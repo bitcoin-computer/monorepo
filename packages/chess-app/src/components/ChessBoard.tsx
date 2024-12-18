@@ -148,8 +148,8 @@ export function ChessBoard() {
         promotion: "q" // always promote to a queen for example simplicity
       })
       const chessMovePromise = chessContract.move(result.san) as unknown as Promise<void>
-      chessMovePromise.catch((err: any) => {
-        showSnackBar(err.message, false)
+      chessMovePromise.catch((err: unknown) => {
+        showSnackBar(err instanceof Error ? err.message : "Error occurred", false)
         setSkipSync(false)
         syncChessContract()
       })

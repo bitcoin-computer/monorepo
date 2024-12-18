@@ -1,4 +1,12 @@
-export const ModSpec = ({ modSpec, setModSpec }: { modSpec: any; setModSpec: any }) => (
+import { Dispatch, SetStateAction } from "react"
+
+export const ModSpec = ({
+  modSpec,
+  setModSpec
+}: {
+  modSpec: string | undefined
+  setModSpec: Dispatch<SetStateAction<string | undefined>>
+}) => (
   <>
     <div>
       <div className="flex mb-2 mt-2">
