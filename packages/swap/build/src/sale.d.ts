@@ -1,5 +1,4 @@
 /// <reference types="node" />
-/// <reference types="node" />
 import { Buffer } from 'buffer';
 import { Transaction } from '@bitcoin-computer/lib';
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
