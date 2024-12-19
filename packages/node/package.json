@@ -27,7 +27,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "build-node": "docker build -t bitcoin-computer-node .",
+    "build": "cd ../../ && npm run build-node",
     "clean-logs": "rm -f *.log 2> /dev/null",
     "delete-blockchain-data": "rm -rf chain-setup/*/*/*-data",
     "down": "node --loader ts-node/esm  ./scripts/down.ts",
