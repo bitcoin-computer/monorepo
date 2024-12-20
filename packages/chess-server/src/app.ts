@@ -3,7 +3,7 @@ import { db } from '../db/db.js'
 import { Computer } from '@bitcoin-computer/lib'
 import * as crypto from 'node:crypto'
 import cors from 'cors'
-import { Chess } from './chess.js'
+import { Chess } from '../../chess-contracts'
 
 const app = express()
 const PORT = 4000
