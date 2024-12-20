@@ -1,4 +1,4 @@
-import type { Chess as ChessLib } from "../../contracts/chess"
+import type { Chess as ChessLib } from "../../../../chess-contracts/"
 
 export function getGameState(chessLib: ChessLib): string {
   if (chessLib.isCheckmate())

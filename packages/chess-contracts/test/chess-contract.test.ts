@@ -3,6 +3,8 @@ import { crypto } from '@bitcoin-computer/nakamotojs'
 import { ChessContract, ChessContractHelper } from '../src/chess-contract'
 import { deploy } from '../scripts/lib.js'
 import { expect } from 'expect'
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
 const chain = 'LTC'
 const network = 'regtest'
@@ -13,6 +15,10 @@ const secretB = 'secretB'
 const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW))).toString('hex')
 const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB))).toString('hex')
 
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = dirname(__filename)
+const chessContractDirectory = `${__dirname}/..`
+
 describe('deploy', () => {
   const computer = new Computer()
   
@@ -21,7 +27,7 @@ describe('deploy', () => {
   })
 
   it('Should deploy the smart contract', async () => {
-    const mod = await deploy(computer)
+    const mod = await deploy(computer, chessContractDirectory)
     expect(typeof mod).toEqual('string')
   })
 })
@@ -36,7 +42,7 @@ describe('ChessContract', () => {
   beforeEach(async () => {
     await computerW.faucet(1e8)
     await computer.faucet(1e8)
-    mod = await deploy(computer)
+    mod = await deploy(computer, chessContractDirectory)
   })
 
   describe('constructor', () => {
@@ -118,7 +124,7 @@ describe('ChessContractHelper', () => {
       secretHashW,
       secretHashB,
     )
-    chessContractHelperW.mod = await deploy(computerW)
+    chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
   }, 20000)
 
   describe('makeTx', () => {

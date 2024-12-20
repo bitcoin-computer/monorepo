@@ -3,7 +3,7 @@ import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/componen
 import { Computer } from "@bitcoin-computer/lib"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
 import { getHash as getHash } from "../services/secret.service"
-import { ChessContractHelper } from "../contracts/chess-contract"
+import { ChessContractHelper } from "../../../chess-contracts/"
 
 function ErrorContent(msg: string) {
   return (

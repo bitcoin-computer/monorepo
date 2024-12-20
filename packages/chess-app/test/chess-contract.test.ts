@@ -1,7 +1,8 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { ChessContract, ChessContractHelper } from '../src/contracts/chess-contract'
 import { crypto } from '@bitcoin-computer/nakamotojs'
-import { deploy } from '../scripts/lib'
+import { deploy } from '../../chess-contracts/scripts/lib'
+import { beforeEach, describe, it, expect } from 'vitest'
+import { ChessContractHelper, ChessContract } from '../../chess-contracts/src/chess-contract'
 
 const chain = 'LTC'
 const network = 'regtest'
@@ -12,11 +13,9 @@ const secretB = 'secretB'
 const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW))).toString('hex')
 const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB))).toString('hex')
 
-export function sleep(delay: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, delay)
-  })
-}
+const currentUrl = new URL(import.meta.url)
+const currentDirectory = currentUrl.pathname.substring(0, currentUrl.pathname.lastIndexOf('/'))
+const chessContractDirectory = `${currentDirectory}/../../chess-contracts`
 
 describe("ChessContract", () => {
   const computerW = new Computer()
@@ -25,10 +24,10 @@ describe("ChessContract", () => {
   const amount = 1e6
   let mod
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     await computerW.faucet(1e8)
     await computer.faucet(1e8)
-    mod = await deploy(computer)
+    mod = await deploy(computer, chessContractDirectory)
   }, 20000)
 
 
@@ -41,7 +40,7 @@ describe("ChessContract", () => {
   })
 
   describe('move', () => {
-    test('Should perform a move', async () => {
+    it('Should perform a move', async () => {
       const chessContract = await computerW.new(ChessContract, [amount, 'w', 'b', computerW.getPublicKey(), computerB.getPublicKey(), secretHashW, secretHashB], mod)
       const fenBefore = chessContract.fen
       await chessContract.move('e2', 'e4')
@@ -83,7 +82,7 @@ describe('ChessContractHelper', () => {
       secretHashW,
       secretHashB
     )
-    chessContractHelperW.mod = await deploy(computerW)
+    chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
   }, 20000)
 
   describe('makeTx', () => {
@@ -109,7 +108,7 @@ describe('ChessContractHelper', () => {
       expect(Object.keys(res)).toEqual(['amount', 'nameW', 'nameB', 'publicKeyW', 'publicKeyB', 'secretHashW', 'secretHashB', 'sans', 'fen', 'payment', '_root', '_rev', '_id', '_amount', '_owners'])
       expect(Object.keys(env)).toEqual([])      
       await res.move('e2', 'e4')
-    }, 10000)
+    }, 20000)
   })
 
   describe('spend', () => {

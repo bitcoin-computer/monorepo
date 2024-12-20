@@ -4,8 +4,8 @@ import { Link, useLocation, useNavigate } from "react-router-dom"
 import { initFlowbite } from "flowbite"
 import { Auth, ComputerContext, UtilsContext } from "@bitcoin-computer/components"
 import { BiGitCompare } from "react-icons/bi"
-import { ChessContract } from "../contracts/chess-contract"
-import { Chess as ChessLib } from "../contracts/chess"
+import { ChessContract } from "../../../chess-contracts/"
+import { Chess as ChessLib } from "../../../chess-contracts/"
 import { getGameState } from "./utils"
 
 export type Class = new (...args: unknown[]) => unknown
