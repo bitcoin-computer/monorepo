@@ -5,10 +5,10 @@
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
+    "declaration": true,
     "types": ["vitest/globals", "@testing-library/jest-dom"],
     "moduleResolution": "node",
     "isolatedModules": true,
-    "noEmit": true,
     "jsx": "react-jsx",
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -16,7 +16,8 @@
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "outDir": "./build/"
   },
   "include": ["src", "test"]
 }

@@ -2,15 +2,20 @@
   "name": "@bitcoin-computer/chess-contracts",
   "version": "0.23.0-beta.0",
   "type": "module",
-  "main": "./src/index.js",
+  "main": "./build/src/index.js",
+  "module": "./build/src/index.js",
   "description": "Contracts for an on-chain Chess game.",
+  "types": "./build/src/index.d.ts",
+  "exports": {
+    ".": "./build/src/index.js"
+  },
   "scripts": {
-    "build": "tsc -p tsconfig.release.json",
+    "build": "tsc -p tsconfig.json",
     "build-turbo": "turbo run build",
     "clean-logs": "rm -f *.log 2> /dev/null",
     "lint": "eslint .",
     "prebuild": "npm run lint",
-    "start": "node build/src/main.js",
+    "start": "node build/src/index.js",
     "test": "mocha  --config .mocharc.json",
     "test-and-show": "npm run test 2>&1 | tee nodejs-template.log && open nodejs-template.log",
     "types": "tsc --noEmit",

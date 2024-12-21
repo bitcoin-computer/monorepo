@@ -3,8 +3,8 @@ import { crypto } from '@bitcoin-computer/nakamotojs'
 import { ChessContract, ChessContractHelper } from '../src/chess-contract'
 import { deploy } from '../scripts/lib.js'
 import { expect } from 'expect'
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { fileURLToPath } from 'url'
+import { dirname } from 'path'
 
 const chain = 'LTC'
 const network = 'regtest'

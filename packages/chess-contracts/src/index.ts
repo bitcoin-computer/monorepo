@@ -1,3 +1,3 @@
-export { ChessContract, ChessContractHelper } from "./chess-contract"
-export { Chess } from './chess' 
-export type { Square } from './chess' 
+export { ChessContract, ChessContractHelper } from "./chess-contract.js"
+export { Chess } from './chess.js' 
+export type { Square } from './chess.js' 

@@ -12,8 +12,6 @@ import { Buffer } from 'buffer'
 import axios from "axios"
 import { API_BASE_URL } from './config.js'
 
-// import { Chess } from "./chess.js"
-
 const { fromASM, toASM } = script
 
 const getSecret = async (id: string): Promise<string | null> => {
@@ -81,7 +79,7 @@ export class ChessContract extends Contract {
     })
   }
 
-  move(from: string, to: string) {
+  move(from: string, to: string): string {
     // @ts-expect-error type error
     const chessLib = new Chess(this.fen)
     const { san } = chessLib.move({ from, to, promotion: 'q' })
@@ -98,7 +96,7 @@ export class ChessContract extends Contract {
     return san
   }
 
-  isGameOver() {
+  isGameOver(): boolean {
     // @ts-expect-error type error
     return new Chess(this.fen).isGameOver()
   }

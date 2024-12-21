@@ -30,7 +30,6 @@ describe("ChessContract", () => {
     mod = await deploy(computer, chessContractDirectory)
   }, 20000)
 
-
   describe("constructor", () => {
     it('Should create a smart object', async () => {
       const chessContract = await computerW.new(ChessContract, [amount, 'w', 'b', computerW.getPublicKey(), computerB.getPublicKey(), secretHashW, secretHashB], mod)
@@ -64,24 +63,17 @@ describe('ChessContractHelper', () => {
     
     await computerW.faucet(1e8)
     await computerB.faucet(1e8)
-    chessContractHelperW = new ChessContractHelper(computerW,
+    const commonParams = [
       'nameW',
       'nameB',
       amount,
       computerW.getPublicKey(),
       computerB.getPublicKey(),
       secretHashW,
-      secretHashB
-    )
-    chessContractHelperB = new ChessContractHelper(computerB,
-      'nameW',
-      'nameB',
-      amount,
-      computerW.getPublicKey(),
-      computerB.getPublicKey(),
-      secretHashW,
-      secretHashB
-    )
+      secretHashB,
+    ]
+    chessContractHelperW = new ChessContractHelper(computerW, ...commonParams)
+    chessContractHelperB = new ChessContractHelper(computerB, ...commonParams)
     chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
   }, 20000)
 
