@@ -221,15 +221,20 @@ export class ChessContractHelper {
     await chessContract.move(from, to)
     // @ts-expect-error type error
     if (new Chess(chessContract.fen).isGameOver()) {
-      const secret = await getSecret(chessContract._id)
-      const spendingPath = chessContract._owners[0] === this.publicKeyW ? 0 : 1
-      const txId = chessContract._id.split(':')[0]
-      const spendingTxId = await this.spend(txId, secret!, spendingPath)
+      const spendingTxId = await this.spend(chessContract)
       console.log('You won!', spendingTxId)
     }
   }
 
-  async spend(txId: string, secret: string, spendingPath: number, fee = 10000): Promise<string> {
+  async spend(chessContract: ChessContract, fee = 10000): Promise<string> {
+    const txId = chessContract._id.split(':')[0]
+    const spendingPath = chessContract._owners[0] === this.publicKeyW ? 0 : 1
+    const secret = await getSecret(chessContract._id)
+    if (!secret) throw new Error('Something went wrong when trying to spend.')
+    return this.spendWithSecret(txId, secret, spendingPath, fee)
+  }
+
+  async spendWithSecret(txId: string, secret: string, spendingPath: number, fee = 10000): Promise<string> {
     const chain = this.computer.getChain()
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)

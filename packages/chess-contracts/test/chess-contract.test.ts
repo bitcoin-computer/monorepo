@@ -173,24 +173,24 @@ describe('ChessContractHelper', () => {
     it('Should allow black to spend with the correct secret', async () => {
       const tx = await chessContractHelperW.makeTx()
       const txId = await chessContractHelperB.completeTx(tx)
-      const txId2 = await chessContractHelperB.spend(txId, secretB, 1)
+      const txId2 = await chessContractHelperB.spendWithSecret(txId, secretB, 1)
       expect(typeof txId2).toEqual('string')
     }, 20000)
 
     it('Should allow white to spend with the correct secret', async () => {
       const tx = await chessContractHelperW.makeTx()
       const txId = await chessContractHelperB.completeTx(tx)
-      const txId2 = await chessContractHelperW.spend(txId, secretW, 0)
+      const txId2 = await chessContractHelperW.spendWithSecret(txId, secretW, 0)
       expect(typeof txId2).toEqual('string')
     }, 20000)
 
     it('Should throw an error when trying to spend with the wrong secret', async () => {
       const tx = await chessContractHelperW.makeTx()
       const txId = await chessContractHelperB.completeTx(tx)
-      await expect(chessContractHelperW.spend(txId, secretB, 0)).rejects.toThrow(
+      await expect(chessContractHelperW.spendWithSecret(txId, secretB, 0)).rejects.toThrow(
         'mandatory-script-verify-flag-failed (Script evaluated without error but finished with a false/empty top stack element)',
       )
-      await expect(chessContractHelperW.spend(txId, secretB, 1)).rejects.toThrow(
+      await expect(chessContractHelperW.spendWithSecret(txId, secretB, 1)).rejects.toThrow(
         'mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)',
       )
     }, 20000)

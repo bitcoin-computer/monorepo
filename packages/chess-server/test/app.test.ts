@@ -97,7 +97,7 @@ describe('Route /secret', () => {
     await game.move('d8', 'h4')
 
     const { data } = await axios.get(`http://127.0.0.1:4000/secret/${game._id}`)
-    const spendingTxId = await chessContractHelperB.spend(game._id, data, 1)
+    const spendingTxId = await chessContractHelperB.spendWithSecret(game._id, data, 1)
     expect(typeof spendingTxId).eq('string')
   })
 })
