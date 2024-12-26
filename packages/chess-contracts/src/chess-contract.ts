@@ -93,7 +93,7 @@ export class ChessContract extends Contract {
         this._owners = [this.publicKeyW]
       }
     }
-    return san
+    return chessLib.isGameOver()
   }
 
   isGameOver(): boolean {
@@ -217,13 +217,21 @@ export class ChessContractHelper {
     return this.computer.broadcast(tx)
   }
 
-  async move(chessContract: ChessContract, from: string, to: string) {
-    await chessContract.move(from, to)
-    // @ts-expect-error type error
-    if (new Chess(chessContract.fen).isGameOver()) {
-      const spendingTxId = await this.spend(chessContract)
+  async move(chessContract: ChessContract, from: string, to: string): Promise<ChessContract> {
+    const { tx, effect } = await this.computer.encodeCall({ 
+      target: chessContract,
+      property: 'move',
+      args: [from, to],
+      mod: this.mod
+    }) as { tx: Transaction, effect: { res: boolean, env: unknown} }
+    await this.computer.broadcast(tx)
+    const { res: isGameOver, env  } = effect
+    const { __bc__: newChessContract } = env as { __bc__: ChessContract } 
+    if (isGameOver) {
+      const spendingTxId = await this.spend(newChessContract)
       console.log('You won!', spendingTxId)
     }
+    return newChessContract
   }
 
   async spend(chessContract: ChessContract, fee = 10000): Promise<string> {

@@ -96,10 +96,24 @@ describe('ChessContractHelper', () => {
       const tx = await chessContractHelperW.makeTx()
       const txId = await chessContractHelperB.completeTx(tx)
       expect(typeof txId).toEqual('string')
-      const { res, env } = await computerW.sync(txId)
-      expect(Object.keys(res)).toEqual(['amount', 'nameW', 'nameB', 'publicKeyW', 'publicKeyB', 'secretHashW', 'secretHashB', 'sans', 'fen', 'payment', '_root', '_rev', '_id', '_amount', '_owners'])
+      const { res: chessContract, env } = await computerW.sync(txId)
+      expect(Object.keys(chessContract)).toEqual(['amount', 'nameW', 'nameB', 'publicKeyW', 'publicKeyB', 'secretHashW', 'secretHashB', 'sans', 'fen', 'payment', '_root', '_rev', '_id', '_amount', '_owners'])
       expect(Object.keys(env)).toEqual([])      
-      await res.move('e2', 'e4')
+      await chessContract.move('e2', 'e4')
+    }, 20000)
+  })
+
+  describe('move', () => {
+    it('Should create a transaction', async () => {
+      const tx = await chessContractHelperW.makeTx()
+      const txId = await chessContractHelperB.completeTx(tx)
+      expect(typeof txId).toEqual('string')
+      const { res: chessContract, env } = await computerW.sync(txId)
+      expect(Object.keys(chessContract)).toEqual(['amount', 'nameW', 'nameB', 'publicKeyW', 'publicKeyB', 'secretHashW', 'secretHashB', 'sans', 'fen', 'payment', '_root', '_rev', '_id', '_amount', '_owners'])
+      expect(Object.keys(env)).toEqual([])      
+      const newChessContract = await chessContractHelperW.move(chessContract, 'e2', 'e4')
+      expect(newChessContract.fen).eq('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1')
+      expect(newChessContract.sans).deep.eq(['e4'])
     }, 20000)
   })
 
