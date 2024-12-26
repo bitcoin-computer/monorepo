@@ -7,6 +7,7 @@
     "dev": "vite",
     "start": "vite",
     "build": "tsc -b && vite build",
+    "build-turbo": "turbo run build",
     "lint": "eslint .",
     "preview": "vite preview",
     "test": "vitest run",
