@@ -217,7 +217,7 @@ export class ChessContractHelper {
     return this.computer.broadcast(tx)
   }
 
-  async move(chessContract: ChessContract, from: string, to: string): Promise<ChessContract> {
+  async move(chessContract: ChessContract, from: string, to: string): Promise<{ newChessContract: ChessContract, isGameOver: boolean }> {
     const { tx, effect } = await this.computer.encodeCall({ 
       target: chessContract,
       property: 'move',
@@ -231,7 +231,7 @@ export class ChessContractHelper {
       const spendingTxId = await this.spend(newChessContract)
       console.log('You won!', spendingTxId)
     }
-    return newChessContract
+    return { newChessContract, isGameOver }
   }
 
   async spend(chessContract: ChessContract, fee = 10000): Promise<string> {

@@ -19,5 +19,6 @@
     "noFallthroughCasesInSwitch": true,
     "outDir": "./build/"
   },
-  "include": ["src", "test"]
+  "include": ["src", "test"],
+  "exclude": ["node_modules", "**/*.js"]
 }

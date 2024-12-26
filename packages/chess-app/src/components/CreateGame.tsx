@@ -2,7 +2,7 @@ import { useContext, useState } from "react"
 import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
 import { Computer } from "@bitcoin-computer/lib"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
-import { getHash as getHash } from "../services/secret.service"
+import { getHash } from "../services/secret.service"
 import { ChessContractHelper } from "../../../chess-contracts/"
 
 function ErrorContent(msg: string) {

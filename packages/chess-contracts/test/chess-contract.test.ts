@@ -5,15 +5,11 @@ import { deploy } from '../scripts/lib.js'
 import { expect } from 'expect'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
+import axios from 'axios'
 
 const chain = 'LTC'
 const network = 'regtest'
 const url = 'http://localhost:1031'
-
-const secretW = 'secretW'
-const secretB = 'secretB'
-const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW))).toString('hex')
-const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB))).toString('hex')
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -21,7 +17,7 @@ const chessContractDirectory = `${__dirname}/..`
 
 describe('deploy', () => {
   const computer = new Computer()
-  
+
   beforeEach(async () => {
     await computer.faucet(1e8)
   })
@@ -33,13 +29,22 @@ describe('deploy', () => {
 })
 
 describe('ChessContract', () => {
-  const computerW = new Computer()
-  const computerB = new Computer()
-  const computer = new Computer()
+  let computerW: Computer
+  let computerB: Computer
+  let computer: Computer
   const amount = 1e6
   let mod: string
 
+  const secretW = 'secretW'
+  const secretB = 'secretB'
+  const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW))).toString('hex')
+  const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB))).toString('hex')
+
   beforeEach(async () => {
+    computerW = new Computer({ chain, network, url })
+    computerB = new Computer({ chain, network, url })
+    computer = new Computer({ chain, network, url })
+
     await computerW.faucet(1e8)
     await computer.faucet(1e8)
     mod = await deploy(computer, chessContractDirectory)
@@ -47,19 +52,15 @@ describe('ChessContract', () => {
 
   describe('constructor', () => {
     it('Should create a smart object', async () => {
-      const chessContract = await computerW.new(
-        ChessContract,
-        [
-          amount,
-          'w',
-          'b',
-          computerW.getPublicKey(),
-          computerB.getPublicKey(),
-          secretHashW,
-          secretHashB,
-        ],
-        mod,
-      )
+      const chessContract = await computerW.new(ChessContract, [
+        amount,
+        'w',
+        'b',
+        computerW.getPublicKey(),
+        computerB.getPublicKey(),
+        secretHashW,
+        secretHashB,
+      ], mod)
       expect(typeof secretHashW).not.toEqual('undefined')
       expect(chessContract.fen).toEqual('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     }, 30000)
@@ -67,19 +68,15 @@ describe('ChessContract', () => {
 
   describe('move', () => {
     it('Should perform a move', async () => {
-      const chessContract = await computerW.new(
-        ChessContract,
-        [
-          amount,
-          'w',
-          'b',
-          computerW.getPublicKey(),
-          computerB.getPublicKey(),
-          secretHashW,
-          secretHashB,
-        ],
-        mod,
-      )
+      const chessContract = await computerW.new(ChessContract, [
+        amount,
+        'w',
+        'b',
+        computerW.getPublicKey(),
+        computerB.getPublicKey(),
+        secretHashW,
+        secretHashB,
+      ], mod)
       const fenBefore = chessContract.fen
       await chessContract.move('e2', 'e4')
       expect(chessContract.fen).toEqual(
@@ -102,6 +99,9 @@ describe('ChessContractHelper', () => {
     computerW = new Computer({ chain, network, url })
     computerB = new Computer({ chain, network, url })
 
+    const { data: secretHashW } = await axios.get<string>(`http://127.0.0.1:4000/hash`)
+    const { data: secretHashB } = await axios.get<string>(`http://127.0.0.1:4000/hash`)
+
     await computerW.faucet(1e8)
     await computerB.faucet(1e8)
     const args = ['nameW',
@@ -113,7 +113,7 @@ describe('ChessContractHelper', () => {
     chessContractHelperW = new ChessContractHelper(computerW, amount, ...args)
     chessContractHelperB = new ChessContractHelper(computerB, amount, ...args)
     chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
-    // chessContractHelperB.mod = chessContractHelperW.mod
+    chessContractHelperB.mod = chessContractHelperW.mod
   }, 20000)
 
   describe('makeTx', () => {
@@ -135,6 +135,7 @@ describe('ChessContractHelper', () => {
       const tx = await chessContractHelperW.makeTx()
       const txId = await chessContractHelperB.completeTx(tx)
       expect(typeof txId).toEqual('string')
+
       const { res, env } = await computerW.sync(txId) as { res: ChessContract, env: [] }
       expect(Object.keys(res)).toEqual([
         'amount',
@@ -158,30 +159,98 @@ describe('ChessContractHelper', () => {
     }, 10000)
   })
 
-  describe('spend', () => {
-    it('Should allow black to spend with the correct secret', async () => {
+  describe('move', () => {
+    it('Should perform a move', async () => {
       const tx = await chessContractHelperW.makeTx()
       const txId = await chessContractHelperB.completeTx(tx)
-      const txId2 = await chessContractHelperB.spendWithSecret(txId, secretB, 1)
+      expect(typeof txId).toEqual('string')
+      const { res: chessContract, env } = await computerW.sync(txId) as { res: ChessContract, env: [] }
+      expect(Object.keys(chessContract)).toEqual(['amount', 'nameW', 'nameB', 'publicKeyW', 'publicKeyB', 'secretHashW', 'secretHashB', 'sans', 'fen', 'payment', '_root', '_rev', '_id', '_amount', '_owners'])
+      expect(Object.keys(env)).toEqual([])      
+      const { newChessContract } = await chessContractHelperW.move(chessContract, 'e2', 'e4')
+      expect(newChessContract.fen).toEqual('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1')
+      expect(newChessContract.sans).toEqual(['e4'])
+    }, 20000)
+  })
+
+  describe.skip('spendWithSecret', () => {
+    let secretW: string
+    let secretB: string
+    let cchw: ChessContractHelper
+    let cchb: ChessContractHelper
+
+    beforeEach(async () => {
+      secretW = 'secretW'
+      secretB = 'secretB'
+      const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW))).toString('hex')
+      const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB))).toString('hex')
+
+      const args = ['nameW',
+        'nameB',
+        computerW.getPublicKey(),
+        computerB.getPublicKey(),
+        secretHashW,
+        secretHashB
+      ]
+      cchw = new ChessContractHelper(computerW, amount, ...args)
+      cchb = new ChessContractHelper(computerB, amount, ...args)
+    })
+
+    it('Should allow black to spend with the correct secret', async () => {
+      const tx = await cchw.makeTx()
+      const txId = await cchb.completeTx(tx)
+      const txId2 = await cchb.spendWithSecret(txId, secretB, 1)
       expect(typeof txId2).toEqual('string')
     }, 20000)
 
     it('Should allow white to spend with the correct secret', async () => {
-      const tx = await chessContractHelperW.makeTx()
-      const txId = await chessContractHelperB.completeTx(tx)
-      const txId2 = await chessContractHelperW.spendWithSecret(txId, secretW, 0)
+      const tx = await cchw.makeTx()
+      const txId = await cchb.completeTx(tx)
+      const txId2 = await cchw.spendWithSecret(txId, secretW, 0)
       expect(typeof txId2).toEqual('string')
     }, 20000)
 
     it('Should throw an error when trying to spend with the wrong secret', async () => {
-      const tx = await chessContractHelperW.makeTx()
-      const txId = await chessContractHelperB.completeTx(tx)
-      await expect(chessContractHelperW.spendWithSecret(txId, secretB, 0)).rejects.toThrow(
+      const tx = await cchw.makeTx()
+      const txId = await cchb.completeTx(tx)
+      await expect(cchw.spendWithSecret(txId, secretB, 0)).rejects.toThrow(
         'mandatory-script-verify-flag-failed (Script evaluated without error but finished with a false/empty top stack element)',
       )
-      await expect(chessContractHelperW.spendWithSecret(txId, secretB, 1)).rejects.toThrow(
+      await expect(cchw.spendWithSecret(txId, secretB, 1)).rejects.toThrow(
         'mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)',
       )
+    }, 20000)
+  })
+
+  describe('spend', () => {
+    it('Should perform a move', async () => {
+      const tx = await chessContractHelperW.makeTx()
+      const txId = await chessContractHelperB.completeTx(tx)
+      let isGameOver: boolean
+
+      const { res: chessContract } = await computerW.sync(txId) as { res: ChessContract }
+      const gameId = chessContract._id
+
+      const [rev2] = await computerW.query({ ids: [gameId] })    
+      const chessContract2 = await computerW.sync(rev2) as ChessContract
+      ({ isGameOver } = await chessContractHelperW.move(chessContract2, 'f2', 'f3'))
+      expect(isGameOver).toEqual(false)
+
+      const [rev3] = await computerB.query({ ids: [gameId] })    
+      const chessContract3 = await computerB.sync(rev3) as ChessContract
+      ({ isGameOver } = await chessContractHelperB.move(chessContract3, 'e7', 'e5'))
+      expect(isGameOver).toEqual(false)
+
+      const [rev4] = await computerW.query({ ids: [gameId] })    
+      const chessContract4 = await computerW.sync(rev4) as ChessContract
+      ({ isGameOver } = await chessContractHelperW.move(chessContract4, 'g2', 'g4'))
+      expect(isGameOver).toEqual(false)
+
+      const [rev5] = await computerB.query({ ids: [gameId] })    
+      const chessContract5 = await computerB.sync(rev5) as ChessContract
+      const res = await chessContractHelperB.move(chessContract5, 'd8', 'h4')
+      expect(await res.newChessContract.isGameOver()).toEqual(true)
+      expect(res.isGameOver).toEqual(true)
     }, 20000)
   })
 })

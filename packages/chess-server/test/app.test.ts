@@ -12,11 +12,6 @@ import { ChessContract } from '@bitcoin-computer/chess-contracts'
 
 dotenv.config()
 
-export const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-
 const chain = 'LTC'
 const network = 'regtest'
 const url = 'http://localhost:1031'
@@ -54,7 +49,6 @@ describe('Route /secret', () => {
     const { data: secretHashW } = await axios.get<string>(`http://127.0.0.1:4000/hash`)
     const { data: secretHashB } = await axios.get<string>(`http://127.0.0.1:4000/hash`)
 
-    
     await computerW.faucet(1e8)
     await computerB.faucet(1e8)
     const commonParams = [
