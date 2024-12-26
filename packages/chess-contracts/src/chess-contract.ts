@@ -104,9 +104,9 @@ export class ChessContract extends Contract {
 
 export class ChessContractHelper {
   computer: Computer
+  amount: number
   nameW: string
   nameB: string
-  amount: number
   publicKeyW: string
   publicKeyB: string
   secretHashW: string
@@ -115,9 +115,9 @@ export class ChessContractHelper {
 
   constructor(
     computer: Computer,
+    amount = 0,
     nameW = '',
     nameB = '',
-    amount = 0,
     publicKeyW = '',
     publicKeyB = '',
     secretHashW = '',
@@ -138,9 +138,9 @@ export class ChessContractHelper {
   static fromContract(game: ChessContract, computer: Computer, mod?: string) {
     return new this(
       computer,
+      game.amount,
       game.nameW,
       game.nameB,
-      game.amount,
       game.publicKeyW,
       game.publicKeyB,
       game.secretHashW,

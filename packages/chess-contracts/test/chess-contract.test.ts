@@ -104,27 +104,16 @@ describe('ChessContractHelper', () => {
 
     await computerW.faucet(1e8)
     await computerB.faucet(1e8)
-    chessContractHelperW = new ChessContractHelper(
-      computerW,
-      'nameW',
+    const args = ['nameW',
       'nameB',
-      amount,
       computerW.getPublicKey(),
       computerB.getPublicKey(),
       secretHashW,
-      secretHashB,
-    )
-    chessContractHelperB = new ChessContractHelper(
-      computerB,
-      'nameW',
-      'nameB',
-      amount,
-      computerW.getPublicKey(),
-      computerB.getPublicKey(),
-      secretHashW,
-      secretHashB,
-    )
+      secretHashB]
+    chessContractHelperW = new ChessContractHelper(computerW, amount, ...args)
+    chessContractHelperB = new ChessContractHelper(computerB, amount, ...args)
     chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
+    // chessContractHelperB.mod = chessContractHelperW.mod
   }, 20000)
 
   describe('makeTx', () => {

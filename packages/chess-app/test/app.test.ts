@@ -66,14 +66,13 @@ describe('ChessContractHelper', () => {
     const commonParams = [
       'nameW',
       'nameB',
-      amount,
       computerW.getPublicKey(),
       computerB.getPublicKey(),
       secretHashW,
       secretHashB,
     ]
-    chessContractHelperW = new ChessContractHelper(computerW, ...commonParams)
-    chessContractHelperB = new ChessContractHelper(computerB, ...commonParams)
+    chessContractHelperW = new ChessContractHelper(computerW, amount, ...commonParams)
+    chessContractHelperB = new ChessContractHelper(computerB, amount, ...commonParams)
     chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
   }, 20000)
 

@@ -31,7 +31,7 @@ function MintForm(props: {
 }) {
   const { computer: computerW, setErrorMsg } = props
   const [nameW, setName] = useState("W")
-  const [publicKeyB, setSecondPlayerPublicKey] = useState("0207e38e74f08c8a0105cad4e3e1f02aa4b81c9d914280edd30366b30802771c03")
+  const [publicKeyB, setSecondPlayerPublicKey] = useState("03d9fec1fb0acd773f9a0a1e6d4a8be723833df32500129fbd29c2ce32a44968e9")
   const [nameB, setNameB] = useState("B")
   const [amount, setAmount] = useState(`0.1`)
   const [serializedTx, setSerializedTx] = useState('')
@@ -50,9 +50,9 @@ function MintForm(props: {
 
       const publicKeyW = computerW.getPublicKey()
       const chessContractHelper = new ChessContractHelper(computerW,
+        parseFloat(amount) * 1e8,
         nameW,
         nameB,
-        parseFloat(amount) * 1e8,
         publicKeyW,
         publicKeyB,
         secretHashW,

@@ -60,14 +60,13 @@ describe('Route /secret', () => {
     const commonParams = [
       'nameW',
       'nameB',
-      amount,
       computerW.getPublicKey(),
       computerB.getPublicKey(),
       secretHashW,
       secretHashB,
-    ] as any[]
-    chessContractHelperW = new ChessContractHelper(computerW, ...commonParams)
-    chessContractHelperB = new ChessContractHelper(computerB, ...commonParams)
+    ] as string[]
+    chessContractHelperW = new ChessContractHelper(computerW, amount, ...commonParams)
+    chessContractHelperB = new ChessContractHelper(computerB, amount, ...commonParams)
     chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
     chessContractHelperB.mod = chessContractHelperW.mod
   }, 20000)
