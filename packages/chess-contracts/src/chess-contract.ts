@@ -214,6 +214,18 @@ export class ChessContractHelper {
 
     // Sign and broadcast
     await this.computer.sign(tx)
+
+    const decoded = await this.computer.decode(tx)
+    const { effect } = await this.computer.encode(decoded)
+    const { res: chessContract } = effect as unknown as { res: ChessContract }
+
+    this.nameW = chessContract.nameW
+    this.nameB = chessContract.nameB
+    this.publicKeyW = chessContract.publicKeyW
+    this.publicKeyB = chessContract.publicKeyB
+    this.secretHashW = chessContract.secretHashW
+    this.secretHashB = chessContract.secretHashB
+
     return this.computer.broadcast(tx)
   }
 
