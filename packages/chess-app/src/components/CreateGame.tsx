@@ -49,16 +49,17 @@ function MintForm(props: {
       if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
 
       const publicKeyW = computerW.getPublicKey()
-      const chessContractHelper = new ChessContractHelper(computerW,
-        parseFloat(amount) * 1e8,
+      const chessContractHelper = new ChessContractHelper({ 
+        computer: computerW,
+        amount: parseFloat(amount) * 1e8,
         nameW,
         nameB,
         publicKeyW,
         publicKeyB,
         secretHashW,
         secretHashB,
-        VITE_CHESS_GAME_MOD_SPEC
-      )
+        mod: VITE_CHESS_GAME_MOD_SPEC
+      })
       const tx = await chessContractHelper.makeTx()
       setSerializedTx(`http://localhost:1032/start/${tx.serialize()}`)
 

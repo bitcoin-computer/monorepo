@@ -104,14 +104,26 @@ describe('ChessContractHelper', () => {
 
     await computerW.faucet(1e8)
     await computerB.faucet(1e8)
-    const args = ['nameW',
-      'nameB',
-      computerW.getPublicKey(),
-      computerB.getPublicKey(),
+    chessContractHelperW = new ChessContractHelper({
+      computer: computerW,
+      amount,
+      nameW: 'nameW',
+      nameB: 'nameB',
+      publicKeyW: computerW.getPublicKey(),
+      publicKeyB: computerB.getPublicKey(),
       secretHashW,
-      secretHashB]
-    chessContractHelperW = new ChessContractHelper(computerW, amount, ...args)
-    chessContractHelperB = new ChessContractHelper(computerB, amount, ...args)
+      secretHashB
+    })
+    chessContractHelperB = new ChessContractHelper({
+      computer: computerB,
+      amount,
+      nameW: 'nameW',
+      nameB: 'nameB',
+      publicKeyW: computerW.getPublicKey(),
+      publicKeyB: computerB.getPublicKey(),
+      secretHashW,
+      secretHashB
+    })
     chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
     chessContractHelperB.mod = chessContractHelperW.mod
   }, 20000)
@@ -185,15 +197,26 @@ describe('ChessContractHelper', () => {
       const secretHashW = crypto.sha256(crypto.sha256(Buffer.from(secretW))).toString('hex')
       const secretHashB = crypto.sha256(crypto.sha256(Buffer.from(secretB))).toString('hex')
 
-      const args = ['nameW',
-        'nameB',
-        computerW.getPublicKey(),
-        computerB.getPublicKey(),
+      cchw = new ChessContractHelper({
+        computer: computerW,
+        amount,
+        nameW: 'nameW',
+        nameB: 'nameB',
+        publicKeyW: computerW.getPublicKey(),
+        publicKeyB: computerB.getPublicKey(),
         secretHashW,
         secretHashB
-      ]
-      cchw = new ChessContractHelper(computerW, amount, ...args)
-      cchb = new ChessContractHelper(computerB, amount, ...args)
+      })
+      cchb = new ChessContractHelper({
+        computer: computerB,
+        amount,
+        nameW: 'nameW',
+        nameB: 'nameB',
+        publicKeyW: computerW.getPublicKey(),
+        publicKeyB: computerB.getPublicKey(),
+        secretHashW,
+        secretHashB
+      })
     })
 
     it('Should allow black to spend with the correct secret', async () => {

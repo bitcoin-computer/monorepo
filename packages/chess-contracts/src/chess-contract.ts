@@ -104,30 +104,40 @@ export class ChessContract extends Contract {
 
 export class ChessContractHelper {
   computer: Computer
-  amount: number
-  nameW: string
-  nameB: string
-  publicKeyW: string
-  publicKeyB: string
-  secretHashW: string
-  secretHashB: string
+  amount?: number
+  nameW?: string
+  nameB?: string
+  publicKeyW?: string
+  publicKeyB?: string
+  secretHashW?: string
+  secretHashB?: string
   mod?: string
 
-  constructor(
+  constructor({
+    computer,
+    amount,
+    nameW,
+    nameB,
+    publicKeyW,
+    publicKeyB,
+    secretHashW,
+    secretHashB,
+    mod,
+  }: {
     computer: Computer,
-    amount = 0,
-    nameW = '',
-    nameB = '',
-    publicKeyW = '',
-    publicKeyB = '',
-    secretHashW = '',
-    secretHashB = '',
+    amount?: number,
+    nameW?: string,
+    nameB?: string,
+    publicKeyW?: string,
+    publicKeyB?: string,
+    secretHashW?: string,
+    secretHashB?: string,
     mod?: string,
-  ) {
+  }) {
     this.computer = computer
+    this.amount = amount
     this.nameW = nameW
     this.nameB = nameB
-    this.amount = amount
     this.publicKeyW = publicKeyW
     this.publicKeyB = publicKeyB
     this.secretHashW = secretHashW
@@ -135,18 +145,23 @@ export class ChessContractHelper {
     this.mod = mod
   }
 
+  isInitialized(): this is Required<ChessContractHelper> {
+    return Object.values(this).every((element) => element !== undefined);
+  }
+
   static fromContract(game: ChessContract, computer: Computer, mod?: string) {
-    return new this(
+    const { amount, nameW, nameB, publicKeyW, publicKeyB, secretHashW, secretHashB } = game
+    return new this({
       computer,
-      game.amount,
-      game.nameW,
-      game.nameB,
-      game.publicKeyW,
-      game.publicKeyB,
-      game.secretHashW,
-      game.secretHashB,
+      amount,
+      nameW,
+      nameB,
+      publicKeyW,
+      publicKeyB,
+      secretHashW,
+      secretHashB,
       mod,
-    )
+    })
   }
 
   getASM(): string {
@@ -160,6 +175,8 @@ export class ChessContractHelper {
   }
 
   async makeTx(): Promise<Transaction> {
+    if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
+
     // Create output with non-standard script
     const { tx } = await this.computer.encode({
       exp: `new ChessContract(
@@ -206,6 +223,18 @@ export class ChessContractHelper {
   }
 
   async completeTx(tx: Transaction): Promise<string> {
+    const decoded = await this.computer.decode(tx)
+    const { effect } = await this.computer.encode(decoded)
+    const { res: chessContract } = effect as unknown as { res: ChessContract }
+
+    this.amount = chessContract.payment._amount
+    this.nameW = chessContract.nameW
+    this.nameB = chessContract.nameB
+    this.publicKeyW = chessContract.publicKeyW
+    this.publicKeyB = chessContract.publicKeyB
+    this.secretHashW = chessContract.secretHashW
+    this.secretHashB = chessContract.secretHashB
+
     // Fund
     const fee = await this.computer.wallet.estimateFee(tx)
     const txId = await this.computer.send(this.amount / 2 + 5 * fee, this.computer.getAddress())
@@ -214,18 +243,6 @@ export class ChessContractHelper {
 
     // Sign and broadcast
     await this.computer.sign(tx)
-
-    const decoded = await this.computer.decode(tx)
-    const { effect } = await this.computer.encode(decoded)
-    const { res: chessContract } = effect as unknown as { res: ChessContract }
-
-    this.nameW = chessContract.nameW
-    this.nameB = chessContract.nameB
-    this.publicKeyW = chessContract.publicKeyW
-    this.publicKeyB = chessContract.publicKeyB
-    this.secretHashW = chessContract.secretHashW
-    this.secretHashB = chessContract.secretHashB
-
     return this.computer.broadcast(tx)
   }
 
@@ -255,6 +272,8 @@ export class ChessContractHelper {
   }
 
   async spendWithSecret(txId: string, secret: string, spendingPath: number, fee = 10000): Promise<string> {
+    if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
+
     const chain = this.computer.getChain()
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)

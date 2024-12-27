@@ -51,16 +51,26 @@ describe('Route /secret', () => {
 
     await computerW.faucet(1e8)
     await computerB.faucet(1e8)
-    const commonParams = [
-      'nameW',
-      'nameB',
-      computerW.getPublicKey(),
-      computerB.getPublicKey(),
+    chessContractHelperW = new ChessContractHelper({
+      computer: computerW,
+      amount,
+      nameW: 'nameW',
+      nameB: 'nameB',
+      publicKeyW: computerW.getPublicKey(),
+      publicKeyB: computerB.getPublicKey(),
       secretHashW,
-      secretHashB,
-    ] as string[]
-    chessContractHelperW = new ChessContractHelper(computerW, amount, ...commonParams)
-    chessContractHelperB = new ChessContractHelper(computerB, amount, ...commonParams)
+      secretHashB
+    })
+    chessContractHelperB = new ChessContractHelper({
+      computer: computerB,
+      amount,
+      nameW: 'nameW',
+      nameB: 'nameB',
+      publicKeyW: computerW.getPublicKey(),
+      publicKeyB: computerB.getPublicKey(),
+      secretHashW,
+      secretHashB
+    })
     chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
     chessContractHelperB.mod = chessContractHelperW.mod
   }, 20000)
