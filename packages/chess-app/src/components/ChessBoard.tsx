@@ -151,8 +151,8 @@ export function ChessBoard() {
     let dropResult = false;
     (async () => {
       if (!chessContract) throw new Error('Chess contract is not defined.')
-      const chessHelper = ChessContractHelper.fromContract(chessContract, computer, VITE_CHESS_GAME_MOD_SPEC)
-      const newChessContract = await chessHelper.move(chessContract, from, to)
+      const chessHelper = ChessContractHelper.fromContract(computer, chessContract, VITE_CHESS_GAME_MOD_SPEC)
+      const { newChessContract } = await chessHelper.move(chessContract, from, to)
 
       setSkipSync(true)
       setGame(new ChessLib(newChessContract.fen))

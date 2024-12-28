@@ -40,14 +40,13 @@ function StartForm(props: {
     e.preventDefault()
     try {
       showLoader(true)
-      console.log('on submit')
       if (!serialized) throw new Error('Invalid link')
 
       const tx = Transaction.deserialize(serialized)
       const { effect } = await computer.encode(tx.onChainMetaData as never)
       const { res } = effect
       const game = res as unknown as ChessContract
-      const chessContractHelper = ChessContractHelper.fromContract(game, computer, VITE_CHESS_GAME_MOD_SPEC)
+      const chessContractHelper = ChessContractHelper.fromContract(computer, game, VITE_CHESS_GAME_MOD_SPEC)
       const txId = await chessContractHelper.completeTx(tx)
       setLink(`http://localhost:1032/game/${txId}:0`)
       showLoader(false)

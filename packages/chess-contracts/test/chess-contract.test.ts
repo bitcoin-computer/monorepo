@@ -246,7 +246,7 @@ describe('ChessContractHelper', () => {
   })
 
   describe('spend', () => {
-    it('Should perform a move', async () => {
+    it('Should work for a game of fools mate', async () => {
       const tx = await chessContractHelperW.makeTx()
       const txId = await chessContractHelperB.completeTx(tx)
       let isGameOver: boolean
@@ -272,6 +272,41 @@ describe('ChessContractHelper', () => {
       const [rev5] = await computerB.query({ ids: [gameId] })    
       const chessContract5 = await computerB.sync(rev5) as ChessContract
       const res = await chessContractHelperB.move(chessContract5, 'd8', 'h4')
+      expect(await res.newChessContract.isGameOver()).toEqual(true)
+      expect(res.isGameOver).toEqual(true)
+    }, 20000)
+
+    it('Should work for a game of fools mate', async () => {
+      const tx = await chessContractHelperW.makeTx()
+      const txId = await chessContractHelperB.completeTx(tx)
+      const mod = chessContractHelperW.mod
+      let isGameOver: boolean
+
+      const { res: chessContract } = await computerW.sync(txId) as { res: ChessContract }
+      const gameId = chessContract._id
+
+      const [rev2] = await computerW.query({ ids: [gameId] })    
+      const chessContract2 = await computerW.sync(rev2) as ChessContract
+      const chessContractHelperW2 = ChessContractHelper.fromContract(computerW, chessContract2, mod)
+      ;({ isGameOver } = await chessContractHelperW2.move(chessContract2, 'f2', 'f3'))
+      expect(isGameOver).toEqual(false)
+
+      const [rev3] = await computerB.query({ ids: [gameId] })    
+      const chessContract3 = await computerB.sync(rev3) as ChessContract
+      const chessContractHelperB3 = ChessContractHelper.fromContract(computerB, chessContract3, mod)
+      ;({ isGameOver } = await chessContractHelperB3.move(chessContract3, 'e7', 'e5'))
+      expect(isGameOver).toEqual(false)
+
+      const [rev4] = await computerW.query({ ids: [gameId] })    
+      const chessContract4 = await computerW.sync(rev4) as ChessContract
+      const chessContractHelperW4 = ChessContractHelper.fromContract(computerW, chessContract4, mod)
+      ;({ isGameOver } = await chessContractHelperW4.move(chessContract4, 'g2', 'g4'))
+      expect(isGameOver).toEqual(false)
+
+      const [rev5] = await computerB.query({ ids: [gameId] })    
+      const chessContract5 = await computerB.sync(rev5) as ChessContract
+      const chessContractHelperB5 = ChessContractHelper.fromContract(computerB, chessContract5, mod)
+      const res = await chessContractHelperB5.move(chessContract5, 'd8', 'h4')
       expect(await res.newChessContract.isGameOver()).toEqual(true)
       expect(res.isGameOver).toEqual(true)
     }, 20000)
