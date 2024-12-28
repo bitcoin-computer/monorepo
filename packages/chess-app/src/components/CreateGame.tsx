@@ -32,7 +32,7 @@ function MintForm(props: {
   const { computer: computerW, setErrorMsg } = props
   const [nameW, setName] = useState("White")
   const [nameB, setNameB] = useState("Black")
-  const [publicKeyB, setSecondPlayerPublicKey] = useState("03d9fec1fb0acd773f9a0a1e6d4a8be723833df32500129fbd29c2ce32a44968e9")
+  const [publicKeyB, setSecondPlayerPublicKey] = useState("03fce46d776c3e2b606aae73fcffdc8fd3a0f0c6bf1088a321f7f3c4e824623a57")
   const [amount, setAmount] = useState(`0.1`)
   const [serializedTx, setSerializedTx] = useState('')
   const [copied, setCopied] = useState(false)

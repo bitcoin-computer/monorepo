@@ -1,7 +1,7 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { crypto } from '@bitcoin-computer/nakamotojs'
 import { ChessContract, ChessContractHelper } from '../src/chess-contract'
-import { deploy } from '../scripts/lib.js'
+import { deploy } from '../../chess-server/scripts/lib.js'
 import { expect } from 'expect'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'

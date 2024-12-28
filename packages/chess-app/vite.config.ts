@@ -27,7 +27,6 @@ export default defineConfig(({ mode }) => {
       setupFiles: ["./src/setupTests.ts"]
     },
     optimizeDeps: {
-      exclude: ["fs"],
       esbuildOptions: {
         define: {
           global: 'globalThis',

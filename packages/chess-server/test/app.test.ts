@@ -1,14 +1,13 @@
+import { ChessContractHelper, ChessContract } from '@bitcoin-computer/chess-contracts'
 import { Computer } from '@bitcoin-computer/lib'
 import { crypto } from '@bitcoin-computer/nakamotojs'
 import { expect } from 'chai'
 import { db } from '../db/db.js'
+import { deploy } from '../scripts/lib.js'
 import axios from 'axios'
 import dotenv from "dotenv"
-import { deploy } from '../../chess-contracts/scripts/lib.js'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
-import { ChessContractHelper } from '../../chess-contracts/src/chess-contract.js'
-import { ChessContract } from '@bitcoin-computer/chess-contracts'
 
 dotenv.config()
 

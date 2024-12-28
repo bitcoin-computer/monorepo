@@ -1,4 +1,4 @@
-import { ChessContract, Payment } from "../src/chess-contract.js"
+import { ChessContract, Payment } from "@bitcoin-computer/chess-contracts"
 import { readFile } from "fs/promises"
 import { Computer } from "@bitcoin-computer/lib"
 import pkg from 'typescript'
