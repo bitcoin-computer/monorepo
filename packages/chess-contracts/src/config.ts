@@ -2,33 +2,37 @@
 
 import 'dotenv/config'
 
-let API_BASE_URL: string | undefined
-let CHESS_GAME_MOD_SPEC: string | undefined
-let CHAIN: string | undefined
-let NETWORK: string | undefined
-let URL: string | undefined
-let MNEMONIC: string | undefined
+let VITE_API_BASE_URL: string | undefined
+let VITE_CHESS_GAME_MOD_SPEC: string | undefined
+let VITE_CHAIN: string | undefined
+let VITE_NETWORK: string | undefined
+let VITE_URL: string | undefined
+let VITE_MNEMONIC: string | undefined
 
 // Vite environment
 if (import.meta.env && import.meta.env.MODE) {
-  API_BASE_URL = import.meta.env.API_BASE_URL
-  CHESS_GAME_MOD_SPEC = import.meta.env.CHESS_GAME_MOD_SPEC
-  CHAIN = import.meta.env.CHAIN
-  NETWORK = import.meta.env.NETWORK
-  URL = import.meta.env.URL
-  MNEMONIC = import.meta.env.MNEMONIC
+  VITE_API_BASE_URL = import.meta.env.VITE_API_BASE_URL
+  VITE_CHESS_GAME_MOD_SPEC = import.meta.env.VITE_CHESS_GAME_MOD_SPEC
+  VITE_CHAIN = import.meta.env.VITE_CHAIN
+  VITE_NETWORK = import.meta.env.VITE_NETWORK
+  VITE_URL = import.meta.env.VITE_URL
+  VITE_MNEMONIC = import.meta.env.VITE_MNEMONIC
 
 // Node.js environment
 } else if (typeof process === 'object' && process.versions && process.versions.node) {
-  API_BASE_URL = process.env.API_BASE_URL
-  CHESS_GAME_MOD_SPEC = process.env.CHESS_GAME_MOD_SPEC
-  CHAIN = process.env.CHAIN
-  NETWORK = process.env.NETWORK
-  URL = process.env.URL
-  MNEMONIC = process.env.MNEMONIC
+  VITE_API_BASE_URL = process.env.VITE_API_BASE_URL
+  VITE_CHESS_GAME_MOD_SPEC = process.env.VITE_CHESS_GAME_MOD_SPEC
+  VITE_CHAIN = process.env.VITE_CHAIN
+  VITE_NETWORK = process.env.VITE_NETWORK
+  VITE_URL = process.env.VITE_URL
+  VITE_MNEMONIC = process.env.VITE_MNEMONIC
 
 } else {
   throw new Error('Unsupported execution environment.')
 }
 
-export { API_BASE_URL, CHESS_GAME_MOD_SPEC, CHAIN, NETWORK, URL, MNEMONIC }
+const vars = [VITE_API_BASE_URL, VITE_CHESS_GAME_MOD_SPEC, VITE_CHAIN, VITE_NETWORK, VITE_URL]
+
+if (vars.some((el) => el === undefined)) throw new Error(`Please create a .env file ${vars}`)
+
+export { VITE_API_BASE_URL, VITE_CHESS_GAME_MOD_SPEC, VITE_CHAIN, VITE_NETWORK, VITE_URL, VITE_MNEMONIC }

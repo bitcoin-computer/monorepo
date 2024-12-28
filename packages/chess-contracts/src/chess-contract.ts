@@ -10,12 +10,12 @@ import {
 } from '@bitcoin-computer/nakamotojs'
 import { Buffer } from 'buffer'
 import axios from "axios"
-import { API_BASE_URL } from './config.js'
+import { VITE_API_BASE_URL } from './config.js'
 
 const { fromASM, toASM } = script
 
 const getSecret = async (id: string): Promise<string | null> => {
-  const { data } = await axios.get<string>(`${API_BASE_URL}/secret/${id}`)
+  const { data } = await axios.get<string>(`${VITE_API_BASE_URL}/secret/${id}`)
   return data
 }
 
@@ -146,10 +146,10 @@ export class ChessContractHelper {
   }
 
   isInitialized(): this is Required<ChessContractHelper> {
-    return Object.values(this).every((element) => element !== undefined);
+    return Object.values(this).every((element) => element !== undefined)
   }
 
-  static fromContract(game: ChessContract, computer: Computer, mod?: string) {
+  static fromContract(computer: Computer, game: ChessContract, mod?: string): ChessContractHelper {
     const { amount, nameW, nameB, publicKeyW, publicKeyB, secretHashW, secretHashB } = game
     return new this({
       computer,
