@@ -24,10 +24,10 @@
     "clean": "rimraf coverage build tmp",
     "clean-logs": "rm -f *.log 2> /dev/null",
     "lint": "eslint src test --ext .ts,.tsx",
-    "lint-fix": "eslint src test --ext .ts,.tsx --fix",
+    "lint:fix": "eslint src test --ext .ts,.tsx --fix",
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
-    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "types": "tsc --noEmit",
     "test": "mocha --config .mocharc.json",
     "test-and-show": "npm run test 2>&1 | tee TBC20-test.log && open TBC20-test.log"

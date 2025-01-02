@@ -1,38 +1,38 @@
 .code-section-container {
-    z-index: 1;
-    position: absolute;
+  z-index: 1;
+  position: absolute;
 }
 
 .code-block {
-    font-family: 'IBMPlexMono-Regular';
-    font-size: 1vw;
-    letter-spacing: 0;
-    color: #A2A2A2;
-    font-weight: lighter;
-    margin: 0;
+  font-family: 'IBMPlexMono-Regular';
+  font-size: 1vw;
+  letter-spacing: 0;
+  color: #a2a2a2;
+  font-weight: lighter;
+  margin: 0;
 }
 
 .code-yellow {
-    color: #FFCF00;
+  color: #ffcf00;
 }
 
 .code-dark-yellow {
-    color: #FFA500;
-    font-weight: bolder;
+  color: #ffa500;
+  font-weight: bolder;
 }
 
 .code-gray {
-    color: #A2A2A2;
+  color: #a2a2a2;
 }
 
 .code-dark-blue {
-    color: #002A99;
+  color: #002a99;
 }
 
 .code-light-blue {
-    color: #6B93FF;
+  color: #6b93ff;
 }
 
 .code-blue {
-    color: #0046FF;
+  color: #0046ff;
 }

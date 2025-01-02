@@ -1,6 +1,6 @@
-import Box from "@mui/material/Box";
-import "./About.css";
-import Profile from "./Profile";
+import Box from '@mui/material/Box'
+import './About.css'
+import Profile from './Profile'
 
 function About() {
   return (
@@ -18,9 +18,7 @@ function About() {
       <Box className="vertical-grid-line-6 grid-opacity" />
       <Box className="vertical-grid-line-7 grid-opacity" />
       <Box className="about-heading">About</Box>
-      <Box className="text-1">
-        Building smart contracts on Bitcoin since 2018.
-      </Box>
+      <Box className="text-1">Building smart contracts on Bitcoin since 2018.</Box>
       {/* <Box className="text-2">
         Initially we just wanted to prove a point: that all smart contracts can be built on Bitcoin. Over time we discovered that smart contracts on Bitcoin have a big advantage over smart contracts on Ethereum and other chains.
       </Box> */}
@@ -44,12 +42,17 @@ function About() {
         />
       </Box>
       <Box className="information-text">
-        <a href="https://docs.bitcoincomputer.io" rel="noreferrer" target="_blank" className="button-lb">
+        <a
+          href="https://docs.bitcoincomputer.io"
+          rel="noreferrer"
+          target="_blank"
+          className="button-lb"
+        >
           <b>Read the Documentation</b>
         </a>
       </Box>
     </Box>
-  );
+  )
 }
 
-export default About;
+export default About

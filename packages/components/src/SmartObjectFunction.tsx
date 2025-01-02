@@ -1,40 +1,40 @@
-import { useContext, useState } from "react"
-import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown"
-import { isValidRev, sleep } from "./common/utils"
-import { UtilsContext } from "./UtilsContext"
-import { ComputerContext } from "./ComputerContext"
+import { useContext, useState } from 'react'
+import { TypeSelectionDropdown } from './common/TypeSelectionDropdown'
+import { isValidRev, sleep } from './common/utils'
+import { UtilsContext } from './UtilsContext'
+import { ComputerContext } from './ComputerContext'
 
 export const getErrorMessage = (error: any): string => {
   if (
     error?.response?.data?.error ===
-    "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
+    'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)'
   ) {
-    return "You are not authorized to make changes to this smart object"
+    return 'You are not authorized to make changes to this smart object'
   }
   if (error?.response?.data?.error) {
     return error?.response?.data?.error
   }
-  return error.message ? error.message : "Error occurred"
+  return error.message ? error.message : 'Error occurred'
 }
 
 export const getFnParamNames = (fn: string) => {
   const match = fn.toString().match(/\(.*?\)/)
-  return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
+  return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : []
 }
 
 export const getValueForType = (type: string, stringValue: string) => {
   switch (type) {
-    case "number":
+    case 'number':
       return Number(stringValue)
-    case "string":
+    case 'string':
       return stringValue
-    case "boolean":
+    case 'boolean':
       return true // make this dynamic
-    case "undefined":
+    case 'undefined':
       return undefined
-    case "null":
+    case 'null':
       return null
-    case "object":
+    case 'object':
       return stringValue
     default:
       return Number(stringValue)
@@ -47,7 +47,7 @@ export const SmartObjectFunction = ({
   options,
   setFunctionResult,
   setShow,
-  setModalTitle
+  setModalTitle,
 }: any) => {
   const [formState, setFormState] = useState<any>({})
   const { showLoader } = UtilsContext.useUtilsComponents()
@@ -57,7 +57,7 @@ export const SmartObjectFunction = ({
     event: any,
     smartObj: any,
     fnName: string,
-    params: string[]
+    params: string[],
   ) => {
     event.preventDefault()
     showLoader(true)
@@ -80,25 +80,25 @@ export const SmartObjectFunction = ({
           if (isValidRev(paramValue)) {
             return param
           }
-          if (typeof paramValue === "string") {
+          if (typeof paramValue === 'string') {
             return `'${paramValue}'`
           }
           return paramValue
         })})`,
         env: { smartObject: smartObj._rev, ...revMap },
         fund: true,
-        sign: true
+        sign: true,
       })
 
       await computer.broadcast(tx!)
       await sleep(1000)
       const res = await computer.query({ ids: [smartObject._id] })
       setFunctionResult({ _rev: res[0] })
-      setModalTitle("Success!")
+      setModalTitle('Success!')
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
-      setModalTitle("Error!")
+      setModalTitle('Error!')
       setShow(true)
     } finally {
       showLoader(false)
@@ -126,7 +126,7 @@ export const SmartObjectFunction = ({
       {Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
         .filter(
           (key) =>
-            key !== "constructor" && typeof Object.getPrototypeOf(smartObject)[key] === "function"
+            key !== 'constructor' && typeof Object.getPrototypeOf(smartObject)[key] === 'function',
         )
         .map((key, fnIndex) => {
           const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key])
@@ -142,7 +142,7 @@ export const SmartObjectFunction = ({
                       <input
                         type="text"
                         id={`${key}-${paramName}`}
-                        value={formState[`${key}-${paramName}`] || ""}
+                        value={formState[`${key}-${paramName}`] || ''}
                         onChange={(e) => updateFormValue(e, `${key}-${paramName}`)}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         placeholder={paramName}

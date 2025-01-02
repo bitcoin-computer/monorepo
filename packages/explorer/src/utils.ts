@@ -1,6 +1,6 @@
 export const getFnParamNames = function (fn: string) {
   const match = fn.toString().match(/\(.*?\)/)
-  return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
+  return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : []
 }
 
 export function isValidRevString(outId: string): boolean {
@@ -8,7 +8,7 @@ export function isValidRevString(outId: string): boolean {
 }
 
 export function isValidRev(value: string | number | true | null | undefined): boolean {
-  return typeof value === "string" && isValidRevString(value)
+  return typeof value === 'string' && isValidRevString(value)
 }
 
 export const sleep = (ms: number): Promise<void> =>
@@ -21,13 +21,13 @@ type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]
 type JObject = { [x: string]: Json }
 
-const isJUndefined = (a: unknown): a is undefined => typeof a === "undefined"
+const isJUndefined = (a: unknown): a is undefined => typeof a === 'undefined'
 const isJNull = (a: unknown): a is null => a === null
-const isJBoolean = (a: unknown): a is boolean => typeof a === "boolean"
-const isJNumber = (a: unknown): a is number => typeof a === "number"
-const isJString = (a: unknown): a is string => typeof a === "string"
-const isJSymbol = (a: unknown): a is symbol => typeof a === "symbol"
-const isJBigInt = (a: unknown): a is bigint => typeof a === "bigint"
+const isJBoolean = (a: unknown): a is boolean => typeof a === 'boolean'
+const isJNumber = (a: unknown): a is number => typeof a === 'number'
+const isJString = (a: unknown): a is string => typeof a === 'string'
+const isJSymbol = (a: unknown): a is symbol => typeof a === 'symbol'
+const isJBigInt = (a: unknown): a is bigint => typeof a === 'bigint'
 const isJBasic = (a: unknown): a is JBasic =>
   isJNull(a) ||
   isJUndefined(a) ||
@@ -55,7 +55,7 @@ export const jsonMap =
     if (isJBasic(json)) return g(json)
     if (isJArray(json)) return g(json.map(jsonMap(g)))
     if (isJObject(json)) return g(objectMap(jsonMap(g))(json))
-    throw new Error("Unsupported type")
+    throw new Error('Unsupported type')
   }
 
 export const strip = (value: Json): Json => {
@@ -76,17 +76,17 @@ export const chunk = (arr: string[], chunkSize = 4): string[][] => {
 
 export const getValueForType = (type: string, stringValue: string) => {
   switch (type) {
-    case "number":
+    case 'number':
       return Number(stringValue)
-    case "string":
+    case 'string':
       return stringValue
-    case "boolean":
+    case 'boolean':
       return true // make this dynamic
-    case "undefined":
+    case 'undefined':
       return undefined
-    case "null":
+    case 'null':
       return null
-    case "object":
+    case 'object':
       return stringValue
     default:
       return Number(stringValue)
@@ -114,18 +114,18 @@ export interface ErrorResponse {
 export const getErrorMessage = (error: ErrorResponse): string => {
   if (
     error?.response?.data?.error ===
-    "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)"
+    'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)'
   ) {
-    return "You are not authorised to make changes to this smart object"
+    return 'You are not authorised to make changes to this smart object'
   }
 
   if (error?.response?.data?.error) {
     return error?.response?.data?.error
   }
 
-  return error.message ? error.message : "Error occurred"
+  return error.message ? error.message : 'Error occurred'
 }
 
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
 export const toObject = (obj: unknown) =>
-  JSON.stringify(obj, (_, value) => (typeof value === "bigint" ? value.toString() : value), 2)
+  JSON.stringify(obj, (_, value) => (typeof value === 'bigint' ? value.toString() : value), 2)

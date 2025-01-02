@@ -1,7 +1,7 @@
-import "./App.css"
-import { useEffect, useState } from "react"
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import { initFlowbite } from "flowbite"
+import './App.css'
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { initFlowbite } from 'flowbite'
 import {
   Auth,
   Error404,
@@ -9,11 +9,11 @@ import {
   Wallet,
   SmartObject,
   Transaction,
-  ComputerContext
-} from "@bitcoin-computer/components"
-import { Navbar } from "./components/Navbar"
-import Mint from "./components/Mint"
-import { AllAssets, MyAssets } from "./components/Assets"
+  ComputerContext,
+} from '@bitcoin-computer/components'
+import { Navbar } from './components/Navbar'
+import Mint from './components/Mint'
+import { AllAssets, MyAssets } from './components/Assets'
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -30,7 +30,7 @@ export default function App() {
           <Auth.LoginModal />
           <Wallet />
           <div className="dark:bg-gray-800 min-h-screen">
-            {" "}
+            {' '}
             <Navbar />
             <div className="p-8 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
               <Routes>

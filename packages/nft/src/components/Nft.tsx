@@ -1,27 +1,27 @@
-import { Dispatch, useContext, useEffect, useState } from "react"
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
+import { Dispatch, useContext, useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
   toObject,
   capitalizeFirstLetter,
   Modal,
   UtilsContext,
-  ComputerContext
-} from "@bitcoin-computer/components"
-import { Computer } from "@bitcoin-computer/lib"
-import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from "@bitcoin-computer/swap"
-import { NFT } from "@bitcoin-computer/TBC721"
+  ComputerContext,
+} from '@bitcoin-computer/components'
+import { Computer } from '@bitcoin-computer/lib'
+import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from '@bitcoin-computer/swap'
+import { NFT } from '@bitcoin-computer/TBC721'
 import {
   VITE_TX_WRAPPER_MOD_SPEC,
   VITE_PAYMENT_MOD_SPEC,
-  VITE_SALE_MOD_SPEC
-} from "../constants/modSpecs"
+  VITE_SALE_MOD_SPEC,
+} from '../constants/modSpecs'
 
-const modalId = "smart-object-bought-modal"
+const modalId = 'smart-object-bought-modal'
 
 const BuyNFT = async ({
   computer,
   nft,
-  setFunctionResult
+  setFunctionResult,
 }: {
   computer: Computer
   nft: NFT
@@ -38,7 +38,7 @@ const BuyNFT = async ({
   const finalTx = await SaleHelper.finalizeSaleTx(
     saleTxn,
     payment,
-    computer.toScriptPubKey() as Buffer
+    computer.toScriptPubKey() as Buffer,
   )
 
   // Buyer funds, signs, and broadcasts to execute the sale
@@ -57,7 +57,7 @@ const CreateSellOffer = async ({
   computer,
   amount,
   nft,
-  showSnackBar
+  showSnackBar,
 }: {
   computer: Computer
   amount: string
@@ -67,7 +67,7 @@ const CreateSellOffer = async ({
   const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
   const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
     computer.getPublicKey(),
-    computer.getUrl()
+    computer.getUrl(),
   )
   const offerTxId = await computer.broadcast(wrappedTx)
   await nft.list(offerTxId)
@@ -75,20 +75,20 @@ const CreateSellOffer = async ({
   const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
   const parsedAmount = Number(amount) * 1e8
   if (!parsedAmount) {
-    showSnackBar("Please provide a valid amount.", false)
+    showSnackBar('Please provide a valid amount.', false)
     return
   }
   const mock = new PaymentMock(parsedAmount)
   const { tx: saleTx } = await saleHelper.createSaleTx(nft, mock)
   if (!saleTx) {
-    showSnackBar("Failed to list NFT for sale.", false)
+    showSnackBar('Failed to list NFT for sale.', false)
     return
   }
 
   const { tx: offerTxWithSaleTx } = await txWrapperHelper.addSaleTx(offerTxId, saleTx)
 
   await computer.broadcast(offerTxWithSaleTx)
-  showSnackBar("Successfully listed NFT for sale.", true)
+  showSnackBar('Successfully listed NFT for sale.', true)
 }
 
 const SmartObjectValues = ({ smartObject }: { smartObject: NFT }) => {
@@ -118,7 +118,7 @@ const SmartObjectValues = ({ smartObject }: { smartObject: NFT }) => {
       )}
       {smartObject._owners && smartObject._owners[0] && (
         <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
-          {capitalizeFirstLetter("owned by:")}{" "}
+          {capitalizeFirstLetter('owned by:')}{' '}
           <Link
             to={`/?publicKey=${smartObject._owners[0]}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -137,12 +137,12 @@ const SmartObjectValues = ({ smartObject }: { smartObject: NFT }) => {
 
 const CreateSellOfferComponent = ({
   computer,
-  smartObject
+  smartObject,
 }: {
   computer: Computer
   smartObject: NFT
 }) => {
-  const [amount, setAmount] = useState<string>("")
+  const [amount, setAmount] = useState<string>('')
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   return (
@@ -164,17 +164,17 @@ const CreateSellOfferComponent = ({
           type="button"
           onClick={async () => {
             if (!amount) {
-              showSnackBar("Provide valid amount", false)
+              showSnackBar('Provide valid amount', false)
             }
             try {
               showLoader(true)
               await CreateSellOffer({ computer, amount, nft: smartObject, showSnackBar })
-              setAmount("")
+              setAmount('')
               showLoader(false)
               showSnackBar(`You listed this NFT for ${amount} ${computer.getChain()}`, true)
             } catch {
               showLoader(false)
-              showSnackBar("Failed to create sell offer", false)
+              showSnackBar('Failed to create sell offer', false)
             }
           }}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
@@ -202,7 +202,7 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
         showLoader(false)
       } catch {
         showLoader(false)
-        showSnackBar("Failed to fetch price of NFT.", false)
+        showSnackBar('Failed to fetch price of NFT.', false)
       }
     }
     fetch()
@@ -236,7 +236,7 @@ const UnlistNftComponent = ({ smartObject }: { smartObject: NFT }) => {
             showLoader(false)
           } catch {
             showLoader(false)
-            showSnackBar("Failed to unlist nft", false)
+            showSnackBar('Failed to unlist nft', false)
           }
         }}
         className="text-white mt-4 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
@@ -250,7 +250,7 @@ const UnlistNftComponent = ({ smartObject }: { smartObject: NFT }) => {
 const BuyNftComponent = ({
   computer,
   smartObject,
-  setFunctionResult
+  setFunctionResult,
 }: {
   computer: Computer
   smartObject: NFT
@@ -270,7 +270,7 @@ const BuyNftComponent = ({
             showLoader(false)
           } catch (error) {
             showLoader(false)
-            showSnackBar("Failed to buy nft", false)
+            showSnackBar('Failed to buy nft', false)
           }
         }}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
@@ -294,7 +294,7 @@ function SuccessContent(id: string) {
     <>
       <div className="p-4 md:p-5">
         <div className="dark:text-gray-400">
-          You bought this NFT{" "}
+          You bought this NFT{' '}
           <Link
             to={`/objects/${id}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -323,10 +323,10 @@ function NftView() {
   const location = useLocation()
   const params = useParams()
   const navigate = useNavigate()
-  const [id] = useState(params.id || "")
+  const [id] = useState(params.id || '')
   const computer = useContext(ComputerContext)
   const [smartObject, setSmartObject] = useState<NFT | null>(null)
-  const [functionResult, setFunctionResult] = useState<string>("")
+  const [functionResult, setFunctionResult] = useState<string>('')
 
   useEffect(() => {
     const fetch = async () => {
@@ -338,7 +338,7 @@ function NftView() {
         showLoader(false)
       } catch {
         showLoader(false)
-        showSnackBar("Not a valid NFT rev", false)
+        showSnackBar('Not a valid NFT rev', false)
       }
     }
     fetch()
@@ -370,7 +370,7 @@ function NftView() {
         )}
 
         <Modal.Component
-          title={"Success"}
+          title={'Success'}
           content={SuccessContent}
           contentData={functionResult}
           id={modalId}

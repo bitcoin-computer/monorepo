@@ -1,5 +1,5 @@
-import { Auth, Gallery } from "@bitcoin-computer/components"
-import { Counter } from "../contracts/counter"
+import { Auth, Gallery } from '@bitcoin-computer/components'
+import { Counter } from '../contracts/counter'
 
 const publicKey = Auth.getComputer().getPublicKey()
 const contract = { class: Counter }

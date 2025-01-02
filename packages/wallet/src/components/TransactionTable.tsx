@@ -1,4 +1,4 @@
-import type { TableTx } from "../types/common"
+import type { TableTx } from '../types/common'
 
 function TranactionRow({ tx }: { tx: TableTx }) {
   return (

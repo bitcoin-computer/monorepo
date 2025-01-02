@@ -1,5 +1,5 @@
-import Box from "@mui/material/Box"
-import "./Profile.css"
+import Box from '@mui/material/Box'
+import './Profile.css'
 
 export interface ProfileProps {
   name: string
@@ -19,7 +19,7 @@ function Profile(props: ProfileProps) {
     : Name
 
   return (
-    <Box sx={{ height: "100%" }}>
+    <Box sx={{ height: '100%' }}>
       <Box className="profile-container">
         {/* <img
           className="profile-picture"

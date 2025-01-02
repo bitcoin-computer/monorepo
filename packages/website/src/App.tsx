@@ -1,28 +1,28 @@
-import "./App.css"
-import Grid from "@mui/material/Grid"
-import Box from "@mui/material/Box"
+import './App.css'
+import Grid from '@mui/material/Grid'
+import Box from '@mui/material/Box'
 // @ts-ignore
-import Telegram from "./social/telegram.svg?react"
+import Telegram from './social/telegram.svg?react'
 // @ts-ignore
-import YouTube from "./social/youtube.svg?react"
+import YouTube from './social/youtube.svg?react'
 // @ts-ignore
-import GitHub from "./social/github.svg?react"
+import GitHub from './social/github.svg?react'
 // @ts-ignore
-import Twitter from "./social/twitter.svg?react"
-import Features from "./Features"
-import Pricing from "./Pricing"
-import Examples from "./Examples"
-import About from "./About"
-import Introduction from "./Introduction"
+import Twitter from './social/twitter.svg?react'
+import Features from './Features'
+import Pricing from './Pricing'
+import Examples from './Examples'
+import About from './About'
+import Introduction from './Introduction'
 // @ts-ignore
-import ArrowLink from "./social/arrow.svg?react"
+import ArrowLink from './social/arrow.svg?react'
 
 function App() {
   return (
     <div className="App">
       <header className="header">
-        <Grid container sx={{ height: "6vw" }}>
-          <Grid item xs={3} sx={{ textAlign: "left" }}>
+        <Grid container sx={{ height: '6vw' }}>
+          <Grid item xs={3} sx={{ textAlign: 'left' }}>
             <img src="/logo/BitcoinComputer-Logo.png" height="40px" alt="logo" />
           </Grid>
           <Grid item xs={9} className="navigation">

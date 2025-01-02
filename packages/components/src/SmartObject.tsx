@@ -1,20 +1,20 @@
-import { useContext, useEffect, useState } from "react"
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom"
-import reactStringReplace from "react-string-replace"
-import { HiOutlineClipboard } from "react-icons/hi"
-import { capitalizeFirstLetter, toObject } from "./common/utils"
-import { Card } from "./Card"
-import { Modal } from "./Modal"
-import { FunctionResultModalContent } from "./common/SmartCallExecutionResult"
-import { SmartObjectFunction } from "./SmartObjectFunction"
-import { ComputerContext } from "./ComputerContext"
+import { useContext, useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import reactStringReplace from 'react-string-replace'
+import { HiOutlineClipboard } from 'react-icons/hi'
+import { capitalizeFirstLetter, toObject } from './common/utils'
+import { Card } from './Card'
+import { Modal } from './Modal'
+import { FunctionResultModalContent } from './common/SmartCallExecutionResult'
+import { SmartObjectFunction } from './SmartObjectFunction'
+import { ComputerContext } from './ComputerContext'
 
-const keywords = ["_id", "_rev", "_owners", "_root", "_amount"]
-const modalId = "smart-object-info-modal"
+const keywords = ['_id', '_rev', '_owners', '_root', '_amount']
+const modalId = 'smart-object-info-modal'
 
 export const getFnParamNames = (fn: string) => {
   const match = fn.toString().match(/\(.*?\)/)
-  return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : []
+  return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : []
 }
 
 function Copy({ text }: { text: string }) {
@@ -54,7 +54,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
         .map(([key, value], i) => (
           <div key={i}>
             <h3 className="mt-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
-            <ObjectValueCard content={toObject(value || "")} />
+            <ObjectValueCard content={toObject(value || '')} />
           </div>
         ))}
     </>
@@ -77,8 +77,8 @@ function MetaData({ smartObject, prev, next }: any) {
             className={`flex items-center justify-center px-4 h-10 ms-3 text-sm font-medium border rounded-lg transition 
       ${
         prev
-          ? "bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+          ? 'bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700'
+          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
       }`}
             aria-disabled={!prev}
           >
@@ -89,8 +89,8 @@ function MetaData({ smartObject, prev, next }: any) {
             className={`flex items-center justify-center px-4 h-10 ms-3 text-sm font-medium border rounded-lg transition 
       ${
         next
-          ? "bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
-          : "bg-gray-200 text-gray-400 cursor-not-allowed"
+          ? 'bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700'
+          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
       }`}
             aria-disabled={!next}
           >
@@ -101,7 +101,7 @@ function MetaData({ smartObject, prev, next }: any) {
             className={`flex items-center justify-center px-4 h-10 ms-3 text-sm font-medium border rounded-lg transition 
       bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700`}
           >
-            {isVisible ? "Hide Metadata" : "Show Metadata"}
+            {isVisible ? 'Hide Metadata' : 'Show Metadata'}
           </button>
         </div>
       </div>
@@ -206,16 +206,16 @@ function Component({ title }: { title?: string }) {
   const location = useLocation()
   const params = useParams()
   const navigate = useNavigate()
-  const [rev] = useState(params.rev || "")
+  const [rev] = useState(params.rev || '')
   const computer = useContext(ComputerContext)
   const [smartObject, setSmartObject] = useState<any | null>(null)
   const [next, setNext] = useState<string | undefined>(undefined)
   const [prev, setPrev] = useState<string | undefined>(undefined)
   const [functionsExist, setFunctionsExist] = useState(false)
   const [functionResult, setFunctionResult] = useState<any>({})
-  const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
+  const options = ['object', 'string', 'number', 'bigint', 'boolean', 'undefined', 'symbol']
 
-  const [modalTitle, setModalTitle] = useState("")
+  const [modalTitle, setModalTitle] = useState('')
 
   const setShow: any = (flag: boolean) => {
     if (flag) {
@@ -231,7 +231,7 @@ function Component({ title }: { title?: string }) {
         const synced = await computer.sync(rev)
         setSmartObject(synced)
       } catch (error) {
-        const [txId] = rev.split(":")
+        const [txId] = rev.split(':')
         navigate(`/transactions/${txId}`)
       }
 
@@ -251,10 +251,10 @@ function Component({ title }: { title?: string }) {
     let funcExist = false
     if (smartObject) {
       const filteredSmartObject = Object.getOwnPropertyNames(
-        Object.getPrototypeOf(smartObject)
+        Object.getPrototypeOf(smartObject),
       ).filter(
         (key) =>
-          key !== "constructor" && typeof Object.getPrototypeOf(smartObject)[key] === "function"
+          key !== 'constructor' && typeof Object.getPrototypeOf(smartObject)[key] === 'function',
       )
 
       Object.keys(filteredSmartObject).forEach((key) => {
@@ -266,12 +266,12 @@ function Component({ title }: { title?: string }) {
     setFunctionsExist(funcExist)
   }, [smartObject])
 
-  const [txId, outNum] = rev.split(":")
+  const [txId, outNum] = rev.split(':')
 
   return (
     <>
       <div className="max-w-screen-md mx-auto">
-        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">{title || "Object"}</h1>
+        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">{title || 'Object'}</h1>
         <div className="mb-8">
           <Link
             to={`/transactions/${txId}`}
@@ -307,5 +307,5 @@ function Component({ title }: { title?: string }) {
 }
 
 export const SmartObject = {
-  Component
+  Component,
 }

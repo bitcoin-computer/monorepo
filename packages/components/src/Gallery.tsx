@@ -1,10 +1,10 @@
-import { Computer } from "@bitcoin-computer/lib"
-import { useContext, useEffect, useState } from "react"
-import { Link, useLocation } from "react-router-dom"
-import { initFlowbite } from "flowbite"
-import { jsonMap, strip, toObject } from "./common/utils"
-import { useUtilsComponents } from "./UtilsContext"
-import { ComputerContext } from "./ComputerContext"
+import { Computer } from '@bitcoin-computer/lib'
+import { useContext, useEffect, useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
+import { initFlowbite } from 'flowbite'
+import { jsonMap, strip, toObject } from './common/utils'
+import { useUtilsComponents } from './UtilsContext'
+import { ComputerContext } from './ComputerContext'
 
 export type Class = new (...args: any) => any
 
@@ -13,7 +13,7 @@ export type UserQuery<T extends Class> = Partial<{
   publicKey: string
   limit: number
   offset: number
-  order: "ASC" | "DESC"
+  order: 'ASC' | 'DESC'
   ids: string[]
   contract: {
     class: T
@@ -32,8 +32,8 @@ function HomePageCard({ content }: any) {
 }
 
 function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
-  const [value, setValue] = useState<any>("loading...")
-  const [errorMsg, setMsgError] = useState("")
+  const [value, setValue] = useState<any>('loading...')
+  const [errorMsg, setMsgError] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -221,5 +221,5 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
 
 export const Gallery = {
   FromRevs,
-  WithPagination
+  WithPagination,
 }

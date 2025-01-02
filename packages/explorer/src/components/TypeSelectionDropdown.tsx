@@ -16,11 +16,11 @@ export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, select
       triggerType: 'click',
       offsetSkidding: 0,
       offsetDistance: 10,
-      delay: 300
+      delay: 300,
     }
     const instanceOptions: InstanceOptions = {
       id: `dropdownMenu${id}`,
-      override: true
+      override: true,
     }
     setDropdown(new Dropdown($targetEl, $triggerEl, options, instanceOptions))
   }, [id])

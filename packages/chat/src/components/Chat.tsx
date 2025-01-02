@@ -1,10 +1,10 @@
-import { ComputerContext, Modal, sleep, UtilsContext } from "@bitcoin-computer/components"
-import { useContext, useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
-import { HiRefresh, HiUserAdd } from "react-icons/hi"
+import { ComputerContext, Modal, sleep, UtilsContext } from '@bitcoin-computer/components'
+import { useContext, useEffect, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { HiRefresh, HiUserAdd } from 'react-icons/hi'
 
-import { ChatSc } from "../contracts/chat"
-const addUserModal = "add-user-modal"
+import { ChatSc } from '../contracts/chat'
+const addUserModal = 'add-user-modal'
 
 interface messageI {
   text: string
@@ -13,9 +13,9 @@ interface messageI {
 }
 const getInitials = (name: string | undefined) => {
   if (!name) {
-    return ""
+    return ''
   }
-  const names = name.trim().split(" ")
+  const names = name.trim().split(' ')
   if (names.length === 1) return names[0].charAt(0).toUpperCase()
   return (names[0].charAt(0) + names[1].charAt(0)).toUpperCase()
 }
@@ -34,28 +34,28 @@ const formatTime = (str: string) => {
   const minutes = date.getMinutes()
 
   // Format time
-  const formattedTime = `${hours < 10 ? "0" + hours : hours}:${minutes < 10 ? "0" + minutes : minutes}`
+  const formattedTime = `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}`
 
   // Format date as dd mmm yy
   const day = date.getDate()
   const monthNames = [
-    "Jan",
-    "Feb",
-    "Mar",
-    "Apr",
-    "May",
-    "Jun",
-    "Jul",
-    "Aug",
-    "Sep",
-    "Oct",
-    "Nov",
-    "Dec"
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ]
   const month = monthNames[date.getMonth()]
   const year = date.getFullYear().toString().slice(-2)
 
-  const formattedDate = `${day < 10 ? "0" + day : day} ${month}'${year}`
+  const formattedDate = `${day < 10 ? '0' + day : day} ${month}'${year}`
 
   return `${formattedDate} ${formattedTime}`
 }
@@ -99,7 +99,7 @@ const SentMessage = ({ message }: { message: messageI }) => {
 }
 
 function AddUserToChat(chatObj: ChatSc) {
-  const [publicKey, setPublicKey] = useState("")
+  const [publicKey, setPublicKey] = useState('')
   const [creating, setCreating] = useState(false)
   const { showSnackBar } = UtilsContext.useUtilsComponents()
 
@@ -109,8 +109,8 @@ function AddUserToChat(chatObj: ChatSc) {
       setCreating(true)
       console.log(chatObj)
       await chatObj.invite(publicKey)
-      setPublicKey("")
-      showSnackBar("User added to the chat", true)
+      setPublicKey('')
+      showSnackBar('User added to the chat', true)
       Modal.hideModal(addUserModal)
     } catch (err) {
       if (err instanceof Error) {
@@ -158,7 +158,7 @@ function AddUserToChat(chatObj: ChatSc) {
 const ChatHeader = ({
   channelName,
   refreshChat,
-  chatObj
+  chatObj,
 }: {
   channelName?: string
   refreshChat: () => Promise<void>
@@ -176,7 +176,7 @@ const ChatHeader = ({
       <div className="flex items-center">
         <div
           className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white text-lg font-semibold"
-          style={{ backgroundColor: "#0046FF" }}
+          style={{ backgroundColor: '#0046FF' }}
         >
           {getInitials(channelName)}
         </div>
@@ -191,16 +191,16 @@ const ChatHeader = ({
         <HiRefresh
           onClick={refreshChat}
           className="w-6 h-6 cursor-pointer hover:opacity-80 dark:hover:opacity-80"
-          style={{ color: "#999999" }}
+          style={{ color: '#999999' }}
         />
         <HiUserAdd
           onClick={() => addUser(chatObj)}
           className="w-6 h-6 cursor-pointer hover:opacity-80 dark:hover:opacity-80"
-          style={{ color: "#999999" }}
+          style={{ color: '#999999' }}
         />
       </div>
       <Modal.Component
-        title={"Add new user to chat"}
+        title={'Add new user to chat'}
         content={AddUserToChat}
         id={addUserModal}
         contentData={addUserToChat}
@@ -212,14 +212,14 @@ const ChatHeader = ({
 const ChatInput = ({
   disabled,
   refreshChat,
-  chatId
+  chatId,
 }: {
   chatId: string
   disabled: boolean
   refreshChat: () => Promise<void>
 }) => {
   const computer = useContext(ComputerContext)
-  const [message, setMessage] = useState<string>("")
+  const [message, setMessage] = useState<string>('')
   const [sending, setSending] = useState(false)
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
@@ -230,14 +230,14 @@ const ChatInput = ({
       const messageData: messageI = {
         text: message,
         publicKey: computer.getPublicKey(),
-        time: Date.now().toString()
+        time: Date.now().toString(),
       }
       const latesRev = await computer.getLatestRev(chatId)
       const chatObj = (await computer.sync(latesRev)) as ChatSc
       await chatObj.post(JSON.stringify(messageData))
       await sleep(2000)
       await refreshChat()
-      setMessage("")
+      setMessage('')
     } catch (error) {
       if (error instanceof Error) showSnackBar(error.message, false)
     } finally {
@@ -247,7 +247,7 @@ const ChatInput = ({
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       sendMessage()
     }
@@ -259,7 +259,7 @@ const ChatInput = ({
         <input
           type="text"
           className="flex-1 p-2.5 bg-gray-100 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
-          placeholder={disabled ? "You don't have access" : "Type your message..."}
+          placeholder={disabled ? "You don't have access" : 'Type your message...'}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyDown}
@@ -268,7 +268,7 @@ const ChatInput = ({
         <button
           onClick={sendMessage}
           type="button"
-          className={`p-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 ${sending ? "opacity-50 cursor-not-allowed" : ""}`}
+          className={`p-2.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800 ${sending ? 'opacity-50 cursor-not-allowed' : ''}`}
           disabled={sending || disabled}
         >
           Send
@@ -282,7 +282,7 @@ export function Chat({ chatId }: { chatId: string }) {
   const computer = useContext(ComputerContext)
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
   const navigate = useNavigate()
-  const [id] = useState(chatId || "")
+  const [id] = useState(chatId || '')
   const [chatObj, setChatObj] = useState<ChatSc | null>(null)
   const [messages, setMessages] = useState<messageI[]>([])
 
@@ -300,7 +300,7 @@ export function Chat({ chatId }: { chatId: string }) {
       showLoader(false)
     } catch {
       showLoader(false)
-      showSnackBar("Not a valid Chat", false)
+      showSnackBar('Not a valid Chat', false)
     }
   }
 
@@ -313,10 +313,10 @@ export function Chat({ chatId }: { chatId: string }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-4 max-w" style={{ maxHeight: "calc(100vh - 10vh)" }}>
+      <div className="grid grid-cols-1 gap-4 max-w" style={{ maxHeight: 'calc(100vh - 10vh)' }}>
         <div
           className="flex flex-col bg-gray-50 dark:bg-gray-800 max-w"
-          style={{ minHeight: "calc(100vh - 10vh)", maxHeight: "calc(100vh - 10vh)" }}
+          style={{ minHeight: 'calc(100vh - 10vh)', maxHeight: 'calc(100vh - 10vh)' }}
         >
           {chatObj && (
             <>
@@ -332,7 +332,7 @@ export function Chat({ chatId }: { chatId: string }) {
                     <SentMessage message={data} key={`${chatObj?._id}_${index.toString()}`} />
                   ) : (
                     <ReceivedMessage message={data} key={`${chatObj?._id}_${index.toString()}`} />
-                  )
+                  ),
                 )}
               </div>
 

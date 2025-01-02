@@ -1,5 +1,5 @@
-import Box from "@mui/material/Box";
-import "./Introduction.css";
+import Box from '@mui/material/Box'
+import './Introduction.css'
 
 function Introduction() {
   return (
@@ -22,7 +22,9 @@ function Introduction() {
       <Box className="cross-grid-2" />
       <Box className="cross-grid-3" />
       <Box className="cross-grid-4" />
-      <Box className="features" id="features">Features</Box>
+      <Box className="features" id="features">
+        Features
+      </Box>
       <Box className="headingWrapper">
         <Box className="headline">
           <p>Enabling Turing-complete smart contracts</p>
@@ -35,7 +37,7 @@ function Introduction() {
         </Box>
       </Box>
     </Box>
-  );
+  )
 }
 
-export default Introduction;
+export default Introduction

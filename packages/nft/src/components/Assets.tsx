@@ -1,6 +1,6 @@
-import { Auth } from "@bitcoin-computer/components"
-import { VITE_NFT_MOD_SPEC } from "../constants/modSpecs"
-import { Gallery } from "./Gallery"
+import { Auth } from '@bitcoin-computer/components'
+import { VITE_NFT_MOD_SPEC } from '../constants/modSpecs'
+import { Gallery } from './Gallery'
 
 const publicKey = Auth.getComputer().getPublicKey()
 

@@ -18,7 +18,8 @@
     "start": "node build/src/main.js",
     "test": "mocha --config .mocharc.json",
     "test-and-show": "npm run test 2>&1 | tee tbc721-test.log && open tbc721-test.log",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\""
   },
   "files": [
     "build"

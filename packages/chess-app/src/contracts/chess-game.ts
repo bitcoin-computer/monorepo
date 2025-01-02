@@ -11,19 +11,19 @@ export class ChessGame extends Contract {
     firstUserPubKey: string,
     secondUserPubKey: string,
     firstPlayerName: string,
-    secondPlayerName: string
+    secondPlayerName: string,
   ) {
     super({
-      firstPlayerColor: color.toLocaleLowerCase() === "black" ? "b" : "w",
+      firstPlayerColor: color.toLocaleLowerCase() === 'black' ? 'b' : 'w',
       sans: [],
       firstUserPubKey: firstUserPubKey,
       secondUserPubKey: secondUserPubKey,
       fen:
-        color.toLocaleLowerCase() === "black"
-          ? "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1"
-          : "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        color.toLocaleLowerCase() === 'black'
+          ? 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b KQkq - 0 1'
+          : 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
       firstPlayerName: firstPlayerName,
-      secondPlayerName: secondPlayerName
+      secondPlayerName: secondPlayerName,
     })
   }
 

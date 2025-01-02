@@ -10,10 +10,10 @@
     "build": "rm -rf build && tsc -p tsconfig.release.json",
     "build-turbo": "turbo run build",
     "lint": "eslint . --ext .ts,.tsx --ignore-pattern build/",
-    "lint-fix": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
+    "lint:fix": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
     "test": "mocha  --config .mocharc.json",
     "test-and-show": "npm run test 2>&1 | tee swap.log && open swap.log",
-    "prettier": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "types": "tsc --noEmit"
   },
   "type": "module",

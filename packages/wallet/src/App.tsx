@@ -1,19 +1,19 @@
-import "./App.css"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
+import './App.css'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import {
   Auth,
   SmartObject,
   Transaction,
   Error404,
   UtilsContext,
-  ComputerContext
-} from "@bitcoin-computer/components"
-import { useState } from "react"
-import { Send } from "./components/Send"
-import { Details } from "./components/Details"
-import Transactions from "./components/Transactions"
-import { Assets } from "./components/Assets"
-import { SideBar } from "./components/Sidebar"
+  ComputerContext,
+} from '@bitcoin-computer/components'
+import { useState } from 'react'
+import { Send } from './components/Send'
+import { Details } from './components/Details'
+import Transactions from './components/Transactions'
+import { Assets } from './components/Assets'
+import { SideBar } from './components/Sidebar'
 
 export default function App() {
   try {

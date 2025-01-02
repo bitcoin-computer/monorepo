@@ -7,11 +7,14 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "test": "vitest run",
     "start": "vite",
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
+    "deploy": "gh-pages -d dist",
+    "test:dev": "vitest",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\""
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",

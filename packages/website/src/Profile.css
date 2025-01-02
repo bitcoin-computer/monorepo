@@ -43,28 +43,28 @@
 }
 
 .social-1 {
-  background-image: url("/social/github.svg");
+  background-image: url('/social/github.svg');
   width: 40px;
   height: 40px;
   background-repeat: no-repeat;
 }
 
 .social-2 {
-  background-image: url("/social/insta.svg");
+  background-image: url('/social/insta.svg');
   width: 40px;
   height: 40px;
   background-repeat: no-repeat;
 }
 
 .social-3 {
-  background-image: url("/social/linkedin.svg");
+  background-image: url('/social/linkedin.svg');
   width: 40px;
   height: 40px;
   background-repeat: no-repeat;
 }
 
 .social-4 {
-  background-image: url("/social/medium.svg");
+  background-image: url('/social/medium.svg');
   width: 40px;
   height: 40px;
   background-repeat: no-repeat;

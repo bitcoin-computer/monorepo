@@ -1,10 +1,10 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react"
-import { IoMdRemoveCircleOutline } from "react-icons/io"
-import { Computer } from "@bitcoin-computer/lib"
-import { UtilsContext } from "@bitcoin-computer/components"
-import { TypeSelectionDropdown } from "../TypeSelectionDropdown"
-import { getErrorMessage, getValueForType, isValidRev, sleep } from "../../utils"
-import { ModSpec } from "./Modspec"
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { IoMdRemoveCircleOutline } from 'react-icons/io'
+import { Computer } from '@bitcoin-computer/lib'
+import { UtilsContext } from '@bitcoin-computer/components'
+import { TypeSelectionDropdown } from '../TypeSelectionDropdown'
+import { getErrorMessage, getValueForType, isValidRev, sleep } from '../../utils'
+import { ModSpec } from './Modspec'
 
 interface Argument {
   type: string
@@ -24,7 +24,7 @@ const CreateNew = (props: {
   const [code, setCode] = useState<string>()
   const [modSpec, setModSpec] = useState<string>()
   const [argumentsList, setArgumentsList] = useState<Argument[]>([])
-  const options = ["object", "string", "number", "bigint", "boolean", "undefined", "symbol"]
+  const options = ['object', 'string', 'number', 'bigint', 'boolean', 'undefined', 'symbol']
   const { showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
@@ -36,8 +36,8 @@ const CreateNew = (props: {
       exampleVars.forEach((exampleVar) => {
         newArgumentsList.push({
           type: exampleVar.type,
-          value: exampleVar.value ? exampleVar.value : "",
-          hidden: false
+          value: exampleVar.value ? exampleVar.value : '',
+          hidden: false,
         })
       })
     }
@@ -46,10 +46,10 @@ const CreateNew = (props: {
   }, [exampleCode, exampleVars])
 
   const handleAddArgument = () => {
-    setArgumentsList([...argumentsList, { type: "", value: "", hidden: false }])
+    setArgumentsList([...argumentsList, { type: '', value: '', hidden: false }])
   }
 
-  const handleArgumentChange = (index: number, field: "type" | "value", value: string) => {
+  const handleArgumentChange = (index: number, field: 'type' | 'value', value: string) => {
     const updatedArguments = [...argumentsList]
     updatedArguments[index][field] = value
     setArgumentsList(updatedArguments)
@@ -69,7 +69,7 @@ const CreateNew = (props: {
       const dynamicClass = createClassFunction()
       if (
         dynamicClass &&
-        typeof dynamicClass === "function" &&
+        typeof dynamicClass === 'function' &&
         dynamicClass.prototype &&
         dynamicClass.prototype instanceof Contract
       ) {
@@ -97,13 +97,13 @@ const CreateNew = (props: {
             .map((argument, index) => {
               const argValue = getValueForType(argument.type, argument.value)
               if (isValidRev(argValue)) return `param${index}`
-              if (typeof argValue === "string") return `'${argValue}'`
+              if (typeof argValue === 'string') return `'${argValue}'`
               return argValue
             })})
           `,
           env: { ...revMap },
           fund: true,
-          sign: true
+          sign: true,
         }
         if (modSpec) {
           encodeObject.mod = modSpec
@@ -113,17 +113,17 @@ const CreateNew = (props: {
         const txId = await computer.broadcast(tx)
         sleep(500)
         const { res } = (await computer.sync(txId)) as any
-        setFunctionResult({ _rev: res._rev, type: "objects" })
-        setModalTitle("Success!")
+        setFunctionResult({ _rev: res._rev, type: 'objects' })
+        setModalTitle('Success!')
         setShow(true)
       } else {
-        setFunctionResult("Please check the code you provided!")
-        setModalTitle("Error!")
+        setFunctionResult('Please check the code you provided!')
+        setModalTitle('Error!')
         setShow(true)
       }
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
-      setModalTitle("Error!")
+      setModalTitle('Error!')
       setShow(true)
     } finally {
       showLoader(false)
@@ -158,7 +158,7 @@ const CreateNew = (props: {
                   type="text"
                   id={`playground-argument-${index}`}
                   value={argument.value}
-                  onChange={(e) => handleArgumentChange(index, "value", e.target.value)}
+                  onChange={(e) => handleArgumentChange(index, 'value', e.target.value)}
                   className="sm:w-full md:w-2/3 lg:w-1/2 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="Value"
                   required
@@ -176,7 +176,7 @@ const CreateNew = (props: {
                   onClick={() => removeArgument(index)}
                 />
               </div>
-            )
+            ),
         )}
       </div>
 

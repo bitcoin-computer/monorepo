@@ -1,9 +1,9 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link, useNavigate } from 'react-router-dom'
 
 export function FunctionResultModalContent({ functionResult }: any) {
   const navigate = useNavigate()
 
-  if (functionResult && typeof functionResult === "object" && !Array.isArray(functionResult))
+  if (functionResult && typeof functionResult === 'object' && !Array.isArray(functionResult))
     return (
       <>
         <div className="p-4 md:p-5 dark:text-gray-400">

@@ -7,7 +7,7 @@
 }
 
 .GridBG {
-  background-image: url("/Grid/grid-Cell-Sub.svg");
+  background-image: url('/Grid/grid-Cell-Sub.svg');
   background-position: right 162px center;
   height: 100vh;
   width: 100%;

@@ -5,7 +5,7 @@ export class ChatSc extends Contract {
     super({
       messages: [],
       channelName,
-      _owners: [publicKey]
+      _owners: [publicKey],
     })
   }
 
