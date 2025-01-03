@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useEffect } from "react";
+import { useEffect } from 'react';
 export function SnackBar(props) {
     var message = props.message, success = props.success, hideSnackBar = props.hideSnackBar;
     var closeMessage = function (evt) {

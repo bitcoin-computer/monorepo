@@ -6,7 +6,7 @@
 }
 
 .TuringCompleteGraph1 {
-  background-image: url("/Turning-Complete-Graph.png");
+  background-image: url('/Turning-Complete-Graph.png');
   height: 97.6vw;
   width: 100%;
   position: absolute;
@@ -16,7 +16,7 @@
 }
 
 .cross-grid-1 {
-  background-image: url("/Grid/grid-Cell-Sub.png");
+  background-image: url('/Grid/grid-Cell-Sub.png');
   width: 16.3%;
   height: 16.67%;
   position: absolute;
@@ -26,7 +26,7 @@
 }
 
 .cross-grid-2 {
-  background-image: url("/Grid/grid-Cell-Sub.png");
+  background-image: url('/Grid/grid-Cell-Sub.png');
   width: 16.3%;
   height: 16.67%;
   position: absolute;
@@ -37,7 +37,7 @@
 }
 
 .cross-grid-3 {
-  background-image: url("/Grid/grid-Cell-Sub.png");
+  background-image: url('/Grid/grid-Cell-Sub.png');
   width: 16.3%;
   height: 16.67%;
   position: absolute;
@@ -48,7 +48,7 @@
 }
 
 .cross-grid-4 {
-  background-image: url("/Grid/grid-Cell-Sub.png");
+  background-image: url('/Grid/grid-Cell-Sub.png');
   width: 16.3%;
   height: 16.67%;
   position: absolute;
@@ -93,7 +93,7 @@
 }
 
 .horizontal-grid-line-1 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -103,7 +103,7 @@
 }
 
 .horizontal-grid-line-2 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -113,7 +113,7 @@
 }
 
 .horizontal-grid-line-3 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -123,7 +123,7 @@
 }
 
 .horizontal-grid-line-4 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -133,7 +133,7 @@
 }
 
 .horizontal-grid-line-5 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -143,7 +143,7 @@
 }
 
 .horizontal-grid-line-6 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -153,7 +153,7 @@
 }
 
 .horizontal-grid-line-7 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -163,7 +163,7 @@
 }
 
 .vertical-grid-line-1 {
-  background-image: url("/Grid/V-Grid-line.svg");
+  background-image: url('/Grid/V-Grid-line.svg');
   height: 100%;
   width: 1px;
   z-index: 1;
@@ -173,7 +173,7 @@
 }
 
 .vertical-grid-line-2 {
-  background-image: url("/Grid/V-Grid-line.svg");
+  background-image: url('/Grid/V-Grid-line.svg');
   height: 100%;
   width: 1px;
   z-index: 1;
@@ -183,7 +183,7 @@
 }
 
 .vertical-grid-line-3 {
-  background-image: url("/Grid/V-Grid-line.svg");
+  background-image: url('/Grid/V-Grid-line.svg');
   height: 100%;
   width: 1px;
   z-index: 1;
@@ -193,7 +193,7 @@
 }
 
 .vertical-grid-line-4 {
-  background-image: url("/Grid/V-Grid-line.svg");
+  background-image: url('/Grid/V-Grid-line.svg');
   height: 100%;
   width: 1px;
   z-index: 1;
@@ -203,7 +203,7 @@
 }
 
 .vertical-grid-line-5 {
-  background-image: url("/Grid/V-Grid-line.svg");
+  background-image: url('/Grid/V-Grid-line.svg');
   height: 100%;
   width: 1px;
   z-index: 1;
@@ -213,7 +213,7 @@
 }
 
 .vertical-grid-line-6 {
-  background-image: url("/Grid/V-Grid-line.svg");
+  background-image: url('/Grid/V-Grid-line.svg');
   height: 100%;
   width: 1px;
   z-index: 1;
@@ -223,7 +223,7 @@
 }
 
 .vertical-grid-line-7 {
-  background-image: url("/Grid/V-Grid-line.svg");
+  background-image: url('/Grid/V-Grid-line.svg');
   height: 100%;
   width: 1px;
   z-index: 1;

@@ -1,9 +1,9 @@
-import "./App.css"
-import { useEffect, useState } from "react"
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import { initFlowbite } from "flowbite"
-import { Auth, UtilsContext, Wallet, ComputerContext } from "@bitcoin-computer/components"
-import { ChessBoard } from "./components/ChessBoard"
+import './App.css'
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { initFlowbite } from 'flowbite'
+import { Auth, UtilsContext, Wallet, ComputerContext } from '@bitcoin-computer/components'
+import { ChessBoard } from './components/ChessBoard'
 
 import { Navbar } from "./components/Navbar"
 import { MyGames } from "./components/Assets"

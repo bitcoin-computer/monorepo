@@ -1,34 +1,34 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useEffect, useRef, useState } from "react";
-import { Computer } from "@bitcoin-computer/lib";
-import { initFlowbite } from "flowbite";
-import { HiRefresh } from "react-icons/hi";
-import { useUtilsComponents } from "./UtilsContext";
-import { Modal } from "./Modal";
-import { getEnv } from "./common/utils";
+import { useEffect, useRef, useState } from 'react';
+import { Computer } from '@bitcoin-computer/lib';
+import { initFlowbite } from 'flowbite';
+import { HiRefresh } from 'react-icons/hi';
+import { useUtilsComponents } from './UtilsContext';
+import { Modal } from './Modal';
+import { getEnv } from './common/utils';
 function isLoggedIn() {
-    return !!localStorage.getItem("BIP_39_KEY");
+    return !!localStorage.getItem('BIP_39_KEY');
 }
 function logout() {
-    localStorage.removeItem("BIP_39_KEY");
-    localStorage.removeItem("CHAIN");
-    localStorage.removeItem("NETWORK");
-    localStorage.removeItem("PATH");
-    localStorage.removeItem("URL");
-    window.location.href = "/";
+    localStorage.removeItem('BIP_39_KEY');
+    localStorage.removeItem('CHAIN');
+    localStorage.removeItem('NETWORK');
+    localStorage.removeItem('PATH');
+    localStorage.removeItem('URL');
+    window.location.href = '/';
 }
 function getCoinType(chain, network) {
-    if (["testnet", "regtest"].includes(network))
+    if (['testnet', 'regtest'].includes(network))
         return 1;
-    if (chain === "BTC")
+    if (chain === 'BTC')
         return 0;
-    if (chain === "LTC")
+    if (chain === 'LTC')
         return 2;
-    if (chain === "DOGE")
+    if (chain === 'DOGE')
         return 3;
-    if (chain === "PEPE")
+    if (chain === 'PEPE')
         return 3434;
-    if (chain === "BCH")
+    if (chain === 'BCH')
         return 145;
     throw new Error("Unsupported chain ".concat(chain, " or network ").concat(network));
 }
@@ -41,16 +41,16 @@ function loggedOutConfiguration() {
         chain: getEnv('CHAIN'),
         network: getEnv('NETWORK'),
         url: getEnv('URL'),
-        moduleStorageType: getEnv('MODULE_STORAGE_TYPE')
+        moduleStorageType: getEnv('MODULE_STORAGE_TYPE'),
     };
 }
 function loggedInConfiguration() {
     return {
-        mnemonic: localStorage.getItem("BIP_39_KEY"),
-        chain: (localStorage.getItem("CHAIN") || getEnv('CHAIN')),
-        network: (localStorage.getItem("NETWORK") || getEnv('NETWORK')),
-        url: localStorage.getItem("URL") || getEnv('URL'),
-        moduleStorageType: getEnv('MODULE_STORAGE_TYPE')
+        mnemonic: localStorage.getItem('BIP_39_KEY'),
+        chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')),
+        network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')),
+        url: localStorage.getItem('URL') || getEnv('URL'),
+        moduleStorageType: getEnv('MODULE_STORAGE_TYPE'),
     };
 }
 function getComputer() {
@@ -62,11 +62,11 @@ function MnemonicInput(_a) {
 }
 function ChainInput(_a) {
     var chain = _a.chain, setChain = _a.setChain;
-    return (_jsxs(_Fragment, { children: [_jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Chain" }), _jsxs("fieldset", { className: "flex", children: [_jsx("legend", { className: "sr-only", children: "Chain" }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain("LTC"); }, checked: chain === "LTC", id: "chain-ltc", type: "radio", name: "chain", value: "LTC", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-ltc", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300", children: "LTC" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain("BTC"); }, checked: chain === "BTC", id: "chain-btc", type: "radio", name: "chain", value: "BTC", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-btc", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "BTC" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain("PEPE"); }, id: "chain-pepe", type: "radio", name: "chain", value: "PEPE", className: "w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-pepe", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "PEPE" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain("DOGE"); }, id: "chain-doge", type: "radio", name: "chain", value: "DOGE", className: "w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600", disabled: true }), _jsx("label", { htmlFor: "chain-doge", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "DOGE" })] })] })] }));
+    return (_jsxs(_Fragment, { children: [_jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Chain" }), _jsxs("fieldset", { className: "flex", children: [_jsx("legend", { className: "sr-only", children: "Chain" }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain('LTC'); }, checked: chain === 'LTC', id: "chain-ltc", type: "radio", name: "chain", value: "LTC", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-ltc", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300", children: "LTC" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain('BTC'); }, checked: chain === 'BTC', id: "chain-btc", type: "radio", name: "chain", value: "BTC", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-btc", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "BTC" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain('PEPE'); }, id: "chain-pepe", type: "radio", name: "chain", value: "PEPE", className: "w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-pepe", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "PEPE" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain('DOGE'); }, id: "chain-doge", type: "radio", name: "chain", value: "DOGE", className: "w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600", disabled: true }), _jsx("label", { htmlFor: "chain-doge", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "DOGE" })] })] })] }));
 }
 function NetworkInput(_a) {
     var network = _a.network, setNetwork = _a.setNetwork;
-    return (_jsxs(_Fragment, { children: [_jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Network" }), _jsxs("fieldset", { className: "flex", children: [_jsx("legend", { className: "sr-only", children: "Network" }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setNetwork("mainnet"); }, checked: network === "mainnet", id: "network-mainnet", type: "radio", name: "network", value: "Mainnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-mainnet", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300", children: "Mainnet" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setNetwork("testnet"); }, checked: network === "testnet", id: "network-testnet", type: "radio", name: "network", value: "Testnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-testnet", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "Testnet" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setNetwork("regtest"); }, checked: network === "regtest", id: "network-regtest", type: "radio", name: "network", value: "Regtest", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-regtest", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "Regtest" })] })] })] }));
+    return (_jsxs(_Fragment, { children: [_jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Network" }), _jsxs("fieldset", { className: "flex", children: [_jsx("legend", { className: "sr-only", children: "Network" }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setNetwork('mainnet'); }, checked: network === 'mainnet', id: "network-mainnet", type: "radio", name: "network", value: "Mainnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-mainnet", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300", children: "Mainnet" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setNetwork('testnet'); }, checked: network === 'testnet', id: "network-testnet", type: "radio", name: "network", value: "Testnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-testnet", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "Testnet" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setNetwork('regtest'); }, checked: network === 'regtest', id: "network-regtest", type: "radio", name: "network", value: "Regtest", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-regtest", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "Regtest" })] })] })] }));
 }
 function UrlInput(_a) {
     var urlInputRef = _a.urlInputRef;
@@ -79,15 +79,15 @@ function LoginButton(_a) {
         var _a;
         e.preventDefault();
         if (isLoggedIn())
-            showSnackBar("A user is already logged in, please log out first.", false);
+            showSnackBar('A user is already logged in, please log out first.', false);
         if (mnemonic.length === 0)
             showSnackBar("Please don't use an empty mnemonic string.", false);
-        localStorage.setItem("BIP_39_KEY", mnemonic);
-        localStorage.setItem("CHAIN", chain);
-        localStorage.setItem("NETWORK", network);
-        localStorage.setItem("PATH", path);
-        localStorage.setItem("URL", ((_a = urlInputRef.current) === null || _a === void 0 ? void 0 : _a.value) || url);
-        window.location.href = "/";
+        localStorage.setItem('BIP_39_KEY', mnemonic);
+        localStorage.setItem('CHAIN', chain);
+        localStorage.setItem('NETWORK', network);
+        localStorage.setItem('PATH', path);
+        localStorage.setItem('URL', ((_a = urlInputRef.current) === null || _a === void 0 ? void 0 : _a.value) || url);
+        window.location.href = '/';
     };
     return (_jsx(_Fragment, { children: _jsx("button", { onClick: login, type: "submit", className: "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800", children: "Log In" }) }));
 }
@@ -114,5 +114,5 @@ export var Auth = {
     browserConfiguration: loggedInConfiguration,
     getComputer: getComputer,
     LoginForm: LoginForm,
-    LoginModal: LoginModal
+    LoginModal: LoginModal,
 };

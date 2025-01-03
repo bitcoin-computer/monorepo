@@ -1,5 +1,5 @@
-import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
-import { WithPagination } from "./Gallery"
+import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import { WithPagination } from './Gallery'
 
 export function MyGames() {
   return (

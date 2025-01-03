@@ -9,13 +9,13 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
-var isJUndefined = function (a) { return typeof a === "undefined"; };
+var isJUndefined = function (a) { return typeof a === 'undefined'; };
 var isJNull = function (a) { return a === null; };
-var isJBoolean = function (a) { return typeof a === "boolean"; };
-var isJNumber = function (a) { return typeof a === "number"; };
-var isJString = function (a) { return typeof a === "string"; };
-var isJSymbol = function (a) { return typeof a === "symbol"; };
-var isJBigInt = function (a) { return typeof a === "bigint"; };
+var isJBoolean = function (a) { return typeof a === 'boolean'; };
+var isJNumber = function (a) { return typeof a === 'number'; };
+var isJString = function (a) { return typeof a === 'string'; };
+var isJSymbol = function (a) { return typeof a === 'symbol'; };
+var isJBigInt = function (a) { return typeof a === 'bigint'; };
 var isJBasic = function (a) {
     return isJNull(a) ||
         isJUndefined(a) ||
@@ -48,7 +48,7 @@ export var jsonMap = function (g) {
             return g(json.map(jsonMap(g)));
         if (isJObject(json))
             return g(objectMap(jsonMap(g))(json));
-        throw new Error("Unsupported type");
+        throw new Error('Unsupported type');
     };
 };
 export var strip = function (value) {
@@ -62,7 +62,7 @@ export var strip = function (value) {
 };
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
 export var toObject = function (obj) {
-    return JSON.stringify(obj, function (key, value) { return (typeof value === "bigint" ? value.toString() : value); }, 2);
+    return JSON.stringify(obj, function (key, value) { return (typeof value === 'bigint' ? value.toString() : value); }, 2);
 };
 export var capitalizeFirstLetter = function (string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
@@ -71,7 +71,7 @@ export function isValidRevString(outId) {
     return /^[0-9A-Fa-f]{64}:\d+$/.test(outId);
 }
 export function isValidRev(value) {
-    return typeof value === "string" && isValidRevString(value);
+    return typeof value === 'string' && isValidRevString(value);
 }
 export var sleep = function (ms) {
     return new Promise(function (resolve) {
@@ -79,6 +79,6 @@ export var sleep = function (ms) {
     });
 };
 export function getEnv(name) {
-    return ((typeof process !== "undefined" && process.env["REACT_APP_".concat(name)]) ||
+    return ((typeof process !== 'undefined' && process.env["REACT_APP_".concat(name)]) ||
         (import.meta.env && import.meta.env["VITE_".concat(name)]));
 }

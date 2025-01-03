@@ -6,13 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "build-turbo": "turbo run build",
+    "build:turbo": "turbo run build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "test": "vitest run",
     "start": "vite",
     "deploy": "node --experimental-modules scripts/deploy.mjs",
-    "types": "tsc --noEmit"
+    "types": "tsc --noEmit",
+    "test:dev": "vitest",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\""
   },
   "dependencies": {
     "@bitcoin-computer/components": "^0.23.0-beta.0",

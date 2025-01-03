@@ -1,6 +1,6 @@
-import Box from "@mui/material/Box";
+import Box from '@mui/material/Box'
 
-import "./CodeSection.css";
+import './CodeSection.css'
 
 function CodeSection() {
   return (
@@ -8,9 +8,8 @@ function CodeSection() {
       <Box>
         <pre className="code-block">
           <code> 1 </code>
-          <code className="code-yellow">class</code>{" "}
-          <code className="code-dark-yellow"> NFT</code>
-          <code className="code-yellow"> extends </code>{" "}
+          <code className="code-yellow">class</code> <code className="code-dark-yellow"> NFT</code>
+          <code className="code-yellow"> extends </code>{' '}
           <code className="code-dark-yellow">Contract</code>
           <code className="code-gray">{` {`}</code>
           <br />
@@ -25,15 +24,16 @@ function CodeSection() {
           <code className="code-grey">{`{`}</code>
           <br />
           <code> 4 </code>
-          <code className="code-dark-blue">        data,</code>
+          <code className="code-dark-blue"> data,</code>
           <br />
           <code> 5 </code>
-          <code className="code-dark-blue">        _owners</code> <code>:[</code>
+          <code className="code-dark-blue"> _owners</code> <code>:[</code>
           <code className="code-dark-blue">owner</code>
           <code>]</code>
           <br />
           <code> 6 </code>
-          <code className="code-grey">{`      }`}</code><code className="code-blue">{`)`}</code>
+          <code className="code-grey">{`      }`}</code>
+          <code className="code-blue">{`)`}</code>
           <br />
           <code> 7 </code>
           <code>{`    }`}</code>
@@ -61,7 +61,7 @@ function CodeSection() {
         </pre>
       </Box>
     </Box>
-  );
+  )
 }
 
-export default CodeSection;
+export default CodeSection

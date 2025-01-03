@@ -1,7 +1,7 @@
-import "./App.css"
-import { useEffect, useState } from "react"
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import { initFlowbite } from "flowbite"
+import './App.css'
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { initFlowbite } from 'flowbite'
 import {
   Auth,
   Error404,
@@ -9,11 +9,11 @@ import {
   Wallet,
   SmartObject,
   Transaction,
-  ComputerContext
-} from "@bitcoin-computer/components"
-import Mint from "./components/Mint"
-import { Chats } from "./components/Chats"
-import { Navbar } from "./components/Navbar"
+  ComputerContext,
+} from '@bitcoin-computer/components'
+import Mint from './components/Mint'
+import { Chats } from './components/Chats'
+import { Navbar } from './components/Navbar'
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())

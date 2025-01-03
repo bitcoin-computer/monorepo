@@ -1,7 +1,7 @@
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Feature from "./Feature";
-import "./Features.css";
+import Box from '@mui/material/Box'
+import Grid from '@mui/material/Grid'
+import Feature from './Feature'
+import './Features.css'
 
 function Features() {
   return (
@@ -63,14 +63,10 @@ function Features() {
         </Grid>
       </Grid>
       <Box className="graph-container">
-        <img
-          className="graph2"
-          src="/Graph-2.png"
-          alt="graph2"
-        />
+        <img className="graph2" src="/Graph-2.png" alt="graph2" />
       </Box>
     </Box>
-  );
+  )
 }
 
-export default Features;
+export default Features

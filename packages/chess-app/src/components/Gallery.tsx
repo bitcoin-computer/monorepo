@@ -15,7 +15,7 @@ export type UserQuery<T extends Class> = Partial<{
   publicKey: string
   limit: number
   offset: number
-  order: "ASC" | "DESC"
+  order: 'ASC' | 'DESC'
   ids: string[]
   contract: {
     class: T
@@ -72,7 +72,7 @@ function HomePageCard({ content }: { content: () => JSX.Element }) {
   return (
     <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
-        {typeof content === "function" ? content() : ""}
+        {typeof content === 'function' ? content() : ''}
       </pre>
     </div>
   )
@@ -267,7 +267,7 @@ export function WithPagination<T extends Class>(q: UserQuery<T>) {
       const query = { ...q, ...params }
       query.offset = contractsPerPage * pageNum
       query.limit = contractsPerPage + 1
-      query.order = "DESC"
+      query.order = 'DESC'
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
       setRevs(result.slice(0, contractsPerPage))

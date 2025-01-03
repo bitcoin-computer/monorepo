@@ -46,39 +46,39 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useContext, useState } from "react";
-import { TypeSelectionDropdown } from "./common/TypeSelectionDropdown";
-import { isValidRev, sleep } from "./common/utils";
-import { UtilsContext } from "./UtilsContext";
-import { ComputerContext } from "./ComputerContext";
+import { useContext, useState } from 'react';
+import { TypeSelectionDropdown } from './common/TypeSelectionDropdown';
+import { isValidRev, sleep } from './common/utils';
+import { UtilsContext } from './UtilsContext';
+import { ComputerContext } from './ComputerContext';
 export var getErrorMessage = function (error) {
     var _a, _b, _c, _d, _e, _f;
     if (((_b = (_a = error === null || error === void 0 ? void 0 : error.response) === null || _a === void 0 ? void 0 : _a.data) === null || _b === void 0 ? void 0 : _b.error) ===
-        "mandatory-script-verify-flag-failed (Operation not valid with the current stack size)") {
-        return "You are not authorized to make changes to this smart object";
+        'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)') {
+        return 'You are not authorized to make changes to this smart object';
     }
     if ((_d = (_c = error === null || error === void 0 ? void 0 : error.response) === null || _c === void 0 ? void 0 : _c.data) === null || _d === void 0 ? void 0 : _d.error) {
         return (_f = (_e = error === null || error === void 0 ? void 0 : error.response) === null || _e === void 0 ? void 0 : _e.data) === null || _f === void 0 ? void 0 : _f.error;
     }
-    return error.message ? error.message : "Error occurred";
+    return error.message ? error.message : 'Error occurred';
 };
 export var getFnParamNames = function (fn) {
     var match = fn.toString().match(/\(.*?\)/);
-    return match ? match[0].replace(/[()]/gi, "").replace(/\s/gi, "").split(",") : [];
+    return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : [];
 };
 export var getValueForType = function (type, stringValue) {
     switch (type) {
-        case "number":
+        case 'number':
             return Number(stringValue);
-        case "string":
+        case 'string':
             return stringValue;
-        case "boolean":
+        case 'boolean':
             return true; // make this dynamic
-        case "undefined":
+        case 'undefined':
             return undefined;
-        case "null":
+        case 'null':
             return null;
-        case "object":
+        case 'object':
             return stringValue;
         default:
             return Number(stringValue);
@@ -114,14 +114,14 @@ export var SmartObjectFunction = function (_a) {
                                 if (isValidRev(paramValue)) {
                                     return param;
                                 }
-                                if (typeof paramValue === "string") {
+                                if (typeof paramValue === 'string') {
                                     return "'".concat(paramValue, "'");
                                 }
                                 return paramValue;
                             }), ")"),
                             env: __assign({ smartObject: smartObj._rev }, revMap_1),
                             fund: true,
-                            sign: true
+                            sign: true,
                         })];
                 case 2:
                     tx = (_a.sent()).tx;
@@ -135,13 +135,13 @@ export var SmartObjectFunction = function (_a) {
                 case 5:
                     res = _a.sent();
                     setFunctionResult({ _rev: res[0] });
-                    setModalTitle("Success!");
+                    setModalTitle('Success!');
                     setShow(true);
                     return [3 /*break*/, 8];
                 case 6:
                     error_1 = _a.sent();
                     setFunctionResult(getErrorMessage(error_1));
-                    setModalTitle("Error!");
+                    setModalTitle('Error!');
                     setShow(true);
                     return [3 /*break*/, 8];
                 case 7:
@@ -167,11 +167,11 @@ export var SmartObjectFunction = function (_a) {
         return _jsx(_Fragment, {});
     return (_jsx(_Fragment, { children: Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
             .filter(function (key) {
-            return key !== "constructor" && typeof Object.getPrototypeOf(smartObject)[key] === "function";
+            return key !== 'constructor' && typeof Object.getPrototypeOf(smartObject)[key] === 'function';
         })
             .map(function (key, fnIndex) {
             var paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key]);
-            return (_jsxs("div", { className: "mt-6 mb-6", children: [_jsx("h3", { className: "my-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(key) }), _jsxs("form", { id: "fn-index-".concat(fnIndex), children: [paramList.map(function (paramName, paramIndex) { return (_jsx("div", { className: "mb-4", children: _jsxs("div", { className: "flex items-center space-x-4", children: [_jsx("input", { type: "text", id: "".concat(key, "-").concat(paramName), value: formState["".concat(key, "-").concat(paramName)] || "", onChange: function (e) { return updateFormValue(e, "".concat(key, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: paramName, required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(key).concat(paramName), dropdownList: options, onSelectMethod: function (option) {
+            return (_jsxs("div", { className: "mt-6 mb-6", children: [_jsx("h3", { className: "my-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(key) }), _jsxs("form", { id: "fn-index-".concat(fnIndex), children: [paramList.map(function (paramName, paramIndex) { return (_jsx("div", { className: "mb-4", children: _jsxs("div", { className: "flex items-center space-x-4", children: [_jsx("input", { type: "text", id: "".concat(key, "-").concat(paramName), value: formState["".concat(key, "-").concat(paramName)] || '', onChange: function (e) { return updateFormValue(e, "".concat(key, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: paramName, required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(key).concat(paramName), dropdownList: options, onSelectMethod: function (option) {
                                                 return updateTypes(option, "".concat(key, "-").concat(paramName));
                                             } })] }) }, paramIndex)); }), _jsx("button", { className: "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700", onClick: function (evt) { return handleSmartObjectMethod(evt, smartObject, key, paramList); }, children: "Call Function" })] })] }, fnIndex));
         }) }));

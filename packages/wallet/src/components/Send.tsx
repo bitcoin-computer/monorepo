@@ -1,10 +1,10 @@
-import { initFlowbite } from "flowbite"
-import { useCallback, useEffect, useState } from "react"
-import { Auth, UtilsContext } from "@bitcoin-computer/components"
-import { Computer } from "@bitcoin-computer/lib"
-import { HiRefresh } from "react-icons/hi"
-import TransactionTable from "./TransactionTable"
-import { TableTxs } from "../types/common"
+import { initFlowbite } from 'flowbite'
+import { useCallback, useEffect, useState } from 'react'
+import { Auth, UtilsContext } from '@bitcoin-computer/components'
+import { Computer } from '@bitcoin-computer/lib'
+import { HiRefresh } from 'react-icons/hi'
+import TransactionTable from './TransactionTable'
+import { TableTxs } from '../types/common'
 
 export function SentTransactions({ computer }: { computer: Computer }) {
   const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
@@ -32,9 +32,9 @@ export function SentTransactions({ computer }: { computer: Computer }) {
 }
 
 export function SendForm({ computer }: { computer: Computer }) {
-  const [to, setTo] = useState<string>("")
-  const [amount, setAmount] = useState<string>("")
-  const [fee, setFee] = useState<string>("2")
+  const [to, setTo] = useState<string>('')
+  const [amount, setAmount] = useState<string>('')
+  const [fee, setFee] = useState<string>('2')
   const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export function SendForm({ computer }: { computer: Computer }) {
       const txId = await computer.send(Number(amount) * 1e8, to)
       showSnackBar(`Sent ${amount} ${computer.getChain()} to ${to} via transaction ${txId}`, true)
     } catch (err) {
-      showSnackBar(`Something went wrong ${err instanceof Error ? err.message : ""}`, false)
+      showSnackBar(`Something went wrong ${err instanceof Error ? err.message : ''}`, false)
     }
   }
 

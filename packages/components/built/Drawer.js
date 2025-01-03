@@ -9,5 +9,5 @@ function Component(_a) {
 }
 export var Drawer = {
     Component: Component,
-    ShowDrawer: ShowDrawer
+    ShowDrawer: ShowDrawer,
 };

@@ -1,17 +1,16 @@
+import { Link, useNavigate } from 'react-router-dom'
+import { Modal, Auth, Drawer } from '@bitcoin-computer/components'
+import { useEffect, useState } from 'react'
+import { initFlowbite } from 'flowbite'
 
-import { Link, useNavigate } from "react-router-dom"
-import { Modal, Auth, Drawer } from "@bitcoin-computer/components"
-import { useEffect, useState } from "react"
-import { initFlowbite } from "flowbite"
-
-const modalTitle = "Connect to Node"
-const modalId = "unsupported-config-modal"
+const modalTitle = 'Connect to Node'
+const modalId = 'unsupported-config-modal'
 
 function ModalContent() {
-  const [url, setUrl] = useState<string>("")
+  const [url, setUrl] = useState<string>('')
   function setNetwork(e: React.SyntheticEvent) {
     e.preventDefault()
-    localStorage.setItem("URL", url)
+    localStorage.setItem('URL', url)
   }
 
   function closeModal() {
@@ -86,7 +85,6 @@ export function NotLoggedMenu() {
     initFlowbite()
   }, [])
 
-
   return (
     <>
       <Modal.Component title={modalTitle} content={ModalContent} id={modalId} />
@@ -122,8 +120,8 @@ function Item({ dest }: { dest: string }) {
 export function LoggedInMenu() {
   return (
     <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-      <Item dest={"mine"} />
-      <Item dest={"mint"} />
+      <Item dest={'mine'} />
+      <Item dest={'mint'} />
       <WalletItem />
     </ul>
   )
@@ -158,7 +156,7 @@ function NavbarDropdownButton() {
   )
 }
 
-export function Logo({ name = "Bitcoin Computer NFT" }) {
+export function Logo({ name = 'Bitcoin Computer NFT' }) {
   const navigate = useNavigate()
   return (
     <Link

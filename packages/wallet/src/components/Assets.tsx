@@ -1,4 +1,4 @@
-import { Auth, Gallery } from "@bitcoin-computer/components"
+import { Auth, Gallery } from '@bitcoin-computer/components'
 
 export function Assets() {
   return (

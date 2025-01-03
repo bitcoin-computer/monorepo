@@ -9,10 +9,13 @@
     "build": "tsc -b && vite build",
     "build-turbo": "turbo run build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "test": "vitest run",
-    "types": "tsc --noEmit",
-    "deploy": "node --loader ts-node/esm ./scripts/deploy.ts"
+    "test:dev": "vitest",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
+    "deploy": "npm run build:contract && node --loader ts-node/esm  ./scripts/deploy.ts",
+    "build:contract": "tsc --project tsconfig.build.json && mv ./build-contract/chess-module.js ./src/contracts/chess.mjs && rm -rf build-contract"
   },
   "dependencies": {
     "@bitcoin-computer/components": "^0.23.0-beta.0",

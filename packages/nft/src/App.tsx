@@ -1,20 +1,20 @@
-import "./App.css"
-import { useEffect, useState } from "react"
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom"
-import { initFlowbite } from "flowbite"
+import './App.css'
+import { useEffect, useState } from 'react'
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+import { initFlowbite } from 'flowbite'
 import {
   Auth,
   Error404,
   UtilsContext,
   Wallet,
   Transaction,
-  ComputerContext
-} from "@bitcoin-computer/components"
-import { Navbar } from "./components/Navbar"
-import Mint from "./components/Mint"
-import { AllAssets, MyAssets } from "./components/Assets"
-import { NftView } from "./components/Nft"
-import { VITE_PAYMENT_MOD_SPEC } from "./constants/modSpecs"
+  ComputerContext,
+} from '@bitcoin-computer/components'
+import { Navbar } from './components/Navbar'
+import Mint from './components/Mint'
+import { AllAssets, MyAssets } from './components/Assets'
+import { NftView } from './components/Nft'
+import { VITE_PAYMENT_MOD_SPEC } from './constants/modSpecs'
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())

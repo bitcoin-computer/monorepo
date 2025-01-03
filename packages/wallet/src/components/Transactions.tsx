@@ -1,9 +1,9 @@
-import { initFlowbite } from "flowbite"
-import { useCallback, useContext, useEffect, useState } from "react"
-import { HiRefresh } from "react-icons/hi"
-import { ComputerContext } from "@bitcoin-computer/components"
-import TransactionTable from "./TransactionTable"
-import { TableTxs } from "../types/common"
+import { initFlowbite } from 'flowbite'
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { HiRefresh } from 'react-icons/hi'
+import { ComputerContext } from '@bitcoin-computer/components'
+import TransactionTable from './TransactionTable'
+import { TableTxs } from '../types/common'
 
 export default function Transactions() {
   const computer = useContext(ComputerContext)

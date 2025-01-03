@@ -1,12 +1,12 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { createContext, useContext, useState } from "react";
-import { SnackBar } from "./SnackBar";
-import { Loader } from "./Loader";
+import { createContext, useContext, useState } from 'react';
+import { SnackBar } from './SnackBar';
+import { Loader } from './Loader';
 var utilsContext = createContext(undefined);
 export var useUtilsComponents = function () {
     var context = useContext(utilsContext);
     if (!context) {
-        throw new Error("useUtilsComponents must be used within a UtilsProvider");
+        throw new Error('useUtilsComponents must be used within a UtilsProvider');
     }
     return context;
 };
@@ -27,5 +27,5 @@ export var UtilsProvider = function (_a) {
 };
 export var UtilsContext = {
     UtilsProvider: UtilsProvider,
-    useUtilsComponents: useUtilsComponents
+    useUtilsComponents: useUtilsComponents,
 };

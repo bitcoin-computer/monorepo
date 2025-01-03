@@ -35,19 +35,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useContext, useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
-import reactStringReplace from "react-string-replace";
-import { Computer } from "@bitcoin-computer/lib";
-import { Card } from "./Card";
-import { ComputerContext } from "./ComputerContext";
+import { useContext, useEffect, useState } from 'react';
+import { Link, useLocation, useParams } from 'react-router-dom';
+import reactStringReplace from 'react-string-replace';
+import { Computer } from '@bitcoin-computer/lib';
+import { Card } from './Card';
+import { ComputerContext } from './ComputerContext';
 function ExpressionCard(_a) {
     var content = _a.content, env = _a.env;
     var entries = Object.entries(env);
     var formattedContent = content;
     entries.forEach(function (entry) {
         var name = entry[0], rev = entry[1];
-        var regExp = new RegExp("(".concat(name, ")"), "g");
+        var regExp = new RegExp("(".concat(name, ")"), 'g');
         var replacer = function (n, ind) { return (_jsx(Link, { to: "/objects/".concat(rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", children: n }, "".concat(rev, "|").concat(ind))); };
         formattedContent = reactStringReplace(formattedContent, regExp, replacer);
     });
@@ -74,7 +74,7 @@ function Component() {
                         hex = (_a.sent())[0];
                         tx = Computer.txFromHex({ hex: hex });
                         setTxnData(tx);
-                        return [4 /*yield*/, computer.rpcCall("getrawtransaction", "".concat(params.txn, " 2"))];
+                        return [4 /*yield*/, computer.rpcCall('getrawtransaction', "".concat(params.txn, " 2"))];
                     case 2:
                         result = (_a.sent()).result;
                         setRPCTxnData(result);
@@ -101,9 +101,9 @@ function Component() {
                     case 3:
                         err_1 = _b.sent();
                         if (err_1 instanceof Error) {
-                            setTransition("");
+                            setTransition('');
                             // eslint-disable-next-line no-console
-                            console.log("Error parsing transaction", err_1.message);
+                            console.log('Error parsing transaction', err_1.message);
                         }
                         return [3 /*break*/, 4];
                     case 4: return [2 /*return*/];

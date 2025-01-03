@@ -5,7 +5,6 @@ icon: package
 
 # Node
 
-
 ## Prerequisites
 
 You need to have [git](https://www.git-scm.com/), [node.js](https://nodejs.org/) and [docker](https://www.docker.com/) installed.
@@ -25,7 +24,7 @@ cd monorepo
 npm install
 
 # Build the docker image
-npm run build-node
+npm run build:node
 ```
 
 </font>
@@ -114,27 +113,27 @@ The [Bitcoin Computer Library](https://github.com/bitcoin-computer/monorepo/tree
 
 ```js
 // Import client side library
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer } from "@bitcoin-computer/lib";
 
 // Configuration to connect to node on localhost
 const conf = {
-  chain: 'LTC',
-  network: 'regtest',
-  url: 'http://localhost:1031',
-}
+  chain: "LTC",
+  network: "regtest",
+  url: "http://localhost:1031",
+};
 
 // Create instance of client side library
-const computer = new Computer(conf)
-const address = computer.getAddress()
+const computer = new Computer(conf);
+const address = computer.getAddress();
 
 // Fund client side library
-const { txId, vout } = await computer.faucet(1e4)
+const { txId, vout } = await computer.faucet(1e4);
 
 // Return the utxos
-expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
+expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`]);
 
 // Return the balance
-expect(await new Computer(conf).getBalance(address).balance).eq(1e4)
+expect(await new Computer(conf).getBalance(address).balance).eq(1e4);
 
 // Return the transactions
 expect(await new Computer(conf).listTxs(address)).deep.eq({
@@ -144,15 +143,15 @@ expect(await new Computer(conf).listTxs(address)).deep.eq({
       txId,
       inputsSatoshis: 0,
       outputsSatoshis: 1e4,
-      satoshis: 1e4
-    }
-  ]
-})
+      satoshis: 1e4,
+    },
+  ],
+});
 ```
 
 </font>
 
-If you do not specify a `url` property it will default to the url below. The node at that url runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software. 
+If you do not specify a `url` property it will default to the url below. The node at that url runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software.
 
 ```
 https://rltc.node.bitcoincomputer.io
@@ -263,13 +262,12 @@ npm run up -- -t -cpus 16
 
 The following table shows the times and costs for syncing to a Litecoin node on testnet on [AWS EC2](https://aws.amazon.com/ec2/pricing/on-demand/). All experiments were run in spring 2022 using 50GB SSD storage.
 
-
-| CPUs | RAM  | Sync Time | Monthly Costs  |
-|------|------|-----------|----------------|
-| 2    | 8GB  | 28h       | $65            |
-| 4    | 16GB | 10h 30m   | $110           |
-| 8    | 32GB | 7h 15m    | $240           |
-| 16   | 32GB | 4h 45m    | $440           |
+| CPUs | RAM  | Sync Time | Monthly Costs |
+| ---- | ---- | --------- | ------------- |
+| 2    | 8GB  | 28h       | $65           |
+| 4    | 16GB | 10h 30m   | $110          |
+| 8    | 32GB | 7h 15m    | $240          |
+| 16   | 32GB | 4h 45m    | $440          |
 
 ## Versioning
 
@@ -284,6 +282,7 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/).
 If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Development Status
+
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
 ## Price
@@ -296,7 +295,7 @@ This software is licensed under the [Creative Commons Attribution-NoDerivs 3.0 U
 
 You are free to: share, copy, and redistribute the material in any medium or format for any purpose, even commercially under the following terms:
 
-* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-* NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
+- Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+- NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
 
 This is a human-readable summary of (and not a substitute for) the [license](https://creativecommons.org/licenses/by-nd/3.0/legalcode).
