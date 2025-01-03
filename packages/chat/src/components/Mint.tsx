@@ -1,19 +1,19 @@
-import { useContext, useState } from "react"
-import { ComputerContext, Modal } from "@bitcoin-computer/components"
-import { Link } from "react-router-dom"
-import { VITE_CHAT_MOD_SPEC } from "../constants/modSpecs"
+import { useContext, useState } from 'react'
+import { ComputerContext, Modal } from '@bitcoin-computer/components'
+import { Link } from 'react-router-dom'
+import { VITE_CHAT_MOD_SPEC } from '../constants/modSpecs'
 
 function SuccessContent(rev: string) {
   return (
     <>
       <div className="p-4 md:p-5">
         <div>
-          You created a{" "}
+          You created a{' '}
           <Link
             to={`/chats/${rev}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             onClick={() => {
-              Modal.hideModal("success-modal")
+              Modal.hideModal('success-modal')
             }}
           >
             chat
@@ -22,7 +22,7 @@ function SuccessContent(rev: string) {
       </div>
       <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
         <button
-          onClick={() => Modal.hideModal("success-modal")}
+          onClick={() => Modal.hideModal('success-modal')}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Close
@@ -46,7 +46,7 @@ function ErrorContent(msg: string) {
       <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
         <button
           onClick={() => {
-            Modal.hideModal("error-modal")
+            Modal.hideModal('error-modal')
           }}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
@@ -59,29 +59,29 @@ function ErrorContent(msg: string) {
 
 export default function Mint() {
   const computer = useContext(ComputerContext)
-  const [successRev, setSuccessRev] = useState("")
-  const [errorMsg, setErrorMsg] = useState("")
-  const [name, setName] = useState("")
+  const [successRev, setSuccessRev] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+  const [name, setName] = useState('')
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
       const { tx, effect } = await computer.encode({
         exp: `new ChatSc("${name}", "${computer.getPublicKey()}")`,
-        mod: VITE_CHAT_MOD_SPEC
+        mod: VITE_CHAT_MOD_SPEC,
       })
       await computer.broadcast(tx)
-      if (typeof effect.res === "object" && !Array.isArray(effect.res)) {
+      if (typeof effect.res === 'object' && !Array.isArray(effect.res)) {
         setSuccessRev(effect.res?._id as string)
-        Modal.showModal("success-modal")
+        Modal.showModal('success-modal')
       } else {
-        setErrorMsg("Error occurred while creating chat")
-        Modal.showModal("error-modal")
+        setErrorMsg('Error occurred while creating chat')
+        Modal.showModal('error-modal')
       }
     } catch (err) {
       if (err instanceof Error) {
         setErrorMsg(err.message)
-        Modal.showModal("error-modal")
+        Modal.showModal('error-modal')
       }
     }
   }
@@ -110,16 +110,16 @@ export default function Mint() {
         </button>
       </form>
       <Modal.Component
-        title={"Success"}
+        title={'Success'}
         content={SuccessContent}
         contentData={successRev}
-        id={"success-modal"}
+        id={'success-modal'}
       />
       <Modal.Component
-        title={"Error"}
+        title={'Error'}
         content={ErrorContent}
         contentData={errorMsg}
-        id={"error-modal"}
+        id={'error-modal'}
       />
     </>
   )

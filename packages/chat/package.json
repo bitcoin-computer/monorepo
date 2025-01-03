@@ -5,11 +5,15 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "start": "vite",
     "build": "tsc -b && vite build",
-    "build-turbo": "turbo run build",
+    "build:turbo": "turbo run build",
     "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "test": "vitest run",
+    "test:dev": "vitest",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "deploy": "node --loader ts-node/esm scripts/deploy.ts"
   },
   "dependencies": {

@@ -1,8 +1,8 @@
-import { Dispatch, SetStateAction } from "react"
+import { Dispatch, SetStateAction } from 'react'
 
 export const ModSpec = ({
   modSpec,
-  setModSpec
+  setModSpec,
 }: {
   modSpec: string | undefined
   setModSpec: Dispatch<SetStateAction<string | undefined>>

@@ -1,33 +1,33 @@
-import { Dispatch, useEffect, useRef, useState } from "react"
-import { Computer } from "@bitcoin-computer/lib"
-import { initFlowbite } from "flowbite"
-import { HiRefresh } from "react-icons/hi"
-import { useUtilsComponents } from "./UtilsContext"
-import { Modal } from "./Modal"
-import type { Chain, Network, ModuleStorageType } from "./common/types"
-import { getEnv } from "./common/utils"
+import { Dispatch, useEffect, useRef, useState } from 'react'
+import { Computer } from '@bitcoin-computer/lib'
+import { initFlowbite } from 'flowbite'
+import { HiRefresh } from 'react-icons/hi'
+import { useUtilsComponents } from './UtilsContext'
+import { Modal } from './Modal'
+import type { Chain, Network, ModuleStorageType } from './common/types'
+import { getEnv } from './common/utils'
 
 function isLoggedIn(): boolean {
-  return !!localStorage.getItem("BIP_39_KEY")
+  return !!localStorage.getItem('BIP_39_KEY')
 }
 
 function logout() {
-  localStorage.removeItem("BIP_39_KEY")
-  localStorage.removeItem("CHAIN")
-  localStorage.removeItem("NETWORK")
-  localStorage.removeItem("PATH")
-  localStorage.removeItem("URL")
-  window.location.href = "/"
+  localStorage.removeItem('BIP_39_KEY')
+  localStorage.removeItem('CHAIN')
+  localStorage.removeItem('NETWORK')
+  localStorage.removeItem('PATH')
+  localStorage.removeItem('URL')
+  window.location.href = '/'
 }
 
 function getCoinType(chain: string, network: string): number {
-  if (["testnet", "regtest"].includes(network)) return 1
+  if (['testnet', 'regtest'].includes(network)) return 1
 
-  if (chain === "BTC") return 0
-  if (chain === "LTC") return 2
-  if (chain === "DOGE") return 3
-  if (chain === "PEPE") return 3434
-  if (chain === "BCH") return 145
+  if (chain === 'BTC') return 0
+  if (chain === 'LTC') return 2
+  if (chain === 'DOGE') return 3
+  if (chain === 'PEPE') return 3434
+  if (chain === 'BCH') return 145
 
   throw new Error(`Unsupported chain ${chain} or network ${network}`)
 }
@@ -41,17 +41,17 @@ function loggedOutConfiguration() {
     chain: getEnv('CHAIN') as Chain,
     network: getEnv('NETWORK') as Network,
     url: getEnv('URL'),
-    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType
+    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType,
   }
 }
 
 function loggedInConfiguration() {
   return {
-    mnemonic: localStorage.getItem("BIP_39_KEY"),
-    chain: (localStorage.getItem("CHAIN") || getEnv('CHAIN')) as Chain,
-    network: (localStorage.getItem("NETWORK") || getEnv('NETWORK')) as Network,
-    url: localStorage.getItem("URL") || getEnv('URL'),
-    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType
+    mnemonic: localStorage.getItem('BIP_39_KEY'),
+    chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')) as Chain,
+    network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
+    url: localStorage.getItem('URL') || getEnv('URL'),
+    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType,
   }
 }
 
@@ -61,7 +61,7 @@ function getComputer(): Computer {
 
 function MnemonicInput({
   mnemonic,
-  setMnemonic
+  setMnemonic,
 }: {
   mnemonic: string
   setMnemonic: Dispatch<string>
@@ -98,8 +98,8 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
 
         <div className="flex items-center mr-4">
           <input
-            onChange={() => setChain("LTC")}
-            checked={chain === "LTC"}
+            onChange={() => setChain('LTC')}
+            checked={chain === 'LTC'}
             id="chain-ltc"
             type="radio"
             name="chain"
@@ -116,8 +116,8 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
 
         <div className="flex items-center mr-4">
           <input
-            onChange={() => setChain("BTC")}
-            checked={chain === "BTC"}
+            onChange={() => setChain('BTC')}
+            checked={chain === 'BTC'}
             id="chain-btc"
             type="radio"
             name="chain"
@@ -134,7 +134,7 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
 
         <div className="flex items-center mr-4">
           <input
-            onChange={() => setChain("PEPE")}
+            onChange={() => setChain('PEPE')}
             id="chain-pepe"
             type="radio"
             name="chain"
@@ -151,7 +151,7 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
 
         <div className="flex items-center mr-4">
           <input
-            onChange={() => setChain("DOGE")}
+            onChange={() => setChain('DOGE')}
             id="chain-doge"
             type="radio"
             name="chain"
@@ -173,7 +173,7 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
 
 function NetworkInput({
   network,
-  setNetwork
+  setNetwork,
 }: {
   network: Network | undefined
   setNetwork: Dispatch<Network>
@@ -188,8 +188,8 @@ function NetworkInput({
 
         <div className="flex items-center mr-4">
           <input
-            onChange={() => setNetwork("mainnet")}
-            checked={network === "mainnet"}
+            onChange={() => setNetwork('mainnet')}
+            checked={network === 'mainnet'}
             id="network-mainnet"
             type="radio"
             name="network"
@@ -206,8 +206,8 @@ function NetworkInput({
 
         <div className="flex items-center mr-4">
           <input
-            onChange={() => setNetwork("testnet")}
-            checked={network === "testnet"}
+            onChange={() => setNetwork('testnet')}
+            checked={network === 'testnet'}
             id="network-testnet"
             type="radio"
             name="network"
@@ -224,8 +224,8 @@ function NetworkInput({
 
         <div className="flex items-center mr-4">
           <input
-            onChange={() => setNetwork("regtest")}
-            checked={network === "regtest"}
+            onChange={() => setNetwork('regtest')}
+            checked={network === 'regtest'}
             id="network-regtest"
             type="radio"
             name="network"
@@ -265,15 +265,15 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    if (isLoggedIn()) showSnackBar("A user is already logged in, please log out first.", false)
+    if (isLoggedIn()) showSnackBar('A user is already logged in, please log out first.', false)
     if (mnemonic.length === 0) showSnackBar("Please don't use an empty mnemonic string.", false)
-    localStorage.setItem("BIP_39_KEY", mnemonic)
-    localStorage.setItem("CHAIN", chain)
-    localStorage.setItem("NETWORK", network)
-    localStorage.setItem("PATH", path)
-    localStorage.setItem("URL", urlInputRef.current?.value || url)
+    localStorage.setItem('BIP_39_KEY', mnemonic)
+    localStorage.setItem('CHAIN', chain)
+    localStorage.setItem('NETWORK', network)
+    localStorage.setItem('PATH', path)
+    localStorage.setItem('URL', urlInputRef.current?.value || url)
 
-    window.location.href = "/"
+    window.location.href = '/'
   }
 
   return (
@@ -293,7 +293,9 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
   const [chain, setChain] = useState<Chain | undefined>(getEnv('CHAIN') as Chain | undefined)
-  const [network, setNetwork] = useState<Network | undefined>(getEnv('NETWORK') as Network | undefined)
+  const [network, setNetwork] = useState<Network | undefined>(
+    getEnv('NETWORK') as Network | undefined,
+  )
   const [url] = useState<string | undefined>(getEnv('URL'))
   const urlInputRef = useRef<HTMLInputElement>(null)
 
@@ -339,5 +341,5 @@ export const Auth = {
   browserConfiguration: loggedInConfiguration,
   getComputer,
   LoginForm,
-  LoginModal
+  LoginModal,
 }

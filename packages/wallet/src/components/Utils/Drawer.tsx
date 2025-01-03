@@ -1,7 +1,7 @@
-import { Computer } from "@bitcoin-computer/lib"
-import { initFlowbite } from "flowbite"
-import { useEffect, useState } from "react"
-import { chunk } from "../../utils"
+import { Computer } from '@bitcoin-computer/lib'
+import { initFlowbite } from 'flowbite'
+import { useEffect, useState } from 'react'
+import { chunk } from '../../utils'
 
 export const CustomDrawer = ({ id, computer }: { id: string; computer: Computer }) => {
   const [showMnemonic, setShowMnemonic] = useState(false)
@@ -15,14 +15,14 @@ export const CustomDrawer = ({ id, computer }: { id: string; computer: Computer 
   }
 
   const logout = () => {
-    localStorage.removeItem("BIP_39_KEY")
-    localStorage.removeItem("CHAIN")
-    window.location.href = "/"
+    localStorage.removeItem('BIP_39_KEY')
+    localStorage.removeItem('CHAIN')
+    window.location.href = '/'
   }
 
   const mnemonicWell = () => {
-    const mnemonicChunks = chunk(computer.getMnemonic().split(" "))
-    const mnemonicChunksString = mnemonicChunks.map((batch) => `${batch.join(" ")}\n`).join(" ")
+    const mnemonicChunks = chunk(computer.getMnemonic().split(' '))
+    const mnemonicChunksString = mnemonicChunks.map((batch) => `${batch.join(' ')}\n`).join(' ')
 
     return (
       <>

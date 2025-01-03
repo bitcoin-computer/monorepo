@@ -46,7 +46,7 @@ export class NftHelper implements ITBC721 {
   async mint(name: string, artist: string, url: string): Promise<NFT> {
     const { tx, effect } = await this.computer.encode({
       exp: `new NFT("${name}", "${artist}", "${url}")`,
-      mod: this.mod
+      mod: this.mod,
     })
     await this.computer.broadcast(tx)
     return effect.res

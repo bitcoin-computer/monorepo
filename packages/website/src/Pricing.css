@@ -62,7 +62,7 @@
 }
 
 .graph3 {
-  background-image: url("/Graph-3.svg");
+  background-image: url('/Graph-3.svg');
   top: 62.73%;
   left: 74.4%;
   position: absolute;
@@ -74,7 +74,7 @@
 }
 
 .horizontal-pricing-grid-line-1 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -84,7 +84,7 @@
 }
 
 .horizontal-pricing-grid-line-2 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -94,7 +94,7 @@
 }
 
 .horizontal-pricing-grid-line-3 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -104,7 +104,7 @@
 }
 
 .horizontal-pricing-grid-line-4 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;

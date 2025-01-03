@@ -10,7 +10,7 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { Modal as ModalClass } from "flowbite";
+import { Modal as ModalClass } from 'flowbite';
 var get = function (id) {
     var $modalElement = document.querySelector("#".concat(id));
     var modalOptions = {};
@@ -50,5 +50,5 @@ export var Modal = {
     ShowButton: ShowButton,
     HideButton: HideButton,
     ToggleButton: ToggleButton,
-    Component: Component
+    Component: Component,
 };

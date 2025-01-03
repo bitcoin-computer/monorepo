@@ -1,34 +1,32 @@
-import { useCallback, useContext, useEffect, useState } from "react"
-import { HiRefresh } from "react-icons/hi"
-import { Computer } from "@bitcoin-computer/lib"
-import { Auth } from "./Auth"
-import { Drawer } from "./Drawer"
-import { UtilsContext } from "./UtilsContext"
-import { ComputerContext } from "./ComputerContext"
-import { getEnv } from "./common/utils"
+import { useCallback, useContext, useEffect, useState } from 'react'
+import { HiRefresh } from 'react-icons/hi'
+import { Computer } from '@bitcoin-computer/lib'
+import { Auth } from './Auth'
+import { Drawer } from './Drawer'
+import { UtilsContext } from './UtilsContext'
+import { ComputerContext } from './ComputerContext'
+import { getEnv } from './common/utils'
 
-const Balance = ({
-  computer,
-  modSpecs
-}: {
-  computer: Computer
-  modSpecs: string[]
-}) => {
+const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[] }) => {
   const [balance, setBalance] = useState<number>(0)
-  const [, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC")
+  const [, setChain] = useState<string>(localStorage.getItem('CHAIN') || 'LTC')
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   const refreshBalance = useCallback(async () => {
     try {
       showLoader(true)
       const publicKey = computer.getPublicKey()
-      const balances = await Promise.all(modSpecs.map(async (mod) => {
-        const paymentRevs = modSpecs ? await computer.query({ publicKey, mod }) : []
-        const payments = (await Promise.all(paymentRevs.map((rev: string) => computer.sync(rev)))) as any[]
-        return payments && payments.length
-          ? payments.reduce((total, pay) => total + (pay._amount - computer.getMinimumFees()), 0)
-          : 0
-      }))
+      const balances = await Promise.all(
+        modSpecs.map(async (mod) => {
+          const paymentRevs = modSpecs ? await computer.query({ publicKey, mod }) : []
+          const payments = (await Promise.all(
+            paymentRevs.map((rev: string) => computer.sync(rev)),
+          )) as any[]
+          return payments && payments.length
+            ? payments.reduce((total, pay) => total + (pay._amount - computer.getMinimumFees()), 0)
+            : 0
+        }),
+      )
       const amountsInPayments = balances.reduce((acc, curr) => acc + curr, 0)
       const walletBalance = await computer.getBalance()
       setBalance(walletBalance.balance + amountsInPayments)
@@ -36,7 +34,7 @@ const Balance = ({
       showLoader(false)
     } catch (err) {
       showLoader(false)
-      showSnackBar("Error fetching wallet details", false)
+      showSnackBar('Error fetching wallet details', false)
     }
   }, [computer])
 
@@ -56,7 +54,7 @@ const Balance = ({
       role="alert"
     >
       <div className="text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400">
-        {balance / 1e8} {computer.getChain()}{" "}
+        {balance / 1e8} {computer.getChain()}{' '}
         <HiRefresh
           onClick={refreshBalance}
           className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
@@ -65,7 +63,7 @@ const Balance = ({
       <div className="text-center uppercase text-xs text-blue-800 dark:text-blue-400">
         {computer.getNetwork()}
       </div>
-      {computer.getNetwork() === "regtest" && (
+      {computer.getNetwork() === 'regtest' && (
         <button
           type="button"
           onClick={fund}
@@ -106,11 +104,11 @@ const Mnemonic = ({ computer }: any) => {
           onClick={() => setMnemonicShown(!mnemonicShown)}
           className="text-xs font-mono font-normal text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline"
         >
-          {mnemonicShown ? "hide" : "show"}
+          {mnemonicShown ? 'hide' : 'show'}
         </button>
       </h6>
       <p className="text-xs font-mono text-gray-500 dark:text-gray-400 break-words">
-        {mnemonicShown ? computer.getMnemonic() : ""}
+        {mnemonicShown ? computer.getMnemonic() : ''}
       </p>
     </div>
   )
@@ -190,5 +188,5 @@ export const WalletComponents = {
   Chain,
   Network,
   Url,
-  LogOut
+  LogOut,
 }
