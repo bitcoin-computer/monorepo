@@ -23,9 +23,6 @@ export type UserQuery<T extends Class> = Partial<{
   }
 }>
 
-const truncateName = (name: string, maxLength: number = 15) =>
-  name.length > maxLength ? name.slice(0, maxLength) + "..." : name
-
 function GameCard({ chessContract }: { chessContract: ChessContract }) {
   const chessLib = new ChessLib(chessContract.fen)
   const publicKey = Auth.getComputer().getPublicKey()
@@ -50,7 +47,7 @@ function GameCard({ chessContract }: { chessContract: ChessContract }) {
             }`}
             title={chessContract.nameW}
           >
-            {truncateName(chessContract.nameW)}
+            {chessContract.nameW}
           </p>
           <div className="flex justify-center items-center my-1 text-gray-500 dark:text-gray-400">
             <BiGitCompare size={20} />
@@ -63,7 +60,7 @@ function GameCard({ chessContract }: { chessContract: ChessContract }) {
             }`}
             title={chessContract.nameB}
           >
-            {truncateName(chessContract.nameB)}
+            {chessContract.nameB}
           </p>
         </div>
       </div>

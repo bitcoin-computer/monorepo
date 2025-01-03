@@ -17,7 +17,7 @@ function currentPlayer(fen: string) {
 
 function getWinnerPubKey(chessLibrary: ChessLib, { publicKeyW, publicKeyB }: ChessContract) {
   if (chessLibrary.isCheckmate())
-    return chessLibrary.turn() === 'w' ? publicKeyW : publicKeyB
+    return chessLibrary.turn() === 'b' ? publicKeyW : publicKeyB
   return null
 }
 
@@ -141,7 +141,7 @@ export function ChessBoard() {
   useEffect(() => {
     const intervalId = setInterval(() => {
       syncChessContract()
-    }, 6000)
+    }, 3000)
 
     return () => clearInterval(intervalId)
   }, [syncChessContract])

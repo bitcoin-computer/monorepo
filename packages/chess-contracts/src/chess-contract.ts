@@ -75,7 +75,7 @@ export class ChessContract extends Contract {
       secretHashB,
       sans: [],
       fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-      payment: new Payment({ amount, publicKeyW, secretHashW, publicKeyB, secretHashB }),
+      payment: new Payment({ amount, publicKeyW, secretHashW, publicKeyB, secretHashB })
     })
   }
 
