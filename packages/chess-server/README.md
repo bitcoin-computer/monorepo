@@ -2,27 +2,10 @@
 
 ## Usage
 
-### Development
-
-Start the database
+Start a Bitcoin Computer Node in the package `node`. Then copy the `.env.example` file.
 
 ```
-npm run start-postgress
-```
-
-Start the express server
-
-```
-npm run start:dev
-```
-
-### Production
-
-Build Docker and start the server
-
-```
-npm run build-docker
-npm run up
+cp .env.example .env
 ```
 
 ### Deploy Smart Contract
@@ -33,9 +16,30 @@ Deploy the smart contract. The script will prompt you to update the `.env` files
 npm run deploy
 ```
 
-### Tests
+### Development
 
-Start the server and run
+Start the database.
+
+```
+npm run start-postgress
+```
+
+Then start the express server.
+
+```
+npm run start:dev
+```
+
+### Production
+
+Build Docker and start the database and express servers.
+
+```
+npm run build-docker
+npm run up
+```
+
+### Tests
 
 ```
 npm test
