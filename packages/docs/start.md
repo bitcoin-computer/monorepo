@@ -151,17 +151,25 @@ npm install
 
 ### Start the node
 
-Navigate the the package for the node and start it. The node it up and running when the lgs die down.
+To start your node at `http://localhost:1031` run the commands below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
 
 ```shell
 # Run the node
 cd packages/node
+
+# Copy the .env file and litecoin.conf file from the examples
+cp chain-setup/ltc/regtest/.env.example .env
+cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
+
+# Run the node
 npm run up
 ```
 
+The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database.
+
 ### Test
 
-Once the node is up an running, open a separate terminal window and navigate the the folder of the monorepo. You can run the following commands
+Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands
 
 ```shell
 # Test
