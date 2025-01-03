@@ -1,4 +1,4 @@
-import { Modal as ModalClass } from "flowbite";
+import { Modal as ModalClass } from 'flowbite';
 export declare const Modal: {
     get: (id: string) => ModalClass;
     showModal: (id: string) => void;

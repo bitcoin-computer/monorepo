@@ -1,4 +1,5 @@
 /// <reference types="node" />
+/// <reference types="node" />
 import { NFT } from '@bitcoin-computer/TBC721';
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
 import { Buffer } from 'buffer';

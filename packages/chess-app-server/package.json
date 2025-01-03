@@ -12,7 +12,7 @@
     "lint": "tslint -p tsconfig.json --fix",
     "start-postgres": "docker-compose up postgres",
     "up": "docker-compose up",
-    "build-docker": "docker build -t chess-app-server ."
+    "build:docker": "docker build -t chess-app-server ."
   },
   "dependencies": {
     "@types/cors": "^2.8.17",

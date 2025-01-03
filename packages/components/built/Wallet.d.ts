@@ -1,4 +1,4 @@
-import { Computer } from "@bitcoin-computer/lib";
+import { Computer } from '@bitcoin-computer/lib';
 export declare function Wallet({ modSpecs }: {
     modSpecs?: string[];
 }): import("react/jsx-runtime").JSX.Element;

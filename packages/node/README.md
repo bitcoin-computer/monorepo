@@ -12,16 +12,15 @@ The Bitcoin Computer Node is the backend for the Bitcoin Computer, a trustless g
 
 ## Features
 
-* Query for the balance, the UTXO set, and the list of transactions of an address
-* Multiplatform Docker images (linux/amd64, linux/arm/v7, linux/arm64)
-* Allow and deny access to Bitcoin RPC endpoints using a regular expression
-* Filter IP addresses by country
-* Enforce allowlist and denylist
-* Optimized for development, you can run large test suites on regtest
-* Synchronizes in parallel
-* All functionality of a Bitcoin node (build, sign, and broadcast txs, rpc)
-* Easy to use an powerful [client side library](../lib/README.md).
-
+- Query for the balance, the UTXO set, and the list of transactions of an address
+- Multiplatform Docker images (linux/amd64, linux/arm/v7, linux/arm64)
+- Allow and deny access to Bitcoin RPC endpoints using a regular expression
+- Filter IP addresses by country
+- Enforce allowlist and denylist
+- Optimized for development, you can run large test suites on regtest
+- Synchronizes in parallel
+- All functionality of a Bitcoin node (build, sign, and broadcast txs, rpc)
+- Easy to use an powerful [client side library](../lib/README.md).
 
 ## Prerequisites
 
@@ -42,7 +41,7 @@ cd monorepo
 npm install
 
 # Build the docker image
-npm run build-node
+npm run build:node
 ```
 
 </font>
@@ -164,15 +163,15 @@ expect(await new Computer(conf).listTxs(address)).deep.eq({
       txId,
       inputsSatoshis: 0,
       outputsSatoshis: 1e4,
-      satoshis: 1e4
-    }
-  ]
+      satoshis: 1e4,
+    },
+  ],
 })
 ```
 
 </font>
 
-If you do not specify a `url` property it will default to the url below. The node at that url runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software. 
+If you do not specify a `url` property it will default to the url below. The node at that url runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software.
 
 ```
 https://rltc.node.bitcoincomputer.io
@@ -305,6 +304,7 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/).
 If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Development Status
+
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
 ## Price
@@ -321,7 +321,7 @@ This software is licensed under the [Creative Commons Attribution-NoDerivs 3.0 U
 
 You are free to: share, copy, and redistribute the material in any medium or format for any purpose, even commercially under the following terms:
 
-* Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-* NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
+- Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
+- NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
 
 This is a human-readable summary of (and not a substitute for) the [license](https://creativecommons.org/licenses/by-nd/3.0/legalcode).

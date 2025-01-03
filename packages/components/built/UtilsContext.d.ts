@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 interface UtilsContextProps {
     showSnackBar: (message: string, success: boolean) => void;
     hideSnackBar: () => void;

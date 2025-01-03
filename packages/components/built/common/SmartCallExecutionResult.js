@@ -10,11 +10,11 @@ var __assign = (this && this.__assign) || function () {
     return __assign.apply(this, arguments);
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from 'react-router-dom';
 export function FunctionResultModalContent(_a) {
     var functionResult = _a.functionResult;
     var navigate = useNavigate();
-    if (functionResult && typeof functionResult === "object" && !Array.isArray(functionResult))
+    if (functionResult && typeof functionResult === 'object' && !Array.isArray(functionResult))
         return (_jsx(_Fragment, { children: _jsxs("div", __assign({ className: "p-4 md:p-5 dark:text-gray-400" }, { children: ["You created a\u00A0", _jsx(Link, __assign({ to: "/objects/".concat(functionResult._rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", onClick: function () {
                             navigate("/objects/".concat(functionResult._rev));
                             window.location.reload();

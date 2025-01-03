@@ -29,7 +29,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build-node": "docker build -t bitcoin-computer-node .",
+    "build:node": "docker build -t bitcoin-computer-node .",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} \\;",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
     "husky-checks": "./scripts/husky-checks.sh",

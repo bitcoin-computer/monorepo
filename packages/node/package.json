@@ -27,7 +27,7 @@
     "node": ">=16"
   },
   "scripts": {
-    "build": "cd ../../ && npm run build-node",
+    "build": "cd ../../ && npm run build:node",
     "clean-logs": "rm -f *.log 2> /dev/null",
     "delete-blockchain-data": "rm -rf chain-setup/*/*/*-data",
     "down": "node --loader ts-node/esm  ./scripts/down.ts",
@@ -35,7 +35,7 @@
     "fund-btc": "node --loader ts-node/esm ./scripts/fund.ts btc",
     "fund-pepe": "node --loader ts-node/esm ./scripts/fund.ts pepe",
     "lint": "eslint",
-    "lint-fix": "eslint --fix",
+    "lint:fix": "eslint --fix",
     "start": "node dist/bcn.es.mjs",
     "sync": "node dist/bcn.sync.es.mjs",
     "setup": "./scripts/setup.py",
