@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.787863852136">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.789240332913">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.787863852136" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.789240332913" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.787863852136" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.789240332913" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.787863852136" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.787863852136" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.789240332913" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.789240332913" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -182,7 +182,7 @@ cd monorepo
 npm install
 
 # Build the docker image
-npm run build-node</code></pre>
+npm run build:node</code></pre>
 </doc-codeblock></div>
 </font>
 <doc-anchor-target id="usage">
@@ -274,27 +274,27 @@ npm run fund-btc -- &lt;address_1&gt; ... &lt;address_n&gt;</code></pre>
 <font size=1>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">// Import client side library
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer } from &quot;@bitcoin-computer/lib&quot;;
 
 // Configuration to connect to node on localhost
 const conf = {
-  chain: 'LTC',
-  network: 'regtest',
-  url: 'http://localhost:1031',
-}
+  chain: &quot;LTC&quot;,
+  network: &quot;regtest&quot;,
+  url: &quot;http://localhost:1031&quot;,
+};
 
 // Create instance of client side library
-const computer = new Computer(conf)
-const address = computer.getAddress()
+const computer = new Computer(conf);
+const address = computer.getAddress();
 
 // Fund client side library
-const { txId, vout } = await computer.faucet(1e4)
+const { txId, vout } = await computer.faucet(1e4);
 
 // Return the utxos
-expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
+expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`]);
 
 // Return the balance
-expect(await new Computer(conf).getBalance(address).balance).eq(1e4)
+expect(await new Computer(conf).getBalance(address).balance).eq(1e4);
 
 // Return the transactions
 expect(await new Computer(conf).listTxs(address)).deep.eq({
@@ -304,10 +304,10 @@ expect(await new Computer(conf).listTxs(address)).deep.eq({
       txId,
       inputsSatoshis: 0,
       outputsSatoshis: 1e4,
-      satoshis: 1e4
-    }
-  ]
-})</code></pre>
+      satoshis: 1e4,
+    },
+  ],
+});</code></pre>
 </doc-codeblock></div>
 </font>
 <p>If you do not specify a <code v-pre>url</code> property it will default to the url below. The node at that url runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software.</p>
@@ -545,7 +545,7 @@ BCN_OFFCHAIN_PROTOCOL=</code></pre>
                                     <ul class="flex flex-wrap items-center text-sm">
                                     </ul>
                                 </div>
-                                <div class="docs-copyright py-2 text-gray-500 dark:text-dark-350 text-sm leading-relaxed"><p>© Copyright BCDB Inc. 2024. All rights reserved.</p></div>
+                                <div class="docs-copyright py-2 text-gray-500 dark:text-dark-350 text-sm leading-relaxed"><p>© Copyright BCDB Inc. 2025. All rights reserved.</p></div>
                             </footer>
                         </div>
                     </div>
