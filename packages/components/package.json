@@ -7,7 +7,7 @@
   "scripts": {
     "tsc-compile": "rm -rf built/* && tsc",
     "build": "npm run tsc-compile",
-    "build-turbo": "turbo run build",
+    "build:turbo": "turbo run build",
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern built/",
     "lint:fix": "eslint src --fix",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
