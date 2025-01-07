@@ -30,7 +30,7 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "types": "tsc --noEmit",
     "test": "mocha --config .mocharc.json",
-    "test-and-show": "npm run test 2>&1 | tee TBC20-test.log && open TBC20-test.log"
+    "test:show": "npm run test 2>&1 | tee TBC20-test.log && open TBC20-test.log"
   },
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "license": "Apache-2.0",
