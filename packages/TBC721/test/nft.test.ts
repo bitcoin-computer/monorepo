@@ -18,6 +18,9 @@ dotenv.config({ path: '../node/.env' })
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
 const network = process.env.BCN_NETWORK
+let moduleStorageType: any = 'taproot' 
+if (chain !== 'BTC' && chain !== 'LTC')
+  moduleStorageType = 'multisig'
 
 const artist = ''
 const imageUrl = ''
@@ -43,10 +46,10 @@ describe('NFT', () => {
     let nft: NFT
 
     describe('Minting an NFT', () => {
-      const sender = new Computer({ url, chain, network })
+      const sender = new Computer({ url, chain, network,  moduleStorageType })
 
       before("Fund sender's wallet", async () => {
-        await sender.faucet(0.001e8)
+        await sender.faucet(1e8)
       })
 
       it('Sender mints an NFT', async () => {
@@ -72,7 +75,7 @@ describe('NFT', () => {
     })
 
     describe('Transferring an NFT', async () => {
-      const receiver = new Computer({ url, chain, network })
+      const receiver = new Computer({ url, chain, network, moduleStorageType })
 
       it('Sender transfers the NFT to receiver', async () => {
         await nft.transfer(receiver.getPublicKey())
@@ -103,13 +106,13 @@ describe('NFT', () => {
   })
 
   describe('Using NFTs with the NftHelper class', () => {
-    const computer = new Computer({ url, chain, network })
+    const computer = new Computer({ url, chain, network, moduleStorageType })
 
     let nftHelper: NftHelper
     let nft: NFT
 
     before(async () => {
-      await computer.faucet(1e7)
+      await computer.faucet(1e8)
     })
 
     describe('Constructor', () => {
@@ -163,7 +166,7 @@ describe('NFT', () => {
       const sender = new Computer({ url, chain, network })
 
       // Fund the senders wallet
-      await sender.faucet(0.001e8)
+      await sender.faucet(1e8)
 
       // Create a new NFT
       const nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
@@ -174,10 +177,10 @@ describe('NFT', () => {
 
     it('Should work with the NftHelper class', async () => {
       // Create wallet
-      const sender = new Computer({ url, chain, network })
+      const sender = new Computer({ url, chain, network, moduleStorageType })
 
       // Fund wallet
-      await sender.faucet(0.001e8)
+      await sender.faucet(1e8)
 
       // Create helper object
       const nftHelper = new NftHelper(sender)
