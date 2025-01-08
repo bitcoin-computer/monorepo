@@ -23,14 +23,14 @@
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf coverage build tmp",
     "clean:logs": "rm -f *.log 2> /dev/null",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint src test --ext .ts,.tsx",
     "lint:fix": "eslint src test --ext .ts,.tsx --fix",
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
-    "types": "tsc --noEmit",
     "test": "mocha --config .mocharc.json",
-    "test:show": "npm run test 2>&1 | tee TBC20-test.log && open TBC20-test.log"
+    "test:show": "npm run test 2>&1 | tee TBC20-test.log && open TBC20-test.log",
+    "types": "tsc --noEmit"
   },
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "license": "Apache-2.0",
