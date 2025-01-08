@@ -22,7 +22,7 @@
     "build:turbo": "turbo run build",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf coverage build tmp",
-    "clean-logs": "rm -f *.log 2> /dev/null",
+    "clean:logs": "rm -f *.log 2> /dev/null",
     "lint": "eslint src test --ext .ts,.tsx",
     "lint:fix": "eslint src test --ext .ts,.tsx --fix",
     "prebuild": "npm run lint",

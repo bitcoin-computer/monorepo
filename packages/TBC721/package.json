@@ -11,7 +11,7 @@
     "build:turbo": "turbo run build",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf coverage build tmp",
-    "clean-logs": "rm -f *.log 2> /dev/null",
+    "clean:logs": "rm -f *.log 2> /dev/null",
     "deploy": "npx tsx src/deploy.ts",
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
     "prebuild": "npm run lint",

@@ -29,13 +29,13 @@
     "packages/*"
   ],
   "scripts": {
+    "build": "turbo run build --concurrency=1",
     "build:node": "docker build -t bitcoin-computer-node .",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} \\;",
     "check-obfuscation": "./scripts/check-obfuscation.sh",
     "husky-checks": "./scripts/husky-checks.sh",
     "prepare": "husky install",
     "prepublishOnly": "./scripts/check-obfuscation.sh && npm run test",
-    "build-all-packages": "turbo run build --concurrency=1",
     "types": "npm run types --if-present --workspaces",
     "lint": "npm run lint --if-present --workspaces",
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
