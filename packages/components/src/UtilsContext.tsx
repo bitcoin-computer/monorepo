@@ -1,6 +1,6 @@
-import React, { createContext, ReactNode, useContext, useState } from "react"
-import { SnackBar } from "./SnackBar"
-import { Loader } from "./Loader"
+import React, { createContext, ReactNode, useContext, useState } from 'react'
+import { SnackBar } from './SnackBar'
+import { Loader } from './Loader'
 
 interface UtilsContextProps {
   showSnackBar: (message: string, success: boolean) => void
@@ -13,7 +13,7 @@ const utilsContext = createContext<UtilsContextProps | undefined>(undefined)
 export const useUtilsComponents = (): UtilsContextProps => {
   const context = useContext(utilsContext)
   if (!context) {
-    throw new Error("useUtilsComponents must be used within a UtilsProvider")
+    throw new Error('useUtilsComponents must be used within a UtilsProvider')
   }
   return context
 }
@@ -55,5 +55,5 @@ export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
 
 export const UtilsContext = {
   UtilsProvider,
-  useUtilsComponents
+  useUtilsComponents,
 }

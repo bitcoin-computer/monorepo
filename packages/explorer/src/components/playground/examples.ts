@@ -36,8 +36,8 @@ export const nftVars = [
   {
     name: 'data',
     type: 'string',
-    value: 'some data'
-  }
+    value: 'some data',
+  },
 ]
 
 export const fungibleToken = `class Token extends Contract {
@@ -87,13 +87,13 @@ export const tokenVars = (pubKey: string) => [
   {
     name: 'supply',
     type: 'number',
-    value: 100
+    value: 100,
   },
   {
     name: 'to',
     type: 'string',
-    value: pubKey
-  }
+    value: pubKey,
+  },
 ]
 
 export const chat = `class Chat extends Contract {

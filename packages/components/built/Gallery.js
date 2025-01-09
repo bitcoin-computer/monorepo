@@ -46,12 +46,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useContext, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { initFlowbite } from "flowbite";
-import { jsonMap, strip, toObject } from "./common/utils";
-import { useUtilsComponents } from "./UtilsContext";
-import { ComputerContext } from "./ComputerContext";
+import { useContext, useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { initFlowbite } from 'flowbite';
+import { jsonMap, strip, toObject } from './common/utils';
+import { useUtilsComponents } from './UtilsContext';
+import { ComputerContext } from './ComputerContext';
 function HomePageCard(_a) {
     var content = _a.content;
     return (_jsx("div", __assign({ className: "block w-72 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" }, { children: _jsx("pre", __assign({ className: "font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs" }, { children: content() })) })));
@@ -59,8 +59,8 @@ function HomePageCard(_a) {
 function ValueComponent(_a) {
     var _this = this;
     var rev = _a.rev, computer = _a.computer;
-    var _b = useState("loading..."), value = _b[0], setValue = _b[1];
-    var _c = useState(""), errorMsg = _c[0], setMsgError = _c[1];
+    var _b = useState('loading...'), value = _b[0], setValue = _b[1];
+    var _c = useState(''), errorMsg = _c[0], setMsgError = _c[1];
     var _d = useState(true), loading = _d[0], setLoading = _d[1];
     useEffect(function () {
         var fetch = function () { return __awaiter(_this, void 0, void 0, function () {
@@ -159,5 +159,5 @@ export default function WithPagination(q) {
 }
 export var Gallery = {
     FromRevs: FromRevs,
-    WithPagination: WithPagination
+    WithPagination: WithPagination,
 };

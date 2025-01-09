@@ -1,27 +1,27 @@
-import { Link } from "react-router-dom"
-import { Modal, Auth, UtilsContext, Drawer } from "@bitcoin-computer/components"
-import { useEffect, useState } from "react"
-import { initFlowbite } from "flowbite"
-import { Chain, Network } from "../types/common"
+import { Link } from 'react-router-dom'
+import { Modal, Auth, UtilsContext, Drawer } from '@bitcoin-computer/components'
+import { useEffect, useState } from 'react'
+import { initFlowbite } from 'flowbite'
+import { Chain, Network } from '../types/common'
 
-const modalTitle = "Connect to Node"
-const modalId = "unsupported-config-modal"
+const modalTitle = 'Connect to Node'
+const modalId = 'unsupported-config-modal'
 
 function formatChainAndNetwork(chain: Chain, network: Network) {
   const map = {
-    mainnet: "",
-    testnet: "t",
-    regtest: "r"
+    mainnet: '',
+    testnet: 't',
+    regtest: 'r',
   }
   const prefix = map[network]
   return `${prefix}${chain}`
 }
 
 function ModalContent() {
-  const [url, setUrl] = useState<string>("")
+  const [url, setUrl] = useState<string>('')
   function setNetwork(e: React.SyntheticEvent) {
     e.preventDefault()
-    localStorage.setItem("URL", url)
+    localStorage.setItem('URL', url)
   }
 
   function closeModal() {
@@ -92,7 +92,7 @@ function SignInItem() {
 }
 
 export function NotLoggedMenu() {
-  const [dropDownLabel, setDropDownLabel] = useState<string>("LTC")
+  const [dropDownLabel, setDropDownLabel] = useState<string>('LTC')
   const { showSnackBar } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
@@ -104,12 +104,12 @@ export function NotLoggedMenu() {
 
   const setChainAndNetwork = (chain: Chain, network: Network) => {
     try {
-      localStorage.setItem("CHAIN", chain)
-      localStorage.setItem("NETWORK", network)
+      localStorage.setItem('CHAIN', chain)
+      localStorage.setItem('NETWORK', network)
       setDropDownLabel(formatChainAndNetwork(chain, network))
-      window.location.href = "/"
+      window.location.href = '/'
     } catch (err) {
-      showSnackBar("Error setting chain and network", false)
+      showSnackBar('Error setting chain and network', false)
       Modal.get(modalId).show()
     }
   }
@@ -162,17 +162,17 @@ export function NotLoggedMenu() {
               className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
-              <CoinSelectionItem chain={"LTC"} network={"mainnet"} />
-              <CoinSelectionItem chain={"LTC"} network={"testnet"} />
-              <CoinSelectionItem chain={"LTC"} network={"regtest"} />
+              <CoinSelectionItem chain={'LTC'} network={'mainnet'} />
+              <CoinSelectionItem chain={'LTC'} network={'testnet'} />
+              <CoinSelectionItem chain={'LTC'} network={'regtest'} />
             </ul>
             <ul
               className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
-              <CoinSelectionItem chain={"BTC"} network={"mainnet"} />
-              <CoinSelectionItem chain={"BTC"} network={"testnet"} />
-              <CoinSelectionItem chain={"BTC"} network={"regtest"} />
+              <CoinSelectionItem chain={'BTC'} network={'mainnet'} />
+              <CoinSelectionItem chain={'BTC'} network={'testnet'} />
+              <CoinSelectionItem chain={'BTC'} network={'regtest'} />
             </ul>
           </div>
         </li>
@@ -198,7 +198,7 @@ const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice
 function Item({ dest }: { dest: string }) {
   return (
     <Link
-      to={`/${dest.toLocaleLowerCase().replace(" ", "-")}`}
+      to={`/${dest.toLocaleLowerCase().replace(' ', '-')}`}
       className="flex items-center space-x-3 rtl:space-x-reverse"
     >
       <span className="block py-2 px-3 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700">
@@ -211,7 +211,7 @@ function Item({ dest }: { dest: string }) {
 export function LoggedInMenu() {
   return (
     <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-gray-50 md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-white dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
-      <Item dest={"New Game"} />
+      <Item dest={'New Game'} />
       <WalletItem />
     </ul>
   )
@@ -246,7 +246,7 @@ function NavbarDropdownButton() {
   )
 }
 
-export function Logo({ name = "TBC Chess" }) {
+export function Logo({ name = 'TBC Chess' }) {
   return (
     <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
       <img src="/logo.png" className="h-10" alt="Bitcoin Computer Logo" />

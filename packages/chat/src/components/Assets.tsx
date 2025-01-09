@@ -1,5 +1,5 @@
-import { Auth, Gallery } from "@bitcoin-computer/components"
-import { VITE_CHAT_MOD_SPEC } from "../constants/modSpecs"
+import { Auth, Gallery } from '@bitcoin-computer/components'
+import { VITE_CHAT_MOD_SPEC } from '../constants/modSpecs'
 
 const publicKey = Auth.getComputer().getPublicKey()
 

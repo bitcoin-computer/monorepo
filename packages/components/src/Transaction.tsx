@@ -1,16 +1,16 @@
-import { useContext, useEffect, useState } from "react"
-import { Link, useLocation, useParams } from "react-router-dom"
-import reactStringReplace from "react-string-replace"
-import { Computer } from "@bitcoin-computer/lib"
-import { Card } from "./Card"
-import { ComputerContext } from "./ComputerContext"
+import { useContext, useEffect, useState } from 'react'
+import { Link, useLocation, useParams } from 'react-router-dom'
+import reactStringReplace from 'react-string-replace'
+import { Computer } from '@bitcoin-computer/lib'
+import { Card } from './Card'
+import { ComputerContext } from './ComputerContext'
 
 function ExpressionCard({ content, env }: { content: string; env: { [s: string]: string } }) {
   const entries = Object.entries(env)
   let formattedContent = content as any
   entries.forEach((entry) => {
     const [name, rev] = entry
-    const regExp = new RegExp(`(${name})`, "g")
+    const regExp = new RegExp(`(${name})`, 'g')
     const replacer = (n: string, ind: number) => (
       <Link
         key={`${rev}|${ind}`}
@@ -41,7 +41,7 @@ function Component() {
       const tx = Computer.txFromHex({ hex })
       setTxnData(tx)
 
-      const { result } = await computer.rpcCall("getrawtransaction", `${params.txn} 2`)
+      const { result } = await computer.rpcCall('getrawtransaction', `${params.txn} 2`)
       setRPCTxnData(result)
     }
     fetch()
@@ -53,9 +53,9 @@ function Component() {
         if (txnData) setTransition(await computer.decode(txnData))
       } catch (err) {
         if (err instanceof Error) {
-          setTransition("")
+          setTransition('')
           // eslint-disable-next-line no-console
-          console.log("Error parsing transaction", err.message)
+          console.log('Error parsing transaction', err.message)
         }
       }
     }

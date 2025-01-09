@@ -34,7 +34,7 @@ export const meta = {
   _rev: isString,
   _root: isString,
   _owners: isArray,
-  _amount: isNumber
+  _amount: isNumber,
 }
 
 describe('NFT', () => {

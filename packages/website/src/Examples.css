@@ -117,7 +117,7 @@
 }
 
 .code-section {
-  background-image: url("/code-section.svg");
+  background-image: url('/code-section.svg');
   height: 325px;
   width: 33.33%;
   z-index: 2;
@@ -153,7 +153,7 @@
 }
 
 .horizontal-examples-grid-line-1 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -163,7 +163,7 @@
 }
 
 .horizontal-examples-grid-line-2 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -173,7 +173,7 @@
 }
 
 .horizontal-examples-grid-line-3 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -183,7 +183,7 @@
 }
 
 .horizontal-examples-grid-line-4 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;
@@ -193,7 +193,7 @@
 }
 
 .horizontal-examples-grid-line-5 {
-  background-image: url("/Grid/H-Grid-line.svg");
+  background-image: url('/Grid/H-Grid-line.svg');
   height: 1px;
   width: 100%;
   z-index: 1;

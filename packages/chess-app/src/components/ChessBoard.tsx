@@ -1,10 +1,10 @@
-import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
-import { useContext, useEffect, useState } from "react"
-import { useParams, Link } from "react-router-dom"
-import { Chessboard } from "react-chessboard"
-import { Chess, Square } from "../contracts/chess-module"
-import { ChessGame } from "../contracts/chess-game"
-import { currentPlayer, getGameState, getOrientation, getWinnerPubKey } from "./utils"
+import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import { useContext, useEffect, useState } from 'react'
+import { useParams, Link } from 'react-router-dom'
+import { Chessboard } from 'react-chessboard'
+import { Chess, Square } from '../contracts/chess-module'
+import { ChessGame } from '../contracts/chess-game'
+import { currentPlayer, getGameState, getOrientation, getWinnerPubKey } from './utils'
 
 function ListLayout(props: { listOfMoves: string[] }) {
   const { listOfMoves } = props
@@ -21,14 +21,14 @@ function ListLayout(props: { listOfMoves: string[] }) {
           <div className="w-4">{i / 2 + 1}.</div>
           <div className="w-1/2">{item1}</div>
           <div className="w-1/2">{item2}</div>
-        </div>
+        </div>,
       )
     } else if (item1) {
       rows.push(
         <div key={i} className="flex space-x-4 text-gray-900 dark:text-gray-200 font-semibold">
           <div className="w-4">{i / 2 + 1}.</div>
           <div className="w-full">{item1}</div>
-        </div>
+        </div>,
       )
     }
   }
@@ -44,22 +44,22 @@ function WinnerModal(data: { winnerPubKey: string; userPubKey: string }) {
           {data.winnerPubKey === data.userPubKey
             ? `Congratiolations! You have won the game. `
             : `Sorry! You have lost the game. `}
-          Click{" "}
+          Click{' '}
           <Link
             to={`/new-game`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             onClick={() => {
-              Modal.hideModal("winner-modal")
+              Modal.hideModal('winner-modal')
             }}
           >
             here
-          </Link>{" "}
+          </Link>{' '}
           to start a new game.
         </div>
       </div>
       <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
         <button
-          onClick={() => Modal.hideModal("winner-modal")}
+          onClick={() => Modal.hideModal('winner-modal')}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Close
@@ -72,8 +72,8 @@ function WinnerModal(data: { winnerPubKey: string; userPubKey: string }) {
 export function ChessBoard() {
   const params = useParams()
   const { showSnackBar } = UtilsContext.useUtilsComponents()
-  const [gameId] = useState<string>(params.id || "")
-  const [orientation, setOrientation] = useState<"white" | "black">("white")
+  const [gameId] = useState<string>(params.id || '')
+  const [orientation, setOrientation] = useState<'white' | 'black'>('white')
   const [sans, setSans] = useState<string[]>([])
   const [skipSync, setSkipSync] = useState(false)
   const [winnerData, setWinnerData] = useState({})
@@ -94,7 +94,7 @@ export function ChessBoard() {
       return
     }
     setWinnerData({ winnerPubKey: winnerPubKey, userPubKey: computer.getPublicKey() })
-    Modal.showModal("winner-modal")
+    Modal.showModal('winner-modal')
   }
 
   const syncChessContract = async () => {
@@ -109,7 +109,7 @@ export function ChessBoard() {
       setGame(new Chess(cc.fen))
       await setWinner()
     } catch (error) {
-      console.error("Error fetching contract:", error)
+      console.error('Error fetching contract:', error)
     }
   }
 
@@ -120,7 +120,7 @@ export function ChessBoard() {
       setChessContract(cc)
       setGame(new Chess(cc.fen))
       setOrientation(
-        getOrientation(cc.firstPlayerColor, cc.firstUserPubKey === computer.getPublicKey())
+        getOrientation(cc.firstPlayerColor, cc.firstUserPubKey === computer.getPublicKey()),
       )
       await setWinner()
     }
@@ -145,11 +145,11 @@ export function ChessBoard() {
       const result = chessGame.move({
         from: sourceSquare,
         to: targetSquare,
-        promotion: "q" // always promote to a queen for example simplicity
+        promotion: 'q', // always promote to a queen for example simplicity
       })
       const chessMovePromise = chessContract.move(result.san) as unknown as Promise<void>
       chessMovePromise.catch((err: unknown) => {
-        showSnackBar(err instanceof Error ? err.message : "Error occurred", false)
+        showSnackBar(err instanceof Error ? err.message : 'Error occurred', false)
         setSkipSync(false)
         syncChessContract()
       })
@@ -160,7 +160,7 @@ export function ChessBoard() {
       setGame(chessGame)
       return true
     } catch (error) {
-      showSnackBar(error instanceof Error ? error.message : "Error Occurred", false)
+      showSnackBar(error instanceof Error ? error.message : 'Error Occurred', false)
       return false
     }
   }
@@ -238,10 +238,10 @@ export function ChessBoard() {
         )}
       </div>
       <Modal.Component
-        title={"Game Over"}
+        title={'Game Over'}
         content={WinnerModal}
         contentData={winnerData}
-        id={"winner-modal"}
+        id={'winner-modal'}
       />
     </div>
   )

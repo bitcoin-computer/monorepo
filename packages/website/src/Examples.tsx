@@ -1,5 +1,5 @@
-import Box from "@mui/material/Box";
-import "./Examples.css";
+import Box from '@mui/material/Box'
+import './Examples.css'
 import ExampleTabs from './tabs'
 
 function Examples() {
@@ -13,11 +13,11 @@ function Examples() {
       <Box className="horizontal-grid-line-6" />
       <Box className="vertical-grid-line-1" />
       <Box className="vertical-grid-line-2" />
-      <Box className="vertical-grid-line-3" sx={{ zIndex: "4" }} />
+      <Box className="vertical-grid-line-3" sx={{ zIndex: '4' }} />
       <Box className="vertical-grid-line-4" />
-      <Box className="vertical-grid-line-5" sx={{ zIndex: "4" }} />
+      <Box className="vertical-grid-line-5" sx={{ zIndex: '4' }} />
       <Box className="vertical-grid-line-6" />
-      <Box className="vertical-grid-line-7" sx={{ zIndex: "4" }} />
+      <Box className="vertical-grid-line-7" sx={{ zIndex: '4' }} />
       <Box className="examples-heading-tab">Examples</Box>
       <ExampleTabs />
       {/* <Box className="line4" /> */}
@@ -35,7 +35,7 @@ function Examples() {
       <Box className="example-1-heading">Non-Fungible tokens </Box>
       <Box className="examples-heading">Examples</Box> */}
     </Box>
-  );
+  )
 }
 
-export default Examples;
+export default Examples

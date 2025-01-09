@@ -1,12 +1,12 @@
-import { Computer } from "@bitcoin-computer/lib"
-import { useContext, useEffect, useState } from "react"
-import { Link, useLocation, useNavigate } from "react-router-dom"
-import { initFlowbite } from "flowbite"
-import { Auth, ComputerContext, UtilsContext } from "@bitcoin-computer/components"
-import { BiGitCompare } from "react-icons/bi"
-import { ChessGame } from "../contracts/chess-game"
-import { Chess } from "../contracts/chess-module"
-import { getGameState, truncateName } from "./utils"
+import { Computer } from '@bitcoin-computer/lib'
+import { useContext, useEffect, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { initFlowbite } from 'flowbite'
+import { Auth, ComputerContext, UtilsContext } from '@bitcoin-computer/components'
+import { BiGitCompare } from 'react-icons/bi'
+import { ChessGame } from '../contracts/chess-game'
+import { Chess } from '../contracts/chess-module'
+import { getGameState, truncateName } from './utils'
 
 export type Class = new (...args: any) => any
 
@@ -15,7 +15,7 @@ export type UserQuery<T extends Class> = Partial<{
   publicKey: string
   limit: number
   offset: number
-  order: "ASC" | "DESC"
+  order: 'ASC' | 'DESC'
   ids: string[]
   contract: {
     class: T
@@ -31,8 +31,8 @@ function GameCard({ chessGame }: { chessGame: ChessGame }) {
       <div
         className={`bg-white border rounded-lg shadow mb-4 ${
           chessGame.firstUserPubKey === publicKey || chessGame.secondUserPubKey === publicKey
-            ? "border-blue-600 dark:border-blue-500"
-            : "border-gray-200 dark:border-gray-700"
+            ? 'border-blue-600 dark:border-blue-500'
+            : 'border-gray-200 dark:border-gray-700'
         }`}
       >
         <div className="p-4">
@@ -42,8 +42,8 @@ function GameCard({ chessGame }: { chessGame: ChessGame }) {
           <p
             className={`mb-1 font-normal break-words ${
               chessGame.firstUserPubKey === publicKey
-                ? "text-blue-600 dark:text-blue-500"
-                : "text-gray-700 dark:text-gray-400"
+                ? 'text-blue-600 dark:text-blue-500'
+                : 'text-gray-700 dark:text-gray-400'
             }`}
             title={chessGame.firstPlayerName}
           >
@@ -55,8 +55,8 @@ function GameCard({ chessGame }: { chessGame: ChessGame }) {
           <p
             className={`mb-1 font-normal break-words ${
               chessGame.secondUserPubKey === publicKey
-                ? "text-blue-600 dark:text-blue-500"
-                : "text-gray-700 dark:text-gray-400"
+                ? 'text-blue-600 dark:text-blue-500'
+                : 'text-gray-700 dark:text-gray-400'
             }`}
             title={chessGame.secondPlayerName}
           >
@@ -72,7 +72,7 @@ function HomePageCard({ content }: any) {
   return (
     <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
-        {typeof content === "function" ? content() : ""}
+        {typeof content === 'function' ? content() : ''}
       </pre>
     </div>
   )
@@ -80,7 +80,7 @@ function HomePageCard({ content }: any) {
 
 function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
   const [value, setValue] = useState<ChessGame | null>(null)
-  const [errorMsg, setMsgError] = useState("")
+  const [errorMsg, setMsgError] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -257,7 +257,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       const query = { ...q, ...params }
       query.offset = contractsPerPage * pageNum
       query.limit = contractsPerPage + 1
-      query.order = "DESC"
+      query.order = 'DESC'
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
       setRevs(result.slice(0, contractsPerPage))
@@ -297,7 +297,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
           <button
             type="button"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            onClick={() => navigate("/new-game")}
+            onClick={() => navigate('/new-game')}
           >
             Play as a Guest
           </button>
@@ -309,5 +309,5 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
 
 export const Gallery = {
   FromRevs,
-  WithPagination
+  WithPagination,
 }

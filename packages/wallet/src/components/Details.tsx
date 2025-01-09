@@ -1,6 +1,6 @@
-import { useState } from "react"
-import { Auth } from "@bitcoin-computer/components"
-import { Computer } from "@bitcoin-computer/lib"
+import { useState } from 'react'
+import { Auth } from '@bitcoin-computer/components'
+import { Computer } from '@bitcoin-computer/lib'
 
 export const Details = () => {
   const [computer] = useState<Computer>(Auth.getComputer())
