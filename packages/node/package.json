@@ -30,7 +30,6 @@
     "build": "cd ../../ && npm run build:node",
     "clean:logs": "rm -f *.log 2> /dev/null",
     "delete-blockchain-data": "rm -rf chain-setup/*/*/*-data",
-    "dev": "vite",
     "down": "node --loader ts-node/esm ./scripts/down.ts",
     "fund-btc": "node --loader ts-node/esm ./scripts/fund.ts btc",
     "fund-ltc": "node --loader ts-node/esm ./scripts/fund.ts ltc",
