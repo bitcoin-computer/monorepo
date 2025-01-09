@@ -92,10 +92,10 @@ In regtest mode, you can fund a wallet with the following commands.
 
 ```sh
 # Fund Litecoin regtest wallet
-npm run fund-ltc -- <address_1> ... <address_n>
+npm run fund:ltc -- <address_1> ... <address_n>
 
 # Fund Bitcoin regtest wallet
-npm run fund-btc -- <address_1> ... <address_n>
+npm run fund:btc -- <address_1> ... <address_n>
 ```
 
 </font>
