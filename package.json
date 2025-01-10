@@ -29,7 +29,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build --concurrency=1",
+    "build": "turbo run build",
     "build:node": "docker build -t bitcoin-computer-node .",
     "check:obfuscation": "./scripts/check-obfuscation.sh",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} \\;",
