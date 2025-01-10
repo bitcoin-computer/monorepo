@@ -48,6 +48,7 @@
   "type": "module",
   "runkitExampleFilename": "example/bitcoin-computer-lib.js",
   "scripts": {
+    "clean": "npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
     "prepublishOnly": "../../scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",

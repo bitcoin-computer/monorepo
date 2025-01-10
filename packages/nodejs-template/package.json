@@ -5,6 +5,7 @@
   "scripts": {
     "build": "tsc -p tsconfig.release.json",
     "build:turbo": "turbo run build",
+    "clean": "npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
     "lint": "eslint --fix . --ext .ts,.tsx",
     "prebuild": "npm run lint",

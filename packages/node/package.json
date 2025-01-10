@@ -28,6 +28,7 @@
   },
   "scripts": {
     "build": "cd ../../ && npm run build:node",
+    "clean": "npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
     "delete:blockchain:data": "rm -rf chain-setup/*/*/*-data",
     "down": "node --loader ts-node/esm ./scripts/down.ts",
