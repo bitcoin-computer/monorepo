@@ -18,9 +18,6 @@ dotenv.config({ path: '../node/.env' })
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
 const network = process.env.BCN_NETWORK
-let moduleStorageType: any = 'taproot' 
-if (chain !== 'BTC' && chain !== 'LTC')
-  moduleStorageType = 'multisig'
 
 const artist = ''
 const imageUrl = ''
@@ -46,7 +43,7 @@ describe('NFT', () => {
     let nft: NFT
 
     describe('Minting an NFT', () => {
-      const sender = new Computer({ url, chain, network,  moduleStorageType })
+      const sender = new Computer({ url, chain, network })
 
       before("Fund sender's wallet", async () => {
         await sender.faucet(1e8)
@@ -75,7 +72,7 @@ describe('NFT', () => {
     })
 
     describe('Transferring an NFT', async () => {
-      const receiver = new Computer({ url, chain, network, moduleStorageType })
+      const receiver = new Computer({ url, chain, network })
 
       it('Sender transfers the NFT to receiver', async () => {
         await nft.transfer(receiver.getPublicKey())
@@ -106,7 +103,7 @@ describe('NFT', () => {
   })
 
   describe('Using NFTs with the NftHelper class', () => {
-    const computer = new Computer({ url, chain, network, moduleStorageType })
+    const computer = new Computer({ url, chain, network })
 
     let nftHelper: NftHelper
     let nft: NFT
@@ -177,7 +174,7 @@ describe('NFT', () => {
 
     it('Should work with the NftHelper class', async () => {
       // Create wallet
-      const sender = new Computer({ url, chain, network, moduleStorageType })
+      const sender = new Computer({ url, chain, network })
 
       // Fund wallet
       await sender.faucet(1e8)

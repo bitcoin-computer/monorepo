@@ -15,10 +15,6 @@ dotenv.config({ path: '../node/.env' })
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
 const network = process.env.BCN_NETWORK
-let moduleStorageType: any = 'taproot'
-if (chain !== 'BTC' && chain !== 'LTC') {
-  moduleStorageType = 'multisig'
-}
 
 const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 
@@ -40,8 +36,8 @@ describe('Sale', () => {
   describe('Examples from docs', () => {
     it('Should work without helper classes', async () => {
       // Create and fund wallets
-      const seller = new Computer({ url, chain, network, moduleStorageType })
-      const buyer = new Computer({ url, chain, network, moduleStorageType })
+      const seller = new Computer({ url, chain, network })
+      const buyer = new Computer({ url, chain, network })
       await seller.faucet(1e8)
       await buyer.faucet(2e8)
 
@@ -86,8 +82,8 @@ describe('Sale', () => {
 
     it('Should work with helper classes', async () => {
       // Create and fund wallets
-      const alice = new Computer({ url, chain, network, moduleStorageType })
-      const bob = new Computer({ url, chain, network, moduleStorageType })
+      const alice = new Computer({ url, chain, network })
+      const bob = new Computer({ url, chain, network })
       await alice.faucet(1e8)
       await bob.faucet(nftPrice + 1e8)
 
@@ -143,7 +139,7 @@ describe('Sale', () => {
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer({ url, chain, network, moduleStorageType })
+    const seller = new Computer({ url, chain, network })
     sellerPublicKey = seller.getPublicKey()
     let saleHelper: SaleHelper
 
@@ -181,7 +177,7 @@ describe('Sale', () => {
   })
 
   describe('Failing to underpay', () => {
-    const thief = new Computer({ url, chain, network, moduleStorageType })
+    const thief = new Computer({ url, chain, network })
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
@@ -233,8 +229,8 @@ describe('Sale', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer({ url, chain, network, moduleStorageType })
-    const computer = new Computer({ url, chain, network, moduleStorageType })
+    const buyer = new Computer({ url, chain, network })
+    const computer = new Computer({ url, chain, network })
     let payment: Payment
     let txId: string
 
