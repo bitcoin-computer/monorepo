@@ -175,6 +175,8 @@ POSTGRES_PASSWORD='bcn'
 POSTGRES_DB='bcn'
 POSTGRES_HOST='db'
 POSTGRES_PORT='5432'
+POSTGRES_MAX_CONNECTIONS='20'
+POSTGRES_IDLE_TIMEOUT_MILLIS='3000'
 
 # Bitcoin Node Settings
 BITCOIN_IMAGE='litecoinproject/litecoin-core:0.21'
@@ -200,6 +202,8 @@ BCN_PORT='1031'
 BCN_ENV=dev
 BCN_ZMQ_URL='tcp://node:28332'
 BCN_ZMQ_PORT='28332'
+# Height of the block at which the zmq connection should start
+BCN_ZMQ_ACTIVATION_HEIGHT=1
 
 # Url of the Bitcoin Computer Node, defaults to localhost
 BCN_URL='http://127.0.0.1:1031'
@@ -246,7 +250,7 @@ BCN_OFFCHAIN_PROTOCOL=
 
 </font>
 
-### Configure Parallelism
+<!--  ### Configure Parallelism
 
 By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
 
@@ -268,7 +272,7 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 | 4    | 16GB | 10h 30m   | $110          |
 | 8    | 32GB | 7h 15m    | $240          |
 | 16   | 32GB | 4h 45m    | $440          |
-
+ -->
 ## Versioning
 
 If you run your own node, make sure to use the same versions of Lib and Node.
