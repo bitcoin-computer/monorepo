@@ -28,6 +28,7 @@
   },
   "scripts": {
     "build": "cd ../../ && npm run build:node",
+    "build:dev": "cd ../../../packages/node-secret && npm run build && cd ../../monorepo/packages/node && npm run build",
     "clean-logs": "rm -f *.log 2> /dev/null",
     "delete-blockchain-data": "rm -rf chain-setup/*/*/*-data",
     "down": "node --loader ts-node/esm  ./scripts/down.ts",
@@ -72,7 +73,7 @@
     "typescript": "^5.3.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "zeromq": "6.0.0-beta.6"
+    "zeromq": "6.1.2"
   },
   "devDependencies": {
     "@types/chai": "^5.0.1",
