@@ -1,18 +1,18 @@
 {
   "name": "@bitcoin-computer/chess-app-server",
   "version": "0.23.0-beta.0",
-  "type": "module",
   "private": true,
+  "type": "module",
   "scripts": {
-    "start:dev": "nodemon --exec npm run start -- --ext ts",
-    "start": "node --loader ts-node/esm.mjs -r tsconfig-paths/register src/app.ts",
+    "build:docker": "docker build -t chess-app-server .",
+    "create:migration": "migrate create",
+    "lint": "tslint -p tsconfig.json --fix",
     "migrate": "migrate up",
     "rollback": "migrate down",
-    "create-migration": "migrate create",
-    "lint": "tslint -p tsconfig.json --fix",
-    "start-postgres": "docker-compose up postgres",
-    "up": "docker-compose up",
-    "build:docker": "docker build -t chess-app-server ."
+    "start": "node --loader ts-node/esm.mjs -r tsconfig-paths/register src/app.ts",
+    "start:dev": "nodemon --exec npm run start -- --ext ts",
+    "start:postgres": "docker-compose up postgres",
+    "up": "docker-compose up"
   },
   "dependencies": {
     "@types/cors": "^2.8.17",

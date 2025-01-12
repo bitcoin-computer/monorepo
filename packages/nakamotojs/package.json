@@ -2,12 +2,6 @@
   "name": "@bitcoin-computer/nakamotojs",
   "version": "0.23.0-beta.0",
   "description": "Client-side Bitcoin and Litecoin JavaScript library",
-  "main": "./src/index.js",
-  "types": "./src/index.d.ts",
-  "engines": {
-    "node": ">=8.0.0"
-  },
-  "type": "module",
   "keywords": [
     "bitcoinjs",
     "bitcoin",
@@ -17,42 +11,46 @@
     "dogecoin",
     "javascript"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo.git"
+  },
+  "license": "MIT",
+  "type": "module",
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "files": [
+    "src"
+  ],
   "scripts": {
     "audit": "better-npm-audit audit -l high",
     "build": "npm run clean && tsc -p ./tsconfig.json && npm run formatjs",
-    "build:turbo": "turbo run build",
     "build:tests": "npm run clean:jstests && tsc -p ./test/tsconfig.json",
+    "build:turbo": "turbo run build",
     "clean": "rimraf src",
     "clean:jstests": "rimraf 'test/**/!(ts-node-register)*.js'",
-    "coverage-report": "npm run build && npm run nobuild:coverage-report",
-    "coverage-html": "npm run build && npm run nobuild:coverage-html",
     "coverage": "npm run build && npm run nobuild:coverage",
+    "coverage:html": "npm run build && npm run nobuild:coverage:html",
+    "coverage:report": "npm run build && npm run nobuild:coverage:report",
     "format": "npm run prettier -- --write",
-    "formatjs": "npm run prettierjs -- --write",
     "format:ci": "npm run prettier -- --check && npm run prettierjs -- --check",
+    "formatjs": "npm run prettierjs -- --write",
     "gitdiff:ci": "npm run build && git diff --exit-code",
     "integration": "npm run build && npm run nobuild:integration",
     "lint": "eslint ts_src/** src/**/*.js",
     "lint:tests": "eslint test/**/*.spec.ts",
     "mocha:ts": "mocha --recursive --require test/ts-node-register",
-    "nobuild:coverage-report": "nyc report --reporter=lcov",
-    "nobuild:coverage-html": "nyc report --reporter=html",
     "nobuild:coverage": "npm run build:tests && nyc --check-coverage --branches 80 --functions 80 --lines 80 mocha && npm run clean:jstests",
+    "nobuild:coverage:html": "nyc report --reporter=html",
+    "nobuild:coverage:report": "nyc report --reporter=lcov",
     "nobuild:integration": "npm run mocha:ts -- --timeout 50000 'test/integration/*.ts'",
     "nobuild:unit": "npm run mocha:ts -- 'test/*.ts'",
     "prettier": "prettier \"ts_src/**/*.ts\" \"test/**/*.ts\" --ignore-path ./.prettierignore --write",
     "prettierjs": "prettier \"src/**/*.js\" --ignore-path ./.prettierignore",
     "test": "npm run build && npm run format:ci && npm run lint && npm run nobuild:coverage",
-    "test-unit-and-show": "npm run test 2>&1 | tee nakamotojs-test.log && open nakamotojs-test.log",
+    "test:unit:show": "npm run test 2>&1 | tee nakamotojs-test.log && open nakamotojs-test.log",
     "unit": "npm run build && npm run nobuild:unit"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitcoin-computer/monorepo.git"
-  },
-  "files": [
-    "src"
-  ],
   "dependencies": {
     "@noble/hashes": "^1.2.0",
     "bech32": "^2.0.0",
@@ -91,5 +89,7 @@
     "ts-node": "^8.3.0",
     "typescript": "^4.9.5"
   },
-  "license": "MIT"
+  "engines": {
+    "node": ">=8.0.0"
+  }
 }
