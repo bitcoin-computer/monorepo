@@ -2,21 +2,23 @@
   "name": "@bitcoin-computer/swap",
   "version": "0.23.0-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
+  "license": "MIT",
+  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
+  "type": "module",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
   "scripts": {
+    "prebuild": "npm run lint",
     "build": "rm -rf build && tsc -p tsconfig.release.json",
     "build:turbo": "turbo run build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint . --ext .ts,.tsx --ignore-pattern build/",
     "lint:fix": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
-    "prebuild": "npm run lint",
     "start": "node build/src/main.js",
     "test": "mocha --config .mocharc.json",
     "test:show": "npm run test 2>&1 | tee swap.log && open swap.log",
     "types": "tsc --noEmit"
   },
-  "type": "module",
   "dependencies": {
     "@bitcoin-computer/TBC20": "^0.23.0-beta.0",
     "@bitcoin-computer/TBC721": "^0.23.0-beta.0",
@@ -38,8 +40,6 @@
     "tsutils": "~3.21.0",
     "typescript": "~5.3.3"
   },
-  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
-  "license": "MIT",
   "volta": {
     "node": "16.13.0"
   },

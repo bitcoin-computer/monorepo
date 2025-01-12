@@ -2,6 +2,8 @@
   "name": "@bitcoin-computer/components",
   "version": "0.23.0-beta.0",
   "description": "",
+  "license": "ISC",
+  "author": "",
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {
@@ -13,8 +15,6 @@
     "tsc:compile": "rm -rf built/* && tsc",
     "types": "tsc --noEmit"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@bitcoin-computer/lib": "^0.23.0-beta.0",
     "flowbite": "^2.3.0",
