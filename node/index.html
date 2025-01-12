@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.789672206221">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.790003535531">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.789672206221" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.790003535531" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.789672206221" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.790003535531" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.789672206221" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.789672206221" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.790003535531" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.790003535531" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -234,10 +234,10 @@ npm run up</code></pre>
 <font size=1>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-bash"><code v-pre class="language-bash"># Fund Litecoin regtest wallet
-npm run fund-ltc -- &lt;address_1&gt; ... &lt;address_n&gt;
+npm run fund:ltc -- &lt;address_1&gt; ... &lt;address_n&gt;
 
 # Fund Bitcoin regtest wallet
-npm run fund-btc -- &lt;address_1&gt; ... &lt;address_n&gt;</code></pre>
+npm run fund:btc -- &lt;address_1&gt; ... &lt;address_n&gt;</code></pre>
 </doc-codeblock></div>
 </font>
 <doc-anchor-target id="stop-the-node">
@@ -334,6 +334,8 @@ POSTGRES_PASSWORD='bcn'
 POSTGRES_DB='bcn'
 POSTGRES_HOST='db'
 POSTGRES_PORT='5432'
+POSTGRES_MAX_CONNECTIONS='20'
+POSTGRES_IDLE_TIMEOUT_MILLIS='3000'
 
 # Bitcoin Node Settings
 BITCOIN_IMAGE='litecoinproject/litecoin-core:0.21'
@@ -359,6 +361,8 @@ BCN_PORT='1031'
 BCN_ENV=dev
 BCN_ZMQ_URL='tcp://node:28332'
 BCN_ZMQ_PORT='28332'
+# Height of the block at which the zmq connection should start
+BCN_ZMQ_ACTIVATION_HEIGHT=1
 
 # Url of the Bitcoin Computer Node, defaults to localhost
 BCN_URL='http://127.0.0.1:1031'
@@ -403,63 +407,29 @@ BCN_BANNED_COUNTRIES=
 BCN_OFFCHAIN_PROTOCOL=</code></pre>
 </doc-codeblock></div>
 </font>
-<doc-anchor-target id="configure-parallelism">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#configure-parallelism">#</doc-anchor-trigger>
-        <span>Configure Parallelism</span>
-    </h3>
-</doc-anchor-target>
-<p>By default the synchronization runs in parallel and uses all cores of your machine. You can use the <code v-pre>-cpus</code> flag to limit the number of cores used.</p>
+<!--  ### Configure Parallelism
+
+By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
+
 <font size=1>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-bash"><code v-pre class="language-bash">npm run up -- -t -cpus 16</code></pre>
-</doc-codeblock></div>
+
+```shell
+npm run up -- -t -cpus 16
+```
+
 </font>
-<doc-anchor-target id="estimated-server-costs">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#estimated-server-costs">#</doc-anchor-trigger>
-        <span>Estimated Server Costs</span>
-    </h2>
-</doc-anchor-target>
-<p>The following table shows the times and costs for syncing to a Litecoin node on testnet on <a href="https://aws.amazon.com/ec2/pricing/on-demand/">AWS EC2</a>. All experiments were run in spring 2022 using 50GB SSD storage.</p>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="comfortable">
-<thead>
-<tr>
-<th>CPUs</th>
-<th>RAM</th>
-<th>Sync Time</th>
-<th>Monthly Costs</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>2</td>
-<td>8GB</td>
-<td>28h</td>
-<td>$65</td>
-</tr>
-<tr>
-<td>4</td>
-<td>16GB</td>
-<td>10h 30m</td>
-<td>$110</td>
-</tr>
-<tr>
-<td>8</td>
-<td>32GB</td>
-<td>7h 15m</td>
-<td>$240</td>
-</tr>
-<tr>
-<td>16</td>
-<td>32GB</td>
-<td>4h 45m</td>
-<td>$440</td>
-</tr>
-</tbody>
-</table>
-</div>
+
+## Estimated Server Costs
+
+The following table shows the times and costs for syncing to a Litecoin node on testnet on [AWS EC2](https://aws.amazon.com/ec2/pricing/on-demand/). All experiments were run in spring 2022 using 50GB SSD storage.
+
+| CPUs | RAM  | Sync Time | Monthly Costs |
+| ---- | ---- | --------- | ------------- |
+| 2    | 8GB  | 28h       | $65           |
+| 4    | 16GB | 10h 30m   | $110          |
+| 8    | 32GB | 7h 15m    | $240          |
+| 16   | 32GB | 4h 45m    | $440          |
+ -->
 <doc-anchor-target id="versioning">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#versioning">#</doc-anchor-trigger>
