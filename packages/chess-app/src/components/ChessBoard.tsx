@@ -1,8 +1,8 @@
 import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
+import { ChessContract, ChessContractHelper, Chess as ChessLib, Square } from "@bitcoin-computer/chess-contracts"
 import { useCallback, useContext, useEffect, useState } from "react"
 import { useParams, Link } from "react-router-dom"
 import { Chessboard } from "react-chessboard"
-import { ChessContract, ChessContractHelper, Chess as ChessLib, Square } from "../../../chess-contracts/"
 import { getGameState } from "./utils"
 import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
 

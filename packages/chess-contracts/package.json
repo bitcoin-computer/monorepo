@@ -2,12 +2,12 @@
   "name": "@bitcoin-computer/chess-contracts",
   "version": "0.23.0-beta.0",
   "type": "module",
-  "main": "./build/src/index.js",
-  "module": "./build/src/index.js",
+  "main": "./build/index.js",
+  "module": "./build/index.js",
   "description": "Contracts for an on-chain Chess game.",
-  "types": "./build/src/index.d.ts",
+  "types": "./build/index.d.ts",
   "exports": {
-    ".": "./build/src/index.js"
+    ".": "./build/index.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
