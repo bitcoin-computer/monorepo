@@ -4,17 +4,20 @@
   "version": "0.23.0-beta.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "start": "vite",
     "build": "tsc -b && vite build",
     "build:turbo": "turbo run build",
+    "clean": "npm run clean:logs",
+    "clean:logs": "rm -f *.log 2> /dev/null",
+    "deploy": "node --loader ts-node/esm  ./scripts/deploy.ts",
+    "dev": "vite",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "deploy": "node --loader ts-node/esm  ./scripts/deploy.ts",
+    "start": "vite",
     "test": "vitest run",
     "test:dev": "vitest",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\""
+    "test:show": "npm run test 2>&1 | tee vite-template-test.log && open vite-template-test.log"
   },
   "dependencies": {
     "@bitcoin-computer/components": "^0.23.0-beta.0",

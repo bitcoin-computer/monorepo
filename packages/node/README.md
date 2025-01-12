@@ -92,10 +92,10 @@ In regtest mode, you can fund a wallet with the following commands.
 
 ```sh
 # Fund Litecoin regtest wallet
-npm run fund-ltc -- <address_1> ... <address_n>
+npm run fund ltc <address_1> ... <address_n>
 
 # Fund Bitcoin regtest wallet
-npm run fund-btc -- <address_1> ... <address_n>
+npm run fund btc <address_1> ... <address_n>
 ```
 
 </font>
@@ -195,6 +195,8 @@ POSTGRES_PASSWORD='bcn'
 POSTGRES_DB='bcn'
 POSTGRES_HOST='db'
 POSTGRES_PORT='5432'
+POSTGRES_MAX_CONNECTIONS='20'
+POSTGRES_IDLE_TIMEOUT_MILLIS='3000'
 
 # Bitcoin Node Settings
 BITCOIN_IMAGE='litecoinproject/litecoin-core:0.21'
@@ -220,6 +222,8 @@ BCN_PORT='1031'
 BCN_ENV=dev
 BCN_ZMQ_URL='tcp://node:28332'
 BCN_ZMQ_PORT='28332'
+# Height of the block at which the zmq connection should start
+BCN_ZMQ_ACTIVATION_HEIGHT=1
 
 # Url of the Bitcoin Computer Node, defaults to localhost
 BCN_URL='http://127.0.0.1:1031'
