@@ -5,12 +5,13 @@
   "scripts": {
     "build": "tsc -p tsconfig.release.json",
     "build:turbo": "turbo run build",
-    "clean-logs": "rm -f *.log 2> /dev/null",
+    "clean": "npm run clean:logs",
+    "clean:logs": "rm -f *.log 2> /dev/null",
     "lint": "eslint --fix . --ext .ts,.tsx",
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
-    "test": "mocha  --config .mocharc.json",
-    "test-and-show": "npm run test 2>&1 | tee nodejs-template.log && open nodejs-template.log",
+    "test": "mocha --config .mocharc.json",
+    "test:show": "npm run test 2>&1 | tee nodejs-template.log && open nodejs-template.log",
     "types": "tsc --noEmit"
   },
   "type": "module",
