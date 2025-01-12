@@ -11,15 +11,15 @@
     "build:turbo": "turbo run build",
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rimraf coverage build tmp",
-    "clean-logs": "rm -f *.log 2> /dev/null",
+    "clean:logs": "rm -f *.log 2> /dev/null",
     "deploy": "npx tsx src/deploy.ts",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
     "prebuild": "npm run lint",
     "start": "node build/src/main.js",
     "test": "mocha --config .mocharc.json",
-    "test-and-show": "npm run test 2>&1 | tee tbc721-test.log && open tbc721-test.log",
-    "types": "tsc --noEmit",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\""
+    "test:show": "npm run test 2>&1 | tee tbc721-test.log && open tbc721-test.log",
+    "types": "tsc --noEmit"
   },
   "files": [
     "build"

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-npm run check-obfuscation
+npm run check:obfuscation

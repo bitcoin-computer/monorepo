@@ -4,18 +4,21 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "start:dev": "nodemon --exec npm run start -- --ext ts",
-    "start": "node --loader ts-node/esm.mjs -r tsconfig-paths/register src/app.ts",
+    "build:docker": "docker build -t chess-app-server .",
+    "create:migration": "migrate create",
     "migrate": "migrate up",
     "rollback": "migrate down",
     "create-migration": "migrate create",
     "lint": "tslint -p tsconfig.json --fix",
     "start-postgres": "docker compose up postgres",
-    "up": "docker compose up",
     "build-docker": "docker build -t chess-server .",
     "clean": "rm -rf db/db-data",
     "test": "POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha -r ts-node/register --loader=ts-node/esm --timeout=30000000 test/**/*.test.ts test/*.test.ts",
-    "deploy": "node --loader ts-node/esm ./scripts/deploy.ts"
+    "deploy": "node --loader ts-node/esm ./scripts/deploy.ts",
+    "start": "node --loader ts-node/esm.mjs -r tsconfig-paths/register src/app.ts",
+    "start:dev": "nodemon --exec npm run start -- --ext ts",
+    "start:postgres": "docker-compose up postgres",
+    "up": "docker-compose up"
   },
   "dependencies": {
     "@bitcoin-computer/lib": "0.22.0-beta.0",
