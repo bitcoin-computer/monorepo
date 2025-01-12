@@ -42,7 +42,10 @@
     "reset": "yes | ./scripts/reset.sh",
     "test": "mocha --config .mocharc.json ",
     "test-and-show": "npm run test 2>&1 | tee node-test.log && open node-test.log",
-    "up": "node --loader ts-node/esm  ./scripts/up.ts"
+    "up": "node --loader ts-node/esm  ./scripts/up.ts",
+    "clean:blockchain:data": "rm -rf chain-setup/*/*/blockchain-data",
+    "clean:db:data": "rm -rf chain-setup/*/*/db-data",
+    "clean": "npm run clean:blockchain:data && npm run clean:db:data"
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
