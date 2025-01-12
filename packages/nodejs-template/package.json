@@ -2,19 +2,21 @@
   "name": "@bitcoin-computer/nodejs-template",
   "version": "0.23.0-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
+  "license": "MIT",
+  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
+  "type": "module",
   "scripts": {
+    "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.release.json",
     "build:turbo": "turbo run build",
     "clean": "npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
     "lint": "eslint --fix . --ext .ts,.tsx",
-    "prebuild": "npm run lint",
     "start": "node build/src/main.js",
     "test": "mocha --config .mocharc.json",
     "test:show": "npm run test 2>&1 | tee nodejs-template.log && open nodejs-template.log",
     "types": "tsc --noEmit"
   },
-  "type": "module",
   "dependencies": {
     "@bitcoin-computer/lib": "^0.23.0-beta.0"
   },
@@ -30,8 +32,6 @@
     "tslib": "~2.6.2",
     "typescript": "~5.3.3"
   },
-  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
-  "license": "MIT",
   "volta": {
     "node": "16.13.0"
   },

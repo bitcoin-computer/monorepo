@@ -1,12 +1,18 @@
 {
   "name": "@bitcoin-computer/TBC721",
   "version": "0.23.0-beta.0",
-  "description": "Standard for non-fungible tokens on Bitcoin",
   "private": true,
+  "description": "Standard for non-fungible tokens on Bitcoin",
+  "license": "MIT",
+  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "type": "module",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
+  "files": [
+    "build"
+  ],
   "scripts": {
+    "prebuild": "npm run lint",
     "build": "rm -rf build && tsc -p tsconfig.release.json",
     "build:turbo": "turbo run build",
     "build:watch": "tsc -w -p tsconfig.release.json",
@@ -15,15 +21,11 @@
     "deploy": "npx tsx src/deploy.ts",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
-    "prebuild": "npm run lint",
     "start": "node build/src/main.js",
     "test": "mocha --config .mocharc.json",
     "test:show": "npm run test 2>&1 | tee tbc721-test.log && open tbc721-test.log",
     "types": "tsc --noEmit"
   },
-  "files": [
-    "build"
-  ],
   "dependencies": {
     "@bitcoin-computer/lib": "^0.23.0-beta.0",
     "chai-match-pattern": "^1.3.0",
@@ -42,8 +44,6 @@
     "prettier": "~3.2.5",
     "typescript": "~5.3.3"
   },
-  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
-  "license": "MIT",
   "volta": {
     "node": "16.13.0"
   }

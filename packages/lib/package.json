@@ -3,21 +3,32 @@
   "version": "0.23.0-beta.0",
   "private": false,
   "description": "Smart Contracts for Bitcoin",
+  "keywords": [
+    "Bitcoin",
+    "Litecoin",
+    "Smart Contracts",
+    "Javascript"
+  ],
+  "homepage": "http://bitcoincomputer.io/",
+  "bugs": {
+    "url": "https://github.com/bitcoin-computer/monorepo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib"
+  },
   "license": "CC-BY-ND-4.0",
+  "author": {
+    "name": "Clemens Ley",
+    "email": "clemens@bitcoincomputer.io",
+    "url": "https://github.com/bitcoin-computer"
+  },
   "contributors": [
     "Clemens Ley",
     "Laura Tardivo",
     "Vivek Singh"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib"
-  },
-  "types": "./index.d.ts",
-  "main": "dist/bc-lib.main.es.mjs",
-  "module": "dist/bc-lib.module.es.mjs",
-  "browser": "dist/bc-lib.browser.min.mjs",
-  "cjs": "dist/bc-lib.commonjs.min.cjs",
+  "type": "module",
   "exports": {
     ".": {
       "node": {
@@ -30,23 +41,13 @@
       "default": "./dist/bc-lib.main.es.mjs"
     }
   },
-  "homepage": "http://bitcoincomputer.io/",
-  "author": {
-    "name": "Clemens Ley",
-    "email": "clemens@bitcoincomputer.io",
-    "url": "https://github.com/bitcoin-computer"
-  },
-  "bugs": {
-    "url": "https://github.com/bitcoin-computer/monorepo/issues"
-  },
-  "engines": {
-    "node": ">=16"
-  },
+  "main": "dist/bc-lib.main.es.mjs",
+  "module": "dist/bc-lib.module.es.mjs",
+  "browser": "dist/bc-lib.browser.min.mjs",
+  "types": "./index.d.ts",
   "files": [
     "dist"
   ],
-  "type": "module",
-  "runkitExampleFilename": "example/bitcoin-computer-lib.js",
   "scripts": {
     "clean": "npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
@@ -96,11 +97,10 @@
     "mocha": "^10.0.0",
     "ts-node": "^10.9.1"
   },
-  "keywords": [
-    "Bitcoin",
-    "Litecoin",
-    "Smart Contracts",
-    "Javascript"
-  ],
-  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
+  "engines": {
+    "node": ">=16"
+  },
+  "cjs": "dist/bc-lib.commonjs.min.cjs",
+  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027",
+  "runkitExampleFilename": "example/bitcoin-computer-lib.js"
 }
