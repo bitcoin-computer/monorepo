@@ -14,7 +14,7 @@ const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
 const network = process.env.BCN_NETWORK
 
-describe.only('Static Swap', () => {
+describe('Static Swap', () => {
   let nftA: NFT
   let nftB: NFT
   const alice = new Computer({ url, chain, network })
