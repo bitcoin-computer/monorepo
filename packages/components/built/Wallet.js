@@ -1,14 +1,3 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -19,8 +8,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -127,38 +116,38 @@ var Balance = function (_a) {
     useEffect(function () {
         refreshBalance();
     }, []);
-    return (_jsxs("div", __assign({ id: "dropdown-cta", className: "relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900", role: "alert" }, { children: [_jsxs("div", __assign({ className: "text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400" }, { children: [balance / 1e8, " ", computer.getChain(), ' ', _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] })), _jsx("div", __assign({ className: "text-center uppercase text-xs text-blue-800 dark:text-blue-400" }, { children: computer.getNetwork() })), computer.getNetwork() === 'regtest' && (_jsx("button", __assign({ type: "button", onClick: fund, className: "absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800" }, { children: "Fund" })))] })));
+    return (_jsxs("div", { id: "dropdown-cta", className: "relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900", role: "alert", children: [_jsxs("div", { className: "text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400", children: [balance / 1e8, " ", computer.getChain(), ' ', _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] }), _jsx("div", { className: "text-center uppercase text-xs text-blue-800 dark:text-blue-400", children: computer.getNetwork() }), computer.getNetwork() === 'regtest' && (_jsx("button", { type: "button", onClick: fund, className: "absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800", children: "Fund" }))] }));
 };
 var Address = function (_a) {
     var computer = _a.computer;
-    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Address" })), _jsx("p", __assign({ className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400" }, { children: computer.getAddress() }))] })));
+    return (_jsxs("div", { className: "mb-4", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Address" }), _jsx("p", { className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400", children: computer.getAddress() })] }));
 };
 var PublicKey = function (_a) {
     var computer = _a.computer;
-    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Public Key" })), _jsx("p", __assign({ className: "mb-4 text-xs font-mono text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getPublicKey() }))] })));
+    return (_jsxs("div", { className: "mb-4", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Public Key" }), _jsx("p", { className: "mb-4 text-xs font-mono text-gray-500 dark:text-gray-400 break-words", children: computer.getPublicKey() })] }));
 };
 var Mnemonic = function (_a) {
     var computer = _a.computer;
     var _b = useState(false), mnemonicShown = _b[0], setMnemonicShown = _b[1];
-    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsxs("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: ["Mnemonic\u00A0", _jsx("button", __assign({ onClick: function () { return setMnemonicShown(!mnemonicShown); }, className: "text-xs font-mono font-normal text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline" }, { children: mnemonicShown ? 'hide' : 'show' }))] })), _jsx("p", __assign({ className: "text-xs font-mono text-gray-500 dark:text-gray-400 break-words" }, { children: mnemonicShown ? computer.getMnemonic() : '' }))] })));
+    return (_jsxs("div", { className: "mb-4", children: [_jsxs("h6", { className: "text-lg font-bold dark:text-white", children: ["Mnemonic\u00A0", _jsx("button", { onClick: function () { return setMnemonicShown(!mnemonicShown); }, className: "text-xs font-mono font-normal text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline", children: mnemonicShown ? 'hide' : 'show' })] }), _jsx("p", { className: "text-xs font-mono text-gray-500 dark:text-gray-400 break-words", children: mnemonicShown ? computer.getMnemonic() : '' })] }));
 };
 var Url = function (_a) {
     var computer = _a.computer;
-    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Node Url" })), _jsx("p", __assign({ className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getUrl() }))] })));
+    return (_jsxs("div", { className: "mb-4", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Node Url" }), _jsx("p", { className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words", children: computer.getUrl() })] }));
 };
 var Chain = function (_a) {
     var computer = _a.computer;
-    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Chain" })), _jsx("p", __assign({ className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getChain() }))] })));
+    return (_jsxs("div", { className: "mb-4", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Chain" }), _jsx("p", { className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words", children: computer.getChain() })] }));
 };
 var Network = function (_a) {
     var computer = _a.computer;
-    return (_jsxs("div", __assign({ className: "mb-4" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Network" })), _jsx("p", __assign({ className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words" }, { children: computer.getNetwork() }))] })));
+    return (_jsxs("div", { className: "mb-4", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Network" }), _jsx("p", { className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words", children: computer.getNetwork() })] }));
 };
-var LogOut = function () { return (_jsxs(_Fragment, { children: [_jsxs("div", __assign({ className: "mb-6" }, { children: [_jsx("h6", __assign({ className: "text-lg font-bold dark:text-white" }, { children: "Log out" })), _jsx("p", __assign({ className: "mb-1 text-sm text-gray-500 dark:text-gray-400" }, { children: "Logging out will delete your mnemonic. Make sure to write it down." }))] })), _jsx("div", __assign({ className: "grid grid-cols-2 gap-4" }, { children: _jsx("button", __assign({ onClick: Auth.logout, className: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700" }, { children: "Log out" })) }))] })); };
+var LogOut = function () { return (_jsxs(_Fragment, { children: [_jsxs("div", { className: "mb-6", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Log out" }), _jsx("p", { className: "mb-1 text-sm text-gray-500 dark:text-gray-400", children: "Logging out will delete your mnemonic. Make sure to write it down." })] }), _jsx("div", { className: "grid grid-cols-2 gap-4", children: _jsx("button", { onClick: Auth.logout, className: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700", children: "Log out" }) })] })); };
 export function Wallet(_a) {
     var modSpecs = _a.modSpecs;
     var computer = useContext(ComputerContext);
-    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", __assign({ className: "text-2xl font-bold dark:text-white" }, { children: "Wallet" })), _jsx(Balance, { computer: computer, modSpecs: modSpecs || [] }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !getEnv('CHAIN') && _jsx(Chain, { computer: computer }), !getEnv('NETWORK') && _jsx(Network, { computer: computer }), !getEnv('URL') && _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
+    var Content = function () { return (_jsxs(_Fragment, { children: [_jsx("h4", { className: "text-2xl font-bold dark:text-white", children: "Wallet" }), _jsx(Balance, { computer: computer, modSpecs: modSpecs || [] }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !getEnv('CHAIN') && _jsx(Chain, { computer: computer }), !getEnv('NETWORK') && _jsx(Network, { computer: computer }), !getEnv('URL') && _jsx(Url, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] })); };
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export var WalletComponents = {

@@ -99,7 +99,7 @@ export const pepecointestnet = {
 };
 export const dogecoin = {
   messagePrefix: '\x19Dogecoin Signed Message:\n',
-  bech32: 'doge',
+  bech32: 'doge', // TODO: Dogecoin doesn't use bech32, make type optional
   bip32: {
     public: 0x02facafd,
     private: 0x02fac398,
@@ -130,6 +130,56 @@ export const dogecointestnet = {
   scriptHash: 0xc4,
   wif: 0xf1,
 };
+export function getNetwork(chain, network) {
+  switch (chain) {
+    case 'BTC':
+      switch (network) {
+        case 'mainnet':
+          return bitcoin;
+        case 'testnet':
+          return testnet;
+        case 'regtest':
+          return regtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    case 'LTC':
+      switch (network) {
+        case 'mainnet':
+          return litecoin;
+        case 'testnet':
+          return litecointestnet;
+        case 'regtest':
+          return litecoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    case 'PEPE':
+      switch (network) {
+        case 'mainnet':
+          return pepecoin;
+        case 'testnet':
+          return pepecointestnet;
+        case 'regtest':
+          return pepecoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    case 'DOGE':
+      switch (network) {
+        case 'mainnet':
+          return dogecoin;
+        case 'testnet':
+          return dogecointestnet;
+        case 'regtest':
+          return dogecoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    default:
+      throw new Error(`Invalid chain ${network}`);
+  }
+}
 export const NETWORKS = {
   // Bitcoin
   bitcoin,

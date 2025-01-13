@@ -5,9 +5,9 @@ export declare const RLTC: {
     url: string;
 };
 export declare const meta: {
-    _id: (x: any) => boolean;
-    _rev: (x: any) => boolean;
-    _root: (x: any) => boolean;
-    _owners: (x: any) => boolean;
-    _amount: (x: any) => boolean;
+    _id: (x: any) => x is string;
+    _rev: (x: any) => x is string;
+    _root: (x: any) => x is string;
+    _owners: (x: any) => x is any[];
+    _amount: (x: any) => x is number;
 };

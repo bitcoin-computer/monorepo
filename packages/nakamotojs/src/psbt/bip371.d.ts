@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 import { Taptree } from '../types.js';
 import { PsbtInput, PsbtOutput, TapLeaf } from 'bip174/src/lib/interfaces';
 import { Buffer } from 'buffer';

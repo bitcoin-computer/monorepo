@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 declare const typeforce: any;
 export { typeforce };
 export declare function isPoint(p: Buffer | number | undefined | null): boolean;

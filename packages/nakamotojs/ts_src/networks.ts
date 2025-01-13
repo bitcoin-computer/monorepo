@@ -25,6 +25,7 @@ export const bitcoin: Network = {
   scriptHash: 0x05,
   wif: 0x80,
 };
+
 export const regtest: Network = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: 'bcrt',
@@ -36,6 +37,7 @@ export const regtest: Network = {
   scriptHash: 0xc4,
   wif: 0xef,
 };
+
 export const testnet: Network = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
   bech32: 'tb',
@@ -155,6 +157,57 @@ export const dogecointestnet: Network = {
   scriptHash: 0xc4,
   wif: 0xf1,
 };
+export function getNetwork(chain: string, network: string): Network {
+  switch (chain) {
+    case 'BTC':
+      switch (network) {
+        case 'mainnet':
+          return bitcoin;
+        case 'testnet':
+          return testnet;
+        case 'regtest':
+          return regtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    case 'LTC':
+      switch (network) {
+        case 'mainnet':
+          return litecoin;
+        case 'testnet':
+          return litecointestnet;
+        case 'regtest':
+          return litecoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    case 'PEPE':
+      switch (network) {
+        case 'mainnet':
+          return pepecoin;
+        case 'testnet':
+          return pepecointestnet;
+        case 'regtest':
+          return pepecoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    case 'DOGE':
+      switch (network) {
+        case 'mainnet':
+          return dogecoin;
+        case 'testnet':
+          return dogecointestnet;
+        case 'regtest':
+          return dogecoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    default:
+      throw new Error(`Invalid chain ${network}`);
+  }
+}
+
 export const NETWORKS: Record<string, any> = {
   // Bitcoin
   bitcoin,

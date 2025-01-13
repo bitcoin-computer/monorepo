@@ -22,5 +22,6 @@ export declare const pepecointestnet: Network;
 export declare const dogecoin: Network;
 export declare const dogecoinregtest: Network;
 export declare const dogecointestnet: Network;
+export declare function getNetwork(chain: string, network: string): Network;
 export declare const NETWORKS: Record<string, any>;
 export {};

@@ -1,45 +1,45 @@
 {
   "name": "bitcoin-computer",
-  "version": "0.22.0-beta.0",
-  "description": "Lightweight Smart Contracts for Bitcoin and Litecoin",
+  "version": "0.23.0-beta.0",
+  "private": true,
+  "description": "A Trustless Smart Contract System for Bitcoin and Litecoin",
+  "homepage": "http://bitcoincomputer.io/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo"
+  },
+  "author": {
+    "name": "Clemens Ley",
+    "email": "clemens@bitcoincomputer.io"
+  },
   "contributors": [
     "Clemens Ley",
     "Laura Tardivo",
     "Vivek Singh"
   ],
+  "type": "module",
   "bin": {
     "bitcoin-computer": "./scripts/install.js"
   },
   "files": [
     "scripts/install.js"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitcoin-computer/monorepo"
-  },
-  "type": "module",
-  "homepage": "http://bitcoincomputer.io/",
-  "author": {
-    "name": "Clemens Ley",
-    "email": "clemens@bitcoincomputer.io"
-  },
-  "private": true,
-  "packageManager": "npm@10.2.4",
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
+    "build": "turbo run build",
     "build:node": "docker build -t bitcoin-computer-node .",
+    "check:obfuscation": "./scripts/check-obfuscation.sh",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} \\;",
-    "check-obfuscation": "./scripts/check-obfuscation.sh",
-    "husky-checks": "./scripts/husky-checks.sh",
-    "prepare": "husky install",
-    "prepublishOnly": "./scripts/check-obfuscation.sh && npm run test",
-    "build-all-packages": "turbo run build --concurrency=1",
-    "types": "npm run types --if-present --workspaces",
+    "format": "npm run format --if-present --workspaces",
+    "husky:checks": "./scripts/husky-checks.sh",
     "lint": "npm run lint --if-present --workspaces",
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
-    "test": "npm run test --if-present --workspaces"
+    "prepare": "husky install",
+    "prepublishOnly": "./scripts/check-obfuscation.sh && npm run test",
+    "test": "npm run test --if-present --workspaces",
+    "types": "npm run types --if-present --workspaces"
   },
   "dependencies": {
     "@endo/static-module-record": "^1.0.4",
@@ -58,10 +58,11 @@
     "path": "^0.12.7",
     "ts-node": "^10.9.2",
     "turbo": "^2.1.3",
-    "typescript": "^4.9.5",
+    "typescript": "^5.7.2",
     "url": "^0.11.3"
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.28.1"
-  }
+  },
+  "packageManager": "npm@10.2.4"
 }

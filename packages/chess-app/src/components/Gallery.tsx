@@ -1,14 +1,14 @@
-import { Computer } from '@bitcoin-computer/lib'
-import { useContext, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { initFlowbite } from 'flowbite'
-import { Auth, ComputerContext, UtilsContext } from '@bitcoin-computer/components'
-import { BiGitCompare } from 'react-icons/bi'
-import { ChessGame } from '../contracts/chess-game'
-import { Chess } from '../contracts/chess-module'
-import { getGameState, truncateName } from './utils'
+import { Computer } from "@bitcoin-computer/lib"
+import { useContext, useEffect, useMemo, useState } from "react"
+import { Link, useLocation, useNavigate } from "react-router-dom"
+import { initFlowbite } from "flowbite"
+import { Auth, ComputerContext, UtilsContext } from "@bitcoin-computer/components"
+import { BiGitCompare } from "react-icons/bi"
+import { ChessContract } from "../../../chess-contracts/"
+import { Chess as ChessLib } from "../../../chess-contracts/"
+import { getGameState } from "./utils"
 
-export type Class = new (...args: any) => any
+export type Class = new (...args: unknown[]) => unknown
 
 export type UserQuery<T extends Class> = Partial<{
   mod: string
@@ -23,44 +23,44 @@ export type UserQuery<T extends Class> = Partial<{
   }
 }>
 
-function GameCard({ chessGame }: { chessGame: ChessGame }) {
-  const c = new Chess(chessGame.fen)
+function GameCard({ chessContract }: { chessContract: ChessContract }) {
+  const chessLib = new ChessLib(chessContract.fen)
   const publicKey = Auth.getComputer().getPublicKey()
   return (
     <>
       <div
         className={`bg-white border rounded-lg shadow mb-4 ${
-          chessGame.firstUserPubKey === publicKey || chessGame.secondUserPubKey === publicKey
-            ? 'border-blue-600 dark:border-blue-500'
-            : 'border-gray-200 dark:border-gray-700'
+          chessContract.publicKeyW === publicKey || chessContract.publicKeyB === publicKey
+            ? "border-blue-600 dark:border-blue-500"
+            : "border-gray-200 dark:border-gray-700"
         }`}
       >
         <div className="p-4">
           <p className="text-center text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
-            {getGameState(c)}
+            {getGameState(chessLib)}
           </p>
           <p
             className={`mb-1 font-normal break-words ${
-              chessGame.firstUserPubKey === publicKey
-                ? 'text-blue-600 dark:text-blue-500'
-                : 'text-gray-700 dark:text-gray-400'
+              chessContract.publicKeyW === publicKey
+                ? "text-blue-600 dark:text-blue-500"
+                : "text-gray-700 dark:text-gray-400"
             }`}
-            title={chessGame.firstPlayerName}
+            title={chessContract.nameW}
           >
-            {truncateName(chessGame.firstPlayerName)}
+            {chessContract.nameW}
           </p>
           <div className="flex justify-center items-center my-1 text-gray-500 dark:text-gray-400">
             <BiGitCompare size={20} />
           </div>
           <p
             className={`mb-1 font-normal break-words ${
-              chessGame.secondUserPubKey === publicKey
-                ? 'text-blue-600 dark:text-blue-500'
-                : 'text-gray-700 dark:text-gray-400'
+              chessContract.publicKeyB === publicKey
+                ? "text-blue-600 dark:text-blue-500"
+                : "text-gray-700 dark:text-gray-400"
             }`}
-            title={chessGame.secondPlayerName}
+            title={chessContract.nameB}
           >
-            {truncateName(chessGame.secondPlayerName)}
+            {chessContract.nameB}
           </p>
         </div>
       </div>
@@ -68,7 +68,7 @@ function GameCard({ chessGame }: { chessGame: ChessGame }) {
   )
 }
 
-function HomePageCard({ content }: any) {
+function HomePageCard({ content }: { content: () => JSX.Element }) {
   return (
     <div className="block w-80 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
       <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
@@ -79,14 +79,14 @@ function HomePageCard({ content }: any) {
 }
 
 function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
-  const [value, setValue] = useState<ChessGame | null>(null)
-  const [errorMsg, setMsgError] = useState('')
+  const [value, setValue] = useState<ChessContract>({ _id: '' } as ChessContract)
+  const [errorMsg, setMsgError] = useState("")
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const synced: ChessGame = (await computer.sync(rev)) as ChessGame
+        const synced: ChessContract = (await computer.sync(rev)) as ChessContract
         setValue(synced)
       } catch (err) {
         if (err instanceof Error) setMsgError(`Error: ${err.message}`)
@@ -124,12 +124,12 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
   }
 
   if (errorMsg) {
-    return <HomePageCard content={errorMsg} />
+    return <HomePageCard content={() => <>errorMsg</>} />
   }
 
   return (
-    <Link to={`/game/${value?._id}`} className="block font-medium text-blue-600 dark:text-blue-500">
-      {value ? <GameCard chessGame={value} /> : <></>}
+    <Link to={`/game/${value._id}`} className="block font-medium text-blue-600 dark:text-blue-500">
+      <GameCard chessContract={value} />
     </Link>
   )
 }
@@ -177,7 +177,13 @@ function FromRevs({ revs, computer }: { revs: string[]; computer: Computer }) {
   )
 }
 
-function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }: any) {
+type PaginationType = {
+  isPrevAvailable: boolean,
+  isNextAvailable: boolean,
+  handlePrev: React.MouseEventHandler<HTMLButtonElement>,
+  handleNext: React.MouseEventHandler<HTMLButtonElement>
+}
+function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }: PaginationType) {
   return (
     <nav className="flex items-center justify-between" aria-label="Table navigation">
       <ul className="inline-flex items-center -space-x-px">
@@ -234,7 +240,7 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
   )
 }
 
-export default function WithPagination<T extends Class>(q: UserQuery<T>) {
+export function WithPagination<T extends Class>(q: UserQuery<T>) {
   const navigate = useNavigate()
   const { showLoader } = UtilsContext.useUtilsComponents()
   const contractsPerPage = 12
@@ -245,8 +251,12 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
   const [showNoAsset, setShowNoAsset] = useState(false)
   const [revs, setRevs] = useState<string[]>([])
   const location = useLocation()
-  const params = Object.fromEntries(new URLSearchParams(location.search))
 
+  const params = useMemo(
+    () => Object.fromEntries(new URLSearchParams(location.search)),
+    [location.search]
+  )
+  
   useEffect(() => {
     initFlowbite()
   }, [])
@@ -267,7 +277,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       showLoader(false)
     }
     fetch()
-  }, [computer, pageNum])
+  }, [computer, pageNum, q, params])
 
   const handleNext = async () => {
     setIsPrevAvailable(true)
@@ -285,7 +295,6 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       <FromRevs revs={revs} computer={computer} />
       {!(pageNum === 0 && revs && revs.length === 0) && (
         <Pagination
-          revs={revs}
           isPrevAvailable={isPrevAvailable}
           handlePrev={handlePrev}
           isNextAvailable={isNextAvailable}
@@ -297,7 +306,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
           <button
             type="button"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            onClick={() => navigate('/new-game')}
+            onClick={() => navigate("/new")}
           >
             Play as a Guest
           </button>
@@ -305,9 +314,4 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
       )}
     </div>
   )
-}
-
-export const Gallery = {
-  FromRevs,
-  WithPagination,
 }
