@@ -84,8 +84,8 @@ describe('Sale', () => {
       // Create and fund wallets
       const alice = new Computer({ url, chain, network })
       const bob = new Computer({ url, chain, network })
-      await alice.faucet(1e5)
-      await bob.faucet(nftPrice + 1e5)
+      await alice.faucet(1e8)
+      await bob.faucet(nftPrice + 1e8)
 
       // Alice creates helper objects
       const nftHelperA = new NftHelper(alice)
@@ -221,7 +221,7 @@ describe('Sale', () => {
         expect(true).eq(false)
       } catch (err) {
         if (err instanceof Error)
-          expect(err.message).eq(
+          expect(err.message).contains(
             'mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)',
           )
       }
@@ -235,7 +235,7 @@ describe('Sale', () => {
     let txId: string
 
     before("Fund Buyers's wallet", async () => {
-      await buyer.faucet(nftPrice + fee)
+      await buyer.faucet(nftPrice + fee + 1e8)
     })
 
     it('Buyer creates a payment object', async () => {

@@ -46,7 +46,7 @@ describe('NFT', () => {
       const sender = new Computer({ url, chain, network })
 
       before("Fund sender's wallet", async () => {
-        await sender.faucet(0.001e8)
+        await sender.faucet(1e8)
       })
 
       it('Sender mints an NFT', async () => {
@@ -109,7 +109,7 @@ describe('NFT', () => {
     let nft: NFT
 
     before(async () => {
-      await computer.faucet(1e7)
+      await computer.faucet(1e8)
     })
 
     describe('Constructor', () => {
@@ -163,7 +163,7 @@ describe('NFT', () => {
       const sender = new Computer({ url, chain, network })
 
       // Fund the senders wallet
-      await sender.faucet(0.001e8)
+      await sender.faucet(1e8)
 
       // Create a new NFT
       const nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
@@ -177,7 +177,7 @@ describe('NFT', () => {
       const sender = new Computer({ url, chain, network })
 
       // Fund wallet
-      await sender.faucet(0.001e8)
+      await sender.faucet(1e8)
 
       // Create helper object
       const nftHelper = new NftHelper(sender)

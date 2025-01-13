@@ -1,23 +1,25 @@
 {
   "name": "@bitcoin-computer/chess-contracts",
   "version": "0.23.0-beta.0",
-  "type": "module",
-  "main": "./build/index.js",
-  "module": "./build/index.js",
   "description": "Contracts for an on-chain Chess game.",
-  "types": "./build/index.d.ts",
+  "license": "MIT",
+  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
+  "type": "module",
   "exports": {
     ".": "./build/index.js"
   },
+  "main": "./build/index.js",
+  "module": "./build/index.js",
+  "types": "./build/index.d.ts",
   "scripts": {
-    "build": "tsc -p tsconfig.json",
-    "build-turbo": "turbo run build",
-    "clean-logs": "rm -f *.log 2> /dev/null",
-    "lint": "eslint .",
     "prebuild": "npm run lint",
+    "build": "tsc -p tsconfig.json",
+    "build:turbo": "turbo run build",
+    "clean:logs": "rm -f *.log 2> /dev/null",
+    "lint": "eslint .",
     "start": "node build/src/index.js",
     "test": "mocha  --config .mocharc.json",
-    "test-and-show": "npm run test 2>&1 | tee nodejs-template.log && open nodejs-template.log",
+    "test:show": "npm run test 2>&1 | tee chess-contracts.log && open chess-contracts.log",
     "types": "tsc --noEmit"
   },
   "dependencies": {
@@ -38,8 +40,6 @@
     "ts-node": "^10.9.2",
     "tslib": "~2.6.2"
   },
-  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
-  "license": "MIT",
   "volta": {
     "node": "16.13.0"
   },

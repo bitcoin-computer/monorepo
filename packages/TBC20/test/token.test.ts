@@ -20,8 +20,8 @@ const sender = new Computer({ url, chain, network })
 const receiver = new Computer({ url, chain, network })
 
 before(async () => {
-  await sender.faucet(1e8)
-  await receiver.faucet(1e8)
+  await sender.faucet(10e8)
+  await receiver.faucet(10e8)
 })
 
 describe('Token', async () => {

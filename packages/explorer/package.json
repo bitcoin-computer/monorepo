@@ -7,14 +7,14 @@
     "build": "tsc -b && vite build",
     "build:turbo": "turbo run build",
     "dev": "vite",
+    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "start": "vite",
     "test": "vitest run",
-    "types": "tsc --noEmit",
-    "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
-    "test:dev": "vitest"
+    "test:dev": "vitest",
+    "types": "tsc --noEmit"
   },
   "dependencies": {
     "@bitcoin-computer/components": "^0.23.0-beta.0",

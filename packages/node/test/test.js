@@ -68,7 +68,7 @@ describe('Should work with chai', () => {
     }
 
     const computer = new Computer(conf)
-    await computer.faucet(1e7)
+    await computer.faucet(1e8)
     const counter = await computer.new(Counter, [])
     expect(counter).to.be.an('object')
     expect(counter.count).eq(0)
@@ -80,14 +80,14 @@ describe('Should work with chai', () => {
     const address = computer.getAddress()
 
     // Fund client side library
-    const { txId, vout } = await computer.faucet(1e4)
+    const { txId, vout } = await computer.faucet(1e7)
 
     // Return the utxos
     expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
 
     // Return the balance
     const balance = await new Computer(conf).getBalance(address)
-    expect(balance.balance).eq(1e4)
+    expect(balance.balance).eq(1e7)
 
     // Return the transactions
     expect(await new Computer(conf).listTxs(address)).deep.eq({
@@ -96,8 +96,8 @@ describe('Should work with chai', () => {
         {
           txId,
           inputsSatoshis: 0,
-          outputsSatoshis: 1e4,
-          satoshis: 1e4
+          outputsSatoshis: 1e7,
+          satoshis: 1e7
         }
       ]
     })
