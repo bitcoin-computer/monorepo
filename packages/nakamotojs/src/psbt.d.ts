@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 import { Psbt as PsbtBase } from 'bip174';
 import { KeyValue, PartialSig, PsbtGlobalUpdate, PsbtInput, PsbtInputUpdate, PsbtOutput, PsbtOutputUpdate } from 'bip174/src/lib/interfaces.js';
 import { Network } from './networks.js';

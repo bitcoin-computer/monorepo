@@ -16,6 +16,9 @@ COPY . /dist
 # Remove the existing node_modules directory
 RUN rm -rf node_modules
 
+# Set VCPKG_FORCE_SYSTEM_BINARIES to avoid vcpkg errors
+ENV VCPKG_FORCE_SYSTEM_BINARIES=1
+
 # Install dependencies
 RUN npm install --build-from-source
 

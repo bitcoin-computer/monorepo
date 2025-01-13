@@ -24,7 +24,7 @@ Create a file `index.html` and open it in your browser.
       // Import the library
       import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs"
 
-      // Create a counter smart contract
+      // Create a smart contract
       class Counter extends Contract {
         constructor() {
           super({ n: 0 })
@@ -39,11 +39,11 @@ Create a file `index.html` and open it in your browser.
       const computer = new Computer()
       await computer.faucet(1e5)
 
-      // Mint a new on-chain object
+      // Mint a smart object
       const counter = await computer.new(Counter)
       document.getElementById("count").innerHTML = counter.n
 
-      // Update the on-chain object
+      // Update smart object
       await counter.inc()
       document.getElementById("count").innerHTML = counter.n
     </script>
@@ -89,17 +89,19 @@ class Counter extends Contract {
   }
 }
 
-// Create and fund a Bitcoin Computer wallet
+// Create a wallet
 const computer = new Computer()
+
+// Fund the wallet
 await computer.faucet(1e5)
 
-// Deploy a smart contract and create an object
+// Create a smart object
 const counter = await computer.new(Counter)
 
-// Update the object
+// Update the smart object
 await counter.inc()
 
-// Log the object
+// Log the smart object
 console.log(counter)
 ```
 

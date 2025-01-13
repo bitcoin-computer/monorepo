@@ -1,50 +1,15 @@
-import { useContext, useState } from 'react'
-import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
-import { Link } from 'react-router-dom'
-import { Computer } from '@bitcoin-computer/lib'
-import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
-import { createGame } from '../services/game.service'
-
-function SuccessContent(id: string) {
-  return (
-    <>
-      <div className="p-4 md:p-5">
-        <div>
-          Congratiolations! You have created a new game. Click{' '}
-          <Link
-            to={`/game/${id}`}
-            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            onClick={() => {
-              Modal.hideModal('success-modal')
-            }}
-          >
-            here
-          </Link>{' '}
-          to start playing it.
-        </div>
-      </div>
-      <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
-        <button
-          onClick={() => Modal.hideModal('success-modal')}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Close
-        </button>
-      </div>
-    </>
-  )
-}
+import { useContext, useState } from "react"
+import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
+import { Computer } from "@bitcoin-computer/lib"
+import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
+import { getHash } from "../services/secret.service"
+import { ChessContractHelper } from "../../../chess-contracts/"
 
 function ErrorContent(msg: string) {
   return (
     <>
       <div className="p-4 md:p-5">
-        <div>
-          Something went wrong.
-          <br />
-          <br />
-          {msg}
-        </div>
+        Something went wrong.<br />{msg}
       </div>
       <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
         <button
@@ -62,42 +27,61 @@ function ErrorContent(msg: string) {
 
 function MintForm(props: {
   computer: Computer
-  setSuccessRev: React.Dispatch<React.SetStateAction<string>>
   setErrorMsg: React.Dispatch<React.SetStateAction<string>>
 }) {
-  const { computer, setSuccessRev, setErrorMsg } = props
-  const [name, setName] = useState('')
-  const [secondPlayerPublicKey, setSecondPlayerPublicKey] = useState('')
-  const [secondPlayerUserName, setSecondPlayerUserName] = useState('')
+  const { computer: computerW, setErrorMsg } = props
+  const [nameW, setName] = useState("White")
+  const [nameB, setNameB] = useState("Black")
+  const [publicKeyB, setSecondPlayerPublicKey] = useState("03fce46d776c3e2b606aae73fcffdc8fd3a0f0c6bf1088a321f7f3c4e824623a57")
+  const [amount, setAmount] = useState(`0.1`)
+  const [serializedTx, setSerializedTx] = useState('')
+  const [copied, setCopied] = useState(false)
   const { showLoader } = UtilsContext.useUtilsComponents()
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
       showLoader(true)
-      const { tx, effect } = await computer.encode({
-        exp: `new ChessGame("white", "${computer.getPublicKey()}", "${secondPlayerPublicKey}", "${name}", "${secondPlayerUserName}")`,
-        mod: VITE_CHESS_GAME_MOD_SPEC,
-      })
+      const secretHashW = await getHash()
+      const secretHashB = await getHash()
 
-      await computer.broadcast(tx)
-      setSuccessRev((effect.res as { _id: string })?._id)
-      await createGame({
-        gameId: (effect.res as { _id: string })?._id,
-        firstPlayerPubKey: computer.getPublicKey(),
-        secondPlayerPubKey: secondPlayerPublicKey,
+      if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
+
+      const publicKeyW = computerW.getPublicKey()
+      const chessContractHelper = new ChessContractHelper({ 
+        computer: computerW,
+        amount: parseFloat(amount) * 1e8,
+        nameW,
+        nameB,
+        publicKeyW,
+        publicKeyB,
+        secretHashW,
+        secretHashB,
+        mod: VITE_CHESS_GAME_MOD_SPEC
       })
+      const tx = await chessContractHelper.makeTx()
+      setSerializedTx(`http://localhost:1032/start/${tx.serialize()}`)
 
       showLoader(false)
-      Modal.showModal('success-modal')
     } catch (err) {
+      console.log('Err', err)
       showLoader(false)
       if (err instanceof Error) {
-        setErrorMsg(err.message)
-        Modal.showModal('error-modal')
+        if(err.message.startsWith('Failed to load module')) setErrorMsg("Run 'npm run deploy' to deploy the smart contracts.")
+        else setErrorMsg(err.message)
+        Modal.showModal("error-modal")
       }
     }
   }
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(serializedTx)
+      .then(() => setCopied(true))
+      .catch(() => setCopied(false))
+
+    setTimeout(() => setCopied(false), 2000)
+  }
+
   return (
     <>
       <form onSubmit={onSubmit} className="w-full lg:w-1/2">
@@ -107,12 +91,24 @@ function MintForm(props: {
 
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
+              Amount
+            </label>
+            <input
+              type="number"
+              id="name"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
               Your User Name
             </label>
             <input
               type="text"
               id="name"
-              value={name}
+              value={nameW}
               onChange={(e) => setName(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
@@ -124,8 +120,8 @@ function MintForm(props: {
             <input
               type="text"
               id="name"
-              value={secondPlayerUserName}
-              onChange={(e) => setSecondPlayerUserName(e.target.value)}
+              value={nameB}
+              onChange={(e) => setNameB(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
           </div>
@@ -136,7 +132,7 @@ function MintForm(props: {
             <input
               type="text"
               id="name"
-              value={secondPlayerPublicKey}
+              value={publicKeyB}
               onChange={(e) => setSecondPlayerPublicKey(e.target.value)}
               className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             />
@@ -149,24 +145,32 @@ function MintForm(props: {
           Create Game
         </button>
       </form>
+
+      <div className="flex flex-col items-start p-4 mt-4 border rounded-lg shadow-md bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
+        <p
+          className="break-all text-sm text-blue-600 underline cursor-pointer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 border-0 focus:ring-0"
+          onClick={handleCopy}
+        >
+          {serializedTx}
+        </p>
+        <button
+          className="mt-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+          onClick={handleCopy}
+        >
+          {copied ? "Copied!" : "Copy Link"}
+        </button>
+      </div>
     </>
   )
 }
 
-export default function CreateNewGame() {
+export default function CreateGame() {
   const computer = useContext(ComputerContext)
-  const [successRev, setSuccessRev] = useState('')
-  const [errorMsg, setErrorMsg] = useState('')
+  const [errorMsg, setErrorMsg] = useState("")
 
   return (
     <>
-      <MintForm computer={computer} setSuccessRev={setSuccessRev} setErrorMsg={setErrorMsg} />
-      <Modal.Component
-        title={'Success'}
-        content={SuccessContent}
-        contentData={successRev}
-        id={'success-modal'}
-      />
+      <MintForm computer={computer} setErrorMsg={setErrorMsg} />
       <Modal.Component
         title={'Error'}
         content={ErrorContent}

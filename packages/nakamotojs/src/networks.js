@@ -97,6 +97,45 @@ export const pepecointestnet = {
   scriptHash: 0xc4,
   wif: 0xf1,
 };
+export function getNetwork(chain, network) {
+  switch (chain) {
+    case 'BTC':
+      switch (network) {
+        case 'mainnet':
+          return bitcoin;
+        case 'testnet':
+          return testnet;
+        case 'regtest':
+          return regtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    case 'LTC':
+      switch (network) {
+        case 'mainnet':
+          return litecoin;
+        case 'testnet':
+          return litecointestnet;
+        case 'regtest':
+          return litecoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    case 'PEPE':
+      switch (network) {
+        case 'mainnet':
+          return pepecoin;
+        case 'testnet':
+          return pepecointestnet;
+        case 'regtest':
+          return pepecoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
+    default:
+      throw new Error(`Invalid chain ${network}`);
+  }
+}
 export const NETWORKS = {
   // Bitcoin
   bitcoin,

@@ -27,7 +27,6 @@
 
 export const WHITE = 'w'
 export const BLACK = 'b'
-
 export const PAWN = 'p'
 export const KNIGHT = 'n'
 export const BISHOP = 'b'
@@ -164,7 +163,6 @@ const BITS: Record<string, number> = {
  */
 
 // prettier-ignore
-
 const Ox88: Record<Square, number> = {
    a8:   0, b8:   1, c8:   2, d8:   3, e8:   4, f8:   5, g8:   6, h8:   7,
    a7:  16, b7:  17, c7:  18, d7:  19, e7:  20, f7:  21, g7:  22, h7:  23,
@@ -206,7 +204,7 @@ const ATTACKS = [
     0, 0,20, 0, 0, 0, 0, 24,  0, 0, 0, 0,20, 0, 0, 0,
     0,20, 0, 0, 0, 0, 0, 24,  0, 0, 0, 0, 0,20, 0, 0,
    20, 0, 0, 0, 0, 0, 0, 24,  0, 0, 0, 0, 0, 0,20
- ];
+ ]
 
 // prettier-ignore
 const RAYS = [
@@ -225,7 +223,7 @@ const RAYS = [
      0,  0,-15,  0,  0,  0,  0,-16,  0,  0,  0,  0,-17,  0,  0, 0,
      0,-15,  0,  0,  0,  0,  0,-16,  0,  0,  0,  0,  0,-17,  0, 0,
    -15,  0,  0,  0,  0,  0,  0,-16,  0,  0,  0,  0,  0,  0,-17
- ];
+ ]
 
 const PIECE_MASKS = { p: 0x1, n: 0x2, b: 0x4, r: 0x8, q: 0x10, k: 0x20 }
 
@@ -410,9 +408,9 @@ export function validateFen(fen: string) {
 
 // this function is used to uniquely identify ambiguous moves
 function getDisambiguator(move: InternalMove, moves: InternalMove[]) {
-  const from = move.from
-  const to = move.to
-  const piece = move.piece
+  const { from } = move
+  const { to } = move
+  const { piece } = move
 
   let ambiguities = 0
   let sameRank = 0
@@ -447,16 +445,16 @@ function getDisambiguator(move: InternalMove, moves: InternalMove[]) {
        * the move in question, use the square as the disambiguator
        */
       return algebraic(from)
-    } else if (sameFile > 0) {
+    }
+    if (sameFile > 0) {
       /*
        * if the moving piece rests on the same file, use the rank symbol as the
        * disambiguator
        */
       return algebraic(from).charAt(1)
-    } else {
-      // else use the file symbol
-      return algebraic(from).charAt(0)
     }
+    // else use the file symbol
+    return algebraic(from).charAt(0)
   }
 
   return ''
@@ -564,8 +562,8 @@ export class Chess {
      * these headers don't make sense in this state. They'll get added later
      * via .load() or .put()
      */
-    delete this._header['SetUp']
-    delete this._header['FEN']
+    delete this._header.SetUp
+    delete this._header.FEN
   }
 
   removeHeader(key: string) {
@@ -735,11 +733,11 @@ export class Chess {
     if (this._history.length > 0) return
 
     if (fen !== DEFAULT_POSITION) {
-      this._header['SetUp'] = '1'
-      this._header['FEN'] = fen
+      this._header.SetUp = '1'
+      this._header.FEN = fen
     } else {
-      delete this._header['SetUp']
-      delete this._header['FEN']
+      delete this._header.SetUp
+      delete this._header.FEN
     }
   }
 
@@ -912,9 +910,8 @@ export class Chess {
           ) {
             if (!verbose) {
               return true
-            } else {
-              attackers.push(algebraic(i))
             }
+            attackers.push(algebraic(i))
           }
           continue
         }
@@ -923,10 +920,9 @@ export class Chess {
         if (piece.type === 'n' || piece.type === 'k') {
           if (!verbose) {
             return true
-          } else {
-            attackers.push(algebraic(i))
-            continue
           }
+          attackers.push(algebraic(i))
+          continue
         }
 
         const offset = RAYS[index]
@@ -944,27 +940,24 @@ export class Chess {
         if (!blocked) {
           if (!verbose) {
             return true
-          } else {
-            attackers.push(algebraic(i))
-            continue
           }
+          attackers.push(algebraic(i))
+          continue
         }
       }
     }
 
     if (verbose) {
       return attackers
-    } else {
-      return false
     }
+    return false
   }
 
   attackers(square: Square, attackedBy?: Color) {
     if (!attackedBy) {
       return this._attacked(this._turn, Ox88[square], true)
-    } else {
-      return this._attacked(attackedBy, Ox88[square], true)
     }
+    return this._attacked(attackedBy, Ox88[square], true)
   }
 
   private _isKingAttacked(color: Color) {
@@ -1032,13 +1025,15 @@ export class Chess {
     // k vs. k
     if (numPieces === 2) {
       return true
-    } else if (
+    }
+    if (
       // k vs. kn .... or .... k vs. kb
       numPieces === 3 &&
       (pieces[BISHOP] === 1 || pieces[KNIGHT] === 1)
     ) {
       return true
-    } else if (numPieces === pieces[BISHOP] + 2) {
+    }
+    if (numPieces === pieces[BISHOP] + 2) {
       // kb vs. kb where any number of bishops are all on the same color
       let sum = 0
       const len = bishops.length
@@ -1115,9 +1110,8 @@ export class Chess {
 
     if (verbose) {
       return moves.map((move) => this._makePretty(move))
-    } else {
-      return moves.map((move) => this._moveToSan(move, moves))
     }
+    return moves.map((move) => this._moveToSan(move, moves))
   }
 
   private _moves({
@@ -1145,10 +1139,9 @@ export class Chess {
       // illegal square, return empty moves
       if (!(forSquare in Ox88)) {
         return []
-      } else {
-        firstSquare = lastSquare = Ox88[forSquare]
-        singleSquare = true
       }
+      firstSquare = lastSquare = Ox88[forSquare]
+      singleSquare = true
     }
 
     for (let from = firstSquare; from <= lastSquare; from++) {
@@ -1198,6 +1191,7 @@ export class Chess {
           const offset = PIECE_OFFSETS[type][j]
           to = from
 
+          // eslint-disable-next-line no-constant-condition
           while (true) {
             to += offset
             if (to & 0x88) break
@@ -1460,7 +1454,7 @@ export class Chess {
       return null
     }
 
-    const move = old.move
+    const { move } = old
 
     this._kings = old.kings
     this._turn = old.turn
@@ -1493,7 +1487,8 @@ export class Chess {
     }
 
     if (move.flags & (BITS.KSIDE_CASTLE | BITS.QSIDE_CASTLE)) {
-      let castlingTo: number, castlingFrom: number
+      let castlingTo: number
+      let castlingFrom: number
       if (move.flags & BITS.KSIDE_CASTLE) {
         castlingTo = move.to + 1
         castlingFrom = move.to - 1
@@ -1524,7 +1519,7 @@ export class Chess {
        * TODO: order of enumerated properties in header object is not
        * guaranteed, see ECMA-262 spec (section 12.6.4)
        */
-      result.push('[' + i + ' "' + this._header[i] + '"]' + newline)
+      result.push(`[${i} "${this._header[i]}"]${newline}`)
       headerExists = true
     }
 
@@ -1575,10 +1570,10 @@ export class Chess {
         if (moveString.length) {
           moves.push(moveString)
         }
-        moveString = this._moveNumber + '.'
+        moveString = `${this._moveNumber}.`
       }
 
-      moveString = moveString + ' ' + this._moveToSan(move, this._moves({ legal: true }))
+      moveString = `${moveString} ${this._moveToSan(move, this._moves({ legal: true }))}`
       this._makeMove(move)
     }
 
@@ -1710,14 +1705,8 @@ export class Chess {
      * /^(\[((?:\r?\n)|.)*\])((?:\s*\r?\n){2}|(?:\s*\r?\n)*$)/
      */
     const headerRegex = new RegExp(
-      '^(\\[((?:' +
-        mask(newlineChar) +
-        ')|.)*\\])' +
-        '((?:\\s*' +
-        mask(newlineChar) +
-        '){2}|(?:\\s*' +
-        mask(newlineChar) +
-        ')*$)',
+      `^(\\[((?:${mask(newlineChar)})|.)*\\])` +
+        `((?:\\s*${mask(newlineChar)}){2}|(?:\\s*${mask(newlineChar)})*$)`,
     )
 
     // If no header given, begin with moves.
@@ -1757,12 +1746,12 @@ export class Chess {
        * strict parser - load the starting position indicated by [Setup '1']
        * and [FEN position]
        */
-      if (headers['SetUp'] === '1') {
+      if (headers.SetUp === '1') {
         if (!('FEN' in headers)) {
           throw new Error('Invalid PGN: FEN tag must be supplied with SetUp tag')
         }
         // don't clear the headers when loading
-        this.load(headers['FEN'], { preserveHeaders: true })
+        this.load(headers.FEN, { preserveHeaders: true })
       }
     }
 
@@ -1792,7 +1781,7 @@ export class Chess {
     }
 
     function fromHex(s: string): string {
-      return s.length == 0 ? '' : decodeURIComponent('%' + (s.match(/.{1,2}/g) || []).join('%'))
+      return s.length == 0 ? '' : decodeURIComponent(`%${(s.match(/.{1,2}/g) || []).join('%')}`)
     }
 
     const encodeComment = function (s: string) {
@@ -1815,7 +1804,7 @@ export class Chess {
         function (_match, bracket, semicolon) {
           return bracket !== undefined
             ? encodeComment(bracket)
-            : ' ' + encodeComment(`{${semicolon.slice(1)}}`)
+            : ` ${encodeComment(`{${semicolon.slice(1)}}`)}`
         },
       )
       .replace(new RegExp(mask(newlineChar), 'g'), ' ')
@@ -1874,7 +1863,7 @@ export class Chess {
      * result tag is missing
      */
 
-    if (result && Object.keys(this._header).length && !this._header['Result']) {
+    if (result && Object.keys(this._header).length && !this._header.Result) {
       this.header('Result', result)
     }
   }
@@ -1914,7 +1903,7 @@ export class Chess {
       output += algebraic(move.to)
 
       if (move.promotion) {
-        output += '=' + move.promotion.toUpperCase()
+        output += `=${move.promotion.toUpperCase()}`
       }
     }
 
@@ -1951,11 +1940,11 @@ export class Chess {
       return null
     }
 
-    let piece = undefined
-    let matches = undefined
-    let from = undefined
-    let to = undefined
-    let promotion = undefined
+    let piece
+    let matches
+    let from
+    let to
+    let promotion
 
     /*
      * The default permissive (non-strict) parser allows the user to parse
@@ -2062,14 +2051,14 @@ export class Chess {
     for (let i = Ox88.a8; i <= Ox88.h1; i++) {
       // display the rank
       if (file(i) === 0) {
-        s += ' ' + '87654321'[rank(i)] + ' |'
+        s += ` ${'87654321'[rank(i)]} |`
       }
 
       if (this._board[i]) {
         const piece = this._board[i].type
-        const color = this._board[i].color
+        const { color } = this._board[i]
         const symbol = color === WHITE ? piece.toUpperCase() : piece.toLowerCase()
-        s += ' ' + symbol + ' '
+        s += ` ${symbol} `
       } else {
         s += ' . '
       }
@@ -2197,6 +2186,7 @@ export class Chess {
       reversedHistory.push(this._undoMove())
     }
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const move = reversedHistory.pop()
       if (!move) {
@@ -2258,6 +2248,7 @@ export class Chess {
 
     copyComment(this.fen())
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       const move = reversedHistory.pop()
       if (!move) {
@@ -2286,7 +2277,7 @@ export class Chess {
   getComments() {
     this._pruneComments()
     return Object.keys(this._comments).map((fen: string) => {
-      return { fen: fen, comment: this._comments[fen] }
+      return { fen, comment: this._comments[fen] }
     })
   }
 
@@ -2295,7 +2286,7 @@ export class Chess {
     return Object.keys(this._comments).map((fen) => {
       const comment = this._comments[fen]
       delete this._comments[fen]
-      return { fen: fen, comment: comment }
+      return { fen, comment }
     })
   }
 

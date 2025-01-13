@@ -16,6 +16,7 @@
     "preview": "vite preview",
     "start": "vite",
     "test": "vitest run",
+    "types": "tsc --noEmit",
     "test:dev": "vitest",
     "test:show": "npm run test 2>&1 | tee vite-template-test.log && open vite-template-test.log"
   },
