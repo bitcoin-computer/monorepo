@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
-    "build-turbo": "turbo run build",
     "build:contract": "tsc --project tsconfig.build.json && mv ./build-contract/chess-module.js ./src/contracts/chess.mjs && rm -rf build-contract",
+    "build-turbo": "turbo run build",
     "deploy": "npm run build:contract && node --loader ts-node/esm ./scripts/deploy.ts",
     "dev": "vite",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
@@ -18,9 +18,9 @@
     "test:dev": "vitest"
   },
   "dependencies": {
+    "@bitcoin-computer/chess-contracts": "^0.23.0-beta.0",
     "@bitcoin-computer/components": "^0.23.0-beta.0",
     "@bitcoin-computer/lib": "^0.23.0-beta.0",
-    "@bitcoin-computer/chess-contracts": "^0.23.0-beta.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",

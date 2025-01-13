@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build-vite": "tsc -b && vite build",
     "build": "tsc -b && vite build",
+    "build-vite": "tsc -b && vite build",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
     "dev": "vite",
