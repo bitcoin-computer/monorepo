@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.790014407545">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.790081292727">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Start</title>
     <meta name="title" content="Start">
-    <meta name="description" content="You can try the Bitcoin Computer without installing or downloading any software. Just create a file index.html">
+    <meta name="description" content="The easiest way to try the Bitcoin Computer is to create a file as below and open it in your browser.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/start/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/start/">
     <meta property="og:title" content="Start">
-    <meta property="og:description" content="You can try the Bitcoin Computer without installing or downloading any software. Just create a file index.html">
+    <meta property="og:description" content="The easiest way to try the Bitcoin Computer is to create a file as below and open it in your browser.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/start/">
     <meta property="twitter:title" content="Start">
-    <meta property="twitter:description" content="You can try the Bitcoin Computer without installing or downloading any software. Just create a file index.html">
+    <meta property="twitter:description" content="The easiest way to try the Bitcoin Computer is to create a file as below and open it in your browser.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.790014407545" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.790081292727" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.790014407545" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.790081292727" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.790014407545" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.790014407545" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.790081292727" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.790081292727" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -157,13 +157,18 @@
         <span>Start</span>
     </h1>
 </doc-anchor-target>
-<p>You can try the Bitcoin Computer without installing or downloading any software. Just create a file <code v-pre>index.html</code> and open it in your browser.</p>
+<doc-anchor-target id="use-in-the-browser">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#use-in-the-browser">#</doc-anchor-trigger>
+        <span>Use in the Browser</span>
+    </h2>
+</doc-anchor-target>
+<p>The easiest way to try the Bitcoin Computer is to create a file as below and open it in your browser.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">index.html</div>
-<pre class="language-javascript"><code v-pre class="language-javascript">&lt;html&gt;
+<pre class="language-markup"><code v-pre class="language-markup">&lt;html&gt;
   &lt;head&gt;
     &lt;script type='module'&gt;
-      // Import the Bitcoin Computer library
+      // Import the library
       import { Computer, Contract } from 'https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs'
 
       // Define a smart contract
@@ -177,17 +182,20 @@
         }
       }
 
-      // Initialize and fund smart contract wallet
+      // Create a wallet
       const computer = new Computer()
+
+      // Fund the wallet
       await computer.faucet(1e5)
 
-      // Create a smart object from smart contract
+      // Create a smart object
       const counter = await computer.new(Counter)
       document.getElementById('count').innerHTML = counter.n
 
       // Update the smart object
       await counter.inc()
       document.getElementById('count').innerHTML = counter.n
+
     &lt;/script&gt;
   &lt;/head&gt;
 
@@ -196,14 +204,14 @@
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 </doc-codeblock></div>
-<p>When the website is rendered you will see <code v-pre>Value: *</code>. When the smart object is created you will see <code v-pre>Value: 0</code>. After the smart object update you will see <code v-pre>Value: 1</code>.</p>
-<doc-anchor-target id="development">
+<p>When the website is first rendered you will see <code v-pre>Value: *</code>. When the smart object is created with <code v-pre>computer.new</code> you will see <code v-pre>Value: 0</code>. The <code v-pre>inc</code> function is called you will see <code v-pre>Value: 1</code>.</p>
+<doc-anchor-target id="use-in-nodejs">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#development">#</doc-anchor-trigger>
-        <span>Development</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#use-in-nodejs">#</doc-anchor-trigger>
+        <span>Use in Node.js</span>
     </h2>
 </doc-anchor-target>
-<p>For serious development you need to have <a href="https://nodejs.org/en/">node.js</a> installed. First download and install the Bitcoin Computer library from <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm">Npm</a>.</p>
+<p>You need to have <a href="https://nodejs.org/en/">node.js</a> installed. First download and install the Bitcoin Computer library from <a href="https://docs.npmjs.com/downloading-and-installing-node-js-and-npm">npm</a>:</p>
 <font size=1>
 <div class="codeblock-wrapper"><doc-codeblock>
 <div class="codeblock-title">Terminal</div>
@@ -231,13 +239,13 @@ class Counter extends Contract {
   }
 }
 
-// Create a Bitcoin Computer wallet
+// Create a wallet
 const computer = new Computer()
 
-// Fund the computer wallet
+// Fund the wallet
 await computer.faucet(1e5)
 
-// Deploy a smart contract and create a smart object
+// Create a smart object
 const counter = await computer.new(Counter)
 
 // Update the smart object
@@ -268,24 +276,89 @@ console.log(counter)</code></pre>
 }</code></pre>
 </doc-codeblock></div>
 </font>
-<doc-anchor-target id="serious-development">
+<p>In the setup above you are using a node that we provide at <code v-pre>node.bitcoincomputer.io</code>. You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node.</p>
+<doc-anchor-target id="run-a-node">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#serious-development">#</doc-anchor-trigger>
-        <span>Serious Development</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#run-a-node">#</doc-anchor-trigger>
+        <span>Run a Node</span>
     </h2>
 </doc-anchor-target>
-<p>In the setup described above, you are using our node and are subject to the rate limiter there. To try the Bitcoin Computer without rate limiter, please follow the instructions of the readme file of the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme">Bitcoin Computer Node</a>.</p>
-<doc-anchor-target id="download">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#download">#</doc-anchor-trigger>
-        <span>Download</span>
-    </h2>
+<p>To run a node we recommend to clone the <a href="https://github.com/bitcoin-computer/monorepo#readme">monorepo</a> with all Bitcoin Computer related materials, including the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme">Bitcoin Computer library</a>, the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme">node</a>, the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme">docs</a>, and <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/apps.md">example applications</a>.</p>
+<doc-anchor-target id="install">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#install">#</doc-anchor-trigger>
+        <span>Install</span>
+    </h3>
 </doc-anchor-target>
-<p>You can download all Bitcoin Computer related material (including the library, node, these docs, and example applications) by <a href="https://git-scm.com/docs/git-clone">cloning</a> the <a href="https://github.com/bitcoin-computer/monorepo/tree/main">monorepo</a>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<div class="codeblock-title">Terminal</div>
-<pre class="language-bash"><code v-pre class="language-bash">git clone https://github.com/bitcoin-computer/monorepo.git</code></pre>
+<pre class="language-bash"><code v-pre class="language-bash"># Clone
+git clone https://github.com/bitcoin-computer/monorepo.git
+
+# Install
+cd monorepo
+npm install</code></pre>
 </doc-codeblock></div>
+<doc-anchor-target id="start-the-node">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#start-the-node">#</doc-anchor-trigger>
+        <span>Start the node</span>
+    </h3>
+</doc-anchor-target>
+<p>To start your node at <code v-pre>http://localhost:1031</code> run the commands below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash"># Run the node
+cd packages/node
+
+# Copy the .env file and litecoin.conf file from the examples
+cp chain-setup/ltc/regtest/.env.example .env
+cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
+
+# Run the node
+npm run up</code></pre>
+</doc-codeblock></div>
+<p>The node will create the docker volumes in the <code v-pre>packages/node/chain-setup/**</code> directory of the selected chain and network. This folder contains the blockchain data and the database.</p>
+<doc-anchor-target id="test">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#test">#</doc-anchor-trigger>
+        <span>Test</span>
+    </h3>
+</doc-anchor-target>
+<p>Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash"># Test
+npm run test
+
+# Lint
+npm run lint
+
+# Types
+npm run types</code></pre>
+</doc-codeblock></div>
+<p>The commands will be run in each package. You can also navigate the a package and run the same scripts there.</p>
+<doc-anchor-target id="start-your-own-project">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#start-your-own-project">#</doc-anchor-trigger>
+        <span>Start your own Project</span>
+    </h3>
+</doc-anchor-target>
+<p>We provide two templates, <code v-pre>vite-template</code> for client side projects and <code v-pre>node-template</code> for server side projects, featuring:</p>
+<ul>
+<li>Bitcoin Computer</li>
+<li>Typescript</li>
+<li>Eslint</li>
+<li>Testing environment</li>
+</ul>
+<p>The easiest thing to do is just to rename the folder. Alternatively have a look at our example apps (e.g. our <a href="https://wallet.bitcoincomputer.io/">wallet</a>, <a href="https://explorer.bitcoincomputer.io/">blockchain explorer</a>, or <a href="https://nft.bitcoincomputer.io/">nft app</a>) to see if any of them are a good starting point for your project.</p>
+<doc-anchor-target id="getting-help">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#getting-help">#</doc-anchor-trigger>
+        <span>Getting Help</span>
+    </h2>
+</doc-anchor-target>
+<ul>
+<li><a href="https://t.me/thebitcoincomputer">Telegram</a></li>
+<li><a href="https://twitter.com/TheBitcoinToken">Twitter</a></li>
+</ul>
 
                                 
                                 <!-- Required only on API pages -->
