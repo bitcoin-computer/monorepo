@@ -1,39 +1,41 @@
 {
   "name": "@bitcoin-computer/node",
   "version": "0.23.0-beta.0",
+  "private": false,
   "description": "Server Side Library for the Bitcoin Computer",
+  "keywords": [
+    "Bitcoin",
+    "Litecoin",
+    "Pepecoin",
+    "Smart Contracts",
+    "Javascript"
+  ],
+  "homepage": "http://bitcoincomputer.io/",
+  "bugs": {
+    "url": "https://github.com/bitcoin-computer/monorepo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/node"
+  },
+  "license": "CC-BY-ND-4.0",
+  "author": {
+    "name": "Clemens Ley",
+    "email": "clemens@bitcoincomputer.io"
+  },
   "contributors": [
     "Clemens Ley",
     "Laura Tardivo",
     "Vivek Singh"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/node"
-  },
   "type": "module",
   "main": "dist/bcn.es.mjs",
-  "homepage": "http://bitcoincomputer.io/",
-  "author": {
-    "name": "Clemens Ley",
-    "email": "clemens@bitcoincomputer.io"
-  },
-  "private": false,
-  "license": "CC-BY-ND-4.0",
-  "bugs": {
-    "url": "https://github.com/bitcoin-computer/monorepo/issues"
-  },
-  "engines": {
-    "node": ">=16"
-  },
   "scripts": {
     "build": "cd ../../ && npm run build:node",
-    "clean-logs": "rm -f *.log 2> /dev/null",
-    "clean": "rm -rf chain-setup/*/*/*-data",
-    "fund-ltc": "node --loader ts-node/esm ./scripts/fund.ts ltc",
-    "fund-btc": "node --loader ts-node/esm ./scripts/fund.ts btc",
-    "fund-pepe": "node --loader ts-node/esm ./scripts/fund.ts pepe",
-    "delete:blockchain:data": "rm -rf chain-setup/*/*/*-data",
+    "clean": "npm run clean:blockchain:data && npm run clean:db:data",
+    "clean:blockchain:data": "rm -rf chain-setup/*/*/blockchain-data",
+    "clean:db:data": "rm -rf chain-setup/*/*/db-data",
+    "clean:logs": "rm -f *.log 2> /dev/null",
     "down": "node --loader ts-node/esm ./scripts/down.ts",
     "fund": "node --loader ts-node/esm ./scripts/fund.ts",
     "lint": "eslint",
@@ -74,7 +76,7 @@
     "typescript": "^5.3.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "zeromq": "6.1.2"
+    "zeromq": "6.0.0-beta.6"
   },
   "devDependencies": {
     "@types/chai": "^5.0.1",
@@ -82,12 +84,8 @@
     "chai": "^5.1.0",
     "mocha": "^10.3.0"
   },
-  "keywords": [
-    "Bitcoin",
-    "Litecoin",
-    "Pepecoin",
-    "Smart Contracts",
-    "Javascript"
-  ],
+  "engines": {
+    "node": ">=16"
+  },
   "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
 }

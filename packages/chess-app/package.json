@@ -1,7 +1,7 @@
 {
   "name": "@bitcoin-computer/chess-app",
-  "private": true,
   "version": "0.23.0-beta.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",

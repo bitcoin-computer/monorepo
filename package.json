@@ -1,30 +1,29 @@
 {
   "name": "bitcoin-computer",
-  "version": "0.22.0-beta.0",
-  "description": "Lightweight Smart Contracts for Bitcoin and Litecoin",
+  "version": "0.23.0-beta.0",
+  "private": true,
+  "description": "A Trustless Smart Contract System for Bitcoin and Litecoin",
+  "homepage": "http://bitcoincomputer.io/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo"
+  },
+  "author": {
+    "name": "Clemens Ley",
+    "email": "clemens@bitcoincomputer.io"
+  },
   "contributors": [
     "Clemens Ley",
     "Laura Tardivo",
     "Vivek Singh"
   ],
+  "type": "module",
   "bin": {
     "bitcoin-computer": "./scripts/install.js"
   },
   "files": [
     "scripts/install.js"
   ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitcoin-computer/monorepo"
-  },
-  "type": "module",
-  "homepage": "http://bitcoincomputer.io/",
-  "author": {
-    "name": "Clemens Ley",
-    "email": "clemens@bitcoincomputer.io"
-  },
-  "private": true,
-  "packageManager": "npm@10.2.4",
   "workspaces": [
     "packages/*"
   ],
@@ -64,5 +63,6 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.28.1"
-  }
+  },
+  "packageManager": "npm@10.2.4"
 }

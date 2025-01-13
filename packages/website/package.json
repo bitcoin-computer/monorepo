@@ -1,18 +1,18 @@
 {
   "name": "@bitcoin-computer/website",
-  "private": true,
   "version": "0.23.0-beta.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "build-vite": "tsc -b && vite build",
     "build": "tsc -b && vite build",
-    "dev": "vite",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist",
+    "dev": "vite",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "predeploy": "npm run build",
     "start": "vite",
     "test": "vitest run",
     "test:dev": "vitest"
