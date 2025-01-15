@@ -27,8 +27,8 @@
     "build": "npm run clean && tsc -p ./tsconfig.json && npm run formatjs && npm run build:tests",
     "build:tests": "npm run clean:jstests && tsc -p ./test/tsconfig.json",
     "build:turbo": "turbo run build",
-    "clean": "rimraf src",
-    "clean:jstests": "rimraf 'test/**/!(ts-node-register)*.js'",
+    "clean": "rm -rf src",
+    "clean:jstests": "rm -rf 'test/**/!(ts-node-register)*.js'",
     "coverage": "npm run build && npm run nobuild:coverage",
     "coverage:html": "npm run build && npm run nobuild:coverage:html",
     "coverage:report": "npm run build && npm run nobuild:coverage:report",
@@ -85,7 +85,6 @@
     "prettier": "^3.2.5",
     "proxyquire": "^2.0.1",
     "randombytes": "^2.1.0",
-    "rimraf": "^2.6.3",
     "ts-node": "^8.3.0",
     "typescript": "^5.5.3"
   },

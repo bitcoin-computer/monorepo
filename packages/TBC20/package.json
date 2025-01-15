@@ -13,7 +13,7 @@
     "build": "rm -rf build && tsc -p tsconfig.release.json",
     "build:turbo": "turbo run build",
     "build:watch": "tsc -w -p tsconfig.release.json",
-    "clean": "rimraf coverage build tmp",
+    "clean": "rm -rf coverage build tmp",
     "clean:logs": "rm -f *.log 2> /dev/null",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint src test --ext .ts,.tsx",
@@ -31,7 +31,6 @@
   },
   "devDependencies": {
     "@types/chai": "^5.0.1",
-    "@types/expect": "^24.3.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "~20.11.21",
     "chai": "^5.1.2",
