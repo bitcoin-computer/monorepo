@@ -43,8 +43,9 @@
     "lint:fix": "eslint --fix",
     "reset": "yes | ./scripts/reset.sh",
     "setup": "./scripts/setup.py",
-    "start": "node dist/bcn.es.mjs",
-    "sync": "node dist/bcn.sync.es.mjs",
+    "start": "npm run up",
+    "start:bcn": "node dist/bcn.es.mjs",
+    "start:sync": "node dist/bcn.sync.es.mjs",
     "test": "mocha --config .mocharc.json",
     "test:show": "npm run test 2>&1 | tee node-test.log && open node-test.log",
     "up": "docker compose -f docker-compose.yml up"

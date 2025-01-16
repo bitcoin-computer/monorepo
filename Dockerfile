@@ -32,4 +32,4 @@ WORKDIR packages/node
 EXPOSE 1031
 
 # Define the command to run when the container starts
-CMD ["npm", "start"]
+CMD ["npm", "start:bcn"]
