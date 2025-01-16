@@ -24,7 +24,7 @@
   ],
   "scripts": {
     "audit": "better-npm-audit audit -l high",
-    "build": "npm run clean && tsc -p ./tsconfig.json && npm run formatjs",
+    "build": "npm run clean && tsc -p ./tsconfig.json && npm run formatjs && npm run build:tests",
     "build:tests": "npm run clean:jstests && tsc -p ./test/tsconfig.json",
     "build:turbo": "turbo run build",
     "clean": "rimraf src",
@@ -87,7 +87,7 @@
     "randombytes": "^2.1.0",
     "rimraf": "^2.6.3",
     "ts-node": "^8.3.0",
-    "typescript": "^4.9.5"
+    "typescript": "^5.5.3"
   },
   "engines": {
     "node": ">=8.0.0"

@@ -161,7 +161,7 @@ describe('Non-Fungible Token (NFT)', () => {
   let receiver = new Computer({ chain, network, url })
 
   before("Fund sender's wallet", async () => {
-    await sender.faucet(0.001e8)
+    await sender.faucet(1e8)
   })
 
   describe('Minting an NFT', () => {
@@ -227,7 +227,7 @@ describe('Fungible Token', () => {
   let receiver = new Computer({ chain, network, url })
 
   before('Fund senders wallet', async () => {
-    await sender.faucet(0.01e8)
+    await sender.faucet(1e8)
   })
 
   describe('Minting a fungible token', () => {
@@ -310,8 +310,8 @@ describe('Chat', () => {
   const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
 
   before('Before', async () => {
-    await alice.faucet(0.01e8)
-    await bob.faucet(0.01e8)
+    await alice.faucet(1e8)
+    await bob.faucet(1e8)
   })
 
   describe('Creating a chat', () => {
@@ -396,8 +396,8 @@ describe('Swap', () => {
   const bob = new Computer({ chain, network, url })
 
   before('Before', async () => {
-    await alice.faucet(0.01e8)
-    await bob.faucet(0.001e8)
+    await alice.faucet(1e8)
+    await bob.faucet(1e8)
   })
 
   describe('Creating two NFTs to be swapped', () => {
@@ -462,8 +462,8 @@ describe('Sell', () => {
   let tx: any
   let txClone: any
   let sellerPublicKey: string
-  const nftPrice = 0.1e8
-  const fee = 100000
+  const nftPrice = 1e8
+  const fee = 10000
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
@@ -471,7 +471,7 @@ describe('Sell', () => {
     sellerPublicKey = seller.getPublicKey()
 
     before("Fund Seller's wallet", async () => {
-      await seller.faucet(1e7)
+      await seller.faucet(1e8)
     })
 
     it('Seller creates an NFT', async () => {
@@ -553,7 +553,7 @@ describe('Sell', () => {
         expect(true).eq(false)
       } catch (err) {
         if (err instanceof Error)
-          expect(err.message).eq(
+          expect(err.message).contains(
             'mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)',
           )
       }
@@ -567,7 +567,7 @@ describe('Sell', () => {
     let txId: string
 
     before("Fund Buyers's wallet", async () => {
-      await buyer.faucet(nftPrice + fee)
+      await buyer.faucet(nftPrice + fee+ 1e8)
     })
 
     it('Buyer creates a payment object', async () => {

@@ -13,6 +13,7 @@ import { Counter } from '../src/main'
 dotenv.config({ path: '../node/.env' })
 
 const url = process.env.BCN_URL
+const chain = process.env.BCN_CHAIN
 
 const { expect } = chai
 chai.use(chaiMatchPattern)
@@ -25,7 +26,7 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a computer object', () => {
-    const computer = new Computer({ url })
+    const computer = new Computer({ url, chain })
     expect(computer).not.to.be.undefined
     expect(typeof computer).eq('object')
   })
@@ -38,9 +39,9 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should create a smart object', async () => {
-    const computer = new Computer({ url })
+    const computer = new Computer({ url, chain })
 
-    await computer.faucet(1e7)
+    await computer.faucet(1e8)
     const counter = await computer.new(Counter)
     // @ts-ignore
     expect(counter).to.matchPattern({
@@ -54,9 +55,9 @@ describe('Bitcoin Computer', () => {
   })
 
   it('should update a smart object', async () => {
-    const computer = new Computer({ url })
+    const computer = new Computer({ url, chain })
 
-    await computer.faucet(1e7)
+    await computer.faucet(1e8)
     const counter = await computer.new(Counter)
     await counter.inc()
     // @ts-ignore

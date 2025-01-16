@@ -164,7 +164,7 @@ You can configure several options by editing the `.env` file.
 <font size=1>
 
 ```bash
-# Chain: BTC, LTC or PEPE
+# Chain: BTC, LTC, DOGE or PEPE
 BCN_CHAIN='LTC'
 # Network: mainnet, testnet, or regtest
 BCN_NETWORK='regtest'
@@ -195,11 +195,13 @@ BITCOIN_RPC_PROTOCOL='http'
 # Default wallet name
 BITCOIN_DEFAULT_WALLET='defaultwallet'
 
+# Bitcoin Computer Node (BCN) Settings
 # Port for Bitcoin Computer Node
 BCN_PORT='1031'
 
-# Setup the environment to prod or dev
-BCN_ENV=dev
+# Enable to launch with fixed number of parallel workers
+# BCN_NUM_WORKERS='6'
+
 BCN_ZMQ_URL='tcp://node:28332'
 BCN_ZMQ_PORT='28332'
 # Height of the block at which the zmq connection should start
@@ -211,14 +213,17 @@ BCN_URL='http://127.0.0.1:1031'
 # Allowed RPC Methods
 BCN_ALLOWED_RPC_METHODS='^get|^gen|^send|^lis'
 
+# Setup the environment to 'prod' (no console logs) or 'dev'
+BCN_ENV='dev'
+
 # Winston Logger Settings
-# Debug mode
+# Log levels
 # 0: Error logs only
 # 1: Error and warning logs
 # 2: Error, warning and info logs
 # 3: Error, warning, info and http logs
 # 4: Error, warning, info, http and debug logs
-BCN_DEBUG_MODE='4'
+BCN_LOG_LEVEL='2'
 # Maximum number of logs to keep. If not set, no logs will be removed. This can be
 # a number of files or number of days. If using days, add 'd' as the suffix.
 BCN_LOG_MAX_FILES='14d'
@@ -229,8 +234,7 @@ BCN_LOG_MAX_SIZE='20m'
 # A boolean to define whether or not to gzip archived log files.
 BCN_LOG_ZIP='false'
 
-# Show logs attached to the Console transport.
-BCN_SHOW_CONSOLE_LOGS='true'
+# Show logs at db service
 BCN_SHOW_DB_LOGS='false'
 
 # Rate Limiting Settings

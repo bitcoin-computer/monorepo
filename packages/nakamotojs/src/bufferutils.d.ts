@@ -1,5 +1,3 @@
-/// <reference types="node" />
-/// <reference types="node" />
 import * as varuint from 'varuint-bitcoin';
 export { varuint };
 import { Buffer } from 'buffer';

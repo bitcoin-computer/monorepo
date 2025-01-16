@@ -17,7 +17,8 @@
     "start": "vite",
     "test": "vitest run",
     "test:dev": "vitest",
-    "test:show": "npm run test 2>&1 | tee vite-template-test.log && open vite-template-test.log"
+    "test:show": "npm run test 2>&1 | tee vite-template-test.log && open vite-template-test.log",
+    "types": "tsc --noEmit"
   },
   "dependencies": {
     "@bitcoin-computer/components": "^0.23.0-beta.0",

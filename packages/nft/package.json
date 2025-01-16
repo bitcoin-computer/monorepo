@@ -14,7 +14,8 @@
     "preview": "vite preview",
     "start": "vite",
     "test": "vitest run",
-    "test:dev": "vitest"
+    "test:dev": "vitest",
+    "types": "tsc --noEmit"
   },
   "dependencies": {
     "@bitcoin-computer/TBC721": "^0.23.0-beta.0",
