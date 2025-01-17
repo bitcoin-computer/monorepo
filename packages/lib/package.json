@@ -79,6 +79,7 @@
     "eciesjs": "0.4.7",
     "ecpair": "^2.1.0",
     "elliptic": "^6.5.4",
+    "eventsource": "^3.0.2",
     "exponential-backoff": "^3.1.1",
     "fs": "^0.0.1-security",
     "jsdom": "^24.0.0",

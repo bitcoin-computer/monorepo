@@ -47,7 +47,7 @@
     "sync": "node dist/bcn.sync.es.mjs",
     "test": "mocha --config .mocharc.json",
     "test:show": "npm run test 2>&1 | tee node-test.log && open node-test.log",
-    "up": "node --loader ts-node/esm ./scripts/up.ts"
+    "up": "docker compose -f docker-compose.yml up"
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
