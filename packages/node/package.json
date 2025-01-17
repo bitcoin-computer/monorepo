@@ -33,7 +33,7 @@
   "main": "dist/bcn.es.mjs",
   "scripts": {
     "build": "cd ../../ && npm run build:node",
-    "clean": "npm run clean:blockchain:data && npm run clean:db:data",
+    "clean": "npm run down && npm run prune && npm run clean:blockchain:data && npm run clean:db:data",
     "clean:blockchain:data": "rm -rf chain-setup/*/*/blockchain-data",
     "clean:db:data": "rm -rf chain-setup/*/*/db-data",
     "clean:logs": "rm -f *.log 2> /dev/null",
@@ -41,7 +41,7 @@
     "fund": "node --loader ts-node/esm ./scripts/fund.ts",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
-    "reset": "yes | ./scripts/reset.sh",
+    "prune": "docker system prune -f",
     "setup": "./scripts/setup.py",
     "start": "npm run up",
     "start:bcn": "node dist/bcn.es.mjs",

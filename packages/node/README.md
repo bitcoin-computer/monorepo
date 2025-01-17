@@ -107,7 +107,7 @@ You can stop the node with the command below. When you restart the process, it w
 <font size=1>
 
 ```sh
-npm run down -- -r
+npm run down
 ```
 
 </font>
@@ -119,7 +119,7 @@ The command below will reset the database, delete all blockchain data, and stop 
 <font size=1>
 
 ```sh
-npm run reset
+npm run clean
 ```
 
 </font>
