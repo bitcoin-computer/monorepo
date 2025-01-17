@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Request, Response } from 'express'
 import { db } from '../db/db.js'
 import { Computer } from '@bitcoin-computer/lib'
