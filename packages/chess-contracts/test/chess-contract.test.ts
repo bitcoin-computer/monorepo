@@ -63,7 +63,7 @@ describe('ChessContract', () => {
       ], mod)
       expect(typeof secretHashW).not.toEqual('undefined')
       expect(chessContract.fen).toEqual('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
-    }, 30000)
+    })
   })
 
   describe('move', () => {
@@ -84,7 +84,7 @@ describe('ChessContract', () => {
       )
       expect(typeof chessContract.payment).not.toEqual('undefined')
       expect(chessContract.fen).not.toEqual(fenBefore)
-    }, 30000)
+    })
   })
 })
 
@@ -126,7 +126,7 @@ describe('ChessContractHelper', () => {
     })
     chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
     chessContractHelperB.mod = chessContractHelperW.mod
-  }, 20000)
+  })
 
   describe('makeTx', () => {
     it('Should deploy the smart contract', () => {
@@ -168,7 +168,7 @@ describe('ChessContractHelper', () => {
       ])
       expect(Object.keys(env)).toEqual([])
       await res.move('e2', 'e4')
-    }, 10000)
+    })
   })
 
   describe('move', () => {
@@ -182,7 +182,7 @@ describe('ChessContractHelper', () => {
       const { newChessContract } = await chessContractHelperW.move(chessContract, 'e2', 'e4')
       expect(newChessContract.fen).toEqual('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1')
       expect(newChessContract.sans).toEqual(['e4'])
-    }, 20000)
+    })
   })
 
   describe.skip('spendWithSecret', () => {
@@ -224,14 +224,14 @@ describe('ChessContractHelper', () => {
       const txId = await cchb.completeTx(tx)
       const txId2 = await cchb.spendWithSecret(txId, secretB, 1)
       expect(typeof txId2).toEqual('string')
-    }, 20000)
+    })
 
     it('Should allow white to spend with the correct secret', async () => {
       const tx = await cchw.makeTx()
       const txId = await cchb.completeTx(tx)
       const txId2 = await cchw.spendWithSecret(txId, secretW, 0)
       expect(typeof txId2).toEqual('string')
-    }, 20000)
+    })
 
     it('Should throw an error when trying to spend with the wrong secret', async () => {
       const tx = await cchw.makeTx()
@@ -242,7 +242,7 @@ describe('ChessContractHelper', () => {
       await expect(cchw.spendWithSecret(txId, secretB, 1)).rejects.toThrow(
         'mandatory-script-verify-flag-failed (Signature must be zero for failed CHECK(MULTI)SIG operation)',
       )
-    }, 20000)
+    })
   })
 
   describe('spend', () => {
@@ -274,7 +274,7 @@ describe('ChessContractHelper', () => {
       const res = await chessContractHelperB.move(chessContract5, 'd8', 'h4')
       expect(await res.newChessContract.isGameOver()).toEqual(true)
       expect(res.isGameOver).toEqual(true)
-    }, 20000)
+    })
 
     it('Should work for a game of fools mate', async () => {
       const tx = await chessContractHelperW.makeTx()
@@ -309,6 +309,6 @@ describe('ChessContractHelper', () => {
       const res = await chessContractHelperB5.move(chessContract5, 'd8', 'h4')
       expect(await res.newChessContract.isGameOver()).toEqual(true)
       expect(res.isGameOver).toEqual(true)
-    }, 20000)
+    })
   })
 })
