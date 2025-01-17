@@ -34,7 +34,7 @@
     "@types/uuid": "9.0.8",
     "migrate": "^2.1.0",
     "nodemon": "^3.1.0",
-    "eslint": "^9.9.0",
+    "eslint": "^9.18.0",
     "typescript": "^5.3.3"
   }
 }
