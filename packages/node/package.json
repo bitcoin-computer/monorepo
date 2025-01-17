@@ -33,9 +33,6 @@
   "main": "dist/bcn.es.mjs",
   "scripts": {
     "build": "cd ../../ && npm run build:node",
-    "build:dev": "cd ../../../packages/node-secret && npm run build && cd ../../monorepo/packages/node && npm run build",
-    "clean-logs": "rm -f *.log 2> /dev/null",
-    "delete-blockchain-data": "rm -rf chain-setup/*/*/*-data",
     "clean": "npm run clean:blockchain:data && npm run clean:db:data",
     "clean:blockchain:data": "rm -rf chain-setup/*/*/blockchain-data",
     "clean:db:data": "rm -rf chain-setup/*/*/db-data",
