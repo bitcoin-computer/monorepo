@@ -4,8 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build-docker": "docker build -t chess-server .",
-    "build:docker": "docker build -t chess-app-server .",
+    "build:docker": "docker build -t chess-server .",
     "clean": "rm -rf db/db-data",
     "create:migration": "migrate create",
     "deploy": "node --loader ts-node/esm ./scripts/deploy.ts",
@@ -15,7 +14,7 @@
     "start": "node --loader ts-node/esm.mjs -r tsconfig-paths/register src/app.ts",
     "start:dev": "nodemon --exec npm run start -- --ext ts",
     "start:postgres": "docker-compose up postgres",
-    "test": "POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha -r ts-node/register --loader=ts-node/esm --timeout=30000000 test/**/*.test.ts test/*.test.ts",
+    "test": "POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha -r ts-node/register --loader=ts-node/esm --timeout=30000000 test/*.test.ts",
     "up": "docker-compose up"
   },
   "dependencies": {
