@@ -54,7 +54,7 @@ Update the following rows in your .env file.
 VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${mod}\x1b[0m
 `)
 } else {
-  const files = ['../chess-app/.env', '../chess-server/.env', '../chess-contracts/.env']
+  const files = ['../chess-app/.env', '../chess-server/.env']
 
   for (const file of files) {
     // Update module specifiers in the .env file

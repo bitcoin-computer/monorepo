@@ -1,20 +1,24 @@
-import { useContext, useState } from "react"
-import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
-import { Computer, Transaction } from "@bitcoin-computer/lib"
-import { useParams } from "react-router-dom"
-import { ChessContract, ChessContractHelper } from "../../../chess-contracts/"
-import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
+import { useContext, useEffect, useState } from 'react'
+import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import { Computer, Transaction } from '@bitcoin-computer/lib'
+import { useParams } from 'react-router-dom'
+import { ChessContract, ChessContractHelper } from '../../../chess-contracts/'
+import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+
+const startGameModal = 'start-game-modal'
 
 function ErrorContent(msg: string) {
   return (
     <>
       <div className="p-4 md:p-5">
-        Something went wrong.<br />{msg}
+        Something went wrong.
+        <br />
+        {msg}
       </div>
       <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
         <button
           onClick={() => {
-            Modal.hideModal("error-modal")
+            Modal.hideModal('error-modal')
           }}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
@@ -46,7 +50,11 @@ function StartForm(props: {
       const { effect } = await computer.encode(tx.onChainMetaData as never)
       const { res } = effect
       const game = res as unknown as ChessContract
-      const chessContractHelper = ChessContractHelper.fromContract(computer, game, VITE_CHESS_GAME_MOD_SPEC)
+      const chessContractHelper = ChessContractHelper.fromContract(
+        computer,
+        game,
+        VITE_CHESS_GAME_MOD_SPEC,
+      )
       const txId = await chessContractHelper.completeTx(tx)
       setLink(`http://localhost:1032/game/${txId}:0`)
       showLoader(false)
@@ -54,16 +62,18 @@ function StartForm(props: {
       console.log('Err', err)
       showLoader(false)
       if (err instanceof Error) {
-        if(err.message.startsWith('Failed to load module')) setErrorMsg("Run 'npm run deploy' to deploy the smart contracts.")
+        if (err.message.startsWith('Failed to load module'))
+          setErrorMsg("Run 'npm run deploy' to deploy the smart contracts.")
         else setErrorMsg(err.message)
-        Modal.showModal("error-modal")
+        Modal.showModal('error-modal')
       }
     }
   }
 
   const handleCopy = (e: React.SyntheticEvent) => {
     e.preventDefault()
-    navigator.clipboard.writeText(link)
+    navigator.clipboard
+      .writeText(link)
       .then(() => setCopied(true))
       .catch(() => setCopied(false))
 
@@ -79,7 +89,7 @@ function StartForm(props: {
         >
           Start Game
         </button>
-        
+
         <div className="flex flex-col items-start p-4 mt-4 border rounded-lg shadow-md bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700">
           <p
             className="break-all text-sm text-blue-600 underline cursor-pointer hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 border-0 focus:ring-0"
@@ -91,28 +101,217 @@ function StartForm(props: {
             className="mt-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
             onClick={handleCopy}
           >
-            {copied ? "Copied!" : "Copy Link"}
+            {copied ? 'Copied!' : 'Copy Link'}
           </button>
         </div>
-
       </form>
     </>
   )
 }
 
+export function StartGameModalContent({
+  serialized,
+  game,
+  computer,
+  copied,
+  setCopied,
+  link,
+  setLink,
+}: {
+  serialized: string
+  game: ChessContract
+  computer: Computer
+  copied: any
+  setCopied: any
+  link: any
+  setLink: any
+}) {
+  const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
+
+  const handleCopy = () => {
+    navigator.clipboard
+      .writeText(link)
+      .then(() => setCopied(true))
+      .catch(() => setCopied(false))
+
+    setTimeout(() => setCopied(false), 2000)
+  }
+
+  const onSubmit = async (e: React.SyntheticEvent) => {
+    e.preventDefault()
+    try {
+      showLoader(true)
+      const tx = Transaction.deserialize(serialized)
+      const chessContractHelper = ChessContractHelper.fromContract(
+        computer,
+        game,
+        VITE_CHESS_GAME_MOD_SPEC,
+      )
+      const txId = await chessContractHelper.completeTx(tx)
+      setLink(`http://localhost:1032/game/${txId}:0`)
+      showLoader(false)
+    } catch (err) {
+      if (err instanceof Error) {
+        showSnackBar(err.message, false)
+      } else {
+        showSnackBar('Error occurred!', false)
+      }
+      showLoader(false)
+    }
+  }
+
+  return (
+    <>
+      {!!link ? (
+        <div className="flex flex-col items-start p-4 mt-4 border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
+          <div className="relative group w-full">
+            <p
+              className="text-sm text-blue-600 underline cursor-pointer truncate hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 focus:ring-0"
+              onClick={handleCopy}
+              title="Click to copy the link"
+            >
+              {/* Dynamically show truncated content */}
+              {`${link.slice(0, 50)}...`}
+            </p>
+            {/* Show full link on hover */}
+            <span className="absolute z-10 hidden group-hover:block bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-2 max-w-xs break-words">
+              {link}
+            </span>
+          </div>
+
+          {/* Button Container */}
+          <div className="flex gap-4 mt-2">
+            <button
+              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+              onClick={handleCopy}
+            >
+              {copied ? 'Copied!' : 'Copy Link'}
+            </button>
+          </div>
+        </div>
+      ) : (
+        <>
+          {!!game && (
+            <form
+              onSubmit={onSubmit}
+              className="w-full mx-auto p-6 bg-white shadow-md rounded-lg dark:bg-gray-700"
+            >
+              <div className="grid gap-6 mb-6">
+                <div>
+                  <h4 className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+                    You have been challenged to a game
+                  </h4>
+                </div>
+
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
+                      Amount
+                    </span>
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {game.amount / 1e8} {computer.getChain()}
+                    </span>
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
+                      Opponent
+                    </span>
+                    <div className="relative group">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-[200px] overflow-hidden block">
+                        {game.publicKeyW}
+                      </span>
+                      <div className="absolute left-0 z-10 hidden p-2 text-xs text-white bg-gray-900 rounded-md shadow-md group-hover:block max-w-xs w-max">
+                        {game.publicKeyW}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button
+                type="submit"
+                className="w-full sm:w-auto text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-6 py-3 text-center dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800"
+              >
+                Accept
+              </button>
+            </form>
+          )}
+        </>
+      )}
+    </>
+  )
+}
+
+export function StartGameModal() {
+  const { serialized } = useParams()
+  const computer = useContext(ComputerContext)
+  const [game, setGame] = useState<ChessContract | null>(null)
+  const [copied, setCopied] = useState(false)
+  const [link, setLink] = useState('')
+
+  const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
+
+  useEffect(() => {
+    const fetch = async () => {
+      try {
+        if (serialized) {
+          const tx = Transaction.deserialize(serialized)
+          const { effect } = await computer.encode(tx.onChainMetaData as never)
+          const { res } = effect
+          const game = res as unknown as ChessContract
+          setGame(game)
+          Modal.showModal(startGameModal)
+          showLoader(false)
+        } else {
+          showSnackBar('Not a valid link', false)
+        }
+      } catch (error) {
+        showLoader(false)
+        if (error instanceof Error) {
+          showSnackBar(error.message, false)
+        } else {
+          showSnackBar('Error occurred', false)
+        }
+      } finally {
+        showLoader(false)
+      }
+    }
+    fetch()
+  }, [serialized])
+
+  return (
+    <Modal.Component
+      title={'Start Game'}
+      content={StartGameModalContent}
+      contentData={{
+        serialized,
+        game,
+        computer,
+        copied,
+        setCopied,
+        link,
+        setLink,
+      }}
+      id={startGameModal}
+    />
+  )
+}
+
 export default function StartGame() {
   const computer = useContext(ComputerContext)
-  const [errorMsg, setErrorMsg] = useState("")
+  const [errorMsg, setErrorMsg] = useState('')
 
   return (
     <>
       <StartForm computer={computer} setErrorMsg={setErrorMsg} />
       <Modal.Component
-        title={"Error"}
+        title={'Error'}
         content={ErrorContent}
         contentData={errorMsg}
-        id={"error-modal"}
+        id={'error-modal'}
       />
+      <StartGameModal />
     </>
   )
 }

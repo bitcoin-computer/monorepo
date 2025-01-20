@@ -21,7 +21,7 @@ npm run deploy
 Start the database.
 
 ```
-npm run start-postgress
+npm run start:postgress
 ```
 
 Then start the express server.

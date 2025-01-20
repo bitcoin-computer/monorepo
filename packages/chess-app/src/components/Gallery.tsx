@@ -1,12 +1,12 @@
-import { Computer } from "@bitcoin-computer/lib"
-import { useContext, useEffect, useMemo, useState } from "react"
-import { Link, useLocation, useNavigate } from "react-router-dom"
-import { initFlowbite } from "flowbite"
-import { Auth, ComputerContext, UtilsContext } from "@bitcoin-computer/components"
-import { BiGitCompare } from "react-icons/bi"
-import { ChessContract } from "../../../chess-contracts/"
-import { Chess as ChessLib } from "../../../chess-contracts/"
-import { getGameState } from "./utils"
+import { Computer } from '@bitcoin-computer/lib'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
+import { initFlowbite } from 'flowbite'
+import { Auth, ComputerContext, UtilsContext } from '@bitcoin-computer/components'
+import { BiGitCompare } from 'react-icons/bi'
+import { ChessContract } from '../../../chess-contracts/'
+import { Chess as ChessLib } from '../../../chess-contracts/'
+import { getGameState } from './utils'
 
 export type Class = new (...args: unknown[]) => unknown
 
@@ -31,8 +31,8 @@ function GameCard({ chessContract }: { chessContract: ChessContract }) {
       <div
         className={`bg-white border rounded-lg shadow mb-4 ${
           chessContract.publicKeyW === publicKey || chessContract.publicKeyB === publicKey
-            ? "border-blue-600 dark:border-blue-500"
-            : "border-gray-200 dark:border-gray-700"
+            ? 'border-blue-600 dark:border-blue-500'
+            : 'border-gray-200 dark:border-gray-700'
         }`}
       >
         <div className="p-4">
@@ -42,8 +42,8 @@ function GameCard({ chessContract }: { chessContract: ChessContract }) {
           <p
             className={`mb-1 font-normal break-words ${
               chessContract.publicKeyW === publicKey
-                ? "text-blue-600 dark:text-blue-500"
-                : "text-gray-700 dark:text-gray-400"
+                ? 'text-blue-600 dark:text-blue-500'
+                : 'text-gray-700 dark:text-gray-400'
             }`}
             title={chessContract.nameW}
           >
@@ -55,8 +55,8 @@ function GameCard({ chessContract }: { chessContract: ChessContract }) {
           <p
             className={`mb-1 font-normal break-words ${
               chessContract.publicKeyB === publicKey
-                ? "text-blue-600 dark:text-blue-500"
-                : "text-gray-700 dark:text-gray-400"
+                ? 'text-blue-600 dark:text-blue-500'
+                : 'text-gray-700 dark:text-gray-400'
             }`}
             title={chessContract.nameB}
           >
@@ -78,9 +78,9 @@ function HomePageCard({ content }: { content: () => JSX.Element }) {
   )
 }
 
-function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
+export function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
   const [value, setValue] = useState<ChessContract>({ _id: '' } as ChessContract)
-  const [errorMsg, setMsgError] = useState("")
+  const [errorMsg, setMsgError] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
@@ -178,9 +178,9 @@ function FromRevs({ revs, computer }: { revs: string[]; computer: Computer }) {
 }
 
 type PaginationType = {
-  isPrevAvailable: boolean,
-  isNextAvailable: boolean,
-  handlePrev: React.MouseEventHandler<HTMLButtonElement>,
+  isPrevAvailable: boolean
+  isNextAvailable: boolean
+  handlePrev: React.MouseEventHandler<HTMLButtonElement>
   handleNext: React.MouseEventHandler<HTMLButtonElement>
 }
 function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }: PaginationType) {
@@ -254,9 +254,9 @@ export function WithPagination<T extends Class>(q: UserQuery<T>) {
 
   const params = useMemo(
     () => Object.fromEntries(new URLSearchParams(location.search)),
-    [location.search]
+    [location.search],
   )
-  
+
   useEffect(() => {
     initFlowbite()
   }, [])
@@ -270,7 +270,7 @@ export function WithPagination<T extends Class>(q: UserQuery<T>) {
       query.order = 'DESC'
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
-      setRevs(result.slice(0, contractsPerPage))
+      setRevs((result.slice(0, contractsPerPage) || []).filter((rev) => rev.split(':')[1] === '0'))
       if (pageNum === 0 && result?.length === 0) {
         setShowNoAsset(true)
       }
@@ -306,7 +306,7 @@ export function WithPagination<T extends Class>(q: UserQuery<T>) {
           <button
             type="button"
             className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-            onClick={() => navigate("/new")}
+            onClick={() => navigate('/new')}
           >
             Play as a Guest
           </button>
