@@ -20,7 +20,7 @@ RUN rm -rf node_modules
 ENV VCPKG_FORCE_SYSTEM_BINARIES=1
 
 # Install dependencies
-RUN npm install --build-from-source
+RUN npm install
 
 # Ensure that the necessary binaries are in the PATH
 ENV PATH="/dist/node_modules/.bin:${PATH}"
@@ -32,4 +32,4 @@ WORKDIR packages/node
 EXPOSE 1031
 
 # Define the command to run when the container starts
-CMD ["npm", "start"]
+CMD ["npm", "start:bcn"]
