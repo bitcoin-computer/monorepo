@@ -42,7 +42,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 30s
-    command: npm start
+    command: npm run start:bcn
     working_dir: /dist/packages/node
     ports:
       - ${BCN_PORT}:${BCN_PORT}
@@ -66,9 +66,9 @@ services:
       - bitcoin
       - bcn
     volumes:
-      - ./logs:/dist/logs
+      - ./logs:/dist/packages/node/logs
   sync:
-    command: npm run sync
+    command: npm run start:sync
     image: bitcoin-computer-node
     env_file: .env
     restart: always
@@ -88,7 +88,7 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
     volumes:
-      - ./logs:/dist/logs
+      - ./logs:/dist/packages/node/logs
     depends_on:
       - db
       - node
