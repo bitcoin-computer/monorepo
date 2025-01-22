@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { HiRefresh, HiOutlineClipboardCopy } from 'react-icons/hi'
+import { FiCopy, FiCheck } from 'react-icons/fi'
 import { Computer } from '@bitcoin-computer/lib'
 import { Auth } from './Auth'
 import { Drawer } from './Drawer'
@@ -91,14 +92,14 @@ const Address = ({ computer }: any) => {
         <h6 className="text-lg font-bold dark:text-white">Address</h6>
         <button
           onClick={handleCopy}
-          className={`ml-2 p-1 ${
-            copied
-              ? 'text-green-500 dark:text-green-400'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'
-          }`}
+          className={`ml-1 p-1 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white`}
           aria-label="Copy address"
         >
-          <HiOutlineClipboardCopy className="w-5 h-5" />
+          {copied ? (
+            <FiCheck className="w-4 h-4 text-green-500 dark:text-green-400" />
+          ) : (
+            <FiCopy className="w-4 h-4" />
+          )}
         </button>
       </div>
       <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
@@ -123,14 +124,14 @@ const PublicKey = ({ computer }: any) => {
         <h6 className="text-lg font-bold dark:text-white">Public Key</h6>
         <button
           onClick={handleCopy}
-          className={`ml-2 p-1 ${
-            copied
-              ? 'text-green-500 dark:text-green-400'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'
-          }`}
+          className={`ml-1 p-1 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white`}
           aria-label="Copy public key"
         >
-          <HiOutlineClipboardCopy className="w-5 h-5" />
+          {copied ? (
+            <FiCheck className="w-4 h-4 text-green-500 dark:text-green-400" />
+          ) : (
+            <FiCopy className="w-4 h-4" />
+          )}
         </button>
       </div>
       <p className="mb-4 text-xs font-mono text-gray-500 dark:text-gray-400 break-words">

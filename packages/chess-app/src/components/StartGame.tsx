@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
 import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { useParams } from 'react-router-dom'
@@ -163,8 +164,8 @@ export function StartGameModalContent({
   return (
     <>
       {!!link ? (
-        <div className="flex flex-col items-start p-4 mt-4 border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
-          <div className="relative group w-full">
+        <div className="flex flex-col items-start border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
+          <div className="relative group w-full p-6 border-b border-gray-200 dark:border-gray-600">
             <p
               className="text-sm text-blue-600 underline cursor-pointer truncate hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 focus:ring-0"
               onClick={handleCopy}
@@ -179,10 +180,9 @@ export function StartGameModalContent({
             </span>
           </div>
 
-          {/* Button Container */}
-          <div className="flex gap-4 mt-2">
+          <div className="p-6">
             <button
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               onClick={handleCopy}
             >
               {copied ? 'Copied!' : 'Copy Link'}
@@ -194,47 +194,43 @@ export function StartGameModalContent({
           {!!game && (
             <form
               onSubmit={onSubmit}
-              className="w-full mx-auto p-6 bg-white shadow-md rounded-lg dark:bg-gray-700"
+              className="w-full mx-auto bg-white shadow-md rounded-lg dark:bg-gray-700"
             >
-              <div className="grid gap-6 mb-6">
+              <div className="grid gap-6 p-6 border-b border-gray-200 dark:border-gray-600">
                 <div>
-                  <h4 className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-                    You have been challenged to a game
-                  </h4>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between">
                     <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                       Amount
                     </span>
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                    <span className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-200">
                       {game.amount / 1e8} {computer.getChain()}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                       Opponent
                     </span>
                     <div className="relative group">
-                      <span className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-[200px] overflow-hidden block">
+                      <span
+                        title={game.publicKeyW}
+                        className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-200 truncate max-w-[200px] overflow-hidden block"
+                      >
                         {game.publicKeyW}
                       </span>
-                      <div className="absolute left-0 z-10 hidden p-2 text-xs text-white bg-gray-900 rounded-md shadow-md group-hover:block max-w-xs w-max">
-                        {game.publicKeyW}
-                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-              <button
-                type="submit"
-                className="w-full sm:w-auto text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-6 py-3 text-center dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800"
-              >
-                Accept
-              </button>
+              <div className="p-6">
+                <button
+                  type="submit"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Accept
+                </button>
+              </div>
             </form>
           )}
         </>
@@ -244,7 +240,9 @@ export function StartGameModalContent({
 }
 
 export function StartGameModal() {
-  const { serialized } = useParams()
+  const location = useLocation()
+  const queryParams = new URLSearchParams(location.search) // Parse the query string
+  const serialized = queryParams.get('start-game')
   const computer = useContext(ComputerContext)
   const [game, setGame] = useState<ChessContract | null>(null)
   const [copied, setCopied] = useState(false)
@@ -256,6 +254,7 @@ export function StartGameModal() {
     const fetch = async () => {
       try {
         if (serialized) {
+          showLoader(true)
           const tx = Transaction.deserialize(serialized)
           const { effect } = await computer.encode(tx.onChainMetaData as never)
           const { res } = effect
@@ -263,8 +262,6 @@ export function StartGameModal() {
           setGame(game)
           Modal.showModal(startGameModal)
           showLoader(false)
-        } else {
-          showSnackBar('Not a valid link', false)
         }
       } catch (error) {
         showLoader(false)
@@ -282,7 +279,7 @@ export function StartGameModal() {
 
   return (
     <Modal.Component
-      title={'Start Game'}
+      title={'You have been challenged'}
       content={StartGameModalContent}
       contentData={{
         serialized,

@@ -5,10 +5,10 @@ import { initFlowbite } from 'flowbite'
 import { Auth, UtilsContext, Wallet, ComputerContext } from '@bitcoin-computer/components'
 import { ChessBoard } from './components/ChessBoard'
 
-import { Navbar } from "./components/Navbar"
-import { MyGames } from "./components/Assets"
-import CreateGame from "./components/CreateGame"
-import StartGame from "./components/StartGame"
+import { Navbar } from './components/Navbar'
+import { MyGames } from './components/Assets'
+import CreateGame from './components/CreateGame'
+import StartGame from './components/StartGame'
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -27,7 +27,7 @@ export default function App() {
           <Navbar />
           <div className="w-full h-screen bg-white border-gray-200 dark:bg-gray-900 px-28">
             <Routes>
-              <Route path="/" element={<MyGames />} />
+              <Route path="/" element={<ChessBoard />} />
               <Route path="/new" element={<CreateGame />} />
               <Route path="/start/:serialized" element={<StartGame />} />
               <Route path="/game/:id" element={<ChessBoard />} />

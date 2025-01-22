@@ -36,7 +36,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useCallback, useContext, useEffect, useState } from 'react';
-import { HiRefresh, HiOutlineClipboardCopy } from 'react-icons/hi';
+import { HiRefresh } from 'react-icons/hi';
+import { FiCopy, FiCheck } from 'react-icons/fi';
 import { Auth } from './Auth';
 import { Drawer } from './Drawer';
 import { UtilsContext } from './UtilsContext';
@@ -126,9 +127,7 @@ var Address = function (_a) {
         setCopied(true);
         setTimeout(function () { return setCopied(false); }, 2000); // Reset icon color after 2 seconds
     };
-    return (_jsxs("div", { className: "mb-4", children: [_jsxs("div", { className: "flex items-center", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Address" }), _jsx("button", { onClick: handleCopy, className: "ml-2 p-1 ".concat(copied
-                            ? 'text-green-500 dark:text-green-400'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'), "aria-label": "Copy address", children: _jsx(HiOutlineClipboardCopy, { className: "w-5 h-5" }) })] }), _jsx("p", { className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400", children: computer.getAddress() })] }));
+    return (_jsxs("div", { className: "mb-4", children: [_jsxs("div", { className: "flex items-center", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Address" }), _jsx("button", { onClick: handleCopy, className: "ml-1 p-1 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white", "aria-label": "Copy address", children: copied ? (_jsx(FiCheck, { className: "w-4 h-4 text-green-500 dark:text-green-400" })) : (_jsx(FiCopy, { className: "w-4 h-4" })) })] }), _jsx("p", { className: "mb-4 font-mono text-xs text-gray-500 dark:text-gray-400", children: computer.getAddress() })] }));
 };
 var PublicKey = function (_a) {
     var computer = _a.computer;
@@ -138,9 +137,7 @@ var PublicKey = function (_a) {
         setCopied(true);
         setTimeout(function () { return setCopied(false); }, 2000); // Reset icon color after 2 seconds
     };
-    return (_jsxs("div", { className: "mb-4", children: [_jsxs("div", { className: "flex items-center", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Public Key" }), _jsx("button", { onClick: handleCopy, className: "ml-2 p-1 ".concat(copied
-                            ? 'text-green-500 dark:text-green-400'
-                            : 'text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white'), "aria-label": "Copy public key", children: _jsx(HiOutlineClipboardCopy, { className: "w-5 h-5" }) })] }), _jsx("p", { className: "mb-4 text-xs font-mono text-gray-500 dark:text-gray-400 break-words", children: computer.getPublicKey() })] }));
+    return (_jsxs("div", { className: "mb-4", children: [_jsxs("div", { className: "flex items-center", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Public Key" }), _jsx("button", { onClick: handleCopy, className: "ml-1 p-1 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white", "aria-label": "Copy public key", children: copied ? (_jsx(FiCheck, { className: "w-4 h-4 text-green-500 dark:text-green-400" })) : (_jsx(FiCopy, { className: "w-4 h-4" })) })] }), _jsx("p", { className: "mb-4 text-xs font-mono text-gray-500 dark:text-gray-400 break-words", children: computer.getPublicKey() })] }));
 };
 var Mnemonic = function (_a) {
     var computer = _a.computer;

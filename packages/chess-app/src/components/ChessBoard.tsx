@@ -8,10 +8,11 @@ import {
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { Chessboard } from 'react-chessboard'
-import { getGameState } from './utils'
+
 import { getHash } from '../services/secret.service'
 import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
-import { BiGitCompare } from 'react-icons/bi'
+import { StartGameModal } from './StartGame'
+import { signInModal } from './Navbar'
 
 const newGameModal = 'new-game-modal'
 
@@ -29,15 +30,6 @@ export type UserQuery<T extends Class> = Partial<{
     args?: ConstructorParameters<T>
   }
 }>
-
-function currentPlayer(fen: string) {
-  const parts = fen.split(' ')
-  const activeColor = parts[1]
-
-  if (activeColor === 'w') return 'White'
-  if (activeColor === 'b') return 'Black'
-  throw new Error('Invalid FEN: Unknown active color')
-}
 
 function getWinnerPubKey(chessLibrary: ChessLib, { publicKeyW, publicKeyB }: ChessContract) {
   if (chessLibrary.isCheckmate()) return chessLibrary.turn() === 'b' ? publicKeyW : publicKeyB
@@ -121,7 +113,6 @@ export function NewGameModalContent({
   serializedTx,
   setSerializedTx,
 }: any) {
-  const navigate = useNavigate()
   const computerW = useContext(ComputerContext)
 
   const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
@@ -157,7 +148,7 @@ export function NewGameModalContent({
         mod: VITE_CHESS_GAME_MOD_SPEC,
       })
       const tx = await chessContractHelper.makeTx()
-      setSerializedTx(`http://localhost:1032/start/${tx.serialize()}`)
+      setSerializedTx(`http://localhost:1032?start-game=${tx.serialize()}`)
 
       showLoader(false)
     } catch (err) {
@@ -173,26 +164,22 @@ export function NewGameModalContent({
   return (
     <>
       {!!serializedTx ? (
-        <div className="flex flex-col items-start p-4 mt-4 border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
-          <div className="relative group w-full">
+        <div className="flex flex-col items-start border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
+          <div className="relative group w-full p-6 border-b border-gray-200 dark:border-gray-600">
+            <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+              Share this link to your friend to start playing
+            </p>
             <p
               className="text-sm text-blue-600 underline cursor-pointer truncate hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 focus:ring-0"
               onClick={handleCopy}
               title="Click to copy the link"
             >
-              {/* Dynamically show truncated content */}
               {`${serializedTx.slice(0, 50)}...`}
             </p>
-            {/* Show full link on hover */}
-            <span className="absolute z-10 hidden group-hover:block bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-2 max-w-xs break-words">
-              {serializedTx}
-            </span>
           </div>
-
-          {/* Button Container */}
-          <div className="flex gap-4 mt-2">
+          <div className="p-6">
             <button
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+              className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               onClick={handleCopy}
             >
               {copied ? 'Copied!' : 'Copy Link'}
@@ -203,9 +190,9 @@ export function NewGameModalContent({
         <>
           <form
             onSubmit={onSubmit}
-            className="w-full mx-auto p-6 bg-white shadow-md rounded-lg dark:bg-gray-700"
+            className="w-full mx-auto bg-white shadow-md rounded-lg dark:bg-gray-700"
           >
-            <div className="grid gap-6 mb-6">
+            <div className="grid gap-6 p-6 border-b border-gray-200 dark:border-gray-600">
               <div>
                 <label
                   htmlFor="amount"
@@ -218,7 +205,6 @@ export function NewGameModalContent({
                   id="amount"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
-                  placeholder="Enter amount"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
               </div>
@@ -232,19 +218,20 @@ export function NewGameModalContent({
                 <input
                   type="text"
                   id="publicKeyB"
-                  placeholder="Second Player Public Key"
                   value={publicKeyB}
                   onChange={(e) => setSecondPlayerPublicKey(e.target.value)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 />
               </div>
             </div>
-            <button
-              type="submit"
-              className="w-full sm:w-auto text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-md text-sm px-6 py-3 text-center dark:bg-blue-500 dark:hover:bg-blue-600 dark:focus:ring-blue-800"
-            >
-              Create Game
-            </button>
+            <div className="p-6">
+              <button
+                type="submit"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+              >
+                Create Game
+              </button>
+            </div>
           </form>
         </>
       )}
@@ -292,73 +279,27 @@ export function NewGameModal() {
   )
 }
 
-function GameCard({ chessContract }: { chessContract: ChessContract }) {
-  const chessLib = new ChessLib(chessContract.fen)
-  const publicKey = Auth.getComputer().getPublicKey()
-  return (
-    <>
-      <div
-        className={`bg-white border rounded-lg shadow mb-4 ${
-          chessContract.publicKeyW === publicKey || chessContract.publicKeyB === publicKey
-            ? 'border-blue-600 dark:border-blue-500'
-            : 'border-gray-200 dark:border-gray-700'
-        }`}
-      >
-        <div className="p-4">
-          <p className="text-center text-sm font-semibold text-gray-600 dark:text-gray-300 mb-3">
-            {getGameState(chessLib)}
-          </p>
-          <p
-            className={`mb-1 font-normal break-words ${
-              chessContract.publicKeyW === publicKey
-                ? 'text-blue-600 dark:text-blue-500'
-                : 'text-gray-700 dark:text-gray-400'
-            }`}
-            title={chessContract.nameW}
-          >
-            {chessContract.nameW}
-          </p>
-          <div className="flex justify-center items-center my-1 text-gray-500 dark:text-gray-400">
-            <BiGitCompare size={20} />
-          </div>
-          <p
-            className={`mb-1 font-normal break-words ${
-              chessContract.publicKeyB === publicKey
-                ? 'text-blue-600 dark:text-blue-500'
-                : 'text-gray-700 dark:text-gray-400'
-            }`}
-            title={chessContract.nameB}
-          >
-            {chessContract.nameB}
-          </p>
-        </div>
-      </div>
-    </>
-  )
-}
-
-const InfiniteScroll = () => {
+const InfiniteScroll = ({
+  setGameId,
+}: {
+  setGameId: React.Dispatch<React.SetStateAction<string>>
+}) => {
   const [items, setItems] = useState<string[]>([])
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
   const computer = useContext(ComputerContext)
-  const contractsPerPage = 10
+  const contractsPerPage = 12
+  const navigate = useNavigate()
 
   const fetchMoreItems = async <T extends Class>(q: UserQuery<T>): Promise<string[]> => {
     const query = { ...q }
     query.limit = contractsPerPage * 2 // For a chess game we have two contracts Payment and ChessContract
     query.order = 'DESC'
     const result = (await computer.query(query)) as string[]
-    const gamesPromise: Promise<ChessContract>[] = []
 
     const filteredRevs = (result || []).filter((rev) => rev.split(':')[1] === '0')
     return filteredRevs
-    // filteredRevs.forEach((chessRev) => {
-    //   return gamesPromise.push(computer.sync(chessRev) as Promise<ChessContract>)
-    // })
-
-    // return Promise.all(gamesPromise)
   }
 
   const loadMoreItems = useCallback(async () => {
@@ -396,28 +337,30 @@ const InfiniteScroll = () => {
   }, [])
 
   return (
-    <div className="w-full h-full overflow-hidden flex flex-col bg-white dark:bg-gray-800">
+    <div className="w-full h-full overflow-hidden flex flex-col bg-white dark:bg-gray-800 border border-gray-300  dark:border-gray-700 rounded-lg">
+      <div className="flex justify-center mt-2 mb-2">
+        <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">All Games</h3>
+      </div>
       <div
         ref={scrollContainerRef}
-        className="overflow-auto flex-1 border border-gray-300 dark:border-gray-700 rounded-lg"
-        style={{ maxHeight: '500px' }}
+        className="overflow-auto flex-1   max-h-[calc(100vh-9rem)]"
+        // style={{ maxHeight: '500px' }}
         onScroll={handleScroll}
       >
         <ul className="space-y-2 p-4">
           {items.map((item, index) => (
             <li
               key={index}
-              className="p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200"
+              className="p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 truncate cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
+              title={item}
+              onClick={() => {
+                navigate(`/game/${item}`)
+                setGameId(item)
+              }}
             >
               {item}
-              {/* <GameCard chessContract={item} /> */}
             </li>
           ))}
-          {!hasMore && (
-            <li className="text-center text-gray-500 dark:text-gray-400 mt-4">
-              No more items to load.
-            </li>
-          )}
         </ul>
         {loading && (
           <div className="text-center text-gray-500 dark:text-gray-400 p-4">Loading...</div>
@@ -430,7 +373,7 @@ const InfiniteScroll = () => {
 export function ChessBoard() {
   const params = useParams()
   const { showSnackBar } = UtilsContext.useUtilsComponents()
-  const [gameId] = useState<string>(params.id || '')
+  const [gameId, setGameId] = useState<string>(params.id || '')
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
   const [skipSync, setSkipSync] = useState(false)
   const [winnerData, setWinnerData] = useState({})
@@ -438,10 +381,10 @@ export function ChessBoard() {
   const [chessContract, setChessContract] = useState<ChessContract | null>(null)
 
   const computer = useContext(ComputerContext)
-  const fetchChessContract = useCallback(async (): Promise<ChessContract> => {
+  const fetchChessContract = async (): Promise<ChessContract> => {
     const [latestRev] = await computer.query({ ids: [gameId] })
     return computer.sync(latestRev) as Promise<ChessContract>
-  }, [computer, gameId])
+  }
 
   const setWinner = useCallback(async () => {
     if (!game || !chessContract) return
@@ -455,39 +398,55 @@ export function ChessBoard() {
 
   const syncChessContract = useCallback(async () => {
     try {
-      const chessContract = await fetchChessContract()
-      // setSans(chessContract.sans)
-      if (skipSync) {
-        setSkipSync(false)
-        return
+      if (gameId) {
+        const chessContract = await fetchChessContract()
+        // setSans(chessContract.sans)
+        if (skipSync) {
+          setSkipSync(false)
+          return
+        }
+        setChessContract(chessContract)
+        setGame(new ChessLib(chessContract.fen))
+        await setWinner()
       }
-      setChessContract(chessContract)
-      setGame(new ChessLib(chessContract.fen))
-      await setWinner()
     } catch (error) {
       console.error('Error fetching contract:', error)
     }
-  }, [fetchChessContract, setWinner, skipSync])
+  }, [setWinner, skipSync])
 
   useEffect(() => {
     const fetch = async () => {
-      const cc = await fetchChessContract()
-      setChessContract(cc)
-      setGame(new ChessLib(cc.fen))
-      setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
-      await setWinner()
+      if (gameId) {
+        const cc = await fetchChessContract()
+        setChessContract(cc)
+        setGame(new ChessLib(cc.fen))
+        setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
+        await setWinner()
+      }
     }
     fetch()
-  }, [computer, fetchChessContract])
+  }, [computer, gameId])
 
   // Update the chess state by polling
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      syncChessContract()
-    }, 10000)
+    let close: any // Declare a variable to hold the subscription
+    if (gameId) {
+      const subscribeToComputer = async () => {
+        // @ts-ignore
+        close = await computer.subscribe(gameId, (rev) => {
+          if (rev) syncChessContract()
+        })
+      }
 
-    return () => clearInterval(intervalId)
-  }, [syncChessContract])
+      subscribeToComputer()
+    }
+
+    return () => {
+      if (close) {
+        close()
+      }
+    }
+  }, [gameId])
 
   const publishMove = async (from: Square, to: Square) => {
     if (!chessContract) throw new Error('Chess contract is not defined.')
@@ -526,27 +485,32 @@ export function ChessBoard() {
       return false
     }
   }
+  const playNewGame = () => {
+    if (Auth.isLoggedIn()) {
+      Modal.showModal(newGameModal)
+    } else {
+      Modal.showModal(signInModal)
+    }
+  }
 
   return (
     <div className="w-full">
       <div className="grid grid-cols-4 gap-12 dark:bg-gray-900">
         {/* Game Info Column */}
-        {game && (
-          <div className="col-span-1 space-y-4 text-gray-900 dark:text-gray-200">
-            <button
-              onClick={() => {
-                Modal.showModal(newGameModal)
-              }}
-              type="button"
-              className="w-full py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-            >
-              New Game
-            </button>
-            <div>
-              <InfiniteScroll />
-            </div>
 
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+        <div className="col-span-1 space-y-4 text-gray-900 dark:text-gray-200">
+          <button
+            onClick={playNewGame}
+            type="button"
+            className="w-full py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+          >
+            New Game
+          </button>
+          <div>
+            <InfiniteScroll setGameId={setGameId} />
+          </div>
+
+          {/* <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
               <dl className="divide-y divide-gray-200 dark:divide-gray-700">
                 <div className="flex flex-col pb-3">
                   <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
@@ -559,13 +523,12 @@ export function ChessBoard() {
                   <dd className="text-lg font-semibold">{getGameState(game)}</dd>
                 </div>
               </dl>
-            </div>
-          </div>
-        )}
+            </div> */}
+        </div>
 
         {/* Chessboard Column */}
         <div className="col-span-2 flex flex-col items-center space-y-2 px-4">
-          {game && (
+          {game ? (
             <>
               <div className="bg-white dark:bg-gray-900 w-full">
                 <dl className="text-gray-900 dark:text-gray-200">
@@ -595,18 +558,46 @@ export function ChessBoard() {
                 </dl>
               </div>
             </>
+          ) : (
+            <>
+              <div className="bg-white dark:bg-gray-800 w-full">
+                <Chessboard />
+              </div>
+            </>
           )}
         </div>
 
-        {/* Moves List Column */}
-        {chessContract && (
-          <div className="col-span-1 pt-4">
+        <div className="col-span-1 pt-4">
+          {/* Moves List Column */}
+          {chessContract ? (
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-              <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">Move History</h3>
+              <div className="flex justify-center">
+                <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">Move History</h3>
+              </div>
+
               <ListLayout listOfMoves={chessContract.sans} />
             </div>
-          </div>
-        )}
+          ) : (
+            <div>
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                <div className="flex justify-center">
+                  <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
+                    Play Chess on {computer.getChain()}
+                  </h3>
+                </div>
+                <div className="flex justify-center mt-4">
+                  <button
+                    onClick={playNewGame}
+                    type="button"
+                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    Start play
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
       <Modal.Component
         title={'Game Over'}
@@ -616,6 +607,7 @@ export function ChessBoard() {
       />
 
       <NewGameModal />
+      <StartGameModal />
     </div>
   )
 }
