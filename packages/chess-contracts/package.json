@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "start": "node build/src/index.js",
     "test": "mocha  --config .mocharc.json",
-    "test:show": "npm run test 2>&1 | tee chess-contracts.log && open chess-contracts.log",
+    "test:show": "npm run test 2>&1 | tee chess-contracts.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open chess-contracts.log; fi",
     "types": "tsc --noEmit"
   },
   "dependencies": {

@@ -20,7 +20,7 @@
     "lint:fix": "eslint src test --ext .ts,.tsx --fix",
     "start": "node build/src/main.js",
     "test": "mocha --config .mocharc.json",
-    "test:show": "npm run test 2>&1 | tee TBC20-test.log && open TBC20-test.log",
+    "test:show": "npm run test 2>&1 | tee TBC20-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open TBC20-test.log; fi",
     "types": "tsc --noEmit"
   },
   "dependencies": {
