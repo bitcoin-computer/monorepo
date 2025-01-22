@@ -54,7 +54,7 @@
     "prepublishOnly": "../../scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
     "test": "mocha --require ts-node/register 'test/**/*.ts'",
-    "test:show": "npm run test 2>&1 | tee lib-test.log && open lib-test.log"
+    "test:show": "npm run test 2>&1 | tee lib-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open lib-test.log; fi"
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",

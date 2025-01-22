@@ -17,7 +17,7 @@
     "start": "vite",
     "test": "vitest run",
     "test:dev": "vitest",
-    "test:show": "npm run test 2>&1 | tee vite-template-test.log && open vite-template-test.log",
+    "test:show": "npm run test 2>&1 | tee vite-template-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open vite-template-test.log; fi",
     "types": "tsc --noEmit"
   },
   "dependencies": {
