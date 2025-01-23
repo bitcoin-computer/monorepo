@@ -25,7 +25,7 @@ export default function App() {
           <Auth.LoginModal />
           <Wallet />
           <Navbar />
-          <div className="w-full h-screen bg-white border-gray-200 dark:bg-gray-900 px-28">
+          <div className="w-full h-screen bg-white border-gray-200 dark:bg-gray-900 px-4 lg:px-24">
             <Routes>
               <Route path="/" element={<ChessBoard />} />
               <Route path="/new" element={<CreateGame />} />

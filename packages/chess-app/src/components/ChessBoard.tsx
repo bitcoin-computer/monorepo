@@ -497,7 +497,7 @@ export function ChessBoard() {
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-12 dark:bg-gray-900">
         {/* Left Column */}
-        <div className="md:col-span-1 space-y-4 text-gray-900 dark:text-gray-200">
+        <div className="space-y-4 text-gray-900 dark:text-gray-200 order-3 md:order-3 lg:order-1 md:col-span-1">
           <button
             onClick={playNewGame}
             type="button"
@@ -511,7 +511,7 @@ export function ChessBoard() {
         </div>
 
         {/* Chessboard Column */}
-        <div className="md:col-span-2 lg:col-span-2 flex flex-col items-center space-y-2 px-4">
+        <div className="flex flex-col items-center space-y-2 px-4 order-1 md:order-1 lg:order-2 md:col-span-2 lg:col-span-2">
           {game ? (
             <>
               <div className="bg-white dark:bg-gray-900 w-full">
@@ -550,7 +550,7 @@ export function ChessBoard() {
         </div>
 
         {/* Moves List Column */}
-        <div className="md:col-span-1 pt-4">
+        <div className="pt-4 order-2 md:order-2 lg:order-3 md:col-span-1">
           {chessContract ? (
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
               <div className="flex justify-center">
