@@ -495,10 +495,9 @@ export function ChessBoard() {
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-4 gap-12 dark:bg-gray-900">
-        {/* Game Info Column */}
-
-        <div className="col-span-1 space-y-4 text-gray-900 dark:text-gray-200">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-12 dark:bg-gray-900">
+        {/* Left Column */}
+        <div className="md:col-span-1 space-y-4 text-gray-900 dark:text-gray-200">
           <button
             onClick={playNewGame}
             type="button"
@@ -509,25 +508,10 @@ export function ChessBoard() {
           <div>
             <InfiniteScroll setGameId={setGameId} />
           </div>
-
-          {/* <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-              <dl className="divide-y divide-gray-200 dark:divide-gray-700">
-                <div className="flex flex-col pb-3">
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
-                    Current Player
-                  </dt>
-                  <dd className="text-lg font-semibold">{currentPlayer(game.fen())}</dd>
-                </div>
-                <div className="flex flex-col pt-3">
-                  <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">State</dt>
-                  <dd className="text-lg font-semibold">{getGameState(game)}</dd>
-                </div>
-              </dl>
-            </div> */}
         </div>
 
         {/* Chessboard Column */}
-        <div className="col-span-2 flex flex-col items-center space-y-2 px-4">
+        <div className="md:col-span-2 lg:col-span-2 flex flex-col items-center space-y-2 px-4">
           {game ? (
             <>
               <div className="bg-white dark:bg-gray-900 w-full">
@@ -559,16 +543,14 @@ export function ChessBoard() {
               </div>
             </>
           ) : (
-            <>
-              <div className="bg-white dark:bg-gray-800 w-full">
-                <Chessboard />
-              </div>
-            </>
+            <div className="bg-white dark:bg-gray-800 w-full">
+              <Chessboard />
+            </div>
           )}
         </div>
 
-        <div className="col-span-1 pt-4">
-          {/* Moves List Column */}
+        {/* Moves List Column */}
+        <div className="md:col-span-1 pt-4">
           {chessContract ? (
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
               <div className="flex justify-center">
@@ -578,27 +560,26 @@ export function ChessBoard() {
               <ListLayout listOfMoves={chessContract.sans} />
             </div>
           ) : (
-            <div>
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                <div className="flex justify-center">
-                  <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
-                    Play Chess on {computer.getChain()}
-                  </h3>
-                </div>
-                <div className="flex justify-center mt-4">
-                  <button
-                    onClick={playNewGame}
-                    type="button"
-                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  >
-                    Start play
-                  </button>
-                </div>
+            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+              <div className="flex justify-center">
+                <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
+                  Play Chess on {computer.getChain()}
+                </h3>
+              </div>
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={playNewGame}
+                  type="button"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  Start play
+                </button>
               </div>
             </div>
           )}
         </div>
       </div>
+
       <Modal.Component
         title={'Game Over'}
         content={WinnerModal}
