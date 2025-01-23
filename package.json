@@ -33,7 +33,7 @@
     "check:obfuscation": "./scripts/check-obfuscation.sh",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} \\;",
     "format": "npm run format --if-present --workspaces",
-    "husky:checks": "./scripts/husky-checks.sh",
+    "husky:checks": "npm run check:obfuscation",
     "lint": "npm run lint --if-present --workspaces",
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
     "prepare": "husky install",
