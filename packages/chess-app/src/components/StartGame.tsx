@@ -166,18 +166,17 @@ export function StartGameModalContent({
       {!!link ? (
         <div className="flex flex-col items-start border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
           <div className="relative group w-full p-6 border-b border-gray-200 dark:border-gray-600">
+            <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
+              Share this link to your friend to start playing
+            </p>
             <p
               className="text-sm text-blue-600 underline cursor-pointer truncate hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 focus:ring-0"
               onClick={handleCopy}
-              title="Click to copy the link"
+              title={link}
             >
               {/* Dynamically show truncated content */}
               {`${link.slice(0, 50)}...`}
             </p>
-            {/* Show full link on hover */}
-            <span className="absolute z-10 hidden group-hover:block bg-gray-50 text-gray-700 dark:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg p-2 max-w-xs break-words">
-              {link}
-            </span>
           </div>
 
           <div className="p-6">
@@ -202,7 +201,7 @@ export function StartGameModalContent({
                     <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
                       Amount
                     </span>
-                    <span className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-200">
+                    <span className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-400">
                       {game.amount / 1e8} {computer.getChain()}
                     </span>
                   </div>
@@ -215,7 +214,7 @@ export function StartGameModalContent({
                     <div className="relative group">
                       <span
                         title={game.publicKeyW}
-                        className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-200 truncate max-w-[200px] overflow-hidden block"
+                        className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-400 truncate max-w-[200px] overflow-hidden block"
                       >
                         {game.publicKeyW}
                       </span>
