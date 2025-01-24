@@ -54,7 +54,7 @@
     "prepublishOnly": "../../scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
     "test": "mocha --require ts-node/register 'test/**/*.ts'",
-    "test:show": "npm run test 2>&1 | tee lib-test.log && open lib-test.log"
+    "test:show": "npm run test 2>&1 | tee lib-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open lib-test.log; fi"
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
@@ -85,7 +85,6 @@
     "jsdom": "^24.0.0",
     "jsdom-global": "^3.0.2",
     "large-set": "^1.0.3",
-    "path": "^0.12.7",
     "randombytes": "^2.1.0",
     "ses": "1.3.0",
     "varuint-bitcoin": "^1.1.2"
