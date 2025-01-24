@@ -36,7 +36,7 @@
     "husky:checks": "npm run check:obfuscation",
     "lint": "npm run lint --if-present --workspaces",
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
-    "prepare": "husky install",
+    "prepare": "husky",
     "prepublishOnly": "./scripts/check-obfuscation.sh && npm run test",
     "test": "npm run test --if-present --workspaces",
     "types": "npm run types --if-present --workspaces"
