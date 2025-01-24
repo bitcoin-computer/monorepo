@@ -6,9 +6,6 @@ import { Auth, UtilsContext, Wallet, ComputerContext } from '@bitcoin-computer/c
 import { ChessBoard } from './components/ChessBoard'
 
 import { Navbar } from './components/Navbar'
-import { MyGames } from './components/Assets'
-import CreateGame from './components/CreateGame'
-import StartGame from './components/StartGame'
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
