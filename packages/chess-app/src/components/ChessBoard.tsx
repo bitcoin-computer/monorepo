@@ -13,8 +13,10 @@ import { getHash } from '../services/secret.service'
 import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
 import { StartGameModal } from './StartGame'
 import { signInModal } from './Navbar'
+import { getGameState } from './utils'
 
 const newGameModal = 'new-game-modal'
+const winnerModal = 'winner-modal'
 
 export type Class = new (...args: unknown[]) => unknown
 
@@ -30,6 +32,15 @@ export type UserQuery<T extends Class> = Partial<{
     args?: ConstructorParameters<T>
   }
 }>
+
+function currentPlayer(fen: string) {
+  const parts = fen.split(' ')
+  const activeColor = parts[1]
+
+  if (activeColor === 'w') return 'White'
+  if (activeColor === 'b') return 'Black'
+  throw new Error('Invalid FEN: Unknown active color')
+}
 
 function getWinnerPubKey(chessLibrary: ChessLib, { publicKeyW, publicKeyB }: ChessContract) {
   if (chessLibrary.isCheckmate()) return chessLibrary.turn() === 'b' ? publicKeyW : publicKeyB
@@ -69,27 +80,16 @@ function ListLayout(props: { listOfMoves: string[] }) {
 function WinnerModal(data: { winnerPubKey: string; userPubKey: string }) {
   return (
     <>
-      <div className="p-4 md:p-5">
-        <div>
+      <div className="p-4">
+        <p className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-gray-200">
           {data.winnerPubKey === data.userPubKey
             ? `Congratiolations! You have won the game. `
             : `Sorry! You have lost the game. `}
-          Click{' '}
-          <Link
-            to={`/new`}
-            className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            onClick={() => {
-              Modal.hideModal('winner-modal')
-            }}
-          >
-            here
-          </Link>{' '}
-          to start a new game.
-        </div>
+        </p>
       </div>
-      <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+      <div className="flex items-center p-6 border-t border-gray-200 rounded-b dark:border-gray-600">
         <button
-          onClick={() => Modal.hideModal('winner-modal')}
+          onClick={() => Modal.hideModal(winnerModal)}
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
         >
           Close
@@ -167,7 +167,7 @@ export function NewGameModalContent({
         <div className="flex flex-col items-start border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
           <div className="relative group w-full p-6 border-b border-gray-200 dark:border-gray-600">
             <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-              Share this link to your friend to start playing
+              Share this link with your opponent to start the game.
             </p>
             <p
               className="text-sm text-blue-600 underline cursor-pointer truncate hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 focus:ring-0"
@@ -372,13 +372,14 @@ const InfiniteScroll = ({
 
 export function ChessBoard() {
   const params = useParams()
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
   const [gameId, setGameId] = useState<string>(params.id || '')
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
   const [skipSync, setSkipSync] = useState(false)
   const [winnerData, setWinnerData] = useState({})
   const [game, setGame] = useState<ChessLib | null>(null)
   const [chessContract, setChessContract] = useState<ChessContract | null>(null)
+  const [balance, setBalance] = useState<number>(0)
 
   const computer = useContext(ComputerContext)
   const fetchChessContract = async (): Promise<ChessContract> => {
@@ -393,7 +394,7 @@ export function ChessBoard() {
       return
     }
     setWinnerData({ winnerPubKey: winnerPubKey, userPubKey: computer.getPublicKey() })
-    Modal.showModal('winner-modal')
+    Modal.showModal(winnerModal)
   }, [game, chessContract, computer])
 
   const syncChessContract = useCallback(async () => {
@@ -407,6 +408,8 @@ export function ChessBoard() {
         }
         setChessContract(chessContract)
         setGame(new ChessLib(chessContract.fen))
+        const walletBalance = await computer.getBalance()
+        setBalance(walletBalance.balance)
         await setWinner()
       }
     } catch (error) {
@@ -416,12 +419,21 @@ export function ChessBoard() {
 
   useEffect(() => {
     const fetch = async () => {
-      if (gameId) {
-        const cc = await fetchChessContract()
-        setChessContract(cc)
-        setGame(new ChessLib(cc.fen))
-        setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
-        await setWinner()
+      showLoader(true)
+      try {
+        if (gameId) {
+          const cc = await fetchChessContract()
+          setChessContract(cc)
+          setGame(new ChessLib(cc.fen))
+          setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
+          const walletBalance = await computer.getBalance()
+          setBalance(walletBalance.balance)
+          await setWinner()
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        showLoader(false)
       }
     }
     fetch()
@@ -552,13 +564,45 @@ export function ChessBoard() {
         {/* Moves List Column */}
         <div className="pt-4 order-2 md:order-2 lg:order-3 md:col-span-1">
           {chessContract ? (
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-              <div className="flex justify-center">
-                <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">Move History</h3>
-              </div>
+            <>
+              {game && (
+                <div className="col-span-1 space-y-4 text-gray-900 dark:text-gray-200 mb-4">
+                  <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                    <dl className="divide-y divide-gray-200 dark:divide-gray-700">
+                      <div className="flex flex-col pb-3">
+                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                          Current Player
+                        </dt>
+                        <dd className="text-lg font-semibold">{currentPlayer(game.fen())}</dd>
+                      </div>
+                      <div className="flex flex-col pt-3 pb-3">
+                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                          State
+                        </dt>
+                        <dd className="text-lg font-semibold">{getGameState(game)}</dd>
+                      </div>
+                      <div className="flex flex-col pt-3">
+                        <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+                          Balance
+                        </dt>
+                        <dd className="text-lg font-semibold">
+                          {balance / 1e8} {computer.getChain()}
+                        </dd>
+                      </div>
+                    </dl>
+                  </div>
+                </div>
+              )}
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                <div className="flex justify-center">
+                  <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
+                    Move History
+                  </h3>
+                </div>
 
-              <ListLayout listOfMoves={chessContract.sans} />
-            </div>
+                <ListLayout listOfMoves={chessContract.sans} />
+              </div>
+            </>
           ) : (
             <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
               <div className="flex justify-center">
@@ -584,7 +628,7 @@ export function ChessBoard() {
         title={'Game Over'}
         content={WinnerModal}
         contentData={winnerData}
-        id={'winner-modal'}
+        id={winnerModal}
       />
 
       <NewGameModal />
