@@ -40,8 +40,6 @@ cd monorepo
 # Install the dependencies
 npm install
 
-# Build the docker image
-npm run build:node
 ```
 
 </font>
