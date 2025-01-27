@@ -8,9 +8,7 @@ export const newGameModal = 'new-game-modal'
 
 function NewGameModalContent({
   nameW,
-  setName,
   nameB,
-  setNameB,
   publicKeyB,
   setSecondPlayerPublicKey,
   amount,
@@ -19,7 +17,20 @@ function NewGameModalContent({
   setCopied,
   serializedTx,
   setSerializedTx,
-}: any) {
+}: {
+  nameW: string
+  setName: React.Dispatch<React.SetStateAction<string>>
+  nameB: string
+  setNameB: React.Dispatch<React.SetStateAction<string>>
+  publicKeyB: string
+  setSecondPlayerPublicKey: React.Dispatch<React.SetStateAction<string>>
+  amount: string
+  setAmount: React.Dispatch<React.SetStateAction<string>>
+  copied: boolean
+  setCopied: React.Dispatch<React.SetStateAction<boolean>>
+  serializedTx: string
+  setSerializedTx: React.Dispatch<React.SetStateAction<string>>
+}) {
   const computerW = useContext(ComputerContext)
 
   const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
@@ -70,7 +81,7 @@ function NewGameModalContent({
 
   return (
     <>
-      {!!serializedTx ? (
+      {serializedTx ? (
         <div className="flex flex-col items-start border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
           <div className="relative group w-full p-6 border-b border-gray-200 dark:border-gray-600">
             <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">

@@ -19,10 +19,10 @@ export function StartGameModalContent({
   serialized: string
   game: ChessContract
   computer: Computer
-  copied: any
-  setCopied: any
-  link: any
-  setLink: any
+  copied: boolean
+  setCopied: React.Dispatch<React.SetStateAction<boolean>>
+  link: string
+  setLink: React.Dispatch<React.SetStateAction<string>>
 }) {
   const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
 
@@ -60,7 +60,7 @@ export function StartGameModalContent({
 
   return (
     <>
-      {!!link ? (
+      {link ? (
         <div className="flex flex-col items-start border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
           <div className="relative group w-full p-6 border-b border-gray-200 dark:border-gray-600">
             <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
@@ -171,7 +171,7 @@ export function StartGameModal() {
       }
     }
     fetch()
-  }, [serialized])
+  }, [serialized, computer, showLoader, showSnackBar])
 
   return (
     <Modal.Component
