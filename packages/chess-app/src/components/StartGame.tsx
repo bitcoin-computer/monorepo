@@ -67,13 +67,13 @@ export function StartGameModalContent({
               You can find your game URL at the link below. Please share this URL with the white
               player.
             </p>
-            <p
+            <a
+              href={link}
               className="text-sm text-blue-600 underline cursor-pointer truncate hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 focus:ring-0"
-              onClick={handleCopy}
               title={link}
             >
-              {`${link.slice(0, 50)}...`}
-            </p>
+              {`${link.slice(0, 40)}...`}
+            </a>
           </div>
 
           <div className="p-6">

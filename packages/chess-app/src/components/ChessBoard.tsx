@@ -193,7 +193,6 @@ export function ChessBoard() {
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
   const [gameId, setGameId] = useState<string>(params.id || '')
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
-  const [skipSync, setSkipSync] = useState(false)
   const [winnerData, setWinnerData] = useState({})
   const [game, setGame] = useState<ChessLib | null>(null)
   const [chessContract, setChessContract] = useState<ChessContract | null>(null)
@@ -215,25 +214,25 @@ export function ChessBoard() {
     Modal.showModal(winnerModal)
   }, [game, chessContract, computer])
 
+  useEffect(() => {
+    if (game && chessContract) {
+      setWinner()
+    }
+  }, [chessContract])
+
   const syncChessContract = useCallback(async () => {
     try {
       if (gameId) {
         const chessContract = await fetchChessContract()
-        // setSans(chessContract.sans)
-        if (skipSync) {
-          setSkipSync(false)
-          return
-        }
         setChessContract(chessContract)
         setGame(new ChessLib(chessContract.fen))
         const walletBalance = await computer.getBalance()
         setBalance(walletBalance.balance)
-        await setWinner()
       }
     } catch (error) {
       console.error('Error fetching contract:', error)
     }
-  }, [setWinner, skipSync])
+  }, [gameId])
 
   useEffect(() => {
     const fetch = async () => {
@@ -289,7 +288,6 @@ export function ChessBoard() {
   const handleError = (error: unknown) => {
     if (error instanceof Error) {
       showSnackBar(error.message, false)
-      setSkipSync(false)
       syncChessContract()
     }
   }
@@ -298,7 +296,6 @@ export function ChessBoard() {
   const onDropSync = (from: Square, to: Square) => {
     try {
       const chessGameInstance = new ChessLib(chessContract?.fen)
-      setSkipSync(true)
       chessGameInstance.move({
         from,
         to,
