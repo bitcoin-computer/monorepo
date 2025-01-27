@@ -31,7 +31,7 @@ services:
     image: bitcoin-computer-node
     env_file: .env
     restart: always
-    build: .
+    build: ../../
     healthcheck:
       test:
         [
