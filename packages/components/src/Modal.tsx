@@ -12,8 +12,11 @@ const showModal = (id: string) => {
   get(id).show()
 }
 
-const hideModal = (id: string) => {
+const hideModal = (id: string, onClickClose?: () => void) => {
   get(id).hide()
+  if (onClickClose) {
+    onClickClose()
+  }
 }
 
 const toggleModal = (id: string) => {
@@ -38,12 +41,25 @@ const ToggleButton = ({ id, text }: any) => (
   </button>
 )
 
-const Component = ({ title, content, contentData, id }: any) => (
+const Component = ({
+  title,
+  content,
+  contentData,
+  id,
+  onClickClose,
+}: {
+  title: string
+  content: any
+  id: string
+  contentData?: any
+  onClickClose?: () => void
+}) => (
   <div
     id={id}
     tabIndex={-1}
     aria-hidden="true"
-    className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
+    style={{ zIndex: 45 }}
+    className="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full"
   >
     <div className="relative p-4 w-full max-w-sm max-h-full">
       <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
@@ -54,7 +70,7 @@ const Component = ({ title, content, contentData, id }: any) => (
             className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
             data-modal-hide={id}
             data-modal-target={id}
-            onClick={() => hideModal(id)}
+            onClick={() => hideModal(id, onClickClose)}
           >
             <svg
               className="w-3 h-3"
