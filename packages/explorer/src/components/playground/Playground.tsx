@@ -127,14 +127,20 @@ const Tabs = () => (
 
 const Playground = () => {
   const [computer] = useState<Computer>(Auth.getComputer())
-  const [functionResult, setFunctionResult] = useState<any>({})
+  const [functionResult, setFunctionResult] = useState<string | { [key: string]: string }>({})
   const [exampleCode, setExampleCode] = useState<string>('')
   const [exampleExpression, setExampleExpresion] = useState<string>('')
   const [exampleModule, setExampleModule] = useState<string>('')
-  const [exampleVars, setExampleVars] = useState<any[]>([])
+  const [exampleVars, setExampleVars] = useState<
+    {
+      name: string
+      type: string
+      value: string
+    }[]
+  >([])
   const [modalTitle, setModalTitle] = useState('')
 
-  const setShow: any = (flag: boolean) => {
+  const setShow = (flag: boolean): void => {
     if (flag) {
       Modal.get(modalId).show()
     } else {

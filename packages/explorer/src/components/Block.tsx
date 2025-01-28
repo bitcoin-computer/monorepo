@@ -8,7 +8,15 @@ function Block() {
   const params = useParams()
   const computer = useContext(ComputerContext)
   const [block] = useState(params.block)
-  const [blockData, setBlockData] = useState<any | null>(null)
+  const [blockData, setBlockData] = useState<{
+    hash: string
+    time: string
+    size: string
+    weight: string
+    previousblockhash: string
+    nextblockhash: string
+    tx: { txid: string }[]
+  } | null>(null)
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
@@ -118,7 +126,7 @@ function Block() {
                 </tr>
               </thead>
               <tbody>
-                {blockData?.tx?.map((txn: any) => (
+                {blockData?.tx?.map((txn: { txid: string }) => (
                   <tr
                     key={txn.txid}
                     className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"

@@ -8,6 +8,7 @@ function Module() {
   const computer = useContext(ComputerContext)
   const params = useParams()
   const [modSpec] = useState(params.rev)
+  // eslint-disable-next-line
   const [module, setModule] = useState<any>({})
   const { showSnackBar } = UtilsContext.useUtilsComponents()
 

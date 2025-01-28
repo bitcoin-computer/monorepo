@@ -270,7 +270,7 @@ const BuyNftComponent = ({
             showLoader(false)
           } catch (error) {
             showLoader(false)
-            showSnackBar('Failed to buy nft', false)
+            showSnackBar(error instanceof Error ? error.message : 'Failed to buy nft', false)
           }
         }}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 ml-auto flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
