@@ -91,6 +91,7 @@ export function ChessBoard() {
   const [winnerData, setWinnerData] = useState({})
   const [game, setGame] = useState<ChessLib | null>(null)
   const [chessContract, setChessContract] = useState<ChessContract | null>(null)
+  const [chessContractId, setChessContractId] = useState<string>('')
   const [balance, setBalance] = useState<number>(0)
 
   const computer = useContext(ComputerContext)
@@ -130,6 +131,7 @@ export function ChessBoard() {
         if (gameId) {
           const cc = await fetchChessContract()
           setChessContract(cc)
+          setChessContractId(cc._id)
           setGame(new ChessLib(cc.fen))
           setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
           const walletBalance = await computer.getBalance()
@@ -147,9 +149,9 @@ export function ChessBoard() {
   // Update the chess state by polling
   useEffect(() => {
     let close: () => void // Declare a variable to hold the subscription
-    if (gameId) {
+    if (chessContractId) {
       const subscribeToComputer = async () => {
-        close = await computer.subscribe(gameId, (rev) => {
+        close = await computer.subscribe(chessContractId, (rev) => {
           if (rev) syncChessContract()
         })
       }
@@ -162,7 +164,7 @@ export function ChessBoard() {
         close()
       }
     }
-  }, [gameId])
+  }, [chessContractId])
 
   const publishMove = async (from: Square, to: Square) => {
     if (!chessContract) throw new Error('Chess contract is not defined.')
