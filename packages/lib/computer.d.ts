@@ -512,6 +512,11 @@ declare class Computer {
   getLatestRev(id: string): Promise<string>
   idsToRevs(ids: string[]): Promise<string[]>
   getMinimumFees(): number
+  subscribe(
+    id: string,
+    onMessage: (rev: string) => void,
+    onError?: (error: Event) => void,
+  ): Promise<() => void>
 }
 
 export { Computer, Contract, Mock, Transaction }
