@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { IoMdRemoveCircleOutline } from 'react-icons/io'
 import { Computer } from '@bitcoin-computer/lib'
 import { UtilsContext } from '@bitcoin-computer/components'
@@ -99,6 +99,11 @@ const ExecuteExpression = (props: {
     }
   }
 
+  const isCallDisabled = useMemo(
+    () => expressionArgumentsList.some((arg) => !arg.name.trim()),
+    [expressionArgumentsList],
+  )
+
   return (
     <>
       <textarea
@@ -165,8 +170,10 @@ const ExecuteExpression = (props: {
 
       <button
         type="button"
-        onClick={handleExpressionCall}
-        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+        disabled={isCallDisabled}
+        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:ring-4 focus:outline-none
+          ${isCallDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'}
+        `}
       >
         Execute Expression
       </button>
