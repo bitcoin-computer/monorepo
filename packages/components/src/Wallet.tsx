@@ -1,5 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { HiRefresh } from 'react-icons/hi'
+import { FiCopy, FiCheck } from 'react-icons/fi'
 import { Computer } from '@bitcoin-computer/lib'
 import { Auth } from './Auth'
 import { Drawer } from './Drawer'
@@ -76,23 +77,69 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
   )
 }
 
-const Address = ({ computer }: any) => (
-  <div className="mb-4">
-    <h6 className="text-lg font-bold dark:text-white">Address</h6>
-    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
-      {computer.getAddress()}
-    </p>
-  </div>
-)
+const Address = ({ computer }: any) => {
+  const [copied, setCopied] = useState(false)
 
-const PublicKey = ({ computer }: any) => (
-  <div className="mb-4">
-    <h6 className="text-lg font-bold dark:text-white">Public Key</h6>
-    <p className="mb-4 text-xs font-mono text-gray-500 dark:text-gray-400 break-words">
-      {computer.getPublicKey()}
-    </p>
-  </div>
-)
+  const handleCopy = () => {
+    navigator.clipboard.writeText(computer.getAddress())
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000) // Reset icon color after 2 seconds
+  }
+
+  return (
+    <div className="mb-4">
+      <div className="flex items-center">
+        <h6 className="text-lg font-bold dark:text-white">Address</h6>
+        <button
+          onClick={handleCopy}
+          className={`ml-1 p-1 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white`}
+          aria-label="Copy address"
+        >
+          {copied ? (
+            <FiCheck className="w-4 h-4 text-green-500 dark:text-green-400" />
+          ) : (
+            <FiCopy className="w-4 h-4" />
+          )}
+        </button>
+      </div>
+      <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
+        {computer.getAddress()}
+      </p>
+    </div>
+  )
+}
+
+const PublicKey = ({ computer }: any) => {
+  const [copied, setCopied] = useState(false)
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(computer.getPublicKey())
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000) // Reset icon color after 2 seconds
+  }
+
+  return (
+    <div className="mb-4">
+      <div className="flex items-center">
+        <h6 className="text-lg font-bold dark:text-white">Public Key</h6>
+        <button
+          onClick={handleCopy}
+          className={`ml-1 p-1 text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white`}
+          aria-label="Copy public key"
+        >
+          {copied ? (
+            <FiCheck className="w-4 h-4 text-green-500 dark:text-green-400" />
+          ) : (
+            <FiCopy className="w-4 h-4" />
+          )}
+        </button>
+      </div>
+      <p className="mb-4 text-xs font-mono text-gray-500 dark:text-gray-400 break-words">
+        {computer.getPublicKey()}
+      </p>
+    </div>
+  )
+}
 
 const Mnemonic = ({ computer }: any) => {
   const [mnemonicShown, setMnemonicShown] = useState(false)

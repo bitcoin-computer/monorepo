@@ -1,6 +1,6 @@
 export function Loader() {
   return (
-    <div className="grid place-items-center h-screen w-full top-0 left-0 fixed">
+    <div className="grid place-items-center h-screen w-full top-0 left-0 fixed z-50">
       <svg
         aria-hidden="true"
         className="mr-2 w-12 h-12 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"

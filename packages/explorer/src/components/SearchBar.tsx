@@ -16,7 +16,7 @@ export function SearchBar() {
         try {
           await computer.load(searchInput)
           navigate(`/modules/${searchInput}`)
-        } catch (error) {
+        } catch {
           navigate(`/objects/${searchInput}`)
         }
       } else if (isValidHexadecimalPublicKey(searchInput))

@@ -2,7 +2,17 @@ import { Dropdown, initFlowbite } from 'flowbite'
 import type { DropdownOptions, DropdownInterface, InstanceOptions } from 'flowbite'
 import { useEffect, useState } from 'react'
 
-export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, selectedType }: any) => {
+export const TypeSelectionDropdown = ({
+  id,
+  onSelectMethod,
+  dropdownList,
+  selectedType,
+}: {
+  id: string
+  onSelectMethod: (option: string) => void
+  dropdownList: string[]
+  selectedType: string
+}) => {
   const [dropDown, setDropdown] = useState<DropdownInterface>()
   const [type, setType] = useState(selectedType || 'Type')
   const [dropdownSelectionList] = useState(dropdownList)

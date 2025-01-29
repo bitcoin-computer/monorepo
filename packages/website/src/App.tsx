@@ -1,20 +1,20 @@
 import './App.css'
 import Grid from '@mui/material/Grid'
 import Box from '@mui/material/Box'
-// @ts-ignore
+// @ts-expect-error importing svg
 import Telegram from './social/telegram.svg?react'
-// @ts-ignore
+// @ts-expect-error importing svg
 import YouTube from './social/youtube.svg?react'
-// @ts-ignore
+// @ts-expect-error importing svg
 import GitHub from './social/github.svg?react'
-// @ts-ignore
+// @ts-expect-error importing svg
 import Twitter from './social/twitter.svg?react'
 import Features from './Features'
 import Pricing from './Pricing'
 import Examples from './Examples'
 import About from './About'
 import Introduction from './Introduction'
-// @ts-ignore
+// @ts-expect-error importing svg
 import ArrowLink from './social/arrow.svg?react'
 
 function App() {
