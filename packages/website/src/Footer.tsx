@@ -1,5 +1,5 @@
 import Box from '@mui/material/Box'
-// @ts-ignore
+// @ts-expect-error importing svg
 import FooterSvg from './social/footer.svg?react'
 import './Footer.css'
 

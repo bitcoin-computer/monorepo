@@ -87,7 +87,7 @@ export const tokenVars = (pubKey: string) => [
   {
     name: 'supply',
     type: 'number',
-    value: 100,
+    value: '100',
   },
   {
     name: 'to',

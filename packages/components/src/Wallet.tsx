@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { HiRefresh, HiOutlineClipboardCopy } from 'react-icons/hi'
+import { HiRefresh } from 'react-icons/hi'
 import { FiCopy, FiCheck } from 'react-icons/fi'
 import { Computer } from '@bitcoin-computer/lib'
 import { Auth } from './Auth'

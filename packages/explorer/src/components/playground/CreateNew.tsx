@@ -14,7 +14,8 @@ interface Argument {
 
 const CreateNew = (props: {
   computer: Computer
-  setShow: Dispatch<SetStateAction<boolean>>
+  setShow: (flag: boolean) => void
+  // eslint-disable-next-line
   setFunctionResult: Dispatch<SetStateAction<any>>
   setModalTitle: Dispatch<SetStateAction<string>>
   exampleCode: string
@@ -112,6 +113,7 @@ const CreateNew = (props: {
         const { tx } = await computer.encode(encodeObject)
         const txId = await computer.broadcast(tx)
         sleep(500)
+        // eslint-disable-next-line
         const { res } = (await computer.sync(txId)) as any
         setFunctionResult({ _rev: res._rev, type: 'objects' })
         setModalTitle('Success!')
@@ -121,7 +123,7 @@ const CreateNew = (props: {
         setModalTitle('Error!')
         setShow(true)
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       setFunctionResult(getErrorMessage(error))
       setModalTitle('Error!')
       setShow(true)
@@ -139,6 +141,7 @@ const CreateNew = (props: {
         placeholder="Enter your JS class and code here"
         rows={16}
         className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" // Added font-mono for monospaced font
+        // eslint-disable-next-line
         style={{ tabSize: 2, MozTabSize: 2, OTabSize: 2, WebkitTabSize: 2 } as any} // Set tab size to 2 spaces
         spellCheck="false" // Disable spell check
         autoCapitalize="none" // Disable auto capitalization

@@ -111,7 +111,15 @@ export interface ErrorResponse {
   message?: string
 }
 
-export const getErrorMessage = (error: ErrorResponse): string => {
+const isErrorResponse = (error: unknown): error is ErrorResponse => {
+  return typeof error === 'object'
+}
+
+export const getErrorMessage = (error: ErrorResponse | unknown): string => {
+  if (!isErrorResponse(error)) {
+    return 'Error occurred'
+  }
+
   if (
     error?.response?.data?.error ===
     'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)'
@@ -123,7 +131,7 @@ export const getErrorMessage = (error: ErrorResponse): string => {
     return error?.response?.data?.error
   }
 
-  return error.message ? error.message : 'Error occurred'
+  return error instanceof Error ? error.message : 'Error occurred'
 }
 
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
