@@ -78,7 +78,7 @@ function MetaData({ smartObject, prev, next }: any) {
       ${
         prev
           ? 'bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700'
-          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
       }`}
             aria-disabled={!prev}
           >
@@ -90,7 +90,7 @@ function MetaData({ smartObject, prev, next }: any) {
       ${
         next
           ? 'bg-white text-black border-gray-300 hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700'
-          : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+          : 'bg-gray-200 text-gray-400 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
       }`}
             aria-disabled={!next}
           >
