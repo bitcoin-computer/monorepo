@@ -2,14 +2,16 @@ import { useContext, useState } from 'react'
 import { ComputerContext, Modal } from '@bitcoin-computer/components'
 import { Link } from 'react-router-dom'
 import { Counter } from '../contracts/counter'
+import { VITE_COUNTER_MOD_SPEC } from '../constants/modSpecs'
 
 function SuccessContent(rev: string) {
   return (
     <>
-      <div className="p-4 md:p-5 dark:text-gray-400">
+      <div id="mint-success" className="p-4 md:p-5 dark:text-gray-400">
         <div>
           You created a{' '}
           <Link
+            id="counter-link"
             to={`/objects/${rev}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             onClick={() => {
@@ -65,8 +67,14 @@ export default function Mint() {
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
-      console.log(Counter.toString())
-      const counter = await computer.new(Counter)
+      const { tx, effect } = await computer.encode({
+        exp: `new Counter()`,
+        mod: VITE_COUNTER_MOD_SPEC,
+      })
+      await computer.broadcast(tx)
+      console.log(tx, effect, effect.res, effect.res)
+
+      const counter = effect.res as unknown as Counter
       setSuccessRev(counter._id)
       Modal.showModal('success-modal')
     } catch (err) {

@@ -1,1 +1,1 @@
-export declare function Card({ content }: any): import("react/jsx-runtime").JSX.Element;
+export declare function Card({ content, id }: any): import("react/jsx-runtime").JSX.Element;
