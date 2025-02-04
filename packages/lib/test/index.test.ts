@@ -19,7 +19,7 @@ const _ = chaiMatchPattern.getLodashModule()
 
 const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa8bc54db8fed'
 const randomRev = '0000000000000000000000000000000000000000000000000000000000000000:0'
-const mockedRev = `mock:${randomRev}`
+const mockedRev = `mock-${randomRev}`
 const symbol = ''
 
 const meta = {
