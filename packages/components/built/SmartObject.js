@@ -56,11 +56,11 @@ function Copy(_a) {
     return (_jsx("button", { onClick: function () { return navigator.clipboard.writeText(text); }, className: "cursor-pointer pl-2 text-gray-600 hover:text-gray-800 focus:outline-none", "aria-label": "Copy Transaction ID", children: _jsx(HiOutlineClipboard, {}) }));
 }
 function ObjectValueCard(_a) {
-    var content = _a.content;
+    var content = _a.content, id = _a.id;
     var isRev = /([0-9a-fA-F]{64}:[0-9]+)/g;
     var revLink = function (rev, i) { return (_jsx(Link, { to: "/objects/".concat(rev), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", children: rev }, i)); };
     var formattedContent = reactStringReplace(content, isRev, revLink);
-    return _jsx(Card, { content: formattedContent });
+    return _jsx(Card, { content: formattedContent, id: "property-".concat(id, "-value") });
 }
 var SmartObjectValues = function (_a) {
     var smartObject = _a.smartObject;
@@ -73,7 +73,7 @@ var SmartObjectValues = function (_a) {
         })
             .map(function (_a, i) {
             var key = _a[0], value = _a[1];
-            return (_jsxs("div", { children: [_jsx("h3", { className: "mt-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(key) }), _jsx(ObjectValueCard, { content: toObject(value || '') })] }, i));
+            return (_jsxs("div", { children: [_jsx("h3", { className: "mt-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(key) }), _jsx(ObjectValueCard, { id: key, content: toObject(value || '') })] }, i));
         }) }));
 };
 function MetaData(_a) {

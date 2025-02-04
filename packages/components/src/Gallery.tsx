@@ -68,7 +68,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
           fill="#1C64F2"
         />
       </svg>
-      &nbsp;Loading...
+      <span className="loading-smart-contract-span">&nbsp;Loading...</span>
     </>
   )
 

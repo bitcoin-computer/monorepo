@@ -4,7 +4,11 @@ export class Counter extends Contract {
     super({ count: 0 })
   }
 
-  inc() {
-    this.count += 1
+  inc(num: number) {
+    this.count += num
+  }
+
+  transfer(publicKey: string) {
+    this._owners = [publicKey]
   }
 }
