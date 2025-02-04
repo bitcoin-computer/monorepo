@@ -1,15 +1,17 @@
-import { useContext, useState } from "react"
-import { ComputerContext, Modal, UtilsContext } from "@bitcoin-computer/components"
-import { Computer } from "@bitcoin-computer/lib"
-import { VITE_CHESS_GAME_MOD_SPEC } from "../constants/modSpecs"
-import { getHash } from "../services/secret.service"
-import { ChessContractHelper } from "../../../chess-contracts/"
+import { useContext, useState } from 'react'
+import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import { Computer } from '@bitcoin-computer/lib'
+import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import { getHash } from '../services/secret.service'
+import { ChessContractHelper } from '../../../chess-contracts/'
 
 function ErrorContent(msg: string) {
   return (
     <>
       <div className="p-4 md:p-5">
-        Something went wrong.<br />{msg}
+        Something went wrong.
+        <br />
+        {msg}
       </div>
       <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
         <button
@@ -30,9 +32,11 @@ function MintForm(props: {
   setErrorMsg: React.Dispatch<React.SetStateAction<string>>
 }) {
   const { computer: computerW, setErrorMsg } = props
-  const [nameW, setName] = useState("White")
-  const [nameB, setNameB] = useState("Black")
-  const [publicKeyB, setSecondPlayerPublicKey] = useState("03fce46d776c3e2b606aae73fcffdc8fd3a0f0c6bf1088a321f7f3c4e824623a57")
+  const [nameW, setName] = useState('White')
+  const [nameB, setNameB] = useState('Black')
+  const [publicKeyB, setSecondPlayerPublicKey] = useState(
+    '03fce46d776c3e2b606aae73fcffdc8fd3a0f0c6bf1088a321f7f3c4e824623a57',
+  )
   const [amount, setAmount] = useState(`0.1`)
   const [serializedTx, setSerializedTx] = useState('')
   const [copied, setCopied] = useState(false)
@@ -48,7 +52,7 @@ function MintForm(props: {
       if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
 
       const publicKeyW = computerW.getPublicKey()
-      const chessContractHelper = new ChessContractHelper({ 
+      const chessContractHelper = new ChessContractHelper({
         computer: computerW,
         amount: parseFloat(amount) * 1e8,
         nameW,
@@ -57,7 +61,7 @@ function MintForm(props: {
         publicKeyB,
         secretHashW,
         secretHashB,
-        mod: VITE_CHESS_GAME_MOD_SPEC
+        mod: VITE_CHESS_GAME_MOD_SPEC,
       })
       const tx = await chessContractHelper.makeTx()
       setSerializedTx(`http://localhost:1032/start/${tx.serialize()}`)
@@ -67,15 +71,17 @@ function MintForm(props: {
       console.log('Err', err)
       showLoader(false)
       if (err instanceof Error) {
-        if(err.message.startsWith('Failed to load module')) setErrorMsg("Run 'npm run deploy' to deploy the smart contracts.")
+        if (err.message.startsWith('Failed to load module'))
+          setErrorMsg("Run 'npm run deploy' to deploy the smart contracts.")
         else setErrorMsg(err.message)
-        Modal.showModal("error-modal")
+        Modal.showModal('error-modal')
       }
     }
   }
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(serializedTx)
+    navigator.clipboard
+      .writeText(serializedTx)
       .then(() => setCopied(true))
       .catch(() => setCopied(false))
 
@@ -157,7 +163,7 @@ function MintForm(props: {
           className="mt-2 px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg shadow hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
           onClick={handleCopy}
         >
-          {copied ? "Copied!" : "Copy Link"}
+          {copied ? 'Copied!' : 'Copy Link'}
         </button>
       </div>
     </>
@@ -166,7 +172,7 @@ function MintForm(props: {
 
 export default function CreateGame() {
   const computer = useContext(ComputerContext)
-  const [errorMsg, setErrorMsg] = useState("")
+  const [errorMsg, setErrorMsg] = useState('')
 
   return (
     <>
