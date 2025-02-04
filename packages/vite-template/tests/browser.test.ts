@@ -16,6 +16,13 @@ describe('Bitcoin Computer Tests', () => {
     return null
   }
 
+  async function waitForSelectorAndClick(page: Page, selector: string, clickCount: number = 1) {
+    await page.waitForSelector(selector, { visible: true, hidden: false })
+    const selectorElement = await page.$(selector)
+    await selectorElement!.click({ clickCount })
+    return selectorElement
+  }
+
   function delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms))
   }
@@ -37,7 +44,7 @@ describe('Bitcoin Computer Tests', () => {
     expect(title).toBe('Vite + React + TS')
   })
 
-  it('should we an h2 with text "All Counters"', async () => {
+  it('should display h2 with text "All Counters"', async () => {
     await page.waitForSelector('h2', { visible: true })
     const h2Text = await page.$eval('h2', (el) => el.textContent)
     expect(h2Text).toBe('All Counters')
@@ -50,82 +57,52 @@ describe('Bitcoin Computer Tests', () => {
     await signInButton!.click()
 
     await page.waitForSelector('button[type="submit"]', { visible: true })
-
     const loginButton = await findButtonByText(page, 'Log In')
     await loginButton!.click()
 
-    await page.waitForSelector('button[data-drawer-target="wallet-drawer"]', { visible: true })
-
-    const walletButton = await findButtonByText(page, 'Wallet')
-    await walletButton!.click()
+    await waitForSelectorAndClick(page, 'button[data-drawer-target="wallet-drawer"]')
     await delay(1000)
   })
 
   it('should click the "Wallet" button, and fund', async () => {
-    await page.waitForSelector('#fund-wallet', { visible: true })
-    const fundButton = await findButtonByText(page, 'Fund')
-    await fundButton!.click()
+    await waitForSelectorAndClick(page, '#fund-wallet')
 
-    await page.waitForSelector('button[data-drawer-hide="wallet-drawer"]', { visible: true })
+    await waitForSelectorAndClick(page, 'button[data-drawer-hide="wallet-drawer"]')
 
-    const closeButton = await page.$('button[data-drawer-hide="wallet-drawer"]')
-    await closeButton!.click()
     await delay(1000)
   })
 
   it('should mint a counter and navigate to counter page', async () => {
-    await page.waitForSelector('#mint-button', { visible: true, hidden: false })
-    const mintButton = await page.$('#mint-button')
-    await mintButton!.click()
+    await waitForSelectorAndClick(page, '#mint-button')
 
-    await page.waitForSelector('#mint-counter-button', { visible: true, hidden: false })
-    const mintCounterButton = await await page.$('#mint-counter-button')
-    await mintCounterButton!.click()
+    await waitForSelectorAndClick(page, '#mint-counter-button')
 
-    await page.waitForSelector('#mint-success', { visible: true, hidden: false })
-    await page.waitForSelector('#counter-link', { visible: true, hidden: false })
-    const counterLink = await page.$('#counter-link')
-    await counterLink!.click()
+    await waitForSelectorAndClick(page, '#counter-link')
 
     await delay(1000)
   })
 
   it('should input 2, open dropdown, and select "number"', async () => {
-    await page.waitForSelector('#property-count-value', { visible: true, hidden: false })
-    await page.waitForSelector('#function-inc', { visible: true, hidden: false })
-    await page.waitForSelector('#inc-num', { visible: true, hidden: false })
-    const inputField = await page.$('#inc-num')
-    await inputField!.click({ clickCount: 3 })
+    const inputField = await waitForSelectorAndClick(page, '#inc-num', 3)
     await inputField!.type('2')
 
-    const dropdownButton = await page.$('#dropdownButtonincnum')
-    await dropdownButton!.click()
+    await waitForSelectorAndClick(page, '#dropdownButtonincnum')
 
     await page.waitForSelector('#dropdownMenuincnum', { visible: true })
-
     const numberOption = await page.evaluateHandle(() => {
       return [...document.querySelectorAll('#dropdownMenuincnum span')].find(
         (el) => el.textContent?.trim() === 'number',
       )
     })
-
     await numberOption!.click()
 
     await delay(1000)
   })
 
   it('should call the counter function and increment the counter by 2', async () => {
-    await page.waitForSelector('#inc-call-function-button', { visible: true, hidden: false })
-    const callFunctionButton = await page.$('#inc-call-function-button')
-    await callFunctionButton!.click()
+    await waitForSelectorAndClick(page, '#inc-call-function-button')
 
-    await page.waitForSelector('#smart-call-execution-success', { visible: true, hidden: false })
-    await page.waitForSelector('#smart-call-execution-counter-link', {
-      visible: true,
-      hidden: false,
-    })
-    const counterLink = await page.$('#smart-call-execution-counter-link')
-    await counterLink!.click()
+    await waitForSelectorAndClick(page, '#smart-call-execution-counter-link')
     await delay(1000)
 
     await page.waitForSelector('#property-count-value', { visible: true, hidden: false })
@@ -136,15 +113,10 @@ describe('Bitcoin Computer Tests', () => {
   })
 
   it('should successfully transfer the counter to a public key', async () => {
-    await page.waitForSelector('#function-transfer', { visible: true, hidden: false })
-    await page.waitForSelector('#transfer-publicKey', { visible: true, hidden: false })
-    const inputField = await page.$('#transfer-publicKey')
-    await inputField!.click({ clickCount: 3 })
+    const inputField = await waitForSelectorAndClick(page, '#transfer-publicKey', 3)
     await inputField!.type('0363f42382c95e5489b87c6b385df8711fd4908bbdc1820b33aab5d9f2b3a731b0')
 
-    await page.waitForSelector('#dropdownButtontransferpublicKey', { visible: true, hidden: false })
-    const dropdownButton = await page.$('#dropdownButtontransferpublicKey')
-    await dropdownButton!.click()
+    await waitForSelectorAndClick(page, '#dropdownButtontransferpublicKey')
 
     await page.waitForSelector('#dropdownMenutransferpublicKey', { visible: true })
     const stringOption = await page.evaluateHandle(() => {
@@ -152,12 +124,9 @@ describe('Bitcoin Computer Tests', () => {
         (el) => el.textContent?.trim() === 'string',
       )
     })
-
     await stringOption!.click()
 
-    await page.waitForSelector('#transfer-call-function-button', { visible: true, hidden: false })
-    const callFunctionButton = await page.$('#transfer-call-function-button')
-    await callFunctionButton!.click()
+    await waitForSelectorAndClick(page, '#transfer-call-function-button')
 
     await page.waitForSelector('#smart-call-execution-success', { visible: true, hidden: false })
     const successDiv = await page.$('#smart-call-execution-success')

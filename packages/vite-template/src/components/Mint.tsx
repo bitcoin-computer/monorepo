@@ -72,7 +72,6 @@ export default function Mint() {
         mod: VITE_COUNTER_MOD_SPEC,
       })
       await computer.broadcast(tx)
-      console.log(tx, effect, effect.res, effect.res)
 
       const counter = effect.res as unknown as Counter
       setSuccessRev(counter._id)
