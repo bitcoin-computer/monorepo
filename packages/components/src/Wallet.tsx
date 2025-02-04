@@ -66,6 +66,7 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
       </div>
       {computer.getNetwork() === 'regtest' && (
         <button
+          id="fund-wallet"
           type="button"
           onClick={fund}
           className="absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"

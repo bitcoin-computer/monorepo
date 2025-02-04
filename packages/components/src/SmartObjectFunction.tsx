@@ -94,7 +94,7 @@ export const SmartObjectFunction = ({
       await sleep(1000)
       const res = await computer.query({ ids: [smartObject._id] })
       setFunctionResult({ _rev: res[0] })
-      setModalTitle('Success!')
+      setModalTitle('Success')
       setShow(true)
     } catch (error: any) {
       setFunctionResult(getErrorMessage(error))
@@ -131,7 +131,7 @@ export const SmartObjectFunction = ({
         .map((key, fnIndex) => {
           const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key])
           return (
-            <div className="mt-6 mb-6" key={fnIndex}>
+            <div className="mt-6 mb-6" key={fnIndex} id={`function-${key}`}>
               <h3 className="my-2 text-xl font-bold dark:text-white">
                 {capitalizeFirstLetter(key)}
               </h3>
@@ -159,6 +159,7 @@ export const SmartObjectFunction = ({
                   </div>
                 ))}
                 <button
+                  id={`${key}-call-function-button`}
                   className="text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                   onClick={(evt) => handleSmartObjectMethod(evt, smartObject, key, paramList)}
                 >
