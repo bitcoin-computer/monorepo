@@ -297,6 +297,7 @@ declare class RestClient {
   getFormattedUtxos(address: string): Promise<_Unspent[]>
   getRawTxs(txIds: string[]): Promise<string[]>
   getTx(txId: string): Promise<_Transaction>
+  getAncestors(txId: string): Promise<string[]>
   query({ publicKey, limit, offset, order, ids, mod }: Partial<Query>): Promise<string[]>
   idsToRevs(outIds: string[]): Promise<string[]>
   revToId(rev: string): Promise<string>
