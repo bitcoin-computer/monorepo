@@ -22,7 +22,10 @@ cd monorepo
 npm install
 
 # install retype globally
-npm run global add retypeapp
+npm install retypeapp --global
+
+# update retype globally
+npm update retypeapp --global
 ```
 
 </font>
@@ -36,7 +39,7 @@ npm run global add retypeapp
 cd packages/docs
 
 # Start the app
-retype watch --verbose
+retype start
 ```
 
 </font>
