@@ -29,7 +29,7 @@ function Copy({ text }: { text: string }) {
   )
 }
 
-function ObjectValueCard({ content }: { content: string }) {
+function ObjectValueCard({ content, id }: { content: string; id?: string }) {
   const isRev = /([0-9a-fA-F]{64}:[0-9]+)/g
   const revLink = (rev: string, i: number) => (
     <Link
@@ -42,7 +42,7 @@ function ObjectValueCard({ content }: { content: string }) {
   )
   const formattedContent = reactStringReplace(content, isRev, revLink)
 
-  return <Card content={formattedContent} />
+  return <Card content={formattedContent} id={`property-${id}-value`} />
 }
 
 const SmartObjectValues = ({ smartObject }: any) => {
@@ -54,7 +54,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
         .map(([key, value], i) => (
           <div key={i}>
             <h3 className="mt-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
-            <ObjectValueCard content={toObject(value || '')} />
+            <ObjectValueCard id={key} content={toObject(value || '')} />
           </div>
         ))}
     </>

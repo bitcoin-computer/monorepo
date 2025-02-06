@@ -6,9 +6,10 @@ export function FunctionResultModalContent({ functionResult }: any) {
   if (functionResult && typeof functionResult === 'object' && !Array.isArray(functionResult))
     return (
       <>
-        <div className="p-4 md:p-5 dark:text-gray-400">
+        <div id="smart-call-execution-success" className="p-4 md:p-5 dark:text-gray-400">
           You created a&nbsp;
           <Link
+            id="smart-call-execution-counter-link"
             to={`/objects/${functionResult._rev}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             onClick={() => {
