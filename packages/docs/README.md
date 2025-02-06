@@ -39,7 +39,7 @@ npm update retypeapp --global
 cd packages/docs
 
 # Start the app
-retype watch --verbose
+retype start
 ```
 
 </font>
