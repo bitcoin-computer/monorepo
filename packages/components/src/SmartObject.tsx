@@ -6,7 +6,7 @@ import { capitalizeFirstLetter, toObject } from './common/utils'
 import { Card } from './Card'
 import { Modal } from './Modal'
 import { FunctionResultModalContent } from './common/SmartCallExecutionResult'
-import { SmartObjectFunction } from './SmartObjectFunction'
+import { SmartObjectFunctions } from './SmartObjectFunctions'
 import { ComputerContext } from './ComputerContext'
 
 const keywords = ['_id', '_rev', '_owners', '_root', '_amount']
@@ -285,7 +285,7 @@ function Component({ title }: { title?: string }) {
 
         <SmartObjectValues smartObject={smartObject} />
 
-        <SmartObjectFunction
+        <SmartObjectFunctions
           smartObject={smartObject}
           functionsExist={functionsExist}
           options={options}

@@ -46,7 +46,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { TypeSelectionDropdown } from './common/TypeSelectionDropdown';
 import { isValidRev, sleep } from './common/utils';
 import { UtilsContext } from './UtilsContext';
@@ -85,8 +85,13 @@ export var getValueForType = function (type, stringValue) {
     }
 };
 export var SmartObjectFunction = function (_a) {
-    var smartObject = _a.smartObject, functionsExist = _a.functionsExist, options = _a.options, setFunctionResult = _a.setFunctionResult, setShow = _a.setShow, setModalTitle = _a.setModalTitle;
-    var _b = useState({}), formState = _b[0], setFormState = _b[1];
+    var smartObject = _a.smartObject, functionsExist = _a.functionsExist, options = _a.options, setFunctionResult = _a.setFunctionResult, setShow = _a.setShow, setModalTitle = _a.setModalTitle, funcName = _a.funcName;
+    var paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[funcName]).filter(function (val) { return val; });
+    var _b = useState(Object.fromEntries(paramList.flatMap(function (key) { return [
+        ["".concat(funcName, "-").concat(key), ''],
+        ["".concat(funcName, "-").concat(key, "--types"), ''],
+    ]; }))), formState = _b[0], setFormState = _b[1];
+    console.log('testing: ', funcName, Object.keys(formState).length > 0 && Object.values(formState).every(function (value) { return value === ''; }), formState);
     var showLoader = UtilsContext.useUtilsComponents().showLoader;
     var computer = useContext(ComputerContext);
     var handleSmartObjectMethod = function (event, smartObj, fnName, params) { return __awaiter(void 0, void 0, void 0, function () {
@@ -163,16 +168,12 @@ export var SmartObjectFunction = function (_a) {
         setFormState(value);
     };
     var capitalizeFirstLetter = function (s) { return s.charAt(0).toUpperCase() + s.slice(1); };
+    var isCallDisabled = useMemo(function () {
+        return Object.keys(formState).length > 0 && Object.values(formState).some(function (value) { return value === ''; });
+    }, [formState]);
     if (!functionsExist)
         return _jsx(_Fragment, {});
-    return (_jsx(_Fragment, { children: Object.getOwnPropertyNames(Object.getPrototypeOf(smartObject))
-            .filter(function (key) {
-            return key !== 'constructor' && typeof Object.getPrototypeOf(smartObject)[key] === 'function';
-        })
-            .map(function (key, fnIndex) {
-            var paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[key]);
-            return (_jsxs("div", { className: "mt-6 mb-6", id: "function-".concat(key), children: [_jsx("h3", { className: "my-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(key) }), _jsxs("form", { id: "fn-index-".concat(fnIndex), children: [paramList.map(function (paramName, paramIndex) { return (_jsx("div", { className: "mb-4", children: _jsxs("div", { className: "flex items-center space-x-4", children: [_jsx("input", { type: "text", id: "".concat(key, "-").concat(paramName), value: formState["".concat(key, "-").concat(paramName)] || '', onChange: function (e) { return updateFormValue(e, "".concat(key, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: paramName, required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(key).concat(paramName), dropdownList: options, onSelectMethod: function (option) {
-                                                return updateTypes(option, "".concat(key, "-").concat(paramName));
-                                            } })] }) }, paramIndex)); }), _jsx("button", { id: "".concat(key, "-call-function-button"), className: "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700", onClick: function (evt) { return handleSmartObjectMethod(evt, smartObject, key, paramList); }, children: "Call Function" })] })] }, fnIndex));
-        }) }));
+    return (_jsx(_Fragment, { children: _jsxs("div", { className: "mt-6 mb-6", id: "function-".concat(funcName), children: [_jsx("h3", { className: "my-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(funcName) }), _jsxs("form", { children: [paramList.map(function (paramName, paramIndex) { return (_jsx("div", { className: "mb-4", children: _jsxs("div", { className: "flex items-center space-x-4", children: [_jsx("input", { type: "text", id: "".concat(funcName, "-").concat(paramName), value: formState["".concat(funcName, "-").concat(paramName)] || '', onChange: function (e) { return updateFormValue(e, "".concat(funcName, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: paramName, required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(funcName).concat(paramName), dropdownList: options, onSelectMethod: function (option) {
+                                            return updateTypes(option, "".concat(funcName, "-").concat(paramName));
+                                        } })] }) }, paramIndex)); }), _jsx("button", { id: "".concat(funcName, "-call-function-button"), disabled: isCallDisabled, className: "text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:ring-4 focus:outline-none\n              ".concat(isCallDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800', "\n            "), onClick: function (evt) { return handleSmartObjectMethod(evt, smartObject, funcName, paramList); }, children: "Call Function" })] })] }) }));
 };
