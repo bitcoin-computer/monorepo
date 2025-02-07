@@ -22,14 +22,14 @@ export const getFnParamNames = (fn: string) => {
   return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : []
 }
 
-export const getValueForType = (type: string, stringValue: string) => {
+const getValueForType = (type: string, stringValue: string) => {
   switch (type) {
     case 'number':
       return Number(stringValue)
     case 'string':
       return stringValue
     case 'boolean':
-      return true // make this dynamic
+      return stringValue === 'true'
     case 'undefined':
       return undefined
     case 'null':
@@ -40,6 +40,19 @@ export const getValueForType = (type: string, stringValue: string) => {
       return Number(stringValue)
   }
 }
+
+const getParamValuesForFunctionInvocation = (params: string[], fnName: string, formState: any) => params.map((param) => {
+    const key = `${fnName}-${param}`
+    const paramValue = getValueForType(formState[`${key}--types`], formState[key])
+
+    if (isValidRev(paramValue)) {
+      return param
+    }
+    if (typeof paramValue === 'string') {
+      return `'${paramValue}'`
+    }
+    return paramValue
+  })
 
 export const SmartObjectFunction = ({
   smartObject,
@@ -69,12 +82,6 @@ export const SmartObjectFunction = ({
       ]),
     ),
   )
-  console.log(
-    'testing: ',
-    funcName,
-    Object.keys(formState).length > 0 && Object.values(formState).every((value) => value === ''),
-    formState,
-  )
   const { showLoader } = UtilsContext.useUtilsComponents()
   const computer = useContext(ComputerContext)
 
@@ -89,6 +96,7 @@ export const SmartObjectFunction = ({
     try {
       const revMap: any = {}
 
+      // Create Rev Map to pass smart objects as params
       params.forEach((param) => {
         const key = `${fnName}-${param}`
         const paramValue = getValueForType(formState[`${key}--types`], formState[key])
@@ -98,18 +106,7 @@ export const SmartObjectFunction = ({
       })
 
       const { tx } = await computer.encode({
-        exp: `smartObject.${fnName}(${params.map((param) => {
-          const key = `${fnName}-${param}`
-          const paramValue = getValueForType(formState[`${key}--types`], formState[key])
-
-          if (isValidRev(paramValue)) {
-            return param
-          }
-          if (typeof paramValue === 'string') {
-            return `'${paramValue}'`
-          }
-          return paramValue
-        })})`,
+        exp: `smartObject.${fnName}(${getParamValuesForFunctionInvocation(params, fnName, formState)})`,
         env: { smartObject: smartObj._rev, ...revMap },
         fund: true,
         sign: true,
@@ -130,7 +127,7 @@ export const SmartObjectFunction = ({
     }
   }
 
-  const updateFormValue = (e: any, key: string) => {
+  const updateForm = (e: any, key: string) => {
     e.preventDefault()
     const value = { ...formState }
     value[key] = e.target.value
@@ -166,7 +163,7 @@ export const SmartObjectFunction = ({
                   type="text"
                   id={`${funcName}-${paramName}`}
                   value={formState[`${funcName}-${paramName}`] || ''}
-                  onChange={(e) => updateFormValue(e, `${funcName}-${paramName}`)}
+                  onChange={(e) => updateForm(e, `${funcName}-${paramName}`)}
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder={paramName}
                   required

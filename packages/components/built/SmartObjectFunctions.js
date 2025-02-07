@@ -8,7 +8,5 @@ export var SmartObjectFunctions = function (_a) {
             .filter(function (key) {
             return key !== 'constructor' && typeof Object.getPrototypeOf(smartObject)[key] === 'function';
         })
-            .map(function (key, fnIndex) {
-            return (_jsx("div", { children: _jsx(SmartObjectFunction, { funcName: key, smartObject: smartObject, functionsExist: functionsExist, options: options, setFunctionResult: setFunctionResult, setShow: setShow, setModalTitle: setModalTitle }) }, fnIndex));
-        }) }));
+            .map(function (key, fnIndex) { return (_jsx("div", { children: _jsx(SmartObjectFunction, { funcName: key, smartObject: smartObject, functionsExist: functionsExist, options: options, setFunctionResult: setFunctionResult, setShow: setShow, setModalTitle: setModalTitle }) }, fnIndex)); }) }));
 };

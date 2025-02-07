@@ -66,14 +66,14 @@ export var getFnParamNames = function (fn) {
     var match = fn.toString().match(/\(.*?\)/);
     return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : [];
 };
-export var getValueForType = function (type, stringValue) {
+var getValueForType = function (type, stringValue) {
     switch (type) {
         case 'number':
             return Number(stringValue);
         case 'string':
             return stringValue;
         case 'boolean':
-            return true; // make this dynamic
+            return stringValue === 'true';
         case 'undefined':
             return undefined;
         case 'null':
@@ -84,6 +84,19 @@ export var getValueForType = function (type, stringValue) {
             return Number(stringValue);
     }
 };
+var getParamValuesForFunctionInvocation = function (params, fnName, formState) {
+    return params.map(function (param) {
+        var key = "".concat(fnName, "-").concat(param);
+        var paramValue = getValueForType(formState["".concat(key, "--types")], formState[key]);
+        if (isValidRev(paramValue)) {
+            return param;
+        }
+        if (typeof paramValue === 'string') {
+            return "'".concat(paramValue, "'");
+        }
+        return paramValue;
+    });
+};
 export var SmartObjectFunction = function (_a) {
     var smartObject = _a.smartObject, functionsExist = _a.functionsExist, options = _a.options, setFunctionResult = _a.setFunctionResult, setShow = _a.setShow, setModalTitle = _a.setModalTitle, funcName = _a.funcName;
     var paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[funcName]).filter(function (val) { return val; });
@@ -91,7 +104,6 @@ export var SmartObjectFunction = function (_a) {
         ["".concat(funcName, "-").concat(key), ''],
         ["".concat(funcName, "-").concat(key, "--types"), ''],
     ]; }))), formState = _b[0], setFormState = _b[1];
-    console.log('testing: ', funcName, Object.keys(formState).length > 0 && Object.values(formState).every(function (value) { return value === ''; }), formState);
     var showLoader = UtilsContext.useUtilsComponents().showLoader;
     var computer = useContext(ComputerContext);
     var handleSmartObjectMethod = function (event, smartObj, fnName, params) { return __awaiter(void 0, void 0, void 0, function () {
@@ -105,6 +117,7 @@ export var SmartObjectFunction = function (_a) {
                 case 1:
                     _a.trys.push([1, 6, 7, 8]);
                     revMap_1 = {};
+                    // Create Rev Map to pass smart objects as params
                     params.forEach(function (param) {
                         var key = "".concat(fnName, "-").concat(param);
                         var paramValue = getValueForType(formState["".concat(key, "--types")], formState[key]);
@@ -113,17 +126,7 @@ export var SmartObjectFunction = function (_a) {
                         }
                     });
                     return [4 /*yield*/, computer.encode({
-                            exp: "smartObject.".concat(fnName, "(").concat(params.map(function (param) {
-                                var key = "".concat(fnName, "-").concat(param);
-                                var paramValue = getValueForType(formState["".concat(key, "--types")], formState[key]);
-                                if (isValidRev(paramValue)) {
-                                    return param;
-                                }
-                                if (typeof paramValue === 'string') {
-                                    return "'".concat(paramValue, "'");
-                                }
-                                return paramValue;
-                            }), ")"),
+                            exp: "smartObject.".concat(fnName, "(").concat(getParamValuesForFunctionInvocation(params, fnName, formState), ")"),
                             env: __assign({ smartObject: smartObj._rev }, revMap_1),
                             fund: true,
                             sign: true,
@@ -156,7 +159,7 @@ export var SmartObjectFunction = function (_a) {
             }
         });
     }); };
-    var updateFormValue = function (e, key) {
+    var updateForm = function (e, key) {
         e.preventDefault();
         var value = __assign({}, formState);
         value[key] = e.target.value;
@@ -173,7 +176,7 @@ export var SmartObjectFunction = function (_a) {
     }, [formState]);
     if (!functionsExist)
         return _jsx(_Fragment, {});
-    return (_jsx(_Fragment, { children: _jsxs("div", { className: "mt-6 mb-6", id: "function-".concat(funcName), children: [_jsx("h3", { className: "my-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(funcName) }), _jsxs("form", { children: [paramList.map(function (paramName, paramIndex) { return (_jsx("div", { className: "mb-4", children: _jsxs("div", { className: "flex items-center space-x-4", children: [_jsx("input", { type: "text", id: "".concat(funcName, "-").concat(paramName), value: formState["".concat(funcName, "-").concat(paramName)] || '', onChange: function (e) { return updateFormValue(e, "".concat(funcName, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: paramName, required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(funcName).concat(paramName), dropdownList: options, onSelectMethod: function (option) {
+    return (_jsx(_Fragment, { children: _jsxs("div", { className: "mt-6 mb-6", id: "function-".concat(funcName), children: [_jsx("h3", { className: "my-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(funcName) }), _jsxs("form", { children: [paramList.map(function (paramName, paramIndex) { return (_jsx("div", { className: "mb-4", children: _jsxs("div", { className: "flex items-center space-x-4", children: [_jsx("input", { type: "text", id: "".concat(funcName, "-").concat(paramName), value: formState["".concat(funcName, "-").concat(paramName)] || '', onChange: function (e) { return updateForm(e, "".concat(funcName, "-").concat(paramName)); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: paramName, required: true }), _jsx(TypeSelectionDropdown, { id: "".concat(funcName).concat(paramName), dropdownList: options, onSelectMethod: function (option) {
                                             return updateTypes(option, "".concat(funcName, "-").concat(paramName));
                                         } })] }) }, paramIndex)); }), _jsx("button", { id: "".concat(funcName, "-call-function-button"), disabled: isCallDisabled, className: "text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:ring-4 focus:outline-none\n              ".concat(isCallDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800', "\n            "), onClick: function (evt) { return handleSmartObjectMethod(evt, smartObject, funcName, paramList); }, children: "Call Function" })] })] }) }));
 };

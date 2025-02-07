@@ -54,7 +54,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
         .map(([key, value], i) => (
           <div key={i}>
             <h3 className="mt-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
-            <ObjectValueCard id={key} content={toObject(value || '')} />
+            <ObjectValueCard id={key} content={toObject(value)} />
           </div>
         ))}
     </>

@@ -115,6 +115,7 @@ const CreateNew = (props: {
         sleep(500)
         // eslint-disable-next-line
         const { res } = (await computer.sync(txId)) as any
+        console.log(txId, res)
         setFunctionResult({ _rev: res._rev, type: 'objects' })
         setModalTitle('Success!')
         setShow(true)
