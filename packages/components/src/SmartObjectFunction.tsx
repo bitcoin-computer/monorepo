@@ -8,18 +8,9 @@ export const getErrorMessage = (error: any): string => {
   if (
     error?.response?.data?.error ===
     'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)'
-  ) {
-    return 'You are not authorized to make changes to this smart object'
-  }
-  if (error?.response?.data?.error) {
-    return error?.response?.data?.error
-  }
+  ) return 'You are not authorized to make changes to this smart object'
+  if (error?.response?.data?.error) return error?.response?.data?.error
   return error.message ? error.message : 'Error occurred'
-}
-
-export const getFnParamNames = (fn: string) => {
-  const match = fn.toString().match(/\(.*?\)/)
-  return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : []
 }
 
 const getValueForType = (type: string, stringValue: string) => {
@@ -41,16 +32,17 @@ const getValueForType = (type: string, stringValue: string) => {
   }
 }
 
-const getParamValuesForFunctionInvocation = (params: string[], fnName: string, formState: any) => params.map((param) => {
+export const getParameterNames = (fn: string) => {
+  const match = fn.toString().match(/\(.*?\)/)
+  return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : []
+}
+
+const getParameters = (params: string[], fnName: string, formState: any) => params.map((param) => {
     const key = `${fnName}-${param}`
     const paramValue = getValueForType(formState[`${key}--types`], formState[key])
 
-    if (isValidRev(paramValue)) {
-      return param
-    }
-    if (typeof paramValue === 'string') {
-      return `'${paramValue}'`
-    }
+    if (isValidRev(paramValue)) return param
+    if (typeof paramValue === 'string') return `'${paramValue}'`
     return paramValue
   })
 
@@ -71,12 +63,12 @@ export const SmartObjectFunction = ({
   setModalTitle: React.Dispatch<React.SetStateAction<string>>
   funcName: string
 }) => {
-  const paramList = getFnParamNames(Object.getPrototypeOf(smartObject)[funcName]).filter(
+  const parameterList = getParameterNames(Object.getPrototypeOf(smartObject)[funcName]).filter(
     (val) => val,
   )
   const [formState, setFormState] = useState<any>(
     Object.fromEntries(
-      paramList.flatMap((key) => [
+      parameterList.flatMap((key) => [
         [`${funcName}-${key}`, ''],
         [`${funcName}-${key}--types`, ''],
       ]),
@@ -85,7 +77,7 @@ export const SmartObjectFunction = ({
   const { showLoader } = UtilsContext.useUtilsComponents()
   const computer = useContext(ComputerContext)
 
-  const handleSmartObjectMethod = async (
+  const handleMethodCall = async (
     event: any,
     smartObj: any,
     fnName: string,
@@ -106,16 +98,14 @@ export const SmartObjectFunction = ({
       })
 
       const { tx } = await computer.encode({
-        exp: `smartObject.${fnName}(${getParamValuesForFunctionInvocation(params, fnName, formState)})`,
+        exp: `smartObject.${fnName}(${getParameters(params, fnName, formState)})`,
         env: { smartObject: smartObj._rev, ...revMap },
-        fund: true,
-        sign: true,
       })
 
       await computer.broadcast(tx!)
       await sleep(1000)
-      const res = await computer.query({ ids: [smartObject._id] })
-      setFunctionResult({ _rev: res[0] })
+      const [rev] = await computer.query({ ids: [smartObject._id] })
+      setFunctionResult({ _rev: rev })
       setModalTitle('Success')
       setShow(true)
     } catch (error: any) {
@@ -142,7 +132,7 @@ export const SmartObjectFunction = ({
 
   const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
 
-  const isCallDisabled = useMemo(
+  const isDisabled = useMemo(
     () =>
       Object.keys(formState).length > 0 && Object.values(formState).some((value) => value === ''),
     [formState],
@@ -156,7 +146,7 @@ export const SmartObjectFunction = ({
           {capitalizeFirstLetter(funcName)}
         </h3>
         <form>
-          {paramList.map((paramName, paramIndex) => (
+          {parameterList.map((paramName, paramIndex) => (
             <div key={paramIndex} className="mb-4">
               <div className="flex items-center space-x-4">
                 <input
@@ -180,11 +170,11 @@ export const SmartObjectFunction = ({
           ))}
           <button
             id={`${funcName}-call-function-button`}
-            disabled={isCallDisabled}
+            disabled={isDisabled}
             className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:ring-4 focus:outline-none
-              ${isCallDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'}
+              ${isDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'}
             `}
-            onClick={(evt) => handleSmartObjectMethod(evt, smartObject, funcName, paramList)}
+            onClick={(evt) => handleMethodCall(evt, smartObject, funcName, parameterList)}
           >
             Call Function
           </button>
