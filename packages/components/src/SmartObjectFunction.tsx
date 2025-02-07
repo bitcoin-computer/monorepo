@@ -8,7 +8,8 @@ export const getErrorMessage = (error: any): string => {
   if (
     error?.response?.data?.error ===
     'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)'
-  ) return 'You are not authorized to make changes to this smart object'
+  )
+    return 'You are not authorized to make changes to this smart object'
   if (error?.response?.data?.error) return error?.response?.data?.error
   return error.message ? error.message : 'Error occurred'
 }
@@ -37,7 +38,8 @@ export const getParameterNames = (fn: string) => {
   return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : []
 }
 
-const getParameters = (params: string[], fnName: string, formState: any) => params.map((param) => {
+const getParameters = (params: string[], fnName: string, formState: any) =>
+  params.map((param) => {
     const key = `${fnName}-${param}`
     const paramValue = getValueForType(formState[`${key}--types`], formState[key])
 
@@ -77,12 +79,7 @@ export const SmartObjectFunction = ({
   const { showLoader } = UtilsContext.useUtilsComponents()
   const computer = useContext(ComputerContext)
 
-  const handleMethodCall = async (
-    event: any,
-    smartObj: any,
-    fnName: string,
-    params: string[],
-  ) => {
+  const handleMethodCall = async (event: any, smartObj: any, fnName: string, params: string[]) => {
     event.preventDefault()
     showLoader(true)
     try {
