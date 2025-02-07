@@ -9,7 +9,7 @@ export declare const strip: (value: Json) => Json;
 export declare const toObject: (obj: any) => string;
 export declare const capitalizeFirstLetter: (string: string) => string;
 export declare function isValidRevString(outId: string): boolean;
-export declare function isValidRev(value: string | number | true | null | undefined): boolean;
+export declare function isValidRev(value: string | number | boolean | null | undefined): boolean;
 export declare const sleep: (ms: number) => Promise<void>;
 export declare function getEnv(name: string): any;
 export {};
