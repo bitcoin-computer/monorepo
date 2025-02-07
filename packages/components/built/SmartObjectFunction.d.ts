@@ -1,5 +1,5 @@
 export declare const getErrorMessage: (error: any) => string;
-export declare const getFnParamNames: (fn: string) => string[];
+export declare const getParameterNames: (fn: string) => string[];
 export declare const SmartObjectFunction: ({ smartObject, functionsExist, options, setFunctionResult, setShow, setModalTitle, funcName, }: {
     smartObject: any;
     functionsExist: boolean;
