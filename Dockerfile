@@ -20,7 +20,7 @@ RUN rm -rf node_modules
 ENV VCPKG_FORCE_SYSTEM_BINARIES=1
 
 # Install dependencies
-RUN npm install
+RUN npm install --build-from-source
 
 # Ensure that the necessary binaries are in the PATH
 ENV PATH="/dist/node_modules/.bin:${PATH}"
