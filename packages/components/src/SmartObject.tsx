@@ -6,7 +6,7 @@ import { capitalizeFirstLetter, toObject } from './common/utils'
 import { Card } from './Card'
 import { Modal } from './Modal'
 import { FunctionResultModalContent } from './common/SmartCallExecutionResult'
-import { SmartObjectFunction } from './SmartObjectFunction'
+import { SmartObjectFunctions } from './SmartObjectFunctions'
 import { ComputerContext } from './ComputerContext'
 
 const keywords = ['_id', '_rev', '_owners', '_root', '_amount']
@@ -54,7 +54,7 @@ const SmartObjectValues = ({ smartObject }: any) => {
         .map(([key, value], i) => (
           <div key={i}>
             <h3 className="mt-2 text-xl font-bold dark:text-white">{capitalizeFirstLetter(key)}</h3>
-            <ObjectValueCard id={key} content={toObject(value || '')} />
+            <ObjectValueCard id={key} content={toObject(value)} />
           </div>
         ))}
     </>
@@ -285,7 +285,7 @@ function Component({ title }: { title?: string }) {
 
         <SmartObjectValues smartObject={smartObject} />
 
-        <SmartObjectFunction
+        <SmartObjectFunctions
           smartObject={smartObject}
           functionsExist={functionsExist}
           options={options}

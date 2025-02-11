@@ -134,7 +134,7 @@ describe('Token', async () => {
     })
 
     it('Should update the revisions correctly', async () => {
-      const computer = new Computer()
+      const computer = new Computer({ url, chain, network })
       await computer.faucet(2e8)
       const t1 = await computer.new(Token, [computer.getPublicKey(), 3, 'test'])
       const rev1 = t1._rev
@@ -207,7 +207,7 @@ describe('TokenHelper', () => {
 
   describe('transfer', () => {
     it('Should transfer a token', async () => {
-      const computer2 = new Computer()
+      const computer2 = new Computer({ url, chain, network })
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
       const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
@@ -219,8 +219,8 @@ describe('TokenHelper', () => {
     })
 
     it('Should transfer random amounts to different people', async () => {
-      const computer2 = new Computer()
-      const computer3 = new Computer()
+      const computer2 = new Computer({ url, chain, network })
+      const computer3 = new Computer({ url, chain, network })
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
       const root = await tokenHelper.mint(publicKey, 200, 'multiple', 'MULT')
@@ -242,7 +242,7 @@ describe('TokenHelper', () => {
     })
 
     it('Should fail if the amount is greater than the balance', async () => {
-      const computer2 = new Computer()
+      const computer2 = new Computer({ url, chain, network })
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
       const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
