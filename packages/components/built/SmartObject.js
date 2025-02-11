@@ -43,7 +43,7 @@ import { capitalizeFirstLetter, toObject } from './common/utils';
 import { Card } from './Card';
 import { Modal } from './Modal';
 import { FunctionResultModalContent } from './common/SmartCallExecutionResult';
-import { SmartObjectFunction } from './SmartObjectFunction';
+import { SmartObjectFunctions } from './SmartObjectFunctions';
 import { ComputerContext } from './ComputerContext';
 var keywords = ['_id', '_rev', '_owners', '_root', '_amount'];
 var modalId = 'smart-object-info-modal';
@@ -73,7 +73,7 @@ var SmartObjectValues = function (_a) {
         })
             .map(function (_a, i) {
             var key = _a[0], value = _a[1];
-            return (_jsxs("div", { children: [_jsx("h3", { className: "mt-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(key) }), _jsx(ObjectValueCard, { id: key, content: toObject(value || '') })] }, i));
+            return (_jsxs("div", { children: [_jsx("h3", { className: "mt-2 text-xl font-bold dark:text-white", children: capitalizeFirstLetter(key) }), _jsx(ObjectValueCard, { id: key, content: toObject(value) })] }, i));
         }) }));
 };
 function MetaData(_a) {
@@ -164,7 +164,7 @@ function Component(_a) {
         setFunctionsExist(funcExist);
     }, [smartObject]);
     var _h = rev.split(':'), txId = _h[0], outNum = _h[1];
-    return (_jsxs(_Fragment, { children: [_jsxs("div", { className: "max-w-screen-md mx-auto", children: [_jsx("h1", { className: "mb-2 text-5xl font-extrabold dark:text-white", children: title || 'Object' }), _jsxs("div", { className: "mb-8", children: [_jsx(Link, { to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", children: txId }), _jsxs("span", { children: [":", outNum] }), _jsx(Copy, { text: "".concat(txId, ":").concat(outNum) })] }), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(SmartObjectFunction, { smartObject: smartObject, functionsExist: functionsExist, options: options, setFunctionResult: setFunctionResult, setShow: setShow, setModalTitle: setModalTitle }), _jsx(MetaData, { smartObject: smartObject, prev: prev, next: next })] }), _jsx(Modal.Component, { title: modalTitle, content: FunctionResultModalContent, contentData: { functionResult: functionResult }, id: modalId })] }));
+    return (_jsxs(_Fragment, { children: [_jsxs("div", { className: "max-w-screen-md mx-auto", children: [_jsx("h1", { className: "mb-2 text-5xl font-extrabold dark:text-white", children: title || 'Object' }), _jsxs("div", { className: "mb-8", children: [_jsx(Link, { to: "/transactions/".concat(txId), className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", children: txId }), _jsxs("span", { children: [":", outNum] }), _jsx(Copy, { text: "".concat(txId, ":").concat(outNum) })] }), _jsx(SmartObjectValues, { smartObject: smartObject }), _jsx(SmartObjectFunctions, { smartObject: smartObject, functionsExist: functionsExist, options: options, setFunctionResult: setFunctionResult, setShow: setShow, setModalTitle: setModalTitle }), _jsx(MetaData, { smartObject: smartObject, prev: prev, next: next })] }), _jsx(Modal.Component, { title: modalTitle, content: FunctionResultModalContent, contentData: { functionResult: functionResult }, id: modalId })] }));
 }
 export var SmartObject = {
     Component: Component,

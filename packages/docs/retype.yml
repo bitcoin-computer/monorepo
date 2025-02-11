@@ -3,13 +3,13 @@ output: .retype
 url: http://bitcoincomputer.io/
 branding:
   title: Bitcoin Computer
-  label: 0.21
+  label: 0.24
 links:
-- text: Github
-  link: https://github.com/bitcoin-computer/monorepo#readme
-- text: Twitter
-  link: https://x.com/thebitcointoken
-- text: Telegram
-  link: https://t.me/thebitcoincomputer
+  - text: Github
+    link: https://github.com/bitcoin-computer/monorepo#readme
+  - text: Twitter
+    link: https://x.com/thebitcointoken
+  - text: Telegram
+    link: https://t.me/thebitcoincomputer
 footer:
   copyright: "&copy; Copyright {{ year }}. All rights reserved."

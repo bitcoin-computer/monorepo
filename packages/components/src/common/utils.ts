@@ -60,7 +60,7 @@ export function isValidRevString(outId: string): boolean {
   return /^[0-9A-Fa-f]{64}:\d+$/.test(outId)
 }
 
-export function isValidRev(value: string | number | true | null | undefined): boolean {
+export function isValidRev(value: string | number | boolean | null | undefined): boolean {
   return typeof value === 'string' && isValidRevString(value)
 }
 
