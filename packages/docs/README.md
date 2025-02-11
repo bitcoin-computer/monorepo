@@ -43,4 +43,8 @@ retype watch --verbose
 
 ## Update the Website
 
-Create a pull request and merge into main
+Create a pull request and merge into main. Then set the custom domain to the string below in [Github Pages](https://github.com/bitcoin-computer/monorepo/settings/pages).
+
+```
+docs.bitcoincomputer.io
+```
