@@ -16,7 +16,7 @@ const __dirname = dirname(__filename)
 const chessContractDirectory = `${__dirname}/..`
 
 describe('deploy', () => {
-  const computer = new Computer()
+  const computer = new Computer({ chain, network, url })
 
   beforeEach(async () => {
     await computer.faucet(1e8)
