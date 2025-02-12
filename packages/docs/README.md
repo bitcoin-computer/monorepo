@@ -22,7 +22,10 @@ cd monorepo
 npm install
 
 # install retype globally
-npm run global add retypeapp
+npm install retypeapp --global
+
+# update retype globally
+npm update retypeapp --global
 ```
 
 </font>
@@ -36,11 +39,15 @@ npm run global add retypeapp
 cd packages/docs
 
 # Start the app
-retype watch --verbose
+retype start
 ```
 
 </font>
 
 ## Update the Website
 
-Create a pull request and merge into main
+Create a pull request and merge into main. Then set the custom domain to the string below in [Github Pages](https://github.com/bitcoin-computer/monorepo/settings/pages).
+
+```
+docs.bitcoincomputer.io
+```

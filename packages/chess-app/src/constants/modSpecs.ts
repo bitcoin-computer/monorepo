@@ -19,6 +19,5 @@ if (typeof import.meta !== 'undefined' && import.meta.env?.VITE_API_BASE_URL) {
 
 export { API_BASE_URL, VITE_CHESS_GAME_MOD_SPEC }
 
-
 // const { VITE_CHESS_GAME_MOD_SPEC, API_BASE_URL } = import.meta.env
 // export { VITE_CHESS_GAME_MOD_SPEC, API_BASE_URL }
