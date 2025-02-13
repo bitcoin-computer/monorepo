@@ -7,7 +7,7 @@ icon: mortar-board
 
 ## Write a Smart Contract
 
-Smart contracts are Javascript or Typescript classes that extend from `Contract`. For example, a smart contract for a simple chat is
+Smart contracts are typically Javascript or Typescript classes that extend from `Contract`. For example, a smart contract for a simple chat is
 
 ```js
 import { Contract } from '@bitcoin-computer/lib'
