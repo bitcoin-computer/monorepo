@@ -3,7 +3,6 @@ order: -10
 icon: rocket
 ---
 
-
 # Start
 
 ## Use in the Browser
@@ -13,9 +12,12 @@ The easiest way to try the Bitcoin Computer is to create a file as below and ope
 ```html
 <html>
   <head>
-    <script type='module'>
+    <script type="module">
       // Import the library
-      import { Computer, Contract } from 'https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs'
+      import {
+        Computer,
+        Contract,
+      } from 'https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs'
 
       // Define a smart contract
       class Counter extends Contract {
@@ -41,12 +43,11 @@ The easiest way to try the Bitcoin Computer is to create a file as below and ope
       // Update the smart object
       await counter.inc()
       document.getElementById('count').innerHTML = counter.n
-
     </script>
   </head>
 
   <body>
-    Value: <span id='count'>*</span>
+    Value: <span id="count">*</span>
   </body>
 </html>
 ```
@@ -132,7 +133,7 @@ Counter {
 
 </font>
 
-In the setup above you are using a node that we provide at `node.bitcoincomputer.io`. You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node.
+In the setup above you are using a node that we provide at `rltc.node.bitcoincomputer.io` (Litecoin Regtest). You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node.
 
 ## Run a Node
 
@@ -165,8 +166,6 @@ cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
 npm run up
 ```
 
-The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database.
-
 ### Test
 
 Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands
@@ -187,15 +186,15 @@ The commands will be run in each package. You can also navigate the a package an
 ### Start your own Project
 
 We provide two templates, `vite-template` for client side projects and `node-template` for server side projects, featuring:
-* Bitcoin Computer
-* Typescript
-* Eslint
-* Testing environment
+
+- Bitcoin Computer
+- Typescript
+- Eslint
+- Testing environment
 
 The easiest thing to do is just to rename the folder. Alternatively have a look at our example apps (e.g. our [wallet](https://wallet.bitcoincomputer.io/), [blockchain explorer](https://explorer.bitcoincomputer.io/), or [nft app](https://nft.bitcoincomputer.io/)) to see if any of them are a good starting point for your project.
 
 ## Getting Help
 
-* [Telegram](https://t.me/thebitcoincomputer)
-* [Twitter](https://twitter.com/TheBitcoinToken)
-
+- [Telegram](https://t.me/thebitcoincomputer)
+- [Twitter](https://twitter.com/TheBitcoinToken)
