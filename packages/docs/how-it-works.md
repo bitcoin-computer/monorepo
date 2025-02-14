@@ -7,7 +7,7 @@ icon: light-bulb
 
 ## Intuition
 
-Bitcoin Computer transactions embed a JavaScript expression within a standard Bitcoin transaction. This expression is evaluated, and the result of that evaluation directly determines the transaction's outputs. If the JavaScript expression evaluates to a primitive value (e.g., number, string, boolean), that value is used to create a single output. If the expression evaluates to a JavaScript object, each property of that object is mapped to a separate output. The value of the property becomes the value of the output. This enables the creation of multiple outputs from a single expression.
+The Bitcoin Computer embeds JavaScript expression in standard Bitcoin transactions. This expression is evaluated, and the result of that evaluation determines the transaction's outputs. If the JavaScript expression evaluates to a primitive value (e.g., number, string, boolean) or an object without sub-objects, that value is used to create a single output. If the expression evaluates to a JavaScript object with sub-objects, the object and each of its sub-objects is mapped to a separate output. This enables the creation of multiple outputs from a single expression.
 
 A key feature is the ability to handle dependencies on data not directly available within the current transaction. For expressions with an undefined variable (for example, the variable `x` is undefined in the expression `x + 1`), the smart contract developer can associate that variables with an input of the transaction. The Bitcoin Computer then recursively calculates the values of these outputs, and replaces the undefined variables with their computed values from previous transactions to evaluate the expression.
 
@@ -35,7 +35,7 @@ In the Bitcoin Computer, data ownership is linked to the ability to spend an out
 
 ### Creating Objects and Object Identity
 
-Associating values with unspent transaction outputs (UTXOs) facilitates the use of the transaction ID and output number as a unique identifier for each smart object. This identifier is assigned to the `_id` property of the smart object upon its creation and remains unchanged for the object’s entire lifespan.
+Associating values with transaction outputs facilitates the use of the transaction ID and output number as a unique identifier for each smart object. This identifier is assigned to the `_id` property of the smart object upon its creation and remains unchanged for the object’s entire lifespan.
 
 ### Updating Objects and Object Revisions
 
