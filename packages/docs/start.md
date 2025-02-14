@@ -185,7 +185,7 @@ The commands will be run in each package. You can also navigate the a package an
 
 ### Start your own Project
 
-We provide two templates, `vite-template` for client side projects and `node-template` for server side projects, featuring:
+We provide two templates, [`vite-template`](https://github.com/bitcoin-computer/monorepo/tree/main/packages/vite-template) for client side projects and [`node-template`](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template) for server side projects, featuring:
 
 - Bitcoin Computer
 - Typescript
