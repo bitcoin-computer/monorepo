@@ -70,7 +70,7 @@ Properties named `_amount`, `_owners`, `_readers`, and `_url` provide control ov
 ```ts
 type OutputDetails = {
   // determines which users can update the object
-  _owners?: string[]
+  _owners?: string[] | string
 
   // determines number of Satoshis stored in the output associated with the object
   _amount?: number
@@ -86,7 +86,11 @@ type OutputDetails = {
 The effect that these properties have on the transaction being built is described below:
 
 - If a property `_amount` is set it needs to be set to a number. It determines the amount of Satoshi stored in the output representing the current revision. If it is not set the revision will have a minimal (non-dust) amount of Satoshi.
-- If a property `_owners` is set it needs to be set to an array of strings $[p_1\ ...\ p_n]$. These determine the output script of the current revision. Specifically, the script for the current revision is a 1-of-n multisig script with the public keys $p_1\ ...\ p_n$. This guarantees that only a user that has a private key corresponding to one of the public keys can update the object. If the property is not set it defaults to the public key of the computer that created the object.
+- If a property `_owners` is set it needs to be set to either an array of strings $[p_1\ ...\ p_n]$ or to a string.
+
+  - Array of strings: These determine the output script of the current revision. Specifically, the script for the current revision is a 1-of-n multisig script with the public keys $p_1\ ...\ p_n$. This guarantees that only a user that has a private key corresponding to one of the public keys can update the object. If the property is not set it defaults to the public key of the computer that created the object.
+  - String: If the property is set to a string $p$, it should be set to an ASM representation of a script. This script is used as the output script of the current revision. This allows for more complex ownership conditions. For example, the script could be non-standard or it could be a multisig script with a different number of required signatures than 1.
+
 - If a property `_readers` is set it needs to be set to an array of strings $[p_1\ ...\ p_n]$. If this property is set the meta data in the corresponding transaction is encrypted such that only users with corresponding private keys can decrypt the expression and compute the value of the smart object. If the `_readers` property is not set the meta data is not encrypted and any user can compute the value of the smart object.
 - If a property `_url` is set it needs to be set to the url of a Bitcoin Computer node. If it is set the expression is not stored in the transaction but on the node instead. The transaction only contains a hash of the expression and the location where the expression can be obtained from the node. This is convenient if the expression is large, for example because it contains a lot of data.
 
