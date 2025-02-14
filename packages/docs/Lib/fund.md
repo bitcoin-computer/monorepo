@@ -3,10 +3,11 @@
 Funds a Bitcoin transaction.
 
 ### Type
+
 ```ts
 (
   tx: BitcoinLib.Transaction,
-  opts?: { 
+  opts?: {
     include?: string[]
     exclude?: string[]
   }
@@ -14,33 +15,34 @@ Funds a Bitcoin transaction.
 ```
 
 ### Syntax
+
 ```js
 await computer.fund(tx)
 ```
 
 ### Parameters
 
-#### tx
-
-A Bitcoin transaction object from the [NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs#nakamotojs-nakamotojs) library.
+{.compact}
+| Parameter | Description |
+|--------------|---------------------------------------------------------------|
+| tx | A [Bitcoin transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/ts_src/transaction.ts) object.|
 
 #### opts
 
-An optional object can be passed as parameter to ```include``` or ```exclude``` certain UTXOs. When using ``include``, the transaction will be funded with the UTXOs specified as the first inputs. 
+An optional object can be passed as parameter to `include` or `exclude` certain UTXOs. When using `include`, the transaction will be funded with the UTXOs specified as the first inputs.
 
 {.compact}
-| Key     | Type     | Description      | Default Value |
+| Key | Type | Description | Default Value |
 |---------|----------|------------------|---------------|
-| include | string[] | UTXOs to include | []            |
-| exclude | string[] | UTXOs to exclude | []            |
-
-
+| include | string[] | UTXOs to include | [] |
+| exclude | string[] | UTXOs to exclude | [] |
 
 ### Return value
 
-If the wallet does not have sufficient funds, an error is thrown. 
+If the wallet does not have sufficient funds, an error is thrown.
 
 ### Examples
+
 ```ts
 // A smart contract
 class C extends Contract {}

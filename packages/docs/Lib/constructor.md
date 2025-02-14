@@ -4,7 +4,7 @@ The constructor of the `Computer` class creates an instance. It's functionality 
 
 ### Type
 
-````ts
+```ts
 new (config: {
   chain?: 'LTC' | 'BTC' | 'DOGE',
   network?: 'mainnet' | 'testnet' | 'regtest',
@@ -17,9 +17,10 @@ new (config: {
   dustRelayFee?: number,
   moduleStorageType?: 'taproot' | 'multisig'
 }) => Computer
-````
+```
 
 ### Syntax
+
 ```js
 new Computer(config)
 ```
@@ -27,28 +28,29 @@ new Computer(config)
 ### Parameters
 
 #### config
+
 A configuration object
 
 {.compact}
-| Key          | Description                                                  | Default Value                        |
+| Key | Description | Default Value |
 |--------------|--------------------------------------------------------------|--------------------------------------|
-| chain        | Target blockchain. Values can be 'LTC' or 'BTC'              | LTC                                  |
-| network      | Target network. Values in 'testnet', 'regtest' or 'mainnet'  | regtest                              |
-| mnemonic     | BIP39 mnemonic phrase                                        | Random phrase                        |
-| path         | BIP32 path                                                   | m/44'/0'/0'                          |
-| passphrase   | BIP32 passphrase                                             | The empty string                     |
-| addressType  | The address script type. Values in 'p2pkh', 'p2wpkh', 'p2tr' | p2pkh                                |
-| url          | Url of a Bitcoin Computer Node                               | https://rltc.node.bitcoincomputer.io |
-| satPerByte   | Fee in satoshi per byte                                      | 2                                    |
-| dustRelayFee | Dust relay fee                                               | 30000 on LTC and 3000 on BTC         |
-| moduleStorageType | Store ES6 modules on Taproot or multisig scripts        | taproot                              |
-
+| chain | Target blockchain. Values can be 'LTC' or 'BTC' | LTC |
+| network | Target network. Values in 'testnet', 'regtest' or 'mainnet' | regtest |
+| mnemonic | BIP39 mnemonic phrase | Random phrase |
+| path | BIP32 path | m/44'/0'/0' |
+| passphrase | BIP32 passphrase | The empty string |
+| addressType | The address script type. Values in 'p2pkh', 'p2wpkh', 'p2tr' | p2pkh |
+| url | Url of a Bitcoin Computer Node | https://rltc.node.bitcoincomputer.io |
+| satPerByte | Fee in satoshi per byte | 2 |
+| dustRelayFee | Dust relay fee | 30000 on LTC and 3000 on BTC |
+| moduleStorageType | Store ES6 modules on Taproot or multisig scripts | taproot |
 
 ### Return Value
 
 An instance of the Computer class
 
 ### Examples
+
 ```ts
 import { Computer } from '@bitcoin-computer/lib'
 
