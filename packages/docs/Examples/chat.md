@@ -7,7 +7,7 @@ icon: comment-discussion
 
 ## Smart Contract
 
-A chat is just a smart object with a property `messages` of type `string[]`. Like all smart objects it has an `_owners` property set to the current data owner. The [`_readers`](./how-it-works.md#keyword-properties-control-the-transaction-being-built) property can be used to restrict read access. 
+A chat is just a smart object with a property `messages` of type `string[]`. Like all smart objects it has an `_owners` property set to the current data owner. The [`_readers`](./how-it-works.md#keyword-properties-control-the-transaction-being-built) property can be used to restrict read access.
 
 ```ts
 class Chat extends Contract {
@@ -19,7 +19,7 @@ class Chat extends Contract {
     super({
       messages: [],
       _owners: publicKeys,
-      _readers: publicKeys
+      _readers: publicKeys,
     })
   }
 
@@ -28,15 +28,15 @@ class Chat extends Contract {
   }
 
   remove(publicKey: string) {
-    this._readers = this._readers.filter(o => o !== publicKey)
-    this._owners_ = this._owners_.filter(o => o !== publicKey)
+    this._readers = this._readers.filter((o) => o !== publicKey)
+    this._owners_ = this._owners_.filter((o) => o !== publicKey)
   }
 }
 ```
 
 ## Usage
 
-A new chat can be created using the [`new`](./API/new.md) function. Note that Bob can initially post to the chat and read it's state as Bob's public key was added to the `_owners` array and `_readers` array by Alice upon creation of the chat. 
+A new chat can be created using the [`new`](./API/new.md) function. Note that Bob can initially post to the chat and read it's state as Bob's public key was added by Alice to the `_owners` array and to the `_readers` array upon creation of the chat.
 
 Later, Alice called the `remove` function removing Bob's public key from these arrays. After this point Bob cannot read or write anymore.
 
@@ -58,7 +58,7 @@ const alicesChat = await alice.new(Chat, [publicKeys])
 await alicesChat.post('Hi')
 
 // Bob can read the current state of the chat and post a message
-const bobsChat = await bob.sync(alicesChat._rev) as Chat
+const bobsChat = (await bob.sync(alicesChat._rev)) as Chat
 await bobsChat.post('Yo')
 expect(bobsChat.messages).deep.eq(['Hi', 'Yo'])
 
@@ -67,7 +67,7 @@ try {
   // This line throws an error
   await eve.sync(alicesChat._rev)
   expect(true).eq(false)
-} catch(err) {
+} catch (err) {
   expect(err.message).not.undefined
 }
 
@@ -79,7 +79,11 @@ try {
   // This line throws an error
   await bob.sync(alicesChat._rev)
   expect(true).eq(false)
-} catch(err) {
+} catch (err) {
   expect(err.message).not.undefined
 }
 ```
+
+## Code
+
+You can find the code [here](https://github.com/bitcoin-computer/monorepo/blob/main/packages/chat/README.md).

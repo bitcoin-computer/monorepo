@@ -15,7 +15,7 @@ We note that the definition of a token swap differs wildly from the legal defini
 
 ## Swap Using a Static Function
 
-You can build a swap as a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this smart objects that contain ordinals.
+You can build a swap as a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this in smart objects that contain ordinals.
 
 ### Smart Contracts
 
@@ -29,9 +29,10 @@ export class StaticSwap extends Contract {
   }
 }
 ```
-The code below shows the `NFT` class. While this example uses NFTs as arguments, the same function can be used to swap any pair of smart objects that have a `transfer` function. 
 
-```ts
+The code below shows the `NFT` class. While this example uses NFTs as arguments, the same function can be used to swap any pair of smart objects that have a `transfer` function.
+
+```javascript
 export class NFT extends Contract {
   constructor(name = '', symbol = '') {
     super({ name, symbol })
@@ -54,9 +55,9 @@ const b = await alice.new(NFT, ['B', 'BBB'])
 
 ### Building the Swap Transaction
 
-A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The outputs are the NFTs after the swap with their owners exchanged. 
+A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The outputs are the NFTs after the swap with their owners exchanged.
 
-Alice passes an expression containing both the code of the `StaticSwap` class and the expression `StaticSwap.exec(a, b)` to the [`encode`](./API/encode.md) function. The second argument is an environment that determines that the values to be used for `a` and `b` are stored at revisions `a._rev` and `b._rev`. 
+Alice passes an expression containing both the code of the `StaticSwap` class and the expression `StaticSwap.exec(a, b)` to the [`encode`](../lib/encode.md) function. The second argument is an environment that determines that the values to be used for `a` and `b` are stored at revisions `a._rev` and `b._rev`.
 
 ```ts
 const { tx } = await alice.encode({
@@ -67,9 +68,11 @@ const { tx } = await alice.encode({
 
 The `encode` function will automatically sign all inputs of the transaction that can be signed with the private key of the computer object on which the function is called. In this case, this is the input as revision `a._rev`.
 
+The function `encode` will not broadcast automatically. This feature is useful when you want to check the transaction before broadcasting it. It also allows more advanced use cases, for example, using different signature hash types, o signing only specific inputs. More on this in the [API documentation](../lib/encode.md).
+
 ### Executing the Swap
 
-Then Bob signs the input `b._rev` and broadcasts the transaction. When the transaction is included in the blockchain the swap is executed and the owners of the two NFTs are reversed.
+The transaction created above was partially signed (only Alice's signature was added). Bob now signs the input `b._rev` and broadcasts the transaction. When the transaction is included in the blockchain the swap is executed and the owners of the two NFTs are reversed.
 
 ```ts
 await bob.sign(tx)
@@ -104,7 +107,7 @@ await bob.broadcast(tx)
 
 #### Reducing Fees
 
-The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the `Swap` function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class [`SwapHelper`](https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts) for swaps and `NftHelper` for NFTs that can be used as follows:
+The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wastes block space and is expensive. A more efficient approach is to deploy the `Swap` function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class [`SwapHelper`](https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts) for swaps and `NftHelper` for NFTs that can be used as follows:
 
 ```ts
 // Alice creates helper objects
@@ -138,4 +141,4 @@ await alice.broadcast(tx)
 
 ## Code
 
-Have a look at the code on  [Github](https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme) for details.
+Have a look at the code on [Github](https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme) for details.
