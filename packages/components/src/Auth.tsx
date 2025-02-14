@@ -7,6 +7,26 @@ import { Modal } from './Modal'
 import type { Chain, Network, ModuleStorageType } from './common/types'
 import { getEnv } from './common/utils'
 
+export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
+export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest'
+export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
+
+export type ComputerOptions = Partial<{
+  chain: TBCChain
+  mnemonic: string
+  network: TBCNetwork
+  passphrase: string
+  path: string
+  seed: string // deprecated
+  url: string
+  satPerByte: number
+  dustRelayFee: number
+  addressType: AddressType
+  moduleStorageType: ModuleStorageType
+  thresholdBytes: number
+  cache: boolean
+}>
+
 function isLoggedIn(): boolean {
   return !!localStorage.getItem('BIP_39_KEY')
 }
@@ -55,8 +75,9 @@ function loggedInConfiguration() {
   }
 }
 
-function getComputer(): Computer {
-  return new Computer(isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration())
+function getComputer(options: ComputerOptions): Computer {
+  const defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration()
+  return new Computer({ ...defaultConfiguration, ...options })
 }
 
 function MnemonicInput({

@@ -1,5 +1,23 @@
 import { Computer } from '@bitcoin-computer/lib';
 import type { Chain, Network, ModuleStorageType } from './common/types';
+export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE';
+export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest';
+export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr';
+export type ComputerOptions = Partial<{
+    chain: TBCChain;
+    mnemonic: string;
+    network: TBCNetwork;
+    passphrase: string;
+    path: string;
+    seed: string;
+    url: string;
+    satPerByte: number;
+    dustRelayFee: number;
+    addressType: AddressType;
+    moduleStorageType: ModuleStorageType;
+    thresholdBytes: number;
+    cache: boolean;
+}>;
 declare function isLoggedIn(): boolean;
 declare function logout(): void;
 declare function getCoinType(chain: string, network: string): number;
@@ -21,7 +39,7 @@ declare function loggedInConfiguration(): {
     url: any;
     moduleStorageType: ModuleStorageType;
 };
-declare function getComputer(): Computer;
+declare function getComputer(options: ComputerOptions): Computer;
 declare function LoginForm(): import("react/jsx-runtime").JSX.Element;
 declare function LoginModal(): import("react/jsx-runtime").JSX.Element;
 export declare const Auth: {
