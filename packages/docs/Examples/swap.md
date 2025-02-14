@@ -68,7 +68,7 @@ const { tx } = await alice.encode({
 
 The `encode` function will automatically sign all inputs of the transaction that can be signed with the private key of the computer object on which the function is called. In this case, this is the input as revision `a._rev`.
 
-The function `encode` will not broadcast automatically. This feature is useful when you want to check the transaction before broadcasting it. It also allows more advanced use cases, for example, using different signature hash types, o signing only specific inputs. More on this in the [API documentation](../lib/encode.md).
+The function `encode` will not broadcast automatically. This feature is useful when you want to check the transaction before broadcasting it. It also allows more advanced use cases, for example, using different signature hash types, or signing only specific inputs. More on this in the [API documentation](../lib/encode.md).
 
 ### Executing the Swap
 
