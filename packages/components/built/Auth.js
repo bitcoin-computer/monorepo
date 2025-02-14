@@ -65,6 +65,7 @@ function loggedInConfiguration() {
     };
 }
 function getComputer(options) {
+    if (options === void 0) { options = {}; }
     var defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration();
     return new Computer(__assign(__assign({}, defaultConfiguration), options));
 }

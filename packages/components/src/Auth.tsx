@@ -75,7 +75,7 @@ function loggedInConfiguration() {
   }
 }
 
-function getComputer(options: ComputerOptions): Computer {
+function getComputer(options: ComputerOptions = {}): Computer {
   const defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration()
   return new Computer({ ...defaultConfiguration, ...options })
 }

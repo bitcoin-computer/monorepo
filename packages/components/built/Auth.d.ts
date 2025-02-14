@@ -39,7 +39,7 @@ declare function loggedInConfiguration(): {
     url: any;
     moduleStorageType: ModuleStorageType;
 };
-declare function getComputer(options: ComputerOptions): Computer;
+declare function getComputer(options?: ComputerOptions): Computer;
 declare function LoginForm(): import("react/jsx-runtime").JSX.Element;
 declare function LoginModal(): import("react/jsx-runtime").JSX.Element;
 export declare const Auth: {
