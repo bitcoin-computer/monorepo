@@ -17,7 +17,7 @@ import { NftView } from './components/Nft'
 import { VITE_PAYMENT_MOD_SPEC } from './constants/modSpecs'
 
 export default function App() {
-  const [computer] = useState(Auth.getComputer())
+  const [computer] = useState(Auth.getComputer({ cache: true }))
 
   useEffect(() => {
     initFlowbite()
