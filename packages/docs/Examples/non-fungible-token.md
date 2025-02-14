@@ -43,7 +43,7 @@ If more than one NFT are broadcast one can save transaction fees by broadcasting
 
 ```ts
 // Create wallet
-const sender = new Computer(RLTC)
+const sender = new Computer()
 
 // Fund wallet
 await sender.faucet(0.001e8)
@@ -58,7 +58,7 @@ await tokenHelper.deploy()
 nft = await tokenHelper.mint('name', 'symbol')
 
 // Transfer NFT
-await tokenHelper.transfer(nft._id, new Computer().getPublicKey())
+await tokenHelper.transfer(new Computer().getPublicKey(), nft._id)
 ```
 
 ## Code

@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>TBC Documentation</h1>
+  <h1>Bitcoin Computer Documentation</h1>
   <p>
     The official documentation of the Bitcoin Computer
     <br />

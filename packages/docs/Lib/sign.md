@@ -3,6 +3,7 @@
 Signs a Bitcoin transaction. Options can be passed in that determine which inputs to sign, the sigHash type to use, and which script to use.
 
 ### Type
+
 ```ts
 (
   tx: BitcoinLib.Transaction,
@@ -15,25 +16,27 @@ Signs a Bitcoin transaction. Options can be passed in that determine which input
 ```
 
 ### Syntax
+
 ```js
 computer.sign(tx, opts)
 ```
 
 ### Parameters
 
-#### tx
-A Bitcoin transaction, possibly partially signed.
+{.compact}
+| Parameter | Description |
+|--------------|---------------------------------------------------------------|
+| tx | A Bitcoin transaction, possibly partially signed.|
+| opts | An object with specific parameters to use when signing.|
 
-#### opts
-An object with specific parameters to use when signing
+The `opts` object can have the following properties:
 
 {.compact}
-| Key         | Type   | Description                                                                                                                                                   |
+| Key | Type | Description |
 |-------------|--------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| inputIndex  | number | The input index to be signed                                                                                                                                  |
+| inputIndex | number | The input index to be signed |
 | sighashType | number | A valid <a target="_blank" href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/src/transaction.d.ts">sighash type number</a> |
-| inputScript | Buffer | A buffer encoding the signature                                                                                                                               |
-
+| inputScript | Buffer | A buffer encoding the signature |
 
 ### Return value
 
@@ -42,6 +45,7 @@ By default, the `sign` function will make a best effort to sign all inputs, but 
 This is useful in the case of partially signed transactions, where a user can encode an expression, sign with the user private key and send the generated partially signed transaction to another user. Then, the receiver can sign other inputs.
 
 ### Examples
+
 ```ts
 class C extends Contract {}
 const tx = await computer.encode({

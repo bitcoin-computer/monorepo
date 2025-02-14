@@ -1,6 +1,5 @@
-
 <div align="center">
-  <h1>TBC Swaps</h1>
+  <h1>Bitcoin Computer Swaps</h1>
   <p>
     A collection of swap smart contracts for the Bitcoin Computer
     <br />
@@ -11,11 +10,12 @@
 </div>
 
 This package contains the following smart contracts:
-* [Swap](./src/swap.ts). A static swap function for two smart objects.
-* [Swappable](./src/swappable.ts). A NFT contract with a built in swap method.
-* [Sale](./src/sale.ts). A contract for selling a smart object for a pre-determined amount of satoshis. This contract does not preserve ordinal ranges so it cannot be used to sell ordinals.
-* [OrdSale](./src/ord-sale.ts). An contract for selling an ordinal for a pre-determined amount of satoshis.
-* [TxWrapper](./src/tx-wrapper.ts). A contract for storing a partially signed transaction in another transaction. This is useful for communicating partially signed transactions over the Bitcoin network.
+
+- [Swap](./src/swap.ts). A static swap function for two smart objects.
+- [Swappable](./src/swappable.ts). A NFT contract with a built in swap method.
+- [Sale](./src/sale.ts). A contract for selling a smart object for a pre-determined amount of satoshis. This contract does not preserve ordinal ranges so it cannot be used to sell ordinals.
+- [OrdSale](./src/ord-sale.ts). An contract for selling an ordinal for a pre-determined amount of satoshis.
+- [TxWrapper](./src/tx-wrapper.ts). A contract for storing a partially signed transaction in another transaction. This is useful for communicating partially signed transactions over the Bitcoin network.
 
 ## Prerequisites
 
@@ -81,6 +81,7 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Comp
 If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Development Status
+
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
 ## Price
@@ -108,8 +109,6 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 [node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node
-
-
 [ts-badge]: https://img.shields.io/badge/TypeScript-4.5-blue.svg
 [nodejs-badge]: https://img.shields.io/badge/Node.js->=%2016.13-blue.svg
 [nodejs]: https://nodejs.org/dist/latest-v14.x/docs/api/

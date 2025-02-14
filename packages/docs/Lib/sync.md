@@ -3,30 +3,35 @@
 Returns smart objects given a location on the blockchain. The location can either be a revision (a string of the for \<transaction id\>:\<output number\>) or a transaction id.
 
 ### Type
+
 ```ts
-(location: string) => Promise<unknown>
+;(location: string) => Promise<unknown>
 ```
 
 ### Syntax
+
 ```js
 await computer.sync('0324ba3...ba2')
 await computer.sync('0324ba3...ba2:0')
 ```
 
 ### Parameters
-#### location
-An string encoding a revision or a transaction id.
+
+{.compact}
+| Parameter | Description |
+|--------------|---------------------------------------------------------------|
+| location | An string encoding a revision or a transaction id.|
 
 ### Return value
 
 If the function is called with a revision, it returns the smart object stored at the provided revision. Note that the revision must not be a latest revision. In that case a historical state of the revision is returned.
 
-If the function is called with a transaction id, it returns an object of type `{ res: Json; env: Json }`. The value of `res` is the result of evaluating the expression inscribed into the transaction. The `env` object has the same keys as the blockchain environment of the transaction, the values of `env` are the smart objects at these revisions *after* evaluating the expression.
+If the function is called with a transaction id, it returns an object of type `{ res: Json; env: Json }`. The value of `res` is the result of evaluating the expression inscribed into the transaction. The `env` object has the same keys as the blockchain environment of the transaction, the values of `env` are the smart objects at these revisions _after_ evaluating the expression.
 
 If the parameter is not a valid revision or transaction id, an error is thrown.
 
 <!-- TODO: explain other type of errors:
-- inconsistent state if the smart object synced or any other smart object on the environment was not created with the library 
+- inconsistent state if the smart object synced or any other smart object on the environment was not created with the library
 - code validation errors like super not allowed
 - validate that the object re-created with the contract matches the object stored at that location
 - Cannot call a function on a smart object that is pointed to
@@ -73,7 +78,7 @@ class C extends Contract {
 
 // Encode the expression into a transaction
 const { effect, tx } = await computer.encode({
-  exp: `${C} new C(1)`
+  exp: `${C} new C(1)`,
 })
 
 // The tx can be broadcast to commit the change

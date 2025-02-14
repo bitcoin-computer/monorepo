@@ -11,29 +11,32 @@ Please note that modules are not encrypted, even if objects that use them have t
 There are two different modes to store a module on the blockchain: `taproot` or `multisig` mode. The default mode is `taproot`. The mode can be changed by passing the option `moduleStorageType` into the constructor of the `Computer` class. In Taproot mode, the module is stored in a Taproot script. This is cheeper and it enables you to store larger Javascript programs in a module. The multisig mode stores the module in multisig scripts. This is more expensive but compatible with chains that do not support Taproot.
 
 ### Type
+
 ```ts
-(module: string) => Promise<string>
+;(module: string) => Promise<string>
 ```
 
 ### Syntax
+
 ```js
 const rev = await computer.deploy(exp)
 ```
 
 ### Parameters
 
-#### module
-A string encoding an ES6 module.
+{.compact}
+| Parameter | Description |
+|--------------|---------------------------------------------------------------|
+| module | A string encoding an ES6 module.|
 
 ### Return value
 
-A string encoding the location where the module is stored. The format is \<transaction id\>:\<output number\>. 
+A string encoding the location where the module is stored. The format is \<transaction id\>:\<output number\>.
 
 ### Examples
+
 ```ts
-const revA = await computer.deploy(
-  `export class A extends Contract {}`
-)
+const revA = await computer.deploy(`export class A extends Contract {}`)
 
 const revB = await computer.deploy(`
   import { A } from '${revA}'

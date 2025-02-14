@@ -15,7 +15,7 @@ These examples use several advanced features (sighash types, mocking, and contro
 
 We first explain a simpler version that works for the Bitcoin Computer but not for ordinals. The [next](#ordinals-sale) section explains a version that can be used with ordinals.
 
-Seller needs to build a partial transaction containing an input spending the asset and an output for receiving the payment. The [sighash type](https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types) `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY` allows Seller to sign only the first input and output. 
+Seller needs to build a partial transaction containing an input spending the asset and an output for receiving the payment. The [sighash type](https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types) `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY` allows Seller to sign only the first input and output.
 
 Buyer wants to obtain the smart object in the first input so Buyer is incentivized to build the transaction according to the protocol. If he broadcasts transaction that is invalid in the Bitcoin Computer protocol, Buyer destroys the smart object but pays the Seller.
 
@@ -39,7 +39,7 @@ export class Sale extends Contract {
 
 The first argument to the `exec` function is an nft of the following class.
 
-```ts
+```javascript
 export class NFT extends Contract {
   constructor(name = '', symbol = '') {
     super({ name, symbol })
@@ -109,7 +109,7 @@ class PaymentMock {
 const mock = new PaymentMock(1e8)
 ```
 
-Now Seller is ready to create and sign the partial sale transaction using as shown below. There is a lot going on, so we will break down the arguments below.
+Now Seller is ready to create and sign the partial sale transaction using as shown below. There is a lot going on here, so we will break down the arguments below.
 
 ```ts
 const { tx } = await seller.encode({
@@ -165,10 +165,10 @@ Next, Buyer updates the second input of the transaction that currently spends th
 tx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
 ```
 
-Then Buyer updates the second output to contain Buyer's public key. This ensures that Buyer will be new owner of the nft. 
+Then Buyer updates the second output to contain Buyer's public key. This ensures that Buyer will be new owner of the nft.
 
 ```ts
-tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey()})
+tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
 ```
 
 Finally Buyer funds, signs, and broadcasts to execute the sale.
@@ -282,8 +282,7 @@ await bob.broadcast(finalTx)
 
 The `Sale` smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call. To preserve the ordinal ranges the expression must not use the `_amount` keyword and must not return an object or an array containing an object.
 
-Building a sale contract for ordinals is more complicated than for smart objects. A very clever construction was proposed by Rodarmor [here](https://github.com/ordinals/ord/issues/802) and later [refined](https://github.com/ordinals/ord/issues/802#issuecomment-1498030294). Our smart contract below implements this exact idea. 
-
+Building a sale contract for ordinals is more complicated than for smart objects. A very clever construction was proposed by Rodarmor [here](https://github.com/ordinals/ord/issues/802) and later [refined](https://github.com/ordinals/ord/issues/802#issuecomment-1498030294). Our smart contract below implements this exact idea.
 
 ### Smart Contracts
 
@@ -379,7 +378,7 @@ const [paymentTxId, paymentIndex] = payment._rev.split(':')
 tx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
 
 // Buyer updates the second output of the swap tx to receive the NFT
-tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey()})
+tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
 
 // Buyer funds, signs, and broadcasts to execute the sale
 await buyer.fund(tx)

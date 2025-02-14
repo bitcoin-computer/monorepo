@@ -2,27 +2,29 @@
 
 The `decode` function parses a Bitcoin transaction to determine if it is a Bitcoin Computer transaction. If so it returns an expression `exp`, a blockchain environment `env`, and a module specifier `mod`. The function `decode` is the inverse of `encode` when the latter is called with `exp`, `env`, and `mod`.
 
-
 ### Type
+
 ```ts
-(tx: BitcoinLib.Transaction) => Promise<{
-  exp: string,
-  env?: { [s: string]: string },
-  mod?: string
-}>
+;(tx: BitcoinLib.Transaction) =>
+  Promise<{
+    exp: string
+    env?: { [s: string]: string }
+    mod?: string
+  }>
 ```
 
 ### Syntax
+
 ```js
 await computer.decode(tx)
 ```
 
 ### Parameters
 
-#### tx
-
-A [Bitcoin transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/ts_src/transaction.ts) object.
-
+{.compact}
+| Parameter | Description |
+|--------------|---------------------------------------------------------------|
+| tx | A [Bitcoin transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/ts_src/transaction.ts) object. |
 
 ### Return value
 
@@ -36,20 +38,20 @@ type Effect = { res: unknown, env: unknown }
 ```
 
 If fund is required, and the wallet has insufficient funds, an error is thrown.
-If sign is required, the default behavior is to sign all inputs. 
+If sign is required, the default behavior is to sign all inputs.
 The encode function will make a best effort to sign all inputs, but will not throw any error if the signature cannot be added due to hash mismatch. This is useful in the case of partially signed transactions, where a user can encode an expression, sign with the user private key and send the generated partially signed transaction to another user. Then, the receiver can sign the remaining inputs.
 
 <!-- TODO: describe that when signing, some errors are swallowed in order to enable partially signed transactions -->
 
-
 ### Examples
+
 ```ts
 class C extends Contract {}
 const computer = new Computer()
 const transition = {
   exp: `${C} new ${C.name}()`,
   env: {},
-  mod: ''
+  mod: '',
 }
 const { tx } = await computer.encode(transition)
 const decoded = await computer.decode(tx)

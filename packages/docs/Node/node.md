@@ -1,6 +1,5 @@
 ---
 order: -60
-icon: package
 ---
 
 # Node
@@ -23,8 +22,6 @@ cd monorepo
 # Install the dependencies
 npm install
 
-# Build the docker image
-npm run build:node
 ```
 
 </font>
@@ -51,6 +48,10 @@ npm run up
 
 </font>
 
+!!!
+The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database. The postgres database is used to efficiently store the complete blockchain data, for fast access and indexing.
+!!!
+
 ### Run the Tests
 
 You can run the integration tests with the command below.
@@ -63,7 +64,7 @@ npm run test
 
 </font>
 
-On regtest, the halving period is set to infinity. This makes it possible to run a large number of tests without having to restart the node.
+On Litecoin regtest, the halving period is set to infinity. This makes it possible to run a large number of tests without having to restart the node.
 
 ### Fund the Wallet
 
@@ -73,10 +74,10 @@ In regtest mode, you can fund a wallet with the following commands.
 
 ```sh
 # Fund Litecoin regtest wallet
-npm run fund:ltc -- <address_1> ... <address_n>
+npm run fund ltc <address_1> ... <address_n>
 
 # Fund Bitcoin regtest wallet
-npm run fund:btc -- <address_1> ... <address_n>
+npm run fund btc  <address_1> ... <address_n>
 ```
 
 </font>
@@ -88,7 +89,7 @@ You can stop the node with the command below. When you restart the process, it w
 <font size=1>
 
 ```sh
-npm run down -- -r
+npm run down
 ```
 
 </font>
@@ -100,7 +101,7 @@ The command below will reset the database, delete all blockchain data, and stop 
 <font size=1>
 
 ```sh
-npm run reset
+npm run clean
 ```
 
 </font>
@@ -113,27 +114,27 @@ The [Bitcoin Computer Library](https://github.com/bitcoin-computer/monorepo/tree
 
 ```js
 // Import client side library
-import { Computer } from "@bitcoin-computer/lib";
+import { Computer } from '@bitcoin-computer/lib'
 
 // Configuration to connect to node on localhost
 const conf = {
-  chain: "LTC",
-  network: "regtest",
-  url: "http://localhost:1031",
-};
+  chain: 'LTC',
+  network: 'regtest',
+  url: 'http://localhost:1031',
+}
 
 // Create instance of client side library
-const computer = new Computer(conf);
-const address = computer.getAddress();
+const computer = new Computer(conf)
+const address = computer.getAddress()
 
 // Fund client side library
-const { txId, vout } = await computer.faucet(1e4);
+const { txId, vout } = await computer.faucet(1e4)
 
 // Return the utxos
-expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`]);
+expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
 
 // Return the balance
-expect(await new Computer(conf).getBalance(address).balance).eq(1e4);
+expect(await new Computer(conf).getBalance(address).balance).eq(1e4)
 
 // Return the transactions
 expect(await new Computer(conf).listTxs(address)).deep.eq({
@@ -146,7 +147,7 @@ expect(await new Computer(conf).listTxs(address)).deep.eq({
       satoshis: 1e4,
     },
   ],
-});
+})
 ```
 
 </font>
@@ -277,33 +278,7 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 | 8    | 32GB | 7h 15m    | $240          |
 | 16   | 32GB | 4h 45m    | $440          |
  -->
+
 ## Versioning
 
 If you run your own node, make sure to use the same versions of Lib and Node.
-
-## Documentation
-
-Have a look at the [docs](https://docs.bitcoincomputer.io/).
-
-## Getting Help
-
-If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
-
-## Development Status
-
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
-
-## Price
-
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price).
-
-## License
-
-This software is licensed under the [Creative Commons Attribution-NoDerivs 3.0 Unported](https://creativecommons.org/licenses/by-nd/3.0/) license.
-
-You are free to: share, copy, and redistribute the material in any medium or format for any purpose, even commercially under the following terms:
-
-- Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-- NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
-
-This is a human-readable summary of (and not a substitute for) the [license](https://creativecommons.org/licenses/by-nd/3.0/legalcode).

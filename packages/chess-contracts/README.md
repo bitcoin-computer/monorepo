@@ -1,4 +1,4 @@
-# Chess Contracts
+# Bitcoin Computer Chess Contracts
 
 ## Usage
 
