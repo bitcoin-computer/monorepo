@@ -23,9 +23,9 @@ class Chat extends Contract {
 }
 ```
 
-=== :paperclip: **Smart Object**
+!!!success **Smart Object**
 Given a class that extends from `Contract`, we define a **smart object** as an instance of that class that is deployed to the blockchain. Smart objects are the basic building blocks of the Bitcoin Computer.
-===
+!!!
 
 You can notice that there are specific rules to follow when writing a smart contract. To deep dive into the rules and best practices, check out the [Smart Contract Language](/language/).
 
@@ -150,7 +150,7 @@ const obj = await computer.sync(rev)
 
 ## Data Ownership
 
-Every smart object can have up to three owners. Only an owner can update the object. The owners can be set by assigning string encoded public keys to the `_owners` property of a smart object. If the `_owners` property is not assigned in a smart contract it defaults to the public key of the computer object that created the smart object.
+Every smart object can have up to three owners. Only an owner can update the object. The owners can be set by assigning an array of string encoded public keys to the `_owners` property of a smart object. If the `_owners` property is not assigned in a smart contract it defaults to the public key of the computer object that created the smart object.
 
 In the chat example the initial owner is the public key of the `computer` object on which `computer.new` function was called. Thus only a user with the private key for that public key will be able to post to the chat. We can add a function `invite` to update the owners array to allow more users to post.
 
@@ -163,6 +163,8 @@ class Chat extends Contract {
   }
 }
 ```
+
+It is also possible to set the `_owners` property to an ASM representation of a script that defines the ownership rules. This allows for more complex conditions over the data ownership. To get more information on how to use this feature see the [Smart Contract Language](./language.md/#control-keyword-properties) section.
 
 ## Privacy
 
@@ -246,3 +248,55 @@ await paymentB.cashOut()
 ```
 
 When executing the `cashOut` function one more transaction is broadcast which send the satoshis to user _B_'s address.
+
+## Advanced Topics
+
+Until now, we use the Bitcoin Computer in a very simple way. However, the Bitcoin Computer is a powerful tool that can be used to build complex applications.
+
+### The `computer.encode()` function
+
+One of the most powerful features of the Bitcoin Computer is the ability to encode Javascript expressions into a Bitcoin transaction that can be stored on the blockchain. This allows for a low-level control over the Bitcoin Computer's execution environment.
+
+The `computer.encode()` function builds a Bitcoin transaction from a Javascript expression according to the [Bitcoin Computer protocol](../how-it-works.md). In addition to the transaction, this function also returns the value of the expression.
+
+For example, the following code creates a Bitcoin transaction that can be deployed to the blockchain, with a Javascript expression that encodes a smart contract class definition and creates a new instance of the smart contract.
+
+```js
+class C extends Contract {} // define a simple smart contract class
+
+const { tx } = await computer.encode({ exp: `${C} new ${C.name}()` })
+```
+
+The encode function can compute the updated status of the objects or expressions in the transaction. This is useful to check the status of the objects before deploying the transaction.
+
+To get more information on this functionality and other advanced options see the [`computer.encode()`](./lib/encode) section of the API documentation.
+
+### Module System
+
+The Bitcoin Computer includes a flexible module system that allows you to deploy and import modules from the blockchain. This is useful for sharing code between different smart contracts and applications, to import modules inside of smart contracts, and to save on deployment costs.
+
+To deploy a module to the blockchain, you can use the `computer.deploy()` function. This function takes a Javascript expression that defines the module, and deploys it to the blockchain. The function returns the address of the deployed module (transaction ID).
+
+In the following example, a simple class `A` is deployed to the blockchain, and then a class `B` is deployed that imports `A` from the blockchain.
+
+```js
+const revA = await computer.deploy(`export class A extends Contract {}`)
+
+const revB = await computer.deploy(`
+  import { A } from '${revA}'
+  export class B extends A {}
+`)
+const { tx } = await computer.encode({ exp: `new B()`, mod: revB })
+expect(tx.getId()).to.be.a.string
+```
+
+To import a module from the blockchain, you can use the `computer.load(rev)` function. This function takes the location of the module and returns the module.
+
+```ts
+class A extends Contract {}
+const rev = await computer.deploy(`export ${A}`)
+const { A: AA } = await computer.load(rev)
+expect(AA).to.equal(A)
+```
+
+To deep dive into the module system and other advanced options see the [`computer.deploy()`](./lib/deploy) and the [`computer.load()`](./lib/load) section of the API documentation.
