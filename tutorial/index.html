@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792887239980">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792888007349">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Tutorial</title>
     <meta name="title" content="Tutorial">
-    <meta name="description" content="Smart contracts are Javascript or Typescript classes that extend from Contract. For example, a smart contract for a simple chat is">
+    <meta name="description" content="Smart contracts are typically Javascript or Typescript classes that extend from Contract. For example, a smart contract for a simple chat is">
 
     <!-- Canonical -->
     <link rel="canonical" href="/tutorial/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/tutorial/">
     <meta property="og:title" content="Tutorial">
-    <meta property="og:description" content="Smart contracts are Javascript or Typescript classes that extend from Contract. For example, a smart contract for a simple chat is">
+    <meta property="og:description" content="Smart contracts are typically Javascript or Typescript classes that extend from Contract. For example, a smart contract for a simple chat is">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/tutorial/">
     <meta property="twitter:title" content="Tutorial">
-    <meta property="twitter:description" content="Smart contracts are Javascript or Typescript classes that extend from Contract. For example, a smart contract for a simple chat is">
+    <meta property="twitter:description" content="Smart contracts are typically Javascript or Typescript classes that extend from Contract. For example, a smart contract for a simple chat is">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.792887239980" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.792888007349" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.792887239980" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.792888007349" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -163,7 +163,7 @@
         <span>Write a Smart Contract</span>
     </h2>
 </doc-anchor-target>
-<p>Smart contracts are Javascript or Typescript classes that extend from <code v-pre>Contract</code>. For example, a smart contract for a simple chat is</p>
+<p>Smart contracts are typically Javascript or Typescript classes that extend from <code v-pre>Contract</code>. For example, a smart contract for a simple chat is</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">import { Contract } from '@bitcoin-computer/lib'
 
@@ -177,7 +177,25 @@ class Chat extends Contract {
   }
 }</code></pre>
 </doc-codeblock></div>
-<p>Note that it is not possible to assign to <code v-pre>this</code> in constructors. Instead you can initialize a smart object by passing an argument into <code v-pre>super</code> as shown above.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-green-500"></div>
+    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-green-500" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M21 9.09c-.55 0-1 .45-1 1v.92c0 4.96-4.04 8.99-9 8.99-4.97 0-9-4.04-9-9s4.04-9 9-9c1.27 0 2.5.26 3.66.78.51.22 1.1 0 1.32-.51.23-.5 0-1.1-.51-1.32C14.06.32 12.56 0 11.01 0H11C4.94 0 0 4.93 0 10.99 0 17.06 4.93 22 10.99 22H11c6.06 0 11-4.93 11-10.99v-.92c0-.56-.45-1-1-1z"></path>
+                    <path d="M8.71 9.31a.996.996 0 10-1.41 1.41l3 3c.19.19.44.29.71.29.27 0 .52-.11.71-.29l10-10.01a.996.996 0 10-1.41-1.41L11 11.6 8.71 9.31z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+            <h5><strong>Smart Object</strong></h5>
+<p>Given a class that extends from <code v-pre>Contract</code>, we define a <strong>smart object</strong> as an instance of that class that is deployed to the blockchain. Smart objects are the basic building blocks of the Bitcoin Computer.</p>
+        </div>
+    </div>
+</div>
+<p>You can notice that there are specific rules to follow when writing a smart contract. To deep dive into the rules and best practices, check out the <a href="../language/">Smart Contract Language</a>.</p>
+<!-- Note that it is not possible to assign to `this` in constructors. Instead you can initialize a smart object by passing an argument into `super` as shown above. -->
 <doc-anchor-target id="create-a-computer-object">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#create-a-computer-object">#</doc-anchor-trigger>
@@ -190,7 +208,7 @@ class Chat extends Contract {
 
 const computer = new Computer({ mnemonic: 'replace this seed' })</code></pre>
 </doc-codeblock></div>
-<p>You can pass in a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic to initialize the wallet in the computer object. To securely generate a random mnemonic leave the <code v-pre>mnemonic</code> key undefined. You can find more configuration options <a href="/api/constructor/">here</a>.</p>
+<p>You can pass in a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic to initialize the wallet in the computer object. To securely generate a random mnemonic leave the <code v-pre>mnemonic</code> key undefined. You can find more configuration options <a href="../lib/constructor/">here</a>.</p>
 <doc-anchor-target id="create-a-smart-object">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#create-a-smart-object">#</doc-anchor-trigger>
@@ -201,7 +219,7 @@ const computer = new Computer({ mnemonic: 'replace this seed' })</code></pre>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const chat = await computer.new(Chat, ['hello'])</code></pre>
 </doc-codeblock></div>
-<p>The object <code v-pre>chat</code> that is returned has the properties defined in the class and five extra properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code>, <code v-pre>_owners</code> and <code v-pre>_amount</code>.</p>
+<p>Basically, the <code v-pre>Chat</code> class is inscribed into a Bitcoin transaction and broadcast to the network, and an instance of the class is returned. In the example, the object <code v-pre>chat</code> has the properties defined in the <code v-pre>Chat</code> class and five extra properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code>, <code v-pre>_owners</code> and <code v-pre>_amount</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">expect(chat).to.deep.equal({
   messages: ['hello'],
@@ -209,11 +227,11 @@ const computer = new Computer({ mnemonic: 'replace this seed' })</code></pre>
   _rev: '667c...2357:0',
   _root: '667c...2357:0',
   _owners: ['03...'],
-  _amount: 5820
+  _amount: 5820,
 })</code></pre>
 </doc-codeblock></div>
-<p>The property <code v-pre>_owners</code> is an array of public keys that are able to spend that UTXO and the property <code v-pre>_amount</code> is the amount of satoshis in that UTXO. The meaning of the other properties are explained below.</p>
-<p>The properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code> reference a transaction that is broadcast when the expression <code v-pre>await computer.new(Chat, ['hello'])</code> is evaluated. This transaction encodes the expression</p>
+<p>The <code v-pre>_owners</code> property lists the public keys able to spend this UTXO. The <code v-pre>_amount</code> property specifies the UTXO&#x27;s value in satoshis.</p>
+<p>The properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code> reference a transaction that is broadcast when the expression <code v-pre>await computer.new(Chat, ['hello'])</code> is evaluated. This transaction encodes the class definition and the creation of an instance of the class, as in following expression:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">class Chat extends Contract {
   constructor(greeting) {
@@ -238,14 +256,15 @@ new Chat('hello')</code></pre>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">expect(await computer.sync('667c...2357:0')).to.deep.equal(chat)</code></pre>
 </doc-codeblock></div>
-<p>You can find more details about how this works <a href="../how-it-works/#storing-values">here</a>.</p>
+<p>The <a href="/api/sync"><code v-pre>computer.sync</code></a> function computes the state of the smart object by recursively evaluating all the transactions that reference the smart object, and replaying the expressions in those transactions.
+You can find more details about how this works <a href="../how-it-works/#storing-values">here</a>.</p>
 <doc-anchor-target id="update-a-smart-object">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#update-a-smart-object">#</doc-anchor-trigger>
         <span>Update a Smart Object</span>
     </h2>
 </doc-anchor-target>
-<p>A Smart object can be updated by calling one of it&#x27;s functions. Note that you have to <code v-pre>await</code> on all function calls to read the latest state.</p>
+<p>A smart object can be updated by calling one of it&#x27;s functions. Note that you have to <code v-pre>await</code> on all function calls to read the latest state.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">await chat.post('world')
 
@@ -255,14 +274,14 @@ expect(chat).to.deep.equal({
   _rev: 'de43...818a:0',
   _root: '667c...2357:0',
   _owners: ['03...'],
-  _amount: 5820
+  _amount: 5820,
 })</code></pre>
 </doc-codeblock></div>
-<p>When a function is called, a transaction is broadcast that inscribes the expression of the function call. In the example, the transaction with id <code v-pre>de43...818a</code> inscribes the expression</p>
+<p>When a function is called, a transaction that inscribes the expression of the function call is broadcast. In the example, the transaction with id <code v-pre>de43...818a</code> inscribes the expression:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">chat.post('world')</code></pre>
 </doc-codeblock></div>
-<p>Note that the <code v-pre>_rev</code> property of the <code v-pre>chat</code> object has been updated to <code v-pre>de43...818a:0</code>. Every time a smart object is updated a new <em>revision</em> is created. The corresponding transaction id and output number is assigned to the <code v-pre>_rev</code> property. The <code v-pre>_id</code> property is never updated and is a unique identifier for each smart object. You can find more details about updating smart object <a href="../how-it-works/#updating-values">here</a>.</p>
+<p>The <code v-pre>_id</code> property uniquely identifies each smart object and remains constant. However, the <code v-pre>_rev</code> property changes with each update, tracking the different versions of the object. For instance, the chat object&#x27;s current revision is <code v-pre>de43...818a:0</code>. Each update creates a new <code v-pre>_rev</code> value, composed of the transaction ID and output number. This means one <code v-pre>_id</code> can be associated with multiple <code v-pre>_rev</code> values, reflecting its update history. Further details on updating smart objects can be found <a href="../how-it-works/#updating-values">here</a>.</p>
 <p>The <code v-pre>computer.sync</code> function maps revisions to historical states. It can be called with any historical revision. It will return the current state for the latest revision.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const oldChat = await computer.sync(chat._id)
@@ -279,10 +298,10 @@ expect(newChat.messages).to.deep.equal(['hello', 'world'])</code></pre>
 </doc-anchor-target>
 <p>The <a href="/api/query"><code v-pre>computer.query</code></a> function returns the latest revision of a smart objects. It can be called with many different kinds of arguments, for example object one or more ids:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const [rev] = await computer.query({ ids: ['667c...2357:0']})
+<pre class="language-javascript"><code v-pre class="language-javascript">const [rev] = await computer.query({ ids: ['667c...2357:0'] })
 expect(rev).to.equal('de43...818a:0')</code></pre>
 </doc-codeblock></div>
-<p>A basic pattern for many applications is to identify a smart object by its id, look up the object&#x27;s latest revision using <code v-pre>computer.query</code>, and then to compute its latest state using <code v-pre>computer.sync</code>. For example, imagine a chat app where the url would contain the id of a specific chat. The app could compute the latest state of the chat as follows:</p>
+<p>A basic pattern for many applications is to identify a smart object by its ids, look up the object&#x27;s latest revision using <code v-pre>computer.query</code>, and then to compute its latest state using <code v-pre>computer.sync</code>. For example, imagine a chat app where the url would contain the id of a specific chat. The app could compute the latest state of the chat as follows:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const urlToId = (url) =&gt; ...
 const id = urlToId(window.location)
@@ -295,7 +314,7 @@ const obj = await computer.sync(rev)</code></pre>
         <span>Data Ownership</span>
     </h2>
 </doc-anchor-target>
-<p>Every smart object can have up to three owners. Only an owner can update the object. The owners can be set by assigning string encoded public keys to the <code v-pre>_owners</code> property of a smart object. If the <code v-pre>_owners</code> property is not assigned in a smart contract it defaults to the public key of the computer object that created the smart object.</p>
+<p>Every smart object can have up to three owners. Only an owner can update the object. The owners can be set by assigning an array of string encoded public keys to the <code v-pre>_owners</code> property of a smart object. If the <code v-pre>_owners</code> property is not assigned in a smart contract it defaults to the public key of the computer object that created the smart object.</p>
 <p>In the chat example the initial owner is the public key of the <code v-pre>computer</code> object on which <code v-pre>computer.new</code> function was called. Thus only a user with the private key for that public key will be able to post to the chat. We can add a function <code v-pre>invite</code> to update the owners array to allow more users to post.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">class Chat extends Contract {
@@ -306,6 +325,7 @@ const obj = await computer.sync(rev)</code></pre>
   }
 }</code></pre>
 </doc-codeblock></div>
+<p>It is also possible to set the <code v-pre>_owners</code> property to an ASM representation of a script that defines the ownership rules. This allows for more complex conditions over the data ownership. To get more information on how to use this feature see the <a href="../language/#control-keyword-properties">Smart Contract Language</a> section.</p>
 <doc-anchor-target id="privacy">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#privacy">#</doc-anchor-trigger>
@@ -319,7 +339,7 @@ const obj = await computer.sync(rev)</code></pre>
   constructor(greeting, owner) {
     super({
       messages: [greeting],
-      _readers: [owner]
+      _readers: [owner],
     })
   }
 
@@ -384,7 +404,57 @@ const payment = computerA.new(Payment, [210000])</code></pre>
 const paymentB = await computerB.sync(payment._rev)
 await paymentB.cashOut()</code></pre>
 </doc-codeblock></div>
-<p>One more transaction is broadcast for which user <em>B</em> pays the fees. This transaction has two outputs: one that records that the <code v-pre>cashOut</code> function was called with 546 satoshi and another that spends the remaining satoshi to user <em>B</em>&#x27;s address.</p>
+<p>When executing the <code v-pre>cashOut</code> function one more transaction is broadcast which send the satoshis to user <em>B</em>&#x27;s address.</p>
+<doc-anchor-target id="advanced-topics">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#advanced-topics">#</doc-anchor-trigger>
+        <span>Advanced Topics</span>
+    </h2>
+</doc-anchor-target>
+<p>Until now, we use the Bitcoin Computer in a very simple way. However, the Bitcoin Computer is a powerful tool that can be used to build complex applications.</p>
+<doc-anchor-target id="the-computerencode-function">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#the-computerencode-function">#</doc-anchor-trigger>
+        <span>The <code v-pre>computer.encode()</code> function</span>
+    </h3>
+</doc-anchor-target>
+<p>One of the most powerful features of the Bitcoin Computer is the ability to encode Javascript expressions into a Bitcoin transaction that can be stored on the blockchain. This allows for a low-level control over the Bitcoin Computer&#x27;s execution environment.</p>
+<p>The <code v-pre>computer.encode()</code> function builds a Bitcoin transaction from a Javascript expression according to the <a href="../how-it-works.md">Bitcoin Computer protocol</a>. In addition to the transaction, this function also returns the value of the expression.</p>
+<p>For example, the following code creates a Bitcoin transaction that can be deployed to the blockchain, with a Javascript expression that encodes a smart contract class definition and creates a new instance of the smart contract.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">class C extends Contract {} // define a simple smart contract class
+
+const { tx } = await computer.encode({ exp: `${C} new ${C.name}()` })</code></pre>
+</doc-codeblock></div>
+<p>The encode function can compute the updated status of the objects or expressions in the transaction. This is useful to check the status of the objects before deploying the transaction.</p>
+<p>To get more information on this functionality and other advanced options see the <a href="../lib/encode/"><code v-pre>computer.encode()</code></a> section of the API documentation.</p>
+<doc-anchor-target id="module-system">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#module-system">#</doc-anchor-trigger>
+        <span>Module System</span>
+    </h3>
+</doc-anchor-target>
+<p>The Bitcoin Computer includes a flexible module system that allows you to deploy and import modules from the blockchain. This is useful for sharing code between different smart contracts and applications, to import modules inside of smart contracts, and to save on deployment costs.</p>
+<p>To deploy a module to the blockchain, you can use the <code v-pre>computer.deploy()</code> function. This function takes a Javascript expression that defines the module, and deploys it to the blockchain. The function returns the address of the deployed module (transaction ID).</p>
+<p>In the following example, a simple class <code v-pre>A</code> is deployed to the blockchain, and then a class <code v-pre>B</code> is deployed that imports <code v-pre>A</code> from the blockchain.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">const revA = await computer.deploy(`export class A extends Contract {}`)
+
+const revB = await computer.deploy(`
+  import { A } from '${revA}'
+  export class B extends A {}
+`)
+const { tx } = await computer.encode({ exp: `new B()`, mod: revB })
+expect(tx.getId()).to.be.a.string</code></pre>
+</doc-codeblock></div>
+<p>To import a module from the blockchain, you can use the <code v-pre>computer.load(rev)</code> function. This function takes the location of the module and returns the module.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">class A extends Contract {}
+const rev = await computer.deploy(`export ${A}`)
+const { A: AA } = await computer.load(rev)
+expect(AA).to.equal(A)</code></pre>
+</doc-codeblock></div>
+<p>To deep dive into the module system and other advanced options see the <a href="../lib/deploy/"><code v-pre>computer.deploy()</code></a> and the <a href="../lib/load/"><code v-pre>computer.load()</code></a> section of the API documentation.</p>
 
                                 
                                 <!-- Required only on API pages -->

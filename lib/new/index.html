@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792887239980">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792888007349">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.792887239980" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.792888007349" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.792887239980" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.792888007349" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -165,22 +165,22 @@
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">&lt;T extends new (...args: any) =&gt; any&gt;(
+<pre class="language-typescript"><code v-pre class="language-typescript">;&lt;T extends new (...args: any) =&gt; any&gt;(
   constructor: T,
   args?: ConstructorParameters&lt;T&gt;,
-  mod?: string
-) =&gt; Promise&lt;InstanceType&lt;T&gt; &amp; MetaData&gt;;</code></pre>
+  mod?: string,
+) =&gt; Promise&lt;InstanceType&lt;T&gt; &amp; MetaData&gt;</code></pre>
 </doc-codeblock></div>
 <p>Here a <code v-pre>MetaData</code> is the type</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">type MetaData = { 
-  _id: string, 
-  _rev: string, 
-  _root: string, 
-  _amount: number, 
-  _owners: string[], 
-  _readers?: string[], 
-  _url?: string 
+<pre class="language-typescript"><code v-pre class="language-typescript">type MetaData = {
+  _id: string
+  _rev: string
+  _root: string
+  _amount: number
+  _owners: string[]
+  _readers?: string[]
+  _url?: string
 }</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="syntax">
@@ -200,27 +200,30 @@ await computer.new(A, ['a'], '9128ab1232...18ba:0')</code></pre>
         <span>Parameters</span>
     </h3>
 </doc-anchor-target>
-<doc-anchor-target id="constructor">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#constructor">#</doc-anchor-trigger>
-        <span>constructor</span>
-    </h4>
-</doc-anchor-target>
-<p>A named Javascript class that extends from <code v-pre>Contract</code>.</p>
-<doc-anchor-target id="args">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#args">#</doc-anchor-trigger>
-        <span>args</span>
-    </h4>
-</doc-anchor-target>
-<p>Arguments to the constructor of the class.</p>
-<doc-anchor-target id="mod">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#mod">#</doc-anchor-trigger>
-        <span>mod</span>
-    </h4>
-</doc-anchor-target>
-<p>A module specifier, i.e., the revision string of a deployed module (see <a href="/api.md#deploy">deploy</a>).</p>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>constructor</td>
+<td>A named Javascript class that extends from <code v-pre>Contract</code>.</td>
+</tr>
+<tr>
+<td>args</td>
+<td>Arguments to the constructor of the class.</td>
+</tr>
+<tr>
+<td>mod</td>
+<td>A module specifier, i.e., the revision string of a deployed module (see <a href="/api.md#deploy">deploy</a>).</td>
+</tr>
+</tbody>
+</table>
+</div>
 <doc-anchor-target id="return-value">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#return-value">#</doc-anchor-trigger>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792887239980">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792888007349">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.792887239980" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.792888007349" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.792887239980" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.792888007349" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -188,27 +188,31 @@
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">(opts: {
-  exp: string, // an expression
-  env?: Record&lt;string, string&gt;, // a blockchain environment
+<pre class="language-typescript"><code v-pre class="language-typescript">;(opts: {
+  exp: string // an expression
+  env?: Record&lt;string, string&gt; // a blockchain environment
   mod?: string // a module specifier
 
   // Funding options
   fund?: boolean // whether to fund the transaction
   include?: string[] // include specific UTXOs when funding
   exclude?: string[] // exclude specific UTXOs when funding
-  
+
   // Signing options
   sign?: boolean // whether to sign the transaction
   sighashType?: number // Sighash type to use
-  index?: number // input index to be signed
+  inputIndex?: number // input index to be signed
   inputScript?: Buffer // use input script (instead of signing)
-}) =&gt; Promise&lt;{
-  // the transaction with the expression inscribed
-  tx: BitcoinLib.Transaction,
-  // the result of the evaluation
-  effect: { res: Json; env: Json }
-}&gt; </code></pre>
+
+  // Mock options
+  mocks?: Record&lt;string, any&gt; // a mock environment
+}) =&gt;
+  Promise&lt;{
+    // the transaction with the expression inscribed
+    tx: BitcoinLib.Transaction
+    // the result of the evaluation
+    effect: { res: Json; env: Json }
+  }&gt;</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="syntax">
     <h3>
@@ -296,7 +300,7 @@ await computer.encode({ exp, fund, sign })
 <td>1=SIGHASH_ALL</td>
 </tr>
 <tr>
-<td>index</td>
+<td>inputIndex</td>
 <td>number</td>
 <td>If set to an number the corresponding input is signed. If undefined all inputs are signed.</td>
 <td>undefined</td>
@@ -305,6 +309,12 @@ await computer.encode({ exp, fund, sign })
 <td>inputScript</td>
 <td>string</td>
 <td>If set to a string a custom input script can be provided. If undefined a signature script is generated</td>
+<td>undefined</td>
+</tr>
+<tr>
+<td>mocks</td>
+<td>Record&lt;string, any&gt;</td>
+<td>A pair &lt;name, object&gt;. The object is an instance of a mocked class (A class that does not extends from Contract but has the keywords <code v-pre>_id</code>, <code v-pre>_root</code>, <code v-pre>_amount</code>,<code v-pre>_owners</code>)</td>
 <td>undefined</td>
 </tr>
 </tbody>
@@ -321,7 +331,7 @@ await computer.encode({ exp, fund, sign })
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">{ tx: BitcoinLib.Transaction, effect: { res: Json; env: Json } }</code></pre>
 </doc-codeblock></div>
-<p>The transaction <code v-pre>tx</code> is an object from the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs#nakamotojs-nakamotojs">NakamotoJS</a> library - a <a href="https://github.com/bitcoinjs/bitcoinjs-lib?tab=readme-ov-file#bitcoinjs-bitcoinjs-lib">BitcoinJS</a> clone that supports LTC and BTC and has some extra features that make is easier to build advanced applications like exchanges.</p>
+<p>The transaction <code v-pre>tx</code> is an object from the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs#nakamotojs-nakamotojs">NakamotoJS</a> library - a <a href="https://github.com/bitcoinjs/bitcoinjs-lib?tab=readme-ov-file#bitcoinjs-bitcoinjs-lib">BitcoinJS</a> clone that supports LTC, BTC, PEPE and DOGE, and has some extra features that make is easier to build advanced applications like exchanges.</p>
 <p>The <code v-pre>res</code> object contains the result of the evaluation.</p>
 <p>The <code v-pre>env</code> object has the same keys as the blockchain environment. However, whereas the values of the blockchain environment are revision strings, the values of <code v-pre>env</code> and the smart object at these revisions <em>after</em> evaluating the expression.</p>
 <!-- TODO: describe that when signing, some errors are swallowed in order to enable partially signed transactions -->
@@ -350,7 +360,7 @@ const { effect, tx } = await computer.encode({
 // Effect captures state of smart objects
 // if the transaction is broadcast
 expect(effect).deep.eq({
-  res: { 
+  res: {
     n:1
     _id: '667c...2357:0',
     _rev: '667c...2357:0',

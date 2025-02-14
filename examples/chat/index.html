@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792887239980">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792888007349">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.792887239980" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.792888007349" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.792887239980" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.792888007349" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -174,7 +174,7 @@
     super({
       messages: [],
       _owners: publicKeys,
-      _readers: publicKeys
+      _readers: publicKeys,
     })
   }
 
@@ -183,8 +183,8 @@
   }
 
   remove(publicKey: string) {
-    this._readers = this._readers.filter(o =&gt; o !== publicKey)
-    this._owners_ = this._owners_.filter(o =&gt; o !== publicKey)
+    this._readers = this._readers.filter((o) =&gt; o !== publicKey)
+    this._owners_ = this._owners_.filter((o) =&gt; o !== publicKey)
   }
 }</code></pre>
 </doc-codeblock></div>
@@ -194,7 +194,7 @@
         <span>Usage</span>
     </h2>
 </doc-anchor-target>
-<p>A new chat can be created using the <a href="./api/new.md"><code v-pre>new</code></a> function. Note that Bob can initially post to the chat and read it&#x27;s state as Bob&#x27;s public key was added to the <code v-pre>_owners</code> array and <code v-pre>_readers</code> array by Alice upon creation of the chat.</p>
+<p>A new chat can be created using the <a href="./api/new.md"><code v-pre>new</code></a> function. Note that Bob can initially post to the chat and read it&#x27;s state as Bob&#x27;s public key was added by Alice to the <code v-pre>_owners</code> array and to the <code v-pre>_readers</code> array upon creation of the chat.</p>
 <p>Later, Alice called the <code v-pre>remove</code> function removing Bob&#x27;s public key from these arrays. After this point Bob cannot read or write anymore.</p>
 <p>Eve was never part of the <code v-pre>_readers</code> array so she cannot read the content of the chat, nor write to it.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
@@ -213,7 +213,7 @@ const alicesChat = await alice.new(Chat, [publicKeys])
 await alicesChat.post('Hi')
 
 // Bob can read the current state of the chat and post a message
-const bobsChat = await bob.sync(alicesChat._rev) as Chat
+const bobsChat = (await bob.sync(alicesChat._rev)) as Chat
 await bobsChat.post('Yo')
 expect(bobsChat.messages).deep.eq(['Hi', 'Yo'])
 
@@ -222,7 +222,7 @@ try {
   // This line throws an error
   await eve.sync(alicesChat._rev)
   expect(true).eq(false)
-} catch(err) {
+} catch (err) {
   expect(err.message).not.undefined
 }
 
@@ -234,10 +234,17 @@ try {
   // This line throws an error
   await bob.sync(alicesChat._rev)
   expect(true).eq(false)
-} catch(err) {
+} catch (err) {
   expect(err.message).not.undefined
 }</code></pre>
 </doc-codeblock></div>
+<doc-anchor-target id="code">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#code">#</doc-anchor-trigger>
+        <span>Code</span>
+    </h2>
+</doc-anchor-target>
+<p>You can find the code <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/chat/README.md">here</a>.</p>
 
                                 
                                 <!-- Required only on API pages -->

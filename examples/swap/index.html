@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792887239980">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.792888007349">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.792887239980" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.792888007349" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.792887239980" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.792887239980" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.792888007349" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.792888007349" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -182,7 +182,7 @@
         <span>Swap Using a Static Function</span>
     </h2>
 </doc-anchor-target>
-<p>You can build a swap as a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this smart objects that contain ordinals.</p>
+<p>You can build a swap as a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this in smart objects that contain ordinals.</p>
 <doc-anchor-target id="smart-contracts">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contracts">#</doc-anchor-trigger>
@@ -201,7 +201,7 @@
 </doc-codeblock></div>
 <p>The code below shows the <code v-pre>NFT</code> class. While this example uses NFTs as arguments, the same function can be used to swap any pair of smart objects that have a <code v-pre>transfer</code> function.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">export class NFT extends Contract {
+<pre class="language-javascript"><code v-pre class="language-javascript">export class NFT extends Contract {
   constructor(name = '', symbol = '') {
     super({ name, symbol })
   }
@@ -229,7 +229,7 @@ const b = await alice.new(NFT, ['B', 'BBB'])</code></pre>
     </h3>
 </doc-anchor-target>
 <p>A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The outputs are the NFTs after the swap with their owners exchanged.</p>
-<p>Alice passes an expression containing both the code of the <code v-pre>StaticSwap</code> class and the expression <code v-pre>StaticSwap.exec(a, b)</code> to the <a href="./api/encode.md"><code v-pre>encode</code></a> function. The second argument is an environment that determines that the values to be used for <code v-pre>a</code> and <code v-pre>b</code> are stored at revisions <code v-pre>a._rev</code> and <code v-pre>b._rev</code>.</p>
+<p>Alice passes an expression containing both the code of the <code v-pre>StaticSwap</code> class and the expression <code v-pre>StaticSwap.exec(a, b)</code> to the <a href="../../lib/encode/"><code v-pre>encode</code></a> function. The second argument is an environment that determines that the values to be used for <code v-pre>a</code> and <code v-pre>b</code> are stored at revisions <code v-pre>a._rev</code> and <code v-pre>b._rev</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">const { tx } = await alice.encode({
   exp: `${StaticSwap} StaticSwap.exec(a, b)`,
@@ -237,13 +237,14 @@ const b = await alice.new(NFT, ['B', 'BBB'])</code></pre>
 })</code></pre>
 </doc-codeblock></div>
 <p>The <code v-pre>encode</code> function will automatically sign all inputs of the transaction that can be signed with the private key of the computer object on which the function is called. In this case, this is the input as revision <code v-pre>a._rev</code>.</p>
+<p>The function <code v-pre>encode</code> will not broadcast automatically. This feature is useful when you want to check the transaction before broadcasting it. It also allows more advanced use cases, for example, using different signature hash types, or signing only specific inputs. More on this in the <a href="../../lib/encode/">API documentation</a>.</p>
 <doc-anchor-target id="executing-the-swap">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#executing-the-swap">#</doc-anchor-trigger>
         <span>Executing the Swap</span>
     </h3>
 </doc-anchor-target>
-<p>Then Bob signs the input <code v-pre>b._rev</code> and broadcasts the transaction. When the transaction is included in the blockchain the swap is executed and the owners of the two NFTs are reversed.</p>
+<p>The transaction created above was partially signed (only Alice&#x27;s signature was added). Bob now signs the input <code v-pre>b._rev</code> and broadcasts the transaction. When the transaction is included in the blockchain the swap is executed and the owners of the two NFTs are reversed.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">await bob.sign(tx)
 await bob.broadcast(tx)</code></pre>
@@ -282,7 +283,7 @@ await bob.broadcast(tx)</code></pre>
         <span>Reducing Fees</span>
     </h4>
 </doc-anchor-target>
-<p>The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wasts block space and is expensive. A more efficient approach is to deploy the <code v-pre>Swap</code> function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts"><code v-pre>SwapHelper</code></a> for swaps and <code v-pre>NftHelper</code> for NFTs that can be used as follows:</p>
+<p>The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wastes block space and is expensive. A more efficient approach is to deploy the <code v-pre>Swap</code> function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts"><code v-pre>SwapHelper</code></a> for swaps and <code v-pre>NftHelper</code> for NFTs that can be used as follows:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">// Alice creates helper objects
 const nftHelperA = new NftHelper(alice)
@@ -318,7 +319,7 @@ await alice.broadcast(tx)</code></pre>
         <span>Code</span>
     </h2>
 </doc-anchor-target>
-<p>Have a look at the code on  <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme">Github</a> for details.</p>
+<p>Have a look at the code on <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme">Github</a> for details.</p>
 
                                 
                                 <!-- Required only on API pages -->
