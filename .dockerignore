@@ -12,6 +12,7 @@ README.md
 packages/.DS_Store
 packages/nakamotojs/test
 packages/nakamotojs/ts_src
+packages/.turbo
 packages/node/coverage/
 packages/node/logs/
 packages/node/node_modules/
@@ -22,26 +23,25 @@ packages/node/.DS_Store
 packages/node/src
 packages/node/test
 packages/node/*.log
+packages/node/*.conf
 packages/node/scripts/__pycache__
 
 packages/lib/*.log
 
 packages/chat
+packages/chess-app
+packages/chess-contracts
+packages/chess-server
 packages/components
-packages/cra-template
 packages/docs
 packages/explorer
-packages/explorer-vite
-packages/ft
-packages/ft2
 packages/nft
-packages/nft-vite
 packages/nodejs-template
 packages/swap/
+packages/nft-vite
 packages/TBC*/
 packages/vite-template
 packages/wallet
-packages/wallet-vite
 packages/website
 
 .env
