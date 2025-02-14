@@ -6,7 +6,7 @@ layout: page
 
 # Introduction
 
-The Bitcoin Computer is a turing complete smart contracts metaprotocol for UTXO-Based Blockchains, designed for creating decentralized applications in Bitcoin, Litecoin and compatible blockchains like Dogecoin and Pepecoin (Bitcoin Cash coming soon). You can create tokens, exchanges, games, social networks, and more.
+The Bitcoin Computer is a Turing-complete metaprotocol for UTXO-Based Blockchains, designed for creating decentralized applications in Bitcoin, Litecoin and compatible blockchains like Dogecoin and Pepecoin (Bitcoin Cash coming soon). You can create tokens, exchanges, games, social networks, and more.
 
 **Free Computation.** A key feature of the Bitcoin Computer is that execution costs do not depend on the computational complexity of the smart contract itself. Unlike other systems where costs escalate with computational intensity, the Bitcoin Computer maintains a fixed cost for an unlimited number of computational steps.
 
