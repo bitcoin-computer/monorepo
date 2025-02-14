@@ -1,7 +1,7 @@
 <div align="center">
-  <h1>Bitcoin Computer CRA Template</h1>
+  <h1>Bitcoin Computer Vite Template</h1>
   <p>
-    A template for Create React App with TypeScript and the Bitcoin Computer
+    A template for Create Vite App with TypeScript and the Bitcoin Computer
     <br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
@@ -28,11 +28,7 @@ npm install
 
 </font>
 
-## Usage
-
-Most of the api is documented in the [Create React App Readme](https://github.com/facebook/create-react-app).
-
-### Start the Application
+## Start the Application
 
 To start the application run the command below and open [http://localhost:3000](http://localhost:3000).
 
