@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>TBC Chat</h1>
+  <h1>Bitcoin Computer Chat</h1>
   <p>
     A chat that's as stable as Bitcoin and Litecoin
     <br />

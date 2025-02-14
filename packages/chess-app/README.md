@@ -1,8 +1,8 @@
-# Chess App
+# Bitcoin Computer Chess App
 
 ## Usage
 
-Start a Bitcoin Computer Node in the package `node`.  Then copy the `.env.example` file.
+Start a Bitcoin Computer Node in the package `node`. Then copy the `.env.example` file.
 
 ```
 cp .env.example .env

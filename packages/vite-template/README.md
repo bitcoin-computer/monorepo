@@ -1,5 +1,5 @@
 <div align="center">
-  <h1>TBC CRA Template</h1>
+  <h1>Bitcoin Computer CRA Template</h1>
   <p>
     A template for Create React App with TypeScript and the Bitcoin Computer
     <br />
@@ -63,6 +63,7 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/) for the Bitcoin Comp
 If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Development Status
+
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
 ## Price

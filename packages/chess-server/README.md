@@ -1,4 +1,4 @@
-# Chess Server
+# Bitcoin Computer Chess Server
 
 ## Usage
 
