@@ -28,6 +28,9 @@ jobs:
         folder:
           - "packages/node"
       fail-fast: false
+    outputs:
+      temp_tag: ${{ steps.prepare.outputs.temp_tag }}
+      final_tags: ${{ steps.prepare.outputs.final_tags }}
     steps:
       - name: Set up Docker Buildx
         uses: crazy-max/ghaction-docker-buildx@v1
