@@ -9,8 +9,10 @@ import {
   script,
 } from '@bitcoin-computer/nakamotojs'
 import { Buffer } from 'buffer'
-import axios from "axios"
+import axios from 'axios'
 import { VITE_API_BASE_URL } from './config.js'
+
+export const NotEnoughFundError = 'Not enough funds to create chess game.'
 
 const { fromASM, toASM } = script
 
@@ -75,7 +77,7 @@ export class ChessContract extends Contract {
       secretHashB,
       sans: [],
       fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-      payment: new Payment({ amount, publicKeyW, secretHashW, publicKeyB, secretHashB })
+      payment: new Payment({ amount, publicKeyW, secretHashW, publicKeyB, secretHashB }),
     })
   }
 
@@ -124,15 +126,15 @@ export class ChessContractHelper {
     secretHashB,
     mod,
   }: {
-    computer: Computer,
-    amount?: number,
-    nameW?: string,
-    nameB?: string,
-    publicKeyW?: string,
-    publicKeyB?: string,
-    secretHashW?: string,
-    secretHashB?: string,
-    mod?: string,
+    computer: Computer
+    amount?: number
+    nameW?: string
+    nameB?: string
+    publicKeyW?: string
+    publicKeyB?: string
+    secretHashW?: string
+    secretHashB?: string
+    mod?: string
   }) {
     this.computer = computer
     this.amount = amount
@@ -207,7 +209,7 @@ export class ChessContractHelper {
       paid += satoshis
     }
 
-    if (paid < this.amount) throw new Error('Not enough funds to create chess game.')
+    if (paid < this.amount) throw new Error(NotEnoughFundError)
 
     // Add change
     const fee = await this.computer.wallet.estimateFee(tx)
@@ -246,16 +248,20 @@ export class ChessContractHelper {
     return this.computer.broadcast(tx)
   }
 
-  async move(chessContract: ChessContract, from: string, to: string): Promise<{ newChessContract: ChessContract, isGameOver: boolean }> {
-    const { tx, effect } = await this.computer.encodeCall({ 
+  async move(
+    chessContract: ChessContract,
+    from: string,
+    to: string,
+  ): Promise<{ newChessContract: ChessContract; isGameOver: boolean }> {
+    const { tx, effect } = (await this.computer.encodeCall({
       target: chessContract,
       property: 'move',
       args: [from, to],
-      mod: this.mod
-    }) as { tx: Transaction, effect: { res: boolean, env: unknown} }
+      mod: this.mod,
+    })) as { tx: Transaction; effect: { res: boolean; env: unknown } }
     await this.computer.broadcast(tx)
-    const { res: isGameOver, env  } = effect
-    const { __bc__: newChessContract } = env as { __bc__: ChessContract } 
+    const { res: isGameOver, env } = effect
+    const { __bc__: newChessContract } = env as { __bc__: ChessContract }
     if (isGameOver) {
       const spendingTxId = await this.spend(newChessContract)
       console.log('You won!', spendingTxId)
@@ -271,7 +277,12 @@ export class ChessContractHelper {
     return this.spendWithSecret(txId, secret, spendingPath, fee)
   }
 
-  async spendWithSecret(txId: string, secret: string, spendingPath: number, fee = 10000): Promise<string> {
+  async spendWithSecret(
+    txId: string,
+    secret: string,
+    spendingPath: number,
+    fee = 10000,
+  ): Promise<string> {
     if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
 
     const chain = this.computer.getChain()

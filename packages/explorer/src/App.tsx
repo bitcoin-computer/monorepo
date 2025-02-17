@@ -17,6 +17,7 @@ import Block from './components/Block'
 import Blocks from './components/Blocks'
 import Module from './components/Module'
 import Playground from './components/playground/Playground'
+import UTXODisplay from './components/Utxos'
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -43,6 +44,7 @@ export default function App() {
                 <Route path="/blocks/:block" element={<Block />} />
                 <Route path="/objects/:rev" element={<SmartObject.Component />} />
                 <Route path="/modules/:rev" element={<Module />} />
+                <Route path="/utxos/:address" element={<UTXODisplay />} />
                 <Route path="*" element={<Error404 />} />
               </Routes>
             </div>
