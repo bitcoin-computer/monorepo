@@ -84,28 +84,45 @@ jobs:
           rm -f ${HOME}/.docker/config.json
 
   integration-tests:
-    needs: build
+    needs: [build, extract-version]
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        version: ${{ fromJson(needs.extract-version.outputs.version) }}
         platform:
           - linux/amd64
-
+    outputs:
+      temp_tag: ${{ steps.prepare.outputs.temp_tag }}
+      final_tags: ${{ steps.prepare.outputs.final_tags }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Prepare Docker build
+        id: prepare
+        run: |
+          BCN_VERSION=${{matrix.version}}
+          PLATFORMS="linux/amd64"
+          PUSH=true
+          DOCKER_REPO=bcdb/bcn
+          TEMP_TAG="${DOCKER_REPO}:${BCN_VERSION}-pre-release"
+          FINAL_TAGS=("${DOCKER_REPO}:${BCN_VERSION} ${DOCKER_REPO}:latest")
+          echo ::set-output name=temp_tag::${TEMP_TAG}
+          echo ::set-output name=final_tags::${FINAL_TAGS[@]}
+          echo "temp_tag=${TEMP_TAG}" >> $GITHUB_OUTPUT
+          echo "final_tags=${FINAL_TAGS[@]}" >> $GITHUB_OUTPUT
+
       - name: Debug temp_tag
         run: |
-          echo "Temporary tag from build job: ${{ needs.build.outputs.temp_tag }}"
+          echo "Temporary tag from build job: ${{ steps.prepare.outputs.temp_tag }}"
 
       - name: Pull temporary image
         run: |
-          docker pull ${{ needs.build.outputs.temp_tag }}
+          docker pull ${{ steps.prepare.outputs.temp_tag }}
 
       - name: Re-tag image for docker-compose
         run: |
-          docker tag ${{ needs.build.outputs.temp_tag }} bitcoin-computer-node
+          docker tag ${{ steps.prepare.outputs.temp_tag }} bitcoin-computer-node
           echo "Re-tagged image as bitcoin-computer-node"
 
       - name: Copy configuration files
