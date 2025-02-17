@@ -57,10 +57,16 @@ jobs:
           TEMP_TAG="${DOCKER_REPO}:${BCN_VERSION}-pre-release"
           FINAL_TAGS=("${DOCKER_REPO}:${BCN_VERSION} ${DOCKER_REPO}:latest")
           echo "Building BCN_VERSION $BCN_VERSION for PLATFORMS ${PLATFORMS}"
+          echo ::set-output name=build_date::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          echo ::set-output name=docker_platforms::${PLATFORMS}
+          echo ::set-output name=push::${PUSH}
+          echo ::set-output name=temp_tag::${TEMP_TAG}
+          echo ::set-output name=final_tags::${FINAL_TAGS[@]}
           echo "temp_tag=${TEMP_TAG}" >> $GITHUB_OUTPUT
           echo "final_tags=${FINAL_TAGS[@]}" >> $GITHUB_OUTPUT
 
       - name: Build and push temporary image
+        working-directory: ./
         run: |
           docker buildx create --use
           docker buildx build --platform ${{ steps.prepare.outputs.docker_platforms }} \
