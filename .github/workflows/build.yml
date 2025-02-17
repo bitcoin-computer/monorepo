@@ -59,6 +59,8 @@ jobs:
           echo ::set-output name=push::${PUSH}
           echo ::set-output name=temp_tag::${TEMP_TAG}
           echo ::set-output name=final_tags::${FINAL_TAGS[@]}
+          echo "temp_tag=${TEMP_TAG}" >> $GITHUB_OUTPUT
+          echo "final_tags=${FINAL_TAGS[@]}" >> $GITHUB_OUTPUT
 
       - name: Build and push temporary image
         working-directory: ./
