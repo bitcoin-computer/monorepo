@@ -45,13 +45,14 @@ jobs:
           PUSH=false
           DOCKER_REPO=bcdb/bcn
           TAGS=("$DOCKER_REPO:${BCN_VERSION} $DOCKER_REPO:latest")
-          echo "Building BCN_VERSION $BCN_VERSION/ for PLATFORMS ${PLATFORMS}/"
+          echo "Building BCN_VERSION $BCN_VERSION for PLATFORMS ${PLATFORMS}"
           echo ::set-output name=build_date::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           echo ::set-output name=docker_platforms::${PLATFORMS}
           echo ::set-output name=push::${PUSH}
           echo ::set-output name=tags::${TAGS[@]}
 
       - name: Build Docker image
+        working-directory: ./
         run: |
           TAGS=(${{ steps.prepare.outputs.tags }})
           docker buildx build --platform ${{ steps.prepare.outputs.docker_platforms }} \
