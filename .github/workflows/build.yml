@@ -92,9 +92,9 @@ jobs:
           docker pull bcdb/bcn:${{ needs.build.outputs.temp_tag }}
 
       - name: Re-tag image for docker-compose
-      run: |
-        docker tag bcdb/bcn:${{ needs.build.outputs.temp_tag }} bitcoin-computer-node
-        echo "Re-tagged image as bitcoin-computer-node"
+        run: |
+          docker tag bcdb/bcn:${{ needs.build.outputs.temp_tag }} bitcoin-computer-node
+          echo "Re-tagged image as bitcoin-computer-node"
 
       - name: Copy configuration files
         run: |
