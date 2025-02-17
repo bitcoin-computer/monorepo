@@ -1,5 +1,5 @@
 name: build-and-test
-on: 
+on:
   push:
     branches: [feat/registry]
 
@@ -24,9 +24,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        version: [ ${{ needs.extract-version.outputs.version }} ]
+        version: ${{ fromJson(needs.extract-version.outputs.version) }}
         folder:
-          - 'packages/node'
+          - "packages/node"
       fail-fast: false
     steps:
       - name: Set up Docker Buildx
@@ -60,7 +60,7 @@ jobs:
             --build-arg "BUILD_DATE=${{ steps.prepare.outputs.build_date }}" \
             --build-arg "VCS_REF=${GITHUB_SHA::8}" \
             $(printf "%s" "${TAGS[@]/#/ --tag }" ) \
-            ${{ matrix.folder }}/ 
+            ${{ matrix.folder }}/
   integration-tests:
     needs: build
     runs-on: ubuntu-latest
@@ -84,7 +84,7 @@ jobs:
         run: |
           npm run up
           echo "Waiting for services to start..."
-          sleep 120 
+          sleep 120
 
       - name: Run integration tests
         run: |
