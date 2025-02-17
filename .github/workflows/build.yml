@@ -35,6 +35,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Login into Docker Hub
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
+
       - name: Prepare Docker build
         id: prepare
         run: |
@@ -64,6 +71,11 @@ jobs:
             --build-arg "VCS_REF=${GITHUB_SHA::8}" \
             --tag ${{ steps.prepare.outputs.temp_tag }} \
             -f Dockerfile .
+
+       - name: Clear DockerHub credentials
+        run: |
+          rm -f ${HOME}/.docker/config.json
+
   integration-tests:
     needs: build
     runs-on: ubuntu-latest
