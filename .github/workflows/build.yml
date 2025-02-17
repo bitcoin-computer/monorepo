@@ -26,7 +26,7 @@ jobs:
       matrix:
         version: ${{ fromJson(needs.extract-version.outputs.version) }}
         folder:
-          - "./"
+          - "packages/node"
       fail-fast: false
     steps:
       - name: Set up Docker Buildx
@@ -50,6 +50,9 @@ jobs:
           echo ::set-output name=docker_platforms::${PLATFORMS}
           echo ::set-output name=push::${PUSH}
           echo ::set-output name=tags::${TAGS[@]}
+
+      - name: List files in root directory
+        run: ls -la
 
       - name: Build Docker image
         working-directory: ./
