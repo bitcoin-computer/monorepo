@@ -18,7 +18,7 @@ jobs:
           # Extract the version from package.json
           VERSION=$(node -p "require('./package.json').version")
           echo "Extracted version: $VERSION"
-          echo "::set-output name=version::$VERSION"
+          echo "::set-output name=version::[\"$VERSION\"]"
   build:
     needs: extract-version
     runs-on: ubuntu-latest
