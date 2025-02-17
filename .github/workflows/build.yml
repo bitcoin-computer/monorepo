@@ -87,13 +87,20 @@ jobs:
       run:
         working-directory: packages/node
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Debug temp_tag
+        run: |
+          echo "Temporary tag from build job: ${{ needs.build.outputs.temp_tag }}"
+
       - name: Pull temporary image
         run: |
-          docker pull bcdb/bcn:${{ needs.build.outputs.temp_tag }}
+          docker pull ${{ needs.build.outputs.temp_tag }}
 
       - name: Re-tag image for docker-compose
         run: |
-          docker tag bcdb/bcn:${{ needs.build.outputs.temp_tag }} bitcoin-computer-node
+          docker tag ${{ needs.build.outputs.temp_tag }} bitcoin-computer-node
           echo "Re-tagged image as bitcoin-computer-node"
 
       - name: Copy configuration files
