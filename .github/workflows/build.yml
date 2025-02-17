@@ -16,10 +16,9 @@ jobs:
       - name: Extract version from package.json
         id: extract
         run: |
-          # Extract the version from package.json
           VERSION=$(node -p "require('./package.json').version")
           echo "Extracted version: $VERSION"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version=[\"$VERSION\"]" >> $GITHUB_OUTPUT
 
   build:
     needs: extract-version
