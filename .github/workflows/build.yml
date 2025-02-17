@@ -72,7 +72,7 @@ jobs:
             --tag ${{ steps.prepare.outputs.temp_tag }} \
             -f Dockerfile .
 
-       - name: Clear DockerHub credentials
+      - name: Clear DockerHub credentials
         run: |
           rm -f ${HOME}/.docker/config.json
 
