@@ -42,38 +42,42 @@ jobs:
 
           BCN_VERSION=${{matrix.version}}
           PLATFORMS="linux/amd64"
-          PUSH=false
+          PUSH=true
           DOCKER_REPO=bcdb/bcn
-          TAGS=("$DOCKER_REPO:${BCN_VERSION} $DOCKER_REPO:latest")
+          TEMP_TAG="${DOCKER_REPO}:${BCN_VERSION}-pre-release"
+          FINAL_TAGS=("${DOCKER_REPO}:${BCN_VERSION} ${DOCKER_REPO}:latest")
           echo "Building BCN_VERSION $BCN_VERSION for PLATFORMS ${PLATFORMS}"
           echo ::set-output name=build_date::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
           echo ::set-output name=docker_platforms::${PLATFORMS}
           echo ::set-output name=push::${PUSH}
-          echo ::set-output name=tags::${TAGS[@]}
+          echo ::set-output name=temp_tag::${TEMP_TAG}
+          echo ::set-output name=final_tags::${FINAL_TAGS[@]}
 
-      - name: List files in root directory
-        run: ls -la
-
-      - name: Build Docker image
+      - name: Build and push temporary image
         working-directory: ./
         run: |
-          TAGS=(${{ steps.prepare.outputs.tags }})
+          docker buildx create --use
           docker buildx build --platform ${{ steps.prepare.outputs.docker_platforms }} \
             --output "type=image,push=${{steps.prepare.outputs.push}}" \
             --progress=plain \
             --build-arg "BUILD_DATE=${{ steps.prepare.outputs.build_date }}" \
             --build-arg "VCS_REF=${GITHUB_SHA::8}" \
-            $(printf "%s" "${TAGS[@]/#/ --tag }" ) \
+            --tag ${{ steps.prepare.outputs.temp_tag }} \
             -f Dockerfile .
   integration-tests:
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform:
+          - linux/amd64
     defaults:
       run:
         working-directory: packages/node
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - name: Pull temporary image
+        run: |
+          docker pull ${{ needs.build.outputs.temp_tag }}
 
       - name: Copy configuration files
         run: |
@@ -89,9 +93,9 @@ jobs:
 
       - name: Start services in regtest mode
         run: |
-          npm run up
+          npm run up &
           echo "Waiting for services to start..."
-          sleep 120
+          sleep 20
 
       - name: Run integration tests
         run: |
@@ -104,10 +108,10 @@ jobs:
       - name: Stop services
         run: |
           npm run down
-  push-to-registry:
+  re-tag-and-push:
     needs: [build, integration-tests]
     runs-on: ubuntu-latest
-    if: always() && needs.integration-tests.result == 'success' # Push only if tests pass
+    if: always() && needs.integration-tests.result == 'success'
     steps:
       - name: Login into Docker Hub
         env:
@@ -116,7 +120,20 @@ jobs:
         run: |
           echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
 
-      - name: Push Docker image
+      - name: Pull temporary image
         run: |
-          TAGS=(${{ needs.build.outputs.image_tag }})
-          docker push ${{ needs.build.outputs.image_tag }}
+          docker pull ${{ needs.build.outputs.temp_tag }}
+
+      - name: Re-tag image
+        run: |
+          TEMP_TAG="${{ needs.build.outputs.temp_tag }}"
+          FINAL_TAGS=(${{ needs.build.outputs.final_tags }})
+          for TAG in "${FINAL_TAGS[@]}"; do
+            docker tag "$TEMP_TAG" "$TAG"
+          done
+      - name: Push final tags
+        run: |
+          FINAL_TAGS=(${{ needs.build.outputs.final_tags }})
+          for TAG in "${FINAL_TAGS[@]}"; do
+            docker push "$TAG"
+          done
