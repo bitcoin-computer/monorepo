@@ -50,7 +50,7 @@ jobs:
         id: prepare
         run: |
           BCN_VERSION=${{matrix.version}}
-          PLATFORMS="linux/amd64"
+          PLATFORMS="linux/amd64,linux/arm64/v8"
           PUSH=true
           DOCKER_REPO=bcdb/bcn
           TEMP_TAG="${DOCKER_REPO}:${BCN_VERSION}-pre-release"
@@ -89,6 +89,7 @@ jobs:
         version: ${{ fromJson(needs.extract-version.outputs.version) }}
         platform:
           - linux/amd64
+          - linux/arm64
     outputs:
       temp_tag: ${{ steps.prepare.outputs.temp_tag }}
       final_tags: ${{ steps.prepare.outputs.final_tags }}
@@ -100,8 +101,6 @@ jobs:
         id: prepare
         run: |
           BCN_VERSION=${{matrix.version}}
-          PLATFORMS="linux/amd64"
-          PUSH=true
           DOCKER_REPO=bcdb/bcn
           TEMP_TAG="${DOCKER_REPO}:${BCN_VERSION}-pre-release"
           FINAL_TAGS=("${DOCKER_REPO}:${BCN_VERSION} ${DOCKER_REPO}:latest")
