@@ -166,7 +166,6 @@ jobs:
     needs: [integration-tests]
     runs-on: ubuntu-latest
     if: always() && needs.integration-tests.result == 'success'
-
     steps:
       - name: Login into Docker Hub
         env:
@@ -175,23 +174,15 @@ jobs:
         run: |
           echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
 
-      - name: Pull temporary image
-        run: |
-          docker pull ${{ needs.integration-tests.outputs.temp_tag }}
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
 
-      - name: Re-tag image
+      - name: Re-tag and push final tags
         run: |
           TEMP_TAG="${{ needs.integration-tests.outputs.temp_tag }}"
           FINAL_TAGS=(${{ needs.integration-tests.outputs.final_tags }})
           for TAG in "${FINAL_TAGS[@]}"; do
-            docker tag "$TEMP_TAG" "$TAG"
-          done
-
-      - name: Push final tags
-        run: |
-          FINAL_TAGS=(${{ needs.integration-tests.outputs.final_tags }})
-          for TAG in "${FINAL_TAGS[@]}"; do
-            docker push "$TAG"
+            docker buildx imagetools create --tag "$TAG" "$TEMP_TAG"
           done
 
       - name: Clear DockerHub credentials
