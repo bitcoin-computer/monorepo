@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793230158025">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793232211930">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Start</title>
     <meta name="title" content="Start">
-    <meta name="description" content="The easiest way to try the Bitcoin Computer is to create a file as below and open it in your browser.">
+    <meta name="description" content="Create the following file and open it in a browser.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/start/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/start/">
     <meta property="og:title" content="Start">
-    <meta property="og:description" content="The easiest way to try the Bitcoin Computer is to create a file as below and open it in your browser.">
+    <meta property="og:description" content="Create the following file and open it in a browser.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/start/">
     <meta property="twitter:title" content="Start">
-    <meta property="twitter:description" content="The easiest way to try the Bitcoin Computer is to create a file as below and open it in your browser.">
+    <meta property="twitter:description" content="Create the following file and open it in a browser.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.793230158025" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.793232211930" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793230158025" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793232211930" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793230158025" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793230158025" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793232211930" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793232211930" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -163,12 +163,12 @@
         <span>Use in the Browser</span>
     </h2>
 </doc-anchor-target>
-<p>The easiest way to try the Bitcoin Computer is to create a file as below and open it in your browser.</p>
+<p>Create the following file and open it in a browser.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
+<div class="codeblock-title">index.html</div>
 <pre class="language-markup"><code v-pre class="language-markup">&lt;html&gt;
   &lt;head&gt;
     &lt;script type=&quot;module&quot;&gt;
-      // Import the library
       import {
         Computer,
         Contract,
@@ -185,28 +185,26 @@
         }
       }
 
-      // Create a wallet
+      // Create and fund a wallet
       const computer = new Computer()
-
-      // Fund the wallet
       await computer.faucet(1e5)
 
-      // Create a smart object
+      // Create an on-chain object
       const counter = await computer.new(Counter)
       document.getElementById('count').innerHTML = counter.n
 
-      // Update the smart object
+      // Update the on-chain object
       await counter.inc()
       document.getElementById('count').innerHTML = counter.n
     &lt;/script&gt;
   &lt;/head&gt;
 
   &lt;body&gt;
-    Value: &lt;span id=&quot;count&quot;&gt;*&lt;/span&gt;
+    &lt;span id=&quot;count&quot;&gt;*&lt;/span&gt;
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 </doc-codeblock></div>
-<p>When the website is first rendered you will see <code v-pre>Value: *</code>. When the smart object is created with <code v-pre>computer.new</code> you will see <code v-pre>Value: 0</code>. The <code v-pre>inc</code> function is called you will see <code v-pre>Value: 1</code>.</p>
+<p>The browser will initially show <code v-pre>*</code>. When the on-chain object is created it will show <code v-pre>0</code> an when the object is updated it will show <code v-pre>1</code>.</p>
 <doc-anchor-target id="use-in-nodejs">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#use-in-nodejs">#</doc-anchor-trigger>
@@ -241,19 +239,17 @@ class Counter extends Contract {
   }
 }
 
-// Create a wallet
+// Create and fund a wallet
 const computer = new Computer()
-
-// Fund the wallet
 await computer.faucet(1e5)
 
-// Create a smart object
+// Create an on-chain object
 const counter = await computer.new(Counter)
 
-// Update the smart object
+// Update the on-chain object
 await counter.inc()
 
-// Log the smart object
+// Log the on-chain object
 console.log(counter)</code></pre>
 </doc-codeblock></div>
 </font>
@@ -278,14 +274,14 @@ console.log(counter)</code></pre>
 }</code></pre>
 </doc-codeblock></div>
 </font>
-<p>In the setup above you are using a node that we provide at <code v-pre>rltc.node.bitcoincomputer.io</code> (Litecoin Regtest). You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node.</p>
+<p>In both examples above you are using a Bitcoin Computer Node that we provide at <code v-pre>rltc.node.bitcoincomputer.io</code> configured to Litecoin Regtest. You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node.</p>
 <doc-anchor-target id="run-a-node">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#run-a-node">#</doc-anchor-trigger>
         <span>Run a Node</span>
     </h2>
 </doc-anchor-target>
-<p>To run a node we recommend to clone the <a href="https://github.com/bitcoin-computer/monorepo#readme">monorepo</a> with all Bitcoin Computer related materials, including the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme">Bitcoin Computer library</a>, the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme">node</a>, the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme">docs</a>, and <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/apps.md">example applications</a>.</p>
+<p>To run a node we recommend to clone the <a href="https://github.com/bitcoin-computer/monorepo#readme">monorepo</a> with all Bitcoin Computer related materials, including the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme">Bitcoin Computer library</a>, the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme">node</a>, these <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme">docs</a>, and <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/apps.md">example applications</a>.</p>
 <doc-anchor-target id="install">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#install">#</doc-anchor-trigger>
@@ -306,7 +302,7 @@ npm install</code></pre>
         <span>Start the node</span>
     </h3>
 </doc-anchor-target>
-<p>To start your node at <code v-pre>http://localhost:1031</code> run the commands below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.</p>
+<p>To start your node at <code v-pre>http://localhost:1031</code> run the commands below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take hours or even days, depending on your hardware and network connection.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-bash"><code v-pre class="language-bash"># Run the node
 cd packages/node
@@ -335,7 +331,7 @@ npm run lint
 # Types
 npm run types</code></pre>
 </doc-codeblock></div>
-<p>The commands will be run in each package. You can also navigate the a package and run the same scripts there.</p>
+<p>The commands will be executed in each package. You can also navigate the a package and run the same scripts there.</p>
 <doc-anchor-target id="start-your-own-project">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#start-your-own-project">#</doc-anchor-trigger>

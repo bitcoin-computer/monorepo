@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793230158025">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793232211930">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.793230158025" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.793232211930" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793230158025" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793232211930" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793230158025" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793230158025" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793232211930" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793232211930" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -279,56 +279,6 @@ npm run fund btc  &lt;address_1&gt; ... &lt;address_n&gt;</code></pre>
 <pre class="language-bash"><code v-pre class="language-bash">npm run clean</code></pre>
 </doc-codeblock></div>
 </font>
-<doc-anchor-target id="client-side-library">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#client-side-library">#</doc-anchor-trigger>
-        <span>Client Side Library</span>
-    </h3>
-</doc-anchor-target>
-<p>The <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme">Bitcoin Computer Library</a> can connect to a Bitcoin Computer Node to provides access to its functionality.</p>
-<font size=1>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">// Import client side library
-import { Computer } from '@bitcoin-computer/lib'
-
-// Configuration to connect to node on localhost
-const conf = {
-  chain: 'LTC',
-  network: 'regtest',
-  url: 'http://localhost:1031',
-}
-
-// Create instance of client side library
-const computer = new Computer(conf)
-const address = computer.getAddress()
-
-// Fund client side library
-const { txId, vout } = await computer.faucet(1e4)
-
-// Return the utxos
-expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
-
-// Return the balance
-expect(await new Computer(conf).getBalance(address).balance).eq(1e4)
-
-// Return the transactions
-expect(await new Computer(conf).listTxs(address)).deep.eq({
-  sentTxs: [],
-  receivedTxs: [
-    {
-      txId,
-      inputsSatoshis: 0,
-      outputsSatoshis: 1e4,
-      satoshis: 1e4,
-    },
-  ],
-})</code></pre>
-</doc-codeblock></div>
-</font>
-<p>If you do not specify a <code v-pre>url</code> property it will default to the url below. The node at that url runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-none"><code v-pre class="language-none">https://rltc.node.bitcoincomputer.io</code></pre>
-</doc-codeblock></div>
 <doc-anchor-target id="configuration">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#configuration">#</doc-anchor-trigger>
@@ -426,6 +376,256 @@ BCN_BANNED_COUNTRIES=
 BCN_OFFCHAIN_PROTOCOL=</code></pre>
 </doc-codeblock></div>
 </font>
+<doc-anchor-target id="client-side-library">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#client-side-library">#</doc-anchor-trigger>
+        <span>Client Side Library</span>
+    </h2>
+</doc-anchor-target>
+<p>The <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme">Bitcoin Computer Library</a> can connect to a Bitcoin Computer Node to provides access to its functionality.</p>
+<font size=1>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">// Import client side library
+import { Computer } from '@bitcoin-computer/lib'
+
+// Configuration to connect to node on localhost
+const conf = {
+  chain: 'LTC',
+  network: 'regtest',
+  url: 'http://localhost:1031',
+}
+
+// Create instance of client side library
+const computer = new Computer(conf)
+const address = computer.getAddress()
+
+// Fund client side library
+const { txId, vout } = await computer.faucet(1e4)
+
+// Return the utxos
+expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
+
+// Return the balance
+expect(await new Computer(conf).getBalance(address).balance).eq(1e4)
+
+// Return the transactions
+expect(await new Computer(conf).listTxs(address)).deep.eq({
+  sentTxs: [],
+  receivedTxs: [
+    {
+      txId,
+      inputsSatoshis: 0,
+      outputsSatoshis: 1e4,
+      satoshis: 1e4,
+    },
+  ],
+})</code></pre>
+</doc-codeblock></div>
+</font>
+<p>If you do not specify a <code v-pre>url</code> property it will default to the url below. The node at that url runs Litecoin on regtest network mode and uses the latest version of the Bitcoin Computer Node software.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-none"><code v-pre class="language-none">https://rltc.node.bitcoincomputer.io</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="api">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#api">#</doc-anchor-trigger>
+        <span>Api</span>
+    </h2>
+</doc-anchor-target>
+<p>The Bitcoin Computer Node exposes an API that can be used to interact with the node.
+The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used to define the chain and network that the node is running on.</p>
+<doc-anchor-target id="wallet">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#wallet">#</doc-anchor-trigger>
+        <span>Wallet</span>
+    </h4>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="wallet/balance/">balance</a></td>
+<td>Get the balance of a wallet.</td>
+</tr>
+<tr>
+<td><a href="wallet/list-txs/">list-txs</a></td>
+<td>List sent and received transactions for a given address.</td>
+</tr>
+<tr>
+<td><a href="wallet/sent-outputs/">sent-outputs</a></td>
+<td>List sent outputs of a wallet.</td>
+</tr>
+<tr>
+<td><a href="wallet/received-outputs/">received-outputs</a></td>
+<td>List received outputs of a wallet.</td>
+</tr>
+<tr>
+<td><a href="wallet/utxos/">utxos</a></td>
+<td>List unspent outputs of a wallet.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="transactions">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#transactions">#</doc-anchor-trigger>
+        <span>Transactions</span>
+    </h4>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="transaction/ancestors/">ancestors</a></td>
+<td>Get the ancestors of a transaction.</td>
+</tr>
+<tr>
+<td><a href="transaction/bulk/">bulk</a></td>
+<td>Get raw transactions for a list of transaction ids.</td>
+</tr>
+<tr>
+<td><a href="transaction/json/">json</a></td>
+<td>Get a transaction in json format.</td>
+</tr>
+<tr>
+<td><a href="transaction/post/">post</a></td>
+<td>Post a transaction to the Bitcoin network.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="blockchain">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#blockchain">#</doc-anchor-trigger>
+        <span>Blockchain</span>
+    </h4>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="blockchain/height/">height</a></td>
+<td>Get the height of an specific block.</td>
+</tr>
+<tr>
+<td><a href="blockchain/mine/">mine</a></td>
+<td>Mine an specific number of blocks to a random address.</td>
+</tr>
+<tr>
+<td><a href="blockchain/height/">rpc</a></td>
+<td>Call a Bitcoin RPC method.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="regtest-faucet">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#regtest-faucet">#</doc-anchor-trigger>
+        <span>Regtest Faucet</span>
+    </h4>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="regtest-faucet/faucet/">faucet</a></td>
+<td>Get coins from the faucet.</td>
+</tr>
+<tr>
+<td><a href="regtest-faucet/faucetscript/">faucetScript</a></td>
+<td>Get coins from the faucet using a script.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="query-revisions">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#query-revisions">#</doc-anchor-trigger>
+        <span>Query revisions</span>
+    </h4>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="query-revisions/next/">next</a></td>
+<td>Get the next revision of a given revision.</td>
+</tr>
+<tr>
+<td><a href="query-revisions/prev/">prev</a></td>
+<td>Get the previous revision of a given revision.</td>
+</tr>
+<tr>
+<td><a href="query-revisions/non-standard-utxos/">non-standard-utxos</a></td>
+<td>Query revisions by module specifier, public key, limit, order, offset and list of transaction ids.</td>
+</tr>
+<tr>
+<td><a href="query-revisions/revs/">revs</a></td>
+<td>Get the revisions of a list of transactions.</td>
+</tr>
+<tr>
+<td><a href="query-revisions/revtoid/">revToId</a></td>
+<td>Given a revision, get the id of the smart contract.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<doc-anchor-target id="offchain">
+    <h4>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#offchain">#</doc-anchor-trigger>
+        <span>OffChain</span>
+    </h4>
+</doc-anchor-target>
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="regtest-faucet/faucet/">id</a></td>
+<td>Get the data stored in the offchain storage.</td>
+</tr>
+<tr>
+<td><a href="regtest-faucet/faucetscript/">store</a></td>
+<td>Stores the hex of the data in the offchain storage.</td>
+</tr>
+</tbody>
+</table>
+</div>
 <!--  ### Configure Parallelism
 
 By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
@@ -475,10 +675,10 @@ The following table shows the times and costs for syncing to a Litecoin node on 
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../node/api/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../node/blockchain/height/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">API</span>
+                                                <span class="block mt-1">height</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
