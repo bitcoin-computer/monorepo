@@ -2,7 +2,8 @@ name: build-and-test
 
 on:
   push:
-    branches: [feat/registry]
+    tags:
+      - "*"
 
 jobs:
   extract-version:
@@ -19,8 +20,70 @@ jobs:
           VERSION=$(node -p "require('./package.json').version")
           echo "Extracted version: $VERSION"
           echo "version=[\"$VERSION\"]" >> $GITHUB_OUTPUT
+  build:
+    needs: extract-version
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: ${{ fromJson(needs.extract-version.outputs.version) }}
+        folder:
+          - "packages/node"
+      fail-fast: false
+    outputs:
+      temp_tag: ${{ steps.prepare.outputs.temp_tag }}
+      final_tags: ${{ steps.prepare.outputs.final_tags }}
+
+    steps:
+      - name: Set up Docker Buildx
+        uses: crazy-max/ghaction-docker-buildx@v1
+
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Login into Docker Hub
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          echo "${DOCKER_HUB_PASSWORD}" | docker login --username "${DOCKER_HUB_USERNAME}" --password-stdin
+
+      - name: Prepare Docker build
+        id: prepare
+        run: |
+          BCN_VERSION=${{matrix.version}}
+          PLATFORMS="linux/amd64,linux/arm64/v8"
+          PUSH=true
+          DOCKER_REPO=bcdb/bcn
+          TEMP_TAG="${DOCKER_REPO}:${BCN_VERSION}-pre-release"
+          FINAL_TAGS=("${DOCKER_REPO}:${BCN_VERSION} ${DOCKER_REPO}:latest")
+          echo "Building BCN_VERSION $BCN_VERSION for PLATFORMS ${PLATFORMS}"
+          echo ::set-output name=build_date::$(date -u +'%Y-%m-%dT%H:%M:%SZ')
+          echo ::set-output name=docker_platforms::${PLATFORMS}
+          echo ::set-output name=push::${PUSH}
+          echo ::set-output name=temp_tag::${TEMP_TAG}
+          echo ::set-output name=final_tags::${FINAL_TAGS[@]}
+          echo "temp_tag=${TEMP_TAG}" >> $GITHUB_OUTPUT
+          echo "final_tags=${FINAL_TAGS[@]}" >> $GITHUB_OUTPUT
+
+      - name: Build and push temporary image
+        working-directory: ./
+        run: |
+          docker buildx create --use
+          docker buildx build --platform ${{ steps.prepare.outputs.docker_platforms }} \
+            --output "type=image,push=${{steps.prepare.outputs.push}}" \
+            --progress=plain \
+            --tag ${{ steps.prepare.outputs.temp_tag }} \
+            -f Dockerfile .
+
+      - name: Debug temp_tag
+        run: |
+          echo "Temporary tag: ${{ steps.prepare.outputs.temp_tag }}"
+
+      - name: Clear DockerHub credentials
+        run: |
+          rm -f ${HOME}/.docker/config.json
   integration-tests:
-    needs: [extract-version]
+    needs: [build, extract-version]
     runs-on: ubuntu-latest
     strategy:
       matrix:
