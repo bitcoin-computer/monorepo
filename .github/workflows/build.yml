@@ -78,7 +78,7 @@ jobs:
       - name: Start services in regtest mode
         working-directory: packages/node
         run: |
-          npm install &&
+          npm install ;
           npm run up &
           echo "Waiting for services to start..."
           sleep 20
