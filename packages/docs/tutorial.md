@@ -318,7 +318,7 @@ The [`computer.encode`](./lib/encode.md) function takes three arguments:
 
 It returns a transaction but does not broadcast it. Therefore calling the `encode` function does not alter the state of any on-chain object. In addition to the transaction the function returns an object `effect` that represents the state that will emerge on-chain if the transaction were included in the blockchain. If the transaction is not included, the on-chain state will not change. This gives the user complete predictability over the state change that will be induced by their action.
 
-The object `effect` object has two sub-objects: `res` contains the value returned from the expression and `env` contains the side-effect, specifically the new values of the names in the environment.
+The `effect` object has two sub-objects: `res` contains the value returned from the expression and `env` contains the side-effect, specifically the new values of the names in the environment.
 
 The code below is equivalent to calling `await computer.new(Chat, ['hello'])`. In fact the smart contract abstraction introduced above is just syntactic sugar for using the `encode` function.
 
