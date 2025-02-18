@@ -4,10 +4,10 @@ services:
     env_file: .env
     restart: always
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER}" ]
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
     # command: ["postgres", "-c", "log_statement=all"]
     ports:
-      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
     networks:
       - bcn
     environment:
@@ -28,16 +28,12 @@ services:
       - ./chain-setup/${BCN_CHAIN}/${BCN_NETWORK}/blockchain-data:${BITCOIN_DATA_DIR}
       - ./${BITCOIN_CONF_FILE}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}
   bcn:
-    image: bitcoin-computer-node
+    image: bcdb/bcn
     env_file: .env
     restart: always
     build: ../../
     healthcheck:
-      test:
-        [
-          "CMD-SHELL",
-          "curl -f http://localhost:${BCN_PORT}/ || exit 1"
-        ]
+      test: ['CMD-SHELL', 'curl -f http://localhost:${BCN_PORT}/ || exit 1']
       interval: 30s
       timeout: 10s
       retries: 3
@@ -69,7 +65,7 @@ services:
       - ./logs:/dist/packages/node/logs
   sync:
     command: npm run start:sync
-    image: bitcoin-computer-node
+    image: bcdb/bcn
     env_file: .env
     restart: always
     environment:

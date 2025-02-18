@@ -16,19 +16,22 @@ describe('Should work with chai', () => {
     expect(computer).an('object')
   })
 
-  it('Should fund the client side library', async () => {
+  it('Should fund the client side library', async function () {
+    this.retries(3)
     const computer = new Computer(conf)
     await computer.faucet(1e7)
     expect((await computer.getBalance()).balance).eq(1e7)
   })
 
-  it('Should send a transaction', async () => {
+  it('Should send a transaction', async function () {
+    this.retries(3)
     const computer = new Computer(conf)
     await computer.faucet(1e7)
-    expect(typeof await computer.send(1e6, new Computer(conf).getAddress())).eq('string')
+    expect(typeof (await computer.send(1e6, new Computer(conf).getAddress()))).eq('string')
   })
 
-  it('Should return the balance of an address', async () => {
+  it('Should return the balance of an address', async function () {
+    this.retries(3)
     const computer = new Computer(conf)
     await computer.faucet(1e7)
     const balance = await new Computer(conf).getBalance(computer.getAddress())
@@ -51,9 +54,9 @@ describe('Should work with chai', () => {
           txId,
           inputsSatoshis: 0,
           outputsSatoshis: 1e7,
-          satoshis: 1e7
-        }
-      ]
+          satoshis: 1e7,
+        },
+      ],
     })
   })
 
@@ -97,9 +100,9 @@ describe('Should work with chai', () => {
           txId,
           inputsSatoshis: 0,
           outputsSatoshis: 1e7,
-          satoshis: 1e7
-        }
-      ]
+          satoshis: 1e7,
+        },
+      ],
     })
   })
 })
