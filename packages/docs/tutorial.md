@@ -5,16 +5,18 @@ icon: mortar-board
 
 # Tutorial
 
+In this tutorial we explain how to build a decentralized chat. We will start with a comically simple version but we will work our way up to a real world chat.
+
 ## Write a Smart Contract
 
-Smart contracts are typically Javascript or Typescript classes that extend from `Contract`. For example, a smart contract for a simple chat is
+The Javascript program below is a smart contract for a one-person chat.
 
 ```js
 import { Contract } from '@bitcoin-computer/lib'
 
 class Chat extends Contract {
   constructor(greeting) {
-    super({ messages: [greeting] })
+    super({ messages: [greeting] }) // initialize messages array
   }
 
   post(message) {
@@ -23,17 +25,13 @@ class Chat extends Contract {
 }
 ```
 
-!!!success **Smart Object**
-Given a class that extends from `Contract`, we define a **smart object** as an instance of that class that is deployed to the blockchain. Smart objects are the basic building blocks of the Bitcoin Computer.
-!!!
+We recommend to ignore the syntax for initializing `messages` in the constructor for now. If you are interested in the details you can find them [here](language/#assigning-to-this-in-constructors-is-prohibited).
 
-You can notice that there are specific rules to follow when writing a smart contract. To deep dive into the rules and best practices, check out the [Smart Contract Language](/language/).
+## Create a Client-Side Wallet
 
-<!-- Note that it is not possible to assign to `this` in constructors. Instead you can initialize a smart object by passing an argument into `super` as shown above. -->
+The `Computer` class is a client-side Javascript wallet that manages a Bitcoin private-public key pair. It can create normal Bitcoin transactions but also ones that contain metadata according to the Bitcoin Computer protocol. This allows for the creation, updating, and retrieval of on-chain objects.
 
-## Create a Computer Object
-
-You need to create an instance of the `Computer` class in oder to deploy smart contracts and create smart objects.
+You can pass a [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) mnemonic into the constructor to create a specific private-public key pair, or leave the `mnemonic` parameter undefined to generate a wallet from a random mnemonic. More configuration options are described [here](/lib/constructor/).
 
 ```javascript
 import { Computer } from '@bitcoin-computer/lib'
@@ -41,32 +39,15 @@ import { Computer } from '@bitcoin-computer/lib'
 const computer = new Computer({ mnemonic: 'replace this seed' })
 ```
 
-You can pass in a [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) mnemonic to initialize the wallet in the computer object. To securely generate a random mnemonic leave the `mnemonic` key undefined. You can find more configuration options [here](/lib/constructor/).
+## Create an On-Chain Object
 
-## Create a Smart Object
-
-The [`computer.new`](/api/new) function creates a smart object from a smart contract.
+The [`computer.new`](/api/new) function broadcasts a transaction inscribed with a Javascript expression consisting of a class and a constructor call. For example, the call
 
 ```js
 const chat = await computer.new(Chat, ['hello'])
 ```
 
-Basically, the `Chat` class is inscribed into a Bitcoin transaction and broadcast to the network, and an instance of the class is returned. In the example, the object `chat` has the properties defined in the `Chat` class and five extra properties `_id`, `_rev`, `_root`, `_owners` and `_amount`.
-
-```js
-expect(chat).to.deep.equal({
-  messages: ['hello'],
-  _id: '667c...2357:0',
-  _rev: '667c...2357:0',
-  _root: '667c...2357:0',
-  _owners: ['03...'],
-  _amount: 5820,
-})
-```
-
-The `_owners` property lists the public keys able to spend this UTXO. The `_amount` property specifies the UTXO's value in satoshis.
-
-The properties `_id`, `_rev`, `_root` reference a transaction that is broadcast when the expression `await computer.new(Chat, ['hello'])` is evaluated. This transaction encodes the class definition and the creation of an instance of the class, as in following expression:
+broadcasts a transaction inscribed with the expression below.
 
 ```js
 class Chat extends Contract {
@@ -82,77 +63,147 @@ class Chat extends Contract {
 new Chat('hello')
 ```
 
-Another user can download this transaction and evaluate this expression to obtain a copy of the smart object. This can be done using the `computer.sync` function described in the next section.
+The Bitcoin Computer protocol interprets such a transaction as creating an on-chain object of type `Chat` at an output of the transaction.
 
-## Read a Smart Object
-
-The [`computer.sync`](/api/sync) function computes the state of smart object. For example, synchronizing to `667c...2357:0` will return an object with the same value as `chat`.
+The object `chat` returned from the `computer.new` call is similar to the object returned from the call `new Chat('hello')`. However it has additional properties `_id`, `_rev`, `_root`, `_owners` and `_amount`:
 
 ```js
-expect(await computer.sync('667c...2357:0')).to.deep.equal(chat)
-```
-
-The [`computer.sync`](/api/sync) function computes the state of the smart object by recursively evaluating all the transactions that reference the smart object, and replaying the expressions in those transactions.
-You can find more details about how this works [here](./how-it-works.md#storing-values).
-
-## Update a Smart Object
-
-A smart object can be updated by calling one of it's functions. Note that you have to `await` on all function calls to read the latest state.
-
-```js
-await chat.post('world')
-
 expect(chat).to.deep.equal({
-  messages: ['hello', 'world'],
+  messages: ['hello'],
   _id: '667c...2357:0',
-  _rev: 'de43...818a:0',
+  _rev: '667c...2357:0',
   _root: '667c...2357:0',
   _owners: ['03...'],
   _amount: 5820,
 })
 ```
 
-When a function is called, a transaction that inscribes the expression of the function call is broadcast. In the example, the transaction with id `de43...818a` inscribes the expression:
+- The properties `_id`, `_rev`, `_root` are set to strings of the form `<tx-id>:<out-num>` where `<tx-id>` is the id of the transaction broadcast by the `computer.new` call.
+- The `_owners` property is set to an array containing public keys.
+- The `_amount` property specifies an amount in satoshis.
+
+We refer to `chat` as an _on-chain object_.
+
+!!!
+Note that the transaction that created `chat` does not contain an encoding of the object itself. It only contains code that evaluates to its state.
+!!!
+
+## Update an On-Chain Object
+
+When a function is called on an on-chain object, a transaction is broadcast that is inscribed with a Javascript expression encoding the function call and an environment determining the undefined variables in the expressions. For example, the call
 
 ```js
-chat.post('world')
+await chat.post('world')
 ```
 
-The `_id` property uniquely identifies each smart object and remains constant. However, the `_rev` property changes with each update, tracking the different versions of the object. For instance, the chat object's current revision is `de43...818a:0`. Each update creates a new `_rev` value, composed of the transaction ID and output number. This means one `_id` can be associated with multiple `_rev` values, reflecting its update history. Further details on updating smart objects can be found [here](./how-it-works.md#updating-values).
-
-The `computer.sync` function maps revisions to historical states. It can be called with any historical revision. It will return the current state for the latest revision.
+broadcasts a transaction _tx_ that is inscribed with the data below.
 
 ```js
-const oldChat = await computer.sync(chat._id)
-expect(oldChat.messages).to.deep.equal(['hello'])
-
-const newChat = await computer.sync(chat._rev)
-expect(newChat.messages).to.deep.equal(['hello', 'world'])
+{
+  exp: 'chat.post('world')'
+  env: { chat: 0 }
+}
 ```
 
-## Find a Smart Object
+The transaction's zeroth input spends the output in which the previous revision of the `chat` object was stored.
 
-The [`computer.query`](/api/query) function returns the latest revision of a smart objects. It can be called with many different kinds of arguments, for example object one or more ids:
+Note that it is not possible to compute a value from the expression `chat.post('world')` alone because the variable `chat` is not defined. To make the expression determined the transaction's inscription contains an environment `env` that associates the variable name `chat` with its zeroth input.
+
+To compute the value of the `chat` after the `post` function is called and the transaction _tx_ is broadcast, the Bitcoin Computer protocol first computes the value stored at the output spent by the zeroth input of _tx_. This value is then substituted for the name `chat` in the expression `chat.post('world')`. Now the expression is completely determined and can be evaluated. The new value for `chat` is associated with the zeroth output of _tx_. In our example, this value is
 
 ```js
-const [rev] = await computer.query({ ids: ['667c...2357:0'] })
-expect(rev).to.equal('de43...818a:0')
+Chat {
+  messages: ['hello', 'world'],
+  _id: '667c...2357:0',
+  _rev: 'de43...818a:0',
+  _root: '667c...2357:0',
+  _owners: ['03...'],
+  _amount: 5820,
+}
 ```
 
-A basic pattern for many applications is to identify a smart object by its ids, look up the object's latest revision using `computer.query`, and then to compute its latest state using `computer.sync`. For example, imagine a chat app where the url would contain the id of a specific chat. The app could compute the latest state of the chat as follows:
+The property `_rev` has been updated and now refers to the zeroth output of _tx_. The properties `_id`, `_root`, `_owners`, `_amount` have not changed. The meaning of these special properties is as follows:
+
+- `_id` is the output in which the on-chain object was first created. As this output never changes the `_id` property never changes
+- `_rev` is the output where the current revision of the object is stored. Therefore, initially, the revision is equal to the id, then the revision is changed every time the object is updated.
+- `_root` is never updated. As it is not relevant to the chat example we refer the interested reader to [this](./language.md/#control-keyword-properties) section.
+- `_owners` is set to the public key of the data owner. More on that [below](#data-ownership).
+- `amount` is set to the amount of satoshi of the output in which an on-chain object is stored. More [here](#cryptocurrency).
+
+The properties `_id`, `_rev`, and `_root` are read only and an attempt to assign to them will throw an error. The properties `_owners` and `_amount` can be assigned in a smart contract to determine the transaction that is built.
+
+!!!
+The state of the on-chain objects is never stored in the blockchain, just the Javascript expression that creates it. This makes it possible to store data compressed to its <a target="blank" href="https://en.wikipedia.org/wiki/Kolmogorov_complexity">Kolmogorov complexity</a> which is optimal.
+!!!
+
+## Read an On-Chain Object
+
+The [`computer.sync`](/api/sync) function computes the state of an on-chain object given its revision. For example, if the function is called with an the id of an on-chain object, it returns the initial state of the object
 
 ```js
-const urlToId = (url) => ...
+const initialChat = await computer.sync(chat._id)
+
+expect(initialChat.messages).deep.eq(['hello'])
+```
+
+If `computer.sync` is called with latest revision it returns the current state.
+
+```js
+const latestChat = await computer.sync(chat._rev)
+
+expect(latestChat.messages).deep.eq(['hello', 'world'])
+expect(latestChat).to.deep.equal(chat)
+```
+
+## Find On-Chain Objects
+
+### Find the Latest Revisions
+
+The [`computer.query`](/api/query) function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:
+
+```js
+const [rev] = await computer.query({ ids: [chat._id] })
+expect(rev).to.equal(chat._rev)
+```
+
+A basic pattern in applications is to identify a on-chain object by its ids, look up the object's latest revision using `computer.query`, and then to compute its latest state using `computer.sync`. For example, in our chat app the url could contain a chat's id and the latest state of the chat could be computed as shown below.
+
+```js
+const urlToId = (url) => ... // extracts the id from the url
 const id = urlToId(window.location)
 const [rev] = await computer.query({ ids: [id] })
-const obj = await computer.sync(rev)
+const latestChat = await computer.sync(rev)
 ```
+
+### Find All Objects of a User
+
+`computer.query` can also return all revisions of on-chain objects owned by a public key. This could be useful for creating a user page for the chat application.
+
+```js
+const publicKey = computer.getPublicKey()
+const revs = await computer.query({ publicKey })
+```
+
+### Navigating the History
+
+It is also possible to navigate the revision history of a on-chain object using [`computer.next`](lib/next.md) and [`computer.prev`](lib/prev.md):
+
+```js
+expect(await computer.next(chat._id)).eq(chat._rev)
+expect(await computer.prev(chat._rev)).eq(chat._id)
+```
+
+Note that the code above only works because there are only two revisions of the chat in our example, otherwise `computer.next` or `computer.prev` would have to be called multiple times.
 
 ## Data Ownership
 
-Every smart object can have up to three owners. Only an owner can update the object. The owners can be set by assigning an array of string encoded public keys to the `_owners` property of a smart object. If the `_owners` property is not assigned in a smart contract it defaults to the public key of the computer object that created the smart object.
+We are finally ready to elevate our one-person chat to a multi-person chat!
 
-In the chat example the initial owner is the public key of the `computer` object on which `computer.new` function was called. Thus only a user with the private key for that public key will be able to post to the chat. We can add a function `invite` to update the owners array to allow more users to post.
+The _owner_ of an on-chain object is the user that can spend the output that stores it, just like the owner of the satoshi in a output is the user that can spend it.
+
+The owners can be set by assigning the `_owners` property. If this property is set to an array of public keys, the output script is a 1-of-n bare multisig script. If it is set to an ASM encoded script the output will have that script, more on that [later](#bitcoin-script-support). If the `_owners` property is not assigned the owners default to the public key of the computer object that created the on-chain object.
+
+In the chat example, the initial owner is the public key of the `computer` object on which `computer.new` function was called. Only that user can post to the chat. We can add a function `invite` to update the owners array to allow other users to post.
 
 ```js
 class Chat extends Contract {
@@ -164,11 +215,15 @@ class Chat extends Contract {
 }
 ```
 
-It is also possible to set the `_owners` property to an ASM representation of a script that defines the ownership rules. This allows for more complex conditions over the data ownership. To get more information on how to use this feature see the [Smart Contract Language](./language.md/#control-keyword-properties) section.
+!!!
+While a user can never change an on-chain object that they do not own, the owner has complete control. This includes the ability to destroy their own objects by spending their outputs with a transaction that does not conform to the Bitcoin Computer protocol. In this case the value of the object will be an Error value.
 
-## Privacy
+This is reminiscent of the real world where people have the right to destroy their own property but not the right to destroy somebody else's property.
+!!!
 
-By default, the state of all smart objects is public in the sense that any user can call the `computer.sync` function on an object's revision. However, you can restrict read access to an object by setting its `_readers` property to an array of public keys. If `_readers` is assigned, the meta-data on the transaction is encrypted using a combination of AES and ECIES. Only the specified readers can decrypt an encrypted object using the `computer.sync` function.
+## Encryption
+
+By default, the state of an on-chain object is public in the sense that any user can compute the state from its revision using `computer.sync`. However, you can restrict read access to an object by setting its `_readers` property to an array of public keys. If `_readers` is assigned, the meta-data on the transaction is encrypted using a combination of AES and ECIES so that only the specified readers have read access.
 
 For example, if we want to ensure that only people invited to the chat can read the messages, we can update our example code as follows:
 
@@ -188,17 +243,17 @@ class Chat extends Contract {
 }
 ```
 
-A user can (only) read the state of a smart object if they have read access to the current and all previous versions of the object. It is, therefore, not possible to revoke read access to a revision after it has been granted. However, it is possible to remove a user's ability to read the state of a smart object from a point in time forwards.
+As all updates to an on-chain object are recorded in immutable transactions it is not possible to restrict access to a revision once it is granted. It is also not possible to grant read access to a revision without granting read access to its entire history as the entire history is needed to compute the value of a revision. It is however possible to revoke read access from some point forward or to restrict access to all revisions all together.
 
-When smart objects are encrypted the flow of cryptocurrency is not obfuscated.
+!!!
+When on-chain objects are encrypted the flow of cryptocurrency is not obfuscated.
+!!!
 
 ## Off-Chain Storage
 
-Not all data needs to be stored on the blockchain. For example, personal information should never be stored on chain, not even encrypted.
+It is possible to store the metadata of a transaction off-chain in the database of a Bitcoin Computer Node. In this case a hash of the data and a url where the metadata can be retrieved is stored on chain, while the metadata itself is stored on the server. To use this feature, set a property `_url` of an on-chain object to the URL of a Bitcoin Computer Node.
 
-When the property `_url` of a smart object is set to the URL of a Bitcoin Computer Node, the metadata of the current function call is stored on the specified Bitcoin Computer Node. The blockchain contains a hash of the meta data and a link to where it can be retrieved.
-
-For example, if we want to allow users to send images that are too large to be stored on chain to the chat, we can make use of the off-chain solution:
+For example, if users want to send images to the chat that are too large to store on-chain, they can use the off-chain solution:
 
 ```js
 class Chat extends Contract {
@@ -209,37 +264,41 @@ class Chat extends Contract {
     this.messages.push(message)
   }
 
-  postPic(picBuf) {
-    this._url = 'https://my.bc.node.example.com'
-    this.messages.push(picBuf)
+  postImage(image) {
+    this._url = 'https://my.bitcoin.computer.node.example.com'
+    this.messages.push(image)
   }
 }
 ```
 
 ## Cryptocurrency
 
-Each smart object can store an amount of cryptocurrency. By default a smart object stores a minimal (non-dust) amount. If the `_amount` property of a smart object is set to a number, the output storing that smart object will contain that number of satoshis. For example, consider the class `Payment` below.
+Recall that an on-chain object is stored in an output and that the owners of the on-chain object are the users that can spend the output. Thus the owners of an on-chain object are always the owners of the satoshi in the output that stores it. We therefore say that the satoshi are stored in the on-chain object.
+
+The amount of satoshi in the output of an on-chain object can be configured by setting the `_amount` property to a number. If this property is undefined, the object will store an a minimal (non-dust) amount.
+
+If the value of the `_amount` property is increased, the additional satoshi must be provided by the wallet of the `computer` object that executes the call. In the case of a constructor call with `computer.new` that is that `computer` object. In the case of a function call it is the `computer` object that created the on-chain object.
+
+If the value of the `_amount` property is decreased, the difference in satoshi is credited to the wallet with the associated computer object.
+
+For example, if a user _Alice_ wants to send 21000 satoshis to a user _Bob_, then _Alice_ can create an on-chain object of the following `Payment` class.
 
 ```js
 class Payment extends Contract {
-  constructor(amount: number) {
-    super({ _amount })
+  constructor(amount, recipient) {
+    super({ _amount, _owners: [recipient] })
   }
 
   cashOut() {
     this._amount = 546 // minimal non-dust amount
   }
 }
+
+const computerAlice = new Computer({ mnemonic: mnemonicAlice })
+const payment = computerA.new(Payment, [21000, pubKeyBob])
 ```
 
-If a user _A_ wants to send 210000 satoshis to a user _B_, the user _A_ can setup the payment as follows:
-
-```js
-const computerA = new Computer({ mnemonic: <A's mnemonic> })
-const payment = computerA.new(Payment, [210000])
-```
-
-When the `payment` smart object is created, the wallet inside the `computerA` object funds the 210000 satoshi that are stored in the `payment` object. Once user _B_ becomes aware of the payment, he can withdraw by syncing against the object and calling the `cashOut` function.
+When the `payment` on-chain object is created, the wallet inside the `computerA` object funds the 21000 satoshi that are stored in the `payment` object. Bob can withdraw the satoshi by calling the `cashOut` function.
 
 ```js
 const computerB = new Computer({ seed: <B's mnemonic> })
@@ -247,56 +306,86 @@ const paymentB = await computerB.sync(payment._rev)
 await paymentB.cashOut()
 ```
 
-When executing the `cashOut` function one more transaction is broadcast which send the satoshis to user _B_'s address.
+## Expressions
 
-## Advanced Topics
+The syntax for on-chain objects introduced provides a high-level abstraction over the transactions of the Bitcoin Computer protocol. However we also provide low-level access to the protocol via the [`computer.encode()`](./lib/encode) function. This gives more control over the transaction being built, enabling advanced applications like DEXes.
 
-Until now, we use the Bitcoin Computer in a very simple way. However, the Bitcoin Computer is a powerful tool that can be used to build complex applications.
+The [`computer.encode`](./lib/encode.md) function takes three arguments:
 
-### The `computer.encode()` function
+- A Javascript expression `exp`,
+- an environment `env` that maps names to output specifiers,
+- and a module specifier `mod`.
 
-One of the most powerful features of the Bitcoin Computer is the ability to encode Javascript expressions into a Bitcoin transaction that can be stored on the blockchain. This allows for a low-level control over the Bitcoin Computer's execution environment.
+It returns a transaction but does not broadcast it. Therefore calling the `encode` function does not alter the state of any on-chain object. In addition to the transaction the function returns an object `effect` that represents the state that will emerge on-chain if the transaction were included in the blockchain. If the transaction is not included, the on-chain state will not change. This gives the user complete predictability over the state change that will be induced by their action.
 
-The `computer.encode()` function builds a Bitcoin transaction from a Javascript expression according to the [Bitcoin Computer protocol](../how-it-works.md). In addition to the transaction, this function also returns the value of the expression.
+The object `effect` object has two sub-objects: `res` contains the value returned from the expression and `env` contains the side-effect, specifically the new values of the names in the environment.
 
-For example, the following code creates a Bitcoin transaction that can be deployed to the blockchain, with a Javascript expression that encodes a smart contract class definition and creates a new instance of the smart contract.
+The code below is equivalent to calling `await computer.new(Chat, ['hello'])`. In fact the smart contract abstraction introduced above is just syntactic sugar for using the `encode` function.
 
 ```js
-class C extends Contract {} // define a simple smart contract class
+const exp = `${Chat} new Chat('hello')`
 
-const { tx } = await computer.encode({ exp: `${C} new ${C.name}()` })
+const { tx, effect } = await computer.encode({ exp })
+
+expect(effect).deep.eq({
+  res: {
+    messages: ['hello'],
+    _id: '667c...2357:0',
+    _rev: '667c...2357:0',
+    _root: '667c...2357:0',
+    _owners: ['03...'],
+    _amount: 5820,
+  }
+  env: {}
+})
 ```
 
-The encode function can compute the updated status of the objects or expressions in the transaction. This is useful to check the status of the objects before deploying the transaction.
+The encode function allows fine grained control over the transaction being built via an options object as a second parameter. Specifically one can specify
 
-To get more information on this functionality and other advanced options see the [`computer.encode()`](./lib/encode) section of the API documentation.
+- whether to fund the transaction
+- whether to include or exclude specific UTXOs when funding
+- whether to sign the transaction
+- which sighash type to use
+- which inputs to sign
+- to use a technique called mocking in order to build transactions when some of its inputs aren't known yet (see more below)
 
-### Module System
+## Module System
 
-The Bitcoin Computer includes a flexible module system that allows you to deploy and import modules from the blockchain. This is useful for sharing code between different smart contracts and applications, to import modules inside of smart contracts, and to save on deployment costs.
-
-To deploy a module to the blockchain, you can use the `computer.deploy()` function. This function takes a Javascript expression that defines the module, and deploys it to the blockchain. The function returns the address of the deployed module (transaction ID).
-
-In the following example, a simple class `A` is deployed to the blockchain, and then a class `B` is deployed that imports `A` from the blockchain.
+The [`computer.deploy`](./Lib/deploy.md) function stores an ES6 modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar `import` syntax.
 
 ```js
-const revA = await computer.deploy(`export class A extends Contract {}`)
+const moduleA = 'export class A extends Contract {}'
+const specifierA = await computer.deploy(moduleA)
 
-const revB = await computer.deploy(`
-  import { A } from '${revA}'
+const moduleB = `
+  import { A } from '${specifierA}'
   export class B extends A {}
-`)
-const { tx } = await computer.encode({ exp: `new B()`, mod: revB })
-expect(tx.getId()).to.be.a.string
+`
+const specifierB = await computer.deploy(moduleB)
 ```
 
-To import a module from the blockchain, you can use the `computer.load(rev)` function. This function takes the location of the module and returns the module.
+Note that `moduleB` refers to `moduleA` via `specifierA`.
 
-```ts
-class A extends Contract {}
-const rev = await computer.deploy(`export ${A}`)
-const { A: AA } = await computer.load(rev)
-expect(AA).to.equal(A)
+These modules can also be loaded from the blockchain using [computer.load](./lib/load.md).
+
+```js
+const loadedB = await computer.load(specifierB)
+expect(loadedB).eq(moduleB)
 ```
 
-To deep dive into the module system and other advanced options see the [`computer.deploy()`](./lib/deploy) and the [`computer.load()`](./lib/load) section of the API documentation.
+Modules can also be passed into `computer.encode`:
+
+```js
+const { tx } = await computer.encode({
+  exp: `new B()`,
+  mod: specifierB,
+})
+```
+
+## Bitcoin Script Support
+
+Todo
+
+## Mocking
+
+Todo
