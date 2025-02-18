@@ -76,7 +76,9 @@ jobs:
           sudo apt-get update && sudo apt-get install -y docker-compose
 
       - name: Start services in regtest mode
+        working-directory: packages/node
         run: |
+          npm run install &&
           npm run up &
           echo "Waiting for services to start..."
           sleep 20
