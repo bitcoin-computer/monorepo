@@ -82,7 +82,7 @@ jobs:
         run: |
           rm -f ${HOME}/.docker/config.json
   integration-tests:
-    needs: [extract-version]
+    needs: [build, extract-version]
     runs-on: ubuntu-latest
     strategy:
       matrix:
