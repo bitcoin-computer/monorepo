@@ -1,6 +1,5 @@
-printtoconsole=1
 testnet=1
-
+debug=net
 server=1
 txindex=1
 
