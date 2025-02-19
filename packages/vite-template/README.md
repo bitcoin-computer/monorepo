@@ -36,10 +36,7 @@ To start the application run the command below and open [http://localhost:3000](
 
 ```bash
 # Move to the package
-cd packages/cra-template
-
-# Install the dependencies
-npm install
+cd packages/vite-template
 
 # Use the default environment variables
 cp .env.example .env
