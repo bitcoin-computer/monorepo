@@ -29,7 +29,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "build:node": "docker build -t bitcoin-computer-node .",
+    "build:node": "docker build -t bcdb/bcn .",
     "check:obfuscation": "./scripts/check-obfuscation.sh",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} \\;",
     "format": "npm run format --if-present --workspaces",
