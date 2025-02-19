@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/lib",
-  "version": "0.24.0-beta.0",
+  "version": "0.24.1-beta.0",
   "private": false,
   "description": "Smart Contracts for Bitcoin",
   "keywords": [
@@ -58,8 +58,8 @@
   },
   "dependencies": {
     "@babel/parser": "^7.23.9",
-    "@bitcoin-computer/nakamotojs": "^0.24.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.24.0-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.24.1-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.24.1-beta.0",
     "@endo/static-module-record": "^1.0.4",
     "axios": "1.7.9",
     "bip32": "^4.0.0",
