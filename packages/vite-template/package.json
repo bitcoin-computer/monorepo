@@ -15,6 +15,7 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "start": "vite",
+    "start:test": "npm run start&",
     "test": "vitest run",
     "test:dev": "vitest",
     "test:puppeteer": "vitest run --config vite.puppeteer.config.ts",
