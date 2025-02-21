@@ -92,8 +92,8 @@ main() {
     local initialTime=$(date +%s)
     echo "initial_time:$initialTime" > "$metricsFile"
     echo "$formattedDateTime" >> "$metricsFile"
-    echo "|        Time         |       Node (K)     |   Coordinator (K)  |     Workers (K)   |" >> "$metricsFile"
-    echo "|---------------------|--------------------|--------------------|-------------------|" >> "$metricsFile"
+    echo "|     Time     |       Node (K)     |   Coordinator (K)  |     Workers (K)   |" >> "$metricsFile"
+    echo "|--------------|--------------------|--------------------|-------------------|" >> "$metricsFile"
   fi
 
   # Read the initial time from the file
@@ -108,7 +108,7 @@ main() {
 
 
   # Append the metrics to the file
-  printf "| %s | %9s (%5s%%) | %9s (%5s%%) | %8s (%5s%%) | %12s |\n" \
+  printf "|   %s   | %9s (%5s%%) | %9s (%5s%%) | %8s (%5s%%) |\n" \
     "$formattedElapsedTime" "$nodeHeightK" "$progressPercent" \
     "$coordinatorHeightK" "$coordinatorProgress" \
     "$workersHeightK" "$workersProgress" >> "$metricsFile"
