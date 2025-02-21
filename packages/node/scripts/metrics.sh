@@ -53,7 +53,6 @@ main() {
 
   # Node
   local debugPath=$(getDebugPath)
-  echo $debugPath
   local nodeOutput=$(execNodeCommand "cat $debugPath | tail -1000 | grep 'UpdateTip' | tail -n 1")
   local nodeHeight=$(echo "$nodeOutput" | sed -n 's/.*height=\([0-9]*\).*/\1/p' || echo "N/A")
   local progress=$(echo "$nodeOutput" | sed -n 's/.*progress=\([0-9.]*\).*/\1/p' || echo "N/A")

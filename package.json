@@ -18,12 +18,6 @@
     "Vivek Singh"
   ],
   "type": "module",
-  "bin": {
-    "bitcoin-computer": "./scripts/install.js"
-  },
-  "files": [
-    "scripts/install.js"
-  ],
   "workspaces": [
     "packages/*"
   ],
@@ -41,9 +35,6 @@
     "test": "npm run test --if-present --workspaces",
     "types": "npm run types --if-present --workspaces"
   },
-  "dependencies": {
-    "@endo/static-module-record": "^1.0.4"
-  },
   "devDependencies": {
     "@types/node": "^20.11.21",
     "eslint": "^8.57.0",
@@ -57,9 +48,6 @@
     "turbo": "^2.1.3",
     "typescript": "^5.5.3",
     "url": "^0.11.3"
-  },
-  "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.28.1"
   },
   "packageManager": "npm@10.2.4"
 }
