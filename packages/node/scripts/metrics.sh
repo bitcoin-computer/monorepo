@@ -37,6 +37,15 @@ getDebugPath() {
   esac
 }
 
+# Helper function to format seconds into HH:MM:SS
+format_elapsed_time() {
+  local total_seconds=$1
+  local hours=$((total_seconds / 3600))
+  local minutes=$(( (total_seconds % 3600) / 60 ))
+  local seconds=$((total_seconds % 60))
+  printf "%02d:%02d:%02d" "$hours" "$minutes" "$seconds"
+}
+
 # Main script
 main() {
   # Format the date and time
@@ -44,6 +53,7 @@ main() {
 
   # Node
   local debugPath=$(getDebugPath)
+  echo $debugPath
   local nodeOutput=$(execNodeCommand "cat $debugPath | tail -1000 | grep 'UpdateTip' | tail -n 1")
   local nodeHeight=$(echo "$nodeOutput" | sed -n 's/.*height=\([0-9]*\).*/\1/p' || echo "N/A")
   local progress=$(echo "$nodeOutput" | sed -n 's/.*progress=\([0-9.]*\).*/\1/p' || echo "N/A")
@@ -79,11 +89,28 @@ main() {
   # Generate Markdown table
   local metricsFile="/tmp/metrics.log"
   if [ ! -f "$metricsFile" ]; then
+    # First run: Write the initial timestamp to the file
+    local initialTime=$(date +%s)
+    echo "initial_time:$initialTime" > "$metricsFile"
+    echo "$formattedDateTime" >> "$metricsFile"
     echo "|        Time         |       Node (K)     |   Coordinator (K)  |     Workers (K)   |" >> "$metricsFile"
     echo "|---------------------|--------------------|--------------------|-------------------|" >> "$metricsFile"
   fi
-  printf "| %s | %9s (%5s%%) | %9s (%5s%%) | %8s (%5s%%) |\n" \
-    "$formattedDateTime" "$nodeHeightK" "$progressPercent" \
+
+  # Read the initial time from the file
+  local initialTime=$(grep 'initial_time:' "$metricsFile" | cut -d':' -f2)
+
+  # Calculate elapsed time relative to the initial time
+  local currentTime=$(date +%s)
+  local elapsedTime=$((currentTime - initialTime))
+
+  # Format elapsed time as HH:MM:SS
+  local formattedElapsedTime=$(format_elapsed_time "$elapsedTime")
+
+
+  # Append the metrics to the file
+  printf "| %s | %9s (%5s%%) | %9s (%5s%%) | %8s (%5s%%) | %12s |\n" \
+    "$formattedElapsedTime" "$nodeHeightK" "$progressPercent" \
     "$coordinatorHeightK" "$coordinatorProgress" \
     "$workersHeightK" "$workersProgress" >> "$metricsFile"
 
