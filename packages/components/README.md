@@ -7,9 +7,6 @@
   </p>
 </div>
 
-> [!WARNING]
-> Built for internal use.
-
 This package contains components that are used in several applications. Have a look at the other packages for how to use.
 
 Currently it contains the following:
@@ -25,10 +22,20 @@ Currently it contains the following:
 
 To re-build the code run
 
-<font size=1>
+```js
+npm run build
+```
+
+To run lint run
 
 ```js
-npm run compile
+npm run lint
+```
+
+To run types run
+
+```js
+npm run types
 ```
 
 </font>
