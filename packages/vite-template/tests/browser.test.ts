@@ -38,7 +38,7 @@ describe('Bitcoin Computer Tests', () => {
     await browser.close()
   })
 
-  it.only('should display the correct title', async () => {
+  it('should display the correct title', async () => {
     const response = await page.goto(process.env.URL ? process.env.URL : 'http://localhost:1032')
     const title = await page.title()
     expect(title).toBe('Vite + React + TS')
