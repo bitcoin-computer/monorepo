@@ -1,9 +1,26 @@
 {
   "name": "@bitcoin-computer/components",
-  "version": "0.24.0-beta.0",
+  "version": "0.24.1-beta.0",
   "description": "",
-  "license": "ISC",
-  "author": "",
+  "license": "MIT",
+  "author": {
+    "name": "Clemens Ley",
+    "email": "clemens@bitcoincomputer.io",
+    "url": "https://github.com/bitcoin-computer"
+  },
+  "contributors": [
+    "Clemens Ley",
+    "Laura Tardivo",
+    "Vivek Singh"
+  ],
+  "homepage": "http://bitcoincomputer.io/",
+  "bugs": {
+    "url": "https://github.com/bitcoin-computer/monorepo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/components"
+  },
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {
@@ -16,7 +33,7 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.24.0-beta.0",
+    "@bitcoin-computer/lib": "^0.24.1-beta.0",
     "flowbite": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

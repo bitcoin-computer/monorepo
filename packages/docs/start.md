@@ -7,13 +7,12 @@ icon: rocket
 
 ## Use in the Browser
 
-The easiest way to try the Bitcoin Computer is to create a file as below and open it in your browser.
+Create the following file and open it in a browser.
 
-```html
+```html index.html
 <html>
   <head>
     <script type="module">
-      // Import the library
       import {
         Computer,
         Contract,
@@ -30,29 +29,27 @@ The easiest way to try the Bitcoin Computer is to create a file as below and ope
         }
       }
 
-      // Create a wallet
+      // Create and fund a wallet
       const computer = new Computer()
-
-      // Fund the wallet
       await computer.faucet(1e5)
 
-      // Create a smart object
+      // Create an on-chain object
       const counter = await computer.new(Counter)
       document.getElementById('count').innerHTML = counter.n
 
-      // Update the smart object
+      // Update the on-chain object
       await counter.inc()
       document.getElementById('count').innerHTML = counter.n
     </script>
   </head>
 
   <body>
-    Value: <span id="count">*</span>
+    <span id="count">*</span>
   </body>
 </html>
 ```
 
-When the website is first rendered you will see `Value: *`. When the smart object is created with `computer.new` you will see `Value: 0`. The `inc` function is called you will see `Value: 1`.
+The browser will initially show `*`. When the on-chain object is created it will show `0` an when the object is updated it will show `1`.
 
 ## Use in Node.js
 
@@ -88,19 +85,17 @@ class Counter extends Contract {
   }
 }
 
-// Create a wallet
+// Create and fund a wallet
 const computer = new Computer()
-
-// Fund the wallet
 await computer.faucet(1e5)
 
-// Create a smart object
+// Create an on-chain object
 const counter = await computer.new(Counter)
 
-// Update the smart object
+// Update the on-chain object
 await counter.inc()
 
-// Log the smart object
+// Log the on-chain object
 console.log(counter)
 ```
 
@@ -133,11 +128,11 @@ Counter {
 
 </font>
 
-In the setup above you are using a node that we provide at `rltc.node.bitcoincomputer.io` (Litecoin Regtest). You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node.
+In both examples above you are using a Bitcoin Computer Node that we provide at `rltc.node.bitcoincomputer.io` configured to Litecoin Regtest. You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node.
 
 ## Run a Node
 
-To run a node we recommend to clone the [monorepo](https://github.com/bitcoin-computer/monorepo#readme) with all Bitcoin Computer related materials, including the [Bitcoin Computer library](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme), the [node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme), the [docs](https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme), and [example applications](https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/apps.md).
+To run a node we recommend to clone the [monorepo](https://github.com/bitcoin-computer/monorepo#readme) with all Bitcoin Computer related materials, including the [Bitcoin Computer library](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme), the [node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme), these [docs](https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme), and [example applications](https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/apps.md).
 
 ### Install
 
@@ -152,7 +147,7 @@ npm install
 
 ### Start the node
 
-To start your node at `http://localhost:1031` run the commands below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
+To start your node at `http://localhost:1031` run the commands below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take hours or even days, depending on your hardware and network connection.
 
 ```shell
 # Run the node
@@ -181,7 +176,7 @@ npm run lint
 npm run types
 ```
 
-The commands will be run in each package. You can also navigate the a package and run the same scripts there.
+The commands will be executed in each package. You can also navigate the a package and run the same scripts there.
 
 ### Start your own Project
 

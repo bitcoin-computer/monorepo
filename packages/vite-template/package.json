@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/vite-project",
-  "version": "0.24.0-beta.0",
+  "version": "0.24.1-beta.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -24,8 +24,8 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/components": "^0.24.0-beta.0",
-    "@bitcoin-computer/lib": "^0.24.0-beta.0",
+    "@bitcoin-computer/components": "^0.24.1-beta.0",
+    "@bitcoin-computer/lib": "^0.24.1-beta.0",
     "dotenv": "^16.4.5",
     "flowbite": "^2.3.0",
     "puppeteer": "^24.1.1",
