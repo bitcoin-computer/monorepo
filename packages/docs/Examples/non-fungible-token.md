@@ -7,10 +7,12 @@ icon: image
 
 ## Smart Contract
 
-Our example class for a non-fungible token only has two properties `name` and `symbol`. It has one function `transfer` that updates the `_owners` property.
+A smart contract for an NFT is a class with two properties and one function to update the `_owners` property.
 
 ```ts
-class NFT extends Contract {
+import { Contract } from '@bitcoin-computer/lib'
+
+export class NFT extends Contract {
   constructor(name = '', symbol = '') {
     super({ name, symbol })
   }
@@ -23,11 +25,15 @@ class NFT extends Contract {
 
 ## Usage
 
-To create a non-fungible token you can call the [`new`](./API/new.md) function as shown below. The [`faucet`](./API/faucet.md) function funds the `sender` object when the `sender` object is configured to `regtest`. The `sender.new` function mints a new NFT and the `transfer` function send the NFT to another user.
+To create an on-chain object of class `NFT`, you can use the [`new`](./API/new.md) function of the `Computer` class. The [`faucet`](./API/faucet.md) function funds the `sender` object on `regtest`. The `sender.new` function mints a new NFT and the `transfer` function send the NFT to another user.
 
 ```ts
-// Create the sender wallet
+import { Computer } from '@bitcoin-computer/lib'
+import { NFT } from './nft.js'
+
+// Create the wallets
 const sender = new Computer()
+const receiver = new Computer()
 
 // Fund the senders wallet
 await sender.faucet(0.001e8)
@@ -36,31 +42,50 @@ await sender.faucet(0.001e8)
 const nft = await sender.new(NFT, ['name', 'symbol'])
 
 // Send the NFT
-await nft.transfer(new Computer().getPublicKey())
+await nft.transfer(receiver.getPublicKey())
 ```
 
-If more than one NFT are broadcast one can save transaction fees by broadcasting a module containing the NFT smart contract first. The class `TCB721` is a helper class for that purpose.
+The transaction that is broadcast when `sender.new` is called contains the expression below.
+
+```js
+class NFT extends Contract {
+  constructor(name = '', symbol = '') {
+    super({ name, symbol })
+  }
+
+  transfer(to: string) {
+    this._owners = [to]
+  }
+}
+new NFT('name', 'symbol')
+```
+
+### The Module System
+
+If many NFTs are created, it is wasteful to store the same Javascript class in the blockchain multiple times. In this case it is possible to use the module system to store the smart contract one time and refer to it multiple times using the module system.
 
 ```ts
-// Create wallet
-const sender = new Computer()
+import { Computer } from '@bitcoin-computer/lib'
 
-// Fund wallet
+// Create and fund wallet
+const sender = new Computer()
 await sender.faucet(0.001e8)
 
-// Create helper object
-const tokenHelper = new TokenHelper(sender)
-
 // Deploy smart contract
-await tokenHelper.deploy()
+const mod = await sender.deploy(`export ${NFT}`)
 
-// Mint nft
-nft = await tokenHelper.mint('name', 'symbol')
+// Mint nfts
+const nft1 = await sender.new(NFT, ['name1', 'symbol'], mod)
+const nft2 = await sender.new(NFT, ['name1', 'symbol'], mod)
+...
+```
 
-// Transfer NFT
-await tokenHelper.transfer(new Computer().getPublicKey(), nft._id)
+In this case each transaction encoding the minting of an NFT contains the module specifier (a transaction id and an output number) and the following expression.
+
+```js
+new NFT('name1', 'symbol')
 ```
 
 ## Code
 
-You can find the code [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721#readme).
+You can find a slightly more elaborate implementation [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721#readme).

@@ -1,5 +1,6 @@
 ---
 order: -60
+icon: server
 ---
 
 # Node
