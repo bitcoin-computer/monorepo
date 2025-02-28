@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.24.0-beta.0",
+  "version": "0.24.1-beta.0",
   "private": false,
   "description": "Server Side Library for the Bitcoin Computer",
   "keywords": [
@@ -52,9 +52,9 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@bitcoin-computer/lib": "^0.24.0-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.24.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.24.0-beta.0",
+    "@bitcoin-computer/lib": "^0.24.1-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.24.1-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.24.1-beta.0",
     "@types/node": "^20.11.20",
     "axios": "1.7.9",
     "bitcoind-rpc": "^0.9.1",
@@ -74,7 +74,7 @@
     "typescript": "^5.3.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "zeromq": "6.0.4"
+    "zeromq": "6.3.0"
   },
   "devDependencies": {
     "@types/chai": "^5.0.1",

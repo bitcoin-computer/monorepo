@@ -7,28 +7,35 @@
   </p>
 </div>
 
-> [!WARNING]
-> Built for internal use.
-
 This package contains components that are used in several applications. Have a look at the other packages for how to use.
 
 Currently it contains the following:
 
-- [Auth](./src/Auth.tsx) - Login and logout
-- [Wallet](./src/Wallet.tsx) - Deposit cryptocurrency
-- [Gallery](./src/Gallery.tsx) - displays a grid of smart objects
-- [SmartObject](./src/SmartObject.tsx) - displays a smart object and has a form for each of its methods
-- [Transaction](./src/Transaction.tsx) - displays a transaction including its Bitcoin Computer expression if it has one
-- [Modal](./src/Wallet.tsx) - displays a modal window
+- [Auth](https://github.com/bitcoin-computer/monorepo/blob/main/packages/components/src/Auth.tsx) - Login and logout
+- [Wallet](https://github.com/bitcoin-computer/monorepo/blob/main/packages/components/src/Wallet.tsx) - Deposit cryptocurrency
+- [Gallery](https://github.com/bitcoin-computer/monorepo/blob/main/packages/components/src/Gallery.tsx) - displays a grid of smart objects
+- [SmartObject](https://github.com/bitcoin-computer/monorepo/blob/main/packages/components/src/SmartObject.tsx) - displays a smart object and has a form for each of its methods
+- [Transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/components/src/Transaction.tsx) - displays a transaction including its Bitcoin Computer expression if it has one
+- [Modal](https://github.com/bitcoin-computer/monorepo/blob/main/packages/components/src/Modal.tsx) - displays a modal window
 
 ## Use
 
 To re-build the code run
 
-<font size=1>
+```js
+npm run build
+```
+
+To run lint run
 
 ```js
-npm run compile
+npm run lint
+```
+
+To run types run
+
+```js
+npm run types
 ```
 
 </font>

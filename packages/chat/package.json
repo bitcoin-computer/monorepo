@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/chat",
-  "version": "0.24.0-beta.0",
+  "version": "0.24.1-beta.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -17,8 +17,8 @@
     "test:dev": "vitest"
   },
   "dependencies": {
-    "@bitcoin-computer/components": "^0.24.0-beta.0",
-    "@bitcoin-computer/lib": "^0.24.0-beta.0",
+    "@bitcoin-computer/components": "^0.24.1-beta.0",
+    "@bitcoin-computer/lib": "^0.24.1-beta.0",
     "flowbite": "^2.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"

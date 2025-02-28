@@ -1,8 +1,9 @@
 import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
-import { ChessContractHelper } from '@bitcoin-computer/chess-contracts'
+import { ChessContractHelper, NotEnoughFundError } from '@bitcoin-computer/chess-contracts'
 import { useContext, useState } from 'react'
 import { getHash } from '../services/secret.service'
 import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import { Transaction } from '@bitcoin-computer/lib'
 
 export const newGameModal = 'new-game-modal'
 
@@ -44,30 +45,54 @@ function NewGameModalContent({
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const createNewGame = async () => {
+    const secretHashW = await getHash()
+    const secretHashB = await getHash()
+
+    if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
+
+    const publicKeyW = computerW.getPublicKey()
+    const chessContractHelper = new ChessContractHelper({
+      computer: computerW,
+      amount: parseFloat(amount) * 1e8,
+      nameW,
+      nameB,
+      publicKeyW,
+      publicKeyB,
+      secretHashW,
+      secretHashB,
+      mod: VITE_CHESS_GAME_MOD_SPEC,
+    })
+    return await chessContractHelper.makeTx()
+  }
+
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
       showLoader(true)
-      const secretHashW = await getHash()
-      const secretHashB = await getHash()
-
-      if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
-
-      const publicKeyW = computerW.getPublicKey()
-      const chessContractHelper = new ChessContractHelper({
-        computer: computerW,
-        amount: parseFloat(amount) * 1e8,
-        nameW,
-        nameB,
-        publicKeyW,
-        publicKeyB,
-        secretHashW,
-        secretHashB,
-        mod: VITE_CHESS_GAME_MOD_SPEC,
-      })
-      const tx = await chessContractHelper.makeTx()
+      let tx: Transaction | undefined
+      const { balance } = await computerW.getBalance()
+      try {
+        // Try to create transactoin
+        tx = await createNewGame()
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message === NotEnoughFundError &&
+          balance > parseFloat(amount) * 1e8
+        ) {
+          // Try to combine the UTXOs in a single UTXO
+          await computerW.send(parseFloat(amount) * 1e8, computerW.getAddress())
+          tx = await createNewGame()
+        } else {
+          if (error instanceof Error) {
+            throw new Error(error.message)
+          } else {
+            throw new Error('Error occurred!')
+          }
+        }
+      }
       setSerializedTx(`http://localhost:1032?start-game=${tx.serialize()}`)
-
       showLoader(false)
     } catch (err) {
       if (err instanceof Error) {

@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/swap",
-  "version": "0.24.0-beta.0",
+  "version": "0.24.1-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
@@ -20,10 +20,10 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/TBC20": "^0.24.0-beta.0",
-    "@bitcoin-computer/TBC721": "^0.24.0-beta.0",
-    "@bitcoin-computer/lib": "^0.24.0-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.24.0-beta.0"
+    "@bitcoin-computer/TBC20": "^0.24.1-beta.0",
+    "@bitcoin-computer/TBC721": "^0.24.1-beta.0",
+    "@bitcoin-computer/lib": "^0.24.1-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.24.1-beta.0"
   },
   "devDependencies": {
     "@types/mocha": "^9.1.1",
