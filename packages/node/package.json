@@ -74,7 +74,7 @@
     "typescript": "^5.3.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "zeromq": "6.3.0"
+    "zeromq": "6.0.4"
   },
   "devDependencies": {
     "@types/chai": "^5.0.1",
