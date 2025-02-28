@@ -449,13 +449,13 @@ tx.setInputScript(0, input!)
 await computer.broadcast(tx)
 ```
 
-A Bitcoin Script could be used to allow more than three users to post to a chat. The idea is to use a Taproot script that has one spending path for each user. Taproot scripts have pretty much an unlimited number of spending paths so an un-limited number of users could be supported. When this kind of Taproot chat is updated, only the spending path for the posting user needs to be revealed, meaning that the cost to post is constant and independent of the number of users in the chat.
+A Bitcoin Script could be used to allow more than three users to post to a chat. The idea is to use a Taproot script that has one spending path for each user. Taproot scripts have a large number of spending paths, so a large number of users could be supported. When this kind of Taproot chat is updated, only the spending path for the posting user needs to be revealed, meaning that the cost to post is constant and independent of the number of users in the chat.
 
 ## Mocking
 
-It is sometimes necessary to build a Bitcoin Computer transaction that spends an output of a transaction that has not been broadcast to the blockchain. One examples is using smart contracts over payment channels or networks. Another example is selling an object to an unknown buyer: in this case the object to be used for the payment is not known when the seller builds the transaction (see for example [here](./Examples/sale.md)).
+It is sometimes necessary to build a Bitcoin Computer transaction that spends an output of a transaction that has not been broadcast to the blockchain. One example is using smart contracts over payment channels or networks. Another example is selling an object to an unknown buyer: in this case the object to be used for the payment is not known when the seller builds the transaction (see for example [here](./Examples/sale.md)).
 
-To facilitate such application the Bitcoin Computer has a feature called Mocking. "Mocked" objects can be passed into the `encode` function. In this case the Bitcoin Computer protocol assumes that an object with that value exists at the specified revision when the transaction is built. To create a mock you can just instantiate an object that extends from `Mock`.
+To facilitate such application the Bitcoin Computer has a feature called Mocking. "Mocked" objects can be passed into the `encode` function. In this case, when a transaction is build the Bitcoin Computer protocol assumes that an object with that value exists at the specified revision. To create a mock you can just instantiate an object that extends from `Mock`.
 
 ```js
 import { Mock, Contract } from '@bitcoin-computer/lib'
@@ -482,7 +482,7 @@ class A extends Contract {
 }
 ```
 
-To use a mock, pass it into the `mocks` property of the `encode` function. When the object becomes available on the blockchain, the mocked transaction can be modified to point to the actual object.
+To use a mock, pass it into the `mocks` property of the `encode` function. When the object being mocked up becomes available on the blockchain, the mocked transaction can be modified to point to the actual object.
 
 ```js
 // Create Mock
@@ -521,9 +521,9 @@ const txId2 = await computer.broadcast(tx)
 
 ## Building the Chat Platform
 
-We now sketch how a chat platform could be built where moderators can build a community and then sell it over the internet.
+We now sketch how a chat platform could be built where moderators can create a community and then sell it over the internet.
 
-Every community would be represented through through multiple on-chain objects that are similar to the `Chat` object. Each of these objects contains a constant-size chunk of message. When the current chunk object is full, a new object would be created that would refer to the previous chunk. When a user joins a chat the app would sync to the latest chunk. If the user scrolls up to the first message of the chunk, the user could click a button to load the previous chunk of messages.
+Every community would be represented through multiple on-chain objects that are similar to the `Chat` object. Each of these objects contains a constant-size chunk of messages. When the current chunk object is full, a new object that would refer to the previous chunk would be created. When a user joins a chat the app would sync to the latest chunk. If the user scrolls up to the first message of the chunk, the user could click a button to load the previous chunk of messages.
 
 In order to support an unlimited number of users, the technique sketched at the end of [this](#bitcoin-script-support) section could be used. However the kinds of scripts described there would have a 1-of-n ownership structure which could lead to abuse (for example, any member of the chat could destroy the current chunk object). This could be mitigated by maintaining an additional "moderators" object for every community. Moderators could spin up a new chunk in the case of abuse and have other privileges like kicking out users and deleting messages from the UI. The moderatos object could have an n-of-m ownership structure. To sell a community one could sell the moderators object. This can be accomplished by using the technique described [here](./Examples/sale.md).
 

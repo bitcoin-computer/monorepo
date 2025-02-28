@@ -9,7 +9,7 @@ icon: circle
 
 A fungible token is stored and transferred in a similar way to how satoshis are stored and transferred in Bitcoin. Its current state is stored in a set of UTXOs. When tokens are transferred a utxo is spent and two new UTXOs are created: one containing the amount sent and one containing the change.
 
-The `transfer` function checks if the current on-chain object contains a sufficient number of tokens and throws an error if it does not. If the supply is sufficient the supply of the current on-chain object is reduced by the amount to be sent. A new on-chain object is created that is owned by recipient and that contains the amount to be sent. This object is returned from the function call to create a new on-chain object.
+The `transfer` function checks if the current on-chain object contains a sufficient number of tokens and throws an error if not. If sufficient, the supply of the current on-chain object is reduced by the amount to be sent. A new on-chain object, owned by the recipient and containing the sent amount, is created and returned.
 
 ```typescript
 import { Contract } from '@bitcoin-computer/lib'
