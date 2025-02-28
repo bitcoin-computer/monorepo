@@ -9,34 +9,33 @@
     <meta name="generator" content="Retype 3.6.0">
 
     <!-- Primary Meta Tags -->
-    <title>Non Fungible Token</title>
-    <meta name="title" content="Non Fungible Token">
-    <meta name="description" content="A smart contract for an NFT is a class with two properties and one function to update the _owners property.">
+    <title>Development</title>
+    <meta name="title" content="Development">
+    <meta name="description" content="Coming soon.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/examples/non-fungible-token/">
+    <link rel="canonical" href="/development/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/examples/non-fungible-token/">
-    <meta property="og:title" content="Non Fungible Token">
-    <meta property="og:description" content="A smart contract for an NFT is a class with two properties and one function to update the _owners property.">
+    <meta property="og:url" content="/development/">
+    <meta property="og:title" content="Development">
+    <meta property="og:description" content="Coming soon.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/examples/non-fungible-token/">
-    <meta property="twitter:title" content="Non Fungible Token">
-    <meta property="twitter:description" content="A smart contract for an NFT is a class with two properties and one function to update the _owners property.">
+    <meta property="twitter:url" content="/development/">
+    <meta property="twitter:title" content="Development">
+    <meta property="twitter:description" content="Coming soon.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
-    <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.794095140562" rel="stylesheet">
+    <link href="../static/favicon.ico" rel="icon">
+    <link href="../resources/css/retype.css?v=3.6.0.794095140562" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.794095140562" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -51,7 +50,7 @@
                 <!-- Logo -->
                 <div class="flex items-center justify-between h-full py-2 md:w-75">
                     <div class="flex items-center px-2 md:px-6">
-                        <a id="docs-site-logo" href="../../" class="flex items-center leading-snug text-xl">
+                        <a id="docs-site-logo" href="../" class="flex items-center leading-snug text-xl">
                             <span class="dark:text-white font-semibold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
                         </a><span class="hidden px-2 py-1 ml-4 text-sm font-semibold leading-none text-root-logo-label-text bg-root-logo-label-bg rounded-sm md:inline-block">0.24.0</span>
                     </div>
@@ -151,102 +150,13 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="non-fungible-token" class="break-words">
+<doc-anchor-target id="development" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#non-fungible-token">#</doc-anchor-trigger>
-        <span>Non Fungible Token</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#development">#</doc-anchor-trigger>
+        <span>Development</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="smart-contract">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract">#</doc-anchor-trigger>
-        <span>Smart Contract</span>
-    </h2>
-</doc-anchor-target>
-<p>A smart contract for an NFT is a class with two properties and one function to update the <code v-pre>_owners</code> property.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">import { Contract } from '@bitcoin-computer/lib'
-
-export class NFT extends Contract {
-  constructor(name = '', symbol = '') {
-    super({ name, symbol })
-  }
-
-  transfer(to: string) {
-    this._owners = [to]
-  }
-}</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="usage">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#usage">#</doc-anchor-trigger>
-        <span>Usage</span>
-    </h2>
-</doc-anchor-target>
-<p>To create an on-chain object of class <code v-pre>NFT</code>, you can use the <a href="./api/new.md"><code v-pre>new</code></a> function of the <code v-pre>Computer</code> class. The <a href="./api/faucet.md"><code v-pre>faucet</code></a> function funds the <code v-pre>sender</code> object on <code v-pre>regtest</code>. The <code v-pre>sender.new</code> function mints a new NFT and the <code v-pre>transfer</code> function send the NFT to another user.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
-import { NFT } from './nft.js'
-
-// Create the wallets
-const sender = new Computer()
-const receiver = new Computer()
-
-// Fund the senders wallet
-await sender.faucet(0.001e8)
-
-// Create a new NFT
-const nft = await sender.new(NFT, ['name', 'symbol'])
-
-// Send the NFT
-await nft.transfer(receiver.getPublicKey())</code></pre>
-</doc-codeblock></div>
-<p>The transaction that is broadcast when <code v-pre>sender.new</code> is called contains the expression below.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">class NFT extends Contract {
-  constructor(name = '', symbol = '') {
-    super({ name, symbol })
-  }
-
-  transfer(to: string) {
-    this._owners = [to]
-  }
-}
-new NFT('name', 'symbol')</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="the-module-system">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#the-module-system">#</doc-anchor-trigger>
-        <span>The Module System</span>
-    </h3>
-</doc-anchor-target>
-<p>If many NFTs are created, it is wasteful to store the same Javascript class in the blockchain multiple times. In this case, it is possible to use the module system to store the smart contract one time and refer to it multiple times.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
-
-// Create and fund wallet
-const sender = new Computer()
-await sender.faucet(0.001e8)
-
-// Deploy smart contract
-const mod = await sender.deploy(`export ${NFT}`)
-
-// Mint nfts
-const nft1 = await sender.new(NFT, ['name1', 'symbol'], mod)
-const nft2 = await sender.new(NFT, ['name1', 'symbol'], mod)
-...</code></pre>
-</doc-codeblock></div>
-<p>In this case, each transaction encoding the minting of an NFT contains the module specifier (a transaction id and an output number) and the following expression.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">new NFT('name1', 'symbol')</code></pre>
-</doc-codeblock></div>
-<doc-anchor-target id="code">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#code">#</doc-anchor-trigger>
-        <span>Code</span>
-    </h2>
-</doc-anchor-target>
-<p>You can find a slightly more elaborate implementation <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/TBC721#readme">here</a>.</p>
+<p>Coming soon.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -256,20 +166,20 @@ const nft2 = await sender.new(NFT, ['name1', 'symbol'], mod)
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../examples/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../format/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">Examples</span>
+                                                <span class="block mt-1">Transaction Format</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../examples/fungible-token/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../apps/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">Fungible Token</span>
+                                                <span class="block mt-1">Apps</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
@@ -313,6 +223,6 @@ const nft2 = await sender.new(NFT, ['name1', 'symbol'], mod)
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Non Fungible Token", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Development", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

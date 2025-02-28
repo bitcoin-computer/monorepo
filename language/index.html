@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793870716139">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794095140562">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Smart Contract Language</title>
     <meta name="title" content="Smart Contract Language">
-    <meta name="description" content="The Bitcoin Computer uses Javascript with slight modifications. Specifically:">
+    <meta name="description" content="Writing smart contracts is all about imposing constraints of future values. These constraints can be local or global.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/language/">
@@ -20,25 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/language/">
     <meta property="og:title" content="Smart Contract Language">
-    <meta property="og:description" content="The Bitcoin Computer uses Javascript with slight modifications. Specifically:">
+    <meta property="og:description" content="Writing smart contracts is all about imposing constraints of future values. These constraints can be local or global.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/language/">
     <meta property="twitter:title" content="Smart Contract Language">
-    <meta property="twitter:description" content="The Bitcoin Computer uses Javascript with slight modifications. Specifically:">
+    <meta property="twitter:description" content="Writing smart contracts is all about imposing constraints of future values. These constraints can be local or global.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.793870716139" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.794095140562" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793870716139" defer></script>
-    <link href="../resources/css/katex.css?v=3.6.0" rel="stylesheet">
-    <script id="katex-js" data-cfasync="false" src="../resources/js/katex.js?v=3.6.0" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.794095140562" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -159,140 +157,31 @@
         <span>Smart Contract Language</span>
     </h1>
 </doc-anchor-target>
-<p>The Bitcoin Computer uses Javascript with slight modifications. Specifically:</p>
-<ul>
-<li><em>Property assignments are not permitted outside function calls.</em> This makes it possible to impose constraints on all future values of an object, thereby making Javascript a viable smart contract language</li>
-<li><em>Certain keyword properties have a special semantics.</em> This gives the smart contract programmer fine grained control over the transaction being built.</li>
-<li><em>Assignments to <code v-pre>this</code> is not permitted in constructor calls.</em> This is necessary to ensure the first two properties.</li>
-</ul>
-<p>These properties are technically enforced by the requirement that all objects returned from a smart contract inherit from a class <code v-pre>Contract</code> that is exported from the Bitcoin Computer Library.</p>
-<p>In the following we explain the three properties in detail.</p>
-<doc-anchor-target id="assigning-properties-outside-of-function-calls-is-prohibited">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#assigning-properties-outside-of-function-calls-is-prohibited">#</doc-anchor-trigger>
-        <span>Assigning Properties Outside of Function Calls is Prohibited</span>
-    </h3>
-</doc-anchor-target>
-<p>Assigning to a property outside of a function call throws an error.</p>
-<p>This makes it possible to write classes that impose constraints on all future values of an object. Consider for example the class <code v-pre>Even</code> below. The condition guarantees that all instances of the class will always have an even value.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">class Even extends Contract {
-  inc2() {
-    this.n = (this.n || 0) + 2
-  }
-}
-const even = new Even()</code></pre>
-</doc-codeblock></div>
-<p>Calling <code v-pre>await even.inc2()</code> works as expected.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">await even.inc2()
-expect(even.n).eq(2)</code></pre>
-</doc-codeblock></div>
-<p>However, assigning to <code v-pre>even.n</code> outside of a function call throws an error.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">try {
-  even.n = 3
-  expect(true).eq(false)
-} catch (err) {
-  expect(err.message).eq(&quot;Cannot set property 'n' directly&quot;)
-}</code></pre>
-</doc-codeblock></div>
-<p>While this is not a very useful example for a constraint, all smart contracts are based on constraints to future values in a similar way.</p>
-<doc-anchor-target id="special-semantics-of-keyword-properties">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#special-semantics-of-keyword-properties">#</doc-anchor-trigger>
-        <span>Special Semantics of Keyword Properties</span>
-    </h3>
-</doc-anchor-target>
-<p>The Bitcoin Computer uses special properties (called keyword properties) that</p>
-<ul>
-<li>control details of the transaction being build, and</li>
-<li>give the user information as to where on the blockchain a smart object was created and where it is currently stored.</li>
-</ul>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">type SmartObject = OutputDetails &amp; Location</code></pre>
-</doc-codeblock></div>
-<p>In the following we describe these properties in details</p>
-<doc-anchor-target id="control-keyword-properties">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#control-keyword-properties">#</doc-anchor-trigger>
-        <span>Control Keyword Properties</span>
-    </h4>
-</doc-anchor-target>
-<p>Properties named <code v-pre>_amount</code>, <code v-pre>_owners</code>, <code v-pre>_readers</code>, and <code v-pre>_url</code> provide control over the transaction being built. These properties can optionally be set in the smart contract.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">type OutputDetails = {
-  // determines which users can update the object
-  _owners?: string[] | string
-
-  // determines number of Satoshis stored in the output associated with the object
-  _amount?: number
-
-  // determines whether object is encrypted and who can decrypt it
-  _readers?: string[]
-
-  // determines if data is stored off-chain
-  _url?: string
-}</code></pre>
-</doc-codeblock></div>
-<p>The effect that these properties have on the transaction being built is described below:</p>
-<ul>
-<li><p>If a property <code v-pre>_amount</code> is set it needs to be set to a number. It determines the amount of Satoshi stored in the output representing the current revision. If it is not set the revision will have a minimal (non-dust) amount of Satoshi.</p>
-</li>
-<li><p>If a property <code v-pre>_owners</code> is set it needs to be set to either an array of strings <span class="math">[p_1\ ...\ p_n]</span> or to a string.</p>
-<ul>
-<li>Array of strings: These determine the output script of the current revision. Specifically, the script for the current revision is a 1-of-n multisig script with the public keys <span class="math">p_1\ ...\ p_n</span>. This guarantees that only a user that has a private key corresponding to one of the public keys can update the object. If the property is not set it defaults to the public key of the computer that created the object.</li>
-<li>String: If the property is set to a string <span class="math">p</span>, it should be set to an ASM representation of a script. This script is used as the output script of the current revision. This allows for more complex ownership conditions. For example, the script could be non-standard or it could be a multisig script with a different number of required signatures than 1.</li>
-</ul>
-</li>
-<li><p>If a property <code v-pre>_readers</code> is set it needs to be set to an array of strings <span class="math">[p_1\ ...\ p_n]</span>. If this property is set the meta data in the corresponding transaction is encrypted such that only users with corresponding private keys can decrypt the expression and compute the value of the smart object. If the <code v-pre>_readers</code> property is not set the meta data is not encrypted and any user can compute the value of the smart object.</p>
-</li>
-<li><p>If a property <code v-pre>_url</code> is set it needs to be set to the url of a Bitcoin Computer node. If it is set the expression is not stored in the transaction but on the node instead. The transaction only contains a hash of the expression and the location where the expression can be obtained from the node. This is convenient if the expression is large, for example because it contains a lot of data.</p>
-</li>
-</ul>
-<doc-anchor-target id="location-keyword-properties">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#location-keyword-properties">#</doc-anchor-trigger>
-        <span>Location Keyword Properties</span>
-    </h4>
-</doc-anchor-target>
-<p>The properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code> contain information about where a smart object was created and where it is currently stored. These properties are set by the runtime. While they can be read, attempts to overwrite their state will lead to an error.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">type Location = {
-  // output where object was created
-  readonly _id: string
-
-  // output where object is currently stored
-  readonly _rev: string
-
-  // useful for building fungible tokens
-  readonly _root: string
-}</code></pre>
-</doc-codeblock></div>
-<ul>
-<li>The value of the <code v-pre>_id</code> property is the output (encoded as &lt;transaction id&gt;:&lt;output index&gt;) that represented the object immediately after it was created.</li>
-<li>The value of the <code v-pre>_rev</code> property is the output of the currently representing the object (that is, the object&#x27;s revision).</li>
-<li>The value of the <code v-pre>_root</code> property is assigned once when the object is created and is never modified subsequently. If the expression that creates the object is of the form <code v-pre>new C(...)</code> then its root is equal to its id. If the expression is of the form <code v-pre>x.f(...)</code> then the root of the new object is equal to the id of <code v-pre>x</code>. Otherwise the root is set to <code v-pre>n/a</code>. The root property is useful for building fungible tokens.</li>
-</ul>
-<doc-anchor-target id="assigning-to-this-in-constructors-is-prohibited">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#assigning-to-this-in-constructors-is-prohibited">#</doc-anchor-trigger>
-        <span>Assigning to <code v-pre>this</code> in Constructors is Prohibited</span>
-    </h3>
-</doc-anchor-target>
-<p>In order to enforce the properties above, it is currently not permitted to assign to <code v-pre>this</code> in constructor calls. Instead, an initialization object can be passed into the constructor:</p>
+<p>Writing smart contracts is all about imposing constraints of future values. These constraints can be local or global. An example of a local constraint is a non-fungible token: These are objects that can change their owners but the data itself typically cannot be changed. A non-fungible token is an example of a class with a non-local constraint: the number of tokens must remain constant across all objects emerging from the same mint.</p>
+<p>In order to make it possible to write smart contracts in Javascript, the Bitcoin Computer library exports a class <code v-pre>Contract</code> that enforces that whenever a class extends from it, its properties can only be assigned through function calls. This is reminiscent to the behavior of Solidity and makes it possible to write smart contracts in Javascript.</p>
+<p>We call an expression a <em>smart contract</em> if it returns a value that contains only sub-objects whose classes that extend from <code v-pre>Contract</code>. The function <code v-pre>encode</code> throws an error if it called with an expression that is not a smart contract. Likewise, the function <code v-pre>sync</code> throws an error if it is called with a transaction whose expression is not a smart contract.</p>
+<p>To describe the behavior of <code v-pre>Contract</code> more precisely, let <code v-pre>obj</code> be an object of a class that extends from <code v-pre>Contract</code>. Then an error is thrown if either</p>
+<ol>
+<li>a property of <code v-pre>obj</code> is assigned outside of a method of <code v-pre>obj</code>,</li>
+<li>a property <code v-pre>_id</code>, <code v-pre>_rev</code>, and <code v-pre>_root</code> is assigned, or</li>
+<li><code v-pre>this</code> is assigned to in the constructor of <code v-pre>C</code>.</li>
+</ol>
+<p>To initialize objects without violating rule 3. an initialization object can be passed into <code v-pre>super</code> in a constructor:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">class A extends Contract {
-  constructor() {
-    super({ k1: v1, ... kn: vn })
+  constructor(v1 ... vn) {
+    super({
+      k1: v1,
+      ...
+      kn: vn
+    })
   }
 }</code></pre>
 </doc-codeblock></div>
 <p>This has the same effect as assigning to <code v-pre>this</code> in a normal Javascript program</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">// Not a smart contract, for illustration purposes only
-class A {
-  constructor() {
+<pre class="language-javascript"><code v-pre class="language-javascript">class A {
+  constructor(v1 ... vn) {
     this.k1 = v1
     ...
     this.kn = vn
@@ -365,6 +254,6 @@ class A {
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Smart Contract Language", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: true, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Smart Contract Language", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>

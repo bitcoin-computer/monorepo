@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793870716139">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794095140562">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Fungible Token</title>
     <meta name="title" content="Fungible Token">
-    <meta name="description" content="A fungible token has three properties, a amount indicating the number of tokens stored in the current smart object, a property ">
+    <meta name="description" content="A fungible token is stored and transferred in a similar way to how satoshis are stored and transferred in Bitcoin.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/examples/fungible-token/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/examples/fungible-token/">
     <meta property="og:title" content="Fungible Token">
-    <meta property="og:description" content="A fungible token has three properties, a amount indicating the number of tokens stored in the current smart object, a property ">
+    <meta property="og:description" content="A fungible token is stored and transferred in a similar way to how satoshis are stored and transferred in Bitcoin.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/examples/fungible-token/">
     <meta property="twitter:title" content="Fungible Token">
-    <meta property="twitter:description" content="A fungible token has three properties, a amount indicating the number of tokens stored in the current smart object, a property ">
+    <meta property="twitter:description" content="A fungible token is stored and transferred in a similar way to how satoshis are stored and transferred in Bitcoin.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.793870716139" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.794095140562" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.793870716139" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.794095140562" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -163,10 +163,12 @@
         <span>Smart Contract</span>
     </h2>
 </doc-anchor-target>
-<p>A fungible token has three properties, a <code v-pre>amount</code> indicating the number of tokens stored in the current smart object, a property <code v-pre>symbol</code> that stores the identifier of the tokens, and an <code v-pre>_owners</code> property set to the current owner of the smart object.</p>
-<p>The <code v-pre>transfer</code> function takes two arguments, the public key of the recipient and an <code v-pre>amount</code> to be sent. This function first checks if the current smart object contains sufficient supply and throws an error if it does not. If the supply is sufficient the supply of the current smart object is reduced by the amount to be sent. A new smart object is created that is owned by recipient and that contains the amount to be sent. This object is returned from the function call to create a new smart object.</p>
+<p>A fungible token is stored and transferred in a similar way to how satoshis are stored and transferred in Bitcoin. Its current state is stored in a set of UTXOs. When tokens are transferred a utxo is spent and two new UTXOs are created: one containing the amount sent and one containing the change.</p>
+<p>The <code v-pre>transfer</code> function checks if the current on-chain object contains a sufficient number of tokens and throws an error if not. If sufficient, the supply of the current on-chain object is reduced by the amount to be sent. A new on-chain object, owned by the recipient and containing the sent amount, is created and returned.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">class Token extends Contract {
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Contract } from '@bitcoin-computer/lib'
+
+class Token extends Contract {
   amount: number
   symbol: string
   _owners: string[]
@@ -177,6 +179,7 @@
 
   transfer(recipient: string, amount: number) {
     if (this.amount &lt; amount) throw new Error()
+
     this.amount -= amount
     return new Token(recipient, amount, this.symbol)
   }
@@ -198,11 +201,14 @@ const receiver = new Computer()
 await sender.faucet(0.001e8)
 
 // Mint new fungible token with total supply of 10
-const token = await sender.new(Token, [sender.getPublicKey(), 10, 'MY-TOKEN'])
+const token = await sender.new(Token, [sender.getPublicKey(), 10, 'SYM'])
 
-// Send 2 tokens to receiver, sentToken will have supply of 2 and
-// token will have a supply of 8.
-const sentToken = await token.transfer(receiver.getPublicKey(), 2)</code></pre>
+// Send 2 tokens to receiver
+const sentToken = await token.transfer(receiver.getPublicKey(), 2)
+
+// SentToken will have supply of 2 and token will have a supply of 8
+expect(token.amount).eq(8)
+expect(sentToken.amount).eq(2)</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="code">
     <h2>

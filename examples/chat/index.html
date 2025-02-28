@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793870716139">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794095140562">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Chat</title>
     <meta name="title" content="Chat">
-    <meta name="description" content="A chat is just a smart object with a property messages of type string[]. Like all smart objects it has an ">
+    <meta name="description" content="The smart contract below creates a chat that can be initialized with an array of participants.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/examples/chat/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/examples/chat/">
     <meta property="og:title" content="Chat">
-    <meta property="og:description" content="A chat is just a smart object with a property messages of type string[]. Like all smart objects it has an ">
+    <meta property="og:description" content="The smart contract below creates a chat that can be initialized with an array of participants.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/examples/chat/">
     <meta property="twitter:title" content="Chat">
-    <meta property="twitter:description" content="A chat is just a smart object with a property messages of type string[]. Like all smart objects it has an ">
+    <meta property="twitter:description" content="The smart contract below creates a chat that can be initialized with an array of participants.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.793870716139" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.794095140562" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.793870716139" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.794095140562" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -163,7 +163,7 @@
         <span>Smart Contract</span>
     </h2>
 </doc-anchor-target>
-<p>A chat is just a smart object with a property <code v-pre>messages</code> of type <code v-pre>string[]</code>. Like all smart objects it has an <code v-pre>_owners</code> property set to the current data owner. The <a href="./how-it-works.md#keyword-properties-control-the-transaction-being-built"><code v-pre>_readers</code></a> property can be used to restrict read access.</p>
+<p>The smart contract below creates a chat that can be initialized with an array of participants. All messages are encrypted so that only the members can read the messages. It is not possible to add a new participant, but any current participant can remove another participant from the chat.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">class Chat extends Contract {
   messages: string[]
@@ -183,8 +183,9 @@
   }
 
   remove(publicKey: string) {
-    this._readers = this._readers.filter((o) =&gt; o !== publicKey)
-    this._owners_ = this._owners_.filter((o) =&gt; o !== publicKey)
+    const isNotPublicKey = (o) =&gt; o !== publicKey
+    this._readers = this._readers.filter(isNotPublicKey)
+    this._owners = this._owners.filter(isNotPublicKey)
   }
 }</code></pre>
 </doc-codeblock></div>
@@ -196,35 +197,24 @@
 </doc-anchor-target>
 <p>A new chat can be created using the <a href="./api/new.md"><code v-pre>new</code></a> function. Note that Bob can initially post to the chat and read it&#x27;s state as Bob&#x27;s public key was added by Alice to the <code v-pre>_owners</code> array and to the <code v-pre>_readers</code> array upon creation of the chat.</p>
 <p>Later, Alice called the <code v-pre>remove</code> function removing Bob&#x27;s public key from these arrays. After this point Bob cannot read or write anymore.</p>
-<p>Eve was never part of the <code v-pre>_readers</code> array so she cannot read the content of the chat, nor write to it.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">// Create and fund wallets
 const alice = new Computer()
 const bob = new Computer()
-const eve = new Computer()
 await alice.faucet(0.01e8)
 await bob.faucet(0.01e8)
 
 // Alice creates a chat with Bob and posts a message
-const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
+const publicKeys = [alice.getPublicKey(), bob.getPublicKey()]
 const alicesChat = await alice.new(Chat, [publicKeys])
 
 // Alice can post to the chat
 await alicesChat.post('Hi')
 
 // Bob can read the current state of the chat and post a message
-const bobsChat = (await bob.sync(alicesChat._rev)) as Chat
+const bobsChat = await bob.sync(alicesChat._rev)
 await bobsChat.post('Yo')
 expect(bobsChat.messages).deep.eq(['Hi', 'Yo'])
-
-// Eve was not invited and can neither read nor write
-try {
-  // This line throws an error
-  await eve.sync(alicesChat._rev)
-  expect(true).eq(false)
-} catch (err) {
-  expect(err.message).not.undefined
-}
 
 // Alice removes Bob's public key from the _readers array
 await alicesChat.remove(bob.getPublicKey())

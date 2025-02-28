@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793870716139">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794095140562">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Start</title>
     <meta name="title" content="Start">
-    <meta name="description" content="Create the following file and open it in a browser.">
+    <meta name="description" content="Create the file below and open it in a browser. It show *, then 0 and finally 1.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/start/">
@@ -20,23 +20,23 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/start/">
     <meta property="og:title" content="Start">
-    <meta property="og:description" content="Create the following file and open it in a browser.">
+    <meta property="og:description" content="Create the file below and open it in a browser. It show *, then 0 and finally 1.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/start/">
     <meta property="twitter:title" content="Start">
-    <meta property="twitter:description" content="Create the following file and open it in a browser.">
+    <meta property="twitter:description" content="Create the file below and open it in a browser. It show *, then 0 and finally 1.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.793870716139" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.794095140562" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.793870716139" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.794095140562" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -163,10 +163,10 @@
         <span>Use in the Browser</span>
     </h2>
 </doc-anchor-target>
-<p>Create the following file and open it in a browser.</p>
+<p>Create the file below and open it in a browser. It show <code v-pre>*</code>, then <code v-pre>0</code> and finally <code v-pre>1</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <div class="codeblock-title">index.html</div>
-<pre class="language-markup"><code v-pre class="language-markup">&lt;html&gt;
+<pre class="language-javascript"><code v-pre class="language-javascript">&lt;html&gt;
   &lt;head&gt;
     &lt;script type=&quot;module&quot;&gt;
       import {
@@ -204,7 +204,6 @@
   &lt;/body&gt;
 &lt;/html&gt;</code></pre>
 </doc-codeblock></div>
-<p>The browser will initially show <code v-pre>*</code>. When the on-chain object is created it will show <code v-pre>0</code> an when the object is updated it will show <code v-pre>1</code>.</p>
 <doc-anchor-target id="use-in-nodejs">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#use-in-nodejs">#</doc-anchor-trigger>
@@ -274,18 +273,17 @@ console.log(counter)</code></pre>
 }</code></pre>
 </doc-codeblock></div>
 </font>
-<p>In both examples above you are using a Bitcoin Computer Node that we provide at <code v-pre>rltc.node.bitcoincomputer.io</code> configured to Litecoin Regtest. You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node.</p>
 <doc-anchor-target id="run-a-node">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#run-a-node">#</doc-anchor-trigger>
         <span>Run a Node</span>
     </h2>
 </doc-anchor-target>
-<p>To run a node we recommend to clone the <a href="https://github.com/bitcoin-computer/monorepo#readme">monorepo</a> with all Bitcoin Computer related materials, including the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme">Bitcoin Computer library</a>, the <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme">node</a>, these <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme">docs</a>, and <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/apps.md">example applications</a>.</p>
-<doc-anchor-target id="install">
+<p>In the examples above you are using a Bitcoin Computer Node that we provide at <code v-pre>rltc.node.bitcoincomputer.io</code> configured to Litecoin Regtest. You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node. To run a node we recommend to clone the <a href="https://github.com/bitcoin-computer/monorepo#readme">monorepo</a> with all Bitcoin Computer related materials.</p>
+<doc-anchor-target id="clone-and-install">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#install">#</doc-anchor-trigger>
-        <span>Install</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#clone-and-install">#</doc-anchor-trigger>
+        <span>Clone and Install</span>
     </h3>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
@@ -314,13 +312,13 @@ cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
 # Run the node
 npm run up</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="test">
+<doc-anchor-target id="run-the-tests">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#test">#</doc-anchor-trigger>
-        <span>Test</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#run-the-tests">#</doc-anchor-trigger>
+        <span>Run the Tests</span>
     </h3>
 </doc-anchor-target>
-<p>Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands</p>
+<p>Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands. The commands will be executed in each package. You can also navigate the a package and run the same scripts there.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-bash"><code v-pre class="language-bash"># Test
 npm run test
@@ -331,21 +329,27 @@ npm run lint
 # Types
 npm run types</code></pre>
 </doc-codeblock></div>
-<p>The commands will be executed in each package. You can also navigate the a package and run the same scripts there.</p>
-<doc-anchor-target id="start-your-own-project">
+<doc-anchor-target id="configure-client-side-library">
     <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#start-your-own-project">#</doc-anchor-trigger>
-        <span>Start your own Project</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#configure-client-side-library">#</doc-anchor-trigger>
+        <span>Configure Client Side Library</span>
     </h3>
 </doc-anchor-target>
-<p>We provide two templates, <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/vite-template"><code v-pre>vite-template</code></a> for client side projects and <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template"><code v-pre>node-template</code></a> for server side projects, featuring:</p>
-<ul>
-<li>Bitcoin Computer</li>
-<li>Typescript</li>
-<li>Eslint</li>
-<li>Testing environment</li>
-</ul>
-<p>The easiest thing to do is just to rename the folder. Alternatively have a look at our example apps (e.g. our <a href="https://wallet.bitcoincomputer.io/">wallet</a>, <a href="https://explorer.bitcoincomputer.io/">blockchain explorer</a>, or <a href="https://nft.bitcoincomputer.io/">nft app</a>) to see if any of them are a good starting point for your project.</p>
+<p>To run the examples above with your own node, change the line that creates to <code v-pre>Computer</code> instance as below.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-javascript"><code v-pre class="language-javascript">const computer = new Computer({
+  chain: 'LTC',
+  network: 'regtest',
+  url: 'http://localhost:1031',
+})</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="start-a-project">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#start-a-project">#</doc-anchor-trigger>
+        <span>Start A Project</span>
+    </h2>
+</doc-anchor-target>
+<p>We provide two templates, <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/vite-template"><code v-pre>vite-template</code></a> for client side projects and <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template"><code v-pre>node-template</code></a> for server side projects. Alternatively have a look at our example apps (e.g. our <a href="https://wallet.bitcoincomputer.io/">wallet</a>, <a href="https://explorer.bitcoincomputer.io/">blockchain explorer</a>, or <a href="https://nft.bitcoincomputer.io/">nft app</a>) to see if any of them are a good starting point for your project.</p>
 <doc-anchor-target id="getting-help">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#getting-help">#</doc-anchor-trigger>

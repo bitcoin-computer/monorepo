@@ -3,39 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.793870716139">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794095140562">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
 
     <!-- Primary Meta Tags -->
-    <title>Api</title>
-    <meta name="title" content="Api">
-    <meta name="description" content="The Bitcoin Computer Node exposes an API that can be used to interact with the node. The variables CHAIN">
+    <title>Ordinal Sale</title>
+    <meta name="title" content="Ordinal Sale">
+    <meta name="description" content="The Sale smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/node/api/">
+    <link rel="canonical" href="/examples/ordinal-sale/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/node/api/">
-    <meta property="og:title" content="Api">
-    <meta property="og:description" content="The Bitcoin Computer Node exposes an API that can be used to interact with the node. The variables CHAIN">
+    <meta property="og:url" content="/examples/ordinal-sale/">
+    <meta property="og:title" content="Ordinal Sale">
+    <meta property="og:description" content="The Sale smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/node/api/">
-    <meta property="twitter:title" content="Api">
-    <meta property="twitter:description" content="The Bitcoin Computer Node exposes an API that can be used to interact with the node. The variables CHAIN">
+    <meta property="twitter:url" content="/examples/ordinal-sale/">
+    <meta property="twitter:title" content="Ordinal Sale">
+    <meta property="twitter:description" content="The Sale smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.793870716139" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.794095140562" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.793870716139" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.794095140562" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.794095140562" defer></script>
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -150,206 +151,150 @@
                                 <!-- Rendered if sidebar right is enabled -->
                                 <div id="docs-sidebar-right-toggle"></div>
                                 <!-- Page content  -->
-<doc-anchor-target id="api" class="break-words">
+<doc-anchor-target id="ordinal-sale" class="break-words">
     <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#api">#</doc-anchor-trigger>
-        <span>Api</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#ordinal-sale">#</doc-anchor-trigger>
+        <span>Ordinal Sale</span>
     </h1>
 </doc-anchor-target>
-<p>The Bitcoin Computer Node exposes an API that can be used to interact with the node.
-The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used to define the chain and network that the node is running on.</p>
-<doc-anchor-target id="wallet">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#wallet">#</doc-anchor-trigger>
-        <span>Wallet</span>
-    </h4>
-</doc-anchor-target>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="../wallet/balance/">balance</a></td>
-<td>Get the balance of a wallet.</td>
-</tr>
-<tr>
-<td><a href="../wallet/list-txs/">list-txs</a></td>
-<td>List sent and received transactions for a given address.</td>
-</tr>
-<tr>
-<td><a href="../wallet/sent-outputs/">sent-outputs</a></td>
-<td>List sent outputs of a wallet.</td>
-</tr>
-<tr>
-<td><a href="../wallet/received-outputs/">received-outputs</a></td>
-<td>List received outputs of a wallet.</td>
-</tr>
-<tr>
-<td><a href="../wallet/utxos/">utxos</a></td>
-<td>List unspent outputs of a wallet.</td>
-</tr>
-</tbody>
-</table>
+<p>The <a href="../sale/"><code v-pre>Sale</code></a> smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call. To preserve the ordinal ranges the expression must not use the <code v-pre>_amount</code> keyword and must not return an object or an array containing an object.</p>
+<p>Building a sale contract for ordinals is more complicated than for smart objects. A very clever construction was proposed <a href="https://github.com/ordinals/ord/issues/802">here</a> and later <a href="https://github.com/ordinals/ord/issues/802#issuecomment-1498030294">refined</a>. Our smart contract below implements this exact idea.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1 rounded-tl rounded-bl bg-green-500"></div>
+    <div class="flex w-full py-4 border border-l-0 border-gray-300 rounded-tr rounded-br doc-alert bg-white dark:bg-dark-700 dark:border-dark-700" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-green-500" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M21 9.09c-.55 0-1 .45-1 1v.92c0 4.96-4.04 8.99-9 8.99-4.97 0-9-4.04-9-9s4.04-9 9-9c1.27 0 2.5.26 3.66.78.51.22 1.1 0 1.32-.51.23-.5 0-1.1-.51-1.32C14.06.32 12.56 0 11.01 0H11C4.94 0 0 4.93 0 10.99 0 17.06 4.93 22 10.99 22H11c6.06 0 11-4.93 11-10.99v-.92c0-.56-.45-1-1-1z"></path>
+                    <path d="M8.71 9.31a.996.996 0 10-1.41 1.41l3 3c.19.19.44.29.71.29.27 0 .52-.11.71-.29l10-10.01a.996.996 0 10-1.41-1.41L11 11.6 8.71 9.31z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>This code preserves ordinal ranges and is safe to use this in smart objects that contain ordinals.</p>
+        </div>
+    </div>
 </div>
-<doc-anchor-target id="transactions">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#transactions">#</doc-anchor-trigger>
-        <span>Transactions</span>
-    </h4>
+<doc-anchor-target id="smart-contract">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#smart-contract">#</doc-anchor-trigger>
+        <span>Smart Contract</span>
+    </h2>
 </doc-anchor-target>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="../transaction/ancestors/">ancestors</a></td>
-<td>Get the ancestors of a transaction.</td>
-</tr>
-<tr>
-<td><a href="../transaction/bulk/">bulk</a></td>
-<td>Get raw transactions for a list of transaction ids.</td>
-</tr>
-<tr>
-<td><a href="../transaction/json/">json</a></td>
-<td>Get a transaction in json format.</td>
-</tr>
-<tr>
-<td><a href="../transaction/post/">post</a></td>
-<td>Post a transaction to the Bitcoin network.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<doc-anchor-target id="blockchain">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#blockchain">#</doc-anchor-trigger>
-        <span>Blockchain</span>
-    </h4>
+<p>The <code v-pre>exec</code> function of the <code v-pre>OrdSale</code> class swaps the owners just like in the <code v-pre>Sale</code> class. However it then proceeds to double the amount of <code v-pre>b1</code> and return <code v-pre>[b1, t, p, b2]</code>.</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">class OrdSale extends Contract {
+  static exec(b1: Payment, b2: Payment, n: NFT, p: Payment) {
+    const [ownerT] = n._owners
+    const [ownerP] = p._owners
+    n.transfer(ownerP)
+    p.transfer(ownerT)
+
+    b1.setAmount(b1._amount + b2._amount)
+    return [b1, n, p, b2]
+  }
+}</code></pre>
+</doc-codeblock></div>
+<p>When the <code v-pre>exec</code> function is evaluated, a transaction of the following form is built:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-none"><code v-pre class="language-none">Inputs: b1, b2, t, p
+Outputs: b1, t, p, b2</code></pre>
+</doc-codeblock></div>
+<p>The amount of <code v-pre>b1</code> after the call is the sum of the amounts of <code v-pre>b1</code> and <code v-pre>b2</code> before combined. The smart object <code v-pre>b1</code> therefore absorbs the entire ordinals range of <code v-pre>b2</code>. The objects <code v-pre>n</code> and <code v-pre>p</code> do not change their amounts during the call, these objects preserve their ordinal ranges.</p>
+<p>We now explain the whole process of minting an NFT, listing it for sale, and processing a purchase. We skip the step for minting as it was described above.</p>
+<doc-anchor-target id="usage">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#usage">#</doc-anchor-trigger>
+        <span>Usage</span>
+    </h2>
 </doc-anchor-target>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="../blockchain/height/">height</a></td>
-<td>Get the height of an specific block.</td>
-</tr>
-<tr>
-<td><a href="../blockchain/mine/">mine</a></td>
-<td>Mine an specific number of blocks to a random address.</td>
-</tr>
-<tr>
-<td><a href="../blockchain/height/">rpc</a></td>
-<td>Call a Bitcoin RPC method.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<doc-anchor-target id="regtest-faucet">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#regtest-faucet">#</doc-anchor-trigger>
-        <span>Regtest Faucet</span>
-    </h4>
+<doc-anchor-target id="building-the-sales-transaction">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#building-the-sales-transaction">#</doc-anchor-trigger>
+        <span>Building the Sales Transaction</span>
+    </h3>
 </doc-anchor-target>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="../regtest-faucet/faucet/">faucet</a></td>
-<td>Get coins from the faucet.</td>
-</tr>
-<tr>
-<td><a href="../regtest-faucet/faucetscript/">faucetScript</a></td>
-<td>Get coins from the faucet using a script.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<doc-anchor-target id="query-revisions">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#query-revisions">#</doc-anchor-trigger>
-        <span>Query revisions</span>
-    </h4>
+<p>In order to build the sale transaction, Seller first needs to create the objects <code v-pre>b1</code>, <code v-pre>b2</code>, and <code v-pre>p</code>:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">const paymentMock = new PaymentMock(7860)
+const b1Mock = new PaymentMock()
+const b2Mock = new PaymentMock()</code></pre>
+</doc-codeblock></div>
+<p>Next Seller can build the sales transaction by executing the following code:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">const { tx } = await seller.encode({
+  exp: `${OrdSale} OrdSale.exec(b1, b2, nft, payment)`,
+  env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
+  mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
+  sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+  inputIndex: 2,
+  fund: false,
+})</code></pre>
+</doc-codeblock></div>
+<p>Conceptually this is very similar to the use of <code v-pre>encode</code> above. Note however, that Seller signs the third input output pair this time. This is because the NFT is spent by the third input and the payment that Seller wants to obtain is in the third output.</p>
+<doc-anchor-target id="buying-the-ordinal-nft">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#buying-the-ordinal-nft">#</doc-anchor-trigger>
+        <span>Buying the Ordinal NFT</span>
+    </h3>
 </doc-anchor-target>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="../query-revisions/next/">next</a></td>
-<td>Get the next revision of a given revision.</td>
-</tr>
-<tr>
-<td><a href="../query-revisions/prev/">prev</a></td>
-<td>Get the previous revision of a given revision.</td>
-</tr>
-<tr>
-<td><a href="../query-revisions/non-standard-utxos/">non-standard-utxos</a></td>
-<td>Query revisions by module specifier, public key, limit, order, offset and list of transaction ids.</td>
-</tr>
-<tr>
-<td><a href="../query-revisions/revs/">revs</a></td>
-<td>Get the revisions of a list of transactions.</td>
-</tr>
-<tr>
-<td><a href="../query-revisions/revtoid/">revToId</a></td>
-<td>Given a revision, get the id of the smart contract.</td>
-</tr>
-</tbody>
-</table>
-</div>
-<doc-anchor-target id="offchain">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#offchain">#</doc-anchor-trigger>
-        <span>OffChain</span>
-    </h4>
+<p>This process is similar to the case of a smart object sale above. See the example blow.</p>
+<doc-anchor-target id="full-example">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#full-example">#</doc-anchor-trigger>
+        <span>Full Example</span>
+    </h3>
 </doc-anchor-target>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="../regtest-faucet/faucet/">id</a></td>
-<td>Get the data stored in the offchain storage.</td>
-</tr>
-<tr>
-<td><a href="../regtest-faucet/faucetscript/">store</a></td>
-<td>Stores the hex of the data in the offchain storage.</td>
-</tr>
-</tbody>
-</table>
-</div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
+
+// Create and fund wallets
+const seller = new Computer(RLTC)
+const buyer = new Computer(RLTC)
+await seller.faucet(1e8)
+await buyer.faucet(2e8)
+
+// Seller mints an NFT
+const nft = await seller.new(NFT, ['name', 'symbol'])
+
+// Seller creates partially signed swap as a sale offer
+const paymentMock = new PaymentMock(7860)
+const b1Mock = new PaymentMock()
+const b2Mock = new PaymentMock()
+
+const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
+const { tx } = await seller.encode({
+  exp: `${OrdSale} OrdSale.exec(b1, b2, nft, payment)`,
+  env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
+  mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
+  // eslint-disable-next-line no-bitwise
+  sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+  inputIndex: 2,
+  fund: false,
+})
+
+// Buyer creates a payment object with the asking price
+const payment = await buyer.new(Payment, [1e8])
+const [paymentTxId, paymentIndex] = payment._rev.split(':')
+
+// Buyer set's the payment object as the second input of the swap tx
+tx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
+
+// Buyer updates the second output of the swap tx to receive the NFT
+tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
+
+// Buyer funds, signs, and broadcasts to execute the sale
+await buyer.fund(tx)
+await buyer.sign(tx)
+await buyer.broadcast(tx)</code></pre>
+</doc-codeblock></div>
+<doc-anchor-target id="code">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#code">#</doc-anchor-trigger>
+        <span>Code</span>
+    </h2>
+</doc-anchor-target>
+<p>You can find the code <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/swap#readme">here</a>.</p>
 
                                 
                                 <!-- Required only on API pages -->
@@ -359,20 +304,20 @@ The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used t
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../node/wallet/utxos/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../examples/sale/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">utxos</span>
+                                                <span class="block mt-1">Sale</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../comparison/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../lib/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">Comparison</span>
+                                                <span class="block mt-1">Lib</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
@@ -416,6 +361,6 @@ The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used t
 
     <div id="docs-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Api", level: 2, icon: "file", hasPrism: false, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+    <script data-cfasync="false">window.__DOCS__ = { "title": "Ordinal Sale", level: 2, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
 </body>
 </html>
