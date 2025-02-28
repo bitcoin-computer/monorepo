@@ -62,7 +62,7 @@ new NFT('name', 'symbol')
 
 ### The Module System
 
-If many NFTs are created, it is wasteful to store the same Javascript class in the blockchain multiple times. In this case it is possible to use the module system to store the smart contract one time and refer to it multiple times using the module system.
+If many NFTs are created, it is wasteful to store the same Javascript class in the blockchain multiple times. In this case, it is possible to use the module system to store the smart contract one time and refer to it multiple times.
 
 ```ts
 import { Computer } from '@bitcoin-computer/lib'
@@ -80,7 +80,7 @@ const nft2 = await sender.new(NFT, ['name1', 'symbol'], mod)
 ...
 ```
 
-In this case each transaction encoding the minting of an NFT contains the module specifier (a transaction id and an output number) and the following expression.
+In this case, each transaction encoding the minting of an NFT contains the module specifier (a transaction id and an output number) and the following expression.
 
 ```js
 new NFT('name1', 'symbol')
