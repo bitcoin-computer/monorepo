@@ -12,4 +12,4 @@ links:
   - text: Telegram
     link: https://t.me/thebitcoincomputer
 footer:
-  copyright: "&copy; Copyright {{ year }}. All rights reserved."
+  copyright: '&copy; Copyright {{ year }}. All rights reserved.'

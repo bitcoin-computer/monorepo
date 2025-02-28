@@ -7,9 +7,9 @@ icon: rocket
 
 ## Use in the Browser
 
-Create the following file and open it in a browser.
+Create the file below and open it in a browser. It show `*`, then `0` and finally `1`.
 
-```html index.html
+```js index.html
 <html>
   <head>
     <script type="module">
@@ -48,8 +48,6 @@ Create the following file and open it in a browser.
   </body>
 </html>
 ```
-
-The browser will initially show `*`. When the on-chain object is created it will show `0` an when the object is updated it will show `1`.
 
 ## Use in Node.js
 
@@ -128,13 +126,11 @@ Counter {
 
 </font>
 
-In both examples above you are using a Bitcoin Computer Node that we provide at `rltc.node.bitcoincomputer.io` configured to Litecoin Regtest. You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node.
-
 ## Run a Node
 
-To run a node we recommend to clone the [monorepo](https://github.com/bitcoin-computer/monorepo#readme) with all Bitcoin Computer related materials, including the [Bitcoin Computer library](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme), the [node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme), these [docs](https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme), and [example applications](https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/apps.md).
+In the examples above you are using a Bitcoin Computer Node that we provide at `rltc.node.bitcoincomputer.io` configured to Litecoin Regtest. You can use this node for free but it is rate limited. For serious development we recommend to clone the monorepo so you can run your own, unlimited, node. To run a node we recommend to clone the [monorepo](https://github.com/bitcoin-computer/monorepo#readme) with all Bitcoin Computer related materials.
 
-### Install
+### Clone and Install
 
 ```shell
 # Clone
@@ -161,9 +157,9 @@ cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
 npm run up
 ```
 
-### Test
+### Run the Tests
 
-Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands
+Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands. The commands will be executed in each package. You can also navigate the a package and run the same scripts there.
 
 ```shell
 # Test
@@ -176,18 +172,21 @@ npm run lint
 npm run types
 ```
 
-The commands will be executed in each package. You can also navigate the a package and run the same scripts there.
+### Configure Client Side Library
 
-### Start your own Project
+To run the examples above with your own node, change the line that creates to `Computer` instance as below.
 
-We provide two templates, [`vite-template`](https://github.com/bitcoin-computer/monorepo/tree/main/packages/vite-template) for client side projects and [`node-template`](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template) for server side projects, featuring:
+```js
+const computer = new Computer({
+  chain: 'LTC',
+  network: 'regtest',
+  url: 'http://localhost:1031',
+})
+```
 
-- Bitcoin Computer
-- Typescript
-- Eslint
-- Testing environment
+## Start A Project
 
-The easiest thing to do is just to rename the folder. Alternatively have a look at our example apps (e.g. our [wallet](https://wallet.bitcoincomputer.io/), [blockchain explorer](https://explorer.bitcoincomputer.io/), or [nft app](https://nft.bitcoincomputer.io/)) to see if any of them are a good starting point for your project.
+We provide two templates, [`vite-template`](https://github.com/bitcoin-computer/monorepo/tree/main/packages/vite-template) for client side projects and [`node-template`](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template) for server side projects. Alternatively have a look at our example apps (e.g. our [wallet](https://wallet.bitcoincomputer.io/), [blockchain explorer](https://explorer.bitcoincomputer.io/), or [nft app](https://nft.bitcoincomputer.io/)) to see if any of them are a good starting point for your project.
 
 ## Getting Help
 

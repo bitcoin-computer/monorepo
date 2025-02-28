@@ -7,11 +7,13 @@ icon: circle
 
 ## Smart Contract
 
-A fungible token has three properties, a `amount` indicating the number of tokens stored in the current smart object, a property `symbol` that stores the identifier of the tokens, and an `_owners` property set to the current owner of the smart object.
+A fungible token is stored and transferred in a similar way to how satoshis are stored and transferred in Bitcoin. Its current state is stored in a set of UTXOs. When tokens are transferred a utxo is spent and two new UTXOs are created: one containing the amount sent and one containing the change.
 
-The `transfer` function takes two arguments, the public key of the recipient and an `amount` to be sent. This function first checks if the current smart object contains sufficient supply and throws an error if it does not. If the supply is sufficient the supply of the current smart object is reduced by the amount to be sent. A new smart object is created that is owned by recipient and that contains the amount to be sent. This object is returned from the function call to create a new smart object.
+The `transfer` function checks if the current on-chain object contains a sufficient number of tokens and throws an error if not. If sufficient, the supply of the current on-chain object is reduced by the amount to be sent. A new on-chain object, owned by the recipient and containing the sent amount, is created and returned.
 
-```javascript
+```typescript
+import { Contract } from '@bitcoin-computer/lib'
+
 class Token extends Contract {
   amount: number
   symbol: string
@@ -23,6 +25,7 @@ class Token extends Contract {
 
   transfer(recipient: string, amount: number) {
     if (this.amount < amount) throw new Error()
+
     this.amount -= amount
     return new Token(recipient, amount, this.symbol)
   }
@@ -42,11 +45,14 @@ const receiver = new Computer()
 await sender.faucet(0.001e8)
 
 // Mint new fungible token with total supply of 10
-const token = await sender.new(Token, [sender.getPublicKey(), 10, 'MY-TOKEN'])
+const token = await sender.new(Token, [sender.getPublicKey(), 10, 'SYM'])
 
-// Send 2 tokens to receiver, sentToken will have supply of 2 and
-// token will have a supply of 8.
+// Send 2 tokens to receiver
 const sentToken = await token.transfer(receiver.getPublicKey(), 2)
+
+// SentToken will have supply of 2 and token will have a supply of 8
+expect(token.amount).eq(8)
+expect(sentToken.amount).eq(2)
 ```
 
 ## Code
