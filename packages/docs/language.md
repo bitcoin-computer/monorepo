@@ -1,6 +1,6 @@
 ---
 order: -35
-icon: log
+icon: pencil
 ---
 
 # Smart Contract Language

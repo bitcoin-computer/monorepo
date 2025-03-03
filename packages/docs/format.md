@@ -5,4 +5,4 @@ icon: note
 
 # Transaction Format
 
-Coming soon.
+Documentation coming soon.
