@@ -17,8 +17,7 @@ import {
 } from '@bitcoin-computer/nakamotojs';
 import { witnessStackToScriptWitness } from '../../src/psbt/psbtutils.js';
 import { expect } from 'chai';
-// @ts-ignore
-import rng from 'randombytes';
+import { randomBytes } from 'crypto';
 import { Taptree } from '../../src/types';
 import { RegtestClient } from '../../src/regtest_client.js';
 import { getRandomAddress } from '../../src/utils.js';
@@ -175,8 +174,8 @@ describe('nakamotojs (transaction with taproot)', () => {
     });
 
     it('can create (and broadcast via 3PBP) a taproot key-path spend Transaction', async () => {
-      const internalKey = bip32.fromSeed(rng(64), regtest);
-      const p2pkhKey = bip32.fromSeed(rng(64), regtest);
+      const internalKey = bip32.fromSeed(randomBytes(64), regtest);
+      const p2pkhKey = bip32.fromSeed(randomBytes(64), regtest);
 
       const { output } = payments.p2tr({
         internalPubkey: toXOnly(internalKey.publicKey),
@@ -209,7 +208,7 @@ describe('nakamotojs (transaction with taproot)', () => {
       });
       psbt.addInput({ index: 0, hash: p2pkhUnspent.txId, nonWitnessUtxo });
 
-      const sendInternalKey = bip32.fromSeed(rng(64), regtest);
+      const sendInternalKey = bip32.fromSeed(randomBytes(64), regtest);
       const sendPubKey = toXOnly(sendInternalKey.publicKey);
       const { address: sendAddress } = payments.p2tr({
         internalPubkey: sendPubKey,
@@ -242,8 +241,8 @@ describe('nakamotojs (transaction with taproot)', () => {
     });
 
     it('can create (and broadcast via 3PBP) a taproot key-path spend Transaction (with unused scriptTree)', async () => {
-      const internalKey = bip32.fromSeed(rng(64), regtest);
-      const leafKey = bip32.fromSeed(rng(64), regtest);
+      const internalKey = bip32.fromSeed(randomBytes(64), regtest);
+      const leafKey = bip32.fromSeed(randomBytes(64), regtest);
 
       const leafScriptAsm = `${toXOnly(leafKey.publicKey).toString('hex')} OP_CHECKSIG`;
       const leafScript = bscript.fromASM(leafScriptAsm);
@@ -297,8 +296,8 @@ describe('nakamotojs (transaction with taproot)', () => {
     });
 
     it('can create (and broadcast via 3PBP) a taproot script-path spend Transaction - OP_CHECKSIG', async () => {
-      const internalKey = bip32.fromSeed(rng(64), regtest);
-      const leafKey = bip32.fromSeed(rng(64), regtest);
+      const internalKey = bip32.fromSeed(randomBytes(64), regtest);
+      const leafKey = bip32.fromSeed(randomBytes(64), regtest);
 
       const leafScriptAsm = `${toXOnly(leafKey.publicKey).toString('hex')} OP_CHECKSIG`;
       const leafScript = bscript.fromASM(leafScriptAsm);
@@ -383,7 +382,7 @@ describe('nakamotojs (transaction with taproot)', () => {
         ],
       });
 
-      const sendInternalKey = bip32.fromSeed(rng(64), regtest);
+      const sendInternalKey = bip32.fromSeed(randomBytes(64), regtest);
       const sendPubKey = toXOnly(sendInternalKey.publicKey);
       const { address: sendAddress } = payments.p2tr({
         internalPubkey: sendPubKey,
@@ -414,8 +413,8 @@ describe('nakamotojs (transaction with taproot)', () => {
     });
 
     it('can create (and broadcast via 3PBP) a taproot script-path spend Transaction - OP_CHECKSEQUENCEVERIFY', async () => {
-      const internalKey = bip32.fromSeed(rng(64), regtest);
-      const leafKey = bip32.fromSeed(rng(64), regtest);
+      const internalKey = bip32.fromSeed(randomBytes(64), regtest);
+      const leafKey = bip32.fromSeed(randomBytes(64), regtest);
       const leafPubkey = toXOnly(leafKey.publicKey).toString('hex');
 
       const leafScriptAsm = `OP_10 OP_CHECKSEQUENCEVERIFY OP_DROP ${leafPubkey} OP_CHECKSIG`;
@@ -474,7 +473,7 @@ describe('nakamotojs (transaction with taproot)', () => {
         ],
       });
 
-      const sendInternalKey = bip32.fromSeed(rng(64), regtest);
+      const sendInternalKey = bip32.fromSeed(randomBytes(64), regtest);
       const sendPubKey = toXOnly(sendInternalKey.publicKey);
       const { address: sendAddress } = payments.p2tr({
         internalPubkey: sendPubKey,
@@ -517,12 +516,12 @@ describe('nakamotojs (transaction with taproot)', () => {
     });
 
     it('can create (and broadcast via 3PBP) a taproot script-path spend Transaction - OP_CHECKSIGADD (3-of-3)', async () => {
-      const internalKey = bip32.fromSeed(rng(64), regtest);
+      const internalKey = bip32.fromSeed(randomBytes(64), regtest);
 
       const leafKeys: any[] = [];
       const leafPubkeys: string[] = [];
       for (let i = 0; i < 3; i += 1) {
-        const leafKey = bip32.fromSeed(rng(64), regtest);
+        const leafKey = bip32.fromSeed(randomBytes(64), regtest);
         leafKeys.push(leafKey);
         leafPubkeys.push(toXOnly(leafKey.publicKey).toString('hex'));
       }
@@ -622,7 +621,7 @@ describe('nakamotojs (transaction with taproot)', () => {
           redeemVersion: 192,
         };
 
-        const internalKey = bip32.fromSeed(rng(64), regtest);
+        const internalKey = bip32.fromSeed(randomBytes(64), regtest);
         const { output, witness } = payments.p2tr({
           internalPubkey: toXOnly(internalKey.publicKey),
           scriptTree,
@@ -652,7 +651,7 @@ describe('nakamotojs (transaction with taproot)', () => {
         };
         psbt.updateInput(0, { tapLeafScript: [tapLeafScript] });
 
-        const sendInternalKey = bip32.fromSeed(rng(64), regtest);
+        const sendInternalKey = bip32.fromSeed(randomBytes(64), regtest);
         const sendPubKey = toXOnly(sendInternalKey.publicKey);
         const { address: sendAddress } = payments.p2tr({
           internalPubkey: sendPubKey,
