@@ -13,6 +13,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["ts_src/**/*.ts"],
+  "include": ["ts_src/**/*.ts", "*.d.ts"],
   "exclude": ["**/*.spec.ts", "node_modules/**/*"]
 }
