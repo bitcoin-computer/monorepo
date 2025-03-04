@@ -6,17 +6,13 @@ import * as ecc from '@bitcoin-computer/secp256k1';
 import * as baddress from '../src/address.js';
 import * as bscript from '../src/script.js';
 import { NETWORKS } from '../src/networks.js';
-import * as fixturesModule from './fixtures/address.json' assert { type: 'json' };
-
-const fixtures: typeof import('./fixtures/address.json') =
-  // @ts-ignore
-  fixturesModule.default || fixturesModule;
+import address from './fixtures/address.js';
 
 import { initEccLib } from '../src/index.js';
 
 describe('address', () => {
   describe('fromBase58Check', () => {
-    fixtures.standard.forEach(f => {
+    address.standard.forEach(f => {
       if (!f.base58check) return;
 
       it('decodes ' + f.base58check, () => {
@@ -27,7 +23,7 @@ describe('address', () => {
       });
     });
 
-    fixtures.invalid.fromBase58Check.forEach(f => {
+    address.invalid.fromBase58Check.forEach(f => {
       it('throws on ' + f.exception, () => {
         assert.throws(
           () => {
@@ -40,7 +36,7 @@ describe('address', () => {
   });
 
   describe('fromBech32', () => {
-    fixtures.standard.forEach(f => {
+    address.standard.forEach(f => {
       if (!f.bech32) return;
 
       it('decodes ' + f.bech32, () => {
@@ -52,7 +48,7 @@ describe('address', () => {
       });
     });
 
-    fixtures.invalid.bech32.forEach(f => {
+    address.invalid.bech32.forEach(f => {
       it('decode fails for ' + f.address + '(' + f.exception + ')', () => {
         assert.throws(() => {
           baddress.fromBech32(f.address);
@@ -63,7 +59,7 @@ describe('address', () => {
 
   describe('fromOutputScript', () => {
     initEccLib(ecc);
-    fixtures.standard.forEach(f => {
+    address.standard.forEach(f => {
       it('encodes ' + f.script.slice(0, 30) + '... (' + f.network + ')', () => {
         const script = bscript.fromASM(f.script);
         const address = baddress.fromOutputScript(script, NETWORKS[f.network]);
@@ -72,7 +68,7 @@ describe('address', () => {
       });
     });
 
-    fixtures.invalid.fromOutputScript.forEach(f => {
+    address.invalid.fromOutputScript.forEach(f => {
       it('throws when ' + f.script.slice(0, 30) + '... ' + f.exception, () => {
         const script = bscript.fromASM(f.script);
 
@@ -84,7 +80,7 @@ describe('address', () => {
   });
 
   describe('toBase58Check', () => {
-    fixtures.standard.forEach(f => {
+    address.standard.forEach(f => {
       if (!f.base58check) return;
 
       it('encodes ' + f.hash + ' (' + f.network + ')', () => {
@@ -99,7 +95,7 @@ describe('address', () => {
   });
 
   describe('toBech32', () => {
-    fixtures.bech32.forEach(f => {
+    address.bech32.forEach(f => {
       if (!f.address) return;
       const data = Buffer.from(f.data, 'hex');
 
@@ -112,7 +108,7 @@ describe('address', () => {
     });
 
     // TODO: These fixtures (according to TypeScript) have none of the data used below
-    fixtures.invalid.bech32.forEach((f: any) => {
+    address.invalid.bech32.forEach((f: any) => {
       if (!f.prefix || f.version === undefined || f.data === undefined) return;
 
       it('encode fails (' + f.exception, () => {
@@ -124,7 +120,7 @@ describe('address', () => {
   });
 
   describe('toOutputScript', () => {
-    fixtures.standard.forEach(f => {
+    address.standard.forEach(f => {
       it('decodes ' + f.script.slice(0, 30) + '... (' + f.network + ')', () => {
         const script = baddress.toOutputScript(
           (f.base58check || f.bech32)!,
@@ -135,7 +131,7 @@ describe('address', () => {
       });
     });
 
-    fixtures.invalid.toOutputScript.forEach(f => {
+    address.invalid.toOutputScript.forEach(f => {
       it('throws when ' + (f.exception || f.paymentException), () => {
         const exception = f.paymentException || `${f.address} ${f.exception}`;
         assert.throws(() => {
@@ -146,7 +142,7 @@ describe('address', () => {
   });
 
   describe('fromPublicKey', () => {
-    fixtures.valid.forEach(f => {
+    address.valid.forEach(f => {
       f.types.forEach(t => {
         if (!t.address) return;
         it(

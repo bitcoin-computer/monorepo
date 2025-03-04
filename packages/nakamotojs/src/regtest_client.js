@@ -58,39 +58,22 @@ const types = {
   },
 };
 export function parseParams(method, params) {
-  if (callSpec[method] === undefined || callSpec[method] === null) {
-    throw new Error('This RPC method does not exist, or not supported');
+  const callSpecMethod = callSpec[method];
+  if (!callSpecMethod) {
+    throw new Error('This RPC method does not exist or is not supported');
   }
   const paramsList = params.trim().split(' ');
-  const callSpecParamsList = callSpec[method].trim().split(' ');
-  if (params.trim().length === 0 && callSpec[method].trim().length !== 0) {
+  const callSpecParamsList = callSpecMethod.trim().split(' ');
+  if (paramsList.length !== callSpecParamsList.length) {
     throw new Error(
-      `Too few params provided. Expected ${callSpecParamsList.length} Provided 0`,
-    );
-  } else if (
-    params.trim().length !== 0 &&
-    callSpec[method].trim().length === 0
-  ) {
-    throw new Error(
-      `Too many params provided. Expected 0 Provided ${paramsList.length}`,
-    );
-  } else if (paramsList.length < callSpecParamsList.length) {
-    throw new Error(
-      `Too few params provided. Expected ${callSpecParamsList.length} Provided ${paramsList.length}`,
-    );
-  } else if (paramsList.length > callSpecParamsList.length) {
-    throw new Error(
-      `Too many params provided. Expected ${callSpecParamsList.length} Provided ${paramsList.length}`,
+      `Incorrect number of params provided. Expected ${callSpecParamsList.length}, got ${paramsList.length}.`,
     );
   }
-  if (params.length === 0) {
-    return [];
-  }
-  const typedParams = paramsList.map((param, index) => {
+  return paramsList.map((param, index) => {
+    const type = callSpecParamsList[index];
     // @ts-expect-error  ts-migrate(7053) FIXME: Element implicitly has an 'any' type because expression of type 'string' can't be used to index type '{}'.
-    return types[callSpecParamsList[index]](param);
+    return types[type](param);
   });
-  return typedParams;
 }
 try {
   // methods like add node
@@ -212,21 +195,6 @@ export class RegtestClient {
     const { result: txIdScript } = await nativeRpcClient.sendrawtransaction(
       txv.toHex(),
     );
-    // let counter = 5;
-    // let foundPsbt;
-    // while (!foundPsbt) {
-    //   const scriptASM = bscript.toASM(Buffer.from(script, 'hex'));
-    //   // eslint-disable-next-line no-await-in-loop
-    //   const unspents = await UtxoAction.selectByScriptASM(scriptASM);
-    //   // eslint-disable-next-line prefer-destructuring
-    //   foundPsbt = unspents.filter((x: any) => x.txId === txv.getId())[0];
-    //   if (!foundPsbt) {
-    //     counter -= 1;
-    //     if (counter <= 0) throw new Error('No outputs');
-    //     // eslint-disable-next-line no-await-in-loop
-    //     await sleep(10);
-    //   }
-    // }
     // Check the vout
     let voutPsbt = 0;
     let foundPsbt = await nativeRpcClient.getTxOut(txIdScript, voutPsbt, true);

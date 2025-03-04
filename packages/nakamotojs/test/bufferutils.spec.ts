@@ -5,10 +5,8 @@ import { describe, it } from 'mocha';
 import * as bufferutils from '../src/bufferutils.js';
 import { BufferReader, BufferWriter } from '../src/bufferutils.js';
 
-import * as fixturesModule from './fixtures/bufferutils.json' assert { type: 'json' };
-const fixtures: typeof import('./fixtures/bufferutils.json') =
-  // @ts-ignore
-  fixturesModule.default || fixturesModule;
+import bufferutilsFixture from './fixtures/bufferutils.js';
+const fixtures = bufferutilsFixture;
 
 import * as varuint from 'varuint-bitcoin';
 

@@ -1,23 +1,23 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+/* eslint-disable no-unused-expressions, @typescript-eslint/no-non-null-assertion */
+import * as assert from 'assert';
 import { BIP32Factory } from 'bip32';
 import * as ecc from '@bitcoin-computer/secp256k1';
 import * as bip39 from 'bip39';
 import { describe, it } from 'mocha';
-import * as bitcoin from '../../src/index.js';
+import { networks, payments } from '../../src/index.js';
+import { expect } from 'chai';
 
 const bip32 = BIP32Factory(ecc);
 
 function getAddress(node: any, network?: any): string {
-  return bitcoin.payments.p2pkh({ pubkey: node.publicKey, network }).address!;
+  return payments.p2pkh({ pubkey: node.publicKey, network }).address!;
 }
 
 describe('nakamotojs (BIP32)', () => {
   it('can import a BIP32 testnet xpriv and export to WIF', () => {
     const xpriv =
       'tprv8ZgxMBicQKsPd7Uf69XL1XwhmjHopUGep8GuEiJDZmbQz6o58LninorQAfcKZWARbtRtfnLcJ5MQ2AtHcQJCCRUcMRvmDUjyEmNUWwx8UbK';
-    const node = bip32.fromBase58(xpriv, bitcoin.networks.testnet);
+    const node = bip32.fromBase58(xpriv, networks.testnet);
 
     assert.strictEqual(
       node.toWIF(),
@@ -41,13 +41,13 @@ describe('nakamotojs (BIP32)', () => {
     const mnemonic =
       'praise you muffin lion enable neck grocery crumble super myself license ghost';
     const seed = bip39.mnemonicToSeedSync(mnemonic);
-    const node = bip32.fromSeed(seed, bitcoin.networks.litecoin);
+    const node = bip32.fromSeed(seed, networks.litecoin);
     const strng = node.toBase58();
-    const restored = bip32.fromBase58(strng, bitcoin.networks.litecoin);
+    const restored = bip32.fromBase58(strng, networks.litecoin);
 
     assert.strictEqual(
-      getAddress(node, bitcoin.networks.litecoin),
-      getAddress(restored, bitcoin.networks.litecoin),
+      getAddress(node, networks.litecoin),
+      getAddress(restored, networks.litecoin),
     ); // same public key
     assert.strictEqual(node.toWIF(), restored.toWIF()); // same private key
   });
@@ -69,7 +69,7 @@ describe('nakamotojs (BIP32)', () => {
     const mnemonic =
       'praise you muffin lion enable neck grocery crumble super myself license ghost';
     const seed = bip39.mnemonicToSeedSync(mnemonic);
-    const node = bip32.fromSeed(seed, bitcoin.networks.litecoin);
+    const node = bip32.fromSeed(seed, networks.litecoin);
     const strng = node.neutered().toBase58();
 
     assert.strictEqual(
@@ -109,7 +109,7 @@ describe('nakamotojs (BIP32)', () => {
         'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
         'hex',
       ),
-      bitcoin.networks.litecoin,
+      networks.litecoin,
     );
 
     const child1 = root.derivePath(path);
@@ -118,11 +118,11 @@ describe('nakamotojs (BIP32)', () => {
     const child1b = root.deriveHardened(0).derive(0).derive(0);
 
     assert.strictEqual(
-      getAddress(child1, bitcoin.networks.litecoin),
+      getAddress(child1, networks.litecoin),
       'LcWvSE7DcZuuK4DuqrtB1hRwJBnpLPHUuT',
     );
     assert.strictEqual(
-      getAddress(child1b, bitcoin.networks.litecoin),
+      getAddress(child1b, networks.litecoin),
       'LcWvSE7DcZuuK4DuqrtB1hRwJBnpLPHUuT',
     );
   });
@@ -161,7 +161,7 @@ describe('nakamotojs (BIP32)', () => {
         'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
         'hex',
       ),
-      bitcoin.networks.litecoin,
+      networks.litecoin,
     );
 
     const child1 = root.derivePath("m/44'/0'/0'/0/0");
@@ -175,11 +175,11 @@ describe('nakamotojs (BIP32)', () => {
       .derive(0);
 
     assert.strictEqual(
-      getAddress(child1, bitcoin.networks.litecoin),
+      getAddress(child1, networks.litecoin),
       'LLgwC4KJCpHsuRoA7VDmMNCPAFdKBNU5Ni',
     );
     assert.strictEqual(
-      getAddress(child1b, bitcoin.networks.litecoin),
+      getAddress(child1b, networks.litecoin),
       'LLgwC4KJCpHsuRoA7VDmMNCPAFdKBNU5Ni',
     );
   });
@@ -193,12 +193,12 @@ describe('nakamotojs (BIP32)', () => {
     const path = "m/49'/1'/0'/0/0";
     const child = root.derivePath(path);
 
-    const { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2wpkh({
+    const { address } = payments.p2sh({
+      redeem: payments.p2wpkh({
         pubkey: child.publicKey,
-        network: bitcoin.networks.testnet,
+        network: networks.testnet,
       }),
-      network: bitcoin.networks.testnet,
+      network: networks.testnet,
     });
     assert.strictEqual(address, '2Mww8dCYPUpKHofjgcXcBCEGmniw9CoaiD2');
   });
@@ -207,17 +207,17 @@ describe('nakamotojs (BIP32)', () => {
     const mnemonic =
       'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
     const seed = bip39.mnemonicToSeedSync(mnemonic);
-    const root = bip32.fromSeed(seed, bitcoin.networks.litecointestnet);
+    const root = bip32.fromSeed(seed, networks.litecointestnet);
 
     const path = "m/49'/1'/0'/0/0";
     const child = root.derivePath(path);
 
-    const { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2wpkh({
+    const { address } = payments.p2sh({
+      redeem: payments.p2wpkh({
         pubkey: child.publicKey,
-        network: bitcoin.networks.litecointestnet,
+        network: networks.litecointestnet,
       }),
-      network: bitcoin.networks.litecointestnet,
+      network: networks.litecointestnet,
     });
     assert.strictEqual(address, 'QRHtkDQdVvNNwrVjEdeCGviCw7Ny3SNNiA');
   });
@@ -226,7 +226,7 @@ describe('nakamotojs (BIP32)', () => {
     // var mnemonic = bip39.generateMnemonic()
     const mnemonic =
       'praise you muffin lion enable neck grocery crumble super myself license ghost';
-    assert(bip39.validateMnemonic(mnemonic));
+    expect(bip39.validateMnemonic(mnemonic)).to.be.true;
 
     const seed = bip39.mnemonicToSeedSync(mnemonic);
     const root = bip32.fromSeed(seed);
@@ -256,28 +256,28 @@ describe('nakamotojs (BIP32)', () => {
     // var mnemonic = bip39.generateMnemonic()
     const mnemonic =
       'praise you muffin lion enable neck grocery crumble super myself license ghost';
-    assert(bip39.validateMnemonic(mnemonic));
+    expect(bip39.validateMnemonic(mnemonic)).to.be.true;
 
     const seed = bip39.mnemonicToSeedSync(mnemonic);
-    const root = bip32.fromSeed(seed, bitcoin.networks.litecoin);
+    const root = bip32.fromSeed(seed, networks.litecoin);
 
     // receive addresses
     assert.strictEqual(
-      getAddress(root.derivePath("m/0'/0/0"), bitcoin.networks.litecoin),
+      getAddress(root.derivePath("m/0'/0/0"), networks.litecoin),
       'LUiMYoajK6KBC1nHLShQYdsMpFnqzMd59C',
     );
     assert.strictEqual(
-      getAddress(root.derivePath("m/0'/0/1"), bitcoin.networks.litecoin),
+      getAddress(root.derivePath("m/0'/0/1"), networks.litecoin),
       'LUr4465fJeqU3tGHCABSsmyvt4vCLcjrjW',
     );
 
     // change addresses
     assert.strictEqual(
-      getAddress(root.derivePath("m/0'/1/0"), bitcoin.networks.litecoin),
+      getAddress(root.derivePath("m/0'/1/0"), networks.litecoin),
       'LMH6ahuuTLtgq7oP73CNEEKiYLTgVnwckC',
     );
     assert.strictEqual(
-      getAddress(root.derivePath("m/0'/1/1"), bitcoin.networks.litecoin),
+      getAddress(root.derivePath("m/0'/1/1"), networks.litecoin),
       'LYPszGxTuXkfhTYCp3xtSe85vdRsMytLkv',
     );
   });
