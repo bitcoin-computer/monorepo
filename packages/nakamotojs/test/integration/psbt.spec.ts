@@ -6,8 +6,10 @@ import { ECPairFactory } from 'ecpair';
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 import { randomBytes } from 'crypto';
-import { RegtestClient } from '../../src/regtest_client.js';
-import { getRandomAddress } from '../../src/utils.js';
+import { getRandomAddress } from '../test_utils.js';
+import { RegtestClient } from './regtest_client.js';
+import { CHAIN, NETWORK } from './config/index.js';
+import { getNetwork } from '../../src/networks.js';
 import {
   initEccLib,
   payments,
@@ -15,8 +17,6 @@ import {
   bufferUtils,
   Transaction,
 } from '../../src/index.js';
-import { CHAIN, NETWORK } from '../../src/config/index.js';
-import { getNetwork } from '../../src/networks.js';
 
 const ECPair = ECPairFactory(ecc);
 initEccLib(ecc);

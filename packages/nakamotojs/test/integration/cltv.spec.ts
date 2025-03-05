@@ -11,10 +11,10 @@ import {
 } from '../../src/index.js';
 // @ts-ignore
 import * as bip65 from 'bip65';
-import { getRandomAddress } from '../../src/utils.js';
-import { RegtestClient } from '../../src/regtest_client.js';
+import { getRandomAddress } from '../test_utils.js';
+import { RegtestClient } from './regtest_client.js';
 import { Transaction } from '../../src/index.js';
-import { CHAIN, NETWORK } from '../../src/config/index.js';
+import { CHAIN, NETWORK } from './config/index.js';
 import { getNetwork } from '../../src/networks.js';
 
 const ECPair = ECPairFactory(ecc);

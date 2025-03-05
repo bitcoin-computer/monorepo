@@ -19,9 +19,9 @@ import { witnessStackToScriptWitness } from '../../src/psbt/psbtutils.js';
 import { expect } from 'chai';
 import { randomBytes } from 'crypto';
 import { Taptree } from '../../src/types';
-import { RegtestClient } from '../../src/regtest_client.js';
-import { getRandomAddress } from '../../src/utils.js';
-import { CHAIN, NETWORK } from '../../src/config/index.js';
+import { getRandomAddress } from '../test_utils.js';
+import { RegtestClient } from './regtest_client.js';
+import { CHAIN, NETWORK } from './config/index.js';
 import { getNetwork } from '../../src/networks.js';
 
 const { toXOnly, tapTreeToList, tapTreeFromList } = bip371;

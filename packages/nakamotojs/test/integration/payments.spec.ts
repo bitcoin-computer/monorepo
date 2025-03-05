@@ -7,9 +7,9 @@ import p2msFixtures from '../fixtures/p2ms.js';
 import p2pkFixtures from '../fixtures/p2pk.js';
 import p2pkhFixtures from '../fixtures/p2pkh.js';
 import p2wpkhFixtures from '../fixtures/p2wpkh.js';
-import { RegtestClient } from '../../src/regtest_client.js';
-import { getRandomAddress } from '../../src/utils.js';
-import { CHAIN, NETWORK } from '../../src/config/index.js';
+import { getRandomAddress } from '../test_utils.js';
+import { RegtestClient } from './regtest_client.js';
+import { CHAIN, NETWORK } from './config/index.js';
 import { getNetwork } from '../../src/networks.js';
 
 const fixturesMap: any = {

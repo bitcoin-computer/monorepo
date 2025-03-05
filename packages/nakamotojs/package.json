@@ -47,9 +47,9 @@
     "prettierjs": "prettier \"src/**/*.js\" --ignore-path ./.prettierignore",
     "test": "npm run build && npm run format:ci && npm run lint && npm run nobuild:coverage",
     "test:integration": "npm run build && npm run format:ci && npm run lint && npm run nobuild:integration",
-    "test:unit:show": "npm run test 2>&1 | tee nakamotojs-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-test.log; fi",
     "test:integration:show": "npm run test:integration | tee nakamotojs-integration-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-integration-test.log; fi",
     "test:show": "npm run test:unit:show && npm run test:integration:show",
+    "test:unit:show": "npm run test 2>&1 | tee nakamotojs-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-test.log; fi",
     "unit": "npm run build && npm run nobuild:unit"
   },
   "dependencies": {
@@ -62,7 +62,6 @@
     "varuint-bitcoin": "^1.1.2"
   },
   "devDependencies": {
-    "@bitcoin-computer/nakamotojs-client": "0.2.2",
     "@bitcoin-computer/secp256k1": "^0.24.1-beta.0",
     "@types/bs58": "^4.0.0",
     "@types/bs58check": "^2.1.0",

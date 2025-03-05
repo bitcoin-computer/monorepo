@@ -1,4 +1,3 @@
-export declare function getRandomAddress(network?: import("./networks.js").Network): string;
 export interface _Transaction {
     txId: string;
     txHex: string;
