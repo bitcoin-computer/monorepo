@@ -1,7 +1,7 @@
 import { useContext, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ComputerContext } from '@bitcoin-computer/components'
-import { isValidHexadecimalPublicKey } from '../utils'
+import { isPossibleCryptoAddress, isValidHexadecimalPublicKey } from '../utils'
 
 export function SearchBar() {
   const inputRef = useRef<HTMLInputElement>(null)
@@ -21,6 +21,7 @@ export function SearchBar() {
         }
       } else if (isValidHexadecimalPublicKey(searchInput))
         navigate(`/?public-key=${searchInput.trim()}`)
+      else if (isPossibleCryptoAddress(searchInput)) navigate(`/utxos/${searchInput}`)
       else navigate(`/transactions/${searchInput}`)
     }
   }
