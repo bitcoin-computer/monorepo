@@ -1,4 +1,4 @@
-const cryptoFixtures = {
+const fixtures = {
   hashes: [
     {
       hex: '0000000000000001',
@@ -50,4 +50,4 @@ const cryptoFixtures = {
     },
   ],
 };
-export default cryptoFixtures;
+export default fixtures;

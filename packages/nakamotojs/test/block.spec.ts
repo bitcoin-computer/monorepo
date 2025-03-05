@@ -4,9 +4,7 @@ import assert from 'assert';
 import { beforeEach, describe, it } from 'mocha';
 import { Block } from '../src/index.js';
 
-import block from './fixtures/block.js';
-
-const fixtures = block;
+import fixtures from './fixtures/block.js';
 
 describe('Block', () => {
   describe('version', () => {

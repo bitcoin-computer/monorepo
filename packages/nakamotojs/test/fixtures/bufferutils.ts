@@ -1,4 +1,4 @@
-const bufferutilsFixture = {
+const fixtures = {
   valid: [
     {
       dec: 0,
@@ -101,4 +101,4 @@ const bufferutilsFixture = {
   },
 };
 
-export default bufferutilsFixture;
+export default fixtures;

@@ -5,8 +5,7 @@ import { describe, it } from 'mocha';
 import * as bufferutils from '../src/bufferutils.js';
 import { BufferReader, BufferWriter } from '../src/bufferutils.js';
 
-import bufferutilsFixture from './fixtures/bufferutils.js';
-const fixtures = bufferutilsFixture;
+import fixtures from './fixtures/bufferutils.js';
 
 import * as varuint from 'varuint-bitcoin';
 

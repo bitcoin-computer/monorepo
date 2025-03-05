@@ -1,4 +1,4 @@
-const block = {
+const fixture = {
     targets: [
         {
             bits: '1d00ffff',
@@ -146,4 +146,4 @@ const block = {
         },
     ],
 };
-export default block;
+export default fixture;

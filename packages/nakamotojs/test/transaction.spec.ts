@@ -8,8 +8,7 @@ import { ECPairFactory } from 'ecpair';
 import * as bscript from '../src/script.js';
 import { p2pkh } from '../src/payments/index.js';
 
-import transaction from './fixtures/transaction.js';
-const fixtures = transaction;
+import fixtures from './fixtures/transaction.js';
 
 const ECPair = ECPairFactory(ecc);
 

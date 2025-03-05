@@ -1,4 +1,4 @@
-const transaction = {
+const fixtures = {
     valid: [
         {
             description: 'Standard transaction (1:1)',
@@ -914,4 +914,4 @@ const transaction = {
         ],
     },
 };
-export default transaction;
+export default fixtures;

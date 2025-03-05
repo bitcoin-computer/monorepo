@@ -3,8 +3,7 @@
 import assert from 'assert';
 import { describe, it } from 'mocha';
 import { crypto as bcrypto, TaggedHashPrefix } from '../src/index.js';
-import cryotoFixtures from './fixtures/crypto.js';
-const fixtures = cryotoFixtures;
+import fixtures from './fixtures/crypto.js';
 import { sha256, TAGS, TAGGED_HASH_PREFIXES } from '../src/crypto.js';
 
 describe('crypto', () => {
