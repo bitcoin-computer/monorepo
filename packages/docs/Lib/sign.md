@@ -5,20 +5,20 @@ Signs a Bitcoin transaction. Options can be passed in that determine which input
 ### Type
 
 ```ts
-(
+;(
   tx: BitcoinLib.Transaction,
   opts: {
     inputIndex?: number
     sighashType?: number
     inputScript?: Buffer
-  }
-) => void
+  },
+) => Promise<void>
 ```
 
 ### Syntax
 
 ```js
-computer.sign(tx, opts)
+await computer.sign(tx, opts)
 ```
 
 ### Parameters
@@ -53,5 +53,5 @@ const tx = await computer.encode({
   sign: false
 })
 await computer.fund(tx)
-computer.sign(tx)
+await computer.sign(tx)
 ```

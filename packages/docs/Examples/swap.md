@@ -5,34 +5,23 @@ icon: arrow-switch
 
 # Token Swap
 
-A token swap is the direct and immediate exchange of ownership of two tokens on the same chain. The swaps described below are atomic in the sense that either both assets change their owner or none of them. This enables trustless exchange, as the situation where the other party does not pay cannot arise.
+In this section we explain how to exchange to on-chain objects atomically. This means that either both assets change their owner or none of them.
 
 A token swap is similar to an atomic swap, the difference being that atomic swaps usually refer to the exchange of cryptocurrency on two different chains, whereas token swaps exchange tokens on the same chain.
 
 !!!
-We note that the definition of a token swap differs wildly from the legal definition of a swap. While a token swap is the immediate exchange of two tokens, a swap in the legal sense involves an option to buy or sell an asset in the future.
+We note that the definition of a token swap differs wildly from the legal definition of a swap. While a token swap is the immediate exchange of two on-chain objects, a swap in the legal sense involves an option to buy or sell an asset in the future.
 !!!
 
-## Swap Using a Static Function
+!!!success
+This code preserves ordinal ranges and is safe to use this in smart objects that contain ordinals.
+!!!
 
-You can build a swap as a static function that takes two arguments and exchanges their owners. This method preserves ordinal ranges, so it is safe to use this in smart objects that contain ordinals.
+## Smart Contract
 
-### Smart Contracts
+You can build a swap as a static function that takes two arguments and exchanges their owners.
 
 ```ts
-export class StaticSwap extends Contract {
-  static exec(a: NFT, b: NFT) {
-    const [ownerA] = a._owners
-    const [ownerB] = b._owners
-    a.transfer(ownerB)
-    b.transfer(ownerA)
-  }
-}
-```
-
-The code below shows the `NFT` class. While this example uses NFTs as arguments, the same function can be used to swap any pair of smart objects that have a `transfer` function.
-
-```javascript
 export class NFT extends Contract {
   constructor(name = '', symbol = '') {
     super({ name, symbol })
@@ -42,7 +31,19 @@ export class NFT extends Contract {
     this._owners = [to]
   }
 }
+
+export class Swap extends Contract {
+  static exec(a: NFT, b: NFT) {
+    const [ownerA] = a._owners
+    const [ownerB] = b._owners
+
+    a.transfer(ownerB)
+    b.transfer(ownerA)
+  }
+}
 ```
+
+## Usage
 
 ### Minting the NFTs
 
@@ -50,29 +51,44 @@ Alice and Bob mint NFTs using the `computer.new` function.
 
 ```ts
 const a = await alice.new(NFT, ['A', 'AAA'])
-const b = await alice.new(NFT, ['B', 'BBB'])
+const b = await bob.new(NFT, ['B', 'BBB'])
 ```
 
 ### Building the Swap Transaction
 
-A swap transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The outputs are the NFTs after the swap with their owners exchanged.
-
-Alice passes an expression containing both the code of the `StaticSwap` class and the expression `StaticSwap.exec(a, b)` to the [`encode`](../lib/encode.md) function. The second argument is an environment that determines that the values to be used for `a` and `b` are stored at revisions `a._rev` and `b._rev`.
+Alice can create a swap transaction as shown below. Such a transaction has two inputs and two outputs. The inputs spend the NFTs to be swapped. The outputs are the NFTs after the swap with their owners exchanged.
 
 ```ts
 const { tx } = await alice.encode({
-  exp: `${StaticSwap} StaticSwap.exec(a, b)`,
+  exp: `${StaticSwap} Swap.exec(a, b)`,
   env: { a: a._rev, b: b._rev },
 })
 ```
 
-The `encode` function will automatically sign all inputs of the transaction that can be signed with the private key of the computer object on which the function is called. In this case, this is the input as revision `a._rev`.
+The `encode` function signs all inputs that can be signed with the private key of the object on which the function is called. In this case, this is the input that spends revision `a._rev`.
 
-The function `encode` will not broadcast automatically. This feature is useful when you want to check the transaction before broadcasting it. It also allows more advanced use cases, for example, using different signature hash types, or signing only specific inputs. More on this in the [API documentation](../lib/encode.md).
+### Checking the Transaction
+
+When Bob receives the transaction, he can decode it and inspect the state that would emerge on chain if he were to sign and broadcast the transaction.
+
+```js
+const { encode, decode } = bob.computer
+const { exp, env } = await decode(tx)
+const { effect } = await encode({ exp, env })
+
+// The effect object contains objects a and b that precisely represent
+// the state on chain after the transaction were broadcast
+const { a, b } = effect.env
+
+// Bob can check if the transaction creates the expected result
+const notOk =
+  exp !== 'new Swap(a, b)' || a._owners.toString() !== pubKeyB || b._owners.toString() !== pubKeyA
+if (notOk) throw new Error()
+```
 
 ### Executing the Swap
 
-The transaction created above was partially signed (only Alice's signature was added). Bob now signs the input `b._rev` and broadcasts the transaction. When the transaction is included in the blockchain the swap is executed and the owners of the two NFTs are reversed.
+If Bob is happy with the transaction, he can execute the swap by signing and broadcasting the transaction.
 
 ```ts
 await bob.sign(tx)
@@ -84,11 +100,11 @@ await bob.broadcast(tx)
 The code snippet below shows how to create two nfts and swap them using the smart contract above.
 
 ```ts
-// Create and fund the wallets
+import { Computer } from '@bitcoin-computer/lib'
+
+// Create and fund Alice's wallet
 const alice = new Computer()
-const bob = new Computer()
 await alice.faucet(0.01e8)
-await bob.faucet(0.01e8)
 
 // Alice and Bob create one NFT each
 const nftA = await alice.new(NFT, ['a', 'AAA'])
@@ -100,43 +116,22 @@ const { tx } = await alice.encode({
   env: { nftA: nftA._rev, nftB: nftB._rev },
 })
 
-// Bob signs and broadcasts the swap transaction
+// At this point Alice would send the partially signed
+// transaction to Bob, who checks it
+const bob = new Computer()
+await bob.faucet(0.01e8)
+
+const { encode, decode } = bob.computer
+const { exp, env } = await decode(tx)
+const { effect } = await encode({ exp, env })
+const { a, b } = effect.env
+const notOk =
+  exp !== 'new Swap(a, b)' || a._owners.toString() !== pubKeyB || b._owners.toString() !== pubKeyA
+if (notOk) throw new Error()
+
+// Bob signs and broadcasts the transaction to execute the swap
 await bob.sign(tx)
 await bob.broadcast(tx)
-```
-
-#### Reducing Fees
-
-The disadvantage of the code above is that the swap class is written into the blockchain on every swap. This wastes block space and is expensive. A more efficient approach is to deploy the `Swap` function as a module first and then refer to the module from the transactions executing the swap. To make this easier, we provide a helper class [`SwapHelper`](https://github.com/bitcoin-computer/monorepo/blob/main/packages/swap/src/swap.ts) for swaps and `NftHelper` for NFTs that can be used as follows:
-
-```ts
-// Alice creates helper objects
-const nftHelperA = new NftHelper(alice)
-const swapHelperA = new StaticSwapHelper(alice)
-
-// Alice deploys the smart contracts
-await nftHelperA.deploy()
-await swapHelperA.deploy()
-
-// Alice mints an NFT
-nftA = await tbc721A.mint('a', 'AAA')
-
-// Bob creates helper objects from the module specifiers
-const nftHelperB = new NftHelper(bob, tbc721A.mod)
-const swapHelperB = new StaticSwapHelper(bob, swapHelperA.mod)
-
-// Bob mints an NFT to pay for Alice's's NFT
-nftB = await nftHelperB.mint('b', 'BBB')
-
-// Bob creates a swap transaction
-const { tx } = await swapHelperB.createSwapTx(nftA, nftB)
-
-// Alice checks the swap transaction
-await swapHelperA.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
-
-// Alice signs an broadcasts the transaction to execute the swap
-await alice.sign(tx)
-await alice.broadcast(tx)
 ```
 
 ## Code

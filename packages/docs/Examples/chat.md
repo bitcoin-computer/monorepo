@@ -7,7 +7,7 @@ icon: comment-discussion
 
 ## Smart Contract
 
-A chat is just a smart object with a property `messages` of type `string[]`. Like all smart objects it has an `_owners` property set to the current data owner. The [`_readers`](./how-it-works.md#keyword-properties-control-the-transaction-being-built) property can be used to restrict read access.
+The smart contract below creates a chat that can be initialized with an array of participants. All messages are encrypted so that only the members can read the messages. It is not possible to add a new participant, but any current participant can remove another participant from the chat.
 
 ```ts
 class Chat extends Contract {
@@ -28,8 +28,9 @@ class Chat extends Contract {
   }
 
   remove(publicKey: string) {
-    this._readers = this._readers.filter((o) => o !== publicKey)
-    this._owners_ = this._owners_.filter((o) => o !== publicKey)
+    const isNotPublicKey = (o) => o !== publicKey
+    this._readers = this._readers.filter(isNotPublicKey)
+    this._owners = this._owners.filter(isNotPublicKey)
   }
 }
 ```
@@ -40,36 +41,24 @@ A new chat can be created using the [`new`](./API/new.md) function. Note that Bo
 
 Later, Alice called the `remove` function removing Bob's public key from these arrays. After this point Bob cannot read or write anymore.
 
-Eve was never part of the `_readers` array so she cannot read the content of the chat, nor write to it.
-
 ```ts
 // Create and fund wallets
 const alice = new Computer()
 const bob = new Computer()
-const eve = new Computer()
 await alice.faucet(0.01e8)
 await bob.faucet(0.01e8)
 
 // Alice creates a chat with Bob and posts a message
-const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
+const publicKeys = [alice.getPublicKey(), bob.getPublicKey()]
 const alicesChat = await alice.new(Chat, [publicKeys])
 
 // Alice can post to the chat
 await alicesChat.post('Hi')
 
 // Bob can read the current state of the chat and post a message
-const bobsChat = (await bob.sync(alicesChat._rev)) as Chat
+const bobsChat = await bob.sync(alicesChat._rev)
 await bobsChat.post('Yo')
 expect(bobsChat.messages).deep.eq(['Hi', 'Yo'])
-
-// Eve was not invited and can neither read nor write
-try {
-  // This line throws an error
-  await eve.sync(alicesChat._rev)
-  expect(true).eq(false)
-} catch (err) {
-  expect(err.message).not.undefined
-}
 
 // Alice removes Bob's public key from the _readers array
 await alicesChat.remove(bob.getPublicKey())
