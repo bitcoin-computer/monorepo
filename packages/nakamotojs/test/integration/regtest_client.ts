@@ -208,9 +208,11 @@ export class RegtestClient {
     for (let i = 0; i < fetchedTx.vout.length; i++) {
       const output = fetchedTx.vout[i];
       if (
-        output.scriptPubKey &&
-        output.scriptPubKey.address &&
-        output.scriptPubKey.address.includes(address)
+        (output.scriptPubKey &&
+          output.scriptPubKey.address &&
+          output.scriptPubKey.address.includes(address)) ||
+        (output.scriptPubKey.addresses &&
+          output.scriptPubKey.addresses.includes(address))
       ) {
         voutIndex = i;
         break;

@@ -23,8 +23,8 @@ const ECPair = ECPairFactory(ecc);
 const restClient = new RegtestClient();
 const network = getNetwork(CHAIN, NETWORK);
 const keyPairs = [
-  ECPair.makeRandom({ network: network }),
-  ECPair.makeRandom({ network: network }),
+  ECPair.makeRandom({ network }),
+  ECPair.makeRandom({ network }),
 ];
 
 const amountFactor = CHAIN === 'DOGE' || CHAIN === 'PEPE' ? 10 : 1;
@@ -38,7 +38,7 @@ async function buildAndSign(
   const unspent = await restClient.faucetScript(prevOutput, 5e4 * amountFactor);
   const utx = await restClient.getTx(unspent.txId);
 
-  const psbt = new Psbt({ network: network })
+  const psbt = new Psbt({ network })
     .addInput({
       hash: unspent.txId,
       index: unspent.vout,
@@ -87,7 +87,7 @@ async function buildAndSign(
     it(`can (as P2SH(${k})) broadcast as an output, and be spent as an input`, async () => {
       const p2sh = payments.p2sh({
         redeem: { output },
-        network: network,
+        network,
       });
       Object.assign(depends, { prevOutScriptType: `p2sh-${k}` });
       await buildAndSign(depends, p2sh.output, p2sh.redeem!.output, undefined);
@@ -99,7 +99,7 @@ async function buildAndSign(
     it(`can (as P2WSH(${k})) broadcast as an output, and be spent as an input`, async () => {
       const p2wsh = payments.p2wsh({
         redeem: { output },
-        network: network,
+        network,
       });
       Object.assign(depends, { prevOutScriptType: `p2wsh-${k}` });
       await buildAndSign(
@@ -113,11 +113,11 @@ async function buildAndSign(
     it(`can (as P2SH(P2WSH(${k}))) broadcast as an output, and be spent as an input`, async () => {
       const p2wsh = payments.p2wsh({
         redeem: { output },
-        network: network,
+        network,
       });
       const p2sh = payments.p2sh({
         redeem: { output: p2wsh.output },
-        network: network,
+        network,
       });
 
       Object.assign(depends, { prevOutScriptType: `p2sh-p2wsh-${k}` });
