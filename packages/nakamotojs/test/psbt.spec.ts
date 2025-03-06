@@ -22,15 +22,11 @@ import {
   Signer,
   SignerAsync,
 } from '../src/index.js';
-import * as preFixturesModule from './fixtures/psbt.json' assert { type: 'json' };
-import * as taprootFixturesModule from './fixtures/p2tr.json' assert { type: 'json' };
+import psbt from './fixtures/psbt.js';
+import p2tr from './fixtures/p2tr.js';
 
-const preFixtures: typeof import('./fixtures/psbt.json') =
-  // @ts-ignore
-  preFixturesModule.default || preFixturesModule;
-const taprootFixtures: typeof import('./fixtures/p2tr.json') =
-  // @ts-ignore
-  taprootFixturesModule.default || taprootFixturesModule;
+const preFixtures = psbt;
+const taprootFixtures = p2tr;
 
 const validator = (
   pubkey: Buffer,

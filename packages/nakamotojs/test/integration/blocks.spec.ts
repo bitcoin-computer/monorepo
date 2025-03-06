@@ -1,9 +1,7 @@
-import * as assertModule from 'assert';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const assert: typeof import('assert') = assertModule.default || assertModule;
+/* eslint-disable no-unused-expressions, @typescript-eslint/no-non-null-assertion */
+import * as assert from 'assert';
 import { describe, it } from 'mocha';
-import * as bitcoin from '../../src/index.js';
+import { script as bscript, Transaction } from '../../src/index.js';
 
 describe('nakamotojs (blocks)', () => {
   it('can extract a height from a CoinBase transaction', () => {
@@ -17,15 +15,16 @@ describe('nakamotojs (blocks)', () => {
       'a24aa21a9ed72d9432948505e3d3062f1307a3f027a5dea846ff85e47159680919c12' +
       'bf1e40012000000000000000000000000000000000000000000000000000000000000' +
       '0000000000000';
-    const tx = bitcoin.Transaction.fromHex(txHex);
+    const tx = Transaction.fromHex(txHex);
 
     assert.strictEqual(tx.ins.length, 1);
-    const script = tx.ins[0].script;
-    // bitcoin.script.decompile(script) // returns [] :(
+    const { script } = tx.ins[0];
+    // bscript.decompile(script) // returns [] :(
 
+    // @ts-ignore
     assert.strictEqual(script[0], 0x03);
     const heightBuffer = script.slice(1, 4);
-    const height = bitcoin.script.number.decode(heightBuffer);
+    const height = bscript.number.decode(heightBuffer);
     assert.strictEqual(height, 498303);
   });
 });

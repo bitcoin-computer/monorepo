@@ -8,10 +8,7 @@ import { ECPairFactory } from 'ecpair';
 import * as bscript from '../src/script.js';
 import { p2pkh } from '../src/payments/index.js';
 
-import * as fixturesModule from './fixtures/transaction.json' assert { type: 'json' };
-const fixtures: typeof import('./fixtures/transaction.json') =
-  // @ts-ignore
-  fixturesModule.default || fixturesModule;
+import fixtures from './fixtures/transaction.js';
 
 const ECPair = ECPairFactory(ecc);
 

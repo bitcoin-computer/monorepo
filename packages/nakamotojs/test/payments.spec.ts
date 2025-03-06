@@ -6,6 +6,25 @@ import { describe, it } from 'mocha';
 import { PaymentCreator } from '../src/payments/index.js';
 import * as u from './payments.utils.js';
 import { initEccLib } from '../src/index.js';
+import embedFixtures from './fixtures/embed.js';
+import p2msFixtures from './fixtures/p2ms.js';
+import p2pkFixtures from './fixtures/p2pk.js';
+import p2pkhFixtures from './fixtures/p2pkh.js';
+import p2shFixtures from './fixtures/p2sh.js';
+import p2wpkhFixtures from './fixtures/p2wpkh.js';
+import p2wshFixtures from './fixtures/p2wsh.js';
+import p2trFixtures from './fixtures/p2tr.js';
+
+const fixturesMap: any = {
+  embed: embedFixtures,
+  p2ms: p2msFixtures,
+  p2pk: p2pkFixtures,
+  p2pkh: p2pkhFixtures,
+  p2sh: p2shFixtures,
+  p2wpkh: p2wpkhFixtures,
+  p2wsh: p2wshFixtures,
+  p2tr: p2trFixtures,
+};
 
 ['embed', 'p2ms', 'p2pk', 'p2pkh', 'p2sh', 'p2wpkh', 'p2wsh', 'p2tr'].forEach(
   p => {
@@ -22,10 +41,7 @@ import { initEccLib } from '../src/index.js';
         fn = payment[p];
       }
 
-      const fixturesModule = await import(`./fixtures/${p}.json`, {
-        assert: { type: 'json' },
-      });
-      const fixtures = fixturesModule.default || fixturesModule;
+      const fixtures = fixturesMap[p];
 
       fixtures.valid.forEach((f: any) => {
         it(f.description + ' as expected', () => {

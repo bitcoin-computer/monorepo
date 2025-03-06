@@ -4,11 +4,7 @@ import assert from 'assert';
 import { beforeEach, describe, it } from 'mocha';
 import { Block } from '../src/index.js';
 
-import * as fixturesModule from './fixtures/block.json' assert { type: 'json' };
-
-const fixtures: typeof import('./fixtures/block.json') =
-  // @ts-ignore
-  fixturesModule.default || fixturesModule;
+import fixtures from './fixtures/block.js';
 
 describe('Block', () => {
   describe('version', () => {

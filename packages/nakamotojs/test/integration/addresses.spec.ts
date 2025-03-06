@@ -1,15 +1,13 @@
-import * as assertModule from 'assert';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const assert: typeof import('assert') = assertModule.default || assertModule;
+/* eslint-disable no-unused-expressions, @typescript-eslint/no-non-null-assertion */
+import * as assert from 'assert';
 import { ECPairFactory } from 'ecpair';
-import axios from 'axios';
 import * as ecc from '@bitcoin-computer/secp256k1';
 import { describe, it } from 'mocha';
-import * as bitcoin from '../../src/index.js';
+import axios from 'axios';
+import { networks, payments } from '../../src/index.js';
 
 const ECPair = ECPairFactory(ecc);
-const TESTNET = bitcoin.networks.testnet;
+const TESTNET = networks.testnet;
 
 describe('nakamotojs (addresses)', () => {
   it(
@@ -17,19 +15,18 @@ describe('nakamotojs (addresses)', () => {
       'transactions for that address (via 3PBP)]',
     async () => {
       const keyPair = ECPair.makeRandom();
-      const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey });
+      const { address } = payments.p2pkh({ pubkey: keyPair.publicKey });
 
       // bitcoin P2PKH addresses start with a '1'
       assert.strictEqual(address!.startsWith('1'), true);
-
       const result = await axios.get(
         `https://blockchain.info/rawaddr/${address}`,
       );
 
       // random private keys [probably!] have no transactions
-      assert.strictEqual((result as any).n_tx, 0);
-      assert.strictEqual((result as any).total_received, 0);
-      assert.strictEqual((result as any).total_sent, 0);
+      assert.strictEqual((result.data as any).n_tx, 0);
+      assert.strictEqual((result.data as any).total_received, 0);
+      assert.strictEqual((result.data as any).total_sent, 0);
     },
   );
 
@@ -39,14 +36,13 @@ describe('nakamotojs (addresses)', () => {
       'transactions for that address (via 3PBP)]',
     async () => {
       const keyPair = ECPair.makeRandom();
-      const { address } = bitcoin.payments.p2pkh({
-        network: bitcoin.networks.litecoin,
+      const { address } = payments.p2pkh({
+        network: networks.litecoin,
         pubkey: keyPair.publicKey,
       });
 
       // bitcoin P2PKH addresses start with a '1'
       assert.strictEqual(address!.startsWith('L'), true);
-
       const result = await axios.get(
         `https://blockchain.info/rawaddr/${address}`,
       );
@@ -62,7 +58,7 @@ describe('nakamotojs (addresses)', () => {
     const keyPair = ECPair.fromWIF(
       'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
     );
-    const { address } = bitcoin.payments.p2pkh({ pubkey: keyPair.publicKey });
+    const { address } = payments.p2pkh({ pubkey: keyPair.publicKey });
 
     assert.strictEqual(address, '1BgGZ9tcN4rm9KBzDn7KprQz87SZ26SAMH');
   });
@@ -70,10 +66,10 @@ describe('nakamotojs (addresses)', () => {
   it('can import a Litecoin address via WIF', () => {
     const keyPair = ECPair.fromWIF(
       'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
-      bitcoin.networks.litecoin,
+      networks.litecoin,
     );
-    const { address } = bitcoin.payments.p2pkh({
-      network: bitcoin.networks.litecoin,
+    const { address } = payments.p2pkh({
+      network: networks.litecoin,
       pubkey: keyPair.publicKey,
     });
 
@@ -86,8 +82,8 @@ describe('nakamotojs (addresses)', () => {
       '02c96db2302d19b43d4c69368babace7854cc84eb9e061cde51cfa77ca4a22b8b9',
       '03c6103b3b83e4a24a0e33a4df246ef11772f9992663db0c35759a5e2ebf68d8e9',
     ].map(hex => Buffer.from(hex, 'hex'));
-    const { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2ms({ m: 2, pubkeys }),
+    const { address } = payments.p2sh({
+      redeem: payments.p2ms({ m: 2, pubkeys }),
     });
 
     assert.strictEqual(address, '36NUkt6FWUi3LAWBqWRdDmdTWbt91Yvfu7');
@@ -99,9 +95,9 @@ describe('nakamotojs (addresses)', () => {
       '02c96db2302d19b43d4c69368babace7854cc84eb9e061cde51cfa77ca4a22b8b9',
       '03c6103b3b83e4a24a0e33a4df246ef11772f9992663db0c35759a5e2ebf68d8e9',
     ].map(hex => Buffer.from(hex, 'hex'));
-    const { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2ms({
-        network: bitcoin.networks.litecoin,
+    const { address } = payments.p2sh({
+      redeem: payments.p2ms({
+        network: networks.litecoin,
         m: 2,
         pubkeys,
       }),
@@ -114,7 +110,7 @@ describe('nakamotojs (addresses)', () => {
     const keyPair = ECPair.fromWIF(
       'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
     );
-    const { address } = bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey });
+    const { address } = payments.p2wpkh({ pubkey: keyPair.publicKey });
 
     assert.strictEqual(address, 'bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4');
   });
@@ -122,10 +118,10 @@ describe('nakamotojs (addresses)', () => {
   it('can generate a Litecoin SegWit address', () => {
     const keyPair = ECPair.fromWIF(
       'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
-      bitcoin.networks.litecoin,
+      networks.litecoin,
     );
-    const { address } = bitcoin.payments.p2wpkh({
-      network: bitcoin.networks.litecoin,
+    const { address } = payments.p2wpkh({
+      network: networks.litecoin,
       pubkey: keyPair.publicKey,
     });
 
@@ -136,8 +132,8 @@ describe('nakamotojs (addresses)', () => {
     const keyPair = ECPair.fromWIF(
       'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
     );
-    const { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2wpkh({ pubkey: keyPair.publicKey }),
+    const { address } = payments.p2sh({
+      redeem: payments.p2wpkh({ pubkey: keyPair.publicKey }),
     });
 
     assert.strictEqual(address, '3JvL6Ymt8MVWiCNHC7oWU6nLeHNJKLZGLN');
@@ -146,11 +142,11 @@ describe('nakamotojs (addresses)', () => {
   it('can generate a Litecoin SegWit address (via P2SH)', () => {
     const keyPair = ECPair.fromWIF(
       'KwDiBf89QgGbjEhKnhXJuH7LrciVrZi3qYjgd9M7rFU73sVHnoWn',
-      bitcoin.networks.litecoin,
+      networks.litecoin,
     );
-    const { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2wpkh({
-        network: bitcoin.networks.litecoin,
+    const { address } = payments.p2sh({
+      redeem: payments.p2wpkh({
+        network: networks.litecoin,
         pubkey: keyPair.publicKey,
       }),
     });
@@ -165,8 +161,8 @@ describe('nakamotojs (addresses)', () => {
       '023e4740d0ba639e28963f3476157b7cf2fb7c6fdf4254f97099cf8670b505ea59',
       '03c6103b3b83e4a24a0e33a4df246ef11772f9992663db0c35759a5e2ebf68d8e9',
     ].map(hex => Buffer.from(hex, 'hex'));
-    const { address } = bitcoin.payments.p2wsh({
-      redeem: bitcoin.payments.p2ms({ m: 3, pubkeys }),
+    const { address } = payments.p2wsh({
+      redeem: payments.p2ms({ m: 3, pubkeys }),
     });
 
     assert.strictEqual(
@@ -182,8 +178,8 @@ describe('nakamotojs (addresses)', () => {
       '023e4740d0ba639e28963f3476157b7cf2fb7c6fdf4254f97099cf8670b505ea59',
       '03c6103b3b83e4a24a0e33a4df246ef11772f9992663db0c35759a5e2ebf68d8e9',
     ].map(hex => Buffer.from(hex, 'hex'));
-    const { address } = bitcoin.payments.p2wsh({
-      redeem: bitcoin.payments.p2ms({ m: 3, pubkeys }),
+    const { address } = payments.p2wsh({
+      redeem: payments.p2ms({ m: 3, pubkeys }),
     });
 
     assert.strictEqual(
@@ -197,11 +193,11 @@ describe('nakamotojs (addresses)', () => {
       '026477115981fe981a6918a6297d9803c4dc04f328f22041bedff886bbc2962e01',
       '02c96db2302d19b43d4c69368babace7854cc84eb9e061cde51cfa77ca4a22b8b9',
     ].map(hex => Buffer.from(hex, 'hex'));
-    const { address } = bitcoin.payments.p2sh({
-      redeem: bitcoin.payments.p2wsh({
-        network: bitcoin.networks.litecoin,
-        redeem: bitcoin.payments.p2ms({
-          network: bitcoin.networks.litecoin,
+    const { address } = payments.p2sh({
+      redeem: payments.p2wsh({
+        network: networks.litecoin,
+        redeem: payments.p2ms({
+          network: networks.litecoin,
           m: 2,
           pubkeys,
         }),
@@ -214,7 +210,7 @@ describe('nakamotojs (addresses)', () => {
   // examples using other network information
   it('can generate a Testnet address', () => {
     const keyPair = ECPair.makeRandom({ network: TESTNET });
-    const { address } = bitcoin.payments.p2pkh({
+    const { address } = payments.p2pkh({
       pubkey: keyPair.publicKey,
       network: TESTNET,
     });
@@ -240,7 +236,7 @@ describe('nakamotojs (addresses)', () => {
     };
 
     const keyPair = ECPair.makeRandom({ network: LITECOIN });
-    const { address } = bitcoin.payments.p2pkh({
+    const { address } = payments.p2pkh({
       pubkey: keyPair.publicKey,
       network: LITECOIN,
     });

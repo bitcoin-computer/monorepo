@@ -3,10 +3,7 @@
 import assert from 'assert';
 import { describe, it } from 'mocha';
 import { crypto as bcrypto, TaggedHashPrefix } from '../src/index.js';
-import * as fixturesModule from './fixtures/crypto.json' assert { type: 'json' };
-const fixtures: typeof import('./fixtures/crypto.json') =
-  // @ts-ignore
-  fixturesModule.default || fixturesModule;
+import fixtures from './fixtures/crypto.js';
 import { sha256, TAGS, TAGGED_HASH_PREFIXES } from '../src/crypto.js';
 
 describe('crypto', () => {
