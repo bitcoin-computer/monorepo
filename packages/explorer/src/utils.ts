@@ -100,7 +100,7 @@ export const isPossibleCryptoAddress = (address: string): boolean => {
   // Regular expressions for common address formats
   const p2pkhRegex = /^[1mn][a-km-zA-HJ-NP-Z1-9]{25,34}$/ // P2PKH (mainnet/testnet)
   const p2shRegex = /^[23][a-km-zA-HJ-NP-Z1-9]{25,34}$/ // P2SH (mainnet/testnet)
-  const bech32Regex = /^(bc1|ltc1|doge1|t[a-z]{2})[a-z0-9]{6,80}$/ // Bech32 (mainnet/testnet)
+  const bech32Regex = /^(bc1|ltc1|doge1|dc1|t[a-z]{2})[a-z0-9]{6,80}$/ // Bech32 (mainnet/testnet)
 
   // Check if the address matches any of the regex patterns
   return p2pkhRegex.test(address) || p2shRegex.test(address) || bech32Regex.test(address)
