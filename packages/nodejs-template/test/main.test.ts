@@ -31,7 +31,7 @@ describe('Bitcoin Computer', () => {
     expect(typeof computer).eq('object')
   })
 
-  it('should create a Javascript object', () => {
+  it('should create a JavaScript object', () => {
     expect(Counter).not.to.be.undefined
     expect(typeof Counter).eq('function')
     const counter = new Counter()
