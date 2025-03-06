@@ -1,35 +1,30 @@
 # broadcast
 
-The `broadcast` function broadcasts a Bitcoin transaction to the Bitcoin mining network.
+_Broadcasts a Bitcoin transaction._
 
-### Type
+## Type
 
 ```ts
-;(tx: BitcoinLib.Transaction) => Promise<string>
-```
-
-### Syntax
-
-```js
-const txId = await computer.broadcast(tx)
+;(tx: NakamotoJS.Transaction) => Promise<string>
 ```
 
 ### Parameters
 
-{.compact}
-| Parameter | Description |
-|--------------|---------------------------------------------------------------|
-| tx | A [Bitcoin transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/ts_src/transaction.ts) object.|
+#### `tx`
+
+A NamamotoJS [transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/ts_src/transaction.ts) object.
 
 ### Return value
 
-If broadcast is successful, it returns an string encoding the transaction id. Otherwise, an error is thrown.
+If the broadcast is successful, it returns the transaction id. Otherwise, an error is thrown.
 
-### Examples
+## Examples
 
 ```ts
 class C extends Contract {}
 const transition = { exp: `${C} new C()` }
 const { tx } = await computer.encode(transition)
+
+// Broadcast transaction
 const txId = await computer.broadcast(tx)
 ```

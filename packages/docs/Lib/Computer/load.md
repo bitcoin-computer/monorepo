@@ -1,6 +1,6 @@
 # load
 
-Imports a ES6 module from a module specifier encoded as a string \<transaction id\>:\<output number\>.
+_Loads a module from the blockchain._
 
 ### Type
 
@@ -8,28 +8,31 @@ Imports a ES6 module from a module specifier encoded as a string \<transaction i
 ;(rev: string) => Promise<ModuleExportsNamespace>
 ```
 
-### Syntax
-
-```js
-await computer.load(rev)
-```
-
 ### Parameters
 
-{.compact}
-| Parameter | Description |
-|--------------|---------------------------------------------------------------|
-| rev | A string encoding a module specifier.|
+#### `rev`
+
+A module specifier encoded as a string of the form `<transaction-id>:<output-number>`.
 
 ### Return value
 
-A ES6 module.
+A JavaScript module.
 
-### Examples
+### Example
 
 ```ts
-class A extends Contract {}
-const rev = await computer.deploy(`export ${A}`)
-const { A: AA } = await computer.load(rev)
-expect(AA).to.equal(A)
+class C extends Contract {}
+const computer = new Computer({ chain, network, url })
+await computer.faucet(1e8)
+
+// Deploy module
+const rev = await computer.deploy(`export ${C}`)
+
+// Load module
+const { C: Loaded } = await computer.load(rev)
+
+// The deployed module is always equal to Loaded Module
+// when white spaces are removed
+const trim = (Class) => Class.toString().replace(/\s+/g, '')
+expect(trim(Loaded)).eq(trim(C))
 ```

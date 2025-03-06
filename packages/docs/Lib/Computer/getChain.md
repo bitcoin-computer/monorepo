@@ -1,17 +1,23 @@
 # getChain
 
-Returns the chain.
+_Returns the chain._
 
-### Type
+## Type
+
 ```ts
-() => 'LTC' | 'BTC'
+;() => 'LTC' | 'BTC' | 'PEPE' | 'BCH' | 'DOGE'
 ```
 
-### Syntax
-```js
-computer.getChain()
-```
+\* `BCH` and `DOGE` support coming soon
 
 ### Return value
 
 Returns a string encoding the chain.
+
+## Example
+
+```ts
+const chain = 'BTC'
+const computer = new Computer({ chain })
+expect(computer.getChain()).eq(chain)
+```

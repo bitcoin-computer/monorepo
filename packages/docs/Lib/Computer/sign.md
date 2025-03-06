@@ -6,7 +6,7 @@ Signs a Bitcoin transaction. Options can be passed in that determine which input
 
 ```ts
 ;(
-  tx: BitcoinLib.Transaction,
+  tx: NakamotoJS.Transaction,
   opts: {
     inputIndex?: number
     sighashType?: number

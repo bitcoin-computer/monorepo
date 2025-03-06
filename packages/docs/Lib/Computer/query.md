@@ -1,82 +1,93 @@
 # query
 
-Returns the latest revisions of smart objects. Conditions can be passed in to determine the smart objects. When multiple conditions are passed in, the latest revisions of the smart objects that satisfy all conditions are returned.
+_Returns the latest revisions of on-chain objects._
 
-### Type
+## Type
 
 ```ts
-<T extends new (...args: any) => any>(
+;<T extends new (...args: any) => any>(
   query:
     | {
-        ids: string[];
+        ids: string[]
       }
     | {
-        publicKey?: string;
-        mod?: string;
-        limit?: number;
-        offset?: number;
-        order?: "ASC" | "DEC";
-      }
-) => Promise<string[]>;
-```
-
-### Syntax
-
-```js
-await computer.query({ publicKey })
-await computer.query({ ids })
-await computer.query({ mod })
-await computer.query({ publicKey, order })
-...
+        publicKey?: string
+        mod?: string
+        limit?: number
+        offset?: number
+        order?: 'ASC' | 'DEC'
+      },
+) => Promise<string[]>
 ```
 
 ### Parameters
 
-#### params
+#### `args`
 
 An object with the query parameters.
 
 {.compact}
-| Key | Type | Description |
-|-----------|-------------------------------------------------|--------------------------------------------------------------------------------|
-| publicKey | string | Return latest revisions of smart objects owned by a public key |
-| ids | string[] | Return latest revision of smart objects with ids in order |
-| mod | string | Return the latest revision of smart objects created with this module specifier |
-| limit | number | Return only limited number of revisions |
-| offset | number | Return results starting from offset |
-| order | 'ASC' \| 'DEC' | Order results in ascending or descending order |
+| Key | Description |
+| --------- | ------------------------------------------------------------------------------ |
+| publicKey | Return latest revisions of on-chain objects owned by a public key |
+| ids | Return latest revision of on-chain objects with ids in order |
+| mod | Return the latest revision of on-chain objects created with this module specifier |
+| limit | Limit the number of revisions returned |
+| offset | Return results starting from offset |
+| order | Order results in ascending or descending order |
 
 ### Return value
 
-Given the query parameters, returns an array of strings encoding the latest revisions of smart objects that matches the specified conditions.
+Given the query parameters, returns an array of strings encoding the latest revisions of on-chain objects that matches the specified conditions.
 
-### Examples
+## Description
+
+The `args` object specifies the on-chain objects of which to return the latest revisions. One can either query by public key to obtain the latests revisions of objects currently owned by that public key
+
+Conditions can be passed in to determine the on-chain objects. When multiple conditions are passed in, the latest revisions of the on-chain objects that satisfy all conditions are returned.
+
+## Examples
 
 ```ts
-class A extends Contract { ... }
-a = await computer.new(A)
+import { Computer, Contract } from '@bitcoin-computer/lib'
 
-// query by public key
-const publicKey = computer.getPublicKey()
-const [rev1] = await computer.query({ publicKey })
-expect(rev1).to.equal(a._rev)
+class Counter extends Contract {
+  constructor() {
+    super({ n: 0 })
+  }
 
-// query by id
-const ids = [a._id]
-const [rev2] = await computer.query({ ids })
-expect(rev2).to.equal(a._rev)
+  inc() {
+    this.n += 1
+  }
+}
 
-// query by module specifier
-const mod = await computer.export(`export ${A}`)
-const b = await computer.new(A, [], mod)
-const [rev3] = await computer.query({ mod })
-expect(rev3).to.equal(b._rev)
+const computer = new Computer()
 
-// query by multiple parameters
-const [revs5] = await computer.query({
-  limit: 10,
-  order: 'ASC',
-  publicKey: { computer.getPublicKey() }
-})
-expect(rev5).to.equal(a._rev)
+// Deploy module
+const mod = await computer.deploy(`export ${Counter}`)
+
+// Encode on-chain object and create it by broadcasting the transaction
+const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
+await computer.broadcast(tx)
+
+// Increment on-chain object
+const counter = effect.res
+await counter.inc()
+
+// Query by public key
+const pRevs = await computer.query({ publicKey })
+expect(pRevs.includes(counter._rev)).to.be.true
+
+// Query by id
+const [iRev] = await computer.query({ ids: [counter._id] })
+expect(iRev).eq(counter._rev)
+
+// Query by module specifier
+const [mRev] = await computer.query({ mod })
+expect(mRev).eq(counter._rev)
+
+// Query by multiple parameters
+const mRevs = await computer.query({ publicKey, limit: 1 })
+expect(mRevs.length).eq(1)
+expect(mRevs.includes(counter._rev)).to.be.true
 ```

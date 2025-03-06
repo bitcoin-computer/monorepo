@@ -1,17 +1,28 @@
 # getBalance
 
-Returns an object with the current balance in Satoshi, the confirmed balance in Satoshi (at least 1 confirmation), and the unconfirmed balance in Satoshi.
+_Returns the balance in satoshi._
 
-### Type
+## Type
+
 ```ts
-() => Promise<{balance: number, confirmed: number, unconfirmed: number}>
-```
-
-### Syntax
-```js
-await computer.getBalance()
+;() => Promise<{ balance: number; confirmed: number; unconfirmed: number }>
 ```
 
 ### Return value
 
-Returns the current balance in Satoshi.
+The current balance in Satoshi.
+
+## Description
+
+Returns the confirmed balance in Satoshi, the unconfirmed balance, and the total balance in satoshi.
+
+## Example
+
+```ts
+const computer = new Computer()
+expect(await computer.getBalance()).matchPattern({
+  confirmed: (c) => typeof c === 'number',
+  unconfirmed: (u) => typeof u === 'number',
+  balance: (b) => typeof b === 'number',
+})
+```

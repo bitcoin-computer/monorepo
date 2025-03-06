@@ -1,17 +1,33 @@
 # getPassphrase
 
-Returns the BIP39 passphrase.
+_Returns the passphrase._
 
-### Type
+## Type
+
 ```ts
-() => string
+;() => string
 ```
 
-### Syntax
-```js
-computer.getPassphrase()
+### Return Value
+
+The passphrase.
+
+## Description
+
+The passphrase can be set in the `Computer` constructor. It defaults to an empty string.
+
+## Examples
+
+The passphrase defaults to the empty string
+
+```ts
+const computer = new Computer()
+expect(computer.getPassphrase()).eq('')
 ```
 
-### Return value
+You can set a passphrase by passing it into the constructor.
 
-Returns the BIP39 passphrase.
+```ts
+const computer = new Computer({ passphrase: 'passphrase' })
+expect(computer.getPassphrase()).eq('passphrase')
+```

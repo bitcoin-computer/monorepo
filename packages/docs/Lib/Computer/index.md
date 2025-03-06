@@ -20,13 +20,13 @@ You can build almost all smart contracts with these.
 
 ### Modules
 
-Deploy ES6 modules to avoid redundant storage smart contract storage on chain and reduce transaction fees.
+Deploy JavaScript modules to avoid redundant storage smart contract storage on chain and reduce transaction fees.
 
 {.compact}
 | Method | Description |
 |-----------------------|-----------------------------------------|
-| [deploy](./deploy.md) | Deploys an ES6 module on the blockchain |
-| [load](./load.md) | Loads an ES6 module from the blockchain |
+| [deploy](./deploy.md) | Deploys a JavaScript module on the blockchain |
+| [load](./load.md) | Loads a JavaScript module from the blockchain |
 
 ### Advanced
 
@@ -35,10 +35,10 @@ For advanced applications that require control over how the transaction is signe
 {.compact}
 | Method | Description |
 |-------------------------------|----------------------------------------------------------------|
-| [encode](./encode.md) | Encodes a Javascript expression into a Bitcoin transaction |
+| [encode](./encode.md) | Encodes a JavaScript expression into a Bitcoin transaction |
 | [encodeNew](./encodeNew.md) | Encodes a constructor call into a Bitcoin transaction |
 | [encodeCall](./encodeCall.md) | Encodes a function call into a Bitcoin transaction |
-| [decode](./decode.md) | Parses a Bitcoin transaction and returns Javascript expression |
+| [decode](./decode.md) | Parses a Bitcoin transaction and returns JavaScript expression |
 | [faucet](./faucet) | Fund a computer object on Regtest |
 
 ### Wallet

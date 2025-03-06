@@ -1,17 +1,20 @@
 # getPrivateKey
 
-Returns a string encoded private key.
+_Returns a string encoded private key._
 
-### Type
+## Type
+
 ```ts
-() => string
-```
-
-### Syntax
-```js
-computer.getPrivateKey()
+;() => string
 ```
 
 ### Return value
 
-Returns a string encoded private key.
+Returns a string encoded BIP32 private key.
+
+## Example
+
+```ts
+const computer = new Computer()
+expect(typeof computer.getPrivateKey()).eq('string')
+```

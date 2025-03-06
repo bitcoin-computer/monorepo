@@ -1,17 +1,21 @@
 # getNetwork
 
-Returns the network.
+_Returns the network._
 
-### Type
+## Type
+
 ```ts
-() => 'mainnet' | 'testnet' | 'regtest'
-```
-
-### Syntax
-```js
-computer.getNetwork()
+;() => 'mainnet' | 'testnet' | 'regtest'
 ```
 
 ### Return value
 
 Returns a string encoding the network.
+
+## Example
+
+```ts
+const network = 'mainnet'
+const computer = new Computer({ network })
+expect(computer.getNetwork()).eq(network)
+```

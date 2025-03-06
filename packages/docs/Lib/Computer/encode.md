@@ -1,21 +1,8 @@
 # encode
 
-The `encode` function builds a Bitcoin transaction from a Javascript expression according to the [Bitcoin Computer protocol](../how-it-works.md). In addition to the transaction, this function also returns the value of the expression.
+_Creates a transaction according to the Bitcoin Computer protocol._
 
-If the expression contains free variables (for example the variable `x` in the expression `x.f()`) a "blockchain environment" must be passed. A blockchain environment is a JSON object that maps variable names to the latest revisions of smart objects.
-
-A [module specifier](#modules) can be provided in order to make the exports of that module are available to the evaluation.
-
-Other options can customize the funding and signing process.
-
-!!!success
-The state update effected by a Bitcoin Computer transaction is completely predictable:
-
-- If the transaction is included in a block the new state will be exactly the state returned from the `effect` function.
-- If the transaction is not included the state is not updated.
-  !!!
-
-### Type
+## Type
 
 ```ts
 ;(opts: {
@@ -30,109 +17,122 @@ The state update effected by a Bitcoin Computer transaction is completely predic
 
   // Signing options
   sign?: boolean // whether to sign the transaction
-  sighashType?: number // Sighash type to use
+  sighashType?: number // signature hash type to use
   inputIndex?: number // input index to be signed
   inputScript?: Buffer // use input script (instead of signing)
 
   // Mock options
-  mocks?: Record<string, any> // a mock environment
+  mocks?: Record<string, any> // values to mock
 }) =>
   Promise<{
     // the transaction with the expression inscribed
-    tx: BitcoinLib.Transaction
+    tx: NakamotoJS.Transaction
+
     // the result of the evaluation
-    effect: { res: Json; env: Json }
+    effect: { res: unknown; env: { [s: string]: unknown } }
   }>
-```
-
-### Syntax
-
-```js
-await computer.encode({ exp })
-await computer.encode({ exp, env })
-await computer.encode({ exp, env, mod })
-await computer.encode({ exp, fund, sign })
-...
 ```
 
 ### Parameters
 
-#### opts
+#### `opts`
 
-An object with the basic configuration parameters to encode the expression in a transaction.
+An object with a specification to build a transaction according to the Bitcoin Computer protocol.
 
 {.compact}
-| Key | Type | Description | Default Value |
-|-------------|------------------------|--------------------------------------------------------------------------------------------------------|---------------|
-| exp | string | A Javascript expression | |
-| env | Record<string, string> | A Blockchain environment, maps free variables to latest revisions | \{\} |
-| mod | string | A module specifier | undefined |
-| fund | boolean | Whether the transaction should be funded | true |
-| include | string[] | UTXOs to include when funding | [] |
-| exclude | string[] | UTXOs to exclude when funding | [] |
-| sign | boolean | Whether to sign the transaction | true |
-| sighashType | number | The sighash type | 1=SIGHASH_ALL |
-| inputIndex | number | If set to an number the corresponding input is signed. If undefined all inputs are signed. | undefined |
-| inputScript | string | If set to a string a custom input script can be provided. If undefined a signature script is generated | undefined |
-| mocks | Record<string, any> | A pair <name, object>. The object is an instance of a mocked class (A class that does not extends from Contract but has the keywords `_id`, `_root`, `_amount`,`_owners`) | undefined |
 
-Module specifiers and UTXOs are encoded as strings of the form \<transaction id\>:\<output number\>
+| Key         | Description                                                                                                                                                               | Default       |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| exp         | A JavaScript expression.                                                                                                                                                  | -             |
+| env         | A Blockchain environment mapping variables names to revisions.                                                                                                            | `{}`          |
+| mod         | A string of the form `<id>:<num>` specifying the location of a module.                                                                                                    | `undefined`   |
+| fund        | Whether the transaction should be funded.                                                                                                                                 | `true`        |
+| include     | UTXOs to include when funding.                                                                                                                                            | `[]`          |
+| exclude     | UTXOs to exclude when funding.                                                                                                                                            | `[]`          |
+| sign        | Whether to sign the transaction.                                                                                                                                          | `true`        |
+| sighashType | The signature hash type.                                                                                                                                                  | `SIGHASH_ALL` |
+| inputIndex  | If set to an number only the corresponding input is signed. If undefined all inputs are signed.                                                                           | `undefined`   |
+| inputScript | If set to a string a custom input script can be provided. If undefined a signature script is generated.                                                                   | `undefined`   |
+| mocks       | A pair <name, object>. The object is an instance of a mocked class (A class that does not extends from Contract but has the keywords `_id`, `_root`, `_amount`,`_owners`) | `{}`          |
 
 ### Return value
 
-It returns an object `{ tx, effect }` where `tx` is a Bitcoin transaction and `effect` is an object with keys `res` and `env`.
+It returns an object `{ tx, effect }` where `tx` is a [NakamotJS](../../NakamotoJs/) transaction and `effect` is an object with keys `res` and `env`. The `res` object contains the result of the evaluation. The `env` object has the same keys as the blockchain environment. However, whereas the values of the blockchain environment are revision strings, the values of `env` and the smart object at these revisions _after_ evaluating the expression.
 
-```ts
-{ tx: BitcoinLib.Transaction, effect: { res: Json; env: Json } }
+## Description
+
+The `encode` function builds a Bitcoin transaction from a JavaScript expression. It returns a transaction and an object `effect` containing the result of the evaluation in a property `res`. If the expression contains undefined variables a blockchain environment `env` must be passed into `encode`. A _blockchain environment_ maps the named of the undefined variable to UTXOs containing on-chain objects. A [module specifier](#modules) can be provided in order to make the exports of that module are available to the evaluation. Other options can customize the funding and signing process. It is also to pass in an object specifying [mocked](../../tutorial.md#mocking) objects.
+
+It is important to note that `encode` does not broadcast the transaction. Nonetheless the `effect` object reflects the on-chain state that will emerge once the transaction is broadcast.
+
+!!!success
+The state update effected by a Bitcoin Computer transaction is completely predictable:
+
+- If the transaction is included in a block the new state will be exactly the state returned from the `effect` function.
+- If the transaction is not included the state is not updated.
+  !!!
+
+## Examples
+
+The first example shows how to store a basic type
+
+```js
+import { Computer, Contract } from '@bitcoin-computer/lib'
+
+// Encode the expression '1'
+const { effect, tx } = await computer.encode({ exp: '1' })
+
+// The effect object captures the on-chain state if the transaction is broadcast
+expect(effect).deep.eq({ res: 1, env: {} })
+
+// Broadcast the transaction
+const txId = await computer.broadcast(tx)
+
+// Synchronizing to the transaction id always returns the effect
+expect(await computer.sync(txId)).deep.eq(effect)
 ```
 
-The transaction `tx` is an object from the [NakamotoJS](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nakamotojs#nakamotojs-nakamotojs) library - a [BitcoinJS](https://github.com/bitcoinjs/bitcoinjs-lib?tab=readme-ov-file#bitcoinjs-bitcoinjs-lib) clone that supports LTC, BTC, PEPE and DOGE, and has some extra features that make is easier to build advanced applications like exchanges.
+The second example shows how to encode a constructor and a function call.
 
-The `res` object contains the result of the evaluation.
-
-The `env` object has the same keys as the blockchain environment. However, whereas the values of the blockchain environment are revision strings, the values of `env` and the smart object at these revisions _after_ evaluating the expression.
-
-<!-- TODO: describe that when signing, some errors are swallowed in order to enable partially signed transactions -->
-
-### Examples
-
-```ts
+```js
 import { Computer, Contract } from '@bitcoin-computer/lib'
 
 // A smart contract
-class C extends Contract {
-  constructor(n) {
-    this.n = n
+class Counter extends Contract {
+  n: number
+
+  constructor() {
+    super({ n: 0 })
+  }
+  inc() {
+    this.n += 1
   }
 }
 
-// Calling encode will not broadcast a transaction
-// or change state of smart objects
-const { effect, tx } = await computer.encode({
-  exp: `${C} new C(1)`
+// Encode a constructor cal
+const { effect: e1, tx: tx1 } = await computer.encode({
+  exp: `${Counter} new Counter()`,
 })
 
-// Effect captures state of smart objects
-// if the transaction is broadcast
-expect(effect).deep.eq({
-  res: {
-    n:1
-    _id: '667c...2357:0',
-    _rev: '667c...2357:0',
-    _root: '667c...2357:0',
-    _owners: ['03...'],
-    _amount: 5820
-  },
-  env: {}
+// Broadcast the transaction
+const txId1 = await computer.broadcast(tx1)
+
+// As above, synchronizing to a transaction id always returns the effect
+expect(await computer.sync(txId1)).deep.eq(e1)
+
+// Encode a function call
+const { effect: e2, tx: tx2 } = await computer.encode({
+  // The expression
+  exp: `c.inc()`,
+
+  // The blockchain environment specifies that the value for c is stores
+  // the the location e1.res._rev on the blockchain
+  env: { c: e1.res._rev },
 })
 
-// The tx can be broadcast to commit the change
-const txId = await computer.broadcast(tx)
+// As before we can broadcast the transaction to update the on-chain state
+const txId2 = await computer.broadcast(tx2)
 
-// Read the latest state
-const synced = await computer.sync(txId)
-
-// The new state in memory will always equal effect
-expect(synced).deep.eq(effect)
-
+// The sync function reads the on-chain state
+expect(await computer.sync(txId2)).deep.eq(e2)
 ```

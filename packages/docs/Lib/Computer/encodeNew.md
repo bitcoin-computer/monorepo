@@ -1,65 +1,64 @@
 # encodeNew
 
-Encodes a constructor call. This function is syntactic sugar for [encode](./encode.md).
+_Creates a transaction from a constructor call._
 
-### Type
+## Type
+
 ```ts
-<T extends new (...args: any) => any>(params: {
-  constructor: T,
-  args?: ConstructorParameters<T>,
+;<T extends new (...args: any) => any>(params: {
+  constructor: T
+  args?: ConstructorParameters<T>
   mod?: string
-}) => Promise<{
-  tx: BitcoinLib.Transaction,
-  effect: { res: Json; env: Json }
-}>
-```
-
-### Syntax
-```js
-await computer.encodeNew({ constructor })
-await computer.encodeNew({ constructor, args })
-await computer.encodeNew({ constructor, args, mod })
+}) =>
+  Promise<{
+    tx: NakamotoJS.Transaction
+    effect: { res: Json; env: Json }
+  }>
 ```
 
 ### Parameters
 
-#### params
-An object with the configuration parameters to encode the expression in a transaction.
+#### `params`
 
 {.compact}
-| Key         | Type                                | Description                                     |
-|-------------|-------------------------------------|-------------------------------------------------|
-| constructor | T extends new (...args: any) => any | A Javascript class that extends from `Contract` |
-| args        | ConstructorParameters\<T\>          | Arguments to the constructor of the class       |
-| mod         | string                              | A module specifier                              |
-
-
-
-Module specifiers are encoded as strings of the form \<transaction id\>:\<output number\>
+| Key | Description |
+| -----------| ----------------------------------------------- |
+| constructor| A JavaScript class that extends from `Contract`. |
+| args | Arguments to the constructor of the class. |
+| mod | A string of the form `<id>:<num>` specifying the location of a module. |
 
 ### Return value
 
-It returns an object `{ tx, effect }` where `tx` is a Bitcoin transaction and `effect` is an object with keys `res` and `env`. For more details see the description of the return type of [encode](./encode.md).
+See [`encode`](./encode.md).
 
-### Examples
+## Description
+
+See [`encode`](./encode.md).
+
+## Examples
+
 ```ts
 // A smart contract
 class C extends Contract {}
 
 // Encode a constructor call
 const computer = new Computer()
-const { tx } = await computer.encodeNew({
-  constructor: C
+const { tx, effect } = await computer.encodeNew({
+  constructor: C,
+  args: [],
 })
 
-// Decode meta data
+// Decode transaction
 const decoded = await computer.decode(tx)
 expect(decoded).to.deep.eq({
   exp: `${C} new C()`,
   env: {},
-  mod: ''
+  mod: '',
 })
 
-// Broadcast the tx to create the smart object
+// Broadcast the tx to create the on-chain object
 const txId = await computer.broadcast(tx)
+
+// Synchronizing to the transaction id always returns the effect
+expect(await computer.sync(txId)).deep.eq(effect)
 ```

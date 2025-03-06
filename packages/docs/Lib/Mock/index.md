@@ -9,8 +9,7 @@ Mocking is a technique for spending objects that are associated with Bitcoin Com
 A _mocked object_ is an object that has `_id`, `_rev` and `_root` set to strings of the form `mock-${hex}:${num}` where `hex` is a string of 64 hexadecimal characters and `num` is a number. The Bitcoin Computer library exports a class `Mock` to make it easy to create a mock.
 
 ```js
-const randomInt = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)
-const rev = () => `mock-${'0'.repeat(64)}:${randomInt()}`
+const makeRev = () => `mock-${'0'.repeat(64)}:${Math.floor(Math.random() * 1000000)}`
 
 export class Mock {
   _id: string

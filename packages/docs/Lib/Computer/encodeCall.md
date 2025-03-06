@@ -1,34 +1,32 @@
 # encodeCall
 
-Encodes a function call. This function is syntactic sugar for [encode](./encode.md).
+_Creates a transaction from a function call._
 
-### Type
+## Type
+
 ```ts
-<T extends new (...args: any) => any, K extends keyof InstanceType<T>>(params: {
+;<T extends new (...args: any) => any, K extends keyof InstanceType<T>>(params: {
   target: InstanceType<T>
   property: string
   args: Parameters<InstanceType<T>[K]>
   mod?: string
-}) => Promise<{
-  tx: BitcoinLib.Transaction,
-  effect: { res: Json; env: Json }
-}>
-```
-
-### Syntax
-```js
-await computer.encodeCall({ target, property, args })
-await computer.encodeCall({ target, property, args, mod })
+}) =>
+  Promise<{
+    tx: NakamotoJS.Transaction
+    effect: { res: Json; env: Json }
+  }>
 ```
 
 ### Parameters
 
-#### params
+#### `params`
+
 An object with the configuration parameters to encode the expression in a transaction.
 
 {.compact}
+
 | Key      | Type                               | Description                                    |
-|----------|------------------------------------|------------------------------------------------|
+| -------- | ---------------------------------- | ---------------------------------------------- |
 | target   | InstanceType\<T\>                  | The smart object on which to call the function |
 | property | string                             | The name of the function being called          |
 | args     | Parameters\<InstanceType\<T\>[K]\> | The arguments to the function call             |
@@ -38,10 +36,14 @@ Module specifiers are encoded as strings of the form \<transaction id\>:\<output
 
 ### Return value
 
-It returns an object `{ tx, effect }` where `tx` is a Bitcoin transaction and `effect` is an object with keys `res` and `env`. For more details see the description of the return type of [encode](./encode.md).
+See [`encode`](./encode.md).
 
+## Description
 
-### Examples
+See [`encode`](./encode.md).
+
+## Examples
+
 ```ts
 // A smart contract
 class Counter extends Contract {

@@ -1,17 +1,20 @@
 # getPublicKey
 
-Returns a string encoding a public key.
+_Returns a string encoding a public key._
 
-### Type
+## Type
+
 ```ts
-() => string
-```
-
-### Syntax
-```js
-computer.getPublicKey()
+;() => string
 ```
 
 ### Return value
 
-Returns a string encoding a public key.
+A string encoding BIP32 public key.
+
+## Example
+
+```ts
+const computer = new Computer()
+expect(typeof computer.getPublicKey()).eq('string')
+```

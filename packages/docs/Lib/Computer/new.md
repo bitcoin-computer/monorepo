@@ -1,73 +1,92 @@
 # new
 
-Creates a new smart object. The parameters are a smart contract (a Javascript class inheriting from `Contract`), a list of arguments for the constructor of the class and an optional module specifier. The arguments of the constructor can be of basic data type or smart objects. The `new` function builds a transaction that records the creation of a new smart object, signs it and broadcasts it. Smart objects can be updated by calling their functions, see [here](/tutorial.md#update-a-smart-object).
+_Creates an on-chain object._
 
-### Type
+## Type
 
 ```ts
 ;<T extends new (...args: any) => any>(
   constructor: T,
   args?: ConstructorParameters<T>,
   mod?: string,
-) => Promise<InstanceType<T> & MetaData>
-```
-
-Here a `MetaData` is the type
-
-```ts
-type MetaData = {
-  _id: string
-  _rev: string
-  _root: string
-  _amount: number
-  _owners: string[]
-  _readers?: string[]
-  _url?: string
-}
-```
-
-### Syntax
-
-```js
-await computer.new(A)
-await computer.new(A, [10])
-await computer.new(A, ['a'], '9128ab1232...18ba:0')
+) =>
+  Promise<
+    InstanceType<T> & {
+      _id: string
+      _rev: string
+      _root: string
+      _amount: number
+      _owners: string[]
+      _readers?: string[]
+      _url?: string
+    }
+  >
 ```
 
 ### Parameters
 
-{.compact}
-| Parameter | Description |
-|--------------|---------------------------------------------------------------|
-| constructor | A named Javascript class that extends from `Contract`. |
-| args | Arguments to the constructor of the class. |
-| mod | A module specifier, i.e., the revision string of a deployed module (see [deploy](/api.md#deploy)).
+#### `constructor`
+
+A named JavaScript class `T`.
+
+#### `args`
+
+Arguments to the constructor of the class `T`.
+
+#### `mod`
+
+Optionally, a string of the for `<transaction-id>:<output-number>` that references a module.
 
 ### Return value
 
-Returns an instance of the class `T`. The class `T` should extend from `Contract`. The returned object has extra properties `_id`, `_rev`, `_root`, `_owners`, `_amount` and possibly `_url`, `_readers`.
+If `T` or one of its sub-objects does not extend from `Contract` an error is thrown. Otherwise it returns an on-chain object of class `T`. The objectk has all the properties specified in `T` and in addition the properties `_id`, `_rev`, `_root`, `_owners`, and `_amount`. If the constructor defined properties `_url` or `_readers` they must have the types as indicated above.
 
-### Examples
+## Description
+
+The `new` function can create on-chain objects. The creation of a smart object is recorded in a transaction on the blockchain (see [here](../../how-it-works.md) for more details on how it works). Once an on-chain object is created its properties can only be updated through function calls. Every time a function is called, a transaction is broadcast that records the function call on the blockchain. For this reason it is necessary to `await` on all function calls on an on-chain object. Multiple users can [`sync`](./sync.md) to the same smart object to get consensus over its state.
+
+!!!success Success
+On-chain objects can be freely combines: you can pass an on-chain object as a parameter into a constructor or function call.
+!!!
+
+## Examples
+
+The example shows how an on-chain object is created and updated.
 
 ```ts
 import { Contract, Computer } from '@bitcoin-computer/lib'
 
 // A smart contract
-class A extends Contract {
-  constructor(n) {
-    this.n = n
+class Counter extends Contract {
+  n: number
+
+  constructor() {
+    super({ n: 0 })
+  }
+  inc() {
+    this.n += 1
   }
 }
 
-// Create a smart object
-const computer = new Computer({ mnemonic: ... })
-const a = await computer.new(A, [1])
-expect(a).to.deep.equal({
-  n: 1,
-  _id: '667c...2357:0',
-  _rev: '667c...2357:0',
-  _root: '667c...2357:0',
+// Create an on-chain object
+const counter = await computer.new(Counter, [])
+expect(counter).to.matchPattern({
+  n: 0,
+  _id: (id) => typeof id === 'string',
+  _rev: (rev) => typeof rev === 'string',
+  _root: (root) => typeof root === 'string',
+  _amount: (amount) => typeof amount === 'number',
   _owners: [computer.getPublicKey()],
-  _amount: 5820
+})
+
+// Update an on-chain object
+await counter.inc()
+expect(counter).to.matchPattern({
+  n: 1,
+  _id: (id) => typeof id === 'string',
+  _rev: (rev) => typeof rev === 'string',
+  _root: (root) => typeof root === 'string',
+  _amount: (amount) => typeof amount === 'number',
+  _owners: [computer.getPublicKey()],
 })
 ```

@@ -2,14 +2,6 @@
 icon: unread
 ---
 
-<style>
-  .h3-mono {
-    /* font-size: 22.2px; */
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
-    font-weight: 700
-  }
-</style>
-
 # Transaction
 
 The `Transaction` class exported from `@bitcoin-computer/lib` extends the `Transaction` class exported from `@bitcoin-computer/nakamotojs` and therefore has all of its properties and methods (see [here](../../NakamotoJs/index.md)).
@@ -18,17 +10,17 @@ In addition it has methods and properties related to the Bitcoin Computer protoc
 
 ## Properties
 
-### <span class="h3-mono">inRevs</span>
+### <span class="mono">inRevs</span>
 
 Returns the revisions of on-chain objects spent by the transaction.
 
-### <span class="h3-mono">outRevs</span>
+### <span class="mono">outRevs</span>
 
 Returns the revisions of on-chain objects created by the transaction.
 
 ## Methods
 
-### <span class="h3-mono">fromTxId</span>
+### <span class="mono">fromTxId</span>
 
 <!-- ```js
 static fromTxId({
@@ -42,15 +34,15 @@ static fromTxId({
 
 Returns a `Transaction` object from a transaction id.
 
-<!-- ### <span class="h3-mono">fromHex</span>
+<!-- ### <span class="mono">fromHex</span>
 
 Returns a `Transaction` object from a transaction hex.
 
-### <span class="h3-mono">fromBuffer</span>
+### <span class="mono">fromBuffer</span>
 
 Returns a `Transaction` object from a transaction buffer. -->
 
-### <span class="h3-mono">onChainMetaData</span>
+### <span class="mono">onChainMetaData</span>
 
 Returns a `Transaction` object from a transaction buffer.
 
@@ -83,7 +75,7 @@ const tx1 = await Transaction.fromTxId({ txId: txId1, restClient })
 expect(tx1.inRevs).deep.eq([])
 expect(tx1.outRevs).deep.eq([a._id])
 
-// tx1'2 metaData contains the constructor call
+// tx1's metaData contains the constructor call
 expect(tx1.onChainMetaData).deep.eq({
   exp: `${A} new A()`,
   env: {},
