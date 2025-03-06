@@ -14,7 +14,7 @@ _The Bitcoin Computer is a protocol for building applications that are as secure
 
 **Multicoin**. Deploy on Bitcoin, Litecoin, Dogecoin, and Pepecoin (Bitcoin Cash coming soon) using the same code.
 
-**JavaScript & Typescript** - Build decentralized applications that integrate seamlessly into web applications using your favorite tools and execute on high performance Javascript engines.
+**JavaScript & Typescript** - Build decentralized applications that integrate seamlessly into web applications using your favorite tools and execute on high performance JavaScript engines.
 
 **Simple** - Deploy a smart contract by inscribing a JavaScript class, create an on-chain object by inscribing a constructor call and update an on-chain object by inscribing a function call.
 

@@ -9,7 +9,7 @@ In this tutorial we explain how to build a decentralized chat. We will start wit
 
 ## A Smart Contract
 
-The Javascript program below is a smart contract for a one-person chat.
+The JavaScript program below is a smart contract for a one-person chat.
 
 ```js
 import { Contract } from '@bitcoin-computer/lib'
@@ -29,7 +29,7 @@ We recommend to ignore the syntax for initializing `messages` in the constructor
 
 ## The Client-Side Wallet
 
-The `Computer` class is a client-side Javascript wallet that manages a Bitcoin private-public key pair. It can create normal Bitcoin transactions but also ones that contain metadata according to the Bitcoin Computer protocol. This allows for the creation, updating, and retrieval of on-chain objects.
+The `Computer` class is a client-side JavaScript wallet that manages a Bitcoin private-public key pair. It can create normal Bitcoin transactions but also ones that contain metadata according to the Bitcoin Computer protocol. This allows for the creation, updating, and retrieval of on-chain objects.
 
 You can pass a [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) mnemonic into the constructor to create a specific private-public key pair, or leave the `mnemonic` parameter undefined to generate a random wallet. More configuration options are described [here](/lib/constructor/).
 
@@ -41,7 +41,7 @@ const computer = new Computer({ mnemonic: 'replace this seed' })
 
 ## Creating On-Chain Objects
 
-The [`computer.new`](/api/new) function broadcasts a transaction inscribed with a Javascript expression consisting of a class and a constructor call. For example, the call
+The [`computer.new`](/api/new) function broadcasts a transaction inscribed with a JavaScript expression consisting of a class and a constructor call. For example, the call
 
 ```js
 const chat = await computer.new(Chat, ['hello'])
@@ -90,7 +90,7 @@ Note that the transaction that created `chat` does not contain an encoding of th
 
 ## Updating On-Chain Objects
 
-When a function is called on an on-chain object, a transaction is broadcast that is inscribed with a Javascript expression encoding the function call and an environment determining the undefined variables in the expressions. For example, the call
+When a function is called on an on-chain object, a transaction is broadcast that is inscribed with a JavaScript expression encoding the function call and an environment determining the undefined variables in the expressions. For example, the call
 
 ```js
 await chat.post('world')
@@ -133,7 +133,7 @@ The property `_rev` has been updated and now refers to the first output of _tx_.
 The properties `_id`, `_rev`, and `_root` are read only and an attempt to assign to them throws an error. The properties `_owners` and `_amount` can be assigned in a smart contract to determine the transaction that is built.
 
 !!!
-The state of the on-chain objects is never stored in the blockchain, just the Javascript expression that creates it. This makes it possible to store data compressed to its <a target="blank" href="https://en.wikipedia.org/wiki/Kolmogorov_complexity">Kolmogorov complexity</a> which is optimal.
+The state of the on-chain objects is never stored in the blockchain, just the JavaScript expression that creates it. This makes it possible to store data compressed to its <a target="blank" href="https://en.wikipedia.org/wiki/Kolmogorov_complexity">Kolmogorov complexity</a> which is optimal.
 !!!
 
 ## Reading On-Chain Objects
@@ -316,7 +316,7 @@ The syntax for on-chain objects introduced above provides a high-level abstracti
 
 The [`computer.encode`](./lib/encode.md) function takes three arguments:
 
-- A Javascript expression `exp`,
+- A JavaScript expression `exp`,
 - an environment `env` that maps names to output specifiers,
 - and a module specifier `mod`.
 
@@ -359,7 +359,7 @@ The encode function allows fine grained control over the transaction being built
 
 ## Module System
 
-The [`computer.deploy`](./Lib/deploy.md) function stores an ES6 modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar `import` syntax. In the example below `moduleB` refers to `moduleA` via `specifierA`. Module specifiers can be passed into `computer.encode` and `computer.new` functions.
+The [`computer.deploy`](./Lib/deploy.md) function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar `import` syntax. In the example below `moduleB` refers to `moduleA` via `specifierA`. Module specifiers can be passed into `computer.encode` and `computer.new` functions.
 
 ```js
 const moduleA = 'export class A extends Contract {}'
