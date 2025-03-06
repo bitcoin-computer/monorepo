@@ -2,6 +2,14 @@
   "name": "@bitcoin-computer/components",
   "version": "0.24.1-beta.0",
   "description": "",
+  "homepage": "http://bitcoincomputer.io/",
+  "bugs": {
+    "url": "https://github.com/bitcoin-computer/monorepo/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/components"
+  },
   "license": "MIT",
   "author": {
     "name": "Clemens Ley",
@@ -13,14 +21,6 @@
     "Laura Tardivo",
     "Vivek Singh"
   ],
-  "homepage": "http://bitcoincomputer.io/",
-  "bugs": {
-    "url": "https://github.com/bitcoin-computer/monorepo/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/components"
-  },
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {

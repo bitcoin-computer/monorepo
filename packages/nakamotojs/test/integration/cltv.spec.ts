@@ -1,19 +1,29 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+/* eslint-disable no-unused-expressions, @typescript-eslint/no-non-null-assertion */
+import * as assert from 'assert';
 import { ECPairFactory } from 'ecpair';
 import * as ecc from '@bitcoin-computer/secp256k1';
 import { before, describe, it } from 'mocha';
-import * as bitcoin from '../../src/index.js';
-import { regtestUtils } from './_regtest.js';
+import {
+  address as bAddress,
+  script as bscript,
+  payments,
+  opcodes,
+} from '../../src/index.js';
+// @ts-ignore
+import * as bip65 from 'bip65';
+import { getRandomAddress } from '../test_utils.js';
+import { RegtestClient } from './regtest_client.js';
+import { Transaction } from '../../src/index.js';
+import { CHAIN, NETWORK } from './config/index.js';
+import { getNetwork } from '../../src/networks.js';
 
 const ECPair = ECPairFactory(ecc);
-const regtest = regtestUtils.network;
-// @ts-ignore
-import bip65 from 'bip65';
+const restClient = new RegtestClient();
+const regtest = getNetwork(CHAIN, NETWORK);
+const randomAddress = getRandomAddress();
 
 function toOutputScript(address: string): Buffer {
-  return bitcoin.address.toOutputScript(address, regtest);
+  return bAddress.toOutputScript(address, regtest);
 }
 
 function idToHash(txid: string): Buffer {
@@ -28,14 +38,15 @@ const bob = ECPair.fromWIF(
   'cMkopUXKWsEzAjfa1zApksGRwjVpJRB3831qM9W4gKZsLwjHXA9x',
   regtest,
 );
+const amountFactor = CHAIN === 'DOGE' || CHAIN === 'PEPE' ? 10 : 1;
 
 describe('nakamotojs (transactions w/ CLTV)', () => {
   // force update MTP
   before(async () => {
-    await regtestUtils.mine(11);
+    await restClient.mine(11);
   });
 
-  const hashType = bitcoin.Transaction.SIGHASH_ALL;
+  const hashType = Transaction.SIGHASH_ALL;
 
   interface KeyPair {
     publicKey: Buffer;
@@ -45,10 +56,10 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
     bQ: KeyPair,
     lockTime: number,
   ): Buffer {
-    return bitcoin.script.fromASM(
+    return bscript.fromASM(
       `
       OP_IF
-          ${bitcoin.script.number.encode(lockTime).toString('hex')}
+          ${bscript.number.encode(lockTime).toString('hex')}
           OP_CHECKLOCKTIMEVERIFY
           OP_DROP
       OP_ELSE
@@ -75,42 +86,39 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
       // 3 hours ago
       const lockTime = bip65.encode({ utc: utcNow() - 3600 * 3 });
       const redeemScript = cltvCheckSigOutput(alice, bob, lockTime);
-      const { address } = bitcoin.payments.p2sh({
+      const { address } = payments.p2sh({
         redeem: { output: redeemScript, network: regtest },
         network: regtest,
       });
 
       // fund the P2SH(CLTV) address
-      const unspent = await regtestUtils.faucet(address!, 1e5);
-      const tx = new bitcoin.Transaction();
+      const unspent = await restClient.faucet(address!, 1e5 * amountFactor);
+      const tx = new Transaction();
       tx.locktime = lockTime;
       // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
-      tx.addOutput(toOutputScript(regtestUtils.RANDOM_ADDRESS), 7e4);
+      tx.addOutput(toOutputScript(randomAddress), 7e4 * amountFactor);
 
       // {Alice's signature} OP_TRUE
       const signatureHash = tx.hashForSignature(0, redeemScript, hashType);
-      const redeemScriptSig = bitcoin.payments.p2sh({
+      const redeemScriptSig = payments.p2sh({
         redeem: {
-          input: bitcoin.script.compile([
-            bitcoin.script.signature.encode(
-              alice.sign(signatureHash),
-              hashType,
-            ),
-            bitcoin.opcodes.OP_TRUE,
+          input: bscript.compile([
+            bscript.signature.encode(alice.sign(signatureHash), hashType),
+            opcodes.OP_TRUE,
           ]),
           output: redeemScript,
         },
       }).input;
       tx.setInputScript(0, redeemScriptSig!);
 
-      await regtestUtils.broadcast(tx.toHex());
+      await restClient.broadcast(tx.toHex());
 
-      await regtestUtils.verify({
+      await restClient.verify({
         txId: tx.getId(),
-        address: regtestUtils.RANDOM_ADDRESS,
+        address: randomAddress,
         vout: 0,
-        value: 7e4,
+        satoshis: 7e4 * amountFactor,
       });
     },
   );
@@ -120,33 +128,30 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
     'can create (and broadcast via 3PBP) a Transaction where Alice can redeem ' +
       'the output after the expiry (in the future)',
     async () => {
-      const height = await regtestUtils.height();
+      const height = await restClient.height();
       // 5 blocks from now
       const lockTime = bip65.encode({ blocks: height + 5 });
       const redeemScript = cltvCheckSigOutput(alice, bob, lockTime);
-      const { address } = bitcoin.payments.p2sh({
+      const { address } = payments.p2sh({
         redeem: { output: redeemScript, network: regtest },
         network: regtest,
       });
 
       // fund the P2SH(CLTV) address
-      const unspent = await regtestUtils.faucet(address!, 1e5);
-      const tx = new bitcoin.Transaction();
+      const unspent = await restClient.faucet(address!, 1e5 * amountFactor);
+      const tx = new Transaction();
       tx.locktime = lockTime;
       // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
-      tx.addOutput(toOutputScript(regtestUtils.RANDOM_ADDRESS), 7e4);
+      tx.addOutput(toOutputScript(randomAddress), 7e4 * amountFactor);
 
       // {Alice's signature} OP_TRUE
       const signatureHash = tx.hashForSignature(0, redeemScript, hashType);
-      const redeemScriptSig = bitcoin.payments.p2sh({
+      const redeemScriptSig = payments.p2sh({
         redeem: {
-          input: bitcoin.script.compile([
-            bitcoin.script.signature.encode(
-              alice.sign(signatureHash),
-              hashType,
-            ),
-            bitcoin.opcodes.OP_TRUE,
+          input: bscript.compile([
+            bscript.signature.encode(alice.sign(signatureHash), hashType),
+            opcodes.OP_TRUE,
           ]),
           output: redeemScript,
         },
@@ -156,13 +161,13 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
       // TODO: test that it failures _prior_ to expiry, unfortunately, race conditions when run concurrently
       // ...
       // into the future!
-      await regtestUtils.mine(5);
-      await regtestUtils.broadcast(tx.toHex());
-      await regtestUtils.verify({
+      await restClient.mine(5);
+      await restClient.broadcast(tx.toHex());
+      await restClient.verify({
         txId: tx.getId(),
-        address: regtestUtils.RANDOM_ADDRESS,
+        address: randomAddress,
         vout: 0,
-        value: 7e4,
+        satoshis: 7e4 * amountFactor,
       });
     },
   );
@@ -175,42 +180,39 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
       // two hours ago
       const lockTime = bip65.encode({ utc: utcNow() - 3600 * 2 });
       const redeemScript = cltvCheckSigOutput(alice, bob, lockTime);
-      const { address } = bitcoin.payments.p2sh({
+      const { address } = payments.p2sh({
         redeem: { output: redeemScript, network: regtest },
         network: regtest,
       });
 
       // fund the P2SH(CLTV) address
-      const unspent = await regtestUtils.faucet(address!, 2e5);
-      const tx = new bitcoin.Transaction();
+      const unspent = await restClient.faucet(address!, 2e5 * amountFactor);
+      const tx = new Transaction();
       tx.locktime = lockTime;
       // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
-      tx.addOutput(toOutputScript(regtestUtils.RANDOM_ADDRESS), 8e4);
+      tx.addOutput(toOutputScript(randomAddress), 8e4 * amountFactor);
 
       // {Alice's signature} {Bob's signature} OP_FALSE
       const signatureHash = tx.hashForSignature(0, redeemScript, hashType);
-      const redeemScriptSig = bitcoin.payments.p2sh({
+      const redeemScriptSig = payments.p2sh({
         redeem: {
-          input: bitcoin.script.compile([
-            bitcoin.script.signature.encode(
-              alice.sign(signatureHash),
-              hashType,
-            ),
-            bitcoin.script.signature.encode(bob.sign(signatureHash), hashType),
-            bitcoin.opcodes.OP_FALSE,
+          input: bscript.compile([
+            bscript.signature.encode(alice.sign(signatureHash), hashType),
+            bscript.signature.encode(bob.sign(signatureHash), hashType),
+            opcodes.OP_FALSE,
           ]),
           output: redeemScript,
         },
       }).input;
       tx.setInputScript(0, redeemScriptSig!);
 
-      await regtestUtils.broadcast(tx.toHex());
-      await regtestUtils.verify({
+      await restClient.broadcast(tx.toHex());
+      await restClient.verify({
         txId: tx.getId(),
-        address: regtestUtils.RANDOM_ADDRESS,
+        address: randomAddress,
         vout: 0,
-        value: 8e4,
+        satoshis: 8e4 * amountFactor,
       });
     },
   );
@@ -223,41 +225,39 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
       // two hours from now
       const lockTime = bip65.encode({ utc: utcNow() + 3600 * 2 });
       const redeemScript = cltvCheckSigOutput(alice, bob, lockTime);
-      const { address } = bitcoin.payments.p2sh({
+      const { address } = payments.p2sh({
         redeem: { output: redeemScript, network: regtest },
         network: regtest,
       });
 
       // fund the P2SH(CLTV) address
-      const unspent = await regtestUtils.faucet(address!, 2e4);
-      const tx = new bitcoin.Transaction();
+      const unspent = await restClient.faucet(address!, 2e5 * amountFactor);
+      const tx = new Transaction();
       tx.locktime = lockTime;
       // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
-      tx.addOutput(toOutputScript(regtestUtils.RANDOM_ADDRESS), 1e4);
+      tx.addOutput(toOutputScript(randomAddress), 1e5 * amountFactor);
 
       // {Alice's signature} OP_TRUE
       const signatureHash = tx.hashForSignature(0, redeemScript, hashType);
-      const redeemScriptSig = bitcoin.payments.p2sh({
+      const redeemScriptSig = payments.p2sh({
         redeem: {
-          input: bitcoin.script.compile([
-            bitcoin.script.signature.encode(
-              alice.sign(signatureHash),
-              hashType,
-            ),
-            bitcoin.script.signature.encode(bob.sign(signatureHash), hashType),
-            bitcoin.opcodes.OP_TRUE,
+          input: bscript.compile([
+            bscript.signature.encode(alice.sign(signatureHash), hashType),
+            bscript.signature.encode(bob.sign(signatureHash), hashType),
+            opcodes.OP_TRUE,
           ]),
           output: redeemScript,
         },
       }).input;
       tx.setInputScript(0, redeemScriptSig!);
 
-      await regtestUtils.broadcast(tx.toHex()).catch((err: any) => {
-        assert.throws(() => {
-          if (err) throw err;
-        }, /Error: non-final/);
-      });
+      try {
+        await restClient.broadcast(tx.toHex());
+        throw new Error('This should fail');
+      } catch (err: any) {
+        assert.equal(err.message.slice(-9), 'non-final');
+      }
     },
   );
 });
