@@ -1,8 +1,9 @@
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Computer, Contract, Transaction } from '@bitcoin-computer/lib'
+import { Contract, Transaction } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
+import { TestComputer } from './utils/test-computer'
 
 // If you want to connect to your local Bitcoin Computer Node, create a .env file
 // in the monorepo root level and add the following line:
@@ -135,7 +136,7 @@ class Payment extends Contract {
 
 describe('Computer', () => {
   it('Should default to public LTC regtest node', async () => {
-    const computer = new Computer()
+    const computer = new TestComputer()
     expect(computer.getChain()).eq('LTC')
     expect(computer.getNetwork()).eq('regtest')
     expect(computer.getUrl()).a('string')
@@ -145,7 +146,7 @@ describe('Computer', () => {
     const chain = 'BTC'
     const network = 'mainnet'
     const url = 'https://btc.node.bitcoincomputer.io'
-    const computer = new Computer({ chain, network, url })
+    const computer = new TestComputer({ chain, network, url })
     expect(computer.getChain()).eq(chain)
     expect(computer.getNetwork()).eq(network)
     expect(computer.getUrl()).eq(url)
@@ -157,8 +158,8 @@ describe('Non-Fungible Token (NFT)', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new Computer({ chain, network, url })
-  let receiver = new Computer({ chain, network, url })
+  let sender = new TestComputer({ chain, network, url })
+  let receiver = new TestComputer({ chain, network, url })
 
   before("Fund sender's wallet", async () => {
     await sender.faucet(1e8)
@@ -223,8 +224,8 @@ describe('Fungible Token', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new Computer({ chain, network, url })
-  let receiver = new Computer({ chain, network, url })
+  let sender = new TestComputer({ chain, network, url })
+  let receiver = new TestComputer({ chain, network, url })
 
   before('Fund senders wallet', async () => {
     await sender.faucet(1e8)
@@ -304,9 +305,9 @@ describe('Fungible Token', () => {
 describe('Chat', () => {
   let alicesChat: Chat
   let bobsChat: Chat
-  const alice = new Computer({ chain, network, url })
-  const bob = new Computer({ chain, network, url })
-  const eve = new Computer({ chain, network, url })
+  const alice = new TestComputer({ chain, network, url })
+  const bob = new TestComputer({ chain, network, url })
+  const eve = new TestComputer({ chain, network, url })
   const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
 
   before('Before', async () => {
@@ -392,8 +393,8 @@ describe('Chat', () => {
 describe('Swap', () => {
   let nftA: NFT
   let nftB: NFT
-  const alice = new Computer({ chain, network, url })
-  const bob = new Computer({ chain, network, url })
+  const alice = new TestComputer({ chain, network, url })
+  const bob = new TestComputer({ chain, network, url })
 
   before('Before', async () => {
     await alice.faucet(1e8)
@@ -467,7 +468,7 @@ describe('Sell', () => {
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new Computer({ chain, network, url })
+    const seller = new TestComputer({ chain, network, url })
     sellerPublicKey = seller.getPublicKey()
 
     before("Fund Seller's wallet", async () => {
@@ -509,7 +510,7 @@ describe('Sell', () => {
   })
 
   describe('Failing to steal the nft', () => {
-    const thief = new Computer({ chain, network, url })
+    const thief = new TestComputer({ chain, network, url })
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
@@ -561,13 +562,13 @@ describe('Sell', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new Computer({ chain, network, url })
-    const computer = new Computer({ chain, network, url })
+    const buyer = new TestComputer({ chain, network, url })
+    const computer = new TestComputer({ chain, network, url })
     let payment: Payment
     let txId: string
 
     before("Fund Buyers's wallet", async () => {
-      await buyer.faucet(nftPrice + fee+ 1e8)
+      await buyer.faucet(nftPrice + fee + 1e8)
     })
 
     it('Buyer creates a payment object', async () => {
