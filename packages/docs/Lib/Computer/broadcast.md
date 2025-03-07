@@ -14,7 +14,7 @@ _Broadcasts a Bitcoin transaction._
 
 A NamamotoJS [transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/ts_src/transaction.ts) object.
 
-### Return value
+### Return Value
 
 If the broadcast is successful, it returns the transaction id. Otherwise, an error is thrown.
 

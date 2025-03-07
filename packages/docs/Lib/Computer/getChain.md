@@ -10,7 +10,7 @@ _Returns the chain._
 
 \* `BCH` and `DOGE` support coming soon
 
-### Return value
+### Return Value
 
 Returns a string encoding the chain.
 

@@ -8,7 +8,7 @@ _Returns a string encoded private key._
 ;() => string
 ```
 
-### Return value
+### Return Value
 
 Returns a string encoded BIP32 private key.
 

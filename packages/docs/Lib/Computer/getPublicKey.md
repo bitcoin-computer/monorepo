@@ -8,7 +8,7 @@ _Returns a string encoding a public key._
 ;() => string
 ```
 
-### Return value
+### Return Value
 
 A string encoding BIP32 public key.
 

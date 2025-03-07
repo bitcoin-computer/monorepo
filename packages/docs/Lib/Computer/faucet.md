@@ -18,7 +18,7 @@ An amount of Satoshi, indicates the amount that should be credited
 
 If set, indicated the address to be funded. If undefined the wallet of the current `Computer` object will be funded.
 
-### Return value
+### Return Value
 
 The utxo containing the funds.
 

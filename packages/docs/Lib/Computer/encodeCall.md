@@ -34,7 +34,7 @@ An object with the configuration parameters to encode the expression in a transa
 
 Module specifiers are encoded as strings of the form \<transaction id\>:\<output number\>
 
-### Return value
+### Return Value
 
 See [`encode`](./encode.md).
 

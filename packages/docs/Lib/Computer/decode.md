@@ -19,7 +19,7 @@ _Parses a Bitcoin transaction and returns its metadata if it is a Bitcoin Comput
 
 A NakamotoJS [transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/ts_src/transaction.ts).
 
-### Return value
+### Return Value
 
 An object containing the following properties:
 

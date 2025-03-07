@@ -1,8 +1,8 @@
 # sign
 
-Signs a Bitcoin transaction. Options can be passed in that determine which inputs to sign, the sigHash type to use, and which script to use.
+_Signs a Bitcoin transaction._
 
-### Type
+## Type
 
 ```ts
 ;(
@@ -15,19 +15,13 @@ Signs a Bitcoin transaction. Options can be passed in that determine which input
 ) => Promise<void>
 ```
 
-### Syntax
-
-```js
-await computer.sign(tx, opts)
-```
-
 ### Parameters
 
-{.compact}
-| Parameter | Description |
-|--------------|---------------------------------------------------------------|
-| tx | A Bitcoin transaction, possibly partially signed.|
-| opts | An object with specific parameters to use when signing.|
+#### `tx`
+
+A Bitcoin transaction, possibly partially signed.
+
+#### `opts`
 
 The `opts` object can have the following properties:
 
@@ -38,20 +32,23 @@ The `opts` object can have the following properties:
 | sighashType | number | A valid <a target="_blank" href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/src/transaction.d.ts">sighash type number</a> |
 | inputScript | Buffer | A buffer encoding the signature |
 
-### Return value
+### Return Value
+
+The function returns `void`.
+
+## Description
 
 By default, the `sign` function will make a best effort to sign all inputs, but will not throw an error if the signature cannot be added due to hash mismatch.
 
 This is useful in the case of partially signed transactions, where a user can encode an expression, sign with the user private key and send the generated partially signed transaction to another user. Then, the receiver can sign other inputs.
 
-### Examples
+## Examples
 
 ```ts
-class C extends Contract {}
-const tx = await computer.encode({
-  exp: `${C} new ${C.name}()`
-  sign: false
+const { tx } = await computer.encode({
+  exp: `${C} new ${C.name}()`,
+  sign: false,
 })
-await computer.fund(tx)
 await computer.sign(tx)
+await computer.broadcast(tx)
 ```

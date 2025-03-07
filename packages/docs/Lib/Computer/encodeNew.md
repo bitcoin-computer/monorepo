@@ -27,7 +27,7 @@ _Creates a transaction from a constructor call._
 | args | Arguments to the constructor of the class. |
 | mod | A string of the form `<id>:<num>` specifying the location of a module. |
 
-### Return value
+### Return Value
 
 See [`encode`](./encode.md).
 

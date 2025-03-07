@@ -55,7 +55,7 @@ An object with a specification to build a transaction according to the Bitcoin C
 | inputScript | If set to a string a custom input script can be provided. If undefined a signature script is generated.                                                                   | `undefined`   |
 | mocks       | A pair <name, object>. The object is an instance of a mocked class (A class that does not extends from Contract but has the keywords `_id`, `_root`, `_amount`,`_owners`) | `{}`          |
 
-### Return value
+### Return Value
 
 It returns an object `{ tx, effect }` where `tx` is a [NakamotJS](../../NakamotoJs/) transaction and `effect` is an object with keys `res` and `env`. The `res` object contains the result of the evaluation. The `env` object has the same keys as the blockchain environment. However, whereas the values of the blockchain environment are revision strings, the values of `env` and the smart object at these revisions _after_ evaluating the expression.
 

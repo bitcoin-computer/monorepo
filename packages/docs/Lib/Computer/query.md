@@ -36,7 +36,7 @@ An object with the query parameters.
 | offset | Return results starting from offset |
 | order | Order results in ascending or descending order |
 
-### Return value
+### Return Value
 
 Given the query parameters, returns an array of strings encoding the latest revisions of on-chain objects that matches the specified conditions.
 

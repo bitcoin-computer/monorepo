@@ -14,7 +14,7 @@ _Loads a module from the blockchain._
 
 A module specifier encoded as a string of the form `<transaction-id>:<output-number>`.
 
-### Return value
+### Return Value
 
 A JavaScript module.
 

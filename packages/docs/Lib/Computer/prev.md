@@ -14,7 +14,7 @@ prev(rev: string): Promise<string | undefined>
 
 A revision encoded as a string of the form `<transaction-id>:<output-number>`.
 
-### Return value
+### Return Value
 
 The previous revision or undefined.
 

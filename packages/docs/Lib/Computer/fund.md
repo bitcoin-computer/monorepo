@@ -33,7 +33,7 @@ An optional object can be passed as parameter to `include` or `exclude` certain 
 
 UTXOs are encoded as `<transaction-id>:<output-number>`.
 
-### Return value
+### Return Value
 
 If the wallet does not have sufficient funds, an error is thrown.
 

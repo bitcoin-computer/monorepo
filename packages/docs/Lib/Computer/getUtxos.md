@@ -14,7 +14,7 @@ getUtxos(address?: string): Promise<UTXO[]>
 
 The address for which to return the UTXOs. If undefined, the UTXOs for the calling object are returned.
 
-### Return value
+### Return Value
 
 Returns all unspent transaction outputs (UTXOs) of the address in question. The UTXOs are formatted as strings of the form `<transaction-id>:<output-number>`
 

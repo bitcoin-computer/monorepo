@@ -1,32 +1,28 @@
 # send
 
-Sends a payment.
+_Sends a payment._
 
-### Type
+## Type
 
 ```ts
 ;(amount: number, address: string) => Promise<string>
 ```
 
-### Syntax
-
-```js
-await computer.send(satoshis, address)
-```
-
 ### Parameters
 
-{.compact}
-| Parameter | Description |
-|--------------|---------------------------------------------------------------|
-| amount | A number representing the amount of satoshis to be sent.|
-| address | An string encoding the receiver address.|
+#### `amount`
 
-### Return value
+A number representing the amount of satoshis to be sent.
+
+#### `address`
+
+An string encoding the receiver address.
+
+### Return Value
 
 If successful, it returns the id of the transaction broadcast.
 
-### Examples
+## Examples
 
 ```ts
 const satoshis = 100000

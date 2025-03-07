@@ -8,7 +8,7 @@ _Returns the balance in satoshi._
 ;() => Promise<{ balance: number; confirmed: number; unconfirmed: number }>
 ```
 
-### Return value
+### Return Value
 
 The current balance in Satoshi.
 

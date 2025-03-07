@@ -37,7 +37,7 @@ Arguments to the constructor of the class `T`.
 
 Optionally, a string of the for `<transaction-id>:<output-number>` that references a module.
 
-### Return value
+### Return Value
 
 If `T` or one of its sub-objects does not extend from `Contract` an error is thrown. Otherwise it returns an on-chain object of class `T`. The objectk has all the properties specified in `T` and in addition the properties `_id`, `_rev`, `_root`, `_owners`, and `_amount`. If the constructor defined properties `_url` or `_readers` they must have the types as indicated above.
 

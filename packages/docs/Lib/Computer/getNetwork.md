@@ -8,7 +8,7 @@ _Returns the network._
 ;() => 'mainnet' | 'testnet' | 'regtest'
 ```
 
-### Return value
+### Return Value
 
 Returns a string encoding the network.
 

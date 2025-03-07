@@ -14,7 +14,7 @@ _Stores a Javascript module on the blockchain._
 
 A string encoding a JavaScript module.
 
-### Return value
+### Return Value
 
 A string of the form `<transaction-id>:<output number>` encoding the location where the module is stored.
 
@@ -44,21 +44,7 @@ To select the module storage type pass either `multisig` or `taproot` into the p
 
 ## Examples
 
-The first example shows that modules can depend on one another.
-
-```ts
-const revA = await computer.deploy(`export class A extends Contract {}`)
-
-const revB = await computer.deploy(`
-  import { A } from '${revA}'
-  export class B extends A {}
-`)
-
-const transition = { exp: `new B()`, mod: revB }
-const tx = await computer.encode(transition)
-```
-
-The next example shows how to deploy a module with module storage type `multisig`.
+The first example shows how to deploy a module with module storage type `multisig`.
 
 ```js
 const computer = new Computer({ moduleStorageType: 'multisig' })
@@ -78,4 +64,72 @@ const veryBig = `x`.repeat(396000) // ~ 400KB
 
 const rev = await computer.deploy(veryBig)
 expect(rev).to.not.equal(undefined)
+```
+
+The next example shows how modules can depends on one another
+
+```ts
+// Deploy module A
+const modSpecA = await computer.deploy(`export class A extends Contract {}`)
+
+// Deploy module B that imports module B
+const modSpecB = await computer.deploy(`
+  import { A } from '${modSpecA}'
+  export class B extends A {}
+`)
+
+// Use module B
+const { tx } = await computer.encode({ exp: `new B()`, mod: modSpecB })
+expect(tx.getId()).to.be.a.string
+```
+
+The last example shows how a string of arbitrary length can be stored using the module system. The idea is to partition a long string into constant size chunks, deploy each chunk in a separate module, and then deploy one additional module that recombined the modules for the chunks and exports their concatenation.
+
+```js
+// Inputs a long string and outputs a module specifier where it can be obtained
+const store = async (s: string, n: number) => {
+  // Partition the long string into chunks of size n
+  const chunks = []
+  for (let i = 0; i < s.length; i += n) {
+    chunks.push(s.slice(i, i + n))
+  }
+
+  // Deploy chunks and build recombining module
+  let module = ''
+  for (let i = 0; i < s.length / n; i += 1) {
+    // Deploy a chunk
+    const mod = await computer.deploy(`export const c${i} = '${chunks[i]}'`)
+
+    // Import chunk into recombining module
+    module += `import { c${i} } from '${mod}'\n`
+  }
+
+  // Export concatenation of chunks
+  const cs = Array.from({ length: n + 1 }, (_, i) => `c${i}`).join(' + ')
+  module += `export const s = ${cs}`
+
+  // Deploy recombining module
+  return computer.deploy(module)
+}
+
+// Create a long string, could be hundreds MB in a real example
+const longString = '0'.repeat(10)
+
+// Store long string, you can use 18262 instead of 3 for multisig modules
+// or 396000 for taproot modules
+const mod = await store(longString, 3)
+
+// Load a long string
+const { s } = await computer.load(mod)
+expect(s).eq(longString)
+```
+
+In the example the "recombining" module is as follows:
+
+```ts
+import { c0 } from 'f86ec90ce2ab7367e197df1e63b45114a381d5636dc85e35dc28d721fbf0c228:0' // stores '000'
+import { c1 } from 'ae90c7aa091045239d61011c770754b8cd8409541e56177d2a15e591e337bd67:0' // stores '000'
+import { c2 } from '5530cfcc89fde62c2cfab4eea56e3aa2d41071480b7b094d7a01316776712701:0' // stores '000'
+import { c3 } from 'dc63fbf200595012b239d69936ac63e4155040042ef7d2e6dff4ca49dec3f51e:0' // stores '0'
+export const s = c0 + c1 + c2 + c3
 ```
