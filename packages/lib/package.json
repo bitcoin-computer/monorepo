@@ -46,7 +46,9 @@
   "browser": "dist/bc-lib.browser.min.mjs",
   "types": "./index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "computer.d.ts",
+    "index.d.ts"
   ],
   "scripts": {
     "clean": "npm run clean:logs",

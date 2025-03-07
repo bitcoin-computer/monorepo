@@ -4,6 +4,16 @@
 import { defineConfig } from 'vitest/config'
 import baseConfig from './vite.config'
 import path from 'path'
+import fs from 'fs'
+
+function getAliasPath() {
+  const monorepoPath = path.resolve(__dirname, '../lib/dist/bc-lib.browser.min.mjs')
+  const standalonePath = path.resolve(
+    __dirname,
+    './node_modules/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs',
+  )
+  return fs.existsSync(monorepoPath) ? monorepoPath : standalonePath
+}
 
 export default defineConfig(({ mode }) => {
   // Load the base Vite configuration
@@ -17,8 +27,7 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       setupFiles: ['./src/setupTests.ts'],
       alias: {
-        // Define the alias pointing to the specific entry point in node_modules
-        '@bitcoin-computer/lib': path.resolve(__dirname, '../lib/dist/bc-lib.browser.min.mjs'),
+        '@bitcoin-computer/lib': getAliasPath(),
       },
     },
   }
