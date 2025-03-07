@@ -65,7 +65,7 @@ export class Sale extends Contract {
 
 The challenge in creating the sales transaction arises from the fact that the output containing the payment is not yet created at the time of building the transaction. To handle such scenarios the Bitcoin Computer provides a feature called mocking. A mock is a class that has the properties `_id`, `_rev`, `_root`, `_amount`, and `_owners`, and sets them to strings of the form `mock-<transaction-id>:<output-number>`. A mock does not have to extend from `Contract`. Each mocked object must have a distinct transaction id and output number.
 
-The following code shows the class to create the payment mock as well as Seller creating a new instance with the standard Javascript `new` keyword.
+The following code shows the class to create the payment mock as well as Seller creating a new instance with the standard JavaScript `new` keyword.
 
 ```ts
 const mockedRev = `mock-${'0'.repeat(64)}:0`

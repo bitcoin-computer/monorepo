@@ -62,7 +62,7 @@ new NFT('name', 'symbol')
 
 ### The Module System
 
-If many NFTs are created, it is wasteful to store the same Javascript class in the blockchain multiple times. In this case, it is possible to use the module system to store the smart contract one time and refer to it multiple times.
+If many NFTs are created, it is wasteful to store the same JavaScript class in the blockchain multiple times. In this case, it is possible to use the module system to store the smart contract one time and refer to it multiple times.
 
 ```ts
 import { Computer } from '@bitcoin-computer/lib'

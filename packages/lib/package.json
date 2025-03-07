@@ -7,7 +7,7 @@
     "Bitcoin",
     "Litecoin",
     "Smart Contracts",
-    "Javascript"
+    "JavaScript"
   ],
   "homepage": "http://bitcoincomputer.io/",
   "bugs": {
@@ -79,8 +79,10 @@
     "ses": "1.3.0"
   },
   "devDependencies": {
+    "@types/chai-as-promised": "^8.0.1",
     "@types/mocha": "^10.0.6",
-    "chai": "^5.1.0",
+    "chai": "^5.2.0",
+    "chai-as-promised": "^8.0.1",
     "dotenv": "^16.4.5",
     "mocha": "^10.0.0",
     "ts-node": "^10.9.1"

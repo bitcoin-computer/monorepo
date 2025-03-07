@@ -14,7 +14,7 @@ describe('List', () => {
   it('Should work', async () => {
     const computer = new Computer({ url, chain, network })
     await computer.faucet(1e8)
-    const list = await computer.new(List)
+    const list = await computer.new(List, [])
     expect(list.elements).deep.eq([])
     await list.add('k')
     expect(list.elements).deep.eq(['k'])

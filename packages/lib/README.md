@@ -2,14 +2,14 @@
   <img src="./imgs/bitcoin-computer-lib@1x.png" alt="bitcoin-computer-logo" border="0" style="max-height: 180px"/>
   <h1>Bitcoin Computer Library</h1>
   <p>
-    A Javascript library for smart contracts on Bitcoin and Litecoin<br />
+    A JavaScript library for smart contracts on Bitcoin and Litecoin<br />
     <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
 </div>
 
 The Bitcoin Computer is a protocol for general purpose smart contracts on Bitcoin and Litecoin. It does not rely on a separate token, a separate blockchain or any trusted intermediaries. It works similar to ordinals, runes, and BRC20: you can build applications where users add metadata to a transaction to encode a smart contract interaction, such as minting a token. The software can parse the metadata back into smart contract data, for example which users owns how many tokens.
 
-Our metadata format consists mostly of Javascript expressions to define the state updates. This makes it possible to build not just tokens but all applications directly on Bitcoin.
+Our metadata format consists mostly of JavaScript expressions to define the state updates. This makes it possible to build not just tokens but all applications directly on Bitcoin.
 
 ## Use in a Browser
 
@@ -22,7 +22,10 @@ Create a file `index.html` and open it in your browser.
   <head>
     <script type="module">
       // Import the library
-      import { Computer, Contract } from "https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs"
+      import {
+        Computer,
+        Contract,
+      } from 'https://unpkg.com/@bitcoin-computer/lib/dist/bc-lib.browser.min.mjs'
 
       // Create a smart contract
       class Counter extends Contract {
@@ -41,16 +44,16 @@ Create a file `index.html` and open it in your browser.
 
       // Mint a smart object
       const counter = await computer.new(Counter)
-      document.getElementById("count").innerHTML = counter.n
+      document.getElementById('count').innerHTML = counter.n
 
       // Update smart object
       await counter.inc()
-      document.getElementById("count").innerHTML = counter.n
+      document.getElementById('count').innerHTML = counter.n
     </script>
   </head>
 
   <body>
-    Count: <span id='count'>*</span>
+    Count: <span id="count">*</span>
   </body>
 </html>
 ```
@@ -144,10 +147,10 @@ To connect to your node, set the `url` parameter as shown below (see [here](http
 
 ```js
 // Connect Bitcoin Computer wallet to a Bitcoin Computer node url
-const computer = new Computer({ 
+const computer = new Computer({
   url: 'http://localhost:1031',
   chain: 'LTC',
-  network: 'regtest'
+  network: 'regtest',
 })
 ```
 
@@ -190,7 +193,7 @@ expect(a).to.deep.equal({
   _rev: '667c...2357:0',
   _root: '667c...2357:0',
   _owners: [computer.getPublicKey()],
-  _amount: 5820
+  _amount: 5820,
 })
 ```
 
@@ -205,12 +208,10 @@ expect(synced).to.deep.equal(a)
 
 ### Deploy
 
-Deploys an ES6 module to Bitcoin. The module is inscribed in a Bitcoin transaction and the transaction id is the module specifier.
+Deploys a JavaScript module to Bitcoin. The module is inscribed in a Bitcoin transaction and the transaction id is the module specifier.
 
 ```ts
-const revA = await computer.deploy(
-  `export class A {}`
-)
+const revA = await computer.deploy(`export class A {}`)
 
 const revB = await computer.deploy(`
   import { A } from '${revA}'
@@ -220,7 +221,7 @@ const revB = await computer.deploy(`
 
 ### Load
 
-Loads an ES6 module from the blockchain given a modules specifier.
+Loads a JavaScript module from the blockchain given a modules specifier.
 
 ```ts
 class A {}
@@ -231,7 +232,7 @@ expect(Loaded).to.equal(A)
 
 ### Encode
 
-Inputs a Javascript expression, possibly a module specifier, and possibly a "blockchain environment" that maps the (free) variables of the expression to utxos. The expression is evaluated in the scope of the module, substituting the (free) variables for the values computed for the respective utxo. A transaction is broadcast that spends the utxos, has one output for each object in the new state, and is inscribed with the expression, the module specifier and the blockchain environment. Returns the changed state after the evaluation and a transaction.
+Inputs a JavaScript expression, possibly a module specifier, and possibly a "blockchain environment" that maps the (free) variables of the expression to utxos. The expression is evaluated in the scope of the module, substituting the (free) variables for the values computed for the respective utxo. A transaction is broadcast that spends the utxos, has one output for each object in the new state, and is inscribed with the expression, the module specifier and the blockchain environment. Returns the changed state after the evaluation and a transaction.
 
 ```ts
 const { effect, tx } = await computer.encode({ exp: `${A} new A()` })
@@ -239,7 +240,7 @@ const { effect, tx } = await computer.encode({ exp: `${A} new A()` })
 
 ### Decode
 
-Inputs a revision (transaction id and output number) and returns a Javascript expression, a module specifier, and a blockchain environment, if present.
+Inputs a revision (transaction id and output number) and returns a JavaScript expression, a module specifier, and a blockchain environment, if present.
 
 ```ts
 const decoded = await computer.decode(tx)
@@ -273,12 +274,11 @@ await computer.rpcCall('getBlockchainInfo', '')
 
 ### Wallet Functionality
 
-* *sign*.	Signs a Bitcoin transaction
-* *broadcast*.	Broadcasts a Bitcoin transaction
-* *send*.	Sends satoshis to an address
-* *getAddress*.	Returns the Bitcoin address of the computer wallet
-* *getBalance*.	Returns the balance in satoshi
-
+- _sign_. Signs a Bitcoin transaction
+- _broadcast_. Broadcasts a Bitcoin transaction
+- _send_. Sends satoshis to an address
+- _getAddress_. Returns the Bitcoin address of the computer wallet
+- _getBalance_. Returns the balance in satoshi
 
 ## Documentation
 
@@ -298,11 +298,11 @@ We are in beta, so there is a possibility of bugs.
 
 ## Legal Notice
 
-*Sanctioned Users are Prohibited*. You may not access or use software developed and published by us if you are (i) a resident of any country with which transactions or dealings are prohibited by governmental sanctions imposed by the U.S., the United Nations, the European Union, the United Kingdom, or any other applicable jurisdiction (collectively, “Sanctions Regimes”); (ii) a person, entity or government prohibited under an applicable Sanctions Regime (“Sanctioned Person”), including the Office of Foreign Assets Control, Specially Designated Nationals and Blocked Persons List; or (iii) prohibited from accessing or using the Software pursuant to the laws, rules, and regulations in the jurisdiction in which you reside or otherwise access and use the Software.
+_Sanctioned Users are Prohibited_. You may not access or use software developed and published by us if you are (i) a resident of any country with which transactions or dealings are prohibited by governmental sanctions imposed by the U.S., the United Nations, the European Union, the United Kingdom, or any other applicable jurisdiction (collectively, “Sanctions Regimes”); (ii) a person, entity or government prohibited under an applicable Sanctions Regime (“Sanctioned Person”), including the Office of Foreign Assets Control, Specially Designated Nationals and Blocked Persons List; or (iii) prohibited from accessing or using the Software pursuant to the laws, rules, and regulations in the jurisdiction in which you reside or otherwise access and use the Software.
 
-*Users Must Comply with Applicable Law*. You may only access or use the Software in compliance with laws, rules, and regulations in the jurisdiction in which you reside or otherwise access and use the Software, including, as applicable, Sanctions Regimes, anti-money laundering laws and regulations, and securities laws and regulations.
+_Users Must Comply with Applicable Law_. You may only access or use the Software in compliance with laws, rules, and regulations in the jurisdiction in which you reside or otherwise access and use the Software, including, as applicable, Sanctions Regimes, anti-money laundering laws and regulations, and securities laws and regulations.
 
-*BCDB Does Not Endorse or Promote User Software Activity*.  We are publishing certain portions of the Software, on an open-source basis, to demonstrate the utility of the Bitcoin Computer.  As this Software is open-source, it may be modified and deployed for a wide range of uses that we may not have intended.  We do not endorse or promote, and expressly disclaim liability for, any non-BCDB use or modification of the Software.
+_BCDB Does Not Endorse or Promote User Software Activity_. We are publishing certain portions of the Software, on an open-source basis, to demonstrate the utility of the Bitcoin Computer. As this Software is open-source, it may be modified and deployed for a wide range of uses that we may not have intended. We do not endorse or promote, and expressly disclaim liability for, any non-BCDB use or modification of the Software.
 
 ## License
 
