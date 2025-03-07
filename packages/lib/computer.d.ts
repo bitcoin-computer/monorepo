@@ -512,7 +512,7 @@ declare class Computer {
   getMinimumFees(): number
   subscribe(
     id: string,
-    onMessage: (rev: string) => void,
+    onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
     onError?: (error: Event) => void,
   ): Promise<() => void>
   static getVersion: () => string
