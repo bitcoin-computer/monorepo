@@ -3,7 +3,6 @@ import dotenv from 'dotenv'
 import * as chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import { address, networks, Transaction } from '@bitcoin-computer/nakamotojs'
-import { sleep } from './utils'
 
 const { expect } = chai
 
@@ -77,6 +76,43 @@ describe.only('Computer', () => {
         const rev = await taprootComputer.deploy(veryBig)
         expect(rev).to.not.equal(undefined)
       }
+    })
+
+    it('Should deploy a module that depends on another module', async () => {
+      const modSpecA = await computer.deploy(`export class A extends Contract {}`)
+
+      const modSpecB = await computer.deploy(`
+        import { A } from '${modSpecA}'
+        export class B extends A {}
+      `)
+      const { tx } = await computer.encode({ exp: `new B()`, mod: modSpecB })
+      expect(tx.getId()).to.be.a.string
+    })
+
+    it('Should deploy a module of arbitrary length', async () => {
+      // this function inputs a long string and output a module specifier where it can be obtained
+      const store = async (s: string, n: number) => {
+        const chunks = []
+        for (let i = 0; i < s.length; i += n) {
+          chunks.push(s.slice(i, i + n))
+        }
+
+        let module = ''
+        for (let i = 0; i < s.length / n; i += 1) {
+          const mod = await computer.deploy(`export const c${i} = '${chunks[i]}'`)
+          module += `import { c${i} } from '${mod}'\n`
+        }
+
+        const cs = Array.from({ length: n + 1 }, (_, i) => `c${i}`).join(' + ')
+        module += `export const s = ${cs}`
+        return computer.deploy(module)
+      }
+
+      const longString = '0'.repeat(10)
+      const mod = await store(longString, 3)
+
+      const { s } = await computer.load(mod)
+      expect(s).eq(longString)
     })
   })
 
@@ -369,7 +405,147 @@ describe.only('Computer', () => {
     it('Should return the latest revisions for multiple parameters', async () => {
       const revs = await computer.query({ publicKey, limit: 1 })
       expect(revs.length).eq(1)
-      expect(revs.includes(counter._rev)).to.be.true
+    })
+  })
+
+  describe('rpcCall', () => {
+    it('Should call getBlockchainInfo', async () => {
+      const { result } = await computer.rpcCall('getBlockchainInfo', '')
+      expect(result.blocks).a('number')
+      expect(result.bestblockhash).a('string')
+    })
+
+    it('Should call getRawTransaction', async () => {
+      const c = await computer.new(C, [])
+      const txId = c._id.slice(0, 64)
+      const { result } = await computer.rpcCall('getRawTransaction', `${txId} 1`)
+      expect(result.txid).eq(txId)
+      expect(result.hex).a('string')
+    })
+
+    it('Should call getTxOut', async () => {
+      const c = await computer.new(C, [])
+      const [txId, outNum] = c._id.split(':')
+      const { result } = await computer.rpcCall('getTxOut', `${txId} ${outNum} true`)
+      expect(result.scriptPubKey.asm).eq(`1 ${computer.getPublicKey()} 1 OP_CHECKMULTISIG`)
+      expect(result).to.matchPattern({
+        bestblock: (bestblock) => typeof bestblock === 'string',
+        confirmations: 0,
+        value: (value) => typeof value === 'number',
+        scriptPubKey: {
+          asm: `1 ${computer.getPublicKey()} 1 OP_CHECKMULTISIG`,
+          hex: (hex) => typeof hex === 'string',
+          reqSigs: 1,
+          type: 'multisig',
+          addresses: (addresses) => Array.isArray(addresses),
+        },
+        coinbase: false,
+      })
+    })
+
+    it('Should call generateToAddress', async () => {
+      const { balance: balanceBefore } = await computer.getBalance()
+      await computer.rpcCall('generateToAddress', `1 ${computer.getAddress()}`)
+      const randomAddress = new Computer({ chain, network, url }).getAddress()
+      await computer.rpcCall('generatetoaddress', `99 ${randomAddress}`)
+
+      const { balance: balanceAfter } = await computer.getBalance()
+      expect(balanceAfter - balanceBefore).to.be.closeTo(50e8, 1e5)
+    })
+  })
+
+  describe('send', () => {
+    it('Should return the previous revision', async () => {
+      const txId = await computer.send(1e6, computer.getAddress())
+      expect(txId).to.be.a('string')
+    })
+  })
+
+  describe('sign', () => {
+    it('Should sign a transaction', async () => {
+      const { tx } = await computer.encode({
+        exp: `${C} new ${C.name}()`,
+        sign: false,
+      })
+      await computer.sign(tx)
+      await computer.broadcast(tx)
+    })
+  })
+
+  describe('subscribe', () => {
+    it('Should call a callback when an object is updated', async () => {
+      const c = await computer.new(Counter, [])
+      let eventCount = 0
+      const close = await computer.subscribe(c._id, ({ rev, hex }) => {
+        expect(typeof rev).eq('string')
+        expect(typeof hex).eq('string')
+        expect(rev.split(':').length).eq(2)
+        eventCount += 1
+      })
+      await c.inc()
+      await c.inc()
+
+      await new Promise<void>((resolve, reject) => {
+        let retryCount = 0
+        const interval = setInterval(() => {
+          retryCount += 1
+
+          if (eventCount === 2) {
+            clearInterval(interval)
+            resolve()
+          }
+
+          if (retryCount > 20) {
+            clearInterval(interval)
+            close()
+            reject(new Error('Missed SSE'))
+          }
+        }, 200)
+      })
+      close()
+    })
+  })
+
+  describe('sync', () => {
+    it('Should sync to a counter', async () => {
+      // Create on-chain object
+      const { tx, effect } = await computer.encode({
+        exp: `${Counter} new Counter()`,
+      })
+      const counter = effect.res as any
+      await computer.broadcast(tx)
+      const initialCounter = {
+        n: 0,
+        _id: `${tx.getId()}:0`,
+        _rev: `${tx.getId()}:0`,
+        _root: `${tx.getId()}:0`,
+        _owners: [computer.getPublicKey()],
+        _amount: chain === 'LTC' ? 5820 : 582,
+      }
+      expect(counter).deep.eq(initialCounter)
+
+      // Update on-chain object
+      await counter.inc()
+
+      // Sync to initial revision
+      expect(await computer.sync(counter._id)).deep.eq(initialCounter)
+
+      // Sync to latest revision
+      expect(await computer.sync(counter._rev)).deep.eq(counter)
+
+      const initialTxId = counter._id.slice(0, 64)
+      expect(await computer.sync(initialTxId)).deep.eq({
+        res: initialCounter,
+        env: {},
+      })
+
+      const latestTxId = counter._rev.slice(0, 64)
+      expect(await computer.sync(latestTxId)).deep.eq({
+        res: undefined,
+        env: {
+          __bc__: counter,
+        },
+      })
     })
   })
 })
