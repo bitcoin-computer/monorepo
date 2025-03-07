@@ -22,7 +22,7 @@ The previous revision or undefined.
 
 Given the revision of an on-chain object, the function returns the previous revision of the same on-chain object. If no such revision exists because the revision passed in is the revision where the on-chain object was created, `undefined` is returned.
 
-### Example
+## Example
 
 ```ts
 import { Computer, Contract } from '@bitcoin-computer/lib'

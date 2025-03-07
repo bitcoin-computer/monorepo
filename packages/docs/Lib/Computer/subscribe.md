@@ -34,7 +34,7 @@ A function to close the connection to the server.
 
 The function enables real-time updates via Server-Sent Events (SSEs). The function takes an on-chain ID and a callback function as arguments. The callback is triggered whenever a method is called on the on-chain object with the specified ID.
 
-## Examples
+## Example
 
 ```ts
 import { Computer, Contract } from '@bitcoin-computer/lib'

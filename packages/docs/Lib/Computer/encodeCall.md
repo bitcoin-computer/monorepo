@@ -24,13 +24,12 @@ _Creates a transaction from a function call._
 An object with the configuration parameters to encode the expression in a transaction.
 
 {.compact}
-
-| Key      | Type                               | Description                                    |
+| Key | Type | Description |
 | -------- | ---------------------------------- | ---------------------------------------------- |
-| target   | InstanceType\<T\>                  | The smart object on which to call the function |
-| property | string                             | The name of the function being called          |
-| args     | Parameters\<InstanceType\<T\>[K]\> | The arguments to the function call             |
-| mod      | string                             | A module specifier                             |
+| target | InstanceType\<T\> | The smart object on which to call the function |
+| property | string | The name of the function being called |
+| args | Parameters\<InstanceType\<T\>[K]\> | The arguments to the function call |
+| mod | string | A module specifier |
 
 Module specifiers are encoded as strings of the form \<transaction id\>:\<output number\>
 

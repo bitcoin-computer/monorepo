@@ -22,7 +22,7 @@ An string encoding the receiver address.
 
 If successful, it returns the id of the transaction broadcast.
 
-## Examples
+## Example
 
 ```ts
 const satoshis = 100000

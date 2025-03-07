@@ -43,7 +43,7 @@ A configuration object with the properties listed below. All properties are opti
 
 An instance of the `Computer` class
 
-### Examples
+## Examples
 
 ```ts
 import { Computer } from '@bitcoin-computer/lib'

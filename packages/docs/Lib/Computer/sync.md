@@ -41,9 +41,7 @@ If the function is called with a transaction id, it returns an object of type `{
 - Cannot call a function on a smart object that is pointed to
 -  -->
 
-## Examples
-
-The first example shows how to sync to two different revisions of a counter
+## Example
 
 ```ts
 import { Computer, Countract } from '@bitcoin-computer/lib'

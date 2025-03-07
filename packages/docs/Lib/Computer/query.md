@@ -46,7 +46,7 @@ The `args` object specifies the on-chain objects of which to return the latest r
 
 Conditions can be passed in to determine the on-chain objects. When multiple conditions are passed in, the latest revisions of the on-chain objects that satisfy all conditions are returned.
 
-## Examples
+## Example
 
 ```ts
 import { Computer, Contract } from '@bitcoin-computer/lib'
