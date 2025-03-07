@@ -36,17 +36,19 @@
         "require": "./dist/bc-lib.commonjs.min.cjs"
       },
       "browser": {
-        "import": "./dist/bc-lib.module.es.mjs"
+        "import": "./dist/bc-lib.browser.min.mjs"
       },
       "default": "./dist/bc-lib.main.es.mjs"
     }
   },
   "main": "dist/bc-lib.main.es.mjs",
-  "module": "dist/bc-lib.module.es.mjs",
+  "module": "dist/bc-lib.main.es.mjs",
   "browser": "dist/bc-lib.browser.min.mjs",
   "types": "./index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "computer.d.ts",
+    "index.d.ts"
   ],
   "scripts": {
     "clean": "npm run clean:logs",
