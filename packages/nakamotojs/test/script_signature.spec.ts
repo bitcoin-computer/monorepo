@@ -3,10 +3,8 @@
 import assert from 'assert';
 import { describe, it } from 'mocha';
 import { signature as bscriptSig } from '../src/script.js';
-import * as fixturesModule from './fixtures/signature.json' assert { type: 'json' };
-const fixtures: typeof import('./fixtures/signature.json') =
-  // @ts-ignore
-  fixturesModule.default || fixturesModule;
+import signature from './fixtures/signature.js';
+const fixtures = signature;
 
 describe('Script Signatures', () => {
   function fromRaw(signature: { r: string; s: string }): Buffer {

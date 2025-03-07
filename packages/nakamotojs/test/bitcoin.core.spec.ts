@@ -5,43 +5,14 @@ import assert from 'assert';
 import base58 from 'bs58';
 import { describe, it } from 'mocha';
 import * as bitcoin from '../src/index.js';
-import * as base58EncodeDecodeModule from './fixtures/core/base58_encode_decode.json' assert { type: 'json' };
-import * as base58KeysInvalidModule from './fixtures/core/base58_keys_invalid.json' assert { type: 'json' };
-import * as base58KeysValidModule from './fixtures/core/base58_keys_valid.json' assert { type: 'json' };
-import * as blocksValidModule from './fixtures/core/blocks.json' assert { type: 'json' };
-import * as sigCanonicalModule from './fixtures/core/sig_canonical.json' assert { type: 'json' };
-import * as sigNoncanonicalModule from './fixtures/core/sig_noncanonical.json' assert { type: 'json' };
-import * as sigHashModule from './fixtures/core/sighash.json' assert { type: 'json' };
-import * as txValidModule from './fixtures/core/tx_valid.json' assert { type: 'json' };
-
-const base58EncodeDecode: typeof import('./fixtures/core/base58_encode_decode.json') =
-  // @ts-ignore
-  base58EncodeDecodeModule.default || base58EncodeDecodeModule;
-
-const base58KeysInvalid: typeof import('./fixtures/core/base58_keys_invalid.json') =
-  // @ts-ignore
-  base58KeysInvalidModule.default || base58KeysInvalidModule;
-const base58KeysValid: typeof import('./fixtures/core/base58_keys_valid.json') =
-  // @ts-ignore
-  base58KeysValidModule.default || base58KeysValidModule;
-
-const blocksValid: typeof import('./fixtures/core/blocks.json') =
-  // @ts-ignore
-  blocksValidModule.default || blocksValidModule;
-const sigCanonical: typeof import('./fixtures/core/sig_canonical.json') =
-  // @ts-ignore
-  sigCanonicalModule.default || sigCanonicalModule;
-
-const sigNoncanonical: typeof import('./fixtures/core/sig_noncanonical.json') =
-  // @ts-ignore
-  sigNoncanonicalModule.default || sigNoncanonicalModule;
-
-const sigHash: typeof import('./fixtures/core/sighash.json') =
-  // @ts-ignore
-  sigHashModule.default || sigHashModule;
-const txValid: typeof import('./fixtures/core/tx_valid.json') =
-  // @ts-ignore
-  txValidModule.default || txValidModule;
+import base58EncodeDecode from './fixtures/core/base58_encode_decode.js';
+import base58KeysInvalid from './fixtures/core/base58_keys_invalid.js';
+import base58KeysValid from './fixtures/core/base58_keys_valid.js';
+import blocks from './fixtures/core/blocks.js';
+import sigCanonical from './fixtures/core/sig_canonical.js';
+import sigNoncanonical from './fixtures/core/sig_noncanonical.js';
+import sigHash from './fixtures/core/sighash.js';
+import txValid from './fixtures/core/tx_valid.js';
 
 describe('Bitcoin-core', () => {
   // base58EncodeDecode
@@ -121,7 +92,7 @@ describe('Bitcoin-core', () => {
   });
 
   describe('Block.fromHex', () => {
-    blocksValid.forEach(f => {
+    blocks.forEach(f => {
       it('can parse ' + f.id, () => {
         const block = bitcoin.Block.fromHex(f.hex);
 

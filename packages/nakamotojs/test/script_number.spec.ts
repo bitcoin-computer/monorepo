@@ -3,14 +3,11 @@
 import assert from 'assert';
 import { describe, it } from 'mocha';
 import * as scriptNumber from '../src/script_number.js';
-import * as fixturesModule from './fixtures/script_number.json' assert { type: 'json' };
-const fixtures: typeof import('./fixtures/script_number.json') =
-  // @ts-ignore
-  fixturesModule.default || fixturesModule;
+import script_number from './fixtures/script_number.js';
 
 describe('script-number', () => {
   describe('decode', () => {
-    fixtures.forEach(f => {
+    script_number.forEach(f => {
       it(f.hex + ' returns ' + f.number, () => {
         const actual = scriptNumber.decode(Buffer.from(f.hex, 'hex'), f.bytes);
 
@@ -20,7 +17,7 @@ describe('script-number', () => {
   });
 
   describe('encode', () => {
-    fixtures.forEach(f => {
+    script_number.forEach(f => {
       it(f.number + ' returns ' + f.hex, () => {
         const actual = scriptNumber.encode(f.number);
 
