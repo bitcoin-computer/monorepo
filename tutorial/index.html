@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794534687108">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794704205588">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,15 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.794534687108" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.794704205588" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.794534687108" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.794704205588" defer></script>
+
+    <link href="/static/custom.css" rel="stylesheet" />
+
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -164,7 +167,7 @@
         <span>A Smart Contract</span>
     </h2>
 </doc-anchor-target>
-<p>The Javascript program below is a smart contract for a one-person chat.</p>
+<p>The JavaScript program below is a smart contract for a one-person chat.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">import { Contract } from '@bitcoin-computer/lib'
 
@@ -185,8 +188,8 @@ class Chat extends Contract {
         <span>The Client-Side Wallet</span>
     </h2>
 </doc-anchor-target>
-<p>The <code v-pre>Computer</code> class is a client-side Javascript wallet that manages a Bitcoin private-public key pair. It can create normal Bitcoin transactions but also ones that contain metadata according to the Bitcoin Computer protocol. This allows for the creation, updating, and retrieval of on-chain objects.</p>
-<p>You can pass a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic into the constructor to create a specific private-public key pair, or leave the <code v-pre>mnemonic</code> parameter undefined to generate a random wallet. More configuration options are described <a href="../lib/constructor/">here</a>.</p>
+<p>The <code v-pre>Computer</code> class is a client-side JavaScript wallet that manages a Bitcoin private-public key pair. It can create normal Bitcoin transactions but also ones that contain metadata according to the Bitcoin Computer protocol. This allows for the creation, updating, and retrieval of on-chain objects.</p>
+<p>You can pass a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic into the constructor to create a specific private-public key pair, or leave the <code v-pre>mnemonic</code> parameter undefined to generate a random wallet. More configuration options are described <a href="/lib/constructor/">here</a>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">import { Computer } from '@bitcoin-computer/lib'
 
@@ -198,7 +201,7 @@ const computer = new Computer({ mnemonic: 'replace this seed' })</code></pre>
         <span>Creating On-Chain Objects</span>
     </h2>
 </doc-anchor-target>
-<p>The <a href="/api/new"><code v-pre>computer.new</code></a> function broadcasts a transaction inscribed with a Javascript expression consisting of a class and a constructor call. For example, the call</p>
+<p>The <a href="/api/new"><code v-pre>computer.new</code></a> function broadcasts a transaction inscribed with a JavaScript expression consisting of a class and a constructor call. For example, the call</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const chat = await computer.new(Chat, ['hello'])</code></pre>
 </doc-codeblock></div>
@@ -257,7 +260,7 @@ new Chat('hello')</code></pre>
         <span>Updating On-Chain Objects</span>
     </h2>
 </doc-anchor-target>
-<p>When a function is called on an on-chain object, a transaction is broadcast that is inscribed with a Javascript expression encoding the function call and an environment determining the undefined variables in the expressions. For example, the call</p>
+<p>When a function is called on an on-chain object, a transaction is broadcast that is inscribed with a JavaScript expression encoding the function call and an environment determining the undefined variables in the expressions. For example, the call</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">await chat.post('world')</code></pre>
 </doc-codeblock></div>
@@ -303,7 +306,7 @@ new Chat('hello')</code></pre>
             </svg>
         </div>
         <div class="pr-5 ml-3 w-full">
-<p>The state of the on-chain objects is never stored in the blockchain, just the Javascript expression that creates it. This makes it possible to store data compressed to its <a target="blank" href="https://en.wikipedia.org/wiki/Kolmogorov_complexity">Kolmogorov complexity</a> which is optimal.</p>
+<p>The state of the on-chain objects is never stored in the blockchain, just the JavaScript expression that creates it. This makes it possible to store data compressed to its <a target="blank" href="https://en.wikipedia.org/wiki/Kolmogorov_complexity">Kolmogorov complexity</a> which is optimal.</p>
         </div>
     </div>
 </div>
@@ -356,7 +359,7 @@ const publicKey = computer.getPublicKey()
 // Look up all revisions owned by user
 const revs = await computer.query({ publicKey })</code></pre>
 </doc-codeblock></div>
-<p>It is also possible to navigate the revision history of a on-chain object using <a href="../lib/next/"><code v-pre>computer.next</code></a> and <a href="../lib/prev/"><code v-pre>computer.prev</code></a>:</p>
+<p>It is also possible to navigate the revision history of a on-chain object using <a href="lib/next.md"><code v-pre>computer.next</code></a> and <a href="lib/prev.md"><code v-pre>computer.prev</code></a>:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">// Navigating forward
 expect(await computer.next(chat._id)).eq(chat._rev)
@@ -503,10 +506,10 @@ await paymentB.cashOut()</code></pre>
         <span>Expressions</span>
     </h2>
 </doc-anchor-target>
-<p>The syntax for on-chain objects introduced above provides a high-level abstraction over the Bitcoin Computer protocol. However we also provide low-level access to the protocol via the <a href="../lib/encode/"><code v-pre>computer.encode()</code></a> function. This gives more control over the transaction being built, enabling advanced applications like DEXes.</p>
-<p>The <a href="../lib/encode/"><code v-pre>computer.encode</code></a> function takes three arguments:</p>
+<p>The syntax for on-chain objects introduced above provides a high-level abstraction over the Bitcoin Computer protocol. However we also provide low-level access to the protocol via the <a href="./lib/encode"><code v-pre>computer.encode()</code></a> function. This gives more control over the transaction being built, enabling advanced applications like DEXes.</p>
+<p>The <a href="./lib/encode.md"><code v-pre>computer.encode</code></a> function takes three arguments:</p>
 <ul>
-<li>A Javascript expression <code v-pre>exp</code>,</li>
+<li>A JavaScript expression <code v-pre>exp</code>,</li>
 <li>an environment <code v-pre>env</code> that maps names to output specifiers,</li>
 <li>and a module specifier <code v-pre>mod</code>.</li>
 </ul>
@@ -561,7 +564,7 @@ expect(effect).deep.eq({
         <span>Module System</span>
     </h2>
 </doc-anchor-target>
-<p>The <a href="../lib/deploy/"><code v-pre>computer.deploy</code></a> function stores an ES6 modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar <code v-pre>import</code> syntax. In the example below <code v-pre>moduleB</code> refers to <code v-pre>moduleA</code> via <code v-pre>specifierA</code>. Module specifiers can be passed into <code v-pre>computer.encode</code> and <code v-pre>computer.new</code> functions.</p>
+<p>The <a href="./lib/deploy.md"><code v-pre>computer.deploy</code></a> function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar <code v-pre>import</code> syntax. In the example below <code v-pre>moduleB</code> refers to <code v-pre>moduleA</code> via <code v-pre>specifierA</code>. Module specifiers can be passed into <code v-pre>computer.encode</code> and <code v-pre>computer.new</code> functions.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const moduleA = 'export class A extends Contract {}'
 const specifierA = await computer.deploy(moduleA)
@@ -577,7 +580,7 @@ const { tx } = await computer.encode({
   mod: specifierB,
 })</code></pre>
 </doc-codeblock></div>
-<p>Modules can be loaded from the blockchain using <a href="../lib/load/">computer.load</a>.</p>
+<p>Modules can be loaded from the blockchain using <a href="./lib/load.md">computer.load</a>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const loadedB = await computer.load(specifierB)
 expect(loadedB).eq(moduleB)</code></pre>
@@ -654,15 +657,16 @@ await computer.broadcast(tx)</code></pre>
         <span>Mocking</span>
     </h2>
 </doc-anchor-target>
-<p>It is sometimes necessary to build a Bitcoin Computer transaction that spends an output of a transaction that has not been broadcast to the blockchain. One example is using smart contracts over payment channels or networks. Another example is selling an object to an unknown buyer: in this case the object to be used for the payment is not known when the seller builds the transaction (see for example <a href="../examples/sale/">here</a>).</p>
-<p>To facilitate such application the Bitcoin Computer has a feature called Mocking. &quot;Mocked&quot; objects can be passed into the <code v-pre>encode</code> function. In this case, when a transaction is build the Bitcoin Computer protocol assumes that an object with that value exists at the specified revision. To create a mock you can just instantiate an object that extends from <code v-pre>Mock</code>.</p>
+<p>Recall that an on-chain object is an object that is associated with the output of a transaction that is built according to the Bitcoin Computer protocol. We will call such an object an <em>off-chain object</em> if the transaction has not been broadcasted yet.</p>
+<p>It is sometimes necessary to update off-chain objects. For example, if smart contracts are used in payment channels or networks. Or, if an object is sold to an unknown buyer: in this case the object that the buyer will use is not known when seller build the transaction (see <a href="../examples/sale/">here</a>).</p>
+<p>Mocking is a technique for updating off-chain objects. The <code v-pre>mocks</code> property of the <code v-pre>encode</code> function can be set to a mapping from variable names to mocked objects. Here, a <em>mocked object</em> is an object that has <code v-pre>_id</code>, <code v-pre>_rev</code> and <code v-pre>_root</code> set to strings <code v-pre>mock-${hex}:${num}</code> where <code v-pre>hex</code> is a string of 64 hexadecimal characters and <code v-pre>num</code> is a number. In addition a revision needs to be specified for the mocked variable name in the <code v-pre>env</code> array (if the revision in <code v-pre>env</code> does not match the revision of the mocked object for the same variable name the revision in <code v-pre>env</code> takes precedence). When the transaction is built, it is assumed that the value stored at the revision specified in <code v-pre>env</code> evaluates to the value in the <code v-pre>mocks</code> for the same variable name.</p>
+<p>The Bitcoin Computer library exports a class <a href="../lib/mock/"><code v-pre>Mock</code></a> that makes it easy to create mocked objects. The example below shows how a mocked object can be used. Note that in the example, the object <code v-pre>a</code> is created after the transaction that spends it. Thus the revision of <code v-pre>a</code> is not known when <code v-pre>tx</code> is built. Once <code v-pre>a</code> is created on-chain and its revision becomes known, the code below updated the input of <code v-pre>tx</code> to spend the revision of <code v-pre>a</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">import { Mock, Contract } from '@bitcoin-computer/lib'
 
 class M extends Mock {
   constructor() {
-    super()
-    this.n = 1
+    super({ n: 1 })
   }
 
   inc() {
@@ -678,42 +682,39 @@ class A extends Contract {
   inc() {
     this.n += 1
   }
-}</code></pre>
-</doc-codeblock></div>
-<p>To use a mock, pass it into the <code v-pre>mocks</code> property of the <code v-pre>encode</code> function. When the object being mocked up becomes available on the blockchain, the mocked transaction can be modified to point to the actual object.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">// Create Mock
-m = new M()
+}
 
-// Create mocked transaction that updates an object a that
-// does not exist yet.
+// Create Mock
+const m = new M()
+
+// Create transaction that updates an object a that does not exist yet
 const { tx } = await computer.encode({
-  // exp contains the update expression
+  // The update expression
   exp: `a.inc()`,
 
-  // mocks determines the value assumed to exist at outpoint
+  // Map variable name a to mock m
   mocks: { a: m },
 
-  // env determines the outpoint to spend, as no object a exists yet
-  // we set it to the revision of the
+  // Specify that the input that spends a points to m._rev
   env: { a: m._rev },
 
-  // the transaction cannot be funded and signed until it is finalized
+  // The transaction can only be funded and signed once it is finalized
   fund: false,
   sign: false,
 })
 
 // Create on-chain object
-a = await computer.new(A)
-const [txId, index] = a._rev.split(':')
+const a = await computer.new(A)
 
-// Update outpoint of mocked transaction to point to on-chain transaction
-tx.updateInput(0, { txId, index: parseInt(index, 10) })
+// Update outpoint of tx to spend a's revision
+const [txId, num] = a._rev.split(':')
+const index = parseInt(num, 10)
+tx.updateInput(0, { txId, index })
 
 // Fund, sign and broadcast transaction
 await computer.fund(tx)
 await computer.sign(tx)
-const txId2 = await computer.broadcast(tx)</code></pre>
+await computer.broadcast(tx)</code></pre>
 </doc-codeblock></div>
 <doc-anchor-target id="building-the-chat-platform">
     <h2>
@@ -722,9 +723,9 @@ const txId2 = await computer.broadcast(tx)</code></pre>
     </h2>
 </doc-anchor-target>
 <p>We now sketch how a chat platform could be built where moderators can create a community and then sell it over the internet.</p>
-<p>Every community would be represented through multiple on-chain objects that are similar to the <code v-pre>Chat</code> object. Each of these objects contains a constant-size chunk of messages. When the current chunk object is full, a new object that would refer to the previous chunk would be created. When a user joins a chat the app would sync to the latest chunk. If the user scrolls up to the first message of the chunk, the user could click a button to load the previous chunk of messages.</p>
-<p>In order to support an unlimited number of users, the technique sketched at the end of <doc-anchor-trigger to="#bitcoin-script-support">this</doc-anchor-trigger> section could be used. However the kinds of scripts described there would have a 1-of-n ownership structure which could lead to abuse (for example, any member of the chat could destroy the current chunk object). This could be mitigated by maintaining an additional &quot;moderators&quot; object for every community. Moderators could spin up a new chunk in the case of abuse and have other privileges like kicking out users and deleting messages from the UI. The moderatos object could have an n-of-m ownership structure. To sell a community one could sell the moderators object. This can be accomplished by using the technique described <a href="../examples/sale/">here</a>.</p>
-<p>Many more details need to be figured out (for example how to implement a &quot;moderator object&quot; and how to prevent abuse). If you want to build such an app please reach out, we would be delighted to try to help you.</p>
+<p>Every community would be represented through multiple on-chain objects that are similar to the <code v-pre>Chat</code> object. In order to guarantee a fast load time, each of these objects contains a constant-size chunk of messages (have a look at <a href="../optimizations/">this</a> section to understand the build-in optimizations). When the current chunk object is full, a new object that would refer to the previous chunk would be created. When the chat app is loaded it syncs to the the latest chunk. If the user scrolls to the first message of the chunk, the user could click a button to load the previous chunk.</p>
+<p>In order to support an unlimited number of users, the technique sketched at the end of <doc-anchor-trigger to="#bitcoin-script-support">this</doc-anchor-trigger> section can be used. However the kinds of scripts described there have a 1-of-n ownership structure which can lead to abuse (for example, any member of the chat could destroy the current chunk object). This could be mitigated by maintaining an additional &quot;moderators&quot; object for every community. Moderators could spin up a new chunk in the case of abuse and point to the message before the chat was destroyed. Moderators could also have other privileges like kicking out users and deleting messages from the UI. The moderatos object could have an n-of-m ownership structure. To sell a community one can sell the moderators object. This can be accomplished by using the technique described <a href="../examples/sale/">here</a>.</p>
+<p>If you would like to build such an app please reach out, we would be delighted to try to help you.</p>
 
                                 
                                 <!-- Required only on API pages -->

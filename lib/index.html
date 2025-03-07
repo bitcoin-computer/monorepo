@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794534687108">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794704205588">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -11,7 +11,7 @@
     <!-- Primary Meta Tags -->
     <title>Lib</title>
     <meta name="title" content="Lib">
-    <meta name="description" content="The Bitcoin Computer Library (available on Github and Npm) provides all the functionality needed to write smart contracts with the Bitcoin Computer.">
+    <meta name="description" content="The Bitcoin Computer Library has the exports below.">
 
     <!-- Canonical -->
     <link rel="canonical" href="/lib/">
@@ -20,22 +20,25 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="/lib/">
     <meta property="og:title" content="Lib">
-    <meta property="og:description" content="The Bitcoin Computer Library (available on Github and Npm) provides all the functionality needed to write smart contracts with the Bitcoin Computer.">
+    <meta property="og:description" content="The Bitcoin Computer Library has the exports below.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="/lib/">
     <meta property="twitter:title" content="Lib">
-    <meta property="twitter:description" content="The Bitcoin Computer Library (available on Github and Npm) provides all the functionality needed to write smart contracts with the Bitcoin Computer.">
+    <meta property="twitter:description" content="The Bitcoin Computer Library has the exports below.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.794534687108" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.794704205588" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
+
+    <link href="/static/custom.css" rel="stylesheet" />
+
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -156,182 +159,31 @@
         <span>Lib</span>
     </h1>
 </doc-anchor-target>
-<p>The Bitcoin Computer Library (available on <a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme">Github</a> and <a href="https://www.npmjs.com/package/@bitcoin-computer/lib">Npm</a>) provides all the functionality needed to write smart contracts with the Bitcoin Computer.</p>
-<p>To interface with the blockchain, the Bitcoin Computer Lib connects to a Bitcoin Computer node. By default the Bitcoin Computer Lib connects to a node in regtest node that we provide. You can find more information about configuration options in the section <a href="constructor/">constructor</a>.</p>
-<doc-anchor-target id="api">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#api">#</doc-anchor-trigger>
-        <span>Api</span>
-    </h2>
-</doc-anchor-target>
-<doc-anchor-target id="basic">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#basic">#</doc-anchor-trigger>
-        <span>Basic</span>
-    </h3>
-</doc-anchor-target>
-<p>You can build almost all smart contracts with following methods.</p>
+<p>The Bitcoin Computer Library has the exports below.</p>
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
 <tr>
-<th>Method</th>
+<th>Class</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><a href="constructor/">constructor</a></td>
-<td>Creates an instance of class Computer</td>
+<td><a href="computer/">Computer</a></td>
+<td>Read and write smart contracts</td>
 </tr>
 <tr>
-<td><a href="new/">new</a></td>
-<td>Creates a smart object from a smart contract</td>
+<td><a href="transaction/">Transaction</a></td>
+<td>Parse Bitcoin Computer transactions</td>
 </tr>
 <tr>
-<td><a href="query/">query</a></td>
-<td>Finds the latest revisions of smart object</td>
+<td><a href="contract/">Contract</a></td>
+<td>Extend from this class to create smart contracts</td>
 </tr>
 <tr>
-<td><a href="sync/">sync</a></td>
-<td>Computes the state of a smart object from a given revision</td>
-</tr>
-</tbody>
-</table>
-</div>
-<doc-anchor-target id="advanced">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#advanced">#</doc-anchor-trigger>
-        <span>Advanced</span>
-    </h3>
-</doc-anchor-target>
-<p>To build advanced applications like swaps have a look at the following.</p>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="encode/">encode</a></td>
-<td>Encodes a Javascript expression into a Bitcoin transaction</td>
-</tr>
-<tr>
-<td><a href="encodenew/">encodeNew</a></td>
-<td>Encodes a constructor call into a Bitcoin transaction</td>
-</tr>
-<tr>
-<td><a href="encodecall/">encodeCall</a></td>
-<td>Encodes a function call into a Bitcoin transaction</td>
-</tr>
-<tr>
-<td><a href="decode/">decode</a></td>
-<td>Parses a Bitcoin transaction and returns Javascript expression</td>
-</tr>
-<tr>
-<td><a href="faucet/">faucet</a></td>
-<td>Fund a computer object on Regtest</td>
-</tr>
-</tbody>
-</table>
-</div>
-<doc-anchor-target id="modules">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#modules">#</doc-anchor-trigger>
-        <span>Modules</span>
-    </h3>
-</doc-anchor-target>
-<p>You can save transaction fees by using our ES6 module system.</p>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="deploy/">deploy</a></td>
-<td>Deploys an ES6 module on the blockchain</td>
-</tr>
-<tr>
-<td><a href="load/">load</a></td>
-<td>Loads an ES6 module from the blockchain</td>
-</tr>
-</tbody>
-</table>
-</div>
-<doc-anchor-target id="wallet">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#wallet">#</doc-anchor-trigger>
-        <span>Wallet</span>
-    </h3>
-</doc-anchor-target>
-<p>The wallet functionality within a <code v-pre>Computer</code> instance can be accessed using the following.</p>
-<div class="table-wrapper scrollbar overflow-hidden">
-<table class="compact">
-<thead>
-<tr>
-<th>Method</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><a href="sign/">sign</a></td>
-<td>Signs a Bitcoin transaction</td>
-</tr>
-<tr>
-<td><a href="broadcast/">broadcast</a></td>
-<td>Broadcasts a Bitcoin transaction</td>
-</tr>
-<tr>
-<td><a href="send/">send</a></td>
-<td>Sends satoshis to an address</td>
-</tr>
-<tr>
-<td><a href="rpccall/">rpcCall</a></td>
-<td>Access Bitcoin&#x27;s RPC interface</td>
-</tr>
-<tr>
-<td><a href="getaddress/">getAddress</a></td>
-<td>Returns the Bitcoin address of the computer wallet</td>
-</tr>
-<tr>
-<td><a href="getbalance/">getBalance</a></td>
-<td>Confirmed, unconfirmed and total balance in sats</td>
-</tr>
-<tr>
-<td><a href="getchain/">getChain</a></td>
-<td>Returns the blockchain</td>
-</tr>
-<tr>
-<td><a href="getnetwork/">getNetwork</a></td>
-<td>Returns the network</td>
-</tr>
-<tr>
-<td><a href="getmnemonic/">getMnemonic</a></td>
-<td>Returns a BIP39 mnemonic sentence</td>
-</tr>
-<tr>
-<td><a href="getpassphrase/">getPassphrase</a></td>
-<td>Returns the passphrase</td>
-</tr>
-<tr>
-<td><a href="getprivatekey/">getPrivateKey</a></td>
-<td>Returns the private key</td>
-</tr>
-<tr>
-<td><a href="getpublickey/">getPublicKey</a></td>
-<td>Returns the public key</td>
-</tr>
-<tr>
-<td><a href="getutxos/">getUtxos</a></td>
-<td>Returns an array of unspent transaction outputs</td>
+<td><a href="mock/">Mock</a></td>
+<td>Mock on-chain objects</td>
 </tr>
 </tbody>
 </table>
@@ -345,20 +197,20 @@
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../examples/ordinal-sale/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../development/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">Ordinal Sale</span>
+                                                <span class="block mt-1">Development</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../lib/broadcast/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../lib/computer/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">broadcast</span>
+                                                <span class="block mt-1">Computer</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>

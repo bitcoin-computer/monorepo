@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794534687108">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794704205588">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -33,13 +33,16 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.794534687108" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.794704205588" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
     <link href="../resources/css/katex.css?v=3.6.0" rel="stylesheet">
     <script id="katex-js" data-cfasync="false" src="../resources/js/katex.js?v=3.6.0" defer></script>
+
+    <link href="/static/custom.css" rel="stylesheet" />
+
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -415,7 +418,7 @@
     </h3>
 </doc-anchor-target>
 <p>While optimistic rollups use fraud proofs, zero-knowledge (ZK) rollups, and validity rollups more generally, use validity proofs. Instead of allowing the aggregator to publish a transaction and then question it, in ZK rollups, the aggregator must prove that the state hash is the correct using a validity proof.</p>
-<p>Similarly to optimistic rollups, an aggregator (sometimes called sequencer)  evaluates L2 transactions and published compressed transaction data and the new state hash to the main chain. However they add a ZK proof that is evaluated by a smart contract on the main chain. The smart contract ensures that only correct executions are recorded on the main chain. In contrast to optimistic rollups, ZK rollups do not require second layer verifiers and there is no dispute resolution. This means transactions achieve finality rapidly; there is no extended period of time where verifiers can trigger a dispute phase.</p>
+<p>Similarly to optimistic rollups, an aggregator (sometimes called sequencer) evaluates L2 transactions and published compressed transaction data and the new state hash to the main chain. However they add a ZK proof that is evaluated by a smart contract on the main chain. The smart contract ensures that only correct executions are recorded on the main chain. In contrast to optimistic rollups, ZK rollups do not require second layer verifiers and there is no dispute resolution. This means transactions achieve finality rapidly; there is no extended period of time where verifiers can trigger a dispute phase.</p>
 <p>The two most commonly used ZK proofs used for rollups are called SNARKs and STARKs. SNARKs are computationally efficient: the time needed to verify a SNARK grows slower than the time of the computation itself. However, they require a trusted setup. STARKs require no trusted setup, but require much more time for proof generation and verification.</p>
 <doc-anchor-target id="examples-3">
     <h3>
@@ -460,8 +463,9 @@
 <p>On Ethereum rollups generally introduce trusted third parties, central points of failures, and lockup periods.</p>
 <p>As building a validity proof requires heavy computations ZK rollups’ L2 fees are higher than optimistic rollups. Additionally, ZK rollup main chain transaction fees are higher as the validity proof needs to be validated on the main chain for every batch.</p>
 <p>On the other hand, optimistic rollups have a period where verifiers have an opportunity to publish a fraud proof. Thus users need to wait (usually a week on Ethereum, on Bitcoin it will likely be longer) until their deposits can be withdrawn. In ZK-rollups, deposits could be withdrawn immediately, however in many cases users have to wait for 24h due to safety concerns. In most cases there is only one aggregator and a very small number of validators and users trust that they do not collude.</p>
-<doc-panel id="complexity-of-snarks-and-starks">
-    <template #title>Complexity of SNARKs and STARKs</template>
+<doc-panels>
+   <doc-panel id="complexity-of-snarks-and-starks">
+       <template #title>Complexity of SNARKs and STARKs</template>
 <p>The Big-O notation is used in Computer Science to describe the upper bound of the runtime of an algorithm in terms of the size of its input. An algorithm is said to run in time <span class="math">O(f(n))</span> if for sufficiently large input sizes <span class="math">n</span>, the algorithm&#x27;s runtime will not exceed <span class="math">c * f(n)</span> steps.</p>
 <p>Prover Complexity refers to the computational complexity associated with generating a proof for a given computation. Verifier Complexity refers to the computational complexity associated with verifying the correctness of a proof for a given computation. The table below is obtained from <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=9862815">here</a></p>
 <div class="table-wrapper scrollbar overflow-hidden">
@@ -490,8 +494,12 @@
 </tbody>
 </table>
 </div>
-<p>Verifier complexity for SNARKs is <span class="math">O(1)</span> meaning that the time to verify a computation can be take longer for small inputs but is faster (even constant) for large enough inputs. Verifier complexity for STARKs is <span class="math">O(\text{log}(n)^c)</span> meaning that it can take much longer to verify a short computation but for very large computations verification is faster than computation.</p>
-</doc-panel>
+<doc-anchor-target id="verifier-complexity-for-snarks-is--meaning-that-the-time-to-verify-a-computation-can-be-take-longer-for-small-inputs-but-is-faster-even-constant-for-large-enough-inputs-verifier-complexity-for-starks-is--meaning-that-it-can-take-much-longer-to-verify-a-short-computation-but-for-very-large-computations-verification-is-faster-than-computation">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#verifier-complexity-for-snarks-is--meaning-that-the-time-to-verify-a-computation-can-be-take-longer-for-small-inputs-but-is-faster-even-constant-for-large-enough-inputs-verifier-complexity-for-starks-is--meaning-that-it-can-take-much-longer-to-verify-a-short-computation-but-for-very-large-computations-verification-is-faster-than-computation">#</doc-anchor-trigger>
+        <span>Verifier complexity for SNARKs is <span class="math">O(1)</span> meaning that the time to verify a computation can be take longer for small inputs but is faster (even constant) for large enough inputs. Verifier complexity for STARKs is <span class="math">O(\text{log}(n)^c)</span> meaning that it can take much longer to verify a short computation but for very large computations verification is faster than computation.</span>
+    </h1>
+</doc-anchor-target>
 <p><strong>Trustlessness.</strong> In optimistic rollups users trust that one honest validator is online at all times. STARKs are trustless, SNARKS are not.</p>
 <p><strong>Expressiveness.</strong> Depends on the expressiveness of the L2.</p>
 <p><strong>Efficiency.</strong> Depends on the efficiency of the L2.</p>
@@ -510,11 +518,16 @@
     </h3>
 </doc-anchor-target>
 <p>The software for a block-order based protocol reads all transactions in the main chain in block-order to find transactions with meta data specific for that protocol. It will then interpret that sequence of meta data values as instructions and build up a data structure of smart contract data. The smart contract data will for example store which user owns which tokens.</p>
-<doc-panel id="formal-description" collapsed>
-    <template #title>Formal Description</template>
+   </doc-panel>
+   <doc-panel id="formal-description" collapsed>
+       <template #title>Formal Description</template>
 <p>We denote the set of transactions by <span class="math">T</span>. We denote by <span class="math">V</span> the set of smart contract data values where <span class="math">\{\} \in V</span> denotes the empty value. We denote the set of sequences of values in a set <span class="math">X</span> by <span class="math">X^*</span>.</p>
-<p>A block-order based meta protocol <span class="math">P</span> consists of a function <span class="math">f: V \times T \rightarrow V</span>. Let <span class="math">t_1 \ldots t_n \in T^*</span> be the sequence of meta data values for <span class="math">P</span> in the main chain in the order of their occurrence. Then <span class="math">P</span> computes the smart contract data value <span class="math">f( \ldots f(f(\{\}, t_1), t_2) \ldots , t_n)</span>.</p>
-</doc-panel>
+<doc-anchor-target id="a-block-order-based-meta-protocol--consists-of-a-function--let--be-the-sequence-of-meta-data-values-for--in-the-main-chain-in-the-order-of-their-occurrence-then--computes-the-smart-contract-data-value-">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#a-block-order-based-meta-protocol--consists-of-a-function--let--be-the-sequence-of-meta-data-values-for--in-the-main-chain-in-the-order-of-their-occurrence-then--computes-the-smart-contract-data-value-">#</doc-anchor-trigger>
+        <span>A block-order based meta protocol <span class="math">P</span> consists of a function <span class="math">f: V \times T \rightarrow V</span>. Let <span class="math">t_1 \ldots t_n \in T^*</span> be the sequence of meta data values for <span class="math">P</span> in the main chain in the order of their occurrence. Then <span class="math">P</span> computes the smart contract data value <span class="math">f( \ldots f(f(\{\}, t_1), t_2) \ldots , t_n)</span>.</span>
+    </h1>
+</doc-anchor-target>
 <doc-anchor-target id="example-brc20">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#example-brc20">#</doc-anchor-trigger>
@@ -546,12 +559,17 @@
     </h3>
 </doc-anchor-target>
 <p>Whereas block order based systems compute one global value from all transactions, UTXO based protocols compute a value for each output that is relevant to that protocol. The value computed for an output can usually depend on the meta data on that transaction and the valued computed for the inputs spent.</p>
-<doc-panel id="formal-description" collapsed>
-    <template #title>Formal Description</template>
+   </doc-panel>
+   <doc-panel id="formal-description" collapsed>
+       <template #title>Formal Description</template>
 <p>Let <span class="math">O</span> be the set of outputs. A UTXO based protocol <span class="math">P</span> is a function <span class="math">P: O \rightarrow V</span> that map outputs to smart contract data values.</p>
 <p>We will say that a protocol <span class="math">P</span> is well designed if <span class="math">P(o)</span> can be computed from the meta data on the transaction containing <span class="math">o</span> and the values of the outputs spent by <span class="math">t</span>. That is, there is a function <span class="math">f_P: O \times V^* \rightarrow V</span> such that <span class="math">P(o) = f_P(o, P(o_1) \ldots P(o_n))</span> where <span class="math">o_1 \ldots o_n</span> are the outputs spent by the transaction containing <span class="math">o</span>.</p>
-<p>We can see that all well designed UTXO based protocols are efficient: You can compute the value of an output by parsing &quot;only&quot; the transactions that are reachable form the transaction containing the output via the of the spending relation, potentially using multiple hops. This is still a large number of transactions in general, but for some values for example those on the outputs of a coinbase transaction can be computed from one transaction.</p>
-</doc-panel>
+<doc-anchor-target id="we-can-see-that-all-well-designed-utxo-based-protocols-are-efficient-you-can-compute-the-value-of-an-output-by-parsing-only-the-transactions-that-are-reachable-form-the-transaction-containing-the-output-via-the-of-the-spending-relation-potentially-using-multiple-hops-this-is-still-a-large-number-of-transactions-in-general-but-for-some-values-for-example-those-on-the-outputs-of-a-coinbase-transaction-can-be-computed-from-one-transaction">
+    <h1>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#we-can-see-that-all-well-designed-utxo-based-protocols-are-efficient-you-can-compute-the-value-of-an-output-by-parsing-only-the-transactions-that-are-reachable-form-the-transaction-containing-the-output-via-the-of-the-spending-relation-potentially-using-multiple-hops-this-is-still-a-large-number-of-transactions-in-general-but-for-some-values-for-example-those-on-the-outputs-of-a-coinbase-transaction-can-be-computed-from-one-transaction">#</doc-anchor-trigger>
+        <span>We can see that all well designed UTXO based protocols are efficient: You can compute the value of an output by parsing &quot;only&quot; the transactions that are reachable form the transaction containing the output via the of the spending relation, potentially using multiple hops. This is still a large number of transactions in general, but for some values for example those on the outputs of a coinbase transaction can be computed from one transaction.</span>
+    </h1>
+</doc-anchor-target>
 <doc-anchor-target id="example-ordinals">
     <h4>
         <doc-anchor-trigger class="header-anchor-trigger" to="#example-ordinals">#</doc-anchor-trigger>
@@ -599,8 +617,8 @@
     <figcaption class="caption caption-float">The Bitcoin Computer protocol</figcaption>
 </figure>
 </p>
-<p>This Bitcoin Computer is a general purpose meta protocol, meaning that it can express all computable smart contracts. The smart contract data values are arbitrarily nested Javascript objects. The meta data values contain mostly Javascript expressions.</p>
-<p>There are two types of transactions: &quot;modules&quot; contain Javascript (ES6) modules. All other transactions contain a Javascript expression, a &quot;blockchain environment&quot; that associated (free) variables in the expressions with input numbers, and an optional &quot;module specifier&quot; containing a transaction id. In order to compute the value of an output, the Bitcoin Computer software</p>
+<p>This Bitcoin Computer is a general purpose meta protocol, meaning that it can express all computable smart contracts. The smart contract data values are arbitrarily nested JavaScript objects. The meta data values contain mostly JavaScript expressions.</p>
+<p>There are two types of transactions: &quot;modules&quot; contain JavaScript (ES6) modules. All other transactions contain a JavaScript expression, a &quot;blockchain environment&quot; that associated (free) variables in the expressions with input numbers, and an optional &quot;module specifier&quot; containing a transaction id. In order to compute the value of an output, the Bitcoin Computer software</p>
 <ul>
 <li>imports the module from the transaction referred to</li>
 <li>computes the values for the outputs being spent and then substitutes these values for the free variables in the expressions as designated by the blockchain environment</li>
@@ -638,6 +656,7 @@
 [14] <a href="https://www.bitcoinrollups.io/">bitcoinrollups.io</a><br />
 [15] <a href="https://www.hiro.so/blog/building-on-bitcoin-project-comparison">Hiro Blog</a><br />
 [16] <a href="https://github.com/john-light/validity-rollups/blob/main/">Validity Rollups</a>validity_rollups_on_bitcoin.md</p>
+   </doc-panel>
 
                                 
                                 <!-- Required only on API pages -->
@@ -647,11 +666,11 @@
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../node/wallet/utxos/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../examples/ordinal-sale/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">utxos</span>
+                                                <span class="block mt-1">Ordinal Sale</span>
                                             </span>
                                         </a>
                                     </div>

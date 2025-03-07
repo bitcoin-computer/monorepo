@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794534687108">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794704205588">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,11 +31,14 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.794534687108" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.794704205588" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
+
+    <link href="/static/custom.css" rel="stylesheet" />
+
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -164,7 +167,7 @@
     </h2>
 </doc-anchor-target>
 <p>To compute the value associated with an output, the expression is first evaluated. If the expression evaluates to a basic type, this value is associated with the first output. If the value is nested and contains multiple sub-objects, each sub-object is associated with a separate output.</p>
-<p>This simple mechanism makes it possible to store arbitrarily complex Javascript values in the outputs of a transaction using an highly efficient encoding: Instead of storing a value, an expression is stored that computes the value. This is much more efficient. In fact, it makes it possible to store a value at its optimal compression (see the <a href="https://en.wikipedia.org/wiki/Kolmogorov_complexity">Kologromov Complexity</a>).</p>
+<p>This simple mechanism makes it possible to store arbitrarily complex JavaScript values in the outputs of a transaction using an highly efficient encoding: Instead of storing a value, an expression is stored that computes the value. This is much more efficient. In fact, it makes it possible to store a value at its optimal compression (see the <a href="https://en.wikipedia.org/wiki/Kolmogorov_complexity">Kologromov Complexity</a>).</p>
 <doc-anchor-target id="example">
     <h3>
         <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
@@ -179,7 +182,7 @@
         <span>Updating Values</span>
     </h2>
 </doc-anchor-target>
-<p>Expressions can contain undefined variables. For example, the variable <code v-pre>x</code> is undefined in the expression <code v-pre>x+4</code>. It is not possible to evaluate an expression with an undefined variable. For example, an Javascript interpreter will throw a <code v-pre>ReferenceError</code> when trying to evaluate <code v-pre>x+4</code>.</p>
+<p>Expressions can contain undefined variables. For example, the variable <code v-pre>x</code> is undefined in the expression <code v-pre>x+4</code>. It is not possible to evaluate an expression with an undefined variable. For example, an JavaScript interpreter will throw a <code v-pre>ReferenceError</code> when trying to evaluate <code v-pre>x+4</code>.</p>
 <p>In the Bitcoin Computer protocol, expressions with undefined variables are used to encode data updates. To determine a value for the undefined variables, the undefined variables in an expression must be associated with inputs of the transaction. The protocol will then compute the values associated with the outputs spent. These values are the substituted (aka plugged into) the respective undefined variables. This yields an expression where all variables are defined that can be evaluated. The value returned from this evaluation is associated with the outputs as explained in the previous section.</p>
 <doc-anchor-target id="example-1">
     <h3>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794534687108">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794704205588">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,15 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.794534687108" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.794704205588" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794534687108" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.794534687108" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.794704205588" defer></script>
+
+    <link href="/static/custom.css" rel="stylesheet" />
+
 </head>
 <body>
     <div id="docs-app" class="relative text-base antialiased text-gray-700 bg-white font-body dark:bg-dark-850 dark:text-dark-300">
@@ -450,23 +453,23 @@ The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used t
 </thead>
 <tbody>
 <tr>
-<td><a href="wallet/balance/">balance</a></td>
+<td><a href="balance/">balance</a></td>
 <td>Get the balance of a wallet.</td>
 </tr>
 <tr>
-<td><a href="wallet/list-txs/">list-txs</a></td>
+<td><a href="list-txs/">list-txs</a></td>
 <td>List sent and received transactions for a given address.</td>
 </tr>
 <tr>
-<td><a href="wallet/sent-outputs/">sent-outputs</a></td>
+<td><a href="sent-outputs/">sent-outputs</a></td>
 <td>List sent outputs of a wallet.</td>
 </tr>
 <tr>
-<td><a href="wallet/received-outputs/">received-outputs</a></td>
+<td><a href="received-outputs/">received-outputs</a></td>
 <td>List received outputs of a wallet.</td>
 </tr>
 <tr>
-<td><a href="wallet/utxos/">utxos</a></td>
+<td><a href="utxos/">utxos</a></td>
 <td>List unspent outputs of a wallet.</td>
 </tr>
 </tbody>
@@ -488,19 +491,19 @@ The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used t
 </thead>
 <tbody>
 <tr>
-<td><a href="transaction/ancestors/">ancestors</a></td>
+<td><a href="ancestors/">ancestors</a></td>
 <td>Get the ancestors of a transaction.</td>
 </tr>
 <tr>
-<td><a href="transaction/bulk/">bulk</a></td>
+<td><a href="bulk/">bulk</a></td>
 <td>Get raw transactions for a list of transaction ids.</td>
 </tr>
 <tr>
-<td><a href="transaction/json/">json</a></td>
+<td><a href="json/">json</a></td>
 <td>Get a transaction in json format.</td>
 </tr>
 <tr>
-<td><a href="transaction/post/">post</a></td>
+<td><a href="post/">post</a></td>
 <td>Post a transaction to the Bitcoin network.</td>
 </tr>
 </tbody>
@@ -522,15 +525,15 @@ The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used t
 </thead>
 <tbody>
 <tr>
-<td><a href="./blockchain/height.md">height</a></td>
+<td><a href="./height.md">height</a></td>
 <td>Get the height of an specific block.</td>
 </tr>
 <tr>
-<td><a href="./blockchain/mine.md">mine</a></td>
+<td><a href="./mine.md">mine</a></td>
 <td>Mine an specific number of blocks to a random address.</td>
 </tr>
 <tr>
-<td><a href="./blockchain/height.md">rpc</a></td>
+<td><a href="./height.md">rpc</a></td>
 <td>Call a Bitcoin RPC method.</td>
 </tr>
 </tbody>
@@ -552,11 +555,11 @@ The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used t
 </thead>
 <tbody>
 <tr>
-<td><a href="regtest-faucet/faucet/">faucet</a></td>
+<td><a href="./faucet.md">faucet</a></td>
 <td>Get coins from the faucet.</td>
 </tr>
 <tr>
-<td><a href="regtest-faucet/faucetscript/">faucetScript</a></td>
+<td><a href="./faucetscript.md">faucetScript</a></td>
 <td>Get coins from the faucet using a script.</td>
 </tr>
 </tbody>
@@ -578,23 +581,23 @@ The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used t
 </thead>
 <tbody>
 <tr>
-<td><a href="query-revisions/next/">next</a></td>
+<td><a href="next/">next</a></td>
 <td>Get the next revision of a given revision.</td>
 </tr>
 <tr>
-<td><a href="query-revisions/prev/">prev</a></td>
+<td><a href="prev/">prev</a></td>
 <td>Get the previous revision of a given revision.</td>
 </tr>
 <tr>
-<td><a href="query-revisions/non-standard-utxos/">non-standard-utxos</a></td>
+<td><a href="non-standard-utxos/">non-standard-utxos</a></td>
 <td>Query revisions by module specifier, public key, limit, order, offset and list of transaction ids.</td>
 </tr>
 <tr>
-<td><a href="query-revisions/revs/">revs</a></td>
+<td><a href="revs/">revs</a></td>
 <td>Get the revisions of a list of transactions.</td>
 </tr>
 <tr>
-<td><a href="query-revisions/revtoid/">revToId</a></td>
+<td><a href="revtoid/">revToId</a></td>
 <td>Given a revision, get the id of the smart contract.</td>
 </tr>
 </tbody>
@@ -616,11 +619,11 @@ The variables <code v-pre>CHAIN</code> and <code v-pre>NETWORK</code> are used t
 </thead>
 <tbody>
 <tr>
-<td><a href="regtest-faucet/faucet/">id</a></td>
+<td><a href="./faucet.md">id</a></td>
 <td>Get the data stored in the offchain storage.</td>
 </tr>
 <tr>
-<td><a href="regtest-faucet/faucetscript/">store</a></td>
+<td><a href="./faucetscript.md">store</a></td>
 <td>Stores the hex of the data in the offchain storage.</td>
 </tr>
 </tbody>
@@ -665,20 +668,20 @@ The following table shows the times and costs for syncing to a Litecoin node on 
                             
                                 <nav class="flex mt-14">
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../lib/sync/">
+                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../lib/transaction/">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                             <span>
                                                 <span class="block text-xs font-normal text-gray-400 dark:text-dark-400">Previous</span>
-                                                <span class="block mt-1">sync</span>
+                                                <span class="block mt-1">Transaction</span>
                                             </span>
                                         </a>
                                     </div>
                             
                                     <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../node/blockchain/rpc/">
+                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-blue-500 dark:text-blue-400 border border-gray-300 hover:border-gray-400 dark:border-dark-650 dark:hover:border-dark-450 rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../node/ancestors/">
                                             <span>
                                                 <span class="block text-xs font-normal text-right text-gray-400 dark:text-dark-400">Next</span>
-                                                <span class="block mt-1">rpc</span>
+                                                <span class="block mt-1">ancestors</span>
                                             </span>
                                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                                         </a>
