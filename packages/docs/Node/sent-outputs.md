@@ -1,12 +1,20 @@
 # sent-outputs
 
-#### `/v1/CHAIN/NETWORK/wallet/:address/sent-outputs`
+_Returns the outputs that were sent from a given address._
 
-Returns the outputs that were sent from a given address.
+## Endpooint
+
+`/v1/CHAIN/NETWORK/wallet/:address/sent-outputs`
+
+## Example
+
+### Request
 
 ```shell
 curl -X GET http://localhost:1031/v1/LTC/regtest/wallet/mkMUZNoiLh4uuuENU5HNZ4Ssxo8BqEQc5t/sent-outputs
 ```
+
+### Response
 
 ```json
 [

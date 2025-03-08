@@ -1,12 +1,20 @@
 # received-outputs
 
-#### `/v1/CHAIN/NETWORK/wallet/:address/received-outputs`
+_Returns the outputs that were received by a given address._
 
-Returns the outputs that were received by a given address.
+## Endpoint
+
+`/v1/CHAIN/NETWORK/wallet/:address/received-outputs`
+
+## Example
+
+### Request
 
 ```shell
 curl -X GET http://localhost:1031/v1/LTC/regtest/wallet/mkMUZNoiLh4uuuENU5HNZ4Ssxo8BqEQc5t/received-outputs
 ```
+
+### Response
 
 ```json
 [

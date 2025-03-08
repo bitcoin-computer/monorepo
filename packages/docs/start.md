@@ -116,11 +116,11 @@ The expected output is:
 ```js Terminal
 Counter {
   n: 1,
-  _id: '656...024:0',
-  _rev: '90f...73f:0',
-  _root: '656...024:0',
+  _id: <transaction id>:<output number>,
+  _rev: <transaction id>:<output number>,
+  _root: <transaction id>:<output number>,
   _amount: 7860,
-  _owners: ['037...954']
+  _owners: [<string encoding of public key>]
 }
 ```
 

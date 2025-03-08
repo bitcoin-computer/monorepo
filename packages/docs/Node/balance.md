@@ -1,12 +1,24 @@
 # balance
 
-#### `/v1/CHAIN/NETWORK/address/:address/balance`
+_Returns the balance of a given address._
 
-Returns the confirmed, unconfirmed and total balance for a given address.
+## Description
+
+Returns the confirmed, unconfirmed and total balance.
+
+## Endpoint
+
+`/v1/CHAIN/NETWORK/address/:address/balance`
+
+## Example
+
+### Request
 
 ```shell
 curl -X GET http://localhost:1031/v1/LTC/regtest/address/mkMUZNoiLh4uuuENU5HNZ4Ssxo8BqEQc5t/balance
 ```
+
+### Response
 
 ```json
 {

@@ -1,8 +1,14 @@
 # rpc
 
-#### `/v1/CHAIN/NETWORK/rpc`
+_Call a Bitcoin RPC method._
 
-Call a Bitcoin RPC method.
+## Endpoint
+
+`/v1/CHAIN/NETWORK/rpc`
+
+## Example
+
+### Request
 
 ```shell
 curl -X POST http://localhost:1031/v1/LTC/regtest/rpc \
@@ -12,6 +18,8 @@ curl -X POST http://localhost:1031/v1/LTC/regtest/rpc \
            "params": ""
          }'
 ```
+
+### Response
 
 ```json
 {

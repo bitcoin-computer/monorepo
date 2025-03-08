@@ -28,9 +28,9 @@ export class Mock {
 
 ## Example
 
-The example below shows how a mocked object can be used. Note that in the example, the object `a` is created after the transaction that spends it. Thus the revision of `a` is not known when `tx` is built. Once `a` is created on-chain and its revision becomes known, the code below updated the input of `tx` to spend the revision of `a`.
+<!-- The example below shows how a mocked object can be used. Note that the object `a` is created after the transaction that spends it. Thus the revision of `a` is not known when `tx` is built. Once `a` is created on-chain and its revision becomes known, the code below updated the input of `tx` to spend the revision of `a`. -->
 
-```js
+<!-- ```js
 import { Mock, Contract } from '@bitcoin-computer/lib'
 
 class M extends Mock {
@@ -84,4 +84,6 @@ tx.updateInput(0, { txId, index })
 await computer.fund(tx)
 await computer.sign(tx)
 await computer.broadcast(tx)
-```
+``` -->
+
+:::code source="../../../lib/test/mock.test.ts" :::
