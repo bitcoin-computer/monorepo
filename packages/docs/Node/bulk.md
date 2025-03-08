@@ -1,8 +1,14 @@
 # bulk
 
-#### `/v1/CHAIN/NETWORK/tx/bulk`
+_Returns the raw transaction hexes for a given list of transaction ids._
 
-Returns the raw transaction hexes for a given list of transaction IDs.
+## Endpoint
+
+`/v1/CHAIN/NETWORK/tx/bulk`
+
+## Example
+
+### Request
 
 ```shell
 curl -X POST http://localhost:1031/v1/LTC/regtest/tx/bulk \
@@ -15,6 +21,8 @@ curl -X POST http://localhost:1031/v1/LTC/regtest/tx/bulk \
            ]
          }'
 ```
+
+### Response
 
 ```json
 ["0100000002b80e0d87611d...", "0100000001b80e0d87611d...", "0100000000012b087e1832..."]

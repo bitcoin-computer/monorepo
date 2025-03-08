@@ -1,12 +1,20 @@
 # utxos
 
-#### `/v1/CHAIN/NETWORK/wallet/:address/utxos`
+_Returns the UTXOs for a given address._
 
-Returns the UTXOs for a given address.
+## Endpoint
+
+`/v1/CHAIN/NETWORK/wallet/:address/utxos`
+
+## Example
+
+### Request
 
 ```shell
 curl -X GET http://localhost:1031/v1/LTC/regtest/wallet/mwJn1YPMq7y5F8J3LkC5Hxg9PHyZ5K4cFv/utxos
 ```
+
+### Response
 
 ```json
 [

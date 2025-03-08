@@ -1,12 +1,20 @@
 # json
 
-#### `/v1/CHAIN/NETWORK/tx/:txId/json`
+_Returns the JSON representation of a given transaction._
 
-Returns the JSON representation of a given transaction.
+## Endpoint
+
+`/v1/CHAIN/NETWORK/tx/:txId/json`
+
+## Example
+
+### Request
 
 ```shell
 curl -X GET http://localhost:1031/v1/LTC/regtest/tx/e53c1440f547b51343d46a2acaafe127e915c7ed08a7ef2ed0ffc248360c0cca/json
 ```
+
+### Response
 
 ```json
 {

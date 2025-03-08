@@ -1,12 +1,20 @@
 # list-txs
 
-#### `/v1/CHAIN/NETWORK/wallet/:address/list-txs`
+_Returns the sent and received transactions for a given address._
 
-Returns the sent and received transactions for a given address.
+## Endpoint
+
+`/v1/CHAIN/NETWORK/wallet/:address/list-txs`
+
+## Example
+
+### Request
 
 ```shell
 curl -X GET http://localhost:1031/v1/LTC/regtest/wallet/mkMUZNoiLh4uuuENU5HNZ4Ssxo8BqEQc5t/list-txs
 ```
+
+### Response
 
 ```json
 {

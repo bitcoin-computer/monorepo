@@ -1,8 +1,14 @@
 # revs
 
-#### `/v1/CHAIN/NETWORK/revs`
+_Get the revisions of a list of transactions._
 
-Get the revisions of a list of transactions.
+## Endpoint
+
+`/v1/CHAIN/NETWORK/revs`
+
+## Exampls
+
+### Request
 
 ```shell
 curl -X POST http://localhost:1031/v1/LTC/regtest/revs \
@@ -14,6 +20,8 @@ curl -X POST http://localhost:1031/v1/LTC/regtest/revs \
            ]
          }'
 ```
+
+### Response
 
 ```json
 [

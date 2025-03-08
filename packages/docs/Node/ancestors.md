@@ -1,12 +1,24 @@
 # ancestors
 
-#### `/v1/CHAIN/NETWORK/tx/:txId/ancestors`
+_Returns an array of transaction ids for all transaction that the on-chain object at the given transaction if depends on._
 
-Returns an array with the transaction IDs of the ancestors of a given transaction. An ancestor is a transaction that is an input to the given transaction.
+## Description
+
+An on-chain object _o_ depends on a transaction _tx_ if _tx_ is a Bitcoin Computer transaction labelled with an expression _exp_ and _exp_ needs to be evaluated in order to compute the the value of _o_. The endpoint returns all ids of such transactions.
+
+## Endpoint
+
+`/v1/CHAIN/NETWORK/tx/:txId/ancestors`
+
+## Example
+
+### Request
 
 ```shell
 curl -X GET http://localhost:1031/v1/LTC/regtest/tx/e53c1440f547b51343d46a2acaafe127e915c7ed08a7ef2ed0ffc248360c0cca/ancestors
 ```
+
+### Response
 
 ```json
 [
