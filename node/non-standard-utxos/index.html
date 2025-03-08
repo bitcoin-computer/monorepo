@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794704205588">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.794704205588" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.794704205588" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.794704205588" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -160,27 +160,49 @@
         <span>non-standard-utxos</span>
     </h1>
 </doc-anchor-target>
-<doc-anchor-target id="v1chainnetworknon-standard-utxos">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#v1chainnetworknon-standard-utxos">#</doc-anchor-trigger>
-        <span><code v-pre>/v1/CHAIN/NETWORK/non-standard-utxos</code></span>
-    </h4>
+<p><em>Query revisions by module specifier, public key, limit, order, offset and list of transaction ids.</em></p>
+<doc-anchor-target id="endpoint">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#endpoint">#</doc-anchor-trigger>
+        <span>Endpoint</span>
+    </h2>
 </doc-anchor-target>
-<p>Query revisions by module specifier, public key, limit, order, offset and list of transaction ids.</p>
+<p><code v-pre>/v1/CHAIN/NETWORK/non-standard-utxos</code></p>
+<doc-anchor-target id="example">
+    <h2>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
+        <span>Example</span>
+    </h2>
+</doc-anchor-target>
+<doc-anchor-target id="requests">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#requests">#</doc-anchor-trigger>
+        <span>Requests</span>
+    </h3>
+</doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-bash"><code v-pre class="language-bash">curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?mod=1
-curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?publicKey=02e3b0...
-curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?limit=10
-curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?order=DESC
-curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?offset=10
-
-id=&quot;4446faf2ea02713580152f2355bc91e2eac3649c85e38d882e1ca795bb7b1494:0&quot;
-json_array=$(jq -n --arg id &quot;$id&quot; '[$id]')
-encoded_json=$(echo &quot;$json_array&quot; | jq -r @uri)
-url=&quot;http://localhost:1031/v1/LTC/regtest/non-standard-utxos?ids=$encoded_json&quot;
-curl -X GET &quot;$url&quot;</code></pre>
+<pre class="language-bash"><code v-pre class="language-bash">curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?publicKey=02e3b0...</code></pre>
 </doc-codeblock></div>
-<!-- curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?ids=%5B%224446faf2ea02713580152f2355bc91e2eac3649c85e38d882e1ca795bb7b1494%3A0%22%5D -->
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?publicKey=02e3b0...&amp;mod=af19fa7...</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?publicKey=02e3b0...&amp;mod=af19fa7...&amp;limit=10</code></pre>
+</doc-codeblock></div>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre class="language-bash"><code v-pre class="language-bash">curl -X GET http://localhost:1031/v1/LTC/regtest/non-standard-utxos?ids=%5B%224446faf2ea02713580152f2355bc91e2eac3649c85e38d882e1ca795bb7b1494%3A0%22%5D</code></pre>
+</doc-codeblock></div>
+<!-- id="4446faf2ea02713580152f2355bc91e2eac3649c85e38d882e1ca795bb7b1494:0"
+json_array=$(jq -n --arg id "$id" '[$id]')
+encoded_json=$(echo "$json_array" | jq -r @uri)
+url="http://localhost:1031/v1/LTC/regtest/non-standard-utxos?ids=$encoded_json"
+curl -X GET "$url" -->
+<doc-anchor-target id="response">
+    <h3>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#response">#</doc-anchor-trigger>
+        <span>Response</span>
+    </h3>
+</doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-json"><code v-pre class="language-json">[&quot;4446faf2ea02713580152f2355bc91e2eac3649c85e38d882e1ca795bb7b1494:0&quot;]</code></pre>
 </doc-codeblock></div>
