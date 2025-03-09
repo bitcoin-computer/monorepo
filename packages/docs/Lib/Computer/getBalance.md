@@ -18,11 +18,4 @@ Returns the confirmed balance in Satoshi, the unconfirmed balance, and the total
 
 ## Example
 
-```ts
-const computer = new Computer()
-expect(await computer.getBalance()).matchPattern({
-  confirmed: (c) => typeof c === 'number',
-  unconfirmed: (u) => typeof u === 'number',
-  balance: (b) => typeof b === 'number',
-})
-```
+:::code source="../../../lib/test/lib/computer/get-balance.test.ts" :::

@@ -28,62 +28,6 @@ export class Mock {
 
 ## Example
 
-<!-- The example below shows how a mocked object can be used. Note that the object `a` is created after the transaction that spends it. Thus the revision of `a` is not known when `tx` is built. Once `a` is created on-chain and its revision becomes known, the code below updated the input of `tx` to spend the revision of `a`. -->
+The example below shows how a mocked object can be used. Note that the object `a` is created after the transaction that spends it. Thus the revision of `a` is not known when `tx` is built. Once `a` is created on-chain and its revision becomes known, the code below updated the input of `tx` to spend the revision of `a`.
 
-<!-- ```js
-import { Mock, Contract } from '@bitcoin-computer/lib'
-
-class M extends Mock {
-  constructor() {
-    super({ n: 1 })
-  }
-
-  inc() {
-    this.n += 1
-  }
-}
-
-class A extends Contract {
-  constructor() {
-    super({ n: 1 })
-  }
-
-  inc() {
-    this.n += 1
-  }
-}
-
-// Create Mock
-const m = new M()
-
-// Create transaction that updates an object a that does not exist yet
-const { tx } = await computer.encode({
-  // The update expression
-  exp: `a.inc()`,
-
-  // Map variable name a to mock m
-  mocks: { a: m },
-
-  // Specify that the input that spends a points to m._rev
-  env: { a: m._rev },
-
-  // The transaction can only be funded and signed once it is finalized
-  fund: false,
-  sign: false,
-})
-
-// Create on-chain object
-const a = await computer.new(A)
-
-// Update outpoint of tx to spend a's revision
-const [txId, num] = a._rev.split(':')
-const index = parseInt(num, 10)
-tx.updateInput(0, { txId, index })
-
-// Fund, sign and broadcast transaction
-await computer.fund(tx)
-await computer.sign(tx)
-await computer.broadcast(tx)
-``` -->
-
-:::code source="../../../lib/test/mock.test.ts" :::
+:::code source="../../../lib/test/lib/mock/index.test.ts" :::

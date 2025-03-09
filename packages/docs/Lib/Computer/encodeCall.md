@@ -41,40 +41,6 @@ See [`encode`](./encode.md).
 
 See [`encode`](./encode.md).
 
-## Examples
+## Example
 
-```ts
-// A smart contract
-class Counter extends Contract {
-  n: number
-  constructor() {
-    super({ n: 0 })
-  }
-
-  inc(m) {
-    this.n += m
-  }
-}
-
-// Create a smart object from the smart contract
-const computer = new Computer({ mnemonic: ... })
-const counter = await computer.new(Counter)
-
-// Encode a function call
-const { tx } = await computer.encodeCall({
-  target: counter,
-  property: 'inc',
-  args: [1]
-})
-
-// Decode the meta data
-const decoded = await computer.decode(tx)
-expect(decoded).to.deep.eq({
-  exp: `__bc__.inc(1)`,
-  env: { __bc__: counter._rev },
-  mod: ''
-})
-
-// Broadcast the tx to commit the change
-const txId = await computer.broadcast(tx)
-```
+:::code source="../../../lib/test/lib/computer/encode-call.test.ts" :::

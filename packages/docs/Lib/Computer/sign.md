@@ -42,13 +42,6 @@ By default, the `sign` function will make a best effort to sign all inputs, but 
 
 This is useful in the case of partially signed transactions, where a user can encode an expression, sign with the user private key and send the generated partially signed transaction to another user. Then, the receiver can sign other inputs.
 
-## Examples
+## Example
 
-```ts
-const { tx } = await computer.encode({
-  exp: `${C} new ${C.name}()`,
-  sign: false,
-})
-await computer.sign(tx)
-await computer.broadcast(tx)
-```
+:::code source="../../../lib/test/lib/computer/sign.test.ts" :::

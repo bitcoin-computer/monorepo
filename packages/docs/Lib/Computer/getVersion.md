@@ -14,6 +14,4 @@ The current version
 
 ## Example
 
-```ts
-expect(typeof Computer.getVersion()).eq('string')
-```
+:::code source="../../../lib/test/lib/computer/get-version.test.ts" :::

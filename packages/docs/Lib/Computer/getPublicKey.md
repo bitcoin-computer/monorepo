@@ -14,7 +14,4 @@ A string encoding BIP32 public key.
 
 ## Example
 
-```ts
-const computer = new Computer()
-expect(typeof computer.getPublicKey()).eq('string')
-```
+:::code source="../../../lib/test/lib/computer/get-public-key.test.ts" :::
