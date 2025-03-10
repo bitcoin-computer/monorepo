@@ -25,3 +25,5 @@ The UTXOs returned are guaranteed to not contain any on-chain objects. This make
 ## Example
 
 :::code source="../../../lib/test/lib/computer/get-utxos.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-utxos.test.ts" target=_blank>Sources</a>

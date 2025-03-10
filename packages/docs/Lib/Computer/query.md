@@ -49,3 +49,5 @@ Conditions can be passed in to determine the on-chain objects. When multiple con
 ## Example
 
 :::code source="../../../lib/test/lib/computer/query.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/query.test.ts" target=_blank>Sources</a>

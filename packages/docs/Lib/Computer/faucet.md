@@ -29,3 +29,5 @@ Funds a `Computer` object on regtest. A second parameter can provide an address 
 ## Example
 
 :::code source="../../../lib/test/lib/computer/faucet.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/faucet.test.ts" target=_blank>Sources</a>

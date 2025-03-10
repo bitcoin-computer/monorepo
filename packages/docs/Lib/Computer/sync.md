@@ -44,3 +44,5 @@ If the function is called with a transaction id, it returns an object of type `{
 ## Example
 
 :::code source="../../../lib/test/lib/computer/sync.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/sync.test.ts" target=_blank>Sources</a>

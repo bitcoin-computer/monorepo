@@ -25,3 +25,5 @@ Given the revision of an on-chain object, the function returns the previous revi
 ## Example
 
 :::code source="../../../lib/test/lib/computer/prev.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/prev.test.ts" target=_blank>Sources</a>

@@ -21,3 +21,5 @@ If the broadcast is successful, it returns the transaction id. Otherwise, an err
 ## Example
 
 :::code source="../../../lib/test/lib/computer/broadcast.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/broadcast.test.ts" target=_blank>Sources</a>

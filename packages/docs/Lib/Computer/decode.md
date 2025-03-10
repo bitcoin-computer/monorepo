@@ -37,3 +37,5 @@ The function `decode` is the inverse of `encode` when the latter is called with 
 ## Example
 
 :::code source="../../../lib/test/lib/computer/decode.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/decode.test.ts" target=_blank>Sources</a>
