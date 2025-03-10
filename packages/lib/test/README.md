@@ -7,5 +7,5 @@ To run the tests against the node provided by us, update the definitions of `cha
 ```ts
 export const url = 'https://rltc.node.bitcoincomputer.io/'
 export const chain = 'LTC'
-export const network = 'regtest
+export const network = 'regtest'
 ```
