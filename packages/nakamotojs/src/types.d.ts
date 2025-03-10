@@ -18,6 +18,7 @@ export interface Tapleaf {
     output: Buffer;
     version?: number;
 }
+export declare const MAX_SAFE_NUMBER = 9007199254740991;
 export declare const TAPLEAF_VERSION_MASK = 254;
 export declare function isTapleaf(o: any): o is Tapleaf;
 /**

@@ -24,15 +24,15 @@ describe('bufferutils', () => {
       });
     });
 
-    fixtures.invalid.readUInt64LE.forEach(f => {
-      it('throws on ' + f.description, () => {
-        const buffer = Buffer.from(f.hex, 'hex');
+    // fixtures.invalid.readUInt64LE.forEach(f => {
+    //   it('throws on ' + f.description, () => {
+    //     const buffer = Buffer.from(f.hex, 'hex');
 
-        assert.throws(() => {
-          bufferutils.readUInt64LE(buffer, 0);
-        }, new RegExp(f.exception));
-      });
-    });
+    //     assert.throws(() => {
+    //       bufferutils.readUInt64LE(buffer, 0);
+    //     }, new RegExp(f.exception));
+    //   });
+    // });
   });
 
   describe('writeUInt64LE', () => {
@@ -40,7 +40,7 @@ describe('bufferutils', () => {
       it('encodes ' + f.dec, () => {
         const buffer = Buffer.alloc(8, 0);
 
-        bufferutils.writeUInt64LE(buffer, f.dec, 0);
+        bufferutils.writeUInt64LE(buffer, BigInt(f.dec), 0);
         assert.strictEqual(buffer.toString('hex'), f.hex);
       });
     });
@@ -50,7 +50,7 @@ describe('bufferutils', () => {
         const buffer = Buffer.alloc(8, 0);
 
         assert.throws(() => {
-          bufferutils.writeUInt64LE(buffer, f.dec, 0);
+          bufferutils.writeUInt64LE(buffer, BigInt(f.dec), 0);
         }, new RegExp(f.exception));
       });
     });
@@ -156,7 +156,7 @@ describe('bufferutils', () => {
       );
       values.forEach((value: number) => {
         const expectedOffset = bufferWriter.offset + 8;
-        bufferWriter.writeUInt64(value);
+        bufferWriter.writeUInt64(BigInt(value));
         testBuffer(bufferWriter, expectedBuffer, expectedOffset);
       });
       testBuffer(bufferWriter, expectedBuffer);
@@ -302,8 +302,8 @@ describe('bufferutils', () => {
   describe('BufferReader', () => {
     function testValue(
       bufferReader: BufferReader,
-      value: Buffer | number,
-      expectedValue: Buffer | number,
+      value: Buffer | bigint,
+      expectedValue: Buffer | bigint,
       expectedOffset: number = Buffer.isBuffer(expectedValue)
         ? expectedValue.length
         : 0,
@@ -315,7 +315,7 @@ describe('bufferutils', () => {
           expectedValue.slice(0, expectedOffset),
         );
       } else {
-        assert.strictEqual(value as number, expectedValue);
+        assert.strictEqual(value, expectedValue);
       }
     }
 
@@ -326,7 +326,7 @@ describe('bufferutils', () => {
       values.forEach((v: number) => {
         const expectedOffset = bufferReader.offset + 1;
         const val = bufferReader.readUInt8();
-        testValue(bufferReader, val, v, expectedOffset);
+        testValue(bufferReader, BigInt(val), BigInt(v), expectedOffset);
       });
     });
 
@@ -351,7 +351,7 @@ describe('bufferutils', () => {
       values.forEach((value: number) => {
         const expectedOffset = bufferReader.offset + 4;
         const val = bufferReader.readInt32();
-        testValue(bufferReader, val, value, expectedOffset);
+        testValue(bufferReader, BigInt(val), BigInt(value), expectedOffset);
       });
     });
 
@@ -368,7 +368,7 @@ describe('bufferutils', () => {
       values.forEach((value: number) => {
         const expectedOffset = bufferReader.offset + 4;
         const val = bufferReader.readUInt32();
-        testValue(bufferReader, val, value, expectedOffset);
+        testValue(bufferReader, BigInt(val), BigInt(value), expectedOffset);
       });
     });
 
@@ -389,7 +389,7 @@ describe('bufferutils', () => {
       values.forEach((value: number) => {
         const expectedOffset = bufferReader.offset + 8;
         const val = bufferReader.readUInt64();
-        testValue(bufferReader, val, value, expectedOffset);
+        testValue(bufferReader, val, BigInt(value), expectedOffset);
       });
     });
 
@@ -431,7 +431,7 @@ describe('bufferutils', () => {
         const expectedOffset =
           bufferReader.offset + varuint.encodingLength(value);
         const val = bufferReader.readVarInt();
-        testValue(bufferReader, val, value, expectedOffset);
+        testValue(bufferReader, BigInt(val), BigInt(value), expectedOffset);
       });
     });
 

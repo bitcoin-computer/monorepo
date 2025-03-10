@@ -80,6 +80,7 @@ export interface Tapleaf {
   version?: number;
 }
 
+export const MAX_SAFE_NUMBER = 0x001fffffffffffff;
 export const TAPLEAF_VERSION_MASK = 0xfe;
 export function isTapleaf(o: any): o is Tapleaf {
   if (!o || !('output' in o)) return false;
