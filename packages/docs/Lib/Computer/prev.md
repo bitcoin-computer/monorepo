@@ -24,20 +24,4 @@ Given the revision of an on-chain object, the function returns the previous revi
 
 ## Example
 
-```ts
-import { Computer, Contract } from '@bitcoin-computer/lib'
-
-class Counter extends Contract {
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-}
-
-const computer = new Computer()
-const counter = await computer.new(Counter, [])
-await counter.inc()
-expect(await computer.prev(counter._rev)).eq(counter._id)
-```
+:::code source="../../../lib/test/lib/computer/prev.test.ts" :::

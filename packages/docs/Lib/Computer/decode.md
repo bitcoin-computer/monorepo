@@ -36,16 +36,4 @@ The function `decode` is the inverse of `encode` when the latter is called with 
 
 ## Example
 
-```ts
-class C extends Contract {}
-const computer = new Computer()
-const transition = {
-  exp: `${C} new ${C.name}()`,
-  env: {},
-  mod: '',
-}
-const { tx } = await computer.encode(transition)
-const decoded = await computer.decode(tx)
-
-expect(decoded).to.deep.equal(transition)
-```
+:::code source="../../../lib/test/lib/computer/decode.test.ts" :::

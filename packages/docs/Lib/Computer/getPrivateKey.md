@@ -14,7 +14,4 @@ Returns a string encoded BIP32 private key.
 
 ## Example
 
-```ts
-const computer = new Computer()
-expect(typeof computer.getPrivateKey()).eq('string')
-```
+:::code source="../../../lib/test/lib/computer/get-private-key.test.ts" :::

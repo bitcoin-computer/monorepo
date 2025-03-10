@@ -49,44 +49,6 @@ The `new` function can create on-chain objects. The creation of a smart object i
 On-chain objects can be freely combines: you can pass an on-chain object as a parameter into a constructor or function call.
 !!!
 
-## Examples
+## Example
 
-The example shows how an on-chain object is created and updated.
-
-```ts
-import { Contract, Computer } from '@bitcoin-computer/lib'
-
-// A smart contract
-class Counter extends Contract {
-  n: number
-
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-}
-
-// Create an on-chain object
-const counter = await computer.new(Counter, [])
-expect(counter).to.matchPattern({
-  n: 0,
-  _id: (id) => typeof id === 'string',
-  _rev: (rev) => typeof rev === 'string',
-  _root: (root) => typeof root === 'string',
-  _amount: (amount) => typeof amount === 'number',
-  _owners: [computer.getPublicKey()],
-})
-
-// Update an on-chain object
-await counter.inc()
-expect(counter).to.matchPattern({
-  n: 1,
-  _id: (id) => typeof id === 'string',
-  _rev: (rev) => typeof rev === 'string',
-  _root: (root) => typeof root === 'string',
-  _amount: (amount) => typeof amount === 'number',
-  _owners: [computer.getPublicKey()],
-})
-```
+:::code source="../../../lib/test/lib/computer/new.test.ts" :::

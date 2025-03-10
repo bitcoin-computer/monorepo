@@ -18,13 +18,6 @@ A NamamotoJS [transaction](https://github.com/bitcoin-computer/monorepo/blob/mai
 
 If the broadcast is successful, it returns the transaction id. Otherwise, an error is thrown.
 
-## Examples
+## Example
 
-```ts
-class C extends Contract {}
-const transition = { exp: `${C} new C()` }
-const { tx } = await computer.encode(transition)
-
-// Broadcast transaction
-const txId = await computer.broadcast(tx)
-```
+:::code source="../../../lib/test/lib/computer/broadcast.test.ts" :::

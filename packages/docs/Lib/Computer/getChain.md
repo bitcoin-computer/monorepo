@@ -16,8 +16,4 @@ Returns a string encoding the chain.
 
 ## Example
 
-```ts
-const chain = 'BTC'
-const computer = new Computer({ chain })
-expect(computer.getChain()).eq(chain)
-```
+:::code source="../../../lib/test/lib/computer/get-chain.test.ts" :::

@@ -18,8 +18,4 @@ You can set the mnemonic in the constructor of the `Computer` class. The mnemoni
 
 ## Example
 
-```ts
-const mnemonic = 'warm almost lobster swim situate hidden tiger ski whale donate sock number'
-const c = new Computer({ mnemonic })
-expect(c.getMnemonic()).eq(mnemonic)
-```
+:::code source="../../../lib/test/lib/computer/get-mnemonic.test.ts" :::

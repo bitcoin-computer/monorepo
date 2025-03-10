@@ -18,21 +18,6 @@ A module specifier encoded as a string of the form `<transaction-id>:<output-num
 
 A JavaScript module.
 
-### Example
+## Example
 
-```ts
-class C extends Contract {}
-const computer = new Computer({ chain, network, url })
-await computer.faucet(1e8)
-
-// Deploy module
-const rev = await computer.deploy(`export ${C}`)
-
-// Load module
-const { C: Loaded } = await computer.load(rev)
-
-// The deployed module is always equal to Loaded Module
-// when white spaces are removed
-const trim = (Class) => Class.toString().replace(/\s+/g, '')
-expect(trim(Loaded)).eq(trim(C))
-```
+:::code source="../../../lib/test/lib/computer/load.test.ts" :::

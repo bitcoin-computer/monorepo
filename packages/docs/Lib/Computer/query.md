@@ -48,46 +48,4 @@ Conditions can be passed in to determine the on-chain objects. When multiple con
 
 ## Example
 
-```ts
-import { Computer, Contract } from '@bitcoin-computer/lib'
-
-class Counter extends Contract {
-  constructor() {
-    super({ n: 0 })
-  }
-
-  inc() {
-    this.n += 1
-  }
-}
-
-const computer = new Computer()
-
-// Deploy module
-const mod = await computer.deploy(`export ${Counter}`)
-
-// Encode on-chain object and create it by broadcasting the transaction
-const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
-await computer.broadcast(tx)
-
-// Increment on-chain object
-const counter = effect.res
-await counter.inc()
-
-// Query by public key
-const pRevs = await computer.query({ publicKey })
-expect(pRevs.includes(counter._rev)).to.be.true
-
-// Query by id
-const [iRev] = await computer.query({ ids: [counter._id] })
-expect(iRev).eq(counter._rev)
-
-// Query by module specifier
-const [mRev] = await computer.query({ mod })
-expect(mRev).eq(counter._rev)
-
-// Query by multiple parameters
-const mRevs = await computer.query({ publicKey, limit: 1 })
-expect(mRevs.length).eq(1)
-expect(mRevs.includes(counter._rev)).to.be.true
-```
+:::code source="../../../lib/test/lib/computer/query.test.ts" :::

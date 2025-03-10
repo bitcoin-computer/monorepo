@@ -35,30 +35,6 @@ See [`encode`](./encode.md).
 
 See [`encode`](./encode.md).
 
-## Examples
+## Example
 
-```ts
-// A smart contract
-class C extends Contract {}
-
-// Encode a constructor call
-const computer = new Computer()
-const { tx, effect } = await computer.encodeNew({
-  constructor: C,
-  args: [],
-})
-
-// Decode transaction
-const decoded = await computer.decode(tx)
-expect(decoded).to.deep.eq({
-  exp: `${C} new C()`,
-  env: {},
-  mod: '',
-})
-
-// Broadcast the tx to create the on-chain object
-const txId = await computer.broadcast(tx)
-
-// Synchronizing to the transaction id always returns the effect
-expect(await computer.sync(txId)).deep.eq(effect)
-```
+:::code source="../../../lib/test/lib/computer/encode-new.test.ts" :::

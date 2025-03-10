@@ -24,8 +24,4 @@ If successful, it returns the id of the transaction broadcast.
 
 ## Example
 
-```ts
-const satoshis = 100000
-const address = '1FFsHfDBEh57BB1nkeuKAk25H44U7mmMXd'
-const txId = await computer.send(satoshis, address)
-```
+:::code source="../../../lib/test/lib/computer/send.test.ts" :::

@@ -14,8 +14,4 @@ Returns a string encoding the network.
 
 ## Example
 
-```ts
-const network = 'mainnet'
-const computer = new Computer({ network })
-expect(computer.getNetwork()).eq(network)
-```
+:::code source="../../../lib/test/lib/computer/get-network.test.ts" :::
