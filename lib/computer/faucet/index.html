@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -204,43 +204,60 @@
     </h2>
 </doc-anchor-target>
 <p>Funds a <code v-pre>Computer</code> object on regtest. A second parameter can provide an address to fund, otherwise the calling object is funded. If the object is not configured to regtest an error is thrown.</p>
-<doc-anchor-target id="examples">
+<doc-anchor-target id="example">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
+        <span>Example</span>
     </h2>
 </doc-anchor-target>
-<p>The first example shows how to fund the current <code v-pre>Computer</code> object.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const c = new Computer()
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils'
 
-// Fund client side wallet
-const utxo = await c.faucet(1e8)
-expect(utxo).to.matchPattern({
-  txId: (txId) =&gt; typeof txId === 'string',
-  vout: (vout) =&gt; typeof vout === 'number',
-  height: -1,
-  satoshis: 1e8,
-})
+describe('faucet', () =&gt; {
+  it('Should fund the wallet of the current object', async () =&gt; {
+    // Create and fund wallet
+    const c = new Computer({ chain, network, url })
+    const utxo = await c.faucet(1e8)
 
-// Check balance
-const { balance } = await c.getBalance()
-expect(balance).eq(1e8)</code></pre>
-</doc-codeblock></div>
-<p>The second example shows how another object can be funded.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const c1 = new Computer({ chain, network, url })
-const c2 = new Computer({ chain, network, url })
-await c1.faucet(1e8, c2.getAddress())
-const { balance: b1 } = await c1.getBalance()
-const { balance: b2 } = await c2.getBalance()
-expect(b1).eq(0)
-expect(b2).eq(1e8)</code></pre>
-</doc-codeblock></div>
-<p>The last example shows that an error is thrown if the <code v-pre>Computer</code> object is not configured to regtest.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const c = new Computer({ network: 'testnet' })
-await expect(c.faucet(1e8)).to.be.rejected</code></pre>
+    // Check shape of return value
+    expect(utxo).to.matchPattern({
+      txId: (val) =&gt; typeof val === 'string',
+      vout: (vout) =&gt; typeof vout === 'number',
+      height: -1,
+      satoshis: 1e8,
+    })
+
+    // Check balance
+    const { balance } = await c.getBalance()
+    expect(balance).eq(1e8)
+  })
+
+  it('Should fund the wallet of another object', async () =&gt; {
+    // Create wallets c1 and c2
+    const c1 = new Computer({ chain, network, url })
+    const c2 = new Computer({ chain, network, url })
+
+    // fund c2 using c1
+    await c1.faucet(1e8, c2.getAddress())
+
+    // Check that c1 did not receive funds
+    const { balance: b1 } = await c1.getBalance()
+    expect(b1).eq(0)
+
+    // Check that c2 did receive funds
+    const { balance: b2 } = await c2.getBalance()
+    expect(b2).eq(1e8)
+  })
+
+  it('Should throw an error on testnet', async () =&gt; {
+    // Create wallet on testnet
+    const c = new Computer({ chain, network: 'testnet', url })
+
+    // Check that it throws an error
+    await expect(c.faucet(1e8)).to.be.rejected
+  })
+})</code></pre>
 </doc-codeblock></div>
 
                                 

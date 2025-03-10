@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -311,70 +311,85 @@
         </div>
     </div>
 </div>
-<doc-anchor-target id="examples">
+<doc-anchor-target id="example">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
+        <span>Example</span>
     </h2>
 </doc-anchor-target>
-<p>The first example shows how to store a basic type</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">import { Computer, Contract } from '@bitcoin-computer/lib'
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils'
 
-// Encode the expression '1'
-const { effect, tx } = await computer.encode({ exp: '1' })
+// Create wallet
+const computer = new Computer({ chain, network, url })
 
-// The effect object captures the on-chain state if the transaction is broadcast
-expect(effect).deep.eq({ res: 1, env: {} })
+describe('encode', () =&gt; {
+  // Fund wallet
+  before('Fund wallet', async () =&gt; {
+    await computer.faucet(1e8)
+  })
 
-// Broadcast the transaction
-const txId = await computer.broadcast(tx)
+  // Basic types
+  it('Should encode a basic type', async () =&gt; {
+    // Encode the expression &quot;1&quot;.repeat(1000000)
+    const { effect, tx } = await computer.encode({ exp: '&quot;1&quot;.repeat(1000000)' })
 
-// Synchronizing to the transaction id always returns the effect
-expect(await computer.sync(txId)).deep.eq(effect)</code></pre>
-</doc-codeblock></div>
-<p>The second example shows how to encode a constructor and a function call.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">import { Computer, Contract } from '@bitcoin-computer/lib'
+    // The value return contains the result
+    expect(effect).deep.eq({ res: '1'.repeat(1000000), env: {} })
 
-// A smart contract
-class Counter extends Contract {
-  n: number
+    // Broadcast transaction to store value on the blockchain
+    const txId = await computer.broadcast(tx)
 
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-}
+    // Syncing to the transaction always returns the effect
+    expect(await computer.sync(txId)).deep.eq(effect)
+  })
 
-// Encode a constructor cal
-const { effect: e1, tx: tx1 } = await computer.encode({
-  exp: `${Counter} new Counter()`,
-})
+  // Objects
+  it('Should work for a class', async () =&gt; {
+    // A smart contract
+    class Counter extends Contract {
+      n: number
 
-// Broadcast the transaction
-const txId1 = await computer.broadcast(tx1)
+      constructor() {
+        super({ n: 0 })
+      }
 
-// As above, synchronizing to a transaction id always returns the effect
-expect(await computer.sync(txId1)).deep.eq(e1)
+      inc() {
+        this.n += 1
+      }
+    }
 
-// Encode a function call
-const { effect: e2, tx: tx2 } = await computer.encode({
-  // The expression
-  exp: `c.inc()`,
+    // Encode a constructor cal
+    const { effect: e1, tx: tx1 } = await computer.encode({
+      exp: `${Counter} new Counter()`,
+    })
 
-  // The blockchain environment specifies that the value for c is stores
-  // the the location e1.res._rev on the blockchain
-  env: { c: e1.res._rev },
-})
+    // Broadcast the transaction
+    const txId1 = await computer.broadcast(tx1)
 
-// As before we can broadcast the transaction to update the on-chain state
-const txId2 = await computer.broadcast(tx2)
+    // As above, synchronizing to a transaction id always returns the effect
+    expect(await computer.sync(txId1)).deep.eq(e1)
 
-// The sync function reads the on-chain state
-expect(await computer.sync(txId2)).deep.eq(e2)</code></pre>
+    // The result of effect e1 is a counter
+    const counter = e1.res as unknown as Counter
+
+    // Encode a function call incrementing the counter
+    const { effect: e2, tx: tx2 } = await computer.encode({
+      // The expression
+      exp: `c.inc()`,
+
+      // The value for the counter is stored at counter._rev
+      env: { c: counter._rev },
+    })
+
+    // As before we can broadcast the transaction to update the on-chain state
+    const txId2 = await computer.broadcast(tx2)
+
+    // The sync function reads the on-chain state
+    expect(await computer.sync(txId2)).deep.eq(e2)
+  })
+})</code></pre>
 </doc-codeblock></div>
 
                                 

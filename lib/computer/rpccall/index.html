@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -197,39 +197,62 @@
     </h3>
 </doc-anchor-target>
 <p>A JSON object with the result of the rpc method call.</p>
-<doc-anchor-target id="examples">
+<doc-anchor-target id="example">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
+        <span>Example</span>
     </h2>
 </doc-anchor-target>
-<p><code v-pre>getBlockchainInfo</code> returns information about the status of the blockchain.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const { result } = await computer.rpcCall('getBlockchainInfo', '')
-expect(result.blocks).a('number')
-expect(result.bestblockhash).a('string')</code></pre>
-</doc-codeblock></div>
-<p><code v-pre>getRawTransaction</code> returns information about the transaction.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const c = await computer.new(C, [])
-const txId = c._id.slice(0, 64)
-const { result } = await computer.rpcCall('getRawTransaction', `${txId} 1`)
-expect(result.txid).eq(txId)
-expect(result.hex).a('string')</code></pre>
-</doc-codeblock></div>
-<p><code v-pre>getTxOut</code> returns information about an output.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const c = await computer.new(C, [])
-const [txId, outNum] = c._id.split(':')
-const { result } = await computer.rpcCall('getTxOut', `${txId} ${outNum} true`)
-expect(result.scriptPubKey.asm).eq(`1 ${computer.getPublicKey()} 1 OP_CHECKMULTISIG`)</code></pre>
-</doc-codeblock></div>
-<p><code v-pre>generateToAddress</code> mines a block to a specific address (only available on regtest).</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const { balance: balanceBefore } = await computer.getBalance()
-await computer.rpcCall('generateToAddress', `1 ${computer.getAddress()}`)
-const { balance: balanceAfter } = await computer.getBalance()
-expect(balanceAfter - balanceBefore).to.be.closeTo(50e8, 1e4)</code></pre>
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer, Contract } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils'
+
+// Create wallet
+const computer = new Computer({ chain, network, url })
+
+// A smart contract
+class C extends Contract {}
+
+describe('rpcCall', () =&gt; {
+  before('Fund wallet', async () =&gt; {
+    await computer.faucet(1e8)
+  })
+
+  // Query for information about the status of the blockchain
+  it('Should call getBlockchainInfo', async () =&gt; {
+    const { result } = await computer.rpcCall('getBlockchainInfo', '')
+    expect(result.blocks).a('number')
+    expect(result.bestblockhash).a('string')
+  })
+
+  // Query for information about the transaction
+  it('Should call getRawTransaction', async () =&gt; {
+    const c = await computer.new(C, [])
+    const txId = c._id.slice(0, 64)
+    const { result } = await computer.rpcCall('getRawTransaction', `${txId} 1`)
+    expect(result.txid).eq(txId)
+    expect(result.hex).a('string')
+  })
+
+  // Query for information about an output
+  it('Should call getTxOut', async () =&gt; {
+    const c = await computer.new(C, [])
+    const [txId, outNum] = c._id.split(':')
+    const { result } = await computer.rpcCall('getTxOut', `${txId} ${outNum} true`)
+    expect(result.scriptPubKey.asm).eq(`1 ${computer.getPublicKey()} 1 OP_CHECKMULTISIG`)
+  })
+
+  // Mine a block to a specific address (only available on regtest)
+  it('Should call generateToAddress', async () =&gt; {
+    const { balance: balanceBefore } = await computer.getBalance()
+    await computer.rpcCall('generateToAddress', `1 ${computer.getAddress()}`)
+    const randomAddress = new Computer({ chain, network, url }).getAddress()
+    await computer.rpcCall('generatetoaddress', `99 ${randomAddress}`)
+
+    const { balance: balanceAfter } = await computer.getBalance()
+    expect(balanceAfter - balanceBefore).to.be.closeTo(50e8, 1e5)
+  })
+})</code></pre>
 </doc-codeblock></div>
 
                                 

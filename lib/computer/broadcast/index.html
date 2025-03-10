@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -190,19 +190,32 @@
     </h3>
 </doc-anchor-target>
 <p>If the broadcast is successful, it returns the transaction id. Otherwise, an error is thrown.</p>
-<doc-anchor-target id="examples">
+<doc-anchor-target id="example">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
+        <span>Example</span>
     </h2>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">class C extends Contract {}
-const transition = { exp: `${C} new C()` }
-const { tx } = await computer.encode(transition)
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
+import { chain, network, url } from '../../utils'
 
-// Broadcast transaction
-const txId = await computer.broadcast(tx)</code></pre>
+class C extends Contract {}
+
+describe('broadcast', () =&gt; {
+  it('Should broadcast a transaction', async () =&gt; {
+    // Create and fund client side wallet
+    const computer = new Computer({ chain, network, url })
+    await computer.faucet(1e8)
+
+    // Build transaction
+    const transition = { exp: `${C} new C()` }
+    const { tx } = await computer.encode(transition)
+
+    // Broadcast transaction
+    await computer.broadcast(tx)
+  })
+})</code></pre>
 </doc-codeblock></div>
 
                                 

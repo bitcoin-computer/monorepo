@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -197,30 +197,47 @@
     </h2>
 </doc-anchor-target>
 <p>The UTXOs returned are guaranteed to not contain any on-chain objects. This makes it possible to ensure to not spend on-chain objects by mistake.</p>
-<doc-anchor-target id="examples">
+<doc-anchor-target id="example">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
+        <span>Example</span>
     </h2>
 </doc-anchor-target>
-<p>The first example shows that <code v-pre>getUtxos</code> returns all UTXOs that do not contains on-chain objects.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">const computer = new Computer()
-const computer2 = new Computer()
-const txId1 = await computer.send(10000, computer2.getAddress())
-const txId2 = await computer.send(10000, computer2.getAddress())
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer, Contract } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils'
 
-const utxos = await computer2.getUtxos()
-expect(new Set(utxos)).deep.eq(new Set([`${txId1}:0`, `${txId2}:0`]))</code></pre>
-</doc-codeblock></div>
-<p>The second example shows that <code v-pre>getUtxos</code> does not return UTXOs that contain on-chain objects.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">class C extends Contract {}
+const computer1 = new Computer({ chain, network, url })
+const computer2 = new Computer({ chain, network, url })
 
-const computer = new Computer()
-const c = await computer.new(C)
-const utxos = await computer.getUtxos()
-expect(!utxos.some((item) =&gt; item === c._id))</code></pre>
+describe('getUtxos', () =&gt; {
+  before('Fund computer1', async () =&gt; {
+    await computer1.faucet(1e8)
+  })
+
+  it('Should return all UTXOs that do not contain on-chain objects', async () =&gt; {
+    // computer1 creates two UTXOs for computer2
+    const txId1 = await computer1.send(10000, computer2.getAddress())
+    const txId2 = await computer1.send(10000, computer2.getAddress())
+
+    // Check that computer2 has both UTXOS
+    const utxos = await computer2.getUtxos()
+    expect(new Set(utxos)).deep.eq(new Set([`${txId1}:0`, `${txId2}:0`]))
+  })
+
+  it('Should not return UTXOs that contain on-chain objects', async () =&gt; {
+    // A smart contract
+    class C extends Contract {}
+
+    // Broadcast UTXO containing an on-chain object
+    const c = await computer1.new(C, [])
+
+    // Check that the UTXO containing the on-chain object is not
+    // returned by getUTXOs
+    const utxos = await computer1.getUtxos()
+    expect(!utxos.some((item) =&gt; item === c._id))
+  })
+})</code></pre>
 </doc-codeblock></div>
 
                                 

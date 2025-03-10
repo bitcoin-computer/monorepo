@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -227,41 +227,51 @@
     </h3>
 </doc-anchor-target>
 <p>If the wallet does not have sufficient funds, an error is thrown.</p>
-<doc-anchor-target id="examples">
+<doc-anchor-target id="example">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
+        <span>Example</span>
     </h2>
 </doc-anchor-target>
-<p>The first example shows how to use <code v-pre>fund</code> with a NakamotoJS transaction.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">import { address, networks, Transaction } from '@bitcoin-computer/nakamotojs'
-const { regtest } = networks
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
+import { address, networks, Transaction } from '@bitcoin-computer/nakamotojs'
+import { chain, network, url } from '../../utils'
 
-const tx = new Transaction()
-const outputScript = address.toOutputScript('mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt', regtest)
-tx.addOutput(outputScript, 1e7)
-await computer.fund(tx)
-await computer.sign(tx)
-await computer.broadcast(tx)</code></pre>
-</doc-codeblock></div>
-<p>The next example shows how to use <code v-pre>fund</code> with a Bitcoin Computer transaction.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">// A smart contract
-class C extends Contract {}
+// Create wallet
+const computer = new Computer({ chain, network, url })
 
-// Encode a constructor call without funding the transaction
-const { tx } = await computer.encode({
-  exp: `${C} new ${C.name}()`,
-  fund: false,
-})
+describe('fund', () =&gt; {
+  before('Fund wallet', async () =&gt; {
+    await computer.faucet(1e8)
+  })
 
-// Another user can fund and sign
-const computer2 = new Computer()
-await computer2.faucet(1e8)
-await computer2.fund(tx)
-await computer2.sign(tx)
-await computer2.broadcast(tx)</code></pre>
+  it('Should fund a NakamotoJS transaction', async () =&gt; {
+    // Build a transaction with NakamotoJS
+    const tx = new Transaction()
+    const { regtest } = networks
+    const outputScript = address.toOutputScript('mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt', regtest)
+    tx.addOutput(outputScript, 1e5)
+
+    // Fund, sign and broadcast transaction
+    await computer.fund(tx)
+    await computer.sign(tx)
+    await computer.broadcast(tx)
+  })
+
+  it('Should fund a Bitcoin Computer transaction', async () =&gt; {
+    // Build a transaction with the Bitcoin Computer library
+    const { tx } = await computer.encode({
+      exp: `class C extends Contract {}; new C()`,
+      fund: false,
+    })
+
+    // Fund, sign and broadcast transaction
+    await computer.fund(tx)
+    await computer.sign(tx)
+    await computer.broadcast(tx)
+  })
+})</code></pre>
 </doc-codeblock></div>
 
                                 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -221,8 +221,10 @@
     </h2>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer, Countract } from '@bitcoin-computer/lib'
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils'
 
+// A smart contract
 class Counter extends Contract {
   n: number
 
@@ -234,48 +236,53 @@ class Counter extends Contract {
   }
 }
 
-const computer = new Computer()
-await computer.faucet(1e8)
+describe('sync', () =&gt; {
+  it('Should sync to a counter', async () =&gt; {
+    // Create and fund wallet
+    const computer = new Computer({ chain, network, url })
+    await computer.faucet(1e8)
 
-// Create on-chain object
-const { tx, effect } = await computer.encode({
-  exp: `${Counter} new Counter()`,
-})
-const counter = effect.res
-await computer.broadcast(tx)
-const initialCounter = {
-  n: 0,
-  _id: `${tx.getId()}:0`,
-  _rev: `${tx.getId()}:0`,
-  _root: `${tx.getId()}:0`,
-  _owners: [computer.getPublicKey()],
-  _amount: chain === 'LTC' ? 5820 : 582,
-}
-expect(counter).deep.eq(initialCounter)
+    // Create on-chain object
+    const { tx, effect } = await computer.encode({
+      exp: `${Counter} new Counter()`,
+    })
+    const counter = effect.res as unknown as Counter
+    await computer.broadcast(tx)
+    const initialCounter = {
+      n: 0,
+      _id: `${tx.getId()}:0`,
+      _rev: `${tx.getId()}:0`,
+      _root: `${tx.getId()}:0`,
+      _owners: [computer.getPublicKey()],
+      _amount: chain === 'LTC' ? 5820 : 582,
+    }
+    expect(counter).deep.eq(initialCounter)
 
-// Update on-chain object
-await counter.inc()
+    // Update on-chain object
+    await counter.inc()
 
-// Sync to initial revision
-expect(await computer.sync(counter._id)).deep.eq(initialCounter)
+    // Sync to initial revision
+    expect(await computer.sync(counter._id)).deep.eq(initialCounter)
 
-// Sync to latest revision
-expect(await computer.sync(counter._rev)).deep.eq(counter)
+    // Sync to latest revision
+    expect(await computer.sync(counter._rev)).deep.eq(counter)
 
-// Sync to initial transaction id
-const initialTxId = counter._id.slice(0, 64)
-expect(await computer.sync(initialTxId)).deep.eq({
-  res: initialCounter,
-  env: {},
-})
+    // Sync to initial transaction id
+    const initialTxId = counter._id.slice(0, 64)
+    expect(await computer.sync(initialTxId)).deep.eq({
+      res: initialCounter,
+      env: {},
+    })
 
-// Sync to latest transaction id
-const latestTxId = counter._rev.slice(0, 64)
-expect(await computer.sync(latestTxId)).deep.eq({
-  res: undefined,
-  env: {
-    __bc__: counter,
-  },
+    // Sync to latest transaction id
+    const latestTxId = counter._rev.slice(0, 64)
+    expect(await computer.sync(latestTxId)).deep.eq({
+      res: undefined,
+      env: {
+        __bc__: counter,
+      },
+    })
+  })
 })</code></pre>
 </doc-codeblock></div>
 

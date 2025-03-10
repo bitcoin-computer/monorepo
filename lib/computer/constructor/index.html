@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -272,32 +272,40 @@
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils'
 
-// Connects to Bitcoin Computer Node at https://rltc.node.bitcoincomputer.io with LTC regtest
-const remoteComputer = new Computer()
+describe('constructor', () =&gt; {
+  // Default configuration
+  it('Should connects to a remote node by default', () =&gt; {
+    const computer = new Computer()
+    expect(computer.getChain()).eq('LTC')
+    expect(computer.getNetwork()).eq('regtest')
+    expect(computer.getUrl()).eq('https://rltc.node.bitcoincomputer.io')
+  })
 
-// Connects to local Bitcoin Computer Node on LTC regtest
-const localComputer = new Computer({
-  chain: 'LTC',
-  network: 'regtest',
-  url: 'http://localhost:1031'
-})
+  // Local configuration
+  it('Should connect to a local node', async () =&gt; {
+    const computer = new Computer({ chain, network, url })
+    expect(computer.getChain()).eq('LTC')
+    expect(computer.getNetwork()).eq('regtest')
+    expect(computer.getUrl()).eq('http://127.0.0.1:1031')
+  })
 
-// Connects to remove node on BTC testnet
-const bitcoinComputer = new Computer({
-  chain: 'BTC',
-  network: 'testnet',
-  mnemonic: 'replace this seed'
-})
-
-// More custom parameters
-const customComputer = new Computer({
-  chain: 'LTC'
-  network: 'mainnet',
-  addressType: 'p2wpkh',
-  path: &quot;m/44'/0'/0'/0&quot;,
-  url: 'https://my-ltc-node.com',
-  satPerByte: 1
+  // Custom configuration
+  it('Should connect to custom parameters', async () =&gt; {
+    const computer = new Computer({
+      chain: 'BTC',
+      network: 'mainnet',
+      url: 'your-node-url',
+      path: &quot;m/44'/0'/0'/0&quot;,
+      passphrase: 'hi',
+    })
+    expect(computer.getChain()).eq('BTC')
+    expect(computer.getNetwork()).eq('mainnet')
+    expect(computer.getUrl()).eq('your-node-url')
+    expect(computer.getPath()).eq(&quot;m/44'/0'/0'/0&quot;)
+    expect(computer.getPassphrase()).eq('hi')
+  })
 })</code></pre>
 </doc-codeblock></div>
 

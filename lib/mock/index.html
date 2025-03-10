@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../static/favicon.ico" rel="icon">
-    <link href="../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -185,135 +185,92 @@ export class Mock {
         <span>Example</span>
     </h2>
 </doc-anchor-target>
-<!-- The example below shows how a mocked object can be used. Note that the object `a` is created after the transaction that spends it. Thus the revision of `a` is not known when `tx` is built. Once `a` is created on-chain and its revision becomes known, the code below updated the input of `tx` to spend the revision of `a`. -->
-<!-- ```js
-import { Mock, Contract } from '@bitcoin-computer/lib'
-
-class M extends Mock {
-  constructor() {
-    super({ n: 1 })
-  }
-
-  inc() {
-    this.n += 1
-  }
-}
-
-class A extends Contract {
-  constructor() {
-    super({ n: 1 })
-  }
-
-  inc() {
-    this.n += 1
-  }
-}
-
-// Create Mock
-const m = new M()
-
-// Create transaction that updates an object a that does not exist yet
-const { tx } = await computer.encode({
-  // The update expression
-  exp: `a.inc()`,
-
-  // Map variable name a to mock m
-  mocks: { a: m },
-
-  // Specify that the input that spends a points to m._rev
-  env: { a: m._rev },
-
-  // The transaction can only be funded and signed once it is finalized
-  fund: false,
-  sign: false,
-})
-
-// Create on-chain object
-const a = await computer.new(A)
-
-// Update outpoint of tx to spend a's revision
-const [txId, num] = a._rev.split(':')
-const index = parseInt(num, 10)
-tx.updateInput(0, { txId, index })
-
-// Fund, sign and broadcast transaction
-await computer.fund(tx)
-await computer.sign(tx)
-await computer.broadcast(tx)
-``` -->
+<p>The example below shows how a mocked object can be used. Note that the object <code v-pre>a</code> is created after the transaction that spends it. Thus the revision of <code v-pre>a</code> is not known when <code v-pre>tx</code> is built. Once <code v-pre>a</code> is created on-chain and its revision becomes known, the code below updated the input of <code v-pre>tx</code> to spend the revision of <code v-pre>a</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">import { expect } from 'chai'
-import { Mock } from '@bitcoin-computer/lib'
-import { TestComputer } from './utils/test-computer'
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer, Mock } from '@bitcoin-computer/lib'
+import { chain, network, url, expect } from '../../utils'
 
-describe('Mock', () =&gt; {
-  class A extends Contract {
-    n: number
-    constructor() {
-      super({ n: 1 })
-    }
-
-    inc() {
-      this.n += 1
-    }
+// A smart contract
+class A extends Contract {
+  n: number
+  constructor() {
+    super({ n: 1 })
   }
 
-  class M extends Mock {
-    n: number
-    constructor() {
-      super()
-      this.n = 1
-    }
+  inc() {
+    this.n += 1
+  }
+}
 
-    inc() {
-      this.n += 1
-    }
+// A mock contract
+class M extends Mock {
+  n: number
+  constructor() {
+    super()
+    this.n = 1
   }
 
-  const computer = new TestComputer()
-  console.log(computer.getUrl())
-  let a: A &amp; Location
-  let m: M
+  inc() {
+    this.n += 1
+  }
+}
+
+describe('Mock', async () =&gt; {
+  // Create client side wallet on regtest
+  const computer = new Computer({ chain, network, url })
+
+  before('Fund client side wallet on regtest', async () =&gt; {
+    await computer.faucet(3e8)
+  })
 
   it('Should spend a mocked object if the object is created first', async () =&gt; {
-    await computer.faucet(3e8)
+    // Create mock
     const m = new M()
+
+    // Create smart object
     const a = await computer.new(A, [])
 
+    // Update smart object
     const { tx: incTx } = await computer.encode({
       exp: `a.inc()`,
       env: { a: a._rev },
       mocks: { a: m },
     })
-    const txId2 = await computer.broadcast(incTx)
-
-    expect(typeof txId2).eq('string')
-    expect(txId2.length).eq(64)
+    await computer.broadcast(incTx)
   })
 
   it('Should spend a mocked object if the mock is created first', async () =&gt; {
-    await computer.faucet(3e8)
+    // Create mock
     const m = new M()
 
+    // Create transaction in update off-chain object
     const { tx: incTx } = await computer.encode({
+      // The update expression
       exp: `a.inc()`,
-      env: { a: m._rev },
+
+      // Assume value m for variable a
       mocks: { a: m },
+
+      // Specify that the input that spends a points to m._rev
+      env: { a: m._rev },
+
+      // The transaction can only be funded and signed once it is finalized
       fund: false,
       sign: false,
     })
 
+    // Create on-chain object
     const a = await computer.new(A, [])
 
-    const [txId, index] = a._rev.split(':')
+    // Update the outpoint of the first inputs to point to a._rev
+    const [txId, i] = a._rev.split(':')
+    const index = parseInt(i, 10)
+    incTx.updateInput(0, { txId, index })
 
-    incTx.updateInput(0, { txId, index: parseInt(index, 10) })
+    // Fund, sign and send transaction
     await computer.fund(incTx)
     await computer.sign(incTx)
-    const txId2 = await computer.broadcast(incTx)
-
-    expect(typeof txId2).eq('string')
-    expect(txId2.length).eq(64)
+    await computer.broadcast(incTx)
   })
 })</code></pre>
 </doc-codeblock></div>

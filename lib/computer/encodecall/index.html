@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -240,46 +240,56 @@
     </h2>
 </doc-anchor-target>
 <p>See <a href="../encode/"><code v-pre>encode</code></a>.</p>
-<doc-anchor-target id="examples">
+<doc-anchor-target id="example">
     <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
+        <doc-anchor-trigger class="header-anchor-trigger" to="#example">#</doc-anchor-trigger>
+        <span>Example</span>
     </h2>
 </doc-anchor-target>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">// A smart contract
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils'
+
+// A smart contract
 class Counter extends Contract {
   n: number
+
   constructor() {
     super({ n: 0 })
   }
 
-  inc(m) {
-    this.n += m
+  inc() {
+    this.n += 1
   }
 }
 
-// Create a smart object from the smart contract
-const computer = new Computer({ mnemonic: ... })
-const counter = await computer.new(Counter)
+describe('encodeCall', async () =&gt; {
+  it('Should encode a function call', async () =&gt; {
+    // Create and fund wallet
+    const computer = new Computer({ chain, network, url })
+    await computer.faucet(1e8)
 
-// Encode a function call
-const { tx } = await computer.encodeCall({
-  target: counter,
-  property: 'inc',
-  args: [1]
-})
+    // Create an on-chain object from the smart contract
+    const counter = await computer.new(Counter, [])
 
-// Decode the meta data
-const decoded = await computer.decode(tx)
-expect(decoded).to.deep.eq({
-  exp: `__bc__.inc(1)`,
-  env: { __bc__: counter._rev },
-  mod: ''
-})
+    // Encode a function call
+    const { tx } = await computer.encodeCall({
+      target: counter,
+      property: 'inc',
+      args: [],
+    })
 
-// Broadcast the tx to commit the change
-const txId = await computer.broadcast(tx)</code></pre>
+    // Decode the meta data
+    expect(await computer.decode(tx)).to.deep.eq({
+      exp: `__bc__.inc()`,
+      env: { __bc__: counter._rev },
+      mod: '',
+    })
+
+    // Broadcast the tx to commit the change
+    await computer.broadcast(tx)
+  })
+})</code></pre>
 </doc-codeblock></div>
 
                                 

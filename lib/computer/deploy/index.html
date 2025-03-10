@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794763643112">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.794961745833">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -31,12 +31,12 @@
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.794763643112" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.794961745833" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794763643112" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794763643112" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.794961745833" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.794961745833" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -267,79 +267,95 @@
         <span>Examples</span>
     </h2>
 </doc-anchor-target>
-<p>The first example shows how to deploy a module with module storage type <code v-pre>multisig</code>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const computer = new Computer({ moduleStorageType: 'multisig' })
-await computer.faucet(1730000)
-const big = `x`.repeat(18262) // ~ 18KB
+<pre class="language-typescript"><code v-pre class="language-typescript">import { Computer } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils'
 
-const rev = await computer.deploy(big)
-expect(rev).to.not.equal(undefined)</code></pre>
+// Create wallet
+const computer = new Computer({ chain, network, url })
+
+describe('deploy', () =&gt; {
+  // Fund wallet
+  before('Fund client side wallet', async () =&gt; {
+    await computer.faucet(1e8)
+  })
+
+  // Modules stored in multisig scripts
+  it('Should deploy a module using multisig', async () =&gt; {
+    const multisigComputer = new Computer({ chain, network, url, moduleStorageType: 'multisig' })
+    await multisigComputer.faucet(1730000)
+    const big = `x`.repeat(18262) // ~ 18KB
+
+    const rev = await multisigComputer.deploy(big)
+    expect(rev).to.not.equal(undefined)
+  })
+
+  // Modules stored in taproot scripts
+  it('Should deploy a module using taproot', async () =&gt; {
+    if (['BTC', 'LTC'].includes(chain)) {
+      const taprootComputer = new Computer({ chain, network, url, moduleStorageType: 'taproot' })
+      await taprootComputer.faucet(436000)
+      const veryBig = `x`.repeat(396000) // ~ 400KB
+
+      const rev = await taprootComputer.deploy(veryBig)
+      expect(rev).to.not.equal(undefined)
+    }
+  })
+
+  // Modules that depends on one another
+  it('Should deploy a module that depends on another module', async () =&gt; {
+    const modSpecA = await computer.deploy(`export class A extends Contract {}`)
+
+    const modSpecB = await computer.deploy(`
+      import { A } from '${modSpecA}'
+      export class B extends A {}
+    `)
+    const { tx } = await computer.encode({ exp: `new B()`, mod: modSpecB })
+    expect(tx.getId()).to.be.a.string
+  })
+
+  // Modules of arbitrary size
+  it('Should deploy a module of arbitrary length', async () =&gt; {
+    // Inputs a long string and outputs a module specifier where it can be obtained
+    const store = async (s: string, n: number) =&gt; {
+      // Partition the long string into chunks of size n
+      const chunks = []
+      for (let i = 0; i &lt; s.length; i += n) {
+        chunks.push(s.slice(i, i + n))
+      }
+
+      // Deploy chunks and build recombining module
+      let module = ''
+      for (let i = 0; i &lt; s.length / n; i += 1) {
+        // Deploy a chunk
+        const mod = await computer.deploy(`export const c${i} = '${chunks[i]}'`)
+
+        // Import chunk into recombining module
+        module += `import { c${i} } from '${mod}'\n`
+      }
+
+      // Export concatenation of chunks
+      const cs = Array.from({ length: n + 1 }, (_, i) =&gt; `c${i}`).join(' + ')
+      module += `export const s = ${cs}`
+
+      // Deploy recombining module
+      return computer.deploy(module)
+    }
+
+    // Create a long string, could be hundreds MB in a real example
+    const longString = '0'.repeat(10)
+
+    // Store long string, you can use 18262 instead of 3 for multisig modules
+    // or 396000 for taproot modules
+    const mod = await store(longString, 3)
+
+    // Load a long string
+    const { s } = await computer.load(mod)
+    expect(s).eq(longString)
+  })
+})</code></pre>
 </doc-codeblock></div>
-<p>On BTC and LTC it is possible to deploy larger modules for lower fees by using <code v-pre>taproot</code>.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">const computer = new Computer({ moduleStorageType: 'taproot' })
-await computer.faucet(436000)
-const veryBig = `x`.repeat(396000) // ~ 400KB
-
-const rev = await computer.deploy(veryBig)
-expect(rev).to.not.equal(undefined)</code></pre>
-</doc-codeblock></div>
-<p>The next example shows how modules can depends on one another</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-typescript"><code v-pre class="language-typescript">// Deploy module A
-const modSpecA = await computer.deploy(`export class A extends Contract {}`)
-
-// Deploy module B that imports module B
-const modSpecB = await computer.deploy(`
-  import { A } from '${modSpecA}'
-  export class B extends A {}
-`)
-
-// Use module B
-const { tx } = await computer.encode({ exp: `new B()`, mod: modSpecB })
-expect(tx.getId()).to.be.a.string</code></pre>
-</doc-codeblock></div>
-<p>The last example shows how a string of arbitrary length can be stored using the module system. The idea is to partition a long string into constant size chunks, deploy each chunk in a separate module, and then deploy one additional module that recombined the modules for the chunks and exports their concatenation.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre class="language-javascript"><code v-pre class="language-javascript">// Inputs a long string and outputs a module specifier where it can be obtained
-const store = async (s: string, n: number) =&gt; {
-  // Partition the long string into chunks of size n
-  const chunks = []
-  for (let i = 0; i &lt; s.length; i += n) {
-    chunks.push(s.slice(i, i + n))
-  }
-
-  // Deploy chunks and build recombining module
-  let module = ''
-  for (let i = 0; i &lt; s.length / n; i += 1) {
-    // Deploy a chunk
-    const mod = await computer.deploy(`export const c${i} = '${chunks[i]}'`)
-
-    // Import chunk into recombining module
-    module += `import { c${i} } from '${mod}'\n`
-  }
-
-  // Export concatenation of chunks
-  const cs = Array.from({ length: n + 1 }, (_, i) =&gt; `c${i}`).join(' + ')
-  module += `export const s = ${cs}`
-
-  // Deploy recombining module
-  return computer.deploy(module)
-}
-
-// Create a long string, could be hundreds MB in a real example
-const longString = '0'.repeat(10)
-
-// Store long string, you can use 18262 instead of 3 for multisig modules
-// or 396000 for taproot modules
-const mod = await store(longString, 3)
-
-// Load a long string
-const { s } = await computer.load(mod)
-expect(s).eq(longString)</code></pre>
-</doc-codeblock></div>
-<p>In the example the &quot;recombining&quot; module is as follows:</p>
+<p>The last example shows how a string of arbitrary length can be stored using the module system. The idea is to partition a long string into constant size chunks, deploy each chunk in a separate module, and then deploy one additional module that recombined the modules for the chunks and exports their concatenation. In the example the &quot;recombining&quot; module is as follows:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-typescript"><code v-pre class="language-typescript">import { c0 } from 'f86ec90ce2ab7367e197df1e63b45114a381d5636dc85e35dc28d721fbf0c228:0' // stores '000'
 import { c1 } from 'ae90c7aa091045239d61011c770754b8cd8409541e56177d2a15e591e337bd67:0' // stores '000'
