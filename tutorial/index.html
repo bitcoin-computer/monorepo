@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795021860239">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795027740545">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -14,29 +14,29 @@
     <meta name="description" content="In this tutorial we explain how to build a decentralized chat.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/tutorial/">
+    <link rel="canonical" href="https://docs.bitcoincomputer.io/tutorial/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/tutorial/">
+    <meta property="og:url" content="https://docs.bitcoincomputer.io/tutorial/">
     <meta property="og:title" content="Tutorial">
     <meta property="og:description" content="In this tutorial we explain how to build a decentralized chat.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/tutorial/">
+    <meta property="twitter:url" content="https://docs.bitcoincomputer.io/tutorial/">
     <meta property="twitter:title" content="Tutorial">
     <meta property="twitter:description" content="In this tutorial we explain how to build a decentralized chat.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.6.0.795021860239" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=3.6.0.795027740545" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.795021860239" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=3.6.0.795027740545" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.795021860239" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.795021860239" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.6.0.795027740545" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.6.0.795027740545" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -189,7 +189,7 @@ class Chat extends Contract {
     </h2>
 </doc-anchor-target>
 <p>The <code v-pre>Computer</code> class is a client-side JavaScript wallet that manages a Bitcoin private-public key pair. It can create normal Bitcoin transactions but also ones that contain metadata according to the Bitcoin Computer protocol. This allows for the creation, updating, and retrieval of on-chain objects.</p>
-<p>You can pass a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic into the constructor to create a specific private-public key pair, or leave the <code v-pre>mnemonic</code> parameter undefined to generate a random wallet. More configuration options are described <a href="/lib/constructor/">here</a>.</p>
+<p>You can pass a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic into the constructor to create a specific private-public key pair, or leave the <code v-pre>mnemonic</code> parameter undefined to generate a random wallet. More configuration options are described <a href="../lib/computer/constructor/">here</a>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">import { Computer } from '@bitcoin-computer/lib'
 
@@ -201,7 +201,7 @@ const computer = new Computer({ mnemonic: 'replace this seed' })</code></pre>
         <span>Creating On-Chain Objects</span>
     </h2>
 </doc-anchor-target>
-<p>The <a href="/api/new"><code v-pre>computer.new</code></a> function broadcasts a transaction inscribed with a JavaScript expression consisting of a class and a constructor call. For example, the call</p>
+<p>The <a href="../lib/computer/new/"><code v-pre>computer.new</code></a> function broadcasts a transaction inscribed with a JavaScript expression consisting of a class and a constructor call. For example, the call</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const chat = await computer.new(Chat, ['hello'])</code></pre>
 </doc-codeblock></div>
@@ -288,7 +288,7 @@ new Chat('hello')</code></pre>
 <ul>
 <li><code v-pre>_id</code> is the output in which the on-chain object was first created. As this output never changes the <code v-pre>_id</code> property never changes</li>
 <li><code v-pre>_rev</code> is the output where the current revision of the object is stored. Therefore, initially, the revision is equal to the id, then the revision is changed every time the object is updated.</li>
-<li><code v-pre>_root</code> is never updated. As it is not relevant to the chat example we refer the interested reader to <a href="../language/#control-keyword-properties">this</a> section.</li>
+<li><code v-pre>_root</code> is never updated. As it is not relevant to the chat example we refer the interested reader to <a href="../language/">this</a> section.</li>
 <li><code v-pre>_owners</code> is set to the public key of the data owner. More on that <doc-anchor-trigger to="#data-ownership">below</doc-anchor-trigger>.</li>
 <li><code v-pre>amount</code> is set to the amount of satoshi of the output in which an on-chain object is stored. More <doc-anchor-trigger to="#cryptocurrency">here</doc-anchor-trigger>.</li>
 </ul>
@@ -316,7 +316,7 @@ new Chat('hello')</code></pre>
         <span>Reading On-Chain Objects</span>
     </h2>
 </doc-anchor-target>
-<p>The <a href="/api/sync"><code v-pre>computer.sync</code></a> function computes the state of an on-chain object given its revision. For example, if the function is called with an the id of an on-chain object, it returns the initial state of the object</p>
+<p>The <a href="../lib/computer/sync/"><code v-pre>computer.sync</code></a> function computes the state of an on-chain object given its revision. For example, if the function is called with an the id of an on-chain object, it returns the initial state of the object</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const initialChat = await computer.sync(chat._id)
 
@@ -335,7 +335,7 @@ expect(latestChat).to.deep.equal(chat)</code></pre>
         <span>Finding On-Chain Objects</span>
     </h2>
 </doc-anchor-target>
-<p>The <a href="/api/query"><code v-pre>computer.query</code></a> function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:</p>
+<p>The <a href="../lib/computer/query/"><code v-pre>computer.query</code></a> function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const [rev] = await computer.query({ ids: [chat._id] })
 expect(rev).to.equal(chat._rev)</code></pre>
@@ -359,7 +359,7 @@ const publicKey = computer.getPublicKey()
 // Look up all revisions owned by user
 const revs = await computer.query({ publicKey })</code></pre>
 </doc-codeblock></div>
-<p>It is also possible to navigate the revision history of a on-chain object using <a href="lib/next.md"><code v-pre>computer.next</code></a> and <a href="lib/prev.md"><code v-pre>computer.prev</code></a>:</p>
+<p>It is also possible to navigate the revision history of a on-chain object using <a href="../lib/computer/next/"><code v-pre>computer.next</code></a> and <a href="../lib/computer/prev/"><code v-pre>computer.prev</code></a>:</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">// Navigating forward
 expect(await computer.next(chat._id)).eq(chat._rev)
@@ -506,8 +506,8 @@ await paymentB.cashOut()</code></pre>
         <span>Expressions</span>
     </h2>
 </doc-anchor-target>
-<p>The syntax for on-chain objects introduced above provides a high-level abstraction over the Bitcoin Computer protocol. However we also provide low-level access to the protocol via the <a href="./lib/encode"><code v-pre>computer.encode()</code></a> function. This gives more control over the transaction being built, enabling advanced applications like DEXes.</p>
-<p>The <a href="./lib/encode.md"><code v-pre>computer.encode</code></a> function takes three arguments:</p>
+<p>The syntax for on-chain objects introduced above provides a high-level abstraction over the Bitcoin Computer protocol. However we also provide low-level access to the protocol via the <code v-pre>computer.encode()</code> function. This gives more control over the transaction being built, enabling advanced applications like DEXes.</p>
+<p>The <a href="../lib/computer/encode/"><code v-pre>computer.encode</code></a> function takes three arguments:</p>
 <ul>
 <li>A JavaScript expression <code v-pre>exp</code>,</li>
 <li>an environment <code v-pre>env</code> that maps names to output specifiers,</li>
@@ -564,7 +564,7 @@ expect(effect).deep.eq({
         <span>Module System</span>
     </h2>
 </doc-anchor-target>
-<p>The <a href="./lib/deploy.md"><code v-pre>computer.deploy</code></a> function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar <code v-pre>import</code> syntax. In the example below <code v-pre>moduleB</code> refers to <code v-pre>moduleA</code> via <code v-pre>specifierA</code>. Module specifiers can be passed into <code v-pre>computer.encode</code> and <code v-pre>computer.new</code> functions.</p>
+<p>The <a href="../lib/computer/deploy/"><code v-pre>computer.deploy</code></a> function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar <code v-pre>import</code> syntax. In the example below <code v-pre>moduleB</code> refers to <code v-pre>moduleA</code> via <code v-pre>specifierA</code>. Module specifiers can be passed into <code v-pre>computer.encode</code> and <code v-pre>computer.new</code> functions.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const moduleA = 'export class A extends Contract {}'
 const specifierA = await computer.deploy(moduleA)
@@ -580,7 +580,7 @@ const { tx } = await computer.encode({
   mod: specifierB,
 })</code></pre>
 </doc-codeblock></div>
-<p>Modules can be loaded from the blockchain using <a href="./lib/load.md">computer.load</a>.</p>
+<p>Modules can be loaded from the blockchain using <a href="../lib/computer/load/">computer.load</a>.</p>
 <div class="codeblock-wrapper"><doc-codeblock>
 <pre class="language-javascript"><code v-pre class="language-javascript">const loadedB = await computer.load(specifierB)
 expect(loadedB).eq(moduleB)</code></pre>

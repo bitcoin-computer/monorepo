@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795021860239">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.6.0.795027740545">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 3.6.0">
@@ -14,29 +14,29 @@
     <meta name="description" content="Creates a transaction according to the Bitcoin Computer protocol.">
 
     <!-- Canonical -->
-    <link rel="canonical" href="/lib/computer/encode/">
+    <link rel="canonical" href="https://docs.bitcoincomputer.io/lib/computer/encode/">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="/lib/computer/encode/">
+    <meta property="og:url" content="https://docs.bitcoincomputer.io/lib/computer/encode/">
     <meta property="og:title" content="encode">
     <meta property="og:description" content="Creates a transaction according to the Bitcoin Computer protocol.">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="/lib/computer/encode/">
+    <meta property="twitter:url" content="https://docs.bitcoincomputer.io/lib/computer/encode/">
     <meta property="twitter:title" content="encode">
     <meta property="twitter:description" content="Creates a transaction according to the Bitcoin Computer protocol.">
 
     <script data-cfasync="false">(function () { var el = document.documentElement, m = localStorage.getItem("doc_theme"), wm = window.matchMedia; if (m === "dark" || (!m && wm && wm("(prefers-color-scheme: dark)").matches)) { el.classList.add("dark") } else { el.classList.remove("dark") } })();</script>
 
     <link href="../../../static/favicon.ico" rel="icon">
-    <link href="../../../resources/css/retype.css?v=3.6.0.795021860239" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=3.6.0.795027740545" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.795021860239" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=3.6.0.795027740545" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=3.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.795021860239" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.795021860239" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=3.6.0.795027740545" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=3.6.0.795027740545" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -282,14 +282,14 @@
         <span>Return Value</span>
     </h3>
 </doc-anchor-target>
-<p>It returns an object <code v-pre>{ tx, effect }</code> where <code v-pre>tx</code> is a <a href="../../../nakamotojs/">NakamotJS</a> transaction and <code v-pre>effect</code> is an object with keys <code v-pre>res</code> and <code v-pre>env</code>. The <code v-pre>res</code> object contains the result of the evaluation. The <code v-pre>env</code> object has the same keys as the blockchain environment. However, whereas the values of the blockchain environment are revision strings, the values of <code v-pre>env</code> and the smart object at these revisions <em>after</em> evaluating the expression.</p>
+<p>It returns an object <code v-pre>{ tx, effect }</code> where <code v-pre>tx</code> is a <a href="../../../nakamotojs/">NakamotoJS</a> transaction and <code v-pre>effect</code> is an object with keys <code v-pre>res</code> and <code v-pre>env</code>. The <code v-pre>res</code> object contains the result of the evaluation. The <code v-pre>env</code> object has the same keys as the blockchain environment. However, whereas the values of the blockchain environment are revision strings, the values of <code v-pre>env</code> and the smart object at these revisions <em>after</em> evaluating the expression.</p>
 <doc-anchor-target id="description">
     <h2>
         <doc-anchor-trigger class="header-anchor-trigger" to="#description">#</doc-anchor-trigger>
         <span>Description</span>
     </h2>
 </doc-anchor-target>
-<p>The <code v-pre>encode</code> function builds a Bitcoin transaction from a JavaScript expression. It returns a transaction and an object <code v-pre>effect</code> containing the result of the evaluation in a property <code v-pre>res</code>. If the expression contains undefined variables a blockchain environment <code v-pre>env</code> must be passed into <code v-pre>encode</code>. A <em>blockchain environment</em> maps the named of the undefined variable to UTXOs containing on-chain objects. A <doc-anchor-trigger to="#modules">module specifier</doc-anchor-trigger> can be provided in order to make the exports of that module are available to the evaluation. Other options can customize the funding and signing process. It is also to pass in an object specifying <a href="../../../tutorial/#mocking">mocked</a> objects.</p>
+<p>The <code v-pre>encode</code> function builds a Bitcoin transaction from a JavaScript expression. It returns a transaction and an object <code v-pre>effect</code> containing the result of the evaluation in a property <code v-pre>res</code>. If the expression contains undefined variables a blockchain environment <code v-pre>env</code> must be passed into <code v-pre>encode</code>. A <em>blockchain environment</em> maps the named of the undefined variable to UTXOs containing on-chain objects. A <a href="../../../tutorial/#module-system">module specifier</a> can be provided in order to make the exports of that module are available to the evaluation. Other options can customize the funding and signing process. It is also to pass in an object specifying <a href="../../../tutorial/#mocking">mocked</a> objects.</p>
 <p>It is important to note that <code v-pre>encode</code> does not broadcast the transaction. Nonetheless the <code v-pre>effect</code> object reflects the on-chain state that will emerge once the transaction is broadcast.</p>
 <div class="flex mb-6">
     <div class="shrink-0 w-1 rounded-tl rounded-bl bg-green-500"></div>
@@ -391,6 +391,7 @@ describe('encode', () =&gt; {
   })
 })</code></pre>
 </doc-codeblock></div>
+<p><a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/encode.test.ts" target=_blank>Sources</a></p>
 
                                 
                                 <!-- Required only on API pages -->
