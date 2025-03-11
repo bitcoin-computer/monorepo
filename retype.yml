@@ -1,6 +1,6 @@
 input: packages/docs
 output: packages/docs/.retype
-url: # Add your website address here
+url: https://docs.bitcoincomputer.io/
 branding:
   title: Bitcoin Computer
   label: 0.24.0

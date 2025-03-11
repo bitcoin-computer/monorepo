@@ -25,7 +25,7 @@ export class NFT extends Contract {
 
 ## Usage
 
-To create an on-chain object of class `NFT`, you can use the [`new`](./API/new.md) function of the `Computer` class. The [`faucet`](./API/faucet.md) function funds the `sender` object on `regtest`. The `sender.new` function mints a new NFT and the `transfer` function send the NFT to another user.
+To create an on-chain object of class `NFT`, you can use the [`new`](../Lib/Computer/new.md) function of the `Computer` class. The [`faucet`](../Lib/Computer/faucet.md) function funds the `sender` object on `regtest`. The `sender.new` function mints a new NFT and the `transfer` function send the NFT to another user.
 
 ```ts
 import { Computer } from '@bitcoin-computer/lib'
