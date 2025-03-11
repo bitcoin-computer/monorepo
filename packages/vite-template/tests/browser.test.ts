@@ -38,16 +38,16 @@ describe('Bitcoin Computer Tests', () => {
     await browser.close()
   })
 
-  it('should display the correct title', async () => {
+  it('should load the page and have correct headers', async () => {
     const response = await page.goto(process.env.URL ? process.env.URL : 'http://localhost:1032')
     const title = await page.title()
     expect(title).toBe('Vite + React + TS')
-    
-    expect(response).not.toBeNull();
+
+    expect(response).not.toBeNull()
     if (response) {
-      const headers = response.headers();
-      expect(headers['cross-origin-opener-policy']).toBe('same-origin');
-      expect(headers['cross-origin-embedder-policy']).toBe('require-corp');
+      const headers = response.headers()
+      expect(headers['cross-origin-opener-policy']).toBe('same-origin')
+      expect(headers['cross-origin-embedder-policy']).toBe('require-corp')
     }
   })
 
