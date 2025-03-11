@@ -11,7 +11,7 @@ The Bitcoin Computer protocol associates JavaScript values with the outputs of B
 
 To compute the value associated with an output, the expression is first evaluated. If the expression evaluates to a basic type, this value is associated with the first output. If the value is nested and contains multiple sub-objects, each sub-object is associated with a separate output.
 
-This simple mechanism makes it possible to store arbitrarily complex Javascript values in the outputs of a transaction using an highly efficient encoding: Instead of storing a value, an expression is stored that computes the value. This is much more efficient. In fact, it makes it possible to store a value at its optimal compression (see the [Kologromov Complexity](https://en.wikipedia.org/wiki/Kolmogorov_complexity)).
+This simple mechanism makes it possible to store arbitrarily complex JavaScript values in the outputs of a transaction using an highly efficient encoding: Instead of storing a value, an expression is stored that computes the value. This is much more efficient. In fact, it makes it possible to store a value at its optimal compression (see the [Kologromov Complexity](https://en.wikipedia.org/wiki/Kolmogorov_complexity)).
 
 ### Example
 
@@ -21,7 +21,7 @@ Note that this encodes a 100,000 character string in just 18 characters
 
 ## Updating Values
 
-Expressions can contain undefined variables. For example, the variable `x` is undefined in the expression `x+4`. It is not possible to evaluate an expression with an undefined variable. For example, an Javascript interpreter will throw a `ReferenceError` when trying to evaluate `x+4`.
+Expressions can contain undefined variables. For example, the variable `x` is undefined in the expression `x+4`. It is not possible to evaluate an expression with an undefined variable. For example, an JavaScript interpreter will throw a `ReferenceError` when trying to evaluate `x+4`.
 
 In the Bitcoin Computer protocol, expressions with undefined variables are used to encode data updates. To determine a value for the undefined variables, the undefined variables in an expression must be associated with inputs of the transaction. The protocol will then compute the values associated with the outputs spent. These values are the substituted (aka plugged into) the respective undefined variables. This yields an expression where all variables are defined that can be evaluated. The value returned from this evaluation is associated with the outputs as explained in the previous section.
 

@@ -129,6 +129,7 @@ type ComputerOptions = Partial<{
   dustRelayFee: number
   addressType: AddressType
   moduleStorageType: ModuleStorageType
+  cache: boolean
 }>
 type Rev = {
   _rev: string
@@ -293,7 +294,7 @@ declare class RestClient {
   broadcast(txHex: string): Promise<string>
   getBalance(address: string): Promise<_Balance>
   listTxs(address: string): Promise<_Transaction>
-  getUtxos(address: string): Promise<_Unspent[]>
+  getUtxos(address?: string): Promise<_Unspent[]>
   getFormattedUtxos(address: string): Promise<_Unspent[]>
   getRawTxs(txIds: string[]): Promise<string[]>
   getTx(txId: string): Promise<_Transaction>
@@ -417,7 +418,7 @@ declare class Computer {
   constructor(params?: ComputerOptions)
   new<T extends Class>(
     constructor: T,
-    args?: ConstructorParameters<T>,
+    args: ConstructorParameters<T>,
     mod?: string,
   ): Promise<InstanceType<T> & Location>
   query(q: UserQuery): Promise<string[]>
@@ -468,10 +469,10 @@ declare class Computer {
   listTxs(address?: string): Promise<{ sentTxs: TxIdAmountType[]; receivedTxs: TxIdAmountType[] }>
   getUtxos(address?: string): Promise<string[]>
   getBalance(address?: string): Promise<_Balance>
-  sign(transaction: Transaction, opts?: SigOptions): Promise<void>
-  fund(tx: Transaction, opts?: Fee & FundOptions): Promise<void>
+  sign(transaction: nTransaction, opts?: SigOptions): Promise<void>
+  fund(tx: nTransaction, opts?: Fee & FundOptions): Promise<void>
   send(satoshis: number, address: string): Promise<string>
-  broadcast(tx: Transaction): Promise<string>
+  broadcast(tx: nTransaction): Promise<string>
   rpcCall(method: string, params: string): Promise<any>
   static txFromHex({ hex }: { hex: string }): Transaction
   getChain(): TBCChain
@@ -498,12 +499,8 @@ declare class Computer {
   static lockdown(opts?: any): void
   delete(inRevs: string[]): Promise<string>
   isUnspent(rev: string): Promise<boolean>
-  next(rev: string): Promise<{
-    rev: string | undefined
-  }>
-  prev(rev: string): Promise<{
-    rev: string | undefined
-  }>
+  next(rev: string): Promise<string | undefined>
+  prev(rev: string): Promise<string | undefined>
   export(module: string, opts?: Partial<ModuleOptions>): Promise<string>
   import(rev: string): Promise<ModuleExportsNamespace>
   queryRevs(q: Query): Promise<string[]>
@@ -515,9 +512,10 @@ declare class Computer {
   getMinimumFees(): number
   subscribe(
     id: string,
-    onMessage: (rev: string) => void,
+    onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
     onError?: (error: Event) => void,
   ): Promise<() => void>
+  static getVersion: () => string
 }
 
 export { Computer, Contract, Mock, Transaction }

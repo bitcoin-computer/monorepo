@@ -113,34 +113,34 @@ function Component(_a) {
     };
     useEffect(function () {
         var fetch = function () { return __awaiter(_this, void 0, void 0, function () {
-            var synced, error_1, txId_1, nextRef, prevRef, error_2;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
+            var synced, error_1, txId_1, _a, _b, error_2;
+            return __generator(this, function (_c) {
+                switch (_c.label) {
                     case 0:
-                        _a.trys.push([0, 2, , 3]);
+                        _c.trys.push([0, 2, , 3]);
                         return [4 /*yield*/, computer.sync(rev)];
                     case 1:
-                        synced = _a.sent();
+                        synced = _c.sent();
                         setSmartObject(synced);
                         return [3 /*break*/, 3];
                     case 2:
-                        error_1 = _a.sent();
+                        error_1 = _c.sent();
                         txId_1 = rev.split(':')[0];
                         navigate("/transactions/".concat(txId_1));
                         return [3 /*break*/, 3];
                     case 3:
-                        _a.trys.push([3, 6, , 7]);
-                        return [4 /*yield*/, computer.next(rev)];
-                    case 4:
-                        nextRef = _a.sent();
+                        _c.trys.push([3, 6, , 7]);
+                        _a = setPrev;
                         return [4 /*yield*/, computer.prev(rev)];
+                    case 4:
+                        _a.apply(void 0, [_c.sent()]);
+                        _b = setNext;
+                        return [4 /*yield*/, computer.next(rev)];
                     case 5:
-                        prevRef = _a.sent();
-                        setPrev(prevRef.rev);
-                        setNext(nextRef.rev);
+                        _b.apply(void 0, [_c.sent()]);
                         return [3 /*break*/, 7];
                     case 6:
-                        error_2 = _a.sent();
+                        error_2 = _c.sent();
                         console.log({ error: error_2 });
                         return [3 /*break*/, 7];
                     case 7: return [2 /*return*/];

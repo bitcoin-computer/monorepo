@@ -198,7 +198,7 @@ const Playground = () => {
 
         <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
 
-        <h5 className="mt-4 text-xl font-bold dark:text-white">Insert Javascript Code</h5>
+        <h5 className="mt-4 text-xl font-bold dark:text-white">Insert JavaScript Code</h5>
         <Tabs />
         <div id="default-tab-content">
           <div className="hidden" id="create-new" role="tabpanel" aria-labelledby="create-new-tab">

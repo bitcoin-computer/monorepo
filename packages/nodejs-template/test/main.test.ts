@@ -31,7 +31,7 @@ describe('Bitcoin Computer', () => {
     expect(typeof computer).eq('object')
   })
 
-  it('should create a Javascript object', () => {
+  it('should create a JavaScript object', () => {
     expect(Counter).not.to.be.undefined
     expect(typeof Counter).eq('function')
     const counter = new Counter()
@@ -42,7 +42,7 @@ describe('Bitcoin Computer', () => {
     const computer = new Computer({ url, chain })
 
     await computer.faucet(1e8)
-    const counter = await computer.new(Counter)
+    const counter = await computer.new(Counter, [])
     // @ts-ignore
     expect(counter).to.matchPattern({
       n: 0,
@@ -58,7 +58,7 @@ describe('Bitcoin Computer', () => {
     const computer = new Computer({ url, chain })
 
     await computer.faucet(1e8)
-    const counter = await computer.new(Counter)
+    const counter = await computer.new(Counter, [])
     await counter.inc()
     // @ts-ignore
     expect(counter).to.matchPattern({
