@@ -25,3 +25,5 @@ A JSON object with the result of the rpc method call.
 ## Example
 
 :::code source="../../../lib/test/lib/computer/rpc-call.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/rpc-call.test.ts" target=_blank>Sources</a>

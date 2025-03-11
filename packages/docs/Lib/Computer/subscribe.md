@@ -37,3 +37,5 @@ The function enables real-time updates via Server-Sent Events (SSEs). The functi
 ## Example
 
 :::code source="../../../lib/test/lib/computer/subscribe.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/subscribe.test.ts" target=_blank>Sources</a>

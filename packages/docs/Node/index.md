@@ -287,17 +287,7 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 {.compact}
 | Method | Description |
 |-------------------------------------|----------------------------------------------------|
-| [height](./height.md) | Get the height of an specific block. |
-| [mine](./mine.md) | Mine an specific number of blocks to a random address. |
-| [rpc](./height.md) | Call a Bitcoin RPC method. |
-
-#### Regtest Faucet
-
-{.compact}
-| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [faucet](./faucet.md) | Get coins from the faucet. |
-| [faucetScript](./faucetScript.md) | Get coins from the faucet using a script. |
+| [rpc](./rpc.md) | Call a Bitcoin RPC method. |
 
 #### Query revisions
 
@@ -309,14 +299,6 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 | [non-standard-utxos](./non-standard-utxos.md) | Query revisions by module specifier, public key, limit, order, offset and list of transaction ids. |
 | [revs](./revs.md) | Get the revisions of a list of transactions. |
 | [revToId](./revtoid.md) | Given a revision, get the id of the smart contract. |
-
-#### OffChain
-
-{.compact}
-| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [id](./faucet.md) | Get the data stored in the offchain storage. |
-| [store](./faucetScript.md) | Stores the hex of the data in the offchain storage. |
 
 <!--  ### Configure Parallelism
 

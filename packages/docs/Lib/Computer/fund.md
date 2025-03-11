@@ -40,3 +40,5 @@ If the wallet does not have sufficient funds, an error is thrown.
 ## Example
 
 :::code source="../../../lib/test/lib/computer/fund.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/fund.test.ts" target=_blank>Sources</a>

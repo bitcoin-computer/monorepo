@@ -38,3 +38,5 @@ See [`encode`](./encode.md).
 ## Example
 
 :::code source="../../../lib/test/lib/computer/encode-new.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/encode-new.test.ts" target=_blank>Sources</a>

@@ -57,11 +57,11 @@ An object with a specification to build a transaction according to the Bitcoin C
 
 ### Return Value
 
-It returns an object `{ tx, effect }` where `tx` is a [NakamotJS](../../NakamotoJs/) transaction and `effect` is an object with keys `res` and `env`. The `res` object contains the result of the evaluation. The `env` object has the same keys as the blockchain environment. However, whereas the values of the blockchain environment are revision strings, the values of `env` and the smart object at these revisions _after_ evaluating the expression.
+It returns an object `{ tx, effect }` where `tx` is a [NakamotoJS](../../NakamotoJs/) transaction and `effect` is an object with keys `res` and `env`. The `res` object contains the result of the evaluation. The `env` object has the same keys as the blockchain environment. However, whereas the values of the blockchain environment are revision strings, the values of `env` and the smart object at these revisions _after_ evaluating the expression.
 
 ## Description
 
-The `encode` function builds a Bitcoin transaction from a JavaScript expression. It returns a transaction and an object `effect` containing the result of the evaluation in a property `res`. If the expression contains undefined variables a blockchain environment `env` must be passed into `encode`. A _blockchain environment_ maps the named of the undefined variable to UTXOs containing on-chain objects. A [module specifier](#modules) can be provided in order to make the exports of that module are available to the evaluation. Other options can customize the funding and signing process. It is also to pass in an object specifying [mocked](../../tutorial.md#mocking) objects.
+The `encode` function builds a Bitcoin transaction from a JavaScript expression. It returns a transaction and an object `effect` containing the result of the evaluation in a property `res`. If the expression contains undefined variables a blockchain environment `env` must be passed into `encode`. A _blockchain environment_ maps the named of the undefined variable to UTXOs containing on-chain objects. A [module specifier](../../tutorial.md#module-system) can be provided in order to make the exports of that module are available to the evaluation. Other options can customize the funding and signing process. It is also to pass in an object specifying [mocked](../../tutorial.md#mocking) objects.
 
 It is important to note that `encode` does not broadcast the transaction. Nonetheless the `effect` object reflects the on-chain state that will emerge once the transaction is broadcast.
 
@@ -75,3 +75,5 @@ The state update effected by a Bitcoin Computer transaction is completely predic
 ## Example
 
 :::code source="../../../lib/test/lib/computer/encode.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/encode.test.ts" target=_blank>Sources</a>

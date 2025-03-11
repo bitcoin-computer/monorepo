@@ -31,7 +31,7 @@ We recommend to ignore the syntax for initializing `messages` in the constructor
 
 The `Computer` class is a client-side JavaScript wallet that manages a Bitcoin private-public key pair. It can create normal Bitcoin transactions but also ones that contain metadata according to the Bitcoin Computer protocol. This allows for the creation, updating, and retrieval of on-chain objects.
 
-You can pass a [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) mnemonic into the constructor to create a specific private-public key pair, or leave the `mnemonic` parameter undefined to generate a random wallet. More configuration options are described [here](/lib/constructor/).
+You can pass a [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki) mnemonic into the constructor to create a specific private-public key pair, or leave the `mnemonic` parameter undefined to generate a random wallet. More configuration options are described [here](./Lib/Computer/constructor.md).
 
 ```javascript
 import { Computer } from '@bitcoin-computer/lib'
@@ -41,7 +41,7 @@ const computer = new Computer({ mnemonic: 'replace this seed' })
 
 ## Creating On-Chain Objects
 
-The [`computer.new`](/api/new) function broadcasts a transaction inscribed with a JavaScript expression consisting of a class and a constructor call. For example, the call
+The [`computer.new`](./Lib/Computer/new.md) function broadcasts a transaction inscribed with a JavaScript expression consisting of a class and a constructor call. For example, the call
 
 ```js
 const chat = await computer.new(Chat, ['hello'])
@@ -126,7 +126,7 @@ The property `_rev` has been updated and now refers to the first output of _tx_.
 
 - `_id` is the output in which the on-chain object was first created. As this output never changes the `_id` property never changes
 - `_rev` is the output where the current revision of the object is stored. Therefore, initially, the revision is equal to the id, then the revision is changed every time the object is updated.
-- `_root` is never updated. As it is not relevant to the chat example we refer the interested reader to [this](./language.md/#control-keyword-properties) section.
+- `_root` is never updated. As it is not relevant to the chat example we refer the interested reader to [this](./language.md) section.
 - `_owners` is set to the public key of the data owner. More on that [below](#data-ownership).
 - `amount` is set to the amount of satoshi of the output in which an on-chain object is stored. More [here](#cryptocurrency).
 
@@ -138,7 +138,7 @@ The state of the on-chain objects is never stored in the blockchain, just the Ja
 
 ## Reading On-Chain Objects
 
-The [`computer.sync`](/api/sync) function computes the state of an on-chain object given its revision. For example, if the function is called with an the id of an on-chain object, it returns the initial state of the object
+The [`computer.sync`](./Lib/Computer/sync.md) function computes the state of an on-chain object given its revision. For example, if the function is called with an the id of an on-chain object, it returns the initial state of the object
 
 ```js
 const initialChat = await computer.sync(chat._id)
@@ -157,7 +157,7 @@ expect(latestChat).to.deep.equal(chat)
 
 ## Finding On-Chain Objects
 
-The [`computer.query`](/api/query) function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:
+The [`computer.query`](./Lib/Computer/query.md) function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:
 
 ```js
 const [rev] = await computer.query({ ids: [chat._id] })
@@ -187,7 +187,7 @@ const publicKey = computer.getPublicKey()
 const revs = await computer.query({ publicKey })
 ```
 
-It is also possible to navigate the revision history of a on-chain object using [`computer.next`](lib/next.md) and [`computer.prev`](lib/prev.md):
+It is also possible to navigate the revision history of a on-chain object using [`computer.next`](./Lib/Computer/next.md) and [`computer.prev`](./Lib/Computer/prev.md):
 
 ```js
 // Navigating forward
@@ -312,9 +312,9 @@ await paymentB.cashOut()
 
 ## Expressions
 
-The syntax for on-chain objects introduced above provides a high-level abstraction over the Bitcoin Computer protocol. However we also provide low-level access to the protocol via the [`computer.encode()`](./lib/encode) function. This gives more control over the transaction being built, enabling advanced applications like DEXes.
+The syntax for on-chain objects introduced above provides a high-level abstraction over the Bitcoin Computer protocol. However we also provide low-level access to the protocol via the `computer.encode()` function. This gives more control over the transaction being built, enabling advanced applications like DEXes.
 
-The [`computer.encode`](./lib/encode.md) function takes three arguments:
+The [`computer.encode`](./Lib/Computer/encode.md) function takes three arguments:
 
 - A JavaScript expression `exp`,
 - an environment `env` that maps names to output specifiers,
@@ -359,7 +359,7 @@ The encode function allows fine grained control over the transaction being built
 
 ## Module System
 
-The [`computer.deploy`](./Lib/deploy.md) function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar `import` syntax. In the example below `moduleB` refers to `moduleA` via `specifierA`. Module specifiers can be passed into `computer.encode` and `computer.new` functions.
+The [`computer.deploy`](./Lib/Computer/deploy.md) function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar `import` syntax. In the example below `moduleB` refers to `moduleA` via `specifierA`. Module specifiers can be passed into `computer.encode` and `computer.new` functions.
 
 ```js
 const moduleA = 'export class A extends Contract {}'
@@ -377,7 +377,7 @@ const { tx } = await computer.encode({
 })
 ```
 
-Modules can be loaded from the blockchain using [computer.load](./lib/load.md).
+Modules can be loaded from the blockchain using [computer.load](./Lib/Computer/load.md).
 
 ```js
 const loadedB = await computer.load(specifierB)

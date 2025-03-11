@@ -45,3 +45,5 @@ This is useful in the case of partially signed transactions, where a user can en
 ## Example
 
 :::code source="../../../lib/test/lib/computer/sign.test.ts" :::
+
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/sign.test.ts" target=_blank>Sources</a>
