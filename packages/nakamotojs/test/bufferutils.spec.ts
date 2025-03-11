@@ -23,16 +23,6 @@ describe('bufferutils', () => {
         assert.strictEqual(num, f.dec);
       });
     });
-
-    // fixtures.invalid.readUInt64LE.forEach(f => {
-    //   it('throws on ' + f.description, () => {
-    //     const buffer = Buffer.from(f.hex, 'hex');
-
-    //     assert.throws(() => {
-    //       bufferutils.readUInt64LE(buffer, 0);
-    //     }, new RegExp(f.exception));
-    //   });
-    // });
   });
 
   describe('writeUInt64LE', () => {
