@@ -50,11 +50,6 @@ export function Signer(obj: any): boolean {
   );
 }
 
-const SATOSHI_MAX: number = 21 * 1e14;
-export function Satoshi(value: number): boolean {
-  return typeforce.UInt53(value) && value <= SATOSHI_MAX;
-}
-
 // external dependent types
 export const ECPoint = typeforce.quacksLike('Point');
 
@@ -80,6 +75,7 @@ export interface Tapleaf {
   version?: number;
 }
 
+export const MAX_SAFE_NUMBER = 0x001fffffffffffff;
 export const TAPLEAF_VERSION_MASK = 0xfe;
 export function isTapleaf(o: any): o is Tapleaf {
   if (!o || !('output' in o)) return false;

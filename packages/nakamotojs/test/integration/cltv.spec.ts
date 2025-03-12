@@ -97,7 +97,7 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
       tx.locktime = lockTime;
       // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
-      tx.addOutput(toOutputScript(randomAddress), 7e4 * amountFactor);
+      tx.addOutput(toOutputScript(randomAddress), BigInt(7e4 * amountFactor));
 
       // {Alice's signature} OP_TRUE
       const signatureHash = tx.hashForSignature(0, redeemScript, hashType);
@@ -143,7 +143,7 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
       tx.locktime = lockTime;
       // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
-      tx.addOutput(toOutputScript(randomAddress), 7e4 * amountFactor);
+      tx.addOutput(toOutputScript(randomAddress), BigInt(7e4 * amountFactor));
 
       // {Alice's signature} OP_TRUE
       const signatureHash = tx.hashForSignature(0, redeemScript, hashType);
@@ -191,7 +191,7 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
       tx.locktime = lockTime;
       // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
-      tx.addOutput(toOutputScript(randomAddress), 8e4 * amountFactor);
+      tx.addOutput(toOutputScript(randomAddress), BigInt(8e4 * amountFactor));
 
       // {Alice's signature} {Bob's signature} OP_FALSE
       const signatureHash = tx.hashForSignature(0, redeemScript, hashType);
@@ -236,7 +236,7 @@ describe('nakamotojs (transactions w/ CLTV)', () => {
       tx.locktime = lockTime;
       // Note: nSequence MUST be <= 0xfffffffe otherwise OP_CHECKLOCKTIMEVERIFY will fail.
       tx.addInput(idToHash(unspent.txId), unspent.vout, 0xfffffffe);
-      tx.addOutput(toOutputScript(randomAddress), 1e5 * amountFactor);
+      tx.addOutput(toOutputScript(randomAddress), BigInt(1e5 * amountFactor));
 
       // {Alice's signature} OP_TRUE
       const signatureHash = tx.hashForSignature(0, redeemScript, hashType);
