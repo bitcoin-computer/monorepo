@@ -76,6 +76,12 @@ const fixtures = {
         hex: '',
         dec: 0.1,
       },
+      {
+        description: 'value > (2^64)-1',
+        exception: 'RangeError: value out of range',
+        hex: '',
+        dec: BigInt(0x1ffffffffffffffff),
+      },
     ],
   },
 };

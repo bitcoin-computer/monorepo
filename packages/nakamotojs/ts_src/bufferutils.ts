@@ -4,6 +4,12 @@ import * as varuint from 'varuint-bitcoin';
 export { varuint };
 import { Buffer } from 'buffer';
 
+function verifuint(value: bigint, max: bigint): void {
+  if (value < 0n)
+    throw new Error('specified a negative value for writing an unsigned value');
+  if (value > max) throw new Error('RangeError: value out of range');
+}
+
 export function readUInt64LE(buffer: Buffer, offset: number): bigint {
   return buffer.readBigInt64LE(offset);
 }
@@ -13,6 +19,7 @@ export function writeUInt64LE(
   value: bigint,
   offset: number,
 ): number {
+  verifuint(value, 0xffffffffffffffffn);
   buffer.writeBigInt64LE(BigInt(value), offset);
   return offset + 8;
 }
