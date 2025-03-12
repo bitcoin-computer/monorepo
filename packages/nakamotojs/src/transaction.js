@@ -167,7 +167,6 @@ export class Transaction {
       this.ins[inputIndex].witness = [witness];
   }
   addOutput(scriptPubKey, value) {
-    // typeforce(types.tuple(types.Buffer, types.Satoshi), arguments);
     // Add the output and return the output's index
     return (
       this.outs.push({
@@ -177,13 +176,8 @@ export class Transaction {
     );
   }
   updateOutput(outputIndex, opts) {
-    // typeforce(
-    //   types.tuple(types.Number, {
-    //     scriptPubKey: types.maybe(types.Buffer),
-    //     value: types.maybe(types.Satoshi),
-    //   }),
-    //   arguments,
-    // );
+    typeforce(types.Number, outputIndex);
+    types.tuple({ scriptPubKey: types.maybe(types.Buffer) });
     const { scriptPubKey, value } = opts;
     if (outputIndex >= this.outs.length)
       throw new Error('No output at index: ' + outputIndex);
@@ -336,15 +330,9 @@ export class Transaction {
   }
   hashForWitnessV1(inIndex, prevOutScripts, values, hashType, leafHash, annex) {
     // https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki#common-signature-message
-    // typeforce(
-    //   types.tuple(
-    //     types.UInt32,
-    //     typeforce.arrayOf(types.Buffer),
-    //     typeforce.arrayOf(types.Satoshi),
-    //     types.UInt32,
-    //   ),
-    //   arguments,
-    // );
+    typeforce(types.UInt32, inIndex);
+    typeforce(typeforce.arrayOf(types.Buffer), prevOutScripts);
+    typeforce(typeforce.arrayOf(types.UInt32), values);
     if (
       values.length !== this.ins.length ||
       prevOutScripts.length !== this.ins.length
@@ -462,10 +450,6 @@ export class Transaction {
     );
   }
   hashForWitnessV0(inIndex, prevOutScript, value, hashType) {
-    // typeforce(
-    //   types.tuple(types.UInt32, types.Buffer, types.Satoshi, types.UInt32),
-    //   arguments,
-    // );
     let tbuffer = Buffer.from([]);
     let bufferWriter;
     let hashOutputs = ZERO;

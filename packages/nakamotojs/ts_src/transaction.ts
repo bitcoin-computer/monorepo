@@ -260,6 +260,8 @@ export class Transaction {
       value?: bigint;
     },
   ): void {
+    typeforce(types.Number, outputIndex);
+    types.tuple({ scriptPubKey: types.maybe(types.Buffer) });
     const { scriptPubKey, value } = opts;
 
     if (outputIndex >= this.outs.length)
@@ -462,15 +464,9 @@ export class Transaction {
     annex?: Buffer,
   ): Buffer {
     // https://github.com/bitcoin/bips/blob/master/bip-0341.mediawiki#common-signature-message
-    // typeforce(
-    //   types.tuple(
-    //     types.UInt32,
-    //     typeforce.arrayOf(types.Buffer),
-    //     typeforce.arrayOf(types.Satoshi),
-    //     types.UInt32,
-    //   ),
-    //   arguments,
-    // );
+    typeforce(types.UInt32, inIndex);
+    typeforce(typeforce.arrayOf(types.Buffer), prevOutScripts);
+    typeforce(typeforce.arrayOf(types.UInt32), values);
 
     if (
       values.length !== this.ins.length ||
