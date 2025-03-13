@@ -2,8 +2,8 @@
 module.exports = {
   content: [
     './src/**/*.{js,jsx,ts,tsx}',
-    './node_modules/@bitcoin-computer/components/built/**/*.{js,jsx,ts,tsx}',
     '../components/built/**/*.{js,jsx,ts,tsx}',
+    './node_modules/@bitcoin-computer/components/built/**/*.{js,jsx,ts,tsx}',
   ],
   darkMode: 'media',
   theme: {
