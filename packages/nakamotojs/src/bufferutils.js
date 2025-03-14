@@ -9,11 +9,11 @@ function verifuint(value, max) {
   if (value > max) throw new Error('RangeError: value out of range');
 }
 export function readUInt64LE(buffer, offset) {
-  return buffer.readBigInt64LE(offset);
+  return buffer.readBigUInt64LE(offset);
 }
 export function writeUInt64LE(buffer, value, offset) {
   verifuint(value, 0xffffffffffffffffn);
-  buffer.writeBigInt64LE(BigInt(value), offset);
+  buffer.writeBigUInt64LE(BigInt(value), offset);
   return offset + 8;
 }
 export function reverseBuffer(buffer) {

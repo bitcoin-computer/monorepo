@@ -440,4 +440,53 @@ describe('Transaction', () => {
     tx.sign(0, keyPair, Transaction.SIGHASH_ALL, script);
     assert(tx.ins[0].script.length > 0);
   });
+
+  describe('toBuffer/fromBuffer', () => {
+    it('Should create a transaction with a big integer output value', () => {
+      const keyPair = ECPair.makeRandom();
+      const txToSpend = new Transaction();
+      const payment = p2pkh({ pubkey: keyPair.publicKey });
+      txToSpend.addOutput(payment.output!, 100000n);
+      const tx = new Transaction();
+      const satoshis = BigInt(72057594037927936n);
+      tx.addInput(txToSpend.getHash(), 0);
+      tx.addOutput(Buffer.from('6a', 'hex'), satoshis);
+      tx.sign(0, keyPair, Transaction.SIGHASH_ALL, txToSpend.outs[0].script);
+
+      const buff = tx.toBuffer();
+      const txBack = Transaction.fromBuffer(buff);
+      assert(txBack.outs[0].value === satoshis);
+    });
+
+    it('Should create a transaction with the maximum value (2^64)-1', () => {
+      const keyPair = ECPair.makeRandom();
+      const txToSpend = new Transaction();
+      const payment = p2pkh({ pubkey: keyPair.publicKey });
+      txToSpend.addOutput(payment.output!, 100000n);
+      const tx = new Transaction();
+      const satoshis = BigInt(18446744073709551615n); // (2^64)-1
+      tx.addInput(txToSpend.getHash(), 0);
+      tx.addOutput(Buffer.from('6a', 'hex'), satoshis);
+      tx.sign(0, keyPair, Transaction.SIGHASH_ALL, txToSpend.outs[0].script);
+
+      const buff = tx.toBuffer();
+      const txBack = Transaction.fromBuffer(buff);
+      assert(txBack.outs[0].value === satoshis);
+    });
+
+    it('Should fail when creating a transaction with a value above (2^64)-1', () => {
+      const keyPair = ECPair.makeRandom();
+      const txToSpend = new Transaction();
+      const payment = p2pkh({ pubkey: keyPair.publicKey });
+      txToSpend.addOutput(payment.output!, 100000n);
+      const tx = new Transaction();
+      const satoshis = BigInt(18446744073709551616n); // (2^64)
+      tx.addInput(txToSpend.getHash(), 0);
+      tx.addOutput(Buffer.from('6a', 'hex'), satoshis);
+
+      assert.throws(() => {
+        tx.toBuffer();
+      }, /Error: RangeError: value out of range/);
+    });
+  });
 });

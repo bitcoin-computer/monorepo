@@ -11,7 +11,7 @@ function verifuint(value: bigint, max: bigint): void {
 }
 
 export function readUInt64LE(buffer: Buffer, offset: number): bigint {
-  return buffer.readBigInt64LE(offset);
+  return buffer.readBigUInt64LE(offset);
 }
 
 export function writeUInt64LE(
@@ -20,7 +20,7 @@ export function writeUInt64LE(
   offset: number,
 ): number {
   verifuint(value, 0xffffffffffffffffn);
-  buffer.writeBigInt64LE(BigInt(value), offset);
+  buffer.writeBigUInt64LE(BigInt(value), offset);
   return offset + 8;
 }
 
