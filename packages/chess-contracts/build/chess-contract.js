@@ -105,7 +105,7 @@ export class ChessContractHelper {
         // Create output with non-standard script
         const { tx } = await this.computer.encode({
             exp: `new ChessContract(
-        ${this.amount},
+        ${this.amount}n,
         "${this.nameW}",
         "${this.nameB}",
         "${this.publicKeyW}",
@@ -123,8 +123,8 @@ export class ChessContractHelper {
         const n = networks.getNetwork(chain, network);
         const addy = address.fromPublicKey(this.computer.wallet.publicKey, 'p2pkh', n);
         const utxos = await this.computer.wallet.restClient.getFormattedUtxos(addy);
-        let paid = 0;
-        while (paid < this.amount / 2 && utxos.length > 0) {
+        let paid = 0n;
+        while (paid < Number(this.amount) / 2 && utxos.length > 0) {
             const { txId, vout, satoshis } = utxos.pop();
             const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'));
             tx.addInput(txHash, vout);
@@ -136,8 +136,8 @@ export class ChessContractHelper {
         const fee = await this.computer.wallet.estimateFee(tx);
         const publicKeyBuffer = this.computer.wallet.publicKey;
         const { output } = payments.p2pkh({ pubkey: publicKeyBuffer, network: n });
-        const changeAmount = paid - this.amount / 2 - 5 * fee; // todo: optimize the fee
-        tx.addOutput(output, changeAmount);
+        const changeAmount = Number(paid) - Number(this.amount) / 2 - 5 * fee; // todo: optimize the fee
+        tx.addOutput(output, BigInt(Math.round(changeAmount)));
         // Sign
         const { SIGHASH_ALL, SIGHASH_ANYONECANPAY } = Transaction;
         await this.computer.sign(tx, { sighashType: SIGHASH_ALL | SIGHASH_ANYONECANPAY });
@@ -156,7 +156,7 @@ export class ChessContractHelper {
         this.secretHashB = chessContract.secretHashB;
         // Fund
         const fee = await this.computer.wallet.estimateFee(tx);
-        const txId = await this.computer.send(this.amount / 2 + 5 * fee, this.computer.getAddress());
+        const txId = await this.computer.send(this.amount / 2n + 5n * BigInt(fee), this.computer.getAddress());
         const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'));
         tx.addInput(txHash, 0);
         // Sign and broadcast
@@ -179,7 +179,7 @@ export class ChessContractHelper {
         }
         return { newChessContract, isGameOver };
     }
-    async spend(chessContract, fee = 10000) {
+    async spend(chessContract, fee = 10000n) {
         const txId = chessContract._id.split(':')[0];
         const spendingPath = chessContract._owners[0] === this.publicKeyW ? 0 : 1;
         const secret = await getSecret(chessContract._id);
@@ -187,7 +187,7 @@ export class ChessContractHelper {
             throw new Error('Something went wrong when trying to spend.');
         return this.spendWithSecret(txId, secret, spendingPath, fee);
     }
-    async spendWithSecret(txId, secret, spendingPath, fee = 10000) {
+    async spendWithSecret(txId, secret, spendingPath, fee = 10000n) {
         if (!this.isInitialized())
             throw new Error('Chess helper is not initialized');
         const chain = this.computer.getChain();
@@ -204,7 +204,7 @@ export class ChessContractHelper {
         const redeemTx = new Transaction();
         redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), 1);
         const { output } = payments.p2pkh({ pubkey: hdPrivateKey.publicKey, ...n });
-        redeemTx.addOutput(output, this.amount - fee);
+        redeemTx.addOutput(output, BigInt(this.amount) - fee);
         const redeemScript = bscript.fromASM(this.getASM());
         const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL);
         const inScript = fromASM(toASM(asmFromBuf(sigHash)));

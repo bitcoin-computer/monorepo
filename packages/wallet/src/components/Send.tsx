@@ -45,7 +45,7 @@ export function SendForm({ computer }: { computer: Computer }) {
     e.preventDefault()
     computer.setFee(Number(fee))
     try {
-      const txId = await computer.send(Number(amount) * 1e8, to)
+      const txId = await computer.send(BigInt(amount) * 100000000n, to)
       showSnackBar(`Sent ${amount} ${computer.getChain()} to ${to} via transaction ${txId}`, true)
     } catch (err) {
       showSnackBar(`Something went wrong ${err instanceof Error ? err.message : ''}`, false)

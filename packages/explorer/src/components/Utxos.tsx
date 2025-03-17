@@ -5,10 +5,10 @@ import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
 interface _Unspent {
   txId: string
   vout: number
-  satoshis: number
+  satoshis: bigint
   rev?: string
   scriptPubKey?: string
-  amount?: number
+  amount?: bigint
   address?: string
   height?: number
 }
@@ -32,7 +32,7 @@ const UTXODisplay = () => {
       showLoader(true)
       const response = await computer.wallet.restClient.getUtxos(addr)
       setUtxos(response)
-      setTotalAmount(response.reduce((total, unspent) => total + unspent.satoshis / 1e8, 0))
+      setTotalAmount(response.reduce((total, unspent) => total + Number(unspent.satoshis) / 1e8, 0))
     } catch (err: unknown) {
       showSnackBar(err instanceof Error ? err.message : 'Error occurred', true)
     } finally {
@@ -92,7 +92,7 @@ const UTXODisplay = () => {
                         {utxo.vout}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-bold">
-                        {utxo.satoshis / 1e8}
+                        {Number(utxo.satoshis) / 1e8}
                       </td>
                     </tr>
                   ))}

@@ -30,7 +30,7 @@ describe('Sale', () => {
   let tx: Transaction
   let txClone: Transaction
   let sellerPublicKey: string
-  const nftPrice = 1e8
+  const nftPrice = 100000000n
   const fee = 100000
 
   describe('Examples from docs', () => {
@@ -45,7 +45,7 @@ describe('Sale', () => {
       const nft = await seller.new(NFT, ['name', 'artist', 'URL'])
 
       // Seller creates a mock for the eventual payment
-      const mock = new PaymentMock(nftPrice)
+      const mock = new PaymentMock(BigInt(nftPrice))
 
       // Seller creates partially signed swap as a sale offer
       const { tx: saleTx } = await seller.encode({
@@ -59,7 +59,7 @@ describe('Sale', () => {
       })
 
       // Buyer creates a payment object with the asking price
-      const payment = await buyer.new(Payment, [1e8])
+      const payment = await buyer.new(Payment, [100000000n])
       const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
       // Buyer set's the payment object as the second input of the swap tx
@@ -75,7 +75,7 @@ describe('Sale', () => {
       const { env } = (await buyer.sync(saleTx.getId())) as { env: { nft: NFT; payment: NFT } }
       const { nft: n, payment: p } = env
 
-      expect(p._amount).eq(1e8)
+      expect(p._amount).eq(100000000n)
       expect(n._owners).deep.eq([buyer.getPublicKey()])
       expect(p._owners).deep.eq([seller.getPublicKey()])
     })
@@ -85,7 +85,7 @@ describe('Sale', () => {
       const alice = new Computer({ url, chain, network })
       const bob = new Computer({ url, chain, network })
       await alice.faucet(1e8)
-      await bob.faucet(nftPrice + 1e8)
+      await bob.faucet(Number(nftPrice) + 1e8)
 
       // Alice creates helper objects
       const nftHelperA = new NftHelper(alice)
@@ -100,7 +100,7 @@ describe('Sale', () => {
       const nftA = await nftHelperA.mint('a', 'AAA', 'URL')
 
       // Alice creates a payment mock
-      const mock = new PaymentMock(nftPrice)
+      const mock = new PaymentMock(BigInt(nftPrice))
 
       // Alice creates a swap transaction
       const { tx: saleTx } = await saleHelperA.createSaleTx(nftA, mock)
@@ -128,12 +128,12 @@ describe('Sale', () => {
 
       // Alice withdraws her payment object
       const { tx: alicePaymentTx } = await alice.encode({
-        exp: `alicePayment.setAmount(7860)`,
+        exp: `alicePayment.setAmount(7860n)`,
         env: { alicePayment: p._rev },
       })
 
       expect(await alice.broadcast(alicePaymentTx)).a('string')
-      expect((await alice.getBalance()).balance).gte(1e8)
+      expect((await alice.getBalance()).balance >= 100000000n).to.be.true
     })
   })
 
@@ -159,7 +159,7 @@ describe('Sale', () => {
     })
 
     it('Seller creates a swap transaction for the NFT with the desired price', async () => {
-      const mock = new PaymentMock(nftPrice)
+      const mock = new PaymentMock(BigInt(nftPrice))
       ;({ tx } = await saleHelper.createSaleTx(nft, mock))
       txClone = tx.clone()
     })
@@ -181,11 +181,11 @@ describe('Sale', () => {
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
-      await thief.faucet(nftPrice + fee)
+      await thief.faucet(Number(nftPrice) + fee)
     })
 
     it('Thief creates a payment object with half the asking price', async () => {
-      tooLowPayment = await thief.new(Payment, [nftPrice / 2])
+      tooLowPayment = await thief.new(Payment, [nftPrice / 2n])
 
       // @ts-ignore
       expect(tooLowPayment).matchPattern({
@@ -193,7 +193,7 @@ describe('Sale', () => {
         _rev: _.isString,
         _root: _.isString,
         _owners: [thief.getPublicKey()],
-        _amount: nftPrice / 2,
+        _amount: nftPrice / 2n,
       })
     })
 
@@ -235,7 +235,7 @@ describe('Sale', () => {
     let txId: string
 
     before("Fund Buyers's wallet", async () => {
-      await buyer.faucet(nftPrice + fee + 1e8)
+      await buyer.faucet(Number(nftPrice) + fee + 1e8)
     })
 
     it('Buyer creates a payment object', async () => {

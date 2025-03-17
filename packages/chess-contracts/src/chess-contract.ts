@@ -24,7 +24,7 @@ const getSecret = async (id: string): Promise<string | null> => {
 if (typeof global !== 'undefined') global.Buffer = Buffer
 
 type PaymentType = {
-  amount: number
+  amount: bigint
   publicKeyW: string
   secretHashW: string
   publicKeyB: string
@@ -47,7 +47,7 @@ export class Payment extends Contract {
 }
 
 export class ChessContract extends Contract {
-  amount!: number
+  amount!: bigint
   nameW!: string
   nameB!: string
   publicKeyW!: string
@@ -59,7 +59,7 @@ export class ChessContract extends Contract {
   payment!: Payment
 
   constructor(
-    amount: number,
+    amount: bigint,
     nameW: string,
     nameB: string,
     publicKeyW: string,
@@ -106,7 +106,7 @@ export class ChessContract extends Contract {
 
 export class ChessContractHelper {
   computer: Computer
-  amount?: number
+  amount?: bigint
   nameW?: string
   nameB?: string
   publicKeyW?: string
@@ -127,7 +127,7 @@ export class ChessContractHelper {
     mod,
   }: {
     computer: Computer
-    amount?: number
+    amount?: bigint
     nameW?: string
     nameB?: string
     publicKeyW?: string
@@ -182,7 +182,7 @@ export class ChessContractHelper {
     // Create output with non-standard script
     const { tx } = await this.computer.encode({
       exp: `new ChessContract(
-        ${this.amount},
+        ${this.amount}n,
         "${this.nameW}",
         "${this.nameB}",
         "${this.publicKeyW}",
@@ -201,8 +201,8 @@ export class ChessContractHelper {
     const n = networks.getNetwork(chain, network)
     const addy = address.fromPublicKey(this.computer.wallet.publicKey, 'p2pkh', n)
     const utxos = await this.computer.wallet.restClient.getFormattedUtxos(addy)
-    let paid = 0
-    while (paid < this.amount / 2 && utxos.length > 0) {
+    let paid = 0n
+    while (paid < Number(this.amount) / 2 && utxos.length > 0) {
       const { txId, vout, satoshis } = utxos.pop()!
       const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
       tx.addInput(txHash, vout)
@@ -215,8 +215,8 @@ export class ChessContractHelper {
     const fee = await this.computer.wallet.estimateFee(tx)
     const publicKeyBuffer = this.computer.wallet.publicKey
     const { output } = payments.p2pkh({ pubkey: publicKeyBuffer, network: n })
-    const changeAmount = paid - this.amount / 2 - 5 * fee // todo: optimize the fee
-    tx.addOutput(output!, changeAmount)
+    const changeAmount = Number(paid) - Number(this.amount) / 2 - 5 * fee // todo: optimize the fee
+    tx.addOutput(output!, BigInt(Math.round(changeAmount)))
 
     // Sign
     const { SIGHASH_ALL, SIGHASH_ANYONECANPAY } = Transaction
@@ -239,7 +239,10 @@ export class ChessContractHelper {
 
     // Fund
     const fee = await this.computer.wallet.estimateFee(tx)
-    const txId = await this.computer.send(this.amount / 2 + 5 * fee, this.computer.getAddress())
+    const txId = await this.computer.send(
+      this.amount / 2n + 5n * BigInt(fee),
+      this.computer.getAddress(),
+    )
     const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
     tx.addInput(txHash, 0)
 
@@ -269,7 +272,7 @@ export class ChessContractHelper {
     return { newChessContract, isGameOver }
   }
 
-  async spend(chessContract: ChessContract, fee = 10000): Promise<string> {
+  async spend(chessContract: ChessContract, fee = 10000n): Promise<string> {
     const txId = chessContract._id.split(':')[0]
     const spendingPath = chessContract._owners[0] === this.publicKeyW ? 0 : 1
     const secret = await getSecret(chessContract._id)
@@ -281,7 +284,7 @@ export class ChessContractHelper {
     txId: string,
     secret: string,
     spendingPath: number,
-    fee = 10000,
+    fee = 10000n,
   ): Promise<string> {
     if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
 
@@ -301,7 +304,7 @@ export class ChessContractHelper {
     const redeemTx = new Transaction()
     redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), 1)
     const { output } = payments.p2pkh({ pubkey: hdPrivateKey.publicKey, ...n })
-    redeemTx.addOutput(output!, this.amount - fee)
+    redeemTx.addOutput(output!, BigInt(this.amount) - fee)
     const redeemScript = bscript.fromASM(this.getASM())
     const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
     const inScript = fromASM(toASM(asmFromBuf(sigHash)))

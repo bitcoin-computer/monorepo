@@ -27,7 +27,7 @@ const meta = {
   _rev: _.isString,
   _root: _.isString,
   _owners: _.isArray,
-  _amount: _.isNumber,
+  _amount: (x) => typeof x === 'bigint',
 }
 
 class NFT extends Contract {
@@ -51,15 +51,15 @@ class Token extends Contract {
   _id: string
   _rev: string
   _root: string
-  supply: number
-  totalSupply: number
+  supply: bigint
+  totalSupply: bigint
   _owners: string[]
 
-  constructor(to: string, supply: number, totalSupply: number) {
+  constructor(to: string, supply: bigint, totalSupply: bigint) {
     super({ supply, totalSupply, _owners: [to] })
   }
 
-  transfer(amount: number, recipient: string) {
+  transfer(amount: bigint, recipient: string) {
     if (this.supply < amount) throw new Error()
     this.supply -= amount
     return new Token(recipient, amount, this.totalSupply)
@@ -101,10 +101,10 @@ class PaymentMock {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _amount: bigint
   _owners: string[]
 
-  constructor(amount: number) {
+  constructor(amount: bigint) {
     this._id = mockedRev
     this._rev = mockedRev
     this._root = mockedRev
@@ -121,10 +121,10 @@ class Payment extends Contract {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _amount: bigint
   _owners: string[]
 
-  constructor(_amount: number) {
+  constructor(_amount: bigint) {
     super({ _amount })
   }
 
@@ -232,12 +232,12 @@ describe('Fungible Token', () => {
 
   describe('Minting a fungible token', () => {
     it('Sender mints a fungible token with supply 10', async () => {
-      token = await sender.new(Token, [sender.getPublicKey(), 10, 10])
+      token = await sender.new(Token, [sender.getPublicKey(), 10n, 10n])
     })
 
     it('This creates a smart object', () => {
       // @ts-ignore
-      expect(token).to.matchPattern({ ...meta, supply: 10, totalSupply: 10 })
+      expect(token).to.matchPattern({ ...meta, supply: 10n, totalSupply: 10n })
     })
 
     it('Property _owners is a singleton array with minters public key', () => {
@@ -259,14 +259,14 @@ describe('Fungible Token', () => {
 
   describe('Transferring a fungible token', async () => {
     it('Sender transfers 2 tokens to receiver', async () => {
-      sentToken = await token.transfer(2, receiver.getPublicKey())
+      sentToken = await token.transfer(2n, receiver.getPublicKey())
     })
 
     it('This creates a second smart object with supply 2', () => {
       // @ts-ignore
       expect(sentToken).to.matchPattern({
-        supply: 2,
-        totalSupply: 10,
+        supply: 2n,
+        totalSupply: 10n,
         ...meta,
       })
     })
@@ -277,7 +277,7 @@ describe('Fungible Token', () => {
 
     it('The first smart object now has a supply of 8', () => {
       // @ts-ignore
-      expect(token).to.matchPattern({ supply: 8, totalSupply: 10, ...meta })
+      expect(token).to.matchPattern({ supply: 8n, totalSupply: 10n, ...meta })
     })
 
     it('The first smart object is still owned by sender', () => {
@@ -289,7 +289,7 @@ describe('Fungible Token', () => {
     })
 
     it('If Sender mints another token it will have a different root', async () => {
-      const fakeToken = await sender.new(Token, [sender.getPublicKey(), 10, 10])
+      const fakeToken = await sender.new(Token, [sender.getPublicKey(), 10n, 10n])
       expect(fakeToken._root).not.eq(token._root)
       expect(fakeToken._root).not.eq(sentToken._root)
     })
@@ -462,7 +462,7 @@ describe('Sell', () => {
   let tx: any
   let txClone: any
   let sellerPublicKey: string
-  const nftPrice = 1e8
+  const nftPrice = 100000000n
   const fee = 10000
 
   describe('Creating an NFT and an offer to sell', () => {
@@ -513,11 +513,11 @@ describe('Sell', () => {
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
-      await thief.faucet(nftPrice + fee)
+      await thief.faucet(Number(nftPrice) + fee)
     })
 
     it('Thief creates a payment object with half the asking price', async () => {
-      tooLowPayment = await thief.new(Payment, [nftPrice / 2])
+      tooLowPayment = await thief.new(Payment, [nftPrice / 2n])
 
       // @ts-ignore
       expect(tooLowPayment).matchPattern({
@@ -525,7 +525,7 @@ describe('Sell', () => {
         _rev: _.isString,
         _root: _.isString,
         _owners: [thief.getPublicKey()],
-        _amount: nftPrice / 2,
+        _amount: nftPrice / 2n,
       })
     })
 
@@ -567,7 +567,7 @@ describe('Sell', () => {
     let txId: string
 
     before("Fund Buyers's wallet", async () => {
-      await buyer.faucet(nftPrice + fee+ 1e8)
+      await buyer.faucet(Number(nftPrice) + fee + 1e8)
     })
 
     it('Buyer creates a payment object', async () => {

@@ -99,7 +99,7 @@ export function StartGameModalContent({
                       Amount
                     </span>
                     <span className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-400">
-                      {game.amount / 1e8} {computer.getChain()}
+                      {Number(game.amount) / 1e8} {computer.getChain()}
                     </span>
                   </div>
                 </div>

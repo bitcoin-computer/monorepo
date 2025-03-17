@@ -30,12 +30,12 @@ describe('Payment', () => {
     })
 
     it('Alice creates an payment transaction and broadcast it', async () => {
-      const { tx: paymentTx } = await paymentHelper.createPaymentTx(2e8)
+      const { tx: paymentTx } = await paymentHelper.createPaymentTx(200000000n)
 
       paymentTxId = await alice.broadcast(paymentTx)
 
       const payment: Payment = await paymentHelper.getPayment(paymentTxId)
-      expect(payment._amount).eq(2e8)
+      expect(payment._amount).eq(200000000n)
     })
   })
 })

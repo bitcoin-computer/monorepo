@@ -2,27 +2,27 @@ export declare class Payment extends Contract {
     _id: string;
     _rev: string;
     _root: string;
-    _amount: number;
+    _amount: bigint;
     _owners: string[];
     constructor(_amount: number);
     transfer(to: string): void;
-    setAmount(a: number): void;
+    setAmount(a: bigint): void;
 }
 export declare class PaymentMock {
     _id: string;
     _rev: string;
     _root: string;
-    _amount: number;
+    _amount: bigint;
     _owners: string[];
-    constructor(amount: number);
+    constructor(amount: bigint);
     transfer(to: string): void;
-    setAmount(a: number): void;
+    setAmount(a: bigint): void;
 }
 export declare class PaymentHelper {
     computer: any;
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
-    createPaymentTx(amount: number): Promise<any>;
+    createPaymentTx(amount: bigint): Promise<any>;
     getPayment(paymentTxId: string): Promise<Payment>;
 }

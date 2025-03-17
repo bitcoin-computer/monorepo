@@ -54,7 +54,7 @@ function NewGameModalContent({
     const publicKeyW = computerW.getPublicKey()
     const chessContractHelper = new ChessContractHelper({
       computer: computerW,
-      amount: parseFloat(amount) * 1e8,
+      amount: BigInt(parseFloat(amount) * 1e8),
       nameW,
       nameB,
       publicKeyW,
@@ -82,7 +82,7 @@ function NewGameModalContent({
           balance > parseFloat(amount) * 1e8
         ) {
           // Try to combine the UTXOs in a single UTXO
-          await computerW.send(parseFloat(amount) * 1e8, computerW.getAddress())
+          await computerW.send(BigInt(parseFloat(amount) * 1e8), computerW.getAddress())
           tx = await createNewGame()
         } else {
           if (error instanceof Error) {

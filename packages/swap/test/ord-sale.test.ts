@@ -16,14 +16,14 @@ const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
 const network = process.env.BCN_NETWORK
 
-let mockAmount = 7860
-if (chain !== 'BTC' && chain !== 'LTC') mockAmount *= 10
+let mockAmount = 7860n
+if (chain !== 'BTC' && chain !== 'LTC') mockAmount *= 10n
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
 describe('Ord Sale', () => {
-  const nftPrice = 1e8
+  const nftPrice = 100000000n
 
   describe('Examples from docs', () => {
     it('Should work without helper classes', async () => {
@@ -37,9 +37,9 @@ describe('Ord Sale', () => {
       const nft = await seller.new(NFT, ['name', 'artist', 'url'])
 
       // Seller creates partially signed swap as a sale offer
-      const paymentMock = new PaymentMock(mockAmount)
-      const b1Mock = new PaymentMock(mockAmount)
-      const b2Mock = new PaymentMock(mockAmount)
+      const paymentMock = new PaymentMock(BigInt(mockAmount))
+      const b1Mock = new PaymentMock(BigInt(mockAmount))
+      const b2Mock = new PaymentMock(BigInt(mockAmount))
 
       const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
       const { tx } = await seller.encode({
@@ -53,7 +53,7 @@ describe('Ord Sale', () => {
       })
 
       // Buyer creates a payment object with the asking price
-      const payment = await buyer.new(Payment, [1e8])
+      const payment = await buyer.new(Payment, [100000000n])
       const b1 = await buyer.new(Payment, [mockAmount])
       const b2 = await buyer.new(Payment, [mockAmount])
 
@@ -97,9 +97,9 @@ describe('Ord Sale', () => {
       const nftA = await nftHelper.mint('a', 'AAA', 'URL')
 
       // Alice creates a payment mock
-      const paymentMock = new PaymentMock(nftPrice)
-      const b1Mock = new PaymentMock(mockAmount)
-      const b2Mock = new PaymentMock(mockAmount)
+      const paymentMock = new PaymentMock(BigInt(nftPrice))
+      const b1Mock = new PaymentMock(BigInt(mockAmount))
+      const b2Mock = new PaymentMock(BigInt(mockAmount))
 
       // Alice creates a swap transaction
       const { tx } = await saleHelperA.createSaleTx(b1Mock, b2Mock, nftA, paymentMock)
@@ -151,9 +151,9 @@ describe('Ord Sale', () => {
       })
 
       it('Seller creates a swap transaction for the NFT with the desired price', async () => {
-        const b1Mock = new PaymentMock(mockAmount)
-        const b2Mock = new PaymentMock(mockAmount)
-        const paymentMock = new PaymentMock(nftPrice)
+        const b1Mock = new PaymentMock(BigInt(mockAmount))
+        const b2Mock = new PaymentMock(BigInt(mockAmount))
+        const paymentMock = new PaymentMock(BigInt(nftPrice))
         ;({ tx } = await saleHelper.createSaleTx(b1Mock, b2Mock, nft, paymentMock))
       })
 
@@ -166,7 +166,7 @@ describe('Ord Sale', () => {
       })
 
       it("The third output's value is nftPrice, the others are according to the _amounts in the returned objects", () => {
-        expect(tx.outs[0].value).eq(mockAmount * 2) // b1 after
+        expect(tx.outs[0].value).eq(mockAmount * 2n) // b1 after
         expect(tx.outs[1].value).greaterThan(0) // t after
         expect(tx.outs[2].value).eq(nftPrice) // p after
         expect(tx.outs[3].value).eq(mockAmount) // b2 after
@@ -182,7 +182,7 @@ describe('Ord Sale', () => {
       let txId: string
 
       before("Fund Buyers's wallet", async () => {
-        await buyer.faucet(nftPrice + fee + 1e8)
+        await buyer.faucet(Number(nftPrice) + fee + 100000000)
       })
 
       it('Buyer creates a payment object', async () => {
