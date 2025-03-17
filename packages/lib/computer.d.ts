@@ -23,7 +23,7 @@ type SJObject = {
   _rev: string
   _root: string
   _owners: string | string[]
-  _amount: number
+  _amount: bigint
   _readers?: string[]
   _url?: string
 }
@@ -32,7 +32,7 @@ declare class Mock {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _amount: bigint
   _owners: string[]
   constructor({
     _id,
@@ -80,7 +80,7 @@ type Fee = Partial<{
 type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
 type ProgramMetaData = JObject &
   Partial<{
-    _amount: number
+    _amount: bigint
     _owners: string | string[]
     _readers?: string[]
     _url?: string
@@ -160,7 +160,7 @@ type Location = {
   _root: string
   _id: string
   _owners: string[]
-  _amount: number
+  _amount: bigint
   _readers?: string[]
   _url?: string
 }
@@ -213,17 +213,17 @@ interface _Network {
   wif: number
 }
 interface _Balance {
-  confirmed: number
-  unconfirmed: number
-  balance: number
+  confirmed: bigint
+  unconfirmed: bigint
+  balance: bigint
 }
 interface _Unspent {
   txId: string
   vout: number
-  satoshis: number
+  satoshis: bigint
   rev?: string
   scriptPubKey?: string
-  amount?: number
+  amount?: bigint
   address?: string
   height?: number
 }
@@ -235,7 +235,7 @@ interface _Input {
   witness: string[]
 }
 interface _Output {
-  value: number
+  value: bigint
   script: string
   address?: string
 }
@@ -262,6 +262,13 @@ type Utxo = {
 type Effect = {
   res: Json
   env: JObject
+}
+
+type TxIdAmountType = {
+  txId: string
+  inputsSatoshis: bigint
+  outputsSatoshis: bigint
+  satoshis: bigint
 }
 
 declare class RestClient {
@@ -353,7 +360,7 @@ declare class Wallet {
   fund(tx: Transaction, opts?: FundOptions): Promise<void>
   sign(transaction: Transaction, sigOptions?: SigOptions): Promise<void>
   broadcast(tx: Transaction): Promise<string>
-  send(satoshis: number, address: string): Promise<string>
+  send(satoshis: bigint, address: string): Promise<string>
   get hdPrivateKey(): BIP32Interface
   get privateKey(): Buffer
   get publicKey(): Buffer
@@ -383,7 +390,7 @@ declare class Transaction extends nTransaction {
   get ownerData(): {
     outScriptBuf: Buffer
     _owners: string | string[]
-    _amount: number
+    _amount: bigint
   }[]
   get ioMap(): number[]
   get zip(): string[][]
@@ -407,7 +414,7 @@ declare class Contract {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _amount: bigint
   _owners: string[]
   constructor(opts?: {})
 }
@@ -470,7 +477,7 @@ declare class Computer {
   getBalance(address?: string): Promise<_Balance>
   sign(transaction: Transaction, opts?: SigOptions): Promise<void>
   fund(tx: Transaction, opts?: Fee & FundOptions): Promise<void>
-  send(satoshis: number, address: string): Promise<string>
+  send(satoshis: bigint, address: string): Promise<string>
   broadcast(tx: Transaction): Promise<string>
   rpcCall(method: string, params: string): Promise<any>
   static txFromHex({ hex }: { hex: string }): Transaction
