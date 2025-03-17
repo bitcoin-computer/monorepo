@@ -341,8 +341,8 @@ describe('nakamotojs (transactions with psbt)', () => {
       bufferUtils.reverseBuffer(Buffer.from(nftOutpoint.hash, 'hex')),
       nftOutpoint.index,
     ); // seller unspent holding NFT (MIN Sat)
-    sellerTx.addOutput(Buffer.alloc(8), MIN); // dummy output 0
-    sellerTx.addOutput(payToSeller.output!, N); // N payment to seller
+    sellerTx.addOutput(Buffer.alloc(8), BigInt(MIN)); // dummy output 0
+    sellerTx.addOutput(payToSeller.output!, BigInt(N)); // N payment to seller
 
     // @ts-ignore
     sellerTx.sign(
@@ -393,7 +393,7 @@ describe('nakamotojs (transactions with psbt)', () => {
     );
     // @ts-ignore
     buyerTx.updateOutput(0, { scriptPubKey: buyerOutput0.output!, value: MIN }); // Output 0
-    buyerTx.addOutput(buyerOutput0.output!, MIN); // Output 2
+    buyerTx.addOutput(buyerOutput0.output!, BigInt(MIN)); // Output 2
 
     // @ts-ignore
     buyerTx.sign(

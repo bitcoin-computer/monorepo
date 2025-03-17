@@ -32,6 +32,20 @@ npm install
 
 ## Usage
 
+Start a Bitcoin Computer Node in the package `node`. Then copy the `.env.example` file.
+
+```
+cp .env.example .env
+```
+
+### Deploy Smart Contract
+
+Deploy the smart contract. The script will prompt you to update the `.env` file.
+
+```
+npm run deploy
+```
+
 ### Start the Application
 
 Run the command below and open [http://localhost:3000](http://localhost:3000)
