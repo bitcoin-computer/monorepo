@@ -516,6 +516,8 @@ declare class Computer {
     onError?: (error: Event) => void,
   ): Promise<() => void>
   static getVersion: () => string
+  toHDCache(): Promise<void>
+  fromHDCache(): Promise<void>
 }
 
 export { Computer, Contract, Mock, Transaction }
