@@ -21,6 +21,20 @@ export default function App() {
 
   useEffect(() => {
     initFlowbite()
+
+    const load = async () => {
+      await computer.fromHDCache()
+    }
+    load()
+
+    const unload = async () => {
+      await computer.toHDCache()
+    }
+    window.addEventListener('beforeunload', unload)
+
+    return () => {
+      window.removeEventListener('beforeunload', unload)
+    }
   }, [])
 
   return (
