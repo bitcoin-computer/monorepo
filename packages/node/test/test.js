@@ -46,13 +46,13 @@ describe('Should work with chai', () => {
 
   it('Should list the txs of a given address', async () => {
     const computer = new Computer(conf)
-    const { txId, vout } = await computer.faucet(1e7)
+    const { txId } = await computer.faucet(1e7)
     expect(await new Computer(conf).listTxs(computer.getAddress())).deep.eq({
       sentTxs: [],
       receivedTxs: [
         {
           txId,
-          inputsSatoshis: 0,
+          inputsSatoshis: 0n,
           outputsSatoshis: 10000000n,
           satoshis: 10000000n,
         },

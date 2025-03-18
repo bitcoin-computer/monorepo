@@ -4,7 +4,7 @@ export declare class Payment extends Contract {
     _root: string;
     _amount: bigint;
     _owners: string[];
-    constructor(_amount: number);
+    constructor(_amount: bigint);
     transfer(to: string): void;
     setAmount(a: bigint): void;
 }
