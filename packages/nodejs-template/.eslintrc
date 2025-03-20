@@ -19,6 +19,7 @@
       "never"
     ],
     "@typescript-eslint/no-extra-semi": "off",
+    "import/no-unresolved": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "off",
     "import/extensions": "off",

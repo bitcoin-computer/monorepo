@@ -4,7 +4,7 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
-import { Counter } from '../src/main'
+import { Counter } from '../src/main.js'
 
 // If you want to connect to your local Bitcoin Computer Node, create a .env file
 // in the monorepo root level and add the following line:

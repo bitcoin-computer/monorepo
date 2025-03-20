@@ -5,8 +5,8 @@ import { Computer } from '@bitcoin-computer/lib'
 import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 import { Token } from '@bitcoin-computer/TBC20'
 import dotenv from 'dotenv'
-import { Swap, SwapHelper } from '../src/swap'
-import { meta } from '../src/utils'
+import { Swap, SwapHelper } from '../src/swap.js'
+import { meta } from '../src/utils/index.js'
 
 dotenv.config({ path: '../node/.env' })
 

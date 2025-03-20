@@ -4,9 +4,9 @@ import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
-import { StaticSwap } from '../src/static-swap'
-import { TxWrapperHelper } from '../src/tx-wrapper'
-import { meta } from '../src/utils'
+import { StaticSwap } from '../src/static-swap.js'
+import { TxWrapperHelper } from '../src/tx-wrapper.js'
+import { meta } from '../src/utils/index.js'
 
 dotenv.config({ path: '../node/.env' })
 
