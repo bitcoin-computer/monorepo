@@ -31,8 +31,8 @@ describe('Swapppable', () => {
   const bob = new Computer({ url, chain, network })
 
   before('Before', async () => {
-    await alice.faucet(0.01e8)
-    await bob.faucet(0.001e8)
+    await alice.faucet(1e8)
+    await bob.faucet(1e8)
   })
 
   describe('Creating two NFTs to be swapped', () => {

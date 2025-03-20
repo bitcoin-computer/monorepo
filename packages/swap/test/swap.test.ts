@@ -20,8 +20,8 @@ describe('Swap', () => {
   const bob = new Computer({ url, chain, network })
 
   before('Before', async () => {
-    await alice.faucet(0.01e8)
-    await bob.faucet(0.01e8)
+    await alice.faucet(10e8)
+    await bob.faucet(10e8)
   })
 
   describe('Examples from docs', () => {
