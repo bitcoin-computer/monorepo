@@ -5,7 +5,7 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
-import { Swappable } from '../src/swappable'
+import { Swappable } from '../src/swappable.js'
 
 dotenv.config({ path: '../node/.env' })
 

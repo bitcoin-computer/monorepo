@@ -6,9 +6,9 @@ import chaiMatchPattern from 'chai-match-pattern'
 import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
-import { OrdSale, OrdSaleHelper } from '../src/ord-sale'
-import { Payment, PaymentMock } from '../src/payment'
-import { meta } from '../src/utils'
+import { OrdSale, OrdSaleHelper } from '../src/ord-sale.js'
+import { Payment, PaymentMock } from '../src/payment.js'
+import { meta } from '../src/utils/index.js'
 
 dotenv.config({ path: '../node/.env' })
 

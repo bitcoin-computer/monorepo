@@ -2,7 +2,7 @@
 import { expect } from 'chai'
 import dotenv from 'dotenv'
 import { Computer } from '@bitcoin-computer/lib'
-import { List } from '../src'
+import { List } from '../src/index.js'
 
 dotenv.config({ path: '../node/.env' })
 

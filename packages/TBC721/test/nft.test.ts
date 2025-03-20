@@ -4,7 +4,7 @@ import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import chaiMatchPattern from 'chai-match-pattern'
-import { NFT, NftHelper } from '../src/nft'
+import { NFT, NftHelper } from '../src/nft.js'
 
 chai.use(chaiMatchPattern)
 const { expect } = chai
