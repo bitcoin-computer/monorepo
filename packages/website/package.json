@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/website",
-  "version": "0.24.1-beta.0",
+  "version": "0.24.2-beta.0",
   "private": true,
   "type": "module",
   "scripts": {
