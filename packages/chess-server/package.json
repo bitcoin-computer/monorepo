@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/chess-server",
-  "version": "0.24.2-beta.0",
+  "version": "0.24.3-beta.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -18,7 +18,7 @@
     "up": "docker compose up"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.24.2-beta.0",
+    "@bitcoin-computer/lib": "^0.24.3-beta.0",
     "@types/cors": "^2.8.17",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
