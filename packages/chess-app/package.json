@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/chess-app",
-  "version": "0.24.2-beta.0",
+  "version": "0.24.3-beta.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -18,9 +18,9 @@
     "test:dev": "vitest"
   },
   "dependencies": {
-    "@bitcoin-computer/chess-contracts": "^0.24.2-beta.0",
-    "@bitcoin-computer/components": "^0.24.2-beta.0",
-    "@bitcoin-computer/lib": "^0.24.2-beta.0",
+    "@bitcoin-computer/chess-contracts": "^0.24.3-beta.0",
+    "@bitcoin-computer/components": "^0.24.3-beta.0",
+    "@bitcoin-computer/lib": "^0.24.3-beta.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
