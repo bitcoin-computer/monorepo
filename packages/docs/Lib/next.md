@@ -1,3 +1,0 @@
-# next
-
-Documentation coming soon.

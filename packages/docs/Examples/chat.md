@@ -37,7 +37,7 @@ class Chat extends Contract {
 
 ## Usage
 
-A new chat can be created using the [`new`](./API/new.md) function. Note that Bob can initially post to the chat and read it's state as Bob's public key was added by Alice to the `_owners` array and to the `_readers` array upon creation of the chat.
+A new chat can be created using the [`new`](../Lib/Computer/new.md) function. Note that Bob can initially post to the chat and read it's state as Bob's public key was added by Alice to the `_owners` array and to the `_readers` array upon creation of the chat.
 
 Later, Alice called the `remove` function removing Bob's public key from these arrays. After this point Bob cannot read or write anymore.
 

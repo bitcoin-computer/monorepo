@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.24.1-beta.0",
+  "version": "0.24.3-beta.0",
   "private": false,
   "description": "Server Side Library for the Bitcoin Computer",
   "keywords": [
@@ -9,7 +9,7 @@
     "Dogecoin",
     "Pepecoin",
     "Smart Contracts",
-    "Javascript"
+    "JavaScript"
   ],
   "homepage": "http://bitcoincomputer.io/",
   "bugs": {
@@ -52,9 +52,9 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@bitcoin-computer/lib": "^0.24.1-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.24.1-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.24.1-beta.0",
+    "@bitcoin-computer/lib": "^0.24.3-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.24.3-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.24.3-beta.0",
     "@types/node": "^20.11.20",
     "axios": "1.7.9",
     "bitcoind-rpc": "^0.9.1",

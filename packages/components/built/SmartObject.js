@@ -77,10 +77,8 @@ function Component({ title }) {
                 navigate(`/transactions/${txId}`);
             }
             try {
-                const nextRef = await computer.next(rev);
-                const prevRef = await computer.prev(rev);
-                setPrev(prevRef.rev);
-                setNext(nextRef.rev);
+                setPrev(await computer.prev(rev));
+                setNext(await computer.next(rev));
             }
             catch (error) {
                 console.log({ error });

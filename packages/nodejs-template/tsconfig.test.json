@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "sourceMap": true,
+    "outDir": "dist",
+    "declaration": false
+  },
+  "include": ["src/**/*", "test/**/*"]
+}

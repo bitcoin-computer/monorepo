@@ -5,16 +5,15 @@
     "plugin:prettier/recommended",
     "prettier",
     "plugin:@typescript-eslint/recommended",
-    "plugin:import/typescript"
+    "plugin:import/typescript",
   ],
-  "plugins": [
-    "@typescript-eslint"
-  ],
+  "plugins": ["@typescript-eslint"],
   "env": {
-  "jest": true
+    "jest": true
   },
   "rules": {
     "semi": ["error", "never"],
+    "import/no-unresolved": "off",
     "@typescript-eslint/no-extra-semi": "off",
     "@typescript-eslint/ban-ts-comment": "off",
     "@typescript-eslint/no-explicit-any": "off",
@@ -25,14 +24,7 @@
       "error",
       {
         "allowAfterThis": true,
-        "allow": [
-          "_readers",
-          "_owners",
-          "_amount",
-          "_id",
-          "_rev",
-          "_root"
-        ]
+        "allow": ["_readers", "_owners", "_amount", "_id", "_rev", "_root"]
       }
     ]
   }

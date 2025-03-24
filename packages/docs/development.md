@@ -5,4 +5,4 @@ icon: beaker
 
 # Development
 
-Coming soon.
+Documentation coming soon.

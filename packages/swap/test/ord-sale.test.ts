@@ -6,9 +6,9 @@ import chaiMatchPattern from 'chai-match-pattern'
 import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
-import { OrdSale, OrdSaleHelper } from '../src/ord-sale'
-import { Payment, PaymentMock } from '../src/payment'
-import { meta } from '../src/utils'
+import { OrdSale, OrdSaleHelper } from '../src/ord-sale.js'
+import { Payment, PaymentMock } from '../src/payment.js'
+import { meta } from '../src/utils/index.js'
 
 dotenv.config({ path: '../node/.env' })
 
@@ -33,8 +33,23 @@ describe('Ord Sale', () => {
       await seller.faucet(1e8)
       await buyer.faucet(11e8)
 
+      // Seller creates a special output that contains the ordinal
+      const txId = await seller.send(10000n, seller.getAddress())
+      const ordinalRev = `${txId}:0`
+
       // Seller mints an NFT
-      const nft = await seller.new(NFT, ['name', 'artist', 'url'])
+      const { effect, tx: mintTx } = await seller.encode({
+        // ensure that the first output of tx with txId is the first input
+        include: [ordinalRev],
+
+        // Creates output that contains on-chain object and ordinal
+        exp: `${NFT} new NFT('name', 'artist', 'url')`,
+      })
+      await seller.broadcast(mintTx)
+      const nft = effect.res as any
+
+      // Verify that the first input of mintTx is ordinalRev
+      expect(mintTx.inputs[0]).eq(ordinalRev)
 
       // Seller creates partially signed swap as a sale offer
       const paymentMock = new PaymentMock(BigInt(mockAmount))

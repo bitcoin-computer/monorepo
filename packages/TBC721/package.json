@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/TBC721",
-  "version": "0.24.1-beta.0",
+  "version": "0.24.3-beta.0",
   "private": true,
   "description": "Standard for non-fungible tokens on Bitcoin",
   "license": "MIT",
@@ -22,12 +22,12 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",
     "start": "node build/src/main.js",
-    "test": "mocha --config .mocharc.json",
+    "test": "rm -rf dist && tsc -p tsconfig.test.json && mocha --config .mocharc.json",
     "test:show": "npm run test 2>&1 | tee tbc721-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open tbc721-test.log; fi",
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.24.1-beta.0",
+    "@bitcoin-computer/lib": "^0.24.3-beta.0",
     "chai-match-pattern": "^1.3.0",
     "eslint-plugin-prettier": "^5.1.3",
     "ts-node": "^10.9.2"
@@ -40,6 +40,7 @@
     "dotenv": "^16.4.5",
     "mocha": "^10.3.0",
     "prettier": "~3.2.5",
+    "source-map-support": "^0.5.21",
     "typescript": "~5.3.3"
   },
   "volta": {
