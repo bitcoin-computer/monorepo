@@ -15,7 +15,7 @@ export class Mock {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _amount: bigint
   _owners: string | string[]
 
   constructor(opts = { _id: rev(), _rev: rev(), _root: rev() }) {

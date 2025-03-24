@@ -74,13 +74,13 @@ expect(chat).to.deep.equal({
   _rev: '667c...2357:0',
   _root: '667c...2357:0',
   _owners: ['03...'],
-  _amount: 5820,
+  _amount: 5820n,
 })
 ```
 
 - The properties `_id`, `_rev`, `_root` are set to strings of the form `<id>:<num>` where `<id>` is the id of the transaction broadcast by the `computer.new` call and `<num>` is an output number.
 - The `_owners` property is set to an array containing public keys.
-- The `_amount` property specifies an amount in satoshis.
+- The `_amount` property specifies an amount in satoshis (bigint).
 
 We refer to `chat` as an _on-chain object_.
 
@@ -118,7 +118,7 @@ Chat {
   _rev: 'de43...818a:0',
   _root: '667c...2357:0',
   _owners: ['03...'],
-  _amount: 5820,
+  _amount: 5820n,
 }
 ```
 
@@ -128,7 +128,7 @@ The property `_rev` has been updated and now refers to the first output of _tx_.
 - `_rev` is the output where the current revision of the object is stored. Therefore, initially, the revision is equal to the id, then the revision is changed every time the object is updated.
 - `_root` is never updated. As it is not relevant to the chat example we refer the interested reader to [this](./language.md) section.
 - `_owners` is set to the public key of the data owner. More on that [below](#data-ownership).
-- `amount` is set to the amount of satoshi of the output in which an on-chain object is stored. More [here](#cryptocurrency).
+- `_amount` is set to the amount of satoshi of the output in which an on-chain object is stored. More [here](#cryptocurrency).
 
 The properties `_id`, `_rev`, and `_root` are read only and an attempt to assign to them throws an error. The properties `_owners` and `_amount` can be assigned in a smart contract to determine the transaction that is built.
 
@@ -279,7 +279,7 @@ class Chat extends Contract {
 
 Recall that an on-chain object is stored in an output and that the owners of the object are the users that can spend the output. Thus the owners of an object are always the owners of the satoshi in the output that stores the object. We therefore say that the satoshi are stored in the on-chain object.
 
-The amount of satoshi in the output of an on-chain object can be configured by setting the `_amount` property to a number. If this property is undefined, the object will store an a minimal (non-dust) amount.
+The amount of satoshi in the output of an on-chain object can be configured by setting the `_amount` property to a number (bigint). If this property is undefined, the object will store an a minimal (non-dust) amount.
 
 If the value of the `_amount` property is increased, the additional satoshi must be provided by the wallet of the `computer` object that executes the call. In the case of a constructor call with `computer.new` that is that `computer` object. In the case of a function call it is the `computer` object that created the on-chain object.
 
@@ -294,12 +294,12 @@ class Payment extends Contract {
   }
 
   cashOut() {
-    this._amount = 546 // minimal non-dust amount
+    this._amount = 546n // minimal non-dust amount
   }
 }
 
 const computerAlice = new Computer({ mnemonic: mnemonicAlice })
-const payment = computerA.new(Payment, [21000, pubKeyBob])
+const payment = computerA.new(Payment, [21000n, pubKeyBob])
 ```
 
 When the `payment` on-chain object is created, the wallet inside the `computerA` object funds the 21000 satoshi that are stored in the `payment` object. Bob can withdraw the satoshi by calling the `cashOut` function.
@@ -342,7 +342,7 @@ expect(effect).deep.eq({
     _rev: '667c...2357:0',
     _root: '667c...2357:0',
     _owners: ['03...'],
-    _amount: 5820,
+    _amount: 5820n,
   }
   env: {}
 })
@@ -396,13 +396,13 @@ class A extends Contract {
     super({
       n: 1,
       _owners: 'OP_3 OP_EQUAL',
-      _amount: 1e8,
+      _amount: 100000000n,
     })
   }
 
   inc() {
     this.n += 1
-    this._amount = 1e8 - 100000
+    this._amount = 100000000n - 100000n
   }
 }
 ```

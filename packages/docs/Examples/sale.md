@@ -37,7 +37,7 @@ export class NFT extends Contract {
 }
 
 export class Payment extends Contract {
-  constructor(_amount: number) {
+  constructor(_amount: bigint) {
     super({ _amount })
   }
 
@@ -71,7 +71,7 @@ The following code shows the class to create the payment mock as well as Seller 
 const mockedRev = `mock-${'0'.repeat(64)}:0`
 
 class PaymentMock {
-  constructor(amount: number) {
+  constructor(amount: bigint) {
     this._id = mockedRev
     this._rev = mockedRev
     this._root = mockedRev
@@ -84,7 +84,7 @@ class PaymentMock {
   }
 }
 
-const mock = new PaymentMock(1e8)
+const mock = new PaymentMock(100000000n)
 ```
 
 ### Building the Sales Transaction
@@ -135,7 +135,7 @@ Seller can publish the sales transaction without any risk. An interested buyer c
 First, Buyer creates a smart object to pay for the nft.
 
 ```ts
-const payment = await buyer.new(Payment, [1e8])
+const payment = await buyer.new(Payment, [100000000n])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 ```
 
@@ -193,7 +193,7 @@ const { tx: saleTx } = await seller.encode({
 })
 
 // Buyer creates a payment object with the asking price
-const payment = await buyer.new(Payment, [1e8])
+const payment = await buyer.new(Payment, [100000000n])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
 // Buyer set's the payment object as the second input of the swap tx

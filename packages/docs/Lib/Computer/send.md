@@ -5,7 +5,7 @@ _Sends a payment._
 ## Type
 
 ```ts
-;(amount: number, address: string) => Promise<string>
+;(amount: bigint, address: string) => Promise<string>
 ```
 
 ### Parameters

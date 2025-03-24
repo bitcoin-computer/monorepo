@@ -15,7 +15,7 @@ _Creates an on-chain object._
       _id: string
       _rev: string
       _root: string
-      _amount: number
+      _amount: bigint
       _owners: string[]
       _readers?: string[]
       _url?: string

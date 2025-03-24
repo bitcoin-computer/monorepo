@@ -88,7 +88,7 @@ await buyer.faucet(2e8)
 const nft = await seller.new(NFT, ['name', 'symbol'])
 
 // Seller creates partially signed swap as a sale offer
-const paymentMock = new PaymentMock(7860)
+const paymentMock = new PaymentMock(7860n)
 const b1Mock = new PaymentMock()
 const b2Mock = new PaymentMock()
 
@@ -104,7 +104,7 @@ const { tx } = await seller.encode({
 })
 
 // Buyer creates a payment object with the asking price
-const payment = await buyer.new(Payment, [1e8])
+const payment = await buyer.new(Payment, [100000000n])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
 // Buyer set's the payment object as the second input of the swap tx
