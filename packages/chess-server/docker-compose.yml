@@ -1,4 +1,4 @@
-version: "3"
+version: '3'
 services:
   express-app:
     env_file: .env
@@ -10,7 +10,7 @@ services:
     volumes:
       - ./src:/app/src
     ports:
-      - "4000:4000"
+      - '4000:4000'
     networks:
       - express-app
     depends_on:
@@ -19,7 +19,7 @@ services:
     image: postgres
     env_file: .env
     ports:
-      - "5434:5432"
+      - '5434:5432'
     volumes:
       - ./db/db-data:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql

@@ -30,12 +30,14 @@
     "uuid": "^9.0.1"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.5.0",
     "@types/express": "^5.0.0",
     "@types/node": "^20.11.20",
     "@types/uuid": "9.0.8",
     "eslint": "^9.18.0",
     "migrate": "^2.1.0",
     "nodemon": "^3.1.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^2.0.5"
   }
 }
