@@ -392,7 +392,10 @@ describe('nakamotojs (transactions with psbt)', () => {
       buyerPaymentToMiners.index,
     );
     // @ts-ignore
-    buyerTx.updateOutput(0, { scriptPubKey: buyerOutput0.output!, value: MIN }); // Output 0
+    buyerTx.updateOutput(0, {
+      scriptPubKey: buyerOutput0.output!,
+      value: BigInt(MIN),
+    }); // Output 0
     buyerTx.addOutput(buyerOutput0.output!, BigInt(MIN)); // Output 2
 
     // @ts-ignore

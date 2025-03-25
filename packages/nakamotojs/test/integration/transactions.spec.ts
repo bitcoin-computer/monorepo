@@ -220,7 +220,7 @@ describe('nakamotojs (transactions)', () => {
       const unspent = await restClient.faucet(address!, 1e5 * amountFactor);
       tx = new Transaction();
       tx.addInput(idToHash(unspent.txId), unspent.vout);
-      tx.addOutput(toOutputScript(randomAddress), 7e4 * amountFactor);
+      tx.addOutput(toOutputScript(randomAddress), BigInt(7e4 * amountFactor));
 
       signatureHash = tx.hashForSignature(0, redeemScript, hashType);
     });
