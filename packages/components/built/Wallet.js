@@ -22,7 +22,7 @@ const Balance = ({ computer, modSpecs }) => {
                     ? payments.reduce((total, pay) => total + (pay._amount - BigInt(computer.getMinimumFees())), 0n)
                     : 0;
             }));
-            const amountsInPayments = balances.reduce((acc, curr) => acc + curr, 0n);
+            const amountsInPayments = balances.reduce((acc, curr) => acc + BigInt(curr), 0n);
             const walletBalance = await computer.getBalance();
             setBalance(walletBalance.balance + amountsInPayments);
             setChain(computer.getChain());

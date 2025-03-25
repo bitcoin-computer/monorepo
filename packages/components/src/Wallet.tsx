@@ -31,7 +31,7 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
             : 0
         }),
       )
-      const amountsInPayments: bigint = balances.reduce((acc, curr) => acc + curr, 0n)
+      const amountsInPayments: bigint = balances.reduce((acc, curr) => acc + BigInt(curr), 0n)
       const walletBalance = await computer.getBalance()
       setBalance(walletBalance.balance + amountsInPayments)
       setChain(computer.getChain())
