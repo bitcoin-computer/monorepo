@@ -50,6 +50,14 @@ export function Signer(obj: any): boolean {
   );
 }
 
+export function Satoshi(value: bigint): boolean {
+  return typeof value === 'bigint';
+}
+
+const SATOSHI_MAX: number = 21 * 1e14;
+export function SmallSatoshi(value: number): boolean {
+  return typeforce.UInt53(value) && value <= SATOSHI_MAX;
+}
 // external dependent types
 export const ECPoint = typeforce.quacksLike('Point');
 

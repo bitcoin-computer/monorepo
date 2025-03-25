@@ -42,6 +42,13 @@ export function Signer(obj) {
     typeof obj.sign === 'function'
   );
 }
+export function Satoshi(value) {
+  return typeof value === 'bigint';
+}
+const SATOSHI_MAX = 21 * 1e14;
+export function SmallSatoshi(value) {
+  return typeforce.UInt53(value) && value <= SATOSHI_MAX;
+}
 // external dependent types
 export const ECPoint = typeforce.quacksLike('Point');
 // exposed, external API

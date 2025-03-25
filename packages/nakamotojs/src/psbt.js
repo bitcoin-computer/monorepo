@@ -982,7 +982,7 @@ class PsbtTransaction {
     ) {
       throw new Error('Error adding output.');
     }
-    this.tx.addOutput(output.script, output.value);
+    this.tx.addOutput(output.script, BigInt(output.value));
   }
   toBuffer() {
     return this.tx.toBuffer();
@@ -1211,8 +1211,7 @@ function getHashForSig(inputIndex, input, cache, forValidate, sighashTypes) {
   const sighashType = input.sighashType || Transaction.SIGHASH_ALL;
   checkSighashTypeAllowed(sighashType, sighashTypes);
   let hash;
-  let prevoutScript;
-  let prevoutValue;
+  let prevout = { script: Buffer.alloc(0), value: 0 };
   if (input.nonWitnessUtxo) {
     const nonWitnessUtxoTx = nonWitnessUtxoTxFromCache(
       cache,
@@ -1228,18 +1227,17 @@ function getHashForSig(inputIndex, input, cache, forValidate, sighashTypes) {
       );
     }
     const prevoutIndex = unsignedTx.ins[inputIndex].index;
+    prevout.script = nonWitnessUtxoTx.outs[prevoutIndex].script;
     if (nonWitnessUtxoTx.outs[prevoutIndex].value > MAX_SAFE_NUMBER)
       throw new Error('Transaction amount is too high to safely process');
-    prevoutScript = nonWitnessUtxoTx.outs[prevoutIndex].script;
-    prevoutValue = Number(nonWitnessUtxoTx.outs[prevoutIndex].value);
+    prevout.value = Number(nonWitnessUtxoTx.outs[prevoutIndex].value);
   } else if (input.witnessUtxo) {
-    prevoutScript = input.witnessUtxo.script;
-    prevoutValue = input.witnessUtxo.value;
+    prevout = input.witnessUtxo;
   } else {
     throw new Error('Need a Utxo input item for signing');
   }
   const { meaningfulScript, type } = getMeaningfulScript(
-    prevoutScript,
+    prevout.script,
     inputIndex,
     'input',
     input.redeemScript,
@@ -1249,7 +1247,7 @@ function getHashForSig(inputIndex, input, cache, forValidate, sighashTypes) {
     hash = unsignedTx.hashForWitnessV0(
       inputIndex,
       meaningfulScript,
-      prevoutValue,
+      prevout.value,
       sighashType,
     );
   } else if (isP2WPKH(meaningfulScript)) {
@@ -1260,7 +1258,7 @@ function getHashForSig(inputIndex, input, cache, forValidate, sighashTypes) {
     hash = unsignedTx.hashForWitnessV0(
       inputIndex,
       signingScript,
-      prevoutValue,
+      prevout.value,
       sighashType,
     );
   } else {
