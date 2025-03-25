@@ -41,6 +41,7 @@ function loggedOutConfiguration() {
         network: getEnv('NETWORK'),
         url: getEnv('URL'),
         moduleStorageType: getEnv('MODULE_STORAGE_TYPE'),
+        path: getEnv('PATH'),
     };
 }
 function loggedInConfiguration() {
@@ -50,6 +51,7 @@ function loggedInConfiguration() {
         network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')),
         url: localStorage.getItem('URL') || getEnv('URL'),
         moduleStorageType: getEnv('MODULE_STORAGE_TYPE'),
+        path: localStorage.getItem('PATH') || getBip44Path(),
     };
 }
 function getComputer(options = {}) {

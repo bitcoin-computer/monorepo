@@ -62,6 +62,7 @@ function loggedOutConfiguration() {
     network: getEnv('NETWORK') as Network,
     url: getEnv('URL'),
     moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType,
+    path: getEnv('PATH'),
   }
 }
 
@@ -72,6 +73,7 @@ function loggedInConfiguration() {
     network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
     url: localStorage.getItem('URL') || getEnv('URL'),
     moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType,
+    path: localStorage.getItem('PATH') || getBip44Path(),
   }
 }
 
