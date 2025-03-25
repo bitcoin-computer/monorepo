@@ -5,7 +5,7 @@ import { expect } from 'chai';
 import { db } from '../db/db.js';
 import { deploy } from '../scripts/lib.js';
 import axios from 'axios';
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 dotenv.config();
@@ -14,7 +14,7 @@ const network = 'regtest';
 const url = 'http://localhost:1031';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const chessContractDirectory = `${__dirname}/../../chess-contracts`;
+const chessContractDirectory = `${__dirname}/../../../chess-contracts`;
 describe('Route /hash', () => {
     it('Should create a post request', async () => {
         const { data } = await axios.get('http://127.0.0.1:4000/hash');
@@ -67,16 +67,16 @@ describe('Route /secret', () => {
     it('Should reveal the winners secret', async () => {
         const tx = await chessContractHelperW.makeTx();
         const txId = await chessContractHelperB.completeTx(tx);
-        let game = await computerW.sync(`${txId}:0`);
+        let game = (await computerW.sync(`${txId}:0`));
         await game.move('f2', 'f3');
         const [rev1] = await computerB.query({ ids: [game._id] });
-        game = await computerB.sync(rev1);
+        game = (await computerB.sync(rev1));
         await game.move('e7', 'e5');
         const [rev2] = await computerW.query({ ids: [game._id] });
-        game = await computerW.sync(rev2);
+        game = (await computerW.sync(rev2));
         await game.move('g2', 'g4');
         const [rev3] = await computerB.query({ ids: [game._id] });
-        game = await computerB.sync(rev3);
+        game = (await computerB.sync(rev3));
         await game.move('d8', 'h4');
         const { data } = await axios.get(`http://127.0.0.1:4000/secret/${game._id}`);
         const spendingTxId = await chessContractHelperB.spendWithSecret(game._id, data, 1);

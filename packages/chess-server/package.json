@@ -11,10 +11,11 @@
     "lint": "eslint .",
     "migrate": "migrate up",
     "rollback": "migrate down",
-    "start": "node --loader ts-node/esm.mjs -r tsconfig-paths/register src/app.ts",
-    "start:dev": "nodemon --exec npm run start -- --ext ts",
+    "server": "node -r source-map-support/register dist/src/app.js",
+    "start": "tsc && npm run server",
+    "start:dev": "tsc && nodemon --exec npm run server",
     "start:postgres": "docker compose up postgres",
-    "test": "POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha -r ts-node/register --loader=ts-node/esm --timeout=30000000 test/*.test.ts",
+    "test": "tsc && POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha -r source-map-support/register  --timeout=30000000 dist/test/*.test.js",
     "up": "docker compose up"
   },
   "dependencies": {
