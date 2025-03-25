@@ -20,14 +20,14 @@ describe('Should work with chai', () => {
     this.retries(3)
     const computer = new Computer(conf)
     await computer.faucet(1e7)
-    expect((await computer.getBalance()).balance).eq(10000000n)
+    expect((await computer.getBalance()).balance).eq(BigInt(1e7))
   })
 
   it('Should send a transaction', async function () {
     this.retries(3)
     const computer = new Computer(conf)
     await computer.faucet(1e7)
-    expect(typeof (await computer.send(1000000n, new Computer(conf).getAddress()))).eq('string')
+    expect(typeof (await computer.send(BigInt(1e6), new Computer(conf).getAddress()))).eq('string')
   })
 
   it('Should return the balance of an address', async function () {
@@ -35,7 +35,7 @@ describe('Should work with chai', () => {
     const computer = new Computer(conf)
     await computer.faucet(1e7)
     const balance = await new Computer(conf).getBalance(computer.getAddress())
-    expect(balance.balance).eq(10000000n)
+    expect(balance.balance).eq(BigInt(1e7))
   })
 
   it('Should return the utxos of an address', async () => {
@@ -53,8 +53,8 @@ describe('Should work with chai', () => {
         {
           txId,
           inputsSatoshis: 0n,
-          outputsSatoshis: 10000000n,
-          satoshis: 10000000n,
+          outputsSatoshis: BigInt(1e7),
+          satoshis: BigInt(1e7),
         },
       ],
     })
@@ -90,7 +90,7 @@ describe('Should work with chai', () => {
 
     // Return the balance
     const balance = await new Computer(conf).getBalance(address)
-    expect(balance.balance).eq(10000000n)
+    expect(balance.balance).eq(BigInt(1e7))
 
     // Return the transactions
     expect(await new Computer(conf).listTxs(address)).deep.eq({
@@ -98,9 +98,9 @@ describe('Should work with chai', () => {
       receivedTxs: [
         {
           txId,
-          inputsSatoshis: 0n,
-          outputsSatoshis: 10000000n,
-          satoshis: 10000000n,
+          inputsSatoshis: BigInt(0),
+          outputsSatoshis: BigInt(1e7),
+          satoshis: BigInt(1e7),
         },
       ],
     })

@@ -23,7 +23,7 @@ chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
 describe('Ord Sale', () => {
-  const nftPrice = 100000000n
+  const nftPrice = BigInt(1e8)
 
   describe('Examples from docs', () => {
     it('Should work without helper classes', async () => {
@@ -68,7 +68,7 @@ describe('Ord Sale', () => {
       })
 
       // Buyer creates a payment object with the asking price
-      const payment = await buyer.new(Payment, [100000000n])
+      const payment = await buyer.new(Payment, [BigInt(1e8)])
       const b1 = await buyer.new(Payment, [mockAmount])
       const b2 = await buyer.new(Payment, [mockAmount])
 
@@ -197,7 +197,7 @@ describe('Ord Sale', () => {
       let txId: string
 
       before("Fund Buyers's wallet", async () => {
-        await buyer.faucet(Number(nftPrice) + fee + 100000000)
+        await buyer.faucet(Number(nftPrice) + fee + 1e8)
       })
 
       it('Buyer creates a payment object', async () => {

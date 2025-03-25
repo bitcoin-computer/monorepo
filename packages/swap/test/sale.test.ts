@@ -30,7 +30,7 @@ describe('Sale', () => {
   let tx: Transaction
   let txClone: Transaction
   let sellerPublicKey: string
-  const nftPrice = 100000000n
+  const nftPrice = BigInt(1e8)
   const fee = 100000
 
   describe('Examples from docs', () => {
@@ -59,7 +59,7 @@ describe('Sale', () => {
       })
 
       // Buyer creates a payment object with the asking price
-      const payment = await buyer.new(Payment, [100000000n])
+      const payment = await buyer.new(Payment, [BigInt(1e8)])
       const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
       // Buyer set's the payment object as the second input of the swap tx
@@ -75,7 +75,7 @@ describe('Sale', () => {
       const { env } = (await buyer.sync(saleTx.getId())) as { env: { nft: NFT; payment: NFT } }
       const { nft: n, payment: p } = env
 
-      expect(p._amount).eq(100000000n)
+      expect(p._amount).eq(BigInt(1e8))
       expect(n._owners).deep.eq([buyer.getPublicKey()])
       expect(p._owners).deep.eq([seller.getPublicKey()])
     })
@@ -133,7 +133,7 @@ describe('Sale', () => {
       })
 
       expect(await alice.broadcast(alicePaymentTx)).a('string')
-      expect((await alice.getBalance()).balance >= 100000000n).to.be.true
+      expect((await alice.getBalance()).balance >= BigInt(1e8)).to.be.true
     })
   })
 
