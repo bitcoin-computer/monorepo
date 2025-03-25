@@ -5,7 +5,7 @@ import { expect } from 'chai'
 import { db } from '../db/db.js'
 import { deploy } from '../scripts/lib.js'
 import axios from 'axios'
-import dotenv from "dotenv"
+import dotenv from 'dotenv'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 
@@ -17,17 +17,14 @@ const url = 'http://localhost:1031'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-const chessContractDirectory = `${__dirname}/../../chess-contracts`
+const chessContractDirectory = `${__dirname}/../../../chess-contracts`
 
 describe('Route /hash', () => {
   it('Should create a post request', async () => {
     const { data } = await axios.get('http://127.0.0.1:4000/hash')
     expect(typeof data).eq('string')
 
-    const { secret } = await db.one(
-      `SELECT secret FROM "Secrets" WHERE "hash"=$1;`,
-      [data]
-    )
+    const { secret } = await db.one(`SELECT secret FROM "Secrets" WHERE "hash"=$1;`, [data])
 
     const hash = crypto.sha256(crypto.sha256(Buffer.from(secret))).toString('hex')
     expect(hash).eq(data)
@@ -83,19 +80,19 @@ describe('Route /secret', () => {
     const tx = await chessContractHelperW.makeTx()
     const txId = await chessContractHelperB.completeTx(tx)
 
-    let game = await computerW.sync(`${txId}:0`) as ChessContract
+    let game = (await computerW.sync(`${txId}:0`)) as ChessContract
     await game.move('f2', 'f3')
-    
+
     const [rev1] = await computerB.query({ ids: [game._id] })
-    game = await computerB.sync(rev1) as ChessContract
+    game = (await computerB.sync(rev1)) as ChessContract
     await game.move('e7', 'e5')
 
     const [rev2] = await computerW.query({ ids: [game._id] })
-    game = await computerW.sync(rev2) as ChessContract
+    game = (await computerW.sync(rev2)) as ChessContract
     await game.move('g2', 'g4')
 
     const [rev3] = await computerB.query({ ids: [game._id] })
-    game = await computerB.sync(rev3) as ChessContract
+    game = (await computerB.sync(rev3)) as ChessContract
     await game.move('d8', 'h4')
 
     const { data } = await axios.get(`http://127.0.0.1:4000/secret/${game._id}`)
