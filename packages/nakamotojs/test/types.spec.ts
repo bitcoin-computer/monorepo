@@ -43,6 +43,21 @@ describe('types', () => {
     });
   });
 
+  describe('SmallSatoshi', () => {
+    [
+      { value: -1, result: false },
+      { value: 0, result: true },
+      { value: 1, result: true },
+      { value: 20999999 * 1e8, result: true },
+      { value: 21000000 * 1e8, result: true },
+      { value: 21000001 * 1e8, result: false },
+    ].forEach(f => {
+      it('returns ' + f.result + ' for valid for ' + f.value, () => {
+        assert.strictEqual(types.SmallSatoshi(f.value), f.result);
+      });
+    });
+  });
+
   describe('UInt31', () => {
     const UINT31_MAX = Math.pow(2, 31) - 1;
     it('return true for valid values', () => {
