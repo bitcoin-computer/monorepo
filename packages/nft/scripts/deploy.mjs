@@ -33,7 +33,7 @@ Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
 Path \x1b[2m${path}\x1b[0m
-Balance \x1b[2m${Number(balance.balance) / 1e8}\x1b[0m`)
+Balance \x1b[2m${balance.balance} satoshis\x1b[0m`)
 
 const answer = await rl.question('\nDo you want to deploy the contracts? \x1b[2m(y/n)\x1b[0m')
 if (answer === 'n') {
