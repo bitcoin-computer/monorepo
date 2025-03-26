@@ -1,4 +1,10 @@
-import { Auth, ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import {
+  Auth,
+  ComputerContext,
+  formatBalance,
+  Modal,
+  UtilsContext,
+} from '@bitcoin-computer/components'
 import {
   ChessContract,
   ChessContractHelper,
@@ -290,7 +296,7 @@ export function ChessBoard() {
                           Balance
                         </dt>
                         <dd className="text-lg font-semibold">
-                          {Number(balance) / 1e8} {computer.getChain()}
+                          {formatBalance(balance)} {computer.getChain()}
                         </dd>
                       </div>
                     </dl>

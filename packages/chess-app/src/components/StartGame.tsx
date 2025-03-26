@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, Modal, UtilsContext, formatBalance } from '@bitcoin-computer/components'
 import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { ChessContract, ChessContractHelper } from '../../../chess-contracts/'
 import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
@@ -99,7 +99,7 @@ export function StartGameModalContent({
                       Amount
                     </span>
                     <span className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-400">
-                      {Number(game.amount) / 1e8} {computer.getChain()}
+                      {formatBalance(game.amount)} {computer.getChain()}
                     </span>
                   </div>
                 </div>

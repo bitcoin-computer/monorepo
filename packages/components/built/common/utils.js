@@ -50,3 +50,11 @@ export function getEnv(name) {
     return ((typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||
         (import.meta.env && import.meta.env[`VITE_${name}`]));
 }
+export function formatBalance(a) {
+    if (a < 0n)
+        throw new Error('Balance must be a non-negative');
+    const scale = BigInt(1e8);
+    const integerPart = (a / scale).toString();
+    const fractionalPart = (a % scale).toString().padStart(8, '0').replace(/0+$/, '');
+    return `${integerPart}.${fractionalPart || '0'}`;
+}

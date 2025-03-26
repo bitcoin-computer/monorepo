@@ -6,7 +6,7 @@ import { Auth } from './Auth'
 import { Drawer } from './Drawer'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
-import { getEnv } from './common/utils'
+import { getEnv, formatBalance } from './common/utils'
 
 const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[] }) => {
   const [balance, setBalance] = useState<bigint>(0n)
@@ -58,7 +58,7 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
       role="alert"
     >
       <div className="text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400">
-        {Number(balance) / 1e8} {computer.getChain()}{' '}
+        {formatBalance(balance)} {computer.getChain()}{' '}
         <HiRefresh
           onClick={refreshBalance}
           className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
