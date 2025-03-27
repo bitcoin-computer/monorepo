@@ -2,8 +2,8 @@ import { describe, it, expect } from 'vitest'
 import { bigInt2Str, str2BigInt } from '../src/common/utils'
 
 describe('str2BigInt/bigInt2Str', () => {
-  it('Should throw if empty string', async () => {
-    expect(str2BigInt('')).to.throw
+  it('Should return zero if empty string is provided', async () => {
+    expect(str2BigInt('')).to.eq(0n)
   })
 
   it('Should parse a string encoding a rounded integer', async () => {
