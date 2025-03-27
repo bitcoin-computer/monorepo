@@ -73,7 +73,7 @@ function loggedInConfiguration() {
     network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
     url: localStorage.getItem('URL') || getEnv('URL'),
     moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType,
-    path: localStorage.getItem('PATH') || getBip44Path(),
+    path: localStorage.getItem('PATH') || getEnv('PATH') || getBip44Path(),
   }
 }
 
@@ -321,6 +321,7 @@ function LoginForm() {
   )
   const [url] = useState<string | undefined>(getEnv('URL'))
   const urlInputRef = useRef<HTMLInputElement>(null)
+  const [path] = useState<string>(getEnv('PATH') || getBip44Path())
 
   useEffect(() => {
     initFlowbite()
@@ -344,6 +345,7 @@ function LoginForm() {
           chain={chain}
           network={network}
           url={url}
+          path={path}
           urlInputRef={urlInputRef}
         />
       </div>

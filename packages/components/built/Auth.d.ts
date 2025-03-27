@@ -39,7 +39,7 @@ declare function loggedInConfiguration(): {
     network: Network;
     url: any;
     moduleStorageType: ModuleStorageType;
-    path: string;
+    path: any;
 };
 declare function getComputer(options?: ComputerOptions): Computer;
 declare function LoginForm(): import("react/jsx-runtime").JSX.Element;
