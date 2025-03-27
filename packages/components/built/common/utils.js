@@ -50,11 +50,20 @@ export function getEnv(name) {
     return ((typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||
         (import.meta.env && import.meta.env[`VITE_${name}`]));
 }
-export function formatBalance(a) {
+export function bigInt2Str(a) {
     if (a < 0n)
         throw new Error('Balance must be a non-negative');
     const scale = BigInt(1e8);
     const integerPart = (a / scale).toString();
     const fractionalPart = (a % scale).toString().padStart(8, '0').replace(/0+$/, '');
     return `${integerPart}.${fractionalPart || '0'}`;
+}
+export function str2BigInt(a) {
+    const [integerPart, fractionalPart = ''] = a.split('.');
+    if (!/^\d*$/.test(integerPart)) {
+        throw new Error('Invalid integer part. Please enter a valid number.');
+    }
+    const paddedFractionalPart = fractionalPart.padEnd(8, '0').slice(0, 8);
+    const totalSatoshisStr = integerPart + paddedFractionalPart;
+    return BigInt(totalSatoshisStr);
 }

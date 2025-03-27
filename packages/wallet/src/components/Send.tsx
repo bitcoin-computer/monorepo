@@ -1,6 +1,6 @@
 import { initFlowbite } from 'flowbite'
 import { useCallback, useEffect, useState } from 'react'
-import { Auth, UtilsContext } from '@bitcoin-computer/components'
+import { Auth, str2BigInt, UtilsContext } from '@bitcoin-computer/components'
 import { Computer } from '@bitcoin-computer/lib'
 import { HiRefresh } from 'react-icons/hi'
 import TransactionTable from './TransactionTable'
@@ -45,7 +45,7 @@ export function SendForm({ computer }: { computer: Computer }) {
     e.preventDefault()
     computer.setFee(Number(fee))
     try {
-      const txId = await computer.send(BigInt(Number(amount) * 1e8), to)
+      const txId = await computer.send(str2BigInt(amount), to)
       showSnackBar(`Sent ${amount} ${computer.getChain()} to ${to} via transaction ${txId}`, true)
     } catch (err) {
       showSnackBar(`Something went wrong ${err instanceof Error ? err.message : ''}`, false)

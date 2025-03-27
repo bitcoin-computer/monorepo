@@ -1,11 +1,11 @@
 import { Dispatch, useContext, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
-  toObject,
   capitalizeFirstLetter,
   Modal,
   UtilsContext,
   ComputerContext,
+  bigInt2Str,
 } from '@bitcoin-computer/components'
 import { Computer } from '@bitcoin-computer/lib'
 import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from '@bitcoin-computer/swap'
@@ -112,6 +112,7 @@ const SmartObjectValues = ({ smartObject }: { smartObject: NFT }) => {
               className="max-h-full max-w-full object-contain"
               src={smartObject.url}
               alt="Image Preview"
+              crossOrigin="anonymous"
             />
           </div>
         </div>
@@ -213,7 +214,7 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
       {nftAmount !== 0n && (
         <div className="sm:w-full">
           <h2 className="mt-3 text-l font-bold dark:text-white">
-            NFT Listed At {toObject(Number(nftAmount) / 1e8)} {computer.getChain()}
+            NFT Listed At {bigInt2Str(nftAmount)} {computer.getChain()}
           </h2>
         </div>
       )}
@@ -267,7 +268,7 @@ const BuyNftComponent = ({
             showLoader(true)
             const nftAmount = await BuyNFT({ computer, nft: smartObject, setFunctionResult })
             showSnackBar(
-              `You bought this NFT for ${Number(nftAmount) / 1e8} ${computer.getChain()}`,
+              `You bought this NFT for ${bigInt2Str(nftAmount)} ${computer.getChain()}`,
               true,
             )
             showLoader(false)
