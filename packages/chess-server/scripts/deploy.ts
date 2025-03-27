@@ -14,14 +14,20 @@ const __dirname = dirname(__filename)
 const chessContractDirectory = `${__dirname}/../../chess-contracts`
 console.log('\n\n', chessContractDirectory)
 
-const { VITE_CHAIN: chain, VITE_NETWORK: network, VITE_URL: url, MNEMONIC: mnemonic } = process.env
+const {
+  VITE_CHAIN: chain,
+  VITE_NETWORK: network,
+  VITE_URL: url,
+  MNEMONIC: mnemonic,
+  VITE_PATH: path
+} = process.env
 
 const rl = createInterface({ input, output })
 
 if (network !== 'regtest' && !mnemonic) throw new Error('Please set MNEMONIC in the .env file')
 
-const computer = new Computer({ chain, network, mnemonic, url })
-await computer.faucet(2e8)
+const computer = new Computer({ chain, network, mnemonic, url, path })
+if (network === 'regtest') await computer.faucet(2e8)
 const { balance } = await computer.getBalance()
 
 console.log(`

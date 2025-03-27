@@ -7,14 +7,20 @@ config()
 
 const rl = readline.createInterface({ input, output })
 
-const { VITE_CHAIN: chain, VITE_NETWORK: network, VITE_URL: url, MNEMONIC: mnemonic } = process.env
+const {
+  VITE_CHAIN: chain,
+  VITE_NETWORK: network,
+  VITE_URL: url,
+  MNEMONIC: mnemonic,
+  VITE_PATH: path,
+} = process.env
 
 if (network !== 'regtest') {
   if (!mnemonic) throw new Error('Please set MNEMONIC in the .env file')
 }
 
-const computer = new Computer({ chain, network, mnemonic, url })
-await computer.faucet(2e8)
+const computer = new Computer({ chain, network, mnemonic, url, path })
+if (network === 'regtest') await computer.faucet(2e8)
 const balance = await computer.wallet.getBalance()
 
 // Summary

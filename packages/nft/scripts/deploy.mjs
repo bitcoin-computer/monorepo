@@ -14,7 +14,7 @@ const {
   VITE_NETWORK: network,
   VITE_URL: url,
   MNEMONIC: mnemonic,
-  WALLET_PATH: path,
+  VITE_PATH: path,
 } = process.env
 
 if (network !== 'regtest') {
