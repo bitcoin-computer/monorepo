@@ -54,7 +54,7 @@ function MintForm(props: {
       const publicKeyW = computerW.getPublicKey()
       const chessContractHelper = new ChessContractHelper({
         computer: computerW,
-        amount: parseFloat(amount) * 1e8,
+        amount: BigInt(parseFloat(amount) * 1e8),
         nameW,
         nameB,
         publicKeyW,

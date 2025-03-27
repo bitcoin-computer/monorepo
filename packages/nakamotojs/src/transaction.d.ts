@@ -2,6 +2,10 @@ import { Signer } from './psbt.js';
 import { Buffer } from 'buffer';
 export interface Output {
     script: Buffer;
+    value: bigint;
+}
+export interface NumberOutput {
+    script: Buffer;
     value: number;
 }
 export interface Input {
@@ -39,10 +43,10 @@ export declare class Transaction {
         scriptSig?: Buffer;
         witness?: Buffer;
     }): void;
-    addOutput(scriptPubKey: Buffer, value: number): number;
+    addOutput(scriptPubKey: Buffer, value: bigint): number;
     updateOutput(outputIndex: number, opts: {
         scriptPubKey?: Buffer;
-        value?: number;
+        value?: bigint;
     }): void;
     hasWitnesses(): boolean;
     weight(): number;

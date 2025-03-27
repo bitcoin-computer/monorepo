@@ -7,10 +7,10 @@ export class Payment extends Contract {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _amount: bigint
   _owners: string[]
 
-  constructor(_amount: number) {
+  constructor(_amount: bigint) {
     super({ _amount })
   }
 
@@ -18,7 +18,7 @@ export class Payment extends Contract {
     this._owners = [to]
   }
 
-  setAmount(a: number) {
+  setAmount(a: bigint) {
     this._amount = a
   }
 }
@@ -27,10 +27,10 @@ export class PaymentMock {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _amount: bigint
   _owners: string[]
 
-  constructor(amount: number) {
+  constructor(amount: bigint) {
     this._id = getMockedRev()
     this._rev = getMockedRev()
     this._root = getMockedRev()
@@ -42,7 +42,7 @@ export class PaymentMock {
     this._owners = [to]
   }
 
-  setAmount(a: number) {
+  setAmount(a: bigint) {
     this._amount = a
   }
 }
@@ -61,8 +61,8 @@ export class PaymentHelper {
     return this.mod
   }
 
-  async createPaymentTx(amount: number) {
-    const exp = `new Payment(${amount})`
+  async createPaymentTx(amount: bigint) {
+    const exp = `new Payment(${amount}n)`
     return this.computer.encode({
       exp,
       mod: this.mod,

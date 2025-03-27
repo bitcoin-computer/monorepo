@@ -1,11 +1,11 @@
 import { Dispatch, useContext, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
-  toObject,
   capitalizeFirstLetter,
   Modal,
   UtilsContext,
   ComputerContext,
+  bigInt2Str,
 } from '@bitcoin-computer/components'
 import { Computer } from '@bitcoin-computer/lib'
 import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from '@bitcoin-computer/swap'
@@ -78,7 +78,7 @@ const CreateSellOffer = async ({
     showSnackBar('Please provide a valid amount.', false)
     return
   }
-  const mock = new PaymentMock(parsedAmount)
+  const mock = new PaymentMock(BigInt(parsedAmount))
   const { tx: saleTx } = await saleHelper.createSaleTx(nft, mock)
   if (!saleTx) {
     showSnackBar('Failed to list NFT for sale.', false)
@@ -112,6 +112,7 @@ const SmartObjectValues = ({ smartObject }: { smartObject: NFT }) => {
               className="max-h-full max-w-full object-contain"
               src={smartObject.url}
               alt="Image Preview"
+              crossOrigin="anonymous"
             />
           </div>
         </div>
@@ -188,7 +189,7 @@ const CreateSellOfferComponent = ({
 
 const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NFT }) => {
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
-  const [nftAmount, setNftAmount] = useState<number>(0)
+  const [nftAmount, setNftAmount] = useState<bigint>(0n)
 
   useEffect(() => {
     const fetch = async () => {
@@ -210,10 +211,10 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
 
   return (
     <>
-      {nftAmount !== 0 && (
+      {nftAmount !== 0n && (
         <div className="sm:w-full">
           <h2 className="mt-3 text-l font-bold dark:text-white">
-            NFT Listed At {toObject(nftAmount / 1e8)} {computer.getChain()}
+            NFT Listed At {bigInt2Str(nftAmount)} {computer.getChain()}
           </h2>
         </div>
       )}
@@ -266,7 +267,10 @@ const BuyNftComponent = ({
           try {
             showLoader(true)
             const nftAmount = await BuyNFT({ computer, nft: smartObject, setFunctionResult })
-            showSnackBar(`You bought this NFT for ${nftAmount / 1e8} ${computer.getChain()}`, true)
+            showSnackBar(
+              `You bought this NFT for ${bigInt2Str(nftAmount)} ${computer.getChain()}`,
+              true,
+            )
             showLoader(false)
           } catch (error) {
             showLoader(false)

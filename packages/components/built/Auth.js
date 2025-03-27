@@ -1,14 +1,3 @@
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useEffect, useRef, useState } from 'react';
 import { Computer } from '@bitcoin-computer/lib';
@@ -41,11 +30,10 @@ function getCoinType(chain, network) {
         return 3434;
     if (chain === 'BCH')
         return 145;
-    throw new Error("Unsupported chain ".concat(chain, " or network ").concat(network));
+    throw new Error(`Unsupported chain ${chain} or network ${network}`);
 }
-function getBip44Path(_a) {
-    var _b = _a === void 0 ? {} : _a, _c = _b.purpose, purpose = _c === void 0 ? 44 : _c, _d = _b.coinType, coinType = _d === void 0 ? 2 : _d, _e = _b.account, account = _e === void 0 ? 0 : _e;
-    return "m/".concat(purpose.toString(), "'/").concat(coinType.toString(), "'/").concat(account.toString(), "'");
+function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
+    return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`;
 }
 function loggedOutConfiguration() {
     return {
@@ -53,6 +41,7 @@ function loggedOutConfiguration() {
         network: getEnv('NETWORK'),
         url: getEnv('URL'),
         moduleStorageType: getEnv('MODULE_STORAGE_TYPE'),
+        path: getEnv('PATH'),
     };
 }
 function loggedInConfiguration() {
@@ -62,34 +51,28 @@ function loggedInConfiguration() {
         network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')),
         url: localStorage.getItem('URL') || getEnv('URL'),
         moduleStorageType: getEnv('MODULE_STORAGE_TYPE'),
+        path: localStorage.getItem('PATH') || getEnv('PATH') || getBip44Path(),
     };
 }
-function getComputer(options) {
-    if (options === void 0) { options = {}; }
-    var defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration();
-    return new Computer(__assign(__assign({}, defaultConfiguration), options));
+function getComputer(options = {}) {
+    const defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration();
+    return new Computer({ ...defaultConfiguration, ...options });
 }
-function MnemonicInput(_a) {
-    var mnemonic = _a.mnemonic, setMnemonic = _a.setMnemonic;
-    return (_jsxs(_Fragment, { children: [_jsxs("div", { className: "flex justify-between", children: [_jsx("label", { className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "BIP 39 Mnemonic" }), _jsx(HiRefresh, { onClick: function () { return setMnemonic(new Computer().getMnemonic()); }, className: "w-4 h-4 ml-2 text-sm font-medium text-gray-900 dark:text-white inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] }), _jsx("input", { value: mnemonic, onChange: function (e) { return setMnemonic(e.target.value); }, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white", required: true })] }));
+function MnemonicInput({ mnemonic, setMnemonic, }) {
+    return (_jsxs(_Fragment, { children: [_jsxs("div", { className: "flex justify-between", children: [_jsx("label", { className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "BIP 39 Mnemonic" }), _jsx(HiRefresh, { onClick: () => setMnemonic(new Computer().getMnemonic()), className: "w-4 h-4 ml-2 text-sm font-medium text-gray-900 dark:text-white inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] }), _jsx("input", { value: mnemonic, onChange: (e) => setMnemonic(e.target.value), className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white", required: true })] }));
 }
-function ChainInput(_a) {
-    var chain = _a.chain, setChain = _a.setChain;
-    return (_jsxs(_Fragment, { children: [_jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Chain" }), _jsxs("fieldset", { className: "flex", children: [_jsx("legend", { className: "sr-only", children: "Chain" }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain('LTC'); }, checked: chain === 'LTC', id: "chain-ltc", type: "radio", name: "chain", value: "LTC", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-ltc", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300", children: "LTC" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain('BTC'); }, checked: chain === 'BTC', id: "chain-btc", type: "radio", name: "chain", value: "BTC", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-btc", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "BTC" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain('PEPE'); }, id: "chain-pepe", type: "radio", name: "chain", value: "PEPE", className: "w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-pepe", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "PEPE" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setChain('DOGE'); }, id: "chain-doge", type: "radio", name: "chain", value: "DOGE", className: "w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600", disabled: true }), _jsx("label", { htmlFor: "chain-doge", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "DOGE" })] })] })] }));
+function ChainInput({ chain, setChain }) {
+    return (_jsxs(_Fragment, { children: [_jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Chain" }), _jsxs("fieldset", { className: "flex", children: [_jsx("legend", { className: "sr-only", children: "Chain" }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: () => setChain('LTC'), checked: chain === 'LTC', id: "chain-ltc", type: "radio", name: "chain", value: "LTC", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-ltc", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300", children: "LTC" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: () => setChain('BTC'), checked: chain === 'BTC', id: "chain-btc", type: "radio", name: "chain", value: "BTC", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-btc", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "BTC" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: () => setChain('PEPE'), id: "chain-pepe", type: "radio", name: "chain", value: "PEPE", className: "w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "chain-pepe", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "PEPE" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: () => setChain('DOGE'), id: "chain-doge", type: "radio", name: "chain", value: "DOGE", className: "w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600", disabled: true }), _jsx("label", { htmlFor: "chain-doge", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "DOGE" })] })] })] }));
 }
-function NetworkInput(_a) {
-    var network = _a.network, setNetwork = _a.setNetwork;
-    return (_jsxs(_Fragment, { children: [_jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Network" }), _jsxs("fieldset", { className: "flex", children: [_jsx("legend", { className: "sr-only", children: "Network" }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setNetwork('mainnet'); }, checked: network === 'mainnet', id: "network-mainnet", type: "radio", name: "network", value: "Mainnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-mainnet", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300", children: "Mainnet" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setNetwork('testnet'); }, checked: network === 'testnet', id: "network-testnet", type: "radio", name: "network", value: "Testnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-testnet", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "Testnet" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: function () { return setNetwork('regtest'); }, checked: network === 'regtest', id: "network-regtest", type: "radio", name: "network", value: "Regtest", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-regtest", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "Regtest" })] })] })] }));
+function NetworkInput({ network, setNetwork, }) {
+    return (_jsxs(_Fragment, { children: [_jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Network" }), _jsxs("fieldset", { className: "flex", children: [_jsx("legend", { className: "sr-only", children: "Network" }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: () => setNetwork('mainnet'), checked: network === 'mainnet', id: "network-mainnet", type: "radio", name: "network", value: "Mainnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-mainnet", className: "block ms-2  text-sm font-medium text-gray-900 dark:text-gray-300", children: "Mainnet" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: () => setNetwork('testnet'), checked: network === 'testnet', id: "network-testnet", type: "radio", name: "network", value: "Testnet", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-testnet", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "Testnet" })] }), _jsxs("div", { className: "flex items-center mr-4", children: [_jsx("input", { onChange: () => setNetwork('regtest'), checked: network === 'regtest', id: "network-regtest", type: "radio", name: "network", value: "Regtest", className: "w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600" }), _jsx("label", { htmlFor: "network-regtest", className: "block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300", children: "Regtest" })] })] })] }));
 }
-function UrlInput(_a) {
-    var urlInputRef = _a.urlInputRef;
+function UrlInput({ urlInputRef }) {
     return (_jsxs(_Fragment, { children: [_jsx("div", { className: "mt-4 flex justify-between", children: _jsx("label", { className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Node Url" }) }), _jsx("input", { ref: urlInputRef, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
 }
-function LoginButton(_a) {
-    var mnemonic = _a.mnemonic, chain = _a.chain, network = _a.network, path = _a.path, url = _a.url, urlInputRef = _a.urlInputRef;
-    var showSnackBar = useUtilsComponents().showSnackBar;
-    var login = function (e) {
-        var _a;
+function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }) {
+    const { showSnackBar } = useUtilsComponents();
+    const login = (e) => {
         e.preventDefault();
         if (isLoggedIn())
             showSnackBar('A user is already logged in, please log out first.', false);
@@ -99,33 +82,34 @@ function LoginButton(_a) {
         localStorage.setItem('CHAIN', chain);
         localStorage.setItem('NETWORK', network);
         localStorage.setItem('PATH', path);
-        localStorage.setItem('URL', ((_a = urlInputRef.current) === null || _a === void 0 ? void 0 : _a.value) || url);
+        localStorage.setItem('URL', urlInputRef.current?.value || url);
         window.location.href = '/';
     };
     return (_jsx(_Fragment, { children: _jsx("button", { onClick: login, type: "submit", className: "w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800", children: "Log In" }) }));
 }
 function LoginForm() {
-    var _a = useState(new Computer().getMnemonic()), mnemonic = _a[0], setMnemonic = _a[1];
-    var _b = useState(getEnv('CHAIN')), chain = _b[0], setChain = _b[1];
-    var _c = useState(getEnv('NETWORK')), network = _c[0], setNetwork = _c[1];
-    var url = useState(getEnv('URL'))[0];
-    var urlInputRef = useRef(null);
-    useEffect(function () {
+    const [mnemonic, setMnemonic] = useState(new Computer().getMnemonic());
+    const [chain, setChain] = useState(getEnv('CHAIN'));
+    const [network, setNetwork] = useState(getEnv('NETWORK'));
+    const [url] = useState(getEnv('URL'));
+    const urlInputRef = useRef(null);
+    const [path] = useState(getEnv('PATH') || getBip44Path());
+    useEffect(() => {
         initFlowbite();
     }, []);
-    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "max-w-sm mx-auto p-4 md:p-5 space-y-4", children: _jsx("form", { className: "space-y-6", children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !chain && _jsx(ChainInput, { chain: chain, setChain: setChain }), !network && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !url && _jsx(UrlInput, { urlInputRef: urlInputRef })] }) }) }), _jsx("div", { className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600", children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, urlInputRef: urlInputRef }) })] }));
+    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "max-w-sm mx-auto p-4 md:p-5 space-y-4", children: _jsx("form", { className: "space-y-6", children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !chain && _jsx(ChainInput, { chain: chain, setChain: setChain }), !network && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !url && _jsx(UrlInput, { urlInputRef: urlInputRef })] }) }) }), _jsx("div", { className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600", children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, path: path, urlInputRef: urlInputRef }) })] }));
 }
 function LoginModal() {
     return _jsx(Modal.Component, { title: "Sign in", content: LoginForm, id: "sign-in-modal" });
 }
-export var Auth = {
-    isLoggedIn: isLoggedIn,
-    logout: logout,
-    getCoinType: getCoinType,
-    getBip44Path: getBip44Path,
+export const Auth = {
+    isLoggedIn,
+    logout,
+    getCoinType,
+    getBip44Path,
     defaultConfiguration: loggedOutConfiguration,
     browserConfiguration: loggedInConfiguration,
-    getComputer: getComputer,
-    LoginForm: LoginForm,
-    LoginModal: LoginModal,
+    getComputer,
+    LoginForm,
+    LoginModal,
 };

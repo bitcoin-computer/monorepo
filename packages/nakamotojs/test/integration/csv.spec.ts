@@ -298,7 +298,7 @@ describe('nakamotojs (transactions w/ CSV)', () => {
       const tx = new Transaction();
       tx.version = 2;
       tx.addInput(idToHash(unspent.txId), unspent.vout, sequence);
-      tx.addOutput(toOutputScript(randomAddress), 1e5 * amountFactor);
+      tx.addOutput(toOutputScript(randomAddress), BigInt(1e5 * amountFactor));
 
       // {Alice's signature} OP_TRUE
       const signatureHash = tx.hashForSignature(
@@ -361,7 +361,7 @@ describe('nakamotojs (transactions w/ CSV)', () => {
       const tx = new Transaction();
       tx.version = 2;
       tx.addInput(idToHash(unspent.txId), unspent.vout);
-      tx.addOutput(toOutputScript(randomAddress), 7e4 * amountFactor);
+      tx.addOutput(toOutputScript(randomAddress), BigInt(7e4 * amountFactor));
 
       // OP_0 {Bob sig} {Charles sig} OP_TRUE OP_TRUE
       const signatureHash = tx.hashForSignature(
@@ -428,7 +428,7 @@ describe('nakamotojs (transactions w/ CSV)', () => {
       const tx = new Transaction();
       tx.version = 2;
       tx.addInput(idToHash(unspent.txId), unspent.vout, sequence1); // Set sequence1 for input
-      tx.addOutput(toOutputScript(randomAddress), 7e4 * amountFactor);
+      tx.addOutput(toOutputScript(randomAddress), BigInt(7e4 * amountFactor));
 
       // OP_0 {Bob sig} {Alice mediator sig} OP_FALSE OP_TRUE
       const signatureHash = tx.hashForSignature(
@@ -498,7 +498,7 @@ describe('nakamotojs (transactions w/ CSV)', () => {
       const tx = new Transaction();
       tx.version = 2;
       tx.addInput(idToHash(unspent.txId), unspent.vout, sequence2); // Set sequence2 for input
-      tx.addOutput(toOutputScript(randomAddress), 7e4 * amountFactor);
+      tx.addOutput(toOutputScript(randomAddress), BigInt(7e4 * amountFactor));
 
       // {Alice mediator sig} OP_FALSE
       const signatureHash = tx.hashForSignature(
