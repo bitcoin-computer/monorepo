@@ -45,6 +45,6 @@ describe('rpcCall', () => {
 
     const { balance: balanceAfter } = await computer.getBalance()
     console.log(balanceAfter - balanceBefore)
-    expect(balanceAfter - balanceBefore - 5000000000n < 100000n).to.be.true
+    expect(balanceAfter - balanceBefore - BigInt(50e8) < BigInt(1e5)).to.be.true
   })
 })

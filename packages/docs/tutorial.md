@@ -396,7 +396,7 @@ class A extends Contract {
     super({
       n: 1,
       _owners: 'OP_3 OP_EQUAL',
-      _amount: 100000000n,
+      _amount: BigInt(1e8),
     })
   }
 

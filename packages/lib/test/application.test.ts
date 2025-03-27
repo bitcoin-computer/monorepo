@@ -463,7 +463,7 @@ describe('Sell', () => {
   let tx: any
   let txClone: any
   let sellerPublicKey: string
-  const nftPrice = 100000000n
+  const nftPrice = BigInt(1e8)
   const fee = 10000
 
   describe('Creating an NFT and an offer to sell', () => {

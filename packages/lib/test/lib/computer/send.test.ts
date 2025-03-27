@@ -8,7 +8,7 @@ describe('send', () => {
     await computer.faucet(1e8)
 
     // Send transaction with payment
-    const txId = await computer.send(1000000n, computer.getAddress())
+    const txId = await computer.send(BigInt(1e6), computer.getAddress())
     expect(txId).to.be.a('string')
   })
 })

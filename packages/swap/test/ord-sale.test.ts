@@ -34,7 +34,7 @@ describe('Ord Sale', () => {
       await buyer.faucet(11e8)
 
       // Seller creates a special output that contains the ordinal
-      const txId = await seller.send(10000n, seller.getAddress())
+      const txId = await seller.send(BigInt(1e4), seller.getAddress())
       const ordinalRev = `${txId}:0`
 
       // Seller mints an NFT

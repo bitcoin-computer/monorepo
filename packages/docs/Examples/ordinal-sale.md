@@ -104,7 +104,7 @@ const { tx } = await seller.encode({
 })
 
 // Buyer creates a payment object with the asking price
-const payment = await buyer.new(Payment, [100000000n])
+const payment = await buyer.new(Payment, [BigInt(1e8)])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
 // Buyer set's the payment object as the second input of the swap tx

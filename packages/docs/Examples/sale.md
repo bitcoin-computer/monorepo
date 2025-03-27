@@ -84,7 +84,7 @@ class PaymentMock {
   }
 }
 
-const mock = new PaymentMock(100000000n)
+const mock = new PaymentMock(BigInt(1e8))
 ```
 
 ### Building the Sales Transaction
@@ -135,7 +135,7 @@ Seller can publish the sales transaction without any risk. An interested buyer c
 First, Buyer creates a smart object to pay for the nft.
 
 ```ts
-const payment = await buyer.new(Payment, [100000000n])
+const payment = await buyer.new(Payment, [BigInt(1e8)])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 ```
 
@@ -193,7 +193,7 @@ const { tx: saleTx } = await seller.encode({
 })
 
 // Buyer creates a payment object with the asking price
-const payment = await buyer.new(Payment, [100000000n])
+const payment = await buyer.new(Payment, [BigInt(1e8)])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
 // Buyer set's the payment object as the second input of the swap tx
