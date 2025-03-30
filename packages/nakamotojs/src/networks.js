@@ -66,7 +66,7 @@ export const litecointestnet = {
 };
 export const pepecoin = {
   messagePrefix: '\x18Pepecoin Signed Message:\n',
-  bech32: 'grs',
+  bech32: 'pepe',
   bip32: {
     public: 0x02facafd,
     private: 0x02fac398,
