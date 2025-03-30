@@ -98,7 +98,7 @@ export const pepecointestnet = {
   wif: 0xf1,
 };
 export const groestlcoin = {
-  messagePrefix: '\x1cGroestlcoin Signed Message:\n',
+  messagePrefix: '\x1cGroestlCoin Signed Message:\n',
   bech32: 'grs',
   bip32: {
     public: 0x0488b21e,
@@ -109,7 +109,7 @@ export const groestlcoin = {
   wif: 0x80,
 };
 export const groestlcoinregtest = {
-  messagePrefix: '\x1cGroestlcoin Signed Message:\n',
+  messagePrefix: '\x1cGroestlCoin Signed Message:\n',
   bech32: 'grsrt',
   bip32: {
     public: 0x043587cf,
@@ -120,7 +120,7 @@ export const groestlcoinregtest = {
   wif: 0xef,
 };
 export const groestlcointestnet = {
-  messagePrefix: '\x1cGroestlcoin Signed Message:\n',
+  messagePrefix: '\x1cGroestlCoin Signed Message:\n',
   bech32: 'tgrs',
   bip32: {
     public: 0x043587cf,
