@@ -239,6 +239,17 @@ export function getNetwork(chain: string, network: string): Network {
         default:
           throw new Error(`Invalid network ${network}`);
       }
+    case 'GRS':
+      switch (network) {
+        case 'mainnet':
+          return groestlcoin;
+        case 'testnet':
+          return groestlcointestnet;
+        case 'regtest':
+          return groestlcoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }      
     default:
       throw new Error(`Invalid chain ${network}`);
   }
