@@ -101,12 +101,12 @@ export const groestlcoin = {
   messagePrefix: '\x1cGroestlcoin Signed Message:\n',
   bech32: 'grs',
   bip32: {
-    public: 0x02facafd,
-    private: 0x02fac398,
+    public: 0x0488b21e,
+    private: 0x0488ade4,
   },
-  pubKeyHash: 0x38,
-  scriptHash: 0x16,
-  wif: 0x9e,
+  pubKeyHash: 0x24,
+  scriptHash: 0x05,
+  wif: 0x80,
 };
 export const groestlcoinregtest = {
   messagePrefix: '\x1cGroestlcoin Signed Message:\n',
@@ -128,7 +128,7 @@ export const groestlcointestnet = {
   },
   pubKeyHash: 0x71,
   scriptHash: 0xc4,
-  wif: 0xf1,
+  wif: 0xef,
 };
 export const dogecoin = {
   messagePrefix: '\x19Dogecoin Signed Message:\n',
