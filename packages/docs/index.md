@@ -12,7 +12,7 @@ _The Bitcoin Computer is a protocol for building applications that are as secure
 
 **Free Computation** - Smart contracts are executed on the client. Execution costs are fixed and independent of the number of computational steps.
 
-**Multicoin**. Deploy on Bitcoin, Litecoin, Dogecoin, and Pepecoin (Bitcoin Cash coming soon) using the same code.
+**Multicoin**. Deploy on Bitcoin, Litecoin, Dogecoin, Pepecoin and Groestlcoin (Bitcoin Cash coming soon) using the same code.
 
 **JavaScript & Typescript** - Build decentralized applications that integrate seamlessly into web applications using your favorite tools and execute on high performance JavaScript engines.
 

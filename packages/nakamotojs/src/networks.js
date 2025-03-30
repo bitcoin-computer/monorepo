@@ -97,6 +97,39 @@ export const pepecointestnet = {
   scriptHash: 0xc4,
   wif: 0xf1,
 };
+export const groestlcoin = {
+  messagePrefix: '\x1cGroestlCoin Signed Message:\n',
+  bech32: 'grs',
+  bip32: {
+    public: 0x0488b21e,
+    private: 0x0488ade4,
+  },
+  pubKeyHash: 0x24,
+  scriptHash: 0x05,
+  wif: 0x80,
+};
+export const groestlcoinregtest = {
+  messagePrefix: '\x1cGroestlCoin Signed Message:\n',
+  bech32: 'grsrt',
+  bip32: {
+    public: 0x043587cf,
+    private: 0x04358394,
+  },
+  pubKeyHash: 0x6f,
+  scriptHash: 0xc4,
+  wif: 0xef,
+};
+export const groestlcointestnet = {
+  messagePrefix: '\x1cGroestlCoin Signed Message:\n',
+  bech32: 'tgrs',
+  bip32: {
+    public: 0x043587cf,
+    private: 0x04358394,
+  },
+  pubKeyHash: 0x71,
+  scriptHash: 0xc4,
+  wif: 0xef,
+};
 export const dogecoin = {
   messagePrefix: '\x19Dogecoin Signed Message:\n',
   bech32: 'doge', // TODO: Dogecoin doesn't use bech32, make type optional
@@ -176,6 +209,17 @@ export function getNetwork(chain, network) {
         default:
           throw new Error(`Invalid network ${network}`);
       }
+    case 'GRS':
+      switch (network) {
+        case 'mainnet':
+          return groestlcoin;
+        case 'testnet':
+          return groestlcointestnet;
+        case 'regtest':
+          return groestlcoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }      
     default:
       throw new Error(`Invalid chain ${network}`);
   }
@@ -197,4 +241,8 @@ export const NETWORKS = {
   dogecoin,
   dogecoinregtest,
   dogecointestnet,
+  // Groestlcoin
+  groestlcoin,
+  groestlcoinregtest,
+  groestlcointestnet,
 };
