@@ -123,7 +123,7 @@ export const pepecointestnet: Network = {
 };
 
 export const groestlcoin: Network = {
-  messagePrefix: '\x18Groestlcoin Signed Message:\n',
+  messagePrefix: '\x1cGroestlcoin Signed Message:\n',
   bech32: 'grs',
   bip32: {
     public: 0x0488b21e,
@@ -135,7 +135,7 @@ export const groestlcoin: Network = {
 };
 
 export const groestlcoinregtest: Network = {
-  messagePrefix: '\x18Groestlcoin Signed Message:\n',
+  messagePrefix: '\x1cGroestlcoin Signed Message:\n',
   bech32: 'grsrt',
   bip32: {
     public: 0x043587cf,
@@ -147,7 +147,7 @@ export const groestlcoinregtest: Network = {
 };
 
 export const groestlcointestnet: Network = {
-  messagePrefix: '\x18Groestlcoin Signed Message:\n',
+  messagePrefix: '\x1cGroestlcoin Signed Message:\n',
   bech32: 'tgrs',
   bip32: {
     public: 0x043587cf,
