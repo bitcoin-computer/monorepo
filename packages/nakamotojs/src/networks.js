@@ -66,7 +66,7 @@ export const litecointestnet = {
 };
 export const pepecoin = {
   messagePrefix: '\x18Pepecoin Signed Message:\n',
-  bech32: 'pepe',
+  bech32: 'grs',
   bip32: {
     public: 0x02facafd,
     private: 0x02fac398,
@@ -98,8 +98,8 @@ export const pepecointestnet = {
   wif: 0xf1,
 };
 export const groestlcoin = {
-  messagePrefix: '\x18Groestlcoin Signed Message:\n',
-  bech32: 'pepe',
+  messagePrefix: '\x1cGroestlcoin Signed Message:\n',
+  bech32: 'grs',
   bip32: {
     public: 0x02facafd,
     private: 0x02fac398,
@@ -109,8 +109,8 @@ export const groestlcoin = {
   wif: 0x9e,
 };
 export const groestlcoinregtest = {
-  messagePrefix: '\x18Groestlcoin Signed Message:\n',
-  bech32: 'rpepe',
+  messagePrefix: '\x1cGroestlcoin Signed Message:\n',
+  bech32: 'grsrt',
   bip32: {
     public: 0x043587cf,
     private: 0x04358394,
@@ -120,8 +120,8 @@ export const groestlcoinregtest = {
   wif: 0xef,
 };
 export const groestlcointestnet = {
-  messagePrefix: '\x18Groestlcoin Signed Message:\n',
-  bech32: 'tpepe',
+  messagePrefix: '\x1cGroestlcoin Signed Message:\n',
+  bech32: 'tgrs',
   bip32: {
     public: 0x043587cf,
     private: 0x04358394,
