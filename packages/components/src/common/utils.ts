@@ -86,14 +86,19 @@ export function bigInt2Str(a: bigint): string {
 }
 
 export function str2BigInt(a: string): bigint {
+  // Validate number contains at most one dot and is not empty
+  if ((a.match(/\./g) || []).length > 1 || a === '.' || a === '') {
+    throw new Error('Invalid number')
+  }
+
   const [integerPart, fractionalPart = ''] = a.split('.')
 
-  if (!/^\d*$/.test(integerPart)) {
-    throw new Error('Invalid integer part. Please enter a valid number.')
+  // Validate integer and fractional part contains only digits (or is empty)
+  if (!/^\d*$/.test(integerPart) || !/^\d*$/.test(fractionalPart)) {
+    throw new Error('Invalid number')
   }
 
   const paddedFractionalPart = fractionalPart.padEnd(8, '0').slice(0, 8)
-
   const totalSatoshisStr = integerPart + paddedFractionalPart
 
   return BigInt(totalSatoshisStr)

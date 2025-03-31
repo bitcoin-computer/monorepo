@@ -2,12 +2,37 @@ import { describe, it, expect } from 'vitest'
 import { bigInt2Str, str2BigInt } from '../src/common/utils'
 
 describe('str2BigInt/bigInt2Str', () => {
-  it('Should return zero if empty string is provided', async () => {
-    expect(str2BigInt('')).to.eq(0n)
+  it('Should throw if an invalid number is provided', async () => {
+    const invalidInputs = [
+      '1.1.1',
+      '12a.34',
+      '12.3z',
+      '12$3.45',
+      'abc',
+      '.',
+      '',
+      '-',
+      '-0',
+      '-0.00000000',
+    ]
+
+    invalidInputs.forEach((input) => {
+      expect(() => str2BigInt(input)).toThrowError('Invalid number')
+    })
+  })
+
+  it('handles valid numbers correctly', () => {
+    const validInputs = ['123', '0.98765432', '123456789.1', '.5', '000123.45', '123.']
+
+    validInputs.forEach((input) => {
+      expect(() => str2BigInt(input)).not.toThrow()
+    })
   })
 
   it('Should parse a string encoding a rounded integer', async () => {
     expect(str2BigInt('1')).to.eq(BigInt(1e8))
+    expect(str2BigInt('1.')).to.eq(BigInt(1e8))
+    expect(str2BigInt('.1')).to.eq(BigInt(1e7))
     expect(bigInt2Str(BigInt(1e8))).to.eq('1.0')
   })
 
