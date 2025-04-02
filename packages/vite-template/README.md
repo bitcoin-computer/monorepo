@@ -76,6 +76,13 @@ If you want to add a feature we recommend to create a fork. Let us know if you h
 
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
 
+## Enable GeoLocation based blocking.
+
+We allow basic geolocation based blocking in-built in the app, you can block access to the US states with following configuration
+
+- VITE_ENABLE_GEOLOCATION (default false) should be set to true
+- VITE_BLOCKED_STATES (default []) should be set to , separated string e.g. California,texas
+
 ## MIT License
 
 Copyright (c) 2022 BCDB Inc.
