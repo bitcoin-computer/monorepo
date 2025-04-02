@@ -1,17 +1,17 @@
 import * as turf from '@turf/turf'
 import usStatesJson from '../geodata/us-states.json' assert { type: 'json' }
-const usStates: StatesGeoJSON = usStatesJson as StatesGeoJSON
 
 interface StateProperties {
   name: string
   density: number
 }
-
 type StateFeature = GeoJSON.Feature<GeoJSON.Polygon | GeoJSON.MultiPolygon, StateProperties>
 type StatesGeoJSON = GeoJSON.FeatureCollection<
   GeoJSON.Polygon | GeoJSON.MultiPolygon,
   StateProperties
 >
+
+const usStates: StatesGeoJSON = usStatesJson as StatesGeoJSON
 
 function getStatesContainingPoint(point: GeoJSON.Point, geojsonData: StatesGeoJSON): string[] {
   const matchingStates: string[] = []

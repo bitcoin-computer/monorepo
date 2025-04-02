@@ -51,47 +51,6 @@ export const useUtilsComponents = (): UtilsContextProps => {
   return context
 }
 
-interface UtilsProviderProps {
-  children: ReactNode
-}
-
-export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
-  const [snackBar, setSnackBar] = useState<{ message: string; success: boolean } | null>(null)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-
-  const showSnackBar = (message: string, success: boolean) => {
-    setSnackBar({ message, success })
-  }
-
-  const showLoader = (show: boolean) => {
-    setIsLoading(show)
-  }
-
-  const hideSnackBar = () => {
-    setSnackBar(null)
-  }
-
-  return (
-    <utilsContext.Provider value={{ showSnackBar, hideSnackBar, showLoader }}>
-      <GeoLocationWrapper>{children}</GeoLocationWrapper>
-      {snackBar && (
-        <SnackBar
-          message={snackBar.message}
-          success={snackBar.success}
-          hideSnackBar={hideSnackBar}
-        />
-      )}
-      {isLoading && <Loader />}
-      <Modal.Component
-        title={'Please provide location access'}
-        content={RequestGeolocationContent}
-        id={requestGeolocationModal}
-      />
-      <Modal.Component title={'Access Denied'} content={ErrorContent} id={errorGeolocationModal} />
-    </utilsContext.Provider>
-  )
-}
-
 // GeoLocationWrapper Component
 function GeoLocationWrapper({ children }: { children: React.ReactNode }) {
   const [isValidLocation, setIsValidLocation] = useState<boolean | null>(null)
@@ -131,6 +90,47 @@ function GeoLocationWrapper({ children }: { children: React.ReactNode }) {
   }
 
   return <>{children}</>
+}
+
+interface UtilsProviderProps {
+  children: ReactNode
+}
+
+export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
+  const [snackBar, setSnackBar] = useState<{ message: string; success: boolean } | null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  const showSnackBar = (message: string, success: boolean) => {
+    setSnackBar({ message, success })
+  }
+
+  const showLoader = (show: boolean) => {
+    setIsLoading(show)
+  }
+
+  const hideSnackBar = () => {
+    setSnackBar(null)
+  }
+
+  return (
+    <utilsContext.Provider value={{ showSnackBar, hideSnackBar, showLoader }}>
+      <GeoLocationWrapper>{children}</GeoLocationWrapper>
+      {snackBar && (
+        <SnackBar
+          message={snackBar.message}
+          success={snackBar.success}
+          hideSnackBar={hideSnackBar}
+        />
+      )}
+      {isLoading && <Loader />}
+      <Modal.Component
+        title={'Please provide location access'}
+        content={RequestGeolocationContent}
+        id={requestGeolocationModal}
+      />
+      <Modal.Component title={'Access Denied'} content={ErrorContent} id={errorGeolocationModal} />
+    </utilsContext.Provider>
+  )
 }
 
 export const UtilsContext = {
