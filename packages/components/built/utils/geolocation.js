@@ -65,7 +65,7 @@ export var checkGeoLocation = function () { return __awaiter(void 0, void 0, voi
                     return __generator(this, function (_b) {
                         try {
                             _a = position.coords, latitude = _a.latitude, longitude = _a.longitude;
-                            point = turf.point([-98.4936, 29.4241]);
+                            point = turf.point([longitude, latitude]);
                             statesContainingPoint = getStatesContainingPoint(point.geometry, usStates);
                             if (statesContainingPoint.length > 1) {
                                 // The getStatesContainingPoint returned multiple points this is not expected

@@ -4,21 +4,7 @@ import { Loader } from './Loader'
 import { checkGeoLocation } from './utils/geolocation'
 import { Modal } from './Modal'
 
-const requestGeolocationModal = 'request-geolocation'
 const errorGeolocationModal = 'error-geolocation'
-
-function RequestGeolocationContent() {
-  return (
-    <>
-      <div className="p-4 md:p-5 dark:text-gray-400">
-        <div>
-          This App is in beta mode and has limited access. Please allow location access to use the
-          app.
-        </div>
-      </div>
-    </>
-  )
-}
 
 function ErrorContent(msg: string) {
   return (
@@ -66,14 +52,12 @@ function GeoLocationWrapper({ children }: { children: React.ReactNode }) {
 
       try {
         showLoader(true)
-        // Modal.showModal(requestGeolocationModal) // Show "Request Location Access" modal
         const isValid = await checkGeoLocation()
         setIsValidLocation(isValid)
       } catch (error) {
         setIsValidLocation(false)
       } finally {
         showLoader(false)
-        // Modal.hideModal(requestGeolocationModal) // Hide "Request Location Access" modal
       }
     }
 
@@ -123,11 +107,6 @@ export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
         />
       )}
       {isLoading && <Loader />}
-      <Modal.Component
-        title={'Please provide location access'}
-        content={RequestGeolocationContent}
-        id={requestGeolocationModal}
-      />
       <Modal.Component title={'Access Denied'} content={ErrorContent} id={errorGeolocationModal} />
     </utilsContext.Provider>
   )

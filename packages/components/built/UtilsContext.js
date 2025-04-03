@@ -34,17 +34,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-import { jsx as _jsx, Fragment as _Fragment, jsxs as _jsxs } from "react/jsx-runtime";
+import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { createContext, useContext, useEffect, useState } from 'react';
 import { SnackBar } from './SnackBar';
 import { Loader } from './Loader';
 import { checkGeoLocation } from './utils/geolocation';
 import { Modal } from './Modal';
-var requestGeolocationModal = 'request-geolocation';
 var errorGeolocationModal = 'error-geolocation';
-function RequestGeolocationContent() {
-    return (_jsx(_Fragment, { children: _jsx("div", { className: "p-4 md:p-5 dark:text-gray-400", children: _jsx("div", { children: "This App is in beta mode and has limited access. Please allow location access to use the app." }) }) }));
-}
 function ErrorContent(msg) {
     return (_jsx(_Fragment, { children: _jsx("div", { className: "p-4 md:p-5 dark:text-gray-400", children: _jsxs("div", { children: ["The app is not accessible from your location.", _jsx("br", {}), _jsx("br", {}), msg] }) }) }));
 }
@@ -55,21 +51,6 @@ export var useUtilsComponents = function () {
         throw new Error('useUtilsComponents must be used within a UtilsProvider');
     }
     return context;
-};
-export var UtilsProvider = function (_a) {
-    var children = _a.children;
-    var _b = useState(null), snackBar = _b[0], setSnackBar = _b[1];
-    var _c = useState(false), isLoading = _c[0], setIsLoading = _c[1];
-    var showSnackBar = function (message, success) {
-        setSnackBar({ message: message, success: success });
-    };
-    var showLoader = function (show) {
-        setIsLoading(show);
-    };
-    var hideSnackBar = function () {
-        setSnackBar(null);
-    };
-    return (_jsxs(utilsContext.Provider, { value: { showSnackBar: showSnackBar, hideSnackBar: hideSnackBar, showLoader: showLoader }, children: [_jsx(GeoLocationWrapper, { children: children }), snackBar && (_jsx(SnackBar, { message: snackBar.message, success: snackBar.success, hideSnackBar: hideSnackBar })), isLoading && _jsx(Loader, {}), _jsx(Modal.Component, { title: 'Please provide location access', content: RequestGeolocationContent, id: requestGeolocationModal }), _jsx(Modal.Component, { title: 'Access Denied', content: ErrorContent, id: errorGeolocationModal })] }));
 };
 // GeoLocationWrapper Component
 function GeoLocationWrapper(_a) {
@@ -111,7 +92,6 @@ function GeoLocationWrapper(_a) {
         checkLocation();
     }, []);
     if (isEnabled && isValidLocation === null) {
-        // Show loader and "Request Location Access" modal while checking geolocation
         return null;
     }
     if (isEnabled && isValidLocation === false) {
@@ -120,6 +100,21 @@ function GeoLocationWrapper(_a) {
     }
     return _jsx(_Fragment, { children: children });
 }
+export var UtilsProvider = function (_a) {
+    var children = _a.children;
+    var _b = useState(null), snackBar = _b[0], setSnackBar = _b[1];
+    var _c = useState(false), isLoading = _c[0], setIsLoading = _c[1];
+    var showSnackBar = function (message, success) {
+        setSnackBar({ message: message, success: success });
+    };
+    var showLoader = function (show) {
+        setIsLoading(show);
+    };
+    var hideSnackBar = function () {
+        setSnackBar(null);
+    };
+    return (_jsxs(utilsContext.Provider, { value: { showSnackBar: showSnackBar, hideSnackBar: hideSnackBar, showLoader: showLoader }, children: [_jsx(GeoLocationWrapper, { children: children }), snackBar && (_jsx(SnackBar, { message: snackBar.message, success: snackBar.success, hideSnackBar: hideSnackBar })), isLoading && _jsx(Loader, {}), _jsx(Modal.Component, { title: 'Access Denied', content: ErrorContent, id: errorGeolocationModal })] }));
+};
 export var UtilsContext = {
     UtilsProvider: UtilsProvider,
     useUtilsComponents: useUtilsComponents,
