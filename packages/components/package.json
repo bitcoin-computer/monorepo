@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@bitcoin-computer/lib": "^0.24.3-beta.0",
+    "@turf/turf": "^7.2.0",
     "flowbite": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

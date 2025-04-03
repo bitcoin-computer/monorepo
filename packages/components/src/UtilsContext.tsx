@@ -1,6 +1,25 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react'
+import React, { createContext, ReactNode, useContext, useEffect, useState } from 'react'
 import { SnackBar } from './SnackBar'
 import { Loader } from './Loader'
+import { checkGeoLocation } from './utils/geolocation'
+import { Modal } from './Modal'
+
+const errorGeolocationModal = 'error-geolocation'
+
+function ErrorContent(msg: string) {
+  return (
+    <>
+      <div className="p-4 md:p-5 dark:text-gray-400">
+        <div>
+          The app is not accessible from your location.
+          <br />
+          <br />
+          {msg}
+        </div>
+      </div>
+    </>
+  )
+}
 
 interface UtilsContextProps {
   showSnackBar: (message: string, success: boolean) => void
@@ -18,8 +37,47 @@ export const useUtilsComponents = (): UtilsContextProps => {
   return context
 }
 
+// GeoLocationWrapper Component
+function GeoLocationWrapper({ children }: { children: React.ReactNode }) {
+  const [isValidLocation, setIsValidLocation] = useState<boolean | null>(null)
+  const { showLoader } = useUtilsComponents()
+  const isEnabled = import.meta.env.VITE_ENABLE_GEOLOCATION === 'true'
+
+  useEffect(() => {
+    const checkLocation = async () => {
+      if (!isEnabled) {
+        setIsValidLocation(true)
+        return
+      }
+
+      try {
+        showLoader(true)
+        const isValid = await checkGeoLocation()
+        setIsValidLocation(isValid)
+      } catch (error) {
+        setIsValidLocation(false)
+      } finally {
+        showLoader(false)
+      }
+    }
+
+    checkLocation()
+  }, [])
+
+  if (isEnabled && isValidLocation === null) {
+    return null
+  }
+
+  if (isEnabled && isValidLocation === false) {
+    Modal.showModal(errorGeolocationModal)
+    return null
+  }
+
+  return <>{children}</>
+}
+
 interface UtilsProviderProps {
-  children: ReactNode // Explicitly type children as ReactNode
+  children: ReactNode
 }
 
 export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
@@ -40,7 +98,7 @@ export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
 
   return (
     <utilsContext.Provider value={{ showSnackBar, hideSnackBar, showLoader }}>
-      {children}
+      <GeoLocationWrapper>{children}</GeoLocationWrapper>
       {snackBar && (
         <SnackBar
           message={snackBar.message}
@@ -49,6 +107,7 @@ export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
         />
       )}
       {isLoading && <Loader />}
+      <Modal.Component title={'Access Denied'} content={ErrorContent} id={errorGeolocationModal} />
     </utilsContext.Provider>
   )
 }
