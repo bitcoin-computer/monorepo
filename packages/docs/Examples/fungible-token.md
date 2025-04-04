@@ -15,15 +15,15 @@ The `transfer` function checks if the current on-chain object contains a suffici
 import { Contract } from '@bitcoin-computer/lib'
 
 class Token extends Contract {
-  amount: number
+  amount: bigint
   symbol: string
   _owners: string[]
 
-  constructor(to: string, amount: number, symbol: string) {
+  constructor(to: string, amount: bigint, symbol: string) {
     super({ _owners: [to], amount, symbol })
   }
 
-  transfer(recipient: string, amount: number) {
+  transfer(recipient: string, amount: bigint) {
     if (this.amount < amount) throw new Error()
 
     this.amount -= amount
@@ -45,14 +45,14 @@ const receiver = new Computer()
 await sender.faucet(0.001e8)
 
 // Mint new fungible token with total supply of 10
-const token = await sender.new(Token, [sender.getPublicKey(), 10, 'SYM'])
+const token = await sender.new(Token, [sender.getPublicKey(), 10n, 'SYM'])
 
 // Send 2 tokens to receiver
-const sentToken = await token.transfer(receiver.getPublicKey(), 2)
+const sentToken = await token.transfer(receiver.getPublicKey(), 2n)
 
 // SentToken will have supply of 2 and token will have a supply of 8
-expect(token.amount).eq(8)
-expect(sentToken.amount).eq(2)
+expect(token.amount).eq(8n)
+expect(sentToken.amount).eq(2n)
 ```
 
 ## Code

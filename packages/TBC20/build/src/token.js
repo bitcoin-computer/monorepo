@@ -14,10 +14,10 @@ export class Token extends Contract {
         throw new Error('Insufficient funds');
     }
     burn() {
-        this.amount = 0;
+        this.amount = 0n;
     }
     merge(tokens) {
-        let total = 0;
+        let total = 0n;
         tokens.forEach((token) => {
             total += token.amount;
             token.burn();
@@ -52,7 +52,7 @@ export class TokenHelper {
         if (typeof root === 'undefined')
             throw new Error('Please pass a root into balanceOf.');
         const bags = await this.getBags(publicKey, root);
-        return bags.reduce((prev, curr) => prev + curr.amount, 0);
+        return bags.reduce((prev, curr) => prev + curr.amount, 0n);
     }
     async transfer(to, amount, root) {
         let _amount = amount;
@@ -61,7 +61,7 @@ export class TokenHelper {
         const results = [];
         while (_amount > 0 && bags.length > 0) {
             const [bag] = bags.splice(0, 1);
-            const available = Math.min(_amount, bag.amount);
+            const available = _amount < bag.amount ? _amount : bag.amount;
             results.push(await bag.transfer(to, available));
             _amount -= available;
         }

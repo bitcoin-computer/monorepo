@@ -3,7 +3,7 @@ export type Network = 'livenet' | 'testnet' | 'mainnet' | 'regtest'
 
 export type TableTx = {
   txId: string
-  satoshis: number
+  satoshis: bigint
 }
 
 export type TableTxs = {

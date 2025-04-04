@@ -75,3 +75,31 @@ export function getEnv(name: string) {
     (import.meta.env && import.meta.env[`VITE_${name}`])
   )
 }
+
+export function bigInt2Str(a: bigint): string {
+  if (a < 0n) throw new Error('Balance must be a non-negative')
+
+  const scale = BigInt(1e8)
+  const integerPart = (a / scale).toString()
+  const fractionalPart = (a % scale).toString().padStart(8, '0').replace(/0+$/, '')
+  return `${integerPart}.${fractionalPart || '0'}`
+}
+
+export function str2BigInt(a: string): bigint {
+  // Validate number contains at most one dot and is not empty
+  if ((a.match(/\./g) || []).length > 1 || a === '.' || a === '') {
+    throw new Error('Invalid number')
+  }
+
+  const [integerPart, fractionalPart = ''] = a.split('.')
+
+  // Validate integer and fractional part contains only digits (or is empty)
+  if (!/^\d*$/.test(integerPart) || !/^\d*$/.test(fractionalPart)) {
+    throw new Error('Invalid number')
+  }
+
+  const paddedFractionalPart = fractionalPart.padEnd(8, '0').slice(0, 8)
+  const totalSatoshisStr = integerPart + paddedFractionalPart
+
+  return BigInt(totalSatoshisStr)
+}

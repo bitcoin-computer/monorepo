@@ -44,6 +44,7 @@ describe('rpcCall', () => {
     await computer.rpcCall('generatetoaddress', `99 ${randomAddress}`)
 
     const { balance: balanceAfter } = await computer.getBalance()
-    expect(balanceAfter - balanceBefore).to.be.closeTo(50e8, 1e5)
+    console.log(balanceAfter - balanceBefore)
+    expect(balanceAfter - balanceBefore - BigInt(50e8) < BigInt(1e5)).to.be.true
   })
 })

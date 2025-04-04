@@ -36,7 +36,7 @@ export class PaymentHelper {
         return this.mod;
     }
     async createPaymentTx(amount) {
-        const exp = `new Payment(${amount})`;
+        const exp = `new Payment(${amount}n)`;
         return this.computer.encode({
             exp,
             mod: this.mod,

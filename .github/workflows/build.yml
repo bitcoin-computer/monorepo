@@ -152,7 +152,7 @@ jobs:
       - name: Run integration tests
         working-directory: packages/node
         run: |
-          npm run test
+          sleep 30; npm run test
 
       - name: Clear DockerHub credentials
         run: |

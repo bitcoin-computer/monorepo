@@ -29,11 +29,11 @@ describe('Token', async () => {
 
   describe('mint', async () => {
     it('Sender mints 3 tokens', async () => {
-      token1 = await sender.new(Token, [sender.getPublicKey(), 3, 'test'])
+      token1 = await sender.new(Token, [sender.getPublicKey(), 3n, 'test'])
     })
 
     it('The meta data should be set', async () => {
-      expect(token1.amount).to.eq(3)
+      expect(token1.amount).to.eq(3n)
       expect(token1._owners).deep.equal([sender.getPublicKey()])
       expect(token1.name).to.eq('test')
       expect(token1.symbol).to.eq('')
@@ -48,11 +48,11 @@ describe('Token', async () => {
     let token2After: Token
 
     it('Sender transfers 1 token to Receiver', async () => {
-      token2 = (await token1.transfer(receiver.getPublicKey(), 1)) as Token
+      token2 = (await token1.transfer(receiver.getPublicKey(), 1n)) as Token
     })
 
     it('The meta data of token should be set correctly', () => {
-      expect(token1.amount).to.eq(2)
+      expect(token1.amount).to.eq(2n)
       expect(token1._owners).deep.equal([sender.getPublicKey()])
       expect(token1.name).to.eq('test')
       expect(token1.symbol).to.eq('')
@@ -62,7 +62,7 @@ describe('Token', async () => {
     })
 
     it('The meta data of newToken should be set correctly', () => {
-      expect(token2.amount).to.eq(1)
+      expect(token2.amount).to.eq(1n)
       expect(token2._owners).deep.equal([receiver.getPublicKey()])
       expect(token2.name).to.eq('test')
       expect(token2.symbol).to.eq('')
@@ -75,12 +75,12 @@ describe('Token', async () => {
       const senderRevs = await sender.query({ publicKey: sender.getPublicKey() })
       expect(senderRevs.length).eq(1)
       const senderToken = (await sender.sync(senderRevs[0])) as Token
-      expect(senderToken.amount).eq(2)
+      expect(senderToken.amount).eq(2n)
 
       const receiverRevs = await receiver.query({ publicKey: receiver.getPublicKey() })
       expect(receiverRevs.length).eq(1)
       const receiverTokens = (await receiver.sync(receiverRevs[0])) as Token
-      expect(receiverTokens.amount).eq(1)
+      expect(receiverTokens.amount).eq(1n)
     })
 
     it('Receiver send token2 back to sender', async () => {
@@ -121,24 +121,24 @@ describe('Token', async () => {
 
     it('Sender merges their two tokens', async () => {
       await token1.merge([token2After])
-      expect(token1.amount).eq(3)
-      expect(token2After.amount).eq(0)
+      expect(token1.amount).eq(3n)
+      expect(token2After.amount).eq(0n)
     })
 
     it('Should burn a token', async () => {
       await token1.burn()
-      expect(token1.amount).eq(0)
+      expect(token1.amount).eq(0n)
 
       await token2.burn()
-      expect(token2.amount).eq(0)
+      expect(token2.amount).eq(0n)
     })
 
     it('Should update the revisions correctly', async () => {
       const computer = new Computer({ url, chain, network })
       await computer.faucet(2e8)
-      const t1 = await computer.new(Token, [computer.getPublicKey(), 3, 'test'])
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 3n, 'test'])
       const rev1 = t1._rev
-      const t2 = await t1.transfer(computer.getPublicKey(), 1)
+      const t2 = await t1.transfer(computer.getPublicKey(), 1n)
       expect(t1!._rev).not.eq(rev1)
       const rev2 = t2!._rev
       await t2!.transfer(computer.getPublicKey())
@@ -153,7 +153,7 @@ describe('TokenHelper', () => {
     let root: string
     it('Should create the tokenHelper object', async () => {
       const publicKey = tokenHelper.computer.getPublicKey()
-      root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
+      root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
       expect(root).not.to.be.undefined
       expect(typeof root).to.eq('string')
       expect(root.length).to.be.greaterThan(64)
@@ -165,7 +165,7 @@ describe('TokenHelper', () => {
       expect(rootToken._id).to.eq(root)
       expect(rootToken._rev).to.eq(root)
       expect(rootToken._root).to.eq(root)
-      expect(rootToken.amount).to.eq(200)
+      expect(rootToken.amount).to.eq(200n)
       expect(rootToken.name).to.eq('test')
       expect(rootToken.symbol).to.eq('TST')
     })
@@ -175,9 +175,9 @@ describe('TokenHelper', () => {
     it('Should return the supply of tokens', async () => {
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
-      const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
+      const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
       const supply = await tokenHelper.totalSupply(root)
-      expect(supply).to.eq(200)
+      expect(supply).to.eq(200n)
     })
   })
 
@@ -198,10 +198,10 @@ describe('TokenHelper', () => {
     it('Should compute the balance', async () => {
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
-      const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
+      const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
       await sleep(200)
       const res = await tokenHelper.balanceOf(publicKey, root)
-      expect(res).to.eq(200)
+      expect(res).to.eq(200n)
     })
   })
 
@@ -210,12 +210,12 @@ describe('TokenHelper', () => {
       const computer2 = new Computer({ url, chain, network })
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
-      const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
+      const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
       await sleep(200)
-      await tokenHelper.transfer(computer2.getPublicKey(), 20, root)
+      await tokenHelper.transfer(computer2.getPublicKey(), 20n, root)
       await sleep(200)
       const res = await tokenHelper.balanceOf(publicKey, root)
-      expect(res).to.eq(180)
+      expect(res).to.eq(180n)
     })
 
     it('Should transfer random amounts to different people', async () => {
@@ -223,16 +223,16 @@ describe('TokenHelper', () => {
       const computer3 = new Computer({ url, chain, network })
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
-      const root = await tokenHelper.mint(publicKey, 200, 'multiple', 'MULT')
-      const amount2 = Math.floor(Math.random() * 100)
-      const amount3 = Math.floor(Math.random() * 100)
+      const root = await tokenHelper.mint(publicKey, 200n, 'multiple', 'MULT')
+      const amount2 = BigInt(Math.floor(Math.random() * 100))
+      const amount3 = BigInt(Math.floor(Math.random() * 100))
       await sleep(200)
       await tokenHelper.transfer(computer2.getPublicKey(), amount2, root)
       await sleep(200)
       await tokenHelper.transfer(computer3.getPublicKey(), amount3, root)
       await sleep(200)
       const res = await tokenHelper.balanceOf(publicKey, root)
-      expect(res).to.eq(200 - amount2 - amount3)
+      expect(res).to.eq(200n - amount2 - amount3)
 
       const res2 = await tokenHelper.balanceOf(computer2.getPublicKey(), root)
       expect(res2).to.eq(amount2)
@@ -245,10 +245,10 @@ describe('TokenHelper', () => {
       const computer2 = new Computer({ url, chain, network })
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
-      const root = await tokenHelper.mint(publicKey, 200, 'test', 'TST')
+      const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
       await sleep(200)
       try {
-        await tokenHelper.transfer(computer2.getPublicKey(), 201, root)
+        await tokenHelper.transfer(computer2.getPublicKey(), 201n, root)
         expect(true).to.eq('false')
       } catch (err) {
         expect(err.message).to.eq('Could not send entire amount')
@@ -258,10 +258,10 @@ describe('TokenHelper', () => {
         const computer3 = new Computer({ url, chain, network })
         const tbc20 = new TokenHelper(sender)
         const pKey = tbc20.computer.getPublicKey()
-        const r = await tbc20.mint(pKey, 200, 'test', 'TST')
+        const r = await tbc20.mint(pKey, 200n, 'test', 'TST')
         await sleep(200)
         try {
-          await tbc20.transfer(computer3.getPublicKey(), 201, r)
+          await tbc20.transfer(computer3.getPublicKey(), 201n, r)
           expect(true).to.eq('false')
         } catch (err) {
           expect(err.message).to.eq('Could not send entire amount')
