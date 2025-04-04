@@ -21,7 +21,6 @@
     "Laura Tardivo",
     "Vivek Singh"
   ],
-  "type": "module",
   "main": "built/index.js",
   "types": "built/index.d.ts",
   "scripts": {
