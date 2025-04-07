@@ -91,18 +91,18 @@ export class TokenHelper implements ITBC20 {
   }
 
   async transfer(to: string, amount: bigint, root: string): Promise<void> {
-    let _amount = amount
+    let _satoshis = amount
     const owner = this.computer.getPublicKey()
     const bags = await this.getBags(owner, root)
     const results = []
-    while (_amount > 0 && bags.length > 0) {
+    while (_satoshis > 0 && bags.length > 0) {
       const [bag] = bags.splice(0, 1)
-      const available = _amount < bag.amount ? _amount : bag.amount
+      const available = _satoshis < bag.amount ? _satoshis : bag.amount
       // eslint-disable-next-line no-await-in-loop
       results.push(await bag.transfer(to, available))
-      _amount -= available
+      _satoshis -= available
     }
-    if (_amount > 0) throw new Error('Could not send entire amount')
+    if (_satoshis > 0) throw new Error('Could not send entire amount')
     await Promise.all(results)
   }
 }

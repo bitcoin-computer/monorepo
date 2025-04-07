@@ -21,7 +21,7 @@ const meta = {
   _rev: _.isString,
   _root: _.isString,
   _owners: _.isArray,
-  _amount: (x) => typeof x === 'bigint',
+  _satoshis: (x) => typeof x === 'bigint',
 }
 
 describe('Swapppable', () => {

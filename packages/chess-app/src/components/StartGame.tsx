@@ -99,7 +99,7 @@ export function StartGameModalContent({
                       Amount
                     </span>
                     <span className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-400">
-                      {bigInt2Str(game.amount)} {computer.getChain()}
+                      {bigInt2Str(game.satoshis)} {computer.getChain()}
                     </span>
                   </div>
                 </div>

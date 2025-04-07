@@ -19,7 +19,7 @@ const Balance = ({ computer, modSpecs }) => {
                 const paymentRevs = modSpecs ? await computer.query({ publicKey, mod }) : [];
                 const payments = (await Promise.all(paymentRevs.map((rev) => computer.sync(rev))));
                 return payments && payments.length
-                    ? payments.reduce((total, pay) => total + (pay._amount - BigInt(computer.getMinimumFees())), 0n)
+                    ? payments.reduce((total, pay) => total + (pay._satoshis - BigInt(computer.getMinimumFees())), 0n)
                     : 0;
             }));
             const amountsInPayments = balances.reduce((acc, curr) => acc + BigInt(curr), 0n);

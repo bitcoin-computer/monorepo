@@ -15,7 +15,7 @@ _Creates an on-chain object._
       _id: string
       _rev: string
       _root: string
-      _amount: bigint
+      _satoshis: bigint
       _owners: string[]
       _readers?: string[]
       _url?: string
@@ -39,7 +39,7 @@ Optionally, a string of the for `<transaction-id>:<output-number>` that referenc
 
 ### Return Value
 
-If `T` or one of its sub-objects does not extend from `Contract` an error is thrown. Otherwise it returns an on-chain object of class `T`. The objectk has all the properties specified in `T` and in addition the properties `_id`, `_rev`, `_root`, `_owners`, and `_amount`. If the constructor defined properties `_url` or `_readers` they must have the types as indicated above.
+If `T` or one of its sub-objects does not extend from `Contract` an error is thrown. Otherwise it returns an on-chain object of class `T`. The objectk has all the properties specified in `T` and in addition the properties `_id`, `_rev`, `_root`, `_owners`, and `_satoshis`. If the constructor defined properties `_url` or `_readers` they must have the types as indicated above.
 
 ## Description
 

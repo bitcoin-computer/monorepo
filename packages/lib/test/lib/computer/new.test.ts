@@ -26,7 +26,7 @@ describe('new', () => {
       _id: (id) => typeof id === 'string',
       _rev: (rev) => typeof rev === 'string',
       _root: (root) => typeof root === 'string',
-      _amount: (amount) => typeof amount === 'bigint',
+      _satoshis: (satoshis) => typeof satoshis === 'bigint',
       _owners: [computer.getPublicKey()],
     })
 
@@ -37,7 +37,7 @@ describe('new', () => {
       _id: (id) => typeof id === 'string',
       _rev: (rev) => typeof rev === 'string',
       _root: (root) => typeof root === 'string',
-      _amount: (amount) => typeof amount === 'bigint',
+      _satoshis: (satoshis) => typeof satoshis === 'bigint',
       _owners: [computer.getPublicKey()],
     })
   })

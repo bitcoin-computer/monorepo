@@ -49,7 +49,7 @@ describe('Bitcoin Computer', () => {
       _id: _.isString,
       _rev: _.isString,
       _root: _.isString,
-      _amount: (x) => typeof x === 'bigint',
+      _satoshis: (x) => typeof x === 'bigint',
       _owners: _.isArray,
     })
   })
@@ -66,7 +66,7 @@ describe('Bitcoin Computer', () => {
       _id: _.isString,
       _rev: _.isString,
       _root: _.isString,
-      _amount: (x) => typeof x === 'bigint',
+      _satoshis: (x) => typeof x === 'bigint',
       _owners: _.isArray,
     })
   })

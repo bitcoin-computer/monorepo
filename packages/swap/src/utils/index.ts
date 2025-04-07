@@ -15,5 +15,5 @@ export const meta = {
   _rev: (x: any) => typeof x === 'string',
   _root: (x: any) => typeof x === 'string',
   _owners: (x: any) => Array.isArray(x),
-  _amount: (x: any) => typeof x === 'bigint',
+  _satoshis: (x: any) => typeof x === 'bigint',
 }

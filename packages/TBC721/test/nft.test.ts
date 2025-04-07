@@ -30,7 +30,7 @@ export const meta = {
   _rev: isString,
   _root: isString,
   _owners: isArray,
-  _amount: (x) => typeof x === 'bigint',
+  _satoshis: (x) => typeof x === 'bigint',
 }
 
 describe('NFT', () => {

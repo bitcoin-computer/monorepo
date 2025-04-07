@@ -31,8 +31,8 @@ const BuyNFT = async ({
   const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
   const paymentHelper = new PaymentHelper(computer, VITE_PAYMENT_MOD_SPEC)
   const saleTxn = await txWrapperHelper.decodeTx(nft.offerTxRev)
-  const nftAmount = await saleHelper.checkSaleTx(saleTxn)
-  const { tx: paymentTx } = await paymentHelper.createPaymentTx(nftAmount)
+  const nftSatoshis = await saleHelper.checkSaleTx(saleTxn)
+  const { tx: paymentTx } = await paymentHelper.createPaymentTx(nftSatoshis)
   const paymentTxId = await computer.broadcast(paymentTx)
   const payment = await paymentHelper.getPayment(paymentTxId)
   const finalTx = await SaleHelper.finalizeSaleTx(
@@ -50,7 +50,7 @@ const BuyNFT = async ({
   // const [updatedRev] = await computer.query({ ids: [nft._id] })
   setFunctionResult(nft._id)
   Modal.showModal(modalId)
-  return nftAmount
+  return nftSatoshis
 }
 
 const CreateSellOffer = async ({
@@ -73,12 +73,12 @@ const CreateSellOffer = async ({
   await nft.list(offerTxId)
 
   const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
-  const parsedAmount = Number(amount) * 1e8
-  if (!parsedAmount) {
+  const parsedSatoshis = Number(amount) * 1e8
+  if (!parsedSatoshis) {
     showSnackBar('Please provide a valid amount.', false)
     return
   }
-  const mock = new PaymentMock(BigInt(parsedAmount))
+  const mock = new PaymentMock(BigInt(parsedSatoshis))
   const { tx: saleTx } = await saleHelper.createSaleTx(nft, mock)
   if (!saleTx) {
     showSnackBar('Failed to list NFT for sale.', false)
@@ -198,8 +198,8 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
         const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
         const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
         const saleTxn = await txWrapperHelper.decodeTx(nft.offerTxRev)
-        const amount = await saleHelper.checkSaleTx(saleTxn)
-        setNftAmount(amount)
+        const satoshis = await saleHelper.checkSaleTx(saleTxn)
+        setNftAmount(satoshis)
         showLoader(false)
       } catch {
         showLoader(false)

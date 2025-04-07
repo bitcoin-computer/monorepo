@@ -32,7 +32,7 @@ describe('ChessContract', () => {
   let computerW: Computer
   let computerB: Computer
   let computer: Computer
-  const amount = 1000000n
+  const satoshis = 1000000n
   let mod: string
 
   const secretW = 'secretW'
@@ -55,7 +55,7 @@ describe('ChessContract', () => {
       const chessContract = await computerW.new(
         ChessContract,
         [
-          amount,
+          satoshis,
           'w',
           'b',
           computerW.getPublicKey(),
@@ -75,7 +75,7 @@ describe('ChessContract', () => {
       const chessContract = await computerW.new(
         ChessContract,
         [
-          amount,
+          satoshis,
           'w',
           'b',
           computerW.getPublicKey(),
@@ -101,7 +101,7 @@ describe('ChessContractHelper', () => {
   let computerB: Computer
   let chessContractHelperW: ChessContractHelper
   let chessContractHelperB: ChessContractHelper
-  const amount = 1000000n
+  const satoshis = 1000000n
 
   beforeEach(async () => {
     computerW = new Computer({ chain, network, url })
@@ -114,7 +114,7 @@ describe('ChessContractHelper', () => {
     await computerB.faucet(1e8)
     chessContractHelperW = new ChessContractHelper({
       computer: computerW,
-      amount,
+      satoshis,
       nameW: 'nameW',
       nameB: 'nameB',
       publicKeyW: computerW.getPublicKey(),
@@ -124,7 +124,7 @@ describe('ChessContractHelper', () => {
     })
     chessContractHelperB = new ChessContractHelper({
       computer: computerB,
-      amount,
+      satoshis,
       nameW: 'nameW',
       nameB: 'nameB',
       publicKeyW: computerW.getPublicKey(),
@@ -146,7 +146,7 @@ describe('ChessContractHelper', () => {
       expect(tx).toBeDefined()
       expect(tx?.ins.length).toBeGreaterThan(0)
       expect(tx?.outs.length).toBeGreaterThan(0)
-      // expect(tx?.outs[0].value).toEqual(amount)
+      // expect(tx?.outs[0].value).toEqual(satoshis)
     })
   })
 
@@ -158,7 +158,7 @@ describe('ChessContractHelper', () => {
 
       const { res, env } = (await computerW.sync(txId)) as { res: ChessContract; env: [] }
       expect(Object.keys(res)).toEqual([
-        'amount',
+        'satoshis',
         'nameW',
         'nameB',
         'publicKeyW',
@@ -171,7 +171,7 @@ describe('ChessContractHelper', () => {
         '_root',
         '_rev',
         '_id',
-        '_amount',
+        '_satoshis',
         '_owners',
       ])
       expect(Object.keys(env)).toEqual([])
@@ -189,7 +189,7 @@ describe('ChessContractHelper', () => {
         env: []
       }
       expect(Object.keys(chessContract)).toEqual([
-        'amount',
+        'satoshis',
         'nameW',
         'nameB',
         'publicKeyW',
@@ -202,7 +202,7 @@ describe('ChessContractHelper', () => {
         '_root',
         '_rev',
         '_id',
-        '_amount',
+        '_satoshis',
         '_owners',
       ])
       expect(Object.keys(env)).toEqual([])
@@ -228,7 +228,7 @@ describe('ChessContractHelper', () => {
 
       cchw = new ChessContractHelper({
         computer: computerW,
-        amount,
+        satoshis,
         nameW: 'nameW',
         nameB: 'nameB',
         publicKeyW: computerW.getPublicKey(),
@@ -238,7 +238,7 @@ describe('ChessContractHelper', () => {
       })
       cchb = new ChessContractHelper({
         computer: computerB,
-        amount,
+        satoshis,
         nameW: 'nameW',
         nameB: 'nameB',
         publicKeyW: computerW.getPublicKey(),

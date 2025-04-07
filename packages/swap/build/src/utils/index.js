@@ -9,5 +9,5 @@ export const meta = {
     _rev: (x) => typeof x === 'string',
     _root: (x) => typeof x === 'string',
     _owners: (x) => Array.isArray(x),
-    _amount: (x) => typeof x === 'bigint',
+    _satoshis: (x) => typeof x === 'bigint',
 };

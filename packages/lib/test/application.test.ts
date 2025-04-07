@@ -28,7 +28,7 @@ const meta = {
   _rev: _.isString,
   _root: _.isString,
   _owners: _.isArray,
-  _amount: (x) => typeof x === 'bigint',
+  _satoshis: (x) => typeof x === 'bigint',
 }
 
 class NFT extends Contract {
@@ -102,7 +102,7 @@ class PaymentMock {
   _id: string
   _rev: string
   _root: string
-  _amount: bigint
+  _satoshis: bigint
   _owners: string[]
 
   constructor(amount: bigint) {
@@ -110,7 +110,7 @@ class PaymentMock {
     this._rev = mockedRev
     this._root = mockedRev
     this._owners = [randomPublicKey]
-    this._amount = amount
+    this._satoshis = amount
   }
 
   transfer(to: string) {
@@ -122,11 +122,11 @@ class Payment extends Contract {
   _id: string
   _rev: string
   _root: string
-  _amount: bigint
+  _satoshis: bigint
   _owners: string[]
 
-  constructor(_amount: bigint) {
-    super({ _amount })
+  constructor(_satoshis: bigint) {
+    super({ _satoshis })
   }
 
   transfer(to: string) {
@@ -526,7 +526,7 @@ describe('Sell', () => {
         _rev: _.isString,
         _root: _.isString,
         _owners: [thief.getPublicKey()],
-        _amount: nftPrice / 2n,
+        _satoshis: nftPrice / 2n,
       })
     })
 
@@ -537,7 +537,7 @@ describe('Sell', () => {
 
       // this is where the thief tries to alter the transaction in order
       // to buy the nft at half the price
-      txClone.updateOutput(0, { value: tooLowPayment._amount })
+      txClone.updateOutput(0, { value: tooLowPayment._satoshis })
     })
 
     it('Thief funds the swap transaction', async () => {
@@ -580,7 +580,7 @@ describe('Sell', () => {
         _rev: _.isString,
         _root: _.isString,
         _owners: [buyer.getPublicKey()],
-        _amount: nftPrice,
+        _satoshis: nftPrice,
       })
     })
 

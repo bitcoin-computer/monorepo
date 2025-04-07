@@ -31,7 +31,7 @@ describe('sync', () => {
       _rev: `${tx.getId()}:0`,
       _root: `${tx.getId()}:0`,
       _owners: [computer.getPublicKey()],
-      _amount: chain === 'LTC' ? 5820n : 582n,
+      _satoshis: chain === 'LTC' ? 5820n : 582n,
     }
     expect(counter).deep.eq(initialCounter)
 

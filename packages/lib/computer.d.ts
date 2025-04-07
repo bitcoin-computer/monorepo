@@ -23,7 +23,7 @@ type SJObject = {
   _rev: string
   _root: string
   _owners: string | string[]
-  _amount: bigint
+  _satoshis: bigint
   _readers?: string[]
   _url?: string
 }
@@ -32,7 +32,7 @@ declare class Mock {
   _id: string
   _rev: string
   _root: string
-  _amount: bigint
+  _satoshis: bigint
   _owners: string[]
   constructor({
     _id,
@@ -79,7 +79,7 @@ type Fee = Partial<{
 }>
 type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
 type OwnerData = {
-  _amount: bigint
+  _satoshis: bigint
   _owners: string | string[]
   _readers?: string[]
   _url?: string
@@ -166,7 +166,7 @@ type Location = {
   _root: string
   _id: string
   _owners: string[] | string
-  _amount: bigint
+  _satoshis: bigint
   _readers?: string[]
   _url?: string
 }
@@ -391,7 +391,7 @@ declare class Transaction extends nTransaction {
   get ownerData(): {
     outScriptBuf: Buffer
     _owners: string | string[]
-    _amount: bigint
+    _satoshis: bigint
   }[]
   get ioMap(): number[]
   get zip(): string[][]
@@ -415,7 +415,7 @@ declare class Contract {
   _id: string
   _rev: string
   _root: string
-  _amount: bigint
+  _satoshis: bigint
   _owners: string[]
   constructor(opts?: {})
 }

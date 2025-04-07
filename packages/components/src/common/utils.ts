@@ -45,7 +45,7 @@ export const strip = (value: Json): Json => {
   if (isJBasic(value)) return value
   if (isJArray(value)) return value.map(strip)
   // eslint-disable-next-line
-  const { _id, _root, _rev, _amount, _owners, ...rest } = value
+  const { _id, _root, _rev, _satoshis, _owners, ...rest } = value
   return rest
 }
 

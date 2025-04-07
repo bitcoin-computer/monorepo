@@ -36,7 +36,7 @@ describe('Route /secret', () => {
   let computerB: Computer
   let chessContractHelperW: ChessContractHelper
   let chessContractHelperB: ChessContractHelper
-  const amount = 1000000n
+  const satoshis = 1000000n
 
   beforeEach(async () => {
     computerW = new Computer({ chain, network, url })
@@ -49,7 +49,7 @@ describe('Route /secret', () => {
     await computerB.faucet(1e8)
     chessContractHelperW = new ChessContractHelper({
       computer: computerW,
-      amount,
+      satoshis,
       nameW: 'nameW',
       nameB: 'nameB',
       publicKeyW: computerW.getPublicKey(),
@@ -59,7 +59,7 @@ describe('Route /secret', () => {
     })
     chessContractHelperB = new ChessContractHelper({
       computer: computerB,
-      amount,
+      satoshis,
       nameW: 'nameW',
       nameB: 'nameB',
       publicKeyW: computerW.getPublicKey(),

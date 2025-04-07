@@ -75,7 +75,7 @@ describe('Sale', () => {
       const { env } = (await buyer.sync(saleTx.getId())) as { env: { nft: NFT; payment: NFT } }
       const { nft: n, payment: p } = env
 
-      expect(p._amount).eq(BigInt(1e8))
+      expect(p._satoshis).eq(BigInt(1e8))
       expect(n._owners).deep.eq([buyer.getPublicKey()])
       expect(p._owners).deep.eq([seller.getPublicKey()])
     })
@@ -122,13 +122,13 @@ describe('Sale', () => {
       const { env } = (await bob.sync(finalTx.getId())) as { env: { o: any; p: Payment } }
       const { o, p } = env
 
-      expect(p._amount).eq(nftPrice)
+      expect(p._satoshis).eq(nftPrice)
       expect(o._owners).deep.eq([bob.getPublicKey()])
       expect(p._owners).deep.eq([alice.getPublicKey()])
 
       // Alice withdraws her payment object
       const { tx: alicePaymentTx } = await alice.encode({
-        exp: `alicePayment.setAmount(7860n)`,
+        exp: `alicePayment.setSatoshis(7860n)`,
         env: { alicePayment: p._rev },
       })
 
@@ -193,7 +193,7 @@ describe('Sale', () => {
         _rev: _.isString,
         _root: _.isString,
         _owners: [thief.getPublicKey()],
-        _amount: nftPrice / 2n,
+        _satoshis: nftPrice / 2n,
       })
     })
 
@@ -204,7 +204,7 @@ describe('Sale', () => {
 
       // this is where the thief tries to alter the transaction in order
       // to buy the nft at half the price
-      txClone.updateOutput(0, { value: tooLowPayment._amount })
+      txClone.updateOutput(0, { value: tooLowPayment._satoshis })
     })
 
     it('Thief funds the swap transaction', async () => {
@@ -247,7 +247,7 @@ describe('Sale', () => {
         _rev: _.isString,
         _root: _.isString,
         _owners: [buyer.getPublicKey()],
-        _amount: nftPrice,
+        _satoshis: nftPrice,
       })
     })
 

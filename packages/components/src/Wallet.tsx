@@ -25,7 +25,7 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
           )) as any[]
           return payments && payments.length
             ? payments.reduce(
-                (total, pay) => total + (pay._amount - BigInt(computer.getMinimumFees())),
+                (total, pay) => total + (pay._satoshis - BigInt(computer.getMinimumFees())),
                 0n,
               )
             : 0
