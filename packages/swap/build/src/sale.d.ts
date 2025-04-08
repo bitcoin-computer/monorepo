@@ -12,6 +12,6 @@ export declare class SaleHelper {
     deploy(): Promise<string>;
     createSaleTx(object: any, payment: PaymentMock): any;
     isSaleTx(tx: TransactionType): Promise<boolean>;
-    checkSaleTx(tx: TransactionType): Promise<number>;
+    checkSaleTx(tx: TransactionType): Promise<bigint>;
     static finalizeSaleTx(tx: TransactionType, payment: Payment, scriptPubKey: Buffer): Transaction;
 }

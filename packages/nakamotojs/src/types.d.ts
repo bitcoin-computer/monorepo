@@ -7,7 +7,8 @@ export declare namespace BIP32Path {
     var toJSON: () => string;
 }
 export declare function Signer(obj: any): boolean;
-export declare function Satoshi(value: number): boolean;
+export declare function Satoshi(value: bigint): boolean;
+export declare function SmallSatoshi(value: number): boolean;
 export declare const ECPoint: any;
 export declare const Network: any;
 export interface XOnlyPointAddTweakResult {
@@ -18,6 +19,7 @@ export interface Tapleaf {
     output: Buffer;
     version?: number;
 }
+export declare const MAX_SAFE_NUMBER = 9007199254740991;
 export declare const TAPLEAF_VERSION_MASK = 254;
 export declare function isTapleaf(o: any): o is Tapleaf;
 /**

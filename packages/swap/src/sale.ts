@@ -52,7 +52,7 @@ export class SaleHelper {
     }
   }
 
-  async checkSaleTx(tx: TransactionType): Promise<number> {
+  async checkSaleTx(tx: TransactionType): Promise<bigint> {
     const { exp, env, mod } = await this.computer.decode(tx)
     if (exp !== 'Sale.exec(o, p)') throw new Error('Unexpected expression')
     if (mod !== this.mod) throw new Error('Unexpected module specifier')

@@ -13,7 +13,7 @@ Ordinal support is still experimental.
 
 There is an important special case where the two protocol coincide: Recall that an output is a "memory update" if its index is smaller than the number of inputs of the transaction. We call a memory update _conservative_ if it stores the same amount of satoshis as the output that it spends. Conservative updates preserve ordinal ranges.
 
-A Bitcoin Computer smart contract that does not use the `_amount` keyword only produces conservative updates. Therefore a smart objects defined by such smart contracts preserve ordinal ranges.
+A Bitcoin Computer smart contract that does not use the `_satoshis` keyword only produces conservative updates. Therefore a smart objects defined by such smart contracts preserve ordinal ranges.
 
 ## Example
 
@@ -50,5 +50,5 @@ expect(newOrdinals).to.deep.eq([5, 6, 7, 8, 9, 10])
 Therefore you can build smart contracts like swaps that cannot be built with ordinals alone. You can store ordinals inside a smart object, pass them around in smart contracts and safely recover them, for example after they have been exchanged.
 
 !!!
-It is important to note that ordinal ranges are only preserved in smart contracts that do not use the `_amount` keyword.
+It is important to note that ordinal ranges are only preserved in smart contracts that do not use the `_satoshis` keyword.
 !!!

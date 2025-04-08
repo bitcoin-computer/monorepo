@@ -1344,7 +1344,7 @@ describe(`Psbt`, () => {
       assert.strictEqual(output.address, address);
 
       assert.ok(output.script.equals(internalInput.script));
-      assert.strictEqual(output.value, internalInput.value);
+      assert.strictEqual(output.value, Number(internalInput.value));
 
       output.script[0] = 123;
       output.value = 123;
@@ -1381,11 +1381,11 @@ describe(`Psbt`, () => {
 
       const outputsAmount = psbt.outputsAmount;
       const internalOutputsAmount = (psbt as any).__CACHE.__TX.outs.reduce(
-        (total: number, output: any) => total + output.value,
-        0,
+        (total: bigint, output: any) => total + output.value,
+        0n,
       );
 
-      assert.strictEqual(outputsAmount, internalOutputsAmount);
+      assert.strictEqual(outputsAmount, Number(internalOutputsAmount));
     });
   });
 });

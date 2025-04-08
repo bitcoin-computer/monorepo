@@ -63,7 +63,7 @@ function CodeSectionFungible() {
           <code>11 </code>
           <code className="code-blue">{`      this`}</code>
           <code>.</code>
-          <code className="code-dark-blue">_amount</code> <code>-=</code>{' '}
+          <code className="code-dark-blue">_satoshis</code> <code>-=</code>{' '}
           <code className="code-dark-blue">amount</code>
           <br />
           <code>12 </code>

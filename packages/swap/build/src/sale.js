@@ -35,7 +35,7 @@ export class SaleHelper {
             const { exp, mod } = await this.computer.decode(tx);
             return exp === 'Sale.exec(o, p)' && mod === this.mod;
         }
-        catch (_a) {
+        catch {
             return false;
         }
     }

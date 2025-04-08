@@ -119,7 +119,7 @@ Counter {
   _id: <transaction id>:<output number>,
   _rev: <transaction id>:<output number>,
   _root: <transaction id>:<output number>,
-  _amount: 7860,
+  _satoshis: 7860n,
   _owners: [<string encoding of public key>]
 }
 ```

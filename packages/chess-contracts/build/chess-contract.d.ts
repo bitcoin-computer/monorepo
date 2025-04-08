@@ -1,17 +1,17 @@
 import { Computer, Transaction } from '@bitcoin-computer/lib';
 export declare const NotEnoughFundError = "Not enough funds to create chess game.";
 type PaymentType = {
-    amount: number;
+    satoshis: bigint;
     publicKeyW: string;
     secretHashW: string;
     publicKeyB: string;
     secretHashB: string;
 };
 export declare class Payment extends Contract {
-    constructor({ amount, publicKeyW, publicKeyB, secretHashW, secretHashB }: PaymentType);
+    constructor({ satoshis, publicKeyW, publicKeyB, secretHashW, secretHashB }: PaymentType);
 }
 export declare class ChessContract extends Contract {
-    amount: number;
+    satoshis: bigint;
     nameW: string;
     nameB: string;
     publicKeyW: string;
@@ -21,13 +21,13 @@ export declare class ChessContract extends Contract {
     sans: string[];
     fen: string;
     payment: Payment;
-    constructor(amount: number, nameW: string, nameB: string, publicKeyW: string, publicKeyB: string, secretHashW: string, secretHashB: string);
+    constructor(satoshis: bigint, nameW: string, nameB: string, publicKeyW: string, publicKeyB: string, secretHashW: string, secretHashB: string);
     move(from: string, to: string): string;
     isGameOver(): boolean;
 }
 export declare class ChessContractHelper {
     computer: Computer;
-    amount?: number;
+    satoshis?: bigint;
     nameW?: string;
     nameB?: string;
     publicKeyW?: string;
@@ -35,9 +35,9 @@ export declare class ChessContractHelper {
     secretHashW?: string;
     secretHashB?: string;
     mod?: string;
-    constructor({ computer, amount, nameW, nameB, publicKeyW, publicKeyB, secretHashW, secretHashB, mod, }: {
+    constructor({ computer, satoshis, nameW, nameB, publicKeyW, publicKeyB, secretHashW, secretHashB, mod, }: {
         computer: Computer;
-        amount?: number;
+        satoshis?: bigint;
         nameW?: string;
         nameB?: string;
         publicKeyW?: string;
@@ -55,7 +55,7 @@ export declare class ChessContractHelper {
         newChessContract: ChessContract;
         isGameOver: boolean;
     }>;
-    spend(chessContract: ChessContract, fee?: number): Promise<string>;
-    spendWithSecret(txId: string, secret: string, spendingPath: number, fee?: number): Promise<string>;
+    spend(chessContract: ChessContract, fee?: bigint): Promise<string>;
+    spendWithSecret(txId: string, secret: string, spendingPath: number, fee?: bigint): Promise<string>;
 }
 export {};
