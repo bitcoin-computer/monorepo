@@ -1,29 +1,29 @@
 import { getMockedRev } from './utils/index.js';
 const randomPublicKey = '023a06bc3ca20170b8202737316a29923f5b0e47f39c6517990f3c75f3b3d4484c';
 export class Payment extends Contract {
-    constructor(_amount) {
-        super({ _amount });
+    constructor(_satoshis) {
+        super({ _satoshis });
     }
     transfer(to) {
         this._owners = [to];
     }
-    setAmount(a) {
-        this._amount = a;
+    setSatoshis(a) {
+        this._satoshis = a;
     }
 }
 export class PaymentMock {
-    constructor(amount) {
+    constructor(satoshis) {
         this._id = getMockedRev();
         this._rev = getMockedRev();
         this._root = getMockedRev();
-        this._amount = amount;
+        this._satoshis = satoshis;
         this._owners = [randomPublicKey];
     }
     transfer(to) {
         this._owners = [to];
     }
-    setAmount(a) {
-        this._amount = a;
+    setSatoshis(a) {
+        this._satoshis = a;
     }
 }
 export class PaymentHelper {
@@ -35,8 +35,8 @@ export class PaymentHelper {
         this.mod = await this.computer.deploy(`export ${Payment}`);
         return this.mod;
     }
-    async createPaymentTx(amount) {
-        const exp = `new Payment(${amount})`;
+    async createPaymentTx(satoshis) {
+        const exp = `new Payment(${satoshis}n)`;
         return this.computer.encode({
             exp,
             mod: this.mod,

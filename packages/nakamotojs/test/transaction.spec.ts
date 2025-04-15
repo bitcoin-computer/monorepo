@@ -248,17 +248,17 @@ describe('Transaction', () => {
   describe('addOutput', () => {
     it('returns an index', () => {
       const tx = new Transaction();
-      assert.strictEqual(tx.addOutput(Buffer.alloc(0), 0), 0);
-      assert.strictEqual(tx.addOutput(Buffer.alloc(0), 0), 1);
+      assert.strictEqual(tx.addOutput(Buffer.alloc(0), 0n), 0);
+      assert.strictEqual(tx.addOutput(Buffer.alloc(0), 0n), 1);
     });
   });
 
   describe('updateOutput', () => {
     it('returns an index', () => {
       const tx = new Transaction();
-      assert.strictEqual(tx.addOutput(Buffer.alloc(0), 0), 0);
-      tx.updateOutput(0, { scriptPubKey: Buffer.alloc(1), value: 1 });
-      assert.strictEqual(tx.outs[0].value, 1);
+      assert.strictEqual(tx.addOutput(Buffer.alloc(0), 0n), 0);
+      tx.updateOutput(0, { scriptPubKey: Buffer.alloc(1), value: 1n });
+      assert.strictEqual(tx.outs[0].value, 1n);
       assert.strictEqual(
         tx.outs[0].script.toString(),
         Buffer.alloc(1).toString(),
@@ -290,7 +290,6 @@ describe('Transaction', () => {
     function verify(f: any): void {
       it('should return the id for ' + f.id + '(' + f.description + ')', () => {
         const tx = Transaction.fromHex(f.whex || f.hex);
-
         assert.strictEqual(tx.getHash().toString('hex'), f.hash);
         assert.strictEqual(tx.getId(), f.id);
       });
@@ -332,7 +331,7 @@ describe('Transaction', () => {
         ),
         0,
       );
-      tx.addOutput(randScript, 5000000000);
+      tx.addOutput(randScript, 5000000000n);
 
       const original = (tx as any).__toBuffer;
       (tx as any).__toBuffer = function (
@@ -431,14 +430,63 @@ describe('Transaction', () => {
     const { publicKey } = keyPair;
     const txToSpend = new Transaction();
     const payment = p2pkh({ pubkey: publicKey });
-    txToSpend.addOutput(payment.output!, 100000);
+    txToSpend.addOutput(payment.output!, 100000n);
     const randScript = Buffer.from('6a', 'hex');
     const tx = new Transaction();
     tx.addInput(txToSpend.getHash(), 0);
-    tx.addOutput(randScript, 5000000000);
+    tx.addOutput(randScript, 5000000000n);
     const script = txToSpend.outs[0].script;
     assert(tx.ins[0].script.length === 0);
     tx.sign(0, keyPair, Transaction.SIGHASH_ALL, script);
     assert(tx.ins[0].script.length > 0);
+  });
+
+  describe('toBuffer/fromBuffer', () => {
+    it('Should create a transaction with a big integer output value', () => {
+      const keyPair = ECPair.makeRandom();
+      const txToSpend = new Transaction();
+      const payment = p2pkh({ pubkey: keyPair.publicKey });
+      txToSpend.addOutput(payment.output!, 100000n);
+      const tx = new Transaction();
+      const satoshis = BigInt(72057594037927936n);
+      tx.addInput(txToSpend.getHash(), 0);
+      tx.addOutput(Buffer.from('6a', 'hex'), satoshis);
+      tx.sign(0, keyPair, Transaction.SIGHASH_ALL, txToSpend.outs[0].script);
+
+      const buff = tx.toBuffer();
+      const txBack = Transaction.fromBuffer(buff);
+      assert(txBack.outs[0].value === satoshis);
+    });
+
+    it('Should create a transaction with the maximum value (2^64)-1', () => {
+      const keyPair = ECPair.makeRandom();
+      const txToSpend = new Transaction();
+      const payment = p2pkh({ pubkey: keyPair.publicKey });
+      txToSpend.addOutput(payment.output!, 100000n);
+      const tx = new Transaction();
+      const satoshis = BigInt(18446744073709551615n); // (2^64)-1
+      tx.addInput(txToSpend.getHash(), 0);
+      tx.addOutput(Buffer.from('6a', 'hex'), satoshis);
+      tx.sign(0, keyPair, Transaction.SIGHASH_ALL, txToSpend.outs[0].script);
+
+      const buff = tx.toBuffer();
+      const txBack = Transaction.fromBuffer(buff);
+      assert(txBack.outs[0].value === satoshis);
+    });
+
+    it('Should fail when creating a transaction with a value above (2^64)-1', () => {
+      const keyPair = ECPair.makeRandom();
+      const txToSpend = new Transaction();
+      const payment = p2pkh({ pubkey: keyPair.publicKey });
+      txToSpend.addOutput(payment.output!, 100000n);
+      const tx = new Transaction();
+      const satoshis = BigInt(18446744073709551616n); // (2^64)
+      tx.addInput(txToSpend.getHash(), 0);
+      tx.addOutput(Buffer.from('6a', 'hex'), satoshis);
+
+      assert.throws(() => {
+        tx.toBuffer();
+      }, /Error: RangeError: value out of range/);
+    });
   });
 });

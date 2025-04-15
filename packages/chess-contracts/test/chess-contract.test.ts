@@ -32,7 +32,7 @@ describe('ChessContract', () => {
   let computerW: Computer
   let computerB: Computer
   let computer: Computer
-  const amount = 1e6
+  const satoshis = 1000000n
   let mod: string
 
   const secretW = 'secretW'
@@ -52,15 +52,19 @@ describe('ChessContract', () => {
 
   describe('constructor', () => {
     it('Should create a smart object', async () => {
-      const chessContract = await computerW.new(ChessContract, [
-        amount,
-        'w',
-        'b',
-        computerW.getPublicKey(),
-        computerB.getPublicKey(),
-        secretHashW,
-        secretHashB,
-      ], mod)
+      const chessContract = await computerW.new(
+        ChessContract,
+        [
+          satoshis,
+          'w',
+          'b',
+          computerW.getPublicKey(),
+          computerB.getPublicKey(),
+          secretHashW,
+          secretHashB,
+        ],
+        mod,
+      )
       expect(typeof secretHashW).not.toEqual('undefined')
       expect(chessContract.fen).toEqual('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
     })
@@ -68,15 +72,19 @@ describe('ChessContract', () => {
 
   describe('move', () => {
     it('Should perform a move', async () => {
-      const chessContract = await computerW.new(ChessContract, [
-        amount,
-        'w',
-        'b',
-        computerW.getPublicKey(),
-        computerB.getPublicKey(),
-        secretHashW,
-        secretHashB,
-      ], mod)
+      const chessContract = await computerW.new(
+        ChessContract,
+        [
+          satoshis,
+          'w',
+          'b',
+          computerW.getPublicKey(),
+          computerB.getPublicKey(),
+          secretHashW,
+          secretHashB,
+        ],
+        mod,
+      )
       const fenBefore = chessContract.fen
       await chessContract.move('e2', 'e4')
       expect(chessContract.fen).toEqual(
@@ -93,7 +101,7 @@ describe('ChessContractHelper', () => {
   let computerB: Computer
   let chessContractHelperW: ChessContractHelper
   let chessContractHelperB: ChessContractHelper
-  const amount = 1e6
+  const satoshis = 1000000n
 
   beforeEach(async () => {
     computerW = new Computer({ chain, network, url })
@@ -106,23 +114,23 @@ describe('ChessContractHelper', () => {
     await computerB.faucet(1e8)
     chessContractHelperW = new ChessContractHelper({
       computer: computerW,
-      amount,
+      satoshis,
       nameW: 'nameW',
       nameB: 'nameB',
       publicKeyW: computerW.getPublicKey(),
       publicKeyB: computerB.getPublicKey(),
       secretHashW,
-      secretHashB
+      secretHashB,
     })
     chessContractHelperB = new ChessContractHelper({
       computer: computerB,
-      amount,
+      satoshis,
       nameW: 'nameW',
       nameB: 'nameB',
       publicKeyW: computerW.getPublicKey(),
       publicKeyB: computerB.getPublicKey(),
       secretHashW,
-      secretHashB
+      secretHashB,
     })
     chessContractHelperW.mod = await deploy(computerW, chessContractDirectory)
     chessContractHelperB.mod = chessContractHelperW.mod
@@ -138,7 +146,7 @@ describe('ChessContractHelper', () => {
       expect(tx).toBeDefined()
       expect(tx?.ins.length).toBeGreaterThan(0)
       expect(tx?.outs.length).toBeGreaterThan(0)
-      // expect(tx?.outs[0].value).toEqual(amount)
+      // expect(tx?.outs[0].value).toEqual(satoshis)
     })
   })
 
@@ -148,9 +156,9 @@ describe('ChessContractHelper', () => {
       const txId = await chessContractHelperB.completeTx(tx)
       expect(typeof txId).toEqual('string')
 
-      const { res, env } = await computerW.sync(txId) as { res: ChessContract, env: [] }
+      const { res, env } = (await computerW.sync(txId)) as { res: ChessContract; env: [] }
       expect(Object.keys(res)).toEqual([
-        'amount',
+        'satoshis',
         'nameW',
         'nameB',
         'publicKeyW',
@@ -163,7 +171,7 @@ describe('ChessContractHelper', () => {
         '_root',
         '_rev',
         '_id',
-        '_amount',
+        '_satoshis',
         '_owners',
       ])
       expect(Object.keys(env)).toEqual([])
@@ -176,11 +184,32 @@ describe('ChessContractHelper', () => {
       const tx = await chessContractHelperW.makeTx()
       const txId = await chessContractHelperB.completeTx(tx)
       expect(typeof txId).toEqual('string')
-      const { res: chessContract, env } = await computerW.sync(txId) as { res: ChessContract, env: [] }
-      expect(Object.keys(chessContract)).toEqual(['amount', 'nameW', 'nameB', 'publicKeyW', 'publicKeyB', 'secretHashW', 'secretHashB', 'sans', 'fen', 'payment', '_root', '_rev', '_id', '_amount', '_owners'])
-      expect(Object.keys(env)).toEqual([])      
+      const { res: chessContract, env } = (await computerW.sync(txId)) as {
+        res: ChessContract
+        env: []
+      }
+      expect(Object.keys(chessContract)).toEqual([
+        'satoshis',
+        'nameW',
+        'nameB',
+        'publicKeyW',
+        'publicKeyB',
+        'secretHashW',
+        'secretHashB',
+        'sans',
+        'fen',
+        'payment',
+        '_root',
+        '_rev',
+        '_id',
+        '_satoshis',
+        '_owners',
+      ])
+      expect(Object.keys(env)).toEqual([])
       const { newChessContract } = await chessContractHelperW.move(chessContract, 'e2', 'e4')
-      expect(newChessContract.fen).toEqual('rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1')
+      expect(newChessContract.fen).toEqual(
+        'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1',
+      )
       expect(newChessContract.sans).toEqual(['e4'])
     })
   })
@@ -199,23 +228,23 @@ describe('ChessContractHelper', () => {
 
       cchw = new ChessContractHelper({
         computer: computerW,
-        amount,
+        satoshis,
         nameW: 'nameW',
         nameB: 'nameB',
         publicKeyW: computerW.getPublicKey(),
         publicKeyB: computerB.getPublicKey(),
         secretHashW,
-        secretHashB
+        secretHashB,
       })
       cchb = new ChessContractHelper({
         computer: computerB,
-        amount,
+        satoshis,
         nameW: 'nameW',
         nameB: 'nameB',
         publicKeyW: computerW.getPublicKey(),
         publicKeyB: computerB.getPublicKey(),
         secretHashW,
-        secretHashB
+        secretHashB,
       })
     })
 
@@ -251,26 +280,26 @@ describe('ChessContractHelper', () => {
       const txId = await chessContractHelperB.completeTx(tx)
       let isGameOver: boolean
 
-      const { res: chessContract } = await computerW.sync(txId) as { res: ChessContract }
+      const { res: chessContract } = (await computerW.sync(txId)) as { res: ChessContract }
       const gameId = chessContract._id
 
-      const [rev2] = await computerW.query({ ids: [gameId] })    
-      const chessContract2 = await computerW.sync(rev2) as ChessContract
-      ({ isGameOver } = await chessContractHelperW.move(chessContract2, 'f2', 'f3'))
+      const [rev2] = await computerW.query({ ids: [gameId] })
+      const chessContract2 = (await computerW.sync(rev2)) as ChessContract
+      ;({ isGameOver } = await chessContractHelperW.move(chessContract2, 'f2', 'f3'))
       expect(isGameOver).toEqual(false)
 
-      const [rev3] = await computerB.query({ ids: [gameId] })    
-      const chessContract3 = await computerB.sync(rev3) as ChessContract
-      ({ isGameOver } = await chessContractHelperB.move(chessContract3, 'e7', 'e5'))
+      const [rev3] = await computerB.query({ ids: [gameId] })
+      const chessContract3 = (await computerB.sync(rev3)) as ChessContract
+      ;({ isGameOver } = await chessContractHelperB.move(chessContract3, 'e7', 'e5'))
       expect(isGameOver).toEqual(false)
 
-      const [rev4] = await computerW.query({ ids: [gameId] })    
-      const chessContract4 = await computerW.sync(rev4) as ChessContract
-      ({ isGameOver } = await chessContractHelperW.move(chessContract4, 'g2', 'g4'))
+      const [rev4] = await computerW.query({ ids: [gameId] })
+      const chessContract4 = (await computerW.sync(rev4)) as ChessContract
+      ;({ isGameOver } = await chessContractHelperW.move(chessContract4, 'g2', 'g4'))
       expect(isGameOver).toEqual(false)
 
-      const [rev5] = await computerB.query({ ids: [gameId] })    
-      const chessContract5 = await computerB.sync(rev5) as ChessContract
+      const [rev5] = await computerB.query({ ids: [gameId] })
+      const chessContract5 = (await computerB.sync(rev5)) as ChessContract
       const res = await chessContractHelperB.move(chessContract5, 'd8', 'h4')
       expect(await res.newChessContract.isGameOver()).toEqual(true)
       expect(res.isGameOver).toEqual(true)
@@ -282,29 +311,29 @@ describe('ChessContractHelper', () => {
       const mod = chessContractHelperW.mod
       let isGameOver: boolean
 
-      const { res: chessContract } = await computerW.sync(txId) as { res: ChessContract }
+      const { res: chessContract } = (await computerW.sync(txId)) as { res: ChessContract }
       const gameId = chessContract._id
 
-      const [rev2] = await computerW.query({ ids: [gameId] })    
-      const chessContract2 = await computerW.sync(rev2) as ChessContract
+      const [rev2] = await computerW.query({ ids: [gameId] })
+      const chessContract2 = (await computerW.sync(rev2)) as ChessContract
       const chessContractHelperW2 = ChessContractHelper.fromContract(computerW, chessContract2, mod)
       ;({ isGameOver } = await chessContractHelperW2.move(chessContract2, 'f2', 'f3'))
       expect(isGameOver).toEqual(false)
 
-      const [rev3] = await computerB.query({ ids: [gameId] })    
-      const chessContract3 = await computerB.sync(rev3) as ChessContract
+      const [rev3] = await computerB.query({ ids: [gameId] })
+      const chessContract3 = (await computerB.sync(rev3)) as ChessContract
       const chessContractHelperB3 = ChessContractHelper.fromContract(computerB, chessContract3, mod)
       ;({ isGameOver } = await chessContractHelperB3.move(chessContract3, 'e7', 'e5'))
       expect(isGameOver).toEqual(false)
 
-      const [rev4] = await computerW.query({ ids: [gameId] })    
-      const chessContract4 = await computerW.sync(rev4) as ChessContract
+      const [rev4] = await computerW.query({ ids: [gameId] })
+      const chessContract4 = (await computerW.sync(rev4)) as ChessContract
       const chessContractHelperW4 = ChessContractHelper.fromContract(computerW, chessContract4, mod)
       ;({ isGameOver } = await chessContractHelperW4.move(chessContract4, 'g2', 'g4'))
       expect(isGameOver).toEqual(false)
 
-      const [rev5] = await computerB.query({ ids: [gameId] })    
-      const chessContract5 = await computerB.sync(rev5) as ChessContract
+      const [rev5] = await computerB.query({ ids: [gameId] })
+      const chessContract5 = (await computerB.sync(rev5)) as ChessContract
       const chessContractHelperB5 = ChessContractHelper.fromContract(computerB, chessContract5, mod)
       const res = await chessContractHelperB5.move(chessContract5, 'd8', 'h4')
       expect(await res.newChessContract.isGameOver()).toEqual(true)

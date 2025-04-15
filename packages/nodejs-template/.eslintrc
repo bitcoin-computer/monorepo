@@ -32,7 +32,7 @@
         "allow": [
           "_readers",
           "_owners",
-          "_amount",
+          "_satoshis",
           "_id",
           "_rev",
           "_root"

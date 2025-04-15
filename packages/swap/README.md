@@ -13,8 +13,8 @@ This package contains the following smart contracts:
 
 - [Swap](./src/swap.ts). A static swap function for two smart objects.
 - [Swappable](./src/swappable.ts). A NFT contract with a built in swap method.
-- [Sale](./src/sale.ts). A contract for selling a smart object for a pre-determined amount of satoshis. This contract does not preserve ordinal ranges so it cannot be used to sell ordinals.
-- [OrdSale](./src/ord-sale.ts). An contract for selling an ordinal for a pre-determined amount of satoshis.
+- [Sale](./src/sale.ts). A contract for selling a smart object for a pre-determined number of satoshis. This contract does not preserve ordinal ranges so it cannot be used to sell ordinals.
+- [OrdSale](./src/ord-sale.ts). An contract for selling an ordinal for a pre-determined number of satoshis.
 - [TxWrapper](./src/tx-wrapper.ts). A contract for storing a partially signed transaction in another transaction. This is useful for communicating partially signed transactions over the Bitcoin network.
 
 ## Prerequisites

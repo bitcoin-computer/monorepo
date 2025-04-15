@@ -24,7 +24,7 @@
       "error",
       {
         "allowAfterThis": true,
-        "allow": ["_readers", "_owners", "_amount", "_id", "_rev", "_root"]
+        "allow": ["_readers", "_owners", "_satoshis", "_id", "_rev", "_root"]
       }
     ]
   }

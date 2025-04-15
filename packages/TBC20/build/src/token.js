@@ -14,10 +14,10 @@ export class Token extends Contract {
         throw new Error('Insufficient funds');
     }
     burn() {
-        this.amount = 0;
+        this.amount = 0n;
     }
     merge(tokens) {
-        let total = 0;
+        let total = 0n;
         tokens.forEach((token) => {
             total += token.amount;
             token.burn();
@@ -52,20 +52,20 @@ export class TokenHelper {
         if (typeof root === 'undefined')
             throw new Error('Please pass a root into balanceOf.');
         const bags = await this.getBags(publicKey, root);
-        return bags.reduce((prev, curr) => prev + curr.amount, 0);
+        return bags.reduce((prev, curr) => prev + curr.amount, 0n);
     }
     async transfer(to, amount, root) {
-        let _amount = amount;
+        let _satoshis = amount;
         const owner = this.computer.getPublicKey();
         const bags = await this.getBags(owner, root);
         const results = [];
-        while (_amount > 0 && bags.length > 0) {
+        while (_satoshis > 0 && bags.length > 0) {
             const [bag] = bags.splice(0, 1);
-            const available = Math.min(_amount, bag.amount);
+            const available = _satoshis < bag.amount ? _satoshis : bag.amount;
             results.push(await bag.transfer(to, available));
-            _amount -= available;
+            _satoshis -= available;
         }
-        if (_amount > 0)
+        if (_satoshis > 0)
             throw new Error('Could not send entire amount');
         await Promise.all(results);
     }

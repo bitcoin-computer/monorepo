@@ -15,7 +15,7 @@ describe('fund', () => {
     const tx = new Transaction()
     const { regtest } = networks
     const outputScript = address.toOutputScript('mkHS9ne12qx9pS9VojpwU5xtRd4T7X7ZUt', regtest)
-    tx.addOutput(outputScript, 1e5)
+    tx.addOutput(outputScript, BigInt(1e5))
 
     // Fund, sign and broadcast transaction
     await computer.fund(tx)

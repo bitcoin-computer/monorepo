@@ -31,6 +31,7 @@ declare function loggedOutConfiguration(): {
     network: Network;
     url: any;
     moduleStorageType: ModuleStorageType;
+    path: any;
 };
 declare function loggedInConfiguration(): {
     mnemonic: string | null;
@@ -38,6 +39,7 @@ declare function loggedInConfiguration(): {
     network: Network;
     url: any;
     moduleStorageType: ModuleStorageType;
+    path: any;
 };
 declare function getComputer(options?: ComputerOptions): Computer;
 declare function LoginForm(): import("react/jsx-runtime").JSX.Element;
