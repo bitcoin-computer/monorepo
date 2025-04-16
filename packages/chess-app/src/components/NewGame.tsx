@@ -1,8 +1,7 @@
 import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
 import { ChessContractHelper, NotEnoughFundError } from '@bitcoin-computer/chess-contracts'
 import { useContext, useState } from 'react'
-import { getHash } from '../services/secret.service'
-import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 import { Transaction } from '@bitcoin-computer/lib'
 
 export const newGameModal = 'new-game-modal'
@@ -46,11 +45,6 @@ function NewGameModalContent({
   }
 
   const createNewGame = async () => {
-    const secretHashW = await getHash()
-    const secretHashB = await getHash()
-
-    if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
-
     const publicKeyW = computerW.getPublicKey()
     const chessContractHelper = new ChessContractHelper({
       computer: computerW,
@@ -59,9 +53,8 @@ function NewGameModalContent({
       nameB,
       publicKeyW,
       publicKeyB,
-      secretHashW,
-      secretHashB,
       mod: VITE_CHESS_GAME_MOD_SPEC,
+      userMod: VITE_CHESS_USER_MOD_SPEC,
     })
     return await chessContractHelper.makeTx()
   }

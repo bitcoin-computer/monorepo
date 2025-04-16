@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
 import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { ChessContract, ChessContractHelper } from '../../../chess-contracts/'
-import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 
 const startGameModal = 'start-game-modal'
 
@@ -44,6 +44,7 @@ export function StartGameModalContent({
         computer,
         game,
         VITE_CHESS_GAME_MOD_SPEC,
+        VITE_CHESS_USER_MOD_SPEC,
       )
       const txId = await chessContractHelper.completeTx(tx)
       setLink(`http://localhost:1032/game/${txId}:0`)
