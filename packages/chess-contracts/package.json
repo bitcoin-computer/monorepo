@@ -24,6 +24,8 @@
   },
   "dependencies": {
     "@bitcoin-computer/lib": "^0.24.3-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.24.3-beta.0",
+    "ecpair": "^2.1.0",
     "expect": "^29.7.0",
     "path": "^0.12.7",
     "typescript": "~5.3.3",

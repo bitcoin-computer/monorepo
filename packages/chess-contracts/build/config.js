@@ -12,7 +12,4 @@ else if (typeof process === 'object' && process.versions && process.versions.nod
 else {
     throw new Error('Unsupported execution environment.');
 }
-const vars = [VITE_API_BASE_URL];
-if (vars.some((el) => el === undefined))
-    throw new Error(`Please create a .env file ${vars}`);
 export { VITE_API_BASE_URL };

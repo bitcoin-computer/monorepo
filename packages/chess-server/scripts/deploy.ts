@@ -6,6 +6,7 @@ import { readFile, writeFile } from 'fs/promises'
 import { deploy } from './lib.js'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
+import { User } from '@bitcoin-computer/chess-contracts'
 
 config()
 
@@ -40,6 +41,7 @@ if (answer === 'n') {
 }
 
 const mod = await deploy(computer, chessContractDirectory)
+const userMod = await computer.deploy(`export ${User}`)
 console.log(' \x1b[2m- Successfully deployed smart contracts\x1b[0m')
 
 const answer2 = await rl.question('\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m')
@@ -52,6 +54,7 @@ ACTION REQUIRED
 Update the following rows in your .env file.
 
 VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${mod}\x1b[0m
+VITE_CHESS_USER_MOD_SPEC\x1b[2m=${userMod}\x1b[0m
 `)
 } else {
   const files = ['../chess-app/.env', '../chess-server/.env']
@@ -62,6 +65,8 @@ VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${mod}\x1b[0m
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].startsWith('VITE_CHESS_GAME_MOD_SPEC'))
         lines[i] = `VITE_CHESS_GAME_MOD_SPEC=${mod}`
+      if (lines[i].startsWith('VITE_CHESS_USER_MOD_SPEC'))
+        lines[i] = `VITE_CHESS_USER_MOD_SPEC=${userMod}`
     }
     await writeFile(file, lines.join('\n'), 'utf-8')
   }

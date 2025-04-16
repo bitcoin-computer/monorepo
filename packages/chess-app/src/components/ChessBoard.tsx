@@ -4,16 +4,19 @@ import {
   ChessContractHelper,
   Chess as ChessLib,
   Square,
+  User,
 } from '@bitcoin-computer/chess-contracts'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Chessboard } from 'react-chessboard'
-import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 import { StartGameModal } from './StartGame'
 import { signInModal } from './Navbar'
 import { getGameState } from './utils'
 import { NewGameModal, newGameModal } from './NewGame'
 import { InfiniteScroll } from './GamesList'
+import { Piece } from 'react-chessboard/dist/chessboard/types'
+import { CreateUserModal, creaetUserModal } from './CreateUser'
 
 const winnerModal = 'winner-modal'
 
@@ -93,6 +96,7 @@ export function ChessBoard() {
   const [chessContract, setChessContract] = useState<ChessContract | null>(null)
   const [chessContractId, setChessContractId] = useState<string>('')
   const [balance, setBalance] = useState<number>(0)
+  const [user, setUser] = useState<User | null>(null)
 
   const computer = useContext(ComputerContext)
   const fetchChessContract = async (): Promise<ChessContract> => {
@@ -123,6 +127,32 @@ export function ChessBoard() {
       console.error('Error fetching contract:', error)
     }
   }, [gameId, computer, fetchChessContract])
+
+  // check if user account is created, create one if not
+  useEffect(() => {
+    const fetch = async () => {
+      showLoader(true)
+      try {
+        const [userRev] = await computer.query({
+          mod: VITE_CHESS_USER_MOD_SPEC,
+          publicKey: computer.getPublicKey(),
+        })
+        if (!userRev) {
+          Modal.showModal(creaetUserModal)
+        } else {
+          const userObj = (await computer.sync(userRev)) as User
+          setUser(userObj)
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        showLoader(false)
+      }
+    }
+    if (Auth.isLoggedIn()) {
+      fetch()
+    }
+  }, [computer])
 
   useEffect(() => {
     const fetch = async () => {
@@ -166,14 +196,15 @@ export function ChessBoard() {
     }
   }, [chessContractId])
 
-  const publishMove = async (from: Square, to: Square) => {
+  const publishMove = async (from: Square, to: Square, promotion: string) => {
     if (!chessContract) throw new Error('Chess contract is not defined.')
     const chessHelper = ChessContractHelper.fromContract(
       computer,
       chessContract,
       VITE_CHESS_GAME_MOD_SPEC,
+      VITE_CHESS_USER_MOD_SPEC,
     )
-    await chessHelper.move(chessContract, from, to)
+    await chessHelper.move(chessContract, from, to, promotion)
   }
   const handleError = (error: unknown) => {
     if (error instanceof Error) {
@@ -183,16 +214,18 @@ export function ChessBoard() {
   }
 
   // OnDrop action for chess game
-  const onDropSync = (from: Square, to: Square) => {
+  const onDropSync = (from: Square, to: Square, piece: Piece) => {
     try {
+      const promotion = piece && piece[1] ? piece[1].toLocaleLowerCase() : 'q'
       const chessGameInstance = new ChessLib(chessContract?.fen)
       chessGameInstance.move({
         from,
         to,
+        promotion,
       })
 
       setGame(new ChessLib(chessGameInstance.fen()))
-      publishMove(from, to).catch((error) => {
+      publishMove(from, to, promotion).catch((error) => {
         handleError(error)
       })
       return true
@@ -202,10 +235,12 @@ export function ChessBoard() {
     }
   }
   const playNewGame = () => {
-    if (Auth.isLoggedIn()) {
-      Modal.showModal(newGameModal)
-    } else {
+    if (!Auth.isLoggedIn()) {
       Modal.showModal(signInModal)
+    } else if (!user) {
+      Modal.showModal(creaetUserModal)
+    } else {
+      Modal.showModal(newGameModal)
     }
   }
 
@@ -222,7 +257,7 @@ export function ChessBoard() {
             New Game
           </button>
           <div>
-            <InfiniteScroll setGameId={setGameId} />
+            <InfiniteScroll setGameId={setGameId} user={user} setUser={setUser} />
           </div>
         </div>
 
@@ -337,6 +372,7 @@ export function ChessBoard() {
 
       <NewGameModal />
       <StartGameModal />
+      <CreateUserModal setUser={setUser} />
     </div>
   )
 }

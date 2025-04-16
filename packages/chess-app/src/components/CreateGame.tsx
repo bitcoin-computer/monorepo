@@ -1,8 +1,7 @@
 import { useContext, useState } from 'react'
 import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
 import { Computer } from '@bitcoin-computer/lib'
-import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
-import { getHash } from '../services/secret.service'
+import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 import { ChessContractHelper } from '../../../chess-contracts/'
 
 function ErrorContent(msg: string) {
@@ -46,10 +45,6 @@ function MintForm(props: {
     e.preventDefault()
     try {
       showLoader(true)
-      const secretHashW = await getHash()
-      const secretHashB = await getHash()
-
-      if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
 
       const publicKeyW = computerW.getPublicKey()
       const chessContractHelper = new ChessContractHelper({
@@ -59,9 +54,8 @@ function MintForm(props: {
         nameB,
         publicKeyW,
         publicKeyB,
-        secretHashW,
-        secretHashB,
         mod: VITE_CHESS_GAME_MOD_SPEC,
+        userMod: VITE_CHESS_USER_MOD_SPEC,
       })
       const tx = await chessContractHelper.makeTx()
       setSerializedTx(`http://localhost:1032/start/${tx.serialize()}`)

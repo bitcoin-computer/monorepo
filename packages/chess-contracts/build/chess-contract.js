@@ -1,49 +1,43 @@
 import { Transaction } from '@bitcoin-computer/lib';
-import { address, bufferUtils, networks, payments, script as bscript, opcodes, script, } from '@bitcoin-computer/nakamotojs';
+import { address, bufferUtils, networks, payments, script as bscript, } from '@bitcoin-computer/nakamotojs';
 import { Buffer } from 'buffer';
 import axios from 'axios';
+import { ECPairFactory } from 'ecpair';
+import * as ecc from '@bitcoin-computer/secp256k1';
 import { VITE_API_BASE_URL } from './config.js';
+const ECPair = ECPairFactory(ecc);
 export const NotEnoughFundError = 'Not enough funds to create chess game.';
-const { fromASM, toASM } = script;
-const getSecret = async (id) => {
-    const { data } = await axios.get(`${VITE_API_BASE_URL}/secret/${id}`);
+const claimWin = async (id, redeemTxHex) => {
+    const { data } = await axios.post(`${VITE_API_BASE_URL}/claim-win/${id}`, { redeemTxHex });
     return data;
 };
 if (typeof global !== 'undefined')
     global.Buffer = Buffer;
 export class Payment extends Contract {
-    constructor({ amount, publicKeyW, publicKeyB, secretHashW, secretHashB }) {
+    constructor({ amount, publicKeyW, publicKeyB }) {
         super({
             _amount: amount,
-            _owners: `OP_IF
-        ${publicKeyW} OP_CHECKSIGVERIFY
-        OP_HASH256 ${secretHashW} OP_EQUAL
-      OP_ELSE
-        ${publicKeyB} OP_CHECKSIGVERIFY
-        OP_HASH256 ${secretHashB} OP_EQUAL
-      OP_ENDIF`.replace(/\s+/g, ' '),
+            _owners: `OP_2 ${publicKeyW} ${publicKeyB} 03f2d045e952de2759b22eafbea90aa3c5cae353581aeb7d319d1ecdded065a5b5 OP_3 OP_CHECKMULTISIG`.replace(/\s+/g, ' '),
         });
     }
 }
 export class ChessContract extends Contract {
-    constructor(amount, nameW, nameB, publicKeyW, publicKeyB, secretHashW, secretHashB) {
+    constructor(amount, nameW, nameB, publicKeyW, publicKeyB) {
         super({
             amount,
             nameW,
             nameB,
             publicKeyW,
             publicKeyB,
-            secretHashW,
-            secretHashB,
             sans: [],
-            fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-            payment: new Payment({ amount, publicKeyW, secretHashW, publicKeyB, secretHashB }),
+            fen: 'rnbqkbnr/pppp1ppp/4p3/8/8/5P2/PPPPP1PP/RNBQKBNR w KQkq - 0 2',
+            payment: new Payment({ amount, publicKeyW, publicKeyB }),
         });
     }
-    move(from, to) {
+    move(from, to, promotion) {
         // @ts-expect-error type error
         const chessLib = new Chess(this.fen);
-        const { san } = chessLib.move({ from, to, promotion: 'q' });
+        const { san } = chessLib.move({ from, to, promotion });
         this.sans.push(san);
         this.fen = chessLib.fen();
         if (!chessLib.isGameOver()) {
@@ -62,22 +56,24 @@ export class ChessContract extends Contract {
     }
 }
 export class ChessContractHelper {
-    constructor({ computer, amount, nameW, nameB, publicKeyW, publicKeyB, secretHashW, secretHashB, mod, }) {
+    constructor({ computer, amount, nameW, nameB, publicKeyW, publicKeyB, mod, userMod, }) {
+        if (!VITE_API_BASE_URL) {
+            throw new Error(`Please create a .env file with ${VITE_API_BASE_URL}`);
+        }
         this.computer = computer;
         this.amount = amount;
         this.nameW = nameW;
         this.nameB = nameB;
         this.publicKeyW = publicKeyW;
         this.publicKeyB = publicKeyB;
-        this.secretHashW = secretHashW;
-        this.secretHashB = secretHashB;
         this.mod = mod;
+        this.userMod = userMod;
     }
     isInitialized() {
         return Object.values(this).every((element) => element !== undefined);
     }
-    static fromContract(computer, game, mod) {
-        const { amount, nameW, nameB, publicKeyW, publicKeyB, secretHashW, secretHashB } = game;
+    static fromContract(computer, game, mod, userMod) {
+        const { amount, nameW, nameB, publicKeyW, publicKeyB } = game;
         return new this({
             computer,
             amount,
@@ -85,19 +81,13 @@ export class ChessContractHelper {
             nameB,
             publicKeyW,
             publicKeyB,
-            secretHashW,
-            secretHashB,
             mod,
+            userMod,
         });
     }
+    // can we fetch the public key from the server
     getASM() {
-        return `OP_IF
-      ${this.publicKeyW} OP_CHECKSIGVERIFY
-      OP_HASH256 ${this.secretHashW} OP_EQUAL
-    OP_ELSE
-      ${this.publicKeyB} OP_CHECKSIGVERIFY
-      OP_HASH256 ${this.secretHashB} OP_EQUAL
-    OP_ENDIF`.replace(/\s+/g, ' ');
+        return `OP_2 ${this.publicKeyW} ${this.publicKeyB} 03f2d045e952de2759b22eafbea90aa3c5cae353581aeb7d319d1ecdded065a5b5 OP_3 OP_CHECKMULTISIG`.replace(/\s+/g, ' ');
     }
     async makeTx() {
         if (!this.isInitialized())
@@ -109,9 +99,7 @@ export class ChessContractHelper {
         "${this.nameW}",
         "${this.nameB}",
         "${this.publicKeyW}",
-        "${this.publicKeyB}",
-        "${this.secretHashW}",
-        "${this.secretHashB}"
+        "${this.publicKeyB}"
       )`,
             mod: this.mod,
             fund: false,
@@ -152,8 +140,6 @@ export class ChessContractHelper {
         this.nameB = chessContract.nameB;
         this.publicKeyW = chessContract.publicKeyW;
         this.publicKeyB = chessContract.publicKeyB;
-        this.secretHashW = chessContract.secretHashW;
-        this.secretHashB = chessContract.secretHashB;
         // Fund
         const fee = await this.computer.wallet.estimateFee(tx);
         const txId = await this.computer.send(this.amount / 2 + 5 * fee, this.computer.getAddress());
@@ -163,11 +149,22 @@ export class ChessContractHelper {
         await this.computer.sign(tx);
         return this.computer.broadcast(tx);
     }
-    async move(chessContract, from, to) {
+    async move(chessContract, from, to, promotion) {
+        const [userRev] = await this.computer.query({
+            mod: this.userMod,
+            publicKey: this.computer.getPublicKey(),
+        });
+        if (userRev) {
+            const userObj = (await this.computer.sync(userRev));
+            const gameId = chessContract._id;
+            if (!userObj.games.includes(gameId)) {
+                await userObj.addGame(gameId);
+            }
+        }
         const { tx, effect } = (await this.computer.encodeCall({
             target: chessContract,
             property: 'move',
-            args: [from, to],
+            args: [from, to, promotion],
             mod: this.mod,
         }));
         await this.computer.broadcast(tx);
@@ -181,37 +178,79 @@ export class ChessContractHelper {
     }
     async spend(chessContract, fee = 10000) {
         const txId = chessContract._id.split(':')[0];
-        const spendingPath = chessContract._owners[0] === this.publicKeyW ? 0 : 1;
-        const secret = await getSecret(chessContract._id);
-        if (!secret)
-            throw new Error('Something went wrong when trying to spend.');
-        return this.spendWithSecret(txId, secret, spendingPath, fee);
+        return this.spendWithConfirmationFromOperator(txId, fee);
     }
-    async spendWithSecret(txId, secret, spendingPath, fee = 10000) {
+    async spendWithConfirmationFromOperator(txId, fee = 10000) {
         if (!this.isInitialized())
             throw new Error('Chess helper is not initialized');
         const chain = this.computer.getChain();
         const network = this.computer.getNetwork();
         const n = networks.getNetwork(chain, network);
         const { hdPrivateKey } = this.computer.wallet;
-        // Create redeem script
-        const asmFromBuf = (sigHash) => [
-            Buffer.from(secret),
-            bscript.signature.encode(hdPrivateKey.sign(sigHash), Transaction.SIGHASH_ALL),
-            spendingPath === 0 ? opcodes.OP_TRUE : opcodes.OP_FALSE,
-        ];
         // Create redeem tx
         const redeemTx = new Transaction();
         redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), 1);
         const { output } = payments.p2pkh({ pubkey: hdPrivateKey.publicKey, ...n });
         redeemTx.addOutput(output, this.amount - fee);
-        const redeemScript = bscript.fromASM(this.getASM());
+        const scriptASM = this.getASM();
+        const redeemScript = bscript.fromASM(scriptASM);
         const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL);
-        const inScript = fromASM(toASM(asmFromBuf(sigHash)));
-        const script = payments.p2sh({
-            redeem: { input: inScript, output: redeemScript },
+        const winnerSig = bscript.signature.encode(hdPrivateKey.sign(sigHash), Transaction.SIGHASH_ALL);
+        // Create partial scriptSig with OP_0 (dummy) and winner's signature
+        const partialRedeemInput = bscript.compile([Buffer.alloc(0), winnerSig]);
+        const partialScript = payments.p2sh({
+            redeem: { input: partialRedeemInput, output: redeemScript },
         });
-        redeemTx.setInputScript(0, script.input);
-        return this.computer.broadcast(redeemTx);
+        redeemTx.setInputScript(0, partialScript.input);
+        const redeemTxHex = redeemTx.toHex();
+        const data = await claimWin(txId, redeemTxHex);
+        console.log(data);
+        return '';
+    }
+    static validateAndSignRedeemTx(redeemTx, winnerPublicKey, operatorKeyPair, expectedRedeemScript, network) {
+        // Verify transaction structure
+        if (redeemTx.ins.length !== 1 || redeemTx.outs.length !== 1) {
+            throw new Error('Invalid transaction structure');
+        }
+        // Decompile scriptSig
+        const scriptSig = redeemTx.ins[0].script;
+        const decompiled = bscript.decompile(scriptSig);
+        if (!decompiled || decompiled.length !== 3) {
+            throw new Error('Invalid scriptSig format');
+        }
+        const [dummy, winnerSig, providedRedeemScript] = decompiled;
+        // Verify dummy element
+        if (dummy !== 0) {
+            throw new Error('Dummy element must be OP_0');
+        }
+        // Verify redeem script
+        if (!Buffer.isBuffer(providedRedeemScript) ||
+            !providedRedeemScript.equals(expectedRedeemScript)) {
+            throw new Error('Redeem script does not match expected script');
+        }
+        // Verify winner's signature
+        const sigHash = redeemTx.hashForSignature(0, expectedRedeemScript, Transaction.SIGHASH_ALL);
+        const winnerSigDecoded = bscript.signature.decode(winnerSig);
+        const winnerKeyPair = ECPair.fromPublicKey(winnerPublicKey, { network });
+        if (!winnerKeyPair.verify(sigHash, winnerSigDecoded.signature)) {
+            throw new Error('Claimant’s signature is invalid');
+        }
+        // Verify output goes to winner's address
+        const outputScript = redeemTx.outs[0].script;
+        const winnerAddressScript = payments.p2pkh({ pubkey: winnerPublicKey, network }).output;
+        if (!outputScript.equals(winnerAddressScript)) {
+            throw new Error('Output must go to winner’s address');
+        }
+        // Operator signs the transaction
+        const operatorSig = bscript.signature.encode(operatorKeyPair.sign(sigHash), Transaction.SIGHASH_ALL);
+        // Update scriptSig with both signatures
+        const finalRedeemInput = bscript.compile([Buffer.alloc(0), winnerSig, operatorSig]);
+        const finalScript = payments.p2sh({
+            redeem: { input: finalRedeemInput, output: expectedRedeemScript },
+            network,
+        });
+        redeemTx.setInputScript(0, finalScript.input);
+        // Return the fully signed transaction
+        return redeemTx;
     }
 }
