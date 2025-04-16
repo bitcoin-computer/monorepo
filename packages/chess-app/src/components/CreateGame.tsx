@@ -3,6 +3,7 @@ import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/componen
 import { Computer } from '@bitcoin-computer/lib'
 import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 import { ChessContractHelper } from '../../../chess-contracts/'
+import { operatorPublicKey } from '../constants/consts'
 
 function ErrorContent(msg: string) {
   return (
@@ -54,6 +55,7 @@ function MintForm(props: {
         nameB,
         publicKeyW,
         publicKeyB,
+        operatorPublicKey,
         mod: VITE_CHESS_GAME_MOD_SPEC,
         userMod: VITE_CHESS_USER_MOD_SPEC,
       })

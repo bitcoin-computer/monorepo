@@ -6,19 +6,20 @@
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "type": "module",
   "exports": {
-    ".": "./build/index.js"
+    ".": "./build/src/index.js"
   },
-  "main": "./build/index.js",
-  "module": "./build/index.js",
-  "types": "./build/index.d.ts",
+  "main": "./build/src/index.js",
+  "module": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
   "scripts": {
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",
     "build:turbo": "turbo run build",
     "clean:logs": "rm -f *.log 2> /dev/null",
+    "deploy": "tsc && node ./build/scripts/deploy.js",
     "lint": "eslint .",
     "start": "node build/src/index.js",
-    "test": "mocha  --config .mocharc.json",
+    "test": "mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
     "test:show": "npm run test 2>&1 | tee chess-contracts.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open chess-contracts.log; fi",
     "types": "tsc --noEmit"
   },

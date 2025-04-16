@@ -5,6 +5,7 @@ import {
   Chess as ChessLib,
   Square,
   User,
+  WinnerTxWrapper,
 } from '@bitcoin-computer/chess-contracts'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -17,8 +18,22 @@ import { NewGameModal, newGameModal } from './NewGame'
 import { InfiniteScroll } from './GamesList'
 import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
+import { script as bscript, networks } from '@bitcoin-computer/nakamotojs'
+import { ECPairFactory } from 'ecpair'
+import * as ecc from '@bitcoin-computer/secp256k1'
+import { Computer, Transaction } from '@bitcoin-computer/lib'
+import { Buffer } from 'buffer'
+const ECPair = ECPairFactory(ecc)
 
 const winnerModal = 'winner-modal'
+
+const operatorMnemonic = `witness ball town vast limit abstract proof clay castle lens year protect`
+const operatorComputer = new Computer({
+  chain: 'LTC',
+  network: 'regtest',
+  url: 'http://127.0.0.1:1031',
+  mnemonic: operatorMnemonic,
+})
 
 function currentPlayer(fen: string) {
   const parts = fen.split(' ')
@@ -188,6 +203,86 @@ export function ChessBoard() {
 
       subscribeToComputer()
     }
+
+    return () => {
+      if (close) {
+        close()
+      }
+    }
+  }, [chessContractId])
+
+  // Polling for the winner and claiming the transaction
+  useEffect(() => {
+    let close: () => void // Declare a variable to hold the subscription
+    const fetch = async () => {
+      try {
+        if (chessContractId) {
+          const cc = await fetchChessContract()
+          const subscribeToWinnerTx = async () => {
+            close = await computer.subscribe(cc.winnerTxWrapper._id, async (rev) => {
+              if (rev) {
+                const txWrapper = (await computer.sync(rev.rev)) as WinnerTxWrapper
+                if (txWrapper.redeemTxHex) {
+                  // Explicitly fetching chess contract again to get the latest state
+                  // Can the user modify inputs and outputs of a partially signed transaction???
+                  const chessContract = await fetchChessContract()
+                  const game = new ChessLib(chessContract.fen)
+                  if (!game.isGameOver()) {
+                    showSnackBar('Game is not over yet!', false)
+                    return
+                  }
+                  const winnerPublicKey = chessContract._owners[0] as string
+                  if (winnerPublicKey === computer.getPublicKey()) {
+                    // No need to do anything here as this is the winner
+                    showSnackBar(
+                      'Congratulations you won!, your funds will be released shortly',
+                      true,
+                    )
+                    return
+                  }
+                  const network = computer.getNetwork()
+                  const chain = computer.getChain()
+                  const NETWORKOBJ = networks.getNetwork(chain, network)
+
+                  const { privateKey: currentPlayerPrivateKey } = computer.wallet
+                  const currentPlayerKeyPair = ECPair.fromPrivateKey(currentPlayerPrivateKey, {
+                    network: NETWORKOBJ,
+                  })
+
+                  const redeemTx = Transaction.fromHex(txWrapper.redeemTxHex)
+
+                  const expectedRedeemScript = bscript.fromASM(
+                    `OP_2 ${chessContract.publicKeyW} ${chessContract.publicKeyB} ${chessContract.operatorPublicKey} OP_3 OP_CHECKMULTISIG`,
+                  )
+
+                  const playerWIsTheValidator = computer.getPublicKey() === chessContract.publicKeyW
+
+                  // Validate and sign the transaction
+                  const signedRedeemTx = ChessContractHelper.validateAndSignRedeemTx(
+                    redeemTx,
+                    Buffer.from(winnerPublicKey, 'hex'),
+                    currentPlayerKeyPair,
+                    expectedRedeemScript,
+                    NETWORKOBJ,
+                    playerWIsTheValidator,
+                  )
+
+                  // Broadcast the fully signed transaction
+                  const finalTxId = await computer.broadcast(signedRedeemTx)
+
+                  showSnackBar(`You lost the game, fund released. Transaction: ${finalTxId}`, true)
+                }
+              }
+            })
+          }
+
+          subscribeToWinnerTx()
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetch()
 
     return () => {
       if (close) {

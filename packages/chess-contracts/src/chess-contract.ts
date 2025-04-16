@@ -7,7 +7,6 @@ import {
   script as bscript,
 } from '@bitcoin-computer/nakamotojs'
 import { Buffer } from 'buffer'
-import axios from 'axios'
 import { ECPairFactory, ECPairInterface } from 'ecpair'
 import * as ecc from '@bitcoin-computer/secp256k1'
 import { VITE_API_BASE_URL } from './config.js'
@@ -17,29 +16,44 @@ const ECPair = ECPairFactory(ecc)
 
 export const NotEnoughFundError = 'Not enough funds to create chess game.'
 
-const claimWin = async (id: string, redeemTxHex: string): Promise<string | null> => {
-  const { data } = await axios.post<string>(`${VITE_API_BASE_URL}/claim-win/${id}`, { redeemTxHex })
-  return data
-}
-
 if (typeof global !== 'undefined') global.Buffer = Buffer
 
 type PaymentType = {
   amount: number
   publicKeyW: string
   publicKeyB: string
+  operatorPublicKey: string
 }
 
 export class Payment extends Contract {
-  constructor({ amount, publicKeyW, publicKeyB }: PaymentType) {
+  constructor({ amount, publicKeyW, publicKeyB, operatorPublicKey }: PaymentType) {
     super({
       _amount: amount,
       _owners:
-        `OP_2 ${publicKeyW} ${publicKeyB} 03f2d045e952de2759b22eafbea90aa3c5cae353581aeb7d319d1ecdded065a5b5 OP_3 OP_CHECKMULTISIG`.replace(
+        `OP_2 ${publicKeyW} ${publicKeyB} ${operatorPublicKey} OP_3 OP_CHECKMULTISIG`.replace(
           /\s+/g,
           ' ',
         ),
     })
+  }
+}
+
+type WinnerTxWrapperType = {
+  publicKeyW: string
+  publicKeyB: string
+  operatorPublicKey: string
+}
+
+export class WinnerTxWrapper extends Contract {
+  redeemTxHex!: string
+  constructor({ publicKeyW, publicKeyB, operatorPublicKey }: WinnerTxWrapperType) {
+    super({
+      _owners: [publicKeyW, publicKeyB, operatorPublicKey],
+      redeemTxHex: '',
+    })
+  }
+  setRedeemHex(txHex: string) {
+    this.redeemTxHex = txHex
   }
 }
 
@@ -49,9 +63,11 @@ export class ChessContract extends Contract {
   nameB!: string
   publicKeyW!: string
   publicKeyB!: string
+  operatorPublicKey!: string
   sans!: string[]
   fen!: string
   payment!: Payment
+  winnerTxWrapper!: WinnerTxWrapper
 
   constructor(
     amount: number,
@@ -59,6 +75,7 @@ export class ChessContract extends Contract {
     nameB: string,
     publicKeyW: string,
     publicKeyB: string,
+    operatorPublicKey: string,
   ) {
     super({
       amount,
@@ -67,9 +84,15 @@ export class ChessContract extends Contract {
       publicKeyW,
       publicKeyB,
       sans: [],
-      fen: 'rnbqkbnr/pppp1ppp/4p3/8/8/5P2/PPPPP1PP/RNBQKBNR w KQkq - 0 2',
-      payment: new Payment({ amount, publicKeyW, publicKeyB }),
+      fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+      operatorPublicKey,
+      payment: new Payment({ amount, publicKeyW, publicKeyB, operatorPublicKey }),
+      winnerTxWrapper: new WinnerTxWrapper({ publicKeyW, publicKeyB, operatorPublicKey }),
     })
+  }
+
+  setRedeemHex(txHex: string) {
+    this.winnerTxWrapper.setRedeemHex(txHex)
   }
 
   move(from: string, to: string, promotion: string): string {
@@ -102,6 +125,7 @@ export class ChessContractHelper {
   nameB?: string
   publicKeyW?: string
   publicKeyB?: string
+  operatorPublicKey?: string
   mod?: string
   userMod?: string
 
@@ -112,6 +136,7 @@ export class ChessContractHelper {
     nameB,
     publicKeyW,
     publicKeyB,
+    operatorPublicKey,
     mod,
     userMod,
   }: {
@@ -121,8 +146,7 @@ export class ChessContractHelper {
     nameB?: string
     publicKeyW?: string
     publicKeyB?: string
-    secretHashW?: string
-    secretHashB?: string
+    operatorPublicKey?: string
     mod?: string
     userMod?: string
   }) {
@@ -137,6 +161,7 @@ export class ChessContractHelper {
     this.publicKeyB = publicKeyB
     this.mod = mod
     this.userMod = userMod
+    this.operatorPublicKey = operatorPublicKey
   }
 
   isInitialized(): this is Required<ChessContractHelper> {
@@ -149,7 +174,7 @@ export class ChessContractHelper {
     mod?: string,
     userMod?: string,
   ): ChessContractHelper {
-    const { amount, nameW, nameB, publicKeyW, publicKeyB } = game
+    const { amount, nameW, nameB, publicKeyW, publicKeyB, operatorPublicKey } = game
     return new this({
       computer,
       amount,
@@ -157,6 +182,7 @@ export class ChessContractHelper {
       nameB,
       publicKeyW,
       publicKeyB,
+      operatorPublicKey,
       mod,
       userMod,
     })
@@ -164,7 +190,7 @@ export class ChessContractHelper {
 
   // can we fetch the public key from the server
   getASM(): string {
-    return `OP_2 ${this.publicKeyW} ${this.publicKeyB} 03f2d045e952de2759b22eafbea90aa3c5cae353581aeb7d319d1ecdded065a5b5 OP_3 OP_CHECKMULTISIG`.replace(
+    return `OP_2 ${this.publicKeyW} ${this.publicKeyB} ${this.operatorPublicKey} OP_3 OP_CHECKMULTISIG`.replace(
       /\s+/g,
       ' ',
     )
@@ -180,7 +206,8 @@ export class ChessContractHelper {
         "${this.nameW}",
         "${this.nameB}",
         "${this.publicKeyW}",
-        "${this.publicKeyB}"
+        "${this.publicKeyB}",
+        "${this.operatorPublicKey}"
       )`,
       mod: this.mod,
       fund: false,
@@ -266,18 +293,22 @@ export class ChessContractHelper {
     const { res: isGameOver, env } = effect
     const { __bc__: newChessContract } = env as { __bc__: ChessContract }
     if (isGameOver) {
-      const spendingTxId = await this.spend(newChessContract)
-      console.log('You won!', spendingTxId)
+      await this.spend(newChessContract)
+      console.log('You won!')
     }
     return { newChessContract, isGameOver }
   }
 
-  async spend(chessContract: ChessContract, fee = 10000): Promise<string> {
+  async spend(chessContract: ChessContract, fee = 10000): Promise<void> {
     const txId = chessContract._id.split(':')[0]
-    return this.spendWithConfirmationFromOperator(txId, fee)
+    return this.spendWithConfirmationFromOperator(txId, chessContract, fee)
   }
 
-  async spendWithConfirmationFromOperator(txId: string, fee = 10000): Promise<string> {
+  async spendWithConfirmationFromOperator(
+    txId: string,
+    chessContract: ChessContract,
+    fee = 10000,
+  ): Promise<void> {
     if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
 
     const chain = this.computer.getChain()
@@ -303,18 +334,17 @@ export class ChessContractHelper {
 
     redeemTx.setInputScript(0, partialScript.input!)
     const redeemTxHex = redeemTx.toHex()
-
-    const data = await claimWin(txId, redeemTxHex)
-    console.log(data)
-    return ''
+    await chessContract.setRedeemHex(redeemTxHex)
+    return
   }
 
   static validateAndSignRedeemTx(
     redeemTx: Transaction,
     winnerPublicKey: Buffer,
-    operatorKeyPair: ECPairInterface,
+    validatorKeyPair: ECPairInterface,
     expectedRedeemScript: Buffer,
     network: networks.Network,
+    playerWIsTheValidator: boolean = false,
   ) {
     // Verify transaction structure
     if (redeemTx.ins.length !== 1 || redeemTx.outs.length !== 1) {
@@ -357,14 +387,19 @@ export class ChessContractHelper {
       throw new Error('Output must go to winner’s address')
     }
 
-    // Operator signs the transaction
-    const operatorSig = bscript.signature.encode(
-      operatorKeyPair.sign(sigHash),
+    // Validator signs the transaction
+    const validatorSig = bscript.signature.encode(
+      validatorKeyPair.sign(sigHash),
       Transaction.SIGHASH_ALL,
     )
 
     // Update scriptSig with both signatures
-    const finalRedeemInput = bscript.compile([Buffer.alloc(0), winnerSig, operatorSig])
+    // Order of public keys in script should be similar to the order of signatures
+    const finalRedeemInput = bscript.compile([
+      Buffer.alloc(0),
+      playerWIsTheValidator ? validatorSig : winnerSig,
+      playerWIsTheValidator ? winnerSig : validatorSig,
+    ])
     const finalScript = payments.p2sh({
       redeem: { input: finalRedeemInput, output: expectedRedeemScript },
       network,
