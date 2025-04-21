@@ -5,7 +5,7 @@ icon: mortar-board
 
 # Tutorial
 
-In this tutorial we explain how to build a decentralized chat. We will start with a comically simple version of a one person chat, but we will work our way up to a chat platform where users can build a community and sell it trustlessly through a smart contract.
+In this tutorial, we explain how to build a decentralized chat application using Bitcoin Computer. We will start with a simple one-person chat and progressively expand it into a chat platform where users can create communities and even trade them trustlessly via smart contracts.
 
 ## A Smart Contract
 
@@ -14,18 +14,33 @@ The JavaScript program below is a smart contract for a one-person chat.
 ```js
 import { Contract } from '@bitcoin-computer/lib'
 
+// Define a Chat contract that extends the base Contract class
 class Chat extends Contract {
+  /**
+   * Constructor to create an on-chain chat
+   * @param {string} greeting - The first message in the chat.
+   */
   constructor(greeting) {
-    super({ messages: [greeting] }) // initialize messages array
+    // Initialize messages array with the first message
+    super({ messages: [greeting] })
   }
 
+  /**
+   * Method to post a new message to the chat.
+   * @param {string} message - The message to be added.
+   */
   post(message) {
+    // Append the new message to the existing array
     this.messages.push(message)
   }
 }
 ```
 
 We recommend to ignore the syntax for initializing `messages` in the constructor for now. If you are interested in the details you can find them [here](language/).
+
+!!!
+**Smart Contract**: A smart contract in the context of the Bitcoin Computer is a JavaScript class that extends from `Contract`, where `Contract` is a class that is exported from the Bitcoin Computer library.
+!!!
 
 ## The Client-Side Wallet
 
@@ -36,8 +51,17 @@ You can pass a [BIP39](https://github.com/bitcoin/bips/blob/master/bip-0039.medi
 ```javascript
 import { Computer } from '@bitcoin-computer/lib'
 
+// Initialize a new computer instance with a mnemonic
 const computer = new Computer({ mnemonic: 'replace this seed' })
 ```
+
+!!!
+**Bitcoin Computer**  
+A JavaScript framework for building decentralized applications on Bitcoin. It consists of:
+
+- client-side library to manage keys, create, and update on-chain objects
+- node software to obtain trustless access to the blockchain and to find the location of on-chain objects on the blockchain.
+  !!!
 
 ## Creating On-Chain Objects
 
@@ -52,10 +76,12 @@ broadcasts a transaction inscribed with the expression below.
 ```js
 class Chat extends Contract {
   constructor(greeting) {
+    // Initialize an on-chain object with messages array
     super({ messages: [greeting] })
   }
 
   post(message) {
+    // Update messages array
     this.messages.push(message)
   }
 }
@@ -63,17 +89,36 @@ class Chat extends Contract {
 new Chat('hello')
 ```
 
+!!!
+**Revision (\_rev)**  
+A revision refers to a particular state of an on-chain object, tied to a specific blockchain transaction output. Each update to the object creates a new revision.
+!!!
+
+!!!
+**Public Key Ownership (\_owners)**  
+This property defines which public keys control (can update) the on-chain object. If multiple keys are assigned, it's a 1-of-n multisig control. The default owner is the key that created the object.
+!!!
+
 The Bitcoin Computer protocol interprets such a transaction as creating an on-chain object of type `Chat` at the first output of the transaction.
 
 The object `chat` returned from the `computer.new` call is similar to the object returned from the call `new Chat('hello')`. However it has additional properties `_id`, `_rev`, `_root`, `_owners` and `_amount`:
 
 ```js
 expect(chat).to.deep.equal({
-  messages: ['hello'],
+  // Application-specific data
+  // Chat messages
+  messages: ['hello'], )
+
+  // Protocol speciic data added by Bitcoin Computer protocol:
+  // Location where the object was first created
   _id: '667c...2357:0',
+  // Location where the object is currently stored
   _rev: '667c...2357:0',
+  // Root object reference for object hierarchies
   _root: '667c...2357:0',
+  // Array of owner public keys that control the object
   _owners: ['03...'],
+  // amount in satoshi locked in this object
   _amount: 5820,
 })
 ```
@@ -88,11 +133,17 @@ We refer to `chat` as an _on-chain object_.
 Note that the transaction that created `chat` does not contain an encoding of the object itself. It only contains code that evaluates to its state.
 !!!
 
+!!!
+**On-Chain Object**  
+An object whose state is tracked via blockchain transactions and smart contracts.
+!!!
+
 ## Updating On-Chain Objects
 
 When a function is called on an on-chain object, a transaction is broadcast that is inscribed with a JavaScript expression encoding the function call and an environment determining the undefined variables in the expressions. For example, the call
 
 ```js
+// Broadcasts transaction updating messages array
 await chat.post('world')
 ```
 
@@ -113,8 +164,10 @@ To compute the value of the `chat` after the `post` function is called and the t
 
 ```js
 Chat {
+  // 'world' has been added to the array of messages
   messages: ['hello', 'world'],
   _id: '667c...2357:0',
+  // the location of where the object has been stored is updated
   _rev: 'de43...818a:0',
   _root: '667c...2357:0',
   _owners: ['03...'],
@@ -141,17 +194,22 @@ The state of the on-chain objects is never stored in the blockchain, just the Ja
 The [`computer.sync`](./Lib/Computer/sync.md) function computes the state of an on-chain object given its revision. For example, if the function is called with an the id of an on-chain object, it returns the initial state of the object
 
 ```js
+// Get initial state using on-chain object id
 const initialChat = await computer.sync(chat._id)
 
+// Original state preserved
 expect(initialChat.messages).deep.eq(['hello'])
 ```
 
 If `computer.sync` is called with latest revision it returns the current state.
 
 ```js
+// Get current state using latest revision id
 const latestChat = await computer.sync(chat._rev)
 
+// Includes all updates
 expect(latestChat.messages).deep.eq(['hello', 'world'])
+// Verify full object consistency
 expect(latestChat).to.deep.equal(chat)
 ```
 
@@ -160,7 +218,11 @@ expect(latestChat).to.deep.equal(chat)
 The [`computer.query`](./Lib/Computer/query.md) function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:
 
 ```js
-const [rev] = await computer.query({ ids: [chat._id] })
+const [rev] = await computer.query({
+  // Search by original on-chain object id
+  ids: [chat._id],
+})
+// Returns most recent revision
 expect(rev).to.equal(chat._rev)
 ```
 
@@ -236,6 +298,7 @@ class Chat extends Contract {
   constructor(greeting, owner) {
     super({
       messages: [greeting],
+      // Only readers can decrypt the object
       _readers: [owner],
     })
   }
@@ -251,6 +314,11 @@ As all updates to an on-chain object are recorded in immutable transactions it i
 
 !!!
 When on-chain objects are encrypted the flow of cryptocurrency is not obfuscated.
+!!!
+
+!!!
+**Encryption (\_readers)**  
+Setting the `_readers` property on an on-chain object limits who can decrypt and read its state. Only public keys listed here can access the object’s content.
 !!!
 
 ## Off-Chain Storage
@@ -269,11 +337,17 @@ class Chat extends Contract {
   }
 
   postImage(image) {
+    // This is the URL where the metadata is stored (including the image)
     this._url = 'https://my.bitcoin.computer.node.example.com'
     this.messages.push(image)
   }
 }
 ```
+
+!!!
+**Off-Chain Storage**  
+A feature allowing large or sensitive data to be stored outside the blockchain, with just a hash and URL on-chain pointing to the actual content. This is useful for images or large metadata.
+!!!
 
 ## Cryptocurrency
 
@@ -298,7 +372,10 @@ class Payment extends Contract {
   }
 }
 
-const computerAlice = new Computer({ mnemonic: mnemonicAlice })
+const computerAlice = new Computer({
+  // Alice's BIP39 recovery phrase
+  mnemonic: mnemonicAlice,
+})
 const payment = computerA.new(Payment, [21000, pubKeyBob])
 ```
 
@@ -306,6 +383,7 @@ When the `payment` on-chain object is created, the wallet inside the `computerA`
 
 ```js
 const computerB = new Computer({ seed: <B's mnemonic> })
+// Get latest version of payment object from blockchain
 const paymentB = await computerB.sync(payment._rev)
 await paymentB.cashOut()
 ```
@@ -331,20 +409,24 @@ The `effect` object has two sub-objects: `res` contains the value returned from 
 The code below is equivalent to calling `await computer.new(Chat, ['hello'])`. In fact the `computer.new` function is just syntactic sugar for using the `encode` function.
 
 ```js
-const exp = `${Chat} new Chat('hello')`
+const exp = `${Chat} new Chat('hello')` // JS expression to evaluate
+const { tx, effect } = await computer.encode({ exp }) // Returns unsigned transaction and predicted effect
 
-const { tx, effect } = await computer.encode({ exp })
-
+// effect shows expected outcome if transaction is broadcast
 expect(effect).deep.eq({
   res: {
+    // Resulting object state
     messages: ['hello'],
     _id: '667c...2357:0',
+    // Current revision ID
     _rev: '667c...2357:0',
     _root: '667c...2357:0',
+    // Owner public key(s)
     _owners: ['03...'],
+    // Satoshi value locked in object
     _amount: 5820,
-  }
-  env: {}
+  },
+  env: {},
 })
 ```
 
@@ -363,16 +445,25 @@ The [`computer.deploy`](./Lib/Computer/deploy.md) function stores a JavaScript m
 
 ```js
 const moduleA = 'export class A extends Contract {}'
+// Returns on-chain module id
 const specifierA = await computer.deploy(moduleA)
 
+// Create dependent module referencing first module
 const moduleB = `
+  // Import from on-chain module
   import { A } from '${specifierA}'
+
+  // Extend base class
   export class B extends A {}
 `
+// Deploy second module
 const specifierB = await computer.deploy(moduleB)
 
+// Use deployed module to create contract instance
 const { tx } = await computer.encode({
+  // Instantiate class from module
   exp: `new B()`,
+  // Specify module location
   mod: specifierB,
 })
 ```
@@ -381,6 +472,7 @@ Modules can be loaded from the blockchain using [computer.load](./Lib/Computer/l
 
 ```js
 const loadedB = await computer.load(specifierB)
+// Verify code integrity
 expect(loadedB).eq(moduleB)
 ```
 
@@ -395,13 +487,16 @@ class A extends Contract {
   constructor() {
     super({
       n: 1,
+      // Bitcoin Script spending condition
       _owners: 'OP_3 OP_EQUAL',
+      // 1 BTC value lock
       _amount: 1e8,
     })
   }
 
   inc() {
     this.n += 1
+    // Transfer 0.001 BTC
     this._amount = 1e8 - 100000
   }
 }
@@ -414,6 +509,7 @@ import { Computer } from '@bitcoin-computer/lib'
 import { payments } from '@bitcoin-computer/nakamotojs'
 
 const computer = new Computer()
+// Create contract with script
 const a = await computer.new(A)
 
 // Encode transaction that encodes update
@@ -465,22 +561,26 @@ The Bitcoin Computer library exports a class [`Mock`](./Lib/Mock/index.md) that 
 import { Mock, Contract } from '@bitcoin-computer/lib'
 
 class M extends Mock {
+  // Mock template
   constructor() {
+    // Initial state
     super({ n: 1 })
   }
 
   inc() {
+    // Mock behavior
     this.n += 1
   }
 }
 
 class A extends Contract {
+  // Real contract
   constructor() {
     super({ n: 1 })
   }
 
   inc() {
-    this.n += 1
+    this.n += 1 // Actual implementation
   }
 }
 
