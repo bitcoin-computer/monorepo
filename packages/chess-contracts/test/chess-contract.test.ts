@@ -2,7 +2,7 @@ import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { bufferUtils, networks, payments, script as bscript } from '@bitcoin-computer/nakamotojs'
 import { ChessContractHelper } from '../src/chess-contract.js'
 import { expect } from 'expect'
-import { ECPairFactory } from 'ecpair'
+import { ECPairFactory, ECPairInterface } from 'ecpair'
 import * as ecc from '@bitcoin-computer/secp256k1'
 
 const url = 'http://localhost:1031'
@@ -77,11 +77,14 @@ describe('Should create a deposit transaction for the Chess game with operator',
   }
 
   const createRedeemTx = (
-    claimantKeyPair: any,
-    commitTxId: any,
-    outputScript: any,
-    amount: any,
+    claimantKeyPair: ECPairInterface,
+    commitTxId: string,
+    outputScript: Buffer | undefined,
+    amount: number,
   ) => {
+    if (!outputScript) {
+      throw new Error('Invalid outputScript provided')
+    }
     const redeemTx = new Transaction()
     redeemTx.addInput(Buffer.from(commitTxId, 'hex').reverse(), 0)
     redeemTx.addOutput(outputScript, amount)
@@ -128,7 +131,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
       )
       expect(() => {
         ChessContractHelper.validateAndSignRedeemTx(
-          redeemTx as any,
+          redeemTx,
           alicePublicKey,
           validator.keyPair,
           redeemScript,
@@ -147,7 +150,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
       )
       expect(() => {
         ChessContractHelper.validateAndSignRedeemTx(
-          redeemTx as any,
+          redeemTx,
           alicePublicKey,
           validator.keyPair,
           redeemScript,
@@ -163,7 +166,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
     const redeemTx = createRedeemTx(aliceKeyPair, commitTxId, bobChangeOutput, 2 * betAmount - fees)
     expect(() => {
       ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx as any,
+        redeemTx,
         winnerPublicKey,
         operatorKeyPair,
         redeemScript,
@@ -184,7 +187,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
     redeemTx.addInput(Buffer.from('00'.repeat(32), 'hex'), 0)
     expect(() => {
       ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx as any,
+        redeemTx,
         winnerPublicKey,
         operatorKeyPair,
         redeemScript,
@@ -208,7 +211,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
     redeemTx.setInputScript(0, invalidScriptSig)
     expect(() => {
       ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx as any,
+        redeemTx,
         winnerPublicKey,
         operatorKeyPair,
         redeemScript,
@@ -236,7 +239,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
     redeemTx.setInputScript(0, partialScript.input as Buffer)
     expect(() => {
       ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx as any,
+        redeemTx,
         winnerPublicKey,
         operatorKeyPair,
         redeemScript,
@@ -264,7 +267,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
     redeemTx.setInputScript(0, corruptedScriptSig)
     expect(() => {
       ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx as any,
+        redeemTx,
         winnerPublicKey,
         operatorKeyPair,
         redeemScript,

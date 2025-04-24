@@ -21,19 +21,11 @@ import { CreateUserModal, creaetUserModal } from './CreateUser'
 import { script as bscript, networks } from '@bitcoin-computer/nakamotojs'
 import { ECPairFactory } from 'ecpair'
 import * as ecc from '@bitcoin-computer/secp256k1'
-import { Computer, Transaction } from '@bitcoin-computer/lib'
+import { Transaction } from '@bitcoin-computer/lib'
 import { Buffer } from 'buffer'
 const ECPair = ECPairFactory(ecc)
 
 const winnerModal = 'winner-modal'
-
-const operatorMnemonic = `witness ball town vast limit abstract proof clay castle lens year protect`
-const operatorComputer = new Computer({
-  chain: 'LTC',
-  network: 'regtest',
-  url: 'http://127.0.0.1:1031',
-  mnemonic: operatorMnemonic,
-})
 
 function currentPlayer(fen: string) {
   const parts = fen.split(' ')

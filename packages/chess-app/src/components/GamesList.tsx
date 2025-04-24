@@ -25,7 +25,7 @@ export const InfiniteScroll = ({
     async (offset: number): Promise<string[]> => {
       return user ? user.games.slice(offset, offset + contractsPerPage) : []
     },
-    [contractsPerPage, computer, user],
+    [contractsPerPage, user],
   )
 
   const loadMoreItems = useCallback(async () => {
