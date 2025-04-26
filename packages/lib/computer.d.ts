@@ -72,7 +72,7 @@ declare class Update {
   isValid(fromTx: Update): boolean
 }
 
-type TBCChain = 'LTC' | 'BTC' | 'PEPE' | string
+type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE' | 'GRS' | string
 type TBCNetwork = 'testnet' | 'mainnet' | 'regtest' | string
 type Fee = Partial<{
   fee: number

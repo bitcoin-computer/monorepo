@@ -58,6 +58,7 @@
     "bip174": "^2.1.0",
     "bs58check": "^3.0.1",
     "buffer": "^6.0.3",
+    "hashes-grs": "^1.2.0",
     "typeforce": "^1.11.3",
     "varuint-bitcoin": "^1.1.2"
   },
@@ -78,6 +79,7 @@
     "bs58": "^4.0.0",
     "dotenv": "^16.4.5",
     "ecpair": "^2.0.1",
+    "ecpairgrs": "^2.0.2",
     "elliptic": "^6.6.1",
     "hoodwink": "^2.0.0",
     "minimaldata": "^1.0.2",
