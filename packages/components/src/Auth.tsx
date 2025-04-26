@@ -7,7 +7,7 @@ import { Modal } from './Modal'
 import type { Chain, Network, ModuleStorageType } from './common/types'
 import { getEnv } from './common/utils'
 
-export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
+export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE' | 'GRS'
 export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest'
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
 
@@ -48,6 +48,7 @@ function getCoinType(chain: string, network: string): number {
   if (chain === 'DOGE') return 3
   if (chain === 'PEPE') return 3434
   if (chain === 'BCH') return 145
+  if (chain === 'GRS') return 17
 
   throw new Error(`Unsupported chain ${chain} or network ${network}`)
 }
@@ -186,6 +187,23 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
           >
             DOGE
           </label>
+        </div>
+        <div className="flex items-center mr-4">
+          <input
+            onChange={() => setChain('GRS')}
+            id="chain-grs"
+            type="radio"
+            name="chain"
+            value="GRS"
+            className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
+            disabled
+          />
+          <label
+            htmlFor="chain-grs"
+            className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >
+            GRS
+          </label>          
         </div>
       </fieldset>
     </>
@@ -332,7 +350,7 @@ function LoginForm() {
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
             {!chain && <ChainInput chain={chain} setChain={setChain} />}
             {!network && <NetworkInput network={network} setNetwork={setNetwork} />}
-            {!url && <UrlInput urlInputRef={urlInputRef} />}
+            {!url && <UrlInput urlInputRef={urlInputRef as React.RefObject<HTMLInputElement>} />}
           </div>
         </form>
       </div>
