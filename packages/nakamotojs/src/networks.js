@@ -126,7 +126,7 @@ export const groestlcointestnet = {
     public: 0x043587cf,
     private: 0x04358394,
   },
-  pubKeyHash: 0x71,
+  pubKeyHash: 0x6f,
   scriptHash: 0xc4,
   wif: 0xef,
 };
@@ -219,7 +219,7 @@ export function getNetwork(chain, network) {
           return groestlcoinregtest;
         default:
           throw new Error(`Invalid network ${network}`);
-      }      
+      }
     default:
       throw new Error(`Invalid chain ${network}`);
   }
@@ -241,8 +241,4 @@ export const NETWORKS = {
   dogecoin,
   dogecoinregtest,
   dogecointestnet,
-  // Groestlcoin
-  groestlcoin,
-  groestlcoinregtest,
-  groestlcointestnet,
 };

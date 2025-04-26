@@ -1,7 +1,6 @@
 import { ripemd160 as _ripemd160 } from '@noble/hashes/ripemd160';
 import { sha1 as _sha1 } from '@noble/hashes/sha1';
 import { sha256 as _sha256 } from '@noble/hashes/sha256';
-import { groestl512 } from 'hashes-grs/groestl512'
 import { Buffer } from 'buffer';
 export function ripemd160(buffer) {
   return Buffer.from(_ripemd160(Uint8Array.from(buffer)));
@@ -18,13 +17,6 @@ export function hash160(buffer) {
 export function hash256(buffer) {
   return Buffer.from(_sha256(_sha256(Uint8Array.from(buffer))));
 }
-export function grs512(buf){
-  return Buffer.from(groestl512(buf))
-}
-export function grs512d(buf){
-  return Buffer.from(groestl512(groestl512(buf)))
-}
-
 export const TAGS = [
   'BIP0340/challenge',
   'BIP0340/aux',

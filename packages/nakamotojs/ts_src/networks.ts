@@ -249,7 +249,7 @@ export function getNetwork(chain: string, network: string): Network {
           return groestlcoinregtest;
         default:
           throw new Error(`Invalid network ${network}`);
-      }      
+      }
     default:
       throw new Error(`Invalid chain ${network}`);
   }
