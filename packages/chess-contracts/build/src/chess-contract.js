@@ -3,7 +3,6 @@ import { address, bufferUtils, networks, payments, script as bscript, } from '@b
 import { Buffer } from 'buffer';
 import { ECPairFactory } from 'ecpair';
 import * as ecc from '@bitcoin-computer/secp256k1';
-import { VITE_API_BASE_URL } from './config.js';
 const ECPair = ECPairFactory(ecc);
 export const NotEnoughFundError = 'Not enough funds to create chess game.';
 if (typeof global !== 'undefined')
@@ -67,9 +66,6 @@ export class ChessContract extends Contract {
 }
 export class ChessContractHelper {
     constructor({ computer, amount, nameW, nameB, publicKeyW, publicKeyB, mod, userMod, }) {
-        if (!VITE_API_BASE_URL) {
-            throw new Error(`Please create a .env file with ${VITE_API_BASE_URL}`);
-        }
         this.computer = computer;
         this.amount = amount;
         this.nameW = nameW;

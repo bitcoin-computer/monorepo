@@ -9,7 +9,6 @@ import {
 import { Buffer } from 'buffer'
 import { ECPairFactory, ECPairInterface } from 'ecpair'
 import * as ecc from '@bitcoin-computer/secp256k1'
-import { VITE_API_BASE_URL } from './config.js'
 import { User } from './user.js'
 
 const ECPair = ECPairFactory(ecc)
@@ -138,9 +137,6 @@ export class ChessContractHelper {
     mod?: string
     userMod?: string
   }) {
-    if (!VITE_API_BASE_URL) {
-      throw new Error(`Please create a .env file with ${VITE_API_BASE_URL}`)
-    }
     this.computer = computer
     this.amount = amount
     this.nameW = nameW
