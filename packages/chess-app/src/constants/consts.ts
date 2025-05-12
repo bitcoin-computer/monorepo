@@ -1,2 +1,0 @@
-export const operatorPublicKey =
-  '03f2d045e952de2759b22eafbea90aa3c5cae353581aeb7d319d1ecdded065a5b5'

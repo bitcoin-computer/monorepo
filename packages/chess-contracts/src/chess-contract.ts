@@ -22,18 +22,13 @@ type PaymentType = {
   amount: number
   publicKeyW: string
   publicKeyB: string
-  operatorPublicKey: string
 }
 
 export class Payment extends Contract {
-  constructor({ amount, publicKeyW, publicKeyB, operatorPublicKey }: PaymentType) {
+  constructor({ amount, publicKeyW, publicKeyB }: PaymentType) {
     super({
       _amount: amount,
-      _owners:
-        `OP_2 ${publicKeyW} ${publicKeyB} ${operatorPublicKey} OP_3 OP_CHECKMULTISIG`.replace(
-          /\s+/g,
-          ' ',
-        ),
+      _owners: `OP_2 ${publicKeyW} ${publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' '),
     })
   }
 }
@@ -41,14 +36,13 @@ export class Payment extends Contract {
 type WinnerTxWrapperType = {
   publicKeyW: string
   publicKeyB: string
-  operatorPublicKey: string
 }
 
 export class WinnerTxWrapper extends Contract {
   redeemTxHex!: string
-  constructor({ publicKeyW, publicKeyB, operatorPublicKey }: WinnerTxWrapperType) {
+  constructor({ publicKeyW, publicKeyB }: WinnerTxWrapperType) {
     super({
-      _owners: [publicKeyW, publicKeyB, operatorPublicKey],
+      _owners: [publicKeyW, publicKeyB],
       redeemTxHex: '',
     })
   }
@@ -63,7 +57,6 @@ export class ChessContract extends Contract {
   nameB!: string
   publicKeyW!: string
   publicKeyB!: string
-  operatorPublicKey!: string
   sans!: string[]
   fen!: string
   payment!: Payment
@@ -75,7 +68,6 @@ export class ChessContract extends Contract {
     nameB: string,
     publicKeyW: string,
     publicKeyB: string,
-    operatorPublicKey: string,
   ) {
     super({
       amount,
@@ -85,9 +77,8 @@ export class ChessContract extends Contract {
       publicKeyB,
       sans: [],
       fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-      operatorPublicKey,
-      payment: new Payment({ amount, publicKeyW, publicKeyB, operatorPublicKey }),
-      winnerTxWrapper: new WinnerTxWrapper({ publicKeyW, publicKeyB, operatorPublicKey }),
+      payment: new Payment({ amount, publicKeyW, publicKeyB }),
+      winnerTxWrapper: new WinnerTxWrapper({ publicKeyW, publicKeyB }),
     })
   }
 
@@ -125,7 +116,6 @@ export class ChessContractHelper {
   nameB?: string
   publicKeyW?: string
   publicKeyB?: string
-  operatorPublicKey?: string
   mod?: string
   userMod?: string
 
@@ -136,7 +126,6 @@ export class ChessContractHelper {
     nameB,
     publicKeyW,
     publicKeyB,
-    operatorPublicKey,
     mod,
     userMod,
   }: {
@@ -146,7 +135,6 @@ export class ChessContractHelper {
     nameB?: string
     publicKeyW?: string
     publicKeyB?: string
-    operatorPublicKey?: string
     mod?: string
     userMod?: string
   }) {
@@ -161,7 +149,6 @@ export class ChessContractHelper {
     this.publicKeyB = publicKeyB
     this.mod = mod
     this.userMod = userMod
-    this.operatorPublicKey = operatorPublicKey
   }
 
   isInitialized(): this is Required<ChessContractHelper> {
@@ -174,7 +161,7 @@ export class ChessContractHelper {
     mod?: string,
     userMod?: string,
   ): ChessContractHelper {
-    const { amount, nameW, nameB, publicKeyW, publicKeyB, operatorPublicKey } = game
+    const { amount, nameW, nameB, publicKeyW, publicKeyB } = game
     return new this({
       computer,
       amount,
@@ -182,7 +169,6 @@ export class ChessContractHelper {
       nameB,
       publicKeyW,
       publicKeyB,
-      operatorPublicKey,
       mod,
       userMod,
     })
@@ -190,10 +176,7 @@ export class ChessContractHelper {
 
   // can we fetch the public key from the server
   getASM(): string {
-    return `OP_2 ${this.publicKeyW} ${this.publicKeyB} ${this.operatorPublicKey} OP_3 OP_CHECKMULTISIG`.replace(
-      /\s+/g,
-      ' ',
-    )
+    return `OP_2 ${this.publicKeyW} ${this.publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' ')
   }
 
   async makeTx(): Promise<Transaction> {
@@ -206,8 +189,7 @@ export class ChessContractHelper {
         "${this.nameW}",
         "${this.nameB}",
         "${this.publicKeyW}",
-        "${this.publicKeyB}",
-        "${this.operatorPublicKey}"
+        "${this.publicKeyB}"
       )`,
       mod: this.mod,
       fund: false,
@@ -301,10 +283,10 @@ export class ChessContractHelper {
 
   async spend(chessContract: ChessContract, fee = 10000): Promise<void> {
     const txId = chessContract._id.split(':')[0]
-    return this.spendWithConfirmationFromOperator(txId, chessContract, fee)
+    return this.spendWithConfirmation(txId, chessContract, fee)
   }
 
-  async spendWithConfirmationFromOperator(
+  async spendWithConfirmation(
     txId: string,
     chessContract: ChessContract,
     fee = 10000,

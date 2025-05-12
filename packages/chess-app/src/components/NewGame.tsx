@@ -3,7 +3,6 @@ import { ChessContractHelper, NotEnoughFundError } from '@bitcoin-computer/chess
 import { useContext, useState } from 'react'
 import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 import { Transaction } from '@bitcoin-computer/lib'
-import { operatorPublicKey } from '../constants/consts'
 
 export const newGameModal = 'new-game-modal'
 
@@ -54,7 +53,6 @@ function NewGameModalContent({
       nameB,
       publicKeyW,
       publicKeyB,
-      operatorPublicKey,
       mod: VITE_CHESS_GAME_MOD_SPEC,
       userMod: VITE_CHESS_USER_MOD_SPEC,
     })
@@ -87,7 +85,7 @@ function NewGameModalContent({
           }
         }
       }
-      setSerializedTx(`http://localhost:1032?start-game=${tx.serialize()}`)
+      setSerializedTx(`${window.location.origin}?start-game=${tx.serialize()}`)
       showLoader(false)
     } catch (err) {
       if (err instanceof Error) {

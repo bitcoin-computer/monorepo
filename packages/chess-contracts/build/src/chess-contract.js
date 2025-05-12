@@ -9,17 +9,17 @@ export const NotEnoughFundError = 'Not enough funds to create chess game.';
 if (typeof global !== 'undefined')
     global.Buffer = Buffer;
 export class Payment extends Contract {
-    constructor({ amount, publicKeyW, publicKeyB, operatorPublicKey }) {
+    constructor({ amount, publicKeyW, publicKeyB }) {
         super({
             _amount: amount,
-            _owners: `OP_2 ${publicKeyW} ${publicKeyB} ${operatorPublicKey} OP_3 OP_CHECKMULTISIG`.replace(/\s+/g, ' '),
+            _owners: `OP_2 ${publicKeyW} ${publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' '),
         });
     }
 }
 export class WinnerTxWrapper extends Contract {
-    constructor({ publicKeyW, publicKeyB, operatorPublicKey }) {
+    constructor({ publicKeyW, publicKeyB }) {
         super({
-            _owners: [publicKeyW, publicKeyB, operatorPublicKey],
+            _owners: [publicKeyW, publicKeyB],
             redeemTxHex: '',
         });
     }
@@ -28,7 +28,7 @@ export class WinnerTxWrapper extends Contract {
     }
 }
 export class ChessContract extends Contract {
-    constructor(amount, nameW, nameB, publicKeyW, publicKeyB, operatorPublicKey) {
+    constructor(amount, nameW, nameB, publicKeyW, publicKeyB) {
         super({
             amount,
             nameW,
@@ -37,9 +37,8 @@ export class ChessContract extends Contract {
             publicKeyB,
             sans: [],
             fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-            operatorPublicKey,
-            payment: new Payment({ amount, publicKeyW, publicKeyB, operatorPublicKey }),
-            winnerTxWrapper: new WinnerTxWrapper({ publicKeyW, publicKeyB, operatorPublicKey }),
+            payment: new Payment({ amount, publicKeyW, publicKeyB }),
+            winnerTxWrapper: new WinnerTxWrapper({ publicKeyW, publicKeyB }),
         });
     }
     setRedeemHex(txHex) {
@@ -67,7 +66,7 @@ export class ChessContract extends Contract {
     }
 }
 export class ChessContractHelper {
-    constructor({ computer, amount, nameW, nameB, publicKeyW, publicKeyB, operatorPublicKey, mod, userMod, }) {
+    constructor({ computer, amount, nameW, nameB, publicKeyW, publicKeyB, mod, userMod, }) {
         if (!VITE_API_BASE_URL) {
             throw new Error(`Please create a .env file with ${VITE_API_BASE_URL}`);
         }
@@ -79,13 +78,12 @@ export class ChessContractHelper {
         this.publicKeyB = publicKeyB;
         this.mod = mod;
         this.userMod = userMod;
-        this.operatorPublicKey = operatorPublicKey;
     }
     isInitialized() {
         return Object.values(this).every((element) => element !== undefined);
     }
     static fromContract(computer, game, mod, userMod) {
-        const { amount, nameW, nameB, publicKeyW, publicKeyB, operatorPublicKey } = game;
+        const { amount, nameW, nameB, publicKeyW, publicKeyB } = game;
         return new this({
             computer,
             amount,
@@ -93,14 +91,13 @@ export class ChessContractHelper {
             nameB,
             publicKeyW,
             publicKeyB,
-            operatorPublicKey,
             mod,
             userMod,
         });
     }
     // can we fetch the public key from the server
     getASM() {
-        return `OP_2 ${this.publicKeyW} ${this.publicKeyB} ${this.operatorPublicKey} OP_3 OP_CHECKMULTISIG`.replace(/\s+/g, ' ');
+        return `OP_2 ${this.publicKeyW} ${this.publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' ');
     }
     async makeTx() {
         if (!this.isInitialized())
@@ -112,8 +109,7 @@ export class ChessContractHelper {
         "${this.nameW}",
         "${this.nameB}",
         "${this.publicKeyW}",
-        "${this.publicKeyB}",
-        "${this.operatorPublicKey}"
+        "${this.publicKeyB}"
       )`,
             mod: this.mod,
             fund: false,
@@ -192,9 +188,9 @@ export class ChessContractHelper {
     }
     async spend(chessContract, fee = 10000) {
         const txId = chessContract._id.split(':')[0];
-        return this.spendWithConfirmationFromOperator(txId, chessContract, fee);
+        return this.spendWithConfirmation(txId, chessContract, fee);
     }
-    async spendWithConfirmationFromOperator(txId, chessContract, fee = 10000) {
+    async spendWithConfirmation(txId, chessContract, fee = 10000) {
         if (!this.isInitialized())
             throw new Error('Chess helper is not initialized');
         const chain = this.computer.getChain();

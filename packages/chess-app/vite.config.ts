@@ -1,23 +1,37 @@
 /// <reference types="vite/client" />
 
 import { defineConfig, loadEnv } from 'vite'
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill'
 import react from '@vitejs/plugin-react'
+import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import path from 'path'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
-    plugins: [react()],
+    plugins: [
+      react(),
+      nodePolyfills({
+        globals: {
+          Buffer: true,
+          global: true,
+          process: true,
+        },
+        protocolImports: true, // Polyfill modules like stream, crypto, etc.
+      }),
+    ],
     resolve: {
       alias: {
+        // Alias for @bitcoin-computer/lib to browser-compatible version
         '@bitcoin-computer/lib': path.resolve(__dirname, '../lib/dist/bc-lib.browser.min.mjs'),
+        // Aliases for Node.js built-ins to browser-compatible versions
         buffer: 'buffer',
-        crypto: 'crypto-browserify/index.js',
+        crypto: 'crypto-browserify',
+        path: 'path-browserify',
+        stream: 'stream-browserify',
       },
     },
     server: {
-      port: parseInt(env.VITE_PORT),
+      port: parseInt(env.VITE_PORT) || 3000, // Fallback port if env.VITE_PORT is undefined
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',
         'Cross-Origin-Embedder-Policy': 'require-corp',
@@ -28,12 +42,10 @@ export default defineConfig(({ mode }) => {
         define: {
           global: 'globalThis',
         },
-        plugins: [
-          NodeGlobalsPolyfillPlugin({
-            buffer: true,
-          }),
-        ],
       },
+    },
+    define: {
+      'process.env': {},
     },
   }
 })

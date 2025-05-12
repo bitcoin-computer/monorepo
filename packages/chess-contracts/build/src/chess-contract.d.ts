@@ -7,19 +7,17 @@ type PaymentType = {
     amount: number;
     publicKeyW: string;
     publicKeyB: string;
-    operatorPublicKey: string;
 };
 export declare class Payment extends Contract {
-    constructor({ amount, publicKeyW, publicKeyB, operatorPublicKey }: PaymentType);
+    constructor({ amount, publicKeyW, publicKeyB }: PaymentType);
 }
 type WinnerTxWrapperType = {
     publicKeyW: string;
     publicKeyB: string;
-    operatorPublicKey: string;
 };
 export declare class WinnerTxWrapper extends Contract {
     redeemTxHex: string;
-    constructor({ publicKeyW, publicKeyB, operatorPublicKey }: WinnerTxWrapperType);
+    constructor({ publicKeyW, publicKeyB }: WinnerTxWrapperType);
     setRedeemHex(txHex: string): void;
 }
 export declare class ChessContract extends Contract {
@@ -28,12 +26,11 @@ export declare class ChessContract extends Contract {
     nameB: string;
     publicKeyW: string;
     publicKeyB: string;
-    operatorPublicKey: string;
     sans: string[];
     fen: string;
     payment: Payment;
     winnerTxWrapper: WinnerTxWrapper;
-    constructor(amount: number, nameW: string, nameB: string, publicKeyW: string, publicKeyB: string, operatorPublicKey: string);
+    constructor(amount: number, nameW: string, nameB: string, publicKeyW: string, publicKeyB: string);
     setRedeemHex(txHex: string): void;
     move(from: string, to: string, promotion: string): string;
     isGameOver(): boolean;
@@ -45,17 +42,15 @@ export declare class ChessContractHelper {
     nameB?: string;
     publicKeyW?: string;
     publicKeyB?: string;
-    operatorPublicKey?: string;
     mod?: string;
     userMod?: string;
-    constructor({ computer, amount, nameW, nameB, publicKeyW, publicKeyB, operatorPublicKey, mod, userMod, }: {
+    constructor({ computer, amount, nameW, nameB, publicKeyW, publicKeyB, mod, userMod, }: {
         computer: Computer;
         amount?: number;
         nameW?: string;
         nameB?: string;
         publicKeyW?: string;
         publicKeyB?: string;
-        operatorPublicKey?: string;
         mod?: string;
         userMod?: string;
     });
@@ -69,7 +64,7 @@ export declare class ChessContractHelper {
         isGameOver: boolean;
     }>;
     spend(chessContract: ChessContract, fee?: number): Promise<void>;
-    spendWithConfirmationFromOperator(txId: string, chessContract: ChessContract, fee?: number): Promise<void>;
+    spendWithConfirmation(txId: string, chessContract: ChessContract, fee?: number): Promise<void>;
     static validateAndSignRedeemTx(redeemTx: Transaction, winnerPublicKey: Buffer, validatorKeyPair: ECPairInterface, expectedRedeemScript: Buffer, network: networks.Network, playerWIsTheValidator?: boolean): Transaction;
 }
 export {};

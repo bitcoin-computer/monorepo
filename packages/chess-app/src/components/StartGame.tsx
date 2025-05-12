@@ -47,7 +47,7 @@ export function StartGameModalContent({
         VITE_CHESS_USER_MOD_SPEC,
       )
       const txId = await chessContractHelper.completeTx(tx)
-      setLink(`http://localhost:1032/game/${txId}:0`)
+      setLink(`${window.location.origin}/game/${txId}:0`)
       showLoader(false)
     } catch (err) {
       if (err instanceof Error) {

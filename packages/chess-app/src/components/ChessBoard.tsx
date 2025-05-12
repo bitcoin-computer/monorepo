@@ -18,12 +18,7 @@ import { NewGameModal, newGameModal } from './NewGame'
 import { InfiniteScroll } from './GamesList'
 import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
-import { script as bscript, networks } from '@bitcoin-computer/nakamotojs'
-import { ECPairFactory } from 'ecpair'
-import * as ecc from '@bitcoin-computer/secp256k1'
-import { Transaction } from '@bitcoin-computer/lib'
-import { Buffer } from 'buffer'
-const ECPair = ECPairFactory(ecc)
+import { signRedeemTx } from './utils/chessContractUtils'
 
 const winnerModal = 'winner-modal'
 
@@ -232,34 +227,9 @@ export function ChessBoard() {
                     )
                     return
                   }
-                  const network = computer.getNetwork()
-                  const chain = computer.getChain()
-                  const NETWORKOBJ = networks.getNetwork(chain, network)
-
-                  const { privateKey: currentPlayerPrivateKey } = computer.wallet
-                  const currentPlayerKeyPair = ECPair.fromPrivateKey(currentPlayerPrivateKey, {
-                    network: NETWORKOBJ,
-                  })
-
-                  const redeemTx = Transaction.fromHex(txWrapper.redeemTxHex)
-
-                  const expectedRedeemScript = bscript.fromASM(
-                    `OP_2 ${chessContract.publicKeyW} ${chessContract.publicKeyB} ${chessContract.operatorPublicKey} OP_3 OP_CHECKMULTISIG`,
-                  )
-
-                  const playerWIsTheValidator = computer.getPublicKey() === chessContract.publicKeyW
-
-                  // Validate and sign the transaction
-                  const signedRedeemTx = ChessContractHelper.validateAndSignRedeemTx(
-                    redeemTx,
-                    Buffer.from(winnerPublicKey, 'hex'),
-                    currentPlayerKeyPair,
-                    expectedRedeemScript,
-                    NETWORKOBJ,
-                    playerWIsTheValidator,
-                  )
-
-                  // Broadcast the fully signed transaction
+                  // showSnackBar(`not closing this now so we can test the flow from my games`, false)
+                  // return
+                  const signedRedeemTx = await signRedeemTx(computer, chessContract, txWrapper)
                   const finalTxId = await computer.broadcast(signedRedeemTx)
 
                   showSnackBar(`You lost the game, fund released. Transaction: ${finalTxId}`, true)

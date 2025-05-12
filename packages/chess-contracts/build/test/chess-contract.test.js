@@ -1,7 +1,5 @@
 import { Computer, Transaction } from '@bitcoin-computer/lib';
-import { bufferUtils, 
-// crypto,
-networks, payments, script as bscript, } from '@bitcoin-computer/nakamotojs';
+import { bufferUtils, networks, payments, script as bscript } from '@bitcoin-computer/nakamotojs';
 import { ChessContractHelper } from '../src/chess-contract.js';
 import { expect } from 'expect';
 import { ECPairFactory } from 'ecpair';
@@ -66,6 +64,9 @@ describe('Should create a deposit transaction for the Chess game with operator',
         return commitTxId;
     };
     const createRedeemTx = (claimantKeyPair, commitTxId, outputScript, amount) => {
+        if (!outputScript) {
+            throw new Error('Invalid outputScript provided');
+        }
         const redeemTx = new Transaction();
         redeemTx.addInput(Buffer.from(commitTxId, 'hex').reverse(), 0);
         redeemTx.addOutput(outputScript, amount);
