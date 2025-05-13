@@ -30,7 +30,6 @@ const UserRow = ({ gameId }: { gameId: string }) => {
         return
       }
       const isUnspent = await computer.isUnspent(syncedObj?.payment._rev)
-      console.log(syncedObj?.payment._rev, isUnspent)
       setPaymentReleased(!isUnspent)
     }
     fetch()
