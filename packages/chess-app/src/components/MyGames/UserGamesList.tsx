@@ -174,8 +174,7 @@ const UserGamesList = () => {
 
   return (
     <div className="relative overflow-x-auto">
-      <h1 className="mb-2 text-5xl font-extrabold dark:text-white">{user?.name}</h1>
-      <h2 className="mb-2 text-4xl font-bold dark:text-white">My Games</h2>
+      <h2 className="mb-2 text-2xl font-bold dark:text-white">My Games</h2>
       <table className="w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400">
         <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
           <tr>
