@@ -184,6 +184,7 @@ export function ChessBoard() {
     if (chessContractId) {
       const subscribeToComputer = async () => {
         close = await computer.subscribe(chessContractId, (rev) => {
+          console.log('subscribeToComputer, rev: ', rev)
           if (rev) syncChessContract()
         })
       }
@@ -193,6 +194,7 @@ export function ChessBoard() {
 
     return () => {
       if (close) {
+        console.log('subscribeToComputer, close called.')
         close()
       }
     }
@@ -207,6 +209,7 @@ export function ChessBoard() {
           const cc = await fetchChessContract()
           const subscribeToWinnerTx = async () => {
             close = await computer.subscribe(cc.winnerTxWrapper._id, async (rev) => {
+              console.log('subscribeToWinnerTx, rev: ', rev)
               if (rev) {
                 const txWrapper = (await computer.sync(rev.rev)) as WinnerTxWrapper
                 if (txWrapper.redeemTxHex) {
@@ -248,6 +251,7 @@ export function ChessBoard() {
 
     return () => {
       if (close) {
+        console.log('subscribeToWinnerTx, close called.')
         close()
       }
     }
