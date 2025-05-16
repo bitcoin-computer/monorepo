@@ -14,7 +14,6 @@ export default defineConfig(({ mode }) => {
         globals: {
           Buffer: true,
           global: true,
-          process: true,
         },
         protocolImports: true, // Polyfill modules like stream, crypto, etc.
       }),
@@ -23,11 +22,6 @@ export default defineConfig(({ mode }) => {
       alias: {
         // Alias for @bitcoin-computer/lib to browser-compatible version
         '@bitcoin-computer/lib': path.resolve(__dirname, '../lib/dist/bc-lib.browser.min.mjs'),
-        // Aliases for Node.js built-ins to browser-compatible versions
-        buffer: 'buffer',
-        crypto: 'crypto-browserify',
-        path: 'path-browserify',
-        stream: 'stream-browserify',
       },
     },
     server: {
@@ -43,9 +37,6 @@ export default defineConfig(({ mode }) => {
           global: 'globalThis',
         },
       },
-    },
-    define: {
-      'process.env': {},
     },
   }
 })

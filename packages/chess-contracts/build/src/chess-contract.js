@@ -264,4 +264,20 @@ export class ChessContractHelper {
         return redeemTx;
     }
 }
+export const signRedeemTx = async (computer, chessContract, txWrapper) => {
+    const winnerPublicKey = chessContract._owners[0];
+    const network = computer.getNetwork();
+    const chain = computer.getChain();
+    const NETWORKOBJ = networks.getNetwork(chain, network);
+    const { privateKey: currentPlayerPrivateKey } = computer.wallet;
+    const currentPlayerKeyPair = ECPair.fromPrivateKey(currentPlayerPrivateKey, {
+        network: NETWORKOBJ,
+    });
+    const redeemTx = Transaction.fromHex(txWrapper.redeemTxHex);
+    const expectedRedeemScript = bscript.fromASM(`OP_2 ${chessContract.publicKeyW} ${chessContract.publicKeyB} OP_2 OP_CHECKMULTISIG`);
+    const playerWIsTheValidator = computer.getPublicKey() === chessContract.publicKeyW;
+    // Validate and sign the transaction
+    const signedRedeemTx = ChessContractHelper.validateAndSignRedeemTx(redeemTx, Buffer.from(winnerPublicKey, 'hex'), currentPlayerKeyPair, expectedRedeemScript, NETWORKOBJ, playerWIsTheValidator);
+    return signedRedeemTx;
+};
 //# sourceMappingURL=chess-contract.js.map

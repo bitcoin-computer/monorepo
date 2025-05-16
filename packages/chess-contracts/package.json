@@ -5,15 +5,15 @@
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "type": "module",
+  "main": "./build/src/main.js",
+  "module": "./build/src/main.js",
   "exports": {
-    ".": "./build/src/index.js"
+    ".": "./build/src/main.js"
   },
-  "main": "./build/src/index.js",
-  "module": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
   "scripts": {
     "prebuild": "npm run lint",
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && parcel build --target main",
     "build:turbo": "turbo run build",
     "clean:logs": "rm -f *.log 2> /dev/null",
     "deploy": "tsc && node ./build/scripts/deploy.js",
@@ -23,6 +23,37 @@
     "test:show": "npm run test 2>&1 | tee chess-contracts.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open chess-contracts.log; fi",
     "types": "tsc --noEmit"
   },
+  "alias": {
+    "buffer": "buffer/index.js",
+    "assert": "assert/build/assert.js",
+    "crypto": "crypto-browserify/index.js",
+    "process": "process/browser.js",
+    "events": "events/events.js",
+    "stream": "stream-browserify/index.js",
+    "string_decoder": "string_decoder/lib/string_decoder.js",
+    "querystring": "querystring-es3",
+    "punycode": "punycode/punycode.js",
+    "util": "util/util.js"
+  },
+  "targets": {
+    "main": {
+      "source": "./build/src/index.js",
+      "distDir": "./build/src",
+      "outputFormat": "esmodule",
+      "context": "browser",
+      "includeNodeModules": {
+        "buffer": true,
+        "stream": true,
+        "string_decoder": true,
+        "events": true,
+        "process": true,
+        "@bitcoin-computer/secp256k1": false,
+        "@bitcoin-computer/lib": false
+      },
+      "sourceMap": false,
+      "optimize": true
+    }
+  },
   "dependencies": {
     "@bitcoin-computer/lib": "^0.24.3-beta.0",
     "@bitcoin-computer/secp256k1": "^0.24.3-beta.0",
@@ -30,7 +61,17 @@
     "expect": "^29.7.0",
     "path": "^0.12.7",
     "typescript": "~5.3.3",
-    "url": "^0.11.4"
+    "url": "^0.11.4",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "stream-browserify": "^3.0.0",
+    "assert": "^2.0.0",
+    "process": "^0.11.10",
+    "events": "^3.3.0",
+    "string_decoder": "^1.3.0",
+    "querystring-es3": "^0.2.1",
+    "punycode": "^2.1.1",
+    "util": "^0.12.4"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
@@ -40,7 +81,8 @@
     "dotenv": "^16.4.5",
     "mocha": "^10.3.0",
     "prettier": "~3.2.5",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "parcel": "^2.13.3"
   },
   "volta": {
     "node": "16.13.0"

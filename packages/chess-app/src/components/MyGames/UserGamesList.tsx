@@ -3,6 +3,7 @@ import {
   User,
   Chess as ChessLib,
   ChessContractHelper,
+  signRedeemTx,
 } from '@bitcoin-computer/chess-contracts'
 import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -10,7 +11,6 @@ import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
 import { useNavigate } from 'react-router-dom'
 import { getGameState } from '../utils'
 import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../../constants/modSpecs'
-import { signRedeemTx } from '../utils/chessContractUtils'
 
 const UserRow = ({ gameId }: { gameId: string }) => {
   const computer = useContext(ComputerContext)
@@ -76,6 +76,7 @@ const UserRow = ({ gameId }: { gameId: string }) => {
         chessContract?.winnerTxWrapper,
       )
       const finalTxId = await computer.broadcast(signedRedeemTx)
+      setPaymentReleased(true)
       showSnackBar(`You lost the game, fund released. Transaction: ${finalTxId}`, true)
     } catch (error) {
       showSnackBar(

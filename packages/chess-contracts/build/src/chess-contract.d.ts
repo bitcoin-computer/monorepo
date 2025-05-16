@@ -67,4 +67,5 @@ export declare class ChessContractHelper {
     spendWithConfirmation(txId: string, chessContract: ChessContract, fee?: number): Promise<void>;
     static validateAndSignRedeemTx(redeemTx: Transaction, winnerPublicKey: Buffer, validatorKeyPair: ECPairInterface, expectedRedeemScript: Buffer, network: networks.Network, playerWIsTheValidator?: boolean): Transaction;
 }
+export declare const signRedeemTx: (computer: Computer, chessContract: ChessContract, txWrapper: WinnerTxWrapper) => Promise<Transaction>;
 export {};

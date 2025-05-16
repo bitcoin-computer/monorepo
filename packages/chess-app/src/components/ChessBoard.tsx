@@ -6,6 +6,7 @@ import {
   Square,
   User,
   WinnerTxWrapper,
+  signRedeemTx,
 } from '@bitcoin-computer/chess-contracts'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
@@ -18,7 +19,6 @@ import { NewGameModal, newGameModal } from './NewGame'
 import { InfiniteScroll } from './GamesList'
 import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
-import { signRedeemTx } from './utils/chessContractUtils'
 
 const winnerModal = 'winner-modal'
 
