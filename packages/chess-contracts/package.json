@@ -60,7 +60,7 @@
     "ecpair": "^2.1.0",
     "expect": "^29.7.0",
     "path": "^0.12.7",
-    "typescript": "~5.3.3",
+    "typescript": "^5.8.2",
     "url": "^0.11.4",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
@@ -81,8 +81,7 @@
     "dotenv": "^16.4.5",
     "mocha": "^10.3.0",
     "prettier": "~3.2.5",
-    "ts-node": "^10.9.2",
-    "parcel": "^2.13.3"
+    "ts-node": "^10.9.2"
   },
   "volta": {
     "node": "16.13.0"
