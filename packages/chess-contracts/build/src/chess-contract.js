@@ -156,15 +156,17 @@ export class ChessContractHelper {
         return this.computer.broadcast(tx);
     }
     async move(chessContract, from, to, promotion) {
-        const [userRev] = await this.computer.query({
-            mod: this.userMod,
-            publicKey: this.computer.getPublicKey(),
-        });
-        if (userRev) {
-            const userObj = (await this.computer.sync(userRev));
-            const gameId = chessContract._id;
-            if (!userObj.games.includes(gameId)) {
-                await userObj.addGame(gameId);
+        if (chessContract && chessContract.sans.length < 2) {
+            const [userRev] = await this.computer.query({
+                mod: this.userMod,
+                publicKey: this.computer.getPublicKey(),
+            });
+            if (userRev) {
+                const userObj = (await this.computer.sync(userRev));
+                const gameId = chessContract._id;
+                if (!userObj.games.includes(gameId)) {
+                    await userObj.addGame(gameId);
+                }
             }
         }
         const { tx, effect } = (await this.computer.encodeCall({

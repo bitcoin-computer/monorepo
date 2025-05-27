@@ -76,7 +76,7 @@ export const InfiniteScroll = ({
     <div className="w-full h-full overflow-hidden flex flex-col bg-white dark:bg-gray-800 border border-gray-300  dark:border-gray-700 rounded-lg">
       <div className="flex justify-center mt-2 mb-2">
         <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
-          All Games{' '}
+          My Games{' '}
           <HiRefresh
             onClick={refreshUser}
             className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"

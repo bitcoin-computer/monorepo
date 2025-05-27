@@ -72,7 +72,7 @@ function WinnerModal(data: { winnerPubKey: string; userPubKey: string }) {
       <div className="p-4">
         <p className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-gray-200">
           {data.winnerPubKey === data.userPubKey
-            ? `Congratiolations! You have won the game. `
+            ? `Congratulations! You have won the game. `
             : `Sorry! You have lost the game. `}
         </p>
       </div>
@@ -183,8 +183,7 @@ export function ChessBoard() {
     let close: () => void // Declare a variable to hold the subscription
     if (chessContractId) {
       const subscribeToComputer = async () => {
-        close = await computer.subscribe(chessContractId, (rev) => {
-          console.log('subscribeToComputer, rev: ', rev)
+        close = await computer.subscribe(chessContractId, async (rev) => {
           if (rev) syncChessContract()
         })
       }
@@ -194,7 +193,6 @@ export function ChessBoard() {
 
     return () => {
       if (close) {
-        console.log('subscribeToComputer, close called.')
         close()
       }
     }
@@ -209,7 +207,6 @@ export function ChessBoard() {
           const cc = await fetchChessContract()
           const subscribeToWinnerTx = async () => {
             close = await computer.subscribe(cc.winnerTxWrapper._id, async (rev) => {
-              console.log('subscribeToWinnerTx, rev: ', rev)
               if (rev) {
                 const txWrapper = (await computer.sync(rev.rev)) as WinnerTxWrapper
                 if (txWrapper.redeemTxHex) {
@@ -251,7 +248,6 @@ export function ChessBoard() {
 
     return () => {
       if (close) {
-        console.log('subscribeToWinnerTx, close called.')
         close()
       }
     }
@@ -284,7 +280,6 @@ export function ChessBoard() {
         to,
         promotion,
       })
-
       setGame(new ChessLib(chessGameInstance.fen()))
       publishMove(from, to, promotion).catch((error) => {
         handleError(error)
@@ -416,7 +411,7 @@ export function ChessBoard() {
                   type="button"
                   className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
-                  Start play
+                  Start New Game
                 </button>
               </div>
             </div>

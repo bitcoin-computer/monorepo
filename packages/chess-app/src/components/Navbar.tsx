@@ -9,6 +9,7 @@ const modalId = 'unsupported-config-modal'
 export const signInModal = 'sign-in-modal'
 
 function formatChainAndNetwork(chain: Chain, network: Network) {
+  if (!chain || !network) return ''
   const map = {
     mainnet: '',
     testnet: 't',
@@ -100,14 +101,24 @@ export function NotLoggedMenu() {
     initFlowbite()
 
     const { chain, network } = Auth.defaultConfiguration()
-    setDropDownLabel(formatChainAndNetwork(chain, network))
+    // default to LTC regtest
+    setDropDownLabel(
+      formatChainAndNetwork(chain, network)
+        ? formatChainAndNetwork(chain, network)
+        : formatChainAndNetwork('LTC', 'regtest'),
+    )
   }, [])
 
   const setChainAndNetwork = (chain: Chain, network: Network) => {
     try {
       localStorage.setItem('CHAIN', chain)
       localStorage.setItem('NETWORK', network)
-      setDropDownLabel(formatChainAndNetwork(chain, network))
+      // default to LTC regtest
+      setDropDownLabel(
+        formatChainAndNetwork(chain, network)
+          ? formatChainAndNetwork(chain, network)
+          : formatChainAndNetwork('LTC', 'regtest'),
+      )
       window.location.href = '/'
     } catch (error) {
       if (error instanceof Error) {
