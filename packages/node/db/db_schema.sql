@@ -33,6 +33,16 @@ CREATE TABLE IF NOT EXISTS
     "processed" BOOLEAN NOT NULL
   );
 
+CREATE INDEX "BlockIndex"
+ON "Block"("height");
+
+CREATE INDEX "OutputAddressIndex"
+ON "Output"("address");
+
+CREATE INDEX "OutputPreviousIndex"
+ON "Output"("previous");
+
+
 CREATE TABLE IF NOT EXISTS
   "User" (
     "publicKey" VARCHAR(66) NOT NULL PRIMARY KEY,
