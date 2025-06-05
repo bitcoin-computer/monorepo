@@ -69,7 +69,7 @@ function Component() {
                 switch (_a.label) {
                     case 0:
                         setTxn(params.txn);
-                        return [4 /*yield*/, computer.wallet.restClient.getRawTxs([params.txn])];
+                        return [4 /*yield*/, computer.db.wallet.restClient.getRawTxs([params.txn])];
                     case 1:
                         hex = (_a.sent())[0];
                         tx = Computer.txFromHex({ hex: hex });

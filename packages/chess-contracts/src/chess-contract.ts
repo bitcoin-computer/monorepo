@@ -199,8 +199,8 @@ export class ChessContractHelper {
     const chain = this.computer.getChain()
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)
-    const addy = address.fromPublicKey(this.computer.wallet.publicKey, 'p2pkh', n)
-    const utxos = await this.computer.wallet.restClient.getFormattedUtxos(addy)
+    const addy = address.fromPublicKey(this.computer.db.wallet.publicKey, 'p2pkh', n)
+    const utxos = await this.computer.db.wallet.restClient.getFormattedUtxos(addy)
     let paid = 0
     while (paid < this.amount / 2 && utxos.length > 0) {
       const { txId, vout, satoshis } = utxos.pop()!
@@ -212,8 +212,8 @@ export class ChessContractHelper {
     if (paid < this.amount) throw new Error(NotEnoughFundError)
 
     // Add change
-    const fee = await this.computer.wallet.estimateFee(tx)
-    const publicKeyBuffer = this.computer.wallet.publicKey
+    const fee = await this.computer.db.wallet.estimateFee(tx)
+    const publicKeyBuffer = this.computer.db.wallet.publicKey
     const { output } = payments.p2pkh({ pubkey: publicKeyBuffer, network: n })
     const changeAmount = paid - this.amount / 2 - 5 * fee // todo: optimize the fee
     tx.addOutput(output!, changeAmount)
@@ -238,7 +238,7 @@ export class ChessContractHelper {
     this.secretHashB = chessContract.secretHashB
 
     // Fund
-    const fee = await this.computer.wallet.estimateFee(tx)
+    const fee = await this.computer.db.wallet.estimateFee(tx)
     const txId = await this.computer.send(this.amount / 2 + 5 * fee, this.computer.getAddress())
     const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
     tx.addInput(txHash, 0)
@@ -288,7 +288,7 @@ export class ChessContractHelper {
     const chain = this.computer.getChain()
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)
-    const { hdPrivateKey } = this.computer.wallet
+    const { hdPrivateKey } = this.computer.db.wallet
 
     // Create redeem script
     const asmFromBuf = (sigHash: Buffer) => [
