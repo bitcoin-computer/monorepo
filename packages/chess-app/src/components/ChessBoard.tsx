@@ -211,7 +211,6 @@ export function ChessBoard() {
                 const txWrapper = (await computer.sync(rev.rev)) as WinnerTxWrapper
                 if (txWrapper.redeemTxHex) {
                   // Explicitly fetching chess contract again to get the latest state
-                  // Can the user modify inputs and outputs of a partially signed transaction???
                   const chessContract = await fetchChessContract()
                   const game = new ChessLib(chessContract.fen)
                   if (!game.isGameOver()) {
