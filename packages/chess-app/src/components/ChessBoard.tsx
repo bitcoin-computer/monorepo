@@ -226,8 +226,6 @@ export function ChessBoard() {
                     )
                     return
                   }
-                  // showSnackBar(`not closing this now so we can test the flow from my games`, false)
-                  // return
                   const signedRedeemTx = await signRedeemTx(computer, chessContract, txWrapper)
                   const finalTxId = await computer.broadcast(signedRedeemTx)
 
