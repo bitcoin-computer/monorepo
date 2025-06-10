@@ -52,7 +52,6 @@ import {
   isP2SHScript,
 } from './psbt/psbtutils.js';
 import { Buffer } from 'buffer';
-import { MAX_SAFE_NUMBER } from './types.js';
 
 export interface TransactionInput {
   hash: string | Buffer;
@@ -222,7 +221,7 @@ export class Psbt {
       try {
         address = fromOutputScript(output.script, this.opts.network);
       } catch (_) {}
-      if (output.value > MAX_SAFE_NUMBER)
+      if (output.value > Number.MAX_SAFE_INTEGER)
         throw new Error('Out of bounds for Number type, loss of precision');
       return {
         script: cloneBuffer(output.script),
@@ -243,7 +242,8 @@ export class Psbt {
         const bigValue = Transaction.fromBuffer(input.nonWitnessUtxo).outs[
           txin.index
         ].value;
-        if (bigValue > MAX_SAFE_NUMBER) throw new Error('Value too large');
+        if (bigValue > Number.MAX_SAFE_INTEGER)
+          throw new Error('Value too large');
         return Number(bigValue);
       } else {
         throw new Error('Could not get input of #' + index);
@@ -1661,7 +1661,7 @@ function getHashForSig(
     const prevoutIndex = unsignedTx.ins[inputIndex].index;
     prevout.script = nonWitnessUtxoTx.outs[prevoutIndex].script;
 
-    if (nonWitnessUtxoTx.outs[prevoutIndex].value > MAX_SAFE_NUMBER)
+    if (nonWitnessUtxoTx.outs[prevoutIndex].value > Number.MAX_SAFE_INTEGER)
       throw new Error('Transaction amount is too high to safely process');
 
     prevout.value = Number(nonWitnessUtxoTx.outs[prevoutIndex].value);
@@ -2066,7 +2066,7 @@ function inputFinalizeGetAmts(
       const nwTx = nonWitnessUtxoTxFromCache(cache, input, idx);
       const vout = tx.ins[idx].index;
       const out = nwTx.outs[vout] as Output;
-      if (out.value > MAX_SAFE_NUMBER)
+      if (out.value > Number.MAX_SAFE_INTEGER)
         throw new Error(
           'Cannot finalize input with value greater than safe integer',
         );
@@ -2075,7 +2075,7 @@ function inputFinalizeGetAmts(
     }
   });
   tx.outs.map(o => {
-    if (o.value > MAX_SAFE_NUMBER)
+    if (o.value > Number.MAX_SAFE_INTEGER)
       throw new Error(
         'Cannot finalize input with value greater than safe integer',
       );
@@ -2132,7 +2132,7 @@ function getScriptAndAmountFromUtxo(
       inputIndex,
     );
     const o = nonWitnessUtxoTx.outs[cache.__TX.ins[inputIndex].index];
-    if (o.value > MAX_SAFE_NUMBER)
+    if (o.value > Number.MAX_SAFE_INTEGER)
       throw new Error(
         'Cannot finalize input with value greater than safe integer',
       );
