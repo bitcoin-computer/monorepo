@@ -37,6 +37,7 @@
     "clean:blockchain:data": "rm -rf chain-setup/*/*/blockchain-data",
     "clean:db:data": "rm -rf chain-setup/*/*/db-data",
     "clean:logs": "rm -f *.log 2> /dev/null",
+    "create:indexes": "nohup node --loader ts-node/esm ./scripts/create-indexes.ts > /dev/null 2>&1 &",
     "down": "docker compose -f docker-compose.yml down",
     "fund": "node --loader ts-node/esm ./scripts/fund.ts",
     "lint": "eslint",

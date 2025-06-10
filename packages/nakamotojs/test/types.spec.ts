@@ -43,7 +43,7 @@ describe('types', () => {
     });
   });
 
-  describe('Satoshi', () => {
+  describe('SmallSatoshi', () => {
     [
       { value: -1, result: false },
       { value: 0, result: true },
@@ -53,7 +53,7 @@ describe('types', () => {
       { value: 21000001 * 1e8, result: false },
     ].forEach(f => {
       it('returns ' + f.result + ' for valid for ' + f.value, () => {
-        assert.strictEqual(types.Satoshi(f.value), f.result);
+        assert.strictEqual(types.SmallSatoshi(f.value), f.result);
       });
     });
   });
