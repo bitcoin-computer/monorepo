@@ -6,7 +6,7 @@ import { Auth } from './Auth';
 import { Drawer } from './Drawer';
 import { UtilsContext } from './UtilsContext';
 import { ComputerContext } from './ComputerContext';
-import { getEnv, bigInt2Str } from './common/utils';
+import { getEnv, bigIntToStr } from './common/utils';
 const Balance = ({ computer, modSpecs }) => {
     const [balance, setBalance] = useState(0n);
     const [, setChain] = useState(localStorage.getItem('CHAIN') || 'LTC');
@@ -40,7 +40,7 @@ const Balance = ({ computer, modSpecs }) => {
     useEffect(() => {
         refreshBalance();
     }, []);
-    return (_jsxs("div", { id: "dropdown-cta", className: "relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900", role: "alert", children: [_jsxs("div", { className: "text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400", children: [bigInt2Str(balance), " ", computer.getChain(), ' ', _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] }), _jsx("div", { className: "text-center uppercase text-xs text-blue-800 dark:text-blue-400", children: computer.getNetwork() }), computer.getNetwork() === 'regtest' && (_jsx("button", { id: "fund-wallet", type: "button", onClick: fund, className: "absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800", children: "Fund" }))] }));
+    return (_jsxs("div", { id: "dropdown-cta", className: "relative flex flex-col p-6 my-4 rounded-lg bg-blue-50 dark:bg-blue-900", role: "alert", children: [_jsxs("div", { className: "text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400", children: [bigIntToStr(balance), " ", computer.getChain(), ' ', _jsx(HiRefresh, { onClick: refreshBalance, className: "w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100" })] }), _jsx("div", { className: "text-center uppercase text-xs text-blue-800 dark:text-blue-400", children: computer.getNetwork() }), computer.getNetwork() === 'regtest' && (_jsx("button", { id: "fund-wallet", type: "button", onClick: fund, className: "absolute bottom-2 right-2 px-1 py-1 text-center text-xs font-medium text-center text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800", children: "Fund" }))] }));
 };
 const Address = ({ computer }) => {
     const [copied, setCopied] = useState(false);

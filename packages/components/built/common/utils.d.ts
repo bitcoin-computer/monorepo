@@ -12,6 +12,6 @@ export declare function isValidRevString(outId: string): boolean;
 export declare function isValidRev(value: string | number | boolean | null | undefined): boolean;
 export declare const sleep: (ms: number) => Promise<void>;
 export declare function getEnv(name: string): any;
-export declare function bigInt2Str(a: bigint): string;
-export declare function str2BigInt(a: string): bigint;
+export declare function bigIntToStr(a: bigint): string;
+export declare function strToBigInt(a: string): bigint;
 export {};

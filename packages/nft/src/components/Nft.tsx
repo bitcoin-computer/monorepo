@@ -5,7 +5,7 @@ import {
   Modal,
   UtilsContext,
   ComputerContext,
-  bigInt2Str,
+  bigIntToStr,
 } from '@bitcoin-computer/components'
 import { Computer } from '@bitcoin-computer/lib'
 import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from '@bitcoin-computer/swap'
@@ -214,7 +214,7 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
       {nftAmount !== 0n && (
         <div className="sm:w-full">
           <h2 className="mt-3 text-l font-bold dark:text-white">
-            NFT Listed At {bigInt2Str(nftAmount)} {computer.getChain()}
+            NFT Listed At {bigIntToStr(nftAmount)} {computer.getChain()}
           </h2>
         </div>
       )}
@@ -268,7 +268,7 @@ const BuyNftComponent = ({
             showLoader(true)
             const nftAmount = await BuyNFT({ computer, nft: smartObject, setFunctionResult })
             showSnackBar(
-              `You bought this NFT for ${bigInt2Str(nftAmount)} ${computer.getChain()}`,
+              `You bought this NFT for ${bigIntToStr(nftAmount)} ${computer.getChain()}`,
               true,
             )
             showLoader(false)

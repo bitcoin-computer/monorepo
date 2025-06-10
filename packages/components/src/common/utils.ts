@@ -85,7 +85,7 @@ export function bigIntToStr(a: bigint): string {
   return `${integerPart}.${fractionalPart || '0'}`
 }
 
-export function str2BigInt(a: string): bigint {
+export function strToBigInt(a: string): bigint {
   // Validate number contains at most one dot and is not empty
   if ((a.match(/\./g) || []).length > 1 || a === '.' || a === '') {
     throw new Error('Invalid number')

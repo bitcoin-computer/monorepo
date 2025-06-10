@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ComputerContext, UtilsContext, bigInt2Str } from '@bitcoin-computer/components'
+import { ComputerContext, UtilsContext, bigIntToStr } from '@bitcoin-computer/components'
 
 interface _Unspent {
   txId: string
@@ -54,7 +54,7 @@ const UTXODisplay = () => {
           <div className="w-full">
             <h2 className="mb-2 text-4xl font-bold dark:text-white">Balance</h2>
             <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-              {bigInt2Str(totalAmount)} {computer.getChain()}
+              {bigIntToStr(totalAmount)} {computer.getChain()}
             </p>
           </div>
 
@@ -92,7 +92,7 @@ const UTXODisplay = () => {
                         {utxo.vout}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-bold">
-                        {bigInt2Str(utxo.satoshis)}
+                        {bigIntToStr(utxo.satoshis)}
                       </td>
                     </tr>
                   ))}

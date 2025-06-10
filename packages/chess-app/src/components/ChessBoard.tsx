@@ -1,7 +1,7 @@
 import {
   Auth,
   ComputerContext,
-  bigInt2Str,
+  bigIntToStr,
   Modal,
   UtilsContext,
 } from '@bitcoin-computer/components'
@@ -296,7 +296,7 @@ export function ChessBoard() {
                           Balance
                         </dt>
                         <dd className="text-lg font-semibold">
-                          {bigInt2Str(balance)} {computer.getChain()}
+                          {bigIntToStr(balance)} {computer.getChain()}
                         </dd>
                       </div>
                     </dl>
