@@ -76,7 +76,7 @@ export function getEnv(name: string) {
   )
 }
 
-export function bigInt2Str(a: bigint): string {
+export function bigIntToStr(a: bigint): string {
   if (a < 0n) throw new Error('Balance must be a non-negative')
 
   const scale = BigInt(1e8)
