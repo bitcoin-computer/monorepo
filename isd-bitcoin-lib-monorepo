@@ -1,0 +1,20 @@
+📁 isd-bitcoin-lib-monorepo/
+ ├── 📁 wallet/
+ │   ├── btc_wallet.js
+ │   ├── isd_wallet.js
+ │   ├── transaction_signer.js
+ │   └── encryption_manager.js
+ ├── 📁 blockchain/
+ │   ├── rpc_connector.js
+ │   ├── utxo_manager.js
+ │   ├── chain_monitor.js
+ │   └── node_validator.js
+ ├── 📁 smart-contracts/
+ │   ├── btc_smart_contract.sol
+ │   ├── isd_hybrid_contract.sol
+ │   ├── liquidity_scaler.sol
+ │   └── cloaking_encryption.sol
+ ├── package.json
+ ├── README.md
+ ├── .gitignore
+ └── yarn.lock
