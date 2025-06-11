@@ -31,7 +31,9 @@ function currentPlayer(fen: string) {
   throw new Error('Invalid FEN: Unknown active color')
 }
 
-function getWinnerPubKey(chessLibrary: ChessLib, { publicKeyW, publicKeyB }: ChessContract) {
+function getWinnerPubKey(chessContract: ChessContract) {
+  const chessLibrary = new ChessLib(chessContract.fen)
+  const { publicKeyW, publicKeyB } = chessContract
   if (chessLibrary.isCheckmate()) return chessLibrary.turn() === 'b' ? publicKeyW : publicKeyB
   return null
 }
@@ -107,14 +109,14 @@ export function ChessBoard() {
   }
 
   useEffect(() => {
-    if (!game || !chessContract) return
-    const winnerPubKey = getWinnerPubKey(game, chessContract)
+    if (!chessContract) return
+    const winnerPubKey = getWinnerPubKey(chessContract)
     if (!winnerPubKey) {
       return
     }
     setWinnerData({ winnerPubKey: winnerPubKey, userPubKey: computer.getPublicKey() })
     Modal.showModal(winnerModal)
-  }, [chessContract, computer, game])
+  }, [chessContract, computer])
 
   const syncChessContract = useCallback(async () => {
     try {
@@ -227,9 +229,11 @@ export function ChessBoard() {
                     return
                   }
                   const signedRedeemTx = await signRedeemTx(computer, chessContract, txWrapper)
-                  const finalTxId = await computer.broadcast(signedRedeemTx)
-
-                  showSnackBar(`You lost the game, fund released. Transaction: ${finalTxId}`, true)
+                  await computer.broadcast(signedRedeemTx)
+                  showSnackBar(
+                    `You lost the game! funds released, if failed please go to /my-games. `,
+                    true,
+                  )
                 }
               }
             })

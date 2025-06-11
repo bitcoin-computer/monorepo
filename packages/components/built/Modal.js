@@ -20,7 +20,7 @@ var toggleModal = function (id) {
 };
 var ShowButton = function (_a) {
     var id = _a.id, text = _a.text;
-    return (_jsx("button", { "data-modal-target": id, "data-modal-show": id, type: "button", children: text }));
+    return (_jsx("button", { "data-modal-target": id, "data-modal-show": id, "data-modal-hide": id, type: "button", children: text }));
 };
 var HideButton = function (_a) {
     var id = _a.id, text = _a.text;

@@ -330,8 +330,8 @@ function LoginForm() {
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {<ChainInput chain={chain} setChain={setChain} />}
-            {<NetworkInput network={network} setNetwork={setNetwork} />}
+            {!chain && <ChainInput chain={chain} setChain={setChain} />}
+            {!network && <NetworkInput network={network} setNetwork={setNetwork} />}
             {!url && <UrlInput urlInputRef={urlInputRef} />}
           </div>
         </form>
