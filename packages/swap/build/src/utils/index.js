@@ -4,13 +4,10 @@ export const RLTC = {
     chain: 'LTC',
     url: 'http://localhost:1031',
 };
-const isString = (x) => typeof x === 'string';
-const isNumber = (x) => typeof x === 'number';
-const isArray = (x) => Array.isArray(x);
 export const meta = {
-    _id: isString,
-    _rev: isString,
-    _root: isString,
-    _owners: isArray,
-    _amount: isNumber,
+    _id: (x) => typeof x === 'string',
+    _rev: (x) => typeof x === 'string',
+    _root: (x) => typeof x === 'string',
+    _owners: (x) => Array.isArray(x),
+    _satoshis: (x) => typeof x === 'bigint',
 };
