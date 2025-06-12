@@ -15,7 +15,7 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "start": "vite",
-    "test": "vitest run && npm run test:puppeteer:build:headless",
+    "test": "vitest run",
     "test:dev": "vitest",
     "test:puppeteer": "vitest run --config vitest.puppeteer.config.ts",
     "test:puppeteer:headless": "HEADLESS=true npm run test:puppeteer",
