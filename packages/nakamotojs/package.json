@@ -42,15 +42,13 @@
     "nobuild:coverage:html": "nyc report --reporter=html",
     "nobuild:coverage:report": "nyc report --reporter=lcov",
     "nobuild:integration": "BITCOIN_RPC_HOST=127.0.0.1 npm run mocha:ts -- --timeout 50000 'test/integration/*.js'",
-    "nobuild:unit": "npm run mocha:ts -- 'test/*.ts'",
     "prettier": "prettier \"ts_src/**/*.ts\" \"test/**/*.ts\" --ignore-path ./.prettierignore --write",
     "prettierjs": "prettier \"src/**/*.js\" --ignore-path ./.prettierignore",
     "test": "npm run build && npm run format:ci && npm run lint && npm run nobuild:coverage",
     "test:integration": "npm run build && npm run format:ci && npm run lint && npm run nobuild:integration",
     "test:integration:show": "npm run test:integration | tee nakamotojs-integration-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-integration-test.log; fi",
     "test:show": "npm run test:unit:show && npm run test:integration:show",
-    "test:unit:show": "npm run test 2>&1 | tee nakamotojs-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-test.log; fi",
-    "unit": "npm run build && npm run nobuild:unit"
+    "test:unit:show": "npm run test 2>&1 | tee nakamotojs-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-test.log; fi"
   },
   "dependencies": {
     "@noble/hashes": "^1.2.0",
