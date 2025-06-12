@@ -5,7 +5,7 @@ icon: number
 
 # Ordinal Sale
 
-The [`Sale`](./sale.md) smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call. To preserve the ordinal ranges the expression must not use the `_amount` keyword and must not return an object or an array containing an object.
+The [`Sale`](./sale.md) smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call. To preserve the ordinal ranges the expression must not use the `_satoshis` keyword and must not return an object or an array containing an object.
 
 Building a sale contract for ordinals is more complicated than for smart objects. A very clever construction was proposed [here](https://github.com/ordinals/ord/issues/802) and later [refined](https://github.com/ordinals/ord/issues/802#issuecomment-1498030294). Our smart contract below implements this exact idea.
 
@@ -25,7 +25,7 @@ class OrdSale extends Contract {
     n.transfer(ownerP)
     p.transfer(ownerT)
 
-    b1.setAmount(b1._amount + b2._amount)
+    b1.setAmount(b1._satoshis + b2._satoshis)
     return [b1, n, p, b2]
   }
 }
@@ -88,7 +88,7 @@ await buyer.faucet(2e8)
 const nft = await seller.new(NFT, ['name', 'symbol'])
 
 // Seller creates partially signed swap as a sale offer
-const paymentMock = new PaymentMock(7860)
+const paymentMock = new PaymentMock(7860n)
 const b1Mock = new PaymentMock()
 const b2Mock = new PaymentMock()
 
@@ -104,7 +104,7 @@ const { tx } = await seller.encode({
 })
 
 // Buyer creates a payment object with the asking price
-const payment = await buyer.new(Payment, [1e8])
+const payment = await buyer.new(Payment, [BigInt(1e8)])
 const [paymentTxId, paymentIndex] = payment._rev.split(':')
 
 // Buyer set's the payment object as the second input of the swap tx

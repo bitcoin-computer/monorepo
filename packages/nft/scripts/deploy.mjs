@@ -9,16 +9,22 @@ config()
 
 const rl = readline.createInterface({ input, output })
 
-const { VITE_CHAIN: chain, VITE_NETWORK: network, VITE_URL: url, MNEMONIC: mnemonic } = process.env
+const {
+  VITE_CHAIN: chain,
+  VITE_NETWORK: network,
+  VITE_URL: url,
+  MNEMONIC: mnemonic,
+  VITE_PATH: path,
+} = process.env
 
 if (network !== 'regtest') {
   if (!mnemonic) throw new Error('Please set MNEMONIC in the .env file')
-  computerProps['mnemonic'] = mnemonic
 }
 
-const computer = new Computer({ chain, network, mnemonic, url })
-await computer.faucet(2e8)
-const balance = await computer.getBalance()
+const computer = new Computer({ chain, network, mnemonic, path, url })
+
+if (network === 'regtest') await computer.faucet(2e8)
+const balance = await computer.wallet.getBalance()
 
 // Summary
 console.log(`Chain \x1b[2m${chain}\x1b[0m
@@ -26,7 +32,8 @@ Network \x1b[2m${network}\x1b[0m
 Node Url \x1b[2m${url}\x1b[0m
 Address \x1b[2m${computer.getAddress()}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
-Balance \x1b[2m${balance.balance / 1e8}\x1b[0m`)
+Path \x1b[2m${path}\x1b[0m
+Balance \x1b[2m${balance.balance} satoshis\x1b[0m`)
 
 const answer = await rl.question('\nDo you want to deploy the contracts? \x1b[2m(y/n)\x1b[0m')
 if (answer === 'n') {

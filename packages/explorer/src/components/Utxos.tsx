@@ -1,14 +1,14 @@
 import { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, UtilsContext, bigIntToStr } from '@bitcoin-computer/components'
 
 interface _Unspent {
   txId: string
   vout: number
-  satoshis: number
+  satoshis: bigint
   rev?: string
   scriptPubKey?: string
-  amount?: number
+  amount?: bigint
   address?: string
   height?: number
 }
@@ -16,7 +16,7 @@ interface _Unspent {
 const UTXODisplay = () => {
   const params = useParams()
   const [utxos, setUtxos] = useState<_Unspent[]>([])
-  const [totalAmount, setTotalAmount] = useState<number>(0)
+  const [totalAmount, setTotalAmount] = useState<bigint>(0n)
   const [address] = useState<string>(params.address || '')
   const computer = useContext(ComputerContext)
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
@@ -32,7 +32,7 @@ const UTXODisplay = () => {
       showLoader(true)
       const response = await computer.db.wallet.restClient.getUtxos(addr)
       setUtxos(response)
-      setTotalAmount(response.reduce((total, unspent) => total + unspent.satoshis / 1e8, 0))
+      setTotalAmount(response.reduce((total, unspent) => total + unspent.satoshis, 0n))
     } catch (err: unknown) {
       showSnackBar(err instanceof Error ? err.message : 'Error occurred', true)
     } finally {
@@ -54,7 +54,7 @@ const UTXODisplay = () => {
           <div className="w-full">
             <h2 className="mb-2 text-4xl font-bold dark:text-white">Balance</h2>
             <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-              {totalAmount} {computer.getChain()}
+              {bigIntToStr(totalAmount)} {computer.getChain()}
             </p>
           </div>
 
@@ -92,7 +92,7 @@ const UTXODisplay = () => {
                         {utxo.vout}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-bold">
-                        {utxo.satoshis / 1e8}
+                        {bigIntToStr(utxo.satoshis)}
                       </td>
                     </tr>
                   ))}

@@ -1,4 +1,10 @@
-import { Auth, ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import {
+  Auth,
+  ComputerContext,
+  bigIntToStr,
+  Modal,
+  UtilsContext,
+} from '@bitcoin-computer/components'
 import {
   ChessContract,
   ChessContractHelper,
@@ -92,7 +98,7 @@ export function ChessBoard() {
   const [game, setGame] = useState<ChessLib | null>(null)
   const [chessContract, setChessContract] = useState<ChessContract | null>(null)
   const [chessContractId, setChessContractId] = useState<string>('')
-  const [balance, setBalance] = useState<number>(0)
+  const [balance, setBalance] = useState<bigint>(0n)
 
   const computer = useContext(ComputerContext)
   const fetchChessContract = async (): Promise<ChessContract> => {
@@ -290,7 +296,7 @@ export function ChessBoard() {
                           Balance
                         </dt>
                         <dd className="text-lg font-semibold">
-                          {balance / 1e8} {computer.getChain()}
+                          {bigIntToStr(balance)} {computer.getChain()}
                         </dd>
                       </div>
                     </dl>

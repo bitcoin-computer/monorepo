@@ -158,9 +158,11 @@ export class Psbt {
       try {
         address = fromOutputScript(output.script, this.opts.network);
       } catch (_) {}
+      if (output.value > Number.MAX_SAFE_INTEGER)
+        throw new Error('Out of bounds for Number type, loss of precision');
       return {
         script: cloneBuffer(output.script),
-        value: output.value,
+        value: Number(output.value),
         address,
       };
     });
@@ -173,8 +175,12 @@ export class Psbt {
       if (input.witnessUtxo) return input.witnessUtxo.value;
       else if (input.nonWitnessUtxo) {
         const txin = this.txInputs[index];
-        return Transaction.fromBuffer(input.nonWitnessUtxo).outs[txin.index]
-          .value;
+        const bigValue = Transaction.fromBuffer(input.nonWitnessUtxo).outs[
+          txin.index
+        ].value;
+        if (bigValue > Number.MAX_SAFE_INTEGER)
+          throw new Error('Value too large');
+        return Number(bigValue);
       } else {
         throw new Error('Could not get input of #' + index);
       }
@@ -976,7 +982,7 @@ class PsbtTransaction {
     ) {
       throw new Error('Error adding output.');
     }
-    this.tx.addOutput(output.script, output.value);
+    this.tx.addOutput(output.script, BigInt(output.value));
   }
   toBuffer() {
     return this.tx.toBuffer();
@@ -1205,7 +1211,7 @@ function getHashForSig(inputIndex, input, cache, forValidate, sighashTypes) {
   const sighashType = input.sighashType || Transaction.SIGHASH_ALL;
   checkSighashTypeAllowed(sighashType, sighashTypes);
   let hash;
-  let prevout;
+  let prevout = { script: Buffer.alloc(0), value: 0 };
   if (input.nonWitnessUtxo) {
     const nonWitnessUtxoTx = nonWitnessUtxoTxFromCache(
       cache,
@@ -1221,7 +1227,10 @@ function getHashForSig(inputIndex, input, cache, forValidate, sighashTypes) {
       );
     }
     const prevoutIndex = unsignedTx.ins[inputIndex].index;
-    prevout = nonWitnessUtxoTx.outs[prevoutIndex];
+    prevout.script = nonWitnessUtxoTx.outs[prevoutIndex].script;
+    if (nonWitnessUtxoTx.outs[prevoutIndex].value > Number.MAX_SAFE_INTEGER)
+      throw new Error('Transaction amount is too high to safely process');
+    prevout.value = Number(nonWitnessUtxoTx.outs[prevoutIndex].value);
   } else if (input.witnessUtxo) {
     prevout = input.witnessUtxo;
   } else {
@@ -1563,10 +1572,20 @@ function inputFinalizeGetAmts(
       const nwTx = nonWitnessUtxoTxFromCache(cache, input, idx);
       const vout = tx.ins[idx].index;
       const out = nwTx.outs[vout];
-      inputAmount += out.value;
+      if (out.value > Number.MAX_SAFE_INTEGER)
+        throw new Error(
+          'Cannot finalize input with value greater than safe integer',
+        );
+      inputAmount += Number(out.value);
     }
   });
-  const outputAmount = tx.outs.reduce((total, o) => total + o.value, 0);
+  tx.outs.map(o => {
+    if (o.value > Number.MAX_SAFE_INTEGER)
+      throw new Error(
+        'Cannot finalize input with value greater than safe integer',
+      );
+  });
+  const outputAmount = tx.outs.reduce((total, o) => total + Number(o.value), 0);
   const fee = inputAmount - outputAmount;
   if (fee < 0 && !disableFeeCheck) {
     throw new Error('Outputs are spending more than Inputs');
@@ -1600,7 +1619,11 @@ function getScriptAndAmountFromUtxo(inputIndex, input, cache) {
       inputIndex,
     );
     const o = nonWitnessUtxoTx.outs[cache.__TX.ins[inputIndex].index];
-    return { script: o.script, value: o.value };
+    if (o.value > Number.MAX_SAFE_INTEGER)
+      throw new Error(
+        'Cannot finalize input with value greater than safe integer',
+      );
+    return { script: o.script, value: Number(o.value) };
   } else {
     throw new Error("Can't find pubkey in input without Utxo data");
   }

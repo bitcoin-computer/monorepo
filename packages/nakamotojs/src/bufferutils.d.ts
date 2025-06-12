@@ -1,8 +1,8 @@
 import * as varuint from 'varuint-bitcoin';
 export { varuint };
 import { Buffer } from 'buffer';
-export declare function readUInt64LE(buffer: Buffer, offset: number): number;
-export declare function writeUInt64LE(buffer: Buffer, value: number, offset: number): number;
+export declare function readUInt64LE(buffer: Buffer, offset: number): bigint;
+export declare function writeUInt64LE(buffer: Buffer, value: bigint, offset: number): number;
 export declare function reverseBuffer(buffer: Buffer): Buffer;
 export declare function cloneBuffer(buffer: Buffer): Buffer;
 /**
@@ -16,7 +16,7 @@ export declare class BufferWriter {
     writeUInt8(i: number): void;
     writeInt32(i: number): void;
     writeUInt32(i: number): void;
-    writeUInt64(i: number): void;
+    writeUInt64(i: bigint): void;
     writeVarInt(i: number): void;
     writeSlice(slice: Buffer): void;
     writeVarSlice(slice: Buffer): void;
@@ -33,7 +33,7 @@ export declare class BufferReader {
     readUInt8(): number;
     readInt32(): number;
     readUInt32(): number;
-    readUInt64(): number;
+    readUInt64(): bigint;
     readVarInt(): number;
     readSlice(n: number): Buffer;
     readVarSlice(): Buffer;

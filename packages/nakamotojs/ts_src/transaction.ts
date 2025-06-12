@@ -53,6 +53,11 @@ function isOutput(out: Output): boolean {
 
 export interface Output {
   script: Buffer;
+  value: bigint;
+}
+
+export interface NumberOutput {
+  script: Buffer;
   value: number;
 }
 
@@ -238,9 +243,8 @@ export class Transaction {
       this.ins[inputIndex].witness = [witness];
   }
 
-  addOutput(scriptPubKey: Buffer, value: number): number {
+  addOutput(scriptPubKey: Buffer, value: bigint): number {
     typeforce(types.tuple(types.Buffer, types.Satoshi), arguments);
-
     // Add the output and return the output's index
     return (
       this.outs.push({
@@ -254,7 +258,7 @@ export class Transaction {
     outputIndex: number,
     opts: {
       scriptPubKey?: Buffer;
-      value?: number;
+      value?: bigint;
     },
   ): void {
     typeforce(
@@ -470,7 +474,7 @@ export class Transaction {
       types.tuple(
         types.UInt32,
         typeforce.arrayOf(types.Buffer),
-        typeforce.arrayOf(types.Satoshi),
+        typeforce.arrayOf(types.SmallSatoshi),
         types.UInt32,
       ),
       arguments,
@@ -509,7 +513,7 @@ export class Transaction {
       hashPrevouts = bcrypto.sha256(bufferWriter.end());
 
       bufferWriter = BufferWriter.withCapacity(8 * this.ins.length);
-      values.forEach(value => bufferWriter.writeUInt64(value));
+      values.forEach(value => bufferWriter.writeUInt64(BigInt(value)));
       hashAmounts = bcrypto.sha256(bufferWriter.end());
 
       bufferWriter = BufferWriter.withCapacity(
@@ -579,7 +583,7 @@ export class Transaction {
       const input = this.ins[inIndex];
       sigMsgWriter.writeSlice(input.hash);
       sigMsgWriter.writeUInt32(input.index);
-      sigMsgWriter.writeUInt64(values[inIndex]);
+      sigMsgWriter.writeUInt64(BigInt(values[inIndex]));
       sigMsgWriter.writeVarSlice(prevOutScripts[inIndex]);
       sigMsgWriter.writeUInt32(input.sequence);
     } else {
@@ -616,7 +620,7 @@ export class Transaction {
     hashType: number,
   ): Buffer {
     typeforce(
-      types.tuple(types.UInt32, types.Buffer, types.Satoshi, types.UInt32),
+      types.tuple(types.UInt32, types.Buffer, types.SmallSatoshi, types.UInt32),
       arguments,
     );
 
@@ -695,7 +699,7 @@ export class Transaction {
     bufferWriter.writeSlice(input.hash);
     bufferWriter.writeUInt32(input.index);
     bufferWriter.writeVarSlice(prevOutScript);
-    bufferWriter.writeUInt64(value);
+    bufferWriter.writeUInt64(BigInt(value));
     bufferWriter.writeUInt32(input.sequence);
     bufferWriter.writeSlice(hashOutputs);
     bufferWriter.writeUInt32(this.locktime);

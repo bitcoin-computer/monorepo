@@ -9,7 +9,7 @@ import { FunctionResultModalContent } from './common/SmartCallExecutionResult'
 import { SmartObjectFunctions } from './SmartObjectFunctions'
 import { ComputerContext } from './ComputerContext'
 
-const keywords = ['_id', '_rev', '_owners', '_root', '_amount']
+const keywords = ['_id', '_rev', '_owners', '_root', '_satoshis']
 const modalId = 'smart-object-info-modal'
 
 export const getFnParamNames = (fn: string) => {
@@ -186,13 +186,13 @@ function MetaData({ smartObject, prev, next }: any) {
             <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
               <td className="px-4 py-2">Amount</td>
               <td className="px-4 py-2">
-                <pre>_amount</pre>
+                <pre>_satoshis</pre>
               </td>
               <td className="px-4 py-2">
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {smartObject?._amount} Satoshi
+                  {smartObject?._satoshis} Satoshi
                 </span>
-                <Copy text={smartObject?._amount} />
+                <Copy text={smartObject?._satoshis} />
               </td>
             </tr>
           </tbody>
