@@ -11,8 +11,8 @@ describe('getUtxos', () => {
 
   it('Should return all UTXOs that do not contain on-chain objects', async () => {
     // computer1 creates two UTXOs for computer2
-    const txId1 = await computer1.send(10000, computer2.getAddress())
-    const txId2 = await computer1.send(10000, computer2.getAddress())
+    const txId1 = await computer1.send(10000n, computer2.getAddress())
+    const txId2 = await computer1.send(10000n, computer2.getAddress())
 
     // Check that computer2 has both UTXOS
     const utxos = await computer2.getUtxos()

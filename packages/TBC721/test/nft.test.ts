@@ -23,7 +23,6 @@ const artist = ''
 const imageUrl = ''
 
 const isString = (x: any) => typeof x === 'string'
-const isNumber = (x: any) => typeof x === 'number'
 const isArray = (x: any) => Array.isArray(x)
 
 export const meta = {
@@ -31,7 +30,7 @@ export const meta = {
   _rev: isString,
   _root: isString,
   _owners: isArray,
-  _amount: isNumber,
+  _satoshis: (x) => typeof x === 'bigint',
 }
 
 describe('NFT', () => {

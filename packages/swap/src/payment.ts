@@ -7,19 +7,19 @@ export class Payment extends Contract {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _satoshis: bigint
   _owners: string[]
 
-  constructor(_amount: number) {
-    super({ _amount })
+  constructor(_satoshis: bigint) {
+    super({ _satoshis })
   }
 
   transfer(to: string) {
     this._owners = [to]
   }
 
-  setAmount(a: number) {
-    this._amount = a
+  setSatoshis(a: bigint) {
+    this._satoshis = a
   }
 }
 
@@ -27,14 +27,14 @@ export class PaymentMock {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _satoshis: bigint
   _owners: string[]
 
-  constructor(amount: number) {
+  constructor(satoshis: bigint) {
     this._id = getMockedRev()
     this._rev = getMockedRev()
     this._root = getMockedRev()
-    this._amount = amount
+    this._satoshis = satoshis
     this._owners = [randomPublicKey]
   }
 
@@ -42,8 +42,8 @@ export class PaymentMock {
     this._owners = [to]
   }
 
-  setAmount(a: number) {
-    this._amount = a
+  setSatoshis(a: bigint) {
+    this._satoshis = a
   }
 }
 
@@ -61,8 +61,8 @@ export class PaymentHelper {
     return this.mod
   }
 
-  async createPaymentTx(amount: number) {
-    const exp = `new Payment(${amount})`
+  async createPaymentTx(satoshis: bigint) {
+    const exp = `new Payment(${satoshis}n)`
     return this.computer.encode({
       exp,
       mod: this.mod,

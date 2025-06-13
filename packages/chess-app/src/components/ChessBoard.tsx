@@ -1,4 +1,10 @@
-import { Auth, ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import {
+  Auth,
+  ComputerContext,
+  bigIntToStr,
+  Modal,
+  UtilsContext,
+} from '@bitcoin-computer/components'
 import {
   ChessContract,
   ChessContractHelper,
@@ -99,8 +105,8 @@ export function ChessBoard() {
   const [game, setGame] = useState<ChessLib | null>(null)
   const [chessContract, setChessContract] = useState<ChessContract | null>(null)
   const [chessContractId, setChessContractId] = useState<string>('')
-  const [balance, setBalance] = useState<number>(0)
   const [user, setUser] = useState<User | null>(null)
+  const [balance, setBalance] = useState<bigint>(0n)
 
   const computer = useContext(ComputerContext)
   const fetchChessContract = async (): Promise<ChessContract> => {
@@ -125,7 +131,7 @@ export function ChessBoard() {
         setChessContract(chessContract)
         setGame(new ChessLib(chessContract.fen))
         const walletBalance = await computer.getBalance()
-        setBalance(walletBalance.balance)
+        setBalance(walletBalance.balance as unknown as bigint)
       }
     } catch (error) {
       console.error('Error fetching contract:', error)
@@ -169,7 +175,7 @@ export function ChessBoard() {
           setGame(new ChessLib(cc.fen))
           setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
           const walletBalance = await computer.getBalance()
-          setBalance(walletBalance.balance)
+          setBalance(walletBalance.balance as unknown as bigint)
         }
       } catch (error) {
         console.log(error)
@@ -382,7 +388,7 @@ export function ChessBoard() {
                           Balance
                         </dt>
                         <dd className="text-lg font-semibold">
-                          {balance / 1e8} {computer.getChain()}
+                          {bigIntToStr(balance)} {computer.getChain()}
                         </dd>
                       </div>
                     </dl>

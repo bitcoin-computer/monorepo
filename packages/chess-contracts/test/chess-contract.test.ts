@@ -9,8 +9,8 @@ const url = 'http://localhost:1031'
 const ECPair = ECPairFactory(ecc)
 
 describe('Should create a deposit transaction for the Chess game with operator', () => {
-  const betAmount = 1e5
-  const fees = 1e4
+  const betAmount = 100000n
+  const fees = 10000n
   const aliceComputer = new Computer({ url })
   const bobComputer = new Computer({ url })
   const operatorComputer = new Computer({ url })
@@ -64,12 +64,12 @@ describe('Should create a deposit transaction for the Chess game with operator',
     const bobUtxoHash = bufferUtils.reverseBuffer(Buffer.from(txId2, 'hex'))
 
     const commitTx = new Transaction()
-    commitTx.addOutput(output as Buffer, 2 * betAmount)
+    commitTx.addOutput(output as Buffer, 2n * betAmount)
     commitTx.addInput(aliceUtxoHash, vout1)
     commitTx.addInput(bobUtxoHash, vout2)
     const requiredFee = await aliceComputer.wallet.estimateFee(commitTx)
     commitTx.addOutput(aliceChangeOutput as Buffer, amountPayment1 - betAmount)
-    commitTx.addOutput(bobChangeOutput as Buffer, amountPayment2 - betAmount - requiredFee)
+    commitTx.addOutput(bobChangeOutput as Buffer, amountPayment2 - betAmount - BigInt(requiredFee))
     await aliceComputer.sign(commitTx)
     await bobComputer.sign(commitTx)
     const commitTxId = await bobComputer.broadcast(commitTx)
@@ -80,7 +80,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
     claimantKeyPair: ECPairInterface,
     commitTxId: string,
     outputScript: Buffer | undefined,
-    amount: number,
+    amount: bigint,
   ) => {
     if (!outputScript) {
       throw new Error('Invalid outputScript provided')
@@ -106,7 +106,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
     const commitTxId = await createCommitTx()
     const redeemTx = new Transaction()
     redeemTx.addInput(Buffer.from(commitTxId, 'hex').reverse(), 0)
-    redeemTx.addOutput(aliceChangeOutput as Buffer, 2 * betAmount - fees)
+    redeemTx.addOutput(aliceChangeOutput as Buffer, 2n * betAmount - fees)
     const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
     const inScript = [
       Buffer.alloc(0),
@@ -127,7 +127,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
         aliceKeyPair,
         commitTxId,
         aliceChangeOutput,
-        2 * betAmount - fees,
+        2n * betAmount - fees,
       )
       expect(() => {
         ChessContractHelper.validateAndSignRedeemTx(
@@ -146,7 +146,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
         bobKeyPair,
         commitTxId,
         aliceChangeOutput,
-        2 * betAmount - fees,
+        2n * betAmount - fees,
       )
       expect(() => {
         ChessContractHelper.validateAndSignRedeemTx(
@@ -163,7 +163,12 @@ describe('Should create a deposit transaction for the Chess game with operator',
   it('Should reject if output is not to winner’s address', async () => {
     const commitTxId = await createCommitTx()
     const winnerPublicKey = alicePublicKey
-    const redeemTx = createRedeemTx(aliceKeyPair, commitTxId, bobChangeOutput, 2 * betAmount - fees)
+    const redeemTx = createRedeemTx(
+      aliceKeyPair,
+      commitTxId,
+      bobChangeOutput,
+      2n * betAmount - fees,
+    )
     expect(() => {
       ChessContractHelper.validateAndSignRedeemTx(
         redeemTx,
@@ -182,7 +187,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
       aliceKeyPair,
       commitTxId,
       aliceChangeOutput,
-      2 * betAmount - fees,
+      2n * betAmount - fees,
     )
     redeemTx.addInput(Buffer.from('00'.repeat(32), 'hex'), 0)
     expect(() => {
@@ -203,7 +208,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
       aliceKeyPair,
       commitTxId,
       aliceChangeOutput,
-      2 * betAmount - fees,
+      2n * betAmount - fees,
     )
     const scriptSig = redeemTx.ins[0].script
     const decompiled = bscript.decompile(scriptSig) as Buffer[]
@@ -226,7 +231,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
     const wrongRedeemScript = bscript.fromASM('OP_1')
     const redeemTx = new Transaction()
     redeemTx.addInput(Buffer.from(commitTxId, 'hex').reverse(), 0)
-    redeemTx.addOutput(aliceChangeOutput as Buffer, 2 * betAmount - fees)
+    redeemTx.addOutput(aliceChangeOutput as Buffer, BigInt(2n * betAmount) - fees)
     const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
     const claimantSig = bscript.signature.encode(
       aliceKeyPair.sign(sigHash),
@@ -255,7 +260,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
       aliceKeyPair,
       commitTxId,
       aliceChangeOutput,
-      2 * betAmount - fees,
+      2n * betAmount - fees,
     )
     const scriptSig = redeemTx.ins[0].script
     const decompiled = bscript.decompile(scriptSig) as Buffer[]

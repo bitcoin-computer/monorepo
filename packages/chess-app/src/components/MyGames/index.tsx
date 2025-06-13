@@ -93,12 +93,12 @@ const UserRow = ({ gameId }: { gameId: string }) => {
         showSnackBar('Not a valid chess contract', false)
         return
       }
-      const { nameB, nameW, amount, publicKeyB, publicKeyW } = chessContract
+      const { nameB, nameW, satoshis, publicKeyB, publicKeyW } = chessContract
       const chessContractHelper = new ChessContractHelper({
         computer,
         nameB,
         nameW,
-        amount,
+        satoshis: satoshis,
         publicKeyB,
         publicKeyW,
         mod: VITE_CHESS_GAME_MOD_SPEC,
@@ -150,7 +150,9 @@ const UserRow = ({ gameId }: { gameId: string }) => {
         </Link>
       </td>
       <td>
-        {chessContract ? `${chessContract.amount / 1e8} ${computer.getChain()}` : 'Loading...'}
+        {chessContract
+          ? `${chessContract.satoshis / BigInt(1e8)} ${computer.getChain()}`
+          : 'Loading...'}
       </td>
       <td>{game ? getGameState(game) : 'Loading...'}</td>
       <td>
