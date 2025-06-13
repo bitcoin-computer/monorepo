@@ -10,16 +10,21 @@ import {
   ChessContractHelper,
   Chess as ChessLib,
   Square,
+  User,
+  WinnerTxWrapper,
+  signRedeemTx,
 } from '@bitcoin-computer/chess-contracts'
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Chessboard } from 'react-chessboard'
-import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 import { StartGameModal } from './StartGame'
 import { signInModal } from './Navbar'
 import { getGameState } from './utils'
 import { NewGameModal, newGameModal } from './NewGame'
 import { InfiniteScroll } from './GamesList'
+import { Piece } from 'react-chessboard/dist/chessboard/types'
+import { CreateUserModal, creaetUserModal } from './CreateUser'
 
 const winnerModal = 'winner-modal'
 
@@ -32,7 +37,9 @@ function currentPlayer(fen: string) {
   throw new Error('Invalid FEN: Unknown active color')
 }
 
-function getWinnerPubKey(chessLibrary: ChessLib, { publicKeyW, publicKeyB }: ChessContract) {
+function getWinnerPubKey(chessContract: ChessContract) {
+  const chessLibrary = new ChessLib(chessContract.fen)
+  const { publicKeyW, publicKeyB } = chessContract
   if (chessLibrary.isCheckmate()) return chessLibrary.turn() === 'b' ? publicKeyW : publicKeyB
   return null
 }
@@ -73,7 +80,7 @@ function WinnerModal(data: { winnerPubKey: string; userPubKey: string }) {
       <div className="p-4">
         <p className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-gray-200">
           {data.winnerPubKey === data.userPubKey
-            ? `Congratiolations! You have won the game. `
+            ? `Congratulations! You have won the game. `
             : `Sorry! You have lost the game. `}
         </p>
       </div>
@@ -98,6 +105,7 @@ export function ChessBoard() {
   const [game, setGame] = useState<ChessLib | null>(null)
   const [chessContract, setChessContract] = useState<ChessContract | null>(null)
   const [chessContractId, setChessContractId] = useState<string>('')
+  const [user, setUser] = useState<User | null>(null)
   const [balance, setBalance] = useState<bigint>(0n)
 
   const computer = useContext(ComputerContext)
@@ -107,14 +115,14 @@ export function ChessBoard() {
   }
 
   useEffect(() => {
-    if (!game || !chessContract) return
-    const winnerPubKey = getWinnerPubKey(game, chessContract)
+    if (!chessContract) return
+    const winnerPubKey = getWinnerPubKey(chessContract)
     if (!winnerPubKey) {
       return
     }
     setWinnerData({ winnerPubKey: winnerPubKey, userPubKey: computer.getPublicKey() })
     Modal.showModal(winnerModal)
-  }, [chessContract, computer, game])
+  }, [chessContract, computer])
 
   const syncChessContract = useCallback(async () => {
     try {
@@ -123,12 +131,38 @@ export function ChessBoard() {
         setChessContract(chessContract)
         setGame(new ChessLib(chessContract.fen))
         const walletBalance = await computer.getBalance()
-        setBalance(walletBalance.balance)
+        setBalance(walletBalance.balance as unknown as bigint)
       }
     } catch (error) {
       console.error('Error fetching contract:', error)
     }
   }, [gameId, computer, fetchChessContract])
+
+  // check if user account is created, create one if not
+  useEffect(() => {
+    const fetch = async () => {
+      showLoader(true)
+      try {
+        const [userRev] = await computer.query({
+          mod: VITE_CHESS_USER_MOD_SPEC,
+          publicKey: computer.getPublicKey(),
+        })
+        if (!userRev) {
+          Modal.showModal(creaetUserModal)
+        } else {
+          const userObj = (await computer.sync(userRev)) as User
+          setUser(userObj)
+        }
+      } catch (error) {
+        console.log(error)
+      } finally {
+        showLoader(false)
+      }
+    }
+    if (Auth.isLoggedIn()) {
+      fetch()
+    }
+  }, [computer])
 
   useEffect(() => {
     const fetch = async () => {
@@ -141,7 +175,7 @@ export function ChessBoard() {
           setGame(new ChessLib(cc.fen))
           setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
           const walletBalance = await computer.getBalance()
-          setBalance(walletBalance.balance)
+          setBalance(walletBalance.balance as unknown as bigint)
         }
       } catch (error) {
         console.log(error)
@@ -157,7 +191,7 @@ export function ChessBoard() {
     let close: () => void // Declare a variable to hold the subscription
     if (chessContractId) {
       const subscribeToComputer = async () => {
-        close = await computer.subscribe(chessContractId, (rev) => {
+        close = await computer.subscribe(chessContractId, async (rev) => {
           if (rev) syncChessContract()
         })
       }
@@ -172,14 +206,69 @@ export function ChessBoard() {
     }
   }, [chessContractId])
 
-  const publishMove = async (from: Square, to: Square) => {
+  // Polling for the winner and claiming the transaction
+  useEffect(() => {
+    let close: () => void // Declare a variable to hold the subscription
+    const fetch = async () => {
+      try {
+        if (chessContractId) {
+          const cc = await fetchChessContract()
+          const subscribeToWinnerTx = async () => {
+            close = await computer.subscribe(cc.winnerTxWrapper._id, async (rev) => {
+              if (rev) {
+                const txWrapper = (await computer.sync(rev.rev)) as WinnerTxWrapper
+                if (txWrapper.redeemTxHex) {
+                  // Explicitly fetching chess contract again to get the latest state
+                  const chessContract = await fetchChessContract()
+                  const game = new ChessLib(chessContract.fen)
+                  if (!game.isGameOver()) {
+                    showSnackBar('Game is not over yet!', false)
+                    return
+                  }
+                  const winnerPublicKey = chessContract._owners[0] as string
+                  if (winnerPublicKey === computer.getPublicKey()) {
+                    // No need to do anything here as this is the winner
+                    showSnackBar(
+                      'Congratulations you won!, your funds will be released shortly',
+                      true,
+                    )
+                    return
+                  }
+                  const signedRedeemTx = await signRedeemTx(computer, chessContract, txWrapper)
+                  await computer.broadcast(signedRedeemTx)
+                  showSnackBar(
+                    `You lost the game! funds released, if failed please go to /my-games. `,
+                    true,
+                  )
+                }
+              }
+            })
+          }
+
+          subscribeToWinnerTx()
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
+    fetch()
+
+    return () => {
+      if (close) {
+        close()
+      }
+    }
+  }, [chessContractId])
+
+  const publishMove = async (from: Square, to: Square, promotion: string) => {
     if (!chessContract) throw new Error('Chess contract is not defined.')
     const chessHelper = ChessContractHelper.fromContract(
       computer,
       chessContract,
       VITE_CHESS_GAME_MOD_SPEC,
+      VITE_CHESS_USER_MOD_SPEC,
     )
-    await chessHelper.move(chessContract, from, to)
+    await chessHelper.move(chessContract, from, to, promotion)
   }
   const handleError = (error: unknown) => {
     if (error instanceof Error) {
@@ -189,16 +278,17 @@ export function ChessBoard() {
   }
 
   // OnDrop action for chess game
-  const onDropSync = (from: Square, to: Square) => {
+  const onDropSync = (from: Square, to: Square, piece: Piece) => {
     try {
+      const promotion = piece && piece[1] ? piece[1].toLocaleLowerCase() : 'q'
       const chessGameInstance = new ChessLib(chessContract?.fen)
       chessGameInstance.move({
         from,
         to,
+        promotion,
       })
-
       setGame(new ChessLib(chessGameInstance.fen()))
-      publishMove(from, to).catch((error) => {
+      publishMove(from, to, promotion).catch((error) => {
         handleError(error)
       })
       return true
@@ -208,10 +298,12 @@ export function ChessBoard() {
     }
   }
   const playNewGame = () => {
-    if (Auth.isLoggedIn()) {
-      Modal.showModal(newGameModal)
-    } else {
+    if (!Auth.isLoggedIn()) {
       Modal.showModal(signInModal)
+    } else if (!user) {
+      Modal.showModal(creaetUserModal)
+    } else {
+      Modal.showModal(newGameModal)
     }
   }
 
@@ -228,7 +320,7 @@ export function ChessBoard() {
             New Game
           </button>
           <div>
-            <InfiniteScroll setGameId={setGameId} />
+            <InfiniteScroll setGameId={setGameId} user={user} setUser={setUser} />
           </div>
         </div>
 
@@ -326,7 +418,7 @@ export function ChessBoard() {
                   type="button"
                   className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
-                  Start play
+                  Start New Game
                 </button>
               </div>
             </div>
@@ -343,6 +435,7 @@ export function ChessBoard() {
 
       <NewGameModal />
       <StartGameModal />
+      <CreateUserModal setUser={setUser} />
     </div>
   )
 }

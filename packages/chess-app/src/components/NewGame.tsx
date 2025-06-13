@@ -1,8 +1,7 @@
 import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
 import { ChessContractHelper, NotEnoughFundError } from '@bitcoin-computer/chess-contracts'
 import { useContext, useState } from 'react'
-import { getHash } from '../services/secret.service'
-import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 import { Transaction } from '@bitcoin-computer/lib'
 
 export const newGameModal = 'new-game-modal'
@@ -46,11 +45,6 @@ function NewGameModalContent({
   }
 
   const createNewGame = async () => {
-    const secretHashW = await getHash()
-    const secretHashB = await getHash()
-
-    if (!secretHashW || !secretHashB) throw new Error('Could not obtain hash from server')
-
     const publicKeyW = computerW.getPublicKey()
     const chessContractHelper = new ChessContractHelper({
       computer: computerW,
@@ -59,9 +53,8 @@ function NewGameModalContent({
       nameB,
       publicKeyW,
       publicKeyB,
-      secretHashW,
-      secretHashB,
       mod: VITE_CHESS_GAME_MOD_SPEC,
+      userMod: VITE_CHESS_USER_MOD_SPEC,
     })
     return await chessContractHelper.makeTx()
   }
@@ -92,7 +85,7 @@ function NewGameModalContent({
           }
         }
       }
-      setSerializedTx(`http://localhost:1032?start-game=${tx.serialize()}`)
+      setSerializedTx(`${window.location.origin}?start-game=${tx.serialize()}`)
       showLoader(false)
     } catch (err) {
       if (err instanceof Error) {
@@ -110,7 +103,8 @@ function NewGameModalContent({
         <div className="flex flex-col items-start border rounded-lg shadow-md bg-gray-50 dark:bg-gray-700 border-gray-300 dark:border-gray-700">
           <div className="relative group w-full p-6 border-b border-gray-200 dark:border-gray-600">
             <p className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-              Share this link with your opponent to start the game.
+              Share this link with the black player. The black player will get back to you with the
+              final game link.
             </p>
             <p
               className="text-sm text-blue-600 underline cursor-pointer truncate hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600 focus:ring-0"
