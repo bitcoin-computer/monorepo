@@ -1,0 +1,18 @@
+📁 isd-multi-chain-lib/
+ ├── 📁 ethereum/
+ │   ├── eth_wallet.js
+ │   ├── isdh_token.sol
+ │   ├── stablecoin_pool.sol
+ ├── 📁 bitcoin/
+ │   ├── btc_wallet.js
+ │   ├── btc_utxo_manager.js
+ ├── 📁 usdt-usdc/
+ │   ├── usdt_token.sol
+ │   ├── usdc_token.sol
+ ├── 📁 blockchain-core/
+ │   ├── rpc_connector.js
+ │   ├── chain_monitor.js
+ ├── package.json
+ ├── README.md
+ ├── .gitignore
+ ├── yarn.lock
