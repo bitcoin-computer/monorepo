@@ -52,8 +52,19 @@ function getCoinType(chain: string, network: string): number {
   throw new Error(`Unsupported chain ${chain} or network ${network}`)
 }
 
-function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
+function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
   return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
+}
+
+function getPath({
+  chain,
+  network,
+}: {
+  chain: Chain | undefined
+  network: Network | undefined
+}): string {
+  if (!chain || !network) return getBip44Path()
+  return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 
 function loggedOutConfiguration() {
@@ -61,8 +72,6 @@ function loggedOutConfiguration() {
     chain: getEnv('CHAIN') as Chain,
     network: getEnv('NETWORK') as Network,
     url: getEnv('URL'),
-    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType,
-    path: getEnv('PATH'),
   }
 }
 
@@ -72,8 +81,6 @@ function loggedInConfiguration() {
     chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')) as Chain,
     network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
     url: localStorage.getItem('URL') || getEnv('URL'),
-    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType,
-    path: localStorage.getItem('PATH') || getEnv('PATH') || getBip44Path(),
   }
 }
 
@@ -283,6 +290,24 @@ function UrlInput({ urlInputRef }: { urlInputRef: React.RefObject<HTMLInputEleme
   )
 }
 
+function PathInput({ path, setPath }: { path: string; setPath: Dispatch<string> }) {
+  return (
+    <>
+      <div className="flex justify-between">
+        <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Path
+        </label>
+      </div>
+      <input
+        value={path}
+        onChange={(e) => setPath(e.target.value)}
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+        required
+      />
+    </>
+  )
+}
+
 function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) {
   const { showSnackBar } = useUtilsComponents()
 
@@ -321,7 +346,7 @@ function LoginForm() {
   )
   const [url] = useState<string | undefined>(getEnv('URL'))
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const [path] = useState<string>(getEnv('PATH') || getBip44Path())
+  const [path, setPath] = useState<string>(getEnv('PATH'))
 
   useEffect(() => {
     initFlowbite()
@@ -333,9 +358,10 @@ function LoginForm() {
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {!chain && <ChainInput chain={chain} setChain={setChain} />}
-            {!network && <NetworkInput network={network} setNetwork={setNetwork} />}
-            {!url && <UrlInput urlInputRef={urlInputRef} />}
+            {!getEnv('CHAIN') && <ChainInput chain={chain} setChain={setChain} />}
+            {!getEnv('NETWORK') && <NetworkInput network={network} setNetwork={setNetwork} />}
+            {!getEnv('URL') && <UrlInput urlInputRef={urlInputRef} />}
+            {!getEnv('PATH') && <PathInput path={getPath({ chain, network })} setPath={setPath} />}
           </div>
         </form>
       </div>

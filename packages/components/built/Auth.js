@@ -32,16 +32,19 @@ function getCoinType(chain, network) {
         return 145;
     throw new Error(`Unsupported chain ${chain} or network ${network}`);
 }
-function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
+function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
     return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`;
+}
+function getPath({ chain, network, }) {
+    if (!chain || !network)
+        return getBip44Path();
+    return getBip44Path({ coinType: getCoinType(chain, network) });
 }
 function loggedOutConfiguration() {
     return {
         chain: getEnv('CHAIN'),
         network: getEnv('NETWORK'),
         url: getEnv('URL'),
-        moduleStorageType: getEnv('MODULE_STORAGE_TYPE'),
-        path: getEnv('PATH'),
     };
 }
 function loggedInConfiguration() {
@@ -50,8 +53,6 @@ function loggedInConfiguration() {
         chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')),
         network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')),
         url: localStorage.getItem('URL') || getEnv('URL'),
-        moduleStorageType: getEnv('MODULE_STORAGE_TYPE'),
-        path: localStorage.getItem('PATH') || getEnv('PATH') || getBip44Path(),
     };
 }
 function getComputer(options = {}) {
@@ -69,6 +70,9 @@ function NetworkInput({ network, setNetwork, }) {
 }
 function UrlInput({ urlInputRef }) {
     return (_jsxs(_Fragment, { children: [_jsx("div", { className: "mt-4 flex justify-between", children: _jsx("label", { className: "block mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Node Url" }) }), _jsx("input", { ref: urlInputRef, className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white" })] }));
+}
+function PathInput({ path, setPath }) {
+    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "flex justify-between", children: _jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Path" }) }), _jsx("input", { value: path, onChange: (e) => setPath(e.target.value), className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white", required: true })] }));
 }
 function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }) {
     const { showSnackBar } = useUtilsComponents();
@@ -93,11 +97,11 @@ function LoginForm() {
     const [network, setNetwork] = useState(getEnv('NETWORK'));
     const [url] = useState(getEnv('URL'));
     const urlInputRef = useRef(null);
-    const [path] = useState(getEnv('PATH') || getBip44Path());
+    const [path, setPath] = useState(getEnv('PATH'));
     useEffect(() => {
         initFlowbite();
     }, []);
-    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "max-w-sm mx-auto p-4 md:p-5 space-y-4", children: _jsx("form", { className: "space-y-6", children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !chain && _jsx(ChainInput, { chain: chain, setChain: setChain }), !network && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !url && _jsx(UrlInput, { urlInputRef: urlInputRef })] }) }) }), _jsx("div", { className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600", children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, path: path, urlInputRef: urlInputRef }) })] }));
+    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "max-w-sm mx-auto p-4 md:p-5 space-y-4", children: _jsx("form", { className: "space-y-6", children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !getEnv('CHAIN') && _jsx(ChainInput, { chain: chain, setChain: setChain }), !getEnv('NETWORK') && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !getEnv('URL') && _jsx(UrlInput, { urlInputRef: urlInputRef }), !getEnv('PATH') && _jsx(PathInput, { path: getPath({ chain, network }), setPath: setPath })] }) }) }), _jsx("div", { className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600", children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, path: path, urlInputRef: urlInputRef }) })] }));
 }
 function LoginModal() {
     return _jsx(Modal.Component, { title: "Sign in", content: LoginForm, id: "sign-in-modal" });
