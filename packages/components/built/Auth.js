@@ -45,6 +45,7 @@ function loggedOutConfiguration() {
         chain: getEnv('CHAIN'),
         network: getEnv('NETWORK'),
         url: getEnv('URL'),
+        path: getEnv('PATH'),
     };
 }
 function loggedInConfiguration() {
@@ -53,6 +54,7 @@ function loggedInConfiguration() {
         chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')),
         network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')),
         url: localStorage.getItem('URL') || getEnv('URL'),
+        path: localStorage.getItem('PATH') || getEnv('PATH'),
     };
 }
 function getComputer(options = {}) {

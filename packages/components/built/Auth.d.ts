@@ -30,12 +30,14 @@ declare function loggedOutConfiguration(): {
     chain: Chain;
     network: Network;
     url: any;
+    path: any;
 };
 declare function loggedInConfiguration(): {
     mnemonic: string | null;
     chain: Chain;
     network: Network;
     url: any;
+    path: any;
 };
 declare function getComputer(options?: ComputerOptions): Computer;
 declare function LoginForm(): import("react/jsx-runtime").JSX.Element;

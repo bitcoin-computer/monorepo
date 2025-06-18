@@ -72,6 +72,7 @@ function loggedOutConfiguration() {
     chain: getEnv('CHAIN') as Chain,
     network: getEnv('NETWORK') as Network,
     url: getEnv('URL'),
+    path: getEnv('PATH'),
   }
 }
 
@@ -81,6 +82,7 @@ function loggedInConfiguration() {
     chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')) as Chain,
     network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
     url: localStorage.getItem('URL') || getEnv('URL'),
+    path: localStorage.getItem('PATH') || getEnv('PATH'),
   }
 }
 
