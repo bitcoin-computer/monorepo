@@ -62,7 +62,7 @@ if (answer === 'n') {
     const file = '.env'
     const lines = (await readFile(file, 'utf-8')).split('\n')
     for (let i = 0; i < lines.length; i++) {
-      if (lines[i].startsWith('VITE_CHAT_MOD_SPEC')) lines[i] = `VITE_CHAT_MOD_SPECC=${chatModSpec}`
+      if (lines[i].startsWith('VITE_CHAT_MOD_SPEC')) lines[i] = `VITE_CHAT_MOD_SPEC=${chatModSpec}`
     }
     await writeFile(file, lines.join('\n'), 'utf-8')
     console.log(' \x1b[2m- Successfully updated .env file\x1b[0m')
