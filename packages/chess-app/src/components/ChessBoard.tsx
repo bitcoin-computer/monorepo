@@ -381,7 +381,7 @@ export function ChessBoard() {
                         <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
                           State
                         </dt>
-                        <dd className="text-lg font-semibold">{getGameState(game)}</dd>
+                        <dd className="text-lg font-semibold">{getGameState(chessContract)}</dd>
                       </div>
                       <div className="flex flex-col pt-3">
                         <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">

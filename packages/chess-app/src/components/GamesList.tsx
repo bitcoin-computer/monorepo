@@ -1,7 +1,7 @@
 import { User } from '@bitcoin-computer/chess-contracts'
 import { ComputerContext } from '@bitcoin-computer/components'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 import { HiRefresh } from 'react-icons/hi'
 
 export const InfiniteScroll = ({
@@ -76,7 +76,12 @@ export const InfiniteScroll = ({
     <div className="w-full h-full overflow-hidden flex flex-col bg-white dark:bg-gray-800 border border-gray-300  dark:border-gray-700 rounded-lg">
       <div className="flex justify-center mt-2 mb-2">
         <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
-          My Games{' '}
+          <Link
+            to="/my-games"
+            className="hover:text-gray-700 dark:hover:text-gray-200 font-extrabold cursor-pointer"
+          >
+            My Games
+          </Link>{' '}
           <HiRefresh
             onClick={refreshUser}
             className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"

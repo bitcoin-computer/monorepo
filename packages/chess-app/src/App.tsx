@@ -7,6 +7,7 @@ import { ChessBoard } from './components/ChessBoard'
 
 import { Navbar } from './components/Navbar'
 import { MyGames } from './components/MyGames/index'
+import { Home } from './components/Home'
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -25,7 +26,7 @@ export default function App() {
           <Navbar />
           <div className="w-full h-screen bg-white border-gray-200 dark:bg-gray-900 px-4 lg:px-24">
             <Routes>
-              <Route path="/" element={<ChessBoard />} />
+              <Route path="/" element={<Home />} />
               <Route path="/game/:id" element={<ChessBoard />} />
               <Route path="/my-games" element={<MyGames />} />
               <Route path="*" element={<Navigate to="/" replace={true} />} />
