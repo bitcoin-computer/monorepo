@@ -274,7 +274,7 @@ function NetworkInput({
   )
 }
 
-function UrlInput({ urlInputRef }: { urlInputRef: React.RefObject<HTMLInputElement> }) {
+function UrlInput({ url, setUrl }: { url: string; setUrl: Dispatch<string> }) {
   return (
     <>
       <div className="mt-4 flex justify-between">
@@ -283,7 +283,8 @@ function UrlInput({ urlInputRef }: { urlInputRef: React.RefObject<HTMLInputEleme
         </label>
       </div>
       <input
-        ref={urlInputRef}
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
       />
     </>
@@ -313,8 +314,32 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    if (isLoggedIn()) showSnackBar('A user is already logged in, please log out first.', false)
-    if (mnemonic.length === 0) showSnackBar("Please don't use an empty mnemonic string.", false)
+    if (isLoggedIn()) {
+      showSnackBar('A user is already logged in, please log out first.', false)
+      return
+    }
+    if (mnemonic.length === 0) {
+      showSnackBar("Please don't use an empty mnemonic string.", false)
+      return
+    }
+    if (chain === undefined) {
+      showSnackBar('Please select a chain.', false)
+      return
+    }
+    if (network === undefined) {
+      showSnackBar('Please select a network.', false)
+      return
+    }
+    if (path.length === 0) {
+      showSnackBar('Please enter a valid path.', false)
+      return
+    }
+    if (url === undefined || url?.length === 0) {
+      showSnackBar('Please enter a valid URL.', false)
+      return
+    }
+    if (isLoggedIn()) return
+
     localStorage.setItem('BIP_39_KEY', mnemonic)
     localStorage.setItem('CHAIN', chain)
     localStorage.setItem('NETWORK', network)
@@ -339,14 +364,14 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 }
 
 function LoginForm() {
-  const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
+  const [mnemonic, setMnemonic] = useState<string>(() => new Computer().getMnemonic())
   const [chain, setChain] = useState<Chain | undefined>(getEnv('CHAIN') as Chain | undefined)
   const [network, setNetwork] = useState<Network | undefined>(
     getEnv('NETWORK') as Network | undefined,
   )
-  const [url] = useState<string | undefined>(getEnv('URL'))
+  const [url, setUrl] = useState<string | undefined>(getEnv('URL'))
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const [path, setPath] = useState<string>(getEnv('PATH'))
+  const [path, setPath] = useState<string>(getEnv('PATH') || getPath({ chain, network }))
 
   useEffect(() => {
     initFlowbite()
@@ -360,8 +385,8 @@ function LoginForm() {
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
             {!getEnv('CHAIN') && <ChainInput chain={chain} setChain={setChain} />}
             {!getEnv('NETWORK') && <NetworkInput network={network} setNetwork={setNetwork} />}
-            {!getEnv('URL') && <UrlInput urlInputRef={urlInputRef} />}
-            {!getEnv('PATH') && <PathInput path={getPath({ chain, network })} setPath={setPath} />}
+            {!getEnv('URL') && <UrlInput url={url || ''} setUrl={setUrl} />}
+            {!getEnv('PATH') && <PathInput path={path} setPath={setPath} />}
           </div>
         </form>
       </div>
