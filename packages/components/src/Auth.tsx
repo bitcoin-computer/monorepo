@@ -369,7 +369,7 @@ function LoginForm() {
   const [network, setNetwork] = useState<Network | undefined>(
     getEnv('NETWORK') as Network | undefined,
   )
-  const [url, setUrl] = useState<string | undefined>(getEnv('URL'))
+  const [url, setUrl] = useState<string | undefined>(getEnv('URL') || 'http://localhost:1031')
   const urlInputRef = useRef<HTMLInputElement>(null)
   const [path, setPath] = useState<string>(getEnv('PATH') || getPath({ chain, network }))
 

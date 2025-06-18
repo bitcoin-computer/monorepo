@@ -117,7 +117,7 @@ function LoginForm() {
     const [mnemonic, setMnemonic] = useState(() => new Computer().getMnemonic());
     const [chain, setChain] = useState(getEnv('CHAIN'));
     const [network, setNetwork] = useState(getEnv('NETWORK'));
-    const [url, setUrl] = useState(getEnv('URL'));
+    const [url, setUrl] = useState(getEnv('URL') || 'http://localhost:1031');
     const urlInputRef = useRef(null);
     const [path, setPath] = useState(getEnv('PATH') || getPath({ chain, network }));
     useEffect(() => {
