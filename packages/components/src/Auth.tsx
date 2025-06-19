@@ -10,6 +10,7 @@ import { getEnv } from './common/utils'
 export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
 export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest'
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
+const pathPattern = /^(m\/)?(\d+'?\/)*\d+'?$/
 
 export type ComputerOptions = Partial<{
   chain: TBCChain
@@ -336,6 +337,11 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
       showSnackBar('Please enter a valid path.', false)
       return
     }
+    if (path.match(pathPattern) === null) {
+      showSnackBar("Path format must be in the form m/44'/0'/0'/0/0.", false)
+      return
+    }
+
     if (url === undefined || url?.length === 0) {
       showSnackBar('Please enter a valid URL.', false)
       return

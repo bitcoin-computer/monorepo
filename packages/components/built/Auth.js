@@ -6,6 +6,7 @@ import { HiRefresh } from 'react-icons/hi';
 import { useUtilsComponents } from './UtilsContext';
 import { Modal } from './Modal';
 import { getEnv } from './common/utils';
+const pathPattern = /^(m\/)?(\d+'?\/)*\d+'?$/;
 function isLoggedIn() {
     return !!localStorage.getItem('BIP_39_KEY');
 }
@@ -98,6 +99,10 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }) {
         }
         if (path.length === 0) {
             showSnackBar('Please enter a valid path.', false);
+            return;
+        }
+        if (path.match(pathPattern) === null) {
+            showSnackBar("Path format must be in the form m/44'/0'/0'/0/0.", false);
             return;
         }
         if (url === undefined || url?.length === 0) {
