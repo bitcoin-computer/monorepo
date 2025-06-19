@@ -19,11 +19,11 @@ jobs:
           echo "Detected tag: $TAG"
 
           if [[ "$TAG" == *-pre-release ]]; then
-            echo "release_type=pre" >> $GITHUB_OUTPUT
-            echo "version=${TAG#v}" | sed 's/-pre-release$//' >> $GITHUB_OUTPUT
+            echo "release_type=pre" >> "$GITHUB_OUTPUT"
+            echo "version=${TAG#v}" | sed 's/-pre-release$//' >> "$GITHUB_OUTPUT"
           else
-            echo "release_type=final" >> $GITHUB_OUTPUT
-            echo "version=${TAG#v}" >> $GITHUB_OUTPUT
+            echo "release_type=final" >> "$GITHUB_OUTPUT"
+            echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
           fi
 
   build:
@@ -53,7 +53,7 @@ jobs:
           else
             TAG="bcdb/bcn:${VERSION}"
           fi
-          echo "image_tag=$TAG" >> $GITHUB_OUTPUT
+          echo "image_tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Build and Push Docker Image
         run: |
