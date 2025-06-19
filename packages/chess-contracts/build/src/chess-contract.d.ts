@@ -57,6 +57,7 @@ export declare class ChessContractHelper {
     isInitialized(): this is Required<ChessContractHelper>;
     static fromContract(computer: Computer, game: ChessContract, mod?: string, userMod?: string): ChessContractHelper;
     getASM(): string;
+    validateUser(): Promise<void>;
     makeTx(): Promise<Transaction>;
     completeTx(tx: Transaction): Promise<string>;
     move(chessContract: ChessContract, from: string, to: string, promotion: string): Promise<{

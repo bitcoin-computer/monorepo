@@ -4,14 +4,20 @@ import {
   Chess as ChessLib,
   ChessContractHelper,
   signRedeemTx,
+  ChessChallengeTxWrapper,
 } from '@bitcoin-computer/chess-contracts'
 import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
 import { useNavigate } from 'react-router-dom'
 import { getGameState } from '../utils'
-import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../../constants/modSpecs'
-import { Computer } from '@bitcoin-computer/lib'
+import {
+  VITE_CHESS_CHALLENGE_MOD_SPEC,
+  VITE_CHESS_GAME_MOD_SPEC,
+  VITE_CHESS_USER_MOD_SPEC,
+} from '../../constants/modSpecs'
+import { Computer, Transaction } from '@bitcoin-computer/lib'
+import { startGameModal, StartGameModal } from '../StartGame'
 
 const renderButtonContent = (
   game: ChessLib | undefined,
@@ -154,7 +160,7 @@ const UserRow = ({ gameId }: { gameId: string }) => {
           ? `${chessContract.satoshis / BigInt(1e8)} ${computer.getChain()}`
           : 'Loading...'}
       </td>
-      <td>{game ? getGameState(game) : 'Loading...'}</td>
+      <td>{chessContract ? getGameState(chessContract) : 'Loading...'}</td>
       <td>
         {game?.isGameOver()
           ? chessContract?._owners?.[0] === computer.getPublicKey()
@@ -163,41 +169,14 @@ const UserRow = ({ gameId }: { gameId: string }) => {
           : ''}
       </td>
       <td>
-        {
-          renderButtonContent(
-            game,
-            paymentReleased,
-            chessContract,
-            computer,
-            requestRelease,
-            releaseFund,
-          )
-          // !game ? (
-          //   <></>
-          // ) : game?.isGameOver() ? (
-          //   paymentReleased ? (
-          //     <>Funds Released</>
-          //   ) : chessContract?._owners[0] === computer.getPublicKey() ? (
-          //     <button
-          //       onClick={() => requestRelease()}
-          //       disabled={!chessContract || !!chessContract.winnerTxWrapper.redeemTxHex}
-          //       className="mt-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
-          //     >
-          //       Request Release
-          //     </button>
-          //   ) : (
-          //     <button
-          //       onClick={() => releaseFund()}
-          //       disabled={!chessContract || !chessContract.winnerTxWrapper.redeemTxHex}
-          //       className="mt-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
-          //     >
-          //       Release Fund
-          //     </button>
-          //   )
-          // ) : (
-          //   <></>
-          // )
-        }
+        {renderButtonContent(
+          game,
+          paymentReleased,
+          chessContract,
+          computer,
+          requestRelease,
+          releaseFund,
+        )}
       </td>
     </tr>
   )
@@ -253,12 +232,136 @@ const UserGamesList = () => {
   )
 }
 
+const ChallengeRow = ({
+  challengeId,
+  setLink,
+}: {
+  challengeId: string
+  setLink: React.Dispatch<React.SetStateAction<string>>
+}) => {
+  const computer = useContext(ComputerContext)
+  const [chessChallenge, setChessChallenge] = useState<ChessChallengeTxWrapper | null>(null)
+  const [game, setGame] = useState<ChessContract>()
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+
+  useEffect(() => {
+    const fetch = async () => {
+      const [latestRev] = await computer.query({ ids: [challengeId] })
+      const syncedObj = (await computer.sync(latestRev)) as ChessChallengeTxWrapper
+      setChessChallenge(syncedObj)
+
+      const tx = Transaction.deserialize(syncedObj.chessGameTxHex)
+      const { effect } = await computer.encode(tx.onChainMetaData as never)
+      const { res } = effect
+      const game = res as unknown as ChessContract
+      setGame(game)
+    }
+    fetch()
+  }, [])
+
+  const acceptGame = async () => {
+    try {
+      if (!chessChallenge || !game) {
+        return showSnackBar('Invalid challenge', false)
+      }
+      showLoader(true)
+      const tx = Transaction.deserialize(chessChallenge?.chessGameTxHex)
+
+      const chessContractHelper = ChessContractHelper.fromContract(
+        computer,
+        game,
+        VITE_CHESS_GAME_MOD_SPEC,
+        VITE_CHESS_USER_MOD_SPEC,
+      )
+      const txId = await chessContractHelper.completeTx(tx)
+      setLink(`${window.location.origin}/game/${txId}:0`)
+      Modal.showModal(startGameModal)
+      showLoader(false)
+    } catch (err) {
+      if (err instanceof Error) {
+        showSnackBar(err.message, false)
+      } else {
+        showSnackBar('Error occurred!', false)
+      }
+      showLoader(false)
+    }
+  }
+
+  return (
+    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
+      <td>{game ? `${game.publicKeyW}` : 'Loading...'}</td>
+      <td>{game ? `${game.satoshis / BigInt(1e8)} ${computer.getChain()}` : 'Loading...'}</td>
+      <td>
+        <button
+          onClick={() => acceptGame()}
+          disabled={!chessChallenge || chessChallenge.accepted}
+          className="mt-1 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
+        >
+          Accept
+        </button>
+      </td>
+    </tr>
+  )
+}
+const UserChallengesList = () => {
+  const [challengeRevs, setChallengeRevs] = useState<string[]>([])
+
+  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+  const computer = useContext(ComputerContext)
+  const [link, setLink] = useState<string>('')
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      showLoader(true)
+      try {
+        const challengeRevList = await computer.query({
+          mod: VITE_CHESS_CHALLENGE_MOD_SPEC,
+          publicKey: computer.getPublicKey(),
+        })
+        setChallengeRevs(challengeRevList)
+      } catch {
+        showSnackBar('Error occurred', false)
+      } finally {
+        showLoader(false)
+      }
+    }
+
+    fetchUser()
+  }, [computer])
+
+  return (
+    <div className="relative overflow-x-auto">
+      <h2 className="mb-2 text-2xl font-bold dark:text-white">My Challenges</h2>
+      <table className="w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <tr>
+            <th className="px-6 py-3">Challenger</th>
+            <th className="px-6 py-3">Amount</th>
+            <th className="px-6 py-3">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {challengeRevs?.map((challengeId) => (
+            <ChallengeRow setLink={setLink} key={challengeId} challengeId={challengeId} />
+          ))}
+        </tbody>
+      </table>
+      <StartGameModal link={link} />
+    </div>
+  )
+}
+
 const MyGames = () => {
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 dark:bg-gray-900">
         <div className="md:col-span-3">
           <UserGamesList />
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 dark:bg-gray-900">
+        <div className="md:col-span-3">
+          <UserChallengesList />
         </div>
       </div>
     </div>

@@ -175,8 +175,21 @@ export class ChessContractHelper {
     return `OP_2 ${this.publicKeyW} ${this.publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' ')
   }
 
+  async validateUser(): Promise<void> {
+    const [userRev] = await this.computer.query({
+      mod: this.userMod,
+      publicKey: this.computer.getPublicKey(),
+    })
+
+    if (!userRev) {
+      throw new Error('Please create your account to start playing')
+    }
+  }
+
   async makeTx(): Promise<Transaction> {
     if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
+
+    await this.validateUser()
 
     // Create output with non-standard script
     const { tx } = await this.computer.encode({
@@ -222,6 +235,7 @@ export class ChessContractHelper {
   }
 
   async completeTx(tx: Transaction): Promise<string> {
+    await this.validateUser()
     const decoded = await this.computer.decode(tx)
     const { effect } = await this.computer.encode(decoded)
     const { res: chessContract } = effect as unknown as { res: ChessContract }
