@@ -20,7 +20,7 @@ export type ComputerOptions = Partial<{
 }>;
 declare function isLoggedIn(): boolean;
 declare function logout(): void;
-declare function getCoinType(chain: string, network: string): number;
+declare function getCoinType(chain?: string, network?: string): number;
 declare function getBip44Path({ purpose, coinType, account }?: {
     purpose?: number | undefined;
     coinType?: number | undefined;
