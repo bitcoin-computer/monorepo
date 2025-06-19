@@ -1,4 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
+// eslint-disable no-param-reassign
 import { useEffect, useRef, useState } from 'react';
 import { Computer } from '@bitcoin-computer/lib';
 import { initFlowbite } from 'flowbite';
@@ -37,8 +38,10 @@ function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
     return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`;
 }
 function getPath({ chain, network, }) {
-    if (!chain || !network)
-        return getBip44Path();
+    if (chain === undefined)
+        chain = 'LTC';
+    if (network === undefined)
+        network = 'regtest';
     return getBip44Path({ coinType: getCoinType(chain, network) });
 }
 function loggedOutConfiguration() {

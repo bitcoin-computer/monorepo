@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import { Dispatch, useEffect, useRef, useState } from 'react'
 import { Computer } from '@bitcoin-computer/lib'
 import { initFlowbite } from 'flowbite'
@@ -64,7 +65,8 @@ function getPath({
   chain: Chain | undefined
   network: Network | undefined
 }): string {
-  if (!chain || !network) return getBip44Path()
+  if (chain === undefined) chain = 'LTC'
+  if (network === undefined) network = 'regtest'
   return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 
