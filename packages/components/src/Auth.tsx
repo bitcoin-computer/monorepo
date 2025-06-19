@@ -57,13 +57,7 @@ function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
   return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
 }
 
-function getPath({
-  chain,
-  network,
-}: {
-  chain: Chain | undefined
-  network: Network | undefined
-}): string {
+function getPath({ chain, network }: { chain?: Chain; network?: Network }): string {
   return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 

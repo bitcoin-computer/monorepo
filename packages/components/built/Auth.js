@@ -36,7 +36,7 @@ function getCoinType(chain = 'LTC', network = 'regtest') {
 function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
     return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`;
 }
-function getPath({ chain, network, }) {
+function getPath({ chain, network }) {
     return getBip44Path({ coinType: getCoinType(chain, network) });
 }
 function loggedOutConfiguration() {
