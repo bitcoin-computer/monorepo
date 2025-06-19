@@ -46,13 +46,16 @@ jobs:
 
       - name: Set image tag
         id: set_tag
+        env:
+          VERSION: ${{ needs.decide.outputs.version }}
+          RELEASE_TYPE: ${{ needs.decide.outputs.release_type }}
         run: |
-          VERSION="${{ needs.decide.outputs.version }}"
-          if [ "${{ needs.decide.outputs.release_type }}" = "pre" ]; then
+          if [ "$RELEASE_TYPE" = "pre" ]; then
             TAG="bcdb/bcn:${VERSION}-pre-release"
           else
             TAG="bcdb/bcn:${VERSION}"
           fi
+          echo "Final tag: $TAG"
           echo "image_tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Build and Push Docker Image
