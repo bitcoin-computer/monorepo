@@ -24,6 +24,8 @@ import { NewGameModal, newGameModal } from './NewGame'
 import { InfiniteScroll } from './GamesList'
 import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
+import { ChallengeListWrapper } from './ChallengesListWrapper'
+import { Computer } from '@bitcoin-computer/lib'
 
 const winnerModal = 'winner-modal'
 
@@ -73,14 +75,41 @@ function ListLayout(props: { listOfMoves: string[] }) {
   return <div className="space-y-2">{rows}</div>
 }
 
-function WinnerModal(data: { winnerPubKey: string; userPubKey: string }) {
+function WinnerModal(data: { winnerPubKey: string; userPubKey: string; amount: string }) {
+  const isWinner = data.winnerPubKey === data.userPubKey
   return (
     <>
       <div className="p-4">
         <p className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-          {data.winnerPubKey === data.userPubKey
+          {isWinner ? (
+            <>
+              {/* Winning State */}
+              <div className="text-center">
+                <h2 className="text-3xl font-bold text-yellow-500 dark:text-yellow-400 mb-4">
+                  🎉 Congratulations! 🎉
+                </h2>
+                <p className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                  You won the game!
+                </p>
+                <p className="text-2xl font-semibold text-green-600 dark:text-green-400">
+                  Prize: {data.amount}
+                </p>
+              </div>
+            </>
+          ) : (
+            <>
+              {/* Losing State */}
+              <div className="text-center">
+                <h2 className="text-2xl font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                  Sorry, you lost.
+                </h2>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Better luck next time!</p>
+              </div>
+            </>
+          )}
+          {/* {data.winnerPubKey === data.userPubKey
             ? `Congratulations! You have won the game. `
-            : `Sorry! You have lost the game. `}
+            : `Sorry! You have lost the game. `} */}
         </p>
       </div>
       <div className="flex items-center p-6 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -95,6 +124,56 @@ function WinnerModal(data: { winnerPubKey: string; userPubKey: string }) {
   )
 }
 
+const renderButtonContent = (
+  game: ChessLib | undefined,
+  paymentReleased: boolean,
+  chessContract: ChessContract | null,
+  computer: Computer,
+  requestRelease: () => Promise<void>,
+  releaseFund: () => Promise<void>,
+) => {
+  if (!game || !game.isGameOver()) {
+    return null
+  }
+
+  if (paymentReleased) {
+    return <span>Funds Released</span>
+  }
+
+  const isOwner = chessContract?._owners[0] === computer.getPublicKey()
+  const buttonStyles = `
+    mt-1 text-white bg-blue-700 hover:bg-blue-800 
+    focus:ring-4 focus:outline-none focus:ring-blue-300 
+    font-medium rounded-lg text-sm w-full sm:w-auto 
+    px-5 py-2.5 text-center dark:bg-blue-600 
+    dark:hover:bg-blue-700 dark:focus:ring-blue-800 
+    disabled:bg-gray-400 disabled:text-gray-100 
+    disabled:cursor-not-allowed disabled:hover:bg-gray-400
+  `
+
+  if (isOwner) {
+    return (
+      <button
+        onClick={() => requestRelease()}
+        disabled={!chessContract || !!chessContract.winnerTxWrapper.redeemTxHex}
+        className={buttonStyles}
+      >
+        Request Release
+      </button>
+    )
+  }
+
+  return (
+    <button
+      onClick={releaseFund}
+      disabled={!chessContract || !chessContract.winnerTxWrapper.redeemTxHex}
+      className={buttonStyles}
+    >
+      Release Fund
+    </button>
+  )
+}
+
 export function ChessBoard() {
   const params = useParams()
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
@@ -106,6 +185,7 @@ export function ChessBoard() {
   const [chessContractId, setChessContractId] = useState<string>('')
   const [user, setUser] = useState<User | null>(null)
   const [balance, setBalance] = useState<bigint>(0n)
+  const [paymentReleased, setPaymentReleased] = useState(true)
 
   const computer = useContext(ComputerContext)
   const fetchChessContract = async (): Promise<ChessContract> => {
@@ -119,7 +199,11 @@ export function ChessBoard() {
     if (!winnerPubKey) {
       return
     }
-    setWinnerData({ winnerPubKey: winnerPubKey, userPubKey: computer.getPublicKey() })
+    setWinnerData({
+      winnerPubKey: winnerPubKey,
+      userPubKey: computer.getPublicKey(),
+      amount: `${bigIntToStr(chessContract.satoshis)} ${computer.getChain()}`,
+    })
     Modal.showModal(winnerModal)
   }, [chessContract, computer])
 
@@ -169,6 +253,8 @@ export function ChessBoard() {
       try {
         if (gameId) {
           const cc = await fetchChessContract()
+          const isUnspent = await computer.isUnspent(cc?.payment._rev)
+          setPaymentReleased(!isUnspent)
           setChessContract(cc)
           setChessContractId(cc._id)
           setGame(new ChessLib(cc.fen))
@@ -235,10 +321,7 @@ export function ChessBoard() {
                   }
                   const signedRedeemTx = await signRedeemTx(computer, chessContract, txWrapper)
                   await computer.broadcast(signedRedeemTx)
-                  showSnackBar(
-                    `You lost the game! funds released, if failed please go to /my-games. `,
-                    true,
-                  )
+                  showSnackBar(`You lost the game! funds released. `, true)
                 }
               }
             })
@@ -306,6 +389,59 @@ export function ChessBoard() {
     }
   }
 
+  const requestRelease = async () => {
+    try {
+      showLoader(true)
+      if (!computer || !chessContract) {
+        showSnackBar('Not a valid chess contract', false)
+        return
+      }
+      const { nameB, nameW, satoshis, publicKeyB, publicKeyW } = chessContract
+      const chessContractHelper = new ChessContractHelper({
+        computer,
+        nameB,
+        nameW,
+        satoshis: satoshis,
+        publicKeyB,
+        publicKeyW,
+        mod: VITE_CHESS_GAME_MOD_SPEC,
+        userMod: VITE_CHESS_USER_MOD_SPEC,
+      })
+      await chessContractHelper.spend(chessContract)
+    } catch (error) {
+      showSnackBar(
+        error instanceof Error ? error.message : 'Error occurred while creating transaction',
+        false,
+      )
+    } finally {
+      showLoader(false)
+    }
+  }
+  const releaseFund = async () => {
+    try {
+      showLoader(true)
+      if (!computer || !chessContract) {
+        showSnackBar('Not a valid chess contract', false)
+        return
+      }
+      const signedRedeemTx = await signRedeemTx(
+        computer,
+        chessContract,
+        chessContract?.winnerTxWrapper,
+      )
+      const finalTxId = await computer.broadcast(signedRedeemTx)
+      setPaymentReleased(true)
+      showSnackBar(`You lost the game, fund released. Transaction: ${finalTxId}`, true)
+    } catch (error) {
+      showSnackBar(
+        error instanceof Error ? error.message : 'Error occurred while releasing fund',
+        false,
+      )
+    } finally {
+      showLoader(false)
+    }
+  }
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-12 dark:bg-gray-900">
@@ -320,6 +456,9 @@ export function ChessBoard() {
           </button>
           <div>
             <InfiniteScroll setGameId={setGameId} user={user} setUser={setUser} />
+          </div>
+          <div>
+            <ChallengeListWrapper />
           </div>
         </div>
 
@@ -390,6 +529,18 @@ export function ChessBoard() {
                           {bigIntToStr(balance)} {computer.getChain()}
                         </dd>
                       </div>
+                      {getWinnerPubKey(chessContract) && (
+                        <div className="flex flex-col pt-3">
+                          {renderButtonContent(
+                            game,
+                            paymentReleased,
+                            chessContract,
+                            computer,
+                            requestRelease,
+                            releaseFund,
+                          )}
+                        </div>
+                      )}
                     </dl>
                   </div>
                 </div>

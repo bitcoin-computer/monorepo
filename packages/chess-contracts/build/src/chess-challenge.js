@@ -16,16 +16,12 @@ export class ChessChallengeTxWrapperHelper {
         this.mod = mod;
     }
     async createChessChallengeTxWrapper(chessGameTxHex, publicKeyB) {
-        console.log(`new ChessChallengeTxWrapper(
-      "${chessGameTxHex}", "${publicKeyB}"
-    )`, this.mod);
         const { tx } = await this.computer.encode({
             exp: `new ChessChallengeTxWrapper(
         "${chessGameTxHex}", "${publicKeyB}"
       )`,
             mod: this.mod,
         });
-        console.log('tx crreated');
         return this.computer.broadcast(tx);
     }
 }

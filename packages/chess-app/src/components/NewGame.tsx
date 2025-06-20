@@ -81,12 +81,10 @@ function NewGameModalContent({
         }
       }
 
-      console.log('creating helper')
       const chessChallengeTxWrapperHelper = new ChessChallengeTxWrapperHelper({
         computer: computerW,
         mod: VITE_CHESS_CHALLENGE_MOD_SPEC,
       })
-      console.log('created helper')
 
       await chessChallengeTxWrapperHelper.createChessChallengeTxWrapper(tx.serialize(), publicKeyB)
       showSnackBar('A challenge request has been sent to the player', true)
@@ -94,7 +92,6 @@ function NewGameModalContent({
       handleClear()
       showLoader(false)
     } catch (err) {
-      console.log(err)
       if (err instanceof Error) {
         showSnackBar(err.message, false)
       } else {

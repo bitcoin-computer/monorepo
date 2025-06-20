@@ -1,31 +1,30 @@
-import { User } from '@bitcoin-computer/chess-contracts'
-import { ComputerContext } from '@bitcoin-computer/components'
+import { ComputerContext, Modal } from '@bitcoin-computer/components'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { HiRefresh } from 'react-icons/hi'
+import { VITE_CHESS_CHALLENGE_MOD_SPEC } from '../constants/modSpecs'
+import { startGameModal } from './StartGame'
 
-export const InfiniteScroll = ({
-  setGameId,
-  user,
-  setUser,
+export const ChallengeList = ({
+  challenges,
+  setChallenges,
+  setChallengeId,
 }: {
-  setGameId: React.Dispatch<React.SetStateAction<string>>
-  user: User | null
-  setUser: React.Dispatch<React.SetStateAction<User | null>>
+  challenges: string[]
+  setChallenges: React.Dispatch<React.SetStateAction<string[]>>
+  setChallengeId: React.Dispatch<React.SetStateAction<string>>
 }) => {
   const [items, setItems] = useState<string[]>([])
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
   const computer = useContext(ComputerContext)
-  const contractsPerPage = 12
-  const navigate = useNavigate()
+  const itemsPerPage = 12
 
   const fetchMoreItems = useCallback(
     async (offset: number): Promise<string[]> => {
-      return user ? user.games.slice(offset, offset + contractsPerPage) : []
+      return challenges ? challenges.slice(offset, offset + itemsPerPage) : []
     },
-    [contractsPerPage, user],
+    [itemsPerPage, challenges],
   )
 
   const loadMoreItems = useCallback(async () => {
@@ -35,7 +34,7 @@ export const InfiniteScroll = ({
     const newItems = await fetchMoreItems(items.length)
 
     setItems((prev) => [...prev, ...newItems])
-    if (newItems.length < contractsPerPage) setHasMore(false) // Stop fetching when no more items are available
+    if (newItems.length < itemsPerPage) setHasMore(false) // Stop fetching when no more items are available
     setLoading(false)
   }, [loading, hasMore, items, fetchMoreItems])
 
@@ -55,21 +54,24 @@ export const InfiniteScroll = ({
       setLoading(true)
       const initialItems = await fetchMoreItems(0)
       setItems(initialItems)
-      if (initialItems.length < contractsPerPage) setHasMore(false)
+      if (initialItems.length < itemsPerPage) setHasMore(false)
       setLoading(false)
     }
 
     initialFetch()
   }, [fetchMoreItems])
 
-  const refreshUser = async () => {
-    if (user) {
-      const [userRev] = await computer.query({
-        ids: [user?._id],
-      })
-      const userObj = (await computer.sync(userRev)) as User
-      setUser(userObj)
-    }
+  const refreshList = async () => {
+    const challengeRevs = await computer.query({
+      mod: VITE_CHESS_CHALLENGE_MOD_SPEC,
+      publicKey: computer.getPublicKey(),
+    })
+    setChallenges(challengeRevs.reverse())
+  }
+
+  const openModal = (item: string) => {
+    setChallengeId(item)
+    Modal.showModal(startGameModal)
   }
 
   return (
@@ -77,10 +79,10 @@ export const InfiniteScroll = ({
       <div className="flex justify-center mt-2 mb-2">
         <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
           <span className="hover:text-gray-700 dark:hover:text-gray-200 font-extrabold cursor-pointer">
-            My Games
+            My Challenges
           </span>{' '}
           <HiRefresh
-            onClick={refreshUser}
+            onClick={refreshList}
             className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
           />
         </h3>
@@ -88,7 +90,6 @@ export const InfiniteScroll = ({
       <div
         ref={scrollContainerRef}
         className="overflow-auto flex-1   max-h-[calc(100vh-9rem)]"
-        // style={{ maxHeight: '500px' }}
         onScroll={handleScroll}
       >
         <ul className="space-y-2 p-4">
@@ -97,10 +98,7 @@ export const InfiniteScroll = ({
               key={index}
               className="p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 truncate cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
               title={item}
-              onClick={() => {
-                navigate(`/game/${item}`)
-                setGameId(item)
-              }}
+              onClick={() => openModal(item)}
             >
               {item}
             </li>

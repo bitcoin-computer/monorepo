@@ -26,20 +26,12 @@ export class ChessChallengeTxWrapperHelper {
   }
 
   async createChessChallengeTxWrapper(chessGameTxHex: string, publicKeyB: string): Promise<string> {
-    console.log(
-      `new ChessChallengeTxWrapper(
-      "${chessGameTxHex}", "${publicKeyB}"
-    )`,
-      this.mod,
-    )
-
     const { tx } = await this.computer.encode({
       exp: `new ChessChallengeTxWrapper(
         "${chessGameTxHex}", "${publicKeyB}"
       )`,
       mod: this.mod,
     })
-    console.log('tx crreated')
     return this.computer.broadcast(tx)
   }
 }

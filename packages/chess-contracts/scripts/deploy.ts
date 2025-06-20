@@ -49,8 +49,6 @@ if (answer === 'n') {
 
 const mod = await deploy(computer, chessContractDirectory)
 const userMod = await computer.deploy(`export ${User}`)
-console.log(`export ${User}`)
-console.log(`export ${ChessChallengeTxWrapper}`)
 const challengeMod = await computer.deploy(`export ${ChessChallengeTxWrapper}`)
 console.log(' \x1b[2m- Successfully deployed smart contracts\x1b[0m')
 

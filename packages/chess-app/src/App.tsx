@@ -6,7 +6,6 @@ import { Auth, UtilsContext, Wallet, ComputerContext } from '@bitcoin-computer/c
 import { ChessBoard } from './components/ChessBoard'
 
 import { Navbar } from './components/Navbar'
-import { MyGames } from './components/MyGames/index'
 import { Home } from './components/Home'
 
 export default function App() {
@@ -28,7 +27,6 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/game/:id" element={<ChessBoard />} />
-              <Route path="/my-games" element={<MyGames />} />
               <Route path="*" element={<Navigate to="/" replace={true} />} />
             </Routes>
           </div>
