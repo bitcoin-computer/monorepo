@@ -91,20 +91,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Compute image tag
+        id: tag_it
+        run: |
+          RELEASE="${{ needs.decide.outputs.release_type }}"
+          VERSION="${{ needs.decide.outputs.version }}"
+
+          if [ "$RELEASE" = "pre" ]; then
+            TAG="${REGISTRY}:${VERSION}-pre-release"
+          else
+            TAG="${REGISTRY}:${VERSION}"
+          fi
+
+          echo "Built image tag is: $TAG"
+          echo "image_tag=$TAG" >> "$GITHUB_OUTPUT"
+
       - name: Debug
         run: |
+          TAG="${{ steps.tag_it.outputs.image_tag }}"
           echo "decide.version      = '${{ needs.decide.outputs.version }}'"
           echo "decide.release_type = '${{ needs.decide.outputs.release_type }}'"
           echo "build.image_tag     = '${{ needs.build.outputs.image_tag }}'"
 
       - name: Pull temporary image
         run: |
-          echo "pulling ${{ needs.build.outputs.image_tag }}"
-          docker pull "${{ needs.build.outputs.image_tag }}"
+          TAG="${{ steps.tag_it.outputs.image_tag }}"
+          echo "$TAG"
+          docker pull "$TAG"
 
       - name: Re-tag image for docker-compose
         run: |
-          docker tag "${{ needs.build.outputs.image_tag }}" bcdb:bcn
+          docker tag "$TAG" bcdb:bcn
 
       - name: Copy configuration files
         working-directory: packages/node
