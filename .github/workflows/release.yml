@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_type: ${{ steps.extract.outputs.release_type }}
-      version:      ${{ steps.extract.outputs.version }}
+      version: ${{ steps.extract.outputs.version }}
     steps:
       - name: Extract version and type
         id: extract
@@ -51,7 +51,7 @@ jobs:
         run: |
           RELEASE="${{ needs.decide.outputs.release_type }}"
           VERSION="${{ needs.decide.outputs.version }}"
-          
+
           if [ "$RELEASE" = "pre" ]; then
             TAG="${REGISTRY}:${VERSION}-pre-release"
           else
@@ -91,7 +91,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Debug: show what we got
+      - name: Debug
         run: |
           echo "decide.version      = '${{ needs.decide.outputs.version }}'"
           echo "decide.release_type = '${{ needs.decide.outputs.release_type }}'"
