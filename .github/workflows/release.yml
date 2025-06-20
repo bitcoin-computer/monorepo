@@ -121,7 +121,7 @@ jobs:
 
       - name: Re-tag image for docker-compose
         run: |
-          docker tag "$TAG" bcdb:bcn
+          docker tag "${{ steps.tag_it.outputs.image_tag }}" bcdb:bcn
 
       - name: Copy configuration files
         working-directory: packages/node
