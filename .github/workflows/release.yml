@@ -99,6 +99,7 @@ jobs:
 
       - name: Pull temporary image
         run: |
+          echo "pulling ${{ needs.build.outputs.image_tag }}"
           docker pull "${{ needs.build.outputs.image_tag }}"
 
       - name: Re-tag image for docker-compose
