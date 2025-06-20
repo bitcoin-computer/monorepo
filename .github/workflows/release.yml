@@ -4,33 +4,35 @@ on:
   push:
     tags:
       - "v*"
-
+env:
+  REGISTRY: bcdb/bcn
 jobs:
   decide:
     runs-on: ubuntu-latest
     outputs:
-      release_type: ${{ steps.set_type.outputs.release_type }}
-      version: ${{ steps.set_type.outputs.version }}
+      release_type: ${{ steps.extract.outputs.release_type }}
+      version:      ${{ steps.extract.outputs.version }}
     steps:
       - name: Extract version and type
-        id: set_type
+        id: extract
         run: |
           TAG="${GITHUB_REF#refs/tags/}"
           echo "Detected tag: $TAG"
 
           if [[ "$TAG" == *-pre-release ]]; then
-            echo "release_type=pre" >> "$GITHUB_OUTPUT"
-            echo "version=${TAG#v}" | sed 's/-pre-release$//' >> "$GITHUB_OUTPUT"
+            VERSION="${TAG#v}"
+            VERSION="${VERSION%-pre-release}"
+            echo "release_type=pre"   >> "$GITHUB_OUTPUT"
           else
+            VERSION="${TAG#v}"
             echo "release_type=final" >> "$GITHUB_OUTPUT"
-            echo "version=${TAG#v}" >> "$GITHUB_OUTPUT"
           fi
-
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
   build:
     needs: decide
     runs-on: ubuntu-latest
     outputs:
-      image_tag: ${{ steps.set_tag.outputs.image_tag }}
+      image_tag: ${{ steps.tag_it.outputs.image_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -44,37 +46,38 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-      - name: Set image tag
-        id: set_tag
-        env:
-          VERSION: ${{ needs.decide.outputs.version }}
-          RELEASE_TYPE: ${{ needs.decide.outputs.release_type }}
+      - name: Compute image tag
+        id: tag_it
         run: |
-          if [ "$RELEASE_TYPE" = "pre" ]; then
-            TAG="bcdb/bcn:${VERSION}-pre-release"
+          RELEASE="${{ needs.decide.outputs.release_type }}"
+          VERSION="${{ needs.decide.outputs.version }}"
+          
+          if [ "$RELEASE" = "pre" ]; then
+            TAG="${REGISTRY}:${VERSION}-pre-release"
           else
-            TAG="bcdb/bcn:${VERSION}"
+            TAG="${REGISTRY}:${VERSION}"
           fi
-          echo "Final tag: $TAG"
+
+          echo "Built image tag is: $TAG"
           echo "image_tag=$TAG" >> "$GITHUB_OUTPUT"
 
       - name: Build and Push Docker Image
         run: |
-          VERSION="${{ needs.decide.outputs.version }}"
-          TAG="${{ steps.set_tag.outputs.image_tag }}"
-
-          echo "Building image: $TAG"
-
-          docker buildx build --platform linux/amd64,linux/arm64 \
+          TAG="${{ steps.tag_it.outputs.image_tag }}"
+          echo "Pushing Docker image $TAG"
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
             --push \
             --tag "$TAG" \
             -f Dockerfile .
 
           if [ "${{ needs.decide.outputs.release_type }}" = "final" ]; then
-            docker buildx build --platform linux/amd64,linux/arm64 \
+            echo "Also tagging as latest"
+            docker buildx build \
+              --platform linux/amd64,linux/arm64 \
               --push \
-              --tag "bcdb/bcn:latest" \
-              --tag "bcdb/bcn:${VERSION}" \
+              --tag "${REGISTRY}:latest" \
+              --tag "${REGISTRY}:${{ needs.decide.outputs.version }}" \
               -f Dockerfile .
           fi
 
@@ -88,13 +91,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Debug: show what we got
+        run: |
+          echo "decide.version      = '${{ needs.decide.outputs.version }}'"
+          echo "decide.release_type = '${{ needs.decide.outputs.release_type }}'"
+          echo "build.image_tag     = '${{ needs.build.outputs.image_tag }}'"
+
       - name: Pull temporary image
         run: |
-          docker pull ${{ needs.build.outputs.image_tag }}
+          docker pull "${{ needs.build.outputs.image_tag }}"
 
       - name: Re-tag image for docker-compose
         run: |
-          docker tag ${{ needs.build.outputs.image_tag }} bcdb:bcn
+          docker tag "${{ needs.build.outputs.image_tag }}" bcdb:bcn
 
       - name: Copy configuration files
         working-directory: packages/node
