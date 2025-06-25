@@ -86,7 +86,11 @@ function NewGameModalContent({
         mod: VITE_CHESS_CHALLENGE_MOD_SPEC,
       })
 
-      await chessChallengeTxWrapperHelper.createChessChallengeTxWrapper(tx.serialize(), publicKeyB)
+      await chessChallengeTxWrapperHelper.createChessChallengeTxWrapper(
+        tx.serialize(),
+        publicKeyB,
+        tx.inputs,
+      )
       showSnackBar('A challenge request has been sent to the player', true)
       Modal.hideModal(newGameModal)
       handleClear()

@@ -23,6 +23,9 @@ export class UserHelper {
   }
 
   async createUser(name: string): Promise<string> {
+    if (!name || !name.trim()) {
+      throw new Error('Name can not be empty')
+    }
     const { tx } = await this.computer.encode({
       exp: `new User(
         "${name}"

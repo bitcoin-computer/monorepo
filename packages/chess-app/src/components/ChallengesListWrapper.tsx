@@ -1,10 +1,11 @@
+import { User } from '@bitcoin-computer/chess-contracts'
 import { ComputerContext } from '@bitcoin-computer/components'
 import { useContext, useEffect, useState } from 'react'
 import { VITE_CHESS_CHALLENGE_MOD_SPEC } from '../constants/modSpecs'
 import { ChallengeList } from './ChallengesList'
 import { StartGameModal } from './StartGame'
 
-export const ChallengeListWrapper = () => {
+export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
   const [challenges, setChallenges] = useState<string[]>([])
   const computer = useContext(ComputerContext)
   const [challengeId, setChallengeId] = useState('')
@@ -24,6 +25,7 @@ export const ChallengeListWrapper = () => {
   return (
     <>
       <ChallengeList
+        user={user}
         challenges={challenges}
         setChallenges={setChallenges}
         setChallengeId={setChallengeId}

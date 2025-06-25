@@ -25,12 +25,17 @@ export class ChessChallengeTxWrapperHelper {
     this.mod = mod
   }
 
-  async createChessChallengeTxWrapper(chessGameTxHex: string, publicKeyB: string): Promise<string> {
+  async createChessChallengeTxWrapper(
+    chessGameTxHex: string,
+    publicKeyB: string,
+    ins: string[],
+  ): Promise<string> {
     const { tx } = await this.computer.encode({
       exp: `new ChessChallengeTxWrapper(
         "${chessGameTxHex}", "${publicKeyB}"
       )`,
       mod: this.mod,
+      exclude: ins,
     })
     return this.computer.broadcast(tx)
   }

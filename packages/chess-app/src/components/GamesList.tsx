@@ -1,31 +1,33 @@
-import { User } from '@bitcoin-computer/chess-contracts'
-import { ComputerContext } from '@bitcoin-computer/components'
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { HiRefresh } from 'react-icons/hi'
 
+export type GameType = {
+  gameId: string
+  new: boolean
+}
+
 export const InfiniteScroll = ({
   setGameId,
-  user,
-  setUser,
+  games,
+  refreshGames,
 }: {
   setGameId: React.Dispatch<React.SetStateAction<string>>
-  user: User | null
-  setUser: React.Dispatch<React.SetStateAction<User | null>>
+  games: GameType[]
+  refreshGames: () => Promise<void>
 }) => {
-  const [items, setItems] = useState<string[]>([])
+  const [items, setItems] = useState<GameType[]>([])
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
-  const computer = useContext(ComputerContext)
   const contractsPerPage = 12
   const navigate = useNavigate()
 
   const fetchMoreItems = useCallback(
-    async (offset: number): Promise<string[]> => {
-      return user ? user.games.slice(offset, offset + contractsPerPage) : []
+    async (offset: number): Promise<GameType[]> => {
+      return games ? games.slice(offset, offset + contractsPerPage) : []
     },
-    [contractsPerPage, user],
+    [contractsPerPage, games],
   )
 
   const loadMoreItems = useCallback(async () => {
@@ -62,16 +64,6 @@ export const InfiniteScroll = ({
     initialFetch()
   }, [fetchMoreItems])
 
-  const refreshUser = async () => {
-    if (user) {
-      const [userRev] = await computer.query({
-        ids: [user?._id],
-      })
-      const userObj = (await computer.sync(userRev)) as User
-      setUser(userObj)
-    }
-  }
-
   return (
     <div className="w-full h-full overflow-hidden flex flex-col bg-white dark:bg-gray-800 border border-gray-300  dark:border-gray-700 rounded-lg">
       <div className="flex justify-center mt-2 mb-2">
@@ -80,7 +72,7 @@ export const InfiniteScroll = ({
             My Games
           </span>{' '}
           <HiRefresh
-            onClick={refreshUser}
+            onClick={refreshGames}
             className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
           />
         </h3>
@@ -95,14 +87,17 @@ export const InfiniteScroll = ({
           {items.map((item, index) => (
             <li
               key={index}
-              className="p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 truncate cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
-              title={item}
+              className="relative p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 truncate cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
+              title={item.gameId}
               onClick={() => {
-                navigate(`/game/${item}`)
-                setGameId(item)
+                navigate(`/game/${item.gameId}`)
+                setGameId(item.gameId)
               }}
             >
-              {item}
+              {item.gameId}
+              {item.new && (
+                <div className="absolute inline-flex w-3 h-3 bg-red-500 rounded-full top-0 end-0 -mt-1 -mr-1"></div>
+              )}
             </li>
           ))}
         </ul>

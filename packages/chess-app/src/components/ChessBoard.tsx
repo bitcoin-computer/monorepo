@@ -21,11 +21,11 @@ import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants
 import { signInModal } from './Navbar'
 import { getGameState } from './utils'
 import { NewGameModal, newGameModal } from './NewGame'
-import { InfiniteScroll } from './GamesList'
 import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
 import { ChallengeListWrapper } from './ChallengesListWrapper'
 import { Computer } from '@bitcoin-computer/lib'
+import { GamesListWrapper } from './GamesListWrapper'
 
 const winnerModal = 'winner-modal'
 
@@ -389,6 +389,10 @@ export function ChessBoard() {
     }
   }
 
+  const createAccount = () => {
+    Modal.showModal(creaetUserModal)
+  }
+
   const requestRelease = async () => {
     try {
       showLoader(true)
@@ -455,10 +459,10 @@ export function ChessBoard() {
             New Game
           </button>
           <div>
-            <InfiniteScroll setGameId={setGameId} user={user} setUser={setUser} />
+            <GamesListWrapper setGameId={setGameId} setUser={setUser} />
           </div>
           <div>
-            <ChallengeListWrapper />
+            <ChallengeListWrapper user={user} />
           </div>
         </div>
 
@@ -503,7 +507,24 @@ export function ChessBoard() {
 
         {/* Moves List Column */}
         <div className="pt-4 order-2 md:order-2 lg:order-3 md:col-span-1">
-          {chessContract ? (
+          <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm mb-4">
+            {user ? (
+              <div className="flex justify-center">
+                <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">{user.name}</h3>
+              </div>
+            ) : (
+              <div className="flex justify-center mt-4">
+                <button
+                  onClick={createAccount}
+                  type="button"
+                  className="w-full py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                >
+                  Create Account
+                </button>
+              </div>
+            )}
+          </div>
+          {chessContract && (
             <>
               {game && (
                 <div className="col-span-1 space-y-4 text-gray-900 dark:text-gray-200 mb-4">
@@ -555,23 +576,6 @@ export function ChessBoard() {
                 <ListLayout listOfMoves={chessContract.sans} />
               </div>
             </>
-          ) : (
-            <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-              <div className="flex justify-center">
-                <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
-                  Play Chess on {computer.getChain()}
-                </h3>
-              </div>
-              <div className="flex justify-center mt-4">
-                <button
-                  onClick={playNewGame}
-                  type="button"
-                  className="w-full py-2.5 px-5 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
-                >
-                  New Game
-                </button>
-              </div>
-            </div>
           )}
         </div>
       </div>

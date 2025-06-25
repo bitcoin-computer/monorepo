@@ -12,6 +12,9 @@ export class UserHelper {
         this.mod = mod;
     }
     async createUser(name) {
+        if (!name || !name.trim()) {
+            throw new Error('Name can not be empty');
+        }
         const { tx } = await this.computer.encode({
             exp: `new User(
         "${name}"

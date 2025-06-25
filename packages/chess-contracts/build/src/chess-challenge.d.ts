@@ -12,5 +12,5 @@ export declare class ChessChallengeTxWrapperHelper {
         computer: Computer;
         mod?: string;
     });
-    createChessChallengeTxWrapper(chessGameTxHex: string, publicKeyB: string): Promise<string>;
+    createChessChallengeTxWrapper(chessGameTxHex: string, publicKeyB: string, ins: string[]): Promise<string>;
 }

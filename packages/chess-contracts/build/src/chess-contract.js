@@ -1,5 +1,6 @@
 import { Transaction } from '@bitcoin-computer/lib';
 import { address, bufferUtils, networks, payments, script as bscript, } from '@bitcoin-computer/nakamotojs';
+import { sleep } from '@bitcoin-computer/components';
 import { Buffer } from 'buffer';
 import { ECPairFactory } from 'ecpair';
 import * as ecc from '@bitcoin-computer/secp256k1';
@@ -164,6 +165,8 @@ export class ChessContractHelper {
         tx.addInput(txHash, 0);
         // Sign and broadcast
         await this.computer.sign(tx);
+        console.log({ inputs: tx.inputs, ins: tx.ins });
+        await sleep(1000);
         return this.computer.broadcast(tx);
     }
     async move(chessContract, from, to, promotion) {

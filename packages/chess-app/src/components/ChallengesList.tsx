@@ -1,17 +1,21 @@
+import { User } from '@bitcoin-computer/chess-contracts'
 import { ComputerContext, Modal } from '@bitcoin-computer/components'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { HiRefresh } from 'react-icons/hi'
 import { VITE_CHESS_CHALLENGE_MOD_SPEC } from '../constants/modSpecs'
+import { creaetUserModal } from './CreateUser'
 import { startGameModal } from './StartGame'
 
 export const ChallengeList = ({
   challenges,
   setChallenges,
   setChallengeId,
+  user,
 }: {
   challenges: string[]
   setChallenges: React.Dispatch<React.SetStateAction<string[]>>
   setChallengeId: React.Dispatch<React.SetStateAction<string>>
+  user: User | null
 }) => {
   const [items, setItems] = useState<string[]>([])
   const [hasMore, setHasMore] = useState(true)
@@ -70,6 +74,10 @@ export const ChallengeList = ({
   }
 
   const openModal = (item: string) => {
+    if (!user) {
+      Modal.showModal(creaetUserModal)
+      return
+    }
     setChallengeId(item)
     Modal.showModal(startGameModal)
   }
