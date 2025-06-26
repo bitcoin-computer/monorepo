@@ -87,16 +87,16 @@ export const InfiniteScroll = ({
           {items.map((item, index) => (
             <li
               key={index}
-              className="relative p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 truncate cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
+              className="relative p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
               title={item.gameId}
               onClick={() => {
                 navigate(`/game/${item.gameId}`)
                 setGameId(item.gameId)
               }}
             >
-              {item.gameId}
+              <span className="truncate block">{item.gameId}</span>
               {item.new && (
-                <div className="absolute inline-flex w-3 h-3 bg-red-500 rounded-full top-0 end-0 -mt-1 -mr-1"></div>
+                <div className="absolute inline-flex w-3 h-3 bg-red-500 rounded-full top-0 right-0 -mt-1 -mr-1 z-10"></div>
               )}
             </li>
           ))}

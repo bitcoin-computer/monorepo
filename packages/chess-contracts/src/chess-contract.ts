@@ -6,7 +6,6 @@ import {
   payments,
   script as bscript,
 } from '@bitcoin-computer/nakamotojs'
-import { sleep } from '@bitcoin-computer/components'
 import { Buffer } from 'buffer'
 import { ECPairFactory, ECPairInterface } from 'ecpair'
 import * as ecc from '@bitcoin-computer/secp256k1'
@@ -258,8 +257,6 @@ export class ChessContractHelper {
 
     // Sign and broadcast
     await this.computer.sign(tx)
-    console.log({ inputs: tx.inputs, ins: tx.ins })
-    await sleep(1000)
     return this.computer.broadcast(tx)
   }
 

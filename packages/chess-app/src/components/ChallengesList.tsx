@@ -1,31 +1,34 @@
 import { User } from '@bitcoin-computer/chess-contracts'
-import { ComputerContext, Modal } from '@bitcoin-computer/components'
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { Modal } from '@bitcoin-computer/components'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { HiRefresh } from 'react-icons/hi'
-import { VITE_CHESS_CHALLENGE_MOD_SPEC } from '../constants/modSpecs'
 import { creaetUserModal } from './CreateUser'
 import { startGameModal } from './StartGame'
 
+export type ChallengeType = {
+  challengeId: string
+  new: boolean
+}
+
 export const ChallengeList = ({
   challenges,
-  setChallenges,
   setChallengeId,
   user,
+  refreshList,
 }: {
-  challenges: string[]
-  setChallenges: React.Dispatch<React.SetStateAction<string[]>>
+  challenges: ChallengeType[]
   setChallengeId: React.Dispatch<React.SetStateAction<string>>
   user: User | null
+  refreshList: () => Promise<void>
 }) => {
-  const [items, setItems] = useState<string[]>([])
+  const [items, setItems] = useState<ChallengeType[]>([])
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
-  const computer = useContext(ComputerContext)
   const itemsPerPage = 12
 
   const fetchMoreItems = useCallback(
-    async (offset: number): Promise<string[]> => {
+    async (offset: number): Promise<ChallengeType[]> => {
       return challenges ? challenges.slice(offset, offset + itemsPerPage) : []
     },
     [itemsPerPage, challenges],
@@ -65,14 +68,6 @@ export const ChallengeList = ({
     initialFetch()
   }, [fetchMoreItems])
 
-  const refreshList = async () => {
-    const challengeRevs = await computer.query({
-      mod: VITE_CHESS_CHALLENGE_MOD_SPEC,
-      publicKey: computer.getPublicKey(),
-    })
-    setChallenges(challengeRevs.reverse())
-  }
-
   const openModal = (item: string) => {
     if (!user) {
       Modal.showModal(creaetUserModal)
@@ -104,11 +99,14 @@ export const ChallengeList = ({
           {items.map((item, index) => (
             <li
               key={index}
-              className="p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 truncate cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
-              title={item}
-              onClick={() => openModal(item)}
+              className="relative p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
+              title={item.challengeId}
+              onClick={() => openModal(item.challengeId)}
             >
-              {item}
+              <span className="truncate block">{item.challengeId}</span>
+              {item.new && (
+                <div className="absolute inline-flex w-3 h-3 bg-red-500 rounded-full top-0 right-0 -mt-1 -mr-1 z-10"></div>
+              )}
             </li>
           ))}
         </ul>
