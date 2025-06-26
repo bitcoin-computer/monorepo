@@ -354,7 +354,7 @@ function LoginForm() {
 }
 
 function LoginModal() {
-  return <Modal.Component title="Sign in" content={LoginForm} id="sign-in-modal" />
+  return <Modal.Component title="Sign in" content={LoginForm} id="sign-in-modal" hideClose={true} />
 }
 
 export const Auth = {
