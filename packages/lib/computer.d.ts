@@ -133,7 +133,6 @@ type ComputerOptions = Partial<{
   dustRelayFee: number
   addressType: AddressType
   moduleStorageType: ModuleStorageType
-  thresholdBytes: number
   cache: boolean
 }>
 type Rev = {
