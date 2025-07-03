@@ -60,7 +60,7 @@
     "ecpair": "^2.1.0",
     "expect": "^29.7.0",
     "path": "^0.12.7",
-    "typescript": "^5.8.2",
+    "typescript": "^5.8.3",
     "url": "^0.11.4",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
