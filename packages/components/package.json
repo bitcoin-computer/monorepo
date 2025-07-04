@@ -29,7 +29,6 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern built/",
     "lint:fix": "eslint src --fix",
-    "test": "vitest run",
     "tsc:compile": "rm -rf built/* && tsc",
     "types": "tsc --noEmit"
   },
@@ -44,7 +43,7 @@
   },
   "devDependencies": {
     "@babel/preset-react": "^7.23.3",
-    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.35.0",
     "vitest": "^2.0.5"
   }
 }

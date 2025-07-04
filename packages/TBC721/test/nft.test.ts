@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-expressions */
-// eslint-disable-next-line import/no-extraneous-dependencies
 import * as chai from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
