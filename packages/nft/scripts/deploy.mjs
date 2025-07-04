@@ -24,7 +24,7 @@ if (network !== 'regtest') {
 const computer = new Computer({ chain, network, mnemonic, path, url })
 
 if (network === 'regtest') await computer.faucet(2e8)
-const balance = await computer.wallet.getBalance()
+const balance = await computer.db.wallet.getBalance()
 
 // Summary
 console.log(`Chain \x1b[2m${chain}\x1b[0m

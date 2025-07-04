@@ -23,6 +23,10 @@
   ],
   "main": "built/index.js",
   "types": "built/index.d.ts",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "build": "npm run tsc:compile",
     "build:turbo": "turbo run build",

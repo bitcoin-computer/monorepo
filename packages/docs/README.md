@@ -51,3 +51,9 @@ Create a pull request and merge into main. Then set the custom domain to the str
 ```
 docs.bitcoincomputer.io
 ```
+
+## License
+
+This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
+
+The software described in this documentation includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.

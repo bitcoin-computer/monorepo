@@ -11,6 +11,10 @@
   "main": "./build/index.js",
   "module": "./build/index.js",
   "types": "./build/index.d.ts",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json",

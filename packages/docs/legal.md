@@ -1,24 +1,19 @@
+---
+order: -110
+icon: law
+---
+
 # Legal Notice
 
-**Summary**: This software is free to use and modify under the MIT License for its source code. However, it includes patented technology that requires payment for use, facilitated through a cryptocurrency mechanism. You are responsible for complying with all applicable laws and bear full liability for your use of the software.
+**Summary**: This software is free to use and modify under the [MIT License](./LICENSE.md) for its source code. However, it includes patented technology that requires payment for use, facilitated through a cryptocurrency mechanism. You are responsible for complying with all applicable laws and bear full liability for your use of the software.
 
 ## Patent and Payment Notice
 
-This software includes technology protected by US Patent Nos. 11694197 and 11188911. Using this patented technology, which forms a core part of the software’s functionality, requires payment through the software’s built-in cryptocurrency mechanism. The payment amount is determined automatically by the software, and the cryptocurrency used (e.g., BTC, LTC, DOGE) depends on the blockchain you select. For detailed payment instructions, please refer to the software's documentation.
+This software includes technology protected by US Patent Nos. 11694197 and 11188911. Using this patented technology, which forms a core part of the software’s functionality, requires payment through the software’s built-in cryptocurrency mechanism. The payment amount is determined automatically by the software, and the cryptocurrency used (e.g., BTC, LTC, DOGE) depends on the blockchain you select. For detailed payment instructions, please refer to the software's [documentation](https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/fees.md).
 
 You may modify the software freely under the MIT License, but any use of the patented functionality, including in modified versions, requires compliance with these payment terms or obtaining an alternative license. Bypassing the payment mechanism while still using the patented technology may constitute patent infringement. For alternative licensing options, please contact clemens@bitcoincomputer.io.
 
-## MIT License
-
-The following MIT License applies only to the copyright of the software’s source code and documentation. It does not grant any rights to the patented technology embedded within the software.
-
-Copyright (c) 2025 BCDB Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+You may use the software for free for testing purposes on testnet and regtest, as these environments use test coins with no real value. However, any use on mainnet or other production environments requires compliance with the payment terms outlined in this notice.
 
 ## Disclaimer Regarding User Modifications
 
