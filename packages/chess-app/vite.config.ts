@@ -15,17 +15,16 @@ export default defineConfig(({ mode }) => {
           Buffer: true,
           global: true,
         },
-        protocolImports: true, // Polyfill modules like stream, crypto, etc.
+        protocolImports: true,
       }),
     ],
     resolve: {
       alias: {
-        // Alias for @bitcoin-computer/lib to browser-compatible version
         '@bitcoin-computer/lib': path.resolve(__dirname, '../lib/dist/bc-lib.browser.min.mjs'),
       },
     },
     server: {
-      port: parseInt(env.VITE_PORT) || 3000, // Fallback port if env.VITE_PORT is undefined
+      port: parseInt(env.VITE_PORT) || 3000,
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',
         'Cross-Origin-Embedder-Policy': 'require-corp',

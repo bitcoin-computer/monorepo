@@ -27,9 +27,7 @@ export class UserHelper {
       throw new Error('Name can not be empty')
     }
     const { tx } = await this.computer.encode({
-      exp: `new User(
-        "${name}"
-      )`,
+      exp: `new User("${name}")`,
       mod: this.mod,
     })
     return this.computer.broadcast(tx)
