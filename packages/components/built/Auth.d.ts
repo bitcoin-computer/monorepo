@@ -20,7 +20,7 @@ export type ComputerOptions = Partial<{
 }>;
 declare function isLoggedIn(): boolean;
 declare function logout(): void;
-declare function getCoinType(chain: string, network: string): number;
+declare function getCoinType(chain?: string, network?: string): number;
 declare function getBip44Path({ purpose, coinType, account }?: {
     purpose?: number | undefined;
     coinType?: number | undefined;
@@ -30,14 +30,14 @@ declare function loggedOutConfiguration(): {
     chain: Chain;
     network: Network;
     url: any;
-    moduleStorageType: ModuleStorageType;
+    path: any;
 };
 declare function loggedInConfiguration(): {
     mnemonic: string | null;
     chain: Chain;
     network: Network;
     url: any;
-    moduleStorageType: ModuleStorageType;
+    path: any;
 };
 declare function getComputer(options?: ComputerOptions): Computer;
 declare function LoginForm(): import("react/jsx-runtime").JSX.Element;

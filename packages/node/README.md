@@ -68,6 +68,19 @@ npm run up
 
 The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database.
 
+### Create indexes after syncing to mainnet
+
+To reduce db syncing overhead, the sync process is carried out without creating db indexes. After the node has synced, you can create the indexes with the command below.
+
+<font size=1>
+
+```sh
+# In the node folder run the following command
+npm run create-indexes
+```
+
+</font>
+
 ### Run the Tests
 
 You can run the integration tests with the command below.
