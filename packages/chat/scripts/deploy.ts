@@ -1,5 +1,6 @@
 import { config } from 'dotenv'
 import * as readline from 'node:readline/promises'
+import { readFile, writeFile } from 'fs/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { Computer } from '@bitcoin-computer/lib'
 import { ChatSc } from '../src/contracts/chat.js'
@@ -42,18 +43,30 @@ if (answer === 'n') {
   console.log('\n * Deploying ChatSc contract...')
   const chatModSpec = await computer.deploy(`export ${ChatSc}`)
 
-  console.log(`
-Successfully deployed chat smart contract.
+  console.log(' \x1b[2m- Successfully deployed smart contract\x1b[0m')
 
------------------
- ACTION REQUIRED
------------------
+  const answer2 = await rl.question('\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m')
+  if (answer2 === 'n') {
+    console.log(`
 
-(1) Update the following rows in your .env file.
+    -----------------
+    ACTION REQUIRED
+    -----------------
 
-VITE_CHAT_MOD_SPEC\x1b[2m=${chatModSpec}\x1b[0m
-(2) Run 'npm start' to start the application.
-`)
+    (1) Update the following rows in your .env file.
+
+    VITE_CHAT_MOD_SPEC\x1b[2m=${chatModSpec}\x1b[0m
+    (2) Run 'npm start' to start the application.
+    `)
+  } else {
+    const file = '.env'
+    const lines = (await readFile(file, 'utf-8')).split('\n')
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith('VITE_CHAT_MOD_SPEC')) lines[i] = `VITE_CHAT_MOD_SPEC=${chatModSpec}`
+    }
+    await writeFile(file, lines.join('\n'), 'utf-8')
+    console.log(' \x1b[2m- Successfully updated .env file\x1b[0m')
+  }
 }
 
 rl.close()

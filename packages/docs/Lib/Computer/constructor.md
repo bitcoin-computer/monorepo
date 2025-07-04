@@ -31,7 +31,7 @@ A configuration object with the properties listed below. All properties are opti
 | chain | Target blockchain | `LTC` |
 | network | Target network | `regtest` |
 | mnemonic | BIP39 mnemonic phrase | Random phrase |
-| path | BIP32 path | `m/44'/0'/0'` |
+| path | BIP32 path | `m/44'/1'/0'` |
 | passphrase | BIP32 passphrase | `''` |
 | addressType | Address type | `p2pkh` |
 | url | Url of a Bitcoin Computer Node | `https://rltc.node.bitcoincomputer.io` |

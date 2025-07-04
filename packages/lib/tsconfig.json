@@ -7,7 +7,8 @@
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "lib": ["esnext", "DOM"]
+    "lib": ["esnext", "DOM"],
+    "types": ["./chai.d.ts", "mocha"]
   },
   "include": ["test/**/*"]
 }
