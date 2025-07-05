@@ -198,6 +198,15 @@ const Network = ({ computer }: any) => (
   </div>
 )
 
+const Path = ({ computer }: any) => (
+  <div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Path</h6>
+    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+      {computer.getPath()}
+    </p>
+  </div>
+)
+
 const LogOut = () => (
   <>
     <div className="mb-6">
@@ -229,6 +238,7 @@ export function Wallet({ modSpecs }: { modSpecs?: string[] }) {
       {!getEnv('CHAIN') && <Chain computer={computer} />}
       {!getEnv('NETWORK') && <Network computer={computer} />}
       {!getEnv('URL') && <Url computer={computer} />}
+      {!getEnv('PATH') && <Path computer={computer} />}
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>
