@@ -35,7 +35,6 @@ If the function is called with a revision, it returns the smart object stored at
 If the function is called with a transaction id, it returns an object of type `{ res: Json; env: Json }`. The value of `res` is the result of evaluating the expression inscribed into the transaction. The `env` object has the same keys as the blockchain environment of the transaction, the values of `env` are the smart objects at these revisions _after_ evaluating the expression.
 
 <!-- TODO: explain other type of errors:
-- inconsistent state if the smart object synced or any other smart object on the environment was not created with the library
 - code validation errors like super not allowed
 - validate that the object re-created with the contract matches the object stored at that location
 - Cannot call a function on a smart object that is pointed to

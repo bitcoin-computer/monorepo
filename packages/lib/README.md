@@ -7,7 +7,7 @@
   </p>
 </div>
 
-The Bitcoin Computer is a protocol for general purpose smart contracts on Bitcoin and Litecoin. It does not rely on a separate token, a separate blockchain or any trusted intermediaries. It works similar to ordinals, runes, and BRC20: you can build applications where users add metadata to a transaction to encode a smart contract interaction, such as minting a token. The software can parse the metadata back into smart contract data, for example which users owns how many tokens.
+The Bitcoin Computer is a protocol for general purpose smart contracts on UTXO base blockchains like Bitcoin and Litecoin. It does not rely on a separate token, a separate blockchain or any trusted intermediaries. It works similar to ordinals, runes, and BRC20: users add metadata to a transaction that encode a smart contract interaction, such as minting a token. The software can parse the metadata back into smart contract data, for example which user owns how many tokens.
 
 Our metadata format consists mostly of JavaScript expressions to define the state updates. This makes it possible to build not just tokens but all applications directly on Bitcoin.
 
@@ -288,29 +288,12 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/).
 
 If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
-## Price
-
-The Bitcoin Computer is, and will always be, free on testnet and regtest. This version of the Bitcoin Computer library is also free on mainnet, but we reserve the right to charge a small amount per transaction in future versions. Currently only miner fees apply.
-
 ## Development Status
 
-We are in beta, so there is a possibility of bugs.
-
-## Legal Notice
-
-_Sanctioned Users are Prohibited_. You may not access or use software developed and published by us if you are (i) a resident of any country with which transactions or dealings are prohibited by governmental sanctions imposed by the U.S., the United Nations, the European Union, the United Kingdom, or any other applicable jurisdiction (collectively, “Sanctions Regimes”); (ii) a person, entity or government prohibited under an applicable Sanctions Regime (“Sanctioned Person”), including the Office of Foreign Assets Control, Specially Designated Nationals and Blocked Persons List; or (iii) prohibited from accessing or using the Software pursuant to the laws, rules, and regulations in the jurisdiction in which you reside or otherwise access and use the Software.
-
-_Users Must Comply with Applicable Law_. You may only access or use the Software in compliance with laws, rules, and regulations in the jurisdiction in which you reside or otherwise access and use the Software, including, as applicable, Sanctions Regimes, anti-money laundering laws and regulations, and securities laws and regulations.
-
-_BCDB Does Not Endorse or Promote User Software Activity_. We are publishing certain portions of the Software, on an open-source basis, to demonstrate the utility of the Bitcoin Computer. As this Software is open-source, it may be modified and deployed for a wide range of uses that we may not have intended. We do not endorse or promote, and expressly disclaim liability for, any non-BCDB use or modification of the Software.
+We are in beta.
 
 ## License
 
-This software is licensed under the [Creative Commons Attribution-NoDerivs 3.0 Unported](https://creativecommons.org/licenses/by-nd/3.0/) license.
+This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
 
-You are free to: share, copy, and redistribute the material in any medium or format for any purpose, even commercially under the following terms:
-
-- Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-- NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
-
-This is a human-readable summary of (and not a substitute for) the [license](https://creativecommons.org/licenses/by-nd/3.0/legalcode).
+This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.

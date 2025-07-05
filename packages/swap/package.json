@@ -7,6 +7,10 @@
   "type": "module",
   "main": "./build/src/index.js",
   "types": "./build/src/index.d.ts",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "prebuild": "npm run lint",
     "build": "rm -rf build && tsc -p tsconfig.release.json",

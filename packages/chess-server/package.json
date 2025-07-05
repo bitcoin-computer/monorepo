@@ -2,7 +2,12 @@
   "name": "@bitcoin-computer/chess-server",
   "version": "0.25.0-beta.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "build:docker": "docker build -t chess-server .",
     "clean": "rm -rf db/db-data",

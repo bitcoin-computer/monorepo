@@ -2,7 +2,12 @@
   "name": "@bitcoin-computer/chat",
   "version": "0.25.0-beta.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "build": "tsc -b && vite build",
     "build:turbo": "turbo run build",

@@ -8,7 +8,15 @@ import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
 import { getEnv, bigIntToStr } from './common/utils'
 
-const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[] }) => {
+const Balance = ({
+  computer,
+  modSpecs,
+  isOpen,
+}: {
+  computer: Computer
+  modSpecs: string[]
+  isOpen: boolean
+}) => {
   const [balance, setBalance] = useState<bigint>(0n)
   const [, setChain] = useState<string>(localStorage.getItem('CHAIN') || 'LTC')
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
@@ -19,16 +27,14 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
       const publicKey = computer.getPublicKey()
       const balances: bigint[] = await Promise.all(
         modSpecs.map(async (mod) => {
-          const paymentRevs = modSpecs ? await computer.query({ publicKey, mod }) : []
-          const payments = (await Promise.all(
-            paymentRevs.map((rev: string) => computer.sync(rev)),
-          )) as any[]
+          const revs = modSpecs ? await computer.query({ publicKey, mod }) : []
+          const payments = (await Promise.all(revs.map((rev) => computer.sync(rev)))) as any[]
           return payments && payments.length
             ? payments.reduce(
                 (total, pay) => total + (pay._satoshis - BigInt(computer.getMinimumFees())),
                 0n,
               )
-            : 0
+            : 0n
         }),
       )
       const amountsInPayments: bigint = balances.reduce((acc, curr) => acc + BigInt(curr), 0n)
@@ -40,7 +46,7 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
       showLoader(false)
       showSnackBar('Error fetching wallet details', false)
     }
-  }, [computer])
+  }, [computer, modSpecs])
 
   const fund = async () => {
     await computer.faucet(1e8)
@@ -48,8 +54,8 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
   }
 
   useEffect(() => {
-    refreshBalance()
-  }, [])
+    if (isOpen) refreshBalance()
+  }, [isOpen, refreshBalance])
 
   return (
     <div
@@ -87,7 +93,7 @@ const Address = ({ computer }: any) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(computer.getAddress())
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000) // Reset icon color after 2 seconds
+    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -119,7 +125,7 @@ const PublicKey = ({ computer }: any) => {
   const handleCopy = () => {
     navigator.clipboard.writeText(computer.getPublicKey())
     setCopied(true)
-    setTimeout(() => setCopied(false), 2000) // Reset icon color after 2 seconds
+    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -150,7 +156,7 @@ const Mnemonic = ({ computer }: any) => {
   return (
     <div className="mb-4">
       <h6 className="text-lg font-bold dark:text-white">
-        Mnemonic&nbsp;
+        Mnemonic{' '}
         <button
           onClick={() => setMnemonicShown(!mnemonicShown)}
           className="text-xs font-mono font-normal text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline"
@@ -222,10 +228,10 @@ const LogOut = () => (
 
 export function Wallet({ modSpecs }: { modSpecs?: string[] }) {
   const computer = useContext(ComputerContext)
-  const Content = () => (
+  const Content = ({ isOpen }: { isOpen: boolean }) => (
     <>
       <h4 className="text-2xl font-bold dark:text-white">Wallet</h4>
-      <Balance computer={computer} modSpecs={modSpecs || []} />
+      <Balance computer={computer} modSpecs={modSpecs || []} isOpen={isOpen} />
       <Address computer={computer} />
       <PublicKey computer={computer} />
       <Mnemonic computer={computer} />
