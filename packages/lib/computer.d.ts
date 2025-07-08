@@ -342,6 +342,7 @@ declare class Wallet {
   derive(subpath?: string): Wallet
   getBalance(address?: string): Promise<_Balance>
   getUtxos(address?: string): Promise<_Unspent[]>
+  getUtxosByPublicKey(publicKey: string): Promise<_Unspent[]>
   getDustThreshold(isWitnessProgram: boolean, script?: Buffer): number
   getAmountThreshold(script: Buffer, isWitnessProgram?: boolean): number
   getUtxosWithOpts({ include, exclude }?: FundOptions): Promise<_Unspent[]>
