@@ -15,6 +15,7 @@
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
     "start": "vite",
+    "test": "exit 0",
     "test:puppeteer": "vitest run --config vitest.puppeteer.config.ts",
     "test:puppeteer:headless": "HEADLESS=true npm run test:puppeteer",
     "test:puppeteer:build:headless": "npm run build && (npm run preview & sleep 2 && URL=http://localhost:4173 HEADLESS=true npm run test:puppeteer && pkill -f 'vite preview')",

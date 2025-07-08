@@ -7,6 +7,7 @@ import * as ecc from '@bitcoin-computer/secp256k1';
 import { ECPairFactory } from 'ecpair';
 import * as bscript from '../src/script.js';
 import { p2pkh } from '../src/payments/index.js';
+import { Buffer } from 'buffer';
 
 import fixtures from './fixtures/transaction.js';
 

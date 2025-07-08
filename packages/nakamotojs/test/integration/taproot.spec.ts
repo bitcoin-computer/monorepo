@@ -23,6 +23,7 @@ import { getRandomAddress } from '../test_utils.js';
 import { RegtestClient } from './regtest_client.js';
 import { CHAIN, NETWORK } from './config/index.js';
 import { getNetwork } from '../../src/networks.js';
+import { Buffer } from 'buffer';
 
 const { toXOnly, tapTreeToList, tapTreeFromList } = bip371;
 

@@ -10,6 +10,7 @@ import { getRandomAddress } from '../test_utils.js';
 import { RegtestClient } from './regtest_client.js';
 import { CHAIN, NETWORK } from './config/index.js';
 import { getNetwork } from '../../src/networks.js';
+import { Buffer } from 'buffer';
 import {
   initEccLib,
   payments,
@@ -355,7 +356,7 @@ describe('nakamotojs (transactions with psbt)', () => {
     // send to the off-chain protocol
     const txHex = sellerTx.toHex();
 
-    expect(txHex).to.not.be.undefined;
+    expect(txHex).not.undefined;
 
     // buyer receive from off-chain protocol
     const buyerTx = Transaction.fromHex(txHex);

@@ -52,6 +52,9 @@
     "test:unit:show": "npm run test 2>&1 | tee nakamotojs-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-test.log; fi",
     "unit": "npm run build && npm run nobuild:unit"
   },
+  "alias": {
+    "buffer": "buffer/index.js"
+  },
   "dependencies": {
     "@noble/hashes": "^1.2.0",
     "bech32": "^2.0.0",
