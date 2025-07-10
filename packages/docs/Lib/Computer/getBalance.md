@@ -5,7 +5,7 @@ _Returns the balance in satoshi._
 ## Type
 
 ```ts
-;() => Promise<{ balance: number; confirmed: number; unconfirmed: number }>
+;() => Promise<{ balance: bigint; confirmed: bigint; unconfirmed: bigint }>
 ```
 
 ### Return Value

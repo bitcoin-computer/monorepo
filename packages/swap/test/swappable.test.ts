@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-/* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
@@ -21,7 +20,7 @@ const meta = {
   _rev: _.isString,
   _root: _.isString,
   _owners: _.isArray,
-  _amount: _.isNumber,
+  _satoshis: (x) => typeof x === 'bigint',
 }
 
 describe('Swapppable', () => {
@@ -31,8 +30,8 @@ describe('Swapppable', () => {
   const bob = new Computer({ url, chain, network })
 
   before('Before', async () => {
-    await alice.faucet(0.01e8)
-    await bob.faucet(0.001e8)
+    await alice.faucet(1e8)
+    await bob.faucet(1e8)
   })
 
   describe('Creating two NFTs to be swapped', () => {

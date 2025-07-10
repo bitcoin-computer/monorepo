@@ -6,10 +6,10 @@ import { Auth } from './Auth'
 import { Drawer } from './Drawer'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
-import { getEnv } from './common/utils'
+import { getEnv, bigIntToStr } from './common/utils'
 
 const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[] }) => {
-  const [balance, setBalance] = useState<number>(0)
+  const [balance, setBalance] = useState<bigint>(0n)
   const [, setChain] = useState<string>(localStorage.getItem('CHAIN') || 'LTC')
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
@@ -17,18 +17,21 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
     try {
       showLoader(true)
       const publicKey = computer.getPublicKey()
-      const balances = await Promise.all(
+      const balances: bigint[] = await Promise.all(
         modSpecs.map(async (mod) => {
           const paymentRevs = modSpecs ? await computer.query({ publicKey, mod }) : []
           const payments = (await Promise.all(
             paymentRevs.map((rev: string) => computer.sync(rev)),
           )) as any[]
           return payments && payments.length
-            ? payments.reduce((total, pay) => total + (pay._amount - computer.getMinimumFees()), 0)
+            ? payments.reduce(
+                (total, pay) => total + (pay._satoshis - BigInt(computer.getMinimumFees())),
+                0n,
+              )
             : 0
         }),
       )
-      const amountsInPayments = balances.reduce((acc, curr) => acc + curr, 0)
+      const amountsInPayments: bigint = balances.reduce((acc, curr) => acc + BigInt(curr), 0n)
       const walletBalance = await computer.getBalance()
       setBalance(walletBalance.balance + amountsInPayments)
       setChain(computer.getChain())
@@ -55,7 +58,7 @@ const Balance = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[
       role="alert"
     >
       <div className="text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400">
-        {balance / 1e8} {computer.getChain()}{' '}
+        {bigIntToStr(balance)} {computer.getChain()}{' '}
         <HiRefresh
           onClick={refreshBalance}
           className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
@@ -189,6 +192,15 @@ const Network = ({ computer }: any) => (
   </div>
 )
 
+const Path = ({ computer }: any) => (
+  <div className="mb-4">
+    <h6 className="text-lg font-bold dark:text-white">Path</h6>
+    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+      {computer.getPath()}
+    </p>
+  </div>
+)
+
 const LogOut = () => (
   <>
     <div className="mb-6">
@@ -220,6 +232,7 @@ export function Wallet({ modSpecs }: { modSpecs?: string[] }) {
       {!getEnv('CHAIN') && <Chain computer={computer} />}
       {!getEnv('NETWORK') && <Network computer={computer} />}
       {!getEnv('URL') && <Url computer={computer} />}
+      {!getEnv('PATH') && <Path computer={computer} />}
       <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>

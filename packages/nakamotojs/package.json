@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/nakamotojs",
-  "version": "0.24.3-beta.0",
+  "version": "0.25.0-beta.0",
   "description": "Client-side Bitcoin and Litecoin JavaScript library",
   "keywords": [
     "bitcoinjs",
@@ -52,6 +52,9 @@
     "test:unit:show": "npm run test 2>&1 | tee nakamotojs-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-test.log; fi",
     "unit": "npm run build && npm run nobuild:unit"
   },
+  "alias": {
+    "buffer": "buffer/index.js"
+  },
   "dependencies": {
     "@noble/hashes": "^1.2.0",
     "bech32": "^2.0.0",
@@ -62,14 +65,14 @@
     "varuint-bitcoin": "^1.1.2"
   },
   "devDependencies": {
-    "@bitcoin-computer/secp256k1": "^0.24.3-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.25.0-beta.0",
     "@types/bs58": "^4.0.0",
     "@types/bs58check": "^2.1.0",
     "@types/mocha": "^5.2.7",
     "@types/node": "^16.11.7",
     "@types/proxyquire": "^1.3.28",
-    "@typescript-eslint/eslint-plugin": "^7.9.0",
-    "@typescript-eslint/parser": "^7.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.35.0",
+    "@typescript-eslint/parser": "^8.35.0",
     "bip32": "^4.0.0",
     "bip39": "^3.1.0",
     "bip65": "^1.0.1",
@@ -86,7 +89,7 @@
     "prettier": "^3.2.5",
     "proxyquire": "^2.0.1",
     "ts-node": "^8.3.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=8.0.0"

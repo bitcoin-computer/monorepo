@@ -1,4 +1,5 @@
 import { OPS } from './ops.js';
+import { Buffer } from 'buffer';
 
 export function encodingLength(i: number): number {
   return i < OPS.OP_PUSHDATA1 ? 1 : i <= 0xff ? 2 : i <= 0xffff ? 3 : 5;

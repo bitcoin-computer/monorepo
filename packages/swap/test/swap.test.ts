@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-/* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
@@ -20,8 +19,8 @@ describe('Swap', () => {
   const bob = new Computer({ url, chain, network })
 
   before('Before', async () => {
-    await alice.faucet(0.01e8)
-    await bob.faucet(0.01e8)
+    await alice.faucet(10e8)
+    await bob.faucet(10e8)
   })
 
   describe('Examples from docs', () => {
@@ -167,8 +166,8 @@ describe('Swap', () => {
   describe('Should work with fungible tokens', async () => {
     it('Should work for tokens', async () => {
       // Alice and Bob create one NFT each
-      const tokenA = await alice.new(Token, [alice.getPublicKey(), 10, 'A'])
-      const tokenB = await bob.new(Token, [bob.getPublicKey(), 100, 'B'])
+      const tokenA = await alice.new(Token, [alice.getPublicKey(), 10n, 'A'])
+      const tokenB = await bob.new(Token, [bob.getPublicKey(), 100n, 'B'])
 
       // Alice builds a partially signed swap transaction
       const { tx } = await alice.encode({
@@ -188,8 +187,8 @@ describe('Swap', () => {
       expect(tA._owners).deep.eq([bob.getPublicKey()])
       expect(tB._owners).deep.eq([alice.getPublicKey()])
 
-      expect(tA.amount).eq(10)
-      expect(tB.amount).eq(100)
+      expect(tA.amount).eq(10n)
+      expect(tB.amount).eq(100n)
     })
   })
 })

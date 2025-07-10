@@ -10,6 +10,7 @@ import { getEnv } from './common/utils'
 export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
 export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest'
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
+const pathPattern = /^(m\/)?(\d+'?\/)*\d+'?$/
 
 export type ComputerOptions = Partial<{
   chain: TBCChain
@@ -40,7 +41,7 @@ function logout() {
   window.location.href = '/'
 }
 
-function getCoinType(chain: string, network: string): number {
+function getCoinType(chain: string = 'LTC', network: string = 'regtest'): number {
   if (['testnet', 'regtest'].includes(network)) return 1
 
   if (chain === 'BTC') return 0
@@ -52,8 +53,12 @@ function getCoinType(chain: string, network: string): number {
   throw new Error(`Unsupported chain ${chain} or network ${network}`)
 }
 
-function getBip44Path({ purpose = 44, coinType = 2, account = 0 } = {}) {
+function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
   return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
+}
+
+function getPath({ chain, network }: { chain?: Chain; network?: Network }): string {
+  return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 
 function loggedOutConfiguration() {
@@ -61,7 +66,7 @@ function loggedOutConfiguration() {
     chain: getEnv('CHAIN') as Chain,
     network: getEnv('NETWORK') as Network,
     url: getEnv('URL'),
-    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType,
+    path: getEnv('PATH'),
   }
 }
 
@@ -71,7 +76,7 @@ function loggedInConfiguration() {
     chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')) as Chain,
     network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
     url: localStorage.getItem('URL') || getEnv('URL'),
-    moduleStorageType: getEnv('MODULE_STORAGE_TYPE') as ModuleStorageType,
+    path: localStorage.getItem('PATH') || getEnv('PATH'),
   }
 }
 
@@ -265,7 +270,7 @@ function NetworkInput({
   )
 }
 
-function UrlInput({ urlInputRef }: { urlInputRef: React.RefObject<HTMLInputElement> }) {
+function UrlInput({ url, setUrl }: { url: string; setUrl: Dispatch<string> }) {
   return (
     <>
       <div className="mt-4 flex justify-between">
@@ -274,8 +279,27 @@ function UrlInput({ urlInputRef }: { urlInputRef: React.RefObject<HTMLInputEleme
         </label>
       </div>
       <input
-        ref={urlInputRef}
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+      />
+    </>
+  )
+}
+
+function PathInput({ path, setPath }: { path: string; setPath: Dispatch<string> }) {
+  return (
+    <>
+      <div className="flex justify-between">
+        <label className="block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white">
+          Path
+        </label>
+      </div>
+      <input
+        value={path}
+        onChange={(e) => setPath(e.target.value)}
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+        required
       />
     </>
   )
@@ -286,8 +310,37 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
-    if (isLoggedIn()) showSnackBar('A user is already logged in, please log out first.', false)
-    if (mnemonic.length === 0) showSnackBar("Please don't use an empty mnemonic string.", false)
+    if (isLoggedIn()) {
+      showSnackBar('A user is already logged in, please log out first.', false)
+      return
+    }
+    if (mnemonic.length === 0) {
+      showSnackBar("Please don't use an empty mnemonic string.", false)
+      return
+    }
+    if (chain === undefined) {
+      showSnackBar('Please select a chain.', false)
+      return
+    }
+    if (network === undefined) {
+      showSnackBar('Please select a network.', false)
+      return
+    }
+    if (path.length === 0) {
+      showSnackBar('Please enter a valid path.', false)
+      return
+    }
+    if (path.match(pathPattern) === null) {
+      showSnackBar("Path format must be in the form m/44'/0'/0'/0/0.", false)
+      return
+    }
+
+    if (url === undefined || url?.length === 0) {
+      showSnackBar('Please enter a valid URL.', false)
+      return
+    }
+    if (isLoggedIn()) return
+
     localStorage.setItem('BIP_39_KEY', mnemonic)
     localStorage.setItem('CHAIN', chain)
     localStorage.setItem('NETWORK', network)
@@ -312,13 +365,14 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
 }
 
 function LoginForm() {
-  const [mnemonic, setMnemonic] = useState<string>(new Computer().getMnemonic())
+  const [mnemonic, setMnemonic] = useState<string>(() => new Computer().getMnemonic())
   const [chain, setChain] = useState<Chain | undefined>(getEnv('CHAIN') as Chain | undefined)
   const [network, setNetwork] = useState<Network | undefined>(
     getEnv('NETWORK') as Network | undefined,
   )
-  const [url] = useState<string | undefined>(getEnv('URL'))
+  const [url, setUrl] = useState<string | undefined>(getEnv('URL') || 'http://localhost:1031')
   const urlInputRef = useRef<HTMLInputElement>(null)
+  const [path, setPath] = useState<string>(getEnv('PATH') || getPath({ chain, network }))
 
   useEffect(() => {
     initFlowbite()
@@ -330,9 +384,10 @@ function LoginForm() {
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {!chain && <ChainInput chain={chain} setChain={setChain} />}
-            {!network && <NetworkInput network={network} setNetwork={setNetwork} />}
-            {!url && <UrlInput urlInputRef={urlInputRef} />}
+            {!getEnv('CHAIN') && <ChainInput chain={chain} setChain={setChain} />}
+            {!getEnv('NETWORK') && <NetworkInput network={network} setNetwork={setNetwork} />}
+            {!getEnv('URL') && <UrlInput url={url || ''} setUrl={setUrl} />}
+            {!getEnv('PATH') && <PathInput path={path} setPath={setPath} />}
           </div>
         </form>
       </div>
@@ -342,6 +397,7 @@ function LoginForm() {
           chain={chain}
           network={network}
           url={url}
+          path={path}
           urlInputRef={urlInputRef}
         />
       </div>
@@ -350,7 +406,7 @@ function LoginForm() {
 }
 
 function LoginModal() {
-  return <Modal.Component title="Sign in" content={LoginForm} id="sign-in-modal" />
+  return <Modal.Component title="Sign in" content={LoginForm} id="sign-in-modal" hideClose={true} />
 }
 
 export const Auth = {

@@ -6,6 +6,7 @@ import * as ecc from '@bitcoin-computer/secp256k1';
 import * as crypto from 'crypto';
 import { ECPairFactory } from 'ecpair';
 import { describe, it } from 'mocha';
+import { Buffer } from 'buffer';
 
 import { convertScriptTree } from './payments.utils.js';
 import { LEAF_VERSION_TAPSCRIPT } from '../src/payments/bip341.js';
@@ -159,7 +160,6 @@ describe(`Psbt`, () => {
         if (f.isTaproot) initEccLib(ecc);
         const psbt = Psbt.fromBase64(f.psbt);
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore // cannot find tapLeafHashToSign
         f.keys.forEach(({ inputToSign, tapLeafHashToSign, WIF }) => {
           const keyPair = ECPair.fromWIF(WIF, NETWORKS.testnet);
@@ -1344,7 +1344,7 @@ describe(`Psbt`, () => {
       assert.strictEqual(output.address, address);
 
       assert.ok(output.script.equals(internalInput.script));
-      assert.strictEqual(output.value, internalInput.value);
+      assert.strictEqual(output.value, Number(internalInput.value));
 
       output.script[0] = 123;
       output.value = 123;
@@ -1381,11 +1381,11 @@ describe(`Psbt`, () => {
 
       const outputsAmount = psbt.outputsAmount;
       const internalOutputsAmount = (psbt as any).__CACHE.__TX.outs.reduce(
-        (total: number, output: any) => total + output.value,
-        0,
+        (total: bigint, output: any) => total + output.value,
+        0n,
       );
 
-      assert.strictEqual(outputsAmount, internalOutputsAmount);
+      assert.strictEqual(outputsAmount, Number(internalOutputsAmount));
     });
   });
 });

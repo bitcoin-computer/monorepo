@@ -1,16 +1,17 @@
 /* eslint-disable max-classes-per-file */
+/* eslint-disable no-underscore-dangle */
 
 export class Token extends Contract {
-  amount: number
+  amount: bigint
   name: string
   symbol: string
   _owners: string[]
 
-  constructor(to: string, amount: number, name: string, symbol = '') {
+  constructor(to: string, amount: bigint, name: string, symbol = '') {
     super({ _owners: [to], amount, name, symbol })
   }
 
-  transfer(to: string, amount?: number): Token | undefined {
+  transfer(to: string, amount?: bigint): Token | undefined {
     if (typeof amount === 'undefined') {
       // Send entire amount
       this._owners = [to]
@@ -25,11 +26,11 @@ export class Token extends Contract {
   }
 
   burn() {
-    this.amount = 0
+    this.amount = 0n
   }
 
   merge(tokens: Token[]) {
-    let total = 0
+    let total = 0n
     tokens.forEach((token) => {
       total += token.amount
       token.burn()
@@ -40,10 +41,10 @@ export class Token extends Contract {
 
 export interface ITBC20 {
   deploy(): Promise<string>
-  mint(publicKey: string, amount: number, name: string, symbol: string): Promise<string>
-  totalSupply(root: string): Promise<number>
-  balanceOf(publicKey: string, root: string): Promise<number>
-  transfer(to: string, amount: number, root: string): Promise<void>
+  mint(publicKey: string, amount: bigint, name: string, symbol: string): Promise<string>
+  totalSupply(root: string): Promise<bigint>
+  balanceOf(publicKey: string, root: string): Promise<bigint>
+  transfer(to: string, amount: bigint, root: string): Promise<void>
 }
 
 export class TokenHelper implements ITBC20 {
@@ -64,7 +65,7 @@ export class TokenHelper implements ITBC20 {
 
   async mint(
     publicKey: string,
-    amount: number,
+    amount: bigint,
     name: string,
     symbol: string,
   ): Promise<string | undefined> {
@@ -73,7 +74,7 @@ export class TokenHelper implements ITBC20 {
     return token._root
   }
 
-  async totalSupply(root: string): Promise<number> {
+  async totalSupply(root: string): Promise<bigint> {
     const rootBag = await this.computer.sync(root)
     return rootBag.amount
   }
@@ -84,20 +85,20 @@ export class TokenHelper implements ITBC20 {
     return bags.flatMap((bag: Token & { _root: string }) => (bag._root === root ? [bag] : []))
   }
 
-  async balanceOf(publicKey: string, root: string): Promise<number> {
+  async balanceOf(publicKey: string, root: string): Promise<bigint> {
     if (typeof root === 'undefined') throw new Error('Please pass a root into balanceOf.')
     const bags = await this.getBags(publicKey, root)
-    return bags.reduce((prev, curr) => prev + curr.amount, 0)
+    return bags.reduce((prev, curr) => prev + curr.amount, 0n)
   }
 
-  async transfer(to: string, amount: number, root: string): Promise<void> {
+  async transfer(to: string, amount: bigint, root: string): Promise<void> {
     let _amount = amount
     const owner = this.computer.getPublicKey()
     const bags = await this.getBags(owner, root)
     const results = []
     while (_amount > 0 && bags.length > 0) {
       const [bag] = bags.splice(0, 1)
-      const available = Math.min(_amount, bag.amount)
+      const available = _amount < bag.amount ? _amount : bag.amount
       // eslint-disable-next-line no-await-in-loop
       results.push(await bag.transfer(to, available))
       _amount -= available

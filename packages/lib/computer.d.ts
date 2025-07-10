@@ -23,7 +23,7 @@ type SJObject = {
   _rev: string
   _root: string
   _owners: string | string[]
-  _amount: number
+  _satoshis: bigint
   _readers?: string[]
   _url?: string
 }
@@ -32,7 +32,7 @@ declare class Mock {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _satoshis: bigint
   _owners: string[]
   constructor({
     _id,
@@ -78,14 +78,18 @@ type Fee = Partial<{
   fee: number
 }>
 type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
+type OwnerData = {
+  _satoshis: bigint
+  _owners: string | string[]
+  _readers?: string[]
+  _url?: string
+}
 type ProgramMetaData = JObject &
-  Partial<{
-    _amount: number
-    _owners: string | string[]
-    _readers?: string[]
-    _url?: string
-    ioMap: number[]
-  }>
+  Partial<
+    OwnerData & {
+      ioMap: number[]
+    }
+  >
 type UpdateMetaData = ProgramMetaData & {
   outScriptBuf?: Buffer
 }
@@ -129,6 +133,7 @@ type ComputerOptions = Partial<{
   dustRelayFee: number
   addressType: AddressType
   moduleStorageType: ModuleStorageType
+  thresholdBytes: number
   cache: boolean
 }>
 type Rev = {
@@ -160,8 +165,8 @@ type Location = {
   _rev: string
   _root: string
   _id: string
-  _owners: string[]
-  _amount: number
+  _owners: string[] | string
+  _satoshis: bigint
   _readers?: string[]
   _url?: string
 }
@@ -214,17 +219,17 @@ interface _Network {
   wif: number
 }
 interface _Balance {
-  confirmed: number
-  unconfirmed: number
-  balance: number
+  confirmed: bigint
+  unconfirmed: bigint
+  balance: bigint
 }
 interface _Unspent {
   txId: string
   vout: number
-  satoshis: number
+  satoshis: bigint
+  amount?: bigint
   rev?: string
   scriptPubKey?: string
-  amount?: number
   address?: string
   height?: number
 }
@@ -265,6 +270,13 @@ type Effect = {
   env: JObject
 }
 
+type TxIdAmountType = {
+  txId: string
+  inputsSatoshis: bigint
+  outputsSatoshis: bigint
+  satoshis: bigint
+}
+
 declare class RestClient {
   readonly chain: TBCChain
   readonly network: TBCNetwork
@@ -277,23 +289,16 @@ declare class RestClient {
   readonly bcn: UrlFetch
   readonly dustRelayTxFee: number
   readonly moduleStorageType: ModuleStorageType
+  readonly rpcClient: any
   satPerByte: number
-  constructor({
-    chain,
-    network,
-    mnemonic,
-    path,
-    passphrase,
-    addressType,
-    url,
-    satPerByte,
-    dustRelayFee,
-    moduleStorageType,
-  }?: ComputerOptions)
+  constructor(params?: ComputerOptions)
   rpc(method: string, params: string): Promise<any>
   broadcast(txHex: string): Promise<string>
   getBalance(address: string): Promise<_Balance>
-  listTxs(address: string): Promise<_Transaction>
+  listTxs(address: string): Promise<{
+    sentTxs: TxIdAmountType[]
+    receivedTxs: TxIdAmountType[]
+  }>
   getUtxos(address?: string): Promise<_Unspent[]>
   getFormattedUtxos(address: string): Promise<_Unspent[]>
   getRawTxs(txIds: string[]): Promise<string[]>
@@ -323,10 +328,12 @@ declare class RestClient {
     keyPair: BIP32Interface
   }): Promise<void>
   faucet(address: string, value: number): Promise<_Unspent>
-  faucetScript(output: Buffer, value: number): Promise<_Unspent>
+  faucetScript(script: Buffer, value: number): Promise<_Unspent>
   mine(count: number): Promise<void>
   verify(txo: _Unspent): Promise<void>
   height(): Promise<number>
+  next(rev: string): Promise<string | undefined>
+  prev(rev: string): Promise<string | undefined>
 }
 
 declare class Wallet {
@@ -335,6 +342,7 @@ declare class Wallet {
   derive(subpath?: string): Wallet
   getBalance(address?: string): Promise<_Balance>
   getUtxos(address?: string): Promise<_Unspent[]>
+  getUtxosByPublicKey(publicKey: string): Promise<_Unspent[]>
   getDustThreshold(isWitnessProgram: boolean, script?: Buffer): number
   getAmountThreshold(script: Buffer, isWitnessProgram?: boolean): number
   getUtxosWithOpts({ include, exclude }?: FundOptions): Promise<_Unspent[]>
@@ -347,14 +355,14 @@ declare class Wallet {
   estimatePsbtSize(tx: Psbt): number
   fundPsbt(tx: Psbt, opts?: FundOptions): Promise<void>
   getOutputSpent: (input: TxInput) => Promise<TxOutput>
-  getInputAmount: (tx: Transaction) => Promise<number>
-  getOutputAmount: (tx: Transaction) => number
+  getInputAmount: (tx: nTransaction) => Promise<bigint>
+  getOutputAmount: (tx: nTransaction) => bigint
   estimateSize(tx: any): Promise<number>
   estimateFee(tx: any): Promise<number>
-  fund(tx: Transaction, opts?: FundOptions): Promise<void>
-  sign(transaction: Transaction, sigOptions?: SigOptions): Promise<void>
-  broadcast(tx: Transaction): Promise<string>
-  send(satoshis: number, address: string): Promise<string>
+  fund(tx: nTransaction, opts?: FundOptions): Promise<void>
+  sign(transaction: nTransaction, sigOptions?: SigOptions): Promise<void>
+  broadcast(tx: nTransaction): Promise<string>
+  send(satoshis: bigint, address: string): Promise<string>
   get hdPrivateKey(): BIP32Interface
   get privateKey(): Buffer
   get publicKey(): Buffer
@@ -384,7 +392,7 @@ declare class Transaction extends nTransaction {
   get ownerData(): {
     outScriptBuf: Buffer
     _owners: string | string[]
-    _amount: number
+    _satoshis: bigint
   }[]
   get ioMap(): number[]
   get zip(): string[][]
@@ -408,13 +416,14 @@ declare class Contract {
   _id: string
   _rev: string
   _root: string
-  _amount: number
+  _satoshis: bigint
   _owners: string[]
   constructor(opts?: {})
 }
 
 declare class Computer {
   wallet: Wallet
+  memory?: Memory
   constructor(params?: ComputerOptions)
   new<T extends Class>(
     constructor: T,
@@ -430,7 +439,7 @@ declare class Computer {
     effect: Effect
     tx: Transaction
     update: Update
-    deltaMem: Memory
+    memory: Memory
   }>
   encode(json: Partial<TransitionJSON & FundOptions & SigOptions & MockOptions>): Promise<{
     tx: Transaction
@@ -444,10 +453,11 @@ declare class Computer {
     constructor: T
     args: ConstructorParameters<T>
     mod?: string
-    root?: string
   }): Promise<{
     tx: Transaction
     effect: Effect
+    update: Update
+    memory: Memory
   }>
   encodeCall<T extends Class, K extends keyof InstanceType<T>>({
     target,
@@ -471,7 +481,7 @@ declare class Computer {
   getBalance(address?: string): Promise<_Balance>
   sign(transaction: nTransaction, opts?: SigOptions): Promise<void>
   fund(tx: nTransaction, opts?: Fee & FundOptions): Promise<void>
-  send(satoshis: number, address: string): Promise<string>
+  send(satoshis: bigint, address: string): Promise<string>
   broadcast(tx: nTransaction): Promise<string>
   rpcCall(method: string, params: string): Promise<any>
   static txFromHex({ hex }: { hex: string }): Transaction
@@ -488,6 +498,7 @@ declare class Computer {
   getFee(): number
   setFee(fee: number): void
   faucet(amount: number, address?: string): Promise<_Unspent>
+  static getVersion(): string
   static getInscription(
     rawTx: string,
     index: number,
@@ -501,6 +512,11 @@ declare class Computer {
   isUnspent(rev: string): Promise<boolean>
   next(rev: string): Promise<string | undefined>
   prev(rev: string): Promise<string | undefined>
+  subscribe(
+    id: string,
+    onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
+    onError?: (error: Event) => void,
+  ): Promise<() => void>
   export(module: string, opts?: Partial<ModuleOptions>): Promise<string>
   import(rev: string): Promise<ModuleExportsNamespace>
   queryRevs(q: Query): Promise<string[]>
@@ -510,12 +526,6 @@ declare class Computer {
   getLatestRev(id: string): Promise<string>
   idsToRevs(ids: string[]): Promise<string[]>
   getMinimumFees(): number
-  subscribe(
-    id: string,
-    onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
-    onError?: (error: Event) => void,
-  ): Promise<() => void>
-  static getVersion: () => string
 }
 
 export { Computer, Contract, Mock, Transaction }

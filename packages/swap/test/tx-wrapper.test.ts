@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-expressions */
-/* eslint-disable import/no-extraneous-dependencies */
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
@@ -25,7 +24,7 @@ describe('TxWrapper', () => {
 
   before('Before', async () => {
     await alice.faucet(1e8)
-    await bob.faucet(0.01e8)
+    await bob.faucet(1e8)
   })
 
   describe('Alice and Bob Creates and swap NFTs', () => {

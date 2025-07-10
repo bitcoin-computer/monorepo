@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.24.3-beta.0",
+  "version": "0.25.0-beta.0",
   "private": false,
   "description": "Server Side Library for the Bitcoin Computer",
   "keywords": [
@@ -37,10 +37,9 @@
     "clean:blockchain:data": "rm -rf chain-setup/*/*/blockchain-data",
     "clean:db:data": "rm -rf chain-setup/*/*/db-data",
     "clean:logs": "rm -f *.log 2> /dev/null",
+    "create:indexes": "nohup node --loader ts-node/esm ./scripts/create-indexes.ts > /dev/null 2>&1 &",
     "down": "docker compose -f docker-compose.yml down",
     "fund": "node --loader ts-node/esm ./scripts/fund.ts",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix",
     "prune": "docker system prune -f",
     "setup": "./scripts/setup.py",
     "start": "npm run up",
@@ -52,9 +51,9 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@bitcoin-computer/lib": "^0.24.3-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.24.3-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.24.3-beta.0",
+    "@bitcoin-computer/lib": "^0.25.0-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.25.0-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.25.0-beta.0",
     "@types/node": "^20.11.20",
     "axios": "1.7.9",
     "bitcoind-rpc": "^0.9.1",
@@ -71,7 +70,7 @@
     "pg-monitor": "^2.0.0",
     "pg-promise": "^11.5.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3",
+    "typescript": "^5.8.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0",
     "zeromq": "6.0.4"

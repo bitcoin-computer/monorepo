@@ -6,6 +6,7 @@ import * as bip39 from 'bip39';
 import { describe, it } from 'mocha';
 import { networks, payments } from '../../src/index.js';
 import { expect } from 'chai';
+import { Buffer } from 'buffer';
 
 const bip32 = BIP32Factory(ecc);
 

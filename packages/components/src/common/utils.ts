@@ -1,4 +1,4 @@
-// eslint-disable-next-line
+ 
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]
@@ -44,8 +44,8 @@ export const jsonMap =
 export const strip = (value: Json): Json => {
   if (isJBasic(value)) return value
   if (isJArray(value)) return value.map(strip)
-  // eslint-disable-next-line
-  const { _id, _root, _rev, _amount, _owners, ...rest } = value
+   
+  const { _id, _root, _rev, _satoshis, _owners, ...rest } = value
   return rest
 }
 
@@ -74,4 +74,32 @@ export function getEnv(name: string) {
     (typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||
     (import.meta.env && import.meta.env[`VITE_${name}`])
   )
+}
+
+export function bigIntToStr(a: bigint): string {
+  if (a < 0n) throw new Error('Balance must be a non-negative')
+
+  const scale = BigInt(1e8)
+  const integerPart = (a / scale).toString()
+  const fractionalPart = (a % scale).toString().padStart(8, '0').replace(/0+$/, '')
+  return `${integerPart}.${fractionalPart || '0'}`
+}
+
+export function strToBigInt(a: string): bigint {
+  // Validate number contains at most one dot and is not empty
+  if ((a.match(/\./g) || []).length > 1 || a === '.' || a === '') {
+    throw new Error('Invalid number')
+  }
+
+  const [integerPart, fractionalPart = ''] = a.split('.')
+
+  // Validate integer and fractional part contains only digits (or is empty)
+  if (!/^\d*$/.test(integerPart) || !/^\d*$/.test(fractionalPart)) {
+    throw new Error('Invalid number')
+  }
+
+  const paddedFractionalPart = fractionalPart.padEnd(8, '0').slice(0, 8)
+  const totalSatoshisStr = integerPart + paddedFractionalPart
+
+  return BigInt(totalSatoshisStr)
 }

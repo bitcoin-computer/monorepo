@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable import/no-extraneous-dependencies */
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
@@ -49,7 +47,7 @@ describe('Bitcoin Computer', () => {
       _id: _.isString,
       _rev: _.isString,
       _root: _.isString,
-      _amount: _.isNumber,
+      _satoshis: (x) => typeof x === 'bigint',
       _owners: _.isArray,
     })
   })
@@ -66,7 +64,7 @@ describe('Bitcoin Computer', () => {
       _id: _.isString,
       _rev: _.isString,
       _root: _.isString,
-      _amount: _.isNumber,
+      _satoshis: (x) => typeof x === 'bigint',
       _owners: _.isArray,
     })
   })

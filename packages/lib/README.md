@@ -130,7 +130,7 @@ Counter {
   _id: '656...024:0',
   _rev: '90f...73f:0',
   _root: '656...024:0',
-  _amount: 7860,
+  _satoshis: 7860,
   _owners: ['037...954']
 }
 ```
@@ -193,7 +193,7 @@ expect(a).to.deep.equal({
   _rev: '667c...2357:0',
   _root: '667c...2357:0',
   _owners: [computer.getPublicKey()],
-  _amount: 5820,
+  _satoshis: 5820,
 })
 ```
 

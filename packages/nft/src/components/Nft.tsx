@@ -1,11 +1,11 @@
 import { Dispatch, useContext, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import {
-  toObject,
   capitalizeFirstLetter,
   Modal,
   UtilsContext,
   ComputerContext,
+  bigIntToStr,
 } from '@bitcoin-computer/components'
 import { Computer } from '@bitcoin-computer/lib'
 import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from '@bitcoin-computer/swap'
@@ -31,8 +31,8 @@ const BuyNFT = async ({
   const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
   const paymentHelper = new PaymentHelper(computer, VITE_PAYMENT_MOD_SPEC)
   const saleTxn = await txWrapperHelper.decodeTx(nft.offerTxRev)
-  const nftAmount = await saleHelper.checkSaleTx(saleTxn)
-  const { tx: paymentTx } = await paymentHelper.createPaymentTx(nftAmount)
+  const nftSatoshis = await saleHelper.checkSaleTx(saleTxn)
+  const { tx: paymentTx } = await paymentHelper.createPaymentTx(nftSatoshis)
   const paymentTxId = await computer.broadcast(paymentTx)
   const payment = await paymentHelper.getPayment(paymentTxId)
   const finalTx = await SaleHelper.finalizeSaleTx(
@@ -50,7 +50,7 @@ const BuyNFT = async ({
   // const [updatedRev] = await computer.query({ ids: [nft._id] })
   setFunctionResult(nft._id)
   Modal.showModal(modalId)
-  return nftAmount
+  return nftSatoshis
 }
 
 const CreateSellOffer = async ({
@@ -73,12 +73,12 @@ const CreateSellOffer = async ({
   await nft.list(offerTxId)
 
   const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
-  const parsedAmount = Number(amount) * 1e8
-  if (!parsedAmount) {
+  const parsedSatoshis = Number(amount) * 1e8
+  if (!parsedSatoshis) {
     showSnackBar('Please provide a valid amount.', false)
     return
   }
-  const mock = new PaymentMock(parsedAmount)
+  const mock = new PaymentMock(BigInt(parsedSatoshis))
   const { tx: saleTx } = await saleHelper.createSaleTx(nft, mock)
   if (!saleTx) {
     showSnackBar('Failed to list NFT for sale.', false)
@@ -112,6 +112,7 @@ const SmartObjectValues = ({ smartObject }: { smartObject: NFT }) => {
               className="max-h-full max-w-full object-contain"
               src={smartObject.url}
               alt="Image Preview"
+              crossOrigin="anonymous"
             />
           </div>
         </div>
@@ -188,7 +189,7 @@ const CreateSellOfferComponent = ({
 
 const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NFT }) => {
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
-  const [nftAmount, setNftAmount] = useState<number>(0)
+  const [nftAmount, setNftAmount] = useState<bigint>(0n)
 
   useEffect(() => {
     const fetch = async () => {
@@ -197,8 +198,8 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
         const txWrapperHelper = new TxWrapperHelper(computer, VITE_TX_WRAPPER_MOD_SPEC)
         const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
         const saleTxn = await txWrapperHelper.decodeTx(nft.offerTxRev)
-        const amount = await saleHelper.checkSaleTx(saleTxn)
-        setNftAmount(amount)
+        const satoshis = await saleHelper.checkSaleTx(saleTxn)
+        setNftAmount(satoshis)
         showLoader(false)
       } catch {
         showLoader(false)
@@ -210,10 +211,10 @@ const ShowSaleOfferComponent = ({ computer, nft }: { computer: Computer; nft: NF
 
   return (
     <>
-      {nftAmount !== 0 && (
+      {nftAmount !== 0n && (
         <div className="sm:w-full">
           <h2 className="mt-3 text-l font-bold dark:text-white">
-            NFT Listed At {toObject(nftAmount / 1e8)} {computer.getChain()}
+            NFT Listed At {bigIntToStr(nftAmount)} {computer.getChain()}
           </h2>
         </div>
       )}
@@ -266,7 +267,10 @@ const BuyNftComponent = ({
           try {
             showLoader(true)
             const nftAmount = await BuyNFT({ computer, nft: smartObject, setFunctionResult })
-            showSnackBar(`You bought this NFT for ${nftAmount / 1e8} ${computer.getChain()}`, true)
+            showSnackBar(
+              `You bought this NFT for ${bigIntToStr(nftAmount)} ${computer.getChain()}`,
+              true,
+            )
             showLoader(false)
           } catch (error) {
             showLoader(false)

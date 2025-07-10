@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/nodejs-template",
-  "version": "0.24.3-beta.0",
+  "version": "0.25.0-beta.0",
   "description": "Minimalistic boilerplate to quick-start Bitcoin Computer development.",
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
@@ -18,7 +18,7 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.24.3-beta.0"
+    "@bitcoin-computer/lib": "^0.25.0-beta.0"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",
@@ -30,7 +30,7 @@
     "prettier": "~3.2.5",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.2",
-    "typescript": "~5.3.3"
+    "typescript": "^5.8.3"
   },
   "volta": {
     "node": "16.13.0"

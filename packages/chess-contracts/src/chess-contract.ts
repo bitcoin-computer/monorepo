@@ -5,86 +5,90 @@ import {
   networks,
   payments,
   script as bscript,
-  opcodes,
-  script,
 } from '@bitcoin-computer/nakamotojs'
 import { Buffer } from 'buffer'
-import axios from 'axios'
-import { VITE_API_BASE_URL } from './config.js'
+import { ECPairFactory, ECPairInterface } from 'ecpair'
+import * as ecc from '@bitcoin-computer/secp256k1'
+import { User } from './user.js'
+
+const ECPair = ECPairFactory(ecc)
 
 export const NotEnoughFundError = 'Not enough funds to create chess game.'
-
-const { fromASM, toASM } = script
-
-const getSecret = async (id: string): Promise<string | null> => {
-  const { data } = await axios.get<string>(`${VITE_API_BASE_URL}/secret/${id}`)
-  return data
-}
 
 if (typeof global !== 'undefined') global.Buffer = Buffer
 
 type PaymentType = {
-  amount: number
+  satoshis: bigint
   publicKeyW: string
-  secretHashW: string
   publicKeyB: string
-  secretHashB: string
 }
 
 export class Payment extends Contract {
-  constructor({ amount, publicKeyW, publicKeyB, secretHashW, secretHashB }: PaymentType) {
+  constructor({ satoshis, publicKeyW, publicKeyB }: PaymentType) {
     super({
-      _amount: amount,
-      _owners: `OP_IF
-        ${publicKeyW} OP_CHECKSIGVERIFY
-        OP_HASH256 ${secretHashW} OP_EQUAL
-      OP_ELSE
-        ${publicKeyB} OP_CHECKSIGVERIFY
-        OP_HASH256 ${secretHashB} OP_EQUAL
-      OP_ENDIF`.replace(/\s+/g, ' '),
+      _satoshis: satoshis,
+      _owners: `OP_2 ${publicKeyW} ${publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' '),
     })
+  }
+}
+
+type WinnerTxWrapperType = {
+  publicKeyW: string
+  publicKeyB: string
+}
+
+export class WinnerTxWrapper extends Contract {
+  redeemTxHex!: string
+  constructor({ publicKeyW, publicKeyB }: WinnerTxWrapperType) {
+    super({
+      _owners: [publicKeyW, publicKeyB],
+      redeemTxHex: '',
+    })
+  }
+  setRedeemHex(txHex: string) {
+    this.redeemTxHex = txHex
   }
 }
 
 export class ChessContract extends Contract {
-  amount!: number
+  satoshis!: bigint
   nameW!: string
   nameB!: string
   publicKeyW!: string
   publicKeyB!: string
-  secretHashW!: string
-  secretHashB!: string
   sans!: string[]
   fen!: string
   payment!: Payment
+  winnerTxWrapper!: WinnerTxWrapper
 
   constructor(
-    amount: number,
+    satoshis: bigint,
     nameW: string,
     nameB: string,
     publicKeyW: string,
     publicKeyB: string,
-    secretHashW: string,
-    secretHashB: string,
   ) {
     super({
-      amount,
+      satoshis,
       nameW,
       nameB,
       publicKeyW,
       publicKeyB,
-      secretHashW,
-      secretHashB,
       sans: [],
       fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-      payment: new Payment({ amount, publicKeyW, secretHashW, publicKeyB, secretHashB }),
+      payment: new Payment({ satoshis, publicKeyW, publicKeyB }),
+      winnerTxWrapper: new WinnerTxWrapper({ publicKeyW, publicKeyB }),
     })
   }
 
-  move(from: string, to: string): string {
+  setRedeemHex(txHex: string) {
+    this.winnerTxWrapper.setRedeemHex(txHex)
+  }
+
+  move(from: string, to: string, promotion: string): string {
     // @ts-expect-error type error
     const chessLib = new Chess(this.fen)
-    const { san } = chessLib.move({ from, to, promotion: 'q' })
+    const { san } = chessLib.move({ from, to, promotion })
     this.sans.push(san)
     this.fen = chessLib.fen()
 
@@ -106,117 +110,123 @@ export class ChessContract extends Contract {
 
 export class ChessContractHelper {
   computer: Computer
-  amount?: number
+  satoshis?: bigint
   nameW?: string
   nameB?: string
   publicKeyW?: string
   publicKeyB?: string
-  secretHashW?: string
-  secretHashB?: string
   mod?: string
+  userMod?: string
 
   constructor({
     computer,
-    amount,
+    satoshis,
     nameW,
     nameB,
     publicKeyW,
     publicKeyB,
-    secretHashW,
-    secretHashB,
     mod,
+    userMod,
   }: {
     computer: Computer
-    amount?: number
+    satoshis?: bigint
     nameW?: string
     nameB?: string
     publicKeyW?: string
     publicKeyB?: string
-    secretHashW?: string
-    secretHashB?: string
     mod?: string
+    userMod?: string
   }) {
     this.computer = computer
-    this.amount = amount
+    this.satoshis = satoshis
     this.nameW = nameW
     this.nameB = nameB
     this.publicKeyW = publicKeyW
     this.publicKeyB = publicKeyB
-    this.secretHashW = secretHashW
-    this.secretHashB = secretHashB
     this.mod = mod
+    this.userMod = userMod
   }
 
   isInitialized(): this is Required<ChessContractHelper> {
     return Object.values(this).every((element) => element !== undefined)
   }
 
-  static fromContract(computer: Computer, game: ChessContract, mod?: string): ChessContractHelper {
-    const { amount, nameW, nameB, publicKeyW, publicKeyB, secretHashW, secretHashB } = game
+  static fromContract(
+    computer: Computer,
+    game: ChessContract,
+    mod?: string,
+    userMod?: string,
+  ): ChessContractHelper {
+    const { satoshis, nameW, nameB, publicKeyW, publicKeyB } = game
     return new this({
       computer,
-      amount,
+      satoshis,
       nameW,
       nameB,
       publicKeyW,
       publicKeyB,
-      secretHashW,
-      secretHashB,
       mod,
+      userMod,
     })
   }
 
+  // can we fetch the public key from the server
   getASM(): string {
-    return `OP_IF
-      ${this.publicKeyW} OP_CHECKSIGVERIFY
-      OP_HASH256 ${this.secretHashW} OP_EQUAL
-    OP_ELSE
-      ${this.publicKeyB} OP_CHECKSIGVERIFY
-      OP_HASH256 ${this.secretHashB} OP_EQUAL
-    OP_ENDIF`.replace(/\s+/g, ' ')
+    return `OP_2 ${this.publicKeyW} ${this.publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' ')
+  }
+
+  async validateUser(): Promise<void> {
+    const [userRev] = await this.computer.query({
+      mod: this.userMod,
+      publicKey: this.computer.getPublicKey(),
+    })
+
+    if (!userRev) {
+      throw new Error('Please create your account to start playing')
+    }
   }
 
   async makeTx(): Promise<Transaction> {
     if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
 
+    await this.validateUser()
+
     // Create output with non-standard script
     const { tx } = await this.computer.encode({
       exp: `new ChessContract(
-        ${this.amount},
+        ${this.satoshis}n,
         "${this.nameW}",
         "${this.nameB}",
         "${this.publicKeyW}",
-        "${this.publicKeyB}",
-        "${this.secretHashW}",
-        "${this.secretHashB}"
+        "${this.publicKeyB}"
       )`,
       mod: this.mod,
       fund: false,
       sign: false,
     })
 
-    // Fund with this.amount / 2
+    // Fund with this.satoshis / 2
     const chain = this.computer.getChain()
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)
     const addy = address.fromPublicKey(this.computer.wallet.publicKey, 'p2pkh', n)
     const utxos = await this.computer.wallet.restClient.getFormattedUtxos(addy)
-    let paid = 0
-    while (paid < this.amount / 2 && utxos.length > 0) {
+    let paid = 0n
+    while (paid < Number(this.satoshis) / 2 && utxos.length > 0) {
       const { txId, vout, satoshis } = utxos.pop()!
       const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
       tx.addInput(txHash, vout)
       paid += satoshis
     }
 
-    if (paid < this.amount) throw new Error(NotEnoughFundError)
+    if (paid < this.satoshis) throw new Error(NotEnoughFundError)
 
     // Add change
     const fee = await this.computer.wallet.estimateFee(tx)
     const publicKeyBuffer = this.computer.wallet.publicKey
     const { output } = payments.p2pkh({ pubkey: publicKeyBuffer, network: n })
-    const changeAmount = paid - this.amount / 2 - 5 * fee // todo: optimize the fee
-    tx.addOutput(output!, changeAmount)
+    const changeSatoshis = Number(paid) - Number(this.satoshis) / 2 - 5 * fee // todo: optimize the fee
+    tx.addOutput(output!, BigInt(Math.round(changeSatoshis)))
 
     // Sign
     const { SIGHASH_ALL, SIGHASH_ANYONECANPAY } = Transaction
@@ -225,21 +235,23 @@ export class ChessContractHelper {
   }
 
   async completeTx(tx: Transaction): Promise<string> {
+    await this.validateUser()
     const decoded = await this.computer.decode(tx)
     const { effect } = await this.computer.encode(decoded)
     const { res: chessContract } = effect as unknown as { res: ChessContract }
 
-    this.amount = chessContract.payment._amount
+    this.satoshis = chessContract.payment._satoshis
     this.nameW = chessContract.nameW
     this.nameB = chessContract.nameB
     this.publicKeyW = chessContract.publicKeyW
     this.publicKeyB = chessContract.publicKeyB
-    this.secretHashW = chessContract.secretHashW
-    this.secretHashB = chessContract.secretHashB
 
     // Fund
     const fee = await this.computer.wallet.estimateFee(tx)
-    const txId = await this.computer.send(this.amount / 2 + 5 * fee, this.computer.getAddress())
+    const txId = await this.computer.send(
+      this.satoshis / 2n + 5n * BigInt(fee),
+      this.computer.getAddress(),
+    )
     const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
     tx.addInput(txHash, 0)
 
@@ -252,37 +264,48 @@ export class ChessContractHelper {
     chessContract: ChessContract,
     from: string,
     to: string,
+    promotion: string,
   ): Promise<{ newChessContract: ChessContract; isGameOver: boolean }> {
+    if (chessContract && chessContract.sans.length < 2) {
+      const [userRev] = await this.computer.query({
+        mod: this.userMod,
+        publicKey: this.computer.getPublicKey(),
+      })
+      if (userRev) {
+        const userObj = (await this.computer.sync(userRev)) as User
+        const gameId = chessContract._id
+        if (!userObj.games.includes(gameId)) {
+          await userObj.addGame(gameId)
+        }
+      }
+    }
+
     const { tx, effect } = (await this.computer.encodeCall({
       target: chessContract,
       property: 'move',
-      args: [from, to],
+      args: [from, to, promotion],
       mod: this.mod,
     })) as { tx: Transaction; effect: { res: boolean; env: unknown } }
     await this.computer.broadcast(tx)
     const { res: isGameOver, env } = effect
     const { __bc__: newChessContract } = env as { __bc__: ChessContract }
     if (isGameOver) {
-      const spendingTxId = await this.spend(newChessContract)
-      console.log('You won!', spendingTxId)
+      await this.spend(newChessContract)
+      console.log('You won!')
     }
     return { newChessContract, isGameOver }
   }
 
-  async spend(chessContract: ChessContract, fee = 10000): Promise<string> {
+  async spend(chessContract: ChessContract, fee = 10000n): Promise<void> {
     const txId = chessContract._id.split(':')[0]
-    const spendingPath = chessContract._owners[0] === this.publicKeyW ? 0 : 1
-    const secret = await getSecret(chessContract._id)
-    if (!secret) throw new Error('Something went wrong when trying to spend.')
-    return this.spendWithSecret(txId, secret, spendingPath, fee)
+    return this.spendWithConfirmation(txId, chessContract, fee)
   }
 
-  async spendWithSecret(
+  async spendWithConfirmation(
     txId: string,
-    secret: string,
-    spendingPath: number,
-    fee = 10000,
-  ): Promise<string> {
+    chessContract: ChessContract,
+    fee = 10000n,
+  ): Promise<void> {
     if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
 
     const chain = this.computer.getChain()
@@ -290,25 +313,133 @@ export class ChessContractHelper {
     const n = networks.getNetwork(chain, network)
     const { hdPrivateKey } = this.computer.wallet
 
-    // Create redeem script
-    const asmFromBuf = (sigHash: Buffer) => [
-      Buffer.from(secret),
-      bscript.signature.encode(hdPrivateKey.sign(sigHash), Transaction.SIGHASH_ALL),
-      spendingPath === 0 ? opcodes.OP_TRUE : opcodes.OP_FALSE,
-    ]
-
     // Create redeem tx
     const redeemTx = new Transaction()
     redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), 1)
     const { output } = payments.p2pkh({ pubkey: hdPrivateKey.publicKey, ...n })
-    redeemTx.addOutput(output!, this.amount - fee)
-    const redeemScript = bscript.fromASM(this.getASM())
+    redeemTx.addOutput(output!, BigInt(this.satoshis) - fee)
+    const scriptASM = this.getASM()
+    const redeemScript = bscript.fromASM(scriptASM)
     const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
-    const inScript = fromASM(toASM(asmFromBuf(sigHash)))
-    const script = payments.p2sh({
-      redeem: { input: inScript, output: redeemScript },
+    const winnerSig = bscript.signature.encode(hdPrivateKey.sign(sigHash), Transaction.SIGHASH_ALL)
+
+    // Create partial scriptSig with OP_0 (dummy) and winner's signature
+    const partialRedeemInput = bscript.compile([Buffer.alloc(0), winnerSig])
+    const partialScript = payments.p2sh({
+      redeem: { input: partialRedeemInput, output: redeemScript },
     })
-    redeemTx.setInputScript(0, script.input!)
-    return this.computer.broadcast(redeemTx)
+
+    redeemTx.setInputScript(0, partialScript.input!)
+    const redeemTxHex = redeemTx.toHex()
+    await chessContract.setRedeemHex(redeemTxHex)
+    return
   }
+
+  static validateAndSignRedeemTx(
+    redeemTx: Transaction,
+    winnerPublicKey: Buffer,
+    validatorKeyPair: ECPairInterface,
+    expectedRedeemScript: Buffer,
+    network: networks.Network,
+    playerWIsTheValidator: boolean = false,
+  ) {
+    // Verify transaction structure
+    if (redeemTx.ins.length !== 1 || redeemTx.outs.length !== 1) {
+      throw new Error('Invalid transaction structure')
+    }
+
+    // Decompile scriptSig
+    const scriptSig = redeemTx.ins[0].script
+    const decompiled = bscript.decompile(scriptSig)
+    if (!decompiled || decompiled.length !== 3) {
+      throw new Error('Invalid scriptSig format')
+    }
+    const [dummy, winnerSig, providedRedeemScript] = decompiled
+
+    // Verify dummy element
+    if (dummy !== 0) {
+      throw new Error('Dummy element must be OP_0')
+    }
+
+    // Verify redeem script
+    if (
+      !Buffer.isBuffer(providedRedeemScript) ||
+      !providedRedeemScript.equals(expectedRedeemScript)
+    ) {
+      throw new Error('Redeem script does not match expected script')
+    }
+
+    // Verify winner's signature
+    const sigHash = redeemTx.hashForSignature(0, expectedRedeemScript, Transaction.SIGHASH_ALL)
+    const winnerSigDecoded = bscript.signature.decode(winnerSig as Buffer)
+    const winnerKeyPair = ECPair.fromPublicKey(winnerPublicKey, { network })
+    if (!winnerKeyPair.verify(sigHash, winnerSigDecoded.signature)) {
+      throw new Error('Claimant’s signature is invalid')
+    }
+
+    // Verify output goes to winner's address
+    const outputScript = redeemTx.outs[0].script
+    const winnerAddressScript = payments.p2pkh({ pubkey: winnerPublicKey, network }).output
+    if (!outputScript.equals(winnerAddressScript as Buffer)) {
+      throw new Error('Output must go to winner’s address')
+    }
+
+    // Validator signs the transaction
+    const validatorSig = bscript.signature.encode(
+      validatorKeyPair.sign(sigHash),
+      Transaction.SIGHASH_ALL,
+    )
+
+    // Update scriptSig with both signatures
+    // Order of public keys in script should be similar to the order of signatures
+    const finalRedeemInput = bscript.compile([
+      Buffer.alloc(0),
+      playerWIsTheValidator ? validatorSig : winnerSig,
+      playerWIsTheValidator ? winnerSig : validatorSig,
+    ])
+    const finalScript = payments.p2sh({
+      redeem: { input: finalRedeemInput, output: expectedRedeemScript },
+      network,
+    })
+    redeemTx.setInputScript(0, finalScript.input as Buffer)
+
+    // Return the fully signed transaction
+    return redeemTx
+  }
+}
+
+export const signRedeemTx = async (
+  computer: Computer,
+  chessContract: ChessContract,
+  txWrapper: WinnerTxWrapper,
+) => {
+  const winnerPublicKey = chessContract._owners[0] as string
+  const network = computer.getNetwork()
+  const chain = computer.getChain()
+  const NETWORKOBJ = networks.getNetwork(chain, network)
+
+  const { privateKey: currentPlayerPrivateKey } = computer.wallet
+  const currentPlayerKeyPair = ECPair.fromPrivateKey(currentPlayerPrivateKey, {
+    network: NETWORKOBJ,
+  })
+
+  const redeemTx = Transaction.fromHex(txWrapper.redeemTxHex)
+
+  const expectedRedeemScript = bscript.fromASM(
+    `OP_2 ${chessContract.publicKeyW} ${chessContract.publicKeyB} OP_2 OP_CHECKMULTISIG`,
+  )
+
+  const playerWIsTheValidator = computer.getPublicKey() === chessContract.publicKeyW
+
+  // Validate and sign the transaction
+  const signedRedeemTx = ChessContractHelper.validateAndSignRedeemTx(
+    redeemTx,
+    Buffer.from(winnerPublicKey, 'hex'),
+    currentPlayerKeyPair,
+    expectedRedeemScript,
+    NETWORKOBJ,
+    playerWIsTheValidator,
+  )
+
+  return signedRedeemTx
 }
