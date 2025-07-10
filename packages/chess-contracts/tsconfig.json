@@ -6,7 +6,7 @@
     "module": "ESNext",
     "skipLibCheck": true,
     "declaration": true,
-    "types": ["vitest/globals", "@testing-library/jest-dom"],
+    "types": ["vitest/globals", "@testing-library/jest-dom", "mocha", "chai"],
     "moduleResolution": "node",
     "isolatedModules": true,
     "jsx": "react-jsx",
@@ -17,8 +17,9 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "outDir": "./build/"
+    "outDir": "./build/",
+    "sourceMap": true
   },
-  "include": ["src"],
+  "include": ["src", "scripts", "test"],
   "exclude": ["node_modules", "**/*.js"]
 }

@@ -8,16 +8,23 @@ Start a Bitcoin Computer Node in the package `node`. Then copy the `.env.example
 cp .env.example .env
 ```
 
-Then start the chess server in the package `chess-server` and run the deploy script there.
+Deploy the smart contracts in the package `chess-contracts`.
+
+```
+cd ../chess-contracts
+cp .env.example .env
+npm run deploy
+cd ../chess-app
+```
+
+Start the App
+
+```
+npm start
+```
 
 ### Test
 
 ```
 npm test
-```
-
-### Start the App
-
-```
-npm start
 ```

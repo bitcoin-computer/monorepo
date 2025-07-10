@@ -13,6 +13,7 @@ import sigCanonical from './fixtures/core/sig_canonical.js';
 import sigNoncanonical from './fixtures/core/sig_noncanonical.js';
 import sigHash from './fixtures/core/sighash.js';
 import txValid from './fixtures/core/tx_valid.js';
+import { Buffer } from 'buffer';
 
 describe('Bitcoin-core', () => {
   // base58EncodeDecode

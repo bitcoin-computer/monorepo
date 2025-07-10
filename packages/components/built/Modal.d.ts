@@ -7,11 +7,12 @@ export declare const Modal: {
     ShowButton: ({ id, text }: any) => import("react/jsx-runtime").JSX.Element;
     HideButton: ({ id, text }: any) => import("react/jsx-runtime").JSX.Element;
     ToggleButton: ({ id, text }: any) => import("react/jsx-runtime").JSX.Element;
-    Component: ({ title, content, contentData, id, onClickClose, }: {
+    Component: ({ title, content, contentData, id, onClickClose, hideClose, }: {
         title: string;
         content: any;
         id: string;
         contentData?: any;
         onClickClose?: () => void;
+        hideClose?: boolean;
     }) => import("react/jsx-runtime").JSX.Element;
 };

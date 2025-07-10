@@ -3,8 +3,9 @@ import * as bscript from '../script.js';
 import { isPoint, typeforce as typef } from '../types.js';
 import { Payment, PaymentOpts, Stack } from './index.js';
 import * as lazy from './lazy.js';
-const OPS = bscript.OPS;
+import { Buffer } from 'buffer';
 
+const OPS = bscript.OPS;
 const OP_INT_BASE = OPS.OP_RESERVED; // OP_1 - 1
 
 function stacksEqual(a: Buffer[], b: Buffer[]): boolean {
