@@ -1,54 +1,40 @@
-import { ComputerContext } from '@bitcoin-computer/components'
-import { useCallback, useContext, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import { HiRefresh } from 'react-icons/hi'
 
-type Class = new (...args: unknown[]) => unknown
-
-type UserQuery<T extends Class> = Partial<{
-  mod: string
-  publicKey: string
-  limit: number
-  offset: number
-  order: 'ASC' | 'DESC'
-  ids: string[]
-  contract: {
-    class: T
-    args?: ConstructorParameters<T>
-  }
-}>
+export type GameType = {
+  gameId: string
+  new: boolean
+}
 
 export const InfiniteScroll = ({
   setGameId,
+  games,
+  refreshGames,
 }: {
   setGameId: React.Dispatch<React.SetStateAction<string>>
+  games: GameType[]
+  refreshGames: () => Promise<void>
 }) => {
-  const [items, setItems] = useState<string[]>([])
+  const [items, setItems] = useState<GameType[]>([])
   const [hasMore, setHasMore] = useState(true)
   const [loading, setLoading] = useState(false)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
-  const computer = useContext(ComputerContext)
   const contractsPerPage = 12
   const navigate = useNavigate()
 
   const fetchMoreItems = useCallback(
-    async <T extends Class>(q: UserQuery<T>): Promise<string[]> => {
-      const query = { ...q }
-      query.limit = contractsPerPage * 2 // For a chess game, we have two contracts: Payment and ChessContract
-      query.order = 'DESC'
-      const result = (await computer.query(query)) as string[]
-
-      const filteredRevs = (result || []).filter((rev) => rev.split(':')[1] === '0')
-      return filteredRevs
+    async (offset: number): Promise<GameType[]> => {
+      return games ? games.slice(offset, offset + contractsPerPage) : []
     },
-    [contractsPerPage, computer],
+    [contractsPerPage, games],
   )
 
   const loadMoreItems = useCallback(async () => {
     if (loading || !hasMore) return
 
     setLoading(true)
-    const newItems = await fetchMoreItems({ mod: VITE_CHESS_GAME_MOD_SPEC, offset: items.length })
+    const newItems = await fetchMoreItems(items.length)
 
     setItems((prev) => [...prev, ...newItems])
     if (newItems.length < contractsPerPage) setHasMore(false) // Stop fetching when no more items are available
@@ -69,7 +55,7 @@ export const InfiniteScroll = ({
     // Initial fetch without relying on scroll
     const initialFetch = async () => {
       setLoading(true)
-      const initialItems = await fetchMoreItems({ mod: VITE_CHESS_GAME_MOD_SPEC, offset: 0 })
+      const initialItems = await fetchMoreItems(0)
       setItems(initialItems)
       if (initialItems.length < contractsPerPage) setHasMore(false)
       setLoading(false)
@@ -81,7 +67,15 @@ export const InfiniteScroll = ({
   return (
     <div className="w-full h-full overflow-hidden flex flex-col bg-white dark:bg-gray-800 border border-gray-300  dark:border-gray-700 rounded-lg">
       <div className="flex justify-center mt-2 mb-2">
-        <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">All Games</h3>
+        <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
+          <span className="hover:text-gray-700 dark:hover:text-gray-200 font-extrabold cursor-pointer">
+            My Games
+          </span>{' '}
+          <HiRefresh
+            onClick={refreshGames}
+            className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"
+          />
+        </h3>
       </div>
       <div
         ref={scrollContainerRef}
@@ -93,14 +87,17 @@ export const InfiniteScroll = ({
           {items.map((item, index) => (
             <li
               key={index}
-              className="p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 truncate cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
-              title={item}
+              className="relative p-2 bg-gray-100 dark:bg-gray-700 rounded shadow text-gray-800 dark:text-gray-200 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-600"
+              title={item.gameId}
               onClick={() => {
-                navigate(`/game/${item}`)
-                setGameId(item)
+                navigate(`/game/${item.gameId}`)
+                setGameId(item.gameId)
               }}
             >
-              {item}
+              <span className="truncate block">{item.gameId}</span>
+              {item.new && (
+                <div className="absolute inline-flex w-3 h-3 bg-red-500 rounded-full top-0 right-0 -mt-1 -mr-1 z-10"></div>
+              )}
             </li>
           ))}
         </ul>

@@ -4,6 +4,7 @@ import assert from 'assert';
 import { describe, it } from 'mocha';
 import * as bufferutils from '../src/bufferutils.js';
 import { BufferReader, BufferWriter } from '../src/bufferutils.js';
+import { Buffer } from 'buffer';
 
 import fixtures from './fixtures/bufferutils.js';
 

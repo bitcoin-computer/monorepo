@@ -5,6 +5,7 @@ import { describe, it } from 'mocha';
 import * as types from '../src/types.js';
 // @ts-ignore
 import typeforce from 'typeforce';
+import { Buffer } from 'buffer';
 
 describe('types', () => {
   describe('Buffer Hash160/Hash256', () => {

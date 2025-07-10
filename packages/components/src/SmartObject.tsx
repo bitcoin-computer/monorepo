@@ -190,9 +190,9 @@ function MetaData({ smartObject, prev, next }: any) {
               </td>
               <td className="px-4 py-2">
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {smartObject?._satoshis} Satoshi
+                  {smartObject?._satoshis.toString()}
                 </span>
-                <Copy text={smartObject?._satoshis} />
+                <Copy text={smartObject?._satoshis.toString()} />
               </td>
             </tr>
           </tbody>

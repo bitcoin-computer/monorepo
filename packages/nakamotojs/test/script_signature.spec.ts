@@ -4,6 +4,8 @@ import assert from 'assert';
 import { describe, it } from 'mocha';
 import { signature as bscriptSig } from '../src/script.js';
 import signature from './fixtures/signature.js';
+import { Buffer } from 'buffer';
+
 const fixtures = signature;
 
 describe('Script Signatures', () => {

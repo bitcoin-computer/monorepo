@@ -1,6 +1,9 @@
-import type { Chess as ChessLib } from '../../../../chess-contracts/'
+import { ChessContract, Chess as ChessLib } from '@bitcoin-computer/chess-contracts'
 
-export function getGameState(chessLib: ChessLib): string {
+export function getGameState(chessContract: ChessContract): string {
+  if (!chessContract) return 'In Progress'
+
+  const chessLib = new ChessLib(chessContract.fen)
   if (chessLib.isCheckmate())
     return `${chessLib.turn() === 'w' ? 'Black' : 'White'} wins by checkmate!`
 
