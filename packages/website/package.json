@@ -4,9 +4,9 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -b && vite build",
+    "build:prod": "tsc -b && vite build",
     "build-vite": "tsc -b && vite build",
-    "predeploy": "npm run build",
+    "predeploy": "npm run build:prod",
     "deploy": "gh-pages -d dist",
     "dev": "vite",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",

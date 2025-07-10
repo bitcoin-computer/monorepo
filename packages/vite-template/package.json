@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc -b && vite build",
-    "build:turbo": "turbo run build",
+    "build:prod": "tsc -b && vite build",
+    "build:turbo": "turbo run build:prod",
     "clean": "npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
     "deploy": "node --loader ts-node/esm  ./scripts/deploy.ts",
@@ -18,7 +18,7 @@
     "test": "exit 0",
     "test:puppeteer": "vitest run --config vitest.puppeteer.config.ts",
     "test:puppeteer:headless": "HEADLESS=true npm run test:puppeteer",
-    "test:puppeteer:build:headless": "npm run build && (npm run preview & sleep 2 && URL=http://localhost:4173 HEADLESS=true npm run test:puppeteer && pkill -f 'vite preview')",
+    "test:puppeteer:build:headless": "npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 HEADLESS=true npm run test:puppeteer && pkill -f 'vite preview')",
     "test:show": "npm run test 2>&1 | tee vite-template-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open vite-template-test.log; fi",
     "types": "tsc --noEmit"
   },
