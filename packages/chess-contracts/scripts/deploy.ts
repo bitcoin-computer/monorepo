@@ -14,7 +14,6 @@ config()
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
 const chessContractDirectory = `${__dirname}/..`
-console.log('\n\n', chessContractDirectory)
 
 const {
   VITE_CHAIN: chain,
