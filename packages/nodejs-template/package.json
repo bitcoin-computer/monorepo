@@ -5,6 +5,10 @@
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "type": "module",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.release.json",

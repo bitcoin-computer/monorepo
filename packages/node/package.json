@@ -19,7 +19,7 @@
     "type": "git",
     "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/node"
   },
-  "license": "CC-BY-ND-4.0",
+  "license": "MIT",
   "author": {
     "name": "Clemens Ley",
     "email": "clemens@bitcoincomputer.io"
@@ -31,6 +31,10 @@
   ],
   "type": "module",
   "main": "dist/bcn.es.mjs",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "build": "cd ../../ && npm run build:node",
     "clean": "npm run down && npm run prune && npm run clean:blockchain:data && npm run clean:db:data",

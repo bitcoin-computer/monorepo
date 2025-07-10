@@ -27,7 +27,7 @@ function Component() {
     useEffect(() => {
         const fetch = async () => {
             setTxn(params.txn);
-            const [hex] = await computer.wallet.restClient.getRawTxs([params.txn]);
+            const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn]);
             const tx = Computer.txFromHex({ hex });
             setTxnData(tx);
             const { result } = await computer.rpcCall('getrawtransaction', `${params.txn} 2`);

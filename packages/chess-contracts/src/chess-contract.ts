@@ -209,8 +209,8 @@ export class ChessContractHelper {
     const chain = this.computer.getChain()
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)
-    const addy = address.fromPublicKey(this.computer.wallet.publicKey, 'p2pkh', n)
-    const utxos = await this.computer.wallet.restClient.getFormattedUtxos(addy)
+    const addy = address.fromPublicKey(this.computer.db.wallet.publicKey, 'p2pkh', n)
+    const utxos = await this.computer.db.wallet.restClient.getFormattedUtxos(addy)
     let paid = 0n
     while (paid < Number(this.satoshis) / 2 && utxos.length > 0) {
       const { txId, vout, satoshis } = utxos.pop()!
@@ -222,8 +222,8 @@ export class ChessContractHelper {
     if (paid < this.satoshis) throw new Error(NotEnoughFundError)
 
     // Add change
-    const fee = await this.computer.wallet.estimateFee(tx)
-    const publicKeyBuffer = this.computer.wallet.publicKey
+    const fee = await this.computer.db.wallet.estimateFee(tx)
+    const publicKeyBuffer = this.computer.db.wallet.publicKey
     const { output } = payments.p2pkh({ pubkey: publicKeyBuffer, network: n })
     const changeSatoshis = Number(paid) - Number(this.satoshis) / 2 - 5 * fee // todo: optimize the fee
     tx.addOutput(output!, BigInt(Math.round(changeSatoshis)))
@@ -247,7 +247,7 @@ export class ChessContractHelper {
     this.publicKeyB = chessContract.publicKeyB
 
     // Fund
-    const fee = await this.computer.wallet.estimateFee(tx)
+    const fee = await this.computer.db.wallet.estimateFee(tx)
     const txId = await this.computer.send(
       this.satoshis / 2n + 5n * BigInt(fee),
       this.computer.getAddress(),
@@ -311,7 +311,7 @@ export class ChessContractHelper {
     const chain = this.computer.getChain()
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)
-    const { hdPrivateKey } = this.computer.wallet
+    const { hdPrivateKey } = this.computer.db.wallet
 
     // Create redeem tx
     const redeemTx = new Transaction()
@@ -418,7 +418,7 @@ export const signRedeemTx = async (
   const chain = computer.getChain()
   const NETWORKOBJ = networks.getNetwork(chain, network)
 
-  const { privateKey: currentPlayerPrivateKey } = computer.wallet
+  const { privateKey: currentPlayerPrivateKey } = computer.db.wallet
   const currentPlayerKeyPair = ECPair.fromPrivateKey(currentPlayerPrivateKey, {
     network: NETWORKOBJ,
   })
