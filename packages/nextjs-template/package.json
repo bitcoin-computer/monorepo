@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
-    "build": "next build",
+    "build:prod": "next build",
     "start": "next start",
     "lint": "next lint",
     "deploy": "tsx ./src/app/contracts/scripts/deploy.ts"
