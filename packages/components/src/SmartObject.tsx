@@ -228,18 +228,19 @@ function Component({ title }: { title?: string }) {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const synced = await computer.sync(rev)
-        setSmartObject(synced)
-      } catch (error) {
+        const [o, p, n] = await Promise.all([
+          computer.sync(rev),
+          computer.prev(rev),
+          computer.next(rev),
+        ])
+
+        setSmartObject(o)
+        setPrev(p)
+        setNext(n)
+      } catch (err) {
+        if (err instanceof Error) console.log('Error syncing to object:', err.message)
         const [txId] = rev.split(':')
         navigate(`/transactions/${txId}`)
-      }
-
-      try {
-        setPrev(await computer.prev(rev))
-        setNext(await computer.next(rev))
-      } catch (error) {
-        console.log({ error })
       }
     }
     fetch()

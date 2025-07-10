@@ -133,7 +133,6 @@ type ComputerOptions = Partial<{
   dustRelayFee: number
   addressType: AddressType
   moduleStorageType: ModuleStorageType
-  thresholdBytes: number
   cache: boolean
 }>
 type Rev = {
@@ -421,9 +420,13 @@ declare class Contract {
   constructor(opts?: {})
 }
 
-declare class Computer {
+declare class Db {
   wallet: Wallet
-  memory?: Memory
+  constructor(params?: {})
+}
+
+declare class Computer {
+  db: Db
   constructor(params?: ComputerOptions)
   new<T extends Class>(
     constructor: T,

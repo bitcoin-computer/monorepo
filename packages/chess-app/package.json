@@ -2,7 +2,12 @@
   "name": "@bitcoin-computer/chess-app",
   "version": "0.25.0-beta.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "build": "tsc -b && NODE_OPTIONS=\"--max-old-space-size=4096\" vite build",
     "build:contract": "tsc --project tsconfig.build.json && mv ./build-contract/chess-module.js ./src/contracts/chess.mjs && rm -rf build-contract",
