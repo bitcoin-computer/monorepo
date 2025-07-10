@@ -418,7 +418,7 @@ export const signRedeemTx = async (
   const chain = computer.getChain()
   const NETWORKOBJ = networks.getNetwork(chain, network)
 
-  const { privateKey: currentPlayerPrivateKey } = computer.wallet
+  const { privateKey: currentPlayerPrivateKey } = computer.db.wallet
   const currentPlayerKeyPair = ECPair.fromPrivateKey(currentPlayerPrivateKey, {
     network: NETWORKOBJ,
   })

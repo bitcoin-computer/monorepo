@@ -1,7 +1,7 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils'
 
-describe.only('getBalance', () => {
+describe('getBalance', () => {
   it('Should return the balance', async () => {
     // Create and fund wallet
     const computer = new Computer({ chain, network, url })
