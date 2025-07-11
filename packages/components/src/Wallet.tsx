@@ -45,7 +45,7 @@ const Balance = ({
         mod: VITE_WITHDRAW_MOD_SPEC,
       })
 
-      const utxos = await computer.wallet.restClient.getFormattedUtxos(computer.getAddress())
+      const utxos = await computer.db.wallet.restClient.getFormattedUtxos(computer.getAddress())
       utxos.forEach((utxo) => {
         tx.addInput(bufferUtils.reverseBuffer(Buffer.from(utxo.txId, 'hex')), utxo.vout)
       })
@@ -56,7 +56,7 @@ const Balance = ({
 
       const p2pkh = paymentsUtils.p2pkh({
         address: computer.getAddress(),
-        network: computer.wallet.restClient.networkObj,
+        network: computer.db.wallet.restClient.networkObj,
       })
 
       tx.updateOutput(changeOutputIndex, { scriptPubKey: p2pkh.output })
