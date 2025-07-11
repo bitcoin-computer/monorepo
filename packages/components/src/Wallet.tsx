@@ -67,7 +67,7 @@ const Balance = ({
       showSnackBar('Congratulations! Balance withdrawn to address.', true)
     } catch (err) {
       if (err instanceof Error) {
-        showSnackBar(`Something went wrong, ${err.message}`, true)
+        showSnackBar(`Something went wrong, ${err.message}`, false)
       }
     } finally {
       setWithdrawing(false)
@@ -145,27 +145,29 @@ const Balance = ({
         )}
       </div>
       <Address computer={computer} />
-      <div className="mb-4">
-        <h6 className="text-lg font-bold dark:text-white mb-1">Withdraw to Address</h6>
-        <p className="mb-1 font-mono text-xs text-gray-500 dark:text-gray-400">
-          Complete balance will be withdrawn, Some of your balance might be locked in the tokens.
-          Use withdraw to unlock.
-        </p>
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          className="block w-full px-3 py-2 mb-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder="Enter recipient address"
-        />
-        <button
-          onClick={handleWithdraw}
-          disabled={withdrawing}
-          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
-        >
-          Withdraw
-        </button>
-      </div>
+      {!!VITE_WITHDRAW_MOD_SPEC && (
+        <div className="mb-4">
+          <h6 className="text-lg font-bold dark:text-white mb-1">Withdraw to Address</h6>
+          <p className="mb-1 font-mono text-xs text-gray-500 dark:text-gray-400">
+            Complete balance will be withdrawn, Some of your balance might be locked in the tokens.
+            Use withdraw to unlock.
+          </p>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="block w-full px-3 py-2 mb-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Enter recipient address"
+          />
+          <button
+            onClick={handleWithdraw}
+            disabled={withdrawing}
+            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
+          >
+            Withdraw
+          </button>
+        </div>
+      )}
     </>
   )
 }
