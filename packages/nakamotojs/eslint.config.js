@@ -4,7 +4,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'src'] },
+  { ignores: ['dist'] }, // Changed from ['dist', 'src'] to ['dist']
   {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
@@ -18,7 +18,6 @@ export default tseslint.config(
         'warn',
         { allowConstantExport: true },
       ],
-      // Disable no-explicit-any to allow `any` type
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
       'no-empty': 'off',

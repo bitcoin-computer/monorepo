@@ -52,7 +52,7 @@ function Component() {
             ? decodeURIComponent(params.txn)
             : decodeURIComponent(params.txn?.[0] || "")
         );
-        const [hex] = await computer.wallet.restClient.getRawTxs([
+        const [hex] = await computer.db.wallet.restClient.getRawTxs([
           params.txn as string,
         ]);
         const tx = Computer.txFromHex({ hex });

@@ -15,9 +15,9 @@ describe('Should create a deposit transaction for the Chess game with operator',
   const bobComputer = new Computer({ url })
   const operatorComputer = new Computer({ url })
 
-  const alicePublicKey = aliceComputer.wallet.publicKey
-  const bobPublicKey = bobComputer.wallet.publicKey
-  const operatorPublicKey = operatorComputer.wallet.publicKey
+  const alicePublicKey = aliceComputer.db.wallet.publicKey
+  const bobPublicKey = bobComputer.db.wallet.publicKey
+  const operatorPublicKey = operatorComputer.db.wallet.publicKey
   const aliceAddress = aliceComputer.getAddress()
   const bobAddress = bobComputer.getAddress()
   const chain = aliceComputer.getChain()
@@ -25,9 +25,9 @@ describe('Should create a deposit transaction for the Chess game with operator',
   const NETWORKOBJ = networks.getNetwork(chain, network)
   const n = { network: NETWORKOBJ }
 
-  const alicePrivateKey = aliceComputer.wallet.privateKey
-  const bobPrivateKey = bobComputer.wallet.privateKey
-  const operatorPrivateKey = operatorComputer.wallet.privateKey
+  const alicePrivateKey = aliceComputer.db.wallet.privateKey
+  const bobPrivateKey = bobComputer.db.wallet.privateKey
+  const operatorPrivateKey = operatorComputer.db.wallet.privateKey
   const aliceKeyPair = ECPair.fromPrivateKey(alicePrivateKey, n)
   const bobKeyPair = ECPair.fromPrivateKey(bobPrivateKey, n)
   const operatorKeyPair = ECPair.fromPrivateKey(operatorPrivateKey, n)
@@ -55,11 +55,11 @@ describe('Should create a deposit transaction for the Chess game with operator',
     await aliceComputer.faucet(10e8)
     await bobComputer.faucet(10e8)
 
-    const [aliceUtxo] = await aliceComputer.wallet.restClient.getFormattedUtxos(aliceAddress)
+    const [aliceUtxo] = await aliceComputer.db.wallet.restClient.getFormattedUtxos(aliceAddress)
     const { vout: vout1, satoshis: amountPayment1, txId: txId1 } = aliceUtxo
     const aliceUtxoHash = bufferUtils.reverseBuffer(Buffer.from(txId1, 'hex'))
 
-    const [bobUtxo] = await bobComputer.wallet.restClient.getFormattedUtxos(bobAddress)
+    const [bobUtxo] = await bobComputer.db.wallet.restClient.getFormattedUtxos(bobAddress)
     const { vout: vout2, satoshis: amountPayment2, txId: txId2 } = bobUtxo
     const bobUtxoHash = bufferUtils.reverseBuffer(Buffer.from(txId2, 'hex'))
 
@@ -67,7 +67,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
     commitTx.addOutput(output as Buffer, 2n * betAmount)
     commitTx.addInput(aliceUtxoHash, vout1)
     commitTx.addInput(bobUtxoHash, vout2)
-    const requiredFee = await aliceComputer.wallet.estimateFee(commitTx)
+    const requiredFee = await aliceComputer.db.wallet.estimateFee(commitTx)
     commitTx.addOutput(aliceChangeOutput as Buffer, amountPayment1 - betAmount)
     commitTx.addOutput(bobChangeOutput as Buffer, amountPayment2 - betAmount - BigInt(requiredFee))
     await aliceComputer.sign(commitTx)

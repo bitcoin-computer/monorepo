@@ -10,6 +10,10 @@
   "exports": {
     ".": "./build/src/main.js"
   },
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "types": "./build/src/index.d.ts",
   "scripts": {
     "prebuild": "npm run lint",

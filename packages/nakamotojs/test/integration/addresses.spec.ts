@@ -5,6 +5,7 @@ import * as ecc from '@bitcoin-computer/secp256k1';
 import { describe, it } from 'mocha';
 import axios from 'axios';
 import { networks, payments } from '../../src/index.js';
+import { Buffer } from 'buffer';
 
 const ECPair = ECPairFactory(ecc);
 const TESTNET = networks.testnet;

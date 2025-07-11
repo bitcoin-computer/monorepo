@@ -12,7 +12,6 @@ config();
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const chessContractDirectory = `${__dirname}/..`;
-console.log('\n\n', chessContractDirectory);
 const { VITE_CHAIN: chain, VITE_NETWORK: network, VITE_URL: url, MNEMONIC: mnemonic, VITE_PATH: path, } = process.env;
 const rl = createInterface({ input, output });
 if (network !== 'regtest' && !mnemonic)

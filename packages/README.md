@@ -32,6 +32,8 @@ This monorepo contains the following packages.
 - [Docs](https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme) - The sources for the documentation
 - [Website](https://github.com/bitcoin-computer/monorepo/tree/main/packages/website#readme) - The sources for the website
 
-## Legal Notice
+## License
 
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
+This software is licensed under the MIT License. See the [LICENSE.md](../LICENSE.md) file.
+
+This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](../LEGAL.md) file for details on patent usage and payment requirements.

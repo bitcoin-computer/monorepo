@@ -6,6 +6,7 @@ import * as ecc from '@bitcoin-computer/secp256k1';
 import * as crypto from 'crypto';
 import { ECPairFactory } from 'ecpair';
 import { describe, it } from 'mocha';
+import { Buffer } from 'buffer';
 
 import { convertScriptTree } from './payments.utils.js';
 import { LEAF_VERSION_TAPSCRIPT } from '../src/payments/bip341.js';
@@ -159,7 +160,6 @@ describe(`Psbt`, () => {
         if (f.isTaproot) initEccLib(ecc);
         const psbt = Psbt.fromBase64(f.psbt);
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore // cannot find tapLeafHashToSign
         f.keys.forEach(({ inputToSign, tapLeafHashToSign, WIF }) => {
           const keyPair = ECPair.fromWIF(WIF, NETWORKS.testnet);

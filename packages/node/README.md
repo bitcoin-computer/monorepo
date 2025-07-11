@@ -326,21 +326,8 @@ If you have any questions, please let us know on <a href="https://t.me/thebitcoi
 
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
-## Price
-
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price).
-
-## Legal Notice
-
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
-
 ## License
 
-This software is licensed under the [Creative Commons Attribution-NoDerivs 3.0 Unported](https://creativecommons.org/licenses/by-nd/3.0/) license.
+This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
 
-You are free to: share, copy, and redistribute the material in any medium or format for any purpose, even commercially under the following terms:
-
-- Attribution — You must give appropriate credit, provide a link to the license, and indicate if changes were made. You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you or your use.
-- NoDerivatives — If you remix, transform, or build upon the material, you may not distribute the modified material.
-
-This is a human-readable summary of (and not a substitute for) the [license](https://creativecommons.org/licenses/by-nd/3.0/legalcode).
+This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.

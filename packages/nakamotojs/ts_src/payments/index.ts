@@ -8,6 +8,7 @@ import { p2sh } from './p2sh.js';
 import { p2wpkh } from './p2wpkh.js';
 import { p2wsh } from './p2wsh.js';
 import { p2tr } from './p2tr.js';
+import { Buffer } from 'buffer';
 
 export interface Payment {
   name?: string;
