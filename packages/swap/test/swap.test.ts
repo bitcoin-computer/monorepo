@@ -83,7 +83,6 @@ describe('Swap', () => {
   describe('Creating two NFTs to be swapped', () => {
     it('Alice creates an NFT', async () => {
       nftA = await alice.new(NFT, ['A', 'AAA', 'URL'])
-      // @ts-ignore
       expect(nftA).to.matchPattern({
         ...meta,
         name: 'A',
@@ -95,7 +94,6 @@ describe('Swap', () => {
 
     it('Bob creates an NFT', async () => {
       nftB = await bob.new(NFT, ['B', 'BBB', 'URL'])
-      // @ts-ignore
       expect(nftB).to.matchPattern({
         ...meta,
         name: 'B',
@@ -139,7 +137,6 @@ describe('Swap', () => {
     it('a is now owned by Bob', async () => {
       const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
       const aSwapped = env.a
-      // @ts-ignore
       expect(aSwapped).to.matchPattern({
         ...meta,
         name: 'A',
@@ -152,7 +149,6 @@ describe('Swap', () => {
     it('b is now owned by Alice', async () => {
       const { env } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
       const bSwapped = env.b
-      // @ts-ignore
       expect(bSwapped).to.matchPattern({
         ...meta,
         name: 'B',

@@ -4,7 +4,7 @@ import { stdin as input, stdout as output } from 'node:process'
 import { readFile, writeFile } from 'fs/promises'
 import { Computer } from '@bitcoin-computer/lib'
 import { NftHelper } from '@bitcoin-computer/TBC721'
-import { TxWrapperHelper, PaymentHelper, SaleHelper } from '@bitcoin-computer/swap'
+import { TxWrapperHelper, PaymentHelper, SaleHelper, Withdraw } from '@bitcoin-computer/swap'
 
 config()
 
@@ -56,6 +56,9 @@ if (answer === 'n') {
   const paymentHelper = new PaymentHelper(computer)
   const paymentModSpec = await paymentHelper.deploy()
 
+  console.log(' * Deploying Withdraw contract...')
+  const withdrawModSpec = await computer.deploy(`export ${Withdraw}`)
+
   console.log(' \x1b[2m- Successfully deployed smart contracts\x1b[0m')
   const answer2 = await rl.question('\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m')
   if (answer2 === 'n') {
@@ -70,6 +73,7 @@ if (answer === 'n') {
     VITE_TX_WRAPPER_MOD_SPEC\x1b[2m=${txWrapperModSpec}\x1b[0m
     VITE_SALE_MOD_SPEC\x1b[2m=${saleModSpec}\x1b[0m
     VITE_PAYMENT_MOD_SPEC\x1b[2m=${paymentModSpec}\x1b[0m
+    VITE_WITHDRAW_MOD_SPEC\x1b[2m=${withdrawModSpec}\x1b[0m
 
     (2) Run 'npm start' to start the application.
     `)
@@ -85,6 +89,8 @@ if (answer === 'n') {
       if (lines[i].startsWith('VITE_SALE_MOD_SPEC')) lines[i] = `VITE_SALE_MOD_SPEC=${saleModSpec}`
       if (lines[i].startsWith('VITE_PAYMENT_MOD_SPEC'))
         lines[i] = `VITE_PAYMENT_MOD_SPEC=${paymentModSpec}`
+      if (lines[i].startsWith('VITE_WITHDRAW_MOD_SPEC'))
+        lines[i] = `VITE_WITHDRAW_MOD_SPEC=${withdrawModSpec}`
     }
     await writeFile(file, lines.join('\n'), 'utf-8')
     console.log(' \x1b[2m- Successfully updated .env file\x1b[0m')

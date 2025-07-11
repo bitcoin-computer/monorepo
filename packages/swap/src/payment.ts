@@ -75,3 +75,9 @@ export class PaymentHelper {
     return syncedPayment
   }
 }
+
+export class Withdraw extends Contract {
+  static exec(payments: Payment[]) {
+    payments.forEach((payment) => payment.setSatoshis(0n))
+  }
+}
