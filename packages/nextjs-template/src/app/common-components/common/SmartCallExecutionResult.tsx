@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export function FunctionResultModalContent({ functionResult }: any) {
   const router = useRouter();
 

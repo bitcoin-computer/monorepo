@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-expressions */
+ 
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'

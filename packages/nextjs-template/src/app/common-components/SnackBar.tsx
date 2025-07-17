@@ -9,7 +9,7 @@ interface SnackBarProps {
 export function SnackBar(props: SnackBarProps) {
   const { message, success, hideSnackBar } = props;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const closeMessage = (evt: any) => {
     evt.preventDefault();
     hideSnackBar();

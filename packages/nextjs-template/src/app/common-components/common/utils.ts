@@ -1,24 +1,24 @@
-// eslint-disable-next-line
+ 
 type Json = JBasic | JObject | JArray;
 type JBasic = undefined | null | boolean | number | string | symbol | bigint;
 type JArray = Json[];
 type JObject = { [x: string]: Json };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJUndefined = (a: any): a is undefined => typeof a === "undefined";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJNull = (a: any): a is null => a === null;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJBoolean = (a: any): a is boolean => typeof a === "boolean";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJNumber = (a: any): a is number => typeof a === "number";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJString = (a: any): a is string => typeof a === "string";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJSymbol = (a: any): a is symbol => typeof a === "symbol";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJBigInt = (a: any): a is bigint => typeof a === "bigint";
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJBasic = (a: any): a is JBasic =>
   isJNull(a) ||
   isJUndefined(a) ||
@@ -27,9 +27,9 @@ const isJBasic = (a: any): a is JBasic =>
   isJBoolean(a) ||
   isJSymbol(a) ||
   isJBigInt(a);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJObject = (a: any): a is JObject => !isJBasic(a) && !Array.isArray(a);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const isJArray = (a: any): a is JArray => !isJBasic(a) && Array.isArray(a);
 
 const objectEntryMap =
@@ -60,7 +60,7 @@ export const strip = (value: Json): Json => {
 };
 
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export const toObject = (obj: any) =>
   JSON.stringify(
     obj,
