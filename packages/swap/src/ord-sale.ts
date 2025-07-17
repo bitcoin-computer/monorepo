@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file */
+ 
 import { NFT } from '@bitcoin-computer/TBC721'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/lib'
@@ -37,7 +37,7 @@ export class OrdSaleHelper {
       exp: `OrdSale.exec(b1, b2, nft, payment)`,
       env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
       mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
-      // eslint-disable-next-line no-bitwise
+       
       sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
       inputIndex: 2,
       fund: false,
