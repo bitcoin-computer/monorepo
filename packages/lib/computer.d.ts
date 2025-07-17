@@ -129,7 +129,6 @@ type ComputerOptions = Partial<{
   path: string
   url: string
   satPerByte: number
-  dustRelayFee: number
   addressType: AddressType
   moduleStorageType: ModuleStorageType
   cache: boolean
