@@ -1,5 +1,5 @@
-/* eslint-disable max-classes-per-file */
-/* eslint-disable no-underscore-dangle */
+ 
+ 
 
 export class Token extends Contract {
   amount: bigint

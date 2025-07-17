@@ -31,7 +31,7 @@ const Balance = ({
               : [];
             const payments = (await Promise.all(
               paymentRevs.map((rev: string) => computer.sync(rev))
-            )) as any[]; // eslint-disable-line @typescript-eslint/no-explicit-any
+            )) as any[];  
             return payments && payments.length
               ? payments.reduce(
                   (total, pay) =>
@@ -98,7 +98,7 @@ const Balance = ({
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const Address = ({ computer }: any) => {
   const [copied, setCopied] = useState(false);
 
@@ -131,7 +131,7 @@ const Address = ({ computer }: any) => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const PublicKey = ({ computer }: any) => {
   const [copied, setCopied] = useState(false);
 
@@ -164,7 +164,7 @@ const PublicKey = ({ computer }: any) => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const Mnemonic = ({ computer }: any) => {
   const [mnemonicShown, setMnemonicShown] = useState(false);
   return (
@@ -185,7 +185,7 @@ const Mnemonic = ({ computer }: any) => {
   );
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const Url = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Node Url</h6>
@@ -195,7 +195,7 @@ const Url = ({ computer }: any) => (
   </div>
 );
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const Chain = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Chain</h6>
@@ -205,7 +205,7 @@ const Chain = ({ computer }: any) => (
   </div>
 );
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const Network = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Network</h6>
