@@ -14,6 +14,8 @@ const __dirname = dirname(__filename);
 const chessContractDirectory = `${__dirname}/..`;
 const { VITE_CHAIN: chain, VITE_NETWORK: network, VITE_URL: url, MNEMONIC: mnemonic, VITE_PATH: path, } = process.env;
 const rl = createInterface({ input, output });
+if (!network || !chain || !url)
+    throw new Error('Please set the .env file');
 if (network !== 'regtest' && !mnemonic)
     throw new Error('Please set MNEMONIC in the .env file');
 const computer = new Computer({ chain, network, mnemonic, url, path });
@@ -66,7 +68,7 @@ else {
         }
         await writeFile(file, lines.join('\n'), 'utf-8');
     }
-    console.log(' \x1b[2m- Successfully updated .env file\x1b[0m');
+    console.log(' \x1b[2m- Successfully updated ../chess-app/.env file\x1b[0m');
 }
 console.log("\nRun 'npm start' to start the application.\n");
 rl.close();

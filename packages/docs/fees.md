@@ -23,7 +23,7 @@ The table below gives an overview of the dust amounts across different blockchai
 | -------------- | -------------- | ------------- |
 | BTC            | ~ 0.000007 BTC | ~ $0.70000    |
 | LTC            | ~ 0.00007 LTC  | ~ $0.00700    |
-| DOGE           | ~ 0.01 DOGE    | ~ $0.00150    |
-| PEPE           | ~ 0.01 PEPE    | ~ $0.00000005 |
+| DOGE           | ~ 0.025 DOGE   | ~ $0.0375     |
+| PEPE           | ~ 0.025 PEPE   | ~ $0.00000012 |
 
 The actual fee might vary slightly from the estimates given above. In the following we explain how the fee is calculated in detail. Recall from the Section called [Tx Format](./format.md) that the metadata is encoded in bare multisig scripts. These scripts can contain up to three public keys. We use on of these to be able to spend the dust and the other 1 or 2 public keys encode the data. Therefore the fee to store two public keys worth of data (66 bytes) is one dust amount.

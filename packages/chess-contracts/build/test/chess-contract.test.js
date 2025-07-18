@@ -167,7 +167,6 @@ describe('Should create a deposit transaction for the Chess game with operator',
         const scriptSig = redeemTx.ins[0].script;
         const decompiled = bscript.decompile(scriptSig);
         const corruptedSig = Buffer.from(decompiled[1]);
-        // eslint-disable-next-line no-bitwise -- intentional bitwise corruption for test
         corruptedSig[10] ^= 0x01; // Corrupt the signature
         decompiled[1] = corruptedSig;
         const corruptedScriptSig = bscript.compile(decompiled);

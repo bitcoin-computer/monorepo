@@ -920,7 +920,6 @@ export class Chess {
                 for (let j = 0, len = PIECE_OFFSETS[type].length; j < len; j++) {
                     const offset = PIECE_OFFSETS[type][j];
                     to = from;
-                    // eslint-disable-next-line no-constant-condition
                     while (true) {
                         to += offset;
                         if (to & 0x88)
@@ -1773,7 +1772,6 @@ export class Chess {
         while (this._history.length > 0) {
             reversedHistory.push(this._undoMove());
         }
-        // eslint-disable-next-line no-constant-condition
         while (true) {
             const move = reversedHistory.pop();
             if (!move) {
@@ -1827,7 +1825,6 @@ export class Chess {
             reversedHistory.push(this._undoMove());
         }
         copyComment(this.fen());
-        // eslint-disable-next-line no-constant-condition
         while (true) {
             const move = reversedHistory.pop();
             if (!move) {

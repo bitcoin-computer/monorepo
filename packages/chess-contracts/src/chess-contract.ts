@@ -222,10 +222,9 @@ export class ChessContractHelper {
     if (paid < this.satoshis) throw new Error(NotEnoughFundError)
 
     // Add change
-    const fee = await this.computer.db.wallet.estimateFee(tx)
     const publicKeyBuffer = this.computer.db.wallet.publicKey
     const { output } = payments.p2pkh({ pubkey: publicKeyBuffer, network: n })
-    const changeSatoshis = Number(paid) - Number(this.satoshis) / 2 - 5 * fee // todo: optimize the fee
+    const changeSatoshis = Number(paid) - Number(this.satoshis) / 2
     tx.addOutput(output!, BigInt(Math.round(changeSatoshis)))
 
     // Sign
@@ -249,7 +248,7 @@ export class ChessContractHelper {
     // Fund
     const fee = await this.computer.db.wallet.estimateFee(tx)
     const txId = await this.computer.send(
-      this.satoshis / 2n + 5n * BigInt(fee),
+      this.satoshis / 2n + 50n * BigInt(fee),
       this.computer.getAddress(),
     )
     const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))

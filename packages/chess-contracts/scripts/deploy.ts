@@ -25,6 +25,7 @@ const {
 
 const rl = createInterface({ input, output })
 
+if (!network || !chain || !url) throw new Error('Please set the .env file')
 if (network !== 'regtest' && !mnemonic) throw new Error('Please set MNEMONIC in the .env file')
 
 const computer = new Computer({ chain, network, mnemonic, url, path })
@@ -81,7 +82,7 @@ VITE_CHESS_CHALLENGE_MOD_SPEC\x1b[2m=${challengeMod}\x1b[0m
     await writeFile(file, lines.join('\n'), 'utf-8')
   }
 
-  console.log(' \x1b[2m- Successfully updated .env file\x1b[0m')
+  console.log(' \x1b[2m- Successfully updated ../chess-app/.env file\x1b[0m')
 }
 
 console.log("\nRun 'npm start' to start the application.\n")
