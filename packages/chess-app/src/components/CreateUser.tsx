@@ -63,8 +63,6 @@ export function CreateUserModalContent({
     refreshBalance()
   }, [])
 
-  const bigIntToStr = (value: bigint) => value.toString()
-
   return (
     <div className="p-6 bg-white dark:bg-gray-700 rounded-lg shadow-md max-w-md mx-auto">
       {userTxId ? (
