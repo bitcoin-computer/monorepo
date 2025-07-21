@@ -23,21 +23,21 @@ const toggleModal = (id: string) => {
   get(id).toggle();
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const ShowButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-show={id} type="button">
     {text}
   </button>
 );
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const HideButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-hide={id} type="button">
     {text}
   </button>
 );
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const ToggleButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-toggle={id} type="button">
     {text}
@@ -52,9 +52,9 @@ const Component = ({
   onClickClose,
 }: {
   title: string;
-  content: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  content: any;  
   id: string;
-  contentData?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
+  contentData?: any;  
   onClickClose?: () => void;
 }) => (
   <div

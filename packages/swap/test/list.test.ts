@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-expressions */
+ 
 import { expect } from 'chai'
 import dotenv from 'dotenv'
 import { Computer } from '@bitcoin-computer/lib'

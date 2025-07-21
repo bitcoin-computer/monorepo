@@ -12,7 +12,7 @@ export const TypeSelectionDropdown = ({
   onSelectMethod,
   dropdownList,
   selectedType,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
 }: any) => {
   const [dropDown, setDropdown] = useState<DropdownInterface>();
   const [type, setType] = useState(selectedType || "Type");

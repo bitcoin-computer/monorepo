@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-expressions */
+ 
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
@@ -51,7 +51,7 @@ describe('Sale', () => {
         exp: `${Sale} Sale.exec(nft, payment)`,
         env: { nft: nft._rev, payment: mock._rev },
         mocks: { payment: mock },
-        // eslint-disable-next-line no-bitwise
+         
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
         inputIndex: 0,
         fund: false,
