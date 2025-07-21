@@ -14,6 +14,7 @@ export function CreateUserModalContent({
   setUserName,
   userName,
   setUser,
+  setTitle,
   currentBalance,
 }: {
   userTxId: string
@@ -22,6 +23,7 @@ export function CreateUserModalContent({
   userName: string
   setUserName: React.Dispatch<React.SetStateAction<string>>
   setUser: React.Dispatch<React.SetStateAction<User | null>>
+  setTitle: React.Dispatch<React.SetStateAction<string>>
   currentBalance: bigint
 }) {
   const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
@@ -38,6 +40,7 @@ export function CreateUserModalContent({
       const user = (await computer.sync(rev)) as User
       setUser(user)
       setUserTxId(txId)
+      setTitle('Account created successfully!')
       showLoader(false)
     } catch (err) {
       if (err instanceof Error) {
@@ -67,9 +70,9 @@ export function CreateUserModalContent({
     <div className="p-6 bg-white dark:bg-gray-700 rounded-lg shadow-md max-w-md mx-auto">
       {userTxId ? (
         <div className="flex flex-col items-start">
-          <p className="text-sm font-medium text-gray-900 dark:text-gray-200">
-            Account created successfully.
-          </p>
+          <span className="text-gray-800 dark:text-gray-200">
+            Click on "New Game" to start playing.
+          </span>
         </div>
       ) : (
         <div className="space-y-6">
@@ -152,10 +155,11 @@ export function CreateUserModal({
   const computer = useContext(ComputerContext)
   const [userTxId, setUserTxId] = useState('')
   const [userName, setUserName] = useState('')
+  const [title, setTitle] = useState<string>('Please create your account!')
 
   return (
     <Modal.Component
-      title={'Please create your account!'}
+      title={title}
       content={CreateUserModalContent}
       contentData={{
         computer,
@@ -164,6 +168,7 @@ export function CreateUserModal({
         userName,
         setUserName,
         setUser,
+        setTitle,
         currentBalance,
       }}
       id={creaetUserModal}
