@@ -153,7 +153,6 @@ describe('Sale', () => {
 
     it('Seller creates an NFT', async () => {
       nft = await seller.new(NFT, ['name', 'artist', 'URL'])
-      // @ts-ignore
       expect(nft).to.matchPattern({ name: 'name', artist: 'artist', url: 'URL', ...meta })
     })
 
@@ -186,7 +185,6 @@ describe('Sale', () => {
     it('Thief creates a payment object with half the asking price', async () => {
       tooLowPayment = await thief.new(Payment, [nftPrice / 2n])
 
-      // @ts-ignore
       expect(tooLowPayment).matchPattern({
         _id: _.isString,
         _rev: _.isString,
@@ -240,7 +238,6 @@ describe('Sale', () => {
     it('Buyer creates a payment object', async () => {
       payment = await buyer.new(Payment, [nftPrice])
 
-      // @ts-ignore
       expect(payment).matchPattern({
         _id: _.isString,
         _rev: _.isString,

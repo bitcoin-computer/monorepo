@@ -1,5 +1,3 @@
- 
-
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
@@ -61,7 +59,7 @@ describe('Ord Sale', () => {
         exp: `${OrdSale} OrdSale.exec(b1, b2, nft, payment)`,
         env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
         mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
-         
+
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
         inputIndex: 2,
         fund: false,
@@ -161,7 +159,6 @@ describe('Ord Sale', () => {
 
       it('Seller creates an NFT', async () => {
         nft = await seller.new(NFT, ['name', 'artist', 'URL'])
-        // @ts-ignore
         expect(nft).to.matchPattern({ name: 'name', artist: 'artist', url: 'URL', ...meta })
       })
 
@@ -205,7 +202,6 @@ describe('Ord Sale', () => {
         b2 = await buyer.new(Payment, [mockSatoshis])
         payment = await buyer.new(Payment, [nftPrice])
 
-        // @ts-ignore
         expect(payment).matchPattern({
           _id: _.isString,
           _rev: _.isString,

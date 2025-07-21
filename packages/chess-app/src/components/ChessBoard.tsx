@@ -588,7 +588,7 @@ export function ChessBoard() {
       />
 
       <NewGameModal />
-      <CreateUserModal setUser={setUser} />
+      <CreateUserModal setUser={setUser} currentBalance={balance} />
     </div>
   )
 }
