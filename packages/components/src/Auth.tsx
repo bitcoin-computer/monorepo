@@ -18,7 +18,6 @@ export type ComputerOptions = Partial<{
   network: TBCNetwork
   passphrase: string
   path: string
-  seed: string // deprecated
   url: string
   satPerByte: number
   dustRelayFee: number
