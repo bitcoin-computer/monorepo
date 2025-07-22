@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/explorer",
-  "version": "0.25.0-beta.0",
+  "version": "0.26.0-beta.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -20,8 +20,8 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/components": "^0.25.0-beta.0",
-    "@bitcoin-computer/lib": "^0.25.0-beta.0",
+    "@bitcoin-computer/components": "^0.26.0-beta.0",
+    "@bitcoin-computer/lib": "^0.26.0-beta.0",
     "flowbite": "^2.3.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
