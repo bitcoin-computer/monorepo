@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/chess-app",
-  "version": "0.25.0-beta.0",
+  "version": "0.26.0-beta.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -21,9 +21,9 @@
     "start": "vite"
   },
   "dependencies": {
-    "@bitcoin-computer/chess-contracts": "^0.25.0-beta.0",
-    "@bitcoin-computer/components": "^0.25.0-beta.0",
-    "@bitcoin-computer/lib": "^0.25.0-beta.0",
+    "@bitcoin-computer/chess-contracts": "^0.26.0-beta.0",
+    "@bitcoin-computer/components": "^0.26.0-beta.0",
+    "@bitcoin-computer/lib": "^0.26.0-beta.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
