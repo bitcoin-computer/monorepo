@@ -1,4 +1,4 @@
-/* eslint-disable no-unused-expressions */
+ 
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
@@ -84,7 +84,7 @@ describe('Token', async () => {
     })
 
     it('Receiver send token2 back to sender', async () => {
-      // Here we would like to call
+      // We would like to call
       //
       //   await token2.transfer(sender.getPublicKey())
       //

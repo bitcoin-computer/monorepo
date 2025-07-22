@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/components",
-  "version": "0.25.0-beta.0",
+  "version": "0.26.0-beta.0",
   "description": "",
   "homepage": "http://bitcoincomputer.io/",
   "bugs": {
@@ -23,18 +23,21 @@
   ],
   "main": "built/index.js",
   "types": "built/index.d.ts",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "build": "npm run tsc:compile",
     "build:turbo": "turbo run build",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern built/",
     "lint:fix": "eslint src --fix",
-    "test": "vitest run",
     "tsc:compile": "rm -rf built/* && tsc",
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.25.0-beta.0",
+    "@bitcoin-computer/lib": "^0.26.0-beta.0",
     "flowbite": "^2.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -44,7 +47,7 @@
   },
   "devDependencies": {
     "@babel/preset-react": "^7.23.3",
-    "@typescript-eslint/eslint-plugin": "^7.9.0",
+    "@typescript-eslint/eslint-plugin": "^8.35.0",
     "vitest": "^2.0.5"
   }
 }

@@ -16,6 +16,7 @@ import { RegtestClient } from './regtest_client.js';
 import { Transaction } from '../../src/index.js';
 import { CHAIN, NETWORK } from './config/index.js';
 import { getNetwork } from '../../src/networks.js';
+import { Buffer } from 'buffer';
 
 export const fail = () => {
   expect(true).to.eq(false);

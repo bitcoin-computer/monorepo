@@ -55,17 +55,16 @@ export class TokenHelper {
         return bags.reduce((prev, curr) => prev + curr.amount, 0n);
     }
     async transfer(to, amount, root) {
-        let _amount = amount;
         const owner = this.computer.getPublicKey();
         const bags = await this.getBags(owner, root);
         const results = [];
-        while (_amount > 0 && bags.length > 0) {
+        while (amount > 0 && bags.length > 0) {
             const [bag] = bags.splice(0, 1);
-            const available = _amount < bag.amount ? _amount : bag.amount;
+            const available = amount < bag.amount ? amount : bag.amount;
             results.push(await bag.transfer(to, available));
-            _amount -= available;
+            amount -= available;
         }
-        if (_amount > 0)
+        if (amount > 0)
             throw new Error('Could not send entire amount');
         await Promise.all(results);
     }

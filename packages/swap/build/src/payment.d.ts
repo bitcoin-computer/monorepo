@@ -26,3 +26,6 @@ export declare class PaymentHelper {
     createPaymentTx(satoshis: bigint): Promise<any>;
     getPayment(paymentTxId: string): Promise<Payment>;
 }
+export declare class Withdraw extends Contract {
+    static exec(payments: Payment[]): void;
+}

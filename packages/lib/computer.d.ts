@@ -127,13 +127,10 @@ type ComputerOptions = Partial<{
   network: TBCNetwork
   passphrase: string
   path: string
-  seed: string
   url: string
   satPerByte: number
-  dustRelayFee: number
   addressType: AddressType
   moduleStorageType: ModuleStorageType
-  thresholdBytes: number
   cache: boolean
 }>
 type Rev = {
@@ -342,6 +339,7 @@ declare class Wallet {
   derive(subpath?: string): Wallet
   getBalance(address?: string): Promise<_Balance>
   getUtxos(address?: string): Promise<_Unspent[]>
+  getUtxosByPublicKey(publicKey: string): Promise<_Unspent[]>
   getDustThreshold(isWitnessProgram: boolean, script?: Buffer): number
   getAmountThreshold(script: Buffer, isWitnessProgram?: boolean): number
   getUtxosWithOpts({ include, exclude }?: FundOptions): Promise<_Unspent[]>
@@ -420,9 +418,13 @@ declare class Contract {
   constructor(opts?: {})
 }
 
-declare class Computer {
+declare class Db {
   wallet: Wallet
-  memory?: Memory
+  constructor(params?: {})
+}
+
+declare class Computer {
+  db: Db
   constructor(params?: ComputerOptions)
   new<T extends Class>(
     constructor: T,

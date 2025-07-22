@@ -83,22 +83,20 @@ To change the configuration please edit your `.env` file.
 <font size=1>
 
 ```bash
-# Application Configuration
-REACT_APP_CHAIN=LTC
-REACT_APP_NETWORK=regtest
-REACT_APP_URL=http://127.0.0.1:1031
+# NFT Application configuration
+VITE_CHAIN=LTC
+VITE_NETWORK=regtest
+VITE_URL=http://127.0.0.1:1031
+VITE_PATH="m/44'/1'/0'"
 
-# Application Port
-PORT=1034
-
-# Module System Storage Type
-REACT_APP_MODULE_STORAGE_TYPE=taproot
+# NFT Application Port
+VITE_PORT=1034
 
 # Smart Contract Locations
-REACT_APP_NFT_MOD_SPEC=32ced85751dba336f47a46086e4df79e4b4925a30ebf0e39d2fbe0df4e4f5547:0
-REACT_APP_TX_WRAPPER_MOD_SPEC=575336fb0d7dc61579b0b65628b9d069e82c0cd0435085dc8a85c86167673add:0
-REACT_APP_SALE_MOD_SPEC=d83c4d08794cd8b8ad8c137d61c82d40189382496f8b885b90c00b971a1ac9ec:0
-REACT_APP_PAYMENT_MOD_SPEC=fab53a193aacbeab7d309687965d4fd275fc49ed2e6784cdad0ec0dee57a5661:0
+VITE_NFT_MOD_SPEC=a257c95872c0ae755a407f3dee69991764ca6d293ea5b6798b4505615aff204b:0
+VITE_TX_WRAPPER_MOD_SPEC=d207b605ceab53df773451e3628c880106f2c92b9c17e415c9682efc28756d09:0
+VITE_SALE_MOD_SPEC=fc802f922e8551f362bb0020d7c711c1f2cda19f3614d86266dd14061d8ea2c1:0
+VITE_PAYMENT_MOD_SPEC=e4daed709c544a2410eed891ddbc30d46bbaddedc7cab74ab9c56c6e0a9a4c38:0
 ```
 
 </font>
@@ -119,22 +117,10 @@ Contributions are most welcome! If you have found a bug or have an idea for an i
 
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
 
-## Price
+## License
 
-Free for a limited time only. See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price) for details.
+This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
 
-## Legal Notice
-
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
-
-## MIT License
-
-Copyright (c) 2022 BCDB Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.
 
 [node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node

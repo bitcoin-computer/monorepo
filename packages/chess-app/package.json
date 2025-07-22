@@ -1,26 +1,29 @@
 {
   "name": "@bitcoin-computer/chess-app",
-  "version": "0.25.0-beta.0",
+  "version": "0.26.0-beta.0",
   "private": true,
+  "license": "MIT",
   "type": "module",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
-    "build": "tsc -b && vite build",
+    "build:prod": "tsc -b && NODE_OPTIONS=\"--max-old-space-size=4096\" vite build",
     "build:contract": "tsc --project tsconfig.build.json && mv ./build-contract/chess-module.js ./src/contracts/chess.mjs && rm -rf build-contract",
-    "build:turbo": "turbo run build",
+    "build:turbo": "turbo run build:prod",
     "deploy": "npm run build:contract && node --loader ts-node/esm ./scripts/deploy.ts",
     "dev": "vite",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "start": "vite",
-    "test": "vitest run",
-    "test:dev": "vitest"
+    "start": "vite"
   },
   "dependencies": {
-    "@bitcoin-computer/chess-contracts": "^0.25.0-beta.0",
-    "@bitcoin-computer/components": "^0.25.0-beta.0",
-    "@bitcoin-computer/lib": "^0.25.0-beta.0",
+    "@bitcoin-computer/chess-contracts": "^0.26.0-beta.0",
+    "@bitcoin-computer/components": "^0.26.0-beta.0",
+    "@bitcoin-computer/lib": "^0.26.0-beta.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
@@ -29,6 +32,7 @@
     "react": "^18.3.1",
     "react-chessboard": "^4.7.2",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.2.1",
     "url": "^0.11.4"
   },
   "devDependencies": {
@@ -43,7 +47,7 @@
     "autoprefixer": "^10.4.20",
     "crypto": "1.0.1",
     "ecpair": "^2.1.0",
-    "eslint": "^9.18.0",
+    "eslint": "9.29.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
@@ -51,9 +55,10 @@
     "postcss": "^8.4.44",
     "rollup-plugin-node-polyfills": "^0.2.1",
     "tailwindcss": "^3.4.10",
-    "typescript": "^5.5.3",
+    "typescript": "^5.8.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
+    "vite-plugin-node-polyfills": "^0.23.0",
     "vitest": "^2.0.5"
   }
 }

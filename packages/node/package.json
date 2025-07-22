@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.25.0-beta.0",
+  "version": "0.26.0-beta.0",
   "private": false,
   "description": "Server Side Library for the Bitcoin Computer",
   "keywords": [
@@ -19,7 +19,7 @@
     "type": "git",
     "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/node"
   },
-  "license": "CC-BY-ND-4.0",
+  "license": "MIT",
   "author": {
     "name": "Clemens Ley",
     "email": "clemens@bitcoincomputer.io"
@@ -31,6 +31,10 @@
   ],
   "type": "module",
   "main": "dist/bcn.es.mjs",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "build": "cd ../../ && npm run build:node",
     "clean": "npm run down && npm run prune && npm run clean:blockchain:data && npm run clean:db:data",
@@ -40,8 +44,6 @@
     "create:indexes": "nohup node --loader ts-node/esm ./scripts/create-indexes.ts > /dev/null 2>&1 &",
     "down": "docker compose -f docker-compose.yml down",
     "fund": "node --loader ts-node/esm ./scripts/fund.ts",
-    "lint": "eslint",
-    "lint:fix": "eslint --fix",
     "prune": "docker system prune -f",
     "setup": "./scripts/setup.py",
     "start": "npm run up",
@@ -53,11 +55,11 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@bitcoin-computer/lib": "^0.25.0-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.25.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.25.0-beta.0",
+    "@bitcoin-computer/lib": "^0.26.0-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.26.0-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.26.0-beta.0",
     "@types/node": "^20.11.20",
-    "axios": "1.7.9",
+    "axios": "1.8.2",
     "bitcoind-rpc": "^0.9.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -72,7 +74,7 @@
     "pg-monitor": "^2.0.0",
     "pg-promise": "^11.5.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3",
+    "typescript": "^5.8.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0",
     "zeromq": "6.0.4"

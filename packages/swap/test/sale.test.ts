@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable import/no-extraneous-dependencies */
+ 
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
@@ -52,7 +51,7 @@ describe('Sale', () => {
         exp: `${Sale} Sale.exec(nft, payment)`,
         env: { nft: nft._rev, payment: mock._rev },
         mocks: { payment: mock },
-        // eslint-disable-next-line no-bitwise
+         
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
         inputIndex: 0,
         fund: false,
@@ -154,7 +153,6 @@ describe('Sale', () => {
 
     it('Seller creates an NFT', async () => {
       nft = await seller.new(NFT, ['name', 'artist', 'URL'])
-      // @ts-ignore
       expect(nft).to.matchPattern({ name: 'name', artist: 'artist', url: 'URL', ...meta })
     })
 
@@ -187,7 +185,6 @@ describe('Sale', () => {
     it('Thief creates a payment object with half the asking price', async () => {
       tooLowPayment = await thief.new(Payment, [nftPrice / 2n])
 
-      // @ts-ignore
       expect(tooLowPayment).matchPattern({
         _id: _.isString,
         _rev: _.isString,
@@ -241,7 +238,6 @@ describe('Sale', () => {
     it('Buyer creates a payment object', async () => {
       payment = await buyer.new(Payment, [nftPrice])
 
-      // @ts-ignore
       expect(payment).matchPattern({
         _id: _.isString,
         _rev: _.isString,

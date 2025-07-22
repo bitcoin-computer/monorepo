@@ -3,9 +3,10 @@ export declare function Wallet({ modSpecs }: {
     modSpecs?: string[];
 }): import("react/jsx-runtime").JSX.Element;
 export declare const WalletComponents: {
-    Balance: ({ computer, modSpecs }: {
+    Balance: ({ computer, modSpecs, isOpen, }: {
         computer: Computer;
         modSpecs: string[];
+        isOpen: boolean;
     }) => import("react/jsx-runtime").JSX.Element;
     Address: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
     PublicKey: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;

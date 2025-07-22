@@ -37,7 +37,7 @@ function Component() {
   useEffect(() => {
     const fetch = async () => {
       setTxn(params.txn)
-      const [hex] = await computer.wallet.restClient.getRawTxs([params.txn as string])
+      const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn as string])
       const tx = Computer.txFromHex({ hex })
       setTxnData(tx)
 
@@ -54,7 +54,7 @@ function Component() {
       } catch (err) {
         if (err instanceof Error) {
           setTransition('')
-          // eslint-disable-next-line no-console
+           
           console.log('Error parsing transaction', err.message)
         }
       }

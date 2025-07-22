@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-expressions */
-/* eslint-disable import/no-extraneous-dependencies */
+ 
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
@@ -35,7 +34,6 @@ describe('TxWrapper', () => {
     describe('Alice and Bob create the NFTs they want to swap', () => {
       it('Alice creates an NFT', async () => {
         a = await alice.new(NFT, ['A', 'AAA', 'URL'])
-        // @ts-ignore
         expect(a).to.matchPattern({
           ...meta,
           name: 'A',
@@ -47,7 +45,6 @@ describe('TxWrapper', () => {
 
       it('Bob creates b', async () => {
         b = await bob.new(NFT, ['B', 'BBB', 'URL'])
-        // @ts-ignore
         expect(b).to.matchPattern({
           ...meta,
           name: 'B',
@@ -116,7 +113,6 @@ describe('TxWrapper', () => {
       it('a is now owned by Bob', async () => {
         const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
         const aSwapped = env.a
-        // @ts-ignore
         expect(aSwapped).to.matchPattern({
           ...meta,
           name: 'A',
@@ -129,7 +125,6 @@ describe('TxWrapper', () => {
       it('b is now owned by Alice', async () => {
         const { env } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
         const bSwapped = env.b
-        // @ts-ignore
         expect(bSwapped).to.matchPattern({
           ...meta,
           name: 'B',
@@ -155,7 +150,6 @@ describe('TxWrapper', () => {
 
       it('Alice creates an NFT', async () => {
         a = await alice.new(NFT, ['A', 'AAA', 'URL'])
-        // @ts-ignore
         expect(a).to.matchPattern({
           ...meta,
           name: 'A',
@@ -167,7 +161,6 @@ describe('TxWrapper', () => {
 
       it('Bob creates b', async () => {
         b = await bob.new(NFT, ['B', 'BBB', 'URL'])
-        // @ts-ignore
         expect(b).to.matchPattern({
           ...meta,
           name: 'B',
@@ -230,7 +223,6 @@ describe('TxWrapper', () => {
       it('a is now owned by Bob', async () => {
         const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
         const aSwapped = env.a
-        // @ts-ignore
         expect(aSwapped).to.matchPattern({
           ...meta,
           name: 'A',
@@ -243,7 +235,6 @@ describe('TxWrapper', () => {
       it('b is now owned by Alice', async () => {
         const { env } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
         const bSwapped = env.b
-        // @ts-ignore
         expect(bSwapped).to.matchPattern({
           ...meta,
           name: 'B',

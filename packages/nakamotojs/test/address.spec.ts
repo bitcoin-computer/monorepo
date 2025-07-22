@@ -7,6 +7,7 @@ import * as baddress from '../src/address.js';
 import * as bscript from '../src/script.js';
 import { NETWORKS } from '../src/networks.js';
 import address from './fixtures/address.js';
+import { Buffer } from 'buffer';
 
 import { initEccLib } from '../src/index.js';
 

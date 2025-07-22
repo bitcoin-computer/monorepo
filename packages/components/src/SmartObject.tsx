@@ -190,9 +190,9 @@ function MetaData({ smartObject, prev, next }: any) {
               </td>
               <td className="px-4 py-2">
                 <span className="font-medium text-gray-900 dark:text-white">
-                  {smartObject?._satoshis} Satoshi
+                  {smartObject?._satoshis.toString()}
                 </span>
-                <Copy text={smartObject?._satoshis} />
+                <Copy text={smartObject?._satoshis.toString()} />
               </td>
             </tr>
           </tbody>
@@ -228,18 +228,19 @@ function Component({ title }: { title?: string }) {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const synced = await computer.sync(rev)
-        setSmartObject(synced)
-      } catch (error) {
+        const [o, p, n] = await Promise.all([
+          computer.sync(rev),
+          computer.prev(rev),
+          computer.next(rev),
+        ])
+
+        setSmartObject(o)
+        setPrev(p)
+        setNext(n)
+      } catch (err) {
+        if (err instanceof Error) console.log('Error syncing to object:', err.message)
         const [txId] = rev.split(':')
         navigate(`/transactions/${txId}`)
-      }
-
-      try {
-        setPrev(await computer.prev(rev))
-        setNext(await computer.next(rev))
-      } catch (error) {
-        console.log({ error })
       }
     }
     fetch()

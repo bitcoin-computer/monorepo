@@ -1,13 +1,17 @@
 {
   "name": "@bitcoin-computer/TBC20",
-  "version": "0.25.0-beta.0",
+  "version": "0.26.0-beta.0",
   "private": true,
   "description": "Standard for fungible tokens on Bitcoin",
-  "license": "Apache-2.0",
+  "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "type": "module",
   "main": "./build/src/token.js",
   "types": "./build/src/token.d.ts",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
   "scripts": {
     "prebuild": "npm run lint",
     "build": "rm -rf build && tsc -p tsconfig.release.json",
@@ -23,7 +27,7 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.25.0-beta.0",
+    "@bitcoin-computer/lib": "^0.26.0-beta.0",
     "eslint-plugin-prettier": "^5.1.3",
     "ts-node": "^10.9.2"
   },
@@ -36,7 +40,7 @@
     "mocha": "^10.3.0",
     "prettier": "~3.2.5",
     "source-map-support": "^0.5.21",
-    "typescript": "~5.3.3"
+    "typescript": "^5.8.3"
   },
   "volta": {
     "node": "16.13.0"

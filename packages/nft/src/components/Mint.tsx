@@ -10,7 +10,7 @@ function SuccessContent(id: string) {
     <>
       <div className="p-4 md:p-5">
         <div className="dark:text-gray-400">
-          Congratiolations! You minted an nft. Click{' '}
+          Congratulations! You minted an nft. Click{' '}
           <Link
             to={`/objects/${id}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
