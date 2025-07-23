@@ -27,14 +27,15 @@ export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
     const challengesList = await Promise.all(challengeSyncPromises)
 
     challengesList.forEach((challenge) => {
-      availableChallenges.push({ challengeId: challenge._id, new: !challenge.accepted })
+      // Don't show accepted challenges
+      if (!challenge.accepted)
+        availableChallenges.push({ challengeId: challenge._id, new: !challenge.accepted })
     })
 
     return availableChallenges
   }
   const refreshList = async () => {
     const availableChallenges: ChallengeType[] = await getChallenges()
-
     setChallenges(availableChallenges.reverse())
   }
 
