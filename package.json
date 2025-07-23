@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer",
-  "version": "0.25.0-beta.0",
+  "version": "0.26.0-beta.0",
   "private": true,
   "description": "A Trustless Smart Contract System for Bitcoin and Litecoin",
   "homepage": "http://bitcoincomputer.io/",
@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.11.21",
+    "buffer": "^6.0.3",
     "eslint": "9.29.0",
     "eslint-config-prettier": "~9.1.0",
     "eslint-plugin-import": "^2.29.1",

@@ -305,7 +305,7 @@ const payment = computerA.new(Payment, [21000n, pubKeyBob])
 When the `payment` on-chain object is created, the wallet inside the `computerA` object funds the 21000 satoshi that are stored in the `payment` object. Bob can withdraw the satoshi by calling the `cashOut` function.
 
 ```js
-const computerB = new Computer({ seed: <B's mnemonic> })
+const computerB = new Computer({ mnemonic: <B's mnemonic> })
 const paymentB = await computerB.sync(payment._rev)
 await paymentB.cashOut()
 ```

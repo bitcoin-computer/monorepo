@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/website",
-  "version": "0.25.0-beta.0",
+  "version": "0.26.0-beta.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -47,8 +47,8 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
+    "vite-plugin-node-polyfills": "^0.23.0",
     "vite-plugin-svgr": "^4.3.0",
-    "vitest": "^2.0.5",
-    "vite-plugin-node-polyfills": "^0.23.0"
+    "vitest": "^2.0.5"
   }
 }

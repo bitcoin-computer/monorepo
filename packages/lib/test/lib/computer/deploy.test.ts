@@ -19,8 +19,8 @@ describe('deploy', () => {
       moduleStorageType: 'multisig',
       satPerByte: 4,
     })
-    await multisigComputer.faucet(1721382) // 1.7M sats
-    const big = `x`.repeat(12155) // ~ 12KB ==>> Each stored byte costs 142 satoshis aprox
+    await multisigComputer.faucet(1881764) // 1.9M sats
+    const big = `x`.repeat(12155) // ~ 12KB ==>> Each stored byte costs 157 satoshis aprox
 
     const rev = await multisigComputer.deploy(big)
     expect(rev).to.not.equal(undefined)

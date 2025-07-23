@@ -1,5 +1,3 @@
- 
-
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
@@ -61,7 +59,7 @@ describe('Ord Sale', () => {
         exp: `${OrdSale} OrdSale.exec(b1, b2, nft, payment)`,
         env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
         mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
-         
+
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
         inputIndex: 2,
         fund: false,

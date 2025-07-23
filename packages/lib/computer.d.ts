@@ -127,10 +127,8 @@ type ComputerOptions = Partial<{
   network: TBCNetwork
   passphrase: string
   path: string
-  seed: string
   url: string
   satPerByte: number
-  dustRelayFee: number
   addressType: AddressType
   moduleStorageType: ModuleStorageType
   cache: boolean

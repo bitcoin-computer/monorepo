@@ -308,7 +308,25 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 | 2    | 8GB  | 28h       | $65            |
 | 4    | 16GB | 10h 30m   | $110           |
 | 8    | 32GB | 7h 15m    | $240           |
-| 16   | 32GB | 4h 45m    | $440           | -->
+| 16   | 32GB | 4h 45m    | $440           |
+
+## Hardware requirements
+
+The following are the minimum hardware requirements for running a Bitcoin Computer Node, using the AWS EC2 instance type `t3a.xlarge` as an example. The actual requirements may vary based on the specific blockchain and network you are using (mainnet, testnet, etc.):
+
+| CHAIN | Network  | Storage |
+|-------|----------|---------|
+| BTC   | mainnet  | 1500GB  |
+| BTC   | testnet  |    |
+| LTC   | mainnet  | 1000GB  |
+| LTC   | testnet  |    |
+| DOGE | mainnet  | 1200GB   |
+| DOGE | testnet  |     |
+| PEPE | mainnet  |  70GB   |
+| PEPE | testnet  |     |
+
+
+-->
 
 ## Versioning
 

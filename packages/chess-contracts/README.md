@@ -8,6 +8,14 @@ Start a Bitcoin Computer Node in the package `node`. Copy the `.env.example` fil
 cp .env.example .env
 ```
 
+### Deploy
+
+Before you can start the chess-app, you need to deploy the chess contract.
+
+```
+npm run deploy
+```
+
 ### Test
 
 ```
