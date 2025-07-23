@@ -9,6 +9,7 @@ import {
 import { Buffer } from 'buffer'
 import { ECPairFactory, ECPairInterface } from 'ecpair'
 import * as ecc from '@bitcoin-computer/secp256k1'
+import { BIP32Interface } from 'bip32'
 import { User } from './user.js'
 
 const ECPair = ECPairFactory(ecc)
@@ -312,13 +313,36 @@ export class ChessContractHelper {
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)
     const { hdPrivateKey } = this.computer.db.wallet
+    const { output } = payments.p2pkh({ pubkey: hdPrivateKey.publicKey, ...n })
 
     // Create redeem tx
+    const redeemTx = ChessContractHelper.createRedeemTx(
+      txId,
+      hdPrivateKey,
+      this.satoshis,
+      fee,
+      output,
+      this.getASM(),
+      1,
+    )
+    //  new Transaction()
+    const redeemTxHex = redeemTx.toHex()
+    await chessContract.setRedeemHex(redeemTxHex)
+    return
+  }
+
+  static createRedeemTx(
+    txId: string,
+    hdPrivateKey: BIP32Interface,
+    satoshis: bigint,
+    fee: bigint,
+    output: Buffer | undefined,
+    scriptASM: string,
+    inputIndex: number,
+  ) {
     const redeemTx = new Transaction()
-    redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), 1)
-    const { output } = payments.p2pkh({ pubkey: hdPrivateKey.publicKey, ...n })
-    redeemTx.addOutput(output!, BigInt(this.satoshis) - fee)
-    const scriptASM = this.getASM()
+    redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), inputIndex)
+    redeemTx.addOutput(output!, BigInt(satoshis) - fee)
     const redeemScript = bscript.fromASM(scriptASM)
     const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
     const winnerSig = bscript.signature.encode(hdPrivateKey.sign(sigHash), Transaction.SIGHASH_ALL)
@@ -330,9 +354,7 @@ export class ChessContractHelper {
     })
 
     redeemTx.setInputScript(0, partialScript.input!)
-    const redeemTxHex = redeemTx.toHex()
-    await chessContract.setRedeemHex(redeemTxHex)
-    return
+    return redeemTx
   }
 
   static validateAndSignRedeemTx(

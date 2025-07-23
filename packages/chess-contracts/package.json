@@ -23,7 +23,7 @@
     "deploy": "tsc && node ./build/scripts/deploy.js",
     "lint": "eslint .",
     "start": "node build/src/index.js",
-    "test": "mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
+    "test": "npm run build && mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
     "test:show": "npm run test 2>&1 | tee chess-contracts.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open chess-contracts.log; fi",
     "types": "tsc --noEmit"
   },
