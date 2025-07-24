@@ -128,6 +128,7 @@ Output.isTbcOutput|idx_output_istbcoutput|CREATE INDEX idx_output_istbcoutput ON
 Output.blockHash|idx_output_blockhash|CREATE INDEX idx_output_blockhash ON "Output"("blockHash");
 Output.asm|idx_output_asm|CREATE INDEX idx_output_asm ON "Output"("asm");
 Output.mod|idx_output_mod|CREATE INDEX idx_output_mod ON "Output"("mod");
+Output.rev|idx_output_rev_substr|CREATE INDEX idx_output_rev_substr ON "Output"((SUBSTRING("rev" FROM 1 FOR 64)));
 Orphan.height|idx_orphan_height|CREATE INDEX idx_orphan_height ON "Orphan"(height);
 Input.outputSpent|idx_input_outputSpent|CREATE INDEX idx_input_outputSpent ON "Input"("outputSpent");
 Input.blockHash|idx_input_blockhash|CREATE INDEX idx_input_blockhash ON "Input"("blockHash");
