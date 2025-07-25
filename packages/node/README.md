@@ -70,13 +70,23 @@ The node will create the docker volumes in the `packages/node/chain-setup/**` di
 
 ### Create indexes after syncing to mainnet
 
-To reduce db syncing overhead, the sync process is carried out without creating db indexes. After the node has synced, you can create the indexes with the command below.
+To reduce db syncing overhead, the sync process is carried out without creating all db indexes needed. After the node has synced, you can create the indexes with the command below.
 
 <font size=1>
 
 ```sh
 # In the node folder run the following command
-npm run create-indexes
+npm run create:indexes
+```
+
+</font>
+
+You will find the logs of the indexes creation in the folder `packages/node/db/logs`.
+<font size=1>
+
+```sh
+# Print the indexes creation output
+cat packages/node/db/logs/index_creation_20250725_203529.log
 ```
 
 </font>
