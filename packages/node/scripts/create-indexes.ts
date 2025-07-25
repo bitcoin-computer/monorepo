@@ -6,7 +6,7 @@ import dotenv from 'dotenv'
 // Load environment variables
 dotenv.config()
 
-const logDir = 'db'
+const logDir = path.join('db', 'logs')
 if (!fs.existsSync(logDir)) fs.mkdirSync(logDir)
 
 const timestamp = new Date()
