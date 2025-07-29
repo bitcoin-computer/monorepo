@@ -11,7 +11,7 @@ export declare const capitalizeFirstLetter: (string: string) => string;
 export declare function isValidRevString(outId: string): boolean;
 export declare function isValidRev(value: string | number | boolean | null | undefined): boolean;
 export declare const sleep: (ms: number) => Promise<void>;
-export declare function getEnv(name: string): any;
+export declare function isInEnv(name: string): any;
 export declare function bigIntToStr(a: bigint): string;
 export declare function strToBigInt(a: string): bigint;
 export {};

@@ -9,7 +9,8 @@ export class Token extends Contract {
         }
         if (this.amount >= amount) {
             this.amount -= amount;
-            return new Token(to, amount, this.name, this.symbol);
+            const ctor = this.constructor;
+            return new ctor(to, amount, this.name, this.symbol);
         }
         throw new Error('Insufficient funds');
     }

@@ -1,4 +1,3 @@
- 
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]
@@ -44,7 +43,7 @@ export const jsonMap =
 export const strip = (value: Json): Json => {
   if (isJBasic(value)) return value
   if (isJArray(value)) return value.map(strip)
-   
+
   const { _id, _root, _rev, _satoshis, _owners, ...rest } = value
   return rest
 }
@@ -69,7 +68,7 @@ export const sleep = (ms: number): Promise<void> =>
     setTimeout(resolve, ms)
   })
 
-export function getEnv(name: string) {
+export function getEnv(name: string): string {
   return (
     (typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||
     (import.meta.env && import.meta.env[`VITE_${name}`])

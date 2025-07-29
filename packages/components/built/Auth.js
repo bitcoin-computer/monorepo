@@ -5,7 +5,7 @@ import { initFlowbite } from 'flowbite';
 import { HiRefresh } from 'react-icons/hi';
 import { useUtilsComponents } from './UtilsContext';
 import { Modal } from './Modal';
-import { getEnv } from './common/utils';
+import { isInEnv } from './common/utils';
 const pathPattern = /^(m\/)?(\d+'?\/)*\d+'?$/;
 function isLoggedIn() {
     return !!localStorage.getItem('BIP_39_KEY');
@@ -41,19 +41,19 @@ function getPath({ chain, network }) {
 }
 function loggedOutConfiguration() {
     return {
-        chain: getEnv('CHAIN'),
-        network: getEnv('NETWORK'),
-        url: getEnv('URL'),
-        path: getEnv('PATH'),
+        chain: isInEnv('CHAIN'),
+        network: isInEnv('NETWORK'),
+        url: isInEnv('URL'),
+        path: isInEnv('PATH'),
     };
 }
 function loggedInConfiguration() {
     return {
         mnemonic: localStorage.getItem('BIP_39_KEY'),
-        chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')),
-        network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')),
-        url: localStorage.getItem('URL') || getEnv('URL'),
-        path: localStorage.getItem('PATH') || getEnv('PATH'),
+        chain: (localStorage.getItem('CHAIN') || isInEnv('CHAIN')),
+        network: (localStorage.getItem('NETWORK') || isInEnv('NETWORK')),
+        url: localStorage.getItem('URL') || isInEnv('URL'),
+        path: localStorage.getItem('PATH') || isInEnv('PATH'),
     };
 }
 function getComputer(options = {}) {
@@ -120,15 +120,15 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }) {
 }
 function LoginForm() {
     const [mnemonic, setMnemonic] = useState(() => new Computer().getMnemonic());
-    const [chain, setChain] = useState(getEnv('CHAIN'));
-    const [network, setNetwork] = useState(getEnv('NETWORK'));
-    const [url, setUrl] = useState(getEnv('URL') || 'http://localhost:1031');
+    const [chain, setChain] = useState(isInEnv('CHAIN'));
+    const [network, setNetwork] = useState(isInEnv('NETWORK'));
+    const [url, setUrl] = useState(isInEnv('URL') || 'http://localhost:1031');
     const urlInputRef = useRef(null);
-    const [path, setPath] = useState(getEnv('PATH') || getPath({ chain, network }));
+    const [path, setPath] = useState(isInEnv('PATH') || getPath({ chain, network }));
     useEffect(() => {
         initFlowbite();
     }, []);
-    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "max-w-sm mx-auto p-4 md:p-5 space-y-4", children: _jsx("form", { className: "space-y-6", children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !getEnv('CHAIN') && _jsx(ChainInput, { chain: chain, setChain: setChain }), !getEnv('NETWORK') && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !getEnv('URL') && _jsx(UrlInput, { url: url || '', setUrl: setUrl }), !getEnv('PATH') && _jsx(PathInput, { path: path, setPath: setPath })] }) }) }), _jsx("div", { className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600", children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, path: path, urlInputRef: urlInputRef }) })] }));
+    return (_jsxs(_Fragment, { children: [_jsx("div", { className: "max-w-sm mx-auto p-4 md:p-5 space-y-4", children: _jsx("form", { className: "space-y-6", children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !isInEnv('CHAIN') && _jsx(ChainInput, { chain: chain, setChain: setChain }), !isInEnv('NETWORK') && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !isInEnv('URL') && _jsx(UrlInput, { url: url || '', setUrl: setUrl }), !isInEnv('PATH') && _jsx(PathInput, { path: path, setPath: setPath })] }) }) }), _jsx("div", { className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600", children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, path: path, urlInputRef: urlInputRef }) })] }));
 }
 function LoginModal() {
     return _jsx(Modal.Component, { title: "Sign in", content: LoginForm, id: "sign-in-modal", hideClose: true });

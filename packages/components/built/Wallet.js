@@ -6,7 +6,7 @@ import { Auth } from './Auth';
 import { Drawer } from './Drawer';
 import { UtilsContext } from './UtilsContext';
 import { ComputerContext } from './ComputerContext';
-import { getEnv, bigIntToStr } from './common/utils';
+import { isInEnv, bigIntToStr } from './common/utils';
 const Balance = ({ computer, modSpecs, isOpen, }) => {
     const [balance, setBalance] = useState(0n);
     const [, setChain] = useState(localStorage.getItem('CHAIN') || 'LTC');
@@ -72,7 +72,7 @@ const Path = ({ computer }) => (_jsxs("div", { className: "mb-4", children: [_js
 const LogOut = () => (_jsxs(_Fragment, { children: [_jsxs("div", { className: "mb-6", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Log out" }), _jsx("p", { className: "mb-1 text-sm text-gray-500 dark:text-gray-400", children: "Logging out will delete your mnemonic. Make sure to write it down." })] }), _jsx("div", { className: "grid grid-cols-2 gap-4", children: _jsx("button", { onClick: Auth.logout, className: "rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700", children: "Log out" }) })] }));
 export function Wallet({ modSpecs }) {
     const computer = useContext(ComputerContext);
-    const Content = ({ isOpen }) => (_jsxs(_Fragment, { children: [_jsx("h4", { className: "text-2xl font-bold dark:text-white", children: "Wallet" }), _jsx(Balance, { computer: computer, modSpecs: modSpecs || [], isOpen: isOpen }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !getEnv('CHAIN') && _jsx(Chain, { computer: computer }), !getEnv('NETWORK') && _jsx(Network, { computer: computer }), !getEnv('URL') && _jsx(Url, { computer: computer }), !getEnv('PATH') && _jsx(Path, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] }));
+    const Content = ({ isOpen }) => (_jsxs(_Fragment, { children: [_jsx("h4", { className: "text-2xl font-bold dark:text-white", children: "Wallet" }), _jsx(Balance, { computer: computer, modSpecs: modSpecs || [], isOpen: isOpen }), _jsx(Address, { computer: computer }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !isInEnv('CHAIN') && _jsx(Chain, { computer: computer }), !isInEnv('NETWORK') && _jsx(Network, { computer: computer }), !isInEnv('URL') && _jsx(Url, { computer: computer }), !isInEnv('PATH') && _jsx(Path, { computer: computer }), _jsx("hr", { className: "h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] }));
     return _jsx(Drawer.Component, { Content: Content, id: "wallet-drawer" });
 }
 export const WalletComponents = {

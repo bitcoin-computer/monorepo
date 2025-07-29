@@ -333,6 +333,8 @@ declare class RestClient {
   height(): Promise<number>
   next(rev: string): Promise<string | undefined>
   prev(rev: string): Promise<string | undefined>
+  last(rev: string): Promise<string>
+  first(rev: string): Promise<string>
 }
 
 declare class Wallet {
@@ -512,7 +514,7 @@ declare class Computer {
   toScriptPubKey(publicKeys?: string[]): Buffer | undefined
   static lockdown(opts?: any): void
   delete(inRevs: string[]): Promise<string>
-  isUnspent(rev: string): Promise<boolean>
+  isUTXO(rev: string): Promise<boolean>
   next(rev: string): Promise<string | undefined>
   prev(rev: string): Promise<string | undefined>
   subscribe(
@@ -529,6 +531,10 @@ declare class Computer {
   getLatestRev(id: string): Promise<string>
   idsToRevs(ids: string[]): Promise<string[]>
   getMinimumFees(): number
+  next(rev: string): Promise<string | undefined>
+  prev(rev: string): Promise<string | undefined>
+  last(rev: string): Promise<string>
+  first(rev: string): Promise<string>
 }
 
 export { Computer, Contract, Mock, Transaction }

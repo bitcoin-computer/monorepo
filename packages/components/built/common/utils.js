@@ -45,7 +45,7 @@ export function isValidRev(value) {
 export const sleep = (ms) => new Promise((resolve) => {
     setTimeout(resolve, ms);
 });
-export function getEnv(name) {
+export function isInEnv(name) {
     return ((typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||
         (import.meta.env && import.meta.env[`VITE_${name}`]));
 }

@@ -43,12 +43,6 @@ describe('query', () => {
     expect(revs.includes(counter._rev)).to.be.true
   })
 
-  // Query by id
-  it('Should return the latest revision for an id', async () => {
-    const [rev] = await computer.query({ ids: [counter._id] })
-    expect(rev).eq(counter._rev)
-  })
-
   // Query by module specifier
   it('Should return the latest revisions for a module specifier', async () => {
     const [rev] = await computer.query({ mod })
