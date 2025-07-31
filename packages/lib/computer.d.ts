@@ -527,6 +527,10 @@ declare class Computer {
   getLatestRev(id: string): Promise<string>
   idsToRevs(ids: string[]): Promise<string[]>
   getMinimumFees(): number
+  next(rev: string): Promise<string | undefined>
+  prev(rev: string): Promise<string | undefined>
+  last(rev: string): Promise<string>
+  first(rev: string): Promise<string>
 }
 
 export { Computer, Contract, Mock, Transaction }
