@@ -58,13 +58,13 @@ export class NftHelper implements ITBC721 {
   }
 
   async ownersOf(tokenId: string): Promise<string[]> {
-    const rev = await this.computer.last(tokenId)
+    const rev = await this.computer.latest(tokenId)
     const obj = await this.computer.sync(rev)
     return obj._owners
   }
 
   async transfer(to: string, tokenId: string): Promise<void> {
-    const rev = await this.computer.last(tokenId)
+    const rev = await this.computer.latest(tokenId)
     const obj = await this.computer.sync(rev)
     await obj.transfer(to)
   }

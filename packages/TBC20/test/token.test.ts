@@ -114,8 +114,8 @@ describe('Token', async () => {
       expect(token2._id).eq(token2After._id)
       expect(token2._rev).not.eq(token2After._rev)
 
-      expect(await sender.last(token1._id)).deep.eq(token1._rev)
-      expect(await sender.last(token2._id)).deep.eq(token2After._rev)
+      expect(await sender.latest(token1._id)).deep.eq(token1._rev)
+      expect(await sender.latest(token2._id)).deep.eq(token2After._rev)
     })
 
     it('Sender merges their two tokens', async () => {

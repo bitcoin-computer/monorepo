@@ -69,7 +69,7 @@ export class PaymentHelper {
   }
 
   async getPayment(paymentTxId: string): Promise<Payment> {
-    const rev = await this.computer.last(`${paymentTxId}:0`)
+    const rev = await this.computer.latest(`${paymentTxId}:0`)
     const syncedPayment: Payment = await this.computer.sync(rev)
     return syncedPayment
   }
