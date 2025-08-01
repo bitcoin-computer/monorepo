@@ -302,7 +302,6 @@ declare class RestClient {
   getTx(txId: string): Promise<_Transaction>
   getAncestors(txId: string): Promise<string[]>
   query({ publicKey, limit, offset, order, ids, mod }: Partial<Query>): Promise<string[]>
-  idsToRevs(outIds: string[]): Promise<string[]>
   revToId(rev: string): Promise<string>
   static getSecretOutput({ _url, keyPair }: { _url: string; keyPair: BIP32Interface }): Promise<{
     host: string
@@ -520,13 +519,6 @@ declare class Computer {
   ): Promise<() => void>
   export(module: string, opts?: Partial<ModuleOptions>): Promise<string>
   import(rev: string): Promise<ModuleExportsNamespace>
-  queryRevs(q: Query): Promise<string[]>
-  getOwnedRevs(publicKey?: Buffer): Promise<string[]>
-  getRevs(publicKey?: Buffer): Promise<string[]>
-  getLatestRevs(ids: string[]): Promise<string[]>
-  getLatestRev(id: string): Promise<string>
-  idsToRevs(ids: string[]): Promise<string[]>
-  getMinimumFees(): number
   next(rev: string): Promise<string | undefined>
   prev(rev: string): Promise<string | undefined>
   latest(rev: string): Promise<string>
