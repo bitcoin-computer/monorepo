@@ -20,4 +20,4 @@ This error is thrown by the Bitcoin node. This error indicates that the transact
 
 #### `Cannot call a function on a smart object that is pointed to` error
 
-When you use a smart object as parameter (env) in some function, that function points to the object. Then, you cannot call a function if there is such a reference to the object. To solve this problem you will need to modify your contract function, and instead of passing the actual object, you can pass the revision and sync to the object in the same contract to get a read only copy of the object.
+When one on chain object `a` is the property of another on chain object `b`, then, you cannot directly call a function on `b`. To update `b`, you have to call a function on `a` that modifies it's property `b`. 
