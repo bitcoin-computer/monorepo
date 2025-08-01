@@ -22,25 +22,25 @@ export class Election extends Contract {
         const revs = await computer.query({ mod: this.voteMod });
         // remove duplicated entries :> possible problem, if we transfer the token, we have
         // txId_A:0, txId_A:1, then we are skipping the tx with the new token?
-        const txIdsSet = new Set(revs.map((r) => r.split(':')[0]));
-        const txIds = Array.from(txIdsSet);
-        const result = txIds;
-        for (const id of txIds) {
+        const voteTxIdsSet = new Set(revs.map((r) => r.split(':')[0]));
+        const voteTxIds = Array.from(voteTxIdsSet);
+        const validVotes = voteTxIds;
+        for (const voteTxId of voteTxIds) {
             // @ts-ignore
-            const ancestors = await computer.db.wallet.restClient.getAncestors(id);
+            const ancestors = await computer.db.wallet.restClient.getAncestors(voteTxId);
             // id belongs to the ancestors, we should remove it before checking intersect
-            const index = ancestors.indexOf(id);
+            const index = ancestors.indexOf(voteTxId);
             if (index !== -1)
                 ancestors.splice(index, 1);
-            const notNew = this.intersect(ancestors, txIds).length > 0;
-            if (notNew) {
-                const index = result.indexOf(id);
+            const isInvalid = this.intersect(ancestors, voteTxIds).length > 0;
+            if (isInvalid) {
+                const index = validVotes.indexOf(voteTxId);
                 if (index !== -1)
-                    result.splice(index, 1);
+                    validVotes.splice(index, 1);
             }
         }
         // @ts-ignore
-        const resolved = (await Promise.all(result.map((txId) => computer.sync(txId)))).map((obj) => obj.res);
+        const resolved = (await Promise.all(validVotes.map((txId) => computer.sync(txId)))).map((obj) => obj.res);
         const acceptedVotes = [...resolved].filter((r) => r.vote === 'accept' && r.electionId === this._id);
         let count = 0n;
         for (const v of acceptedVotes) {
