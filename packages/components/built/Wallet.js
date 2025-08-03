@@ -67,7 +67,7 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
                 const payments = (await Promise.all(paymentRevs.map((rev) => computer.sync(rev))));
                 allPayments.push(...payments); // Accumulate payments
                 return payments && payments.length
-                    ? payments.reduce((total, pay) => total + (pay._satoshis - BigInt(computer.getMinimumFees())), 0n)
+                    ? payments.reduce((total, pay) => total + (pay._satoshis - BigInt(computer.db.wallet.getDustThreshold(false))), 0n)
                     : 0n;
             }));
             const amountsInPayments = balances.reduce((acc, curr) => acc + BigInt(curr), 0n);

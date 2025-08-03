@@ -79,6 +79,7 @@ const Balance = ({
     try {
       showLoader(true)
       const publicKey = computer.getPublicKey()
+      const dust = computer.db.wallet.getDustThreshold(false)
       const allPayments: any[] = []
       const balances: bigint[] = await Promise.all(
         modSpecs.map(async (mod) => {
@@ -86,12 +87,9 @@ const Balance = ({
           const payments = (await Promise.all(
             paymentRevs.map((rev: string) => computer.sync(rev)),
           )) as any[]
-          allPayments.push(...payments) // Accumulate payments
+          allPayments.push(...payments)
           return payments && payments.length
-            ? payments.reduce(
-                (total, pay) => total + (pay._satoshis - BigInt(computer.getMinimumFees())),
-                0n,
-              )
+            ? payments.reduce((total, pay) => total + (pay._satoshis - BigInt(dust)), 0n)
             : 0n
         }),
       )
