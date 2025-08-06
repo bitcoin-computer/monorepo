@@ -14,11 +14,15 @@ class Counter extends Contract {
 }
 
 describe('prev', () => {
-  it('Should return the previous revision', async () => {
-    // Create and fund wallet
-    const computer = new Computer({ chain, network, url })
-    await computer.faucet(1e8)
+  // Create wallet
+  const computer = new Computer({ chain, network, url })
 
+  before('Fund wallet', async () => {
+    // Fund wallet
+    await computer.faucet(1e8)
+  })
+
+  it('Should return the previous revision', async () => {
     // Create on-chain object at counter._id
     const counter = await computer.new(Counter, [])
 
@@ -27,5 +31,20 @@ describe('prev', () => {
 
     // Check that the previous revision of counter._rev is counter._id
     expect(await computer.prev(counter._rev)).eq(counter._id)
+  })
+
+  it('Should throw an error with a revision that does not exist', async () => {
+    const noOutput = '0'.repeat(64) + ':0'
+
+    // Throws because there is no output with that revision
+    await expect(computer.prev(noOutput)).to.be.rejectedWith('Rev not found')
+  })
+
+  it('Should throw an error with a revision that does not contain an object', async () => {
+    const counter = await computer.new(Counter, [])
+    const noObject = counter._id.split(':')[0] + ':1'
+
+    // Throws because there is no object at the output with that revision
+    await expect(computer.prev(noObject)).to.be.rejectedWith('Rev not found')
   })
 })
