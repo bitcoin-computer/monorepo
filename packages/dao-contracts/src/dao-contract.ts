@@ -35,49 +35,46 @@ export class Election extends Contract {
     return Array.from(result)
   }
   
+  async validVotes(revs: string[]): Promise<string[]> {
+    const voteTxIdsSet = new Set<string>(revs.map(r => r.split(':')[0]))
+    const validVotes = new Set<string>(voteTxIdsSet)
 
-  async acceptingVotes() {
-    // @ts-ignore
-    const revs = await computer.query({ mod: this.voteMod })
-    // remove duplicated entries :> possible problem, if we transfer the token, we have
-    // txId_A:0, txId_A:1, then we are skipping the tx with the new token?
-    const voteTxIdsSet = new Set<string>(revs.map((r:string) => r.split(':')[0]))
-    const voteTxIds= Array.from(voteTxIdsSet)
-    const validVotes = voteTxIds
-    for (const voteTxId of voteTxIds) {
+    for (const voteTxId of voteTxIdsSet) {
       // @ts-ignore
       const ancestors = await computer.db.wallet.restClient.getAncestors(voteTxId)
-      // id belongs to the ancestors, we should remove it before checking intersect
-      const index = ancestors.indexOf(voteTxId)
-      if (index !== -1) ancestors.splice(index, 1)
+      const ancestorsSet = new Set<string>(ancestors)
+      ancestorsSet.delete(voteTxId)
 
-      const isInvalid = this.intersect(ancestors, voteTxIds).length > 0
-
-      if (isInvalid) {
-        const index = validVotes.indexOf(voteTxId);
-        if (index !== -1) validVotes.splice(index, 1);
+      if ([...ancestorsSet].some(voteTxIdsSet.has, voteTxIdsSet)) {
+        validVotes.delete(voteTxId)
       }
     }
+
+    return Array.from(validVotes)
+  }
+
+  async acceptingVotes(): Promise<bigint> {
+    // @ts-ignore
+    const revs = await computer.query({ mod: this.voteMod })
+   
+    const validVotes = await this.validVotes(revs)
+
     // @ts-ignore
     const resolved = (await Promise.all(validVotes.map((txId) => computer.sync(txId)))).map( (obj) => obj.res)
+    
     const acceptedVotes = [...resolved].filter((r: Vote) => r.vote === 'accept' && r.electionId === this._id)
-    let count = 0n
-    for (const v of acceptedVotes) {
-      // sync to tokens
-      // @ts-ignore
-      const tokens = await Promise.all(v.tokenRevs.map((rev)=> computer.sync(rev)))
-      count += tokens.reduce((acc: bigint, curr: Token) => acc + curr.amount, 0n)
-    }
+    
+    const count = acceptedVotes.reduce((acc: bigint, curr: Vote) => acc + curr.tokensAmount, 0n)
     return count
   }
 }
 
 export class Vote extends Contract {
-  tokenRevs!: string[]
+  tokensAmount!: bigint
   vote!: 'accept' | 'reject'
   electionId!: string
   constructor({ electionId, tokens, vote }: VoteType) {
-    super({ electionId, tokenRevs: tokens.map(t=>t._rev), vote })
+    super({ electionId, tokensAmount: tokens.reduce((acc: bigint, curr: Token) => acc + curr.amount, 0n), vote })
   }
 }
 

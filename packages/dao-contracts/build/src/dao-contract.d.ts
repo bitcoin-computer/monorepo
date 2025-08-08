@@ -13,10 +13,11 @@ export declare class Election extends Contract {
     voteMod: string;
     constructor({ voteMod, description }: ElectionType);
     intersect(a: string[], b: string[]): string[];
+    validVotes(revs: string[]): Promise<string[]>;
     acceptingVotes(): Promise<bigint>;
 }
 export declare class Vote extends Contract {
-    tokenRevs: string[];
+    tokensAmount: bigint;
     vote: 'accept' | 'reject';
     electionId: string;
     constructor({ electionId, tokens, vote }: VoteType);
