@@ -131,7 +131,6 @@ type ComputerOptions = Partial<{
   satPerByte: number
   addressType: AddressType
   moduleStorageType: ModuleStorageType
-  cache: boolean
 }>
 type Rev = {
   _rev: string
@@ -302,7 +301,6 @@ declare class RestClient {
   getTx(txId: string): Promise<_Transaction>
   getAncestors(txId: string): Promise<string[]>
   query({ publicKey, limit, offset, order, ids, mod }: Partial<Query>): Promise<string[]>
-  revToId(rev: string): Promise<string>
   static getSecretOutput({ _url, keyPair }: { _url: string; keyPair: BIP32Interface }): Promise<{
     host: string
     data: string
@@ -484,7 +482,6 @@ declare class Computer {
   send(satoshis: bigint, address: string): Promise<string>
   broadcast(tx: nTransaction): Promise<string>
   rpcCall(method: string, params: string): Promise<any>
-  static txFromHex({ hex }: { hex: string }): Transaction
   getChain(): TBCChain
   getNetwork(): TBCNetwork
   getMnemonic(): string
@@ -494,7 +491,6 @@ declare class Computer {
   getUrl(): string
   getPublicKey(): string
   getAddress(): string
-  getAddressType(): string
   getFee(): number
   setFee(fee: number): void
   faucet(amount: number, address?: string): Promise<_Unspent>

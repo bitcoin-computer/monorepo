@@ -42,7 +42,7 @@
     "types": "npm run types --if-present --workspaces"
   },
   "dependencies": {
-    "@endo/static-module-record": "^1.0.4",
+    "@endo/static-module-record": "1.1.2",
     "esbuild": "^0.24.0"
   },
   "devDependencies": {
@@ -53,6 +53,7 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.1.3",
     "husky": "^9.0.11",
+    "parcel": "^2.15.4",
     "path": "^0.12.7",
     "ts-node": "^10.9.2",
     "turbo": "^2.1.3",

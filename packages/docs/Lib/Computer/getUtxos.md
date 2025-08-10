@@ -5,7 +5,7 @@ _Returns UTXOs that do not contains on-chain objects._
 ## Type
 
 ```ts
-getUtxos(address?: string): Promise<UTXO[]>
+getUtxos(address?: string): Promise<string[]>
 ```
 
 ### Parameters

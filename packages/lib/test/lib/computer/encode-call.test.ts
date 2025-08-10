@@ -1,21 +1,21 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils'
 
-// A smart contract
-class Counter extends Contract {
-  n: number
-
-  constructor() {
-    super({ n: 0 })
-  }
-
-  inc() {
-    this.n += 1
-  }
-}
-
 describe('encodeCall', async () => {
   it('Should encode a function call', async () => {
+    // A smart contract
+    class Counter extends Contract {
+      n: number
+
+      constructor() {
+        super({ n: 0 })
+      }
+
+      inc() {
+        this.n += 1
+      }
+    }
+
     // Create and fund wallet
     const computer = new Computer({ chain, network, url })
     await computer.faucet(1e8)

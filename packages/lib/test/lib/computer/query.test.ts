@@ -1,28 +1,27 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils'
 
-// Create wallet
-const computer = new Computer({ chain, network, url })
-
-// A smart contract
-class Counter extends Contract {
-  n: number
-
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-}
-
 describe('query', () => {
-  const publicKey = computer.getPublicKey()
-  let counter
-  let mod
+  // A smart contract
+  class Counter extends Contract {
+    n: number
+
+    constructor() {
+      super({ n: 0 })
+    }
+    inc() {
+      this.n += 1
+    }
+  }
+
+  let computer: Computer
+  let publicKey: string
+  let counter: Counter
+  let mod: string
 
   before('Before tests for query', async () => {
-    // Fund wallet
+    computer = new Computer({ chain, network, url })
+    publicKey = computer.getPublicKey()
     await computer.faucet(1e8)
 
     // Deploy module
@@ -33,7 +32,7 @@ describe('query', () => {
     await computer.broadcast(tx)
 
     // Increment on-chain object
-    counter = effect.res
+    counter = effect.res as unknown as Counter
     await counter.inc()
   })
 

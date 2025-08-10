@@ -1,36 +1,36 @@
 import { Contract, Computer } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from '../../utils'
 
-// A smart contract
-class Counter extends Contract {
-  n: number
-
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-}
-
 describe('next', () => {
-  // Create wallet
-  const computer = new Computer({ chain, network, url })
+  // A smart contract
+  class Counter extends Contract {
+    n: number
 
-  before('Fund wallet', async () => {
-    // Fund wallet
+    constructor() {
+      super({ n: 0 })
+    }
+    inc() {
+      this.n += 1
+    }
+  }
+
+  let computer: Computer
+
+  before('Create and fund wallet', async () => {
+    computer = new Computer({ chain, network, url })
     await computer.faucet(1e8)
   })
 
   it('Should return the next revision', async () => {
-    // Create on-chain object at counter._id
+    // Create and update onchain object
     const counter = await computer.new(Counter, [])
-
-    // Update on-chain object, the new version is stores at counter._rev
     await counter.inc()
 
-    // Check that the next revision of counter._id is counter._rev
+    // The next revision of counter._id is counter._rev
     expect(await computer.next(counter._id)).eq(counter._rev)
+
+    // The next revision of counter._rev is undefined
+    expect(await computer.next(counter._rev)).eq(undefined)
   })
 
   it('Should throw an error with a revision that does not exist', async () => {
