@@ -5,16 +5,16 @@
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "type": "module",
-  "main": "./build/src/main.js",
-  "module": "./build/src/main.js",
   "exports": {
     ".": "./build/src/main.js"
   },
+  "main": "./build/src/main.js",
+  "module": "./build/src/main.js",
+  "types": "./build/src/index.d.ts",
   "files": [
     "LICENSE.md",
     "LEGAL.md"
   ],
-  "types": "./build/src/index.d.ts",
   "scripts": {
     "prebuild": "npm run lint",
     "build": "tsc -p tsconfig.json && parcel build --target main",
@@ -26,37 +26,6 @@
     "test": "mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
     "test:show": "npm run test 2>&1 | tee chess-contracts.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open chess-contracts.log; fi",
     "types": "tsc --noEmit"
-  },
-  "alias": {
-    "buffer": "buffer/index.js",
-    "assert": "assert/build/assert.js",
-    "crypto": "crypto-browserify/index.js",
-    "process": "process/browser.js",
-    "events": "events/events.js",
-    "stream": "stream-browserify/index.js",
-    "string_decoder": "string_decoder/lib/string_decoder.js",
-    "querystring": "querystring-es3",
-    "punycode": "punycode/punycode.js",
-    "util": "util/util.js"
-  },
-  "targets": {
-    "main": {
-      "source": "./build/src/index.js",
-      "distDir": "./build/src",
-      "outputFormat": "esmodule",
-      "context": "browser",
-      "includeNodeModules": {
-        "buffer": true,
-        "stream": true,
-        "string_decoder": true,
-        "events": true,
-        "process": true,
-        "@bitcoin-computer/secp256k1": false,
-        "@bitcoin-computer/lib": false
-      },
-      "sourceMap": false,
-      "optimize": true
-    }
   },
   "dependencies": {
     "@bitcoin-computer/lib": "^0.26.0-beta.0",
@@ -90,5 +59,36 @@
   "volta": {
     "node": "16.13.0"
   },
-  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
+  "alias": {
+    "buffer": "buffer/index.js",
+    "assert": "assert/build/assert.js",
+    "crypto": "crypto-browserify/index.js",
+    "process": "process/browser.js",
+    "events": "events/events.js",
+    "stream": "stream-browserify/index.js",
+    "string_decoder": "string_decoder/lib/string_decoder.js",
+    "querystring": "querystring-es3",
+    "punycode": "punycode/punycode.js",
+    "util": "util/util.js"
+  },
+  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027",
+  "targets": {
+    "main": {
+      "source": "./build/src/index.js",
+      "distDir": "./build/src",
+      "outputFormat": "esmodule",
+      "context": "browser",
+      "includeNodeModules": {
+        "buffer": true,
+        "stream": true,
+        "string_decoder": true,
+        "events": true,
+        "process": true,
+        "@bitcoin-computer/secp256k1": false,
+        "@bitcoin-computer/lib": false
+      },
+      "sourceMap": false,
+      "optimize": true
+    }
+  }
 }
