@@ -3,5 +3,7 @@
   "node-option": ["experimental-specifier-resolution=node", "loader=ts-node/esm"],
   "require": ["dotenv/config"],
   "spec": "test/*.js",
-  "timeout": "30000000"
+  "timeout": "30000000",
+  "reporter": "json",
+  "reporter-option": ["output=test-results.json"]
 }

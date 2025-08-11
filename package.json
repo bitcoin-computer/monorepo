@@ -37,6 +37,7 @@
     "lint": "npm run lint --if-present --workspaces",
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
     "prepare": "husky",
+    "test:rerun-failed": "node ./rerun-failed.js",
     "prepublishOnly": "./scripts/check-obfuscation.sh && npm run test",
     "test": "npm run test --if-present --workspaces",
     "types": "npm run types --if-present --workspaces"
