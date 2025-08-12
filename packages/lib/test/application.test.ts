@@ -137,8 +137,9 @@ describe('Computer', () => {
   it('Should instantiate a computer object', async () => {
     const chain = 'BTC'
     const network = 'mainnet'
+    const mode = 'prod'
     const url = 'https://btc.node.bitcoincomputer.io'
-    const computer = new Computer({ chain, network, url })
+    const computer = new Computer({ chain, network, url, mode })
     expect(computer.getChain()).eq(chain)
     expect(computer.getNetwork()).eq(network)
     expect(computer.getUrl()).eq(url)

@@ -131,6 +131,7 @@ type ComputerOptions = Partial<{
   satPerByte: number
   addressType: AddressType
   moduleStorageType: ModuleStorageType
+  mode: 'prod' | 'dev'
 }>
 type Rev = {
   _rev: string
