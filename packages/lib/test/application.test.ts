@@ -3,7 +3,7 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Contract, Transaction } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
-import { TestComputer } from './utils/test-computer'
+import { TestComputer } from './utils/test-computer.js'
 
 // If you want to connect to your local Bitcoin Computer Node, create a .env file
 // in the monorepo root level and add the following line:

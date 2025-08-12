@@ -8,7 +8,9 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "lib": ["esnext", "DOM"],
-    "types": ["./chai.d.ts", "mocha"]
+    "types": ["./chai.d.ts", "mocha"],
+    "outDir": "test-build",
+    "sourceMap": true
   },
   "include": ["test/**/*"]
 }

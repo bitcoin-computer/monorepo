@@ -1,8 +1,6 @@
 {
-  "extension": ["ts"],
-  "node-option": ["experimental-specifier-resolution=node", "loader=ts-node/esm"],
-  "require": ["dotenv/config"],
-  "spec": "test/*.ts",
+  "require": ["dotenv/config", "source-map-support/register"],
+  "spec": "test-build/**/*.test.js",
   "timeout": "30000000",
   "reporter": "json",
   "reporter-option": ["output=test-results.json"]

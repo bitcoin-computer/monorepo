@@ -1,5 +1,5 @@
 import { Computer, Contract } from '@bitcoin-computer/lib'
-import { chain, network, url } from '../../utils'
+import { chain, network, url } from '../../utils/index.js'
 
 // A smart contract
 class C extends Contract {}

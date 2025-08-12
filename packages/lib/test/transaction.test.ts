@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { TestComputer } from './utils/test-computer'
+import { TestComputer } from './utils/test-computer.js'
 import { Transaction } from '@bitcoin-computer/lib'
 
 describe('Transaction', () => {
