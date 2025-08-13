@@ -188,7 +188,6 @@ type Query = Partial<{
   limit: number
   offset: number
   order: 'ASC' | 'DESC'
-  ids: string[]
 }>
 type UserQuery = Partial<{
   mod: string
