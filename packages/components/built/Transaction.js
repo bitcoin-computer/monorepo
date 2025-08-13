@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-run
 import { useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import reactStringReplace from 'react-string-replace';
-import { Computer } from '@bitcoin-computer/lib';
+import { Transaction as BCTransaction } from '@bitcoin-computer/lib';
 import { Card } from './Card';
 import { ComputerContext } from './ComputerContext';
 function ExpressionCard({ content, env }) {
@@ -28,7 +28,7 @@ function Component() {
         const fetch = async () => {
             setTxn(params.txn);
             const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn]);
-            const tx = Computer.txFromHex({ hex });
+            const tx = BCTransaction.fromHex(hex);
             setTxnData(tx);
             const { result } = await computer.rpcCall('getrawtransaction', `${params.txn} 2`);
             setRPCTxnData(result);

@@ -61,13 +61,14 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
         try {
             showLoader(true);
             const publicKey = computer.getPublicKey();
+            const dust = computer.db.wallet.getDustThreshold(false);
             const allPayments = [];
             const balances = await Promise.all(modSpecs.map(async (mod) => {
                 const paymentRevs = modSpecs ? await computer.query({ publicKey, mod }) : [];
                 const payments = (await Promise.all(paymentRevs.map((rev) => computer.sync(rev))));
-                allPayments.push(...payments); // Accumulate payments
+                allPayments.push(...payments);
                 return payments && payments.length
-                    ? payments.reduce((total, pay) => total + (pay._satoshis - BigInt(computer.db.wallet.getDustThreshold(false))), 0n)
+                    ? payments.reduce((total, pay) => total + (pay._satoshis - BigInt(dust)), 0n)
                     : 0n;
             }));
             const amountsInPayments = balances.reduce((acc, curr) => acc + BigInt(curr), 0n);
