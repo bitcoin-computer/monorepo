@@ -37,12 +37,12 @@ export class NftHelper {
         return objects.length;
     }
     async ownersOf(tokenId) {
-        const [rev] = await this.computer.query({ ids: [tokenId] });
+        const rev = await this.computer.latest(tokenId);
         const obj = await this.computer.sync(rev);
         return obj._owners;
     }
     async transfer(to, tokenId) {
-        const [rev] = await this.computer.query({ ids: [tokenId] });
+        const rev = await this.computer.latest(tokenId);
         const obj = await this.computer.sync(rev);
         await obj.transfer(to);
     }

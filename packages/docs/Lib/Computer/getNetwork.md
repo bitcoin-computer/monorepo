@@ -16,4 +16,4 @@ Returns a string encoding the network.
 
 :::code source="../../../lib/test/lib/computer/get-network.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-network.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-network.test.ts" target=_blank>Source</a>

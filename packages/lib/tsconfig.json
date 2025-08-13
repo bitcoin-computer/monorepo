@@ -8,7 +8,13 @@
     "experimentalDecorators": true,
     "skipLibCheck": true,
     "lib": ["esnext", "DOM"],
-    "types": ["./chai.d.ts", "mocha"]
+    "types": ["./chai.local.d.ts", "mocha"],
+    "sourceMap": true,
+    "outDir": "js-build",
+    "baseUrl": ".",
+    "strict": true,
+    "strictPropertyInitialization": false
   },
-  "include": ["test/**/*"]
+  "include": ["test/**/*", "src/**/*"],
+  "exclude": ["node_modules", "js-build"]
 }

@@ -22,8 +22,8 @@
     "start": "vite",
     "test": "exit 0",
     "test:puppeteer": "vitest run --config vitest.puppeteer.config.ts",
-    "test:puppeteer:headless": "HEADLESS=true npm run test:puppeteer",
     "test:puppeteer:build:headless": "npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 HEADLESS=true npm run test:puppeteer && pkill -f 'vite preview')",
+    "test:puppeteer:headless": "HEADLESS=true npm run test:puppeteer",
     "test:show": "npm run test 2>&1 | tee vite-template-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open vite-template-test.log; fi",
     "types": "tsc --noEmit"
   },

@@ -1,12 +1,11 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils'
 
-// Create wallet
-const computer = new Computer({ chain, network, url })
-
 describe('deploy', () => {
-  // Fund wallet
-  before('Fund client side wallet', async () => {
+  let computer: Computer
+
+  before('Create and fund wallet', async () => {
+    computer = new Computer({ chain, network, url })
     await computer.faucet(1e8)
   })
 
@@ -28,7 +27,7 @@ describe('deploy', () => {
 
   // Modules stored in taproot scripts
   it('Should deploy a module using taproot', async () => {
-    if (['BTC', 'LTC'].includes(chain)) {
+    if (chain && ['BTC', 'LTC'].includes(chain)) {
       const taprootComputer = new Computer({ chain, network, url, moduleStorageType: 'taproot' })
       await taprootComputer.faucet(436000)
       const veryBig = `x`.repeat(396000) // ~ 400KB

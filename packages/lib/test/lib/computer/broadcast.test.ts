@@ -1,10 +1,11 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, network, url } from '../../utils'
 
-class C extends Contract {}
-
 describe('broadcast', () => {
   it('Should broadcast a transaction', async () => {
+    // A smart contract
+    class C extends Contract {}
+
     // Create and fund client side wallet
     const computer = new Computer({ chain, network, url })
     await computer.faucet(1e8)

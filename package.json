@@ -42,7 +42,7 @@
     "types": "npm run types --if-present --workspaces"
   },
   "dependencies": {
-    "@endo/static-module-record": "^1.0.4",
+    "@endo/static-module-record": "1.1.2",
     "esbuild": "^0.24.0"
   },
   "devDependencies": {

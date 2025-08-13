@@ -1,19 +1,11 @@
-import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Contract, Transaction } from '@bitcoin-computer/lib'
-import dotenv from 'dotenv'
-import { TestComputer } from './utils/test-computer'
+import { Computer, Contract, Transaction } from '@bitcoin-computer/lib'
 
-// If you want to connect to your local Bitcoin Computer Node, create a .env file
-// in the monorepo root level and add the following line:
-// BCN_URL=http://localhost:1031
+import { chain, network, url, expect } from './utils'
+import dotenv from 'dotenv'
 
 dotenv.config({ path: '../node/.env' })
-
-const url = process.env.BCN_URL
-const chain = process.env.BCN_CHAIN
-const network = process.env.BCN_NETWORK
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
@@ -28,7 +20,7 @@ const meta = {
   _rev: _.isString,
   _root: _.isString,
   _owners: _.isArray,
-  _satoshis: (x) => typeof x === 'bigint',
+  _satoshis: (x: number) => typeof x === 'bigint',
 }
 
 class NFT extends Contract {
@@ -79,7 +71,7 @@ class Chat extends Contract {
     super({ messages: [], _owners: publicKeys, _readers: publicKeys })
   }
 
-  post(message) {
+  post(message: string) {
     this.messages.push(message)
   }
 
@@ -136,7 +128,7 @@ class Payment extends Contract {
 
 describe('Computer', () => {
   it('Should default to public LTC regtest node', async () => {
-    const computer = new TestComputer()
+    const computer = new Computer({ chain, network, url })
     expect(computer.getChain()).eq('LTC')
     expect(computer.getNetwork()).eq('regtest')
     expect(computer.getUrl()).a('string')
@@ -145,8 +137,9 @@ describe('Computer', () => {
   it('Should instantiate a computer object', async () => {
     const chain = 'BTC'
     const network = 'mainnet'
+    const mode = 'prod'
     const url = 'https://btc.node.bitcoincomputer.io'
-    const computer = new TestComputer({ chain, network, url })
+    const computer = new Computer({ chain, network, url, mode })
     expect(computer.getChain()).eq(chain)
     expect(computer.getNetwork()).eq(network)
     expect(computer.getUrl()).eq(url)
@@ -158,8 +151,8 @@ describe('Non-Fungible Token (NFT)', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new TestComputer({ chain, network, url })
-  let receiver = new TestComputer({ chain, network, url })
+  let sender = new Computer({ chain, network, url })
+  let receiver = new Computer({ chain, network, url })
 
   before("Fund sender's wallet", async () => {
     await sender.faucet(1e8)
@@ -219,13 +212,13 @@ describe('Non-Fungible Token (NFT)', () => {
 })
 
 describe('Fungible Token', () => {
-  let token: Token = null
-  let sentToken: Token = null
+  let token: Token
+  let sentToken: Token
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new TestComputer({ chain, network, url })
-  let receiver = new TestComputer({ chain, network, url })
+  let sender = new Computer({ chain, network, url })
+  let receiver = new Computer({ chain, network, url })
 
   before('Fund senders wallet', async () => {
     await sender.faucet(1e8)
@@ -305,9 +298,9 @@ describe('Fungible Token', () => {
 describe('Chat', () => {
   let alicesChat: Chat
   let bobsChat: Chat
-  const alice = new TestComputer({ chain, network, url })
-  const bob = new TestComputer({ chain, network, url })
-  const eve = new TestComputer({ chain, network, url })
+  const alice = new Computer({ chain, network, url })
+  const bob = new Computer({ chain, network, url })
+  const eve = new Computer({ chain, network, url })
   const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
 
   before('Before', async () => {
@@ -368,7 +361,7 @@ describe('Chat', () => {
         await eve.sync(alicesChat._rev)
         expect(true).eq(false)
       } catch (err) {
-        expect(err.message).eq('Decryption failure')
+        if (err instanceof Error) expect(err.message).eq('Decryption failure')
       }
     })
   })
@@ -384,7 +377,7 @@ describe('Chat', () => {
         await bob.sync(alicesChat._rev)
         expect(true).eq(false)
       } catch (err) {
-        expect(err.message).eq('Decryption failure')
+        if (err instanceof Error) expect(err.message).eq('Decryption failure')
       }
     })
   })
@@ -393,8 +386,8 @@ describe('Chat', () => {
 describe('Swap', () => {
   let nftA: NFT
   let nftB: NFT
-  const alice = new TestComputer({ chain, network, url })
-  const bob = new TestComputer({ chain, network, url })
+  const alice = new Computer({ chain, network, url })
+  const bob = new Computer({ chain, network, url })
 
   before('Before', async () => {
     await alice.faucet(1e8)
@@ -468,7 +461,7 @@ describe('Sell', () => {
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new TestComputer({ chain, network, url })
+    const seller = new Computer({ chain, network, url })
     sellerPublicKey = seller.getPublicKey()
 
     before("Fund Seller's wallet", async () => {
@@ -510,7 +503,7 @@ describe('Sell', () => {
   })
 
   describe('Failing to steal the nft', () => {
-    const thief = new TestComputer({ chain, network, url })
+    const thief = new Computer({ chain, network, url })
     let tooLowPayment: Payment
 
     before("Fund Thief's wallet", async () => {
@@ -562,8 +555,8 @@ describe('Sell', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new TestComputer({ chain, network, url })
-    const computer = new TestComputer({ chain, network, url })
+    const buyer = new Computer({ chain, network, url })
+    const computer = new Computer({ chain, network, url })
     let payment: Payment
     let txId: string
 

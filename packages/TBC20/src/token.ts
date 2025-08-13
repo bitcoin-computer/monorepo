@@ -1,5 +1,4 @@
- 
- 
+type Constructor<T> = new (...args: any[]) => T
 
 export class Token extends Contract {
   amount: bigint
@@ -20,7 +19,8 @@ export class Token extends Contract {
     if (this.amount >= amount) {
       // Send partial amount in a new object
       this.amount -= amount
-      return new Token(to, amount, this.name, this.symbol)
+      const ctor = this.constructor as Constructor<this>
+      return new ctor(to, amount, this.name, this.symbol)
     }
     throw new Error('Insufficient funds')
   }

@@ -1,6 +1,5 @@
-import { expect } from 'chai'
-import { TestComputer } from './utils/test-computer'
-import { Transaction } from '@bitcoin-computer/lib'
+import { Contract, Computer, Transaction } from '@bitcoin-computer/lib'
+import { chain, network, url, expect } from './utils'
 
 describe('Transaction', () => {
   class A extends Contract {
@@ -14,12 +13,16 @@ describe('Transaction', () => {
     }
   }
 
-  const computer = new TestComputer()
-  const { wallet } = computer.db
-  const { restClient } = wallet
+  let computer: Computer
+  let wallet: any
+  let restClient: any
   let a: A
 
   before('Before Transaction test', async () => {
+    computer = new Computer({ chain, network, url })
+    wallet = computer.db.wallet
+    restClient = wallet.restClient
+
     await computer.faucet(1e8)
     a = await computer.new(A, [])
     await a.inc()
@@ -77,7 +80,7 @@ describe('Transaction', () => {
         exp: `${A} new A()`,
         env: {},
         mod: '',
-        v: TestComputer.getVersion(),
+        v: Computer.getVersion(),
         ioMap: [],
       })
 
@@ -87,7 +90,7 @@ describe('Transaction', () => {
         exp: `__bc__.inc()`,
         env: { __bc__: 0 },
         mod: '',
-        v: TestComputer.getVersion(),
+        v: Computer.getVersion(),
         ioMap: [0],
       })
     })

@@ -50,7 +50,7 @@ export class TxWrapperHelper {
   }
 
   async decodeTx(txWrapperTxId: string) {
-    const [rev] = await this.computer.query({ ids: [`${txWrapperTxId}:0`] })
+    const rev = await this.computer.latest(`${txWrapperTxId}:0`)
     const { txHex } = await this.computer.sync(rev)
     return Transaction.deserialize(txHex)
   }
