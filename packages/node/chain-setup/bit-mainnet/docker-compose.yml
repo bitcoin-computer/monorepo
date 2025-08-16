@@ -1,0 +1,84 @@
+services:
+  db:
+    env_file: .env
+    volumes:
+      - ./chain-setup/b1t-mainnet/db-data:/var/lib/postgresql/data
+      - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
+    restart: always
+
+  node:
+    image: b1ttoshimoto/bit-core:3.0.0
+    networks:
+      - bitcoin
+    restart: always
+    command:
+      [
+        "bitd",
+        "-dbcache=4000",
+        "-txindex=1",
+        "-printtoconsole=1",
+        "-server=1",
+        "-rpcbind=0.0.0.0",
+        "-rpcworkqueue=512",
+        "-rpcport=33318",
+        "-port=33317",
+        "-zmqpubrawblock=tcp://0.0.0.0:28332",
+        "-zmqpubrawtx=tcp://0.0.0.0:28332",
+        "-rpcallowip=0.0.0.0/0",
+        "-rpcauth=${RPC_AUTH}",
+        "-wallet=${DEFAULT_WALLET}"
+      ]
+    ports:
+      - "33317:33317"   # P2P
+      - "33318:33318"   # RPC
+      - "28332:28332"   # ZMQ
+    volumes:
+      - ./chain-setup/b1t-mainnet/blockchain-data:/home/bit/.bit
+
+  bcn:
+    image: bitcoin-computer-node
+    env_file: .env
+    restart: always
+    environment:
+      - BCN_ENV=dev
+      - RPC_HOST=node
+      - RPC_PORT=33318
+      - ZMQ_URL=tcp://node:28332
+      - NETWORK=mainnet
+      - CHAIN=B1T
+      - BCN_URL=http://127.0.0.1:1031
+    depends_on:
+      - db
+      - node
+
+  sync:
+    command: npm run sync
+    image: bitcoin-computer-node
+    env_file: .env
+    restart: always
+    environment:
+      - BCN_ENV=dev
+      - RPC_HOST=node
+      - RPC_PORT=33318
+      - NETWORK=mainnet
+      - CHAIN=B1T
+      - ZMQ_URL=tcp://node:28332
+      - BCN_URL=http://127.0.0.1:1031
+      - POSTGRES_PORT=5432
+      - POSTGRES_HOST=db
+      - RPC_PROTOCOL=http
+      - RPC_USER=${RPC_USER}
+      - RPC_PASSWORD=${RPC_PASSWORD}
+      - THREADS=${THREADS}
+    volumes:
+      - ./logs:/dist/packages/node/logs
+    depends_on:
+      - db
+      - node
+    networks:
+      - bitcoin
+      - bcn
+
+networks:
+  bitcoin:
+  bcn:

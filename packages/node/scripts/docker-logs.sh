@@ -15,41 +15,48 @@ for container_id in $container_ids; do
 done
 echo ''
 
-# Define .env path
-env_path='.env'
+# Read chain and network from the arguments
+if [ $# -eq 0 ]; then
+    chain='ltc'
+    network='testnet'
+else
+    chain=$1
+    network=$2
+fi
 
-# Read network from env_path
-network=$(grep 'BCN_NETWORK=' $env_path | cut -d '=' -f2 | tr -d "'")
-
-# Set debug path based on network
-case "$network" in
-    mainnet)
-        debug="/debug.log"
-        ;;
-    testnet)
-        debug="/testnet4/debug.log"
-        ;;
-    regtest)
-        debug="/regtest/debug.log"
-        ;;
-    *)
-        echo "Invalid network: $network"
-        exit 1
-        ;;
-esac
-
-# Get bitcoin data directory from .env
-logpath=$(grep 'BITCOIN_DATA_DIR=' $env_path | cut -d '=' -f2)
-
-# Remove single quotes from the logpath
-logpath=$(echo $logpath | tr -d "'")
+# Log paths are predefined for Bitcoin, Litecoin, Pepecoin and B1T
+if [ $chain == 'btc' ]; then
+    if [ $network == 'mainnet' ]; then
+        logpath='/home/bitcoin/.bitcoin/debug.log'
+    else
+        logpath='/home/bitcoin/.bitcoin/testnet3/debug.log'
+    fi
+else if [ $chain == 'pepe' ]; then
+    if [ $network == 'mainnet' ]; then
+        logpath='/home/pepecoin/.pepecoin/debug.log'
+    else
+        logpath='/home/pepecoin/.pepecoin/testnet3/debug.log'
+    fi
+else if [ $chain == 'b1t' ]; then
+    if [ $network == 'mainnet' ]; then
+        logpath='/home/bit/.bit/debug.log'
+    else
+        logpath='/home/bit/.bit/testnet3/debug.log'
+    fi
+else
+    if [ $network == 'mainnet' ]; then
+        logpath='/home/litecoin/.litecoin/debug.log'
+    else
+        logpath='/home/litecoin/.litecoin/testnet4/debug.log'
+    fi
+fi
 
 echo '------ node ------'
 
 # Get the logs from the bitcoin node (default LTC testnet)
-node_container_image=$(docker compose -f docker-compose.yml ps -q node | xargs docker inspect --format='{{.Image}}' | sed -e 's/^sha256:/\'$'\n/g')
+node_container_image=$(docker compose -f docker-compose.yml -f chain-setup/${chain}-${network}/docker-compose.yml ps -q node | xargs docker inspect --format='{{.Image}}' | sed -e 's/^sha256:/\'$'\n/g')
 node_container_id=$(docker ps -qf "ancestor=$node_container_image")
-docker exec $node_container_id tail -n 5 $logpath$debug
+docker exec $node_container_id tail -n 5 $logpath
 
 echo '------ postgress ------'
 
