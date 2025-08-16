@@ -7,7 +7,7 @@ import { Modal } from './Modal'
 import type { Chain, Network, ModuleStorageType } from './common/types'
 import { getEnv } from './common/utils'
 
-export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
+export type TBCChain = 'LTC' | 'BTC' | 'B1T' | 'PEPE' | 'DOGE'
 export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest'
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
 const pathPattern = /^(m\/)?(\d+'?\/)*\d+'?$/
@@ -45,6 +45,7 @@ function getCoinType(chain: string = 'LTC', network: string = 'regtest'): number
   if (chain === 'BTC') return 0
   if (chain === 'LTC') return 2
   if (chain === 'DOGE') return 3
+  if (chain === 'B1T') return 3141
   if (chain === 'PEPE') return 3434
   if (chain === 'BCH') return 145
 
@@ -153,6 +154,23 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
             className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
           >
             BTC
+          </label>
+        </div>
+
+        <div className="flex items-center mr-4">
+          <input
+            onChange={() => setChain('B1T')}
+            id="chain-b1t"
+            type="radio"
+            name="chain"
+            value="B1T"
+            className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
+          />
+          <label
+            htmlFor="chain-b1t"
+            className="block ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+          >
+            B1T
           </label>
         </div>
 

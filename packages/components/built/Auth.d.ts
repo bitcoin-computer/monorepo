@@ -1,6 +1,6 @@
 import { Computer } from '@bitcoin-computer/lib';
 import type { Chain, Network, ModuleStorageType } from './common/types';
-export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE';
+export type TBCChain = 'LTC' | 'BTC' | 'B1T' | 'PEPE' | 'DOGE';
 export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest';
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr';
 export type ComputerOptions = Partial<{

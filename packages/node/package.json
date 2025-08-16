@@ -1,92 +1,97 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.26.0-beta.0",
-  "private": false,
+  "version": "0.20.0-beta.0",
   "description": "Server Side Library for the Bitcoin Computer",
-  "keywords": [
-    "Bitcoin",
-    "Litecoin",
-    "Dogecoin",
-    "Pepecoin",
-    "Smart Contracts",
-    "JavaScript"
-  ],
-  "homepage": "http://bitcoincomputer.io/",
-  "bugs": {
-    "url": "https://github.com/bitcoin-computer/monorepo/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/node"
-  },
-  "license": "MIT",
-  "author": {
-    "name": "Clemens Ley",
-    "email": "clemens@bitcoincomputer.io"
-  },
   "contributors": [
     "Clemens Ley",
     "Laura Tardivo",
     "Vivek Singh"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bitcoin-computer/monorepo/tree/main/packages/node"
+  },
   "type": "module",
   "main": "dist/bcn.es.mjs",
-  "files": [
-    "LICENSE.md",
-    "LEGAL.md"
-  ],
+  "homepage": "http://bitcoincomputer.io/",
+  "author": {
+    "name": "Clemens Ley",
+    "email": "clemens@bitcoincomputer.io"
+  },
+  "private": false,
+  "license": "CC-BY-ND-4.0",
+  "bugs": {
+    "url": "https://github.com/bitcoin-computer/monorepo/issues"
+  },
+  "engines": {
+    "node": ">=16"
+  },
   "scripts": {
-    "build": "cd ../../ && npm run build:node",
-    "clean": "npm run down && npm run prune && npm run clean:blockchain:data && npm run clean:db:data",
-    "clean:blockchain:data": "rm -rf chain-setup/*/*/blockchain-data",
-    "clean:db:data": "rm -rf chain-setup/*/*/db-data",
-    "clean:logs": "rm -f *.log 2> /dev/null",
-    "create:indexes": "nohup node --loader ts-node/esm ./scripts/create-indexes.ts > /dev/null 2>&1 &",
-    "down": "docker compose -f docker-compose.yml down",
-    "fund": "node --loader ts-node/esm ./scripts/fund.ts",
-    "prune": "docker system prune -f",
+    "clean-logs": "rm -f *.log 2> /dev/null",
+    "dist-clean": "rm -rf dist",
+    "down": "./scripts/down.py",
+    "fund-ltc": "node --loader ts-node/esm ./scripts/fund.ts ltc",
+    "fund-btc": "node --loader ts-node/esm ./scripts/fund.ts btc",
+    "fund-pepe": "node --loader ts-node/esm ./scripts/fund.ts pepe",
+    "lint": "eslint",
+    "lint-fix": "eslint --fix",
+    "node-clean": "./scripts/node-clean.sh",
+    "reset": "yes | ./scripts/reset.sh",
+    "start": "node $(grep SRC_ENTRY .package.paths | cut -d '=' -f2)",
+    "start-test": "node --loader ts-node/esm ./scripts/dev-setup.ts",
+    "sync": "$(grep SYNC_START .package.paths | cut -d '=' -f2)",
     "setup": "./scripts/setup.py",
-    "start": "npm run up",
-    "start:bcn": "node dist/bcn.es.mjs",
-    "start:sync": "node dist/bcn.sync.es.mjs",
-    "test": "mocha --config .mocharc.json",
-    "test:show": "npm run test 2>&1 | tee node-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open node-test.log; fi",
-    "up": "docker compose -f docker-compose.yml up"
+    "types": "tsc -p tsconfig.json",
+    "test": "node --loader ts-node/esm  ./scripts/test.ts",
+    "test-node-and-show": "../../scripts/test-and-show.sh node-test.log",
+    "test-unit": "npm run test -- -u",
+    "up": "./scripts/up.py"
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@bitcoin-computer/lib": "^0.26.0-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.26.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.26.0-beta.0",
+    "@bitcoin-computer/lib": "^0.20.0-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.20.0-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.20.0-beta.0",
+    "@types/chai": "^4.3.1",
+    "@types/mocha": "^10.0.6",
     "@types/node": "^20.11.20",
-    "axios": "1.8.2",
+    "@types/sinon": "^10.0.11",
+    "@types/sinon-chai": "^3.2.8",
+    "argparse": "^2.0.1",
+    "axios-mock-adapter": "^1.22.0",
     "bitcoind-rpc": "^0.9.1",
     "body-parser": "^1.20.2",
+    "chai": "^4.3.6",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ecpair": "^2.1.0",
-    "elliptic": "^6.6.1",
+    "edit-json-file": "^1.8.0",
+    "elliptic": "^6.5.4",
     "exponential-backoff": "^3.1.1",
     "express": "^4.18.2",
     "express-rate-limit": "^7.1.5",
     "geoip-lite": "^1.4.10",
     "hash.js": "^1.1.7",
+    "mocha": "^10.3.0",
     "pg-monitor": "^2.0.0",
     "pg-promise": "^11.5.4",
+    "run-parallel": "^1.2.0",
+    "sinon": "^14.0.0",
+    "sinon-chai": "^3.7.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3",
+    "typeforce": "^1.18.0",
+    "typescript": "^5.3.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "zeromq": "6.0.4"
+    "zeromq": "6.0.0-beta.6"
   },
-  "devDependencies": {
-    "@types/chai": "^5.0.1",
-    "@types/mocha": "^10.0.6",
-    "chai": "^5.1.0",
-    "mocha": "^10.3.0"
-  },
-  "engines": {
-    "node": ">=16"
-  },
+  "keywords": [
+    "Bitcoin",
+    "Litecoin",
+    "Pepecoin",
+    "B1tcoin",
+    "Smart Contracts",
+    "Javascript"
+  ],
   "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
 }
