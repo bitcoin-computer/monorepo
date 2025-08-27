@@ -22,7 +22,7 @@
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint src test --ext .ts,.tsx",
     "lint:fix": "eslint src test --ext .ts,.tsx --fix",
-    "test": "rm -rf dist && tsc -p tsconfig.test.json && mocha --config .mocharc.json; node ../../scripts/show-mocha-tests-summary.js",
+    "test": "rm -rf dist && tsc -p tsconfig.test.json && mocha --config .mocharc.json",
     "test:rerun-failed": "rm -rf dist && tsc -p tsconfig.test.json && node ../../scripts/rerun-failed.js",
     "test:show": "npm run test 2>&1 | tee TBC20-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open TBC20-test.log; fi",
     "types": "tsc --noEmit"

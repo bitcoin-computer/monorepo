@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { HiRefresh, HiOutlineInformationCircle } from 'react-icons/hi'
+import { HiRefresh } from 'react-icons/hi'
 import { FiCopy, FiCheck } from 'react-icons/fi'
 import { Computer } from '@bitcoin-computer/lib'
 import { Auth } from './Auth'
@@ -103,7 +103,11 @@ const Balance = ({
       showLoader(false)
     } catch (err) {
       showLoader(false)
-      showSnackBar('Error fetching wallet details', false)
+      if (err instanceof Error) {
+        showSnackBar(`Error fetching wallet details, ${err.message}`, false)
+      } else {
+        showSnackBar('Error fetching wallet details', false)
+      }
     }
   }, [computer, modSpecs])
 

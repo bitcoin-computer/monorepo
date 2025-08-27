@@ -2,6 +2,6 @@
   "require": ["dotenv/config", "source-map-support/register"],
   "spec": "test-build/**/*.test.js",
   "timeout": "30000000",
-  "reporter": "json",
-  "reporter-option": ["output=test-results.json"]
+  "reporter": "mocha-multi",
+  "reporter-option": ["spec=-", "json=test-results.json"]
 }

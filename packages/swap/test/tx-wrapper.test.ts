@@ -1,5 +1,4 @@
- 
-import { expect } from 'chai'
+import { expect, assert } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
@@ -107,7 +106,7 @@ describe('TxWrapper', () => {
 
       it('Bob broadcasts the swap transaction', async () => {
         txId = await bob.broadcast(bobsTx)
-        expect(txId).not.undefined
+        assert.isDefined(txId)
       })
 
       it('a is now owned by Bob', async () => {

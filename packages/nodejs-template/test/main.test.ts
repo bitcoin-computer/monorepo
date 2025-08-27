@@ -19,17 +19,20 @@ const _ = chaiMatchPattern.getLodashModule()
 
 describe('Bitcoin Computer', () => {
   it('should export a function', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expect(Computer).not.to.be.undefined
     expect(typeof Computer).eq('function')
   })
 
   it('should create a computer object', () => {
     const computer = new Computer({ url, chain })
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expect(computer).not.to.be.undefined
     expect(typeof computer).eq('object')
   })
 
   it('should create a JavaScript object', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expect(Counter).not.to.be.undefined
     expect(typeof Counter).eq('function')
     const counter = new Counter()
@@ -41,7 +44,6 @@ describe('Bitcoin Computer', () => {
 
     await computer.faucet(1e8)
     const counter = await computer.new(Counter, [])
-    // @ts-ignore
     expect(counter).to.matchPattern({
       n: 0,
       _id: _.isString,
@@ -58,7 +60,6 @@ describe('Bitcoin Computer', () => {
     await computer.faucet(1e8)
     const counter = await computer.new(Counter, [])
     await counter.inc()
-    // @ts-ignore
     expect(counter).to.matchPattern({
       n: 1,
       _id: _.isString,
