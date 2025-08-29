@@ -99,7 +99,7 @@ testResultsFiles.forEach((testResultsFile) => {
     const failedFiles = [...new Set(failedTests.map((test) => test.file))];
 
     // Run Mocha with default .mocharc.json (json reporter)
-    const mochaCommand = `${envVars} mocha --config .mocharc.json --grep '${grepPattern}' ${failedFiles.join(" ")}`;
+    const mochaCommand = `${envVars} mocha --config .mocharc.json --grep "${grepPattern}" ${failedFiles.join(" ")}`;
     console.log(`Running command in ${packageDir}: ${mochaCommand}`);
 
     try {
@@ -107,33 +107,6 @@ testResultsFiles.forEach((testResultsFile) => {
     } catch (mochaError) {
       console.error(
         `${colors.red}Mocha command failed in ${packageDir}: ${mochaError.message}${colors.reset}`
-      );
-    }
-
-    // Parse the updated test-results.json to show a summary, if it exists
-    if (existsSync(testResultsFile)) {
-      try {
-        const newResults = JSON.parse(readFileSync(testResultsFile, "utf8"));
-        const passing = newResults.stats?.passes || 0;
-        const failing = newResults.stats?.failures || 0;
-        console.log(`\nTest Summary for ${packageDir}:`);
-        if (passing > 0) {
-          console.log(`${colors.green}${passing} passing${colors.reset}`);
-        }
-        if (failing > 0) {
-          console.log(`${colors.red}${failing} failing${colors.reset}`);
-        }
-        if (passing === 0 && failing === 0) {
-          console.log(`${colors.red}No tests executed${colors.reset}`);
-        }
-      } catch (parseError) {
-        console.error(
-          `${colors.red}Error parsing ${testResultsFile} for summary: ${parseError.message}${colors.reset}`
-        );
-      }
-    } else {
-      console.error(
-        `${colors.red}No test-results.json found after running tests in ${packageDir}.${colors.reset}`
       );
     }
   } catch (error) {

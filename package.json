@@ -38,6 +38,7 @@
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
     "prepare": "husky",
     "test:rerun-failed": "node ./scripts/rerun-failed.js",
+    "test:mocha:all": "BCN_CHAIN=LTC BCN_NETWORK=regtest POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha --config .mocharc.json",
     "prepublishOnly": "./scripts/check-obfuscation.sh && npm run test",
     "test": "npm run test --if-present --workspaces",
     "types": "npm run types --if-present --workspaces"
