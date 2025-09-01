@@ -54,10 +54,8 @@ const Balance = ({
 
       const changeOutputIndex = tx.outs.length - 1
 
-      const p2pkh = paymentsUtils.p2pkh({
-        address: computer.getAddress(),
-        network: computer.db.wallet.restClient.networkObj,
-      })
+      const network = computer.db.wallet.restClient.networkObj
+      const p2pkh = paymentsUtils.p2pkh({ address, network })
 
       tx.updateOutput(changeOutputIndex, { scriptPubKey: p2pkh.output })
 
@@ -108,7 +106,8 @@ const Balance = ({
   }, [computer, modSpecs])
 
   const fund = async () => {
-    await computer.faucet(1e8)
+    const amount = computer.getChain() === 'PEPE' ? 10e8 : 1e8
+    await computer.faucet(amount)
     setBalance((await computer.getBalance()).balance)
   }
 

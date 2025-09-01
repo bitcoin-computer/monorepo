@@ -17,6 +17,7 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
     const [address, setAddress] = useState('');
     const [withdrawing, setWithdrawing] = useState(false);
     const handleWithdraw = async () => {
+        console.log('handleWithdraw');
         try {
             setWithdrawing(true);
             showLoader(true);
@@ -38,13 +39,12 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
             });
             await computer.fund(tx);
             const changeOutputIndex = tx.outs.length - 1;
-            const p2pkh = paymentsUtils.p2pkh({
-                address: computer.getAddress(),
-                network: computer.db.wallet.restClient.networkObj,
-            });
+            const network = computer.db.wallet.restClient.networkObj;
+            const p2pkh = paymentsUtils.p2pkh({ address, network });
             tx.updateOutput(changeOutputIndex, { scriptPubKey: p2pkh.output });
             await computer.sign(tx);
             await computer.broadcast(tx);
+            console.log('withdrawTx', tx);
             showSnackBar('Congratulations! Balance withdrawn to address.', true);
         }
         catch (err) {
@@ -83,7 +83,8 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
         }
     }, [computer, modSpecs]);
     const fund = async () => {
-        await computer.faucet(1e8);
+        const amount = computer.getChain() === 'PEPE' ? 10e8 : 1e8;
+        await computer.faucet(amount);
         setBalance((await computer.getBalance()).balance);
     };
     useEffect(() => {
