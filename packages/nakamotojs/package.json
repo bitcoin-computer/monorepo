@@ -50,9 +50,6 @@
     "test:show": "npm run test:unit:show && npm run test:integration:show",
     "test:unit:show": "npm run test 2>&1 | tee nakamotojs-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-test.log; fi"
   },
-  "alias": {
-    "buffer": "buffer/index.js"
-  },
   "dependencies": {
     "@noble/hashes": "^1.2.0",
     "bech32": "^2.0.0",
@@ -91,5 +88,8 @@
   },
   "engines": {
     "node": ">=8.0.0"
+  },
+  "alias": {
+    "buffer": "buffer/index.js"
   }
 }

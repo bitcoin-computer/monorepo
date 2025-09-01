@@ -232,7 +232,7 @@ const ChatInput = ({
         publicKey: computer.getPublicKey(),
         time: Date.now().toString(),
       }
-      const latesRev = await computer.getLatestRev(chatId)
+      const latesRev = await computer.latest(chatId)
       const chatObj = (await computer.sync(latesRev)) as ChatSc
       await chatObj.post(JSON.stringify(messageData))
       await sleep(2000)
@@ -289,7 +289,7 @@ export function Chat({ chatId }: { chatId: string }) {
   const refreshChat = async () => {
     try {
       showLoader(true)
-      const latesRev = await computer.getLatestRev(id)
+      const latesRev = await computer.latest(id)
       const synced = (await computer.sync(latesRev)) as ChatSc
       setChatObj(synced)
       const messagesData: messageI[] = []

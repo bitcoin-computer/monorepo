@@ -336,7 +336,7 @@ function NftView() {
     const fetch = async () => {
       try {
         showLoader(true)
-        const latesRev = await computer.getLatestRev(id)
+        const latesRev = await computer.latest(id)
         const synced = (await computer.sync(latesRev)) as NFT
         setSmartObject(synced)
         showLoader(false)

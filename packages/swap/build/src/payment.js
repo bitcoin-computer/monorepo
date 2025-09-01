@@ -43,7 +43,7 @@ export class PaymentHelper {
         });
     }
     async getPayment(paymentTxId) {
-        const [rev] = await this.computer.query({ ids: [`${paymentTxId}:0`] });
+        const rev = await this.computer.latest(`${paymentTxId}:0`);
         const syncedPayment = await this.computer.sync(rev);
         return syncedPayment;
     }

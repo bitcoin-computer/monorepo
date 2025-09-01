@@ -5,7 +5,7 @@ _Returns UTXOs that do not contains on-chain objects._
 ## Type
 
 ```ts
-getUtxos(address?: string): Promise<UTXO[]>
+getUtxos(address?: string): Promise<string[]>
 ```
 
 ### Parameters
@@ -26,4 +26,4 @@ The UTXOs returned are guaranteed to not contain any on-chain objects. This make
 
 :::code source="../../../lib/test/lib/computer/get-utxos.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-utxos.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-utxos.test.ts" target=_blank>Source</a>

@@ -4,11 +4,11 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
     "build:production": "next build",
-    "start": "next start",
+    "deploy": "tsx ./src/app/contracts/scripts/deploy.ts",
+    "dev": "next dev --turbopack",
     "lint": "next lint",
-    "deploy": "tsx ./src/app/contracts/scripts/deploy.ts"
+    "start": "next start"
   },
   "dependencies": {
     "@bitcoin-computer/lib": "^0.26.0-beta.0",

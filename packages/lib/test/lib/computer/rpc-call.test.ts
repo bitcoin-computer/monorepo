@@ -1,14 +1,14 @@
 import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils'
 
-// Create wallet
-const computer = new Computer({ chain, network, url })
-
-// A smart contract
-class C extends Contract {}
-
 describe('rpcCall', () => {
-  before('Fund wallet', async () => {
+  // A smart contract
+  class C extends Contract {}
+
+  let computer: Computer
+
+  before('Create and fund wallet', async () => {
+    computer = new Computer({ chain, network, url })
     await computer.faucet(1e8)
   })
 

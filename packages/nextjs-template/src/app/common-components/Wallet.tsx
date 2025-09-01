@@ -24,6 +24,7 @@ const Balance = ({
       if (computer) {
         showLoader(true);
         const publicKey = computer.getPublicKey();
+        const dust = computer.db.wallet.getDustThreshold(false);
         const balances: bigint[] = await Promise.all(
           modSpecs.map(async (mod) => {
             const paymentRevs = modSpecs
@@ -31,11 +32,10 @@ const Balance = ({
               : [];
             const payments = (await Promise.all(
               paymentRevs.map((rev: string) => computer.sync(rev))
-            )) as any[];  
+            )) as any[];
             return payments && payments.length
               ? payments.reduce(
-                  (total, pay) =>
-                    total + (pay._satoshis - BigInt(computer.getMinimumFees())),
+                  (total, pay) => total + (pay._satoshis - BigInt(dust)),
                   0n
                 )
               : 0;
@@ -98,7 +98,6 @@ const Balance = ({
   );
 };
 
- 
 const Address = ({ computer }: any) => {
   const [copied, setCopied] = useState(false);
 
@@ -131,7 +130,6 @@ const Address = ({ computer }: any) => {
   );
 };
 
- 
 const PublicKey = ({ computer }: any) => {
   const [copied, setCopied] = useState(false);
 
@@ -164,7 +162,6 @@ const PublicKey = ({ computer }: any) => {
   );
 };
 
- 
 const Mnemonic = ({ computer }: any) => {
   const [mnemonicShown, setMnemonicShown] = useState(false);
   return (
@@ -185,7 +182,6 @@ const Mnemonic = ({ computer }: any) => {
   );
 };
 
- 
 const Url = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Node Url</h6>
@@ -195,7 +191,6 @@ const Url = ({ computer }: any) => (
   </div>
 );
 
- 
 const Chain = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Chain</h6>
@@ -205,7 +200,6 @@ const Chain = ({ computer }: any) => (
   </div>
 );
 
- 
 const Network = ({ computer }: any) => (
   <div className="mb-4">
     <h6 className="text-lg font-bold dark:text-white">Network</h6>

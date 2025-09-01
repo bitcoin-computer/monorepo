@@ -1,11 +1,13 @@
 import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils'
 
-const computer1 = new Computer({ chain, network, url })
-const computer2 = new Computer({ chain, network, url })
-
 describe('getUtxos', () => {
+  let computer1: Computer
+  let computer2: Computer
+
   before('Fund computer1', async () => {
+    computer1 = new Computer({ chain, network, url })
+    computer2 = new Computer({ chain, network, url })
     await computer1.faucet(1e8)
   })
 

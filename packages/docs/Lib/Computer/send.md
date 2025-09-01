@@ -26,4 +26,4 @@ If successful, it returns the id of the transaction broadcast.
 
 :::code source="../../../lib/test/lib/computer/send.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/send.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/send.test.ts" target=_blank>Source</a>

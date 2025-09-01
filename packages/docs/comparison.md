@@ -11,10 +11,6 @@ We explain how smart contract systems for Bitcoin work in simple terms. We then 
 - **Expressiveness.** A system is expressive if it can express all computable smart contracts, formally if it is Turing Complete. Assets created in such general purpose protocols can be freely composed and moved between applications.
 - **Efficiency.** A system is efficient if it is possible to compute some smart contract data without having to parse all transactions in the blockchain. This is important for two reasons: the obvious one is that it is faster to compute some values. The other is that it is possible to compute values in parallel.
 
-!!!
-This writeup is based on a presentation we gave at the Litecoin Summit in 2024. You can find the slides [here](./static/litecoin-summit-2024-slides.pdf) and a video recording [here](https://www.youtube.com/live/Sn_Hl2Q5cIw?t=15767s).
-!!!
-
 ## Results
 
 The table below captures the results of our comparison. Each result is explained in detail in the following sections.
@@ -175,7 +171,8 @@ As building a validity proof requires heavy computations ZK rollups’ L2 fees a
 
 On the other hand, optimistic rollups have a period where verifiers have an opportunity to publish a fraud proof. Thus users need to wait (usually a week on Ethereum, on Bitcoin it will likely be longer) until their deposits can be withdrawn. In ZK-rollups, deposits could be withdrawn immediately, however in many cases users have to wait for 24h due to safety concerns. In most cases there is only one aggregator and a very small number of validators and users trust that they do not collude.
 
-=== Complexity of SNARKs and STARKs
+### Complexity of SNARKs and STARKs
+
 The Big-O notation is used in Computer Science to describe the upper bound of the runtime of an algorithm in terms of the size of its input. An algorithm is said to run in time $O(f(n))$ if for sufficiently large input sizes $n$, the algorithm's runtime will not exceed $c * f(n)$ steps.
 
 Prover Complexity refers to the computational complexity associated with generating a proof for a given computation. Verifier Complexity refers to the computational complexity associated with verifying the correctness of a proof for a given computation. The table below is obtained from [here](https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9862815)
@@ -185,7 +182,7 @@ Prover Complexity refers to the computational complexity associated with generat
 | SNARKs | <span style="color: red;">No</span>    | $O(n \cdot \text{log}(n))$   | $O(1)$               |
 | STARKs | <span style="color: green;">Yes</span> | $O(n \cdot \text{log}(n)^c)$ | $O(\text{log}(n)^c)$ |
 
-# Verifier complexity for SNARKs is $O(1)$ meaning that the time to verify a computation can be take longer for small inputs but is faster (even constant) for large enough inputs. Verifier complexity for STARKs is $O(\text{log}(n)^c)$ meaning that it can take much longer to verify a short computation but for very large computations verification is faster than computation.
+Verifier complexity for SNARKs is $O(1)$ meaning that the time to verify a computation can be take longer for small inputs but is faster (even constant) for large enough inputs. Verifier complexity for STARKs is $O(\text{log}(n)^c)$ meaning that it can take much longer to verify a short computation but for very large computations verification is faster than computation.
 
 **Trustlessness.** In optimistic rollups users trust that one honest validator is online at all times. STARKs are trustless, SNARKS are not.
 
@@ -203,10 +200,13 @@ There are two basic types of meta protocols called block-order based and UTXO ba
 
 The software for a block-order based protocol reads all transactions in the main chain in block-order to find transactions with meta data specific for that protocol. It will then interpret that sequence of meta data values as instructions and build up a data structure of smart contract data. The smart contract data will for example store which user owns which tokens.
 
+<!-- prettier-ignore-start -->
 ==- Formal Description
 We denote the set of transactions by $T$. We denote by $V$ the set of smart contract data values where $\{\} \in V$ denotes the empty value. We denote the set of sequences of values in a set $X$ by $X^*$.
 
-# A block-order based meta protocol $P$ consists of a function $f: V \times T \rightarrow V$. Let $t_1 \ldots t_n \in T^*$ be the sequence of meta data values for $P$ in the main chain in the order of their occurrence. Then $P$ computes the smart contract data value $f( \ldots f(f(\{\}, t_1), t_2) \ldots , t_n)$.
+A block-order based meta protocol $P$ consists of a function $f: V \times T \rightarrow V$. Let $t_1 \ldots t_n \in T^*$ be the sequence of meta data values for $P$ in the main chain in the order of their occurrence. Then $P$ computes the smart contract data value $f( \ldots f(f(\{\}, t_1), t_2) \ldots , t_n)$.
+===
+<!-- prettier-ignore-end -->
 
 #### Example: BRC20
 
@@ -232,12 +232,15 @@ There are two other issues issues: Block-order based protocols cannot be real ti
 
 Whereas block order based systems compute one global value from all transactions, UTXO based protocols compute a value for each output that is relevant to that protocol. The value computed for an output can usually depend on the meta data on that transaction and the valued computed for the inputs spent.
 
+<!-- prettier-ignore-start -->
 ==- Formal Description
 Let $O$ be the set of outputs. A UTXO based protocol $P$ is a function $P: O \rightarrow V$ that map outputs to smart contract data values.
 
 We will say that a protocol $P$ is well designed if $P(o)$ can be computed from the meta data on the transaction containing $o$ and the values of the outputs spent by $t$. That is, there is a function $f_P: O \times V^* \rightarrow V$ such that $P(o) = f_P(o, P(o_1) \ldots P(o_n))$ where $o_1 \ldots o_n$ are the outputs spent by the transaction containing $o$.
+===
+<!-- prettier-ignore-end -->
 
-# We can see that all well designed UTXO based protocols are efficient: You can compute the value of an output by parsing "only" the transactions that are reachable form the transaction containing the output via the of the spending relation, potentially using multiple hops. This is still a large number of transactions in general, but for some values for example those on the outputs of a coinbase transaction can be computed from one transaction.
+We can see that all well designed UTXO based protocols are efficient: You can compute the value of an output by parsing "only" the transactions that are reachable form the transaction containing the output via the of the spending relation, potentially using multiple hops. This is still a large number of transactions in general, but for some values for example those on the outputs of a coinbase transaction can be computed from one transaction.
 
 #### Example: Ordinals
 
