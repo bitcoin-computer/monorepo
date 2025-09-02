@@ -41,18 +41,18 @@ An object with a specification to build a transaction according to the Bitcoin C
 
 {.compact}
 
-| Key         | Description                                                                                                                                                               | Default       |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| exp         | A JavaScript expression.                                                                                                                                                  | -             |
-| env         | A Blockchain environment mapping variables names to revisions.                                                                                                            | `{}`          |
-| mod         | A string of the form `<id>:<num>` specifying the location of a module.                                                                                                    | `undefined`   |
-| fund        | Whether the transaction should be funded.                                                                                                                                 | `true`        |
-| include     | UTXOs to include when funding.                                                                                                                                            | `[]`          |
-| exclude     | UTXOs to exclude when funding.                                                                                                                                            | `[]`          |
-| sign        | Whether to sign the transaction.                                                                                                                                          | `true`        |
-| sighashType | The signature hash type.                                                                                                                                                  | `SIGHASH_ALL` |
-| inputIndex  | If set to an number only the corresponding input is signed. If undefined all inputs are signed.                                                                           | `undefined`   |
-| inputScript | If set to a string a custom input script can be provided. If undefined a signature script is generated.                                                                   | `undefined`   |
+| Key         | Description                                                                                                                                                                 | Default       |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| exp         | A JavaScript expression.                                                                                                                                                    | -             |
+| env         | A Blockchain environment mapping variables names to revisions.                                                                                                              | `{}`          |
+| mod         | A string of the form `<id>:<num>` specifying the location of a module.                                                                                                      | `undefined`   |
+| fund        | Whether the transaction should be funded.                                                                                                                                   | `true`        |
+| include     | UTXOs to include when funding.                                                                                                                                              | `[]`          |
+| exclude     | UTXOs to exclude when funding.                                                                                                                                              | `[]`          |
+| sign        | Whether to sign the transaction.                                                                                                                                            | `true`        |
+| sighashType | The signature hash type.                                                                                                                                                    | `SIGHASH_ALL` |
+| inputIndex  | If set to an number only the corresponding input is signed. If undefined all inputs are signed.                                                                             | `undefined`   |
+| inputScript | If set to a string a custom input script can be provided. If undefined a signature script is generated.                                                                     | `undefined`   |
 | mocks       | A pair <name, object>. The object is an instance of a mocked class (A class that does not extends from Contract but has the keywords `_id`, `_root`, `_satoshis`,`_owners`) | `{}`          |
 
 ### Return Value
@@ -76,4 +76,4 @@ The state update effected by a Bitcoin Computer transaction is completely predic
 
 :::code source="../../../lib/test/lib/computer/encode.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/encode.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/encode.test.ts" target=_blank>Source</a>

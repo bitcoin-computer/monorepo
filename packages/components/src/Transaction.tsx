@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import reactStringReplace from 'react-string-replace'
-import { Computer } from '@bitcoin-computer/lib'
+import { Transaction as BCTransaction } from '@bitcoin-computer/lib'
 import { Card } from './Card'
 import { ComputerContext } from './ComputerContext'
 
@@ -38,7 +38,7 @@ function Component() {
     const fetch = async () => {
       setTxn(params.txn)
       const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn as string])
-      const tx = Computer.txFromHex({ hex })
+      const tx = BCTransaction.fromHex(hex)
       setTxnData(tx)
 
       const { result } = await computer.rpcCall('getrawtransaction', `${params.txn} 2`)
@@ -54,7 +54,7 @@ function Component() {
       } catch (err) {
         if (err instanceof Error) {
           setTransition('')
-           
+
           console.log('Error parsing transaction', err.message)
         }
       }

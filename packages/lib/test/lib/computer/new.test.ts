@@ -1,19 +1,19 @@
 import { Contract, Computer } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from '../../utils/index.js'
 
-// A smart contract
-class Counter extends Contract {
-  n: number
-
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-}
-
 describe('new', () => {
+  // A smart contract
+  class Counter extends Contract {
+    n: number
+
+    constructor() {
+      super({ n: 0 })
+    }
+    inc() {
+      this.n += 1
+    }
+  }
+
   it('Should create a new on-chain object', async () => {
     // Create and fund wallet
     const computer = new Computer({ chain, network, url })
@@ -23,10 +23,10 @@ describe('new', () => {
     const counter = await computer.new(Counter, [])
     expect(counter).to.matchPattern({
       n: 0,
-      _id: (id) => typeof id === 'string',
-      _rev: (rev) => typeof rev === 'string',
-      _root: (root) => typeof root === 'string',
-      _satoshis: (satoshis) => typeof satoshis === 'bigint',
+      _id: (id: string) => typeof id === 'string',
+      _rev: (rev: string) => typeof rev === 'string',
+      _root: (root: string) => typeof root === 'string',
+      _satoshis: (satoshis: number) => typeof satoshis === 'bigint',
       _owners: [computer.getPublicKey()],
     })
 
@@ -34,10 +34,10 @@ describe('new', () => {
     await counter.inc()
     expect(counter).to.matchPattern({
       n: 1,
-      _id: (id) => typeof id === 'string',
-      _rev: (rev) => typeof rev === 'string',
-      _root: (root) => typeof root === 'string',
-      _satoshis: (satoshis) => typeof satoshis === 'bigint',
+      _id: (id: string) => typeof id === 'string',
+      _rev: (rev: string) => typeof rev === 'string',
+      _root: (root: string) => typeof root === 'string',
+      _satoshis: (satoshis: number) => typeof satoshis === 'bigint',
       _owners: [computer.getPublicKey()],
     })
   })

@@ -1,19 +1,19 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
-// A smart contract
-class Counter extends Contract {
-  n: number
-
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-}
-
 describe('sync', () => {
+  // A smart contract
+  class Counter extends Contract {
+    n: number
+
+    constructor() {
+      super({ n: 0 })
+    }
+    inc() {
+      this.n += 1
+    }
+  }
+
   it('Should sync to a counter', async () => {
     // Create and fund wallet
     const computer = new Computer({ chain, network, url })

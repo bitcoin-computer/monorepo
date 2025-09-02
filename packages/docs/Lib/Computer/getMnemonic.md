@@ -20,4 +20,4 @@ You can set the mnemonic in the constructor of the `Computer` class. The mnemoni
 
 :::code source="../../../lib/test/lib/computer/get-mnemonic.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-mnemonic.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-mnemonic.test.ts" target=_blank>Source</a>

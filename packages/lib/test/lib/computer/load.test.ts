@@ -1,10 +1,10 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
-// A smart contract
-class C extends Contract {}
-
 describe('load', () => {
+  // A smart contract
+  class C extends Contract {}
+
   it('Should load a module', async () => {
     // Create and fund wallet
     const computer = new Computer({ chain, network, url })
@@ -18,7 +18,7 @@ describe('load', () => {
 
     // The deployed module is always equal to loaded module
     // when white spaces are removed
-    const trim = (Class) => Class.toString().replace(/\s+/g, '')
+    const trim = (Class: any) => Class.toString().replace(/\s+/g, '')
     expect(trim(Loaded)).eq(trim(C))
   })
 })

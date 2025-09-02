@@ -1,19 +1,15 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
-// A smart contract
-class C extends Contract {}
-
-// Create wallet
-const computer = new Computer({ chain, network, url })
-
 describe('encodeNew', async () => {
-  // Fund wallet
-  before('Fund wallet', async () => {
-    await computer.faucet(1e8)
-  })
-
   it('Should encode a constructor call', async () => {
+    // A smart contract
+    class C extends Contract {}
+
+    // Create and wallet
+    const computer = new Computer({ chain, network, url })
+    await computer.faucet(1e8)
+
     // Encode a constructor call
     const { tx, effect } = await computer.encodeNew({
       constructor: C,

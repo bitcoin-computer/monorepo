@@ -41,6 +41,18 @@ For advanced applications that require control over how the transaction is signe
 | [decode](./decode.md) | Parses a Bitcoin transaction and returns JavaScript expression |
 | [faucet](./faucet) | Fund a computer object on Regtest |
 
+### History
+
+Access historical versions of on-chain objects.
+
+{.compact}
+| Method | Description |
+|-------------------------------|----------------------------------------------------------------|
+| [first](./first.md) | Return the first revision |
+| [prev](./prev.md) | Return the previous revision |
+| [next](./next.md) | Return the next revision |
+| [latest](./latest.md) | Return the latest revision |
+
 ### Wallet
 
 Access the client side wallet.

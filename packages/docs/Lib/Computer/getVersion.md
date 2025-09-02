@@ -16,4 +16,4 @@ The current version
 
 :::code source="../../../lib/test/lib/computer/get-version.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-version.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-version.test.ts" target=_blank>Source</a>

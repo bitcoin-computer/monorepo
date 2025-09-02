@@ -2,11 +2,11 @@ import { Computer } from '@bitcoin-computer/lib'
 import { address, networks, Transaction } from '@bitcoin-computer/nakamotojs'
 import { chain, network, url } from '../../utils/index.js'
 
-// Create wallet
-const computer = new Computer({ chain, network, url })
-
 describe('fund', () => {
-  before('Fund wallet', async () => {
+  let computer: Computer
+
+  before('Create and fund wallet', async () => {
+    computer = new Computer({ chain, network, url })
     await computer.faucet(1e8)
   })
 

@@ -1,12 +1,11 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
-// Create wallet
-const computer = new Computer({ chain, network, url })
-
 describe('encode', () => {
-  // Fund wallet
-  before('Fund wallet', async () => {
+  let computer: Computer
+
+  before('Create and fund wallet', async () => {
+    computer = new Computer({ chain, network, url })
     await computer.faucet(1e8)
   })
 
@@ -15,7 +14,7 @@ describe('encode', () => {
     // Encode the expression "1".repeat(1000000)
     const { effect, tx } = await computer.encode({ exp: '"1".repeat(1000000)' })
 
-    // The value return contains the result
+    // The value returned contains the result
     expect(effect).deep.eq({ res: '1'.repeat(1000000), env: {} })
 
     // Broadcast transaction to store value on the blockchain

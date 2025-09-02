@@ -1,10 +1,11 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
-class C extends Contract {}
-
 describe('decode', () => {
   it('Should decode a transaction', async () => {
+    // A smart contract
+    class C extends Contract {}
+
     // Create and fund a wallet
     const computer = new Computer({ chain, network, url })
     await computer.faucet(1e8)

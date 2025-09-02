@@ -90,9 +90,11 @@ function buildLeafIndexFinalizer(
         Buffer.from([leafIndex]),
         Buffer.from([leafIndex]),
       ];
-      const witness = scriptSolution
-        .concat(tapLeafScript.script)
-        .concat(tapLeafScript.controlBlock);
+      const witness = [
+        ...scriptSolution,
+        tapLeafScript.script,
+        tapLeafScript.controlBlock,
+      ];
       return { finalScriptWitness: witnessStackToScriptWitness(witness) };
     } catch (err) {
       throw new Error(`Can not finalize taproot input #${inputIndex}: ${err}`);
