@@ -24,7 +24,7 @@ const LoginModal = dynamic(
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   const [computer, setComputer] = useState<Computer | null>(null);
-  console.log(computer)
+  console.log(computer);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -43,10 +43,8 @@ export function ClientProviders({ children }: { children: React.ReactNode }) {
           <>
             <LoginModal />
             <Wallet />
-            <div className="dark:bg-gray-800 min-h-screen">
-              <Navbar />
-              <div className="m-4 bg-gray-100 dark:bg-gray-800">{children}</div>
-            </div>
+            <Navbar />
+            <div className="m-4 bg-gray-100 dark:bg-gray-800">{children}</div>
           </>
         ) : (
           <></>

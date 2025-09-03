@@ -134,7 +134,12 @@ function MintForm(props: {
             {url && (
               <div className="w-full h-64 flex items-center justify-center">
                 <div className="w-4/5 md:w-1/2 lg:w-1/2 h-full bg-gray-200 flex items-center justify-center mt-8 dark:bg-gray-700">
-                  <img className="max-h-full max-w-full object-contain" src={url} alt="" />
+                  <img
+                    className="max-h-full max-w-full object-contain"
+                    src={url}
+                    alt=""
+                    crossOrigin="anonymous"
+                  />
                 </div>
               </div>
             )}

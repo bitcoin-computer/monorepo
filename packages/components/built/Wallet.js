@@ -17,7 +17,6 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
     const [address, setAddress] = useState('');
     const [withdrawing, setWithdrawing] = useState(false);
     const handleWithdraw = async () => {
-        console.log('handleWithdraw');
         try {
             setWithdrawing(true);
             showLoader(true);
@@ -44,7 +43,6 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
             tx.updateOutput(changeOutputIndex, { scriptPubKey: p2pkh.output });
             await computer.sign(tx);
             await computer.broadcast(tx);
-            console.log('withdrawTx', tx);
             showSnackBar('Congratulations! Balance withdrawn to address.', true);
         }
         catch (err) {
