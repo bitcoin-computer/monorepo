@@ -33,7 +33,7 @@ function HomePageCard({ content }: { content: string | (() => JSX.Element) }) {
 }
 
 function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
-  const [value, setValue] = useState<NFT>()
+  const [nft, setNft] = useState<NFT>()
   const [errorMsg, setMsgError] = useState('')
   const [loading, setLoading] = useState<boolean>(true)
 
@@ -41,7 +41,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
     const fetch = async () => {
       try {
         const synced: NFT = (await computer.sync(rev)) as NFT
-        setValue(synced)
+        setNft(synced)
       } catch (err) {
         if (err instanceof Error) setMsgError(`Error: ${err.message}`)
       }
@@ -81,7 +81,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
     return <HomePageCard content={errorMsg} />
   }
 
-  return <NFTCard nft={value} />
+  return <NFTCard nft={nft} userPublicKey={computer.getPublicKey()} />
 }
 
 function FromRevs({ revs, computer }: { revs: string[]; computer: Computer }) {
@@ -261,7 +261,7 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
   }
 
   return (
-    <div className="relative sm:rounded-lg pt-4 w-full">
+    <div className="relative sm:rounded-lg w-full">
       <FromRevs revs={revs} computer={computer} />
       {!(pageNum === 0 && revs && revs.length === 0) && (
         <Pagination
