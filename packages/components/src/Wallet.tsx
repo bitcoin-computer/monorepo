@@ -145,26 +145,26 @@ const Balance = ({
       </div>
       <Address computer={computer} />
       {!!VITE_WITHDRAW_MOD_SPEC && (
-        <div className="mb-4">
-          <h6 className="text-lg font-bold dark:text-white mb-1">Withdraw to Address</h6>
-          <p className="mb-1 font-mono text-xs text-gray-500 dark:text-gray-400">
-            Complete balance will be withdrawn, Some of your balance might be locked in the tokens.
-            Use withdraw to unlock.
-          </p>
-          <input
-            type="text"
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
-            className="block w-full px-3 py-2 mb-2 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            placeholder="Enter recipient address"
-          />
-          <button
-            onClick={handleWithdraw}
-            disabled={withdrawing}
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
-          >
-            Withdraw
-          </button>
+        <div className="my-2">
+          <h6 className="text-lg font-bold dark:text-white">Withdraw to Address</h6>
+          <div className="flex items-center space-x-2 my-2">
+            <input
+              type="text"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              placeholder="Recipient Address"
+            />
+
+            <button
+              type="button"
+              onClick={handleWithdraw}
+              disabled={withdrawing}
+              className="px-3 py-1.5 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+            >
+              Withdraw
+            </button>
+          </div>
         </div>
       )}
     </>
@@ -181,7 +181,7 @@ const Address = ({ computer }: any) => {
   }
 
   return (
-    <div className="mb-4">
+    <div className="my-2">
       <div className="flex items-center">
         <h6 className="text-lg font-bold dark:text-white">Deposit Address</h6>
         <button
@@ -196,7 +196,7 @@ const Address = ({ computer }: any) => {
           )}
         </button>
       </div>
-      <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400">
+      <p className="my-2 font-mono text-xs text-gray-500 dark:text-gray-400">
         {computer.getAddress()}
       </p>
     </div>
@@ -213,7 +213,7 @@ const PublicKey = ({ computer }: any) => {
   }
 
   return (
-    <div className="mb-4">
+    <div className="my-2">
       <div className="flex items-center">
         <h6 className="text-lg font-bold dark:text-white">Public Key</h6>
         <button
@@ -228,7 +228,7 @@ const PublicKey = ({ computer }: any) => {
           )}
         </button>
       </div>
-      <p className="mb-4 text-xs font-mono text-gray-500 dark:text-gray-400 break-words">
+      <p className="my-2 text-xs font-mono text-gray-500 dark:text-gray-400 break-words">
         {computer.getPublicKey()}
       </p>
     </div>
@@ -238,7 +238,7 @@ const PublicKey = ({ computer }: any) => {
 const Mnemonic = ({ computer }: any) => {
   const [mnemonicShown, setMnemonicShown] = useState(false)
   return (
-    <div className="mb-4">
+    <div className="my-2">
       <h6 className="text-lg font-bold dark:text-white">
         Mnemonic{' '}
         <button
@@ -256,36 +256,36 @@ const Mnemonic = ({ computer }: any) => {
 }
 
 const Url = ({ computer }: any) => (
-  <div className="mb-4">
+  <div className="my-2">
     <h6 className="text-lg font-bold dark:text-white">Node Url</h6>
-    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+    <p className="my-2 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
       {computer.getUrl()}
     </p>
   </div>
 )
 
 const Chain = ({ computer }: any) => (
-  <div className="mb-4">
+  <div className="my-2">
     <h6 className="text-lg font-bold dark:text-white">Chain</h6>
-    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+    <p className="my-2 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
       {computer.getChain()}
     </p>
   </div>
 )
 
 const Network = ({ computer }: any) => (
-  <div className="mb-4">
+  <div className="my-2">
     <h6 className="text-lg font-bold dark:text-white">Network</h6>
-    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+    <p className="my-2 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
       {computer.getNetwork()}
     </p>
   </div>
 )
 
 const Path = ({ computer }: any) => (
-  <div className="mb-4">
+  <div className="my-2">
     <h6 className="text-lg font-bold dark:text-white">Path</h6>
-    <p className="mb-4 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
+    <p className="my-2 font-mono text-xs text-gray-500 dark:text-gray-400 break-words">
       {computer.getPath()}
     </p>
   </div>
@@ -293,20 +293,19 @@ const Path = ({ computer }: any) => (
 
 const LogOut = () => (
   <>
-    <div className="mb-6">
-      <h6 className="text-lg font-bold dark:text-white">Log out</h6>
+    <div className="my-2">
+      <h6 className="text-lg font-bold dark:text-white">Log Out</h6>
       <p className="mb-1 text-sm text-gray-500 dark:text-gray-400">
         Logging out will delete your mnemonic. Make sure to write it down.
       </p>
     </div>
-    <div className="grid grid-cols-2 gap-4">
-      <button
-        onClick={Auth.logout}
-        className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
-      >
-        Log out
-      </button>
-    </div>
+    <button
+      type="button"
+      onClick={Auth.logout}
+      className="px-3 py-1.5 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+    >
+      Log Out
+    </button>
   </>
 )
 
@@ -322,7 +321,7 @@ export function Wallet({ modSpecs }: { modSpecs?: string[] }) {
       {!getEnv('NETWORK') && <Network computer={computer} />}
       {!getEnv('URL') && <Url computer={computer} />}
       {!getEnv('PATH') && <Path computer={computer} />}
-      <hr className="h-px my-6 bg-gray-200 border-0 dark:bg-gray-700" />
+      <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
       <LogOut />
     </>
   )
