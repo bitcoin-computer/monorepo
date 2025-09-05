@@ -69,23 +69,19 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
                 const paymentRevs = await computer.query({ publicKey, mod });
                 const payments = (await Promise.all(paymentRevs.map((rev) => computer.sync(rev))));
                 allPayments.push(...payments);
+                const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')));
                 return payments && payments.length
-                    ? payments.reduce((total, pay) => {
-                        console.log('pay._satoshis', pay._satoshis);
-                        console.log('BigInt(computer.getMinimumFees())', BigInt(computer.getMinimumFees()));
-                        return total + (pay._satoshis - BigInt(computer.getMinimumFees()));
-                    }, 0n)
+                    ? payments.reduce((total, pay) => total + (pay._satoshis - minDust), 0n)
                     : 0n;
             }));
             const amountsInPayments = balances.reduce((acc, curr) => acc + curr, 0n);
             const walletBalance = await computer.getBalance();
-            // console.log('balances', balances)
-            // console.log('walletBalance.balance', walletBalance.balance)
-            // console.log('amountsInPayments', amountsInPayments)
             setBalance(walletBalance.balance + amountsInPayments);
             setPaymentsWrapper(allPayments);
         }
         catch (err) {
+            if (err instanceof Error)
+                console.log(err.stack);
             showSnackBar('Error fetching wallet details', false);
         }
         finally {

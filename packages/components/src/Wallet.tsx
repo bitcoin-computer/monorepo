@@ -191,11 +191,9 @@ const Balance = ({
             paymentRevs.map((rev: string) => computer.sync(rev)),
           )) as any[]
           allPayments.push(...payments)
+          const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')))
           return payments && payments.length
-            ? payments.reduce(
-                (total, pay) => total + (pay._satoshis - BigInt(computer.getMinimumFees())),
-                0n,
-              )
+            ? payments.reduce((total, pay) => total + (pay._satoshis - minDust), 0n)
             : 0n
         }),
       )
