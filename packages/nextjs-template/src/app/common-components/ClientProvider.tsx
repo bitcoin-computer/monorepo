@@ -24,8 +24,6 @@ const LoginModal = dynamic(
 
 export function ClientProviders({ children }: { children: React.ReactNode }) {
   const [computer, setComputer] = useState<Computer | null>(null);
-  console.log(computer);
-
   useEffect(() => {
     if (typeof window !== "undefined") {
       setComputer(getComputer());
