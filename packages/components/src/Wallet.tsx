@@ -6,7 +6,7 @@ import { Auth } from './Auth'
 import { Drawer } from './Drawer'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
-import { getEnv, bigIntToStr } from './common/utils'
+import { getEnv, bigIntToStr, sleep } from './common/utils'
 import { VITE_WITHDRAW_MOD_SPEC } from './common/modSpecs'
 import { bufferUtils, payments as paymentsUtils } from '@bitcoin-computer/nakamotojs'
 
@@ -77,10 +77,12 @@ const BalanceDisplay = ({
 
 const Withdraw = ({
   computer,
-  paymentsWrapper,
+  paymentsWrapper: payments,
+  onSuccess,
 }: {
   computer: Computer
   paymentsWrapper: any[]
+  onSuccess?: () => Promise<void>
 }) => {
   const { showSnackBar } = UtilsContext.useUtilsComponents()
   const [address, setAddress] = useState<string>('')
@@ -93,52 +95,22 @@ const Withdraw = ({
         showSnackBar('Please input valid address', false)
         return
       }
-      const expParams = paymentsWrapper.map((_, i) => `p${i}`).join(', ')
-      const envParams = Object.fromEntries(
-        paymentsWrapper.map((payment, i) => [`p${i}`, payment._rev]),
-      )
-      const { tx } = await computer.encode({
-        exp: `Withdraw.exec([${expParams}])`,
-        env: envParams,
-        fund: false,
-        mod: VITE_WITHDRAW_MOD_SPEC,
-      })
 
-      const utxos = await computer.db.wallet.restClient.getFormattedUtxos(computer.getAddress())
-      utxos.forEach((utxo) => {
-        tx.addInput(bufferUtils.reverseBuffer(Buffer.from(utxo.txId, 'hex')), utxo.vout)
-      })
+      const revs = payments.map((p) => p._rev)
+      await computer.delete(revs)
 
-      await computer.fund(tx)
+      const { balance } = await computer.getBalance()
+      const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')))
+      await computer.send(balance - minDust, address)
 
-      const changeOutputIndex = tx.outs.length - 1
-
-      const network = computer.db.wallet.restClient.networkObj
-      const p2pkh = paymentsUtils.p2pkh({ address, network })
-
-      tx.updateOutput(changeOutputIndex, { scriptPubKey: p2pkh.output })
-
-      await computer.sign(tx)
-      await computer.broadcast(tx)
-
-      showSnackBar('Congratulations! Balance withdrawn to address.', true)
+      setAddress('')
+      if (onSuccess) await onSuccess()
     } catch (err) {
-      if (err instanceof Error) {
-        showSnackBar(`Something went wrong, ${err.message}`, false)
-      }
+      if (err instanceof Error) showSnackBar(`Something went wrong, ${err.message}`, false)
     } finally {
       setWithdrawing(false)
     }
   }
-
-  const ButtonLabel = () =>
-    withdrawing ? (
-      <>
-        <Loader />
-      </>
-    ) : (
-      <>Withdraw</>
-    )
 
   return (
     <div className="my-2">
@@ -158,7 +130,7 @@ const Withdraw = ({
           disabled={withdrawing}
           className="px-3 py-1.5 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
         >
-          <ButtonLabel />
+          {withdrawing ? <Loader /> : <>Withdraw</>}
         </button>
       </div>
     </div>
@@ -241,7 +213,11 @@ const Balance = ({
       />
       <Address computer={computer} />
       {!!VITE_WITHDRAW_MOD_SPEC && (
-        <Withdraw computer={computer} paymentsWrapper={paymentsWrapper} />
+        <Withdraw
+          computer={computer}
+          paymentsWrapper={paymentsWrapper}
+          onSuccess={refreshBalance}
+        />
       )}
     </>
   )
