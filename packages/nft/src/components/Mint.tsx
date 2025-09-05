@@ -4,6 +4,7 @@ import { NftHelper } from '@bitcoin-computer/TBC721'
 import { Link } from 'react-router-dom'
 import { VITE_NFT_MOD_SPEC } from '../constants/modSpecs'
 import { Loader } from '../utils'
+import { useNavigate } from 'react-router-dom'
 
 function SuccessContent(id: string) {
   return (
@@ -96,6 +97,8 @@ export default function Mint() {
   const [url, setUrl] = useState('')
   const [isLoading, setIsLoading] = useState(false)
 
+  const navigate = useNavigate()
+
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
@@ -104,7 +107,7 @@ export default function Mint() {
       const nft = await nftHelper.mint(name, symbol, url)
       setSuccessRev(nft._id)
       setIsLoading(false)
-      Modal.showModal('success-modal')
+      navigate(`/objects/${nft._id}`, { state: { isNew: true } })
     } catch (err) {
       setIsLoading(false)
       if (err instanceof Error) {

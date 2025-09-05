@@ -258,7 +258,7 @@ const Buy = ({
   )
 }
 
-function SuccessContent(id: string) {
+function BoughtNft(id: string) {
   return (
     <>
       <div className="p-4 md:p-5">
@@ -287,8 +287,26 @@ function SuccessContent(id: string) {
   )
 }
 
+function NewNFT() {
+  return (
+    <>
+      <div className="p-4 md:p-5">
+        <div className="dark:text-gray-400">Congratulations! You minted an nft.</div>
+      </div>
+      <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+        <button
+          onClick={() => Modal.hideModal('new-modal')}
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Close
+        </button>
+      </div>
+    </>
+  )
+}
+
 function NftView() {
-  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
   const location = useLocation()
   const params = useParams()
   const navigate = useNavigate()
@@ -296,22 +314,54 @@ function NftView() {
   const computer = useContext(ComputerContext)
   const [nft, setNft] = useState<NFT | null>(null)
   const [functionResult, setFunctionResult] = useState<string>('')
+  const [isLoading, setIsLoading] = useState(true)
+
+  const isNew = location.state?.isNew || false
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        showLoader(true)
         const latesRev = await computer.getLatestRev(id)
         const synced = (await computer.sync(latesRev)) as NFT
         setNft(synced)
-        showLoader(false)
-      } catch {
-        showLoader(false)
+      } catch (err) {
+        if (err instanceof Error) console.log(err.stack)
         showSnackBar('Not a valid NFT rev', false)
+      } finally {
+        setIsLoading(false)
       }
     }
     fetch()
   }, [computer, id, location, navigate])
+
+  useEffect(() => {
+    if (nft && isNew) {
+      console.log('is NEW!!!')
+      Modal.showModal('new-modal')
+    }
+  }, [nft, isNew])
+
+  if (isLoading) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4 animate-pulse">
+        <div className="max-w-screen-xl items-center justify-between mx-auto">
+          <div className="grid grid-cols-3 gap-4">
+            <div className="col-span-2 rounded-l-lg bg-gray-300 dark:bg-gray-700 h-96"></div>
+            <div className="col-span-1 py-4 pr-4">
+              <div className="h-10 bg-gray-200 rounded dark:bg-gray-700 w-3/4 mb-1"></div>
+              <div className="h-6 bg-gray-200 rounded dark:bg-gray-700 w-1/2 mb-3"></div>
+              <div className="h-5 bg-gray-200 rounded dark:bg-gray-700 w-2/3 mb-4"></div>
+              <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
+              <div className="flex flex-row items-center">
+                <div className="bg-gray-200 rounded-lg dark:bg-gray-700 border border-gray-300 dark:border-gray-600 flex-1 h-10"></div>
+                <div className="ml-3 bg-gray-200 rounded-lg dark:bg-gray-700 h-10 w-32"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (!nft) return <></>
 
@@ -346,10 +396,12 @@ function NftView() {
 
       <Modal.Component
         title={'Success'}
-        content={SuccessContent}
+        content={BoughtNft}
         contentData={functionResult}
         id={modalId}
       />
+
+      <Modal.Component title={'Success'} content={NewNFT} id={'new-modal'} />
     </div>
   )
 }
