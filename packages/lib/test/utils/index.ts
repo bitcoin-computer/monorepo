@@ -2,15 +2,11 @@ import dotenv from 'dotenv'
 import * as chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 import path from 'path'
-import { fileURLToPath } from 'url'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 // possible env paths
 const envPaths = [
   path.resolve(process.cwd(), './packages/node/.env'), // monorepo root
-  path.resolve(__dirname, '../node/.env'), // when running from lib
+  '../node/.env', // when running from lib
 ]
 
 for (const envPath of envPaths) {

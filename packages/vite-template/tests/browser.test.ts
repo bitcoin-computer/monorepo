@@ -66,16 +66,15 @@ describe('Bitcoin Computer Tests', () => {
     await page.waitForSelector('button[type="submit"]', { visible: true })
     const loginButton = await findButtonByText(page, 'Log In')
     await loginButton!.click()
-
-    await waitForSelectorAndClick(page, 'button[data-drawer-target="wallet-drawer"]')
-    await delay(1000)
+    await delay(3000)
   })
 
   it('should click the "Wallet" button, and fund', async () => {
+    await waitForSelectorAndClick(page, 'button[data-drawer-target="wallet-drawer"]')
+    await delay(2000)
     await waitForSelectorAndClick(page, '#fund-wallet')
-
+    await delay(2000)
     await waitForSelectorAndClick(page, 'button[data-drawer-hide="wallet-drawer"]')
-
     await delay(1000)
   })
 
@@ -86,7 +85,7 @@ describe('Bitcoin Computer Tests', () => {
 
     await waitForSelectorAndClick(page, '#counter-link')
 
-    await delay(1000)
+    await delay(2000)
   })
 
   it('should input 2, open dropdown, and select "number"', async () => {

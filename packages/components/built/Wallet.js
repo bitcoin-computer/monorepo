@@ -80,7 +80,12 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
         }
         catch (err) {
             showLoader(false);
-            showSnackBar('Error fetching wallet details', false);
+            if (err instanceof Error) {
+                showSnackBar(`Error fetching wallet details, ${err.message}`, false);
+            }
+            else {
+                showSnackBar('Error fetching wallet details', false);
+            }
         }
     }, [computer, modSpecs]);
     const fund = async () => {

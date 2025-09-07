@@ -15,6 +15,7 @@
     "prebuild": "npm run lint",
     "build": "rm -rf build && tsc -p tsconfig.release.json",
     "build:turbo": "turbo run build",
+    "compile:test": "rm -rf dist && tsc -p tsconfig.test.json",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint . --ext .ts,.tsx --ignore-pattern build/",
     "lint:fix": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",

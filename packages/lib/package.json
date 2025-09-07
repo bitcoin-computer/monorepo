@@ -55,6 +55,7 @@
   "scripts": {
     "clean": "rm -rf js-build && npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
+    "compile:test": "tsc",
     "prepublishOnly": "../../scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
     "test:rerun-failed": "tsc && node ../../scripts/rerun-failed.js",

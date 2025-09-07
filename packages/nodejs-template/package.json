@@ -15,6 +15,7 @@
     "build:turbo": "turbo run build",
     "clean": "npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
+    "compile:test": "rm -rf dist && tsc -p tsconfig.test.json",
     "lint": "eslint --fix . --ext .ts,.tsx",
     "start": "node build/src/main.js",
     "test": "rm -rf dist && tsc -p tsconfig.test.json && mocha --config .mocharc.json",

@@ -1,6 +1,15 @@
-import { config } from 'dotenv';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-config({ path: '../node/.env' });
+// possible env paths
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // monorepo root
+  '../node/.env', // when running from nakamotojs
+];
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath });
+}
 
 export const CHAIN = process.env.BCN_CHAIN || 'LTC';
 export const NETWORK = process.env.BCN_NETWORK || 'regtest';

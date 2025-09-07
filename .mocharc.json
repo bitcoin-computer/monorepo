@@ -1,8 +1,11 @@
 {
   "require": ["source-map-support/register"],
+  "node-option": ["experimental-specifier-resolution=node"],
   "timeout": 30000,
   "spec": [
-    "packages/lib/test-build/**/*.test.js",
+    "packages/nakamotojs/test/*.spec.js",
+    "packages/nakamotojs/test/integration/*.spec.js",
+    "packages/lib/js-build/*.test.js",
     "packages/node/test/*.js",
     "packages/nodejs-template/dist/test/*.js",
     "packages/swap/dist/test/*.js",

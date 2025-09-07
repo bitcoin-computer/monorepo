@@ -84,9 +84,7 @@ testResultsFiles.forEach((testResultsFile) => {
       .map((test) => {
         // Escape special regex characters for Mocha's --grep
         const regexEscaped = test.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-        // Escape single quotes for the shell
-        const shellEscaped = regexEscaped.replace(/'/g, "\\'");
-        return shellEscaped;
+        return regexEscaped;
       })
       .filter((title) => title.trim() !== "");
     if (escapedTitles.length === 0) {

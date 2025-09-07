@@ -38,7 +38,9 @@
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
     "prepare": "husky",
     "test:rerun-failed": "node ./scripts/rerun-failed.js",
-    "test:mocha:all": "BCN_CHAIN=LTC BCN_NETWORK=regtest POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha --config .mocharc.json",
+    "test:compile:mocha": "npm run compile:test --if-present --workspace=@bitcoin-computer/lib --workspace=@bitcoin-computer/swap --workspace=@bitcoin-computer/TBC20 --workspace=@bitcoin-computer/TBC721 --workspace=@bitcoin-computer/nodejs-template --workspace=@bitcoin-computer/nakamotojs",
+    "test:mocha:all": "npm run test:compile:mocha && BITCOIN_RPC_HOST=127.0.0.1 BCN_CHAIN=LTC BCN_NETWORK=regtest POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha --config .mocharc.json",
+    "test:puppeteer:build:headless": "npm run test:puppeteer:build:headless --if-present --workspace=@bitcoin-computer/vite-template",
     "prepublishOnly": "./scripts/check-obfuscation.sh && npm run test",
     "test": "npm run test --if-present --workspaces",
     "types": "npm run types --if-present --workspaces"
