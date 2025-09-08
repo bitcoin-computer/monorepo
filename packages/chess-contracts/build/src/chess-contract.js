@@ -205,12 +205,18 @@ export class ChessContractHelper {
         const network = this.computer.getNetwork();
         const n = networks.getNetwork(chain, network);
         const { hdPrivateKey } = this.computer.db.wallet;
-        // Create redeem tx
-        const redeemTx = new Transaction();
-        redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), 1);
         const { output } = payments.p2pkh({ pubkey: hdPrivateKey.publicKey, ...n });
-        redeemTx.addOutput(output, BigInt(this.satoshis) - fee);
-        const scriptASM = this.getASM();
+        // Create redeem tx
+        const redeemTx = ChessContractHelper.createRedeemTx(txId, hdPrivateKey, this.satoshis, fee, output, this.getASM(), 1);
+        //  new Transaction()
+        const redeemTxHex = redeemTx.toHex();
+        await chessContract.setRedeemHex(redeemTxHex);
+        return;
+    }
+    static createRedeemTx(txId, hdPrivateKey, satoshis, fee, output, scriptASM, inputIndex) {
+        const redeemTx = new Transaction();
+        redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), inputIndex);
+        redeemTx.addOutput(output, BigInt(satoshis) - fee);
         const redeemScript = bscript.fromASM(scriptASM);
         const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL);
         const winnerSig = bscript.signature.encode(hdPrivateKey.sign(sigHash), Transaction.SIGHASH_ALL);
@@ -220,9 +226,7 @@ export class ChessContractHelper {
             redeem: { input: partialRedeemInput, output: redeemScript },
         });
         redeemTx.setInputScript(0, partialScript.input);
-        const redeemTxHex = redeemTx.toHex();
-        await chessContract.setRedeemHex(redeemTxHex);
-        return;
+        return redeemTx;
     }
     static validateAndSignRedeemTx(redeemTx, winnerPublicKey, validatorKeyPair, expectedRedeemScript, network, playerWIsTheValidator = false) {
         // Verify transaction structure

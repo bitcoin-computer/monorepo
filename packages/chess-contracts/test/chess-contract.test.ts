@@ -2,7 +2,7 @@ import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { bufferUtils, networks, payments, script as bscript } from '@bitcoin-computer/nakamotojs'
 import { ChessContractHelper } from '../src/chess-contract.js'
 import { expect } from 'expect'
-import { ECPairFactory, ECPairInterface } from 'ecpair'
+import { ECPairFactory } from 'ecpair'
 import * as ecc from '@bitcoin-computer/secp256k1'
 
 const url = 'http://localhost:1031'
@@ -76,31 +76,6 @@ describe('Should create a deposit transaction for the Chess game with operator',
     return commitTxId
   }
 
-  const createRedeemTx = (
-    claimantKeyPair: ECPairInterface,
-    commitTxId: string,
-    outputScript: Buffer | undefined,
-    amount: bigint,
-  ) => {
-    if (!outputScript) {
-      throw new Error('Invalid outputScript provided')
-    }
-    const redeemTx = new Transaction()
-    redeemTx.addInput(Buffer.from(commitTxId, 'hex').reverse(), 0)
-    redeemTx.addOutput(outputScript, amount)
-    const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
-    const claimantSig = bscript.signature.encode(
-      claimantKeyPair.sign(sigHash),
-      Transaction.SIGHASH_ALL,
-    )
-    const partialRedeemInput = bscript.compile([Buffer.alloc(0), claimantSig])
-    const partialScript = payments.p2sh({
-      redeem: { input: partialRedeemInput, output: redeemScript },
-    })
-    redeemTx.setInputScript(0, partialScript.input as Buffer)
-    return redeemTx
-  }
-
   // Tests
   it('Should create the deposit transaction and redeem it', async () => {
     const commitTxId = await createCommitTx()
@@ -123,11 +98,14 @@ describe('Should create a deposit transaction for the Chess game with operator',
   validators.forEach((validator) => {
     it(`Should allow Alice (winner) to claim funds with ${validator.name}`, async () => {
       const commitTxId = await createCommitTx()
-      const redeemTx = createRedeemTx(
-        aliceKeyPair,
+      const redeemTx = ChessContractHelper.createRedeemTx(
         commitTxId,
+        aliceComputer.db.wallet.hdPrivateKey,
+        2n * betAmount,
+        fees,
         aliceChangeOutput,
-        2n * betAmount - fees,
+        outScript,
+        0,
       )
       expect(() => {
         ChessContractHelper.validateAndSignRedeemTx(
@@ -142,11 +120,14 @@ describe('Should create a deposit transaction for the Chess game with operator',
 
     it(`Should reject Bob (loser) claiming with ${validator.name}`, async () => {
       const commitTxId = await createCommitTx()
-      const redeemTx = createRedeemTx(
-        bobKeyPair,
+      const redeemTx = ChessContractHelper.createRedeemTx(
         commitTxId,
+        bobComputer.db.wallet.hdPrivateKey,
+        2n * betAmount,
+        fees,
         aliceChangeOutput,
-        2n * betAmount - fees,
+        outScript,
+        0,
       )
       expect(() => {
         ChessContractHelper.validateAndSignRedeemTx(
@@ -163,11 +144,14 @@ describe('Should create a deposit transaction for the Chess game with operator',
   it('Should reject if output is not to winner’s address', async () => {
     const commitTxId = await createCommitTx()
     const winnerPublicKey = alicePublicKey
-    const redeemTx = createRedeemTx(
-      aliceKeyPair,
+    const redeemTx = ChessContractHelper.createRedeemTx(
       commitTxId,
+      aliceComputer.db.wallet.hdPrivateKey,
+      2n * betAmount,
+      fees,
       bobChangeOutput,
-      2n * betAmount - fees,
+      outScript,
+      0,
     )
     expect(() => {
       ChessContractHelper.validateAndSignRedeemTx(
@@ -183,11 +167,14 @@ describe('Should create a deposit transaction for the Chess game with operator',
   it('Should reject if transaction has multiple inputs', async () => {
     const commitTxId = await createCommitTx()
     const winnerPublicKey = alicePublicKey
-    const redeemTx = createRedeemTx(
-      aliceKeyPair,
+    const redeemTx = ChessContractHelper.createRedeemTx(
       commitTxId,
+      aliceComputer.db.wallet.hdPrivateKey,
+      2n * betAmount,
+      fees,
       aliceChangeOutput,
-      2n * betAmount - fees,
+      outScript,
+      0,
     )
     redeemTx.addInput(Buffer.from('00'.repeat(32), 'hex'), 0)
     expect(() => {
@@ -204,11 +191,14 @@ describe('Should create a deposit transaction for the Chess game with operator',
   it('Should reject if scriptSig has invalid format', async () => {
     const commitTxId = await createCommitTx()
     const winnerPublicKey = alicePublicKey
-    const redeemTx = createRedeemTx(
-      aliceKeyPair,
+    const redeemTx = ChessContractHelper.createRedeemTx(
       commitTxId,
+      aliceComputer.db.wallet.hdPrivateKey,
+      2n * betAmount,
+      fees,
       aliceChangeOutput,
-      2n * betAmount - fees,
+      outScript,
+      0,
     )
     const scriptSig = redeemTx.ins[0].script
     const decompiled = bscript.decompile(scriptSig) as Buffer[]
@@ -256,11 +246,14 @@ describe('Should create a deposit transaction for the Chess game with operator',
   it('Should reject if claimant signature is invalid', async () => {
     const commitTxId = await createCommitTx()
     const winnerPublicKey = alicePublicKey
-    const redeemTx = createRedeemTx(
-      aliceKeyPair,
+    const redeemTx = ChessContractHelper.createRedeemTx(
       commitTxId,
+      aliceComputer.db.wallet.hdPrivateKey,
+      2n * betAmount,
+      fees,
       aliceChangeOutput,
-      2n * betAmount - fees,
+      outScript,
+      0,
     )
     const scriptSig = redeemTx.ins[0].script
     const decompiled = bscript.decompile(scriptSig) as Buffer[]

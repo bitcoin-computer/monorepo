@@ -2,6 +2,7 @@ import { Computer, Transaction } from '@bitcoin-computer/lib';
 import { networks } from '@bitcoin-computer/nakamotojs';
 import { Buffer } from 'buffer';
 import { ECPairInterface } from 'ecpair';
+import { BIP32Interface } from 'bip32';
 export declare const NotEnoughFundError = "Not enough funds to create chess game.";
 type PaymentType = {
     satoshis: bigint;
@@ -66,6 +67,7 @@ export declare class ChessContractHelper {
     }>;
     spend(chessContract: ChessContract, fee?: bigint): Promise<void>;
     spendWithConfirmation(txId: string, chessContract: ChessContract, fee?: bigint): Promise<void>;
+    static createRedeemTx(txId: string, hdPrivateKey: BIP32Interface, satoshis: bigint, fee: bigint, output: Buffer | undefined, scriptASM: string, inputIndex: number): Transaction;
     static validateAndSignRedeemTx(redeemTx: Transaction, winnerPublicKey: Buffer, validatorKeyPair: ECPairInterface, expectedRedeemScript: Buffer, network: networks.Network, playerWIsTheValidator?: boolean): Transaction;
 }
 export declare const signRedeemTx: (computer: Computer, chessContract: ChessContract, txWrapper: WinnerTxWrapper) => Promise<Transaction>;
