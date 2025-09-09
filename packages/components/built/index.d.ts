@@ -12,3 +12,4 @@ export { Drawer } from './Drawer';
 export { Wallet, WalletComponents } from './Wallet';
 export { Card } from './Card';
 export * from './common/utils';
+export { PrimaryActionButton, SecondaryActionButton } from './ActionButtons';

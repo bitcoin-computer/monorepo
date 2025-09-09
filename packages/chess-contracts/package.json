@@ -23,7 +23,7 @@
     "deploy": "tsc && node ./build/scripts/deploy.js",
     "lint": "eslint .",
     "start": "node build/src/index.js",
-    "test": "mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
+    "test": "npm run build && mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
     "test:show": "npm run test 2>&1 | tee chess-contracts.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open chess-contracts.log; fi",
     "types": "tsc --noEmit"
   },
@@ -31,6 +31,7 @@
     "@bitcoin-computer/lib": "^0.26.0-beta.0",
     "@bitcoin-computer/secp256k1": "^0.26.0-beta.0",
     "assert": "^2.0.0",
+    "bip32": "^4.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "ecpair": "^2.1.0",
