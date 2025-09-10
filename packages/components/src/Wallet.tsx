@@ -332,14 +332,3 @@ export function Wallet({ modSpecs }: { modSpecs?: string[] }) {
 
   return <Drawer.Component Content={Content} id="wallet-drawer" />
 }
-
-export const WalletComponents = {
-  Balance,
-  Address,
-  PublicKey,
-  Mnemonic,
-  Chain,
-  Network,
-  Url,
-  LogOut,
-}

@@ -47,7 +47,6 @@
     "test": "npm run build && npm run format:ci && npm run lint && npm run nobuild:coverage",
     "test:integration": "npm run build && npm run format:ci && npm run lint && npm run nobuild:integration",
     "test:integration:show": "npm run test:integration | tee nakamotojs-integration-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-integration-test.log; fi",
-    "test:show": "npm run test:unit:show && npm run test:integration:show",
     "test:unit:show": "npm run test 2>&1 | tee nakamotojs-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open nakamotojs-test.log; fi"
   },
   "dependencies": {

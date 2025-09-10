@@ -58,9 +58,8 @@
     "compile:test": "tsc",
     "prepublishOnly": "../../scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
-    "test:rerun-failed": "tsc && node ../../scripts/rerun-failed.js",
+    "test:rerun": "tsc && node ../../scripts/rerun-failed.js",
     "test": "tsc && mocha",
-    "test:show": "npm run test 2>&1 | tee lib-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open lib-test.log; fi",
     "types": "tsc --noEmit"
   },
   "dependencies": {
