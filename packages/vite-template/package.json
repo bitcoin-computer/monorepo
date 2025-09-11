@@ -22,6 +22,7 @@
     "start": "vite",
     "test": "exit 0",
     "test:puppeteer": "vitest run --config vitest.puppeteer.config.ts",
+    "test:puppeteer:build": "npm run deploy -- --yes && pkill -f 'vite preview' || true && npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 npm run test:puppeteer && pkill -f 'vite preview')",
     "test:puppeteer:build:headless": "npm run deploy && pkill -f 'vite preview' || true && npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 HEADLESS=true npm run test:puppeteer && pkill -f 'vite preview')",
     "test:puppeteer:headless": "HEADLESS=true npm run test:puppeteer",
     "types": "tsc --noEmit"

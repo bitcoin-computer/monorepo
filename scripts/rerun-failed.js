@@ -2,7 +2,7 @@
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { execSync } from "child_process";
-import glob from "glob";
+import * as glob from "glob";
 
 // ANSI color codes for red/green output
 const colors = {

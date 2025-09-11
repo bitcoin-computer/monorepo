@@ -5,8 +5,16 @@ import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
 import { StaticSwapHelper } from '../src/static-swap.js'
 import { meta } from '../src/utils/index.js'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
