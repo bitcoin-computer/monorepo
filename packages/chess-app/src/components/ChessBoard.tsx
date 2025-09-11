@@ -76,12 +76,16 @@ function ListLayout(props: { listOfMoves: string[] }) {
 }
 
 function WinnerModal(data: { winnerPubKey: string; userPubKey: string; amount: string }) {
-  const isWinner = data.winnerPubKey === data.userPubKey
+  const isWinner = data.winnerPubKey ? data.winnerPubKey === data.userPubKey : undefined
   return (
     <>
       <div className="p-4">
         <p className="block mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-gray-200">
-          {isWinner ? (
+          {typeof isWinner === 'undefined' ? (
+            <div className="text-center">
+              <p className="text-sm text-gray-600 dark:text-gray-400">Loading details!</p>
+            </div>
+          ) : isWinner ? (
             <>
               {/* Winning State */}
               <div className="text-center">
@@ -166,7 +170,7 @@ const renderButtonContent = (
   return (
     <button
       onClick={releaseFund}
-      disabled={!chessContract || !chessContract.winnerTxWrapper.redeemTxHex}
+      disabled={!chessContract || !!chessContract.winnerTxWrapper.redeemTxHex}
       className={buttonStyles}
     >
       Release Fund
