@@ -25,7 +25,7 @@ function ExpressionCard({ content, env }: { content: string; env: { [s: string]:
   return <Card content={formattedContent} />
 }
 
-function Component() {
+export function TransactionComponent() {
   const location = useLocation()
   const params = useParams()
   const computer = useContext(ComputerContext)
@@ -221,4 +221,4 @@ function Component() {
   )
 }
 
-export const Transaction = { Component }
+export const Transaction = { Component: TransactionComponent }

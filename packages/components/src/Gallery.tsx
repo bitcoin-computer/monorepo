@@ -153,7 +153,7 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
   )
 }
 
-export default function WithPagination<T extends Class>(q: UserQuery<T>) {
+export function GalleryWithPagination<T extends Class>(q: UserQuery<T>) {
   const contractsPerPage = 12
   const computer = useContext(ComputerContext)
   const { showLoader } = useUtilsComponents()
@@ -221,5 +221,5 @@ export default function WithPagination<T extends Class>(q: UserQuery<T>) {
 
 export const Gallery = {
   FromRevs,
-  WithPagination,
+  WithPagination: GalleryWithPagination,
 }

@@ -118,3 +118,6 @@ workspace.code-workspace
 
 # turbo
 .turbo
+
+# test-results
+test-results.json

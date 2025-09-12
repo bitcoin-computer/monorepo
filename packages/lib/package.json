@@ -55,10 +55,11 @@
   "scripts": {
     "clean": "rm -rf js-build && npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
+    "compile:test": "tsc",
     "prepublishOnly": "../../scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
-    "test": "tsc && mocha -r source-map-support/register 'js-build/test/**/*.js'",
-    "test:show": "npm run test 2>&1 | tee lib-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open lib-test.log; fi",
+    "test:rerun": "tsc && node ../../scripts/rerun-failed.js",
+    "test": "tsc && mocha",
     "types": "tsc --noEmit"
   },
   "dependencies": {

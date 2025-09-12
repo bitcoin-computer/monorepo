@@ -1,11 +1,7 @@
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer, Contract, Transaction } from '@bitcoin-computer/lib'
-
-import { chain, network, url, expect } from './utils'
-import dotenv from 'dotenv'
-
-dotenv.config({ path: '../node/.env' })
+import { chain, network, url, expect } from './utils/index.js'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()

@@ -1,5 +1,5 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { chain, expect, network, url } from '../../utils'
+import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('getBalance', () => {
   it('Should return the balance', async () => {

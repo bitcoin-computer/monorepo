@@ -3,6 +3,7 @@ import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import chaiMatchPattern from 'chai-match-pattern'
 import { NFT, NftHelper } from '../src/nft.js'
+import path from 'path'
 
 chai.use(chaiMatchPattern)
 const { expect } = chai
@@ -11,7 +12,14 @@ const { expect } = chai
 // in the monorepo root level and add the following line:
 // BCN_URL=http://localhost:1031
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN

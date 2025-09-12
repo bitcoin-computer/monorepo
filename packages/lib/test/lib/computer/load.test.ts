@@ -1,5 +1,5 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { chain, expect, network, url } from '../../utils'
+import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('load', () => {
   // A smart contract

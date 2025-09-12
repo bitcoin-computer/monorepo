@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 
-function ShowDrawer({ text, id }: { text: string; id: string }) {
+export function ShowDrawer({ text, id }: { text: string; id: string }) {
   return (
     <button
       data-drawer-target={id}
@@ -13,7 +13,7 @@ function ShowDrawer({ text, id }: { text: string; id: string }) {
   )
 }
 
-function Component({
+export function DrawerComponent({
   Content,
   id,
 }: {
@@ -77,6 +77,6 @@ function Component({
 }
 
 export const Drawer = {
-  Component,
+  Component: DrawerComponent,
   ShowDrawer,
 }
