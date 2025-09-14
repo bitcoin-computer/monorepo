@@ -65,7 +65,12 @@ describe('Ord Sale', () => {
       const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
       const { tx } = await seller.encode({
         exp: `${OrdSale} OrdSale.exec(b1, b2, nft, payment)`,
-        env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
+        env: {
+          b1: b1Mock._rev as string,
+          b2: b2Mock._rev as string,
+          nft: nft._rev,
+          payment: paymentMock._rev as string,
+        },
         mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
 
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
@@ -78,13 +83,13 @@ describe('Ord Sale', () => {
       const b1 = await buyer.new(Payment, [mockSatoshis])
       const b2 = await buyer.new(Payment, [mockSatoshis])
 
-      const [b1TxId, b1Index] = b1._rev.split(':')
+      const [b1TxId, b1Index] = (b1._rev as string).split(':')
       tx.updateInput(0, { txId: b1TxId, index: parseInt(b1Index, 10) })
 
-      const [b2TxId, b2Index] = b2._rev.split(':')
+      const [b2TxId, b2Index] = (b2._rev as string).split(':')
       tx.updateInput(1, { txId: b2TxId, index: parseInt(b2Index, 10) })
 
-      const [paymentTxId, paymentIndex] = payment._rev.split(':')
+      const [paymentTxId, paymentIndex] = (payment._rev as string).split(':')
       tx.updateInput(3, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
 
       const scriptPubKey = seller.toScriptPubKey()
@@ -143,9 +148,9 @@ describe('Ord Sale', () => {
       const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
       const { nft: n, payment: p } = env
 
-      expect(p._satoshis).eq(nftPrice)
-      expect(n._owners).deep.eq([bob.getPublicKey()])
-      expect(p._owners).deep.eq([alice.getPublicKey()])
+      expect(p.getSatoshis()).eq(nftPrice)
+      expect(n.getOwners()).deep.eq([bob.getPublicKey()])
+      expect(p.getOwners()).deep.eq([alice.getPublicKey()])
     })
   })
 

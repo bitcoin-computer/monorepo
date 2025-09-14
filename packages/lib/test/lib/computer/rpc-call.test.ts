@@ -22,7 +22,7 @@ describe('rpcCall', () => {
   // Query for information about the transaction
   it('Should call getRawTransaction', async () => {
     const c = await computer.new(C, [])
-    const txId = c._id.slice(0, 64)
+    const txId = (c.getId() as string).slice(0, 64)
     const { result } = await computer.rpcCall('getRawTransaction', `${txId} 1`)
     expect(result.txid).eq(txId)
     expect(result.hex).a('string')
@@ -31,7 +31,7 @@ describe('rpcCall', () => {
   // Query for information about an output
   it('Should call getTxOut', async () => {
     const c = await computer.new(C, [])
-    const [txId, outNum] = c._id.split(':')
+    const [txId, outNum] = (c.getId() as string).split(':')
     const { result } = await computer.rpcCall('getTxOut', `${txId} ${outNum} true`)
     expect(result.scriptPubKey.asm).eq(`1 ${computer.getPublicKey()} 1 OP_CHECKMULTISIG`)
   })

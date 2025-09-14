@@ -94,10 +94,10 @@ export class ChessContract extends Contract {
     this.fen = chessLib.fen()
 
     if (!chessLib.isGameOver()) {
-      if (this._owners[0] === this.publicKeyW) {
-        this._owners = [this.publicKeyB]
+      if (this.getOwners()[0] === this.publicKeyW) {
+        this.setOwners([this.publicKeyB])
       } else {
-        this._owners = [this.publicKeyW]
+        this.setOwners([this.publicKeyW])
       }
     }
     return chessLib.isGameOver()
@@ -240,7 +240,7 @@ export class ChessContractHelper {
     const { effect } = await this.computer.encode(decoded)
     const { res: chessContract } = effect as unknown as { res: ChessContract }
 
-    this.satoshis = chessContract.payment._satoshis
+    this.satoshis = chessContract.payment.getSatoshis()
     this.nameW = chessContract.nameW
     this.nameB = chessContract.nameB
     this.publicKeyW = chessContract.publicKeyW
@@ -273,7 +273,7 @@ export class ChessContractHelper {
       })
       if (userRev) {
         const userObj = (await this.computer.sync(userRev)) as User
-        const gameId = chessContract._id
+        const gameId = chessContract.getId() as string
         if (!userObj.games.includes(gameId)) {
           await userObj.addGame(gameId)
         }
@@ -297,7 +297,7 @@ export class ChessContractHelper {
   }
 
   async spend(chessContract: ChessContract, fee = 10000n): Promise<void> {
-    const txId = chessContract._id.split(':')[0]
+    const txId = (chessContract.getId() as string).split(':')[0]
     return this.spendWithConfirmation(txId, chessContract, fee)
   }
 
@@ -434,7 +434,7 @@ export const signRedeemTx = async (
   chessContract: ChessContract,
   txWrapper: WinnerTxWrapper,
 ) => {
-  const winnerPublicKey = chessContract._owners[0] as string
+  const winnerPublicKey = chessContract.getOwners()[0] as string
   const network = computer.getNetwork()
   const chain = computer.getChain()
   const NETWORKOBJ = networks.getNetwork(chain, network)

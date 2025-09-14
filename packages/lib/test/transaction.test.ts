@@ -30,7 +30,7 @@ describe('Transaction', () => {
 
   describe('fromTxId', () => {
     it('Should return a transaction', async () => {
-      const txId = a._id.slice(0, 64)
+      const txId = (a.getId() as string).slice(0, 64)
       const tx = await Transaction.fromTxId({ txId, restClient })
       expect(tx instanceof Transaction).eq(true)
     })
@@ -38,7 +38,7 @@ describe('Transaction', () => {
 
   describe('fromHex', () => {
     it('Should return a transaction', async () => {
-      const txId = a._id.slice(0, 64)
+      const txId = (a.getId() as string).slice(0, 64)
       const tx = await Transaction.fromTxId({ txId, restClient })
       const hex = tx.toHex()
       const tx2 = Transaction.fromHex(hex)
@@ -49,7 +49,7 @@ describe('Transaction', () => {
 
   describe('fromBuffer', () => {
     it('Should return a transaction', async () => {
-      const txId = a._id.slice(0, 64)
+      const txId = (a.getId() as string).slice(0, 64)
       const tx = await Transaction.fromTxId({ txId, restClient })
       const hex = tx.toBuffer()
       const tx2 = Transaction.fromBuffer(hex)
@@ -60,21 +60,21 @@ describe('Transaction', () => {
 
   describe('inRevs and outRevs', () => {
     it('Should return the revisions spent and created', async () => {
-      const txId1 = a._id.slice(0, 64)
+      const txId1 = (a.getId() as string).slice(0, 64)
       const tx1 = await Transaction.fromTxId({ txId: txId1, restClient })
       expect(tx1.inRevs).deep.eq([])
-      expect(tx1.outRevs).deep.eq([a._id])
+      expect(tx1.outRevs).deep.eq([a.getId()])
 
-      const txId2 = a._rev.slice(0, 64)
+      const txId2 = (a._rev as string).slice(0, 64)
       const tx2 = await Transaction.fromTxId({ txId: txId2, restClient })
-      expect(tx2.inRevs).deep.eq([a._id])
+      expect(tx2.inRevs).deep.eq([a.getId()])
       expect(tx2.outRevs).deep.eq([a._rev])
     })
   })
 
   describe('onChainMetaData', () => {
     it('Should return the revisions spent and created', async () => {
-      const txId1 = a._id.slice(0, 64)
+      const txId1 = (a.getId() as string).slice(0, 64)
       const tx1 = await Transaction.fromTxId({ txId: txId1, restClient })
       expect(tx1.onChainMetaData).deep.eq({
         exp: `${A} new A()`,
@@ -84,7 +84,7 @@ describe('Transaction', () => {
         ioMap: [],
       })
 
-      const txId2 = a._rev.slice(0, 64)
+      const txId2 = (a._rev as string).slice(0, 64)
       const tx2 = await Transaction.fromTxId({ txId: txId2, restClient })
       expect(tx2.onChainMetaData).deep.eq({
         exp: `__bc__.inc()`,

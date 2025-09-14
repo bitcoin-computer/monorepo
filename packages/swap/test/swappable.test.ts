@@ -70,7 +70,7 @@ describe('Swapppable', () => {
     it('Alice builds, funds, and signs a swap transaction', async () => {
       ;({ tx } = await alice.encode({
         exp: `a.swap(b)`,
-        env: { a: a._rev, b: b._rev },
+        env: { a: a._rev as string, b: b._rev as string },
       }))
     })
 

@@ -59,7 +59,7 @@ describe('encode', () => {
       exp: `c.inc()`,
 
       // The value for the counter is stored at counter._rev
-      env: { c: counter._rev },
+      env: { c: counter._rev as string },
     })
 
     // As before we can broadcast the transaction to update the on-chain state

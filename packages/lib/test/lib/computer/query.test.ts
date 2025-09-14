@@ -39,7 +39,7 @@ describe('query', () => {
   // Query by public key
   it('Should return the latest revisions for a public key', async () => {
     const revs = await computer.query({ publicKey })
-    expect(revs.includes(counter._rev)).to.be.true
+    expect(revs.includes(counter._rev as string)).to.be.true
   })
 
   // Query by module specifier

@@ -77,7 +77,7 @@ function MintForm(props: {
       showLoader(true)
       const nftHelper = new NftHelper(computer, VITE_NFT_MOD_SPEC)
       const nft = await nftHelper.mint(name, symbol, url)
-      setSuccessRev(nft._id)
+      setSuccessRev(nft.getId() as string)
       showLoader(false)
       Modal.showModal('success-modal')
     } catch (err) {

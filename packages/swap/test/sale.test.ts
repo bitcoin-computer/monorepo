@@ -56,7 +56,7 @@ describe('Sale', () => {
       // Seller creates partially signed swap as a sale offer
       const { tx: saleTx } = await seller.encode({
         exp: `${Sale} Sale.exec(nft, payment)`,
-        env: { nft: nft._rev, payment: mock._rev },
+        env: { nft: nft._rev as string, payment: mock._rev as string },
         mocks: { payment: mock },
 
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
@@ -66,7 +66,7 @@ describe('Sale', () => {
 
       // Buyer creates a payment object with the asking price
       const payment = await buyer.new(Payment, [BigInt(1e8)])
-      const [paymentTxId, paymentIndex] = payment._rev.split(':')
+      const [paymentTxId, paymentIndex] = (payment._rev as string).split(':')
 
       // Buyer set's the payment object as the second input of the swap tx
       saleTx.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
@@ -81,9 +81,9 @@ describe('Sale', () => {
       const { env } = (await buyer.sync(saleTx.getId())) as { env: { nft: NFT; payment: NFT } }
       const { nft: n, payment: p } = env
 
-      expect(p._satoshis).eq(BigInt(1e8))
-      expect(n._owners).deep.eq([buyer.getPublicKey()])
-      expect(p._owners).deep.eq([seller.getPublicKey()])
+      expect(p.getSatoshis()).eq(BigInt(1e8))
+      expect(n.getOwners()).deep.eq([buyer.getPublicKey()])
+      expect(p.getOwners()).deep.eq([seller.getPublicKey()])
     })
 
     it('Should work with helper classes', async () => {
@@ -128,14 +128,14 @@ describe('Sale', () => {
       const { env } = (await bob.sync(finalTx.getId())) as { env: { o: any; p: Payment } }
       const { o, p } = env
 
-      expect(p._satoshis).eq(nftPrice)
-      expect(o._owners).deep.eq([bob.getPublicKey()])
-      expect(p._owners).deep.eq([alice.getPublicKey()])
+      expect(p.getSatoshis()).eq(nftPrice)
+      expect(o.getOwners()).deep.eq([bob.getPublicKey()])
+      expect(p.getOwners()).deep.eq([alice.getPublicKey()])
 
       // Alice withdraws her payment object
       const { tx: alicePaymentTx } = await alice.encode({
         exp: `alicePayment.setSatoshis(7860n)`,
-        env: { alicePayment: p._rev },
+        env: { alicePayment: p._rev as string },
       })
 
       expect(await alice.broadcast(alicePaymentTx)).a('string')
@@ -202,13 +202,13 @@ describe('Sale', () => {
     })
 
     it("Thief update's the swap transaction maliciously to receive the NFT at half the price", () => {
-      const [paymentTxId, paymentIndex] = tooLowPayment._rev.split(':')
+      const [paymentTxId, paymentIndex] = (tooLowPayment._rev as string).split(':')
       txClone.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
       txClone.updateOutput(1, { scriptPubKey: thief.toScriptPubKey() })
 
       // this is where the thief tries to alter the transaction in order
       // to buy the nft at half the price
-      txClone.updateOutput(0, { value: tooLowPayment._satoshis })
+      txClone.updateOutput(0, { value: tooLowPayment.getSatoshis() })
     })
 
     it('Thief funds the swap transaction', async () => {

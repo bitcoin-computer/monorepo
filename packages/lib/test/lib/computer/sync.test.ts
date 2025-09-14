@@ -39,20 +39,20 @@ describe('sync', () => {
     await counter.inc()
 
     // Sync to initial revision
-    expect(await computer.sync(counter._id)).deep.eq(initialCounter)
+    expect(await computer.sync(counter.getId() as string)).deep.eq(initialCounter)
 
     // Sync to latest revision
-    expect(await computer.sync(counter._rev)).deep.eq(counter)
+    expect(await computer.sync(counter.getRev() as string)).deep.eq(counter)
 
     // Sync to initial transaction id
-    const initialTxId = counter._id.slice(0, 64)
+    const initialTxId = (counter.getId() as string).slice(0, 64)
     expect(await computer.sync(initialTxId)).deep.eq({
       res: initialCounter,
       env: {},
     })
 
     // Sync to latest transaction id
-    const latestTxId = counter._rev.slice(0, 64)
+    const latestTxId = (counter._rev as string).slice(0, 64)
     expect(await computer.sync(latestTxId)).deep.eq({
       res: undefined,
       env: {

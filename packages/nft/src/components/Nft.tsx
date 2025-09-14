@@ -47,8 +47,8 @@ const BuyNFT = async ({
   await computer.broadcast(finalTx)
   // const test = await computer.sync(txId)
   // need to have a sleep on this to get latest reve
-  // const [updatedRev] = await computer.query({ ids: [nft._id] })
-  setFunctionResult(nft._id)
+  // const [updatedRev] = await computer.query({ ids: [nft.getId()] })
+  setFunctionResult(nft.getId() as string)
   Modal.showModal(modalId)
   return nftSatoshis
 }
@@ -117,18 +117,18 @@ const SmartObjectValues = ({ smartObject }: { smartObject: NFT }) => {
           </div>
         </div>
       )}
-      {smartObject._owners && smartObject._owners[0] && (
+      {smartObject.getOwners() && smartObject.getOwners()[0] && (
         <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">
           {capitalizeFirstLetter('owned by:')}{' '}
           <Link
-            to={`/?publicKey=${smartObject._owners[0]}`}
+            to={`/?publicKey=${smartObject.getOwners()[0]}`}
             className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
             onClick={() => {
               Modal.hideModal(modalId)
             }}
           >
-            {smartObject._owners[0].substring(0, 8)}...
-            {smartObject._owners[0].substring(smartObject._owners[0].length - 2)}
+            {smartObject.getOwners()[0].substring(0, 8)}...
+            {smartObject.getOwners()[0].substring(smartObject.getOwners()[0].length - 2)}
           </Link>
         </p>
       )}
@@ -286,11 +286,13 @@ const BuyNftComponent = ({
 }
 
 function showCreateOffer(computer: Computer, smartObject: NFT) {
-  return smartObject && smartObject._owners[0] === computer.getPublicKey()
+  return smartObject && smartObject.getOwners()[0] === computer.getPublicKey()
 }
 
 function showBuyOffer(computer: Computer, smartObject: NFT) {
-  return smartObject && smartObject._owners[0] !== computer.getPublicKey() && smartObject.offerTxRev
+  return (
+    smartObject && smartObject.getOwners()[0] !== computer.getPublicKey() && smartObject.offerTxRev
+  )
 }
 
 function SuccessContent(id: string) {

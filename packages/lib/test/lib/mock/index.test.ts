@@ -44,7 +44,7 @@ describe('Mock', async () => {
     // Update smart object
     const { tx: incTx } = await computer.encode({
       exp: `a.inc()`,
-      env: { a: a._rev },
+      env: { a: a._rev as string },
       mocks: { a: m },
     })
     await computer.broadcast(incTx)
@@ -62,8 +62,8 @@ describe('Mock', async () => {
       // Assume value m for variable a
       mocks: { a: m },
 
-      // Specify that the input that spends a points to m._rev
-      env: { a: m._rev },
+      // Specify that the input that spends a points to m.getRev()
+      env: { a: m._rev as string },
 
       // The transaction can only be funded and signed once it is finalized
       fund: false,
@@ -73,8 +73,8 @@ describe('Mock', async () => {
     // Create on-chain object
     const a = await computer.new(A, [])
 
-    // Update the outpoint of the first inputs to point to a._rev
-    const [txId, i] = a._rev.split(':')
+    // Update the outpoint of the first inputs to point to a.getRev()
+    const [txId, i] = (a.getRev() as string).split(':')
     const index = parseInt(i, 10)
     incTx.updateInput(0, { txId, index })
 

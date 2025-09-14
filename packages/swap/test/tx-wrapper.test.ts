@@ -78,7 +78,7 @@ describe('TxWrapper', () => {
       it('Alice builds, funds, and signs a swap transaction', async () => {
         ;({ tx: aliceTx } = await alice.encode({
           exp: `${StaticSwap} StaticSwap.exec(a, b)`,
-          env: { a: a._rev, b: b._rev },
+          env: { a: a._rev as string, b: b._rev as string },
         }))
       })
 
@@ -185,7 +185,7 @@ describe('TxWrapper', () => {
       it('Alice builds, funds, and signs a swap transaction', async () => {
         ;({ tx: aliceTx } = await alice.encode({
           exp: `${StaticSwap} StaticSwap.exec(a, b)`,
-          env: { a: a._rev, b: b._rev },
+          env: { a: a._rev as string, b: b._rev as string },
         }))
       })
 

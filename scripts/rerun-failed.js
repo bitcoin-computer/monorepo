@@ -33,9 +33,7 @@ function getTestResultsFiles() {
 const testResultsFiles = getTestResultsFiles();
 
 if (testResultsFiles.length === 0) {
-  console.error(
-    `${colors.red}No test-results.json files found.${colors.reset}`
-  );
+  console.error(`${colors.green}All tests have passed! 😊${colors.reset}`);
   process.exit(1);
 }
 

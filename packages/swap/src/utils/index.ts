@@ -1,4 +1,5 @@
-export const getMockedRev = () => `mock-${'0'.repeat(64)}:${Math.floor(Math.random() * 10000)}`
+export const mockRev = () => `mock-${'0'.repeat(64)}:${Math.floor(Math.random() * 1000000)}`
+export const mockPublicKey = '023a06bc3ca20170b8202737316a29923f5b0e47f39c6517990f3c75f3b3d4484c'
 
 export const RLTC: {
   network: 'regtest'

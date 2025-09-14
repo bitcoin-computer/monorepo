@@ -66,9 +66,9 @@ describe('Static Swap', () => {
         env: { a, b },
       } = (await bob.sync(tx.getId())) as { env: { a: NFT; b: NFT } }
       expect(a.name).deep.eq('a')
-      expect(a._owners).deep.eq([bob.getPublicKey()])
+      expect(a.getOwners()).deep.eq([bob.getPublicKey()])
       expect(b.name).deep.eq('b')
-      expect(b._owners).deep.eq([alice.getPublicKey()])
+      expect(b.getOwners()).deep.eq([alice.getPublicKey()])
     })
   })
 

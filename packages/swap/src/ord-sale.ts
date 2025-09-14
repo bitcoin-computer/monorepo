@@ -1,4 +1,3 @@
- 
 import { NFT } from '@bitcoin-computer/TBC721'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/lib'
@@ -7,11 +6,11 @@ import { Payment, PaymentMock } from './payment.js'
 
 export class OrdSale extends Contract {
   static exec(b1: Payment, b2: Payment, n: NFT, p: Payment) {
-    const [ownerT] = n._owners
-    const [ownerP] = p._owners
+    const [ownerT] = n.getOwners()
+    const [ownerP] = p.getOwners()
     n.transfer(ownerP)
     p.transfer(ownerT)
-    b1.setSatoshis(b1._satoshis + b2._satoshis)
+    b1.setSatoshis(b1.getSatoshis() + b2.getSatoshis())
     return [b1, n, p, b2]
   }
 }
@@ -37,7 +36,7 @@ export class OrdSaleHelper {
       exp: `OrdSale.exec(b1, b2, nft, payment)`,
       env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
       mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
-       
+
       sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
       inputIndex: 2,
       fund: false,
@@ -56,13 +55,13 @@ export class OrdSaleHelper {
     payment: Payment,
     scriptPubKey: Buffer,
   ) {
-    const [b1TxId, b1Index] = b1._rev.split(':')
+    const [b1TxId, b1Index] = (b1.getRev() as string).split(':')
     tx.updateInput(0, { txId: b1TxId, index: parseInt(b1Index, 10) })
 
-    const [b2TxId, b2Index] = b2._rev.split(':')
+    const [b2TxId, b2Index] = (b2.getRev() as string).split(':')
     tx.updateInput(1, { txId: b2TxId, index: parseInt(b2Index, 10) })
 
-    const [paymentTxId, paymentIndex] = payment._rev.split(':')
+    const [paymentTxId, paymentIndex] = (payment.getRev() as string).split(':')
     tx.updateInput(3, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
 
     tx.updateOutput(0, { scriptPubKey })

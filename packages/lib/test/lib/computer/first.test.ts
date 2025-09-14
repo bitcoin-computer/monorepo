@@ -26,7 +26,7 @@ describe('first', () => {
     const counter = await computer.new(Counter, [])
 
     // The first of an id is the id
-    expect(await computer.first(counter._id)).eq(counter._id)
+    expect(await computer.first(counter.getId() as string)).eq(counter.getId())
   })
 
   it('Should work if an object is updated', async () => {
@@ -34,8 +34,8 @@ describe('first', () => {
     await counter.inc()
 
     // The first is the id even if the object is updated
-    expect(await computer.first(counter._id)).eq(counter._id)
-    expect(await computer.first(counter._rev)).eq(counter._id)
+    expect(await computer.first(counter.getId() as string)).eq(counter.getId())
+    expect(await computer.first(counter.getRev() as string)).eq(counter.getId())
   })
 
   it('Should throw an error with a revision that does not exist', async () => {
@@ -47,7 +47,7 @@ describe('first', () => {
 
   it('Should throw an error with a revision that does not contain an object', async () => {
     const counter = await computer.new(Counter, [])
-    const noObject = counter._id.split(':')[0] + ':1'
+    const noObject = (counter.getId() as string).split(':')[0] + ':1'
 
     // Throws because there is no object at the output with that revision
     await expect(computer.first(noObject)).to.be.rejectedWith('Rev not found')

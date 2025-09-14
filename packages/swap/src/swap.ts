@@ -1,12 +1,11 @@
- 
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
 
 export class Swap extends Contract {
   constructor(a: NFT, b: NFT) {
     super()
-    const [ownerA] = a._owners
-    const [ownerB] = b._owners
+    const [ownerA] = a.getOwners()
+    const [ownerB] = b.getOwners()
     a.transfer(ownerB)
     b.transfer(ownerA)
   }

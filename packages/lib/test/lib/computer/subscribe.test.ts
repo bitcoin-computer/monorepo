@@ -24,7 +24,7 @@ describe('subscribe', () => {
 
     // Subscribe to updates on object c
     let eventCount = 0
-    const close = await computer.subscribe(c._id, ({ rev, hex }) => {
+    const close = await computer.subscribe(c.getId() as string, ({ rev, hex }) => {
       expect(rev).to.be.a('string')
       expect(hex).to.be.a('string')
       eventCount += 1

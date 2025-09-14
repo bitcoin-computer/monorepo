@@ -26,11 +26,11 @@ describe('next', () => {
     const counter = await computer.new(Counter, [])
     await counter.inc()
 
-    // The next revision of counter._id is counter._rev
-    expect(await computer.next(counter._id)).eq(counter._rev)
+    // The next revision of counter.getId() is counter._rev
+    expect(await computer.next(counter.getId() as string)).eq(counter._rev)
 
     // The next revision of counter._rev is undefined
-    expect(await computer.next(counter._rev)).eq(undefined)
+    expect(await computer.next(counter.getRev() as string)).eq(undefined)
   })
 
   it('Should throw an error with a revision that does not exist', async () => {
@@ -42,7 +42,7 @@ describe('next', () => {
 
   it('Should throw an error with a revision that does not contain an object', async () => {
     const counter = await computer.new(Counter, [])
-    const noObject = counter._id.split(':')[0] + ':1'
+    const noObject = (counter.getId() as string).split(':')[0] + ':1'
 
     // Throws because there is no object at the output with that revision
     await expect(computer.next(noObject)).to.be.rejectedWith('Rev not found')

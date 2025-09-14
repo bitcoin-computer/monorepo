@@ -1,6 +1,6 @@
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Computer, Contract, Transaction } from '@bitcoin-computer/lib'
+import { Computer, Contract, Mock, Transaction } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from './utils/index.js'
 
 chai.use(chaiMatchPattern)
@@ -22,27 +22,19 @@ const meta = {
 class NFT extends Contract {
   name: string
   symbol: string
-  _id: string
-  _rev: string
-  _root: string
-  _owners: string[]
 
   constructor(publicKey: string, name = '', symbol = '') {
     super({ _owners: [publicKey], name, symbol })
   }
 
   transfer(to: string) {
-    this._owners = [to]
+    this.setOwners([to])
   }
 }
 
 class Token extends Contract {
-  _id: string
-  _rev: string
-  _root: string
   supply: bigint
   totalSupply: bigint
-  _owners: string[]
 
   constructor(to: string, supply: bigint, totalSupply: bigint) {
     super({ supply, totalSupply, _owners: [to] })
@@ -56,12 +48,7 @@ class Token extends Contract {
 }
 
 class Chat extends Contract {
-  _id: string
-  _rev: string
-  _root: string
   messages: string[]
-  _owners: string[]
-  _readers: string[]
 
   constructor(publicKeys: string[]) {
     super({ messages: [], _owners: publicKeys, _readers: publicKeys })
@@ -72,53 +59,37 @@ class Chat extends Contract {
   }
 
   remove(publicKey: string) {
-    this._readers = this._readers.filter((o) => o !== publicKey)
+    this.setReaders((this.getReaders() || []).filter((o) => o !== publicKey))
   }
 }
 
 class Swap extends Contract {
   static exec(nftA: NFT, nftB: NFT) {
-    const [ownerA] = nftA._owners
-    const [ownerB] = nftB._owners
+    const [ownerA] = nftA.getOwners()
+    const [ownerB] = nftB.getOwners()
     nftA.transfer(ownerB)
     nftB.transfer(ownerA)
     return [nftB, nftA]
   }
 }
 
-class PaymentMock {
-  _id: string
-  _rev: string
-  _root: string
-  _satoshis: bigint
-  _owners: string[]
-
+class PaymentMock extends Mock {
   constructor(amount: bigint) {
-    this._id = mockedRev
-    this._rev = mockedRev
-    this._root = mockedRev
-    this._owners = [randomPublicKey]
-    this._satoshis = amount
+    super({ _satoshis: amount })
   }
 
   transfer(to: string) {
-    this._owners = [to]
+    this.setOwners([to])
   }
 }
 
 class Payment extends Contract {
-  _id: string
-  _rev: string
-  _root: string
-  _satoshis: bigint
-  _owners: string[]
-
   constructor(_satoshis: bigint) {
     super({ _satoshis })
   }
 
   transfer(to: string) {
-    this._owners = [to]
+    this.setOwners([to])
   }
 }
 
@@ -162,19 +133,19 @@ describe('Non-Fungible Token (NFT)', () => {
     })
 
     it('Property _owners is a singleton array with minters public key', () => {
-      expect(nft._owners).deep.eq([sender.getPublicKey()])
+      expect(nft.getOwners()).deep.eq([sender.getPublicKey()])
     })
 
     it('Properties _id, _rev, and _root have the same value', () => {
-      expect(nft._id).eq(nft._rev).eq(nft._root)
+      expect(nft.getId()).eq(nft._rev).eq(nft.getRoot())
 
-      initialId = nft._id
-      initialRev = nft._rev
-      initialRoot = nft._root
+      initialId = nft.getId() as string
+      initialRev = nft._rev as string
+      initialRoot = nft.getRoot() as string
     })
 
     it("The nft is returned when syncing against it's revision", async () => {
-      expect(await sender.sync(nft._rev)).deep.eq(nft)
+      expect(await sender.sync(nft._rev as string)).deep.eq(nft)
     })
   })
 
@@ -186,7 +157,7 @@ describe('Non-Fungible Token (NFT)', () => {
     })
 
     it('The id does not change', () => {
-      expect(initialId).eq(nft._id)
+      expect(initialId).eq(nft.getId())
     })
 
     it('The revision is updated', () => {
@@ -194,15 +165,15 @@ describe('Non-Fungible Token (NFT)', () => {
     })
 
     it('The root does not change', () => {
-      expect(initialRoot).eq(nft._root)
+      expect(initialRoot).eq(nft.getRoot())
     })
 
     it("The _owners are updated to receiver's public key", () => {
-      expect(nft._owners).deep.eq([receiver.getPublicKey()])
+      expect(nft.getOwners()).deep.eq([receiver.getPublicKey()])
     })
 
     it("Syncing to the NFT's revision returns an object that is equal to the NFT", async () => {
-      expect(await receiver.sync(nft._rev)).deep.eq(nft)
+      expect(await receiver.sync(nft._rev as string)).deep.eq(nft)
     })
   })
 })
@@ -231,19 +202,19 @@ describe('Fungible Token', () => {
     })
 
     it('Property _owners is a singleton array with minters public key', () => {
-      expect(token._owners).deep.eq([sender.getPublicKey()])
+      expect(token.getOwners()).deep.eq([sender.getPublicKey()])
     })
 
     it('Properties _id, _rev, and _root have the same value', () => {
-      expect(token._id).eq(token._rev).eq(token._root)
+      expect(token.getId()).eq(token._rev).eq(token.getRoot())
 
-      initialId = token._id
-      initialRev = token._rev
-      initialRoot = token._root
+      initialId = token.getId() as string
+      initialRev = token._rev as string
+      initialRoot = token.getRoot() as string
     })
 
     it("Syncing to the token's revision returns an object equal to the token", async () => {
-      expect(await sender.sync(token._rev)).deep.eq(token)
+      expect(await sender.sync(token.getRev() as string)).deep.eq(token)
     })
   })
 
@@ -253,7 +224,6 @@ describe('Fungible Token', () => {
     })
 
     it('This creates a second smart object with supply 2', () => {
-      // @ts-ignore
       expect(sentToken).to.matchPattern({
         supply: 2n,
         totalSupply: 10n,
@@ -262,7 +232,7 @@ describe('Fungible Token', () => {
     })
 
     it('The second smart object is owned by recipient', () => {
-      expect(sentToken._owners).deep.eq([receiver.getPublicKey()])
+      expect(sentToken.getOwners()).deep.eq([receiver.getPublicKey()])
     })
 
     it('The first smart object now has a supply of 8', () => {
@@ -271,22 +241,22 @@ describe('Fungible Token', () => {
     })
 
     it('The first smart object is still owned by sender', () => {
-      expect(token._owners).deep.eq([sender.getPublicKey()])
+      expect(token.getOwners()).deep.eq([sender.getPublicKey()])
     })
 
     it('Both smart objects have the same _root', () => {
-      expect(sentToken._root).eq(token._root)
+      expect(sentToken.getRoot()).eq(token.getRoot())
     })
 
     it('If Sender mints another token it will have a different root', async () => {
       const fakeToken = await sender.new(Token, [sender.getPublicKey(), 10n, 10n])
-      expect(fakeToken._root).not.eq(token._root)
-      expect(fakeToken._root).not.eq(sentToken._root)
+      expect(fakeToken.getRoot() as string).not.eq(token.getRoot())
+      expect(fakeToken.getRoot()).not.eq(sentToken.getRoot())
     })
 
     it("Syncing to any smart objects's revision returns an object equal to that smart object", async () => {
-      expect(await sender.sync(token._rev)).deep.eq(token)
-      expect(await sender.sync(sentToken._rev)).deep.eq(sentToken)
+      expect(await sender.sync(token._rev as string)).deep.eq(token)
+      expect(await sender.sync(sentToken._rev as string)).deep.eq(sentToken)
     })
   })
 })
@@ -313,7 +283,7 @@ describe('Chat', () => {
         _readers: publicKeys,
         ...meta,
       })
-      expect(alicesChat._owners).deep.eq(publicKeys)
+      expect(alicesChat.getOwners()).deep.eq(publicKeys)
     })
   })
 
@@ -331,7 +301,7 @@ describe('Chat', () => {
 
   describe('Invited users can read the chat and post messages', async () => {
     it('Bob can read the content of the chat', async () => {
-      bobsChat = (await bob.sync(alicesChat._rev)) as Chat
+      bobsChat = (await bob.sync(alicesChat._rev as string)) as Chat
       // @ts-ignore
       expect(bobsChat).matchPattern({
         messages: ['Hi'],
@@ -354,7 +324,7 @@ describe('Chat', () => {
   describe('User that are not invited cannot read the state or post', async () => {
     it('Eve cannot read the content of the chat', async () => {
       try {
-        await eve.sync(alicesChat._rev)
+        await eve.sync(alicesChat._rev as string)
         expect(true).eq(false)
       } catch (err) {
         if (err instanceof Error) expect(err.message).eq('Decryption failure')
@@ -365,12 +335,12 @@ describe('Chat', () => {
   describe('Users can be removed from the chat', () => {
     it('Alice removes Bob from the chat', async () => {
       await alicesChat.remove(bob.getPublicKey())
-      expect(alicesChat._readers).deep.eq([alice.getPublicKey()])
+      expect(alicesChat.getReaders()).deep.eq([alice.getPublicKey()])
     })
 
     it('Bob cannot read the chat or post to it anymore', async () => {
       try {
-        await bob.sync(alicesChat._rev)
+        await bob.sync(alicesChat._rev as string)
         expect(true).eq(false)
       } catch (err) {
         if (err instanceof Error) expect(err.message).eq('Decryption failure')
@@ -395,14 +365,14 @@ describe('Swap', () => {
       nftA = await alice.new(NFT, [alice.getPublicKey(), 'nftA'])
       // @ts-ignore
       expect(nftA).to.matchPattern({ name: 'nftA', symbol, ...meta })
-      expect(nftA._owners).deep.eq([alice.getPublicKey()])
+      expect(nftA.getOwners()).deep.eq([alice.getPublicKey()])
     })
 
     it('Bob creates nftB', async () => {
       nftB = await bob.new(NFT, [bob.getPublicKey(), 'nftB'])
       // @ts-ignore
       expect(nftB).to.matchPattern({ name: 'nftB', symbol, ...meta })
-      expect(nftB._owners).deep.eq([bob.getPublicKey()])
+      expect(nftB.getOwners()).deep.eq([bob.getPublicKey()])
     })
   })
 
@@ -413,7 +383,7 @@ describe('Swap', () => {
     it('Alice builds, funds, and signs a swap transaction', async () => {
       ;({ tx } = await alice.encode({
         exp: `${Swap} Swap.exec(nftA, nftB)`,
-        env: { nftA: nftA._rev, nftB: nftB._rev },
+        env: { nftA: nftA._rev as string, nftB: nftB._rev as string },
       }))
     })
 
@@ -433,7 +403,7 @@ describe('Swap', () => {
       const nftASwapped = env.nftA
       // @ts-ignore
       expect(nftASwapped).to.matchPattern({ name: 'nftA', symbol, ...meta })
-      expect(nftASwapped._owners).deep.eq([bob.getPublicKey()])
+      expect(nftASwapped.getOwners()).deep.eq([bob.getPublicKey()])
     })
 
     it('nftB is now owned by Alice', async () => {
@@ -443,7 +413,7 @@ describe('Swap', () => {
       const nftBSwapped = env.nftB
       // @ts-ignore
       expect(nftBSwapped).to.matchPattern({ name: 'nftB', symbol, ...meta })
-      expect(nftBSwapped._owners).deep.eq([alice.getPublicKey()])
+      expect(nftBSwapped.getOwners()).deep.eq([alice.getPublicKey()])
     })
   })
 })
@@ -466,7 +436,6 @@ describe('Sell', () => {
 
     it('Seller creates an NFT', async () => {
       nft = await seller.new(NFT, [seller.getPublicKey(), 'NFT'])
-      // @ts-ignore
       expect(nft).to.matchPattern({ name: 'NFT', symbol, ...meta })
     })
 
@@ -476,7 +445,7 @@ describe('Sell', () => {
 
       ;({ tx } = await seller.encode({
         exp: `${Swap} Swap.exec(nft, payment)`,
-        env: { nft: nft._rev, payment: mock._rev },
+        env: { nft: nft._rev as string, payment: mock._rev as string },
         mocks: { payment: mock },
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
         inputIndex: 0,
@@ -520,13 +489,13 @@ describe('Sell', () => {
     })
 
     it("Thief update's the swap transaction maliciously to receive the NFT at half the price", () => {
-      const [paymentTxId, paymentIndex] = tooLowPayment._rev.split(':')
+      const [paymentTxId, paymentIndex] = (tooLowPayment._rev as string).split(':')
       txClone.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
       txClone.updateOutput(1, { scriptPubKey: thief.toScriptPubKey() })
 
       // this is where the thief tries to alter the transaction in order
       // to buy the nft at half the price
-      txClone.updateOutput(0, { value: tooLowPayment._satoshis })
+      txClone.updateOutput(0, { value: tooLowPayment.getSatoshis() })
     })
 
     it('Thief funds the swap transaction', async () => {
@@ -574,7 +543,7 @@ describe('Sell', () => {
     })
 
     it("Buyer update's the swap transaction to receive the NFT", () => {
-      const [paymentTxId, paymentIndex] = payment._rev.split(':')
+      const [paymentTxId, paymentIndex] = (payment._rev as string).split(':')
       tx.updateInput(1, {
         txId: paymentTxId,
         index: parseInt(paymentIndex, 10),

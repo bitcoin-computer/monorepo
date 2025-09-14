@@ -9,6 +9,6 @@ export class Counter extends Contract {
   }
 
   transfer(publicKey: string) {
-    this._owners = [publicKey]
+    this.setOwners([publicKey])
   }
 }

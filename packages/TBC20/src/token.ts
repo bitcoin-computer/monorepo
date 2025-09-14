@@ -4,7 +4,6 @@ export class Token extends Contract {
   amount: bigint
   name: string
   symbol: string
-  _owners: string[]
 
   constructor(to: string, amount: bigint, name: string, symbol = '') {
     super({ _owners: [to], amount, name, symbol })
@@ -13,7 +12,7 @@ export class Token extends Contract {
   transfer(to: string, amount?: bigint): Token | undefined {
     if (typeof amount === 'undefined') {
       // Send entire amount
-      this._owners = [to]
+      this.setOwners([to])
       return undefined
     }
     if (this.amount >= amount) {
@@ -82,7 +81,7 @@ export class TokenHelper implements ITBC20 {
   private async getBags(publicKey: string, root: string): Promise<Token[]> {
     const revs = await this.computer.query({ publicKey, mod: this.mod })
     const bags = await Promise.all(revs.map(async (rev: string) => this.computer.sync(rev)))
-    return bags.flatMap((bag: Token & { _root: string }) => (bag._root === root ? [bag] : []))
+    return bags.flatMap((bag: Token) => (bag.getRoot() === root ? [bag] : []))
   }
 
   async balanceOf(publicKey: string, root: string): Promise<bigint> {

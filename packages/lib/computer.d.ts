@@ -28,23 +28,6 @@ type SJObject = {
   _url?: string
 }
 
-declare class Mock {
-  _id: string
-  _rev: string
-  _root: string
-  _satoshis: bigint
-  _owners: string[]
-  constructor({
-    _id,
-    _rev,
-    _root,
-  }?: {
-    _id?: string | undefined
-    _rev?: string | undefined
-    _root?: string | undefined
-  })
-}
-
 declare class Update {
   inRevs: string[]
   ownerData: UpdateMetaData[]
@@ -407,13 +390,32 @@ declare class Transaction extends nTransaction {
 }
 
 declare class Contract {
-  _id: string
-  _rev: string
-  _root: string
-  _satoshis: bigint
-  _owners: string[]
+  private _id: string | number
+  _rev: string | number
+  private _root: string | number
+  private _satoshis: bigint
+  private _owners: string | string[]
+  private _readers?: string[]
+  private _url?: string
+
   constructor(opts?: {})
+  getId(): string | number
+  setId(id: string | number): void
+  getRev(): string | number
+  setRev(rev: string | number): void
+  getRoot(): string | number
+  setRoot(root: string | number): void
+  getSatoshis(): bigint
+  setSatoshis(satoshis: bigint): void
+  getOwners(): string | string[]
+  setOwners(owners: string | string[]): void
+  getReaders(): undefined | string[]
+  setReaders(readers: string[]): void
+  getUrl(): undefined | string
+  setUrl(url: string): void
 }
+
+declare class Mock extends Contract {}
 
 declare class Db {
   wallet: Wallet
@@ -427,7 +429,7 @@ declare class Computer {
     constructor: T,
     args: ConstructorParameters<T>,
     mod?: string,
-  ): Promise<InstanceType<T> & Location>
+  ): Promise<InstanceType<T>>
   query(q: UserQuery): Promise<string[]>
   sync(rev: string): Promise<unknown>
   wrappedEncode(

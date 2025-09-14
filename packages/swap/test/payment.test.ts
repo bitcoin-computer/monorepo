@@ -42,7 +42,7 @@ describe('Payment', () => {
       paymentTxId = await alice.broadcast(paymentTx)
 
       const payment: Payment = await paymentHelper.getPayment(paymentTxId)
-      expect(payment._satoshis).eq(BigInt(2e8))
+      expect(payment.getSatoshis()).eq(BigInt(2e8))
     })
   })
 })

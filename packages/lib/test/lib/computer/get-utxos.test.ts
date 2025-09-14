@@ -31,6 +31,6 @@ describe('getUtxos', () => {
     // Check that the UTXO containing the on-chain object is not
     // returned by getUTXOs
     const utxos = await computer1.getUtxos()
-    expect(!utxos.some((item) => item === c._id))
+    expect(!utxos.some((item) => item === c.getId()))
   })
 })

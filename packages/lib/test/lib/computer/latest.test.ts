@@ -25,15 +25,15 @@ describe('latest', () => {
   it('Should work if an object is not updated', async () => {
     const counter = await computer.new(Counter, [])
 
-    expect(await computer.latest(counter._id)).eq(counter._id)
+    expect(await computer.latest(counter.getId() as string)).eq(counter.getId())
   })
 
   it('Should work if an object is updated', async () => {
     const counter = await computer.new(Counter, [])
     await counter.inc()
 
-    expect(await computer.latest(counter._id)).eq(counter._rev)
-    expect(await computer.latest(counter._rev)).eq(counter._rev)
+    expect(await computer.latest(counter.getId() as string)).eq(counter._rev)
+    expect(await computer.latest(counter.getRev() as string)).eq(counter._rev)
   })
 
   it('Should throw an error with a revision that does not exist', async () => {
@@ -45,7 +45,7 @@ describe('latest', () => {
 
   it('Should throw an error with a revision that does not contain an object', async () => {
     const counter = await computer.new(Counter, [])
-    const noObject = counter._id.split(':')[0] + ':1'
+    const noObject = (counter.getId() as string).split(':')[0] + ':1'
 
     // Throws because there is no object at the output with that revision
     await expect(computer.latest(noObject)).to.be.rejectedWith('Rev not found')

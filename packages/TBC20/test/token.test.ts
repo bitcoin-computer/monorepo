@@ -41,12 +41,12 @@ describe('Token', async () => {
 
     it('The meta data should be set', async () => {
       expect(token1.amount).to.eq(3n)
-      expect(token1._owners).deep.equal([sender.getPublicKey()])
+      expect(token1.getOwners()).deep.equal([sender.getPublicKey()])
       expect(token1.name).to.eq('test')
       expect(token1.symbol).to.eq('')
-      expect(token1._id).to.be.a('string')
+      expect(token1.getId()).to.be.a('string')
       expect(token1._rev).to.be.a('string')
-      expect(token1._root).to.be.a('string')
+      expect(token1.getRoot()).to.be.a('string')
     })
   })
 
@@ -60,22 +60,22 @@ describe('Token', async () => {
 
     it('The meta data of token should be set correctly', () => {
       expect(token1.amount).to.eq(2n)
-      expect(token1._owners).deep.equal([sender.getPublicKey()])
+      expect(token1.getOwners()).deep.equal([sender.getPublicKey()])
       expect(token1.name).to.eq('test')
       expect(token1.symbol).to.eq('')
-      expect(token1._id).to.be.a('string')
+      expect(token1.getId()).to.be.a('string')
       expect(token1._rev).to.be.a('string')
-      expect(token1._root).to.be.a('string')
+      expect(token1.getRoot()).to.be.a('string')
     })
 
     it('The meta data of newToken should be set correctly', () => {
       expect(token2.amount).to.eq(1n)
-      expect(token2._owners).deep.equal([receiver.getPublicKey()])
+      expect(token2.getOwners()).deep.equal([receiver.getPublicKey()])
       expect(token2.name).to.eq('test')
       expect(token2.symbol).to.eq('')
-      expect(token2._id).to.be.a('string')
+      expect(token2.getId()).to.be.a('string')
       expect(token2._rev).to.be.a('string')
-      expect(token2._root).to.be.a('string')
+      expect(token2.getRoot()).to.be.a('string')
     })
 
     it('computer.query should return the tokens', async () => {
@@ -116,14 +116,14 @@ describe('Token', async () => {
       const { __bc__ } = env
       token2After = __bc__ as unknown as Token
 
-      expect(token1._owners).deep.eq([sender.getPublicKey()])
-      expect(token2After._owners).deep.eq([sender.getPublicKey()])
+      expect(token1.getOwners()).deep.eq([sender.getPublicKey()])
+      expect(token2After.getOwners()).deep.eq([sender.getPublicKey()])
 
-      expect(token2._id).eq(token2After._id)
+      expect(token2.getId()).eq(token2After.getId())
       expect(token2._rev).not.eq(token2After._rev)
 
-      expect(await sender.latest(token1._id)).deep.eq(token1._rev)
-      expect(await sender.latest(token2._id)).deep.eq(token2After._rev)
+      expect(await sender.latest(token1.getId() as string)).deep.eq(token1._rev)
+      expect(await sender.latest(token2.getId() as string)).deep.eq(token2After._rev)
     })
 
     it('Sender merges their two tokens', async () => {
@@ -148,7 +148,7 @@ describe('Token', async () => {
       const t2 = await t1.transfer(computer.getPublicKey(), 1n)
       expect(t1!._rev).not.eq(rev1)
       const rev2 = t2!._rev
-      await t2!.transfer(computer.getPublicKey())
+      await t2!.transfer(new Computer().getPublicKey())
       expect(t2!._rev).not.eq(rev2)
     })
   })
@@ -169,9 +169,9 @@ describe('TokenHelper', () => {
     it('Should mint a root token', async () => {
       const rootToken: any = await sender.sync(root)
       expect(rootToken).not.to.be.undefined
-      expect(rootToken._id).to.eq(root)
+      expect(rootToken.getId()).to.eq(root)
       expect(rootToken._rev).to.eq(root)
-      expect(rootToken._root).to.eq(root)
+      expect(rootToken.getRoot()).to.eq(root)
       expect(rootToken.amount).to.eq(200n)
       expect(rootToken.name).to.eq('test')
       expect(rootToken.symbol).to.eq('TST')

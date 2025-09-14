@@ -74,7 +74,7 @@ export default function Mint() {
       await computer.broadcast(tx)
 
       const counter = effect.res as unknown as Counter
-      setSuccessRev(counter._id)
+      setSuccessRev(counter.getId() as string)
       Modal.showModal('success-modal')
     } catch (err) {
       if (err instanceof Error) {

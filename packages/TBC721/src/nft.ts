@@ -8,7 +8,7 @@ export class NFT extends Contract {
     super({ name, artist, url })
   }
   transfer(to) {
-    this._owners = [to]
+    this.setOwners([to])
     this.offerTxRev = undefined
   }
   list(rev) {
