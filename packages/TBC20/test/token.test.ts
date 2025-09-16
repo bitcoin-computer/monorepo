@@ -167,7 +167,7 @@ describe('TokenHelper', () => {
     })
 
     it('Should mint a root token', async () => {
-      const rootToken: any = await sender.sync(root)
+      const rootToken = (await sender.sync(root)) as Token
       expect(rootToken).not.to.be.undefined
       expect(rootToken._id).to.eq(root)
       expect(rootToken._rev).to.eq(root)

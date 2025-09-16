@@ -47,7 +47,8 @@
   },
   "dependencies": {
     "@endo/static-module-record": "1.1.2",
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.24.0",
+    "eslint-plugin-chai-friendly": "^1.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.21",
