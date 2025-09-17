@@ -59,9 +59,8 @@ export default function WithPagination(q) {
             const result = await computer.query(query);
             setIsNextAvailable(result.length > contractsPerPage);
             setRevs(result.slice(0, contractsPerPage));
-            if (pageNum === 0 && result?.length === 0) {
+            if (pageNum === 0 && result?.length === 0)
                 setShowNoAsset(true);
-            }
             showLoader(false);
         };
         fetch();

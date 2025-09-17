@@ -8,11 +8,23 @@ export declare const WalletComponents: {
         modSpecs: string[];
         isOpen: boolean;
     }) => import("react/jsx-runtime").JSX.Element;
-    Address: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
-    PublicKey: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
-    Mnemonic: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
-    Chain: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
-    Network: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
-    Url: ({ computer }: any) => import("react/jsx-runtime").JSX.Element;
+    Address: ({ computer }: {
+        computer: Computer;
+    }) => import("react/jsx-runtime").JSX.Element;
+    PublicKey: ({ computer }: {
+        computer: Computer;
+    }) => import("react/jsx-runtime").JSX.Element;
+    Mnemonic: ({ computer }: {
+        computer: Computer;
+    }) => import("react/jsx-runtime").JSX.Element;
+    Chain: ({ computer }: {
+        computer: Computer;
+    }) => import("react/jsx-runtime").JSX.Element;
+    Network: ({ computer }: {
+        computer: Computer;
+    }) => import("react/jsx-runtime").JSX.Element;
+    Url: ({ computer }: {
+        computer: Computer;
+    }) => import("react/jsx-runtime").JSX.Element;
     LogOut: () => import("react/jsx-runtime").JSX.Element;
 };
