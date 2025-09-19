@@ -189,29 +189,28 @@ type Query = Partial<{
   offset: number
   order: 'ASC' | 'DESC'
 }>
-export type GetTxos = {
-  rev: string
-} & GetTxos_
-
-export type GetTxos_ = Partial<{
+type DbOutput = {
   address: string
+  rev: string
   satoshis: bigint
   asm: string
-  isSmartObject: boolean
-  mod: string
-  previous: string
-  expHash: string
-  blockHash: string
-  spent: boolean
-  publicKey: string
-}>
+  expHash?: string
+  mod?: string
+  isObject?: boolean
+  previous?: string
+  blockHash?: string
+}
+
+export type GetTxos = string | DbOutput
 
 export type GetTxosQuery = {
   verbosity?: number
   limit?: number
   order?: 'ASC' | 'DESC'
   offset?: number
-} & GetTxos_
+  spent?: boolean
+  publicKey?: string
+} & Partial<DbOutput>
 
 type UserQuery = Partial<{
   mod: string
@@ -454,7 +453,7 @@ declare class Computer {
     mod?: string,
   ): Promise<InstanceType<T> & Location>
   query(q: UserQuery): Promise<string[]>
-  getTxos(query: RawTxoQuery): Promise<RawTxoQuery[]>
+  getTxos(query: GetTxosQuery): Promise<GetTxos[]>
   sync(rev: string): Promise<unknown>
   wrappedEncode(
     transition: Transition,

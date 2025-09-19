@@ -5,29 +5,28 @@ _Returns transaction outputs for the given query parameters._
 ## Type
 
 ```ts
-type GetTxos = {
-  rev: string
-} & GetTxos_
-
-type GetTxos_ = Partial<{
+type DbOutput = {
   address: string
+  rev: string
   satoshis: bigint
   asm: string
-  isSmartObject: boolean
-  mod: string
-  previous: string
-  expHash: string
-  blockHash: string
-  spent: boolean
-  publicKey: string
-}>
+  expHash?: string
+  mod?: string
+  isObject?: boolean
+  previous?: string
+  blockHash?: string
+}
 
-type GetTxosQuery = {
+export type GetTxos = string | DbOutput
+
+export type GetTxosQuery = {
   verbosity?: number
   limit?: number
   order?: 'ASC' | 'DESC'
   offset?: number
-} & GetTxos_
+  spent?: boolean
+  publicKey?: string
+} & Partial<DbOutput>
 
 getTxos(query: GetTxosQuery): Promise<GetTxos[]>
 ```
@@ -45,7 +44,7 @@ An object with the query parameters.
 | address | Return txouts that belong to this address |
 | satoshis | Return txouts with this exact satoshi amount |
 | asm | Return txouts matching the asm script |
-| isSmartObject | Return txouts that are (or are not) smart objects |
+| isObject | Return txouts that are (or are not) smart objects |
 | mod | Return txouts that are (or are not) smart objects created with this module or a descendant of it |
 | previous | Return txouts whose previous is the provided parameter |
 | expHash | Return txouts that are matching the provided expression hash |
@@ -58,7 +57,7 @@ An object with the query parameters.
 
 ### Return Value
 
-An array of either revision strings or rows from the Output table, depending on the verbosity level specified in the query.
+An array of either revision strings or rows from the database Output table, depending on the verbosity level specified in the query.
 
 ## Description
 
