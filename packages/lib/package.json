@@ -57,7 +57,7 @@
     "clean:logs": "rm -f *.log 2> /dev/null",
     "prepublishOnly": "../../scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
-    "test": "tsc && mocha -r source-map-support/register 'js-build/test/**/*.js'",
+    "test": "tsc && mocha -r source-map-support/register 'js-build/**/*.js'",
     "test:show": "npm run test 2>&1 | tee lib-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open lib-test.log; fi",
     "types": "tsc --noEmit"
   },
