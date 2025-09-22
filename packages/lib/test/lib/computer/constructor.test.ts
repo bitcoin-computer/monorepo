@@ -26,6 +26,7 @@ describe('constructor', () => {
       url: 'your-node-url',
       path: "m/44'/0'/0'/0",
       passphrase: 'hi',
+      mode: 'prod',
     })
     expect(computer.getChain()).eq('BTC')
     expect(computer.getNetwork()).eq('mainnet')
