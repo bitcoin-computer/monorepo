@@ -201,9 +201,9 @@ type DbOutput = {
   blockHash?: string
 }
 
-export type GetTxos = string | DbOutput
+export type GetTXOs = string | DbOutput
 
-export type GetTxosQuery = {
+export type GetTXOsQuery = {
   verbosity?: number
   limit?: number
   order?: 'ASC' | 'DESC'
@@ -324,7 +324,7 @@ declare class RestClient {
   getTx(txId: string): Promise<_Transaction>
   getAncestors(txId: string): Promise<string[]>
   query({ publicKey, limit, offset, order, ids, mod }: Partial<Query>): Promise<string[]>
-  getTxos(query: GetTxosQuery): Promise<GetTxos[]>
+  getTXOs(query: GetTXOsQuery): Promise<GetTXOs[]>
   static getSecretOutput({ _url, keyPair }: { _url: string; keyPair: BIP32Interface }): Promise<{
     host: string
     data: string
@@ -453,7 +453,7 @@ declare class Computer {
     mod?: string,
   ): Promise<InstanceType<T> & Location>
   query(q: UserQuery): Promise<string[]>
-  getTxos(query: GetTxosQuery): Promise<GetTxos[]>
+  getTxos(query: GetTXOsQuery): Promise<GetTXOs[]>
   sync(rev: string): Promise<unknown>
   wrappedEncode(
     transition: Transition,
@@ -501,7 +501,7 @@ declare class Computer {
   load(rev: string): Promise<ModuleExportsNamespace>
   listTxs(address?: string): Promise<{ sentTxs: TxIdAmountType[]; receivedTxs: TxIdAmountType[] }>
   getUtxos(address?: string): Promise<string[]>
-  getTxos(query: GetTxosQuery): Promise<GetTxos[]>
+  getTXOs(query: GetTXOsQuery): Promise<GetTXOs[]>
   getBalance(address?: string): Promise<_Balance>
   sign(transaction: nTransaction, opts?: SigOptions): Promise<void>
   fund(tx: nTransaction, opts?: Fee & FundOptions): Promise<void>

@@ -1,4 +1,4 @@
-# getTxos
+# getTXOs
 
 _Returns transaction outputs for the given query parameters._
 
@@ -17,9 +17,9 @@ type DbOutput = {
   blockHash?: string
 }
 
-export type GetTxos = string | DbOutput
+export type GetTXOs = string | DbOutput
 
-export type GetTxosQuery = {
+export type GetTXOsQuery = {
   verbosity?: number
   limit?: number
   order?: 'ASC' | 'DESC'
@@ -28,7 +28,7 @@ export type GetTxosQuery = {
   publicKey?: string
 } & Partial<DbOutput>
 
-getTxos(query: GetTxosQuery): Promise<GetTxos[]>
+getTXOs(query: GetTXOsQuery): Promise<GetTXOs[]>
 ```
 
 ### Parameters
@@ -83,7 +83,7 @@ An array of either revision strings or rows from the database Output table, depe
 
 ## Description
 
-The `getTxos` function allows you to query transaction outputs (txos) based on various parameters. You can filter TXOs by address, satoshi amount, script assembly, whether they are smart objects, and more. The function returns either revision strings or detailed rows from the Output table, depending on the verbosity level specified in the query.
+The `getTXOs` function allows you to query transaction outputs (txos) based on various parameters. You can filter TXOs by address, satoshi amount, script assembly, whether they are smart objects, and more. The function returns either revision strings or detailed rows from the Output table, depending on the verbosity level specified in the query.
 
 ## Example
 
