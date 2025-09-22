@@ -190,8 +190,8 @@ type Query = Partial<{
   order: 'ASC' | 'DESC'
 }>
 type DbOutput = {
-  address: string
   rev: string
+  address: string
   satoshis: bigint
   asm: string
   expHash?: string
