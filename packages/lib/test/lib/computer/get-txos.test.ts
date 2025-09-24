@@ -264,15 +264,15 @@ describe('getTXOs', () => {
       expect(txos).to.include(c2._rev)
     })
   })
-  describe('Get by expHash', () => {
-    it('Should get TXOs by expHash', async () => {
+  describe('Get by exp', () => {
+    it('Should get TXOs by exp', async () => {
       class C extends Contract {}
 
       const exp = `${C} new ${C.name}()`
       const { tx } = await computer.encode({ exp })
       await computer.broadcast(tx)
 
-      const txos = await computer.getTXOs({ expHash: exp })
+      const txos = await computer.getTXOs({ exp })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(`${tx.getId()}:0`)
     })

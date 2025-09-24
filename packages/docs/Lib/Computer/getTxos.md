@@ -10,7 +10,7 @@ type DbOutput = {
   address: string
   satoshis: bigint
   asm: string
-  expHash?: string
+  exp?: string
   mod?: string
   isObject?: boolean
   previous?: string
@@ -48,7 +48,7 @@ An object with the query parameters.
 | isObject | Return TXOs that are (or are not) smart objects |
 | mod | Return TXOs that are (or are not) smart objects created with this module or a descendant of it |
 | previous | Return TXOs whose previous is the provided parameter |
-| expHash | Giving an expression, return TXOs that matches the hash of that expression |
+| exp | Giving an expression, return TXOs that matches the hash of that expression |
 | blockHash | Return TXOs that are (or are not) included in the block with this hash |
 | spent | Return TXOs that are (or are not) spent |
 | publicKey | Return TXOs that are (or are not) owned by this public key |

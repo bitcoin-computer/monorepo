@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS
     "isObject" BOOLEAN NOT NULL,
     "mod" VARCHAR(70),
     "previous" VARCHAR(70),
-    "expHash" VARCHAR(64),
+    "exp" VARCHAR(64),
     "blockHash" VARCHAR(64),
     "timestamp" timestamp default CURRENT_TIMESTAMP not null
   );

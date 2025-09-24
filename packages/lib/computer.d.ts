@@ -194,7 +194,7 @@ type DbOutput = {
   address: string
   satoshis: bigint
   asm: string
-  expHash?: string
+  exp?: string
   mod?: string
   isObject?: boolean
   previous?: string
