@@ -208,7 +208,8 @@ export type GetTXOsQuery = {
   limit?: number
   order?: 'ASC' | 'DESC'
   offset?: number
-  spent?: boolean
+  isSpent?: boolean
+  isConfirmed?: boolean
   publicKey?: string
 } & Partial<DbOutput>
 

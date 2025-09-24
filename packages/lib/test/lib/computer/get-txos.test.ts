@@ -111,7 +111,7 @@ describe('getTXOs', () => {
       const allTxos = await computer.getTXOs({ address: computer.getAddress() })
       const unspentTxos = await computer.getTXOs({
         address: computer.getAddress(),
-        spent: false,
+        isSpent: false,
       })
       unspentTxos.forEach((txo) => {
         expect(allTxos).to.include(txo)
@@ -121,7 +121,7 @@ describe('getTXOs', () => {
     it('Should get TXOs by address and compute the balance for the computer address', async () => {
       const txos = await computer.getTXOs({
         address: computer.getAddress(),
-        spent: false,
+        isSpent: false,
         verbosity: 1,
       })
       const balance: bigint = txos.reduce((acc: bigint, txo) => {
@@ -297,6 +297,53 @@ describe('getTXOs', () => {
       expect(txos.length).to.be.greaterThan(0)
       // On chain objects belong to the computer's public key
       expect(txos).includes(c2._rev)
+    })
+  })
+  describe('Get by isSpent', () => {
+    it('Should get TXOs by isSpent key', async () => {
+      const c2 = await computer.new(Counter, [])
+      const unSpentTx = await c2.inc()
+
+      const unspentTxos = await computer.getTXOs({
+        isSpent: false,
+        publicKey: computer.getPublicKey(),
+      })
+      expect(unspentTxos.length).to.be.greaterThan(0)
+      expect(unspentTxos).to.include(c2._rev)
+      expect(unspentTxos).to.not.include(c2._id)
+
+      const spentTxos = await computer.getTXOs({
+        isSpent: true,
+        publicKey: computer.getPublicKey(),
+      })
+      expect(spentTxos.length).to.be.greaterThan(0)
+      expect(spentTxos).to.include(c2._id)
+      expect(spentTxos).to.not.include(c2._rev)
+    })
+  })
+  describe('Get by isConfirmed', () => {
+    it('Should get TXOs by isConfirmed key', async () => {
+      const computer2 = new Computer({ chain, network, url })
+      await computer2.faucet(1e8)
+      const c2 = await computer2.new(Counter, [])
+
+      const unconfirmedTxos = await computer2.getTXOs({
+        isConfirmed: false,
+        publicKey: computer2.getPublicKey(),
+      })
+      expect(unconfirmedTxos.length).to.be.greaterThan(0)
+      expect(unconfirmedTxos).to.include(c2._rev)
+
+      // mine a block to confirm the transaction
+      await computer2.rpcCall('generateToAddress', `1 ${computer2.getAddress()}`)
+      await sleep(500)
+
+      const confirmedTxos = await computer2.getTXOs({
+        isConfirmed: true,
+        publicKey: computer2.getPublicKey(),
+      })
+      expect(confirmedTxos.length).to.be.greaterThan(0)
+      expect(confirmedTxos).to.include(c2._rev)
     })
   })
   describe('Get by limit, offset and order', () => {
