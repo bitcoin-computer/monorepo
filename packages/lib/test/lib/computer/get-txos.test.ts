@@ -186,7 +186,7 @@ describe('getTXOs', () => {
       expect(txos).to.include(c4._rev)
     })
 
-    it('Should get TXOs by mod only for the object direct inheritance, but not token transfers', async () => {
+    it('Should get TXOs by mod both for the object direct inheritance abd token transfers', async () => {
       const m = await computer.deploy(`export ${Token}`)
       const t = await computer.new(Token, [computer.getPublicKey(), 100n], m)
       const computer2 = new Computer({ chain, network, url })
@@ -195,26 +195,27 @@ describe('getTXOs', () => {
       const txos = await computer.getTXOs({ mod: m })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(t._id)
-      expect(txos).to.not.include(newToken._rev)
+      expect(txos).to.include(newToken._rev)
     })
 
-    it('Should get TXOs by mod on token transfers with explicit mod parameter', async () => {
+    it('Should get TXOs by mod on token transfers with explicit different mod parameter', async () => {
       const m = await computer.deploy(`export ${Token}`)
+      const m1 = await computer.deploy(``) // different mod
       const t = await computer.new(Token, [computer.getPublicKey(), 100n], m)
       const computer2 = new Computer({ chain, network, url })
       const transferTx = await computer.encode({
         exp: `a.transfer('${computer2.getPublicKey()}', 40n)`,
         env: { a: t._rev },
-        mod: m, // explicitly specifying the mod here
+        mod: m1, // explicitly specifying the mod here
       })
       await computer.broadcast(transferTx.tx)
 
       // sync to the new token
       const newToken = (await computer.sync(`${transferTx.tx.getId()}:0`)) as Token
 
-      const txos = await computer.getTXOs({ mod: m })
+      const txos = await computer.getTXOs({ mod: m1 })
       expect(txos.length).to.be.greaterThan(0)
-      expect(txos).to.include(t._id)
+      expect(txos).to.not.include(t._id)
       expect(txos).to.include(newToken._rev)
     })
   })
@@ -284,7 +285,7 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpcCall('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(500)
+      await sleep(1500)
       const txos = await computer.getTXOs({ blockHash: blockHex.result[0] })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c2._rev)
@@ -336,7 +337,7 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       await computer2.rpcCall('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(500)
+      await sleep(1500)
 
       const confirmedTxos = await computer2.getTXOs({
         isConfirmed: true,

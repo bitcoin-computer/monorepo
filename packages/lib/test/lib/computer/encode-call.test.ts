@@ -34,7 +34,7 @@ describe('encodeCall', async () => {
     expect(await computer.decode(tx)).to.deep.eq({
       exp: `__bc__.inc()`,
       env: { __bc__: counter._rev },
-      mod: '',
+      mod: undefined,
     })
 
     // Broadcast the tx to commit the change

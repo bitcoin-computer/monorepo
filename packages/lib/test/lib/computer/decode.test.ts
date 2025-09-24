@@ -14,7 +14,7 @@ describe('decode', () => {
     const transition = {
       exp: `${C} new C()`,
       env: {},
-      mod: '',
+      mod: undefined,
     }
 
     // Encode the transition to a transaction
