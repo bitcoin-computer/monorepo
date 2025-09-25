@@ -60,6 +60,23 @@ describe('getTXOs', () => {
       expect(error).to.be.instanceOf(Error)
       expect(error.message).to.eq('At least one query parameter must be provided')
     })
+    it('Should throw when the query string only includes verbosity', async () => {
+      let error
+      try {
+        await computer.getTXOs({ verbosity: 1 })
+      } catch (e: any) {
+        error = e
+      }
+      expect(error).to.be.instanceOf(Error)
+      expect(error.message).to.eq('At least one query parameter must be provided')
+      try {
+        await computer.getTXOs({ verbosity: 0 })
+      } catch (e: any) {
+        error = e
+      }
+      expect(error).to.be.instanceOf(Error)
+      expect(error.message).to.eq('At least one query parameter must be provided')
+    })
   })
   describe('Get by rev', () => {
     it('Should get TXOs by rev', async () => {
@@ -70,14 +87,10 @@ describe('getTXOs', () => {
 
       const txosJson = await computer.getTXOs({ rev: c3._rev, verbosity: 1 })
       expect(txosJson.length).to.eq(1)
-      if (typeof txosJson[0] === 'object' && txosJson[0] !== null) {
-        expect(txosJson[0].rev).to.eq(c3._rev)
-        expect(txosJson[0].isObject).to.eq(true)
-        expect(txosJson[0].satoshis).to.be.a('bigint')
-        expect(txosJson[0].asm).to.be.a('string')
-      } else {
-        throw new Error('Txo is not an object')
-      }
+      expect(txosJson[0].rev).to.eq(c3._rev)
+      expect(txosJson[0].isObject).to.eq(true)
+      expect(txosJson[0].satoshis).to.be.a('bigint')
+      expect(txosJson[0].asm).to.be.a('string')
     })
   })
   describe('Get by address', () => {
@@ -85,7 +98,6 @@ describe('getTXOs', () => {
       const txos = await computer.getTXOs({ address: computer.getAddress() })
       expect(txos.length).to.be.greaterThan(0)
       txos.forEach((txo) => {
-        if (typeof txo !== 'string') throw new Error('Txo is not a string')
         expect(txo.split(':').length).to.eq(2)
         expect(txo.split(':')[0].length).to.eq(64)
       })
@@ -95,15 +107,11 @@ describe('getTXOs', () => {
       const txos = await computer.getTXOs({ verbosity: 1, address: computer.getAddress() })
       expect(txos.length).to.be.greaterThan(0)
       txos.forEach((txo) => {
-        if (typeof txo === 'object' && txo !== null) {
-          expect(txo.address).to.eq(computer.getAddress())
-          expect(txo.satoshis).to.be.a('bigint')
-          expect(txo.rev).to.be.a('string')
-          expect(txo.asm).to.be.a('string')
-          expect(txo.isObject).to.be.a('boolean')
-        } else {
-          throw new Error('Txo is not an object')
-        }
+        expect(txo.address).to.eq(computer.getAddress())
+        expect(txo.satoshis).to.be.a('bigint')
+        expect(txo.rev).to.be.a('string')
+        expect(txo.asm).to.be.a('string')
+        expect(txo.isObject).to.be.a('boolean')
       })
     })
 
@@ -125,11 +133,7 @@ describe('getTXOs', () => {
         verbosity: 1,
       })
       const balance: bigint = txos.reduce((acc: bigint, txo) => {
-        if (typeof txo === 'object' && txo !== null) {
-          return acc + txo.satoshis
-        } else {
-          throw new Error('Txo is not an object')
-        }
+        return acc + txo.satoshis
       }, 0n)
 
       const computerBalance = await computer.getBalance()
@@ -303,7 +307,7 @@ describe('getTXOs', () => {
   describe('Get by isSpent', () => {
     it('Should get TXOs by isSpent key', async () => {
       const c2 = await computer.new(Counter, [])
-      const unSpentTx = await c2.inc()
+      await c2.inc()
 
       const unspentTxos = await computer.getTXOs({
         isSpent: false,
@@ -369,6 +373,21 @@ describe('getTXOs', () => {
       expect(limitedTxos.length).to.eq(2)
       expect(limitedTxos[0]).to.eq(allTxos[1])
       expect(limitedTxos[1]).to.eq(allTxos[2])
+    })
+  })
+  describe('Should work with deletions', () => {
+    it('Deleted objects should not be included in utxos', async () => {
+      const c2 = await computer.new(Counter, [])
+      await c2.inc()
+      await computer.delete([c2._rev])
+
+      await sleep(500)
+      const utxos = await computer.getTXOs({
+        publicKey: computer.getPublicKey(),
+        isSpent: false,
+      })
+      expect(utxos.length).to.be.greaterThan(0)
+      expect(utxos).to.not.include(c2._rev)
     })
   })
 })

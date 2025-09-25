@@ -201,8 +201,6 @@ type DbOutput = {
   blockHash?: string
 }
 
-export type GetTXOs = string | DbOutput
-
 export type GetTXOsQuery = {
   verbosity?: number
   limit?: number
@@ -325,7 +323,9 @@ declare class RestClient {
   getTx(txId: string): Promise<_Transaction>
   getAncestors(txId: string): Promise<string[]>
   query({ publicKey, limit, offset, order, ids, mod }: Partial<Query>): Promise<string[]>
-  getTXOs(query: GetTXOsQuery): Promise<GetTXOs[]>
+  getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
   static getSecretOutput({ _url, keyPair }: { _url: string; keyPair: BIP32Interface }): Promise<{
     host: string
     data: string
@@ -502,7 +502,9 @@ declare class Computer {
   load(rev: string): Promise<ModuleExportsNamespace>
   listTxs(address?: string): Promise<{ sentTxs: TxIdAmountType[]; receivedTxs: TxIdAmountType[] }>
   getUtxos(address?: string): Promise<string[]>
-  getTXOs(query: GetTXOsQuery): Promise<GetTXOs[]>
+  getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
   getBalance(address?: string): Promise<_Balance>
   sign(transaction: nTransaction, opts?: SigOptions): Promise<void>
   fund(tx: nTransaction, opts?: Fee & FundOptions): Promise<void>
