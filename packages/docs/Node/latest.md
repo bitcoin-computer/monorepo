@@ -1,17 +1,17 @@
-# next
+# latest
 
-_Get the next revision of a given revision._
+_Get the latest revision of a given revision._
 
 ## Endpoint
 
-`/v1/CHAIN/NETWORK/next/:rev`
+`/v1/CHAIN/NETWORK/latest/:rev`
 
 ## Example
 
 ### Request
 
 ```shell
-curl -X GET http://localhost:1031/v1/LTC/regtest/next/032fc7a37e7848f5fb2beb79f773631c6047be0a2e9a699e1355aa8d1c64155e:0
+curl -X GET http://localhost:1031/v1/LTC/regtest/latest/032fc7a37e7848f5fb2beb79f773631c6047be0a2e9a699e1355aa8d1c64155e:0
 ```
 
 ### Response
@@ -26,6 +26,12 @@ curl -X GET http://localhost:1031/v1/LTC/regtest/next/032fc7a37e7848f5fb2beb79f7
 
 ```json
 { "error": "Missing rev." }
+```
+
+#### Not found (404)
+
+```json
+{ "error": "Not found" }
 ```
 
 #### Server error (500)

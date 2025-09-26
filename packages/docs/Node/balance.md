@@ -20,10 +20,18 @@ curl -X GET http://localhost:1031/v1/LTC/regtest/address/mkMUZNoiLh4uuuENU5HNZ4S
 
 ### Response
 
+#### Success (200)
+
 ```json
 {
   "confirmed": 99927794,
   "unconfirmed": 0,
   "balance": 99927794
 }
+```
+
+#### Server error (500)
+
+```json
+{ "error": "Internal server error message" }
 ```

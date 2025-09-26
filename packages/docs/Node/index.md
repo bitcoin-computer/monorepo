@@ -53,6 +53,23 @@ npm run up
 The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database. The postgres database is used to efficiently store the complete blockchain data, for fast access and indexing.
 !!!
 
+### Postgres Database
+
+The node uses a Postgres database to store the synced information required by the Bitcoin Computer protocol. The database is automatically created and managed by the node using a docker container. The full db schema can be found [here](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql).
+
+### Create indexes after syncing to mainnet
+
+To reduce db syncing overhead, the sync process is carried out without creating db indexes. After the node has synced, you can create the indexes with the command below.
+
+<font size=1>
+
+```sh
+# In the node folder run the following command
+npm run create-indexes
+```
+
+</font>
+
 ### Run the Tests
 
 You can run the integration tests with the command below.
@@ -67,7 +84,7 @@ npm run test
 
 On Litecoin regtest, the halving period is set to infinity. This makes it possible to run a large number of tests without having to restart the node.
 
-### Fund the Wallet
+### Fund a Wallet
 
 In regtest mode, you can fund a wallet with the following commands.
 
@@ -109,7 +126,7 @@ npm run clean
 
 ## Configuration
 
-You can configure several options by editing the `.env` file.
+You can configure several options by editing the `.env` file. See the [example](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/chain-setup/LTC/regtest/.env.example) for details.
 
 <font size=1>
 
@@ -204,6 +221,27 @@ BCN_OFFCHAIN_PROTOCOL=
 
 </font>
 
+## How to Connect to the Database Directly
+
+You can connect to the Postgres database to inspect synced data. To connect, obtain the docker container ID of the database with the command below.
+<font size=1>
+
+```sh
+docker ps
+```
+
+</font>
+Then use the container ID to run the psql client inside the database container.
+<font size=1>
+
+```sh
+docker exec -it <container_id> psql -h localhost -p 5432 -U bcn bcn
+```
+
+</font>
+
+See the [DB schema](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql) for an overview of tables and relations.
+
 ## Client Side Library
 
 The [Bitcoin Computer Library](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#readme) can connect to a Bitcoin Computer Node to provides access to its functionality.
@@ -229,20 +267,20 @@ const address = computer.getAddress()
 const { txId, vout } = await computer.faucet(1e4)
 
 // Return the utxos
-expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
+expect(await new Computer({ chain, network, url }).getUtxos(address)).deep.eq([`${txId}:${vout}`])
 
 // Return the balance
-expect(await new Computer(conf).getBalance(address).balance).eq(1e4)
+expect((await new Computer({ chain, network, url }).getBalance(address)).balance).eq(BigInt(1e4))
 
 // Return the transactions
-expect(await new Computer(conf).listTxs(address)).deep.eq({
+expect(await new Computer({ chain, network, url }).listTxs(address)).deep.eq({
   sentTxs: [],
   receivedTxs: [
     {
       txId,
-      inputsSatoshis: 0,
-      outputsSatoshis: 1e4,
-      satoshis: 1e4,
+      inputsSatoshis: 0n,
+      outputsSatoshis: 10_000n,
+      satoshis: 10_000n,
     },
   ],
 })
@@ -279,6 +317,7 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 |-------------------------------------|----------------------------------------------------|
 | [ancestors](./ancestors.md) | Get the ancestors of a transaction. |
 | [bulk](./bulk.md) | Get raw transactions for a list of transaction ids. |
+| [hex](./hex.md) | Get a transaction in hex format. |
 | [json](./json.md) | Get a transaction in json format. |
 | [post](./post.md) | Post a transaction to the Bitcoin network. |
 
@@ -294,11 +333,13 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 {.compact}
 | Method | Description |
 |-------------------------------------|----------------------------------------------------|
+| [get-txos](./get-txos.md) | Get all the transaction outputs based on specific query parameters. |
+| [latest](./latest.md) | Get the latest revision of a smart contract. |
 | [next](./next.md) | Get the next revision of a given revision. |
-| [prev](./prev.md) | Get the previous revision of a given revision. |
 | [non-standard-utxos](./non-standard-utxos.md) | Query revisions by module specifier, public key, limit, order, offset and list of transaction ids. |
-| [revs](./revs.md) | Get the revisions of a list of transactions. |
+| [prev](./prev.md) | Get the previous revision of a given revision. |
 | [revToId](./revtoid.md) | Given a revision, get the id of the smart contract. |
+| [subscribe](./subscribe.md) | Subscribe to new revisions matching specific query parameters. |
 
 <!--  ### Configure Parallelism
 
@@ -324,6 +365,6 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 | 16   | 32GB | 4h 45m    | $440          |
  -->
 
-## Versioning
+## Version compatibility
 
 If you run your own node, make sure to use the same versions of Lib and Node.

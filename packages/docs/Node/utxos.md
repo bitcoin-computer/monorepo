@@ -16,6 +16,8 @@ curl -X GET http://localhost:1031/v1/LTC/regtest/wallet/mwJn1YPMq7y5F8J3LkC5Hxg9
 
 ### Response
 
+#### Success (200)
+
 ```json
 [
   {
@@ -27,4 +29,10 @@ curl -X GET http://localhost:1031/v1/LTC/regtest/wallet/mwJn1YPMq7y5F8J3LkC5Hxg9
     "vout": 3
   }
 ]
+```
+
+#### Server error (500)
+
+```json
+{ "error": "Internal server error message" }
 ```

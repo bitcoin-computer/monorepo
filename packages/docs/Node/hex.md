@@ -1,17 +1,17 @@
-# prev
+# hex
 
-_Get the previous revision of a given revision._
+_Returns the raw transaction hex for a given transaction ID._
 
 ## Endpoint
 
-`/v1/CHAIN/NETWORK/prev/:rev`
+`/v1/CHAIN/NETWORK/tx/:txId/hex`
 
 ## Example
 
 ### Request
 
 ```shell
-curl -X GET http://localhost:1031/v1/LTC/regtest/prev/44a1e658be5b1fa7b13511979c91497cacf9286aac694bbb75188b875384db98:0
+curl -X GET http://localhost:1031/v1/LTC/regtest/tx/e53c1440f547b51343d46a2acaafe127e915c7ed08a7ef2ed0ffc248360c0cca/hex
 ```
 
 ### Response
@@ -20,7 +20,7 @@ curl -X GET http://localhost:1031/v1/LTC/regtest/prev/44a1e658be5b1fa7b13511979c
 
 ```json
 {
-  "rev": "032fc7a37e7848f5fb2beb79f773631c6047be0a2e9a699e1355aa8d1c64155e:0"
+  "0100000001202aabc..."
 }
 ```
 
@@ -30,7 +30,7 @@ curl -X GET http://localhost:1031/v1/LTC/regtest/prev/44a1e658be5b1fa7b13511979c
 #### Missing parameter (400)
 
 ```json
-{ "error": "Missing rev." }
+{ "error": "Missing input txId." }
 ```
 
 #### Not found (404)
