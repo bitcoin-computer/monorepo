@@ -321,7 +321,7 @@ function NftView() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        const latesRev = await computer.getLatestRev(id)
+        const latesRev = await computer.latest(id)
         const synced = (await computer.sync(latesRev)) as NFT
         setNft(synced)
       } catch (err) {
