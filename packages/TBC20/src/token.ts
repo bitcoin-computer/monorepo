@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 
 // eslint-disable-next-line
 type Constructor<T> = new (...args: any[]) => T
