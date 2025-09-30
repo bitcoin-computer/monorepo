@@ -179,9 +179,7 @@ export function GalleryWithPagination<T extends Class>(q: UserQuery<T>) {
       const result = await computer.query(query)
       setIsNextAvailable(result.length > contractsPerPage)
       setRevs(result.slice(0, contractsPerPage))
-      if (pageNum === 0 && result?.length === 0) {
-        setShowNoAsset(true)
-      }
+      if (pageNum === 0 && result?.length === 0) setShowNoAsset(true)
       showLoader(false)
     }
     fetch()

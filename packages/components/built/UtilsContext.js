@@ -5,9 +5,8 @@ import { Loader } from './Loader';
 const utilsContext = createContext(undefined);
 export const useUtilsComponents = () => {
     const context = useContext(utilsContext);
-    if (!context) {
+    if (!context)
         throw new Error('useUtilsComponents must be used within a UtilsProvider');
-    }
     return context;
 };
 export const UtilsProvider = ({ children }) => {
