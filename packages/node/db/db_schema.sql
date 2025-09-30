@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS
     "previous" VARCHAR(70),
     "exp" VARCHAR(64),
     "blockHash" VARCHAR(64),
+    "blockHeight" INTEGER,
+    "blockIndex" INTEGER,
     "timestamp" timestamp default CURRENT_TIMESTAMP not null
   );
 
