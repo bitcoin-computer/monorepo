@@ -199,6 +199,8 @@ type DbOutput = {
   isObject?: boolean
   previous?: string
   blockHash?: string
+  blockHeight?: number
+  blockIndex?: number
 }
 
 export type GetTXOsQuery = {
