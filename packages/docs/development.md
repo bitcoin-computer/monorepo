@@ -17,3 +17,7 @@ This error is thrown by the Bitcoin node. This error occurs when the transaction
 #### `bad-txns-inputs-missingorspent` error
 
 This error is thrown by the Bitcoin node. This error indicates that the transaction is missing an input or the input has already been spent. To fix this, ensure that all inputs are valid and not previously used in another transaction.
+
+#### `Cannot call a function on a smart object that is pointed to` error
+
+When one on chain object `a` is the property of another on chain object `b`, then, you cannot directly call a function on `b`. To update `b`, you have to call a function on `a` that modifies it's property `b`. 

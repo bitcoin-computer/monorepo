@@ -1,3 +1,5 @@
+import { Contract } from '@bitcoin-computer/lib'
+
 type Constructor<T> = new (...args: any[]) => T
 
 export class Token extends Contract {
