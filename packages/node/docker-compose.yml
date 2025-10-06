@@ -1,6 +1,6 @@
 services:
   db:
-    image: postgres
+    image: postgres:15
     env_file: .env
     restart: always
     healthcheck:
