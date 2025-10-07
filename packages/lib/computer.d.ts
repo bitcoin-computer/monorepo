@@ -456,7 +456,6 @@ declare class Computer {
     mod?: string,
   ): Promise<InstanceType<T> & Location>
   query(q: UserQuery): Promise<string[]>
-  getTxos(query: GetTXOsQuery): Promise<GetTXOs[]>
   sync(rev: string): Promise<unknown>
   wrappedEncode(
     transition: Transition,
