@@ -6,15 +6,17 @@ Implements a basic Decentralized Autonomous Organization (DAO) using the Bitcoin
 
 ## Purpose of the DAO
 
-The DAO allows token holders to participate in governance by voting on proposals (e.g., accept or reject). Each election is an instance of the `Election` class, identified by a unique ID, an associated token root and description. Votes are submitted as `Vote` objects, referencing tokens for weighted voting. The system computes valid accept votes to determine outcomes, supporting multiple elections categorized by module specifiers. Voting is restricted to tokens descending from a specified root token.
+The DAO allows token holders to participate in governance by voting on proposals (e.g., accept or reject). Each election is an instance of the `Election` class, identified by a unique ID, an associated token root and description. Votes are submitted as `Vote` objects, referencing tokens for weighted voting. The system computes totals for accepted and rejected votes based on valid submissions, filtering out duplicates and invalid uses via transaction ancestry. Multiple elections can be categorized by different module specifiers, and voting is restricted to tokens descending from the specified root token.
 
 ## Classes and Objects
 
 - **Token (from @bitcoin-computer/TBC20)**: Represents fungible tokens with properties like owner public key, amount, and symbol. Supports transfer, which spends the UTXO and creates new ones for sender (remaining) and recipient. Descendant tokens share the same \_root property, which is the original creation revision (txid:vout) of the token lineage.
 
 * **Election**: Manages a voting process. Constructor parameters: `proposalMod` (module specifier for the code being voted in the DAO), `description`. Methods:
-  - `validVotes()`: Queries votes by `proposalMod` using `getTXOs`, filters valid ones based on transaction ancestry to prevent duplicates.
-  - `acceptingVotes()`: Computes total token amounts from valid accept votes for the election, filtering by matching `electionId` and `tokenRoot`.
+  - `proposalVotes()`: Retrieves transaction IDs of valid votes by querying TXOs with `getTXOs({ mod: this.proposalMod })`, then filters for uniqueness using ancestry to eliminate duplicates or conflicting votes.
+  - `validVotes()`: Resolves valid vote objects from `proposalVotes()`, filtering those matching the election's `_id` and `tokenRoot`.
+  - `accepted()`: Computes the total token amount from valid accept votes.
+  - `rejected()`: Computes the total token amount from valid reject votes.
 
 * **Vote**: Represents a vote submission. Computes `tokensAmount` as sum, stores `tokenRoot` from the first token, and verifies all tokens share the same `_root` (throws error if not).
 
