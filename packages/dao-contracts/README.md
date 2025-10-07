@@ -6,23 +6,25 @@ Implements a basic Decentralized Autonomous Organization (DAO) using the Bitcoin
 
 ## Purpose of the DAO
 
-The DAO allows token holders to participate in governance by voting on proposals (e.g., accept or reject). Each election is an instance of the `Election` class, identified by a unique ID and description. Votes are submitted as `Vote` objects, referencing tokens for weighted voting. The system computes valid accept votes to determine outcomes, supporting multiple elections categorized by module specifiers.
+The DAO allows token holders to participate in governance by voting on proposals (e.g., accept or reject). Each election is an instance of the `Election` class, identified by a unique ID, an associated token root and description. Votes are submitted as `Vote` objects, referencing tokens for weighted voting. The system computes valid accept votes to determine outcomes, supporting multiple elections categorized by module specifiers. Voting is restricted to tokens descending from a specified root token.
 
 ## Classes and Objects
 
-- **Token (from @bitcoin-computer/TBC20)**: Represents fungible tokens with properties like owner public key, amount, and symbol. Supports transfer, which spends the UTXO and creates new ones for sender (remaining) and recipient.
+- **Token (from @bitcoin-computer/TBC20)**: Represents fungible tokens with properties like owner public key, amount, and symbol. Supports transfer, which spends the UTXO and creates new ones for sender (remaining) and recipient. Descendant tokens share the same \_root property, which is the original creation revision (txid:vout) of the token lineage.
 
-* **Election**: Manages a voting process. Constructor parameters: `voteMod` (module specifier for votes), `description`. Methods:
-  - `validVotes()`: Queries votes by `voteMod` using `getTXOs`, filters valid ones based on transaction ancestry to prevent duplicates.
-  - `acceptingVotes()`: Computes total token amounts from valid accept votes for the election.
+* **Election**: Manages a voting process. Constructor parameters: `proposalMod` (module specifier for the code being voted in the DAO), `description`. Methods:
+  - `validVotes()`: Queries votes by `proposalMod` using `getTXOs`, filters valid ones based on transaction ancestry to prevent duplicates.
+  - `acceptingVotes()`: Computes total token amounts from valid accept votes for the election, filtering by matching `electionId` and `tokenRoot`.
 
-* **Vote**: Represents a vote submission. Computes tokensAmount as sum of token amounts. It is important to note that token revisions are not stored, only counted. Since tokens are input parameters of the function call that executes the vote, the token ownership is verified at that time against the computer object that executes the vote (see test cases for details).
+* **Vote**: Represents a vote submission. Computes `tokensAmount` as sum, stores `tokenRoot` from the first token, and verifies all tokens share the same `_root` (throws error if not).
 
-Objects are created via `computer.new(Class, [params], mod)`. Modules are deployed via `computer.deploy(source)`, returning a specifier (e.g., txid:vout). Passing `mod` in object creation embeds it, enabling queries like `getTXOs({ mod })` to retrieve all objects of a category (e.g., votes for an election).
+Objects are created via `computer.new(Class, [params], mod)`. Modules are deployed via `computer.deploy(source)`, returning a specifier (e.g., `txid:vout`). Passing `mod` in object creation embeds it, enabling queries like `getTXOs({ mod })` to retrieve all objects of a category (e.g., votes for an election).
 
 Relations:
-_ An `Election` references a `voteMod` to group its `Vote` objects.
-_ A `Vote` references an `electionId` and computes amount from tokens. \* Tokens are independent but used in votes for weighting.
+\_ An `Election` references a `proposalMod` to group its `Vote` objects and a `tokenRoot` to specify eligible token lineages.
+
+\_ A `Vote` references an `electionId` and computes amount from `tokens`.
+\_ Tokens are independent but used in votes for weighting, with eligibility checked via `_root`.
 
 ## Voting Restrictions
 
@@ -32,11 +34,13 @@ The system enforces the following rules to maintain integrity:
 
 - **No Voting with Transferred Tokens in Same Election**: If a token is used to vote, neither the remaining amount nor transferred portions can be used again in the same election, even by new owners. This is enforced by checking transaction ancestry of votes.
 
-- **Tokens Usable in Different Elections**: A token (or its descendants) used in one election can be used in another, as different `voteMod` separates queries.
+- **Tokens Usable in Different Elections**: A token (or its descendants) used in one election can be used in another, as different `proposalMod` separates queries.
 
 - **Post-Vote Transfers Allowed**: Tokens remain transferable after voting, without affecting prior votes.
 
-- **Category-Based Querying**: Using `mod} in `Vote`creation allows`Election`to query all related votes via  `getTXOs({ mod })`, enabling categorized elections.
+- **Category-Based Querying**: Using `mod in `Vote`creation allows`Election`to query all related votes via  `getTXOs({ mod })`, enabling categorized elections.
+
+- **Token Lineage Restriction**: Votes must use tokens sharing the same `_root` as specified in the `Election`. Multiple tokens per vote are allowed if they share the same `_root`.
 
 ## Test Suite
 
@@ -47,6 +51,8 @@ The test suite (in `test/dao-contract.test.ts`) covers all restrictions:
 - Transfers and post-transfer voting.
 - Different elections via mods.
 - Valid vote counting.
+- Multiple tokens from same root.
+- Non-owned token attempts.
 
 ## Usage
 
