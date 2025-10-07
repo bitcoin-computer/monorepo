@@ -6,8 +6,11 @@
   "keywords": [
     "Bitcoin",
     "Litecoin",
+    "Dogecoin",
+    "Pepecoin",
     "Smart Contracts",
-    "JavaScript"
+    "JavaScript",
+    "Web3"
   ],
   "homepage": "http://bitcoincomputer.io/",
   "bugs": {
