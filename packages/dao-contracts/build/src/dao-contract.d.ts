@@ -11,9 +11,9 @@ type VoteType = {
 };
 export declare class Election extends Contract {
     voteMod: string;
+    description: string;
     constructor({ voteMod, description }: ElectionType);
-    intersect(a: string[], b: string[]): string[];
-    validVotes(revs: string[]): Promise<string[]>;
+    validVotes(): Promise<string[]>;
     acceptingVotes(): Promise<bigint>;
 }
 export declare class Vote extends Contract {

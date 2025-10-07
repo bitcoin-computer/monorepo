@@ -18,14 +18,13 @@ describe('Election', () => {
   })
 
   describe('validVotes', () => {
-    it.only('Should compute one valid vote', async () => {
+    it('Should compute one valid vote', async () => {
       const tokenMod = await computer.deploy(`export ${Token}`)
       const voteMod = await computer.deploy(`export ${Vote}`)
 
       const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
       const election = await computer.new(Election, [{ voteMod, description: 'test' }])
-      console.log(`Election ${election._rev}`)
-      await computer.new(
+      const vote = await computer.new(
         Vote,
         [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
         voteMod,
@@ -34,320 +33,396 @@ describe('Election', () => {
       await sleep(2000)
       const revs = await computer.query({ mod: voteMod })
       expect(revs.length).greaterThan(0)
-      await election.validVotes(revs)
+      await election.validVotes()
 
-      // const validVotes = await election.validVotes(revs)
-      // expect(validVotes.length).eq(1)
-      // expect(validVotes[0]).eq(vote._rev.substring(0, 64))
+      const validVotes = await election.validVotes()
+      expect(validVotes.length).eq(1)
+      expect(validVotes[0]).eq(vote._rev.substring(0, 64))
     })
 
-    //   it('Should compute the first vote if the token is used twice', async () => {
-    //     const tokenMod = await computer.deploy(`export ${Token}`)
-    //     const voteMod = await computer.deploy(`export ${Vote}`)
+    it('Should compute the first vote if the token is used twice', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod = await computer.deploy(`export ${Vote}`)
 
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-    //     const election = await computer.new(Election, [{ voteMod, description: 'test' }])
-    //     const vote1 = await computer.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const election = await computer.new(Election, [{ voteMod, description: 'test' }])
+      const vote1 = await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
 
-    //     await sleep(2000)
-    //     // vote again with the token
-    //     await computer.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
+      await sleep(2000)
+      // vote again with the token
+      await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
 
-    //     const revs = await computer.query({ mod: voteMod })
-    //     const validVotes = await election.validVotes(revs)
-    //     expect(validVotes.length).eq(1)
-    //     expect(validVotes[0]).eq(vote1._rev.substring(0, 64))
-    //   })
+      const validVotes = await election.validVotes()
+      expect(validVotes.length).eq(1)
+      expect(validVotes[0]).eq(vote1._rev.substring(0, 64))
+    })
 
-    //   it('Should compute the first vote if the token is sent and used to vote in the same election', async () => {
-    //     const tokenMod = await computer.deploy(`export ${Token}`)
-    //     const voteMod = await computer.deploy(`export ${Vote}`)
+    it('Should compute the first vote and other valid ones', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod = await computer.deploy(`export ${Vote}`)
 
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-    //     const election = await computer.new(Election, [{ voteMod, description: 'test' }])
-    //     const vote1 = await computer.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
+      // send some tokens to someone else
+      const computer2 = new Computer({ url })
+      await computer2.faucet(1e8)
+      // send some tokens to someone else
+      const computer3 = new Computer({ url })
+      await computer3.faucet(1e8)
 
-    //     await sleep(2000)
-    //     // vote again with the token
-    //     await computer.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const t2 = await computer2.new(Token, [computer2.getPublicKey(), 7n, 'A'], tokenMod)
+      const t3 = await computer3.new(Token, [computer3.getPublicKey(), 20n, 'A'], tokenMod)
+      const t4 = await computer3.new(Token, [computer3.getPublicKey(), 3n, 'A'], tokenMod)
+      const election = await computer.new(Election, [{ voteMod, description: 'test' }])
+      const vote1 = await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
 
-    //     // transfer the token
-    //     const computer2 = new Computer({ url })
-    //     const t2 = await t1.transfer(computer2.getPublicKey(), 2n)
-    //     expect(t2?.amount).eq(2n)
+      await sleep(2000)
+      // vote again with the token
+      await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
 
-    //     const revs = await computer.query({ mod: voteMod })
-    //     const validVotes = await election.validVotes(revs)
-    //     expect(validVotes.length).eq(1)
-    //     expect(validVotes[0]).eq(vote1._rev.substring(0, 64))
-    //   })
+      // vote with the other tokens
+      await computer2.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t2], vote: 'accept' }],
+        voteMod,
+      )
 
-    //   // TODO: fix this test when fixing module specifiers
-    //   it.skip('Should compute the valid votes using a transferred token in another election', async () => {
-    //     const tokenMod = await computer.deploy(`export ${Token}`)
-    //     const voteMod = await computer.deploy(`export ${Vote}`)
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-    //     const election1 = await computer.new(Election, [{ voteMod, description: 'election1' }])
+      await computer3.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t3, t4], vote: 'accept' }],
+        voteMod,
+      )
 
-    //     const vote1 = await computer.new(
-    //       Vote,
-    //       [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
-    //     const revs1 = await computer.query({ mod: voteMod })
-    //     // TODO: uncomment the following expect. Query is returning one extra revision with the voteMod
-    //     // expect(revs1.length).eq(1)
-    //     const validVotes1 = await election1.validVotes(revs1)
-    //     expect(validVotes1.length).eq(1)
-    //     expect(validVotes1[0]).eq(vote1._rev.substring(0, 64))
+      const validVotes = await election.validVotes()
+      expect(validVotes.length).eq(3)
+      expect(validVotes).to.include(vote1._rev.substring(0, 64))
+      expect(validVotes).to.include(t2._rev.substring(0, 64))
+      expect(validVotes).to.include(t3._rev.substring(0, 64))
+      expect(validVotes).to.include(t4._rev.substring(0, 64))
 
-    //     // send some tokens to someone else
-    //     const computer2 = new Computer({ url })
-    //     await computer2.faucet(1e8)
+      const acceptedCount = await election.acceptingVotes()
+      expect(acceptedCount).eq(40)
+    })
 
-    //     const t2 = await t1.transfer(computer2.getPublicKey(), 2n)
-    //     expect(t2?.amount).eq(2n)
+    it('Should compute the first vote if the token is sent and used to vote in the same election', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod = await computer.deploy(`export ${Vote}`)
 
-    //     const election2 = await computer.new(Election, [{ voteMod, description: 'election2' }])
-    //     // vote in another election
-    //     const vote2 = await computer2.new(
-    //       Vote,
-    //       [{ electionId: election2._id, tokens: [t2!], vote: 'accept' }],
-    //       voteMod,
-    //     )
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const election = await computer.new(Election, [{ voteMod, description: 'test' }])
+      const vote1 = await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
+      // transfer the token
+      const computer2 = new Computer({ url })
+      const t2 = await t1.transfer(computer2.getPublicKey(), 2n)
+      expect(t2?.amount).eq(2n)
 
-    //     const revs2 = await computer.query({ mod: voteMod })
-    //     // TODO: fix this. Query is returning 4 revisions. t1's and t2's mod specifier have been updated when deploying the Vote
-    //     expect(revs2.length).eq(2)
-    //     expect(revs2.includes(vote1._rev))
-    //     expect(revs2.includes(vote2._rev))
-    //     const validVotes2 = await election2.validVotes(revs2)
-    //     expect(validVotes2.length).eq(1)
-    //     expect(validVotes2[0]).eq(vote2._rev.substring(0, 64))
-    //   })
-    // })
+      await sleep(2000)
+      // vote again with the token
+      await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
 
-    // describe('acceptingVotes', () => {
-    //   it('Should count to zero if the Vote is not deployed as a module', async () => {
-    //     const election = await computer.new(Election, [{ voteMod: 'a', description: 'test' }])
+      const validVotes = await election.validVotes()
+      expect(validVotes.length).eq(1)
+      expect(validVotes[0]).eq(vote1._rev.substring(0, 64))
+    })
 
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'])
+    it('Should compute the valid votes using a transferred token in another election with different mod specifier', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod1 = await computer.deploy(`export ${Vote}`)
+      const voteMod2 = await computer.deploy(`export ${Vote}`)
 
-    //     await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }])
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const election1 = await computer.new(Election, [
+        { voteMod: voteMod1, description: 'election1' },
+      ])
 
-    //     const accepted = await election.acceptingVotes()
-    //     expect(accepted).eq(0n)
-    //   })
+      const vote1 = await computer.new(
+        Vote,
+        [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
+        voteMod1, // use the module specifier to distinguish different elections
+      )
+      const revs1 = await computer.getTXOs({ mod: voteMod1 })
+      expect(revs1.length).eq(1)
 
-    //   it('Should count if the Vote is deployed as a module', async () => {
-    //     const tokenMod = await computer.deploy(`export ${Token}`)
-    //     const voteMod = await computer.deploy(`export ${Vote}`)
+      const validVotes1 = await election1.validVotes()
+      expect(validVotes1.length).eq(1)
+      expect(validVotes1[0]).eq(vote1._rev.substring(0, 64))
 
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-    //     const election = await computer.new(Election, [{ voteMod, description: 'test' }])
-    //     await computer.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
+      // send some tokens to someone else
+      const computer2 = new Computer({ url })
+      await computer2.faucet(1e8)
 
-    //     const accepted = await election.acceptingVotes()
-    //     expect(accepted).eq(10n)
-    //   })
+      const t2 = (await t1.transfer(computer2.getPublicKey(), 2n)) as Token
+      expect(t2?.amount).eq(2n)
 
-    //   it('Should be able to transfer tokens after voting with them', async () => {
-    //     const tokenMod = await computer.deploy(`export ${Token}`)
-    //     const voteMod = await computer.deploy(`export ${Vote}`)
+      const election2 = await computer.new(Election, [
+        { voteMod: voteMod2, description: 'election2' },
+      ])
 
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-    //     const election = await computer.new(Election, [{ voteMod, description: 'test' }])
+      // vote in another election
+      const vote2 = await computer2.new(
+        Vote,
+        [{ electionId: election2._id, tokens: [t2], vote: 'accept' }],
+        voteMod2, // use a different module specifier to distinguish the second election
+      )
 
-    //     await computer.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
+      const revs2 = await computer.getTXOs({ mod: voteMod2 })
+      expect(revs2.length).eq(1)
+      expect(revs2.includes(vote1._rev))
 
-    //     const accepted = await election.acceptingVotes()
-    //     expect(accepted).eq(10n)
+      const validVotes2 = await election2.validVotes()
+      expect(validVotes2.length).eq(1)
+      expect(validVotes2[0]).eq(vote2._rev.substring(0, 64))
+    })
+  })
 
-    //     // send some tokens to someone else
-    //     const computer2 = new Computer({ url })
+  describe('acceptingVotes', () => {
+    it('Should count to zero if the Vote is not deployed as a module', async () => {
+      const invalidMod = '0f08b977b9be9d96b8b02dd0866e7a692bb1527277a746dc8a74adde724d7856:22'
+      const election = await computer.new(Election, [{ voteMod: invalidMod, description: 'test' }])
 
-    //     const tokenSent = await t1.transfer(computer2.getPublicKey(), 2n)
-    //     expect(tokenSent?.amount).eq(2n)
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'])
 
-    //     const updatedT1 = (await computer.sync(t1._rev)) as Token
-    //     expect(updatedT1.amount).eq(8n)
-    //   })
+      await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }])
 
-    //   it('Should not count token amounts if the same token is transfer and then used for voting', async () => {
-    //     const tokenMod = await computer.deploy(`export ${Token}`)
-    //     const voteMod = await computer.deploy(`export ${Vote}`)
+      const accepted = await election.acceptingVotes()
+      expect(accepted).eq(0n)
+    })
 
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-    //     const election = await computer.new(Election, [{ voteMod, description: 'test' }])
+    it('Should count if the Vote is deployed as a module', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod = await computer.deploy(`export ${Vote}`)
 
-    //     await computer.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const election = await computer.new(Election, [{ voteMod, description: 'test' }])
+      await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
 
-    //     const accepted = await election.acceptingVotes()
-    //     expect(accepted).eq(10n)
+      const accepted = await election.acceptingVotes()
+      expect(accepted).eq(10n)
+    })
 
-    //     // send some tokens to someone else
-    //     const computer2 = new Computer({ url })
-    //     const tokenSent = await t1.transfer(computer2.getPublicKey(), 2n)
-    //     expect(tokenSent?.amount).eq(2n)
+    it('Should be able to transfer tokens after voting with them', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod = await computer.deploy(`export ${Vote}`)
 
-    //     const updatedT1 = (await computer.sync(t1._rev)) as Token
-    //     expect(updatedT1.amount).eq(8n)
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const election = await computer.new(Election, [{ voteMod, description: 'test' }])
 
-    //     // Vote again
-    //     const vote2 = await computer.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [updatedT1], vote: 'accept' }],
-    //       voteMod,
-    //     )
-    //     expect(typeof vote2._id).eq('string')
+      await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
 
-    //     const accepted2 = await election.acceptingVotes()
-    //     expect(accepted2).eq(10n)
-    //   })
+      const accepted = await election.acceptingVotes()
+      expect(accepted).eq(10n)
 
-    //   it('Should not count token amounts if the transferred token is used to vote in the same election', async () => {
-    //     const tokenMod = await computer.deploy(`export ${Token}`)
-    //     expect(typeof tokenMod).eq('string')
+      // send some tokens to someone else
+      const computer2 = new Computer({ url })
 
-    //     const voteMod = await computer.deploy(`export ${Vote}`)
-    //     expect(typeof voteMod).eq('string')
+      const tokenSent = await t1.transfer(computer2.getPublicKey(), 2n)
+      expect(tokenSent?.amount).eq(2n)
 
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-    //     expect(typeof t1._id).eq('string')
+      const updatedT1 = (await computer.sync(t1._rev)) as Token
+      expect(updatedT1.amount).eq(8n)
+    })
 
-    //     const election = await computer.new(Election, [{ voteMod, description: 'test' }])
-    //     expect(typeof election._id).eq('string')
+    it('Should not count token amounts if the same token is transfer and then used for voting', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod = await computer.deploy(`export ${Vote}`)
 
-    //     const vote = await computer.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
-    //     expect(typeof vote._id).eq('string')
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const election = await computer.new(Election, [{ voteMod, description: 'test' }])
 
-    //     const accepted = await election.acceptingVotes()
-    //     expect(accepted).eq(10n)
+      await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
 
-    //     // send some tokens to someone else
-    //     const computer2 = new Computer({ url })
-    //     await computer2.faucet(1e8)
-    //     const [newRev] = await computer.query({ ids: [t1._id] })
-    //     const t1Updated = await computer.sync(newRev)
+      const accepted = await election.acceptingVotes()
+      expect(accepted).eq(10n)
 
-    //     // @ts-ignore
-    //     const tokenSent = await t1Updated.transfer(computer2.getPublicKey(), 2n)
-    //     expect(tokenSent?.amount).eq(2n)
+      // send some tokens to someone else
+      const computer2 = new Computer({ url })
+      const tokenSent = await t1.transfer(computer2.getPublicKey(), 2n)
+      expect(tokenSent?.amount).eq(2n)
 
-    //     const updatedT1 = (await computer.sync(t1._rev)) as Token
-    //     expect(updatedT1.amount).eq(8n)
+      const updatedT1 = (await computer.sync(t1._rev)) as Token
+      expect(updatedT1.amount).eq(8n)
 
-    //     // Vote again
-    //     const vote2 = await computer2.new(
-    //       Vote,
-    //       [{ electionId: election._id, tokens: [tokenSent], vote: 'accept' }],
-    //       voteMod,
-    //     )
-    //     expect(typeof vote2._id).eq('string')
-    //     await sleep(2000)
-    //     const accepted2 = await election.acceptingVotes()
-    //     expect(accepted2).eq(10n)
-    //   })
+      // Vote again
+      await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [updatedT1], vote: 'accept' }],
+        voteMod,
+      )
 
-    //   // TODO: fix this test when fixing module specifiers issue
-    //   it.skip('Should count token amounts if the transferred token is used to vote in a different election', async () => {
-    //     const tokenMod = await computer.deploy(`export ${Token}`)
-    //     const voteMod = await computer.deploy(`export ${Vote}`)
+      const accepted2 = await election.acceptingVotes()
+      expect(accepted2).eq(10n)
+    })
 
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-    //     const election1 = await computer.new(Election, [{ voteMod, description: 'election1' }])
+    it('Should not count token amounts if the transferred token is used to vote in the same election', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod = await computer.deploy(`export ${Vote}`)
 
-    //     await computer.new(
-    //       Vote,
-    //       [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
-    //     const accepted = await election1.acceptingVotes()
-    //     expect(accepted).eq(10n)
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
 
-    //     // send some tokens to someone else
-    //     const computer2 = new Computer({ url })
-    //     await computer2.faucet(1e8)
+      const election = await computer.new(Election, [{ voteMod, description: 'test' }])
 
-    //     const t2 = await t1.transfer(computer2.getPublicKey(), 2n)
-    //     expect(t2?.amount).eq(2n)
+      const vote = await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
+      expect(vote._id.length > 0).to.eq(true)
 
-    //     const updatedT1 = (await computer.sync(t1._rev)) as Token
-    //     expect(updatedT1.amount).eq(8n)
+      const accepted = await election.acceptingVotes()
+      expect(accepted).eq(10n)
 
-    //     const election2 = await computer.new(Election, [{ voteMod, description: 'election2' }])
-    //     expect(typeof election2._id).eq('string')
+      // send some tokens to someone else
+      const computer2 = new Computer({ url })
+      await computer2.faucet(1e8)
+      const newRev = await computer.latest(t1._rev)
+      const t1Updated = (await computer.sync(newRev)) as Token
 
-    //     // vote in another election
-    //     await computer2.new(
-    //       Vote,
-    //       [{ electionId: election2._id, tokens: [t2!], vote: 'accept' }],
-    //       voteMod,
-    //     )
-    //     const acceptedElection1 = await election1.acceptingVotes()
-    //     expect(acceptedElection1).eq(10n)
+      const tokenSent = (await t1Updated.transfer(computer2.getPublicKey(), 2n)) as Token
+      expect(tokenSent?.amount).eq(2n)
 
-    //     const acceptedElection2 = await election2.acceptingVotes()
-    //     expect(acceptedElection2).eq(2n)
-    //   })
+      const updatedT1 = (await computer.sync(t1._rev)) as Token
+      expect(updatedT1.amount).eq(8n)
 
-    //   it('Should not count token amounts if same token is used twice', async () => {
-    //     const tokenMod = await computer.deploy(`export ${Token}`)
-    //     const voteMod = await computer.deploy(`export ${Vote}`)
+      // Vote again
+      await computer2.new(
+        Vote,
+        [{ electionId: election._id, tokens: [tokenSent], vote: 'accept' }],
+        voteMod,
+      )
 
-    //     const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-    //     const election1 = await computer.new(Election, [{ voteMod, description: 'election1' }])
+      await sleep(2000)
+      const accepted2 = await election.acceptingVotes()
+      expect(accepted2).eq(10n)
+    })
 
-    //     await computer.new(
-    //       Vote,
-    //       [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
-    //     const accepted = await election1.acceptingVotes()
-    //     expect(accepted).eq(10n)
+    it('Should count token amounts if the transferred token is used to vote in a different election', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod1 = await computer.deploy(`export ${Vote}`)
+      const voteMod2 = await computer.deploy(`export ${Vote}`)
 
-    //     // use the token again
-    //     const vote2 = await computer.new(
-    //       Vote,
-    //       [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
-    //       voteMod,
-    //     )
-    //     expect(typeof vote2._id).eq('string')
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const election1 = await computer.new(Election, [
+        { voteMod: voteMod1, description: 'election1' },
+      ])
 
-    //     const accepted2 = await election1.acceptingVotes()
-    //     expect(accepted2).eq(10n)
-    //   })
+      await computer.new(
+        Vote,
+        [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
+        voteMod1,
+      )
+      const accepted = await election1.acceptingVotes()
+      expect(accepted).eq(10n)
+
+      // send some tokens to someone else
+      const computer2 = new Computer({ url })
+      await computer2.faucet(1e8)
+
+      const t2 = (await t1.transfer(computer2.getPublicKey(), 2n)) as Token
+      expect(t2?.amount).eq(2n)
+
+      const updatedT1 = (await computer.sync(t1._rev)) as Token
+      expect(updatedT1.amount).eq(8n)
+
+      const election2 = await computer.new(Election, [
+        { voteMod: voteMod2, description: 'election2' },
+      ])
+
+      // vote in another election
+      await computer2.new(
+        Vote,
+        [{ electionId: election2._id, tokens: [t2], vote: 'accept' }],
+        voteMod2,
+      )
+      const acceptedElection1 = await election1.acceptingVotes()
+      expect(acceptedElection1).eq(10n)
+
+      const acceptedElection2 = await election2.acceptingVotes()
+      expect(acceptedElection2).eq(2n)
+    })
+
+    it('Should not count token amounts if same token is used twice', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const voteMod = await computer.deploy(`export ${Vote}`)
+
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const election1 = await computer.new(Election, [{ voteMod, description: 'election1' }])
+
+      await computer.new(
+        Vote,
+        [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
+      const accepted = await election1.acceptingVotes()
+      expect(accepted).eq(10n)
+
+      // use the token again
+      await computer.new(
+        Vote,
+        [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
+        voteMod,
+      )
+
+      const accepted2 = await election1.acceptingVotes()
+      expect(accepted2).eq(10n)
+    })
+  })
+
+  it('Should not be possible to use a non owned token to vote in an election', async () => {
+    const tokenMod = await computer.deploy(`export ${Token}`)
+    const voteMod = await computer.deploy(`export ${Vote}`)
+    const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+
+    // another user syncs to the valid token revision and uses it to vote
+    const computer2 = new Computer({ url })
+    await computer2.faucet(1e8)
+    const syncedT1 = (await computer2.sync(t1._rev)) as Token
+
+    const election = await computer2.new(Election, [{ voteMod, description: 'test' }])
+
+    try {
+      await computer2.new(
+        Vote,
+        [{ electionId: election._id, tokens: [syncedT1], vote: 'accept' }],
+        voteMod,
+      )
+      expect(true).to.eq(false)
+    } catch (error) {
+      expect((error as Error).message.includes('mandatory-script-verify-flag-failed')).eq(true)
+    }
   })
 })
