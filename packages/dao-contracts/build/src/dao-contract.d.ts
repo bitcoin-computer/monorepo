@@ -15,8 +15,10 @@ export declare class Election extends Contract {
     tokenRoot: string;
     description: string;
     constructor({ proposalMod, tokenRoot, description }: ElectionType);
-    validVotes(): Promise<string[]>;
-    acceptingVotes(): Promise<bigint>;
+    proposalVotes(): Promise<string[]>;
+    validVotes(): Promise<Vote[]>;
+    accepted(): Promise<bigint>;
+    rejected(): Promise<bigint>;
 }
 export declare class Vote extends Contract {
     tokensAmount: bigint;

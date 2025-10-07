@@ -35,9 +35,9 @@ describe('Election', () => {
       await sleep(2000)
       const revs = await computer.query({ mod: proposalMod })
       expect(revs.length).greaterThan(0)
-      await election.validVotes()
+      await election.proposalVotes()
 
-      const validVotes = await election.validVotes()
+      const validVotes = await election.proposalVotes()
       expect(validVotes.length).eq(1)
       expect(validVotes[0]).eq(vote._rev.substring(0, 64))
     })
@@ -64,7 +64,7 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const validVotes = await election.validVotes()
+      const validVotes = await election.proposalVotes()
       expect(validVotes.length).eq(1)
       expect(validVotes[0]).eq(vote1._rev.substring(0, 64))
     })
@@ -118,15 +118,15 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const validVotes = await election.validVotes()
+      const validVotes = await election.proposalVotes()
       expect(validVotes.length).eq(3)
       expect(validVotes).to.include(vote1._rev.substring(0, 64))
       expect(validVotes).to.include(t2._rev.substring(0, 64))
       expect(validVotes).to.include(t3._rev.substring(0, 64))
       expect(validVotes).to.include(t4._rev.substring(0, 64))
 
-      const acceptedCount = await election.acceptingVotes()
-      expect(acceptedCount).eq(40n)
+      const accepted = await election.accepted()
+      expect(accepted).eq(40n)
     })
 
     it('Should compute the first vote if the token is sent and used to vote in the same election', async () => {
@@ -155,7 +155,7 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const validVotes = await election.validVotes()
+      const validVotes = await election.proposalVotes()
       expect(validVotes.length).eq(1)
       expect(validVotes[0]).eq(vote1._rev.substring(0, 64))
     })
@@ -178,7 +178,7 @@ describe('Election', () => {
       const revs1 = await computer.getTXOs({ mod: proposalMod1 })
       expect(revs1.length).eq(1)
 
-      const validVotes1 = await election1.validVotes()
+      const validVotes1 = await election1.proposalVotes()
       expect(validVotes1.length).eq(1)
       expect(validVotes1[0]).eq(vote1._rev.substring(0, 64))
 
@@ -204,7 +204,7 @@ describe('Election', () => {
       expect(revs2.length).eq(1)
       expect(revs2.includes(vote1._rev))
 
-      const validVotes2 = await election2.validVotes()
+      const validVotes2 = await election2.proposalVotes()
       expect(validVotes2.length).eq(1)
       expect(validVotes2[0]).eq(vote2._rev.substring(0, 64))
     })
@@ -220,7 +220,7 @@ describe('Election', () => {
 
       await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }])
 
-      const accepted = await election.acceptingVotes()
+      const accepted = await election.accepted()
       expect(accepted).eq(0n)
     })
 
@@ -238,7 +238,7 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const accepted = await election.acceptingVotes()
+      const accepted = await election.accepted()
       expect(accepted).eq(10n)
     })
 
@@ -257,7 +257,7 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const accepted = await election.acceptingVotes()
+      const accepted = await election.accepted()
       expect(accepted).eq(10n)
 
       // send some tokens to someone else
@@ -285,7 +285,7 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const accepted = await election.acceptingVotes()
+      const accepted = await election.accepted()
       expect(accepted).eq(10n)
 
       // send some tokens to someone else
@@ -303,7 +303,7 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const accepted2 = await election.acceptingVotes()
+      const accepted2 = await election.accepted()
       expect(accepted2).eq(10n)
     })
 
@@ -324,7 +324,7 @@ describe('Election', () => {
       )
       expect(vote._id.length > 0).to.eq(true)
 
-      const accepted = await election.acceptingVotes()
+      const accepted = await election.accepted()
       expect(accepted).eq(10n)
 
       // send some tokens to someone else
@@ -347,7 +347,7 @@ describe('Election', () => {
       )
 
       await sleep(2000)
-      const accepted2 = await election.acceptingVotes()
+      const accepted2 = await election.accepted()
       expect(accepted2).eq(10n)
     })
 
@@ -366,7 +366,7 @@ describe('Election', () => {
         [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
         proposalMod1,
       )
-      const accepted = await election1.acceptingVotes()
+      const accepted = await election1.accepted()
       expect(accepted).eq(10n)
 
       // send some tokens to someone else
@@ -389,10 +389,10 @@ describe('Election', () => {
         [{ electionId: election2._id, tokens: [t2], vote: 'accept' }],
         proposalMod2,
       )
-      const acceptedElection1 = await election1.acceptingVotes()
+      const acceptedElection1 = await election1.accepted()
       expect(acceptedElection1).eq(10n)
 
-      const acceptedElection2 = await election2.acceptingVotes()
+      const acceptedElection2 = await election2.accepted()
       expect(acceptedElection2).eq(2n)
     })
 
@@ -410,7 +410,7 @@ describe('Election', () => {
         [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
         proposalMod,
       )
-      const accepted = await election1.acceptingVotes()
+      const accepted = await election1.accepted()
       expect(accepted).eq(10n)
 
       // use the token again
@@ -420,7 +420,43 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const accepted2 = await election1.acceptingVotes()
+      const accepted2 = await election1.accepted()
+      expect(accepted2).eq(10n)
+    })
+
+    it('Should not count token amounts if the token is not from the same lineage', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const proposalMod = await computer.deploy(`export ${Vote}`)
+
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const election1 = await computer.new(Election, [
+        { proposalMod, tokenRoot: t1._root, description: 'election1' },
+      ])
+
+      await computer.new(
+        Vote,
+        [{ electionId: election1._id, tokens: [t1], vote: 'accept' }],
+        proposalMod,
+      )
+      const accepted = await election1.accepted()
+      expect(accepted).eq(10n)
+
+      // create a new token that is not from the same lineage
+      const t2 = await computer.new(Token, [computer.getPublicKey(), 5n, 'A'], tokenMod)
+
+      // use the new token to vote
+      await computer.new(
+        Vote,
+        [{ electionId: election1._id, tokens: [t2], vote: 'accept' }],
+        proposalMod,
+      )
+
+      const votes = await election1.proposalVotes()
+      expect(votes.length).eq(2)
+      expect(votes).includes(t1._rev.substring(0, 64))
+      expect(votes).includes(t2._rev.substring(0, 64))
+
+      const accepted2 = await election1.accepted()
       expect(accepted2).eq(10n)
     })
 

@@ -21,7 +21,7 @@ export class Election extends Contract {
     super({ proposalMod, tokenRoot, description })
   }
 
-  async validVotes(): Promise<string[]> {
+  async proposalVotes(): Promise<string[]> {
     const revs = await computer.getTXOs({ mod: this.proposalMod })
     const voteTxIdsSet = new Set<string>(revs.map((r) => r.split(':')[0]))
     const validVotes = new Set<string>(voteTxIdsSet)
@@ -39,21 +39,31 @@ export class Election extends Contract {
     return Array.from(validVotes)
   }
 
-  async acceptingVotes(): Promise<bigint> {
-    const validVotes = await this.validVotes()
+  async validVotes(): Promise<Vote[]> {
+    const proposalVotes = await this.proposalVotes()
 
-    const resolved = (await Promise.all(validVotes.map((txId) => computer.sync(txId)))).map(
+    const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map(
       // @ts-expect-error type unknown
       (obj) => obj.res,
     )
 
-    const acceptedVotes = [...resolved].filter(
-      (r: Vote) =>
-        r.vote === 'accept' && r.electionId === this._id && r.tokenRoot === this.tokenRoot,
+    return [...resolved].filter(
+      (r: Vote) => r.electionId === this._id && r.tokenRoot === this.tokenRoot,
     )
+  }
 
-    const count = acceptedVotes.reduce((acc: bigint, curr: Vote) => acc + curr.tokensAmount, 0n)
-    return count
+  async accepted(): Promise<bigint> {
+    const votes = await this.validVotes()
+    return votes
+      .filter((v) => v.vote === 'accept')
+      .reduce((acc, curr) => acc + curr.tokensAmount, 0n)
+  }
+
+  async rejected(): Promise<bigint> {
+    const votes = await this.validVotes()
+    return votes
+      .filter((v) => v.vote === 'reject')
+      .reduce((acc, curr) => acc + curr.tokensAmount, 0n)
   }
 }
 
