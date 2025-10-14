@@ -502,6 +502,7 @@ declare class Computer {
   deploy(module: string, opts?: Partial<ModuleOptions>): Promise<string>
   load(rev: string): Promise<ModuleExportsNamespace>
   listTxs(address?: string): Promise<{ sentTxs: TxIdAmountType[]; receivedTxs: TxIdAmountType[] }>
+  getAncestors(location: string, verbosity?: number): Promise<string[] | Map<string, string>>
   getUtxos(address?: string): Promise<string[]>
   getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
   getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
