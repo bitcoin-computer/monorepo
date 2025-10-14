@@ -511,7 +511,7 @@ declare class Computer {
   fund(tx: nTransaction, opts?: Fee & FundOptions): Promise<void>
   send(satoshis: bigint, address: string): Promise<string>
   broadcast(tx: nTransaction): Promise<string>
-  rpcCall(method: string, params: string): Promise<any>
+  rpc(method: string, params: string): Promise<any>
   getChain(): TBCChain
   getNetwork(): TBCNetwork
   getMnemonic(): string

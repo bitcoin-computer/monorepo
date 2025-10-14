@@ -1,4 +1,4 @@
-# rpcCall
+# rpc
 
 _Calls a Bitcoin RPC method with the given parameters._
 

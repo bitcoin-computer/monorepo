@@ -17,7 +17,7 @@ export default function Blocks() {
     const fetch = async () => {
       try {
         showLoader(true)
-        const res = await computer.rpcCall('getblockchaininfo', '')
+        const res = await computer.rpc('getblockchaininfo', '')
         setTotalBlocks(res.result.blocks)
         showLoader(false)
       } catch (error) {

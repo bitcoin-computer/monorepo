@@ -30,7 +30,7 @@ function Component() {
             const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn]);
             const tx = BCTransaction.fromHex(hex);
             setTxnData(tx);
-            const { result } = await computer.rpcCall('getrawtransaction', `${params.txn} 2`);
+            const { result } = await computer.rpc('getrawtransaction', `${params.txn} 2`);
             setRPCTxnData(result);
         };
         fetch();
