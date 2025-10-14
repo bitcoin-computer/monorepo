@@ -27,7 +27,7 @@ export class Election extends Contract {
     const validVotes = new Set<string>(voteTxIdsSet)
 
     for (const voteTxId of voteTxIdsSet) {
-      const ancestors = await computer.db.wallet.restClient.getAncestors(voteTxId)
+      const ancestors = (await computer.getAncestors(voteTxId)) as string[]
       const ancestorsSet = new Set<string>(ancestors)
       ancestorsSet.delete(voteTxId)
 
@@ -39,7 +39,7 @@ export class Election extends Contract {
     return Array.from(validVotes)
   }
 
-  async validVotes(): Promise<Vote[]> {
+  private async validVotes(): Promise<Vote[]> {
     const proposalVotes = await this.proposalVotes()
 
     const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map(
@@ -50,6 +50,11 @@ export class Election extends Contract {
     return [...resolved].filter(
       (r: Vote) => r.electionId === this._id && r.tokenRoot === this.tokenRoot,
     )
+  }
+
+  async validRevVotes(): Promise<string[]> {
+    const votes = await this.validVotes()
+    return votes.map((v) => v._rev)
   }
 
   async accepted(): Promise<bigint> {

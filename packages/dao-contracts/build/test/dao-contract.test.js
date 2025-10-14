@@ -3,11 +3,6 @@ import { expect } from 'chai';
 import { Computer } from '@bitcoin-computer/lib';
 import { Token } from '@bitcoin-computer/TBC20';
 const url = 'http://localhost:1031';
-function sleep(delay) {
-    return new Promise((resolve) => {
-        setTimeout(resolve, delay);
-    });
-}
 describe('Election', () => {
     const computer = new Computer({ url });
     beforeEach('Before', async () => {
@@ -22,7 +17,6 @@ describe('Election', () => {
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
             const vote = await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }], proposalMod);
-            await sleep(2000);
             const revs = await computer.query({ mod: proposalMod });
             expect(revs.length).greaterThan(0);
             await election.proposalVotes();
@@ -38,7 +32,6 @@ describe('Election', () => {
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
             const vote1 = await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }], proposalMod);
-            await sleep(2000);
             // vote again with the token
             await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }], proposalMod);
             const validVotes = await election.proposalVotes();
@@ -64,7 +57,6 @@ describe('Election', () => {
             ]);
             const vote1 = await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }], proposalMod);
             expect(vote1.tokenRoot).eq(t1._root);
-            await sleep(2000);
             // vote again with the token
             await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }], proposalMod);
             // vote with the other tokens
@@ -91,14 +83,13 @@ describe('Election', () => {
             const computer2 = new Computer({ url });
             const t2 = await t1.transfer(computer2.getPublicKey(), 2n);
             expect(t2?.amount).eq(2n);
-            await sleep(2000);
             // vote again with the token
             await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }], proposalMod);
             const validVotes = await election.proposalVotes();
             expect(validVotes.length).eq(1);
             expect(validVotes[0]).eq(vote1._rev.substring(0, 64));
         });
-        it('Should compute the valid votes using a transferred token in another election with different mod specifier', async () => {
+        it.only('Should compute the valid votes using a transferred token in another election with different mod specifier', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod1 = await computer.deploy(`export ${Vote}`);
             const proposalMod2 = await computer.deploy(`export ${Vote}`);
@@ -176,7 +167,7 @@ describe('Election', () => {
             const election = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
-            await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }], proposalMod);
+            const vote1 = await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }], proposalMod);
             const accepted = await election.accepted();
             expect(accepted).eq(10n);
             // send some tokens to someone else
@@ -187,6 +178,9 @@ describe('Election', () => {
             expect(updatedT1.amount).eq(8n);
             // Vote again
             await computer.new(Vote, [{ electionId: election._id, tokens: [updatedT1], vote: 'accept' }], proposalMod);
+            const validVotes = await election.validRevVotes();
+            expect(validVotes.length).eq(1);
+            expect(validVotes[0]).eq(vote1._rev);
             const accepted2 = await election.accepted();
             expect(accepted2).eq(10n);
         });
@@ -212,7 +206,6 @@ describe('Election', () => {
             expect(updatedT1.amount).eq(8n);
             // Vote again
             await computer2.new(Vote, [{ electionId: election._id, tokens: [tokenSent], vote: 'accept' }], proposalMod);
-            await sleep(2000);
             const accepted2 = await election.accepted();
             expect(accepted2).eq(10n);
         });

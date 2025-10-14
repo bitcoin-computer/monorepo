@@ -4,12 +4,6 @@ import { Computer } from '@bitcoin-computer/lib'
 import { Token } from '@bitcoin-computer/TBC20'
 const url = 'http://localhost:1031'
 
-function sleep(delay: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, delay)
-  })
-}
-
 describe('Election', () => {
   const computer = new Computer({ url })
 
@@ -32,7 +26,6 @@ describe('Election', () => {
         proposalMod,
       )
 
-      await sleep(2000)
       const revs = await computer.query({ mod: proposalMod })
       expect(revs.length).greaterThan(0)
       await election.proposalVotes()
@@ -56,7 +49,6 @@ describe('Election', () => {
         proposalMod,
       )
 
-      await sleep(2000)
       // vote again with the token
       await computer.new(
         Vote,
@@ -97,7 +89,6 @@ describe('Election', () => {
       )
       expect(vote1.tokenRoot).eq(t1._root)
 
-      await sleep(2000)
       // vote again with the token
       await computer.new(
         Vote,
@@ -147,7 +138,6 @@ describe('Election', () => {
       const t2 = await t1.transfer(computer2.getPublicKey(), 2n)
       expect(t2?.amount).eq(2n)
 
-      await sleep(2000)
       // vote again with the token
       await computer.new(
         Vote,
@@ -279,7 +269,7 @@ describe('Election', () => {
         { proposalMod, tokenRoot: t1._root, description: 'test' },
       ])
 
-      await computer.new(
+      const vote1 = await computer.new(
         Vote,
         [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
         proposalMod,
@@ -303,6 +293,9 @@ describe('Election', () => {
         proposalMod,
       )
 
+      const validVotes = await election.validRevVotes()
+      expect(validVotes.length).eq(1)
+      expect(validVotes[0]).eq(vote1._rev)
       const accepted2 = await election.accepted()
       expect(accepted2).eq(10n)
     })
@@ -346,7 +339,6 @@ describe('Election', () => {
         proposalMod,
       )
 
-      await sleep(2000)
       const accepted2 = await election.accepted()
       expect(accepted2).eq(10n)
     })

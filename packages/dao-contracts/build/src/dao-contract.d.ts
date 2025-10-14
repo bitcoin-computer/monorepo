@@ -16,7 +16,8 @@ export declare class Election extends Contract {
     description: string;
     constructor({ proposalMod, tokenRoot, description }: ElectionType);
     proposalVotes(): Promise<string[]>;
-    validVotes(): Promise<Vote[]>;
+    private validVotes;
+    validRevVotes(): Promise<string[]>;
     accepted(): Promise<bigint>;
     rejected(): Promise<bigint>;
 }

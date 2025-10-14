@@ -8,7 +8,7 @@ export class Election extends Contract {
         const voteTxIdsSet = new Set(revs.map((r) => r.split(':')[0]));
         const validVotes = new Set(voteTxIdsSet);
         for (const voteTxId of voteTxIdsSet) {
-            const ancestors = await computer.db.wallet.restClient.getAncestors(voteTxId);
+            const ancestors = (await computer.getAncestors(voteTxId));
             const ancestorsSet = new Set(ancestors);
             ancestorsSet.delete(voteTxId);
             if ([...ancestorsSet].some(voteTxIdsSet.has, voteTxIdsSet)) {
@@ -23,6 +23,10 @@ export class Election extends Contract {
         // @ts-expect-error type unknown
         (obj) => obj.res);
         return [...resolved].filter((r) => r.electionId === this._id && r.tokenRoot === this.tokenRoot);
+    }
+    async validRevVotes() {
+        const votes = await this.validVotes();
+        return votes.map((v) => v._rev);
     }
     async accepted() {
         const votes = await this.validVotes();
