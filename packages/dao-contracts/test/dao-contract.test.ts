@@ -200,7 +200,7 @@ describe('Election', () => {
     })
   })
 
-  describe('acceptingVotes', () => {
+  describe('accepted-rejected', () => {
     it('Should count to zero if the Vote is not deployed as a module', async () => {
       const invalidMod = '0f08b977b9be9d96b8b02dd0866e7a692bb1527277a746dc8a74adde724d7856:22'
       const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'])
@@ -476,6 +476,54 @@ describe('Election', () => {
       } catch (error) {
         expect((error as Error).message.includes('mandatory-script-verify-flag-failed')).eq(true)
       }
+    })
+
+    it('Should count number of accepted and rejected votes', async () => {
+      const tokenMod = await computer.deploy(`export ${Token}`)
+      const proposalMod = await computer.deploy(`export ${Vote}`)
+
+      const computer2 = new Computer({ url })
+      await computer2.faucet(1e8)
+      const computer3 = new Computer({ url })
+      await computer3.faucet(1e8)
+
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
+      const t2 = (await t1.transfer(computer2.getPublicKey(), 5n)) as Token
+      expect(t2?.amount).eq(5n)
+      const t3 = (await t1.transfer(computer3.getPublicKey(), 1n)) as Token
+
+      expect(t1.amount).eq(10n - (t2.amount + t3.amount))
+
+      const election = await computer.new(Election, [
+        { proposalMod, tokenRoot: t1._root, description: 'test' },
+      ])
+
+      await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        proposalMod,
+      )
+      const accepted = await election.accepted()
+      expect(accepted).eq(t1.amount)
+
+      await computer2.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t2], vote: 'reject' }],
+        proposalMod,
+      )
+      const rejected = await election.rejected()
+      expect(rejected).eq(t2.amount)
+
+      await computer3.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t3], vote: 'accept' }],
+        proposalMod,
+      )
+      const accepted2 = await election.accepted()
+      expect(accepted2).eq(t1.amount + t3.amount)
+
+      const rejected2 = await election.rejected()
+      expect(rejected2).eq(t2.amount)
     })
   })
 })
