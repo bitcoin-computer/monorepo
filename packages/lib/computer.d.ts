@@ -238,7 +238,7 @@ interface _Network {
   scriptHash: number
   wif: number
 }
-interface _Balance {
+interface Balance {
   confirmed: bigint
   unconfirmed: bigint
   balance: bigint
@@ -314,7 +314,7 @@ declare class RestClient {
   constructor(params?: ComputerOptions)
   rpc(method: string, params: string): Promise<any>
   broadcast(txHex: string): Promise<string>
-  getBalance(address: string): Promise<_Balance>
+  getBalance(address: string): Promise<Balance>
   listTxs(address: string): Promise<{
     sentTxs: TxIdAmountType[]
     receivedTxs: TxIdAmountType[]
