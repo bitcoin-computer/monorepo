@@ -89,7 +89,7 @@ describe('Election', () => {
             expect(validVotes.length).eq(1);
             expect(validVotes[0]).eq(vote1._rev.substring(0, 64));
         });
-        it.only('Should compute the valid votes using a transferred token in another election with different mod specifier', async () => {
+        it('Should compute the valid votes using a transferred token in another election with different mod specifier', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod1 = await computer.deploy(`export ${Vote}`);
             const proposalMod2 = await computer.deploy(`export ${Vote}`);

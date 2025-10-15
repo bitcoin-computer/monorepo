@@ -507,7 +507,7 @@ declare class Computer {
   getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
   getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
   getTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
-  getBalance(address?: string): Promise<_Balance>
+  getBalance(address?: string): Promise<Balance>
   sign(transaction: nTransaction, opts?: SigOptions): Promise<void>
   fund(tx: nTransaction, opts?: Fee & FundOptions): Promise<void>
   send(satoshis: bigint, address: string): Promise<string>
