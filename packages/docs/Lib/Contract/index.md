@@ -74,7 +74,7 @@ expect(c.n).eq(0)
 
 ## Querying inside of a Contract
 
-Smart contracts that extend the `Contract` class can access several built-in functions to explore information related to revisions, transaction outputs, trace transaction ancestry or query for balances. These functions do not modify blockchain data. Instead, they allow a contract to traverse its own revision graph, another contract's revision graph or access contextual information derived from transactions.
+Smart contracts can access several built-in functions to explore information related to revisions, transaction outputs, trace transaction ancestry or query for balances. These functions do not modify blockchain data. Instead, they allow a contract to traverse its own revision graph, another contract's revision graph or access contextual information derived from transactions.
 
 ### Determinism rule
 
