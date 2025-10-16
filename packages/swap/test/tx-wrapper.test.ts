@@ -1,13 +1,20 @@
- 
-import { expect } from 'chai'
+import { expect, assert } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
 import { StaticSwap } from '../src/static-swap.js'
 import { TxWrapperHelper } from '../src/tx-wrapper.js'
 import { meta } from '../src/utils/index.js'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
@@ -107,7 +114,7 @@ describe('TxWrapper', () => {
 
       it('Bob broadcasts the swap transaction', async () => {
         txId = await bob.broadcast(bobsTx)
-        expect(txId).not.undefined
+        assert.isDefined(txId)
       })
 
       it('a is now owned by Bob', async () => {

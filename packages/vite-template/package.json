@@ -1,5 +1,5 @@
 {
-  "name": "@bitcoin-computer/vite-project",
+  "name": "@bitcoin-computer/vite-template",
   "version": "0.26.0-beta.0",
   "private": true,
   "license": "MIT",
@@ -22,9 +22,9 @@
     "start": "vite",
     "test": "exit 0",
     "test:puppeteer": "vitest run --config vitest.puppeteer.config.ts",
-    "test:puppeteer:build:headless": "npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 HEADLESS=true npm run test:puppeteer && pkill -f 'vite preview')",
+    "test:puppeteer:build": "npm run deploy -- --yes && pkill -f 'vite preview' || true && npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 npm run test:puppeteer && pkill -f 'vite preview')",
+    "test:puppeteer:build:headless": "npm run deploy && pkill -f 'vite preview' || true && npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 HEADLESS=true npm run test:puppeteer && pkill -f 'vite preview')",
     "test:puppeteer:headless": "HEADLESS=true npm run test:puppeteer",
-    "test:show": "npm run test 2>&1 | tee vite-template-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open vite-template-test.log; fi",
     "types": "tsc --noEmit"
   },
   "dependencies": {

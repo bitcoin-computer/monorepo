@@ -1,5 +1,5 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { chain, expect, network, url } from '../../utils'
+import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('encodeCall', async () => {
   it('Should encode a function call', async () => {

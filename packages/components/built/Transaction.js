@@ -16,7 +16,7 @@ function ExpressionCard({ content, env }) {
     });
     return _jsx(Card, { content: formattedContent });
 }
-function Component() {
+export function TransactionComponent() {
     const location = useLocation();
     const params = useParams();
     const computer = useContext(ComputerContext);
@@ -56,4 +56,4 @@ function Component() {
     const outputsComponent = () => (_jsxs("div", { className: "relative overflow-x-auto", children: [_jsx("h2", { className: "mb-2 text-4xl font-bold dark:text-white", children: "Objects" }), _jsxs("table", { className: "w-full mt-4 mb-8 text-sm text-left text-gray-500 dark:text-gray-400", children: [_jsx("thead", { className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400", children: _jsxs("tr", { children: [_jsx("th", { scope: "col", className: "px-6 py-3", children: "Number" }), _jsx("th", { scope: "col", className: "px-6 py-3", children: "Value" }), _jsx("th", { scope: "col", className: "px-6 py-3", children: "Type" }), _jsx("th", { scope: "col", className: "px-6 py-3", children: "Script PubKey" })] }) }), _jsx("tbody", { children: rpcTxnData?.vout?.map((output) => (_jsxs("tr", { className: "bg-white border-b dark:bg-gray-800 dark:border-gray-700", children: [_jsx("td", { className: "px-6 py-4 break-all", children: _jsxs(Link, { to: `/objects/${txn}:${output.n}`, className: "font-medium text-blue-600 dark:text-blue-500 hover:underline", children: ["#", output.n] }) }), _jsx("td", { className: "px-6 py-4", children: output.value }), _jsx("td", { className: "px-6 py-4", children: output.scriptPubKey.type }), _jsx("td", { className: "px-6 py-4 break-all", children: output.scriptPubKey.asm })] }, output.n))) })] })] }));
     return (_jsx(_Fragment, { children: _jsxs("div", { className: "pt-8", children: [_jsx("h1", { className: "mb-2 text-5xl font-extrabold dark:text-white", children: "Transaction" }), _jsx("p", { className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400", children: txn }), transition && transitionComponent(), rpcTxnData?.vin && inputsComponent(), rpcTxnData?.vout && outputsComponent()] }) }));
 }
-export const Transaction = { Component };
+export const Transaction = { Component: TransactionComponent };

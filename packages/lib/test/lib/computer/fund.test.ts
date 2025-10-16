@@ -1,6 +1,6 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { address, networks, Transaction } from '@bitcoin-computer/nakamotojs'
-import { chain, network, url } from '../../utils'
+import { chain, network, url } from '../../utils/index.js'
 
 describe('fund', () => {
   let computer: Computer

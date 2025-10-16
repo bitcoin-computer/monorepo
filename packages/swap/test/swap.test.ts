@@ -1,4 +1,3 @@
- 
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
@@ -6,8 +5,16 @@ import { Token } from '@bitcoin-computer/TBC20'
 import dotenv from 'dotenv'
 import { Swap, SwapHelper } from '../src/swap.js'
 import { meta } from '../src/utils/index.js'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 describe('Swap', () => {
   let nftA: NFT

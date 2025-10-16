@@ -50,7 +50,7 @@
     "start:bcn": "node dist/bcn.es.mjs",
     "start:sync": "node dist/bcn.sync.es.mjs",
     "test": "mocha --config .mocharc.json",
-    "test:show": "npm run test 2>&1 | tee node-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open node-test.log; fi",
+    "test:rerun": "node ../../scripts/rerun-failed.js",
     "up": "docker compose -f docker-compose.yml up"
   },
   "dependencies": {

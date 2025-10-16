@@ -35,7 +35,7 @@ function FromRevs({ revs, computer }) {
 function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }) {
     return (_jsx("nav", { className: "flex items-center justify-between", "aria-label": "Table navigation", children: _jsxs("ul", { className: "inline-flex items-center -space-x-px", children: [_jsx("li", { children: _jsxs("button", { disabled: !isPrevAvailable, onClick: handlePrev, className: "flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white", children: [_jsx("span", { className: "sr-only", children: "Previous" }), _jsx("svg", { className: "w-2.5 h-2.5", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 6 10", children: _jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "M5 1 1 5l4 4" }) })] }) }), _jsx("li", { children: _jsxs("button", { disabled: !isNextAvailable, onClick: handleNext, className: "flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white", children: [_jsx("span", { className: "sr-only", children: "Next" }), _jsx("svg", { className: "w-2.5 h-2.5", "aria-hidden": "true", xmlns: "http://www.w3.org/2000/svg", fill: "none", viewBox: "0 0 6 10", children: _jsx("path", { stroke: "currentColor", strokeLinecap: "round", strokeLinejoin: "round", strokeWidth: "2", d: "m1 9 4-4-4-4" }) })] }) })] }) }));
 }
-export default function WithPagination(q) {
+export function GalleryWithPagination(q) {
     const contractsPerPage = 12;
     const computer = useContext(ComputerContext);
     const { showLoader } = useUtilsComponents();
@@ -59,9 +59,8 @@ export default function WithPagination(q) {
             const result = await computer.query(query);
             setIsNextAvailable(result.length > contractsPerPage);
             setRevs(result.slice(0, contractsPerPage));
-            if (pageNum === 0 && result?.length === 0) {
+            if (pageNum === 0 && result?.length === 0)
                 setShowNoAsset(true);
-            }
             showLoader(false);
         };
         fetch();
@@ -80,5 +79,5 @@ export default function WithPagination(q) {
 }
 export const Gallery = {
     FromRevs,
-    WithPagination,
+    WithPagination: GalleryWithPagination,
 };

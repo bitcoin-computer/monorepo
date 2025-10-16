@@ -1,15 +1,25 @@
 export { SnackBar } from './SnackBar'
 export { Auth } from './Auth'
-export { Modal } from './Modal'
-export { Gallery } from './Gallery'
+export {
+  Modal,
+  getModal,
+  showModal,
+  hideModal,
+  toggleModal,
+  ShowModalButton,
+  HideModalButton,
+  ToggleModalButton,
+  ModalComponent,
+} from './Modal'
+export { Gallery, GalleryWithPagination } from './Gallery'
 export { SmartObject } from './SmartObject'
-export { Transaction } from './Transaction'
+export { Transaction, TransactionComponent } from './Transaction'
 export { Error404 } from './Error404'
-export { UtilsContext } from './UtilsContext'
+export { UtilsContext, UtilsProvider, useUtilsComponents } from './UtilsContext'
 export { ComputerContext } from './ComputerContext'
 export { FunctionResultModalContent } from './common/SmartCallExecutionResult'
-export { Drawer } from './Drawer'
-export { Wallet, WalletComponents } from './Wallet'
+export { Drawer, DrawerComponent, ShowDrawer } from './Drawer'
+export { Wallet } from './Wallet'
 export { Card } from './Card'
 export * from './common/utils'
 export { PrimaryActionButton, SecondaryActionButton } from './ActionButtons'

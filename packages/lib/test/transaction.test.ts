@@ -1,5 +1,5 @@
 import { Contract, Computer, Transaction } from '@bitcoin-computer/lib'
-import { chain, network, url, expect } from './utils'
+import { chain, network, url, expect } from './utils/index.js'
 
 describe('Transaction', () => {
   class A extends Contract {
