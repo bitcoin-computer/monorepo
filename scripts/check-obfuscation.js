@@ -64,13 +64,7 @@ for (const file of stagedFiles) {
   const snippet = stagedContent.slice(0, 1024);
   if (snippet.includes("  ")) {
     console.error(`Obfuscation failed for staged file: ${file}`);
-    console.log("↩️  Unstaging", file, "...");
-    try {
-      execSync(`git restore --staged "${file}"`);
-    } catch {}
-    console.log(
-      "Restored. Please fix the obfuscation and stage the file again."
-    );
+    throw new Error("Staged file is not obfuscated");
     failed = 1;
   }
 }
