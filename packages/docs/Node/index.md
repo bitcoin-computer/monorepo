@@ -308,7 +308,6 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 | [list-txs](./list-txs.md) | List sent and received transactions for a given address. |
 | [sent-outputs](./sent-outputs.md) | List sent outputs of a wallet. |
 | [received-outputs](./received-outputs.md) | List received outputs of a wallet. |
-| [utxos](./utxos.md) | List unspent outputs of a wallet. |
 
 #### Transactions
 
