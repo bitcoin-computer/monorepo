@@ -96,7 +96,7 @@ export class ChessContractHelper {
         return `OP_2 ${this.publicKeyW} ${this.publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' ');
     }
     async validateUser() {
-        const [userRev] = await this.computer.query({
+        const [userRev] = await this.computer.getOUTXOs({
             mod: this.userMod,
             publicKey: this.computer.getPublicKey(),
         });
@@ -167,7 +167,7 @@ export class ChessContractHelper {
     }
     async move(chessContract, from, to, promotion) {
         if (chessContract && chessContract.sans.length < 2) {
-            const [userRev] = await this.computer.query({
+            const [userRev] = await this.computer.getOUTXOs({
                 mod: this.userMod,
                 publicKey: this.computer.getPublicKey(),
             });

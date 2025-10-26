@@ -11,7 +11,7 @@ export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
   const [challengeId, setChallengeId] = useState('')
 
   const getChallenges = async () => {
-    const challengeRevs = await computer.query({
+    const challengeRevs = await computer.getOUTXOs({
       mod: VITE_CHESS_CHALLENGE_MOD_SPEC,
       publicKey: computer.getPublicKey(),
     })

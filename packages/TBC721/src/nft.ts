@@ -52,7 +52,7 @@ export class NftHelper implements ITBC721 {
 
   async balanceOf(publicKey: string): Promise<number> {
     const { mod } = this
-    const revs = await this.computer.query({ publicKey, mod })
+    const revs = await this.computer.getOUTXOs({ publicKey, mod })
     const objects: NFT[] = await Promise.all(revs.map((rev: string) => this.computer.sync(rev)))
     return objects.length
   }

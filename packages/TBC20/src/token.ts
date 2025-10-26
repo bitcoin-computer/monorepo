@@ -82,7 +82,7 @@ export class TokenHelper implements ITBC20 {
   }
 
   private async getBags(publicKey: string, root: string): Promise<Token[]> {
-    const revs = await this.computer.query({ publicKey, mod: this.mod })
+    const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod })
     const bags = await Promise.all(revs.map(async (rev: string) => this.computer.sync(rev)))
     return bags.flatMap((bag: Token & { _root: string }) => (bag._root === root ? [bag] : []))
   }

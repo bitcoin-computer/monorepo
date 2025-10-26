@@ -179,7 +179,7 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
       try {
         showLoader(true)
         // Fetch challenge data
-        const [latestRev] = await computer.query({ ids: [challengeId] })
+        const latestRev = await computer.latest(challengeId)
         if (!latestRev) throw new Error('Challenge not found')
 
         const challengeObj = (await computer.sync(latestRev)) as ChessChallengeTxWrapper

@@ -26,7 +26,7 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const revs = await computer.query({ mod: proposalMod })
+      const revs = await computer.getOUTXOs({ mod: proposalMod })
       expect(revs.length).greaterThan(0)
       await election.proposalVotes()
 

@@ -193,8 +193,8 @@ export function ChessBoard() {
 
   const computer = useContext(ComputerContext)
   const fetchChessContract = async (): Promise<ChessContract> => {
-    const [latestRev] = await computer.query({ ids: [gameId] })
-    return computer.sync(latestRev) as Promise<ChessContract>
+    const latest = await computer.latest(gameId)
+    return computer.sync(latest) as Promise<ChessContract>
   }
 
   useEffect(() => {
@@ -230,7 +230,7 @@ export function ChessBoard() {
     const fetch = async () => {
       showLoader(true)
       try {
-        const [userRev] = await computer.query({
+        const [userRev] = await computer.getOUTXOs({
           mod: VITE_CHESS_USER_MOD_SPEC,
           publicKey: computer.getPublicKey(),
         })

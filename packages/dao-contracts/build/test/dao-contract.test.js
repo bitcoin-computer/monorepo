@@ -17,7 +17,7 @@ describe('Election', () => {
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
             const vote = await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }], proposalMod);
-            const revs = await computer.query({ mod: proposalMod });
+            const revs = await computer.getOUTXOs({ mod: proposalMod });
             expect(revs.length).greaterThan(0);
             await election.proposalVotes();
             const validVotes = await election.proposalVotes();

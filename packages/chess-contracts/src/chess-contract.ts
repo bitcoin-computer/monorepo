@@ -177,7 +177,7 @@ export class ChessContractHelper {
   }
 
   async validateUser(): Promise<void> {
-    const [userRev] = await this.computer.query({
+    const [userRev] = await this.computer.getOUTXOs({
       mod: this.userMod,
       publicKey: this.computer.getPublicKey(),
     })
@@ -267,7 +267,7 @@ export class ChessContractHelper {
     promotion: string,
   ): Promise<{ newChessContract: ChessContract; isGameOver: boolean }> {
     if (chessContract && chessContract.sans.length < 2) {
-      const [userRev] = await this.computer.query({
+      const [userRev] = await this.computer.getOUTXOs({
         mod: this.userMod,
         publicKey: this.computer.getPublicKey(),
       })

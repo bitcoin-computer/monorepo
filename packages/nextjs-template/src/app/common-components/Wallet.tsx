@@ -28,7 +28,7 @@ const Balance = ({
         const balances: bigint[] = await Promise.all(
           modSpecs.map(async (mod) => {
             const paymentRevs = modSpecs
-              ? await computer.query({ publicKey, mod })
+              ? await computer.getOUTXOs({ publicKey, mod })
               : [];
             const payments = (await Promise.all(
               paymentRevs.map((rev: string) => computer.sync(rev))

@@ -78,13 +78,13 @@ describe('Token', async () => {
       expect(token2._root).to.be.a('string')
     })
 
-    it('computer.query should return the tokens', async () => {
-      const senderRevs = await sender.query({ publicKey: sender.getPublicKey() })
+    it('computer.getOUTXOs should return the tokens', async () => {
+      const senderRevs = await sender.getOUTXOs({ publicKey: sender.getPublicKey() })
       expect(senderRevs.length).eq(1)
       const senderToken = (await sender.sync(senderRevs[0])) as Token
       expect(senderToken.amount).eq(2n)
 
-      const receiverRevs = await receiver.query({ publicKey: receiver.getPublicKey() })
+      const receiverRevs = await receiver.getOUTXOs({ publicKey: receiver.getPublicKey() })
       expect(receiverRevs.length).eq(1)
       const receiverTokens = (await receiver.sync(receiverRevs[0])) as Token
       expect(receiverTokens.amount).eq(1n)

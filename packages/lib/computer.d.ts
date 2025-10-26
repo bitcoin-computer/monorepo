@@ -507,6 +507,15 @@ declare class Computer {
   getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
   getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
   getTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getUTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getUTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getUTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getOTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getOTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getOTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getOUTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getOUTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getOUTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
   getBalance(address?: string): Promise<Balance>
   sign(transaction: nTransaction, opts?: SigOptions): Promise<void>
   fund(tx: nTransaction, opts?: Fee & FundOptions): Promise<void>
