@@ -320,7 +320,6 @@ declare class RestClient {
     receivedTxs: TxIdAmountType[]
   }>
   getUtxos(address?: string): Promise<_Unspent[]>
-  getFormattedUtxos(address: string): Promise<_Unspent[]>
   getRawTxs(txIds: string[]): Promise<string[]>
   getTx(txId: string): Promise<_Transaction>
   getAncestors(txId: string): Promise<string[]>

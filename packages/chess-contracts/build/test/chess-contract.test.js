@@ -45,11 +45,15 @@ describe('Should create a deposit transaction for the Chess game with operator',
     const createCommitTx = async () => {
         await aliceComputer.faucet(10e8);
         await bobComputer.faucet(10e8);
-        const [aliceUtxo] = await aliceComputer.db.wallet.restClient.getFormattedUtxos(aliceAddress);
-        const { vout: vout1, satoshis: amountPayment1, txId: txId1 } = aliceUtxo;
+        const [aliceUtxo] = await aliceComputer.getUTXOs({ address: aliceAddress, verbosity: 1 });
+        const { rev: rev1, satoshis: amountPayment1 } = aliceUtxo;
+        const txId1 = rev1.substring(0, 64);
+        const vout1 = parseInt(rev1.substring(65), 10);
         const aliceUtxoHash = bufferUtils.reverseBuffer(Buffer.from(txId1, 'hex'));
-        const [bobUtxo] = await bobComputer.db.wallet.restClient.getFormattedUtxos(bobAddress);
-        const { vout: vout2, satoshis: amountPayment2, txId: txId2 } = bobUtxo;
+        const [bobUtxo] = await bobComputer.getUTXOs({ address: bobAddress, verbosity: 1 });
+        const { rev: rev2, satoshis: amountPayment2 } = bobUtxo;
+        const txId2 = rev2.substring(0, 64);
+        const vout2 = parseInt(rev2.substring(65), 10);
         const bobUtxoHash = bufferUtils.reverseBuffer(Buffer.from(txId2, 'hex'));
         const commitTx = new Transaction();
         commitTx.addOutput(output, 2n * betAmount);
@@ -150,6 +154,7 @@ describe('Should create a deposit transaction for the Chess game with operator',
         const redeemTx = ChessContractHelper.createRedeemTx(commitTxId, aliceComputer.db.wallet.hdPrivateKey, 2n * betAmount, fees, aliceChangeOutput, outScript, 0);
         const scriptSig = redeemTx.ins[0].script;
         const decompiled = bscript.decompile(scriptSig);
+        // @ts-expect-error typeError
         const corruptedSig = Buffer.from(decompiled[1]);
         corruptedSig[10] ^= 0x01; // Corrupt the signature
         decompiled[1] = corruptedSig;
