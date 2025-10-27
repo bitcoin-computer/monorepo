@@ -2,7 +2,6 @@
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
 import { execSync } from "child_process";
-import * as glob from "glob";
 
 // ANSI color codes for red/green output
 const colors = {
@@ -18,16 +17,25 @@ const envVars =
   "POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332";
 
 function getTestResultsFiles() {
-  // If run from a specific package (test-results.json exists in cwd)
-  if (existsSync(join(cwd, "test-results.json"))) {
-    return [join(cwd, "test-results.json")];
+  const results = [];
+
+  // Case 1: run inside a specific package
+  const localFile = join(cwd, "test-results.json");
+  if (existsSync(localFile)) return [localFile];
+
+  // Case 2: run from monorepo root
+  const packagesDir = join(cwd, "packages");
+  if (!existsSync(packagesDir)) return results;
+
+  // Read each direct subdirectory in packages/
+  for (const entry of readdirSync(packagesDir, { withFileTypes: true })) {
+    if (entry.isDirectory()) {
+      const file = join(packagesDir, entry.name, "test-results.json");
+      if (existsSync(file)) results.push(resolve(file));
+    }
   }
 
-  // If run from monorepo/, collect from packages/
-  const packageDirs = glob.sync(join(cwd, "packages/*/"), { absolute: true });
-  return packageDirs
-    .map((dir) => join(dir, "test-results.json"))
-    .filter(existsSync);
+  return results;
 }
 
 const testResultsFiles = getTestResultsFiles();
