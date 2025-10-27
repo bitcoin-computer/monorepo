@@ -23,7 +23,7 @@
     "deploy": "tsc && node ./build/scripts/deploy.js",
     "lint": "eslint .",
     "start": "node build/src/index.js",
-    "test": "mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
+    "test": "npm run build && mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
     "types": "tsc --noEmit"
   },
   "dependencies": {
