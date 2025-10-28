@@ -1,6 +1,5 @@
-#!/usr/bin/env node
-import { existsSync, readFileSync } from "fs";
-import { join } from "path";
+import { existsSync, readFileSync, readdirSync } from "fs";
+import { join, resolve } from "path";
 import { execSync } from "child_process";
 
 // ANSI color codes for red/green output
