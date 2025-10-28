@@ -1,24 +1,22 @@
- 
 type Json = JBasic | JObject | JArray;
 type JBasic = undefined | null | boolean | number | string | symbol | bigint;
 type JArray = Json[];
 type JObject = { [x: string]: Json };
 
- 
 const isJUndefined = (a: any): a is undefined => typeof a === "undefined";
- 
+
 const isJNull = (a: any): a is null => a === null;
- 
+
 const isJBoolean = (a: any): a is boolean => typeof a === "boolean";
- 
+
 const isJNumber = (a: any): a is number => typeof a === "number";
- 
+
 const isJString = (a: any): a is string => typeof a === "string";
- 
+
 const isJSymbol = (a: any): a is symbol => typeof a === "symbol";
- 
+
 const isJBigInt = (a: any): a is bigint => typeof a === "bigint";
- 
+
 const isJBasic = (a: any): a is JBasic =>
   isJNull(a) ||
   isJUndefined(a) ||
@@ -27,9 +25,9 @@ const isJBasic = (a: any): a is JBasic =>
   isJBoolean(a) ||
   isJSymbol(a) ||
   isJBigInt(a);
- 
+
 const isJObject = (a: any): a is JObject => !isJBasic(a) && !Array.isArray(a);
- 
+
 const isJArray = (a: any): a is JArray => !isJBasic(a) && Array.isArray(a);
 
 const objectEntryMap =
@@ -54,13 +52,14 @@ export const jsonMap =
 export const strip = (value: Json): Json => {
   if (isJBasic(value)) return value;
   if (isJArray(value)) return value.map(strip);
-   
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { _id, _root, _rev, _satoshis, _owners, ...rest } = value;
   return rest;
 };
 
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
- 
+
 export const toObject = (obj: any) =>
   JSON.stringify(
     obj,
