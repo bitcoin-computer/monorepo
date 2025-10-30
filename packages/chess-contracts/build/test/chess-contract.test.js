@@ -154,7 +154,6 @@ describe('Should create a deposit transaction for the Chess game with operator',
         const redeemTx = ChessContractHelper.createRedeemTx(commitTxId, aliceComputer.db.wallet.hdPrivateKey, 2n * betAmount, fees, aliceChangeOutput, outScript, 0);
         const scriptSig = redeemTx.ins[0].script;
         const decompiled = bscript.decompile(scriptSig);
-        // @ts-expect-error typeError
         const corruptedSig = Buffer.from(decompiled[1]);
         corruptedSig[10] ^= 0x01; // Corrupt the signature
         decompiled[1] = corruptedSig;

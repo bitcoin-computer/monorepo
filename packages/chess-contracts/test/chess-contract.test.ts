@@ -261,7 +261,6 @@ describe('Should create a deposit transaction for the Chess game with operator',
     )
     const scriptSig = redeemTx.ins[0].script
     const decompiled = bscript.decompile(scriptSig) as Buffer[]
-    // @ts-expect-error typeError
     const corruptedSig = Buffer.from(decompiled[1])
 
     corruptedSig[10] ^= 0x01 // Corrupt the signature

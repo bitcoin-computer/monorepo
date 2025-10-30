@@ -387,7 +387,6 @@ export class ChessContractHelper {
     // Verify redeem script
     if (
       !Buffer.isBuffer(providedRedeemScript) ||
-      // @ts-expect-error typeError
       !providedRedeemScript.equals(expectedRedeemScript)
     ) {
       throw new Error('Redeem script does not match expected script')
@@ -404,7 +403,6 @@ export class ChessContractHelper {
     // Verify output goes to winner's address
     const outputScript = redeemTx.outs[0].script
     const winnerAddressScript = payments.p2pkh({ pubkey: winnerPublicKey, network }).output
-    // @ts-expect-error typeError
     if (!outputScript.equals(winnerAddressScript as Buffer)) {
       throw new Error('Output must go to winner’s address')
     }
