@@ -7,7 +7,7 @@
     "build:production": "next build",
     "deploy": "tsx ./src/app/contracts/scripts/deploy.ts",
     "dev": "next dev --turbopack",
-    "lint": "eslint . --fix",
+    "lint": "next lint",
     "start": "next start"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
     "eslint": "9.29.0",
+    "eslint-config-next": "^16.0.1",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.5",
