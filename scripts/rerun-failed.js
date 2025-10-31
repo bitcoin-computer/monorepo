@@ -21,8 +21,6 @@ if (existsSync(envFile)) {
   const result = dotenv.config({ path: envFile });
   if (result.error) {
     console.error("Failed to load .env:", result.error);
-  } else {
-    console.log(`Loaded environment variables from ${envFile}`);
   }
 } else {
   console.warn(`.env file not found at ${envFile}`);
@@ -93,7 +91,7 @@ for (const testResultsFile of testResultsFiles) {
       console.error(
         `${colors.red}Error: ${testResultsFile} does not contain a "failures" array.${colors.reset}`
       );
-      process.exit(1);
+      continue;
     }
 
     const validFailures = results.failures.filter(
@@ -128,7 +126,7 @@ for (const testResultsFile of testResultsFiles) {
       console.error(
         `${colors.red}No valid test titles found for --grep in ${packageDir}.${colors.reset}`
       );
-      process.exit(1);
+      continue;
     }
 
     const grepPattern = escapedTitles.join("|");
