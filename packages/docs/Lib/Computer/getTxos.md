@@ -12,14 +12,12 @@ type DbOutput = {
   asm: string
   exp?: string
   mod?: string
-  isObject?: boolean
+  isObject: boolean
   previous?: string
   blockHash?: string
 }
 
-export type GetTXOs = string | DbOutput
-
-export type GetTXOsQuery = {
+type GetTXOsQuery = {
   verbosity?: number
   limit?: number
   order?: 'ASC' | 'DESC'
@@ -28,7 +26,11 @@ export type GetTXOsQuery = {
   publicKey?: string
 } & Partial<DbOutput>
 
-getTXOs(query: GetTXOsQuery): Promise<GetTXOs[]>
+type GetTXOs = {
+  (query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  (query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  (query: GetTXOsQuery): Promise<(string | DbOutput)[]>
+}
 ```
 
 ### Parameters
@@ -56,36 +58,29 @@ An object with the query parameters.
 | offset | Return results starting from offset |
 | order | Order results in ascending or descending order |
 
-While syncing to the blockchain, the Output table is fully populated with all TXOs. Two additional computed columns are available to facilitate querying:
-
-The column 'address' is computed from the output script by attempting to convert it to an address using the `address.fromOutputScript` function from the `@bitcoin-computer/nakamotoJs` library. If the conversion fails (for example, if the output script is not a standard pay-to-public-key-hash or pay-to-script-hash script), the address is set to `null`.
-
-```
-import { address, script } from '@bitcoin-computer/nakamotoJs'
-
-address = nullIfThrows(() => address.fromOutputScript(script))
-
-```
-
-The column 'asm' contains the assembly representation of the output script.
-
-```
-asm = script.toASM(script)
-```
-
-Then, queries can be made based on these computed columns. When filtering by address, only TXOs whose output script can be successfully converted to that address are considered. When filtering by public key, only TXOs whose output script includes the provided public key are considered. See the examples below for more details.
-
-To query all on chain objects, use the parameter `isObject: true`. It is a good practice to always combine this with the `publicKey` parameter to return only the objects owned by a specific public key, and to limit the scope of the query.
-
-To return only objects created with a specific module or its descendants, you can use the `mod` parameter. This is useful when you want to filter objects based on their module of origin. Within the Bitcoin Computer, the module is inherited to all descendant objects created from the original module object, except when the execution creates new objects or when the module is explicitly changed within the expression. See the examples, some test cases illustrate this behavior for token transfers.
-
 ### Return Value
 
 An array of either revision strings or rows from the database Output table, depending on the verbosity level specified in the query.
 
 ## Description
 
-The `getTXOs` function allows you to query transaction outputs (txos) based on various parameters. You can filter TXOs by address, satoshi amount, script assembly, whether they are smart objects, and more. The function returns either revision strings or detailed rows from the Output table, depending on the verbosity level specified in the query.
+## Description
+
+The `getTXOs` function retrieves transaction outputs (TXOs) from the database based on customizable query parameters. It supports filtering by attributes such as address, satoshi amount, script assembly (ASM), smart object status, ownership via public key, and more. Results can be returned in two formats depending on the `verbosity` level: an array of revision strings (for `verbosity: 0`) or an array of detailed `DbOutput` objects (for `verbosity: 1`).
+
+### Key Column Details
+- **address**: Derived from the output script using `address.fromOutputScript` from the `@bitcoin-computer/nakamotoJs` library. If the script cannot be converted (e.g., non-standard P2PKH or P2SH scripts), this value is set to `null`. When filtering by `address`, only TXOs with matching convertible scripts are included.
+- **asm**: The assembly (ASM) string representation of the output script, computed as `script.toASM(script)`. Use this for exact script-based filtering.
+- **Other columns**: Include `rev` (revision string), `satoshis` (output value as bigint), `isObject` (boolean indicating if it's a smart object), `mod` (module identifier for smart objects), `exp` (expression hash), `previous` (prior TXO reference), `blockHash` (inclusion in a specific block), and `spent` (spend status).
+
+### Filtering Behaviors
+- **By public key (`publicKey`)**: Matches TXOs where the output script contains specified public key, enabling ownership-based queries. The value does not have to be a public key, the query works for any string. For example if you query for `OP_TRUE` the query will return all outputs whose script contains `OP_TRUE`.
+- **By smart object status (`isObject`)**: Set to `true` to retrieve all on-chain smart objects.
+- **By module (`mod`)**: Filters for smart objects created with the given module specifier. Modules are inherited in descendant objects within the Bitcoin Computer ecosystem, except during new object creation or explicit module overrides in expressions. This is particularly useful for tracking token transfers or module-specific lineages—refer to the examples for practical demonstrations.
+- **Spent status (`spent`)**: Includes or excludes spent TXOs; combine with other filters for UTXO-like queries.
+- **Pagination and ordering**: Use `limit`, `offset`, and `order` ('ASC' or 'DESC') for controlled, sorted result sets.
+
+For security and efficiency, always pair this with `publicKey` to scope results to a specific owner, and apply `limit`/`offset` to manage result volume.
 
 ## Example
 
