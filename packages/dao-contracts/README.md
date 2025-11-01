@@ -40,7 +40,7 @@ The system enforces the following rules to maintain integrity:
 
 - **Post-Vote Transfers Allowed**: Tokens remain transferable after voting, without affecting prior votes.
 
-- **Category-Based Querying**: Using `mod in `Vote`creation allows`Election`to query all related votes via  `getTXOs({ mod })`, enabling categorized elections.
+- **Category-Based Querying**: Using `mod in `Vote` creation allows `Election` to query all related votes via `getTXOs({ mod })`, enabling categorized elections.
 
 - **Token Lineage Restriction**: Votes must use tokens sharing the same `_root` as specified in the `Election`. Multiple tokens per vote are allowed if they share the same `_root`.
 
