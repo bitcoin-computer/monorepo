@@ -53,13 +53,9 @@ npm run up
 The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database. The postgres database is used to efficiently store the complete blockchain data, for fast access and indexing.
 !!!
 
-### Postgres Database
+#### IMPORTANT: Create indexes after syncing to mainnet
 
-The node uses a Postgres database to store the synced information required by the Bitcoin Computer protocol. The database is automatically created and managed by the node using a docker container. The full db schema can be found [here](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql).
-
-### Create indexes after syncing to mainnet
-
-To reduce db syncing overhead, the sync process is carried out without creating db indexes. After the node has synced, you can create the indexes with the command below.
+To speed up the syncing process, syncing is carried out without db indexes. After the node has synced, you can create the indexes with the command below.
 
 <font size=1>
 
@@ -69,6 +65,22 @@ npm run create-indexes
 ```
 
 </font>
+
+### Postgres Database
+
+The node uses a Postgres database to store the synced information required by the Bitcoin Computer protocol. The database is automatically created and managed by the node using a docker container. The full db schema can be found [here](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql).
+
+By default the database uses the following credentials:
+
+```shell
+POSTGRES_USER='bcn'
+POSTGRES_PASSWORD='bcn'
+POSTGRES_DB='bcn'
+POSTGRES_HOST='db'
+POSTGRES_PORT='5432'
+```
+
+You can configure these from the `.env` file for production deployments.
 
 ### Run the Tests
 
