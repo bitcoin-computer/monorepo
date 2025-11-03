@@ -8,6 +8,8 @@ export const bitcoin = {
   pubKeyHash: 0x00,
   scriptHash: 0x05,
   wif: 0x80,
+  coinType: 0,
+  symbol: 'btc',
 };
 export const regtest = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
@@ -19,6 +21,8 @@ export const regtest = {
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'rbtc',
 };
 export const testnet = {
   messagePrefix: '\x18Bitcoin Signed Message:\n',
@@ -30,6 +34,8 @@ export const testnet = {
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'tbtc',
 };
 export const litecoin = {
   messagePrefix: '\x18Litecoin Signed Message:\n',
@@ -41,6 +47,8 @@ export const litecoin = {
   pubKeyHash: 0x30,
   scriptHash: 0x32,
   wif: 0x80,
+  coinType: 2,
+  symbol: 'ltc',
 };
 export const litecoinregtest = {
   messagePrefix: '\x18Litecoin Signed Message:\n',
@@ -52,6 +60,8 @@ export const litecoinregtest = {
   pubKeyHash: 0x6f,
   scriptHash: 0x3a,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'rltc',
 };
 export const litecointestnet = {
   messagePrefix: '\x18Litecoin Signed Message:\n',
@@ -63,6 +73,8 @@ export const litecointestnet = {
   pubKeyHash: 0x6f,
   scriptHash: 0x3a,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'tltc',
 };
 export const pepecoin = {
   messagePrefix: '\x18Pepecoin Signed Message:\n',
@@ -74,6 +86,8 @@ export const pepecoin = {
   pubKeyHash: 0x38,
   scriptHash: 0x16,
   wif: 0x9e,
+  coinType: 3434,
+  symbol: 'pepe',
 };
 export const pepecoinregtest = {
   messagePrefix: '\x18Pepecoin Signed Message:\n',
@@ -85,6 +99,8 @@ export const pepecoinregtest = {
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'rpepe',
 };
 export const pepecointestnet = {
   messagePrefix: '\x18Pepecoin Signed Message:\n',
@@ -96,6 +112,8 @@ export const pepecointestnet = {
   pubKeyHash: 0x71,
   scriptHash: 0xc4,
   wif: 0xf1,
+  coinType: 1,
+  symbol: 'tpepe',
 };
 export const dogecoin = {
   messagePrefix: '\x19Dogecoin Signed Message:\n',
@@ -107,6 +125,8 @@ export const dogecoin = {
   pubKeyHash: 0x1e,
   scriptHash: 0x16,
   wif: 0x9e,
+  coinType: 3,
+  symbol: 'doge',
 };
 export const dogecoinregtest = {
   messagePrefix: '\x19Dogecoin Signed Message:\n',
@@ -118,6 +138,8 @@ export const dogecoinregtest = {
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'rdoge',
 };
 export const dogecointestnet = {
   messagePrefix: '\x19Dogecoin Signed Message:\n',
@@ -129,6 +151,8 @@ export const dogecointestnet = {
   pubKeyHash: 0x71,
   scriptHash: 0xc4,
   wif: 0xf1,
+  coinType: 1,
+  symbol: 'tdoge',
 };
 export function getNetwork(chain, network) {
   switch (chain) {

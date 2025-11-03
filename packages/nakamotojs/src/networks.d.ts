@@ -5,6 +5,8 @@ export interface Network {
     pubKeyHash: number;
     scriptHash: number;
     wif: number;
+    coinType: number;
+    symbol: string;
 }
 interface Bip32 {
     public: number;

@@ -7,6 +7,8 @@ export interface Network {
   pubKeyHash: number;
   scriptHash: number;
   wif: number;
+  coinType: number;
+  symbol: string;
 }
 
 interface Bip32 {
@@ -24,6 +26,8 @@ export const bitcoin: Network = {
   pubKeyHash: 0x00,
   scriptHash: 0x05,
   wif: 0x80,
+  coinType: 0,
+  symbol: 'btc',
 };
 
 export const regtest: Network = {
@@ -36,6 +40,8 @@ export const regtest: Network = {
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'rbtc',
 };
 
 export const testnet: Network = {
@@ -48,6 +54,8 @@ export const testnet: Network = {
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'tbtc',
 };
 
 export const litecoin: Network = {
@@ -60,6 +68,8 @@ export const litecoin: Network = {
   pubKeyHash: 0x30,
   scriptHash: 0x32,
   wif: 0x80,
+  coinType: 2,
+  symbol: 'ltc',
 };
 
 export const litecoinregtest: Network = {
@@ -72,6 +82,8 @@ export const litecoinregtest: Network = {
   pubKeyHash: 0x6f,
   scriptHash: 0x3a,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'rltc',
 };
 
 export const litecointestnet: Network = {
@@ -84,6 +96,8 @@ export const litecointestnet: Network = {
   pubKeyHash: 0x6f,
   scriptHash: 0x3a,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'tltc',
 };
 
 export const pepecoin: Network = {
@@ -96,6 +110,8 @@ export const pepecoin: Network = {
   pubKeyHash: 0x38,
   scriptHash: 0x16,
   wif: 0x9e,
+  coinType: 3434,
+  symbol: 'pepe',
 };
 
 export const pepecoinregtest: Network = {
@@ -108,6 +124,8 @@ export const pepecoinregtest: Network = {
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'rpepe',
 };
 
 export const pepecointestnet: Network = {
@@ -120,6 +138,8 @@ export const pepecointestnet: Network = {
   pubKeyHash: 0x71,
   scriptHash: 0xc4,
   wif: 0xf1,
+  coinType: 1,
+  symbol: 'tpepe',
 };
 
 export const dogecoin: Network = {
@@ -132,6 +152,8 @@ export const dogecoin: Network = {
   pubKeyHash: 0x1e,
   scriptHash: 0x16,
   wif: 0x9e,
+  coinType: 3,
+  symbol: 'doge',
 };
 
 export const dogecoinregtest: Network = {
@@ -144,6 +166,8 @@ export const dogecoinregtest: Network = {
   pubKeyHash: 0x6f,
   scriptHash: 0xc4,
   wif: 0xef,
+  coinType: 1,
+  symbol: 'rdoge',
 };
 
 export const dogecointestnet: Network = {
@@ -156,6 +180,8 @@ export const dogecointestnet: Network = {
   pubKeyHash: 0x71,
   scriptHash: 0xc4,
   wif: 0xf1,
+  coinType: 1,
+  symbol: 'tdoge',
 };
 export function getNetwork(chain: string, network: string): Network {
   switch (chain) {

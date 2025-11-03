@@ -234,6 +234,8 @@ describe('nakamotojs (addresses)', () => {
       pubKeyHash: 0x30,
       scriptHash: 0x32,
       wif: 0xb0,
+      coinType: 2,
+      symbol: 'ltc',
     };
 
     const keyPair = ECPair.makeRandom({ network: LITECOIN });
