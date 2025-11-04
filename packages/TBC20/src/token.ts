@@ -1,3 +1,6 @@
+import { Computer } from '@bitcoin-computer/lib'
+
+// eslint-disable-next-line
 type Constructor<T> = new (...args: any[]) => T
 
 export class Token extends Contract {
@@ -50,10 +53,10 @@ export interface ITBC20 {
 export class TokenHelper implements ITBC20 {
   name: string
   symbol: string
-  computer: any
+  computer: Computer
   mod: string
 
-  constructor(computer: any, mod?: string) {
+  constructor(computer: Computer, mod?: string) {
     this.computer = computer
     this.mod = mod
   }
@@ -69,13 +72,12 @@ export class TokenHelper implements ITBC20 {
     name: string,
     symbol: string,
   ): Promise<string | undefined> {
-    const args = [publicKey, amount, name, symbol]
-    const token = await this.computer.new(Token, args, this.mod)
+    const token = await this.computer.new(Token, [publicKey, amount, name, symbol], this.mod)
     return token._root
   }
 
   async totalSupply(root: string): Promise<bigint> {
-    const rootBag = await this.computer.sync(root)
+    const rootBag = (await this.computer.sync(root)) as Token
     return rootBag.amount
   }
 

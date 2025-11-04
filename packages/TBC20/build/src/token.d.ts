@@ -1,3 +1,4 @@
+import { Computer } from '@bitcoin-computer/lib';
 export declare class Token extends Contract {
     amount: bigint;
     name: string;
@@ -18,9 +19,9 @@ export interface ITBC20 {
 export declare class TokenHelper implements ITBC20 {
     name: string;
     symbol: string;
-    computer: any;
+    computer: Computer;
     mod: string;
-    constructor(computer: any, mod?: string);
+    constructor(computer: Computer, mod?: string);
     deploy(): Promise<string>;
     mint(publicKey: string, amount: bigint, name: string, symbol: string): Promise<string | undefined>;
     totalSupply(root: string): Promise<bigint>;

@@ -19,7 +19,7 @@
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rm -rf coverage build tmp",
     "clean:logs": "rm -f *.log 2> /dev/null",
-    "compile:test": "rm -rf dist && tsc -p tsconfig.test.json",
+    "build:test": "rm -rf dist && tsc -p tsconfig.test.json",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint src test --ext .ts,.tsx",
     "lint:fix": "eslint src test --ext .ts,.tsx --fix",
@@ -38,7 +38,7 @@
     "@types/node": "~20.11.21",
     "chai": "^5.1.2",
     "dotenv": "^16.4.5",
-    "mocha": "^10.3.0",
+    "mocha": "^11.7.3",
     "prettier": "~3.2.5",
     "source-map-support": "^0.5.21",
     "typescript": "^5.8.3"

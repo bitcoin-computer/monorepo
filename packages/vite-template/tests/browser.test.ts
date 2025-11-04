@@ -71,9 +71,11 @@ describe('Bitcoin Computer Tests', () => {
 
   it('should click the "Wallet" button, and fund', async () => {
     await waitForSelectorAndClick(page, 'button[data-drawer-target="wallet-drawer"]')
-    await delay(2000)
+    await delay(3000)
     try {
-      await page.waitForSelector('#fund-wallet', { visible: true, timeout: 2000 })
+      await page.waitForSelector('#fund-wallet', { visible: true, timeout: 1000 })
+      await delay(1000)
+      await page.waitForSelector('#fund-wallet', { visible: true, timeout: 1000 })
     } catch (e) {
       console.log('Wallet drawer not open, retrying...', e)
       await waitForSelectorAndClick(page, 'button[data-drawer-target="wallet-drawer"]')

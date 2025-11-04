@@ -1,3 +1,5 @@
+import { Computer } from '@bitcoin-computer/lib'
+
 export class NFT extends Contract {
   name: string
   artist: string
@@ -28,10 +30,10 @@ export interface ITBC721 {
 }
 
 export class NftHelper implements ITBC721 {
-  computer: any
+  computer: Computer
   mod: string | undefined
 
-  constructor(computer: any, mod?: string) {
+  constructor(computer: Computer, mod?: string) {
     this.computer = computer
     this.mod = mod
   }
@@ -42,10 +44,10 @@ export class NftHelper implements ITBC721 {
   }
 
   async mint(name: string, artist: string, url: string): Promise<NFT> {
-    const { tx, effect } = await this.computer.encode({
+    const { tx, effect } = (await this.computer.encode({
       exp: `new NFT("${name}", "${artist}", "${url}")`,
       mod: this.mod,
-    })
+    })) as { tx; effect }
     await this.computer.broadcast(tx)
     return effect.res
   }
@@ -53,19 +55,19 @@ export class NftHelper implements ITBC721 {
   async balanceOf(publicKey: string): Promise<number> {
     const { mod } = this
     const revs = await this.computer.query({ publicKey, mod })
-    const objects: NFT[] = await Promise.all(revs.map((rev: string) => this.computer.sync(rev)))
+    const objects = (await Promise.all(revs.map((rev: string) => this.computer.sync(rev)))) as NFT[]
     return objects.length
   }
 
   async ownersOf(tokenId: string): Promise<string[]> {
     const rev = await this.computer.latest(tokenId)
-    const obj = await this.computer.sync(rev)
+    const obj = (await this.computer.sync(rev)) as NFT
     return obj._owners
   }
 
   async transfer(to: string, tokenId: string): Promise<void> {
     const rev = await this.computer.latest(tokenId)
-    const obj = await this.computer.sync(rev)
+    const obj = (await this.computer.sync(rev)) as NFT
     await obj.transfer(to)
   }
 }

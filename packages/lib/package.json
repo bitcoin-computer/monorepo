@@ -55,7 +55,7 @@
   "scripts": {
     "clean": "rm -rf js-build && npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
-    "compile:test": "tsc",
+    "build:test": "tsc",
     "prepublishOnly": "../../scripts/check-obfuscation.sh",
     "publish-lib": "npm publish",
     "test:rerun": "tsc && node ../../scripts/rerun-failed.js",
@@ -90,7 +90,7 @@
     "chai": "^5.2.0",
     "chai-as-promised": "^8.0.1",
     "dotenv": "^16.4.5",
-    "mocha": "^10.0.0",
+    "mocha": "^11.7.3",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.1"
   },

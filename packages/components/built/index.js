@@ -4,6 +4,7 @@ export { Modal, getModal, showModal, hideModal, toggleModal, ShowModalButton, Hi
 export { Gallery, GalleryWithPagination } from './Gallery';
 export { SmartObject } from './SmartObject';
 export { Transaction, TransactionComponent } from './Transaction';
+export { DecodedransactionComponent } from './DecodeTransaction';
 export { Error404 } from './Error404';
 export { UtilsContext, UtilsProvider, useUtilsComponents } from './UtilsContext';
 export { ComputerContext } from './ComputerContext';

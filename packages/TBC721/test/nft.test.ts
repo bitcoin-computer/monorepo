@@ -28,7 +28,9 @@ const network = process.env.BCN_NETWORK
 const artist = ''
 const imageUrl = ''
 
+// eslint-disable-next-line
 const isString = (x: any) => typeof x === 'string'
+// eslint-disable-next-line
 const isArray = (x: any) => Array.isArray(x)
 
 export const meta = {
@@ -56,7 +58,6 @@ describe('NFT', () => {
 
       it('Sender mints an NFT', async () => {
         nft = await sender.new(NFT, ['Test'])
-        // @ts-ignore
         expect(nft).matchPattern({ name: 'Test', artist, url: imageUrl, ...meta })
       })
 
@@ -81,7 +82,6 @@ describe('NFT', () => {
 
       it('Sender transfers the NFT to receiver', async () => {
         await nft.transfer(receiver.getPublicKey())
-        // @ts-ignore
         expect(nft).to.matchPattern({ name: 'Test', artist, url: imageUrl, ...meta })
       })
 

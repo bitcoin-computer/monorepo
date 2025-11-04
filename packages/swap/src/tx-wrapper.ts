@@ -28,14 +28,15 @@ export class TxWrapperHelper {
     return this.mod
   }
 
-  async createWrappedTx(publicKey: string, url: string, tx?: Transaction) {
+  async createWrappedTx(publicKey: string, url: string, tx?: Transaction, excludedRevs?: string[]) {
     const exp = tx
       ? `new TxWrapper("${publicKey}", "${url}", "${tx.serialize()}")`
       : `new TxWrapper("${publicKey}", "${url}")`
     const exclude = tx ? tx.getInRevs() : []
+    const revsToExclude = excludedRevs ? [...new Set([...exclude, ...excludedRevs])] : exclude
     return this.computer.encode({
       exp,
-      exclude,
+      exclude: revsToExclude,
       mod: this.mod,
     })
   }

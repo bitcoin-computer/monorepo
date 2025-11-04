@@ -1,3 +1,4 @@
+import { Computer } from '@bitcoin-computer/lib';
 export declare class NFT extends Contract {
     name: string;
     artist: string;
@@ -16,9 +17,9 @@ export interface ITBC721 {
     transfer(to: string, tokenId: string): Promise<void>;
 }
 export declare class NftHelper implements ITBC721 {
-    computer: any;
+    computer: Computer;
     mod: string | undefined;
-    constructor(computer: any, mod?: string);
+    constructor(computer: Computer, mod?: string);
     deploy(): Promise<string>;
     mint(name: string, artist: string, url: string): Promise<NFT>;
     balanceOf(publicKey: string): Promise<number>;

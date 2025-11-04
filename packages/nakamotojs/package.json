@@ -78,7 +78,7 @@
     "elliptic": "^6.6.1",
     "hoodwink": "^2.0.0",
     "minimaldata": "^1.0.2",
-    "mocha": "^10.0.0",
+    "mocha": "^11.7.3",
     "nyc": "^15.1.0",
     "prettier": "^3.2.5",
     "proxyquire": "^2.0.1",

@@ -281,7 +281,7 @@ const RevealableField = ({ label, getValue }: { label: string; getValue: () => s
 }
 
 const Mnemonic = ({ computer }: { computer: Computer }) => (
-  <RevealableField label="Mnemonic" getValue={computer.getMnemonic} />
+  <RevealableField label="Mnemonic" getValue={() => computer.getMnemonic()} />
 )
 
 const SimpleField = ({ label, value }: { label: string; value: string }) => (
