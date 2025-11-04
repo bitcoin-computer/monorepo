@@ -9,7 +9,7 @@ export declare class TxWrapperHelper {
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
-    createWrappedTx(publicKey: string, url: string, tx?: Transaction): Promise<any>;
+    createWrappedTx(publicKey: string, url: string, tx?: Transaction, excludedRevs?: string[]): Promise<any>;
     addSaleTx(txWrapperTxId: string, tx: Transaction): Promise<any>;
     decodeTx(txWrapperTxId: string): Promise<Transaction>;
 }

@@ -7,12 +7,6 @@ export declare class StaticSwapHelper {
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
-    createSwapTx(a: any, b: any): Promise<{
-        tx: Transaction;
-        effect: {
-            res: any;
-            env: any;
-        };
-    }>;
+    createSwapTx(a: any, b: any): Promise<any>;
     checkSwapTx(tx: Transaction, pubKeyA: string, pubKeyB: string): Promise<any>;
 }

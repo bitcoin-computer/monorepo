@@ -16,14 +16,15 @@ export class TxWrapperHelper {
         this.mod = await this.computer.deploy(`export ${TxWrapper}`);
         return this.mod;
     }
-    async createWrappedTx(publicKey, url, tx) {
+    async createWrappedTx(publicKey, url, tx, excludedRevs) {
         const exp = tx
             ? `new TxWrapper("${publicKey}", "${url}", "${tx.serialize()}")`
             : `new TxWrapper("${publicKey}", "${url}")`;
         const exclude = tx ? tx.getInRevs() : [];
+        const revsToExclude = excludedRevs ? [...new Set([...exclude, ...excludedRevs])] : exclude;
         return this.computer.encode({
             exp,
-            exclude,
+            exclude: revsToExclude,
             mod: this.mod,
         });
     }

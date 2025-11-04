@@ -13,5 +13,7 @@ export declare class SaleHelper {
     createSaleTx(object: any, payment: PaymentMock): any;
     isSaleTx(tx: TransactionType): Promise<boolean>;
     checkSaleTx(tx: TransactionType): Promise<bigint>;
-    static finalizeSaleTx(tx: TransactionType, payment: Payment, scriptPubKey: Buffer): Transaction;
+    static finalizeSaleTx(tx: TransactionType, payment: {
+        _rev: string;
+    }, scriptPubKey: Buffer): Transaction;
 }

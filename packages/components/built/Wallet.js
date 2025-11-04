@@ -108,7 +108,7 @@ const RevealableField = ({ label, getValue }) => {
     const [shown, setShown] = useState(false);
     return (_jsxs("div", { className: "my-2", children: [_jsxs("h6", { className: "text-lg font-bold dark:text-white", children: [label, ' ', _jsx("button", { onClick: () => setShown(!shown), className: "text-xs font-mono font-normal text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-500 underline", children: shown ? 'hide' : 'show' })] }), _jsx("p", { className: "text-xs font-mono text-gray-500 dark:text-gray-400 break-words", children: shown ? getValue() : '' })] }));
 };
-const Mnemonic = ({ computer }) => (_jsx(RevealableField, { label: "Mnemonic", getValue: computer.getMnemonic }));
+const Mnemonic = ({ computer }) => (_jsx(RevealableField, { label: "Mnemonic", getValue: () => computer.getMnemonic() }));
 const SimpleField = ({ label, value }) => (_jsxs("div", { className: "my-2", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: label }), _jsx("p", { className: "my-2 font-mono text-xs text-gray-500 dark:text-gray-400 break-words", children: value })] }));
 const Url = ({ computer }) => (_jsx(SimpleField, { label: "Node Url", value: computer.getUrl() }));
 const Chain = ({ computer }) => (_jsx(SimpleField, { label: "Chain", value: computer.getChain() }));
