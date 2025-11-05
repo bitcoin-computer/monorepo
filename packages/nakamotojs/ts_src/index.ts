@@ -22,7 +22,7 @@ export {
 export { OPS as opcodes } from './ops.js';
 export { Transaction } from './transaction.js';
 
-export { Network } from './networks.js';
+export { Network, NETWORKS } from './networks.js';
 export {
   Payment,
   PaymentCreator,

@@ -10,5 +10,6 @@ export { Block } from './block.js';
 export { Psbt } from './psbt.js';
 export { OPS as opcodes } from './ops.js';
 export { Transaction } from './transaction.js';
+export { NETWORKS } from './networks.js';
 export { initEccLib } from './ecc_lib.js';
 export { bip371 };

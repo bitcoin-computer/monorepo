@@ -11,7 +11,7 @@ export { TaggedHashPrefix } from './crypto.js';
 export { Psbt, PsbtTxInput, PsbtTxOutput, Signer, SignerAsync, HDSigner, HDSignerAsync, } from './psbt.js';
 export { OPS as opcodes } from './ops.js';
 export { Transaction } from './transaction.js';
-export { Network } from './networks.js';
+export { Network, NETWORKS } from './networks.js';
 export { Payment, PaymentCreator, PaymentOpts, Stack, StackElement, } from './payments/index.js';
 export { Input as TxInput, Output as TxOutput } from './transaction.js';
 export { initEccLib } from './ecc_lib.js';
