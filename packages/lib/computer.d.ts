@@ -194,7 +194,7 @@ type DbOutput = {
   address: string
   satoshis: bigint
   asm: string
-  exp?: string
+  expHash?: string
   mod?: string
   isObject?: boolean
   previous?: string
@@ -211,7 +211,8 @@ export type GetTXOsQuery = {
   isSpent?: boolean
   isConfirmed?: boolean
   publicKey?: string
-} & Partial<DbOutput>
+  exp?: string
+} & Partial<Omit<DbOutput, 'expHash'>>
 
 type UserQuery = Partial<{
   mod: string
@@ -319,7 +320,6 @@ declare class RestClient {
     sentTxs: TxIdAmountType[]
     receivedTxs: TxIdAmountType[]
   }>
-  getUtxos(address?: string): Promise<_Unspent[]>
   getRawTxs(txIds: string[]): Promise<string[]>
   getTx(txId: string): Promise<_Transaction>
   getAncestors(txId: string): Promise<string[]>
@@ -327,6 +327,15 @@ declare class RestClient {
   getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
   getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
   getTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getUTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getUTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getUTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getOTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getOTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getOTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getOUTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getOUTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getOUTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
   static getSecretOutput({ _url, keyPair }: { _url: string; keyPair: BIP32Interface }): Promise<{
     host: string
     data: string
@@ -361,8 +370,6 @@ declare class Wallet {
   constructor(params?: ComputerOptions)
   derive(subpath?: string): Wallet
   getBalance(address?: string): Promise<_Balance>
-  getUtxos(address?: string): Promise<_Unspent[]>
-  getUtxosByPublicKey(publicKey: string): Promise<_Unspent[]>
   getDustThreshold(isWitnessProgram: boolean, script?: Buffer): number
   getAmountThreshold(script: Buffer, isWitnessProgram?: boolean): number
   getUtxosWithOpts({ include, exclude }?: FundOptions): Promise<_Unspent[]>
@@ -502,7 +509,6 @@ declare class Computer {
   load(rev: string): Promise<ModuleExportsNamespace>
   listTxs(address?: string): Promise<{ sentTxs: TxIdAmountType[]; receivedTxs: TxIdAmountType[] }>
   getAncestors(location: string, verbosity?: number): Promise<string[] | Map<string, string>>
-  getUtxos(address?: string): Promise<string[]>
   getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
   getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
   getTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>

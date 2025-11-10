@@ -1,11 +1,11 @@
 import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
-describe('getUtxos', () => {
+describe('getUTXOs', () => {
   let computer1: Computer
   let computer2: Computer
 
-  before('Fund computer1', async () => {
+  before('Fund computers', async () => {
     computer1 = new Computer({ chain, network, url })
     computer2 = new Computer({ chain, network, url })
     await computer1.faucet(1e8)
@@ -17,7 +17,7 @@ describe('getUtxos', () => {
     const txId2 = await computer1.send(10000n, computer2.getAddress())
 
     // Check that computer2 has both UTXOS
-    const utxos = await computer2.getUtxos()
+    const utxos = await computer2.getUTXOs({ address: computer2.getAddress(), isObject: false })
     expect(new Set(utxos)).deep.eq(new Set([`${txId1}:0`, `${txId2}:0`]))
   })
 
@@ -30,7 +30,7 @@ describe('getUtxos', () => {
 
     // Check that the UTXO containing the on-chain object is not
     // returned by getUTXOs
-    const utxos = await computer1.getUtxos()
+    const utxos = await computer1.getUTXOs({ address: computer1.getAddress(), isObject: false })
     expect(!utxos.some((item) => item === c._id))
   })
 })

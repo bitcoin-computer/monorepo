@@ -24,7 +24,7 @@ Validation is performed on all parameters to ensure proper format and type.
 | `isObject`    | `boolean`  | Whether to return TXOs as objects.                 |
 | `mod`         | `string`   | Modifier revision (must be valid).                 |
 | `previous`    | `string`   | Previous TXO revision (must be valid).             |
-| `exp`         | `string`   | Script in hexadecimal format.                      |
+| `exp`         | `string`   | The Javascript expression.                         |
 | `blockHash`   | `string`   | Block hash (must be hex).                          |
 | `blockHeight` | `number`   | Block height (non-negative integer).               |
 | `blockIndex`  | `number`   | Index of the TXO within the block.                 |
@@ -45,6 +45,8 @@ curl -X GET "http://localhost:1031/v1/LTC/regtest/get-txos?verbosity=1&address=m
 
 ### Response
 
+On success, the response will be an array of DBOutput objects matching the query parameters. See full db schema for more details [here](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql).
+
 #### Success (200)
 
 ```json
@@ -57,9 +59,9 @@ curl -X GET "http://localhost:1031/v1/LTC/regtest/get-txos?verbosity=1&address=m
     "isObject": false,
     "mod": null,
     "previous": null,
-    "exp": "a69f71ff08ef782d3edb7d938cd765b89ce608c3b7d0db9a3f1675c172fe43b3",
-    "blockHeight": 104,
+    "expHash": "a69f71ff08ef782d3edb7d938cd765b89ce608c3b7d0db9a3f1675c172fe43b3",
     "blockHash": "00000000000000000000000000000000000000000000000000000000000000ff",
+    "blockHeight": 104,
     "blockIndex": 0
   }
 ]

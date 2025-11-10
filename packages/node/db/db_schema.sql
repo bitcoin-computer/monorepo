@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS
     "isObject" BOOLEAN NOT NULL,
     "mod" VARCHAR(70),
     "previous" VARCHAR(70),
-    "exp" VARCHAR(64),
+    "expHash" VARCHAR(64),
     "blockHash" VARCHAR(64),
     "blockHeight" INTEGER,
     "blockIndex" INTEGER,
