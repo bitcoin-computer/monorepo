@@ -1,6 +1,6 @@
 # getTXOs
 
-_Returns **Transaction Outputs** for the given query parameters._
+_Returns *transaction outputs* for the given query parameters._
 
 ## Type
 
