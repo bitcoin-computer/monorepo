@@ -12,10 +12,9 @@ async getUTXOs(q: GetTXOsQuery): Promise<string[] | DbOutput[]>
 
 ## Description
 
-The `getUTXOs` function is a **syntactic sugar** built on top of [`getTXOs`](./getTXOs.md).  
-It automatically sets the parameter `isSpent: false` to return only **unspent** outputs.
 
-It can be used to query Bitcoin UTXOs or Bitcoin Computer objects that have not been spent yet.
+
+The `getUTXOs` function is *syntactic sugar* for [`getTXOs`](./getTXOs.md) function where `isSpent` is set to `false`. It return only unspent outputs that may or may not contain smart objects.
 
 ## Parameters
 
@@ -29,7 +28,7 @@ It accepts the same parameters as [`getTXOs`](./getTXOs.md), except that `isSpen
 
 ## Return Value
 
-An array of either revision strings or rows from the Output table, depending on the verbosity level. It is important to highlight that the returned outputs are Bitcoin UTXOs that can encode Bitcoin Computer objects, based on the query parameters provided. If `isObject` is not specified, the returned UTXOs may include both regular Bitcoin outputs or outputs that encode Bitcoin Computer objects.
+An array of either revision strings or rows from the Output table, depending on the verbosity level. It is important to highlight that the returned outputs are UTXOs that can encode smart objects, based on the query parameters provided.
 
 ## Example
 
