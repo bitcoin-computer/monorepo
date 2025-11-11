@@ -19,9 +19,3 @@ Start the App
 ```
 npm run dev
 ```
-
-### Test
-
-```
-npm test
-```

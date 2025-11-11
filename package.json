@@ -30,7 +30,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:node": "docker build -t bcdb/bcn .",
-    "check:obfuscation": "./scripts/check-obfuscation.sh",
+    "check:obfuscation": "node ./scripts/check-obfuscation.js",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} \\;",
     "format": "npm run format --if-present --workspaces",
     "husky:checks": "npm run check:obfuscation && npm run lint",

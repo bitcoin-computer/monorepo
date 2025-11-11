@@ -23,7 +23,7 @@
     "deploy": "tsc && node ./build/scripts/deploy.js",
     "lint": "eslint .",
     "start": "node build/src/index.js",
-    "test": "mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
+    "test": "npm run build && mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
     "types": "tsc --noEmit"
   },
   "dependencies": {
@@ -39,7 +39,7 @@
     "path": "^0.12.7",
     "process": "^0.11.10",
     "punycode": "^2.1.1",
-    "parcel": "^2.15.4",
+    "parcel": "2.15.4",
     "querystring-es3": "^0.2.1",
     "stream-browserify": "^3.0.0",
     "string_decoder": "^1.3.0",
@@ -53,8 +53,8 @@
     "chai": "^5.1.2",
     "chai-match-pattern": "^1.3.0",
     "dotenv": "^16.4.5",
-    "mocha": "^10.3.0",
-    "parcel": "^2.15.4",
+    "mocha": "^11.0.0",
+    "parcel": "2.15.4",
     "prettier": "~3.2.5",
     "ts-node": "^10.9.2"
   },

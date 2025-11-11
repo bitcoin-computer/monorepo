@@ -87,7 +87,7 @@ export function Chats() {
 
   useEffect(() => {
     const fetch = async () => {
-      const result = await computer.query({ mod: VITE_CHAT_MOD_SPEC, publicKey })
+      const result = await computer.getOUTXOs({ mod: VITE_CHAT_MOD_SPEC, publicKey })
       const chatsPromise: Promise<ChatSc>[] = []
       result.forEach((rev: string) => {
         chatsPromise.push(computer.sync(rev) as Promise<ChatSc>)

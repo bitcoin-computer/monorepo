@@ -20,7 +20,7 @@ describe('encodeNew', async () => {
     expect(await computer.decode(tx)).to.deep.eq({
       exp: `${C} new C()`,
       env: {},
-      mod: '',
+      mod: undefined,
     })
 
     // Broadcast the tx to create the on-chain object

@@ -16,6 +16,8 @@ curl -X GET http://localhost:1031/v1/store/fcdb882a0b9556a0c6fb2a89efe0633f0c256
 
 ### Response
 
+#### Success (200)
+
 ```json
 {
   "exp": "class A extends Contract {
@@ -32,4 +34,16 @@ curl -X GET http://localhost:1031/v1/store/fcdb882a0b9556a0c6fb2a89efe0633f0c256
     "mod":"",
     "v":"0.24.0-beta.0"
 }
+```
+
+#### Not found / forbidden (403)
+
+```json
+{ "error": "No entry found." }
+```
+
+#### Server error (500)
+
+```json
+{ "error": "Internal server error message" }
 ```

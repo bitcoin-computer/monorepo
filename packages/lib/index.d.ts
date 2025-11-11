@@ -4,6 +4,7 @@ import { Contract as ContractGlobal, Computer, Mock, Transaction } from './compu
 
 declare global {
   var Contract: typeof ContractGlobal
+  var computer: Computer
 }
 
 export { Computer, ContractGlobal as Contract, Mock, Transaction }

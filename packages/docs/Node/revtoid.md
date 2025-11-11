@@ -20,6 +20,23 @@ curl -X POST http://localhost:1031/v1/LTC/regtest/revToId \
 
 ### Response
 
+#### Success (200)
+
 ```json
 "db98c59f328bb45b14a957ce44546f5bfe2f1bf4394de18e98f32188e76082be:0"
+```
+
+> **Note on caching:** Successful responses are returned with  
+> `Cache-Control: public, max-age=31536000`, meaning they can be cached for up to **1 year**.
+
+#### Invalid revision (400)
+
+```json
+{ "error": "Invalid revision" }
+```
+
+#### Server error (500)
+
+```json
+{ "error": "Internal server error message" }
 ```

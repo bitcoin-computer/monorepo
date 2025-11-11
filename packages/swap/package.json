@@ -30,14 +30,14 @@
     "@bitcoin-computer/nakamotojs": "^0.26.0-beta.0"
   },
   "devDependencies": {
-    "@types/mocha": "^9.1.1",
+    "@types/mocha": "^10.0.6",
     "@types/node": "~20.11.21",
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "@typescript-eslint/parser": "^8.35.0",
     "chai": "^5.1.0",
     "chai-match-pattern": "^1.3.0",
     "dotenv": "^16.0.0",
-    "mocha": "^10.0.0",
+    "mocha": "^11.0.0",
     "prettier": "^3.2.5",
     "source-map-support": "^0.5.21",
     "ts-node": "^10.8.1",

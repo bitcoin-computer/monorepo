@@ -10,12 +10,10 @@ export async function fund(chain, addresses: string[] = []) {
   const computer = new Computer({ chain, network, url })
 
   // Send to address
-  await Promise.all(
-    addresses.map((address) => computer.rpcCall('generateToAddress', `1 ${address}`)),
-  )
+  await Promise.all(addresses.map((address) => computer.rpc('generateToAddress', `1 ${address}`)))
 
   // Mine 100 blocks on top
-  await computer.rpcCall('generateToAddress', '100 mrpdUjdfFZQWRYaqgqjgoXTJqn5rwahTHr')
+  await computer.rpc('generateToAddress', '100 mrpdUjdfFZQWRYaqgqjgoXTJqn5rwahTHr')
 }
 
 const [, , chain, ...addressList] = process.argv
