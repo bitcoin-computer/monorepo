@@ -12,14 +12,11 @@ async getOTXOs(q: GetTXOsQuery): Promise<string[] | DbOutput[]>
 
 ## Description
 
-The `getOTXOs` function is a **syntactic sugar** built on top of [`getTXOs`](./getTXOs.md).  
-It automatically sets the parameter `isObject: true` to return only **Bitcoin Computer objects** (outputs that encode a smart object).
-
-Objects are identified by the presence of specific patterns in their locking script.
+The `getOTXOs` function is *syntactic sugar* for the [`getTXOs`](./getTXOs.md) with `isObject` set to `true`. The name is short for get-object-transaction-outputs, it return only output identifiers of output that encode *smart objects*.
 
 ## Parameters
 
-It accepts the same parameters as [`getTXOs`](./getTXOs.md), except that `isObject` is always fixed to `true`.
+It accepts the same parameters as [`getTXOs`](./getTXOs.md), except that `isObject` is always set to `true`.
 
 {.compact}
 | Key | Description |
