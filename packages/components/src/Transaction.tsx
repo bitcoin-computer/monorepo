@@ -167,7 +167,7 @@ function InputRevCell({ utxo, checkForSpentInput }: { utxo: string; checkForSpen
       )}
       {isSpent && (
         <div className="absolute left-1/2 z-10 inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700 group-hover:opacity-100 bottom-full -translate-x-1/2 mb-3">
-          this input have been spent in this transaction{' '}
+          Already spent in this tx{' '}
           <Link
             to={`/transactions/${spendingTxId}`}
             className="font-medium text-blue-400 hover:underline"
