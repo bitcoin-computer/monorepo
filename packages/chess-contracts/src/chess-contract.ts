@@ -177,7 +177,7 @@ export class ChessContractHelper {
   }
 
   async validateUser(): Promise<void> {
-    const [userRev] = await this.computer.query({
+    const [userRev] = await this.computer.getOUTXOs({
       mod: this.userMod,
       publicKey: this.computer.getPublicKey(),
     })
@@ -211,10 +211,12 @@ export class ChessContractHelper {
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)
     const addy = address.fromPublicKey(this.computer.db.wallet.publicKey, 'p2pkh', n)
-    const utxos = await this.computer.db.wallet.restClient.getFormattedUtxos(addy)
+    const utxos = await this.computer.getUTXOs({ address: addy, verbosity: 1 })
     let paid = 0n
     while (paid < Number(this.satoshis) / 2 && utxos.length > 0) {
-      const { txId, vout, satoshis } = utxos.pop()!
+      const { rev, satoshis } = utxos.pop()!
+      const txId = rev.substring(0, 64)
+      const vout = parseInt(rev.substring(65), 10)
       const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
       tx.addInput(txHash, vout)
       paid += satoshis
@@ -267,7 +269,7 @@ export class ChessContractHelper {
     promotion: string,
   ): Promise<{ newChessContract: ChessContract; isGameOver: boolean }> {
     if (chessContract && chessContract.sans.length < 2) {
-      const [userRev] = await this.computer.query({
+      const [userRev] = await this.computer.getOUTXOs({
         mod: this.userMod,
         publicKey: this.computer.getPublicKey(),
       })

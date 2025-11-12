@@ -63,7 +63,7 @@ Access the client side wallet.
 | [sign](./sign.md) | Signs a Bitcoin transaction |
 | [broadcast](./broadcast.md) | Broadcasts a Bitcoin transaction |
 | [send](./send.md) | Sends satoshis to an address |
-| [rpcCall](./rpcCall.md) | Access Bitcoin's RPC interface |
+| [rpc](./rpcCall.md) | Access Bitcoin's RPC interface |
 | [getAddress](./getAddress.md) | Returns the Bitcoin address of the computer wallet |
 | [getBalance](./getBalance.md) | Confirmed, unconfirmed and total balance in sats |
 | [getChain](./getChain.md) | Returns the blockchain |

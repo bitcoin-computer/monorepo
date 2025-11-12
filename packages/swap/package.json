@@ -30,7 +30,7 @@
     "@bitcoin-computer/nakamotojs": "^0.26.0-beta.0"
   },
   "devDependencies": {
-    "@types/mocha": "^9.1.1",
+    "@types/mocha": "^10.0.6",
     "@types/node": "~20.11.21",
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "@typescript-eslint/parser": "^8.35.0",

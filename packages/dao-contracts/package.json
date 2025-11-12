@@ -1,0 +1,94 @@
+{
+  "name": "@bitcoin-computer/dao-contracts",
+  "version": "0.26.0-beta.0",
+  "description": "Contracts for a DAO",
+  "license": "MIT",
+  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
+  "type": "module",
+  "main": "./build/src/main.js",
+  "module": "./build/src/main.js",
+  "exports": {
+    ".": "./build/src/main.js"
+  },
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
+  "types": "./build/src/index.d.ts",
+  "scripts": {
+    "prebuild": "npm run lint:fix",
+    "build": "tsc -p tsconfig.json && parcel build --target main",
+    "build:turbo": "turbo run build",
+    "clean:logs": "rm -f *.log 2> /dev/null",
+    "deploy": "tsc && node ./build/scripts/deploy.js",
+    "lint:fix": "eslint . --fix",
+    "start": "node build/src/index.js",
+    "test": "npm run build && mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
+    "test:show": "npm run test 2>&1 | tee dao-contracts.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open dao-contracts.log; fi",
+    "types": "tsc --noEmit"
+  },
+  "alias": {
+    "buffer": "buffer/index.js",
+    "assert": "assert/build/assert.js",
+    "crypto": "crypto-browserify/index.js",
+    "process": "process/browser.js",
+    "events": "events/events.js",
+    "stream": "stream-browserify/index.js",
+    "string_decoder": "string_decoder/lib/string_decoder.js",
+    "querystring": "querystring-es3",
+    "punycode": "punycode/punycode.js",
+    "util": "util/util.js"
+  },
+  "targets": {
+    "main": {
+      "source": "./build/src/index.js",
+      "distDir": "./build/src",
+      "outputFormat": "esmodule",
+      "context": "browser",
+      "includeNodeModules": {
+        "buffer": true,
+        "stream": true,
+        "string_decoder": true,
+        "events": true,
+        "process": true,
+        "@bitcoin-computer/secp256k1": false,
+        "@bitcoin-computer/lib": false
+      },
+      "sourceMap": false,
+      "optimize": true
+    }
+  },
+  "dependencies": {
+    "@bitcoin-computer/lib": "^0.26.0-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.26.0-beta.0",
+    "assert": "^2.0.0",
+    "buffer": "^6.0.3",
+    "crypto-browserify": "^3.12.0",
+    "ecpair": "^2.1.0",
+    "events": "^3.3.0",
+    "expect": "^29.7.0",
+    "path": "^0.12.7",
+    "process": "^0.11.10",
+    "punycode": "^2.1.1",
+    "querystring-es3": "^0.2.1",
+    "stream-browserify": "^3.0.0",
+    "string_decoder": "^1.3.0",
+    "typescript": "^5.8.3",
+    "url": "^0.11.4",
+    "util": "^0.12.4"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "~20.11.21",
+    "chai": "^5.1.2",
+    "chai-match-pattern": "^1.3.0",
+    "dotenv": "^16.4.5",
+    "mocha": "^11.0.0",
+    "prettier": "~3.2.5",
+    "ts-node": "^10.9.2"
+  },
+  "volta": {
+    "node": "16.13.0"
+  },
+  "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
+}

@@ -1,6 +1,6 @@
 # bulk
 
-_Returns the raw transaction hexes for a given list of transaction ids._
+_Get the raw transaction HEX for multiple transactions in a single request._
 
 ## Endpoint
 
@@ -24,6 +24,29 @@ curl -X POST http://localhost:1031/v1/LTC/regtest/tx/bulk \
 
 ### Response
 
+#### Success (200)
+
 ```json
 ["0100000002b80e0d87611d...", "0100000001b80e0d87611d...", "0100000000012b087e1832..."]
+```
+
+> **Note on caching:** Successful responses are returned with  
+> `Cache-Control: public, max-age=31536000`, meaning they can be cached for up to **1 year**.
+
+#### Missing parameter (400)
+
+```json
+{ "error": "Missing input txIds." }
+```
+
+#### Not found (404)
+
+```json
+{ "error": "Not found" }
+```
+
+#### Server error (500)
+
+```json
+{ "error": "Internal server error message" }
 ```

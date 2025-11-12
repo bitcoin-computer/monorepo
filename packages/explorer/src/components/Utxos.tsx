@@ -2,20 +2,23 @@ import { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { ComputerContext, UtilsContext, bigIntToStr } from '@bitcoin-computer/components'
 
-interface _Unspent {
-  txId: string
-  vout: number
+interface _DbOutput {
+  rev: string
+  address: string
   satoshis: bigint
-  rev?: string
-  scriptPubKey?: string
-  amount?: bigint
-  address?: string
-  height?: number
+  asm: string
+  expHash?: string
+  mod?: string
+  isObject?: boolean
+  previous?: string
+  blockHash?: string
+  blockHeight?: number
+  blockIndex?: number
 }
 
 const UTXODisplay = () => {
   const params = useParams()
-  const [utxos, setUtxos] = useState<_Unspent[]>([])
+  const [utxos, setUtxos] = useState<_DbOutput[]>([])
   const [totalAmount, setTotalAmount] = useState<bigint>(0n)
   const [address] = useState<string>(params.address || '')
   const computer = useContext(ComputerContext)
@@ -30,7 +33,11 @@ const UTXODisplay = () => {
   const fetchUTXOs = async (addr: string) => {
     try {
       showLoader(true)
-      const response = await computer.db.wallet.restClient.getUtxos(addr)
+      const response = await computer.db.wallet.restClient.getUTXOs({
+        address: addr,
+        verbosity: 1,
+        isObject: false,
+      })
       setUtxos(response)
       setTotalAmount(response.reduce((total, unspent) => total + unspent.satoshis, 0n))
     } catch (err: unknown) {
@@ -89,7 +96,7 @@ const UTXODisplay = () => {
                         {utxo.rev?.split(':')[0]}
                       </th>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                        {utxo.vout}
+                        {utxo.rev?.split(':')[1]}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-bold">
                         {bigIntToStr(utxo.satoshis)}

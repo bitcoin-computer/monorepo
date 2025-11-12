@@ -23,7 +23,7 @@ function Block() {
     const fetch = async () => {
       try {
         showLoader(true)
-        const res = await computer.rpcCall('getblock', `${block} 2`)
+        const res = await computer.rpc('getblock', `${block} 2`)
         setBlockData(res.result)
         showLoader(false)
       } catch {

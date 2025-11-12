@@ -120,6 +120,7 @@ export function NotLoggedMenu() {
           ? formatChainAndNetwork(chain, network)
           : formatChainAndNetwork("LTC", "regtest")
       );
+      // eslint-disable-next-line react-hooks/immutability
       window.location.href = "/";
     } catch (error) {
       if (error instanceof Error) {

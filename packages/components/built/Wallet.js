@@ -51,7 +51,7 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
             const publicKey = computer.getPublicKey();
             const allPayments = [];
             const balances = await Promise.all(modSpecs.map(async (mod) => {
-                const paymentRevs = await computer.query({ publicKey, mod });
+                const paymentRevs = await computer.getOUTXOs({ publicKey, mod });
                 const payments = (await Promise.all(paymentRevs.map((rev) => computer.sync(rev))));
                 allPayments.push(...payments);
                 const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')));
