@@ -363,6 +363,7 @@ declare class RestClient {
   height(): Promise<number>
   next(rev: string): Promise<string | undefined>
   prev(rev: string): Promise<string | undefined>
+  latest(rev: string): Promise<string>
 }
 
 declare class Wallet {
@@ -555,6 +556,12 @@ declare class Computer {
   prev(rev: string): Promise<string | undefined>
   subscribe(
     id: string,
+    onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
+    onError?: (error: Event) => void,
+  ): Promise<() => void>
+  stream(
+    field: AllowedKeys,
+    value: string | number,
     onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
     onError?: (error: Event) => void,
   ): Promise<() => void>

@@ -1,6 +1,5 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { payments, script, Transaction } from '@bitcoin-computer/nakamotojs'
-import { chain, expect, network, sleep, url } from '../../utils'
+import { chain, expect, network, sleep, url } from '../../utils/index.js'
 
 describe('getTXOs', () => {
   let computer: Computer
