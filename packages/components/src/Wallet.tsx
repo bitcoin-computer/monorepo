@@ -143,9 +143,6 @@ const Withdraw = ({
   const [address, setAddress] = useState<string>('')
   const [withdrawing, setWithdrawing] = useState<boolean>(false)
 
-  const withdrawModSpec = getEnv('WITHDRAW_MOD_SPEC')
-  if (!withdrawModSpec) return null
-
   const handleWithdraw = async () => {
     try {
       setWithdrawing(true)

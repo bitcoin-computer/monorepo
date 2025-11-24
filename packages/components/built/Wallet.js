@@ -66,9 +66,6 @@ const Withdraw = ({ computer, paymentsWrapper: payments, onSuccess, }) => {
     const { showSnackBar } = UtilsContext.useUtilsComponents();
     const [address, setAddress] = useState('');
     const [withdrawing, setWithdrawing] = useState(false);
-    const withdrawModSpec = getEnv('WITHDRAW_MOD_SPEC');
-    if (!withdrawModSpec)
-        return null;
     const handleWithdraw = async () => {
         try {
             setWithdrawing(true);
