@@ -40,7 +40,7 @@ export function CreateUserModalContent({
       const user = (await computer.sync(rev)) as User
       setUser(user)
       setUserTxId(txId)
-      setTitle('Account created successfully!')
+      setTitle('Account created!')
       showLoader(false)
     } catch (err) {
       if (err instanceof Error) {
