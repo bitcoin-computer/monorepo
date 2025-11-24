@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { HiRefresh } from 'react-icons/hi'
 import { FiCopy, FiCheck } from 'react-icons/fi'
 import { Computer } from '@bitcoin-computer/lib'
@@ -298,7 +298,7 @@ const LogOut = () => (
 export function Wallet({ modSpecs }: { modSpecs?: string[] }) {
   const computer = useContext(ComputerContext)
   const Content = ({ isOpen }: { isOpen: boolean }) => {
-    const modSpecsProp = modSpecs || []
+    const modSpecsProp = useMemo(() => modSpecs || [], [modSpecs])
     const { balance, paymentsWrapper, isRefreshing, refreshBalance, fund } = useBalance(
       computer,
       modSpecsProp,

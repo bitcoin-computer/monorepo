@@ -1,5 +1,5 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { HiRefresh } from 'react-icons/hi';
 import { FiCopy, FiCheck } from 'react-icons/fi';
 import { Auth } from './Auth';
@@ -117,7 +117,7 @@ const LogOut = () => (_jsxs(_Fragment, { children: [_jsxs("div", { className: "m
 export function Wallet({ modSpecs }) {
     const computer = useContext(ComputerContext);
     const Content = ({ isOpen }) => {
-        const modSpecsProp = modSpecs || [];
+        const modSpecsProp = useMemo(() => modSpecs || [], [modSpecs]);
         const { balance, paymentsWrapper, isRefreshing, refreshBalance, fund } = useBalance(computer, modSpecsProp, isOpen);
         return (_jsxs(_Fragment, { children: [_jsx("h4", { className: "text-2xl font-bold dark:text-white", children: "Wallet" }), _jsx(BalanceDisplay, { balance: balance, computer: computer, isRefreshing: isRefreshing, onRefresh: refreshBalance, onFund: fund }), _jsx(Deposit, { computer: computer }), _jsx(Withdraw, { computer: computer, paymentsWrapper: paymentsWrapper, onSuccess: refreshBalance }), _jsx(PublicKey, { computer: computer }), _jsx(Mnemonic, { computer: computer }), !getEnv('CHAIN') && _jsx(Chain, { computer: computer }), !getEnv('NETWORK') && _jsx(Network, { computer: computer }), !getEnv('URL') && _jsx(Url, { computer: computer }), !getEnv('PATH') && _jsx(Path, { computer: computer }), _jsx("hr", { className: "h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" }), _jsx(LogOut, {})] }));
     };
