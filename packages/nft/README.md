@@ -1,11 +1,16 @@
 <div align="center">
+  <img src="./imgs/nft.png" alt="nft-app-screenshot" border="0" style=""/>
   <h1>Bitcoin Computer NFT</h1>
   <p>
     A application for minting, storing, and selling NFTs
     <br />
-    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+    <a href="http://nft.bitcoincomputer.io/">demo</a> &#183; <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
 </div>
+
+## Demo
+
+[http://nft.bitcoincomputer.io/](http://nft.bitcoincomputer.io/)
 
 ## Prerequisites
 
@@ -35,22 +40,6 @@ cd packages/nft
 
 ## Usage
 
-### Start the Application Connecting to a Remote Node
-
-Run the commands below and open [http://localhost:1034/](http://localhost:1034/).
-
-<font size=1>
-
-```bash
-# Use the environment variables for the public node
-cp .env.remote.example .env
-
-# Start the app
-npm run start
-```
-
-</font>
-
 ### Start the Application Connecting to a Local Node
 
 You need to have a [Bitcoin Computer Node](https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme) installed and running. Then run the commands below and open [http://localhost:1034](http://localhost:1034).
@@ -71,6 +60,22 @@ npm run start
 </font>
 
 You need to copy the smart contract locations into your .env file after running the deploy script.
+
+### Start the Application Connecting to a Remote Node
+
+Run the commands below and open [http://localhost:1034/](http://localhost:1034/).
+
+<font size=1>
+
+```bash
+# Use the environment variables for the public node
+cp .env.remote.example .env
+
+# Start the app
+npm run start
+```
+
+</font>
 
 ### Fund the Wallet
 
