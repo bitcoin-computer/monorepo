@@ -1,4 +1,3 @@
- 
 type Json = JBasic | JObject | JArray
 type JBasic = undefined | null | boolean | number | string | symbol | bigint
 type JArray = Json[]
@@ -44,7 +43,7 @@ export const jsonMap =
 export const strip = (value: Json): Json => {
   if (isJBasic(value)) return value
   if (isJArray(value)) return value.map(strip)
-   
+
   const { _id, _root, _rev, _satoshis, _owners, ...rest } = value
   return rest
 }
