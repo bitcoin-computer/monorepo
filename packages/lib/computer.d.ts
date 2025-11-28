@@ -189,7 +189,7 @@ type Query = Partial<{
   offset: number
   order: 'ASC' | 'DESC'
 }>
-type DbOutput = {
+export type DbOutput = {
   rev: string
   address: string
   satoshis: bigint
@@ -201,6 +201,13 @@ type DbOutput = {
   blockHash?: string
   blockHeight?: number
   blockIndex?: number
+}
+
+export type Stream = {
+  satoshis?: bigint
+  exp?: string
+  asm?: string
+  mod?: string
 }
 
 export type GetTXOsQuery = {
@@ -560,8 +567,7 @@ declare class Computer {
     onError?: (error: Event) => void,
   ): Promise<() => void>
   stream(
-    field: AllowedKeys,
-    value: string | number,
+    filter: Partial<Stream>,
     onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
     onError?: (error: Event) => void,
   ): Promise<() => void>
