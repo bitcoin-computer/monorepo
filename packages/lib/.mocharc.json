@@ -1,7 +1,7 @@
 {
   "require": ["dotenv/config", "source-map-support/register"],
   "node-option": ["experimental-specifier-resolution=node"],
-  "spec": "js-build/*.test.js",
+  "spec": ["js-build/*.test.js", "js-build/**/**/*.test.js"],
   "timeout": "30000000",
   "reporter": "mocha-multi",
   "reporter-option": ["spec=-", "json=test-results.json"]
