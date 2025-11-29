@@ -30,12 +30,19 @@ describe('stream', () => {
     const asm = `OP_DUP OP_HASH160 ${hash} OP_EQUALVERIFY OP_CHECKSIG`
 
     // subscribe to receive events when the public keys receive funds
-    close = await computer.stream({ asm }, ({ rev, hex }) => {
-      expect(typeof rev).eq('string')
-      expect(typeof hex).eq('string')
-      expect(rev.split(':').length).eq(2)
-      eventCount += 1
-    })
+
+    close = await computer.streamTXOs(
+      { asm },
+      ({ rev, hex }) => {
+        expect(typeof rev).eq('string')
+        expect(typeof hex).eq('string')
+        expect(rev.split(':').length).eq(2)
+        eventCount += 1
+      },
+      (error) => {
+        throw new Error(`Error ${error} in SSE stream`)
+      },
+    )
 
     await computer.send(30000n, computer.getAddress())
 
@@ -82,7 +89,7 @@ describe('stream', () => {
     let eventCount = 0
     const expectedEvents = 4 // 2 objects × 2 updates each
 
-    close = await computer.stream({ satoshis: sats }, ({ rev, hex }) => {
+    close = await computer.streamTXOs({ satoshis: sats }, ({ rev, hex }) => {
       expect(typeof rev).to.eq('string')
       expect(typeof hex).to.eq('string')
       expect(rev.split(':').length).to.eq(2)
@@ -149,7 +156,7 @@ describe('stream', () => {
     await computer.broadcast(tx)
     const expectedEvents = 2 // at least 2 (unconfirmed) updates
 
-    close = await computer.stream({ mod }, ({ rev, hex }) => {
+    close = await computer.streamTXOs({ mod }, ({ rev, hex }) => {
       expect(typeof rev).eq('string')
       expect(typeof hex).eq('string')
       expect(rev.split(':').length).eq(2)
@@ -181,13 +188,76 @@ describe('stream', () => {
     close()
   })
 
+  it('Should emit one message for each object involved in the expression', async () => {
+    class CounterT extends Contract {
+      n: number
+
+      constructor() {
+        super({ n: 0 })
+      }
+      transfer(to: string) {
+        this._owners = [to]
+      }
+    }
+    class Swap extends Contract {
+      constructor(a: CounterT, b: CounterT) {
+        super()
+        const [ownerA] = a._owners
+        const [ownerB] = b._owners
+        a.transfer(ownerB)
+        b.transfer(ownerA)
+      }
+    }
+
+    const counterA = await computer.new(CounterT, [])
+    const counterB = await computer.new(CounterT, [])
+    let eventCount = 0
+    // we expect events for each object passed as parameter + the Swap object
+    // all share the same expression in this transaction
+    const expectedEvents = 3
+    const mod = await computer.deploy(`export ${Swap}`)
+    const exp = `new Swap(a, b)`
+
+    close = await computer.streamTXOs({ exp }, ({ rev, hex }) => {
+      expect(typeof rev).eq('string')
+      expect(typeof hex).eq('string')
+      expect(rev.split(':').length).eq(2)
+      eventCount += 1
+    })
+    const { tx } = await computer.encode({
+      exp: `new Swap(a, b)`,
+      env: { a: counterA._rev, b: counterB._rev },
+      mod,
+    })
+    await computer.broadcast(tx)
+
+    await new Promise<void>((resolve, reject) => {
+      let retryCount = 0
+      const interval = setInterval(() => {
+        retryCount += 1
+
+        if (eventCount >= expectedEvents) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount > 20) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for mod stream with multiple owners'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
   it('Should emit when streaming to expression field', async () => {
     let eventCount = 0
     const counter = await computer.new(Counter, [])
     const expectedEvents = 2 // 2 updates
     const exp = '__bc__.inc()'
 
-    close = await computer.stream({ exp }, ({ rev, hex }) => {
+    close = await computer.streamTXOs({ exp }, ({ rev, hex }) => {
       expect(typeof rev).eq('string')
       expect(typeof hex).eq('string')
       expect(rev.split(':').length).eq(2)
@@ -227,7 +297,7 @@ describe('stream', () => {
     const expectedEvents = 2
     const exp = '__bc__.inc()'
 
-    close = await computer.stream({ exp, mod }, ({ rev, hex }) => {
+    close = await computer.streamTXOs({ exp, mod }, ({ rev, hex }) => {
       expect(typeof rev).eq('string')
       expect(typeof hex).eq('string')
       expect(rev.split(':').length).eq(2)
@@ -264,7 +334,7 @@ describe('stream', () => {
     const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
     await computer.broadcast(tx)
     const exp = '__bc__.wrong()'
-    close = await computer.stream({ exp, mod }, () => {
+    close = await computer.streamTXOs({ exp, mod }, () => {
       eventCount += 1 // Should not trigger
     })
 
@@ -291,7 +361,7 @@ describe('stream', () => {
 
   it('Should throw error for invalid keys in stream', async () => {
     const invalidFilter = { invalidField: 'value' } as Partial<any>
-    await expect(computer.stream(invalidFilter, () => {})).to.be.rejectedWith(
+    await expect(computer.streamTXOs(invalidFilter, () => {})).to.be.rejectedWith(
       'Invalid subscription field: invalidField',
     )
   })

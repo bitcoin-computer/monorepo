@@ -1,5 +1,4 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { crypto } from '@bitcoin-computer/nakamotojs'
 import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('subscribe', () => {

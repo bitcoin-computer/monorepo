@@ -566,7 +566,7 @@ declare class Computer {
     onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
     onError?: (error: Event) => void,
   ): Promise<() => void>
-  stream(
+  streamTXOs(
     filter: Partial<Stream>,
     onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
     onError?: (error: Event) => void,
