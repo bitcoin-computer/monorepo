@@ -1,6 +1,6 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { payments, script, Transaction } from '@bitcoin-computer/nakamotojs'
-import { chain, expect, network, sleep, url } from '../../utils'
+import { crypto, script } from '@bitcoin-computer/nakamotojs'
+import { chain, expect, network, sleep, url } from '../../utils/index.js'
 
 describe('getTXOs', () => {
   let computer: Computer
@@ -167,13 +167,16 @@ describe('getTXOs', () => {
   describe('Get by asm', () => {
     it('Should get TXOs by asm substring', async () => {
       class True extends Contract {
-        constructor() {
-          super({ _owners: 'OP_TRUE' })
+        constructor(script: string) {
+          super({ _owners: script })
         }
       }
-      const c2 = await computer.new(True, [])
+      const scriptString = 'OP_TRUE'
+      const c2 = await computer.new(True, [scriptString])
+      const hash = crypto.hash160(script.fromASM(scriptString)).toString('hex')
+      const asm = `OP_HASH160 ${hash} OP_EQUAL`
 
-      const txos = await computer.getTXOs({ asm: 'OP_TRUE' })
+      const txos = await computer.getTXOs({ asm })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c2._rev)
     })
@@ -183,7 +186,7 @@ describe('getTXOs', () => {
       const m = await computer.deploy('')
       const c4 = await computer.new(Counter, [], m)
       await c4.inc()
-
+      await sleep(1000)
       const txos = await computer.getTXOs({ mod: m })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c4._id)

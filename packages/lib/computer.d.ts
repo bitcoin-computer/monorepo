@@ -189,7 +189,7 @@ type Query = Partial<{
   offset: number
   order: 'ASC' | 'DESC'
 }>
-type DbOutput = {
+export type DbOutput = {
   rev: string
   address: string
   satoshis: bigint
@@ -201,6 +201,13 @@ type DbOutput = {
   blockHash?: string
   blockHeight?: number
   blockIndex?: number
+}
+
+export type Stream = {
+  satoshis?: bigint
+  exp?: string
+  asm?: string
+  mod?: string
 }
 
 export type GetTXOsQuery = {
@@ -363,6 +370,7 @@ declare class RestClient {
   height(): Promise<number>
   next(rev: string): Promise<string | undefined>
   prev(rev: string): Promise<string | undefined>
+  latest(rev: string): Promise<string>
 }
 
 declare class Wallet {
@@ -555,6 +563,11 @@ declare class Computer {
   prev(rev: string): Promise<string | undefined>
   subscribe(
     id: string,
+    onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
+    onError?: (error: Event) => void,
+  ): Promise<() => void>
+  streamTXOs(
+    filter: Partial<Stream>,
     onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
     onError?: (error: Event) => void,
   ): Promise<() => void>
