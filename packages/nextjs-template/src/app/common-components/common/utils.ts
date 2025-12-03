@@ -53,7 +53,7 @@ export const strip = (value: Json): Json => {
   if (isJBasic(value)) return value;
   if (isJArray(value)) return value.map(strip);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+   
   const { _id, _root, _rev, _satoshis, _owners, ...rest } = value;
   return rest;
 };
