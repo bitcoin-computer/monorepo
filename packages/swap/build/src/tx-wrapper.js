@@ -22,10 +22,19 @@ export class TxWrapperHelper {
             : `new TxWrapper("${publicKey}", "${url}")`;
         const exclude = tx ? tx.getInRevs() : [];
         const revsToExclude = excludedRevs ? [...new Set([...exclude, ...excludedRevs])] : exclude;
+        const { tx: wrappedTx } = await this.computer.encode({
+            fund: false,
+            exp,
+            exclude: revsToExclude,
+            mod: this.mod,
+        });
+        const fee = await this.computer.db.wallet.estimateFee(wrappedTx);
+        const txId = await this.computer.send(BigInt(fee * 10), this.computer.getAddress());
         return this.computer.encode({
             exp,
             exclude: revsToExclude,
             mod: this.mod,
+            include: [`${txId}:0`],
         });
     }
     async addSaleTx(txWrapperTxId, tx) {

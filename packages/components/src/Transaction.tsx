@@ -30,23 +30,6 @@ function SpendsCell({ utxo }: { utxo: string }) {
   const computer = useContext(ComputerContext)
   const [spends, setSpends] = useState<string | undefined | null>(null)
   const [loading, setLoading] = useState(true)
-  const [txn, setTxn] = useState(params.txn)
-  const [txnData, setTxnData] = useState<any | null>(null)
-  const [rpcTxnData, setRPCTxnData] = useState<any | null>(null)
-  const [transition, setTransition] = useState<any | null>(null)
-
-  useEffect(() => {
-    const fetch = async () => {
-      setTxn(params.txn)
-      const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn as string])
-      const tx = BCTransaction.fromHex(hex)
-      setTxnData(tx)
-
-      const { result } = await computer.rpc('getrawtransaction', `${params.txn} 2`)
-      setRPCTxnData(result)
-    }
-    fetch()
-  }, [computer, txn, location, params.txn])
 
   useEffect(() => {
     const fetchSpends = async () => {
@@ -301,7 +284,7 @@ export function TransactionComponent() {
       const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn as string])
       const tx = BCTransaction.fromHex(hex)
       setTxnData(tx)
-      const { result } = await computer.rpcCall('getrawtransaction', `${params.txn} 2`)
+      const { result } = await computer.rpc('getrawtransaction', `${params.txn} 2`)
       setRPCTxnData(result)
     }
     fetch()

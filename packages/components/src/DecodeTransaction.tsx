@@ -16,7 +16,7 @@ export function DecodedransactionComponent() {
     const fetch = async () => {
       const txnDeserialized = BCTransaction.deserialize(params.txn as string)
       setTxnData(txnDeserialized)
-      const { result } = await computer.rpcCall(
+      const { result } = await computer.rpc(
         'decoderawtransaction',
         `${txnDeserialized.toHex()} false`,
       )
