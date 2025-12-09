@@ -166,7 +166,7 @@ describe('Election', () => {
                     expect(e.message).to.include('Failed to load module "0f08b977b9be9d96b8b02dd0866e7a692bb1527277a746dc8a74adde724d7856:22"');
                 }
                 else {
-                    throw e; // rethrow if it's not an Error
+                    throw e;
                 }
             }
         });
@@ -216,10 +216,6 @@ describe('Election', () => {
             expect(updatedT1.amount).eq(8n);
             // Vote again
             await computer.new(Vote, [{ electionId: election._id, tokens: [updatedT1], vote: 'accept' }], proposalMod);
-            // const votes = await election.validVotes()
-            // const validVotes = votes.map((v) => v._rev)
-            // expect(validVotes.length).eq(1)
-            // expect(validVotes[0]).eq(vote1._rev)
             const accepted2 = await election.accepted();
             expect(accepted2).eq(10n);
         });

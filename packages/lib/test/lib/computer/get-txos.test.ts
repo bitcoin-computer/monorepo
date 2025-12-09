@@ -198,7 +198,7 @@ describe('getTXOs', () => {
       const t = await computer.new(Token, [computer.getPublicKey(), 100n], m)
       const computer2 = new Computer({ chain, network, url })
       const newToken: Token = await t.transfer(computer2.getPublicKey(), 40n)
-
+      
       const txos = await computer.getTXOs({ mod: m })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(t._id)
