@@ -461,6 +461,30 @@ declare class Db {
   constructor(params?: {})
 }
 
+declare class InnerComputer {
+  computer: Computer
+  constructor({ chain, network, url }: { chain: TBCChain; network: TBCNetwork; url: string })
+
+  public async getTXOs(q: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  public async getTXOs(q: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  public async getTXOs(q: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  public async sync(location: string): Promise<unknown>
+  public async decode(txId: string): Promise<{
+    exp: string
+    env: {
+      [s: string]: string
+    }
+    mod?: string | undefined
+  }>
+  public async load(location: string): Promise<Record<string, any>>
+  public async getAncestors(location: string): Promise<string[]>
+  public async getBalance(address?: string): Promise<Balance>
+  public async first(rev: string): Promise<string>
+  public async prev(rev: string): Promise<string | undefined>
+  public async next(rev: string): Promise<string | undefined>
+  public async latest(rev: string): Promise<string>
+}
+
 declare class Computer {
   db: Db
   constructor(params?: ComputerOptions)
@@ -512,7 +536,7 @@ declare class Computer {
     tx: Transaction
     effect: Effect
   }>
-  decode(tx: Transaction): Promise<TransitionJSON>
+  decode(tx: Transaction | string): Promise<TransitionJSON>
   deploy(module: string, opts?: Partial<ModuleOptions>): Promise<string>
   load(rev: string): Promise<ModuleExportsNamespace>
   listTxs(address?: string): Promise<{ sentTxs: TxIdAmountType[]; receivedTxs: TxIdAmountType[] }>
