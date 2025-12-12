@@ -4,7 +4,6 @@ export declare class Payment extends Contract {
     _root: string;
     _satoshis: bigint;
     _owners: string[];
-    iteration: number;
     constructor(_satoshis: bigint);
     transfer(to: string): void;
     setSatoshis(a: bigint): void;

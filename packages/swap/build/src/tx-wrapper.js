@@ -6,6 +6,9 @@ export class TxWrapper extends Contract {
     addSaleTx(txHex) {
         this.txHex = txHex;
     }
+    cancelSaleTx() {
+        this.txHex = '';
+    }
 }
 export class TxWrapperHelper {
     constructor(computer, mod) {
@@ -35,6 +38,13 @@ export class TxWrapperHelper {
             exclude: revsToExclude,
             mod: this.mod,
             include: [`${txId}:0`],
+        });
+    }
+    async cancelSaleTx(txWrapperTxId) {
+        const { res: txWrapper } = (await this.computer.sync(txWrapperTxId));
+        return this.computer.encode({
+            exp: `txWrapper.cancelSaleTx()`,
+            env: { txWrapper: txWrapper._rev },
         });
     }
     async addSaleTx(txWrapperTxId, tx) {
