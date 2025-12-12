@@ -15,9 +15,10 @@ export declare class Election extends Contract {
     tokenRoot: string;
     description: string;
     constructor({ proposalMod, tokenRoot, description }: ElectionType);
+    private regexEscape;
+    normalize(str: string): string;
     proposalVotes(): Promise<string[]>;
     private validVotes;
-    validRevVotes(): Promise<string[]>;
     accepted(): Promise<bigint>;
     rejected(): Promise<bigint>;
 }

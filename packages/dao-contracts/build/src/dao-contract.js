@@ -3,6 +3,15 @@ export class Election extends Contract {
     constructor({ proposalMod, tokenRoot, description }) {
         super({ proposalMod, tokenRoot, description });
     }
+    regexEscape(str) {
+        return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
+    normalize(str) {
+        return str
+            .replace(/\s+/g, '')
+            .replace(/,([})])/g, '$1')
+            .trim();
+    }
     async proposalVotes() {
         const revs = await computer.getTXOs({ mod: this.proposalMod });
         const voteTxIdsSet = new Set(revs.map((r) => r.split(':')[0]));
@@ -22,11 +31,40 @@ export class Election extends Contract {
         const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map(
         // @ts-expect-error type unknown
         (obj) => obj.res);
-        return [...resolved].filter((r) => r.electionId === this._id && r.tokenRoot === this.tokenRoot);
-    }
-    async validRevVotes() {
-        const votes = await this.validVotes();
-        return votes.map((v) => v._rev);
+        const module = await computer.load(this.proposalMod);
+        const voteClassStr = module['Vote'].toString();
+        const normalizedClass = this.normalize(voteClassStr);
+        const regex = new RegExp('^' +
+            this.regexEscape(normalizedClass) +
+            "newVote\\({electionId:'" +
+            this.regexEscape(this._id) +
+            "',tokens:\\[(__bc\\d+__(?:,__bc\\d+__)*)\\],vote:'(accept|reject)'\\}\\)$");
+        const isValid = await Promise.all(resolved.map(async (r) => {
+            const decoded = await computer.decode(r._rev.substring(0, 64));
+            const normExp = this.normalize(decoded.exp);
+            const match = regex.exec(normExp);
+            if (!match)
+                return false;
+            const tokensStr = match[1];
+            const voteFromExp = match[2];
+            if (voteFromExp !== r.vote)
+                return false;
+            const tokenPlaceholders = tokensStr.split(',');
+            const indices = tokenPlaceholders.map((ph) => {
+                const m = ph.match(/^__bc(\d+)__$/);
+                if (!m)
+                    return NaN;
+                return parseInt(m[1], 10);
+            });
+            if (indices.some(isNaN) || indices.length < 1)
+                return false;
+            for (let i = 0; i < indices.length; i++) {
+                if (indices[i] !== i)
+                    return false;
+            }
+            return true;
+        }));
+        return resolved.filter((r, i) => r.electionId === this._id && r.tokenRoot === this.tokenRoot && isValid[i]);
     }
     async accepted() {
         const votes = await this.validVotes();

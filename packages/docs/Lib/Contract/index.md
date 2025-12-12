@@ -153,3 +153,32 @@ Returns the ancestry of a transaction or revision, describing how it was derived
 ```ts
 getAncestors(location: string, verbosity?: number): Promise<string[] | Map<string, string>>
 ```
+
+### `sync`
+
+The `sync` the latest state for a revision, and returns the object representation of that state.
+
+```ts
+sync(rev: string): Promise<any>
+```
+
+### `decode`
+
+Parses a Bitcoin transaction or a transaction ID and returns its metadata if it is a Bitcoin Computer transaction.
+
+```ts
+decode(tx: NakamotoJS.Transaction | string) =>
+  Promise<{
+    exp: string
+    env?: { [s: string]: string }
+    mod?: string
+  }>
+```
+
+### `load`
+
+Loads a module from a given module specifier.
+
+```ts
+load(location: string): Promise<ModuleExportsNamespace>
+```
