@@ -1,6 +1,6 @@
 # decode
 
-_Parses a Bitcoin transaction or a transaction ID and returns its metadata if it is a Bitcoin Computer transaction._
+_Inputs a Bitcoin transaction or a transaction id and returns its metadata if it is a Bitcoin Computer transaction._
 
 ## Type
 
