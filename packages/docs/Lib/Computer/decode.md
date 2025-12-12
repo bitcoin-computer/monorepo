@@ -1,11 +1,11 @@
 # decode
 
-_Parses a Bitcoin transaction and returns its metadata if it is a Bitcoin Computer transaction._
+_Inputs a Bitcoin transaction or a transaction id and returns its metadata if it is a Bitcoin Computer transaction._
 
 ## Type
 
 ```ts
-;(tx: NakamotoJS.Transaction) =>
+;(tx: NakamotoJS.Transaction | string) =>
   Promise<{
     exp: string
     env?: { [s: string]: string }
@@ -17,7 +17,7 @@ _Parses a Bitcoin transaction and returns its metadata if it is a Bitcoin Comput
 
 #### `tx`
 
-A NakamotoJS [transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/ts_src/transaction.ts).
+A NakamotoJS [transaction](https://github.com/bitcoin-computer/monorepo/blob/main/packages/nakamotojs/ts_src/transaction.ts), or a string representing a transaction ID.
 
 ### Return Value
 
@@ -32,7 +32,7 @@ An object containing the following properties:
 
 ## Description
 
-The function `decode` is the inverse of `encode` when the latter is called with `exp`, `env`, and `mod`.
+The `decode` function takes a Bitcoin transaction or a transaction ID as input and retrieves the associated metadata if the transaction is a Bitcoin Computer transaction. This metadata includes the JavaScript expression, any environment variables, and an optional module specifier.
 
 ## Example
 

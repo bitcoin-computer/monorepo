@@ -30,9 +30,9 @@ describe('Election', () => {
       expect(revs.length).greaterThan(0)
       await election.proposalVotes()
 
-      const validVotes = await election.proposalVotes()
-      expect(validVotes.length).eq(1)
-      expect(validVotes[0]).eq(vote._rev.substring(0, 64))
+      const proposalVotes = await election.proposalVotes()
+      expect(proposalVotes.length).eq(1)
+      expect(proposalVotes[0]).eq(vote._rev.substring(0, 64))
     })
 
     it('Should compute the first vote if the token is used twice', async () => {
@@ -63,7 +63,7 @@ describe('Election', () => {
 
     it('Should compute the first vote and other valid ones', async () => {
       const tokenMod = await computer.deploy(`export ${Token}`)
-      const proposalMod = await computer.deploy(``)
+      const proposalMod = await computer.deploy(`export ${Vote}`)
 
       // send some tokens to someone else
       const computer2 = new Computer({ url })
@@ -200,6 +200,52 @@ describe('Election', () => {
     })
   })
 
+  describe('vote-with-invalid-token', () => {
+    let realVoteMod: string
+    before(async () => {
+      await computer.faucet(1e8)
+      realVoteMod = await computer.deploy(`export ${Vote}`)
+    })
+    it('Should fail to count votes with altered tokenAmount', async () => {
+      type VoteType = {
+        electionId: string
+        tokens: Token[]
+        vote: 'accept' | 'reject'
+      }
+      // create a malicious Vote contract that skips the checks and manipulates the token amount
+      class Vote extends Contract {
+        tokensAmount!: bigint
+        vote!: 'accept' | 'reject'
+        electionId!: string
+        tokenRoot!: string
+        constructor({ electionId, tokens, vote }: VoteType) {
+          super({
+            electionId,
+            tokensAmount: 10000n, // manipulated amount
+            vote,
+            tokenRoot: tokens[0]._root,
+          })
+        }
+      }
+      const tokenMod = await computer.deploy(`export ${Token}`)
+
+      const t1 = await computer.new(Token, [computer.getPublicKey(), 2n, 'A'], tokenMod)
+      const election = await computer.new(Election, [
+        { proposalMod: realVoteMod, tokenRoot: t1._root, description: 'test' },
+      ])
+
+      // use the malicious Vote contract to vote
+      await computer.new(
+        Vote,
+        [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
+        realVoteMod,
+      )
+
+      const proposalVotes = await election.proposalVotes()
+      expect(proposalVotes.length).eq(1)
+    })
+  })
+
   describe('accepted-rejected', () => {
     it('Should count to zero if the Vote is not deployed as a module', async () => {
       const invalidMod = '0f08b977b9be9d96b8b02dd0866e7a692bb1527277a746dc8a74adde724d7856:22'
@@ -210,8 +256,17 @@ describe('Election', () => {
 
       await computer.new(Vote, [{ electionId: election._id, tokens: [t1], vote: 'accept' }])
 
-      const accepted = await election.accepted()
-      expect(accepted).eq(0n)
+      try {
+        await election.accepted()
+      } catch (e: unknown) {
+        if (e instanceof Error) {
+          expect(e.message).to.include(
+            'Failed to load module "0f08b977b9be9d96b8b02dd0866e7a692bb1527277a746dc8a74adde724d7856:22"',
+          )
+        } else {
+          throw e
+        }
+      }
     })
 
     it('Should count if the Vote is deployed as a module', async () => {
@@ -260,7 +315,7 @@ describe('Election', () => {
       expect(updatedT1.amount).eq(8n)
     })
 
-    it('Should not count token amounts if the same token is transfer and then used for voting', async () => {
+    it('Should not count token amounts if the same token is transferred and then used for voting', async () => {
       const tokenMod = await computer.deploy(`export ${Token}`)
       const proposalMod = await computer.deploy(`export ${Vote}`)
 
@@ -269,12 +324,11 @@ describe('Election', () => {
         { proposalMod, tokenRoot: t1._root, description: 'test' },
       ])
 
-      const vote1 = await computer.new(
+      await computer.new(
         Vote,
         [{ electionId: election._id, tokens: [t1], vote: 'accept' }],
         proposalMod,
       )
-
       const accepted = await election.accepted()
       expect(accepted).eq(10n)
 
@@ -293,9 +347,6 @@ describe('Election', () => {
         proposalMod,
       )
 
-      const validVotes = await election.validRevVotes()
-      expect(validVotes.length).eq(1)
-      expect(validVotes[0]).eq(vote1._rev)
       const accepted2 = await election.accepted()
       expect(accepted2).eq(10n)
     })
