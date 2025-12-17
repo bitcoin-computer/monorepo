@@ -88,8 +88,5 @@
     "prettier": "~3.2.5",
     "ts-node": "^10.9.2"
   },
-  "volta": {
-    "node": "16.13.0"
-  },
   "gitHead": "af40117bcb9616e631910f68c3b617aef629f027"
 }
