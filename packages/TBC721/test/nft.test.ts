@@ -115,42 +115,25 @@ describe('NFT', () => {
 
     before(async () => {
       await computer.faucet(1e8)
+      nftHelper = new NftHelper(computer)
+      expect(nftHelper.computer).deep.eq(computer)
     })
 
-    describe('Constructor', () => {
-      it('Should create a new NftHelper object', async () => {
-        nftHelper = new NftHelper(computer)
-        expect(nftHelper.computer).deep.eq(computer)
-      })
-    })
-
-    describe('deploy', () => {
+    describe('functions', () => {
       it('Should deploy a contract', async () => {
         await nftHelper.deploy()
       })
-    })
-
-    describe('mint', () => {
       it('Should mint an NFT', async () => {
         nft = await nftHelper.mint('name', 'artist', 'url')
       })
-    })
-
-    describe('balanceOf', () => {
       it('Should return the balance', async () => {
         const balance = await nftHelper.balanceOf(computer.getPublicKey())
         expect(balance).to.be.greaterThanOrEqual(1)
       })
-    })
-
-    describe('ownerOf', () => {
       it('Should return the owner', async () => {
         const owners = await nftHelper.ownersOf(nft._id)
         expect(owners).deep.eq([computer.getPublicKey()])
       })
-    })
-
-    describe('transfer', () => {
       it('Should transfer an NFT', async () => {
         const computer2 = new Computer({ url, chain, network })
         expect(await nftHelper.balanceOf(computer.getPublicKey())).eq(1)
