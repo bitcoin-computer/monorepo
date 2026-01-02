@@ -132,7 +132,7 @@ for (const testResultsFile of testResultsFiles) {
     const grepPattern = escapedTitles.join("|");
     const failedFiles = [...new Set(failedTests.map((test) => test.file))];
 
-    const mochaCommand = `tsc -p tsconfig.json && mocha --config .mocharc.json --grep "${grepPattern}" ${failedFiles.join(" ")}`;
+    const mochaCommand = `mocha --config .mocharc.json --grep "${grepPattern}" ${failedFiles.join(" ")}`;
     console.log(`Running command in ${packageDir}: ${mochaCommand}`);
 
     execSync(mochaCommand, {
