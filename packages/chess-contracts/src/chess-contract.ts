@@ -373,22 +373,29 @@ export class ChessContractHelper {
 
     // Decompile scriptSig
     const scriptSig = redeemTx.ins[0].script
-    const decompiled = bscript.decompile(scriptSig)
+    const decompiled: (number | Buffer)[] | null = bscript.decompile(scriptSig)
     if (!decompiled || decompiled.length !== 3) {
       throw new Error('Invalid scriptSig format')
     }
     const [dummy, winnerSig, providedRedeemScript] = decompiled
 
     // Verify dummy element
-    if (dummy !== 0) {
+    if (typeof dummy !== 'number' || dummy !== 0) {
       throw new Error('Dummy element must be OP_0')
     }
 
+    // Verify winner's signature format
+    if (!Buffer.isBuffer(winnerSig)) {
+      throw new Error('Invalid winner signature format')
+    }
+
+    // Verify redeem script format
+    if (!Buffer.isBuffer(providedRedeemScript)) {
+      throw new Error('Invalid redeem script format')
+    }
+
     // Verify redeem script
-    if (
-      !Buffer.isBuffer(providedRedeemScript) ||
-      !providedRedeemScript.equals(expectedRedeemScript)
-    ) {
+    if (!providedRedeemScript.equals(expectedRedeemScript as Uint8Array<ArrayBufferLike>)) {
       throw new Error('Redeem script does not match expected script')
     }
 
@@ -403,7 +410,7 @@ export class ChessContractHelper {
     // Verify output goes to winner's address
     const outputScript = redeemTx.outs[0].script
     const winnerAddressScript = payments.p2pkh({ pubkey: winnerPublicKey, network }).output
-    if (!outputScript.equals(winnerAddressScript as Buffer)) {
+    if (!outputScript.equals(winnerAddressScript as Buffer as Uint8Array<ArrayBufferLike>)) {
       throw new Error('Output must go to winner’s address')
     }
 
