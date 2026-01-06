@@ -83,7 +83,7 @@
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.6",
     "chai": "^5.1.0",
-    "mocha": "^11.7.3"
+    "mocha": "^11.0.0"
   },
   "engines": {
     "node": ">=16"
