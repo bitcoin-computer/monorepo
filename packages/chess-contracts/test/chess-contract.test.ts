@@ -260,8 +260,8 @@ describe('Should create a deposit transaction for the Chess game with operator',
       0,
     )
     const scriptSig = redeemTx.ins[0].script
-    const decompiled = bscript.decompile(scriptSig) as Buffer[]
-    const corruptedSig = Buffer.from(decompiled[1])
+    const decompiled = bscript.decompile(scriptSig) as (number | Buffer)[]
+    const corruptedSig = decompiled[1] as Buffer
 
     corruptedSig[10] ^= 0x01 // Corrupt the signature
     decompiled[1] = corruptedSig

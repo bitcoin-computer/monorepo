@@ -243,12 +243,19 @@ export class ChessContractHelper {
         }
         const [dummy, winnerSig, providedRedeemScript] = decompiled;
         // Verify dummy element
-        if (dummy !== 0) {
+        if (typeof dummy !== 'number' || dummy !== 0) {
             throw new Error('Dummy element must be OP_0');
         }
+        // Verify winner's signature format
+        if (!Buffer.isBuffer(winnerSig)) {
+            throw new Error('Invalid winner signature format');
+        }
+        // Verify redeem script format
+        if (!Buffer.isBuffer(providedRedeemScript)) {
+            throw new Error('Invalid redeem script format');
+        }
         // Verify redeem script
-        if (!Buffer.isBuffer(providedRedeemScript) ||
-            !providedRedeemScript.equals(expectedRedeemScript)) {
+        if (!providedRedeemScript.equals(expectedRedeemScript)) {
             throw new Error('Redeem script does not match expected script');
         }
         // Verify winner's signature
