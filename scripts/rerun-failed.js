@@ -167,6 +167,17 @@ for (const testResultsFile of testResultsFiles) {
     if (updatedRaw) {
       try {
         const updatedResults = JSON.parse(updatedRaw);
+    
+        if (
+          Array.isArray(updatedResults.failures) &&
+          updatedResults.failures.length > 0
+        ) {
+          hasError = true;
+          console.log(
+            `${colors.red}Remaining failures in ${testResultsFile}; marking as error.${colors.reset}`
+          );
+        }
+    
         if (
           Array.isArray(updatedResults.failures) &&
           updatedResults.failures.length === 0
