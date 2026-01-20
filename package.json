@@ -46,7 +46,6 @@
     "types": "turbo run types --concurrency=1 --continue=never"
   },
   "dependencies": {
-    "@endo/static-module-record": "1.1.2",
     "esbuild": "^0.24.0"
   },
   "devDependencies": {
