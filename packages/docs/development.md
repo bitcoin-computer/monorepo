@@ -10,6 +10,10 @@ visibility: hidden
 
 ### Common Issues
 
+#### `Cannot define property <property name>
+
+Set `"useDefineForClassFields": false` in your `tsconfig.json`.
+
 #### `min relay fee not met` error
 
 This error is thrown by the Bitcoin node. This error occurs when the transaction fee is lower than the minimum required by the network. In general, the parameter `satPerByte` is considered to build the transaction, but in some scenarios the mempool may require a higher fee to accept the transaction (e.g., large transactions with multiple signature operations). To resolve this, you can increase the transaction fee, modify the `satPerByte` parameter in your configuration.
