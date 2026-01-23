@@ -410,37 +410,31 @@ describe('Swap', () => {
     let tx: any
     let txId: string
 
-    it('Alice builds, funds, and signs a swap transaction', async () => {
+    it('Executes the swap between two participants', async () => {
       ;({ tx } = await alice.encode({
         exp: `${Swap} Swap.exec(nftA, nftB)`,
         env: { nftA: nftA._rev, nftB: nftB._rev },
       }))
-    })
-
-    it('Bob signs the swap transaction', async () => {
+      // Bob signs the swap transaction
       await bob.sign(tx)
-    })
 
-    it('Bob broadcasts the swap transaction', async () => {
+      // Bob broadcasts the swap transaction
       txId = await bob.broadcast(tx)
       expect(txId).not.undefined
-    })
 
-    it('nftA is now owned by Bob', async () => {
+      // nftA is now owned by Bob
       const { env } = (await bob.sync(txId)) as {
         env: { nftA: NFT; nftB: NFT }
       }
       const nftASwapped = env.nftA
-      // @ts-ignore
       expect(nftASwapped).to.matchPattern({ name: 'nftA', symbol, ...meta })
       expect(nftASwapped._owners).deep.eq([bob.getPublicKey()])
-    })
 
-    it('nftB is now owned by Alice', async () => {
-      const { env } = (await alice.sync(txId)) as {
+      // nftB is now owned by Alice
+      const { env: env2 } = (await alice.sync(txId)) as {
         env: { nftA: NFT; nftB: NFT }
       }
-      const nftBSwapped = env.nftB
+      const nftBSwapped = env2.nftB
       // @ts-ignore
       expect(nftBSwapped).to.matchPattern({ name: 'nftB', symbol, ...meta })
       expect(nftBSwapped._owners).deep.eq([alice.getPublicKey()])
@@ -560,7 +554,8 @@ describe('Sell', () => {
       await buyer.faucet(Number(nftPrice) + fee + 1e8)
     })
 
-    it('Buyer creates a payment object', async () => {
+    it('Executes the sale', async () => {
+      // Buyer creates a payment object with the asking price
       payment = await buyer.new(Payment, [nftPrice])
 
       // @ts-ignore
@@ -571,9 +566,8 @@ describe('Sell', () => {
         _owners: [buyer.getPublicKey()],
         _satoshis: nftPrice,
       })
-    })
 
-    it("Buyer update's the swap transaction to receive the NFT", () => {
+      // Buyer update's the swap transaction to receive the NFT"
       const [paymentTxId, paymentIndex] = payment._rev.split(':')
       tx.updateInput(1, {
         txId: paymentTxId,
@@ -581,29 +575,24 @@ describe('Sell', () => {
       })
       // @ts-ignore
       tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
-    })
 
-    it('Buyer funds the swap transaction', async () => {
+      // Buyer funds the swap transaction
       await buyer.fund(tx)
-    })
 
-    it('Buyer signs the swap transaction', async () => {
+      // Buyer signs the swap transaction
       await buyer.sign(tx)
-    })
 
-    it('Buyer broadcast the swap transaction to execute the sale', async () => {
+      // Buyer broadcast the swap transaction to execute the sale
       txId = await buyer.broadcast(tx)
       expect(txId).not.undefined
-    })
 
-    it('Seller now owns the payment', async () => {
+      // Seller now owns the payment
       const { env } = (await computer.sync(txId)) as any
       expect(env.payment._owners).deep.eq([sellerPublicKey])
-    })
 
-    it('Buyer now owns the nft', async () => {
-      const { env } = (await computer.sync(txId)) as any
-      expect(env.nft._owners).deep.eq([buyer.getPublicKey()])
+      // Buyer now owns the nft
+      const { env: env2 } = (await computer.sync(txId)) as any
+      expect(env2.nft._owners).deep.eq([buyer.getPublicKey()])
     })
   })
 })

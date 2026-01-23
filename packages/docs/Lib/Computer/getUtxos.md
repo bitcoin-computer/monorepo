@@ -1,5 +1,9 @@
 # getUtxos
 
+!!!
+Warning: This method is deprecated and will be removed in future versions. Use `getUTXOs` instead (see https://docs.bitcoincomputer.io/Lib/Computer/getUTXOs).
+!!!
+
 _Returns UTXOs that do not contains on-chain objects._
 
 ## Type

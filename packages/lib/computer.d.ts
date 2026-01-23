@@ -189,6 +189,38 @@ type Query = Partial<{
   offset: number
   order: 'ASC' | 'DESC'
 }>
+export type DbOutput = {
+  rev: string
+  address: string
+  satoshis: bigint
+  asm: string
+  expHash?: string
+  mod?: string
+  isObject?: boolean
+  previous?: string
+  blockHash?: string
+  blockHeight?: number
+  blockIndex?: number
+}
+
+export type Stream = {
+  satoshis?: bigint
+  exp?: string
+  asm?: string
+  mod?: string
+}
+
+export type GetTXOsQuery = {
+  verbosity?: number
+  limit?: number
+  order?: 'ASC' | 'DESC'
+  offset?: number
+  isSpent?: boolean
+  isConfirmed?: boolean
+  publicKey?: string
+  exp?: string
+} & Partial<Omit<DbOutput, 'expHash'>>
+
 type UserQuery = Partial<{
   mod: string
   publicKey: string
@@ -214,7 +246,7 @@ interface _Network {
   scriptHash: number
   wif: number
 }
-interface _Balance {
+interface Balance {
   confirmed: bigint
   unconfirmed: bigint
   balance: bigint
@@ -290,17 +322,27 @@ declare class RestClient {
   constructor(params?: ComputerOptions)
   rpc(method: string, params: string): Promise<any>
   broadcast(txHex: string): Promise<string>
-  getBalance(address: string): Promise<_Balance>
+  getBalance(address: string): Promise<Balance>
   listTxs(address: string): Promise<{
     sentTxs: TxIdAmountType[]
     receivedTxs: TxIdAmountType[]
   }>
-  getUtxos(address?: string): Promise<_Unspent[]>
-  getFormattedUtxos(address: string): Promise<_Unspent[]>
   getRawTxs(txIds: string[]): Promise<string[]>
   getTx(txId: string): Promise<_Transaction>
   getAncestors(txId: string): Promise<string[]>
   query({ publicKey, limit, offset, order, ids, mod }: Partial<Query>): Promise<string[]>
+  getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getUTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getUTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getUTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getOTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getOTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getOTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getOUTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getOUTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getOUTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
   static getSecretOutput({ _url, keyPair }: { _url: string; keyPair: BIP32Interface }): Promise<{
     host: string
     data: string
@@ -328,6 +370,7 @@ declare class RestClient {
   height(): Promise<number>
   next(rev: string): Promise<string | undefined>
   prev(rev: string): Promise<string | undefined>
+  latest(rev: string): Promise<string>
 }
 
 declare class Wallet {
@@ -335,8 +378,6 @@ declare class Wallet {
   constructor(params?: ComputerOptions)
   derive(subpath?: string): Wallet
   getBalance(address?: string): Promise<_Balance>
-  getUtxos(address?: string): Promise<_Unspent[]>
-  getUtxosByPublicKey(publicKey: string): Promise<_Unspent[]>
   getDustThreshold(isWitnessProgram: boolean, script?: Buffer): number
   getAmountThreshold(script: Buffer, isWitnessProgram?: boolean): number
   getUtxosWithOpts({ include, exclude }?: FundOptions): Promise<_Unspent[]>
@@ -420,6 +461,30 @@ declare class Db {
   constructor(params?: {})
 }
 
+declare class InnerComputer {
+  computer: Computer
+  constructor({ chain, network, url }: { chain: TBCChain; network: TBCNetwork; url: string })
+
+  public async getTXOs(q: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  public async getTXOs(q: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  public async getTXOs(q: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  public async sync(location: string): Promise<unknown>
+  public async decode(txId: string): Promise<{
+    exp: string
+    env: {
+      [s: string]: string
+    }
+    mod?: string | undefined
+  }>
+  public async load(location: string): Promise<Record<string, any>>
+  public async getAncestors(location: string): Promise<string[]>
+  public async getBalance(address?: string): Promise<Balance>
+  public async first(rev: string): Promise<string>
+  public async prev(rev: string): Promise<string | undefined>
+  public async next(rev: string): Promise<string | undefined>
+  public async latest(rev: string): Promise<string>
+}
+
 declare class Computer {
   db: Db
   constructor(params?: ComputerOptions)
@@ -471,17 +536,29 @@ declare class Computer {
     tx: Transaction
     effect: Effect
   }>
-  decode(tx: Transaction): Promise<TransitionJSON>
+  decode(tx: Transaction | string): Promise<TransitionJSON>
   deploy(module: string, opts?: Partial<ModuleOptions>): Promise<string>
   load(rev: string): Promise<ModuleExportsNamespace>
   listTxs(address?: string): Promise<{ sentTxs: TxIdAmountType[]; receivedTxs: TxIdAmountType[] }>
-  getUtxos(address?: string): Promise<string[]>
-  getBalance(address?: string): Promise<_Balance>
+  getAncestors(location: string, verbosity?: number): Promise<string[] | Map<string, string>>
+  getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getUTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getUTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getUTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getOTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getOTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getOTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getOUTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
+  getOUTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
+  getOUTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
+  getBalance(address?: string): Promise<Balance>
   sign(transaction: nTransaction, opts?: SigOptions): Promise<void>
   fund(tx: nTransaction, opts?: Fee & FundOptions): Promise<void>
   send(satoshis: bigint, address: string): Promise<string>
   broadcast(tx: nTransaction): Promise<string>
-  rpcCall(method: string, params: string): Promise<any>
+  rpc(method: string, params: string): Promise<any>
   getChain(): TBCChain
   getNetwork(): TBCNetwork
   getMnemonic(): string
@@ -510,6 +587,11 @@ declare class Computer {
   prev(rev: string): Promise<string | undefined>
   subscribe(
     id: string,
+    onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
+    onError?: (error: Event) => void,
+  ): Promise<() => void>
+  streamTXOs(
+    filter: Partial<Stream>,
     onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
     onError?: (error: Event) => void,
   ): Promise<() => void>

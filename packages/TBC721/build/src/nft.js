@@ -32,7 +32,7 @@ export class NftHelper {
     }
     async balanceOf(publicKey) {
         const { mod } = this;
-        const revs = await this.computer.query({ publicKey, mod });
+        const revs = await this.computer.getOUTXOs({ publicKey, mod });
         const objects = await Promise.all(revs.map((rev) => this.computer.sync(rev)));
         return objects.length;
     }

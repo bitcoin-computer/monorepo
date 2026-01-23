@@ -79,7 +79,7 @@ expect(tx1.outRevs).deep.eq([a._id])
 expect(tx1.onChainMetaData).deep.eq({
   exp: `${A} new A()`,
   env: {},
-  mod: '',
+  mod: undefined,
   v: Computer.getVersion(),
   ioMap: [],
 })
@@ -97,7 +97,7 @@ expect(tx2.outRevs).deep.eq([a._rev])
 expect(tx2.onChainMetaData).deep.eq({
   exp: `__bc__.inc()`,
   env: { __bc__: 0 },
-  mod: '',
+  mod: undefined,
   v: Computer.getVersion(),
   ioMap: [0],
 })

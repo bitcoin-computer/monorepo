@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class Token extends Contract {
     constructor(to, amount, name, symbol = '') {
         super({ _owners: [to], amount, name, symbol });
@@ -45,7 +46,7 @@ export class TokenHelper {
         return rootBag.amount;
     }
     async getBags(publicKey, root) {
-        const revs = await this.computer.query({ publicKey, mod: this.mod });
+        const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod });
         const bags = await Promise.all(revs.map(async (rev) => this.computer.sync(rev)));
         return bags.flatMap((bag) => (bag._root === root ? [bag] : []));
     }

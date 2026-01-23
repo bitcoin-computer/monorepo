@@ -58,50 +58,41 @@ describe('NFT', () => {
         nft = await sender.new(NFT, ['Test'])
         // @ts-ignore
         expect(nft).matchPattern({ name: 'Test', artist, url: imageUrl, ...meta })
-      })
 
-      it('Property _owners is a singleton array with minters public key', () => {
+        // Property _owners is a singleton array with minters public key
         expect(nft._owners).deep.eq([sender.getPublicKey()])
-      })
 
-      it('Properties _id, _rev, and _root have the same value', () => {
+        // Properties _id, _rev, and _root have the same value
         expect(nft._id).eq(nft._rev).eq(nft._root)
 
         initialId = nft._id
         initialRev = nft._rev
         initialRoot = nft._root
-      })
-      it("The nft is returned when syncing against it's revision", async () => {
+      
+        // The nft is returned when syncing against it's revision
         expect(await sender.sync(nft._rev)).deep.eq(nft)
-      })
-    })
+      
+        // Transferring an NFT'
+        const receiver = new Computer({ url, chain, network })
 
-    describe('Transferring an NFT', async () => {
-      const receiver = new Computer({ url, chain, network })
-
-      it('Sender transfers the NFT to receiver', async () => {
+        // Sender transfers the NFT to receiver
         await nft.transfer(receiver.getPublicKey())
         // @ts-ignore
         expect(nft).to.matchPattern({ name: 'Test', artist, url: imageUrl, ...meta })
-      })
-
-      it('The id does not change', () => {
+      
+        // The id does not change
         expect(initialId).eq(nft._id)
-      })
-
-      it('The revision is updated', () => {
+      
+        // The revision is updated
         expect(initialRev).not.eq(nft._rev)
-      })
 
-      it('The root does not change', () => {
+        // The root does not change
         expect(initialRoot).eq(nft._root)
-      })
 
-      it("The _owners are updated to receiver's public key", () => {
+        // The _owners are updated to receiver's public key
         expect(nft._owners).deep.eq([receiver.getPublicKey()])
-      })
-
-      it("Syncing to the NFT's revision returns an object that is equal to the NFT", async () => {
+      
+        // Syncing to the NFT's revision returns an object that is equal to the NFT
         expect(await receiver.sync(nft._rev)).deep.eq(nft)
       })
     })
@@ -115,42 +106,25 @@ describe('NFT', () => {
 
     before(async () => {
       await computer.faucet(1e8)
+      nftHelper = new NftHelper(computer)
+      expect(nftHelper.computer).deep.eq(computer)
     })
 
-    describe('Constructor', () => {
-      it('Should create a new NftHelper object', async () => {
-        nftHelper = new NftHelper(computer)
-        expect(nftHelper.computer).deep.eq(computer)
-      })
-    })
-
-    describe('deploy', () => {
+    describe('functions', () => {
       it('Should deploy a contract', async () => {
         await nftHelper.deploy()
       })
-    })
-
-    describe('mint', () => {
       it('Should mint an NFT', async () => {
         nft = await nftHelper.mint('name', 'artist', 'url')
       })
-    })
-
-    describe('balanceOf', () => {
       it('Should return the balance', async () => {
         const balance = await nftHelper.balanceOf(computer.getPublicKey())
         expect(balance).to.be.greaterThanOrEqual(1)
       })
-    })
-
-    describe('ownerOf', () => {
       it('Should return the owner', async () => {
         const owners = await nftHelper.ownersOf(nft._id)
         expect(owners).deep.eq([computer.getPublicKey()])
       })
-    })
-
-    describe('transfer', () => {
       it('Should transfer an NFT', async () => {
         const computer2 = new Computer({ url, chain, network })
         expect(await nftHelper.balanceOf(computer.getPublicKey())).eq(1)

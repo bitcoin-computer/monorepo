@@ -269,7 +269,7 @@ await computer.faucet(0.001e8)
 Access the RPC interface of the Bitcoin node
 
 ```ts
-await computer.rpcCall('getBlockchainInfo', '')
+await computer.rpc('getBlockchainInfo', '')
 ```
 
 ### Wallet Functionality

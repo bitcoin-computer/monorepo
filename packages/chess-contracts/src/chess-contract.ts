@@ -177,7 +177,7 @@ export class ChessContractHelper {
   }
 
   async validateUser(): Promise<void> {
-    const [userRev] = await this.computer.query({
+    const [userRev] = await this.computer.getOUTXOs({
       mod: this.userMod,
       publicKey: this.computer.getPublicKey(),
     })
@@ -211,10 +211,12 @@ export class ChessContractHelper {
     const network = this.computer.getNetwork()
     const n = networks.getNetwork(chain, network)
     const addy = address.fromPublicKey(this.computer.db.wallet.publicKey, 'p2pkh', n)
-    const utxos = await this.computer.db.wallet.restClient.getFormattedUtxos(addy)
+    const utxos = await this.computer.getUTXOs({ address: addy, verbosity: 1 })
     let paid = 0n
     while (paid < Number(this.satoshis) / 2 && utxos.length > 0) {
-      const { txId, vout, satoshis } = utxos.pop()!
+      const { rev, satoshis } = utxos.pop()!
+      const txId = rev.substring(0, 64)
+      const vout = parseInt(rev.substring(65), 10)
       const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
       tx.addInput(txHash, vout)
       paid += satoshis
@@ -267,7 +269,7 @@ export class ChessContractHelper {
     promotion: string,
   ): Promise<{ newChessContract: ChessContract; isGameOver: boolean }> {
     if (chessContract && chessContract.sans.length < 2) {
-      const [userRev] = await this.computer.query({
+      const [userRev] = await this.computer.getOUTXOs({
         mod: this.userMod,
         publicKey: this.computer.getPublicKey(),
       })
@@ -371,22 +373,29 @@ export class ChessContractHelper {
 
     // Decompile scriptSig
     const scriptSig = redeemTx.ins[0].script
-    const decompiled = bscript.decompile(scriptSig)
+    const decompiled: (number | Buffer)[] | null = bscript.decompile(scriptSig)
     if (!decompiled || decompiled.length !== 3) {
       throw new Error('Invalid scriptSig format')
     }
     const [dummy, winnerSig, providedRedeemScript] = decompiled
 
     // Verify dummy element
-    if (dummy !== 0) {
+    if (typeof dummy !== 'number' || dummy !== 0) {
       throw new Error('Dummy element must be OP_0')
     }
 
+    // Verify winner's signature format
+    if (!Buffer.isBuffer(winnerSig)) {
+      throw new Error('Invalid winner signature format')
+    }
+
+    // Verify redeem script format
+    if (!Buffer.isBuffer(providedRedeemScript)) {
+      throw new Error('Invalid redeem script format')
+    }
+
     // Verify redeem script
-    if (
-      !Buffer.isBuffer(providedRedeemScript) ||
-      !providedRedeemScript.equals(expectedRedeemScript)
-    ) {
+    if (!providedRedeemScript.equals(expectedRedeemScript as Uint8Array<ArrayBufferLike>)) {
       throw new Error('Redeem script does not match expected script')
     }
 
@@ -401,7 +410,7 @@ export class ChessContractHelper {
     // Verify output goes to winner's address
     const outputScript = redeemTx.outs[0].script
     const winnerAddressScript = payments.p2pkh({ pubkey: winnerPublicKey, network }).output
-    if (!outputScript.equals(winnerAddressScript as Buffer)) {
+    if (!outputScript.equals(winnerAddressScript as Buffer as Uint8Array<ArrayBufferLike>)) {
       throw new Error('Output must go to winner’s address')
     }
 

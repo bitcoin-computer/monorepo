@@ -56,7 +56,7 @@ export function GalleryWithPagination(q) {
             query.offset = contractsPerPage * pageNum;
             query.limit = contractsPerPage + 1;
             query.order = 'DESC';
-            const result = await computer.query(query);
+            const result = await computer.getOUTXOs(query);
             setIsNextAvailable(result.length > contractsPerPage);
             setRevs(result.slice(0, contractsPerPage));
             if (pageNum === 0 && result?.length === 0)

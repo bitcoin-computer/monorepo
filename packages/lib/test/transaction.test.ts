@@ -79,7 +79,6 @@ describe('Transaction', () => {
       expect(tx1.onChainMetaData).deep.eq({
         exp: `${A} new A()`,
         env: {},
-        mod: '',
         v: Computer.getVersion(),
         ioMap: [],
       })
@@ -89,7 +88,6 @@ describe('Transaction', () => {
       expect(tx2.onChainMetaData).deep.eq({
         exp: `__bc__.inc()`,
         env: { __bc__: 0 },
-        mod: '',
         v: Computer.getVersion(),
         ioMap: [0],
       })

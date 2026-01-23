@@ -17,7 +17,7 @@ export const GamesListWrapper = ({
 
   const getLatestGames = async () => {
     const availableGames: GameType[] = []
-    const gameRevs = await computer.query({
+    const gameRevs = await computer.getOUTXOs({
       mod: VITE_CHESS_GAME_MOD_SPEC,
       publicKey: computer.getPublicKey(),
     })
@@ -36,7 +36,7 @@ export const GamesListWrapper = ({
       }
     })
 
-    const [userRev] = await computer.query({
+    const [userRev] = await computer.getOUTXOs({
       mod: VITE_CHESS_USER_MOD_SPEC,
       publicKey: computer.getPublicKey(),
     })
