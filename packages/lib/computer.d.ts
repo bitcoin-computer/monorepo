@@ -327,6 +327,7 @@ declare class RestClient {
     sentTxs: TxIdAmountType[]
     receivedTxs: TxIdAmountType[]
   }>
+  cleanMempool(): Promise<string[]>
   getRawTxs(txIds: string[]): Promise<string[]>
   getTx(txId: string): Promise<_Transaction>
   getAncestors(txId: string): Promise<string[]>
@@ -593,6 +594,10 @@ declare class Computer {
   streamTXOs(
     filter: Partial<Stream>,
     onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
+    onError?: (error: Event) => void,
+  ): Promise<() => void>
+  streamMempoolCleanup(
+    onMessage: (event: { revs: string[] }) => void,
     onError?: (error: Event) => void,
   ): Promise<() => void>
   export(module: string, opts?: Partial<ModuleOptions>): Promise<string>
