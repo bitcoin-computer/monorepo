@@ -20,7 +20,7 @@ describe('stream', () => {
 
   beforeEach('Before Computer', async () => {
     computer = new Computer({ chain, network, url })
-    await computer.faucet(10e8)
+    await computer.faucet(12e8)
   })
 
   it('Should emit when streaming to asm key field', async () => {
