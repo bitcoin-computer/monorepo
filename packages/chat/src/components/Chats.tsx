@@ -85,26 +85,60 @@ export function Chats() {
   const [chatId] = useState(params.id || '')
   const [chats, setChats] = useState<ChatSc[]>([])
 
+  const fetchChats = async () => {
+    const result = await computer.getOUTXOs({ mod: VITE_CHAT_MOD_SPEC, publicKey })
+    const chatsPromise: Promise<ChatSc>[] = []
+    result.forEach((rev: string) => {
+      chatsPromise.push(computer.sync(rev) as Promise<ChatSc>)
+    })
+
+    Promise.allSettled(chatsPromise).then((results) => {
+      const successfulChats = results
+        .filter((result): result is PromiseFulfilledResult<ChatSc> => result.status === 'fulfilled')
+        .map((result) => result.value)
+      setChats(successfulChats)
+    })
+  }
+
   useEffect(() => {
-    const fetch = async () => {
-      const result = await computer.getOUTXOs({ mod: VITE_CHAT_MOD_SPEC, publicKey })
-      const chatsPromise: Promise<ChatSc>[] = []
-      result.forEach((rev: string) => {
-        chatsPromise.push(computer.sync(rev) as Promise<ChatSc>)
-      })
-
-      Promise.allSettled(chatsPromise).then((results) => {
-        const successfulChats = results
-          .filter(
-            (result): result is PromiseFulfilledResult<ChatSc> => result.status === 'fulfilled',
-          )
-          .map((result) => result.value)
-
-        setChats(successfulChats)
-      })
-    }
-    fetch()
+    fetchChats()
   }, [computer, location, navigate])
+
+  useEffect(() => {
+    let unsubscribe: () => void
+    const subscribeToNewChats = async () => {
+      // Stream all new chats with same mod for now
+      unsubscribe = await computer.streamTXOs(
+        { mod: VITE_CHAT_MOD_SPEC },
+        async ({ rev }) => {
+          const newChat = (await computer.sync(rev)) as ChatSc
+          // Filter by ownership
+          if (newChat._owners.includes(publicKey)) {
+            setChats((prev) => {
+              // We receive notifications for any updates of mod
+              // We need to check if is this a creation or an update of an existing chat
+              const exists = prev.findIndex((chat) => chat._id === newChat._id)
+              if (exists !== -1) {
+                // Update existing chat with latest data
+                const updated = [...prev]
+                updated[exists] = newChat
+                return updated
+              } else {
+                // Append if truly new
+                return [...prev, newChat]
+              }
+            })
+          }
+        },
+        (error) => console.error('Chat list SSE error:', error),
+      )
+    }
+    subscribeToNewChats()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [computer, publicKey])
 
   const newChat = () => {
     Modal.showModal(newChatModal)
