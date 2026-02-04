@@ -317,6 +317,7 @@ export function Chat({ chatId }: { chatId: string }) {
       if (!id) return
       unsubscribe = await computer.subscribe(
         id, // Subscribe to this chat's ID (gets updates to its lineage)
+        // eslint-disable-next-line no-empty-pattern
         async ({}) => {
           // If new post, refresh the chat for now
           await refreshChat()
