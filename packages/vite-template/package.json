@@ -13,6 +13,7 @@
     "build:turbo": "turbo run build:prod",
     "clean": "npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
+    "deploy:dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 node --loader ts-node/esm  ./scripts/deploy.ts",
     "deploy": "node --loader ts-node/esm  ./scripts/deploy.ts",
     "dev": "vite",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",

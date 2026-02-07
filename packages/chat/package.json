@@ -11,6 +11,7 @@
   "scripts": {
     "build": "tsc -b && vite build",
     "build:turbo": "turbo run build",
+    "deploy:dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 node --loader ts-node/esm scripts/deploy.ts",
     "deploy": "node --loader ts-node/esm scripts/deploy.ts",
     "dev": "vite",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",

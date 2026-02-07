@@ -6,6 +6,7 @@
   "scripts": {
     "build:prod": "tsc -b && vite build",
     "build:turbo": "turbo run build:prod",
+    "deploy:dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 node --experimental-modules scripts/deploy.mjs",
     "deploy": "node --experimental-modules scripts/deploy.mjs",
     "dev": "vite",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",

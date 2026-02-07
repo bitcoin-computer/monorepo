@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build:production": "next build",
+    "deploy:dev": "NODE_TLS_REJECT_UNAUTHORIZED=0 tsx ./src/app/contracts/scripts/deploy.ts",
     "deploy": "tsx ./src/app/contracts/scripts/deploy.ts",
     "dev": "next dev --turbopack",
     "lint": "next lint",

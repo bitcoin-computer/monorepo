@@ -71,6 +71,7 @@
     "express-rate-limit": "^7.1.5",
     "geoip-lite": "^1.4.10",
     "hash.js": "^1.1.7",
+    "http2-express": "^1.1.0",
     "pg-monitor": "^2.0.0",
     "pg-promise": "^11.5.4",
     "ts-node": "^10.9.2",

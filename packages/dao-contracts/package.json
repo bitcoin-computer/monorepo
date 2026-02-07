@@ -20,6 +20,7 @@
     "build": "tsc -p tsconfig.json && parcel build --target main",
     "build:turbo": "turbo run build",
     "clean:logs": "rm -f *.log 2> /dev/null",
+    "deploy:dev": "tsc && NODE_TLS_REJECT_UNAUTHORIZED=0 node ./build/scripts/deploy.js",
     "deploy": "tsc && node ./build/scripts/deploy.js",
     "lint:fix": "eslint . --fix",
     "start": "node build/src/index.js",
