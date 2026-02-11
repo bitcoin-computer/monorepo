@@ -66,6 +66,7 @@ cd packages/node
 cp chain-setup/ltc/mainnet/.env.example .env
 cp chain-setup/ltc/mainnet/litecoin.conf.example litecoin.conf
 ```
+
 </font>
 
 After configuring the `.env` file, you can start the node with the following command:
@@ -73,10 +74,9 @@ After configuring the `.env` file, you can start the node with the following com
 
 ```sh
 npm run up
-``` 
+```
 
 </font>
-
 
 #### IMPORTANT: Create indexes after syncing to mainnet
 
@@ -186,7 +186,7 @@ At a high level, the node consists of:
 - **Background maintenance tasks**
   - Periodic cleanup of stale unconfirmed (mempool) data (see [clean-mempool](./clean-mempool.md) for more details)
 
-The architecture is designed for robustness, scalability, and real-time responsiveness. 
+The architecture is designed for robustness, scalability, and real-time responsiveness.
 
 ## Advanced configuration
 
@@ -283,7 +283,7 @@ BCN_BANNED_COUNTRIES=
 BCN_OFFCHAIN_PROTOCOL=
 
 # Output columns for which streamTXOs function should emit events (and their combinations)
-BCN_STREAM_KEYS='satoshis,asm,expHash,mod'
+BCN_STREAM_KEYS='satoshis,asm,expHash,mod,publicKey'
 
 # Mempool Cleanup Settings
 BCN_MEMPOOL_CLEANUP_INTERVAL_MS='900000' # 15 minutes

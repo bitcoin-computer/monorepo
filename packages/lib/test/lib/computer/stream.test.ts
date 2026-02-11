@@ -13,6 +13,9 @@ describe('stream', () => {
     inc() {
       this.n += 1
     }
+    transfer(to: string) {
+      this._owners = [to]
+    }
   }
 
   let computer: Computer
@@ -31,18 +34,22 @@ describe('stream', () => {
 
     // subscribe to receive events when the public keys receive funds
 
-    close = await computer.streamTXOs(
-      { asm },
-      ({ rev, hex }) => {
-        expect(typeof rev).eq('string')
-        expect(typeof hex).eq('string')
-        expect(rev.split(':').length).eq(2)
-        eventCount += 1
-      },
-      (error) => {
-        throw new Error(`Error ${error} in SSE stream`)
-      },
-    )
+    try {
+      close = await computer.streamTXOs(
+        { asm },
+        ({ rev, hex }) => {
+          expect(typeof rev).eq('string')
+          expect(typeof hex).eq('string')
+          expect(rev.split(':').length).eq(2)
+          eventCount += 1
+        },
+        (error) => {
+          throw new Error(`Error ${error} in SSE stream`)
+        },
+      )
+    } catch (error) {
+      expect(true).to.eq(false)
+    }
 
     await computer.send(30000n, computer.getAddress())
 
@@ -140,16 +147,6 @@ describe('stream', () => {
 
   it('Should emit when streaming to mod field', async () => {
     let eventCount = 0
-    class Counter extends Contract {
-      n: number
-
-      constructor() {
-        super({ n: 0 })
-      }
-      inc() {
-        this.n += 1
-      }
-    }
     const mod = await computer.deploy(`export ${Counter}`)
 
     const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
@@ -189,18 +186,8 @@ describe('stream', () => {
   })
 
   it('Should emit one message for each object involved in the expression', async () => {
-    class CounterT extends Contract {
-      n: number
-
-      constructor() {
-        super({ n: 0 })
-      }
-      transfer(to: string) {
-        this._owners = [to]
-      }
-    }
     class Swap extends Contract {
-      constructor(a: CounterT, b: CounterT) {
+      constructor(a: Counter, b: Counter) {
         super()
         const [ownerA] = a._owners
         const [ownerB] = b._owners
@@ -209,8 +196,8 @@ describe('stream', () => {
       }
     }
 
-    const counterA = await computer.new(CounterT, [])
-    const counterB = await computer.new(CounterT, [])
+    const counterA = await computer.new(Counter, [])
+    const counterB = await computer.new(Counter, [])
     let eventCount = 0
     // we expect events for each object passed as parameter + the Swap object
     // all share the same expression in this transaction
@@ -322,6 +309,165 @@ describe('stream', () => {
           clearInterval(interval)
           close()
           reject(new Error('Missed SSE for exp + mod stream'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should emit when streaming to publicKey field', async () => {
+    let eventCount = 0
+    const publicKey = computer.getPublicKey()
+
+    close = await computer.streamTXOs(
+      { publicKey },
+      ({ rev, hex }) => {
+        expect(typeof rev).eq('string')
+        expect(typeof hex).eq('string')
+        expect(rev.split(':').length).eq(2)
+        eventCount += 1
+      },
+      (error) => {
+        throw new Error(`Error ${error} in SSE stream`)
+      },
+    )
+
+    const c = await computer.new(Counter, [])
+    // Trigger a transaction that creates an object owned by computer.getPublicKey()
+    await c.inc()
+
+    await new Promise<void>((resolve, reject) => {
+      let retryCount = 0
+      const interval = setInterval(() => {
+        retryCount += 1
+
+        if (eventCount >= 1) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount > 25) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for publicKey stream'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should throw validation error for invalid publicKey filter', async () => {
+    const invalidCases = [
+      { value: ' ', expected: 'cannot be empty' },
+      { value: 'OP_1 OP_CHECKSIG', expected: 'Invalid publicKey: invalid opcode format' },
+      {
+        value: 'invalid-opcode',
+        expected:
+          'Invalid publicKey: must be a valid opcode (starting with OP_) or a hexadecimal string',
+      },
+      {
+        value: 'GG1234',
+        expected:
+          'Invalid publicKey: must be a valid opcode (starting with OP_) or a hexadecimal string',
+      },
+      { value: 'a'.repeat(1041), expected: 'data push too large' }, // 520 bytes = 1040 hex chars
+    ]
+
+    for (const { value, expected } of invalidCases) {
+      await expect(computer.streamTXOs({ publicKey: value }, () => {})).to.be.rejectedWith(expected)
+    }
+  })
+
+  it('Should not emit events for a chunk that does not exist in the script', async () => {
+    let eventCount = 0
+
+    close = await computer.streamTXOs({ publicKey: 'OP_RETURN' }, () => {
+      eventCount++
+    })
+
+    await computer.new(Counter, [])
+
+    await new Promise<void>((resolve) => {
+      setTimeout(() => {
+        expect(eventCount).to.eq(0)
+        resolve()
+      }, 1500)
+    })
+    close()
+  })
+
+  it('Should receive two events when output matches two different publicKey subscriptions', async () => {
+    let eventCount = 0
+    const pubKey = computer.getPublicKey()
+
+    const close1 = await computer.streamTXOs({ publicKey: 'OP_1' }, () => {
+      eventCount++
+    })
+    const close2 = await computer.streamTXOs({ publicKey: pubKey }, () => {
+      eventCount++
+    })
+
+    close = () => {
+      close1()
+      close2()
+    }
+
+    const c = await computer.new(Counter, [])
+    await c.inc()
+
+    await new Promise<void>((resolve, reject) => {
+      let retryCount = 0
+      const interval = setInterval(() => {
+        retryCount += 1
+        if (eventCount >= 2) {
+          clearInterval(interval)
+          resolve()
+        }
+        if (retryCount > 25) {
+          clearInterval(interval)
+          close()
+          reject(new Error(`Expected at least 2 events, got ${eventCount}`))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should emit when streaming to any asm chunk ', async () => {
+    let eventCount = 0
+    // Owner script asm prefix as filter
+    const chunk = `OP_1`
+
+    close = await computer.streamTXOs(
+      { publicKey: chunk },
+      ({ rev, hex }) => {
+        expect(typeof rev).eq('string')
+        expect(typeof hex).eq('string')
+        expect(rev.split(':').length).eq(2)
+        eventCount += 1
+      },
+      (error) => {
+        throw new Error(`Error ${error} in SSE stream`)
+      },
+    )
+
+    const c = await computer.new(Counter, [])
+    await c.inc()
+
+    await new Promise<void>((resolve, reject) => {
+      let retryCount = 0
+      const interval = setInterval(() => {
+        retryCount += 1
+
+        if (eventCount >= 1) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount > 25) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for publicKey stream'))
         }
       }, 200)
     })

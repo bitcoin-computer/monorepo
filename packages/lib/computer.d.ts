@@ -205,9 +205,10 @@ export type DbOutput = {
 
 export type Stream = {
   satoshis?: bigint
-  exp?: string
   asm?: string
+  exp?: string
   mod?: string
+  publicKey?: string
 }
 
 export type GetTXOsQuery = {
