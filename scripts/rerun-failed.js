@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, readdirSync } from "fs";
+import { existsSync, readFileSync, readdirSync, unlinkSync } from "fs";
 import { join, resolve } from "path";
 import { execSync } from "child_process";
 import dotenv from "dotenv";
@@ -57,11 +57,11 @@ function getTestResultsFiles() {
 const testResultsFiles = getTestResultsFiles();
 
 if (testResultsFiles.length === 0) {
-  console.error(
-    `${colors.red}No test-results.json files found.${colors.reset}`
-  );
-  process.exit(1);
+  console.log(`${colors.green}No failed tests to rerun.${colors.reset}`);
+  process.exit(0);
 }
+
+let hasError = false;
 
 for (const testResultsFile of testResultsFiles) {
   const packageDir = testResultsFile.replace(/\/test-results\.json$/, "");
@@ -74,6 +74,7 @@ for (const testResultsFile of testResultsFiles) {
       console.error(
         `${colors.red}Error: ${testResultsFile} is empty.${colors.reset}`
       );
+      hasError = true;
       continue;
     }
 
@@ -84,6 +85,7 @@ for (const testResultsFile of testResultsFiles) {
       console.error(
         `${colors.red}Error: Failed to parse ${testResultsFile} — invalid JSON.${colors.reset}`
       );
+      hasError = true;
       continue;
     }
 
@@ -91,6 +93,7 @@ for (const testResultsFile of testResultsFiles) {
       console.error(
         `${colors.red}Error: ${testResultsFile} does not contain a "failures" array.${colors.reset}`
       );
+      hasError = true;
       continue;
     }
 
@@ -126,11 +129,24 @@ for (const testResultsFile of testResultsFiles) {
       console.error(
         `${colors.red}No valid test titles found for --grep in ${packageDir}.${colors.reset}`
       );
+      hasError = true;
       continue;
     }
 
     const grepPattern = escapedTitles.join("|");
     const failedFiles = [...new Set(failedTests.map((test) => test.file))];
+
+    // Recompile before rerun
+    try {
+      execSync("npm run compile:test --if-present --workspaces", {
+        cwd: packageDir,
+        stdio: "inherit",
+      });
+    } catch (compileError) {
+      console.warn(
+        `${colors.yellow}Warning: Compilation step failed or skipped: ${compileError.message}${colors.reset}`
+      );
+    }
 
     const mochaCommand = `mocha --config .mocharc.json --grep "${grepPattern}" ${failedFiles.join(" ")}`;
     console.log(`Running command in ${packageDir}: ${mochaCommand}`);
@@ -142,9 +158,50 @@ for (const testResultsFile of testResultsFiles) {
         Object.entries(process.env).map(([k, v]) => [k, String(v ?? "")])
       ),
     });
+
+    // After successful rerun, check if failures are cleared and delete json if no failures remain
+    console.log(
+      `${colors.green}Rerun completed for ${packageDir}. Checking for remaining failures.${colors.reset}`
+    );
+    const updatedRaw = readFileSync(testResultsFile, "utf8").trim();
+    if (updatedRaw) {
+      try {
+        const updatedResults = JSON.parse(updatedRaw);
+    
+        if (
+          Array.isArray(updatedResults.failures) &&
+          updatedResults.failures.length > 0
+        ) {
+          hasError = true;
+          console.log(
+            `${colors.red}Remaining failures in ${testResultsFile}; marking as error.${colors.reset}`
+          );
+        }
+    
+        if (
+          Array.isArray(updatedResults.failures) &&
+          updatedResults.failures.length === 0
+        ) {
+          unlinkSync(testResultsFile);
+          console.log(
+            `${colors.green}No remaining failures; cleared ${testResultsFile}.${colors.reset}`
+          );
+        }
+      } catch (parseError) {
+        console.error(
+          `${colors.red}Failed to parse updated ${testResultsFile} for cleanup.${colors.reset}`
+        );
+        hasError = true;
+      }
+    }
   } catch (error) {
     console.error(
       `${colors.red}Error processing ${testResultsFile}: ${error.message}${colors.reset}`
     );
+    hasError = true;
   }
+}
+
+if (hasError) {
+  process.exit(1);
 }
