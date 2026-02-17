@@ -19,6 +19,7 @@ wallet=defaultwallet
 
 zmqpubhashtx=tcp://0.0.0.0:28332
 zmqpubrawtx=tcp://0.0.0.0:28332
+zmqpubsequence=tcp://0.0.0.0:28332
 
 # Rpc work queue increase
 rpcworkqueue=512

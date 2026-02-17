@@ -26,6 +26,8 @@ BCN_MEMPOOL_CLEANUP_ENDPOINT_ENABLED='true'
 
 If this variable is set to 'false', the endpoint will return a `403 Forbidden` response.
 
+Even if disabled, the node will still perform automatic background cleanup based on the configured interval, according to the Bitcoin Node mempool `BCN_MEMPOOL_CLEANUP_INTERVAL_MS` (default is 1 hour for BTC and LTC, mainnet and testnet; and 15 minutes for DOGE and PEPE)
+
 ## Example
 
 ### Request
@@ -33,18 +35,17 @@ If this variable is set to 'false', the endpoint will return a `403 Forbidden` r
 ```shell
 curl -X POST http://localhost:1031/v1/LTC/regtest/clean-mempool
 ```
+
 ### Response
 
 #### Success (200)
+
 Returns a list of revision identifiers (`rev`) that were removed during the cleanup.
 
 ```json
-[
-  "txid1:0",
-  "txid2:1",
-  "txid3:0"
-]
+["txid1:0", "txid2:1", "txid3:0"]
 ```
+
 Each entry represents a stale unconfirmed revision that was removed from the database.
 
 #### Forbidden (403)
@@ -65,12 +66,4 @@ Returned when the cleanup endpoint is disabled via configuration.
 
 ### Notes
 
-* This endpoint performs a potentially expensive database operation.
-
-* It is recommended to keep this endpoint disabled on public mainnet deployments unless explicitly required.
-
-* The node also performs automatic background cleanup based on the configured interval (milliseconds):
-
-````
-BCN_MEMPOOL_CLEANUP_INTERVAL_MS='900000'
-````
+- It is recommended to keep this endpoint disabled on public mainnet deployments unless explicitly required.
