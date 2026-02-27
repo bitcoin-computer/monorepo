@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "esnext",
+    "resolveJsonModule": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "skipLibCheck": true,
+    "lib": ["esnext", "DOM"],
+    "useDefineForClassFields": false
+  },
+  "include": ["src/**/*", "test/**/*"]
+}
