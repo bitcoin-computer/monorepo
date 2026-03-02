@@ -104,6 +104,17 @@ describe('Pow', () => {
     mod = await computer.deploy(`export ${Pow}; export ${Sha256};`)
   })
 
+  const mint = async (prev: string, diff = 16, mod) => {
+    let nonce = 0
+    while (true) {
+      const puzzle = prev + nonce.toString() + diff.toString()
+      const hashHex = crypto.createHash('sha256').update(puzzle).digest('hex')
+      if (hashHex.startsWith('0'.repeat(Math.floor(diff / 4)))) break
+      nonce++
+    }
+    return computer.new(Pow, [computer.getPublicKey(), 1n, nonce.toString(), prev, diff], mod)
+  }
+
   it('should create a smart object', async () => {
     const token = await computer.new(Pow, [computer.getPublicKey(), 10000n, '11348', '', 16], mod)
     expect(token).to.matchPattern({
@@ -286,36 +297,20 @@ describe('Pow', () => {
 
     const miner = new PowTokenMiner(computer, freshMod)
 
-    // Helper to mint a valid token on top of prev
-    const mint = async (prev: string, diff = 16) => {
-      let nonce = 0
-      while (true) {
-        const puzzle = prev + nonce.toString() + diff.toString()
-        const hashHex = crypto.createHash('sha256').update(puzzle).digest('hex')
-        if (hashHex.startsWith('0'.repeat(Math.floor(diff / 4)))) break
-        nonce++
-      }
-      return computer.new(
-        Pow,
-        [computer.getPublicKey(), 1n, nonce.toString(), prev, diff],
-        freshMod,
-      )
-    }
-
     // Simulate main chain: genesis → t1 → t2 → t3 → t4 (length 5)
-    const genesis = await mint('')
-    const t1 = await mint(genesis._rev)
+    const genesis = await mint('', 16, freshMod)
+    const t1 = await mint(genesis._rev, 16, freshMod)
     await computer.faucet(1e8)
-    const t2 = await mint(t1._rev)
-    const t3 = await mint(t2._rev)
+    const t2 = await mint(t1._rev, 16, freshMod)
+    const t3 = await mint(t2._rev, 16, freshMod)
     await computer.faucet(1e8)
-    const t4 = await mint(t3._rev)
-    const t5 = await mint(t4._rev) // Extra to make main longer than fork
+    const t4 = await mint(t3._rev, 16, freshMod)
+    const t5 = await mint(t4._rev, 16, freshMod) // Extra to make main longer than fork
     await computer.faucet(1e8)
 
     // Force a short fork from t2 (fork: t2 → f1 → f2)
-    const f1 = await mint(t2._rev)
-    const f2 = await mint(f1._rev)
+    const f1 = await mint(t2._rev, 16, freshMod)
+    const f2 = await mint(f1._rev, 16, freshMod)
 
     await sleep(500)
     // Check the tip – should be main chain t4 (longer work)
@@ -338,5 +333,47 @@ describe('Pow', () => {
     await split.merge([token]) // merge the remaining 3n
     expect(await split.isValid()).to.be.true
     expect(split.amount).to.equal(5n)
+  })
+
+  it('should allow mint with difficulty 0 (genesis or test)', async () => {
+    const freshMod = await computer.deploy(`export ${Pow}; export ${Sha256};`)
+    const token = await computer.new(
+      Pow,
+      [computer.getPublicKey(), 1n, 'any-nonce', '', 0],
+      freshMod,
+    )
+    expect(await token.isValid()).to.be.true
+  })
+
+  it('should return "" for tip on empty chain', async () => {
+    const freshMod = await computer.deploy(`export ${Pow}; export ${Sha256};`)
+    const miner = new PowTokenMiner(computer, freshMod)
+    expect(await miner.computePrevMintedTokenId()).to.equal('')
+  })
+
+  it('should prefer heavier fork (higher difficulty)', async () => {
+    const freshMod = await computer.deploy(`export ${Pow}; export ${Sha256};`)
+
+    const genesis = await mint('', 16, freshMod)
+    const light1 = await mint(genesis._rev, 16, freshMod)
+    await mint(light1._rev, 16, freshMod) // Light: len 3, work ~3*2^16
+
+    const heavy1 = await mint(genesis._rev, 20, freshMod) // Heavy: len 2, but work ~2^20 > light
+
+    const miner = new PowTokenMiner(computer, freshMod)
+    const tip = await miner.computePrevMintedTokenId()
+    expect(tip).to.equal(heavy1._rev)
+  })
+
+  it('should update cache with new tip after refresh', async () => {
+    const freshMod = await computer.deploy(`export ${Pow}; export ${Sha256};`)
+    const miner = new PowTokenMiner(computer, freshMod)
+
+    expect(miner['cachedPrev']).to.equal('')
+
+    const genesis = await mint('', 16, freshMod) // Assume mint from above
+
+    await miner.refreshCache()
+    expect(miner['cachedPrev']).to.equal(genesis._rev)
   })
 })

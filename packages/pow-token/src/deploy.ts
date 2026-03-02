@@ -4,12 +4,18 @@ import { readFile, writeFile } from 'fs/promises'
 import { stdin as input, stdout as output } from 'node:process'
 import { Computer } from '@bitcoin-computer/lib'
 import { Pow } from './pow.js'
+import { config as conf } from './config.js' // NEW
 
 config()
 
 const rl = readline.createInterface({ input, output })
 
-const { CHAIN: chain, NETWORK: network, URL: url, MNEMONIC: mnemonic } = process.env
+const {
+  CHAIN: chain = conf.DEFAULT_CHAIN,
+  NETWORK: network = conf.DEFAULT_NETWORK,
+  URL: url = conf.DEFAULT_URL,
+  MNEMONIC: mnemonic,
+} = process.env
 
 if (network !== 'regtest') {
   if (!mnemonic) throw new Error('Please set MNEMONIC in the .env file')
@@ -17,12 +23,11 @@ if (network !== 'regtest') {
 
 const computer = new Computer({ chain, network, mnemonic, url })
 if (network === 'regtest') {
-  await computer.faucet(2e8)
+  await computer.faucet(conf.FAUCET_AMOUNT)
 }
 
 const balance = await computer.db.wallet.getBalance()
 
-// Summary
 console.log(`Chain \x1b[2m${chain}\x1b[0m
 Network \x1b[2m${network}\x1b[0m
 Node Url \x1b[2m${url}\x1b[0m
