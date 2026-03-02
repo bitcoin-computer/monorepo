@@ -25,6 +25,7 @@ services:
       - ${BITCOIN_RPC_PORT}:${BITCOIN_RPC_PORT}
       - ${BCN_ZMQ_PORT}:${BCN_ZMQ_PORT}
     volumes:
+      - ./dev-certs:/dist/packages/node/dev-certs
       - ./chain-setup/${BCN_CHAIN}/${BCN_NETWORK}/blockchain-data:${BITCOIN_DATA_DIR}
       - ./${BITCOIN_CONF_FILE}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}
   bcn:
