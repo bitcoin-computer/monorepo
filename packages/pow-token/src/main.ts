@@ -4,6 +4,7 @@ dotenv.config()
 import { Computer } from '@bitcoin-computer/lib'
 import { Pow } from './pow.js'
 import { PowTokenMiner } from './miner.js'
+import { config } from './config.js' // NEW
 
 const main = async () => {
   if (!process.env.MNEMONIC) {
@@ -12,9 +13,9 @@ const main = async () => {
   }
 
   const computer = new Computer({
-    chain: process.env.CHAIN || 'LTC',
-    network: process.env.NETWORK || 'regtest',
-    url: process.env.BCN_URL || 'http://localhost:1031',
+    chain: process.env.CHAIN || config.DEFAULT_CHAIN,
+    network: process.env.NETWORK || config.DEFAULT_NETWORK,
+    url: process.env.BCN_URL || config.DEFAULT_URL,
   })
 
   const mod = process.env.POW_MOD
@@ -25,10 +26,9 @@ const main = async () => {
 
   const miner = new PowTokenMiner(computer, mod)
 
-  // Refresh cache every 5 seconds (like Bitcoin template refresh)
   setInterval(() => miner.refreshCache().catch(console.error), 5000)
 
-  console.log('PoW Miner started on', process.env.NETWORK || 'testnet')
+  console.log('PoW Miner started on', process.env.NETWORK || config.DEFAULT_NETWORK)
   console.log('Press Ctrl+C to stop')
 
   while (true) {
@@ -38,7 +38,6 @@ const main = async () => {
 
       const { nonce, amount } = await miner.computePow(prev, diff)
 
-      // Final race check (exactly like Bitcoin stale block handling)
       const currentPrev = await miner.computePrevMintedTokenId()
       if (currentPrev !== prev) {
         console.log('⚡ Stale work – another miner won, restarting...')

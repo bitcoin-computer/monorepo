@@ -1,6 +1,7 @@
 import { Computer } from '@bitcoin-computer/lib'
 import * as crypto from 'crypto'
 import { Pow } from './pow.js'
+import { config } from './config.js' // NEW: import config
 
 export interface IPowTokenMiner {
   computePrevMintedTokenId(): Promise<string>
@@ -10,16 +11,15 @@ export interface IPowTokenMiner {
 
 export class PowTokenMiner implements IPowTokenMiner {
   private computer: Computer
-  private mod: string // deployed module id of Pow
+  private mod: string
   private cachedPrev: string = ''
-  private cachedDifficulty: number = 16 // initial
+  private cachedDifficulty: number = config.getInitialDifficulty() // Use config
 
   constructor(computer: Computer, mod: string) {
     this.computer = computer
     this.mod = mod
   }
 
-  /** Returns the _rev of the current tip of the longest valid chain (or '' for genesis) */
   async computePrevMintedTokenId(): Promise<string> {
     const revs = await this.computer.getOUTXOs({ mod: this.mod })
     if (revs.length === 0) return ''
@@ -33,7 +33,6 @@ export class PowTokenMiner implements IPowTokenMiner {
       graph.set(rev, { prev: obj.prevMintedId || '', diff: obj.difficulty })
     }
 
-    // Find true tips: objects not used as prev by anyone
     const allPrev = new Set(
       Array.from(graph.values())
         .map((v) => v.prev)
@@ -43,7 +42,6 @@ export class PowTokenMiner implements IPowTokenMiner {
 
     if (tips.length === 0) return ''
 
-    // Heaviest chain: sum of work (2^diff), tie-break by length
     let bestTip = tips[0]
     let maxWork = this.getCumulativeWork(bestTip, graph)
 
@@ -85,12 +83,10 @@ export class PowTokenMiner implements IPowTokenMiner {
     return len
   }
 
-  /** Difficulty adjustment based on length of longest valid chain (every 2016 mints +1) */
   async computeDifficulty(): Promise<number> {
-    const prev = await this.computePrevMintedTokenId() // ensures we have latest chain
-    if (!prev) return 16 // genesis
+    const prev = await this.computePrevMintedTokenId()
+    if (!prev) return config.getInitialDifficulty() // NEW: chain-aware
 
-    // count length of longest chain (we already did most of the work above)
     const revs = await this.computer.getOUTXOs({ mod: this.mod })
     const graph = new Map<string, string>()
     let maxLength = 0
@@ -109,13 +105,11 @@ export class PowTokenMiner implements IPowTokenMiner {
       if (len > maxLength) maxLength = len
     }
 
-    // Bitcoin-style: increase difficulty every 2016 mints on the longest chain
-    const initial = 16
-    const interval = 2016
+    const initial = config.getInitialDifficulty()
+    const interval = config.getAdjustmentInterval() // NEW: from config, chain-specific
     return initial + Math.floor((maxLength - 1) / interval)
   }
 
-  /** Pure mining loop – exactly like Bitcoin miner hot path */
   async computePow(
     prevMintedId: string,
     difficulty: number,
@@ -138,7 +132,6 @@ export class PowTokenMiner implements IPowTokenMiner {
     }
   }
 
-  /** Keep cache fresh */
   async refreshCache() {
     this.cachedPrev = await this.computePrevMintedTokenId()
     this.cachedDifficulty = await this.computeDifficulty()
