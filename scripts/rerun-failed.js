@@ -109,8 +109,8 @@ for (const testResultsFile of testResultsFiles) {
 
     const failedTests = validFailures.map((failure) => {
       let cleanedTitle = (failure.fullTitle || failure.title)
-        .replace(/"before all" hook:.*?for\s*"/, "")
-        .replace(/"before each" hook:.*?for\s*"/, "")
+        .replace(/"before all" hook.*?for\s*"/, "")
+        .replace(/"before each" hook.*?for\s*"/, "")
         .replace(/\\"/g, '"')
         .replace(/"/g, "")
         .trim();
