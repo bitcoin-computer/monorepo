@@ -22,6 +22,31 @@ export default function App() {
     initFlowbite()
   }, [])
 
+  useEffect(() => {
+    let close: (() => void) | undefined
+
+    const streamToComputer = async () => {
+      // Prevent double subscription in StrictMode dev
+      if (close) return
+
+      close = await computer.streamMempoolCleanup(async ({ revs }) => {
+        console.log('mempool cleanup txs:', revs.join(', '))
+
+        window.location.reload() // Reload page on mempool cleanup
+      })
+    }
+
+    streamToComputer()
+
+    return () => {
+      if (close) {
+        console.log('closing mempool cleanup SSE connection')
+        close()
+        close = undefined
+      }
+    }
+  }, [computer])
+
   return (
     <BrowserRouter>
       <span className="bg-gray-900/50 dark:bg-gray-900/80 z-30 inset-0 sr-only"></span>
