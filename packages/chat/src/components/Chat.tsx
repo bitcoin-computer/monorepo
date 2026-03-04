@@ -311,6 +311,27 @@ export function Chat({ chatId }: { chatId: string }) {
     fetch()
   }, [computer, id, chatId, location, navigate])
 
+  useEffect(() => {
+    let unsubscribe: () => void
+    const subscribeToChatUpdates = async () => {
+      if (!id) return
+      unsubscribe = await computer.subscribe(
+        id, // Subscribe to this chat's ID (gets updates to its lineage)
+        // eslint-disable-next-line no-empty-pattern
+        async ({}) => {
+          // If new post, refresh the chat for now
+          await refreshChat()
+        },
+        (error) => console.error('Chat SSE error:', error),
+      )
+    }
+    subscribeToChatUpdates()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [id, computer])
+
   return (
     <>
       <div className="grid grid-cols-1 gap-4 max-w" style={{ maxHeight: 'calc(100vh - 10vh)' }}>

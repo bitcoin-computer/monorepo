@@ -13,7 +13,7 @@ sequenceDiagram
     Note over C,S: Tx confirms in block
     S->>C: onMessage({rev, hex}) // Confirmation
     C->>S: unsubscribe() // Closes SSE
-```    
+```
 
 ## Type
 
@@ -23,6 +23,7 @@ type StreamQuery = {
   asm?: string
   exp?: string
   mod?: string
+  publicKey?: string
 }
 
 streamTXOs(
@@ -38,20 +39,24 @@ streamTXOs(
 
 A partial `StreamQuery` object that defines the properties a transaction output must satisfy. The supported properties are:
 
-| Property   | Type      | Description |
-|------------|-----------|-------------|
-| `satoshis` | `bigint?` | The number of satoshis on the output. |
-| `asm`      | `string?` | The script assembly (ASM) of the output. |
-| `exp`      | `string?` | The expression for the output's transaction. |
-| `mod`      | `string?` | The module specifier for the output. |
+| Property    | Type      | Description                                                 |
+| ----------- | --------- | ----------------------------------------------------------- |
+| `satoshis`  | `bigint?` | The number of satoshis on the output.                       |
+| `asm`       | `string?` | The script assembly (ASM) of the output.                    |
+| `exp`       | `string?` | The expression for the output's transaction.                |
+| `mod`       | `string?` | The module specifier for the output.                        |
+| `publicKey` | `string?` | Matches if the output script contains this exact publicKey. |
 
 Any combination of the supported fields (e.g., `mod`, `satoshis`, `asm`) can be used. All provided fields are combined with AND logic.
+
+The `publicKey` option can also be used to filter for an specific script chunk. A chunk can be an opcode ("OP_1", "OP_RETURN", "OP_CHECKSIG", etc.) or a hexadecimal data push (e.g. a public key "02f7f0..." or OP_RETURN data). To match multiple chunks (e.g. both "OP_1" and a specific public key), subscribe twice with the same callback (see example below).
 
 Note that if a transaction has multiple outputs that encode objects you will receive updates for each of these outputs when subscribing to `exp`. This is because the expression `exp` is a property of the transaction, not of the output.
 
 #### `onMessage`
 
 The function to call when a matching transaction is detected. The callback receives an object containing:
+
 - `rev`: the revision of matching output, that is `<transaction id>:<output number>`
 - `hex`: the transaction hex
 
@@ -69,7 +74,10 @@ A promise that resolves to a cleanup function once the SSE connection is establi
 
 The `streamTXOs` method enables real-time updates via Server-Sent Events (SSEs) that match a custom filter. It opens an SSE connection to the server and invokes the provided callback whenever a transaction containing an output that exactly matches all conditions in the filter is broadcast — first in the mempool and again when confirmed in a block.
 
+The `publicKey` field gives powerful flexibility: you can subscribe to any individual piece of a script (opcodes or data pushes), making it easy to watch for specific patterns like OP_RETURN data, particular public keys, or script fragments.
+
 ## Tips
+
 - **Reconnection:** SSEs can drop on network hiccups—use `onError` for exponential backoff retries.
 - **Filter Precision:** Start broad (e.g., just `mod`) to test, then narrow with `satoshis` or `asm` for specificity.
 - **Performance:** Limit concurrent streams; each opens a dedicated SSE.
