@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS
     "blockHash" VARCHAR(64),
     "blockHeight" INTEGER,
     "blockIndex" INTEGER,
+    "staleSince" timestamp,
     "timestamp" timestamp default CURRENT_TIMESTAMP not null
   );
 

@@ -148,7 +148,7 @@ for (const testResultsFile of testResultsFiles) {
       );
     }
 
-    const mochaCommand = `mocha --config .mocharc.json --grep "${grepPattern}" ${failedFiles.join(" ")}`;
+    const mochaCommand = `mocha --config .mocharc.json --grep '${grepPattern}' ${failedFiles.join(" ")}`;
     console.log(`Running command in ${packageDir}: ${mochaCommand}`);
 
     execSync(mochaCommand, {
@@ -167,7 +167,7 @@ for (const testResultsFile of testResultsFiles) {
     if (updatedRaw) {
       try {
         const updatedResults = JSON.parse(updatedRaw);
-    
+
         if (
           Array.isArray(updatedResults.failures) &&
           updatedResults.failures.length > 0
@@ -177,7 +177,7 @@ for (const testResultsFile of testResultsFiles) {
             `${colors.red}Remaining failures in ${testResultsFile}; marking as error.${colors.reset}`
           );
         }
-    
+
         if (
           Array.isArray(updatedResults.failures) &&
           updatedResults.failures.length === 0
