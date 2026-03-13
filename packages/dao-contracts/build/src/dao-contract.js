@@ -13,10 +13,12 @@ export class Election extends Contract {
             .trim();
     }
     async proposalVotes() {
+        // @ts-expect-error Cannot find name 'computer'
         const revs = await computer.getTXOs({ mod: this.proposalMod });
         const voteTxIdsSet = new Set(revs.map((r) => r.split(':')[0]));
         const validVotes = new Set(voteTxIdsSet);
         for (const voteTxId of voteTxIdsSet) {
+            // @ts-expect-error Cannot find name 'computer'
             const ancestors = (await computer.getAncestors(voteTxId));
             const ancestorsSet = new Set(ancestors);
             ancestorsSet.delete(voteTxId);
@@ -28,9 +30,9 @@ export class Election extends Contract {
     }
     async validVotes() {
         const proposalVotes = await this.proposalVotes();
-        const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map(
-        // @ts-expect-error type unknown
-        (obj) => obj.res);
+        // @ts-expect-error Cannot find name 'computer'
+        const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map((obj) => obj.res);
+        // @ts-expect-error Cannot find name 'computer'
         const module = await computer.load(this.proposalMod);
         const voteClassStr = module['Vote'].toString();
         const normalizedClass = this.normalize(voteClassStr);
@@ -40,6 +42,7 @@ export class Election extends Contract {
             this.regexEscape(this._id) +
             "',tokens:\\[(__bc\\d+__(?:,__bc\\d+__)*)\\],vote:'(accept|reject)'\\}\\)$");
         const isValid = await Promise.all(resolved.map(async (r) => {
+            // @ts-expect-error Cannot find name 'computer'
             const decoded = await computer.decode(r._rev.substring(0, 64));
             const normExp = this.normalize(decoded.exp);
             const match = regex.exec(normExp);

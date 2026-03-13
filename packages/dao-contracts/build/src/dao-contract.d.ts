@@ -1,5 +1,5 @@
 import { Token } from '@bitcoin-computer/TBC20';
-import { Contract } from '@bitcoin-computer/lib';
+import { Contract, SmartContract } from '@bitcoin-computer/lib';
 type ElectionType = {
     proposalMod: string;
     tokenRoot: string;
@@ -7,7 +7,7 @@ type ElectionType = {
 };
 type VoteType = {
     electionId: string;
-    tokens: Token[];
+    tokens: SmartContract<typeof Token>[];
     vote: 'accept' | 'reject';
 };
 export declare class Election extends Contract {

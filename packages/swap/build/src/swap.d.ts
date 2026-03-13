@@ -1,4 +1,5 @@
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
+import { Contract } from '@bitcoin-computer/lib';
 import { NFT } from '@bitcoin-computer/TBC721';
 export declare class Swap extends Contract {
     constructor(a: NFT, b: NFT);
