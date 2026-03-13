@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('encodeCall', async () => {
@@ -31,13 +31,13 @@ describe('encodeCall', async () => {
     })
 
     // Decode the meta data
-    expect(await computer.decode(tx)).to.deep.eq({
+    expect(await computer.decode(tx!)).to.deep.eq({
       exp: `__bc__.inc()`,
       env: { __bc__: counter._rev },
       mod: undefined,
     })
 
     // Broadcast the tx to commit the change
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
   })
 })

@@ -71,6 +71,7 @@ export default function Mint() {
         exp: `new Counter()`,
         mod: VITE_COUNTER_MOD_SPEC,
       })
+      if (!tx) throw new Error('Could not create counter')
       await computer.broadcast(tx)
 
       const counter = effect.res as unknown as Counter

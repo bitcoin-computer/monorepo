@@ -21,7 +21,6 @@ describe('nakamotojs (blocks)', () => {
     const { script } = tx.ins[0];
     // bscript.decompile(script) // returns [] :(
 
-    // @ts-ignore
     assert.strictEqual(script[0], 0x03);
     const heightBuffer = script.slice(1, 4);
     const height = bscript.number.decode(heightBuffer);

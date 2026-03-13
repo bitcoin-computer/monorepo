@@ -1,6 +1,6 @@
 import { Election, Vote } from '../src/dao-contract.js'
 import { expect } from 'chai'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract, SmartContract } from '@bitcoin-computer/lib'
 import { Token } from '@bitcoin-computer/TBC20'
 const url = 'http://localhost:1031'
 
@@ -73,10 +73,10 @@ describe('Election', () => {
       await computer3.faucet(1e8)
 
       const t0 = await computer.new(Token, [computer.getPublicKey(), 100n, 'A'], tokenMod)
-      const t1 = (await t0.transfer(computer.getPublicKey(), 10n)) as Token
-      const t2 = (await t0.transfer(computer2.getPublicKey(), 7n)) as Token
-      const t3 = (await t0.transfer(computer3.getPublicKey(), 20n)) as Token
-      const t4 = (await t0.transfer(computer3.getPublicKey(), 3n)) as Token
+      const t1 = (await t0.transfer(computer.getPublicKey(), 10n))!
+      const t2 = (await t0.transfer(computer2.getPublicKey(), 7n))!
+      const t3 = (await t0.transfer(computer3.getPublicKey(), 20n))!
+      const t4 = (await t0.transfer(computer3.getPublicKey(), 3n))!
 
       const election = await computer.new(Election, [
         { proposalMod, tokenRoot: t0._root, description: 'test' },
@@ -176,7 +176,7 @@ describe('Election', () => {
       const computer2 = new Computer({ url })
       await computer2.faucet(1e8)
 
-      const t2 = (await t1.transfer(computer2.getPublicKey(), 2n)) as Token
+      const t2 = (await t1.transfer(computer2.getPublicKey(), 2n))!
       expect(t2?.amount).eq(2n)
 
       const election2 = await computer.new(Election, [
@@ -209,15 +209,17 @@ describe('Election', () => {
     it('Should fail to count votes with altered tokenAmount', async () => {
       type VoteType = {
         electionId: string
-        tokens: Token[]
+        tokens: SmartContract<typeof Token>[]
         vote: 'accept' | 'reject'
       }
+
       // create a malicious Vote contract that skips the checks and manipulates the token amount
       class Vote extends Contract {
         tokensAmount!: bigint
         vote!: 'accept' | 'reject'
         electionId!: string
         tokenRoot!: string
+
         constructor({ electionId, tokens, vote }: VoteType) {
           super({
             electionId,
@@ -311,7 +313,7 @@ describe('Election', () => {
       const tokenSent = await t1.transfer(computer2.getPublicKey(), 2n)
       expect(tokenSent?.amount).eq(2n)
 
-      const updatedT1 = (await computer.sync(t1._rev)) as Token
+      const updatedT1 = await computer.sync<typeof Token>(t1._rev)
       expect(updatedT1.amount).eq(8n)
     })
 
@@ -337,7 +339,7 @@ describe('Election', () => {
       const tokenSent = await t1.transfer(computer2.getPublicKey(), 2n)
       expect(tokenSent?.amount).eq(2n)
 
-      const updatedT1 = (await computer.sync(t1._rev)) as Token
+      const updatedT1 = await computer.sync<typeof Token>(t1._rev)
       expect(updatedT1.amount).eq(8n)
 
       // Vote again
@@ -375,12 +377,12 @@ describe('Election', () => {
       const computer2 = new Computer({ url })
       await computer2.faucet(1e8)
       const newRev = await computer.latest(t1._rev)
-      const t1Updated = (await computer.sync(newRev)) as Token
+      const t1Updated = await computer.sync<typeof Token>(newRev)
 
-      const tokenSent = (await t1Updated.transfer(computer2.getPublicKey(), 2n)) as Token
+      const tokenSent = (await t1Updated.transfer(computer2.getPublicKey(), 2n))!
       expect(tokenSent?.amount).eq(2n)
 
-      const updatedT1 = (await computer.sync(t1._rev)) as Token
+      const updatedT1 = await computer.sync<typeof Token>(t1._rev)
       expect(updatedT1.amount).eq(8n)
 
       // Vote again
@@ -416,10 +418,10 @@ describe('Election', () => {
       const computer2 = new Computer({ url })
       await computer2.faucet(1e8)
 
-      const t2 = (await t1.transfer(computer2.getPublicKey(), 2n)) as Token
+      const t2 = (await t1.transfer(computer2.getPublicKey(), 2n))!
       expect(t2?.amount).eq(2n)
 
-      const updatedT1 = (await computer.sync(t1._rev)) as Token
+      const updatedT1 = await computer.sync<typeof Token>(t1._rev)
       expect(updatedT1.amount).eq(8n)
 
       const election2 = await computer.new(Election, [
@@ -511,7 +513,7 @@ describe('Election', () => {
       // another user syncs to the valid token revision and uses it to vote
       const computer2 = new Computer({ url })
       await computer2.faucet(1e8)
-      const syncedT1 = (await computer2.sync(t1._rev)) as Token
+      const syncedT1 = await computer2.sync<typeof Token>(t1._rev)
 
       const election = await computer2.new(Election, [
         { proposalMod, tokenRoot: t1._root, description: 'test' },
@@ -539,9 +541,9 @@ describe('Election', () => {
       await computer3.faucet(1e8)
 
       const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod)
-      const t2 = (await t1.transfer(computer2.getPublicKey(), 5n)) as Token
+      const t2 = (await t1.transfer(computer2.getPublicKey(), 5n))!
       expect(t2?.amount).eq(5n)
-      const t3 = (await t1.transfer(computer3.getPublicKey(), 1n)) as Token
+      const t3 = (await t1.transfer(computer3.getPublicKey(), 1n))!
 
       expect(t1.amount).eq(10n - (t2.amount + t3.amount))
 

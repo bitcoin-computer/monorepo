@@ -1,7 +1,7 @@
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { Swappable } from '../src/swappable.js'
 import path from 'path'
@@ -31,8 +31,8 @@ const meta = {
 }
 
 describe('Swapppable', () => {
-  let a: Swappable
-  let b: Swappable
+  let a: SmartContract<typeof Swappable>
+  let b: SmartContract<typeof Swappable>
   const alice = new Computer({ url, chain, network })
   const bob = new Computer({ url, chain, network })
 
@@ -76,13 +76,13 @@ describe('Swapppable', () => {
 
       // Bob signs the swap transaction
       await bob.sign(tx)
-    
+
       // Bob broadcasts the swap transaction
       txId = await bob.broadcast(tx)
       expect(txId).not.undefined
-    
+
       // a is now owned by Bob
-      const { env } = (await bob.sync(txId)) as { env: { a: Swappable; b: Swappable } }
+      const { env } = await bob.sync(txId)
       const aSwapped = env.a
       expect(aSwapped).to.matchPattern({
         ...meta,
@@ -92,7 +92,7 @@ describe('Swapppable', () => {
       })
 
       // b is now owned by Alice
-      const { env: env2 } = (await alice.sync(txId)) as { env: { a: Swappable; b: Swappable } }
+      const { env: env2 } = await alice.sync(txId)
       const bSwapped = env2.b
       expect(bSwapped).to.matchPattern({
         ...meta,

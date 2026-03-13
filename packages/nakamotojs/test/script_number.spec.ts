@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+import { strict as assert } from 'assert';
 import { describe, it } from 'mocha';
 import * as scriptNumber from '../src/script_number.js';
 import script_number from './fixtures/script_number.js';

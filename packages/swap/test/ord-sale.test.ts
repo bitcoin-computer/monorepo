@@ -140,7 +140,7 @@ describe('Ord Sale', () => {
       await bob.broadcast(finalTx)
 
       // Bob reads the updated state from the blockchain
-      const { env } = (await bob.sync(finalTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      const { env } = await bob.sync(finalTx.getId())
       const { nft: n, payment: p } = env
 
       expect(p._satoshis).eq(nftPrice)

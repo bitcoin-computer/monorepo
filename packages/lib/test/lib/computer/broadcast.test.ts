@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, network, url } from '../../utils/index.js'
 
 describe('broadcast', () => {
@@ -15,6 +15,6 @@ describe('broadcast', () => {
     const { tx } = await computer.encode(transition)
 
     // Broadcast transaction
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
   })
 })

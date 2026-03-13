@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+import { strict as assert } from 'assert';
 import { BIP32Factory } from 'bip32';
 import * as ecc from '@bitcoin-computer/secp256k1';
 import * as crypto from 'crypto';
@@ -160,7 +158,7 @@ describe(`Psbt`, () => {
         if (f.isTaproot) initEccLib(ecc);
         const psbt = Psbt.fromBase64(f.psbt);
 
-        // @ts-ignore // cannot find tapLeafHashToSign
+        // @ts-expect-error Property 'tapLeafHashToSign' does not exist on type '{ inputToSign: number; WIF: string; }'
         f.keys.forEach(({ inputToSign, tapLeafHashToSign, WIF }) => {
           const keyPair = ECPair.fromWIF(WIF, NETWORKS.testnet);
           if (tapLeafHashToSign)

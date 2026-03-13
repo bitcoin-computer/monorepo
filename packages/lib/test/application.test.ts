@@ -1,6 +1,13 @@
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Computer, Contract, Transaction } from '@bitcoin-computer/lib'
+import {
+  Computer,
+  Contract,
+  Transaction,
+  Mock,
+  SmartContract,
+  TxIdString,
+} from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from './utils/index.js'
 
 chai.use(chaiMatchPattern)
@@ -8,7 +15,6 @@ const _ = chaiMatchPattern.getLodashModule()
 
 const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa8bc54db8fed'
 const randomRev = '0000000000000000000000000000000000000000000000000000000000000000:0'
-const mockedRev = `mock-${randomRev}`
 const symbol = ''
 
 const meta = {
@@ -86,7 +92,7 @@ class Swap extends Contract {
   }
 }
 
-class PaymentMock {
+class PaymentMock extends Mock {
   _id: string
   _rev: string
   _root: string
@@ -94,9 +100,7 @@ class PaymentMock {
   _owners: string[]
 
   constructor(amount: bigint) {
-    this._id = mockedRev
-    this._rev = mockedRev
-    this._root = mockedRev
+    super()
     this._owners = [randomPublicKey]
     this._satoshis = amount
   }
@@ -157,7 +161,6 @@ describe('Non-Fungible Token (NFT)', () => {
   describe('Minting an NFT', () => {
     it('Sender mints an NFT', async () => {
       nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
-      // @ts-ignore
       expect(nft).matchPattern({ name: 'Test', symbol, ...meta })
     })
 
@@ -181,7 +184,6 @@ describe('Non-Fungible Token (NFT)', () => {
   describe('Transferring an NFT', async () => {
     it('Sender transfers the NFT to receiver', async () => {
       await nft.transfer(receiver.getPublicKey())
-      // @ts-ignore
       expect(nft).to.matchPattern({ name: 'Test', symbol, ...meta })
     })
 
@@ -208,8 +210,8 @@ describe('Non-Fungible Token (NFT)', () => {
 })
 
 describe('Fungible Token', () => {
-  let token: Token
-  let sentToken: Token
+  let token: SmartContract<typeof Token>
+  let sentToken: SmartContract<typeof Token>
   let initialId: string
   let initialRev: string
   let initialRoot: string
@@ -226,7 +228,6 @@ describe('Fungible Token', () => {
     })
 
     it('This creates a smart object', () => {
-      // @ts-ignore
       expect(token).to.matchPattern({ ...meta, supply: 10n, totalSupply: 10n })
     })
 
@@ -253,7 +254,6 @@ describe('Fungible Token', () => {
     })
 
     it('This creates a second smart object with supply 2', () => {
-      // @ts-ignore
       expect(sentToken).to.matchPattern({
         supply: 2n,
         totalSupply: 10n,
@@ -266,7 +266,6 @@ describe('Fungible Token', () => {
     })
 
     it('The first smart object now has a supply of 8', () => {
-      // @ts-ignore
       expect(token).to.matchPattern({ supply: 8n, totalSupply: 10n, ...meta })
     })
 
@@ -307,7 +306,6 @@ describe('Chat', () => {
   describe('Creating a chat', () => {
     it('Alice creates a chat and invites Bob', async () => {
       alicesChat = await alice.new(Chat, [publicKeys])
-      // @ts-ignore
       expect(alicesChat).to.matchPattern({
         messages: [],
         _readers: publicKeys,
@@ -320,7 +318,6 @@ describe('Chat', () => {
   describe('Posting a message', () => {
     it('Alice posts a message to the chat', async () => {
       await alicesChat.post('Hi')
-      // @ts-ignore
       expect(alicesChat).to.matchPattern({
         messages: ['Hi'],
         _readers: publicKeys,
@@ -331,8 +328,7 @@ describe('Chat', () => {
 
   describe('Invited users can read the chat and post messages', async () => {
     it('Bob can read the content of the chat', async () => {
-      bobsChat = (await bob.sync(alicesChat._rev)) as Chat
-      // @ts-ignore
+      bobsChat = await bob.sync<typeof Chat>(alicesChat._rev)
       expect(bobsChat).matchPattern({
         messages: ['Hi'],
         _readers: publicKeys,
@@ -342,7 +338,6 @@ describe('Chat', () => {
 
     it('Bob can write to the chat', async () => {
       await bobsChat.post('Yo')
-      // @ts-ignore
       expect(bobsChat).matchPattern({
         messages: ['Hi', 'Yo'],
         _readers: publicKeys,
@@ -393,14 +388,12 @@ describe('Swap', () => {
   describe('Creating two NFTs to be swapped', () => {
     it('Alice creates nftA', async () => {
       nftA = await alice.new(NFT, [alice.getPublicKey(), 'nftA'])
-      // @ts-ignore
       expect(nftA).to.matchPattern({ name: 'nftA', symbol, ...meta })
       expect(nftA._owners).deep.eq([alice.getPublicKey()])
     })
 
     it('Bob creates nftB', async () => {
       nftB = await bob.new(NFT, [bob.getPublicKey(), 'nftB'])
-      // @ts-ignore
       expect(nftB).to.matchPattern({ name: 'nftB', symbol, ...meta })
       expect(nftB._owners).deep.eq([bob.getPublicKey()])
     })
@@ -423,19 +416,14 @@ describe('Swap', () => {
       expect(txId).not.undefined
 
       // nftA is now owned by Bob
-      const { env } = (await bob.sync(txId)) as {
-        env: { nftA: NFT; nftB: NFT }
-      }
-      const nftASwapped = env.nftA
+      const { env } = await bob.sync(txId as TxIdString)
+      const nftASwapped = env.nftA!
       expect(nftASwapped).to.matchPattern({ name: 'nftA', symbol, ...meta })
       expect(nftASwapped._owners).deep.eq([bob.getPublicKey()])
 
       // nftB is now owned by Alice
-      const { env: env2 } = (await alice.sync(txId)) as {
-        env: { nftA: NFT; nftB: NFT }
-      }
-      const nftBSwapped = env2.nftB
-      // @ts-ignore
+      const { env: env2 } = await alice.sync(txId)
+      const nftBSwapped = env2.nftB!
       expect(nftBSwapped).to.matchPattern({ name: 'nftB', symbol, ...meta })
       expect(nftBSwapped._owners).deep.eq([alice.getPublicKey()])
     })
@@ -460,7 +448,6 @@ describe('Sell', () => {
 
     it('Seller creates an NFT', async () => {
       nft = await seller.new(NFT, [seller.getPublicKey(), 'NFT'])
-      // @ts-ignore
       expect(nft).to.matchPattern({ name: 'NFT', symbol, ...meta })
     })
 
@@ -503,7 +490,6 @@ describe('Sell', () => {
     it('Thief creates a payment object with half the asking price', async () => {
       tooLowPayment = await thief.new(Payment, [nftPrice / 2n])
 
-      // @ts-ignore
       expect(tooLowPayment).matchPattern({
         _id: _.isString,
         _rev: _.isString,
@@ -558,7 +544,6 @@ describe('Sell', () => {
       // Buyer creates a payment object with the asking price
       payment = await buyer.new(Payment, [nftPrice])
 
-      // @ts-ignore
       expect(payment).matchPattern({
         _id: _.isString,
         _rev: _.isString,
@@ -573,7 +558,6 @@ describe('Sell', () => {
         txId: paymentTxId,
         index: parseInt(paymentIndex, 10),
       })
-      // @ts-ignore
       tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
 
       // Buyer funds the swap transaction

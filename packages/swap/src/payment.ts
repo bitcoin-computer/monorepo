@@ -1,4 +1,4 @@
-import { getMockedRev } from './utils/index.js'
+import { Mock, Contract } from '@bitcoin-computer/lib'
 
 const randomPublicKey = '023a06bc3ca20170b8202737316a29923f5b0e47f39c6517990f3c75f3b3d4484c'
 
@@ -22,7 +22,7 @@ export class Payment extends Contract {
   }
 }
 
-export class PaymentMock {
+export class PaymentMock extends Mock {
   _id: string
   _rev: string
   _root: string
@@ -30,9 +30,7 @@ export class PaymentMock {
   _owners: string[]
 
   constructor(satoshis: bigint) {
-    this._id = getMockedRev()
-    this._rev = getMockedRev()
-    this._root = getMockedRev()
+    super()
     this._satoshis = satoshis
     this._owners = [randomPublicKey]
   }
