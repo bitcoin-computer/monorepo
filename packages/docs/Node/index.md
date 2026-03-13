@@ -282,8 +282,6 @@ BCN_BANNED_COUNTRIES=
 # Default value for protocol in the _url parameter. Set to https if behind a load balancer.
 BCN_OFFCHAIN_PROTOCOL=
 
-# If you wanna run the node on http (i.e. http1 or http2).
-BCN_HTTP_TYPE='http'
 # Output columns for which streamTXOs function should emit events (and their combinations)
 BCN_STREAM_KEYS='satoshis,asm,expHash,mod,publicKey'
 
@@ -292,51 +290,6 @@ BCN_MEMPOOL_CLEANUP_INTERVAL_MS='900000' # 15 minutes
 BCN_MEMPOOL_CLEANUP_ENDPOINT_ENABLED='false' # recommended to be disabled in .env mainnet configuration
 BCN_MEMPOOL_STALE_GRACE_HOURS='2' # Number of hours after which a mempool transaction is considered stale and can be removed
 ```
-
-## Configuring the Server Protocol BCN_HTTP_TYPE (HTTP/1 or HTTP/2)
-
-The server is configured to use either HTTP/1 or HTTP/2 based on environment variables. This setup allows for flexibility between plain HTTP (for simple or unsecured environments) and secure HTTP/2 (for enhanced performance and security, especially in production).
-
-### Environment Variables
-
-The configuration relies on the following environment variables:
-
-- `BCN_HTTP_TYPE`: Determines the protocol. Set to `'http'` for HTTP/1 or `'http2'` for HTTP/2.
-- `BCN_ENV`: Specifies the environment. Set to `'dev'` for development (uses self-signed certificates) or another value (e.g., `'prod'`) for production (loads real certificates).
-
-If `BCN_HTTP_TYPE` is invalid, an error is thrown.
-
-### Generating Self-Signed Certificates for Development
-
-For local development on Mac or Linux, use OpenSSL to generate self-signed certificates. Place the generated `server.key` and `server.crt` files in the `dev-certs` folder.
-
-```sh
-# Navigate to your project directory
-cd /path/to/your/project
-
-# Create the dev-certs folder if it doesn't exist
-mkdir -p dev-certs
-
-# Generate a private key and self-signed certificate (valid for 365 days)
-openssl req -x509 -newkey rsa:2048 -nodes -keyout dev-certs/server.key -out dev-certs/server.crt -days 365 -subj "/C=US/ST=YourState/L=YourCity/O=YourOrg/CN=localhost"
-```
-
-This command generates:
-
-- `server.key`: The private key.
-- `server.crt`: The self-signed certificate.
-
-**Note**: Self-signed certificates will trigger browser warnings. They are suitable only for development.
-
-### Using Certificates in Production
-
-In production, do not use self-signed certificates. Instead, obtain SSL/TLS certificates from a trusted Certificate Authority (CA) provided by your hosting platform, such as AWS Certificate Manager (ACM), Let's Encrypt, or similar services.
-
-For example, with AWS:
-
-1. Use AWS ACM to request or import a certificate.
-2. If deploying on EC2 or a similar setup, export the certificate and key, then set environment variables like `SSL_KEY_PATH` and `SSL_CERT_PATH` to their file paths.
-3. In your code (as shown in the production branch), load them via `fs.readFileSync(process.env.SSL_KEY_PATH)` and `fs.readFileSync(process.env.SSL_CERT_PATH)`.
 
 </font>
 

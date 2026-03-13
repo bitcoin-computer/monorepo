@@ -1,13 +1,14 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { HiRefresh } from 'react-icons/hi'
 import { FiCopy, FiCheck } from 'react-icons/fi'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Transaction } from '@bitcoin-computer/lib'
 import { Auth } from './Auth'
 import { Drawer } from './Drawer'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
 import { getEnv, bigIntToStr } from './common/utils'
 import { VITE_WITHDRAW_MOD_SPEC } from './common/modSpecs'
+import { address as bAddress } from '@bitcoin-computer/nakamotojs'
 
 const Loader = () => (
   <span role="status">
@@ -136,6 +137,88 @@ const Withdraw = ({
   )
 }
 
+const WithdrawNew = ({ computer }: { computer: Computer }) => {
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const [withdrawing, setWithdrawing] = useState<boolean>(false)
+
+  const handleWithdraw = async () => {
+    try {
+      setWithdrawing(true)
+      const utxos = await computer.getUTXOs({
+        address: computer.getAddress(),
+        verbosity: 1,
+        isObject: false,
+      })
+
+      // TODO provide the actual mods
+      const paymentUtxos = await computer.getUTXOs({
+        publicKey: computer.getPublicKey(),
+        mod: '51d2f057cf16f04d2539dcda8e45db235b666d483c4ecc7bd0cec7df3a645d48:0',
+        verbosity: 1,
+      })
+      const buyPaymentUtxos = await computer.getUTXOs({
+        publicKey: computer.getPublicKey(),
+        mod: '7821501c926ce7b3e86b849b2840caefb35c445912363e018b4e7e1b33d8d4a6:0',
+        verbosity: 1,
+      })
+
+      const tx = new Transaction()
+
+      let totalInput = 0n
+
+      // balance
+      utxos.forEach((utxo) => {
+        const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse()
+        tx.addInput(prevHash, Number(utxo.rev.split(':')[1]))
+        totalInput += utxo.satoshis // Sum satoshis for output calculation
+      })
+
+      paymentUtxos.forEach((utxo) => {
+        const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse()
+        tx.addInput(prevHash, Number(utxo.rev.split(':')[1]))
+        totalInput += utxo.satoshis // Sum satoshis for output calculation
+      })
+
+      buyPaymentUtxos.forEach((utxo) => {
+        const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse()
+        tx.addInput(prevHash, Number(utxo.rev.split(':')[1]))
+        totalInput += utxo.satoshis // Sum satoshis for output calculation
+      })
+
+      // @ts-expect-error types are not defined correctly as of now
+      const networkObj = computer.getNetworkObject(computer.getChain(), computer.getNetwork())
+
+      const changeScript = bAddress.toOutputScript(computer.getAddress().toString(), networkObj)
+      tx.addOutput(changeScript, totalInput)
+      const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx))
+      const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')))
+      tx.updateOutput(0, { value: totalInput - estimatedFees - minDust })
+      await computer.sign(tx)
+      await computer.broadcast(tx)
+    } catch (err) {
+      if (err instanceof Error) showSnackBar(`Something went wrong, ${err.message}`, false)
+    } finally {
+      setWithdrawing(false)
+    }
+  }
+
+  return (
+    <div className="my-2">
+      <h6 className="text-lg font-bold dark:text-white">Withdraw to Address</h6>
+      <div className="flex items-center space-x-2 my-2">
+        <button
+          type="button"
+          onClick={handleWithdraw}
+          disabled={withdrawing}
+          className="px-3 py-1.5 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+        >
+          {withdrawing ? <Loader /> : <>Withdraw</>}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 const Balance = ({
   computer,
   modSpecs,
@@ -211,6 +294,7 @@ const Balance = ({
         onFund={fund}
       />
       <Address computer={computer} />
+      <WithdrawNew computer={computer} />
       {!!VITE_WITHDRAW_MOD_SPEC && (
         <Withdraw
           computer={computer}
