@@ -87,6 +87,7 @@ const ExecuteExpression = (props: {
         fund: true,
         sign: true,
       })
+      if (!tx) throw new Error('Transition does not update the state, no transaction created')
       const txId = await computer.broadcast(tx)
       setFunctionResult({ _rev: `${txId}:0`, type: 'objects', res: effect.res })
       setModalTitle('Success!')

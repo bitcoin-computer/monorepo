@@ -118,7 +118,7 @@ describe('TxWrapper', () => {
       })
 
       it('a is now owned by Bob', async () => {
-        const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
+        const { env } = await bob.sync(txId)
         const aSwapped = env.a
         expect(aSwapped).to.matchPattern({
           ...meta,
@@ -130,7 +130,7 @@ describe('TxWrapper', () => {
       })
 
       it('b is now owned by Alice', async () => {
-        const { env } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
+        const { env } = await alice.sync(txId)
         const bSwapped = env.b
         expect(bSwapped).to.matchPattern({
           ...meta,
@@ -228,7 +228,7 @@ describe('TxWrapper', () => {
       })
 
       it('a is now owned by Bob', async () => {
-        const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
+        const { env } = await bob.sync(txId)
         const aSwapped = env.a
         expect(aSwapped).to.matchPattern({
           ...meta,
@@ -240,7 +240,7 @@ describe('TxWrapper', () => {
       })
 
       it('b is now owned by Alice', async () => {
-        const { env } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
+        const { env } = await alice.sync(txId)
         const bSwapped = env.b
         expect(bSwapped).to.matchPattern({
           ...meta,

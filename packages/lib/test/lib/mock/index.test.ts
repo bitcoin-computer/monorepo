@@ -1,4 +1,4 @@
-import { Computer, Mock } from '@bitcoin-computer/lib'
+import { Computer, Mock, Contract } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from '../../utils/index.js'
 
 // A smart contract
@@ -42,11 +42,12 @@ describe('Mock', async () => {
     const a = await computer.new(A, [])
 
     // Update smart object
-    const { tx: incTx } = await computer.encode({
+    const { tx } = await computer.encode({
       exp: `a.inc()`,
       env: { a: a._rev },
       mocks: { a: m },
     })
+    const incTx = tx!
     await computer.broadcast(incTx)
   })
 
@@ -55,7 +56,7 @@ describe('Mock', async () => {
     const m = new M()
 
     // Create transaction in update off-chain object
-    const { tx: incTx } = await computer.encode({
+    const { tx } = await computer.encode({
       // The update expression
       exp: `a.inc()`,
 
@@ -69,6 +70,7 @@ describe('Mock', async () => {
       fund: false,
       sign: false,
     })
+    const incTx = tx!
 
     // Create on-chain object
     const a = await computer.new(A, [])

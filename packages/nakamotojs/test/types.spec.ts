@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+import { strict as assert } from 'assert';
 import { describe, it } from 'mocha';
 import * as types from '../src/types.js';
-// @ts-ignore
+// @ts-expect-error Could not find a declaration file for module 'typeforce'.
 import typeforce from 'typeforce';
 import { Buffer } from 'buffer';
 

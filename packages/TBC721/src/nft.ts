@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract, SmartContract } from '@bitcoin-computer/lib'
 
 export class NFT extends Contract {
   name: string
@@ -43,7 +43,7 @@ export class NftHelper implements ITBC721 {
     return this.mod
   }
 
-  async mint(name: string, artist: string, url: string): Promise<NFT> {
+  async mint(name: string, artist: string, url: string): Promise<SmartContract<typeof NFT>> {
     const { tx, effect } = (await this.computer.encode({
       exp: `new NFT("${name}", "${artist}", "${url}")`,
       mod: this.mod,

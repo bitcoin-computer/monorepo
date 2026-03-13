@@ -6,6 +6,7 @@ import { HiPlusCircle } from 'react-icons/hi'
 import { VITE_CHAT_MOD_SPEC } from '../constants/modSpecs'
 import { ChatSc } from '../contracts/chat'
 import { Chat } from './Chat'
+import { SmartContract } from '@bitcoin-computer/lib'
 
 const newChatModal = 'new-chat-modal'
 
@@ -30,7 +31,7 @@ function CreateNewChat() {
       if (typeof effect.res === 'object' && !Array.isArray(effect.res)) {
         showLoader(false)
         showSnackBar('You created a new chat', true)
-        navigate(`/chats/${effect.res?._id as string}`)
+        navigate(`/chats/${(effect.res as SmartContract<typeof ChatSc>)._id}`)
         window.location.reload()
       }
     } catch (err) {
@@ -101,7 +102,24 @@ export function Chats() {
   }
 
   useEffect(() => {
-    fetchChats()
+    const fetch = async () => {
+      const result = await computer.getOUTXOs({ mod: VITE_CHAT_MOD_SPEC, publicKey })
+      const chatsPromise: Promise<ChatSc>[] = []
+      result.forEach((rev: string) => {
+        chatsPromise.push(computer.sync<typeof ChatSc>(rev))
+      })
+
+      Promise.allSettled(chatsPromise).then((results) => {
+        const successfulChats = results
+          .filter(
+            (result): result is PromiseFulfilledResult<ChatSc> => result.status === 'fulfilled',
+          )
+          .map((result) => result.value)
+
+        setChats(successfulChats)
+      })
+    }
+    fetch()
   }, [computer, location, navigate])
 
   useEffect(() => {

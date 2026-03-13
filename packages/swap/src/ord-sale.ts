@@ -1,7 +1,6 @@
- 
 import { NFT } from '@bitcoin-computer/TBC721'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
-import { Transaction } from '@bitcoin-computer/lib'
+import { Transaction, Contract } from '@bitcoin-computer/lib'
 import { Buffer } from 'buffer'
 import { Payment, PaymentMock } from './payment.js'
 
@@ -37,7 +36,7 @@ export class OrdSaleHelper {
       exp: `OrdSale.exec(b1, b2, nft, payment)`,
       env: { b1: b1Mock._rev, b2: b2Mock._rev, nft: nft._rev, payment: paymentMock._rev },
       mocks: { b1: b1Mock, b2: b2Mock, payment: paymentMock },
-       
+
       sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
       inputIndex: 2,
       fund: false,

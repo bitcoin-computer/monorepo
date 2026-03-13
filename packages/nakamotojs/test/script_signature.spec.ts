@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+import { strict as assert } from 'assert';
 import { describe, it } from 'mocha';
 import { signature as bscriptSig } from '../src/script.js';
 import signature from './fixtures/signature.js';

@@ -1,5 +1,5 @@
 import * as chai from 'chai'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import chaiMatchPattern from 'chai-match-pattern'
 import { NFT, NftHelper } from '../src/nft.js'
@@ -47,7 +47,7 @@ describe('NFT', () => {
   let initialRoot: string
 
   describe('Using NFTs without an helper class', () => {
-    let nft: NFT
+    let nft: SmartContract<typeof NFT>
 
     describe('Minting an NFT', () => {
       const sender = new Computer({ url, chain, network })
@@ -69,20 +69,20 @@ describe('NFT', () => {
         initialId = nft._id
         initialRev = nft._rev
         initialRoot = nft._root
-      
+
         // The nft is returned when syncing against it's revision
         expect(await sender.sync(nft._rev)).deep.eq(nft)
-      
+
         // Transferring an NFT'
         const receiver = new Computer({ url, chain, network })
 
         // Sender transfers the NFT to receiver
         await nft.transfer(receiver.getPublicKey())
         expect(nft).to.matchPattern({ name: 'Test', artist, url: imageUrl, ...meta })
-      
+
         // The id does not change
         expect(initialId).eq(nft._id)
-      
+
         // The revision is updated
         expect(initialRev).not.eq(nft._rev)
 
@@ -91,7 +91,7 @@ describe('NFT', () => {
 
         // The _owners are updated to receiver's public key
         expect(nft._owners).deep.eq([receiver.getPublicKey()])
-      
+
         // Syncing to the NFT's revision returns an object that is equal to the NFT
         expect(await receiver.sync(nft._rev)).deep.eq(nft)
       })
@@ -102,7 +102,7 @@ describe('NFT', () => {
     const computer = new Computer({ url, chain, network })
 
     let nftHelper: NftHelper
-    let nft: NFT
+    let nft: SmartContract<typeof NFT>
 
     before(async () => {
       await computer.faucet(1e8)

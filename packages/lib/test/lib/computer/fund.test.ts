@@ -31,8 +31,8 @@ describe('fund', () => {
     })
 
     // Fund, sign and broadcast transaction
-    await computer.fund(tx)
-    await computer.sign(tx)
-    await computer.broadcast(tx)
+    await computer.fund(tx!)
+    await computer.sign(tx!)
+    await computer.broadcast(tx!)
   })
 })

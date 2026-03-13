@@ -78,7 +78,7 @@ describe('Sale', () => {
       await buyer.fund(saleTx)
       await buyer.sign(saleTx)
       await buyer.broadcast(saleTx)
-      const { env } = (await buyer.sync(saleTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      const { env } = await buyer.sync(saleTx.getId())
       const { nft: n, payment: p } = env
 
       expect(p._satoshis).eq(BigInt(1e8))
@@ -125,7 +125,7 @@ describe('Sale', () => {
       await sleep(3000)
 
       // Bob reads the updated state from the blockchain
-      const { env } = (await bob.sync(finalTx.getId())) as { env: { o: any; p: Payment } }
+      const { env } = await bob.sync(finalTx.getId())
       const { o, p } = env
 
       expect(p._satoshis).eq(nftPrice)

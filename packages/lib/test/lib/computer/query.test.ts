@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('query', () => {
@@ -29,10 +29,10 @@ describe('query', () => {
 
     // Encode on-chain object and create it by broadcasting the transaction
     const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
 
     // Increment on-chain object
-    counter = effect.res as unknown as Counter
+    counter = effect.res as SmartContract<typeof Counter>
     await counter.inc()
   })
 

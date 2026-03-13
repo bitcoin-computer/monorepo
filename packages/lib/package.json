@@ -47,7 +47,8 @@
   "main": "dist/bc-lib.main.es.mjs",
   "module": "dist/bc-lib.main.es.mjs",
   "browser": "dist/bc-lib.browser.min.mjs",
-  "types": "./index.d.ts",
+  "types": "./types/src/index.d.ts",
+  "typings": "./types/src/index.d.ts",
   "files": [
     "LICENSE.md",
     "LEGAL.md",

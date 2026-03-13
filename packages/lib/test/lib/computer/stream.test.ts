@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { crypto } from '@bitcoin-computer/nakamotojs'
 import { chain, expect, network, url } from '../../utils/index.js'
 
@@ -150,7 +150,7 @@ describe('stream', () => {
     const mod = await computer.deploy(`export ${Counter}`)
 
     const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
     const expectedEvents = 2 // at least 2 (unconfirmed) updates
 
     close = await computer.streamTXOs({ mod }, ({ rev, hex }) => {
@@ -216,7 +216,7 @@ describe('stream', () => {
       env: { a: counterA._rev, b: counterB._rev },
       mod,
     })
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
 
     await new Promise<void>((resolve, reject) => {
       let retryCount = 0
@@ -280,7 +280,7 @@ describe('stream', () => {
     const mod = await computer.deploy(`export ${Counter}`)
 
     const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
     const expectedEvents = 2
     const exp = '__bc__.inc()'
 
@@ -478,7 +478,7 @@ describe('stream', () => {
     let eventCount = 0
     const mod = await computer.deploy(`export ${Counter}`)
     const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
     const exp = '__bc__.wrong()'
     close = await computer.streamTXOs({ exp, mod }, () => {
       eventCount += 1 // Should not trigger

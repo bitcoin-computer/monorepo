@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('decode', () => {
@@ -21,7 +21,7 @@ describe('decode', () => {
     const { tx } = await computer.encode(transition)
 
     // Decode transaction back into transition
-    const decoded = await computer.decode(tx)
+    const decoded = await computer.decode(tx!)
     expect(decoded).to.deep.equal(transition)
   })
 
@@ -42,10 +42,10 @@ describe('decode', () => {
 
     // Encode the transition to a transaction
     const { tx } = await computer.encode(transition)
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
 
     // Decode transaction back into transition
-    const decoded = await computer.decode(tx.getId())
+    const decoded = await computer.decode(tx!.getId())
     expect(decoded).to.deep.equal(transition)
   })
 })

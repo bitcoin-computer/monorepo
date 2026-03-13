@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 
 export class ChessChallengeTxWrapper extends Contract {
   chessGameTxHex!: string
@@ -37,6 +37,7 @@ export class ChessChallengeTxWrapperHelper {
       mod: this.mod,
       exclude: ins,
     })
+    if (!tx) throw new Error('Could not create ChessChallengeTxWrapper')
     return this.computer.broadcast(tx)
   }
 }

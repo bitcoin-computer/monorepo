@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('encodeNew', async () => {
@@ -17,14 +17,14 @@ describe('encodeNew', async () => {
     })
 
     // Decode transaction
-    expect(await computer.decode(tx)).to.deep.eq({
+    expect(await computer.decode(tx!)).to.deep.eq({
       exp: `${C} new C()`,
       env: {},
       mod: undefined,
     })
 
     // Broadcast the tx to create the on-chain object
-    const txId = await computer.broadcast(tx)
+    const txId = await computer.broadcast(tx!)
 
     // Synchronizing to the transaction id always returns the effect
     expect(await computer.sync(txId)).deep.eq(effect)

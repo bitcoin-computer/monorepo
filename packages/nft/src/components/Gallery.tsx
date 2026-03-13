@@ -40,7 +40,7 @@ function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const synced: NFT = (await computer.sync(rev)) as NFT
+        const synced = await computer.sync<typeof NFT>(rev)
         setNft(synced)
       } catch (err) {
         if (err instanceof Error) setMsgError(`Error: ${err.message}`)

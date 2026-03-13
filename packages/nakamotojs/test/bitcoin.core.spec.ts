@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+import { strict as assert } from 'assert';
 // @ts-ignore
 import base58 from 'bs58';
 import { describe, it } from 'mocha';
