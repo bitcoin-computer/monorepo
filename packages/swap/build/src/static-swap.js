@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class StaticSwap extends Contract {
     static exec(a, b) {
         const [ownerA] = a._owners;

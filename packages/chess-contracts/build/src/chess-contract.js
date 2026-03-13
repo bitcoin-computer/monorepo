@@ -1,4 +1,4 @@
-import { Transaction } from '@bitcoin-computer/lib';
+import { Contract, Transaction } from '@bitcoin-computer/lib';
 import { address, bufferUtils, networks, payments, script as bscript, } from '@bitcoin-computer/nakamotojs';
 import { Buffer } from 'buffer';
 import { ECPairFactory } from 'ecpair';
@@ -121,6 +121,8 @@ export class ChessContractHelper {
             fund: false,
             sign: false,
         });
+        if (!tx)
+            throw new Error('Could not create ChessContract');
         // Fund with this.satoshis / 2
         const chain = this.computer.getChain();
         const network = this.computer.getNetwork();
@@ -174,7 +176,7 @@ export class ChessContractHelper {
                 publicKey: this.computer.getPublicKey(),
             });
             if (userRev) {
-                const userObj = (await this.computer.sync(userRev));
+                const userObj = await this.computer.sync(userRev);
                 const gameId = chessContract._id;
                 if (!userObj.games.includes(gameId)) {
                     await userObj.addGame(gameId);

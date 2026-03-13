@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class ChessChallengeTxWrapper extends Contract {
     constructor(chessGameTxHex, publicKeyB) {
         super({
@@ -23,6 +24,8 @@ export class ChessChallengeTxWrapperHelper {
             mod: this.mod,
             exclude: ins,
         });
+        if (!tx)
+            throw new Error('Could not create ChessChallengeTxWrapper');
         return this.computer.broadcast(tx);
     }
 }

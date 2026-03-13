@@ -1,4 +1,4 @@
-import { Transaction } from '@bitcoin-computer/lib';
+import { Transaction, Contract } from '@bitcoin-computer/lib';
 export class TxWrapper extends Contract {
     constructor(owner, url, txHex) {
         super({ _owners: [owner], txHex });
@@ -28,7 +28,7 @@ export class TxWrapperHelper {
         });
     }
     async addSaleTx(txWrapperTxId, tx) {
-        const { res: txWrapper } = (await this.computer.sync(txWrapperTxId));
+        const { res: txWrapper } = await this.computer.sync(txWrapperTxId);
         return this.computer.encode({
             exp: `txWrapper.addSaleTx("${tx.serialize()}")`,
             exclude: tx.getInRevs(),
