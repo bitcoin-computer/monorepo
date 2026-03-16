@@ -135,7 +135,7 @@ Returns the first revision in the lineage of the given revision, i.e., the origi
 first(rev: string): Promise<string>
 ```
 
-#### `last`
+#### `latest`
 
 Returns the most recent revision derived from the provided revision, following the chain of updates.
 

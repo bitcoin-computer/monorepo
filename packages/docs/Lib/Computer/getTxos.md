@@ -67,7 +67,7 @@ An array of either revision strings or rows from the database Output table, depe
 
 ## Description
 
-The `getTXOs` function retrieves transaction outputs (TXOs) from the database based on customizable query parameters. It supports filtering by attributes such as address, satoshi amount, script assembly (ASM), smart object status, ownership via public key, and more. Results can be returned in two formats depending on the `verbosity` level: an array of revision strings (for `verbosity: 0`) or an array of detailed `DbOutput` objects (for `verbosity: 1`).
+The `getTXOs` function retrieves transaction outputs (TXOs) from the database based on customizable query parameters. It supports filtering by attributes such as address, satoshis, script assembly (ASM), smart object status, ownership via public key, and more. Results can be returned in two formats depending on the `verbosity` level: an array of revision strings (for `verbosity: 0`) or an array of detailed `DbOutput` objects (for `verbosity: 1`).
 
 ### Key Column Details
 
