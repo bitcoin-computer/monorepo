@@ -609,4 +609,4 @@ declare class Computer {
   first(rev: string): Promise<string>
 }
 
-export { Computer, Contract, Mock, Transaction }
+export { Computer, Contract, Mock, Transaction, InnerComputer }

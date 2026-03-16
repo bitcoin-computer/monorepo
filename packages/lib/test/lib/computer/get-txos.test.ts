@@ -193,12 +193,13 @@ describe('getTXOs', () => {
       expect(txos).to.include(c4._rev)
     })
 
-    it('Should get TXOs by mod both for the object direct inheritance abd token transfers', async () => {
+    it('Should get TXOs by mod both for the object direct inheritance and token transfers', async () => {
       const m = await computer.deploy(`export ${Token}`)
       const t = await computer.new(Token, [computer.getPublicKey(), 100n], m)
       const computer2 = new Computer({ chain, network, url })
       const newToken: Token = await t.transfer(computer2.getPublicKey(), 40n)
-      
+
+      await sleep(500)
       const txos = await computer.getTXOs({ mod: m })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(t._id)

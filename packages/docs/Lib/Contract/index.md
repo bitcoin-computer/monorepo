@@ -182,3 +182,7 @@ Loads a module from a given module specifier.
 ```ts
 load(location: string): Promise<ModuleExportsNamespace>
 ```
+
+### Examples
+
+:::code source="../../../lib/test/contract.test.ts" :::
