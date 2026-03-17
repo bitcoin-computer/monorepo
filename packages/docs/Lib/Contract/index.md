@@ -164,10 +164,10 @@ sync(rev: string): Promise<any>
 
 ### `decode`
 
-Parses a Bitcoin transaction or a transaction ID and returns its metadata if it is a Bitcoin Computer transaction.
+Parses a transaction ID and returns its metadata if it is a Bitcoin Computer transaction.
 
 ```ts
-decode(tx: NakamotoJS.Transaction | string) =>
+decode(txId: string) =>
   Promise<{
     exp: string
     env?: { [s: string]: string }
