@@ -137,7 +137,7 @@ describe('Contract', () => {
     expect(last).to.eq(latest)
   })
 
-  it('Should getTXOS with default verbosity 0 and verbosity 1', async () => {
+  it('Should getTXOS with default verbosity 0, and verbosity 1', async () => {
     class A extends Contract {
       n!: number
       constructor() {
@@ -176,39 +176,6 @@ describe('Contract', () => {
     const revsVerbose = await c2.getSatoshisByPubKey(comp.getPublicKey())
     expect(revsVerbose.length).to.be.greaterThan(0)
     expect(typeof revsVerbose[0]).to.eq('bigint')
-  })
-
-  it('Should getTXOS with verbosity 1', async () => {
-    class A extends Contract {
-      n!: number
-      constructor() {
-        super({ n: 0 })
-      }
-
-      inc() {
-        this.n += 1
-      }
-    }
-    class Query extends Contract {
-      constructor() {
-        super({})
-      }
-      async getTxosByPubKey(pubKey: string): Promise<string[]> {
-        return computer.getTXOs({ publicKey: pubKey })
-      }
-    }
-    const comp = new Computer({ chain, network, url })
-    await comp.faucet(1e8)
-    const c1 = await comp.new(A, [])
-    await c1.inc()
-
-    const c2 = await comp.new(Query, [])
-    const revs = await c2.getTxosByPubKey(comp.getPublicKey())
-    expect(revs.length).to.be.greaterThan(0)
-    expect(revs).includes(c1._id)
-
-    // Given that c2._rev is updated in the last call, should not include it
-    expect(revs.some((r) => r.includes(c2._rev))).to.be.false
   })
 
   it('Should sync inside of a contract method', async () => {
@@ -330,5 +297,60 @@ describe('Contract', () => {
     const c2 = await computer2.new(Query, [])
     const balance1 = await c2.getBalance(computer1.getAddress())
     expect(balance1 - 300000000n < 0n).to.be.true
+  })
+
+  it('Should decode a transaction id inside of a contract method', async () => {
+    class A extends Contract {
+      n!: number
+      constructor() {
+        super({ n: 0 })
+      }
+
+      inc() {
+        this.n += 1
+      }
+    }
+    class Query extends Contract {
+      constructor() {
+        super({})
+      }
+      async decodeTxId(txId: string): Promise<string> {
+        const decoded = await computer.decode(txId)
+        return decoded.exp
+      }
+    }
+
+    const computer1 = new Computer({ chain, network, url })
+    await computer1.faucet(3e8)
+
+    const c1 = await computer1.new(A, [])
+    await c1.inc()
+
+    const c2 = await computer1.new(Query, [])
+    const decodedTxId = await c2.decodeTxId(c1._rev.substring(0, 64))
+    expect(decodedTxId).to.eq('__bc__.inc()')
+  })
+
+  it('Should load a module inside of a contract method', async () => {
+    class C extends Contract {}
+    class Query extends Contract {
+      computer!: Computer
+      constructor() {
+        super({})
+      }
+      async loadModule(moduleName: string): Promise<string> {
+        const res = await computer.load(moduleName)
+        return Object.keys(res)[0]
+      }
+    }
+    const computer1 = new Computer({ chain, network, url })
+    await computer1.faucet(3e8)
+
+    const module = `export ${C}`
+    const rev = await computer1.deploy(module)
+
+    const c2 = await computer1.new(Query, [])
+    const loaded = await c2.loadModule(rev)
+    expect(loaded).to.eq('C')
   })
 })
