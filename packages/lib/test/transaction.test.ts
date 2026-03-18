@@ -1,4 +1,4 @@
-import { Contract, Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
+import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from './utils/index.js'
 
 describe('Transaction', () => {

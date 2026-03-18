@@ -1,4 +1,3 @@
-import { Contract } from '@bitcoin-computer/lib';
 export class Swap extends Contract {
     constructor(a, b) {
         super();
