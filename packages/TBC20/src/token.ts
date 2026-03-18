@@ -1,6 +1,3 @@
-import { Computer, Contract } from '@bitcoin-computer/lib'
-
-// eslint-disable-next-line
 type Constructor<T> = new (...args: any[]) => T
 
 export class Token extends Contract {

@@ -41,7 +41,7 @@ describe('Should work with chai', () => {
   it('Should return the utxos of an address', async () => {
     const computer = new Computer(conf)
     const { txId, vout } = await computer.faucet(1e7)
-    expect(await computer.getUtxos()).deep.eq([`${txId}:${vout}`])
+    expect(await computer.getUTXOs()).deep.eq([`${txId}:${vout}`])
   })
 
   it('Should list the txs of a given address', async () => {
@@ -86,7 +86,9 @@ describe('Should work with chai', () => {
     const { txId, vout } = await computer.faucet(1e7)
 
     // Return the utxos
-    expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
+    expect(await new Computer(conf).getUTXOs({ publicKey: computer.getPublicKey() })).deep.eq([
+      `${txId}:${vout}`,
+    ])
 
     // Return the balance
     const balance = await new Computer(conf).getBalance(address)

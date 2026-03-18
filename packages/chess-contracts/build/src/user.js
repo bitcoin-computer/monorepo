@@ -1,4 +1,3 @@
-import { Contract } from '@bitcoin-computer/lib';
 export class User extends Contract {
     constructor(name) {
         super({ name, games: [] });

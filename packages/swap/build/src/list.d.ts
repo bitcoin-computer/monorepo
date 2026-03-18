@@ -1,4 +1,3 @@
-import { Contract } from '@bitcoin-computer/lib';
 export declare class List extends Contract {
     elements: string[];
     constructor();

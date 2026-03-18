@@ -300,7 +300,7 @@ export function Chat({ chatId }: { chatId: string }) {
       showLoader(false)
     } catch {
       showLoader(false)
-      showSnackBar('Not a valid Chat', false)
+      showSnackBar('Not a valid Chat ', false)
     }
   }
 

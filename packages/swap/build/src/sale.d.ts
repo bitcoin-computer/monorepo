@@ -1,5 +1,4 @@
 import { Buffer } from 'buffer'
-import { Contract } from '@bitcoin-computer/lib'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
 export declare class Sale extends Contract {

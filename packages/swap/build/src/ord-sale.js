@@ -1,4 +1,4 @@
-import { Transaction, Contract } from '@bitcoin-computer/lib';
+import { Transaction } from '@bitcoin-computer/lib';
 export class OrdSale extends Contract {
     static exec(b1, b2, n, p) {
         const [ownerT] = n._owners;
