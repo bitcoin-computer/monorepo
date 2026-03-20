@@ -1,0 +1,71 @@
+import { config } from 'dotenv'
+import * as readline from 'node:readline/promises'
+import { readFile, writeFile } from 'fs/promises'
+import { stdin as input, stdout as output } from 'node:process'
+import { Computer } from '@bitcoin-computer/lib'
+import { Pow } from './pow.js'
+import { config as conf } from './config.js' // NEW
+
+config()
+
+const rl = readline.createInterface({ input, output })
+
+const {
+  CHAIN: chain = conf.DEFAULT_CHAIN,
+  NETWORK: network = conf.DEFAULT_NETWORK,
+  URL: url = conf.DEFAULT_URL,
+  MNEMONIC: mnemonic,
+} = process.env
+
+if (network !== 'regtest') {
+  if (!mnemonic) throw new Error('Please set MNEMONIC in the .env file')
+}
+
+const computer = new Computer({ chain, network, mnemonic, url })
+if (network === 'regtest') {
+  await computer.faucet(conf.FAUCET_AMOUNT)
+}
+
+const balance = await computer.db.wallet.getBalance()
+
+console.log(`Chain \x1b[2m${chain}\x1b[0m
+Network \x1b[2m${network}\x1b[0m
+Node Url \x1b[2m${url}\x1b[0m
+Address \x1b[2m${computer.db.wallet.address}\x1b[0m
+Mnemonic \x1b[2m${mnemonic}\x1b[0m
+Balance \x1b[2m${balance.balance} satoshis\x1b[0m`)
+
+const answer = await rl.question('\nDo you want to deploy the contract? \x1b[2m(y/n)\x1b[0m')
+if (answer === 'n') {
+  console.log('\n Aborting...\n')
+} else {
+  console.log('\n * Deploying Pow module...')
+  const powModSpec = await computer.deploy(`export ${Pow}`)
+
+  console.log(' \x1b[2m- Successfully deployed smart contract\x1b[0m')
+
+  const answer2 = await rl.question('\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m')
+  if (answer2 === 'n') {
+    console.log(`
+
+    -----------------
+    ACTION REQUIRED
+    -----------------
+
+    (1) Update the following rows in your .env file.
+
+    POW\x1b[2m=${powModSpec}\x1b[0m
+    (2) Run 'npm start' to start the application.
+    `)
+  } else {
+    const file = '.env'
+    const lines = (await readFile(file, 'utf-8')).split('\n')
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith('POW')) lines[i] = `POW=${powModSpec}`
+    }
+    await writeFile(file, lines.join('\n'), 'utf-8')
+    console.log(' \x1b[2m- Successfully updated .env file\x1b[0m')
+  }
+}
+
+rl.close()
