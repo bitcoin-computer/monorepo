@@ -1,4 +1,3 @@
-import { Contract } from '@bitcoin-computer/lib';
 export class Election extends Contract {
     constructor({ proposalMod, tokenRoot, description }) {
         super({ proposalMod, tokenRoot, description });

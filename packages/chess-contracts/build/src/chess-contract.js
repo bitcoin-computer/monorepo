@@ -1,4 +1,4 @@
-import { Contract, Transaction } from '@bitcoin-computer/lib';
+import { Transaction } from '@bitcoin-computer/lib';
 import { address, bufferUtils, networks, payments, script as bscript, } from '@bitcoin-computer/nakamotojs';
 import { Buffer } from 'buffer';
 import { ECPairFactory } from 'ecpair';

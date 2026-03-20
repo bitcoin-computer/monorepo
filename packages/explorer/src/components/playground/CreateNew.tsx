@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
 import { IoMdRemoveCircleOutline } from 'react-icons/io'
-import { Computer, Contract } from '@bitcoin-computer/lib'
+import { Computer } from '@bitcoin-computer/lib'
 import { UtilsContext } from '@bitcoin-computer/components'
 import { TypeSelectionDropdown } from '../TypeSelectionDropdown'
 import { getErrorMessage, getValueForType, isValidRev, sleep } from '../../utils'

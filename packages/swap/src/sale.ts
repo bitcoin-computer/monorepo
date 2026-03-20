@@ -1,5 +1,5 @@
 import { Buffer } from 'buffer'
-import { Transaction, Contract } from '@bitcoin-computer/lib'
+import { Transaction } from '@bitcoin-computer/lib'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
 

@@ -24,9 +24,34 @@ const computer = new Computer({
 
 ### Common Issues
 
-#### `Cannot define property <property name>
+#### `Cannot define property <property name> ` error
 
-Set `"useDefineForClassFields": false` in your `tsconfig.json`.
+This error occurs when TypeScript emits `Object.defineProperty` calls for class fields (e.g. `n: number`), but the library's security proxy blocks them to prevent direct property assignment outside methods. To resolve this, you can disable the `useDefineForClassFields` option in your `tsconfig.json` file.
+
+```json
+{
+  "compilerOptions": {
+    "useDefineForClassFields": false
+    // other options...
+  }
+}
+```
+
+#### `Cannot set property <property name> directly` error
+
+This error is thrown when you try to set a property of a smart contract object directly, instead of through a method. To fix this, ensure that you are only updating properties of smart contract objects through their methods.
+
+If you are using vite, or similar bundler, you may also need to disable minification in your build configuration, as minification can interfere with the library's security proxy and cause this error to be thrown even when properties are being set through methods.
+
+```js
+// vite.config.js
+export default defineConfig({
+  // other options...
+  build: {
+    minify: false,
+  },
+})
+```
 
 #### `min relay fee not met` error
 
@@ -36,6 +61,8 @@ This error is thrown by the Bitcoin node. This error occurs when the transaction
 
 This error is thrown by the Bitcoin node. This error indicates that the transaction is missing an input or the input has already been spent. To fix this, ensure that all inputs are valid and not previously used in another transaction.
 
-#### `Cannot call a function on a smart object that is pointed to` error
+#### `txns-mempool-conflict` error
 
-When one on chain object `a` is the property of another on chain object `b`, then, you cannot directly call a function on `b`. To update `b`, you have to call a function on `a` that modifies it's property `b`.
+This error is thrown by the Bitcoin node. This error indicates that the transaction conflicts with another transaction in the mempool. For example, if two transactions try to spend the same input, only one of them can be accepted by the mempool.
+
+The reasons could be timing issues. In this case, add a delay between broadcasting multiple transactions. Another common reason is when you are building a transaction that you are not broadcasting immediately, and in the meantime another transaction that spends the same input is broadcast.

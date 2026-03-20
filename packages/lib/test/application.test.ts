@@ -1,13 +1,6 @@
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import {
-  Computer,
-  Contract,
-  Transaction,
-  Mock,
-  SmartContract,
-  TxIdString,
-} from '@bitcoin-computer/lib'
+import { Computer, Transaction, Mock, SmartContract, TxIdString } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from './utils/index.js'
 
 chai.use(chaiMatchPattern)

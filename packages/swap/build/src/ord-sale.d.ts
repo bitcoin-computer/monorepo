@@ -1,6 +1,5 @@
 import { NFT } from '@bitcoin-computer/TBC721';
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
-import { Contract } from '@bitcoin-computer/lib';
 import { Buffer } from 'buffer';
 import { Payment, PaymentMock } from './payment.js';
 export declare class OrdSale extends Contract {

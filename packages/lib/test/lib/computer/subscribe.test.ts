@@ -1,4 +1,4 @@
-import { Computer, Contract } from '@bitcoin-computer/lib'
+import { Computer } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('subscribe', () => {
