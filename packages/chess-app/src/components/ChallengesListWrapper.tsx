@@ -21,7 +21,7 @@ export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
     const challengeSyncPromises: Promise<ChessChallengeTxWrapper>[] = []
 
     challengeRevs.forEach((rev) => {
-      challengeSyncPromises.push(computer.sync(rev) as Promise<ChessChallengeTxWrapper>)
+      challengeSyncPromises.push(computer.sync<typeof ChessChallengeTxWrapper>(rev))
     })
 
     const challengesList = await Promise.all(challengeSyncPromises)

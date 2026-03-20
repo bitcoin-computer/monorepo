@@ -6,7 +6,7 @@ import {
   bigIntToStr,
   sleep,
 } from '@bitcoin-computer/components'
-import { Computer, Transaction } from '@bitcoin-computer/lib'
+import { Computer, SmartContract, Transaction } from '@bitcoin-computer/lib'
 import {
   ChessContract,
   ChessContractHelper,
@@ -28,7 +28,7 @@ export function StartGameModalContent({
   accepted,
 }: {
   serialized: string
-  game: ChessContract
+  game: SmartContract<typeof ChessContract>
   computer: Computer
   copied: boolean
   setCopied: React.Dispatch<React.SetStateAction<boolean>>
@@ -182,7 +182,7 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
         const latestRev = await computer.latest(challengeId)
         if (!latestRev) throw new Error('Challenge not found')
 
-        const challengeObj = (await computer.sync(latestRev)) as ChessChallengeTxWrapper
+        const challengeObj = await computer.sync<typeof ChessChallengeTxWrapper>(latestRev)
         setAccepted(challengeObj.accepted)
         setUserChallenge(challengeObj)
         const serializedTx = challengeObj.chessGameTxHex

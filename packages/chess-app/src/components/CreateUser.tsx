@@ -37,7 +37,7 @@ export function CreateUserModalContent({
       const userHelper = new UserHelper({ computer, mod: VITE_CHESS_USER_MOD_SPEC })
       const txId = await userHelper.createUser(userName)
       const rev = await computer.latest(txId + ':0')
-      const user = (await computer.sync(rev)) as User
+      const user = await computer.sync<typeof User>(rev)
       setUser(user)
       setUserTxId(txId)
       setTitle('Account created successfully!')
