@@ -1,6 +1,7 @@
 import { ChessContract, Chess as ChessLib } from '@bitcoin-computer/chess-contracts'
+import { SmartContract } from '@bitcoin-computer/lib'
 
-export function getGameState(chessContract: ChessContract): string {
+export function getGameState(chessContract: SmartContract<typeof ChessContract>): string {
   if (!chessContract) return 'In Progress'
 
   const chessLib = new ChessLib(chessContract.fen)
