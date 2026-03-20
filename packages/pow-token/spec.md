@@ -1,4 +1,14 @@
-# Specification
+# Specification Draft
+
+## Introduction
+
+The Meta Token is a utility token built on the Bitcoin Computer platform. One Meta Token consists of $10^8$ mitoshi. It is initially deployed in Bitcoin block $G$ and issued in epochs of exactly $m = 2016$ blocks. Each epoch $n$ issues either $S(n)$ mitoshi — the sum of Bitcoin block subsidies over the corresponding virtual-height interval starting at height 0 — or zero mitoshi. This preserves Bitcoin’s 21-million hard cap, halving cadence, and asymptotic scarcity.
+
+Participants earn usage scores equal to their proportional share of protocol fees paid in valid (non-claim) transactions during the epoch’s eligibility window. To receive an allocation, a public key must submit exactly one claim transaction in that window (zero or multiple claims result in full disqualification).
+
+Allocations are determined by floor-proportional division followed by Sainte-Laguë (Webster) remainder distribution. All rules are deterministic and fully verifiable by light clients from the Bitcoin longest chain alone.
+
+## Definition
 
 Bitcoins _initial subsidy_ $I$ is $50 \times 10^8 = 5000000000$ satoshi, one difficulty adjustment period $m$ is $2016$ blocks, and its _halving interval_ $H$ is $210000$ blocks. For any block index $n \geq 0$, the block subsidy for block $n$ is:
 
@@ -395,7 +405,7 @@ static async parseRecipient(claim: any): Promise<PublicKey> {
     const decoded = await computer.decode?.(claim._id.split(":")[0]);
     const exp = decoded?.exp || "";
     // Handles both `new Claim(epoch)` and `new Claim(epoch, recipient)` patterns
-    const match = exp.match(/new Claim\s*\(\s*\d+[^,]*,\s*["']?([a-f0-9A-Fx]+)["']?/i);
+    const match = exp.match(/new Claim\s*$\s*\d+[^,]*,\s*["']?([a-f0-9A-Fx]+)["']?/i);
     if (match && match[1]) return match[1] as PublicKey;
   } catch {}
 
@@ -526,3 +536,18 @@ Consider additive reputation weight from prior epochs (decaying and bounded leng
 ## Optimize Usage Metric
 
 Optimize the usage scoring metric definition for U_P(n) to reduce the incentive for low-value transaction spam while better rewarding meaningful Bitcoin Computer platform activity.
+
+## Design Team Allocation
+
+For example
+
+- 2%-5% per block
+- assigning blocks without claims to team
+- etc
+
+## Improve Efficiency
+
+For example
+
+- try to reduce the number of http requests (explore JSON-RPC batching)
+- configure $m$
