@@ -164,7 +164,7 @@ export function StartGameModalContent({
 
 export function StartGameModal({ challengeId }: { challengeId: string }) {
   const computer = useContext(ComputerContext)
-  const [game, setGame] = useState<ChessContract | null>(null)
+  const [game, setGame] = useState<SmartContract<typeof ChessContract> | null>(null)
   const [copied, setCopied] = useState(false)
   const [link, setLink] = useState('')
   const [serialized, setSerialized] = useState('')
@@ -191,7 +191,7 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
         const tx = Transaction.deserialize(serializedTx)
         const { effect } = await computer.encode(tx.onChainMetaData as never)
         const { res } = effect
-        const gameData = res as unknown as ChessContract
+        const gameData = res as SmartContract<typeof ChessContract>
         setGame(gameData)
 
         // Show modal only after data is fetched
