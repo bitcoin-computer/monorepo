@@ -24,7 +24,7 @@ import { NewGameModal, newGameModal } from './NewGame'
 import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
 import { ChallengeListWrapper } from './ChallengesListWrapper'
-import { Computer, SmartContract } from '@bitcoin-computer/lib'
+import { Computer, precise, SmartContract } from '@bitcoin-computer/lib'
 import { GamesListWrapper } from './GamesListWrapper'
 
 const winnerModal = 'winner-modal'
@@ -220,7 +220,7 @@ export function ChessBoard() {
         setChessContract(chessContract)
         setGame(new ChessLib(chessContract.fen))
         const walletBalance = await computer.getBalance()
-        setBalance(walletBalance.balance as unknown as bigint)
+        setBalance(walletBalance.balance as bigint)
       }
     } catch (error) {
       console.error('Error fetching contract:', error)
@@ -266,7 +266,7 @@ export function ChessBoard() {
           setGame(new ChessLib(cc.fen))
           setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
           const walletBalance = await computer.getBalance()
-          setBalance(walletBalance.balance as unknown as bigint)
+          setBalance(walletBalance.balance as bigint)
         }
       } catch (error) {
         console.log(error)
@@ -434,11 +434,9 @@ export function ChessBoard() {
         showSnackBar('Not a valid chess contract', false)
         return
       }
-      const signedRedeemTx = await signRedeemTx(
-        computer,
-        chessContract,
-        chessContract?.winnerTxWrapper as unknown as SmartContract<typeof WinnerTxWrapper>,
-      )
+      const { winnerTxWrapper } = chessContract
+      precise<typeof WinnerTxWrapper>(winnerTxWrapper)
+      const signedRedeemTx = await signRedeemTx(computer, chessContract, winnerTxWrapper)
       const finalTxId = await computer.broadcast(signedRedeemTx)
       setPaymentReleased(true)
       showSnackBar(`You lost the game, fund released. Transaction: ${finalTxId}`, true)

@@ -88,9 +88,11 @@ export type LiftedInstanceProperties<T extends Class> = Readonly<{
 export type SmartContract<T extends Class = Class> = Compute<Exact<LiftedInstanceProperties<T> & Contract>> & {
     readonly constructor: LiftedContract<T>;
 };
-export type LiftedContract<T extends Class = Class> = Compute<SmartContract<T> & LiftedStatics<T>>;
+export type LiftedConstructorParams<T extends Class> = LiftedParameters<ConstructorParameters<T>, T>;
+export type LiftedContract<T extends Class = Class> = Compute<SmartContract<T> & LiftedStatics<T>> & (new (...args: LiftedConstructorParams<T>) => SmartContract<T>) & (new (...args: any[]) => SmartContract<T>);
 export declare function lifted<C extends Class>(target: C): LiftedContract<C>;
 export declare function lifted<C extends Class>(target: SmartContract<C>): LiftedContract<C>;
+export declare function precise<T extends Class>(value: SmartContract<any>): asserts value is SmartContract<T>;
 export type SmartValue = JsonPrimitive | readonly SmartValue[] | SmartContract;
 export type Env<T = SmartContract> = Record<string, T | null>;
 export type EvaluatedEffect = {
