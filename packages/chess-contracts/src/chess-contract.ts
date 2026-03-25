@@ -243,7 +243,8 @@ export class ChessContractHelper {
     await this.validateUser()
     const decoded = await this.computer.decode(tx)
     const { effect } = await this.computer.encode(decoded)
-    const { res: chessContract } = effect as unknown as { res: ChessContract }
+    const { res } = effect
+    const chessContract = res as SmartContract<typeof ChessContract>
 
     this.satoshis = chessContract.payment._satoshis
     this.nameW = chessContract.nameW

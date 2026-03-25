@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import { crypto } from '@bitcoin-computer/nakamotojs'
 import { chain, expect, network, url } from '../../utils/index.js'
 import type { Contract } from '@bitcoin-computer/lib/contract-env'
@@ -163,7 +163,7 @@ describe('stream', () => {
     })
 
     // Increment on-chain object
-    const counter = effect.res as unknown as Counter
+    const counter = effect.res as SmartContract<typeof Counter>
     await counter.inc()
     await counter.inc()
 
@@ -293,7 +293,7 @@ describe('stream', () => {
       eventCount += 1
     })
 
-    const counter = effect.res as unknown as Counter
+    const counter = effect.res as SmartContract<typeof Counter>
     await counter.inc()
     await counter.inc()
 
@@ -486,7 +486,7 @@ describe('stream', () => {
       eventCount += 1 // Should not trigger
     })
 
-    const counter = effect.res as unknown as Counter
+    const counter = effect.res as SmartContract<typeof Counter>
     await counter.inc()
 
     await new Promise<void>((resolve, reject) => {
