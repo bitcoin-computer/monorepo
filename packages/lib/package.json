@@ -42,6 +42,16 @@
         "import": "./dist/bc-lib.browser.min.mjs"
       },
       "default": "./dist/bc-lib.main.es.mjs"
+    },
+    "./contract-env": {
+      "types": "./types/src/contract-env.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "contract-env": [
+        "./types/src/contract-env.d.ts"
+      ]
     }
   },
   "main": "dist/bc-lib.main.es.mjs",

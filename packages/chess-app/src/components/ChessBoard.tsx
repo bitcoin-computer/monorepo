@@ -352,7 +352,7 @@ export function ChessBoard() {
     if (!chessContract) throw new Error('Chess contract is not defined.')
     const chessHelper = ChessContractHelper.fromContract(
       computer,
-      chessContract,
+      chessContract as ChessContract,
       VITE_CHESS_GAME_MOD_SPEC,
       VITE_CHESS_USER_MOD_SPEC,
     )

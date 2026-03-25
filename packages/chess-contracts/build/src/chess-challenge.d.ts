@@ -1,4 +1,6 @@
 import { Computer } from '@bitcoin-computer/lib';
+import type { Contract } from '@bitcoin-computer/lib/contract-env';
+declare const Contract: Contract;
 export declare class ChessChallengeTxWrapper extends Contract {
     chessGameTxHex: string;
     accepted: boolean;
@@ -14,3 +16,4 @@ export declare class ChessChallengeTxWrapperHelper {
     });
     createChessChallengeTxWrapper(chessGameTxHex: string, publicKeyB: string, ins: string[]): Promise<string>;
 }
+export {};

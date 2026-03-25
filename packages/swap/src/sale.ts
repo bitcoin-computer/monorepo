@@ -2,6 +2,8 @@ import { Buffer } from 'buffer'
 import { Transaction } from '@bitcoin-computer/lib'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
+import type { Contract } from '@bitcoin-computer/lib/contract-env'
+declare const Contract: Contract
 
 const sighashType = Transaction.SIGHASH_SINGLE | Transaction.SIGHASH_ANYONECANPAY
 

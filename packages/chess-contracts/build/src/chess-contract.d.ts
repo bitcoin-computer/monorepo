@@ -3,6 +3,8 @@ import { networks } from '@bitcoin-computer/nakamotojs'
 import { Buffer } from 'buffer'
 import { ECPairInterface } from 'ecpair'
 import { BIP32Interface } from 'bip32'
+import type { Contract } from '@bitcoin-computer/lib/contract-env'
+declare const Contract: Contract
 export declare const NotEnoughFundError = 'Not enough funds to create chess game.'
 type PaymentType = {
   satoshis: bigint
@@ -30,7 +32,7 @@ export declare class ChessContract extends Contract {
   sans: string[]
   fen: string
   payment: Payment
-  winnerTxWrapper: WinnerTxWrapper
+  winnerTxWrapper: SmartContract<typeof WinnerTxWrapper>
   constructor(
     satoshis: bigint,
     nameW: string,
@@ -73,7 +75,7 @@ export declare class ChessContractHelper {
   isInitialized(): this is Required<ChessContractHelper>
   static fromContract(
     computer: Computer,
-    game: SmartContract<typeof ChessContract>,
+    game: ChessContract,
     mod?: string,
     userMod?: string,
   ): ChessContractHelper
@@ -117,6 +119,6 @@ export declare class ChessContractHelper {
 export declare const signRedeemTx: (
   computer: Computer,
   chessContract: SmartContract<typeof ChessContract>,
-  txWrapper: SmartContract<typeof WinnerTxWrapper>,
+  txWrapper: WinnerTxWrapper,
 ) => Promise<Transaction>
 export {}

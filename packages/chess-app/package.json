@@ -18,7 +18,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "types": "tsc --noEmit"
   },
   "dependencies": {
     "@bitcoin-computer/chess-contracts": "^0.26.0-beta.0",

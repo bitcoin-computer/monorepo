@@ -1,6 +1,6 @@
-import { Election, Vote } from '../src/dao-contract.js';
 import { expect } from 'chai';
 import { Computer } from '@bitcoin-computer/lib';
+import { Election, Vote } from '../src/dao-contract.js';
 import { Token } from '@bitcoin-computer/TBC20';
 const url = 'http://localhost:1031';
 describe('Election', () => {

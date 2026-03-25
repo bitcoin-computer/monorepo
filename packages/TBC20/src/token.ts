@@ -1,3 +1,6 @@
+import type { Contract } from '@bitcoin-computer/lib/contract-env'
+declare const Contract: Contract
+
 type Constructor<T> = new (...args: any[]) => T
 
 export class Token extends Contract {

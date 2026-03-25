@@ -1,6 +1,8 @@
 /* eslint max-classes-per-file: ["error", 2] */
 
 import { Transaction } from '@bitcoin-computer/lib'
+import type { Contract } from '@bitcoin-computer/lib/contract-env'
+declare const Contract: Contract
 
 export class TxWrapper extends Contract {
   txHex: string
