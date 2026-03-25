@@ -1,5 +1,7 @@
 import { Token } from '@bitcoin-computer/TBC20';
 import { SmartContract } from '@bitcoin-computer/lib';
+import type { Contract } from '@bitcoin-computer/lib/contract-env';
+declare const Contract: Contract;
 type ElectionType = {
     proposalMod: string;
     tokenRoot: string;

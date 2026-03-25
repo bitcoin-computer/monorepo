@@ -1,4 +1,6 @@
 import { NFT } from '@bitcoin-computer/TBC721'
+import type { Contract } from '@bitcoin-computer/lib/contract-env'
+declare const Contract: Contract
 
 export class Swappable extends Contract {
   name: string

@@ -1,4 +1,6 @@
 import { Computer } from '@bitcoin-computer/lib'
+import type { Contract } from '@bitcoin-computer/lib/contract-env'
+declare const Contract: Contract
 
 export class ChessChallengeTxWrapper extends Contract {
   chessRev!: string

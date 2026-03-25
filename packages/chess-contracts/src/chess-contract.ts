@@ -1,5 +1,7 @@
 import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
 import { User } from './user.js'
+import type { Contract } from '@bitcoin-computer/lib/contract-env'
+declare const Contract: Contract
 
 export class ChessContract extends Contract {
   wagerAmount!: bigint

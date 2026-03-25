@@ -1,3 +1,6 @@
+import type { Contract } from '@bitcoin-computer/lib/contract-env'
+declare const Contract: Contract
+
 export class Counter extends Contract {
   count!: number
   constructor() {

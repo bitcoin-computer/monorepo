@@ -3,6 +3,8 @@ import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Transaction } from '@bitcoin-computer/lib'
 import { Buffer } from 'buffer'
 import { Payment, PaymentMock } from './payment.js'
+import type { Contract } from '@bitcoin-computer/lib/contract-env'
+declare const Contract: Contract
 
 export class OrdSale extends Contract {
   static exec(b1: Payment, b2: Payment, n: NFT, p: Payment) {
