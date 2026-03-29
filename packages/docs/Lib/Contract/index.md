@@ -86,34 +86,16 @@ Definition
 Given two identical blockchain states and two identical Bitcoin Computer Node states, a contract method invoked with the same parameters must always return the same result.
 ```
 
+To warrant this determinism, the functions will throw an error if they are called with invalid arguments, such as malformed revisions/transactionIds, a revision identifier that does not correspond to a Bitcoin Computer revision or a transaction ID that does not correspond to a Bitcoin Computer transaction.
+
 ### Available Functions
 
 These functions are:
 
-#### `getTXOs`
-
-Returns the unspent transaction outputs (UTXOs) that match a given parameter. Common use cases:
-
-- Retrieve TXOs belonging to a specific address.
-- Retrieve TXOs associated with a particular module specifier.
-
-```ts
-getTXOs(query: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
-getTXOs(query: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
-getTXOs(query: GetTXOsQuery): Promise<string[] | DbOutput[]>
-```
-
-#### `getBalance`
-
-Retrieves the balance of a specified address.
-
-```ts
-getBalance(address: string): Promise<Balance>
-```
-
 #### `prev`
 
-Returns the immediate previous revision of the provided revision identifier.
+Returns the immediate previous revision of the provided revision identifier, or undefined if there is no immediate previous object.
+If the provided revision identifier is not valid or does not correspond to a Bitcoin Computer revision, the full execution is invalidated and an error is thrown.
 
 ```ts
 prev(rev: string): Promise<string | undefined>
@@ -122,6 +104,7 @@ prev(rev: string): Promise<string | undefined>
 #### `next`
 
 Returns the immediate next revision that follows the provided revision identifier, if any.
+If the provided revision identifier is not valid, does not correspond to a Bitcoin Computer revision, or there is no next object, the full execution is invalidated and an error is thrown.
 
 ```ts
 next(rev: string): Promise<string | undefined>
@@ -130,33 +113,25 @@ next(rev: string): Promise<string | undefined>
 #### `first`
 
 Returns the first revision in the lineage of the given revision, i.e., the original revision from which it was derived.
+If the provided revision identifier is not valid or does not correspond to a Bitcoin Computer revision, the full execution is invalidated and an error is thrown.
 
 ```ts
 first(rev: string): Promise<string>
 ```
 
-#### `last`
-
-Returns the most recent revision derived from the provided revision, following the chain of updates.
-
-```ts
-latest(rev: string): Promise<string>
-```
-
 #### `getAncestors`
 
-Returns the ancestry of a transaction or revision, describing how it was derived.
-
-- When called with low verbosity, it returns an array of ancestor transaction IDs.
-- With higher verbosity, it returns a Map of { txId → rawHex } pairs containing full transaction data.
+Returns the ancestry of a transaction identifier, describing how it was derived.
+If there is no ancestor, returns an empty array.
+If the provided transaction identifier is malformed, the full execution is invalidated and an error is thrown.
 
 ```ts
-getAncestors(location: string, verbosity?: number): Promise<string[] | Map<string, string>>
+getAncestors(location: string): Promise<string[] | Map<string, string>>
 ```
 
 ### `sync`
 
-The `sync` the latest state for a revision, and returns the object representation of that state.
+The `sync` the latest state for a revision, and returns the object representation of that state. If the provided revision identifier is not valid or does not correspond to a Bitcoin Computer revision, the full execution is invalidated and an error is thrown.
 
 ```ts
 sync(rev: string): Promise<any>
@@ -164,10 +139,10 @@ sync(rev: string): Promise<any>
 
 ### `decode`
 
-Parses a Bitcoin transaction or a transaction ID and returns its metadata if it is a Bitcoin Computer transaction.
+Parses a Bitcoin transaction ID and returns its metadata if it is a Bitcoin Computer transaction. If the provided transaction identifier is malformed or does not correspond to a Bitcoin Computer transaction, the full execution is invalidated and an error is thrown.
 
 ```ts
-decode(tx: NakamotoJS.Transaction | string) =>
+decode(txId: string) =>
   Promise<{
     exp: string
     env?: { [s: string]: string }
@@ -177,7 +152,7 @@ decode(tx: NakamotoJS.Transaction | string) =>
 
 ### `load`
 
-Loads a module from a given module specifier.
+Loads a module from a given module specifier. If the provided module specifier is malformed or does not correspond to a valid Bitcoin Computer module, the full execution is invalidated and an error is thrown.
 
 ```ts
 load(location: string): Promise<ModuleExportsNamespace>
