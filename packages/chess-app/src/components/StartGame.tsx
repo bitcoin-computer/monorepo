@@ -55,7 +55,7 @@ export function StartGameModalContent({
       const tx = Transaction.deserialize(serialized)
       const chessContractHelper = ChessContractHelper.fromContract(
         computer,
-        game as ChessContract,
+        game,
         VITE_CHESS_GAME_MOD_SPEC,
         VITE_CHESS_USER_MOD_SPEC,
       )
