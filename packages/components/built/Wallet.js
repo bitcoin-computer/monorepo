@@ -42,62 +42,46 @@ const Withdraw = ({ computer, paymentsWrapper: payments, onSuccess, }) => {
     };
     return (_jsxs("div", { className: "my-2", children: [_jsx("h6", { className: "text-lg font-bold dark:text-white", children: "Withdraw to Address" }), _jsxs("div", { className: "flex items-center space-x-2 my-2", children: [_jsx("input", { type: "text", value: address, onChange: (e) => setAddress(e.target.value), className: "block w-full p-2 text-gray-900 border border-gray-300 rounded-lg bg-gray-50 text-xs focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500", placeholder: "Recipient Address" }), _jsx("button", { type: "button", onClick: handleWithdraw, disabled: withdrawing, className: "px-3 py-1.5 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700", children: withdrawing ? _jsx(Loader, {}) : _jsx(_Fragment, { children: "Withdraw" }) })] })] }));
 };
-const WithdrawNew = ({ computer }) => {
+const WithdrawNew = ({ computer, modSpecs }) => {
     const { showSnackBar } = UtilsContext.useUtilsComponents();
     const [withdrawing, setWithdrawing] = useState(false);
     const handleWithdraw = async () => {
         try {
             setWithdrawing(true);
+            // 1. Fetch normal (balance) UTXOs
             const utxos = await computer.getUTXOs({
                 address: computer.getAddress(),
                 verbosity: 1,
                 isObject: false,
             });
-            const paymentUtxos = await computer.getUTXOs({
+            const modUtxosArrays = await Promise.all(modSpecs.map((mod) => computer.getUTXOs({
                 publicKey: computer.getPublicKey(),
-                mod: '51d2f057cf16f04d2539dcda8e45db235b666d483c4ecc7bd0cec7df3a645d48:0',
+                mod,
                 verbosity: 1,
-            });
-            const buyPaymentUtxos = await computer.getUTXOs({
-                publicKey: computer.getPublicKey(),
-                mod: '7821501c926ce7b3e86b849b2840caefb35c445912363e018b4e7e1b33d8d4a6:0',
-                verbosity: 1,
-            });
-            console.log({ utxos, paymentUtxos, buyPaymentUtxos });
+            })));
+            const allModUtxos = modUtxosArrays.flat();
             const tx = new Transaction();
             let totalInput = 0n;
-            // balance
+            // Add inputs from normal balance UTXOs
             utxos.forEach((utxo) => {
                 const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse();
                 tx.addInput(prevHash, Number(utxo.rev.split(':')[1]));
-                totalInput += utxo.satoshis; // Sum satoshis for output calculation
+                totalInput += utxo.satoshis;
             });
-            paymentUtxos.forEach((utxo) => {
+            allModUtxos.forEach((utxo) => {
                 const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse();
                 tx.addInput(prevHash, Number(utxo.rev.split(':')[1]));
-                totalInput += utxo.satoshis; // Sum satoshis for output calculation
+                totalInput += utxo.satoshis;
             });
-            buyPaymentUtxos.forEach((utxo) => {
-                const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse();
-                tx.addInput(prevHash, Number(utxo.rev.split(':')[1]));
-                totalInput += utxo.satoshis; // Sum satoshis for output calculation
-            });
-            console.log({ totalInput });
             // @ts-expect-error types are not defined correctly as of now
             const networkObj = computer.getNetworkObject(computer.getChain(), computer.getNetwork());
-            console.log({ networkObj, chain: computer.getChain(), network: computer.getNetwork() });
             const changeScript = bAddress.toOutputScript(computer.getAddress().toString(), networkObj);
             tx.addOutput(changeScript, totalInput);
             const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx));
-            console.log({ estimatedFees });
             const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')));
-            console.log({ minDust });
             tx.updateOutput(0, { value: totalInput - estimatedFees - minDust });
-            console.log({ before: await computer.getBalance() });
-            console.log(tx);
             await computer.sign(tx);
             await computer.broadcast(tx);
-            console.log({ after: await computer.getBalance() });
         }
         catch (err) {
             if (err instanceof Error)
@@ -160,7 +144,7 @@ const Balance = ({ computer, modSpecs, isOpen, }) => {
         if (isOpen)
             refreshBalance();
     }, [isOpen, refreshBalance]);
-    return (_jsxs(_Fragment, { children: [_jsx(BalanceDisplay, { balance: balance, chain: computer.getChain(), network: computer.getNetwork(), isRegtest: computer.getNetwork() === 'regtest', isRefreshing: isRefreshing, onRefresh: refreshBalance, onFund: fund }), _jsx(Address, { computer: computer }), _jsx(WithdrawNew, { computer: computer }), !!VITE_WITHDRAW_MOD_SPEC && (_jsx(Withdraw, { computer: computer, paymentsWrapper: paymentsWrapper, onSuccess: refreshBalance }))] }));
+    return (_jsxs(_Fragment, { children: [_jsx(BalanceDisplay, { balance: balance, chain: computer.getChain(), network: computer.getNetwork(), isRegtest: computer.getNetwork() === 'regtest', isRefreshing: isRefreshing, onRefresh: refreshBalance, onFund: fund }), _jsx(Address, { computer: computer }), _jsx(WithdrawNew, { computer: computer, modSpecs: modSpecs }), !!VITE_WITHDRAW_MOD_SPEC && (_jsx(Withdraw, { computer: computer, paymentsWrapper: paymentsWrapper, onSuccess: refreshBalance }))] }));
 };
 const CopyableField = ({ label, value }) => {
     const [copied, setCopied] = useState(false);

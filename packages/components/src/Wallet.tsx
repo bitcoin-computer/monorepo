@@ -137,52 +137,47 @@ const Withdraw = ({
   )
 }
 
-const WithdrawNew = ({ computer }: { computer: Computer }) => {
+const WithdrawNew = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[] }) => {
   const { showSnackBar } = UtilsContext.useUtilsComponents()
   const [withdrawing, setWithdrawing] = useState<boolean>(false)
 
   const handleWithdraw = async () => {
     try {
       setWithdrawing(true)
+
+      // 1. Fetch normal (balance) UTXOs
       const utxos = await computer.getUTXOs({
         address: computer.getAddress(),
         verbosity: 1,
         isObject: false,
       })
 
-      // TODO provide the actual mods
-      const paymentUtxos = await computer.getUTXOs({
-        publicKey: computer.getPublicKey(),
-        mod: '51d2f057cf16f04d2539dcda8e45db235b666d483c4ecc7bd0cec7df3a645d48:0',
-        verbosity: 1,
-      })
-      const buyPaymentUtxos = await computer.getUTXOs({
-        publicKey: computer.getPublicKey(),
-        mod: '7821501c926ce7b3e86b849b2840caefb35c445912363e018b4e7e1b33d8d4a6:0',
-        verbosity: 1,
-      })
+      const modUtxosArrays = await Promise.all(
+        modSpecs.map((mod) =>
+          computer.getUTXOs({
+            publicKey: computer.getPublicKey(),
+            mod,
+            verbosity: 1,
+          }),
+        ),
+      )
+      const allModUtxos = modUtxosArrays.flat()
 
       const tx = new Transaction()
 
       let totalInput = 0n
 
-      // balance
+      // Add inputs from normal balance UTXOs
       utxos.forEach((utxo) => {
         const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse()
         tx.addInput(prevHash, Number(utxo.rev.split(':')[1]))
-        totalInput += utxo.satoshis // Sum satoshis for output calculation
+        totalInput += utxo.satoshis
       })
 
-      paymentUtxos.forEach((utxo) => {
+      allModUtxos.forEach((utxo) => {
         const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse()
         tx.addInput(prevHash, Number(utxo.rev.split(':')[1]))
-        totalInput += utxo.satoshis // Sum satoshis for output calculation
-      })
-
-      buyPaymentUtxos.forEach((utxo) => {
-        const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse()
-        tx.addInput(prevHash, Number(utxo.rev.split(':')[1]))
-        totalInput += utxo.satoshis // Sum satoshis for output calculation
+        totalInput += utxo.satoshis
       })
 
       // @ts-expect-error types are not defined correctly as of now
@@ -294,7 +289,7 @@ const Balance = ({
         onFund={fund}
       />
       <Address computer={computer} />
-      <WithdrawNew computer={computer} />
+      <WithdrawNew computer={computer} modSpecs={modSpecs} />
       {!!VITE_WITHDRAW_MOD_SPEC && (
         <Withdraw
           computer={computer}
