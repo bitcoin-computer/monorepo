@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "rootDir": ".",
+    "outDir": "build",
+    "types": ["node", "@bitcoin-computer/lib"],
+    "removeComments": true,
+    "declaration": true
+  },
+  "include": ["src/**/*"]
+}

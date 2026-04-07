@@ -1,3 +1,5 @@
+import { ReconstructedObject, Transaction as CacheTransaction } from './cache.js';
+export type VersionResult = CacheTransaction<ReconstructedObject>;
 export declare class BitcoinComputerError extends Error {
     constructor(message: string);
 }

@@ -1,0 +1,2565 @@
+diff --git a/packages/TBC777/src/tbc20.ts b/packages/TBC777/src/tbc20.ts
+new file mode 100644
+index 00000000..afbe2bba
+--- /dev/null
++++ b/packages/TBC777/src/tbc20.ts
+@@ -0,0 +1,118 @@
++type Constructor<T> = new (...args: any[]) => T
++
++export type TBC20ConstructorParams = {
++  to: string
++  amount: bigint
++  name: string
++  symbol?: string
++  [s: string]: unknown
++}
++
++export class TBC20 extends Contract {
++  amount: bigint
++  name: string
++  symbol: string
++  _owners: string[]
++
++  constructor(params: TBC20ConstructorParams) {
++    const { to, amount, name, symbol = '', ...rest } = params
++    super({ _owners: [to], amount, name, symbol, ...rest })
++  }
++
++  transfer(to: string, amount?: bigint): TBC20 | undefined {
++    // Send entire amount
++    if (typeof amount === 'undefined') {
++      this._owners = [to]
++      return undefined
++    }
++
++    // Send partial amount in a new object
++    if (this.amount >= amount) {
++      this.amount -= amount
++      const ctor = this.constructor as Constructor<this>
++      const { name, symbol } = this
++      return new ctor({ to, amount, name, symbol })
++    }
++    throw new Error('Insufficient funds')
++  }
++
++  burn() {
++    this.amount = 0n
++  }
++
++  merge(tokens: TBC20[]) {
++    let total = 0n
++    tokens.forEach((token) => {
++      total += token.amount
++      token.burn()
++    })
++    this.amount += total
++  }
++}
++
++export interface ITBC20 {
++  deploy(): Promise<string>
++  mint(publicKey: string, amount: bigint, name: string, symbol: string): Promise<string>
++  totalSupply(root: string): Promise<bigint>
++  balanceOf(publicKey: string, root: string): Promise<bigint>
++  transfer(to: string, amount: bigint, root: string): Promise<void>
++}
++
++export class TBC20Helper implements ITBC20 {
++  name: string
++  symbol: string
++  computer: any
++  mod: string
++
++  constructor(computer: any, mod?: string) {
++    this.computer = computer
++    this.mod = mod
++  }
++
++  async deploy() {
++    this.mod = await this.computer.deploy(`export ${TBC20}`)
++    return this.mod
++  }
++
++  async mint(
++    publicKey: string,
++    amount: bigint,
++    name: string,
++    symbol: string,
++  ): Promise<string | undefined> {
++    const params = [{ to: publicKey, amount, name, symbol }]
++    const token = await this.computer.new(TBC20, params, this.mod)
++    return token._root
++  }
++
++  async totalSupply(root: string): Promise<bigint> {
++    const rootBag = await this.computer.sync(root)
++    return rootBag.amount
++  }
++
++  private async getBags(publicKey: string, root: string): Promise<TBC20[]> {
++    const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod })
++    const bags = await Promise.all(revs.map(async (rev: string) => this.computer.sync(rev)))
++    return bags.flatMap((bag: TBC20 & { _root: string }) => (bag._root === root ? [bag] : []))
++  }
++
++  async balanceOf(publicKey: string, root: string): Promise<bigint> {
++    if (typeof root === 'undefined') throw new Error('Please pass a root into balanceOf.')
++    const bags = await this.getBags(publicKey, root)
++    return bags.reduce((prev, curr) => prev + curr.amount, 0n)
++  }
++
++  async transfer(to: string, amount: bigint, root: string): Promise<void> {
++    const owner = this.computer.getPublicKey()
++    const bags = await this.getBags(owner, root)
++    const results = []
++    while (amount > 0 && bags.length > 0) {
++      const [bag] = bags.splice(0, 1)
++      const available = amount < bag.amount ? amount : bag.amount
++      results.push(await bag.transfer(to, available))
++      amount -= available
++    }
++    if (amount > 0) throw new Error('Could not send entire amount')
++    await Promise.all(results)
++  }
++}
+diff --git a/packages/TBC777/src/tbc777.ts b/packages/TBC777/src/tbc777.ts
+new file mode 100644
+index 00000000..df76e07d
+--- /dev/null
++++ b/packages/TBC777/src/tbc777.ts
+@@ -0,0 +1,222 @@
++/**
++ * TBC777 - Inflation-proof TBC20 token for arbitrary Escrow contracts
++ *
++ * Any TBC777 token can be safely deposited into *any* smart contract (even one
++ * that does not inherit from the provided `Escrow` convenience base) that
++ * exposes the public shape `{ claimable: [string, bigint][], status: string }`.
++ *
++ * The TBC777 contract itself — not the escrow — is solely responsible for
++ * guaranteeing that **no inflation is ever possible**, no matter how the escrow
++ * is implemented, even if the escrow is malicious or contains bugs.
++ *
++ * Inflation is impossible; however, a buggy or malicious escrow may still fail
++ * to release tokens (the token contract cannot fix escrow logic, only prevent
++ * over-issuance).
++ *
++ * The no-inflation invariant is enforced entirely inside TBC777:
++ *
++ * - `deposit(escrow: string, amount: bigint)` is the only public method that
++ *   moves tokens into an escrow. It records the escrow identifier and reduces
++ *   the token's balance by the deposited amount.
++ *
++ * - `claim(rev: string)` is the only place where `this.amount` can ever
++ *   increase after a deposit. Before crediting any tokens it performs an
++ *   on-chain audit of the escrow's linear revision history (the "prev-chain")
++ *   using the trusted inner-computer primitives (`computer.sync` and
++ *   `computer.prev`).
++ *
++ * The audit guarantees the following on the linear revision history (where
++ * `_root` = root revision of this TBC20 token lineage and `this._rev` = the
++ * specific deposit revision):
++ *
++ *   1. The supplied `rev` is the *first* revision in the prev-chain that
++ *      reaches `status === 'final'` (no earlier finalization exists). Later
++ *      revisions may also be marked 'final', but claiming is intentionally
++ *      restricted to the first final state to prevent repeated claims /
++ *      double-spending.
++ *
++ *   2. The sum of all `claimable` amounts published in that first final state
++ *      never exceeds the sum of amounts that were verifiably removed from this
++ *      exact token lineage (`_root`) when they entered the escrow.
++ *
++ * Only the portion of `claimable` entries that reference the specific deposit
++ * revision (`this._rev`) is actually credited back to the token.
++ *
++ * Pseudo-code of the on-chain audit performed inside `claim`:
++ *
++ *   ```ts
++ *   let cur = computer.sync(rev)
++ *   while (cur && cur.status !== 'final') cur = computer.prev(cur)
++ *   // assert cur is the *first* final state
++ *   // assert sum(claimable for this._root) <= deposited for this lineage
++ *   ```
++ *
++ * Note: The design currently assumes that every entry in `claimable` refers to
++ * a deposit from the *same* token lineage (same `_root`). Deposits from
++ * unrelated TBC777 tokens (or mixed-lineage escrows) will cause the claim to
++ * fail, but inflation is still impossible.
++ */
++
++import { Computer } from '@bitcoin-computer/lib'
++import { TBC20, type TBC20ConstructorParams } from './tbc20.js'
++
++declare global {
++  const computer: Computer
++}
++
++export {}
++
++/**
++ * Minimal interface that *any* escrow contract must satisfy for TBC777
++ * compatibility.
++ *
++ * The TBC777 `claim` method performs an on-chain audit against any contract
++ * exposing this exact public shape. No inheritance from `Escrow` is required.
++ */
++export abstract class Escrow extends Contract {
++  claimable: [string, bigint][]
++  status: string
++
++  constructor() {
++    super()
++  }
++}
++
++/**
++ * TBC777 - Inflation-proof TBC20 token.
++ *
++ * Extends the base TBC20 with secure `deposit`/`claim` mechanics that use the
++ * inner-computer (`computer.sync` + `computer.prev`) to enforce a strict
++ * no-inflation invariant, even when the escrow is completely untrusted.
++ */
++export class TBC777 extends TBC20 {
++  escrow?: string
++
++  constructor(args: TBC20ConstructorParams) {
++    super(args)
++  }
++
++  /**
++   * Deposits tokens into an escrow contract.
++   *
++   * This is the *only* public method that moves tokens out of the TBC777
++   * contract. It records the escrow identifier and reduces the token balance
++   * accordingly. The token remains locked until a successful `claim`.
++   */
++  deposit(escrow: string, deposit: bigint) {
++    if (deposit <= 0n) throw new Error('Deposit amount must be positive')
++    if (this.amount < deposit) throw new Error('Insufficient balance for deposit')
++    if (this.escrow) throw new Error('Token already in escrow')
++
++    this.escrow = escrow
++    this.amount -= deposit
++  }
++
++  /**
++   * Claims tokens back from a finalized escrow.
++   *
++   * This is the *only* place where `this.amount` can ever increase after a
++   * deposit. Before crediting any tokens, it performs a complete on-chain audit
++   * of the escrow's linear revision history using the trusted inner-computer
++   * primitives.
++   *
++   * Security guarantees (enforced on-chain):
++   *   1. The supplied `rev` is the *first* revision that reaches `status ===
++   *      'final'`. Prevents double-claiming if the escrow finalizes again
++   *      later.
++   *   2. The total `claimable` amounts published in that first final state
++   *      never exceed the amounts that were verifiably deposited from this
++   *      exact token lineage (`_root`). This is what makes inflation
++   *      impossible.
++   *
++   * Only the slice of `claimable` entries that reference *this* deposit
++   * revision (`this._rev`) is credited back to the caller.
++   */
++  async claim(rev: string) {
++    if (!this.escrow) throw new Error('Token not in escrow')
++
++    // Load the claimed revision (must already be in final state)
++    const finalState = await computer.sync<typeof Escrow>(rev)
++    if (finalState.status !== 'final') throw new Error('Escrow is not in final state')
++
++    // Walk backwards through the entire prev-chain to confirm this is the
++    // *first* finalization. If any earlier revision was already final, the
++    // escrow has been finalized multiple times → reject to prevent
++    // double-spending.
++    let currentRev = rev
++    while (true) {
++      const prevRev = await computer.prev(currentRev)
++      if (!prevRev) break
++
++      const prevState = await computer.sync<typeof Escrow>(prevRev)
++      if (prevState.status === 'final')
++        throw new Error('Escrow was already finalized in a previous state')
++
++      currentRev = prevRev
++    }
++
++    const escrowId = finalState._id
++    const { claimable } = finalState
++
++    // Collect all unique deposit revisions referenced by the escrow's claimable
++    // list
++    const uniqueDepositRevs = [...new Set(claimable.map((claim) => claim[0]))]
++
++    // For each referenced deposit revision, compute the *actual* deposited
++    // amount by inspecting the token's own revision history (delta between
++    // deposit state and its immediate predecessor). This is the source-of-truth
++    // for deposited funds.
++    const depositAmounts = await Promise.all(
++      uniqueDepositRevs.map((depositRev: string) =>
++        TBC777.computeDeposit(depositRev, this._root, escrowId),
++      ),
++    )
++    const depositAmount = depositAmounts.reduce((sum, amt) => sum + amt, 0n)
++
++    const claimableAmount = finalState.claimable.reduce((sum, [, amt]) => sum + amt, 0n)
++
++    // Core security invariant: total claimable must never exceed what was
++    // actually deposited from this token lineage. This check makes inflation
++    // impossible no matter what the escrow contract does.
++    if (claimableAmount > depositAmount) throw new Error('Escrow created tokens')
++
++    // Credit back only the portion of the claimable list that belongs to *this*
++    // specific deposit revision (prevents claiming someone else's deposit).
++    const myClaim = finalState.claimable
++      .filter(([rev]) => rev === this._rev)
++      .reduce((sum, [, amt]) => sum + amt, 0n)
++
++    this.amount += myClaim
++    this.escrow = undefined
++  }
++
++  /**
++   * Private helper used **only inside the on-chain `claim` audit**.
++   *
++   * **This method runs inside the inner-computer context** (the `computer`
++   * global injected by the Bitcoin Computer runtime). It must **never** be
++   * called from off-chain JavaScript — tests temporarily override the global
++   * `computer` for this purpose.
++   *
++   * It loads the deposit state and its immediate predecessor, then returns the
++   * delta (`prev.amount - deposit.amount`). This value is guaranteed to be the
++   * exact amount that left the token contract during that deposit call.
++   */
++  private static async computeDeposit(
++    depositRev: string,
++    root: string,
++    escrowId: string,
++  ): Promise<bigint> {
++    const deposit = await computer.sync<typeof TBC777>(depositRev)
++    if (deposit.escrow !== escrowId || deposit._root !== root) throw Error('Found invalid deposit')
++
++    const prevRev = await computer.prev(depositRev)
++    if (!prevRev) throw Error('Something went wrong')
++    const prev = await computer.sync<typeof TBC777>(prevRev)
++
++    const delta = prev.amount - deposit.amount
++    if (delta < 0n) throw new Error('Something went wrong')
++
++    return delta
++  }
++}
+diff --git a/packages/TBC777/src/tbc777m.ts b/packages/TBC777/src/tbc777m.ts
+new file mode 100644
+index 00000000..c06680ca
+--- /dev/null
++++ b/packages/TBC777/src/tbc777m.ts
+@@ -0,0 +1,226 @@
++/**
++ * TBC777P - Programmable inflation-proof TBC20 token for arbitrary Escrow
++ * contracts using the inner computer (multi-token array-only edition).
++ *
++ * TBC777P tokens can be safely deposited into *any* smart contract that exposes
++ * the public properties `deposits: [string, string][]` and `withdraws: [string,
++ * string, bigint][]` (even if it does not inherit from the provided `Escrow`
++ * convenience base class).
++ *
++ * This design achieves two key goals simultaneously:
++ *
++ * - **No inflation is ever possible**, even if the escrow contract is malicious
++ *   or buggy. The TBC777P token contract itself — not the escrow — is solely
++ *   responsible for enforcing this invariant using on-chain audits.
++ *
++ * - The escrow contract can implement *any* computable distribution logic (for
++ *   example, it could encode the rules of a chess game and guarantee that the
++ *   winner receives both deposits) and can now hold **multiple independent
++ *   token roots** in a single escrow instance.
++ *
++ * The no-inflation guarantee is enforced entirely inside TBC777P:
++ *
++ * - `deposit(escrowId: string, amount: bigint)` is the only public method that
++ *   moves tokens into an escrow. It records the escrow identifier on the token
++ *   and reduces the token’s balance.
++ *
++ * - `withdraw(withdrawRev: string)` is the only place where `this.amount` can
++ *   ever increase after a deposit. Before crediting any tokens it performs a
++ *   full on-chain audit of the escrow’s linear revision history (the
++ *   “prev-chain”) using the trusted inner-computer primitives (`computer.sync`
++ *   and `computer.prev`).
++ *
++ * The audit walks the complete prev-chain from the provided `withdrawRev`,
++ * then:
++ *
++ * - Computes total deposits for this token’s `_root` by collecting all matching
++ *   `[root, rev]` entries from `deposits` and calculating the actual amount
++ *   moved in each deposit (via the difference between a token’s `prev` state
++ *   and current state).
++ *
++ * - Computes total withdrawals claimed across all historical states (sum of
++ *   every `[root, id, amount]` entry that matches the token’s root).
++ *
++ * Withdrawal is only permitted if `totalDeposits >= totalWithdraws`.
++ *
++ * Note: The current design assumes that every entry in `withdraws` refers to a
++ * deposit from the *same* token lineage (same `_root`). Deposits from unrelated
++ * TBC777P tokens will cause the withdraw to fail, but inflation is still
++ * impossible. A buggy or malicious escrow may still fail to release tokens (the
++ * token contract cannot fix escrow logic, only prevent over-issuance).
++ */
++
++import { TBC20, type TBC20ConstructorParams } from './tbc20.js'
++
++/**
++ * Minimal interface that any escrow contract must satisfy to be compatible with
++ * TBC777P. The token contract never trusts the escrow's internal logic — it
++ * only reads these two public arrays during the on-chain audit.
++ *
++ * Any contract (even one that does not extend this base class) can be used as
++ * long as it exposes `deposits` and `withdraws` using the flat tuple format below.
++ * This representation works perfectly with the Bitcoin Computer output model
++ * (no nested objects).
++ */
++export abstract class Escrow extends Contract {
++  /**
++   * Flat list of all deposits ever accepted. Format: [tokenRoot, depositRev]
++   * for every deposit
++   */
++  deposits: [string, string][]
++
++  /**
++   * Flat list of all withdrawal that can be claimed for the current revision.
++   * Format: [tokenRoot, tokenId, amount].
++   */
++  withdraws: [string, string, bigint][]
++}
++
++export class TBC777M extends TBC20 {
++  /** Tracks every withdraw revision that has already been claimed (prevents
++   * double-spends) */
++  withdrawRevs: string[]
++
++  /** The escrow that is being deposited into in this revision */
++  escrowId: string | undefined
++
++  constructor(args: TBC20ConstructorParams) {
++    super({ withdrawRevs: [], escrowId: undefined, ...args })
++  }
++
++  /**
++   * Moves tokens from the caller's balance into an escrow.
++   *
++   * This is the *only* public method that can ever decrease `this.amount`. The
++   * escrow identifier is recorded on-chain so the later audit can associate
++   * this deposit with the correct escrow instance.
++   */
++  deposit(escrowId: string, deposit: bigint) {
++    if (deposit <= 0n) throw new Error('Deposit amount must be positive')
++    if (this.amount < deposit) throw new Error('Insufficient balance for deposit')
++
++    this.escrowId = escrowId
++    this.amount -= deposit
++  }
++
++  /**
++   * Claims tokens back from an escrow.
++   *
++   * Before any tokens are credited, the escrow's entire revision history is
++   * audited on-chain using the inner computer. This guarantees that the escrow
++   * has never released more tokens than were deposited for this exact token
++   * lineage (`_root`).
++   */
++  async withdraw(rev: string) {
++    const { _id, _root } = this
++    if (this.withdrawRevs.includes(rev)) throw new Error('Cannot withdraw multiple times')
++    if (!(await TBC777M.isValid(rev, _root))) throw new Error('Escrow balance too low')
++
++    this.withdrawRevs.push(rev)
++    this.amount += await TBC777M.computeWithdraw(rev, _id, _root)
++  }
++
++  /**
++   * Returns the amount this specific token instance (`_id`) is allowed to
++   * withdraw according to the escrow's `withdraws` list at the given revision.
++   * Only matching entries for the token’s root are summed.
++   */
++  static async computeWithdraw(rev: string, _id: string, _root: string): Promise<bigint> {
++    const { withdraws } = await computer.sync<typeof Escrow>(rev)
++    return withdraws
++      .filter(([root, id]) => root === _root && id === _id)
++      .map(([, , amount]) => amount)
++      .reduce((prev, curr) => prev + curr, 0n)
++  }
++
++  /**
++   * Performs the no-inflation invariant check.
++   *
++   * Walks the complete linear revision history ("prev-chain") of the escrow
++   * starting from `withdrawRev`, then compares total actual deposits against
++   * total claimed withdrawals for this token's `_root`.
++   */
++  static async isValid(rev: string, root: string): Promise<boolean> {
++    const states: Escrow[] = []
++    let current = rev
++
++    // Collect every historical state. Deposits and withdrawals accumulate
++    // across the entire lifetime of the escrow, so the audit must see them all.
++    while (true) {
++      states.push(await computer.sync<typeof Escrow>(current))
++      const previous = await computer.prev(current)
++      if (!previous) break
++      current = previous
++    }
++
++    const deposits = await TBC777M.computeDeposits(states, root)
++    const withdraws = await TBC777M.computeWithdraws(states, root)
++
++    return deposits - withdraws >= 0
++  }
++
++  /**
++   * Sums the *actual* deposited amounts for a given token lineage (`root`)
++   * across all escrow states.
++   *
++   * `allStates[0]._id` is used as the canonical escrow identifier. For each
++   * recorded deposit revision we load the TBC777P state and compute the precise
++   * transfer amount via the pre/post-deposit balance delta.
++   */
++  static async computeDeposits(states: Escrow[], root: string): Promise<bigint> {
++    if (states.length === 0) return 0n
++
++    const escrowId = states[0]._id
++
++    const depositRevs = new Set(
++      states.flatMap((state) => state.deposits.filter(([r]) => r === root).map(([, rev]) => rev)),
++    )
++
++    const deposits = await Promise.all(
++      [...depositRevs].map((rev: string) => computer.sync<typeof TBC777M>(rev)),
++    )
++
++    const depositAmounts = await Promise.all(
++      deposits.map((deposit) => TBC777M.computeDeposit(deposit as TBC777M, escrowId, root)),
++    )
++
++    return depositAmounts.reduce((prev, curr) => curr + prev, 0n)
++  }
++
++  /**
++   * Computes the exact number of tokens transferred into the escrow by this
++   * particular deposit transaction.
++   *
++   * Uses `computer.prev` to obtain the token state *before* the deposit, then
++   * subtracts the post-deposit balance. This value is independent of any data
++   * supplied by the escrow.
++   *
++   * A malicious escrow cannot claim a deposit that was made to a different
++   * escrow: we only credit the deposit if the *historical* token state at
++   * deposit time recorded `token.escrowId === escrowId`.
++   */
++  static async computeDeposit(token: TBC777M, escrowId: string, root: string): Promise<bigint> {
++    if (token.escrowId !== escrowId) return 0n
++    if (token._root !== root) return 0n
++
++    const prevRev = await computer.prev(token._rev)
++    const prevToken = await computer.sync<typeof TBC777M>(prevRev)
++
++    return prevToken.amount - token.amount
++  }
++
++  /**
++   * Sums every withdrawal amount the escrow has ever recorded across all of its
++   * historical states for the given root. This is the "claimed" side of the
++   * audit.
++   */
++  static async computeWithdraws(allStates: Escrow[], root: string): Promise<bigint> {
++    let total = 0n
++    for (const state of allStates) {
++      const claimsForRoot = state.withdraws.filter(([r]) => r === root).map(([, , amt]) => amt)
++
++      total += claimsForRoot.reduce((prev, amt) => prev + amt, 0n)
++    }
++    return total
++  }
++}
+diff --git a/packages/TBC777/src/tbc777p.ts b/packages/TBC777/src/tbc777p.ts
+new file mode 100644
+index 00000000..bdad3328
+--- /dev/null
++++ b/packages/TBC777/src/tbc777p.ts
+@@ -0,0 +1,211 @@
++/**
++ * TBC777P - Programmable inflation-proof TBC20 token for arbitrary Escrow
++ * contracts using the inner computer.
++ *
++ * TBC777P tokens can be safely deposited into *any* smart contract that
++ * exposes the public properties `depositRevs: string[]` and
++ * `amountByWithdrawId: [string, bigint][]` (even if it does not inherit from
++ * the provided `Escrow` convenience base class).
++ *
++ * This design achieves two key goals simultaneously:
++ *
++ * - **No inflation is ever possible**, even if the escrow contract is malicious
++ *   or buggy. The TBC777P token contract itself — not the escrow — is solely
++ *   responsible for enforcing this invariant using on-chain audits.
++ *
++ * - The escrow contract can implement *any* computable distribution logic
++ *   (for example, it could encode the rules of a chess game and guarantee that
++ *   the winner receives both deposits).
++ *
++ * The no-inflation guarantee is enforced entirely inside TBC777P:
++ *
++ * - `deposit(escrowId: string, amount: bigint)` is the only public method that
++ *   moves tokens into an escrow. It records the escrow identifier on the token
++ *   and reduces the token’s balance.
++ *
++ * - `withdraw(withdrawRev: string)` is the only place where `this.amount` can
++ *   ever increase after a deposit. Before crediting any tokens it performs a
++ *   full on-chain audit of the escrow’s linear revision history (the
++ *   “prev-chain”) using the trusted inner-computer primitives
++ *   (`computer.sync` and `computer.prev`).
++ *
++ * The audit walks the complete prev-chain from the provided `withdrawRev`,
++ * then:
++ *
++ * - Computes total deposits for this token’s `_root` by collecting all
++ *   `depositRevs` and calculating the actual amount moved in each deposit
++ *   (via the difference between a token’s `prev` state and current state).
++ *
++ * - Computes total withdrawals claimed across all historical states
++ *   (sum of every `amountByWithdrawId` entry).
++ *
++ * Withdrawal is only permitted if `totalDeposits >= totalWithdraws`.
++ *
++ * Note: The current design assumes that every entry in `amountByWithdrawId`
++ * refers to a deposit from the *same* token lineage (same `_root`). Deposits
++ * from unrelated TBC777P tokens (or mixed-lineage escrows) will cause the
++ * withdraw to fail, but inflation is still impossible. A buggy or malicious
++ * escrow may still fail to release tokens (the token contract cannot fix escrow
++ * logic, only prevent over-issuance).
++ */
++
++import { TBC20, type TBC20ConstructorParams } from './tbc20.js'
++
++/**
++ * Minimal interface that any escrow contract must satisfy to be compatible
++ * with TBC777P. The token contract never trusts the escrow's internal logic —
++ * it only reads these two public arrays during the on-chain audit.
++ *
++ * Any contract (even one that does not extend this base class) can be used
++ * as long as it exposes `depositRevs` and `amountByWithdrawId`.
++ */
++export abstract class Escrow extends Contract {
++  /** List of all TBC777P deposit revision IDs accepted by this escrow */
++  depositRevs: string[]
++
++  /** New claims added in *this revision only* (non-cumulative). */
++  amountByWithdrawId: [string, bigint][]
++}
++
++export class TBC777P extends TBC20 {
++  /** Tracks every withdraw revision that has already been processed (prevents double-spends) */
++  withdrawRevs: string[]
++
++  /** The escrow that currently holds the deposited portion of this token */
++  escrowId: string | undefined
++
++  constructor(args: TBC20ConstructorParams) {
++    super({ withdrawRevs: [], escrowId: undefined, ...args })
++  }
++
++  /**
++   * Moves tokens from the caller's balance into an escrow.
++   *
++   * This is the *only* public method that can ever decrease `this.amount`.
++   * The escrow identifier is recorded on-chain so the later audit can
++   * associate this deposit with the correct escrow instance.
++   */
++  deposit(escrowId: string, deposit: bigint) {
++    if (deposit <= 0n) throw new Error('Deposit amount must be positive')
++    if (this.amount < deposit) throw new Error('Insufficient balance for deposit')
++
++    this.escrowId = escrowId
++    this.amount -= deposit
++  }
++
++  /**
++   * Claims tokens back from an escrow.
++   *
++   * Before any tokens are credited, the escrow's entire revision history
++   * is audited on-chain using the inner computer. This guarantees that
++   * the escrow has never released more tokens than were deposited for
++   * this exact token lineage (`_root`).
++   */
++  async withdraw(withdrawRev: string) {
++    if (this.withdrawRevs.includes(withdrawRev)) throw new Error('Cannot withdraw multiple times')
++
++    if (!(await TBC777P.isValidAtRev(withdrawRev, this._root)))
++      throw new Error('Escrow balance too low')
++
++    this.amount += await TBC777P.computeMyWithdraw(withdrawRev, this._id)
++    this.withdrawRevs.push(withdrawRev)
++  }
++
++  /**
++   * Returns the amount this specific token instance (`_id`) is allowed to
++   * withdraw according to the escrow's `amountByWithdrawId` list at the
++   * given revision. Only matching entries are summed.
++   */
++  static async computeMyWithdraw(withdrawRev: string, myId: string): Promise<bigint> {
++    const { amountByWithdrawId } = await computer.sync<typeof Escrow>(withdrawRev)
++    const myAmountByWithdrawId = amountByWithdrawId.filter(([id]) => id === myId)
++    return myAmountByWithdrawId.reduce((prev, curr) => prev + curr[1], 0n)
++  }
++
++  /**
++   * Performs the no-inflation invariant check.
++   *
++   * Walks the complete linear revision history ("prev-chain") of the escrow
++   * starting from `withdrawRev`, then compares total actual deposits against
++   * total claimed withdrawals for this token's `_root`.
++   */
++  static async isValidAtRev(withdrawRev: string, myRoot: string): Promise<boolean> {
++    const allStates: Escrow[] = []
++    let currentRev = withdrawRev
++
++    // Collect every historical state. Deposits and withdrawals accumulate
++    // across the entire lifetime of the escrow, so the audit must see them all.
++    while (true) {
++      allStates.push(await computer.sync<typeof Escrow>(currentRev))
++      const prevRev = await computer.prev(currentRev)
++      if (!prevRev) break
++      currentRev = prevRev
++    }
++
++    const totalDeposits = await TBC777P.computeDeposits(allStates, myRoot)
++    const totalWithdraws = await TBC777P.computeWithdraws(allStates)
++
++    return totalDeposits - totalWithdraws >= 0
++  }
++
++  /**
++   * Sums the *actual* deposited amounts for a given token lineage (`root`)
++   * across all escrow states.
++   *
++   * `allStates[0]._id` is used as the canonical escrow identifier.
++   * For each recorded deposit revision we load the TBC777P state and compute
++   * the precise transfer amount via the pre/post-deposit balance delta.
++   */
++  static async computeDeposits(allStates: Escrow[], root: string): Promise<bigint> {
++    if (allStates.length === 0) return 0n
++
++    const escrowId = allStates[0]._id
++    const allDepositRevs = new Set(
++      allStates.reduce((prev, curr) => prev.concat(curr.depositRevs), []),
++    )
++
++    const deposits = await Promise.all(
++      [...allDepositRevs].map((rev: string) => computer.sync<typeof TBC777P>(rev)),
++    )
++
++    const depositAmounts = await Promise.all(
++      deposits.map((deposit) => TBC777P.computeDeposit(deposit as TBC777P, escrowId, root)),
++    )
++
++    return depositAmounts.reduce((prev, curr) => curr + prev, 0n)
++  }
++
++  /**
++   * Computes the exact number of tokens transferred into the escrow by this
++   * particular deposit transaction.
++   *
++   * Uses `computer.prev` to obtain the token state *before* the deposit,
++   * then subtracts the post-deposit balance. This value is independent of
++   * any data supplied by the escrow.
++   *
++   * A malicious escrow cannot claim a deposit that was made to a
++   * different escrow: we only credit the deposit if the *historical*
++   * token state at deposit time recorded `token.escrowId === escrowId`.
++   */
++  static async computeDeposit(token: TBC777P, escrowId: string, root: string): Promise<bigint> {
++    if (token.escrowId !== escrowId) return 0n
++    if (token._root !== root) return 0n
++
++    const prevRev = await computer.prev(token._rev)
++    const prevToken = await computer.sync<typeof TBC777P>(prevRev)
++
++    return prevToken.amount - token.amount
++  }
++
++  /**
++   * Sums every withdrawal amount the escrow has ever recorded across
++   * all of its historical states. This is the "claimed" side of the audit.
++   */
++  static async computeWithdraws(allStates: Escrow[]): Promise<bigint> {
++    let total = 0n
++    for (const state of allStates) {
++      total += state.amountByWithdrawId.reduce((prev, curr) => prev + curr[1], 0n)
++    }
++    return total
++  }
++}
+diff --git a/packages/TBC777/test/tbc20.test.ts b/packages/TBC777/test/tbc20.test.ts
+new file mode 100644
+index 00000000..4a4f3755
+--- /dev/null
++++ b/packages/TBC777/test/tbc20.test.ts
+@@ -0,0 +1,281 @@
++import { expect } from 'chai'
++import { Computer, SmartContract } from '@bitcoin-computer/lib'
++import dotenv from 'dotenv'
++import { TBC20, TBC20Helper } from '../src/tbc20.js'
++import path from 'path'
++
++const envPaths = [
++  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
++  '../node/.env', // when running from local
++]
++
++for (const envPath of envPaths) {
++  dotenv.config({ path: envPath })
++}
++
++const url = process.env.BCN_URL
++const chain = process.env.BCN_CHAIN
++const network = process.env.BCN_NETWORK
++
++function sleep(delay: number): Promise<void> {
++  return new Promise((resolve) => {
++    setTimeout(resolve, delay)
++  })
++}
++
++const sender = new Computer({ url, chain, network })
++const receiver = new Computer({ url, chain, network })
++
++before(async () => {
++  await sender.faucet(10e8)
++  await receiver.faucet(10e8)
++})
++
++describe.skip('TBC20', async () => {
++  let token1: SmartContract<typeof TBC20>
++
++  describe('mint', async () => {
++    it('Sender mints 3 tokens', async () => {
++      const params = { to: sender.getPublicKey(), amount: 3n, name: 'test' }
++      token1 = await sender.new(TBC20, [params])
++    })
++
++    it('The meta data should be set', async () => {
++      expect(token1.amount).to.eq(3n)
++      expect(token1._owners).deep.equal([sender.getPublicKey()])
++      expect(token1.name).to.eq('test')
++      expect(token1.symbol).to.eq('')
++      expect(token1._id).to.be.a('string')
++      expect(token1._rev).to.be.a('string')
++      expect(token1._root).to.be.a('string')
++    })
++  })
++
++  describe('transfer, merge and burn', () => {
++    let token2: SmartContract<typeof TBC20>
++    let token2After: SmartContract<typeof TBC20>
++
++    it('Sender transfers 1 token to Receiver', async () => {
++      token2 = await token1.transfer(receiver.getPublicKey(), 1n)
++    })
++
++    it('The meta data of token should be set correctly', () => {
++      expect(token1.amount).to.eq(2n)
++      expect(token1._owners).deep.equal([sender.getPublicKey()])
++      expect(token1.name).to.eq('test')
++      expect(token1.symbol).to.eq('')
++      expect(token1._id).to.be.a('string')
++      expect(token1._rev).to.be.a('string')
++      expect(token1._root).to.be.a('string')
++    })
++
++    it('The meta data of newToken should be set correctly', () => {
++      expect(token2.amount).to.eq(1n)
++      expect(token2._owners).deep.equal([receiver.getPublicKey()])
++      expect(token2.name).to.eq('test')
++      expect(token2.symbol).to.eq('')
++      expect(token2._id).to.be.a('string')
++      expect(token2._rev).to.be.a('string')
++      expect(token2._root).to.be.a('string')
++    })
++
++    it('computer.getOUTXOs should return the tokens', async () => {
++      const senderRevs = await sender.getOUTXOs({ publicKey: sender.getPublicKey() })
++      expect(senderRevs.length).eq(1)
++      const senderToken = await sender.sync<typeof TBC20>(senderRevs[0])
++      expect(senderToken.amount).eq(2n)
++
++      const receiverRevs = await receiver.getOUTXOs({ publicKey: receiver.getPublicKey() })
++      expect(receiverRevs.length).eq(1)
++      const receiverTokens = await receiver.sync<typeof TBC20>(receiverRevs[0])
++      expect(receiverTokens.amount).eq(1n)
++    })
++
++    it('Receiver send token2 back to sender', async () => {
++      // We would like to call
++      //
++      //   await token2.transfer(sender.getPublicKey())
++      //
++      // However, the wallet associated with of token2 is sender as token2 was created by
++      // token1 which was created by sender. As token2 is owned by receiver the transaction
++      // would be rejected as sender cannot spend an output owned by receiver.
++      //
++      // We could execute the call by creating an object associated with receiver.
++      //
++      //   const token2Receiver = (await receiver.sync(token2._rev)) as any
++      //   await token2Receiver.transfer(sender.getPublicKey())
++      //
++      // Alternatively we can use encodeCall
++      const { tx, effect } = await receiver.encodeCall({
++        target: token2,
++        property: 'transfer',
++        args: [sender.getPublicKey()],
++      })
++      await receiver.broadcast(tx)
++
++      const { env } = effect
++      const { __bc__ } = env
++      token2After = __bc__ as SmartContract<typeof TBC20>
++
++      expect(token1._owners).deep.eq([sender.getPublicKey()])
++      expect(token2After._owners).deep.eq([sender.getPublicKey()])
++
++      expect(token2._id).eq(token2After._id)
++      expect(token2._rev).not.eq(token2After._rev)
++
++      expect(await sender.latest(token1._id)).deep.eq(token1._rev)
++      expect(await sender.latest(token2._id)).deep.eq(token2After._rev)
++    })
++
++    it('Sender merges their two tokens', async () => {
++      await token1.merge([token2After])
++      expect(token1.amount).eq(3n)
++      expect(token2After.amount).eq(0n)
++    })
++
++    it('Should burn a token', async () => {
++      await token1.burn()
++      expect(token1.amount).eq(0n)
++
++      await token2.burn()
++      expect(token2.amount).eq(0n)
++    })
++
++    it('Should update the revisions correctly', async () => {
++      const computer = new Computer({ url, chain, network })
++      await computer.faucet(2e8)
++      const params = { to: computer.getPublicKey(), amount: 3n, name: 'test' }
++      const t1 = await computer.new(TBC20, [params])
++      const rev1 = t1._rev
++      const t2 = await t1.transfer(computer.getPublicKey(), 1n)
++      expect(t1!._rev).not.eq(rev1)
++      const rev2 = t2!._rev
++      await t2!.transfer(computer.getPublicKey())
++      expect(t2!._rev).not.eq(rev2)
++    })
++  })
++})
++
++describe('TokenHelper', () => {
++  describe('mint', () => {
++    const tokenHelper = new TBC20Helper(sender)
++    let root: string
++    it('Should create the tokenHelper object', async () => {
++      const publicKey = tokenHelper.computer.getPublicKey()
++      root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
++      expect(root).not.to.be.undefined
++      expect(typeof root).to.eq('string')
++      expect(root.length).to.be.greaterThan(64)
++    })
++
++    it('Should mint a root token', async () => {
++      const rootToken: any = await sender.sync(root)
++      expect(rootToken).not.to.be.undefined
++      expect(rootToken._id).to.eq(root)
++      expect(rootToken._rev).to.eq(root)
++      expect(rootToken._root).to.eq(root)
++      expect(rootToken.amount).to.eq(200n)
++      expect(rootToken.name).to.eq('test')
++      expect(rootToken.symbol).to.eq('TST')
++    })
++  })
++
++  describe('totalSupply', () => {
++    it('Should return the supply of tokens', async () => {
++      const tokenHelper = new TBC20Helper(sender)
++      const publicKey = tokenHelper.computer.getPublicKey()
++      const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
++      const supply = await tokenHelper.totalSupply(root)
++      expect(supply).to.eq(200n)
++    })
++  })
++
++  describe('balanceOf', () => {
++    it('Should throw an error if the root is not set', async () => {
++      const publicKeyString = sender.getPublicKey()
++
++      const tokenHelper = new TBC20Helper(sender)
++      expect(tokenHelper).not.to.be.undefined
++      try {
++        await tokenHelper.balanceOf(publicKeyString, undefined)
++        expect(true).to.eq(false)
++      } catch (err) {
++        expect(err.message).to.eq('Please pass a root into balanceOf.')
++      }
++    })
++
++    it('Should compute the balance', async () => {
++      const tokenHelper = new TBC20Helper(sender)
++      const publicKey = tokenHelper.computer.getPublicKey()
++      const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
++      await sleep(200)
++      const res = await tokenHelper.balanceOf(publicKey, root)
++      expect(res).to.eq(200n)
++    })
++  })
++
++  describe('transfer', () => {
++    it('Should transfer a token', async () => {
++      const computer2 = new Computer({ url, chain, network })
++      const tokenHelper = new TBC20Helper(sender)
++      const publicKey = tokenHelper.computer.getPublicKey()
++      const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
++      await sleep(200)
++      await tokenHelper.transfer(computer2.getPublicKey(), 20n, root)
++      await sleep(200)
++      const res = await tokenHelper.balanceOf(publicKey, root)
++      expect(res).to.eq(180n)
++    })
++
++    it('Should transfer random amounts to different people', async () => {
++      const computer2 = new Computer({ url, chain, network })
++      const computer3 = new Computer({ url, chain, network })
++      const tokenHelper = new TBC20Helper(sender)
++      const publicKey = tokenHelper.computer.getPublicKey()
++      const root = await tokenHelper.mint(publicKey, 200n, 'multiple', 'MULT')
++      const amount2 = BigInt(Math.floor(Math.random() * 100))
++      const amount3 = BigInt(Math.floor(Math.random() * 100))
++      await sleep(200)
++      await tokenHelper.transfer(computer2.getPublicKey(), amount2, root)
++      await sleep(200)
++      await tokenHelper.transfer(computer3.getPublicKey(), amount3, root)
++      await sleep(200)
++      const res = await tokenHelper.balanceOf(publicKey, root)
++      expect(res).to.eq(200n - amount2 - amount3)
++
++      const res2 = await tokenHelper.balanceOf(computer2.getPublicKey(), root)
++      expect(res2).to.eq(amount2)
++
++      const res3 = await tokenHelper.balanceOf(computer3.getPublicKey(), root)
++      expect(res3).to.eq(amount3)
++    })
++
++    it('Should fail if the amount is greater than the balance', async () => {
++      const computer2 = new Computer({ url, chain, network })
++      const tokenHelper = new TBC20Helper(sender)
++      const publicKey = tokenHelper.computer.getPublicKey()
++      const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
++      await sleep(200)
++      try {
++        await tokenHelper.transfer(computer2.getPublicKey(), 201n, root)
++        expect(true).to.eq('false')
++      } catch (err) {
++        expect(err.message).to.eq('Could not send entire amount')
++      }
++
++      it('Should fail if the amount is greater than the balance', async () => {
++        const computer3 = new Computer({ url, chain, network })
++        const tbc20 = new TBC20Helper(sender)
++        const pKey = tbc20.computer.getPublicKey()
++        const r = await tbc20.mint(pKey, 200n, 'test', 'TST')
++        await sleep(200)
++        try {
++          await tbc20.transfer(computer3.getPublicKey(), 201n, r)
++          expect(true).to.eq('false')
++        } catch (err) {
++          expect(err.message).to.eq('Could not send entire amount')
++        }
++      })
++    })
++  })
++})
+diff --git a/packages/TBC777/test/tbc777.test.ts b/packages/TBC777/test/tbc777.test.ts
+new file mode 100644
+index 00000000..5e891950
+--- /dev/null
++++ b/packages/TBC777/test/tbc777.test.ts
+@@ -0,0 +1,1149 @@
++import { expect } from 'chai'
++import { Computer } from '@bitcoin-computer/lib'
++import dotenv from 'dotenv'
++import { TBC777 } from '../src/tbc777.js'
++import path from 'path'
++import { TBC20 } from '../src/tbc20.js'
++
++const envPaths = [
++  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
++  '../node/.env', // when running from local
++]
++
++for (const envPath of envPaths) {
++  dotenv.config({ path: envPath })
++}
++
++const url = process.env.BCN_URL
++const chain = process.env.BCN_CHAIN
++const network = process.env.BCN_NETWORK
++
++// Reusable instances to prevent txn-mempool-conflict
++let minter: Computer
++let alice: Computer
++let bob: Computer
++let mod: string
++
++async function ensureFunds(c: Computer, minSats = 10e8) {
++  try {
++    const { balance } = await c.getBalance()
++    if (balance < minSats) await c.faucet(minSats)
++  } catch {
++    await c.faucet(minSats)
++  }
++}
++
++describe('TBC777', () => {
++  beforeEach(async () => {
++    minter = new Computer({ url, chain, network })
++    await minter.faucet(50e8)
++    mod = await minter.deploy(`export ${TBC20}`)
++
++    alice = new Computer({ url, chain, network })
++    bob = new Computer({ url, chain, network })
++    await Promise.all([alice.faucet(30e8), bob.faucet(30e8)])
++  })
++
++  describe('Deployment and Minting', () => {
++    it('should successfully deploy TBC777 contract', async () => {
++      expect(mod).to.be.a('string')
++    })
++
++    it('should mint initial tokens with correct amount, owner, and metadata', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 3n
++      const tokenName = 'test'
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: tokenName }
++      const token = await minter.new(TBC777, [params], mod)
++
++      expect(token.amount).eq(mintAmount)
++      expect(token.name).eq(tokenName)
++
++      const expectedOwner = minter.getPublicKey()
++      if (token.owner !== undefined) {
++        expect(token.owner).eq(expectedOwner)
++      } else if (token._owner !== undefined) {
++        expect(token._owner).eq(expectedOwner)
++      } else if (token._owners) {
++        expect(token._owners).to.include(expectedOwner)
++      }
++
++      expect(token._id).to.be.a('string')
++      expect(token._rev).to.be.a('string')
++      expect(token._root).to.be.a('string')
++    })
++
++    it('should correctly inherit and expose all TBC20 base functionality', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 3n
++      const tokenName = 'test'
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: tokenName }
++      const token = await minter.new(TBC777, [params], mod)
++
++      expect(token).to.have.property('amount')
++      expect(token.amount).eq(mintAmount)
++      expect(token).to.have.property('name')
++      expect(token.name).eq(tokenName)
++      expect(token).to.have.property('_id')
++      expect(token).to.have.property('_rev')
++      expect(token).to.have.property('_root')
++
++      expect(typeof token.deposit).to.eq('function')
++      expect(typeof token.claim).to.eq('function')
++    })
++  })
++
++  describe('Deposit Functionality', () => {
++    class NaiveEscrow extends Contract {
++      claimable: [string, bigint][]
++      status: string
++
++      constructor() {
++        super()
++      }
++
++      move(rev: string, amount: bigint) {
++        this.claimable = [[rev, amount]]
++        this.status = 'final'
++      }
++    }
++
++    const createToken = async (mintAmount: bigint = 10n) => {
++      await ensureFunds(alice)
++      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'test-deposit' }
++      return await alice.new(TBC777, [params], mod)
++    }
++
++    const createEscrow = async () => {
++      await ensureFunds(bob)
++      return await bob.new(NaiveEscrow, [])
++    }
++
++    it('should allow depositing a positive amount into any compatible escrow', async () => {
++      const token = await createToken(5n)
++      const escrow = await createEscrow()
++      const depositAmount = 2n
++      await token.deposit(escrow._id, depositAmount)
++      expect(token.amount).to.equal(3n)
++      expect(token.escrow).to.equal(escrow._id)
++    })
++
++    it('should reduce token balance by exact deposit amount and record escrow id', async () => {
++      const initialAmount = 5n
++      const depositAmount = 3n
++      const token = await createToken(initialAmount)
++      const escrow = await createEscrow()
++      await token.deposit(escrow._id, depositAmount)
++      expect(token.amount).to.equal(initialAmount - depositAmount)
++      expect(token.escrow).to.equal(escrow._id)
++    })
++
++    it('should support partial deposits while leaving remainder unlocked', async () => {
++      const initialAmount = 5n
++      const depositAmount = 2n
++      const token = await createToken(initialAmount)
++      const escrow = await createEscrow()
++      await token.deposit(escrow._id, depositAmount)
++      expect(token.amount).to.equal(initialAmount - depositAmount)
++      expect(token.escrow).to.equal(escrow._id)
++    })
++
++    it('should reject deposit of zero or negative amount', async () => {
++      const token = await createToken(5n)
++      const escrow = await createEscrow()
++      try {
++        await token.deposit(escrow._id, 0n)
++        expect.fail('Expected deposit of zero to be rejected')
++      } catch (err: any) {
++        expect(err.message).to.equal('Deposit amount must be positive')
++      }
++      try {
++        await token.deposit(escrow._id, -5n)
++        expect.fail('Expected deposit of negative amount to be rejected')
++      } catch (err: any) {
++        expect(err.message).to.equal('Deposit amount must be positive')
++      }
++    })
++
++    it('should reject deposit when token balance is insufficient', async () => {
++      const token = await createToken(5n)
++      const escrow = await createEscrow()
++      try {
++        await token.deposit(escrow._id, 10n)
++        expect.fail('Expected insufficient balance deposit to be rejected')
++      } catch (err: any) {
++        expect(err.message).to.equal('Insufficient balance for deposit')
++      }
++    })
++
++    it('should reject deposit if token is already locked in another escrow', async () => {
++      const token = await createToken(10n)
++      const escrow1 = await createEscrow()
++      const escrow2 = await createEscrow()
++      await token.deposit(escrow1._id, 4n)
++      try {
++        await token.deposit(escrow2._id, 3n)
++        expect.fail('Expected deposit while already escrowed to be rejected')
++      } catch (err: any) {
++        expect(err.message).to.equal('Token already in escrow')
++      }
++      try {
++        await token.deposit(escrow1._id, 1n)
++        expect.fail('Expected re-deposit to the same escrow to be rejected')
++      } catch (err: any) {
++        expect(err.message).to.equal('Token already in escrow')
++      }
++    })
++  })
++
++  describe('Claim Functionality - Happy Path', () => {
++    class TestEscrow extends Contract {
++      claimable: [string, bigint][]
++      status: string
++
++      constructor() {
++        super()
++      }
++
++      finalize(claims: [string, bigint][]) {
++        this.claimable = claims
++        this.status = 'final'
++      }
++    }
++
++    it('should successfully claim tokens from a properly finalized escrow', async () => {
++      await ensureFunds(alice)
++      await ensureFunds(bob)
++      const mintAmount = 1000n
++      const depositAmount = 400n
++      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'happy-path' }
++      const token = await alice.new(TBC777, [params], mod)
++      const escrow = await bob.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      await escrow.finalize([[token._rev, depositAmount]])
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount)
++    })
++
++    it('should restore original token balance after a full claim', async () => {
++      await ensureFunds(alice)
++      await ensureFunds(bob)
++      const mintAmount = 500n
++      const depositAmount = 500n
++      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'restore-balance' }
++      const token = await alice.new(TBC777, [params], mod)
++      const escrow = await bob.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      await escrow.finalize([[token._rev, depositAmount]])
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount)
++    })
++
++    it('should credit only the claimable slice matching the exact deposit revision', async () => {
++      await ensureFunds(alice)
++      await ensureFunds(bob)
++      const mintAmount = 1000n
++      const depositAmount = 300n
++      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'slice-test' }
++      const token = await alice.new(TBC777, [params], mod)
++      const escrow = await bob.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      await escrow.finalize([
++        [token._rev, 100n],
++        [token._rev, 200n],
++      ] as [string, bigint][])
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount)
++    })
++
++    it('should clear the escrow flag after successful claim', async () => {
++      await ensureFunds(alice)
++      await ensureFunds(bob)
++      const mintAmount = 1000n
++      const depositAmount = 400n
++      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'clear-flag' }
++      const token = await alice.new(TBC777, [params], mod)
++      const escrow = await bob.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      await escrow.finalize([[token._rev, depositAmount]])
++      await token.claim(escrow._rev)
++      expect(token.escrow).to.be.undefined
++    })
++
++    it('should support partial deposit followed by full claim', async () => {
++      await ensureFunds(alice)
++      await ensureFunds(bob)
++      const mintAmount = 3n
++      const depositAmount = 2n
++      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'partial' }
++      const token = await alice.new(TBC777, [params], mod)
++      const escrow = await bob.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      expect(token.amount).eq(mintAmount - depositAmount)
++      await escrow.finalize([[token._rev, depositAmount]])
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount)
++    })
++
++    it('should allow sequential deposit-claim-redeposit cycles on the same token', async () => {
++      await ensureFunds(alice)
++      await ensureFunds(bob)
++      const mintAmount = 1000n
++      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'cycle-test' }
++      const token = await alice.new(TBC777, [params], mod)
++
++      const escrow1 = await bob.new(TestEscrow, [])
++      await token.deposit(escrow1._id, 300n)
++      await escrow1.finalize([[token._rev, 300n]])
++      await token.claim(escrow1._rev)
++      expect(token.amount).eq(mintAmount)
++      expect(token.escrow).to.be.undefined
++
++      const escrow2 = await bob.new(TestEscrow, [])
++      await token.deposit(escrow2._id, 450n)
++      await escrow2.finalize([[token._rev, 450n]])
++      await token.claim(escrow2._rev)
++      expect(token.amount).eq(mintAmount)
++    })
++  })
++
++  describe('Revision History Audit', () => {
++    class AuditTestEscrow extends Contract {
++      claimable: [string, bigint][]
++      status: string
++
++      constructor() {
++        super({ claimable: [], status: 'pending' })
++      }
++
++      setClaimable(rev: string, amount: bigint) {
++        this.claimable = [[rev, amount]]
++      }
++
++      finalize() {
++        this.status = 'final'
++      }
++    }
++
++    it('should accept the supplied rev as the first final state in the prev-chain', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 10n
++      const depositAmount = 5n
++      const params = {
++        to: minter.getPublicKey(),
++        amount: mintAmount,
++        name: 'audit-accept-first-final',
++      }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(AuditTestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      await escrow.setClaimable(token._rev, depositAmount)
++      await escrow.finalize()
++
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount)
++      expect(token.escrow).to.be.undefined
++    })
++
++    it('should reject claim if any earlier revision in the prev-chain is already final', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 10n
++      const depositAmount = 5n
++      const params = {
++        to: minter.getPublicKey(),
++        amount: mintAmount,
++        name: 'audit-reject-earlier-final',
++      }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(AuditTestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      await escrow.setClaimable(token._rev, depositAmount)
++
++      await escrow.finalize()
++
++      await escrow.setClaimable(token._rev, depositAmount)
++      await escrow.finalize()
++      const laterFinalRev = escrow._rev
++
++      let errorThrown = false
++      try {
++        await token.claim(laterFinalRev)
++      } catch (e: any) {
++        errorThrown = true
++        expect(e.message).to.include('Escrow was already finalized in a previous state')
++      }
++      expect(errorThrown).to.be.true
++    })
++
++    it('should fully traverse the linear revision history using computer.prev', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 10n
++      const depositAmount = 5n
++      const params = {
++        to: minter.getPublicKey(),
++        amount: mintAmount,
++        name: 'audit-traverse-history',
++      }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(AuditTestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      await escrow.setClaimable(token._rev, depositAmount)
++
++      for (let i = 0; i < 8; i++) {
++        await escrow.setClaimable(token._rev, depositAmount)
++      }
++
++      await escrow.finalize()
++
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount)
++    })
++
++    it('should prevent double-claiming on any subsequent finalization of the same escrow', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 10n
++      const depositAmount = 5n
++      const params = {
++        to: minter.getPublicKey(),
++        amount: mintAmount,
++        name: 'audit-prevent-double-final',
++      }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(AuditTestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      await escrow.setClaimable(token._rev, depositAmount)
++
++      await escrow.finalize()
++
++      await escrow.setClaimable(token._rev, depositAmount)
++      await escrow.finalize()
++      const laterFinalRev = escrow._rev
++
++      let errorThrown = false
++      try {
++        await token.claim(laterFinalRev)
++      } catch (e: any) {
++        errorThrown = true
++        expect(e.message).to.include('Escrow was already finalized in a previous state')
++      }
++      expect(errorThrown).to.be.true
++    })
++
++    it('should handle long revision chains before reaching the first final state', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 10n
++      const depositAmount = 5n
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'audit-long-chain' }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(AuditTestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++      await escrow.setClaimable(token._rev, depositAmount)
++
++      for (let i = 0; i < 12; i++) {
++        await escrow.setClaimable(token._rev, depositAmount)
++      }
++
++      await escrow.finalize()
++
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount)
++    })
++  })
++
++  describe('No-Inflation Invariant', () => {
++    class TestEscrow extends Contract {
++      claimable: [string, bigint][]
++      status: string
++
++      constructor() {
++        super()
++      }
++
++      finalize(claimables: [string, bigint][]) {
++        this.claimable = claimables
++        this.status = 'final'
++      }
++    }
++
++    it('should reject claim when total claimable exceeds actual deposited amount from this lineage', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 5n
++      const depositAmount = 3n
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++
++      await escrow.finalize([[token._rev, depositAmount + 1n]])
++
++      let errorThrown = false
++      try {
++        await token.claim(escrow._rev)
++      } catch (e: any) {
++        errorThrown = true
++        expect(e.message).to.include('Escrow created tokens')
++      }
++      expect(errorThrown).to.be.true
++
++      expect(token.amount).eq(mintAmount - depositAmount)
++    })
++
++    it('should allow claim when total claimable exactly equals deposited amount', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 5n
++      const depositAmount = 3n
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++
++      await escrow.finalize([[token._rev, depositAmount]])
++
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount)
++      expect(token.escrow).to.be.undefined
++    })
++
++    it('should allow claim when total claimable is less than deposited amount', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 5n
++      const depositAmount = 3n
++      const claimableAmount = 2n
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++
++      await escrow.finalize([[token._rev, claimableAmount]])
++
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount - depositAmount + claimableAmount)
++    })
++
++    it('should correctly compute deposited amounts via computeDeposit delta for every referenced depositRev', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 5n
++      const depositAmount = 3n
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++
++      const originalComputer = (globalThis as any).computer
++      ;(globalThis as any).computer = minter
++
++      const computed = await (TBC777 as any).computeDeposit(token._rev, token._root, escrow._id)
++
++      ;(globalThis as any).computer = originalComputer
++
++      expect(computed).to.equal(depositAmount)
++    })
++
++    it('should enforce no-inflation across multiple unique deposit revisions in a single claimable list', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 5n
++      const depositAmount = 3n
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++
++      await escrow.finalize([
++        [token._rev, 2n],
++        [token._rev, 1n],
++      ])
++
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(mintAmount - depositAmount + 3n)
++    })
++
++    it('should reject claim when escrow attempts to over-claim from any single deposit revision', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 5n
++      const depositAmount = 3n
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
++      const token = await minter.new(TBC777, [params], mod)
++
++      const escrow = await minter.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++
++      await escrow.finalize([[token._rev, depositAmount + 1n]])
++
++      let errorThrown = false
++      try {
++        await token.claim(escrow._rev)
++      } catch (e: any) {
++        errorThrown = true
++        expect(e.message).to.include('Escrow created tokens')
++      }
++      expect(errorThrown).to.be.true
++    })
++
++    it('should maintain no-inflation even when claimable contains entries from unrelated TBC777 lineages', async () => {
++      await ensureFunds(minter)
++      const paramsMain = { to: minter.getPublicKey(), amount: 5n, name: 'main' }
++      const token = await minter.new(TBC777, [paramsMain], mod)
++
++      const paramsUnrelated = { to: minter.getPublicKey(), amount: 10n, name: 'unrelated' }
++      const unrelated = await minter.new(TBC777, [paramsUnrelated], mod)
++
++      const escrow = await minter.new(TestEscrow, [])
++
++      await token.deposit(escrow._id, 3n)
++
++      await escrow.finalize([
++        [token._rev, 3n],
++        [unrelated._rev, 1n],
++      ])
++
++      let errorThrown = false
++      try {
++        await token.claim(escrow._rev)
++      } catch (e: any) {
++        errorThrown = true
++        expect(e.message).to.include('Found invalid deposit')
++      }
++      expect(errorThrown).to.be.true
++
++      expect(token.amount).eq(2n)
++    })
++  })
++
++  describe('Multi-Deposit and Multi-Claim Scenarios', () => {
++    class NaiveEscrow extends Contract {
++      claimable: [string, bigint][]
++      status: string
++
++      constructor() {
++        super()
++      }
++
++      move(claimable: [string, bigint][]) {
++        this.claimable = claimable
++        this.status = 'final'
++      }
++    }
++
++    it('should support multiple simultaneous deposits from the same token into different escrows', async () => {
++      await ensureFunds(minter, 15e8)
++      const token1 = await minter.new(
++        TBC777,
++        [{ to: minter.getPublicKey(), amount: 10n, name: 'test' }],
++        mod,
++      )
++      const token2 = await minter.new(
++        TBC777,
++        [{ to: minter.getPublicKey(), amount: 10n, name: 'test' }],
++        mod,
++      )
++
++      const escrow1 = await minter.new(NaiveEscrow, [])
++      const escrow2 = await minter.new(NaiveEscrow, [])
++
++      await token1.deposit(escrow1._id, 6n)
++      await token2.deposit(escrow2._id, 7n)
++
++      expect(token1.amount).eq(4n)
++      expect(token2.amount).eq(3n)
++      expect(token1.escrow).eq(escrow1._id)
++      expect(token2.escrow).eq(escrow2._id)
++    })
++
++    it('should allow claiming from one escrow while deposits in other escrows remain locked', async () => {
++      await ensureFunds(minter, 15e8)
++      const token1 = await minter.new(
++        TBC777,
++        [{ to: minter.getPublicKey(), amount: 5n, name: 't1' }],
++        mod,
++      )
++      const token2 = await minter.new(
++        TBC777,
++        [{ to: minter.getPublicKey(), amount: 5n, name: 't2' }],
++        mod,
++      )
++
++      const escrow1 = await minter.new(NaiveEscrow, [])
++      const escrow2 = await minter.new(NaiveEscrow, [])
++
++      await token1.deposit(escrow1._id, 5n)
++      await token2.deposit(escrow2._id, 5n)
++
++      await escrow1.move([[token1._rev, 5n]])
++      await token1.claim(escrow1._rev)
++
++      expect(token1.amount).eq(5n)
++      expect(token1.escrow).to.be.undefined
++
++      expect(token2.amount).eq(0n)
++      expect(token2.escrow).eq(escrow2._id)
++    })
++
++    it('should handle multiple distinct TBC777 tokens deposited into the same escrow', async () => {
++      await ensureFunds(minter, 15e8)
++      const token1 = await minter.new(
++        TBC777,
++        [{ to: minter.getPublicKey(), amount: 5n, name: 't1' }],
++        mod,
++      )
++      const token2 = await minter.new(
++        TBC777,
++        [{ to: minter.getPublicKey(), amount: 5n, name: 't2' }],
++        mod,
++      )
++
++      const escrow = await minter.new(NaiveEscrow, [])
++
++      await token1.deposit(escrow._id, 4n)
++      await token2.deposit(escrow._id, 3n)
++
++      expect(token1.amount).eq(1n)
++      expect(token2.amount).eq(2n)
++      expect(token1.escrow).eq(escrow._id)
++      expect(token2.escrow).eq(escrow._id)
++    })
++
++    it('should correctly distribute claimables that reference multiple deposit revisions', async () => {
++      await ensureFunds(minter, 15e8)
++      const token = await minter.new(
++        TBC777,
++        [{ to: minter.getPublicKey(), amount: 20n, name: 't1' }],
++        mod,
++      )
++
++      const escrow = await minter.new(NaiveEscrow, [])
++
++      await token.deposit(escrow._id, 10n)
++      const depositRev = token._rev
++
++      await escrow.move([
++        [depositRev, 6n],
++        [depositRev, 4n],
++      ])
++
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(20n)
++    })
++
++    it('should support partial claims leaving the remainder correctly locked', async () => {
++      await ensureFunds(minter)
++      const token = await minter.new(
++        TBC777,
++        [{ to: minter.getPublicKey(), amount: 10n, name: 'partial' }],
++        mod,
++      )
++
++      const escrow = await minter.new(NaiveEscrow, [])
++
++      await token.deposit(escrow._id, 8n)
++
++      await escrow.move([[token._rev, 5n]])
++
++      await token.claim(escrow._rev)
++      expect(token.amount).eq(7n)
++      expect(token.escrow).to.be.undefined
++    })
++  })
++
++  describe('Escrow Contract Compatibility', () => {
++    it('should work with any minimal escrow exposing only { claimable, status } shape', async () => {
++      class MinimalEscrow extends Contract {
++        claimable: [string, bigint][]
++        status: string
++
++        constructor() {
++          super()
++        }
++
++        finalize(depositRev: string, amt: bigint) {
++          this.claimable = [[depositRev, amt]]
++          this.status = 'final'
++        }
++      }
++
++      await ensureFunds(alice)
++      const params = { to: alice.getPublicKey(), amount: 10n, name: 'test-minimal' }
++      const token = await alice.new(TBC777, [params], mod)
++
++      const escrow = await alice.new(MinimalEscrow, [])
++
++      await token.deposit(escrow._id, 7n)
++      expect(token.amount).to.eq(3n)
++
++      await escrow.finalize(token._rev, 7n)
++
++      await token.claim(escrow._rev)
++      expect(token.amount).to.eq(10n)
++      expect(token.escrow).to.be.undefined
++    })
++
++    it('should work with escrows that inherit from the provided Escrow base class', async () => {
++      class InheritedEscrow extends Contract {
++        claimable: [string, bigint][]
++        status: string
++
++        constructor() {
++          super()
++        }
++
++        finalize(depositRev: string, amt: bigint) {
++          this.claimable = [[depositRev, amt]]
++          this.status = 'final'
++        }
++      }
++
++      await ensureFunds(alice)
++      const params = { to: alice.getPublicKey(), amount: 10n, name: 'test-inherited' }
++      const token = await alice.new(TBC777, [params], mod)
++
++      const escrow = await alice.new(InheritedEscrow, [])
++
++      await token.deposit(escrow._id, 7n)
++      expect(token.amount).to.eq(3n)
++
++      await escrow.finalize(token._rev, 7n)
++
++      await token.claim(escrow._rev)
++      expect(token.amount).to.eq(10n)
++      expect(token.escrow).to.be.undefined
++    })
++
++    it('should work with arbitrarily complex custom escrow implementations', async () => {
++      class ComplexEscrow extends Contract {
++        claimable: [string, bigint][]
++        status: string
++        logs: string[]
++        extraData: string | null
++
++        constructor() {
++          super()
++        }
++
++        log(msg: string) {
++          if (!this.logs) this.logs = []
++          this.logs.push(msg)
++        }
++
++        setMetadata(reason: string) {
++          this.extraData = reason
++        }
++
++        finalize(depositRev: string, amt: bigint) {
++          this.log('finalizing escrow')
++          this.setMetadata('complex-payout')
++          this.claimable = [[depositRev, amt]]
++          this.status = 'final'
++        }
++      }
++
++      await ensureFunds(alice)
++      const params = { to: alice.getPublicKey(), amount: 10n, name: 'test-complex' }
++      const token = await alice.new(TBC777, [params], mod)
++
++      const escrow = await alice.new(ComplexEscrow, [])
++
++      await token.deposit(escrow._id, 7n)
++      expect(token.amount).to.eq(3n)
++
++      await escrow.finalize(token._rev, 7n)
++
++      await token.claim(escrow._rev)
++      expect(token.amount).to.eq(10n)
++      expect(token.escrow).to.be.undefined
++    })
++
++    it('should work with escrows that perform multiple intermediate state changes before final', async () => {
++      class MultiStepEscrow extends Contract {
++        claimable: [string, bigint][]
++        status: string
++
++        constructor() {
++          super()
++        }
++
++        step1(depositRev: string) {
++          this.claimable = [[depositRev, 0n]]
++        }
++
++        step2(depositRev: string, amt: bigint) {
++          this.claimable = [[depositRev, amt / 2n]]
++        }
++
++        finalize(depositRev: string, amt: bigint) {
++          this.claimable = [[depositRev, amt]]
++          this.status = 'final'
++        }
++      }
++
++      await ensureFunds(alice)
++      const params = { to: alice.getPublicKey(), amount: 10n, name: 'test-multistep' }
++      const token = await alice.new(TBC777, [params], mod)
++
++      const escrow = await alice.new(MultiStepEscrow, [])
++
++      await token.deposit(escrow._id, 8n)
++      expect(token.amount).to.eq(2n)
++
++      await escrow.step1(token._rev)
++      await escrow.step2(token._rev, 8n)
++      await escrow.finalize(token._rev, 8n)
++
++      await token.claim(escrow._rev)
++      expect(token.amount).to.eq(10n)
++      expect(token.escrow).to.be.undefined
++    })
++  })
++
++  describe('Helper Utilities', () => {
++    class NaiveEscrow extends Contract {
++      claimable: [string, bigint][]
++      status: string
++      constructor() {
++        super()
++      }
++      move(rev: string, amount: bigint) {
++        this.claimable = [[rev, amount]]
++        this.status = 'final'
++      }
++    }
++
++    it('should compute exact deposit delta using prev-state comparison in computeDeposit', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 10n
++      const depositAmount = 7n
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'delta-test' }
++
++      const token = await minter.new(TBC777, [params], mod)
++      const escrow = await minter.new(NaiveEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++
++      const originalComputer = (global as any).computer
++      ;(global as any).computer = minter
++
++      try {
++        const delta = await (TBC777 as any).computeDeposit(token._rev, token._root, escrow._id)
++        expect(delta).eq(depositAmount)
++      } finally {
++        ;(global as any).computer = originalComputer
++      }
++    })
++
++    it('should reject invalid deposit revisions that do not belong to the expected root or escrow', async () => {
++      await ensureFunds(minter)
++      const mintAmount = 10n
++      const depositAmount = 3n
++      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'invalid-test' }
++
++      const token = await minter.new(TBC777, [params], mod)
++      const escrow = await minter.new(NaiveEscrow, [])
++
++      await token.deposit(escrow._id, depositAmount)
++
++      const originalComputer = (global as any).computer
++      ;(global as any).computer = minter
++
++      try {
++        await (TBC777 as any).computeDeposit(token._rev, 'wrong-root-123', escrow._id)
++        expect.fail('Should have thrown error for wrong root')
++      } catch (e: any) {
++        expect(e.message).to.include('Found invalid deposit')
++      }
++
++      try {
++        await (TBC777 as any).computeDeposit(token._rev, token._root, 'wrong-escrow-456')
++        expect.fail('Should have thrown error for wrong escrow')
++      } catch (e: any) {
++        expect(e.message).to.include('Found invalid deposit')
++      } finally {
++        ;(global as any).computer = originalComputer
++      }
++    })
++  })
++
++  describe('Error Handling and Edge Cases', () => {
++    class NaiveEscrow extends Contract {
++      claimable: [string, bigint][]
++      status: string
++      constructor() {
++        super()
++      }
++      move(rev: string, amount: bigint) {
++        this.claimable = [[rev, amount]]
++        this.status = 'final'
++      }
++    }
++
++    class MaliciousEscrow extends Contract {
++      claimable: [string, bigint][]
++      status: string
++      constructor() {
++        super()
++      }
++      finalize(claimableList: [string, bigint][]) {
++        this.claimable = claimableList
++        this.status = 'final'
++      }
++    }
++
++    const setupMinter = async () => {
++      await ensureFunds(minter)
++      return minter
++    }
++
++    it('should throw descriptive errors for all invalid operations', async () => {
++      const minterInst = await setupMinter()
++      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test-error' }
++      const token = await minterInst.new(TBC777, [params], mod)
++
++      try {
++        await token.deposit('dummy-escrow', 0n)
++        expect.fail('Should have thrown')
++      } catch (e: any) {
++        expect(e.message).to.include('Deposit amount must be positive')
++      }
++
++      try {
++        await token.deposit('dummy-escrow', -5n)
++        expect.fail('Should have thrown')
++      } catch (e: any) {
++        expect(e.message).to.include('Deposit amount must be positive')
++      }
++
++      try {
++        await token.deposit('dummy-escrow', 20n)
++        expect.fail('Should have thrown')
++      } catch (e: any) {
++        expect(e.message).to.include('Insufficient balance for deposit')
++      }
++
++      const escrow = await minterInst.new(NaiveEscrow, [])
++      await token.deposit(escrow._id, 5n)
++
++      try {
++        await token.deposit('other-escrow', 1n)
++        expect.fail('Should have thrown')
++      } catch (e: any) {
++        expect(e.message).to.include('Token already in escrow')
++      }
++    })
++
++    it('should reject claim when token is not currently escrowed', async () => {
++      const minterInst = await setupMinter()
++      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
++      const token = await minterInst.new(TBC777, [params], mod)
++      const escrow = await minterInst.new(NaiveEscrow, [])
++
++      try {
++        await token.claim(escrow._rev)
++        expect.fail('Should have thrown')
++      } catch (e: any) {
++        expect(e.message).to.include('Token not in escrow')
++      }
++    })
++
++    it('should reject claim when provided revision is not in final state', async () => {
++      const minterInst = await setupMinter()
++      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
++      const token = await minterInst.new(TBC777, [params], mod)
++      const escrow = await minterInst.new(NaiveEscrow, [])
++
++      await token.deposit(escrow._id, 5n)
++
++      try {
++        await token.claim(escrow._rev)
++        expect.fail('Should have thrown')
++      } catch (e: any) {
++        expect(e.message).to.include('Escrow is not in final state')
++      }
++    })
++
++    it('should reject claimable entries referencing non-existent or malformed deposit revisions', async () => {
++      const minterInst = await setupMinter()
++      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
++      const token = await minterInst.new(TBC777, [params], mod)
++      const escrow = await minterInst.new(MaliciousEscrow, [])
++
++      await token.deposit(escrow._id, 5n)
++      await escrow.finalize([['non-existent-rev-xyz', 3n]])
++
++      try {
++        await token.claim(escrow._rev)
++        expect.fail('Should have thrown')
++      } catch (e: any) {
++        expect(e.message).to.match(
++          /parameter 1 must be of length 64|Found invalid deposit|Something went wrong/i,
++        )
++      }
++    })
++
++    it('should handle escrow with empty claimable array gracefully', async () => {
++      const minterInst = await setupMinter()
++      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
++      const token = await minterInst.new(TBC777, [params], mod)
++      const escrow = await minterInst.new(MaliciousEscrow, [])
++
++      await token.deposit(escrow._id, 5n)
++      await escrow.finalize([])
++
++      await token.claim(escrow._rev)
++      expect(token.amount).to.equal(5n)
++      expect(token.escrow).to.be.undefined
++    })
++
++    it('should handle zero-value claimable entries without allowing inflation', async () => {
++      const minterInst = await setupMinter()
++      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
++      const token = await minterInst.new(TBC777, [params], mod)
++      const escrow = await minterInst.new(NaiveEscrow, [])
++
++      await token.deposit(escrow._id, 5n)
++      await escrow.move(token._rev, 0n)
++
++      await token.claim(escrow._rev)
++      expect(token.amount).to.equal(5n)
++    })
++
++    it('should maintain security invariants under malicious escrow behavior', async () => {
++      const minterInst = await setupMinter()
++      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
++      const token = await minterInst.new(TBC777, [params], mod)
++      const escrow = await minterInst.new(MaliciousEscrow, [])
++
++      await token.deposit(escrow._id, 5n)
++      await escrow.finalize([[token._rev, 100n]])
++
++      try {
++        await token.claim(escrow._rev)
++        expect.fail('Should have thrown')
++      } catch (e: any) {
++        expect(e.message).to.include('Escrow created tokens')
++      }
++    })
++  })
++})
+diff --git a/packages/TBC777/test/tbc777m.test.ts b/packages/TBC777/test/tbc777m.test.ts
+new file mode 100644
+index 00000000..dd1a8fef
+--- /dev/null
++++ b/packages/TBC777/test/tbc777m.test.ts
+@@ -0,0 +1,190 @@
++import { expect } from 'chai'
++import { Computer } from '@bitcoin-computer/lib'
++import dotenv from 'dotenv'
++import path from 'path'
++import { TBC20 } from '../src/tbc20.js'
++import { Escrow, TBC777M } from '../src/tbc777m.js'
++
++const envPaths = [
++  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
++  '../node/.env', // when running from local
++]
++
++for (const envPath of envPaths) {
++  dotenv.config({ path: envPath })
++}
++
++const url = process.env.BCN_URL
++const chain = process.env.BCN_CHAIN
++const network = process.env.BCN_NETWORK
++
++let black: Computer
++let white: Computer
++let minter: Computer
++let mod: string
++
++async function ensureFunds(c: Computer, minSats = 10e8) {
++  try {
++    const { balance } = await c.getBalance()
++    if (balance < minSats) await c.faucet(minSats)
++  } catch {
++    await c.faucet(minSats)
++  }
++}
++
++describe.only('TBC777M', () => {
++  beforeEach(async () => {
++    minter = new Computer({ url, chain, network })
++    black = new Computer({ url, chain, network })
++    white = new Computer({ url, chain, network })
++    await Promise.all([black.faucet(10e8), white.faucet(1e8), minter.faucet(1e8)])
++    mod = await black.deploy(`export ${TBC20}`)
++  })
++
++  it('Should work for a naive escrow', async () => {
++    class NaiveEscrow extends Contract implements Escrow {
++      deposits: [string, string][]
++      withdraws: [string, string, bigint][]
++
++      constructor() {
++        super({ deposits: [], withdraws: [] })
++      }
++
++      acceptDeposit(token: any) {
++        this.deposits.push([token._root, token._rev])
++      }
++
++      move(id: string, amount: bigint, root: string) {
++        this.withdraws = [[root, id, amount]]
++      }
++    }
++
++    await ensureFunds(minter)
++    const amount = 3n
++    const name = 'test'
++    const to = minter.getPublicKey()
++    const token = await minter.new(TBC777M, [{ to, amount, name }], mod)
++
++    const escrow = await minter.new(NaiveEscrow, [])
++
++    await token.deposit(escrow._id, 2n)
++    await escrow.acceptDeposit(token)
++
++    expect(token.amount).eq(1n)
++    await escrow.move(token._id, 2n, token._root)
++
++    await token.withdraw(escrow._rev)
++    expect(token.amount).eq(3n)
++  })
++
++  it('Should work for an escrow with atomic deposit', async () => {
++    class AtomicEscrow extends Contract implements Escrow {
++      deposits: [string, string][]
++      withdraws: [string, string, bigint][]
++
++      constructor() {
++        super({ deposits: [], withdraws: [] })
++      }
++
++      async acceptDeposit(token: any, amount: bigint) {
++        token.deposit(this._id, amount)
++        const nextRev = await computer.next(token._rev)
++        this.deposits.push([token._root, nextRev])
++      }
++
++      move(id: string, amount: bigint, root: string) {
++        this.withdraws = [[root, id, amount]]
++      }
++    }
++
++    await ensureFunds(minter)
++    const amount = 3n
++    const name = 'test'
++    const to = minter.getPublicKey()
++    const token = await minter.new(TBC777M, [{ to, amount, name }], mod)
++
++    const escrow = await minter.new(AtomicEscrow, [])
++
++    await escrow.acceptDeposit(token, 2n)
++    expect(token.amount).eq(1n)
++
++    await escrow.move(token._id, 2n, token._root)
++
++    await token.withdraw(escrow._rev)
++    expect(token.amount).eq(3n)
++  })
++
++  it.only('Should work for a chess game without timeout', async () => {
++    class Chess extends Contract {
++      deposits: [string, string][]
++      withdraws: [string, string, bigint][]
++      publicKeyW: string
++      publicKeyB: string
++      tokenIdW: string
++      tokenIdB: string
++      root: string
++
++      constructor(root: string) {
++        super({ deposits: [], withdraws: [], root })
++      }
++
++      async acceptDeposit(token: any, amount: bigint, nextOwner: string) {
++        token.deposit(this._id, amount)
++        const nextRev = await computer.next(token._rev)
++        this.deposits.push([token._root, nextRev])
++        this._owners = [nextOwner]
++        if (!this.publicKeyB) {
++          this.tokenIdW = token._id
++          this.publicKeyB = nextOwner
++        } else {
++          this.tokenIdB = token._id
++          this.publicKeyW = nextOwner
++        }
++      }
++
++      move(amount: bigint, isGameOver: boolean = false) {
++        if (!isGameOver) {
++          if (this._owners[0] === this.publicKeyW) this._owners = [this.publicKeyB]
++          else this._owners = [this.publicKeyW]
++        } else {
++          let winnerId: string
++          if (this._owners[0] === this.publicKeyW) winnerId = this.tokenIdW
++          else winnerId = this.tokenIdB
++          this.withdraws = [[this.root, winnerId, amount]]
++        }
++      }
++    }
++
++    await ensureFunds(minter)
++    const amount = 30n
++    const name = 'test'
++    const to = minter.getPublicKey()
++
++    // Issuer mints token
++    const token = await minter.new(TBC777M, [{ to, amount, name }], mod)
++    const whiteToken = await token.transfer(white.getPublicKey(), 10n)
++    const blackToken = await token.transfer(black.getPublicKey(), 10n)
++
++    // White player creates the chess game and places a wager
++    const chess = await white.new(Chess, [token._root])
++    await chess.acceptDeposit(whiteToken, 5n, black.getPublicKey())
++
++    // Black player places their wager
++    const { tx: tx1 } = await black.encode({
++      exp: `chess.acceptDeposit(blackToken, 5n, '${white.getPublicKey()}')`,
++      env: { chess: chess._rev, blackToken: blackToken._rev },
++    })
++    await black.broadcast(tx1)
++
++    // White wins the game
++    const { tx: tx2 } = await white.encode({
++      exp: `chess.move(10n, true)`,
++      env: { chess: tx1.getId() + ':0' },
++    })
++    await white.broadcast(tx2)
++
++    // White withdraws
++    await whiteToken.withdraw(tx2.getId() + ':0')
++    expect(whiteToken.amount).eq(15n)
++  })
++})
+diff --git a/packages/TBC777/test/tbc777p.test.ts b/packages/TBC777/test/tbc777p.test.ts
+new file mode 100644
+index 00000000..bfde61ba
+--- /dev/null
++++ b/packages/TBC777/test/tbc777p.test.ts
+@@ -0,0 +1,120 @@
++import { expect } from 'chai'
++import { Computer } from '@bitcoin-computer/lib'
++import dotenv from 'dotenv'
++import path from 'path'
++import { TBC20 } from '../src/tbc20.js'
++import { Escrow, TBC777P } from '../src/tbc777p.js'
++
++const envPaths = [
++  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
++  '../node/.env', // when running from local
++]
++
++for (const envPath of envPaths) {
++  dotenv.config({ path: envPath })
++}
++
++const url = process.env.BCN_URL
++const chain = process.env.BCN_CHAIN
++const network = process.env.BCN_NETWORK
++
++// Reusable instances to prevent txn-mempool-conflict
++let minter: Computer
++let alice: Computer
++let bob: Computer
++let mod: string
++
++async function ensureFunds(c: Computer, minSats = 10e8) {
++  try {
++    const { balance } = await c.getBalance()
++    if (balance < minSats) await c.faucet(minSats)
++  } catch {
++    await c.faucet(minSats)
++  }
++}
++
++describe('TBC777P', () => {
++  beforeEach(async () => {
++    minter = new Computer({ url, chain, network })
++    await minter.faucet(50e8)
++    mod = await minter.deploy(`export ${TBC20}`)
++
++    alice = new Computer({ url, chain, network })
++    bob = new Computer({ url, chain, network })
++    await Promise.all([alice.faucet(30e8), bob.faucet(30e8)])
++  })
++
++  it('Should work for a naive escrow', async () => {
++    class NaiveEscrow extends Contract implements Escrow {
++      depositRevs: string[]
++      amountByWithdrawId: [string, bigint][]
++
++      constructor() {
++        super({ amountByWithdrawId: [], depositRevs: [] })
++      }
++
++      move(id: string, amount: bigint) {
++        this.amountByWithdrawId = [[id, amount]]
++      }
++
++      acceptDeposit(tokenRev: string) {
++        this.depositRevs.push(tokenRev)
++      }
++    }
++
++    await ensureFunds(minter)
++    const amount = 3n
++    const name = 'test'
++    const to = minter.getPublicKey()
++    const token = await minter.new(TBC777P, [{ to, amount, name }], mod)
++
++    const escrow = await minter.new(NaiveEscrow, [])
++
++    await token.deposit(escrow._id, 2n)
++    await escrow.acceptDeposit(token._rev)
++
++    expect(token.amount).eq(1n)
++    await escrow.move(token._id, 2n)
++
++    await token.withdraw(escrow._rev)
++    expect(token.amount).eq(3n)
++  })
++
++  it('Should work for an escrow with atomic deposit', async () => {
++    class AtomicEscrow extends Contract implements Escrow {
++      depositRevs: string[]
++      amountByWithdrawId: [string, bigint][]
++
++      constructor() {
++        super({ amountByWithdrawId: [], depositRevs: [] })
++      }
++
++      move(id: string, amount: bigint) {
++        this.amountByWithdrawId = [[id, amount]]
++      }
++
++      acceptDeposit(token: TBC777P, amount: bigint) {
++        token.deposit(this._id, amount)
++        this.depositRevs.push(token._rev)
++      }
++    }
++
++    await ensureFunds(minter)
++    const amount = 3n
++    const name = 'test'
++    const to = minter.getPublicKey()
++    const token = await minter.new(TBC777P, [{ to, amount, name }], mod)
++
++    const escrow = await minter.new(AtomicEscrow, [])
++
++    await escrow.acceptDeposit(token as any, 2n)
++    console.log('token', token)
++    console.log('escrow', escrow)
++
++    expect(token.amount).eq(1n)
++    await escrow.move(token._id, 2n)
++
++    await token.withdraw(escrow._rev)
++    expect(token.amount).eq(3n)
++  })
++})

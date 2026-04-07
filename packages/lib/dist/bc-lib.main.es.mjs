@@ -1,1 +1,4738 @@
-const a2_0x36b7bf=a2_0x1eab;(function(_0x4ccbf7,_0x3b01ad){const _0x5e77dd=a2_0x1eab,_0x2ce415=_0x4ccbf7();while(!![]){try{const _0x612c34=-parseInt(_0x5e77dd(0x22a))/0x1+parseInt(_0x5e77dd(0x2fa))/0x2*(parseInt(_0x5e77dd(0x387))/0x3)+-parseInt(_0x5e77dd(0x13b))/0x4+-parseInt(_0x5e77dd(0x2bd))/0x5*(-parseInt(_0x5e77dd(0x2df))/0x6)+parseInt(_0x5e77dd(0x2c0))/0x7+parseInt(_0x5e77dd(0x1ed))/0x8*(-parseInt(_0x5e77dd(0x17b))/0x9)+parseInt(_0x5e77dd(0x147))/0xa;if(_0x612c34===_0x3b01ad)break;else _0x2ce415['push'](_0x2ce415['shift']());}catch(_0x25b153){_0x2ce415['push'](_0x2ce415['shift']());}}}(a2_0x480f,0x6bb9a));import{bufferUtils as a2_0x335987,Transaction as a2_0x5b7609,opcodes as a2_0x3224db,script as a2_0x55d388,payments as a2_0x154e74,networks as a2_0x4dc820,crypto as a2_0x181d13,address as a2_0x2921e5,Psbt as a2_0x4a370a,initEccLib as a2_0x3d22da,bip371 as a2_0x2f63ba}from'@bitcoin-computer/nakamotojs';import{Buffer as a2_0x21cdf5}from'buffer';import{generateMnemonic as a2_0x5c8da5,mnemonicToSeedSync as a2_0x223a80,validateMnemonic as a2_0x237a6a}from'bip39';import*as a2_0x1648f2 from'@bitcoin-computer/secp256k1';import{BIP32Factory as a2_0x1cf0c4}from'bip32';import a2_0x22cfbe from'elliptic';import a2_0x26fc7f from'process';import{EventSource as a2_0x99a71b}from'eventsource';import a2_0x2d0333 from'large-set';import{parse as a2_0x49569c}from'@babel/parser';import{ECPairFactory as a2_0x320c49}from'ecpair';import a2_0x46003a from'axios';import'ses';import{backOff as a2_0x904848}from'exponential-backoff';import{ECIES_CONFIG as a2_0x48614d,encrypt as a2_0x23c023,decrypt as a2_0x1026a7}from'eciesjs';import{webcrypto as a2_0x7d9cd8}from'crypto';import{StaticModuleRecord as a2_0x4fbb08}from'@endo/static-module-record';function $parcel$export(_0x484f10,_0x48e86e,_0x5465d7,_0x526412){const _0x1c9b49=a2_0x1eab;Object[_0x1c9b49(0x167)](_0x484f10,_0x48e86e,{'get':_0x5465d7,'set':_0x526412,'enumerable':!![],'configurable':!![]});}var $e1e9e2b9d71bc2d8$exports={};$parcel$export($e1e9e2b9d71bc2d8$exports,a2_0x36b7bf(0x2ee),()=>$5897c693dfcff079$export$2454fd0de010f4bb,_0x4025c4=>$5897c693dfcff079$export$2454fd0de010f4bb=_0x4025c4),$parcel$export($e1e9e2b9d71bc2d8$exports,a2_0x36b7bf(0x28e),()=>$70710ac8a001306b$export$2a766bd177c54dd,_0x3b503e=>$70710ac8a001306b$export$2a766bd177c54dd=_0x3b503e),$parcel$export($e1e9e2b9d71bc2d8$exports,'Transaction',()=>$4b62a469f572a3c6$export$febc5573c75cefb0,_0x7e4f88=>$4b62a469f572a3c6$export$febc5573c75cefb0=_0x7e4f88),$parcel$export($e1e9e2b9d71bc2d8$exports,a2_0x36b7bf(0x33b),()=>$d205febb791b53ee$export$bbf2ffbffa00b288,_0x31432b=>$d205febb791b53ee$export$bbf2ffbffa00b288=_0x31432b),$parcel$export($e1e9e2b9d71bc2d8$exports,a2_0x36b7bf(0x1d1),()=>$d205febb791b53ee$export$57b7f3bf07321492,_0x73cc04=>$d205febb791b53ee$export$57b7f3bf07321492=_0x73cc04);const $bd5ff9060a235dd4$export$6b7d953c9668b0b6=parseInt(process[a2_0x36b7bf(0x25f)][a2_0x36b7bf(0x2d3)]||'',0xa)||0x1df,$bd5ff9060a235dd4$export$965ba7d812c66aa4=0x1db,$bd5ff9060a235dd4$export$1035b0570451c823='',$bd5ff9060a235dd4$export$9c80b82d32647b78='p2pkh',$bd5ff9060a235dd4$export$14096f3be8a46637=0x7530,$bd5ff9060a235dd4$export$1e7ef728e2683d27=0xbb8,$bd5ff9060a235dd4$export$e7e3d18e730436b6=0x989680,$bd5ff9060a235dd4$export$c32d443dbb2eda37=0x989680,$bd5ff9060a235dd4$export$925a05c4b96b2744=0x3,$bd5ff9060a235dd4$export$4266a5deb789e6a0=0x14,$bd5ff9060a235dd4$export$b00b425fffc1d558=0x3,$bd5ff9060a235dd4$export$bb38fdd194d4373f=0x2,$bd5ff9060a235dd4$export$13e1a04b9affc983=0x2,$bd5ff9060a235dd4$export$e1763572af4d7bad=0xbb8,$bd5ff9060a235dd4$export$50e187a9fd923b2a=0xbb8,$bd5ff9060a235dd4$export$4bc394cb084a3624=0x4,$bd5ff9060a235dd4$export$7dc90d32bceb5ea5='0x50',$bd5ff9060a235dd4$export$43182d2709f4c8de=a2_0x36b7bf(0x32e),$bd5ff9060a235dd4$export$280d845b0ed37876=0x208,$bd5ff9060a235dd4$export$a1be5b5a5ff3a4a1=0x1,$bd5ff9060a235dd4$export$986c012ad4b59cfe=0x47,$bd5ff9060a235dd4$export$b3bf7f8ed07f5d46=0x14,$bd5ff9060a235dd4$export$30dc5b6bafe2f74=['satoshis',a2_0x36b7bf(0x39b),a2_0x36b7bf(0x26c),a2_0x36b7bf(0x134),a2_0x36b7bf(0x160)],$70710ac8a001306b$export$e89b5b69fd27457c='0'[a2_0x36b7bf(0x265)](0x40),$70710ac8a001306b$export$ecc1d4b757948754=()=>$70710ac8a001306b$export$e89b5b69fd27457c+':0';class $70710ac8a001306b$export$2a766bd177c54dd{constructor(_0x12f58f={}){const _0x59f4c2=a2_0x36b7bf,_0x5ebe16=$70710ac8a001306b$export$ecc1d4b757948754();Object[_0x59f4c2(0x115)](_0x12f58f)[_0x59f4c2(0x1b3)](([_0x51b849,_0x2c185b])=>{const _0x1e7039=_0x59f4c2;if(!['_id','_rev',_0x1e7039(0x1c5)]['includes'](_0x51b849))this[_0x51b849]=_0x2c185b;});}}const $303220cf0debbf6c$var$ec=a2_0x22cfbe['ec'](a2_0x36b7bf(0x35d)),$303220cf0debbf6c$var$bip32=(0x0,a2_0x1cf0c4)(a2_0x1648f2);function $303220cf0debbf6c$export$c194c5a73880e96f(_0x217c0f){const _0x479b75=a2_0x36b7bf;return JSON[_0x479b75(0x1d2)](_0x217c0f,(_0x4dbf84,_0x5b68e1)=>typeof _0x5b68e1===_0x479b75(0x1ae)?_0x5b68e1[_0x479b75(0x3a0)]()+'n':_0x5b68e1);}function $303220cf0debbf6c$export$ea99c62adecc85ae(_0x135555){const _0x246fc7=a2_0x36b7bf;return JSON[_0x246fc7(0x12a)](_0x135555,(_0x27bd02,_0x31dcd9)=>{const _0x1a2bae=_0x246fc7;if(typeof _0x31dcd9==='string'&&/^\d+n$/[_0x1a2bae(0x2da)](_0x31dcd9))return BigInt(_0x31dcd9[_0x1a2bae(0x1b2)](0x0,-0x1));return _0x31dcd9;});}function $303220cf0debbf6c$export$f08f4d51349c691f(_0x244442){const _0x36a72c=a2_0x36b7bf;return Buffer[_0x36a72c(0x2ed)](_0x244442)['toString'](_0x36a72c(0x38b));}function $303220cf0debbf6c$export$52324db6daaca2e1(_0x44bd34){const _0x16719d=a2_0x36b7bf;return Buffer[_0x16719d(0x2ed)](_0x44bd34,'hex')[_0x16719d(0x3a0)]()['replace'](/\0/g,'');}function $303220cf0debbf6c$export$522325fb116d804e(_0x2a938d,_0x23c8fb,_0x3c1643){const _0x41bfeb=a2_0x36b7bf;if(_0x2a938d[_0x41bfeb(0x2be)]*Math[_0x41bfeb(0x1c9)](_0x23c8fb)>0x35)throw new Error(_0x41bfeb(0x2a6)+_0x2a938d[_0x41bfeb(0x2be)]+'\x20'+Math[_0x41bfeb(0x1c9)](_0x23c8fb));if(![0x2,0xa,0x10]['includes'](_0x23c8fb)||![0x2,0xa,0x10][_0x41bfeb(0x197)](_0x3c1643))throw new Error(_0x41bfeb(0x28d));if(_0x23c8fb===0x2&&_0x2a938d[_0x41bfeb(0x2be)]%0x8!==0x0)throw new Error(_0x41bfeb(0x19b));if(_0x23c8fb===0x10&&_0x2a938d[_0x41bfeb(0x2be)]%0x2!==0x0)throw new Error('Hex\x20strings\x20must\x20be\x20of\x20even\x20length.');const _0x354185=parseInt(_0x2a938d,_0x23c8fb)[_0x41bfeb(0x3a0)](_0x3c1643);if(_0x3c1643===0x2)return _0x354185[_0x41bfeb(0x13e)](0x8*Math[_0x41bfeb(0x347)](_0x354185[_0x41bfeb(0x2be)]/0x8),'0');if(_0x3c1643===0x10)return _0x354185[_0x41bfeb(0x13e)](0x2*Math[_0x41bfeb(0x347)](_0x354185['length']/0x2),'0');return _0x354185;}function $303220cf0debbf6c$export$416b7890be9acca6(_0x2a6b37,_0x10d77a){const _0x1c9ac3=a2_0x36b7bf,_0x410dbf=new RegExp(_0x1c9ac3(0x144)+_0x10d77a+'}','g');return _0x2a6b37[_0x1c9ac3(0x10d)](_0x410dbf)||[];}function $303220cf0debbf6c$export$f922ebe57f2c36e8(_0x3a03d0,_0x13fb94){const _0x3be492=a2_0x36b7bf,_0x2aefe0=[];for(let _0x3ce9bc=0x0;_0x3ce9bc<_0x3a03d0[_0x3be492(0x2be)];_0x3ce9bc+=_0x13fb94)_0x2aefe0[_0x3be492(0x2e4)](_0x3a03d0[_0x3be492(0x1b2)](_0x3ce9bc,_0x3ce9bc+_0x13fb94));return _0x2aefe0;}function $303220cf0debbf6c$export$b3ab84721822b8ab(_0x4b269b,_0x77e3a5){const _0x40e6bd=a2_0x36b7bf,_0x2d13a7=[];let _0x4aafed=0x0;while(_0x4aafed<_0x4b269b[_0x40e6bd(0x2be)]){_0x2d13a7[_0x40e6bd(0x2e4)](_0x4b269b[_0x40e6bd(0x1b2)](_0x4aafed,_0x4aafed+_0x77e3a5)),_0x4aafed+=_0x77e3a5;}return _0x2d13a7;}function $303220cf0debbf6c$export$8d4c4429581146c2(_0x3db31c){const _0x172968=a2_0x36b7bf;return $303220cf0debbf6c$export$416b7890be9acca6(_0x3db31c,0x2)[_0x172968(0x359)](_0x43b139=>$303220cf0debbf6c$export$522325fb116d804e(_0x43b139,0x10,0x2))[_0x172968(0x1a8)]('');}function $303220cf0debbf6c$export$48bc0de5bc199606(_0x5fe900){const _0x5c2c16=a2_0x36b7bf;return $303220cf0debbf6c$export$416b7890be9acca6(_0x5fe900,0x8)[_0x5c2c16(0x359)](_0x460e89=>$303220cf0debbf6c$export$522325fb116d804e(_0x460e89,0x2,0x10))[_0x5c2c16(0x1a8)]('');}function $303220cf0debbf6c$export$c5ff7c6cb12f5f46(_0x1a9283,_0x32f68f){const _0xfeccde=a2_0x36b7bf;return _0x1a9283[_0xfeccde(0x1b2)](_0x32f68f)+_0x1a9283[_0xfeccde(0x1b2)](0x0,_0x32f68f);}function $303220cf0debbf6c$export$b8ff662d454dbe46(_0x204265,_0x35379b){const _0x1b0272=a2_0x36b7bf;return _0x204265[_0x1b0272(0x1b2)](-_0x35379b)+_0x204265[_0x1b0272(0x1b2)](0x0,-_0x35379b);}function $303220cf0debbf6c$export$68538d2c6856b285(_0x2bdab0){const _0x8a4531=a2_0x36b7bf;if(_0x2bdab0['length']!==0x3e)throw new Error(_0x8a4531(0x262));let _0x1f7ab4=![],_0x317e1d=0x0,_0x45a6c2;while(!_0x1f7ab4){if(_0x317e1d>=0x100)throw new Error(_0x8a4531(0x119));const _0x2aa549=_0x317e1d[_0x8a4531(0x3a0)](0x10)[_0x8a4531(0x13e)](0x2,'0'),_0x23b7b7=$303220cf0debbf6c$export$8d4c4429581146c2(_0x2bdab0),_0x12a766=_0x23b7b7[_0x8a4531(0x13e)](0x40,'0'),_0x41128d=$303220cf0debbf6c$export$c5ff7c6cb12f5f46(_0x12a766,_0x317e1d),_0x447766=$303220cf0debbf6c$export$48bc0de5bc199606(_0x41128d),_0x26b453=_0x2aa549+_0x447766;try{_0x45a6c2=$303220cf0debbf6c$var$ec[_0x8a4531(0x148)][_0x8a4531(0x2fe)](_0x26b453,![]),_0x1f7ab4=!![];}catch(_0x3e2128){_0x317e1d+=0x1;}}if(!_0x45a6c2)throw new Error(_0x8a4531(0x119));return Buffer['from'](_0x45a6c2[_0x8a4531(0x137)]());}function $303220cf0debbf6c$export$cfd9a51138473022(_0x3a32d0){const _0x4a526a=a2_0x36b7bf,_0x44f8ad=$303220cf0debbf6c$var$ec['curve']['decodePoint'](_0x3a32d0),_0x447d92=_0x44f8ad[_0x4a526a(0x207)](),_0x3d0d6b=_0x447d92[_0x4a526a(0x3a0)](_0x4a526a(0x38b))[_0x4a526a(0x13e)](0x40,'0'),_0x4bc8c8=_0x3d0d6b['slice'](0x0,0x2),_0x189bfc=$303220cf0debbf6c$export$522325fb116d804e(_0x4bc8c8,0x10,0xa),_0x594f67=parseInt(_0x189bfc,0xa),_0x296acc=_0x3d0d6b[_0x4a526a(0x1b2)](0x2);return $303220cf0debbf6c$export$48bc0de5bc199606($303220cf0debbf6c$export$b8ff662d454dbe46($303220cf0debbf6c$export$8d4c4429581146c2(_0x296acc),_0x594f67));}function $303220cf0debbf6c$export$de754bb4cdcc210c(_0x4682f6,_0x39ad08){const _0x1cf606=a2_0x36b7bf;switch(_0x4682f6){case _0x1cf606(0x248):switch(_0x39ad08){case'mainnet':return(0x0,a2_0x4dc820)['bitcoin'];case _0x1cf606(0x142):return(0x0,a2_0x4dc820)[_0x1cf606(0x142)];case _0x1cf606(0x264):return(0x0,a2_0x4dc820)['regtest'];default:throw new Error(_0x1cf606(0x183)+_0x39ad08);}case'LTC':switch(_0x39ad08){case _0x1cf606(0x2ca):return(0x0,a2_0x4dc820)['litecoin'];case'testnet':return(0x0,a2_0x4dc820)['litecointestnet'];case _0x1cf606(0x264):return(0x0,a2_0x4dc820)[_0x1cf606(0x33d)];default:throw new Error(_0x1cf606(0x183)+_0x39ad08);}case _0x1cf606(0x131):switch(_0x39ad08){case'mainnet':return(0x0,a2_0x4dc820)['pepecoin'];case _0x1cf606(0x142):return(0x0,a2_0x4dc820)[_0x1cf606(0x3aa)];case _0x1cf606(0x264):return(0x0,a2_0x4dc820)[_0x1cf606(0x225)];default:throw new Error(_0x1cf606(0x183)+_0x39ad08);}case'DOGE':switch(_0x39ad08){case'mainnet':return(0x0,a2_0x4dc820)['dogecoin'];case _0x1cf606(0x142):return(0x0,a2_0x4dc820)[_0x1cf606(0x1af)];case _0x1cf606(0x264):return(0x0,a2_0x4dc820)[_0x1cf606(0x388)];default:throw new Error(_0x1cf606(0x183)+_0x39ad08);}default:throw new Error('Invalid\x20chain\x20'+_0x39ad08);}}function $303220cf0debbf6c$export$23109f16a8a07245(_0xaee90e,_0x5c6400){const _0x33d370=a2_0x36b7bf,_0x2a50b1=$303220cf0debbf6c$export$de754bb4cdcc210c(_0xaee90e,_0x5c6400);if(_0x2a50b1[_0x33d370(0x1fe)]==='bc')return 0x0;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x12d))return 0x1;if(_0x2a50b1['bech32']==='tb')return 0x1;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x2cb))return 0x2;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x289))return 0x1;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x2ae))return 0x1;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x2e9))return 0x3;if(_0x2a50b1['bech32']===_0x33d370(0x390))return 0x1;if(_0x2a50b1['bech32']==='tdoge')return 0x1;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x273))return 0x91;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x374))return 0x1;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x2d8))return 0xec;if(_0x2a50b1['bech32']===_0x33d370(0x1fd))return 0x1;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x274))return 0xd6a;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x213))return 0x1;if(_0x2a50b1[_0x33d370(0x1fe)]===_0x33d370(0x1e0))return 0x1;throw new Error(_0x33d370(0x30a)+_0xaee90e+'\x20or\x20network\x20'+_0x5c6400);}function $303220cf0debbf6c$export$e59691a2f8406773({purpose:purpose=0x2c,coinType:coinType=0x1,account:account=0x0}={}){const _0x495881=a2_0x36b7bf;return'm/'+purpose[_0x495881(0x3a0)]()+'\x27/'+coinType['toString']()+'\x27/'+account[_0x495881(0x3a0)]()+'\x27';}function $303220cf0debbf6c$export$2aa3fd96c49a84a8({chain:_0x4b8d7f,network:_0x5df369}){return $303220cf0debbf6c$export$e59691a2f8406773({'coinType':$303220cf0debbf6c$export$23109f16a8a07245(_0x4b8d7f,_0x5df369)});}function $303220cf0debbf6c$export$c6922c1d7db6c3a3(){const _0x31384f=a2_0x36b7bf;return Math[_0x31384f(0x2f4)](Math[_0x31384f(0x36c)]()*0x2**0x1f);}function $303220cf0debbf6c$export$99014ca06cc45eae({chain:_0x48c494,network:_0x26a5a9,account:account=$303220cf0debbf6c$export$c6922c1d7db6c3a3()}){return $303220cf0debbf6c$export$e59691a2f8406773({'account':account,'coinType':$303220cf0debbf6c$export$23109f16a8a07245(_0x48c494,_0x26a5a9)});}function $303220cf0debbf6c$export$448332262467e042(_0x40b8d2){const _0x54fd01=a2_0x36b7bf,_0x250b69=_0x40b8d2;for(let _0x530631=_0x250b69[_0x54fd01(0x2be)]-0x1;_0x530631>0x0;_0x530631-=0x1){const _0x486ab4=Math['floor'](Math[_0x54fd01(0x36c)]()*(_0x530631+0x1));[_0x250b69[_0x530631],_0x250b69[_0x486ab4]]=[_0x250b69[_0x486ab4],_0x250b69[_0x530631]];}}function $303220cf0debbf6c$export$accea06471c18a5a({mnemonic:mnemonic=a2_0x5c8da5(),path:_0x2fb2b1,passphrase:passphrase=(0x0,$bd5ff9060a235dd4$export$1035b0570451c823),networkObj:networkObj=(0x0,a2_0x4dc820)['litecoinregtest']}){const _0xb9c927=a2_0x36b7bf,_0x455553=a2_0x223a80(mnemonic,passphrase),_0x30d61a=$303220cf0debbf6c$var$bip32[_0xb9c927(0x295)](_0x455553,networkObj);return _0x30d61a['derivePath'](_0x2fb2b1);}function $303220cf0debbf6c$export$ec70ee4fa0462cba(_0x2dc1e9){const _0x264983=a2_0x36b7bf;return/^[0-9A-Fa-f]{64}:\d+$/[_0x264983(0x2da)](_0x2dc1e9);}const $303220cf0debbf6c$export$1ef33362739af9d6=_0x334206=>typeof _0x334206===a2_0x36b7bf(0x1bc)&&_0x334206[a2_0x36b7bf(0x21e)]((0x0,$70710ac8a001306b$export$e89b5b69fd27457c));function $303220cf0debbf6c$export$b02a40aff8e4ad18(_0x4f4f69){const _0x36ba0b=a2_0x36b7bf;return/^[0-9a-fA-F]+$/[_0x36ba0b(0x2da)](_0x4f4f69);}function $303220cf0debbf6c$export$bafbdc92027712dd(_0x3a5d61){const _0x50a152=a2_0x36b7bf,_0x351f44=$303220cf0debbf6c$export$caebc656d3686561(_0x3a5d61);return _0x351f44[_0x50a152(0x37a)]===(0x0,$70710ac8a001306b$export$e89b5b69fd27457c);}function $303220cf0debbf6c$export$61ac08182746c02(_0x3af476){return $303220cf0debbf6c$export$caebc656d3686561(_0x3af476);}function $303220cf0debbf6c$export$caebc656d3686561(_0x5aa401){const _0x83ec62=a2_0x36b7bf,_0x3fce4c=_0x5aa401['slice'](0x0,0x40),_0x3da327=_0x5aa401[_0x83ec62(0x1b2)](0x41),_0x8ffdbf=Number(_0x3da327);if(!$303220cf0debbf6c$export$e99f72af86782de5(_0x3fce4c)||!$303220cf0debbf6c$export$5ead30270c363bef(_0x3da327))throw new Error(_0x83ec62(0x12b)+_0x5aa401);return{'txId':_0x3fce4c,'outputIndex':_0x8ffdbf};}function $303220cf0debbf6c$export$4a99dfb24923098f(_0x80fec4){const _0x1078bd=a2_0x36b7bf;return $303220cf0debbf6c$export$caebc656d3686561(_0x80fec4)[_0x1078bd(0x1cf)];}const $303220cf0debbf6c$export$21c1b1d63f43cbc9=_0x5cc119=>_0x5cc119[a2_0x36b7bf(0x21e)]('./')||_0x5cc119[a2_0x36b7bf(0x21e)](a2_0x36b7bf(0x11f))||_0x5cc119==='.'||_0x5cc119==='..';function $303220cf0debbf6c$export$8c6326f453a62d26(_0x5602eb,_0x30d7f6){const _0x5d0962=a2_0x36b7bf;let _0x1381bf;if(_0x5602eb[_0x5d0962(0x2be)]%_0x30d7f6!==0x0){const _0x544b73=_0x5602eb[_0x5d0962(0x2be)]/_0x30d7f6;_0x1381bf=Math[_0x5d0962(0x347)](_0x544b73)*_0x30d7f6;}return _0x5602eb[_0x5d0962(0x13e)](_0x1381bf,'0');}const $303220cf0debbf6c$export$b29f828819edca8d=_0x153101=>_0x3f4bb4=>{const _0x17dc40=a2_0x36b7bf,_0x4facfc=[],_0x502047=[];for(let _0x1b813c=0x0;_0x1b813c<_0x153101[_0x17dc40(0x2be)];_0x1b813c+=0x1)if(_0x3f4bb4(_0x153101[_0x1b813c]))_0x4facfc[_0x17dc40(0x2e4)](_0x153101[_0x1b813c]);else _0x502047[_0x17dc40(0x2e4)](_0x153101[_0x1b813c]);return{'hits':_0x4facfc,'misses':_0x502047};},$303220cf0debbf6c$export$7efc99439b8625a3=(_0x49fd52,_0x19fdae,_0x1535c6)=>_0x49fd52[a2_0x36b7bf(0x2be)]===_0x19fdae['length']&&_0x1535c6?_0x49fd52[a2_0x36b7bf(0x121)]((_0x243f0a,_0x2c5226)=>_0x1535c6(_0x243f0a,_0x19fdae[_0x2c5226])):_0x49fd52[a2_0x36b7bf(0x121)]((_0x4ec5f9,_0x34cda3)=>_0x4ec5f9===_0x19fdae[_0x34cda3]),$303220cf0debbf6c$export$dfcec05bb7372a54=(_0x2175a9,_0x27dc73)=>{const _0x423d7c=a2_0x36b7bf;if(_0x2175a9===_0x27dc73)return!![];if(_0x2175a9===undefined||_0x27dc73===undefined)return![];if(Array[_0x423d7c(0x2bf)](_0x2175a9)&&Array['isArray'](_0x27dc73)){if(_0x2175a9[_0x423d7c(0x2be)]!==_0x27dc73[_0x423d7c(0x2be)])return![];return _0x2175a9[_0x423d7c(0x121)]((_0x2d65b1,_0x570e89)=>$303220cf0debbf6c$export$dfcec05bb7372a54(_0x2d65b1,_0x27dc73[_0x570e89]));}return _0x2175a9===_0x27dc73;},$303220cf0debbf6c$export$fb9431c544c373fd=_0x57fe67=>{const _0x40637e=a2_0x36b7bf;if(!_0x57fe67[_0x40637e(0x2be)])return!![];const _0x360126=_0x57fe67[0x0];return!_0x57fe67[_0x40637e(0x1d3)](_0x49e2bd=>!$303220cf0debbf6c$export$dfcec05bb7372a54(_0x49e2bd,_0x360126));},$303220cf0debbf6c$export$e1b97b9ec89505f2=(_0x11a4d1,_0x17d9d0)=>{const _0xd4bea5=a2_0x36b7bf;if(_0x11a4d1===_0x17d9d0)return!![];if(typeof _0x11a4d1!==typeof _0x17d9d0)return![];if(typeof _0x11a4d1==='object'&&_0x11a4d1!==null&&typeof _0x17d9d0==='object'&&_0x17d9d0!==null){const _0x24de13=Object[_0xd4bea5(0x2d2)](_0x11a4d1),_0x4339c1=Object['keys'](_0x17d9d0);if(_0x24de13[_0xd4bea5(0x2be)]!==_0x4339c1[_0xd4bea5(0x2be)])return![];for(let _0x2cb209=0x0;_0x2cb209<_0x24de13[_0xd4bea5(0x2be)];_0x2cb209+=0x1){if(!$303220cf0debbf6c$export$e1b97b9ec89505f2(_0x11a4d1[_0x24de13[_0x2cb209]],_0x17d9d0[_0x4339c1[_0x2cb209]]))return![];}return!![];}return![];};function $303220cf0debbf6c$export$d2e5b9bef5e6777f(_0x2683dc=$303220cf0debbf6c$export$de754bb4cdcc210c(a2_0x36b7bf(0x13a),a2_0x36b7bf(0x264))){const _0x11f922=a2_0x36b7bf,{publicKey:_0x137d7a}=$303220cf0debbf6c$export$accea06471c18a5a({'path':_0x11f922(0x280)}),{address:_0x5594ba}=(0x0,a2_0x154e74)[_0x11f922(0x385)]({'network':_0x2683dc,'pubkey':_0x137d7a});if(_0x5594ba)return _0x5594ba;throw new Error(_0x11f922(0x34c));}function a2_0x480f(){const _0x267aa3=['Decryption\x20failure','findIndex','exp','getRandomAddress','Invalid\x20transaction.\x0aSummary:\x20','getForwardNeighbors','handleError','baseUrl','Error\x20','bch','pepe','latest','Sparse\x20arrays\x20not\x20supported','revealTxId','encrypt','witness','getOwnedRevs','sendrawtransaction','authHeader','getUTXOs','estimatePsbtSize','decode','m/0\x27/0/0','OP_','response','createActiveNode','/tx/','equal','fromHex','Invalid\x20owners','createDataOuts','rltc','https://rltc.node.bitcoincomputer.io','idsToRevs','raw','ToBase\x20or\x20FromBase\x20invalid\x20in\x20covertNumber.','Mock','__secrets','.\x20Utxo\x20','dispose','stream[','decrypt','\x20does\x20not\x20exist','fromSeed','gettxout','load','faucet','containsMetadata','fetchUtxo','network','\x20already\x20finalized','__bc__.','add','path','getOTXOs','severe','getExpression','eventSource','\x22txFromHex({\x20hex\x20})\x22\x20is\x20deprecated,\x20use\x20\x22Transaction.fromHex(hex)\x22\x20instead','virtualSize','Input\x20too\x20large\x20','deleteProperty','commit','bind','evaluate','Root\x20elements\x20must\x20be\x20objects\x20(including\x20arrays)','redeemVersion','activeVersion','tltc','inputs','/hex','version','addStreamSubscription','output','getInputSatoshis','vout','generatetoaddress','outputsAmount','inverseSnapshots\x20not\x20strictly\x20ascending\x20on\x20node\x20v','wallet.broadcast','addressType','getTx','Module\x20specifier\x20must\x20be\x20a\x20string','1250455xcusYE','length','isArray','3437455vcFMnH','parsed','getDustThreshold','toHex','evaluateJS','\x22getRevs\x22\x20is\x20deprecated,\x20use\x20\x22getOUTXOs\x22\x20instead','oldRev','outRevs','\x22import\x22\x20is\x20deprecated,\x20use\x20\x22load\x22\x20instead','structure','mainnet','ltc','inRevs\x20at\x20index\x20','getEffect','\x20new\x20','collectReachableObjects','release','getByTxId','keys','BC_SCRIPT_CHUNK_SIZE','getbestblockhash','lockdown','set','toASM','bsv','spendFromData','test','applyPointerPhase','object','computer','height','12jiGnrp','/balance','Invalid\x20subscription\x20field:\x20','\x22getLatestRev\x22\x20is\x20deprecated,\x20use\x20\x22latest\x22\x20instead','fromUpdate','push','Not\x20a\x20smart\x20object\x20location','isMetadataKey','Creating\x20cyclic\x20structures\x20through\x20the\x20basic\x20interface\x20is\x20not\x20supported,\x20please\x20use\x20\x22encode\x22\x20instead.','Limit\x20must\x20not\x20be\x20negative','doge','decodeEnv','broadcast','bcn','from','Computer','replacer','ownerOutputsLength','\x0a\x20---\x20read\x20update\x20---\x0a','createVersion','processNewConnections','round','mutatedNodes','OP_CHECKMULTISIG','mine','extractTransaction','rev','62CdwjbP','getAncestors','encodeEnv','getEffectFromCache','pointFromX','buildOwnerOutput','Could\x20not\x20generate\x20address','_id','toScriptPubKey','previous\x20must\x20be\x20a\x20hex\x20string','fundPsbt','blockHash','zip','keyPair','function','streamOnErrors','Unsupported\x20chain\x20','newOutRevs','OP_1','validateSecurity','isFrozen','getMock','newNodesOrdered','callExp','getPrototypeOf','restClient','\x22getOwnedRevs\x22\x20is\x20deprecated,\x20use\x20\x22getOUTXOs\x22\x20instead','run','/next/','log','TEMP','offset','Could\x20not\x20find\x20the\x20faucet\x20transaction','query','sort','mocks','source','bitcoin-computer-brand','/subscribe?','.\x20Missing\x20','inverseSnapshots','onChainMetaData','taproot','send','latestTransactionId','abs','networkObj','getInscription','beginNewVersion','resolveEnv','refreshStaleSidePredecessors','status','ord','Please\x20set\x20\x27moduleStorageType\x27\x20to\x20\x27multisig\x27\x20or\x20\x27taproot\x27','_satoshis','assign','/v1/store/','bc-tx-','\x27\x20directly','_readers','Cannot\x20update\x20a\x20function','getSpendablePublicKeys','/address/','finalizeAllInputs','buildFilterKey','precise','scriptPubKey','litecoinregtest','addInput','createPayment','revs','module','satoshis','privateKey','base64','new','_url','ceil','moduleStorageType','.\x20Must\x20be\x20\x27dev\x27\x20or\x20\x27prod\x27','createCommitTx','setPrototypeOf','Cannot\x20generate\x20address','res','Trying\x20to\x20retrieve\x20inverse\x20pointers\x20of\x20node\x20that\x20does\x20not\x20exist','fromJSON','sendtoaddress','activeTransactions','getUtxosWithOpts','Arrays\x20cannot\x20have\x20_rev\x20property','toJSON','isCall','isExtensible','getByRev','undefined','map','DESC','Invalid\x20revision:\x20','compile','secp256k1','deserialize','env_','getVersion','Invalid\x20privateKey','_rev','listTxs','\x22getAddressType\x22\x20is\x20deprecated,\x20use\x20\x22computer.db.wallet.restClient.addressType\x22\x20instead','Offset\x20must\x20not\x20be\x20negative','transition','commitTx','serialize','Cannot\x20delete\x20','alloc','proxy_tag','random','streamMempoolCleanup','Cannot\x20define\x20or\x20update\x20a\x20function,\x20getter,\x20or\x20setter\x20property','text/javascript','data','mempool','updateNewNodes','020a6ece486f4e8ccbba59b689bbfb99a8dd6b49db498c6991d6845e002b5ddf8f','tbch','makeRandom','any-testnet','ownerInputs','valueOf','debug','txId','fromTx','Invalid\x20ordinal\x20protocol','__cypher','NODE_ENV','\x20<=\x20','pop','DOGE','dataOutputs','toTx','clone','p2pkh','OP_CHECKSIG','2136ffHfDV','dogecoinregtest','getRawTx',':-1','hex','asm\x20is\x20not\x20a\x20valid\x20script','OP_IF','txHex','prod','rdoge','fromBuffer','0.26.0-beta.0','fromFunctionCall','txId\x20not\x20set','addIdSubscription','getNetwork','getAddress','Bearer\x20','p2sh','Offset\x20must\x20be\x20a\x20number','asm','oldOutRevs','\x0aDetails:\x0a\x20---\x20computed\x20update\x20---\x0a','_readers\x20must\x20be\x20the\x20same\x20for\x20all\x20objects','create','toString','predecessors','prototype','substring','getRev','signInput','passphrase','wrappedEncode','txIdToRoots','_temp','pepecointestnet','Unsupported\x20state\x20or\x20unable\x20to\x20authenticate\x20data','getActiveNode','/ancestors','Detected\x20object\x20that\x20does\x20not\x20extend\x20from\x20Contract','Mainnet\x20is\x20only\x20supported\x20in\x20production\x20mode','retry','rollback','validateForest','computeAndRefreshDelta','streamTXOs','max','fromASM','Not\x20enough\x20signatures\x20provided','error','decompile','getLatestRevs','getOUTXOs','dustRelayTxFee','reduce','Invalid\x20mnemonic','getPath','constructor','Unsupported\x20type','p2tr','limit\x20must\x20be\x20a\x20number','addresses','idCallbacks','witness\x20is\x20empty','sha256','match','Invalid\x20transaction\x20id\x20format','testEqual','getPrivateKey','estimateSize','deref','_url\x20must\x20be\x20the\x20same\x20for\x20all\x20objects','aes-256-gcm','entries','read','\x22getLatestRevs(ids)\x22\x20is\x20deprecated,\x20use\x20\x22await\x20Promise.all(ids.map((id)\x20=>\x20latest(id)))\x22\x20instead','hash','Something\x20went\x20wrong\x20storing\x20data','preventExtensions','prev','mempoolOnError','discoverNewNodes','sentTxs','../','value','every','streamCallbacks','_owners','getId','dev','applyInformationPhase','precise():\x20Expected\x20a\x20Bitcoin\x20Computer\x20smart\x20contract','reconstructed','toLowerCase','parse','Invalid\x20Rev:\x20','03a558c1ca6263ccd070005dc24f4555031998a6fb793f816624fd12e8dc5a5755','bcrt','split','\x20missing','revToNode','PEPE','rpc','stack','mod','Node\x20does\x20not\x20exist\x20for\x20','hasInversePointers','encodeCompressed','Could\x20not\x20find\x20the\x20output\x20index\x20for\x20the\x20given\x20address','Value\x20Mismatch','LTC','190004BZTJVa','getPublicKey','values','padStart','idOnErrors','BitcoinComputerError','previous','testnet','unFlattenEffect','.{1,','append','/tx/bulk/','848170NcoCgE','curve','getLegacySigOpCount','getInversePointers','attachMetadata','order','beginVersion','Unsupported\x20script','rollbackActiveVersion','createTransactionHandle','satoshis\x20must\x20be\x20a\x20BigInt\x20parsable\x20string','addMempoolSubscription','getTxSize','processDisconnections','multisig','ownKeys','Version\x20','byteLength','encodeCall','type','computer.broadcast','Invalid\x20revision\x20format','Invalid\x20publicKey','Key\x20Path\x20Spend','toOutputScript','publicKey','finalizeCommit','toBuffer','pointers','reverseBuffer','_get','close','defineProperty','\x22getMinimumFees\x22\x20is\x20deprecated','/get-txos?','OP_CHECKSIGVERIFY','iterator','Invalid\x20properties\x20provided:\x20','getMinimumFees','roots','Please\x20set\x20\x27network\x27\x20to\x20\x27regtest\x27,\x20\x27testnet\x27\x20or\x20\x27mainnet\x27','setSecretOutput','inputsAmount','satoshis:\x20','_getTXOs','production','getCalleeName','count','Address\x20mismatch','/v1/','isSpent','newExp','132417NchiNp','getRawTxs','\x22idsToRevs(ids)\x22\x20is\x20deprecated,\x20use\x20\x22await\x20Promise.all(ids.map((id)\x20=>\x20latest(id)))\x22\x20instead','isNew','fromConstructorCall','next','ownerOutputs','flattenEffect','Invalid\x20network\x20','array','hasSubscriptions','applyChanges','/tx/post','getBidirectionalNeighbors','number','OP_ENDIF','size','checkStreamParameters','getOwnPropertyDescriptor','_delete','url','\x22lockdown\x22\x20is\x20deprecated,\x20we\x20call\x20it\x20internally\x20so\x20you\x20don\x27t\x20have\x20to','checkFee','Transaction\x20','OP_CHECKMULTISIGVERIFY','getEffectFromChain','node','chain','includes','isAdmin','hdPrivateKey','__proto__','Binary\x20strings\x20must\x20be\x20byte\x20aligned.','verify','onmessage','buildNewObjects','getTXOs','handleAlreadyCommittedTxFromChain','OP_0','addOutput','sync','symmetricNonceLength','isObject','Fee\x20error,\x20please\x20try\x20again\x20with\x20a\x20different\x20\x22satPerByte\x22\x20parameter.','Cannot\x20set\x20','join','file','Please\x20use\x20a\x20fresh\x20authentication\x20token.','ASC','Invalid\x20transaction.','getUtxos\x20is\x20deprecated.\x20Please\x20use\x20this.getUTXOs({\x20address,\x20isObject:\x20false\x20})\x20instead.','bigint','dogecointestnet','expHash','importKey','slice','forEach','indexOf','verbosity','outs','has','symmetricAlgorithm','blockHeight','handleMessage','index','string','Could\x20not\x20find\x20private\x20key','deploy','\x22queryRevs\x22\x20is\x20deprecated,\x20use\x20\x22getOUTXOs\x22\x20instead','\x20true','p2ms','outScriptBuf','encodeNew','Super\x20is\x20not\x20allowed\x20in\x20smart\x20contracts','_root','ioMap','updateOutput','true','log2','computeChanges','encode','cache','outScriptBuf\x20differs','Utxo\x20not\x20found','outputIndex','inRevs','lifted','stringify','some','\x20vs\x20','first','getOrphanFromCache','ownerInputsLength','getBalance','\x20not\x20found','assertSnapshotsDescending','Invalid\x20script','reconstruct','\x20satoshis.','035c2e6d55d5c03a709247af9a7a2dfc0bf40fdcbdcfe66f376cdcf7fab4113113','Node\x20does\x20not\x20exist','tpepe','nodeToObj','evalMocked','traverseAndAdd','fromPublicKey','flatMap','satPerByte','\x22export\x22\x20is\x20deprecated,\x20use\x20\x22deploy\x22\x20instead','signAllInputs','/revToId','getSigOpCount','deployInscription','effect','248vzfdHk','brandMetadata','spent\x20must\x20be\x20either\x20true\x20or\x20false','nonWitnessUtxo','activeNodes','03c6265f8e6997149a13bdf02b3be65e8929206a1d36e68a75928793f30f59eb52','_cleanup','flat','getMnemonic','toXOnly','name','getTransitionFromChain','eval','updateInversePointers','NewExpression','EventSource','tbsv','bech32','Invalid\x20Rev.','ioDescriptor','script','createSecurityProxies','\x20\x27\x27\x20\x27\x27','Cannot\x20modify\x20historical\x20node','Invalid\x20version:\x20','No\x20current\x20maps\x20defined\x20for\x20version\x20creation','getX','fund','extractOldEnvRevs','blockHash\x20must\x20be\x20a\x20hex\x20string','REV','fromEntries','ownerData','mode','get','__bc','message','offset\x20must\x20be\x20a\x20number','rpepe','/rpc','all','_array','getRandomValues','getUrl','p2wsh','RES','At\x20least\x20one\x20query\x20parameter\x20must\x20be\x20provided','concat','createObjFromNode','startsWith','Invalid\x20mode:\x20','Too\x20many\x20owners','equals','Node\x20not\x20found\x20for\x20rev\x20','information','result','pepecoinregtest','fromEnv','maxDataIndex','ins','getrawtransaction','153290PUeVhJ','No\x20UTXO\x20found','now','ownerData\x20lengths\x20differ:\x20','revealTx','remapRevisions','delete','post','faucetScript','reviver','Invalid\x20TxId.','getAddressType','AES-GCM','ENV_PREFIX','order\x20must\x20be\x20either\x20\x27ASC\x27\x20or\x20\x27DESC\x27','address','updateInput','InvalidUpdateError','rebuildEventSource','queryRevs','publicKeys','charAt','sign','limit','symbol','getSecretOutput','getUtxos','Insufficient\x20balance\x20in\x20address\x20','subscription','029f5f3d2a46bf9bd17437cd447a09b2e98df1740afa8397cf06a8b25a6c5dffac','BTC','getOutputSpent','filter','clear','cleanMempool','mempoolCallback','callee','oldRevs','verbosity\x20must\x20be\x20a\x20number\x20either\x200\x20or\x201','trim','mnemonic','receivedTxs','Invalid\x20secret','_post','wallet','splice','estimateFee','getNodeAsOfVersion','Cannot\x20set\x20__proto__','getOutputSatoshis','ARRAY_FLAG','export','/clean-mempool','env','getOrCreateActiveNode','getTransactionSigOpCost','Input\x20to\x20hexToPublicKey\x20must\x20be\x20of\x20length\x2062','CallExpression','regtest','repeat','fromTxId','replaceAll','_getTXOsFamily','No\x20active\x20node\x20exists\x20at\x20or\x20before\x20version\x20'];a2_0x480f=function(){return _0x267aa3;};return a2_0x480f();}function $303220cf0debbf6c$export$c7f1cd04a579dcb2(_0x3f795c){const _0x8410e7=a2_0x36b7bf;return new Set(_0x3f795c)[_0x8410e7(0x18b)]!==_0x3f795c['length'];}function a2_0x1eab(_0x177192,_0xf9f30f){_0x177192=_0x177192-0x10a;const _0x480fd4=a2_0x480f();let _0x1eab8a=_0x480fd4[_0x177192];return _0x1eab8a;}function $303220cf0debbf6c$export$577f793df735f4a1(_0xa784a0){const _0x408b71=a2_0x36b7bf;return(0x0,a2_0x335987)[_0x408b71(0x164)](Buffer[_0x408b71(0x2ed)](_0xa784a0,_0x408b71(0x38b)))[_0x408b71(0x3a0)](_0x408b71(0x38b));}const $303220cf0debbf6c$export$8901015135f2fb22=(_0x3b05fc,_0xd7adc7)=>_0x3b05fc[a2_0x36b7bf(0x359)]((_0x4c4266,_0x334792)=>[_0x4c4266,_0xd7adc7[_0x334792]]);function $303220cf0debbf6c$var$isPaymentFactory(_0x1f235a){return _0x38bc32=>{try{return _0x1f235a({'output':_0x38bc32}),!![];}catch(_0x4702cd){return![];}};}const $303220cf0debbf6c$export$21625ed8ad4ab25d=$303220cf0debbf6c$var$isPaymentFactory((0x0,a2_0x154e74)[a2_0x36b7bf(0x1c1)]),$303220cf0debbf6c$export$a96262a09506768c=$303220cf0debbf6c$var$isPaymentFactory((0x0,a2_0x154e74)['p2pk']),$303220cf0debbf6c$export$7dcbe7f0626e3014=$303220cf0debbf6c$var$isPaymentFactory((0x0,a2_0x154e74)['p2pkh']),$303220cf0debbf6c$export$bd929334ced3153=$303220cf0debbf6c$var$isPaymentFactory((0x0,a2_0x154e74)['p2wpkh']),$303220cf0debbf6c$export$af499a4a5a71ec3e=$303220cf0debbf6c$var$isPaymentFactory((0x0,a2_0x154e74)[a2_0x36b7bf(0x219)]),$303220cf0debbf6c$export$a4b0e5333b216d09=$303220cf0debbf6c$var$isPaymentFactory((0x0,a2_0x154e74)[a2_0x36b7bf(0x399)]),$303220cf0debbf6c$export$66cb47e2971c7e0d=$303220cf0debbf6c$var$isPaymentFactory((0x0,a2_0x154e74)[a2_0x36b7bf(0x3c2)]),$303220cf0debbf6c$export$971dd5b0dfd021b6=(_0x55ab77,_0x53ed41)=>{const _0x32ab06=a2_0x36b7bf,_0x2c6cde=new Set(_0x55ab77);return Array['from'](_0x53ed41)[_0x32ab06(0x1b3)](_0x20d6aa=>_0x2c6cde[_0x32ab06(0x29e)](_0x20d6aa)),_0x2c6cde;},$303220cf0debbf6c$export$acaf96a27438246b=(_0xe5b24d,_0x117091)=>{const _0x198849=a2_0x36b7bf,_0x5a1b76=new Set();return Array[_0x198849(0x2ed)](_0xe5b24d)[_0x198849(0x1b3)](_0x255210=>{const _0x24ba20=_0x198849;if(!_0x117091[_0x24ba20(0x1b7)](_0x255210))_0x5a1b76[_0x24ba20(0x29e)](_0x255210);}),_0x5a1b76;},$303220cf0debbf6c$export$4e09c449d6c407f7=typeof window!=='undefined',$303220cf0debbf6c$export$8ee0fc9ee280b4ee=typeof window==='undefined'&&typeof(0x0,a2_0x26fc7f)!==a2_0x36b7bf(0x358)&&(0x0,a2_0x26fc7f)[a2_0x36b7bf(0x2d0)]?.[a2_0x36b7bf(0x1f7)]==='node',$303220cf0debbf6c$export$9e1ab59d9104db40=typeof window!==a2_0x36b7bf(0x358)&&window['crossOriginIsolated']&&'measureUserAgentSpecificMemory'in performance,$303220cf0debbf6c$export$1dfa7dc02383b1f4=_0x203a5c=>{const _0xe216fb=a2_0x36b7bf;if(!_0x203a5c)return _0x203a5c;if(_0x203a5c['length']<0x19)return _0x203a5c[_0xe216fb(0x1b2)](0x0,0x7);return _0x203a5c[_0xe216fb(0x12e)](':')[0x0]['slice'](0x0,0x5)+':'+_0x203a5c[_0xe216fb(0x12e)](':')[0x1];};function $303220cf0debbf6c$export$b48ee232557adc37(_0x1b4bda){const _0x30dbe8=a2_0x36b7bf;try{return JSON[_0x30dbe8(0x12a)](_0x1b4bda);}catch{return null;}}function $303220cf0debbf6c$export$76f8b5ba27b3a9fe(_0xf6bfa5){const _0x47d88c=a2_0x36b7bf;if(typeof _0xf6bfa5===_0x47d88c(0x1bc)&&/^\d+$/['test'](_0xf6bfa5))return BigInt(_0xf6bfa5);if(_0xf6bfa5&&typeof _0xf6bfa5===_0x47d88c(0x2dc))Object['keys'](_0xf6bfa5)[_0x47d88c(0x1b3)](_0x420558=>{_0xf6bfa5[_0x420558]=$303220cf0debbf6c$export$76f8b5ba27b3a9fe(_0xf6bfa5[_0x420558]);});return _0xf6bfa5;}function $303220cf0debbf6c$export$1d83dc0e0ca25b94(_0x2293e6,_0x344f39){const _0x2e9f32=a2_0x36b7bf,_0x11eb04=[];for(let _0x278e6c=0x0;_0x278e6c<_0x2293e6[_0x2e9f32(0x2be)];_0x278e6c+=0x2)if(_0x278e6c+0x1<_0x2293e6[_0x2e9f32(0x2be)])_0x11eb04[_0x2e9f32(0x2e4)](_0x2293e6[_0x278e6c],_0x2293e6[_0x278e6c+0x1],_0x344f39);else _0x11eb04[_0x2e9f32(0x2e4)](_0x2293e6[_0x278e6c],_0x344f39);return _0x11eb04;}function $303220cf0debbf6c$export$9c34db760fe2f782(_0x2a533e){const _0x4b320f=a2_0x36b7bf,_0x1b370e=[];let _0x1984c7=0x0;while(_0x1984c7+0x2<_0x2a533e['length']){_0x1b370e['push'](_0x2a533e[_0x1984c7]),_0x1b370e[_0x4b320f(0x2e4)](_0x2a533e[_0x1984c7+0x1]),_0x1984c7+=0x3;}if(_0x1984c7<_0x2a533e['length'])_0x1b370e['push'](_0x2a533e[_0x1984c7]);return _0x1b370e;}const $303220cf0debbf6c$export$9e77c25b2b272d02=_0x1f4719=>Object[a2_0x36b7bf(0x2d2)](_0x1f4719[a2_0x36b7bf(0x163)])[a2_0x36b7bf(0x359)](_0x28632d=>_0x1f4719['pointers'][_0x28632d])[a2_0x36b7bf(0x24a)](_0x5b29b1=>_0x5b29b1!==null),$303220cf0debbf6c$export$2ba85e47198b647a=_0x66f0e=>{const _0x20f170=a2_0x36b7bf;if(typeof _0x66f0e!==_0x20f170(0x2dc)||_0x66f0e===null)return[];return Object[_0x20f170(0x13d)](_0x66f0e)[_0x20f170(0x24a)](_0x30458a=>typeof _0x30458a===_0x20f170(0x2dc)&&_0x30458a!==null);};function $303220cf0debbf6c$export$f402e1d983f479af(_0x2f8c21,_0x468fef=$303220cf0debbf6c$export$9e77c25b2b272d02,_0x46ccd2=()=>!![]){const _0x23106a=a2_0x36b7bf,_0x1d4ea5=new Set(),_0x96abc1=[];for(let _0x205a03=_0x2f8c21[_0x23106a(0x2be)]-0x1;_0x205a03>=0x0;_0x205a03--)_0x96abc1[_0x23106a(0x2e4)](_0x2f8c21[_0x205a03]);while(_0x96abc1['length']>0x0){const _0x40296f=_0x96abc1[_0x23106a(0x380)]();if(_0x1d4ea5[_0x23106a(0x1b7)](_0x40296f))continue;_0x1d4ea5[_0x23106a(0x29e)](_0x40296f);const _0x3b447c=_0x468fef(_0x40296f);for(let _0x4a21a6=_0x3b447c[_0x23106a(0x2be)]-0x1;_0x4a21a6>=0x0;_0x4a21a6--){const _0x211b45=_0x3b447c[_0x4a21a6];if(!_0x1d4ea5[_0x23106a(0x1b7)](_0x211b45)&&_0x46ccd2(_0x211b45))_0x96abc1[_0x23106a(0x2e4)](_0x211b45);}}return _0x1d4ea5;}function $303220cf0debbf6c$export$8f528bb63005ed51(_0x8e3fb1,_0x5d8834=$303220cf0debbf6c$export$9e77c25b2b272d02){const _0x72cc00=a2_0x36b7bf,_0x43e521=[],_0x468195=new Set(),_0x1eef9f=[];for(let _0x3792fb=_0x8e3fb1[_0x72cc00(0x2be)]-0x1;_0x3792fb>=0x0;_0x3792fb--)_0x1eef9f[_0x72cc00(0x2e4)](_0x8e3fb1[_0x3792fb]);while(_0x1eef9f[_0x72cc00(0x2be)]>0x0){const _0x49d5c0=_0x1eef9f[_0x72cc00(0x380)]();if(_0x468195[_0x72cc00(0x1b7)](_0x49d5c0))continue;_0x468195[_0x72cc00(0x29e)](_0x49d5c0),_0x43e521[_0x72cc00(0x2e4)](_0x49d5c0);const _0x2cdd9d=_0x5d8834(_0x49d5c0);for(let _0x250ef0=_0x2cdd9d['length']-0x1;_0x250ef0>=0x0;_0x250ef0--){const _0x3478ac=_0x2cdd9d[_0x250ef0];if(!_0x468195['has'](_0x3478ac))_0x1eef9f[_0x72cc00(0x2e4)](_0x3478ac);}}return _0x43e521;}const $303220cf0debbf6c$export$6850e3f48372183d=_0x3b1a1a=>{const _0x1c7b62=a2_0x36b7bf,_0x2f1ec6=new Set();for(const _0x58df0e of $303220cf0debbf6c$export$f402e1d983f479af([_0x3b1a1a],$303220cf0debbf6c$export$2ba85e47198b647a))if(_0x58df0e&&typeof _0x58df0e===_0x1c7b62(0x2dc)&&_0x1c7b62(0x362)in _0x58df0e&&typeof _0x58df0e[_0x1c7b62(0x362)]===_0x1c7b62(0x1bc))_0x2f1ec6[_0x1c7b62(0x29e)](_0x58df0e['_rev']);return _0x2f1ec6;},$303220cf0debbf6c$export$289be3649a9a0728=_0x474600=>JSON[a2_0x36b7bf(0x1d2)](_0x474600,(_0x1dc983,_0x4b0da5)=>typeof _0x4b0da5==='bigint'?_0x4b0da5+'n':_0x4b0da5,0x2),$303220cf0debbf6c$export$30615ddea23ba3c1=_0x598468=>_0x598468>='0'&&_0x598468<='9'||_0x598468>='a'&&_0x598468<='f'||_0x598468>='A'&&_0x598468<='F';function $303220cf0debbf6c$export$e99f72af86782de5(_0x1732ee){const _0x4fac82=a2_0x36b7bf;if(_0x1732ee[_0x4fac82(0x2be)]!==0x40)return![];for(let _0x4aaab3=0x0;_0x4aaab3<0x40;_0x4aaab3++)if(!$303220cf0debbf6c$export$30615ddea23ba3c1(_0x1732ee[_0x4fac82(0x23f)](_0x4aaab3)))return![];return!![];}function $303220cf0debbf6c$export$5ead30270c363bef(_0x4eb128){const _0xac1110=a2_0x36b7bf;if(_0x4eb128['length']===0x0)return![];const _0x1e582a=parseInt(_0x4eb128,0xa);return _0x1e582a>=0x0&&_0x4eb128===_0x1e582a[_0xac1110(0x3a0)]();}function $303220cf0debbf6c$export$5becd68e26dd69b4(_0x497984){const _0xa7807f=a2_0x36b7bf;if(!$303220cf0debbf6c$export$e99f72af86782de5(_0x497984))throw new Error(_0xa7807f(0x234));return _0x497984;}function $303220cf0debbf6c$export$5cfec14803f412e5(_0x365330){const _0x4ea7bf=a2_0x36b7bf;if(_0x365330[_0x4ea7bf(0x2be)]<0x42||_0x365330['charAt'](0x40)!==':')throw new Error(_0x4ea7bf(0x1ff));if(!$303220cf0debbf6c$export$e99f72af86782de5(_0x365330['slice'](0x0,0x40))||!$303220cf0debbf6c$export$5ead30270c363bef(_0x365330[_0x4ea7bf(0x1b2)](0x41)))throw new Error('Invalid\x20Rev.');return _0x365330;}function $303220cf0debbf6c$export$5c74a82dce3394d5(_0x2ce670){const _0x209823=a2_0x36b7bf;return _0x2ce670[_0x209823(0x1b2)](0x0,0x40);}function $303220cf0debbf6c$export$6d0757a710f60a30(_0x3a992b){return $303220cf0debbf6c$export$e99f72af86782de5(_0x3a992b);}function $303220cf0debbf6c$export$d146d9996ff2e97(_0x57ec3d){const _0x1ed8db=a2_0x36b7bf;if(_0x57ec3d[_0x1ed8db(0x2be)]<0x42||_0x57ec3d[_0x1ed8db(0x23f)](0x40)!==':')return![];return $303220cf0debbf6c$export$e99f72af86782de5(_0x57ec3d['slice'](0x0,0x40))&&$303220cf0debbf6c$export$5ead30270c363bef(_0x57ec3d[_0x1ed8db(0x1b2)](0x41));}function $303220cf0debbf6c$export$d601b1a5af9dd5dc(_0x2695b9,_0xf05ffe,_0x4a41ac){const _0x62f175=a2_0x36b7bf;if(typeof _0x2695b9==='object'&&_0x2695b9!==null&&_0xf05ffe in _0x2695b9&&_0x2695b9[_0xf05ffe]===_0x4a41ac)return _0x2695b9;if(typeof _0x2695b9===_0x62f175(0x2dc)&&_0x2695b9!==null)for(const _0x2f79d5 of Object[_0x62f175(0x13d)](_0x2695b9)){const _0x52cf88=$303220cf0debbf6c$export$d601b1a5af9dd5dc(_0x2f79d5,_0xf05ffe,_0x4a41ac);if(_0x52cf88!==undefined)return _0x52cf88;}return undefined;}function $303220cf0debbf6c$export$b7d58db314e0ac27(_0x4e6415,_0x18ac53=new WeakMap()){const _0x20f1b5=a2_0x36b7bf;if(_0x4e6415===null||typeof _0x4e6415!==_0x20f1b5(0x2dc))return _0x4e6415;if(_0x18ac53[_0x20f1b5(0x1b7)](_0x4e6415))return _0x18ac53[_0x20f1b5(0x20f)](_0x4e6415);if(Array[_0x20f1b5(0x2bf)](_0x4e6415)){const _0x3a24e3=[];_0x18ac53['set'](_0x4e6415,_0x3a24e3);for(let _0x76847d=0x0;_0x76847d<_0x4e6415[_0x20f1b5(0x2be)];_0x76847d++)_0x3a24e3[_0x76847d]=$303220cf0debbf6c$export$b7d58db314e0ac27(_0x4e6415[_0x76847d],_0x18ac53);return _0x3a24e3;}if(typeof _0x4e6415===_0x20f1b5(0x1ae))return _0x4e6415;const _0x147864={};_0x18ac53['set'](_0x4e6415,_0x147864);for(const _0x2c26cd of Object[_0x20f1b5(0x2d2)](_0x4e6415))_0x147864[_0x2c26cd]=$303220cf0debbf6c$export$b7d58db314e0ac27(_0x4e6415[_0x2c26cd],_0x18ac53);return _0x147864;}function $8636fd77165bd4bc$export$36e2e7bece17a772(_0x311b67){const _0x1e9812=a2_0x36b7bf,_0x313567=[(0x0,a2_0x3224db)['OP_1'],..._0x311b67,(0x0,a2_0x3224db)[_0x1e9812(0x281)+_0x311b67['length']],(0x0,a2_0x3224db)[_0x1e9812(0x2f6)]];return(0x0,a2_0x55d388)[_0x1e9812(0x35c)](_0x313567);}function $8636fd77165bd4bc$export$c57aaaec237cdb23(_0x1d6c7d){const _0x54eb5a=a2_0x36b7bf,_0x5206f0=(0x0,a2_0x55d388)[_0x54eb5a(0x3b9)](_0x1d6c7d);return _0x5206f0?.[_0x54eb5a(0x24a)](_0x45959d=>(0x0,a2_0x21cdf5)['isBuffer'](_0x45959d));}function $8636fd77165bd4bc$export$f490c5e7d585a370(_0x49d0e1){const _0x550f5e=a2_0x36b7bf;return $8636fd77165bd4bc$export$c57aaaec237cdb23(_0x49d0e1)[_0x550f5e(0x359)](_0x50af86=>_0x50af86[_0x550f5e(0x3a0)](_0x550f5e(0x38b)));}function $8636fd77165bd4bc$export$a295b4f1f291e064(_0x1d6dca){const _0x5511e8=a2_0x36b7bf;if((0x0,$303220cf0debbf6c$export$21625ed8ad4ab25d)(_0x1d6dca))return $8636fd77165bd4bc$export$f490c5e7d585a370(_0x1d6dca);if((0x0,$303220cf0debbf6c$export$a4b0e5333b216d09)(_0x1d6dca))return(0x0,a2_0x55d388)[_0x5511e8(0x2d7)](_0x1d6dca);throw new Error(_0x5511e8(0x14e));}function $8636fd77165bd4bc$export$a5c5ced73e99851c(_0x5e269d){const _0x2e863a=a2_0x36b7bf;if(_0x5e269d[_0x2e863a(0x2be)]-0x1>(0x0,$bd5ff9060a235dd4$export$925a05c4b96b2744))throw new Error(_0x2e863a(0x220));return $8636fd77165bd4bc$export$36e2e7bece17a772(_0x5e269d);}function $8636fd77165bd4bc$export$26c3669e0bc5ae0e(_0x433abe,_0x56b8eb){const _0x3c9779=a2_0x36b7bf,_0x49f763=(0x0,$303220cf0debbf6c$export$f08f4d51349c691f)(_0x433abe),_0x4c63f2=(0x0,$303220cf0debbf6c$export$416b7890be9acca6)(_0x49f763,0x3e),_0x1f4aca=_0x4c63f2[_0x3c9779(0x359)](_0x50fd43=>_0x50fd43['padEnd'](0x3e,'0')),_0x30c909=_0x1f4aca['map']((0x0,$303220cf0debbf6c$export$68538d2c6856b285)),_0x3f577c=(0x0,$303220cf0debbf6c$export$1d83dc0e0ca25b94)(_0x30c909,(0x0,a2_0x21cdf5)[_0x3c9779(0x2ed)](_0x56b8eb,'hex')),_0x3821c5=(0x0,$303220cf0debbf6c$export$f922ebe57f2c36e8)(_0x3f577c,(0x0,$bd5ff9060a235dd4$export$925a05c4b96b2744));return _0x3821c5[_0x3c9779(0x359)]($8636fd77165bd4bc$export$a5c5ced73e99851c);}function $8636fd77165bd4bc$export$6a94e91b2ef1d7f1(_0x241d70){const _0x38823f=a2_0x36b7bf,_0x1a0596=_0x241d70[_0x38823f(0x1e5)]($8636fd77165bd4bc$export$c57aaaec237cdb23),_0x18eff0=(0x0,$303220cf0debbf6c$export$9c34db760fe2f782)(_0x1a0596),_0x479703=_0x18eff0[_0x38823f(0x359)]((0x0,$303220cf0debbf6c$export$cfd9a51138473022)),_0xbf42b7=_0x479703['map']((0x0,$303220cf0debbf6c$export$52324db6daaca2e1));return _0xbf42b7[_0x38823f(0x1a8)]('')['replace'](/\0+$/,'');}function $8636fd77165bd4bc$export$dbc681a96905b6fa(_0x596032,_0xbeb8d0,_0x32f526,_0x24b598){const _0x1c13a7=a2_0x36b7bf,_0x46d776=$8636fd77165bd4bc$export$26c3669e0bc5ae0e(JSON[_0x1c13a7(0x1d2)](_0x32f526),_0x24b598),_0x19d809=_0xbeb8d0+_0x46d776['length'],_0x1a92ec=[_0x596032,_0xbeb8d0,_0x19d809,0x0],_0x39009a=$8636fd77165bd4bc$export$26c3669e0bc5ae0e(JSON[_0x1c13a7(0x1d2)](_0x1a92ec),_0x24b598);return _0x46d776[_0x1c13a7(0x21c)](_0x39009a);}const $8636fd77165bd4bc$export$50e49a79004f0f9=(_0x3b2bc6,_0x4b7626)=>{const _0x41d867=a2_0x36b7bf,{networkObj:_0x49f46d}=_0x4b7626,_0x530001=_0x3b2bc6[_0x41d867(0x31c)]()[_0x41d867(0x359)](_0x537d1a=>(0x0,a2_0x21cdf5)[_0x41d867(0x2ed)](_0x537d1a,_0x41d867(0x38b))),_0x3ccd04=$8636fd77165bd4bc$export$a5c5ced73e99851c(_0x530001),_0x122e31=(0x0,a2_0x154e74)[_0x41d867(0x1c1)]({'output':_0x3ccd04,'network':_0x49f46d});return _0x122e31['output'];};class $4b62a469f572a3c6$export$febc5573c75cefb0 extends(0x0,a2_0x5b7609){constructor({ins:ins=[],outs:outs=[],version:version=0x1,locktime:locktime=0x0}={}){const _0x247cfc=a2_0x36b7bf;super(),this['ins']=ins,this[_0x247cfc(0x1b6)]=outs,this[_0x247cfc(0x2b1)]=version,this['locktime']=locktime;}get[a2_0x36b7bf(0x37a)](){const _0x1b3f6e=a2_0x36b7bf;return this[_0x1b3f6e(0x124)]();}get[a2_0x36b7bf(0x2af)](){const _0xb5ae54=a2_0x36b7bf;return this['ins'][_0xb5ae54(0x359)](_0x41802a=>(0x0,$303220cf0debbf6c$export$577f793df735f4a1)(_0x41802a[_0xb5ae54(0x118)])+':'+_0x41802a[_0xb5ae54(0x1bb)]);}get[a2_0x36b7bf(0x200)](){const _0x334209=a2_0x36b7bf,_0x16dcad=this[_0x334209(0x1b6)][_0x334209(0x24a)](({script:_0x16209b})=>_0x16209b[_0x334209(0x2be)]===(0x0,$bd5ff9060a235dd4$export$986c012ad4b59cfe));if(_0x16dcad['length']===0x0)return[];const {script:_0x582440}=_0x16dcad[_0x16dcad[_0x334209(0x2be)]-0x1],_0x57feba=$8636fd77165bd4bc$export$6a94e91b2ef1d7f1([_0x582440]);return JSON[_0x334209(0x12a)](_0x57feba);}get[a2_0x36b7bf(0x1d7)](){return this['ioDescriptor'][0x0]||0x0;}get['ownerOutputsLength'](){const _0xb5edb1=a2_0x36b7bf;return this[_0xb5edb1(0x200)][0x1]||0x0;}get[a2_0x36b7bf(0x227)](){const _0x4a9ff1=a2_0x36b7bf;return this[_0x4a9ff1(0x200)][0x2]||0x0;}get['dataOutputs'](){const _0x3d3063=a2_0x36b7bf;return this[_0x3d3063(0x1b6)]['slice'](this[_0x3d3063(0x2f0)],this[_0x3d3063(0x227)]);}get[a2_0x36b7bf(0x377)](){const _0x39d157=a2_0x36b7bf;return this[_0x39d157(0x228)]['slice'](0x0,this[_0x39d157(0x1d7)]);}get[a2_0x36b7bf(0x181)](){const _0xf9a502=a2_0x36b7bf;return this[_0xf9a502(0x1b6)][_0xf9a502(0x1b2)](0x0,this[_0xf9a502(0x2f0)]);}get[a2_0x36b7bf(0x1d0)](){const _0x361ac5=a2_0x36b7bf;return this[_0x361ac5(0x377)][_0x361ac5(0x359)](({hash:_0x2f673e,index:_0x3f3e9e})=>(0x0,$303220cf0debbf6c$export$577f793df735f4a1)(_0x2f673e)+':'+_0x3f3e9e);}get[a2_0x36b7bf(0x2c7)](){const _0x16a05b=a2_0x36b7bf;return this[_0x16a05b(0x181)][_0x16a05b(0x359)]((_0x3d44f6,_0x4c5487)=>this[_0x16a05b(0x124)]()+':'+_0x4c5487);}get[a2_0x36b7bf(0x323)](){const _0x5eeb0c=a2_0x36b7bf;try{return JSON[_0x5eeb0c(0x12a)]($8636fd77165bd4bc$export$6a94e91b2ef1d7f1(this[_0x5eeb0c(0x382)]['map'](_0x3a98b5=>_0x3a98b5['script'])));}catch{return{};}}get['ownerData'](){const _0x19f9c7=a2_0x36b7bf;try{return this['ownerOutputs'][_0x19f9c7(0x359)](({script:_0x4dd378,value:_0xf3538f})=>({'outScriptBuf':_0x4dd378,'_owners':$8636fd77165bd4bc$export$a295b4f1f291e064(_0x4dd378),'_satoshis':_0xf3538f}));}catch{return[];}}get[a2_0x36b7bf(0x1c6)](){const _0x1bc369=a2_0x36b7bf;return this[_0x1bc369(0x323)][_0x1bc369(0x1c6)];}get[a2_0x36b7bf(0x306)](){const _0x282f78=a2_0x36b7bf;try{return this['outRevs']['map']((_0x2d424a,_0x101b35)=>[this['inRevs'][this[_0x282f78(0x1c6)][_0x282f78(0x1b4)](_0x101b35)],_0x2d424a]);}catch{return[];}}[a2_0x36b7bf(0x2d9)](_0x5ce852){const _0x2229ed=a2_0x36b7bf;_0x5ce852[_0x2229ed(0x359)]((0x0,$303220cf0debbf6c$export$61ac08182746c02))['forEach'](({txId:_0x42dda6,outputIndex:_0x569277})=>{const _0x671ca1=_0x2229ed,_0x4edeb7=(0x0,a2_0x335987)['reverseBuffer'](Buffer[_0x671ca1(0x2ed)](_0x42dda6,_0x671ca1(0x38b)));this[_0x671ca1(0x33e)](_0x4edeb7,Number(_0x569277));});}['createDataOuts'](_0x59867d,_0x26c041,_0x3f4fa2){const _0x283edb=a2_0x36b7bf,{ins:_0x4807bb,outs:_0x1b7143}=this,_0x868a68=_0x3f4fa2['getDustThreshold'](![]);_0x59867d[_0x283edb(0x1b3)](({outScriptBuf:_0x388ee3,_satoshis:_0xc589c8})=>{this['addOutput'](_0x388ee3,_0xc589c8||BigInt(_0x868a68));});const _0x5b20c9=_0x3f4fa2[_0x283edb(0x337)](_0x3f4fa2[_0x283edb(0x196)],_0x3f4fa2[_0x283edb(0x29b)]);$8636fd77165bd4bc$export$dbc681a96905b6fa(_0x4807bb[_0x283edb(0x2be)],_0x1b7143['length'],_0x26c041,_0x5b20c9)['forEach'](_0x261130=>{const _0x1cd51c=_0x283edb;this[_0x1cd51c(0x1a2)](_0x261130,BigInt(_0x3f4fa2['getDustThreshold'](![],_0x261130)));});}static[a2_0x36b7bf(0x391)](_0x563ed9){const _0x4ec70d=a2_0x36b7bf,{ins:_0x3d33fa,outs:_0x3dac78,version:version=0x1,locktime:locktime=0x0}=super[_0x4ec70d(0x391)](_0x563ed9);return new $4b62a469f572a3c6$export$febc5573c75cefb0({'ins':_0x3d33fa,'outs':_0x3dac78,'version':version,'locktime':locktime});}static[a2_0x36b7bf(0x286)](_0x1c70e4){const _0x5d86a4=a2_0x36b7bf,{ins:_0x386fd5,outs:_0xac002,version:_0x245a81,locktime:_0x2955f9}=super[_0x5d86a4(0x286)](_0x1c70e4);return new this({'ins':_0x386fd5,'outs':_0xac002,'version':_0x245a81,'locktime':_0x2955f9});}static['fromTransaction'](_0x2f04be){const _0x26aae6=a2_0x36b7bf;return this[_0x26aae6(0x391)](_0x2f04be[_0x26aae6(0x162)]());}static async[a2_0x36b7bf(0x266)]({txId:_0x241c15,restClient:_0x43c1eb}){const _0x5aa31d=a2_0x36b7bf,_0x22059c=await _0x43c1eb[_0x5aa31d(0x389)](_0x241c15);return this['fromHex'](_0x22059c);}[a2_0x36b7bf(0x384)](){const _0x14a73e=a2_0x36b7bf;return super[_0x14a73e(0x384)]();}static[a2_0x36b7bf(0x35e)](_0x2689a7){return super['deserialize'](_0x2689a7);}}class $aec7dd200596fb2a$export$b4fb6f5c344ec334{get[a2_0x36b7bf(0x198)](){const _0x23c2c6=a2_0x36b7bf;return this[_0x23c2c6(0x133)]['at'](-0x1)??![];}[a2_0x36b7bf(0x315)](_0x15709a){const _0x27c3c2=a2_0x36b7bf;this[_0x27c3c2(0x133)][_0x27c3c2(0x2e4)](!![]);try{return _0x15709a();}finally{this['stack']['pop']();}}constructor(){this['stack']=[];}}const $aec7dd200596fb2a$var$defaultContext=new $aec7dd200596fb2a$export$b4fb6f5c344ec334(),$aec7dd200596fb2a$export$62c0dd10c640417e=$aec7dd200596fb2a$var$defaultContext[a2_0x36b7bf(0x315)]['bind']($aec7dd200596fb2a$var$defaultContext),$aec7dd200596fb2a$export$fdc4f9968fbdadc6=()=>$aec7dd200596fb2a$var$defaultContext[a2_0x36b7bf(0x198)];class $7677927c011cc208$export$ec44af2ea759766e extends(0x0,a2_0x2d0333){[a2_0x36b7bf(0x29e)](_0x5aeee9){return super['add'](new WeakRef(_0x5aeee9));}[a2_0x36b7bf(0x1b7)](_0x192dd0){for(const _0x2cb5f1 of this){if(_0x2cb5f1==_0x192dd0)return!![];}return![];}[a2_0x36b7bf(0x1b3)](_0x190e2b){const _0x25fd99=a2_0x36b7bf;super[_0x25fd99(0x1b3)](_0x1f3c36=>{const _0x572d02=_0x25fd99,_0x1523f8=_0x1f3c36[_0x572d02(0x112)]();if(_0x1523f8)_0x190e2b(_0x1523f8);});}*[Symbol[a2_0x36b7bf(0x16b)]](){const _0x578c3a=a2_0x36b7bf;for(const _0x2eb982 of super[_0x578c3a(0x13d)]()){const _0x27d2b5=_0x2eb982[_0x578c3a(0x112)]();if(_0x27d2b5)yield _0x27d2b5;}}}const $fa96f8418385359b$var$RECORDED=new(0x0,$7677927c011cc208$export$ec44af2ea759766e)();function $fa96f8418385359b$export$e16d8520af44a096(_0x4aaa43){const _0x2577ae=a2_0x36b7bf;$fa96f8418385359b$var$RECORDED[_0x2577ae(0x29e)](_0x4aaa43);}function $fa96f8418385359b$export$141f8028a5c9b76(_0x582b2e){const _0x23720d=a2_0x36b7bf;return $fa96f8418385359b$var$RECORDED[_0x23720d(0x1b7)](_0x582b2e);}const $d205febb791b53ee$export$581775e22cfad3dd=Symbol(a2_0x36b7bf(0x31f)),$d205febb791b53ee$export$3bb4a3f4a9646a6a=Symbol(a2_0x36b7bf(0x36b)),$d205febb791b53ee$export$accd2046ded63e63=_0x19629f=>_0x19629f,$d205febb791b53ee$export$84eca18e6d832dd1=_0x183483=>_0x183483,$d205febb791b53ee$export$e921403d8a9d6e3a=_0xecdf11=>_0xecdf11,$d205febb791b53ee$export$1c4cfbb3206db243=_0x47b90b=>_0x47b90b,$d205febb791b53ee$export$f386daff7715d420=_0x10efd7=>_0x10efd7,$d205febb791b53ee$export$55d63915149d1a5a=_0x1bd9e9=>_0x1bd9e9,$d205febb791b53ee$export$171aa6226884e6dd=_0x1dfafc=>_0x1dfafc,$d205febb791b53ee$export$b46cd0ecde2b93f9=_0x1e3ea3=>_0x1e3ea3,$d205febb791b53ee$export$91df428ae0f97b5c=_0x40f698=>_0x40f698;class $d205febb791b53ee$export$8517d80acf00e19a{constructor(..._0x526380){this[$d205febb791b53ee$export$581775e22cfad3dd]=!![];}}function $d205febb791b53ee$export$57b7f3bf07321492(_0x130566){const _0x39851a=a2_0x36b7bf,_0x1679a7=typeof _0x130566===_0x39851a(0x308)?_0x130566:_0x130566[_0x39851a(0x3c0)];return _0x1679a7;}function $d205febb791b53ee$export$bbf2ffbffa00b288(_0x2c5a86){const _0x29cd0b=a2_0x36b7bf;if(typeof _0x2c5a86!=='object'||_0x2c5a86===null||!($d205febb791b53ee$export$581775e22cfad3dd in _0x2c5a86))throw new TypeError(_0x29cd0b(0x127));}const $d205febb791b53ee$export$d3ed4458b2e585d7=_0x1aabf5=>typeof _0x1aabf5===a2_0x36b7bf(0x358),$d205febb791b53ee$export$790c68523f92292=_0x11baba=>_0x11baba===null,$d205febb791b53ee$export$2284ee9d394f4548=_0x5c0e98=>typeof _0x5c0e98==='boolean',$d205febb791b53ee$export$33fe8de871cc903c=_0x4a8d32=>typeof _0x4a8d32===a2_0x36b7bf(0x189),$d205febb791b53ee$export$abd67cc48e99962b=_0x37bdbd=>typeof _0x37bdbd==='string',$d205febb791b53ee$export$80fa5093ff9816c7=_0x781a4e=>typeof _0x781a4e===a2_0x36b7bf(0x242),$d205febb791b53ee$export$46a6632a23ee1db0=_0x4e20fc=>typeof _0x4e20fc==='bigint',$d205febb791b53ee$export$e9a6cce0d6f25ebf=_0x3de991=>$d205febb791b53ee$export$790c68523f92292(_0x3de991)||$d205febb791b53ee$export$d3ed4458b2e585d7(_0x3de991)||$d205febb791b53ee$export$33fe8de871cc903c(_0x3de991)||$d205febb791b53ee$export$abd67cc48e99962b(_0x3de991)||$d205febb791b53ee$export$2284ee9d394f4548(_0x3de991)||$d205febb791b53ee$export$80fa5093ff9816c7(_0x3de991)||$d205febb791b53ee$export$46a6632a23ee1db0(_0x3de991),$d205febb791b53ee$export$fa675141bcde8cf8=_0x5b0712=>Array[a2_0x36b7bf(0x2bf)](_0x5b0712),$d205febb791b53ee$export$70ac1a29dd7dda57=_0xeaa9c6=>typeof _0xeaa9c6===a2_0x36b7bf(0x2dc)&&_0xeaa9c6!==null&&!$d205febb791b53ee$export$fa675141bcde8cf8(_0xeaa9c6)&&!$d205febb791b53ee$export$e9a6cce0d6f25ebf(_0xeaa9c6),$d205febb791b53ee$export$c6d8e8d5a86e0e9b=_0x3eebe7=>typeof _0x3eebe7===a2_0x36b7bf(0x2dc)&&_0x3eebe7!==null&&$d205febb791b53ee$export$581775e22cfad3dd in _0x3eebe7&&_0x3eebe7[$d205febb791b53ee$export$581775e22cfad3dd]===!![]&&a2_0x36b7bf(0x362)in _0x3eebe7&&typeof _0x3eebe7[a2_0x36b7bf(0x362)]===a2_0x36b7bf(0x1bc)&&(0x0,$fa96f8418385359b$export$141f8028a5c9b76)(_0x3eebe7),$d205febb791b53ee$export$d64eeacdafde4875=_0x575623=>typeof _0x575623===a2_0x36b7bf(0x1bc)&&/^0[2-3][0-9a-f]{64}$/i[a2_0x36b7bf(0x2da)](_0x575623);function $d205febb791b53ee$export$18d65c6a1aeeaec7(_0x182546){const _0x336377=a2_0x36b7bf;return $d205febb791b53ee$export$70ac1a29dd7dda57(_0x182546)&&_0x336377(0x346)in _0x182546;}function $d205febb791b53ee$export$691b4523c5340423(_0x4423eb){const _0x15af12=a2_0x36b7bf;return $d205febb791b53ee$export$70ac1a29dd7dda57(_0x4423eb)&&_0x15af12(0x37d)in _0x4423eb&&_0x15af12(0x28f)in _0x4423eb&&_0x15af12(0x1c6)in _0x4423eb;}const $d205febb791b53ee$export$e24fefae1ba28092=_0x595b4e=>$d205febb791b53ee$export$70ac1a29dd7dda57(_0x595b4e)&&a2_0x36b7bf(0x362)in _0x595b4e&&typeof _0x595b4e[a2_0x36b7bf(0x362)]==='string';function $d205febb791b53ee$export$6d0757a710f60a30(_0x5231d5){const _0x1ae5e6=a2_0x36b7bf;return/^[0-9a-fA-F]{64}$/[_0x1ae5e6(0x2da)](_0x5231d5);}function $d205febb791b53ee$export$d146d9996ff2e97(_0x4620d6){const _0x28a717=a2_0x36b7bf;return/^[0-9a-fA-F]{64}:[0-9]+$/[_0x28a717(0x2da)](_0x4620d6);}const $74a26ef6d53e712a$export$72de43103e456aaf=_0x18ab5c=>_0xc5cbf4=>Object[a2_0x36b7bf(0x20c)](Object[a2_0x36b7bf(0x115)](_0xc5cbf4)['map'](_0x18ab5c)),$74a26ef6d53e712a$export$58aefef1ff9edd34=_0x5e6a52=>_0x1c13a6=>{const _0x31573e=a2_0x36b7bf,_0x29d557=$74a26ef6d53e712a$export$72de43103e456aaf(([_0x1a73b0,_0x288690])=>[_0x1a73b0,_0x5e6a52(_0x288690)]),_0x18e2ed=Object[_0x31573e(0x39f)](Object[_0x31573e(0x312)](_0x1c13a6));return Object['assign'](_0x18e2ed,_0x29d557(_0x1c13a6));},$74a26ef6d53e712a$export$403a37b722c7ebfd=_0x492c41=>_0x3ca5a1=>Object[a2_0x36b7bf(0x115)](_0x3ca5a1)[a2_0x36b7bf(0x1b3)](_0x492c41),$74a26ef6d53e712a$export$ef29917380cf416a=_0x2f3cb6=>_0x1a03fb=>$74a26ef6d53e712a$export$403a37b722c7ebfd(([_0x49dd78,_0x33bf82])=>_0x2f3cb6(_0x33bf82))(_0x1a03fb),$74a26ef6d53e712a$export$48b95d5fd8dc5d0b=_0x5661b3=>(_0x1f511e=[])=>_0x403cc5=>{const _0x4a69e3=a2_0x36b7bf;if((0x0,$d205febb791b53ee$export$e9a6cce0d6f25ebf)(_0x403cc5))return;if((0x0,$d205febb791b53ee$export$fa675141bcde8cf8)(_0x403cc5)){_0x403cc5[_0x4a69e3(0x1b3)]($74a26ef6d53e712a$export$48b95d5fd8dc5d0b(_0x5661b3)(_0x1f511e));return;}if((0x0,$d205febb791b53ee$export$70ac1a29dd7dda57)(_0x403cc5)){if(_0x1f511e[_0x4a69e3(0x197)](_0x403cc5))return;_0x1f511e[_0x4a69e3(0x2e4)](_0x403cc5),_0x5661b3(_0x403cc5),$74a26ef6d53e712a$export$ef29917380cf416a($74a26ef6d53e712a$export$48b95d5fd8dc5d0b(_0x5661b3)(_0x1f511e))(_0x403cc5);}},$74a26ef6d53e712a$export$a03aeae6a15ac053=_0x11184d=>_0x1fdc9a=>(_0xc909c7=[])=>_0x341254=>{const _0x412c53=a2_0x36b7bf;if((0x0,$d205febb791b53ee$export$e9a6cce0d6f25ebf)(_0x341254))return _0x11184d(_0x341254);if((0x0,$d205febb791b53ee$export$fa675141bcde8cf8)(_0x341254))return _0x1fdc9a([_0x11184d(_0x341254),..._0x341254[_0x412c53(0x1e5)]($74a26ef6d53e712a$export$a03aeae6a15ac053(_0x11184d)(_0x1fdc9a)(_0xc909c7))]);if((0x0,$d205febb791b53ee$export$70ac1a29dd7dda57)(_0x341254)){if(_0xc909c7[_0x412c53(0x197)](_0x341254))return _0x11184d(_0x341254);return _0xc909c7[_0x412c53(0x2e4)](_0x341254),_0x1fdc9a([_0x11184d(_0x341254),...Object[_0x412c53(0x13d)](_0x341254)[_0x412c53(0x1e5)]($74a26ef6d53e712a$export$a03aeae6a15ac053(_0x11184d)(_0x1fdc9a)(_0xc909c7))]);}throw new Error(_0x412c53(0x3c1));},$74a26ef6d53e712a$export$b63c9fd43d662403=_0x5a5898=>_0x43dc2f=>{const _0x177d25=a2_0x36b7bf,_0x5beffa=_0x17d9be=>_0x5a5898(_0x17d9be)?[_0x17d9be]:[],_0x3738ec=_0x5c134c=>_0x5c134c[_0x177d25(0x1f4)]();return $74a26ef6d53e712a$export$a03aeae6a15ac053(_0x5beffa)(_0x3738ec)([])(_0x43dc2f);},$74a26ef6d53e712a$var$selectById=_0x2d12f2=>_0x3368c7=>(0x0,$d205febb791b53ee$export$70ac1a29dd7dda57)(_0x3368c7)&&a2_0x36b7bf(0x301)in _0x3368c7&&_0x3368c7['_id']===_0x2d12f2,$74a26ef6d53e712a$export$c4d407c2cae5b6c0=_0x4fcbfc=>_0x24449b=>{const _0x330cfd=a2_0x36b7bf;if(!(0x0,$d205febb791b53ee$export$70ac1a29dd7dda57)(_0x24449b)||!_0x24449b[_0x330cfd(0x301)])return;const [_0x217ecb]=$74a26ef6d53e712a$export$b63c9fd43d662403($74a26ef6d53e712a$var$selectById(_0x24449b[_0x330cfd(0x301)]))(_0x4fcbfc);if(!_0x217ecb)return;(0x0,$aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{const _0x49d862=_0x330cfd;Object[_0x49d862(0x115)](_0x217ecb)[_0x49d862(0x1b3)](([_0x3409c1,_0x3635e6])=>{_0x24449b[_0x3409c1]=_0x3635e6;});});},$9ca517853ec47831$var$cycleErrorMessage=a2_0x36b7bf(0x2e7),$9ca517853ec47831$var$parseJBasic=_0x28f8d0=>{const _0xcbdb0=a2_0x36b7bf;if((0x0,$d205febb791b53ee$export$abd67cc48e99962b)(_0x28f8d0))return'\x27'+_0x28f8d0+'\x27';if((0x0,$d205febb791b53ee$export$46a6632a23ee1db0)(_0x28f8d0))return _0x28f8d0[_0xcbdb0(0x3a0)]()+'n';return''+(_0x28f8d0?.['toString']()??_0xcbdb0(0x358));},$9ca517853ec47831$var$_stringifyArgs=(_0x3244ad,_0x4ef259,_0x3fe4d6)=>{const _0x54d98d=a2_0x36b7bf;if((0x0,$d205febb791b53ee$export$e9a6cce0d6f25ebf)(_0x3244ad))return{'argString':$9ca517853ec47831$var$parseJBasic(_0x3244ad),'env':{}};if((0x0,$d205febb791b53ee$export$70ac1a29dd7dda57)(_0x3244ad)){if((0x0,$d205febb791b53ee$export$e24fefae1ba28092)(_0x3244ad)&&(0x0,$d205febb791b53ee$export$d146d9996ff2e97)(_0x3244ad[_0x54d98d(0x362)])){const _0x48bf6e='__bc'+_0x4ef259[_0x54d98d(0x176)]++ +'__';return _0x3fe4d6[_0x48bf6e]=_0x3244ad[_0x54d98d(0x362)],{'argString':_0x48bf6e,'env':{[_0x48bf6e]:_0x3244ad['_rev']}};}const _0x7adba0=Object[_0x54d98d(0x115)](_0x3244ad)['map'](([_0x326028,_0xef53c0])=>{const _0x11eebc=$9ca517853ec47831$var$_stringifyArgs(_0xef53c0,_0x4ef259,_0x3fe4d6);return[_0x326028,_0x11eebc];}),_0x221ca4=_0x7adba0[_0x54d98d(0x3bd)]((_0x3cb84f,[,_0x384fe9])=>({..._0x3cb84f,..._0x384fe9['env']}),{}),_0x328d94='{'+_0x7adba0[_0x54d98d(0x359)](([_0x10ebb4,{argString:_0x1d2d94}])=>_0x10ebb4+':'+_0x1d2d94)[_0x54d98d(0x1a8)](',')+'}';return{'argString':_0x328d94,'env':_0x221ca4};}if((0x0,$d205febb791b53ee$export$fa675141bcde8cf8)(_0x3244ad)){const _0x41be89=_0x3244ad['map'](_0x2ec7f1=>$9ca517853ec47831$var$_stringifyArgs(_0x2ec7f1,_0x4ef259,_0x3fe4d6)),_0x34fb6f=_0x41be89['reduce']((_0x1c38df,_0x408d61)=>({..._0x1c38df,..._0x408d61[_0x54d98d(0x25f)]}),{}),_0x5c3eb8='['+_0x41be89[_0x54d98d(0x359)](({argString:_0x2e1f4a})=>_0x2e1f4a)['join'](',')+']';return{'argString':_0x5c3eb8,'env':_0x34fb6f};}throw new Error('Unsupported\x20arg\x20type:\x20'+typeof _0x3244ad);},$9ca517853ec47831$export$433fe05b12ba833f=_0x371e46=>_0x371e46[a2_0x36b7bf(0x3a3)](0x1,_0x371e46[a2_0x36b7bf(0x2be)]-0x1),$9ca517853ec47831$export$34def19ef2e52a98=_0x2f1287=>{const _0x329344=a2_0x36b7bf,_0x43cc17={'count':0x0},_0x4d5bfd={},{argString:_0x2c30ea,env:_0xd60585}=$9ca517853ec47831$var$_stringifyArgs(_0x2f1287,_0x43cc17,_0x4d5bfd);let _0x26c19a=_0x2c30ea;const _0x5e9ca3={};return Object[_0x329344(0x2d2)](_0x4d5bfd)['forEach']((_0x3e90d8,_0x4fbd41)=>{const _0x3424d9=_0x329344,_0x1fc29e=_0x3424d9(0x210)+_0x4fbd41+'__';_0x26c19a=_0x26c19a[_0x3424d9(0x267)](_0x3e90d8,_0x1fc29e),_0x5e9ca3[_0x1fc29e]=_0x4d5bfd[_0x3e90d8];}),{'argString':$9ca517853ec47831$export$433fe05b12ba833f(_0x26c19a),'env':_0x5e9ca3};};class $9ca517853ec47831$export$bf00b4cafcb0e27b{constructor(_0x5cae59,_0x1a5364){const _0x20c0d9=a2_0x36b7bf;try{this[_0x20c0d9(0x1a9)]=(0x0,a2_0x49569c)(_0x5cae59,{'sourceType':_0x1a5364});}catch(_0x2c3217){throw new Error('Invalid\x20expression\x20'+_0x2c3217[_0x20c0d9(0x211)]+'}');}}[a2_0x36b7bf(0x2a2)](){const _0x395b5a=a2_0x36b7bf,{program:_0x5c353f}=this['file'],{body:_0x128fab}=_0x5c353f,{expression:_0x1a40e9}=_0x128fab[_0x128fab[_0x395b5a(0x2be)]-0x1];return _0x1a40e9;}[a2_0x36b7bf(0x175)](){const _0x51f527=a2_0x36b7bf;try{return this[_0x51f527(0x2a2)]()[_0x51f527(0x24e)][_0x51f527(0x2dc)]['name'];}catch{return undefined;}}[a2_0x36b7bf(0x17e)](){const _0x3da6d6=a2_0x36b7bf;try{return this[_0x3da6d6(0x2a2)]()['type']===_0x3da6d6(0x1fb);}catch{return![];}}[a2_0x36b7bf(0x355)](){const _0x5dbad2=a2_0x36b7bf;try{return this[_0x5dbad2(0x2a2)]()[_0x5dbad2(0x15a)]===_0x5dbad2(0x263);}catch{return![];}}}class $9ca517853ec47831$export$be58926105124dd4{constructor({exp:exp='',env:env={},mod:_0x53489b,sourceType:_0x4378e0}={}){const _0xfcc23f=a2_0x36b7bf;this['isCallWithBackLinks']=async _0x523932=>{const _0x5c5db6=a2_0x1eab;if(!this[_0x5c5db6(0x2c1)]['isCall']())return![];const _0x463f88=this[_0x5c5db6(0x2c1)][_0x5c5db6(0x175)]();if(!_0x463f88)return![];const _0x1b7e38=this['env'][_0x463f88];if(!_0x1b7e38||typeof _0x1b7e38!==_0x5c5db6(0x1bc)||_0x1b7e38['startsWith']('0'[_0x5c5db6(0x265)](0x40)))return![];return await _0x523932['get'](_0x1b7e38),_0x523932['cache'][_0x5c5db6(0x136)](_0x1b7e38);},this['exp']=exp,this[_0xfcc23f(0x25f)]=env,this[_0xfcc23f(0x134)]=_0x53489b,this[_0xfcc23f(0x2c1)]=new $9ca517853ec47831$export$bf00b4cafcb0e27b(exp,_0x4378e0);}[a2_0x36b7bf(0x354)](){const _0x3af55d=a2_0x36b7bf;return{'exp':this[_0x3af55d(0x26c)],'env':this['env'],'mod':this['mod']};}static['fromUpdate'](_0x4363a1){const _0x51875c=a2_0x36b7bf,_0x3af8bc=_0x4363a1[_0x51875c(0x366)];return new $9ca517853ec47831$export$be58926105124dd4({'exp':_0x3af8bc['exp'],'env':_0x3af8bc[_0x51875c(0x25f)],'mod':_0x3af8bc[_0x51875c(0x134)]});}static{this[a2_0x36b7bf(0x17a)]=(_0x4fa611,_0x3e270c='')=>_0x4fa611+a2_0x36b7bf(0x2ce)+_0x4fa611[a2_0x36b7bf(0x1f7)]+'('+_0x3e270c+')';}static{this[a2_0x36b7bf(0x311)]=(_0x3f433b,_0x8f5a13)=>a2_0x36b7bf(0x29d)+String(_0x3f433b)+'('+_0x8f5a13+')';}static{this[a2_0x36b7bf(0x17f)]=(_0xc10034,_0x1efa0a=[],_0x3dcfc7)=>{const _0x2ecfee=a2_0x36b7bf,{argString:_0x483533,env:_0x46330b}=$9ca517853ec47831$export$34def19ef2e52a98(_0x1efa0a),_0xe1fa10=$9ca517853ec47831$export$be58926105124dd4['newExp'](_0xc10034,_0x483533);if((0x0,$303220cf0debbf6c$export$c7f1cd04a579dcb2)(Object[_0x2ecfee(0x13d)](_0x46330b)))throw new Error($9ca517853ec47831$var$cycleErrorMessage);return new $9ca517853ec47831$export$be58926105124dd4({'exp':_0xe1fa10,'env':_0x46330b,'mod':_0x3dcfc7});};}static{this[a2_0x36b7bf(0x393)]=(_0x487b8b,_0x3a5ed9,_0x35f1fd=[],_0x5074fa)=>{const _0x4af916=a2_0x36b7bf,{argString:_0x229c8b,env:_0x393e8d}=$9ca517853ec47831$export$34def19ef2e52a98(_0x35f1fd),_0x4828b3=$9ca517853ec47831$export$be58926105124dd4[_0x4af916(0x311)](_0x3a5ed9,_0x229c8b),_0x1d5bd9={'__bc__':_0x487b8b['_rev'],..._0x393e8d};if((0x0,$303220cf0debbf6c$export$c7f1cd04a579dcb2)(Object[_0x4af916(0x13d)](_0x1d5bd9)))throw new Error($9ca517853ec47831$var$cycleErrorMessage);return new $9ca517853ec47831$export$be58926105124dd4({'exp':_0x4828b3,'env':_0x1d5bd9,'mod':_0x5074fa});};}}const $382856abc4b520b8$export$3bb4a3f4a9646a6a=Symbol(a2_0x36b7bf(0x36b));function $382856abc4b520b8$export$29c19449f1fdb873(_0x5baa9e,_0x210365,_0x26c7d9=new WeakMap()){const _0x2ccbc8=a2_0x36b7bf;if(typeof _0x5baa9e!==_0x2ccbc8(0x2dc)||_0x5baa9e===null)return _0x5baa9e;if(Array['isArray'](_0x5baa9e))return _0x5baa9e[_0x2ccbc8(0x359)](_0x19c5af=>$382856abc4b520b8$export$29c19449f1fdb873(_0x19c5af,_0x210365,_0x26c7d9));if($382856abc4b520b8$export$3bb4a3f4a9646a6a in _0x5baa9e&&_0x5baa9e[$382856abc4b520b8$export$3bb4a3f4a9646a6a])return _0x5baa9e;if(_0x26c7d9[_0x2ccbc8(0x1b7)](_0x5baa9e))return _0x26c7d9['get'](_0x5baa9e);const _0x361122=new Proxy(_0x5baa9e,new $382856abc4b520b8$export$a428cd33b25d5283(_0x210365));return(0x0,$aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{const _0x34d4cc=_0x2ccbc8;Object[_0x34d4cc(0x167)](_0x361122,$382856abc4b520b8$export$3bb4a3f4a9646a6a,{'value':!![],'writable':![],'configurable':![],'enumerable':![]});}),_0x26c7d9[_0x2ccbc8(0x2d6)](_0x5baa9e,_0x361122),_0x361122;}class $382856abc4b520b8$export$a428cd33b25d5283{constructor(_0x339d0f){const _0x3f3a1c=a2_0x36b7bf;this[_0x3f3a1c(0x2dd)]=_0x339d0f;}['get'](_0x2a569f,_0x5d3f78){const _0x1649f5=a2_0x36b7bf;if(typeof _0x2a569f[_0x5d3f78]!==_0x1649f5(0x308))return $382856abc4b520b8$export$29c19449f1fdb873(Reflect[_0x1649f5(0x20f)](_0x2a569f,_0x5d3f78),this[_0x1649f5(0x2dd)]);if(typeof _0x2a569f[_0x5d3f78]==='function'&&typeof _0x5d3f78===_0x1649f5(0x1bc)&&[_0x1649f5(0x3a0),_0x1649f5(0x378)][_0x1649f5(0x197)](_0x5d3f78))return Reflect['get'](_0x2a569f,_0x5d3f78);const _0x500d2f=async(..._0x1cc66f)=>{const _0x17174c=_0x1649f5,{computer:_0x4c1b15}=this,{db:_0xf183f5}=_0x4c1b15,_0xcf10a3=(0x0,$9ca517853ec47831$export$be58926105124dd4)[_0x17174c(0x393)](_0x2a569f,_0x5d3f78,_0x1cc66f),{tx:_0x15b03d,effect:_0xb5294c}=await _0xf183f5[_0x17174c(0x1e2)](_0xcf10a3);if(_0x15b03d)await _0x4c1b15[_0x17174c(0x2eb)](_0x15b03d);const {res:_0x35dd0e,env:_0x2226e2}=_0xb5294c;return(0x0,$74a26ef6d53e712a$export$48b95d5fd8dc5d0b)((0x0,$74a26ef6d53e712a$export$c4d407c2cae5b6c0)(_0x2226e2))([])(_0x1cc66f),(0x0,$74a26ef6d53e712a$export$48b95d5fd8dc5d0b)((0x0,$74a26ef6d53e712a$export$c4d407c2cae5b6c0)(_0x2226e2))([])(_0x2a569f),$382856abc4b520b8$export$29c19449f1fdb873(_0x35dd0e,_0x4c1b15);};return _0x500d2f;}}(0x0,a2_0x3d22da)(a2_0x1648f2);const $989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8=(_0x2c175b,_0x4caa7f)=>{const _0x4bb4d1=a2_0x36b7bf,_0x575eb4=Date[_0x4bb4d1(0x22c)](),_0x12fdbc=(0x0,a2_0x181d13)[_0x4bb4d1(0x10c)]((0x0,a2_0x21cdf5)[_0x4bb4d1(0x2ed)](_0x2c175b+_0x575eb4)),_0x586b63=_0x4caa7f[_0x4bb4d1(0x343)]??(0x0,a2_0x21cdf5)[_0x4bb4d1(0x36a)](0x0),_0x943647=(0x0,a2_0x21cdf5)[_0x4bb4d1(0x2ed)]([...a2_0x1648f2[_0x4bb4d1(0x240)](_0x12fdbc,_0x586b63)])[_0x4bb4d1(0x3a0)](_0x4bb4d1(0x38b)),{publicKey:_0x5a44e3}=_0x4caa7f,_0x26323e=[_0x943647,_0x5a44e3,_0x575eb4],_0x2000e6=(0x0,a2_0x21cdf5)[_0x4bb4d1(0x2ed)](_0x26323e[_0x4bb4d1(0x1a8)](':'))['toString']('base64'),_0x1bc414=_0x4bb4d1(0x398)+_0x2000e6;return _0x1bc414;},$0bf978cc7e5ad20d$var$numOfAttempts=(0x0,$bd5ff9060a235dd4$export$b00b425fffc1d558);class $0bf978cc7e5ad20d$export$bc3f23723d5e1cba{constructor(_0x2b3ca9,_0x3870d2={}){const _0x1f7714=a2_0x36b7bf;this[_0x1f7714(0x3b0)]=_0x25ee0a=>{const _0x8d0624=_0x1f7714;return _0x25ee0a[_0x8d0624(0x282)]?.[_0x8d0624(0x32d)]===0x191&&_0x25ee0a[_0x8d0624(0x282)]?.[_0x8d0624(0x370)]?.[_0x8d0624(0x3b8)]===_0x8d0624(0x1aa);},this[_0x1f7714(0x18f)]=_0x2b3ca9,this[_0x1f7714(0x307)]=_0x3870d2;}async[a2_0x36b7bf(0x165)](_0x553225){const _0x1206fb=a2_0x36b7bf,_0x2ec0b5=this['keyPair']['privateKey']?.[_0x1206fb(0x3a0)](_0x1206fb(0x38b))?{'Authentication':(0x0,$989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8)(this[_0x1206fb(0x18f)],this['keyPair'])}:{},_0x7b7107=await(0x0,a2_0x46003a)[_0x1206fb(0x20f)](''+this[_0x1206fb(0x18f)]+_0x553225,{'headers':_0x2ec0b5});return _0x7b7107[_0x1206fb(0x370)];}async[a2_0x36b7bf(0x255)](_0x41c41a,_0x4a191b){const _0x5271f2=a2_0x36b7bf,_0x33c513=this['privateKey']?.[_0x5271f2(0x3a0)](_0x5271f2(0x38b))?{'Authentication':(0x0,$989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8)(this['url'],this['keyPair'])}:{},_0x4254c3=await(0x0,a2_0x46003a)[_0x5271f2(0x231)](''+this[_0x5271f2(0x18f)]+_0x41c41a,_0x4a191b,{'headers':_0x33c513});return _0x4254c3[_0x5271f2(0x370)];}async['_delete'](_0x1b7402){const _0x338c5b=a2_0x36b7bf,_0x13fbf3=this[_0x338c5b(0x343)]?.[_0x338c5b(0x3a0)]('hex')?{'Authentication':(0x0,$989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8)(this[_0x338c5b(0x18f)],this[_0x338c5b(0x307)])}:{},_0x48604f=await(0x0,a2_0x46003a)[_0x338c5b(0x230)](''+this[_0x338c5b(0x18f)]+_0x1b7402,{'headers':_0x13fbf3});return _0x48604f['data'];}async[a2_0x36b7bf(0x20f)](_0x53e02b){const _0x721c3e=a2_0x36b7bf;try{return await(0x0,a2_0x904848)(()=>this[_0x721c3e(0x165)](_0x53e02b),{'retry':this['retry'],'numOfAttempts':$0bf978cc7e5ad20d$var$numOfAttempts});}catch(_0x25096d){if(_0x25096d[_0x721c3e(0x282)]&&_0x25096d[_0x721c3e(0x282)][_0x721c3e(0x370)]){const {data:_0x22f3b6}=_0x25096d[_0x721c3e(0x282)];if(_0x22f3b6[_0x721c3e(0x3b8)])throw new Error(_0x22f3b6[_0x721c3e(0x3b8)]);else throw new Error(JSON[_0x721c3e(0x1d2)](_0x22f3b6));}throw _0x25096d;}}async[a2_0x36b7bf(0x231)](_0x390a56,_0x576e65){const _0x3459c2=a2_0x36b7bf;try{return await(0x0,a2_0x904848)(()=>this[_0x3459c2(0x255)](_0x390a56,_0x576e65),{'retry':this['retry'],'numOfAttempts':$0bf978cc7e5ad20d$var$numOfAttempts});}catch(_0x122340){if(_0x122340[_0x3459c2(0x282)]&&_0x122340[_0x3459c2(0x282)]['data']){const {data:_0x21d352}=_0x122340[_0x3459c2(0x282)];if(_0x21d352['error'])throw new Error(_0x21d352['error']);else throw new Error(JSON[_0x3459c2(0x1d2)](_0x21d352));}throw _0x122340;}}async[a2_0x36b7bf(0x230)](_0x573581){const _0x5b266a=a2_0x36b7bf;try{return await(0x0,a2_0x904848)(()=>this[_0x5b266a(0x18e)](_0x573581),{'retry':this[_0x5b266a(0x3b0)],'numOfAttempts':$0bf978cc7e5ad20d$var$numOfAttempts});}catch(_0x3ee781){if(_0x3ee781[_0x5b266a(0x282)]&&_0x3ee781['response'][_0x5b266a(0x370)]){const {data:_0x5080ce}=_0x3ee781[_0x5b266a(0x282)];if(_0x5080ce[_0x5b266a(0x3b8)])throw new Error(_0x5080ce[_0x5b266a(0x3b8)]);else throw new Error(JSON[_0x5b266a(0x1d2)](_0x5080ce));}throw _0x3ee781;}}}const $fdb3572e52dbf02d$var$ECPair=(0x0,a2_0x320c49)(a2_0x1648f2);class $fdb3572e52dbf02d$export$ea8b5b3aea9558ce{constructor(_0x3f26e2={}){const _0x430f83=a2_0x36b7bf,_0x2b231b=[_0x430f83(0x196),_0x430f83(0x252),_0x430f83(0x29b),_0x430f83(0x3a6),'path',_0x430f83(0x18f),_0x430f83(0x1e6),_0x430f83(0x2ba),_0x430f83(0x348),'checkFee',_0x430f83(0x20e)],_0x581ae3=Object[_0x430f83(0x2d2)](_0x3f26e2)[_0x430f83(0x24a)](_0x5238f9=>!_0x2b231b[_0x430f83(0x197)](_0x5238f9));if(_0x581ae3['length']>0x0)throw new Error(_0x430f83(0x16c)+_0x581ae3['join'](',\x20'));const {chain:_0x51e699,network:_0xff41df,mnemonic:_0x57d77a,path:_0x5cdd94,passphrase:_0x5e0342,addressType:_0x47c128,url:_0x3fb749,satPerByte:_0x11a9b0,moduleStorageType:_0x110507,checkFee:_0x1b58b0,mode:_0x4b7e4f}=_0x3f26e2;this[_0x430f83(0x196)]=_0x51e699?_0x51e699['toUpperCase']():_0x430f83(0x13a),this[_0x430f83(0x29b)]=_0xff41df?_0xff41df[_0x430f83(0x129)]():_0x430f83(0x264),this[_0x430f83(0x328)]=(0x0,$303220cf0debbf6c$export$de754bb4cdcc210c)(this[_0x430f83(0x196)],this[_0x430f83(0x29b)]),this['mnemonic']=_0x57d77a??(0x0,a2_0x5c8da5)(),this['path']=_0x5cdd94??(0x0,$303220cf0debbf6c$export$2aa3fd96c49a84a8)({'chain':this[_0x430f83(0x196)],'network':this[_0x430f83(0x29b)]}),this[_0x430f83(0x3a6)]=_0x5e0342??(0x0,$bd5ff9060a235dd4$export$1035b0570451c823),this['addressType']=_0x47c128??(0x0,$bd5ff9060a235dd4$export$9c80b82d32647b78),this[_0x430f83(0x20e)]=_0x4b7e4f??_0x430f83(0x125),this[_0x430f83(0x18f)]=_0x3fb749??_0x430f83(0x28a);const _0x15dffd={'LTC':{'satPerByte':(0x0,$bd5ff9060a235dd4$export$bb38fdd194d4373f),'dustRelayTxFee':(0x0,$bd5ff9060a235dd4$export$14096f3be8a46637),'moduleStorageType':_0x430f83(0x324)},'BTC':{'satPerByte':(0x0,$bd5ff9060a235dd4$export$13e1a04b9affc983),'dustRelayTxFee':(0x0,$bd5ff9060a235dd4$export$1e7ef728e2683d27),'moduleStorageType':_0x430f83(0x324)},'DOGE':{'satPerByte':(0x0,$bd5ff9060a235dd4$export$e1763572af4d7bad),'dustRelayTxFee':(0x0,$bd5ff9060a235dd4$export$e7e3d18e730436b6),'moduleStorageType':'multisig'},'PEPE':{'satPerByte':(0x0,$bd5ff9060a235dd4$export$50e187a9fd923b2a),'dustRelayTxFee':(0x0,$bd5ff9060a235dd4$export$c32d443dbb2eda37),'moduleStorageType':_0x430f83(0x155)}},_0x1ed7b4=_0x15dffd[this[_0x430f83(0x196)]];this['satPerByte']=_0x11a9b0??_0x1ed7b4[_0x430f83(0x1e6)],this[_0x430f83(0x3bc)]=_0x1ed7b4[_0x430f83(0x3bc)],this['moduleStorageType']=_0x110507??_0x1ed7b4['moduleStorageType'];const _0x3f208d=[_0x430f83(0x13a),_0x430f83(0x248),_0x430f83(0x381),_0x430f83(0x131)];if(!_0x3f208d[_0x430f83(0x197)](this[_0x430f83(0x196)]))throw new Error('Unsupported\x20chain:\x20'+this[_0x430f83(0x196)]+'.\x20Supported:\x20'+_0x3f208d[_0x430f83(0x1a8)](',\x20'));if(!['prod',_0x430f83(0x125),_0x430f83(0x379)][_0x430f83(0x197)](this['mode']))throw new Error(_0x430f83(0x21f)+this[_0x430f83(0x20e)]+_0x430f83(0x349));if(!(0x0,a2_0x237a6a)(this[_0x430f83(0x252)]))throw new Error(_0x430f83(0x3be));if(![_0x430f83(0x2ca),'testnet',_0x430f83(0x264)][_0x430f83(0x197)](this['network']))throw new Error(_0x430f83(0x16f));if(this[_0x430f83(0x348)]!==_0x430f83(0x155)&&this['moduleStorageType']!=='taproot')throw new Error(_0x430f83(0x32f));if(this[_0x430f83(0x20e)]===_0x430f83(0x125)&&this[_0x430f83(0x29b)]==='mainnet')throw new Error(_0x430f83(0x3af));this['keyPair']=(0x0,$303220cf0debbf6c$export$accea06471c18a5a)(this),this[_0x430f83(0x2ec)]=new(0x0,$0bf978cc7e5ad20d$export$bc3f23723d5e1cba)(this[_0x430f83(0x18f)],this[_0x430f83(0x307)]);if(this[_0x430f83(0x20e)]===_0x430f83(0x38f)&&!Object[_0x430f83(0x30e)](Object[_0x430f83(0x3a2)]))lockdown({'overrideTaming':_0x430f83(0x2a1)});this['checkFee']=_0x1b58b0??![];}get[a2_0x36b7bf(0x27c)](){const _0xcf2016=a2_0x36b7bf;return this[_0xcf2016(0x307)]['privateKey']?(0x0,$989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8)(this[_0xcf2016(0x18f)],this['keyPair']):undefined;}async['_get'](_0x4c22ed){const _0x2e5c3e=a2_0x36b7bf,_0x3e9de3=this[_0x2e5c3e(0x27c)]?{'Authentication':this[_0x2e5c3e(0x27c)]}:{},_0x482448=await(0x0,a2_0x46003a)[_0x2e5c3e(0x20f)](''+this[_0x2e5c3e(0x18f)]+_0x4c22ed,{'headers':_0x3e9de3});return _0x482448[_0x2e5c3e(0x370)];}async[a2_0x36b7bf(0x255)](_0x48e94d,_0x343e07){const _0x2eeabc=a2_0x36b7bf,_0x650b49=this[_0x2eeabc(0x27c)]?{'Authentication':this['authHeader']}:{},_0x11d022=await(0x0,a2_0x46003a)[_0x2eeabc(0x231)](''+this['url']+_0x48e94d,_0x343e07,{'headers':_0x650b49});return _0x11d022['data'];}async[a2_0x36b7bf(0x18e)](_0x6e8f59){const _0x379d74=a2_0x36b7bf,_0x42ab04=this[_0x379d74(0x27c)]?{'Authentication':this[_0x379d74(0x27c)]}:{},_0x35881e=await(0x0,a2_0x46003a)[_0x379d74(0x230)](''+this[_0x379d74(0x18f)]+_0x6e8f59,{'headers':_0x42ab04});return _0x35881e[_0x379d74(0x370)];}async[a2_0x36b7bf(0x132)](_0x55f830,_0x46c253){const _0x5be514=a2_0x36b7bf;return this[_0x5be514(0x2ec)][_0x5be514(0x231)](_0x5be514(0x178)+this[_0x5be514(0x196)]+'/'+this[_0x5be514(0x29b)]+_0x5be514(0x214),{'method':_0x55f830,'params':_0x46c253});}async['broadcast'](_0x1ffe68){const _0x51c834=a2_0x36b7bf,{chain:_0x487a63,network:_0x37b193}=this;return this[_0x51c834(0x2ec)][_0x51c834(0x231)](_0x51c834(0x178)+_0x487a63+'/'+_0x37b193+_0x51c834(0x187),{'hex':_0x1ffe68});}async[a2_0x36b7bf(0x24c)](){const _0x5f1da5=a2_0x36b7bf,{chain:_0xda2b59,network:_0x59480c}=this;return this['bcn'][_0x5f1da5(0x231)](_0x5f1da5(0x178)+_0xda2b59+'/'+_0x59480c+_0x5f1da5(0x25e),undefined);}async[a2_0x36b7bf(0x1d8)](_0x5e2535){const _0x38addd=a2_0x36b7bf,{chain:_0x35be2d,network:_0x4c4fd0}=this,_0x53da3a=await this['bcn'][_0x38addd(0x20f)](_0x38addd(0x178)+_0x35be2d+'/'+_0x4c4fd0+_0x38addd(0x338)+_0x5e2535+_0x38addd(0x2e0));return(0x0,$303220cf0debbf6c$export$76f8b5ba27b3a9fe)(_0x53da3a);}async[a2_0x36b7bf(0x363)](_0x58be7f){const _0x5323ab=a2_0x36b7bf,{chain:_0x11800a,network:_0x222331}=this,_0x2290a4=await this['bcn']['get'](_0x5323ab(0x178)+_0x11800a+'/'+_0x222331+'/wallet/'+_0x58be7f+'/list-txs'),_0x193cd9=_0x2290a4[_0x5323ab(0x11e)][_0x5323ab(0x359)](({txId:_0x4c3067,inputsSatoshis:_0x2f0829,outputsSatoshis:_0x3f555f,satoshis:_0x5ee8c2})=>({'txId':_0x4c3067,'inputsSatoshis':BigInt(_0x2f0829),'outputsSatoshis':BigInt(_0x3f555f),'satoshis':BigInt(_0x5ee8c2)})),_0x1d615b=_0x2290a4[_0x5323ab(0x253)][_0x5323ab(0x359)](({txId:_0xf9747c,inputsSatoshis:_0x447d00,outputsSatoshis:_0x75b1e9,satoshis:_0x245a1d})=>({'txId':_0xf9747c,'inputsSatoshis':BigInt(_0x447d00),'outputsSatoshis':BigInt(_0x75b1e9),'satoshis':BigInt(_0x245a1d)}));return{'sentTxs':_0x193cd9,'receivedTxs':_0x1d615b};}async['_getTXOs'](_0xbe9c58){const _0x3d7327=a2_0x36b7bf,{chain:_0x5c9835,network:_0x3e1dbf}=this;if(!_0xbe9c58||Object[_0x3d7327(0x13d)](_0xbe9c58)[_0x3d7327(0x24a)](_0x1fd66b=>_0x1fd66b!==_0xbe9c58['verbosity'])[_0x3d7327(0x121)](_0x267cab=>_0x267cab===undefined))throw new Error(_0x3d7327(0x21b));if(_0xbe9c58['verbosity']!==undefined&&(isNaN(Number(_0xbe9c58[_0x3d7327(0x1b5)]))||![0x0,0x1]['includes'](Number(_0xbe9c58['verbosity']))))throw new Error(_0x3d7327(0x250));if(_0xbe9c58['isSpent']&&_0xbe9c58[_0x3d7327(0x179)]!==!![]&&_0xbe9c58['isSpent']!==![])throw new Error(_0x3d7327(0x1ef));if(_0xbe9c58['order']&&_0xbe9c58[_0x3d7327(0x14c)]!==_0x3d7327(0x1ab)&&_0xbe9c58[_0x3d7327(0x14c)]!==_0x3d7327(0x35a))throw new Error(_0x3d7327(0x238));if(_0xbe9c58[_0x3d7327(0x241)]!==undefined&&isNaN(Number(_0xbe9c58[_0x3d7327(0x241)])))throw new Error(_0x3d7327(0x3c3));if(_0xbe9c58[_0x3d7327(0x319)]!==undefined&&isNaN(Number(_0xbe9c58[_0x3d7327(0x319)])))throw new Error(_0x3d7327(0x212));if(_0xbe9c58[_0x3d7327(0x1a5)]&&_0xbe9c58[_0x3d7327(0x1a5)]!==!![]&&_0xbe9c58[_0x3d7327(0x1a5)]!==![])throw new Error('isSmartObject\x20must\x20be\x20either\x20true\x20or\x20false');if(_0xbe9c58[_0x3d7327(0x342)]!==undefined)try{BigInt(_0xbe9c58[_0x3d7327(0x342)]);}catch(_0x16e986){throw new Error(_0x3d7327(0x151));}if(_0xbe9c58[_0x3d7327(0x160)]!==undefined&&!(0x0,$303220cf0debbf6c$export$b02a40aff8e4ad18)(_0xbe9c58[_0x3d7327(0x160)]))throw new Error('publicKey\x20must\x20be\x20a\x20hex\x20string');if(_0xbe9c58[_0x3d7327(0x141)]!==undefined&&!(0x0,$303220cf0debbf6c$export$ec70ee4fa0462cba)(_0xbe9c58[_0x3d7327(0x141)]))throw new Error(_0x3d7327(0x303));if(_0xbe9c58[_0x3d7327(0x305)]!==undefined&&!(0x0,$303220cf0debbf6c$export$b02a40aff8e4ad18)(_0xbe9c58[_0x3d7327(0x305)]))throw new Error(_0x3d7327(0x20a));if(_0xbe9c58[_0x3d7327(0x39b)]!==undefined){if(!(0x0,a2_0x55d388)[_0x3d7327(0x3b6)](_0xbe9c58[_0x3d7327(0x39b)]))throw new Error(_0x3d7327(0x38c));}let _0x10b92e;if(_0xbe9c58['exp']!==undefined){if(typeof _0xbe9c58[_0x3d7327(0x26c)]!==_0x3d7327(0x1bc))throw new Error('exp\x20must\x20be\x20a\x20string');_0x10b92e=(0x0,a2_0x181d13)[_0x3d7327(0x10c)](Buffer[_0x3d7327(0x2ed)](_0xbe9c58[_0x3d7327(0x26c)]))['toString'](_0x3d7327(0x38b));}const _0x51f579=new URLSearchParams(),{exp:_0x1b6adb,..._0x2a5a73}=_0xbe9c58,_0xd17656={..._0x2a5a73,..._0x10b92e?{'expHash':_0x10b92e}:{}};Object[_0x3d7327(0x115)](_0xd17656)[_0x3d7327(0x1b3)](([_0x1165d1,_0x5d2b85])=>{if(_0x5d2b85!==undefined)_0x51f579['append'](_0x1165d1,String(_0x5d2b85));});const _0x36bfff='/v1/'+_0x5c9835+'/'+_0x3e1dbf+_0x3d7327(0x169)+_0x51f579[_0x3d7327(0x3a0)]();if(_0xbe9c58[_0x3d7327(0x1b5)]===0x1){const _0xe027a3=await this[_0x3d7327(0x2ec)]['get'](_0x36bfff);return _0xe027a3[_0x3d7327(0x359)](_0x33f97e=>({..._0x33f97e,'satoshis':BigInt(_0x33f97e[_0x3d7327(0x342)])}));}return await this['bcn'][_0x3d7327(0x20f)](_0x36bfff);}async[a2_0x36b7bf(0x19f)](_0x4f6ef6){const _0x4e8221=a2_0x36b7bf;return this[_0x4e8221(0x173)](_0x4f6ef6);}async['getUTXOs'](_0x16652f){const _0x3254d4=a2_0x36b7bf;return this[_0x3254d4(0x173)]({..._0x16652f,'isSpent':![]});}async['getOTXOs'](_0x1ceda4){const _0xa613db=a2_0x36b7bf;return this[_0xa613db(0x173)]({..._0x1ceda4,'isObject':!![]});}async[a2_0x36b7bf(0x3bb)](_0x41ee6f){const _0x2349f6=a2_0x36b7bf;return this[_0x2349f6(0x173)]({..._0x41ee6f,'isObject':!![],'isSpent':![]});}async[a2_0x36b7bf(0x17c)](_0x4ec79f){const _0xe29302=a2_0x36b7bf,{chain:_0x43b4df,network:_0x2fe80d}=this;return this[_0xe29302(0x2ec)][_0xe29302(0x231)](_0xe29302(0x178)+_0x43b4df+'/'+_0x2fe80d+_0xe29302(0x146),{'txIds':_0x4ec79f});}async[a2_0x36b7bf(0x18c)](_0x57c670){const _0x12d870=a2_0x36b7bf,{chain:_0x4325b2,network:_0x2fff2c}=this;return this[_0x12d870(0x2ec)][_0x12d870(0x20f)](_0x12d870(0x178)+_0x4325b2+'/'+_0x2fff2c+'/subscribe-check?'+_0x57c670[_0x12d870(0x3a0)]());}async[a2_0x36b7bf(0x389)](_0x2881ab){const _0x2e21e4=a2_0x36b7bf,{chain:_0x4b0650,network:_0x3e4308}=this;return this[_0x2e21e4(0x2ec)][_0x2e21e4(0x20f)](_0x2e21e4(0x178)+_0x4b0650+'/'+_0x3e4308+_0x2e21e4(0x284)+_0x2881ab+_0x2e21e4(0x2b0));}async[a2_0x36b7bf(0x2bb)](_0x4ecede){const _0x29ba07=a2_0x36b7bf,{chain:_0x126453,network:_0x74a0b4}=this,_0x1583ed=await this[_0x29ba07(0x2ec)][_0x29ba07(0x20f)]('/v1/'+_0x126453+'/'+_0x74a0b4+_0x29ba07(0x284)+_0x4ecede+'/json');return _0x1583ed['outs'][_0x29ba07(0x1b3)](_0x452d2f=>{const _0x1b5a58=_0x29ba07;Object[_0x1b5a58(0x331)](_0x452d2f,{'value':BigInt(_0x452d2f[_0x1b5a58(0x120)])});}),_0x1583ed;}async[a2_0x36b7bf(0x2fb)](_0x1676ea){const _0xf3f238=a2_0x36b7bf;return this[_0xf3f238(0x2ec)]['get'](_0xf3f238(0x178)+this['chain']+'/'+this[_0xf3f238(0x29b)]+_0xf3f238(0x284)+_0x1676ea+_0xf3f238(0x3ad));}async[a2_0x36b7bf(0x31b)]({publicKey:_0x5d4cb8,limit:_0x53db84,offset:_0x5d9cc7,order:_0x5a10a0,mod:_0xa18bc6}){const _0x3c8d64=a2_0x36b7bf;if(_0xa18bc6&&typeof _0xa18bc6!=='string')throw new Error(_0x3c8d64(0x2bc));if(_0x5d4cb8&&typeof _0x5d4cb8!=='string')throw new Error('PublicKey\x20must\x20be\x20string\x20encoded');if(_0x53db84&&typeof _0x53db84!==_0x3c8d64(0x189))throw new Error('Limit\x20must\x20be\x20a\x20number');if(_0x53db84&&_0x53db84<0x0)throw new Error(_0x3c8d64(0x2e8));if(_0x5d9cc7&&typeof _0x5d9cc7!==_0x3c8d64(0x189))throw new Error(_0x3c8d64(0x39a));if(_0x5d9cc7&&_0x5d9cc7<0x0)throw new Error(_0x3c8d64(0x365));if(_0x5a10a0&&![_0x3c8d64(0x1ab),'DESC'][_0x3c8d64(0x197)](_0x5a10a0))throw new Error('Order\x20must\x20be\x20\x22ASC\x22\x20or\x20\x22DESC\x22');const _0x3cebe1=new URLSearchParams();if(typeof _0xa18bc6!==_0x3c8d64(0x358))_0x3cebe1['append']('mod',_0xa18bc6);if(typeof _0x5d4cb8!==_0x3c8d64(0x358))_0x3cebe1[_0x3c8d64(0x145)](_0x3c8d64(0x160),_0x5d4cb8);if(typeof _0x53db84!==_0x3c8d64(0x358))_0x3cebe1[_0x3c8d64(0x145)]('limit',_0x53db84[_0x3c8d64(0x3a0)]());if(typeof _0x5d9cc7!==_0x3c8d64(0x358))_0x3cebe1[_0x3c8d64(0x145)]('offset',_0x5d9cc7[_0x3c8d64(0x3a0)]());if(typeof _0x5a10a0!==_0x3c8d64(0x358))_0x3cebe1[_0x3c8d64(0x145)](_0x3c8d64(0x14c),_0x5a10a0);if(_0x3cebe1[_0x3c8d64(0x3a0)]()==='')throw new Error('Query\x20must\x20not\x20be\x20empty');return this[_0x3c8d64(0x19f)]({'publicKey':_0x5d4cb8,'isSpent':![],'limit':_0x53db84,'offset':_0x5d9cc7,'order':_0x5a10a0,'mod':_0xa18bc6,'verbosity':0x0,'isObject':![]});}async[a2_0x36b7bf(0x1d5)](_0x1cba2a){const _0x410337=a2_0x36b7bf,{chain:_0x2ab3d8,network:_0x2ffdd8}=this;return this[_0x410337(0x2ec)][_0x410337(0x231)](_0x410337(0x178)+_0x2ab3d8+'/'+_0x2ffdd8+_0x410337(0x1e9),{'rev':_0x1cba2a});}static async[a2_0x36b7bf(0x243)]({_url:_0xa67511,keyPair:_0x53f8f7}){const _0x19ae89=a2_0x36b7bf,_0x48285e=_0xa67511[_0x19ae89(0x12e)]('/'),_0x11cc5c=_0x48285e[_0x48285e['length']-0x1],_0x3da2d1=_0x48285e[_0x19ae89(0x1b2)](0x0,-0x2)[_0x19ae89(0x1a8)]('/'),_0x4e9463=new(0x0,$0bf978cc7e5ad20d$export$bc3f23723d5e1cba)(_0x3da2d1,_0x53f8f7),_0x3d69b5=await _0x4e9463[_0x19ae89(0x20f)](_0x19ae89(0x332)+_0x11cc5c);return{'host':_0x3da2d1,'data':_0x3d69b5};}static async['setSecretOutput']({secretOutput:_0x4ad6f0,host:_0x1a90ea,keyPair:_0xe1f713}){const _0x208785=a2_0x36b7bf,_0x2a931f=new(0x0,$0bf978cc7e5ad20d$export$bc3f23723d5e1cba)(_0x1a90ea,_0xe1f713);return _0x2a931f['post'](_0x208785(0x332),_0x4ad6f0);}static async['deleteSecretOutput']({_url:_0x479af7,keyPair:_0x1f88f5}){const _0x51c919=a2_0x36b7bf,_0x386378=_0x479af7['split']('/'),_0x2b69d8=_0x386378[_0x386378['length']-0x1],_0x59535a=_0x386378[_0x51c919(0x1b2)](0x0,-0x2)[_0x51c919(0x1a8)]('/'),_0x58549a=new(0x0,$0bf978cc7e5ad20d$export$bc3f23723d5e1cba)(_0x59535a,_0x1f88f5);await _0x58549a[_0x51c919(0x230)]('/v1/store/'+_0x2b69d8);}[a2_0x36b7bf(0x26d)](){const _0x50fcc8=a2_0x36b7bf,_0x1eb259=(0x0,$303220cf0debbf6c$export$accea06471c18a5a)({'path':(0x0,$303220cf0debbf6c$export$2aa3fd96c49a84a8)({'chain':this[_0x50fcc8(0x196)],'network':this[_0x50fcc8(0x29b)]}),'networkObj':this['networkObj']});return(0x0,a2_0x2921e5)[_0x50fcc8(0x1e4)](_0x1eb259[_0x50fcc8(0x160)],this[_0x50fcc8(0x2ba)],this[_0x50fcc8(0x328)]);}async['faucet'](_0x55bacb,_0x2ff29d){const _0x4c6f56=a2_0x36b7bf,_0x5819b7=_0x2ff29d/0x5f5e100,{result:_0x4e379b}=await this['rpc']('sendtoaddress',_0x55bacb+'\x20'+_0x5819b7+_0x4c6f56(0x203)),_0x5ca708=_0x4e379b[_0x4c6f56(0x224)];await this[_0x4c6f56(0x132)](_0x4c6f56(0x2b6),'1\x20'+this['getRandomAddress']());const {result:_0x954a4d}=await this[_0x4c6f56(0x132)](_0x4c6f56(0x229),_0x5ca708+'\x201'),_0x426cf1=_0x954a4d[_0x4c6f56(0x224)],_0xbd530e=_0x426cf1[_0x4c6f56(0x2b5)][_0x4c6f56(0x26b)](_0x433c6c=>_0x433c6c[_0x4c6f56(0x120)]*0x5f5e100===_0x2ff29d);return{'txId':_0x5ca708,'vout':_0xbd530e,'height':-0x1,'satoshis':BigInt(_0x2ff29d)};}async[a2_0x36b7bf(0x232)](_0x14108f,_0x4dc7e7){const _0xa9be2e=a2_0x36b7bf,_0x1241c9=$fdb3572e52dbf02d$var$ECPair[_0xa9be2e(0x375)]({'network':this[_0xa9be2e(0x328)]}),_0x320240=(0x0,a2_0x154e74)[_0xa9be2e(0x385)]({'pubkey':_0x1241c9['publicKey'],'network':this[_0xa9be2e(0x328)]}),{address:_0x5ec6ec}=_0x320240,_0x179c98=(await this[_0xa9be2e(0x132)](_0xa9be2e(0x350),_0x5ec6ec+'\x20'+_0x4dc7e7*0x2/0x5f5e100+_0xa9be2e(0x203)))[_0xa9be2e(0x224)],_0x12ada0=_0x179c98[_0xa9be2e(0x224)],_0x38f86e=(await this[_0xa9be2e(0x132)]('getrawtransaction',_0x12ada0+'\x201'))[_0xa9be2e(0x224)],_0x4dc952=_0x38f86e[_0xa9be2e(0x224)];let _0x5eff5c=-0x1;for(let _0x4f7c7d=0x0;_0x4f7c7d<_0x4dc952[_0xa9be2e(0x2b5)][_0xa9be2e(0x2be)];_0x4f7c7d+=0x1){const _0x266f95=_0x4dc952['vout'][_0x4f7c7d];if(_0x266f95[_0xa9be2e(0x33c)]&&_0x266f95['scriptPubKey']['address']&&_0x266f95[_0xa9be2e(0x33c)][_0xa9be2e(0x239)]['includes'](_0x5ec6ec)||_0x266f95['scriptPubKey']['addresses']&&_0x266f95[_0xa9be2e(0x33c)][_0xa9be2e(0x3c4)][_0xa9be2e(0x197)](_0x5ec6ec)){_0x5eff5c=_0x4f7c7d;break;}}if(_0x5eff5c===-0x1)throw new Error(_0xa9be2e(0x138));let _0x1f2c82=0xa,_0x2299f0;do _0x2299f0=await this[_0xa9be2e(0x132)](_0xa9be2e(0x296),_0x12ada0+'\x20'+_0x5eff5c+'\x20true');while(_0x2299f0[_0xa9be2e(0x3b8)]&&_0x1f2c82--);if(_0x2299f0[_0xa9be2e(0x3b8)])throw new Error(_0xa9be2e(0x31a));const _0x21ee98=new(0x0,a2_0x4a370a)({'network':this[_0xa9be2e(0x328)]});_0x21ee98[_0xa9be2e(0x33e)]({'hash':_0x12ada0,'index':_0x5eff5c,'nonWitnessUtxo':Buffer['from'](_0x4dc952['hex'],'hex')}),_0x21ee98['addOutput']({'script':_0x14108f,'value':_0x4dc7e7}),_0x21ee98[_0xa9be2e(0x3a5)](0x0,_0x1241c9),_0x21ee98['finalizeAllInputs']();const _0x5b06b0=_0x21ee98[_0xa9be2e(0x2f8)](!![]),{result:_0x518fcb}=await this[_0xa9be2e(0x132)]('sendrawtransaction',''+_0x5b06b0[_0xa9be2e(0x2c3)]()),_0x2950ef=_0x518fcb[_0xa9be2e(0x224)];let _0x5b2156=0x0,_0x236ec9=await this[_0xa9be2e(0x132)](_0xa9be2e(0x296),_0x2950ef+'\x20'+_0x5b2156+_0xa9be2e(0x1c0));if(_0x236ec9[_0xa9be2e(0x3b8)])_0x236ec9=await this[_0xa9be2e(0x132)](_0xa9be2e(0x296),_0x2950ef+'\x20'+ ++_0x5b2156+_0xa9be2e(0x1c0));if(_0x236ec9[_0xa9be2e(0x3b8)])_0x236ec9=await this[_0xa9be2e(0x132)](_0xa9be2e(0x296),_0x2950ef+'\x20'+ ++_0x5b2156+_0xa9be2e(0x1c0));if(_0x236ec9[_0xa9be2e(0x3b8)])throw new Error(_0xa9be2e(0x22b));return{'txId':_0x5b06b0[_0xa9be2e(0x124)](),'vout':_0x5b2156,'height':-0x1,'satoshis':BigInt(Math[_0xa9be2e(0x2f4)](_0x236ec9[_0xa9be2e(0x224)][_0xa9be2e(0x224)][_0xa9be2e(0x120)]*0x5f5e100))};}async[a2_0x36b7bf(0x2f7)](_0xb36a8b){const _0x24d7f0=a2_0x36b7bf;return this[_0x24d7f0(0x132)](_0x24d7f0(0x2b6),_0xb36a8b+'\x20'+this[_0x24d7f0(0x26d)]());}async[a2_0x36b7bf(0x19c)](_0x298695){const _0x570ec8=a2_0x36b7bf,_0x2daa05=await this[_0x570ec8(0x132)](_0x570ec8(0x229),_0x298695[_0x570ec8(0x37a)]+'\x201'),_0x2983c5=_0x2daa05['result'][_0x570ec8(0x224)][_0x570ec8(0x2b5)][_0x298695[_0x570ec8(0x2b5)]];if(_0x298695[_0x570ec8(0x33c)]&&_0x2983c5[_0x570ec8(0x33c)]!==_0x298695[_0x570ec8(0x33c)])throw new Error(_0x570ec8(0x177));if(_0x298695['satoshis']&&BigInt(_0x2983c5[_0x570ec8(0x120)])*0x5f5e100n!==_0x298695[_0x570ec8(0x342)])throw new Error(_0x570ec8(0x139));}async[a2_0x36b7bf(0x2de)](){const _0x2e6e09=a2_0x36b7bf,{result:_0x5a89a2}=await this[_0x2e6e09(0x132)](_0x2e6e09(0x2d4),''),{result:_0x3b8c2d}=await this[_0x2e6e09(0x132)]('getblockheader',''+_0x5a89a2[_0x2e6e09(0x224)]);return _0x3b8c2d[_0x2e6e09(0x224)]['height'];}async[a2_0x36b7bf(0x180)](_0x27ef67){const _0x14b43e=a2_0x36b7bf,{chain:_0xc30ae9,network:_0x50da2f}=this,_0xf3c9ef=_0x14b43e(0x178)+_0xc30ae9+'/'+_0x50da2f+_0x14b43e(0x316)+_0x27ef67,{rev:_0x454f4c}=await this['bcn']['get'](_0xf3c9ef);return _0x454f4c;}async[a2_0x36b7bf(0x11b)](_0x30209c){const _0x38c5e6=a2_0x36b7bf,{chain:_0x371dbc,network:_0x2aa0d2}=this,_0xdbd1e8=_0x38c5e6(0x178)+_0x371dbc+'/'+_0x2aa0d2+'/prev/'+_0x30209c,{rev:_0xe33339}=await this[_0x38c5e6(0x2ec)][_0x38c5e6(0x20f)](_0xdbd1e8);return _0xe33339??undefined;}async[a2_0x36b7bf(0x275)](_0x31885f){const _0x340421=a2_0x36b7bf,{chain:_0x19771e,network:_0x25bc39}=this,_0x5ef82f=_0x340421(0x178)+_0x19771e+'/'+_0x25bc39+'/latest/'+_0x31885f,{rev:_0x1f1af9}=await this[_0x340421(0x2ec)]['get'](_0x5ef82f);return _0x1f1af9;}}function $88b91cd8c4477eb9$export$6f57813fe9f31bf9(_0x202d4b,_0x229fd0,_0xd90af0){const _0x5db725=a2_0x36b7bf;return _0x229fd0?(0x0,$fdb3572e52dbf02d$export$ea8b5b3aea9558ce)[_0x5db725(0x170)]({'host':_0x229fd0,'secretOutput':{'data':JSON[_0x5db725(0x1d2)](_0x202d4b)},'keyPair':_0xd90af0}):_0x202d4b;}async function $88b91cd8c4477eb9$export$e7aa7bc5c1b3cfb3(_0x31d787,_0x826e52){if((0x0,$d205febb791b53ee$export$18d65c6a1aeeaec7)(_0x31d787)){const {_url:_0x29ef8b,..._0x1a267b}=_0x31d787,{host:_0x22da6c,data:_0x526a07}=await(0x0,$fdb3572e52dbf02d$export$ea8b5b3aea9558ce)['getSecretOutput']({'_url':_0x29ef8b,'keyPair':_0x826e52});return{..._0x1a267b,...JSON['parse'](_0x526a07),'_url':_0x22da6c};}return _0x31d787;}const $deb927b75e1890ae$export$a4ad2735b021c132=a2_0x36b7bf(0x392);a2_0x48614d[a2_0x36b7bf(0x1b8)]=a2_0x36b7bf(0x114),a2_0x48614d[a2_0x36b7bf(0x1a4)]=0xc;const $2e54c381077e6c48$var$webCryptoPromise=((async()=>{if(0x0,$303220cf0debbf6c$export$4e09c449d6c407f7)return globalThis['crypto'];else return a2_0x7d9cd8;})());async function $2e54c381077e6c48$export$c83d4bcc905511a5(){const _0x2891b1=a2_0x36b7bf,_0xef420b=await $2e54c381077e6c48$var$webCryptoPromise,_0x5360f8=_0xef420b[_0x2891b1(0x217)](new Uint8Array(0x20));return(0x0,a2_0x21cdf5)['from'](_0x5360f8)[_0x2891b1(0x3a0)](_0x2891b1(0x38b));}async function $2e54c381077e6c48$export$52b2fbbd12724c12(_0x3e47b4,_0x591e2a){const _0x494155=a2_0x36b7bf;if(!/^[0-9a-f]{64}$/i[_0x494155(0x2da)](_0x591e2a))throw new Error(_0x494155(0x254));const _0x55f134=await $2e54c381077e6c48$var$webCryptoPromise,{subtle:_0x54eb28}=_0x55f134,_0x1104d9=new Uint8Array((0x0,a2_0x21cdf5)[_0x494155(0x2ed)](_0x591e2a,_0x494155(0x38b))),_0x18e5fc=_0x55f134[_0x494155(0x217)](new Uint8Array(0xc)),_0x3dbf83=await _0x54eb28['importKey'](_0x494155(0x28c),_0x1104d9,_0x494155(0x236),!![],[_0x494155(0x278)]),_0x115933=new TextEncoder()[_0x494155(0x1cb)](_0x3e47b4),_0x2777c0=await _0x54eb28['encrypt']({'name':_0x494155(0x236),'iv':_0x18e5fc},_0x3dbf83,_0x115933),_0x553528=new Uint8Array(_0x18e5fc[_0x494155(0x158)]+_0x2777c0['byteLength']);return _0x553528[_0x494155(0x2d6)](_0x18e5fc,0x0),_0x553528['set'](new Uint8Array(_0x2777c0),_0x18e5fc[_0x494155(0x158)]),(0x0,a2_0x21cdf5)['from'](_0x553528)[_0x494155(0x3a0)](_0x494155(0x344));}async function $2e54c381077e6c48$export$496fc7864dba515e(_0x6dd194,_0x23c082){const _0x1299a2=a2_0x36b7bf;if(!/^[0-9a-f]{64}$/i['test'](_0x23c082))throw new Error('Invalid\x20secret');const _0xc4f820=new Uint8Array((0x0,a2_0x21cdf5)[_0x1299a2(0x2ed)](_0x6dd194,_0x1299a2(0x344)));if(_0xc4f820[_0x1299a2(0x2be)]<0x1c)throw new Error(_0x1299a2(0x26a));const _0x5931a9=_0xc4f820[_0x1299a2(0x1b2)](0x0,0xc),_0x114a72=_0xc4f820['slice'](0xc),_0x452a0a=await $2e54c381077e6c48$var$webCryptoPromise,{subtle:_0x27b036}=_0x452a0a,_0x149609=new Uint8Array((0x0,a2_0x21cdf5)[_0x1299a2(0x2ed)](_0x23c082,_0x1299a2(0x38b))),_0x71ff07=await _0x27b036[_0x1299a2(0x1b1)](_0x1299a2(0x28c),_0x149609,'AES-GCM',!![],[_0x1299a2(0x293)]);let _0xe51c59;try{_0xe51c59=await _0x27b036[_0x1299a2(0x293)]({'name':'AES-GCM','iv':_0x5931a9},_0x71ff07,_0x114a72);}catch{throw new Error('Decryption\x20failure');}return new TextDecoder()['decode'](_0xe51c59);}function $2e54c381077e6c48$export$ff4060c8805361f3(_0x5f4450,_0x23bcd3){const _0x391fa8=a2_0x36b7bf;if(!/^0[2-3][0-9a-f]{64}|04[0-9a-f]{128}$/i['test'](_0x23bcd3))throw new Error(_0x391fa8(0x15d));const _0x1f8419=new TextEncoder()[_0x391fa8(0x1cb)](_0x5f4450);return a2_0x23c023(_0x23bcd3,_0x1f8419)[_0x391fa8(0x3a0)](_0x391fa8(0x344));}function $2e54c381077e6c48$export$d702cea5b1df4a97(_0x4038f3,_0x3090cc){const _0x962309=a2_0x36b7bf;if(!/^[0-9a-f]{64}$/i[_0x962309(0x2da)](_0x3090cc))throw new Error(_0x962309(0x361));const _0x3bc1b9=new Uint8Array((0x0,a2_0x21cdf5)[_0x962309(0x2ed)](_0x4038f3,_0x962309(0x344)));let _0x1ab994;try{_0x1ab994=a2_0x1026a7(_0x3090cc,_0x3bc1b9);}catch(_0x11bf3b){if(_0x11bf3b[_0x962309(0x211)]===_0x962309(0x3ab))throw new Error('Decryption\x20failure');throw _0x11bf3b;}return new TextDecoder()[_0x962309(0x27f)](_0x1ab994);}async function $2e54c381077e6c48$export$60a153e45a5d0ad8(_0x275fa2,_0x2d7360){const _0xaa7039=a2_0x36b7bf,_0x3be0af=await $2e54c381077e6c48$export$c83d4bcc905511a5();return{'__cypher':await $2e54c381077e6c48$export$52b2fbbd12724c12(_0x275fa2,_0x3be0af),'__secrets':[...new Set(_0x2d7360)][_0xaa7039(0x359)](_0x2fea22=>$2e54c381077e6c48$export$ff4060c8805361f3(_0x3be0af,_0x2fea22))};}async function $2e54c381077e6c48$export$28eea9a217b16b0a({__cypher:_0x264959,__secrets:_0x7442c6},_0x43634f){const _0x1c705c=a2_0x36b7bf;for(const _0xfb7418 of _0x7442c6)try{const _0x35c13a=$2e54c381077e6c48$export$d702cea5b1df4a97(_0xfb7418,_0x43634f[_0x1c705c(0x3a0)]('hex'));return await $2e54c381077e6c48$export$496fc7864dba515e(_0x264959,_0x35c13a);}catch(_0x1c1764){if(_0x1c1764 instanceof Error&&_0x1c1764[_0x1c705c(0x211)]!==_0x1c705c(0x26a))throw _0x1c1764;}throw new Error(_0x1c705c(0x26a));}const $2e54c381077e6c48$export$e85a0c9a1067c5d3=async(_0x285867,_0x1cedfe)=>(0x0,$d205febb791b53ee$export$691b4523c5340423)(_0x285867)?{...JSON[a2_0x36b7bf(0x12a)](await $2e54c381077e6c48$export$28eea9a217b16b0a(_0x285867,_0x1cedfe)),'ioMap':_0x285867[a2_0x36b7bf(0x1c6)]??[],'_readers':[]}:_0x285867,$2e54c381077e6c48$export$5b0f6292f11d1d18=async(_0x1c85eb,_0x1c5a97)=>_0x1c5a97?await $2e54c381077e6c48$export$60a153e45a5d0ad8(JSON['stringify'](_0x1c85eb),_0x1c5a97):_0x1c85eb;class $9723fb8a051ef3ce$export$7dc1820ecc9cc6de extends Error{constructor(_0x5662ca){const _0x2c9c32=a2_0x36b7bf;super(_0x5662ca),this[_0x2c9c32(0x1f7)]=_0x2c9c32(0x23b);}}class $9723fb8a051ef3ce$export$489a84f048b0ef8{constructor({inRevs:inRevs=[],ownerData:ownerData=[],transition:transition=new(0x0,$9ca517853ec47831$export$be58926105124dd4)({'exp':'','env':{},'mod':undefined}),txId:_0x325cac,effect:_0x190812}={}){const _0x3fed6e=a2_0x36b7bf;this[_0x3fed6e(0x1d0)]=inRevs,this['ownerData']=ownerData,this['transition']=transition,this['txId']=_0x325cac,this[_0x3fed6e(0x1ec)]=_0x190812;}[a2_0x36b7bf(0x368)](){const _0x214ace=a2_0x36b7bf,{inRevs:_0x1d5846,ownerData:_0x40d707,transition:_0x460b53,txId:_0x56a365}=this;return JSON[_0x214ace(0x1d2)]({'inRevs':_0x1d5846,'ownerData':_0x40d707,'transition':_0x460b53,'txId':_0x56a365},$9723fb8a051ef3ce$export$489a84f048b0ef8[_0x214ace(0x2ef)],0x2);}static[a2_0x36b7bf(0x35e)](_0x31c2c5){const _0x3d8c85=a2_0x36b7bf,_0x3575d6=JSON['parse'](_0x31c2c5,$9723fb8a051ef3ce$export$489a84f048b0ef8[_0x3d8c85(0x233)]);return new $9723fb8a051ef3ce$export$489a84f048b0ef8(_0x3575d6);}[a2_0x36b7bf(0x354)](){const _0x3956fc=a2_0x36b7bf;return this[_0x3956fc(0x368)]();}static[a2_0x36b7bf(0x34f)](_0x26899e){return $9723fb8a051ef3ce$export$489a84f048b0ef8['deserialize'](_0x26899e);}static{this[a2_0x36b7bf(0x2ef)]=(_0x4fc09f,_0x5ee38b)=>{const _0x45b928=a2_0x36b7bf;if(_0x4fc09f===_0x45b928(0x330)&&typeof _0x5ee38b===_0x45b928(0x1ae))return _0x5ee38b[_0x45b928(0x3a0)]();if(_0x4fc09f===_0x45b928(0x1c2)&&Buffer['isBuffer'](_0x5ee38b))return(0x0,a2_0x55d388)[_0x45b928(0x2d7)](_0x5ee38b);return _0x5ee38b;};}static{this[a2_0x36b7bf(0x233)]=(_0x52efb3,_0xf6b60f)=>{const _0x5d86b5=a2_0x36b7bf;if(_0x52efb3===_0x5d86b5(0x330)&&typeof _0xf6b60f==='string')return BigInt(_0xf6b60f);if(_0x52efb3===_0x5d86b5(0x1c2)&&typeof _0xf6b60f===_0x5d86b5(0x1bc))return(0x0,a2_0x55d388)['fromASM'](_0xf6b60f);return _0xf6b60f;};}get[a2_0x36b7bf(0x39c)](){const _0x21b6ba=a2_0x36b7bf;return this[_0x21b6ba(0x20d)][_0x21b6ba(0x359)](_0x16f2b9=>_0x16f2b9[_0x21b6ba(0x2c6)]);}get[a2_0x36b7bf(0x30b)](){const _0x31231a=a2_0x36b7bf;if(!this[_0x31231a(0x37a)])throw new Error(_0x31231a(0x394));return this[_0x31231a(0x20d)][_0x31231a(0x359)]((_0x2a42b3,_0x535c60)=>this['txId']+':'+_0x535c60);}get[a2_0x36b7bf(0x1c6)](){const _0x145d77=a2_0x36b7bf;return this['inRevs'][_0x145d77(0x359)](_0x2c040c=>this['oldOutRevs'][_0x145d77(0x1b4)](_0x2c040c));}[a2_0x36b7bf(0x306)](){const _0x485f2e=a2_0x36b7bf;try{return this[_0x485f2e(0x30b)][_0x485f2e(0x359)]((_0x4676c3,_0x25a986)=>[this[_0x485f2e(0x1d0)][this[_0x485f2e(0x1c6)][_0x485f2e(0x1b4)](_0x25a986)],_0x4676c3]);}catch{return[];}}static async[a2_0x36b7bf(0x266)](_0x3e7e9a,_0x2af7f7){const _0xdd46e3=a2_0x36b7bf,{restClient:_0x681efc}=_0x2af7f7,_0x25cdae=await(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)['fromTxId']({'txId':_0x3e7e9a,'restClient':_0x681efc});return $9723fb8a051ef3ce$export$489a84f048b0ef8[_0xdd46e3(0x37b)](_0x25cdae,_0x681efc);}static async[a2_0x36b7bf(0x37b)](_0x15b9bc,{keyPair:_0xd844f3}){const _0xe1aeb4=a2_0x36b7bf,{inRevs:_0x5a9b09,ownerData:_0x22b214,onChainMetaData:_0x9c25db,txId:_0x47a3af}=_0x15b9bc,{privateKey:_0x3d95ea}=_0xd844f3;if(!_0x3d95ea)throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de(_0xe1aeb4(0x1bd));const _0x54a457=await(0x0,$88b91cd8c4477eb9$export$e7aa7bc5c1b3cfb3)(_0x9c25db,_0xd844f3),_0x1ddbf5=await(0x0,$2e54c381077e6c48$export$e85a0c9a1067c5d3)(_0x54a457,_0x3d95ea),_0x19558c={..._0x1ddbf5,'env':$9723fb8a051ef3ce$export$489a84f048b0ef8[_0xe1aeb4(0x2ea)](_0x1ddbf5[_0xe1aeb4(0x25f)],_0x15b9bc)};return new $9723fb8a051ef3ce$export$489a84f048b0ef8({'inRevs':_0x5a9b09,'ownerData':_0x22b214,'transition':_0x19558c,'txId':_0x47a3af});}static async['fromEnv'](_0x4096d3,_0x2137e4,_0x3cd194,_0x23753a,_0x2a80a0,_0x5344e1){const _0x227b3d=a2_0x36b7bf,_0x1ff5ab=await Promise[_0x227b3d(0x215)](_0x4096d3[_0x227b3d(0x359)](async(_0x4dad87,_0x1b2ae7)=>{const _0x373593=_0x227b3d,_0x20b2db=$9723fb8a051ef3ce$export$489a84f048b0ef8[_0x373593(0x2ff)](_0x4dad87,_0x1b2ae7,_0x2137e4,_0x23753a);return{..._0x20b2db,'oldRev':_0x2a80a0[_0x1b2ae7]};}));return new $9723fb8a051ef3ce$export$489a84f048b0ef8({'inRevs':_0x5344e1,'ownerData':_0x1ff5ab,'transition':_0x3cd194});}static[a2_0x36b7bf(0x2ff)](_0x346d85,_0x5346e9,_0x1b494d,_0x59d284){const _0x434216=a2_0x36b7bf,{restClient:_0x56196d,publicKey:_0x11c15c}=_0x1b494d,{_owners:_0x292c54,_satoshis:_0x3c7d76,_readers:_0x248c4f,_url:_0x43a084}=_0x346d85,_0x3f8dd9={'network':_0x56196d[_0x434216(0x328)]};let _0x152a2b;if(typeof _0x292c54===_0x434216(0x358))_0x152a2b=_0x59d284?_0x59d284['ownerData'][_0x5346e9][_0x434216(0x1c2)]:$8636fd77165bd4bc$export$50e49a79004f0f9([_0x11c15c[_0x434216(0x3a0)](_0x434216(0x38b))],_0x56196d);else{if(typeof _0x292c54===_0x434216(0x1bc)){const _0x2438ef=(0x0,a2_0x55d388)[_0x434216(0x3b6)](_0x292c54[_0x434216(0x251)]()['replace'](/\s+/g,'\x20'));_0x152a2b=(0x0,a2_0x154e74)[_0x434216(0x399)]({'redeem':{'output':_0x2438ef,..._0x3f8dd9},..._0x3f8dd9})[_0x434216(0x2b3)];}else{if(typeof _0x292c54==='object'&&Array['isArray'](_0x292c54))_0x152a2b=$8636fd77165bd4bc$export$50e49a79004f0f9(_0x292c54||_0x59d284?.[_0x434216(0x20d)][_0x5346e9]?.[_0x434216(0x123)],_0x56196d);else throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de(_0x434216(0x287));}}const _0xd327c9=BigInt(_0x1b494d[_0x434216(0x2c2)](![],_0x152a2b));return{'_satoshis':_0x3c7d76===undefined||_0x3c7d76<_0xd327c9?_0xd327c9:_0x3c7d76,'_owners':typeof _0x292c54==='string'?_0x292c54:$8636fd77165bd4bc$export$a295b4f1f291e064(_0x152a2b),'outScriptBuf':_0x152a2b,'_readers':_0x248c4f,'_url':_0x43a084};}async[a2_0x36b7bf(0x383)](_0x530e2e){const _0x5d8769=a2_0x36b7bf,{inRevs:_0x4b067d,ownerData:_0x2bda1c,transition:_0x513595,ioMap:_0x2b1207}=this,{exp:_0x28314f,mod:_0x39a865,env:_0x1c7ca0}=_0x513595,{restClient:_0x40d81c}=_0x530e2e,{keyPair:_0x36eda1}=_0x40d81c,_0x193eb7=_0x2bda1c[_0x5d8769(0x359)](_0x535dc4=>_0x535dc4[_0x5d8769(0x335)]);if(!(0x0,$303220cf0debbf6c$export$fb9431c544c373fd)(_0x193eb7))throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de(_0x5d8769(0x39e));const _0x20e9f0=_0x193eb7[0x0],_0x37c47f=_0x2bda1c[_0x5d8769(0x359)](_0x4ed0a0=>_0x4ed0a0[_0x5d8769(0x346)]);if(!(0x0,$303220cf0debbf6c$export$fb9431c544c373fd)(_0x37c47f))throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de(_0x5d8769(0x113));const _0x2d2ad6=_0x37c47f[0x0],_0xde442a={'exp':_0x28314f,'env':$9723fb8a051ef3ce$export$489a84f048b0ef8[_0x5d8769(0x2fc)](_0x1c7ca0,_0x4b067d),'mod':_0x39a865,'v':(0x0,$deb927b75e1890ae$export$a4ad2735b021c132)},_0x4c52b3=await(0x0,$2e54c381077e6c48$export$5b0f6292f11d1d18)(_0xde442a,_0x20e9f0),_0x268252=await(0x0,$88b91cd8c4477eb9$export$6f57813fe9f31bf9)(_0x4c52b3,_0x2d2ad6,_0x36eda1),_0x2df836={..._0x268252,'ioMap':_0x2b1207},_0x91f3e3=new(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)();return _0x91f3e3[_0x5d8769(0x2d9)](_0x4b067d),_0x91f3e3[_0x5d8769(0x288)](_0x2bda1c,_0x2df836,_0x530e2e),_0x91f3e3;}static[a2_0x36b7bf(0x285)](_0x3670fa,_0x528bed){const _0x3e8e79=a2_0x36b7bf,_0x5e9e2e=(_0x19356d,_0x38c3ee)=>_0x19356d[_0x3e8e79(0x330)]===_0x38c3ee['_satoshis']&&_0x19356d[_0x3e8e79(0x1c2)][_0x3e8e79(0x221)](_0x38c3ee[_0x3e8e79(0x1c2)]);return(0x0,$303220cf0debbf6c$export$7efc99439b8625a3)(_0x3670fa[_0x3e8e79(0x20d)],_0x528bed[_0x3e8e79(0x20d)],_0x5e9e2e)&&(0x0,$303220cf0debbf6c$export$7efc99439b8625a3)(_0x3670fa[_0x3e8e79(0x1d0)],_0x528bed[_0x3e8e79(0x1d0)]);}static[a2_0x36b7bf(0x10f)](_0x3f8168,_0x2a975a,_0x5ea8b0){const _0xf9e76=a2_0x36b7bf;if(_0x5ea8b0!==_0xf9e76(0x379)){if(this[_0xf9e76(0x285)](_0x3f8168,_0x2a975a))return;throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de(_0xf9e76(0x1ac));}const _0x414880=(_0x4819af,_0x3dfda2)=>_0x4819af[_0xf9e76(0x330)]===_0x3dfda2[_0xf9e76(0x330)]&&(_0x4819af[_0xf9e76(0x1c2)]===undefined&&_0x3dfda2[_0xf9e76(0x1c2)]===undefined||_0x4819af[_0xf9e76(0x1c2)]&&_0x3dfda2[_0xf9e76(0x1c2)]&&_0x4819af['outScriptBuf']['equals'](_0x3dfda2['outScriptBuf'])),_0x5d0678=[],_0xb029be=_0x3f8168[_0xf9e76(0x20d)],_0x117017=_0x2a975a[_0xf9e76(0x20d)];if(_0xb029be[_0xf9e76(0x2be)]!==_0x117017['length'])_0x5d0678[_0xf9e76(0x2e4)](_0xf9e76(0x22d)+_0xb029be[_0xf9e76(0x2be)]+_0xf9e76(0x1d4)+_0x117017[_0xf9e76(0x2be)]);else for(let _0x5a6970=0x0;_0x5a6970<_0xb029be[_0xf9e76(0x2be)];_0x5a6970++){const _0x2cbef9=_0xb029be[_0x5a6970],_0x185eb5=_0x117017[_0x5a6970];if(!_0x414880(_0x2cbef9,_0x185eb5)){const _0x2534ad=[];if(_0x2cbef9[_0xf9e76(0x330)]!==_0x185eb5[_0xf9e76(0x330)])_0x2534ad[_0xf9e76(0x2e4)](_0xf9e76(0x172)+_0x2cbef9[_0xf9e76(0x330)]+_0xf9e76(0x1d4)+_0x185eb5['_satoshis']);const _0x180cef=_0x2cbef9[_0xf9e76(0x1c2)],_0x507fb1=_0x185eb5[_0xf9e76(0x1c2)];if(_0x180cef===undefined!==(_0x507fb1===undefined)||_0x180cef&&_0x507fb1&&!_0x180cef[_0xf9e76(0x221)](_0x507fb1))_0x2534ad[_0xf9e76(0x2e4)](_0xf9e76(0x1cd));_0x5d0678[_0xf9e76(0x2e4)]('ownerData\x20at\x20index\x20'+_0x5a6970+':\x20'+_0x2534ad[_0xf9e76(0x1a8)](',\x20'));}}const _0x1a67bb=_0x3f8168[_0xf9e76(0x1d0)],_0x29a9e2=_0x2a975a[_0xf9e76(0x1d0)];if(_0x1a67bb[_0xf9e76(0x2be)]!==_0x29a9e2[_0xf9e76(0x2be)])_0x5d0678[_0xf9e76(0x2e4)]('inRevs\x20lengths\x20differ:\x20'+_0x1a67bb[_0xf9e76(0x2be)]+_0xf9e76(0x1d4)+_0x29a9e2[_0xf9e76(0x2be)]);else{for(let _0x38030a=0x0;_0x38030a<_0x1a67bb[_0xf9e76(0x2be)];_0x38030a++)if(_0x1a67bb[_0x38030a]!==_0x29a9e2[_0x38030a])_0x5d0678[_0xf9e76(0x2e4)](_0xf9e76(0x2cc)+_0x38030a+':\x20'+_0x1a67bb[_0x38030a]+_0xf9e76(0x1d4)+_0x29a9e2[_0x38030a]);}if(this[_0xf9e76(0x285)](_0x3f8168,_0x2a975a))return;const _0x1a84d6=_0xf9e76(0x26e)+_0x5d0678[_0xf9e76(0x1a8)](',\x20')+_0xf9e76(0x39d)+_0x3f8168[_0xf9e76(0x368)]()+_0xf9e76(0x2f1)+_0x2a975a[_0xf9e76(0x368)]();throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de(_0x1a84d6);}async[a2_0x36b7bf(0x2eb)](_0x66835b){const _0x2f0d07=a2_0x36b7bf,_0x4132c3=await this['toTx'](_0x66835b);return await _0x66835b[_0x2f0d07(0x208)](_0x4132c3),await _0x66835b['sign'](_0x4132c3),await _0x66835b[_0x2f0d07(0x2eb)](_0x4132c3),_0x4132c3[_0x2f0d07(0x2c7)];}static[a2_0x36b7bf(0x2ea)](_0x1122f9,_0xc354b1){const _0x1447e0=a2_0x36b7bf;return Object['entries'](_0x1122f9)[_0x1447e0(0x3bd)]((_0x21f0f2,[_0x1fbf1c,_0x3f93b1])=>{const _0x1e0dcc=_0x1447e0,{hash:_0x2fc09f,index:_0x47b024}=_0xc354b1[_0x1e0dcc(0x228)][_0x3f93b1];return _0x21f0f2[_0x1fbf1c]=(0x0,$303220cf0debbf6c$export$577f793df735f4a1)(_0x2fc09f)+':'+_0x47b024,_0x21f0f2;},{});}static['encodeEnv'](_0x5c15f1,_0x24e7c0){const _0x1b8f91=a2_0x36b7bf;return Object[_0x1b8f91(0x115)](_0x5c15f1)['reduce']((_0x1ea5aa,[_0x31cb2b,_0x33c970])=>{const _0x5d067d=_0x1b8f91,[_0x58eb7a,_0x4c287f]=_0x33c970['split'](':')[_0x5d067d(0x1b2)](-0x2);return _0x1ea5aa[_0x31cb2b]=_0x24e7c0[_0x5d067d(0x359)](_0x45bcee=>_0x45bcee[_0x5d067d(0x12e)](':')[_0x5d067d(0x1b2)](-0x2)[_0x5d067d(0x1a8)](':'))[_0x5d067d(0x1b4)](_0x58eb7a+':'+_0x4c287f),_0x1ea5aa;},{});}}class $0b77d8afb5886e41$export$f2aa9e51325c9c38{[a2_0x36b7bf(0x20f)](_0x4da092,_0x252573){const _0x4fdae7=a2_0x36b7bf,_0x26a65b=Reflect[_0x4fdae7(0x20f)](_0x4da092,_0x252573);if(typeof _0x26a65b===_0x4fdae7(0x308))return _0x26a65b[_0x4fdae7(0x2a9)](_0x4da092);return _0x26a65b;}[a2_0x36b7bf(0x2d6)](_0x5e1f21,_0x4ae8f4,_0x4b650f){const _0x235c35=a2_0x36b7bf;if(!(0x0,$aec7dd200596fb2a$export$fdc4f9968fbdadc6)())throw new Error('Cannot\x20set\x20property\x20\x27'+String(_0x4ae8f4)+_0x235c35(0x334));return Reflect[_0x235c35(0x2d6)](_0x5e1f21,_0x4ae8f4,_0x4b650f);}['defineProperty'](_0x4ced03,_0x49c32f,_0x52c955){const _0x5458b1=a2_0x36b7bf;if(!(0x0,$aec7dd200596fb2a$export$fdc4f9968fbdadc6)())throw new Error('Cannot\x20define\x20property\x20\x27'+String(_0x49c32f)+'\x27');if(_0x52c955['value']&&typeof _0x52c955[_0x5458b1(0x120)]===_0x5458b1(0x308)||_0x52c955[_0x5458b1(0x20f)]||_0x52c955[_0x5458b1(0x2d6)])throw new Error(_0x5458b1(0x36e));return Reflect[_0x5458b1(0x167)](_0x4ced03,_0x49c32f,_0x52c955);}[a2_0x36b7bf(0x2a7)](_0xcfed82,_0x420400){const _0x387edf=a2_0x36b7bf;if(!(0x0,$aec7dd200596fb2a$export$fdc4f9968fbdadc6)())throw new Error('Cannot\x20delete\x20property\x20\x27'+String(_0x420400)+_0x387edf(0x334));return Reflect[_0x387edf(0x2a7)](_0xcfed82,_0x420400);}[a2_0x36b7bf(0x1b7)](_0xfebf33,_0x7a248d){const _0x52c48c=a2_0x36b7bf;if(_0x7a248d===(0x0,$d205febb791b53ee$export$581775e22cfad3dd)||_0x7a248d===(0x0,$d205febb791b53ee$export$3bb4a3f4a9646a6a))return!![];return Reflect[_0x52c48c(0x1b7)](_0xfebf33,_0x7a248d);}[a2_0x36b7bf(0x18d)](_0x1fa329,_0x244330){const _0x393ea5=a2_0x36b7bf;if(_0x244330===(0x0,$d205febb791b53ee$export$581775e22cfad3dd)||_0x244330===(0x0,$d205febb791b53ee$export$3bb4a3f4a9646a6a))return{'value':!![],'writable':![],'configurable':![],'enumerable':![]};return Reflect[_0x393ea5(0x18d)](_0x1fa329,_0x244330);}[a2_0x36b7bf(0x156)](_0x51d200){const _0x1051ff=a2_0x36b7bf;return Reflect[_0x1051ff(0x156)](_0x51d200)[_0x1051ff(0x24a)](_0x3db874=>_0x3db874!==(0x0,$d205febb791b53ee$export$581775e22cfad3dd)&&_0x3db874!==(0x0,$d205febb791b53ee$export$3bb4a3f4a9646a6a));}[a2_0x36b7bf(0x34b)](_0x195255,_0x6409a3){throw new Error('Cannot\x20override\x20prototype');}[a2_0x36b7bf(0x356)](_0x555c77){return![];}[a2_0x36b7bf(0x11a)](_0x396264){return!![];}}const $952d3bca5034e549$var$keyWords=['_id',a2_0x36b7bf(0x362),a2_0x36b7bf(0x1c5)];class $952d3bca5034e549$export$b8e7b394f2964d0d{['has'](_0x44fbf5,_0x2fb452){const _0x36795b=a2_0x36b7bf;if(_0x2fb452===(0x0,$d205febb791b53ee$export$581775e22cfad3dd)||_0x2fb452===(0x0,$d205febb791b53ee$export$3bb4a3f4a9646a6a))return!![];return Reflect[_0x36795b(0x1b7)](_0x44fbf5,_0x2fb452);}[a2_0x36b7bf(0x20f)](_0x477b28,_0x5892ac){const _0x5e1e82=a2_0x36b7bf;if(_0x5892ac===(0x0,$d205febb791b53ee$export$581775e22cfad3dd))return!![];if(_0x5892ac===(0x0,$d205febb791b53ee$export$3bb4a3f4a9646a6a))return!![];if(_0x5892ac===_0x5e1e82(0x19a))throw new Error('Cannot\x20get\x20__proto__');return Reflect[_0x5e1e82(0x20f)](_0x477b28,_0x5892ac);}[a2_0x36b7bf(0x2d6)](_0x10eb18,_0x662f4,_0x17ca7f){const _0x1905cd=a2_0x36b7bf;if($952d3bca5034e549$var$keyWords[_0x1905cd(0x197)](_0x662f4['toString']())&&!(0x0,$aec7dd200596fb2a$export$fdc4f9968fbdadc6)())throw new Error('Cannot\x20set\x20'+_0x662f4[_0x1905cd(0x3a0)]());if(_0x662f4[_0x1905cd(0x3a0)]()===_0x1905cd(0x19a))throw new Error(_0x1905cd(0x25a));if(typeof _0x10eb18[_0x662f4]===_0x1905cd(0x308)||typeof _0x17ca7f===_0x1905cd(0x308))throw new Error(_0x1905cd(0x336));return Reflect[_0x1905cd(0x2d6)](_0x10eb18,_0x662f4,_0x17ca7f);}['defineProperty'](_0x44cede,_0x40e8d7,_0x80a01d){const _0x2d85ac=a2_0x36b7bf,_0x11ba06=_0x40e8d7[_0x2d85ac(0x3a0)]();if($952d3bca5034e549$var$keyWords[_0x2d85ac(0x197)](_0x11ba06))throw new Error(_0x2d85ac(0x1a7)+_0x11ba06);const _0x29f1c2=_0x80a01d[_0x2d85ac(0x120)]&&typeof _0x80a01d[_0x2d85ac(0x120)]==='function',_0x64043=_0x80a01d[_0x2d85ac(0x20f)]||_0x80a01d[_0x2d85ac(0x2d6)];if(_0x29f1c2||_0x64043)throw new Error('Cannot\x20define\x20or\x20update\x20a\x20function,\x20getter,\x20or\x20setter\x20property');return Reflect[_0x2d85ac(0x167)](_0x44cede,_0x40e8d7,_0x80a01d);}[a2_0x36b7bf(0x34b)](){throw new Error('Cannot\x20set\x20the\x20prototype');}['deleteProperty'](_0x162cc1,_0x316198){const _0x452c05=a2_0x36b7bf;if($952d3bca5034e549$var$keyWords[_0x452c05(0x197)](_0x316198[_0x452c05(0x3a0)]())&&!(0x0,$aec7dd200596fb2a$export$fdc4f9968fbdadc6)())throw new Error(_0x452c05(0x369)+_0x316198[_0x452c05(0x3a0)]());return Reflect['deleteProperty'](_0x162cc1,_0x316198);}[a2_0x36b7bf(0x18d)](_0x51ff4a,_0x5cb059){if(_0x5cb059===(0x0,$d205febb791b53ee$export$581775e22cfad3dd)||_0x5cb059===(0x0,$d205febb791b53ee$export$3bb4a3f4a9646a6a))return{'value':!![],'writable':![],'configurable':![],'enumerable':![]};return Reflect['getOwnPropertyDescriptor'](_0x51ff4a,_0x5cb059);}[a2_0x36b7bf(0x156)](_0x4b9484){const _0x2181b6=a2_0x36b7bf;return Reflect[_0x2181b6(0x156)](_0x4b9484)[_0x2181b6(0x24a)](_0x32cb55=>_0x32cb55!==(0x0,$d205febb791b53ee$export$581775e22cfad3dd)&&_0x32cb55!==(0x0,$d205febb791b53ee$export$3bb4a3f4a9646a6a));}}const $ed98b948820df6a2$var$keyWords=[a2_0x36b7bf(0x301),'_rev','_root'];class $ed98b948820df6a2$export$8517d80acf00e19a extends(0x0,$d205febb791b53ee$export$8517d80acf00e19a){constructor(_0xdd9755={}){const _0x36aebb=a2_0x36b7bf;super(),Object[_0x36aebb(0x115)](_0xdd9755)['forEach'](([_0x1bcfea,_0x585ebc])=>{const _0x19703b=_0x36aebb;if($ed98b948820df6a2$var$keyWords[_0x19703b(0x197)](_0x1bcfea))throw new Error('Cannot\x20set\x20property\x20'+_0x1bcfea);this[_0x1bcfea]=_0x585ebc;});const _0x4816d2=new Proxy(this,new(0x0,$952d3bca5034e549$export$b8e7b394f2964d0d)()),_0x1aa698=new Proxy(_0x4816d2,new(0x0,$0b77d8afb5886e41$export$f2aa9e51325c9c38)());return(0x0,$fa96f8418385359b$export$e16d8520af44a096)(_0x1aa698),_0x1aa698;}}function $f94e2696d4b62340$export$bc1ec3784f4ae897(_0x38460a){const _0x50c757=a2_0x36b7bf,_0x263e83=(0x0,a2_0x55d388)[_0x50c757(0x3b9)](_0x38460a)||[],_0x420671=[];let _0x1dc630='',_0x283d75=0x0;while(_0x263e83[_0x283d75]!==(0x0,a2_0x3224db)[_0x50c757(0x38d)]&&_0x283d75<_0x263e83['length'])_0x283d75+=0x1;if(_0x263e83[_0x50c757(0x2be)]<=_0x283d75)throw new Error(_0x50c757(0x1db));if(_0x263e83[_0x283d75+0x1][_0x50c757(0x3a0)]()!==(0x0,$bd5ff9060a235dd4$export$43182d2709f4c8de))throw new Error(_0x50c757(0x37c));_0x283d75+=0x2;_0x263e83[_0x283d75]===(0x0,a2_0x3224db)[_0x50c757(0x30c)]&&(_0x1dc630=_0x263e83[_0x283d75+0x1][_0x50c757(0x3a0)](),_0x283d75+=0x2);if(_0x263e83[_0x283d75]===(0x0,a2_0x3224db)[_0x50c757(0x1a1)])_0x283d75+=0x1;for(_0x283d75;_0x283d75<_0x263e83[_0x50c757(0x2be)];_0x283d75+=0x1)if(_0x263e83[_0x283d75]!==(0x0,a2_0x3224db)[_0x50c757(0x18a)])_0x420671['push'](_0x263e83[_0x283d75][_0x50c757(0x3a0)]());return{'contentType':_0x1dc630,'body':_0x420671['join']('')};}function $f94e2696d4b62340$export$a0291b2a7af96f4c(_0x30b8d1){const _0x51604f=a2_0x36b7bf;if(_0x30b8d1['length']<0x2)throw new Error('Invalid\x20witness');const _0x2ccf03=_0x30b8d1[_0x30b8d1[_0x51604f(0x2be)]-0x1][_0x51604f(0x3a0)](_0x51604f(0x38b))===(0x0,$bd5ff9060a235dd4$export$7dc90d32bceb5ea5);if(_0x30b8d1[_0x51604f(0x2be)]===0x2&&_0x2ccf03)throw new Error(_0x51604f(0x15e));const _0x462599=_0x30b8d1[_0x2ccf03?_0x30b8d1[_0x51604f(0x2be)]-0x1:_0x30b8d1['length']-0x2];return $f94e2696d4b62340$export$bc1ec3784f4ae897(_0x462599);}function $f94e2696d4b62340$export$36dc4b471c81bcc7(_0x226aca,_0x5f13aa,_0x4849ce){const _0x2f591a=a2_0x36b7bf,_0x373b0d=[_0x226aca,(0x0,a2_0x3224db)[_0x2f591a(0x386)],(0x0,a2_0x3224db)['OP_0'],(0x0,a2_0x3224db)[_0x2f591a(0x38d)],(0x0,a2_0x21cdf5)['from']((0x0,$bd5ff9060a235dd4$export$43182d2709f4c8de)),(0x0,a2_0x3224db)[_0x2f591a(0x30c)],(0x0,a2_0x21cdf5)[_0x2f591a(0x2ed)](_0x5f13aa),(0x0,a2_0x3224db)[_0x2f591a(0x1a1)],...(0x0,$303220cf0debbf6c$export$b3ab84721822b8ab)(_0x4849ce,(0x0,$bd5ff9060a235dd4$export$280d845b0ed37876))[_0x2f591a(0x359)](_0x19e312=>(0x0,a2_0x21cdf5)['from'](_0x19e312)),(0x0,a2_0x3224db)[_0x2f591a(0x18a)]],_0x573024=(0x0,a2_0x55d388)[_0x2f591a(0x35c)](_0x373b0d);return _0x573024;}class $7e669d424cbb933b$export$7e20c6d567ea8b7a{constructor(_0x33af0a=(0x0,a2_0x4dc820)[a2_0x36b7bf(0x33d)]){const _0x107311=a2_0x36b7bf;this[_0x107311(0x1eb)]=async(_0x57be6d,_0x22e2ce,_0x17499e,_0x4d2caf)=>{const _0x1562a9=_0x107311,{restClient:_0x2a420e}=_0x57be6d,{output:_0x221f16,witness:_0x16b06c,redeem:_0x5652ae}=this[_0x1562a9(0x33f)](_0x2a420e['keyPair'],_0x22e2ce,_0x17499e);this['commitTx']=await this[_0x1562a9(0x34a)](_0x57be6d,_0x221f16,_0x4d2caf);const _0x149166=this['commitTx'][_0x1562a9(0x2f8)]()[_0x1562a9(0x2c3)]();await _0x2a420e[_0x1562a9(0x132)](_0x1562a9(0x27b),''+_0x149166);const _0x316341=this[_0x1562a9(0x367)][_0x1562a9(0x2f8)]()[_0x1562a9(0x124)]();this['revealTx']=await this['createRevealTx'](_0x316341,_0x221f16,_0x5652ae,_0x16b06c,_0x57be6d,_0x4d2caf);const _0x29ce54=this[_0x1562a9(0x22e)][_0x1562a9(0x2f8)]();await _0x2a420e[_0x1562a9(0x132)]('sendrawtransaction',''+_0x29ce54[_0x1562a9(0x2c3)]());},this[_0x107311(0x33f)]=(_0x17837c,_0x43c172,_0x2ed02a)=>{const _0x2009b6=_0x107311,_0x43e552=(0x0,$f94e2696d4b62340$export$36dc4b471c81bcc7)((0x0,a2_0x2f63ba)[_0x2009b6(0x1f6)](_0x17837c[_0x2009b6(0x160)]),_0x43c172,_0x2ed02a),_0x56c122={'output':_0x43e552,'redeemVersion':0xc0},{output:_0x5c3194,witness:_0x5454be}=(0x0,a2_0x154e74)[_0x2009b6(0x3c2)]({'internalPubkey':(0x0,a2_0x2f63ba)[_0x2009b6(0x1f6)](_0x17837c[_0x2009b6(0x160)]),'scriptTree':{'output':_0x43e552},'redeem':_0x56c122,'network':this[_0x2009b6(0x29b)]});return{'output':_0x5c3194,'witness':_0x5454be,'redeem':_0x56c122};},this[_0x107311(0x34a)]=async(_0x3a433d,_0x4c1b21,_0xf12de7)=>{const _0x321488=_0x107311,{commitAmount:commitAmount=_0x3a433d[_0x321488(0x2c2)](![],_0x4c1b21),commitFee:commitFee=0x0}=_0xf12de7||{},_0x14db19=new(0x0,a2_0x4a370a)({'network':this['network']}),_0x4362bb=_0x4c1b21?.['toString'](_0x321488(0x38b)),_0x4b25bc=(0x0,a2_0x21cdf5)['from'](_0x4362bb,_0x321488(0x38b)),_0x3204e7=commitAmount-commitFee;return _0x14db19['addOutput']({'script':_0x4b25bc,'value':_0x3204e7}),await _0x3a433d[_0x321488(0x304)](_0x14db19,_0xf12de7),_0x14db19[_0x321488(0x1e8)](_0x3a433d[_0x321488(0x313)][_0x321488(0x307)]),_0x14db19[_0x321488(0x339)](),_0x14db19;},this['createRevealTx']=async(_0x2c5c8c,_0x59005d,_0x4466e9,_0x198552,_0x2596ca,_0x19eb68)=>{const _0x13dccb=_0x107311;if(_0x198552['length']===0x0)throw new Error(_0x13dccb(0x10b));const _0x32e5c2=_0x2596ca[_0x13dccb(0x2c2)](![],_0x59005d),{revealAmount:revealAmount=_0x32e5c2,revealFee:revealFee=0x0,commitAmount:commitAmount=_0x32e5c2,commitFee:commitFee=0x0}=_0x19eb68||{},_0x2ce3a4=new(0x0,a2_0x4a370a)({'network':this[_0x13dccb(0x29b)]});return _0x2ce3a4[_0x13dccb(0x33e)]({'hash':_0x2c5c8c,'index':0x0,'witnessUtxo':{'value':commitAmount-commitFee,'script':_0x59005d},'sequence':0xffffffff}),_0x2ce3a4[_0x13dccb(0x23a)](0x0,{'tapLeafScript':[{'leafVersion':_0x4466e9[_0x13dccb(0x2ac)],'script':_0x4466e9[_0x13dccb(0x2b3)],'controlBlock':_0x198552[_0x198552[_0x13dccb(0x2be)]-0x1]}]}),_0x2ce3a4[_0x13dccb(0x1a2)]({'value':revealAmount-revealFee,'address':_0x2596ca[_0x13dccb(0x239)]}),await _0x2596ca[_0x13dccb(0x304)](_0x2ce3a4),_0x2ce3a4[_0x13dccb(0x1e8)](_0x2596ca[_0x13dccb(0x313)]['keyPair']),_0x2ce3a4[_0x13dccb(0x339)](),_0x2ce3a4;},this[_0x107311(0x29b)]=_0x33af0a;}get[a2_0x36b7bf(0x277)](){const _0x1c7aef=a2_0x36b7bf;return this['revealTx'][_0x1c7aef(0x2f8)]()[_0x1c7aef(0x124)]();}get['commitTxId'](){const _0x30919a=a2_0x36b7bf;return this[_0x30919a(0x367)][_0x30919a(0x2f8)]()[_0x30919a(0x124)]();}static async[a2_0x36b7bf(0x116)](_0x3ae84c,_0x50b21d){const _0x267884=a2_0x36b7bf,_0x5b8590=await(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)[_0x267884(0x266)]({'txId':_0x3ae84c,'restClient':_0x50b21d[_0x267884(0x313)]}),_0x144dff=(0x0,a2_0x21cdf5)[_0x267884(0x2ed)]([..._0x5b8590[_0x267884(0x228)][0x0][_0x267884(0x279)][0x1]]);return(0x0,$f94e2696d4b62340$export$bc1ec3784f4ae897)(_0x144dff);}}class $d195a3a2ffcd72dd$export$85c928794f8d04d4{constructor(_0x1b80b8,_0x10c4ca={},_0x1032b8={},_0x417563=[],_0x8987e8=null,_0xae4ca2=null){const _0x1f36f0=a2_0x36b7bf;this['inverseSnapshots']=[],this[_0x1f36f0(0x180)]=null,this[_0x1f36f0(0x141)]=null,this[_0x1f36f0(0x2b1)]=_0x1b80b8,this[_0x1f36f0(0x223)]={..._0x10c4ca},this[_0x1f36f0(0x163)]={..._0x1032b8},this['inverseSnapshots']=[..._0x417563],this[_0x1f36f0(0x141)]=_0x8987e8,this[_0x1f36f0(0x3a2)]=_0xae4ca2;}['createActiveNode'](_0x153dc6){const {information:_0x24f258,pointers:_0x565c1d,prototype:_0x224d1a,inverseSnapshots:_0x15dac7}=this,_0x1f4f32=new $d195a3a2ffcd72dd$export$85c928794f8d04d4(_0x153dc6,_0x24f258,_0x565c1d,_0x15dac7,this,_0x224d1a);return this['next']=_0x1f4f32,_0x1f4f32;}}const $d195a3a2ffcd72dd$export$264fea50f06efab8='_temp';class $d195a3a2ffcd72dd$export$d981182684770f2a{[a2_0x36b7bf(0x32a)](){const _0x35338a=a2_0x36b7bf;return this[_0x35338a(0x2ad)]++,this['activeNodes']=new Map(),this[_0x35338a(0x2f5)][_0x35338a(0x24b)](),this['activeVersion'];}['rollbackActiveVersion'](_0x13fd69,_0x4e77ce){const _0x514c55=a2_0x36b7bf;if(this[_0x514c55(0x2ad)]<=0x0)return;for(const _0x45ea3d of _0x13fd69)if(_0x45ea3d[_0x514c55(0x141)])_0x45ea3d[_0x514c55(0x141)]['next']=null;for(const _0x41e9be of _0x4e77ce)_0x41e9be['inverseSnapshots']=_0x41e9be[_0x514c55(0x322)][_0x514c55(0x24a)](_0x1bc848=>_0x1bc848[_0x514c55(0x2b1)]!==this[_0x514c55(0x2ad)]);this[_0x514c55(0x2ad)]--;}[a2_0x36b7bf(0x259)](_0x2b7b9c,_0xe409b7){const _0x58c0a9=a2_0x36b7bf;if(_0xe409b7<0x0)throw new Error(_0x58c0a9(0x205)+_0xe409b7);let _0x53d797=_0x2b7b9c;while(_0x53d797[_0x58c0a9(0x141)]!==null&&_0x53d797[_0x58c0a9(0x2b1)]>_0xe409b7)_0x53d797=_0x53d797[_0x58c0a9(0x141)];if(_0x53d797['version']>_0xe409b7)return null;while(_0x53d797[_0x58c0a9(0x180)]!==null&&_0x53d797[_0x58c0a9(0x180)]['version']<=_0xe409b7)_0x53d797=_0x53d797['next'];return _0x53d797;}[a2_0x36b7bf(0x3ac)](_0x3c85bd){const _0x1a8f2a=a2_0x36b7bf,_0x14df8b=this[_0x1a8f2a(0x259)](_0x3c85bd,this[_0x1a8f2a(0x2ad)]);if(!_0x14df8b)throw new Error(_0x1a8f2a(0x269)+this[_0x1a8f2a(0x2ad)]);return _0x14df8b;}[a2_0x36b7bf(0x14a)](_0x48d3c4,_0x414c36=this['activeVersion']){const _0x344ae1=a2_0x36b7bf,_0x446b6f=this[_0x344ae1(0x259)](_0x48d3c4,_0x414c36);if(!_0x446b6f)return[];const {inverseSnapshots:_0x3de2ba}=_0x446b6f;for(let _0x278b91=_0x3de2ba[_0x344ae1(0x2be)]-0x1;_0x278b91>=0x0;_0x278b91--)if(_0x3de2ba[_0x278b91][_0x344ae1(0x2b1)]<=_0x414c36)return[..._0x3de2ba[_0x278b91][_0x344ae1(0x3a1)]];return[];}['getOrCreateActiveNode'](_0xf79a7){const _0x35cfe1=a2_0x36b7bf;if(!this['activeNodes'])throw new Error('No\x20current\x20maps\x20defined\x20for\x20copying\x20node');const _0x4892c1=this['getActiveNode'](_0xf79a7);let _0x884769=this[_0x35cfe1(0x1f1)]['get'](_0x4892c1);if(_0x884769)return _0x884769;if(_0x4892c1[_0x35cfe1(0x2b1)]===this[_0x35cfe1(0x2ad)])return this[_0x35cfe1(0x1f1)][_0x35cfe1(0x2d6)](_0x4892c1,_0x4892c1),_0x4892c1;_0x884769=_0x4892c1[_0x35cfe1(0x283)](this[_0x35cfe1(0x2ad)]),this[_0x35cfe1(0x1f1)][_0x35cfe1(0x2d6)](_0x4892c1,_0x884769);const _0x4b155a=this[_0x35cfe1(0x14a)](_0x4892c1,this['activeVersion']);for(const {node:_0x4c376a,field:_0x2e42b1}of _0x4b155a){if(_0x4c376a['information'][$d195a3a2ffcd72dd$export$264fea50f06efab8]===!![])continue;const _0x582f30=this['getActiveNode'](_0x4c376a),_0x14d4d1=this['activeNodes'][_0x35cfe1(0x20f)](_0x582f30)||_0x582f30;if(_0x14d4d1[_0x35cfe1(0x163)][_0x2e42b1]===_0x4892c1)this[_0x35cfe1(0x186)](_0x14d4d1,new Map([[_0x2e42b1,_0x884769]]),{});}return _0x884769;}[a2_0x36b7bf(0x186)](_0x16bcd5,_0x3dce04=new Map(),_0x419aea={},_0x84feb9=new Set()){const _0x5e0a22=a2_0x36b7bf,_0x4f343c=Object[_0x5e0a22(0x2d2)](_0x419aea)[_0x5e0a22(0x2be)]>0x0||_0x84feb9[_0x5e0a22(0x18b)]>0x0||_0x3dce04[_0x5e0a22(0x18b)]>0x0;if(!_0x4f343c)return _0x16bcd5;if(!this[_0x5e0a22(0x1f1)])throw new Error(_0x5e0a22(0x206));if(_0x16bcd5['version']>this[_0x5e0a22(0x2ad)])throw new Error(_0x5e0a22(0x204));if(process[_0x5e0a22(0x25f)][_0x5e0a22(0x37e)]!==_0x5e0a22(0x174)&&!this[_0x5e0a22(0x1f1)])throw new Error('Cannot\x20modify\x20node\x20after\x20commit()');const _0x4e2150=this[_0x5e0a22(0x260)](_0x16bcd5);for(const [_0x4075d7,_0x5648bd]of Object['entries'](_0x419aea)){delete _0x4e2150['pointers'][_0x4075d7],_0x4e2150[_0x5e0a22(0x223)][_0x4075d7]=_0x5648bd;}for(const _0x20903a of _0x84feb9){delete _0x4e2150[_0x5e0a22(0x163)][_0x20903a],delete _0x4e2150['information'][_0x20903a];}for(const [_0x49103b,_0x1a9724]of _0x3dce04){if(_0x1a9724===null){delete _0x4e2150[_0x5e0a22(0x163)][_0x49103b];continue;}const _0x282804=this['getOrCreateActiveNode'](_0x1a9724);_0x4e2150[_0x5e0a22(0x163)][_0x49103b]=_0x282804,delete _0x4e2150[_0x5e0a22(0x223)][_0x49103b];}return _0x4e2150;}[a2_0x36b7bf(0x2a8)](){const _0x412c45=a2_0x36b7bf;if(!this['activeNodes'])throw new Error('No\x20active\x20version');return this['updateInversePointers'](),this[_0x412c45(0x1f1)]=undefined,Array['from'](this['mutatedNodes']);}[a2_0x36b7bf(0x1fa)](){const _0x44c803=a2_0x36b7bf,_0x103754=new Map();for(const [_0x1b4947,_0x5b5f37]of this[_0x44c803(0x1f1)]){this[_0x44c803(0x154)](_0x1b4947,_0x103754),this[_0x44c803(0x2f3)](_0x5b5f37,_0x103754);}for(const [_0x1864be,_0x42f543]of _0x103754){_0x1864be[_0x44c803(0x322)][_0x44c803(0x2e4)]({'version':this[_0x44c803(0x2ad)],'predecessors':_0x42f543}),this[_0x44c803(0x1da)](_0x1864be),this['mutatedNodes'][_0x44c803(0x29e)](_0x1864be);}}[a2_0x36b7bf(0x154)](_0x8f35e4,_0x2c1325){const _0x498928=a2_0x36b7bf;for(const [_0x58fab6,_0x3b30bc]of Object['entries'](_0x8f35e4[_0x498928(0x163)])){if(_0x3b30bc===null)continue;const _0x3d66b2=this[_0x498928(0x3ac)](_0x3b30bc),_0x1d750e=_0x2c1325[_0x498928(0x20f)](_0x3d66b2)??[...this[_0x498928(0x14a)](_0x3d66b2,this[_0x498928(0x2ad)]-0x1)],_0x59f363=_0x1d750e['filter'](_0x411552=>!(_0x411552[_0x498928(0x195)]===_0x8f35e4&&_0x411552['field']===_0x58fab6));_0x2c1325['set'](_0x3d66b2,_0x59f363);}}[a2_0x36b7bf(0x2f3)](_0x12e787,_0xb2532b){const _0x42013d=a2_0x36b7bf;for(const [_0x4cdfad,_0x1582fe]of Object['entries'](_0x12e787[_0x42013d(0x163)])){if(_0x1582fe===null)continue;const _0x438dbc=_0xb2532b[_0x42013d(0x20f)](_0x1582fe)??[...this[_0x42013d(0x14a)](_0x1582fe,this[_0x42013d(0x2ad)]-0x1)];_0x438dbc[_0x42013d(0x2e4)]({'node':_0x12e787,'field':_0x4cdfad}),_0xb2532b[_0x42013d(0x2d6)](_0x1582fe,_0x438dbc);}}[a2_0x36b7bf(0x1da)](_0x17a2b6){const _0x1e229c=a2_0x36b7bf;if(process['env']['NODE_ENV']==='production')return;const _0x1b2bb0=_0x17a2b6[_0x1e229c(0x322)];for(let _0x513334=0x1;_0x513334<_0x1b2bb0[_0x1e229c(0x2be)];_0x513334++){if(_0x1b2bb0[_0x513334][_0x1e229c(0x2b1)]<=_0x1b2bb0[_0x513334-0x1][_0x1e229c(0x2b1)])throw new Error(_0x1e229c(0x2b8)+_0x17a2b6[_0x1e229c(0x2b1)]+'\x20'+('(found\x20'+_0x1b2bb0[_0x513334][_0x1e229c(0x2b1)]+_0x1e229c(0x37f)+_0x1b2bb0[_0x513334-0x1][_0x1e229c(0x2b1)]+')'));}}constructor(){const _0x39d50a=a2_0x36b7bf;this[_0x39d50a(0x2ad)]=0x0,this[_0x39d50a(0x2f5)]=new Set();}}function $703356805bc7d6e8$var$getOrThrow(_0x17894b,_0x32e925,_0x2bc055){const _0x3cc31a=a2_0x36b7bf,_0x3bac46=_0x17894b[_0x3cc31a(0x20f)](_0x32e925);if(_0x3bac46===undefined)throw new Error(_0x2bc055);return _0x3bac46;}const $703356805bc7d6e8$var$isPrimitiveInformationValue=_0xd8dd22=>_0xd8dd22==null||['string',a2_0x36b7bf(0x189),'boolean',a2_0x36b7bf(0x1ae)][a2_0x36b7bf(0x197)](typeof _0xd8dd22),$703356805bc7d6e8$var$isInformationValue=_0x5d89cd=>$703356805bc7d6e8$var$isPrimitiveInformationValue(_0x5d89cd)||Array[a2_0x36b7bf(0x2bf)](_0x5d89cd)&&_0x5d89cd[a2_0x36b7bf(0x121)]($703356805bc7d6e8$var$isInformationValue),$703356805bc7d6e8$var$isEqualInformation=(_0x4c7d90,_0x49d780)=>_0x4c7d90===_0x49d780||Array['isArray'](_0x4c7d90)&&Array[a2_0x36b7bf(0x2bf)](_0x49d780)&&_0x4c7d90[a2_0x36b7bf(0x2be)]===_0x49d780[a2_0x36b7bf(0x2be)]&&_0x4c7d90[a2_0x36b7bf(0x121)]((_0x1b272d,_0xb0e6ca)=>$703356805bc7d6e8$var$isEqualInformation(_0x1b272d,_0x49d780[_0xb0e6ca])),$703356805bc7d6e8$var$deepCloneInformationValue=_0x4e6ff5=>$703356805bc7d6e8$var$isPrimitiveInformationValue(_0x4e6ff5)?_0x4e6ff5:Array['isArray'](_0x4e6ff5)?_0x4e6ff5[a2_0x36b7bf(0x359)]($703356805bc7d6e8$var$deepCloneInformationValue):_0x4e6ff5,$703356805bc7d6e8$var$META={'REV':a2_0x36b7bf(0x362),'TEMP':a2_0x36b7bf(0x3a9),'ARRAY_FLAG':a2_0x36b7bf(0x216)};class $703356805bc7d6e8$export$94affb487e701bf2{constructor(){const _0x51f9c9=a2_0x36b7bf;this[_0x51f9c9(0x3a8)]=new Map(),this[_0x51f9c9(0x351)]=new Map(),this[_0x51f9c9(0x326)]=null,this['structure']=new(0x0,$d195a3a2ffcd72dd$export$d981182684770f2a)(),this[_0x51f9c9(0x130)]=new Map();}[a2_0x36b7bf(0x188)](_0x55d8ec){const _0x1b072=a2_0x36b7bf,_0x216944=Object[_0x1b072(0x13d)](_0x55d8ec['pointers'])[_0x1b072(0x24a)](_0x120a46=>_0x120a46!==null),_0x498f56=this[_0x1b072(0x2c9)][_0x1b072(0x14a)](_0x55d8ec)[_0x1b072(0x359)](({node:_0x2325dc})=>_0x2325dc)['filter'](_0x15fccb=>_0x15fccb!==null&&!_0x15fccb['information'][$703356805bc7d6e8$var$META[_0x1b072(0x318)]]);return[...new Set([..._0x216944,..._0x498f56])];}[a2_0x36b7bf(0x26f)](_0x4c2863){const _0x8308bd=a2_0x36b7bf;return Object[_0x8308bd(0x13d)](_0x4c2863[_0x8308bd(0x163)])[_0x8308bd(0x24a)](_0x3f2bf5=>_0x3f2bf5!==null);}[a2_0x36b7bf(0x2cf)](_0x34dfe2){const _0x3b31ce=a2_0x36b7bf,_0x236f90=([_0x1ba07c,_0x1d3d52])=>_0x1ba07c!==$703356805bc7d6e8$var$META[_0x3b31ce(0x20b)]&&typeof _0x1d3d52===_0x3b31ce(0x2dc)&&_0x1d3d52!==null&&!$703356805bc7d6e8$var$isInformationValue(_0x1d3d52);return(0x0,$303220cf0debbf6c$export$8f528bb63005ed51)(_0x34dfe2,_0x34eb21=>Object[_0x3b31ce(0x115)](_0x34eb21)[_0x3b31ce(0x24a)](_0x236f90)[_0x3b31ce(0x359)](([,_0x5cc48a])=>_0x5cc48a));}[a2_0x36b7bf(0x11d)](_0x3c2cf3,_0x2988a9){const _0x1243c1=a2_0x36b7bf;return(0x0,$303220cf0debbf6c$export$8f528bb63005ed51)([..._0x3c2cf3],this[_0x1243c1(0x188)]['bind'](this))[_0x1243c1(0x24a)](_0x56fc4f=>_0x56fc4f['version']===_0x2988a9);}[a2_0x36b7bf(0x1ca)](_0x30ba2f){const _0x5d4680=a2_0x36b7bf,_0x458e41=new Map();for(const _0x1bc748 of _0x30ba2f){const _0x2c98eb=_0x1bc748[$703356805bc7d6e8$var$META[_0x5d4680(0x20b)]],_0x59ae31=_0x2c98eb?this[_0x5d4680(0x130)][_0x5d4680(0x20f)](_0x2c98eb):undefined;if(_0x2c98eb&&!_0x59ae31)throw new Error(_0x5d4680(0x222)+_0x2c98eb);const _0x77a24c=Array[_0x5d4680(0x2bf)](_0x1bc748),_0xe7e7de=_0x59ae31?.[_0x5d4680(0x223)][$703356805bc7d6e8$var$META[_0x5d4680(0x25c)]]===!![],_0x1d5d48=[],_0x46804b=[];for(const [_0x128c38,_0x23c7f8]of Object[_0x5d4680(0x115)](_0x1bc748)){if(_0x128c38===$703356805bc7d6e8$var$META[_0x5d4680(0x20b)])continue;if($703356805bc7d6e8$var$isInformationValue(_0x23c7f8))_0x1d5d48[_0x5d4680(0x2e4)](_0x128c38);else _0x46804b['push'](_0x128c38);}const _0x198d22=new Set();if(_0x59ae31){const _0x1a791c=new Set(Object[_0x5d4680(0x2d2)](_0x59ae31[_0x5d4680(0x223)]));_0x1a791c['delete']($703356805bc7d6e8$var$META[_0x5d4680(0x25c)]),_0x1a791c['delete']($703356805bc7d6e8$var$META[_0x5d4680(0x20b)]);for(const _0x192c6e of _0x1a791c)if(!_0x1d5d48[_0x5d4680(0x197)](_0x192c6e))_0x198d22[_0x5d4680(0x29e)](_0x192c6e);if(_0xe7e7de&&!_0x77a24c)_0x198d22[_0x5d4680(0x29e)]($703356805bc7d6e8$var$META[_0x5d4680(0x25c)]);}const _0x52c312={};if(!_0xe7e7de&&_0x77a24c)_0x52c312[$703356805bc7d6e8$var$META['ARRAY_FLAG']]=!![];for(const _0x16522b of _0x1d5d48){const _0x2341b9=_0x59ae31?.[_0x5d4680(0x223)][_0x16522b],_0x16d0a6=_0x1bc748[_0x16522b];if(_0x2341b9===undefined||!$703356805bc7d6e8$var$isEqualInformation(_0x2341b9,_0x16d0a6))_0x52c312[_0x16522b]=_0x16d0a6;}_0x458e41['set'](_0x1bc748,{'isArray':_0x77a24c,'pointerFields':_0x46804b,'infoChanges':_0x52c312,'deletes':_0x198d22,'oldPointerKeys':_0x59ae31?Object['keys'](_0x59ae31['pointers']):[],'oldNode':_0x59ae31});}return _0x458e41;}[a2_0x36b7bf(0x126)](_0x40e08f,_0x4598a1){const _0x3ca026=a2_0x36b7bf,_0x4d2642=new Map();for(const _0x59a73e of _0x40e08f){const {infoChanges:_0x421075,deletes:_0x325506,oldNode:_0x1232bf,isArray:_0x7dce7a}=_0x4598a1[_0x3ca026(0x20f)](_0x59a73e),_0xc6acab=_0x1232bf||new(0x0,$d195a3a2ffcd72dd$export$85c928794f8d04d4)(this[_0x3ca026(0x2c9)][_0x3ca026(0x2ad)]),_0x36b125=this[_0x3ca026(0x2c9)][_0x3ca026(0x186)](_0xc6acab,new Map(),_0x421075,_0x325506);if(!_0x7dce7a&&!_0x36b125[_0x3ca026(0x3a2)])_0x36b125[_0x3ca026(0x3a2)]=Object[_0x3ca026(0x312)](_0x59a73e);_0x4d2642['set'](_0x59a73e,_0x36b125);}return _0x4d2642;}[a2_0x36b7bf(0x2db)](_0x30b5a8,_0x311811,_0x346347){const _0x9f521d=a2_0x36b7bf;for(const _0x4e4c3b of _0x30b5a8){const _0x186862=_0x311811[_0x9f521d(0x20f)](_0x4e4c3b),{pointerFields:_0x11a597,oldPointerKeys:_0x5143bd,oldNode:_0x5bbced}=_0x186862,_0x33c3c0=_0x346347[_0x9f521d(0x20f)](_0x4e4c3b),_0x1ce241=new Map(),_0x467766=_0x5bbced?.[_0x9f521d(0x163)]??{};for(const _0x49e0cb of _0x11a597){const _0x54ba9e=_0x346347['get'](_0x4e4c3b[_0x49e0cb]),_0x15d6b8=_0x467766[_0x49e0cb]??null,_0x324dfd=_0x15d6b8?this['structure']['getActiveNode'](_0x15d6b8):null;if(_0x54ba9e!==_0x324dfd)_0x1ce241[_0x9f521d(0x2d6)](_0x49e0cb,_0x54ba9e);}for(const _0x5d8479 of _0x5143bd)if(!_0x11a597[_0x9f521d(0x197)](_0x5d8479))_0x1ce241[_0x9f521d(0x2d6)](_0x5d8479,null);if(_0x1ce241[_0x9f521d(0x18b)]>0x0)this[_0x9f521d(0x2c9)]['applyChanges'](_0x33c3c0,_0x1ce241,{});}}[a2_0x36b7bf(0x2f2)](_0x37daa0){const _0x312665=a2_0x36b7bf;this['validateForest'](_0x37daa0);const _0x1c0062=this[_0x312665(0x2cf)](_0x37daa0),_0x3f6108=this[_0x312665(0x1ca)](_0x1c0062),_0x8830c1=this[_0x312665(0x2c9)][_0x312665(0x32a)]();let _0x192de7=[],_0x43931a=[],_0x627fea,_0x221da6=[],_0x694793;try{_0x627fea=this['applyInformationPhase'](_0x1c0062,_0x3f6108),this['applyPointerPhase'](_0x1c0062,_0x3f6108,_0x627fea),_0x43931a=this['structure']['commit']();for(const _0x3e79d5 of _0x1c0062){const _0x40947f=_0x627fea[_0x312665(0x20f)](_0x3e79d5),_0x303125=this['structure'][_0x312665(0x3ac)](_0x40947f);_0x627fea['set'](_0x3e79d5,_0x303125);}_0x221da6=_0x37daa0[_0x312665(0x359)](_0x5e259f=>_0x627fea[_0x312665(0x20f)](_0x5e259f)),_0x192de7=this[_0x312665(0x11d)](_0x221da6,_0x8830c1);const {nodeToObj:_0x3de08e}=this[_0x312665(0x1dc)](_0x221da6);_0x694793=_0x3de08e;const {array:_0x38c549,oldRevs:_0x2e2532}=this[_0x312665(0x19e)](_0x192de7,_0x694793),_0x4c673f=this[_0x312665(0x209)](_0x37daa0[0x0]),_0x51a0b9=this['computeInRevs'](_0x2e2532,_0x4c673f);return{'version':_0x8830c1,'roots':_0x221da6,'newNodesOrdered':_0x192de7,'mutatedNodes':_0x43931a,'nodeToObj':_0x694793,'inputObjToCurrentNode':_0x627fea,'array':_0x38c549,'oldRevs':_0x2e2532,'inRevs':_0x51a0b9};}catch(_0x38a8a1){this['structure'][_0x312665(0x14f)](_0x192de7,_0x43931a);throw _0x38a8a1;}}[a2_0x36b7bf(0x150)](_0x42f671){const _0x26e068=a2_0x36b7bf,_0x4c9c5a=_0x26e068(0x333)+Date['now']()+'-'+Math[_0x26e068(0x36c)]()[_0x26e068(0x3a0)](0x24)[_0x26e068(0x1b2)](0x2);let _0x463b46=![];const _0x136d8f={'array':_0x42f671['array'],'oldRevs':_0x42f671[_0x26e068(0x24f)],'inRevs':_0x42f671[_0x26e068(0x1d0)],'id':_0x4c9c5a,'commit':_0x2a9fc9=>{const _0x1b4b4=_0x26e068;if(_0x463b46)throw new Error(_0x1b4b4(0x192)+_0x4c9c5a+_0x1b4b4(0x29c));if(!this[_0x1b4b4(0x351)][_0x1b4b4(0x1b7)](_0x4c9c5a))return;this[_0x1b4b4(0x161)](_0x42f671,_0x2a9fc9),_0x463b46=!![],this[_0x1b4b4(0x1f3)](_0x4c9c5a);},'rollback':()=>{const _0x9358bc=_0x26e068;if(_0x463b46)return;if(!this[_0x9358bc(0x351)][_0x9358bc(0x1b7)](_0x4c9c5a))return;this['structure']['rollbackActiveVersion'](_0x42f671[_0x9358bc(0x310)],_0x42f671[_0x9358bc(0x2f5)]),_0x463b46=!![],this[_0x9358bc(0x1f3)](_0x4c9c5a);}};if(typeof Symbol[_0x26e068(0x291)]!=='undefined')_0x136d8f[Symbol[_0x26e068(0x291)]]=()=>_0x136d8f['rollback']();return this[_0x26e068(0x351)][_0x26e068(0x2d6)](_0x4c9c5a,_0x42f671),this[_0x26e068(0x326)]=_0x4c9c5a,_0x136d8f;}[a2_0x36b7bf(0x161)](_0x22f689,_0x2994e9){const _0x22cc9c=a2_0x36b7bf;this[_0x22cc9c(0x22f)](_0x2994e9,_0x22f689[_0x22cc9c(0x310)]),this[_0x22cc9c(0x3a8)][_0x22cc9c(0x2d6)](_0x2994e9,_0x22f689[_0x22cc9c(0x16e)]);for(const [_0x5ee350,_0xb22f21]of _0x22f689[_0x22cc9c(0x1e1)])_0xb22f21['_rev']=_0x5ee350['information'][$703356805bc7d6e8$var$META['REV']];}[a2_0x36b7bf(0x1f3)](_0x1d32e1){const _0xe6aa1a=a2_0x36b7bf;this[_0xe6aa1a(0x351)][_0xe6aa1a(0x230)](_0x1d32e1);if(this[_0xe6aa1a(0x326)]===_0x1d32e1)this[_0xe6aa1a(0x326)]=null;}[a2_0x36b7bf(0x14d)](_0x318326){const _0x31f72f=a2_0x36b7bf,_0x3214d7=this[_0x31f72f(0x2f2)](_0x318326);return this[_0x31f72f(0x150)](_0x3214d7);}[a2_0x36b7bf(0x357)](_0x2f9a8f){const _0x4abe5e=a2_0x36b7bf;if(!_0x2f9a8f[_0x4abe5e(0x121)](_0x3ecfb1=>typeof _0x3ecfb1===_0x4abe5e(0x1bc)))throw new Error(_0x4abe5e(0x15c));const _0xd77849=_0x2f9a8f[_0x4abe5e(0x359)](_0x1b2da5=>_0x1b2da5[_0x4abe5e(0x12e)](':'));if(_0xd77849[_0x4abe5e(0x1d3)](_0x11214=>_0x11214[_0x4abe5e(0x2be)]!==0x2))throw new Error('Invalid\x20revision\x20format');if(_0xd77849[_0x4abe5e(0x1d3)](([,_0xebb5df])=>isNaN(parseInt(_0xebb5df,0xa))))throw new Error('Invalid\x20revision\x20number');const _0x39edfd=_0x2f9a8f[_0x4abe5e(0x359)](_0x49d227=>$703356805bc7d6e8$var$getOrThrow(this['revToNode'],_0x49d227,_0x4abe5e(0x135)+_0x49d227));return this[_0x4abe5e(0x1dc)](_0x39edfd)[_0x4abe5e(0x128)];}[a2_0x36b7bf(0x2d1)](_0x5a7a16){const _0x3f4a8e=a2_0x36b7bf,_0x59c730=$703356805bc7d6e8$var$getOrThrow(this[_0x3f4a8e(0x3a8)],_0x5a7a16,_0x3f4a8e(0x157)+_0x5a7a16+_0x3f4a8e(0x294));return this['reconstruct'](_0x59c730)[_0x3f4a8e(0x128)];}[a2_0x36b7bf(0x21d)](_0x3944fd){const _0x2f4771=a2_0x36b7bf,{[$703356805bc7d6e8$var$META[_0x2f4771(0x25c)]]:_0x31a2ab,[$703356805bc7d6e8$var$META[_0x2f4771(0x318)]]:_0x59a465,..._0x52b0e9}=_0x3944fd[_0x2f4771(0x223)],_0x5624e6=_0x31a2ab?Array[_0x2f4771(0x3a2)]:_0x3944fd['prototype']||Object[_0x2f4771(0x3a2)],_0x18f613=_0x31a2ab?[]:Object[_0x2f4771(0x39f)](_0x5624e6);for(const [_0x1e152c,_0x654c25]of Object[_0x2f4771(0x115)](_0x52b0e9))_0x18f613[_0x1e152c]=$703356805bc7d6e8$var$deepCloneInformationValue(_0x654c25);return _0x18f613;}[a2_0x36b7bf(0x1dc)](_0x284484){const _0x5140de=a2_0x36b7bf,_0x281ab9=(0x0,$303220cf0debbf6c$export$8f528bb63005ed51)([..._0x284484],this['getBidirectionalNeighbors']['bind'](this)),_0x242aea=new Map(_0x281ab9[_0x5140de(0x359)](_0x7cafa2=>[_0x7cafa2,this[_0x5140de(0x21d)](_0x7cafa2)]));for(const [_0x1aef12,_0x5b2a37]of _0x242aea)for(const [_0x38a27f,_0x3a2211]of Object[_0x5140de(0x115)](_0x1aef12[_0x5140de(0x163)]))_0x5b2a37[_0x38a27f]=_0x3a2211===null?null:_0x242aea['get'](_0x3a2211);return{'reconstructed':_0x284484[_0x5140de(0x359)](_0x1d010e=>_0x242aea['get'](_0x1d010e)),'nodeToObj':_0x242aea};}['remapRevisions'](_0x4b2a32,_0x4c2355){const _0x3a66c9=a2_0x36b7bf;let _0x2d53ba=-0x1;for(const _0x41447f of _0x4c2355){if(_0x41447f['information'][$703356805bc7d6e8$var$META['ARRAY_FLAG']]===!![])continue;const _0x55755d=_0x2d53ba[_0x3a66c9(0x3a0)]();_0x2d53ba++;const _0x30da47=_0x4b2a32+':'+_0x55755d;_0x41447f[_0x3a66c9(0x223)][$703356805bc7d6e8$var$META[_0x3a66c9(0x20b)]]=_0x30da47,this['revToNode'][_0x3a66c9(0x2d6)](_0x30da47,_0x41447f);}}['buildNewObjects'](_0x5af83a,_0x3140e1){const _0x2e8e8d=a2_0x36b7bf,_0x5ae3e9=_0x30cfd1=>!_0x30cfd1[_0x2e8e8d(0x223)][$703356805bc7d6e8$var$META[_0x2e8e8d(0x25c)]]&&!_0x30cfd1[_0x2e8e8d(0x223)][$703356805bc7d6e8$var$META[_0x2e8e8d(0x318)]],_0x4977c4=_0x5af83a[_0x2e8e8d(0x24a)](_0x5ae3e9);return{'array':_0x4977c4[_0x2e8e8d(0x359)](_0x3f86ab=>_0x3140e1['get'](_0x3f86ab)),'oldRevs':_0x4977c4[_0x2e8e8d(0x359)](({previous:_0x2333c9})=>_0x2333c9?.[_0x2e8e8d(0x223)][$703356805bc7d6e8$var$META[_0x2e8e8d(0x20b)]])};}[a2_0x36b7bf(0x3b2)](_0x693ca){const _0x385249=a2_0x36b7bf;if($703356805bc7d6e8$var$META[_0x385249(0x20b)]in _0x693ca)throw new Error(_0x385249(0x353));const _0x1ae854=Object[_0x385249(0x2d2)](_0x693ca)[_0x385249(0x24a)](_0x39e7b6=>/^[0-9]+$/[_0x385249(0x2da)](_0x39e7b6));if(_0x1ae854[_0x385249(0x2be)]!==_0x693ca[_0x385249(0x2be)]||!_0x1ae854['every']((_0x20afaf,_0x38390d)=>Number(_0x20afaf)===_0x38390d))throw new Error(_0x385249(0x276));const _0x5511db=_0x36d38a=>typeof _0x36d38a!==_0x385249(0x2dc)&&typeof _0x36d38a!==_0x385249(0x308)||_0x36d38a===null;if(_0x693ca[_0x385249(0x1d3)](_0x5511db))throw new Error(_0x385249(0x2ab));}[a2_0x36b7bf(0x209)](_0x3fca7a){const _0x20a885=a2_0x36b7bf;if(!_0x3fca7a||typeof _0x3fca7a!==_0x20a885(0x2dc))return[];return Object['keys'](_0x3fca7a)[_0x20a885(0x24a)](_0x203f19=>_0x203f19[_0x20a885(0x21e)](_0x20a885(0x35f))&&_0x3fca7a[_0x203f19]!==null)[_0x20a885(0x359)](_0x202b90=>_0x3fca7a[_0x202b90][$703356805bc7d6e8$var$META[_0x20a885(0x20b)]])['filter'](Boolean);}['computeInRevs'](_0x10eb95,_0x50b742){const _0xa271fd=a2_0x36b7bf,_0x5b2263=_0x50b742['map'](_0x5f4212=>$703356805bc7d6e8$var$getOrThrow(this[_0xa271fd(0x130)],_0x5f4212,'rev\x20'+_0x5f4212+_0xa271fd(0x12f))),_0x6f1a93=(0x0,$303220cf0debbf6c$export$8f528bb63005ed51)(_0x5b2263,this[_0xa271fd(0x26f)]['bind'](this))[_0xa271fd(0x359)](_0x9c56b9=>_0x9c56b9[_0xa271fd(0x223)][$703356805bc7d6e8$var$META[_0xa271fd(0x20b)]])[_0xa271fd(0x24a)](_0x3431fe=>_0x3431fe!==undefined&&_0x10eb95[_0xa271fd(0x197)](_0x3431fe)),_0x4e56e1=_0x10eb95[_0xa271fd(0x24a)](_0x4e9ede=>_0x4e9ede&&!_0x6f1a93[_0xa271fd(0x197)](_0x4e9ede));return[..._0x6f1a93,..._0x4e56e1];}[a2_0x36b7bf(0x372)](_0x1d3799){const _0x3f2079=a2_0x36b7bf,_0x552df8=this[_0x3f2079(0x326)]&&this[_0x3f2079(0x351)][_0x3f2079(0x1b7)](this[_0x3f2079(0x326)])?this[_0x3f2079(0x351)][_0x3f2079(0x20f)](this[_0x3f2079(0x326)])[_0x3f2079(0x310)]:((()=>{const _0x3f94b4=_0x3f2079,_0x40e9c8=this[_0x3f94b4(0x2c9)][_0x3f94b4(0x2ad)],_0x468b71=Array[_0x3f94b4(0x2ed)](this['txIdToRoots'][_0x3f94b4(0x13d)]())[_0x3f94b4(0x380)]()??[];return this[_0x3f94b4(0x11d)](_0x468b71,_0x40e9c8);})());for(const _0x31b9b5 of _0x552df8){const _0x55f54f=this[_0x3f2079(0x21d)](_0x31b9b5);_0x1d3799(_0x55f54f);for(const _0x429834 of Object['keys'](_0x55f54f))_0x429834!==$703356805bc7d6e8$var$META[_0x3f2079(0x20b)]&&$703356805bc7d6e8$var$isInformationValue(_0x55f54f[_0x429834])&&(_0x31b9b5[_0x3f2079(0x223)][_0x429834]=_0x55f54f[_0x429834],delete _0x31b9b5[_0x3f2079(0x163)][_0x429834]);}}['pruneTxId'](_0x5088a7){this['txIdToRoots']['delete'](_0x5088a7);}[a2_0x36b7bf(0x136)](_0x5339a5){const _0x3e8dbf=a2_0x36b7bf,_0x209674=_0x3e8dbf(0x34e),_0x41449f=$703356805bc7d6e8$var$getOrThrow(this[_0x3e8dbf(0x130)],_0x5339a5,_0x209674);return this[_0x3e8dbf(0x2c9)][_0x3e8dbf(0x14a)](_0x41449f)[_0x3e8dbf(0x1d3)](({node:_0x24634f})=>!_0x24634f[_0x3e8dbf(0x223)][$703356805bc7d6e8$var$META[_0x3e8dbf(0x318)]]);}}class $bfd727fd88a0b35a$export$6d8228690abc2da8{static{this[a2_0x36b7bf(0x1cc)]=new(0x0,$703356805bc7d6e8$export$94affb487e701bf2)();}static async[a2_0x36b7bf(0x1be)](_0x48e8de,_0x2372a5,_0x20c877){const _0x498d9c=a2_0x36b7bf;if(_0x2372a5[_0x498d9c(0x313)]['moduleStorageType']==='multisig'){const _0x58ea88=[_0x2372a5[_0x498d9c(0x160)][_0x498d9c(0x3a0)](_0x498d9c(0x38b))],_0x445303=(0x0,$8636fd77165bd4bc$export$50e49a79004f0f9)(_0x58ea88,_0x2372a5[_0x498d9c(0x313)]),_0x11fba9=new(0x0,$9723fb8a051ef3ce$export$489a84f048b0ef8)({'ownerData':[{'outScriptBuf':_0x445303}],'transition':new(0x0,$9ca517853ec47831$export$be58926105124dd4)({'exp':_0x48e8de,'env':{},'mod':undefined,'sourceType':_0x498d9c(0x341)})}),[_0x3e0081]=await _0x11fba9[_0x498d9c(0x2eb)](_0x2372a5);return(0x0,$d205febb791b53ee$export$1c4cfbb3206db243)(_0x3e0081);}const _0x2a3d1d=new(0x0,$7e669d424cbb933b$export$7e20c6d567ea8b7a)((0x0,$303220cf0debbf6c$export$de754bb4cdcc210c)(_0x2372a5[_0x498d9c(0x196)],_0x2372a5[_0x498d9c(0x29b)]));return await _0x2a3d1d[_0x498d9c(0x1eb)](_0x2372a5,_0x498d9c(0x36f),_0x48e8de,_0x20c877),_0x2a3d1d[_0x498d9c(0x277)]+':0';}static async[a2_0x36b7bf(0x297)](_0x5bde2b,_0x2671b3){const _0x1a74a5=async _0x5eab83=>{const _0x11422e=a2_0x1eab,{txId:_0x40d9cc}=(0x0,$303220cf0debbf6c$export$caebc656d3686561)(_0x5eab83);let _0x55ac39;try{const _0x43fa8b=$bfd727fd88a0b35a$export$6d8228690abc2da8[_0x11422e(0x1cc)][_0x11422e(0x357)]([_0x40d9cc+_0x11422e(0x38a)]);_0x55ac39=_0x43fa8b[0x0][_0x11422e(0x31e)];}catch(_0x3f5d26){if(!_0x3f5d26['message']['startsWith'](_0x11422e(0x1df)))throw _0x3f5d26;const {restClient:_0x55fa90}=_0x2671b3;if(_0x55fa90[_0x11422e(0x348)]===_0x11422e(0x155)){const {ioDescriptor:_0x4e2b7f,outs:_0x45ea41}=await(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)[_0x11422e(0x266)]({'txId':_0x40d9cc,'restClient':_0x55fa90}),[,_0x13a5d0,_0x1bd18b]=_0x4e2b7f,_0x37f88e=_0x45ea41[_0x11422e(0x1b2)](_0x13a5d0,_0x1bd18b),_0x3a19c6=(0x0,$8636fd77165bd4bc$export$6a94e91b2ef1d7f1)(_0x37f88e[_0x11422e(0x359)](_0x303d7e=>_0x303d7e[_0x11422e(0x201)])),_0x1cf8b0=JSON[_0x11422e(0x12a)](_0x3a19c6);_0x55ac39=_0x1cf8b0[_0x11422e(0x26c)];}else{const {body:_0x8bf166}=await(0x0,$7e669d424cbb933b$export$7e20c6d567ea8b7a)[_0x11422e(0x116)](_0x40d9cc,_0x2671b3);_0x55ac39=_0x8bf166;}const _0x30ec8e={'source':_0x55ac39},_0x590d10=$bfd727fd88a0b35a$export$6d8228690abc2da8[_0x11422e(0x1cc)][_0x11422e(0x14d)]([_0x30ec8e]);_0x590d10[_0x11422e(0x2a8)](_0x40d9cc);}return new(0x0,a2_0x4fbb08)(_0x55ac39,_0x5eab83);},_0x26cac0=_0x17223b=>_0x17223b,_0x1e6205=new Compartment({'Contract':$ed98b948820df6a2$export$8517d80acf00e19a},{},{'resolveHook':_0x26cac0,'importHook':_0x1a74a5}),{namespace:_0x4c8d37}=await _0x1e6205['import'](_0x5bde2b);return _0x4c8d37;}}const {OPS:$287a3b2e2915d9e2$var$OPS}=(0x0,a2_0x55d388),{SIGHASH_ALL:$287a3b2e2915d9e2$var$SIGHASH_ALL}=(0x0,a2_0x5b7609);(0x0,a2_0x3d22da)(a2_0x1648f2);class $287a3b2e2915d9e2$export$bcca3ea514774656{constructor(_0x5867cf={}){const _0x1600ef=a2_0x36b7bf;this[_0x1600ef(0x29a)]=async({rev:_0x3c35c2})=>{const _0x1bd076=_0x1600ef,{txId:_0x4de292,outputIndex:_0x1b345d}=(0x0,$303220cf0debbf6c$export$caebc656d3686561)(_0x3c35c2);let _0x32da9f;try{_0x32da9f=await this[_0x1bd076(0x313)][_0x1bd076(0x2bb)](_0x4de292);}catch(_0x21a1d0){throw new Error(_0x1bd076(0x272)+_0x21a1d0[_0x1bd076(0x211)]+_0x1bd076(0x290)+_0x4de292+_0x1bd076(0x1d9));}const _0x30ac06=(0x0,a2_0x21cdf5)[_0x1bd076(0x2ed)](_0x32da9f[_0x1bd076(0x38e)],_0x1bd076(0x38b));return{'hash':_0x4de292,'index':_0x1b345d,'nonWitnessUtxo':_0x30ac06};},this[_0x1600ef(0x249)]=async _0x49aea2=>{const _0x584884=_0x1600ef,{hash:_0x52ab83,index:_0x3ac8c1}=_0x49aea2,{restClient:_0x2ca9b5}=this,_0x3de9a4=(0x0,$303220cf0debbf6c$export$577f793df735f4a1)(_0x52ab83),_0x206148=await(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)[_0x584884(0x266)]({'txId':_0x3de9a4,'restClient':_0x2ca9b5});return _0x206148[_0x584884(0x1b6)][_0x3ac8c1];},this[_0x1600ef(0x2b4)]=async _0x10c6fb=>{const _0x34400a=_0x1600ef,_0x3086d3=await Promise[_0x34400a(0x215)](_0x10c6fb[_0x34400a(0x228)][_0x34400a(0x359)](this[_0x34400a(0x249)]));return _0x3086d3[_0x34400a(0x3bd)]((_0x3c46da,_0x224f01)=>_0x3c46da+_0x224f01[_0x34400a(0x120)],0x0n);},this[_0x1600ef(0x25b)]=_0x4b0d48=>{const _0x4c2ac5=_0x1600ef;return _0x4b0d48[_0x4c2ac5(0x1b6)]['reduce']((_0x50db9f,_0x4bd273)=>_0x50db9f+_0x4bd273[_0x4c2ac5(0x120)],0x0n);},this[_0x1600ef(0x313)]=new(0x0,$fdb3572e52dbf02d$export$ea8b5b3aea9558ce)(_0x5867cf);}[a2_0x36b7bf(0x298)](_0x312026,_0x16304e=this['address']){const _0x46ee83=a2_0x36b7bf;return this['restClient'][_0x46ee83(0x298)](_0x16304e,_0x312026);}['derive'](_0x246201='0'){const _0x55dc5a=a2_0x36b7bf,_0x1a981a=''+this[_0x55dc5a(0x29f)]+(this[_0x55dc5a(0x29f)][_0x55dc5a(0x2be)]>0x0?'/':'')+_0x246201,{chain:_0x3d3e59,network:_0x4bd4f1,bcn:_0x34ac11,mnemonic:_0x3cd27b,passphrase:_0x2b4b87}=this[_0x55dc5a(0x313)],{url:_0x1b7bd3}=_0x34ac11;return new $287a3b2e2915d9e2$export$bcca3ea514774656({'chain':_0x3d3e59,'network':_0x4bd4f1,'url':_0x1b7bd3,'mnemonic':_0x3cd27b,'path':_0x1a981a,'passphrase':_0x2b4b87});}async[a2_0x36b7bf(0x1d8)](_0x227fde=this[a2_0x36b7bf(0x239)]){const _0x452e76=a2_0x36b7bf;return this[_0x452e76(0x313)][_0x452e76(0x1d8)](_0x227fde);}async[a2_0x36b7bf(0x244)](_0x5bc7b6=this[a2_0x36b7bf(0x239)]){const _0x11d6d7=a2_0x36b7bf;console['log'](_0x11d6d7(0x1ad));const _0xa33055=await this[_0x11d6d7(0x313)][_0x11d6d7(0x27d)]({'address':_0x5bc7b6,'verbosity':0x1,'isObject':![]});return _0xa33055[_0x11d6d7(0x359)](_0x46f48d=>({'txId':(0x0,$303220cf0debbf6c$export$caebc656d3686561)(_0x46f48d[_0x11d6d7(0x2f9)])[_0x11d6d7(0x37a)],'vout':(0x0,$303220cf0debbf6c$export$caebc656d3686561)(_0x46f48d[_0x11d6d7(0x2f9)])['outputIndex'],'satoshis':_0x46f48d[_0x11d6d7(0x342)],'rev':_0x46f48d[_0x11d6d7(0x2f9)],'address':_0x46f48d[_0x11d6d7(0x239)],'height':_0x46f48d[_0x11d6d7(0x1b9)]}));}[a2_0x36b7bf(0x2c2)](_0x1ca506,_0x562678){const _0x5419d3=a2_0x36b7bf;if(this[_0x5419d3(0x313)]['chain']===_0x5419d3(0x131))return 0x1d9a20;let _0x32d609=_0x562678?_0x562678[_0x5419d3(0x2be)]+0x9:0x72;if(_0x562678&&_0x1ca506)_0x32d609+=0x25+0x6b/(0x0,$bd5ff9060a235dd4$export$4bc394cb084a3624)+0x4;else _0x32d609+=0x94;const _0x4b9540=this[_0x5419d3(0x313)][_0x5419d3(0x3bc)]/0x3e8;return Math[_0x5419d3(0x347)](_0x4b9540*_0x32d609);}['getSigOpCount'](_0x2c25aa){const _0x4a44d9=a2_0x36b7bf,_0x2f0443=(0x0,a2_0x55d388)[_0x4a44d9(0x3b9)](_0x2c25aa);if(!_0x2f0443)return 0x0;let _0x3e3774=0x0,_0x56392d='OP_INVALIDOPCODE';for(let _0x55783a=0x0;_0x55783a<_0x2f0443['length'];_0x55783a+=0x1){const _0x5b4766=_0x2f0443[_0x55783a];if(_0x5b4766===$287a3b2e2915d9e2$var$OPS['OP_CHECKSIG']||_0x5b4766===$287a3b2e2915d9e2$var$OPS[_0x4a44d9(0x16a)])_0x3e3774+=0x1;else{if(_0x5b4766===$287a3b2e2915d9e2$var$OPS[_0x4a44d9(0x2f6)]||_0x5b4766===$287a3b2e2915d9e2$var$OPS[_0x4a44d9(0x193)]){if($287a3b2e2915d9e2$var$OPS[_0x56392d]>=$287a3b2e2915d9e2$var$OPS['OP_1']&&$287a3b2e2915d9e2$var$OPS[_0x56392d]<=$287a3b2e2915d9e2$var$OPS['OP_16'])_0x3e3774+=_0x56392d['charCodeAt'](0x3)-'0'['charCodeAt'](0x0);else _0x3e3774+=(0x0,$bd5ff9060a235dd4$export$4266a5deb789e6a0);}}_0x56392d=_0x5b4766['toString']();}return _0x3e3774;}async['getLegacySigOpCount'](_0x202b93){const _0xf63a04=a2_0x36b7bf;let _0xc2e3e2=0x0;for(let _0x598b3b=0x0;_0x598b3b<_0x202b93[_0xf63a04(0x228)]['length'];_0x598b3b+=0x1){const _0x1d8276=await this[_0xf63a04(0x249)](_0x202b93[_0xf63a04(0x228)][_0x598b3b]);_0xc2e3e2+=this['getSigOpCount'](_0x1d8276[_0xf63a04(0x201)]);}for(let _0x37c5c7=0x0;_0x37c5c7<_0x202b93[_0xf63a04(0x1b6)][_0xf63a04(0x2be)];_0x37c5c7+=0x1)_0xc2e3e2+=this[_0xf63a04(0x1ea)](_0x202b93['outs'][_0x37c5c7]['script']);return _0xc2e3e2;}async[a2_0x36b7bf(0x261)](_0x1588b6){const _0x562aa3=a2_0x36b7bf;return await this[_0x562aa3(0x149)](_0x1588b6)*(0x0,$bd5ff9060a235dd4$export$4bc394cb084a3624);}async[a2_0x36b7bf(0x352)]({include:include=[],exclude:exclude=[]}={}){const _0x5c0a01=a2_0x36b7bf;let _0x13af5=await this[_0x5c0a01(0x313)][_0x5c0a01(0x27d)]({'address':this[_0x5c0a01(0x239)],'verbosity':0x1,'isObject':![]});(0x0,$303220cf0debbf6c$export$448332262467e042)(_0x13af5);const _0x1d5f50=new Set(include),_0x1d05e8=_0x13af5[_0x5c0a01(0x24a)](_0x20c4f2=>_0x1d5f50['has'](_0x20c4f2[_0x5c0a01(0x2f9)]));if(_0x1d05e8['length']!==include['length'])throw new Error('Include\x20utxos\x20not\x20found');const _0x1d1de7=new Set([...include,...exclude]);return _0x13af5=_0x13af5[_0x5c0a01(0x24a)](_0x5b0897=>!_0x1d1de7[_0x5c0a01(0x1b7)](_0x5b0897[_0x5c0a01(0x2f9)])),_0x1d05e8[_0x5c0a01(0x21c)](_0x13af5);}[a2_0x36b7bf(0x191)](_0x4a88c2,_0x42417c){const _0x478176=a2_0x36b7bf,_0x297188=_0x4a88c2/_0x42417c,_0x171029=Math[_0x478176(0x327)](0x1-_0x297188/this['restClient'][_0x478176(0x1e6)])*0x64;if(_0x171029>(0x0,$bd5ff9060a235dd4$export$a1be5b5a5ff3a4a1))throw new Error(_0x478176(0x1a6));}[a2_0x36b7bf(0x153)](_0x396c61,_0xfb35d8,_0x33fcb9){const _0x1513c6=a2_0x36b7bf;return Math[_0x1513c6(0x2f4)]((Math[_0x1513c6(0x3b5)](_0x396c61,_0xfb35d8*_0x33fcb9)+(0x0,$bd5ff9060a235dd4$export$4bc394cb084a3624)-0x1)/(0x0,$bd5ff9060a235dd4$export$4bc394cb084a3624));}[a2_0x36b7bf(0x27e)](_0x5a5098){const _0x4f2568=a2_0x36b7bf,_0x44e37d=_0x5a5098[_0x4f2568(0x384)]();return _0x44e37d['addOutput']({'address':this['address'],'value':this[_0x4f2568(0x2c2)](![])}),_0x44e37d[_0x4f2568(0x1e8)](this[_0x4f2568(0x313)]['keyPair']),_0x44e37d[_0x4f2568(0x339)](),_0x44e37d[_0x4f2568(0x2f8)](!![])[_0x4f2568(0x2a5)]();}async[a2_0x36b7bf(0x304)](_0x3a99ac,_0x483d1e){const _0x54900f=a2_0x36b7bf,{restClient:_0x2c840b,address:_0xcf77d5}=this,_0x87f6b2=_0x3a99ac[_0x54900f(0x171)],_0x2c9fc9=_0x3a99ac['outputsAmount'],_0x5c17e1=this['getDustThreshold'](![]),_0x3c1096=await this[_0x54900f(0x352)](_0x483d1e);let _0x29fc37=_0x2c9fc9-_0x87f6b2+_0x5c17e1;while(_0x29fc37>0x0){const _0x4d20d9=_0x3c1096[_0x54900f(0x257)](0x0,0x1)[0x0];if(!_0x4d20d9)throw new Error(_0x54900f(0x245)+_0xcf77d5+'.\x20Missing\x20'+_0x29fc37+'\x20satoshis.');const _0x31531d=await this[_0x54900f(0x29a)](_0x4d20d9);if(!_0x31531d)throw new Error(_0x54900f(0x1ce));_0x3a99ac[_0x54900f(0x33e)](_0x31531d);const _0x47a1a3=this['estimatePsbtSize'](_0x3a99ac)*_0x2c840b[_0x54900f(0x1e6)];_0x29fc37=_0x3a99ac[_0x54900f(0x2b7)]+_0x47a1a3-_0x3a99ac[_0x54900f(0x171)]+_0x5c17e1;}const _0x3de964=this[_0x54900f(0x27e)](_0x3a99ac),_0x4af136=_0x3de964*_0x2c840b[_0x54900f(0x1e6)],_0x229c83=_0x3a99ac['inputsAmount'],_0x4ccdbf=_0x229c83-_0x2c9fc9,_0x287512=_0x4ccdbf-_0x4af136;if(_0x287512>0x0)_0x3a99ac[_0x54900f(0x1a2)]({'address':_0xcf77d5,'value':Math[_0x54900f(0x2f4)](_0x287512)});const _0x43e68e=_0x3a99ac['clone']();_0x43e68e[_0x54900f(0x1e8)](_0x2c840b[_0x54900f(0x307)]),_0x43e68e[_0x54900f(0x339)]();const _0x5a6daa=_0x43e68e[_0x54900f(0x2f8)]()[_0x54900f(0x2a5)](),_0x4037f7=_0x43e68e[_0x54900f(0x171)]-_0x43e68e[_0x54900f(0x2b7)];this['checkFee'](_0x4037f7,_0x5a6daa);}async[a2_0x36b7bf(0x111)](_0x5bae37){const _0x37becb=a2_0x36b7bf,_0x47d271=_0x5bae37[_0x37becb(0x384)](),_0x1a04e8=(0x0,a2_0x2921e5)[_0x37becb(0x15f)](this[_0x37becb(0x239)],this['restClient'][_0x37becb(0x328)]),_0x2ffe9b=this['getDustThreshold'](![],_0x1a04e8);_0x47d271[_0x37becb(0x1a2)](_0x1a04e8,BigInt(_0x2ffe9b)),await this['sign'](_0x47d271);const _0x3ea568=this['getTxSize'](_0x47d271[_0x37becb(0x2a5)](),await this[_0x37becb(0x261)](_0x47d271),(0x0,$bd5ff9060a235dd4$export$b3bf7f8ed07f5d46));return Math[_0x37becb(0x3b5)](_0x47d271['virtualSize'](),_0x3ea568);}async[a2_0x36b7bf(0x258)](_0x1c060d){const _0x54659d=a2_0x36b7bf,_0x4e2131=await this[_0x54659d(0x111)](_0x1c060d);return _0x4e2131*this['restClient'][_0x54659d(0x1e6)];}async[a2_0x36b7bf(0x208)](_0x3b4eaa,_0x4f6ae8){const _0x4c314f=a2_0x36b7bf,{restClient:_0x2bdb94,address:_0x32eb62}=this,{chain:_0x105dbc,network:_0x2eef57}=_0x2bdb94,_0x5881bc=(0x0,$303220cf0debbf6c$export$de754bb4cdcc210c)(_0x105dbc,_0x2eef57),_0x3304d5=await this['getInputSatoshis'](_0x3b4eaa),_0x4f941e=await this[_0x4c314f(0x352)](_0x4f6ae8),_0x40f7cf=(0x0,a2_0x2921e5)[_0x4c314f(0x15f)](_0x32eb62[_0x4c314f(0x3a0)](),_0x5881bc),_0x5cbf68=this[_0x4c314f(0x2c2)](![],_0x40f7cf);_0x3b4eaa['addOutput'](_0x40f7cf,0x0n);const _0x538dbf=_0x3b4eaa['outs'][_0x4c314f(0x2be)]-0x1;let _0x70408=_0x3304d5,_0x1f523b=await this['estimateFee'](_0x3b4eaa),_0x226c86=this[_0x4c314f(0x25b)](_0x3b4eaa)+BigInt(_0x1f523b)-_0x3304d5;while(_0x226c86>0x0){const _0xb8aefe=_0x4f941e['splice'](0x0,0x1)[0x0];if(!_0xb8aefe)throw new Error(_0x4c314f(0x245)+_0x32eb62+_0x4c314f(0x321)+_0x226c86+_0x4c314f(0x1dd));const _0x100e21=await this[_0x4c314f(0x29a)](_0xb8aefe),_0x46f82a=(0x0,a2_0x335987)[_0x4c314f(0x164)]((0x0,a2_0x21cdf5)[_0x4c314f(0x2ed)](_0x100e21[_0x4c314f(0x118)],_0x4c314f(0x38b)));_0x3b4eaa[_0x4c314f(0x33e)](_0x46f82a,_0x100e21[_0x4c314f(0x1bb)]);const _0x1f163c=(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)[_0x4c314f(0x391)](_0x100e21[_0x4c314f(0x1f0)]);_0x70408+=_0x1f163c[_0x4c314f(0x1b6)][_0x100e21[_0x4c314f(0x1bb)]][_0x4c314f(0x120)],_0x1f523b=await this[_0x4c314f(0x258)](_0x3b4eaa),_0x226c86=this[_0x4c314f(0x25b)](_0x3b4eaa)+BigInt(_0x1f523b)-_0x70408;}const _0x36012b=_0x70408-this[_0x4c314f(0x25b)](_0x3b4eaa),_0x213993=_0x36012b-BigInt(_0x1f523b);if(_0x213993>=_0x5cbf68)_0x3b4eaa[_0x4c314f(0x1c7)](_0x538dbf,{'value':_0x213993});else _0x3b4eaa[_0x4c314f(0x1b6)][_0x4c314f(0x257)](_0x538dbf,0x1);if(this[_0x4c314f(0x313)][_0x4c314f(0x191)])this['checkFee'](_0x1f523b,await this[_0x4c314f(0x111)](_0x3b4eaa));}async[a2_0x36b7bf(0x240)](_0x3a90e1,_0x275499={}){const _0xb99474=a2_0x36b7bf,{restClient:_0x56b0cb}=this,{ins:_0x415510}=_0x3a90e1,{inputIndex:_0x53332f,sighashType:sighashType=$287a3b2e2915d9e2$var$SIGHASH_ALL,inputScript:_0x20316e}=_0x275499,_0x31117c=typeof _0x53332f===_0xb99474(0x189)?[_0x53332f]:[...Array(_0x415510[_0xb99474(0x2be)])[_0xb99474(0x2d2)]()];for(let _0x1904ce=0x0;_0x1904ce<_0x31117c[_0xb99474(0x2be)];_0x1904ce+=0x1)try{const _0x1329e4=_0x31117c[_0x1904ce],{hash:_0x5d7ea6,index:_0x2e5be5}=_0x415510[_0x1329e4];if(_0x5d7ea6[_0xb99474(0x121)](_0x5670e9=>_0x5670e9===0x0))continue;const _0x150201=(0x0,a2_0x335987)[_0xb99474(0x164)]((0x0,a2_0x21cdf5)['from']([..._0x5d7ea6])),_0x568679=await _0x56b0cb[_0xb99474(0x2bb)](_0x150201[_0xb99474(0x3a0)](_0xb99474(0x38b))),{script:_0x231670}=_0x568679['outs'][_0x2e5be5],_0x16e64b=_0x20316e||(0x0,a2_0x21cdf5)[_0xb99474(0x2ed)](_0x231670,_0xb99474(0x38b));_0x3a90e1[_0xb99474(0x240)](_0x1329e4,_0x56b0cb[_0xb99474(0x307)],sighashType,_0x16e64b);}catch(_0x5122d4){const _0x3d332c=[_0xb99474(0x3b7),'Hash\x20mismatch'];if(_0x5122d4 instanceof Error&&!_0x3d332c['includes'](_0x5122d4[_0xb99474(0x211)]))throw _0x5122d4;}}async[a2_0x36b7bf(0x2eb)](_0x276b7a){const _0x5ce82a=a2_0x36b7bf;if(this[_0x5ce82a(0x313)]['mode']==='debug'){const {inRevs:_0x314ff1,outRevs:_0x1caca8}=_0x276b7a;console['log'](_0x5ce82a(0x2b9),{'inRevs':_0x314ff1,'outRevs':_0x1caca8});}return await this['restClient']['broadcast'](_0x276b7a[_0x5ce82a(0x2c3)]()),_0x276b7a[_0x5ce82a(0x124)]();}async[a2_0x36b7bf(0x325)](_0x581143,_0x5e9846){const _0x47b1c1=a2_0x36b7bf,_0x16690f=new(0x0,a2_0x5b7609)(),{chain:_0x70f235,network:_0x4e71e9}=this[_0x47b1c1(0x313)],_0x1a271d=(0x0,$303220cf0debbf6c$export$de754bb4cdcc210c)(_0x70f235,_0x4e71e9),_0x18bc83=(0x0,a2_0x2921e5)[_0x47b1c1(0x15f)](_0x5e9846,_0x1a271d);return _0x16690f[_0x47b1c1(0x1a2)](_0x18bc83,_0x581143),await this[_0x47b1c1(0x208)](_0x16690f),await this[_0x47b1c1(0x240)](_0x16690f),this[_0x47b1c1(0x2eb)](_0x16690f);}['getSpendablePublicKeys'](_0x3fa6e4,_0x267140){const _0x924b83=a2_0x36b7bf,_0x35034a={'any-testnet':_0x924b83(0x373),'LTC-mainnet':_0x924b83(0x247),'BTC-mainnet':_0x924b83(0x1f2),'PEPE-mainnet':_0x924b83(0x1de),'DOGE-mainnet':_0x924b83(0x12c)};if(_0x267140===_0x924b83(0x264)||_0x267140===_0x924b83(0x142))return _0x35034a[_0x924b83(0x376)];const _0x27b9d9=_0x3fa6e4+'-'+_0x267140;return _0x35034a[_0x27b9d9];}get[a2_0x36b7bf(0x199)](){const _0x259956=a2_0x36b7bf;return(0x0,$303220cf0debbf6c$export$accea06471c18a5a)(this[_0x259956(0x313)]);}get[a2_0x36b7bf(0x343)](){const _0x2f1206=a2_0x36b7bf;return this['hdPrivateKey'][_0x2f1206(0x343)]??(0x0,a2_0x21cdf5)['alloc'](0x0);}get['publicKey'](){const _0x3a1222=a2_0x36b7bf;return this['hdPrivateKey'][_0x3a1222(0x160)];}get['passphrase'](){const _0x593a32=a2_0x36b7bf;return this[_0x593a32(0x313)][_0x593a32(0x3a6)];}get[a2_0x36b7bf(0x29f)](){const _0x10453b=a2_0x36b7bf;return this['restClient'][_0x10453b(0x29f)];}get[a2_0x36b7bf(0x196)](){const _0x5b3231=a2_0x36b7bf;return this[_0x5b3231(0x313)][_0x5b3231(0x196)];}get[a2_0x36b7bf(0x29b)](){const _0x4e9ec8=a2_0x36b7bf;return this[_0x4e9ec8(0x313)][_0x4e9ec8(0x29b)];}get['url'](){const _0x2bcacf=a2_0x36b7bf;return this['restClient'][_0x2bcacf(0x2ec)]['url'];}get[a2_0x36b7bf(0x252)](){const _0x18f00f=a2_0x36b7bf;return this[_0x18f00f(0x313)][_0x18f00f(0x252)];}get[a2_0x36b7bf(0x239)](){const _0x114a00=a2_0x36b7bf;let _0x2f4d91;try{_0x2f4d91=(0x0,a2_0x2921e5)['fromPublicKey'](this[_0x114a00(0x160)],this[_0x114a00(0x313)][_0x114a00(0x2ba)],this[_0x114a00(0x313)][_0x114a00(0x328)]);}catch(_0x41303d){throw new Error(_0x114a00(0x300));}return _0x2f4d91;}}class $888aa77d15cfc3b3$export$76f9d441834df9ba{constructor({chain:_0x5605e6,network:_0x337e8d,url:_0x38b8be}){const _0xc86fcc=a2_0x36b7bf;this[_0xc86fcc(0x2dd)]=new(0x0,$5897c693dfcff079$export$2454fd0de010f4bb)({'chain':_0x5605e6,'network':_0x337e8d,'url':_0x38b8be});}async['getTXOs'](_0x58c343){const _0x14a2cc=a2_0x36b7bf;if(_0x58c343['verbosity']===0x1)return this[_0x14a2cc(0x2dd)]['getTXOs']({..._0x58c343,'verbosity':0x1});return this[_0x14a2cc(0x2dd)]['getTXOs']({..._0x58c343,'verbosity':0x0});}async['sync'](_0x4fa974){const _0x5e491f=a2_0x36b7bf,_0x4e42dc=await this[_0x5e491f(0x2dd)][_0x5e491f(0x1a3)](_0x4fa974);return(0x0,$303220cf0debbf6c$export$ea99c62adecc85ae)((0x0,$303220cf0debbf6c$export$c194c5a73880e96f)(_0x4e42dc));}async[a2_0x36b7bf(0x27f)](_0x1fabe7){const _0x3ded29=a2_0x36b7bf;return this[_0x3ded29(0x2dd)][_0x3ded29(0x27f)](_0x1fabe7);}async['load'](_0x549b2d){const _0x752096=a2_0x36b7bf;return this['computer'][_0x752096(0x297)](_0x549b2d);}async[a2_0x36b7bf(0x2fb)](_0x4c34e5){const _0x424651=a2_0x36b7bf;return this[_0x424651(0x2dd)][_0x424651(0x2fb)](_0x4c34e5);}async[a2_0x36b7bf(0x1d8)](_0x360e0f){const _0x309929=a2_0x36b7bf;return this[_0x309929(0x2dd)][_0x309929(0x1d8)](_0x360e0f);}async[a2_0x36b7bf(0x1d5)](_0x5e6d51){const _0x8f78ec=a2_0x36b7bf;return this[_0x8f78ec(0x2dd)][_0x8f78ec(0x1d5)](_0x5e6d51);}async[a2_0x36b7bf(0x11b)](_0x372007){return this['computer']['prev'](_0x372007);}async[a2_0x36b7bf(0x180)](_0x308d01){const _0x3b77d4=a2_0x36b7bf;return this['computer'][_0x3b77d4(0x180)](_0x308d01);}async[a2_0x36b7bf(0x275)](_0x50aff8){const _0x55f0c0=a2_0x36b7bf;return this[_0x55f0c0(0x2dd)][_0x55f0c0(0x275)](_0x50aff8);}}const $5f4b05da045beabf$var$FLATTEN={'TEMP':a2_0x36b7bf(0x3a9),'RES':a2_0x36b7bf(0x34d),'ENV_PREFIX':a2_0x36b7bf(0x35f)};class $5f4b05da045beabf$export$14be6456f8698719{constructor(_0x151886={}){this['wallet']=new(0x0,$287a3b2e2915d9e2$export$bcca3ea514774656)(_0x151886),this['cache']=new(0x0,$703356805bc7d6e8$export$94affb487e701bf2)();}get['restClient'](){const _0x1d66e1=a2_0x36b7bf;return this['wallet'][_0x1d66e1(0x313)];}[a2_0x36b7bf(0x182)](_0x415396){const _0x359b25=a2_0x36b7bf,_0x5e644a=Object[_0x359b25(0x115)](_0x415396['env'])[_0x359b25(0x359)](([_0x1aee04,_0x3b00a6])=>[''+$5f4b05da045beabf$var$FLATTEN['ENV_PREFIX']+_0x1aee04,_0x3b00a6]);return{[$5f4b05da045beabf$var$FLATTEN[_0x359b25(0x318)]]:!![],[$5f4b05da045beabf$var$FLATTEN[_0x359b25(0x21a)]]:_0x415396[_0x359b25(0x34d)],...Object[_0x359b25(0x20c)](_0x5e644a)};}[a2_0x36b7bf(0x143)](_0x5b4844){const _0x1835e6=a2_0x36b7bf,_0x9a08c1=Object[_0x1835e6(0x115)](_0x5b4844)['filter'](([_0x3eea0e])=>_0x3eea0e[_0x1835e6(0x21e)]($5f4b05da045beabf$var$FLATTEN[_0x1835e6(0x237)]))[_0x1835e6(0x359)](([_0x201825,_0x36eb06])=>[_0x201825[_0x1835e6(0x1b2)]($5f4b05da045beabf$var$FLATTEN['ENV_PREFIX'][_0x1835e6(0x2be)]),_0x36eb06]);return{'res':_0x5b4844[$5f4b05da045beabf$var$FLATTEN[_0x1835e6(0x21a)]],'env':Object['fromEntries'](_0x9a08c1)};}[a2_0x36b7bf(0x202)](_0x48bdb5){const _0x46212c=new Proxy(_0x48bdb5,new(0x0,$952d3bca5034e549$export$b8e7b394f2964d0d)());return new Proxy(_0x46212c,new(0x0,$0b77d8afb5886e41$export$f2aa9e51325c9c38)());}[a2_0x36b7bf(0x1e3)](_0x4e3c81,_0x4e8e9b=new WeakMap()){const _0x4e4002=a2_0x36b7bf;if(typeof _0x4e3c81!=='object'||_0x4e3c81===null)return _0x4e3c81;const _0x39c2ca=_0x4e3c81;if(_0x4e8e9b[_0x4e4002(0x1b7)](_0x39c2ca))return _0x4e8e9b[_0x4e4002(0x20f)](_0x39c2ca);const _0x45a178=this[_0x4e4002(0x202)](_0x4e3c81);_0x4e8e9b[_0x4e4002(0x2d6)](_0x39c2ca,_0x45a178),(0x0,$fa96f8418385359b$export$e16d8520af44a096)(_0x45a178);for(const _0x1eb0d4 of Object[_0x4e4002(0x2d2)](_0x45a178))(0x0,$aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{const _0x3d9c7a=_0x4e4002;_0x45a178[_0x1eb0d4]=this[_0x3d9c7a(0x1e3)](_0x45a178[_0x1eb0d4],_0x4e8e9b);});return _0x45a178;}async[a2_0x36b7bf(0x1f8)](_0xc6bced,_0x22d5dc){const _0x3f89d8=a2_0x36b7bf,_0x2d3b16=_0x22d5dc??await(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)[_0x3f89d8(0x266)]({'txId':_0xc6bced,'restClient':this[_0x3f89d8(0x313)]}),_0x3c0554=await(0x0,$9723fb8a051ef3ce$export$489a84f048b0ef8)[_0x3f89d8(0x37b)](_0x2d3b16,this[_0x3f89d8(0x313)]);return(0x0,$9ca517853ec47831$export$be58926105124dd4)[_0x3f89d8(0x2e3)](_0x3c0554);}['getEffectFromCache'](_0x550a8a){const _0x5b165d=a2_0x36b7bf,[_0x53537c]=this['cache']['getByTxId'](_0x550a8a),_0x47416d=this[_0x5b165d(0x143)](_0x53537c);return this['traverseAndAdd'](_0x47416d);}async['getEffectFromChain'](_0x119c48){const _0x5d71c7=a2_0x36b7bf,_0x212e24=await(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)[_0x5d71c7(0x266)]({'txId':_0x119c48,'restClient':this[_0x5d71c7(0x313)]}),_0x442a07=await this[_0x5d71c7(0x1f8)](_0x119c48,_0x212e24),{effect:_0x59b26c}=await this[_0x5d71c7(0x1f9)](_0x442a07,{'txFromChain':_0x212e24});return _0x59b26c;}async[a2_0x36b7bf(0x2cd)](_0x1e8f47){const _0x183cf5=a2_0x36b7bf;try{return await this['getEffectFromCache'](_0x1e8f47);}catch(_0x488a7b){if(_0x488a7b instanceof Error&&_0x488a7b[_0x183cf5(0x211)]!=='Version\x20'+_0x1e8f47+_0x183cf5(0x294))throw _0x488a7b;return this['getEffectFromChain'](_0x1e8f47);}}[a2_0x36b7bf(0x1d6)](_0x5eba28){const _0xb5e264=a2_0x36b7bf,[_0x5f0fa4]=this[_0xb5e264(0x1cc)][_0xb5e264(0x357)]([_0x5eba28]);return this[_0xb5e264(0x1e3)](_0x5f0fa4);}async[a2_0x36b7bf(0x3a4)](_0x581841){const _0x5524ae=a2_0x36b7bf;if(!_0x581841||typeof _0x581841!=='string')throw new $5f4b05da045beabf$export$8ef43b75008b17aa(_0x5524ae(0x35b)+_0x581841);if(_0x581841['startsWith']((0x0,$70710ac8a001306b$export$e89b5b69fd27457c)))return this[_0x5524ae(0x30f)](_0x581841);const _0x3b3588=(0x0,$303220cf0debbf6c$export$5c74a82dce3394d5)(_0x581841),_0x192976=await this[_0x5524ae(0x2cd)](_0x3b3588),_0x1d4c92=(0x0,$303220cf0debbf6c$export$d601b1a5af9dd5dc)(_0x192976,_0x5524ae(0x362),_0x581841);return _0x1d4c92||this['getOrphanFromCache'](_0x581841);}async['get'](_0x3ce247){const _0x5991e1=a2_0x36b7bf;return(0x0,$303220cf0debbf6c$export$d146d9996ff2e97)(_0x3ce247)?this['getRev'](_0x3ce247):this[_0x5991e1(0x2cd)](_0x3ce247);}async[a2_0x36b7bf(0x32b)](_0x43f6f9){const _0x4f71d8=a2_0x36b7bf;return Object[_0x4f71d8(0x20c)](await Promise[_0x4f71d8(0x215)](Object['entries'](_0x43f6f9)[_0x4f71d8(0x359)](async([_0x513bd0,_0x10a072])=>{if(_0x10a072==null)throw new Error('Missing\x20revision\x20for\x20env\x20key:\x20'+_0x513bd0);return[_0x513bd0,await this['getRev'](_0x10a072)];})));}[a2_0x36b7bf(0x30d)](_0x43ebd1,_0x5c4152,_0x282370){const _0x39983b=a2_0x36b7bf;if(typeof _0x43ebd1!=='string')throw new $5f4b05da045beabf$export$7f71b5adef806671(_0x39983b(0x2e5));if(/ super(\[|\.)/[_0x39983b(0x2da)](_0x43ebd1))throw new $5f4b05da045beabf$export$7f71b5adef806671(_0x39983b(0x1c4));if($5f4b05da045beabf$export$d23a8e6958a8bc2d(_0x5c4152)||Object[_0x39983b(0x13d)](_0x282370)['some'](_0x1ace79=>$5f4b05da045beabf$export$d23a8e6958a8bc2d(_0x1ace79)))throw new $5f4b05da045beabf$export$7f71b5adef806671(_0x39983b(0x3ae));}async['refreshStaleSidePredecessors'](_0x5b30c1,_0x46b5b6,_0x2e6511){const _0x132eb0=a2_0x36b7bf,_0x5b4506=(0x0,$303220cf0debbf6c$export$6850e3f48372183d)(_0x46b5b6),_0x2656a7=(await Promise[_0x132eb0(0x215)](_0x5b30c1['filter'](_0xdce04d=>_0xdce04d!==undefined&&!_0x5b4506['has'](_0xdce04d))[_0x132eb0(0x359)](async _0x4ae8ef=>{const _0xa494c4=_0x132eb0,_0x4e665a=await this[_0xa494c4(0x313)]['latest'](_0x4ae8ef);return _0x4e665a!==_0x4ae8ef?_0x4e665a:null;})))[_0x132eb0(0x24a)](_0x35f8e7=>_0x35f8e7!==null),_0xa38462=new Set(_0x2656a7[_0x132eb0(0x24a)](_0x151afb=>!_0x5b4506[_0x132eb0(0x1b7)](_0x151afb))[_0x132eb0(0x359)](_0x3dac35=>(0x0,$303220cf0debbf6c$export$5c74a82dce3394d5)(_0x3dac35)));if(_0xa38462[_0x132eb0(0x18b)]===0x0)return null;if(_0x2e6511)_0x2e6511[_0x132eb0(0x3b1)]();return await Promise['all'](Array[_0x132eb0(0x2ed)](_0xa38462)[_0x132eb0(0x359)](_0x22fcae=>this[_0x132eb0(0x194)](_0x22fcae))),this[_0x132eb0(0x1cc)][_0x132eb0(0x14d)]([_0x46b5b6]);}[a2_0x36b7bf(0x14b)](_0x35f384,_0x1368c7,_0x3e5a6e,_0x59deb9){const _0x458047=a2_0x36b7bf,_0x4b9df0=_0x1368c7[_0x458047(0x2c1)][_0x458047(0x175)](),_0x383baf=_0x1368c7['parsed'][_0x458047(0x17e)]()||_0x1368c7[_0x458047(0x2c1)]['isCall']();this[_0x458047(0x1cc)][_0x458047(0x372)](_0x36a132=>{const _0x5ca562=_0x458047;if(!(0x0,$d205febb791b53ee$export$70ac1a29dd7dda57)(_0x36a132)||!(_0x5ca562(0x362)in _0x36a132)||typeof _0x36a132[_0x5ca562(0x362)]!=='string')return;const _0x900486=_0x36a132[_0x5ca562(0x362)][_0x5ca562(0x12e)](':')[0x1],_0x317db8=parseInt(_0x900486,0xa);if(_0x317db8<0x0||_0x317db8>=_0x35f384[_0x5ca562(0x20d)][_0x5ca562(0x2be)])return;const {_owners:_0x181ea6,_satoshis:_0x15fce9,_readers:_0x1151ff,_url:_0x1373be}=_0x35f384[_0x5ca562(0x20d)][_0x317db8],_0x210a45=()=>{const _0x10645f=_0x5ca562;if(_0x4b9df0&&_0x59deb9[_0x4b9df0])return(0x0,$d205febb791b53ee$export$accd2046ded63e63)(_0x59deb9[_0x4b9df0][_0x10645f(0x1c5)]);return(0x0,$d205febb791b53ee$export$accd2046ded63e63)(_0x36a132[_0x10645f(0x301)]);};(0x0,$aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{const _0x27d230=_0x5ca562;if(typeof _0x36a132[_0x27d230(0x301)]!=='string')_0x36a132[_0x27d230(0x301)]=(0x0,$d205febb791b53ee$export$84eca18e6d832dd1)(_0x3e5a6e+':'+_0x317db8);if(typeof _0x36a132['_root']!==_0x27d230(0x1bc))_0x36a132['_root']=_0x383baf?_0x210a45():(0x0,$d205febb791b53ee$export$accd2046ded63e63)('n/a');if(typeof _0x36a132[_0x27d230(0x330)]===_0x27d230(0x358))_0x36a132[_0x27d230(0x330)]=_0x15fce9;if(typeof _0x36a132[_0x27d230(0x123)]===_0x27d230(0x358))_0x36a132[_0x27d230(0x123)]=_0x181ea6;if(typeof _0x1151ff!==_0x27d230(0x358))_0x36a132[_0x27d230(0x335)]=_0x1151ff;if(typeof _0x1373be!==_0x27d230(0x358))_0x36a132['_url']=_0x1373be;});});}[a2_0x36b7bf(0x1a0)](_0x154a74){const _0x221c46=a2_0x36b7bf;if(!_0x154a74)return null;const _0x3249e3=_0x154a74[_0x221c46(0x124)]();if(this[_0x221c46(0x1cc)][_0x221c46(0x3a8)][_0x221c46(0x1b7)](_0x3249e3)){const _0x5a16a6=this[_0x221c46(0x2fd)](_0x3249e3);return{'effect':_0x5a16a6,'tx':_0x154a74};}return null;}async['evaluateJS'](_0x13922b){const _0x3adf6c=a2_0x36b7bf,_0x17e44e=await this[_0x3adf6c(0x32b)](_0x13922b[_0x3adf6c(0x25f)]),_0x5922ce=_0x13922b['mod']?await(0x0,$bfd727fd88a0b35a$export$6d8228690abc2da8)[_0x3adf6c(0x297)](_0x13922b[_0x3adf6c(0x134)],this[_0x3adf6c(0x256)]):{},{chain:_0x2fd21d,network:_0xff3092,bcn:_0x21f1e1}=this['restClient'],_0x3fdd2f=new(0x0,$888aa77d15cfc3b3$export$76f9d441834df9ba)({'chain':_0x2fd21d,'network':_0xff3092,'url':_0x21f1e1['url']}),_0x20b52e={'Contract':$ed98b948820df6a2$export$8517d80acf00e19a,'computer':_0x3fdd2f,..._0x17e44e,..._0x5922ce},_0x2373bf=new Compartment(_0x20b52e),_0x194e30=await _0x2373bf[_0x3adf6c(0x2aa)](_0x13922b['exp']);return this['validateSecurity'](_0x13922b['exp'],_0x194e30,_0x17e44e),{'res':_0x194e30,'env':_0x17e44e};}async[a2_0x36b7bf(0x3b3)](_0x2a5aed,_0x3f3de7){const _0x280540=a2_0x36b7bf,_0x59bd26=this[_0x280540(0x1cc)][_0x280540(0x14d)]([_0x2a5aed]);if(_0x59bd26[_0x280540(0x184)][_0x280540(0x2be)]===0x0)return _0x59bd26[_0x280540(0x3b1)](),_0x59bd26;if(!_0x3f3de7){const _0x28b967=await this[_0x280540(0x32c)](_0x59bd26['oldRevs'],_0x2a5aed,_0x59bd26);if(_0x28b967)return _0x28b967;}return _0x59bd26;}async['buildAndCommitTransaction'](_0x565031,_0x9ac152,_0x392383,_0x283e40,_0x38aa2e,_0x4f3c1a){const _0x1d600c=a2_0x36b7bf,_0x11e354=!!_0x392383,_0x236f57=_0x11e354?await(0x0,$9723fb8a051ef3ce$export$489a84f048b0ef8)['fromTx'](_0x392383,this['restClient']):null,_0x114efb=_0x11e354?_0x236f57[_0x1d600c(0x1d0)]:_0x565031[_0x1d600c(0x1d0)],_0xf6f514=await(0x0,$9723fb8a051ef3ce$export$489a84f048b0ef8)[_0x1d600c(0x226)](_0x565031['array'],this['wallet'],_0x9ac152,_0x392383,_0x565031[_0x1d600c(0x24f)],_0x114efb),_0xca557d=await _0xf6f514[_0x1d600c(0x383)](this[_0x1d600c(0x256)]);let _0x83effc;if(_0x11e354){(0x0,$9723fb8a051ef3ce$export$489a84f048b0ef8)['testEqual'](_0xf6f514,_0x236f57,this[_0x1d600c(0x313)][_0x1d600c(0x20e)]),_0x83effc=_0x392383[_0x1d600c(0x124)]();if(!this[_0x1d600c(0x1cc)][_0x1d600c(0x3a8)][_0x1d600c(0x1b7)](_0x83effc))_0x565031[_0x1d600c(0x2a8)](_0x83effc);}else{if(_0x38aa2e)await this[_0x1d600c(0x256)][_0x1d600c(0x208)](_0xca557d,_0x283e40);if(_0x4f3c1a)await this['wallet'][_0x1d600c(0x240)](_0xca557d,_0x283e40);_0x83effc=_0xca557d[_0x1d600c(0x124)](),_0x565031['commit'](_0x83effc);}return{'update':_0xf6f514,'tx':_0xca557d,'txId':_0x83effc};}async[a2_0x36b7bf(0x1f9)](_0x98c5c5,_0x5a0fab={}){const _0x3f683d=a2_0x36b7bf,{txFromChain:_0x3859c9,fund:fund=!![],sign:sign=!![]}=_0x5a0fab,_0x11302c=this[_0x3f683d(0x1a0)](_0x3859c9);if(_0x11302c)return _0x11302c;const _0x11bea2=await this[_0x3f683d(0x2c4)](_0x98c5c5),_0x41c249=this[_0x3f683d(0x182)](_0x11bea2),_0x1ec566=await this[_0x3f683d(0x3b3)](_0x41c249,_0x3859c9);if(_0x1ec566['array'][_0x3f683d(0x2be)]===0x0)return{'effect':_0x11bea2,'tx':null};const {update:_0x3e2956,tx:_0x50c4b8,txId:_0x5b0253}=await this['buildAndCommitTransaction'](_0x1ec566,_0x98c5c5,_0x3859c9,_0x5a0fab,fund,sign);this[_0x3f683d(0x14b)](_0x3e2956,_0x98c5c5,_0x5b0253,_0x11bea2[_0x3f683d(0x25f)]);const [_0xd0a63a]=this[_0x3f683d(0x1cc)]['getByTxId'](_0x5b0253),_0x2b7005=this[_0x3f683d(0x143)](_0xd0a63a);return{'effect':this[_0x3f683d(0x1e3)](_0x2b7005),'tx':_0x50c4b8};}['getMock'](_0x4c6177){const _0x42b4a3=a2_0x36b7bf,_0x5d3952=parseInt(_0x4c6177[_0x42b4a3(0x12e)](':')[0x1],0xa);if(this['mocks'])return Object['values'](this[_0x42b4a3(0x31d)])[_0x5d3952];throw new $5f4b05da045beabf$export$8ef43b75008b17aa('Mock\x20not\x20found');}async[a2_0x36b7bf(0x1e2)](_0x461ffc,_0x2821b6={}){const _0x3662d7=a2_0x36b7bf,{mocks:_0x771854}=_0x2821b6;if(!_0x771854||Object[_0x3662d7(0x2d2)](_0x771854)[_0x3662d7(0x2be)]===0x0)return this[_0x3662d7(0x1f9)](_0x461ffc,_0x2821b6);const _0x732d09=[{[$5f4b05da045beabf$var$FLATTEN[_0x3662d7(0x318)]]:!![],..._0x771854}],_0x5627a9=this[_0x3662d7(0x1cc)][_0x3662d7(0x14d)](_0x732d09);_0x5627a9[_0x3662d7(0x2a8)]((0x0,$70710ac8a001306b$export$e89b5b69fd27457c));const _0x5c39aa=this['cache'][_0x3662d7(0x2d1)]((0x0,$70710ac8a001306b$export$e89b5b69fd27457c)),_0x2679c0=_0x5c39aa[0x0];this[_0x3662d7(0x31d)]={};const _0xa03915=Object[_0x3662d7(0x115)](_0x771854);for(const [_0x2cdabe,[_0xa44b84,_0x52e44d]]of _0xa03915['entries']()){_0x52e44d[_0x3662d7(0x301)]=(0x0,$70710ac8a001306b$export$e89b5b69fd27457c)+':'+_0x2cdabe,_0x52e44d[_0x3662d7(0x362)]=(0x0,$70710ac8a001306b$export$e89b5b69fd27457c)+':'+_0x2cdabe,_0x52e44d['_root']=(0x0,$70710ac8a001306b$export$e89b5b69fd27457c)+':'+_0x2cdabe,this[_0x3662d7(0x31d)][_0xa44b84]=_0x52e44d;}const _0x357c42={};for(const [_0x5d42f0]of _0xa03915){const _0x1d9e7d=''+$5f4b05da045beabf$var$FLATTEN['ENV_PREFIX']+_0x5d42f0,_0x269cb5=_0x2679c0[_0x1d9e7d]||_0x2679c0[_0x5d42f0];if(_0x269cb5?.[_0x3662d7(0x362)]&&typeof _0x269cb5[_0x3662d7(0x362)]===_0x3662d7(0x1bc))_0x357c42[_0x5d42f0]=_0x269cb5[_0x3662d7(0x362)];}_0x461ffc[_0x3662d7(0x25f)]={..._0x461ffc[_0x3662d7(0x25f)],..._0x357c42};const _0x12f080=await this['eval'](_0x461ffc,{..._0x2821b6,'mocks':undefined});return this[_0x3662d7(0x1cc)]['pruneTxId']((0x0,$70710ac8a001306b$export$e89b5b69fd27457c)),this[_0x3662d7(0x31d)]=undefined,_0x12f080;}[a2_0x36b7bf(0x298)](_0x4bdade,_0x4dc296){const _0x243ea7=a2_0x36b7bf;return this[_0x243ea7(0x256)]['faucet'](_0x4bdade,_0x4dc296);}}function $5f4b05da045beabf$export$d23a8e6958a8bc2d(_0x4d6294){const _0x88d5ea=a2_0x36b7bf;return[...(0x0,$303220cf0debbf6c$export$f402e1d983f479af)([_0x4d6294],(0x0,$303220cf0debbf6c$export$2ba85e47198b647a))][_0x88d5ea(0x1d3)](_0x3348c5=>(0x0,$d205febb791b53ee$export$70ac1a29dd7dda57)(_0x3348c5)&&!(0x0,$fa96f8418385359b$export$141f8028a5c9b76)(_0x3348c5)&&!(0x0,$303220cf0debbf6c$export$1ef33362739af9d6)(_0x3348c5['_rev']));}class $5f4b05da045beabf$export$70e773e797606c01 extends Error{constructor(_0x518ee2){const _0x156a05=a2_0x36b7bf;super(_0x518ee2),this[_0x156a05(0x1f7)]=_0x156a05(0x140);}}class $5f4b05da045beabf$export$7f71b5adef806671 extends $5f4b05da045beabf$export$70e773e797606c01{}class $5f4b05da045beabf$export$3fbb8a111b629068 extends $5f4b05da045beabf$export$70e773e797606c01{}class $5f4b05da045beabf$export$8ef43b75008b17aa extends $5f4b05da045beabf$export$70e773e797606c01{}const $0b7f72abf1819dc7$var$EventSource=typeof window!=='undefined'&&window[a2_0x36b7bf(0x1fc)]?window[a2_0x36b7bf(0x1fc)]:(0x0,a2_0x99a71b);class $0b7f72abf1819dc7$export$f55210826850c514{constructor(_0x141d17,_0x2244b0,_0x29af92,_0x36d9ef){const _0x54bf3a=a2_0x36b7bf;this['eventSource']=null,this[_0x54bf3a(0x10a)]=new Map(),this[_0x54bf3a(0x13f)]=new Map(),this[_0x54bf3a(0x122)]=new Map(),this[_0x54bf3a(0x309)]=new Map(),this[_0x54bf3a(0x24d)]=null,this['mempoolOnError']=undefined,this[_0x54bf3a(0x271)]=_0x141d17,this[_0x54bf3a(0x196)]=_0x2244b0,this['network']=_0x29af92,this[_0x54bf3a(0x313)]=_0x36d9ef;}[a2_0x36b7bf(0x33a)](_0x5368cc){const _0xc3e5e8=a2_0x36b7bf,_0x3bbc31=Object[_0xc3e5e8(0x2d2)](_0x5368cc)[_0xc3e5e8(0x31c)]()['reduce']((_0x501185,_0x51b995)=>{const _0x4dc94f=_0xc3e5e8,_0x3acfa5=_0x5368cc[_0x51b995];return _0x501185[_0x51b995]=typeof _0x3acfa5==='bigint'?_0x3acfa5[_0x4dc94f(0x3a0)]():_0x3acfa5,_0x501185;},{});return JSON['stringify'](_0x3bbc31);}['hasSubscriptions'](){const _0x1f0356=a2_0x36b7bf;return this[_0x1f0356(0x10a)]['size']>0x0||this['streamCallbacks'][_0x1f0356(0x18b)]>0x0||!!this[_0x1f0356(0x24d)];}async[a2_0x36b7bf(0x23c)](){const _0x3fbc2a=a2_0x36b7bf;this['eventSource']?.[_0x3fbc2a(0x166)](),this[_0x3fbc2a(0x2a3)]=null;if(!this[_0x3fbc2a(0x185)]())return;const _0x1d1ab7=new URLSearchParams();if(this[_0x3fbc2a(0x24d)])_0x1d1ab7[_0x3fbc2a(0x145)](_0x3fbc2a(0x371),_0x3fbc2a(0x1c8));this[_0x3fbc2a(0x10a)][_0x3fbc2a(0x1b3)]((_0x59370e,_0x3ec642)=>_0x1d1ab7[_0x3fbc2a(0x145)]('id',_0x3ec642));let _0xc70f2f=0x0;for(const {filter:_0x90f43a}of this[_0x3fbc2a(0x122)][_0x3fbc2a(0x13d)]()){const _0x132d28={..._0x90f43a};if(_0x132d28['exp']!==undefined){if(typeof _0x132d28[_0x3fbc2a(0x26c)]!==_0x3fbc2a(0x1bc))throw new Error('exp\x20must\x20be\x20a\x20string');_0x132d28[_0x3fbc2a(0x1b0)]=(0x0,a2_0x181d13)[_0x3fbc2a(0x10c)](Buffer[_0x3fbc2a(0x2ed)](_0x132d28['exp']))['toString'](_0x3fbc2a(0x38b)),delete _0x132d28[_0x3fbc2a(0x26c)];}for(const [_0xa37c20,_0x3b429a]of Object['entries'](_0x132d28))if(_0x3b429a!==undefined&&_0x3b429a!==null)_0x1d1ab7[_0x3fbc2a(0x145)](_0x3fbc2a(0x292)+_0xc70f2f+']['+_0xa37c20+']',String(_0x3b429a));_0xc70f2f++;}const _0x458a01=this['baseUrl']+'/v1/'+this[_0x3fbc2a(0x196)]+'/'+this[_0x3fbc2a(0x29b)]+_0x3fbc2a(0x320)+_0x1d1ab7[_0x3fbc2a(0x3a0)]();this[_0x3fbc2a(0x2a3)]=new $0b7f72abf1819dc7$var$EventSource(_0x458a01),this[_0x3fbc2a(0x2a3)][_0x3fbc2a(0x19d)]=this['handleMessage'][_0x3fbc2a(0x2a9)](this),this['eventSource']['onerror']=this[_0x3fbc2a(0x270)][_0x3fbc2a(0x2a9)](this);}[a2_0x36b7bf(0x1ba)](_0x148171){const _0xe0cc20=a2_0x36b7bf,_0x36b8df=(0x0,$303220cf0debbf6c$export$b48ee232557adc37)(_0x148171[_0xe0cc20(0x370)]);if(!_0x36b8df)return;if(_0xe0cc20(0x340)in _0x36b8df){this['mempoolCallback']?.(_0x36b8df);return;}if(_0x36b8df['id']){const _0x2ac8dd=this[_0xe0cc20(0x10a)][_0xe0cc20(0x20f)](_0x36b8df['id']);_0x2ac8dd?.({'rev':_0x36b8df[_0xe0cc20(0x2f9)],'hex':_0x36b8df['hex']});}this['streamCallbacks']['forEach'](({filter:_0x94e00d,callback:_0x26c58c})=>{const _0x476d8f=_0xe0cc20;let _0x4c5e30=!![];for(const [_0x4185c4,_0x5becce]of Object['entries'](_0x94e00d)){if(_0x4185c4===_0x476d8f(0x160)){if(!Array[_0x476d8f(0x2bf)](_0x36b8df[_0x476d8f(0x23e)])||!_0x36b8df[_0x476d8f(0x23e)][_0x476d8f(0x197)](String(_0x5becce))){_0x4c5e30=![];break;}}else{if(_0x36b8df[_0x4185c4]!==String(_0x5becce)){_0x4c5e30=![];break;}}}if(_0x4c5e30)_0x26c58c({'rev':_0x36b8df[_0x476d8f(0x2f9)],'hex':_0x36b8df[_0x476d8f(0x38b)]});});}[a2_0x36b7bf(0x270)](_0x598b3e){const _0x37b1cc=a2_0x36b7bf;this['idOnErrors'][_0x37b1cc(0x1b3)](_0x1c2a2a=>_0x1c2a2a?.(_0x598b3e)),this[_0x37b1cc(0x309)][_0x37b1cc(0x1b3)](_0x190eb2=>_0x190eb2?.(_0x598b3e)),this[_0x37b1cc(0x11c)]?.(_0x598b3e),this[_0x37b1cc(0x2a3)]?.[_0x37b1cc(0x166)]();}async[a2_0x36b7bf(0x395)](_0xc7c797,_0x28cdee,_0x2b860b){const _0x80f00d=a2_0x36b7bf;return this['idCallbacks'][_0x80f00d(0x2d6)](_0xc7c797,_0x28cdee),this[_0x80f00d(0x13f)]['set'](_0xc7c797,_0x2b860b),await this[_0x80f00d(0x23c)](),()=>{const _0x353a28=_0x80f00d;this[_0x353a28(0x10a)][_0x353a28(0x230)](_0xc7c797),this['idOnErrors'][_0x353a28(0x230)](_0xc7c797),this[_0x353a28(0x23c)]();};}async[a2_0x36b7bf(0x2b2)](_0x2edfb0,_0x3e68e9,_0x245184){const _0x5c9c51=a2_0x36b7bf;for(const _0x422e2b of Object['keys'](_0x2edfb0)){if(!(0x0,$bd5ff9060a235dd4$export$30dc5b6bafe2f74)[_0x5c9c51(0x197)](_0x422e2b))throw new Error(_0x5c9c51(0x2e1)+_0x422e2b);}if(_0x2edfb0[_0x5c9c51(0x39b)]!==undefined){if(!(0x0,a2_0x55d388)[_0x5c9c51(0x3b6)](_0x2edfb0[_0x5c9c51(0x39b)]))throw new Error(_0x5c9c51(0x38c));}const _0x7155f1=new URLSearchParams();let _0x4134e7;const _0xe62739={..._0x2edfb0};_0xe62739['exp']!==undefined&&(_0x4134e7=(0x0,a2_0x181d13)[_0x5c9c51(0x10c)](Buffer['from'](_0xe62739[_0x5c9c51(0x26c)]))[_0x5c9c51(0x3a0)](_0x5c9c51(0x38b)),delete _0xe62739['exp'],_0xe62739['expHash']=_0x4134e7);for(const [_0x2f3211,_0xbd39fc]of Object['entries'](_0xe62739))if(_0xbd39fc!==undefined&&_0xbd39fc!==null)_0x7155f1['append'](_0x2f3211,String(_0xbd39fc));await this['restClient'][_0x5c9c51(0x18c)](_0x7155f1);const _0x4ac896={};for(const [_0x2a0db2,_0x1c5536]of Object[_0x5c9c51(0x115)](_0xe62739))if(_0x1c5536!==undefined&&_0x1c5536!==null)_0x4ac896[_0x2a0db2]=typeof _0x1c5536===_0x5c9c51(0x1ae)?_0x1c5536['toString']():String(_0x1c5536);const _0x1e4f44=this[_0x5c9c51(0x33a)](_0x2edfb0);return this[_0x5c9c51(0x122)][_0x5c9c51(0x2d6)](_0x1e4f44,{'filter':_0x4ac896,'callback':_0x3e68e9}),this['streamOnErrors'][_0x5c9c51(0x2d6)](_0x1e4f44,_0x245184),await this[_0x5c9c51(0x23c)](),()=>{const _0x545993=_0x5c9c51;this[_0x545993(0x122)]['delete'](_0x1e4f44),this[_0x545993(0x309)][_0x545993(0x230)](_0x1e4f44),this[_0x545993(0x23c)]();};}async[a2_0x36b7bf(0x152)](_0x3a25df,_0x1ffef3){const _0x5e7f70=a2_0x36b7bf;return this[_0x5e7f70(0x24d)]=_0x3a25df,this[_0x5e7f70(0x11c)]=_0x1ffef3,await this[_0x5e7f70(0x23c)](),()=>{const _0x1ecc4f=_0x5e7f70;this[_0x1ecc4f(0x24d)]=null,this['mempoolOnError']=undefined,this['rebuildEventSource']();};}}const $5897c693dfcff079$var$EventSource=typeof window!==a2_0x36b7bf(0x358)&&window['EventSource']?window[a2_0x36b7bf(0x1fc)]:(0x0,a2_0x99a71b);class $5897c693dfcff079$export$2454fd0de010f4bb{constructor(_0x5416f5={}){const _0x1837e5=a2_0x36b7bf;this['db']=new(0x0,$5f4b05da045beabf$export$14be6456f8698719)(_0x5416f5),this[_0x1837e5(0x246)]=new(0x0,$0b7f72abf1819dc7$export$f55210826850c514)(this['db']['wallet'][_0x1837e5(0x18f)],this['db'][_0x1837e5(0x256)][_0x1837e5(0x196)],this['db'][_0x1837e5(0x256)][_0x1837e5(0x29b)],this['db'][_0x1837e5(0x256)][_0x1837e5(0x313)]);}[a2_0x36b7bf(0x2e6)](_0x3507fb){const _0x5f0999=a2_0x36b7bf;return['_id',_0x5f0999(0x362),'_root',_0x5f0999(0x346),'_owners',_0x5f0999(0x335),_0x5f0999(0x330)]['includes'](_0x3507fb);}['containsMetadata'](_0x1c521a,_0x45c8c9=new WeakSet()){const _0x40ab88=a2_0x36b7bf;if(_0x1c521a==null||typeof _0x1c521a!==_0x40ab88(0x2dc))return![];if(_0x45c8c9[_0x40ab88(0x1b7)](_0x1c521a))return![];_0x45c8c9[_0x40ab88(0x29e)](_0x1c521a);if(Array['isArray'](_0x1c521a))return _0x1c521a[_0x40ab88(0x1d3)](_0xff1665=>this[_0x40ab88(0x299)](_0xff1665,_0x45c8c9));for(const _0xf35a32 of Object[_0x40ab88(0x2d2)](_0x1c521a)){if(this['isMetadataKey'](_0xf35a32))return!![];if(this[_0x40ab88(0x299)](_0x1c521a[_0xf35a32],_0x45c8c9))return!![];}return![];}[a2_0x36b7bf(0x1ee)](_0x157c19,_0x13c4bd=new WeakMap()){const _0x4d003b=a2_0x36b7bf;if(_0x157c19==null||typeof _0x157c19!=='object')return _0x157c19;const _0x46d1b6=_0x157c19;if(_0x13c4bd[_0x4d003b(0x1b7)](_0x46d1b6))return _0x13c4bd['get'](_0x46d1b6);if(!this[_0x4d003b(0x299)](_0x157c19))return _0x13c4bd[_0x4d003b(0x2d6)](_0x46d1b6,_0x157c19),_0x157c19;if(Array[_0x4d003b(0x2bf)](_0x157c19)){const _0x18bc0f=_0x157c19[_0x4d003b(0x359)](_0x22a459=>this[_0x4d003b(0x1ee)](_0x22a459,_0x13c4bd));return _0x13c4bd[_0x4d003b(0x2d6)](_0x46d1b6,_0x18bc0f),_0x18bc0f;}return _0x13c4bd[_0x4d003b(0x2d6)](_0x46d1b6,_0x157c19),(0x0,$aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{const _0x27e9db=_0x4d003b;if(typeof _0x46d1b6[_0x27e9db(0x301)]===_0x27e9db(0x1bc))_0x46d1b6[_0x27e9db(0x301)]=(0x0,$d205febb791b53ee$export$84eca18e6d832dd1)(_0x46d1b6['_id']);if(typeof _0x46d1b6[_0x27e9db(0x362)]==='string')_0x46d1b6[_0x27e9db(0x362)]=(0x0,$d205febb791b53ee$export$f386daff7715d420)(_0x46d1b6[_0x27e9db(0x362)]);if(typeof _0x46d1b6['_root']===_0x27e9db(0x1bc))_0x46d1b6[_0x27e9db(0x1c5)]=(0x0,$d205febb791b53ee$export$accd2046ded63e63)(_0x46d1b6['_root']);if(typeof _0x46d1b6[_0x27e9db(0x346)]==='string')_0x46d1b6[_0x27e9db(0x346)]=(0x0,$d205febb791b53ee$export$91df428ae0f97b5c)(_0x46d1b6[_0x27e9db(0x346)]);const _0x97a13a=_0x46d1b6['_owners'];if(_0x97a13a!==undefined)_0x46d1b6['_owners']=Array[_0x27e9db(0x2bf)](_0x97a13a)?_0x97a13a[_0x27e9db(0x359)](_0x1ddaf8=>typeof _0x1ddaf8===_0x27e9db(0x1bc)?(0x0,$d205febb791b53ee$export$171aa6226884e6dd)(_0x1ddaf8):_0x1ddaf8):typeof _0x97a13a===_0x27e9db(0x1bc)?(0x0,$d205febb791b53ee$export$171aa6226884e6dd)(_0x97a13a):_0x97a13a;const _0x1ceeb6=_0x46d1b6[_0x27e9db(0x335)];if(_0x1ceeb6!==undefined)_0x46d1b6[_0x27e9db(0x335)]=Array[_0x27e9db(0x2bf)](_0x1ceeb6)?_0x1ceeb6['map'](_0x11d58e=>typeof _0x11d58e==='string'?(0x0,$d205febb791b53ee$export$171aa6226884e6dd)(_0x11d58e):_0x11d58e):typeof _0x1ceeb6===_0x27e9db(0x1bc)?(0x0,$d205febb791b53ee$export$171aa6226884e6dd)(_0x1ceeb6):_0x1ceeb6;for(const _0x3ee59a of Object['keys'](_0x46d1b6))if(!this[_0x27e9db(0x2e6)](_0x3ee59a))_0x46d1b6[_0x3ee59a]=this[_0x27e9db(0x1ee)](_0x46d1b6[_0x3ee59a],_0x13c4bd);}),_0x157c19;}async[a2_0x36b7bf(0x345)](_0x2d5f7a,_0x52cf05=[],_0x2a8b85){const _0x4a2cb6=a2_0x36b7bf,_0xdd5e1b=_0x2a8b85?(0x0,$d205febb791b53ee$export$1c4cfbb3206db243)(_0x2a8b85):undefined,{tx:_0x389286,effect:_0x10ac46}=await this['encodeNew']({'constructor':_0x2d5f7a,'args':_0x52cf05,'mod':_0xdd5e1b});if(_0x389286)await this[_0x4a2cb6(0x2eb)](_0x389286);const {res:_0x4acf5b,env:_0x4cab53}=_0x10ac46;(0x0,$74a26ef6d53e712a$export$48b95d5fd8dc5d0b)((0x0,$74a26ef6d53e712a$export$c4d407c2cae5b6c0)(_0x4cab53))([])(_0x52cf05);const _0x2b9b05=this[_0x4a2cb6(0x1ee)](_0x4acf5b);return(0x0,$382856abc4b520b8$export$29c19449f1fdb873)(_0x2b9b05,this);}async[a2_0x36b7bf(0x268)](_0x1d59dd){const _0x19095f=a2_0x36b7bf;return this['db'][_0x19095f(0x256)][_0x19095f(0x313)]['getTXOs'](_0x1d59dd);}async[a2_0x36b7bf(0x19f)](_0x126699){const _0x51bec3=a2_0x36b7bf;return this[_0x51bec3(0x268)](_0x126699);}async['getUTXOs'](_0x40f53a){const _0x4bbb4b=a2_0x36b7bf;return this[_0x4bbb4b(0x268)]({..._0x40f53a,'isSpent':![]});}async[a2_0x36b7bf(0x2a0)](_0x5845cc){const _0x190140=a2_0x36b7bf;return this[_0x190140(0x268)]({..._0x5845cc,'isObject':!![]});}async[a2_0x36b7bf(0x3bb)](_0x4966e6){return this['_getTXOsFamily']({..._0x4966e6,'isObject':!![],'isSpent':![]});}async['sync'](_0x3adc1d){const _0x105476=a2_0x36b7bf,_0x2f11da=(0x0,$303220cf0debbf6c$export$d146d9996ff2e97)(_0x3adc1d),_0x25665=_0x2f11da?(0x0,$382856abc4b520b8$export$29c19449f1fdb873)(await this['db']['get']((0x0,$d205febb791b53ee$export$f386daff7715d420)(_0x3adc1d)),this):await this['db'][_0x105476(0x20f)]((0x0,$d205febb791b53ee$export$55d63915149d1a5a)(_0x3adc1d));if(_0x2f11da)return this[_0x105476(0x1ee)](_0x25665);return _0x25665;}async[a2_0x36b7bf(0x2fb)](_0x55b868,_0x3d6f08){const _0x1fdca9=a2_0x36b7bf,{wallet:_0x3823b1}=this['db'],{restClient:_0x2a4239}=_0x3823b1,_0x4c65d9=(0x0,$d205febb791b53ee$export$6d0757a710f60a30)(_0x55b868)?(0x0,$d205febb791b53ee$export$55d63915149d1a5a)(_0x55b868):(0x0,$303220cf0debbf6c$export$caebc656d3686561)(_0x55b868)[_0x1fdca9(0x37a)],_0x222890=await _0x2a4239['getAncestors'](_0x4c65d9);if(_0x3d6f08===0x1){const _0x66bd9f=_0x222890['length']?await _0x2a4239[_0x1fdca9(0x17c)](_0x222890):[];return new Map(_0x222890['map']((_0x43a4dc,_0x147129)=>[_0x43a4dc,_0x66bd9f[_0x147129]]));}return _0x222890;}async[a2_0x36b7bf(0x3a7)](_0xba2476,_0x4130de={}){const _0x5d5562=a2_0x36b7bf,{db:_0x42f34f}=this,{effect:_0x5db0c1,tx:_0x2d6005}=await _0x42f34f[_0x5d5562(0x1e2)](_0xba2476,_0x4130de),_0x35f024=(0x0,$382856abc4b520b8$export$29c19449f1fdb873)(_0x5db0c1[_0x5d5562(0x34d)],this),_0x5c402d=(0x0,$74a26ef6d53e712a$export$72de43103e456aaf)(_0x4d60b1=>(0x0,$382856abc4b520b8$export$29c19449f1fdb873)(_0x4d60b1,this))(_0x5db0c1[_0x5d5562(0x25f)]);return{'tx':_0x2d6005,'effect':{'res':_0x35f024,'env':_0x5c402d},'db':_0x42f34f};}async['encode'](_0x3eab06){const _0x2ad743=a2_0x36b7bf,_0x2554cb=new(0x0,$9ca517853ec47831$export$be58926105124dd4)({'exp':(0x0,$d205febb791b53ee$export$e921403d8a9d6e3a)(_0x3eab06['exp']||''),'env':Object[_0x2ad743(0x20c)](Object[_0x2ad743(0x115)](_0x3eab06[_0x2ad743(0x25f)]||{})[_0x2ad743(0x359)](([_0x2e2ec7,_0x29d9b0])=>[_0x2e2ec7,(0x0,$d205febb791b53ee$export$f386daff7715d420)(_0x29d9b0)])),'mod':_0x3eab06[_0x2ad743(0x134)]?(0x0,$d205febb791b53ee$export$1c4cfbb3206db243)(_0x3eab06['mod']):undefined}),{tx:_0xb9a830,effect:_0x5f58f5}=await this[_0x2ad743(0x3a7)](_0x2554cb,_0x3eab06);return{'tx':_0xb9a830,'effect':this[_0x2ad743(0x1ee)](_0x5f58f5)};}async[a2_0x36b7bf(0x1c3)]({constructor:_0x4b8600,args:_0x200928,mod:_0x471407}){const _0x23a208=(0x0,$9ca517853ec47831$export$be58926105124dd4)['fromConstructorCall'](_0x4b8600,_0x200928,_0x471407?(0x0,$d205febb791b53ee$export$1c4cfbb3206db243)(_0x471407):undefined);return this['wrappedEncode'](_0x23a208);}async[a2_0x36b7bf(0x159)]({target:_0xa2c6ef,property:_0x30befa,args:_0x116ca6,mod:_0x39ca32}){const _0x52418e=a2_0x36b7bf,_0x2f9289=(0x0,$9ca517853ec47831$export$be58926105124dd4)[_0x52418e(0x393)](_0xa2c6ef,_0x30befa,_0x116ca6,_0x39ca32?(0x0,$d205febb791b53ee$export$1c4cfbb3206db243)(_0x39ca32):undefined);return this[_0x52418e(0x3a7)](_0x2f9289);}async['decode'](_0x24801b){const _0x1c1b28=a2_0x36b7bf;let _0x216ba6;if(typeof _0x24801b===_0x1c1b28(0x1bc)){if(!(0x0,$d205febb791b53ee$export$6d0757a710f60a30)(_0x24801b))throw new Error(_0x1c1b28(0x10e));_0x216ba6=await(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)[_0x1c1b28(0x266)]({'txId':(0x0,$d205febb791b53ee$export$55d63915149d1a5a)(_0x24801b),'restClient':this['db']['wallet'][_0x1c1b28(0x313)]});}else _0x216ba6=_0x24801b;const _0x1bbf3b=(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)['fromTransaction'](_0x216ba6),_0x3435f7=await(0x0,$9723fb8a051ef3ce$export$489a84f048b0ef8)[_0x1c1b28(0x37b)](_0x1bbf3b,this['db'][_0x1c1b28(0x256)][_0x1c1b28(0x313)]),_0xf54165=(0x0,$9ca517853ec47831$export$be58926105124dd4)[_0x1c1b28(0x2e3)](_0x3435f7);return _0xf54165[_0x1c1b28(0x354)]();}async[a2_0x36b7bf(0x1be)](_0x28e232,_0xe872eb){const _0x4bbe3c=a2_0x36b7bf;return(0x0,$bfd727fd88a0b35a$export$6d8228690abc2da8)[_0x4bbe3c(0x1be)](_0x28e232,this['db']['wallet'],_0xe872eb);}async[a2_0x36b7bf(0x297)](_0x3c2ea5){const _0xce5aff=a2_0x36b7bf;return(0x0,$bfd727fd88a0b35a$export$6d8228690abc2da8)[_0xce5aff(0x297)]((0x0,$d205febb791b53ee$export$1c4cfbb3206db243)(_0x3c2ea5),this['db'][_0xce5aff(0x256)]);}async[a2_0x36b7bf(0x363)](_0x557132=this[a2_0x36b7bf(0x397)]()){const _0x3ee970=a2_0x36b7bf;return this['db'][_0x3ee970(0x256)]['restClient'][_0x3ee970(0x363)](_0x557132);}async[a2_0x36b7bf(0x1d8)](_0x3e3259){const _0x5750f1=a2_0x36b7bf,_0x25d7cd=_0x3e3259?typeof _0x3e3259==='string'?(0x0,$d205febb791b53ee$export$b46cd0ecde2b93f9)(_0x3e3259):_0x3e3259:undefined;return this['db'][_0x5750f1(0x256)]['getBalance'](_0x25d7cd);}async[a2_0x36b7bf(0x240)](_0x5a7bdc,_0x27f108={}){return this['db']['wallet']['sign'](_0x5a7bdc,_0x27f108);}async[a2_0x36b7bf(0x208)](_0xf71dc2,_0x58c1ac){const _0x31dedd=a2_0x36b7bf,{include:_0x4746e3,exclude:_0x46fa44}=_0x58c1ac||{};return this['db']['wallet'][_0x31dedd(0x208)](_0xf71dc2,{'include':_0x4746e3,'exclude':_0x46fa44});}async[a2_0x36b7bf(0x325)](_0x5c6f50,_0x5db4a4){const _0x3f9003=a2_0x36b7bf,_0x458364=typeof _0x5db4a4==='string'?(0x0,$d205febb791b53ee$export$b46cd0ecde2b93f9)(_0x5db4a4):_0x5db4a4;return this['db'][_0x3f9003(0x256)][_0x3f9003(0x325)](_0x5c6f50,_0x458364);}async['broadcast'](_0x5435c8){const _0xb3d8a9=a2_0x36b7bf;if(this['db']['wallet'][_0xb3d8a9(0x313)][_0xb3d8a9(0x20e)]==='debug'){const {exp:_0x1a9154,env:_0x4a29c1,mod:_0x58ee0e}=await this['decode'](_0x5435c8);console[_0xb3d8a9(0x317)](_0xb3d8a9(0x15b),{'exp':_0x1a9154,'env':_0x4a29c1,'mod':_0x58ee0e});}return this['db'][_0xb3d8a9(0x256)][_0xb3d8a9(0x2eb)](_0x5435c8);}async[a2_0x36b7bf(0x132)](_0x3e2233,_0x209f83){const _0x4ce2ba=a2_0x36b7bf,_0x244360=await this['db'][_0x4ce2ba(0x256)][_0x4ce2ba(0x313)][_0x4ce2ba(0x132)](_0x3e2233,_0x209f83);return _0x244360[_0x4ce2ba(0x224)]?_0x244360['result']:{};}['getChain'](){const _0x669b95=a2_0x36b7bf;return this['db'][_0x669b95(0x256)]['restClient'][_0x669b95(0x196)];}[a2_0x36b7bf(0x396)](){const _0x4a8f68=a2_0x36b7bf;return this['db']['wallet'][_0x4a8f68(0x313)]['network'];}[a2_0x36b7bf(0x1f5)](){const _0x59764c=a2_0x36b7bf;return this['db'][_0x59764c(0x256)][_0x59764c(0x313)][_0x59764c(0x252)]['toString']();}[a2_0x36b7bf(0x110)](){const _0x51cbc0=a2_0x36b7bf;return this['db'][_0x51cbc0(0x256)]['privateKey']['toString']();}['getPassphrase'](){const _0xd487ab=a2_0x36b7bf;return this['db'][_0xd487ab(0x256)]['restClient'][_0xd487ab(0x3a6)];}[a2_0x36b7bf(0x3bf)](){const _0x37de6c=a2_0x36b7bf;return this['db'][_0x37de6c(0x256)]['restClient'][_0x37de6c(0x29f)];}[a2_0x36b7bf(0x218)](){const _0x573d17=a2_0x36b7bf;return this['db'][_0x573d17(0x256)]['restClient'][_0x573d17(0x2ec)]['url'];}[a2_0x36b7bf(0x13c)](){const _0x5eb7d0=a2_0x36b7bf;return this['db'][_0x5eb7d0(0x256)]['publicKey'][_0x5eb7d0(0x3a0)]('hex');}[a2_0x36b7bf(0x397)](){const _0xc06f23=a2_0x36b7bf;return this['db'][_0xc06f23(0x256)][_0xc06f23(0x239)];}['getFee'](){const _0x55c805=a2_0x36b7bf;return this['db'][_0x55c805(0x256)][_0x55c805(0x313)][_0x55c805(0x1e6)];}['setFee'](_0x155cca){const _0x5827cf=a2_0x36b7bf;this['db']['wallet'][_0x5827cf(0x313)][_0x5827cf(0x1e6)]=_0x155cca;}[a2_0x36b7bf(0x298)](_0x548785,_0x117e60=this[a2_0x36b7bf(0x397)]()){const _0x511f8c=a2_0x36b7bf;return this['db'][_0x511f8c(0x256)][_0x511f8c(0x298)](_0x548785,_0x117e60);}static[a2_0x36b7bf(0x360)](){return 0x0,$deb927b75e1890ae$export$a4ad2735b021c132;}async['delete'](_0x2bb493){const _0x5402e8=a2_0x36b7bf,_0x176e4b=new(0x0,$9723fb8a051ef3ce$export$489a84f048b0ef8)({'inRevs':_0x2bb493[_0x5402e8(0x359)]((0x0,$d205febb791b53ee$export$f386daff7715d420))}),_0x9764a3=await _0x176e4b[_0x5402e8(0x383)](this['db'][_0x5402e8(0x256)]);return await this[_0x5402e8(0x208)](_0x9764a3),await this['db'][_0x5402e8(0x256)]['sign'](_0x9764a3),this[_0x5402e8(0x2eb)](_0x9764a3);}async[a2_0x36b7bf(0x1d5)](_0x5638f9){const _0x3e9932=a2_0x36b7bf;return this['db'][_0x3e9932(0x256)][_0x3e9932(0x313)][_0x3e9932(0x1d5)]((0x0,$d205febb791b53ee$export$f386daff7715d420)(_0x5638f9));}async[a2_0x36b7bf(0x11b)](_0x318082){const _0x19a2eb=a2_0x36b7bf;return this['db'][_0x19a2eb(0x256)][_0x19a2eb(0x313)][_0x19a2eb(0x11b)]((0x0,$d205febb791b53ee$export$f386daff7715d420)(_0x318082));}async[a2_0x36b7bf(0x180)](_0x277bad){const _0x4b53eb=a2_0x36b7bf;return this['db'][_0x4b53eb(0x256)][_0x4b53eb(0x313)]['next']((0x0,$d205febb791b53ee$export$f386daff7715d420)(_0x277bad));}async[a2_0x36b7bf(0x275)](_0x20806e){const _0x31bc3e=a2_0x36b7bf;return this['db'][_0x31bc3e(0x256)]['restClient'][_0x31bc3e(0x275)]((0x0,$d205febb791b53ee$export$f386daff7715d420)(_0x20806e));}async['subscribe'](_0x111bdc,_0x5ae730,_0x18c03d){const _0x4119a5=a2_0x36b7bf;return this['subscription'][_0x4119a5(0x395)](_0x111bdc,_0x5ae730,_0x18c03d);}async[a2_0x36b7bf(0x3b4)](_0x3054c0,_0x10ea5b,_0x22ed9b){return this['subscription']['addStreamSubscription'](_0x3054c0,_0x10ea5b,_0x22ed9b);}async[a2_0x36b7bf(0x36d)](_0x22ba7a,_0x580085){return this['subscription']['addMempoolSubscription'](_0x22ba7a,_0x580085);}async[a2_0x36b7bf(0x31b)](_0x15a038){const _0x17b798=a2_0x36b7bf;return console[_0x17b798(0x317)]('\x22query\x22\x20is\x20deprecated,\x20use\x20\x22getOUTXOs\x22\x20instead'),this[_0x17b798(0x3bb)](_0x15a038);}static['txFromHex']({hex:_0x4f27c4}){const _0xc67ce=a2_0x36b7bf;return console[_0xc67ce(0x317)](_0xc67ce(0x2a4)),(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)[_0xc67ce(0x286)](_0x4f27c4);}[a2_0x36b7bf(0x235)](){const _0x1174fb=a2_0x36b7bf;return console[_0x1174fb(0x317)](_0x1174fb(0x364)),this['db'][_0x1174fb(0x256)][_0x1174fb(0x313)]['addressType'];}static[a2_0x36b7bf(0x2d5)](_0x572065){const _0x22f517=a2_0x36b7bf;console[_0x22f517(0x317)](_0x22f517(0x190));}async[a2_0x36b7bf(0x25d)](_0x527f93,_0x1dade1){const _0x1e6388=a2_0x36b7bf;return console[_0x1e6388(0x317)](_0x1e6388(0x1e7)),this[_0x1e6388(0x1be)](_0x527f93,_0x1dade1);}async['import'](_0x21ae37){const _0x508d32=a2_0x36b7bf;return console[_0x508d32(0x317)](_0x508d32(0x2c8)),this['load'](_0x21ae37);}async[a2_0x36b7bf(0x23d)](_0x2d11c8){const _0x5aaa46=a2_0x36b7bf;return console['log'](_0x5aaa46(0x1bf)),this[_0x5aaa46(0x3bb)](_0x2d11c8);}async[a2_0x36b7bf(0x27a)](_0x467c35=this['db'][a2_0x36b7bf(0x256)]['publicKey']){const _0x14e82d=a2_0x36b7bf;return console[_0x14e82d(0x317)](_0x14e82d(0x314)),this[_0x14e82d(0x3bb)]({'publicKey':_0x467c35[_0x14e82d(0x3a0)](_0x14e82d(0x38b))});}async['getRevs'](_0x5c778e=this['db'][a2_0x36b7bf(0x256)][a2_0x36b7bf(0x160)]){const _0x4f4c3a=a2_0x36b7bf;return console[_0x4f4c3a(0x317)](_0x4f4c3a(0x2c5)),this['getOUTXOs']({'publicKey':_0x5c778e[_0x4f4c3a(0x3a0)]('hex')});}async[a2_0x36b7bf(0x3ba)](_0x1173dd){const _0x382902=a2_0x36b7bf;return console[_0x382902(0x317)](_0x382902(0x117)),Promise[_0x382902(0x215)](_0x1173dd[_0x382902(0x359)](_0x37e807=>this['latest'](_0x37e807)));}async['getLatestRev'](_0x5e0b9b){const _0x104c4d=a2_0x36b7bf;return console[_0x104c4d(0x317)](_0x104c4d(0x2e2)),this[_0x104c4d(0x275)](_0x5e0b9b);}async[a2_0x36b7bf(0x28b)](_0xf54365){const _0x2a375f=a2_0x36b7bf;return console[_0x2a375f(0x317)](_0x2a375f(0x17d)),Promise[_0x2a375f(0x215)](_0xf54365[_0x2a375f(0x359)](_0x5e32f0=>this['latest'](_0x5e32f0)));}[a2_0x36b7bf(0x16d)](){const _0x4a1e9f=a2_0x36b7bf;return console[_0x4a1e9f(0x317)](_0x4a1e9f(0x168)),this['db'][_0x4a1e9f(0x256)][_0x4a1e9f(0x2c2)](![]);}static[a2_0x36b7bf(0x329)](_0x107ce1,_0x1d0ab0){const _0x5531dc=a2_0x36b7bf,_0x87faa4=(0x0,$4b62a469f572a3c6$export$febc5573c75cefb0)['fromHex'](_0x107ce1);if(_0x87faa4['ins'][_0x1d0ab0][_0x5531dc(0x279)][_0x5531dc(0x2be)]>0x0)return(0x0,$f94e2696d4b62340$export$a0291b2a7af96f4c)(_0x87faa4['ins'][_0x1d0ab0][_0x5531dc(0x279)]);return{'contentType':'','body':''};}[a2_0x36b7bf(0x302)](_0x740e38=[this[a2_0x36b7bf(0x13c)]()]){const _0x44b8e0=a2_0x36b7bf,_0x50fcb0=(0x0,$8636fd77165bd4bc$export$a5c5ced73e99851c)(_0x740e38[_0x44b8e0(0x359)](_0x5b9cfa=>(0x0,a2_0x21cdf5)['from'](_0x5b9cfa,'hex'))),_0x105ebb=this['db'][_0x44b8e0(0x256)]['restClient']['networkObj'];return(0x0,a2_0x154e74)[_0x44b8e0(0x1c1)]({'output':_0x50fcb0,'network':_0x105ebb})['output'];}async['isUnspent'](_0x3f4acb){const _0x1269c8=a2_0x36b7bf,[_0x2ba05d,_0x194017]=_0x3f4acb[_0x1269c8(0x12e)](':'),{result:_0x16084c}=await this['rpc'](_0x1269c8(0x296),_0x2ba05d+'\x20'+_0x194017+_0x1269c8(0x1c0));return!!_0x16084c;}}globalThis['Contract']=(0x0,$ed98b948820df6a2$export$8517d80acf00e19a);const $e1e9e2b9d71bc2d8$var$moduleExports={'Computer':$5897c693dfcff079$export$2454fd0de010f4bb,'Mock':$70710ac8a001306b$export$2a766bd177c54dd,'Transaction':$4b62a469f572a3c6$export$febc5573c75cefb0};if(typeof $e1e9e2b9d71bc2d8$exports!=='undefined')$e1e9e2b9d71bc2d8$exports=$e1e9e2b9d71bc2d8$var$moduleExports;export{$e1e9e2b9d71bc2d8$exports as default,$5897c693dfcff079$export$2454fd0de010f4bb as Computer,$70710ac8a001306b$export$2a766bd177c54dd as Mock,$4b62a469f572a3c6$export$febc5573c75cefb0 as Transaction,$d205febb791b53ee$export$bbf2ffbffa00b288 as precise,$d205febb791b53ee$export$57b7f3bf07321492 as lifted};
+import {bufferUtils as $9PVwI$bufferUtils, Transaction as $9PVwI$Transaction, opcodes as $9PVwI$opcodes, script as $9PVwI$script, payments as $9PVwI$payments, networks as $9PVwI$networks, crypto as $9PVwI$crypto, address as $9PVwI$address, Psbt as $9PVwI$Psbt, initEccLib as $9PVwI$initEccLib, bip371 as $9PVwI$bip371} from "@bitcoin-computer/nakamotojs";
+import {Buffer as $9PVwI$Buffer} from "buffer";
+import {generateMnemonic as $9PVwI$generateMnemonic, mnemonicToSeedSync as $9PVwI$mnemonicToSeedSync, validateMnemonic as $9PVwI$validateMnemonic} from "bip39";
+import * as $9PVwI$bitcoincomputersecp256k1 from "@bitcoin-computer/secp256k1";
+import {BIP32Factory as $9PVwI$BIP32Factory} from "bip32";
+import $9PVwI$elliptic from "elliptic";
+import $9PVwI$process from "process";
+import {EventSource as $9PVwI$EventSource} from "eventsource";
+import $9PVwI$largeset from "large-set";
+import {parse as $9PVwI$parse} from "@babel/parser";
+import {ECPairFactory as $9PVwI$ECPairFactory} from "ecpair";
+import $9PVwI$axios from "axios";
+import "ses";
+import {backOff as $9PVwI$backOff} from "exponential-backoff";
+import {ECIES_CONFIG as $9PVwI$ECIES_CONFIG, encrypt as $9PVwI$encrypt, decrypt as $9PVwI$decrypt} from "eciesjs";
+import {webcrypto as $9PVwI$webcrypto} from "crypto";
+import {StaticModuleRecord as $9PVwI$StaticModuleRecord} from "@endo/static-module-record";
+
+
+function $parcel$export(e, n, v, s) {
+  Object.defineProperty(e, n, {get: v, set: s, enumerable: true, configurable: true});
+}
+var $e1e9e2b9d71bc2d8$exports = {};
+
+$parcel$export($e1e9e2b9d71bc2d8$exports, "Computer", () => $5897c693dfcff079$export$2454fd0de010f4bb, (v) => $5897c693dfcff079$export$2454fd0de010f4bb = v);
+$parcel$export($e1e9e2b9d71bc2d8$exports, "Mock", () => $70710ac8a001306b$export$2a766bd177c54dd, (v) => $70710ac8a001306b$export$2a766bd177c54dd = v);
+$parcel$export($e1e9e2b9d71bc2d8$exports, "Transaction", () => $4b62a469f572a3c6$export$febc5573c75cefb0, (v) => $4b62a469f572a3c6$export$febc5573c75cefb0 = v);
+$parcel$export($e1e9e2b9d71bc2d8$exports, "precise", () => $d205febb791b53ee$export$bbf2ffbffa00b288, (v) => $d205febb791b53ee$export$bbf2ffbffa00b288 = v);
+$parcel$export($e1e9e2b9d71bc2d8$exports, "lifted", () => $d205febb791b53ee$export$57b7f3bf07321492, (v) => $d205febb791b53ee$export$57b7f3bf07321492 = v);
+
+
+
+
+
+
+
+
+
+const $bd5ff9060a235dd4$export$6b7d953c9668b0b6 = parseInt(process.env.BC_SCRIPT_CHUNK_SIZE || '', 10) || 479;
+const $bd5ff9060a235dd4$export$965ba7d812c66aa4 = 475 // in bytes
+;
+const $bd5ff9060a235dd4$export$1035b0570451c823 = '';
+const $bd5ff9060a235dd4$export$9c80b82d32647b78 = 'p2pkh';
+const $bd5ff9060a235dd4$export$14096f3be8a46637 = 30000 // in Kb, 30 satoshis per byte
+;
+const $bd5ff9060a235dd4$export$1e7ef728e2683d27 = 3000 // in Kb, 3 satoshis per byte
+;
+const $bd5ff9060a235dd4$export$e7e3d18e730436b6 = 10000000 // in Kb, 1000 satoshis per byte
+;
+const $bd5ff9060a235dd4$export$c32d443dbb2eda37 = 10000000 // in Kb, 1000 satoshis per byte
+;
+const $bd5ff9060a235dd4$export$925a05c4b96b2744 = 3;
+const $bd5ff9060a235dd4$export$4266a5deb789e6a0 = 20;
+const $bd5ff9060a235dd4$export$b00b425fffc1d558 = 3;
+const $bd5ff9060a235dd4$export$bb38fdd194d4373f = 2;
+const $bd5ff9060a235dd4$export$13e1a04b9affc983 = 2;
+const $bd5ff9060a235dd4$export$e1763572af4d7bad = 3000;
+const $bd5ff9060a235dd4$export$50e187a9fd923b2a = 3000;
+const $bd5ff9060a235dd4$export$4bc394cb084a3624 = 4;
+const $bd5ff9060a235dd4$export$7dc90d32bceb5ea5 = '0x50';
+const $bd5ff9060a235dd4$export$43182d2709f4c8de = 'ord';
+const $bd5ff9060a235dd4$export$280d845b0ed37876 = 520;
+const $bd5ff9060a235dd4$export$a1be5b5a5ff3a4a1 = 1 // 1% of allowed error
+;
+const $bd5ff9060a235dd4$export$986c012ad4b59cfe = 71 // 37 bytes for the script and 34 bytes for the spendable public key
+;
+const $bd5ff9060a235dd4$export$b3bf7f8ed07f5d46 = 20;
+const $bd5ff9060a235dd4$export$30dc5b6bafe2f74 = [
+    'satoshis',
+    'asm',
+    'exp',
+    'mod',
+    'publicKey'
+];
+
+
+const $70710ac8a001306b$export$e89b5b69fd27457c = '0'.repeat(64);
+const $70710ac8a001306b$export$ecc1d4b757948754 = ()=>`${$70710ac8a001306b$export$e89b5b69fd27457c}:0`;
+class $70710ac8a001306b$export$2a766bd177c54dd {
+    constructor(opts = {}){
+        const rev = $70710ac8a001306b$export$ecc1d4b757948754();
+        Object.entries(opts).forEach(([key, value])=>{
+            if (![
+                '_id',
+                '_rev',
+                '_root'
+            ].includes(key)) this[key] = value;
+        });
+    }
+}
+
+
+// @ts-ignore (elliptic has no types; runtime behavior unchanged)
+const $303220cf0debbf6c$var$ec = $9PVwI$elliptic.ec('secp256k1');
+const $303220cf0debbf6c$var$bip32 = (0, $9PVwI$BIP32Factory)($9PVwI$bitcoincomputersecp256k1);
+function $303220cf0debbf6c$export$c194c5a73880e96f(obj) {
+    return JSON.stringify(obj, (_key, value)=>typeof value === 'bigint' ? value.toString() + 'n' : value);
+}
+function $303220cf0debbf6c$export$ea99c62adecc85ae(str) {
+    return JSON.parse(str, (_key, value)=>{
+        if (typeof value === 'string' && /^\d+n$/.test(value)) return BigInt(value.slice(0, -1));
+        return value;
+    });
+}
+function $303220cf0debbf6c$export$f08f4d51349c691f(string) {
+    return Buffer.from(string).toString('hex');
+}
+function $303220cf0debbf6c$export$52324db6daaca2e1(hex) {
+    return Buffer.from(hex, 'hex').toString().replace(/\0/g, '');
+}
+function $303220cf0debbf6c$export$522325fb116d804e(s, fromBase, toBase) {
+    if (s.length * Math.log2(fromBase) > 53) throw new Error(`Input too large ${s.length} ${Math.log2(fromBase)}`);
+    if (![
+        2,
+        10,
+        16
+    ].includes(fromBase) || ![
+        2,
+        10,
+        16
+    ].includes(toBase)) throw new Error('ToBase or FromBase invalid in covertNumber.');
+    if (fromBase === 2 && s.length % 8 !== 0) throw new Error('Binary strings must be byte aligned.');
+    if (fromBase === 16 && s.length % 2 !== 0) throw new Error('Hex strings must be of even length.');
+    const unPaddedRes = parseInt(s, fromBase).toString(toBase);
+    if (toBase === 2) return unPaddedRes.padStart(8 * Math.ceil(unPaddedRes.length / 8), '0');
+    if (toBase === 16) return unPaddedRes.padStart(2 * Math.ceil(unPaddedRes.length / 2), '0');
+    return unPaddedRes;
+}
+function $303220cf0debbf6c$export$416b7890be9acca6(s, n) {
+    const regExp = new RegExp(`.{1,${n}}`, 'g');
+    return s.match(regExp) || [];
+}
+function $303220cf0debbf6c$export$f922ebe57f2c36e8(array, n) {
+    const res = [];
+    for(let i = 0; i < array.length; i += n)res.push(array.slice(i, i + n));
+    return res;
+}
+function $303220cf0debbf6c$export$b3ab84721822b8ab(str, size) {
+    const chunks = [];
+    let index = 0;
+    while(index < str.length){
+        chunks.push(str.slice(index, index + size));
+        index += size;
+    }
+    return chunks;
+}
+function $303220cf0debbf6c$export$8d4c4429581146c2(s) {
+    return $303220cf0debbf6c$export$416b7890be9acca6(s, 2).map((n)=>$303220cf0debbf6c$export$522325fb116d804e(n, 16, 2)).join('');
+}
+function $303220cf0debbf6c$export$48bc0de5bc199606(s) {
+    return $303220cf0debbf6c$export$416b7890be9acca6(s, 8).map((n)=>$303220cf0debbf6c$export$522325fb116d804e(n, 2, 16)).join('');
+}
+function $303220cf0debbf6c$export$c5ff7c6cb12f5f46(bin, n) {
+    return bin.slice(n) + bin.slice(0, n);
+}
+function $303220cf0debbf6c$export$b8ff662d454dbe46(bin, n) {
+    return bin.slice(-n) + bin.slice(0, -n);
+}
+function $303220cf0debbf6c$export$68538d2c6856b285(hex) {
+    if (hex.length !== 62) throw new Error('Input to hexToPublicKey must be of length 62');
+    let success = false;
+    let rotations = 0;
+    let point;
+    while(!success){
+        if (rotations >= 256) throw new Error('Something went wrong storing data');
+        const counterHex = rotations.toString(16).padStart(2, '0');
+        const bin = $303220cf0debbf6c$export$8d4c4429581146c2(hex);
+        const padded = bin.padStart(64, '0');
+        const rotated = $303220cf0debbf6c$export$c5ff7c6cb12f5f46(padded, rotations);
+        const rotatedHex = $303220cf0debbf6c$export$48bc0de5bc199606(rotated);
+        const xHex = counterHex + rotatedHex;
+        try {
+            point = $303220cf0debbf6c$var$ec.curve.pointFromX(xHex, false);
+            success = true;
+        } catch (err) {
+            rotations += 1;
+        }
+    }
+    if (!point) throw new Error('Something went wrong storing data');
+    return Buffer.from(point.encodeCompressed());
+}
+function $303220cf0debbf6c$export$cfd9a51138473022(buff) {
+    const point = $303220cf0debbf6c$var$ec.curve.decodePoint(buff);
+    const x = point.getX();
+    const xHex = x.toString('hex').padStart(64, '0');
+    const counterHex = xHex.slice(0, 2);
+    const counter = $303220cf0debbf6c$export$522325fb116d804e(counterHex, 16, 10);
+    const rotations = parseInt(counter, 10);
+    const rotatedData = xHex.slice(2);
+    return $303220cf0debbf6c$export$48bc0de5bc199606($303220cf0debbf6c$export$b8ff662d454dbe46($303220cf0debbf6c$export$8d4c4429581146c2(rotatedData), rotations));
+}
+function $303220cf0debbf6c$export$de754bb4cdcc210c(chain, network) {
+    switch(chain){
+        case 'BTC':
+            switch(network){
+                case 'mainnet':
+                    return (0, $9PVwI$networks).bitcoin;
+                case 'testnet':
+                    return (0, $9PVwI$networks).testnet;
+                case 'regtest':
+                    return (0, $9PVwI$networks).regtest;
+                default:
+                    throw new Error(`Invalid network ${network}`);
+            }
+        case 'LTC':
+            switch(network){
+                case 'mainnet':
+                    return (0, $9PVwI$networks).litecoin;
+                case 'testnet':
+                    return (0, $9PVwI$networks).litecointestnet;
+                case 'regtest':
+                    return (0, $9PVwI$networks).litecoinregtest;
+                default:
+                    throw new Error(`Invalid network ${network}`);
+            }
+        case 'PEPE':
+            switch(network){
+                case 'mainnet':
+                    return (0, $9PVwI$networks).pepecoin;
+                case 'testnet':
+                    return (0, $9PVwI$networks).pepecointestnet;
+                case 'regtest':
+                    return (0, $9PVwI$networks).pepecoinregtest;
+                default:
+                    throw new Error(`Invalid network ${network}`);
+            }
+        case 'DOGE':
+            switch(network){
+                case 'mainnet':
+                    return (0, $9PVwI$networks).dogecoin;
+                case 'testnet':
+                    return (0, $9PVwI$networks).dogecointestnet;
+                case 'regtest':
+                    return (0, $9PVwI$networks).dogecoinregtest;
+                default:
+                    throw new Error(`Invalid network ${network}`);
+            }
+        default:
+            throw new Error(`Invalid chain ${network}`);
+    }
+}
+function $303220cf0debbf6c$export$23109f16a8a07245(chain, network) {
+    const n = $303220cf0debbf6c$export$de754bb4cdcc210c(chain, network);
+    if (n.bech32 === 'bc') return 0;
+    if (n.bech32 === 'bcrt') return 1;
+    if (n.bech32 === 'tb') return 1;
+    if (n.bech32 === 'ltc') return 2;
+    if (n.bech32 === 'rltc') return 1;
+    if (n.bech32 === 'tltc') return 1;
+    if (n.bech32 === 'doge') return 3;
+    if (n.bech32 === 'rdoge') return 1;
+    if (n.bech32 === 'tdoge') return 1;
+    if (n.bech32 === 'bch') return 145;
+    if (n.bech32 === 'tbch') return 1;
+    if (n.bech32 === 'bsv') return 236;
+    if (n.bech32 === 'tbsv') return 1;
+    if (n.bech32 === 'pepe') return 3434;
+    if (n.bech32 === 'rpepe') return 1;
+    if (n.bech32 === 'tpepe') return 1;
+    throw new Error(`Unsupported chain ${chain} or network ${network}`);
+}
+function $303220cf0debbf6c$export$e59691a2f8406773({ purpose: purpose = 44, coinType: coinType = 1, account: account = 0 } = {}) {
+    return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`;
+}
+function $303220cf0debbf6c$export$2aa3fd96c49a84a8({ chain: chain, network: network }) {
+    return $303220cf0debbf6c$export$e59691a2f8406773({
+        coinType: $303220cf0debbf6c$export$23109f16a8a07245(chain, network)
+    });
+}
+function $303220cf0debbf6c$export$c6922c1d7db6c3a3() {
+    return Math.round(Math.random() * 2 ** 31);
+}
+function $303220cf0debbf6c$export$99014ca06cc45eae({ chain: chain, network: network, account: account = $303220cf0debbf6c$export$c6922c1d7db6c3a3() }) {
+    return $303220cf0debbf6c$export$e59691a2f8406773({
+        account: account,
+        coinType: $303220cf0debbf6c$export$23109f16a8a07245(chain, network)
+    });
+}
+function $303220cf0debbf6c$export$448332262467e042(_array) {
+    const array = _array;
+    for(let i = array.length - 1; i > 0; i -= 1){
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [
+            array[j],
+            array[i]
+        ];
+    }
+}
+function $303220cf0debbf6c$export$accea06471c18a5a({ mnemonic: mnemonic = $9PVwI$generateMnemonic(), path: path, passphrase: passphrase = (0, $bd5ff9060a235dd4$export$1035b0570451c823), networkObj: networkObj = (0, $9PVwI$networks).litecoinregtest }) {
+    const seed = $9PVwI$mnemonicToSeedSync(mnemonic, passphrase);
+    const rootKey = $303220cf0debbf6c$var$bip32.fromSeed(seed, networkObj);
+    return rootKey.derivePath(path);
+}
+function $303220cf0debbf6c$export$ec70ee4fa0462cba(outId) {
+    return /^[0-9A-Fa-f]{64}:\d+$/.test(outId);
+}
+const $303220cf0debbf6c$export$1ef33362739af9d6 = (rev)=>typeof rev === 'string' && rev.startsWith((0, $70710ac8a001306b$export$e89b5b69fd27457c));
+function $303220cf0debbf6c$export$b02a40aff8e4ad18(rev) {
+    return /^[0-9a-fA-F]+$/.test(rev);
+}
+function $303220cf0debbf6c$export$bafbdc92027712dd(rev) {
+    const parsed = $303220cf0debbf6c$export$caebc656d3686561(rev);
+    return parsed.txId === (0, $70710ac8a001306b$export$e89b5b69fd27457c);
+}
+function $303220cf0debbf6c$export$61ac08182746c02(outId) {
+    return $303220cf0debbf6c$export$caebc656d3686561(outId);
+}
+function $303220cf0debbf6c$export$caebc656d3686561(outId) {
+    const txId = outId.slice(0, 64);
+    const index = outId.slice(65);
+    const outputIndex = Number(index);
+    if (!$303220cf0debbf6c$export$e99f72af86782de5(txId) || !$303220cf0debbf6c$export$5ead30270c363bef(index)) throw new Error(`Invalid Rev: ${outId}`);
+    return {
+        txId: txId,
+        outputIndex: outputIndex
+    };
+}
+function $303220cf0debbf6c$export$4a99dfb24923098f(outId) {
+    return $303220cf0debbf6c$export$caebc656d3686561(outId).outputIndex;
+}
+const $303220cf0debbf6c$export$21c1b1d63f43cbc9 = (spec)=>spec.startsWith('./') || spec.startsWith('../') || spec === '.' || spec === '..';
+function $303220cf0debbf6c$export$8c6326f453a62d26(str, base) {
+    let length;
+    if (str.length % base !== 0) {
+        const div = str.length / base;
+        length = Math.ceil(div) * base;
+    }
+    return str.padStart(length, '0');
+}
+const $303220cf0debbf6c$export$b29f828819edca8d = (arr)=>(p)=>{
+        const hits = [];
+        const misses = [];
+        for(let i = 0; i < arr.length; i += 1)if (p(arr[i])) hits.push(arr[i]);
+        else misses.push(arr[i]);
+        return {
+            hits: hits,
+            misses: misses
+        };
+    };
+const $303220cf0debbf6c$export$7efc99439b8625a3 = (a, b, eq)=>a.length === b.length && eq ? a.every((el, i)=>eq(el, b[i])) : a.every((el, i)=>el === b[i]);
+const $303220cf0debbf6c$export$dfcec05bb7372a54 = (arr1, arr2)=>{
+    if (arr1 === arr2) return true;
+    if (arr1 === undefined || arr2 === undefined) return false;
+    if (Array.isArray(arr1) && Array.isArray(arr2)) {
+        if (arr1.length !== arr2.length) return false;
+        return arr1.every((val, index)=>$303220cf0debbf6c$export$dfcec05bb7372a54(val, arr2[index]));
+    }
+    return arr1 === arr2;
+};
+const $303220cf0debbf6c$export$fb9431c544c373fd = (arr)=>{
+    if (!arr.length) return true;
+    const base = arr[0];
+    return !arr.some((nestedArr)=>!$303220cf0debbf6c$export$dfcec05bb7372a54(nestedArr, base));
+};
+const $303220cf0debbf6c$export$e1b97b9ec89505f2 = (a, b)=>{
+    if (a === b) return true;
+    if (typeof a !== typeof b) return false;
+    if (typeof a === 'object' && a !== null && typeof b === 'object' && b !== null) {
+        const aKeys = Object.keys(a);
+        const bKeys = Object.keys(b);
+        if (aKeys.length !== bKeys.length) return false;
+        for(let i = 0; i < aKeys.length; i += 1){
+            if (!$303220cf0debbf6c$export$e1b97b9ec89505f2(a[aKeys[i]], b[bKeys[i]])) return false;
+        }
+        return true;
+    }
+    return false;
+};
+function $303220cf0debbf6c$export$d2e5b9bef5e6777f(network = $303220cf0debbf6c$export$de754bb4cdcc210c('LTC', 'regtest')) {
+    const { publicKey: pubkey } = $303220cf0debbf6c$export$accea06471c18a5a({
+        path: "m/0'/0/0"
+    });
+    const { address: address } = (0, $9PVwI$payments).p2pkh({
+        network: network,
+        pubkey: pubkey
+    });
+    if (address) return address;
+    throw new Error('Cannot generate address');
+}
+function $303220cf0debbf6c$export$c7f1cd04a579dcb2(arr) {
+    return new Set(arr).size !== arr.length;
+}
+function $303220cf0debbf6c$export$577f793df735f4a1(hex) {
+    return (0, $9PVwI$bufferUtils).reverseBuffer(Buffer.from(hex, 'hex')).toString('hex');
+}
+const $303220cf0debbf6c$export$8901015135f2fb22 = (a, b)=>a.map((k, i)=>[
+            k,
+            b[i]
+        ]);
+function $303220cf0debbf6c$var$isPaymentFactory(payment) {
+    return (script)=>{
+        try {
+            payment({
+                output: script
+            });
+            return true;
+        } catch (err) {
+            return false;
+        }
+    };
+}
+const $303220cf0debbf6c$export$21625ed8ad4ab25d = $303220cf0debbf6c$var$isPaymentFactory((0, $9PVwI$payments).p2ms);
+const $303220cf0debbf6c$export$a96262a09506768c = $303220cf0debbf6c$var$isPaymentFactory((0, $9PVwI$payments).p2pk);
+const $303220cf0debbf6c$export$7dcbe7f0626e3014 = $303220cf0debbf6c$var$isPaymentFactory((0, $9PVwI$payments).p2pkh);
+const $303220cf0debbf6c$export$bd929334ced3153 = $303220cf0debbf6c$var$isPaymentFactory((0, $9PVwI$payments).p2wpkh);
+const $303220cf0debbf6c$export$af499a4a5a71ec3e = $303220cf0debbf6c$var$isPaymentFactory((0, $9PVwI$payments).p2wsh);
+const $303220cf0debbf6c$export$a4b0e5333b216d09 = $303220cf0debbf6c$var$isPaymentFactory((0, $9PVwI$payments).p2sh);
+const $303220cf0debbf6c$export$66cb47e2971c7e0d = $303220cf0debbf6c$var$isPaymentFactory((0, $9PVwI$payments).p2tr);
+const $303220cf0debbf6c$export$971dd5b0dfd021b6 = (s1, s2)=>{
+    const result = new Set(s1);
+    Array.from(s2).forEach((value)=>result.add(value));
+    return result;
+};
+const $303220cf0debbf6c$export$acaf96a27438246b = (s1, s2)=>{
+    const result = new Set();
+    Array.from(s1).forEach((value)=>{
+        if (!s2.has(value)) result.add(value);
+    });
+    return result;
+};
+const $303220cf0debbf6c$export$4e09c449d6c407f7 = typeof window !== 'undefined';
+const $303220cf0debbf6c$export$8ee0fc9ee280b4ee = typeof window === 'undefined' && typeof (0, $9PVwI$process) !== 'undefined' && (0, $9PVwI$process).release?.name === 'node';
+const $303220cf0debbf6c$export$9e1ab59d9104db40 = typeof window !== 'undefined' && window.crossOriginIsolated && 'measureUserAgentSpecificMemory' in performance;
+const $303220cf0debbf6c$export$1dfa7dc02383b1f4 = (rev)=>{
+    if (!rev) return rev;
+    if (rev.length < 25) return rev.slice(0, 7);
+    return `${rev.split(':')[0].slice(0, 5)}:${rev.split(':')[1]}`;
+};
+function $303220cf0debbf6c$export$b48ee232557adc37(json) {
+    try {
+        return JSON.parse(json);
+    } catch  {
+        return null;
+    }
+}
+function $303220cf0debbf6c$export$76f8b5ba27b3a9fe(obj) {
+    if (typeof obj === 'string' && /^\d+$/.test(obj)) return BigInt(obj);
+    if (obj && typeof obj === 'object') Object.keys(obj).forEach((key)=>{
+        obj[key] = $303220cf0debbf6c$export$76f8b5ba27b3a9fe(obj[key]);
+    });
+    return obj;
+}
+function $303220cf0debbf6c$export$1d83dc0e0ca25b94(arr, elem) {
+    const result = [];
+    for(let i = 0; i < arr.length; i += 2)if (i + 1 < arr.length) result.push(arr[i], arr[i + 1], elem);
+    else result.push(arr[i], elem);
+    return result;
+}
+function $303220cf0debbf6c$export$9c34db760fe2f782(arr) {
+    const result = [];
+    let i = 0;
+    while(i + 2 < arr.length){
+        result.push(arr[i]);
+        result.push(arr[i + 1]);
+        i += 3;
+    }
+    if (i < arr.length) result.push(arr[i]);
+    return result;
+}
+const $303220cf0debbf6c$export$9e77c25b2b272d02 = (currentNode)=>Object.keys(currentNode.pointers).map((key)=>currentNode.pointers[key]).filter((successor)=>successor !== null);
+const $303220cf0debbf6c$export$2ba85e47198b647a = (obj)=>{
+    if (typeof obj !== 'object' || obj === null) return [];
+    return Object.values(obj).filter((v)=>typeof v === 'object' && v !== null);
+};
+function $303220cf0debbf6c$export$f402e1d983f479af(starts, getNeighbors = $303220cf0debbf6c$export$9e77c25b2b272d02, shouldAdd = ()=>true) {
+    const visited = new Set();
+    const stack = [];
+    for(let i = starts.length - 1; i >= 0; i--)stack.push(starts[i]);
+    while(stack.length > 0){
+        const current = stack.pop();
+        if (visited.has(current)) continue;
+        visited.add(current);
+        const neighbors = getNeighbors(current);
+        for(let i = neighbors.length - 1; i >= 0; i--){
+            const neighbor = neighbors[i];
+            if (!visited.has(neighbor) && shouldAdd(neighbor)) stack.push(neighbor);
+        }
+    }
+    return visited;
+}
+function $303220cf0debbf6c$export$8f528bb63005ed51(starts, getNeighbors = $303220cf0debbf6c$export$9e77c25b2b272d02) {
+    const order = [];
+    const visited = new Set();
+    const stack = [];
+    for(let i = starts.length - 1; i >= 0; i--)stack.push(starts[i]);
+    while(stack.length > 0){
+        const current = stack.pop();
+        if (visited.has(current)) continue;
+        visited.add(current);
+        order.push(current);
+        const neighbors = getNeighbors(current);
+        for(let i = neighbors.length - 1; i >= 0; i--){
+            const neighbor = neighbors[i];
+            if (!visited.has(neighbor)) stack.push(neighbor);
+        }
+    }
+    return order;
+}
+const $303220cf0debbf6c$export$6850e3f48372183d = (obj)=>{
+    const revs = new Set();
+    for (const node of $303220cf0debbf6c$export$f402e1d983f479af([
+        obj
+    ], $303220cf0debbf6c$export$2ba85e47198b647a))if (node && typeof node === 'object' && '_rev' in node && typeof node._rev === 'string') revs.add(node._rev);
+    return revs;
+};
+const $303220cf0debbf6c$export$289be3649a9a0728 = (obj)=>JSON.stringify(obj, (_, v)=>typeof v === 'bigint' ? `${v}n` : v, 2);
+const $303220cf0debbf6c$export$30615ddea23ba3c1 = (char)=>char >= '0' && char <= '9' || char >= 'a' && char <= 'f' || char >= 'A' && char <= 'F';
+function $303220cf0debbf6c$export$e99f72af86782de5(value) {
+    if (value.length !== 64) return false;
+    for(let i = 0; i < 64; i++)if (!$303220cf0debbf6c$export$30615ddea23ba3c1(value.charAt(i))) return false;
+    return true;
+}
+function $303220cf0debbf6c$export$5ead30270c363bef(suffix) {
+    if (suffix.length === 0) return false;
+    const num = parseInt(suffix, 10);
+    return num >= 0 && suffix === num.toString();
+}
+function $303220cf0debbf6c$export$5becd68e26dd69b4(value) {
+    if (!$303220cf0debbf6c$export$e99f72af86782de5(value)) throw new Error(`Invalid TxId.`);
+    return value;
+}
+function $303220cf0debbf6c$export$5cfec14803f412e5(value) {
+    if (value.length < 66 || value.charAt(64) !== ':') throw new Error(`Invalid Rev.`);
+    if (!$303220cf0debbf6c$export$e99f72af86782de5(value.slice(0, 64)) || !$303220cf0debbf6c$export$5ead30270c363bef(value.slice(65))) throw new Error(`Invalid Rev.`);
+    return value;
+}
+function $303220cf0debbf6c$export$5c74a82dce3394d5(rev) {
+    return rev.slice(0, 64);
+}
+function $303220cf0debbf6c$export$6d0757a710f60a30(value) {
+    return $303220cf0debbf6c$export$e99f72af86782de5(value);
+}
+function $303220cf0debbf6c$export$d146d9996ff2e97(value) {
+    if (value.length < 66 || value.charAt(64) !== ':') return false;
+    return $303220cf0debbf6c$export$e99f72af86782de5(value.slice(0, 64)) && $303220cf0debbf6c$export$5ead30270c363bef(value.slice(65));
+}
+function $303220cf0debbf6c$export$d601b1a5af9dd5dc(root, key, value) {
+    if (typeof root === 'object' && root !== null && key in root && root[key] === value) return root;
+    if (typeof root === 'object' && root !== null) for (const val of Object.values(root)){
+        const sub = $303220cf0debbf6c$export$d601b1a5af9dd5dc(val, key, value);
+        if (sub !== undefined) return sub;
+    }
+    return undefined;
+}
+function $303220cf0debbf6c$export$b7d58db314e0ac27(obj, seen = new WeakMap()) {
+    if (obj === null || typeof obj !== 'object') return obj // Primitives and BigInt (immutable) are returned as-is
+    ;
+    if (seen.has(obj)) return seen.get(obj) // Handle cycles
+    ;
+    if (Array.isArray(obj)) {
+        const clone = [];
+        seen.set(obj, clone);
+        for(let i = 0; i < obj.length; i++)clone[i] = $303220cf0debbf6c$export$b7d58db314e0ac27(obj[i], seen);
+        return clone;
+    }
+    if (typeof obj === 'bigint') return obj; // BigInt is immutable, safe to return directly
+    // For plain objects
+    const clone = {};
+    seen.set(obj, clone);
+    for (const key of Object.keys(obj))clone[key] = $303220cf0debbf6c$export$b7d58db314e0ac27(obj[key], seen);
+    return clone;
+}
+
+
+
+function $8636fd77165bd4bc$export$36e2e7bece17a772(bufs) {
+    const script = [
+        (0, $9PVwI$opcodes).OP_1,
+        ...bufs,
+        (0, $9PVwI$opcodes)[`OP_${bufs.length}`],
+        (0, $9PVwI$opcodes).OP_CHECKMULTISIG
+    ];
+    return (0, $9PVwI$script).compile(script);
+}
+function $8636fd77165bd4bc$export$c57aaaec237cdb23(script) {
+    const stack = (0, $9PVwI$script).decompile(script);
+    return stack?.filter((c)=>(0, $9PVwI$Buffer).isBuffer(c));
+}
+function $8636fd77165bd4bc$export$f490c5e7d585a370(script) {
+    return $8636fd77165bd4bc$export$c57aaaec237cdb23(script).map((p)=>p.toString('hex'));
+}
+function $8636fd77165bd4bc$export$a295b4f1f291e064(script) {
+    if ((0, $303220cf0debbf6c$export$21625ed8ad4ab25d)(script)) return $8636fd77165bd4bc$export$f490c5e7d585a370(script);
+    if ((0, $303220cf0debbf6c$export$a4b0e5333b216d09)(script)) return (0, $9PVwI$script).toASM(script);
+    throw new Error('Unsupported script');
+}
+function $8636fd77165bd4bc$export$a5c5ced73e99851c(publicKeys) {
+    if (publicKeys.length - 1 > (0, $bd5ff9060a235dd4$export$925a05c4b96b2744)) throw new Error('Too many owners');
+    return $8636fd77165bd4bc$export$36e2e7bece17a772(publicKeys);
+}
+function $8636fd77165bd4bc$export$26c3669e0bc5ae0e(dataString, bcdbPk) {
+    const dataHex = (0, $303220cf0debbf6c$export$f08f4d51349c691f)(dataString);
+    const hexes = (0, $303220cf0debbf6c$export$416b7890be9acca6)(dataHex, 62);
+    const paddedHexes = hexes.map((hex)=>hex.padEnd(62, '0'));
+    const publicKeys = paddedHexes.map((0, $303220cf0debbf6c$export$68538d2c6856b285));
+    const finalPubKeys = (0, $303220cf0debbf6c$export$1d83dc0e0ca25b94)(publicKeys, (0, $9PVwI$Buffer).from(bcdbPk, 'hex'));
+    const chunkedPublicKeys = (0, $303220cf0debbf6c$export$f922ebe57f2c36e8)(finalPubKeys, (0, $bd5ff9060a235dd4$export$925a05c4b96b2744));
+    return chunkedPublicKeys.map($8636fd77165bd4bc$export$a5c5ced73e99851c);
+}
+function $8636fd77165bd4bc$export$6a94e91b2ef1d7f1(scripts) {
+    const publicKeys = scripts.flatMap($8636fd77165bd4bc$export$c57aaaec237cdb23);
+    const finalPubKeys = (0, $303220cf0debbf6c$export$9c34db760fe2f782)(publicKeys);
+    const hexes = finalPubKeys.map((0, $303220cf0debbf6c$export$cfd9a51138473022));
+    const dataHex = hexes.map((0, $303220cf0debbf6c$export$52324db6daaca2e1));
+    return dataHex.join('').replace(/\0+$/, '');
+}
+function $8636fd77165bd4bc$export$dbc681a96905b6fa(inputsLength, outputsLength, data, pubKey) {
+    const dataScripts = $8636fd77165bd4bc$export$26c3669e0bc5ae0e(JSON.stringify(data), pubKey);
+    const maxDataIndex = outputsLength + dataScripts.length;
+    const ioDescriptor = [
+        inputsLength,
+        outputsLength,
+        maxDataIndex,
+        0
+    ];
+    const ioDescriptorScripts = $8636fd77165bd4bc$export$26c3669e0bc5ae0e(JSON.stringify(ioDescriptor), pubKey);
+    return dataScripts.concat(ioDescriptorScripts);
+}
+const $8636fd77165bd4bc$export$50e49a79004f0f9 = (owners, restClient)=>{
+    const { networkObj: networkObj } = restClient;
+    const publicKeys = owners.sort().map((owner)=>(0, $9PVwI$Buffer).from(owner, 'hex'));
+    const outputScript = $8636fd77165bd4bc$export$a5c5ced73e99851c(publicKeys);
+    const payment = (0, $9PVwI$payments).p2ms({
+        output: outputScript,
+        network: networkObj
+    });
+    return payment.output;
+};
+
+
+
+
+class $4b62a469f572a3c6$export$febc5573c75cefb0 extends (0, $9PVwI$Transaction) {
+    constructor({ ins: ins = [], outs: outs = [], version: version = 1, locktime: locktime = 0 } = {}){
+        super();
+        this.ins = ins;
+        this.outs = outs;
+        this.version = version;
+        this.locktime = locktime;
+    }
+    get txId() {
+        return this.getId();
+    }
+    get inputs() {
+        return this.ins.map((input)=>`${(0, $303220cf0debbf6c$export$577f793df735f4a1)(input.hash)}:${input.index}`);
+    }
+    get ioDescriptor() {
+        const candidates = this.outs.filter(({ script: script })=>script.length === (0, $bd5ff9060a235dd4$export$986c012ad4b59cfe));
+        if (candidates.length === 0) return [];
+        const { script: script } = candidates[candidates.length - 1];
+        const string = $8636fd77165bd4bc$export$6a94e91b2ef1d7f1([
+            script
+        ]);
+        return JSON.parse(string);
+    }
+    get ownerInputsLength() {
+        return this.ioDescriptor[0] || 0;
+    }
+    get ownerOutputsLength() {
+        return this.ioDescriptor[1] || 0;
+    }
+    get maxDataIndex() {
+        return this.ioDescriptor[2] || 0;
+    }
+    get dataOutputs() {
+        return this.outs.slice(this.ownerOutputsLength, this.maxDataIndex);
+    }
+    get ownerInputs() {
+        return this.ins.slice(0, this.ownerInputsLength);
+    }
+    get ownerOutputs() {
+        return this.outs.slice(0, this.ownerOutputsLength);
+    }
+    get inRevs() {
+        return this.ownerInputs.map(({ hash: hash, index: index })=>`${(0, $303220cf0debbf6c$export$577f793df735f4a1)(hash)}:${index}`);
+    }
+    get outRevs() {
+        return this.ownerOutputs.map((_, i)=>`${this.getId()}:${i}`);
+    }
+    get onChainMetaData() {
+        try {
+            return JSON.parse($8636fd77165bd4bc$export$6a94e91b2ef1d7f1(this.dataOutputs.map((o)=>o.script)));
+        } catch  {
+            return {};
+        }
+    }
+    get ownerData() {
+        try {
+            return this.ownerOutputs.map(({ script: script, value: value })=>({
+                    outScriptBuf: script,
+                    _owners: $8636fd77165bd4bc$export$a295b4f1f291e064(script),
+                    _satoshis: value
+                }));
+        } catch  {
+            return [];
+        }
+    }
+    get ioMap() {
+        return this.onChainMetaData.ioMap;
+    }
+    get zip() {
+        try {
+            return this.outRevs.map((rev, i)=>[
+                    this.inRevs[this.ioMap.indexOf(i)],
+                    rev
+                ]);
+        } catch  {
+            return [];
+        }
+    }
+    spendFromData(inputRevs) {
+        inputRevs.map((0, $303220cf0debbf6c$export$61ac08182746c02)).forEach(({ txId: txId, outputIndex: outputIndex })=>{
+            const txHash = (0, $9PVwI$bufferUtils).reverseBuffer(Buffer.from(txId, 'hex'));
+            this.addInput(txHash, Number(outputIndex));
+        });
+    }
+    createDataOuts(ownerData, metaData, wallet) {
+        const { ins: ins, outs: outs } = this;
+        // Create owner outputs
+        const dust = wallet.getDustThreshold(false);
+        ownerData.forEach(({ outScriptBuf: outScriptBuf, _satoshis: _satoshis })=>{
+            this.addOutput(outScriptBuf, _satoshis || BigInt(dust));
+        });
+        // Create data outputs
+        const pubKey = wallet.getSpendablePublicKeys(wallet.chain, wallet.network);
+        $8636fd77165bd4bc$export$dbc681a96905b6fa(ins.length, outs.length, metaData, pubKey).forEach((script)=>{
+            this.addOutput(script, BigInt(wallet.getDustThreshold(false, script)));
+        });
+    }
+    static fromBuffer(buffer) {
+        const { ins: ins, outs: outs, version: version = 1, locktime: locktime = 0 } = super.fromBuffer(buffer);
+        return new $4b62a469f572a3c6$export$febc5573c75cefb0({
+            ins: ins,
+            outs: outs,
+            version: version,
+            locktime: locktime
+        });
+    }
+    static fromHex(hex) {
+        const { ins: ins, outs: outs, version: version, locktime: locktime } = super.fromHex(hex);
+        return new this({
+            ins: ins,
+            outs: outs,
+            version: version,
+            locktime: locktime
+        });
+    }
+    static fromTransaction(tx) {
+        return this.fromBuffer(tx.toBuffer()) // Using `this` to refer to the calling class
+        ;
+    }
+    static async fromTxId({ txId: txId, restClient: restClient }) {
+        const hex = await restClient.getRawTx(txId);
+        return this.fromHex(hex);
+    }
+    clone() {
+        return super.clone();
+    }
+    static deserialize(s) {
+        return super.deserialize(s);
+    }
+}
+
+
+
+
+/**
+ * Per-instance admin mode context using a call stack. Guarantees correct
+ * nested/re-entrant behavior and eliminates global mutable state.
+ * @internal
+ */ class $aec7dd200596fb2a$export$b4fb6f5c344ec334 {
+    /** Returns true iff the current call is inside a _sudo block. */ get isAdmin() {
+        // Peek at the top of the call stack. `stack.at(-1)` returns the most recent
+        // admin state (true = inside _sudo). If the stack is empty (we are outside
+        // any _sudo), `at(-1)` returns `undefined`, which we safely coerce to
+        // `false` with the nullish coalescing operator.
+        return this.stack.at(-1) ?? false;
+    }
+    /**
+   * Executes `fn` with admin privileges.
+   * Restores previous state even if `fn` throws.
+   */ run(fn) {
+        this.stack.push(true);
+        try {
+            return fn();
+        } finally{
+            this.stack.pop();
+        }
+    }
+    constructor(){
+        this.stack = [];
+    }
+}
+const $aec7dd200596fb2a$var$defaultContext = new $aec7dd200596fb2a$export$b4fb6f5c344ec334();
+const $aec7dd200596fb2a$export$62c0dd10c640417e = $aec7dd200596fb2a$var$defaultContext.run.bind($aec7dd200596fb2a$var$defaultContext);
+const $aec7dd200596fb2a$export$fdc4f9968fbdadc6 = ()=>$aec7dd200596fb2a$var$defaultContext.isAdmin;
+
+
+// =============================================================================
+// types.ts
+// =============================================================================
+//
+// Central Type System for Bitcoin Computer
+//
+// This file defines the complete, compile-time safe public API for smart
+// contracts used by the Bitcoin Computer library.
+//
+// The key abstraction is `SmartContract<T>` — a covariant recursive type that
+// automatically lifts every method of your contract class. The lifting rule
+// (enforced everywhere by the type system) is:
+//
+//  * Original method: m(this: C, ...Ai) → R
+//  * Lifted method: m(this: SmartContract<C>, ...SmartContract<Ai>) →
+//    Promise<SmartContract<R>>
+//
+// Simple example:
+//  * Original: transfer(to: string, amount: bigint): Token
+//  * Lifted: transfer(to: string, amount: bigint):
+//    Promise<SmartContract<Token>>
+//
+// Guarantees (all verified exhaustively in types.test.ts):
+// * Deep structural exactness (`Exact<T>`) — no extra properties allowed at any
+//   nesting level
+// * Cycle-safe recursion termination via "Root unification" (nested Contract
+//   subclasses collapse to the root SmartContract<Root> for safety)
+// * Opt-in precise subclass narrowing via `precise<T>()` when you know the
+//   concrete type
+// * Full method lifting with correct `this` binding and exactly-one-Promise
+//   normalization
+// * Primitives, branded types, arrays (mutable + readonly), unions, optionals,
+//   and higher-order functions are preserved exactly
+//
+// All objects returned by the runtime (db.get, .sync, etc.) are wrapped with
+// dual-layer security proxies that enforce immutability, ownership, and
+// persistence rules at runtime.
+//
+// =====================================================================
+
+class $7677927c011cc208$export$ec44af2ea759766e extends (0, $9PVwI$largeset) {
+    add(el) {
+        return super.add(new WeakRef(el));
+    }
+    has(el) {
+        for (const o of this){
+            if (o == el) return true;
+        }
+        return false;
+    }
+    forEach(fn) {
+        super.forEach((ref)=>{
+            const value = ref.deref();
+            if (value) fn(value);
+        });
+    }
+    *[Symbol.iterator]() {
+        for (const ref of super.values()){
+            const value = ref.deref();
+            if (value) yield value;
+        }
+    }
+}
+
+
+/**
+ * A weak set that tracks recorded (wrapped) objects for security checks.
+ * Uses IterableWeakSet to allow garbage collection of unreferenced objects
+ * while supporting membership testing and iteration.
+ * @internal
+ */ const $fa96f8418385359b$var$RECORDED = new (0, $7677927c011cc208$export$ec44af2ea759766e)();
+function $fa96f8418385359b$export$e16d8520af44a096(obj) {
+    $fa96f8418385359b$var$RECORDED.add(obj);
+}
+function $fa96f8418385359b$export$141f8028a5c9b76(obj) {
+    return $fa96f8418385359b$var$RECORDED.has(obj);
+}
+
+
+const $d205febb791b53ee$export$581775e22cfad3dd = Symbol('bitcoin-computer-brand');
+const $d205febb791b53ee$export$3bb4a3f4a9646a6a = Symbol('proxy_tag');
+const $d205febb791b53ee$export$accd2046ded63e63 = (s)=>s;
+const $d205febb791b53ee$export$84eca18e6d832dd1 = (s)=>s;
+const $d205febb791b53ee$export$e921403d8a9d6e3a = (s)=>s;
+const $d205febb791b53ee$export$1c4cfbb3206db243 = (s)=>s;
+const $d205febb791b53ee$export$f386daff7715d420 = (s)=>s;
+const $d205febb791b53ee$export$55d63915149d1a5a = (s)=>s;
+const $d205febb791b53ee$export$171aa6226884e6dd = (s)=>s;
+const $d205febb791b53ee$export$b46cd0ecde2b93f9 = (s)=>s;
+const $d205febb791b53ee$export$91df428ae0f97b5c = (s)=>s;
+class $d205febb791b53ee$export$8517d80acf00e19a {
+    constructor(..._args){
+        this[$d205febb791b53ee$export$581775e22cfad3dd] = true;
+    }
+}
+function $d205febb791b53ee$export$57b7f3bf07321492(target) {
+    const cls = typeof target === 'function' ? target : target.constructor;
+    return cls;
+}
+function $d205febb791b53ee$export$bbf2ffbffa00b288(value) {
+    if (typeof value !== 'object' || value === null || !($d205febb791b53ee$export$581775e22cfad3dd in value)) throw new TypeError('precise(): Expected a Bitcoin Computer smart contract');
+}
+const $d205febb791b53ee$export$d3ed4458b2e585d7 = (a)=>typeof a === 'undefined';
+const $d205febb791b53ee$export$790c68523f92292 = (a)=>a === null;
+const $d205febb791b53ee$export$2284ee9d394f4548 = (a)=>typeof a === 'boolean';
+const $d205febb791b53ee$export$33fe8de871cc903c = (a)=>typeof a === 'number';
+const $d205febb791b53ee$export$abd67cc48e99962b = (a)=>typeof a === 'string';
+const $d205febb791b53ee$export$80fa5093ff9816c7 = (a)=>typeof a === 'symbol';
+const $d205febb791b53ee$export$46a6632a23ee1db0 = (a)=>typeof a === 'bigint';
+const $d205febb791b53ee$export$e9a6cce0d6f25ebf = (a)=>$d205febb791b53ee$export$790c68523f92292(a) || $d205febb791b53ee$export$d3ed4458b2e585d7(a) || $d205febb791b53ee$export$33fe8de871cc903c(a) || $d205febb791b53ee$export$abd67cc48e99962b(a) || $d205febb791b53ee$export$2284ee9d394f4548(a) || $d205febb791b53ee$export$80fa5093ff9816c7(a) || $d205febb791b53ee$export$46a6632a23ee1db0(a);
+const $d205febb791b53ee$export$fa675141bcde8cf8 = (a)=>Array.isArray(a);
+const $d205febb791b53ee$export$70ac1a29dd7dda57 = (a)=>typeof a === 'object' && a !== null && !$d205febb791b53ee$export$fa675141bcde8cf8(a) && !$d205febb791b53ee$export$e9a6cce0d6f25ebf(a);
+const $d205febb791b53ee$export$c6d8e8d5a86e0e9b = (v)=>typeof v === 'object' && v !== null && $d205febb791b53ee$export$581775e22cfad3dd in v && v[$d205febb791b53ee$export$581775e22cfad3dd] === true && '_rev' in v && typeof v._rev === 'string' && (0, $fa96f8418385359b$export$141f8028a5c9b76)(v);
+const $d205febb791b53ee$export$d64eeacdafde4875 = (s)=>typeof s === 'string' && /^0[2-3][0-9a-f]{64}$/i.test(s);
+function $d205febb791b53ee$export$18d65c6a1aeeaec7(obj) {
+    return $d205febb791b53ee$export$70ac1a29dd7dda57(obj) && '_url' in obj;
+}
+function $d205febb791b53ee$export$691b4523c5340423(obj) {
+    return $d205febb791b53ee$export$70ac1a29dd7dda57(obj) && '__cypher' in obj && '__secrets' in obj && 'ioMap' in obj;
+}
+const $d205febb791b53ee$export$e24fefae1ba28092 = (obj)=>$d205febb791b53ee$export$70ac1a29dd7dda57(obj) && '_rev' in obj && typeof obj._rev === 'string';
+function $d205febb791b53ee$export$6d0757a710f60a30(value) {
+    return /^[0-9a-fA-F]{64}$/.test(value);
+}
+function $d205febb791b53ee$export$d146d9996ff2e97(s) {
+    return /^[0-9a-fA-F]{64}:[0-9]+$/.test(s);
+}
+
+
+const $74a26ef6d53e712a$export$72de43103e456aaf = (g)=>(obj)=>Object.fromEntries(Object.entries(obj).map(g));
+const $74a26ef6d53e712a$export$58aefef1ff9edd34 = (f)=>(obj)=>{
+        const props = $74a26ef6d53e712a$export$72de43103e456aaf(([k, v])=>[
+                k,
+                f(v)
+            ]);
+        const methods = Object.create(Object.getPrototypeOf(obj));
+        return Object.assign(methods, props(obj));
+    };
+const $74a26ef6d53e712a$export$403a37b722c7ebfd = (g)=>(obj)=>Object.entries(obj).forEach(g);
+const $74a26ef6d53e712a$export$ef29917380cf416a = (f)=>(obj)=>$74a26ef6d53e712a$export$403a37b722c7ebfd(([_, v])=>f(v))(obj);
+const $74a26ef6d53e712a$export$48b95d5fd8dc5d0b = (g)=>(visited = [])=>(json)=>{
+            if ((0, $d205febb791b53ee$export$e9a6cce0d6f25ebf)(json)) return;
+            if ((0, $d205febb791b53ee$export$fa675141bcde8cf8)(json)) {
+                json.forEach($74a26ef6d53e712a$export$48b95d5fd8dc5d0b(g)(visited));
+                return;
+            }
+            if ((0, $d205febb791b53ee$export$70ac1a29dd7dda57)(json)) {
+                if (visited.includes(json)) return;
+                visited.push(json);
+                g(json);
+                $74a26ef6d53e712a$export$ef29917380cf416a($74a26ef6d53e712a$export$48b95d5fd8dc5d0b(g)(visited))(json);
+            }
+        };
+const $74a26ef6d53e712a$export$a03aeae6a15ac053 = (leaf)=>(node)=>(visited = [])=>(x)=>{
+                if ((0, $d205febb791b53ee$export$e9a6cce0d6f25ebf)(x)) return leaf(x);
+                if ((0, $d205febb791b53ee$export$fa675141bcde8cf8)(x)) return node([
+                    leaf(x),
+                    ...x.flatMap($74a26ef6d53e712a$export$a03aeae6a15ac053(leaf)(node)(visited))
+                ]);
+                if ((0, $d205febb791b53ee$export$70ac1a29dd7dda57)(x)) {
+                    if (visited.includes(x)) return leaf(x);
+                    visited.push(x);
+                    return node([
+                        leaf(x),
+                        ...Object.values(x).flatMap($74a26ef6d53e712a$export$a03aeae6a15ac053(leaf)(node)(visited))
+                    ]);
+                }
+                throw new Error('Unsupported type');
+            };
+const $74a26ef6d53e712a$export$b63c9fd43d662403 = (predicate)=>(x)=>{
+        const leaf = (y)=>predicate(y) ? [
+                y
+            ] : [];
+        const node = (arr)=>arr.flat();
+        return $74a26ef6d53e712a$export$a03aeae6a15ac053(leaf)(node)([])(x);
+    };
+// ==================== LEGACY HELPERS ====================
+const $74a26ef6d53e712a$var$selectById = (id)=>(o)=>(0, $d205febb791b53ee$export$70ac1a29dd7dda57)(o) && '_id' in o && o._id === id;
+const $74a26ef6d53e712a$export$c4d407c2cae5b6c0 = (env)=>(arg)=>{
+        if (!(0, $d205febb791b53ee$export$70ac1a29dd7dda57)(arg) || !arg._id) return;
+        const [fromEffect] = $74a26ef6d53e712a$export$b63c9fd43d662403($74a26ef6d53e712a$var$selectById(arg._id))(env);
+        if (!fromEffect) return;
+        (0, $aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{
+            Object.entries(fromEffect).forEach(([k, v])=>{
+                arg[k] = v;
+            });
+        });
+    };
+
+
+
+
+
+const $9ca517853ec47831$var$cycleErrorMessage = 'Creating cyclic structures through the basic interface is not supported, please use "encode" instead.';
+/**
+ * Parses a basic JSON value into a literal suitable for insertion into generated JS code.
+ */ const $9ca517853ec47831$var$parseJBasic = (val)=>{
+    if ((0, $d205febb791b53ee$export$abd67cc48e99962b)(val)) return `'${val}'`;
+    if ((0, $d205febb791b53ee$export$46a6632a23ee1db0)(val)) return `${val.toString()}n`;
+    return `${val?.toString() ?? 'undefined'}`;
+};
+/**
+ * Internal recursive serializer.
+ * Uses a shared counter for deterministic temp variable names (__bc0__, __bc1__, ...).
+ * Exactly matches original runtime behavior.
+ */ const $9ca517853ec47831$var$_stringifyArgs = (arg, counterRef, tempToRev)=>{
+    if ((0, $d205febb791b53ee$export$e9a6cce0d6f25ebf)(arg)) return {
+        argString: $9ca517853ec47831$var$parseJBasic(arg),
+        env: {}
+    };
+    if ((0, $d205febb791b53ee$export$70ac1a29dd7dda57)(arg)) {
+        // Smart-contract reference → deterministic temp var
+        if ((0, $d205febb791b53ee$export$e24fefae1ba28092)(arg) && (0, $d205febb791b53ee$export$d146d9996ff2e97)(arg._rev)) {
+            const tempVar = `__bc${counterRef.count++}__`;
+            tempToRev[tempVar] = arg._rev;
+            return {
+                argString: tempVar,
+                env: {
+                    [tempVar]: arg._rev
+                }
+            };
+        }
+        // Plain object
+        const entries = Object.entries(arg).map(([k, v])=>{
+            const res = $9ca517853ec47831$var$_stringifyArgs(v, counterRef, tempToRev);
+            return [
+                k,
+                res
+            ];
+        });
+        const env = entries.reduce((acc, [, res])=>({
+                ...acc,
+                ...res.env
+            }), {});
+        const argString = `{${entries.map(([k, { argString: argString }])=>`${k}:${argString}`).join(',')}}`;
+        return {
+            argString: argString,
+            env: env
+        };
+    }
+    if ((0, $d205febb791b53ee$export$fa675141bcde8cf8)(arg)) {
+        const pairs = arg.map((item)=>$9ca517853ec47831$var$_stringifyArgs(item, counterRef, tempToRev));
+        const env = pairs.reduce((acc, res)=>({
+                ...acc,
+                ...res.env
+            }), {});
+        const argString = `[${pairs.map(({ argString: argString })=>argString).join(',')}]`;
+        return {
+            argString: argString,
+            env: env
+        };
+    }
+    throw new Error(`Unsupported arg type: ${typeof arg}`);
+};
+const $9ca517853ec47831$export$433fe05b12ba833f = (s)=>s.substring(1, s.length - 1);
+const $9ca517853ec47831$export$34def19ef2e52a98 = (arg)=>{
+    const counterRef = {
+        count: 0
+    };
+    const tempToRev = {};
+    const { argString: rawArgString, env: rawEnv } = $9ca517853ec47831$var$_stringifyArgs(arg, counterRef, tempToRev);
+    // Replace all temp vars with deterministic __bcN__ in discovery order
+    let finalArgString = rawArgString;
+    const finalEnv = {};
+    Object.keys(tempToRev).forEach((oldTemp, index)=>{
+        const newTemp = `__bc${index}__`;
+        finalArgString = finalArgString.replaceAll(oldTemp, newTemp);
+        finalEnv[newTemp] = tempToRev[oldTemp];
+    });
+    return {
+        argString: $9ca517853ec47831$export$433fe05b12ba833f(finalArgString),
+        env: finalEnv
+    };
+};
+class $9ca517853ec47831$export$bf00b4cafcb0e27b {
+    constructor(s, sourceType){
+        try {
+            this.file = (0, $9PVwI$parse)(s, {
+                sourceType: sourceType
+            });
+        } catch (err) {
+            throw new Error(`Invalid expression ${err.message}}`);
+        }
+    }
+    getExpression() {
+        const { program: program } = this.file;
+        const { body: body } = program;
+        // @ts-ignore – Babel AST shape
+        const { expression: expression } = body[body.length - 1];
+        return expression;
+    }
+    getCalleeName() {
+        try {
+            return this.getExpression().callee.object.name;
+        } catch  {
+            return undefined;
+        }
+    }
+    isNew() {
+        try {
+            return this.getExpression().type === 'NewExpression';
+        } catch  {
+            return false;
+        }
+    }
+    isCall() {
+        try {
+            return this.getExpression().type === 'CallExpression';
+        } catch  {
+            return false;
+        }
+    }
+}
+class $9ca517853ec47831$export$be58926105124dd4 {
+    constructor({ exp: exp = '', env: env = {}, mod: mod, sourceType: sourceType } = {}){
+        /**
+   * Determines whether this transition is a method call on an object that
+   * has back-links (i.e. is reachable via inverse pointers from other objects).
+   * Used by `Db` for stale-side-predecessor detection.
+   */ this.isCallWithBackLinks = async (db)=>{
+            if (!this.parsed.isCall()) return false;
+            const callerName = this.parsed.getCalleeName();
+            if (!callerName) return false;
+            const callerRev = this.env[callerName];
+            if (!callerRev || typeof callerRev !== 'string' || callerRev.startsWith('0'.repeat(64))) return false;
+            await db.get(callerRev) // ensure cached
+            ;
+            return db.cache.hasInversePointers(callerRev);
+        };
+        this.exp = exp;
+        this.env = env;
+        this.mod = mod;
+        this.parsed = new $9ca517853ec47831$export$bf00b4cafcb0e27b(exp, sourceType);
+    }
+    /**
+   * Returns the public JSON shape (unbranded strings) expected by the outside world.
+   */ toJSON() {
+        return {
+            exp: this.exp,
+            env: this.env,
+            mod: this.mod
+        };
+    }
+    static fromUpdate(update) {
+        const t = update.transition;
+        return new $9ca517853ec47831$export$be58926105124dd4({
+            exp: t.exp,
+            env: t.env,
+            mod: t.mod
+        });
+    }
+    static{
+        this.newExp = (constructor, argString = '')=>`${constructor} new ${constructor.name}(${argString})`;
+    }
+    static{
+        this.callExp = (property, argString)=>`__bc__.${String(property)}(${argString})`;
+    }
+    static{
+        /**
+   * Creates a Transition representing `new Constructor(...)`.
+   */ this.fromConstructorCall = (constructor, args = [], mod)=>{
+            const { argString: argString, env: env } = $9ca517853ec47831$export$34def19ef2e52a98(args);
+            const exp = $9ca517853ec47831$export$be58926105124dd4.newExp(constructor, argString);
+            if ((0, $303220cf0debbf6c$export$c7f1cd04a579dcb2)(Object.values(env))) throw new Error($9ca517853ec47831$var$cycleErrorMessage);
+            return new $9ca517853ec47831$export$be58926105124dd4({
+                exp: exp,
+                env: env,
+                mod: mod
+            });
+        };
+    }
+    static{
+        /**
+   * Creates a Transition representing `target.method(...)`.
+   * Signature kept identical to original for maximum backward compatibility.
+   */ this.fromFunctionCall = (target, property, args = [], mod)=>{
+            const { argString: argString, env: preEnv } = $9ca517853ec47831$export$34def19ef2e52a98(args);
+            const exp = $9ca517853ec47831$export$be58926105124dd4.callExp(property, argString);
+            const env = {
+                __bc__: target._rev,
+                ...preEnv
+            };
+            if ((0, $303220cf0debbf6c$export$c7f1cd04a579dcb2)(Object.values(env))) throw new Error($9ca517853ec47831$var$cycleErrorMessage);
+            return new $9ca517853ec47831$export$be58926105124dd4({
+                exp: exp,
+                env: env,
+                mod: mod
+            });
+        };
+    }
+}
+
+
+
+const $382856abc4b520b8$export$3bb4a3f4a9646a6a = Symbol('proxy_tag');
+function $382856abc4b520b8$export$29c19449f1fdb873(obj, computer, seen = new WeakMap()) {
+    if (typeof obj !== 'object' || obj === null) return obj;
+    if (Array.isArray(obj)) return obj.map((item)=>$382856abc4b520b8$export$29c19449f1fdb873(item, computer, seen));
+    if ($382856abc4b520b8$export$3bb4a3f4a9646a6a in obj && obj[$382856abc4b520b8$export$3bb4a3f4a9646a6a]) return obj;
+    if (seen.has(obj)) return seen.get(obj);
+    const proxy = new Proxy(obj, new $382856abc4b520b8$export$a428cd33b25d5283(computer));
+    (0, $aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{
+        Object.defineProperty(proxy, $382856abc4b520b8$export$3bb4a3f4a9646a6a, {
+            value: true,
+            writable: false,
+            configurable: false,
+            enumerable: false
+        });
+    });
+    seen.set(obj, proxy);
+    return proxy;
+}
+class $382856abc4b520b8$export$a428cd33b25d5283 {
+    constructor(computer){
+        this.computer = computer;
+    }
+    get(target, property) {
+        if (typeof target[property] !== 'function') return $382856abc4b520b8$export$29c19449f1fdb873(Reflect.get(target, property), this.computer);
+        if (typeof target[property] === 'function' && typeof property === 'string' && [
+            'toString',
+            'valueOf'
+        ].includes(property)) return Reflect.get(target, property);
+        const handleFunctionCall = async (...args)=>{
+            const { computer: computer } = this;
+            const { db: db } = computer;
+            const transition = (0, $9ca517853ec47831$export$be58926105124dd4).fromFunctionCall(target, property, args);
+            const { tx: tx, effect: effect } = await db.evalMocked(transition);
+            if (tx) await computer.broadcast(tx);
+            const { res: res, env: env } = effect;
+            (0, $74a26ef6d53e712a$export$48b95d5fd8dc5d0b)((0, $74a26ef6d53e712a$export$c4d407c2cae5b6c0)(env))([])(args);
+            (0, $74a26ef6d53e712a$export$48b95d5fd8dc5d0b)((0, $74a26ef6d53e712a$export$c4d407c2cae5b6c0)(env))([])(target);
+            return $382856abc4b520b8$export$29c19449f1fdb873(res, computer);
+        };
+        return handleFunctionCall;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+(0, $9PVwI$initEccLib)($9PVwI$bitcoincomputersecp256k1);
+const $989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8 = (baseUrl, keyPair)=>{
+    const timestamp = Date.now();
+    const msgHash = (0, $9PVwI$crypto).sha256((0, $9PVwI$Buffer).from(baseUrl + timestamp));
+    const privateKey = keyPair.privateKey ?? (0, $9PVwI$Buffer).alloc(0);
+    const signature = (0, $9PVwI$Buffer).from([
+        ...$9PVwI$bitcoincomputersecp256k1.sign(msgHash, privateKey)
+    ]).toString('hex');
+    const { publicKey: publicKey } = keyPair;
+    const tokenParts = [
+        signature,
+        publicKey,
+        timestamp
+    ];
+    const authToken = (0, $9PVwI$Buffer).from(tokenParts.join(':')).toString('base64');
+    const authHeader = `Bearer ${authToken}`;
+    return authHeader;
+};
+
+
+
+const $0bf978cc7e5ad20d$var$numOfAttempts = (0, $bd5ff9060a235dd4$export$b00b425fffc1d558);
+class $0bf978cc7e5ad20d$export$bc3f23723d5e1cba {
+    constructor(baseUrl, keyPair = {}){
+        this.retry = (error)=>{
+            return error.response?.status === 401 && error.response?.data?.error === 'Please use a fresh authentication token.';
+        };
+        this.url = baseUrl;
+        this.keyPair = keyPair;
+    }
+    async _get(route) {
+        const headers = this.keyPair.privateKey?.toString('hex') ? {
+            Authentication: (0, $989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8)(this.url, this.keyPair)
+        } : {};
+        const response = await (0, $9PVwI$axios).get(`${this.url}${route}`, {
+            headers: headers
+        });
+        return response.data;
+    }
+    async _post(route, data) {
+        const headers = this.privateKey?.toString('hex') ? {
+            Authentication: (0, $989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8)(this.url, this.keyPair)
+        } : {};
+        const response = await (0, $9PVwI$axios).post(`${this.url}${route}`, data, {
+            headers: headers
+        });
+        return response.data;
+    }
+    async _delete(route) {
+        const headers = this.privateKey?.toString('hex') ? {
+            Authentication: (0, $989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8)(this.url, this.keyPair)
+        } : {};
+        const response = await (0, $9PVwI$axios).delete(`${this.url}${route}`, {
+            headers: headers
+        });
+        return response.data;
+    }
+    async get(route) {
+        try {
+            return await (0, $9PVwI$backOff)(()=>this._get(route), {
+                retry: this.retry,
+                numOfAttempts: $0bf978cc7e5ad20d$var$numOfAttempts
+            });
+        } catch (e) {
+            if (e.response && e.response.data) {
+                const { data: data } = e.response;
+                if (data.error) throw new Error(data.error);
+                else throw new Error(JSON.stringify(data));
+            }
+            throw e;
+        }
+    }
+    async post(route, datum) {
+        try {
+            return await (0, $9PVwI$backOff)(()=>this._post(route, datum), {
+                retry: this.retry,
+                numOfAttempts: $0bf978cc7e5ad20d$var$numOfAttempts
+            });
+        } catch (e) {
+            if (e.response && e.response.data) {
+                const { data: data } = e.response;
+                if (data.error) throw new Error(data.error);
+                else throw new Error(JSON.stringify(data));
+            }
+            throw e;
+        }
+    }
+    async delete(route) {
+        try {
+            return await (0, $9PVwI$backOff)(()=>this._delete(route), {
+                retry: this.retry,
+                numOfAttempts: $0bf978cc7e5ad20d$var$numOfAttempts
+            });
+        } catch (e) {
+            if (e.response && e.response.data) {
+                const { data: data } = e.response;
+                if (data.error) throw new Error(data.error);
+                else throw new Error(JSON.stringify(data));
+            }
+            throw e;
+        }
+    }
+}
+
+
+
+
+
+
+const $fdb3572e52dbf02d$var$ECPair = (0, $9PVwI$ECPairFactory)($9PVwI$bitcoincomputersecp256k1);
+class $fdb3572e52dbf02d$export$ea8b5b3aea9558ce {
+    constructor(params = {}){
+        const supported = [
+            'chain',
+            'mnemonic',
+            'network',
+            'passphrase',
+            'path',
+            'url',
+            'satPerByte',
+            'addressType',
+            'moduleStorageType',
+            'checkFee',
+            'mode'
+        ];
+        const invalidKeys = Object.keys(params).filter((key)=>!supported.includes(key));
+        if (invalidKeys.length > 0) throw new Error(`Invalid properties provided: ${invalidKeys.join(', ')}`);
+        const { chain: chain, network: network, mnemonic: mnemonic, path: path, passphrase: passphrase, addressType: addressType, url: url, satPerByte: satPerByte, moduleStorageType: moduleStorageType, checkFee: checkFee, mode: mode } = params;
+        this.chain = chain ? chain.toUpperCase() : 'LTC';
+        this.network = network ? network.toLowerCase() : 'regtest';
+        this.networkObj = (0, $303220cf0debbf6c$export$de754bb4cdcc210c)(this.chain, this.network);
+        this.mnemonic = mnemonic ?? (0, $9PVwI$generateMnemonic)();
+        this.path = path ?? (0, $303220cf0debbf6c$export$2aa3fd96c49a84a8)({
+            chain: this.chain,
+            network: this.network
+        });
+        this.passphrase = passphrase ?? (0, $bd5ff9060a235dd4$export$1035b0570451c823);
+        this.addressType = addressType ?? (0, $bd5ff9060a235dd4$export$9c80b82d32647b78);
+        this.mode = mode ?? 'dev';
+        this.url = url ?? 'https://rltc.node.bitcoincomputer.io' // ← added
+        ;
+        const chainDefaults = {
+            LTC: {
+                satPerByte: (0, $bd5ff9060a235dd4$export$bb38fdd194d4373f),
+                dustRelayTxFee: (0, $bd5ff9060a235dd4$export$14096f3be8a46637),
+                moduleStorageType: 'taproot'
+            },
+            BTC: {
+                satPerByte: (0, $bd5ff9060a235dd4$export$13e1a04b9affc983),
+                dustRelayTxFee: (0, $bd5ff9060a235dd4$export$1e7ef728e2683d27),
+                moduleStorageType: 'taproot'
+            },
+            DOGE: {
+                satPerByte: (0, $bd5ff9060a235dd4$export$e1763572af4d7bad),
+                dustRelayTxFee: (0, $bd5ff9060a235dd4$export$e7e3d18e730436b6),
+                moduleStorageType: 'multisig'
+            },
+            PEPE: {
+                satPerByte: (0, $bd5ff9060a235dd4$export$50e187a9fd923b2a),
+                dustRelayTxFee: (0, $bd5ff9060a235dd4$export$c32d443dbb2eda37),
+                moduleStorageType: 'multisig'
+            }
+        };
+        const defaults = chainDefaults[this.chain];
+        this.satPerByte = satPerByte ?? defaults.satPerByte;
+        this.dustRelayTxFee = defaults.dustRelayTxFee;
+        this.moduleStorageType = moduleStorageType ?? defaults.moduleStorageType;
+        const supportedChains = [
+            'LTC',
+            'BTC',
+            'DOGE',
+            'PEPE'
+        ];
+        if (!supportedChains.includes(this.chain)) throw new Error(`Unsupported chain: ${this.chain}. Supported: ${supportedChains.join(', ')}`);
+        if (![
+            'prod',
+            'dev',
+            'debug'
+        ].includes(this.mode)) throw new Error(`Invalid mode: ${this.mode}. Must be 'dev' or 'prod'`);
+        if (!(0, $9PVwI$validateMnemonic)(this.mnemonic)) throw new Error('Invalid mnemonic');
+        if (![
+            'mainnet',
+            'testnet',
+            'regtest'
+        ].includes(this.network)) throw new Error(`Please set 'network' to 'regtest', 'testnet' or 'mainnet'`);
+        if (this.moduleStorageType !== 'multisig' && this.moduleStorageType !== 'taproot') throw new Error(`Please set 'moduleStorageType' to 'multisig' or 'taproot'`);
+        if (this.mode === 'dev' && this.network === 'mainnet') throw new Error('Mainnet is only supported in production mode');
+        this.keyPair = (0, $303220cf0debbf6c$export$accea06471c18a5a)(this);
+        this.bcn = new (0, $0bf978cc7e5ad20d$export$bc3f23723d5e1cba)(this.url, this.keyPair) // ← now passes this.url
+        ;
+        if (this.mode === 'prod' && !Object.isFrozen(Object.prototype)) lockdown({
+            overrideTaming: 'severe'
+        });
+        this.checkFee = checkFee ?? false;
+    }
+    /* ==================== PRIVATE HELPERS ==================== */ get authHeader() {
+        return this.keyPair.privateKey ? (0, $989cbe3a18f5d1dd$export$8ca3fddf2a08fbf8)(this.url, this.keyPair) : undefined;
+    }
+    async _get(route) {
+        const headers = this.authHeader ? {
+            Authentication: this.authHeader
+        } : {};
+        const response = await (0, $9PVwI$axios).get(`${this.url}${route}`, {
+            headers: headers
+        });
+        return response.data;
+    }
+    async _post(route, data) {
+        const headers = this.authHeader ? {
+            Authentication: this.authHeader
+        } : {};
+        const response = await (0, $9PVwI$axios).post(`${this.url}${route}`, data, {
+            headers: headers
+        });
+        return response.data;
+    }
+    async _delete(route) {
+        const headers = this.authHeader ? {
+            Authentication: this.authHeader
+        } : {};
+        const response = await (0, $9PVwI$axios).delete(`${this.url}${route}`, {
+            headers: headers
+        });
+        return response.data;
+    }
+    /* ==================== NODE METHODS ==================== */ async rpc(method, params) {
+        return this.bcn.post(`/v1/${this.chain}/${this.network}/rpc`, {
+            method: method,
+            params: params
+        });
+    }
+    async broadcast(txHex) {
+        const { chain: chain, network: network } = this;
+        return this.bcn.post(`/v1/${chain}/${network}/tx/post`, {
+            hex: txHex
+        });
+    }
+    async cleanMempool() {
+        const { chain: chain, network: network } = this;
+        return this.bcn.post(`/v1/${chain}/${network}/clean-mempool`, undefined);
+    }
+    async getBalance(address) {
+        const { chain: chain, network: network } = this;
+        const res = await this.bcn.get(`/v1/${chain}/${network}/address/${address}/balance`);
+        return (0, $303220cf0debbf6c$export$76f8b5ba27b3a9fe)(res);
+    }
+    async listTxs(address) {
+        const { chain: chain, network: network } = this;
+        const rest = await this.bcn.get(`/v1/${chain}/${network}/wallet/${address}/list-txs`);
+        const sentTxs = rest.sentTxs.map(({ txId: txId, inputsSatoshis: inputsSatoshis, outputsSatoshis: outputsSatoshis, satoshis: satoshis })=>({
+                txId: txId,
+                inputsSatoshis: BigInt(inputsSatoshis),
+                outputsSatoshis: BigInt(outputsSatoshis),
+                satoshis: BigInt(satoshis)
+            }));
+        const receivedTxs = rest.receivedTxs.map(({ txId: txId, inputsSatoshis: inputsSatoshis, outputsSatoshis: outputsSatoshis, satoshis: satoshis })=>({
+                txId: txId,
+                inputsSatoshis: BigInt(inputsSatoshis),
+                outputsSatoshis: BigInt(outputsSatoshis),
+                satoshis: BigInt(satoshis)
+            }));
+        return {
+            sentTxs: sentTxs,
+            receivedTxs: receivedTxs
+        };
+    }
+    /* ==================== GET-TXOS FAMILY (clean union-based private helper) ==================== */ async _getTXOs(query) {
+        const { chain: chain, network: network } = this;
+        // === EXACT ORIGINAL VALIDATION (unchanged) ===
+        if (!query || Object.values(query).filter((v)=>v !== query.verbosity).every((v)=>v === undefined)) throw new Error('At least one query parameter must be provided');
+        if (query.verbosity !== undefined && (isNaN(Number(query.verbosity)) || ![
+            0,
+            1
+        ].includes(Number(query.verbosity)))) throw new Error('verbosity must be a number either 0 or 1');
+        if (query.isSpent && query.isSpent !== true && query.isSpent !== false) throw new Error('spent must be either true or false');
+        if (query.order && query.order !== 'ASC' && query.order !== 'DESC') throw new Error("order must be either 'ASC' or 'DESC'");
+        if (query.limit !== undefined && isNaN(Number(query.limit))) throw new Error('limit must be a number');
+        if (query.offset !== undefined && isNaN(Number(query.offset))) throw new Error('offset must be a number');
+        if (query.isObject && query.isObject !== true && query.isObject !== false) throw new Error('isSmartObject must be either true or false');
+        if (query.satoshis !== undefined) try {
+            BigInt(query.satoshis);
+        } catch (e) {
+            throw new Error('satoshis must be a BigInt parsable string');
+        }
+        if (query.publicKey !== undefined && !(0, $303220cf0debbf6c$export$b02a40aff8e4ad18)(query.publicKey)) throw new Error('publicKey must be a hex string');
+        if (query.previous !== undefined && !(0, $303220cf0debbf6c$export$ec70ee4fa0462cba)(query.previous)) throw new Error('previous must be a hex string');
+        if (query.blockHash !== undefined && !(0, $303220cf0debbf6c$export$b02a40aff8e4ad18)(query.blockHash)) throw new Error('blockHash must be a hex string');
+        if (query.asm !== undefined) {
+            if (!(0, $9PVwI$script).fromASM(query.asm)) throw new Error('asm is not a valid script');
+        }
+        let expHash;
+        if (query.exp !== undefined) {
+            if (typeof query.exp !== 'string') throw new Error('exp must be a string');
+            expHash = (0, $9PVwI$crypto).sha256(Buffer.from(query.exp)).toString('hex');
+        }
+        const searchParams = new URLSearchParams();
+        const { exp: exp, ...restQuery } = query;
+        const apiQuery = {
+            ...restQuery,
+            ...expHash ? {
+                expHash: expHash
+            } : {}
+        };
+        Object.entries(apiQuery).forEach(([key, value])=>{
+            if (value !== undefined) searchParams.append(key, String(value));
+        });
+        const route = `/v1/${chain}/${network}/get-txos?${searchParams.toString()}`;
+        if (query.verbosity === 1) {
+            const res = await this.bcn.get(route);
+            return res.map((txo)=>({
+                    ...txo,
+                    satoshis: BigInt(txo.satoshis)
+                }));
+        }
+        return await this.bcn.get(route);
+    }
+    async getTXOs(query) {
+        return this._getTXOs(query);
+    }
+    async getUTXOs(query) {
+        return this._getTXOs({
+            ...query,
+            isSpent: false
+        });
+    }
+    async getOTXOs(query) {
+        return this._getTXOs({
+            ...query,
+            isObject: true
+        });
+    }
+    async getOUTXOs(query) {
+        return this._getTXOs({
+            ...query,
+            isObject: true,
+            isSpent: false
+        });
+    }
+    async getRawTxs(txIds) {
+        const { chain: chain, network: network } = this;
+        return this.bcn.post(`/v1/${chain}/${network}/tx/bulk/`, {
+            txIds: txIds
+        });
+    }
+    async checkStreamParameters(searchParams) {
+        const { chain: chain, network: network } = this;
+        return this.bcn.get(`/v1/${chain}/${network}/subscribe-check?${searchParams.toString()}`);
+    }
+    async getRawTx(txId) {
+        const { chain: chain, network: network } = this;
+        return this.bcn.get(`/v1/${chain}/${network}/tx/${txId}/hex`);
+    }
+    async getTx(txId) {
+        const { chain: chain, network: network } = this;
+        const res = await this.bcn.get(`/v1/${chain}/${network}/tx/${txId}/json`);
+        res.outs.forEach((output)=>{
+            Object.assign(output, {
+                value: BigInt(output.value)
+            });
+        });
+        return res;
+    }
+    async getAncestors(txId) {
+        return this.bcn.get(`/v1/${this.chain}/${this.network}/tx/${txId}/ancestors`);
+    }
+    /* ==================== BITCOIN COMPUTER METHODS (unchanged) ==================== */ async query({ publicKey: publicKey, limit: limit, offset: offset, order: order, mod: mod }) {
+        if (mod && typeof mod !== 'string') throw new Error('Module specifier must be a string');
+        if (publicKey && typeof publicKey !== 'string') throw new Error('PublicKey must be string encoded');
+        if (limit && typeof limit !== 'number') throw new Error('Limit must be a number');
+        if (limit && limit < 0) throw new Error('Limit must not be negative');
+        if (offset && typeof offset !== 'number') throw new Error('Offset must be a number');
+        if (offset && offset < 0) throw new Error('Offset must not be negative');
+        if (order && ![
+            'ASC',
+            'DESC'
+        ].includes(order)) throw new Error('Order must be "ASC" or "DESC"');
+        const searchParams = new URLSearchParams();
+        if (typeof mod !== 'undefined') searchParams.append('mod', mod);
+        if (typeof publicKey !== 'undefined') searchParams.append('publicKey', publicKey);
+        if (typeof limit !== 'undefined') searchParams.append('limit', limit.toString());
+        if (typeof offset !== 'undefined') searchParams.append('offset', offset.toString());
+        if (typeof order !== 'undefined') searchParams.append('order', order);
+        if (searchParams.toString() === '') throw new Error('Query must not be empty');
+        return this.getTXOs({
+            publicKey: publicKey,
+            isSpent: false,
+            limit: limit,
+            offset: offset,
+            order: order,
+            mod: mod,
+            verbosity: 0,
+            isObject: false
+        });
+    }
+    async first(rev) {
+        const { chain: chain, network: network } = this;
+        return this.bcn.post(`/v1/${chain}/${network}/revToId`, {
+            rev: rev
+        });
+    }
+    static async getSecretOutput({ _url: _url, keyPair: keyPair }) {
+        const urlSplit = _url.split('/');
+        const id = urlSplit[urlSplit.length - 1];
+        const host = urlSplit.slice(0, -2).join('/');
+        const server = new (0, $0bf978cc7e5ad20d$export$bc3f23723d5e1cba)(host, keyPair);
+        const data = await server.get(`/v1/store/${id}`);
+        return {
+            host: host,
+            data: data
+        };
+    }
+    static async setSecretOutput({ secretOutput: secretOutput, host: host, keyPair: keyPair }) {
+        const server = new (0, $0bf978cc7e5ad20d$export$bc3f23723d5e1cba)(host, keyPair);
+        return server.post(`/v1/store/`, secretOutput);
+    }
+    static async deleteSecretOutput({ _url: _url, keyPair: keyPair }) {
+        const urlSplit = _url.split('/');
+        const id = urlSplit[urlSplit.length - 1];
+        const host = urlSplit.slice(0, -2).join('/');
+        const server = new (0, $0bf978cc7e5ad20d$export$bc3f23723d5e1cba)(host, keyPair);
+        await server.delete(`/v1/store/${id}`);
+    }
+    /* ==================== FAUCET & NODE METHODS (exact original) ==================== */ getRandomAddress() {
+        const hdPrivateKey = (0, $303220cf0debbf6c$export$accea06471c18a5a)({
+            path: (0, $303220cf0debbf6c$export$2aa3fd96c49a84a8)({
+                chain: this.chain,
+                network: this.network
+            }),
+            networkObj: this.networkObj
+        });
+        return (0, $9PVwI$address).fromPublicKey(hdPrivateKey.publicKey, this.addressType, this.networkObj);
+    }
+    async faucet(address, value) {
+        const valueBtc = value / 1e8;
+        const { result: res } = await this.rpc('sendtoaddress', `${address} ${valueBtc} '' ''`);
+        const txId = res.result;
+        await this.rpc('generatetoaddress', `1 ${this.getRandomAddress()}`);
+        const { result: res2 } = await this.rpc('getrawtransaction', `${txId} 1`);
+        const fetchedTx = res2.result;
+        const vout = fetchedTx.vout.findIndex((x)=>x.value * 1e8 === value);
+        return {
+            txId: txId,
+            vout: vout,
+            height: -1,
+            satoshis: BigInt(value)
+        };
+    }
+    async faucetScript(script, value) {
+        const key = $fdb3572e52dbf02d$var$ECPair.makeRandom({
+            network: this.networkObj
+        });
+        const payment = (0, $9PVwI$payments).p2pkh({
+            pubkey: key.publicKey,
+            network: this.networkObj
+        });
+        const { address: address } = payment;
+        const resTxId = (await this.rpc('sendtoaddress', `${address} ${value * 2 / 1e8} '' ''`)).result;
+        const txId = resTxId.result;
+        const res = (await this.rpc('getrawtransaction', `${txId} 1`)).result;
+        const fetchedTx = res.result;
+        let voutIndex = -1;
+        for(let i = 0; i < fetchedTx.vout.length; i += 1){
+            const output = fetchedTx.vout[i];
+            if (output.scriptPubKey && output.scriptPubKey.address && output.scriptPubKey.address.includes(address) || output.scriptPubKey.addresses && output.scriptPubKey.addresses.includes(address)) {
+                voutIndex = i;
+                break;
+            }
+        }
+        if (voutIndex === -1) throw new Error('Could not find the output index for the given address');
+        let counter = 10;
+        let unspent;
+        do unspent = await this.rpc('gettxout', `${txId} ${voutIndex} true`);
+        while (unspent.error && counter--);
+        if (unspent.error) throw new Error('Could not find the faucet transaction');
+        const txvb = new (0, $9PVwI$Psbt)({
+            network: this.networkObj
+        });
+        txvb.addInput({
+            hash: txId,
+            index: voutIndex,
+            nonWitnessUtxo: Buffer.from(fetchedTx.hex, 'hex')
+        });
+        txvb.addOutput({
+            script: script,
+            value: value
+        });
+        txvb.signInput(0, key);
+        txvb.finalizeAllInputs();
+        const txv = txvb.extractTransaction(true);
+        const { result: res2 } = await this.rpc('sendrawtransaction', `${txv.toHex()}`);
+        const txIdScript = res2.result;
+        let voutPsbt = 0;
+        let foundPsbt = await this.rpc('gettxout', `${txIdScript} ${voutPsbt} true`);
+        if (foundPsbt.error) foundPsbt = await this.rpc('gettxout', `${txIdScript} ${++voutPsbt} true`);
+        if (foundPsbt.error) foundPsbt = await this.rpc('gettxout', `${txIdScript} ${++voutPsbt} true`);
+        if (foundPsbt.error) throw new Error('No UTXO found');
+        return {
+            txId: txv.getId(),
+            vout: voutPsbt,
+            height: -1,
+            satoshis: BigInt(Math.round(foundPsbt.result.result.value * 100000000))
+        };
+    }
+    async mine(count) {
+        return this.rpc('generatetoaddress', `${count} ${this.getRandomAddress()}`);
+    }
+    async verify(txo) {
+        const res = await this.rpc('getrawtransaction', `${txo.txId} 1`);
+        const txoActual = res.result.result.vout[txo.vout];
+        if (txo.scriptPubKey && txoActual.scriptPubKey !== txo.scriptPubKey) throw new Error('Address mismatch');
+        if (txo.satoshis && BigInt(txoActual.value) * 100000000n !== txo.satoshis) throw new Error('Value Mismatch');
+    }
+    async height() {
+        const { result: topBlockHash } = await this.rpc('getbestblockhash', '');
+        const { result: result } = await this.rpc('getblockheader', `${topBlockHash.result}`);
+        return result.result.height;
+    }
+    async next(rev) {
+        const { chain: chain, network: network } = this;
+        const url = `/v1/${chain}/${network}/next/${rev}`;
+        const { rev: r } = await this.bcn.get(url);
+        return r;
+    }
+    async prev(rev) {
+        const { chain: chain, network: network } = this;
+        const url = `/v1/${chain}/${network}/prev/${rev}`;
+        const { rev: r } = await this.bcn.get(url);
+        return r ?? undefined;
+    }
+    async latest(rev) {
+        const { chain: chain, network: network } = this;
+        const url = `/v1/${chain}/${network}/latest/${rev}`;
+        const { rev: r } = await this.bcn.get(url);
+        return r;
+    }
+}
+
+
+
+function $88b91cd8c4477eb9$export$6f57813fe9f31bf9(obj, url, keyPair) {
+    return url ? (0, $fdb3572e52dbf02d$export$ea8b5b3aea9558ce).setSecretOutput({
+        host: url,
+        secretOutput: {
+            data: JSON.stringify(obj)
+        },
+        keyPair: keyPair
+    }) : obj;
+}
+async function $88b91cd8c4477eb9$export$e7aa7bc5c1b3cfb3(obj, keyPair) {
+    if ((0, $d205febb791b53ee$export$18d65c6a1aeeaec7)(obj)) {
+        const { _url: _url, ...rest } = obj;
+        const { host: host, data: data } = await (0, $fdb3572e52dbf02d$export$ea8b5b3aea9558ce).getSecretOutput({
+            _url: _url,
+            keyPair: keyPair
+        });
+        return {
+            ...rest,
+            ...JSON.parse(data),
+            _url: host
+        };
+    }
+    return obj;
+}
+
+
+
+const $deb927b75e1890ae$export$a4ad2735b021c132 = '0.26.0-beta.0';
+
+
+
+
+
+
+
+$9PVwI$ECIES_CONFIG.symmetricAlgorithm = 'aes-256-gcm';
+$9PVwI$ECIES_CONFIG.symmetricNonceLength = 12;
+const $2e54c381077e6c48$var$webCryptoPromise = (async ()=>{
+    if (0, $303220cf0debbf6c$export$4e09c449d6c407f7) return globalThis.crypto;
+    else return $9PVwI$webcrypto;
+})();
+async function $2e54c381077e6c48$export$c83d4bcc905511a5() {
+    const webCrypto = await $2e54c381077e6c48$var$webCryptoPromise;
+    const bytes = webCrypto.getRandomValues(new Uint8Array(32));
+    return (0, $9PVwI$Buffer).from(bytes).toString('hex');
+}
+async function $2e54c381077e6c48$export$52b2fbbd12724c12(message, secret) {
+    if (!/^[0-9a-f]{64}$/i.test(secret)) throw new Error('Invalid secret');
+    const webCrypto = await $2e54c381077e6c48$var$webCryptoPromise;
+    const { subtle: subtle } = webCrypto;
+    const keyBytes = new Uint8Array((0, $9PVwI$Buffer).from(secret, 'hex'));
+    const iv = webCrypto.getRandomValues(new Uint8Array(12));
+    const key = await subtle.importKey('raw', keyBytes, 'AES-GCM', true, [
+        'encrypt'
+    ]);
+    const data = new TextEncoder().encode(message);
+    const encrypted = await subtle.encrypt({
+        name: 'AES-GCM',
+        iv: iv
+    }, key, data);
+    const full = new Uint8Array(iv.byteLength + encrypted.byteLength);
+    full.set(iv, 0);
+    full.set(new Uint8Array(encrypted), iv.byteLength);
+    return (0, $9PVwI$Buffer).from(full).toString('base64');
+}
+async function $2e54c381077e6c48$export$496fc7864dba515e(encrypted, secret) {
+    if (!/^[0-9a-f]{64}$/i.test(secret)) throw new Error('Invalid secret');
+    const full = new Uint8Array((0, $9PVwI$Buffer).from(encrypted, 'base64'));
+    if (full.length < 28) throw new Error('Decryption failure') // Min: IV + tag
+    ;
+    const iv = full.slice(0, 12);
+    const ciphertext = full.slice(12);
+    const webCrypto = await $2e54c381077e6c48$var$webCryptoPromise;
+    const { subtle: subtle } = webCrypto;
+    const keyBytes = new Uint8Array((0, $9PVwI$Buffer).from(secret, 'hex'));
+    const key = await subtle.importKey('raw', keyBytes, 'AES-GCM', true, [
+        'decrypt'
+    ]);
+    let decrypted;
+    try {
+        decrypted = await subtle.decrypt({
+            name: 'AES-GCM',
+            iv: iv
+        }, key, ciphertext);
+    } catch  {
+        throw new Error('Decryption failure');
+    }
+    return new TextDecoder().decode(decrypted);
+}
+function $2e54c381077e6c48$export$ff4060c8805361f3(message, publicKey) {
+    if (!/^0[2-3][0-9a-f]{64}|04[0-9a-f]{128}$/i.test(publicKey)) throw new Error('Invalid publicKey');
+    const msgBytes = new TextEncoder().encode(message);
+    return $9PVwI$encrypt(publicKey, msgBytes).toString('base64');
+}
+function $2e54c381077e6c48$export$d702cea5b1df4a97(encrypted, privateKey) {
+    if (!/^[0-9a-f]{64}$/i.test(privateKey)) throw new Error('Invalid privateKey');
+    const encBytes = new Uint8Array((0, $9PVwI$Buffer).from(encrypted, 'base64'));
+    let bytes;
+    try {
+        bytes = $9PVwI$decrypt(privateKey, encBytes);
+    } catch (err) {
+        if (err.message === 'Unsupported state or unable to authenticate data') throw new Error('Decryption failure');
+        throw err;
+    }
+    return new TextDecoder().decode(bytes);
+}
+async function $2e54c381077e6c48$export$60a153e45a5d0ad8(message, publicKeys) {
+    const secret = await $2e54c381077e6c48$export$c83d4bcc905511a5();
+    return {
+        __cypher: await $2e54c381077e6c48$export$52b2fbbd12724c12(message, secret),
+        __secrets: [
+            ...new Set(publicKeys)
+        ].map((publicKey)=>$2e54c381077e6c48$export$ff4060c8805361f3(secret, publicKey))
+    };
+}
+async function $2e54c381077e6c48$export$28eea9a217b16b0a({ __cypher: __cypher, __secrets: __secrets }, privateKey) {
+    for (const encryptedSecret of __secrets)try {
+        const secret = $2e54c381077e6c48$export$d702cea5b1df4a97(encryptedSecret, privateKey.toString('hex'));
+        return await $2e54c381077e6c48$export$496fc7864dba515e(__cypher, secret);
+    } catch (err) {
+        if (err instanceof Error && err.message !== 'Decryption failure') throw err;
+    }
+    throw new Error('Decryption failure');
+}
+const $2e54c381077e6c48$export$e85a0c9a1067c5d3 = async (data, privateKey)=>(0, $d205febb791b53ee$export$691b4523c5340423)(data) ? {
+        ...JSON.parse(await $2e54c381077e6c48$export$28eea9a217b16b0a(data, privateKey)),
+        ioMap: data.ioMap ?? [],
+        _readers: []
+    } : data;
+const $2e54c381077e6c48$export$5b0f6292f11d1d18 = async (data, readers)=>readers ? await $2e54c381077e6c48$export$60a153e45a5d0ad8(JSON.stringify(data), readers) : data;
+
+
+
+
+class $9723fb8a051ef3ce$export$7dc1820ecc9cc6de extends Error {
+    constructor(message){
+        super(message);
+        this.name = 'InvalidUpdateError';
+    }
+}
+class $9723fb8a051ef3ce$export$489a84f048b0ef8 {
+    constructor({ inRevs: inRevs = [], ownerData: ownerData = [], transition: transition = new (0, $9ca517853ec47831$export$be58926105124dd4)({
+        exp: '',
+        env: {},
+        mod: undefined
+    }), txId: txId, effect: effect } = {}){
+        this.inRevs = inRevs;
+        this.ownerData = ownerData;
+        this.transition = transition;
+        this.txId = txId;
+        this.effect = effect;
+    }
+    /**
+   * Serializes the Update to JSON, handling BigInt and Buffer → ASM round-tripping.
+   * Exact same runtime behavior as before.
+   */ serialize() {
+        const { inRevs: inRevs, ownerData: ownerData, transition: transition, txId: txId } = this;
+        return JSON.stringify({
+            inRevs: inRevs,
+            ownerData: ownerData,
+            transition: transition,
+            txId: txId
+        }, $9723fb8a051ef3ce$export$489a84f048b0ef8.replacer, 2);
+    }
+    /**
+   * Deserializes JSON back to an Update instance.
+   * Exact same runtime behavior as before.
+   */ static deserialize(json) {
+        const parsed = JSON.parse(json, $9723fb8a051ef3ce$export$489a84f048b0ef8.reviver);
+        return new $9723fb8a051ef3ce$export$489a84f048b0ef8(parsed);
+    }
+    /**
+   * Alias for modern code (recommended over `serialize`).
+   * Behavior unchanged.
+   */ toJSON() {
+        return this.serialize();
+    }
+    /**
+   * Alias for modern code (recommended over `deserialize`).
+   * Behavior unchanged.
+   */ static fromJSON(json) {
+        return $9723fb8a051ef3ce$export$489a84f048b0ef8.deserialize(json);
+    }
+    static{
+        this.replacer = (key, value)=>{
+            if (key === '_satoshis' && typeof value === 'bigint') return value.toString();
+            if (key === 'outScriptBuf' && Buffer.isBuffer(value)) return (0, $9PVwI$script).toASM(value);
+            return value;
+        };
+    }
+    static{
+        this.reviver = (key, value)=>{
+            if (key === '_satoshis' && typeof value === 'string') return BigInt(value);
+            if (key === 'outScriptBuf' && typeof value === 'string') return (0, $9PVwI$script).fromASM(value);
+            return value;
+        };
+    }
+    /**
+   * Full list of old revisions (including undefined for brand-new objects).
+   * This preserves the exact length and semantics of the original implementation.
+   */ get oldOutRevs() {
+        return this.ownerData.map((o)=>o.oldRev);
+    }
+    get newOutRevs() {
+        if (!this.txId) throw new Error('txId not set');
+        return this.ownerData.map((_, i)=>`${this.txId}:${i}`);
+    }
+    get ioMap() {
+        return this.inRevs.map((rev)=>this.oldOutRevs.indexOf(rev));
+    }
+    /**
+   * Exact same logic as the original `Transaction.zip` / pre-typing `Update.zip`.
+   * Returns `[oldRev or undefined, newRev]` for each output.
+   */ zip() {
+        try {
+            return this.newOutRevs.map((rev, i)=>[
+                    this.inRevs[this.ioMap.indexOf(i)],
+                    rev
+                ]);
+        } catch  {
+            return [];
+        }
+    }
+    /**
+   * Creates an Update from a transaction ID by fetching and decrypting it.
+   * Exact same runtime behavior.
+   */ static async fromTxId(txId, wallet) {
+        const { restClient: restClient } = wallet;
+        const tx = await (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromTxId({
+            txId: txId,
+            restClient: restClient
+        });
+        return $9723fb8a051ef3ce$export$489a84f048b0ef8.fromTx(tx, restClient);
+    }
+    /**
+   * Creates an Update from a raw Transaction object.
+   * Exact same runtime behavior.
+   */ static async fromTx(tx, { keyPair: keyPair }) {
+        const { inRevs: inRevs, ownerData: ownerData, onChainMetaData: onChainMetaData, txId: txId } = tx;
+        const { privateKey: privateKey } = keyPair;
+        if (!privateKey) throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de('Could not find private key');
+        const fetched = await (0, $88b91cd8c4477eb9$export$e7aa7bc5c1b3cfb3)(onChainMetaData, keyPair);
+        const decrypted = await (0, $2e54c381077e6c48$export$e85a0c9a1067c5d3)(fetched, privateKey);
+        const transition = {
+            ...decrypted,
+            env: $9723fb8a051ef3ce$export$489a84f048b0ef8.decodeEnv(decrypted.env, tx)
+        };
+        return new $9723fb8a051ef3ce$export$489a84f048b0ef8({
+            inRevs: inRevs,
+            ownerData: ownerData,
+            transition: transition,
+            txId: txId
+        });
+    }
+    static buildOwnerOutput(entry, index, wallet, txFromChain) {
+        const { restClient: restClient, publicKey: publicKey } = wallet;
+        const { _owners: _owners, _satoshis: _satoshis, _readers: _readers, _url: _url } = entry;
+        const n = {
+            network: restClient.networkObj
+        };
+        let outScriptBuf;
+        if (typeof _owners === 'undefined') outScriptBuf = txFromChain ? txFromChain.ownerData[index].outScriptBuf : $8636fd77165bd4bc$export$50e49a79004f0f9([
+            publicKey.toString('hex')
+        ], restClient);
+        else if (typeof _owners === 'string') {
+            const redeemScript = (0, $9PVwI$script).fromASM(_owners.trim().replace(/\s+/g, ' '));
+            outScriptBuf = (0, $9PVwI$payments).p2sh({
+                redeem: {
+                    output: redeemScript,
+                    ...n
+                },
+                ...n
+            }).output;
+        } else if (typeof _owners === 'object' && Array.isArray(_owners)) outScriptBuf = $8636fd77165bd4bc$export$50e49a79004f0f9(_owners || txFromChain?.ownerData[index]?._owners, restClient);
+        else throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de('Invalid owners');
+        const dust = BigInt(wallet.getDustThreshold(false, outScriptBuf));
+        return {
+            _satoshis: _satoshis === undefined || _satoshis < dust ? dust : _satoshis,
+            _owners: typeof _owners === 'string' ? _owners : $8636fd77165bd4bc$export$a295b4f1f291e064(outScriptBuf),
+            outScriptBuf: outScriptBuf,
+            _readers: _readers,
+            _url: _url
+        };
+    }
+    /**
+   * Converts the Update to a signed Transaction (or validates if from chain).
+   * Exact same runtime behavior.
+   */ async toTx(wallet) {
+        const { inRevs: inRevs, ownerData: ownerData, transition: transition, ioMap: ioMap } = this;
+        const { exp: exp, mod: mod, env: env } = transition;
+        const { restClient: restClient } = wallet;
+        const { keyPair: keyPair } = restClient;
+        const nestedReaders = ownerData.map((d)=>d._readers);
+        if (!(0, $303220cf0debbf6c$export$fb9431c544c373fd)(nestedReaders)) throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de('_readers must be the same for all objects');
+        const readers = nestedReaders[0];
+        const nestedUrls = ownerData.map((d)=>d._url);
+        if (!(0, $303220cf0debbf6c$export$fb9431c544c373fd)(nestedUrls)) throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de('_url must be the same for all objects');
+        const url = nestedUrls[0];
+        const encoded = {
+            exp: exp,
+            env: $9723fb8a051ef3ce$export$489a84f048b0ef8.encodeEnv(env, inRevs),
+            mod: mod,
+            v: (0, $deb927b75e1890ae$export$a4ad2735b021c132)
+        };
+        const encrypted = await (0, $2e54c381077e6c48$export$5b0f6292f11d1d18)(encoded, readers);
+        const stored = await (0, $88b91cd8c4477eb9$export$6f57813fe9f31bf9)(encrypted, url, keyPair);
+        const onChainMetaData = {
+            ...stored,
+            ioMap: ioMap
+        };
+        const tx = new (0, $4b62a469f572a3c6$export$febc5573c75cefb0)();
+        tx.spendFromData(inRevs);
+        tx.createDataOuts(ownerData, onChainMetaData, wallet);
+        return tx;
+    }
+    static equal(u1, u2) {
+        const compare = (computedOut, fromTxOut)=>computedOut._satoshis === fromTxOut._satoshis && computedOut.outScriptBuf.equals(fromTxOut.outScriptBuf);
+        return (0, $303220cf0debbf6c$export$7efc99439b8625a3)(u1.ownerData, u2.ownerData, compare) && (0, $303220cf0debbf6c$export$7efc99439b8625a3)(u1.inRevs, u2.inRevs);
+    }
+    /**
+   * Used in debug mode to provide detailed diff when transactions mismatch.
+   * Exact same runtime behavior (including the debug message).
+   */ static testEqual(u1, u2, mode) {
+        if (mode !== 'debug') {
+            if (this.equal(u1, u2)) return;
+            throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de('Invalid transaction.');
+        }
+        const compare = (computedOut, fromTxOut)=>computedOut._satoshis === fromTxOut._satoshis && (computedOut.outScriptBuf === undefined && fromTxOut.outScriptBuf === undefined || computedOut.outScriptBuf && fromTxOut.outScriptBuf && computedOut.outScriptBuf.equals(fromTxOut.outScriptBuf));
+        const summary = [];
+        const od1 = u1.ownerData;
+        const od2 = u2.ownerData;
+        if (od1.length !== od2.length) summary.push(`ownerData lengths differ: ${od1.length} vs ${od2.length}`);
+        else for(let i = 0; i < od1.length; i++){
+            const c1 = od1[i];
+            const c2 = od2[i];
+            if (!compare(c1, c2)) {
+                const diffParts = [];
+                if (c1._satoshis !== c2._satoshis) diffParts.push(`satoshis: ${c1._satoshis} vs ${c2._satoshis}`);
+                const buf1 = c1.outScriptBuf;
+                const buf2 = c2.outScriptBuf;
+                if (buf1 === undefined !== (buf2 === undefined) || buf1 && buf2 && !buf1.equals(buf2)) diffParts.push('outScriptBuf differs');
+                summary.push(`ownerData at index ${i}: ${diffParts.join(', ')}`);
+            }
+        }
+        const ir1 = u1.inRevs;
+        const ir2 = u2.inRevs;
+        if (ir1.length !== ir2.length) summary.push(`inRevs lengths differ: ${ir1.length} vs ${ir2.length}`);
+        else {
+            for(let i = 0; i < ir1.length; i++)if (ir1[i] !== ir2[i]) summary.push(`inRevs at index ${i}: ${ir1[i]} vs ${ir2[i]}`);
+        }
+        if (this.equal(u1, u2)) return;
+        const msg = `Invalid transaction.\nSummary: ${summary.join(', ')}\nDetails:\n --- computed update ---\n${u1.serialize()}\n --- read update ---\n${u2.serialize()}`;
+        throw new $9723fb8a051ef3ce$export$7dc1820ecc9cc6de(msg);
+    }
+    // todo: remove this function
+    async broadcast(wallet) {
+        const transaction = await this.toTx(wallet);
+        await wallet.fund(transaction);
+        await wallet.sign(transaction);
+        await wallet.broadcast(transaction);
+        return transaction.outRevs;
+    }
+    static decodeEnv(env, tx) {
+        return Object.entries(env).reduce((acc, [key, idx])=>{
+            const { hash: hash, index: index } = tx.ins[idx];
+            acc[key] = `${(0, $303220cf0debbf6c$export$577f793df735f4a1)(hash)}:${index}`;
+            return acc;
+        }, {});
+    }
+    static encodeEnv(env, inRevs) {
+        return Object.entries(env).reduce((acc, [key, rev])=>{
+            const [txId, index] = rev.split(':').slice(-2);
+            acc[key] = inRevs.map((s)=>s.split(':').slice(-2).join(':')).indexOf(`${txId}:${index}`);
+            return acc;
+        }, {});
+    }
+}
+
+
+
+
+
+
+
+
+
+class $0b77d8afb5886e41$export$f2aa9e51325c9c38 {
+    /**
+   * Handles property access: Returns data properties transparently. For function properties,
+   * binds the function to the target to ensure 'this' refers to the inner object during calls,
+   * preventing 'this' hijacking and maintaining encapsulation during method invocation.
+   *
+   * Enhanced in v2.10.2: method bodies now run under _sudo so internal mutations (this.n += 1)
+   * are always allowed when calling methods on live smart objects (even after manual encode+ broadcast).
+   */ get(target, property) {
+        const value = Reflect.get(target, property);
+        if (typeof value === 'function') return value.bind(target);
+        return value;
+    }
+    /**
+   * Blocks direct property assignments in user mode to enforce encapsulation.
+   * In admin mode, forwards to the target (inner proxy), allowing controlled updates.
+   *
+   * @param target The target instance.
+   * @param property The property key.
+   * @param value The value to set.
+   * @returns True if set succeeded (in admin mode).
+   */ set(target, property, value) {
+        if (!(0, $aec7dd200596fb2a$export$fdc4f9968fbdadc6)()) throw new Error(`Cannot set property '${String(property)}' directly`);
+        return Reflect.set(target, property, value);
+    }
+    /**
+   * Blocks property definitions/redefinitions in user mode.
+   * In admin mode, allows data properties but prevents defining/updating functions, getters, or setters
+   * to support method-immutability.
+   *
+   * @param target The target instance.
+   * @param property The property key.
+   * @param descriptor The property descriptor.
+   * @returns True if definition succeeded (in admin mode, for valid descriptors).
+   */ defineProperty(target, property, descriptor) {
+        if (!(0, $aec7dd200596fb2a$export$fdc4f9968fbdadc6)()) throw new Error(`Cannot define property '${String(property)}'`);
+        if (descriptor.value && typeof descriptor.value === 'function' || descriptor.get || descriptor.set) throw new Error('Cannot define or update a function, getter, or setter property');
+        return Reflect.defineProperty(target, property, descriptor);
+    }
+    /**
+   * Blocks property deletions in user mode to prevent unauthorized removals.
+   * In admin mode, forwards to the target (inner proxy) for controlled deletions.
+   * (Note: Inner handler protects keywords; deletions are rare in persistence but allowed here for flexibility.)
+   *
+   * @param target The target instance (unused but included for API completeness).
+   * @param property The property key.
+   * @returns True if deletion succeeded (in admin mode).
+   */ deleteProperty(target, property) {
+        if (!(0, $aec7dd200596fb2a$export$fdc4f9968fbdadc6)()) throw new Error(`Cannot delete property '${String(property)}' directly`);
+        return Reflect.deleteProperty(target, property);
+    }
+    /**
+   * Complete reflection support for BC_BRAND and PROXY_TAG (v2.9.1).
+   * Guarantees that `Object.hasOwn(obj, BC_BRAND)` and similar checks succeed on the proxy.
+   */ has(target, property) {
+        if (property === (0, $d205febb791b53ee$export$581775e22cfad3dd) || property === (0, $d205febb791b53ee$export$3bb4a3f4a9646a6a)) return true;
+        return Reflect.has(target, property);
+    }
+    /**
+   * Complete reflection support for BC_BRAND and PROXY_TAG (v2.9.1).
+   * Ensures `Object.getOwnPropertyDescriptor` returns the correct hidden descriptor.
+   */ getOwnPropertyDescriptor(target, property) {
+        if (property === (0, $d205febb791b53ee$export$581775e22cfad3dd) || property === (0, $d205febb791b53ee$export$3bb4a3f4a9646a6a)) return {
+            value: true,
+            writable: false,
+            configurable: false,
+            enumerable: false
+        };
+        return Reflect.getOwnPropertyDescriptor(target, property);
+    }
+    /**
+   * Complete reflection support for BC_BRAND and PROXY_TAG (v2.9.1).
+   * Hides the internal symbols from `Object.keys`, `JSON.stringify`, etc.
+   */ ownKeys(target) {
+        return Reflect.ownKeys(target).filter((k)=>k !== (0, $d205febb791b53ee$export$581775e22cfad3dd) && k !== (0, $d205febb791b53ee$export$3bb4a3f4a9646a6a));
+    }
+    /**
+   * Always blocks prototype changes to prevent prototype pollution attacks.
+   * This is unconditional (even in admin mode) as prototypes are set during construction
+   * and should remain immutable for security.
+   *
+   * @param _target The target instance (unused).
+   * @param _newPrototype The proposed new prototype (unused).
+   * @returns False (always fails).
+   */ setPrototypeOf(_target, _newPrototype) {
+        throw new Error('Cannot override prototype');
+    }
+    /**
+   * Signals that the proxied object is not extensible, aligning with the handler's
+   * mutation-blocking behavior. This trap returns false to indicate non-extensibility,
+   * which discourages attempts to add new properties (though additions are already
+   * blocked by other traps like `set` and `defineProperty`).
+   *
+   * @param _target The target instance (unused).
+   * @returns {boolean} Always false, indicating the object is non-extensible.
+   */ isExtensible(_target) {
+        return false // Aligns with mutation-blocking traps
+        ;
+    }
+    /**
+   * Allows calls to `Object.preventExtensions` or `Reflect.preventExtensions` to succeed,
+   * treating the proxied object as already non-extensible. This is cosmetic for API
+   * completeness, as extensibility is already effectively prevented by other traps.
+   *
+   * @param _target The target instance (unused).
+   * @returns {boolean} Always true, indicating the operation succeeded.
+   */ preventExtensions(_target) {
+        return true // Succeeds, as object is treated as non-extensible
+        ;
+    }
+}
+
+
+
+
+const $952d3bca5034e549$var$keyWords = [
+    '_id',
+    '_rev',
+    '_root'
+];
+class $952d3bca5034e549$export$b8e7b394f2964d0d {
+    /**
+   * Reflection trap for `in` / `hasOwn` / `Object.hasOwn` / `Reflect.has`.
+   * Guarantees that both the internal brand and the proxy tag are visible
+   * on every wrapped contract (required for `isSmartObject`, JSON serialization,
+   * and the new compile-time safety).
+   */ has(target, property) {
+        if (property === (0, $d205febb791b53ee$export$581775e22cfad3dd) || property === (0, $d205febb791b53ee$export$3bb4a3f4a9646a6a)) return true;
+        return Reflect.has(target, property);
+    }
+    /**
+   * Updated get trap (v2.9.1).
+   * Returns the internal brand and proxy tag transparently.
+   * Preserves the original `__proto__` protection and all existing behavior.
+   */ get(target, property) {
+        if (property === (0, $d205febb791b53ee$export$581775e22cfad3dd)) return true;
+        if (property === (0, $d205febb791b53ee$export$3bb4a3f4a9646a6a)) return true;
+        if (property === '__proto__') throw new Error('Cannot get __proto__');
+        return Reflect.get(target, property);
+    }
+    /**
+   * Throws an error if attempting to set a keyword property unless in admin mode,
+   * or if setting '__proto__' to prevent prototype pollution,
+   * or if updating a function property to enforce method-immutability.
+   * Otherwise, sets the property on the target object.
+   *
+   * @param target The target object being proxied.
+   * @param property The property being set.
+   * @param value The value to set.
+   * @returns True if the set operation succeeded.
+   */ set(target, property, value) {
+        if ($952d3bca5034e549$var$keyWords.includes(property.toString()) && !(0, $aec7dd200596fb2a$export$fdc4f9968fbdadc6)()) throw new Error(`Cannot set ${property.toString()}`);
+        if (property.toString() === '__proto__') throw new Error('Cannot set __proto__');
+        if (typeof target[property] === 'function' || typeof value === 'function') throw new Error('Cannot update a function');
+        return Reflect.set(target, property, value);
+    }
+    /**
+   * Enforces both keyword-protection and method-immutability when defining properties.
+   *
+   * - Always blocks keywords (`_id`, `_rev`, `_root`) — even in admin mode.
+   * - Always blocks defining functions, getters, or setters (method-immutability).
+   * - Allows defining or updating normal data properties (needed for `_sudo`
+   *   mutations of `_satoshis`, `_owners`, etc.).
+   */ defineProperty(target, property, descriptor) {
+        const propStr = property.toString();
+        if ($952d3bca5034e549$var$keyWords.includes(propStr)) throw new Error(`Cannot set ${propStr}`);
+        const isFunction = descriptor.value && typeof descriptor.value === 'function';
+        const hasAccessor = descriptor.get || descriptor.set;
+        if (isFunction || hasAccessor) throw new Error('Cannot define or update a function, getter, or setter property');
+        return Reflect.defineProperty(target, property, descriptor);
+    }
+    /**
+   * Throws an error if attempting to set the prototype to prevent prototype pollution.
+   *
+   * @returns False, as the operation is not allowed.
+   */ setPrototypeOf() {
+        throw new Error('Cannot set the prototype');
+    }
+    /**
+   * Throws an error if attempting to delete a keyword property unless in admin mode to enforce keyword-protection.
+   * Otherwise, deletes the property from the target object.
+   *
+   * @param target The target object being proxied.
+   * @param property The property being deleted.
+   * @returns True if the delete operation succeeded.
+   */ deleteProperty(target, property) {
+        if ($952d3bca5034e549$var$keyWords.includes(property.toString()) && !(0, $aec7dd200596fb2a$export$fdc4f9968fbdadc6)()) throw new Error(`Cannot delete ${property.toString()}`);
+        return Reflect.deleteProperty(target, property);
+    }
+    /**
+   * Reflection trap for `Object.getOwnPropertyDescriptor` / `Reflect.getOwnPropertyDescriptor`.
+   * Makes `BC_BRAND` and `PROXY_TAG` appear as non-enumerable, non-writable,
+   * non-configurable properties (exactly as they are defined on the raw target
+   * and on the outer proxy).
+   */ getOwnPropertyDescriptor(target, property) {
+        if (property === (0, $d205febb791b53ee$export$581775e22cfad3dd) || property === (0, $d205febb791b53ee$export$3bb4a3f4a9646a6a)) return {
+            value: true,
+            writable: false,
+            configurable: false,
+            enumerable: false
+        };
+        return Reflect.getOwnPropertyDescriptor(target, property);
+    }
+    /**
+   * Reflection trap for `Object.keys`, `Object.getOwnPropertyNames`,
+   * `Object.getOwnPropertySymbols`, `Reflect.ownKeys`, and JSON.stringify.
+   * Hides both the internal brand and the proxy tag so that user-facing
+   * enumeration and serialization remain clean.
+   */ ownKeys(target) {
+        return Reflect.ownKeys(target).filter((k)=>k !== (0, $d205febb791b53ee$export$581775e22cfad3dd) && k !== (0, $d205febb791b53ee$export$3bb4a3f4a9646a6a));
+    }
+}
+
+
+
+
+const $ed98b948820df6a2$var$keyWords = [
+    '_id',
+    '_rev',
+    '_root'
+];
+class $ed98b948820df6a2$export$8517d80acf00e19a extends (0, $d205febb791b53ee$export$8517d80acf00e19a) {
+    constructor(opts = {}){
+        super();
+        // Initialize user-provided properties on the raw instance
+        Object.entries(opts).forEach(([key, value])=>{
+            if ($ed98b948820df6a2$var$keyWords.includes(key)) throw new Error(`Cannot set property ${key}`);
+            this[key] = value;
+        });
+        // Build the two-layer security proxy stack (exactly as in v2)
+        const keywordProxy = new Proxy(this, new (0, $952d3bca5034e549$export$b8e7b394f2964d0d)());
+        const callProxy = new Proxy(keywordProxy, new (0, $0b77d8afb5886e41$export$f2aa9e51325c9c38)());
+        // Register the final (outer) proxy with the security record set
+        (0, $fa96f8418385359b$export$e16d8520af44a096)(callProxy);
+        // Return the outer proxy to the caller (standard pattern for proxy-based classes)
+        return callProxy;
+    }
+}
+
+
+
+
+
+
+
+
+function $f94e2696d4b62340$export$bc1ec3784f4ae897(script) {
+    const chunks = (0, $9PVwI$script).decompile(script) || [];
+    const body = [];
+    let contentType = '';
+    let i = 0;
+    while(chunks[i] !== (0, $9PVwI$opcodes).OP_IF && i < chunks.length)i += 1;
+    if (chunks.length <= i) throw new Error('Invalid script');
+    if (chunks[i + 1].toString() !== (0, $bd5ff9060a235dd4$export$43182d2709f4c8de)) throw new Error('Invalid ordinal protocol');
+    i += 2;
+    if (chunks[i] === (0, $9PVwI$opcodes).OP_1) {
+        contentType = chunks[i + 1].toString();
+        i += 2;
+    }
+    if (chunks[i] === (0, $9PVwI$opcodes).OP_0) i += 1;
+    // now read body chunks
+    for(i; i < chunks.length; i += 1)if (chunks[i] !== (0, $9PVwI$opcodes).OP_ENDIF) body.push(chunks[i].toString());
+    return {
+        contentType: contentType,
+        body: body.join('')
+    };
+}
+function $f94e2696d4b62340$export$a0291b2a7af96f4c(witness) {
+    if (witness.length < 2) throw new Error('Invalid witness');
+    const annex = witness[witness.length - 1].toString('hex') === (0, $bd5ff9060a235dd4$export$7dc90d32bceb5ea5);
+    if (witness.length === 2 && annex) throw new Error('Key Path Spend');
+    const script = witness[annex ? witness.length - 1 : witness.length - 2];
+    return $f94e2696d4b62340$export$bc1ec3784f4ae897(script);
+}
+function $f94e2696d4b62340$export$36dc4b471c81bcc7(publicKey, contentType, body) {
+    const stack = [
+        publicKey,
+        (0, $9PVwI$opcodes).OP_CHECKSIG,
+        (0, $9PVwI$opcodes).OP_0,
+        (0, $9PVwI$opcodes).OP_IF,
+        (0, $9PVwI$Buffer).from((0, $bd5ff9060a235dd4$export$43182d2709f4c8de)),
+        (0, $9PVwI$opcodes).OP_1,
+        (0, $9PVwI$Buffer).from(contentType),
+        (0, $9PVwI$opcodes).OP_0,
+        ...(0, $303220cf0debbf6c$export$b3ab84721822b8ab)(body, (0, $bd5ff9060a235dd4$export$280d845b0ed37876)).map((chunk)=>(0, $9PVwI$Buffer).from(chunk)),
+        (0, $9PVwI$opcodes).OP_ENDIF
+    ];
+    const scrpt = (0, $9PVwI$script).compile(stack);
+    return scrpt;
+}
+
+
+
+class $7e669d424cbb933b$export$7e20c6d567ea8b7a {
+    constructor(network = (0, $9PVwI$networks).litecoinregtest){
+        this.deployInscription = async (wallet, contentType, body, opts)=>{
+            const { restClient: restClient } = wallet;
+            const { output: output, witness: witness, redeem: redeem } = this.createPayment(restClient.keyPair, contentType, body);
+            this.commitTx = await this.createCommitTx(wallet, output, opts);
+            const hex = this.commitTx.extractTransaction().toHex();
+            await restClient.rpc('sendrawtransaction', `${hex}`);
+            const commitTxId = this.commitTx.extractTransaction().getId();
+            this.revealTx = await this.createRevealTx(commitTxId, output, redeem, witness, wallet, opts);
+            const revealTx = this.revealTx.extractTransaction();
+            await restClient.rpc('sendrawtransaction', `${revealTx.toHex()}`);
+        };
+        this.createPayment = (keyPair, contentType, body)=>{
+            const output = (0, $f94e2696d4b62340$export$36dc4b471c81bcc7)((0, $9PVwI$bip371).toXOnly(keyPair.publicKey), contentType, body);
+            const redeem = {
+                output: output,
+                redeemVersion: 192
+            };
+            const { output: o, witness: witness } = (0, $9PVwI$payments).p2tr({
+                internalPubkey: (0, $9PVwI$bip371).toXOnly(keyPair.publicKey),
+                scriptTree: {
+                    output: output
+                },
+                redeem: redeem,
+                network: this.network
+            });
+            return {
+                output: o,
+                witness: witness,
+                redeem: redeem
+            };
+        };
+        this.createCommitTx = async (wallet, output, opts)=>{
+            const { commitAmount: commitAmount = wallet.getDustThreshold(false, output), commitFee: commitFee = 0 } = opts || {};
+            const commitPsbt = new (0, $9PVwI$Psbt)({
+                network: this.network
+            });
+            const outputString = output?.toString('hex');
+            const script = (0, $9PVwI$Buffer).from(outputString, 'hex');
+            const value = commitAmount - commitFee;
+            commitPsbt.addOutput({
+                script: script,
+                value: value
+            });
+            await wallet.fundPsbt(commitPsbt, opts);
+            commitPsbt.signAllInputs(wallet.restClient.keyPair);
+            commitPsbt.finalizeAllInputs();
+            return commitPsbt;
+        };
+        this.createRevealTx = async (commitTxId, output, redeem, witness, wallet, opts)=>{
+            if (witness.length === 0) throw new Error('witness is empty');
+            const dust = wallet.getDustThreshold(false, output);
+            const { revealAmount: revealAmount = dust, revealFee: revealFee = 0, commitAmount: commitAmount = dust, commitFee: commitFee = 0 } = opts || {};
+            const psbt = new (0, $9PVwI$Psbt)({
+                network: this.network
+            });
+            psbt.addInput({
+                hash: commitTxId,
+                index: 0,
+                witnessUtxo: {
+                    value: commitAmount - commitFee,
+                    script: output
+                },
+                sequence: 0xffffffff
+            });
+            psbt.updateInput(0, {
+                tapLeafScript: [
+                    {
+                        leafVersion: redeem.redeemVersion,
+                        script: redeem.output,
+                        controlBlock: witness[witness.length - 1]
+                    }
+                ]
+            });
+            psbt.addOutput({
+                value: revealAmount - revealFee,
+                address: wallet.address
+            });
+            await wallet.fundPsbt(psbt);
+            psbt.signAllInputs(wallet.restClient.keyPair);
+            psbt.finalizeAllInputs();
+            return psbt;
+        };
+        this.network = network;
+    }
+    get revealTxId() {
+        return this.revealTx.extractTransaction().getId();
+    }
+    get commitTxId() {
+        return this.commitTx.extractTransaction().getId();
+    }
+    static async read(revealTxId, wallet) {
+        const revealTx = await (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromTxId({
+            txId: revealTxId,
+            restClient: wallet.restClient
+        });
+        const scriptBack = (0, $9PVwI$Buffer).from([
+            ...revealTx.ins[0].witness[1]
+        ]);
+        return (0, $f94e2696d4b62340$export$bc1ec3784f4ae897)(scriptBack);
+    }
+}
+
+
+
+
+
+
+/**
+ * ================================================================
+ * CACHE.TS – HIGH-LEVEL PERSISTENT OBJECT CACHE
+ * ================================================================
+ *
+ * This is the **public-facing persistence layer** of Bitcoin Computer. It sits
+ * on top of the pure `Structure` (node-copying engine) and provides a clean,
+ * transaction-oriented API for the rest of the library (primarily `Db`).
+ *
+ * Core responsibilities: • Two-phase apply algorithm (information phase →
+ *   pointer phase) → Prevents premature predecessor propagation during nested
+ *   object construction. • inRevs ordering invariant: reachable old revs (DFS
+ *   from env roots) + unreachable side-predecessors appended. This is
+ *   **critical** for correct Bitcoin transaction semantics (see
+ *   `refreshStaleSidePredecessors` in db.ts). • Reconstruction with prototype
+ *   preservation (so `instanceof` and methods survive). • Explicit Transaction
+ *   handles for safe concurrent evaluation and rollback support. • Metadata
+ *   attachment (`_rev`, `_id`, `_root`, etc.) via `updateNewNodes`.
+ *
+ * The implementation follows the node-copying method (Driscoll et al. §2.3 +
+ * Karp §2.1) with e=0 and unbounded in-degree via inverse pointer snapshots.
+ *
+ * @see Structure for the pure node-copying core
+ * @see Db for the full evaluation pipeline
+ * @internal
+ */ /**
+ * ================================================================
+ * STRUCTURE.TS – PURE NODE-COPYING ENGINE (Driscoll et al. §2.3 + Karp §2.1)
+ * ================================================================
+ *
+ * This is the **minimal, reusable core** of Bitcoin Computer's
+ * partially-persistent object graph. It implements the classic node-copying
+ * method with e=0 (no extra space per node) and supports unbounded in-degree
+ * via inverse-pointer snapshots.
+ *
+ * Key design decisions: • Only path copying on mutation (no lazy techniques) •
+ *   activeVersion + activeNode terminology for maximum clarity • Full rollback
+ *   support (used by Cache.refreshStaleSidePredecessors) • Version chain for
+ *   O(1) historical access • Inverse snapshots stored only on the target node
+ *
+ * What this file deliberately does NOT do: • Root tracking (handled by
+ *   Cache.txIdToRoots) • VersionState or entryPointers (not needed for e=0) •
+ *   Any on-chain or wallet logic (pure in-memory structure)
+ *
+ * All public APIs use the canonical terms defined in the project:
+ *   activeVersion, activeNode, baseNode, queryVersion, etc.
+ *
+ * @see Cache for the high-level object graph and transaction integration
+ * @see Driscoll et al. "Making Data Structures Persistent" §2.3
+ * @see Karp "A New Examination of Persistent Data Structures" §2.1
+ * @internal
+ */ class $d195a3a2ffcd72dd$export$85c928794f8d04d4 {
+    constructor(version, information = {}, pointers = {}, inverseSnapshots = [], previous = null, prototype = null){
+        /** Predecessor snapshots (ascending by version). Immutable after commit(). */ this.inverseSnapshots = [];
+        /** Version chain for cheap traversal (partial persistence). */ this.next = null;
+        this.previous = null;
+        this.version = version;
+        this.information = {
+            ...information
+        };
+        this.pointers = {
+            ...pointers
+        };
+        this.inverseSnapshots = [
+            ...inverseSnapshots
+        ];
+        this.previous = previous;
+        this.prototype = prototype;
+    }
+    /**
+   * Creates a shallow activeNode (copy) of this node for a new version and
+   * links it into the version chain.
+   */ createActiveNode(version) {
+        const { information: information, pointers: pointers, prototype: prototype, inverseSnapshots: inverseSnapshots } = this;
+        const activeNode = new $d195a3a2ffcd72dd$export$85c928794f8d04d4(version, information, pointers, inverseSnapshots, this, prototype);
+        this.next = activeNode;
+        return activeNode;
+    }
+}
+const $d195a3a2ffcd72dd$export$264fea50f06efab8 = '_temp';
+class $d195a3a2ffcd72dd$export$d981182684770f2a {
+    /**
+   * Increments version immediately and prepares temporary maps. Must be
+   * followed by commit().
+   */ beginNewVersion() {
+        this.activeVersion++;
+        this.activeNodes = new Map();
+        this.mutatedNodes.clear();
+        return this.activeVersion;
+    }
+    rollbackActiveVersion(newNodes, mutatedNodes) {
+        if (this.activeVersion <= 0) return;
+        for (const node of newNodes)if (node.previous) node.previous.next = null;
+        for (const succ of mutatedNodes)succ.inverseSnapshots = succ.inverseSnapshots.filter((s)=>s.version !== this.activeVersion);
+        this.activeVersion--;
+    }
+    // ─────────────────────────────────────────────────────────────────────────────────
+    // Core node-copying logic
+    // ─────────────────────────────────────────────────────────────────────────────────
+    getNodeAsOfVersion(node, version) {
+        if (version < 0) throw new Error(`Invalid version: ${version}`);
+        let current = node;
+        while(current.previous !== null && current.version > version)current = current.previous;
+        if (current.version > version) return null;
+        while(current.next !== null && current.next.version <= version)current = current.next;
+        return current;
+    }
+    /**
+   * Finds the most recent activeNode of a node up to (and including) the
+   * activeVersion of the structure.
+   */ getActiveNode(node) {
+        const n = this.getNodeAsOfVersion(node, this.activeVersion);
+        if (!n) throw new Error(`No active node exists at or before version ${this.activeVersion}`);
+        return n;
+    }
+    /**
+   * Returns inverse pointers (predecessors) for `node` at `queryVersion`.
+   * Returns [] if the node did not exist at the queried version.
+   *
+   * Snapshots are stored in strictly ascending version order (see
+   * `assertSnapshotsDescending`). We scan backwards to find the newest snapshot
+   * whose version <= queryVersion.
+   *
+   * History length is typically few entries, so the linear scan is optimal.
+   */ getInversePointers(node, queryVersion = this.activeVersion) {
+        const queryNode = this.getNodeAsOfVersion(node, queryVersion);
+        if (!queryNode) return [];
+        const { inverseSnapshots: inverseSnapshots } = queryNode;
+        for(let i = inverseSnapshots.length - 1; i >= 0; i--)if (inverseSnapshots[i].version <= queryVersion) return [
+            ...inverseSnapshots[i].predecessors
+        ];
+        return [];
+    }
+    /**
+   * Returns (or creates) the version of `baseNode` that belongs to the
+   * **activeVersion** of the structure.
+   *
+   * - If an activeNode for the activeVersion already exists in `activeNodes`,
+   *   it is reused (no extra copying).
+   * - If the node is already at the activeVersion, we simply register it.
+   * - Otherwise we create a fresh activeNode via `createActiveNode` and
+   *   immediately propagate the change to every predecessor that still points
+   *   to the baseNode.
+   */ getOrCreateActiveNode(baseNode) {
+        if (!this.activeNodes) throw new Error('No current maps defined for copying node');
+        // Fast path: reuse an existing activeNode created earlier in this version.
+        const baseCopy = this.getActiveNode(baseNode);
+        let activeNode = this.activeNodes.get(baseCopy);
+        if (activeNode) return activeNode;
+        // The node is already at the activeVersion → just register it.
+        if (baseCopy.version === this.activeVersion) {
+            this.activeNodes.set(baseCopy, baseCopy);
+            return baseCopy;
+        }
+        // Create a fresh activeNode for the activeVersion.
+        activeNode = baseCopy.createActiveNode(this.activeVersion);
+        this.activeNodes.set(baseCopy, activeNode);
+        // Every predecessor that still points to the *base* version of this node
+        // must now be updated to point to the new activeNode.
+        const inversePointers = this.getInversePointers(baseCopy, this.activeVersion);
+        for (const { node: predecessorNode, field: field } of inversePointers){
+            if (predecessorNode.information[$d195a3a2ffcd72dd$export$264fea50f06efab8] === true) continue;
+            const basePred = this.getActiveNode(predecessorNode);
+            const activePred = this.activeNodes.get(basePred) || basePred;
+            // Only update if the predecessor still points to the *base* version
+            if (activePred.pointers[field] === baseCopy) this.applyChanges(activePred, new Map([
+                [
+                    field,
+                    activeNode
+                ]
+            ]), {});
+        }
+        return activeNode;
+    }
+    /**
+   * Applies information and/or pointer changes to a node, creating an
+   * activeNode if necessary.
+   *
+   * MUTABILITY CONTRACT (skeleton phase):
+   * - information and pointers may ONLY be mutated between beginNewVersion()
+   *   and commit() (the "skeleton phase").
+   * - After commit(), they become immutable. The only allowed post-commit
+   *   mutation is Cache.updateNewNodes (metadata/_rev).
+   * - This assertion (dev mode) guarantees the contract and prevents accidental
+   *   mutation of historical nodes.
+   */ applyChanges(baseNode, pointerChanges = new Map(), informationChanges = {}, deletes = new Set()) {
+        const hasChanges = Object.keys(informationChanges).length > 0 || deletes.size > 0 || pointerChanges.size > 0;
+        if (!hasChanges) return baseNode;
+        if (!this.activeNodes) throw new Error('No current maps defined for version creation');
+        if (baseNode.version > this.activeVersion) throw new Error('Cannot modify historical node');
+        if (process.env.NODE_ENV !== 'production' && !this.activeNodes) throw new Error('Cannot modify node after commit()');
+        const activeNode = this.getOrCreateActiveNode(baseNode);
+        // Apply information changes
+        for (const [key, value] of Object.entries(informationChanges)){
+            delete activeNode.pointers[key];
+            activeNode.information[key] = value;
+        }
+        // Apply deletes
+        for (const key of deletes){
+            delete activeNode.pointers[key];
+            delete activeNode.information[key];
+        }
+        // Apply pointer changes
+        for (const [field, newSuccessor] of pointerChanges){
+            if (newSuccessor === null) {
+                delete activeNode.pointers[field];
+                continue;
+            }
+            const copiedSuccessor = this.getOrCreateActiveNode(newSuccessor);
+            activeNode.pointers[field] = copiedSuccessor;
+            delete activeNode.information[field];
+        }
+        return activeNode;
+    }
+    /**
+   * Finalizes the version, updates all inverse-pointer snapshots, and returns
+   * the exact set of mutated successors (for Cache cleanup).
+   */ commit() {
+        if (!this.activeNodes) throw new Error('No active version');
+        this.updateInversePointers();
+        this.activeNodes = undefined;
+        return Array.from(this.mutatedNodes);
+    }
+    /**
+   * Updates inverse-pointer snapshots for all nodes whose pointers changed in
+   * the activeVersion. Snapshots are stored only on the activeNode.
+   */ updateInversePointers() {
+        const updatedInversesByNode = new Map();
+        for (const [baseNode, activeNode] of this.activeNodes){
+            this.processDisconnections(baseNode, updatedInversesByNode);
+            this.processNewConnections(activeNode, updatedInversesByNode);
+        }
+        for (const [targetNode, predecessors] of updatedInversesByNode){
+            targetNode.inverseSnapshots.push({
+                version: this.activeVersion,
+                predecessors: predecessors
+            });
+            this.assertSnapshotsDescending(targetNode);
+            this.mutatedNodes.add(targetNode);
+        }
+    }
+    processDisconnections(predecessorNode, updated) {
+        for (const [field, oldTarget] of Object.entries(predecessorNode.pointers)){
+            if (oldTarget === null) continue;
+            const baseTarget = this.getActiveNode(oldTarget);
+            const currentInverses = updated.get(baseTarget) ?? [
+                ...this.getInversePointers(baseTarget, this.activeVersion - 1)
+            ];
+            const filtered = currentInverses.filter((inv)=>!(inv.node === predecessorNode && inv.field === field));
+            updated.set(baseTarget, filtered);
+        }
+    }
+    processNewConnections(predecessorNode, updated) {
+        for (const [field, newTarget] of Object.entries(predecessorNode.pointers)){
+            if (newTarget === null) continue;
+            const currentInverses = updated.get(newTarget) ?? [
+                ...this.getInversePointers(newTarget, this.activeVersion - 1)
+            ];
+            currentInverses.push({
+                node: predecessorNode,
+                field: field
+            });
+            updated.set(newTarget, currentInverses);
+        }
+    }
+    assertSnapshotsDescending(node) {
+        if (process.env.NODE_ENV === 'production') return;
+        const h = node.inverseSnapshots;
+        for(let i = 1; i < h.length; i++){
+            if (h[i].version <= h[i - 1].version) throw new Error(`inverseSnapshots not strictly ascending on node v${node.version} ` + `(found ${h[i].version} <= ${h[i - 1].version})`);
+        }
+    }
+    constructor(){
+        this.activeVersion = 0;
+        this.mutatedNodes = new Set();
+    }
+}
+
+
+
+// ─────────────────────────────────────────────────────────────────────────────────
+// INTERNAL HELPERS (pure utility functions)
+// ─────────────────────────────────────────────────────────────────────────────────
+/**
+ * Safe map getter that throws a descriptive error if the key is missing. Used
+ * everywhere we expect a node/rev to exist after a cache lookup.
+ */ function $703356805bc7d6e8$var$getOrThrow(map, key, message) {
+    const value = map.get(key);
+    if (value === undefined) throw new Error(message);
+    return value;
+}
+const $703356805bc7d6e8$var$isPrimitiveInformationValue = (val)=>val == null || [
+        'string',
+        'number',
+        'boolean',
+        'bigint'
+    ].includes(typeof val);
+const $703356805bc7d6e8$var$isInformationValue = (val)=>$703356805bc7d6e8$var$isPrimitiveInformationValue(val) || Array.isArray(val) && val.every($703356805bc7d6e8$var$isInformationValue);
+/**
+ * Deep equality for information values (used to detect real changes). Handles
+ * primitives, arrays, and null/undefined.
+ */ const $703356805bc7d6e8$var$isEqualInformation = (a, b)=>a === b || Array.isArray(a) && Array.isArray(b) && a.length === b.length && a.every((item, i)=>$703356805bc7d6e8$var$isEqualInformation(item, b[i]));
+const $703356805bc7d6e8$var$deepCloneInformationValue = (val)=>$703356805bc7d6e8$var$isPrimitiveInformationValue(val) ? val : Array.isArray(val) ? val.map($703356805bc7d6e8$var$deepCloneInformationValue) : val;
+/**
+ * Metadata keys used throughout the cache. Single source of truth to prevent
+ * magic strings.
+ */ const $703356805bc7d6e8$var$META = {
+    REV: '_rev',
+    TEMP: '_temp',
+    ARRAY_FLAG: '_array'
+};
+class $703356805bc7d6e8$export$94affb487e701bf2 {
+    constructor(){
+        this.txIdToRoots = new Map();
+        /** String-keyed map for 100% white-box test compatibility */ this.activeTransactions = new Map();
+        this.latestTransactionId = null;
+        this.structure = new (0, $d195a3a2ffcd72dd$export$d981182684770f2a)();
+        this.revToNode = new Map();
+    }
+    // ───────────────────────────────────────────────────────────────────────
+    // Traversal helpers (used by reconstruction and inRevs computation)
+    // ───────────────────────────────────────────────────────────────────────
+    /**
+   * Returns every node reachable via forward pointers OR via non-TEMP inverse
+   * pointers. This is the **single source of truth** for "which objects belong
+   * to the new version" after commit().
+   */ getBidirectionalNeighbors(node) {
+        const forwards = Object.values(node.pointers).filter((p)=>p !== null);
+        const backwards = this.structure.getInversePointers(node).map(({ node: pred })=>pred).filter((p)=>p !== null && !p.information[$703356805bc7d6e8$var$META.TEMP]);
+        return [
+            ...new Set([
+                ...forwards,
+                ...backwards
+            ])
+        ];
+    }
+    /**
+   * Forward-only traversal used exclusively when computing reachable old revs
+   * from the environment (for the inRevs invariant).
+   */ getForwardNeighbors(node) {
+        return Object.values(node.pointers).filter((p)=>p !== null);
+    }
+    /**
+   * Collects every reachable object (including nested pointers and arrays) from
+   * the input forest. Used as the input to the two-phase apply.
+   */ collectReachableObjects(forest) {
+        const isObject = ([k, v])=>k !== $703356805bc7d6e8$var$META.REV && typeof v === 'object' && v !== null && !$703356805bc7d6e8$var$isInformationValue(v);
+        return (0, $303220cf0debbf6c$export$8f528bb63005ed51)(forest, (current)=>Object.entries(current).filter(isObject).map(([, v])=>v));
+    }
+    /**
+   * Discover all nodes created **exactly** at the current version using
+   * bidirectional DFS. This includes both new roots and all propagated
+   * predecessor copies.
+   */ discoverNewNodes(roots, version) {
+        return (0, $303220cf0debbf6c$export$8f528bb63005ed51)([
+            ...roots
+        ], this.getBidirectionalNeighbors.bind(this)).filter((n)=>n.version === version);
+    }
+    // ───────────────────────────────────────────────────────────────────────
+    // Change computation & two-phase apply
+    // ───────────────────────────────────────────────────────────────────────
+    /**
+   * Computes the minimal set of information changes, deletes, and pointer
+   * changes for every reachable object.
+   *
+   * This is the "diff" step that drives the two-phase algorithm.
+   */ computeChanges(reachableObjects) {
+        const changes = new Map();
+        for (const obj of reachableObjects){
+            const rev = obj[$703356805bc7d6e8$var$META.REV];
+            const oldNode = rev ? this.revToNode.get(rev) : undefined;
+            if (rev && !oldNode) throw new Error(`Node not found for rev ${rev}`);
+            const isArray = Array.isArray(obj);
+            const oldIsArray = oldNode?.information[$703356805bc7d6e8$var$META.ARRAY_FLAG] === true;
+            const currentInfoKeys = [];
+            const currentPointerKeys = [];
+            for (const [key, value] of Object.entries(obj)){
+                if (key === $703356805bc7d6e8$var$META.REV) continue;
+                if ($703356805bc7d6e8$var$isInformationValue(value)) currentInfoKeys.push(key);
+                else currentPointerKeys.push(key);
+            }
+            const deletes = new Set();
+            if (oldNode) {
+                const oldInfoKeys = new Set(Object.keys(oldNode.information));
+                oldInfoKeys.delete($703356805bc7d6e8$var$META.ARRAY_FLAG);
+                oldInfoKeys.delete($703356805bc7d6e8$var$META.REV);
+                for (const oldKey of oldInfoKeys)if (!currentInfoKeys.includes(oldKey)) deletes.add(oldKey);
+                if (oldIsArray && !isArray) deletes.add($703356805bc7d6e8$var$META.ARRAY_FLAG);
+            }
+            const infoChanges = {};
+            if (!oldIsArray && isArray) infoChanges[$703356805bc7d6e8$var$META.ARRAY_FLAG] = true;
+            for (const key of currentInfoKeys){
+                const oldValue = oldNode?.information[key];
+                const newValue = obj[key];
+                if (oldValue === undefined || !$703356805bc7d6e8$var$isEqualInformation(oldValue, newValue)) infoChanges[key] = newValue;
+            }
+            changes.set(obj, {
+                isArray: isArray,
+                pointerFields: currentPointerKeys,
+                infoChanges: infoChanges,
+                deletes: deletes,
+                oldPointerKeys: oldNode ? Object.keys(oldNode.pointers) : [],
+                oldNode: oldNode
+            });
+        }
+        return changes;
+    }
+    /**
+   * Phase 1 – Information phase.
+   *
+   * Creates/updates nodes with **all** information-field changes (including
+   * deletes and the _array flag). No pointer work is done yet, so we never
+   * trigger premature predecessor propagation.
+   */ applyInformationPhase(reachableObjects, changesMap) {
+        const inputObjToCurrentNode = new Map();
+        for (const inputObj of reachableObjects){
+            const { infoChanges: infoChanges, deletes: deletes, oldNode: oldNode, isArray: isArray } = changesMap.get(inputObj);
+            const baseNode = oldNode || new (0, $d195a3a2ffcd72dd$export$85c928794f8d04d4)(this.structure.activeVersion);
+            const currentNode = this.structure.applyChanges(baseNode, new Map(), infoChanges, deletes);
+            if (!isArray && !currentNode.prototype) currentNode.prototype = Object.getPrototypeOf(inputObj);
+            inputObjToCurrentNode.set(inputObj, currentNode);
+        }
+        return inputObjToCurrentNode;
+    }
+    /**
+   * Phase 2 – Pointer phase.
+   *
+   * Now that every node exists at the current version, we apply pointer
+   * changes. This is where `getOrCreateActiveNode` + predecessor propagation
+   * happens.
+   */ applyPointerPhase(reachableObjects, changesMap, inputObjToCurrentNode) {
+        for (const inputObj of reachableObjects){
+            const ch = changesMap.get(inputObj);
+            const { pointerFields: pointerFields, oldPointerKeys: oldPointerKeys, oldNode: oldNode } = ch;
+            const currentNode = inputObjToCurrentNode.get(inputObj);
+            const pointerChanges = new Map();
+            const oldPointers = oldNode?.pointers ?? {};
+            // Collect pointer *updates* – only when the target node actually changed
+            for (const key of pointerFields){
+                const newTargetNode = inputObjToCurrentNode.get(inputObj[key]);
+                const oldTarget = oldPointers[key] ?? null;
+                const oldLatestTarget = oldTarget ? this.structure.getActiveNode(oldTarget) : null;
+                if (newTargetNode !== oldLatestTarget) pointerChanges.set(key, newTargetNode);
+            }
+            // Collect *deletions* – any old pointer key that no longer exists
+            for (const key of oldPointerKeys)if (!pointerFields.includes(key)) pointerChanges.set(key, null);
+            if (pointerChanges.size > 0) this.structure.applyChanges(currentNode, pointerChanges, {});
+        }
+    }
+    // ───────────────────────────────────────────────────────────────────────
+    // Core version creation (the heart of the cache)
+    // ───────────────────────────────────────────────────────────────────────
+    /**
+   * Creates a new version from a forest of objects. Returns only the data
+   * needed immediately by `Db`, while the full context is kept in
+   * `activeTransactions` for later commit/rollback.
+   */ createVersion(forest) {
+        this.validateForest(forest);
+        const reachableObjects = this.collectReachableObjects(forest);
+        const changes = this.computeChanges(reachableObjects);
+        const version = this.structure.beginNewVersion();
+        // These must stay in scope for the rollback in the catch block
+        let newNodesOrdered = [];
+        let mutatedNodes = [];
+        let inputObjToCurrentNode;
+        let roots = [];
+        let nodeToObj;
+        try {
+            // Phase 1: information fields (including _array flag) + deletes
+            inputObjToCurrentNode = this.applyInformationPhase(reachableObjects, changes);
+            // Phase 2: pointer changes + predecessor propagation
+            this.applyPointerPhase(reachableObjects, changes, inputObjToCurrentNode);
+            // Finalize the structure (updates all inverse-pointer snapshots)
+            mutatedNodes = this.structure.commit();
+            // After commit(), ensure every reference in the map points to the final
+            // active node at the current version (important after any internal
+            // copying)
+            for (const inputObj of reachableObjects){
+                const current = inputObjToCurrentNode.get(inputObj);
+                const active = this.structure.getActiveNode(current);
+                inputObjToCurrentNode.set(inputObj, active);
+            }
+            roots = forest.map((r)=>inputObjToCurrentNode.get(r));
+            // Discover every node created exactly at this version
+            newNodesOrdered = this.discoverNewNodes(roots, version);
+            // Reconstruct the full JavaScript object graph from the root nodes
+            const { nodeToObj: reconstructedNodeToObj } = this.reconstruct(roots);
+            nodeToObj = reconstructedNodeToObj;
+            const { array: array, oldRevs: oldRevs } = this.buildNewObjects(newNodesOrdered, nodeToObj);
+            const oldEnvRevs = this.extractOldEnvRevs(forest[0]);
+            const inRevs = this.computeInRevs(oldRevs, oldEnvRevs);
+            return {
+                version: version,
+                roots: roots,
+                newNodesOrdered: newNodesOrdered,
+                mutatedNodes: mutatedNodes,
+                nodeToObj: nodeToObj,
+                inputObjToCurrentNode: inputObjToCurrentNode,
+                array: array,
+                oldRevs: oldRevs,
+                inRevs: inRevs
+            };
+        } catch (e) {
+            this.structure.rollbackActiveVersion(newNodesOrdered, mutatedNodes);
+            throw e;
+        }
+    }
+    // ───────────────────────────────────────────────────────────────────────
+    // Transaction Handle Factory
+    // ───────────────────────────────────────────────────────────────────────
+    /**
+   * Creates a public Transaction handle that owns a version context. The handle
+   * provides explicit `commit` and `rollback` methods and automatic cleanup via
+   * `Symbol.dispose`.
+   */ createTransactionHandle(ctx) {
+        const id = `bc-tx-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+        let finalized = false;
+        const handle = {
+            array: ctx.array,
+            oldRevs: ctx.oldRevs,
+            inRevs: ctx.inRevs,
+            id: id,
+            commit: (txId)=>{
+                if (finalized) throw new Error(`Transaction ${id} already finalized`);
+                if (!this.activeTransactions.has(id)) return;
+                this.finalizeCommit(ctx, txId);
+                finalized = true;
+                this._cleanup(id);
+            },
+            rollback: ()=>{
+                if (finalized) return;
+                if (!this.activeTransactions.has(id)) return;
+                this.structure.rollbackActiveVersion(ctx.newNodesOrdered, ctx.mutatedNodes);
+                finalized = true;
+                this._cleanup(id);
+            }
+        };
+        // Safari-safe: only attach when supported
+        if (typeof Symbol.dispose !== 'undefined') handle[Symbol.dispose] = ()=>handle.rollback();
+        this.activeTransactions.set(id, ctx);
+        this.latestTransactionId = id;
+        return handle;
+    }
+    finalizeCommit(ctx, txId) {
+        this.remapRevisions(txId, ctx.newNodesOrdered);
+        this.txIdToRoots.set(txId, ctx.roots);
+        for (const [node, obj] of ctx.nodeToObj)obj._rev = node.information[$703356805bc7d6e8$var$META.REV];
+    }
+    _cleanup(id) {
+        this.activeTransactions.delete(id);
+        if (this.latestTransactionId === id) this.latestTransactionId = null;
+    }
+    // ───────────────────────────────────────────────────────────────────────
+    // Public API
+    // ───────────────────────────────────────────────────────────────────────
+    /**
+   * Begins a new version from a forest of objects. Returns a Transaction handle
+   * that must be committed or rolled back.
+   */ beginVersion(forest) {
+        const ctx = this.createVersion(forest);
+        return this.createTransactionHandle(ctx);
+    }
+    /**
+   * Returns the latest reconstructed objects for the given revisions. Throws if
+   * any revision does not exist.
+   */ getByRev(revs) {
+        if (!revs.every((r)=>typeof r === 'string')) throw new Error('Invalid revision format');
+        const parsed = revs.map((r)=>r.split(':'));
+        if (parsed.some((p)=>p.length !== 2)) throw new Error('Invalid revision format');
+        if (parsed.some(([, num])=>isNaN(parseInt(num, 10)))) throw new Error('Invalid revision number');
+        const nodes = revs.map((rev)=>$703356805bc7d6e8$var$getOrThrow(this.revToNode, rev, `Node does not exist for ${rev}`));
+        return this.reconstruct(nodes).reconstructed;
+    }
+    /**
+   * Returns the reconstructed objects for a given transaction ID. Throws if the
+   * transaction was never committed.
+   */ getByTxId(txId) {
+        const roots = $703356805bc7d6e8$var$getOrThrow(this.txIdToRoots, txId, `Version ${txId} does not exist`);
+        return this.reconstruct(roots).reconstructed;
+    }
+    // ───────────────────────────────────────────────────────────────────────
+    // Reconstruction & final remapping
+    // ───────────────────────────────────────────────────────────────────────
+    /**
+   * Creates a plain JavaScript object (or array) from a node. Clones
+   * information values and respects the original prototype.
+   */ createObjFromNode(node) {
+        const { [$703356805bc7d6e8$var$META.ARRAY_FLAG]: isArrayFlag, [$703356805bc7d6e8$var$META.TEMP]: temp, ...rest } = node.information;
+        const proto = isArrayFlag ? Array.prototype : node.prototype || Object.prototype;
+        const obj = isArrayFlag ? [] : Object.create(proto);
+        for (const [key, val] of Object.entries(rest))obj[key] = $703356805bc7d6e8$var$deepCloneInformationValue(val);
+        return obj;
+    }
+    /**
+   * Reconstructs the full JavaScript object graph from a set of root nodes.
+   * Returns both the root objects and a node → object map for pointer wiring.
+   */ reconstruct(roots) {
+        const ordered = (0, $303220cf0debbf6c$export$8f528bb63005ed51)([
+            ...roots
+        ], this.getBidirectionalNeighbors.bind(this));
+        const nodeToObj = new Map(ordered.map((n)=>[
+                n,
+                this.createObjFromNode(n)
+            ]));
+        for (const [node, obj] of nodeToObj)for (const [k, successor] of Object.entries(node.pointers))obj[k] = successor === null ? null : nodeToObj.get(successor);
+        return {
+            reconstructed: roots.map((r)=>nodeToObj.get(r)),
+            nodeToObj: nodeToObj
+        };
+    }
+    /**
+   * Assigns final `_rev` values using the real transaction ID. Called exactly
+   * once during commit.
+   */ remapRevisions(txId, nodes) {
+        let nodeNum = -1;
+        for (const node of nodes){
+            if (node.information[$703356805bc7d6e8$var$META.ARRAY_FLAG] === true) continue;
+            const num = nodeNum.toString();
+            nodeNum++;
+            const newRev = `${txId}:${num}`;
+            node.information[$703356805bc7d6e8$var$META.REV] = newRev;
+            this.revToNode.set(newRev, node);
+        }
+    }
+    /**
+   * Shared helper that builds both the public `array` and `oldRevs`. Filters
+   * out internal _array and _temp nodes.
+   */ buildNewObjects(newNodesOrdered, nodeToObj) {
+        const isPersistentObjectNode = (n)=>!n.information[$703356805bc7d6e8$var$META.ARRAY_FLAG] && !n.information[$703356805bc7d6e8$var$META.TEMP];
+        const newObjectNodesInOrder = newNodesOrdered.filter(isPersistentObjectNode);
+        return {
+            array: newObjectNodesInOrder.map((n)=>nodeToObj.get(n)),
+            oldRevs: newObjectNodesInOrder.map(({ previous: previous })=>previous?.information[$703356805bc7d6e8$var$META.REV])
+        };
+    }
+    // ───────────────────────────────────────────────────────────────────────
+    // Validation & environment helpers
+    // ───────────────────────────────────────────────────────────────────────
+    /**
+   * Strict validation of the input forest (exactly what `Db` passes). Prevents
+   * sparse arrays and primitive roots.
+   */ validateForest(forest) {
+        if ($703356805bc7d6e8$var$META.REV in forest) throw new Error('Arrays cannot have _rev property');
+        const numericKeys = Object.keys(forest).filter((k)=>/^[0-9]+$/.test(k));
+        if (numericKeys.length !== forest.length || !numericKeys.every((k, i)=>Number(k) === i)) throw new Error('Sparse arrays not supported');
+        const isPrimitiveOrNull = (e)=>typeof e !== 'object' && typeof e !== 'function' || e === null;
+        if (forest.some(isPrimitiveOrNull)) throw new Error('Root elements must be objects (including arrays)');
+    }
+    /**
+   * Extracts old revision strings from the special `_temp` effect root that
+   * `Db` passes to us.
+   */ extractOldEnvRevs(effectObj) {
+        if (!effectObj || typeof effectObj !== 'object') return [];
+        return Object.keys(effectObj).filter((k)=>k.startsWith('env_') && effectObj[k] !== null).map((k)=>effectObj[k][$703356805bc7d6e8$var$META.REV]).filter(Boolean);
+    }
+    /**
+   * Computes inRevs exactly as required by the Bitcoin Computer transaction
+   * model: reachable revs from the environment (in DFS order) followed by any
+   * unreachable old root revs (side-predecessors).
+   *
+   * This ordering is **critical** for correct propagation of stale
+   * side-predecessors during `refreshStaleSidePredecessors`.
+   */ computeInRevs(oldRevs, oldEnvRevs) {
+        const oldRootNodes = oldEnvRevs.map((rev)=>$703356805bc7d6e8$var$getOrThrow(this.revToNode, rev, `rev ${rev} missing`));
+        const reachableOrdered = (0, $303220cf0debbf6c$export$8f528bb63005ed51)(oldRootNodes, this.getForwardNeighbors.bind(this)).map((n)=>n.information[$703356805bc7d6e8$var$META.REV]).filter((rev)=>rev !== undefined && oldRevs.includes(rev));
+        const unreachableOldRevs = oldRevs.filter((rev)=>rev && !reachableOrdered.includes(rev));
+        return [
+            ...reachableOrdered,
+            ...unreachableOldRevs
+        ];
+    }
+    // ───────────────────────────────────────────────────────────────────────
+    // Additional public API
+    // ───────────────────────────────────────────────────────────────────────
+    /**
+   * Allows mutation of information fields of newly-created nodes. Used by
+   * `Db.attachMetadata` after transaction construction.
+   */ updateNewNodes(f) {
+        const nodesToUpdate = this.latestTransactionId && this.activeTransactions.has(this.latestTransactionId) ? this.activeTransactions.get(this.latestTransactionId).newNodesOrdered : (()=>{
+            const latestNumeric = this.structure.activeVersion;
+            const roots = Array.from(this.txIdToRoots.values()).pop() ?? [];
+            return this.discoverNewNodes(roots, latestNumeric);
+        })();
+        for (const node of nodesToUpdate){
+            const obj = this.createObjFromNode(node);
+            f(obj);
+            for (const key of Object.keys(obj))if (key !== $703356805bc7d6e8$var$META.REV && $703356805bc7d6e8$var$isInformationValue(obj[key])) {
+                node.information[key] = obj[key];
+                delete node.pointers[key];
+            }
+        }
+    }
+    pruneTxId(label) {
+        this.txIdToRoots.delete(label);
+    }
+    /**
+   * Returns whether a revision still has any non-_temp predecessors. Used by
+   * `Db` to decide whether a pointee needs to be copied.
+   */ hasInversePointers(rev) {
+        const msg = 'Trying to retrieve inverse pointers of node that does not exist';
+        const node = $703356805bc7d6e8$var$getOrThrow(this.revToNode, rev, msg);
+        return this.structure.getInversePointers(node).some(({ node: pred })=>!pred.information[$703356805bc7d6e8$var$META.TEMP]);
+    }
+}
+
+
+
+class $bfd727fd88a0b35a$export$6d8228690abc2da8 {
+    static{
+        this.cache = new (0, $703356805bc7d6e8$export$94affb487e701bf2)();
+    }
+    static async deploy(ept, wallet, opts) {
+        if (wallet.restClient.moduleStorageType === 'multisig') {
+            const _owners = [
+                wallet.publicKey.toString('hex')
+            ];
+            const outScriptBuf = (0, $8636fd77165bd4bc$export$50e49a79004f0f9)(_owners, wallet.restClient);
+            const update = new (0, $9723fb8a051ef3ce$export$489a84f048b0ef8)({
+                ownerData: [
+                    {
+                        outScriptBuf: outScriptBuf
+                    }
+                ],
+                transition: new (0, $9ca517853ec47831$export$be58926105124dd4)({
+                    exp: ept,
+                    env: {},
+                    mod: undefined,
+                    sourceType: 'module'
+                })
+            });
+            const [rev] = await update.broadcast(wallet);
+            return (0, $d205febb791b53ee$export$1c4cfbb3206db243)(rev);
+        }
+        const tx = new (0, $7e669d424cbb933b$export$7e20c6d567ea8b7a)((0, $303220cf0debbf6c$export$de754bb4cdcc210c)(wallet.chain, wallet.network));
+        await tx.deployInscription(wallet, 'text/javascript', ept, opts);
+        return `${tx.revealTxId}:0`;
+    }
+    static async load(rev, wallet) {
+        const importHook = async (spec)=>{
+            const { txId: txId } = (0, $303220cf0debbf6c$export$caebc656d3686561)(spec);
+            let sourceCode;
+            try {
+                const reconstructed = $bfd727fd88a0b35a$export$6d8228690abc2da8.cache.getByRev([
+                    `${txId}:-1`
+                ]);
+                sourceCode = reconstructed[0].source;
+            } catch (error) {
+                if (!error.message.startsWith('Node does not exist')) throw error;
+                // Fetch from blockchain based on storage type
+                const { restClient: restClient } = wallet;
+                if (restClient.moduleStorageType === 'multisig') {
+                    const { ioDescriptor: ioDescriptor, outs: outs } = await (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromTxId({
+                        txId: txId,
+                        restClient: restClient
+                    });
+                    const [, maxOwnerIndex, maxDataIndex] = ioDescriptor;
+                    const dataOutputs = outs.slice(maxOwnerIndex, maxDataIndex);
+                    const txData = (0, $8636fd77165bd4bc$export$6a94e91b2ef1d7f1)(dataOutputs.map((out)=>out.script));
+                    const json = JSON.parse(txData);
+                    sourceCode = json.exp;
+                } else {
+                    const { body: body } = await (0, $7e669d424cbb933b$export$7e20c6d567ea8b7a).read(txId, wallet);
+                    sourceCode = body;
+                }
+                // Cache the source code
+                const moduleObj = {
+                    source: sourceCode
+                };
+                const handle = $bfd727fd88a0b35a$export$6d8228690abc2da8.cache.beginVersion([
+                    moduleObj
+                ]);
+                handle.commit(txId);
+            }
+            return new (0, $9PVwI$StaticModuleRecord)(sourceCode, spec);
+        };
+        const resolveHook = (spec)=>spec;
+        const compartment = new Compartment({
+            Contract: $ed98b948820df6a2$export$8517d80acf00e19a
+        }, {}, {
+            resolveHook: resolveHook,
+            importHook: importHook
+        });
+        const { namespace: namespace } = await compartment.import(rev);
+        return namespace;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+const { OPS: $287a3b2e2915d9e2$var$OPS } = (0, $9PVwI$script);
+const { SIGHASH_ALL: $287a3b2e2915d9e2$var$SIGHASH_ALL } = (0, $9PVwI$Transaction);
+(0, $9PVwI$initEccLib)($9PVwI$bitcoincomputersecp256k1);
+class $287a3b2e2915d9e2$export$bcca3ea514774656 {
+    constructor(params = {}){
+        this.fetchUtxo = async ({ rev: rev })=>{
+            const { txId: txId, outputIndex: outputIndex } = (0, $303220cf0debbf6c$export$caebc656d3686561)(rev);
+            let fetched;
+            try {
+                fetched = await this.restClient.getTx(txId);
+            } catch (e) {
+                // TODO verify if this is correct
+                throw new Error(`Error ${e.message}. Utxo ${txId} not found`);
+            }
+            const nonWitnessUtxo = (0, $9PVwI$Buffer).from(fetched.txHex, 'hex');
+            return {
+                hash: txId,
+                index: outputIndex,
+                nonWitnessUtxo: nonWitnessUtxo
+            };
+        };
+        this.getOutputSpent = async (input)=>{
+            const { hash: hash, index: index } = input;
+            const { restClient: restClient } = this;
+            const txId = (0, $303220cf0debbf6c$export$577f793df735f4a1)(hash);
+            const tx = await (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromTxId({
+                txId: txId,
+                restClient: restClient
+            });
+            return tx.outs[index];
+        };
+        this.getInputSatoshis = async (tx)=>{
+            const outputsSpent = await Promise.all(tx.ins.map(this.getOutputSpent));
+            return outputsSpent.reduce((acc, cur)=>acc + cur.value, 0n);
+        };
+        this.getOutputSatoshis = (tx)=>{
+            return tx.outs.reduce((acc, cur)=>acc + cur.value, 0n);
+        };
+        this.restClient = new (0, $fdb3572e52dbf02d$export$ea8b5b3aea9558ce)(params);
+    }
+    faucet(amount, address = this.address) {
+        return this.restClient.faucet(address, amount);
+    }
+    derive(subpath = '0') {
+        const path = `${this.path}${this.path.length > 0 ? '/' : ''}${subpath}`;
+        const { chain: chain, network: network, bcn: bcn, mnemonic: mnemonic, passphrase: passphrase } = this.restClient;
+        const { url: url } = bcn;
+        return new $287a3b2e2915d9e2$export$bcca3ea514774656({
+            chain: chain,
+            network: network,
+            url: url,
+            mnemonic: mnemonic,
+            path: path,
+            passphrase: passphrase
+        });
+    }
+    async getBalance(address = this.address) {
+        return this.restClient.getBalance(address);
+    }
+    async getUtxos(address = this.address) {
+        console.log('getUtxos is deprecated. Please use this.getUTXOs({ address, isObject: false }) instead.');
+        const res = await this.restClient.getUTXOs({
+            address: address,
+            verbosity: 1,
+            isObject: false
+        });
+        return res.map((utxo)=>({
+                txId: (0, $303220cf0debbf6c$export$caebc656d3686561)(utxo.rev).txId,
+                vout: (0, $303220cf0debbf6c$export$caebc656d3686561)(utxo.rev).outputIndex,
+                satoshis: utxo.satoshis,
+                rev: utxo.rev,
+                address: utxo.address,
+                height: utxo.blockHeight
+            }));
+    }
+    /**
+   * Computes the dust threshold like the Bitcoin C++ implementation.
+   *
+   * A typical spendable bare multisig output is 37 bytes big, and will later need an input of at least
+   * 148 bytes to spend. An output is considered dust if its amount is less than 185*DUST_RELAY_TX_FEE/1000
+   * satoshis.
+   *
+   * In BTC the default dust fee relay rate is 3000 sat/kvB, and in LTC 30'000 sat/kvB. Therefore,
+   * the min non dust amount per output for bare multisig scripts is 582 satoshis in BTC and 5820
+   * in LTC.
+   * https://github.com/bitcoin/bitcoin/blob/bf0cb4399061c6827bd5d7428a146010102d7ab1/src/policy/policy.cpp#L26
+   */ getDustThreshold(isWitnessProgram, script) {
+        if (this.restClient.chain === 'PEPE') return 1940000;
+        let size = script ? script.length + 9 : 114 // 114 is the size of a 1-of-3 bare multisig script
+        ;
+        if (script && isWitnessProgram) size += 37 + 107 / (0, $bd5ff9060a235dd4$export$4bc394cb084a3624) + 4;
+        else size += 148 // the 148 mentioned above
+        ;
+        const dustRelayPerByte = this.restClient.dustRelayTxFee / 1000;
+        return Math.ceil(dustRelayPerByte * size);
+    }
+    getSigOpCount(script) {
+        const chunks = (0, $9PVwI$script).decompile(script);
+        if (!chunks) return 0;
+        let n = 0;
+        let lastOpCode = 'OP_INVALIDOPCODE';
+        for(let i = 0; i < chunks.length; i += 1){
+            const opCode = chunks[i];
+            if (opCode === $287a3b2e2915d9e2$var$OPS.OP_CHECKSIG || opCode === $287a3b2e2915d9e2$var$OPS.OP_CHECKSIGVERIFY) n += 1;
+            else if (opCode === $287a3b2e2915d9e2$var$OPS.OP_CHECKMULTISIG || opCode === $287a3b2e2915d9e2$var$OPS.OP_CHECKMULTISIGVERIFY) {
+                if ($287a3b2e2915d9e2$var$OPS[lastOpCode] >= $287a3b2e2915d9e2$var$OPS.OP_1 && $287a3b2e2915d9e2$var$OPS[lastOpCode] <= $287a3b2e2915d9e2$var$OPS.OP_16) n += lastOpCode.charCodeAt(3) - '0'.charCodeAt(0);
+                else n += (0, $bd5ff9060a235dd4$export$4266a5deb789e6a0);
+            }
+            lastOpCode = opCode.toString();
+        }
+        return n;
+    }
+    async getLegacySigOpCount(tx) {
+        let nSigOps = 0;
+        for(let i = 0; i < tx.ins.length; i += 1){
+            const prevOutput = await this.getOutputSpent(tx.ins[i]);
+            nSigOps += this.getSigOpCount(prevOutput.script);
+        }
+        for(let i = 0; i < tx.outs.length; i += 1)nSigOps += this.getSigOpCount(tx.outs[i].script);
+        return nSigOps;
+    }
+    async getTransactionSigOpCost(tx) {
+        return await this.getLegacySigOpCount(tx) * (0, $bd5ff9060a235dd4$export$4bc394cb084a3624);
+    }
+    async getUtxosWithOpts({ include: include = [], exclude: exclude = [] } = {}) {
+        let utxos = await this.restClient.getUTXOs({
+            address: this.address,
+            verbosity: 1,
+            isObject: false
+        });
+        (0, $303220cf0debbf6c$export$448332262467e042)(utxos);
+        // Build includeUtxos array from include array
+        const includeSet = new Set(include);
+        const includeUtxos = utxos.filter((utxo)=>includeSet.has(utxo.rev));
+        if (includeUtxos.length !== include.length) throw new Error('Include utxos not found');
+        // Remove utxos that must be excluded, and those that will be included at the beginning of the utxos set
+        const toFilter = new Set([
+            ...include,
+            ...exclude
+        ]);
+        utxos = utxos.filter((utxo)=>!toFilter.has(utxo.rev));
+        // Append utxos that will be included at the beginning of the utxos set
+        return includeUtxos.concat(utxos);
+    }
+    checkFee(fee, size) {
+        const feePerByte = fee / size;
+        const feeErrorPercentage = Math.abs(1 - feePerByte / this.restClient.satPerByte) * 100;
+        if (feeErrorPercentage > (0, $bd5ff9060a235dd4$export$a1be5b5a5ff3a4a1)) throw new Error(`Fee error, please try again with a different "satPerByte" parameter.`);
+    }
+    getTxSize(txSize, nSigOpCost, bytesPerSigOp) {
+        return Math.round((Math.max(txSize, nSigOpCost * bytesPerSigOp) + (0, $bd5ff9060a235dd4$export$4bc394cb084a3624) - 1) / (0, $bd5ff9060a235dd4$export$4bc394cb084a3624));
+    }
+    estimatePsbtSize(tx) {
+        // Estimate the size with a mock transaction
+        const clone = tx.clone();
+        // force add a change output
+        clone.addOutput({
+            address: this.address,
+            value: this.getDustThreshold(false)
+        });
+        clone.signAllInputs(this.restClient.keyPair);
+        clone.finalizeAllInputs();
+        return clone.extractTransaction(true).virtualSize();
+    }
+    async fundPsbt(tx, opts) {
+        const { restClient: restClient, address: address } = this;
+        const inputAmount = tx.inputsAmount;
+        const outputAmount = tx.outputsAmount;
+        const minNonDustAmount = this.getDustThreshold(false);
+        const utxos = await this.getUtxosWithOpts(opts);
+        // fulfill the outputs
+        let missingAmount = outputAmount - inputAmount + minNonDustAmount;
+        while(missingAmount > 0){
+            const utxo = utxos.splice(0, 1)[0];
+            if (!utxo) throw new Error(`Insufficient balance in address ${address}. Missing ${missingAmount} satoshis.`);
+            const utxoInputs = await this.fetchUtxo(utxo);
+            if (!utxoInputs) throw new Error('Utxo not found');
+            tx.addInput(utxoInputs);
+            const estimatedFee = this.estimatePsbtSize(tx) * restClient.satPerByte;
+            missingAmount = tx.outputsAmount + estimatedFee - tx.inputsAmount + minNonDustAmount;
+        }
+        const estimateSize = this.estimatePsbtSize(tx);
+        const requiredFee = estimateSize * restClient.satPerByte;
+        const inputAmountAfter = tx.inputsAmount;
+        // This are the fees we would pay if the change output has minNonDustAmount
+        const feesAssumingMinNonDustChangeAmount = inputAmountAfter - outputAmount;
+        // if the fee is too high, add a change output
+        const missingFee = feesAssumingMinNonDustChangeAmount - requiredFee;
+        if (missingFee > 0) tx.addOutput({
+            address: address,
+            value: Math.round(missingFee)
+        });
+        // checkFees (todo: check if the below is necessary)
+        const finalPsbt = tx.clone();
+        finalPsbt.signAllInputs(restClient.keyPair);
+        finalPsbt.finalizeAllInputs();
+        const finalSize = finalPsbt.extractTransaction().virtualSize();
+        const finalFee = finalPsbt.inputsAmount - finalPsbt.outputsAmount;
+        this.checkFee(finalFee, finalSize);
+    }
+    async estimateSize(tx) {
+        const clone = tx.clone();
+        const changeScript = (0, $9PVwI$address).toOutputScript(this.address, this.restClient.networkObj);
+        const minNonDustSatoshis = this.getDustThreshold(false, changeScript);
+        clone.addOutput(changeScript, BigInt(minNonDustSatoshis));
+        await this.sign(clone);
+        const sigOpCost = this.getTxSize(clone.virtualSize(), await this.getTransactionSigOpCost(clone), (0, $bd5ff9060a235dd4$export$b3bf7f8ed07f5d46));
+        return Math.max(clone.virtualSize(), sigOpCost);
+    }
+    async estimateFee(tx) {
+        const size = await this.estimateSize(tx);
+        return size * this.restClient.satPerByte;
+    }
+    /**
+   * Given a transaction with inputs and outputs containing data, this function
+   * adds extra inputs to fund the transaction and possibly an change output.
+   * The options are:
+   * * include: an array of revisions to be included in order as inputs
+   * * exclude: an array of revisions to be excluded in order as inputs
+   */ async fund(tx, opts) {
+        const { restClient: restClient, address: address } = this;
+        const { chain: chain, network: network } = restClient;
+        const networkObj = (0, $303220cf0debbf6c$export$de754bb4cdcc210c)(chain, network);
+        const inputSatoshis = await this.getInputSatoshis(tx);
+        const utxos = await this.getUtxosWithOpts(opts);
+        // Always add a change output
+        const changeScript = (0, $9PVwI$address).toOutputScript(address.toString(), networkObj);
+        const minNonDustSatoshis = this.getDustThreshold(false, changeScript);
+        tx.addOutput(changeScript, 0n);
+        const changeOutputIndex = tx.outs.length - 1;
+        // Add the inputs
+        let inputSatoshisAfter = inputSatoshis;
+        let requiredFee = await this.estimateFee(tx);
+        let missingSatoshis = this.getOutputSatoshis(tx) + BigInt(requiredFee) - inputSatoshis;
+        while(missingSatoshis > 0){
+            const utxo = utxos.splice(0, 1)[0];
+            if (!utxo) throw new Error(`Insufficient balance in address ${address}. Missing ${missingSatoshis} satoshis.`);
+            const utxoInput = await this.fetchUtxo(utxo);
+            const inputHash = (0, $9PVwI$bufferUtils).reverseBuffer((0, $9PVwI$Buffer).from(utxoInput.hash, 'hex'));
+            tx.addInput(inputHash, utxoInput.index);
+            const prevTx = (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromBuffer(utxoInput.nonWitnessUtxo);
+            inputSatoshisAfter += prevTx.outs[utxoInput.index].value;
+            requiredFee = await this.estimateFee(tx);
+            missingSatoshis = this.getOutputSatoshis(tx) + BigInt(requiredFee) - inputSatoshisAfter;
+        }
+        // Now, if the fee to pay too high, add a change output
+        const currentFee = inputSatoshisAfter - this.getOutputSatoshis(tx);
+        const change = currentFee - BigInt(requiredFee);
+        if (change >= minNonDustSatoshis) // Update change output with the required fee
+        tx.updateOutput(changeOutputIndex, {
+            value: change
+        });
+        else // If the change is too low, drop the change output (we pay a little more fee, but no dust output)
+        tx.outs.splice(changeOutputIndex, 1);
+        if (this.restClient.checkFee) this.checkFee(requiredFee, await this.estimateSize(tx));
+    }
+    async sign(transaction, sigOptions = {}) {
+        const { restClient: restClient } = this;
+        const { ins: ins } = transaction;
+        const { inputIndex: inputIndex, sighashType: sighashType = $287a3b2e2915d9e2$var$SIGHASH_ALL, inputScript: inputScript } = sigOptions;
+        const positions = typeof inputIndex === 'number' ? [
+            inputIndex
+        ] : [
+            ...Array(ins.length).keys()
+        ];
+        for(let i = 0; i < positions.length; i += 1)try {
+            const pos = positions[i];
+            const { hash: hash, index: index } = ins[pos];
+            if (hash.every((byte)=>byte === 0)) continue;
+            const prevHash = (0, $9PVwI$bufferUtils).reverseBuffer((0, $9PVwI$Buffer).from([
+                ...hash
+            ]));
+            const prevTx = await restClient.getTx(prevHash.toString('hex'));
+            const { script: script } = prevTx.outs[index];
+            const prevOutScript = inputScript || (0, $9PVwI$Buffer).from(script, 'hex');
+            transaction.sign(pos, restClient.keyPair, sighashType, prevOutScript);
+        } catch (error) {
+            const expectedErrors = [
+                'Not enough signatures provided',
+                'Hash mismatch'
+            ];
+            if (error instanceof Error && !expectedErrors.includes(error.message)) throw error;
+        }
+    }
+    async broadcast(tx) {
+        if (this.restClient.mode === 'debug') {
+            const { inRevs: inRevs, outRevs: outRevs } = tx;
+            console.log('wallet.broadcast', {
+                inRevs: inRevs,
+                outRevs: outRevs
+            });
+        }
+        await this.restClient.broadcast(tx.toHex());
+        return tx.getId();
+    }
+    async send(satoshis, address) {
+        const transaction = new (0, $9PVwI$Transaction)();
+        const { chain: chain, network: network } = this.restClient;
+        const networkObj = (0, $303220cf0debbf6c$export$de754bb4cdcc210c)(chain, network);
+        const script = (0, $9PVwI$address).toOutputScript(address, networkObj);
+        transaction.addOutput(script, satoshis);
+        await this.fund(transaction);
+        await this.sign(transaction);
+        return this.broadcast(transaction);
+    }
+    getSpendablePublicKeys(chain, network) {
+        const publicKeys = {
+            'any-testnet': '020a6ece486f4e8ccbba59b689bbfb99a8dd6b49db498c6991d6845e002b5ddf8f',
+            'LTC-mainnet': '029f5f3d2a46bf9bd17437cd447a09b2e98df1740afa8397cf06a8b25a6c5dffac',
+            'BTC-mainnet': '03c6265f8e6997149a13bdf02b3be65e8929206a1d36e68a75928793f30f59eb52',
+            'PEPE-mainnet': '035c2e6d55d5c03a709247af9a7a2dfc0bf40fdcbdcfe66f376cdcf7fab4113113',
+            'DOGE-mainnet': '03a558c1ca6263ccd070005dc24f4555031998a6fb793f816624fd12e8dc5a5755'
+        };
+        if (network === 'regtest' || network === 'testnet') return publicKeys['any-testnet'];
+        const key = `${chain}-${network}`;
+        return publicKeys[key];
+    }
+    get hdPrivateKey() {
+        return (0, $303220cf0debbf6c$export$accea06471c18a5a)(this.restClient);
+    }
+    get privateKey() {
+        return this.hdPrivateKey.privateKey ?? (0, $9PVwI$Buffer).alloc(0);
+    }
+    get publicKey() {
+        return this.hdPrivateKey.publicKey;
+    }
+    get passphrase() {
+        return this.restClient.passphrase;
+    }
+    get path() {
+        return this.restClient.path;
+    }
+    get chain() {
+        return this.restClient.chain;
+    }
+    get network() {
+        return this.restClient.network;
+    }
+    get url() {
+        return this.restClient.bcn.url;
+    }
+    get mnemonic() {
+        return this.restClient.mnemonic;
+    }
+    get address() {
+        let address;
+        try {
+            address = (0, $9PVwI$address).fromPublicKey(this.publicKey, this.restClient.addressType, this.restClient.networkObj);
+        } catch (error) {
+            throw new Error('Could not generate address');
+        }
+        return address;
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+class $888aa77d15cfc3b3$export$76f9d441834df9ba {
+    constructor({ chain: chain, network: network, url: url }){
+        this.computer = new (0, $5897c693dfcff079$export$2454fd0de010f4bb)({
+            chain: chain,
+            network: network,
+            url: url
+        });
+    }
+    async getTXOs(q) {
+        if (q.verbosity === 1) return this.computer.getTXOs({
+            ...q,
+            verbosity: 1
+        });
+        return this.computer.getTXOs({
+            ...q,
+            verbosity: 0
+        });
+    }
+    async sync(location) {
+        const synced = await this.computer.sync(location);
+        return (0, $303220cf0debbf6c$export$ea99c62adecc85ae)((0, $303220cf0debbf6c$export$c194c5a73880e96f)(synced));
+    }
+    async decode(txId) {
+        return this.computer.decode(txId);
+    }
+    async load(location) {
+        return this.computer.load(location);
+    }
+    async getAncestors(location) {
+        return this.computer.getAncestors(location);
+    }
+    async getBalance(address) {
+        return this.computer.getBalance(address);
+    }
+    async first(rev) {
+        return this.computer.first(rev);
+    }
+    async prev(rev) {
+        return this.computer.prev(rev);
+    }
+    async next(rev) {
+        return this.computer.next(rev);
+    }
+    async latest(rev) {
+        return this.computer.latest(rev);
+    }
+}
+
+
+
+
+/**
+ * Internal flattened representation of an `Effect2` used during cache
+ * operations.
+ */ const $5f4b05da045beabf$var$FLATTEN = {
+    TEMP: '_temp',
+    RES: 'res',
+    ENV_PREFIX: 'env_'
+};
+class $5f4b05da045beabf$export$14be6456f8698719 {
+    /**
+   * Creates a new Bitcoin Computer database instance.
+   *
+   * @param params - Configuration for the underlying wallet and REST client
+   */ constructor(params = {}){
+        this.wallet = new (0, $287a3b2e2915d9e2$export$bcca3ea514774656)(params);
+        this.cache = new (0, $703356805bc7d6e8$export$94affb487e701bf2)();
+    }
+    get restClient() {
+        return this.wallet.restClient;
+    }
+    /**
+   * Flattens a high-level `EvaluatedEffect` into the internal cache format.
+   * Fully type-safe – no assertions required.
+   */ flattenEffect(effect) {
+        const envEntries = Object.entries(effect.env).map(([key, value])=>[
+                `${$5f4b05da045beabf$var$FLATTEN.ENV_PREFIX}${key}`,
+                value
+            ]);
+        return {
+            [$5f4b05da045beabf$var$FLATTEN.TEMP]: true,
+            [$5f4b05da045beabf$var$FLATTEN.RES]: effect.res,
+            ...Object.fromEntries(envEntries)
+        };
+    }
+    /**
+   * Reverses `flattenEffect` to restore a normal `EvaluatedEffect`. Fully
+   * type-safe – no assertions required.
+   */ unFlattenEffect(flattened) {
+        const envEntries = Object.entries(flattened).filter(([key])=>key.startsWith($5f4b05da045beabf$var$FLATTEN.ENV_PREFIX)).map(([key, value])=>[
+                key.slice($5f4b05da045beabf$var$FLATTEN.ENV_PREFIX.length),
+                value
+            ]);
+        return {
+            res: flattened[$5f4b05da045beabf$var$FLATTEN.RES],
+            env: Object.fromEntries(envEntries)
+        };
+    }
+    /**
+   * Recursively traverses an object, adds it to the recording system
+   * (`record.ts`), and wraps every nested object with security proxies.
+   *
+   * This ensures that every reachable smart object participates in the
+   * persistence layer and cannot bypass security boundaries.
+   */ record(obj, visited = new WeakMap()) {
+        if (typeof obj !== 'object' || obj === null) return obj;
+        const objKey = obj;
+        if (visited.has(objKey)) return visited.get(objKey);
+        const insideCallProxy = new Proxy(obj, new (0, $952d3bca5034e549$export$b8e7b394f2964d0d)());
+        const proxy = new Proxy(insideCallProxy, new (0, $0b77d8afb5886e41$export$f2aa9e51325c9c38)());
+        visited.set(objKey, proxy);
+        (0, $fa96f8418385359b$export$e16d8520af44a096)(proxy);
+        for (const key of Object.keys(proxy))(0, $aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{
+            proxy[key] = this.record(proxy[key], visited);
+        });
+        return proxy;
+    }
+    /**
+   * Fetches a transition from the blockchain and decodes it. Accepts an
+   * optional pre-fetched `txFromChain` to avoid duplicate RPC calls.
+   */ async getTransitionFromChain(txId, txFromChain) {
+        const { restClient: restClient } = this;
+        const tx = txFromChain ?? await (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromTxId({
+            txId: txId,
+            restClient: restClient
+        });
+        const update = await (0, $9723fb8a051ef3ce$export$489a84f048b0ef8).fromTx(tx, restClient);
+        return (0, $9ca517853ec47831$export$be58926105124dd4).fromUpdate(update);
+    }
+    /**
+   * Retrieves an already-cached effect for a transaction.
+   */ getEffectFromCache(txId) {
+        const [fromCache] = this.cache.getByTxId(txId);
+        const flattened = this.unFlattenEffect(fromCache);
+        return this.record(flattened);
+    }
+    /**
+   * Re-evaluates a transaction from the chain (used when cache miss occurs).
+   * Now performs the transaction fetch **only once**.
+   */ async getEffectFromChain(txId) {
+        const { restClient: restClient } = this;
+        const txFromChain = await (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromTxId({
+            txId: txId,
+            restClient: restClient
+        });
+        const transition = await this.getTransitionFromChain(txId, txFromChain);
+        const { effect: effect } = await this.eval(transition, {
+            txFromChain: txFromChain
+        });
+        return effect;
+    }
+    /**
+   * Returns the effect of a transaction (result + environment). First tries the
+   * cache; falls back to on-chain re-evaluation if needed.
+   */ async getEffect(txId) {
+        try {
+            return await this.getEffectFromCache(txId);
+        } catch (err) {
+            if (err instanceof Error && err.message !== `Version ${txId} does not exist`) throw err;
+            return this.getEffectFromChain(txId);
+        }
+    }
+    /**
+   * Returns an orphan object (reachable only via inverse pointers) from cache.
+   */ getOrphanFromCache(rev) {
+        const [orphan] = this.cache.getByRev([
+            rev
+        ]);
+        return this.record(orphan);
+    }
+    /**
+   * Retrieves a smart object by its revision. Works for both on-chain and
+   * in-memory objects (including orphans).
+   */ async getRev(rev) {
+        if (!rev || typeof rev !== 'string') throw new $5f4b05da045beabf$export$8ef43b75008b17aa(`Invalid revision: ${rev}`);
+        if (rev.startsWith((0, $70710ac8a001306b$export$e89b5b69fd27457c))) return this.getMock(rev);
+        const txId = (0, $303220cf0debbf6c$export$5c74a82dce3394d5)(rev);
+        const effect = await this.getEffect(txId);
+        const fromEffect = (0, $303220cf0debbf6c$export$d601b1a5af9dd5dc)(effect, '_rev', rev);
+        return fromEffect || this.getOrphanFromCache(rev);
+    }
+    async get(id) {
+        return (0, $303220cf0debbf6c$export$d146d9996ff2e97)(id) ? this.getRev(id) : this.getEffect(id);
+    }
+    /**
+   * Evaluates a smart-contract transition and returns the resulting effect + transaction.
+   *
+   * Core pipeline of Bitcoin Computer. Maps directly to the node-copying architecture
+   * (Driscoll et al. §2.3 + Karp §2.1):
+   *
+   *   1. Environment & namespace resolution
+   *   2. Secure sandbox evaluation
+   *   3. Cache version creation (two-phase apply + propagation)
+   *   4. Transaction construction + metadata attachment
+   *
+   * Only the stale-side-predecessor refresh (inside Phase 3) ever rolls back.
+   * Guarantees partial persistence (e=0, path copying), correct inRevs ordering,
+   * prototype preservation, and security boundaries.
+   */ async eval(transition, opts = {}) {
+        const txFromChain = opts.txFromChain;
+        // Phase 0: Replay / cache-hit shortcut
+        if (txFromChain) {
+            const txId = txFromChain.getId();
+            if (this.cache.txIdToRoots.has(txId)) return {
+                effect: this.getEffectFromCache(txId),
+                tx: txFromChain
+            };
+        }
+        const { cache: cache, restClient: restClient, wallet: wallet } = this;
+        const { chain: chain, network: network, bcn: bcn } = restClient;
+        const { exp: exp, env: env, mod: mod } = transition;
+        // Phase 1: Resolve environment & namespace
+        const environment = await Object.fromEntries(await Promise.all(Object.entries(env).map(async ([k, rev])=>[
+                k,
+                await this.getRev(rev)
+            ])));
+        const namespace = mod ? await (0, $bfd727fd88a0b35a$export$6d8228690abc2da8).load(mod, wallet) : {};
+        const computer = new (0, $888aa77d15cfc3b3$export$76f9d441834df9ba)({
+            chain: chain,
+            network: network,
+            url: bcn.url
+        });
+        // Phase 2: Secure Compartment evaluation + security checks
+        const globals = {
+            Contract: $ed98b948820df6a2$export$8517d80acf00e19a,
+            computer: computer,
+            console: console,
+            ...environment,
+            ...namespace
+        };
+        const compartment = new Compartment(globals);
+        const result = await compartment.evaluate(exp);
+        // this.validateSecurity(exp, result, environment)
+        if (typeof exp !== 'string') throw new $5f4b05da045beabf$export$7f71b5adef806671('Not a smart object location');
+        if (/ super(\[|\.)/.test(exp)) throw new $5f4b05da045beabf$export$7f71b5adef806671('Super is not allowed in smart contracts');
+        if ($5f4b05da045beabf$export$d23a8e6958a8bc2d(result) || Object.values(environment).some($5f4b05da045beabf$export$d23a8e6958a8bc2d)) throw new $5f4b05da045beabf$export$7f71b5adef806671('Detected object that does not extend from Contract');
+        const evaluatedEffect = {
+            res: result,
+            env: environment
+        };
+        const freshFlattened = this.flattenEffect(evaluatedEffect);
+        let handle;
+        try {
+            // Phase 3: Node-copying version creation (two-phase apply)
+            handle = cache.beginVersion([
+                freshFlattened
+            ]);
+            if (handle.array.length === 0) {
+                handle.rollback();
+                return {
+                    effect: evaluatedEffect,
+                    tx: null
+                };
+            }
+            const isReplay = !!txFromChain;
+            // Stale-side-predecessor refresh – the *only* rollback path in the pipeline
+            if (!isReplay) {
+                const revsInFlattened = (0, $303220cf0debbf6c$export$6850e3f48372183d)(freshFlattened);
+                const unreachable = handle.oldRevs.filter((rev)=>rev !== undefined && !revsInFlattened.has(rev));
+                if (unreachable.length > 0) {
+                    const latestRevs = await Promise.all(unreachable.map((r)=>this.restClient.latest(r)));
+                    const staleSideRevs = latestRevs.filter((l, i)=>l !== unreachable[i]);
+                    if (staleSideRevs.length > 0) {
+                        const staleTxIds = new Set(staleSideRevs.map((0, $303220cf0debbf6c$export$5c74a82dce3394d5)));
+                        handle.rollback() // discard temporary version
+                        ;
+                        await Promise.all([
+                            ...staleTxIds
+                        ].map((id)=>this.getEffectFromChain(id))) // refresh cache
+                        ;
+                        handle = this.cache.beginVersion([
+                            freshFlattened
+                        ]) // retry with latest state
+                        ;
+                    }
+                }
+            }
+            const { array: array, inRevs: inRevs, oldRevs: oldRevs } = handle;
+            // Phase 4: Transaction construction & final commit
+            let update;
+            let tx;
+            if (isReplay) {
+                update = await (0, $9723fb8a051ef3ce$export$489a84f048b0ef8).fromTx(txFromChain, restClient);
+                tx = txFromChain;
+            } else {
+                const ownerData = await Promise.all(array.map((obj, i)=>{
+                    const out = (0, $9723fb8a051ef3ce$export$489a84f048b0ef8).buildOwnerOutput(obj, i, wallet, txFromChain);
+                    return {
+                        ...out,
+                        oldRev: oldRevs[i]
+                    };
+                }));
+                update = new (0, $9723fb8a051ef3ce$export$489a84f048b0ef8)({
+                    inRevs: inRevs,
+                    ownerData: ownerData,
+                    transition: transition
+                });
+                tx = await update.toTx(wallet);
+                const { fund: fund = true, sign: sign = true } = opts;
+                if (fund) await wallet.fund(tx, opts);
+                if (sign) await wallet.sign(tx, opts);
+            }
+            const txId = tx.getId();
+            handle.commit(txId);
+            // Attach _id / _root / _satoshis / _owners metadata (runs only on new nodes)
+            this.cache.updateNewNodes((obj)=>{
+                if (!(0, $d205febb791b53ee$export$70ac1a29dd7dda57)(obj) || typeof obj._rev !== 'string') return;
+                const outputIndex = parseInt(obj._rev.split(':')[1], 10);
+                if (outputIndex < 0 || outputIndex >= update.ownerData.length) return;
+                const calleeName = transition.parsed.getCalleeName();
+                const isNewOrCall = transition.parsed.isNew() || transition.parsed.isCall();
+                const meta = {};
+                if (typeof obj._id !== 'string') meta._id = (0, $d205febb791b53ee$export$84eca18e6d832dd1)(`${txId}:${outputIndex}`);
+                if (isNewOrCall && typeof obj._root !== 'string') meta._root = calleeName && evaluatedEffect.env[calleeName] ? (0, $d205febb791b53ee$export$accd2046ded63e63)(evaluatedEffect.env[calleeName]._root) : (0, $d205febb791b53ee$export$accd2046ded63e63)(obj._id ?? `${txId}:${outputIndex}`);
+                const ownerDataEntry = update.ownerData[outputIndex] ?? {};
+                if (typeof obj._satoshis === 'undefined') meta._satoshis = ownerDataEntry._satoshis;
+                if (typeof obj._owners === 'undefined') meta._owners = ownerDataEntry._owners;
+                if (ownerDataEntry._readers !== undefined) meta._readers = ownerDataEntry._readers;
+                if (ownerDataEntry._url !== undefined) meta._url = ownerDataEntry._url;
+                (0, $aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{
+                    Object.assign(obj, meta);
+                });
+            });
+            const effect = this.record(this.unFlattenEffect(cache.getByTxId(txId)[0]));
+            return {
+                effect: effect,
+                tx: tx
+            };
+        } finally{
+            // rollback() is idempotent after commit(), so this is always safe
+            if (handle) handle.rollback();
+        }
+    }
+    getMock(rev) {
+        const mockIndex = parseInt(rev.split(':')[1], 10);
+        if (this.mocks) return Object.values(this.mocks)[mockIndex];
+        throw new $5f4b05da045beabf$export$8ef43b75008b17aa('Mock not found');
+    }
+    /**
+   * Same as `eval` but with a set of mocked objects injected into the
+   * environment. Useful for unit-testing contracts that depend on external
+   * state.
+   */ async evalMocked(transition, opts = {}) {
+        const { mocks: mocks } = opts;
+        if (!mocks || Object.keys(mocks).length === 0) return this.eval(transition, opts);
+        // 1. Register mocks in the cache under a fake transaction so they receive
+        //    proper _id / _rev / _root metadata via the normal commit path.
+        const mockForest = [
+            {
+                [$5f4b05da045beabf$var$FLATTEN.TEMP]: true,
+                ...mocks
+            }
+        ];
+        const mockHandle = this.cache.beginVersion(mockForest);
+        mockHandle.commit((0, $70710ac8a001306b$export$e89b5b69fd27457c));
+        const committedArray = this.cache.getByTxId((0, $70710ac8a001306b$export$e89b5b69fd27457c));
+        const committedRoot = committedArray[0];
+        // 2. Attach metadata to the original mock objects (mutates them)
+        this.mocks = {};
+        const mockEntries = Object.entries(mocks);
+        for (const [i, [name, mock]] of mockEntries.entries()){
+            mock._id = `${0, $70710ac8a001306b$export$e89b5b69fd27457c}:${i}`;
+            mock._rev = `${0, $70710ac8a001306b$export$e89b5b69fd27457c}:${i}`;
+            mock._root = `${0, $70710ac8a001306b$export$e89b5b69fd27457c}:${i}`;
+            this.mocks[name] = mock;
+        }
+        // 3. Build env mapping from mock name → assigned revision string
+        const mockedEnv = {};
+        for (const [name] of mockEntries){
+            const key = `${$5f4b05da045beabf$var$FLATTEN.ENV_PREFIX}${name}`;
+            const obj = committedRoot[key] || committedRoot[name];
+            if (obj?._rev && typeof obj._rev === 'string') mockedEnv[name] = obj._rev;
+        }
+        // 4. Inject mock revisions into transition environment
+        transition.env = {
+            ...transition.env,
+            ...mockedEnv
+        };
+        // 5. Run real evaluation (mocks are now resolved as revs)
+        const result = await this.eval(transition, {
+            ...opts,
+            mocks: undefined
+        });
+        // 6. Cleanup
+        this.cache.pruneTxId((0, $70710ac8a001306b$export$e89b5b69fd27457c));
+        this.mocks = undefined;
+        return result;
+    }
+    /**
+   * Requests testnet BTC from the faucet.
+   */ faucet(amount, address) {
+        return this.wallet.faucet(amount, address);
+    }
+}
+function $5f4b05da045beabf$export$d23a8e6958a8bc2d(value) {
+    return [
+        ...(0, $303220cf0debbf6c$export$f402e1d983f479af)([
+            value
+        ], (0, $303220cf0debbf6c$export$2ba85e47198b647a))
+    ].some((v)=>(0, $d205febb791b53ee$export$70ac1a29dd7dda57)(v) && !(0, $fa96f8418385359b$export$141f8028a5c9b76)(v) && !(0, $303220cf0debbf6c$export$1ef33362739af9d6)(v._rev));
+}
+class $5f4b05da045beabf$export$70e773e797606c01 extends Error {
+    constructor(message){
+        super(message);
+        this.name = 'BitcoinComputerError';
+    }
+}
+class $5f4b05da045beabf$export$7f71b5adef806671 extends $5f4b05da045beabf$export$70e773e797606c01 {
+}
+class $5f4b05da045beabf$export$3fbb8a111b629068 extends $5f4b05da045beabf$export$70e773e797606c01 {
+}
+class $5f4b05da045beabf$export$8ef43b75008b17aa extends $5f4b05da045beabf$export$70e773e797606c01 {
+}
+
+
+
+
+
+
+
+
+
+const $0b7f72abf1819dc7$var$EventSource = typeof window !== 'undefined' && window.EventSource ? window.EventSource : (0, $9PVwI$EventSource);
+class $0b7f72abf1819dc7$export$f55210826850c514 {
+    constructor(baseUrl, chain, network, restClient){
+        this.eventSource = null;
+        this.idCallbacks = new Map();
+        this.idOnErrors = new Map();
+        this.streamCallbacks = new Map();
+        this.streamOnErrors = new Map();
+        this.mempoolCallback = null;
+        this.mempoolOnError = undefined;
+        this.baseUrl = baseUrl;
+        this.chain = chain;
+        this.network = network;
+        this.restClient = restClient;
+    }
+    buildFilterKey(filter) {
+        const sorted = Object.keys(filter).sort().reduce((acc, k)=>{
+            const val = filter[k];
+            acc[k] = typeof val === 'bigint' ? val.toString() : val;
+            return acc;
+        }, {});
+        return JSON.stringify(sorted);
+    }
+    hasSubscriptions() {
+        return this.idCallbacks.size > 0 || this.streamCallbacks.size > 0 || !!this.mempoolCallback;
+    }
+    async rebuildEventSource() {
+        this.eventSource?.close();
+        this.eventSource = null;
+        if (!this.hasSubscriptions()) return;
+        const params = new URLSearchParams();
+        if (this.mempoolCallback) params.append('mempool', 'true');
+        this.idCallbacks.forEach((_, id)=>params.append('id', id));
+        let index = 0;
+        for (const { filter: filter } of this.streamCallbacks.values()){
+            const processed = {
+                ...filter
+            };
+            if (processed.exp !== undefined) {
+                if (typeof processed.exp !== 'string') throw new Error('exp must be a string');
+                processed.expHash = (0, $9PVwI$crypto).sha256(Buffer.from(processed.exp)).toString('hex');
+                delete processed.exp;
+            }
+            for (const [key, value] of Object.entries(processed))if (value !== undefined && value !== null) params.append(`stream[${index}][${key}]`, String(value));
+            index++;
+        }
+        const url = `${this.baseUrl}/v1/${this.chain}/${this.network}/subscribe?${params.toString()}`;
+        this.eventSource = new $0b7f72abf1819dc7$var$EventSource(url);
+        this.eventSource.onmessage = this.handleMessage.bind(this);
+        this.eventSource.onerror = this.handleError.bind(this);
+    }
+    handleMessage(event) {
+        const data = (0, $303220cf0debbf6c$export$b48ee232557adc37)(event.data);
+        if (!data) return;
+        if ('revs' in data) {
+            this.mempoolCallback?.(data);
+            return;
+        }
+        // Dispatch to ID if present
+        if (data.id) {
+            const cb = this.idCallbacks.get(data.id);
+            cb?.({
+                rev: data.rev,
+                hex: data.hex
+            });
+        }
+        // Dispatch to matching streams (check exact match on filter keys)
+        this.streamCallbacks.forEach(({ filter: filter, callback: callback })=>{
+            let matches = true;
+            for (const [k, v] of Object.entries(filter)){
+                if (k === 'publicKey') // Server sends publicKeys array
+                {
+                    if (!Array.isArray(data.publicKeys) || !data.publicKeys.includes(String(v))) {
+                        matches = false;
+                        break;
+                    }
+                } else if (data[k] !== String(v)) {
+                    matches = false;
+                    break;
+                }
+            }
+            if (matches) callback({
+                rev: data.rev,
+                hex: data.hex
+            });
+        });
+    }
+    handleError(error) {
+        this.idOnErrors.forEach((onError)=>onError?.(error));
+        this.streamOnErrors.forEach((onError)=>onError?.(error));
+        this.mempoolOnError?.(error);
+        this.eventSource?.close();
+    }
+    async addIdSubscription(id, onMessage, onError) {
+        this.idCallbacks.set(id, onMessage);
+        this.idOnErrors.set(id, onError);
+        await this.rebuildEventSource();
+        return ()=>{
+            this.idCallbacks.delete(id);
+            this.idOnErrors.delete(id);
+            this.rebuildEventSource();
+        };
+    }
+    async addStreamSubscription(filter, onMessage, onError) {
+        for (const key of Object.keys(filter)){
+            if (!(0, $bd5ff9060a235dd4$export$30dc5b6bafe2f74).includes(key)) throw new Error(`Invalid subscription field: ${key}`);
+        }
+        if (filter.asm !== undefined) {
+            if (!(0, $9PVwI$script).fromASM(filter.asm)) throw new Error('asm is not a valid script');
+        }
+        const queryParams = new URLSearchParams();
+        let expHash;
+        const processed = {
+            ...filter
+        };
+        if (processed.exp !== undefined) {
+            expHash = (0, $9PVwI$crypto).sha256(Buffer.from(processed.exp)).toString('hex');
+            delete processed.exp;
+            processed['expHash'] = expHash;
+        }
+        for (const [key, value] of Object.entries(processed))if (value !== undefined && value !== null) queryParams.append(key, String(value));
+        await this.restClient.checkStreamParameters(queryParams);
+        const storedFilter = {};
+        for (const [key, value] of Object.entries(processed))if (value !== undefined && value !== null) storedFilter[key] = typeof value === 'bigint' ? value.toString() : String(value);
+        const key = this.buildFilterKey(filter);
+        this.streamCallbacks.set(key, {
+            filter: storedFilter,
+            callback: onMessage
+        });
+        this.streamOnErrors.set(key, onError);
+        await this.rebuildEventSource();
+        return ()=>{
+            this.streamCallbacks.delete(key);
+            this.streamOnErrors.delete(key);
+            this.rebuildEventSource();
+        };
+    }
+    async addMempoolSubscription(onMessage, onError) {
+        this.mempoolCallback = onMessage;
+        this.mempoolOnError = onError;
+        await this.rebuildEventSource();
+        return ()=>{
+            this.mempoolCallback = null;
+            this.mempoolOnError = undefined;
+            this.rebuildEventSource();
+        };
+    }
+}
+
+
+
+
+const $5897c693dfcff079$var$EventSource = typeof window !== 'undefined' && window.EventSource ? window.EventSource : (0, $9PVwI$EventSource);
+/**
+ * # Bitcoin Computer – Main Public API
+ *
+ * This is the primary entry point for developers using the Bitcoin Computer library.
+ *
+ * Key design principles:
+ * - **Type-safe smart contracts**: Every contract instance is wrapped in `SmartContract<T>`, which
+ *   uses a covariant recursive endofunctor (see `types.ts`) to lift methods, preserve `this`,
+ *   brand metadata, and guarantee async returns.
+ * - **Branded primitives**: `Rev`, `TxId`, `Address`, etc. are branded strings for compile-time safety.
+ * - **Backward compatibility**: Public APIs accept plain `string` where `Rev`/`TxId` are expected
+ *   (e.g. for `inner-computer.ts` and legacy code), but return branded types when possible.
+ * - **Security**: All returned objects are wrapped with dual-layer proxies (`InsideCallHandler` +
+ *   `OutsideCallHandler`) to enforce encapsulation and call-boundary rules.
+ * - **Partial persistence**: The underlying graph uses the node-copying method (Driscoll et al. §2.3).
+ *
+ * All mutation happens inside evaluated smart-contract transitions. User code outside contracts
+ * cannot mutate objects.
+ */ class $5897c693dfcff079$export$2454fd0de010f4bb {
+    constructor(params = {}){
+        this.db = new (0, $5f4b05da045beabf$export$14be6456f8698719)(params);
+        this.subscription = new (0, $0b7f72abf1819dc7$export$f55210826850c514)(this.db.wallet.url, this.db.wallet.chain, this.db.wallet.network, this.db.wallet.restClient);
+    }
+    /* ==================== BRANDING & METADATA ==================== */ /**
+   * Returns `true` if `key` is one of the special Bitcoin Computer metadata fields.
+   * Used by `brandMetadata` and `containsMetadata`.
+   */ isMetadataKey(key) {
+        return [
+            '_id',
+            '_rev',
+            '_root',
+            '_url',
+            '_owners',
+            '_readers',
+            '_satoshis'
+        ].includes(key);
+    }
+    /**
+   * Fast cycle-safe check whether a value (or any nested value) contains Bitcoin Computer metadata.
+   * Early exit improves performance on plain objects.
+   */ containsMetadata(v, seen = new WeakSet()) {
+        if (v == null || typeof v !== 'object') return false;
+        if (seen.has(v)) return false;
+        seen.add(v);
+        if (Array.isArray(v)) return v.some((item)=>this.containsMetadata(item, seen));
+        for (const key of Object.keys(v)){
+            if (this.isMetadataKey(key)) return true;
+            if (this.containsMetadata(v[key], seen)) return true;
+        }
+        return false;
+    }
+    /**
+   * Recursively brands all Bitcoin Computer metadata fields **at runtime**.
+   *
+   * This is the canonical way to turn a plain JavaScript object (e.g. deserialized JSON,
+   * result from a raw RPC call, or legacy data) into a fully typed `SmartContract<T>`.
+   *
+   * Called automatically by `new`, `sync`, `encode*`, `decode`, etc.
+   * Uses `_sudo` to bypass proxy restrictions during branding.
+   */ brandMetadata(value, seen = new WeakMap()) {
+        if (value == null || typeof value !== 'object') return value;
+        const obj = value;
+        if (seen.has(obj)) return seen.get(obj);
+        if (!this.containsMetadata(value)) {
+            seen.set(obj, value);
+            return value;
+        }
+        if (Array.isArray(value)) {
+            const arr = value.map((v)=>this.brandMetadata(v, seen));
+            seen.set(obj, arr);
+            return arr;
+        }
+        seen.set(obj, value);
+        (0, $aec7dd200596fb2a$export$62c0dd10c640417e)(()=>{
+            if (typeof obj._id === 'string') obj._id = (0, $d205febb791b53ee$export$84eca18e6d832dd1)(obj._id);
+            if (typeof obj._rev === 'string') obj._rev = (0, $d205febb791b53ee$export$f386daff7715d420)(obj._rev);
+            if (typeof obj._root === 'string') obj._root = (0, $d205febb791b53ee$export$accd2046ded63e63)(obj._root);
+            if (typeof obj._url === 'string') obj._url = (0, $d205febb791b53ee$export$91df428ae0f97b5c)(obj._url);
+            const owners = obj._owners;
+            if (owners !== undefined) obj._owners = Array.isArray(owners) ? owners.map((v)=>typeof v === 'string' ? (0, $d205febb791b53ee$export$171aa6226884e6dd)(v) : v) : typeof owners === 'string' ? (0, $d205febb791b53ee$export$171aa6226884e6dd)(owners) : owners;
+            const readers = obj._readers;
+            if (readers !== undefined) obj._readers = Array.isArray(readers) ? readers.map((v)=>typeof v === 'string' ? (0, $d205febb791b53ee$export$171aa6226884e6dd)(v) : v) : typeof readers === 'string' ? (0, $d205febb791b53ee$export$171aa6226884e6dd)(readers) : readers;
+            for (const key of Object.keys(obj))if (!this.isMetadataKey(key)) obj[key] = this.brandMetadata(obj[key], seen);
+        });
+        return value;
+    }
+    /* ==================== CORE PUBLIC API ==================== */ /**
+   * Creates a new instance of a smart contract on the blockchain.
+   *
+   * The returned object is a fully typed `SmartContract<T>` proxy with all methods lifted
+   * to return `Promise<...>`, metadata branded, and security proxies applied.
+   */ async new(constructor, args = [], mod) {
+        const internalMod = mod ? (0, $d205febb791b53ee$export$1c4cfbb3206db243)(mod) : undefined;
+        const { tx: tx, effect: effect } = await this.encodeNew({
+            constructor: constructor,
+            args: args,
+            mod: internalMod
+        });
+        if (tx) await this.broadcast(tx);
+        const { res: res, env: env } = effect;
+        (0, $74a26ef6d53e712a$export$48b95d5fd8dc5d0b)((0, $74a26ef6d53e712a$export$c4d407c2cae5b6c0)(env))([])(args);
+        const branded = this.brandMetadata(res);
+        return (0, $382856abc4b520b8$export$29c19449f1fdb873)(branded, this);
+    }
+    /* ==================== GET-TXOS FAMILY (DRY) ==================== */ /**
+   * Internal helper that forwards to the REST client.
+   * The `as any` cast is required because the public overloads in `RestClient` are not
+   * visible to the implementation signature from outside the class (TS limitation).
+   */ async _getTXOsFamily(query) {
+        return this.db.wallet.restClient.getTXOs(query);
+    }
+    async getTXOs(q) {
+        return this._getTXOsFamily(q);
+    }
+    async getUTXOs(q) {
+        return this._getTXOsFamily({
+            ...q,
+            isSpent: false
+        });
+    }
+    async getOTXOs(q) {
+        return this._getTXOsFamily({
+            ...q,
+            isObject: true
+        });
+    }
+    async getOUTXOs(q) {
+        return this._getTXOsFamily({
+            ...q,
+            isObject: true,
+            isSpent: false
+        });
+    }
+    // Implementation
+    async sync(location) {
+        const isRevLocation = (0, $303220cf0debbf6c$export$d146d9996ff2e97)(location);
+        const result = isRevLocation ? (0, $382856abc4b520b8$export$29c19449f1fdb873)(await this.db.get((0, $d205febb791b53ee$export$f386daff7715d420)(location)), this) : await this.db.get((0, $d205febb791b53ee$export$55d63915149d1a5a)(location));
+        if (isRevLocation) return this.brandMetadata(result);
+        return result;
+    }
+    async getAncestors(location, verbosity) {
+        const { wallet: wallet } = this.db;
+        const { restClient: restClient } = wallet;
+        const txId = (0, $d205febb791b53ee$export$6d0757a710f60a30)(location) ? (0, $d205febb791b53ee$export$55d63915149d1a5a)(location) : (0, $303220cf0debbf6c$export$caebc656d3686561)(location).txId;
+        const ancestorTxIds = await restClient.getAncestors(txId);
+        if (verbosity === 1) {
+            const ancestorHexes = ancestorTxIds.length ? await restClient.getRawTxs(ancestorTxIds) : [];
+            return new Map(ancestorTxIds.map((id, index)=>[
+                    id,
+                    ancestorHexes[index]
+                ]));
+        }
+        return ancestorTxIds;
+    }
+    /* ==================== ENCODE / DECODE / MODULES ==================== */ /**
+   * Shared internal wrapper used by all `encode*` methods.
+   * Performs evaluation, proxy wrapping, and returns the raw effect + tx.
+   */ async wrappedEncode(transition, opts = {}) {
+        const { db: db } = this;
+        const { effect: e, tx: tx } = await db.evalMocked(transition, opts);
+        const res = (0, $382856abc4b520b8$export$29c19449f1fdb873)(e.res, this);
+        const env = (0, $74a26ef6d53e712a$export$72de43103e456aaf)((el)=>(0, $382856abc4b520b8$export$29c19449f1fdb873)(el, this))(e.env);
+        return {
+            tx: tx,
+            effect: {
+                res: res,
+                env: env
+            },
+            db: db
+        };
+    }
+    /**
+   * Low-level encode of any transition (new, call, or raw expression).
+   * Returns the transaction (if any) and the resulting effect.
+   */ async encode(json) {
+        const transition = new (0, $9ca517853ec47831$export$be58926105124dd4)({
+            exp: (0, $d205febb791b53ee$export$e921403d8a9d6e3a)(json.exp || ''),
+            env: Object.fromEntries(Object.entries(json.env || {}).map(([k, v])=>[
+                    k,
+                    (0, $d205febb791b53ee$export$f386daff7715d420)(v)
+                ])),
+            mod: json.mod ? (0, $d205febb791b53ee$export$1c4cfbb3206db243)(json.mod) : undefined
+        });
+        const { tx: tx, effect: effect } = await this.wrappedEncode(transition, json);
+        return {
+            tx: tx,
+            effect: this.brandMetadata(effect)
+        };
+    }
+    async encodeNew({ constructor: constructor, args: args, mod: mod }) {
+        const transition = (0, $9ca517853ec47831$export$be58926105124dd4).fromConstructorCall(constructor, args, mod ? (0, $d205febb791b53ee$export$1c4cfbb3206db243)(mod) : undefined);
+        return this.wrappedEncode(transition);
+    }
+    async encodeCall({ target: target, property: property, args: args, mod: mod }) {
+        const transition = (0, $9ca517853ec47831$export$be58926105124dd4).fromFunctionCall(target, property, args, mod ? (0, $d205febb791b53ee$export$1c4cfbb3206db243)(mod) : undefined);
+        return this.wrappedEncode(transition);
+    }
+    /**
+   * Decodes an on-chain transaction back into its original transition JSON.
+   */ async decode(tx) {
+        let bitcoinTx;
+        if (typeof tx === 'string') {
+            if (!(0, $d205febb791b53ee$export$6d0757a710f60a30)(tx)) throw new Error('Invalid transaction id format');
+            bitcoinTx = await (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromTxId({
+                txId: (0, $d205febb791b53ee$export$55d63915149d1a5a)(tx),
+                restClient: this.db.wallet.restClient
+            });
+        } else bitcoinTx = tx;
+        const tbcTx = (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromTransaction(bitcoinTx);
+        const update = await (0, $9723fb8a051ef3ce$export$489a84f048b0ef8).fromTx(tbcTx, this.db.wallet.restClient);
+        const transition = (0, $9ca517853ec47831$export$be58926105124dd4).fromUpdate(update);
+        return transition.toJSON();
+    }
+    /* ==================== MODULE SYSTEM ==================== */ async deploy(module, opts) {
+        return (0, $bfd727fd88a0b35a$export$6d8228690abc2da8).deploy(module, this.db.wallet, opts);
+    }
+    async load(rev) {
+        return (0, $bfd727fd88a0b35a$export$6d8228690abc2da8).load((0, $d205febb791b53ee$export$1c4cfbb3206db243)(rev), this.db.wallet);
+    }
+    /* ==================== WALLET & NODE OPERATIONS ==================== */ async listTxs(address = this.getAddress()) {
+        return this.db.wallet.restClient.listTxs(address);
+    }
+    async getBalance(address) {
+        const addr = address ? typeof address === 'string' ? (0, $d205febb791b53ee$export$b46cd0ecde2b93f9)(address) : address : undefined;
+        return this.db.wallet.getBalance(addr);
+    }
+    async sign(transaction, opts = {}) {
+        return this.db.wallet.sign(transaction, opts);
+    }
+    async fund(tx, opts) {
+        const { include: include, exclude: exclude } = opts || {};
+        return this.db.wallet.fund(tx, {
+            include: include,
+            exclude: exclude
+        });
+    }
+    async send(satoshis, address) {
+        const addr = typeof address === 'string' ? (0, $d205febb791b53ee$export$b46cd0ecde2b93f9)(address) : address;
+        return this.db.wallet.send(satoshis, addr);
+    }
+    /**
+   * Broadcasts a transaction. In debug mode also logs the decoded transition.
+   */ async broadcast(tx) {
+        if (this.db.wallet.restClient.mode === 'debug') {
+            const { exp: exp, env: env, mod: mod } = await this.decode(tx);
+            console.log('computer.broadcast', {
+                exp: exp,
+                env: env,
+                mod: mod
+            });
+        }
+        return this.db.wallet.broadcast(tx);
+    }
+    async rpc(method, params) {
+        const data = await this.db.wallet.restClient.rpc(method, params);
+        return data.result ? data.result : {};
+    }
+    /* ==================== GETTERS / SETTERS ==================== */ getChain() {
+        return this.db.wallet.restClient.chain;
+    }
+    getNetwork() {
+        return this.db.wallet.restClient.network;
+    }
+    getMnemonic() {
+        return this.db.wallet.restClient.mnemonic.toString();
+    }
+    getPrivateKey() {
+        return this.db.wallet.privateKey.toString();
+    }
+    getPassphrase() {
+        return this.db.wallet.restClient.passphrase;
+    }
+    getPath() {
+        return this.db.wallet.restClient.path;
+    }
+    getUrl() {
+        return this.db.wallet.restClient.bcn.url;
+    }
+    getPublicKey() {
+        return this.db.wallet.publicKey.toString('hex');
+    }
+    getAddress() {
+        return this.db.wallet.address;
+    }
+    getFee() {
+        return this.db.wallet.restClient.satPerByte;
+    }
+    setFee(fee) {
+        this.db.wallet.restClient.satPerByte = fee;
+    }
+    /* ==================== UTILITIES ==================== */ faucet(amount, address = this.getAddress()) {
+        return this.db.wallet.faucet(amount, address);
+    }
+    static getVersion() {
+        return 0, $deb927b75e1890ae$export$a4ad2735b021c132;
+    }
+    async delete(inRevs) {
+        const update = new (0, $9723fb8a051ef3ce$export$489a84f048b0ef8)({
+            inRevs: inRevs.map((0, $d205febb791b53ee$export$f386daff7715d420))
+        });
+        const tx = await update.toTx(this.db.wallet);
+        await this.fund(tx);
+        await this.db.wallet.sign(tx);
+        return this.broadcast(tx);
+    }
+    async first(rev) {
+        return this.db.wallet.restClient.first((0, $d205febb791b53ee$export$f386daff7715d420)(rev));
+    }
+    async prev(rev) {
+        return this.db.wallet.restClient.prev((0, $d205febb791b53ee$export$f386daff7715d420)(rev));
+    }
+    async next(rev) {
+        return this.db.wallet.restClient.next((0, $d205febb791b53ee$export$f386daff7715d420)(rev));
+    }
+    async latest(rev) {
+        return this.db.wallet.restClient.latest((0, $d205febb791b53ee$export$f386daff7715d420)(rev));
+    }
+    /* ==================== SUBSCRIPTION / STREAMING ==================== */ async subscribe(id, onMessage, onError) {
+        return this.subscription.addIdSubscription(id, onMessage, onError);
+    }
+    async streamTXOs(filter, onMessage, onError) {
+        return this.subscription.addStreamSubscription(filter, onMessage, onError);
+    }
+    async streamMempoolCleanup(onMessage, onError) {
+        return this.subscription.addMempoolSubscription(onMessage, onError);
+    }
+    /* ==================== DEPRECATED API (kept for backward compatibility) ==================== */ /** @deprecated Use `getOUTXOs` instead */ async query(q) {
+        console.log('"query" is deprecated, use "getOUTXOs" instead');
+        return this.getOUTXOs(q);
+    }
+    /** @deprecated Use `Transaction.fromHex(hex)` instead */ static txFromHex({ hex: hex }) {
+        console.log('"txFromHex({ hex })" is deprecated, use "Transaction.fromHex(hex)" instead');
+        return (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromHex(hex);
+    }
+    /** @deprecated Use `computer.db.wallet.restClient.addressType` instead */ getAddressType() {
+        console.log('"getAddressType" is deprecated, use "computer.db.wallet.restClient.addressType" instead');
+        return this.db.wallet.restClient.addressType;
+    }
+    /** @deprecated We call lockdown internally – no need to call it yourself */ static lockdown(_opts) {
+        console.log('"lockdown" is deprecated, we call it internally so you don\'t have to');
+    }
+    /** @deprecated Use `deploy` instead */ async export(module, opts) {
+        console.log('"export" is deprecated, use "deploy" instead');
+        return this.deploy(module, opts);
+    }
+    /** @deprecated Use `load` instead */ async import(rev) {
+        console.log('"import" is deprecated, use "load" instead');
+        return this.load(rev);
+    }
+    /** @deprecated Use `getOUTXOs` instead */ async queryRevs(q) {
+        console.log('"queryRevs" is deprecated, use "getOUTXOs" instead');
+        return this.getOUTXOs(q);
+    }
+    /** @deprecated Use `getOUTXOs` instead */ async getOwnedRevs(publicKey = this.db.wallet.publicKey) {
+        console.log('"getOwnedRevs" is deprecated, use "getOUTXOs" instead');
+        return this.getOUTXOs({
+            publicKey: publicKey.toString('hex')
+        });
+    }
+    /** @deprecated Use `getOUTXOs` instead */ async getRevs(publicKey = this.db.wallet.publicKey) {
+        console.log('"getRevs" is deprecated, use "getOUTXOs" instead');
+        return this.getOUTXOs({
+            publicKey: publicKey.toString('hex')
+        });
+    }
+    /** @deprecated Use `Promise.all(ids.map(latest))` instead */ async getLatestRevs(ids) {
+        console.log('"getLatestRevs(ids)" is deprecated, use "await Promise.all(ids.map((id) => latest(id)))" instead');
+        return Promise.all(ids.map((id)=>this.latest(id)));
+    }
+    /** @deprecated Use `latest` instead */ async getLatestRev(id) {
+        console.log('"getLatestRev" is deprecated, use "latest" instead');
+        return this.latest(id);
+    }
+    /** @deprecated Use `Promise.all(ids.map(latest))` instead */ async idsToRevs(ids) {
+        console.log('"idsToRevs(ids)" is deprecated, use "await Promise.all(ids.map((id) => latest(id)))" instead');
+        return Promise.all(ids.map((id)=>this.latest(id)));
+    }
+    /** @deprecated No longer needed */ getMinimumFees() {
+        console.log('"getMinimumFees" is deprecated');
+        return this.db.wallet.getDustThreshold(false);
+    }
+    /* ==================== STATIC UTILITIES ==================== */ /**
+   * Extracts inscription data (content-type + body) from a raw transaction witness.
+   */ static getInscription(rawTx, index) {
+        const tx = (0, $4b62a469f572a3c6$export$febc5573c75cefb0).fromHex(rawTx);
+        if (tx.ins[index].witness.length > 0) return (0, $f94e2696d4b62340$export$a0291b2a7af96f4c)(tx.ins[index].witness);
+        return {
+            contentType: '',
+            body: ''
+        };
+    }
+    toScriptPubKey(publicKeys = [
+        this.getPublicKey()
+    ]) {
+        const output = (0, $8636fd77165bd4bc$export$a5c5ced73e99851c)(publicKeys.map((pk)=>(0, $9PVwI$Buffer).from(pk, 'hex')));
+        const network = this.db.wallet.restClient.networkObj;
+        return (0, $9PVwI$payments).p2ms({
+            output: output,
+            network: network
+        }).output;
+    }
+    async isUnspent(rev) {
+        const [txId, outNum] = rev.split(':');
+        const { result: result } = await this.rpc('gettxout', `${txId} ${outNum} true`);
+        return !!result;
+    }
+}
+
+
+
+
+
+globalThis.Contract = (0, $ed98b948820df6a2$export$8517d80acf00e19a);
+const $e1e9e2b9d71bc2d8$var$moduleExports = {
+    Computer: $5897c693dfcff079$export$2454fd0de010f4bb,
+    Mock: $70710ac8a001306b$export$2a766bd177c54dd,
+    Transaction: $4b62a469f572a3c6$export$febc5573c75cefb0
+};
+if (typeof $e1e9e2b9d71bc2d8$exports !== 'undefined') $e1e9e2b9d71bc2d8$exports = $e1e9e2b9d71bc2d8$var$moduleExports;
+
+
+export {$e1e9e2b9d71bc2d8$exports as default, $5897c693dfcff079$export$2454fd0de010f4bb as Computer, $70710ac8a001306b$export$2a766bd177c54dd as Mock, $4b62a469f572a3c6$export$febc5573c75cefb0 as Transaction, $d205febb791b53ee$export$bbf2ffbffa00b288 as precise, $d205febb791b53ee$export$57b7f3bf07321492 as lifted};

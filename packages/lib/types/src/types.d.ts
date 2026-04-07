@@ -103,6 +103,10 @@ export type EffectJSON = {
     res: SmartValue;
     env: Env<Rev>;
 };
+export type Evaluated = {
+    effect: EvaluatedEffect;
+    tx: Transaction | null;
+};
 export type RawSmartContract<T extends Class = Class> = Omit<SmartContract<T>, '_id' | '_rev' | '_root'> & {
     _id: Id;
     _rev: Rev;
