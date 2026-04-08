@@ -18,6 +18,11 @@ export default defineConfig(({ mode }) => {
         protocolImports: true, // Polyfill modules like stream, crypto, etc.
       }),
     ],
+    esbuild: { target: 'es2022' },
+    build: {
+      target: 'es2022',
+      minify: false,
+    },
     resolve: {
       alias: {
         // Alias for @bitcoin-computer/lib to browser-compatible version

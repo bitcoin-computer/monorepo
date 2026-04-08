@@ -13,4 +13,5 @@ export { Drawer, DrawerComponent, ShowDrawer } from './Drawer';
 export { Wallet } from './Wallet';
 export { Card } from './Card';
 export * from './common/utils';
+export { getSpendableUtxosTotalSatoshis, signAndBroadcastSpendUtxos } from './common/spendUtxos';
 export { PrimaryActionButton, SecondaryActionButton } from './ActionButtons';

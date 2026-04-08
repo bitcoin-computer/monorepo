@@ -1,14 +1,14 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { HiRefresh } from 'react-icons/hi'
 import { FiCopy, FiCheck } from 'react-icons/fi'
-import { Computer, Transaction } from '@bitcoin-computer/lib'
+import { Computer } from '@bitcoin-computer/lib'
 import { Auth } from './Auth'
 import { Drawer } from './Drawer'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
 import { getEnv, bigIntToStr } from './common/utils'
+import { signAndBroadcastSpendUtxos } from './common/spendUtxos'
 import { VITE_WITHDRAW_MOD_SPEC } from './common/modSpecs'
-import { address as bAddress } from '@bitcoin-computer/nakamotojs'
 
 const Loader = () => (
   <span role="status">
@@ -139,57 +139,38 @@ const Withdraw = ({
 
 const WithdrawNew = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[] }) => {
   const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const [address, setAddress] = useState<string>('')
+  const [amount, setAmount] = useState<string>('')
   const [withdrawing, setWithdrawing] = useState<boolean>(false)
 
   const handleWithdraw = async () => {
     try {
       setWithdrawing(true)
+      const trimmedAddress = address.trim()
+      const parsedAmount = Number(amount)
+      const chain = computer.getChain()
 
-      // 1. Fetch normal (balance) UTXOs
-      const utxos = await computer.getUTXOs({
-        address: computer.getAddress(),
-        verbosity: 1,
-        isObject: false,
+      if (!trimmedAddress) {
+        showSnackBar('Please input valid address', false)
+        return
+      }
+
+      if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+        showSnackBar(`Please input a valid ${chain} amount`, false)
+        return
+      }
+
+      const amountSatoshis = BigInt(Math.round(parsedAmount * 1e8))
+
+      await signAndBroadcastSpendUtxos({
+        computer,
+        modSpecs,
+        toAddress: trimmedAddress,
+        amountSatoshis,
       })
-
-      const modUtxosArrays = await Promise.all(
-        modSpecs.map((mod) =>
-          computer.getUTXOs({
-            publicKey: computer.getPublicKey(),
-            mod,
-            verbosity: 1,
-          }),
-        ),
-      )
-      const allModUtxos = modUtxosArrays.flat()
-
-      const tx = new Transaction()
-
-      let totalInput = 0n
-
-      // Add inputs from normal balance UTXOs
-      utxos.forEach((utxo) => {
-        const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse()
-        tx.addInput(prevHash, Number(utxo.rev.split(':')[1]))
-        totalInput += utxo.satoshis
-      })
-
-      allModUtxos.forEach((utxo) => {
-        const prevHash = Buffer.from(utxo.rev.split(':')[0], 'hex').reverse()
-        tx.addInput(prevHash, Number(utxo.rev.split(':')[1]))
-        totalInput += utxo.satoshis
-      })
-
-      // @ts-expect-error types are not defined correctly as of now
-      const networkObj = computer.getNetworkObject(computer.getChain(), computer.getNetwork())
-
-      const changeScript = bAddress.toOutputScript(computer.getAddress().toString(), networkObj)
-      tx.addOutput(changeScript, totalInput)
-      const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx))
-      const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')))
-      tx.updateOutput(0, { value: totalInput - estimatedFees - minDust })
-      await computer.sign(tx)
-      await computer.broadcast(tx)
+      setAddress('')
+      setAmount('')
+      showSnackBar(`Withdraw successful`, true)
     } catch (err) {
       if (err instanceof Error) showSnackBar(`Something went wrong, ${err.message}`, false)
     } finally {
@@ -200,7 +181,33 @@ const WithdrawNew = ({ computer, modSpecs }: { computer: Computer; modSpecs: str
   return (
     <div className="my-2">
       <h6 className="text-lg font-bold dark:text-white">Withdraw to Address</h6>
-      <div className="flex items-center space-x-2 my-2">
+      <div className="mt-3 space-y-3">
+        <div>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="block w-full p-1.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Recipient Address"
+          />
+        </div>
+        <div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step="0.00000001"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="block w-full p-1.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 [moz-appearance:textfield] focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              placeholder="0.00"
+            />
+            <div className="shrink-0 rounded-lg border border-gray-300 bg-gray-50 px-2 py-1.5 text-sm text-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400">
+              {computer.getChain()}
+            </div>
+          </div>
+        </div>
         <button
           type="button"
           onClick={handleWithdraw}
@@ -289,7 +296,9 @@ const Balance = ({
         onFund={fund}
       />
       <Address computer={computer} />
+      <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
       <WithdrawNew computer={computer} modSpecs={modSpecs} />
+      <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
       {!!VITE_WITHDRAW_MOD_SPEC && (
         <Withdraw
           computer={computer}
