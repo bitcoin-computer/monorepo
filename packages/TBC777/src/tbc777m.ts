@@ -79,13 +79,13 @@ export abstract class Escrow extends Contract {
 export class TBC777M extends TBC20 {
   /** Tracks every withdraw revision that has already been claimed (prevents
    * double-spends) */
-  withdrawRevs: string[]
+  withdrawn: string[]
 
   /** The escrow that is being deposited into in this revision */
   escrowId: string | undefined
 
   constructor(args: TBC20ConstructorParams) {
-    super({ withdrawRevs: [], escrowId: undefined, ...args })
+    super({ withdrawn: [], escrowId: undefined, ...args })
   }
 
   /**
@@ -113,10 +113,10 @@ export class TBC777M extends TBC20 {
    */
   async withdraw(rev: string) {
     const { _id, _root } = this
-    if (this.withdrawRevs.includes(rev)) throw new Error('Cannot withdraw multiple times')
+    if (this.withdrawn.includes(rev)) throw new Error('Cannot withdraw multiple times')
     if (!(await TBC777M.isValid(rev, _root))) throw new Error('Escrow balance too low')
 
-    this.withdrawRevs.push(rev)
+    this.withdrawn.push(rev)
     this.amount += await TBC777M.computeWithdraw(rev, _id, _root)
   }
 
@@ -127,10 +127,10 @@ export class TBC777M extends TBC20 {
    */
   static async computeWithdraw(rev: string, _id: string, _root: string): Promise<bigint> {
     const { withdraws } = await computer.sync<typeof Escrow>(rev)
-    return withdraws
-      .filter(([root, id]) => root === _root && id === _id)
-      .map(([, , amount]) => amount)
-      .reduce((prev, curr) => prev + curr, 0n)
+    return withdraws.reduce(
+      (total, [root, id, amount]) => (root === _root && id === _id ? total + amount : total),
+      0n,
+    )
   }
 
   /**
@@ -200,13 +200,13 @@ export class TBC777M extends TBC20 {
    * deposit time recorded `token.escrowId === escrowId`.
    */
   static async computeDeposit(token: TBC777M, escrowId: string, root: string): Promise<bigint> {
-    if (token.escrowId !== escrowId) return 0n
     if (token._root !== root) return 0n
 
-    const prevRev = await computer.prev(token._rev)
-    const prevToken = await computer.sync<typeof TBC777M>(prevRev)
+    const nextRev = await computer.next(token._rev)
+    const nextToken = await computer.sync<typeof TBC777M>(nextRev)
+    if (nextToken.escrowId !== escrowId) return 0n
 
-    return prevToken.amount - token.amount
+    return token.amount - nextToken.amount
   }
 
   /**
