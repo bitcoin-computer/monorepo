@@ -49,11 +49,12 @@ describe.only('TBC777M', () => {
 
   it('Should work for a naive escrow', async () => {
     class NaiveEscrow extends Contract implements Escrow {
-      deposits: [string, string][]
-      withdraws: [string, string, bigint][]
+      deposits!: [string, string][]
+      withdraws!: [string, string, bigint][]
+      finalWithdraws!: [string, string, bigint][]
 
       constructor() {
-        super({ deposits: [], withdraws: [] })
+        super({ deposits: [], withdraws: [], finalWithdraws: [] })
       }
 
       acceptDeposit(root: string, rev: string) {
@@ -85,11 +86,12 @@ describe.only('TBC777M', () => {
 
   it('Should work for an escrow with atomic deposit', async () => {
     class AtomicEscrow extends Contract implements Escrow {
-      deposits: [string, string][]
-      withdraws: [string, string, bigint][]
+      deposits!: [string, string][]
+      withdraws!: [string, string, bigint][]
+      finalWithdraws!: [string, string, bigint][]
 
       constructor() {
-        super({ deposits: [], withdraws: [] })
+        super({ deposits: [], withdraws: [], finalWithdraws: [] })
       }
 
       async acceptDeposit(token: any, amount: bigint) {
@@ -119,18 +121,18 @@ describe.only('TBC777M', () => {
     expect(token.amount).eq(3n)
   })
 
-  it.only('Should work atomically for a chess game without timeout', async () => {
+  it('Should work atomically for a chess game without timeout', async () => {
     class Chess extends Contract {
-      deposits: [string, string][]
-      withdraws: [string, string, bigint][]
-      publicKeyW: string
-      publicKeyB: string
-      tokenIdW: string
-      tokenIdB: string
-      root: string
+      deposits!: [string, string][]
+      withdraws!: [string, string, bigint][]
+      publicKeyW!: string
+      publicKeyB!: string
+      tokenIdW!: string
+      tokenIdB!: string
+      root!: string
 
       constructor(root: string) {
-        super({ deposits: [], withdraws: [], root })
+        super({ deposits: [], withdraws: [], finalWithdraws: [], root })
       }
 
       async acceptDeposit(token: any, amount: bigint, nextOwner: string) {
@@ -174,12 +176,12 @@ describe.only('TBC777M', () => {
 
     // White player creates the chess game and places a wager
     const chess = await white.new(Chess, [token._root])
-    const whiteToken = await white.sync<typeof TBC777M>(whiteTokenM._rev)
+    const whiteToken = await white.sync<typeof TBC777M>(whiteTokenM!._rev)
     await chess.acceptDeposit(whiteToken, 5n, black.getPublicKey())
     expect(chess._owners).deep.eq([black.getPublicKey()])
 
     // Black player places their wager
-    const blackToken = await black.sync<typeof TBC777M>(blackTokenM._rev)
+    const blackToken = await black.sync<typeof TBC777M>(blackTokenM!._rev)
     const { tx: tx1, effect: effect1 } = await black.encode({
       exp: `chess.acceptDeposit(blackToken, 5n, '${white.getPublicKey()}')`,
       env: { chess: chess._rev, blackToken: blackToken._rev },
@@ -188,8 +190,8 @@ describe.only('TBC777M', () => {
     const chess1 = effect1.env.chess as SmartContract<typeof Chess>
 
     expect(chess1.deposits).deep.eq([
-      [token._root, whiteTokenM._rev],
-      [token._root, blackTokenM._rev],
+      [token._root, whiteTokenM!._rev],
+      [token._root, blackTokenM!._rev],
     ])
     expect(chess.withdraws).deep.eq([])
 

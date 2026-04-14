@@ -98,6 +98,7 @@ declare class Computer {
     prev(rev: string): Promise<string | undefined>;
     next(rev: string): Promise<string | undefined>;
     latest(rev: string): Promise<string>;
+    last(rev: string): Promise<string | undefined>;
     subscribe(id: string, onMessage: ({ rev, hex }: {
         rev: RevString;
         hex: string;
