@@ -1,18 +1,18 @@
 # getOUTXOs
 
-_Returns output identifiers of outputs containing *unspent smart objects** for the given query parameters._
+_Returns output identifiers of outputs containing \*unspent smart objects\*\* for the given query parameters._
 
 ## Type
 
 ```ts
-async getOUTXOs(q: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
-async getOUTXOs(q: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
-async getOUTXOs(q: GetTXOsQuery): Promise<string[] | DbOutput[]>
+async getOUTXOs(q: TXOQuery & { verbosity?: 0 }): Promise<string[]>
+async getOUTXOs(q: TXOQuery & { verbosity: 1 }): Promise<DbOutput[]>
+async getOUTXOs(q: TXOQuery): Promise<string[] | TXORecord[]>
 ```
 
 ## Description
 
-The `getOUTXOs` function is *syntactic sugar* for the [`getTXOs`](./getTXOs.md) with `isObject` set to `true` and `isSpent` set to `false`. The name is short for get-object-unspent-transaction-outputs, it return only output identifiers of output that encode unpent smart objects.
+The `getOUTXOs` function is _syntactic sugar_ for the [`getTXOs`](./getTXOs.md) with `isObject` set to `true` and `isSpent` set to `false`. The name is short for get-object-unspent-transaction-outputs, it return only output identifiers of output that encode unpent smart objects.
 
 This function is commonly used to query for the latest revisions of smart objects.
 

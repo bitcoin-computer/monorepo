@@ -4,6 +4,10 @@
 
 Implements a basic Decentralized Autonomous Organization (DAO) using the Bitcoin Computer platform. The DAO enables token-based voting on proposals through smart objects. Tokens represent voting power, and votes are cast in elections. The system ensures decentralized, secure execution on the Bitcoin blockchain, leveraging UTXOs for object state.
 
+## Work in Progress warning
+
+This implementation uses getTXOs functions to query for revisions inside the contract, which is not published yet and may be subject to change. The design and implementation may evolve as the platform develops, so please refer to the latest documentation and code for updates.
+
 ## Purpose of the DAO
 
 The DAO allows token holders to participate in governance by voting on proposals (e.g., accept or reject). Each election is an instance of the `Election` class, identified by a unique ID, an associated token root and description. Votes are submitted as `Vote` objects, referencing tokens for weighted voting. The system computes totals for accepted and rejected votes based on valid submissions, filtering out duplicates and invalid uses via transaction ancestry. Multiple elections can be categorized by different module specifiers, and voting is restricted to tokens descending from the specified root token.
@@ -40,7 +44,7 @@ The system enforces the following rules to maintain integrity:
 
 - **Post-Vote Transfers Allowed**: Tokens remain transferable after voting, without affecting prior votes.
 
-- **Category-Based Querying**: Using `mod in `Vote` creation allows `Election` to query all related votes via `getTXOs({ mod })`, enabling categorized elections.
+- **Category-Based Querying**: Using `mod in `Vote`creation allows`Election`to query all related votes via`getTXOs({ mod })`, enabling categorized elections.
 
 - **Token Lineage Restriction**: Votes must use tokens sharing the same `_root` as specified in the `Election`. Multiple tokens per vote are allowed if they share the same `_root`.
 
