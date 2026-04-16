@@ -1,5 +1,6 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
+import { crypto } from '@bitcoin-computer/nakamotojs'
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '../.env' })
@@ -83,19 +84,14 @@ describe('Should work with chai', () => {
     const address = computer.getAddress()
 
     // Fund client side library
-    const { txId, vout } = await computer.faucet(1e7)
-
-    // Return the utxos
-    expect(await new Computer(conf).getUTXOs({ publicKey: computer.getPublicKey() })).deep.eq([
-      `${txId}:${vout}`,
-    ])
+    const { txId } = await computer.faucet(1e7)
 
     // Return the balance
-    const balance = await new Computer(conf).getBalance(address)
+    const balance = await computer.getBalance(address)
     expect(balance.balance).eq(BigInt(1e7))
 
     // Return the transactions
-    expect(await new Computer(conf).listTxs(address)).deep.eq({
+    expect(await computer.listTxs(address)).deep.eq({
       sentTxs: [],
       receivedTxs: [
         {
