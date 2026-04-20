@@ -1,280 +1,282 @@
-import { Computer, Transaction } from '@bitcoin-computer/lib'
-import { bufferUtils, networks, payments, script as bscript } from '@bitcoin-computer/nakamotojs'
-import { ChessContractHelper } from '../src/chess-contract.js'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
+import { TBC20, TBC777M } from '@bitcoin-computer/TBC777'
+import { ChessContract, ChessContractHelper } from '../src/chess-contract.js'
+import { ChessChallengeTxWrapper } from '../src/chess-challenge.js'
+import { User } from '../src/user.js'
 import { expect } from 'expect'
-import { ECPairFactory } from 'ecpair'
-import * as ecc from '@bitcoin-computer/secp256k1'
+import dotenv from 'dotenv'
+import path from 'path'
+import { fileURLToPath } from 'node:url'
+import { dirname, join } from 'node:path'
+import { deploy as deployChessModule } from '../scripts/lib.js'
 
-const url = 'http://localhost:1031'
-const ECPair = ECPairFactory(ecc)
+// `scripts/lib.ts` reads `${path}/src/chess.js`; `tsc` emits that file under `build/src/`. Deploy uses
+// the same base (`build/scripts` → `..` = `build/`). From compiled `build/test/*.js`, one `..` is `build/`.
+const chessDeployRoot = join(dirname(fileURLToPath(import.meta.url)), '..')
 
-describe('Should create a deposit transaction for the Chess game with operator', () => {
-  const betAmount = 100000n
-  const fees = 10000n
-  const aliceComputer = new Computer({ url })
-  const bobComputer = new Computer({ url })
-  const operatorComputer = new Computer({ url })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'),
+  path.resolve(process.cwd(), '../../node/.env'),
+  '../node/.env',
+]
 
-  const alicePublicKey = aliceComputer.db.wallet.publicKey
-  const bobPublicKey = bobComputer.db.wallet.publicKey
-  const operatorPublicKey = operatorComputer.db.wallet.publicKey
-  const aliceAddress = aliceComputer.getAddress()
-  const bobAddress = bobComputer.getAddress()
-  const chain = aliceComputer.getChain()
-  const network = aliceComputer.getNetwork()
-  const NETWORKOBJ = networks.getNetwork(chain, network)
-  const n = { network: NETWORKOBJ }
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
-  const alicePrivateKey = aliceComputer.db.wallet.privateKey
-  const bobPrivateKey = bobComputer.db.wallet.privateKey
-  const operatorPrivateKey = operatorComputer.db.wallet.privateKey
-  const aliceKeyPair = ECPair.fromPrivateKey(alicePrivateKey, n)
-  const bobKeyPair = ECPair.fromPrivateKey(bobPrivateKey, n)
-  const operatorKeyPair = ECPair.fromPrivateKey(operatorPrivateKey, n)
+const url = process.env.BCN_URL ?? 'http://localhost:1031'
+const chain = process.env.BCN_CHAIN ?? 'LTC'
+const network = process.env.BCN_NETWORK ?? 'regtest'
 
-  const { output: aliceChangeOutput } = payments.p2pkh({ pubkey: alicePublicKey, ...n })
-  const { output: bobChangeOutput } = payments.p2pkh({ pubkey: bobPublicKey, ...n })
-
-  const outScript = `OP_2 ${alicePublicKey.toString('hex')} ${bobPublicKey.toString('hex')} ${operatorPublicKey.toString('hex')} OP_3 OP_CHECKMULTISIG`
-  const redeemScript = bscript.fromASM(outScript.trim().replace(/\s+/g, ' '))
-  const { output } = payments.p2sh({ redeem: { output: redeemScript, ...n }, ...n })
-
-  const validators = [
-    { name: 'operator', keyPair: operatorKeyPair },
-    { name: 'loser', keyPair: bobKeyPair },
-  ]
-
-  before('Before', async () => {
-    await aliceComputer.faucet(10e8)
-    await bobComputer.faucet(10e8)
-    await operatorComputer.faucet(10e8)
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms)
   })
 
-  // Helper functions remain unchanged
-  const createCommitTx = async () => {
-    await aliceComputer.faucet(10e8)
-    await bobComputer.faucet(10e8)
-
-    const [aliceUtxo] = await aliceComputer.getUTXOs({ address: aliceAddress, verbosity: 1 })
-    const { rev: rev1, satoshis: amountPayment1 } = aliceUtxo
-    const txId1 = rev1.substring(0, 64)
-    const vout1 = parseInt(rev1.substring(65), 10)
-    const aliceUtxoHash = bufferUtils.reverseBuffer(Buffer.from(txId1, 'hex'))
-
-    const [bobUtxo] = await bobComputer.getUTXOs({ address: bobAddress, verbosity: 1 })
-    const { rev: rev2, satoshis: amountPayment2 } = bobUtxo
-    const txId2 = rev2.substring(0, 64)
-    const vout2 = parseInt(rev2.substring(65), 10)
-    const bobUtxoHash = bufferUtils.reverseBuffer(Buffer.from(txId2, 'hex'))
-
-    const commitTx = new Transaction()
-    commitTx.addOutput(output as Buffer, 2n * betAmount)
-    commitTx.addInput(aliceUtxoHash, vout1)
-    commitTx.addInput(bobUtxoHash, vout2)
-    const requiredFee = await aliceComputer.db.wallet.estimateFee(commitTx)
-    commitTx.addOutput(aliceChangeOutput as Buffer, amountPayment1 - betAmount)
-    commitTx.addOutput(bobChangeOutput as Buffer, amountPayment2 - betAmount - BigInt(requiredFee))
-    await aliceComputer.sign(commitTx)
-    await bobComputer.sign(commitTx)
-    const commitTxId = await bobComputer.broadcast(commitTx)
-    return commitTxId
+async function ensureFunds(c: Computer, minSats = 10e8) {
+  try {
+    const { balance } = await c.getBalance()
+    if (balance < minSats) await c.faucet(minSats)
+  } catch {
+    await c.faucet(minSats)
   }
+}
 
-  // Tests
-  it('Should create the deposit transaction and redeem it', async () => {
-    const commitTxId = await createCommitTx()
-    const redeemTx = new Transaction()
-    redeemTx.addInput(Buffer.from(commitTxId, 'hex').reverse(), 0)
-    redeemTx.addOutput(aliceChangeOutput as Buffer, 2n * betAmount - fees)
-    const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
-    const inScript = [
-      Buffer.alloc(0),
-      bscript.signature.encode(aliceKeyPair.sign(sigHash), Transaction.SIGHASH_ALL),
-      bscript.signature.encode(operatorKeyPair.sign(sigHash), Transaction.SIGHASH_ALL),
-    ]
-    const script = payments.p2sh({
-      redeem: { input: bscript.compile(inScript), output: redeemScript },
+describe('ChessContract', () => {
+  describe('ChessContractHelper', () => {
+    it('Should instantiate with required options', () => {
+      const computer = new Computer({ url })
+      const helper = new ChessContractHelper({
+        computer,
+        mod: 'test-mod',
+        userMod: 'test-user-mod',
+        tokenMod: 'test-token-mod',
+      })
+      expect(helper.computer).toBe(computer)
+      expect(helper.mod).toBe('test-mod')
+      expect(helper.userMod).toBe('test-user-mod')
+      expect(helper.tokenMod).toBe('test-token-mod')
     })
-    redeemTx.setInputScript(0, script.input as Buffer)
-    await operatorComputer.broadcast(redeemTx)
+
+    it('Should create via fromModSpecs static method', () => {
+      const computer = new Computer({ url })
+      const helper = ChessContractHelper.fromModSpecs(computer, 'mod', 'userMod', 'tokenMod')
+      expect(helper).toBeInstanceOf(ChessContractHelper)
+      expect(helper.mod).toBe('mod')
+      expect(helper.tokenMod).toBe('tokenMod')
+    })
   })
 
-  validators.forEach((validator) => {
-    it(`Should allow Alice (winner) to claim funds with ${validator.name}`, async () => {
-      const commitTxId = await createCommitTx()
-      const redeemTx = ChessContractHelper.createRedeemTx(
-        commitTxId,
-        aliceComputer.db.wallet.hdPrivateKey,
-        2n * betAmount,
-        fees,
-        aliceChangeOutput,
-        outScript,
-        0,
-      )
-      expect(() => {
-        ChessContractHelper.validateAndSignRedeemTx(
-          redeemTx,
-          alicePublicKey,
-          validator.keyPair,
-          redeemScript,
-          n.network,
+  describe('ChessChallengeTxWrapper', () => {
+    it('Should have the correct fields', () => {
+      const wrapper = new ChessChallengeTxWrapper('rev123', 5n, 'root456', 'pubKeyW', 'pubKeyB')
+      expect(wrapper.chessRev).toBe('rev123')
+      expect(wrapper.wagerAmount).toBe(5n)
+      expect(wrapper.tokenRoot).toBe('root456')
+      expect(wrapper.publicKeyW).toBe('pubKeyW')
+      expect(wrapper.accepted).toBe(false)
+    })
+  })
+
+  describe('User', () => {
+    it('Should create a user with name and empty games', () => {
+      const user = new User('Alice')
+      expect(user.name).toBe('Alice')
+      expect(user.games).toEqual([])
+    })
+
+    it('Should add games', () => {
+      const user = new User('Bob')
+      user.addGame('game1')
+      user.addGame('game2')
+      expect(user.games).toEqual(['game1', 'game2'])
+    })
+  })
+
+  /**
+   * Same pattern as packages/TBC777/test/tbc777m.test.ts: deploy each mod once, reuse
+   * the returned spec strings for all tests (new wallets + faucet per test is fine).
+   */
+  describe('Chain integration (local BCN)', () => {
+    let tbc20Mod: string
+    let chessMod: string
+
+    before(async () => {
+      const deployer = new Computer({ url, chain, network })
+      await deployer.faucet(20e8)
+      tbc20Mod = await deployer.deploy(`export ${TBC20}`)
+      await deployer.faucet(20e8)
+      chessMod = await deployChessModule(deployer, chessDeployRoot)
+    })
+
+    describe('On-chain escrow flow', () => {
+      const computer = new Computer({ url, chain, network })
+
+      before(async () => {
+        await computer.faucet(10e8)
+      })
+
+      it('Should create a ChessContract with correct initial state', async () => {
+        const chess = await computer.new(ChessContract, ['root123', 5n], chessMod)
+        expect(chess.root).toBe('root123')
+        expect(chess.wagerAmount).toBe(5n)
+        expect(chess.nameW).toBe('')
+        expect(chess.nameB).toBe('')
+        expect(chess.publicKeyW).toBe('')
+        expect(chess.publicKeyB).toBe('')
+        expect(chess.fen).toBe('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1')
+        expect(chess.sans).toEqual([])
+        expect(chess.deposits).toEqual([])
+        expect(chess.withdraws).toEqual([])
+        expect(chess.finalWithdraws).toEqual([])
+        expect(chess.tokenIdW).toBe('')
+        expect(chess.tokenIdB).toBe('')
+      })
+
+      it('Should reject moves when game is not fully funded', async () => {
+        const chess = await computer.new(ChessContract, ['root123', 5n], chessMod)
+        await expect(async () => {
+          const { tx } = await computer.encodeCall({
+            target: chess,
+            property: 'move',
+            args: ['e2', 'e4', 'q'],
+            mod: chessMod,
+          })
+          await computer.broadcast(tx)
+        }).rejects.toThrow('Game not yet fully funded')
+      })
+    })
+
+    describe('E2E TBC777M escrow + ChessContract', () => {
+      let minter: Computer
+      let white: Computer
+      let black: Computer
+
+      beforeEach(async () => {
+        minter = new Computer({ url, chain, network })
+        white = new Computer({ url, chain, network })
+        black = new Computer({ url, chain, network })
+        await Promise.all([white.faucet(10e8), black.faucet(10e8), minter.faucet(10e8)])
+        await ensureFunds(minter)
+      })
+
+      it('Should reject acceptDeposit when amount does not match wager', async () => {
+        const wager = 5n
+        const to = minter.getPublicKey()
+        const token = await minter.new(TBC777M, [{ to, amount: 20n, name: 't' }], tbc20Mod)
+        const whiteTokenM = await token.transfer(white.getPublicKey(), 10n)
+        if (!whiteTokenM) throw new Error('expected white token UTXO')
+        const chess = await white.new(ChessContract, [token._root, wager], chessMod)
+        const whiteToken = await white.sync<typeof TBC777M>(whiteTokenM._rev)
+
+        await expect(async () => {
+          const { tx } = await white.encode({
+            exp: `chess.acceptDeposit(whiteToken, 3n, 'W', '${black.getPublicKey()}')`,
+            env: { chess: chess._rev, whiteToken: whiteToken._rev },
+            mod: chessMod,
+          })
+          await white.broadcast(tx)
+        }).rejects.toThrow()
+      })
+
+      it('Should run escrow, fool mate, and credit winner balance on withdraw', async () => {
+        const wager = 5n
+        const mintAmount = 30n
+        const name = 'chess-e2e'
+        const to = minter.getPublicKey()
+
+        const token = await minter.new(TBC777M, [{ to, amount: mintAmount, name }], tbc20Mod)
+        const whiteTokenM = await token.transfer(white.getPublicKey(), 10n)
+        const blackTokenM = await token.transfer(black.getPublicKey(), 10n)
+        if (!whiteTokenM || !blackTokenM) throw new Error('expected player token UTXOs')
+
+        const chess = await white.new(ChessContract, [token._root, wager], chessMod)
+        const whiteToken = await white.sync<typeof TBC777M>(whiteTokenM._rev)
+
+        expect(whiteToken.amount).toBe(10n)
+        await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey())
+        expect(chess._owners).toEqual([black.getPublicKey()])
+
+        const whiteAfterFirstDeposit = await white.sync<typeof TBC777M>(
+          await white.latest(whiteTokenM._rev),
         )
-      }).not.toThrow()
-    })
+        expect(whiteAfterFirstDeposit.amount).toBe(5n)
 
-    it(`Should reject Bob (loser) claiming with ${validator.name}`, async () => {
-      const commitTxId = await createCommitTx()
-      const redeemTx = ChessContractHelper.createRedeemTx(
-        commitTxId,
-        bobComputer.db.wallet.hdPrivateKey,
-        2n * betAmount,
-        fees,
-        aliceChangeOutput,
-        outScript,
-        0,
-      )
-      expect(() => {
-        ChessContractHelper.validateAndSignRedeemTx(
-          redeemTx,
-          alicePublicKey,
-          validator.keyPair,
-          redeemScript,
-          n.network,
+        const blackToken = await black.sync<typeof TBC777M>(blackTokenM._rev)
+        // After white’s deposit, chess advanced — use the current head rev (not stale `chess._rev`).
+        const chessHeadForBlack = await white.latest(chess._rev)
+        const { tx: tx1, effect: effect1 } = await black.encode({
+          exp: `chess.acceptDeposit(blackToken, ${wager}n, 'Black', '${white.getPublicKey()}')`,
+          env: { chess: chessHeadForBlack, blackToken: blackToken._rev },
+          mod: chessMod,
+        })
+        await black.broadcast(tx1)
+        const chess1 = effect1.env.chess as SmartContract<typeof ChessContract>
+
+        expect(chess1.deposits).toEqual([
+          [token._root, whiteTokenM._rev],
+          [token._root, blackTokenM._rev],
+        ])
+        expect(chess1.withdraws).toEqual([])
+
+        // Fool’s mate (black wins): 1.f3 e5 2.g4 Qh4#
+        const moves: { from: string; to: string; promotion: string; player: Computer }[] = [
+          { from: 'f2', to: 'f3', promotion: '', player: white },
+          { from: 'e7', to: 'e5', promotion: '', player: black },
+          { from: 'g2', to: 'g4', promotion: '', player: white },
+          { from: 'd8', to: 'h4', promotion: '', player: black },
+        ]
+
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let currentChess: any = chess1
+        for (const m of moves) {
+          const latest = await m.player.latest(currentChess._id)
+          const synced = await m.player.sync<typeof ChessContract>(latest)
+          const { tx, effect } = await m.player.encodeCall({
+            target: synced,
+            property: 'move',
+            args: [m.from, m.to, m.promotion],
+            mod: chessMod,
+          })
+          await m.player.broadcast(tx)
+          currentChess = (effect as unknown as { env: { __bc__: unknown } }).env.__bc__
+          await sleep(300)
+        }
+
+        const chessFinal = currentChess as SmartContract<typeof ChessContract>
+        const totalPot = wager * 2n
+        expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]])
+        expect(chessFinal.finalWithdraws).toEqual([])
+
+        const blackTokenBeforeWithdraw = await black.sync<typeof TBC777M>(
+          await black.latest(blackTokenM._rev),
         )
-      }).toThrow('Claimant’s signature is invalid')
+        expect(blackTokenBeforeWithdraw.amount).toBe(5n)
+
+        // TBC777M.isValid walks `computer.prev` / `next`; poll withdraw until the indexer catches up.
+        let lastWithdrawErr: unknown
+        let withdrew = false
+        for (let attempt = 0; attempt < 10; attempt += 1) {
+          try {
+            const rev = await white.latest(chessFinal._id)
+            const tok = await black.sync<typeof TBC777M>(await black.latest(blackTokenM._rev))
+            await tok.withdraw(rev)
+            withdrew = true
+            break
+          } catch (e) {
+            lastWithdrawErr = e
+            const msg = e instanceof Error ? e.message : String(e)
+            if (!msg.includes('Escrow balance too low')) throw e
+            await sleep(2500)
+          }
+        }
+        if (!withdrew) throw lastWithdrawErr
+
+        const blackTokenFinal = await black.sync<typeof TBC777M>(
+          await black.latest(blackTokenM._rev),
+        )
+        expect(blackTokenFinal.amount).toBe(15n)
+      })
     })
-  })
-
-  it('Should reject if output is not to winner’s address', async () => {
-    const commitTxId = await createCommitTx()
-    const winnerPublicKey = alicePublicKey
-    const redeemTx = ChessContractHelper.createRedeemTx(
-      commitTxId,
-      aliceComputer.db.wallet.hdPrivateKey,
-      2n * betAmount,
-      fees,
-      bobChangeOutput,
-      outScript,
-      0,
-    )
-    expect(() => {
-      ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx,
-        winnerPublicKey,
-        operatorKeyPair,
-        redeemScript,
-        n.network,
-      )
-    }).toThrow('Output must go to winner’s address')
-  })
-
-  it('Should reject if transaction has multiple inputs', async () => {
-    const commitTxId = await createCommitTx()
-    const winnerPublicKey = alicePublicKey
-    const redeemTx = ChessContractHelper.createRedeemTx(
-      commitTxId,
-      aliceComputer.db.wallet.hdPrivateKey,
-      2n * betAmount,
-      fees,
-      aliceChangeOutput,
-      outScript,
-      0,
-    )
-    redeemTx.addInput(Buffer.from('00'.repeat(32), 'hex'), 0)
-    expect(() => {
-      ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx,
-        winnerPublicKey,
-        operatorKeyPair,
-        redeemScript,
-        n.network,
-      )
-    }).toThrow('Invalid transaction structure')
-  })
-
-  it('Should reject if scriptSig has invalid format', async () => {
-    const commitTxId = await createCommitTx()
-    const winnerPublicKey = alicePublicKey
-    const redeemTx = ChessContractHelper.createRedeemTx(
-      commitTxId,
-      aliceComputer.db.wallet.hdPrivateKey,
-      2n * betAmount,
-      fees,
-      aliceChangeOutput,
-      outScript,
-      0,
-    )
-    const scriptSig = redeemTx.ins[0].script
-    const decompiled = bscript.decompile(scriptSig) as Buffer[]
-    const invalidScriptSig = bscript.compile([decompiled[0], decompiled[1]]) // Missing redeem script
-    redeemTx.setInputScript(0, invalidScriptSig)
-    expect(() => {
-      ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx,
-        winnerPublicKey,
-        operatorKeyPair,
-        redeemScript,
-        n.network,
-      )
-    }).toThrow('Invalid scriptSig format')
-  })
-
-  it('Should reject if provided redeem script is incorrect', async () => {
-    const commitTxId = await createCommitTx()
-    const winnerPublicKey = alicePublicKey
-    const wrongRedeemScript = bscript.fromASM('OP_1')
-    const redeemTx = new Transaction()
-    redeemTx.addInput(Buffer.from(commitTxId, 'hex').reverse(), 0)
-    redeemTx.addOutput(aliceChangeOutput as Buffer, BigInt(2n * betAmount) - fees)
-    const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
-    const claimantSig = bscript.signature.encode(
-      aliceKeyPair.sign(sigHash),
-      Transaction.SIGHASH_ALL,
-    )
-    const partialRedeemInput = bscript.compile([Buffer.alloc(0), claimantSig])
-    const partialScript = payments.p2sh({
-      redeem: { input: partialRedeemInput, output: wrongRedeemScript },
-    })
-    redeemTx.setInputScript(0, partialScript.input as Buffer)
-    expect(() => {
-      ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx,
-        winnerPublicKey,
-        operatorKeyPair,
-        redeemScript,
-        n.network,
-      )
-    }).toThrow('Redeem script does not match expected script')
-  })
-
-  it('Should reject if claimant signature is invalid', async () => {
-    const commitTxId = await createCommitTx()
-    const winnerPublicKey = alicePublicKey
-    const redeemTx = ChessContractHelper.createRedeemTx(
-      commitTxId,
-      aliceComputer.db.wallet.hdPrivateKey,
-      2n * betAmount,
-      fees,
-      aliceChangeOutput,
-      outScript,
-      0,
-    )
-    const scriptSig = redeemTx.ins[0].script
-    const decompiled = bscript.decompile(scriptSig) as (number | Buffer)[]
-    const corruptedSig = decompiled[1] as Buffer
-
-    corruptedSig[10] ^= 0x01 // Corrupt the signature
-    decompiled[1] = corruptedSig
-    const corruptedScriptSig = bscript.compile(decompiled)
-    redeemTx.setInputScript(0, corruptedScriptSig)
-    expect(() => {
-      ChessContractHelper.validateAndSignRedeemTx(
-        redeemTx,
-        winnerPublicKey,
-        operatorKeyPair,
-        redeemScript,
-        n.network,
-      )
-    }).toThrow('Claimant’s signature is invalid')
   })
 })

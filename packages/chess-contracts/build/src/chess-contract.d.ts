@@ -1,122 +1,48 @@
-import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
-import { networks } from '@bitcoin-computer/nakamotojs'
-import { Buffer } from 'buffer'
-import { ECPairInterface } from 'ecpair'
-import { BIP32Interface } from 'bip32'
-export declare const NotEnoughFundError = 'Not enough funds to create chess game.'
-type PaymentType = {
-  satoshis: bigint
-  publicKeyW: string
-  publicKeyB: string
-}
-export declare class Payment extends Contract {
-  constructor({ satoshis, publicKeyW, publicKeyB }: PaymentType)
-}
-type WinnerTxWrapperType = {
-  publicKeyW: string
-  publicKeyB: string
-}
-export declare class WinnerTxWrapper extends Contract {
-  redeemTxHex: string
-  constructor({ publicKeyW, publicKeyB }: WinnerTxWrapperType)
-  setRedeemHex(txHex: string): void
-}
+import { Computer, SmartContract } from '@bitcoin-computer/lib';
 export declare class ChessContract extends Contract {
-  satoshis: bigint
-  nameW: string
-  nameB: string
-  publicKeyW: string
-  publicKeyB: string
-  sans: string[]
-  fen: string
-  payment: Payment
-  winnerTxWrapper: WinnerTxWrapper
-  constructor(
-    satoshis: bigint,
-    nameW: string,
-    nameB: string,
-    publicKeyW: string,
-    publicKeyB: string,
-  )
-  setRedeemHex(txHex: string): void
-  move(from: string, to: string, promotion: string): string
-  isGameOver(): boolean
+    wagerAmount: bigint;
+    nameW: string;
+    nameB: string;
+    publicKeyW: string;
+    publicKeyB: string;
+    sans: string[];
+    fen: string;
+    deposits: [string, string][];
+    withdraws: [string, string, bigint][];
+    /** Required by TBC777M escrow audit (`isValid` / `computeFinalWithdraws`). */
+    finalWithdraws: [string, string, bigint][];
+    root: string;
+    tokenIdW: string;
+    tokenIdB: string;
+    constructor(root: string, wagerAmount: bigint);
+    acceptDeposit(token: any, amount: bigint, name: string, nextOwner: string): Promise<void>;
+    move(from: string, to: string, promotion: string): boolean;
+    isGameOver(): boolean;
 }
 export declare class ChessContractHelper {
-  computer: Computer
-  satoshis?: bigint
-  nameW?: string
-  nameB?: string
-  publicKeyW?: string
-  publicKeyB?: string
-  mod?: string
-  userMod?: string
-  constructor({
-    computer,
-    satoshis,
-    nameW,
-    nameB,
-    publicKeyW,
-    publicKeyB,
-    mod,
-    userMod,
-  }: {
-    computer: Computer
-    satoshis?: bigint
-    nameW?: string
-    nameB?: string
-    publicKeyW?: string
-    publicKeyB?: string
-    mod?: string
-    userMod?: string
-  })
-  isInitialized(): this is Required<ChessContractHelper>
-  static fromContract(
-    computer: Computer,
-    game: SmartContract<typeof ChessContract>,
-    mod?: string,
-    userMod?: string,
-  ): ChessContractHelper
-  getASM(): string
-  validateUser(): Promise<void>
-  makeTx(): Promise<Transaction>
-  completeTx(tx: Transaction): Promise<string>
-  move(
-    chessContract: SmartContract<typeof ChessContract>,
-    from: string,
-    to: string,
-    promotion: string,
-  ): Promise<{
-    newChessContract: SmartContract<typeof ChessContract>
-    isGameOver: boolean
-  }>
-  spend(chessContract: SmartContract<typeof ChessContract>, fee?: bigint): Promise<void>
-  spendWithConfirmation(
-    txId: string,
-    chessContract: SmartContract<typeof ChessContract>,
-    fee?: bigint,
-  ): Promise<void>
-  static createRedeemTx(
-    txId: string,
-    hdPrivateKey: BIP32Interface,
-    satoshis: bigint,
-    fee: bigint,
-    output: Buffer | undefined,
-    scriptASM: string,
-    inputIndex: number,
-  ): any
-  static validateAndSignRedeemTx(
-    redeemTx: Transaction,
-    winnerPublicKey: Buffer,
-    validatorKeyPair: ECPairInterface,
-    expectedRedeemScript: Buffer,
-    network: networks.Network,
-    playerWIsTheValidator?: boolean,
-  ): Transaction
+    computer: Computer;
+    mod?: string;
+    userMod?: string;
+    tokenMod?: string;
+    constructor({ computer, mod, userMod, tokenMod, }: {
+        computer: Computer;
+        mod?: string;
+        userMod?: string;
+        tokenMod?: string;
+    });
+    static fromModSpecs(computer: Computer, mod?: string, userMod?: string, tokenMod?: string): ChessContractHelper;
+    validateUser(): Promise<void>;
+    createGame(tokenRoot: string, wagerAmount: bigint): Promise<SmartContract<typeof ChessContract>>;
+    depositTokens(chessRev: string, tokenRev: string, wagerAmount: bigint, name: string, nextOwner: string): Promise<SmartContract<typeof ChessContract>>;
+    findToken(tokenRoot: string, minAmount: bigint): Promise<{
+        _rev: string;
+        _root: string;
+        _id: string;
+        amount: bigint;
+    } | null>;
+    move(chessContract: SmartContract<typeof ChessContract>, from: string, to: string, promotion: string): Promise<{
+        newChessContract: SmartContract<typeof ChessContract>;
+        isGameOver: boolean;
+    }>;
+    withdrawTokens(tokenId: string, chessId: string): Promise<void>;
 }
-export declare const signRedeemTx: (
-  computer: Computer,
-  chessContract: SmartContract<typeof ChessContract>,
-  txWrapper: SmartContract<typeof WinnerTxWrapper>,
-) => Promise<Transaction>
-export {}
