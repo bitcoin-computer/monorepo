@@ -177,13 +177,13 @@ describe.only('TBC777M', () => {
     // White player creates the chess game and places a wager
     const chess = await white.new(Chess, [token._root])
     const whiteToken = await white.sync<typeof TBC777M>(whiteTokenM!._rev)
-    await chess.acceptDeposit(whiteToken, 5n, black.getPublicKey())
+    await chess.acceptDeposit(whiteToken, 4n, black.getPublicKey())
     expect(chess._owners).deep.eq([black.getPublicKey()])
 
     // Black player places their wager
     const blackToken = await black.sync<typeof TBC777M>(blackTokenM!._rev)
     const { tx: tx1, effect: effect1 } = await black.encode({
-      exp: `chess.acceptDeposit(blackToken, 5n, '${white.getPublicKey()}')`,
+      exp: `chess.acceptDeposit(blackToken, 6n, '${white.getPublicKey()}')`,
       env: { chess: chess._rev, blackToken: blackToken._rev },
     })
     await black.broadcast(tx1)
@@ -210,6 +210,6 @@ describe.only('TBC777M', () => {
 
     await sleep(3000)
     await whiteToken.withdraw(chess2._rev)
-    expect(whiteToken.amount).eq(15n)
+    expect(whiteToken.amount).eq(16n)
   })
 })

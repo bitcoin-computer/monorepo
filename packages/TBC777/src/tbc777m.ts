@@ -108,12 +108,19 @@ export abstract class Escrow extends Contract {
 }
 
 export class TBC777M extends TBC20 {
-  /** Tracks every withdraw revision that has already been claimed. Prevents
+  /**
+   * Tracks every withdraw revision that has already been claimed. Prevents
    * double-spends and replay attacks across revisions.
    */
   withdrawn!: string[]
 
-  /** The escrow that is being deposited into in this revision (recorded
+  /**
+   * Tracks every final withdraw revision that has been claimed.
+   */
+  finalWithdrawn!: string[]
+
+  /**
+   * The escrow that is being deposited into in this revision (recorded
    * on-chain so the audit can verify the deposit was made to the correct escrow
    * instance and prevent cross-escrow claims by a malicious escrow).
    */
@@ -154,9 +161,26 @@ export class TBC777M extends TBC20 {
     if (!(await TBC777M.isValid(rev, _root))) throw new Error('Escrow balance too low')
 
     this.withdrawn.push(rev)
-    const withdraw = await TBC777M.computeWithdraw(rev, _id, _root)
-    const finalWithdraw = await TBC777M.computeFinalWithdraw(rev, _id, _root)
-    this.amount += withdraw + finalWithdraw
+    this.amount += await TBC777M.computeWithdraw(rev, _id, _root)
+  }
+
+  /**
+   * Claims tokens back from an escrow.
+   *
+   * Before any tokens are credited, the escrow's entire revision history is
+   * audited on-chain using the inner computer. This guarantees that the escrow
+   * has never released more tokens than were deposited for this exact token
+   * lineage (`_root`).
+   *
+   * The `withdrawn` array prevents claiming the same revision multiple times.
+   */
+  async withdrawFinal(rev: string) {
+    const { _id, _root } = this
+    if (this.finalWithdrawn.includes(rev)) throw new Error('Cannot withdraw multiple times')
+    if (!(await TBC777M.isValid(rev, _root))) throw new Error('Escrow balance too low')
+
+    this.finalWithdrawn.push(rev)
+    this.amount += await TBC777M.computeFinalWithdraw(rev, _id, _root)
   }
 
   /**
