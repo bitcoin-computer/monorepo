@@ -6,8 +6,8 @@
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "type": "module",
-  "main": "./build/src/token.js",
-  "types": "./build/src/token.d.ts",
+  "main": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
   "files": [
     "LICENSE.md",
     "LEGAL.md"

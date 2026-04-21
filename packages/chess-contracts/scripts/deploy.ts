@@ -7,6 +7,7 @@ import { deploy } from './lib.js'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import { User } from '../src/user.js'
+import { TBC777M, TBC20 } from '@bitcoin-computer/TBC777'
 import { ChessChallengeTxWrapper } from '../src/chess-challenge.js'
 
 config()
@@ -50,6 +51,8 @@ if (answer === 'n') {
 const mod = await deploy(computer, chessContractDirectory)
 const userMod = await computer.deploy(`export ${User}`)
 const challengeMod = await computer.deploy(`export ${ChessChallengeTxWrapper}`)
+const tbc20Mod = await computer.deploy(`export ${TBC20}`)
+const tokenMod = await computer.deploy(`import {TBC20} from '${tbc20Mod}'; export ${TBC777M}`)
 console.log(' \x1b[2m- Successfully deployed smart contracts\x1b[0m')
 
 const answer2 = await rl.question('\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m')
@@ -64,6 +67,7 @@ Update the following rows in your .env file.
 VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${mod}\x1b[0m
 VITE_CHESS_USER_MOD_SPEC\x1b[2m=${userMod}\x1b[0m
 VITE_CHESS_CHALLENGE_MOD_SPEC\x1b[2m=${challengeMod}\x1b[0m
+VITE_TOKEN_MOD_SPEC\x1b[2m=${tokenMod}\x1b[0m
 `)
 } else {
   const files = ['../chess-app/.env']
@@ -78,6 +82,7 @@ VITE_CHESS_CHALLENGE_MOD_SPEC\x1b[2m=${challengeMod}\x1b[0m
         lines[i] = `VITE_CHESS_USER_MOD_SPEC=${userMod}`
       if (lines[i].startsWith('VITE_CHESS_CHALLENGE_MOD_SPEC'))
         lines[i] = `VITE_CHESS_CHALLENGE_MOD_SPEC=${challengeMod}`
+      if (lines[i].startsWith('VITE_TOKEN_MOD_SPEC')) lines[i] = `VITE_TOKEN_MOD_SPEC=${tokenMod}`
     }
     await writeFile(file, lines.join('\n'), 'utf-8')
   }

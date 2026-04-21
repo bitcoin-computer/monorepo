@@ -1,12 +1,25 @@
 import { Computer } from '@bitcoin-computer/lib'
 
 export class ChessChallengeTxWrapper extends Contract {
-  chessGameTxHex!: string
+  chessRev!: string
+  wagerAmount!: bigint
+  tokenRoot!: string
+  publicKeyW!: string
   accepted!: boolean
-  constructor(chessGameTxHex: string, publicKeyB: string) {
+
+  constructor(
+    chessRev: string,
+    wagerAmount: bigint,
+    tokenRoot: string,
+    publicKeyW: string,
+    publicKeyB: string,
+  ) {
     super({
       _owners: [publicKeyB],
-      chessGameTxHex: chessGameTxHex,
+      chessRev,
+      wagerAmount,
+      tokenRoot,
+      publicKeyW,
       accepted: false,
     })
   }
@@ -26,16 +39,15 @@ export class ChessChallengeTxWrapperHelper {
   }
 
   async createChessChallengeTxWrapper(
-    chessGameTxHex: string,
+    chessRev: string,
+    wagerAmount: bigint,
+    tokenRoot: string,
+    publicKeyW: string,
     publicKeyB: string,
-    ins: string[],
   ): Promise<string> {
     const { tx } = await this.computer.encode({
-      exp: `new ChessChallengeTxWrapper(
-        "${chessGameTxHex}", "${publicKeyB}"
-      )`,
+      exp: `new ChessChallengeTxWrapper("${chessRev}", ${wagerAmount}n, "${tokenRoot}", "${publicKeyW}", "${publicKeyB}")`,
       mod: this.mod,
-      exclude: ins,
     })
     if (!tx) throw new Error('Could not create ChessChallengeTxWrapper')
     return this.computer.broadcast(tx)
