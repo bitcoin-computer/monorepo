@@ -120,9 +120,9 @@ export class TBC777M extends TBC20 {
   finalWithdrawn!: string[]
 
   /**
-   * The escrow that is being deposited into in this revision (recorded
-   * on-chain so the audit can verify the deposit was made to the correct escrow
-   * instance and prevent cross-escrow claims by a malicious escrow).
+   * The escrow that is being deposited into in this revision (recorded on-chain
+   * so the audit can verify the deposit was made to the correct escrow instance
+   * and prevent cross-escrow claims by a malicious escrow).
    */
   escrowId: string | undefined
 
@@ -158,7 +158,9 @@ export class TBC777M extends TBC20 {
   async withdraw(rev: string) {
     const { _id, _root } = this
     if (this.withdrawn.includes(rev)) throw new Error('Cannot withdraw multiple times')
-    if (!(await TBC777M.isValid(rev, _root))) throw new Error('Escrow balance too low')
+
+    const balance = await TBC777M.getBalance(rev, _root)
+    if (0 < balance) throw new Error(`Escrow balance (${balance}) too low`)
 
     this.withdrawn.push(rev)
     this.amount += await TBC777M.computeWithdraw(rev, _id, _root)
@@ -177,10 +179,13 @@ export class TBC777M extends TBC20 {
   async withdrawFinal(rev: string) {
     const { _id, _root } = this
     if (this.finalWithdrawn.includes(rev)) throw new Error('Cannot withdraw multiple times')
-    if (!(await TBC777M.isValid(rev, _root))) throw new Error('Escrow balance too low')
+
+    const balance = await TBC777M.getBalance(rev, _root)
+    const finalWithdraw = await TBC777M.computeFinalWithdraw(rev, _id, _root)
+    if (balance < finalWithdraw) throw new Error(`Escrow balance (${balance}) too low`)
 
     this.finalWithdrawn.push(rev)
-    this.amount += await TBC777M.computeFinalWithdraw(rev, _id, _root)
+    this.amount += finalWithdraw
   }
 
   /**
@@ -215,13 +220,14 @@ export class TBC777M extends TBC20 {
   }
 
   /**
-   * Performs the no-inflation invariant check.
+   * Computes the balance of the escrow at the revision, assuming that all
+   * withdraws at that revision had been processed.
    *
    * Walks the complete linear revision history ("prev-chain") of the escrow
    * starting from `rev`, then compares total actual deposits against total
    * claimed withdrawals for this token's `_root`.
    */
-  static async isValid(rev: string, root: string): Promise<boolean> {
+  static async getBalance(rev: string, root: string): Promise<bigint> {
     const states: Escrow[] = []
     let current = rev
 
@@ -236,9 +242,8 @@ export class TBC777M extends TBC20 {
 
     const deposits = await TBC777M.computeDeposits(states, root)
     const withdraws = await TBC777M.computeWithdraws(states, root)
-    const finalWithdraws = await TBC777M.computeFinalWithdraws(states, root)
 
-    return deposits - (withdraws + finalWithdraws) >= 0
+    return deposits - withdraws
   }
 
   /**

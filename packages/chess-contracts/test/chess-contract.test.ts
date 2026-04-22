@@ -42,7 +42,7 @@ async function ensureFunds(c: Computer, minSats = 10e8) {
   }
 }
 
-describe.only('ChessContract', () => {
+describe('ChessContract', () => {
   describe('ChessContractHelper', () => {
     it('Should instantiate with required options', () => {
       const computer = new Computer({ url })
@@ -182,7 +182,7 @@ describe.only('ChessContract', () => {
         }).rejects.toThrow()
       })
 
-      it.only('Should run escrow, fool mate, and credit winner balance on withdraw', async () => {
+      it('Should run escrow, fool mate, and credit winner balance on withdraw', async () => {
         const wager = 5n
         const timeLimit = 60n * 10n
         const mintAmount = 30n
