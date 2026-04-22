@@ -3,6 +3,7 @@ import { User } from './user.js'
 
 export class ChessContract extends Contract {
   wagerAmount!: bigint
+  timeLimit!: bigint
   nameW!: string
   nameB!: string
   publicKeyW!: string
@@ -17,9 +18,10 @@ export class ChessContract extends Contract {
   tokenIdW!: string
   tokenIdB!: string
 
-  constructor(root: string, wagerAmount: bigint) {
+  constructor(root: string, wagerAmount: bigint, timeLimit: bigint) {
     super({
       wagerAmount,
+      timeLimit,
       nameW: '',
       nameB: '',
       publicKeyW: '',
@@ -64,23 +66,93 @@ export class ChessContract extends Contract {
     this.sans.push(san)
     this.fen = chessLib.fen()
 
+    // const totalWager = this.wagerAmount * 2n
     if (!chessLib.isGameOver()) {
       if (this._owners[0] === this.publicKeyW) {
         this._owners = [this.publicKeyB]
+        // this.finalWithdraws = [[this.root, this.tokenIdB, totalWager]]
       } else {
         this._owners = [this.publicKeyW]
+        // this.finalWithdraws = [[this.root, this.tokenIdW, totalWager]]
       }
-    } else if (chessLib.isCheckmate()) {
-      const totalWager = this.wagerAmount * 2n
-      const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdW : this.tokenIdB
-      this.withdraws = [[this.root, winnerId, totalWager]]
     }
     return chessLib.isGameOver()
+  }
+
+  claimWin() {
+    // @ts-expect-error Chess is available in the deployed module scope
+    const chessLib = new Chess(this.fen)
+    if (!this.isGameOver()) throw new Error('Game not over')
+    if (chessLib.isCheckmate()) {
+      this.withdraws = [
+        [this.root, this.tokenIdW, this.wagerAmount],
+        [this.root, this.tokenIdB, this.wagerAmount],
+      ]
+    }
+    const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdW : this.tokenIdB
+    this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]]
+  }
+
+  resign() {
+    const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdB : this.tokenIdW
+    this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]]
   }
 
   isGameOver(): boolean {
     // @ts-expect-error Chess is available in the deployed module scope
     return new Chess(this.fen).isGameOver()
+  }
+
+  async hasTimedOutW(): Promise<boolean> {
+    const { timeW } = await this.calculateTimes()
+    return timeW > this.timeLimit
+  }
+
+  async hasTimedOutB(): Promise<boolean> {
+    const { timeB } = await this.calculateTimes()
+    return timeB > this.timeLimit
+  }
+
+  /**
+   * Calculates white time (timeW) and black time (timeB) from a list of timestamps.
+   * timeW = (t2 - t1) + (t4 - t3) + (t6 - t5) + ...
+   * timeB = (t3 - t2) + (t5 - t4) + (t7 - t6) + ...
+   *
+   * Note: timeW + timeB will equal (tn - t1).
+   */
+  async calculateTimes(): Promise<{ timeW: bigint; timeB: bigint }> {
+    let current = this._rev
+    const timestamps: bigint[] = []
+
+    // Collect every historical state. Deposits and withdrawals accumulate
+    // across the entire lifetime of the escrow, so the audit must see them all.
+    while (true) {
+      const txId = current.split(':')[0]
+      timestamps.push(await computer.txIdToBlockTime(txId))
+      const previous = await computer.prev(current)
+      if (!previous) break
+      current = previous
+    }
+
+    if (timestamps.length < 2) return { timeW: 0n, timeB: 0n }
+
+    let timeW = 0n
+    let timeB = 0n
+
+    // Start from the first move (index 0)
+    for (let i = 1; i < timestamps.length; i++) {
+      const diff: bigint = timestamps[i] - timestamps[i - 1]
+
+      if (i % 2 === 1) {
+        // Odd indices (1, 3, 5, ...): White's moves
+        timeW += diff
+      } else {
+        // Even indices (2, 4, 6, ...): Black's moves
+        timeB += diff
+      }
+    }
+
+    return { timeW, timeB }
   }
 }
 
