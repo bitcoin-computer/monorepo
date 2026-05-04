@@ -60,7 +60,7 @@ export class ChessContract extends Contract {
   sans!: string[]
   fen!: string
   payment!: Payment
-  winnerTxWrapper!: WinnerTxWrapper
+  winnerTxWrapper!: SmartContract<typeof WinnerTxWrapper>
 
   constructor(
     satoshis: bigint,
@@ -154,7 +154,7 @@ export class ChessContractHelper {
 
   static fromContract(
     computer: Computer,
-    game: ChessContract,
+    game: SmartContract<typeof ChessContract>,
     mod?: string,
     userMod?: string,
   ): ChessContractHelper {
@@ -443,7 +443,7 @@ export class ChessContractHelper {
 export const signRedeemTx = async (
   computer: Computer,
   chessContract: SmartContract<typeof ChessContract>,
-  txWrapper: WinnerTxWrapper,
+  txWrapper: SmartContract<typeof WinnerTxWrapper>,
 ) => {
   const winnerPublicKey = chessContract._owners[0] as string
   const network = computer.getNetwork()
