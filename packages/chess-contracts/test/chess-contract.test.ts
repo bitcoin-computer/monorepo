@@ -42,7 +42,7 @@ async function ensureFunds(c: Computer, minSats = 10e8) {
   }
 }
 
-describe.only('ChessContract', () => {
+describe('ChessContract', () => {
   describe('ChessContractHelper', () => {
     it('Should instantiate with required options', () => {
       const computer = new Computer({ url })
