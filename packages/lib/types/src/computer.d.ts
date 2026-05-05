@@ -80,6 +80,7 @@ declare class Computer {
     send(satoshis: bigint, address: string | Address): Promise<string>;
     broadcast(tx: nTransaction): Promise<string>;
     rpc(method: string, params: string): Promise<any>;
+    txIdToBlockTime(hash: string): Promise<bigint>;
     getChain(): Chain;
     getNetwork(): BtcNetwork;
     getMnemonic(): string;

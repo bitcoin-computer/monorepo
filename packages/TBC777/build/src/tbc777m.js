@@ -20,9 +20,16 @@ export class TBC777M extends TBC20 {
         if (!(await TBC777M.isValid(rev, _root)))
             throw new Error('Escrow balance too low');
         this.withdrawn.push(rev);
-        const withdraw = await TBC777M.computeWithdraw(rev, _id, _root);
-        const finalWithdraw = await TBC777M.computeFinalWithdraw(rev, _id, _root);
-        this.amount += withdraw + finalWithdraw;
+        this.amount += await TBC777M.computeWithdraw(rev, _id, _root);
+    }
+    async withdrawFinal(rev) {
+        const { _id, _root } = this;
+        if (this.finalWithdrawn.includes(rev))
+            throw new Error('Cannot withdraw multiple times');
+        if (!(await TBC777M.isValid(rev, _root)))
+            throw new Error('Escrow balance too low');
+        this.finalWithdrawn.push(rev);
+        this.amount += await TBC777M.computeFinalWithdraw(rev, _id, _root);
     }
     static async computeWithdraw(rev, _id, _root) {
         const { withdraws } = await computer.sync(rev);

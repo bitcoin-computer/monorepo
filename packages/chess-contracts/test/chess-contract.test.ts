@@ -182,7 +182,7 @@ describe.only('ChessContract', () => {
         }).rejects.toThrow()
       })
 
-      it.only('Should run escrow, fool mate, and credit winner balance on withdraw', async () => {
+      it('Should run escrow, fool mate, and credit winner balance on withdraw', async () => {
         const wager = 5n
         const timeLimit = 60n * 10n
         const mintAmount = 30n
@@ -193,6 +193,12 @@ describe.only('ChessContract', () => {
         const whiteTokenM = await token.transfer(white.getPublicKey(), 10n)
         const blackTokenM = await token.transfer(black.getPublicKey(), 10n)
         if (!whiteTokenM || !blackTokenM) throw new Error('expected player token UTXOs')
+
+        const x = await white.getOUTXOs({
+          mod: tbc20Mod,
+          publicKey: white.getPublicKey(),
+        })
+        console.log('x', x)
 
         const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
         const whiteToken = await white.sync<typeof TBC777M>(whiteTokenM._rev)
@@ -249,10 +255,7 @@ describe.only('ChessContract', () => {
 
         const chessFinal = currentChess as SmartContract<typeof ChessContract>
         const totalPot = wager * 2n
-        expect(chessFinal.withdraws).toEqual([])
-        // expect(chessFinal.finalWithdraws).toEqual([[token._root, blackToken._id, totalPot]])
-
-        await chessFinal.claimWin()
+        // The winning move now settles the pot atomically — no claimWin step.
         expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]])
 
         const blackTokenBeforeWithdraw = await black.sync<typeof TBC777M>(

@@ -6,10 +6,12 @@ export declare abstract class Escrow extends Contract {
 }
 export declare class TBC777M extends TBC20 {
     withdrawn: string[];
+    finalWithdrawn: string[];
     escrowId: string | undefined;
     constructor(args: TBC20ConstructorParams);
     deposit(escrowId: string, deposit: bigint): void;
     withdraw(rev: string): Promise<void>;
+    withdrawFinal(rev: string): Promise<void>;
     static computeWithdraw(rev: string, _id: string, _root: string): Promise<bigint>;
     static computeFinalWithdraw(rev: string, _id: string, _root: string): Promise<bigint>;
     static isValid(rev: string, root: string): Promise<boolean>;
