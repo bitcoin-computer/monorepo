@@ -154,7 +154,7 @@ export class ChessContractHelper {
 
   static fromContract(
     computer: Computer,
-    game: ChessContract,
+    game: SmartContract<typeof ChessContract>,
     mod?: string,
     userMod?: string,
   ): ChessContractHelper {
