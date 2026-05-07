@@ -154,7 +154,8 @@ export class ChessContractHelper {
         await this.validateUser();
         const decoded = await this.computer.decode(tx);
         const { effect } = await this.computer.encode(decoded);
-        const { res: chessContract } = effect;
+        const { res } = effect;
+        const chessContract = res;
         this.satoshis = chessContract.payment._satoshis;
         this.nameW = chessContract.nameW;
         this.nameB = chessContract.nameB;
