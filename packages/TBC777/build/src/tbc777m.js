@@ -17,8 +17,9 @@ export class TBC777M extends TBC20 {
         const { _id, _root } = this;
         if (this.withdrawn.includes(rev))
             throw new Error('Cannot withdraw multiple times');
-        if (!(await TBC777M.isValid(rev, _root)))
-            throw new Error('Escrow balance too low');
+        const balance = await TBC777M.getBalance(rev, _root);
+        if (0 < balance)
+            throw new Error(`Escrow balance (${balance}) too low`);
         this.withdrawn.push(rev);
         this.amount += await TBC777M.computeWithdraw(rev, _id, _root);
     }
@@ -26,10 +27,12 @@ export class TBC777M extends TBC20 {
         const { _id, _root } = this;
         if (this.finalWithdrawn.includes(rev))
             throw new Error('Cannot withdraw multiple times');
-        if (!(await TBC777M.isValid(rev, _root)))
-            throw new Error('Escrow balance too low');
+        const balance = await TBC777M.getBalance(rev, _root);
+        const finalWithdraw = await TBC777M.computeFinalWithdraw(rev, _id, _root);
+        if (balance < finalWithdraw)
+            throw new Error(`Escrow balance (${balance}) too low`);
         this.finalWithdrawn.push(rev);
-        this.amount += await TBC777M.computeFinalWithdraw(rev, _id, _root);
+        this.amount += finalWithdraw;
     }
     static async computeWithdraw(rev, _id, _root) {
         const { withdraws } = await computer.sync(rev);
@@ -41,7 +44,7 @@ export class TBC777M extends TBC20 {
         const { finalWithdraws } = await computer.sync(rev);
         return finalWithdraws.reduce((total, [root, id, amount]) => (root === _root && id === _id ? total + amount : total), 0n);
     }
-    static async isValid(rev, root) {
+    static async getBalance(rev, root) {
         const states = [];
         let current = rev;
         while (true) {
@@ -53,8 +56,7 @@ export class TBC777M extends TBC20 {
         }
         const deposits = await TBC777M.computeDeposits(states, root);
         const withdraws = await TBC777M.computeWithdraws(states, root);
-        const finalWithdraws = await TBC777M.computeFinalWithdraws(states, root);
-        return deposits - (withdraws + finalWithdraws) >= 0;
+        return deposits - withdraws;
     }
     static async computeDeposits(states, root) {
         if (states.length === 0)

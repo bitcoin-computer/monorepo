@@ -14,7 +14,7 @@ export declare class TBC777M extends TBC20 {
     withdrawFinal(rev: string): Promise<void>;
     static computeWithdraw(rev: string, _id: string, _root: string): Promise<bigint>;
     static computeFinalWithdraw(rev: string, _id: string, _root: string): Promise<bigint>;
-    static isValid(rev: string, root: string): Promise<boolean>;
+    static getBalance(rev: string, root: string): Promise<bigint>;
     static computeDeposits(states: Escrow[], root: string): Promise<bigint>;
     static computeDeposit(token: TBC777M, escrowId: string, root: string): Promise<bigint>;
     static computeWithdraws(states: Escrow[], root: string): Promise<bigint>;

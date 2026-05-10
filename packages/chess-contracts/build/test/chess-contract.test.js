@@ -36,7 +36,7 @@ async function ensureFunds(c, minSats = 10e8) {
         await c.faucet(minSats);
     }
 }
-describe.only('ChessContract', () => {
+describe('ChessContract', () => {
     describe('ChessContractHelper', () => {
         it('Should instantiate with required options', () => {
             const computer = new Computer({ url });
