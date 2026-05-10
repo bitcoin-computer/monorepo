@@ -336,16 +336,13 @@ const computer = new Computer(conf)
 const address = computer.getAddress()
 
 // Fund client side library
-const { txId, vout } = await computer.faucet(1e4)
-
-// Return the utxos
-expect(await new Computer({ chain, network, url }).getUtxos(address)).deep.eq([`${txId}:${vout}`])
+const { txId } = await computer.faucet(1e4)
 
 // Return the balance
-expect((await new Computer({ chain, network, url }).getBalance(address)).balance).eq(BigInt(1e4))
+expect((await computer.getBalance(address)).balance).eq(BigInt(1e4))
 
 // Return the transactions
-expect(await new Computer({ chain, network, url }).listTxs(address)).deep.eq({
+expect(await computer.listTxs(address)).deep.eq({
   sentTxs: [],
   receivedTxs: [
     {
