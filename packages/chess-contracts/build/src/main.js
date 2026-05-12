@@ -13678,11 +13678,12 @@ class iF {
       mod: this.mod,
       exclude: r,
     })
+    if (!n) throw Error('Could not create ChessChallengeTxWrapper')
     return this.computer.broadcast(n)
   }
 }
-let iK = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-  iV = {
+let iF = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
+  iK = {
     NORMAL: 'n',
     CAPTURE: 'c',
     BIG_PAWN: 'b',
@@ -13691,7 +13692,7 @@ let iK = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
     KSIDE_CASTLE: 'k',
     QSIDE_CASTLE: 'q',
   },
-  iW = {
+  iV = {
     NORMAL: 1,
     CAPTURE: 2,
     BIG_PAWN: 4,
@@ -13700,7 +13701,7 @@ let iK = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
     KSIDE_CASTLE: 32,
     QSIDE_CASTLE: 64,
   },
-  iq = {
+  iW = {
     a8: 0,
     b8: 1,
     c8: 2,
@@ -13766,15 +13767,15 @@ let iK = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
     g1: 118,
     h1: 119,
   },
-  iG = { b: [16, 32, 17, 15], w: [-16, -32, -17, -15] },
-  i$ = {
+  iq = { b: [16, 32, 17, 15], w: [-16, -32, -17, -15] },
+  iG = {
     n: [-18, -33, -31, -14, 18, 33, 31, 14],
     b: [-17, -15, 17, 15],
     r: [-16, 1, 16, -1],
     q: [-17, -16, -15, 1, 17, 16, 15, -1],
     k: [-17, -16, -15, 1, 17, 16, 15, -1],
   },
-  iz = [
+  i$ = [
     20, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0, 20, 0, 0, 20, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 20,
     0, 0, 0, 0, 20, 0, 0, 0, 0, 24, 0, 0, 0, 0, 20, 0, 0, 0, 0, 0, 0, 20, 0, 0, 0, 24, 0, 0, 0, 20,
     0, 0, 0, 0, 0, 0, 0, 0, 20, 0, 0, 24, 0, 0, 20, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 20, 2, 24, 2, 20,
@@ -13785,7 +13786,7 @@ let iK = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
     0, 20, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 20, 0, 0, 20, 0, 0, 0, 0, 0, 0, 24, 0, 0, 0, 0, 0, 0,
     20,
   ],
-  iY = [
+  iz = [
     17, 0, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 0, 15, 0, 0, 17, 0, 0, 0, 0, 0, 16, 0, 0, 0, 0, 0, 15,
     0, 0, 0, 0, 17, 0, 0, 0, 0, 16, 0, 0, 0, 0, 15, 0, 0, 0, 0, 0, 0, 17, 0, 0, 0, 16, 0, 0, 0, 15,
     0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 0, 16, 0, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 17, 0, 16, 0, 15,
@@ -13796,37 +13797,37 @@ let iK = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
     0, 0, 0, 0, -15, 0, 0, 0, 0, 0, -16, 0, 0, 0, 0, 0, -17, 0, 0, -15, 0, 0, 0, 0, 0, 0, -16, 0, 0,
     0, 0, 0, 0, -17,
   ],
-  iQ = { p: 1, n: 2, b: 4, r: 8, q: 16, k: 32 },
-  iX = ['n', 'b', 'r', 'q'],
-  iJ = { k: iW.KSIDE_CASTLE, q: iW.QSIDE_CASTLE },
-  iZ = {
+  iY = { p: 1, n: 2, b: 4, r: 8, q: 16, k: 32 },
+  iQ = ['n', 'b', 'r', 'q'],
+  iX = { k: iV.KSIDE_CASTLE, q: iV.QSIDE_CASTLE },
+  iJ = {
     w: [
-      { square: iq.a1, flag: iW.QSIDE_CASTLE },
-      { square: iq.h1, flag: iW.KSIDE_CASTLE },
+      { square: iW.a1, flag: iV.QSIDE_CASTLE },
+      { square: iW.h1, flag: iV.KSIDE_CASTLE },
     ],
     b: [
-      { square: iq.a8, flag: iW.QSIDE_CASTLE },
-      { square: iq.h8, flag: iW.KSIDE_CASTLE },
+      { square: iW.a8, flag: iV.QSIDE_CASTLE },
+      { square: iW.h8, flag: iV.KSIDE_CASTLE },
     ],
   },
-  i0 = { b: 1, w: 6 },
-  i1 = ['1-0', '0-1', '1/2-1/2', '*']
-function i2(e) {
+  iZ = { b: 1, w: 6 },
+  i0 = ['1-0', '0-1', '1/2-1/2', '*']
+function i1(e) {
   return -1 !== '0123456789'.indexOf(e)
 }
-function i3(e) {
+function i2(e) {
   let t = 15 & e,
     r = e >> 4
   return 'abcdefgh'.substring(t, t + 1) + '87654321'.substring(r, r + 1)
 }
-function i8(e) {
+function i3(e) {
   return 'w' === e ? 'b' : 'w'
 }
-function i6(e, t, r, n, i, o, a = iW.NORMAL) {
+function i8(e, t, r, n, i, o, a = iV.NORMAL) {
   let s = n >> 4
   if ('p' === i && (7 === s || 0 === s))
-    for (let s = 0; s < iX.length; s++) {
-      let f = iX[s]
+    for (let s = 0; s < iQ.length; s++) {
+      let f = iQ[s]
       e.push({
         color: t,
         from: r,
@@ -13834,12 +13835,12 @@ function i6(e, t, r, n, i, o, a = iW.NORMAL) {
         piece: i,
         captured: o,
         promotion: f,
-        flags: a | iW.PROMOTION,
+        flags: a | iV.PROMOTION,
       })
     }
   else e.push({ color: t, from: r, to: n, piece: i, captured: o, flags: a })
 }
-function i4(e) {
+function i6(e) {
   let t = e.charAt(0)
   if (t >= 'a' && t <= 'h') {
     if (e.match(/[a-h]\d.*[a-h]\d/)) return
@@ -13850,11 +13851,11 @@ function i4(e) {
 function i5(e) {
   return e.replace(/=/, '').replace(/[+#]?[?!]*$/, '')
 }
-function i7(e) {
+function i4(e) {
   return e.split(' ').slice(0, 4).join(' ')
 }
-class i9 {
-  constructor(e = iK) {
+class i7 {
+  constructor(e = iF) {
     ;((this._board = Array(128)),
       (this._turn = 'w'),
       (this._header = {}),
@@ -13920,7 +13921,7 @@ class i9 {
           let t = 0,
             r = !1
           for (let n = 0; n < i[e].length; n++)
-            if (i2(i[e][n])) {
+            if (i1(i[e][n])) {
               if (r)
                 return { ok: !1, error: 'Invalid FEN: piece data is invalid (consecutive number)' }
               ;((t += parseInt(i[e][n], 10)), (r = !0))
@@ -13957,18 +13958,18 @@ class i9 {
     for (let e = 0; e < i.length; e++) {
       let t = i.charAt(e)
       if ('/' === t) o += 8
-      else if (i2(t)) o += parseInt(t, 10)
+      else if (i1(t)) o += parseInt(t, 10)
       else {
         let e = t < 'a' ? 'w' : 'b'
-        ;(this._put({ type: t.toLowerCase(), color: e }, i3(o)), o++)
+        ;(this._put({ type: t.toLowerCase(), color: e }, i2(o)), o++)
       }
     }
     ;((this._turn = n[1]),
-      n[2].indexOf('K') > -1 && (this._castling.w |= iW.KSIDE_CASTLE),
-      n[2].indexOf('Q') > -1 && (this._castling.w |= iW.QSIDE_CASTLE),
-      n[2].indexOf('k') > -1 && (this._castling.b |= iW.KSIDE_CASTLE),
-      n[2].indexOf('q') > -1 && (this._castling.b |= iW.QSIDE_CASTLE),
-      (this._epSquare = '-' === n[3] ? -1 : iq[n[3]]),
+      n[2].indexOf('K') > -1 && (this._castling.w |= iV.KSIDE_CASTLE),
+      n[2].indexOf('Q') > -1 && (this._castling.w |= iV.QSIDE_CASTLE),
+      n[2].indexOf('k') > -1 && (this._castling.b |= iV.KSIDE_CASTLE),
+      n[2].indexOf('q') > -1 && (this._castling.b |= iV.QSIDE_CASTLE),
+      (this._epSquare = '-' === n[3] ? -1 : iW[n[3]]),
       (this._halfMoves = parseInt(n[4], 10)),
       (this._moveNumber = parseInt(n[5], 10)),
       this._updateSetup(e),
@@ -13977,19 +13978,19 @@ class i9 {
   fen() {
     let e = 0,
       t = ''
-    for (let r = iq.a8; r <= iq.h1; r++) {
+    for (let r = iW.a8; r <= iW.h1; r++) {
       if (this._board[r]) {
         e > 0 && ((t += e), (e = 0))
         let { color: n, type: i } = this._board[r]
         t += 'w' === n ? i.toUpperCase() : i.toLowerCase()
       } else e++
-      ;(r + 1) & 136 && (e > 0 && (t += e), r !== iq.h1 && (t += '/'), (e = 0), (r += 8))
+      ;(r + 1) & 136 && (e > 0 && (t += e), r !== iW.h1 && (t += '/'), (e = 0), (r += 8))
     }
     let r = ''
-    ;(this._castling.w & iW.KSIDE_CASTLE && (r += 'K'),
-      this._castling.w & iW.QSIDE_CASTLE && (r += 'Q'),
-      this._castling.b & iW.KSIDE_CASTLE && (r += 'k'),
-      this._castling.b & iW.QSIDE_CASTLE && (r += 'q'),
+    ;(this._castling.w & iV.KSIDE_CASTLE && (r += 'K'),
+      this._castling.w & iV.QSIDE_CASTLE && (r += 'Q'),
+      this._castling.b & iV.KSIDE_CASTLE && (r += 'k'),
+      this._castling.b & iV.QSIDE_CASTLE && (r += 'q'),
       (r = r || '-'))
     let n = '-'
     if (-1 !== this._epSquare) {
@@ -14004,11 +14005,11 @@ class i9 {
             to: this._epSquare,
             piece: 'p',
             captured: 'p',
-            flags: iW.EP_CAPTURE,
+            flags: iV.EP_CAPTURE,
           })
           let r = !this._isKingAttacked(e)
           if ((this._undoMove(), r)) {
-            n = i3(this._epSquare)
+            n = i2(this._epSquare)
             break
           }
         }
@@ -14018,15 +14019,15 @@ class i9 {
   }
   _updateSetup(e) {
     this._history.length > 0 ||
-      (e !== iK
+      (e !== iF
         ? ((this._header.SetUp = '1'), (this._header.FEN = e))
         : (delete this._header.SetUp, delete this._header.FEN))
   }
   reset() {
-    this.load(iK)
+    this.load(iF)
   }
   get(e) {
-    return this._board[iq[e]] || !1
+    return this._board[iW[e]] || !1
   }
   put({ type: e, color: t }, r) {
     return (
@@ -14038,8 +14039,8 @@ class i9 {
     )
   }
   _put({ type: e, color: t }, r) {
-    if (-1 === 'pnbrqkPNBRQK'.indexOf(e.toLowerCase()) || !(r in iq)) return !1
-    let n = iq[r]
+    if (-1 === 'pnbrqkPNBRQK'.indexOf(e.toLowerCase()) || !(r in iW)) return !1
+    let n = iW[r]
     if ('k' == e && -1 != this._kings[t] && this._kings[t] != n) return !1
     let i = this._board[n]
     return (
@@ -14052,7 +14053,7 @@ class i9 {
   remove(e) {
     let t = this.get(e)
     return (
-      delete this._board[iq[e]],
+      delete this._board[iW[e]],
       t && 'k' === t.type && (this._kings[t.color] = -1),
       this._updateCastlingRights(),
       this._updateEnPassantSquare(),
@@ -14061,16 +14062,16 @@ class i9 {
     )
   }
   _updateCastlingRights() {
-    let e = this._board[iq.e1]?.type === 'k' && this._board[iq.e1]?.color === 'w',
-      t = this._board[iq.e8]?.type === 'k' && this._board[iq.e8]?.color === 'b'
-    ;((e && this._board[iq.a1]?.type === 'r' && this._board[iq.a1]?.color === 'w') ||
-      (this._castling.w &= ~iW.QSIDE_CASTLE),
-      (e && this._board[iq.h1]?.type === 'r' && this._board[iq.h1]?.color === 'w') ||
-        (this._castling.w &= ~iW.KSIDE_CASTLE),
-      (t && this._board[iq.a8]?.type === 'r' && this._board[iq.a8]?.color === 'b') ||
-        (this._castling.b &= ~iW.QSIDE_CASTLE),
-      (t && this._board[iq.h8]?.type === 'r' && this._board[iq.h8]?.color === 'b') ||
-        (this._castling.b &= ~iW.KSIDE_CASTLE))
+    let e = this._board[iW.e1]?.type === 'k' && this._board[iW.e1]?.color === 'w',
+      t = this._board[iW.e8]?.type === 'k' && this._board[iW.e8]?.color === 'b'
+    ;((e && this._board[iW.a1]?.type === 'r' && this._board[iW.a1]?.color === 'w') ||
+      (this._castling.w &= ~iV.QSIDE_CASTLE),
+      (e && this._board[iW.h1]?.type === 'r' && this._board[iW.h1]?.color === 'w') ||
+        (this._castling.w &= ~iV.KSIDE_CASTLE),
+      (t && this._board[iW.a8]?.type === 'r' && this._board[iW.a8]?.color === 'b') ||
+        (this._castling.b &= ~iV.QSIDE_CASTLE),
+      (t && this._board[iW.h8]?.type === 'r' && this._board[iW.h8]?.color === 'b') ||
+        (this._castling.b &= ~iV.KSIDE_CASTLE))
   }
   _updateEnPassantSquare() {
     if (-1 === this._epSquare) return
@@ -14079,7 +14080,7 @@ class i9 {
     if (
       null !== this._board[e] ||
       null !== this._board[this._epSquare] ||
-      this._board[t]?.color !== i8(this._turn) ||
+      this._board[t]?.color !== i3(this._turn) ||
       this._board[t]?.type !== 'p'
     ) {
       this._epSquare = -1
@@ -14091,7 +14092,7 @@ class i9 {
   }
   _attacked(e, t, r) {
     let n = []
-    for (let i = iq.a8; i <= iq.h1; i++) {
+    for (let i = iW.a8; i <= iW.h1; i++) {
       if (136 & i) {
         i += 7
         continue
@@ -14101,20 +14102,20 @@ class i9 {
         a = i - t
       if (0 === a) continue
       let s = a + 119
-      if (iz[s] & iQ[o.type]) {
+      if (i$[s] & iY[o.type]) {
         if ('p' === o.type) {
           if ((a > 0 && 'w' === o.color) || (a <= 0 && 'b' === o.color)) {
             if (!r) return !0
-            n.push(i3(i))
+            n.push(i2(i))
           }
           continue
         }
         if ('n' === o.type || 'k' === o.type) {
           if (!r) return !0
-          n.push(i3(i))
+          n.push(i2(i))
           continue
         }
-        let e = iY[s],
+        let e = iz[s],
           f = i + e,
           u = !1
         for (; f !== t; ) {
@@ -14126,7 +14127,7 @@ class i9 {
         }
         if (!u) {
           if (!r) return !0
-          n.push(i3(i))
+          n.push(i2(i))
           continue
         }
       }
@@ -14134,14 +14135,14 @@ class i9 {
     return !!r && n
   }
   attackers(e, t) {
-    return t ? this._attacked(t, iq[e], !0) : this._attacked(this._turn, iq[e], !0)
+    return t ? this._attacked(t, iW[e], !0) : this._attacked(this._turn, iW[e], !0)
   }
   _isKingAttacked(e) {
     let t = this._kings[e]
-    return -1 !== t && this._attacked(i8(e), t)
+    return -1 !== t && this._attacked(i3(e), t)
   }
   isAttacked(e, t) {
-    return this._attacked(t, iq[e])
+    return this._attacked(t, iW[e])
   }
   isCheck() {
     return this._isKingAttacked(this._turn)
@@ -14160,7 +14161,7 @@ class i9 {
       t = [],
       r = 0,
       n = 0
-    for (let i = iq.a8; i <= iq.h1; i++) {
+    for (let i = iW.a8; i <= iW.h1; i++) {
       if (((n = (n + 1) % 2), 136 & i)) {
         i += 7
         continue
@@ -14200,13 +14201,13 @@ class i9 {
       i = t?.toLowerCase(),
       o = [],
       a = this._turn,
-      s = i8(a),
-      f = iq.a8,
-      u = iq.h1,
+      s = i3(a),
+      f = iW.a8,
+      u = iW.h1,
       h = !1
     if (n) {
-      if (!(n in iq)) return []
-      ;((f = u = iq[n]), (h = !0))
+      if (!(n in iW)) return []
+      ;((f = u = iW[n]), (h = !0))
     }
     for (let e = f; e <= u; e++) {
       let t
@@ -14218,33 +14219,33 @@ class i9 {
       let { type: r } = this._board[e]
       if ('p' === r) {
         if (i && i !== r) continue
-        ;((t = e + iG[a][0]),
+        ;((t = e + iq[a][0]),
           !this._board[t] &&
-            (i6(o, a, e, t, 'p'),
-            (t = e + iG[a][1]),
-            i0[a] !== e >> 4 || this._board[t] || i6(o, a, e, t, 'p', void 0, iW.BIG_PAWN)))
+            (i8(o, a, e, t, 'p'),
+            (t = e + iq[a][1]),
+            iZ[a] !== e >> 4 || this._board[t] || i8(o, a, e, t, 'p', void 0, iV.BIG_PAWN)))
         for (let r = 2; r < 4; r++)
-          136 & (t = e + iG[a][r]) ||
+          136 & (t = e + iq[a][r]) ||
             (this._board[t]?.color === s
-              ? i6(o, a, e, t, 'p', this._board[t].type, iW.CAPTURE)
-              : t === this._epSquare && i6(o, a, e, t, 'p', 'p', iW.EP_CAPTURE))
+              ? i8(o, a, e, t, 'p', this._board[t].type, iV.CAPTURE)
+              : t === this._epSquare && i8(o, a, e, t, 'p', 'p', iV.EP_CAPTURE))
       } else {
         if (i && i !== r) continue
-        for (let n = 0, i = i$[r].length; n < i; n++) {
-          let i = i$[r][n]
+        for (let n = 0, i = iG[r].length; n < i; n++) {
+          let i = iG[r][n]
           for (t = e; !(136 & (t += i)); ) {
             if (this._board[t]) {
               if (this._board[t].color === a) break
-              i6(o, a, e, t, r, this._board[t].type, iW.CAPTURE)
+              i8(o, a, e, t, r, this._board[t].type, iV.CAPTURE)
               break
             }
-            if ((i6(o, a, e, t, r), 'n' === r || 'k' === r)) break
+            if ((i8(o, a, e, t, r), 'n' === r || 'k' === r)) break
           }
         }
       }
     }
     if ((void 0 === i || 'k' === i) && (!h || u === this._kings[a])) {
-      if (this._castling[a] & iW.KSIDE_CASTLE) {
+      if (this._castling[a] & iV.KSIDE_CASTLE) {
         let e = this._kings[a],
           t = e + 2
         this._board[e + 1] ||
@@ -14252,9 +14253,9 @@ class i9 {
           this._attacked(s, this._kings[a]) ||
           this._attacked(s, e + 1) ||
           this._attacked(s, t) ||
-          i6(o, a, this._kings[a], t, 'k', void 0, iW.KSIDE_CASTLE)
+          i8(o, a, this._kings[a], t, 'k', void 0, iV.KSIDE_CASTLE)
       }
-      if (this._castling[a] & iW.QSIDE_CASTLE) {
+      if (this._castling[a] & iV.QSIDE_CASTLE) {
         let e = this._kings[a],
           t = e - 2
         this._board[e - 1] ||
@@ -14263,7 +14264,7 @@ class i9 {
           this._attacked(s, this._kings[a]) ||
           this._attacked(s, e - 1) ||
           this._attacked(s, t) ||
-          i6(o, a, this._kings[a], t, 'k', void 0, iW.QSIDE_CASTLE)
+          i8(o, a, this._kings[a], t, 'k', void 0, iV.QSIDE_CASTLE)
       }
     }
     if (!e || -1 === this._kings[a]) return o
@@ -14279,8 +14280,8 @@ class i9 {
       let t = this._moves()
       for (let n = 0, i = t.length; n < i; n++)
         if (
-          e.from === i3(t[n].from) &&
-          e.to === i3(t[n].to) &&
+          e.from === i2(t[n].from) &&
+          e.to === i2(t[n].to) &&
           (!('promotion' in t[n]) || e.promotion === t[n].promotion)
         ) {
           r = t[n]
@@ -14306,21 +14307,21 @@ class i9 {
   }
   _makeMove(e) {
     let t = this._turn,
-      r = i8(t)
+      r = i3(t)
     if (
       (this._push(e),
       (this._board[e.to] = this._board[e.from]),
       delete this._board[e.from],
-      e.flags & iW.EP_CAPTURE &&
+      e.flags & iV.EP_CAPTURE &&
         ('b' === this._turn ? delete this._board[e.to - 16] : delete this._board[e.to + 16]),
       e.promotion && (this._board[e.to] = { type: e.promotion, color: t }),
       'k' === this._board[e.to].type)
     ) {
-      if (((this._kings[t] = e.to), e.flags & iW.KSIDE_CASTLE)) {
+      if (((this._kings[t] = e.to), e.flags & iV.KSIDE_CASTLE)) {
         let t = e.to - 1,
           r = e.to + 1
         ;((this._board[t] = this._board[r]), delete this._board[r])
-      } else if (e.flags & iW.QSIDE_CASTLE) {
+      } else if (e.flags & iV.QSIDE_CASTLE) {
         let t = e.to + 1,
           r = e.to - 2
         ;((this._board[t] = this._board[r]), delete this._board[r])
@@ -14328,25 +14329,25 @@ class i9 {
       this._castling[t] = 0
     }
     if (this._castling[t]) {
-      for (let r = 0, n = iZ[t].length; r < n; r++)
-        if (e.from === iZ[t][r].square && this._castling[t] & iZ[t][r].flag) {
-          this._castling[t] ^= iZ[t][r].flag
+      for (let r = 0, n = iJ[t].length; r < n; r++)
+        if (e.from === iJ[t][r].square && this._castling[t] & iJ[t][r].flag) {
+          this._castling[t] ^= iJ[t][r].flag
           break
         }
     }
     if (this._castling[r]) {
-      for (let t = 0, n = iZ[r].length; t < n; t++)
-        if (e.to === iZ[r][t].square && this._castling[r] & iZ[r][t].flag) {
-          this._castling[r] ^= iZ[r][t].flag
+      for (let t = 0, n = iJ[r].length; t < n; t++)
+        if (e.to === iJ[r][t].square && this._castling[r] & iJ[r][t].flag) {
+          this._castling[r] ^= iJ[r][t].flag
           break
         }
     }
-    ;(e.flags & iW.BIG_PAWN
+    ;(e.flags & iV.BIG_PAWN
       ? 'b' === t
         ? (this._epSquare = e.to - 16)
         : (this._epSquare = e.to + 16)
       : (this._epSquare = -1),
-      'p' === e.piece || e.flags & (iW.CAPTURE | iW.EP_CAPTURE)
+      'p' === e.piece || e.flags & (iV.CAPTURE | iV.EP_CAPTURE)
         ? (this._halfMoves = 0)
         : this._halfMoves++,
       'b' === t && this._moveNumber++,
@@ -14371,20 +14372,20 @@ class i9 {
       (this._halfMoves = e.halfMoves),
       (this._moveNumber = e.moveNumber))
     let r = this._turn,
-      n = i8(r)
+      n = i3(r)
     if (
       ((this._board[t.from] = this._board[t.to]),
       (this._board[t.from].type = t.piece),
       delete this._board[t.to],
       t.captured)
     )
-      if (t.flags & iW.EP_CAPTURE) {
+      if (t.flags & iV.EP_CAPTURE) {
         let e
         ;((e = 'b' === r ? t.to - 16 : t.to + 16), (this._board[e] = { type: 'p', color: n }))
       } else this._board[t.to] = { type: t.captured, color: n }
-    if (t.flags & (iW.KSIDE_CASTLE | iW.QSIDE_CASTLE)) {
+    if (t.flags & (iV.KSIDE_CASTLE | iV.QSIDE_CASTLE)) {
       let e, r
-      ;(t.flags & iW.KSIDE_CASTLE
+      ;(t.flags & iV.KSIDE_CASTLE
         ? ((e = t.to + 1), (r = t.to - 1))
         : ((e = t.to - 2), (r = t.to + 1)),
         (this._board[e] = this._board[r]),
@@ -14531,7 +14532,7 @@ class i9 {
       }
       let n = this._moveFromSan(l[e], t)
       if (null == n)
-        if (i1.indexOf(l[e]) > -1) c = l[e]
+        if (i0.indexOf(l[e]) > -1) c = l[e]
         else throw Error(`Invalid move in PGN: ${l[e]}`)
       else ((c = ''), this._makeMove(n), this._incPositionCount(this.fen()))
     }
@@ -14539,8 +14540,8 @@ class i9 {
   }
   _moveToSan(e, t) {
     let r = ''
-    if (e.flags & iW.KSIDE_CASTLE) r = 'O-O'
-    else if (e.flags & iW.QSIDE_CASTLE) r = 'O-O-O'
+    if (e.flags & iV.KSIDE_CASTLE) r = 'O-O'
+    else if (e.flags & iV.QSIDE_CASTLE) r = 'O-O-O'
     else {
       if ('p' !== e.piece) {
         let n = (function (e, t) {
@@ -14558,13 +14559,13 @@ class i9 {
               n === u &&
               (o++, r >> 4 == f >> 4 && a++, (15 & r) == (15 & f) && s++)
           }
-          return o > 0 ? (a > 0 && s > 0 ? i3(r) : s > 0 ? i3(r).charAt(1) : i3(r).charAt(0)) : ''
+          return o > 0 ? (a > 0 && s > 0 ? i2(r) : s > 0 ? i2(r).charAt(1) : i2(r).charAt(0)) : ''
         })(e, t)
         r += e.piece.toUpperCase() + n
       }
-      ;(e.flags & (iW.CAPTURE | iW.EP_CAPTURE) &&
-        ('p' === e.piece && (r += i3(e.from)[0]), (r += 'x')),
-        (r += i3(e.to)),
+      ;(e.flags & (iV.CAPTURE | iV.EP_CAPTURE) &&
+        ('p' === e.piece && (r += i2(e.from)[0]), (r += 'x')),
+        (r += i2(e.to)),
         e.promotion && (r += `=${e.promotion.toUpperCase()}`))
     }
     return (
@@ -14581,7 +14582,7 @@ class i9 {
       o,
       a,
       s = i5(e),
-      f = i4(s),
+      f = i6(s),
       u = this._moves({ legal: !0, piece: f })
     for (let e = 0, t = u.length; e < t; e++) if (s === i5(this._moveToSan(u[e], u))) return u[e]
     if (t) return null
@@ -14591,7 +14592,7 @@ class i9 {
         ? ((r = n[1]), (i = n[2]), (o = n[3]), (a = n[4]), 1 == i.length && (h = !0))
         : (n = s.match(/([pnbrqkPNBRQK])?([a-h]?[1-8]?)x?-?([a-h][1-8])([qrbnQRBN])?/)) &&
           ((r = n[1]), (i = n[2]), (o = n[3]), (a = n[4]), 1 == i.length && (h = !0)),
-      (f = i4(s)),
+      (f = i6(s)),
       (u = this._moves({ legal: !0, piece: r || f })),
       !o)
     )
@@ -14600,16 +14601,16 @@ class i9 {
       if (i) {
         if (
           (!r || r.toLowerCase() == u[e].piece) &&
-          iq[i] == u[e].from &&
-          iq[o] == u[e].to &&
+          iW[i] == u[e].from &&
+          iW[o] == u[e].to &&
           (!a || a.toLowerCase() == u[e].promotion)
         )
           return u[e]
         else if (h) {
-          let t = i3(u[e].from)
+          let t = i2(u[e].from)
           if (
             (!r || r.toLowerCase() == u[e].piece) &&
-            iq[o] == u[e].to &&
+            iW[o] == u[e].to &&
             (i == t[0] || i == t[1]) &&
             (!a || a.toLowerCase() == u[e].promotion)
           )
@@ -14620,7 +14621,7 @@ class i9 {
   }
   ascii() {
     let e = '   +------------------------+\n'
-    for (let t = iq.a8; t <= iq.h1; t++) {
+    for (let t = iW.a8; t <= iW.h1; t++) {
       if ((0 == (15 & t) && (e += ` ${'87654321'[t >> 4]} |`), this._board[t])) {
         let r = this._board[t].type,
           { color: n } = this._board[t],
@@ -14644,9 +14645,9 @@ class i9 {
   _makePretty(e) {
     let { color: t, piece: r, from: n, to: i, flags: o, captured: a, promotion: s } = e,
       f = ''
-    for (let e in iW) iW[e] & o && (f += iV[e])
-    let u = i3(n),
-      h = i3(i),
+    for (let e in iV) iV[e] & o && (f += iK[e])
+    let u = i2(n),
+      h = i2(i),
       l = {
         color: t,
         piece: r,
@@ -14673,16 +14674,16 @@ class i9 {
   board() {
     let e = [],
       t = []
-    for (let r = iq.a8; r <= iq.h1; r++)
+    for (let r = iW.a8; r <= iW.h1; r++)
       (null == this._board[r]
         ? t.push(null)
-        : t.push({ square: i3(r), type: this._board[r].type, color: this._board[r].color }),
+        : t.push({ square: i2(r), type: this._board[r].type, color: this._board[r].color }),
         (r + 1) & 136 && (e.push(t), (t = []), (r += 8)))
     return e
   }
   squareColor(e) {
-    if (e in iq) {
-      let t = iq[e]
+    if (e in iW) {
+      let t = iW[e]
       return ((t >> 4) + (15 & t)) % 2 == 0 ? 'light' : 'dark'
     }
     return null
@@ -14700,16 +14701,16 @@ class i9 {
     return r
   }
   _getPositionCount(e) {
-    let t = i7(e)
+    let t = i4(e)
     return this._positionCount[t] || 0
   }
   _incPositionCount(e) {
-    let t = i7(e)
+    let t = i4(e)
     ;(void 0 === this._positionCount[t] && (this._positionCount[t] = 0),
       (this._positionCount[t] += 1))
   }
   _decPositionCount(e) {
-    let t = i7(e)
+    let t = i4(e)
     1 === this._positionCount[t] ? delete this._positionCount[t] : (this._positionCount[t] -= 1)
   }
   _pruneComments() {
@@ -14753,28 +14754,28 @@ class i9 {
   }
   setCastlingRights(e, t) {
     for (let r of ['k', 'q'])
-      void 0 !== t[r] && (t[r] ? (this._castling[e] |= iJ[r]) : (this._castling[e] &= ~iJ[r]))
+      void 0 !== t[r] && (t[r] ? (this._castling[e] |= iX[r]) : (this._castling[e] &= ~iX[r]))
     this._updateCastlingRights()
     let r = this.getCastlingRights(e)
     return (void 0 === t.k || t.k === r.k) && (void 0 === t.q || t.q === r.q)
   }
   getCastlingRights(e) {
-    return { k: (this._castling[e] & iJ.k) != 0, q: (this._castling[e] & iJ.q) != 0 }
+    return { k: (this._castling[e] & iX.k) != 0, q: (this._castling[e] & iX.q) != 0 }
   }
   moveNumber() {
     return this._moveNumber
   }
 }
 export {
-  iL as ChessContract,
-  iC as ChessContractHelper,
-  iR as Payment,
-  iN as WinnerTxWrapper,
-  iU as NotEnoughFundError,
-  iM as signRedeemTx,
-  iH as User,
-  iD as UserHelper,
-  ij as ChessChallengeTxWrapper,
-  iF as ChessChallengeTxWrapperHelper,
-  i9 as Chess,
+  iN as ChessContract,
+  iL as ChessContractHelper,
+  iU as Payment,
+  iR as WinnerTxWrapper,
+  iP as NotEnoughFundError,
+  iC as signRedeemTx,
+  iM as User,
+  iH as UserHelper,
+  iD as ChessChallengeTxWrapper,
+  ij as ChessChallengeTxWrapperHelper,
+  i7 as Chess,
 }
