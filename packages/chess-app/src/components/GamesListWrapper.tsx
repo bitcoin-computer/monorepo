@@ -67,6 +67,25 @@ export const GamesListWrapper = ({
     fetch()
   }, [])
 
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined
+
+    const subscribe = async () => {
+      unsubscribe = await computer.streamTXOs(
+        { mod: VITE_CHESS_GAME_MOD_SPEC, publicKey: computer.getPublicKey() },
+        () => {
+          refreshGames()
+        },
+        (err) => console.error('Game stream error:', err),
+      )
+    }
+    subscribe()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [computer])
+
   return (
     <>
       <InfiniteScroll games={games} refreshGames={refreshGames} setGameId={setGameId} />

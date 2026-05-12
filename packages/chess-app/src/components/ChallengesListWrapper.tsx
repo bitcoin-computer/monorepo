@@ -49,6 +49,25 @@ export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
     fetch()
   }, [])
 
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined
+
+    const subscribe = async () => {
+      unsubscribe = await computer.streamTXOs(
+        { mod: VITE_CHESS_CHALLENGE_MOD_SPEC, publicKey: computer.getPublicKey() },
+        () => {
+          refreshList()
+        },
+        (err) => console.error('Challenge stream error:', err),
+      )
+    }
+    subscribe()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [computer])
+
   return (
     <>
       <ChallengeList
