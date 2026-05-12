@@ -1,6 +1,8 @@
 export class ChatSc extends Contract {
   messages!: string[]
   channelName!: string
+  _owners!: string[]
+
   constructor(channelName: string, publicKey: string) {
     super({
       messages: [],

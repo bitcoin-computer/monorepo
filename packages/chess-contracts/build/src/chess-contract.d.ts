@@ -1,4 +1,4 @@
-import { Computer, Transaction } from '@bitcoin-computer/lib';
+import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib';
 import { networks } from '@bitcoin-computer/nakamotojs';
 import { Buffer } from 'buffer';
 import { ECPairInterface } from 'ecpair';
@@ -56,19 +56,19 @@ export declare class ChessContractHelper {
         userMod?: string;
     });
     isInitialized(): this is Required<ChessContractHelper>;
-    static fromContract(computer: Computer, game: ChessContract, mod?: string, userMod?: string): ChessContractHelper;
+    static fromContract(computer: Computer, game: SmartContract<typeof ChessContract>, mod?: string, userMod?: string): ChessContractHelper;
     getASM(): string;
     validateUser(): Promise<void>;
     makeTx(): Promise<Transaction>;
     completeTx(tx: Transaction): Promise<string>;
-    move(chessContract: ChessContract, from: string, to: string, promotion: string): Promise<{
-        newChessContract: ChessContract;
+    move(chessContract: SmartContract<typeof ChessContract>, from: string, to: string, promotion: string): Promise<{
+        newChessContract: SmartContract<typeof ChessContract>;
         isGameOver: boolean;
     }>;
-    spend(chessContract: ChessContract, fee?: bigint): Promise<void>;
-    spendWithConfirmation(txId: string, chessContract: ChessContract, fee?: bigint): Promise<void>;
-    static createRedeemTx(txId: string, hdPrivateKey: BIP32Interface, satoshis: bigint, fee: bigint, output: Buffer | undefined, scriptASM: string, inputIndex: number): Transaction;
+    spend(chessContract: SmartContract<typeof ChessContract>, fee?: bigint): Promise<void>;
+    spendWithConfirmation(txId: string, chessContract: SmartContract<typeof ChessContract>, fee?: bigint): Promise<void>;
+    static createRedeemTx(txId: string, hdPrivateKey: BIP32Interface, satoshis: bigint, fee: bigint, output: Buffer | undefined, scriptASM: string, inputIndex: number): any;
     static validateAndSignRedeemTx(redeemTx: Transaction, winnerPublicKey: Buffer, validatorKeyPair: ECPairInterface, expectedRedeemScript: Buffer, network: networks.Network, playerWIsTheValidator?: boolean): Transaction;
 }
-export declare const signRedeemTx: (computer: Computer, chessContract: ChessContract, txWrapper: WinnerTxWrapper) => Promise<Transaction>;
+export declare const signRedeemTx: (computer: Computer, chessContract: SmartContract<typeof ChessContract>, txWrapper: WinnerTxWrapper) => Promise<Transaction>;
 export {};

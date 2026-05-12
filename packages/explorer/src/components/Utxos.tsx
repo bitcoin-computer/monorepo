@@ -33,11 +33,11 @@ const UTXODisplay = () => {
   const fetchUTXOs = async (addr: string) => {
     try {
       showLoader(true)
-      const response = await computer.db.wallet.restClient.getUTXOs({
+      const response = (await computer.db.wallet.restClient.getUTXOs({
         address: addr,
         verbosity: 1,
         isObject: false,
-      })
+      })) as _DbOutput[]
       setUtxos(response)
       setTotalAmount(response.reduce((total, unspent) => total + unspent.satoshis, 0n))
     } catch (err: unknown) {

@@ -1,7 +1,7 @@
 import { Dispatch, useContext, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
 import { Modal, UtilsContext, ComputerContext, bigIntToStr } from '@bitcoin-computer/components'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from '@bitcoin-computer/swap'
 import { NFT } from '@bitcoin-computer/TBC721'
 import {
@@ -20,15 +20,15 @@ const getPrice = async (computer: Computer, nft: NFT) => {
   return saleHelper.checkSaleTx(saleTxn)
 }
 
-function isListed(nft: NFT) {
+function isListed(nft: SmartContract<typeof NFT>) {
   return nft && nft.offerTxRev
 }
 
-function isMine(computer: Computer, nft: NFT) {
+function isMine(computer: Computer, nft: SmartContract<typeof NFT>) {
   return nft && nft._owners[0] === computer.getPublicKey()
 }
 
-function ShowOwner({ computer, nft }: { computer: Computer; nft: NFT }) {
+function ShowOwner({ computer, nft }: { computer: Computer; nft: SmartContract<typeof NFT> }) {
   if (!nft) throw new Error('NFT not found')
 
   return (
@@ -179,7 +179,7 @@ const Buy = ({
   setFunctionResult,
 }: {
   computer: Computer
-  nft: NFT
+  nft: SmartContract<typeof NFT>
   setFunctionResult: Dispatch<React.SetStateAction<string>>
 }) => {
   const { showSnackBar } = UtilsContext.useUtilsComponents()
@@ -312,7 +312,7 @@ function NftView() {
   const navigate = useNavigate()
   const [id] = useState(params.id || '')
   const computer = useContext(ComputerContext)
-  const [nft, setNft] = useState<NFT | null>(null)
+  const [nft, setNft] = useState<SmartContract<typeof NFT> | null>(null)
   const [functionResult, setFunctionResult] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
 
@@ -322,7 +322,7 @@ function NftView() {
     const fetch = async () => {
       try {
         const latesRev = await computer.latest(id)
-        const synced = (await computer.sync(latesRev)) as NFT
+        const synced = await computer.sync<typeof NFT>(latesRev)
         setNft(synced)
       } catch (err) {
         if (err instanceof Error) console.log(err.stack)

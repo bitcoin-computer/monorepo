@@ -233,7 +233,7 @@ const ChatInput = ({
         time: Date.now().toString(),
       }
       const latesRev = await computer.latest(chatId)
-      const chatObj = (await computer.sync(latesRev)) as ChatSc
+      const chatObj = await computer.sync<typeof ChatSc>(latesRev)
       await chatObj.post(JSON.stringify(messageData))
       await sleep(2000)
       await refreshChat()
@@ -290,7 +290,7 @@ export function Chat({ chatId }: { chatId: string }) {
     try {
       showLoader(true)
       const latesRev = await computer.latest(id)
-      const synced = (await computer.sync(latesRev)) as ChatSc
+      const synced = await computer.sync<typeof ChatSc>(latesRev)
       setChatObj(synced)
       const messagesData: messageI[] = []
       synced.messages.forEach((message) => {
@@ -300,7 +300,7 @@ export function Chat({ chatId }: { chatId: string }) {
       showLoader(false)
     } catch {
       showLoader(false)
-      showSnackBar('Not a valid Chat', false)
+      showSnackBar('Not a valid Chat ', false)
     }
   }
 

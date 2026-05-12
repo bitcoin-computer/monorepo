@@ -41,7 +41,7 @@ export class TxWrapperHelper {
   }
 
   async addSaleTx(txWrapperTxId: string, tx: Transaction) {
-    const { res: txWrapper } = (await this.computer.sync(txWrapperTxId)) as { res: TxWrapper }
+    const { res: txWrapper } = await this.computer.sync(txWrapperTxId)
     return this.computer.encode({
       exp: `txWrapper.addSaleTx("${tx.serialize()}")`,
       exclude: tx.getInRevs(),

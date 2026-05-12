@@ -6,7 +6,7 @@ import {
   bigIntToStr,
   sleep,
 } from '@bitcoin-computer/components'
-import { Computer, Transaction } from '@bitcoin-computer/lib'
+import { Computer, SmartContract, Transaction } from '@bitcoin-computer/lib'
 import {
   ChessContract,
   ChessContractHelper,
@@ -28,7 +28,7 @@ export function StartGameModalContent({
   accepted,
 }: {
   serialized: string
-  game: ChessContract
+  game: SmartContract<typeof ChessContract>
   computer: Computer
   copied: boolean
   setCopied: React.Dispatch<React.SetStateAction<boolean>>
@@ -164,7 +164,7 @@ export function StartGameModalContent({
 
 export function StartGameModal({ challengeId }: { challengeId: string }) {
   const computer = useContext(ComputerContext)
-  const [game, setGame] = useState<ChessContract | null>(null)
+  const [game, setGame] = useState<SmartContract<typeof ChessContract> | null>(null)
   const [copied, setCopied] = useState(false)
   const [link, setLink] = useState('')
   const [serialized, setSerialized] = useState('')
@@ -182,7 +182,7 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
         const latestRev = await computer.latest(challengeId)
         if (!latestRev) throw new Error('Challenge not found')
 
-        const challengeObj = (await computer.sync(latestRev)) as ChessChallengeTxWrapper
+        const challengeObj = await computer.sync<typeof ChessChallengeTxWrapper>(latestRev)
         setAccepted(challengeObj.accepted)
         setUserChallenge(challengeObj)
         const serializedTx = challengeObj.chessGameTxHex
@@ -191,7 +191,7 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
         const tx = Transaction.deserialize(serializedTx)
         const { effect } = await computer.encode(tx.onChainMetaData as never)
         const { res } = effect
-        const gameData = res as unknown as ChessContract
+        const gameData = res as SmartContract<typeof ChessContract>
         setGame(gameData)
 
         // Show modal only after data is fetched

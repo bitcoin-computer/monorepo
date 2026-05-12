@@ -1,4 +1,4 @@
-import { Contract, Computer, Transaction } from '@bitcoin-computer/lib'
+import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from './utils/index.js'
 
 describe('Transaction', () => {
@@ -16,7 +16,7 @@ describe('Transaction', () => {
   let computer: Computer
   let wallet: any
   let restClient: any
-  let a: A
+  let a: SmartContract<typeof A>
 
   before('Before Transaction test', async () => {
     computer = new Computer({ chain, network, url })

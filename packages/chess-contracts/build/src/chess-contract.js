@@ -121,6 +121,8 @@ export class ChessContractHelper {
             fund: false,
             sign: false,
         });
+        if (!tx)
+            throw new Error('Could not create ChessContract');
         // Fund with this.satoshis / 2
         const chain = this.computer.getChain();
         const network = this.computer.getNetwork();
@@ -152,7 +154,8 @@ export class ChessContractHelper {
         await this.validateUser();
         const decoded = await this.computer.decode(tx);
         const { effect } = await this.computer.encode(decoded);
-        const { res: chessContract } = effect;
+        const { res } = effect;
+        const chessContract = res;
         this.satoshis = chessContract.payment._satoshis;
         this.nameW = chessContract.nameW;
         this.nameB = chessContract.nameB;
@@ -174,7 +177,7 @@ export class ChessContractHelper {
                 publicKey: this.computer.getPublicKey(),
             });
             if (userRev) {
-                const userObj = (await this.computer.sync(userRev));
+                const userObj = await this.computer.sync(userRev);
                 const gameId = chessContract._id;
                 if (!userObj.games.includes(gameId)) {
                     await userObj.addGame(gameId);

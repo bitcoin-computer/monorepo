@@ -6,6 +6,7 @@ import { HiPlusCircle } from 'react-icons/hi'
 import { VITE_CHAT_MOD_SPEC } from '../constants/modSpecs'
 import { ChatSc } from '../contracts/chat'
 import { Chat } from './Chat'
+import { SmartContract } from '@bitcoin-computer/lib'
 
 const newChatModal = 'new-chat-modal'
 
@@ -30,7 +31,7 @@ function CreateNewChat() {
       if (typeof effect.res === 'object' && !Array.isArray(effect.res)) {
         showLoader(false)
         showSnackBar('You created a new chat', true)
-        navigate(`/chats/${effect.res?._id as string}`)
+        navigate(`/chats/${(effect.res as SmartContract<typeof ChatSc>)._id}`)
         window.location.reload()
       }
     } catch (err) {
@@ -89,7 +90,7 @@ export function Chats() {
     const result = await computer.getOUTXOs({ mod: VITE_CHAT_MOD_SPEC, publicKey })
     const chatsPromise: Promise<ChatSc>[] = []
     result.forEach((rev: string) => {
-      chatsPromise.push(computer.sync(rev) as Promise<ChatSc>)
+      chatsPromise.push(computer.sync<typeof ChatSc>(rev))
     })
 
     Promise.allSettled(chatsPromise).then((results) => {
@@ -111,7 +112,7 @@ export function Chats() {
       unsubscribe = await computer.streamTXOs(
         { mod: VITE_CHAT_MOD_SPEC },
         async ({ rev }) => {
-          const newChat = (await computer.sync(rev)) as ChatSc
+          const newChat = await computer.sync<typeof ChatSc>(rev)
           // Filter by ownership
           if (newChat._owners.includes(publicKey)) {
             setChats((prev) => {

@@ -1,5 +1,5 @@
 import { Token } from '@bitcoin-computer/TBC20'
-import { Contract } from '@bitcoin-computer/lib'
+import { SmartContract } from '@bitcoin-computer/lib'
 
 type ElectionType = {
   proposalMod: string
@@ -9,7 +9,7 @@ type ElectionType = {
 
 type VoteType = {
   electionId: string
-  tokens: Token[]
+  tokens: SmartContract<typeof Token>[]
   vote: 'accept' | 'reject'
 }
 
@@ -33,11 +33,13 @@ export class Election extends Contract {
   }
 
   async proposalVotes(): Promise<string[]> {
+    // @ts-expect-error Cannot find name 'computer'
     const revs = await computer.getTXOs({ mod: this.proposalMod })
     const voteTxIdsSet = new Set<string>(revs.map((r: string) => r.split(':')[0]))
     const validVotes = new Set<string>(voteTxIdsSet)
 
     for (const voteTxId of voteTxIdsSet) {
+      // @ts-expect-error Cannot find name 'computer'
       const ancestors = (await computer.getAncestors(voteTxId)) as string[]
       const ancestorsSet = new Set<string>(ancestors)
       ancestorsSet.delete(voteTxId)
@@ -53,11 +55,12 @@ export class Election extends Contract {
   private async validVotes(): Promise<Vote[]> {
     const proposalVotes = await this.proposalVotes()
 
+    // @ts-expect-error Cannot find name 'computer'
     const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map(
-      // @ts-expect-error type unknown
-      (obj) => obj.res,
+      (obj: { res: unknown }) => obj.res,
     )
 
+    // @ts-expect-error Cannot find name 'computer'
     const module = await computer.load(this.proposalMod)
     const voteClassStr = module['Vote'].toString()
     const normalizedClass = this.normalize(voteClassStr)
@@ -72,6 +75,7 @@ export class Election extends Contract {
 
     const isValid = await Promise.all(
       resolved.map(async (r: Vote) => {
+        // @ts-expect-error Cannot find name 'computer'
         const decoded = await computer.decode(r._rev.substring(0, 64))
         const normExp = this.normalize(decoded.exp)
         const match = regex.exec(normExp)
@@ -119,10 +123,14 @@ export class Vote extends Contract {
   vote!: 'accept' | 'reject'
   electionId!: string
   tokenRoot!: string
+
   constructor({ electionId, tokens, vote }: VoteType) {
     super({
       electionId,
-      tokensAmount: tokens.reduce((acc: bigint, curr: Token) => acc + curr.amount, 0n),
+      tokensAmount: tokens.reduce(
+        (acc: bigint, curr: SmartContract<typeof Token>) => acc + curr.amount,
+        0n,
+      ),
       vote,
       tokenRoot: tokens[0]._root,
     })
