@@ -20,6 +20,27 @@ function formatChainAndNetwork(chain: Chain, network: Network) {
   return `${prefix}${chain}`;
 }
 
+function CoinSelectionItem({
+  chain,
+  network,
+  onSelect,
+}: {
+  chain: Chain;
+  network: Network;
+  onSelect: (chain: Chain, network: Network) => void;
+}) {
+  return (
+    <li>
+      <div
+        onClick={() => onSelect(chain, network)}
+        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+      >
+        {chain} {network}
+      </div>
+    </li>
+  );
+}
+
 function ModalContent() {
   const [url, setUrl] = useState<string>("");
   function setNetwork(e: React.SyntheticEvent) {
@@ -133,25 +154,6 @@ export function NotLoggedMenu() {
     }
   };
 
-  function CoinSelectionItem({
-    chain,
-    network,
-  }: {
-    chain: Chain;
-    network: Network;
-  }) {
-    return (
-      <li>
-        <div
-          onClick={() => setChainAndNetwork(chain, network)}
-          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-        >
-          {chain} {network}
-        </div>
-      </li>
-    );
-  }
-
   return (
     <>
       <Modal.Component title={modalTitle} content={ModalContent} id={modalId} />
@@ -187,17 +189,41 @@ export function NotLoggedMenu() {
               className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
-              <CoinSelectionItem chain={"LTC"} network={"mainnet"} />
-              <CoinSelectionItem chain={"LTC"} network={"testnet"} />
-              <CoinSelectionItem chain={"LTC"} network={"regtest"} />
+              <CoinSelectionItem
+                chain="LTC"
+                network="mainnet"
+                onSelect={setChainAndNetwork}
+              />
+              <CoinSelectionItem
+                chain="LTC"
+                network="testnet"
+                onSelect={setChainAndNetwork}
+              />
+              <CoinSelectionItem
+                chain="LTC"
+                network="regtest"
+                onSelect={setChainAndNetwork}
+              />
             </ul>
             <ul
               className="py-2 text-sm text-gray-700 dark:text-gray-400 cursor-pointer"
               aria-labelledby="dropdownLargeButton"
             >
-              <CoinSelectionItem chain={"BTC"} network={"mainnet"} />
-              <CoinSelectionItem chain={"BTC"} network={"testnet"} />
-              <CoinSelectionItem chain={"BTC"} network={"regtest"} />
+              <CoinSelectionItem
+                chain="BTC"
+                network="mainnet"
+                onSelect={setChainAndNetwork}
+              />
+              <CoinSelectionItem
+                chain="BTC"
+                network="testnet"
+                onSelect={setChainAndNetwork}
+              />
+              <CoinSelectionItem
+                chain="BTC"
+                network="regtest"
+                onSelect={setChainAndNetwork}
+              />
             </ul>
           </div>
         </li>
