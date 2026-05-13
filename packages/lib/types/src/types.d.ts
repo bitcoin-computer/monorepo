@@ -317,6 +317,7 @@ export type Stream = {
     asm?: string;
     exp?: string;
     mod?: string;
+    publicKey?: string;
 };
 export type TXORecord = {
     rev: string;

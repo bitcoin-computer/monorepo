@@ -5,8 +5,10 @@ import { Transaction } from './transaction.js';
 import { SmartContract, EvaluatedEffect, TransitionJSON, Address, RevString, TxIdString, ModString, AddressString, PublicKeyString, UrlString } from './types.js';
 import { Db } from './db.js';
 import { Class, ComputerOptions, Query, FundOptions, Unspent, Fee, Chain, BtcNetwork, SigOptions, ModuleOptions, MockOptions, Balance, TXOQuery, TXORecord, Stream } from './types.js';
+import { Subscription } from './subscription.js';
 declare class Computer {
     db: Db;
+    subscription: Subscription;
     constructor(params?: ComputerOptions);
     private isMetadataKey;
     private containsMetadata;
@@ -104,6 +106,9 @@ declare class Computer {
     streamTXOs(filter: Partial<Stream>, onMessage: ({ rev, hex }: {
         rev: RevString;
         hex: string;
+    }) => void, onError?: (error: Event) => void): Promise<() => void>;
+    streamMempoolCleanup(onMessage: (event: {
+        revs: string[];
     }) => void, onError?: (error: Event) => void): Promise<() => void>;
     query(q: Query): Promise<string[]>;
     static txFromHex({ hex }: {
