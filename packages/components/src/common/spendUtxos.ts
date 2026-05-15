@@ -1,5 +1,5 @@
 import { Computer, Transaction } from '@bitcoin-computer/lib'
-import { address as bAddress } from '@bitcoin-computer/nakamotojs'
+import { address as bAddress, networks } from '@bitcoin-computer/nakamotojs'
 
 async function listSpendableUtxos(computer: Computer, modSpecs: string[]) {
   const utxos = await computer.getUTXOs({
@@ -83,8 +83,7 @@ export async function signAndBroadcastSpendUtxos(
     throw new Error('No spendable UTXOs to include in the transaction.')
   }
 
-  // @ts-expect-error types are not defined correctly as of now
-  const networkObj = computer.getNetworkObject(computer.getChain(), computer.getNetwork())
+  const networkObj = networks.getNetwork(computer.getChain(), computer.getNetwork())
   const changeScript = bAddress.toOutputScript(computer.getAddress().toString(), networkObj)
   const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')))
 
