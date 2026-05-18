@@ -1,6 +1,5 @@
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
-import { crypto } from '@bitcoin-computer/nakamotojs'
 import dotenv from 'dotenv'
 
 dotenv.config({ path: '../.env' })
@@ -42,7 +41,7 @@ describe('Should work with chai', () => {
   it('Should return the utxos of an address', async () => {
     const computer = new Computer(conf)
     const { txId, vout } = await computer.faucet(1e7)
-    expect(await computer.getUTXOs()).deep.eq([`${txId}:${vout}`])
+    expect(await computer.getUTXOs({ address: computer.getAddress() })).deep.eq([`${txId}:${vout}`])
   })
 
   it('Should list the txs of a given address', async () => {
