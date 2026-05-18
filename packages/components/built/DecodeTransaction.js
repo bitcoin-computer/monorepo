@@ -4,7 +4,7 @@ import { useLocation, useParams } from 'react-router-dom';
 import { Transaction as BCTransaction } from '@bitcoin-computer/lib';
 import { ComputerContext } from './ComputerContext';
 import { inputsComponent, outputsComponent, transitionComponent } from './Transaction';
-export function DecodedransactionComponent() {
+export function DecodeTransactionComponent() {
     const location = useLocation();
     const params = useParams();
     const computer = useContext(ComputerContext);
@@ -37,4 +37,4 @@ export function DecodedransactionComponent() {
     }, [computer, txnData]);
     return (_jsx(_Fragment, { children: _jsxs("div", { className: "pt-8", children: [_jsx("h1", { className: "mb-2 text-5xl font-extrabold dark:text-white", children: "Decoded Transaction" }), transition && transitionComponent({ transition }), rpcTxnData?.vin && inputsComponent({ rpcTxnData, checkForSpentInput: true }), rpcTxnData?.vout && outputsComponent({ rpcTxnData, txn: undefined })] }) }));
 }
-export const Decodedransaction = { Component: DecodedransactionComponent };
+export const DecodeTransaction = { Component: DecodeTransactionComponent };

@@ -4,7 +4,7 @@ import { Transaction as BCTransaction } from '@bitcoin-computer/lib'
 import { ComputerContext } from './ComputerContext'
 import { inputsComponent, outputsComponent, transitionComponent } from './Transaction'
 
-export function DecodedransactionComponent() {
+export function DecodeTransactionComponent() {
   const location = useLocation()
   const params = useParams()
   const computer = useContext(ComputerContext)
@@ -55,4 +55,4 @@ export function DecodedransactionComponent() {
   )
 }
 
-export const Decodedransaction = { Component: DecodedransactionComponent }
+export const DecodeTransaction = { Component: DecodeTransactionComponent }
