@@ -69,11 +69,11 @@ export class ChessContract extends Contract {
     const totalWager = this.wagerAmount * 2n
     if (!chessLib.isGameOver()) {
       if (this._owners[0] === this.publicKeyW) {
-        this._owners = [this.publicKeyB]
-        this.finalWithdraws = [[this.root, this.tokenIdB, totalWager]]
-      } else {
-        this._owners = [this.publicKeyW]
         this.finalWithdraws = [[this.root, this.tokenIdW, totalWager]]
+        this._owners = [this.publicKeyB]
+      } else {
+        this.finalWithdraws = [[this.root, this.tokenIdB, totalWager]]
+        this._owners = [this.publicKeyW]
       }
     }
     return chessLib.isGameOver()

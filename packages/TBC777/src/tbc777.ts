@@ -41,7 +41,7 @@
 
 // TYPES & INTERFACES
 
-import { Id, Rev, Root, GlobalComputer } from '@bitcoin-computer/lib'
+import { Id, Rev, Root, InnerComputer } from '@bitcoin-computer/lib'
 import { TBC20, TBC20ConstructorParams } from './tbc20.js'
 
 export type Constructor<T> = new (...args: any[]) => T
@@ -69,51 +69,35 @@ export type ClaimEntry = [Root, Id, Amount]
  */
 export type ClaimAmountEntry = [Id, Amount]
 
-declare const computer: GlobalComputer
+declare const computer: InnerComputer
 
 /**
  * Canonical escrow interface (mandatory for all TBC777-compatible escrows).
  *
- * Defines the *minimal* state contract that any escrow implementation must
- * expose. `EscrowAuditor` walks the complete `prev`-chain of an escrow revision
- * and uses only the three arrays below to re-derive truth.
+ * This defines the *minimal* append-only history log that `EscrowAuditor` needs
+ * to enforce the no-inflation guarantee. Escrows may add any extra business
+ * logic/state — the auditor ignores everything except these three arrays.
  *
- * THE KEY ARCHITECTURAL PRINCIPLE: TBC777 tokens **never** trust an escrow's
- * internal business logic, validation rules, or current state. Instead, the
- * auditor reconstructs authoritative balances by:
+ * @property {DepositEntry[]} deposits Every successful deposit ever accepted.
+ *   Each entry is `[root, rev]` where **`rev` is the input/pre-mutation
+ *   revision of the token** (i.e. the revision that existed *before*
+ *   `deposit()` reduced `this.amount` in that transition).
  *
- * - Collecting every historical `DepositEntry` across the full revision history
- * - Collecting every historical `ClaimEntry` (regular + final)
- * - Applying strict validation (`isEqualTo` + `isValidMint`) to deposits
- * - Summing claim amounts recorded under the target lineage root
- *
- * The three arrays form an **append-only, immutable history log**:
- *
- * @property {DepositEntry[]} deposits Every successful deposit ever made into
- *   this escrow. Each entry is `[root, rev]` where `rev` is the exact revision
- *   of the token that was deposited. Only entries that later pass both
+ *   `EscrowAuditor` uses `computer.next(rev)` to obtain the post-deposit state
+ *   and compute the exact delta deposited. Only entries that pass *both*
  *   `isEqualTo` **and** `isValidMint` contribute to `totalDeposited`.
  *
- * @property {ClaimEntry[]} withdraws Every regular (non-final) withdrawal ever
- *   claimed from this escrow. Collected from **every** revision in the
- *   prev-chain. Each entry is `[root, id, amount]`. After filtering by root in
- *   `collectRevisions`, the recorded amounts are summed into
- *   `totalRegularAuthorized`.
+ * @property {ClaimEntry[]} withdraws Regular (non-final) withdrawal claims.
+ *   Collected from **every** revision in the escrow's full prev-chain.
  *
  * @property {ClaimEntry[]} finalWithdraws Final-withdrawal claims. These are
- *   **only ever present on the terminal (latest) revision** of the escrow. The
- *   auditor therefore reads them exclusively from `states[0]`. Each entry is
- *   `[root, id, amount]`. After filtering by root, the recorded amounts are
- *   summed into `totalFinalAuthorized`.
+ *   only ever present/claimable on the **terminal (latest)** revision of the
+ *   escrow. Auditor reads them exclusively from `states[0]`.
  *
- * Subclasses are free to implement any additional logic, access control, or
- * state they need — the auditor simply ignores everything except these three
- * arrays and the revision history itself.
- *
- * @see EscrowAuditor
- * @see DepositEntry
- * @see ClaimEntry
- * @see TBC777
+ * SECURITY INVARIANT (core no-inflation guarantee): Even if an escrow contract
+ * is buggy, malicious, or deliberately tries to over-authorize claims, the
+ * audited balance for any token lineage can never exceed the amount originally
+ * minted.
  */
 export abstract class Escrow extends Contract {
   deposits!: DepositEntry[]
@@ -474,9 +458,15 @@ export class TBC777 extends TBC20 {
   }
 
   /**
-   * Tuple used by escrows to record a deposit. Returns [root, currentRev] so
-   * that EscrowAuditor can later validate the exact revision that was
-   * deposited.
+   * Tuple recorded by escrows when accepting a deposit.
+   *
+   * Returns `[root, rev]` where **`rev` is the input/pre-mutation revision**
+   * of the token at the moment the deposit is recorded (i.e. the `_rev` that
+   * existed *before* `deposit()` reduced `this.amount` in the same transition).
+   *
+   * `EscrowAuditor.computeDepositAmount` uses `computer.next(rev)` to obtain
+   * the post-deposit state and compute the exact delta that was moved into
+   * the escrow.
    */
   get depositTuple(): DepositEntry {
     return [this.root as Root, this._rev as Rev]
@@ -633,7 +623,8 @@ export class TBC777 extends TBC20 {
    * Creates a strict regex that only matches valid TBC777 constructor
    * expressions. Prevents inline-class / shadowing attacks.
    *
-   * Supports both normal mints (amount > 0) and remote-root tokens (amount: 0n).
+   * Supports both normal mints (amount > 0) and remote-root tokens (amount:
+   * 0n).
    */
   static makeRegex(exp: string): RegExp {
     const toMatch = exp.match(/to\s*:\s*'(0[23][0-9a-fA-F]{64})'/)?.[1]
