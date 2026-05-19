@@ -3,14 +3,9 @@ import { branded, Computer, Id, Rev, Root, SmartContract } from '@bitcoin-comput
 import dotenv from 'dotenv'
 import path from 'path'
 import { TBC20 } from '../src/tbc20.js'
-import { Amount, Escrow, TBC777, EscrowAuditor, type AuditResult } from '../src/tbc777.js'
+import { Amount, Escrow, TBC777, EscrowAuditor } from '../src/tbc777.js'
 
 const envPaths = [path.resolve(process.cwd(), './packages/node/.env'), '../node/.env']
-
-const sleep = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms))
-
-const waitForConfirmation = (ms: number = 3000): Promise<void> =>
-  new Promise((resolve) => setTimeout(resolve, ms))
 
 const INITIAL_AMOUNT = 30n
 const TEST_NAME = 'test'
@@ -43,7 +38,6 @@ let black: Computer
 let white: Computer
 let minter: Computer
 let mod: string
-let rootToken: SmartContract<typeof TBC777>
 
 async function ensureFunds(c: Computer, minSats = 20e8) {
   try {
@@ -54,7 +48,7 @@ async function ensureFunds(c: Computer, minSats = 20e8) {
   }
 }
 
-describe.only('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
+describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
   before(async () => {
     minter = new Computer({ url, chain, network })
     black = new Computer({ url, chain, network })
@@ -81,8 +75,7 @@ describe.only('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     const symbol = TEST_SYMBOL
     const to = minter.getPublicKey()
     const exp = `new TBC777({ to: '${to}', amount: ${amount}n, name: '${name}', symbol: '${symbol}' })`
-    const { effect, tx } = await minter.encode({ exp, mod })
-    rootToken = branded(effect.res as SmartContract<typeof TBC777>)
+    const { tx } = await minter.encode({ exp, mod })
     await minter.broadcast(tx)
   })
 
@@ -146,17 +139,8 @@ describe.only('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     }
   }
 
-  /** Manual (non-atomic) deposit */
-  async function depositManual(token: any, escrow: Id, amount: Amount) {
-    token.deposit(escrow, amount)
-  }
-
   async function withdraw(token: any, escrowRev: Rev, isFinal = false) {
     await token.withdraw(escrowRev, isFinal)
-  }
-
-  async function withdrawFinal(token: any, escrowRev: Rev) {
-    await token.withdraw(escrowRev, true)
   }
 
   /**
@@ -668,7 +652,7 @@ describe.only('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     it('merge() is permanently disabled with clear error message', async () => {
       const token = await createFreshToken()
       try {
-        await token.merge([])
+        await token.merge()
         expect.fail('merge() should have thrown')
       } catch (e: any) {
         expect(e.message).to.equal('merge() is disabled in TBC777.')
@@ -813,7 +797,7 @@ describe.only('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
   // ============================================================
   // KEY SCENARIOS
   // ============================================================
-  describe.only('Key Scenarios (Ready for Implementation)', () => {
+  describe('Key Scenarios (Ready for Implementation)', () => {
     it('Single deposit → full withdrawal', async () => {
       const escrow = await createNaiveEscrow()
       let t = await createFreshToken(FRESH_TOKEN_AMOUNT)
@@ -928,7 +912,7 @@ describe.only('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       await (escrow1 as any).setWithdraw(tA._id, DEPOSIT_AMOUNT, rootA)
 
       // Create an incompatible token (different root / lineage)
-      let tB = await createFreshToken(FRESH_TOKEN_AMOUNT)
+      const tB = await createFreshToken(FRESH_TOKEN_AMOUNT)
       expect(tB.root).to.not.equal(rootA)
       expect(await tA.isEqualTo(tB)).to.be.false
 
@@ -946,7 +930,7 @@ describe.only('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       await assertNoInflation(escrow1._rev as Rev, tA)
     })
 
-    it.only('Cross-lineage (remoteRoot) complete flow with isValidMint validation', async () => {
+    it('Cross-lineage (remoteRoot) complete flow with isValidMint validation', async () => {
       // === Setup: Create source token and deposit into escrow ===
       const escrow = await createNaiveEscrow()
       let source = await createFreshToken(FRESH_TOKEN_AMOUNT)

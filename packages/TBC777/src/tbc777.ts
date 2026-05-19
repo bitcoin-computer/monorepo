@@ -394,6 +394,7 @@ export class TBC777 extends TBC20 {
     // finalWithdrawn) so that isValidMint() can later prove the initial
     // on-chain state had zero balance.
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { withdrawn, finalWithdrawn, escrow, ...rest } = args
 
     super({
@@ -413,7 +414,7 @@ export class TBC777 extends TBC20 {
    * Merge is intentionally disabled. Use escrow-based atomic merge instead
    * (deposit sources then claim total into one target).
    */
-  merge(_tokens: TBC20[]): never {
+  merge(): never {
     throw new Error('merge() is disabled in TBC777.')
   }
 
@@ -430,6 +431,7 @@ export class TBC777 extends TBC20 {
     // Explicitly drop revision metadata + escrow-related mutable state so the
     // recipient receives a clean token instance with no inherited claim
     // history.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _id, _root, _rev, withdrawn, finalWithdrawn, escrow, ...preserved } = this
 
     return new ctor({ ...preserved, to, amount })

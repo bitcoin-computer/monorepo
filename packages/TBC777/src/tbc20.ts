@@ -56,6 +56,7 @@ export class TBC20 extends Contract {
    */
   protected _createTransferToken(to: string, amount: bigint): this {
     const ctor = this.constructor as Constructor<this>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _id, _root, _rev, ...cleanState } = this
     return new ctor({ ...cleanState, to, amount })
   }
