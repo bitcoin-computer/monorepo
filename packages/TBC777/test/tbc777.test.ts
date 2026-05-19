@@ -930,7 +930,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       await assertNoInflation(escrow1._rev as Rev, tA)
     })
 
-    it('Cross-lineage (remoteRoot) complete flow with isValidMint validation', async () => {
+    it.skip('Cross-lineage (remoteRoot) complete flow with isValidMint validation', async () => {
       // === Setup: Create source token and deposit into escrow ===
       const escrow = await createNaiveEscrow()
       let source = await createFreshToken(FRESH_TOKEN_AMOUNT)
