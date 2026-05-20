@@ -18,7 +18,7 @@
     "build:watch": "tsc -w -p tsconfig.release.json",
     "clean": "rm -rf coverage build tmp",
     "clean:logs": "rm -f *.log 2> /dev/null",
-    "compile:test": "rm -rf dist && tsc -p tsconfig.test.json",
+    "build:test": "rm -rf dist && tsc -p tsconfig.test.json",
     "deploy": "npx tsx src/deploy.ts",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern build/",

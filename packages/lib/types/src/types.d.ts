@@ -361,6 +361,7 @@ export type TXORecord = {
     blockHash?: string;
     blockHeight?: number;
     blockIndex?: number;
+    timestamp?: number;
 };
 export type TXOQuery = {
     verbosity?: number;

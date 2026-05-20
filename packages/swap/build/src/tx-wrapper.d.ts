@@ -3,13 +3,15 @@ export declare class TxWrapper extends Contract {
     txHex: string;
     constructor(owner: string, url: string, txHex?: string);
     addSaleTx(txHex: string): void;
+    cancelSaleTx(): void;
 }
 export declare class TxWrapperHelper {
     computer: any;
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
-    createWrappedTx(publicKey: string, url: string, tx?: Transaction): Promise<any>;
+    createWrappedTx(publicKey: string, url: string, tx?: Transaction, excludedRevs?: string[]): Promise<any>;
+    cancelSaleTx(txWrapperTxId: string): Promise<any>;
     addSaleTx(txWrapperTxId: string, tx: Transaction): Promise<any>;
     decodeTx(txWrapperTxId: string): Promise<any>;
 }
