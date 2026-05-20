@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { HiRefresh, HiUserAdd } from 'react-icons/hi'
 
 import { ChatSc } from '../contracts/chat'
+import { SmartContract } from '@bitcoin-computer/lib'
 const addUserModal = 'add-user-modal'
 
 interface messageI {
@@ -98,7 +99,7 @@ const SentMessage = ({ message }: { message: messageI }) => {
   )
 }
 
-function AddUserToChat(chatObj: ChatSc) {
+function AddUserToChat(chatObj: SmartContract<typeof ChatSc>) {
   const [publicKey, setPublicKey] = useState('')
   const [creating, setCreating] = useState(false)
   const { showSnackBar } = UtilsContext.useUtilsComponents()
@@ -162,11 +163,11 @@ const ChatHeader = ({
 }: {
   channelName?: string
   refreshChat: () => Promise<void>
-  chatObj: ChatSc
+  chatObj: SmartContract<typeof ChatSc>
 }) => {
-  const [addUserToChat, setAddUserToChat] = useState<ChatSc>()
+  const [addUserToChat, setAddUserToChat] = useState<SmartContract<typeof ChatSc>>()
 
-  const addUser = (chat: ChatSc) => {
+  const addUser = (chat: SmartContract<typeof ChatSc>) => {
     setAddUserToChat(chat)
     Modal.showModal(addUserModal)
   }
@@ -283,7 +284,7 @@ export function Chat({ chatId }: { chatId: string }) {
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
   const navigate = useNavigate()
   const [id] = useState(chatId || '')
-  const [chatObj, setChatObj] = useState<ChatSc | null>(null)
+  const [chatObj, setChatObj] = useState<SmartContract<typeof ChatSc> | null>(null)
   const [messages, setMessages] = useState<messageI[]>([])
 
   const refreshChat = async () => {

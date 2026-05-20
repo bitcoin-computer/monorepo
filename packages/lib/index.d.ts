@@ -1,10 +1,10 @@
 /// <reference path="./computer.d.ts" />
 
-import { Contract as ContractGlobal, Computer, Mock, Transaction } from './computer'
+import { Contract as ContractGlobal, Computer, Mock, Transaction, Transition } from './computer'
 
 declare global {
   var Contract: typeof ContractGlobal
   var computer: InnerComputer
 }
 
-export { Computer, ContractGlobal as Contract, Mock, Transaction }
+export { Computer, ContractGlobal as Contract, Mock, Transaction, Transition }
