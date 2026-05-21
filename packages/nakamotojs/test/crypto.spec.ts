@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+import { strict as assert } from 'assert';
 import { describe, it } from 'mocha';
 import { crypto as bcrypto, TaggedHashPrefix } from '../src/index.js';
 import fixtures from './fixtures/crypto.js';

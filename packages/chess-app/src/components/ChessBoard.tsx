@@ -24,7 +24,7 @@ import { NewGameModal, newGameModal } from './NewGame'
 import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
 import { ChallengeListWrapper } from './ChallengesListWrapper'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, precise, SmartContract } from '@bitcoin-computer/lib'
 import { GamesListWrapper } from './GamesListWrapper'
 
 const winnerModal = 'winner-modal'
@@ -38,7 +38,7 @@ function currentPlayer(fen: string) {
   throw new Error('Invalid FEN: Unknown active color')
 }
 
-function getWinnerPubKey(chessContract: ChessContract) {
+function getWinnerPubKey(chessContract: SmartContract<typeof ChessContract>) {
   const chessLibrary = new ChessLib(chessContract.fen)
   const { publicKeyW, publicKeyB } = chessContract
   if (chessLibrary.isCheckmate()) return chessLibrary.turn() === 'b' ? publicKeyW : publicKeyB
@@ -131,7 +131,7 @@ function WinnerModal(data: { winnerPubKey: string; userPubKey: string; amount: s
 const renderButtonContent = (
   game: ChessLib | undefined,
   paymentReleased: boolean,
-  chessContract: ChessContract | null,
+  chessContract: SmartContract<typeof ChessContract> | null,
   computer: Computer,
   requestRelease: () => Promise<void>,
   releaseFund: () => Promise<void>,
@@ -185,16 +185,18 @@ export function ChessBoard() {
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
   const [winnerData, setWinnerData] = useState({})
   const [game, setGame] = useState<ChessLib | null>(null)
-  const [chessContract, setChessContract] = useState<ChessContract | null>(null)
+  const [chessContract, setChessContract] = useState<SmartContract<typeof ChessContract> | null>(
+    null,
+  )
   const [chessContractId, setChessContractId] = useState<string>('')
   const [user, setUser] = useState<User | null>(null)
   const [balance, setBalance] = useState<bigint>(0n)
   const [paymentReleased, setPaymentReleased] = useState(true)
 
   const computer = useContext(ComputerContext)
-  const fetchChessContract = async (): Promise<ChessContract> => {
+  const fetchChessContract = async (): Promise<SmartContract<typeof ChessContract>> => {
     const latest = await computer.latest(gameId)
-    return computer.sync(latest) as Promise<ChessContract>
+    return computer.sync<typeof ChessContract>(latest)
   }
 
   useEffect(() => {
@@ -218,7 +220,7 @@ export function ChessBoard() {
         setChessContract(chessContract)
         setGame(new ChessLib(chessContract.fen))
         const walletBalance = await computer.getBalance()
-        setBalance(walletBalance.balance as unknown as bigint)
+        setBalance(walletBalance.balance as bigint)
       }
     } catch (error) {
       console.error('Error fetching contract:', error)
@@ -237,7 +239,7 @@ export function ChessBoard() {
         if (!userRev) {
           Modal.showModal(creaetUserModal)
         } else {
-          const userObj = (await computer.sync(userRev)) as User
+          const userObj = await computer.sync<typeof User>(userRev)
           setUser(userObj)
         }
       } catch (error) {
@@ -264,7 +266,7 @@ export function ChessBoard() {
           setGame(new ChessLib(cc.fen))
           setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
           const walletBalance = await computer.getBalance()
-          setBalance(walletBalance.balance as unknown as bigint)
+          setBalance(walletBalance.balance as bigint)
         }
       } catch (error) {
         console.log(error)
@@ -305,7 +307,7 @@ export function ChessBoard() {
           const subscribeToWinnerTx = async () => {
             close = await computer.subscribe(cc.winnerTxWrapper._id, async (rev) => {
               if (rev) {
-                const txWrapper = (await computer.sync(rev.rev)) as WinnerTxWrapper
+                const txWrapper = await computer.sync<typeof WinnerTxWrapper>(rev.rev)
                 if (txWrapper.redeemTxHex) {
                   // Explicitly fetching chess contract again to get the latest state
                   const chessContract = await fetchChessContract()
@@ -432,11 +434,9 @@ export function ChessBoard() {
         showSnackBar('Not a valid chess contract', false)
         return
       }
-      const signedRedeemTx = await signRedeemTx(
-        computer,
-        chessContract,
-        chessContract?.winnerTxWrapper,
-      )
+      const { winnerTxWrapper } = chessContract
+      precise<typeof WinnerTxWrapper>(winnerTxWrapper)
+      const signedRedeemTx = await signRedeemTx(computer, chessContract, winnerTxWrapper)
       const finalTxId = await computer.broadcast(signedRedeemTx)
       setPaymentReleased(true)
       showSnackBar(`You lost the game, fund released. Transaction: ${finalTxId}`, true)

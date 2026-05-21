@@ -46,7 +46,7 @@ export class TokenHelper {
     async getBags(publicKey, root) {
         const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod });
         const bags = await Promise.all(revs.map(async (rev) => this.computer.sync(rev)));
-        return bags.flatMap((bag) => (bag._root === root ? [bag] : []));
+        return bags.flatMap((bag) => bag._root === root ? [bag] : []);
     }
     async balanceOf(publicKey, root) {
         if (typeof root === 'undefined')

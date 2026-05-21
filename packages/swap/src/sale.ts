@@ -33,7 +33,7 @@ export class SaleHelper {
     return this.computer.encode({
       exp: `Sale.exec(o, p)`,
       env: { o: object._rev, p: payment._rev },
-      mocks: { payment },
+      mocks: { p: payment },
       sighashType,
       inputIndex: 0,
       fund: false,

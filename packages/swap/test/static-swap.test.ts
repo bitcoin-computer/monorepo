@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 
 import dotenv from 'dotenv'
@@ -62,9 +62,9 @@ describe('Static Swap', () => {
       await alice.broadcast(tx)
 
       // Bob reads the updated state from the blockchain
-      const {
-        env: { a, b },
-      } = (await bob.sync(tx.getId())) as { env: { a: NFT; b: NFT } }
+      const { env } = await bob.sync(tx.getId())
+      const a = env.a as SmartContract<typeof NFT>
+      const b = env.b as SmartContract<typeof NFT>
       expect(a.name).deep.eq('a')
       expect(a._owners).deep.eq([bob.getPublicKey()])
       expect(b.name).deep.eq('b')
@@ -123,7 +123,7 @@ describe('Static Swap', () => {
       expect(txId).not.undefined
 
       // a is now owned by Bob
-      const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
+      const { env } = await bob.sync(txId)
       const aSwapped = env.a
       expect(aSwapped).to.matchPattern({
         ...meta,
@@ -134,7 +134,7 @@ describe('Static Swap', () => {
       })
 
       // b is now owned by Alice
-      const { env: env2 } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
+      const { env: env2 } = await alice.sync(txId)
       const bSwapped = env2.b
       expect(bSwapped).to.matchPattern({
         ...meta,

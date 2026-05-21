@@ -1,5 +1,5 @@
 import { expect } from 'chai'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { Token, TokenHelper } from '../src/token.js'
 import path from 'path'
@@ -32,7 +32,7 @@ before(async () => {
 })
 
 describe('Token', async () => {
-  let token1: Token
+  let token1: SmartContract<typeof Token>
 
   describe('mint', async () => {
     it('Sender mints 3 tokens', async () => {
@@ -51,11 +51,11 @@ describe('Token', async () => {
   })
 
   describe('transfer, merge and burn', () => {
-    let token2: Token
-    let token2After: Token
+    let token2: SmartContract<typeof Token>
+    let token2After: SmartContract<typeof Token>
 
     it('Sender transfers 1 token to Receiver', async () => {
-      token2 = (await token1.transfer(receiver.getPublicKey(), 1n)) as Token
+      token2 = await token1.transfer(receiver.getPublicKey(), 1n)
     })
 
     it('The meta data of token should be set correctly', () => {
@@ -81,12 +81,12 @@ describe('Token', async () => {
     it('computer.getOUTXOs should return the tokens', async () => {
       const senderRevs = await sender.getOUTXOs({ publicKey: sender.getPublicKey() })
       expect(senderRevs.length).eq(1)
-      const senderToken = (await sender.sync(senderRevs[0])) as Token
+      const senderToken = await sender.sync<typeof Token>(senderRevs[0])
       expect(senderToken.amount).eq(2n)
 
       const receiverRevs = await receiver.getOUTXOs({ publicKey: receiver.getPublicKey() })
       expect(receiverRevs.length).eq(1)
-      const receiverTokens = (await receiver.sync(receiverRevs[0])) as Token
+      const receiverTokens = await receiver.sync<typeof Token>(receiverRevs[0])
       expect(receiverTokens.amount).eq(1n)
     })
 
@@ -114,7 +114,7 @@ describe('Token', async () => {
 
       const { env } = effect
       const { __bc__ } = env
-      token2After = __bc__ as unknown as Token
+      token2After = __bc__ as SmartContract<typeof Token>
 
       expect(token1._owners).deep.eq([sender.getPublicKey()])
       expect(token2After._owners).deep.eq([sender.getPublicKey()])
@@ -167,7 +167,7 @@ describe('TokenHelper', () => {
     })
 
     it('Should mint a root token', async () => {
-      const rootToken = (await sender.sync(root)) as Token
+      const rootToken = (await sender.sync<typeof Token>(root)) as SmartContract<typeof Token>
       expect(rootToken).not.to.be.undefined
       expect(rootToken._id).to.eq(root)
       expect(rootToken._rev).to.eq(root)

@@ -13,5 +13,5 @@ export declare class TxWrapperHelper {
     createWrappedTx(publicKey: string, url: string, tx?: Transaction, excludedRevs?: string[]): Promise<any>;
     cancelSaleTx(txWrapperTxId: string): Promise<any>;
     addSaleTx(txWrapperTxId: string, tx: Transaction): Promise<any>;
-    decodeTx(txWrapperTxId: string): Promise<Transaction>;
+    decodeTx(txWrapperTxId: string): Promise<any>;
 }

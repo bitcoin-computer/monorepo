@@ -37,6 +37,7 @@ export class ChessChallengeTxWrapperHelper {
       mod: this.mod,
       exclude: ins,
     })
+    if (!tx) throw new Error('Could not create ChessChallengeTxWrapper')
     return this.computer.broadcast(tx)
   }
 }

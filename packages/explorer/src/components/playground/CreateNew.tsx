@@ -111,6 +111,7 @@ const CreateNew = (props: {
         }
 
         const { tx } = await computer.encode(encodeObject)
+        if (!tx) throw new Error('Transition does not update the state, no transaction created')
         const txId = await computer.broadcast(tx)
         sleep(500)
         // eslint-disable-next-line

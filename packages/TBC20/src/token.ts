@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 
 // eslint-disable-next-line
 type Constructor<T> = new (...args: any[]) => T
@@ -77,14 +77,18 @@ export class TokenHelper implements ITBC20 {
   }
 
   async totalSupply(root: string): Promise<bigint> {
-    const rootBag = (await this.computer.sync(root)) as Token
+    const rootBag = (await this.computer.sync<typeof Token>(root)) as SmartContract<typeof Token>
     return rootBag.amount
   }
 
-  private async getBags(publicKey: string, root: string): Promise<Token[]> {
+  private async getBags(publicKey: string, root: string): Promise<SmartContract<typeof Token>[]> {
     const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod })
-    const bags = await Promise.all(revs.map(async (rev: string) => this.computer.sync(rev)))
-    return bags.flatMap((bag: Token & { _root: string }) => (bag._root === root ? [bag] : []))
+    const bags = await Promise.all(
+      revs.map(async (rev: string) => this.computer.sync<typeof Token>(rev)),
+    )
+    return bags.flatMap((bag: SmartContract<typeof Token> & { _root: string }) =>
+      bag._root === root ? [bag] : [],
+    )
   }
 
   async balanceOf(publicKey: string, root: string): Promise<bigint> {

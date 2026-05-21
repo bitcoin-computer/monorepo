@@ -15,6 +15,6 @@ describe('broadcast', () => {
     const { tx } = await computer.encode(transition)
 
     // Broadcast transaction
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
   })
 })

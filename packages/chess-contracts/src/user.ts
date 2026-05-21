@@ -30,6 +30,6 @@ export class UserHelper {
       exp: `new User("${name}")`,
       mod: this.mod,
     })
-    return this.computer.broadcast(tx)
+    return this.computer.broadcast(tx!)
   }
 }

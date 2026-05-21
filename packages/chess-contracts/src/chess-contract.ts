@@ -1,4 +1,4 @@
-import { Computer, Transaction } from '@bitcoin-computer/lib'
+import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
 import {
   address,
   bufferUtils,
@@ -154,7 +154,7 @@ export class ChessContractHelper {
 
   static fromContract(
     computer: Computer,
-    game: ChessContract,
+    game: SmartContract<typeof ChessContract>,
     mod?: string,
     userMod?: string,
   ): ChessContractHelper {
@@ -205,6 +205,7 @@ export class ChessContractHelper {
       fund: false,
       sign: false,
     })
+    if (!tx) throw new Error('Could not create ChessContract')
 
     // Fund with this.satoshis / 2
     const chain = this.computer.getChain()
@@ -240,7 +241,8 @@ export class ChessContractHelper {
     await this.validateUser()
     const decoded = await this.computer.decode(tx)
     const { effect } = await this.computer.encode(decoded)
-    const { res: chessContract } = effect as unknown as { res: ChessContract }
+    const { res } = effect
+    const chessContract = res as SmartContract<typeof ChessContract>
 
     this.satoshis = chessContract.payment._satoshis
     this.nameW = chessContract.nameW
@@ -263,18 +265,18 @@ export class ChessContractHelper {
   }
 
   async move(
-    chessContract: ChessContract,
+    chessContract: SmartContract<typeof ChessContract>,
     from: string,
     to: string,
     promotion: string,
-  ): Promise<{ newChessContract: ChessContract; isGameOver: boolean }> {
+  ): Promise<{ newChessContract: SmartContract<typeof ChessContract>; isGameOver: boolean }> {
     if (chessContract && chessContract.sans.length < 2) {
       const [userRev] = await this.computer.getOUTXOs({
         mod: this.userMod,
         publicKey: this.computer.getPublicKey(),
       })
       if (userRev) {
-        const userObj = (await this.computer.sync(userRev)) as User
+        const userObj = await this.computer.sync<typeof User>(userRev)
         const gameId = chessContract._id
         if (!userObj.games.includes(gameId)) {
           await userObj.addGame(gameId)
@@ -290,7 +292,7 @@ export class ChessContractHelper {
     })) as { tx: Transaction; effect: { res: boolean; env: unknown } }
     await this.computer.broadcast(tx)
     const { res: isGameOver, env } = effect
-    const { __bc__: newChessContract } = env as { __bc__: ChessContract }
+    const { __bc__: newChessContract } = env as { __bc__: SmartContract<typeof ChessContract> }
     if (isGameOver) {
       await this.spend(newChessContract)
       console.log('You won!')
@@ -298,14 +300,14 @@ export class ChessContractHelper {
     return { newChessContract, isGameOver }
   }
 
-  async spend(chessContract: ChessContract, fee = 10000n): Promise<void> {
+  async spend(chessContract: SmartContract<typeof ChessContract>, fee = 10000n): Promise<void> {
     const txId = chessContract._id.split(':')[0]
     return this.spendWithConfirmation(txId, chessContract, fee)
   }
 
   async spendWithConfirmation(
     txId: string,
-    chessContract: ChessContract,
+    chessContract: SmartContract<typeof ChessContract>,
     fee = 10000n,
   ): Promise<void> {
     if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
@@ -440,7 +442,7 @@ export class ChessContractHelper {
 
 export const signRedeemTx = async (
   computer: Computer,
-  chessContract: ChessContract,
+  chessContract: SmartContract<typeof ChessContract>,
   txWrapper: WinnerTxWrapper,
 ) => {
   const winnerPublicKey = chessContract._owners[0] as string

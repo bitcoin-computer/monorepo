@@ -1,4 +1,4 @@
-export declare function DecodedransactionComponent(): import("react/jsx-runtime").JSX.Element;
-export declare const Decodedransaction: {
-    Component: typeof DecodedransactionComponent;
+export declare function DecodeTransactionComponent(): import("react/jsx-runtime").JSX.Element;
+export declare const DecodeTransaction: {
+    Component: typeof DecodeTransactionComponent;
 };

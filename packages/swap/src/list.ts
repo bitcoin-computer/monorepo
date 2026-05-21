@@ -1,5 +1,3 @@
- 
-
 export class List extends Contract {
   elements: string[]
 

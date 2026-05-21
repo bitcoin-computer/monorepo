@@ -11,7 +11,7 @@ import {
   UtilsContext,
   Wallet,
   ComputerContext,
-  DecodedransactionComponent,
+  DecodeTransactionComponent,
 } from '@bitcoin-computer/components'
 import NavBar from './components/Navbar'
 import Block from './components/Block'
@@ -41,7 +41,7 @@ export default function App() {
               <Route path="/blocks" element={<Blocks />} />
               <Route path="/playground" element={<Playground />} />
               <Route path="/transactions/:txn" element={<Transaction.Component />} />
-              <Route path="/decode-txn/:txn" element={<DecodedransactionComponent />} />
+              <Route path="/decode-txn/:txn" element={<DecodeTransactionComponent />} />
               <Route path="/blocks/:block" element={<Block />} />
               <Route path="/objects/:rev" element={<SmartObject.Component />} />
               <Route path="/modules/:rev" element={<Module />} />

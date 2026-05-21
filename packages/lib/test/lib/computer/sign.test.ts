@@ -1,4 +1,4 @@
-import { Computer, Contract } from '@bitcoin-computer/lib'
+import { Computer } from '@bitcoin-computer/lib'
 import { chain, network, url } from '../../utils/index.js'
 
 describe('sign', () => {
@@ -17,9 +17,9 @@ describe('sign', () => {
     })
 
     // Sign transaction
-    await computer.sign(tx)
+    await computer.sign(tx!)
 
     // Broadcast to see it it worked
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
   })
 })
