@@ -6,11 +6,7 @@ async function listSpendableUtxos(computer, modSpecs) {
         verbosity: 1,
         isObject: false,
     });
-    const modUtxosArrays = await Promise.all(modSpecs.map((mod) => computer.getUTXOs({
-        publicKey: computer.getPublicKey(),
-        mod,
-        verbosity: 1,
-    })));
+    const modUtxosArrays = await Promise.all(modSpecs.map((mod) => computer.getUTXOs({ publicKey: computer.getPublicKey(), mod, verbosity: 1 })));
     const allModUtxos = modUtxosArrays.flat();
     const totalSatoshis = utxos.reduce((acc, u) => acc + u.satoshis, 0n) +
         allModUtxos.reduce((acc, u) => acc + u.satoshis, 0n);

@@ -10,11 +10,7 @@ async function listSpendableUtxos(computer: Computer, modSpecs: string[]) {
 
   const modUtxosArrays = await Promise.all(
     modSpecs.map((mod) =>
-      computer.getUTXOs({
-        publicKey: computer.getPublicKey(),
-        mod,
-        verbosity: 1,
-      }),
+      computer.getUTXOs({ publicKey: computer.getPublicKey(), mod, verbosity: 1 }),
     ),
   )
   const allModUtxos = modUtxosArrays.flat()
@@ -87,7 +83,6 @@ export async function signAndBroadcastSpendUtxos(
   const networkObj = computer.getNetworkObject(computer.getChain(), computer.getNetwork())
   const changeScript = bAddress.toOutputScript(computer.getAddress().toString(), networkObj)
   const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')))
-
   if (!hasRecipient) {
     tx.addOutput(changeScript, totalInput)
     const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx))
