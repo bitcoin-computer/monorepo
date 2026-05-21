@@ -10,8 +10,10 @@ export declare class TBC20 extends Contract {
     name: string;
     symbol: string;
     _owners: string[];
+    get root(): string;
     constructor(params: TBC20ConstructorParams);
-    transfer(to: string, amount?: bigint): TBC20 | undefined;
+    transfer(to: string, amount?: bigint): this;
+    protected _createTransferToken(to: string, amount: bigint): this;
     burn(): void;
     merge(tokens: TBC20[]): void;
 }

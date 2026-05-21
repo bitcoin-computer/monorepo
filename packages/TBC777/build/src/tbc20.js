@@ -1,29 +1,36 @@
 export class TBC20 extends Contract {
+    get root() {
+        return this._root;
+    }
     constructor(params) {
         const { to, amount, name, symbol = '', ...rest } = params;
         super({ _owners: [to], amount, name, symbol, ...rest });
     }
     transfer(to, amount) {
-        if (typeof amount === 'undefined') {
-            this._owners = [to];
-            return undefined;
-        }
-        if (this.amount >= amount) {
-            this.amount -= amount;
-            const ctor = this.constructor;
-            const { name, symbol } = this;
-            return new ctor({ to, amount, name, symbol });
-        }
-        throw new Error('Insufficient funds');
+        if (typeof amount === 'undefined')
+            amount = this.amount;
+        if (amount <= 0n)
+            throw new Error('Transfer amount must be positive');
+        if (this.amount < amount)
+            throw new Error('Insufficient funds');
+        this.amount -= amount;
+        return this._createTransferToken(to, amount);
+    }
+    _createTransferToken(to, amount) {
+        const ctor = this.constructor;
+        const { _id, _root, _rev, ...cleanState } = this;
+        return new ctor({ ...cleanState, to, amount });
     }
     burn() {
         this.amount = 0n;
     }
     merge(tokens) {
+        if (tokens.some((t) => t._root !== this._root))
+            throw new Error('Cannot merge tokens from different lineages');
         let total = 0n;
-        tokens.forEach((token) => {
-            total += token.amount;
-            token.burn();
+        tokens.forEach((t) => {
+            total += t.amount;
+            t.burn();
         });
         this.amount += total;
     }
@@ -49,7 +56,7 @@ export class TBC20Helper {
     async getBags(publicKey, root) {
         const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod });
         const bags = await Promise.all(revs.map(async (rev) => this.computer.sync(rev)));
-        return bags.flatMap((bag) => (bag._root === root ? [bag] : []));
+        return bags.flatMap((bag) => (bag.root === root ? [bag] : []));
     }
     async balanceOf(publicKey, root) {
         if (typeof root === 'undefined')

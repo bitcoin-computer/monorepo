@@ -8,32 +8,57 @@ export type TBC20ConstructorParams = {
   [s: string]: unknown
 }
 
+/**
+ * Base fungible token contract for the Bitcoin Computer.
+ */
 export class TBC20 extends Contract {
-  amount: bigint
-  name: string
-  symbol: string
-  _owners: string[]
+  amount!: bigint
+  name!: string
+  symbol!: string
+  _owners!: string[]
+
+  get root(): string {
+    return this._root
+  }
 
   constructor(params: TBC20ConstructorParams) {
     const { to, amount, name, symbol = '', ...rest } = params
     super({ _owners: [to], amount, name, symbol, ...rest })
   }
 
-  transfer(to: string, amount?: bigint): TBC20 | undefined {
-    // Send entire amount
-    if (typeof amount === 'undefined') {
-      this._owners = [to]
-      return undefined
-    }
+  /**
+   * Transfer tokens to another owner.
+   *
+   * If `amount` is omitted, the entire balance is transferred by creating a
+   * new token instance for the recipient (leaving this token with a zero
+   * balance). This unifies partial and full transfers into a single code path.
+   *
+   * Subclasses can customize the newly created token by overriding
+   * `_createTransferToken`.
+   */
+  transfer(to: string, amount?: bigint): this {
+    if (typeof amount === 'undefined') amount = this.amount
 
-    // Send partial amount in a new object
-    if (this.amount >= amount) {
-      this.amount -= amount
-      const ctor = this.constructor as Constructor<this>
-      const { name, symbol } = this
-      return new ctor({ to, amount, name, symbol })
-    }
-    throw new Error('Insufficient funds')
+    if (amount <= 0n) throw new Error('Transfer amount must be positive')
+    if (this.amount < amount) throw new Error('Insufficient funds')
+
+    this.amount -= amount
+    return this._createTransferToken(to, amount)
+  }
+
+  /**
+   * Factory method used by `transfer` when creating a new token for a partial
+   * transfer. Subclasses should override this method to control which fields
+   * are copied to the new token instance.
+   *
+   * Default implementation performs a shallow copy of all current state
+   * (preserving original behavior) while setting the new owner and amount.
+   */
+  protected _createTransferToken(to: string, amount: bigint): this {
+    const ctor = this.constructor as Constructor<this>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _id, _root, _rev, ...cleanState } = this
+    return new ctor({ ...cleanState, to, amount })
   }
 
   burn() {
@@ -41,10 +66,12 @@ export class TBC20 extends Contract {
   }
 
   merge(tokens: TBC20[]) {
+    if (tokens.some((t) => t._root !== this._root))
+      throw new Error('Cannot merge tokens from different lineages')
     let total = 0n
-    tokens.forEach((token) => {
-      total += token.amount
-      token.burn()
+    tokens.forEach((t) => {
+      total += t.amount
+      t.burn()
     })
     this.amount += total
   }
@@ -93,7 +120,7 @@ export class TBC20Helper implements ITBC20 {
   private async getBags(publicKey: string, root: string): Promise<TBC20[]> {
     const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod })
     const bags = await Promise.all(revs.map(async (rev: string) => this.computer.sync(rev)))
-    return bags.flatMap((bag: TBC20 & { _root: string }) => (bag._root === root ? [bag] : []))
+    return bags.flatMap((bag: TBC20) => (bag.root === root ? [bag] : []))
   }
 
   async balanceOf(publicKey: string, root: string): Promise<bigint> {

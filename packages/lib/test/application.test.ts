@@ -296,74 +296,68 @@ describe('Chat', () => {
     await bob.faucet(1e8)
   })
 
-  describe('Creating a chat', () => {
-    it('Alice creates a chat and invites Bob', async () => {
-      alicesChat = await alice.new(Chat, [publicKeys])
-      expect(alicesChat).to.matchPattern({
-        messages: [],
-        _readers: publicKeys,
-        ...meta,
-      })
-      expect(alicesChat._owners).deep.eq(publicKeys)
+  // 'Creating a chat'
+  it('Alice creates a chat and invites Bob', async () => {
+    alicesChat = await alice.new(Chat, [publicKeys])
+    expect(alicesChat).to.matchPattern({
+      messages: [],
+      _readers: publicKeys,
+      ...meta,
+    })
+    expect(alicesChat._owners).deep.eq(publicKeys)
+  })
+
+  // 'Posting a message'
+  it('Alice posts a message to the chat', async () => {
+    await alicesChat.post('Hi')
+    expect(alicesChat).to.matchPattern({
+      messages: ['Hi'],
+      _readers: publicKeys,
+      ...meta,
     })
   })
 
-  describe('Posting a message', () => {
-    it('Alice posts a message to the chat', async () => {
-      await alicesChat.post('Hi')
-      expect(alicesChat).to.matchPattern({
-        messages: ['Hi'],
-        _readers: publicKeys,
-        ...meta,
-      })
+  // 'Invited users can read the chat and post messages'
+  it('Bob can read the content of the chat', async () => {
+    bobsChat = await bob.sync<typeof Chat>(alicesChat._rev)
+    expect(bobsChat).matchPattern({
+      messages: ['Hi'],
+      _readers: publicKeys,
+      ...meta,
     })
   })
 
-  describe('Invited users can read the chat and post messages', async () => {
-    it('Bob can read the content of the chat', async () => {
-      bobsChat = await bob.sync<typeof Chat>(alicesChat._rev)
-      expect(bobsChat).matchPattern({
-        messages: ['Hi'],
-        _readers: publicKeys,
-        ...meta,
-      })
-    })
-
-    it('Bob can write to the chat', async () => {
-      await bobsChat.post('Yo')
-      expect(bobsChat).matchPattern({
-        messages: ['Hi', 'Yo'],
-        _readers: publicKeys,
-        ...meta,
-      })
+  it('Bob can write to the chat', async () => {
+    await bobsChat.post('Yo')
+    expect(bobsChat).matchPattern({
+      messages: ['Hi', 'Yo'],
+      _readers: publicKeys,
+      ...meta,
     })
   })
 
-  describe('User that are not invited cannot read the state or post', async () => {
-    it('Eve cannot read the content of the chat', async () => {
-      try {
-        await eve.sync(alicesChat._rev)
-        expect(true).eq(false)
-      } catch (err) {
-        if (err instanceof Error) expect(err.message).eq('Decryption failure')
-      }
-    })
+  // 'User that are not invited cannot read the state or post'
+  it('Eve cannot read the content of the chat', async () => {
+    try {
+      await eve.sync(alicesChat._rev)
+      expect(true).eq(false)
+    } catch (err) {
+      if (err instanceof Error) expect(err.message).eq('Decryption failure')
+    }
   })
 
-  describe('Users can be removed from the chat', () => {
-    it('Alice removes Bob from the chat', async () => {
-      await alicesChat.remove(bob.getPublicKey())
-      expect(alicesChat._readers).deep.eq([alice.getPublicKey()])
-    })
+  // 'Users can be removed from the chat, and lose reading access'
+  it('Alice removes Bob from the chat', async () => {
+    await alicesChat.remove(bob.getPublicKey())
+    expect(alicesChat._readers).deep.eq([alice.getPublicKey()])
 
-    it('Bob cannot read the chat or post to it anymore', async () => {
-      try {
-        await bob.sync(alicesChat._rev)
-        expect(true).eq(false)
-      } catch (err) {
-        if (err instanceof Error) expect(err.message).eq('Decryption failure')
-      }
-    })
+    // 'Bob cannot read the chat or post to it anymore'
+    try {
+      await bob.sync(alicesChat._rev)
+      expect(true).eq(false)
+    } catch (err) {
+      if (err instanceof Error) expect(err.message).eq('Decryption failure')
+    }
   })
 })
 

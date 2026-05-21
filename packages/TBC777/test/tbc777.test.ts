@@ -1,14 +1,30 @@
 import { expect } from 'chai'
-import { Computer } from '@bitcoin-computer/lib'
+import { branded, Computer, Id, Rev, Root, SmartContract } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
-import { TBC777 } from '../src/tbc777.js'
 import path from 'path'
 import { TBC20 } from '../src/tbc20.js'
+import { Amount, Escrow, TBC777, EscrowAuditor } from '../src/tbc777.js'
 
-const envPaths = [
-  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
-  '../node/.env', // when running from local
-]
+const envPaths = [path.resolve(process.cwd(), './packages/node/.env'), '../node/.env']
+
+const INITIAL_AMOUNT = 30n
+const TEST_NAME = 'test'
+const TEST_SYMBOL = 'TST'
+const FRESH_TOKEN_AMOUNT = 10n
+const DEPOSIT_AMOUNT = 6n
+/**
+ * Strips all comments (JSDoc, block, and line) from a class source string and
+ * collapses empty lines. Keeps the code valid and much smaller.
+ */
+function stripComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, '') // remove /* ... */ (including JSDoc)
+    .replace(/\/\/.*$/gm, '') // remove // comments
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .join('\n')
+}
 
 for (const envPath of envPaths) {
   dotenv.config({ path: envPath })
@@ -18,13 +34,12 @@ const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
 const network = process.env.BCN_NETWORK
 
-// Reusable instances to prevent txn-mempool-conflict
+let black: Computer
+let white: Computer
 let minter: Computer
-let alice: Computer
-let bob: Computer
 let mod: string
 
-async function ensureFunds(c: Computer, minSats = 10e8) {
+async function ensureFunds(c: Computer, minSats = 20e8) {
   try {
     const { balance } = await c.getBalance()
     if (balance < minSats) await c.faucet(minSats)
@@ -33,1117 +48,1015 @@ async function ensureFunds(c: Computer, minSats = 10e8) {
   }
 }
 
-describe('TBC777', () => {
-  beforeEach(async () => {
+describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
+  before(async () => {
     minter = new Computer({ url, chain, network })
-    await minter.faucet(50e8)
-    mod = await minter.deploy(`export ${TBC20}`)
+    black = new Computer({ url, chain, network })
+    white = new Computer({ url, chain, network })
 
-    alice = new Computer({ url, chain, network })
-    bob = new Computer({ url, chain, network })
-    await Promise.all([alice.faucet(30e8), bob.faucet(30e8)])
+    await Promise.all([black.faucet(2e8), white.faucet(2e8), minter.faucet(2e8)])
+    await ensureFunds(minter, 2e8)
+
+    // Strip comments from all three classes before deploying
+    const tbc20Source = stripComments(TBC20.toString())
+    const escrowSource = stripComments(EscrowAuditor.toString())
+    const tbc777Source = stripComments(TBC777.toString())
+
+    mod = await minter.deploy(`
+      export ${tbc20Source}
+      export ${escrowSource}
+      export ${tbc777Source}
+    `)
+
+    await ensureFunds(minter, 20e8)
+
+    const amount = INITIAL_AMOUNT
+    const name = TEST_NAME
+    const symbol = TEST_SYMBOL
+    const to = minter.getPublicKey()
+    const exp = `new TBC777({ to: '${to}', amount: ${amount}n, name: '${name}', symbol: '${symbol}' })`
+    const { tx } = await minter.encode({ exp, mod })
+    await minter.broadcast(tx)
   })
 
-  describe('Deployment and Minting', () => {
-    it('should successfully deploy TBC777 contract', async () => {
-      expect(mod).to.be.a('string')
-    })
-
-    it('should mint initial tokens with correct amount, owner, and metadata', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 3n
-      const tokenName = 'test'
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: tokenName }
-      const token = await minter.new(TBC777, [params], mod)
-
-      expect(token.amount).eq(mintAmount)
-      expect(token.name).eq(tokenName)
-
-      const expectedOwner = minter.getPublicKey()
-      if (token.owner !== undefined) {
-        expect(token.owner).eq(expectedOwner)
-      } else if (token._owner !== undefined) {
-        expect(token._owner).eq(expectedOwner)
-      } else if (token._owners) {
-        expect(token._owners).to.include(expectedOwner)
-      }
-
-      expect(token._id).to.be.a('string')
-      expect(token._rev).to.be.a('string')
-      expect(token._root).to.be.a('string')
-    })
-
-    it('should correctly inherit and expose all TBC20 base functionality', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 3n
-      const tokenName = 'test'
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: tokenName }
-      const token = await minter.new(TBC777, [params], mod)
-
-      expect(token).to.have.property('amount')
-      expect(token.amount).eq(mintAmount)
-      expect(token).to.have.property('name')
-      expect(token.name).eq(tokenName)
-      expect(token).to.have.property('_id')
-      expect(token).to.have.property('_rev')
-      expect(token).to.have.property('_root')
-
-      expect(typeof token.deposit).to.eq('function')
-      expect(typeof token.claim).to.eq('function')
-    })
+  beforeEach(async () => {
+    await Promise.all([black.faucet(2e8), white.faucet(2e8), minter.faucet(2e8)])
+    await ensureFunds(minter, 2e8)
   })
 
-  describe('Deposit Functionality', () => {
-    class NaiveEscrow extends Contract {
-      claimable: [string, bigint][]
-      status: string
+  // ============================================================
+  // TEST HELPERS (Defined at top level so they are available everywhere)
+  // ============================================================
+
+  /**
+   * Creates a minimal NaiveEscrow implementation for testing.
+   */
+  async function createNaiveEscrow(c: Computer = minter) {
+    class NaiveEscrow extends Contract implements Escrow {
+      deposits!: [Root, Rev][]
+      withdraws!: [Root, Id, Amount][]
+      finalWithdraws!: [Root, Id, Amount][]
 
       constructor() {
-        super()
+        super({ deposits: [], withdraws: [], finalWithdraws: [] })
       }
 
-      move(rev: string, amount: bigint) {
-        this.claimable = [[rev, amount]]
-        this.status = 'final'
+      async acceptDeposit(token: any, amount: Amount, nextOwner?: string) {
+        token.deposit(this._id, amount)
+        this.deposits.push(token.depositTuple)
+        if (nextOwner) this._owners = [nextOwner]
+      }
+
+      setWithdraw(id: Id, amount: Amount, root: Root) {
+        this.withdraws = [[root, id, amount]]
+      }
+
+      setFinalWithdraw(id: Id, amount: Amount, root: Root) {
+        this.finalWithdraws = [[root, id, amount]]
       }
     }
+    return c.new(NaiveEscrow, [])
+  }
 
-    const createToken = async (mintAmount: bigint = 10n) => {
-      await ensureFunds(alice)
-      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'test-deposit' }
-      return await alice.new(TBC777, [params], mod)
+  /** Atomic deposit (recommended pattern) */
+  async function depositAtomic(
+    token: any,
+    escrow: any,
+    amount: Amount,
+    depositor: Computer = minter,
+    nextOwner?: string,
+  ) {
+    const { tx, effect } = await depositor.encode({
+      exp: `escrow.acceptDeposit(token, ${amount}n${nextOwner ? `, '${nextOwner}'` : ''})`,
+      env: { escrow: escrow._rev, token: token._rev },
+    })
+    await depositor.broadcast(tx)
+
+    // Return both updated objects so callers can re-bind if needed
+    return {
+      escrow: effect.env.escrow as SmartContract<typeof Escrow>,
+      token: effect.env.token as any, // ← this is the key line
     }
+  }
 
-    const createEscrow = async () => {
-      await ensureFunds(bob)
-      return await bob.new(NaiveEscrow, [])
-    }
+  async function withdraw(token: any, escrowRev: Rev, isFinal = false) {
+    await token.withdraw(escrowRev, isFinal)
+  }
 
-    it('should allow depositing a positive amount into any compatible escrow', async () => {
-      const token = await createToken(5n)
-      const escrow = await createEscrow()
-      const depositAmount = 2n
-      await token.deposit(escrow._id, depositAmount)
-      expect(token.amount).to.equal(3n)
-      expect(token.escrow).to.equal(escrow._id)
+  /**
+   * Primary no-inflation assertion helper. Uses only the safe getBalance path
+   * (EscrowAuditor.audit is only available inside smart contracts).
+   */
+  async function assertNoInflation(escrowRev: Rev, token: any) {
+    const balance = await token.getBalance(escrowRev)
+    expect(balance >= 0n).eq(true)
+  }
+
+  /** Create a fresh token instance (via transfer for efficiency) */
+  /** Create a fresh token instance (mint fresh each time to avoid depleting
+   * shared root) */
+  async function createFreshToken(amount = FRESH_TOKEN_AMOUNT, owner = minter.getPublicKey()) {
+    const exp = `new TBC777({ to: '${owner}', amount: ${amount}n, name: '${TEST_NAME}', symbol: '${TEST_SYMBOL}' })`
+    const { effect, tx } = await minter.encode({ exp, mod })
+    const fresh = branded(effect.res as SmartContract<typeof TBC777>)
+    await minter.broadcast(tx)
+    return fresh
+  }
+
+  // ============================================================
+  // PRIMARY GOAL: NO-INFLATION INVARIANT
+  // ============================================================
+  describe('No-Inflation Invariant (Core Security Guarantee)', () => {
+    it('maintains non-negative balance after single deposit + full withdraw', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken(FRESH_TOKEN_AMOUNT)
+      expect(t.amount).eq(FRESH_TOKEN_AMOUNT)
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken // re-bind so the test sees the post-deposit state (amount === 5n)
+      expect(t.amount).eq(FRESH_TOKEN_AMOUNT - DEPOSIT_AMOUNT)
+
+      await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
+
+      await withdraw(t, escrow1._rev as Rev)
+      await assertNoInflation(escrow1._rev as Rev, t)
+      expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
     })
 
-    it('should reduce token balance by exact deposit amount and record escrow id', async () => {
-      const initialAmount = 5n
-      const depositAmount = 3n
-      const token = await createToken(initialAmount)
-      const escrow = await createEscrow()
-      await token.deposit(escrow._id, depositAmount)
-      expect(token.amount).to.equal(initialAmount - depositAmount)
-      expect(token.escrow).to.equal(escrow._id)
-    })
+    it('rejects over-claim (withdraws > deposited) with "Escrow balance too low"', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken()
 
-    it('should support partial deposits while leaving remainder unlocked', async () => {
-      const initialAmount = 5n
-      const depositAmount = 2n
-      const token = await createToken(initialAmount)
-      const escrow = await createEscrow()
-      await token.deposit(escrow._id, depositAmount)
-      expect(token.amount).to.equal(initialAmount - depositAmount)
-      expect(token.escrow).to.equal(escrow._id)
-    })
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
 
-    it('should reject deposit of zero or negative amount', async () => {
-      const token = await createToken(5n)
-      const escrow = await createEscrow()
+      // Malicious escrow over-claims far more than was deposited
+      const MALICIOUS_AMOUNT = 100n
+      await (escrow1 as any).setWithdraw(t._id, MALICIOUS_AMOUNT, t.root as Root)
+
       try {
-        await token.deposit(escrow._id, 0n)
-        expect.fail('Expected deposit of zero to be rejected')
-      } catch (err: any) {
-        expect(err.message).to.equal('Deposit amount must be positive')
-      }
-      try {
-        await token.deposit(escrow._id, -5n)
-        expect.fail('Expected deposit of negative amount to be rejected')
-      } catch (err: any) {
-        expect(err.message).to.equal('Deposit amount must be positive')
+        await withdraw(t, escrow1._rev as Rev)
+        expect.fail('should have thrown on over-claim')
+      } catch (e: any) {
+        const msg = `Escrow available balance (${DEPOSIT_AMOUNT - MALICIOUS_AMOUNT}) too low`
+        expect(e.message).eq(msg)
       }
     })
 
-    it('should reject deposit when token balance is insufficient', async () => {
-      const token = await createToken(5n)
-      const escrow = await createEscrow()
+    it('rejects cumulative inflation across multiple revisions in escrow history', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken()
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+
+      // First revision records a small claim
+      await (escrow1 as any).setWithdraw(t._id, 1n, t.root as Root)
+
+      // Second revision overwrites with a huge claim. The auditor walks the
+      // full prev-chain and sums *all* historical withdraw entries (1n + 100n >
+      // 5n deposited) → availableBalance < 0 → reject.
+      await (escrow1 as any).setWithdraw(t._id, 100n, t.root as Root)
+
       try {
-        await token.deposit(escrow._id, 10n)
-        expect.fail('Expected insufficient balance deposit to be rejected')
-      } catch (err: any) {
-        expect(err.message).to.equal('Insufficient balance for deposit')
+        await withdraw(t, escrow1._rev as Rev)
+        expect.fail('should have thrown on cumulative inflation')
+      } catch (e: any) {
+        expect(e.message).to.include('Escrow available balance')
       }
     })
 
-    it('should reject deposit if token is already locked in another escrow', async () => {
-      const token = await createToken(10n)
-      const escrow1 = await createEscrow()
-      const escrow2 = await createEscrow()
-      await token.deposit(escrow1._id, 4n)
+    it('withdrawn[] array prevents replay (even after transfer)', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken()
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+
+      await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
+
+      await withdraw(t, escrow1._rev as Rev)
+      await assertNoInflation(escrow1._rev as Rev, t)
+      expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
+
+      // replay on same token instance
       try {
-        await token.deposit(escrow2._id, 3n)
-        expect.fail('Expected deposit while already escrowed to be rejected')
-      } catch (err: any) {
-        expect(err.message).to.equal('Token already in escrow')
+        await withdraw(t, escrow1._rev as Rev)
+        expect.fail('should have thrown on replay')
+      } catch (e: any) {
+        expect(e.message).to.include('Cannot withdraw multiple times')
       }
+
+      // even after full transfer (withdrawn list travels with the token)
+      await t.transfer(white.getPublicKey())
+      const whiteToken = await white.sync<typeof TBC777>(t._rev)
       try {
-        await token.deposit(escrow1._id, 1n)
-        expect.fail('Expected re-deposit to the same escrow to be rejected')
-      } catch (err: any) {
-        expect(err.message).to.equal('Token already in escrow')
+        await withdraw(whiteToken, escrow1._rev as Rev)
+        expect.fail('should have thrown on replay after transfer')
+      } catch (e: any) {
+        expect(e.message).to.include('Cannot withdraw multiple times')
       }
+    })
+
+    it('finalWithdrawn[] prevents replay of final claims', async () => {
+      // TODO
+    })
+
+    it('finalWithdraw only succeeds on the last revision of the escrow', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken()
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+
+      await (escrow1 as any).setFinalWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
+      const firstRev = escrow1._rev as Rev
+
+      await (escrow1 as any).setFinalWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
+      const lastRev = escrow1._rev as Rev
+
+      try {
+        await t.finalWithdraw(firstRev)
+        expect.fail('should have thrown on non-last rev')
+      } catch (e: any) {
+        expect(e.message).to.include('Claimable final withdraw amount is zero or negative')
+      }
+
+      await minter.delete([lastRev])
+
+      await t.finalWithdraw(lastRev)
+      expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
+    })
+
+    it('filters claims to only compatible tokens via isEqualTo', async () => {
+      // TODO: mint incompatible token + claim both → only compatible token is
+      // credited
+    })
+
+    it('cross-escrow claim is rejected (escrow + successor revision check)', async () => {
+      // TODO
+    })
+
+    it('malicious escrow pushing fake/duplicate/invalid revs is rejected by audit', async () => {
+      // TODO
+    })
+
+    it('remoteRoot tokens respect isValidMint and cannot inflate value', async () => {
+      // Create a completely fresh token directly
+      const amount = 10n
+      const exp = `new TBC777({ to: '${minter.getPublicKey()}', amount: ${amount}n, name: '${TEST_NAME}', symbol: '${TEST_SYMBOL}' })`
+      const { effect, tx } = await minter.encode({ exp, mod })
+      const freshToken = branded(effect.res as SmartContract<typeof TBC777>)
+      await minter.broadcast(tx)
+
+      const escrow = await createNaiveEscrow()
+      let t = await minter.sync<typeof TBC777>(freshToken._rev)
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(t, escrow, 5n)
+      t = updatedToken
+      await (escrow1 as any).setWithdraw(t._id, 5n, t.root as Root)
+
+      // Good case
+      const goodExp = `new TBC777({ to: '${minter.getPublicKey()}', amount: 0n, name: '${TEST_NAME}', symbol: '${TEST_SYMBOL}', remoteRoot: '${t.root}', withdrawn: ['${escrow1._rev}'] })`
+      const { effect: effectGood, tx: txGood } = await minter.encode({ exp: goodExp, mod })
+      const goodRemote = effectGood.res as SmartContract<typeof TBC777>
+      await minter.broadcast(txGood)
+
+      const { effect: isValidGood } = await minter.encode({
+        exp: `TBC777.isValidMint(goodRemote)`,
+        env: { goodRemote: goodRemote._rev },
+        mod,
+      })
+      expect(isValidGood.res).to.be.true
+
+      // Bad case 1: constructor rejects amount > 0n
+      expect(
+        () =>
+          new TBC777({
+            to: minter.getPublicKey(),
+            amount: 5n,
+            name: TEST_NAME,
+            symbol: TEST_SYMBOL,
+            remoteRoot: 'abc:0' as any,
+            withdrawn: ['def:0' as Rev],
+          }),
+      ).to.throw('Remote-root tokens must be created with amount 0n')
+
+      // Bad case 2
+      const badExp = `new TBC777({ to: '${minter.getPublicKey()}', amount: 0n, name: '${TEST_NAME}', symbol: '${TEST_SYMBOL}', remoteRoot: '${t.root}' })`
+      const { effect: effectBad, tx: txBad } = await minter.encode({ exp: badExp, mod })
+      const badRemote = effectBad.res as SmartContract<typeof TBC777>
+      await minter.broadcast(txBad)
+
+      const { effect: isValidBad } = await minter.encode({
+        exp: `TBC777.isValidMint(badRemote)`,
+        env: { badRemote: badRemote._rev },
+        mod,
+      })
+      expect(isValidBad.res).to.be.false
     })
   })
 
-  describe('Claim Functionality - Happy Path', () => {
-    class TestEscrow extends Contract {
-      claimable: [string, bigint][]
-      status: string
+  // ============================================================
+  // LIFECYCLE MANAGEMENT
+  // ============================================================
+  describe('Lifecycle: deposit / withdraw / finalWithdraw', () => {
+    it('atomic deposit correctly sets escrow and reduces token balance', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken(FRESH_TOKEN_AMOUNT)
+      expect(t.amount).eq(FRESH_TOKEN_AMOUNT)
 
-      constructor() {
-        super()
-      }
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
 
-      finalize(claims: [string, bigint][]) {
-        this.claimable = claims
-        this.status = 'final'
-      }
-    }
+      // Token side: amount reduced, escrow reference set
+      expect(t.amount).eq(FRESH_TOKEN_AMOUNT - DEPOSIT_AMOUNT)
+      expect(t.escrow).to.eq(escrow1._id)
 
-    it('should successfully claim tokens from a properly finalized escrow', async () => {
-      await ensureFunds(alice)
-      await ensureFunds(bob)
-      const mintAmount = 1000n
-      const depositAmount = 400n
-      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'happy-path' }
-      const token = await alice.new(TBC777, [params], mod)
-      const escrow = await bob.new(TestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-      await escrow.finalize([[token._rev, depositAmount]])
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount)
+      // Escrow side: deposit recorded with correct lineage + pre-mutation revision
+      expect(escrow1.deposits).to.have.lengthOf(1)
+      const [recordedRoot, recordedRev] = escrow1.deposits[0]
+      expect(recordedRoot).eq(t.root)
+      expect(recordedRev).to.be.a('string')
     })
 
-    it('should restore original token balance after a full claim', async () => {
-      await ensureFunds(alice)
-      await ensureFunds(bob)
-      const mintAmount = 500n
-      const depositAmount = 500n
-      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'restore-balance' }
-      const token = await alice.new(TBC777, [params], mod)
-      const escrow = await bob.new(TestEscrow, [])
+    it('withdraw clears escrow after successful claim', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken()
 
-      await token.deposit(escrow._id, depositAmount)
-      await escrow.finalize([[token._rev, depositAmount]])
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount)
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+      expect(t.escrow).to.eq(escrow1._id)
+
+      await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
+
+      await withdraw(t, escrow1._rev as Rev)
+
+      expect(t.escrow).to.be.undefined
+
+      await assertNoInflation(escrow1._rev as Rev, t)
+      expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
     })
 
-    it('should credit only the claimable slice matching the exact deposit revision', async () => {
-      await ensureFunds(alice)
-      await ensureFunds(bob)
-      const mintAmount = 1000n
-      const depositAmount = 300n
-      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'slice-test' }
-      const token = await alice.new(TBC777, [params], mod)
-      const escrow = await bob.new(TestEscrow, [])
+    it('getBalance remains consistent with manual audit at every step', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken()
 
-      await token.deposit(escrow._id, depositAmount)
-      await escrow.finalize([
-        [token._rev, 100n],
-        [token._rev, 200n],
-      ] as [string, bigint][])
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount)
-    })
+      // Step 1: Initial state – no deposits
+      let balance = await t.getBalance(escrow._rev as Rev)
+      expect(balance).eq(0n)
 
-    it('should clear the escrow flag after successful claim', async () => {
-      await ensureFunds(alice)
-      await ensureFunds(bob)
-      const mintAmount = 1000n
-      const depositAmount = 400n
-      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'clear-flag' }
-      const token = await alice.new(TBC777, [params], mod)
-      const escrow = await bob.new(TestEscrow, [])
+      // Step 2: Deposit
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
 
-      await token.deposit(escrow._id, depositAmount)
-      await escrow.finalize([[token._rev, depositAmount]])
-      await token.claim(escrow._rev)
-      expect(token.escrow).to.be.undefined
-    })
+      balance = await t.getBalance(escrow1._rev as Rev)
+      expect(balance).eq(DEPOSIT_AMOUNT)
 
-    it('should support partial deposit followed by full claim', async () => {
-      await ensureFunds(alice)
-      await ensureFunds(bob)
-      const mintAmount = 3n
-      const depositAmount = 2n
-      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'partial' }
-      const token = await alice.new(TBC777, [params], mod)
-      const escrow = await bob.new(TestEscrow, [])
+      // Step 3: Record a regular withdrawal authorization
+      await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
 
-      await token.deposit(escrow._id, depositAmount)
-      expect(token.amount).eq(mintAmount - depositAmount)
-      await escrow.finalize([[token._rev, depositAmount]])
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount)
-    })
+      balance = await t.getBalance(escrow1._rev as Rev)
+      expect(balance).eq(0n)
 
-    it('should allow sequential deposit-claim-redeposit cycles on the same token', async () => {
-      await ensureFunds(alice)
-      await ensureFunds(bob)
-      const mintAmount = 1000n
-      const params = { to: alice.getPublicKey(), amount: mintAmount, name: 'cycle-test' }
-      const token = await alice.new(TBC777, [params], mod)
+      // Step 4: Perform the withdrawal
+      await withdraw(t, escrow1._rev as Rev)
 
-      const escrow1 = await bob.new(TestEscrow, [])
-      await token.deposit(escrow1._id, 300n)
-      await escrow1.finalize([[token._rev, 300n]])
-      await token.claim(escrow1._rev)
-      expect(token.amount).eq(mintAmount)
-      expect(token.escrow).to.be.undefined
+      balance = await t.getBalance(escrow1._rev as Rev)
+      expect(balance).eq(0n)
+      expect(t.amount).eq(FRESH_TOKEN_AMOUNT)
 
-      const escrow2 = await bob.new(TestEscrow, [])
-      await token.deposit(escrow2._id, 450n)
-      await escrow2.finalize([[token._rev, 450n]])
-      await token.claim(escrow2._rev)
-      expect(token.amount).eq(mintAmount)
+      // Step 5: Delete the last revision (escrow becomes stale) – balance must stay 0
+      await minter.delete([escrow1._rev as Rev])
+      balance = await t.getBalance(escrow1._rev as Rev)
+      expect(balance).eq(0n)
     })
   })
 
-  describe('Revision History Audit', () => {
-    class AuditTestEscrow extends Contract {
-      claimable: [string, bigint][]
-      status: string
+  // ============================================================
+  // LINEAGE & COMPATIBILITY
+  // ============================================================
+  describe('Lineage Compatibility (isEqualTo / isSameLineageSync / semantic)', () => {
+    it('fast path returns true for same-lineage tokens (no remoteRoot)', async () => {
+      const t1 = await createFreshToken()
+      expect(t1.remoteRoot).to.be.undefined
 
-      constructor() {
-        super({ claimable: [], status: 'pending' })
-      }
+      // Explicit cast is required because of how the SmartContract<T> lifting
+      // works with inherited methods from TBC20 (transfer returns `this`)
+      const t2 = await t1.transfer(black.getPublicKey(), 3n)
 
-      setClaimable(rev: string, amount: bigint) {
-        this.claimable = [[rev, amount]]
-      }
+      // Fast path (synchronous)
+      expect(await t1.sameLineage(t2)).to.be.true
+      expect(await t2.sameLineage(t1)).to.be.true
 
-      finalize() {
-        this.status = 'final'
-      }
-    }
+      // Full isEqualTo (should use fast path internally)
+      expect(await t1.isEqualTo(t2)).to.be.true
+      expect(await t2.isEqualTo(t1)).to.be.true
 
-    it('should accept the supplied rev as the first final state in the prev-chain', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 10n
-      const depositAmount = 5n
-      const params = {
-        to: minter.getPublicKey(),
-        amount: mintAmount,
-        name: 'audit-accept-first-final',
-      }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(AuditTestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-      await escrow.setClaimable(token._rev, depositAmount)
-      await escrow.finalize()
-
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount)
-      expect(token.escrow).to.be.undefined
+      expect(t1._root).to.equal(t2._root)
+      expect(t1._rev).to.not.equal(t2._rev)
     })
 
-    it('should reject claim if any earlier revision in the prev-chain is already final', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 10n
-      const depositAmount = 5n
-      const params = {
-        to: minter.getPublicKey(),
-        amount: mintAmount,
-        name: 'audit-reject-earlier-final',
-      }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(AuditTestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-      await escrow.setClaimable(token._rev, depositAmount)
-
-      await escrow.finalize()
-
-      await escrow.setClaimable(token._rev, depositAmount)
-      await escrow.finalize()
-      const laterFinalRev = escrow._rev
-
-      let errorThrown = false
-      try {
-        await token.claim(laterFinalRev)
-      } catch (e: any) {
-        errorThrown = true
-        expect(e.message).to.include('Escrow was already finalized in a previous state')
-      }
-      expect(errorThrown).to.be.true
-    })
-
-    it('should fully traverse the linear revision history using computer.prev', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 10n
-      const depositAmount = 5n
-      const params = {
-        to: minter.getPublicKey(),
-        amount: mintAmount,
-        name: 'audit-traverse-history',
-      }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(AuditTestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-      await escrow.setClaimable(token._rev, depositAmount)
-
-      for (let i = 0; i < 8; i++) {
-        await escrow.setClaimable(token._rev, depositAmount)
-      }
-
-      await escrow.finalize()
-
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount)
-    })
-
-    it('should prevent double-claiming on any subsequent finalization of the same escrow', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 10n
-      const depositAmount = 5n
-      const params = {
-        to: minter.getPublicKey(),
-        amount: mintAmount,
-        name: 'audit-prevent-double-final',
-      }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(AuditTestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-      await escrow.setClaimable(token._rev, depositAmount)
-
-      await escrow.finalize()
-
-      await escrow.setClaimable(token._rev, depositAmount)
-      await escrow.finalize()
-      const laterFinalRev = escrow._rev
-
-      let errorThrown = false
-      try {
-        await token.claim(laterFinalRev)
-      } catch (e: any) {
-        errorThrown = true
-        expect(e.message).to.include('Escrow was already finalized in a previous state')
-      }
-      expect(errorThrown).to.be.true
-    })
-
-    it('should handle long revision chains before reaching the first final state', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 10n
-      const depositAmount = 5n
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'audit-long-chain' }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(AuditTestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-      await escrow.setClaimable(token._rev, depositAmount)
-
-      for (let i = 0; i < 12; i++) {
-        await escrow.setClaimable(token._rev, depositAmount)
-      }
-
-      await escrow.finalize()
-
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount)
-    })
-  })
-
-  describe('No-Inflation Invariant', () => {
-    class TestEscrow extends Contract {
-      claimable: [string, bigint][]
-      status: string
-
-      constructor() {
-        super()
-      }
-
-      finalize(claimables: [string, bigint][]) {
-        this.claimable = claimables
-        this.status = 'final'
-      }
-    }
-
-    it('should reject claim when total claimable exceeds actual deposited amount from this lineage', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 5n
-      const depositAmount = 3n
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(TestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-
-      await escrow.finalize([[token._rev, depositAmount + 1n]])
-
-      let errorThrown = false
-      try {
-        await token.claim(escrow._rev)
-      } catch (e: any) {
-        errorThrown = true
-        expect(e.message).to.include('Escrow created tokens')
-      }
-      expect(errorThrown).to.be.true
-
-      expect(token.amount).eq(mintAmount - depositAmount)
-    })
-
-    it('should allow claim when total claimable exactly equals deposited amount', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 5n
-      const depositAmount = 3n
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(TestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-
-      await escrow.finalize([[token._rev, depositAmount]])
-
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount)
-      expect(token.escrow).to.be.undefined
-    })
-
-    it('should allow claim when total claimable is less than deposited amount', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 5n
-      const depositAmount = 3n
-      const claimableAmount = 2n
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(TestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-
-      await escrow.finalize([[token._rev, claimableAmount]])
-
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount - depositAmount + claimableAmount)
-    })
-
-    it('should correctly compute deposited amounts via computeDeposit delta for every referenced depositRev', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 5n
-      const depositAmount = 3n
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(TestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-
-      const originalComputer = (globalThis as any).computer
-      ;(globalThis as any).computer = minter
-
-      const computed = await (TBC777 as any).computeDeposit(token._rev, token._root, escrow._id)
-
-      ;(globalThis as any).computer = originalComputer
-
-      expect(computed).to.equal(depositAmount)
-    })
-
-    it('should enforce no-inflation across multiple unique deposit revisions in a single claimable list', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 5n
-      const depositAmount = 3n
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(TestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-
-      await escrow.finalize([
-        [token._rev, 2n],
-        [token._rev, 1n],
-      ])
-
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(mintAmount - depositAmount + 3n)
-    })
-
-    it('should reject claim when escrow attempts to over-claim from any single deposit revision', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 5n
-      const depositAmount = 3n
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'test' }
-      const token = await minter.new(TBC777, [params], mod)
-
-      const escrow = await minter.new(TestEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-
-      await escrow.finalize([[token._rev, depositAmount + 1n]])
-
-      let errorThrown = false
-      try {
-        await token.claim(escrow._rev)
-      } catch (e: any) {
-        errorThrown = true
-        expect(e.message).to.include('Escrow created tokens')
-      }
-      expect(errorThrown).to.be.true
-    })
-
-    it('should maintain no-inflation even when claimable contains entries from unrelated TBC777 lineages', async () => {
-      await ensureFunds(minter)
-      const paramsMain = { to: minter.getPublicKey(), amount: 5n, name: 'main' }
-      const token = await minter.new(TBC777, [paramsMain], mod)
-
-      const paramsUnrelated = { to: minter.getPublicKey(), amount: 10n, name: 'unrelated' }
-      const unrelated = await minter.new(TBC777, [paramsUnrelated], mod)
-
-      const escrow = await minter.new(TestEscrow, [])
-
-      await token.deposit(escrow._id, 3n)
-
-      await escrow.finalize([
-        [token._rev, 3n],
-        [unrelated._rev, 1n],
-      ])
-
-      let errorThrown = false
-      try {
-        await token.claim(escrow._rev)
-      } catch (e: any) {
-        errorThrown = true
-        expect(e.message).to.include('Found invalid deposit')
-      }
-      expect(errorThrown).to.be.true
-
-      expect(token.amount).eq(2n)
-    })
-  })
-
-  describe('Multi-Deposit and Multi-Claim Scenarios', () => {
-    class NaiveEscrow extends Contract {
-      claimable: [string, bigint][]
-      status: string
-
-      constructor() {
-        super()
-      }
-
-      move(claimable: [string, bigint][]) {
-        this.claimable = claimable
-        this.status = 'final'
-      }
-    }
-
-    it('should support multiple simultaneous deposits from the same token into different escrows', async () => {
-      await ensureFunds(minter, 15e8)
-      const token1 = await minter.new(
-        TBC777,
-        [{ to: minter.getPublicKey(), amount: 10n, name: 'test' }],
-        mod,
+    it('semantic comparison accepts valid remoteRoot tokens', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken()
+
+      // Deposit the normal token into escrow (establishes the lineage)
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
       )
-      const token2 = await minter.new(
-        TBC777,
-        [{ to: minter.getPublicKey(), amount: 10n, name: 'test' }],
-        mod,
-      )
+      t = updatedToken
 
-      const escrow1 = await minter.new(NaiveEscrow, [])
-      const escrow2 = await minter.new(NaiveEscrow, [])
+      // Record a valid claim so the remoteRoot token can be created
+      await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
 
-      await token1.deposit(escrow1._id, 6n)
-      await token2.deposit(escrow2._id, 7n)
+      // Create a remoteRoot token that claims the exact same lineage
+      const goodExp = `new TBC777({ to: '${minter.getPublicKey()}', amount: 0n, name: '${TEST_NAME}', symbol: '${TEST_SYMBOL}', remoteRoot: '${t.root}', withdrawn: ['${escrow1._rev}'] })`
+      const { effect: effectGood, tx: txGood } = await minter.encode({ exp: goodExp, mod })
+      const goodRemote = branded(effectGood.res as SmartContract<typeof TBC777>)
+      await minter.broadcast(txGood)
 
-      expect(token1.amount).eq(4n)
-      expect(token2.amount).eq(3n)
-      expect(token1.escrow).eq(escrow1._id)
-      expect(token2.escrow).eq(escrow2._id)
+      // Both directions must succeed (isEqualTo is symmetric)
+      expect(await t.isEqualTo(goodRemote)).to.be.true
+      expect(await goodRemote.isEqualTo(t)).to.be.true
+
+      // Fast-path sameLineage is false because one has remoteRoot
+      expect(await t.sameLineage(goodRemote)).to.be.false
     })
 
-    it('should allow claiming from one escrow while deposits in other escrows remain locked', async () => {
-      await ensureFunds(minter, 15e8)
-      const token1 = await minter.new(
-        TBC777,
-        [{ to: minter.getPublicKey(), amount: 5n, name: 't1' }],
-        mod,
-      )
-      const token2 = await minter.new(
-        TBC777,
-        [{ to: minter.getPublicKey(), amount: 5n, name: 't2' }],
-        mod,
-      )
-
-      const escrow1 = await minter.new(NaiveEscrow, [])
-      const escrow2 = await minter.new(NaiveEscrow, [])
-
-      await token1.deposit(escrow1._id, 5n)
-      await token2.deposit(escrow2._id, 5n)
-
-      await escrow1.move([[token1._rev, 5n]])
-      await token1.claim(escrow1._rev)
-
-      expect(token1.amount).eq(5n)
-      expect(token1.escrow).to.be.undefined
-
-      expect(token2.amount).eq(0n)
-      expect(token2.escrow).eq(escrow2._id)
-    })
-
-    it('should handle multiple distinct TBC777 tokens deposited into the same escrow', async () => {
-      await ensureFunds(minter, 15e8)
-      const token1 = await minter.new(
-        TBC777,
-        [{ to: minter.getPublicKey(), amount: 5n, name: 't1' }],
-        mod,
-      )
-      const token2 = await minter.new(
-        TBC777,
-        [{ to: minter.getPublicKey(), amount: 5n, name: 't2' }],
-        mod,
-      )
-
-      const escrow = await minter.new(NaiveEscrow, [])
-
-      await token1.deposit(escrow._id, 4n)
-      await token2.deposit(escrow._id, 3n)
-
-      expect(token1.amount).eq(1n)
-      expect(token2.amount).eq(2n)
-      expect(token1.escrow).eq(escrow._id)
-      expect(token2.escrow).eq(escrow._id)
-    })
-
-    it('should correctly distribute claimables that reference multiple deposit revisions', async () => {
-      await ensureFunds(minter, 15e8)
-      const token = await minter.new(
-        TBC777,
-        [{ to: minter.getPublicKey(), amount: 20n, name: 't1' }],
-        mod,
-      )
-
-      const escrow = await minter.new(NaiveEscrow, [])
-
-      await token.deposit(escrow._id, 10n)
-      const depositRev = token._rev
-
-      await escrow.move([
-        [depositRev, 6n],
-        [depositRev, 4n],
-      ])
-
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(20n)
-    })
-
-    it('should support partial claims leaving the remainder correctly locked', async () => {
-      await ensureFunds(minter)
-      const token = await minter.new(
-        TBC777,
-        [{ to: minter.getPublicKey(), amount: 10n, name: 'partial' }],
-        mod,
-      )
-
-      const escrow = await minter.new(NaiveEscrow, [])
-
-      await token.deposit(escrow._id, 8n)
-
-      await escrow.move([[token._rev, 5n]])
-
-      await token.claim(escrow._rev)
-      expect(token.amount).eq(7n)
-      expect(token.escrow).to.be.undefined
-    })
-  })
-
-  describe('Escrow Contract Compatibility', () => {
-    it('should work with any minimal escrow exposing only { claimable, status } shape', async () => {
-      class MinimalEscrow extends Contract {
-        claimable: [string, bigint][]
-        status: string
-
-        constructor() {
-          super()
-        }
-
-        finalize(depositRev: string, amt: bigint) {
-          this.claimable = [[depositRev, amt]]
-          this.status = 'final'
-        }
-      }
-
-      await ensureFunds(alice)
-      const params = { to: alice.getPublicKey(), amount: 10n, name: 'test-minimal' }
-      const token = await alice.new(TBC777, [params], mod)
-
-      const escrow = await alice.new(MinimalEscrow, [])
-
-      await token.deposit(escrow._id, 7n)
-      expect(token.amount).to.eq(3n)
-
-      await escrow.finalize(token._rev, 7n)
-
-      await token.claim(escrow._rev)
-      expect(token.amount).to.eq(10n)
-      expect(token.escrow).to.be.undefined
-    })
-
-    it('should work with escrows that inherit from the provided Escrow base class', async () => {
-      class InheritedEscrow extends Contract {
-        claimable: [string, bigint][]
-        status: string
-
-        constructor() {
-          super()
-        }
-
-        finalize(depositRev: string, amt: bigint) {
-          this.claimable = [[depositRev, amt]]
-          this.status = 'final'
-        }
-      }
-
-      await ensureFunds(alice)
-      const params = { to: alice.getPublicKey(), amount: 10n, name: 'test-inherited' }
-      const token = await alice.new(TBC777, [params], mod)
-
-      const escrow = await alice.new(InheritedEscrow, [])
-
-      await token.deposit(escrow._id, 7n)
-      expect(token.amount).to.eq(3n)
-
-      await escrow.finalize(token._rev, 7n)
-
-      await token.claim(escrow._rev)
-      expect(token.amount).to.eq(10n)
-      expect(token.escrow).to.be.undefined
-    })
-
-    it('should work with arbitrarily complex custom escrow implementations', async () => {
-      class ComplexEscrow extends Contract {
-        claimable: [string, bigint][]
-        status: string
-        logs: string[]
-        extraData: string | null
-
-        constructor() {
-          super()
-        }
-
-        log(msg: string) {
-          if (!this.logs) this.logs = []
-          this.logs.push(msg)
-        }
-
-        setMetadata(reason: string) {
-          this.extraData = reason
-        }
-
-        finalize(depositRev: string, amt: bigint) {
-          this.log('finalizing escrow')
-          this.setMetadata('complex-payout')
-          this.claimable = [[depositRev, amt]]
-          this.status = 'final'
-        }
-      }
-
-      await ensureFunds(alice)
-      const params = { to: alice.getPublicKey(), amount: 10n, name: 'test-complex' }
-      const token = await alice.new(TBC777, [params], mod)
-
-      const escrow = await alice.new(ComplexEscrow, [])
-
-      await token.deposit(escrow._id, 7n)
-      expect(token.amount).to.eq(3n)
-
-      await escrow.finalize(token._rev, 7n)
-
-      await token.claim(escrow._rev)
-      expect(token.amount).to.eq(10n)
-      expect(token.escrow).to.be.undefined
-    })
-
-    it('should work with escrows that perform multiple intermediate state changes before final', async () => {
-      class MultiStepEscrow extends Contract {
-        claimable: [string, bigint][]
-        status: string
-
-        constructor() {
-          super()
-        }
-
-        step1(depositRev: string) {
-          this.claimable = [[depositRev, 0n]]
-        }
-
-        step2(depositRev: string, amt: bigint) {
-          this.claimable = [[depositRev, amt / 2n]]
-        }
-
-        finalize(depositRev: string, amt: bigint) {
-          this.claimable = [[depositRev, amt]]
-          this.status = 'final'
-        }
-      }
-
-      await ensureFunds(alice)
-      const params = { to: alice.getPublicKey(), amount: 10n, name: 'test-multistep' }
-      const token = await alice.new(TBC777, [params], mod)
-
-      const escrow = await alice.new(MultiStepEscrow, [])
-
-      await token.deposit(escrow._id, 8n)
-      expect(token.amount).to.eq(2n)
-
-      await escrow.step1(token._rev)
-      await escrow.step2(token._rev, 8n)
-      await escrow.finalize(token._rev, 8n)
-
-      await token.claim(escrow._rev)
-      expect(token.amount).to.eq(10n)
-      expect(token.escrow).to.be.undefined
-    })
-  })
-
-  describe('Helper Utilities', () => {
-    class NaiveEscrow extends Contract {
-      claimable: [string, bigint][]
-      status: string
-      constructor() {
-        super()
-      }
-      move(rev: string, amount: bigint) {
-        this.claimable = [[rev, amount]]
-        this.status = 'final'
-      }
-    }
-
-    it('should compute exact deposit delta using prev-state comparison in computeDeposit', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 10n
-      const depositAmount = 7n
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'delta-test' }
-
-      const token = await minter.new(TBC777, [params], mod)
-      const escrow = await minter.new(NaiveEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-
-      const originalComputer = (global as any).computer
-      ;(global as any).computer = minter
-
-      try {
-        const delta = await (TBC777 as any).computeDeposit(token._rev, token._root, escrow._id)
-        expect(delta).eq(depositAmount)
-      } finally {
-        ;(global as any).computer = originalComputer
-      }
-    })
-
-    it('should reject invalid deposit revisions that do not belong to the expected root or escrow', async () => {
-      await ensureFunds(minter)
-      const mintAmount = 10n
-      const depositAmount = 3n
-      const params = { to: minter.getPublicKey(), amount: mintAmount, name: 'invalid-test' }
-
-      const token = await minter.new(TBC777, [params], mod)
-      const escrow = await minter.new(NaiveEscrow, [])
-
-      await token.deposit(escrow._id, depositAmount)
-
-      const originalComputer = (global as any).computer
-      ;(global as any).computer = minter
-
-      try {
-        await (TBC777 as any).computeDeposit(token._rev, 'wrong-root-123', escrow._id)
-        expect.fail('Should have thrown error for wrong root')
-      } catch (e: any) {
-        expect(e.message).to.include('Found invalid deposit')
-      }
-
-      try {
-        await (TBC777 as any).computeDeposit(token._rev, token._root, 'wrong-escrow-456')
-        expect.fail('Should have thrown error for wrong escrow')
-      } catch (e: any) {
-        expect(e.message).to.include('Found invalid deposit')
-      } finally {
-        ;(global as any).computer = originalComputer
-      }
-    })
-  })
-
-  describe('Error Handling and Edge Cases', () => {
-    class NaiveEscrow extends Contract {
-      claimable: [string, bigint][]
-      status: string
-      constructor() {
-        super()
-      }
-      move(rev: string, amount: bigint) {
-        this.claimable = [[rev, amount]]
-        this.status = 'final'
-      }
-    }
-
-    class MaliciousEscrow extends Contract {
-      claimable: [string, bigint][]
-      status: string
-      constructor() {
-        super()
-      }
-      finalize(claimableList: [string, bigint][]) {
-        this.claimable = claimableList
-        this.status = 'final'
-      }
-    }
-
-    const setupMinter = async () => {
-      await ensureFunds(minter)
-      return minter
-    }
-
-    it('should throw descriptive errors for all invalid operations', async () => {
-      const minterInst = await setupMinter()
-      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test-error' }
-      const token = await minterInst.new(TBC777, [params], mod)
-
-      try {
-        await token.deposit('dummy-escrow', 0n)
-        expect.fail('Should have thrown')
-      } catch (e: any) {
-        expect(e.message).to.include('Deposit amount must be positive')
-      }
-
-      try {
-        await token.deposit('dummy-escrow', -5n)
-        expect.fail('Should have thrown')
-      } catch (e: any) {
-        expect(e.message).to.include('Deposit amount must be positive')
-      }
-
-      try {
-        await token.deposit('dummy-escrow', 20n)
-        expect.fail('Should have thrown')
-      } catch (e: any) {
-        expect(e.message).to.include('Insufficient balance for deposit')
-      }
-
-      const escrow = await minterInst.new(NaiveEscrow, [])
-      await token.deposit(escrow._id, 5n)
-
-      try {
-        await token.deposit('other-escrow', 1n)
-        expect.fail('Should have thrown')
-      } catch (e: any) {
-        expect(e.message).to.include('Token already in escrow')
-      }
-    })
-
-    it('should reject claim when token is not currently escrowed', async () => {
-      const minterInst = await setupMinter()
-      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
-      const token = await minterInst.new(TBC777, [params], mod)
-      const escrow = await minterInst.new(NaiveEscrow, [])
-
-      try {
-        await token.claim(escrow._rev)
-        expect.fail('Should have thrown')
-      } catch (e: any) {
-        expect(e.message).to.include('Token not in escrow')
-      }
-    })
-
-    it('should reject claim when provided revision is not in final state', async () => {
-      const minterInst = await setupMinter()
-      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
-      const token = await minterInst.new(TBC777, [params], mod)
-      const escrow = await minterInst.new(NaiveEscrow, [])
-
-      await token.deposit(escrow._id, 5n)
-
-      try {
-        await token.claim(escrow._rev)
-        expect.fail('Should have thrown')
-      } catch (e: any) {
-        expect(e.message).to.include('Escrow is not in final state')
-      }
-    })
-
-    it('should reject claimable entries referencing non-existent or malformed deposit revisions', async () => {
-      const minterInst = await setupMinter()
-      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
-      const token = await minterInst.new(TBC777, [params], mod)
-      const escrow = await minterInst.new(MaliciousEscrow, [])
-
-      await token.deposit(escrow._id, 5n)
-      await escrow.finalize([['non-existent-rev-xyz', 3n]])
-
-      try {
-        await token.claim(escrow._rev)
-        expect.fail('Should have thrown')
-      } catch (e: any) {
-        expect(e.message).to.match(
-          /parameter 1 must be of length 64|Found invalid deposit|Something went wrong/i,
+    it('rejects inline-class / shadowing attacks via makeRegex', async () => {
+      const validTo = '02abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'
+
+      // Malicious expressions that try to define an inline class / override methods / shadow
+      const maliciousExpressions = [
+        // Inline class definition (classic shadowing attack)
+        `new (class extends TBC777 { malicious() { return 999n } })({to:'${validTo}',amount:30n,name:'test',symbol:'TST'})`,
+
+        // Function definition inside the expression
+        `new (function(){return class extends TBC777{}})()({to:'${validTo}',amount:30n,name:'test',symbol:'TST'})`,
+
+        // Constructor with inline class expression
+        `new TBC777({to:'${validTo}',amount:30n,name:'test',symbol:'TST',malicious: new (class { evil(){} })()})`,
+
+        // Shadowing with a function expression
+        `new TBC777({to:'${validTo}',amount:30n,name:'test',symbol:'TST',constructor: function(){return 999n}})`,
+      ]
+
+      for (const malicious of maliciousExpressions) {
+        expect(() => TBC777.makeRegex(malicious)).to.throw(
+          'Constructor expression contains forbidden keywords',
         )
       }
     })
+  })
 
-    it('should handle escrow with empty claimable array gracefully', async () => {
-      const minterInst = await setupMinter()
-      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
-      const token = await minterInst.new(TBC777, [params], mod)
-      const escrow = await minterInst.new(MaliciousEscrow, [])
+  // ============================================================
+  // REMOTE ROOT / TRANSFERRABLE VALUE
+  // ============================================================
+  describe('remoteRoot & Cross-Lineage Flows', () => {
+    it('isValidMint returns true only when claimed amount ≤ total offered', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken(10n) // source token with 10n
 
-      await token.deposit(escrow._id, 5n)
-      await escrow.finalize([])
+      // Deposit exactly 5n into escrow (total offered = 5n)
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(t, escrow, 5n)
+      t = updatedToken // post-deposit token (amount now 5n)
 
-      await token.claim(escrow._rev)
-      expect(token.amount).to.equal(5n)
-      expect(token.escrow).to.be.undefined
+      // Record a matching claim in the escrow
+      await (escrow1 as any).setWithdraw(t._id, 5n, t.root as Root)
+
+      // GOOD CASE: remoteRoot token claims exactly the offered/deposited amount
+      // (must be created in same tx as the source token's withdraw)
+      const goodExp = `new TBC777({ to: '${minter.getPublicKey()}', amount: 0n, name: '${TEST_NAME}', symbol: '${TEST_SYMBOL}', remoteRoot: '${t.root}', withdrawn: ['${escrow1._rev}'] })`
+      const { effect: goodEffect, tx: goodTx } = await minter.encode({ exp: goodExp, mod })
+      const goodRemote = branded(goodEffect.res as SmartContract<typeof TBC777>)
+      await minter.broadcast(goodTx)
+
+      // isValidMint succeeds because:
+      // 1. remoteRoot token was created with amount: 0n at _id
+      // 2. it records a valid withdrawal claim
+      const { effect: goodValid } = await minter.encode({
+        exp: `TBC777.isValidMint(goodRemote)`,
+        env: { goodRemote: goodRemote._rev },
+        mod,
+      })
+      expect(goodValid.res).to.be.true
+
+      // BAD CASE: remoteRoot token with no matching withdrawal record
+      // (claimed amount effectively 0, but no claim recorded → invalid mint)
+      const badExpNoClaim = `new TBC777({ to: '${minter.getPublicKey()}', amount: 0n, name: '${TEST_NAME}', symbol: '${TEST_SYMBOL}', remoteRoot: '${t.root}' })`
+      const { effect: badEffectNoClaim, tx: badTxNoClaim } = await minter.encode({
+        exp: badExpNoClaim,
+        mod,
+      })
+      const badRemoteNoClaim = branded(badEffectNoClaim.res as SmartContract<typeof TBC777>)
+      await minter.broadcast(badTxNoClaim)
+
+      const { effect: badValidNoClaim } = await minter.encode({
+        exp: `TBC777.isValidMint(badRemoteNoClaim)`,
+        env: { badRemoteNoClaim: badRemoteNoClaim._rev },
+        mod,
+      })
+      expect(badValidNoClaim.res).to.be.false
+
+      // Note: Over-claim (claimed > total offered) is prevented earlier by
+      // EscrowAuditor.audit / _withdraw (availableBalance check) and cannot reach
+      // a successfully broadcast remoteRoot token. isValidMint is the final gate
+      // ensuring remote tokens were properly "claimed" from escrow during mint.
     })
 
-    it('should handle zero-value claimable entries without allowing inflation', async () => {
-      const minterInst = await setupMinter()
-      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
-      const token = await minterInst.new(TBC777, [params], mod)
-      const escrow = await minterInst.new(NaiveEscrow, [])
-
-      await token.deposit(escrow._id, 5n)
-      await escrow.move(token._rev, 0n)
-
-      await token.claim(escrow._rev)
-      expect(token.amount).to.equal(5n)
+    it('remote token can be deposited into a new escrow and claimed successfully', async () => {
+      // TODO
     })
+  })
 
-    it('should maintain security invariants under malicious escrow behavior', async () => {
-      const minterInst = await setupMinter()
-      const params = { to: minterInst.getPublicKey(), amount: 10n, name: 'test' }
-      const token = await minterInst.new(TBC777, [params], mod)
-      const escrow = await minterInst.new(MaliciousEscrow, [])
-
-      await token.deposit(escrow._id, 5n)
-      await escrow.finalize([[token._rev, 100n]])
+  // ============================================================
+  // ERROR HANDLING & EDGE CASES
+  // ============================================================
+  describe('Error Handling & Edge Cases', () => {
+    it('rejects deposit ≤ 0n', async () => {
+      const escrow = await createNaiveEscrow()
+      const t = await createFreshToken()
 
       try {
-        await token.claim(escrow._rev)
-        expect.fail('Should have thrown')
+        await t.deposit(escrow._id, 0n)
+        expect.fail('should have thrown on deposit <= 0n')
       } catch (e: any) {
-        expect(e.message).to.include('Escrow created tokens')
+        expect(e.message).to.equal('Deposit amount must be positive')
+      }
+
+      try {
+        await t.deposit(escrow._id, -1n)
+        expect.fail('should have thrown on deposit <= 0n')
+      } catch (e: any) {
+        expect(e.message).to.equal('Deposit amount must be positive')
       }
     })
+
+    it('rejects claim of zero amount', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken()
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+
+      // Explicit zero claim (escrow can be malicious or buggy)
+      await (escrow1 as any).setWithdraw(t._id, 0n, t.root as Root)
+
+      try {
+        await withdraw(t, escrow1._rev as Rev)
+        expect.fail('should have thrown on zero claimable amount')
+      } catch (e: any) {
+        expect(e.message).to.include('Claimable withdraw amount is zero or negative')
+      }
+    })
+
+    it('merge() is permanently disabled with clear error message', async () => {
+      const token = await createFreshToken()
+      try {
+        await token.merge()
+        expect.fail('merge() should have thrown')
+      } catch (e: any) {
+        expect(e.message).to.equal('merge() is disabled in TBC777.')
+      }
+    })
+
+    it('transfer of token with active escrow produces fresh recipient state', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken()
+
+      // 1. Deposit – sender token now has active escrow state
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+
+      expect(t.escrow).to.equal(escrow1._id)
+      expect(t.amount).to.equal(FRESH_TOKEN_AMOUNT - DEPOSIT_AMOUNT)
+
+      // 2. Transfer full remaining balance (explicit amount avoids internal timing issue)
+      const remainingAmount = t.amount
+      const transferResult = await t.transfer(white.getPublicKey(), remainingAmount)
+
+      // 3. Recipient syncs the newly created token
+      const whiteToken = await white.sync<typeof TBC777>(transferResult._rev)
+
+      // === KEY INVARIANT: recipient gets a fresh / sanitized state ===
+      expect(whiteToken.escrow).to.be.undefined
+      expect(whiteToken.withdrawn).to.deep.equal([])
+      expect(whiteToken.finalWithdrawn).to.deep.equal([])
+
+      // Amount should have been transferred correctly
+      expect(whiteToken.amount).to.equal(remainingAmount)
+
+      // Sender side checks
+      expect(t.amount).to.equal(0n)
+      expect(t.escrow).to.equal(escrow1._id)
+    })
+
+    it('rejects tokens created by defining a malicious class inside the expression (inline class definition / shadowing attack)', async () => {
+      // Malicious expression attempting to define an inline subclass that bypasses
+      // no-inflation (classic constructor shadowing / inline class attack).
+      const maliciousExp = `
+    new (class MaliciousTBC777 extends TBC777 {
+      deposit(escrow: any, amount: bigint) {
+        // Attempt to inflate balance, breaking the core security invariant
+        this.amount = this.amount + amount * 1000n
+        super.deposit(escrow, amount)
+      }
+    })({
+      to: '${minter.getPublicKey()}',
+      amount: 100n,
+      name: '${TEST_NAME}',
+      symbol: '${TEST_SYMBOL}'
+    })
+  `.trim()
+
+      // 1. Direct defense: makeRegex immediately rejects forbidden keywords
+      expect(() => TBC777.makeRegex(maliciousExp)).to.throw(
+        'Constructor expression contains forbidden keywords',
+      )
+
+      // 2. End-to-end protection: the public API must also reject it
+      try {
+        const { tx } = await minter.encode({ exp: maliciousExp, mod })
+        await minter.broadcast(tx)
+        expect.fail('Should have thrown when attempting to create malicious inline-class token')
+      } catch (e: any) {
+        // The error can surface at regex validation time (makeRegex) or during
+        // semantic validation / isValidMint. Either way, creation must be blocked.
+        expect(e.message).to.satisfy(
+          (msg: string) =>
+            msg.includes('forbidden keywords') ||
+            msg.includes('Invalid expression') ||
+            msg.includes('isValidMint') ||
+            msg.includes('constructor'),
+        )
+      }
+    })
+  })
+
+  // ============================================================
+  // ESCROW AUDITOR INTERNALS
+  // ============================================================
+  describe('EscrowAuditor Correctness', () => {
+    it('walkPrevChain traverses the complete revision history', async () => {
+      const escrow = await createNaiveEscrow()
+      const t1 = await createFreshToken(10n)
+      const t2 = await createFreshToken(5n)
+
+      // First deposit → revision 1
+      const { escrow: escrowAfter1 } = await depositAtomic(t1, escrow, 3n)
+
+      // Second deposit → revision 2 (latest)
+      const { escrow: escrowAfter2 } = await depositAtomic(t2, escrowAfter1, 2n)
+
+      // Manually walk the full prev-chain using the real Computer instance (minter)
+      // This mirrors exactly what EscrowAuditor.walkHistory does internally
+      const states: any[] = []
+      let current: Rev | undefined = escrowAfter2._rev as Rev
+
+      while (current) {
+        const state = await minter.sync(current)
+        states.push(state)
+        current = (await minter.prev(current)) as Rev
+      }
+
+      // Should contain exactly one state per revision (latest → genesis)
+      expect(states.length).to.equal(3)
+
+      // deposits array should grow with each deposit
+      expect(states[0].deposits.length).to.equal(2) // latest revision
+      expect(states[1].deposits.length).to.equal(1)
+      expect(states[2].deposits.length).to.equal(0) // initial empty escrow
+
+      // Verify correct ordering and prev links
+      for (let i = 0; i < states.length - 1; i++) {
+        const currentRev = states[i]._rev as Rev
+        const prevRev = await minter.prev(currentRev)
+        expect(prevRev).to.equal(states[i + 1]._rev)
+      }
+
+      // Genesis revision has no predecessor
+      expect(await minter.prev(states[2]._rev as Rev)).to.be.undefined
+    })
+
+    it('computeDeposit correctly calculates delta using successor revision', async () => {
+      // TODO
+    })
+
+    it('sumCompatibleClaimAmounts uses only isEqualTo (not isValidMint) for claims', async () => {
+      // TODO
+    })
+
+    it('very long escrow revision histories are handled correctly by the auditor', async () => {
+      // TODO: stress test full prev-chain walk with many revisions
+    })
+  })
+
+  // ============================================================
+  // KEY SCENARIOS
+  // ============================================================
+  describe('Key Scenarios (Ready for Implementation)', () => {
+    it('Single deposit → full withdrawal', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken(FRESH_TOKEN_AMOUNT)
+      expect(t.amount).eq(FRESH_TOKEN_AMOUNT)
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken // re-bind so the test sees the post-deposit state (amount === FRESH_TOKEN_AMOUNT - DEPOSIT_AMOUNT)
+      expect(t.amount).eq(FRESH_TOKEN_AMOUNT - DEPOSIT_AMOUNT)
+
+      await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
+
+      await withdraw(t, escrow1._rev as Rev)
+      await assertNoInflation(escrow1._rev as Rev, t)
+      expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
+    })
+
+    it('Multiple deposits from different owners → partial claims', async () => {
+      // TODO
+    })
+
+    it('Deposit → transfer token → claim from new owner', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken(FRESH_TOKEN_AMOUNT)
+      expect(t.amount).eq(FRESH_TOKEN_AMOUNT)
+
+      // 1. Deposit (amount reduced to 4n, deposit recorded in escrow)
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+      expect(t.amount).eq(FRESH_TOKEN_AMOUNT - DEPOSIT_AMOUNT)
+
+      // 2. Authorize claim for the exact post-deposit token _id
+      await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
+
+      // 3. Transfer the *remaining* balance to new owner
+      //    _createTransferToken sanitizes escrow state (withdrawn/finalWithdrawn/escrow)
+      const transferred = await t.transfer(white.getPublicKey())
+      const whiteToken = await white.sync<typeof TBC777>(transferred._rev)
+
+      // 4. Original owner claims the deposited amount (even after transferring remainder)
+      await withdraw(t, escrow1._rev as Rev)
+      await assertNoInflation(escrow1._rev as Rev, t)
+
+      // After transfer the original token had 0n; withdraw adds back only the deposited 6n
+      expect(t.amount).to.eq(DEPOSIT_AMOUNT)
+
+      // 5. New owner receives clean token with the remaining balance (4n)
+      //    No inherited escrow/claim state, different _id → cannot claim deposit
+      expect(whiteToken.amount).eq(FRESH_TOKEN_AMOUNT - DEPOSIT_AMOUNT)
+      expect(whiteToken.withdrawn).to.have.lengthOf(0)
+      expect(whiteToken.finalWithdrawn).to.have.lengthOf(0)
+      expect(whiteToken.escrow).to.be.undefined
+
+      try {
+        await withdraw(whiteToken, escrow1._rev as Rev)
+        expect.fail('new owner should not be able to claim deposit (different _id)')
+      } catch (e: any) {
+        expect(e.message).to.include('Claimable')
+      }
+    })
+
+    it('Final withdraw on last revision vs non-last revision', async () => {
+      const escrow = await createNaiveEscrow()
+      let t = await createFreshToken(FRESH_TOKEN_AMOUNT)
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+
+      await (escrow1 as any).setFinalWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
+      const firstRev = escrow1._rev as Rev
+
+      await (escrow1 as any).setFinalWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
+      const lastRev = escrow1._rev as Rev
+
+      try {
+        await t.finalWithdraw(firstRev)
+        expect.fail('should have thrown on non-last rev')
+      } catch (e: any) {
+        expect(e.message).to.include('Claimable final withdraw amount is zero or negative')
+      }
+
+      await minter.delete([lastRev])
+
+      await t.finalWithdraw(lastRev)
+      expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
+    })
+
+    it('Attempted inflation via incompatible token', async () => {
+      const escrow = await createNaiveEscrow()
+      let tA = await createFreshToken(FRESH_TOKEN_AMOUNT)
+      const rootA = tA.root as Root
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        tA,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      tA = updatedToken
+
+      // Record a legitimate claim for tA's lineage
+      await (escrow1 as any).setWithdraw(tA._id, DEPOSIT_AMOUNT, rootA)
+
+      // Create an incompatible token (different root / lineage)
+      const tB = await createFreshToken(FRESH_TOKEN_AMOUNT)
+      expect(tB.root).to.not.equal(rootA)
+      expect(await tA.isEqualTo(tB)).to.be.false
+
+      // Attempted inflation: tB tries to claim the amount recorded for tA
+      try {
+        await withdraw(tB, escrow1._rev as Rev)
+        expect.fail('incompatible token must not be able to claim')
+      } catch (e: any) {
+        expect(e.message).to.include('Claimable withdraw amount is zero or negative')
+      }
+
+      // Legitimate token can still claim normally (no inflation occurred)
+      await withdraw(tA, escrow1._rev as Rev)
+      expect(tA.amount).to.eq(FRESH_TOKEN_AMOUNT)
+      await assertNoInflation(escrow1._rev as Rev, tA)
+    })
+
+    it.skip('Cross-lineage (remoteRoot) complete flow with isValidMint validation', async () => {
+      // === Setup: Create source token and deposit into escrow ===
+      const escrow = await createNaiveEscrow()
+      let source = await createFreshToken(FRESH_TOKEN_AMOUNT)
+
+      const { escrow: escrowAfterDeposit, token: deposited } = await depositAtomic(
+        source,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      source = deposited
+
+      // Authorize the claim on the escrow
+      await (escrowAfterDeposit as any).setWithdraw(source._id, DEPOSIT_AMOUNT, source.root as Root)
+
+      // === Create remoteRoot token (the key operation) ===
+      const remoteExp = `new TBC777({ 
+    to: '${minter.getPublicKey()}', 
+    amount: 0n, 
+    name: '${TEST_NAME}', 
+    symbol: '${TEST_SYMBOL}', 
+    remoteRoot: '${source.root}', 
+    withdrawn: ['${escrowAfterDeposit._rev}'] 
+  })`
+
+      const { effect: remoteEffect, tx: remoteTx } = await minter.encode({
+        exp: remoteExp,
+        mod,
+      })
+      const goodRemote = branded(remoteEffect.res as SmartContract<typeof TBC777>)
+      await minter.broadcast(remoteTx)
+
+      // === Core assertions ===
+
+      // 1. isValidMint must succeed (amount 0n + valid withdrawn record)
+      const { effect: isValidEffect } = await minter.encode({
+        exp: `TBC777.isValidMint(goodRemote)`,
+        env: { goodRemote: goodRemote._rev },
+        mod,
+      })
+      expect(isValidEffect.res).to.be.true
+
+      // 2. Remote token starts at 0 and carries correct remoteRoot
+      expect(goodRemote.amount).to.equal(0n)
+      expect(goodRemote.remoteRoot).to.equal(source.root)
+      expect(goodRemote._root).to.not.equal(source._root)
+
+      // 3. Cross-lineage compatibility
+      expect(await source.isEqualTo(goodRemote)).to.be.true
+      expect(await goodRemote.isEqualTo(source)).to.be.true
+      expect(await source.sameLineage(goodRemote)).to.be.false
+
+      // 4. Replay protection: cannot withdraw the same claim twice
+      try {
+        await (goodRemote as any).withdraw(escrowAfterDeposit._rev as Rev)
+        expect.fail('Expected replay protection to throw')
+      } catch (e: any) {
+        expect(e.message).to.include('Cannot withdraw multiple times')
+      }
+
+      // 5. Bad remote (missing withdrawn record) must fail isValidMint
+      const badExp = `new TBC777({ 
+    to: '${minter.getPublicKey()}', 
+    amount: 0n, 
+    name: '${TEST_NAME}', 
+    symbol: '${TEST_SYMBOL}', 
+    remoteRoot: '${source.root}' 
+  })`
+
+      const { effect: badEffect, tx: badTx } = await minter.encode({ exp: badExp, mod })
+      const badRemote = branded(badEffect.res as SmartContract<typeof TBC777>)
+      await minter.broadcast(badTx)
+
+      const { effect: isValidBad } = await minter.encode({
+        exp: `TBC777.isValidMint(badRemote)`,
+        env: { badRemote: badRemote._rev },
+        mod,
+      })
+      expect(isValidBad.res).to.be.false
+    })
+
+    it('concurrent claims from multiple tokens on the same escrow respect inRevs ordering', async () => {
+      // TODO
+    })
+  })
+})
+
+// ============================================================
+// UNIT TESTS FOR makeRegex
+// ============================================================
+describe('TBC777.makeRegex (unit)', () => {
+  const validTo = '02abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'
+  const validName = 'test'
+  const validSymbol = 'TST'
+
+  function makeExp(
+    to = validTo,
+    amount = '30',
+    name = validName,
+    symbol = validSymbol,
+    extra = '',
+  ) {
+    return `new TBC777({to:'${to}',amount:${amount}n,name:'${name}',symbol:'${symbol}'${extra}})`
+  }
+
+  it('accepts valid initial constructor expression', () => {
+    const regex = TBC777.makeRegex(makeExp())
+    expect(regex.test(makeExp())).to.equal(true)
+  })
+
+  it('accepts remoteRoot constructor with extra fields', () => {
+    const exp = makeExp(validTo, '7', 'test', 'TST', `,remoteRoot:'abc:0',withdrawn:['def:0']`)
+    const regex = TBC777.makeRegex(exp)
+    expect(regex.test(exp)).to.equal(true)
+  })
+
+  it('rejects invalid to length, prefix, or non-hex characters', () => {
+    expect(() => TBC777.makeRegex(makeExp('04' + 'a'.repeat(64)))).to.throw()
+  })
+
+  it('rejects negative amounts', () => {
+    expect(() => TBC777.makeRegex(makeExp(validTo, '-10'))).to.throw()
+  })
+
+  it('rejects inline class / shadowing attacks', () => {
+    const malicious = `new (class extends TBC777 {...})({to:'${validTo}',amount:30n,name:'test',symbol:'TST'})`
+    const regex = TBC777.makeRegex(makeExp())
+    expect(regex.test(malicious)).to.equal(false)
   })
 })

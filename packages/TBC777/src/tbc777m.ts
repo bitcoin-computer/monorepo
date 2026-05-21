@@ -70,7 +70,10 @@
  *    conservatively from the provided revision’s `finalWithdraws` list.
  */
 
+import { InnerComputer } from '@bitcoin-computer/lib'
 import { TBC20, type TBC20ConstructorParams } from './tbc20.js'
+
+declare const computer: InnerComputer
 
 /**
  * Minimal interface that any escrow contract must satisfy to be compatible with
@@ -196,6 +199,7 @@ export class TBC777M extends TBC20 {
   static async computeWithdraw(rev: string, _id: string, _root: string): Promise<bigint> {
     const { withdraws } = await computer.sync<typeof Escrow>(rev)
     return withdraws.reduce(
+      // @ts-ignore
       (total, [root, id, amount]) => (root === _root && id === _id ? total + amount : total),
       0n,
     )
@@ -214,6 +218,7 @@ export class TBC777M extends TBC20 {
 
     const { finalWithdraws } = await computer.sync<typeof Escrow>(rev)
     return finalWithdraws.reduce(
+      // @ts-ignore
       (total, [root, id, amount]) => (root === _root && id === _id ? total + amount : total),
       0n,
     )
@@ -268,9 +273,11 @@ export class TBC777M extends TBC20 {
     )
 
     const depositAmounts = await Promise.all(
+      // @ts-ignore
       deposits.map((deposit) => TBC777M.computeDeposit(deposit as TBC777M, escrowId, root)),
     )
 
+    // @ts-ignore
     return depositAmounts.reduce((prev, curr) => curr + prev, 0n)
   }
 

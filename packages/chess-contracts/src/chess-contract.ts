@@ -1,5 +1,7 @@
-import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
+import { Computer, Transaction, SmartContract, InnerComputer } from '@bitcoin-computer/lib'
 import { User } from './user.js'
+
+declare const computer: InnerComputer
 
 export class ChessContract extends Contract {
   wagerAmount!: bigint
@@ -82,9 +84,7 @@ export class ChessContract extends Contract {
         ]
       }
     } else {
-      this._owners = [
-        this._owners[0] === this.publicKeyW ? this.publicKeyB : this.publicKeyW,
-      ]
+      this._owners = [this._owners[0] === this.publicKeyW ? this.publicKeyB : this.publicKeyW]
     }
 
     return chessLib.isGameOver()

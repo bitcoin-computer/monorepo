@@ -75,6 +75,10 @@ function loggedInConfiguration() {
     network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
     url: localStorage.getItem('URL') || getEnv('URL'),
     path: localStorage.getItem('PATH') || getEnv('PATH'),
+    moduleStorageType:
+      (localStorage.getItem('MODULE_STORAGE_TYPE') as ModuleStorageType) ||
+      getEnv('MODULE_STORAGE_TYPE') ||
+      'taproot',
   }
 }
 

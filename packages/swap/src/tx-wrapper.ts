@@ -12,6 +12,10 @@ export class TxWrapper extends Contract {
   addSaleTx(txHex: string) {
     this.txHex = txHex
   }
+
+  cancelSaleTx() {
+    this.txHex = ''
+  }
 }
 
 export class TxWrapperHelper {
@@ -28,15 +32,35 @@ export class TxWrapperHelper {
     return this.mod
   }
 
-  async createWrappedTx(publicKey: string, url: string, tx?: Transaction) {
+  async createWrappedTx(publicKey: string, url: string, tx?: Transaction, excludedRevs?: string[]) {
     const exp = tx
       ? `new TxWrapper("${publicKey}", "${url}", "${tx.serialize()}")`
       : `new TxWrapper("${publicKey}", "${url}")`
     const exclude = tx ? tx.getInRevs() : []
+    const revsToExclude = excludedRevs ? [...new Set([...exclude, ...excludedRevs])] : exclude
+    const { tx: wrappedTx } = await this.computer.encode({
+      fund: false,
+      exp,
+      exclude: revsToExclude,
+      mod: this.mod,
+    })
+
+    const fee = await this.computer.db.wallet.estimateFee(wrappedTx)
+    const txId = await this.computer.send(BigInt(fee * 10), this.computer.getAddress())
+
     return this.computer.encode({
       exp,
-      exclude,
+      exclude: revsToExclude,
       mod: this.mod,
+      include: [`${txId}:0`],
+    })
+  }
+
+  async cancelSaleTx(txWrapperTxId: string) {
+    const { res: txWrapper } = (await this.computer.sync(txWrapperTxId)) as { res: TxWrapper }
+    return this.computer.encode({
+      exp: `txWrapper.cancelSaleTx()`,
+      env: { txWrapper: txWrapper._rev },
     })
   }
 

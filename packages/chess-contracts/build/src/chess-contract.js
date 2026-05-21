@@ -68,9 +68,7 @@ export class ChessContract extends Contract {
             }
         }
         else {
-            this._owners = [
-                this._owners[0] === this.publicKeyW ? this.publicKeyB : this.publicKeyW,
-            ];
+            this._owners = [this._owners[0] === this.publicKeyW ? this.publicKeyB : this.publicKeyW];
         }
         return chessLib.isGameOver();
     }

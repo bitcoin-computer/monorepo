@@ -36,18 +36,17 @@ export class TokenHelper {
         return this.mod;
     }
     async mint(publicKey, amount, name, symbol) {
-        const args = [publicKey, amount, name, symbol];
-        const token = await this.computer.new(Token, args, this.mod);
+        const token = await this.computer.new(Token, [publicKey, amount, name, symbol], this.mod);
         return token._root;
     }
     async totalSupply(root) {
-        const rootBag = await this.computer.sync(root);
+        const rootBag = (await this.computer.sync(root));
         return rootBag.amount;
     }
     async getBags(publicKey, root) {
         const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod });
         const bags = await Promise.all(revs.map(async (rev) => this.computer.sync(rev)));
-        return bags.flatMap((bag) => (bag._root === root ? [bag] : []));
+        return bags.flatMap((bag) => bag._root === root ? [bag] : []);
     }
     async balanceOf(publicKey, root) {
         if (typeof root === 'undefined')

@@ -585,8 +585,6 @@ declare class Computer {
   static lockdown(opts?: any): void
   delete(inRevs: string[]): Promise<string>
   isUnspent(rev: string): Promise<boolean>
-  next(rev: string): Promise<string | undefined>
-  prev(rev: string): Promise<string | undefined>
   subscribe(
     id: string,
     onMessage: ({ rev, hex }: { rev: string; hex: string }) => void,
@@ -605,6 +603,7 @@ declare class Computer {
   import(rev: string): Promise<ModuleExportsNamespace>
   next(rev: string): Promise<string | undefined>
   prev(rev: string): Promise<string | undefined>
+  spendingInput(rev: string): Promise<string | undefined>
   latest(rev: string): Promise<string>
   first(rev: string): Promise<string>
 }

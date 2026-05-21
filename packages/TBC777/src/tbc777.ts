@@ -1,222 +1,662 @@
 /**
- * TBC777 - Inflation-proof TBC20 token for arbitrary Escrow contracts
+ * TBC777 - Programmable Escrow Token Standard for Bitcoin Computer
  *
- * Any TBC777 token can be safely deposited into *any* smart contract (even one
- * that does not inherit from the provided `Escrow` convenience base) that
- * exposes the public shape `{ claimable: [string, bigint][], status: string }`.
+ * Reference implementation extending TBC20 with native, on-chain escrow
+ * primitives and an EscrowAuditor that enforces a strict no-inflation
+ * invariant.
  *
- * The TBC777 contract itself — not the escrow — is solely responsible for
- * guaranteeing that **no inflation is ever possible**, no matter how the escrow
- * is implemented, even if the escrow is malicious or contains bugs.
+ * THE CORE GUARANTEE: Even if an escrow contract is buggy, malicious, or
+ * deliberately tries to over-authorize claims, the audited balance for any
+ * token lineage can never exceed the amount originally minted. This is achieved
+ * by:
  *
- * Inflation is impossible; however, a buggy or malicious escrow may still fail
- * to release tokens (the token contract cannot fix escrow logic, only prevent
- * over-issuance).
+ * - Walking the full prev-chain of any escrow revision
+ * - Strictly validating deposits using both `isEqualTo` + `isValidMint`
+ * - Summing claim amounts that were recorded under the lineage root
+ *   (over-authorization of claims can only reduce `availableBalance` and cannot
+ *   cause inflation)
+ * - Computing exact per-token claimable amounts from the current escrow state
+ *   and rejecting withdrawals when `availableBalance < 0`
  *
- * The no-inflation invariant is enforced entirely inside TBC777:
+ * Additional guarantees:
+ * - Cross-chain tokens are supported
+ * - A single token instance may deposit into multiple escrows over time
+ * - An escrow can accept deposits from multiple different tokens
+ * - Transfers automatically sanitize escrow-related state on the recipient
+ * - `merge()` is intentionally disabled — use escrow-based atomic merge instead
  *
- * - `deposit(escrow: string, amount: bigint)` is the only public method that
- *   moves tokens into an escrow. It records the escrow identifier and reduces
- *   the token's balance by the deposited amount.
+ * REMOTE-ROOT TOKEN CREATION (cross-chain / bridged tokens): Remote-root tokens
+ * MUST be created with `amount: 0n` and MUST immediately call `withdraw(rev)`
+ * or `finalWithdraw(rev)` in the same transaction:
  *
- * - `claim(rev: string)` is the only place where `this.amount` can ever
- *   increase after a deposit. Before crediting any tokens it performs an
- *   on-chain audit of the escrow's linear revision history (the "prev-chain")
- *   using the trusted inner-computer primitives (`computer.sync` and
- *   `computer.prev`).
+ *   const token = new TBC777({ amount: 0n, remoteRoot: 'abc123...', ... })
+ *   token.withdraw(escrowRev)   // or finalWithdraw(escrowRev)
  *
- * The audit guarantees the following on the linear revision history (where
- * `_root` = root revision of this TBC20 token lineage and `this._rev` = the
- * specific deposit revision):
+ * This pattern guarantees that the minted amount exactly matches an audited
+ * claim.
  *
- *   1. The supplied `rev` is the *first* revision in the prev-chain that
- *      reaches `status === 'final'` (no earlier finalization exists). Later
- *      revisions may also be marked 'final', but claiming is intentionally
- *      restricted to the first final state to prevent repeated claims /
- *      double-spending.
- *
- *   2. The sum of all `claimable` amounts published in that first final state
- *      never exceeds the sum of amounts that were verifiably removed from this
- *      exact token lineage (`_root`) when they entered the escrow.
- *
- * Only the portion of `claimable` entries that reference the specific deposit
- * revision (`this._rev`) is actually credited back to the token.
- *
- * Pseudo-code of the on-chain audit performed inside `claim`:
- *
- *   ```ts
- *   let cur = computer.sync(rev)
- *   while (cur && cur.status !== 'final') cur = computer.prev(cur)
- *   // assert cur is the *first* final state
- *   // assert sum(claimable for this._root) <= deposited for this lineage
- *   ```
- *
- * Note: The design currently assumes that every entry in `claimable` refers to
- * a deposit from the *same* token lineage (same `_root`). Deposits from
- * unrelated TBC777 tokens (or mixed-lineage escrows) will cause the claim to
- * fail, but inflation is still impossible.
+ * @see ./tbc20.ts
+ * @see https://docs.bitcoincomputer.io/
  */
 
-import { Computer } from '@bitcoin-computer/lib'
-import { TBC20, type TBC20ConstructorParams } from './tbc20.js'
+// TYPES & INTERFACES
 
-declare global {
-  const computer: Computer
-}
+import { Id, Rev, Root, InnerComputer } from '@bitcoin-computer/lib'
+import { TBC20, TBC20ConstructorParams } from './tbc20.js'
 
-export {}
+export type Constructor<T> = new (...args: any[]) => T
+export type Amount = bigint
 
 /**
- * Minimal interface that *any* escrow contract must satisfy for TBC777
- * compatibility.
+ * Represents a single deposit recorded in an escrow.
+ * - root: immutable token lineage
+ * - revision: token version
+ */
+export type DepositEntry = [Root, Rev]
+
+/**
+ * Represents a withdrawal or final-withdrawal claim.
+ * - root: immutable token lineage
+ * - id: immutable token identifier
+ * - amount: amount authorized
+ */
+export type ClaimEntry = [Root, Id, Amount]
+
+/**
+ * Pre-filtered claim entry for a specific lineage (root omitted after filtering
+ * in collectRevisions). Used by EscrowAuditor for totalRegularAuthorized /
+ * totalFinalAuthorized calculations.
+ */
+export type ClaimAmountEntry = [Id, Amount]
+
+declare const computer: InnerComputer
+
+/**
+ * Canonical escrow interface (mandatory for all TBC777-compatible escrows).
  *
- * The TBC777 `claim` method performs an on-chain audit against any contract
- * exposing this exact public shape. No inheritance from `Escrow` is required.
+ * This defines the *minimal* append-only history log that `EscrowAuditor` needs
+ * to enforce the no-inflation guarantee. Escrows may add any extra business
+ * logic/state — the auditor ignores everything except these three arrays.
+ *
+ * @property {DepositEntry[]} deposits Every successful deposit ever accepted.
+ *   Each entry is `[root, rev]` where **`rev` is the input/pre-mutation
+ *   revision of the token** (i.e. the revision that existed *before*
+ *   `deposit()` reduced `this.amount` in that transition).
+ *
+ *   `EscrowAuditor` uses `computer.next(rev)` to obtain the post-deposit state
+ *   and compute the exact delta deposited. Only entries that pass *both*
+ *   `isEqualTo` **and** `isValidMint` contribute to `totalDeposited`.
+ *
+ * @property {ClaimEntry[]} withdraws Regular (non-final) withdrawal claims.
+ *   Collected from **every** revision in the escrow's full prev-chain.
+ *
+ * @property {ClaimEntry[]} finalWithdraws Final-withdrawal claims. These are
+ *   only ever present/claimable on the **terminal (latest)** revision of the
+ *   escrow. Auditor reads them exclusively from `states[0]`.
+ *
+ * SECURITY INVARIANT (core no-inflation guarantee): Even if an escrow contract
+ * is buggy, malicious, or deliberately tries to over-authorize claims, the
+ * audited balance for any token lineage can never exceed the amount originally
+ * minted.
  */
 export abstract class Escrow extends Contract {
-  claimable: [string, bigint][]
-  status: string
+  deposits!: DepositEntry[]
+  withdraws!: ClaimEntry[]
+  finalWithdraws!: ClaimEntry[]
+}
 
-  constructor() {
-    super()
-  }
+export type CompatibilityValidator = (candidate: any) => Promise<boolean>
+
+/**
+ * AuditResult — the single source of truth for a token lineage's state inside
+ * an escrow.
+ *
+ * Returned by `EscrowAuditor.audit(escrowRev, token)` (and internally by
+ * `getAudit()`).
+ *
+ * Computed by walking the **complete** prev-chain of the given escrow revision.
+ * This is what enforces the core no-inflation guarantee: `totalDeposited` is
+ * strictly validated, and `availableBalance` is computed as `totalDeposited −
+ * totalRegularAuthorized − totalFinalAuthorized`. Any over-authorization of
+ * claims only reduces `availableBalance` (making the guard stricter) and can
+ * never allow a lineage to extract more value than was validly deposited.
+ *
+ * The result contains two distinct categories of information:
+ *
+ * 1. **Lineage-level aggregates** (`totalDeposited`, `totalRegularAuthorized`,
+ *    `totalFinalAuthorized`, `availableBalance`) → Used to track the overall
+ *    health of the lineage inside the escrow.
+ *
+ * 2. **Per-token-instance claimables** (`regularClaimable`, `finalClaimable`) →
+ *    What **a specific token** (`_id`) can actually claim right now from the
+ *    current escrow state.
+ */
+export type AuditResult = {
+  /**
+   * Total amount **validly deposited** into this escrow for the lineage.
+   *
+   * Only deposit revisions that pass **both** `isEqualTo` **and** `isValidMint`
+   * are counted. This is the strictest validation in the entire system.
+   */
+  totalDeposited: bigint
+
+  /**
+   * Cumulative total of all amounts recorded as claimable via regular
+   * `withdraw()` for this lineage (collected from the **entire** escrow
+   * history).
+   *
+   * These amounts come from claim entries whose root matched the lineage after
+   * filtering in `collectRevisions`. They represent recorded claim
+   * opportunities, not necessarily amounts already pulled out.
+   * Over-authorization here only lowers `availableBalance` and cannot violate
+   * the no-inflation guarantee.
+   */
+  totalRegularAuthorized: bigint
+
+  /**
+   * Cumulative total of all amounts recorded as claimable via `finalWithdraw()`
+   * for this lineage.
+   *
+   * Only read from the **latest** escrow revision (`states[0]`). Same semantics
+   * as `totalRegularAuthorized`.
+   */
+  totalFinalAuthorized: bigint
+
+  /**
+   * Amount that **this specific token instance** (`_id`) can currently claim
+   * via `withdraw(rev)` from the audited escrow revision.
+   *
+   * This is the sum of all matching entries in the *current* escrow's
+   * `withdraws` array for this token's exact `_id`. It is what `withdraw()`
+   * will add to `this.amount` if called successfully.
+   */
+  regularClaimable: bigint
+
+  /**
+   * Amount that **this specific token instance** can currently claim via
+   * `finalWithdraw(rev)`.
+   *
+   * Non-zero **only** when `isTerminal === true` (the audited revision is the
+   * terminal/latest state of the escrow).
+   */
+  finalClaimable: bigint
+
+  /**
+   * Remaining available balance for the **entire lineage**: `totalDeposited −
+   * totalRegularAuthorized − totalFinalAuthorized`.
+   *
+   * This is a **conservative** (safe) view — it subtracts every amount that has
+   * been made available to claim. Must be ≥ 0. A negative value triggers an
+   * error in `_withdraw()`, protecting the no-inflation invariant even if an
+   * escrow over-authorizes claims.
+   */
+  availableBalance: bigint
+
+  /**
+   * Whether the audited escrow revision is the **terminal/latest** revision in
+   * the prev-chain (i.e. `(await computer.last(rev)) === rev`).
+   *
+   * Must be `true` before `finalWithdraw()` can succeed.
+   */
+  isTerminal: boolean
 }
 
 /**
- * TBC777 - Inflation-proof TBC20 token.
- *
- * Extends the base TBC20 with secure `deposit`/`claim` mechanics that use the
- * inner-computer (`computer.sync` + `computer.prev`) to enforce a strict
- * no-inflation invariant, even when the escrow is completely untrusted.
+ * The EscrowAuditor is the single source of truth for the no-inflation
+ * guarantee. It is deliberately placed outside the token class so its detailed
+ * documentation does not increase deployed class size.
  */
-export class TBC777 extends TBC20 {
-  escrow?: string
-
-  constructor(args: TBC20ConstructorParams) {
-    super(args)
+export class EscrowAuditor {
+  /**
+   * SECURITY INVARIANT (core no-inflation guarantee)
+   *
+   * - Only deposits that pass BOTH `isEqualTo` AND `isValidMint` contribute to
+   *   totalDeposited.
+   * - All historical claim amounts (regular withdraws from full prev-chain +
+   *   finalWithdraws from latest revision) are subtracted.
+   * - Over-authorization by a malicious or buggy escrow can only *reduce*
+   *   availableBalance (never increase it).
+   * - If availableBalance < 0 after audit, withdrawals are rejected.
+   *
+   * This is enforced in getAudit() + _withdraw().
+   */
+  static async walkHistory(rev: Rev): Promise<Escrow[]> {
+    const states: Escrow[] = []
+    let current: Rev | null = rev
+    while (current) {
+      states.push((await computer.sync(current)) as any)
+      current = (await computer.prev(current)) as Rev | null
+    }
+    return states
   }
 
   /**
-   * Deposits tokens into an escrow contract.
-   *
-   * This is the *only* public method that moves tokens out of the TBC777
-   * contract. It records the escrow identifier and reduces the token balance
-   * accordingly. The token remains locked until a successful `claim`.
+   * Pure synchronous collection of relevant entries for a lineage. NOTE:
+   * finalEntries only taken from states[0] (latest revision) because
+   * finalWithdraws are only ever present and claimable on the terminal state.
+   * Regular withdraws are collected from the full history.
    */
-  deposit(escrow: string, deposit: bigint) {
+  static collectRevisions(states: Escrow[], lineage: Root) {
+    const depositRevs = new Set<Rev>()
+    const withdrawEntries = new Set<ClaimAmountEntry>()
+    const finalEntries = new Set<ClaimAmountEntry>()
+
+    if (states.length === 0) return { depositRevs, withdrawEntries, finalEntries }
+
+    const [finalState] = states
+    for (const { deposits, withdraws } of states) {
+      for (const [r, rev] of deposits) {
+        if (r === lineage) depositRevs.add(rev)
+      }
+      for (const [r, id, amt] of withdraws) {
+        if (r === lineage) withdrawEntries.add([id, amt] as ClaimAmountEntry)
+      }
+    }
+
+    for (const [r, id, amt] of finalState.finalWithdraws) {
+      if (r === lineage) finalEntries.add([id, amt] as ClaimAmountEntry)
+    }
+
+    return { depositRevs, withdrawEntries, finalEntries }
+  }
+
+  /**
+   * Computes total deposited after full validation (isEqualTo + isValidMint).
+   * Matches the original deposit path exactly.
+   *
+   * Accepts the token instance directly for better encapsulation.
+   */
+  static async sumDeposits(depositRevs: Set<Rev>, escrow: Id, token: TBC777): Promise<bigint> {
+    const getDepositAmount = async (rev: Rev) => {
+      const deposit = await computer.sync(rev)
+      if (!(await token.isValidDeposit(deposit))) return 0n
+      return await TBC777.computeDepositAmount(deposit, escrow, token.root as Root)
+    }
+    const amounts = await Promise.all([...depositRevs].map(getDepositAmount))
+    return amounts.reduce((sum, amt) => sum + amt, 0n)
+  }
+
+  /**
+   * Sums claim amounts for a lineage.
+   *
+   * Entries are pre-filtered by root in collectRevisions, so we sum the
+   * recorded amounts directly. This trusts the root annotation written by the
+   * escrow at claim time. Over-authorization can only reduce availableBalance
+   * and cannot violate the no-inflation guarantee.
+   */
+  static sumClaims(entries: Set<ClaimAmountEntry>): bigint {
+    return [...entries].reduce((sum, [, amt]) => sum + amt, 0n)
+  }
+
+  static async getAudit(states: Escrow[], token: TBC777): Promise<AuditResult> {
+    if (states.length === 0) {
+      return {
+        totalDeposited: 0n,
+        totalRegularAuthorized: 0n,
+        totalFinalAuthorized: 0n,
+        regularClaimable: 0n,
+        finalClaimable: 0n,
+        availableBalance: 0n,
+        isTerminal: false,
+      }
+    }
+
+    const lineage = token.root as Root
+    const tokenId = token._id as Id
+
+    const { depositRevs, withdrawEntries, finalEntries } = this.collectRevisions(states, lineage)
+
+    const escrow = states[0]._id as Id
+    const rev = states[0]._rev as Rev
+
+    const totalDeposited = await this.sumDeposits(depositRevs, escrow, token)
+    const totalRegularAuthorized = this.sumClaims(withdrawEntries)
+    const totalFinalAuthorized = this.sumClaims(finalEntries)
+
+    const getClaimable = (entries: ClaimEntry[]): bigint =>
+      entries
+        .filter(([r, id]) => r === lineage && id === tokenId)
+        .reduce((sum, [, , amt]) => sum + amt, 0n)
+
+    const { withdraws, finalWithdraws } = states[0]
+    const regularClaimable = getClaimable(withdraws)
+
+    const isTerminal = (await computer.last(rev)) === rev
+    const finalClaimable = isTerminal ? getClaimable(finalWithdraws) : 0n
+
+    const availableBalance = totalDeposited - totalRegularAuthorized - totalFinalAuthorized
+
+    return {
+      totalDeposited,
+      totalRegularAuthorized,
+      totalFinalAuthorized,
+      regularClaimable,
+      finalClaimable,
+      availableBalance,
+      isTerminal,
+    }
+  }
+
+  /**
+   * Public entry point – the single source of truth for the no-inflation
+   * guarantee.
+   *
+   * Accepts a TBC777 token instance (which supplies its own validation strategy
+   * via the `isValidDeposit` getter) and the escrow revision. This is the
+   * simplest and most encapsulated API.
+   */
+  static async audit(escrowRev: Rev, token: TBC777): Promise<AuditResult> {
+    const states = await this.walkHistory(escrowRev)
+
+    return this.getAudit(states, token)
+  }
+}
+
+export type TBC777Params = TBC20ConstructorParams & {
+  remoteRoot?: string
+  withdrawn?: Rev[]
+  finalWithdrawn?: Rev[]
+  escrow?: Id
+}
+
+export class TBC777 extends TBC20 {
+  remoteRoot?: string
+  withdrawn!: Rev[]
+  finalWithdrawn!: Rev[]
+  escrow?: Id
+
+  private static readonly CLEAN_STATE = {
+    withdrawn: [] as Rev[],
+    finalWithdrawn: [] as Rev[],
+    escrow: undefined as Id | undefined,
+  }
+
+  /**
+   * REMOTE-ROOT TOKEN CREATION (cross-chain / bridged tokens): Remote-root
+   * tokens MUST be created with `amount: 0n` and MUST immediately call
+   * `withdraw(rev)` or `finalWithdraw(rev)` in the same transaction.
+   *
+   * The constructor now enforces `amount === 0n` when `remoteRoot` is provided.
+   */
+  constructor(args: TBC777Params) {
+    const { amount, remoteRoot } = args
+
+    if (amount !== undefined) {
+      if (amount < 0n) throw new Error('Amount cannot be negative')
+      if (amount === 0n && !remoteRoot)
+        throw new Error('Zero amount is only valid for remote-root tokens')
+      if (remoteRoot && amount !== 0n)
+        throw new Error('Remote-root tokens must be created with amount 0n')
+    }
+
+    // Remote-root tokens are a special case for bridged / cross-chain value.
+    // They MUST start at amount: 0n and MUST record the claim (via withdrawn or
+    // finalWithdrawn) so that isValidMint() can later prove the initial
+    // on-chain state had zero balance.
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { withdrawn, finalWithdrawn, escrow, ...rest } = args
+
+    super({
+      ...TBC777.CLEAN_STATE,
+      ...rest,
+      withdrawn: withdrawn ?? [],
+      finalWithdrawn: finalWithdrawn ?? [],
+    })
+  }
+
+  /** Effective root (remoteRoot takes precedence for cross-chain tokens) */
+  get root(): string {
+    return this.remoteRoot || this._root
+  }
+
+  /**
+   * Merge is intentionally disabled. Use escrow-based atomic merge instead
+   * (deposit sources then claim total into one target).
+   */
+  merge(): never {
+    throw new Error('merge() is disabled in TBC777.')
+  }
+
+  /**
+   * Creates a fresh token instance for the recipient of a transfer. We
+   * deliberately sanitize all escrow-related mutable state (`withdrawn`,
+   * `finalWithdrawn`, `escrow`) so the new owner does not inherit any
+   * claim/withdrawal history. Claims in escrows are always tied to a specific
+   * token `_id`, so this is safe.
+   */
+  protected _createTransferToken(to: string, amount: bigint): this {
+    const ctor = this.constructor as Constructor<this>
+
+    // Explicitly drop revision metadata + escrow-related mutable state so the
+    // recipient receives a clean token instance with no inherited claim
+    // history.
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _id, _root, _rev, withdrawn, finalWithdrawn, escrow, ...preserved } = this
+
+    return new ctor({ ...preserved, to, amount })
+  }
+
+  /**
+   * Deposit a positive amount into the given escrow. The deposited amount is
+   * subtracted from this token's balance and the escrow reference is recorded
+   * so that future claims can be validated.
+   */
+  deposit(escrow: Id, deposit: Amount) {
     if (deposit <= 0n) throw new Error('Deposit amount must be positive')
     if (this.amount < deposit) throw new Error('Insufficient balance for deposit')
-    if (this.escrow) throw new Error('Token already in escrow')
 
     this.escrow = escrow
     this.amount -= deposit
   }
 
   /**
-   * Claims tokens back from a finalized escrow.
-   *
-   * This is the *only* place where `this.amount` can ever increase after a
-   * deposit. Before crediting any tokens, it performs a complete on-chain audit
-   * of the escrow's linear revision history using the trusted inner-computer
-   * primitives.
-   *
-   * Security guarantees (enforced on-chain):
-   *   1. The supplied `rev` is the *first* revision that reaches `status ===
-   *      'final'`. Prevents double-claiming if the escrow finalizes again
-   *      later.
-   *   2. The total `claimable` amounts published in that first final state
-   *      never exceed the amounts that were verifiably deposited from this
-   *      exact token lineage (`_root`). This is what makes inflation
-   *      impossible.
-   *
-   * Only the slice of `claimable` entries that reference *this* deposit
-   * revision (`this._rev`) is credited back to the caller.
+   * Returns the current audited available balance for this token with respect
+   * to a specific escrow revision.
    */
-  async claim(rev: string) {
-    if (!this.escrow) throw new Error('Token not in escrow')
-
-    // Load the claimed revision (must already be in final state)
-    const finalState = await computer.sync<typeof Escrow>(rev)
-    if (finalState.status !== 'final') throw new Error('Escrow is not in final state')
-
-    // Walk backwards through the entire prev-chain to confirm this is the
-    // *first* finalization. If any earlier revision was already final, the
-    // escrow has been finalized multiple times → reject to prevent
-    // double-spending.
-    let currentRev = rev
-    while (true) {
-      const prevRev = await computer.prev(currentRev)
-      if (!prevRev) break
-
-      const prevState = await computer.sync<typeof Escrow>(prevRev)
-      if (prevState.status === 'final')
-        throw new Error('Escrow was already finalized in a previous state')
-
-      currentRev = prevRev
-    }
-
-    const escrowId = finalState._id
-    const { claimable } = finalState
-
-    // Collect all unique deposit revisions referenced by the escrow's claimable
-    // list
-    const uniqueDepositRevs = [...new Set(claimable.map((claim) => claim[0]))]
-
-    // For each referenced deposit revision, compute the *actual* deposited
-    // amount by inspecting the token's own revision history (delta between
-    // deposit state and its immediate predecessor). This is the source-of-truth
-    // for deposited funds.
-    const depositAmounts = await Promise.all(
-      uniqueDepositRevs.map((depositRev: string) =>
-        TBC777.computeDeposit(depositRev, this._root, escrowId),
-      ),
-    )
-    const depositAmount = depositAmounts.reduce((sum, amt) => sum + amt, 0n)
-
-    const claimableAmount = finalState.claimable.reduce((sum, [, amt]) => sum + amt, 0n)
-
-    // Core security invariant: total claimable must never exceed what was
-    // actually deposited from this token lineage. This check makes inflation
-    // impossible no matter what the escrow contract does.
-    if (claimableAmount > depositAmount) throw new Error('Escrow created tokens')
-
-    // Credit back only the portion of the claimable list that belongs to *this*
-    // specific deposit revision (prevents claiming someone else's deposit).
-    const myClaim = finalState.claimable
-      .filter(([rev]) => rev === this._rev)
-      .reduce((sum, [, amt]) => sum + amt, 0n)
-
-    this.amount += myClaim
-    this.escrow = undefined
+  async getBalance(escrowRev: Rev): Promise<bigint> {
+    const audit = await EscrowAuditor.audit(escrowRev, this)
+    return audit.availableBalance
   }
 
   /**
-   * Private helper used **only inside the on-chain `claim` audit**.
+   * Tuple recorded by escrows when accepting a deposit.
    *
-   * **This method runs inside the inner-computer context** (the `computer`
-   * global injected by the Bitcoin Computer runtime). It must **never** be
-   * called from off-chain JavaScript — tests temporarily override the global
-   * `computer` for this purpose.
+   * Returns `[root, rev]` where **`rev` is the input/pre-mutation revision**
+   * of the token at the moment the deposit is recorded (i.e. the `_rev` that
+   * existed *before* `deposit()` reduced `this.amount` in the same transition).
    *
-   * It loads the deposit state and its immediate predecessor, then returns the
-   * delta (`prev.amount - deposit.amount`). This value is guaranteed to be the
-   * exact amount that left the token contract during that deposit call.
+   * `EscrowAuditor.computeDepositAmount` uses `computer.next(rev)` to obtain
+   * the post-deposit state and compute the exact delta that was moved into
+   * the escrow.
    */
-  private static async computeDeposit(
-    depositRev: string,
-    root: string,
-    escrowId: string,
-  ): Promise<bigint> {
-    const deposit = await computer.sync<typeof TBC777>(depositRev)
-    if (deposit.escrow !== escrowId || deposit._root !== root) throw Error('Found invalid deposit')
+  get depositTuple(): DepositEntry {
+    return [this.root as Root, this._rev as Rev]
+  }
 
-    const prevRev = await computer.prev(depositRev)
-    if (!prevRev) throw Error('Something went wrong')
-    const prev = await computer.sync<typeof TBC777>(prevRev)
+  /**
+   * Returns a validator that checks whether a candidate token is a valid
+   * deposit for this lineage. Requires BOTH semantic equality and a legitimate
+   * mint (for remoteRoot tokens).
+   */
+  public get isValidDeposit(): CompatibilityValidator {
+    return async (cand: any) =>
+      (await this.isEqualTo(cand as TBC777)) && (await TBC777.isValidMint(cand as TBC777))
+  }
 
-    const delta = prev.amount - deposit.amount
-    if (delta < 0n) throw new Error('Something went wrong')
+  /**
+   * Claim a regular (non-final) withdrawal from the given escrow revision.
+   */
+  async withdraw(rev: Rev) {
+    return this._withdraw(rev, false)
+  }
 
-    return delta
+  /**
+   * Claim a final withdrawal from the given escrow revision. Only allowed when
+   * the revision is the terminal state of the escrow.
+   */
+  async finalWithdraw(rev: Rev) {
+    return this._withdraw(rev, true)
+  }
+
+  private async _withdraw(rev: Rev, isFinal: boolean) {
+    const targetList = isFinal ? this.finalWithdrawn : this.withdrawn
+    if (targetList.includes(rev)) throw new Error('Cannot withdraw multiple times')
+
+    const { availableBalance, regularClaimable, finalClaimable, isTerminal } =
+      await EscrowAuditor.audit(rev, this)
+    const claimable = isFinal ? finalClaimable : regularClaimable
+
+    // Critical no-inflation enforcement point: Even if the escrow maliciously
+    // over-authorizes claims in its history, a negative availableBalance will
+    // cause this withdrawal to be rejected.
+    if (availableBalance < 0)
+      throw new Error(`Escrow available balance (${availableBalance}) too low`)
+    if (claimable <= 0n)
+      throw new Error(`Claimable ${isFinal ? 'final ' : ''}withdraw amount is zero or negative`)
+    if (isFinal && !isTerminal)
+      throw new Error("finalWithdraws can only be claimed from the escrow's last revision")
+
+    this.amount += claimable
+    targetList.push(rev)
+    if (!isFinal) this.escrow = undefined
+  }
+
+  /**
+   * Canonical compatibility predicate (single source of truth). Fast O(1)
+   * lineage check or semantic equivalence for cross-chain/remoteRoot.
+   */
+  async isEqualTo(other: TBC777): Promise<boolean> {
+    if (this.sameLineage(other)) return true
+    if (this.root === other.root) return await this._semanticEqualTo(other)
+    return false
+  }
+
+  /* Synchronous fast-path check */
+  sameLineage(other: TBC777): boolean {
+    return !this.remoteRoot && !other.remoteRoot && this._root === other._root
+  }
+
+  /* Full semantic comparison (defensive try/catch). */
+  private async _semanticEqualTo(other: TBC777): Promise<boolean> {
+    try {
+      const { mod: myMod, exp: myExp, env: myEnv } = await TBC777.getSignature(this)
+      const { mod: otherMod, exp: otherExp, env: otherEnv } = await TBC777.getSignature(other)
+
+      const { TBC777: my777, TBC20: my20 } = await computer.load(myMod!)
+      const { TBC777: other777, TBC20: other20 } = await computer.load(otherMod!)
+
+      if (my777.toString() !== other777.toString() || my20.toString() !== other20.toString())
+        return false
+
+      const isEmptyEnv = (env: object) =>
+        env != null &&
+        typeof env === 'object' &&
+        Object.getPrototypeOf(env) === Object.prototype &&
+        Object.keys(env).length === 0
+
+      if (!isEmptyEnv(myEnv) || !isEmptyEnv(otherEnv)) return false
+
+      return TBC777.makeRegex(myExp).test(otherExp)
+    } catch {
+      return false
+    }
+  }
+
+  /** Decodes the original transaction that created this token's root. */
+  static async getSignature(token: TBC777): Promise<any> {
+    const txId = token._root.split(':')[0]
+    return computer.decode(txId)
+  }
+
+  /**
+   * Computes the amount deposited for a given entry in `escrow.deposits`.
+   *
+   * IMPORTANT: The revision stored in `escrow.deposits` is the token's revision
+   * *before* the deposit was applied. This is because, in Bitcoin Computer,
+   * when a smart contract method mutates an object and records its `_rev` into
+   * another object's state, it captures the *input* revision (pre-mutation).
+   *
+   * We therefore use `computer.next(depositData._rev)` to retrieve the
+   * post-deposit revision and calculate the delta:
+   *
+   *     deposited = pre-deposit amount − post-deposit amount
+   *
+   * Using `prev()` instead would look one step too far back and return an
+   * incorrect result.
+   */
+  static async computeDepositAmount(depositData: any, escrow: Id, lineage: Root): Promise<bigint> {
+    const root = depositData.remoteRoot || depositData._root
+    if (root !== lineage) return 0n
+
+    // We must use next() (not prev()) because escrow.deposits stores the
+    // token's _rev *before* the deposit() mutation was applied. next() gives us
+    // the post-deposit state so we can compute the exact delta that was moved
+    // into the escrow.
+    const nextRev = await computer.next(depositData._rev)
+    if (!nextRev) return 0n
+    const nextToken = (await computer.sync(nextRev)) as unknown as TBC777
+    if (String(nextToken.escrow) !== String(escrow)) return 0n
+
+    return depositData.amount - nextToken.amount
+  }
+
+  /**
+   * Validates that a remoteRoot token was created correctly.
+   *
+   * Remote-root tokens MUST be created with `amount: 0n` and MUST immediately
+   * call `withdraw(rev)` or `finalWithdraw(rev)` in the same transaction. This
+   * guarantees that the token's balance comes exclusively from an audited
+   * escrow claim (via `EscrowAuditor`), enforcing the no-inflation invariant
+   * without duplicating audit logic.
+   *
+   * The check simply verifies that the *initial* state (at `_id`) had zero
+   * amount — proving the token did not arbitrarily mint value.
+   */
+  static async isValidMint(token: TBC777): Promise<boolean> {
+    if (!token.remoteRoot) return true
+    if (token.withdrawn.length === 0 && token.finalWithdrawn.length === 0) return false
+
+    const { amount } = await computer.sync<typeof TBC777>(token._id)
+    return amount === 0n
+  }
+
+  /**
+   * Creates a strict regex that only matches valid TBC777 constructor
+   * expressions. Prevents inline-class / shadowing attacks.
+   *
+   * Supports both normal mints (amount > 0) and remote-root tokens (amount:
+   * 0n).
+   */
+  static makeRegex(exp: string): RegExp {
+    const toMatch = exp.match(/to\s*:\s*'(0[23][0-9a-fA-F]{64})'/)?.[1]
+    const amountMatch = exp.match(/amount\s*:\s*(0|[1-9]\d*)n/)?.[1]
+    const nameMatch = exp.match(/name\s*:\s*'([^']+)'/)?.[1]
+    const symbolMatch = exp.match(/symbol\s*:\s*'([^']+)'/)?.[1]
+
+    if (!toMatch || !amountMatch || !nameMatch || !symbolMatch)
+      throw new Error('Input string is not in a valid TBC777 constructor form')
+    if (amountMatch === '0' && !exp.includes('remoteRoot'))
+      throw new Error('Zero amount is only valid for remote-root tokens')
+
+    const noStrings = exp
+      .replace(/'[^'\\]*(?:\\.[^'\\]*)*'/g, '""')
+      .replace(/"[^"\\]*(?:\\.[^"\\]*)*"/g, '""')
+
+    if (/\b(class|extends|function)\b/.test(noStrings))
+      throw new Error('Constructor expression contains forbidden keywords')
+
+    const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+    const pattern =
+      `^\\s*new\\s+TBC777\\s*\\(\\s*\\{[\\s\\S]*?` +
+      `(?=.*to\\s*:\\s*'(0[23][0-9a-fA-F]{64})')` +
+      `(?=.*amount\\s*:\\s*(0|[1-9]\\d*)n)` +
+      `(?=.*name\\s*:\\s*'${escape(nameMatch)}')` +
+      `(?=.*symbol\\s*:\\s*'${escape(symbolMatch)}')` +
+      `(?!.*\\b(class|extends|function)\\b)` +
+      `[\\s\\S]*\\}\\s*\\)\\s*$`
+
+    return new RegExp(pattern)
   }
 }
