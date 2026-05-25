@@ -24,6 +24,7 @@
     "lint": "eslint .",
     "start": "node build/src/index.js",
     "test": "npm run build && mocha -r source-map-support/register --timeout=30000000 build/test/*.js",
+    "test:rerun": "npm run build && node ../../scripts/rerun-failed.js",
     "types": "tsc --noEmit"
   },
   "dependencies": {
