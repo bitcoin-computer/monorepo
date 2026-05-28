@@ -249,10 +249,7 @@ describe('ChessContract', () => {
 
         const chessFinal = currentChess as SmartContract<typeof ChessContract>
         const totalPot = wager * 2n
-        expect(chessFinal.withdraws).toEqual([])
-        // expect(chessFinal.finalWithdraws).toEqual([[token._root, blackToken._id, totalPot]])
-
-        await chessFinal.claimWin()
+        // The winning move now settles the pot atomically — no claimWin step.
         expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]])
 
         const blackTokenBeforeWithdraw = await black.sync<typeof TBC777M>(

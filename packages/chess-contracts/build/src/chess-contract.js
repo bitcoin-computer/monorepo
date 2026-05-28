@@ -21,6 +21,8 @@ export class ChessContract extends Contract {
     async acceptDeposit(token, amount, name, nextOwner) {
         if (amount !== this.wagerAmount)
             throw new Error('Deposit amount must match wager');
+        if (token._root !== this.root)
+            throw new Error('Token root does not match wager');
         token.deposit(this._id, amount);
         this.deposits.push([token._root, token._rev]);
         this._owners = [nextOwner];
@@ -49,32 +51,26 @@ export class ChessContract extends Contract {
         const { san } = chessLib.move(moveArg);
         this.sans.push(san);
         this.fen = chessLib.fen();
-        const totalWager = this.wagerAmount * 2n;
-        if (!chessLib.isGameOver()) {
-            if (this._owners[0] === this.publicKeyW) {
-                this.finalWithdraws = [[this.root, this.tokenIdW, totalWager]];
-                this._owners = [this.publicKeyB];
+        if (chessLib.isGameOver()) {
+            // Settle the pot atomically with the winning move so the winner does not
+            // need a separate "claim" transaction before they can withdraw.
+            if (chessLib.isCheckmate()) {
+                // The player who just moved is the winner.
+                const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdW : this.tokenIdB;
+                this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]];
             }
             else {
-                this.finalWithdraws = [[this.root, this.tokenIdB, totalWager]];
-                this._owners = [this.publicKeyW];
+                // Draw / stalemate / threefold / 50-move rule: each side gets its wager back.
+                this.withdraws = [
+                    [this.root, this.tokenIdW, this.wagerAmount],
+                    [this.root, this.tokenIdB, this.wagerAmount],
+                ];
             }
         }
-        return chessLib.isGameOver();
-    }
-    claimWin() {
-        // @ts-expect-error Chess is available in the deployed module scope
-        const chessLib = new Chess(this.fen);
-        if (!this.isGameOver())
-            throw new Error('Game not over');
-        if (chessLib.isCheckmate()) {
-            this.withdraws = [
-                [this.root, this.tokenIdW, this.wagerAmount],
-                [this.root, this.tokenIdB, this.wagerAmount],
-            ];
+        else {
+            this._owners = [this._owners[0] === this.publicKeyW ? this.publicKeyB : this.publicKeyW];
         }
-        const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdW : this.tokenIdB;
-        this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]];
+        return chessLib.isGameOver();
     }
     resign() {
         const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdB : this.tokenIdW;
@@ -106,7 +102,9 @@ export class ChessContract extends Contract {
         // across the entire lifetime of the escrow, so the audit must see them all.
         while (true) {
             const txId = current.split(':')[0];
+            // @ts-expect-error Cannot find name 'computer'. Did you mean 'Computer'?
             timestamps.push(await computer.txIdToBlockTime(txId));
+            // @ts-expect-error Cannot find name 'computer'. Did you mean 'Computer'?
             const previous = await computer.prev(current);
             if (!previous)
                 break;
@@ -150,10 +148,10 @@ export class ChessContractHelper {
             throw new Error('Please create your account to start playing');
         }
     }
-    async createGame(tokenRoot, wagerAmount) {
+    async createGame(tokenRoot, wagerAmount, timeLimit = 600n) {
         await this.validateUser();
         const { tx, effect } = await this.computer.encode({
-            exp: `new ChessContract('${tokenRoot}', ${wagerAmount}n)`,
+            exp: `new ChessContract('${tokenRoot}', ${wagerAmount}n, ${timeLimit}n)`,
             mod: this.mod,
         });
         await this.computer.broadcast(tx);
@@ -213,6 +211,42 @@ export class ChessContractHelper {
         const latestChessRev = await this.computer.latest(chessId);
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await token.withdraw(latestChessRev);
+    }
+    /**
+     * Finds any token owned by the current user with at least minAmount balance.
+     * Used when creating a new game to auto-detect which token to wager.
+     */
+    async findAnyToken(minAmount) {
+        const tokenRevs = await this.computer.getOUTXOs({
+            mod: this.tokenMod,
+            publicKey: this.computer.getPublicKey(),
+        });
+        for (const rev of tokenRevs) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const token = (await this.computer.sync(rev));
+            if (token.amount >= minAmount) {
+                return token;
+            }
+        }
+        return null;
+    }
+    /**
+     * Resigns from the current game. Sets the withdraws array so the opponent
+     * (winner) can call withdrawTokens. Can only be called by the current
+     * contract owner (the player whose turn it is).
+     */
+    async resign(chessId) {
+        const latestRev = await this.computer.latest(chessId);
+        const chess = await this.computer.sync(latestRev);
+        const { tx, effect } = await this.computer.encodeCall({
+            target: chess,
+            property: 'resign',
+            args: [],
+            mod: this.mod,
+        });
+        await this.computer.broadcast(tx);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return effect.env.__bc__;
     }
 }
 //# sourceMappingURL=chess-contract.js.map

@@ -18,7 +18,6 @@ export declare class ChessContract extends Contract {
     constructor(root: string, wagerAmount: bigint, timeLimit: bigint);
     acceptDeposit(token: any, amount: bigint, name: string, nextOwner: string): Promise<void>;
     move(from: string, to: string, promotion: string): boolean;
-    claimWin(): void;
     resign(): void;
     isGameOver(): boolean;
     hasTimedOutW(): Promise<boolean>;
@@ -48,7 +47,7 @@ export declare class ChessContractHelper {
     });
     static fromModSpecs(computer: Computer, mod?: string, userMod?: string, tokenMod?: string): ChessContractHelper;
     validateUser(): Promise<void>;
-    createGame(tokenRoot: string, wagerAmount: bigint): Promise<SmartContract<typeof ChessContract>>;
+    createGame(tokenRoot: string, wagerAmount: bigint, timeLimit?: bigint): Promise<SmartContract<typeof ChessContract>>;
     depositTokens(chessRev: string, tokenRev: string, wagerAmount: bigint, name: string, nextOwner: string): Promise<SmartContract<typeof ChessContract>>;
     findToken(tokenRoot: string, minAmount: bigint): Promise<{
         _rev: string;
@@ -61,4 +60,20 @@ export declare class ChessContractHelper {
         isGameOver: boolean;
     }>;
     withdrawTokens(tokenId: string, chessId: string): Promise<void>;
+    /**
+     * Finds any token owned by the current user with at least minAmount balance.
+     * Used when creating a new game to auto-detect which token to wager.
+     */
+    findAnyToken(minAmount: bigint): Promise<{
+        _rev: string;
+        _root: string;
+        _id: string;
+        amount: bigint;
+    } | null>;
+    /**
+     * Resigns from the current game. Sets the withdraws array so the opponent
+     * (winner) can call withdrawTokens. Can only be called by the current
+     * contract owner (the player whose turn it is).
+     */
+    resign(chessId: string): Promise<SmartContract<typeof ChessContract>>;
 }
