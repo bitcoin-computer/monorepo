@@ -38,6 +38,7 @@
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
     "prepare": "husky",
     "test:rerun": "node ./scripts/rerun-failed.js",
+    "test:turbo": "turbo run test --concurrency=1 --continue",
     "test:compile:mocha": "npm run build:test --if-present --workspaces",
     "test:mocha:all": "npm run test:compile:mocha && BITCOIN_RPC_HOST=127.0.0.1 BCN_CHAIN=LTC BCN_NETWORK=regtest POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha --config .mocharc.json",
     "test:puppeteer:build": "npm run test:puppeteer:build --if-present --workspace=@bitcoin-computer/vite-template",
