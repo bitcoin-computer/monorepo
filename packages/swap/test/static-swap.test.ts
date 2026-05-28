@@ -26,7 +26,7 @@ describe('Static Swap', () => {
   const alice = new Computer({ url, chain, network })
   const bob = new Computer({ url, chain, network })
 
-  before('Before', async () => {
+  before('Fund Alice and Bob', async () => {
     await alice.faucet(1e8)
     await bob.faucet(1e8)
   })
@@ -48,7 +48,7 @@ describe('Static Swap', () => {
       const nftHelperB = new NftHelper(bob, nftHelperA.mod)
       const swapHelperB = new StaticSwapHelper(bob, swapHelperA.mod)
 
-      // Bob mints an NFT to pay for Alice's's NFT
+      // Bob mints an NFT to pay for Alice's NFT
       nftB = await nftHelperB.mint('b', 'BBB', 'URL')
 
       // Bob creates a swap transaction
@@ -57,7 +57,7 @@ describe('Static Swap', () => {
       // Alice checks the swap transaction
       await swapHelperA.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
 
-      // Alice signs an broadcasts the transaction to execute the swap
+      // Alice signs and broadcasts the transaction to execute the swap
       await alice.sign(tx)
       await alice.broadcast(tx)
 
@@ -73,8 +73,12 @@ describe('Static Swap', () => {
   })
 
   describe('Creating two NFTs to be swapped', () => {
-    it('Alice creates an NFT', async () => {
+    before('Create two NFTs to be swapped', async () => {
       nftA = await alice.new(NFT, ['A', 'AAA', 'URL'])
+      nftB = await bob.new(NFT, ['B', 'BBB', 'URL'])
+    })
+
+    it('Alice creates an NFT', async () => {
       expect(nftA).to.matchPattern({
         ...meta,
         name: 'A',
@@ -85,7 +89,6 @@ describe('Static Swap', () => {
     })
 
     it('Bob creates an NFT', async () => {
-      nftB = await bob.new(NFT, ['B', 'BBB', 'URL'])
       expect(nftB).to.matchPattern({
         ...meta,
         name: 'B',
@@ -96,19 +99,17 @@ describe('Static Swap', () => {
     })
   })
 
-  describe('Executing a swap', async () => {
+  describe('Executing a swap', () => {
     let tx: any
     let txId: string
     let swapHelper: StaticSwapHelper
 
     before('Before creating an offer', async () => {
       swapHelper = new StaticSwapHelper(alice)
+      await swapHelper.deploy()
     })
 
     it('Executes the swap', async () => {
-      // Alice deploys a swap contract
-      await swapHelper.deploy()
-
       // Alice builds, funds, and signs a swap transaction
       ;({ tx } = await swapHelper.createSwapTx(nftA, nftB))
 
