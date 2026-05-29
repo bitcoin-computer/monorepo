@@ -164,6 +164,30 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
   }
 
   // ============================================================
+  // TBC20 TRANSFER (base class — TBC777 / TBC777M inherit this)
+  // ============================================================
+  describe('TBC20 transfer (base class)', () => {
+    it('mint and partial transfer set recipient _owners on chain', async () => {
+      const tbc20Mod = await minter.deploy(`export ${TBC20}`)
+      const to = minter.getPublicKey()
+      const token = await minter.new(
+        TBC20,
+        [{ to, amount: 10n, name: TEST_NAME, symbol: TEST_SYMBOL }],
+        tbc20Mod,
+      )
+      const { tx, effect } = await minter.encode({
+        exp: `token.transfer('${black.getPublicKey()}', 3n)`,
+        env: { token: token._rev },
+        mod: tbc20Mod,
+      })
+      await minter.broadcast(tx)
+      const child = effect.res as SmartContract<typeof TBC20>
+      expect(child._owners).to.deep.equal([black.getPublicKey()])
+      expect(child.amount).to.eq(3n)
+    })
+  })
+
+  // ============================================================
   // PRIMARY GOAL: NO-INFLATION INVARIANT
   // ============================================================
   describe('No-Inflation Invariant (Core Security Guarantee)', () => {

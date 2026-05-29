@@ -4,7 +4,7 @@ export class TBC20 extends Contract {
     }
     constructor(params) {
         const { to, amount, name, symbol = '', ...rest } = params;
-        super({ _owners: [to], amount, name, symbol, ...rest });
+        super({ amount, name, symbol, ...rest, _owners: [to] });
     }
     transfer(to, amount) {
         if (typeof amount === 'undefined')
@@ -18,7 +18,7 @@ export class TBC20 extends Contract {
     }
     _createTransferToken(to, amount) {
         const ctor = this.constructor;
-        const { _id, _root, _rev, ...cleanState } = this;
+        const { _id, _root, _rev, _owners, ...cleanState } = this;
         return new ctor({ ...cleanState, to, amount });
     }
     burn() {

@@ -23,7 +23,7 @@ export class TBC20 extends Contract {
 
   constructor(params: TBC20ConstructorParams) {
     const { to, amount, name, symbol = '', ...rest } = params
-    super({ _owners: [to], amount, name, symbol, ...rest })
+    super({ amount, name, symbol, ...rest, _owners: [to] })
   }
 
   /**
@@ -57,7 +57,7 @@ export class TBC20 extends Contract {
   protected _createTransferToken(to: string, amount: bigint): this {
     const ctor = this.constructor as Constructor<this>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _id, _root, _rev, ...cleanState } = this
+    const { _id, _root, _rev, _owners, ...cleanState } = this
     return new ctor({ ...cleanState, to, amount })
   }
 
