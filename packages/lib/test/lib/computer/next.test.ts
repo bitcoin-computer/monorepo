@@ -37,7 +37,7 @@ describe('next', () => {
     const noOutput = '0'.repeat(64) + ':0'
 
     // Throws because there is no output with that revision
-    await expect(computer.next(noOutput)).to.be.rejectedWith('Rev not found')
+    await expect(computer.next(noOutput)).to.be.rejectedWith(/Rev .* not found/)
   })
 
   it('Should throw an error with a revision that does not contain an object', async () => {
@@ -45,6 +45,6 @@ describe('next', () => {
     const noObject = counter._id.split(':')[0] + ':1'
 
     // Throws because there is no object at the output with that revision
-    await expect(computer.next(noObject)).to.be.rejectedWith('Rev not found')
+    await expect(computer.next(noObject)).to.be.rejectedWith(/Rev .* not found/)
   })
 })
