@@ -7,7 +7,6 @@ chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
 const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa8bc54db8fed'
-const randomRev = '0000000000000000000000000000000000000000000000000000000000000000:0'
 const symbol = ''
 
 const meta = {
@@ -313,55 +312,74 @@ describe('Chat', () => {
       })
       expect(alicesChat._owners).deep.eq(publicKeys)
     })
-    expect(alicesChat._owners).deep.eq(publicKeys)
+  })
 
-    // 'Posting a message'
-    // 'Alice posts a message to the chat'
-    await alicesChat.post('Hi')
-    expect(alicesChat).to.matchPattern({
-      messages: ['Hi'],
-      _readers: publicKeys,
-      ...meta,
+  describe('Posting messages and reading', () => {
+    let alicesChat: Chat
+
+    before(async () => {
+      alicesChat = await alice.new(Chat, [publicKeys])
+      await alicesChat.post('Hi')
     })
 
-    // 'Invited users can read the chat and post messages'
-    // 'Bob can read the content of the chat'
-    bobsChat = await bob.sync<typeof Chat>(alicesChat._rev)
-    expect(bobsChat).matchPattern({
-      messages: ['Hi'],
-      _readers: publicKeys,
-      ...meta,
+    it('Alice posts a message to the chat', async () => {
+      expect(alicesChat).to.matchPattern({
+        messages: ['Hi'],
+        _readers: publicKeys,
+        ...meta,
+      })
     })
 
-    // 'Bob can write to the chat'
-    await bobsChat.post('Yo')
-    expect(bobsChat).matchPattern({
-      messages: ['Hi', 'Yo'],
-      _readers: publicKeys,
-      ...meta,
+    it('Bob can read the content of the chat', async () => {
+      const bobsChat = await bob.sync<typeof Chat>(alicesChat._rev)
+      expect(bobsChat).matchPattern({
+        messages: ['Hi'],
+        _readers: publicKeys,
+        ...meta,
+      })
     })
 
-    // 'User that are not invited cannot read the state or post'
-    // 'Eve cannot read the content of the chat'
-    try {
-      await eve.sync(alicesChat._rev)
-      expect(true).eq(false)
-    } catch (err) {
-      if (err instanceof Error) expect(err.message).eq('Decryption failure')
-    }
+    it('Bob can write to the chat', async () => {
+      const bobsChat = await bob.sync<typeof Chat>(alicesChat._rev)
+      await bobsChat.post('Yo')
+      expect(bobsChat).matchPattern({
+        messages: ['Hi', 'Yo'],
+        _readers: publicKeys,
+        ...meta,
+      })
+    })
+  })
 
-    // 'Users can be removed from the chat, and lose reading access'
-    // 'Alice removes Bob from the chat'
-    await alicesChat.remove(bob.getPublicKey())
-    expect(alicesChat._readers).deep.eq([alice.getPublicKey()])
+  describe('Access control', () => {
+    let alicesChat: Chat
 
-    // 'Bob cannot read the chat or post to it anymore'
-    try {
-      await bob.sync(alicesChat._rev)
-      expect(true).eq(false)
-    } catch (err) {
-      if (err instanceof Error) expect(err.message).eq('Decryption failure')
-    }
+    before(async () => {
+      alicesChat = await alice.new(Chat, [publicKeys])
+      await alicesChat.post('Hi')
+    })
+
+    it('Eve cannot read the content of the chat', async () => {
+      try {
+        await eve.sync(alicesChat._rev)
+        expect(true).eq(false)
+      } catch (err) {
+        if (err instanceof Error) expect(err.message).eq('Decryption failure')
+      }
+    })
+
+    it('Alice removes Bob from the chat', async () => {
+      const chatForRemove = await alice.new(Chat, [publicKeys])
+      await chatForRemove.post('Hi')
+      await chatForRemove.remove(bob.getPublicKey())
+      expect(chatForRemove._readers).deep.eq([alice.getPublicKey()])
+
+      try {
+        await bob.sync(chatForRemove._rev)
+        expect(true).eq(false)
+      } catch (err) {
+        if (err instanceof Error) expect(err.message).eq('Decryption failure')
+      }
+    })
   })
 })
 
