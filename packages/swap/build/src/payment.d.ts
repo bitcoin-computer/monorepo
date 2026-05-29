@@ -1,6 +1,5 @@
 import { Mock } from '@bitcoin-computer/lib';
-import type { Contract } from '@bitcoin-computer/lib/contract-env';
-declare const Contract: Contract;
+import { Contract } from '@bitcoin-computer/lib';
 export declare class Payment extends Contract {
     _id: string;
     _rev: string;
@@ -32,4 +31,3 @@ export declare class PaymentHelper {
 export declare class Withdraw extends Contract {
     static exec(payments: Payment[]): void;
 }
-export {};

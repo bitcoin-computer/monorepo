@@ -1,6 +1,5 @@
 import type { Transaction } from '@bitcoin-computer/lib';
-import type { Contract } from '@bitcoin-computer/lib/contract-env';
-declare const Contract: Contract;
+import { Contract } from '@bitcoin-computer/lib';
 export declare class StaticSwap extends Contract {
     static exec(a: any, b: any): void;
 }
@@ -18,4 +17,3 @@ export declare class StaticSwapHelper {
     }>;
     checkSwapTx(tx: Transaction, pubKeyA: string, pubKeyB: string): Promise<any>;
 }
-export {};

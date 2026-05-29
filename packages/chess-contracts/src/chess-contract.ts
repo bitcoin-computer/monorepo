@@ -11,8 +11,7 @@ import { ECPairFactory, ECPairInterface } from 'ecpair'
 import * as ecc from '@bitcoin-computer/secp256k1'
 import { BIP32Interface } from 'bip32'
 import { User } from './user.js'
-import type { Contract } from '@bitcoin-computer/lib/contract-env'
-declare const Contract: Contract
+import { Contract } from '@bitcoin-computer/lib'
 
 const ECPair = ECPairFactory(ecc)
 

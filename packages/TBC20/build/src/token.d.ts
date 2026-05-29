@@ -1,5 +1,4 @@
-import type { Contract } from '@bitcoin-computer/lib/contract-env';
-declare const Contract: Contract;
+import { Contract } from '@bitcoin-computer/lib';
 export declare class Token extends Contract {
     amount: bigint;
     name: string;
@@ -30,4 +29,3 @@ export declare class TokenHelper implements ITBC20 {
     balanceOf(publicKey: string, root: string): Promise<bigint>;
     transfer(to: string, amount: bigint, root: string): Promise<void>;
 }
-export {};

@@ -3,8 +3,7 @@ import { networks } from '@bitcoin-computer/nakamotojs';
 import { Buffer } from 'buffer';
 import { ECPairInterface } from 'ecpair';
 import { BIP32Interface } from 'bip32';
-import type { Contract } from '@bitcoin-computer/lib/contract-env';
-declare const Contract: Contract;
+import { Contract } from '@bitcoin-computer/lib';
 export declare const NotEnoughFundError = "Not enough funds to create chess game.";
 type PaymentType = {
     satoshis: bigint;

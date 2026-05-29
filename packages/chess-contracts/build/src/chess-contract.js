@@ -3,6 +3,7 @@ import { address, bufferUtils, networks, payments, script as bscript, } from '@b
 import { Buffer } from 'buffer';
 import { ECPairFactory } from 'ecpair';
 import * as ecc from '@bitcoin-computer/secp256k1';
+import { Contract } from '@bitcoin-computer/lib';
 const ECPair = ECPairFactory(ecc);
 export const NotEnoughFundError = 'Not enough funds to create chess game.';
 if (typeof global !== 'undefined')

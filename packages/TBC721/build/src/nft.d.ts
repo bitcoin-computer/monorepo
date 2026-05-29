@@ -1,6 +1,5 @@
 import { SmartContract } from '@bitcoin-computer/lib';
-import type { Contract } from '@bitcoin-computer/lib/contract-env';
-declare const Contract: Contract;
+import { Contract } from '@bitcoin-computer/lib';
 export declare class NFT extends Contract {
     name: string;
     artist: string;
@@ -28,4 +27,3 @@ export declare class NftHelper implements ITBC721 {
     ownersOf(tokenId: string): Promise<string[]>;
     transfer(to: string, tokenId: string): Promise<void>;
 }
-export {};

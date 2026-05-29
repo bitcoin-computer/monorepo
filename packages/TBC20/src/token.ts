@@ -1,5 +1,4 @@
-import type { Contract } from '@bitcoin-computer/lib/contract-env'
-declare const Contract: Contract
+import { Contract } from '@bitcoin-computer/lib'
 
 type Constructor<T> = new (...args: any[]) => T
 
