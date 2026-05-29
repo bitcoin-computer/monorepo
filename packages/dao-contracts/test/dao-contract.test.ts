@@ -3,8 +3,7 @@ import { Election, Vote } from '../src/dao-contract.js'
 import { expect } from 'chai'
 import { Token } from '@bitcoin-computer/TBC20'
 const url = 'http://localhost:1031'
-import type { Contract } from '@bitcoin-computer/lib/contract-env'
-declare const Contract: Contract
+import { Contract } from '@bitcoin-computer/lib'
 
 describe('Election', () => {
   const computer = new Computer({ url })

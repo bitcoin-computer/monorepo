@@ -1,6 +1,4 @@
-import type { Contract } from '@bitcoin-computer/lib/contract-env';
-declare const Contract: Contract;
-import { Computer } from '@bitcoin-computer/lib';
+import { Computer, Contract } from '@bitcoin-computer/lib';
 export declare class User extends Contract {
     name: string;
     games: string[];
@@ -16,4 +14,3 @@ export declare class UserHelper {
     });
     createUser(name: string): Promise<string>;
 }
-export {};

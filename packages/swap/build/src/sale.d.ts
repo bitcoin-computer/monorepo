@@ -1,8 +1,7 @@
 import { Buffer } from 'buffer';
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
 import { Payment, PaymentMock } from './payment.js';
-import type { Contract } from '@bitcoin-computer/lib/contract-env';
-declare const Contract: Contract;
+import { Contract } from '@bitcoin-computer/lib';
 export declare class Sale extends Contract {
     static exec(o: any, p: Payment): any[];
 }
@@ -18,4 +17,3 @@ export declare class SaleHelper {
         _rev: string;
     }, scriptPubKey: Buffer): TransactionType;
 }
-export {};

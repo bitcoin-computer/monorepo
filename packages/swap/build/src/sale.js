@@ -1,5 +1,6 @@
 import { Transaction } from '@bitcoin-computer/lib';
 import { PaymentMock } from './payment.js';
+import { Contract } from '@bitcoin-computer/lib';
 const sighashType = Transaction.SIGHASH_SINGLE | Transaction.SIGHASH_ANYONECANPAY;
 export class Sale extends Contract {
     static exec(o, p) {

@@ -1,6 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib';
-import type { Contract } from '@bitcoin-computer/lib/contract-env';
-declare const Contract: Contract;
+import { Computer, Contract } from '@bitcoin-computer/lib';
 export declare class ChessChallengeTxWrapper extends Contract {
     chessRev: string;
     wagerAmount: bigint;
@@ -19,4 +17,3 @@ export declare class ChessChallengeTxWrapperHelper {
     });
     createChessChallengeTxWrapper(chessRev: string, wagerAmount: bigint, tokenRoot: string, publicKeyW: string, publicKeyB: string): Promise<string>;
 }
-export {};

@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class Token extends Contract {
     constructor(to, amount, name, symbol = '') {
         super({ _owners: [to], amount, name, symbol });

@@ -1,7 +1,6 @@
 import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from './utils/index.js'
-import type { Contract } from '@bitcoin-computer/lib/contract-env'
-declare const Contract: Contract
+import { Contract } from '@bitcoin-computer/lib'
 
 describe('Transaction', () => {
   class A extends Contract {

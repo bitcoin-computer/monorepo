@@ -5,8 +5,7 @@ import { UtilsContext } from '@bitcoin-computer/components'
 import { TypeSelectionDropdown } from '../TypeSelectionDropdown'
 import { getErrorMessage, getValueForType, isValidRev, sleep } from '../../utils'
 import { ModSpec } from './Modspec'
-import type { Contract } from '@bitcoin-computer/lib/contract-env'
-declare const Contract: Contract
+import { Contract } from '@bitcoin-computer/lib'
 
 interface Argument {
   type: string

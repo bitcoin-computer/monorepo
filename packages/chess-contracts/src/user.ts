@@ -1,7 +1,4 @@
-import type { Contract } from '@bitcoin-computer/lib/contract-env'
-declare const Contract: Contract
-
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 
 export class User extends Contract {
   name!: string

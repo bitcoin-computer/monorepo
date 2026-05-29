@@ -1,8 +1,7 @@
 import { Computer } from '@bitcoin-computer/lib'
 import { crypto, script } from '@bitcoin-computer/nakamotojs'
 import { chain, expect, network, sleep, url } from '../../utils/index.js'
-import type { Contract } from '@bitcoin-computer/lib/contract-env'
-declare const Contract: Contract
+import { Contract } from '@bitcoin-computer/lib'
 
 describe('getTXOs', () => {
   let computer: Computer

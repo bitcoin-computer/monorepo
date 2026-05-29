@@ -1,5 +1,4 @@
-import type { Contract } from '@bitcoin-computer/lib/contract-env';
-declare const Contract: Contract;
+import { Contract } from '@bitcoin-computer/lib';
 export declare class List extends Contract {
     elements: string[];
     constructor();
@@ -12,4 +11,3 @@ export declare class ListHelper {
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
 }
-export {};
