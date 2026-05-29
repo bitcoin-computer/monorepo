@@ -94,9 +94,7 @@ export function StartGameModalContent({
     >
       <div className="grid gap-6 p-6 border-b border-gray-200 dark:border-gray-600">
         <div className="flex items-center justify-between">
-          <span className="text-sm font-medium text-gray-900 dark:text-gray-200">
-            Wager Amount
-          </span>
+          <span className="text-sm font-medium text-gray-900 dark:text-gray-200">Wager Amount</span>
           <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
             {challenge.wagerAmount.toString()} tokens
           </span>
