@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib'
 type Constructor<T> = new (...args: any[]) => T
 
 export type TBC20ConstructorParams = {

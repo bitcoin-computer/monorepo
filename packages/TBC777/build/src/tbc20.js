@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class TBC20 extends Contract {
     get root() {
         return this._root;

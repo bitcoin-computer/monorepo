@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 import { TBC20 } from './tbc20.js';
 export class Escrow extends Contract {
 }

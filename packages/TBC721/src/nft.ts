@@ -1,5 +1,4 @@
-import { SmartContract } from '@bitcoin-computer/lib'
-import { Contract } from '@bitcoin-computer/lib'
+import { Contract, Computer, SmartContract } from '@bitcoin-computer/lib'
 
 export class NFT extends Contract {
   name: string
