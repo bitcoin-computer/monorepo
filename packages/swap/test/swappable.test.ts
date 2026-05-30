@@ -36,14 +36,15 @@ describe('Swapppable', () => {
   const alice = new Computer({ url, chain, network })
   const bob = new Computer({ url, chain, network })
 
-  before('Before', async () => {
+  before('Fund Alice and Bob', async () => {
     await alice.faucet(1e8)
     await bob.faucet(1e8)
+    a = await alice.new(Swappable, ['A', 'AAA'])
+    b = await bob.new(Swappable, ['B', 'BBB'])
   })
 
   describe('Creating two NFTs to be swapped', () => {
     it('Alice creates a', async () => {
-      a = await alice.new(Swappable, ['A', 'AAA'])
       expect(a).to.matchPattern({
         ...meta,
         name: 'A',
@@ -53,7 +54,6 @@ describe('Swapppable', () => {
     })
 
     it('Bob creates b', async () => {
-      b = await bob.new(Swappable, ['B', 'BBB'])
       expect(b).to.matchPattern({
         ...meta,
         name: 'B',
@@ -63,7 +63,7 @@ describe('Swapppable', () => {
     })
   })
 
-  describe('Executing a swap', async () => {
+  describe('Executing a swap', () => {
     let tx: any
     let txId: string
 

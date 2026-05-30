@@ -28,7 +28,9 @@ const network = process.env.BCN_NETWORK
 const artist = ''
 const imageUrl = ''
 
+// eslint-disable-next-line
 const isString = (x: any) => typeof x === 'string'
+// eslint-disable-next-line
 const isArray = (x: any) => Array.isArray(x)
 
 export const meta = {

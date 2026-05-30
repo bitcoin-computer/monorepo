@@ -69,7 +69,7 @@ export class SaleHelper {
     return tx.outs[0].value
   }
 
-  static finalizeSaleTx(tx: TransactionType, payment: Payment, scriptPubKey: Buffer) {
+  static finalizeSaleTx(tx: TransactionType, payment: { _rev: string }, scriptPubKey: Buffer) {
     const [paymentTxId, paymentIndex] = payment._rev.split(':')
     const index = parseInt(paymentIndex, 10)
     tx.updateInput(1, { txId: paymentTxId, index })

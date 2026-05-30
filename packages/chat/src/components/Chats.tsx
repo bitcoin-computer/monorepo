@@ -86,23 +86,28 @@ export function Chats() {
   const [chatId] = useState(params.id || '')
   const [chats, setChats] = useState<ChatSc[]>([])
 
-  const fetchChats = async () => {
-    const result = await computer.getOUTXOs({ mod: VITE_CHAT_MOD_SPEC, publicKey })
-    const chatsPromise: Promise<ChatSc>[] = []
-    result.forEach((rev: string) => {
-      chatsPromise.push(computer.sync<typeof ChatSc>(rev))
-    })
-
-    Promise.allSettled(chatsPromise).then((results) => {
-      const successfulChats = results
-        .filter((result): result is PromiseFulfilledResult<ChatSc> => result.status === 'fulfilled')
-        .map((result) => result.value)
-      setChats(successfulChats)
-    })
-  }
-
   useEffect(() => {
-    fetchChats()
+    const fetch = async () => {
+      const result = await computer.getOUTXOs({ mod: VITE_CHAT_MOD_SPEC, publicKey })
+      const chatsPromise: Promise<SmartContract<typeof ChatSc>>[] = []
+      result.forEach((rev: string) => {
+        chatsPromise.push(
+          computer.sync<typeof ChatSc>(rev) as Promise<SmartContract<typeof ChatSc>>,
+        )
+      })
+
+      Promise.allSettled(chatsPromise).then((results) => {
+        const successfulChats = results
+          .filter(
+            (result): result is PromiseFulfilledResult<SmartContract<typeof ChatSc>> =>
+              result.status === 'fulfilled',
+          )
+          .map((result) => result.value)
+
+        setChats(successfulChats)
+      })
+    }
+    fetch()
   }, [computer, location, navigate])
 
   useEffect(() => {
@@ -112,7 +117,7 @@ export function Chats() {
       unsubscribe = await computer.streamTXOs(
         { mod: VITE_CHAT_MOD_SPEC },
         async ({ rev }) => {
-          const newChat = await computer.sync<typeof ChatSc>(rev)
+          const newChat = (await computer.sync<typeof ChatSc>(rev)) as SmartContract<typeof ChatSc>
           // Filter by ownership
           if (newChat._owners.includes(publicKey)) {
             setChats((prev) => {

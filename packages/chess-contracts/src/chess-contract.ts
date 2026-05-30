@@ -1,180 +1,189 @@
 import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
-import {
-  address,
-  bufferUtils,
-  networks,
-  payments,
-  script as bscript,
-} from '@bitcoin-computer/nakamotojs'
-import { Buffer } from 'buffer'
-import { ECPairFactory, ECPairInterface } from 'ecpair'
-import * as ecc from '@bitcoin-computer/secp256k1'
-import { BIP32Interface } from 'bip32'
 import { User } from './user.js'
 import { Contract } from '@bitcoin-computer/lib'
 
-const ECPair = ECPairFactory(ecc)
-
-export const NotEnoughFundError = 'Not enough funds to create chess game.'
-
-if (typeof global !== 'undefined') global.Buffer = Buffer
-
-type PaymentType = {
-  satoshis: bigint
-  publicKeyW: string
-  publicKeyB: string
-}
-
-export class Payment extends Contract {
-  constructor({ satoshis, publicKeyW, publicKeyB }: PaymentType) {
-    super({
-      _satoshis: satoshis,
-      _owners: `OP_2 ${publicKeyW} ${publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' '),
-    })
-  }
-}
-
-type WinnerTxWrapperType = {
-  publicKeyW: string
-  publicKeyB: string
-}
-
-export class WinnerTxWrapper extends Contract {
-  redeemTxHex!: string
-  constructor({ publicKeyW, publicKeyB }: WinnerTxWrapperType) {
-    super({
-      _owners: [publicKeyW, publicKeyB],
-      redeemTxHex: '',
-    })
-  }
-  setRedeemHex(txHex: string) {
-    this.redeemTxHex = txHex
-  }
-}
-
 export class ChessContract extends Contract {
-  satoshis!: bigint
+  wagerAmount!: bigint
+  timeLimit!: bigint
   nameW!: string
   nameB!: string
   publicKeyW!: string
   publicKeyB!: string
   sans!: string[]
   fen!: string
-  payment!: Payment
-  winnerTxWrapper!: WinnerTxWrapper
+  deposits!: [string, string][]
+  withdraws!: [string, string, bigint][]
+  /** Required by TBC777M escrow audit (`isValid` / `computeFinalWithdraws`). */
+  finalWithdraws!: [string, string, bigint][]
+  root!: string
+  tokenIdW!: string
+  tokenIdB!: string
 
-  constructor(
-    satoshis: bigint,
-    nameW: string,
-    nameB: string,
-    publicKeyW: string,
-    publicKeyB: string,
-  ) {
+  constructor(root: string, wagerAmount: bigint, timeLimit: bigint) {
     super({
-      satoshis,
-      nameW,
-      nameB,
-      publicKeyW,
-      publicKeyB,
+      wagerAmount,
+      timeLimit,
+      nameW: '',
+      nameB: '',
+      publicKeyW: '',
+      publicKeyB: '',
       sans: [],
       fen: 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1',
-      payment: new Payment({ satoshis, publicKeyW, publicKeyB }),
-      winnerTxWrapper: new WinnerTxWrapper({ publicKeyW, publicKeyB }),
+      deposits: [],
+      withdraws: [],
+      finalWithdraws: [],
+      root,
+      tokenIdW: '',
+      tokenIdB: '',
     })
   }
 
-  setRedeemHex(txHex: string) {
-    this.winnerTxWrapper.setRedeemHex(txHex)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async acceptDeposit(token: any, amount: bigint, name: string, nextOwner: string) {
+    if (amount !== this.wagerAmount) throw new Error('Deposit amount must match wager')
+    if (token._root !== this.root) throw new Error('Token root does not match wager')
+    token.deposit(this._id, amount)
+    this.deposits.push([token._root, token._rev])
+    this._owners = [nextOwner]
+    if (!this.publicKeyB) {
+      this.tokenIdW = token._id
+      this.nameW = name
+      this.publicKeyB = nextOwner
+    } else if (!this.publicKeyW) {
+      this.tokenIdB = token._id
+      this.nameB = name
+      this.publicKeyW = nextOwner
+    } else {
+      throw new Error('Game is already fully funded')
+    }
   }
 
-  move(from: string, to: string, promotion: string): string {
-    // @ts-expect-error type error
+  move(from: string, to: string, promotion: string): boolean {
+    if (!this.publicKeyB || !this.publicKeyW) throw new Error('Game not yet fully funded')
+    // @ts-expect-error Chess is available in the deployed module scope
     const chessLib = new Chess(this.fen)
-    const { san } = chessLib.move({ from, to, promotion })
+    const moveArg: { from: string; to: string; promotion?: string } = { from, to }
+    if (promotion) moveArg.promotion = promotion
+    const { san } = chessLib.move(moveArg)
     this.sans.push(san)
     this.fen = chessLib.fen()
 
-    if (!chessLib.isGameOver()) {
-      if (this._owners[0] === this.publicKeyW) {
-        this._owners = [this.publicKeyB]
+    if (chessLib.isGameOver()) {
+      // Settle the pot atomically with the winning move so the winner does not
+      // need a separate "claim" transaction before they can withdraw.
+      if (chessLib.isCheckmate()) {
+        // The player who just moved is the winner.
+        const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdW : this.tokenIdB
+        this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]]
       } else {
-        this._owners = [this.publicKeyW]
+        // Draw / stalemate / threefold / 50-move rule: each side gets its wager back.
+        this.withdraws = [
+          [this.root, this.tokenIdW, this.wagerAmount],
+          [this.root, this.tokenIdB, this.wagerAmount],
+        ]
       }
+    } else {
+      this._owners = [this._owners[0] === this.publicKeyW ? this.publicKeyB : this.publicKeyW]
     }
+
     return chessLib.isGameOver()
   }
 
+  resign() {
+    const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdB : this.tokenIdW
+    this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]]
+  }
+
   isGameOver(): boolean {
-    // @ts-expect-error type error
+    // @ts-expect-error Chess is available in the deployed module scope
     return new Chess(this.fen).isGameOver()
+  }
+
+  async hasTimedOutW(): Promise<boolean> {
+    const { timeW } = await this.calculateTimes()
+    return timeW > this.timeLimit
+  }
+
+  async hasTimedOutB(): Promise<boolean> {
+    const { timeB } = await this.calculateTimes()
+    return timeB > this.timeLimit
+  }
+
+  /**
+   * Calculates white time (timeW) and black time (timeB) from a list of timestamps.
+   * timeW = (t2 - t1) + (t4 - t3) + (t6 - t5) + ...
+   * timeB = (t3 - t2) + (t5 - t4) + (t7 - t6) + ...
+   *
+   * Note: timeW + timeB will equal (tn - t1).
+   */
+  async calculateTimes(): Promise<{ timeW: bigint; timeB: bigint }> {
+    let current = this._rev
+    const timestamps: bigint[] = []
+
+    // Collect every historical state. Deposits and withdrawals accumulate
+    // across the entire lifetime of the escrow, so the audit must see them all.
+    while (true) {
+      const txId = current.split(':')[0]
+      // @ts-expect-error Cannot find name 'computer'. Did you mean 'Computer'?
+      timestamps.push(await computer.txIdToBlockTime(txId))
+      // @ts-expect-error Cannot find name 'computer'. Did you mean 'Computer'?
+      const previous = await computer.prev(current)
+      if (!previous) break
+      current = previous
+    }
+
+    if (timestamps.length < 2) return { timeW: 0n, timeB: 0n }
+
+    let timeW = 0n
+    let timeB = 0n
+
+    // Start from the first move (index 0)
+    for (let i = 1; i < timestamps.length; i++) {
+      const diff: bigint = timestamps[i] - timestamps[i - 1]
+
+      if (i % 2 === 1) {
+        // Odd indices (1, 3, 5, ...): White's moves
+        timeW += diff
+      } else {
+        // Even indices (2, 4, 6, ...): Black's moves
+        timeB += diff
+      }
+    }
+
+    return { timeW, timeB }
   }
 }
 
 export class ChessContractHelper {
   computer: Computer
-  satoshis?: bigint
-  nameW?: string
-  nameB?: string
-  publicKeyW?: string
-  publicKeyB?: string
   mod?: string
   userMod?: string
+  tokenMod?: string
 
   constructor({
     computer,
-    satoshis,
-    nameW,
-    nameB,
-    publicKeyW,
-    publicKeyB,
     mod,
     userMod,
+    tokenMod,
   }: {
     computer: Computer
-    satoshis?: bigint
-    nameW?: string
-    nameB?: string
-    publicKeyW?: string
-    publicKeyB?: string
     mod?: string
     userMod?: string
+    tokenMod?: string
   }) {
     this.computer = computer
-    this.satoshis = satoshis
-    this.nameW = nameW
-    this.nameB = nameB
-    this.publicKeyW = publicKeyW
-    this.publicKeyB = publicKeyB
     this.mod = mod
     this.userMod = userMod
+    this.tokenMod = tokenMod
   }
 
-  isInitialized(): this is Required<ChessContractHelper> {
-    return Object.values(this).every((element) => element !== undefined)
-  }
-
-  static fromContract(
+  static fromModSpecs(
     computer: Computer,
-    game: SmartContract<typeof ChessContract>,
     mod?: string,
     userMod?: string,
+    tokenMod?: string,
   ): ChessContractHelper {
-    const { satoshis, nameW, nameB, publicKeyW, publicKeyB } = game
-    return new this({
-      computer,
-      satoshis,
-      nameW,
-      nameB,
-      publicKeyW,
-      publicKeyB,
-      mod,
-      userMod,
-    })
-  }
-
-  // can we fetch the public key from the server
-  getASM(): string {
-    return `OP_2 ${this.publicKeyW} ${this.publicKeyB} OP_2 OP_CHECKMULTISIG`.replace(/\s+/g, ' ')
+    return new this({ computer, mod, userMod, tokenMod })
   }
 
   async validateUser(): Promise<void> {
@@ -182,87 +191,57 @@ export class ChessContractHelper {
       mod: this.userMod,
       publicKey: this.computer.getPublicKey(),
     })
-
     if (!userRev) {
       throw new Error('Please create your account to start playing')
     }
   }
 
-  async makeTx(): Promise<Transaction> {
-    if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
-
+  async createGame(
+    tokenRoot: string,
+    wagerAmount: bigint,
+    timeLimit = 600n,
+  ): Promise<SmartContract<typeof ChessContract>> {
     await this.validateUser()
-
-    // Create output with non-standard script
-    const { tx } = await this.computer.encode({
-      exp: `new ChessContract(
-        ${this.satoshis}n,
-        "${this.nameW}",
-        "${this.nameB}",
-        "${this.publicKeyW}",
-        "${this.publicKeyB}"
-      )`,
+    const { tx, effect } = await this.computer.encode({
+      exp: `new ChessContract('${tokenRoot}', ${wagerAmount}n, ${timeLimit}n)`,
       mod: this.mod,
-      fund: false,
-      sign: false,
     })
-    if (!tx) throw new Error('Could not create ChessContract')
-
-    // Fund with this.satoshis / 2
-    const chain = this.computer.getChain()
-    const network = this.computer.getNetwork()
-    const n = networks.getNetwork(chain, network)
-    const addy = address.fromPublicKey(this.computer.db.wallet.publicKey, 'p2pkh', n)
-    const utxos = await this.computer.getUTXOs({ address: addy, verbosity: 1 })
-    let paid = 0n
-    while (paid < Number(this.satoshis) / 2 && utxos.length > 0) {
-      const { rev, satoshis } = utxos.pop()!
-      const txId = rev.substring(0, 64)
-      const vout = parseInt(rev.substring(65), 10)
-      const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
-      tx.addInput(txHash, vout)
-      paid += satoshis
-    }
-
-    if (paid < this.satoshis) throw new Error(NotEnoughFundError)
-
-    // Add change
-    const publicKeyBuffer = this.computer.db.wallet.publicKey
-    const { output } = payments.p2pkh({ pubkey: publicKeyBuffer, network: n })
-    const changeSatoshis = Number(paid) - Number(this.satoshis) / 2
-    tx.addOutput(output!, BigInt(Math.round(changeSatoshis)))
-
-    // Sign
-    const { SIGHASH_ALL, SIGHASH_ANYONECANPAY } = Transaction
-    await this.computer.sign(tx, { sighashType: SIGHASH_ALL | SIGHASH_ANYONECANPAY })
-    return tx
+    await this.computer.broadcast(tx)
+    return effect.res as SmartContract<typeof ChessContract>
   }
 
-  async completeTx(tx: Transaction): Promise<string> {
-    await this.validateUser()
-    const decoded = await this.computer.decode(tx)
-    const { effect } = await this.computer.encode(decoded)
-    const { res } = effect
-    const chessContract = res as SmartContract<typeof ChessContract>
+  async depositTokens(
+    chessRev: string,
+    tokenRev: string,
+    wagerAmount: bigint,
+    name: string,
+    nextOwner: string,
+  ): Promise<SmartContract<typeof ChessContract>> {
+    const { tx, effect } = await this.computer.encode({
+      exp: `chess.acceptDeposit(token, ${wagerAmount}n, '${name}', '${nextOwner}')`,
+      env: { chess: chessRev, token: tokenRev },
+      mod: this.mod,
+    })
+    await this.computer.broadcast(tx)
+    return effect.env.chess as SmartContract<typeof ChessContract>
+  }
 
-    this.satoshis = chessContract.payment._satoshis
-    this.nameW = chessContract.nameW
-    this.nameB = chessContract.nameB
-    this.publicKeyW = chessContract.publicKeyW
-    this.publicKeyB = chessContract.publicKeyB
-
-    // Fund
-    const fee = await this.computer.db.wallet.estimateFee(tx)
-    const txId = await this.computer.send(
-      this.satoshis / 2n + 50n * BigInt(fee),
-      this.computer.getAddress(),
-    )
-    const txHash = bufferUtils.reverseBuffer(Buffer.from(txId, 'hex'))
-    tx.addInput(txHash, 0)
-
-    // Sign and broadcast
-    await this.computer.sign(tx)
-    return this.computer.broadcast(tx)
+  async findToken(
+    tokenRoot: string,
+    minAmount: bigint,
+  ): Promise<{ _rev: string; _root: string; _id: string; amount: bigint } | null> {
+    const tokenRevs = await this.computer.getOUTXOs({
+      mod: this.tokenMod,
+      publicKey: this.computer.getPublicKey(),
+    })
+    for (const rev of tokenRevs) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const token = (await this.computer.sync(rev)) as any
+      if (token._root === tokenRoot && token.amount >= minAmount) {
+        return token
+      }
+    }
+    return null
   }
 
   async move(
@@ -294,185 +273,54 @@ export class ChessContractHelper {
     await this.computer.broadcast(tx)
     const { res: isGameOver, env } = effect
     const { __bc__: newChessContract } = env as { __bc__: SmartContract<typeof ChessContract> }
-    if (isGameOver) {
-      await this.spend(newChessContract)
-      console.log('You won!')
-    }
     return { newChessContract, isGameOver }
   }
 
-  async spend(chessContract: SmartContract<typeof ChessContract>, fee = 10000n): Promise<void> {
-    const txId = chessContract._id.split(':')[0]
-    return this.spendWithConfirmation(txId, chessContract, fee)
+  async withdrawTokens(tokenId: string, chessId: string): Promise<void> {
+    const latestTokenRev = await this.computer.latest(tokenId)
+    const token = await this.computer.sync(latestTokenRev)
+    const latestChessRev = await this.computer.latest(chessId)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await (token as any).withdraw(latestChessRev)
   }
 
-  async spendWithConfirmation(
-    txId: string,
-    chessContract: SmartContract<typeof ChessContract>,
-    fee = 10000n,
-  ): Promise<void> {
-    if (!this.isInitialized()) throw new Error('Chess helper is not initialized')
-
-    const chain = this.computer.getChain()
-    const network = this.computer.getNetwork()
-    const n = networks.getNetwork(chain, network)
-    const { hdPrivateKey } = this.computer.db.wallet
-    const { output } = payments.p2pkh({ pubkey: hdPrivateKey.publicKey, ...n })
-
-    // Create redeem tx
-    const redeemTx = ChessContractHelper.createRedeemTx(
-      txId,
-      hdPrivateKey,
-      this.satoshis,
-      fee,
-      output,
-      this.getASM(),
-      1,
-    )
-    //  new Transaction()
-    const redeemTxHex = redeemTx.toHex()
-    await chessContract.setRedeemHex(redeemTxHex)
-    return
-  }
-
-  static createRedeemTx(
-    txId: string,
-    hdPrivateKey: BIP32Interface,
-    satoshis: bigint,
-    fee: bigint,
-    output: Buffer | undefined,
-    scriptASM: string,
-    inputIndex: number,
-  ) {
-    const redeemTx = new Transaction()
-    redeemTx.addInput(Buffer.from(txId, 'hex').reverse(), inputIndex)
-    redeemTx.addOutput(output!, BigInt(satoshis) - fee)
-    const redeemScript = bscript.fromASM(scriptASM)
-    const sigHash = redeemTx.hashForSignature(0, redeemScript, Transaction.SIGHASH_ALL)
-    const winnerSig = bscript.signature.encode(hdPrivateKey.sign(sigHash), Transaction.SIGHASH_ALL)
-
-    // Create partial scriptSig with OP_0 (dummy) and winner's signature
-    const partialRedeemInput = bscript.compile([Buffer.alloc(0), winnerSig])
-    const partialScript = payments.p2sh({
-      redeem: { input: partialRedeemInput, output: redeemScript },
+  /**
+   * Finds any token owned by the current user with at least minAmount balance.
+   * Used when creating a new game to auto-detect which token to wager.
+   */
+  async findAnyToken(
+    minAmount: bigint,
+  ): Promise<{ _rev: string; _root: string; _id: string; amount: bigint } | null> {
+    const tokenRevs = await this.computer.getOUTXOs({
+      mod: this.tokenMod,
+      publicKey: this.computer.getPublicKey(),
     })
-
-    redeemTx.setInputScript(0, partialScript.input!)
-    return redeemTx
+    for (const rev of tokenRevs) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const token = (await this.computer.sync(rev)) as any
+      if (token.amount >= minAmount) {
+        return token
+      }
+    }
+    return null
   }
 
-  static validateAndSignRedeemTx(
-    redeemTx: Transaction,
-    winnerPublicKey: Buffer,
-    validatorKeyPair: ECPairInterface,
-    expectedRedeemScript: Buffer,
-    network: networks.Network,
-    playerWIsTheValidator: boolean = false,
-  ) {
-    // Verify transaction structure
-    if (redeemTx.ins.length !== 1 || redeemTx.outs.length !== 1) {
-      throw new Error('Invalid transaction structure')
-    }
-
-    // Decompile scriptSig
-    const scriptSig = redeemTx.ins[0].script
-    const decompiled: (number | Buffer)[] | null = bscript.decompile(scriptSig)
-    if (!decompiled || decompiled.length !== 3) {
-      throw new Error('Invalid scriptSig format')
-    }
-    const [dummy, winnerSig, providedRedeemScript] = decompiled
-
-    // Verify dummy element
-    if (typeof dummy !== 'number' || dummy !== 0) {
-      throw new Error('Dummy element must be OP_0')
-    }
-
-    // Verify winner's signature format
-    if (!Buffer.isBuffer(winnerSig)) {
-      throw new Error('Invalid winner signature format')
-    }
-
-    // Verify redeem script format
-    if (!Buffer.isBuffer(providedRedeemScript)) {
-      throw new Error('Invalid redeem script format')
-    }
-
-    // Verify redeem script
-    if (!providedRedeemScript.equals(expectedRedeemScript as Uint8Array<ArrayBufferLike>)) {
-      throw new Error('Redeem script does not match expected script')
-    }
-
-    // Verify winner's signature
-    const sigHash = redeemTx.hashForSignature(0, expectedRedeemScript, Transaction.SIGHASH_ALL)
-    const winnerSigDecoded = bscript.signature.decode(winnerSig as Buffer)
-    const winnerKeyPair = ECPair.fromPublicKey(winnerPublicKey, { network })
-    if (!winnerKeyPair.verify(sigHash, winnerSigDecoded.signature)) {
-      throw new Error('Claimant’s signature is invalid')
-    }
-
-    // Verify output goes to winner's address
-    const outputScript = redeemTx.outs[0].script
-    const winnerAddressScript = payments.p2pkh({ pubkey: winnerPublicKey, network }).output
-    if (!outputScript.equals(winnerAddressScript as Buffer as Uint8Array<ArrayBufferLike>)) {
-      throw new Error('Output must go to winner’s address')
-    }
-
-    // Validator signs the transaction
-    const validatorSig = bscript.signature.encode(
-      validatorKeyPair.sign(sigHash),
-      Transaction.SIGHASH_ALL,
-    )
-
-    // Update scriptSig with both signatures
-    // Order of public keys in script should be similar to the order of signatures
-    const finalRedeemInput = bscript.compile([
-      Buffer.alloc(0),
-      playerWIsTheValidator ? validatorSig : winnerSig,
-      playerWIsTheValidator ? winnerSig : validatorSig,
-    ])
-    const finalScript = payments.p2sh({
-      redeem: { input: finalRedeemInput, output: expectedRedeemScript },
-      network,
+  /**
+   * Resigns from the current game. Sets the withdraws array so the opponent
+   * (winner) can call withdrawTokens. Can only be called by the current
+   * contract owner (the player whose turn it is).
+   */
+  async resign(chessId: string): Promise<SmartContract<typeof ChessContract>> {
+    const latestRev = await this.computer.latest(chessId)
+    const chess = await this.computer.sync<typeof ChessContract>(latestRev)
+    const { tx, effect } = await this.computer.encodeCall({
+      target: chess,
+      property: 'resign',
+      args: [],
+      mod: this.mod,
     })
-    redeemTx.setInputScript(0, finalScript.input as Buffer)
-
-    // Return the fully signed transaction
-    return redeemTx
+    await this.computer.broadcast(tx)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (effect as any).env.__bc__ as SmartContract<typeof ChessContract>
   }
-}
-
-export const signRedeemTx = async (
-  computer: Computer,
-  chessContract: SmartContract<typeof ChessContract>,
-  txWrapper: WinnerTxWrapper,
-) => {
-  const winnerPublicKey = chessContract._owners[0] as string
-  const network = computer.getNetwork()
-  const chain = computer.getChain()
-  const NETWORKOBJ = networks.getNetwork(chain, network)
-
-  const { privateKey: currentPlayerPrivateKey } = computer.db.wallet
-  const currentPlayerKeyPair = ECPair.fromPrivateKey(currentPlayerPrivateKey, {
-    network: NETWORKOBJ,
-  })
-
-  const redeemTx = Transaction.fromHex(txWrapper.redeemTxHex)
-
-  const expectedRedeemScript = bscript.fromASM(
-    `OP_2 ${chessContract.publicKeyW} ${chessContract.publicKeyB} OP_2 OP_CHECKMULTISIG`,
-  )
-
-  const playerWIsTheValidator = computer.getPublicKey() === chessContract.publicKeyW
-
-  // Validate and sign the transaction
-  const signedRedeemTx = ChessContractHelper.validateAndSignRedeemTx(
-    redeemTx,
-    Buffer.from(winnerPublicKey, 'hex'),
-    currentPlayerKeyPair,
-    expectedRedeemScript,
-    NETWORKOBJ,
-    playerWIsTheValidator,
-  )
-
-  return signedRedeemTx
 }

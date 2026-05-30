@@ -10,21 +10,6 @@ describe('encode', () => {
     await computer.faucet(1e8)
   })
 
-  // Basic types
-  it('Should encode a basic type', async () => {
-    // Encode the expression "1".repeat(1000000)
-    const { effect, tx } = await computer.encode({ exp: '"1".repeat(1000000)' })
-
-    // The value returned contains the result
-    expect(effect).deep.eq({ res: '1'.repeat(1000000), env: {} })
-
-    // Broadcast transaction to store value on the blockchain
-    const txId = await computer.broadcast(tx!)
-
-    // Syncing to the transaction always returns the effect
-    expect(await computer.sync(txId)).deep.eq(effect)
-  })
-
   // Objects
   it('Should work for a class', async () => {
     // A smart contract

@@ -5,11 +5,14 @@ export declare const BC_BRAND: unique symbol;
 export declare const PROXY_TAG: unique symbol;
 export type BC_BRAND = typeof BC_BRAND;
 export type PROXY_TAG = typeof PROXY_TAG;
-type KnownContractSymbols = typeof BC_BRAND | typeof PROXY_TAG;
+type KnownContractSymbols = typeof BC_BRAND | typeof PROXY_TAG | typeof brand;
 declare const brand: unique symbol;
 type Branded<T, Brand extends string> = T & {
     readonly [brand]: Brand;
 };
+type Unbranded<T> = T extends {
+    readonly [brand]: any;
+} ? T extends string ? string : T extends bigint ? bigint : T : T;
 export type TxId = Branded<string, 'TxId'>;
 export type Id = Branded<`${TxId}:${number}`, 'Id'>;
 export type Rev = Branded<`${TxId}:${number}`, 'Rev'>;
@@ -51,6 +54,15 @@ export declare abstract class Contract {
     _url?: string;
     constructor(..._args: any[]);
 }
+export declare abstract class ContractBranded extends Contract {
+    readonly _id: Id;
+    readonly _rev: Rev;
+    readonly _root: Root;
+    _satoshis: bigint;
+    _owners: PublicKeyHex | readonly PublicKeyHex[];
+    _readers?: readonly PublicKeyHex[];
+    _url?: Url;
+}
 type Compute<T> = T extends (...args: any[]) => any ? T : {
     [K in keyof T]: T[K];
 } & object;
@@ -58,7 +70,9 @@ export type Class = abstract new (...args: any[]) => any;
 export type IsContractClass<T> = T extends abstract new (...args: any[]) => Contract ? true : false;
 export type ExtractClass<T> = T extends Class ? T : never;
 export type Exact<T> = T & Record<Exclude<keyof any, keyof T | KnownContractSymbols>, never>;
-export type DeepExact<T> = T extends Contract ? T : T extends (...args: any[]) => any ? T : T extends readonly any[] ? {
+export type DeepExact<T> = T extends Contract | {
+    readonly [brand]: any;
+} ? Unbranded<T> : T extends (...args: any[]) => any ? T : T extends readonly any[] ? {
     [K in keyof T]: DeepExact<T[K]>;
 } & readonly any[] & Record<string, never> : T extends any[] ? {
     [K in keyof T]: DeepExact<T[K]>;
@@ -71,7 +85,9 @@ export type Lifted<T, Root extends Class = Class> = IsContractClass<T> extends t
     [K in keyof T]: Lifted<T[K], Root>;
 } & any[] : T extends readonly any[] ? {
     [K in keyof T]: Lifted<T[K], Root>;
-} & readonly any[] : T extends object ? DeepExact<T> : LiftedPrimitive<T>;
+} & readonly any[] : T extends object ? T extends {
+    readonly [brand]: any;
+} ? Unbranded<T> : DeepExact<T> : LiftedPrimitive<T>;
 export type LiftedPrimitive<T> = T;
 export type LiftedParameters<P extends readonly any[], Root extends Class = Class> = {
     [K in keyof P]: Lifted<P[K], Root>;
@@ -88,11 +104,20 @@ export type LiftedInstanceProperties<T extends Class> = Readonly<{
 export type SmartContract<T extends Class = Class> = Compute<Exact<LiftedInstanceProperties<T> & Contract>> & {
     readonly constructor: LiftedContract<T>;
 };
+export type SmartContractBranded<T extends Class = Class> = Compute<Exact<LiftedInstanceProperties<T> & ContractBranded>> & {
+    readonly constructor: LiftedContract<T>;
+};
+export declare function branded<C extends Class>(value: SmartContract<C>): SmartContractBranded<C>;
 export type LiftedConstructorParams<T extends Class> = LiftedParameters<ConstructorParameters<T>, T>;
 export type LiftedContract<T extends Class = Class> = Compute<SmartContract<T> & LiftedStatics<T>> & (new (...args: LiftedConstructorParams<T>) => SmartContract<T>) & (new (...args: any[]) => SmartContract<T>);
 export declare function lifted<C extends Class>(target: C): LiftedContract<C>;
 export declare function lifted<C extends Class>(target: SmartContract<C>): LiftedContract<C>;
-export declare function precise<T extends Class>(value: SmartContract<any>): asserts value is SmartContract<T>;
+export declare function precise<T extends Class>(value: SmartContract<any>, opts?: {
+    branded?: false;
+}): asserts value is SmartContract<T>;
+export declare function precise<T extends Class>(value: SmartContract<any>, opts: {
+    branded: true;
+}): asserts value is SmartContractBranded<T>;
 export type SmartValue = JsonPrimitive | readonly SmartValue[] | SmartContract;
 export type Env<T = SmartContract> = Record<string, T | null>;
 export type EvaluatedEffect = {
@@ -102,6 +127,10 @@ export type EvaluatedEffect = {
 export type EffectJSON = {
     res: SmartValue;
     env: Env<Rev>;
+};
+export type Evaluated = {
+    effect: EvaluatedEffect;
+    tx: Transaction | null;
 };
 export type RawSmartContract<T extends Class = Class> = Omit<SmartContract<T>, '_id' | '_rev' | '_root'> & {
     _id: Id;
@@ -149,9 +178,10 @@ export type SigOptions = {
     inputScript?: Buffer;
 };
 export type MockOptions = {
-    mocks?: {
-        [s: string]: Mock;
-    };
+    mocks?: Record<string, Mock>;
+};
+export type RetryOptions = {
+    maxRetries?: number;
 };
 export type ModuleOptions = {
     commitAmount?: number;
@@ -161,7 +191,7 @@ export type ModuleOptions = {
     include?: Rev[];
     exclude?: Rev[];
 };
-export type ComputeOptions = VerifyOptions & FundOptions & AncestorOptions & SigOptions & MockOptions;
+export type ComputeOptions = VerifyOptions & FundOptions & AncestorOptions & SigOptions & MockOptions & RetryOptions;
 export type VerifyOptions = {
     txUpdate?: Update;
     txFromChain?: Transaction;
@@ -331,6 +361,7 @@ export type TXORecord = {
     blockHash?: string;
     blockHeight?: number;
     blockIndex?: number;
+    timestamp?: number;
 };
 export type TXOQuery = {
     verbosity?: number;

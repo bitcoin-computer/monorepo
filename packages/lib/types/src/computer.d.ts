@@ -80,6 +80,7 @@ declare class Computer {
     send(satoshis: bigint, address: string | Address): Promise<string>;
     broadcast(tx: nTransaction): Promise<string>;
     rpc(method: string, params: string): Promise<any>;
+    txIdToBlockTime(hash: string): Promise<bigint>;
     getChain(): Chain;
     getNetwork(): BtcNetwork;
     getMnemonic(): string;
@@ -97,7 +98,9 @@ declare class Computer {
     first(rev: string): Promise<string>;
     prev(rev: string): Promise<string | undefined>;
     next(rev: string): Promise<string | undefined>;
+    spendingInput(rev: string): Promise<string | undefined>;
     latest(rev: string): Promise<string>;
+    last(rev: string): Promise<string | undefined>;
     subscribe(id: string, onMessage: ({ rev, hex }: {
         rev: RevString;
         hex: string;
