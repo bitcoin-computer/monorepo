@@ -1,10 +1,10 @@
 import { Transaction } from './transaction.js'
 import { Computer } from './computer.js'
+import { Contract as RuntimeContract } from './contract.js'
 import { Mock } from './mock.js'
 export { Computer, Mock, Transaction }
-export { precise, lifted, branded } from './types.js'
+export { RuntimeContract as Contract }
+export type { InnerComputer } from './contract-env.js'
+export { precise } from './types.js'
+export { lifted } from './types.js'
 export type * from './types.js'
-export type { InnerComputer } from './inner-computer.js'
-declare global {
-  var Contract: typeof GlobalContract
-}

@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 import { TBC20, type TBC20ConstructorParams } from './tbc20.js';
 export declare abstract class Escrow extends Contract {
     deposits: [string, string][];

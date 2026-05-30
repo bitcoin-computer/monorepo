@@ -1,4 +1,5 @@
 import { Computer, SmartContract } from '@bitcoin-computer/lib'
+import { Contract } from '@bitcoin-computer/lib'
 export declare class ChessContract extends Contract {
   wagerAmount: bigint
   timeLimit: bigint
@@ -10,20 +11,13 @@ export declare class ChessContract extends Contract {
   fen: string
   deposits: [string, string][]
   withdraws: [string, string, bigint][]
-  /** Required by TBC777 `Escrow` interface (chess uses `withdraws` only). */
+  /** Required by TBC777M escrow audit (`isValid` / `computeFinalWithdraws`). */
   finalWithdraws: [string, string, bigint][]
   root: string
   tokenIdW: string
   tokenIdB: string
-  /** Public key of the player who created the game (white / first depositor). */
-  creatorPublicKey: string
   constructor(root: string, wagerAmount: bigint, timeLimit: bigint)
   acceptDeposit(token: any, amount: bigint, name: string, nextOwner: string): Promise<void>
-  /**
-   * Cancel a pending game before the opponent deposits. Refunds are authorized
-   * via `withdraws` set in this method; the creator then claims with `withdrawTokens`.
-   */
-  cancel(): void
   move(from: string, to: string, promotion: string): boolean
   resign(): void
   isGameOver(): boolean
@@ -69,17 +63,12 @@ export declare class ChessContractHelper {
     wagerAmount: bigint,
     timeLimit?: bigint,
   ): Promise<SmartContract<typeof ChessContract>>
-  /**
-   * Deposits wager tokens into a chess game. After the creator's first deposit
-   * the invited opponent owns the contract and can accept without a co-sign.
-   */
   depositTokens(
     chessRev: string,
     tokenRev: string,
     wagerAmount: bigint,
     name: string,
     nextOwner: string,
-    coSignComputer?: Computer,
   ): Promise<SmartContract<typeof ChessContract>>
   findToken(
     tokenRoot: string,
@@ -110,20 +99,6 @@ export declare class ChessContractHelper {
     _id: string
     amount: bigint
   } | null>
-  /** True when both players have deposited and the game is playable. */
-  isGameStarted(chess: SmartContract<typeof ChessContract>): boolean
-  /** True when the creator canceled before the opponent deposited (refund claimed). */
-  isPendingGameCanceled(chess: SmartContract<typeof ChessContract>): Promise<boolean>
-  /** True when waiting for the opponent's deposit (creator may cancel). */
-  canCancel(chess: SmartContract<typeof ChessContract>): boolean
-  isCreator(chess: SmartContract<typeof ChessContract>): boolean
-  /**
-   * Cancel a pending game before the opponent deposits. Sets `withdraws` on-chain
-   * so the creator can claim their deposit with `withdrawTokens`.
-   */
-  cancelGame(chessId: string): Promise<SmartContract<typeof ChessContract>>
-  /** Cancel a pending game and withdraw the creator's wager in one flow. */
-  cancelGameAndWithdraw(chessId: string): Promise<void>
   /**
    * Resigns from the current game. Sets the withdraws array so the opponent
    * (winner) can call withdrawTokens. Can only be called by the current

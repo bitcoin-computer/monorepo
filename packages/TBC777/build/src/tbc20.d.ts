@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export type TBC20ConstructorParams = {
     to: string;
     amount: bigint;
