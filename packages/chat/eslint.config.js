@@ -7,6 +7,14 @@ import tseslint from 'typescript-eslint'
 export default tseslint.config(
   { ignores: ['dist'] },
   {
+    files: ['**/*.config.js'],
+    languageOptions: {
+      parserOptions: {
+        ecmaVersion: 'latest',
+      },
+    },
+  },
+  {
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     files: ['**/*.{ts,tsx}'],
     plugins: {

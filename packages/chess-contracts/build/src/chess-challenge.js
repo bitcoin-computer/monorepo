@@ -1,8 +1,11 @@
 export class ChessChallengeTxWrapper extends Contract {
-    constructor(chessGameTxHex, publicKeyB) {
+    constructor(chessRev, wagerAmount, tokenRoot, publicKeyW, publicKeyB) {
         super({
             _owners: [publicKeyB],
-            chessGameTxHex: chessGameTxHex,
+            chessRev,
+            wagerAmount,
+            tokenRoot,
+            publicKeyW,
             accepted: false,
         });
     }
@@ -15,13 +18,10 @@ export class ChessChallengeTxWrapperHelper {
         this.computer = computer;
         this.mod = mod;
     }
-    async createChessChallengeTxWrapper(chessGameTxHex, publicKeyB, ins) {
+    async createChessChallengeTxWrapper(chessRev, wagerAmount, tokenRoot, publicKeyW, publicKeyB) {
         const { tx } = await this.computer.encode({
-            exp: `new ChessChallengeTxWrapper(
-        "${chessGameTxHex}", "${publicKeyB}"
-      )`,
+            exp: `new ChessChallengeTxWrapper("${chessRev}", ${wagerAmount}n, "${tokenRoot}", "${publicKeyW}", "${publicKeyB}")`,
             mod: this.mod,
-            exclude: ins,
         });
         if (!tx)
             throw new Error('Could not create ChessChallengeTxWrapper');

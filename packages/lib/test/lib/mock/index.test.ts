@@ -35,19 +35,40 @@ describe('Mock', async () => {
   })
 
   it('Should spend a mocked object if the object is created first', async () => {
+    // Create smart object first (this is the scenario we want to test)
+    const a = await computer.new(A, [])
+
     // Create mock
     const m = new M()
 
-    // Create smart object
-    const a = await computer.new(A, [])
-
-    // Update smart object
+    // Create transaction in update using the *mock* rev in env
+    // (this is required by the current evalMocked implementation)
     const { tx } = await computer.encode({
+      // The update expression
       exp: `a.inc()`,
-      env: { a: a._rev },
+
+      // Assume value m for variable a during evaluation
       mocks: { a: m },
+
+      // env must contain the mock rev (not the real one)
+      // – this is what makes the current cache + two-phase apply happy
+      env: { a: m._rev },
+
+      // The transaction can only be funded and signed once it is finalized
+      fund: false,
+      sign: false,
     })
     const incTx = tx!
+
+    // Patch the outpoint of the first input to point to the real on-chain object
+    // (this is the exact same technique used in the passing test)
+    const [txId, i] = a._rev.split(':')
+    const index = parseInt(i, 10)
+    incTx.updateInput(0, { txId, index })
+
+    // Fund, sign and send transaction
+    await computer.fund(incTx)
+    await computer.sign(incTx)
     await computer.broadcast(incTx)
   })
 
