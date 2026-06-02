@@ -13,7 +13,7 @@ The first number of outputs represent on-chain objects. Their amounts and script
 
 ## Outputs Containing Metadata
 
-Next is a sequence of outputs encoding the metadata - for example a JavaScript expressions or the code of a module. These outputs use bare multisig scripts so that the data (not just their hash) and their signature is stored on chain. These outputs contain a minimal non-dust amount of satoshi that is owned by the company developing the Bitcoin Computer protocol.
+Next is a sequence of outputs encoding the metadata—for example JavaScript expressions or the code of a module. These outputs use bare multisig scripts so that the data (not just its hash) is stored directly on chain. These outputs contain a minimal non-dust amount of satoshis. To allow the company developing the Bitcoin Computer (BCDB Inc.) to later spend and consolidate these outputs (preventing permanent bloat of the UTXO set), each such output includes a public key controlled by BCDB Inc. among its signers.
 
 ## Other Outputs
 

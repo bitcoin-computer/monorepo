@@ -5,15 +5,17 @@ icon: law
 
 # Legal Notice
 
-**Summary**: This software is free to use and modify under the [MIT License](./LICENSE.md) for its source code. However, it includes patented technology that requires payment for use, facilitated through a cryptocurrency mechanism. You are responsible for complying with all applicable laws and bear full liability for your use of the software.
+**Summary**: This software is free to use and modify under the [MIT License](./LICENSE.md) for its source code. However, it includes patented technology that requires payment for use, facilitated through the protocol’s built-in fee mechanism. You are responsible for complying with all applicable laws and bear full liability for your use of the software.
 
 ## Patent and Payment Notice
 
-This software includes technology protected by US Patent Nos. 11694197 and 11188911. Using this patented technology, which forms a core part of the software’s functionality, requires payment through the software’s built-in cryptocurrency mechanism. The payment amount is determined automatically by the software, and the cryptocurrency used (e.g., BTC, LTC, DOGE) depends on the blockchain you select. For detailed payment instructions, please refer to the software's [documentation](https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/fees.md).
+This software includes technology protected by U.S. Patent Nos. 11,188,911 and 11,694,197 (and related family members). These patents cover a protocol and method for implementing object-oriented smart contracts on UTXO-based blockchains by storing expressions and computation history in transactions and associating evaluated values with outputs. Using this patented technology, which forms a core part of the software’s functionality, requires payment through the software’s built-in protocol fee mechanism. The fee is paid automatically via minimal-dust metadata outputs. The amount depends on the size of the metadata and the blockchain you select. For detailed information, please refer to the [Fees documentation](https://github.com/bitcoin-computer/monorepo/blob/main/packages/docs/fees.md).
 
 You may modify the software freely under the MIT License, but any use of the patented functionality, including in modified versions, requires compliance with these payment terms or obtaining an alternative license. Bypassing the payment mechanism while still using the patented technology may constitute patent infringement. For alternative licensing options, please contact clemens@bitcoincomputer.io.
 
 You may use the software for free for testing purposes on testnet and regtest, as these environments use test coins with no real value. However, any use on mainnet or other production environments requires compliance with the payment terms outlined in this notice.
+
+The protocol fee compensates for use of the patented storage method and supports the ongoing operation and development of the platform, including periodic consolidation of metadata outputs to maintain blockchain efficiency.
 
 ## Disclaimer Regarding User Modifications
 
@@ -35,8 +37,10 @@ By using this software, you agree to indemnify, defend, and hold harmless BCDB I
 
 ## Intellectual Property
 
-The patented technology is protected under US Patent Nos. 11694197 and 11188911. This patent applies in the United States only. If you are outside the US, you should review your local patent laws to understand any additional obligations.
+The patented technology is protected under U.S. Patent Nos. 11,188,911 and 11,694,197 (and related family members). This patent protection applies in the United States only. If you are outside the US, you should review your local patent laws to understand any additional obligations.
 
 ## Contact Information
 
 For questions, alternative licensing options, or further clarification, please contact clemens@bitcoincomputer.io.
+
+Last updated: 2026-06-01
