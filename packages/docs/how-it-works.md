@@ -62,7 +62,7 @@ Smart contracts can contain the keyword properties `_owners`, `_satoshis`, `_url
 
   - **Neither `_url` nor `_readers`**: The expression and full metadata are stored unencrypted directly in the transaction’s metadata outputs.
   - **Only `_readers`**: The expression and metadata are stored encrypted directly in the transaction’s metadata outputs (only the specified readers can decrypt them).
-  - **Only `_url`**: Only a hash and pointer are stored in the transaction; the full (unencrypted) metadata is stored on the server at the provided URL.
+  - **Only `_url`**: Only a small pointer/hash is stored on-chain in the (still-present) dust metadata output(s). The full (unencrypted) metadata is stored on the server at the provided URL. This changes the on-chain dust cost from proportional to the size of the expression to a small constant, independent of expression size.
   - **Both `_url` and `_readers`**: The metadata is stored encrypted on the server at the provided URL; only a pointer goes on-chain.
 
-  The `_url` value is the base URL of a server that implements the required secret storage endpoint (it does not have to be a Bitcoin Computer node). These choices affect how much data is written to the blockchain and therefore the protocol fee. See the [Fees](./fees.md) page for cost details and the exact fee impact of each combination.
+  The `_url` value must be a Bitcoin Computer node (or a compatible server implementing the required secret storage endpoint). These choices (plus use of the module system and `moduleStorageType`) affect how much data is written to the blockchain and therefore the on-chain technical dust / hygiene dust costs. See the [Fees](./fees.md) page — especially the "User Choices to Control On-Chain Data and Hygiene Dust Costs" section — for details on minimization best practices, the precise scope of hygiene dust outputs, bare-multisig UX rationale, absolute minimum dust, and verification.

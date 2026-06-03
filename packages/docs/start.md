@@ -186,6 +186,8 @@ const computer = new Computer({
 
 ## Start A Project
 
+Before using on mainnet, review the [Legal Notice](../LEGAL.md) (including Licensing and your compliance responsibilities for securities, DFAL, AML, etc.) and [Fees](./fees.md) (on-chain technical dust, hygiene service, User Choices to minimize costs via modules/_url/taproot, and the bare-multisig UX rationale).
+
 We provide two templates, [`vite-template`](https://github.com/bitcoin-computer/monorepo/tree/main/packages/vite-template) for client side projects and [`node-template`](https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template) for server side projects. Alternatively have a look at our example apps (e.g. our [wallet](https://wallet.bitcoincomputer.io/), [blockchain explorer](https://explorer.bitcoincomputer.io/), or [nft app](https://nft.bitcoincomputer.io/)) to see if any of them are a good starting point for your project.
 
 ## Getting Help
