@@ -1,6 +1,6 @@
+import { Computer } from '@bitcoin-computer/lib';
 import { Election, Vote } from '../src/dao-contract.js';
 import { expect } from 'chai';
-import { Computer } from '@bitcoin-computer/lib';
 import { Token } from '@bitcoin-computer/TBC20';
 const url = 'http://localhost:1031';
 describe('Election', () => {
@@ -8,7 +8,8 @@ describe('Election', () => {
     beforeEach('Before', async () => {
         await computer.faucet(1e8);
     });
-    describe('validVotes', () => {
+    // TODO: enable this test when unlocking inner computer getTXOs functionality
+    describe.skip('validVotes', () => {
         it('Should compute one valid vote', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
@@ -121,7 +122,8 @@ describe('Election', () => {
             expect(validVotes2[0]).eq(vote2._rev.substring(0, 64));
         });
     });
-    describe('vote-with-invalid-token', () => {
+    // TODO: enable this test when unlocking inner computer getTXOs functionality
+    describe.skip('vote-with-invalid-token', () => {
         let realVoteMod;
         before(async () => {
             await computer.faucet(1e8);
@@ -150,7 +152,8 @@ describe('Election', () => {
             expect(proposalVotes.length).eq(1);
         });
     });
-    describe('accepted-rejected', () => {
+    // TODO: enable this test when unlocking inner computer getTXOs functionality
+    describe.skip('accepted-rejected', () => {
         it('Should count to zero if the Vote is not deployed as a module', async () => {
             const invalidMod = '0f08b977b9be9d96b8b02dd0866e7a692bb1527277a746dc8a74adde724d7856:22';
             const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A']);
