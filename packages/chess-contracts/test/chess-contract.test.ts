@@ -194,12 +194,6 @@ describe('ChessContract', () => {
         const blackTokenM = await token.transfer(black.getPublicKey(), 10n)
         if (!whiteTokenM || !blackTokenM) throw new Error('expected player token UTXOs')
 
-        const x = await white.getOUTXOs({
-          mod: tbc20Mod,
-          publicKey: white.getPublicKey(),
-        })
-        console.log('x', x)
-
         const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
         const whiteToken = await white.sync<typeof TBC777M>(whiteTokenM._rev)
 
