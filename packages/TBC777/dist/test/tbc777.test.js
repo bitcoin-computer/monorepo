@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import { branded, Computer } from '@bitcoin-computer/lib';
+import { Computer, Contract } from '@bitcoin-computer/lib';
 import dotenv from 'dotenv';
 import path from 'path';
 import { TBC20 } from '../src/tbc20.js';
