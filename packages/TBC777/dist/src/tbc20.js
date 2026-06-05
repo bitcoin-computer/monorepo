@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 /**
  * Base fungible token contract for the Bitcoin Computer.
  */

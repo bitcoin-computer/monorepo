@@ -38,6 +38,8 @@
  * @see ./tbc20.ts
  * @see https://docs.bitcoincomputer.io/
  */
+// TYPES & INTERFACES
+import { Contract } from '@bitcoin-computer/lib';
 import { TBC20 } from './tbc20.js';
 /**
  * Canonical escrow interface (mandatory for all TBC777-compatible escrows).

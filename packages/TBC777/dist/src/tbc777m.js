@@ -69,6 +69,7 @@
  *    game winner takes all, auction settlement). The audit counts them
  *    conservatively from the provided revision’s `finalWithdraws` list.
  */
+import { Contract } from '@bitcoin-computer/lib';
 import { TBC20 } from './tbc20.js';
 /**
  * Minimal interface that any escrow contract must satisfy to be compatible with
