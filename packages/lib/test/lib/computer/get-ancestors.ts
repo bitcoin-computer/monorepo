@@ -1,6 +1,5 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils'
-import { Contract } from '@bitcoin-computer/lib'
 
 describe('getAncestors', () => {
   class Counter extends Contract {
