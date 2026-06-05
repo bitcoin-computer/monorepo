@@ -1,8 +1,5 @@
 import { Token } from '@bitcoin-computer/TBC20'
-import { SmartContract } from '@bitcoin-computer/lib'
-import type { Contract, InnerComputer } from '@bitcoin-computer/lib/contract-env'
-declare const Contract: Contract
-declare const computer: InnerComputer
+import { SmartContract, Contract } from '@bitcoin-computer/lib'
 
 type ElectionType = {
   proposalMod: string

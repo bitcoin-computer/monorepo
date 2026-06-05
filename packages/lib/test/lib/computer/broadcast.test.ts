@@ -1,6 +1,5 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, network, url } from '../../utils/index.js'
-import { Contract } from '@bitcoin-computer/lib'
 
 describe('broadcast', () => {
   it('Should broadcast a transaction', async () => {

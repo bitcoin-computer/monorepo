@@ -1,6 +1,5 @@
-import { Computer, SmartContract } from '@bitcoin-computer/lib'
+import { Computer, SmartContract, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
-import { Contract } from '@bitcoin-computer/lib'
 
 describe('encode', () => {
   let computer: Computer
