@@ -1,5 +1,5 @@
 import { Computer, SmartContract } from '@bitcoin-computer/lib'
-import { TBC20, TBC777M } from '@bitcoin-computer/TBC777'
+import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777'
 import { ChessContract, ChessContractHelper } from '../src/chess-contract.js'
 import { ChessChallengeTxWrapper } from '../src/chess-challenge.js'
 import { User } from '../src/user.js'
@@ -28,10 +28,24 @@ const url = process.env.BCN_URL ?? 'http://localhost:1031'
 const chain = process.env.BCN_CHAIN ?? 'LTC'
 const network = process.env.BCN_NETWORK ?? 'regtest'
 
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
+/** Keeps deployed module size down when inlining TBC777 + EscrowAuditor. */
+function stripComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*$/gm, '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .join('\n')
+}
+
+async function deployTbc777Mod(deployer: Computer): Promise<string> {
+  return deployer.deploy(`
+    export ${stripComments(TBC20.toString())}
+    export ${stripComments(EscrowAuditor.toString())}
+    export ${stripComments(TBC777.toString())}
+  `)
+}
 
 async function ensureFunds(c: Computer, minSats = 10e8) {
   try {
@@ -39,6 +53,88 @@ async function ensureFunds(c: Computer, minSats = 10e8) {
     if (balance < minSats) await c.faucet(minSats)
   } catch {
     await c.faucet(minSats)
+  }
+}
+
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
+
+/** Confirm pending txs on regtest (faucet mines a block; use minter, not players). */
+async function confirmChainTip(miner: Computer) {
+  if (network !== 'regtest') {
+    await sleep(2000)
+    return
+  }
+  await miner.faucet(1e8)
+}
+
+async function withdrawFromChess(
+  player: Computer,
+  tokenId: string,
+  chessId: string,
+  tbc777Mod: string,
+) {
+  const latestTokenRev = await player.latest(tokenId)
+  const chessRev = await player.latest(chessId)
+  const { tx, effect } = await player.encode({
+    exp: `token.withdraw('${chessRev}')`,
+    env: { token: latestTokenRev },
+    mod: tbc777Mod,
+  })
+  await player.broadcast(tx)
+  return effect.env.token as SmartContract<typeof TBC777>
+}
+
+/** Fund a chess game: mint, split tokens, both deposits. Returns game state. */
+async function fundChessGame(opts: {
+  minter: Computer
+  white: Computer
+  black: Computer
+  tbc777Mod: string
+  chessMod: string
+  wager: bigint
+  timeLimit: bigint
+  mintAmount?: bigint
+}) {
+  const { minter, white, black, tbc777Mod, chessMod, wager, timeLimit } = opts
+  const mintAmount = opts.mintAmount ?? 30n
+  const to = minter.getPublicKey()
+
+  const token = await minter.new(
+    TBC777,
+    [{ to, amount: mintAmount, name: 'chess-e2e', symbol: 'CHS' }],
+    tbc777Mod,
+  )
+  await confirmChainTip(minter)
+  const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+  await confirmChainTip(minter)
+  const blackTokenUtxo = await token.transfer(black.getPublicKey(), 10n)
+  await confirmChainTip(minter)
+  if (!whiteTokenUtxo || !blackTokenUtxo) throw new Error('expected player token UTXOs')
+
+  const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
+  const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
+  await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey())
+
+  const blackToken = await black.sync<typeof TBC777>(blackTokenUtxo._rev)
+  const chessHeadForBlack = await white.latest(chess._id)
+  const { tx: tx1, effect: effect1 } = await black.encode({
+    exp: `chess.acceptDeposit(blackToken, ${wager}n, 'Black', '${white.getPublicKey()}')`,
+    env: { chess: chessHeadForBlack, blackToken: blackToken._rev },
+    mod: chessMod,
+  })
+  await black.broadcast(tx1)
+  const chessFunded = effect1.env.chess as SmartContract<typeof ChessContract>
+
+  return {
+    token,
+    whiteTokenUtxo,
+    blackTokenUtxo,
+    blackToken,
+    chess,
+    chessFunded,
   }
 }
 
@@ -94,17 +190,17 @@ describe('ChessContract', () => {
   })
 
   /**
-   * Same pattern as packages/TBC777/test/tbc777m.test.ts: deploy each mod once, reuse
-   * the returned spec strings for all tests (new wallets + faucet per test is fine).
+   * Deploy chess + TBC777 token mods once; reuse spec strings across tests.
    */
   describe('Chain integration (local BCN)', () => {
-    let tbc20Mod: string
+    const TOKEN_SYMBOL = 'CHS'
+    let tbc777Mod: string
     let chessMod: string
 
     before(async () => {
       const deployer = new Computer({ url, chain, network })
       await deployer.faucet(20e8)
-      tbc20Mod = await deployer.deploy(`export ${TBC20}`)
+      tbc777Mod = await deployTbc777Mod(deployer)
       await deployer.faucet(20e8)
       chessMod = await deployChessModule(deployer, chessDeployRoot)
     })
@@ -149,7 +245,7 @@ describe('ChessContract', () => {
       })
     })
 
-    describe('E2E TBC777M escrow + ChessContract', () => {
+    describe('E2E TBC777 escrow + ChessContract', () => {
       let minter: Computer
       let white: Computer
       let black: Computer
@@ -166,11 +262,15 @@ describe('ChessContract', () => {
         const wager = 5n
         const timeLimit = 60n * 10n
         const to = minter.getPublicKey()
-        const token = await minter.new(TBC777M, [{ to, amount: 20n, name: 't' }], tbc20Mod)
-        const whiteTokenM = await token.transfer(white.getPublicKey(), 10n)
-        if (!whiteTokenM) throw new Error('expected white token UTXO')
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
         const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
-        const whiteToken = await white.sync<typeof TBC777M>(whiteTokenM._rev)
+        const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
 
         await expect(async () => {
           const { tx } = await white.encode({
@@ -182,52 +282,74 @@ describe('ChessContract', () => {
         }).rejects.toThrow()
       })
 
-      it('Should run escrow, fool mate, and credit winner balance on withdraw', async () => {
+      it('Should settle on resign and credit winner balance on withdraw', async () => {
         const wager = 5n
         const timeLimit = 60n * 10n
-        const mintAmount = 30n
-        const name = 'chess-e2e'
-        const to = minter.getPublicKey()
+        const { token, whiteTokenUtxo, blackTokenUtxo, blackToken, chess, chessFunded } =
+          await fundChessGame({
+            minter,
+            white,
+            black,
+            tbc777Mod,
+            chessMod,
+            wager,
+            timeLimit,
+          })
 
-        const token = await minter.new(TBC777M, [{ to, amount: mintAmount, name }], tbc20Mod)
-        const whiteTokenM = await token.transfer(white.getPublicKey(), 10n)
-        const blackTokenM = await token.transfer(black.getPublicKey(), 10n)
-        if (!whiteTokenM || !blackTokenM) throw new Error('expected player token UTXOs')
+        expect(chessFunded.deposits).toEqual([
+          [token._root, whiteTokenUtxo._rev],
+          [token._root, blackTokenUtxo._rev],
+        ])
+        expect(chessFunded.withdraws).toEqual([])
+        // After both deposits it is white’s turn.
+        expect(chessFunded._owners).toEqual([white.getPublicKey()])
 
-        const x = await white.getOUTXOs({
-          mod: tbc20Mod,
-          publicKey: white.getPublicKey(),
-        })
-        console.log('x', x)
-
-        const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
-        const whiteToken = await white.sync<typeof TBC777M>(whiteTokenM._rev)
-
-        expect(whiteToken.amount).toBe(10n)
-        await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey())
-        expect(chess._owners).toEqual([black.getPublicKey()])
-
-        const whiteAfterFirstDeposit = await white.sync<typeof TBC777M>(
-          await white.latest(whiteTokenM._rev),
-        )
-        expect(whiteAfterFirstDeposit.amount).toBe(5n)
-
-        const blackToken = await black.sync<typeof TBC777M>(blackTokenM._rev)
-        // After white’s deposit, chess advanced — use the current head rev (not stale `chess._rev`).
-        const chessHeadForBlack = await white.latest(chess._rev)
-        const { tx: tx1, effect: effect1 } = await black.encode({
-          exp: `chess.acceptDeposit(blackToken, ${wager}n, 'Black', '${white.getPublicKey()}')`,
-          env: { chess: chessHeadForBlack, blackToken: blackToken._rev },
+        const chessHead = await white.latest(chess._id)
+        const chessToResign = await white.sync<typeof ChessContract>(chessHead)
+        const { tx: resignTx, effect: resignEffect } = await white.encodeCall({
+          target: chessToResign,
+          property: 'resign',
+          args: [],
           mod: chessMod,
         })
-        await black.broadcast(tx1)
-        const chess1 = effect1.env.chess as SmartContract<typeof ChessContract>
+        await white.broadcast(resignTx)
+        const chessFinal = (resignEffect as unknown as { env: { __bc__: unknown } }).env
+          .__bc__ as SmartContract<typeof ChessContract>
 
-        expect(chess1.deposits).toEqual([
-          [token._root, whiteTokenM._rev],
-          [token._root, blackTokenM._rev],
+        const totalPot = wager * 2n
+        expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]])
+
+        expect((await black.sync<typeof TBC777>(await black.latest(blackToken._id))).amount).toBe(
+          5n,
+        )
+
+        const blackTokenFinal = await withdrawFromChess(
+          black,
+          blackToken._id,
+          chess._id,
+          tbc777Mod,
+        )
+        expect(blackTokenFinal.amount).toBe(15n)
+      })
+
+      it('Should run fool mate and credit winner balance on withdraw', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const { token, whiteTokenUtxo, blackTokenUtxo, blackToken, chess, chessFunded } =
+          await fundChessGame({
+            minter,
+            white,
+            black,
+            tbc777Mod,
+            chessMod,
+            wager,
+            timeLimit,
+          })
+
+        expect(chessFunded.deposits).toEqual([
+          [token._root, whiteTokenUtxo._rev],
+          [token._root, blackTokenUtxo._rev],
         ])
-        expect(chess1.withdraws).toEqual([])
 
         // Fool’s mate (black wins): 1.f3 e5 2.g4 Qh4#
         const moves: { from: string; to: string; promotion: string; player: Computer }[] = [
@@ -238,7 +360,7 @@ describe('ChessContract', () => {
         ]
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        let currentChess: any = chess1
+        let currentChess: any = chessFunded
         for (const m of moves) {
           const latest = await m.player.latest(currentChess._id)
           const synced = await m.player.sync<typeof ChessContract>(latest)
@@ -249,26 +371,19 @@ describe('ChessContract', () => {
             mod: chessMod,
           })
           await m.player.broadcast(tx)
+          await confirmChainTip(minter)
           currentChess = (effect as unknown as { env: { __bc__: unknown } }).env.__bc__
-          await sleep(300)
         }
 
         const chessFinal = currentChess as SmartContract<typeof ChessContract>
         const totalPot = wager * 2n
-        // The winning move now settles the pot atomically — no claimWin step.
         expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]])
 
-        const blackTokenBeforeWithdraw = await black.sync<typeof TBC777M>(
-          await black.latest(blackTokenM._rev),
-        )
-        expect(blackTokenBeforeWithdraw.amount).toBe(5n)
-
-        // const rev = await white.latest(chessFinal._id)
-        const tok = await black.sync<typeof TBC777M>(await black.latest(blackTokenM._rev))
-        await tok.withdraw(chessFinal._rev)
-
-        const blackTokenFinal = await black.sync<typeof TBC777M>(
-          await black.latest(blackTokenM._rev),
+        const blackTokenFinal = await withdrawFromChess(
+          black,
+          blackToken._id,
+          chess._id,
+          tbc777Mod,
         )
         expect(blackTokenFinal.amount).toBe(15n)
       })

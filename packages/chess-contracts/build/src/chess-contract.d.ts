@@ -10,7 +10,7 @@ export declare class ChessContract extends Contract {
     fen: string;
     deposits: [string, string][];
     withdraws: [string, string, bigint][];
-    /** Required by TBC777M escrow audit (`isValid` / `computeFinalWithdraws`). */
+    /** Required by TBC777 `Escrow` interface (chess uses `withdraws` only). */
     finalWithdraws: [string, string, bigint][];
     root: string;
     tokenIdW: string;

@@ -248,7 +248,7 @@ export function ChessBoard() {
     setHasWithdrawn(false)
   }, [gameId])
 
-  // Detect whether my TBC777M token has already claimed against the current
+  // Detect whether my TBC777 token has already claimed against the current
   // chess revision, so we can hide the Withdraw button after a successful
   // withdraw (and on page refresh of an already-claimed game).
   useEffect(() => {

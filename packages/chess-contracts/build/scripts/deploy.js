@@ -7,9 +7,26 @@ import { deploy } from './lib.js';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { User } from '../src/user.js';
-import { TBC777M, TBC20 } from '@bitcoin-computer/TBC777';
+import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777';
 import { ChessChallengeTxWrapper } from '../src/chess-challenge.js';
 config();
+/** Keeps deployed module size down when inlining TBC777 + EscrowAuditor. */
+function stripComments(source) {
+    return source
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\/\/.*$/gm, '')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .join('\n');
+}
+async function deployTbc777Mod(computer) {
+    return computer.deploy(`
+    export ${stripComments(TBC20.toString())}
+    export ${stripComments(EscrowAuditor.toString())}
+    export ${stripComments(TBC777.toString())}
+  `);
+}
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const chessContractDirectory = `${__dirname}/..`;
@@ -42,9 +59,15 @@ if (answer === 'n') {
 const mod = await deploy(computer, chessContractDirectory);
 const userMod = await computer.deploy(`export ${User}`);
 const challengeMod = await computer.deploy(`export ${ChessChallengeTxWrapper}`);
-const tbc20Mod = await computer.deploy(`export ${TBC20}`);
-const tokenMod = await computer.deploy(`import {TBC20} from '${tbc20Mod}'; export ${TBC777M}`);
-const token = await computer.new(TBC777M, [{ to: computer.getPublicKey(), amount: 1000000n, name: 'chess-token' }], tbc20Mod);
+const tbc777Mod = await deployTbc777Mod(computer);
+const token = await computer.new(TBC777, [
+    {
+        to: computer.getPublicKey(),
+        amount: 1000000n,
+        name: 'chess-token',
+        symbol: 'CHS',
+    },
+], tbc777Mod);
 console.log(' \x1b[2m- Successfully deployed smart contracts\x1b[0m');
 console.log(` \x1b[2m- Minted chess token: ${token._id}\x1b[0m`);
 const answer2 = await rl.question('\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m');
@@ -59,8 +82,8 @@ Update the following rows in your .env file.
 VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${mod}\x1b[0m
 VITE_CHESS_USER_MOD_SPEC\x1b[2m=${userMod}\x1b[0m
 VITE_CHESS_CHALLENGE_MOD_SPEC\x1b[2m=${challengeMod}\x1b[0m
-VITE_TOKEN_MOD_SPEC\x1b[2m=${tokenMod}\x1b[0m
-VITE_TBC20_MOD_SPEC\x1b[2m=${tbc20Mod}\x1b[0m
+VITE_TOKEN_MOD_SPEC\x1b[2m=${tbc777Mod}\x1b[0m
+VITE_TBC20_MOD_SPEC\x1b[2m=${tbc777Mod}\x1b[0m
 VITE_MINTER_MNEMONIC\x1b[2m=${minterMnemonic}\x1b[0m
 VITE_CHESS_TOKEN_ID\x1b[2m=${token._id}\x1b[0m
 `);
@@ -78,9 +101,9 @@ else {
             if (lines[i].startsWith('VITE_CHESS_CHALLENGE_MOD_SPEC'))
                 lines[i] = `VITE_CHESS_CHALLENGE_MOD_SPEC=${challengeMod}`;
             if (lines[i].startsWith('VITE_TBC20_MOD_SPEC'))
-                lines[i] = `VITE_TBC20_MOD_SPEC=${tbc20Mod}`;
+                lines[i] = `VITE_TBC20_MOD_SPEC=${tbc777Mod}`;
             if (lines[i].startsWith('VITE_TOKEN_MOD_SPEC'))
-                lines[i] = `VITE_TOKEN_MOD_SPEC=${tokenMod}`;
+                lines[i] = `VITE_TOKEN_MOD_SPEC=${tbc777Mod}`;
             if (lines[i].startsWith('VITE_MINTER_MNEMONIC'))
                 lines[i] = `VITE_MINTER_MNEMONIC=${minterMnemonic}`;
             if (lines[i].startsWith('VITE_CHESS_TOKEN_ID'))

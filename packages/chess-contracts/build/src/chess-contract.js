@@ -21,10 +21,11 @@ export class ChessContract extends Contract {
     async acceptDeposit(token, amount, name, nextOwner) {
         if (amount !== this.wagerAmount)
             throw new Error('Deposit amount must match wager');
-        if (token._root !== this.root)
+        const tokenRoot = token.root ?? token._root;
+        if (tokenRoot !== this.root)
             throw new Error('Token root does not match wager');
         token.deposit(this._id, amount);
-        this.deposits.push([token._root, token._rev]);
+        this.deposits.push(token.depositTuple);
         this._owners = [nextOwner];
         if (!this.publicKeyB) {
             this.tokenIdW = token._id;
@@ -207,10 +208,16 @@ export class ChessContractHelper {
     }
     async withdrawTokens(tokenId, chessId) {
         const latestTokenRev = await this.computer.latest(tokenId);
-        const token = await this.computer.sync(latestTokenRev);
         const latestChessRev = await this.computer.latest(chessId);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await token.withdraw(latestChessRev);
+        if (!this.tokenMod) {
+            throw new Error('tokenMod is required for TBC777 withdraw');
+        }
+        const { tx } = await this.computer.encode({
+            exp: `token.withdraw('${latestChessRev}')`,
+            env: { token: latestTokenRev },
+            mod: this.tokenMod,
+        });
+        await this.computer.broadcast(tx);
     }
     /**
      * Finds any token owned by the current user with at least minAmount balance.

@@ -12,7 +12,7 @@ export class ChessContract extends Contract {
   fen!: string
   deposits!: [string, string][]
   withdraws!: [string, string, bigint][]
-  /** Required by TBC777M escrow audit (`isValid` / `computeFinalWithdraws`). */
+  /** Required by TBC777 `Escrow` interface (chess uses `withdraws` only). */
   finalWithdraws!: [string, string, bigint][]
   root!: string
   tokenIdW!: string
@@ -40,9 +40,10 @@ export class ChessContract extends Contract {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async acceptDeposit(token: any, amount: bigint, name: string, nextOwner: string) {
     if (amount !== this.wagerAmount) throw new Error('Deposit amount must match wager')
-    if (token._root !== this.root) throw new Error('Token root does not match wager')
+    const tokenRoot = token.root ?? token._root
+    if (tokenRoot !== this.root) throw new Error('Token root does not match wager')
     token.deposit(this._id, amount)
-    this.deposits.push([token._root, token._rev])
+    this.deposits.push(token.depositTuple)
     this._owners = [nextOwner]
     if (!this.publicKeyB) {
       this.tokenIdW = token._id
@@ -277,10 +278,16 @@ export class ChessContractHelper {
 
   async withdrawTokens(tokenId: string, chessId: string): Promise<void> {
     const latestTokenRev = await this.computer.latest(tokenId)
-    const token = await this.computer.sync(latestTokenRev)
     const latestChessRev = await this.computer.latest(chessId)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    await (token as any).withdraw(latestChessRev)
+    if (!this.tokenMod) {
+      throw new Error('tokenMod is required for TBC777 withdraw')
+    }
+    const { tx } = await this.computer.encode({
+      exp: `token.withdraw('${latestChessRev}')`,
+      env: { token: latestTokenRev },
+      mod: this.tokenMod,
+    })
+    await this.computer.broadcast(tx)
   }
 
   /**
