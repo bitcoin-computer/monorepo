@@ -1,4 +1,5 @@
 import type { Transaction } from '@bitcoin-computer/lib';
+import { Contract } from '@bitcoin-computer/lib';
 export declare class StaticSwap extends Contract {
     static exec(a: any, b: any): void;
 }

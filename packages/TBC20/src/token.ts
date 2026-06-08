@@ -1,3 +1,5 @@
+import { Contract } from '@bitcoin-computer/lib'
+
 import { Computer, SmartContract } from '@bitcoin-computer/lib'
 
 // eslint-disable-next-line

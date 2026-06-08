@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { crypto, script } from '@bitcoin-computer/nakamotojs'
 import { chain, expect, network, sleep, url } from '../../utils/index.js'
 

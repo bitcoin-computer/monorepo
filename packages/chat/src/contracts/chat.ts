@@ -1,3 +1,5 @@
+import { Contract } from '@bitcoin-computer/lib'
+
 export class ChatSc extends Contract {
   messages!: string[]
   channelName!: string

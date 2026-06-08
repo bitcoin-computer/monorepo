@@ -70,10 +70,8 @@
  *    conservatively from the provided revision’s `finalWithdraws` list.
  */
 
-import { InnerComputer } from '@bitcoin-computer/lib'
+import { Contract } from '@bitcoin-computer/lib'
 import { TBC20, type TBC20ConstructorParams } from './tbc20.js'
-
-declare const computer: InnerComputer
 
 /**
  * Minimal interface that any escrow contract must satisfy to be compatible with

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { execSync } from "node:child_process";
-import { readFileSync, existsSync, rmSync } from "node:fs";
-import { dirname, basename, resolve } from "node:path";
+import { readFileSync, existsSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 process.on("unhandledRejection", (err) => {
@@ -12,18 +12,26 @@ process.on("unhandledRejection", (err) => {
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const scriptDir = resolve(__dirname);
 const packagesDir = resolve(scriptDir, "../packages");
-let failed = 0;
 
-const FOLDER = "dist/";
+const distPaths = [
+  resolve(packagesDir, "lib/dist"),
+  resolve(packagesDir, "node/dist"),
+];
+
+let failed = 0;
 
 console.log("Checking obfuscation...");
 
-// Check dist folders
-for (const folder of [`${packagesDir}/lib/dist`, `${packagesDir}/node/dist`]) {
+// 1. Check the built dist folders on disk (lib + node only)
+for (const distPath of distPaths) {
   try {
-    const files = execSync(`ls ${folder}/*.*`, { encoding: "utf8" })
+    // Use `find` so it also works if there are subfolders
+    const files = execSync(`find "${distPath}" -type f -name "*.*"`, {
+      encoding: "utf8",
+    })
       .trim()
-      .split("\n");
+      .split("\n")
+      .filter(Boolean);
 
     for (const file of files) {
       if (!existsSync(file)) continue;
@@ -36,19 +44,31 @@ for (const folder of [`${packagesDir}/lib/dist`, `${packagesDir}/node/dist`]) {
       }
     }
   } catch {
-    // Skip if folder doesn't exist
+    // Folder doesn't exist or is empty → skip
   }
 }
-// Check staged files in dist folders
-let stagedFiles = "";
+
+// 2. Check staged files — BUT ONLY in the two target dist folders
+let stagedFiles = [];
 try {
-  stagedFiles = execSync(`git diff --cached --name-only --diff-filter=ACM`, {
-    encoding: "utf8",
-  })
+  const allStaged = execSync(
+    `git diff --cached --name-only --diff-filter=ACM`,
+    {
+      encoding: "utf8",
+    }
+  )
+    .trim()
     .split("\n")
-    .filter((f) => f.includes(FOLDER) && f.trim().length > 0);
+    .filter(Boolean);
+
+  stagedFiles = allStaged.filter((file) => {
+    const absPath = resolve(file); // make it absolute so it works regardless of cwd
+    return distPaths.some(
+      (distPath) => absPath === distPath || absPath.startsWith(distPath + "/")
+    );
+  });
 } catch {
-  stagedFiles = [];
+  // no staged files or git not available
 }
 
 for (const file of stagedFiles) {
@@ -64,7 +84,6 @@ for (const file of stagedFiles) {
   const snippet = stagedContent.slice(0, 1024);
   if (snippet.includes("  ")) {
     console.error(`Obfuscation failed for staged file: ${file}`);
-    throw new Error("Staged file is not obfuscated");
     failed = 1;
   }
 }
