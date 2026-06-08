@@ -22,14 +22,6 @@ interface TokenInfo {
 function isTokenInfo(value: unknown): value is TokenInfo {
   if (!value || typeof value !== 'object') return false
   const candidate = value as Partial<TokenInfo>
-  console.log(
-    'value: ',
-    !candidate || typeof candidate !== 'object',
-    candidate?._id,
-    candidate?._rev,
-    candidate?._root,
-    candidate?.amount,
-  )
 
   return (
     typeof candidate._id === 'string' &&

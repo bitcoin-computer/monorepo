@@ -54,7 +54,6 @@ export const GamesListWrapper = ({
   }
   const refreshGames = async () => {
     const availableGames: GameType[] = await getLatestGames()
-    console.log('iavailableGames: ', availableGames)
     setGames(availableGames)
   }
 

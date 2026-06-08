@@ -82,7 +82,6 @@ Update the following rows in your .env file.
 VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${mod}\x1b[0m
 VITE_CHESS_USER_MOD_SPEC\x1b[2m=${userMod}\x1b[0m
 VITE_CHESS_CHALLENGE_MOD_SPEC\x1b[2m=${challengeMod}\x1b[0m
-VITE_TOKEN_MOD_SPEC\x1b[2m=${tbc777Mod}\x1b[0m
 VITE_TBC20_MOD_SPEC\x1b[2m=${tbc777Mod}\x1b[0m
 VITE_MINTER_MNEMONIC\x1b[2m=${minterMnemonic}\x1b[0m
 VITE_CHESS_TOKEN_ID\x1b[2m=${token._id}\x1b[0m
@@ -92,7 +91,9 @@ else {
     const files = ['../chess-app/.env'];
     for (const file of files) {
         // Update module specifiers in the .env file
-        const lines = (await readFile(file, 'utf-8')).split('\n');
+        const lines = (await readFile(file, 'utf-8'))
+            .split('\n')
+            .filter((line) => !line.startsWith('VITE_TOKEN_MOD_SPEC'));
         for (let i = 0; i < lines.length; i++) {
             if (lines[i].startsWith('VITE_CHESS_GAME_MOD_SPEC'))
                 lines[i] = `VITE_CHESS_GAME_MOD_SPEC=${mod}`;
@@ -102,8 +103,6 @@ else {
                 lines[i] = `VITE_CHESS_CHALLENGE_MOD_SPEC=${challengeMod}`;
             if (lines[i].startsWith('VITE_TBC20_MOD_SPEC'))
                 lines[i] = `VITE_TBC20_MOD_SPEC=${tbc777Mod}`;
-            if (lines[i].startsWith('VITE_TOKEN_MOD_SPEC'))
-                lines[i] = `VITE_TOKEN_MOD_SPEC=${tbc777Mod}`;
             if (lines[i].startsWith('VITE_MINTER_MNEMONIC'))
                 lines[i] = `VITE_MINTER_MNEMONIC=${minterMnemonic}`;
             if (lines[i].startsWith('VITE_CHESS_TOKEN_ID'))

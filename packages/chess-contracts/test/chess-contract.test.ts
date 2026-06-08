@@ -116,16 +116,24 @@ async function fundChessGame(opts: {
 
   const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
   const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
-  await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey())
+  const { tx: whiteDepositTx, effect: whiteDepositEffect } = await white.encode({
+    exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+    env: { chess: chess._rev, whiteToken: whiteToken._rev },
+    mod: chessMod,
+  })
+  await white.broadcast(whiteDepositTx)
+  await confirmChainTip(minter)
+  const chessAfterWhiteDeposit = whiteDepositEffect.env.chess as SmartContract<typeof ChessContract>
 
   const blackToken = await black.sync<typeof TBC777>(blackTokenUtxo._rev)
-  const chessHeadForBlack = await white.latest(chess._id)
+  const chessHeadForBlack = await white.latest(chessAfterWhiteDeposit._id)
   const { tx: tx1, effect: effect1 } = await black.encode({
     exp: `chess.acceptDeposit(blackToken, ${wager}n, 'Black', '${white.getPublicKey()}')`,
     env: { chess: chessHeadForBlack, blackToken: blackToken._rev },
     mod: chessMod,
   })
   await black.broadcast(tx1)
+  await confirmChainTip(minter)
   const chessFunded = effect1.env.chess as SmartContract<typeof ChessContract>
 
   return {
@@ -133,7 +141,7 @@ async function fundChessGame(opts: {
     whiteTokenUtxo,
     blackTokenUtxo,
     blackToken,
-    chess,
+    chess: chessAfterWhiteDeposit,
     chessFunded,
   }
 }
@@ -243,6 +251,21 @@ describe('ChessContract', () => {
           await computer.broadcast(tx)
         }).rejects.toThrow('Game not yet fully funded')
       })
+
+      it('Should reject resign when game is not fully funded', async () => {
+        await computer.faucet(1e8)
+        const timeLimit = 60n * 10n
+        const chess = await computer.new(ChessContract, ['root123', 5n, timeLimit], chessMod)
+        await expect(async () => {
+          const { tx } = await computer.encodeCall({
+            target: chess,
+            property: 'resign',
+            args: [],
+            mod: chessMod,
+          })
+          await computer.broadcast(tx)
+        }).rejects.toThrow('Game not yet started')
+      })
     })
 
     describe('E2E TBC777 escrow + ChessContract', () => {
@@ -282,6 +305,154 @@ describe('ChessContract', () => {
         }).rejects.toThrow()
       })
 
+      it('Should let the creator cancel a pending game and recover their wager', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        await confirmChainTip(minter)
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
+        const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
+        const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
+        const { tx: depositTx, effect: depositEffect } = await white.encode({
+          exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+          env: { chess: chess._rev, whiteToken: whiteToken._rev },
+          mod: chessMod,
+        })
+        await white.broadcast(depositTx)
+        await confirmChainTip(minter)
+        const chessPending = depositEffect.env.chess as SmartContract<typeof ChessContract>
+
+        expect(chessPending.creatorPublicKey).toBe(white.getPublicKey())
+        expect(chessPending.publicKeyW).toBe('')
+        expect(chessPending.deposits.length).toBe(1)
+        expect(chessPending._owners).toEqual([white.getPublicKey(), black.getPublicKey()])
+        expect(chessPending.withdraws).toEqual([])
+        expect(chessPending.finalWithdraws).toEqual([])
+
+        const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod)
+        expect(helper.canCancel(chessPending)).toBe(true)
+        expect(helper.isCreator(chessPending)).toBe(true)
+
+        await helper.cancelGameAndWithdraw(chessPending._id)
+        await confirmChainTip(minter)
+
+        const whiteTokenFinal = await white.sync<typeof TBC777>(await white.latest(whiteToken._id))
+        expect(whiteTokenFinal.amount).toBe(10n)
+      })
+
+      it('Should reject cancel from the invited opponent', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
+        const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
+        const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
+        const { tx: depositTx, effect: depositEffect } = await white.encode({
+          exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+          env: { chess: chess._rev, whiteToken: whiteToken._rev },
+          mod: chessMod,
+        })
+        await white.broadcast(depositTx)
+        await confirmChainTip(minter)
+        const chessPending = depositEffect.env.chess as SmartContract<typeof ChessContract>
+
+        const blackHelper = ChessContractHelper.fromModSpecs(black, chessMod, undefined, tbc777Mod)
+
+        await expect(blackHelper.cancelGameAndWithdraw(chessPending._id)).rejects.toThrow(
+          'Cannot cancel',
+        )
+      })
+
+      it('Should reject second deposit from the creator using their own token', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
+        const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
+        const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
+        await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey())
+
+        const chessHead = await white.latest(chess._id)
+        const whiteTokenAfterDeposit = await white.sync<typeof TBC777>(
+          await white.latest(whiteToken._id),
+        )
+
+        await expect(async () => {
+          const { tx } = await white.encode({
+            exp: `chess.acceptDeposit(whiteTokenAfterDeposit, ${wager}n, 'FakeBlack', '${white.getPublicKey()}')`,
+            env: { chess: chessHead, whiteTokenAfterDeposit: whiteTokenAfterDeposit._rev },
+            mod: chessMod,
+          })
+          await white.broadcast(tx)
+        }).rejects.toThrow('Only the invited opponent can accept the game')
+      })
+
+      it('Should reject cancel after the game has started', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const { chess, chessFunded } = await fundChessGame({
+          minter,
+          white,
+          black,
+          tbc777Mod,
+          chessMod,
+          wager,
+          timeLimit,
+        })
+
+        expect(chessFunded.publicKeyW).toBe(white.getPublicKey())
+
+        const chessHead = await white.latest(chess._id)
+        const chessStarted = await white.sync<typeof ChessContract>(chessHead)
+
+        await expect(async () => {
+          const { tx } = await white.encodeCall({
+            target: chessStarted,
+            property: 'cancel',
+            args: [],
+            mod: chessMod,
+          })
+          await white.broadcast(tx)
+        }).rejects.toThrow('Game started use resign to forfeit')
+      })
+
+      it('Should reject resign on a pending game via helper', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
+        const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
+        const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
+        await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey())
+
+        const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod)
+        await expect(helper.resign(chess._id)).rejects.toThrow('Game not yet started')
+      })
+
       it('Should settle on resign and credit winner balance on withdraw', async () => {
         const wager = 5n
         const timeLimit = 60n * 10n
@@ -301,6 +472,7 @@ describe('ChessContract', () => {
           [token._root, blackTokenUtxo._rev],
         ])
         expect(chessFunded.withdraws).toEqual([])
+        expect(chessFunded.finalWithdraws).toEqual([])
         // After both deposits it is white’s turn.
         expect(chessFunded._owners).toEqual([white.getPublicKey()])
 

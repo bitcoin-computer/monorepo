@@ -15,6 +15,7 @@ export class ChessContract extends Contract {
             root,
             tokenIdW: '',
             tokenIdB: '',
+            creatorPublicKey: '',
         });
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -26,19 +27,54 @@ export class ChessContract extends Contract {
             throw new Error('Token root does not match wager');
         token.deposit(this._id, amount);
         this.deposits.push(token.depositTuple);
-        this._owners = [nextOwner];
+        const tokenOwner = Array.isArray(token._owners) ? token._owners[0] : token._owners;
         if (!this.publicKeyB) {
+            const gameOwner = Array.isArray(this._owners) ? this._owners[0] : this._owners;
+            if (tokenOwner !== gameOwner) {
+                throw new Error('Deposit token must belong to the game creator');
+            }
+            this.creatorPublicKey = gameOwner;
             this.tokenIdW = token._id;
             this.nameW = name;
             this.publicKeyB = nextOwner;
+            // Both players can sign while the game is pending: black accepts alone,
+            // white can cancel alone. Do not set withdraws here — TBC777 sums every
+            // historical withdraw entry, so a pending refund must be authorized in cancel().
+            this._owners = [gameOwner, nextOwner];
         }
         else if (!this.publicKeyW) {
+            if (tokenOwner !== this.publicKeyB) {
+                throw new Error('Only the invited opponent can accept the game');
+            }
+            if (nextOwner !== this.creatorPublicKey) {
+                throw new Error('Opponent must set the creator as the white player');
+            }
+            this.withdraws = [];
+            this.finalWithdraws = [];
             this.tokenIdB = token._id;
             this.nameB = name;
             this.publicKeyW = nextOwner;
+            this._owners = [nextOwner];
         }
         else {
             throw new Error('Game is already fully funded');
+        }
+    }
+    /**
+     * Cancel a pending game before the opponent deposits. Refunds are authorized
+     * via `withdraws` set in this method; the creator then claims with `withdrawTokens`.
+     */
+    cancel() {
+        if (this.publicKeyW)
+            throw new Error('Game started use resign to forfeit');
+        if (this.deposits.length !== 1)
+            throw new Error('Cannot cancel: invalid deposit state');
+        if (!this.tokenIdW)
+            throw new Error('Cannot cancel: no deposit to refund');
+        if (!this.creatorPublicKey)
+            throw new Error('Cannot cancel: creator not set');
+        if (this.withdraws.length === 0) {
+            this.withdraws = [[this.root, this.tokenIdW, this.wagerAmount]];
         }
     }
     move(from, to, promotion) {
@@ -74,6 +110,9 @@ export class ChessContract extends Contract {
         return chessLib.isGameOver();
     }
     resign() {
+        if (!this.publicKeyW || !this.publicKeyB) {
+            throw new Error('Game not yet started');
+        }
         const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdB : this.tokenIdW;
         this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]];
     }
@@ -158,12 +197,19 @@ export class ChessContractHelper {
         await this.computer.broadcast(tx);
         return effect.res;
     }
-    async depositTokens(chessRev, tokenRev, wagerAmount, name, nextOwner) {
+    /**
+     * Deposits wager tokens into a chess game. After the creator's first deposit
+     * the invited opponent owns the contract and can accept without a co-sign.
+     */
+    async depositTokens(chessRev, tokenRev, wagerAmount, name, nextOwner, coSignComputer) {
         const { tx, effect } = await this.computer.encode({
             exp: `chess.acceptDeposit(token, ${wagerAmount}n, '${name}', '${nextOwner}')`,
             env: { chess: chessRev, token: tokenRev },
             mod: this.mod,
         });
+        if (coSignComputer) {
+            await coSignComputer.sign(tx);
+        }
         await this.computer.broadcast(tx);
         return effect.env.chess;
     }
@@ -236,6 +282,69 @@ export class ChessContractHelper {
             }
         }
         return null;
+    }
+    /** True when both players have deposited and the game is playable. */
+    isGameStarted(chess) {
+        return !!chess.publicKeyW && !!chess.publicKeyB;
+    }
+    /** True when the creator canceled before the opponent deposited (refund claimed). */
+    async isPendingGameCanceled(chess) {
+        if (chess.publicKeyW || !chess.tokenIdW || chess.deposits.length !== 1)
+            return false;
+        try {
+            const latestChessRev = await this.computer.latest(chess._id);
+            const latestTokenRev = await this.computer.latest(chess.tokenIdW);
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const token = (await this.computer.sync(latestTokenRev));
+            const withdrawn = token.withdrawn ?? [];
+            return withdrawn.includes(latestChessRev);
+        }
+        catch {
+            return false;
+        }
+    }
+    /** True when waiting for the opponent's deposit (creator may cancel). */
+    canCancel(chess) {
+        return (!!chess.creatorPublicKey &&
+            !!chess.publicKeyB &&
+            !chess.publicKeyW &&
+            chess.deposits.length === 1 &&
+            chess.withdraws.length === 0 &&
+            chess.finalWithdraws.length === 0);
+    }
+    isCreator(chess) {
+        return chess.creatorPublicKey === this.computer.getPublicKey();
+    }
+    /**
+     * Cancel a pending game before the opponent deposits. Sets `withdraws` on-chain
+     * so the creator can claim their deposit with `withdrawTokens`.
+     */
+    async cancelGame(chessId) {
+        const latestRev = await this.computer.latest(chessId);
+        const chess = await this.computer.sync(latestRev);
+        if (!this.canCancel(chess)) {
+            throw new Error('Cannot cancel: game is not in a cancelable state');
+        }
+        if (!this.isCreator(chess)) {
+            throw new Error('Cannot cancel: only the game creator can cancel');
+        }
+        if (await this.isPendingGameCanceled(chess)) {
+            throw new Error('Cannot cancel: wager already refunded');
+        }
+        const { tx, effect } = await this.computer.encodeCall({
+            target: chess,
+            property: 'cancel',
+            args: [],
+            mod: this.mod,
+        });
+        await this.computer.broadcast(tx);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return effect.env.__bc__;
+    }
+    /** Cancel a pending game and withdraw the creator's wager in one flow. */
+    async cancelGameAndWithdraw(chessId) {
+        const chess = await this.cancelGame(chessId);
+        await this.withdrawTokens(chess.tokenIdW, chessId);
     }
     /**
      * Resigns from the current game. Sets the withdraws array so the opponent

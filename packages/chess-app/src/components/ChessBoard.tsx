@@ -13,7 +13,7 @@ import {
   User,
 } from '@bitcoin-computer/chess-contracts'
 import { useCallback, useContext, useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Chessboard } from 'react-chessboard'
 import {
   VITE_CHESS_GAME_MOD_SPEC,
@@ -21,7 +21,7 @@ import {
   VITE_TBC20_MOD_SPEC,
 } from '../constants/modSpecs'
 import { signInModal } from './Navbar'
-import { getGameState } from './utils'
+import { getGameState, isCreatorRefunded } from './utils'
 import { NewGameModal, newGameModal } from './NewGame'
 import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
@@ -60,8 +60,95 @@ function getWinnerPubKey(chessContract: SmartContract<typeof ChessContract>): st
 }
 
 /** Returns true when the game is functionally over (checkmate, draw, or resign). */
-function isGameOver(chessContract: SmartContract<typeof ChessContract>): boolean {
+function isGameOver(
+  chessContract: SmartContract<typeof ChessContract>,
+  creatorRefunded = false,
+): boolean {
+  if (creatorRefunded) return false
+  if (!isFullyFunded(chessContract)) return false
   return new ChessLib(chessContract.fen).isGameOver() || chessContract.withdraws.length > 0
+}
+
+function isFullyFunded(chessContract: SmartContract<typeof ChessContract>): boolean {
+  return !!chessContract.publicKeyW && !!chessContract.publicKeyB
+}
+
+function CanceledChallengePanel() {
+  return (
+    <div className="w-full bg-white dark:bg-gray-800 rounded-lg border border-amber-200 dark:border-amber-800 p-8 text-center">
+      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Challenge canceled</h2>
+      <p className="text-sm text-gray-600 dark:text-gray-400">
+        This game was canceled before it started. The creator&apos;s wager has been refunded.
+      </p>
+    </div>
+  )
+}
+
+function WaitingForOpponent({
+  chessContract,
+  helper,
+  onCancel,
+  isCancelling,
+}: {
+  chessContract: SmartContract<typeof ChessContract>
+  helper: ChessContractHelper
+  onCancel: () => Promise<void>
+  isCancelling: boolean
+}) {
+  const canCancel = helper.canCancel(chessContract) && helper.isCreator(chessContract)
+  const isInvitedBlack = helper.computer.getPublicKey() === chessContract.publicKeyB
+
+  return (
+    <div className="w-full bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
+      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Game not started yet</h2>
+      {isInvitedBlack ? (
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Accept the challenge from the <strong>Challenges</strong> list and deposit your wager to
+          start the game.
+        </p>
+      ) : (
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+          Waiting for your opponent to accept the challenge and deposit their wager.
+        </p>
+      )}
+      <dl className="text-left text-sm space-y-2 text-gray-700 dark:text-gray-300 max-w-md mx-auto">
+        <div className="flex justify-between gap-4">
+          <dt className="text-gray-500 dark:text-gray-400">Wager</dt>
+          <dd className="font-semibold">{chessContract.wagerAmount.toString()} tokens each</dd>
+        </div>
+        {chessContract.nameW && (
+          <div className="flex justify-between gap-4">
+            <dt className="text-gray-500 dark:text-gray-400">White</dt>
+            <dd className="font-semibold">{chessContract.nameW}</dd>
+          </div>
+        )}
+        {chessContract.publicKeyB && (
+          <div className="flex justify-between gap-4">
+            <dt className="text-gray-500 dark:text-gray-400">Black</dt>
+            <dd
+              className="font-mono text-xs truncate max-w-[200px]"
+              title={chessContract.publicKeyB}
+            >
+              {chessContract.publicKeyB}
+            </dd>
+          </div>
+        )}
+      </dl>
+      {canCancel && (
+        <button
+          type="button"
+          onClick={() => onCancel()}
+          disabled={isCancelling}
+          className="mt-6 text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        >
+          {isCancelling ? 'Cancelling…' : 'Cancel Challenge & Refund Wager'}
+        </button>
+      )}
+      <p className="text-xs text-gray-500 dark:text-gray-400 mt-6">
+        The board will appear automatically once both players have deposited.
+      </p>
+    </div>
+  )
 }
 
 function ListLayout(props: { listOfMoves: string[] }) {
@@ -212,6 +299,7 @@ function ActionButtons({
 
 export function ChessBoard() {
   const params = useParams()
+  const navigate = useNavigate()
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
   const [gameId, setGameId] = useState<string>(params.id || '')
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
@@ -229,6 +317,8 @@ export function ChessBoard() {
   const [user, setUser] = useState<User | null>(null)
   const [balance, setBalance] = useState<bigint>(0n)
   const [hasWithdrawn, setHasWithdrawn] = useState<boolean>(false)
+  const [isCancelling, setIsCancelling] = useState<boolean>(false)
+  const [creatorRefunded, setCreatorRefunded] = useState<boolean>(false)
 
   const computer = useContext(ComputerContext)
 
@@ -246,6 +336,7 @@ export function ChessBoard() {
     winnerShownForGameRef.current = null
     setWinnerData(null)
     setHasWithdrawn(false)
+    setCreatorRefunded(false)
   }, [gameId])
 
   // Detect whether my TBC777 token has already claimed against the current
@@ -292,10 +383,26 @@ export function ChessBoard() {
     }
   }, [chessContract, computer])
 
+  useEffect(() => {
+    if (!chessContract) {
+      setCreatorRefunded(false)
+      return
+    }
+    let cancelled = false
+    ;(async () => {
+      const refunded = await isCreatorRefunded(computer, chessContract)
+      if (!cancelled) setCreatorRefunded(refunded)
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [chessContract, computer])
+
   // Compute winner data when game ends (this also mounts <Modal.Component /> below).
   useEffect(() => {
     if (!chessContract) return
-    if (!isGameOver(chessContract)) return
+    if (!isFullyFunded(chessContract)) return
+    if (!isGameOver(chessContract, creatorRefunded)) return
 
     const chessLib = new ChessLib(chessContract.fen)
     const isDraw = chessLib.isGameOver() && !chessLib.isCheckmate()
@@ -318,7 +425,7 @@ export function ChessBoard() {
       }
       return { winnerPubKey, userPubKey, wagerAmount, isDraw }
     })
-  }, [chessContract, computer])
+  }, [chessContract, computer, creatorRefunded])
 
   // Show the modal at most once per game, after winnerData is in state so the
   // modal element exists in the DOM (Modal.showModal looks it up by id).
@@ -336,6 +443,9 @@ export function ChessBoard() {
         const cc = await fetchChessContract()
         setChessContract(cc)
         setGame(new ChessLib(cc.fen))
+        if (isFullyFunded(cc)) {
+          setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
+        }
         const walletBalance = await computer.getBalance()
         setBalance(walletBalance.balance as bigint)
       }
@@ -378,7 +488,9 @@ export function ChessBoard() {
           setChessContract(cc)
           setChessContractId(cc._id)
           setGame(new ChessLib(cc.fen))
-          setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
+          if (isFullyFunded(cc)) {
+            setOrientation(cc.publicKeyW === computer.getPublicKey() ? 'white' : 'black')
+          }
           const walletBalance = await computer.getBalance()
           setBalance(walletBalance.balance as bigint)
         }
@@ -427,9 +539,14 @@ export function ChessBoard() {
   }
 
   const onDropSync = (from: Square, to: Square, piece: Piece) => {
+    if (!chessContract) return false
+    if (!isFullyFunded(chessContract)) return false
+    if (isGameOver(chessContract)) return false
+    if (chessContract._owners[0] !== computer.getPublicKey()) return false
+
     try {
       const promotion = piece && piece[1] ? piece[1].toLocaleLowerCase() : 'q'
-      const chessGameInstance = new ChessLib(chessContract?.fen)
+      const chessGameInstance = new ChessLib(chessContract.fen)
       chessGameInstance.move({ from, to, promotion })
       setGame(new ChessLib(chessGameInstance.fen()))
       publishMove(from, to, promotion).catch(handleError)
@@ -439,6 +556,13 @@ export function ChessBoard() {
       return false
     }
   }
+
+  const canMove =
+    !!game &&
+    !!chessContract &&
+    isFullyFunded(chessContract) &&
+    !isGameOver(chessContract) &&
+    chessContract._owners[0] === computer.getPublicKey()
 
   const playNewGame = () => {
     if (!Auth.isLoggedIn()) {
@@ -485,6 +609,32 @@ export function ChessBoard() {
     }
   }
 
+  const cancelChallenge = async () => {
+    if (!chessContract) return
+    try {
+      setIsCancelling(true)
+      showLoader(true)
+      await helper.cancelGameAndWithdraw(chessContract._id)
+      if (document.getElementById(winnerModal)) {
+        Modal.hideModal(winnerModal)
+      }
+      winnerShownForGameRef.current = null
+      setWinnerData(null)
+      setChessContract(null)
+      setChessContractId('')
+      setGame(null)
+      setGameId('')
+      if (params.id) navigate('/')
+      showSnackBar('Challenge cancelled. Your wager has been refunded.', true)
+    } catch (error) {
+      showSnackBar(error instanceof Error ? error.message : 'Error cancelling challenge', false)
+      await syncChessContract()
+    } finally {
+      setIsCancelling(false)
+      showLoader(false)
+    }
+  }
+
   return (
     <div className="w-full">
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 lg:gap-12 dark:bg-gray-900">
@@ -507,7 +657,16 @@ export function ChessBoard() {
 
         {/* Chessboard Column */}
         <div className="flex flex-col items-center space-y-2 px-4 order-1 md:order-1 lg:order-2 md:col-span-2 lg:col-span-2">
-          {game ? (
+          {creatorRefunded ? (
+            <CanceledChallengePanel />
+          ) : chessContract && !helper.isGameStarted(chessContract) ? (
+            <WaitingForOpponent
+              chessContract={chessContract}
+              helper={helper}
+              onCancel={cancelChallenge}
+              isCancelling={isCancelling}
+            />
+          ) : game ? (
             <>
               <div className="bg-white dark:bg-gray-900 w-full">
                 <dl className="text-gray-900 dark:text-gray-200">
@@ -524,6 +683,7 @@ export function ChessBoard() {
                   position={game.fen()}
                   onPieceDrop={onDropSync}
                   boardOrientation={orientation}
+                  arePiecesDraggable={canMove}
                 />
               </div>
 
@@ -566,7 +726,7 @@ export function ChessBoard() {
 
           {chessContract && (
             <>
-              {game && (
+              {game && helper.isGameStarted(chessContract) && (
                 <div className="col-span-1 space-y-4 text-gray-900 dark:text-gray-200 mb-4">
                   <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
                     <dl className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -611,14 +771,16 @@ export function ChessBoard() {
                   </div>
                 </div>
               )}
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
-                <div className="flex justify-center">
-                  <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
-                    Move History
-                  </h3>
+              {helper.isGameStarted(chessContract) && (
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-sm">
+                  <div className="flex justify-center">
+                    <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
+                      Move History
+                    </h3>
+                  </div>
+                  <ListLayout listOfMoves={chessContract.sans} />
                 </div>
-                <ListLayout listOfMoves={chessContract.sans} />
-              </div>
+              )}
             </>
           )}
         </div>
