@@ -26,4 +26,3 @@ export declare class NftHelper implements ITBC721 {
     ownersOf(tokenId: string): Promise<string[]>;
     transfer(to: string, tokenId: string): Promise<void>;
 }
-export {}
