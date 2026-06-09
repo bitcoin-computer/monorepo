@@ -1,4 +1,4 @@
-import { Computer, SmartContract } from '@bitcoin-computer/lib'
+import { Computer, SmartContract, Contract } from '@bitcoin-computer/lib'
 import { Election, Vote } from '../src/dao-contract.js'
 import { expect } from 'chai'
 import { Token } from '@bitcoin-computer/TBC20'
