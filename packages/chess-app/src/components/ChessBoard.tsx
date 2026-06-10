@@ -325,6 +325,7 @@ export function ChessBoard() {
   // Tracks which gameId we have already auto-popped the winner modal for, so
   // subsequent contract revisions (e.g. after Withdraw) do not re-open it.
   const winnerShownForGameRef = useRef<string | null>(null)
+  const canceledSeenMarkedRef = useRef(false)
 
   const fetchChessContract = useCallback(async (): Promise<SmartContract<typeof ChessContract>> => {
     const latest = await computer.latest(gameId)
@@ -337,6 +338,7 @@ export function ChessBoard() {
     setWinnerData(null)
     setHasWithdrawn(false)
     setCreatorRefunded(false)
+    canceledSeenMarkedRef.current = false
   }, [gameId])
 
   // Detect whether my TBC777 token has already claimed against the current
@@ -397,6 +399,23 @@ export function ChessBoard() {
       cancelled = true
     }
   }, [chessContract, computer])
+
+  useEffect(() => {
+    if (!chessContract || !creatorRefunded) return
+    if (chessContract.publicKeyB !== computer.getPublicKey()) return
+    if (chessContract.canceledSeen || canceledSeenMarkedRef.current) return
+    canceledSeenMarkedRef.current = true
+    const helper = ChessContractHelper.fromModSpecs(
+      computer,
+      VITE_CHESS_GAME_MOD_SPEC,
+      VITE_CHESS_USER_MOD_SPEC,
+      VITE_TBC20_MOD_SPEC,
+    )
+    helper.markCanceledSeen(chessContract._id).catch((err) => {
+      console.error('Failed to mark canceled game as seen:', err)
+      canceledSeenMarkedRef.current = false
+    })
+  }, [chessContract, creatorRefunded, computer])
 
   // Compute winner data when game ends (this also mounts <Modal.Component /> below).
   useEffect(() => {

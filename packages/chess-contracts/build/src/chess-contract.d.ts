@@ -17,7 +17,10 @@ export declare class ChessContract extends Contract {
     tokenIdB: string;
     /** Public key of the player who created the game (white / first depositor). */
     creatorPublicKey: string;
+    /** Set when a canceled pending game has been acknowledged (clears list badge). */
+    canceledSeen: boolean;
     constructor(root: string, wagerAmount: bigint, timeLimit: bigint);
+    setCanceledSeen(): void;
     acceptDeposit(token: any, amount: bigint, name: string, nextOwner: string): Promise<void>;
     /**
      * Cancel a pending game before the opponent deposits. Refunds are authorized
@@ -95,6 +98,8 @@ export declare class ChessContractHelper {
     cancelGame(chessId: string): Promise<SmartContract<typeof ChessContract>>;
     /** Cancel a pending game and withdraw the creator's wager in one flow. */
     cancelGameAndWithdraw(chessId: string): Promise<void>;
+    /** Mark a canceled pending game as seen by the invited opponent (clears list badge). */
+    markCanceledSeen(chessId: string): Promise<SmartContract<typeof ChessContract>>;
     /**
      * Resigns from the current game. Sets the withdraws array so the opponent
      * (winner) can call withdrawTokens. Can only be called by the current

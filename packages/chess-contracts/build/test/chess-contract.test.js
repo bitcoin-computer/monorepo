@@ -145,6 +145,7 @@ describe('ChessContract', () => {
             expect(wrapper.tokenRoot).toBe('root456');
             expect(wrapper.publicKeyW).toBe('pubKeyW');
             expect(wrapper.accepted).toBe(false);
+            expect(wrapper.canceledSeen).toBe(false);
         });
     });
     describe('User', () => {
@@ -195,6 +196,7 @@ describe('ChessContract', () => {
                 expect(chess.finalWithdraws).toEqual([]);
                 expect(chess.tokenIdW).toBe('');
                 expect(chess.tokenIdB).toBe('');
+                expect(chess.canceledSeen).toBe(false);
             });
             it('Should reject moves when game is not fully funded', async () => {
                 const timeLimit = 60n * 10n;
@@ -292,6 +294,7 @@ describe('ChessContract', () => {
                 const timeLimit = 60n * 10n;
                 const to = minter.getPublicKey();
                 const token = await minter.new(TBC777, [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
+                await confirmChainTip(minter);
                 const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
                 if (!whiteTokenUtxo)
                     throw new Error('expected white token UTXO');
@@ -313,6 +316,7 @@ describe('ChessContract', () => {
                 const timeLimit = 60n * 10n;
                 const to = minter.getPublicKey();
                 const token = await minter.new(TBC777, [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
+                await confirmChainTip(minter);
                 const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
                 if (!whiteTokenUtxo)
                     throw new Error('expected white token UTXO');

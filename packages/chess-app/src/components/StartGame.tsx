@@ -172,7 +172,31 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
         const latestChessRev = await computer.latest(challengeObj.chessRev)
         const chessObj = await computer.sync<typeof ChessContract>(latestChessRev)
         setChess(chessObj)
-        setCanceled(await isCreatorRefunded(computer, chessObj))
+        const isCanceled = await isCreatorRefunded(computer, chessObj)
+        setCanceled(isCanceled)
+
+        if (isCanceled) {
+          const helper = ChessContractHelper.fromModSpecs(
+            computer,
+            VITE_CHESS_GAME_MOD_SPEC,
+            VITE_CHESS_USER_MOD_SPEC,
+            VITE_TBC20_MOD_SPEC,
+          )
+          try {
+            if (!challengeObj.canceledSeen) {
+              await challengeObj.setCanceledSeen()
+            }
+          } catch {
+            // Non-fatal: badge may clear on next open
+          }
+          try {
+            if (!chessObj.canceledSeen && chessObj.publicKeyB === computer.getPublicKey()) {
+              await helper.markCanceledSeen(chessObj._id)
+            }
+          } catch {
+            // Non-fatal: badge may clear on next open
+          }
+        }
 
         Modal.showModal(startGameModal)
       } catch (error) {

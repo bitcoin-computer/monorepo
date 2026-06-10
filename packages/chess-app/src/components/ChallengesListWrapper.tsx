@@ -28,8 +28,12 @@ export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
 
     challengesList.forEach((challenge) => {
       // Don't show accepted challenges
-      if (!challenge.accepted)
-        availableChallenges.push({ challengeId: challenge._id, new: !challenge.accepted })
+      if (!challenge.accepted) {
+        availableChallenges.push({
+          challengeId: challenge._id,
+          new: !challenge.canceledSeen,
+        })
+      }
     })
 
     return availableChallenges

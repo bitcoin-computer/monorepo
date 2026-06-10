@@ -33,7 +33,7 @@ export const GamesListWrapper = ({
 
     gamesList.forEach((game) => {
       if (game.sans && game.sans.length === 0) {
-        availableGames.push({ gameId: game._id, new: true })
+        availableGames.push({ gameId: game._id, new: !game.canceledSeen })
       }
     })
 

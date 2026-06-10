@@ -179,6 +179,7 @@ describe('ChessContract', () => {
       expect(wrapper.tokenRoot).toBe('root456')
       expect(wrapper.publicKeyW).toBe('pubKeyW')
       expect(wrapper.accepted).toBe(false)
+      expect(wrapper.canceledSeen).toBe(false)
     })
   })
 
@@ -236,6 +237,7 @@ describe('ChessContract', () => {
         expect(chess.finalWithdraws).toEqual([])
         expect(chess.tokenIdW).toBe('')
         expect(chess.tokenIdB).toBe('')
+        expect(chess.canceledSeen).toBe(false)
       })
 
       it('Should reject moves when game is not fully funded', async () => {
@@ -355,6 +357,7 @@ describe('ChessContract', () => {
           [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
           tbc777Mod,
         )
+        await confirmChainTip(minter)
         const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
         if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
         const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
@@ -384,6 +387,7 @@ describe('ChessContract', () => {
           [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
           tbc777Mod,
         )
+        await confirmChainTip(minter)
         const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
         if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
         const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)

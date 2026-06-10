@@ -16,7 +16,11 @@ export class ChessContract extends Contract {
             tokenIdW: '',
             tokenIdB: '',
             creatorPublicKey: '',
+            canceledSeen: false,
         });
+    }
+    setCanceledSeen() {
+        this.canceledSeen = true;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     async acceptDeposit(token, amount, name, nextOwner) {
@@ -76,6 +80,7 @@ export class ChessContract extends Contract {
         if (this.withdraws.length === 0) {
             this.withdraws = [[this.root, this.tokenIdW, this.wagerAmount]];
         }
+        this.canceledSeen = true;
     }
     move(from, to, promotion) {
         if (!this.publicKeyB || !this.publicKeyW)
@@ -345,6 +350,25 @@ export class ChessContractHelper {
     async cancelGameAndWithdraw(chessId) {
         const chess = await this.cancelGame(chessId);
         await this.withdrawTokens(chess.tokenIdW, chessId);
+    }
+    /** Mark a canceled pending game as seen by the invited opponent (clears list badge). */
+    async markCanceledSeen(chessId) {
+        const latestRev = await this.computer.latest(chessId);
+        const chess = await this.computer.sync(latestRev);
+        if (chess.canceledSeen)
+            return chess;
+        if (chess.publicKeyB !== this.computer.getPublicKey()) {
+            throw new Error('Only the invited opponent can acknowledge a canceled game');
+        }
+        const { tx, effect } = await this.computer.encodeCall({
+            target: chess,
+            property: 'setCanceledSeen',
+            args: [],
+            mod: this.mod,
+        });
+        await this.computer.broadcast(tx);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        return effect.env.__bc__;
     }
     /**
      * Resigns from the current game. Sets the withdraws array so the opponent
