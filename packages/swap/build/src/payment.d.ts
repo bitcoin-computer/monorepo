@@ -1,4 +1,5 @@
 import { Mock } from '@bitcoin-computer/lib';
+import { Contract } from '@bitcoin-computer/lib';
 export declare class Payment extends Contract {
     _id: string;
     _rev: string;

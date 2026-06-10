@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class ChessContract extends Contract {
     constructor(root, wagerAmount, timeLimit) {
         super({
@@ -147,9 +148,7 @@ export class ChessContract extends Contract {
         // across the entire lifetime of the escrow, so the audit must see them all.
         while (true) {
             const txId = current.split(':')[0];
-            // @ts-expect-error Cannot find name 'computer'. Did you mean 'Computer'?
             timestamps.push(await computer.txIdToBlockTime(txId));
-            // @ts-expect-error Cannot find name 'computer'. Did you mean 'Computer'?
             const previous = await computer.prev(current);
             if (!previous)
                 break;

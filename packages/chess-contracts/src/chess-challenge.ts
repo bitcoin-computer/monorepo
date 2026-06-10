@@ -1,5 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
-
+import { Computer, Contract } from '@bitcoin-computer/lib'
 export class ChessChallengeTxWrapper extends Contract {
   chessRev!: string
   wagerAmount!: bigint

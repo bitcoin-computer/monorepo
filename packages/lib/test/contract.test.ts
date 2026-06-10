@@ -1,4 +1,5 @@
 import { expect } from 'chai'
+import { Contract } from '@bitcoin-computer/lib'
 
 describe('Contract', () => {
   it('Should Throw an Error When Updating Properties Outside of Methods', () => {

@@ -1,3 +1,5 @@
+import { Contract } from '@bitcoin-computer/lib'
+
 import '@bitcoin-computer/lib'
 class Counter extends Contract {
   n: number

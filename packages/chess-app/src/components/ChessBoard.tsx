@@ -76,7 +76,9 @@ function isFullyFunded(chessContract: SmartContract<typeof ChessContract>): bool
 function CanceledChallengePanel() {
   return (
     <div className="w-full bg-white dark:bg-gray-800 rounded-lg border border-amber-200 dark:border-amber-800 p-8 text-center">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Challenge canceled</h2>
+      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+        Challenge canceled
+      </h2>
       <p className="text-sm text-gray-600 dark:text-gray-400">
         This game was canceled before it started. The creator&apos;s wager has been refunded.
       </p>
@@ -100,7 +102,9 @@ function WaitingForOpponent({
 
   return (
     <div className="w-full bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8 text-center">
-      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">Game not started yet</h2>
+      <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+        Game not started yet
+      </h2>
       {isInvitedBlack ? (
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
           Accept the challenge from the <strong>Challenges</strong> list and deposit your wager to

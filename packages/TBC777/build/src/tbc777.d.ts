@@ -1,4 +1,4 @@
-import { Id, Rev, Root } from '@bitcoin-computer/lib';
+import { Id, Rev, Root, Contract } from '@bitcoin-computer/lib';
 import { TBC20, TBC20ConstructorParams } from './tbc20.js';
 export type Constructor<T> = new (...args: any[]) => T;
 export type Amount = bigint;

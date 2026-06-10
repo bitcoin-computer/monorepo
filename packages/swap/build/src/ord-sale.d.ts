@@ -2,6 +2,7 @@ import { NFT } from '@bitcoin-computer/TBC721';
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
 import { Buffer } from 'buffer';
 import { Payment, PaymentMock } from './payment.js';
+import { Contract } from '@bitcoin-computer/lib';
 export declare class OrdSale extends Contract {
     static exec(b1: Payment, b2: Payment, n: NFT, p: Payment): (Payment | NFT)[];
 }

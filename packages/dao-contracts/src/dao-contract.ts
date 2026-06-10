@@ -1,5 +1,5 @@
 import { Token } from '@bitcoin-computer/TBC20'
-import { SmartContract } from '@bitcoin-computer/lib'
+import { SmartContract, Contract } from '@bitcoin-computer/lib'
 
 type ElectionType = {
   proposalMod: string
@@ -33,13 +33,11 @@ export class Election extends Contract {
   }
 
   async proposalVotes(): Promise<string[]> {
-    // @ts-expect-error Cannot find name 'computer'
     const revs = await computer.getTXOs({ mod: this.proposalMod })
     const voteTxIdsSet = new Set<string>(revs.map((r: string) => r.split(':')[0]))
     const validVotes = new Set<string>(voteTxIdsSet)
 
     for (const voteTxId of voteTxIdsSet) {
-      // @ts-expect-error Cannot find name 'computer'
       const ancestors = (await computer.getAncestors(voteTxId)) as string[]
       const ancestorsSet = new Set<string>(ancestors)
       ancestorsSet.delete(voteTxId)
@@ -54,13 +52,10 @@ export class Election extends Contract {
 
   private async validVotes(): Promise<Vote[]> {
     const proposalVotes = await this.proposalVotes()
-
-    // @ts-expect-error Cannot find name 'computer'
     const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map(
       (obj: { res: unknown }) => obj.res,
-    )
+    ) as Vote[]
 
-    // @ts-expect-error Cannot find name 'computer'
     const module = await computer.load(this.proposalMod)
     const voteClassStr = module['Vote'].toString()
     const normalizedClass = this.normalize(voteClassStr)
@@ -75,7 +70,6 @@ export class Election extends Contract {
 
     const isValid = await Promise.all(
       resolved.map(async (r: Vote) => {
-        // @ts-expect-error Cannot find name 'computer'
         const decoded = await computer.decode(r._rev.substring(0, 64))
         const normExp = this.normalize(decoded.exp)
         const match = regex.exec(normExp)

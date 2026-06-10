@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class ChessChallengeTxWrapper extends Contract {
     constructor(chessRev, wagerAmount, tokenRoot, publicKeyW, publicKeyB) {
         super({

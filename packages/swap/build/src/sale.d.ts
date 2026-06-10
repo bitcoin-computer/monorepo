@@ -1,6 +1,7 @@
 import { Buffer } from 'buffer';
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib';
 import { Payment, PaymentMock } from './payment.js';
+import { Contract } from '@bitcoin-computer/lib';
 export declare class Sale extends Contract {
     static exec(o: any, p: Payment): any[];
 }

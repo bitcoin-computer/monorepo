@@ -1,4 +1,5 @@
 import { Computer, SmartContract } from '@bitcoin-computer/lib';
+import { Contract } from '@bitcoin-computer/lib';
 export declare class ChessContract extends Contract {
     wagerAmount: bigint;
     timeLimit: bigint;

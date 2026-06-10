@@ -1,3 +1,5 @@
+import { Contract } from '@bitcoin-computer/lib'
+
 export class List extends Contract {
   elements: string[]
 
