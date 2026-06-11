@@ -1,84 +1,73 @@
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
+const isJUndefined = (a) => typeof a === 'undefined';
+const isJNull = (a) => a === null;
+const isJBoolean = (a) => typeof a === 'boolean';
+const isJNumber = (a) => typeof a === 'number';
+const isJString = (a) => typeof a === 'string';
+const isJSymbol = (a) => typeof a === 'symbol';
+const isJBigInt = (a) => typeof a === 'bigint';
+const isJBasic = (a) => isJNull(a) ||
+    isJUndefined(a) ||
+    isJNumber(a) ||
+    isJString(a) ||
+    isJBoolean(a) ||
+    isJSymbol(a) ||
+    isJBigInt(a);
+const isJObject = (a) => !isJBasic(a) && !Array.isArray(a);
+const isJArray = (a) => !isJBasic(a) && Array.isArray(a);
+const objectEntryMap = (g) => (object) => Object.fromEntries(Object.entries(object).map(g));
+const objectMap = (f) => (object) => objectEntryMap(([key, value]) => [key, f(value)])(object);
+export const jsonMap = (g) => (json) => {
+    if (isJBasic(json))
+        return g(json);
+    if (isJArray(json))
+        return g(json.map(jsonMap(g)));
+    if (isJObject(json))
+        return g(objectMap(jsonMap(g))(json));
+    throw new Error('Unsupported type');
 };
-var isJUndefined = function (a) { return typeof a === 'undefined'; };
-var isJNull = function (a) { return a === null; };
-var isJBoolean = function (a) { return typeof a === 'boolean'; };
-var isJNumber = function (a) { return typeof a === 'number'; };
-var isJString = function (a) { return typeof a === 'string'; };
-var isJSymbol = function (a) { return typeof a === 'symbol'; };
-var isJBigInt = function (a) { return typeof a === 'bigint'; };
-var isJBasic = function (a) {
-    return isJNull(a) ||
-        isJUndefined(a) ||
-        isJNumber(a) ||
-        isJString(a) ||
-        isJBoolean(a) ||
-        isJSymbol(a) ||
-        isJBigInt(a);
-};
-var isJObject = function (a) { return !isJBasic(a) && !Array.isArray(a); };
-var isJArray = function (a) { return !isJBasic(a) && Array.isArray(a); };
-var objectEntryMap = function (g) {
-    return function (object) {
-        return Object.fromEntries(Object.entries(object).map(g));
-    };
-};
-var objectMap = function (f) {
-    return function (object) {
-        return objectEntryMap(function (_a) {
-            var key = _a[0], value = _a[1];
-            return [key, f(value)];
-        })(object);
-    };
-};
-export var jsonMap = function (g) {
-    return function (json) {
-        if (isJBasic(json))
-            return g(json);
-        if (isJArray(json))
-            return g(json.map(jsonMap(g)));
-        if (isJObject(json))
-            return g(objectMap(jsonMap(g))(json));
-        throw new Error('Unsupported type');
-    };
-};
-export var strip = function (value) {
+export const strip = (value) => {
     if (isJBasic(value))
         return value;
     if (isJArray(value))
         return value.map(strip);
-    // eslint-disable-next-line
-    var _id = value._id, _root = value._root, _rev = value._rev, _amount = value._amount, _owners = value._owners, rest = __rest(value, ["_id", "_root", "_rev", "_amount", "_owners"]);
+    const { _id, _root, _rev, _satoshis, _owners, ...rest } = value;
     return rest;
 };
 // https://github.com/GoogleChromeLabs/jsbi/issues/30
-export var toObject = function (obj) {
-    return JSON.stringify(obj, function (key, value) { return (typeof value === 'bigint' ? value.toString() : value); }, 2);
-};
-export var capitalizeFirstLetter = function (string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-};
+export const toObject = (obj) => JSON.stringify(obj, (key, value) => (typeof value === 'bigint' ? value.toString() : value), 2);
+export const capitalizeFirstLetter = (string) => string.charAt(0).toUpperCase() + string.slice(1);
 export function isValidRevString(outId) {
     return /^[0-9A-Fa-f]{64}:\d+$/.test(outId);
 }
 export function isValidRev(value) {
     return typeof value === 'string' && isValidRevString(value);
 }
-export var sleep = function (ms) {
-    return new Promise(function (resolve) {
-        setTimeout(resolve, ms);
-    });
-};
+export const sleep = (ms) => new Promise((resolve) => {
+    setTimeout(resolve, ms);
+});
 export function getEnv(name) {
-    return ((typeof process !== 'undefined' && process.env["REACT_APP_".concat(name)]) ||
-        (import.meta.env && import.meta.env["VITE_".concat(name)]));
+    return ((typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||
+        (import.meta.env && import.meta.env[`VITE_${name}`]));
+}
+export function bigIntToStr(a) {
+    if (a < 0n)
+        throw new Error('Balance must be a non-negative');
+    const scale = BigInt(1e8);
+    const integerPart = (a / scale).toString();
+    const fractionalPart = (a % scale).toString().padStart(8, '0').replace(/0+$/, '');
+    return `${integerPart}.${fractionalPart || '0'}`;
+}
+export function strToBigInt(a) {
+    // Validate number contains at most one dot and is not empty
+    if ((a.match(/\./g) || []).length > 1 || a === '.' || a === '') {
+        throw new Error('Invalid number');
+    }
+    const [integerPart, fractionalPart = ''] = a.split('.');
+    // Validate integer and fractional part contains only digits (or is empty)
+    if (!/^\d*$/.test(integerPart) || !/^\d*$/.test(fractionalPart)) {
+        throw new Error('Invalid number');
+    }
+    const paddedFractionalPart = fractionalPart.padEnd(8, '0').slice(0, 8);
+    const totalSatoshisStr = integerPart + paddedFractionalPart;
+    return BigInt(totalSatoshisStr);
 }

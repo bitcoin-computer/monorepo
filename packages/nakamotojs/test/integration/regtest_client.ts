@@ -14,6 +14,7 @@ import {
   CHAIN,
   NETWORK,
 } from './config/index.js';
+import { Buffer } from 'buffer';
 
 import { payments, Psbt, networks } from '../../src/index.js';
 

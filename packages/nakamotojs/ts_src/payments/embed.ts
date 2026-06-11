@@ -3,6 +3,7 @@ import * as bscript from '../script.js';
 import { typeforce as typef } from '../types.js';
 import { Payment, PaymentOpts, Stack } from './index.js';
 import * as lazy from './lazy.js';
+import { Buffer } from 'buffer';
 
 const OPS = bscript.OPS;
 

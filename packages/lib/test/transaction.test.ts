@@ -15,7 +15,7 @@ describe('Transaction', () => {
   }
 
   const computer = new TestComputer()
-  const { wallet } = computer
+  const { wallet } = computer.db
   const { restClient } = wallet
   let a: A
 

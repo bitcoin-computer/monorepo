@@ -1,11 +1,20 @@
 import { useContext, useEffect, useState } from 'react'
-import { useLocation } from 'react-router-dom'
-import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import {
+  ComputerContext,
+  Modal,
+  UtilsContext,
+  bigIntToStr,
+  sleep,
+} from '@bitcoin-computer/components'
 import { Computer, Transaction } from '@bitcoin-computer/lib'
-import { ChessContract, ChessContractHelper } from '../../../chess-contracts/'
-import { VITE_CHESS_GAME_MOD_SPEC } from '../constants/modSpecs'
+import {
+  ChessContract,
+  ChessContractHelper,
+  ChessChallengeTxWrapper,
+} from '@bitcoin-computer/chess-contracts'
+import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 
-const startGameModal = 'start-game-modal'
+export const startGameModal = 'start-game-modal'
 
 export function StartGameModalContent({
   serialized,
@@ -15,6 +24,8 @@ export function StartGameModalContent({
   setCopied,
   link,
   setLink,
+  userChallenge,
+  accepted,
 }: {
   serialized: string
   game: ChessContract
@@ -23,6 +34,8 @@ export function StartGameModalContent({
   setCopied: React.Dispatch<React.SetStateAction<boolean>>
   link: string
   setLink: React.Dispatch<React.SetStateAction<string>>
+  userChallenge: ChessChallengeTxWrapper
+  accepted: boolean
 }) {
   const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
 
@@ -44,16 +57,19 @@ export function StartGameModalContent({
         computer,
         game,
         VITE_CHESS_GAME_MOD_SPEC,
+        VITE_CHESS_USER_MOD_SPEC,
       )
       const txId = await chessContractHelper.completeTx(tx)
-      setLink(`http://localhost:1032/game/${txId}:0`)
+      setLink(`${window.location.origin}/game/${txId}:0`)
       showLoader(false)
-    } catch (err) {
-      if (err instanceof Error) {
-        showSnackBar(err.message, false)
-      } else {
-        showSnackBar('Error occurred!', false)
+      try {
+        await sleep(2000)
+        await userChallenge.setAccepted()
+      } catch (error) {
+        console.log('error occured while updating state of the challenge', error)
       }
+    } catch (err) {
+      showSnackBar(err instanceof Error ? err.message : 'Error occurred!', false)
       showLoader(false)
     }
   }
@@ -75,7 +91,6 @@ export function StartGameModalContent({
               {`${link.slice(0, 40)}...`}
             </a>
           </div>
-
           <div className="p-6">
             <button
               className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -87,7 +102,7 @@ export function StartGameModalContent({
         </div>
       ) : (
         <>
-          {!!game && (
+          {game ? (
             <form
               onSubmit={onSubmit}
               className="w-full mx-auto bg-white shadow-md rounded-lg dark:bg-gray-700"
@@ -99,7 +114,7 @@ export function StartGameModalContent({
                       Amount
                     </span>
                     <span className="cursor-pointer text-sm font-medium text-gray-900 dark:text-gray-400">
-                      {game.amount / 1e8} {computer.getChain()}
+                      {bigIntToStr(game.satoshis)} {computer.getChain()}
                     </span>
                   </div>
                 </div>
@@ -120,14 +135,26 @@ export function StartGameModalContent({
                 </div>
               </div>
               <div className="p-6">
+                {accepted && (
+                  <div className="mb-4 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 rounded-lg p-3 text-center">
+                    This game has already been accepted.
+                  </div>
+                )}
                 <button
+                  disabled={accepted}
                   type="submit"
-                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
                 >
                   Accept
                 </button>
               </div>
             </form>
+          ) : (
+            <div className="flex flex-col items-center justify-center p-6 border rounded-lg shadow-md bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-700">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-200">
+                Loading challenge details...
+              </p>
+            </div>
           )}
         </>
       )}
@@ -135,43 +162,58 @@ export function StartGameModalContent({
   )
 }
 
-export function StartGameModal() {
-  const location = useLocation()
-  const queryParams = new URLSearchParams(location.search) // Parse the query string
-  const serialized = queryParams.get('start-game')
+export function StartGameModal({ challengeId }: { challengeId: string }) {
   const computer = useContext(ComputerContext)
   const [game, setGame] = useState<ChessContract | null>(null)
   const [copied, setCopied] = useState(false)
   const [link, setLink] = useState('')
-
+  const [serialized, setSerialized] = useState('')
   const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
+  const [userChallenge, setUserChallenge] = useState<ChessChallengeTxWrapper>()
+  const [accepted, setAccepted] = useState(false)
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchChallenge = async () => {
+      if (!challengeId) return // Skip if no challengeId
+
       try {
         showLoader(true)
-        if (serialized) {
-          const tx = Transaction.deserialize(serialized)
-          const { effect } = await computer.encode(tx.onChainMetaData as never)
-          const { res } = effect
-          const game = res as unknown as ChessContract
-          setGame(game)
-          Modal.showModal(startGameModal)
-          showLoader(false)
-        }
-      } catch (error) {
+        // Fetch challenge data
+        const [latestRev] = await computer.query({ ids: [challengeId] })
+        if (!latestRev) throw new Error('Challenge not found')
+
+        const challengeObj = (await computer.sync(latestRev)) as ChessChallengeTxWrapper
+        setAccepted(challengeObj.accepted)
+        setUserChallenge(challengeObj)
+        const serializedTx = challengeObj.chessGameTxHex
+        setSerialized(serializedTx)
+        // Decode transaction to get game
+        const tx = Transaction.deserialize(serializedTx)
+        const { effect } = await computer.encode(tx.onChainMetaData as never)
+        const { res } = effect
+        const gameData = res as unknown as ChessContract
+        setGame(gameData)
+
+        // Show modal only after data is fetched
+        Modal.showModal(startGameModal)
         showLoader(false)
-        if (error instanceof Error) {
-          showSnackBar(error.message, false)
-        } else {
-          showSnackBar('Error occurred', false)
-        }
+      } catch (error) {
+        showSnackBar(error instanceof Error ? error.message : 'Error occurred', false)
       } finally {
         showLoader(false)
       }
     }
-    fetch()
-  }, [serialized, computer, showLoader, showSnackBar])
+
+    fetchChallenge()
+  }, [challengeId, computer])
+
+  // Reset state when challengeId changes
+  useEffect(() => {
+    setGame(null)
+    setSerialized('')
+    setLink('')
+    setCopied(false)
+  }, [challengeId])
 
   return (
     <Modal.Component
@@ -185,6 +227,9 @@ export function StartGameModal() {
         setCopied,
         link,
         setLink,
+        userChallenge,
+        setUserChallenge,
+        accepted,
       }}
       id={startGameModal}
     />

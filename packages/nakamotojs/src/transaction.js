@@ -340,7 +340,7 @@ export class Transaction {
       types.tuple(
         types.UInt32,
         typeforce.arrayOf(types.Buffer),
-        typeforce.arrayOf(types.Satoshi),
+        typeforce.arrayOf(types.SmallSatoshi),
         types.UInt32,
       ),
       arguments,
@@ -372,7 +372,7 @@ export class Transaction {
       });
       hashPrevouts = bcrypto.sha256(bufferWriter.end());
       bufferWriter = BufferWriter.withCapacity(8 * this.ins.length);
-      values.forEach(value => bufferWriter.writeUInt64(value));
+      values.forEach(value => bufferWriter.writeUInt64(BigInt(value)));
       hashAmounts = bcrypto.sha256(bufferWriter.end());
       bufferWriter = BufferWriter.withCapacity(
         prevOutScripts.map(varSliceSize).reduce((a, b) => a + b),
@@ -433,7 +433,7 @@ export class Transaction {
       const input = this.ins[inIndex];
       sigMsgWriter.writeSlice(input.hash);
       sigMsgWriter.writeUInt32(input.index);
-      sigMsgWriter.writeUInt64(values[inIndex]);
+      sigMsgWriter.writeUInt64(BigInt(values[inIndex]));
       sigMsgWriter.writeVarSlice(prevOutScripts[inIndex]);
       sigMsgWriter.writeUInt32(input.sequence);
     } else {
@@ -463,7 +463,7 @@ export class Transaction {
   }
   hashForWitnessV0(inIndex, prevOutScript, value, hashType) {
     typeforce(
-      types.tuple(types.UInt32, types.Buffer, types.Satoshi, types.UInt32),
+      types.tuple(types.UInt32, types.Buffer, types.SmallSatoshi, types.UInt32),
       arguments,
     );
     let tbuffer = Buffer.from([]);
@@ -526,7 +526,7 @@ export class Transaction {
     bufferWriter.writeSlice(input.hash);
     bufferWriter.writeUInt32(input.index);
     bufferWriter.writeVarSlice(prevOutScript);
-    bufferWriter.writeUInt64(value);
+    bufferWriter.writeUInt64(BigInt(value));
     bufferWriter.writeUInt32(input.sequence);
     bufferWriter.writeSlice(hashOutputs);
     bufferWriter.writeUInt32(this.locktime);

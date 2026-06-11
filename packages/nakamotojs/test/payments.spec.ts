@@ -14,6 +14,7 @@ import p2shFixtures from './fixtures/p2sh.js';
 import p2wpkhFixtures from './fixtures/p2wpkh.js';
 import p2wshFixtures from './fixtures/p2wsh.js';
 import p2trFixtures from './fixtures/p2tr.js';
+import { Buffer } from 'buffer';
 
 const fixturesMap: any = {
   embed: embedFixtures,

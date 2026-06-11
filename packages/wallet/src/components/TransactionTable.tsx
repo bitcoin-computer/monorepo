@@ -1,3 +1,4 @@
+import { bigIntToStr } from '@bitcoin-computer/components'
 import type { TableTx } from '../types/common'
 
 function TranactionRow({ tx }: { tx: TableTx }) {
@@ -9,7 +10,7 @@ function TranactionRow({ tx }: { tx: TableTx }) {
       >
         {tx.txId}
       </th>
-      <td className="px-6 py-4">{tx.satoshis / 1e8}</td>
+      <td className="px-6 py-4">{bigIntToStr(tx.satoshis)}</td>
     </tr>
   )
 }

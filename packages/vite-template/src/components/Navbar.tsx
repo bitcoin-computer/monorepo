@@ -247,7 +247,7 @@ function NavbarDropdownButton() {
   )
 }
 
-export function Logo({ name = 'Bitcoin Computer CRA Template' }) {
+export function Logo({ name = 'Bitcoin Computer Vite Template' }) {
   return (
     <Link to={`/`} className="flex items-center space-x-3 rtl:space-x-reverse">
       <img src="/logo.png" className="h-10" alt="Bitcoin Computer Logo" />

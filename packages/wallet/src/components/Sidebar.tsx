@@ -3,10 +3,10 @@ import { Computer } from '@bitcoin-computer/lib'
 import { HiRefresh } from 'react-icons/hi'
 import { initFlowbite } from 'flowbite'
 import { useCallback, useContext, useEffect, useState } from 'react'
-import { Auth, ComputerContext } from '@bitcoin-computer/components'
+import { Auth, ComputerContext, bigIntToStr } from '@bitcoin-computer/components'
 
 function Balance({ computer }: { computer: Computer }) {
-  const [balance, setBalance] = useState(0)
+  const [balance, setBalance] = useState(0n)
 
   const updateBalance = useCallback(async () => {
     if (Auth.isLoggedIn()) setBalance((await computer.getBalance()).balance)
@@ -29,7 +29,7 @@ function Balance({ computer }: { computer: Computer }) {
       role="alert"
     >
       <div className="text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400">
-        {balance / 1e8} {computer.getChain()}{' '}
+        {bigIntToStr(balance)} {computer.getChain()}{' '}
         <HiRefresh
           onClick={updateBalance}
           className="w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100"

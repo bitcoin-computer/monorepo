@@ -7,7 +7,7 @@ export function FunctionResultModalContent({ functionResult }: any) {
     return (
       <>
         <div id="smart-call-execution-success" className="p-4 md:p-5 dark:text-gray-400">
-          You created a&nbsp;
+          You created an&nbsp;
           <Link
             id="smart-call-execution-counter-link"
             to={`/objects/${functionResult._rev}`}
@@ -17,7 +17,7 @@ export function FunctionResultModalContent({ functionResult }: any) {
               window.location.reload()
             }}
           >
-            smart object
+            on chain object
           </Link>
           .
         </div>

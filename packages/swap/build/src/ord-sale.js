@@ -5,7 +5,7 @@ export class OrdSale extends Contract {
         const [ownerP] = p._owners;
         n.transfer(ownerP);
         p.transfer(ownerT);
-        b1.setAmount(b1._amount + b2._amount);
+        b1.setSatoshis(b1._satoshis + b2._satoshis);
         return [b1, n, p, b2];
     }
 }

@@ -84,11 +84,8 @@ Have a look at the [docs](https://docs.bitcoincomputer.io/) of the Bitcoin Compu
 If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.
 
 ## Development Status
+
 See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#development-status).
-
-## Price
-
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#price).
 
 ## Contributing
 
@@ -96,18 +93,10 @@ This project is intended as a starting point for new development so we want to k
 
 If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
 
-## Legal Notice
+## License
 
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
+This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
 
-## MIT License
-
-Copyright (c) 2022 BCDB Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.
 
 [node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node

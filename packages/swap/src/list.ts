@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file */
+ 
 
 export class List extends Contract {
   elements: string[]

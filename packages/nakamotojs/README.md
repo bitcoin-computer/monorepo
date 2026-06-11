@@ -7,18 +7,19 @@
 
 <div align="center">
 
-  <a href="">[![Github CI](https://github.com/bitcoinjs/bitcoinjs-lib/actions/workflows/main_ci.yml/badge.svg)](https://github.com/bitcoinjs/bitcoinjs-lib/actions/workflows/main_ci.yml)</a>
-  <a href="">![NPM](https://img.shields.io/npm/v/@bitcoin-computer/nakamotojs.svg)</a>
-  <a href="">[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)</a>
+<a href="">[![Github CI](https://github.com/bitcoinjs/bitcoinjs-lib/actions/workflows/main_ci.yml/badge.svg)](https://github.com/bitcoinjs/bitcoinjs-lib/actions/workflows/main_ci.yml)</a>
+<a href="">![NPM](https://img.shields.io/npm/v/@bitcoin-computer/nakamotojs.svg)</a>
+<a href="">[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)</a>
 
 </div>
 
 This fork makes the following changes to <a href="https://github.com/bitcoinjs/bitcoinjs-lib/" target="_blank">BitcoinJS</a>:
-* Works in the browser
-* Supports Litecoin in addition to Bitcoin (support for Dogecoin coming soon)
-* Adds support for signing transactions (BitcoinJS can only sign PSBTs).
-* Adds support for updating inputs and outputs
-* Adds support for serializing and deserializing transactions
+
+- Works in the browser
+- Supports Litecoin in addition to Bitcoin (support for Dogecoin coming soon)
+- Adds support for signing transactions (BitcoinJS can only sign PSBTs).
+- Adds support for updating inputs and outputs
+- Adds support for serializing and deserializing transactions
 
 ## Why
 
@@ -79,7 +80,6 @@ npm run build
 
 </font>
 
-
 ## BitcoinJS Docs
 
 See [here](https://github.com/bitcoinjs/bitcoinjs-lib).
@@ -90,6 +90,7 @@ The below examples are implemented as integration tests, they should be very eas
 Otherwise, pull requests are appreciated.
 Some examples interact (via HTTPS) with a 3rd Party Blockchain Provider (3PBP).
 17:29
+
 - [Taproot Key Spend](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/taproot.spec.ts)
 - [Generate a random address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
 - [Import an address via WIF](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/addresses.spec.ts)
@@ -116,7 +117,7 @@ Some examples interact (via HTTPS) with a 3rd Party Blockchain Provider (3PBP).
 - [Create a BIP32, bitcoin, account 0, external address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
 - [Create a BIP44, bitcoin, account 0, external address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
 - [Create a BIP49, bitcoin testnet, account 0, external address](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
-17:29
+  17:29
 - [Use BIP39 to generate BIP32 addresses](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/bip32.spec.ts)
 - [Create (and broadcast via 3PBP) a Transaction where Alice can redeem the output after the expiry (in the past)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/cltv.spec.ts)
 - [Create (and broadcast via 3PBP) a Transaction where Alice can redeem the output after the expiry (in the future)](https://github.com/bitcoin-computer/nakamotojs/tree/master/test/integration/cltv.spec.ts)
@@ -136,16 +137,10 @@ Contributions are most welcome. If you have found a bug please create an [issue]
 
 If you want to add a feature we recommend to create a fork. Let us know if you have built something cool and we can link to your project.
 
-## Legal Notice
+## License
 
-See [here](https://github.com/bitcoin-computer/monorepo/tree/main/packages/lib#legal-notice).
+This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
 
-## MIT License
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.
 
 [node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node

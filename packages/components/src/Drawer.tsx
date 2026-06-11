@@ -1,3 +1,5 @@
+import { useState, useEffect, useRef } from 'react'
+
 function ShowDrawer({ text, id }: { text: string; id: string }) {
   return (
     <button
@@ -11,11 +13,38 @@ function ShowDrawer({ text, id }: { text: string; id: string }) {
   )
 }
 
-function Component({ Content, id }: any) {
+function Component({
+  Content,
+  id,
+}: {
+  Content: (props: { isOpen: boolean }) => JSX.Element
+  id: string
+}) {
+  const [isOpen, setIsOpen] = useState(false)
+  const drawerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const drawerElement = drawerRef.current
+    if (drawerElement) {
+      const onTransitionEnd = (event: TransitionEvent) => {
+        if (event.propertyName === 'transform')
+          setIsOpen(!drawerElement.classList.contains('translate-x-full'))
+      }
+
+      drawerElement.addEventListener('transitionend', onTransitionEnd as EventListener)
+
+      return () => {
+        drawerElement.removeEventListener('transitionend', onTransitionEnd as EventListener)
+      }
+    }
+    return undefined
+  }, [])
+
   return (
     <div
+      ref={drawerRef}
       id={id}
-      className="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform translate-x-full bg-white w-80 dark:bg-gray-800"
+      className="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform duration-300 translate-x-full bg-white w-80 dark:bg-gray-800"
       tabIndex={-1}
       aria-labelledby="drawer-right-label"
     >
@@ -42,7 +71,7 @@ function Component({ Content, id }: any) {
         </svg>
         <span className="sr-only">Close menu</span>
       </button>
-      {Content()}
+      {Content({ isOpen })}
     </div>
   )
 }

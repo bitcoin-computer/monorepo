@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file */
+ 
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
 

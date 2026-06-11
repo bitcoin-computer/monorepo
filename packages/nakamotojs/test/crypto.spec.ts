@@ -5,6 +5,7 @@ import { describe, it } from 'mocha';
 import { crypto as bcrypto, TaggedHashPrefix } from '../src/index.js';
 import fixtures from './fixtures/crypto.js';
 import { sha256, TAGS, TAGGED_HASH_PREFIXES } from '../src/crypto.js';
+import { Buffer } from 'buffer';
 
 describe('crypto', () => {
   ['hash160', 'hash256', 'ripemd160', 'sha1', 'sha256'].forEach(algorithm => {

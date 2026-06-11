@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 export declare function encodingLength(i: number): number;
 export declare function encode(buffer: Buffer, num: number, offset: number): number;
 export declare function decode(buffer: Buffer, offset: number): {

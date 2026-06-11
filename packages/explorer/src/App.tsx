@@ -33,21 +33,19 @@ export default function App() {
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />
           <Wallet />
-          <div className="dark:bg-gray-800 min-h-screen">
-            <NavBar />
-            <div className="p-8 max-w-screen-lg flex flex-wrap items-center justify-between mx-auto">
-              <Routes>
-                <Route path="/" element={<Gallery.WithPagination />} />
-                <Route path="/blocks" element={<Blocks />} />
-                <Route path="/playground" element={<Playground />} />
-                <Route path="/transactions/:txn" element={<Transaction.Component />} />
-                <Route path="/blocks/:block" element={<Block />} />
-                <Route path="/objects/:rev" element={<SmartObject.Component />} />
-                <Route path="/modules/:rev" element={<Module />} />
-                <Route path="/utxos/:address" element={<UTXODisplay />} />
-                <Route path="*" element={<Error404 />} />
-              </Routes>
-            </div>
+          <NavBar />
+          <div className="p-8 max-w-screen-lg flex flex-wrap items-center justify-between mx-auto">
+            <Routes>
+              <Route path="/" element={<Gallery.WithPagination />} />
+              <Route path="/blocks" element={<Blocks />} />
+              <Route path="/playground" element={<Playground />} />
+              <Route path="/transactions/:txn" element={<Transaction.Component />} />
+              <Route path="/blocks/:block" element={<Block />} />
+              <Route path="/objects/:rev" element={<SmartObject.Component />} />
+              <Route path="/modules/:rev" element={<Module />} />
+              <Route path="/utxos/:address" element={<UTXODisplay />} />
+              <Route path="*" element={<Error404 />} />
+            </Routes>
           </div>
         </ComputerContext.Provider>
       </UtilsContext.UtilsProvider>

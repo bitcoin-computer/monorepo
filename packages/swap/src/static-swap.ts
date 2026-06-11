@@ -1,4 +1,4 @@
-/* eslint-disable max-classes-per-file */
+ 
 import type { Transaction } from '@bitcoin-computer/lib'
 
 export class StaticSwap extends Contract {

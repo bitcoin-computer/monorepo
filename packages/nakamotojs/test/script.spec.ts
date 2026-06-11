@@ -6,6 +6,7 @@ import * as bscript from '../src/script.js';
 import * as ecc from '@bitcoin-computer/secp256k1';
 import { initEccLib } from '../src/ecc_lib.js';
 import script from './fixtures/script.js';
+import { Buffer } from 'buffer';
 
 const fixtures = script;
 // @ts-ignore

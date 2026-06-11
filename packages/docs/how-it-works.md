@@ -54,9 +54,9 @@ If the value returned from _sync_ contains an object, it has extra properties _\
 
 ## Keyword Properties
 
-Smart contracts can contain the keyword properties `_owners`, `_amount`, `_url` and `_readers` that determine how the transaction is built. Specifically
+Smart contracts can contain the keyword properties `_owners`, `_satoshis`, `_url` and `_readers` that determine how the transaction is built. Specifically
 
 - The `_owners` property of a smart object determines the output script of the output that is associated with it. If it is set to an array of strings that encode public keys, then the output script will be a 1-of-n multisig script with these public keys. If it is set to a string that encodes a Bitcoin Script ASM, then that will be the script of the output.
-- The `_amount` property can be set to a number and determined the amount of satoshi of the output associated with a smart object. If this property is undefined the output will contain a minimal, non-dust amount of satoshis.
+- The `_satoshis` property can be set to a number (bigint) and determined the number of satoshis of the output associated with a smart object. If this property is undefined the output will contain a minimal, non-dust amount of satoshis.
 - The `_url` property can be set to the url of a Bitcoin Computer node. If set the metadata that would otherwise be stored in the transaction is stored on that node. The metadata will consist only of a url where the data can be obtained.
 - The `_readers` property can be set to encrypt the meta data. It can be set to an array of strings encoding public keys. In this case the metadata on the transaction will be encrypted such that only the specified users can decrypt the data and read the object.

@@ -12,9 +12,7 @@ const utilsContext = createContext<UtilsContextProps | undefined>(undefined)
 
 export const useUtilsComponents = (): UtilsContextProps => {
   const context = useContext(utilsContext)
-  if (!context) {
-    throw new Error('useUtilsComponents must be used within a UtilsProvider')
-  }
+  if (!context) throw new Error('useUtilsComponents must be used within a UtilsProvider')
   return context
 }
 

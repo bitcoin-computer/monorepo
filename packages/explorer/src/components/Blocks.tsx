@@ -44,7 +44,7 @@ export default function Blocks() {
   }, [totalBlocks, pageNum])
 
   const handleClick = async (block: number) => {
-    const res = await computer.wallet.restClient.rpc('getblockhash', `${block}`)
+    const res = await computer.db.wallet.restClient.rpc('getblockhash', `${block}`)
     const blockHash = res.result.result
     navigate(`/blocks/${blockHash}`)
   }

@@ -19,7 +19,7 @@ const fixtures = {
           {
             script:
               'OP_DUP OP_HASH160 c42e7ef92fdb603af844d064faad95db9bcdfd3d OP_EQUALVERIFY OP_CHECKSIG',
-            value: 100000,
+            value: 100000n,
           },
         ],
         locktime: 0,
@@ -55,12 +55,12 @@ const fixtures = {
           {
             script:
               'OP_DUP OP_HASH160 c42e7ef92fdb603af844d064faad95db9bcdfd3d OP_EQUALVERIFY OP_CHECKSIG',
-            value: 50000,
+            value: 50000n,
           },
           {
             script:
               'OP_HASH160 7ccb85f0ab2d599bc17246c98babd5a20b1cdc76 OP_EQUAL',
-            value: 150000,
+            value: 150000n,
           },
         ],
         locktime: 0,
@@ -166,12 +166,12 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 52680000,
+            value: 52680000n,
             script:
               'OP_DUP OP_HASH160 167c3e1f10cc3b691c73afbdb211e156e3e3f25c OP_EQUALVERIFY OP_CHECKSIG',
           },
           {
-            value: 3032597,
+            value: 3032597n,
             script:
               'OP_DUP OP_HASH160 290f7d617b75993e770e5606335fa0999a28d713 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -199,7 +199,7 @@ const fixtures = {
           {
             script:
               'OP_DUP OP_HASH160 b05793fe86a9f51a5f5ae3a6f07fd31932128a3f OP_EQUALVERIFY OP_CHECKSIG',
-            value: 2501463873,
+            value: 2501463873n,
           },
         ],
         locktime: 0,
@@ -227,35 +227,35 @@ const fixtures = {
         outs: [
           {
             data: '01',
-            value: 1,
+            value: 1n,
           },
           {
             data: '0201',
-            value: 1,
+            value: 1n,
           },
           {
             data: '4c',
-            value: 1,
+            value: 1n,
           },
           {
             data: '4c0201',
-            value: 1,
+            value: 1n,
           },
           {
             data: '4d',
-            value: 1,
+            value: 1n,
           },
           {
             data: '4dffff01',
-            value: 1,
+            value: 1n,
           },
           {
             data: '4e',
-            value: 1,
+            value: 1n,
           },
           {
             data: '4effffffff01',
-            value: 1,
+            value: 1n,
           },
         ],
       },
@@ -277,12 +277,12 @@ const fixtures = {
             index: 0,
             script:
               '3045022100e57eba5380dcc8a7bdb5370b423dadd43070e1ca268f94bc97b2ded55ca45e9502206a43151c8af03a00f0ac86526d07981e303fc0daea8c6ed435abe8961533046d01',
-            value: 80000,
+            value: 80000n,
           },
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -307,12 +307,12 @@ const fixtures = {
             index: 0,
             script:
               '3044022026d2b56b6cb0269bf4e80dd655b9e917019e2ccef57f4b858d03bb45a2da59d9022010519a7f327f03e7c9613e0694f929544af29d3682e7ec8f19147e7a86651ecd01 21038de63cf582d058a399a176825c045672d5ff8ea25b64d28d4375dcdb14c02b2bac',
-            value: 80000,
+            value: 80000n,
           },
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
             scriptHex: '76a914851a33a5ef0d4279bd5854949174e2c65b1d450088ac',
@@ -344,7 +344,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
             scriptHex: '76a914851a33a5ef0d4279bd5854949174e2c65b1d450088ac',
@@ -378,7 +378,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -407,7 +407,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -436,7 +436,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -469,7 +469,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
             scriptHex: '76a914851a33a5ef0d4279bd5854949174e2c65b1d450088ac',
@@ -504,7 +504,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -533,7 +533,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -562,7 +562,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
             scriptHex: '76a914851a33a5ef0d4279bd5854949174e2c65b1d450088ac',
@@ -596,7 +596,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -630,7 +630,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
             scriptHex: '76a914851a33a5ef0d4279bd5854949174e2c65b1d450088ac',
@@ -663,7 +663,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -695,7 +695,7 @@ const fixtures = {
         ],
         outs: [
           {
-            value: 60000,
+            value: 60000n,
             script:
               'OP_DUP OP_HASH160 851a33a5ef0d4279bd5854949174e2c65b1d4500 OP_EQUALVERIFY OP_CHECKSIG',
           },
@@ -729,12 +729,12 @@ const fixtures = {
           {
             script:
               '03c6c5964853fd00fb3271ac002831c66825102d223c706ce0ee99e73db3be4aa1 OP_CHECKSIG',
-            value: 625004480,
+            value: 625004480n,
           },
           {
             script:
               'OP_RETURN aa21a9edff828eb21f40ab251d9f107792670aba9299028b894a364fda570f6a089dcfe9',
-            value: 0,
+            value: 0n,
           },
         ],
         locktime: 0,

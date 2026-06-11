@@ -9,9 +9,9 @@ describe('getBalance', () => {
 
     // Check wallet
     expect(await computer.getBalance()).to.deep.eq({
-      confirmed: 0,
-      unconfirmed: 1e6,
-      balance: 1e6,
+      confirmed: 0n,
+      unconfirmed: BigInt(1e6),
+      balance: BigInt(1e6),
     })
   })
 })

@@ -1,10 +1,10 @@
-/* eslint-disable max-classes-per-file */
+ 
 import { Buffer } from 'buffer'
 import { Transaction } from '@bitcoin-computer/lib'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
 
-// eslint-disable-next-line no-bitwise
+ 
 const sighashType = Transaction.SIGHASH_SINGLE | Transaction.SIGHASH_ANYONECANPAY
 
 export class Sale extends Contract {
@@ -52,7 +52,7 @@ export class SaleHelper {
     }
   }
 
-  async checkSaleTx(tx: TransactionType): Promise<number> {
+  async checkSaleTx(tx: TransactionType): Promise<bigint> {
     const { exp, env, mod } = await this.computer.decode(tx)
     if (exp !== 'Sale.exec(o, p)') throw new Error('Unexpected expression')
     if (mod !== this.mod) throw new Error('Unexpected module specifier')

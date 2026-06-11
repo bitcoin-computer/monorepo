@@ -3,8 +3,7 @@ import { bitcoin as BITCOIN_NETWORK } from '../networks.js';
 import * as bscript from '../script.js';
 import { isPoint, typeforce as typef } from '../types.js';
 import * as lazy from './lazy.js';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-expect-error This module is declared with 'export =', and can only be used with a default import
 import bs58check from 'bs58check';
 const OPS = bscript.OPS;
 import { Buffer } from 'buffer';

@@ -53,7 +53,7 @@ An object with a specification to build a transaction according to the Bitcoin C
 | sighashType | The signature hash type.                                                                                                                                                  | `SIGHASH_ALL` |
 | inputIndex  | If set to an number only the corresponding input is signed. If undefined all inputs are signed.                                                                           | `undefined`   |
 | inputScript | If set to a string a custom input script can be provided. If undefined a signature script is generated.                                                                   | `undefined`   |
-| mocks       | A pair <name, object>. The object is an instance of a mocked class (A class that does not extends from Contract but has the keywords `_id`, `_root`, `_amount`,`_owners`) | `{}`          |
+| mocks       | A pair <name, object>. The object is an instance of a mocked class (A class that does not extends from Contract but has the keywords `_id`, `_root`, `_satoshis`,`_owners`) | `{}`          |
 
 ### Return Value
 
