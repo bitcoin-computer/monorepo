@@ -38,9 +38,6 @@ class Chat extends Contract {
 
 We recommend to ignore the syntax for initializing `messages` in the constructor for now. If you are interested in the details you can find them [here](language/).
 
-!!!
-**Smart Contract**: A smart contract in the context of the Bitcoin Computer is a JavaScript class that extends from `Contract`, where `Contract` is a class that is exported from the Bitcoin Computer library.
-!!!
 
 ## The Client-Side Wallet
 
@@ -54,14 +51,6 @@ import { Computer } from '@bitcoin-computer/lib'
 // Initialize a new computer instance with a mnemonic
 const computer = new Computer({ mnemonic: 'replace this seed' })
 ```
-
-!!!
-**Bitcoin Computer**  
-A JavaScript framework for building decentralized applications on Bitcoin. It consists of:
-
-- client-side library to manage keys, create, and update on-chain objects
-- node software to obtain trustless access to the blockchain and to find the location of on-chain objects on the blockchain.
-  !!!
 
 ## Creating On-Chain Objects
 
@@ -81,7 +70,6 @@ class Chat extends Contract {
   }
 
   post(message) {
-    // Update messages array
     this.messages.push(message)
   }
 }
@@ -133,10 +121,6 @@ We refer to `chat` as an _on-chain object_.
 Note that the transaction that created `chat` does not contain an encoding of the object itself. It only contains code that evaluates to its state.
 !!!
 
-!!!
-**On-Chain Object**  
-An object whose state is tracked via blockchain transactions and smart contracts.
-!!!
 
 ## Updating On-Chain Objects
 
@@ -418,12 +402,9 @@ expect(effect).deep.eq({
     // Resulting object state
     messages: ['hello'],
     _id: '667c...2357:0',
-    // Current revision ID
     _rev: '667c...2357:0',
     _root: '667c...2357:0',
-    // Owner public key(s)
     _owners: ['03...'],
-    // Satoshi value locked in object
     _amount: 5820,
   },
   env: {},
@@ -453,7 +434,6 @@ const moduleB = `
   // Import from on-chain module
   import { A } from '${specifierA}'
 
-  // Extend base class
   export class B extends A {}
 `
 // Deploy second module
@@ -461,9 +441,7 @@ const specifierB = await computer.deploy(moduleB)
 
 // Use deployed module to create contract instance
 const { tx } = await computer.encode({
-  // Instantiate class from module
   exp: `new B()`,
-  // Specify module location
   mod: specifierB,
 })
 ```
@@ -472,7 +450,6 @@ Modules can be loaded from the blockchain using [computer.load](./Lib/Computer/l
 
 ```js
 const loadedB = await computer.load(specifierB)
-// Verify code integrity
 expect(loadedB).eq(moduleB)
 ```
 
@@ -509,17 +486,12 @@ import { Computer } from '@bitcoin-computer/lib'
 import { payments } from '@bitcoin-computer/nakamotojs'
 
 const computer = new Computer()
-// Create contract with script
 const a = await computer.new(A)
 
 // Encode transaction that encodes update
 const { tx } = await computer.encode({
-  // Call the 'inc' function
   exp: 'a.inc()',
-
-  // Spend output at revision a._rev
   env: { a: a._rev },
-
   // transaction can only be signed and funded when it is completed
   sign: false,
   fund: false,
@@ -561,20 +533,17 @@ The Bitcoin Computer library exports a class [`Mock`](./Lib/Mock/index.md) that 
 import { Mock, Contract } from '@bitcoin-computer/lib'
 
 class M extends Mock {
-  // Mock template
   constructor() {
-    // Initial state
     super({ n: 1 })
   }
 
   inc() {
-    // Mock behavior
     this.n += 1
   }
 }
 
+// Real contract
 class A extends Contract {
-  // Real contract
   constructor() {
     super({ n: 1 })
   }
