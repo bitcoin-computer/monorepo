@@ -8,8 +8,7 @@ describe.skip('Election', () => {
   beforeEach('Before', async () => {
     await computer.faucet(1e8)
   })
-  // TODO: enable this test when unlocking inner computer getTXOs functionality
-  describe.skip('validVotes', () => {
+  describe('validVotes', () => {
     it('Should compute one valid vote', async () => {
       const tokenMod = await computer.deploy(`export ${Token}`)
       const proposalMod = await computer.deploy(`export ${Vote}`)
@@ -166,8 +165,7 @@ describe.skip('Election', () => {
       expect(validVotes2[0]).eq(vote2._rev.substring(0, 64))
     })
   })
-  // TODO: enable this test when unlocking inner computer getTXOs functionality
-  describe.skip('vote-with-invalid-token', () => {
+  describe('vote-with-invalid-token', () => {
     let realVoteMod
     before(async () => {
       await computer.faucet(1e8)
@@ -200,8 +198,7 @@ describe.skip('Election', () => {
       expect(proposalVotes.length).eq(1)
     })
   })
-  // TODO: enable this test when unlocking inner computer getTXOs functionality
-  describe.skip('accepted-rejected', () => {
+  describe('accepted-rejected', () => {
     it('Should count to zero if the Vote is not deployed as a module', async () => {
       const invalidMod = '0f08b977b9be9d96b8b02dd0866e7a692bb1527277a746dc8a74adde724d7856:22'
       const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'])
