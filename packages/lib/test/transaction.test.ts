@@ -1,6 +1,6 @@
-import { expect } from 'chai'
-import { TestComputer } from './utils/test-computer'
-import { Transaction } from '@bitcoin-computer/lib'
+import { Computer, Transaction, SmartContract } from '@bitcoin-computer/lib'
+import { chain, network, url, expect } from './utils/index.js'
+import { Contract } from '@bitcoin-computer/lib'
 
 describe('Transaction', () => {
   class A extends Contract {
@@ -14,12 +14,16 @@ describe('Transaction', () => {
     }
   }
 
-  const computer = new TestComputer()
-  const { wallet } = computer.db
-  const { restClient } = wallet
-  let a: A
+  let computer: Computer
+  let wallet: any
+  let restClient: any
+  let a: SmartContract<typeof A>
 
   before('Before Transaction test', async () => {
+    computer = new Computer({ chain, network, url })
+    wallet = computer.db.wallet
+    restClient = wallet.restClient
+
     await computer.faucet(1e8)
     a = await computer.new(A, [])
     await a.inc()
@@ -76,8 +80,7 @@ describe('Transaction', () => {
       expect(tx1.onChainMetaData).deep.eq({
         exp: `${A} new A()`,
         env: {},
-        mod: '',
-        v: TestComputer.getVersion(),
+        v: Computer.getVersion(),
         ioMap: [],
       })
 
@@ -86,8 +89,7 @@ describe('Transaction', () => {
       expect(tx2.onChainMetaData).deep.eq({
         exp: `__bc__.inc()`,
         env: { __bc__: 0 },
-        mod: '',
-        v: TestComputer.getVersion(),
+        v: Computer.getVersion(),
         ioMap: [0],
       })
     })

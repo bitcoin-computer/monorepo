@@ -1,12 +1,20 @@
 import { expect } from 'chai'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import { NFT, NftHelper } from '@bitcoin-computer/TBC721'
 
 import dotenv from 'dotenv'
 import { StaticSwapHelper } from '../src/static-swap.js'
 import { meta } from '../src/utils/index.js'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
@@ -18,7 +26,7 @@ describe('Static Swap', () => {
   const alice = new Computer({ url, chain, network })
   const bob = new Computer({ url, chain, network })
 
-  before('Before', async () => {
+  before('Fund Alice and Bob', async () => {
     await alice.faucet(1e8)
     await bob.faucet(1e8)
   })
@@ -40,7 +48,7 @@ describe('Static Swap', () => {
       const nftHelperB = new NftHelper(bob, nftHelperA.mod)
       const swapHelperB = new StaticSwapHelper(bob, swapHelperA.mod)
 
-      // Bob mints an NFT to pay for Alice's's NFT
+      // Bob mints an NFT to pay for Alice's NFT
       nftB = await nftHelperB.mint('b', 'BBB', 'URL')
 
       // Bob creates a swap transaction
@@ -49,14 +57,14 @@ describe('Static Swap', () => {
       // Alice checks the swap transaction
       await swapHelperA.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
 
-      // Alice signs an broadcasts the transaction to execute the swap
+      // Alice signs and broadcasts the transaction to execute the swap
       await alice.sign(tx)
       await alice.broadcast(tx)
 
       // Bob reads the updated state from the blockchain
-      const {
-        env: { a, b },
-      } = (await bob.sync(tx.getId())) as { env: { a: NFT; b: NFT } }
+      const { env } = await bob.sync(tx.getId())
+      const a = env.a as SmartContract<typeof NFT>
+      const b = env.b as SmartContract<typeof NFT>
       expect(a.name).deep.eq('a')
       expect(a._owners).deep.eq([bob.getPublicKey()])
       expect(b.name).deep.eq('b')
@@ -65,8 +73,12 @@ describe('Static Swap', () => {
   })
 
   describe('Creating two NFTs to be swapped', () => {
-    it('Alice creates an NFT', async () => {
+    before('Create two NFTs to be swapped', async () => {
       nftA = await alice.new(NFT, ['A', 'AAA', 'URL'])
+      nftB = await bob.new(NFT, ['B', 'BBB', 'URL'])
+    })
+
+    it('Alice creates an NFT', async () => {
       expect(nftA).to.matchPattern({
         ...meta,
         name: 'A',
@@ -77,7 +89,6 @@ describe('Static Swap', () => {
     })
 
     it('Bob creates an NFT', async () => {
-      nftB = await bob.new(NFT, ['B', 'BBB', 'URL'])
       expect(nftB).to.matchPattern({
         ...meta,
         name: 'B',
@@ -88,38 +99,32 @@ describe('Static Swap', () => {
     })
   })
 
-  describe('Executing a swap', async () => {
+  describe('Executing a swap', () => {
     let tx: any
     let txId: string
     let swapHelper: StaticSwapHelper
 
     before('Before creating an offer', async () => {
       swapHelper = new StaticSwapHelper(alice)
-    })
-
-    it('Alice deploys a swap contract', async () => {
       await swapHelper.deploy()
     })
 
-    it('Alice builds, funds, and signs a swap transaction', async () => {
+    it('Executes the swap', async () => {
+      // Alice builds, funds, and signs a swap transaction
       ;({ tx } = await swapHelper.createSwapTx(nftA, nftB))
-    })
 
-    it('Bob checks the swap transaction', async () => {
+      // Bob checks the swap transaction
       await swapHelper.checkSwapTx(tx, alice.getPublicKey(), bob.getPublicKey())
-    })
 
-    it('Bob signs the swap transaction', async () => {
+      // Bob signs the swap transaction
       await bob.sign(tx)
-    })
 
-    it('Bob broadcasts the swap transaction', async () => {
+      // Bob broadcasts the swap transaction
       txId = await bob.broadcast(tx)
       expect(txId).not.undefined
-    })
 
-    it('a is now owned by Bob', async () => {
-      const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
+      // a is now owned by Bob
+      const { env } = await bob.sync(txId)
       const aSwapped = env.a
       expect(aSwapped).to.matchPattern({
         ...meta,
@@ -128,11 +133,10 @@ describe('Static Swap', () => {
         url: 'URL',
         _owners: [bob.getPublicKey()],
       })
-    })
 
-    it('b is now owned by Alice', async () => {
-      const { env } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
-      const bSwapped = env.b
+      // b is now owned by Alice
+      const { env: env2 } = await alice.sync(txId)
+      const bSwapped = env2.b
       expect(bSwapped).to.matchPattern({
         ...meta,
         name: 'B',

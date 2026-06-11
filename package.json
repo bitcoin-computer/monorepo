@@ -30,32 +30,35 @@
   "scripts": {
     "build": "turbo run build",
     "build:node": "docker build -t bcdb/bcn .",
-    "check:obfuscation": "./scripts/check-obfuscation.sh",
+    "check:obfuscation": "node ./scripts/check-obfuscation.js",
     "clean": "find . -name 'node_modules' -type d -prune -exec rm -rf {} \\;",
     "format": "npm run format --if-present --workspaces",
     "husky:checks": "npm run check:obfuscation && npm run lint",
-    "lint": "npm run lint --if-present --workspaces",
+    "lint": "turbo run lint --concurrency=1 --continue=never",
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
     "prepare": "husky",
+    "test:rerun": "node ./scripts/rerun-failed.js",
+    "test:turbo": "turbo run test --concurrency=1 --continue",
+    "test:compile:mocha": "npm run build:test --if-present --workspaces",
+    "test:mocha:all": "npm run test:compile:mocha && BITCOIN_RPC_HOST=127.0.0.1 BCN_CHAIN=LTC BCN_NETWORK=regtest POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha --config .mocharc.json",
+    "test:puppeteer:build": "npm run test:puppeteer:build --if-present --workspace=@bitcoin-computer/vite-template",
     "prepublishOnly": "./scripts/check-obfuscation.sh && npm run test",
     "test": "npm run test --if-present --workspaces",
-    "types": "npm run types --if-present --workspaces"
+    "types": "turbo run types --concurrency=1 --continue=never"
   },
   "dependencies": {
-    "@endo/static-module-record": "^1.0.4",
     "esbuild": "^0.24.0"
   },
   "devDependencies": {
     "@types/node": "^20.11.21",
     "buffer": "^6.0.3",
-    "eslint": "9.29.0",
     "eslint-config-prettier": "~9.1.0",
-    "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-prettier": "^5.1.3",
     "husky": "^9.0.11",
+    "mocha-multi": "^1.1.7",
     "path": "^0.12.7",
     "ts-node": "^10.9.2",
-    "turbo": "^2.1.3",
+    "turbo": "^2.6.3",
     "typescript": "^5.8.3",
     "url": "^0.11.3"
   },

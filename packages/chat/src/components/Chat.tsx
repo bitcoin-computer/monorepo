@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { HiRefresh, HiUserAdd } from 'react-icons/hi'
 
 import { ChatSc } from '../contracts/chat'
+import { SmartContract } from '@bitcoin-computer/lib'
 const addUserModal = 'add-user-modal'
 
 interface messageI {
@@ -98,7 +99,7 @@ const SentMessage = ({ message }: { message: messageI }) => {
   )
 }
 
-function AddUserToChat(chatObj: ChatSc) {
+function AddUserToChat(chatObj: SmartContract<typeof ChatSc>) {
   const [publicKey, setPublicKey] = useState('')
   const [creating, setCreating] = useState(false)
   const { showSnackBar } = UtilsContext.useUtilsComponents()
@@ -162,11 +163,11 @@ const ChatHeader = ({
 }: {
   channelName?: string
   refreshChat: () => Promise<void>
-  chatObj: ChatSc
+  chatObj: SmartContract<typeof ChatSc>
 }) => {
-  const [addUserToChat, setAddUserToChat] = useState<ChatSc>()
+  const [addUserToChat, setAddUserToChat] = useState<SmartContract<typeof ChatSc>>()
 
-  const addUser = (chat: ChatSc) => {
+  const addUser = (chat: SmartContract<typeof ChatSc>) => {
     setAddUserToChat(chat)
     Modal.showModal(addUserModal)
   }
@@ -232,8 +233,8 @@ const ChatInput = ({
         publicKey: computer.getPublicKey(),
         time: Date.now().toString(),
       }
-      const latesRev = await computer.getLatestRev(chatId)
-      const chatObj = (await computer.sync(latesRev)) as ChatSc
+      const latesRev = await computer.latest(chatId)
+      const chatObj = await computer.sync<typeof ChatSc>(latesRev)
       await chatObj.post(JSON.stringify(messageData))
       await sleep(2000)
       await refreshChat()
@@ -283,14 +284,14 @@ export function Chat({ chatId }: { chatId: string }) {
   const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
   const navigate = useNavigate()
   const [id] = useState(chatId || '')
-  const [chatObj, setChatObj] = useState<ChatSc | null>(null)
+  const [chatObj, setChatObj] = useState<SmartContract<typeof ChatSc> | null>(null)
   const [messages, setMessages] = useState<messageI[]>([])
 
   const refreshChat = async () => {
     try {
       showLoader(true)
-      const latesRev = await computer.getLatestRev(id)
-      const synced = (await computer.sync(latesRev)) as ChatSc
+      const latesRev = await computer.latest(id)
+      const synced = await computer.sync<typeof ChatSc>(latesRev)
       setChatObj(synced)
       const messagesData: messageI[] = []
       synced.messages.forEach((message) => {
@@ -300,7 +301,7 @@ export function Chat({ chatId }: { chatId: string }) {
       showLoader(false)
     } catch {
       showLoader(false)
-      showSnackBar('Not a valid Chat', false)
+      showSnackBar('Not a valid Chat ', false)
     }
   }
 
@@ -310,6 +311,27 @@ export function Chat({ chatId }: { chatId: string }) {
     }
     fetch()
   }, [computer, id, chatId, location, navigate])
+
+  useEffect(() => {
+    let unsubscribe: () => void
+    const subscribeToChatUpdates = async () => {
+      if (!id) return
+      unsubscribe = await computer.subscribe(
+        id, // Subscribe to this chat's ID (gets updates to its lineage)
+        // eslint-disable-next-line no-empty-pattern
+        async ({}) => {
+          // If new post, refresh the chat for now
+          await refreshChat()
+        },
+        (error) => console.error('Chat SSE error:', error),
+      )
+    }
+    subscribeToChatUpdates()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [id, computer])
 
   return (
     <>

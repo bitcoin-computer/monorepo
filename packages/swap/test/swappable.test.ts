@@ -1,12 +1,19 @@
- 
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { Swappable } from '../src/swappable.js'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
@@ -24,19 +31,20 @@ const meta = {
 }
 
 describe('Swapppable', () => {
-  let a: Swappable
-  let b: Swappable
+  let a: SmartContract<typeof Swappable>
+  let b: SmartContract<typeof Swappable>
   const alice = new Computer({ url, chain, network })
   const bob = new Computer({ url, chain, network })
 
-  before('Before', async () => {
+  before('Fund Alice and Bob', async () => {
     await alice.faucet(1e8)
     await bob.faucet(1e8)
+    a = await alice.new(Swappable, ['A', 'AAA'])
+    b = await bob.new(Swappable, ['B', 'BBB'])
   })
 
   describe('Creating two NFTs to be swapped', () => {
     it('Alice creates a', async () => {
-      a = await alice.new(Swappable, ['A', 'AAA'])
       expect(a).to.matchPattern({
         ...meta,
         name: 'A',
@@ -46,7 +54,6 @@ describe('Swapppable', () => {
     })
 
     it('Bob creates b', async () => {
-      b = await bob.new(Swappable, ['B', 'BBB'])
       expect(b).to.matchPattern({
         ...meta,
         name: 'B',
@@ -56,28 +63,26 @@ describe('Swapppable', () => {
     })
   })
 
-  describe('Executing a swap', async () => {
+  describe('Executing a swap', () => {
     let tx: any
     let txId: string
 
-    it('Alice builds, funds, and signs a swap transaction', async () => {
+    it('Executes the swap', async () => {
+      // Alice builds, funds, and signs a swap transaction
       ;({ tx } = await alice.encode({
         exp: `a.swap(b)`,
         env: { a: a._rev, b: b._rev },
       }))
-    })
 
-    it('Bob signs the swap transaction', async () => {
+      // Bob signs the swap transaction
       await bob.sign(tx)
-    })
 
-    it('Bob broadcasts the swap transaction', async () => {
+      // Bob broadcasts the swap transaction
       txId = await bob.broadcast(tx)
       expect(txId).not.undefined
-    })
 
-    it('a is now owned by Bob', async () => {
-      const { env } = (await bob.sync(txId)) as { env: { a: Swappable; b: Swappable } }
+      // a is now owned by Bob
+      const { env } = await bob.sync(txId)
       const aSwapped = env.a
       expect(aSwapped).to.matchPattern({
         ...meta,
@@ -85,11 +90,10 @@ describe('Swapppable', () => {
         symbol: 'AAA',
         _owners: [bob.getPublicKey()],
       })
-    })
 
-    it('b is now owned by Alice', async () => {
-      const { env } = (await alice.sync(txId)) as { env: { a: Swappable; b: Swappable } }
-      const bSwapped = env.b
+      // b is now owned by Alice
+      const { env: env2 } = await alice.sync(txId)
+      const bSwapped = env2.b
       expect(bSwapped).to.matchPattern({
         ...meta,
         name: 'B',

@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class StaticSwap extends Contract {
     static exec(a, b) {
         const [ownerA] = a._owners;
@@ -16,10 +17,19 @@ export class StaticSwapHelper {
         return this.mod;
     }
     async createSwapTx(a, b) {
+        const { tx } = await this.computer.encode({
+            fund: false,
+            exp: `StaticSwap.exec(a, b)`,
+            env: { a: a._rev, b: b._rev },
+            mod: this.mod,
+        });
+        const fee = await this.computer.db.wallet.estimateFee(tx);
+        const txId = await this.computer.send(BigInt(fee * 10), this.computer.getAddress());
         return this.computer.encode({
             exp: `StaticSwap.exec(a, b)`,
             env: { a: a._rev, b: b._rev },
             mod: this.mod,
+            include: [`${txId}:0`],
         });
     }
     async checkSwapTx(tx, pubKeyA, pubKeyB) {

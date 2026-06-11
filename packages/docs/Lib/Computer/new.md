@@ -53,4 +53,4 @@ On-chain objects can be freely combines: you can pass an on-chain object as a pa
 
 :::code source="../../../lib/test/lib/computer/new.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/new.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/new.test.ts" target=_blank>Source</a>

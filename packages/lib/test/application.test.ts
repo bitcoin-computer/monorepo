@@ -1,26 +1,13 @@
-import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
-import { Contract, Transaction } from '@bitcoin-computer/lib'
-import dotenv from 'dotenv'
-import { TestComputer } from './utils/test-computer'
-
-// If you want to connect to your local Bitcoin Computer Node, create a .env file
-// in the monorepo root level and add the following line:
-// BCN_URL=http://localhost:1031
-
-dotenv.config({ path: '../node/.env' })
-
-const url = process.env.BCN_URL
-const chain = process.env.BCN_CHAIN
-const network = process.env.BCN_NETWORK
+import { Computer, Transaction, Mock, SmartContract, TxIdString } from '@bitcoin-computer/lib'
+import { chain, network, url, expect } from './utils/index.js'
+import { Contract } from '@bitcoin-computer/lib'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
 const randomPublicKey = '023e21361b53bb2e625cc1f41d18b35ae882e88d8d107df1c3711fa8bc54db8fed'
-const randomRev = '0000000000000000000000000000000000000000000000000000000000000000:0'
-const mockedRev = `mock-${randomRev}`
 const symbol = ''
 
 const meta = {
@@ -28,7 +15,7 @@ const meta = {
   _rev: _.isString,
   _root: _.isString,
   _owners: _.isArray,
-  _satoshis: (x) => typeof x === 'bigint',
+  _satoshis: (x: number) => typeof x === 'bigint',
 }
 
 class NFT extends Contract {
@@ -79,7 +66,7 @@ class Chat extends Contract {
     super({ messages: [], _owners: publicKeys, _readers: publicKeys })
   }
 
-  post(message) {
+  post(message: string) {
     this.messages.push(message)
   }
 
@@ -98,7 +85,7 @@ class Swap extends Contract {
   }
 }
 
-class PaymentMock {
+class PaymentMock extends Mock {
   _id: string
   _rev: string
   _root: string
@@ -106,9 +93,7 @@ class PaymentMock {
   _owners: string[]
 
   constructor(amount: bigint) {
-    this._id = mockedRev
-    this._rev = mockedRev
-    this._root = mockedRev
+    super()
     this._owners = [randomPublicKey]
     this._satoshis = amount
   }
@@ -136,7 +121,7 @@ class Payment extends Contract {
 
 describe('Computer', () => {
   it('Should default to public LTC regtest node', async () => {
-    const computer = new TestComputer()
+    const computer = new Computer({ chain, network, url })
     expect(computer.getChain()).eq('LTC')
     expect(computer.getNetwork()).eq('regtest')
     expect(computer.getUrl()).a('string')
@@ -145,8 +130,9 @@ describe('Computer', () => {
   it('Should instantiate a computer object', async () => {
     const chain = 'BTC'
     const network = 'mainnet'
+    const mode = 'prod'
     const url = 'https://btc.node.bitcoincomputer.io'
-    const computer = new TestComputer({ chain, network, url })
+    const computer = new Computer({ chain, network, url, mode })
     expect(computer.getChain()).eq(chain)
     expect(computer.getNetwork()).eq(network)
     expect(computer.getUrl()).eq(url)
@@ -158,17 +144,22 @@ describe('Non-Fungible Token (NFT)', () => {
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new TestComputer({ chain, network, url })
-  let receiver = new TestComputer({ chain, network, url })
+  let sender = new Computer({ chain, network, url })
+  let receiver = new Computer({ chain, network, url })
 
   before("Fund sender's wallet", async () => {
     await sender.faucet(1e8)
   })
 
   describe('Minting an NFT', () => {
-    it('Sender mints an NFT', async () => {
+    before(async () => {
       nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
-      // @ts-ignore
+      initialId = nft._id
+      initialRev = nft._rev
+      initialRoot = nft._root
+    })
+
+    it('Sender mints an NFT', async () => {
       expect(nft).matchPattern({ name: 'Test', symbol, ...meta })
     })
 
@@ -178,10 +169,6 @@ describe('Non-Fungible Token (NFT)', () => {
 
     it('Properties _id, _rev, and _root have the same value', () => {
       expect(nft._id).eq(nft._rev).eq(nft._root)
-
-      initialId = nft._id
-      initialRev = nft._rev
-      initialRoot = nft._root
     })
 
     it("The nft is returned when syncing against it's revision", async () => {
@@ -189,10 +176,16 @@ describe('Non-Fungible Token (NFT)', () => {
     })
   })
 
-  describe('Transferring an NFT', async () => {
-    it('Sender transfers the NFT to receiver', async () => {
+  describe('Transferring an NFT', () => {
+    before(async () => {
+      nft = await sender.new(NFT, [sender.getPublicKey(), 'Test'])
+      initialId = nft._id
+      initialRev = nft._rev
+      initialRoot = nft._root
       await nft.transfer(receiver.getPublicKey())
-      // @ts-ignore
+    })
+
+    it('Sender transfers the NFT to receiver', async () => {
       expect(nft).to.matchPattern({ name: 'Test', symbol, ...meta })
     })
 
@@ -219,25 +212,27 @@ describe('Non-Fungible Token (NFT)', () => {
 })
 
 describe('Fungible Token', () => {
-  let token: Token = null
-  let sentToken: Token = null
+  let token: SmartContract<typeof Token>
+  let sentToken: SmartContract<typeof Token>
   let initialId: string
   let initialRev: string
   let initialRoot: string
-  let sender = new TestComputer({ chain, network, url })
-  let receiver = new TestComputer({ chain, network, url })
+  let sender = new Computer({ chain, network, url })
+  let receiver = new Computer({ chain, network, url })
 
   before('Fund senders wallet', async () => {
     await sender.faucet(1e8)
   })
 
   describe('Minting a fungible token', () => {
-    it('Sender mints a fungible token with supply 10', async () => {
+    before(async () => {
       token = await sender.new(Token, [sender.getPublicKey(), 10n, 10n])
+      initialId = token._id
+      initialRev = token._rev
+      initialRoot = token._root
     })
 
-    it('This creates a smart object', () => {
-      // @ts-ignore
+    it('Sender mints a fungible token with supply 10', () => {
       expect(token).to.matchPattern({ ...meta, supply: 10n, totalSupply: 10n })
     })
 
@@ -247,10 +242,6 @@ describe('Fungible Token', () => {
 
     it('Properties _id, _rev, and _root have the same value', () => {
       expect(token._id).eq(token._rev).eq(token._root)
-
-      initialId = token._id
-      initialRev = token._rev
-      initialRoot = token._root
     })
 
     it("Syncing to the token's revision returns an object equal to the token", async () => {
@@ -258,13 +249,13 @@ describe('Fungible Token', () => {
     })
   })
 
-  describe('Transferring a fungible token', async () => {
-    it('Sender transfers 2 tokens to receiver', async () => {
+  describe('Transferring a fungible token', () => {
+    before(async () => {
+      token = await sender.new(Token, [sender.getPublicKey(), 10n, 10n])
       sentToken = await token.transfer(2n, receiver.getPublicKey())
     })
 
     it('This creates a second smart object with supply 2', () => {
-      // @ts-ignore
       expect(sentToken).to.matchPattern({
         supply: 2n,
         totalSupply: 10n,
@@ -277,7 +268,6 @@ describe('Fungible Token', () => {
     })
 
     it('The first smart object now has a supply of 8', () => {
-      // @ts-ignore
       expect(token).to.matchPattern({ supply: 8n, totalSupply: 10n, ...meta })
     })
 
@@ -303,22 +293,19 @@ describe('Fungible Token', () => {
 })
 
 describe('Chat', () => {
-  let alicesChat: Chat
-  let bobsChat: Chat
-  const alice = new TestComputer({ chain, network, url })
-  const bob = new TestComputer({ chain, network, url })
-  const eve = new TestComputer({ chain, network, url })
+  const alice = new Computer({ chain, network, url })
+  const bob = new Computer({ chain, network, url })
+  const eve = new Computer({ chain, network, url })
   const publicKeys = [alice.getPublicKey(), bob.getPublicKey()].sort()
 
-  before('Before', async () => {
+  before('Fund alice and bob', async () => {
     await alice.faucet(1e8)
     await bob.faucet(1e8)
   })
 
   describe('Creating a chat', () => {
     it('Alice creates a chat and invites Bob', async () => {
-      alicesChat = await alice.new(Chat, [publicKeys])
-      // @ts-ignore
+      const alicesChat = await alice.new(Chat, [publicKeys])
       expect(alicesChat).to.matchPattern({
         messages: [],
         _readers: publicKeys,
@@ -328,22 +315,24 @@ describe('Chat', () => {
     })
   })
 
-  describe('Posting a message', () => {
-    it('Alice posts a message to the chat', async () => {
+  describe('Posting messages and reading', () => {
+    let alicesChat: Chat
+
+    before(async () => {
+      alicesChat = await alice.new(Chat, [publicKeys])
       await alicesChat.post('Hi')
-      // @ts-ignore
+    })
+
+    it('Alice posts a message to the chat', async () => {
       expect(alicesChat).to.matchPattern({
         messages: ['Hi'],
         _readers: publicKeys,
         ...meta,
       })
     })
-  })
 
-  describe('Invited users can read the chat and post messages', async () => {
     it('Bob can read the content of the chat', async () => {
-      bobsChat = (await bob.sync(alicesChat._rev)) as Chat
-      // @ts-ignore
+      const bobsChat = await bob.sync<typeof Chat>(alicesChat._rev)
       expect(bobsChat).matchPattern({
         messages: ['Hi'],
         _readers: publicKeys,
@@ -352,8 +341,8 @@ describe('Chat', () => {
     })
 
     it('Bob can write to the chat', async () => {
+      const bobsChat = await bob.sync<typeof Chat>(alicesChat._rev)
       await bobsChat.post('Yo')
-      // @ts-ignore
       expect(bobsChat).matchPattern({
         messages: ['Hi', 'Yo'],
         _readers: publicKeys,
@@ -362,97 +351,95 @@ describe('Chat', () => {
     })
   })
 
-  describe('User that are not invited cannot read the state or post', async () => {
+  describe('Access control', () => {
+    let alicesChat: Chat
+
+    before(async () => {
+      alicesChat = await alice.new(Chat, [publicKeys])
+      await alicesChat.post('Hi')
+    })
+
     it('Eve cannot read the content of the chat', async () => {
       try {
         await eve.sync(alicesChat._rev)
         expect(true).eq(false)
       } catch (err) {
-        expect(err.message).eq('Decryption failure')
+        if (err instanceof Error) expect(err.message).eq('Decryption failure')
       }
     })
-  })
 
-  describe('Users can be removed from the chat', () => {
     it('Alice removes Bob from the chat', async () => {
-      await alicesChat.remove(bob.getPublicKey())
-      expect(alicesChat._readers).deep.eq([alice.getPublicKey()])
-    })
+      const chatForRemove = await alice.new(Chat, [publicKeys])
+      await chatForRemove.post('Hi')
+      await chatForRemove.remove(bob.getPublicKey())
+      expect(chatForRemove._readers).deep.eq([alice.getPublicKey()])
 
-    it('Bob cannot read the chat or post to it anymore', async () => {
       try {
-        await bob.sync(alicesChat._rev)
+        await bob.sync(chatForRemove._rev)
         expect(true).eq(false)
       } catch (err) {
-        expect(err.message).eq('Decryption failure')
+        if (err instanceof Error) expect(err.message).eq('Decryption failure')
       }
     })
   })
 })
 
 describe('Swap', () => {
-  let nftA: NFT
-  let nftB: NFT
-  const alice = new TestComputer({ chain, network, url })
-  const bob = new TestComputer({ chain, network, url })
+  const alice = new Computer({ chain, network, url })
+  const bob = new Computer({ chain, network, url })
 
-  before('Before', async () => {
+  before('Fund alice and bob', async () => {
     await alice.faucet(1e8)
     await bob.faucet(1e8)
   })
 
   describe('Creating two NFTs to be swapped', () => {
-    it('Alice creates nftA', async () => {
+    let nftA: NFT
+    let nftB: NFT
+
+    before(async () => {
       nftA = await alice.new(NFT, [alice.getPublicKey(), 'nftA'])
-      // @ts-ignore
+      nftB = await bob.new(NFT, [bob.getPublicKey(), 'nftB'])
+    })
+
+    it('Alice creates nftA', async () => {
       expect(nftA).to.matchPattern({ name: 'nftA', symbol, ...meta })
       expect(nftA._owners).deep.eq([alice.getPublicKey()])
     })
 
     it('Bob creates nftB', async () => {
-      nftB = await bob.new(NFT, [bob.getPublicKey(), 'nftB'])
-      // @ts-ignore
       expect(nftB).to.matchPattern({ name: 'nftB', symbol, ...meta })
       expect(nftB._owners).deep.eq([bob.getPublicKey()])
     })
   })
 
-  describe('Executing a swap', async () => {
+  describe('Executing a swap', () => {
+    let nftA: NFT
+    let nftB: NFT
     let tx: any
     let txId: string
 
-    it('Alice builds, funds, and signs a swap transaction', async () => {
+    before(async () => {
+      nftA = await alice.new(NFT, [alice.getPublicKey(), 'nftA'])
+      nftB = await bob.new(NFT, [bob.getPublicKey(), 'nftB'])
       ;({ tx } = await alice.encode({
         exp: `${Swap} Swap.exec(nftA, nftB)`,
         env: { nftA: nftA._rev, nftB: nftB._rev },
       }))
-    })
-
-    it('Bob signs the swap transaction', async () => {
       await bob.sign(tx)
-    })
-
-    it('Bob broadcasts the swap transaction', async () => {
       txId = await bob.broadcast(tx)
-      expect(txId).not.undefined
     })
 
-    it('nftA is now owned by Bob', async () => {
-      const { env } = (await bob.sync(txId)) as {
-        env: { nftA: NFT; nftB: NFT }
-      }
-      const nftASwapped = env.nftA
-      // @ts-ignore
+    it('Executes the swap between two participants', async () => {
+      expect(txId).not.undefined
+
+      const { env } = await bob.sync(txId as TxIdString)
+      const nftASwapped = env.nftA!
       expect(nftASwapped).to.matchPattern({ name: 'nftA', symbol, ...meta })
       expect(nftASwapped._owners).deep.eq([bob.getPublicKey()])
-    })
 
-    it('nftB is now owned by Alice', async () => {
-      const { env } = (await alice.sync(txId)) as {
-        env: { nftA: NFT; nftB: NFT }
-      }
-      const nftBSwapped = env.nftB
-      // @ts-ignore
+      const { env: env2 } = await alice.sync(txId)
+      const nftBSwapped = env2.nftB!
       expect(nftBSwapped).to.matchPattern({ name: 'nftB', symbol, ...meta })
       expect(nftBSwapped._owners).deep.eq([alice.getPublicKey()])
     })
@@ -460,28 +447,23 @@ describe('Swap', () => {
 })
 
 describe('Sell', () => {
-  let tx: any
-  let txClone: any
-  let sellerPublicKey: string
   const nftPrice = BigInt(1e8)
   const fee = 10000
+  let sellerPublicKey: string
 
   describe('Creating an NFT and an offer to sell', () => {
     let nft: NFT
-    const seller = new TestComputer({ chain, network, url })
+    let tx: any
+    let txClone: any
+    const seller = new Computer({ chain, network, url })
     sellerPublicKey = seller.getPublicKey()
 
-    before("Fund Seller's wallet", async () => {
-      await seller.faucet(1e8)
+    before("Fund Seller's wallet generously", async () => {
+      await seller.faucet(5e8)
     })
 
-    it('Seller creates an NFT', async () => {
+    before(async () => {
       nft = await seller.new(NFT, [seller.getPublicKey(), 'NFT'])
-      // @ts-ignore
-      expect(nft).to.matchPattern({ name: 'NFT', symbol, ...meta })
-    })
-
-    it('Seller creates a swap transaction for the NFT with the desired price', async () => {
       const mock = new PaymentMock(nftPrice)
       const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 
@@ -497,6 +479,10 @@ describe('Sell', () => {
       txClone = tx.clone()
     })
 
+    it('Seller creates an NFT', async () => {
+      expect(nft).to.matchPattern({ name: 'NFT', symbol, ...meta })
+    })
+
     it('The first inputs has been signed by seller, the second input is unsigned', () => {
       expect(tx.ins).to.have.lengthOf(2)
       expect(tx.ins[0].script).to.have.lengthOf.above(0)
@@ -510,17 +496,43 @@ describe('Sell', () => {
   })
 
   describe('Failing to steal the nft', () => {
-    const thief = new TestComputer({ chain, network, url })
+    let txClone: any
+    const thief = new Computer({ chain, network, url })
     let tooLowPayment: Payment
 
-    before("Fund Thief's wallet", async () => {
-      await thief.faucet(Number(nftPrice) + fee)
+    before("Fund Thief's wallet generously", async () => {
+      await thief.faucet(5e8)
+    })
+
+    before(async () => {
+      // Re-create the offer setup for independence
+      const seller = new Computer({ chain, network, url })
+      await seller.faucet(5e8)
+
+      const nft = await seller.new(NFT, [seller.getPublicKey(), 'NFT'])
+      const mock = new PaymentMock(nftPrice)
+      const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
+
+      let txSetup: any
+      ;({ tx: txSetup } = await seller.encode({
+        exp: `${Swap} Swap.exec(nft, payment)`,
+        env: { nft: nft._rev, payment: mock._rev },
+        mocks: { payment: mock },
+        sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+        inputIndex: 0,
+        fund: false,
+      }))
+      txClone = txSetup.clone()
+
+      tooLowPayment = await thief.new(Payment, [nftPrice / 2n])
+
+      const [paymentTxId, paymentIndex] = tooLowPayment._rev.split(':')
+      txClone.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
+      txClone.updateOutput(1, { scriptPubKey: thief.toScriptPubKey() })
+      txClone.updateOutput(0, { value: tooLowPayment._satoshis })
     })
 
     it('Thief creates a payment object with half the asking price', async () => {
-      tooLowPayment = await thief.new(Payment, [nftPrice / 2n])
-
-      // @ts-ignore
       expect(tooLowPayment).matchPattern({
         _id: _.isString,
         _rev: _.isString,
@@ -528,16 +540,6 @@ describe('Sell', () => {
         _owners: [thief.getPublicKey()],
         _satoshis: nftPrice / 2n,
       })
-    })
-
-    it("Thief update's the swap transaction maliciously to receive the NFT at half the price", () => {
-      const [paymentTxId, paymentIndex] = tooLowPayment._rev.split(':')
-      txClone.updateInput(1, { txId: paymentTxId, index: parseInt(paymentIndex, 10) })
-      txClone.updateOutput(1, { scriptPubKey: thief.toScriptPubKey() })
-
-      // this is where the thief tries to alter the transaction in order
-      // to buy the nft at half the price
-      txClone.updateOutput(0, { value: tooLowPayment._satoshis })
     })
 
     it('Thief funds the swap transaction', async () => {
@@ -562,59 +564,57 @@ describe('Sell', () => {
   })
 
   describe('Executing the sale', () => {
-    const buyer = new TestComputer({ chain, network, url })
-    const computer = new TestComputer({ chain, network, url })
+    const buyer = new Computer({ chain, network, url })
+    const computer = new Computer({ chain, network, url })
     let payment: Payment
+    let tx: any
     let txId: string
 
-    before("Fund Buyers's wallet", async () => {
-      await buyer.faucet(Number(nftPrice) + fee + 1e8)
+    before("Fund Buyer's wallet generously", async () => {
+      await buyer.faucet(5e8)
     })
 
-    it('Buyer creates a payment object', async () => {
+    before(async () => {
+      // Re-create the offer setup for independence
+      const seller = new Computer({ chain, network, url })
+      await seller.faucet(5e8)
+      sellerPublicKey = seller.getPublicKey()
+
+      const nft = await seller.new(NFT, [seller.getPublicKey(), 'NFT'])
+      const mock = new PaymentMock(nftPrice)
+      const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
+
+      ;({ tx } = await seller.encode({
+        exp: `${Swap} Swap.exec(nft, payment)`,
+        env: { nft: nft._rev, payment: mock._rev },
+        mocks: { payment: mock },
+        sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
+        inputIndex: 0,
+        fund: false,
+      }))
+
       payment = await buyer.new(Payment, [nftPrice])
 
-      // @ts-ignore
-      expect(payment).matchPattern({
-        _id: _.isString,
-        _rev: _.isString,
-        _root: _.isString,
-        _owners: [buyer.getPublicKey()],
-        _satoshis: nftPrice,
-      })
-    })
-
-    it("Buyer update's the swap transaction to receive the NFT", () => {
       const [paymentTxId, paymentIndex] = payment._rev.split(':')
       tx.updateInput(1, {
         txId: paymentTxId,
         index: parseInt(paymentIndex, 10),
       })
-      // @ts-ignore
       tx.updateOutput(1, { scriptPubKey: buyer.toScriptPubKey() })
-    })
 
-    it('Buyer funds the swap transaction', async () => {
       await buyer.fund(tx)
-    })
-
-    it('Buyer signs the swap transaction', async () => {
       await buyer.sign(tx)
-    })
-
-    it('Buyer broadcast the swap transaction to execute the sale', async () => {
       txId = await buyer.broadcast(tx)
-      expect(txId).not.undefined
     })
 
-    it('Seller now owns the payment', async () => {
+    it('Executes the sale', async () => {
+      expect(txId).not.undefined
+
       const { env } = (await computer.sync(txId)) as any
       expect(env.payment._owners).deep.eq([sellerPublicKey])
-    })
 
-    it('Buyer now owns the nft', async () => {
-      const { env } = (await computer.sync(txId)) as any
-      expect(env.nft._owners).deep.eq([buyer.getPublicKey()])
+      const { env: env2 } = (await computer.sync(txId)) as any
+      expect(env2.nft._owners).deep.eq([buyer.getPublicKey()])
     })
   })
 })

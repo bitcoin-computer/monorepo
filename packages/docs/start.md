@@ -7,7 +7,7 @@ icon: rocket
 
 ## Use in the Browser
 
-Create the file below and open it in a browser. It show `*`, then `0` and finally `1`.
+Create the file below and open it in a browser. It shows `*`, then `0` and finally `1`.
 
 ```js index.html
 <html>

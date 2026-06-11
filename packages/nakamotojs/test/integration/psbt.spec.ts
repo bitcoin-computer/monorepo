@@ -345,7 +345,6 @@ describe('nakamotojs (transactions with psbt)', () => {
     sellerTx.addOutput(Buffer.alloc(8), BigInt(MIN)); // dummy output 0
     sellerTx.addOutput(payToSeller.output!, BigInt(N)); // N payment to seller
 
-    // @ts-ignore
     sellerTx.sign(
       1,
       seller.keys[0],
@@ -392,14 +391,12 @@ describe('nakamotojs (transactions with psbt)', () => {
       bufferUtils.reverseBuffer(Buffer.from(buyerPaymentToMiners.hash, 'hex')),
       buyerPaymentToMiners.index,
     );
-    // @ts-ignore
     buyerTx.updateOutput(0, {
       scriptPubKey: buyerOutput0.output!,
       value: BigInt(MIN),
     }); // Output 0
     buyerTx.addOutput(buyerOutput0.output!, BigInt(MIN)); // Output 2
 
-    // @ts-ignore
     buyerTx.sign(
       0,
       buyerPayment.keys[0],
@@ -407,7 +404,6 @@ describe('nakamotojs (transactions with psbt)', () => {
       Transaction.fromHex(buyerPayment0.nonWitnessUtxo).outs[0].script,
     );
 
-    // @ts-ignore
     buyerTx.sign(
       2,
       buyerPayment.keys[0],

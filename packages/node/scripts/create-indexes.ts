@@ -126,8 +126,11 @@ Output.address|idx_output_address|CREATE INDEX idx_output_address ON "Output"(ad
 Output.previous|idx_output_previous|CREATE INDEX idx_output_previous ON "Output"(previous);
 Output.isTbcOutput|idx_output_istbcoutput|CREATE INDEX idx_output_istbcoutput ON "Output"("isTbcOutput");
 Output.blockHash|idx_output_blockhash|CREATE INDEX idx_output_blockhash ON "Output"("blockHash");
+Output.blockHeight|idx_output_blockheight|CREATE INDEX idx_output_blockheight ON "Output"("blockHeight");
+Output.blockIndex|idx_output_blockindex|CREATE INDEX idx_output_blockindex ON "Output"("blockIndex");
 Output.asm|idx_output_asm|CREATE INDEX idx_output_asm ON "Output"("asm");
 Output.mod|idx_output_mod|CREATE INDEX idx_output_mod ON "Output"("mod");
+Output.rev|idx_output_rev_substr|CREATE INDEX idx_output_rev_substr ON "Output"((SUBSTRING("rev" FROM 1 FOR 64)));
 Orphan.height|idx_orphan_height|CREATE INDEX idx_orphan_height ON "Orphan"(height);
 Input.outputSpent|idx_input_outputSpent|CREATE INDEX idx_input_outputSpent ON "Input"("outputSpent");
 Input.blockHash|idx_input_blockhash|CREATE INDEX idx_input_blockhash ON "Input"("blockHash");

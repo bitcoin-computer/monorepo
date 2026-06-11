@@ -56,4 +56,4 @@ import { c3 } from 'dc63fbf200595012b239d69936ac63e4155040042ef7d2e6dff4ca49dec3
 export const s = c0 + c1 + c2 + c3
 ```
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/deploy.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/deploy.test.ts" target=_blank>Source</a>

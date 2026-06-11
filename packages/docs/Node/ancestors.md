@@ -20,10 +20,38 @@ curl -X GET http://localhost:1031/v1/LTC/regtest/tx/e53c1440f547b51343d46a2acaaf
 
 ### Response
 
+#### Success (200)
+
 ```json
 [
-  "5a04f3cdb0450fd4708dfcd2fe86f51c6077add296507d69f2620c15e94c8e89",
-  "9343ce7ca5e2039ab5329b2918319bd1656983cf2e8f8de7c4001d61870d0eb8",
-  "db98c59f328bb45b14a957ce44546f5bfe2f1bf4394de18e98f32188e76082be"
+  "b3c1a43d0c9a8e07a27df8727c3b3a3e74c5b99f0d9f9af7f2f9bde1e46c2a77",
+  "9f1b2d18fce0c95fba8843d10c5c87b81a4fa221cbe7e97de2b42e15d2a90f66"
 ]
+```
+
+> **Note on caching:** Successful responses are returned with  
+> `Cache-Control: public, max-age=31536000`, meaning they can be cached for up to **1 year**.
+
+#### Invalid parameter (400)
+
+```json
+{ "error": "Invalid txId, did you provide a revision instead?" }
+```
+
+#### Missing parameter (400)
+
+```json
+{ "error": "Missing input txIds." }
+```
+
+#### Not found (404)
+
+```json
+{ "error": "Not found" }
+```
+
+#### Server error (500)
+
+```json
+{ "error": "Internal server error message" }
 ```

@@ -4,6 +4,7 @@ import { ComputerContext, Modal } from "../common-components";
 import Link from "next/link";
 import { Counter } from "../contracts/counter";
 import { NEXT_PUBLIC_COUNTER_MOD_SPEC } from "../contracts/modSpecs";
+import { SmartContract } from "@bitcoin-computer/lib";
 
 function SuccessContent(rev: string) {
   return (
@@ -77,7 +78,7 @@ export default function Mint() {
       });
       await computer.broadcast(tx);
 
-      const counter = effect.res as unknown as Counter;
+      const counter = effect.res as SmartContract<typeof Counter>;
       setSuccessRev(counter._id);
       Modal.showModal("success-modal");
     } catch (err) {

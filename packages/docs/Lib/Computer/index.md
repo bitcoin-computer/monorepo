@@ -41,6 +41,18 @@ For advanced applications that require control over how the transaction is signe
 | [decode](./decode.md) | Parses a Bitcoin transaction and returns JavaScript expression |
 | [faucet](./faucet) | Fund a computer object on Regtest |
 
+### History
+
+Access historical versions of on-chain objects.
+
+{.compact}
+| Method | Description |
+|-------------------------------|----------------------------------------------------------------|
+| [first](./first.md) | Return the first revision |
+| [prev](./prev.md) | Return the previous revision |
+| [next](./next.md) | Return the next revision |
+| [latest](./latest.md) | Return the latest revision |
+
 ### Wallet
 
 Access the client side wallet.
@@ -51,7 +63,7 @@ Access the client side wallet.
 | [sign](./sign.md) | Signs a Bitcoin transaction |
 | [broadcast](./broadcast.md) | Broadcasts a Bitcoin transaction |
 | [send](./send.md) | Sends satoshis to an address |
-| [rpcCall](./rpcCall.md) | Access Bitcoin's RPC interface |
+| [rpc](./rpcCall.md) | Access Bitcoin's RPC interface |
 | [getAddress](./getAddress.md) | Returns the Bitcoin address of the computer wallet |
 | [getBalance](./getBalance.md) | Confirmed, unconfirmed and total balance in sats |
 | [getChain](./getChain.md) | Returns the blockchain |

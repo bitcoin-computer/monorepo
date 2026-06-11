@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+import { strict as assert } from 'assert';
 import { describe, it } from 'mocha';
 import * as bscript from '../src/script.js';
 import * as ecc from '@bitcoin-computer/secp256k1';
@@ -9,7 +8,7 @@ import script from './fixtures/script.js';
 import { Buffer } from 'buffer';
 
 const fixtures = script;
-// @ts-ignore
+// @ts-expect-error Could not find a declaration file for module 'minimaldata'.
 import minimalData from 'minimaldata';
 
 describe('script', () => {

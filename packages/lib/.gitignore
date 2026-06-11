@@ -9,3 +9,4 @@ js-build
 yarn.lock
 scripts/__pycache__
 parcel
+test-build

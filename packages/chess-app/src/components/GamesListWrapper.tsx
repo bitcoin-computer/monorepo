@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react'
 import { VITE_CHESS_GAME_MOD_SPEC, VITE_CHESS_USER_MOD_SPEC } from '../constants/modSpecs'
 
 import { GameType, InfiniteScroll } from './GamesList'
+import { SmartContract } from '@bitcoin-computer/lib'
 
 export const GamesListWrapper = ({
   setGameId,
@@ -17,15 +18,15 @@ export const GamesListWrapper = ({
 
   const getLatestGames = async () => {
     const availableGames: GameType[] = []
-    const gameRevs = await computer.query({
+    const gameRevs = await computer.getOUTXOs({
       mod: VITE_CHESS_GAME_MOD_SPEC,
       publicKey: computer.getPublicKey(),
     })
 
-    const gameSyncPromises: Promise<ChessContract>[] = []
+    const gameSyncPromises: Promise<SmartContract<typeof ChessContract>>[] = []
 
     gameRevs.forEach((rev) => {
-      gameSyncPromises.push(computer.sync(rev) as Promise<ChessContract>)
+      gameSyncPromises.push(computer.sync<typeof ChessContract>(rev))
     })
 
     const gamesList = await Promise.all(gameSyncPromises)
@@ -36,13 +37,13 @@ export const GamesListWrapper = ({
       }
     })
 
-    const [userRev] = await computer.query({
+    const [userRev] = await computer.getOUTXOs({
       mod: VITE_CHESS_USER_MOD_SPEC,
       publicKey: computer.getPublicKey(),
     })
 
     if (userRev) {
-      const userObj = (await computer.sync(userRev)) as User
+      const userObj = await computer.sync<typeof User>(userRev)
       userObj.games.forEach((gameObjId) => {
         availableGames.push({ gameId: gameObjId, new: false })
       })

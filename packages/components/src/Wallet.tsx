@@ -6,8 +6,9 @@ import { Auth } from './Auth'
 import { Drawer } from './Drawer'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
-import { getEnv, bigIntToStr, sleep } from './common/utils'
-import { bufferUtils, payments as paymentsUtils } from '@bitcoin-computer/nakamotojs'
+import { getEnv, bigIntToStr } from './common/utils'
+import { signAndBroadcastSpendUtxos } from './common/spendUtxos'
+import { VITE_WITHDRAW_MOD_SPEC } from './common/modSpecs'
 
 const Loader = () => (
   <span role="status">
@@ -33,13 +34,17 @@ const Loader = () => (
 
 const BalanceDisplay = ({
   balance,
-  computer,
+  chain,
+  network,
+  isRegtest,
   isRefreshing,
   onRefresh,
   onFund,
 }: {
   balance: bigint
-  computer: Computer
+  chain: string
+  network: string
+  isRegtest: boolean
   isRefreshing: boolean
   onRefresh: () => Promise<void>
   onFund: () => Promise<void>
@@ -50,16 +55,14 @@ const BalanceDisplay = ({
     role="alert"
   >
     <div className="text-center mb-1 text-2xl font-bold text-blue-800 dark:text-blue-400">
-      {bigIntToStr(balance)} {computer.getChain()}{' '}
+      {bigIntToStr(balance)} {chain}{' '}
       <HiRefresh
         onClick={onRefresh}
         className={`w-4 h-4 ml-1 mb-1 inline cursor-pointer hover:text-slate-700 dark:hover:text-slate-100 ${isRefreshing ? 'animate-spin' : ''}`}
       />
     </div>
-    <div className="text-center uppercase text-xs text-blue-800 dark:text-blue-400">
-      {computer.getNetwork()}
-    </div>
-    {computer.getNetwork() === 'regtest' && (
+    <div className="text-center uppercase text-xs text-blue-800 dark:text-blue-400">{network}</div>
+    {isRegtest && (
       <button
         id="fund-wallet"
         type="button"
@@ -71,64 +74,6 @@ const BalanceDisplay = ({
     )}
   </div>
 )
-
-const useBalance = (computer: Computer, modSpecs: string[], isOpen: boolean) => {
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
-  const [balance, setBalance] = useState<bigint>(0n)
-  const [paymentsWrapper, setPaymentsWrapper] = useState<any[]>([])
-  const [isRefreshing, setIsRefreshing] = useState(false)
-
-  const refreshBalance = useCallback(async () => {
-    setIsRefreshing(true)
-    try {
-      const publicKey = computer.getPublicKey()
-      const allPayments: any[] = []
-      const balances: bigint[] = await Promise.all(
-        modSpecs.map(async (mod) => {
-          const paymentRevs = await computer.query({ publicKey, mod })
-          const payments = (await Promise.all(
-            paymentRevs.map((rev: string) => computer.sync(rev)),
-          )) as any[]
-          allPayments.push(...payments)
-          const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')))
-          return payments && payments.length
-            ? payments.reduce((total, pay) => total + (pay._satoshis - minDust), 0n)
-            : 0n
-        }),
-      )
-      const amountsInPayments: bigint = balances.reduce((acc, curr) => acc + curr, 0n)
-      const walletBalance = await computer.getBalance()
-
-      setBalance(walletBalance.balance + amountsInPayments)
-      setPaymentsWrapper(allPayments)
-    } catch (err) {
-      showSnackBar('Error fetching wallet details', false)
-    } finally {
-      setIsRefreshing(false)
-    }
-  }, [computer, modSpecs, showSnackBar])
-
-  const fund = async () => {
-    setIsRefreshing(true)
-    try {
-      const amount = computer.getChain() === 'PEPE' ? 10e8 : 1e8
-      await computer.faucet(amount)
-      await refreshBalance()
-    } catch (err) {
-      if (err instanceof Error) {
-        showSnackBar(`Error funding wallet: ${err.message}`, false)
-      }
-    } finally {
-      setIsRefreshing(false)
-    }
-  }
-
-  useEffect(() => {
-    if (isOpen) refreshBalance()
-  }, [isOpen, refreshBalance])
-
-  return { balance, paymentsWrapper, isRefreshing, refreshBalance, fund }
-}
 
 const Withdraw = ({
   computer,
@@ -192,6 +137,179 @@ const Withdraw = ({
   )
 }
 
+const WithdrawNew = ({ computer, modSpecs }: { computer: Computer; modSpecs: string[] }) => {
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const [address, setAddress] = useState<string>('')
+  const [amount, setAmount] = useState<string>('')
+  const [withdrawing, setWithdrawing] = useState<boolean>(false)
+
+  const handleWithdraw = async () => {
+    try {
+      setWithdrawing(true)
+      const trimmedAddress = address.trim()
+      const parsedAmount = Number(amount)
+      const chain = computer.getChain()
+
+      if (!trimmedAddress) {
+        showSnackBar('Please input valid address', false)
+        return
+      }
+
+      if (!Number.isFinite(parsedAmount) || parsedAmount <= 0) {
+        showSnackBar(`Please input a valid ${chain} amount`, false)
+        return
+      }
+
+      const amountSatoshis = BigInt(Math.round(parsedAmount * 1e8))
+
+      await signAndBroadcastSpendUtxos({
+        computer,
+        modSpecs,
+        toAddress: trimmedAddress,
+        amountSatoshis,
+      })
+      setAddress('')
+      setAmount('')
+      showSnackBar(`Withdraw successful`, true)
+    } catch (err) {
+      if (err instanceof Error) showSnackBar(`Something went wrong, ${err.message}`, false)
+    } finally {
+      setWithdrawing(false)
+    }
+  }
+
+  return (
+    <div className="my-2">
+      <h6 className="text-lg font-bold dark:text-white">Withdraw to Address</h6>
+      <div className="mt-3 space-y-3">
+        <div>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            className="block w-full p-1.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder="Recipient Address"
+          />
+        </div>
+        <div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step="0.00000001"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              className="block w-full p-1.5 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 [moz-appearance:textfield] focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              placeholder="0.00"
+            />
+            <div className="shrink-0 rounded-lg border border-gray-300 bg-gray-50 px-2 py-1.5 text-sm text-gray-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-400">
+              {computer.getChain()}
+            </div>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={handleWithdraw}
+          disabled={withdrawing}
+          className="px-3 py-1.5 text-sm font-medium text-center text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 rounded-lg dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
+        >
+          {withdrawing ? <Loader /> : <>Withdraw</>}
+        </button>
+      </div>
+    </div>
+  )
+}
+
+const Balance = ({
+  computer,
+  modSpecs,
+  isOpen,
+}: {
+  computer: Computer
+  modSpecs: string[]
+  isOpen: boolean
+}) => {
+  const [balance, setBalance] = useState<bigint>(0n)
+  const [paymentsWrapper, setPaymentsWrapper] = useState<any[]>([])
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const [isRefreshing, setIsRefreshing] = useState(false)
+
+  const refreshBalance = useCallback(async () => {
+    setIsRefreshing(true)
+    try {
+      const publicKey = computer.getPublicKey()
+      const allPayments: any[] = []
+      const balances: bigint[] = await Promise.all(
+        modSpecs.map(async (mod) => {
+          const paymentRevs = await computer.getOUTXOs({ publicKey, mod })
+          const payments = (await Promise.all(
+            paymentRevs.map((rev: string) => computer.sync(rev)),
+          )) as any[]
+          allPayments.push(...payments)
+          const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')))
+          return payments && payments.length
+            ? payments.reduce((total, pay) => total + (pay._satoshis - minDust), 0n)
+            : 0n
+        }),
+      )
+      const amountsInPayments: bigint = balances.reduce((acc, curr) => acc + curr, 0n)
+      const walletBalance = await computer.getBalance()
+
+      setBalance(walletBalance.balance + amountsInPayments)
+      setPaymentsWrapper(allPayments)
+    } catch {
+      showSnackBar('Error fetching wallet details', false)
+    } finally {
+      setIsRefreshing(false)
+    }
+  }, [computer, modSpecs, showSnackBar])
+
+  const fund = async () => {
+    setIsRefreshing(true)
+    try {
+      const amount = computer.getChain() === 'PEPE' ? 10e8 : 1e8
+      await computer.faucet(amount)
+      await refreshBalance()
+    } catch (err) {
+      if (err instanceof Error) {
+        showSnackBar(`Error funding wallet: ${err.message}`, false)
+      }
+    } finally {
+      setIsRefreshing(false)
+    }
+  }
+
+  useEffect(() => {
+    if (isOpen) refreshBalance()
+  }, [isOpen, refreshBalance])
+
+  return (
+    <>
+      <BalanceDisplay
+        balance={balance}
+        chain={computer.getChain()}
+        network={computer.getNetwork()}
+        isRegtest={computer.getNetwork() === 'regtest'}
+        isRefreshing={isRefreshing}
+        onRefresh={refreshBalance}
+        onFund={fund}
+      />
+      <Address computer={computer} />
+      <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+      <WithdrawNew computer={computer} modSpecs={modSpecs} />
+      <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+      {!!VITE_WITHDRAW_MOD_SPEC && (
+        <Withdraw
+          computer={computer}
+          paymentsWrapper={paymentsWrapper}
+          onSuccess={refreshBalance}
+        />
+      )}
+    </>
+  )
+}
+
 const CopyableField = ({ label, value }: { label: string; value: string }) => {
   const [copied, setCopied] = useState(false)
 
@@ -222,7 +340,7 @@ const CopyableField = ({ label, value }: { label: string; value: string }) => {
   )
 }
 
-const Deposit = ({ computer }: { computer: Computer }) => (
+const Address = ({ computer }: { computer: Computer }) => (
   <CopyableField label="Deposit Address" value={computer.getAddress()} />
 )
 
@@ -251,7 +369,7 @@ const RevealableField = ({ label, getValue }: { label: string; getValue: () => s
 }
 
 const Mnemonic = ({ computer }: { computer: Computer }) => (
-  <RevealableField label="Mnemonic" getValue={computer.getMnemonic} />
+  <RevealableField label="Mnemonic" getValue={() => computer.getMnemonic()} />
 )
 
 const SimpleField = ({ label, value }: { label: string; value: string }) => (
@@ -297,50 +415,20 @@ const LogOut = () => (
 
 export function Wallet({ modSpecs }: { modSpecs?: string[] }) {
   const computer = useContext(ComputerContext)
-  const Content = ({ isOpen }: { isOpen: boolean }) => {
-    const modSpecsProp = modSpecs || []
-    const { balance, paymentsWrapper, isRefreshing, refreshBalance, fund } = useBalance(
-      computer,
-      modSpecsProp,
-      isOpen,
-    )
-    return (
-      <>
-        <h4 className="text-2xl font-bold dark:text-white">Wallet</h4>
-        <BalanceDisplay
-          balance={balance}
-          computer={computer}
-          isRefreshing={isRefreshing}
-          onRefresh={refreshBalance}
-          onFund={fund}
-        />
-        <Deposit computer={computer} />
-        <Withdraw
-          computer={computer}
-          paymentsWrapper={paymentsWrapper}
-          onSuccess={refreshBalance}
-        />
-        <PublicKey computer={computer} />
-        <Mnemonic computer={computer} />
-        {!getEnv('CHAIN') && <Chain computer={computer} />}
-        {!getEnv('NETWORK') && <Network computer={computer} />}
-        {!getEnv('URL') && <Url computer={computer} />}
-        {!getEnv('PATH') && <Path computer={computer} />}
-        <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
-        <LogOut />
-      </>
-    )
-  }
+  const Content = ({ isOpen }: { isOpen: boolean }) => (
+    <>
+      <h4 className="text-2xl font-bold dark:text-white">Wallet</h4>
+      <Balance computer={computer} modSpecs={modSpecs || []} isOpen={isOpen} />
+      <PublicKey computer={computer} />
+      <Mnemonic computer={computer} />
+      {!getEnv('CHAIN') && <Chain computer={computer} />}
+      {!getEnv('NETWORK') && <Network computer={computer} />}
+      {!getEnv('URL') && <Url computer={computer} />}
+      {!getEnv('PATH') && <Path computer={computer} />}
+      <hr className="h-px my-2 bg-gray-200 border-0 dark:bg-gray-700" />
+      <LogOut />
+    </>
+  )
 
   return <Drawer.Component Content={Content} id="wallet-drawer" />
-}
-
-export const WalletComponents = {
-  Deposit,
-  PublicKey,
-  Mnemonic,
-  Chain,
-  Network,
-  Url,
-  LogOut,
 }

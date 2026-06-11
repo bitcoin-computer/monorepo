@@ -54,6 +54,9 @@ function loggedInConfiguration() {
         network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')),
         url: localStorage.getItem('URL') || getEnv('URL'),
         path: localStorage.getItem('PATH') || getEnv('PATH'),
+        moduleStorageType: localStorage.getItem('MODULE_STORAGE_TYPE') ||
+            getEnv('MODULE_STORAGE_TYPE') ||
+            'taproot',
     };
 }
 function getComputer(options = {}) {

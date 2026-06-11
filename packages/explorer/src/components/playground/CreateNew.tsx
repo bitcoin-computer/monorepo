@@ -5,6 +5,7 @@ import { UtilsContext } from '@bitcoin-computer/components'
 import { TypeSelectionDropdown } from '../TypeSelectionDropdown'
 import { getErrorMessage, getValueForType, isValidRev, sleep } from '../../utils'
 import { ModSpec } from './Modspec'
+import { Contract } from '@bitcoin-computer/lib'
 
 interface Argument {
   type: string
@@ -111,6 +112,7 @@ const CreateNew = (props: {
         }
 
         const { tx } = await computer.encode(encodeObject)
+        if (!tx) throw new Error('Transition does not update the state, no transaction created')
         const txId = await computer.broadcast(tx)
         sleep(500)
         // eslint-disable-next-line

@@ -1,3 +1,5 @@
+import { Mock } from '@bitcoin-computer/lib';
+import { Contract } from '@bitcoin-computer/lib';
 export declare class Payment extends Contract {
     _id: string;
     _rev: string;
@@ -8,7 +10,7 @@ export declare class Payment extends Contract {
     transfer(to: string): void;
     setSatoshis(a: bigint): void;
 }
-export declare class PaymentMock {
+export declare class PaymentMock extends Mock {
     _id: string;
     _rev: string;
     _root: string;

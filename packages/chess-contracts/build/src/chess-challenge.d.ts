@@ -1,8 +1,11 @@
-import { Computer } from '@bitcoin-computer/lib';
+import { Computer, Contract } from '@bitcoin-computer/lib';
 export declare class ChessChallengeTxWrapper extends Contract {
-    chessGameTxHex: string;
+    chessRev: string;
+    wagerAmount: bigint;
+    tokenRoot: string;
+    publicKeyW: string;
     accepted: boolean;
-    constructor(chessGameTxHex: string, publicKeyB: string);
+    constructor(chessRev: string, wagerAmount: bigint, tokenRoot: string, publicKeyW: string, publicKeyB: string);
     setAccepted(): void;
 }
 export declare class ChessChallengeTxWrapperHelper {
@@ -12,5 +15,5 @@ export declare class ChessChallengeTxWrapperHelper {
         computer: Computer;
         mod?: string;
     });
-    createChessChallengeTxWrapper(chessGameTxHex: string, publicKeyB: string, ins: string[]): Promise<string>;
+    createChessChallengeTxWrapper(chessRev: string, wagerAmount: bigint, tokenRoot: string, publicKeyW: string, publicKeyB: string): Promise<string>;
 }

@@ -29,7 +29,7 @@ npm install
 
 ## Usage
 
-### Start the Node
+### Running a local development node
 
 To start your node at `http://localhost:1031` run the commands below. The node is ready once the log activity subsides. On regtest this will take a few minutes, on mainnet and testnet it can take days or even weeks, depending on your hardware.
 
@@ -53,7 +53,61 @@ npm run up
 The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database. The postgres database is used to efficiently store the complete blockchain data, for fast access and indexing.
 !!!
 
-### Run the Tests
+### Running a production node
+
+To run the node in production, you need to configure the `.env` file with appropriate settings for your environment. You can copy the example file and modify it as needed.
+
+<font size=1>
+
+```sh
+# Move to node folder
+cd packages/node
+# Copy the .env file from the examples
+cp chain-setup/ltc/mainnet/.env.example .env
+cp chain-setup/ltc/mainnet/litecoin.conf.example litecoin.conf
+```
+
+</font>
+
+After configuring the `.env` file, you can start the node with the following command:
+<font size=1>
+
+```sh
+npm run up
+```
+
+</font>
+
+#### IMPORTANT: Create indexes after syncing to mainnet
+
+To speed up the syncing process, syncing is carried out without db indexes. After the node has synced, you can create the indexes with the command below.
+
+<font size=1>
+
+```sh
+# In the node folder run the following command
+npm run create-indexes
+```
+
+</font>
+
+### Postgres Database
+
+The node uses a Postgres database to store the synced information required by the Bitcoin Computer protocol. The database is automatically created and managed by the node using a docker container. The full db schema can be found [here](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql).
+
+By default the database uses the following credentials:
+
+```shell
+POSTGRES_USER='bcn'
+POSTGRES_PASSWORD='bcn'
+POSTGRES_DB='bcn'
+POSTGRES_HOST='db'
+POSTGRES_PORT='5432'
+```
+
+You can configure these from the `.env` file for production deployments.
+
+### Run the Tests on Regtest
 
 You can run the integration tests with the command below.
 
@@ -67,7 +121,7 @@ npm run test
 
 On Litecoin regtest, the halving period is set to infinity. This makes it possible to run a large number of tests without having to restart the node.
 
-### Fund the Wallet
+### Fund a Wallet
 
 In regtest mode, you can fund a wallet with the following commands.
 
@@ -107,9 +161,36 @@ npm run clean
 
 </font>
 
-## Configuration
+## Architecture Overview
 
-You can configure several options by editing the `.env` file.
+The Bitcoin Computer Node is a high-performance, multi-process system designed to
+efficiently synchronize blockchain data, track mempool activity, and serve real-time
+subscriptions.
+
+At a high level, the node consists of:
+
+- **Primary coordinator process**
+  - Reads block headers sequentially
+  - Detects chain reorganizations (reorgs)
+  - Coordinates parallel workers
+- **Parallel sync workers**
+  - Parse blocks and transactions
+  - Insert inputs, outputs, and metadata into Postgres
+  - Scale automatically with available CPU cores
+- **Live mempool listener**
+  - Subscribes to raw transactions via ZeroMQ
+  - Activates once the blockchain is sufficiently synchronized
+- **API and SSE service**
+  - Serves HTTP API requests
+  - Streams real-time updates via Server-Sent Events (SSE)
+- **Background maintenance tasks**
+  - Periodic cleanup of stale unconfirmed (mempool) data (see [clean-mempool](./clean-mempool.md) for more details)
+
+The architecture is designed for robustness, scalability, and real-time responsiveness.
+
+## Advanced configuration
+
+You can configure several options by editing the `.env` file. See the [example](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/chain-setup/LTC/regtest/.env.example) for details.
 
 <font size=1>
 
@@ -200,9 +281,38 @@ BCN_BANNED_COUNTRIES=
 
 # Default value for protocol in the _url parameter. Set to https if behind a load balancer.
 BCN_OFFCHAIN_PROTOCOL=
+
+# Output columns for which streamTXOs function should emit events (and their combinations)
+BCN_STREAM_KEYS='satoshis,asm,expHash,mod,publicKey'
+
+# Mempool Cleanup Settings
+BCN_MEMPOOL_CLEANUP_INTERVAL_MS='900000' # 15 minutes
+BCN_MEMPOOL_CLEANUP_ENDPOINT_ENABLED='false' # recommended to be disabled in .env mainnet configuration
+BCN_MEMPOOL_STALE_GRACE_HOURS='2' # Number of hours after which a mempool transaction is considered stale and can be removed
 ```
 
 </font>
+
+## How to Connect to the Database Directly
+
+You can connect to the Postgres database to inspect synced data. To connect, obtain the docker container ID of the database with the command below.
+<font size=1>
+
+```sh
+docker ps
+```
+
+</font>
+Then use the container ID to run the psql client inside the database container.
+<font size=1>
+
+```sh
+docker exec -it <container_id> psql -h localhost -p 5432 -U bcn bcn
+```
+
+</font>
+
+See the [DB schema](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql) for an overview of tables and relations.
 
 ## Client Side Library
 
@@ -226,23 +336,20 @@ const computer = new Computer(conf)
 const address = computer.getAddress()
 
 // Fund client side library
-const { txId, vout } = await computer.faucet(1e4)
-
-// Return the utxos
-expect(await new Computer(conf).getUtxos(address)).deep.eq([`${txId}:${vout}`])
+const { txId } = await computer.faucet(1e4)
 
 // Return the balance
-expect(await new Computer(conf).getBalance(address).balance).eq(1e4)
+expect((await computer.getBalance(address)).balance).eq(BigInt(1e4))
 
 // Return the transactions
-expect(await new Computer(conf).listTxs(address)).deep.eq({
+expect(await computer.listTxs(address)).deep.eq({
   sentTxs: [],
   receivedTxs: [
     {
       txId,
-      inputsSatoshis: 0,
-      outputsSatoshis: 1e4,
-      satoshis: 1e4,
+      inputsSatoshis: 0n,
+      outputsSatoshis: 10_000n,
+      satoshis: 10_000n,
     },
   ],
 })
@@ -270,7 +377,6 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 | [list-txs](./list-txs.md) | List sent and received transactions for a given address. |
 | [sent-outputs](./sent-outputs.md) | List sent outputs of a wallet. |
 | [received-outputs](./received-outputs.md) | List received outputs of a wallet. |
-| [utxos](./utxos.md) | List unspent outputs of a wallet. |
 
 #### Transactions
 
@@ -279,6 +385,7 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 |-------------------------------------|----------------------------------------------------|
 | [ancestors](./ancestors.md) | Get the ancestors of a transaction. |
 | [bulk](./bulk.md) | Get raw transactions for a list of transaction ids. |
+| [hex](./hex.md) | Get a transaction in hex format. |
 | [json](./json.md) | Get a transaction in json format. |
 | [post](./post.md) | Post a transaction to the Bitcoin network. |
 
@@ -288,17 +395,20 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 | Method | Description |
 |-------------------------------------|----------------------------------------------------|
 | [rpc](./rpc.md) | Call a Bitcoin RPC method. |
+| [clean-mempool](./clean-mempool.md) | Remove stale unconfirmed mempool entries from the DB. |
 
 #### Query revisions
 
 {.compact}
 | Method | Description |
 |-------------------------------------|----------------------------------------------------|
+| [get-txos](./get-txos.md) | Get all the transaction outputs based on specific query parameters. |
+| [latest](./latest.md) | Get the latest revision of a smart contract. |
 | [next](./next.md) | Get the next revision of a given revision. |
-| [prev](./prev.md) | Get the previous revision of a given revision. |
 | [non-standard-utxos](./non-standard-utxos.md) | Query revisions by module specifier, public key, limit, order, offset and list of transaction ids. |
-| [revs](./revs.md) | Get the revisions of a list of transactions. |
+| [prev](./prev.md) | Get the previous revision of a given revision. |
 | [revToId](./revtoid.md) | Given a revision, get the id of the smart contract. |
+| [subscribe](./subscribe.md) | Subscribe to new revisions matching specific query parameters. |
 
 <!--  ### Configure Parallelism
 
@@ -324,6 +434,6 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 | 16   | 32GB | 4h 45m    | $440          |
  -->
 
-## Versioning
+## Version compatibility
 
 If you run your own node, make sure to use the same versions of Lib and Node.
