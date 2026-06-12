@@ -7,6 +7,11 @@ import { Amount, Escrow, TBC777, EscrowAuditor } from '../src/tbc777.js'
 
 const envPaths = [path.resolve(process.cwd(), './packages/node/.env'), '../node/.env']
 
+const sleep = (ms: number): Promise<void> =>
+  new Promise((resolve) => {
+    setTimeout(resolve, ms)
+  })
+
 const INITIAL_AMOUNT = 30n
 const TEST_NAME = 'test'
 const TEST_SYMBOL = 'TST'
@@ -162,6 +167,30 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     await minter.broadcast(tx)
     return fresh
   }
+
+  // ============================================================
+  // TBC20 TRANSFER (base class — TBC777 / TBC777M inherit this)
+  // ============================================================
+  describe('TBC20 transfer (base class)', () => {
+    it('mint and partial transfer set recipient _owners on chain', async () => {
+      const tbc20Mod = await minter.deploy(`export ${TBC20}`)
+      const to = minter.getPublicKey()
+      const token = await minter.new(
+        TBC20,
+        [{ to, amount: 10n, name: TEST_NAME, symbol: TEST_SYMBOL }],
+        tbc20Mod,
+      )
+      const { tx, effect } = await minter.encode({
+        exp: `token.transfer('${black.getPublicKey()}', 3n)`,
+        env: { token: token._rev },
+        mod: tbc20Mod,
+      })
+      await minter.broadcast(tx)
+      const child = effect.res as SmartContract<typeof TBC20>
+      expect(child._owners).to.deep.equal([black.getPublicKey()])
+      expect(child.amount).to.eq(3n)
+    })
+  })
 
   // ============================================================
   // PRIMARY GOAL: NO-INFLATION INVARIANT
@@ -1013,6 +1042,95 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 
     it('concurrent claims from multiple tokens on the same escrow respect inRevs ordering', async () => {
       // TODO
+    })
+  })
+
+  // ============================================================
+  // CHESS APP COMPATIBILITY (mirrors tbc777m.test.ts chess flow)
+  // ============================================================
+  describe('Chess app compatibility', () => {
+    it('Should work atomically for a chess game without timeout', async () => {
+      class Chess extends Contract {
+        deposits!: [Root, Rev][]
+        withdraws!: [Root, Id, Amount][]
+        publicKeyW!: string
+        publicKeyB!: string
+        tokenIdW!: Id
+        tokenIdB!: Id
+        root!: Root
+
+        constructor(root: Root) {
+          super({ deposits: [], withdraws: [], finalWithdraws: [], root })
+        }
+
+        async acceptDeposit(token: any, amount: Amount, nextOwner: string) {
+          token.deposit(this._id, amount)
+          this.deposits.push(token.depositTuple as [Root, Rev])
+          this._owners = [nextOwner]
+          if (!this.publicKeyB) {
+            this.tokenIdW = token._id as Id
+            this.publicKeyB = nextOwner
+          } else if (!this.publicKeyW) {
+            this.tokenIdB = token._id as Id
+            this.publicKeyW = nextOwner
+          } else {
+            throw new Error('Game is already fully funded')
+          }
+        }
+
+        move(amount: Amount, isGameOver: boolean = false) {
+          if (!this.publicKeyB || !this.publicKeyW) throw new Error('Game not yet fully funded')
+          if (!isGameOver) {
+            if (this._owners[0] === this.publicKeyW) this._owners = [this.publicKeyB]
+            else this._owners = [this.publicKeyW]
+          } else {
+            let winnerId: Id
+            if (this._owners[0] === this.publicKeyW) winnerId = this.tokenIdW
+            else winnerId = this.tokenIdB
+            this.withdraws = [[this.root, winnerId, amount]]
+          }
+        }
+      }
+
+      const amount = 30n
+      const token = await createFreshToken(amount)
+      const whiteTokenM = await token.transfer(white.getPublicKey(), 10n)
+      const blackTokenM = await token.transfer(black.getPublicKey(), 10n)
+      if (!whiteTokenM || !blackTokenM) throw new Error('expected player token UTXOs')
+
+      const chess = await white.new(Chess, [token.root as Root])
+      const whiteToken = await white.sync<typeof TBC777>(whiteTokenM._rev)
+      await (chess as any).acceptDeposit(whiteToken, 4n, black.getPublicKey())
+      expect(chess._owners).deep.eq([black.getPublicKey()])
+
+      const blackToken = await black.sync<typeof TBC777>(blackTokenM._rev)
+      const { tx: tx1, effect: effect1 } = await black.encode({
+        exp: `chess.acceptDeposit(blackToken, 6n, '${white.getPublicKey()}')`,
+        env: { chess: chess._rev, blackToken: blackToken._rev },
+      })
+      await black.broadcast(tx1)
+      const chess1 = effect1.env.chess as SmartContract<typeof Chess>
+
+      expect(chess1.deposits).deep.eq([
+        [token.root, whiteTokenM._rev],
+        [token.root, blackTokenM._rev],
+      ])
+      expect(chess.withdraws).deep.eq([])
+
+      const { tx: tx2, effect: effect2 } = await white.encode({
+        exp: `chess.move(10n, true)`,
+        env: { chess: chess1._rev },
+      })
+      await white.broadcast(tx2)
+      const chess2 = effect2.env.chess as SmartContract<typeof Chess>
+      expect(chess2.withdraws).deep.eq([[token.root, whiteToken._id, 10n]])
+
+      expect(whiteToken._rev).eq(await white.latest(whiteToken._rev))
+      expect(whiteToken._owners).deep.eq([white.getPublicKey()])
+
+      await sleep(3000)
+      await whiteToken.withdraw(chess2._rev as Rev)
+      expect(whiteToken.amount).eq(16n)
     })
   })
 })

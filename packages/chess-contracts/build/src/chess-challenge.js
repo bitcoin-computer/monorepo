@@ -8,10 +8,14 @@ export class ChessChallengeTxWrapper extends Contract {
             tokenRoot,
             publicKeyW,
             accepted: false,
+            canceledSeen: false,
         });
     }
     setAccepted() {
         this.accepted = true;
+    }
+    setCanceledSeen() {
+        this.canceledSeen = true;
     }
 }
 export class ChessChallengeTxWrapperHelper {

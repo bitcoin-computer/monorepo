@@ -430,7 +430,7 @@ export class TBC777 extends TBC20 {
     // recipient receives a clean token instance with no inherited claim
     // history.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _id, _root, _rev, withdrawn, finalWithdrawn, escrow, ...preserved } = this
+    const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this
 
     return new ctor({ ...preserved, to, amount })
   }

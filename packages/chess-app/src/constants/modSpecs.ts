@@ -12,12 +12,12 @@ if (
   import.meta.env?.VITE_CHESS_GAME_MOD_SPEC &&
   import.meta.env?.VITE_CHESS_USER_MOD_SPEC &&
   import.meta.env?.VITE_CHESS_CHALLENGE_MOD_SPEC &&
-  (import.meta.env?.VITE_TBC20_MOD_SPEC || import.meta.env?.VITE_TOKEN_MOD_SPEC)
+  import.meta.env?.VITE_TBC20_MOD_SPEC
 ) {
   VITE_CHESS_GAME_MOD_SPEC = import.meta.env.VITE_CHESS_GAME_MOD_SPEC
   VITE_CHESS_USER_MOD_SPEC = import.meta.env.VITE_CHESS_USER_MOD_SPEC
   VITE_CHESS_CHALLENGE_MOD_SPEC = import.meta.env.VITE_CHESS_CHALLENGE_MOD_SPEC
-  VITE_TBC20_MOD_SPEC = import.meta.env.VITE_TBC20_MOD_SPEC || import.meta.env.VITE_TOKEN_MOD_SPEC
+  VITE_TBC20_MOD_SPEC = import.meta.env.VITE_TBC20_MOD_SPEC
 } else {
   if (!process.env.VITE_CHESS_GAME_MOD_SPEC)
     throw new Error('VITE_CHESS_GAME_MOD_SPEC is not defined in the .env file.')
@@ -25,12 +25,12 @@ if (
     throw new Error('VITE_CHESS_USER_MOD_SPEC is not defined in the .env file.')
   if (!process.env.VITE_CHESS_CHALLENGE_MOD_SPEC)
     throw new Error('VITE_CHESS_CHALLENGE_MOD_SPEC is not defined in the .env file.')
-  if (!process.env.VITE_TBC20_MOD_SPEC && !process.env.VITE_TOKEN_MOD_SPEC)
+  if (!process.env.VITE_TBC20_MOD_SPEC)
     throw new Error('VITE_TBC20_MOD_SPEC is not defined in the .env file.')
   VITE_CHESS_GAME_MOD_SPEC = process.env.VITE_CHESS_GAME_MOD_SPEC
   VITE_CHESS_USER_MOD_SPEC = process.env.VITE_CHESS_USER_MOD_SPEC
   VITE_CHESS_CHALLENGE_MOD_SPEC = process.env.VITE_CHESS_CHALLENGE_MOD_SPEC
-  VITE_TBC20_MOD_SPEC = process.env.VITE_TBC20_MOD_SPEC || process.env.VITE_TOKEN_MOD_SPEC!
+  VITE_TBC20_MOD_SPEC = process.env.VITE_TBC20_MOD_SPEC
 }
 
 export {
