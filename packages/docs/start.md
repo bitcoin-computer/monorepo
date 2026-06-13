@@ -159,9 +159,12 @@ npm run up
 
 ### Run the Tests
 
-Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands. The commands will be executed in each package. You can also navigate the a package and run the same scripts there.
+Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands. The commands will be executed in each package. You can also navigate a package and run the same scripts there.
 
 ```shell
+# Build all projects
+npm run build
+
 # Test
 npm run test
 
