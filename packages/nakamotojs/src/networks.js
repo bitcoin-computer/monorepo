@@ -130,6 +130,39 @@ export const dogecointestnet = {
   scriptHash: 0xc4,
   wif: 0xf1,
 };
+export const wojakcoin = {
+  messagePrefix: '\x18WojakCoin Signed Message:\n',
+  bech32: 'wojak',
+  bip32: {
+    public: 0x0488b21e,
+    private: 0x0488ade4,
+  },
+  pubKeyHash: 0x49,
+  scriptHash: 0x05,
+  wif: 0xc9,
+};
+export const wojakcoinregtest = {
+  messagePrefix: '\x18WojakCoin Signed Message:\n',
+  bech32: 'rwojak',
+  bip32: {
+    public: 0x043587cf,
+    private: 0x04358394,
+  },
+  pubKeyHash: 0x6f,
+  scriptHash: 0xc4,
+  wif: 0xef,
+};
+export const wojakcointestnet = {
+  messagePrefix: '\x18WojakCoin Signed Message:\n',
+  bech32: 'twojak',
+  bip32: {
+    public: 0x043587cf,
+    private: 0x04358394,
+  },
+  pubKeyHash: 0x6f,
+  scriptHash: 0xc4,
+  wif: 0xef,
+};
 export function getNetwork(chain, network) {
   switch (chain) {
     case 'BTC':
@@ -176,6 +209,17 @@ export function getNetwork(chain, network) {
         default:
           throw new Error(`Invalid network ${network}`);
       }
+    case 'WOJAK':
+      switch (network) {
+        case 'mainnet':
+          return wojakcoin;
+        case 'testnet':
+          return wojakcointestnet;
+        case 'regtest':
+          return wojakcoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
     default:
       throw new Error(`Invalid chain ${network}`);
   }
@@ -197,4 +241,8 @@ export const NETWORKS = {
   dogecoin,
   dogecoinregtest,
   dogecointestnet,
+  // WojakCoin
+  wojakcoin,
+  wojakcoinregtest,
+  wojakcointestnet,
 };
