@@ -27,7 +27,7 @@ import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
 import { ChallengeListWrapper } from './ChallengesListWrapper'
 import { Computer, SmartContract } from '@bitcoin-computer/lib'
-import { GamesListWrapper } from './GamesListWrapper'
+import { ActiveTurnsList, GameListsProvider, MyGamesList } from './GamesListWrapper'
 
 const winnerModal = 'winner-modal'
 
@@ -670,12 +670,17 @@ export function ChessBoard() {
           >
             New Game
           </button>
-          <div>
-            <GamesListWrapper setGameId={setGameId} setUser={setUser} />
-          </div>
-          <div>
-            <ChallengeListWrapper user={user} />
-          </div>
+          <GameListsProvider setUser={setUser}>
+            <div>
+              <ActiveTurnsList setGameId={setGameId} />
+            </div>
+            <div>
+              <ChallengeListWrapper user={user} />
+            </div>
+            <div>
+              <MyGamesList setGameId={setGameId} />
+            </div>
+          </GameListsProvider>
         </div>
 
         {/* Chessboard Column */}

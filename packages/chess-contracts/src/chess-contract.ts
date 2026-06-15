@@ -241,6 +241,30 @@ export class ChessContractHelper {
     }
   }
 
+  async addGameToUserIfNeeded(gameId: string): Promise<void> {
+    if (!this.userMod || !gameId) return
+    const [userRev] = await this.computer.getOUTXOs({
+      mod: this.userMod,
+      publicKey: this.computer.getPublicKey(),
+    })
+    if (!userRev) return
+    const userObj = await this.computer.sync<typeof User>(userRev)
+    if (userObj.games.includes(gameId)) return
+
+    const latestUserRev = await this.computer.latest(userObj._id)
+    const latestUser = await this.computer.sync<typeof User>(latestUserRev)
+    if (latestUser.games.includes(gameId)) return
+
+    const { tx } = await this.computer.encodeCall({
+      target: latestUser,
+      property: 'addGame',
+      args: [gameId],
+      mod: this.userMod,
+    })
+    if (!tx) throw new Error('Failed to record game on user profile')
+    await this.computer.broadcast(tx)
+  }
+
   async createGame(
     tokenRoot: string,
     wagerAmount: bigint,
@@ -276,7 +300,10 @@ export class ChessContractHelper {
       await coSignComputer.sign(tx)
     }
     await this.computer.broadcast(tx)
-    return effect.env.chess as SmartContract<typeof ChessContract>
+    const chess = effect.env.chess as SmartContract<typeof ChessContract>
+    const gameId = chess._id ?? chess._root
+    await this.addGameToUserIfNeeded(gameId)
+    return chess
   }
 
   async findToken(
@@ -304,17 +331,7 @@ export class ChessContractHelper {
     promotion: string,
   ): Promise<{ newChessContract: SmartContract<typeof ChessContract>; isGameOver: boolean }> {
     if (chessContract && chessContract.sans.length < 2) {
-      const [userRev] = await this.computer.getOUTXOs({
-        mod: this.userMod,
-        publicKey: this.computer.getPublicKey(),
-      })
-      if (userRev) {
-        const userObj = await this.computer.sync<typeof User>(userRev)
-        const gameId = chessContract._id
-        if (!userObj.games.includes(gameId)) {
-          await userObj.addGame(gameId)
-        }
-      }
+      await this.addGameToUserIfNeeded(chessContract._id)
     }
 
     const { tx, effect } = (await this.computer.encodeCall({

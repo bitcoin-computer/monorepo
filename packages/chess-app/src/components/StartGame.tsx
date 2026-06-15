@@ -13,6 +13,7 @@ import {
 } from '../constants/modSpecs'
 import { SmartContract } from '@bitcoin-computer/lib'
 import { isCreatorRefunded } from './utils'
+import { notifyGamesUpdated } from './utils/gamesRefresh'
 
 export const startGameModal = 'start-game-modal'
 
@@ -63,6 +64,7 @@ export function StartGameModalContent({
         'Black',
         challenge.publicKeyW,
       )
+      await helper.addGameToUserIfNeeded(chess._id)
 
       // Mark challenge as accepted
       try {
@@ -72,6 +74,7 @@ export function StartGameModalContent({
       }
 
       Modal.hideModal(startGameModal)
+      notifyGamesUpdated()
       navigate(`/game/${chess._id}`)
     } catch (err) {
       showSnackBar(err instanceof Error ? err.message : 'Error occurred!', false)
