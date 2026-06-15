@@ -35,7 +35,7 @@ A configuration object with the properties listed below. All properties are opti
 | addressType | Address type | `p2pkh` |
 | url | Url of a Bitcoin Computer Node | `https://rltc.node.bitcoincomputer.io` |
 | satPerByte | Fee in satoshi per byte | `2` |
-| moduleStorageType | Store JavaScript modules on Taproot or multisig scripts | `taproot` |
+| moduleStorageType | Store JavaScript modules on Taproot (`taproot`) or bare multisig (`multisig`). Taproot (default where available) produces *no* hygiene dust outputs for the module encoding txs and supports larger modules (with SegWit discount) but uses a two-tx pattern. Multisig uses single-tx direct data storage (with hygiene dust outputs). Choose based on minimization goals and high-throughput single-tx UX needs. See [Fees](../../fees.md) "User Choices..." section. | `taproot` |
 
 ### Return Value
 

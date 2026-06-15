@@ -20,7 +20,7 @@ You can build almost all smart contracts with these.
 
 ### Modules
 
-Deploy JavaScript modules to avoid redundant storage smart contract storage on chain and reduce transaction fees.
+Deploy JavaScript modules (preferably via taproot) to avoid redundant on-chain storage for smart contracts, keep using expressions tiny, and minimize on-chain technical dust / hygiene dust costs. See [Fees](../../fees.md) for details and best practices.
 
 {.compact}
 | Method | Description |
