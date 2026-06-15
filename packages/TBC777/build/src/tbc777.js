@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 import { TBC20 } from './tbc20.js';
 export class Escrow extends Contract {
 }
@@ -117,7 +118,7 @@ export class TBC777 extends TBC20 {
     }
     _createTransferToken(to, amount) {
         const ctor = this.constructor;
-        const { _id, _root, _rev, withdrawn, finalWithdrawn, escrow, ...preserved } = this;
+        const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this;
         return new ctor({ ...preserved, to, amount });
     }
     deposit(escrow, deposit) {

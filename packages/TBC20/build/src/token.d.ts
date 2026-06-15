@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib';
+import { Computer, Contract } from '@bitcoin-computer/lib';
 export declare class Token extends Contract {
     amount: bigint;
     name: string;

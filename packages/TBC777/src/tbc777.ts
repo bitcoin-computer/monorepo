@@ -41,7 +41,7 @@
 
 // TYPES & INTERFACES
 
-import { Id, Rev, Root, InnerComputer } from '@bitcoin-computer/lib'
+import { Id, Rev, Root, Contract } from '@bitcoin-computer/lib'
 import { TBC20, TBC20ConstructorParams } from './tbc20.js'
 
 export type Constructor<T> = new (...args: any[]) => T
@@ -68,8 +68,6 @@ export type ClaimEntry = [Root, Id, Amount]
  * totalFinalAuthorized calculations.
  */
 export type ClaimAmountEntry = [Id, Amount]
-
-declare const computer: InnerComputer
 
 /**
  * Canonical escrow interface (mandatory for all TBC777-compatible escrows).
@@ -432,7 +430,7 @@ export class TBC777 extends TBC20 {
     // recipient receives a clean token instance with no inherited claim
     // history.
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _id, _root, _rev, withdrawn, finalWithdrawn, escrow, ...preserved } = this
+    const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this
 
     return new ctor({ ...preserved, to, amount })
   }

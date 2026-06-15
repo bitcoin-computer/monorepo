@@ -1,5 +1,5 @@
 import { Computer } from '@bitcoin-computer/lib';
-import { TBC20, TBC777M } from '@bitcoin-computer/TBC777';
+import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777';
 import { ChessContract, ChessContractHelper } from '../src/chess-contract.js';
 import { ChessChallengeTxWrapper } from '../src/chess-challenge.js';
 import { User } from '../src/user.js';
@@ -23,9 +23,23 @@ for (const envPath of envPaths) {
 const url = process.env.BCN_URL ?? 'http://localhost:1031';
 const chain = process.env.BCN_CHAIN ?? 'LTC';
 const network = process.env.BCN_NETWORK ?? 'regtest';
-const sleep = (ms) => new Promise((resolve) => {
-    setTimeout(resolve, ms);
-});
+/** Keeps deployed module size down when inlining TBC777 + EscrowAuditor. */
+function stripComments(source) {
+    return source
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\/\/.*$/gm, '')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .join('\n');
+}
+async function deployTbc777Mod(deployer) {
+    return deployer.deploy(`
+    export ${stripComments(TBC20.toString())}
+    export ${stripComments(EscrowAuditor.toString())}
+    export ${stripComments(TBC777.toString())}
+  `);
+}
 async function ensureFunds(c, minSats = 10e8) {
     try {
         const { balance } = await c.getBalance();
@@ -35,6 +49,70 @@ async function ensureFunds(c, minSats = 10e8) {
     catch {
         await c.faucet(minSats);
     }
+}
+const sleep = (ms) => new Promise((resolve) => {
+    setTimeout(resolve, ms);
+});
+/** Confirm pending txs on regtest (faucet mines a block; use minter, not players). */
+async function confirmChainTip(miner) {
+    if (network !== 'regtest') {
+        await sleep(2000);
+        return;
+    }
+    await miner.faucet(1e8);
+}
+async function withdrawFromChess(player, tokenId, chessId, tbc777Mod) {
+    const latestTokenRev = await player.latest(tokenId);
+    const chessRev = await player.latest(chessId);
+    const { tx, effect } = await player.encode({
+        exp: `token.withdraw('${chessRev}')`,
+        env: { token: latestTokenRev },
+        mod: tbc777Mod,
+    });
+    await player.broadcast(tx);
+    return effect.env.token;
+}
+/** Fund a chess game: mint, split tokens, both deposits. Returns game state. */
+async function fundChessGame(opts) {
+    const { minter, white, black, tbc777Mod, chessMod, wager, timeLimit } = opts;
+    const mintAmount = opts.mintAmount ?? 30n;
+    const to = minter.getPublicKey();
+    const token = await minter.new(TBC777, [{ to, amount: mintAmount, name: 'chess-e2e', symbol: 'CHS' }], tbc777Mod);
+    await confirmChainTip(minter);
+    const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
+    await confirmChainTip(minter);
+    const blackTokenUtxo = await token.transfer(black.getPublicKey(), 10n);
+    await confirmChainTip(minter);
+    if (!whiteTokenUtxo || !blackTokenUtxo)
+        throw new Error('expected player token UTXOs');
+    const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod);
+    const whiteToken = await white.sync(whiteTokenUtxo._rev);
+    const { tx: whiteDepositTx, effect: whiteDepositEffect } = await white.encode({
+        exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+        env: { chess: chess._rev, whiteToken: whiteToken._rev },
+        mod: chessMod,
+    });
+    await white.broadcast(whiteDepositTx);
+    await confirmChainTip(minter);
+    const chessAfterWhiteDeposit = whiteDepositEffect.env.chess;
+    const blackToken = await black.sync(blackTokenUtxo._rev);
+    const chessHeadForBlack = await white.latest(chessAfterWhiteDeposit._id);
+    const { tx: tx1, effect: effect1 } = await black.encode({
+        exp: `chess.acceptDeposit(blackToken, ${wager}n, 'Black', '${white.getPublicKey()}')`,
+        env: { chess: chessHeadForBlack, blackToken: blackToken._rev },
+        mod: chessMod,
+    });
+    await black.broadcast(tx1);
+    await confirmChainTip(minter);
+    const chessFunded = effect1.env.chess;
+    return {
+        token,
+        whiteTokenUtxo,
+        blackTokenUtxo,
+        blackToken,
+        chess: chessAfterWhiteDeposit,
+        chessFunded,
+    };
 }
 describe('ChessContract', () => {
     describe('ChessContractHelper', () => {
@@ -67,6 +145,7 @@ describe('ChessContract', () => {
             expect(wrapper.tokenRoot).toBe('root456');
             expect(wrapper.publicKeyW).toBe('pubKeyW');
             expect(wrapper.accepted).toBe(false);
+            expect(wrapper.canceledSeen).toBe(false);
         });
     });
     describe('User', () => {
@@ -83,16 +162,16 @@ describe('ChessContract', () => {
         });
     });
     /**
-     * Same pattern as packages/TBC777/test/tbc777m.test.ts: deploy each mod once, reuse
-     * the returned spec strings for all tests (new wallets + faucet per test is fine).
+     * Deploy chess + TBC777 token mods once; reuse spec strings across tests.
      */
     describe('Chain integration (local BCN)', () => {
-        let tbc20Mod;
+        const TOKEN_SYMBOL = 'CHS';
+        let tbc777Mod;
         let chessMod;
         before(async () => {
             const deployer = new Computer({ url, chain, network });
             await deployer.faucet(20e8);
-            tbc20Mod = await deployer.deploy(`export ${TBC20}`);
+            tbc777Mod = await deployTbc777Mod(deployer);
             await deployer.faucet(20e8);
             chessMod = await deployChessModule(deployer, chessDeployRoot);
         });
@@ -117,6 +196,7 @@ describe('ChessContract', () => {
                 expect(chess.finalWithdraws).toEqual([]);
                 expect(chess.tokenIdW).toBe('');
                 expect(chess.tokenIdB).toBe('');
+                expect(chess.canceledSeen).toBe(false);
             });
             it('Should reject moves when game is not fully funded', async () => {
                 const timeLimit = 60n * 10n;
@@ -131,8 +211,22 @@ describe('ChessContract', () => {
                     await computer.broadcast(tx);
                 }).rejects.toThrow('Game not yet fully funded');
             });
+            it('Should reject resign when game is not fully funded', async () => {
+                await computer.faucet(1e8);
+                const timeLimit = 60n * 10n;
+                const chess = await computer.new(ChessContract, ['root123', 5n, timeLimit], chessMod);
+                await expect(async () => {
+                    const { tx } = await computer.encodeCall({
+                        target: chess,
+                        property: 'resign',
+                        args: [],
+                        mod: chessMod,
+                    });
+                    await computer.broadcast(tx);
+                }).rejects.toThrow('Game not yet started');
+            });
         });
-        describe('E2E TBC777M escrow + ChessContract', () => {
+        describe('E2E TBC777 escrow + ChessContract', () => {
             let minter;
             let white;
             let black;
@@ -147,12 +241,12 @@ describe('ChessContract', () => {
                 const wager = 5n;
                 const timeLimit = 60n * 10n;
                 const to = minter.getPublicKey();
-                const token = await minter.new(TBC777M, [{ to, amount: 20n, name: 't' }], tbc20Mod);
-                const whiteTokenM = await token.transfer(white.getPublicKey(), 10n);
-                if (!whiteTokenM)
+                const token = await minter.new(TBC777, [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
+                const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
+                if (!whiteTokenUtxo)
                     throw new Error('expected white token UTXO');
                 const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod);
-                const whiteToken = await white.sync(whiteTokenM._rev);
+                const whiteToken = await white.sync(whiteTokenUtxo._rev);
                 await expect(async () => {
                     const { tx } = await white.encode({
                         exp: `chess.acceptDeposit(whiteToken, 3n, 'W', '${black.getPublicKey()}')`,
@@ -162,39 +256,176 @@ describe('ChessContract', () => {
                     await white.broadcast(tx);
                 }).rejects.toThrow();
             });
-            it('Should run escrow, fool mate, and credit winner balance on withdraw', async () => {
+            it('Should let the creator cancel a pending game and recover their wager', async () => {
                 const wager = 5n;
                 const timeLimit = 60n * 10n;
-                const mintAmount = 30n;
-                const name = 'chess-e2e';
                 const to = minter.getPublicKey();
-                const token = await minter.new(TBC777M, [{ to, amount: mintAmount, name }], tbc20Mod);
-                const whiteTokenM = await token.transfer(white.getPublicKey(), 10n);
-                const blackTokenM = await token.transfer(black.getPublicKey(), 10n);
-                if (!whiteTokenM || !blackTokenM)
-                    throw new Error('expected player token UTXOs');
+                const token = await minter.new(TBC777, [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
+                await confirmChainTip(minter);
+                const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
+                if (!whiteTokenUtxo)
+                    throw new Error('expected white token UTXO');
                 const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod);
-                const whiteToken = await white.sync(whiteTokenM._rev);
-                expect(whiteToken.amount).toBe(10n);
-                await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey());
-                expect(chess._owners).toEqual([black.getPublicKey()]);
-                const whiteAfterFirstDeposit = await white.sync(await white.latest(whiteTokenM._rev));
-                expect(whiteAfterFirstDeposit.amount).toBe(5n);
-                const blackToken = await black.sync(blackTokenM._rev);
-                // After white’s deposit, chess advanced — use the current head rev (not stale `chess._rev`).
-                const chessHeadForBlack = await white.latest(chess._rev);
-                const { tx: tx1, effect: effect1 } = await black.encode({
-                    exp: `chess.acceptDeposit(blackToken, ${wager}n, 'Black', '${white.getPublicKey()}')`,
-                    env: { chess: chessHeadForBlack, blackToken: blackToken._rev },
+                const whiteToken = await white.sync(whiteTokenUtxo._rev);
+                const { tx: depositTx, effect: depositEffect } = await white.encode({
+                    exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+                    env: { chess: chess._rev, whiteToken: whiteToken._rev },
                     mod: chessMod,
                 });
-                await black.broadcast(tx1);
-                const chess1 = effect1.env.chess;
-                expect(chess1.deposits).toEqual([
-                    [token._root, whiteTokenM._rev],
-                    [token._root, blackTokenM._rev],
+                await white.broadcast(depositTx);
+                await confirmChainTip(minter);
+                const chessPending = depositEffect.env.chess;
+                expect(chessPending.creatorPublicKey).toBe(white.getPublicKey());
+                expect(chessPending.publicKeyW).toBe('');
+                expect(chessPending.deposits.length).toBe(1);
+                expect(chessPending._owners).toEqual([white.getPublicKey(), black.getPublicKey()]);
+                expect(chessPending.withdraws).toEqual([]);
+                expect(chessPending.finalWithdraws).toEqual([]);
+                const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod);
+                expect(helper.canCancel(chessPending)).toBe(true);
+                expect(helper.isCreator(chessPending)).toBe(true);
+                await helper.cancelGameAndWithdraw(chessPending._id);
+                await confirmChainTip(minter);
+                const whiteTokenFinal = await white.sync(await white.latest(whiteToken._id));
+                expect(whiteTokenFinal.amount).toBe(10n);
+            });
+            it('Should reject cancel from the invited opponent', async () => {
+                const wager = 5n;
+                const timeLimit = 60n * 10n;
+                const to = minter.getPublicKey();
+                const token = await minter.new(TBC777, [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
+                await confirmChainTip(minter);
+                const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
+                if (!whiteTokenUtxo)
+                    throw new Error('expected white token UTXO');
+                const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod);
+                const whiteToken = await white.sync(whiteTokenUtxo._rev);
+                const { tx: depositTx, effect: depositEffect } = await white.encode({
+                    exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+                    env: { chess: chess._rev, whiteToken: whiteToken._rev },
+                    mod: chessMod,
+                });
+                await white.broadcast(depositTx);
+                await confirmChainTip(minter);
+                const chessPending = depositEffect.env.chess;
+                const blackHelper = ChessContractHelper.fromModSpecs(black, chessMod, undefined, tbc777Mod);
+                await expect(blackHelper.cancelGameAndWithdraw(chessPending._id)).rejects.toThrow('Cannot cancel');
+            });
+            it('Should reject second deposit from the creator using their own token', async () => {
+                const wager = 5n;
+                const timeLimit = 60n * 10n;
+                const to = minter.getPublicKey();
+                const token = await minter.new(TBC777, [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
+                await confirmChainTip(minter);
+                const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
+                if (!whiteTokenUtxo)
+                    throw new Error('expected white token UTXO');
+                const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod);
+                const whiteToken = await white.sync(whiteTokenUtxo._rev);
+                await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey());
+                const chessHead = await white.latest(chess._id);
+                const whiteTokenAfterDeposit = await white.sync(await white.latest(whiteToken._id));
+                await expect(async () => {
+                    const { tx } = await white.encode({
+                        exp: `chess.acceptDeposit(whiteTokenAfterDeposit, ${wager}n, 'FakeBlack', '${white.getPublicKey()}')`,
+                        env: { chess: chessHead, whiteTokenAfterDeposit: whiteTokenAfterDeposit._rev },
+                        mod: chessMod,
+                    });
+                    await white.broadcast(tx);
+                }).rejects.toThrow('Only the invited opponent can accept the game');
+            });
+            it('Should reject cancel after the game has started', async () => {
+                const wager = 5n;
+                const timeLimit = 60n * 10n;
+                const { chess, chessFunded } = await fundChessGame({
+                    minter,
+                    white,
+                    black,
+                    tbc777Mod,
+                    chessMod,
+                    wager,
+                    timeLimit,
+                });
+                expect(chessFunded.publicKeyW).toBe(white.getPublicKey());
+                const chessHead = await white.latest(chess._id);
+                const chessStarted = await white.sync(chessHead);
+                await expect(async () => {
+                    const { tx } = await white.encodeCall({
+                        target: chessStarted,
+                        property: 'cancel',
+                        args: [],
+                        mod: chessMod,
+                    });
+                    await white.broadcast(tx);
+                }).rejects.toThrow('Game started use resign to forfeit');
+            });
+            it('Should reject resign on a pending game via helper', async () => {
+                const wager = 5n;
+                const timeLimit = 60n * 10n;
+                const to = minter.getPublicKey();
+                const token = await minter.new(TBC777, [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
+                const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
+                if (!whiteTokenUtxo)
+                    throw new Error('expected white token UTXO');
+                const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod);
+                const whiteToken = await white.sync(whiteTokenUtxo._rev);
+                await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey());
+                const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod);
+                await expect(helper.resign(chess._id)).rejects.toThrow('Game not yet started');
+            });
+            it('Should settle on resign and credit winner balance on withdraw', async () => {
+                const wager = 5n;
+                const timeLimit = 60n * 10n;
+                const { token, whiteTokenUtxo, blackTokenUtxo, blackToken, chess, chessFunded } = await fundChessGame({
+                    minter,
+                    white,
+                    black,
+                    tbc777Mod,
+                    chessMod,
+                    wager,
+                    timeLimit,
+                });
+                expect(chessFunded.deposits).toEqual([
+                    [token._root, whiteTokenUtxo._rev],
+                    [token._root, blackTokenUtxo._rev],
                 ]);
-                expect(chess1.withdraws).toEqual([]);
+                expect(chessFunded.withdraws).toEqual([]);
+                expect(chessFunded.finalWithdraws).toEqual([]);
+                // After both deposits it is white’s turn.
+                expect(chessFunded._owners).toEqual([white.getPublicKey()]);
+                const chessHead = await white.latest(chess._id);
+                const chessToResign = await white.sync(chessHead);
+                const { tx: resignTx, effect: resignEffect } = await white.encodeCall({
+                    target: chessToResign,
+                    property: 'resign',
+                    args: [],
+                    mod: chessMod,
+                });
+                await white.broadcast(resignTx);
+                const chessFinal = resignEffect.env
+                    .__bc__;
+                const totalPot = wager * 2n;
+                expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]]);
+                expect((await black.sync(await black.latest(blackToken._id))).amount).toBe(5n);
+                const blackTokenFinal = await withdrawFromChess(black, blackToken._id, chess._id, tbc777Mod);
+                expect(blackTokenFinal.amount).toBe(15n);
+            });
+            it('Should run fool mate and credit winner balance on withdraw', async () => {
+                const wager = 5n;
+                const timeLimit = 60n * 10n;
+                const { token, whiteTokenUtxo, blackTokenUtxo, blackToken, chess, chessFunded } = await fundChessGame({
+                    minter,
+                    white,
+                    black,
+                    tbc777Mod,
+                    chessMod,
+                    wager,
+                    timeLimit,
+                });
+                expect(chessFunded.deposits).toEqual([
+                    [token._root, whiteTokenUtxo._rev],
+                    [token._root, blackTokenUtxo._rev],
+                ]);
                 // Fool’s mate (black wins): 1.f3 e5 2.g4 Qh4#
                 const moves = [
                     { from: 'f2', to: 'f3', promotion: '', player: white },
@@ -203,7 +434,7 @@ describe('ChessContract', () => {
                     { from: 'd8', to: 'h4', promotion: '', player: black },
                 ];
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                let currentChess = chess1;
+                let currentChess = chessFunded;
                 for (const m of moves) {
                     const latest = await m.player.latest(currentChess._id);
                     const synced = await m.player.sync(latest);
@@ -214,19 +445,13 @@ describe('ChessContract', () => {
                         mod: chessMod,
                     });
                     await m.player.broadcast(tx);
+                    await confirmChainTip(minter);
                     currentChess = effect.env.__bc__;
-                    await sleep(300);
                 }
                 const chessFinal = currentChess;
                 const totalPot = wager * 2n;
-                // The winning move now settles the pot atomically — no claimWin step.
                 expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]]);
-                const blackTokenBeforeWithdraw = await black.sync(await black.latest(blackTokenM._rev));
-                expect(blackTokenBeforeWithdraw.amount).toBe(5n);
-                // const rev = await white.latest(chessFinal._id)
-                const tok = await black.sync(await black.latest(blackTokenM._rev));
-                await tok.withdraw(chessFinal._rev);
-                const blackTokenFinal = await black.sync(await black.latest(blackTokenM._rev));
+                const blackTokenFinal = await withdrawFromChess(black, blackToken._id, chess._id, tbc777Mod);
                 expect(blackTokenFinal.amount).toBe(15n);
             });
         });

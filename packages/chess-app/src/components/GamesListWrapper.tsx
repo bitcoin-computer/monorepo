@@ -33,7 +33,7 @@ export const GamesListWrapper = ({
 
     gamesList.forEach((game) => {
       if (game.sans && game.sans.length === 0) {
-        availableGames.push({ gameId: game._id, new: true })
+        availableGames.push({ gameId: game._id, new: !game.canceledSeen })
       }
     })
 
@@ -54,7 +54,6 @@ export const GamesListWrapper = ({
   }
   const refreshGames = async () => {
     const availableGames: GameType[] = await getLatestGames()
-    console.log('iavailableGames: ', availableGames)
     setGames(availableGames)
   }
 
@@ -66,6 +65,25 @@ export const GamesListWrapper = ({
     }
     fetch()
   }, [])
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined
+
+    const subscribe = async () => {
+      unsubscribe = await computer.streamTXOs(
+        { mod: VITE_CHESS_GAME_MOD_SPEC, publicKey: computer.getPublicKey() },
+        () => {
+          refreshGames()
+        },
+        (err) => console.error('Game stream error:', err),
+      )
+    }
+    subscribe()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [computer])
 
   return (
     <>

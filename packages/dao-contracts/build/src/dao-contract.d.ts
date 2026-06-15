@@ -1,5 +1,5 @@
 import { Token } from '@bitcoin-computer/TBC20';
-import { SmartContract } from '@bitcoin-computer/lib';
+import { SmartContract, Contract } from '@bitcoin-computer/lib';
 type ElectionType = {
     proposalMod: string;
     tokenRoot: string;

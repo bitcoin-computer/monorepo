@@ -1,5 +1,20 @@
 import { ChessContract, Chess as ChessLib } from '@bitcoin-computer/chess-contracts'
-import { SmartContract } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
+
+export async function isCreatorRefunded(
+  computer: Computer,
+  chess: SmartContract<typeof ChessContract>,
+): Promise<boolean> {
+  if (chess.publicKeyW || !chess.tokenIdW || chess.deposits.length !== 1) return false
+  try {
+    const latestChessRev = await computer.latest(chess._id)
+    const latestTokenRev = await computer.latest(chess.tokenIdW)
+    const token = (await computer.sync(latestTokenRev)) as { withdrawn?: string[] }
+    return (token.withdrawn ?? []).includes(latestChessRev)
+  } catch {
+    return false
+  }
+}
 
 export function getGameState(chessContract: SmartContract<typeof ChessContract>): string {
   if (!chessContract) return 'In Progress'

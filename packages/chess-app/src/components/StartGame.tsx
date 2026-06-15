@@ -12,6 +12,7 @@ import {
   VITE_TBC20_MOD_SPEC,
 } from '../constants/modSpecs'
 import { SmartContract } from '@bitcoin-computer/lib'
+import { isCreatorRefunded } from './utils'
 
 export const startGameModal = 'start-game-modal'
 
@@ -19,10 +20,12 @@ export function StartGameModalContent({
   challenge,
   chess,
   accepted,
+  canceled,
 }: {
   challenge: ChessChallengeTxWrapper | null
   chess: SmartContract<typeof ChessContract> | null
   accepted: boolean
+  canceled: boolean
 }) {
   const computer = useContext(ComputerContext)
   const navigate = useNavigate()
@@ -123,13 +126,18 @@ export function StartGameModalContent({
         </p>
       </div>
       <div className="p-6">
-        {accepted && (
+        {canceled && (
+          <div className="mb-4 text-sm text-gray-700 dark:text-gray-200 bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-center">
+            The opponent canceled this challenge before you deposited. This game will not start.
+          </div>
+        )}
+        {accepted && !canceled && (
           <div className="mb-4 text-sm text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 rounded-lg p-3 text-center">
             This challenge has already been accepted.
           </div>
         )}
         <button
-          disabled={accepted}
+          disabled={accepted || canceled}
           type="submit"
           className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 disabled:bg-gray-400 disabled:text-gray-100 disabled:cursor-not-allowed disabled:hover:bg-gray-400"
         >
@@ -145,6 +153,7 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
   const [challenge, setChallenge] = useState<ChessChallengeTxWrapper | null>(null)
   const [chess, setChess] = useState<SmartContract<typeof ChessContract> | null>(null)
   const [accepted, setAccepted] = useState(false)
+  const [canceled, setCanceled] = useState(false)
   const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
@@ -163,6 +172,31 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
         const latestChessRev = await computer.latest(challengeObj.chessRev)
         const chessObj = await computer.sync<typeof ChessContract>(latestChessRev)
         setChess(chessObj)
+        const isCanceled = await isCreatorRefunded(computer, chessObj)
+        setCanceled(isCanceled)
+
+        if (isCanceled) {
+          const helper = ChessContractHelper.fromModSpecs(
+            computer,
+            VITE_CHESS_GAME_MOD_SPEC,
+            VITE_CHESS_USER_MOD_SPEC,
+            VITE_TBC20_MOD_SPEC,
+          )
+          try {
+            if (!challengeObj.canceledSeen) {
+              await challengeObj.setCanceledSeen()
+            }
+          } catch {
+            // Non-fatal: badge may clear on next open
+          }
+          try {
+            if (!chessObj.canceledSeen && chessObj.publicKeyB === computer.getPublicKey()) {
+              await helper.markCanceledSeen(chessObj._id)
+            }
+          } catch {
+            // Non-fatal: badge may clear on next open
+          }
+        }
 
         Modal.showModal(startGameModal)
       } catch (error) {
@@ -180,13 +214,20 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
     setChallenge(null)
     setChess(null)
     setAccepted(false)
+    setCanceled(false)
   }, [challengeId])
+
+  const modalTitle = canceled
+    ? 'Challenge canceled'
+    : accepted
+      ? 'Challenge accepted'
+      : 'You have been challenged!'
 
   return (
     <Modal.Component
-      title={'You have been challenged!'}
+      title={modalTitle}
       content={StartGameModalContent}
-      contentData={{ challenge, chess, accepted }}
+      contentData={{ challenge, chess, accepted, canceled }}
       id={startGameModal}
     />
   )

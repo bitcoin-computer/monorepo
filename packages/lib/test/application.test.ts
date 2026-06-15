@@ -2,6 +2,7 @@ import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
 import { Computer, Transaction, Mock, SmartContract, TxIdString } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from './utils/index.js'
+import { Contract } from '@bitcoin-computer/lib'
 
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()

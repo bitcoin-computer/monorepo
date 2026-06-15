@@ -1,5 +1,6 @@
 import { Computer, Mock } from '@bitcoin-computer/lib'
 import { chain, network, url, expect } from '../../utils/index.js'
+import { Contract } from '@bitcoin-computer/lib'
 
 // A smart contract
 class A extends Contract {

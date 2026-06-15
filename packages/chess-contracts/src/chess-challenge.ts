@@ -1,11 +1,12 @@
-import { Computer } from '@bitcoin-computer/lib'
-
+import { Computer, Contract } from '@bitcoin-computer/lib'
 export class ChessChallengeTxWrapper extends Contract {
   chessRev!: string
   wagerAmount!: bigint
   tokenRoot!: string
   publicKeyW!: string
   accepted!: boolean
+  /** Set when the challenged player has seen a canceled challenge (clears list badge). */
+  canceledSeen!: boolean
 
   constructor(
     chessRev: string,
@@ -21,11 +22,16 @@ export class ChessChallengeTxWrapper extends Contract {
       tokenRoot,
       publicKeyW,
       accepted: false,
+      canceledSeen: false,
     })
   }
 
   setAccepted() {
     this.accepted = true
+  }
+
+  setCanceledSeen() {
+    this.canceledSeen = true
   }
 }
 

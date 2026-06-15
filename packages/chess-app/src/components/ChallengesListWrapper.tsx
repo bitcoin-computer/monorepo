@@ -28,8 +28,12 @@ export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
 
     challengesList.forEach((challenge) => {
       // Don't show accepted challenges
-      if (!challenge.accepted)
-        availableChallenges.push({ challengeId: challenge._id, new: !challenge.accepted })
+      if (!challenge.accepted) {
+        availableChallenges.push({
+          challengeId: challenge._id,
+          new: !challenge.canceledSeen,
+        })
+      }
     })
 
     return availableChallenges
@@ -48,6 +52,25 @@ export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
     }
     fetch()
   }, [])
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined
+
+    const subscribe = async () => {
+      unsubscribe = await computer.streamTXOs(
+        { mod: VITE_CHESS_CHALLENGE_MOD_SPEC, publicKey: computer.getPublicKey() },
+        () => {
+          refreshList()
+        },
+        (err) => console.error('Challenge stream error:', err),
+      )
+    }
+    subscribe()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [computer])
 
   return (
     <>
