@@ -281,6 +281,8 @@ Recall that an on-chain object is stored in an output and that the owners of the
 
 The number of satoshis in the output of an on-chain object can be configured by setting the `_satoshis` property to a number (bigint). If this property is undefined, the object will store an a minimal (non-dust) amount.
 
+**Minimizing on-chain costs:** In addition to the satoshis stored in objects, creating/updating objects typically involves minimal-dust metadata outputs (the technical cost of direct on-chain storage via bare multisig + the UTXO hygiene service). To minimize these costs (and thus user fees), prefer `moduleStorageType: 'taproot'` (default where available; no hygiene dust for the module tx itself), deploy larger logic once as a module so expressions stay tiny, and/or use `_url` (pointer only on-chain; cost becomes small constant). Direct bare-multisig is useful for single-tx reliability in high-throughput cases (e.g. exchanges) but still benefits from minimization. Full guidance, scope, bare-multisig UX rationale (incl. why not OP_RETURN), and verification notes: see the [Fees](./fees.md) "User Choices to Control On-Chain Data and Hygiene Dust Costs" section. Also review the [Legal Notice](../LEGAL.md).
+
 If the value of the `_satoshis` property is increased, the additional satoshi must be provided by the wallet of the `computer` object that executes the call. In the case of a constructor call with `computer.new` that is that `computer` object. In the case of a function call it is the `computer` object that created the on-chain object.
 
 If the value of the `_satoshis` property is decreased, the difference in satoshi is credited to the associated computer object's wallet.

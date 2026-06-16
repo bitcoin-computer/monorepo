@@ -319,13 +319,11 @@ verify :: Buffer -> Buffer -> Number [-> Bool] -> Maybe Buffer
 
 Returns the ECDSA public key from a signature if it can be recovered, `null` otherwise.
 
-
 ##### Throws:
 
 - `Expected Signature` if `signature` has any (r, s) values not in range `(0...order - 1]`
-- `Bad Recovery Id` if `recid & 2 !== 0`  and `signature` has any r value not in range `(0...P - N - 1]`
+- `Bad Recovery Id` if `recid & 2 !== 0` and `signature` has any r value not in range `(0...P - N - 1]`
 - `Expected Hash` if `h` is not 256-bit
-
 
 ### verifySchnorr (h, Q, signature)
 
@@ -345,4 +343,24 @@ Returns `false` if any of (r, s) values are equal to `0`, or if the signature is
 
 This library uses the native library [secp256k1](https://github.com/bitcoin-core/secp256k1) by the bitcoin-core developers through Rust crate [secp256k1-sys](https://crates.io/crates/secp256k1-sys), including derivatives of its tests and test vectors.
 
-# LICENSE [MIT](LICENSE)
+## License
+
+This package is licensed under the MIT License. See [LICENSE](./LICENSE) for details.
+
+---
+
+## Legal Notice (Bitcoin Computer Ecosystem)
+
+This package is a fork of `tiny-secp256k1` and is used as part of the Bitcoin Computer ecosystem.
+
+The core Bitcoin Computer technology (object-oriented smart contracts on UTXO-based blockchains) is protected by U.S. Patent Nos. 11,188,911 and 11,694,197 (and related family members). The patented technology is currently available under **free open terms** for all users.
+
+When using direct on-chain storage methods, any value transferred consists solely of the minimal technical dust required by the chosen Bitcoin primitives plus compensation for the associated UTXO hygiene service. This is **not** a license fee or royalty for the patented technology.
+
+For complete details on current licensing status, grandfathering (creations before 2026-06-15), user compliance responsibilities (including securities laws and DFAL), disclaimers, and alternative licensing options, see:
+
+[LEGAL.md](https://github.com/bitcoin-computer/monorepo/blob/main/LEGAL.md) in the Bitcoin Computer monorepo.
+
+BCDB Inc. provides no custody, platform, exchange, or financial services of any kind. Users write data directly to public blockchains and are solely responsible for complying with all applicable laws in their jurisdiction.
+
+By using this package you agree to the terms described in the monorepo LEGAL.md.
