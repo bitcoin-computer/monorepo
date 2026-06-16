@@ -141,6 +141,20 @@ If you want to add a feature we recommend to create a fork. Let us know if you h
 
 This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
 
-This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.
+---
 
-[node]: https://github.com/bitcoin-computer/monorepo/tree/main/packages/node
+## Legal Notice (Bitcoin Computer Ecosystem)
+
+This package is a fork of bitcoinjs-lib and is used as part of the Bitcoin Computer ecosystem.
+
+The core Bitcoin Computer technology (object-oriented smart contracts on UTXO-based blockchains) is protected by U.S. Patent Nos. 11,188,911 and 11,694,197 (and related family members). The patented technology is currently available under **free open terms** for all users.
+
+When using direct on-chain storage methods, any value transferred consists solely of the minimal technical dust required by the chosen Bitcoin primitives plus compensation for the associated UTXO hygiene service. This is **not** a license fee or royalty for the patented technology.
+
+For complete details on current licensing status, grandfathering (creations before 2026-06-15), user compliance responsibilities (including securities laws and DFAL), disclaimers, and alternative licensing options, see:
+
+[LEGAL.md](https://github.com/bitcoin-computer/monorepo/blob/main/LEGAL.md) in the Bitcoin Computer monorepo.
+
+BCDB Inc. provides no custody, platform, exchange, or financial services of any kind. Users write data directly to public blockchains and are solely responsible for complying with all applicable laws in their jurisdiction.
+
+By using this package you agree to the terms described in the monorepo LEGAL.md.
