@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { HiRefresh } from 'react-icons/hi'
 import { FiCopy, FiCheck } from 'react-icons/fi'
 import { Computer } from '@bitcoin-computer/lib'
