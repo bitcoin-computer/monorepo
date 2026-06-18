@@ -45,7 +45,7 @@ An object with a specification to build a transaction according to the Bitcoin C
 | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
 | exp         | A JavaScript expression.                                                                                                                                                    | -             |
 | env         | A Blockchain environment mapping variables names to revisions.                                                                                                              | `{}`          |
-| mod         | A string of the form `<id>:<num>` specifying the location of a module.                                                                                                      | `undefined`   |
+| mod         | A string of the form `<id>:<num>` specifying the location of a module (see propagation rules).                                                                              | `undefined`   |
 | fund        | Whether the transaction should be funded.                                                                                                                                   | `true`        |
 | include     | UTXOs to include when funding.                                                                                                                                              | `[]`          |
 | exclude     | UTXOs to exclude when funding.                                                                                                                                              | `[]`          |
@@ -61,7 +61,11 @@ It returns an object `{ tx, effect }` where `tx` is a [NakamotoJS](../../Nakamot
 
 ## Description
 
-The `encode` function builds a Bitcoin transaction from a JavaScript expression. It returns a transaction and an object `effect` containing the result of the evaluation in a property `res`. If the expression contains undefined variables a blockchain environment `env` must be passed into `encode`. A _blockchain environment_ maps the named of the undefined variable to UTXOs containing on-chain objects. A [module specifier](../../tutorial.md#module-system) can be provided in order to make the exports of that module are available to the evaluation. Other options can customize the funding and signing process. It is also to pass in an object specifying [mocked](../../tutorial.md#mocking) objects.
+The `encode` function builds a Bitcoin transaction from a JavaScript expression. It returns a transaction and an object `effect` containing the result of the evaluation in a property `res`. If the expression contains undefined variables a blockchain environment `env` must be passed into `encode`. A _blockchain environment_ maps the named of the undefined variable to UTXOs containing on-chain objects. A [module specifier](../../tutorial.md#module-system) can be provided in order to make the exports of that module are available to the evaluation.
+
+When a `mod` is supplied to `encode`, the module specifier is attached not only to the main result but is automatically propagated to all descendant objects created during the evaluation. This mirrors the propagation behavior of `computer.new` and method calls on modular objects, enabling consistent module tracking across complex object graphs.
+
+Other options can customize the funding and signing process. It is also possible to pass in an object specifying [mocked](../../tutorial.md#mocking) objects.
 
 It is important to note that `encode` does not broadcast the transaction. Nonetheless the `effect` object reflects the on-chain state that will emerge once the transaction is broadcast.
 
