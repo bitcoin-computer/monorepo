@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/chess-contracts",
-  "version": "0.27.0-beta.0",
+  "version": "0.26.0-beta.0",
   "description": "Contracts for an on-chain Chess game.",
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
@@ -28,8 +28,8 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.27.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.27.0-beta.0",
+    "@bitcoin-computer/lib": "^0.26.0-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.26.0-beta.0",
     "assert": "^2.0.0",
     "bip32": "^4.0.0",
     "buffer": "^6.0.3",
@@ -49,7 +49,7 @@
     "util": "^0.12.4"
   },
   "devDependencies": {
-    "@bitcoin-computer/TBC777": "^0.27.0-beta.0",
+    "@bitcoin-computer/TBC777": "^0.26.0-beta.0",
     "@types/mocha": "^10.0.6",
     "@types/node": "~20.11.21",
     "chai": "^5.1.2",
