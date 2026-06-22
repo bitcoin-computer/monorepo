@@ -22,6 +22,7 @@ import {
 } from '../constants/modSpecs'
 import { signInModal } from './Navbar'
 import { getGameState, isCreatorRefunded } from './utils'
+import { notifyGamesUpdated } from './utils/gamesRefresh'
 import { NewGameModal, newGameModal } from './NewGame'
 import { Piece } from 'react-chessboard/dist/chessboard/types'
 import { CreateUserModal, creaetUserModal } from './CreateUser'
@@ -552,6 +553,7 @@ export function ChessBoard() {
   const publishMove = async (from: Square, to: Square, promotion: string) => {
     if (!chessContract) throw new Error('Chess contract is not defined.')
     await helper.move(chessContract, from, to, promotion)
+    notifyGamesUpdated()
   }
 
   const handleError = (error: unknown) => {
@@ -610,6 +612,7 @@ export function ChessBoard() {
         myPubKey === chessContract.publicKeyW ? chessContract.tokenIdW : chessContract.tokenIdB
       await helper.withdrawTokens(myTokenId, chessContract._id)
       await syncChessContract()
+      notifyGamesUpdated()
       showSnackBar('Tokens withdrawn successfully!', true)
     } catch (error) {
       showSnackBar(error instanceof Error ? error.message : 'Error withdrawing tokens', false)
@@ -624,6 +627,7 @@ export function ChessBoard() {
       showLoader(true)
       await helper.resign(chessContract._id)
       await syncChessContract()
+      notifyGamesUpdated()
       showSnackBar('You resigned. Your opponent can now withdraw the pot.', true)
     } catch (error) {
       showSnackBar(error instanceof Error ? error.message : 'Error resigning', false)
@@ -647,6 +651,7 @@ export function ChessBoard() {
       setChessContractId('')
       setGame(null)
       setGameId('')
+      notifyGamesUpdated()
       if (params.id) navigate('/')
       showSnackBar('Challenge cancelled. Your wager has been refunded.', true)
     } catch (error) {

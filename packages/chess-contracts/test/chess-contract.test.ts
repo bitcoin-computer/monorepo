@@ -348,6 +348,46 @@ describe('ChessContract', () => {
         expect(whiteTokenFinal.amount).toBe(10n)
       })
 
+      it('Should reject acceptDeposit after the creator cancels', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        await confirmChainTip(minter)
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        const blackTokenUtxo = await token.transfer(black.getPublicKey(), 10n)
+        if (!whiteTokenUtxo || !blackTokenUtxo) throw new Error('expected player token UTXOs')
+        const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
+        const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
+        const { tx: depositTx, effect: depositEffect } = await white.encode({
+          exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+          env: { chess: chess._rev, whiteToken: whiteToken._rev },
+          mod: chessMod,
+        })
+        await white.broadcast(depositTx)
+        await confirmChainTip(minter)
+        const chessPending = depositEffect.env.chess as SmartContract<typeof ChessContract>
+
+        const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod)
+        await helper.cancelGame(chessPending._id)
+        await confirmChainTip(minter)
+
+        const latestChessRev = await black.latest(chessPending._id)
+        const blackToken = await black.sync<typeof TBC777>(blackTokenUtxo._rev)
+        await expect(async () => {
+          const { tx } = await black.encode({
+            exp: `chess.acceptDeposit(blackToken, ${wager}n, 'Black', '${white.getPublicKey()}')`,
+            env: { chess: latestChessRev, blackToken: blackToken._rev },
+            mod: chessMod,
+          })
+          await black.broadcast(tx)
+        }).rejects.toThrow('Game was canceled')
+      })
+
       it('Should reject cancel from the invited opponent', async () => {
         const wager = 5n
         const timeLimit = 60n * 10n

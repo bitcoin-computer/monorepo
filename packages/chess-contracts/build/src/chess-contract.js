@@ -48,6 +48,9 @@ export class ChessContract extends Contract {
             this._owners = [gameOwner, nextOwner];
         }
         else if (!this.publicKeyW) {
+            if (this.withdraws.length > 0) {
+                throw new Error('Game was canceled');
+            }
             if (tokenOwner !== this.publicKeyB) {
                 throw new Error('Only the invited opponent can accept the game');
             }

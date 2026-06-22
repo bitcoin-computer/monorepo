@@ -16,6 +16,16 @@ export async function isCreatorRefunded(
   }
 }
 
+/** True when a pending challenge was canceled (on-chain or refund completed). */
+export async function isPendingChallengeCanceled(
+  computer: Computer,
+  chess: SmartContract<typeof ChessContract>,
+): Promise<boolean> {
+  if (chess.publicKeyW) return false
+  if (chess.withdraws.length > 0) return true
+  return isCreatorRefunded(computer, chess)
+}
+
 export function isFullyFunded(chessContract: SmartContract<typeof ChessContract>): boolean {
   return !!chessContract.publicKeyW && !!chessContract.publicKeyB
 }

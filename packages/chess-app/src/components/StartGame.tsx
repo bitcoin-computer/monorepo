@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -11,22 +11,54 @@ import {
   VITE_CHESS_USER_MOD_SPEC,
   VITE_TBC20_MOD_SPEC,
 } from '../constants/modSpecs'
-import { SmartContract } from '@bitcoin-computer/lib'
-import { isCreatorRefunded } from './utils'
+import { SmartContract, Computer } from '@bitcoin-computer/lib'
+import { isPendingChallengeCanceled } from './utils'
 import { notifyGamesUpdated } from './utils/gamesRefresh'
 
 export const startGameModal = 'start-game-modal'
+
+const CHALLENGE_CANCELED_MESSAGE =
+  'This challenge was canceled by the opponent. Your wager was not deposited.'
+
+async function markCanceledChallengeSeen(
+  computer: Computer,
+  challenge: ChessChallengeTxWrapper,
+  chess: SmartContract<typeof ChessContract>,
+) {
+  const helper = ChessContractHelper.fromModSpecs(
+    computer,
+    VITE_CHESS_GAME_MOD_SPEC,
+    VITE_CHESS_USER_MOD_SPEC,
+    VITE_TBC20_MOD_SPEC,
+  )
+  try {
+    if (!challenge.canceledSeen) {
+      await challenge.setCanceledSeen()
+    }
+  } catch {
+    // Non-fatal: badge may clear on next open
+  }
+  try {
+    if (!chess.canceledSeen && chess.publicKeyB === computer.getPublicKey()) {
+      await helper.markCanceledSeen(chess._id)
+    }
+  } catch {
+    // Non-fatal: badge may clear on next open
+  }
+}
 
 export function StartGameModalContent({
   challenge,
   chess,
   accepted,
   canceled,
+  loading,
 }: {
   challenge: ChessChallengeTxWrapper | null
   chess: SmartContract<typeof ChessContract> | null
   accepted: boolean
   canceled: boolean
+  loading: boolean
 }) {
   const computer = useContext(ComputerContext)
   const navigate = useNavigate()
@@ -45,7 +77,16 @@ export function StartGameModalContent({
         VITE_TBC20_MOD_SPEC,
       )
 
-      // Find Black's token matching the wagered token root
+      const latestChessRev = await computer.latest(chess._id)
+      const latestChess = await computer.sync<typeof ChessContract>(latestChessRev)
+
+      if (latestChess.publicKeyW) {
+        throw new Error('This challenge has already been accepted.')
+      }
+      if (await isPendingChallengeCanceled(computer, latestChess)) {
+        throw new Error(CHALLENGE_CANCELED_MESSAGE)
+      }
+
       const token = await helper.findToken(challenge.tokenRoot, challenge.wagerAmount)
       if (!token) {
         throw new Error(
@@ -53,10 +94,6 @@ export function StartGameModalContent({
         )
       }
 
-      // Get the latest chess rev before depositing
-      const latestChessRev = await computer.latest(chess._id)
-
-      // Black deposits their wager
       await helper.depositTokens(
         latestChessRev,
         token._rev,
@@ -66,7 +103,6 @@ export function StartGameModalContent({
       )
       await helper.addGameToUserIfNeeded(chess._id)
 
-      // Mark challenge as accepted
       try {
         await challenge.setAccepted()
       } catch {
@@ -83,7 +119,7 @@ export function StartGameModalContent({
     }
   }
 
-  if (!challenge || !chess) {
+  if (loading || !challenge || !chess) {
     return (
       <div className="flex flex-col items-center justify-center p-6 border rounded-lg shadow-md bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-700">
         <p className="text-sm font-medium text-gray-900 dark:text-gray-200">
@@ -157,68 +193,106 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
   const [chess, setChess] = useState<SmartContract<typeof ChessContract> | null>(null)
   const [accepted, setAccepted] = useState(false)
   const [canceled, setCanceled] = useState(false)
-  const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
+  const [loading, setLoading] = useState(false)
+  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const showSnackBarRef = useRef(showSnackBar)
+  showSnackBarRef.current = showSnackBar
+  const computerRef = useRef(computer)
+  computerRef.current = computer
 
-  useEffect(() => {
-    const fetchChallenge = async () => {
-      if (!challengeId) return
-      try {
-        showLoader(true)
-        const latestRev = await computer.latest(challengeId)
-        if (!latestRev) throw new Error('Challenge not found')
-
-        const challengeObj = await computer.sync<typeof ChessChallengeTxWrapper>(latestRev)
-        setChallenge(challengeObj)
-        setAccepted(challengeObj.accepted)
-
-        // Load the chess contract referenced in the challenge
-        const latestChessRev = await computer.latest(challengeObj.chessRev)
-        const chessObj = await computer.sync<typeof ChessContract>(latestChessRev)
-        setChess(chessObj)
-        const isCanceled = await isCreatorRefunded(computer, chessObj)
-        setCanceled(isCanceled)
-
-        if (isCanceled) {
-          const helper = ChessContractHelper.fromModSpecs(
-            computer,
-            VITE_CHESS_GAME_MOD_SPEC,
-            VITE_CHESS_USER_MOD_SPEC,
-            VITE_TBC20_MOD_SPEC,
-          )
-          try {
-            if (!challengeObj.canceledSeen) {
-              await challengeObj.setCanceledSeen()
-            }
-          } catch {
-            // Non-fatal: badge may clear on next open
-          }
-          try {
-            if (!chessObj.canceledSeen && chessObj.publicKeyB === computer.getPublicKey()) {
-              await helper.markCanceledSeen(chessObj._id)
-            }
-          } catch {
-            // Non-fatal: badge may clear on next open
-          }
-        }
-
-        Modal.showModal(startGameModal)
-      } catch (error) {
-        showSnackBar(error instanceof Error ? error.message : 'Error occurred', false)
-      } finally {
-        showLoader(false)
+  const applyChessState = useCallback(
+    async (
+      chessObj: SmartContract<typeof ChessContract>,
+      challengeObj: ChessChallengeTxWrapper | null,
+    ) => {
+      setChess(chessObj)
+      setAccepted((prev) => prev || !!chessObj.publicKeyW)
+      const isCanceled = await isPendingChallengeCanceled(computer, chessObj)
+      setCanceled(isCanceled)
+      if (isCanceled && challengeObj) {
+        void markCanceledChallengeSeen(computer, challengeObj, chessObj)
       }
-    }
+    },
+    [computer],
+  )
 
-    fetchChallenge()
-  }, [challengeId, computer])
-
-  // Reset when challengeId changes
   useEffect(() => {
+    if (!challengeId) return
+
+    let cancelled = false
+
     setChallenge(null)
     setChess(null)
     setAccepted(false)
     setCanceled(false)
+    setLoading(true)
+
+    const fetchChallenge = async () => {
+      const comp = computerRef.current
+      try {
+        const latestRev = await comp.latest(challengeId)
+        if (!latestRev) throw new Error('Challenge not found')
+
+        const challengeObj = await comp.sync<typeof ChessChallengeTxWrapper>(latestRev)
+        if (cancelled) return
+
+        setChallenge(challengeObj)
+        setAccepted(challengeObj.accepted)
+
+        const latestChessRev = await comp.latest(challengeObj.chessRev)
+        const chessObj = await comp.sync<typeof ChessContract>(latestChessRev)
+        if (cancelled) return
+
+        setChess(chessObj)
+        setAccepted((prev) => prev || challengeObj.accepted || !!chessObj.publicKeyW)
+        const isCanceled = await isPendingChallengeCanceled(comp, chessObj)
+        setCanceled(isCanceled)
+        if (isCanceled) {
+          void markCanceledChallengeSeen(comp, challengeObj, chessObj)
+        }
+        if (cancelled) return
+
+        Modal.showModal(startGameModal)
+      } catch (error) {
+        if (!cancelled) {
+          showSnackBarRef.current(
+            error instanceof Error ? error.message : 'Error occurred',
+            false,
+          )
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false)
+        }
+      }
+    }
+
+    void fetchChallenge()
+
+    return () => {
+      cancelled = true
+    }
   }, [challengeId])
+
+  useEffect(() => {
+    if (!chess?._id || !challenge || loading) return
+
+    const chessId = chess._id
+    let close: (() => void) | undefined
+    const subscribeToChess = async () => {
+      const comp = computerRef.current
+      close = await comp.subscribe(chessId, async () => {
+        const latestChessRev = await comp.latest(chessId)
+        const chessObj = await comp.sync<typeof ChessContract>(latestChessRev)
+        await applyChessState(chessObj, challenge)
+      })
+    }
+    void subscribeToChess()
+
+    return () => {
+      if (close) close()
+    }
+  }, [chess?._id, challenge, applyChessState, loading])
 
   const modalTitle = canceled
     ? 'Challenge canceled'
@@ -230,7 +304,7 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
     <Modal.Component
       title={modalTitle}
       content={StartGameModalContent}
-      contentData={{ challenge, chess, accepted, canceled }}
+      contentData={{ challenge, chess, accepted, canceled, loading }}
       id={startGameModal}
     />
   )
