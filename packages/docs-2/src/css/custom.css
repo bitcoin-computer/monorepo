@@ -1,0 +1,214 @@
+/* ============================================
+   Bitcoin Computer — Official Color Scheme Toned-down light mode blue (v2)
+   ============================================ */
+
+/* ---------- LIGHT MODE ---------- */
+:root {
+  /* Primary (toned-down blue) */
+  --ifm-color-primary: #0039cc;
+  --ifm-color-primary-dark: #002a99;
+  --ifm-color-primary-darker: #000f38;
+  --ifm-color-primary-darkest: #000a26;
+  --ifm-color-primary-light: #3366ff;
+  --ifm-color-primary-lighter: #668cff;
+  --ifm-color-primary-lightest: #a7bfff;
+
+  /* Success (Green) */
+  --ifm-color-success: #009536;
+  --ifm-color-success-dark: #007a2b;
+  --ifm-color-success-darker: #005c20;
+
+  /* Warning / Danger (Red-Orange) */
+  --ifm-color-warning: #ff7d00;
+  --ifm-color-danger: #ff1500;
+
+  /* Neutral / Text */
+  --ifm-color-content: #393939;
+  --ifm-color-content-secondary: #666666;
+
+  /* Backgrounds */
+  --ifm-background-color: #ffffff;
+  --ifm-background-surface-color: #f1f1f1;
+
+  /* Navbar & Footer */
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-footer-background-color: #000f38;
+  --ifm-footer-color: #f1f1f1;
+  --ifm-footer-link-color: #a7bfff;
+}
+
+/* ---------- DARK MODE ---------- */
+[data-theme="dark"] {
+  /* Primary */
+  --ifm-color-primary: #a7bfff;
+  --ifm-color-primary-dark: #7a9cff;
+  --ifm-color-primary-darker: #4d7aff;
+  --ifm-color-primary-darkest: #0039cc;
+  --ifm-color-primary-light: #c8d8ff;
+  --ifm-color-primary-lighter: #e0e9ff;
+  --ifm-color-primary-lightest: #f0f4ff;
+
+  /* Success */
+  --ifm-color-success: #0cbf50;
+  --ifm-color-success-dark: #009536;
+  --ifm-color-success-darker: #007a2b;
+
+  /* Warning / Danger */
+  --ifm-color-warning: #ffbeaf;
+  --ifm-color-danger: #ff7864;
+
+  /* Neutral / Text */
+  --ifm-color-content: #f1f1f1;
+  --ifm-color-content-secondary: #d5d5d5;
+
+  /* Backgrounds */
+  --ifm-background-color: #1a1a1a;
+  --ifm-background-surface-color: #2a2a2a;
+
+  /* Navbar & Footer */
+  --ifm-navbar-background-color: #000f38;
+  --ifm-footer-background-color: #000a26;
+  --ifm-footer-color: #d5d5d5;
+  --ifm-footer-link-color: #a7bfff;
+}
+
+/* ============================================
+   Admonition Styling — Full color scheme
+   ============================================ */
+
+/* Note (:::note) */
+.alert--secondary {
+  --ifm-alert-background-color: #f1f1f1;
+  --ifm-alert-background-color-highlight: #e6e6e6;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-content-secondary);
+}
+[data-theme="dark"] .alert--secondary {
+  --ifm-alert-background-color: #2a2a2a;
+  --ifm-alert-background-color-highlight: #3a3a3a;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-content-secondary);
+}
+
+/* Info — Primary Blue */
+.alert--info {
+  --ifm-alert-background-color: #e6edff;
+  --ifm-alert-background-color-highlight: #d2d8ff;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-primary);
+}
+[data-theme="dark"] .alert--info {
+  --ifm-alert-background-color: #1e2a4d;
+  --ifm-alert-background-color-highlight: #2a3a66;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-primary);
+}
+
+/* Warning */
+.alert--warning {
+  --ifm-alert-background-color: #fff4e6;
+  --ifm-alert-background-color-highlight: #ffe8cc;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-warning);
+}
+[data-theme="dark"] .alert--warning {
+  --ifm-alert-background-color: #3d2a1f;
+  --ifm-alert-background-color-highlight: #4d3528;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-warning);
+}
+
+/* Danger */
+.alert--danger {
+  --ifm-alert-background-color: #ffe6e6;
+  --ifm-alert-background-color-highlight: #ffcccc;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-danger);
+}
+[data-theme="dark"] .alert--danger {
+  --ifm-alert-background-color: #3d1f1f;
+  --ifm-alert-background-color-highlight: #4d2828;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-danger);
+}
+
+/* Tip / Success */
+.alert--success {
+  --ifm-alert-background-color: #e6f4ed;
+  --ifm-alert-background-color-highlight: #cce8db;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-success);
+}
+[data-theme="dark"] .alert--success {
+  --ifm-alert-background-color: #1f3d2a;
+  --ifm-alert-background-color-highlight: #284d35;
+  --ifm-alert-foreground-color: var(--ifm-color-content);
+  --ifm-alert-border-color: var(--ifm-color-success);
+}
+
+/* ============================================
+   Code Blocks (optional cleanup)
+   ============================================ */
+
+/* If you want to customize code block colors, target tokens directly instead of
+   --prism-color */
+.prism-code {
+  /* Add custom Prism token overrides here if needed */
+}
+
+/* ============================================
+   Code Blocks — Bitcoin Computer styling
+   ============================================ */
+
+.prism-code,
+pre.prism-code {
+  border-radius: 8px;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* Dark mode */
+[data-theme="dark"] .prism-code,
+[data-theme="dark"] pre.prism-code {
+  background-color: #1a1a1a !important;
+  border: 1px solid #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Inline code in dark mode */
+[data-theme="dark"] :not(pre) > code {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid #444444;
+  color: #f1f1f1;
+  padding: 0.1em 0.45em;
+  border-radius: 4px;
+}
+
+/* Highlighted lines (```js {1,3-5}) */
+.token-line.highlighted,
+.theme-code-block-highlighted-line {
+  background-color: rgba(0, 57, 204, 0.08);
+  border-left: 3px solid var(--ifm-color-primary);
+}
+
+[data-theme="dark"] .token-line.highlighted,
+[data-theme="dark"] .theme-code-block-highlighted-line {
+  background-color: rgba(167, 191, 255, 0.12) !important;
+  border-left: 3px solid #a7bfff;
+}
+
+/* Inline code */
+code {
+  background-color: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  font-size: 0.875em;
+}
+
+[data-theme="dark"] code {
+  border-color: var(--ifm-color-emphasis-300);
+  background-color: rgba(255, 255, 255, 0.05);
+}
