@@ -58,6 +58,7 @@ export declare class ChessContractHelper {
     });
     static fromModSpecs(computer: Computer, mod?: string, userMod?: string, tokenMod?: string): ChessContractHelper;
     validateUser(): Promise<void>;
+    addGameToUserIfNeeded(gameId: string): Promise<void>;
     createGame(tokenRoot: string, wagerAmount: bigint, timeLimit?: bigint): Promise<SmartContract<typeof ChessContract>>;
     /**
      * Deposits wager tokens into a chess game. After the creator's first deposit
