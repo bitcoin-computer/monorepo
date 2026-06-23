@@ -2,7 +2,7 @@ import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777'
 import { ChessContract, ChessContractHelper } from '../src/chess-contract.js'
 import { ChessChallengeTxWrapper } from '../src/chess-challenge.js'
-import { User } from '../src/user.js'
+import { User, UserHelper } from '../src/user.js'
 import { expect } from 'expect'
 import dotenv from 'dotenv'
 import path from 'path'
@@ -348,6 +348,46 @@ describe('ChessContract', () => {
         expect(whiteTokenFinal.amount).toBe(10n)
       })
 
+      it('Should reject acceptDeposit after the creator cancels', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        await confirmChainTip(minter)
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        const blackTokenUtxo = await token.transfer(black.getPublicKey(), 10n)
+        if (!whiteTokenUtxo || !blackTokenUtxo) throw new Error('expected player token UTXOs')
+        const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod)
+        const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
+        const { tx: depositTx, effect: depositEffect } = await white.encode({
+          exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+          env: { chess: chess._rev, whiteToken: whiteToken._rev },
+          mod: chessMod,
+        })
+        await white.broadcast(depositTx)
+        await confirmChainTip(minter)
+        const chessPending = depositEffect.env.chess as SmartContract<typeof ChessContract>
+
+        const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod)
+        await helper.cancelGame(chessPending._id)
+        await confirmChainTip(minter)
+
+        const latestChessRev = await black.latest(chessPending._id)
+        const blackToken = await black.sync<typeof TBC777>(blackTokenUtxo._rev)
+        await expect(async () => {
+          const { tx } = await black.encode({
+            exp: `chess.acceptDeposit(blackToken, ${wager}n, 'Black', '${white.getPublicKey()}')`,
+            env: { chess: latestChessRev, blackToken: blackToken._rev },
+            mod: chessMod,
+          })
+          await black.broadcast(tx)
+        }).rejects.toThrow('Game was canceled')
+      })
+
       it('Should reject cancel from the invited opponent', async () => {
         const wager = 5n
         const timeLimit = 60n * 10n
@@ -499,16 +539,12 @@ describe('ChessContract', () => {
           5n,
         )
 
-        const blackTokenFinal = await withdrawFromChess(
-          black,
-          blackToken._id,
-          chess._id,
-          tbc777Mod,
-        )
+        const blackTokenFinal = await withdrawFromChess(black, blackToken._id, chess._id, tbc777Mod)
         expect(blackTokenFinal.amount).toBe(15n)
       })
 
       it('Should run fool mate and credit winner balance on withdraw', async () => {
+        await confirmChainTip(minter)
         const wager = 5n
         const timeLimit = 60n * 10n
         const { token, whiteTokenUtxo, blackTokenUtxo, blackToken, chess, chessFunded } =
@@ -555,13 +591,198 @@ describe('ChessContract', () => {
         const totalPot = wager * 2n
         expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]])
 
-        const blackTokenFinal = await withdrawFromChess(
-          black,
-          blackToken._id,
-          chess._id,
+        const blackTokenFinal = await withdrawFromChess(black, blackToken._id, chess._id, tbc777Mod)
+        expect(blackTokenFinal.amount).toBe(15n)
+      })
+    })
+
+    describe('User.games on deposit', () => {
+      let minter: Computer
+      let white: Computer
+      let black: Computer
+      let userMod: string
+
+      before(async () => {
+        const deployer = new Computer({ url, chain, network })
+        await deployer.faucet(20e8)
+        userMod = await deployer.deploy(`export ${User}`)
+      })
+
+      beforeEach(async () => {
+        minter = new Computer({ url, chain, network })
+        white = new Computer({ url, chain, network })
+        black = new Computer({ url, chain, network })
+        await Promise.all([white.faucet(10e8), black.faucet(10e8), minter.faucet(10e8)])
+        await ensureFunds(minter)
+
+        const whiteUserHelper = new UserHelper({ computer: white, mod: userMod })
+        const blackUserHelper = new UserHelper({ computer: black, mod: userMod })
+        await whiteUserHelper.createUser('White')
+        await blackUserHelper.createUser('Black')
+        await confirmChainTip(minter)
+      })
+
+      async function syncUser(player: Computer) {
+        const [userRev] = await player.getOUTXOs({
+          mod: userMod,
+          publicKey: player.getPublicKey(),
+        })
+        if (!userRev) throw new Error('expected user account')
+        return player.sync<typeof User>(userRev)
+      }
+
+      it('Should add the game to white user on first deposit', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
           tbc777Mod,
         )
-        expect(blackTokenFinal.amount).toBe(15n)
+        await confirmChainTip(minter)
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
+
+        const helper = ChessContractHelper.fromModSpecs(white, chessMod, userMod, tbc777Mod)
+        const chess = await helper.createGame(token._root, wager, timeLimit)
+        await helper.depositTokens(
+          chess._rev,
+          whiteTokenUtxo._rev,
+          wager,
+          'White',
+          black.getPublicKey(),
+        )
+        await confirmChainTip(minter)
+
+        const whiteUser = await syncUser(white)
+        expect(whiteUser.games).toEqual([chess._id])
+      })
+
+      it('Should add the game to both users after both deposits', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        await confirmChainTip(minter)
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        await confirmChainTip(minter)
+        const blackTokenUtxo = await token.transfer(black.getPublicKey(), 10n)
+        await confirmChainTip(minter)
+        if (!whiteTokenUtxo || !blackTokenUtxo) throw new Error('expected player token UTXOs')
+
+        const whiteHelper = ChessContractHelper.fromModSpecs(white, chessMod, userMod, tbc777Mod)
+        const blackHelper = ChessContractHelper.fromModSpecs(black, chessMod, userMod, tbc777Mod)
+
+        const chess = await whiteHelper.createGame(token._root, wager, timeLimit)
+        const chessAfterWhite = await whiteHelper.depositTokens(
+          chess._rev,
+          whiteTokenUtxo._rev,
+          wager,
+          'White',
+          black.getPublicKey(),
+        )
+        await confirmChainTip(minter)
+
+        const whiteUserAfterDeposit = await syncUser(white)
+        expect(whiteUserAfterDeposit.games).toEqual([chess._id])
+
+        const blackToken = await black.sync<typeof TBC777>(blackTokenUtxo._rev)
+        const chessHeadForBlack = await white.latest(chessAfterWhite._id)
+        await blackHelper.depositTokens(
+          chessHeadForBlack,
+          blackToken._rev,
+          wager,
+          'Black',
+          white.getPublicKey(),
+        )
+        await confirmChainTip(minter)
+
+        const whiteUser = await syncUser(white)
+        const blackUser = await syncUser(black)
+        expect(whiteUser.games).toEqual([chess._id])
+        expect(blackUser.games).toEqual([chess._id])
+      })
+
+      it('Should not duplicate game ids when addGameToUserIfNeeded is called twice', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        await confirmChainTip(minter)
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
+
+        const helper = ChessContractHelper.fromModSpecs(white, chessMod, userMod, tbc777Mod)
+        const chess = await helper.createGame(token._root, wager, timeLimit)
+        await helper.depositTokens(
+          chess._rev,
+          whiteTokenUtxo._rev,
+          wager,
+          'White',
+          black.getPublicKey(),
+        )
+        await confirmChainTip(minter)
+        await helper.addGameToUserIfNeeded(chess._id)
+        await confirmChainTip(minter)
+
+        const whiteUser = await syncUser(white)
+        expect(whiteUser.games).toEqual([chess._id])
+      })
+
+      it('Should not duplicate game ids when move runs after deposit', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const to = minter.getPublicKey()
+        const token = await minter.new(
+          TBC777,
+          [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+          tbc777Mod,
+        )
+        await confirmChainTip(minter)
+        const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+        await confirmChainTip(minter)
+        const blackTokenUtxo = await token.transfer(black.getPublicKey(), 10n)
+        await confirmChainTip(minter)
+        if (!whiteTokenUtxo || !blackTokenUtxo) throw new Error('expected player token UTXOs')
+
+        const whiteHelper = ChessContractHelper.fromModSpecs(white, chessMod, userMod, tbc777Mod)
+        const blackHelper = ChessContractHelper.fromModSpecs(black, chessMod, userMod, tbc777Mod)
+
+        const chess = await whiteHelper.createGame(token._root, wager, timeLimit)
+        const chessAfterWhite = await whiteHelper.depositTokens(
+          chess._rev,
+          whiteTokenUtxo._rev,
+          wager,
+          'White',
+          black.getPublicKey(),
+        )
+        await confirmChainTip(minter)
+
+        const blackToken = await black.sync<typeof TBC777>(blackTokenUtxo._rev)
+        const chessHeadForBlack = await white.latest(chessAfterWhite._id)
+        const chessFunded = await blackHelper.depositTokens(
+          chessHeadForBlack,
+          blackToken._rev,
+          wager,
+          'Black',
+          white.getPublicKey(),
+        )
+        await confirmChainTip(minter)
+
+        await whiteHelper.move(chessFunded, 'e2', 'e4', 'q')
+        await confirmChainTip(minter)
+
+        const whiteUser = await syncUser(white)
+        expect(whiteUser.games).toEqual([chess._id])
       })
     })
   })

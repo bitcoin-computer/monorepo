@@ -3,5 +3,5 @@ interface SnackBarProps {
     success: boolean;
     hideSnackBar: () => void;
 }
-export declare function SnackBar(props: SnackBarProps): import("react/jsx-runtime").JSX.Element;
+export declare function SnackBar(props: SnackBarProps): import("react").JSX.Element;
 export {};
