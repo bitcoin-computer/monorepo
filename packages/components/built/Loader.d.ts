@@ -1,1 +1,1 @@
-export declare function Loader(): import("react/jsx-runtime").JSX.Element;
+export declare function Loader(): import("react").JSX.Element;
