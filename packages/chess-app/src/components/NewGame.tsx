@@ -10,6 +10,7 @@ import {
   VITE_CHESS_USER_MOD_SPEC,
   VITE_TBC20_MOD_SPEC,
 } from '../constants/modSpecs'
+import { notifyGamesUpdated } from './utils/gamesRefresh'
 
 export const newGameModal = 'new-game-modal'
 
@@ -60,6 +61,7 @@ function NewGameModalContent({
 
       // White deposits their wager atomically with the game creation step
       await helper.depositTokens(chess._rev, token._rev, wager, nameW, publicKeyB)
+      await helper.addGameToUserIfNeeded(chess._id)
 
       // Create a challenge so Black can find and accept the game
       const chessChallengeTxWrapperHelper = new ChessChallengeTxWrapperHelper({
@@ -75,6 +77,7 @@ function NewGameModalContent({
       )
 
       showSnackBar('Challenge sent! Waiting for opponent to accept.', true)
+      notifyGamesUpdated()
       Modal.hideModal(newGameModal)
       handleClear()
     } catch (err) {

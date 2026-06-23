@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/dao-contracts",
-  "version": "0.27.0-beta.0",
+  "version": "0.26.0-beta.0",
   "description": "Contracts for a DAO",
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
@@ -59,8 +59,8 @@
     }
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.27.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.27.0-beta.0",
+    "@bitcoin-computer/lib": "^0.26.0-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.26.0-beta.0",
     "assert": "^2.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",

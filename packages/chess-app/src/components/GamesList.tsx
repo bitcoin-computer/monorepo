@@ -11,10 +11,14 @@ export const InfiniteScroll = ({
   setGameId,
   games,
   refreshGames,
+  title,
+  showNewBadge = true,
 }: {
   setGameId: React.Dispatch<React.SetStateAction<string>>
   games: GameType[]
   refreshGames: () => Promise<void>
+  title: string
+  showNewBadge?: boolean
 }) => {
   const [items, setItems] = useState<GameType[]>([])
   const [hasMore, setHasMore] = useState(true)
@@ -69,7 +73,7 @@ export const InfiniteScroll = ({
       <div className="flex justify-center mt-2 mb-2">
         <h3 className="text-xl font-bold text-gray-500 dark:text-gray-400">
           <span className="hover:text-gray-700 dark:hover:text-gray-200 font-extrabold cursor-pointer">
-            My Games
+            {title}
           </span>{' '}
           <HiRefresh
             onClick={refreshGames}
@@ -95,7 +99,7 @@ export const InfiniteScroll = ({
               }}
             >
               <span className="truncate block">{item.gameId}</span>
-              {item.new && (
+              {showNewBadge && item.new && (
                 <div className="absolute inline-flex w-3 h-3 bg-red-500 rounded-full top-0 right-0 -mt-1 -mr-1 z-10"></div>
               )}
             </li>

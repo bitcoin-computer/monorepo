@@ -48,6 +48,9 @@ export class ChessContract extends Contract {
             this._owners = [gameOwner, nextOwner];
         }
         else if (!this.publicKeyW) {
+            if (this.withdraws.length > 0) {
+                throw new Error('Game was canceled');
+            }
             if (tokenOwner !== this.publicKeyB) {
                 throw new Error('Only the invited opponent can accept the game');
             }
@@ -192,6 +195,32 @@ export class ChessContractHelper {
             throw new Error('Please create your account to start playing');
         }
     }
+    async addGameToUserIfNeeded(gameId) {
+        if (!this.userMod || !gameId)
+            return;
+        const [userRev] = await this.computer.getOUTXOs({
+            mod: this.userMod,
+            publicKey: this.computer.getPublicKey(),
+        });
+        if (!userRev)
+            return;
+        const userObj = await this.computer.sync(userRev);
+        if (userObj.games.includes(gameId))
+            return;
+        const latestUserRev = await this.computer.latest(userObj._id);
+        const latestUser = await this.computer.sync(latestUserRev);
+        if (latestUser.games.includes(gameId))
+            return;
+        const { tx } = await this.computer.encodeCall({
+            target: latestUser,
+            property: 'addGame',
+            args: [gameId],
+            mod: this.userMod,
+        });
+        if (!tx)
+            throw new Error('Failed to record game on user profile');
+        await this.computer.broadcast(tx);
+    }
     async createGame(tokenRoot, wagerAmount, timeLimit = 600n) {
         await this.validateUser();
         const { tx, effect } = await this.computer.encode({
@@ -215,7 +244,10 @@ export class ChessContractHelper {
             await coSignComputer.sign(tx);
         }
         await this.computer.broadcast(tx);
-        return effect.env.chess;
+        const chess = effect.env.chess;
+        const gameId = chess._id ?? chess._root;
+        await this.addGameToUserIfNeeded(gameId);
+        return chess;
     }
     async findToken(tokenRoot, minAmount) {
         const tokenRevs = await this.computer.getOUTXOs({
@@ -233,17 +265,7 @@ export class ChessContractHelper {
     }
     async move(chessContract, from, to, promotion) {
         if (chessContract && chessContract.sans.length < 2) {
-            const [userRev] = await this.computer.getOUTXOs({
-                mod: this.userMod,
-                publicKey: this.computer.getPublicKey(),
-            });
-            if (userRev) {
-                const userObj = await this.computer.sync(userRev);
-                const gameId = chessContract._id;
-                if (!userObj.games.includes(gameId)) {
-                    await userObj.addGame(gameId);
-                }
-            }
+            await this.addGameToUserIfNeeded(chessContract._id);
         }
         const { tx, effect } = (await this.computer.encodeCall({
             target: chessContract,
