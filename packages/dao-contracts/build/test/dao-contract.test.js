@@ -13,7 +13,7 @@ describe.skip('Election', () => {
         it('Should compute one valid vote', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
@@ -28,7 +28,7 @@ describe.skip('Election', () => {
         it('Should compute the first vote if the token is used twice', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
@@ -48,7 +48,7 @@ describe.skip('Election', () => {
             // send some tokens to someone else
             const computer3 = new Computer({ url });
             await computer3.faucet(1e8);
-            const t0 = await computer.new(Token, [computer.getPublicKey(), 100n, 'A'], tokenMod);
+            const t0 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 100n, name: 'A' }], tokenMod);
             const t1 = (await t0.transfer(computer.getPublicKey(), 10n));
             const t2 = (await t0.transfer(computer2.getPublicKey(), 7n));
             const t3 = (await t0.transfer(computer3.getPublicKey(), 20n));
@@ -75,7 +75,7 @@ describe.skip('Election', () => {
         it('Should compute the first vote if the token is sent and used to vote in the same election', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
@@ -94,7 +94,7 @@ describe.skip('Election', () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod1 = await computer.deploy(`export ${Vote}`);
             const proposalMod2 = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election1 = await computer.new(Election, [
                 { proposalMod: proposalMod1, tokenRoot: t1._root, description: 'election1' },
             ]);
@@ -142,7 +142,7 @@ describe.skip('Election', () => {
                 }
             }
             const tokenMod = await computer.deploy(`export ${Token}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 2n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 2n, name: 'A' }], tokenMod);
             const election = await computer.new(Election, [
                 { proposalMod: realVoteMod, tokenRoot: t1._root, description: 'test' },
             ]);
@@ -156,7 +156,7 @@ describe.skip('Election', () => {
     describe.skip('accepted-rejected', () => {
         it('Should count to zero if the Vote is not deployed as a module', async () => {
             const invalidMod = '0f08b977b9be9d96b8b02dd0866e7a692bb1527277a746dc8a74adde724d7856:22';
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A']);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }]);
             const election = await computer.new(Election, [
                 { proposalMod: invalidMod, tokenRoot: t1._root, description: 'test' },
             ]);
@@ -176,7 +176,7 @@ describe.skip('Election', () => {
         it('Should count if the Vote is deployed as a module', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
@@ -187,7 +187,7 @@ describe.skip('Election', () => {
         it('Should be able to transfer tokens after voting with them', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
@@ -204,7 +204,7 @@ describe.skip('Election', () => {
         it('Should not count token amounts if the same token is transferred and then used for voting', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
@@ -225,7 +225,7 @@ describe.skip('Election', () => {
         it('Should not count token amounts if the transferred token is used to vote in the same election', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);
@@ -251,7 +251,7 @@ describe.skip('Election', () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod1 = await computer.deploy(`export ${Vote}`);
             const proposalMod2 = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election1 = await computer.new(Election, [
                 { proposalMod: proposalMod1, tokenRoot: t1._root, description: 'election1' },
             ]);
@@ -278,7 +278,7 @@ describe.skip('Election', () => {
         it('Should not count token amounts if same token is used twice', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election1 = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'election1' },
             ]);
@@ -293,7 +293,7 @@ describe.skip('Election', () => {
         it('Should not count token amounts if the token is not from the same lineage', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const election1 = await computer.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'election1' },
             ]);
@@ -301,7 +301,7 @@ describe.skip('Election', () => {
             const accepted = await election1.accepted();
             expect(accepted).eq(10n);
             // create a new token that is not from the same lineage
-            const t2 = await computer.new(Token, [computer.getPublicKey(), 5n, 'A'], tokenMod);
+            const t2 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 5n, name: 'A' }], tokenMod);
             // use the new token to vote
             await computer.new(Vote, [{ electionId: election1._id, tokens: [t2], vote: 'accept' }], proposalMod);
             const votes = await election1.proposalVotes();
@@ -314,7 +314,7 @@ describe.skip('Election', () => {
         it('Should not be possible to use a non owned token to vote in an election', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             // another user syncs to the valid token revision and uses it to vote
             const computer2 = new Computer({ url });
             await computer2.faucet(1e8);
@@ -337,7 +337,7 @@ describe.skip('Election', () => {
             await computer2.faucet(1e8);
             const computer3 = new Computer({ url });
             await computer3.faucet(1e8);
-            const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A'], tokenMod);
+            const t1 = await computer.new(Token, [{ to: computer.getPublicKey(), amount: 10n, name: 'A' }], tokenMod);
             const t2 = (await t1.transfer(computer2.getPublicKey(), 5n));
             expect(t2?.amount).eq(5n);
             const t3 = (await t1.transfer(computer3.getPublicKey(), 1n));

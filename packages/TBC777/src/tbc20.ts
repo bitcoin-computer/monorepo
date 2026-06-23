@@ -30,15 +30,24 @@ export class TBC20 extends Contract {
   /**
    * Transfer tokens to another owner.
    *
-   * If `amount` is omitted, the entire balance is transferred by creating a
-   * new token instance for the recipient (leaving this token with a zero
-   * balance). This unifies partial and full transfers into a single code path.
+   * If `amount` is omitted, the entire balance is transferred by reassigning
+   * ownership of this token in place (the same UTXO/output changes owner). This
+   * preserves the original TBC20 behavior and keeps the output layout fixed so
+   * SIGHASH_SINGLE-based swaps (e.g. the `Sale` contract) continue to work.
    *
-   * Subclasses can customize the newly created token by overriding
+   * For a partial transfer the value is split off into a new token instance for
+   * the recipient. Subclasses can customize that token by overriding
    * `_createTransferToken`.
+   *
+   * NOTE: Subclasses that must sanitize per-instance state on transfer (e.g.
+   * TBC777, which strips escrow/claim history) override this method to route
+   * full transfers through `_createTransferToken` as well.
    */
-  transfer(to: string, amount?: bigint): this {
-    if (typeof amount === 'undefined') amount = this.amount
+  transfer(to: string, amount?: bigint): this | undefined {
+    if (typeof amount === 'undefined') {
+      this._owners = [to]
+      return undefined
+    }
 
     if (amount <= 0n) throw new Error('Transfer amount must be positive')
     if (this.amount < amount) throw new Error('Insufficient funds')

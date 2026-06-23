@@ -1,11 +1,20 @@
 import { Computer, Contract } from '@bitcoin-computer/lib';
+export type TokenConstructorParams = {
+    to: string;
+    amount: bigint;
+    name: string;
+    symbol?: string;
+    [s: string]: unknown;
+};
 export declare class Token extends Contract {
     amount: bigint;
     name: string;
     symbol: string;
     _owners: string[];
-    constructor(to: string, amount: bigint, name: string, symbol?: string);
-    transfer(to: string, amount?: bigint): Token | undefined;
+    get root(): string;
+    constructor(params: TokenConstructorParams);
+    transfer(to: string, amount?: bigint): this | undefined;
+    protected _createTransferToken(to: string, amount: bigint): this;
     burn(): void;
     merge(tokens: Token[]): void;
 }
