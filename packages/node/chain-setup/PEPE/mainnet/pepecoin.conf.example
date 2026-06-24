@@ -24,4 +24,5 @@ printtoconsole=1
 
 zmqpubhashtx=tcp://0.0.0.0:28332
 zmqpubrawtx=tcp://0.0.0.0:28332
+zmqpubsequence=tcp://0.0.0.0:28332
 

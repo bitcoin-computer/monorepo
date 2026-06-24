@@ -6,6 +6,7 @@ import * as readline from 'node:readline/promises'
 import { stdin as input, stdout as output } from 'node:process'
 config()
 
+const autoYes = process.argv.includes('--yes')
 const rl = readline.createInterface({ input, output })
 
 const {
@@ -32,7 +33,14 @@ Address \x1b[2m${computer.db.wallet.address}\x1b[0m
 Mnemonic \x1b[2m${mnemonic}\x1b[0m
 Balance \x1b[2m${balance.balance} satoshis\x1b[0m`)
 
-const answer = await rl.question('\nDo you want to deploy the contracts? \x1b[2m(y/n)\x1b[0m')
+let answer: string
+if (autoYes) {
+  answer = 'y'
+  console.log('\n--yes flag detected, auto-approving deployment\n')
+} else {
+  answer = await rl.question('\nDo you want to deploy the contracts? \x1b[2m(y/n)\x1b[0m')
+}
+
 if (answer === 'n') {
   console.log('\n Aborting...\n')
 } else {
@@ -40,7 +48,15 @@ if (answer === 'n') {
   const counterModSpec = await computer.deploy(`export ${Counter}`)
 
   console.log(' \x1b[2m- Successfully deployed smart contracts\x1b[0m')
-  const answer2 = await rl.question('\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m')
+
+  let answer2: string
+  if (autoYes) {
+    answer2 = 'y'
+    console.log('\n--yes flag detected, auto-updating .env\n')
+  } else {
+    answer2 = await rl.question('\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m')
+  }
+
   if (answer2 === 'n') {
     console.log(`
 

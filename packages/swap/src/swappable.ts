@@ -1,4 +1,5 @@
 import { NFT } from '@bitcoin-computer/TBC721'
+import { Contract } from '@bitcoin-computer/lib'
 
 export class Swappable extends Contract {
   name: string

@@ -1,5 +1,5 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { expect } from '../../utils'
+import { expect } from '../../utils/index.js'
 
 describe('getMnemonic', () => {
   it('Should return the mnemonic', async () => {

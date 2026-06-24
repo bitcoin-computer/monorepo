@@ -1,10 +1,10 @@
 import { Computer, Contract } from '@bitcoin-computer/lib'
-import { chain, network, url } from '../../utils'
-
-// A smart contract
-class C extends Contract {}
+import { chain, network, url } from '../../utils/index.js'
 
 describe('sign', () => {
+  // A smart contract
+  class C extends Contract {}
+
   it('Should sign a transaction', async () => {
     // Create and fund wallet
     const computer = new Computer({ chain, network, url })
@@ -17,9 +17,9 @@ describe('sign', () => {
     })
 
     // Sign transaction
-    await computer.sign(tx)
+    await computer.sign(tx!)
 
     // Broadcast to see it it worked
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
   })
 })

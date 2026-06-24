@@ -1,10 +1,17 @@
- 
 import { expect } from 'chai'
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { Token, TokenHelper } from '../src/token.js'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
@@ -24,126 +31,114 @@ before(async () => {
   await receiver.faucet(10e8)
 })
 
-describe('Token', async () => {
-  let token1: Token
+describe('Token', () => {
+  it('lifecycle: mint, transfer, merge, burn and update revisions', async () => {
+    // Sender mints 3 tokens
+    const token1 = await sender.new(Token, [sender.getPublicKey(), 3n, 'test'])
 
-  describe('mint', async () => {
-    it('Sender mints 3 tokens', async () => {
-      token1 = await sender.new(Token, [sender.getPublicKey(), 3n, 'test'])
-    })
+    // The meta data should be set
+    expect(token1.amount).to.eq(3n)
+    expect(token1._owners).deep.equal([sender.getPublicKey()])
+    expect(token1.name).to.eq('test')
+    expect(token1.symbol).to.eq('')
+    expect(token1._id).to.be.a('string')
+    expect(token1._rev).to.be.a('string')
+    expect(token1._root).to.be.a('string')
 
-    it('The meta data should be set', async () => {
-      expect(token1.amount).to.eq(3n)
-      expect(token1._owners).deep.equal([sender.getPublicKey()])
-      expect(token1.name).to.eq('test')
-      expect(token1.symbol).to.eq('')
-      expect(token1._id).to.be.a('string')
-      expect(token1._rev).to.be.a('string')
-      expect(token1._root).to.be.a('string')
+    // Sender transfers 1 token to Receiver
+    await sleep(500)
+    const token2 = await token1.transfer(receiver.getPublicKey(), 1n)
+
+    // The meta data of token should be set correctly
+    expect(token1.amount).to.eq(2n)
+    expect(token1._owners).deep.equal([sender.getPublicKey()])
+    expect(token1.name).to.eq('test')
+    expect(token1.symbol).to.eq('')
+    expect(token1._id).to.be.a('string')
+    expect(token1._rev).to.be.a('string')
+    expect(token1._root).to.be.a('string')
+
+    // The meta data of newToken should be set correctly
+    expect(token2.amount).to.eq(1n)
+    expect(token2._owners).deep.equal([receiver.getPublicKey()])
+    expect(token2.name).to.eq('test')
+    expect(token2.symbol).to.eq('')
+    expect(token2._id).to.be.a('string')
+    expect(token2._rev).to.be.a('string')
+    expect(token2._root).to.be.a('string')
+
+    // computer.getOUTXOs should return the tokens
+    const senderRevs = await sender.getOUTXOs({ publicKey: sender.getPublicKey() })
+    expect(senderRevs.length).eq(1)
+    const senderToken = await sender.sync<typeof Token>(senderRevs[0])
+    expect(senderToken.amount).eq(2n)
+
+    const receiverRevs = await receiver.getOUTXOs({ publicKey: receiver.getPublicKey() })
+    expect(receiverRevs.length).eq(1)
+    const receiverTokens = await receiver.sync<typeof Token>(receiverRevs[0])
+    expect(receiverTokens.amount).eq(1n)
+
+    // it('Receiver send token2 back to sender', async () => {
+    // We would like to call
+    //
+    //   await token2.transfer(sender.getPublicKey())
+    //
+    // However, the wallet associated with of token2 is sender as token2 was created by
+    // token1 which was created by sender. As token2 is owned by receiver the transaction
+    // would be rejected as sender cannot spend an output owned by receiver.
+    //
+    // We could execute the call by creating an object associated with receiver.
+    //
+    //   const token2Receiver = (await receiver.sync(token2._rev)) as any
+    //   await token2Receiver.transfer(sender.getPublicKey())
+    //
+    // Alternatively we can use encodeCall
+    const { tx, effect } = await receiver.encodeCall({
+      target: token2,
+      property: 'transfer',
+      args: [sender.getPublicKey()],
     })
+    await receiver.broadcast(tx)
+
+    const { env } = effect
+    const { __bc__ } = env
+    const token2After = __bc__ as SmartContract<typeof Token>
+
+    expect(token1._owners).deep.eq([sender.getPublicKey()])
+    expect(token2After._owners).deep.eq([sender.getPublicKey()])
+
+    expect(token2._id).eq(token2After._id)
+    expect(token2._rev).not.eq(token2After._rev)
+
+    expect(await sender.latest(token1._id)).deep.eq(token1._rev)
+    expect(await sender.latest(token2._id)).deep.eq(token2After._rev)
+
+    // Sender merges their two tokens
+    await token1.merge([token2After])
+    expect(token1.amount).eq(3n)
+    expect(token2After.amount).eq(0n)
+
+    // Should burn a token
+    await token1.burn()
+    expect(token1.amount).eq(0n)
+
+    await token2After.burn()
+    expect(token2After.amount).eq(0n)
   })
 
-  describe('transfer, merge and burn', () => {
-    let token2: Token
-    let token2After: Token
-
-    it('Sender transfers 1 token to Receiver', async () => {
-      token2 = (await token1.transfer(receiver.getPublicKey(), 1n)) as Token
-    })
-
-    it('The meta data of token should be set correctly', () => {
-      expect(token1.amount).to.eq(2n)
-      expect(token1._owners).deep.equal([sender.getPublicKey()])
-      expect(token1.name).to.eq('test')
-      expect(token1.symbol).to.eq('')
-      expect(token1._id).to.be.a('string')
-      expect(token1._rev).to.be.a('string')
-      expect(token1._root).to.be.a('string')
-    })
-
-    it('The meta data of newToken should be set correctly', () => {
-      expect(token2.amount).to.eq(1n)
-      expect(token2._owners).deep.equal([receiver.getPublicKey()])
-      expect(token2.name).to.eq('test')
-      expect(token2.symbol).to.eq('')
-      expect(token2._id).to.be.a('string')
-      expect(token2._rev).to.be.a('string')
-      expect(token2._root).to.be.a('string')
-    })
-
-    it('computer.query should return the tokens', async () => {
-      const senderRevs = await sender.query({ publicKey: sender.getPublicKey() })
-      expect(senderRevs.length).eq(1)
-      const senderToken = (await sender.sync(senderRevs[0])) as Token
-      expect(senderToken.amount).eq(2n)
-
-      const receiverRevs = await receiver.query({ publicKey: receiver.getPublicKey() })
-      expect(receiverRevs.length).eq(1)
-      const receiverTokens = (await receiver.sync(receiverRevs[0])) as Token
-      expect(receiverTokens.amount).eq(1n)
-    })
-
-    it('Receiver send token2 back to sender', async () => {
-      // We would like to call
-      //
-      //   await token2.transfer(sender.getPublicKey())
-      //
-      // However, the wallet associated with of token2 is sender as token2 was created by
-      // token1 which was created by sender. As token2 is owned by receiver the transaction
-      // would be rejected as sender cannot spend an output owned by receiver.
-      //
-      // We could execute the call by creating an object associated with receiver.
-      //
-      //   const token2Receiver = (await receiver.sync(token2._rev)) as any
-      //   await token2Receiver.transfer(sender.getPublicKey())
-      //
-      // Alternatively we can use encodeCall
-      const { tx, effect } = await receiver.encodeCall({
-        target: token2,
-        property: 'transfer',
-        args: [sender.getPublicKey()],
-      })
-      await receiver.broadcast(tx)
-
-      const { env } = effect
-      const { __bc__ } = env
-      token2After = __bc__ as unknown as Token
-
-      expect(token1._owners).deep.eq([sender.getPublicKey()])
-      expect(token2After._owners).deep.eq([sender.getPublicKey()])
-
-      expect(token2._id).eq(token2After._id)
-      expect(token2._rev).not.eq(token2After._rev)
-
-      expect(await sender.query({ ids: [token1._id] })).deep.eq([token1._rev])
-      expect(await sender.query({ ids: [token2._id] })).deep.eq([token2After._rev])
-    })
-
-    it('Sender merges their two tokens', async () => {
-      await token1.merge([token2After])
-      expect(token1.amount).eq(3n)
-      expect(token2After.amount).eq(0n)
-    })
-
-    it('Should burn a token', async () => {
-      await token1.burn()
-      expect(token1.amount).eq(0n)
-
-      await token2.burn()
-      expect(token2.amount).eq(0n)
-    })
-
-    it('Should update the revisions correctly', async () => {
-      const computer = new Computer({ url, chain, network })
-      await computer.faucet(2e8)
-      const t1 = await computer.new(Token, [computer.getPublicKey(), 3n, 'test'])
-      const rev1 = t1._rev
-      const t2 = await t1.transfer(computer.getPublicKey(), 1n)
-      expect(t1!._rev).not.eq(rev1)
-      const rev2 = t2!._rev
-      await t2!.transfer(computer.getPublicKey())
-      expect(t2!._rev).not.eq(rev2)
-    })
+  it('Should update the revisions correctly', async () => {
+    const computer = new Computer({ url, chain, network })
+    await computer.faucet(2e8)
+    const t1 = await computer.new(Token, [computer.getPublicKey(), 3n, 'test'])
+    const rev1 = t1._rev
+    const t2 = await t1.transfer(computer.getPublicKey(), 1n)
+    expect(t1!._rev).not.eq(rev1)
+    const rev2 = t2!._rev
+    // transfer to another owner
+    const computer2 = new Computer({ url, chain, network })
+    await t2!.transfer(computer2.getPublicKey())
+    await sleep(500)
+    expect(t2!._rev).not.eq(rev2)
   })
 })
 
@@ -160,7 +155,7 @@ describe('TokenHelper', () => {
     })
 
     it('Should mint a root token', async () => {
-      const rootToken: any = await sender.sync(root)
+      const rootToken = (await sender.sync<typeof Token>(root)) as SmartContract<typeof Token>
       expect(rootToken).not.to.be.undefined
       expect(rootToken._id).to.eq(root)
       expect(rootToken._rev).to.eq(root)
@@ -253,20 +248,20 @@ describe('TokenHelper', () => {
       } catch (err) {
         expect(err.message).to.eq('Could not send entire amount')
       }
+    })
 
-      it('Should fail if the amount is greater than the balance', async () => {
-        const computer3 = new Computer({ url, chain, network })
-        const tbc20 = new TokenHelper(sender)
-        const pKey = tbc20.computer.getPublicKey()
-        const r = await tbc20.mint(pKey, 200n, 'test', 'TST')
-        await sleep(200)
-        try {
-          await tbc20.transfer(computer3.getPublicKey(), 201n, r)
-          expect(true).to.eq('false')
-        } catch (err) {
-          expect(err.message).to.eq('Could not send entire amount')
-        }
-      })
+    it('Should fail if the amount is greater than the balance (alt)', async () => {
+      const computer3 = new Computer({ url, chain, network })
+      const tbc20 = new TokenHelper(sender)
+      const pKey = tbc20.computer.getPublicKey()
+      const r = await tbc20.mint(pKey, 200n, 'test', 'TST')
+      await sleep(200)
+      try {
+        await tbc20.transfer(computer3.getPublicKey(), 201n, r)
+        expect(true).to.eq('false')
+      } catch (err) {
+        expect(err.message).to.eq('Could not send entire amount')
+      }
     })
   })
 })

@@ -1,5 +1,5 @@
- 
 import type { Transaction } from '@bitcoin-computer/lib'
+import { Contract } from '@bitcoin-computer/lib'
 
 export class StaticSwap extends Contract {
   static exec(a: any, b: any) {
@@ -24,11 +24,30 @@ export class StaticSwapHelper {
     return this.mod
   }
 
-  async createSwapTx(a: any, b: any): Promise<{ tx: Transaction; effect: { res: any; env: any } }> {
+  // async createSwapTx(a: any, b: any): Promise<{ tx: Transaction; effect: { res: any; env: any } }> {
+  //   return this.computer.encode({
+  //     // fund: false,
+  //     exp: `StaticSwap.exec(a, b)`,
+  //     env: { a: a._rev, b: b._rev },
+  //     mod: this.mod,
+  //   })
+  // }
+
+  async createSwapTx(a: any, b: any) {
+    const { tx } = await this.computer.encode({
+      fund: false,
+      exp: `StaticSwap.exec(a, b)`,
+      env: { a: a._rev, b: b._rev },
+      mod: this.mod,
+    })
+
+    const fee = await this.computer.db.wallet.estimateFee(tx)
+    const txId = await this.computer.send(BigInt(fee * 10), this.computer.getAddress())
     return this.computer.encode({
       exp: `StaticSwap.exec(a, b)`,
       env: { a: a._rev, b: b._rev },
       mod: this.mod,
+      include: [`${txId}:0`],
     })
   }
 

@@ -22,8 +22,10 @@ The next revision or undefined.
 
 Given the revision of an on-chain object, the function returns the next revision of the same on-chain object. If no such revision exists because the revision passed in is a latest revision, `undefined` is returned.
 
+[![](../../static/next.png)](https://wallet.bitcoincomputer.io)
+
 ## Example
 
 :::code source="../../../lib/test/lib/computer/next.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/next.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/next.test.ts" target=_blank>Source</a>

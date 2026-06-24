@@ -17,11 +17,10 @@ export type ComputerOptions = Partial<{
   path: string;
   url: string;
   satPerByte: number;
-  dustRelayFee: number;
   addressType: AddressType;
   moduleStorageType: ModuleStorageType;
   thresholdBytes: number;
-  cache: boolean;
+  mode: "dev" | "prod";
 }>;
 
 function isLoggedIn(): boolean {

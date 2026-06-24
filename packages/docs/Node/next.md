@@ -16,6 +16,20 @@ curl -X GET http://localhost:1031/v1/LTC/regtest/next/032fc7a37e7848f5fb2beb79f7
 
 ### Response
 
+#### Success (200)
+
 ```json
 { "rev": "44a1e658be5b1fa7b13511979c91497cacf9286aac694bbb75188b875384db98:0" }
+```
+
+#### Missing parameter (400)
+
+```json
+{ "error": "Missing rev." }
+```
+
+#### Server error (500)
+
+```json
+{ "error": "Internal server error message" }
 ```

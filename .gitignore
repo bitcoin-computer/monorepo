@@ -118,3 +118,11 @@ workspace.code-workspace
 
 # turbo
 .turbo
+
+# test-results
+test-results.json
+
+# AI PR context folders (temporary)
+pr-context/
+commit-context/
+release-context/

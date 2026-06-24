@@ -5,4 +5,4 @@ export declare const SmartObjectFunctions: ({ smartObject, functionsExist, optio
     setFunctionResult: React.Dispatch<any>;
     setShow: any;
     setModalTitle: React.Dispatch<React.SetStateAction<string>>;
-}) => import("react/jsx-runtime").JSX.Element;
+}) => import("react").JSX.Element;

@@ -1,47 +1,47 @@
 import { Modal as ModalClass } from 'flowbite'
 import type { ModalOptions, InstanceOptions } from 'flowbite'
 
-const get = (id: string) => {
+export const getModal = (id: string) => {
   const $modalElement = document.querySelector(`#${id}`) as HTMLElement
   const modalOptions: ModalOptions = {}
   const instanceOptions: InstanceOptions = { id, override: true }
   return new ModalClass($modalElement, modalOptions, instanceOptions)
 }
 
-const showModal = (id: string) => {
-  get(id).show()
+export const showModal = (id: string) => {
+  getModal(id).show()
 }
 
-const hideModal = (id: string, onClickClose?: () => void) => {
-  get(id).hide()
+export const hideModal = (id: string, onClickClose?: () => void) => {
+  getModal(id).hide()
   if (onClickClose) {
     onClickClose()
   }
 }
 
-const toggleModal = (id: string) => {
-  get(id).toggle()
+export const toggleModal = (id: string) => {
+  getModal(id).toggle()
 }
 
-const ShowButton = ({ id, text }: any) => (
+export const ShowModalButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-show={id} type="button">
     {text}
   </button>
 )
 
-const HideButton = ({ id, text }: any) => (
+export const HideModalButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-hide={id} type="button">
     {text}
   </button>
 )
 
-const ToggleButton = ({ id, text }: any) => (
+export const ToggleModalButton = ({ id, text }: any) => (
   <button data-modal-target={id} data-modal-toggle={id} type="button">
     {text}
   </button>
 )
 
-const Component = ({
+export const ModalComponent = ({
   title,
   content,
   contentData,
@@ -103,12 +103,12 @@ const Component = ({
 )
 
 export const Modal = {
-  get,
+  get: getModal,
   showModal,
   hideModal,
   toggleModal,
-  ShowButton,
-  HideButton,
-  ToggleButton,
-  Component,
+  ShowButton: ShowModalButton,
+  HideButton: HideModalButton,
+  ToggleButton: ToggleModalButton,
+  Component: ModalComponent,
 }

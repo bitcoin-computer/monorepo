@@ -85,9 +85,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
+      - name: Set image tag
+        id: set_tag
+        run: |
+          VERSION="${{ needs.decide.outputs.version }}"
+          if [ "${{ needs.decide.outputs.release_type }}" = "pre" ]; then
+            TAG="bcdb/bcn:${VERSION}-pre-release"
+          else
+            TAG="bcdb/bcn:${VERSION}"
+          fi
+          echo "image_tag=$TAG" >> $GITHUB_OUTPUT
+
       - name: Pull temporary image
         run: |
-          docker pull ${{ needs.build.outputs.image_tag }}
+          TAG="${{ steps.set_tag.outputs.image_tag }}"
+          echo "Pulling $TAG image"
+          docker pull $TAG
 
       - name: Re-tag image for docker-compose
         run: |

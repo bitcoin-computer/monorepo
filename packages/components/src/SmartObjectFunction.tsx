@@ -101,7 +101,7 @@ export const SmartObjectFunction = ({
 
       await computer.broadcast(tx!)
       await sleep(1000)
-      const [rev] = await computer.query({ ids: [smartObject._id] })
+      const rev = await computer.latest(smartObject._id)
       setFunctionResult({ _rev: rev })
       setModalTitle('Success')
       setShow(true)

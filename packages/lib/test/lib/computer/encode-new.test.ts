@@ -1,19 +1,15 @@
-import { Computer } from '@bitcoin-computer/lib'
-import { chain, expect, network, url } from '../../utils'
-
-// A smart contract
-class C extends Contract {}
-
-// Create wallet
-const computer = new Computer({ chain, network, url })
+import { Computer, Contract } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('encodeNew', async () => {
-  // Fund wallet
-  before('Fund wallet', async () => {
-    await computer.faucet(1e8)
-  })
-
   it('Should encode a constructor call', async () => {
+    // A smart contract
+    class C extends Contract {}
+
+    // Create and wallet
+    const computer = new Computer({ chain, network, url })
+    await computer.faucet(1e8)
+
     // Encode a constructor call
     const { tx, effect } = await computer.encodeNew({
       constructor: C,
@@ -21,14 +17,14 @@ describe('encodeNew', async () => {
     })
 
     // Decode transaction
-    expect(await computer.decode(tx)).to.deep.eq({
+    expect(await computer.decode(tx!)).to.deep.eq({
       exp: `${C} new C()`,
       env: {},
-      mod: '',
+      mod: undefined,
     })
 
     // Broadcast the tx to create the on-chain object
-    const txId = await computer.broadcast(tx)
+    const txId = await computer.broadcast(tx!)
 
     // Synchronizing to the transaction id always returns the effect
     expect(await computer.sync(txId)).deep.eq(effect)

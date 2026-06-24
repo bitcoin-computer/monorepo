@@ -21,6 +21,8 @@ curl -X POST http://localhost:1031/v1/LTC/regtest/rpc \
 
 ### Response
 
+#### Success (200)
+
 ```json
 {
   "result": {
@@ -39,3 +41,21 @@ curl -X POST http://localhost:1031/v1/LTC/regtest/rpc \
   }
 }
 ```
+
+#### Invalid method (400 / 500)
+
+```json
+{ "error": "Please provide appropriate RPC method name" }
+```
+
+```json
+{ "error": "Method is not allowed" }
+```
+
+#### Server error (500)
+
+```json
+{ "error": "Internal server error message" }
+```
+
+> **Note:** Only RPC methods matching `BCN_ALLOWED_RPC_METHODS` are permitted. Any other method will return an error. This value can be configured in the `.env` file.

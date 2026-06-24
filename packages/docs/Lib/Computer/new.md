@@ -35,11 +35,13 @@ Arguments to the constructor of the class `T`.
 
 #### `mod`
 
-Optionally, a string of the for `<transaction-id>:<output-number>` that references a module.
+Optionally, a string of the form `<transaction-id>:<output-number>` that references a module.
+
+When a `mod` is supplied, the module specifier is attached to the top-level created object **and automatically propagated to every descendant object** created during the constructor execution. This guarantees that the entire object graph produced by a single `new` call shares the same module membership. The same propagation rule applies during method calls: if the target object (or any argument) carries a `mod`, every new object created inside the method inherits that module specifier. This behavior enables consistent module-based querying and powerful patterns such as DAOs.
 
 ### Return Value
 
-If `T` or one of its sub-objects does not extend from `Contract` an error is thrown. Otherwise it returns an on-chain object of class `T`. The objectk has all the properties specified in `T` and in addition the properties `_id`, `_rev`, `_root`, `_owners`, and `_satoshis`. If the constructor defined properties `_url` or `_readers` they must have the types as indicated above.
+If `T` or one of its sub-objects does not extend from `Contract` an error is thrown. Otherwise it returns an on-chain object of class `T`. The object has all the properties specified in `T` and in addition the properties `_id`, `_rev`, `_root`, `_owners`, and `_satoshis`. If the constructor defined properties `_url` or `_readers` they must have the types as indicated above.
 
 ## Description
 
@@ -53,4 +55,4 @@ On-chain objects can be freely combines: you can pass an on-chain object as a pa
 
 :::code source="../../../lib/test/lib/computer/new.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/new.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/new.test.ts" target=_blank>Source</a>
