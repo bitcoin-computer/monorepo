@@ -15,6 +15,8 @@ These examples use several advanced features (sighash types, mocking, and contro
 This code is not safe to use with ordinals. A slightly more complicated version that works for ordinals is described [here](./ordinal-sale.md).
 !!!
 
+**Minimization & compliance note:** When building sales or other high-throughput patterns, the direct bare-multisig path provides single-tx reliability (data in output) but consider modules/_url for expressions to keep dust small. See [Fees](../../fees.md) User Choices section (and bare-multisig UX rationale including OP_RETURN limits). Always review [Legal Notice](../../LEGAL.md) for your responsibilities.
+
 ## Smart Contract
 
 Seller builds a partial transaction containing an input spending the asset and an output for receiving the payment. The [sighash type](https://developer.bitcoin.org/devguide/transactions.html#signature-hash-types) `SIGHASH_SINGLE | SIGHASH_ANYONECANPAY` allows Seller to sign only the first input and output.

@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 
 export class User extends Contract {
   name!: string
@@ -30,6 +30,6 @@ export class UserHelper {
       exp: `new User("${name}")`,
       mod: this.mod,
     })
-    return this.computer.broadcast(tx)
+    return this.computer.broadcast(tx!)
   }
 }

@@ -46,7 +46,7 @@ describe('deploy', () => {
       export class B extends A {}
     `)
     const { tx } = await computer.encode({ exp: `new B()`, mod: modSpecB })
-    expect(tx.getId()).to.be.a.string
+    expect(tx!.getId()).to.be.a.string
   })
 
   // Modules of arbitrary size

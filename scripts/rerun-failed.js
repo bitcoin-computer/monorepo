@@ -1,11 +1,10 @@
 #!/usr/bin/env node
-import { existsSync, readFileSync, readdirSync, unlinkSync } from "fs";
-import { join, resolve } from "path";
+import { existsSync, readFileSync } from "fs";
+import { join, dirname } from "path";
 import { execSync } from "child_process";
-import dotenv from "dotenv";
-import { fileURLToPath } from "url";
+import * as glob from "glob";
 
-// ANSI color codes for red/green output
+// ANSI color codes
 const colors = {
   green: "\x1b[32m",
   red: "\x1b[31m",
@@ -13,195 +12,121 @@ const colors = {
 };
 
 const cwd = process.cwd();
+const envVars =
+  "POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332";
 
-// Load environment variables from .env
-const __dirname = resolve(fileURLToPath(import.meta.url), "..");
-const envFile = resolve(__dirname, "../packages/node/.env");
-if (existsSync(envFile)) {
-  const result = dotenv.config({ path: envFile });
-  if (result.error) {
-    console.error("Failed to load .env:", result.error);
+function getPackageDir(testFile) {
+  let dir = dirname(testFile);
+  while (dir && dir !== cwd && dir !== "/") {
+    if (existsSync(join(dir, "package.json"))) {
+      return dir;
+    }
+    const parent = dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
   }
-} else {
-  console.warn(`.env file not found at ${envFile}`);
-}
-
-// Adjust for host environment if running outside Docker
-if (process.env.POSTGRES_HOST === "db") {
-  process.env.POSTGRES_HOST = "127.0.0.1";
-  process.env.BITCOIN_RPC_HOST = "127.0.0.1";
-  process.env.BCN_ZMQ_URL = "tcp://127.0.0.1:28332";
+  return cwd; // fallback
 }
 
 function getTestResultsFiles() {
-  const results = [];
+  let testResultsFiles = [];
 
-  // Case 1: run inside a specific package
-  const localFile = join(cwd, "test-results.json");
-  if (existsSync(localFile)) return [localFile];
-
-  // Case 2: run from monorepo root
-  const packagesDir = join(cwd, "packages");
-  if (!existsSync(packagesDir)) return results;
-
-  for (const entry of readdirSync(packagesDir, { withFileTypes: true })) {
-    if (entry.isDirectory()) {
-      const file = join(packagesDir, entry.name, "test-results.json");
-      if (existsSync(file)) results.push(resolve(file));
-    }
+  if (existsSync(join(cwd, "test-results.json"))) {
+    testResultsFiles.push(join(cwd, "test-results.json"));
   }
 
-  return results;
+  if (existsSync(join(cwd, "packages"))) {
+    const packageDirs = glob.sync(join(cwd, "packages/*/"), { absolute: true });
+    const packageTestResults = packageDirs
+      .map((dir) => join(dir, "test-results.json"))
+      .filter(existsSync);
+    testResultsFiles = [...testResultsFiles, ...packageTestResults];
+  }
+
+  return testResultsFiles;
 }
 
 const testResultsFiles = getTestResultsFiles();
 
 if (testResultsFiles.length === 0) {
-  console.log(`${colors.green}No failed tests to rerun.${colors.reset}`);
-  process.exit(0);
+  console.error(
+    `${colors.red}No test-results.json files found.${colors.reset}`,
+  );
+  process.exit(1);
 }
 
-let hasError = false;
+console.log("Found test-results files:", testResultsFiles);
 
-for (const testResultsFile of testResultsFiles) {
-  const packageDir = testResultsFile.replace(/\/test-results\.json$/, "");
-  console.log(`Processing package: ${packageDir}`);
-
+testResultsFiles.forEach((testResultsFile) => {
   try {
-    const raw = readFileSync(testResultsFile, "utf8").trim();
-
-    if (!raw) {
-      console.error(
-        `${colors.red}Error: ${testResultsFile} is empty.${colors.reset}`
-      );
-      hasError = true;
-      continue;
-    }
-
-    let results;
-    try {
-      results = JSON.parse(raw);
-    } catch (parseError) {
-      console.error(
-        `${colors.red}Error: Failed to parse ${testResultsFile} — invalid JSON.${colors.reset}`
-      );
-      hasError = true;
-      continue;
-    }
-
+    const results = JSON.parse(readFileSync(testResultsFile, "utf8"));
     if (!Array.isArray(results.failures)) {
       console.error(
-        `${colors.red}Error: ${testResultsFile} does not contain a "failures" array.${colors.reset}`
+        `${colors.red}Error: ${testResultsFile} does not contain a "failures" array.${colors.reset}`,
       );
-      hasError = true;
-      continue;
+      return;
     }
 
     const validFailures = results.failures.filter(
-      (failure) => failure.file && (failure.fullTitle || failure.title)
+      (failure) => failure.file && (failure.fullTitle || failure.title),
     );
+
     if (validFailures.length === 0) {
       console.log(
-        `${colors.green}No failures in ${packageDir}.${colors.reset}`
+        `${colors.green}No failures in ${testResultsFile}.${colors.reset}`,
       );
-      continue;
+      return;
     }
 
+    // Clean titles
     const failedTests = validFailures.map((failure) => {
-      let cleanedTitle = (failure.fullTitle || failure.title)
-        .replace(/"before all" hook.*?for\s*"/, "")
-        .replace(/"before each" hook.*?for\s*"/, "")
-        .replace(/\\"/g, '"')
-        .replace(/"/g, "")
-        .trim();
+      let cleanedTitle = failure.fullTitle || failure.title;
+
+      if (cleanedTitle.includes('"before each" hook')) {
+        const match = cleanedTitle.match(/(.*?)\s*"before each" hook/);
+        if (match && match[1]) cleanedTitle = match[1].trim();
+      } else if (cleanedTitle.includes('"before all" hook')) {
+        cleanedTitle = cleanedTitle
+          .replace(/"before all" hook:.*?for\s*"/, "")
+          .replace(/\\"/g, '"')
+          .replace(/"/g, "")
+          .trim();
+      } else {
+        cleanedTitle = cleanedTitle
+          .replace(/\\"/g, '"')
+          .replace(/"/g, "")
+          .trim();
+      }
+
       return { file: failure.file, title: cleanedTitle };
     });
 
-    console.log(
-      `Rerunning ${failedTests.length} failed tests in ${packageDir}.`
-    );
+    const failedFiles = [...new Set(failedTests.map((t) => t.file))];
+    const packageDir = getPackageDir(failedFiles[0]);
 
+    console.log(
+      `\n${colors.green}Processing package: ${packageDir}${colors.reset}`,
+    );
+    console.log(`Rerunning ${failedTests.length} failed tests`);
+
+    // Escape for --grep
     const escapedTitles = failedTests
       .map((test) => test.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
-      .filter((title) => title.trim() !== "");
-
-    if (escapedTitles.length === 0) {
-      console.error(
-        `${colors.red}No valid test titles found for --grep in ${packageDir}.${colors.reset}`
-      );
-      hasError = true;
-      continue;
-    }
-
+      .filter(Boolean);
     const grepPattern = escapedTitles.join("|");
-    const failedFiles = [...new Set(failedTests.map((test) => test.file))];
 
-    // Recompile before rerun
-    try {
-      execSync("npm run compile:test --if-present --workspaces", {
-        cwd: packageDir,
-        stdio: "inherit",
-      });
-    } catch (compileError) {
-      console.warn(
-        `${colors.yellow}Warning: Compilation step failed or skipped: ${compileError.message}${colors.reset}`
-      );
-    }
+    // Config + FORCE library load (this fixes Contract error)
+    const configPath = join(packageDir, ".mocharc.json");
+    const configArg = existsSync(configPath) ? "--config .mocharc.json" : "";
+    const setupArg = "--require @bitcoin-computer/lib";
 
-    const mochaCommand = `mocha --config .mocharc.json --grep '${grepPattern}' ${failedFiles.join(" ")}`;
-    console.log(`Running command in ${packageDir}: ${mochaCommand}`);
+    const mochaCommand = `${envVars} mocha ${configArg} ${setupArg} --grep "${grepPattern}" ${failedFiles.join(" ")}`;
+    console.log(`Running in ${packageDir}: ${mochaCommand}`);
 
-    execSync(mochaCommand, {
-      cwd: packageDir,
-      stdio: "inherit",
-      env: Object.fromEntries(
-        Object.entries(process.env).map(([k, v]) => [k, String(v ?? "")])
-      ),
-    });
-
-    // After successful rerun, check if failures are cleared and delete json if no failures remain
-    console.log(
-      `${colors.green}Rerun completed for ${packageDir}. Checking for remaining failures.${colors.reset}`
-    );
-    const updatedRaw = readFileSync(testResultsFile, "utf8").trim();
-    if (updatedRaw) {
-      try {
-        const updatedResults = JSON.parse(updatedRaw);
-
-        if (
-          Array.isArray(updatedResults.failures) &&
-          updatedResults.failures.length > 0
-        ) {
-          hasError = true;
-          console.log(
-            `${colors.red}Remaining failures in ${testResultsFile}; marking as error.${colors.reset}`
-          );
-        }
-
-        if (
-          Array.isArray(updatedResults.failures) &&
-          updatedResults.failures.length === 0
-        ) {
-          unlinkSync(testResultsFile);
-          console.log(
-            `${colors.green}No remaining failures; cleared ${testResultsFile}.${colors.reset}`
-          );
-        }
-      } catch (parseError) {
-        console.error(
-          `${colors.red}Failed to parse updated ${testResultsFile} for cleanup.${colors.reset}`
-        );
-        hasError = true;
-      }
-    }
+    execSync(mochaCommand, { cwd: packageDir, stdio: "inherit" });
   } catch (error) {
     console.error(
-      `${colors.red}Error processing ${testResultsFile}: ${error.message}${colors.reset}`
+      `${colors.red}Error processing ${testResultsFile}: ${error.message}${colors.reset}`,
     );
-    hasError = true;
   }
-}
-
-if (hasError) {
-  process.exit(1);
-}
+});

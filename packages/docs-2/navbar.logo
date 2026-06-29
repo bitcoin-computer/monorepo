@@ -1,0 +1,31 @@
+navbar: {
+  title: 'Bitcoin Computer',
+  logo: {
+    alt: 'Bitcoin Computer Logo',
+    src: 'img/logo.svg',           // Light mode logo
+    srcDark: 'img/logo-dark.svg',  // Dark mode logo (optional but nice)
+  },
+  items: [
+    {
+      type: 'docSidebar',
+      sidebarId: 'docs',
+      position: 'left',
+      label: 'Documentation',
+    },
+    {
+      to: '/docs/features',
+      label: 'Key Features',
+      position: 'left',
+    },
+    {
+      href: 'https://github.com/bitcoin-computer/monorepo',
+      label: 'GitHub',
+      position: 'right',
+    },
+    {
+      href: 'https://t.me/thebitcoincomputer',
+      label: 'Community',
+      position: 'right',
+    },
+  ],
+},

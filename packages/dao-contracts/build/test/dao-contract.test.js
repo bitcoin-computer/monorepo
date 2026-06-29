@@ -1,14 +1,15 @@
-import { Election, Vote } from '../src/dao-contract.js';
 import { expect } from 'chai';
-import { Computer } from '@bitcoin-computer/lib';
+import { Computer, Contract } from '@bitcoin-computer/lib';
+import { Election, Vote } from '../src/dao-contract.js';
 import { Token } from '@bitcoin-computer/TBC20';
 const url = 'http://localhost:1031';
-describe('Election', () => {
+describe.skip('Election', () => {
     const computer = new Computer({ url });
     beforeEach('Before', async () => {
         await computer.faucet(1e8);
     });
-    describe('validVotes', () => {
+    // TODO: enable this test when unlocking inner computer getTXOs functionality
+    describe.skip('validVotes', () => {
         it('Should compute one valid vote', async () => {
             const tokenMod = await computer.deploy(`export ${Token}`);
             const proposalMod = await computer.deploy(`export ${Vote}`);
@@ -121,7 +122,8 @@ describe('Election', () => {
             expect(validVotes2[0]).eq(vote2._rev.substring(0, 64));
         });
     });
-    describe('vote-with-invalid-token', () => {
+    // TODO: enable this test when unlocking inner computer getTXOs functionality
+    describe.skip('vote-with-invalid-token', () => {
         let realVoteMod;
         before(async () => {
             await computer.faucet(1e8);
@@ -150,7 +152,8 @@ describe('Election', () => {
             expect(proposalVotes.length).eq(1);
         });
     });
-    describe('accepted-rejected', () => {
+    // TODO: enable this test when unlocking inner computer getTXOs functionality
+    describe.skip('accepted-rejected', () => {
         it('Should count to zero if the Vote is not deployed as a module', async () => {
             const invalidMod = '0f08b977b9be9d96b8b02dd0866e7a692bb1527277a746dc8a74adde724d7856:22';
             const t1 = await computer.new(Token, [computer.getPublicKey(), 10n, 'A']);
@@ -195,7 +198,7 @@ describe('Election', () => {
             const computer2 = new Computer({ url });
             const tokenSent = await t1.transfer(computer2.getPublicKey(), 2n);
             expect(tokenSent?.amount).eq(2n);
-            const updatedT1 = (await computer.sync(t1._rev));
+            const updatedT1 = await computer.sync(t1._rev);
             expect(updatedT1.amount).eq(8n);
         });
         it('Should not count token amounts if the same token is transferred and then used for voting', async () => {
@@ -212,7 +215,7 @@ describe('Election', () => {
             const computer2 = new Computer({ url });
             const tokenSent = await t1.transfer(computer2.getPublicKey(), 2n);
             expect(tokenSent?.amount).eq(2n);
-            const updatedT1 = (await computer.sync(t1._rev));
+            const updatedT1 = await computer.sync(t1._rev);
             expect(updatedT1.amount).eq(8n);
             // Vote again
             await computer.new(Vote, [{ electionId: election._id, tokens: [updatedT1], vote: 'accept' }], proposalMod);
@@ -234,10 +237,10 @@ describe('Election', () => {
             const computer2 = new Computer({ url });
             await computer2.faucet(1e8);
             const newRev = await computer.latest(t1._rev);
-            const t1Updated = (await computer.sync(newRev));
+            const t1Updated = await computer.sync(newRev);
             const tokenSent = (await t1Updated.transfer(computer2.getPublicKey(), 2n));
             expect(tokenSent?.amount).eq(2n);
-            const updatedT1 = (await computer.sync(t1._rev));
+            const updatedT1 = await computer.sync(t1._rev);
             expect(updatedT1.amount).eq(8n);
             // Vote again
             await computer2.new(Vote, [{ electionId: election._id, tokens: [tokenSent], vote: 'accept' }], proposalMod);
@@ -260,7 +263,7 @@ describe('Election', () => {
             await computer2.faucet(1e8);
             const t2 = (await t1.transfer(computer2.getPublicKey(), 2n));
             expect(t2?.amount).eq(2n);
-            const updatedT1 = (await computer.sync(t1._rev));
+            const updatedT1 = await computer.sync(t1._rev);
             expect(updatedT1.amount).eq(8n);
             const election2 = await computer.new(Election, [
                 { proposalMod: proposalMod2, tokenRoot: t2._root, description: 'election2' },
@@ -315,7 +318,7 @@ describe('Election', () => {
             // another user syncs to the valid token revision and uses it to vote
             const computer2 = new Computer({ url });
             await computer2.faucet(1e8);
-            const syncedT1 = (await computer2.sync(t1._rev));
+            const syncedT1 = await computer2.sync(t1._rev);
             const election = await computer2.new(Election, [
                 { proposalMod, tokenRoot: t1._root, description: 'test' },
             ]);

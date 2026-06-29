@@ -1,5 +1,6 @@
-import { Contract } from '@bitcoin-computer/lib'
+import { Computer, SmartContract, Contract } from '@bitcoin-computer/lib'
 
+// eslint-disable-next-line
 type Constructor<T> = new (...args: any[]) => T
 
 export class Token extends Contract {
@@ -52,10 +53,10 @@ export interface ITBC20 {
 export class TokenHelper implements ITBC20 {
   name: string
   symbol: string
-  computer: any
+  computer: Computer
   mod: string
 
-  constructor(computer: any, mod?: string) {
+  constructor(computer: Computer, mod?: string) {
     this.computer = computer
     this.mod = mod
   }
@@ -71,20 +72,23 @@ export class TokenHelper implements ITBC20 {
     name: string,
     symbol: string,
   ): Promise<string | undefined> {
-    const args = [publicKey, amount, name, symbol]
-    const token = await this.computer.new(Token, args, this.mod)
+    const token = await this.computer.new(Token, [publicKey, amount, name, symbol], this.mod)
     return token._root
   }
 
   async totalSupply(root: string): Promise<bigint> {
-    const rootBag = await this.computer.sync(root)
+    const rootBag = (await this.computer.sync<typeof Token>(root)) as SmartContract<typeof Token>
     return rootBag.amount
   }
 
-  private async getBags(publicKey: string, root: string): Promise<Token[]> {
+  private async getBags(publicKey: string, root: string): Promise<SmartContract<typeof Token>[]> {
     const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod })
-    const bags = await Promise.all(revs.map(async (rev: string) => this.computer.sync(rev)))
-    return bags.flatMap((bag: Token & { _root: string }) => (bag._root === root ? [bag] : []))
+    const bags = await Promise.all(
+      revs.map(async (rev: string) => this.computer.sync<typeof Token>(rev)),
+    )
+    return bags.flatMap((bag: SmartContract<typeof Token> & { _root: string }) =>
+      bag._root === root ? [bag] : [],
+    )
   }
 
   async balanceOf(publicKey: string, root: string): Promise<bigint> {

@@ -2,6 +2,8 @@ import { useContext, useState } from 'react'
 import { ComputerContext, Modal } from '@bitcoin-computer/components'
 import { Link } from 'react-router-dom'
 import { VITE_CHAT_MOD_SPEC } from '../constants/modSpecs'
+import { SmartContract } from '@bitcoin-computer/lib'
+import { ChatSc } from '../contracts/chat'
 
 function SuccessContent(rev: string) {
   return (
@@ -72,7 +74,7 @@ export default function Mint() {
       })
       await computer.broadcast(tx)
       if (typeof effect.res === 'object' && !Array.isArray(effect.res)) {
-        setSuccessRev(effect.res?._id as string)
+        setSuccessRev((effect.res as SmartContract<typeof ChatSc>)._id as string)
         Modal.showModal('success-modal')
       } else {
         setErrorMsg('Error occurred while creating chat')

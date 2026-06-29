@@ -17,9 +17,9 @@ describe('sign', () => {
     })
 
     // Sign transaction
-    await computer.sign(tx)
+    await computer.sign(tx!)
 
     // Broadcast to see it it worked
-    await computer.broadcast(tx)
+    await computer.broadcast(tx!)
   })
 })

@@ -1,11 +1,16 @@
 <div align="center">
+  <img src="./imgs/explorer.png" alt="nft-app-screenshot" border="0" style=""/>
   <h1>Bitcoin Computer Explorer</h1>
   <p>
     A Web Application for Exploring and Interacting with Smart Contracts
     <br />
-    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+    <a href="http://explorer.bitcoincomputer.io/">demo</a> &#183; <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
   </p>
 </div>
+
+## Demo
+
+[http://explorer.bitcoincomputer.io/](http://explorer.bitcoincomputer.io/)
 
 ## Prerequisites
 

@@ -61,4 +61,4 @@ See [here](https://docs.bitcoincomputer.io/start/).
 
 This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
 
-This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.
+The patented technology is currently available under free open terms. When using direct on-chain storage methods, users incur minimal technical dust (on-chain storage necessity + UTXO hygiene service); see [LEGAL.md](./LEGAL.md) and the Fees documentation for full details, user choices for minimization, and licensing (free for now with reservation of rights for future paid commercial terms).

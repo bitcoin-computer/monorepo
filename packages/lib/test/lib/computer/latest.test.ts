@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('latest', () => {
@@ -40,7 +40,7 @@ describe('latest', () => {
     const noOutput = '0'.repeat(64) + ':0'
 
     // Throws because there is no output with that revision
-    await expect(computer.latest(noOutput)).to.be.rejectedWith('Rev not found')
+    await expect(computer.latest(noOutput)).to.be.rejectedWith(/Rev .* not found/)
   })
 
   it('Should throw an error with a revision that does not contain an object', async () => {
@@ -48,6 +48,6 @@ describe('latest', () => {
     const noObject = counter._id.split(':')[0] + ':1'
 
     // Throws because there is no object at the output with that revision
-    await expect(computer.latest(noObject)).to.be.rejectedWith('Rev not found')
+    await expect(computer.latest(noObject)).to.be.rejectedWith(/Rev .* not found/)
   })
 })

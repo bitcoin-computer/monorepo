@@ -1,3 +1,5 @@
+import { Contract } from '@bitcoin-computer/lib'
+
 export class Counter extends Contract {
   count!: number
   constructor() {

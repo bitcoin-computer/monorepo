@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+import { strict as assert } from 'assert';
 import { describe, it } from 'mocha';
 import * as ecc from '@bitcoin-computer/secp256k1';
 import * as baddress from '../src/address.js';

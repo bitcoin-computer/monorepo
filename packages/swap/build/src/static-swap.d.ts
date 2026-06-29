@@ -1,4 +1,5 @@
 import type { Transaction } from '@bitcoin-computer/lib';
+import { Contract } from '@bitcoin-computer/lib';
 export declare class StaticSwap extends Contract {
     static exec(a: any, b: any): void;
 }
@@ -7,12 +8,6 @@ export declare class StaticSwapHelper {
     mod?: string;
     constructor(computer: any, mod?: string);
     deploy(): Promise<string>;
-    createSwapTx(a: any, b: any): Promise<{
-        tx: Transaction;
-        effect: {
-            res: any;
-            env: any;
-        };
-    }>;
+    createSwapTx(a: any, b: any): Promise<any>;
     checkSwapTx(tx: Transaction, pubKeyA: string, pubKeyB: string): Promise<any>;
 }

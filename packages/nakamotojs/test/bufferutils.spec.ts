@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-ignore
-import assert from 'assert';
+import { strict as assert } from 'assert';
 import { describe, it } from 'mocha';
 import * as bufferutils from '../src/bufferutils.js';
 import { BufferReader, BufferWriter } from '../src/bufferutils.js';

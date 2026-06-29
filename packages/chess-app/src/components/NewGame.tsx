@@ -2,192 +2,168 @@ import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/componen
 import {
   ChessChallengeTxWrapperHelper,
   ChessContractHelper,
-  NotEnoughFundError,
 } from '@bitcoin-computer/chess-contracts'
 import { useContext, useState } from 'react'
 import {
   VITE_CHESS_CHALLENGE_MOD_SPEC,
   VITE_CHESS_GAME_MOD_SPEC,
   VITE_CHESS_USER_MOD_SPEC,
+  VITE_TBC20_MOD_SPEC,
 } from '../constants/modSpecs'
-import { Transaction } from '@bitcoin-computer/lib'
+import { notifyGamesUpdated } from './utils/gamesRefresh'
 
 export const newGameModal = 'new-game-modal'
 
 function NewGameModalContent({
   nameW,
-  nameB,
   publicKeyB,
   setSecondPlayerPublicKey,
-  amount,
-  setAmount,
+  wagerAmount,
+  setWagerAmount,
   handleClear,
 }: {
   nameW: string
-  setName: React.Dispatch<React.SetStateAction<string>>
-  nameB: string
-  setNameB: React.Dispatch<React.SetStateAction<string>>
   publicKeyB: string
   setSecondPlayerPublicKey: React.Dispatch<React.SetStateAction<string>>
-  amount: string
-  setAmount: React.Dispatch<React.SetStateAction<string>>
-  copied: boolean
-  setCopied: React.Dispatch<React.SetStateAction<boolean>>
+  wagerAmount: string
+  setWagerAmount: React.Dispatch<React.SetStateAction<string>>
   handleClear: () => void
 }) {
-  const computerW = useContext(ComputerContext)
-
+  const computer = useContext(ComputerContext)
   const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
-
-  const createNewGame = async () => {
-    const publicKeyW = computerW.getPublicKey()
-    const chessContractHelper = new ChessContractHelper({
-      computer: computerW,
-      satoshis: BigInt(parseFloat(amount) * 1e8),
-      nameW,
-      nameB,
-      publicKeyW,
-      publicKeyB,
-      mod: VITE_CHESS_GAME_MOD_SPEC,
-      userMod: VITE_CHESS_USER_MOD_SPEC,
-    })
-    return await chessContractHelper.makeTx()
-  }
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
       showLoader(true)
-      let tx: Transaction | undefined
-      const { balance } = await computerW.getBalance()
-      try {
-        // Try to create transactoin
-        tx = await createNewGame()
-      } catch (error) {
-        if (
-          error instanceof Error &&
-          error.message === NotEnoughFundError &&
-          balance > parseFloat(amount) * 1e8
-        ) {
-          // Try to combine the UTXOs in a single UTXO
-          await computerW.send(BigInt(parseFloat(amount) * 1e8), computerW.getAddress())
-          tx = await createNewGame()
-        } else {
-          if (error instanceof Error) {
-            throw new Error(error.message)
-          } else {
-            throw new Error('Error occurred!')
-          }
-        }
+
+      const wager = BigInt(wagerAmount)
+      if (wager <= 0n) throw new Error('Wager amount must be positive')
+      if (!publicKeyB) throw new Error('Opponent public key is required')
+
+      const helper = ChessContractHelper.fromModSpecs(
+        computer,
+        VITE_CHESS_GAME_MOD_SPEC,
+        VITE_CHESS_USER_MOD_SPEC,
+        VITE_TBC20_MOD_SPEC,
+      )
+
+      // Find a token with enough balance to wager
+      const token = await helper.findAnyToken(wager)
+      if (!token) {
+        throw new Error(
+          `No token with sufficient balance found. You need at least ${wagerAmount} tokens.`,
+        )
       }
 
+      // Create the chess game on-chain
+      const chess = await helper.createGame(token._root, wager)
+
+      // White deposits their wager atomically with the game creation step
+      await helper.depositTokens(chess._rev, token._rev, wager, nameW, publicKeyB)
+      await helper.addGameToUserIfNeeded(chess._id)
+
+      // Create a challenge so Black can find and accept the game
       const chessChallengeTxWrapperHelper = new ChessChallengeTxWrapperHelper({
-        computer: computerW,
+        computer,
         mod: VITE_CHESS_CHALLENGE_MOD_SPEC,
       })
-
       await chessChallengeTxWrapperHelper.createChessChallengeTxWrapper(
-        tx.serialize(),
+        chess._rev,
+        wager,
+        token._root,
+        computer.getPublicKey(),
         publicKeyB,
-        tx.inputs,
       )
-      showSnackBar('A challenge request has been sent to the player', true)
+
+      showSnackBar('Challenge sent! Waiting for opponent to accept.', true)
+      notifyGamesUpdated()
       Modal.hideModal(newGameModal)
       handleClear()
-      showLoader(false)
     } catch (err) {
-      if (err instanceof Error) {
-        showSnackBar(err.message, false)
-      } else {
-        showSnackBar('Error occurred!', false)
-      }
+      showSnackBar(err instanceof Error ? err.message : 'Error occurred!', false)
+    } finally {
       showLoader(false)
     }
   }
 
   return (
-    <>
-      <form
-        onSubmit={onSubmit}
-        className="w-full mx-auto bg-white shadow-md rounded-lg dark:bg-gray-700"
-      >
-        <div className="grid gap-6 p-6 border-b border-gray-200 dark:border-gray-600">
-          <div>
-            <label
-              htmlFor="amount"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200"
-            >
-              Amount
-            </label>
-            <input
-              type="number"
-              id="amount"
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
-          <div>
-            <label
-              htmlFor="publicKeyB"
-              className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200"
-            >
-              Second Player Public Key
-            </label>
-            <input
-              type="text"
-              id="publicKeyB"
-              value={publicKeyB}
-              onChange={(e) => setSecondPlayerPublicKey(e.target.value)}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            />
-          </div>
-        </div>
-        <div className="p-6">
-          <button
-            type="submit"
-            className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    <form
+      onSubmit={onSubmit}
+      className="w-full mx-auto bg-white shadow-md rounded-lg dark:bg-gray-700"
+    >
+      <div className="grid gap-6 p-6 border-b border-gray-200 dark:border-gray-600">
+        <div>
+          <label
+            htmlFor="wagerAmount"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200"
           >
-            Create Game
-          </button>
+            Wager Amount (tokens)
+          </label>
+          <input
+            type="number"
+            id="wagerAmount"
+            min="1"
+            step="1"
+            value={wagerAmount}
+            onChange={(e) => setWagerAmount(e.target.value)}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Each player wagers this many tokens. Winner takes the full pot.
+          </p>
         </div>
-      </form>
-    </>
+        <div>
+          <label
+            htmlFor="publicKeyB"
+            className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-200"
+          >
+            Opponent Public Key
+          </label>
+          <input
+            type="text"
+            id="publicKeyB"
+            value={publicKeyB}
+            onChange={(e) => setSecondPlayerPublicKey(e.target.value)}
+            placeholder="Paste opponent's public key"
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+          />
+        </div>
+      </div>
+      <div className="p-6">
+        <button
+          type="submit"
+          className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Create Game
+        </button>
+      </div>
+    </form>
   )
 }
+
 export function NewGameModal() {
-  const [nameW, setName] = useState('White')
-  const [nameB, setNameB] = useState('Black')
+  const [nameW, setNameW] = useState('White')
   const [publicKeyB, setSecondPlayerPublicKey] = useState('')
-  const [amount, setAmount] = useState(`0.1`)
-  const [copied, setCopied] = useState(false)
-  const [serializedTx, setSerializedTx] = useState('')
+  const [wagerAmount, setWagerAmount] = useState('5')
 
   const handleClear = () => {
-    setName('White')
-    setNameB('Black')
+    setNameW('White')
     setSecondPlayerPublicKey('')
-    setAmount(`0.1`)
-    setCopied(false)
-    setSerializedTx('')
+    setWagerAmount('5')
   }
+
   return (
     <Modal.Component
       title={'New Game'}
       content={NewGameModalContent}
       contentData={{
         nameW,
-        setName,
-        nameB,
-        setNameB,
+        setNameW,
         publicKeyB,
         setSecondPlayerPublicKey,
-        amount,
-        setAmount,
-        copied,
-        setCopied,
-        serializedTx,
-        setSerializedTx,
+        wagerAmount,
+        setWagerAmount,
         handleClear,
       }}
       id={newGameModal}

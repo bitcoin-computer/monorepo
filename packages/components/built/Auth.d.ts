@@ -36,10 +36,11 @@ declare function loggedInConfiguration(): {
     network: Network;
     url: any;
     path: any;
+    moduleStorageType: ModuleStorageType;
 };
 declare function getComputer(options?: ComputerOptions): Computer;
-declare function LoginForm(): import("react/jsx-runtime").JSX.Element;
-declare function LoginModal(): import("react/jsx-runtime").JSX.Element;
+declare function LoginForm(): import("react").JSX.Element;
+declare function LoginModal(): import("react").JSX.Element;
 export declare const Auth: {
     isLoggedIn: typeof isLoggedIn;
     logout: typeof logout;

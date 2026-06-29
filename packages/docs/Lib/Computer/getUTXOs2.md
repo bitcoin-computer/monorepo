@@ -5,16 +5,14 @@ _Returns **Unspent Transaction Outputs (UTXOs)** for the given query parameters.
 ## Type
 
 ```ts
-async getUTXOs(q: GetTXOsQuery & { verbosity?: 0 }): Promise<string[]>
-async getUTXOs(q: GetTXOsQuery & { verbosity: 1 }): Promise<DbOutput[]>
-async getUTXOs(q: GetTXOsQuery): Promise<string[] | DbOutput[]>
+async getUTXOs(q: TXOQuery & { verbosity?: 0 }): Promise<string[]>
+async getUTXOs(q: TXOQuery & { verbosity: 1 }): Promise<DbOutput[]>
+async getUTXOs(q: TXOQuery): Promise<string[] | TXORecord[]>
 ```
 
 ## Description
 
-
-
-The `getUTXOs` function is *syntactic sugar* for [`getTXOs`](./getTXOs.md) function where `isSpent` is set to `false`. It return only unspent outputs that may or may not contain smart objects.
+The `getUTXOs` function is _syntactic sugar_ for [`getTXOs`](./getTXOs.md) function where `isSpent` is set to `false`. It return only unspent outputs that may or may not contain smart objects.
 
 ## Parameters
 

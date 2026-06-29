@@ -1,5 +1,5 @@
 import { Token } from '@bitcoin-computer/TBC20'
-import { Contract } from '@bitcoin-computer/lib'
+import { SmartContract, Contract } from '@bitcoin-computer/lib'
 
 type ElectionType = {
   proposalMod: string
@@ -9,7 +9,7 @@ type ElectionType = {
 
 type VoteType = {
   electionId: string
-  tokens: Token[]
+  tokens: SmartContract<typeof Token>[]
   vote: 'accept' | 'reject'
 }
 
@@ -52,11 +52,9 @@ export class Election extends Contract {
 
   private async validVotes(): Promise<Vote[]> {
     const proposalVotes = await this.proposalVotes()
-
     const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map(
-      // @ts-expect-error type unknown
-      (obj) => obj.res,
-    )
+      (obj: { res: unknown }) => obj.res,
+    ) as Vote[]
 
     const module = await computer.load(this.proposalMod)
     const voteClassStr = module['Vote'].toString()
@@ -119,10 +117,14 @@ export class Vote extends Contract {
   vote!: 'accept' | 'reject'
   electionId!: string
   tokenRoot!: string
+
   constructor({ electionId, tokens, vote }: VoteType) {
     super({
       electionId,
-      tokensAmount: tokens.reduce((acc: bigint, curr: Token) => acc + curr.amount, 0n),
+      tokensAmount: tokens.reduce(
+        (acc: bigint, curr: SmartContract<typeof Token>) => acc + curr.amount,
+        0n,
+      ),
       vote,
       tokenRoot: tokens[0]._root,
     })

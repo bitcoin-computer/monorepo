@@ -3,6 +3,7 @@ import { ComputerContext, Modal } from '@bitcoin-computer/components'
 import { Link } from 'react-router-dom'
 import { Counter } from '../contracts/counter'
 import { VITE_COUNTER_MOD_SPEC } from '../constants/modSpecs'
+import { SmartContract } from '@bitcoin-computer/lib'
 
 function SuccessContent(rev: string) {
   return (
@@ -71,9 +72,10 @@ export default function Mint() {
         exp: `new Counter()`,
         mod: VITE_COUNTER_MOD_SPEC,
       })
+      if (!tx) throw new Error('Could not create counter')
       await computer.broadcast(tx)
 
-      const counter = effect.res as unknown as Counter
+      const counter = effect.res as SmartContract<typeof Counter>
       setSuccessRev(counter._id)
       Modal.showModal('success-modal')
     } catch (err) {

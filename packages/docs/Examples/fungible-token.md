@@ -11,6 +11,8 @@ A fungible token is stored and transferred in a similar way to how satoshis are 
 
 The `transfer` function checks if the current on-chain object contains a sufficient number of tokens and throws an error if not. If sufficient, the supply of the current on-chain object is reduced by the amount to be sent. A new on-chain object, owned by the recipient and containing the sent amount, is created and returned.
 
+**Minimization note:** For lower on-chain footprint (and thus lower hygiene dust costs), consider deploying token logic via a taproot module and using small expressions or `_url` where appropriate. See [Fees](../../fees.md) "User Choices to Control On-Chain Data and Hygiene Dust Costs" and the bare-multisig rationale. Review [Legal Notice](../../LEGAL.md) for compliance.
+
 ```typescript
 import { Contract } from '@bitcoin-computer/lib'
 

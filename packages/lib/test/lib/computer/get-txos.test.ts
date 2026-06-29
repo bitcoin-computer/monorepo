@@ -1,4 +1,4 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, Contract } from '@bitcoin-computer/lib'
 import { crypto, script } from '@bitcoin-computer/nakamotojs'
 import { chain, expect, network, sleep, url } from '../../utils/index.js'
 
@@ -193,16 +193,24 @@ describe('getTXOs', () => {
       expect(txos).to.include(c4._rev)
     })
 
-    it('Should get TXOs by mod both for the object direct inheritance abd token transfers', async () => {
+    it('Should get TXOs by mod for objects created directly with .new()', async () => {
+      const m = await computer.deploy(`export ${Token}`)
+      const t = await computer.new(Token, [computer.getPublicKey(), 100n], m)
+
+      const txos = await computer.getTXOs({ mod: m })
+
+      expect(txos).to.include(t._id)
+    })
+
+    it('Should NOT return TXO revisions created by .transfer() when filtering by mod', async () => {
       const m = await computer.deploy(`export ${Token}`)
       const t = await computer.new(Token, [computer.getPublicKey(), 100n], m)
       const computer2 = new Computer({ chain, network, url })
-      const newToken: Token = await t.transfer(computer2.getPublicKey(), 40n)
-      
+      const newToken = await t.transfer(computer2.getPublicKey(), 40n)
+
       const txos = await computer.getTXOs({ mod: m })
-      expect(txos.length).to.be.greaterThan(0)
-      expect(txos).to.include(t._id)
-      expect(txos).to.include(newToken._rev)
+
+      expect(txos).not.to.include(newToken._rev)
     })
 
     it('Should get TXOs by mod on token transfers with explicit different mod parameter', async () => {
@@ -215,10 +223,10 @@ describe('getTXOs', () => {
         env: { a: t._rev },
         mod: m1, // explicitly specifying the mod here
       })
-      await computer.broadcast(transferTx.tx)
+      await computer.broadcast(transferTx.tx!)
 
       // sync to the new token
-      const newToken = (await computer.sync(`${transferTx.tx.getId()}:0`)) as Token
+      const newToken = await computer.sync<typeof Token>(`${transferTx.tx!.getId()}:0`)
 
       const txos = await computer.getTXOs({ mod: m1 })
       expect(txos.length).to.be.greaterThan(0)
@@ -278,11 +286,11 @@ describe('getTXOs', () => {
 
       const exp = `${C} new ${C.name}()`
       const { tx } = await computer.encode({ exp })
-      await computer.broadcast(tx)
+      await computer.broadcast(tx!)
 
       const txos = await computer.getTXOs({ exp })
       expect(txos.length).to.be.greaterThan(0)
-      expect(txos).to.include(`${tx.getId()}:0`)
+      expect(txos).to.include(`${tx!.getId()}:0`)
     })
   })
   describe('Get by blockHash', () => {

@@ -28,9 +28,7 @@ export class Election extends Contract {
     }
     async validVotes() {
         const proposalVotes = await this.proposalVotes();
-        const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map(
-        // @ts-expect-error type unknown
-        (obj) => obj.res);
+        const resolved = (await Promise.all(proposalVotes.map((txId) => computer.sync(txId)))).map((obj) => obj.res);
         const module = await computer.load(this.proposalMod);
         const voteClassStr = module['Vote'].toString();
         const normalizedClass = this.normalize(voteClassStr);

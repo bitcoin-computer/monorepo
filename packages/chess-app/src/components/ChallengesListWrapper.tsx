@@ -21,15 +21,19 @@ export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
     const challengeSyncPromises: Promise<ChessChallengeTxWrapper>[] = []
 
     challengeRevs.forEach((rev) => {
-      challengeSyncPromises.push(computer.sync(rev) as Promise<ChessChallengeTxWrapper>)
+      challengeSyncPromises.push(computer.sync<typeof ChessChallengeTxWrapper>(rev))
     })
 
     const challengesList = await Promise.all(challengeSyncPromises)
 
     challengesList.forEach((challenge) => {
       // Don't show accepted challenges
-      if (!challenge.accepted)
-        availableChallenges.push({ challengeId: challenge._id, new: !challenge.accepted })
+      if (!challenge.accepted) {
+        availableChallenges.push({
+          challengeId: challenge._id,
+          new: !challenge.canceledSeen,
+        })
+      }
     })
 
     return availableChallenges
@@ -48,6 +52,25 @@ export const ChallengeListWrapper = ({ user }: { user: User | null }) => {
     }
     fetch()
   }, [])
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined
+
+    const subscribe = async () => {
+      unsubscribe = await computer.streamTXOs(
+        { mod: VITE_CHESS_CHALLENGE_MOD_SPEC, publicKey: computer.getPublicKey() },
+        () => {
+          refreshList()
+        },
+        (err) => console.error('Challenge stream error:', err),
+      )
+    }
+    subscribe()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [computer])
 
   return (
     <>
