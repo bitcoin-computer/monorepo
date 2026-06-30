@@ -320,6 +320,34 @@ describe('getTXOs', () => {
       expect(txos).to.include(c2._rev)
     })
   })
+  describe('Get by gtBlockHeight', () => {
+    it('Should get TXOs by gtBlockHeight', async () => {
+      const c2 = await computer.new(Counter, [])
+      const computer2 = new Computer({ chain, network, url })
+
+      // mine a block to confirm the transaction
+      const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
+      await sleep(1500)
+      const blockInfo = await computer.rpc('getBlock', `${blockHex.result[0]} 1`)
+      const txos = await computer.getTXOs({ gtBlockHeight: blockInfo.result.height - 1 })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.include(c2._rev)
+    })
+  })
+  describe('Get by ltBlockHeight', () => {
+    it('Should get TXOs by ltBlockHeight', async () => {
+      const c2 = await computer.new(Counter, [])
+      const computer2 = new Computer({ chain, network, url })
+
+      // mine a block to confirm the transaction
+      const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
+      await sleep(1500)
+      const blockInfo = await computer.rpc('getBlock', `${blockHex.result[0]} 1`)
+      const txos = await computer.getTXOs({ ltBlockHeight: blockInfo.result.height + 1 })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.include(c2._rev)
+    })
+  })
   describe('Get TXOs by blockIndex', () => {
     it('Should get TXOs by blockIndex', async () => {
       const c2 = await computer.new(Counter, [])
