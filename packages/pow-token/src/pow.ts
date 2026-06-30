@@ -1,9 +1,11 @@
+import { Contract } from '@bitcoin-computer/lib'
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T> = new (...args: any[]) => T
 
 export class Sha256 {
-  static hash(ascii) {
-    function rightRotate(value, amount) {
+  static hash(ascii: string) {
+    function rightRotate(value: number, amount: number) {
       return (value >>> amount) | (value << (32 - amount))
     }
 
@@ -115,33 +117,26 @@ export class Sha256 {
 }
 
 export class Pow extends Contract {
-  amount: bigint
-  name: string
-  nonce: string
-  prevMintedId: string // _rev of the previous mint in the chain ('' for genesis)
-  difficulty: number // The difficulty value that was used/claimed for this mint
+  amount!: bigint
+  name!: string
+  nonce!: string
+  prevMintedId!: string // _rev of the previous mint in the chain ('' for genesis)
+  difficulty!: number // The difficulty value that was used/claimed for this mint
 
   constructor(to: string, amount: bigint, nonce: string, prevMintedId: string, difficulty: number) {
-    if (!Pow.isValidPow(nonce, prevMintedId, difficulty)) {
-      throw new Error('Invalid proof of work')
-    }
+    if (!Pow.isValidPow(nonce, prevMintedId, difficulty)) throw new Error('Invalid proof of work')
 
-    super({
-      _owners: [to],
-      amount,
-      name: 'TBC-alpha',
-      nonce,
-      prevMintedId,
-      difficulty,
-    })
+    const _owners = [to]
+    const name = 'TBC-alpha'
+
+    super({ _owners, amount, name, nonce, prevMintedId, difficulty })
   }
 
   /**
-   * Fast, synchronous PoW validation (used in constructor + mining loop)
-   * Anyone who passes a wrong (too easy) difficulty will be rejected by the
-   * app-level longest-chain rule in the miner.
-   * The difficulty is bound into the hash to prevent cheating by reusing a nonce from a lower difficulty.
-   *
+   * Fast, synchronous PoW validation (used in constructor + mining loop) Anyone
+   * who passes a wrong (too easy) difficulty will be rejected by the app-level
+   * longest-chain rule in the miner. The difficulty is bound into the hash to
+   * prevent cheating by reusing a nonce from a lower difficulty.
    */
   static isValidPow(nonce: string, prevMintedId: string, difficulty: number): boolean {
     if (!nonce) return true // dummy object created by transfer() split
@@ -150,6 +145,12 @@ export class Pow extends Contract {
     const hash = Sha256.hash(puzzle)
     const targetZeros = Math.floor(difficulty / 4) // ~ leading zero hex chars
     return hash.startsWith('0'.repeat(targetZeros))
+  }
+
+  // convenience for apps
+  async isValid(): Promise<boolean> {
+    const root = this._root === this._rev ? this : await computer.sync<typeof Pow>(this._root)
+    return Pow.isValidPow(root.nonce, root.prevMintedId, root.difficulty)
   }
 
   transfer(to: string, amount?: bigint): Pow | undefined {
@@ -176,17 +177,5 @@ export class Pow extends Contract {
       token.burn()
     })
     this.amount += total
-  }
-
-  // convenience for apps
-  async isValid(): Promise<boolean> {
-    if (this._root === this._rev) {
-      // freshly minted token (not transferred yet)
-      return Pow.isValidPow(this.nonce, this.prevMintedId, this.difficulty)
-    } else {
-      // transferred token
-      const root = (await computer.sync(this._root)) as Pow
-      return Pow.isValidPow(root.nonce, root.prevMintedId, root.difficulty)
-    }
   }
 }

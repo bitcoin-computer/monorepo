@@ -104,7 +104,7 @@ describe('Pow', () => {
     mod = await computer.deploy(`export ${Pow}; export ${Sha256};`)
   })
 
-  const mint = async (prev: string, diff = 16, mod) => {
+  const mint = async (prev: string, diff = 16, mod: string) => {
     let nonce = 0
     while (true) {
       const puzzle = prev + nonce.toString() + diff.toString()
@@ -126,7 +126,7 @@ describe('Pow', () => {
       _id: _.isString,
       _rev: _.isString,
       _root: _.isString,
-      _satoshis: (x) => typeof x === 'bigint',
+      _satoshis: (x: unknown) => typeof x === 'bigint',
       _owners: _.isArray,
     })
   })
@@ -176,7 +176,7 @@ describe('Pow', () => {
       )
       expect(true).to.eq(false)
     } catch (error) {
-      expect(error.message).to.eq('Invalid proof of work')
+      if (error instanceof Error) expect(error.message).to.eq('Invalid proof of work')
     }
   })
 
@@ -256,7 +256,7 @@ describe('Pow', () => {
 
     await sleep(500)
     const miner = new PowTokenMiner(computer, freshMod)
-    const tip = await miner.computePrevMintedTokenId()
+    const tip = await miner.getBestTip()
 
     expect(tip).to.equal(t5._rev) // must be the last one
   })
@@ -273,7 +273,7 @@ describe('Pow', () => {
 
     // Mint 2017 tokens (fast on regtest because difficulty stays 16)
     for (let i = 0; i < 2017; i++) {
-      const prev = await miner.computePrevMintedTokenId()
+      const prev = await miner.getBestTip()
       let nonce = 0
       while (true) {
         const puzzle = prev + nonce.toString() + '16'
@@ -314,7 +314,7 @@ describe('Pow', () => {
 
     await sleep(500)
     // Check the tip – should be main chain t4 (longer work)
-    const tip = await miner.computePrevMintedTokenId()
+    const tip = await miner.getBestTip()
     expect(tip).to.equal(t5._rev)
     expect(tip).to.not.equal(f2._rev) // rejects shorter fork
   })
@@ -323,16 +323,16 @@ describe('Pow', () => {
     const token = await computer.new(Pow, [computer.getPublicKey(), 5n, '11348', '', 16], mod)
 
     // partial transfer
-    const split = (await token.transfer(computer.getPublicKey(), 2n)) as Pow
-    expect(await split.isValid()).to.be.true
+    const split = await token.transfer(computer.getPublicKey(), 2n)
+    expect(await split!.isValid()).to.be.true
 
     // full transfer
     await token.transfer(computer.getPublicKey())
 
     // merge back
-    await split.merge([token]) // merge the remaining 3n
-    expect(await split.isValid()).to.be.true
-    expect(split.amount).to.equal(5n)
+    await split!.merge([token]) // merge the remaining 3n
+    expect(await split!.isValid()).to.be.true
+    expect(split!.amount).to.equal(5n)
   })
 
   it('should allow mint with difficulty 0 (genesis or test)', async () => {
@@ -348,7 +348,7 @@ describe('Pow', () => {
   it('should return "" for tip on empty chain', async () => {
     const freshMod = await computer.deploy(`export ${Pow}; export ${Sha256};`)
     const miner = new PowTokenMiner(computer, freshMod)
-    expect(await miner.computePrevMintedTokenId()).to.equal('')
+    expect(await miner.getBestTip()).to.equal('')
   })
 
   it('should prefer heavier fork (higher difficulty)', async () => {
@@ -361,7 +361,7 @@ describe('Pow', () => {
     const heavy1 = await mint(genesis._rev, 20, freshMod) // Heavy: len 2, but work ~2^20 > light
 
     const miner = new PowTokenMiner(computer, freshMod)
-    const tip = await miner.computePrevMintedTokenId()
+    const tip = await miner.getBestTip()
     expect(tip).to.equal(heavy1._rev)
   })
 

@@ -4,7 +4,7 @@ import { Pow } from './pow.js'
 import { config } from './config.js' // NEW: import config
 
 export interface IPowTokenMiner {
-  computePrevMintedTokenId(): Promise<string>
+  getBestTip(): Promise<string>
   computeDifficulty(): Promise<number>
   computePow(prevMintedId: string, difficulty: number): Promise<{ nonce: string; amount: bigint }>
 }
@@ -20,14 +20,14 @@ export class PowTokenMiner implements IPowTokenMiner {
     this.mod = mod
   }
 
-  async computePrevMintedTokenId(): Promise<string> {
+  async getBestTip(): Promise<string> {
     const revs = await this.computer.getOUTXOs({ mod: this.mod })
     if (revs.length === 0) return ''
 
     const graph = new Map<string, { prev: string; diff: number }>()
 
     for (const rev of revs) {
-      const obj = (await this.computer.sync(rev)) as Pow
+      const obj = await this.computer.sync<typeof Pow>(rev)
       if (!Pow.isValidPow(obj.nonce, obj.prevMintedId, obj.difficulty)) continue
 
       graph.set(rev, { prev: obj.prevMintedId || '', diff: obj.difficulty })
@@ -84,7 +84,7 @@ export class PowTokenMiner implements IPowTokenMiner {
   }
 
   async computeDifficulty(): Promise<number> {
-    const prev = await this.computePrevMintedTokenId()
+    const prev = await this.getBestTip()
     if (!prev) return config.getInitialDifficulty() // NEW: chain-aware
 
     const revs = await this.computer.getOUTXOs({ mod: this.mod })
@@ -92,7 +92,7 @@ export class PowTokenMiner implements IPowTokenMiner {
     let maxLength = 0
 
     for (const rev of revs) {
-      const obj = (await this.computer.sync(rev)) as Pow
+      const obj = await this.computer.sync<typeof Pow>(rev)
       if (!Pow.isValidPow(obj.nonce, obj.prevMintedId, obj.difficulty)) continue
       graph.set(rev, obj.prevMintedId)
 
@@ -133,7 +133,7 @@ export class PowTokenMiner implements IPowTokenMiner {
   }
 
   async refreshCache() {
-    this.cachedPrev = await this.computePrevMintedTokenId()
+    this.cachedPrev = await this.getBestTip()
     this.cachedDifficulty = await this.computeDifficulty()
   }
 }
