@@ -55,6 +55,9 @@ An object with the query parameters.
 | previous | Return TXOs whose previous revision is the provided parameter |
 | exp | Giving an expression, return TXOs that matches the hash of that expression |
 | blockHash | Return TXOs that are included in the block with this hash |
+| blockHeight | Return TXOs that are included in the block with this height |
+| ltBlockHeight | Return TXOs that are included in the block with height lower than this number |
+| gtBlockHeight | Return TXOs that are included in the block with height greater than this number |
 | isSpent | Return TXOs that are (or are not) spent |
 | isConfirmed | Return TXOs that are (or are not) included in a block |
 | publicKey | Return TXOs whose asm contains this public key |
