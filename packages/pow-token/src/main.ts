@@ -33,12 +33,12 @@ const main = async () => {
 
   while (true) {
     try {
-      const prev = await miner.computePrevMintedTokenId()
+      const prev = await miner.getBestTip()
       const diff = await miner.computeDifficulty()
 
       const { nonce, amount } = await miner.computePow(prev, diff)
 
-      const currentPrev = await miner.computePrevMintedTokenId()
+      const currentPrev = await miner.getBestTip()
       if (currentPrev !== prev) {
         console.log('⚡ Stale work – another miner won, restarting...')
         continue
