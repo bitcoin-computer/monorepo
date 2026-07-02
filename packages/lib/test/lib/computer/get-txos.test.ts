@@ -313,37 +313,39 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(1500)
+      await sleep(2000)
       const blockInfo = await computer.rpc('getBlock', `${blockHex.result[0]} 1`)
       const txos = await computer.getTXOs({ blockHeight: blockInfo.result.height })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c2._rev)
     })
   })
-  describe('Get by gtBlockHeight', () => {
-    it('Should get TXOs by gtBlockHeight', async () => {
+  describe('Get by gteBlockHeight', () => {
+    it('Should get TXOs by gteBlockHeight', async () => {
       const c2 = await computer.new(Counter, [])
       const computer2 = new Computer({ chain, network, url })
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(1500)
+      // await computer.faucet(1e8)
+      await sleep(2000)
       const blockInfo = await computer.rpc('getBlock', `${blockHex.result[0]} 1`)
-      const txos = await computer.getTXOs({ gtBlockHeight: blockInfo.result.height - 1 })
+      const txos = await computer.getTXOs({ gteBlockHeight: blockInfo.result.height })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c2._rev)
     })
   })
-  describe('Get by ltBlockHeight', () => {
-    it('Should get TXOs by ltBlockHeight', async () => {
+  describe('Get by lteBlockHeight', () => {
+    it('Should get TXOs by lteBlockHeight', async () => {
       const c2 = await computer.new(Counter, [])
       const computer2 = new Computer({ chain, network, url })
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(1500)
+      // await computer.faucet(1e8)
+      await sleep(2000)
       const blockInfo = await computer.rpc('getBlock', `${blockHex.result[0]} 1`)
-      const txos = await computer.getTXOs({ ltBlockHeight: blockInfo.result.height + 1 })
+      const txos = await computer.getTXOs({ lteBlockHeight: blockInfo.result.height })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c2._rev)
     })
