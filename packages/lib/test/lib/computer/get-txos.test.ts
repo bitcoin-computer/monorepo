@@ -44,7 +44,7 @@ describe('getTXOs', () => {
 
   before('Fund computer', async () => {
     computer = new Computer({ chain, network, url })
-    await computer.faucet(2e8)
+    await computer.faucet(3e8)
     const c = await computer.new(Counter, [])
     await c.inc()
   })
@@ -155,6 +155,7 @@ describe('getTXOs', () => {
   describe('Get by satoshis', () => {
     it('Should get TXOs by satoshis amount', async () => {
       const c1 = await computer.new(Payment, [1000000n])
+      await computer.faucet(2e8)
       const satoshis = 2_000_000n
       await c1.setSatoshis(satoshis)
 
