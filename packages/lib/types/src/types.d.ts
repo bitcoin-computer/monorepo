@@ -1,6 +1,7 @@
 import type { Mock } from './mock.js'
 import type { Transaction } from './transaction.js'
 import type { Update } from './update.js'
+import { SUPPORTED_CHAINS } from '../config/constants.js'
 export declare const BC_BRAND: unique symbol
 export declare const PROXY_TAG: unique symbol
 export type BC_BRAND = typeof BC_BRAND
@@ -316,7 +317,7 @@ export declare const isRevObject: (obj: Json) => obj is {
 }
 export declare function isTxId(value: string): value is TxId
 export declare function isRev(s: string): s is Rev
-export type Chain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
+export type Chain = (typeof SUPPORTED_CHAINS)[number]
 export type BtcNetwork = 'testnet' | 'mainnet' | 'regtest'
 export type Fee = Partial<{
   fee: number
