@@ -2300,11 +2300,7 @@ type AllScriptType =
   | 'p2sh-p2wsh-pubkey'
   | 'p2sh-p2wsh-nonstandard';
 type ScriptType =
-  | 'witnesspubkeyhash'
-  | 'pubkeyhash'
-  | 'multisig'
-  | 'pubkey'
-  | 'nonstandard';
+  'witnesspubkeyhash' | 'pubkeyhash' | 'multisig' | 'pubkey' | 'nonstandard';
 export function classifyScript(script: Buffer): ScriptType {
   if (isP2WPKH(script)) return 'witnesspubkeyhash';
   if (isP2PKH(script)) return 'pubkeyhash';

@@ -120,7 +120,7 @@ export function TransactionComponent() {
                     setTransition(decoded);
                 }
             }
-            catch (err) {
+            catch {
                 setTransition('');
             }
         };

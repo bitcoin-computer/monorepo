@@ -261,9 +261,7 @@ function _tapTreeToList(
 
 // Just like Taptree, but it accepts empty branches
 type PartialTaptree =
-  | [PartialTaptree | Tapleaf, PartialTaptree | Tapleaf]
-  | Tapleaf
-  | undefined;
+  [PartialTaptree | Tapleaf, PartialTaptree | Tapleaf] | Tapleaf | undefined;
 function instertLeavesInTree(leaves: TapLeaf[]): Taptree {
   let tree: PartialTaptree;
   for (const leaf of leaves) {
