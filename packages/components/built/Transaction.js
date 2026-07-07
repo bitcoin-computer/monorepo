@@ -111,10 +111,8 @@ export function TransactionComponent() {
                 if (txnData)
                     setTransition(await computer.decode(txnData));
             }
-            catch (err) {
-                if (err instanceof Error) {
-                    setTransition('');
-                }
+            catch {
+                setTransition('');
             }
         };
         fetch();
