@@ -140,7 +140,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     // Return both updated objects so callers can re-bind if needed
     return {
       escrow: effect.env.escrow as SmartContract<typeof Escrow>,
-      token: effect.env.token as any, // ← this is the key line
+      token: effect.env.token as any, // this is the key line
     }
   }
 
