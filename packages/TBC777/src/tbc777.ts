@@ -368,9 +368,8 @@ export class TBC777 extends TBC20 {
   }
 
   /**
-   * Amount may be any non-negative bigint, including `0n` (empty bag / deferred
-   * issuance). Remote-root tokens (bridged / cross-chain value) MUST still be
-   * created with `amount: 0n` so all value originates from audited escrow claims.
+   * Remote-root tokens (used for bridged / cross-chain value) MUST be created
+   * with `amount: 0n`. The constructor enforces this rule.
    *
    * A remote-root token MUST immediately call `withdraw(rev)` or
    * `finalWithdraw(rev)` inside the same transaction that instantiates it. This
@@ -651,11 +650,10 @@ export class TBC777 extends TBC20 {
    * constructor expressions.
    *
    * Rejects:
-   * - Invalid `to` addresses, negative amounts
+   * - Invalid `to` addresses, negative/zero amounts (except remote-root)
    * - Expressions containing `class`, `extends`, or `function` keywords
    *   (prevents inline-class / shadowing attacks)
    *
-   * Zero amounts (`0n`) are allowed for any token, including non-remote mints.
    * Used by the semantic-equality path for remote-root tokens.
    */
   static makeRegex(exp: string): RegExp {
