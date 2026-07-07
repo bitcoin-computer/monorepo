@@ -67,7 +67,7 @@ const prismDarkTheme: PrismTheme = {
     {
       types: ["comment", "prolog", "doctype", "cdata"],
       style: {
-        color: "#9ca3af", // ← Much better contrast + distinction
+        color: "#9ca3af",
         fontStyle: "italic",
       },
     },
@@ -167,8 +167,8 @@ const config: Config = {
       title: "Bitcoin Computer",
       logo: {
         alt: "Bitcoin Computer Logo",
-        src: "img/logo.svg", // ← Light mode logo
-        srcDark: "img/logo-dark.svg", // ← Dark mode logo (optional)
+        src: "img/logo.svg", // Light mode logo
+        srcDark: "img/logo-dark.svg", // Dark mode logo (optional)
       },
       items: [
         {
