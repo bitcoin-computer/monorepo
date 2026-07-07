@@ -293,11 +293,12 @@ export function TransactionComponent() {
   useEffect(() => {
     const fetch = async () => {
       try {
-        if (txnData) setTransition(await computer.decode(txnData))
-      } catch (err) {
-        if (err instanceof Error) {
-          setTransition('')
+        if (txnData) {
+          const decoded = await computer.decode(txnData)
+          setTransition(decoded)
         }
+      } catch {
+        setTransition('')
       }
     }
     fetch()
