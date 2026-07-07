@@ -163,6 +163,10 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     return fresh
   }
 
+  async function mine(c: Computer = minter, blocks: number = 1) {
+    return c.db.wallet.restClient.mine(blocks)
+  }
+
   // ============================================================
   // TBC20 TRANSFER (base class — TBC777 / TBC777M inherit this)
   // ============================================================
@@ -206,6 +210,8 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 
       await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
 
+      await minter.faucet(1e8)
+
       await withdraw(t, escrow1._rev as Rev)
       await assertNoInflation(escrow1._rev as Rev, t)
       expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
@@ -225,6 +231,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       // Malicious escrow over-claims far more than was deposited
       const MALICIOUS_AMOUNT = 100n
       await (escrow1 as any).setWithdraw(t._id, MALICIOUS_AMOUNT, t.root as Root)
+      await mine()
 
       try {
         await withdraw(t, escrow1._rev as Rev)
@@ -253,6 +260,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       // full prev-chain and sums *all* historical withdraw entries (1n + 100n >
       // 5n deposited) → availableBalance < 0 → reject.
       await (escrow1 as any).setWithdraw(t._id, 100n, t.root as Root)
+      await mine()
 
       try {
         await withdraw(t, escrow1._rev as Rev)
@@ -275,6 +283,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 
       await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
 
+      await mine()
       await withdraw(t, escrow1._rev as Rev)
       await assertNoInflation(escrow1._rev as Rev, t)
       expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
@@ -318,12 +327,15 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 
       await (escrow1 as any).setFinalWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
       const lastRev = escrow1._rev as Rev
+      await mine()
 
       try {
         await t.finalWithdraw(firstRev)
         expect.fail('should have thrown on non-last rev')
       } catch (e: any) {
-        expect(e.message).to.include('Claimable final withdraw amount is zero or negative')
+        expect(e.message).to.include(
+          'Accessing non-existent on-chain state inside a smart contract is forbidden',
+        )
       }
 
       await minter.delete([lastRev])
@@ -365,6 +377,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       const { effect: effectGood, tx: txGood } = await minter.encode({ exp: goodExp, mod })
       const goodRemote = effectGood.res as SmartContract<typeof TBC777>
       await minter.broadcast(txGood)
+      await mine()
 
       const { effect: isValidGood } = await minter.encode({
         exp: `TBC777.isValidMint(goodRemote)`,
@@ -442,6 +455,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 
       await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
 
+      await mine()
       await withdraw(t, escrow1._rev as Rev)
 
       expect(t.escrow).to.be.undefined
@@ -453,6 +467,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     it('getBalance remains consistent with manual audit at every step', async () => {
       const escrow = await createNaiveEscrow()
       let t = await createFreshToken()
+      await mine()
 
       // Step 1: Initial state – no deposits
       let balance = await t.getBalance(escrow._rev as Rev)
@@ -465,6 +480,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
         DEPOSIT_AMOUNT,
       )
       t = updatedToken
+      await mine()
 
       balance = await t.getBalance(escrow1._rev as Rev)
       expect(balance).eq(DEPOSIT_AMOUNT)
@@ -472,6 +488,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       // Step 3: Record a regular withdrawal authorization
       await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
 
+      await mine()
       balance = await t.getBalance(escrow1._rev as Rev)
       expect(balance).eq(0n)
 
@@ -533,6 +550,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       const { effect: effectGood, tx: txGood } = await minter.encode({ exp: goodExp, mod })
       const goodRemote = branded(effectGood.res as SmartContract<typeof TBC777>)
       await minter.broadcast(txGood)
+      await mine()
 
       // Both directions must succeed (isEqualTo is symmetric)
       expect(await t.isEqualTo(goodRemote)).to.be.true
@@ -589,6 +607,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       const { effect: goodEffect, tx: goodTx } = await minter.encode({ exp: goodExp, mod })
       const goodRemote = branded(goodEffect.res as SmartContract<typeof TBC777>)
       await minter.broadcast(goodTx)
+      await mine()
 
       // isValidMint succeeds because:
       // 1. remoteRoot token was created with amount: 0n at _id
@@ -664,6 +683,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 
       // Explicit zero claim (escrow can be malicious or buggy)
       await (escrow1 as any).setWithdraw(t._id, 0n, t.root as Root)
+      await mine()
 
       try {
         await withdraw(t, escrow1._rev as Rev)
@@ -769,6 +789,8 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       const t1 = await createFreshToken(10n)
       const t2 = await createFreshToken(5n)
 
+      await mine()
+
       // First deposit → revision 1
       const { escrow: escrowAfter1 } = await depositAtomic(t1, escrow, 3n)
 
@@ -838,6 +860,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 
       await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
 
+      await mine()
       await withdraw(t, escrow1._rev as Rev)
       await assertNoInflation(escrow1._rev as Rev, t)
       expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
@@ -868,6 +891,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       //    _createTransferToken sanitizes escrow state (withdrawn/finalWithdrawn/escrow)
       const transferred = await t.transfer(white.getPublicKey())
       const whiteToken = await white.sync<typeof TBC777>(transferred._rev)
+      await mine()
 
       // 4. Original owner claims the deposited amount (even after transferring remainder)
       await withdraw(t, escrow1._rev as Rev)
@@ -907,12 +931,15 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 
       await (escrow1 as any).setFinalWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
       const lastRev = escrow1._rev as Rev
+      await mine()
 
       try {
         await t.finalWithdraw(firstRev)
         expect.fail('should have thrown on non-last rev')
       } catch (e: any) {
-        expect(e.message).to.include('Claimable final withdraw amount is zero or negative')
+        expect(e.message).to.include(
+          'Accessing non-existent on-chain state inside a smart contract is forbidden',
+        )
       }
 
       await minter.delete([lastRev])
@@ -940,6 +967,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       const tB = await createFreshToken(FRESH_TOKEN_AMOUNT)
       expect(tB.root).to.not.equal(rootA)
       expect(await tA.isEqualTo(tB)).to.be.false
+      await mine()
 
       // Attempted inflation: tB tries to claim the amount recorded for tA
       try {

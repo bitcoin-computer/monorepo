@@ -31,7 +31,11 @@ const network = process.env.NETWORK
 const { expect } = chai
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
-let computer
+let computer: Computer
+
+async function mine() {
+  return computer.db.wallet.restClient.mine(1)
+}
 
 before(async function () {
   computer = new Computer({
@@ -205,6 +209,8 @@ describe('Pow', () => {
     // Partial transfer creates a new object with dummy nonce
     const split = (await token.transfer(computer.getPublicKey(), 1n)) as Pow | undefined
     expect(split?.nonce).to.equal('')
+
+    await mine()
     expect(await split?.isValid()).to.be.true // dummy objects always pass
   })
 
@@ -324,6 +330,8 @@ describe('Pow', () => {
 
     // partial transfer
     const split = await token.transfer(computer.getPublicKey(), 2n)
+
+    await mine()
     expect(await split!.isValid()).to.be.true
 
     // full transfer

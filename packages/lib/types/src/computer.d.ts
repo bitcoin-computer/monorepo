@@ -165,7 +165,7 @@ declare class Computer {
     hasInputs: boolean
   }>
   rpc(method: string, params: string): Promise<any>
-  txIdToBlockTime(hash: string): Promise<number | undefined>
+  txIdToBlockTime(hash: string): Promise<bigint>
   txIdToBlockHeight(txId: string): Promise<number>
   txIdToBlockHash(txId: string): Promise<string | undefined>
   getBlockHash(height: number): Promise<string>

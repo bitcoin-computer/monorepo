@@ -14,7 +14,7 @@ describe('rpc', () => {
 
   // Query for information about the status of the blockchain
   it('Should call getBlockchainInfo', async () => {
-    const { result } = await computer.rpc('getBlockchainInfo', '')
+    const result = await computer.rpc('getBlockchainInfo', '')
     expect(result.blocks).a('number')
     expect(result.bestblockhash).a('string')
   })
@@ -23,7 +23,7 @@ describe('rpc', () => {
   it('Should call getRawTransaction', async () => {
     const c = await computer.new(C, [])
     const txId = c._id.slice(0, 64)
-    const { result } = await computer.rpc('getRawTransaction', `${txId} 1`)
+    const result = await computer.rpc('getRawTransaction', `${txId} 1`)
     expect(result.txid).eq(txId)
     expect(result.hex).a('string')
   })
@@ -32,7 +32,7 @@ describe('rpc', () => {
   it('Should call getTxOut', async () => {
     const c = await computer.new(C, [])
     const [txId, outNum] = c._id.split(':')
-    const { result } = await computer.rpc('getTxOut', `${txId} ${outNum} true`)
+    const result = await computer.rpc('getTxOut', `${txId} ${outNum} true`)
     expect(result.scriptPubKey.asm).eq(`1 ${computer.getPublicKey()} 1 OP_CHECKMULTISIG`)
   })
 

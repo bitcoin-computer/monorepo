@@ -447,10 +447,18 @@ export class ChessContractHelper {
     return (effect as any).env.__bc__ as SmartContract<typeof ChessContract>
   }
 
-  /** Cancel a pending game and withdraw the creator's wager in one flow. */
+  /**
+   * Cancel a pending game and withdraw the creator's wager in one flow.
+   * @deprecated
+   * */
   async cancelGameAndWithdraw(chessId: string): Promise<void> {
-    const chess = await this.cancelGame(chessId)
-    await this.withdrawTokens(chess.tokenIdW, chessId)
+    await this.cancelGame(chessId)
+    /**
+     * Under the strict non-determinism guarantee we cannot cancel and withdraw
+     * in one atomic action anymore. We now have to wait for the next block
+     * before we withdraw. The app needs to be adapted accordingly.
+     * */
+    // await this.withdrawTokens(chess.tokenIdW, chessId)
   }
 
   /** Mark a canceled pending game as seen by the invited opponent (clears list badge). */
