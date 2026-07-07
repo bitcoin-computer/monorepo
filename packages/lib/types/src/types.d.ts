@@ -1,6 +1,7 @@
 import type { Mock } from './mock.js'
 import type { Transaction } from './transaction.js'
 import type { Update } from './update.js'
+import { SUPPORTED_CHAINS } from '../config/constants.js'
 export declare const BC_BRAND: unique symbol
 export declare const PROXY_TAG: unique symbol
 export type BC_BRAND = typeof BC_BRAND
@@ -147,18 +148,20 @@ export type LiftedFunction<Args extends readonly any[], Ret, Root extends Class 
   ...args: LiftedParameters<Args, Root>
 ) => LiftedReturn<Ret, Root>
 export type LiftedStatics<T extends Class> = {
-  [K in keyof T as K extends
-    | 'prototype'
-    | 'length'
-    | 'name'
-    | 'caller'
-    | 'arguments'
-    | 'apply'
-    | 'call'
-    | 'bind'
-    | 'constructor'
-    ? never
-    : K]: Lifted<T[K], T>
+  [
+    K in keyof T as K extends
+      | 'prototype'
+      | 'length'
+      | 'name'
+      | 'caller'
+      | 'arguments'
+      | 'apply'
+      | 'call'
+      | 'bind'
+      | 'constructor'
+      ? never
+      : K
+  ]: Lifted<T[K], T>
 }
 export type LiftedInstanceProperties<T extends Class> = Readonly<{
   [K in keyof InstanceType<T>]: Lifted<InstanceType<T>[K], T>
@@ -316,7 +319,7 @@ export declare const isRevObject: (obj: Json) => obj is {
 }
 export declare function isTxId(value: string): value is TxId
 export declare function isRev(s: string): s is Rev
-export type Chain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
+export type Chain = (typeof SUPPORTED_CHAINS)[number]
 export type BtcNetwork = 'testnet' | 'mainnet' | 'regtest'
 export type Fee = Partial<{
   fee: number
