@@ -361,7 +361,7 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(2500)
+      await sleep(1000)
       const blockInfo = await computer.rpc('getBlock', `${blockHex[0]} 1`)
 
       // check tx index 0 and 1
