@@ -311,7 +311,7 @@ export function TransactionComponent() {
           const decoded = await computer.decode(txnData)
           setTransition(decoded)
         }
-      } catch (err) {
+      } catch {
         setTransition('')
       }
     }
