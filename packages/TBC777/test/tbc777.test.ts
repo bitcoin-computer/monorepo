@@ -1173,9 +1173,9 @@ describe('TBC777 constructor amount rules (unit)', () => {
   })
 
   it('rejects negative amounts', () => {
-    expect(
-      () => new TBC777({ to: validTo, amount: -1n, name: 'test', symbol: 'TST' }),
-    ).to.throw('Amount cannot be negative')
+    expect(() => new TBC777({ to: validTo, amount: -1n, name: 'test', symbol: 'TST' })).to.throw(
+      'Amount cannot be negative',
+    )
   })
 
   it('still requires remote-root tokens to be created with amount 0n', () => {
