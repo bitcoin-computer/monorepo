@@ -37,6 +37,10 @@ async function ensureFunds(c: Computer, minSats = 10e8) {
   }
 }
 
+async function mine(c: Computer = minter, blocks: number = 1) {
+  return c.db.wallet.restClient.mine(blocks)
+}
+
 describe('TBC777M', () => {
   beforeEach(async () => {
     minter = new Computer({ url, chain, network })
@@ -80,6 +84,7 @@ describe('TBC777M', () => {
     expect(token.amount).eq(1n)
     await escrow.move(token._id, 2n, token._root)
 
+    await mine()
     await token.withdraw(escrow._rev)
     expect(token.amount).eq(3n)
   })
@@ -117,6 +122,7 @@ describe('TBC777M', () => {
 
     await escrow.move(token._id, 2n, token._root)
 
+    await mine()
     await token.withdraw(escrow._rev)
     expect(token.amount).eq(3n)
   })
@@ -207,6 +213,7 @@ describe('TBC777M', () => {
     // White withdraws
     expect(whiteToken._rev).eq(await white.latest(whiteToken._rev))
     expect(whiteToken._owners).deep.eq([white.getPublicKey()])
+    await mine()
 
     await sleep(3000)
     await whiteToken.withdraw(chess2._rev)
