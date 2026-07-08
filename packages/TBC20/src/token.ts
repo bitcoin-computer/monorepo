@@ -13,10 +13,6 @@ export type TokenConstructorParams = {
 
 /**
  * Base fungible token contract for the Bitcoin Computer (TBC20 standard).
- *
- * This is a mirror of the canonical `TBC20` implementation in the TBC777
- * package. It keeps the historical `Token` export name for backwards
- * compatibility while adopting the standard behavior.
  */
 export class Token extends Contract {
   amount!: bigint
@@ -37,10 +33,7 @@ export class Token extends Contract {
    * Transfer tokens to another owner.
    *
    * If `amount` is omitted, the entire balance is transferred by reassigning
-   * ownership of this token in place (the same UTXO/output changes owner). This
-   * preserves the original TBC20 behavior and, crucially, keeps the output
-   * layout fixed so SIGHASH_SINGLE-based swaps (e.g. the `Sale` contract used by
-   * swap / swap2 / ft2) continue to work.
+   * ownership of this token in place (the same UTXO/output changes owner). 
    *
    * For a partial transfer the value is split off into a new token instance for
    * the recipient. Subclasses can customize that token by overriding
