@@ -6,6 +6,10 @@ import { Card } from './Card'
 import { ComputerContext } from './ComputerContext'
 import { HiOutlineRefresh } from 'react-icons/hi'
 
+type TransactionRouteParams = {
+  txn?: string
+}
+
 function ExpressionCard({ content, env }: { content: string; env: { [s: string]: string } }) {
   const entries = Object.entries(env)
   let formattedContent = content as any
@@ -271,24 +275,34 @@ export const transitionComponent = ({ transition }: { transition: any }) => (
 
 export function TransactionComponent() {
   const location = useLocation()
-  const params = useParams()
+  const params = useParams<TransactionRouteParams>()
   const computer = useContext(ComputerContext)
-  const [txn, setTxn] = useState(params.txn)
+
+  const [txn, setTxn] = useState<string | undefined>(params.txn)
   const [txnData, setTxnData] = useState<any | null>(null)
   const [rpcTxnData, setRPCTxnData] = useState<any | null>(null)
   const [transition, setTransition] = useState<any | null>(null)
 
   useEffect(() => {
     const fetch = async () => {
+      if (!params.txn) return
+
       setTxn(params.txn)
-      const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn as string])
-      const tx = BCTransaction.fromHex(hex)
-      setTxnData(tx)
-      const { result } = await computer.rpc('getrawtransaction', `${params.txn} 2`)
-      setRPCTxnData(result)
+
+      try {
+        const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn])
+        const tx = BCTransaction.fromHex(hex)
+        setTxnData(tx)
+
+        const { result } = await computer.rpc('getrawtransaction', `${params.txn} 2`)
+        setRPCTxnData(result)
+      } catch (err) {
+        console.error('Failed to fetch transaction:', err)
+      }
     }
+
     fetch()
-  }, [computer, txn, location, params.txn])
+  }, [computer, params.txn, location])
 
   useEffect(() => {
     const fetch = async () => {
@@ -302,23 +316,22 @@ export function TransactionComponent() {
       }
     }
     fetch()
-  }, [computer, txnData, txn])
+  }, [computer, txnData])
+
+  if (!txn) {
+    return <div className="pt-8 text-red-500">Transaction ID not found in URL</div>
+  }
 
   return (
-    <>
-      <div className="pt-8">
-        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Transaction</h1>
-        <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-          {txn}
-        </p>
+    <div className="pt-8">
+      <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Transaction</h1>
+      <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">{txn}</p>
 
-        {transition && transitionComponent({ transition })}
+      {transition && transitionComponent({ transition })}
 
-        {rpcTxnData?.vin && inputsComponent({ rpcTxnData, checkForSpentInput: false })}
-
-        {rpcTxnData?.vout && outputsComponent({ rpcTxnData, txn })}
-      </div>
-    </>
+      {rpcTxnData?.vin && inputsComponent({ rpcTxnData, checkForSpentInput: false })}
+      {rpcTxnData?.vout && outputsComponent({ rpcTxnData, txn })}
+    </div>
   )
 }
 

@@ -96,27 +96,39 @@ export function TransactionComponent() {
     const [transition, setTransition] = useState(null);
     useEffect(() => {
         const fetch = async () => {
+            if (!params.txn)
+                return;
             setTxn(params.txn);
-            const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn]);
-            const tx = BCTransaction.fromHex(hex);
-            setTxnData(tx);
-            const { result } = await computer.rpc('getrawtransaction', `${params.txn} 2`);
-            setRPCTxnData(result);
+            try {
+                const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn]);
+                const tx = BCTransaction.fromHex(hex);
+                setTxnData(tx);
+                const { result } = await computer.rpc('getrawtransaction', `${params.txn} 2`);
+                setRPCTxnData(result);
+            }
+            catch (err) {
+                console.error('Failed to fetch transaction:', err);
+            }
         };
         fetch();
-    }, [computer, txn, location, params.txn]);
+    }, [computer, params.txn, location]);
     useEffect(() => {
         const fetch = async () => {
             try {
-                if (txnData)
-                    setTransition(await computer.decode(txnData));
+                if (txnData) {
+                    const decoded = await computer.decode(txnData);
+                    setTransition(decoded);
+                }
             }
             catch {
                 setTransition('');
             }
         };
         fetch();
-    }, [computer, txnData, txn]);
-    return (_jsx(_Fragment, { children: _jsxs("div", { className: "pt-8", children: [_jsx("h1", { className: "mb-2 text-5xl font-extrabold dark:text-white", children: "Transaction" }), _jsx("p", { className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400", children: txn }), transition && transitionComponent({ transition }), rpcTxnData?.vin && inputsComponent({ rpcTxnData, checkForSpentInput: false }), rpcTxnData?.vout && outputsComponent({ rpcTxnData, txn })] }) }));
+    }, [computer, txnData]);
+    if (!txn) {
+        return _jsx("div", { className: "pt-8 text-red-500", children: "Transaction ID not found in URL" });
+    }
+    return (_jsxs("div", { className: "pt-8", children: [_jsx("h1", { className: "mb-2 text-5xl font-extrabold dark:text-white", children: "Transaction" }), _jsx("p", { className: "mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400", children: txn }), transition && transitionComponent({ transition }), rpcTxnData?.vin && inputsComponent({ rpcTxnData, checkForSpentInput: false }), rpcTxnData?.vout && outputsComponent({ rpcTxnData, txn })] }));
 }
 export const Transaction = { Component: TransactionComponent };
