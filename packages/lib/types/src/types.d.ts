@@ -148,18 +148,20 @@ export type LiftedFunction<Args extends readonly any[], Ret, Root extends Class 
   ...args: LiftedParameters<Args, Root>
 ) => LiftedReturn<Ret, Root>
 export type LiftedStatics<T extends Class> = {
-  [K in keyof T as K extends
-    | 'prototype'
-    | 'length'
-    | 'name'
-    | 'caller'
-    | 'arguments'
-    | 'apply'
-    | 'call'
-    | 'bind'
-    | 'constructor'
-    ? never
-    : K]: Lifted<T[K], T>
+  [
+    K in keyof T as K extends
+      | 'prototype'
+      | 'length'
+      | 'name'
+      | 'caller'
+      | 'arguments'
+      | 'apply'
+      | 'call'
+      | 'bind'
+      | 'constructor'
+      ? never
+      : K
+  ]: Lifted<T[K], T>
 }
 export type LiftedInstanceProperties<T extends Class> = Readonly<{
   [K in keyof InstanceType<T>]: Lifted<InstanceType<T>[K], T>
