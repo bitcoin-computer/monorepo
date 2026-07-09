@@ -58,7 +58,7 @@ export const PrimaryActionButton = ({
   return (
     <button
       type="button"
-      className={`inline-flex items-center justify-center rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 ${actionButtonPadding} ${actionButtonFocus} focus:ring-blue-500 dark:bg-blue-600 dark:hover:bg-blue-700 ${actionButtonDisabled} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg text-sm font-medium text-white bg-blue-3 hover:brightness-90 ${actionButtonPadding} ${actionButtonFocus} focus:ring-blue-3 dark:bg-blue-3 dark:hover:brightness-90 ${actionButtonDisabled} ${className}`}
       onClick={handleClick}
       disabled={isLoading || disabled}
     >
@@ -90,7 +90,7 @@ export const SecondaryActionButton = ({
   return (
     <button
       type="button"
-      className={`inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${actionButtonPadding} ${actionButtonFocus} focus:ring-gray-400 dark:focus:ring-gray-600 ${actionButtonDisabled} ${className}`}
+      className={`inline-flex items-center justify-center rounded-lg border border-gray-200 bg-white text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-3 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white ${actionButtonPadding} ${actionButtonFocus} focus:ring-gray-400 dark:focus:ring-gray-600 ${actionButtonDisabled} ${className}`}
       onClick={handleClick}
       disabled={isLoading || disabled}
     >

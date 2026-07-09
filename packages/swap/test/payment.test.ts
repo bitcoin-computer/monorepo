@@ -32,11 +32,8 @@ describe('Payment', () => {
       paymentHelper = new PaymentHelper(alice)
     })
 
-    it('Alice deploys the payment contract', async () => {
+    it('Alice deploys the payment contract and creates an payment transaction and broadcast it', async () => {
       await paymentHelper.deploy()
-    })
-
-    it('Alice creates an payment transaction and broadcast it', async () => {
       const { tx: paymentTx } = await paymentHelper.createPaymentTx(BigInt(2e8))
 
       paymentTxId = await alice.broadcast(paymentTx)

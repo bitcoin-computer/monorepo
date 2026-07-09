@@ -1,5 +1,5 @@
 import { Computer, SmartContract, Contract } from '@bitcoin-computer/lib'
-import { chain, expect, network, url } from '../../utils/index.js'
+import { chain, expect, network, sleep, url } from '../../utils/index.js'
 
 describe('query', () => {
   // A smart contract
@@ -34,6 +34,7 @@ describe('query', () => {
     // Increment on-chain object
     counter = effect.res as SmartContract<typeof Counter>
     await counter.inc()
+    await sleep(1000)
   })
 
   // Query by public key

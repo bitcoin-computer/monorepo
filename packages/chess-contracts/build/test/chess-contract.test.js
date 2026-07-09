@@ -356,7 +356,11 @@ describe('ChessContract', () => {
                     throw new Error('expected white token UTXO');
                 const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod);
                 const whiteToken = await white.sync(whiteTokenUtxo._rev);
+                // Direct call == encode+broadcast (multi-object update). Proxies advance immediately.
                 await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey());
+                // latest() needs the deposit confirmed; otherwise it can return pre-deposit revs
+                // and the next encode hits txn-mempool-conflict instead of the contract error.
+                await confirmChainTip(minter);
                 const chessHead = await white.latest(chess._id);
                 const whiteTokenAfterDeposit = await white.sync(await white.latest(whiteToken._id));
                 await expect(async () => {
@@ -398,12 +402,15 @@ describe('ChessContract', () => {
                 const timeLimit = 60n * 10n;
                 const to = minter.getPublicKey();
                 const token = await minter.new(TBC777, [{ to, amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
+                await confirmChainTip(minter);
                 const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
                 if (!whiteTokenUtxo)
                     throw new Error('expected white token UTXO');
                 const chess = await white.new(ChessContract, [token._root, wager, timeLimit], chessMod);
                 const whiteToken = await white.sync(whiteTokenUtxo._rev);
                 await chess.acceptDeposit(whiteToken, wager, 'White', black.getPublicKey());
+                // helper.resign uses latest(); confirm so it loads the pending (post-deposit) state.
+                await confirmChainTip(minter);
                 const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod);
                 await expect(helper.resign(chess._id)).rejects.toThrow('Game not yet started');
             });

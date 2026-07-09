@@ -18,6 +18,8 @@ const getValueForType = (type: string, stringValue: string) => {
   switch (type) {
     case 'number':
       return Number(stringValue)
+    case 'bigint':
+      return BigInt(stringValue)
     case 'string':
       return stringValue
     case 'boolean':
@@ -28,6 +30,8 @@ const getValueForType = (type: string, stringValue: string) => {
       return null
     case 'object':
       return stringValue
+    case 'symbol':
+      return Symbol(stringValue)
     default:
       return Number(stringValue)
   }
@@ -45,6 +49,9 @@ const getParameters = (params: string[], fnName: string, formState: any) =>
 
     if (isValidRev(paramValue)) return param
     if (typeof paramValue === 'string') return `'${paramValue}'`
+    // BigInt.prototype.toString() drops the `n` suffix, which would otherwise turn this
+    // back into a plain number literal once interpolated into the `exp` string below.
+    if (typeof paramValue === 'bigint') return `${paramValue}n`
     return paramValue
   })
 

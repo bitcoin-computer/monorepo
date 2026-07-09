@@ -46,6 +46,7 @@ describe('getTXOs', () => {
     computer = new Computer({ chain, network, url })
     await computer.faucet(3e8)
     const c = await computer.new(Counter, [])
+    await sleep(500)
     await c.inc()
   })
 
@@ -229,6 +230,7 @@ describe('getTXOs', () => {
       // sync to the new token
       const newToken = await computer.sync<typeof Token>(`${transferTx.tx!.getId()}:0`)
 
+      await sleep(500)
       const txos = await computer.getTXOs({ mod: m1 })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.not.include(t._id)
