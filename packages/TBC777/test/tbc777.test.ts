@@ -7,11 +7,6 @@ import { Amount, Escrow, TBC777, EscrowAuditor } from '../src/tbc777.js'
 
 const envPaths = [path.resolve(process.cwd(), './packages/node/.env'), '../node/.env']
 
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-
 const INITIAL_AMOUNT = 30n
 const TEST_NAME = 'test'
 const TEST_SYMBOL = 'TST'
@@ -788,6 +783,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       while (current) {
         const state = await minter.sync(current)
         states.push(state)
+        await minter.waitForIndexed(current)
         current = (await minter.prev(current)) as Rev
       }
 
@@ -1128,7 +1124,6 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       expect(whiteToken._rev).eq(await white.latest(whiteToken._rev))
       expect(whiteToken._owners).deep.eq([white.getPublicKey()])
 
-      await sleep(3000)
       await whiteToken.withdraw(chess2._rev as Rev)
       expect(whiteToken.amount).eq(16n)
     })

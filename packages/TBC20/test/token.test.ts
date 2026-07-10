@@ -17,12 +17,6 @@ const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
 const network = process.env.BCN_NETWORK
 
-function sleep(delay: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, delay)
-  })
-}
-
 const sender = new Computer({ url, chain, network })
 const receiver = new Computer({ url, chain, network })
 
@@ -51,9 +45,7 @@ async function fundedComputer(times = 3, sats = 2e8): Promise<Computer> {
 
 describe('Token', () => {
   it('Should mint a token with the expected metadata', async () => {
-    const token = await sender.new(Token, [
-      { to: sender.getPublicKey(), amount: 3n, name: 'test' },
-    ])
+    const token = await sender.new(Token, [{ to: sender.getPublicKey(), amount: 3n, name: 'test' }])
 
     expect(token.amount).to.eq(3n)
     expect(token._owners).deep.equal([sender.getPublicKey()])
@@ -78,7 +70,6 @@ describe('Token', () => {
       { to: sender.getPublicKey(), amount: 3n, name: 'test' },
     ])
 
-    await sleep(500)
     const token2 = await token1.transfer(receiver.getPublicKey(), 1n)
 
     // Sender's token keeps its identity, amount reduced
@@ -112,7 +103,6 @@ describe('Token', () => {
     ])
     const idBefore = token1._id
 
-    await sleep(500)
     // A full transfer mutates the token in place and returns undefined (matching
     // the original TBC20 / NFT / Payment behavior).
     const returned = await token1.transfer(receiver.getPublicKey())
@@ -130,9 +120,7 @@ describe('Token', () => {
   })
 
   it('Should throw when transferring a non-positive amount', async () => {
-    const token = await sender.new(Token, [
-      { to: sender.getPublicKey(), amount: 3n, name: 'test' },
-    ])
+    const token = await sender.new(Token, [{ to: sender.getPublicKey(), amount: 3n, name: 'test' }])
     try {
       await token.transfer(receiver.getPublicKey(), 0n)
       expect.fail('should have thrown on non-positive transfer')
@@ -142,9 +130,7 @@ describe('Token', () => {
   })
 
   it('Should throw when transferring more than the balance', async () => {
-    const token = await sender.new(Token, [
-      { to: sender.getPublicKey(), amount: 3n, name: 'test' },
-    ])
+    const token = await sender.new(Token, [{ to: sender.getPublicKey(), amount: 3n, name: 'test' }])
     try {
       await token.transfer(receiver.getPublicKey(), 4n)
       expect.fail('should have thrown on insufficient funds')
@@ -160,12 +146,11 @@ describe('Token', () => {
     const token1 = await computer.new(Token, [
       { to: computer.getPublicKey(), amount: 3n, name: 'test' },
     ])
-    await sleep(500)
+
     const token2 = await token1.transfer(computer.getPublicKey(), 1n)
     expect(token1.amount).to.eq(2n)
     expect(token2.amount).to.eq(1n)
 
-    await sleep(500)
     await token1.merge([token2])
     expect(token1.amount).to.eq(3n)
     expect(token2.amount).to.eq(0n)
@@ -191,9 +176,7 @@ describe('Token', () => {
   })
 
   it('Should burn a token', async () => {
-    const token = await sender.new(Token, [
-      { to: sender.getPublicKey(), amount: 3n, name: 'test' },
-    ])
+    const token = await sender.new(Token, [{ to: sender.getPublicKey(), amount: 3n, name: 'test' }])
     await token.burn()
     expect(token.amount).to.eq(0n)
   })
@@ -210,7 +193,7 @@ describe('Token', () => {
     // transfer the rest to another owner
     const computer2 = new Computer({ url, chain, network })
     await t2.transfer(computer2.getPublicKey())
-    await sleep(500)
+
     expect(t2._rev).not.eq(rev2)
   })
 })
@@ -267,7 +250,7 @@ describe('TokenHelper', () => {
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
       const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
-      await sleep(200)
+
       const res = await tokenHelper.balanceOf(publicKey, root)
       expect(res).to.eq(200n)
     })
@@ -279,9 +262,9 @@ describe('TokenHelper', () => {
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
       const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
-      await sleep(200)
+
       await tokenHelper.transfer(computer2.getPublicKey(), 20n, root)
-      await sleep(200)
+
       const res = await tokenHelper.balanceOf(publicKey, root)
       expect(res).to.eq(180n)
     })
@@ -294,11 +277,11 @@ describe('TokenHelper', () => {
       const root = await tokenHelper.mint(publicKey, 200n, 'multiple', 'MULT')
       const amount2 = BigInt(Math.floor(Math.random() * 100))
       const amount3 = BigInt(Math.floor(Math.random() * 100))
-      await sleep(200)
+
       await tokenHelper.transfer(computer2.getPublicKey(), amount2, root)
-      await sleep(200)
+
       await tokenHelper.transfer(computer3.getPublicKey(), amount3, root)
-      await sleep(200)
+
       const res = await tokenHelper.balanceOf(publicKey, root)
       expect(res).to.eq(200n - amount2 - amount3)
 
@@ -314,7 +297,7 @@ describe('TokenHelper', () => {
       const tokenHelper = new TokenHelper(sender)
       const publicKey = tokenHelper.computer.getPublicKey()
       const root = await tokenHelper.mint(publicKey, 200n, 'test', 'TST')
-      await sleep(200)
+
       try {
         await tokenHelper.transfer(computer2.getPublicKey(), 201n, root)
         expect(true).to.eq('false')

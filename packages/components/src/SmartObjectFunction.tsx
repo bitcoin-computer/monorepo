@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from 'react'
 import { TypeSelectionDropdown } from './common/TypeSelectionDropdown'
-import { isValidRev, sleep } from './common/utils'
+import { isValidRev } from './common/utils'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
 
@@ -107,7 +107,7 @@ export const SmartObjectFunction = ({
       })
 
       await computer.broadcast(tx!)
-      await sleep(1000)
+      await computer.waitForIndexed(tx.txId)
       const rev = await computer.latest(smartObject._id)
       setFunctionResult({ _rev: rev })
       setModalTitle('Success')
