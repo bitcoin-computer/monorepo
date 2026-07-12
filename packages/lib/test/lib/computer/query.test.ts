@@ -34,7 +34,7 @@ describe('query', () => {
     // Increment on-chain object
     counter = effect.res as SmartContract<typeof Counter>
     await counter.inc()
-    await sleep(1000)
+    await computer.waitForIndexed(counter._rev)
   })
 
   // Query by public key

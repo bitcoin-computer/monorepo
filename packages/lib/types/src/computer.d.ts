@@ -135,6 +135,22 @@ declare class Computer {
   fund(tx: nTransaction, opts?: Fee & FundOptions): Promise<void>
   send(satoshis: bigint, address: string | Address): Promise<string>
   broadcast(tx: nTransaction): Promise<string>
+  isIndexed(location: string): Promise<{
+    indexed: boolean
+    hasOutputs: boolean
+    hasInputs: boolean
+  }>
+  waitForIndexed(
+    location: string,
+    opts?: {
+      timeoutMs?: number
+      pollMs?: number
+    },
+  ): Promise<{
+    indexed: boolean
+    hasOutputs: boolean
+    hasInputs: boolean
+  }>
   rpc(method: string, params: string): Promise<any>
   txIdToBlockTime(hash: string): Promise<bigint>
   getChain(): Chain

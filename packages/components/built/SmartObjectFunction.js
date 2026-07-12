@@ -1,7 +1,7 @@
 import { Fragment as _Fragment, jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useContext, useMemo, useState } from 'react';
 import { TypeSelectionDropdown } from './common/TypeSelectionDropdown';
-import { isValidRev, sleep } from './common/utils';
+import { isValidRev } from './common/utils';
 import { UtilsContext } from './UtilsContext';
 import { ComputerContext } from './ComputerContext';
 export const getErrorMessage = (error) => {
@@ -77,7 +77,7 @@ export const SmartObjectFunction = ({ smartObject, functionsExist, options, setF
                 env: { smartObject: smartObj._rev, ...revMap },
             });
             await computer.broadcast(tx);
-            await sleep(1000);
+            await computer.waitForIndexed(tx.txId);
             const rev = await computer.latest(smartObject._id);
             setFunctionResult({ _rev: rev });
             setModalTitle('Success');

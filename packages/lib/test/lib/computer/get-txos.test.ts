@@ -46,7 +46,6 @@ describe('getTXOs', () => {
     computer = new Computer({ chain, network, url })
     await computer.faucet(3e8)
     const c = await computer.new(Counter, [])
-    await sleep(500)
     await c.inc()
   })
 
@@ -230,7 +229,7 @@ describe('getTXOs', () => {
       // sync to the new token
       const newToken = await computer.sync<typeof Token>(`${transferTx.tx!.getId()}:0`)
 
-      await sleep(500)
+      await computer.waitForIndexed(newToken._rev)
       const txos = await computer.getTXOs({ mod: m1 })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.not.include(t._id)
@@ -242,6 +241,7 @@ describe('getTXOs', () => {
       const computer2 = new Computer({ chain, network, url })
       await computer2.faucet(1e8)
       const c2 = await computer2.new(Counter, [])
+      await computer2.waitForIndexed(c2._rev)
       const objectTxos = await computer2.getTXOs({ isObject: true })
       expect(objectTxos.length).to.be.greaterThan(0)
       expect(objectTxos).to.include(c2._rev)
@@ -303,7 +303,7 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(1500)
+      await sleep(1000)
       const txos = await computer.getTXOs({ blockHash: blockHex.result[0] })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c2._rev)
@@ -316,8 +316,8 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(1500)
       const blockInfo = await computer.rpc('getBlock', `${blockHex.result[0]} 1`)
+      await sleep(1000)
       const txos = await computer.getTXOs({ blockHeight: blockInfo.result.height })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c2._rev)
@@ -331,8 +331,8 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(2500)
       const blockInfo = await computer.rpc('getBlock', `${blockHex.result[0]} 1`)
+      await sleep(1000)
 
       // check tx index 0 and 1
       const txosIdx0 = await computer.getTXOs({ blockIndex: 0, blockHash: blockInfo.result.hash })
@@ -389,8 +389,8 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       await computer2.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(1500)
 
+      await sleep(1000)
       const confirmedTxos = await computer2.getTXOs({
         isConfirmed: true,
         publicKey: computer2.getPublicKey(),
@@ -429,7 +429,6 @@ describe('getTXOs', () => {
       await c2.inc()
       await computer.delete([c2._rev])
 
-      await sleep(500)
       const utxos = await computer.getTXOs({
         publicKey: computer.getPublicKey(),
         isSpent: false,
