@@ -102,9 +102,16 @@ jobs:
           echo "Pulling $TAG image"
           docker pull $TAG
 
+      - name: Debug tag values
+        run: |
+          echo "needs.build.outputs.image_tag='${{ needs.build.outputs.image_tag }}'"
+          echo "steps.set_tag.outputs.image_tag='${{ steps.set_tag.outputs.image_tag }}'"
+          echo "needs.decide.outputs.version='${{ needs.decide.outputs.version }}'"
+          echo "needs.decide.outputs.release_type='${{ needs.decide.outputs.release_type }}'"
+
       - name: Re-tag image for docker-compose
         run: |
-          docker tag ${{ needs.build.outputs.image_tag }} bcdb:bcn
+          docker tag ${{ steps.set_tag.outputs.image_tag }} bcdb:bcn
 
       - name: Copy configuration files
         working-directory: packages/node
