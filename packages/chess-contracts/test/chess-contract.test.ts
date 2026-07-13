@@ -187,7 +187,7 @@ describe('ChessContract', () => {
   /**
    * Deploy chess + TBC777 token mods once; reuse spec strings across tests.
    */
-  describe('Chain integration (local BCN)', () => {
+  describe.only('Chain integration (local BCN)', () => {
     const TOKEN_SYMBOL = 'CHS'
     let tbc777Mod: string
     let chessMod: string
