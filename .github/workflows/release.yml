@@ -133,33 +133,33 @@ jobs:
           sleep 20
 
       - name: Wait for Bitcoin Computer Node to be fully ready
-          working-directory: packages/node
-          run: |
-            echo "Waiting for Bitcoin Computer Node health check to report 'ready' on port 1031..."
-            for i in {1..60}; do
-              RESPONSE=$(curl -s -w "%{http_code}" -o /tmp/health.json http://127.0.0.1:1031/health || echo "000")
-              
-              if [ "$RESPONSE" = "200" ]; then
-                STATUS=$(jq -r '.status' /tmp/health.json 2>/dev/null || echo "unknown")
-                if [ "$STATUS" = "ready" ]; then
-                  echo "Node is fully ready (wallet funded)"
-                  cat /tmp/health.json
-                  exit 0
-                fi
+        working-directory: packages/node
+        run: |
+          echo "Waiting for Bitcoin Computer Node health check to report 'ready' on port 1031..."
+          for i in {1..60}; do
+            RESPONSE=$(curl -s -w "%{http_code}" -o /tmp/health.json http://127.0.0.1:1031/health || echo "000")
+            
+            if [ "$RESPONSE" = "200" ]; then
+              STATUS=$(jq -r '.status' /tmp/health.json 2>/dev/null || echo "unknown")
+              if [ "$STATUS" = "ready" ]; then
+                echo "Node is fully ready (wallet funded)"
+                cat /tmp/health.json
+                exit 0
               fi
-              
-              echo "Attempt $i/60: Node not ready yet (HTTP $RESPONSE, status: $STATUS). Waiting 5s..."
-              sleep 5
-            done
+            fi
             
-            echo "Node did not become ready in time"
-            echo "Last health response:"
-            cat /tmp/health.json || true
-            echo ""
-            echo "=== Last 120 lines of docker-compose.log ==="
-            tail -n 120 ../../docker-compose.log || true
-            exit 1
-            
+            echo "Attempt $i/60: Node not ready yet (HTTP $RESPONSE, status: $STATUS). Waiting 5s..."
+            sleep 5
+          done
+
+          echo "Node did not become ready in time"
+          echo "Last health response:"
+          cat /tmp/health.json || true
+          echo ""
+          echo "=== Last 120 lines of docker-compose.log ==="
+          tail -n 120 ../../docker-compose.log || true
+          exit 1
+
       - name: Run integration tests (with retry)
         uses: nick-fields/retry@v3
         with:
