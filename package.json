@@ -54,6 +54,7 @@
     "esbuild": "^0.24.0"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.11.21",
     "buffer": "^6.0.3",
     "eslint-config-prettier": "~9.1.0",
