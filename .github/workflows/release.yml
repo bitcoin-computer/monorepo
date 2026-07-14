@@ -125,7 +125,7 @@ jobs:
         working-directory: packages/node
         run: |
           echo "Waiting for Bitcoin Computer Node health check to report 'ready' on port 1031..."
-          for i in {1..60}; do
+          for i in {1..120}; do   # up to 10 minutes (120 * 5s)
             RESPONSE=$(curl -s -w "%{http_code}" -o /tmp/health.json http://127.0.0.1:1031/health || echo "000")
             
             if [ "$RESPONSE" = "200" ]; then
@@ -134,19 +134,21 @@ jobs:
                 echo "Node is fully ready (wallet funded)"
                 cat /tmp/health.json
                 exit 0
+              else
+                echo "Attempt $i/120: Node is starting (wallet setup in progress)..."
               fi
+            else
+              echo "Attempt $i/120: HTTP $RESPONSE - waiting for server..."
             fi
             
-            echo "Attempt $i/60: Node not ready yet (HTTP $RESPONSE, status: $STATUS). Waiting 5s..."
             sleep 5
           done
 
-          echo "Node did not become ready in time"
-          echo "Last health response:"
+          echo "Timeout: Node did not become ready within 10 minutes"
           cat /tmp/health.json || true
           echo ""
-          echo "=== Last 120 lines of docker-compose.log ==="
-          tail -n 120 ../../docker-compose.log || true
+          echo "=== Last 100 lines of docker-compose.log ==="
+          tail -n 100 ../../docker-compose.log || true
           exit 1
 
       - name: Run integration tests (with retry)
