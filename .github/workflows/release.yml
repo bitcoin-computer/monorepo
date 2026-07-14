@@ -151,8 +151,7 @@ jobs:
           max_attempts: 4
           retry_on: error
           retry_wait_seconds: 25
-          command: npm run test:ci
-          working-directory: packages/node
+          command: cd packages/node && npm run test
 
       - name: Show service logs on failure
         working-directory: packages/node
