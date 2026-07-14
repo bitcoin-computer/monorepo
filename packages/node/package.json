@@ -50,6 +50,7 @@
     "start:bcn": "node dist/bcn.es.mjs",
     "start:sync": "node dist/bcn.sync.es.mjs",
     "test": "mocha --config .mocharc.json",
+    "test:ci": "mocha --config .mocharc.json --retries 3 --exit --timeout 40000",
     "test:rerun": "node ../../scripts/rerun-failed.js",
     "up": "docker compose -f docker-compose.yml up"
   },
