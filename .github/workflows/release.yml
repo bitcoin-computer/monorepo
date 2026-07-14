@@ -85,11 +85,12 @@ jobs:
           fi
           echo "image_tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Pull temporary image
+      - name: Pull and prepare image for docker-compose
         run: |
-          TAG="${{ steps.set_tag.outputs.image_tag }}"
-          echo "Pulling $TAG image"
-          docker pull $TAG
+          IMAGE="${{ steps.set_tag.outputs.image_tag }}"
+          echo "Using image: $IMAGE"
+          docker pull "$IMAGE"
+          docker tag "$IMAGE" bcdb/bcn
 
       - name: Debug tag values
         run: |
@@ -98,28 +99,20 @@ jobs:
           echo "needs.decide.outputs.version='${{ needs.decide.outputs.version }}'"
           echo "needs.decide.outputs.release_type='${{ needs.decide.outputs.release_type }}'"
 
-      - name: Re-tag image for docker-compose
-        run: |
-          docker tag ${{ steps.set_tag.outputs.image_tag }} bcdb:bcn
-
       - name: Copy configuration files
         working-directory: packages/node
         run: |
           cp chain-setup/LTC/regtest/.env.example .env
           cp chain-setup/LTC/regtest/litecoin.conf.example litecoin.conf
 
-      - name: Set up Docker Compose
-        run: |
-          sudo apt-get update && sudo apt-get install -y docker-compose
-
-      - name: Install dependencies (npm install)
+      - name: Install dependencies
         run: npm ci
 
       - name: Start services in regtest mode
         working-directory: packages/node
         run: |
-          npm run up &
-          sleep 20
+          echo "Starting services with --no-build..."
+          docker compose up --no-build -d
 
       - name: Wait for Bitcoin Computer Node to be fully ready
         working-directory: packages/node
