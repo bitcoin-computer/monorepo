@@ -417,13 +417,28 @@ export class TBC777 extends TBC20 {
   }
 
   /**
-   * Factory used by `transfer()`. Creates a clean token instance for the
-   * recipient.
-   *
-   * All escrow-related mutable state (`withdrawn`, `finalWithdrawn`, `escrow`)
-   * is deliberately omitted so the recipient does not inherit any claim
-   * history. Escrow claims are always bound to a concrete token `_id`, making
-   * this safe.
+   * TBC777 always transfers by splitting off a fresh, sanitized token instance —
+   * even for a full transfer (when `amount` is omitted). The base TBC20 reassigns
+   * ownership in place on a full transfer, but TBC777 must never let a recipient
+   * inherit escrow / claim history, so we route every transfer through
+   * `_createTransferToken` (which strips `withdrawn` / `finalWithdrawn` / `escrow`).
+   */
+  transfer(to: string, amount?: bigint): this {
+    if (typeof amount === 'undefined') amount = this.amount
+
+    if (amount <= 0n) throw new Error('Transfer amount must be positive')
+    if (this.amount < amount) throw new Error('Insufficient funds')
+
+    this.amount -= amount
+    return this._createTransferToken(to, amount)
+  }
+
+  /**
+   * Creates a fresh token instance for the recipient of a transfer. We
+   * deliberately sanitize all escrow-related mutable state (`withdrawn`,
+   * `finalWithdrawn`, `escrow`) so the new owner does not inherit any
+   * claim/withdrawal history. Claims in escrows are always tied to a specific
+   * token `_id`, so this is safe.
    */
   protected _createTransferToken(to: string, amount: bigint): this {
     const ctor = this.constructor as Constructor<this>

@@ -1,6 +1,6 @@
 {
   "name": "bitcoin-computer",
-  "version": "0.26.0-beta.0",
+  "version": "0.27.0-beta.0",
   "private": true,
   "description": "A Trustless Smart Contract System for Bitcoin and Litecoin",
   "homepage": "http://bitcoincomputer.io/",
@@ -51,7 +51,8 @@
     "types": "turbo run types --concurrency=1 --continue=never"
   },
   "dependencies": {
-    "esbuild": "^0.24.0"
+    "esbuild": "^0.24.0",
+    "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",

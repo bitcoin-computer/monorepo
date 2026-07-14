@@ -112,6 +112,16 @@ export class TBC777 extends TBC20 {
     merge() {
         throw new Error('merge() is disabled in TBC777.');
     }
+    transfer(to, amount) {
+        if (typeof amount === 'undefined')
+            amount = this.amount;
+        if (amount <= 0n)
+            throw new Error('Transfer amount must be positive');
+        if (this.amount < amount)
+            throw new Error('Insufficient funds');
+        this.amount -= amount;
+        return this._createTransferToken(to, amount);
+    }
     _createTransferToken(to, amount) {
         const ctor = this.constructor;
         const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this;

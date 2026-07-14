@@ -108,7 +108,7 @@ function MnemonicInput({
       <input
         value={mnemonic}
         onChange={(e) => setMnemonic(e.target.value)}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-3 focus:border-blue-3 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
         required
       />
     </>
@@ -132,7 +132,7 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
             type="radio"
             name="chain"
             value="LTC"
-            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-4 dark:focus:ring-blue-3 dark:focus:bg-blue-3 dark:bg-gray-700 dark:border-gray-600"
           />
           <label
             htmlFor="chain-ltc"
@@ -150,7 +150,7 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
             type="radio"
             name="chain"
             value="BTC"
-            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-4 dark:focus:ring-blue-3 dark:focus:bg-blue-3 dark:bg-gray-700 dark:border-gray-600"
           />
           <label
             htmlFor="chain-btc"
@@ -167,7 +167,7 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
             type="radio"
             name="chain"
             value="PEPE"
-            className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
+            className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-4 dark:focus:ring-blue-3 dark:bg-gray-700 dark:border-gray-600"
           />
           <label
             htmlFor="chain-pepe"
@@ -184,7 +184,7 @@ function ChainInput({ chain, setChain }: { chain: Chain | undefined; setChain: D
             type="radio"
             name="chain"
             value="DOGE"
-            className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600"
+            className="w-4 h-4 border-gray-200 focus:ring-2 focus:ring-blue-4 dark:focus:ring-blue-3 dark:bg-gray-700 dark:border-gray-600"
             disabled
           />
           <label
@@ -222,7 +222,7 @@ function NetworkInput({
             type="radio"
             name="network"
             value="Mainnet"
-            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-4 dark:focus:ring-blue-3 dark:focus:bg-blue-3 dark:bg-gray-700 dark:border-gray-600"
           />
           <label
             htmlFor="network-mainnet"
@@ -240,7 +240,7 @@ function NetworkInput({
             type="radio"
             name="network"
             value="Testnet"
-            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-4 dark:focus:ring-blue-3 dark:focus:bg-blue-3 dark:bg-gray-700 dark:border-gray-600"
           />
           <label
             htmlFor="network-testnet"
@@ -258,7 +258,7 @@ function NetworkInput({
             type="radio"
             name="network"
             value="Regtest"
-            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-600 dark:focus:bg-blue-600 dark:bg-gray-700 dark:border-gray-600"
+            className="w-4 h-4 border-gray-300 focus:ring-2 focus:ring-blue-4 dark:focus:ring-blue-3 dark:focus:bg-blue-3 dark:bg-gray-700 dark:border-gray-600"
           />
           <label
             htmlFor="network-regtest"
@@ -283,7 +283,7 @@ function UrlInput({ url, setUrl }: { url: string; setUrl: Dispatch<string> }) {
       <input
         value={url}
         onChange={(e) => setUrl(e.target.value)}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-3 focus:border-blue-3 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
       />
     </>
   )
@@ -300,7 +300,7 @@ function PathInput({ path, setPath }: { path: string; setPath: Dispatch<string> 
       <input
         value={path}
         onChange={(e) => setPath(e.target.value)}
-        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-3 focus:border-blue-3 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
         required
       />
     </>
@@ -357,7 +357,7 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
       <button
         onClick={login}
         type="submit"
-        className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        className="w-full text-white bg-blue-3 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-3 dark:hover:brightness-90 dark:focus:ring-blue-2"
       >
         Log In
       </button>

@@ -45,6 +45,11 @@ ON "Output"("address");
 CREATE INDEX "OutputPreviousIndex"
 ON "Output"("previous");
 
+CREATE INDEX IF NOT EXISTS "OutputBlockHeightIndex" 
+ON "Output"("blockHeight");
+
+CREATE INDEX IF NOT EXISTS "OutputBlockHashIndex" 
+ON "Output"("blockHash");
 
 CREATE TABLE IF NOT EXISTS
   "User" (

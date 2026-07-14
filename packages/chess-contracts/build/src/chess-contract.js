@@ -367,7 +367,10 @@ export class ChessContractHelper {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return effect.env.__bc__;
     }
-    /** Cancel a pending game and withdraw the creator's wager in one flow. */
+    /**
+     * Cancel a pending game and withdraw the creator's wager in one flow.
+     * @deprecated
+     * */
     async cancelGameAndWithdraw(chessId) {
         await this.cancelGame(chessId);
         /**

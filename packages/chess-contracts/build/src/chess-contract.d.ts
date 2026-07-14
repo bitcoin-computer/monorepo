@@ -98,7 +98,10 @@ export declare class ChessContractHelper {
      * so the creator can claim their deposit with `withdrawTokens`.
      */
     cancelGame(chessId: string): Promise<SmartContract<typeof ChessContract>>;
-    /** Cancel a pending game and withdraw the creator's wager in one flow. */
+    /**
+     * Cancel a pending game and withdraw the creator's wager in one flow.
+     * @deprecated
+     * */
     cancelGameAndWithdraw(chessId: string): Promise<void>;
     /** Mark a canceled pending game as seen by the invited opponent (clears list badge). */
     markCanceledSeen(chessId: string): Promise<SmartContract<typeof ChessContract>>;

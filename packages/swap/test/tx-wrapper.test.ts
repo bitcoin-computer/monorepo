@@ -76,7 +76,7 @@ describe('TxWrapper', () => {
       )
 
       wrappedTxId = await alice.broadcast(wrappedTx)
-      await sleep(1000)
+      await alice.waitForIndexed(wrappedTx.txId)
     })
 
     it('Bob accepts the offer', async () => {
@@ -155,7 +155,7 @@ describe('TxWrapper', () => {
       const { tx: offerTxWithAliceTx } = await txWrapperHelper.addSaleTx(wrappedTxId, aliceTx)
 
       await alice.broadcast(offerTxWithAliceTx)
-      await sleep(1000)
+      await alice.waitForIndexed(offerTxWithAliceTx.txId)
     })
 
     it('Bob accepts the offer after alice add sale txn', async () => {

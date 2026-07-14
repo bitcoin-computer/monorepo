@@ -44,7 +44,7 @@ describe('getTXOs', () => {
 
   before('Fund computer', async () => {
     computer = new Computer({ chain, network, url })
-    await computer.faucet(2e8)
+    await computer.faucet(3e8)
     const c = await computer.new(Counter, [])
     await c.inc()
   })
@@ -155,6 +155,7 @@ describe('getTXOs', () => {
   describe('Get by satoshis', () => {
     it('Should get TXOs by satoshis amount', async () => {
       const c1 = await computer.new(Payment, [1000000n])
+      await computer.faucet(2e8)
       const satoshis = 2_000_000n
       await c1.setSatoshis(satoshis)
 
@@ -228,6 +229,7 @@ describe('getTXOs', () => {
       // sync to the new token
       const newToken = await computer.sync<typeof Token>(`${transferTx.tx!.getId()}:0`)
 
+      await computer.waitForIndexed(newToken._rev)
       const txos = await computer.getTXOs({ mod: m1 })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.not.include(t._id)
@@ -239,6 +241,7 @@ describe('getTXOs', () => {
       const computer2 = new Computer({ chain, network, url })
       await computer2.faucet(1e8)
       const c2 = await computer2.new(Counter, [])
+      await computer2.waitForIndexed(c2._rev)
       const objectTxos = await computer2.getTXOs({ isObject: true })
       expect(objectTxos.length).to.be.greaterThan(0)
       expect(objectTxos).to.include(c2._rev)
@@ -300,7 +303,7 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(1500)
+      await sleep(1000)
       const txos = await computer.getTXOs({ blockHash: blockHex[0] })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c2._rev)
@@ -416,8 +419,8 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       await computer2.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(1500)
 
+      await sleep(1000)
       const confirmedTxos = await computer2.getTXOs({
         isConfirmed: true,
         publicKey: computer2.getPublicKey(),
@@ -456,7 +459,6 @@ describe('getTXOs', () => {
       await c2.inc()
       await computer.delete([c2._rev])
 
-      await sleep(500)
       const utxos = await computer.getTXOs({
         publicKey: computer.getPublicKey(),
         isSpent: false,
