@@ -55,26 +55,14 @@ jobs:
           fi
           echo "image_tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      - name: Build and push multi-arch image
+        uses: docker/build-push-action@v6
         with:
-          platforms: arm64
-
-      - name: Build and push amd64
-        run: |
-          docker buildx build \
-            --platform linux/amd64 \
-            --push \
-            --tag "${{ steps.set_tag.outputs.image_tag }}" \
-            -f Dockerfile .
-
-      - name: Build and push arm64
-        run: |
-          docker buildx build \
-            --platform linux/arm64 \
-            --push \
-            --tag "${{ steps.set_tag.outputs.image_tag }}" \
-            -f Dockerfile .
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.set_tag.outputs.image_tag }}
 
   integration-tests:
     needs: [decide, build]
