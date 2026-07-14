@@ -55,25 +55,26 @@ jobs:
           fi
           echo "image_tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Build and Push Docker Image
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Build and push amd64
         run: |
-          VERSION="${{ needs.decide.outputs.version }}"
-          TAG="${{ steps.set_tag.outputs.image_tag }}"
-
-          echo "Building image: $TAG"
-
-          docker buildx build --platform linux/amd64,linux/arm64 \
+          docker buildx build \
+            --platform linux/amd64 \
             --push \
-            --tag "$TAG" \
+            --tag "${{ steps.set_tag.outputs.image_tag }}" \
             -f Dockerfile .
 
-          if [ "${{ needs.decide.outputs.release_type }}" = "final" ]; then
-            docker buildx build --platform linux/amd64,linux/arm64 \
-              --push \
-              --tag "bcdb/bcn:latest" \
-              --tag "bcdb/bcn:${VERSION}" \
-              -f Dockerfile .
-          fi
+      - name: Build and push arm64
+        run: |
+          docker buildx build \
+            --platform linux/arm64 \
+            --push \
+            --tag "${{ steps.set_tag.outputs.image_tag }}" \
+            -f Dockerfile .
 
   integration-tests:
     needs: [decide, build]
