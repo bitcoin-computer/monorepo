@@ -284,7 +284,10 @@ describe('ChessContract', () => {
                 const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod);
                 expect(helper.canCancel(chessPending)).toBe(true);
                 expect(helper.isCreator(chessPending)).toBe(true);
-                await helper.cancelGameAndWithdraw(chessPending._id);
+                await black.db.wallet.restClient.mine(1);
+                const chess2 = await helper.cancelGame(chessPending._id);
+                await black.db.wallet.restClient.mine(1);
+                await helper.withdrawTokens(chess2.tokenIdW, chessPending._id);
                 await confirmChainTip(minter);
                 const whiteTokenFinal = await white.sync(await white.latest(whiteToken._id));
                 expect(whiteTokenFinal.amount).toBe(10n);
@@ -441,6 +444,7 @@ describe('ChessContract', () => {
                 const totalPot = wager * 2n;
                 expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]]);
                 expect((await black.sync(await black.latest(blackToken._id))).amount).toBe(5n);
+                await black.db.wallet.restClient.mine(1);
                 const blackTokenFinal = await withdrawFromChess(black, blackToken._id, chess._id, tbc777Mod);
                 expect(blackTokenFinal.amount).toBe(15n);
             });

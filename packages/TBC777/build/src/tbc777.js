@@ -57,14 +57,12 @@ export class EscrowAuditor {
                 regularClaimable: 0n,
                 finalClaimable: 0n,
                 availableBalance: 0n,
-                isTerminal: false,
             };
         }
         const lineage = token.root;
         const tokenId = token._id;
         const { depositRevs, withdrawEntries, finalEntries } = this.collectRevisions(states, lineage);
         const escrow = states[0]._id;
-        const rev = states[0]._rev;
         const totalDeposited = await this.sumDeposits(depositRevs, escrow, token);
         const totalRegularAuthorized = this.sumClaims(withdrawEntries);
         const totalFinalAuthorized = this.sumClaims(finalEntries);
@@ -73,8 +71,7 @@ export class EscrowAuditor {
             .reduce((sum, [, , amt]) => sum + amt, 0n);
         const { withdraws, finalWithdraws } = states[0];
         const regularClaimable = getClaimable(withdraws);
-        const isTerminal = (await computer.last(rev)) === rev;
-        const finalClaimable = isTerminal ? getClaimable(finalWithdraws) : 0n;
+        const finalClaimable = getClaimable(finalWithdraws);
         const availableBalance = totalDeposited - totalRegularAuthorized - totalFinalAuthorized;
         return {
             totalDeposited,
@@ -83,7 +80,6 @@ export class EscrowAuditor {
             regularClaimable,
             finalClaimable,
             availableBalance,
-            isTerminal,
         };
     }
     static async audit(escrowRev, token) {
@@ -149,14 +145,18 @@ export class TBC777 extends TBC20 {
         const targetList = isFinal ? this.finalWithdrawn : this.withdrawn;
         if (targetList.includes(rev))
             throw new Error('Cannot withdraw multiple times');
-        const { availableBalance, regularClaimable, finalClaimable, isTerminal } = await EscrowAuditor.audit(rev, this);
+        const { availableBalance, regularClaimable, finalClaimable } = await EscrowAuditor.audit(rev, this);
         const claimable = isFinal ? finalClaimable : regularClaimable;
         if (availableBalance < 0)
             throw new Error(`Escrow available balance (${availableBalance}) too low`);
         if (claimable <= 0n)
             throw new Error(`Claimable ${isFinal ? 'final ' : ''}withdraw amount is zero or negative`);
-        if (isFinal && !isTerminal)
-            throw new Error("finalWithdraws can only be claimed from the escrow's last revision");
+        if (isFinal) {
+            const lastRev = await computer.last(rev);
+            if (lastRev !== rev) {
+                throw new Error("finalWithdraws can only be claimed from the escrow's last revision");
+            }
+        }
         this.amount += claimable;
         targetList.push(rev);
         if (!isFinal)

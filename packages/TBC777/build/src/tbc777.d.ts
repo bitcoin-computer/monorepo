@@ -18,7 +18,6 @@ export type AuditResult = {
     regularClaimable: bigint;
     finalClaimable: bigint;
     availableBalance: bigint;
-    isTerminal: boolean;
 };
 export declare class EscrowAuditor {
     static walkHistory(rev: Rev): Promise<Escrow[]>;
