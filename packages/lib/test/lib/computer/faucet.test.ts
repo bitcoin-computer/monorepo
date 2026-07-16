@@ -1,5 +1,5 @@
 import { Computer } from '@bitcoin-computer/lib'
-import { chain, expect, network, url } from '../../utils'
+import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('faucet', () => {
   it('Should fund the wallet of the current object', async () => {
@@ -9,8 +9,8 @@ describe('faucet', () => {
 
     // Check shape of return value
     expect(utxo).to.matchPattern({
-      txId: (val) => typeof val === 'string',
-      vout: (vout) => typeof vout === 'number',
+      txId: (val: string) => typeof val === 'string',
+      vout: (vout: number) => typeof vout === 'number',
       height: -1,
       satoshis: BigInt(1e8),
     })

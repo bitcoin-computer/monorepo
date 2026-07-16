@@ -41,18 +41,18 @@ An object with a specification to build a transaction according to the Bitcoin C
 
 {.compact}
 
-| Key         | Description                                                                                                                                                               | Default       |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
-| exp         | A JavaScript expression.                                                                                                                                                  | -             |
-| env         | A Blockchain environment mapping variables names to revisions.                                                                                                            | `{}`          |
-| mod         | A string of the form `<id>:<num>` specifying the location of a module.                                                                                                    | `undefined`   |
-| fund        | Whether the transaction should be funded.                                                                                                                                 | `true`        |
-| include     | UTXOs to include when funding.                                                                                                                                            | `[]`          |
-| exclude     | UTXOs to exclude when funding.                                                                                                                                            | `[]`          |
-| sign        | Whether to sign the transaction.                                                                                                                                          | `true`        |
-| sighashType | The signature hash type.                                                                                                                                                  | `SIGHASH_ALL` |
-| inputIndex  | If set to an number only the corresponding input is signed. If undefined all inputs are signed.                                                                           | `undefined`   |
-| inputScript | If set to a string a custom input script can be provided. If undefined a signature script is generated.                                                                   | `undefined`   |
+| Key         | Description                                                                                                                                                                 | Default       |
+| ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------- |
+| exp         | A JavaScript expression.                                                                                                                                                    | -             |
+| env         | A Blockchain environment mapping variables names to revisions.                                                                                                              | `{}`          |
+| mod         | A string of the form `<id>:<num>` specifying the location of a module (see propagation rules).                                                                              | `undefined`   |
+| fund        | Whether the transaction should be funded.                                                                                                                                   | `true`        |
+| include     | UTXOs to include when funding.                                                                                                                                              | `[]`          |
+| exclude     | UTXOs to exclude when funding.                                                                                                                                              | `[]`          |
+| sign        | Whether to sign the transaction.                                                                                                                                            | `true`        |
+| sighashType | The signature hash type.                                                                                                                                                    | `SIGHASH_ALL` |
+| inputIndex  | If set to an number only the corresponding input is signed. If undefined all inputs are signed.                                                                             | `undefined`   |
+| inputScript | If set to a string a custom input script can be provided. If undefined a signature script is generated.                                                                     | `undefined`   |
 | mocks       | A pair <name, object>. The object is an instance of a mocked class (A class that does not extends from Contract but has the keywords `_id`, `_root`, `_satoshis`,`_owners`) | `{}`          |
 
 ### Return Value
@@ -61,7 +61,11 @@ It returns an object `{ tx, effect }` where `tx` is a [NakamotoJS](../../Nakamot
 
 ## Description
 
-The `encode` function builds a Bitcoin transaction from a JavaScript expression. It returns a transaction and an object `effect` containing the result of the evaluation in a property `res`. If the expression contains undefined variables a blockchain environment `env` must be passed into `encode`. A _blockchain environment_ maps the named of the undefined variable to UTXOs containing on-chain objects. A [module specifier](../../tutorial.md#module-system) can be provided in order to make the exports of that module are available to the evaluation. Other options can customize the funding and signing process. It is also to pass in an object specifying [mocked](../../tutorial.md#mocking) objects.
+The `encode` function builds a Bitcoin transaction from a JavaScript expression. It returns a transaction and an object `effect` containing the result of the evaluation in a property `res`. If the expression contains undefined variables a blockchain environment `env` must be passed into `encode`. A _blockchain environment_ maps the named of the undefined variable to UTXOs containing on-chain objects. A [module specifier](../../tutorial.md#module-system) can be provided in order to make the exports of that module are available to the evaluation.
+
+When a module specifier `mod` is supplied to `encode`, all objects that are created in the transaction are associated with that module specifier. The module specifier never changes, even when the object it updated. It is important to note that if an object `o1` created a second object `o2` in a method call, `o2` does not automatically inherit `o1`'s module specifier. If this is desired, then module specifier needs to be passe into the expression encoding the function call. For example, the transfer function of the TBC20 contract creates a new object for the receipient. This object will not inherit the module specifier of the original token. If this is desired the module specifier needs to be passed into the `encode` call of the transfer function.
+
+Other options can customize the funding and signing process. It is also possible to pass in an object specifying [mocked](../../tutorial.md#mocking) objects.
 
 It is important to note that `encode` does not broadcast the transaction. Nonetheless the `effect` object reflects the on-chain state that will emerge once the transaction is broadcast.
 
@@ -76,4 +80,4 @@ The state update effected by a Bitcoin Computer transaction is completely predic
 
 :::code source="../../../lib/test/lib/computer/encode.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/encode.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/encode.test.ts" target=_blank>Source</a>

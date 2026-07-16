@@ -31,6 +31,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     optimizeDeps: {
+      exclude: ['@bitcoin-computer/chess-contracts'],
       esbuildOptions: {
         define: {
           global: 'globalThis',

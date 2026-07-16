@@ -7,9 +7,29 @@ import { deploy } from './lib.js'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
 import { User } from '../src/user.js'
+import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777'
 import { ChessChallengeTxWrapper } from '../src/chess-challenge.js'
 
 config()
+
+/** Keeps deployed module size down when inlining TBC777 + EscrowAuditor. */
+function stripComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*$/gm, '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .join('\n')
+}
+
+async function deployTbc777Mod(computer: Computer): Promise<string> {
+  return computer.deploy(`
+    export ${stripComments(TBC20.toString())}
+    export ${stripComments(EscrowAuditor.toString())}
+    export ${stripComments(TBC777.toString())}
+  `)
+}
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -31,6 +51,9 @@ if (network !== 'regtest' && !mnemonic) throw new Error('Please set MNEMONIC in 
 const computer = new Computer({ chain, network, mnemonic, url, path })
 if (network === 'regtest') await computer.faucet(2e8)
 const { balance } = await computer.getBalance()
+const minterMnemonic =
+  mnemonic ?? (computer as unknown as { getMnemonic?: () => string }).getMnemonic?.()
+if (!minterMnemonic) throw new Error('Failed to resolve minter mnemonic')
 
 console.log(`
 Chain \x1b[2m${chain}\x1b[0m
@@ -50,7 +73,22 @@ if (answer === 'n') {
 const mod = await deploy(computer, chessContractDirectory)
 const userMod = await computer.deploy(`export ${User}`)
 const challengeMod = await computer.deploy(`export ${ChessChallengeTxWrapper}`)
+const tbc777Mod = await deployTbc777Mod(computer)
+
+const token = await computer.new(
+  TBC777,
+  [
+    {
+      to: computer.getPublicKey(),
+      amount: 1000000n,
+      name: 'chess-token',
+      symbol: 'CHS',
+    },
+  ],
+  tbc777Mod,
+)
 console.log(' \x1b[2m- Successfully deployed smart contracts\x1b[0m')
+console.log(` \x1b[2m- Minted chess token: ${token._id}\x1b[0m`)
 
 const answer2 = await rl.question('\nDo you want to update your .env files? \x1b[2m(y/n)\x1b[0m')
 if (answer2 === 'n') {
@@ -64,13 +102,18 @@ Update the following rows in your .env file.
 VITE_CHESS_GAME_MOD_SPEC\x1b[2m=${mod}\x1b[0m
 VITE_CHESS_USER_MOD_SPEC\x1b[2m=${userMod}\x1b[0m
 VITE_CHESS_CHALLENGE_MOD_SPEC\x1b[2m=${challengeMod}\x1b[0m
+VITE_TBC20_MOD_SPEC\x1b[2m=${tbc777Mod}\x1b[0m
+VITE_MINTER_MNEMONIC\x1b[2m=${minterMnemonic}\x1b[0m
+VITE_CHESS_TOKEN_ID\x1b[2m=${token._id}\x1b[0m
 `)
 } else {
   const files = ['../chess-app/.env']
 
   for (const file of files) {
     // Update module specifiers in the .env file
-    const lines = (await readFile(file, 'utf-8')).split('\n')
+    const lines = (await readFile(file, 'utf-8'))
+      .split('\n')
+      .filter((line) => !line.startsWith('VITE_TOKEN_MOD_SPEC'))
     for (let i = 0; i < lines.length; i++) {
       if (lines[i].startsWith('VITE_CHESS_GAME_MOD_SPEC'))
         lines[i] = `VITE_CHESS_GAME_MOD_SPEC=${mod}`
@@ -78,7 +121,15 @@ VITE_CHESS_CHALLENGE_MOD_SPEC\x1b[2m=${challengeMod}\x1b[0m
         lines[i] = `VITE_CHESS_USER_MOD_SPEC=${userMod}`
       if (lines[i].startsWith('VITE_CHESS_CHALLENGE_MOD_SPEC'))
         lines[i] = `VITE_CHESS_CHALLENGE_MOD_SPEC=${challengeMod}`
+      if (lines[i].startsWith('VITE_TBC20_MOD_SPEC')) lines[i] = `VITE_TBC20_MOD_SPEC=${tbc777Mod}`
+      if (lines[i].startsWith('VITE_MINTER_MNEMONIC'))
+        lines[i] = `VITE_MINTER_MNEMONIC=${minterMnemonic}`
+      if (lines[i].startsWith('VITE_CHESS_TOKEN_ID')) lines[i] = `VITE_CHESS_TOKEN_ID=${token._id}`
     }
+    if (!lines.some((line) => line.startsWith('VITE_MINTER_MNEMONIC')))
+      lines.push(`VITE_MINTER_MNEMONIC=${minterMnemonic}`)
+    if (!lines.some((line) => line.startsWith('VITE_CHESS_TOKEN_ID')))
+      lines.push(`VITE_CHESS_TOKEN_ID=${token._id}`)
     await writeFile(file, lines.join('\n'), 'utf-8')
   }
 

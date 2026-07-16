@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.26.0-beta.0",
+  "version": "0.27.0-beta.0",
   "private": false,
   "description": "Server Side Library for the Bitcoin Computer",
   "keywords": [
@@ -45,21 +45,22 @@
     "down": "docker compose -f docker-compose.yml down",
     "fund": "node --loader ts-node/esm ./scripts/fund.ts",
     "prune": "docker system prune -f",
-    "setup": "./scripts/setup.py",
+    "setup": "./scripts/setup.sh",
     "start": "npm run up",
     "start:bcn": "node dist/bcn.es.mjs",
     "start:sync": "node dist/bcn.sync.es.mjs",
     "test": "mocha --config .mocharc.json",
-    "test:show": "npm run test 2>&1 | tee node-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open node-test.log; fi",
+    "test:ci": "mocha --config .mocharc.json --retries 3 --exit --timeout 40000",
+    "test:rerun": "node ../../scripts/rerun-failed.js",
     "up": "docker compose -f docker-compose.yml up"
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@bitcoin-computer/lib": "^0.26.0-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.26.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.26.0-beta.0",
+    "@bitcoin-computer/lib": "^0.27.0-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.27.0-beta.0",
+    "@bitcoin-computer/secp256k1": "^0.27.0-beta.0",
     "@types/node": "^20.11.20",
-    "axios": "1.8.2",
+    "axios": "1.16.1",
     "bitcoind-rpc": "^0.9.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
@@ -73,17 +74,19 @@
     "hash.js": "^1.1.7",
     "pg-monitor": "^2.0.0",
     "pg-promise": "^11.5.4",
-    "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "winston": "^3.11.0",
     "winston-daily-rotate-file": "^5.0.0",
-    "zeromq": "6.0.4"
+    "zeromq": "6.5.0"
   },
   "devDependencies": {
+    "@babel/core": "^7.23.9",
     "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.6",
+    "@types/node": "^20.11.20",
     "chai": "^5.1.0",
-    "mocha": "^10.3.0"
+    "mocha": "^11.7.5",
+    "typescript": "^5.8.3"
   },
   "engines": {
     "node": ">=16"

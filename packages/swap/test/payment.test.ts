@@ -1,10 +1,17 @@
- 
 import { expect } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { Payment, PaymentHelper } from '../src/index.js'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
@@ -25,11 +32,8 @@ describe('Payment', () => {
       paymentHelper = new PaymentHelper(alice)
     })
 
-    it('Alice deploys the payment contract', async () => {
+    it('Alice deploys the payment contract and creates an payment transaction and broadcast it', async () => {
       await paymentHelper.deploy()
-    })
-
-    it('Alice creates an payment transaction and broadcast it', async () => {
       const { tx: paymentTx } = await paymentHelper.createPaymentTx(BigInt(2e8))
 
       paymentTxId = await alice.broadcast(paymentTx)

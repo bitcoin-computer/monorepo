@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/chess-app",
-  "version": "0.26.0-beta.0",
+  "version": "0.27.0-beta.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -10,20 +10,20 @@
   ],
   "scripts": {
     "build:prod": "tsc -b && NODE_OPTIONS=\"--max-old-space-size=4096\" vite build",
-    "build:contract": "tsc --project tsconfig.build.json && mv ./build-contract/chess-module.js ./src/contracts/chess.mjs && rm -rf build-contract",
     "build:turbo": "turbo run build:prod",
-    "deploy": "npm run build:contract && node --loader ts-node/esm ./scripts/deploy.ts",
     "dev": "vite",
     "format": "prettier --write \"src/**/*.{js,jsx,ts,tsx,css,scss,md}\"",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "preview": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/chess-contracts": "^0.26.0-beta.0",
-    "@bitcoin-computer/components": "^0.26.0-beta.0",
-    "@bitcoin-computer/lib": "^0.26.0-beta.0",
+    "@bitcoin-computer/TBC777": "^0.27.0-beta.0",
+    "@bitcoin-computer/chess-contracts": "^0.27.0-beta.0",
+    "@bitcoin-computer/components": "^0.27.0-beta.0",
+    "@bitcoin-computer/lib": "^0.27.0-beta.0",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",

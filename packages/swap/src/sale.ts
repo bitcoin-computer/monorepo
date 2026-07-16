@@ -1,10 +1,9 @@
- 
 import { Buffer } from 'buffer'
 import { Transaction } from '@bitcoin-computer/lib'
 import type { Transaction as TransactionType } from '@bitcoin-computer/lib'
 import { Payment, PaymentMock } from './payment.js'
+import { Contract } from '@bitcoin-computer/lib'
 
- 
 const sighashType = Transaction.SIGHASH_SINGLE | Transaction.SIGHASH_ANYONECANPAY
 
 export class Sale extends Contract {
@@ -35,7 +34,7 @@ export class SaleHelper {
     return this.computer.encode({
       exp: `Sale.exec(o, p)`,
       env: { o: object._rev, p: payment._rev },
-      mocks: { payment },
+      mocks: { p: payment },
       sighashType,
       inputIndex: 0,
       fund: false,
@@ -70,7 +69,7 @@ export class SaleHelper {
     return tx.outs[0].value
   }
 
-  static finalizeSaleTx(tx: TransactionType, payment: Payment, scriptPubKey: Buffer) {
+  static finalizeSaleTx(tx: TransactionType, payment: { _rev: string }, scriptPubKey: Buffer) {
     const [paymentTxId, paymentIndex] = payment._rev.split(':')
     const index = parseInt(paymentIndex, 10)
     tx.updateInput(1, { txId: paymentTxId, index })

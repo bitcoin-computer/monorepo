@@ -1,13 +1,20 @@
- 
-import { expect } from 'chai'
+import { expect, assert } from 'chai'
 import { Computer } from '@bitcoin-computer/lib'
 import { NFT } from '@bitcoin-computer/TBC721'
 import dotenv from 'dotenv'
 import { StaticSwap } from '../src/static-swap.js'
 import { TxWrapperHelper } from '../src/tx-wrapper.js'
 import { meta } from '../src/utils/index.js'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
@@ -31,107 +38,74 @@ describe('TxWrapper', () => {
     let a: NFT
     let b: NFT
     let wrappedTxId: string
-    describe('Alice and Bob create the NFTs they want to swap', () => {
-      it('Alice creates an NFT', async () => {
-        a = await alice.new(NFT, ['A', 'AAA', 'URL'])
-        expect(a).to.matchPattern({
-          ...meta,
-          name: 'A',
-          artist: 'AAA',
-          url: 'URL',
-          _owners: [alice.getPublicKey()],
-        })
+
+    before('Create NFTs and Alice offer', async () => {
+      a = await alice.new(NFT, ['A', 'AAA', 'URL'])
+      expect(a).to.matchPattern({
+        ...meta,
+        name: 'A',
+        artist: 'AAA',
+        url: 'URL',
+        _owners: [alice.getPublicKey()],
       })
 
-      it('Bob creates b', async () => {
-        b = await bob.new(NFT, ['B', 'BBB', 'URL'])
-        expect(b).to.matchPattern({
-          ...meta,
-          name: 'B',
-          artist: 'BBB',
-          url: 'URL',
-          _owners: [bob.getPublicKey()],
-        })
+      b = await bob.new(NFT, ['B', 'BBB', 'URL'])
+      expect(b).to.matchPattern({
+        ...meta,
+        name: 'B',
+        artist: 'BBB',
+        url: 'URL',
+        _owners: [bob.getPublicKey()],
       })
+
+      const txWrapperHelper = new TxWrapperHelper(alice)
+
+      await alice.faucet(0.1e8)
+      await txWrapperHelper.deploy()
+
+      const { tx: aliceTx } = await alice.encode({
+        exp: `${StaticSwap} StaticSwap.exec(a, b)`,
+        env: { a: a._rev, b: b._rev },
+      })
+
+      await alice.faucet(1e8)
+      const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
+        bob.getPublicKey(),
+        bob.getUrl(),
+        aliceTx,
+      )
+
+      wrappedTxId = await alice.broadcast(wrappedTx)
+      await alice.waitForIndexed(wrappedTx.txId)
     })
 
-    describe('Alice creates an offer', async () => {
-      let aliceTx: any
-      let txWrapperHelper: TxWrapperHelper
+    it('Bob accepts the offer', async () => {
+      const txWrapperHelper = new TxWrapperHelper(bob)
+      const bobsTx = await txWrapperHelper.decodeTx(wrappedTxId)
 
-      before('Before creating an offer', async () => {
-        txWrapperHelper = new TxWrapperHelper(alice)
+      await bob.sign(bobsTx)
+
+      const txId = await bob.broadcast(bobsTx)
+      assert.isDefined(txId)
+
+      const { env: envBob } = await bob.sync(txId)
+      const aSwapped = envBob.a
+      expect(aSwapped).to.matchPattern({
+        ...meta,
+        name: 'A',
+        artist: 'AAA',
+        url: 'URL',
+        _owners: [bob.getPublicKey()],
       })
 
-      it('Alice deploys the offer contract', async () => {
-        await alice.faucet(0.1e8)
-        await txWrapperHelper.deploy()
-      })
-
-      it('Alice builds, funds, and signs a swap transaction', async () => {
-        ;({ tx: aliceTx } = await alice.encode({
-          exp: `${StaticSwap} StaticSwap.exec(a, b)`,
-          env: { a: a._rev, b: b._rev },
-        }))
-      })
-
-      it('Alice creates an offer transaction', async () => {
-        await alice.faucet(1e8)
-        const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
-          bob.getPublicKey(),
-          bob.getUrl(),
-          aliceTx,
-        )
-
-        wrappedTxId = await alice.broadcast(wrappedTx)
-        await sleep(1000)
-      })
-    })
-
-    describe('Bob accepts the offer', () => {
-      let txWrapperHelper
-      let bobsTx: any
-      let txId: string
-
-      before('Before accepting the offer', () => {
-        txWrapperHelper = new TxWrapperHelper(bob)
-      })
-
-      it('Bob syncs to the offer transaction and extracts the swap transaction', async () => {
-        bobsTx = await txWrapperHelper.decodeTx(wrappedTxId)
-      })
-
-      it('Bob signs the swap transaction', async () => {
-        await bob.sign(bobsTx)
-      })
-
-      it('Bob broadcasts the swap transaction', async () => {
-        txId = await bob.broadcast(bobsTx)
-        expect(txId).not.undefined
-      })
-
-      it('a is now owned by Bob', async () => {
-        const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
-        const aSwapped = env.a
-        expect(aSwapped).to.matchPattern({
-          ...meta,
-          name: 'A',
-          artist: 'AAA',
-          url: 'URL',
-          _owners: [bob.getPublicKey()],
-        })
-      })
-
-      it('b is now owned by Alice', async () => {
-        const { env } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
-        const bSwapped = env.b
-        expect(bSwapped).to.matchPattern({
-          ...meta,
-          name: 'B',
-          artist: 'BBB',
-          url: 'URL',
-          _owners: [alice.getPublicKey()],
-        })
+      const { env: envAlice } = await alice.sync(txId)
+      const bSwapped = envAlice.b
+      expect(bSwapped).to.matchPattern({
+        ...meta,
+        name: 'B',
+        artist: 'BBB',
+        url: 'URL',
+        _owners: [alice.getPublicKey()],
       })
     })
   })
@@ -140,108 +114,77 @@ describe('TxWrapper', () => {
     let a: NFT
     let b: NFT
     let wrappedTxId: string
-    it('Alice creates an offer and add tx using addSaleTx', async () => {
-      let aliceTx: any
-      let txWrapperHelper: TxWrapperHelper
 
-      before('Before creating an offer', async () => {
-        txWrapperHelper = new TxWrapperHelper(alice)
+    before('Alice creates offer using addSaleTx', async () => {
+      const txWrapperHelper = new TxWrapperHelper(alice)
+
+      a = await alice.new(NFT, ['A', 'AAA', 'URL'])
+      expect(a).to.matchPattern({
+        ...meta,
+        name: 'A',
+        artist: 'AAA',
+        url: 'URL',
+        _owners: [alice.getPublicKey()],
       })
 
-      it('Alice creates an NFT', async () => {
-        a = await alice.new(NFT, ['A', 'AAA', 'URL'])
-        expect(a).to.matchPattern({
-          ...meta,
-          name: 'A',
-          artist: 'AAA',
-          url: 'URL',
-          _owners: [alice.getPublicKey()],
-        })
+      b = await bob.new(NFT, ['B', 'BBB', 'URL'])
+      expect(b).to.matchPattern({
+        ...meta,
+        name: 'B',
+        artist: 'BBB',
+        url: 'URL',
+        _owners: [bob.getPublicKey()],
       })
 
-      it('Bob creates b', async () => {
-        b = await bob.new(NFT, ['B', 'BBB', 'URL'])
-        expect(b).to.matchPattern({
-          ...meta,
-          name: 'B',
-          artist: 'BBB',
-          url: 'URL',
-          _owners: [bob.getPublicKey()],
-        })
+      await alice.faucet(0.1e8)
+      await txWrapperHelper.deploy()
+
+      const { tx: aliceTx } = await alice.encode({
+        exp: `${StaticSwap} StaticSwap.exec(a, b)`,
+        env: { a: a._rev, b: b._rev },
       })
 
-      it('Alice deploys the offer contract', async () => {
-        await alice.faucet(0.1e8)
-        await txWrapperHelper.deploy()
-      })
+      await alice.faucet(1e8)
+      const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
+        alice.getPublicKey(),
+        alice.getUrl(),
+      )
 
-      it('Alice builds, funds, and signs a swap transaction', async () => {
-        ;({ tx: aliceTx } = await alice.encode({
-          exp: `${StaticSwap} StaticSwap.exec(a, b)`,
-          env: { a: a._rev, b: b._rev },
-        }))
-      })
+      wrappedTxId = await alice.broadcast(wrappedTx)
 
-      it('Alice creates an offer transaction', async () => {
-        await alice.faucet(1e8)
-        const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
-          alice.getPublicKey(),
-          alice.getUrl(),
-        )
+      const { tx: offerTxWithAliceTx } = await txWrapperHelper.addSaleTx(wrappedTxId, aliceTx)
 
-        wrappedTxId = await alice.broadcast(wrappedTx)
-
-        const { tx: offerTxWithAliceTx } = await txWrapperHelper.addSaleTx(wrappedTxId, aliceTx)
-
-        await alice.broadcast(offerTxWithAliceTx)
-        await sleep(1000)
-      })
+      await alice.broadcast(offerTxWithAliceTx)
+      await alice.waitForIndexed(offerTxWithAliceTx.txId)
     })
 
-    it('Bob accepts the offer after alice add sale txn', () => {
-      let txWrapperHelper
-      let bobsTx: any
-      let txId: string
+    it('Bob accepts the offer after alice add sale txn', async () => {
+      const txWrapperHelper = new TxWrapperHelper(bob)
+      const bobsTx = await txWrapperHelper.decodeTx(wrappedTxId)
 
-      before('Before accepting the offer', () => {
-        txWrapperHelper = new TxWrapperHelper(bob)
+      await bob.sign(bobsTx)
+
+      const txId = await bob.broadcast(bobsTx)
+      expect(txId).not.undefined
+
+      const { env: envBob } = await bob.sync(txId)
+      const aSwapped = envBob.a
+      expect(aSwapped).to.matchPattern({
+        ...meta,
+        name: 'A',
+        artist: 'AAA',
+        url: 'URL',
+        _owners: [bob.getPublicKey()],
       })
 
-      it('Bob syncs to the offer transaction and extracts the swap transaction', async () => {
-        bobsTx = await txWrapperHelper.decodeTx(wrappedTxId)
-      })
-
-      it('Bob signs the swap transaction', async () => {
-        await bob.sign(bobsTx)
-      })
-
-      it('Bob broadcasts the swap transaction', async () => {
-        txId = await bob.broadcast(bobsTx)
-        expect(txId).not.undefined
-      })
-
-      it('a is now owned by Bob', async () => {
-        const { env } = (await bob.sync(txId)) as { env: { a: NFT; b: NFT } }
-        const aSwapped = env.a
-        expect(aSwapped).to.matchPattern({
-          ...meta,
-          name: 'A',
-          artist: 'AAA',
-          url: 'URL',
-          _owners: [bob.getPublicKey()],
-        })
-      })
-
-      it('b is now owned by Alice', async () => {
-        const { env } = (await alice.sync(txId)) as { env: { a: NFT; b: NFT } }
-        const bSwapped = env.b
-        expect(bSwapped).to.matchPattern({
-          ...meta,
-          name: 'B',
-          artist: 'BBB',
-          url: 'URL',
-          _owners: [alice.getPublicKey()],
-        })
+      const { env: envAlice } = await alice.sync(txId)
+      const bSwapped = envAlice.b
+      expect(bSwapped).to.matchPattern({
+        ...meta,
+        name: 'B',
+        artist: 'BBB',
+        url: 'URL',
+        _owners: [alice.getPublicKey()],
       })
     })
   })

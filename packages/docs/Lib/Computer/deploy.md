@@ -22,14 +22,14 @@ A string of the form `<transaction-id>:<output number>` encoding the location wh
 
 The `deploy` function stores a JavaScript module on the blockchain and returns a module specifier that identifier that module. This specifier can be passed into [`computer.new`](./new.md), [`computer.encode`](./encode.md), [`computer.encodeNew`](./encodeNew.md), and [`computer.encodeCall`](./encodeCall.md) as an optional parameter. In this case, the names exported from the module are available in the evaluation of these functions.
 
-The rational of deploying modules is that it can save transaction fees: A module can be deployed once and then used to create or update many smart objects. This is unlike on-chain objects whose value can only be used once.
+The rationale for deploying modules is to minimize on-chain data (and thereby the technical on-chain storage costs / hygiene dust): a module can be deployed once (preferably via taproot) and then referenced to create or update many smart objects using tiny expressions. This keeps using transactions small. This is unlike on-chain objects whose associated data is tied to a single use/revision. See the [Fees](../../fees.md) "User Choices..." section for full minimization guidance.
 
-The protocol supports two module storage types
+The protocol supports two module storage types:
 
-- `multisig` - A module is stored in one transaction with several outputs that contain a bare multisig script each. These outputs are currently un-spendable, in a future update we will make them spendable. The maximum module size is about 18 kB, larger modules must be split into chunks of less than 18 kB and recombined in another module.
-- `taproot` - A module is stored two transactions, one commits to the hash of the data ona taproot output script and the second one spends that output and contains the entire module in its input. These modules can be close 400 kB or even close to 4 MB if you know a miner that will include them. In addition module storage is 4x cheaper due to the Segwit discount.
+- `multisig` - A module is stored in one transaction with several outputs that contain a bare multisig script each. These outputs are currently un-spendable (in a future update we will make them spendable). The maximum module size is about 18 kB; larger modules must be split into chunks of less than 18 kB and recombined in another module. *Module encoding transactions using `multisig` generate hygiene dust outputs* (see Fees for scope and costs).
+- `taproot` - A module is stored in two transactions: one commits to the hash of the data on a taproot output script, and the second spends that output and contains the entire module in its input. These modules can be close to 400 kB or even close to 4 MB (if you know a miner that will include them). In addition, module storage is 4x cheaper due to the SegWit discount. *Crucially, taproot module encoding transactions generate no hygiene dust outputs.*
 
-To select the module storage type pass either `multisig` or `taproot` into the property `moduleStorageType` of the `Computer` constructor. If `moduleStorageType` is not specified it will use `taproot` if available and `multisig` otherwise.
+To select the module storage type, pass either `multisig` or `taproot` into the property `moduleStorageType` of the `Computer` constructor. If `moduleStorageType` is not specified, it will use `taproot` if available and `multisig` otherwise. For minimization of on-chain data and hygiene dust (and the UX trade-offs of single-tx vs. two-tx), see the [Fees](../../fees.md) documentation, especially "User Choices to Control On-Chain Data and Hygiene Dust Costs" and the bare-multisig rationale (single-tx direct data for high-throughput reliability).
 
 {.compact}
 | Coin | Taproot | Module Storage Types | Default | Max Module Size | Segwit Discount
@@ -56,4 +56,4 @@ import { c3 } from 'dc63fbf200595012b239d69936ac63e4155040042ef7d2e6dff4ca49dec3
 export const s = c0 + c1 + c2 + c3
 ```
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/deploy.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/deploy.test.ts" target=_blank>Source</a>

@@ -1,3 +1,4 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class NFT extends Contract {
     constructor(name = '', artist = '', url = '') {
         super({ name, artist, url });
@@ -23,27 +24,27 @@ export class NftHelper {
         return this.mod;
     }
     async mint(name, artist, url) {
-        const { tx, effect } = await this.computer.encode({
+        const { tx, effect } = (await this.computer.encode({
             exp: `new NFT("${name}", "${artist}", "${url}")`,
             mod: this.mod,
-        });
+        }));
         await this.computer.broadcast(tx);
         return effect.res;
     }
     async balanceOf(publicKey) {
         const { mod } = this;
-        const revs = await this.computer.query({ publicKey, mod });
-        const objects = await Promise.all(revs.map((rev) => this.computer.sync(rev)));
+        const revs = await this.computer.getOUTXOs({ publicKey, mod });
+        const objects = (await Promise.all(revs.map((rev) => this.computer.sync(rev))));
         return objects.length;
     }
     async ownersOf(tokenId) {
-        const [rev] = await this.computer.query({ ids: [tokenId] });
-        const obj = await this.computer.sync(rev);
+        const rev = await this.computer.latest(tokenId);
+        const obj = (await this.computer.sync(rev));
         return obj._owners;
     }
     async transfer(to, tokenId) {
-        const [rev] = await this.computer.query({ ids: [tokenId] });
-        const obj = await this.computer.sync(rev);
+        const rev = await this.computer.latest(tokenId);
+        const obj = (await this.computer.sync(rev));
         await obj.transfer(to);
     }
 }

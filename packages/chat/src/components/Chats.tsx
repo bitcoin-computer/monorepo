@@ -6,6 +6,7 @@ import { HiPlusCircle } from 'react-icons/hi'
 import { VITE_CHAT_MOD_SPEC } from '../constants/modSpecs'
 import { ChatSc } from '../contracts/chat'
 import { Chat } from './Chat'
+import { SmartContract } from '@bitcoin-computer/lib'
 
 const newChatModal = 'new-chat-modal'
 
@@ -30,7 +31,7 @@ function CreateNewChat() {
       if (typeof effect.res === 'object' && !Array.isArray(effect.res)) {
         showLoader(false)
         showSnackBar('You created a new chat', true)
-        navigate(`/chats/${effect.res?._id as string}`)
+        navigate(`/chats/${(effect.res as SmartContract<typeof ChatSc>)._id}`)
         window.location.reload()
       }
     } catch (err) {
@@ -77,26 +78,33 @@ function CreateNewChat() {
   )
 }
 
+type MyRouteParams = {
+  id?: string
+}
+
 export function Chats() {
   const computer = useContext(ComputerContext)
   const publicKey = Auth.getComputer().getPublicKey()
-  const params = useParams()
+  const params = useParams<MyRouteParams>()
   const navigate = useNavigate()
   const [chatId] = useState(params.id || '')
   const [chats, setChats] = useState<ChatSc[]>([])
 
   useEffect(() => {
     const fetch = async () => {
-      const result = await computer.query({ mod: VITE_CHAT_MOD_SPEC, publicKey })
-      const chatsPromise: Promise<ChatSc>[] = []
+      const result = await computer.getOUTXOs({ mod: VITE_CHAT_MOD_SPEC, publicKey })
+      const chatsPromise: Promise<SmartContract<typeof ChatSc>>[] = []
       result.forEach((rev: string) => {
-        chatsPromise.push(computer.sync(rev) as Promise<ChatSc>)
+        chatsPromise.push(
+          computer.sync<typeof ChatSc>(rev) as Promise<SmartContract<typeof ChatSc>>,
+        )
       })
 
       Promise.allSettled(chatsPromise).then((results) => {
         const successfulChats = results
           .filter(
-            (result): result is PromiseFulfilledResult<ChatSc> => result.status === 'fulfilled',
+            (result): result is PromiseFulfilledResult<SmartContract<typeof ChatSc>> =>
+              result.status === 'fulfilled',
           )
           .map((result) => result.value)
 
@@ -105,6 +113,42 @@ export function Chats() {
     }
     fetch()
   }, [computer, location, navigate])
+
+  useEffect(() => {
+    let unsubscribe: () => void
+    const subscribeToNewChats = async () => {
+      // Stream all new chats with same mod for now
+      unsubscribe = await computer.streamTXOs(
+        { mod: VITE_CHAT_MOD_SPEC },
+        async ({ rev }) => {
+          const newChat = (await computer.sync<typeof ChatSc>(rev)) as SmartContract<typeof ChatSc>
+          // Filter by ownership
+          if (newChat._owners.includes(publicKey)) {
+            setChats((prev) => {
+              // We receive notifications for any updates of mod
+              // We need to check if is this a creation or an update of an existing chat
+              const exists = prev.findIndex((chat) => chat._id === newChat._id)
+              if (exists !== -1) {
+                // Update existing chat with latest data
+                const updated = [...prev]
+                updated[exists] = newChat
+                return updated
+              } else {
+                // Append if truly new
+                return [...prev, newChat]
+              }
+            })
+          }
+        },
+        (error) => console.error('Chat list SSE error:', error),
+      )
+    }
+    subscribeToNewChats()
+
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
+  }, [computer, publicKey])
 
   const newChat = () => {
     Modal.showModal(newChatModal)

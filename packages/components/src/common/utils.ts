@@ -44,6 +44,7 @@ export const strip = (value: Json): Json => {
   if (isJBasic(value)) return value
   if (isJArray(value)) return value.map(strip)
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { _id, _root, _rev, _satoshis, _owners, ...rest } = value
   return rest
 }
@@ -59,7 +60,9 @@ export function isValidRevString(outId: string): boolean {
   return /^[0-9A-Fa-f]{64}:\d+$/.test(outId)
 }
 
-export function isValidRev(value: string | number | boolean | null | undefined): boolean {
+export function isValidRev(
+  value: string | number | bigint | boolean | symbol | null | undefined,
+): boolean {
   return typeof value === 'string' && isValidRevString(value)
 }
 

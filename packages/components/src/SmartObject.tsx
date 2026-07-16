@@ -202,9 +202,13 @@ function MetaData({ smartObject, prev, next }: any) {
   )
 }
 
+type MyRouteParams = {
+  rev?: string
+}
+
 function Component({ title }: { title?: string }) {
   const location = useLocation()
-  const params = useParams()
+  const params = useParams<MyRouteParams>()
   const navigate = useNavigate()
   const [rev] = useState(params.rev || '')
   const computer = useContext(ComputerContext)

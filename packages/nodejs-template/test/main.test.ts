@@ -3,12 +3,21 @@ import chaiMatchPattern from 'chai-match-pattern'
 import { Computer } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import { Counter } from '../src/main.js'
+import path from 'path'
 
-// If you want to connect to your local Bitcoin Computer Node, create a .env file
-// in the monorepo root level and add the following line:
+// If you want to connect to your local Bitcoin Computer Node,
+// ensure the monorepo/packages/node/.env file exists and
+// contains the following line with the correct value:
 // BCN_URL=http://localhost:1031
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'),
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
@@ -19,17 +28,20 @@ const _ = chaiMatchPattern.getLodashModule()
 
 describe('Bitcoin Computer', () => {
   it('should export a function', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expect(Computer).not.to.be.undefined
     expect(typeof Computer).eq('function')
   })
 
   it('should create a computer object', () => {
     const computer = new Computer({ url, chain })
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expect(computer).not.to.be.undefined
     expect(typeof computer).eq('object')
   })
 
   it('should create a JavaScript object', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     expect(Counter).not.to.be.undefined
     expect(typeof Counter).eq('function')
     const counter = new Counter()
@@ -41,7 +53,6 @@ describe('Bitcoin Computer', () => {
 
     await computer.faucet(1e8)
     const counter = await computer.new(Counter, [])
-    // @ts-ignore
     expect(counter).to.matchPattern({
       n: 0,
       _id: _.isString,
@@ -58,7 +69,6 @@ describe('Bitcoin Computer', () => {
     await computer.faucet(1e8)
     const counter = await computer.new(Counter, [])
     await counter.inc()
-    // @ts-ignore
     expect(counter).to.matchPattern({
       n: 1,
       _id: _.isString,

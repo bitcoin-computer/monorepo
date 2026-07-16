@@ -20,6 +20,26 @@ curl -X POST http://localhost:1031/v1/LTC/regtest/tx/post \
 
 ### Response
 
+#### Success (200)
+
 ```json
 "e53c1440f547b51343d46a2acaafe127e915c7ed08a7ef2ed0ffc248360c0cca"
+```
+
+#### Missing parameter (400)
+
+```json
+{ "error": "Missing input hex." }
+```
+
+#### Error occurred (404)
+
+```json
+{ "error": "Error Occured" }
+```
+
+#### Server error (500)
+
+```json
+{ "error": "Internal server error message" }
 ```

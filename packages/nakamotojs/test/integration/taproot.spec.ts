@@ -44,7 +44,7 @@ function tapTweakHash(pubKey: Buffer, h: Buffer | undefined): Buffer {
 // This logic will be extracted to ecpair
 function tweakSigner(signer: Signer, opts: any = {}): Signer {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // @ts-expect-error Property 'privateKey' does not exist on type 'Signer'
   let privateKey: Uint8Array | undefined = signer.privateKey!;
   if (!privateKey) {
     throw new Error('Private key is required for tweaking signer!');
@@ -90,9 +90,11 @@ function buildLeafIndexFinalizer(
         Buffer.from([leafIndex]),
         Buffer.from([leafIndex]),
       ];
-      const witness = scriptSolution
-        .concat(tapLeafScript.script)
-        .concat(tapLeafScript.controlBlock);
+      const witness = [
+        ...scriptSolution,
+        tapLeafScript.script,
+        tapLeafScript.controlBlock,
+      ];
       return { finalScriptWitness: witnessStackToScriptWitness(witness) };
     } catch (err) {
       throw new Error(`Can not finalize taproot input #${inputIndex}: ${err}`);

@@ -1,6 +1,6 @@
 import { useContext, useMemo, useState } from 'react'
 import { TypeSelectionDropdown } from './common/TypeSelectionDropdown'
-import { isValidRev, sleep } from './common/utils'
+import { isValidRev } from './common/utils'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
 
@@ -18,6 +18,8 @@ const getValueForType = (type: string, stringValue: string) => {
   switch (type) {
     case 'number':
       return Number(stringValue)
+    case 'bigint':
+      return BigInt(stringValue)
     case 'string':
       return stringValue
     case 'boolean':
@@ -28,6 +30,8 @@ const getValueForType = (type: string, stringValue: string) => {
       return null
     case 'object':
       return stringValue
+    case 'symbol':
+      return Symbol(stringValue)
     default:
       return Number(stringValue)
   }
@@ -45,6 +49,9 @@ const getParameters = (params: string[], fnName: string, formState: any) =>
 
     if (isValidRev(paramValue)) return param
     if (typeof paramValue === 'string') return `'${paramValue}'`
+    // BigInt.prototype.toString() drops the `n` suffix, which would otherwise turn this
+    // back into a plain number literal once interpolated into the `exp` string below.
+    if (typeof paramValue === 'bigint') return `${paramValue}n`
     return paramValue
   })
 
@@ -100,8 +107,8 @@ export const SmartObjectFunction = ({
       })
 
       await computer.broadcast(tx!)
-      await sleep(1000)
-      const [rev] = await computer.query({ ids: [smartObject._id] })
+      await computer.waitForIndexed(tx.txId)
+      const rev = await computer.latest(smartObject._id)
       setFunctionResult({ _rev: rev })
       setModalTitle('Success')
       setShow(true)

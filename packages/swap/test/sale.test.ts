@@ -1,4 +1,3 @@
- 
 import { expect } from 'chai'
 import * as chai from 'chai'
 import chaiMatchPattern from 'chai-match-pattern'
@@ -8,8 +7,16 @@ import dotenv from 'dotenv'
 import { Sale, SaleHelper } from '../src/sale.js'
 import { Payment, PaymentMock } from '../src/payment.js'
 import { meta } from '../src/utils/index.js'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // workspace root
+  '../node/.env', // when running from local
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
@@ -51,7 +58,7 @@ describe('Sale', () => {
         exp: `${Sale} Sale.exec(nft, payment)`,
         env: { nft: nft._rev, payment: mock._rev },
         mocks: { payment: mock },
-         
+
         sighashType: SIGHASH_SINGLE | SIGHASH_ANYONECANPAY,
         inputIndex: 0,
         fund: false,
@@ -71,7 +78,7 @@ describe('Sale', () => {
       await buyer.fund(saleTx)
       await buyer.sign(saleTx)
       await buyer.broadcast(saleTx)
-      const { env } = (await buyer.sync(saleTx.getId())) as { env: { nft: NFT; payment: NFT } }
+      const { env } = await buyer.sync(saleTx.getId())
       const { nft: n, payment: p } = env
 
       expect(p._satoshis).eq(BigInt(1e8))
@@ -115,10 +122,10 @@ describe('Sale', () => {
       await bob.fund(finalTx)
       await bob.sign(finalTx)
       await bob.broadcast(finalTx)
-      await sleep(3000)
+      await bob.waitForIndexed(finalTx.txId)
 
       // Bob reads the updated state from the blockchain
-      const { env } = (await bob.sync(finalTx.getId())) as { env: { o: any; p: Payment } }
+      const { env } = await bob.sync(finalTx.getId())
       const { o, p } = env
 
       expect(p._satoshis).eq(nftPrice)

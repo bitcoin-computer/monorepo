@@ -55,25 +55,14 @@ jobs:
           fi
           echo "image_tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Build and Push Docker Image
-        run: |
-          VERSION="${{ needs.decide.outputs.version }}"
-          TAG="${{ steps.set_tag.outputs.image_tag }}"
-
-          echo "Building image: $TAG"
-
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            --push \
-            --tag "$TAG" \
-            -f Dockerfile .
-
-          if [ "${{ needs.decide.outputs.release_type }}" = "final" ]; then
-            docker buildx build --platform linux/amd64,linux/arm64 \
-              --push \
-              --tag "bcdb/bcn:latest" \
-              --tag "bcdb/bcn:${VERSION}" \
-              -f Dockerfile .
-          fi
+      - name: Build and push multi-arch image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.set_tag.outputs.image_tag }}
 
   integration-tests:
     needs: [decide, build]
@@ -85,13 +74,30 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      - name: Pull temporary image
+      - name: Set image tag
+        id: set_tag
         run: |
-          docker pull ${{ needs.build.outputs.image_tag }}
+          VERSION="${{ needs.decide.outputs.version }}"
+          if [ "${{ needs.decide.outputs.release_type }}" = "pre" ]; then
+            TAG="bcdb/bcn:${VERSION}-pre-release"
+          else
+            TAG="bcdb/bcn:${VERSION}"
+          fi
+          echo "image_tag=$TAG" >> $GITHUB_OUTPUT
 
-      - name: Re-tag image for docker-compose
+      - name: Pull and prepare image for docker-compose
         run: |
-          docker tag ${{ needs.build.outputs.image_tag }} bcdb:bcn
+          IMAGE="${{ steps.set_tag.outputs.image_tag }}"
+          echo "Using image: $IMAGE"
+          docker pull "$IMAGE"
+          docker tag "$IMAGE" bcdb/bcn
+
+      - name: Debug tag values
+        run: |
+          echo "needs.build.outputs.image_tag='${{ needs.build.outputs.image_tag }}'"
+          echo "steps.set_tag.outputs.image_tag='${{ steps.set_tag.outputs.image_tag }}'"
+          echo "needs.decide.outputs.version='${{ needs.decide.outputs.version }}'"
+          echo "needs.decide.outputs.release_type='${{ needs.decide.outputs.release_type }}'"
 
       - name: Copy configuration files
         working-directory: packages/node
@@ -99,28 +105,68 @@ jobs:
           cp chain-setup/LTC/regtest/.env.example .env
           cp chain-setup/LTC/regtest/litecoin.conf.example litecoin.conf
 
-      - name: Set up Docker Compose
-        run: |
-          sudo apt-get update && sudo apt-get install -y docker-compose
-
-      - name: Install dependencies (npm install)
-        working-directory: packages/node
-        continue-on-error: true
-        run: |
-          npm install || echo "npm install failed, continuing..."
+      - name: Install dependencies
+        run: npm ci
 
       - name: Start services in regtest mode
         working-directory: packages/node
         run: |
-          npm run up &
-          sleep 20
+          echo "Starting services with --no-build..."
+          docker compose up --no-build -d
 
-      - name: Run integration tests
+      - name: Wait for Bitcoin Computer Node to be fully ready
         working-directory: packages/node
         run: |
-          sleep 30; npm run test
+          echo "Waiting for Bitcoin Computer Node health check to report 'ready' on port 1031..."
+          for i in {1..120}; do   # up to 10 minutes (120 * 5s)
+            RESPONSE=$(curl -s -w "%{http_code}" -o /tmp/health.json http://127.0.0.1:1031/health || echo "000")
+            
+            if [ "$RESPONSE" = "200" ]; then
+              STATUS=$(jq -r '.status' /tmp/health.json 2>/dev/null || echo "unknown")
+              if [ "$STATUS" = "ready" ]; then
+                echo "Node is fully ready (wallet funded)"
+                cat /tmp/health.json
+                exit 0
+              else
+                echo "Attempt $i/120: Node is starting (wallet setup in progress)..."
+              fi
+            else
+              echo "Attempt $i/120: HTTP $RESPONSE - waiting for server..."
+            fi
+            
+            sleep 5
+          done
+
+          echo "Timeout: Node did not become ready within 10 minutes"
+          cat /tmp/health.json || true
+          echo ""
+          echo "=== Last 100 lines of docker-compose.log ==="
+          tail -n 100 ../../docker-compose.log || true
+          exit 1
+
+      - name: Run integration tests (with retry)
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 50
+          max_attempts: 4
+          retry_on: error
+          retry_wait_seconds: 25
+          command: cd packages/node && npm run test
+
+      - name: Show service logs on failure
+        working-directory: packages/node
+        if: failure()
+        run: |
+          echo "=== Full docker-compose.log (last 150 lines) ==="
+          tail -n 150 ../../docker-compose.log || true
+          echo ""
+          echo "=== docker ps ==="
+          docker ps || true
+          echo ""
+          echo "=== Listening ports ==="
+          ss -tlnp || true
 
       - name: Stop services
         working-directory: packages/node
         run: |
-          npm run down
+          npm run down || true

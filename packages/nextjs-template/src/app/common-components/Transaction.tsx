@@ -58,7 +58,7 @@ function Component() {
         const tx = Computer.txFromHex({ hex });
         setTxnData(tx);
 
-        const { result } = await computer.rpcCall(
+        const { result } = await computer.rpc(
           "getrawtransaction",
           `${params.txn} 2`
         );

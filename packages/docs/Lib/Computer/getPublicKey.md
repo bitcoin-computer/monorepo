@@ -16,4 +16,4 @@ A string encoding BIP32 public key.
 
 :::code source="../../../lib/test/lib/computer/get-public-key.test.ts" :::
 
-<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-public-key.test.ts" target=_blank>Sources</a>
+<a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-public-key.test.ts" target=_blank>Source</a>

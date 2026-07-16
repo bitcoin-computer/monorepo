@@ -4,9 +4,9 @@ import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
 import { initFlowbite } from 'flowbite'
 import { Auth, UtilsContext, Wallet, ComputerContext } from '@bitcoin-computer/components'
 import { ChessBoard } from './components/ChessBoard'
-
 import { Navbar } from './components/Navbar'
 import { Home } from './components/Home'
+import { TokenBalance } from './components/TokenBalance'
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
@@ -27,6 +27,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/game/:id" element={<ChessBoard />} />
+              <Route path="/tokens" element={<TokenBalance />} />
               <Route path="*" element={<Navigate to="/" replace={true} />} />
             </Routes>
           </div>

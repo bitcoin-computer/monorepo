@@ -1,6 +1,6 @@
 {
-  "name": "@bitcoin-computer/vite-project",
-  "version": "0.26.0-beta.0",
+  "name": "@bitcoin-computer/vite-template",
+  "version": "0.27.0-beta.0",
   "private": true,
   "license": "MIT",
   "type": "module",
@@ -22,20 +22,19 @@
     "start": "vite",
     "test": "exit 0",
     "test:puppeteer": "vitest run --config vitest.puppeteer.config.ts",
+    "test:puppeteer:build": "npm run deploy -- --yes && pkill -f 'vite preview' || true && npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 npm run test:puppeteer && pkill -f 'vite preview')",
+    "test:puppeteer:build:headless": "npm run deploy && pkill -f 'vite preview' || true && npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 HEADLESS=true npm run test:puppeteer && pkill -f 'vite preview')",
     "test:puppeteer:headless": "HEADLESS=true npm run test:puppeteer",
-    "test:puppeteer:build:headless": "npm run build:prod && (npm run preview & sleep 2 && URL=http://localhost:4173 HEADLESS=true npm run test:puppeteer && pkill -f 'vite preview')",
-    "test:show": "npm run test 2>&1 | tee vite-template-test.log; if [ ${PIPESTATUS[0]} -ne 0 ]; then open vite-template-test.log; fi",
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/components": "^0.26.0-beta.0",
-    "@bitcoin-computer/lib": "^0.26.0-beta.0",
+    "@bitcoin-computer/components": "^0.27.0-beta.0",
+    "@bitcoin-computer/lib": "^0.27.0-beta.0",
     "dotenv": "^16.4.5",
     "flowbite": "^2.3.0",
     "puppeteer": "^24.1.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "ts-node": "^10.9.2"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
@@ -43,7 +42,6 @@
     "@testing-library/react": "^16.0.1",
     "@testing-library/user-event": "^14.5.2",
     "@types/node": "^20.11.20",
-    "@types/puppeteer": "^7.0.4",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",

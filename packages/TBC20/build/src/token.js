@@ -1,26 +1,39 @@
+import { Contract } from '@bitcoin-computer/lib';
 export class Token extends Contract {
-    constructor(to, amount, name, symbol = '') {
-        super({ _owners: [to], amount, name, symbol });
+    get root() {
+        return this._root;
+    }
+    constructor(params) {
+        const { to, amount, name, symbol = '', ...rest } = params;
+        super({ amount, name, symbol, ...rest, _owners: [to] });
     }
     transfer(to, amount) {
         if (typeof amount === 'undefined') {
             this._owners = [to];
             return undefined;
         }
-        if (this.amount >= amount) {
-            this.amount -= amount;
-            return new Token(to, amount, this.name, this.symbol);
-        }
-        throw new Error('Insufficient funds');
+        if (amount <= 0n)
+            throw new Error('Transfer amount must be positive');
+        if (this.amount < amount)
+            throw new Error('Insufficient funds');
+        this.amount -= amount;
+        return this._createTransferToken(to, amount);
+    }
+    _createTransferToken(to, amount) {
+        const ctor = this.constructor;
+        const { _id, _root, _rev, _owners, ...cleanState } = this;
+        return new ctor({ ...cleanState, to, amount });
     }
     burn() {
         this.amount = 0n;
     }
     merge(tokens) {
+        if (tokens.some((t) => t._root !== this._root))
+            throw new Error('Cannot merge tokens from different lineages');
         let total = 0n;
-        tokens.forEach((token) => {
-            total += token.amount;
-            token.burn();
+        tokens.forEach((t) => {
+            total += t.amount;
+            t.burn();
         });
         this.amount += total;
     }
@@ -35,18 +48,17 @@ export class TokenHelper {
         return this.mod;
     }
     async mint(publicKey, amount, name, symbol) {
-        const args = [publicKey, amount, name, symbol];
-        const token = await this.computer.new(Token, args, this.mod);
+        const token = await this.computer.new(Token, [{ to: publicKey, amount, name, symbol }], this.mod);
         return token._root;
     }
     async totalSupply(root) {
-        const rootBag = await this.computer.sync(root);
+        const rootBag = (await this.computer.sync(root));
         return rootBag.amount;
     }
     async getBags(publicKey, root) {
-        const revs = await this.computer.query({ publicKey, mod: this.mod });
+        const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod });
         const bags = await Promise.all(revs.map(async (rev) => this.computer.sync(rev)));
-        return bags.flatMap((bag) => (bag._root === root ? [bag] : []));
+        return bags.flatMap((bag) => bag.root === root ? [bag] : []);
     }
     async balanceOf(publicKey, root) {
         if (typeof root === 'undefined')

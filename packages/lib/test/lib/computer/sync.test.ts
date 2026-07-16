@@ -1,19 +1,20 @@
-import { Computer } from '@bitcoin-computer/lib'
-import { chain, expect, network, url } from '../../utils'
-
-// A smart contract
-class Counter extends Contract {
-  n: number
-
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-}
+import { Computer, SmartContract, Contract } from '@bitcoin-computer/lib'
+import { chain, expect, network, url } from '../../utils/index.js'
 
 describe('sync', () => {
+  // A smart contract
+  class Counter extends Contract {
+    n: number
+
+    constructor() {
+      super({ n: 0 })
+    }
+
+    inc() {
+      this.n += 1
+    }
+  }
+
   it('Should sync to a counter', async () => {
     // Create and fund wallet
     const computer = new Computer({ chain, network, url })
@@ -23,13 +24,14 @@ describe('sync', () => {
     const { tx, effect } = await computer.encode({
       exp: `${Counter} new Counter()`,
     })
-    const counter = effect.res as unknown as Counter
-    await computer.broadcast(tx)
+    const createTx = tx!
+    const counter = effect.res as SmartContract<typeof Counter>
+    await computer.broadcast(createTx)
     const initialCounter = {
       n: 0,
-      _id: `${tx.getId()}:0`,
-      _rev: `${tx.getId()}:0`,
-      _root: `${tx.getId()}:0`,
+      _id: `${createTx.getId()}:0`,
+      _rev: `${createTx.getId()}:0`,
+      _root: `${createTx.getId()}:0`,
       _owners: [computer.getPublicKey()],
       _satoshis: chain === 'LTC' ? 5820n : 582n,
     }

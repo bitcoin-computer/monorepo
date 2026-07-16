@@ -1,8 +1,17 @@
 import dotenv from 'dotenv'
 import * as chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
+import path from 'path'
 
-dotenv.config({ path: '../node/.env' })
+// possible env paths
+const envPaths = [
+  path.resolve(process.cwd(), './packages/node/.env'), // monorepo root
+  '../node/.env', // when running from lib
+]
+
+for (const envPath of envPaths) {
+  dotenv.config({ path: envPath })
+}
 
 chai.use(chaiAsPromised)
 
