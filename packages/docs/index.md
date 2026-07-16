@@ -32,7 +32,7 @@ _The Bitcoin Computer is a protocol for building applications that are as secure
 
 **Privacy** - Public by default, built-in support for encryption and off-chain storage enables CCPA- and GDPR-compliant applications.
 
-**Legal, Costs & Compliance** - On-chain value transfers (when using direct storage) are the technical dust for the chosen method plus UTXO hygiene service. The patented technology is free under open terms for now. Review the [Legal Notice](../LEGAL.md) (Licensing + Regulatory sections) and [Fees](./fees.md) (User Choices for minimization, bare-multisig rationale, DFAL/securities responsibilities) before mainnet use. Users write directly to public blockchains; no custody or platform services are provided.
+**Legal, Costs & Compliance** - On-chain value transfers (when using direct storage) are the technical dust for the chosen method plus UTXO hygiene service. The patented technology is free under open terms for now. Review the [Legal Notice](./legal.md) (Licensing + Regulatory sections) and [Fees](./fees.md) (User Choices for minimization, bare-multisig rationale, DFAL/securities responsibilities) before mainnet use. Users write directly to public blockchains; no custody or platform services are provided.
 
 ---
 
