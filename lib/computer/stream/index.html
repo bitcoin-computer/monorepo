@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837560724466">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>streamTXOs</title>
+    <meta name="title" content="streamTXOs">
+    <meta name="description" content="Subscribe to real-time transaction updates matching your filter. Get notified twice per match: once on mempool entry, again on block confirmation. Powered by SSE for low-latency streaming.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://docs.bitcoincomputer.io/lib/computer/stream/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://docs.bitcoincomputer.io/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://docs.bitcoincomputer.io/lib/computer/stream/">
+    <meta property="og:title" content="streamTXOs">
+    <meta property="og:description" content="Subscribe to real-time transaction updates matching your filter. Get notified twice per match: once on mempool entry, again on block confirmation. Powered by SSE for low-latency streaming.">
+    <meta property="og:site_name" content="Bitcoin Computer">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://docs.bitcoincomputer.io/lib/computer/stream/">
+    <meta name="twitter:title" content="streamTXOs">
+    <meta name="twitter:description" content="Subscribe to real-time transaction updates matching your filter. Get notified twice per match: once on mempool entry, again on block confirmation. Powered by SSE for low-latency streaming.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/lib/computer/stream.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
+    <link href="../../../resources/css/retype.css?v=4.6.0.837560724466" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837560724466" defer></script>
+    <script id="mermaid-js" data-cfasync="false" src="../../../resources/js/mermaid.js?v=4.6.0" defer></script>
+
+    <link href="/static/custom.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://docs.bitcoincomputer.io/" class="flex items-center leading-snug text-xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">0.26.0</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="streamtxos">streamTXOs</h1>
+<p><em>Subscribe to real-time transaction updates matching your filter. Get notified twice per match: once on mempool entry, again on block confirmation. Powered by SSE for low-latency streaming.</em></p>
+<div class="overflow-hidden mb-6 py-4 dark:px-5 dark:bg-white rounded-md"><pre translate="no" class="mermaid w-full">sequenceDiagram
+    participant C as Client
+    participant S as Server
+    C-&gt;&gt;S: streamTXOs(filter, callbacks)
+    S--&gt;&gt;C: SSE Connected (Promise resolves)
+    Note over C,S: Tx broadcasts to mempool
+    S-&gt;&gt;C: onMessage({rev, hex}) // Mempool sighting
+    Note over C,S: Tx confirms in block
+    S-&gt;&gt;C: onMessage({rev, hex}) // Confirmation
+    C-&gt;&gt;S: unsubscribe() // Closes SSE</pre></div>
+<h2 id="type">Type</h2>
+<div id="type-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">type StreamQuery = {
+  satoshis?: bigint
+  asm?: string
+  exp?: string
+  mod?: string
+  publicKey?: string
+}
+
+streamTXOs(
+  filter: Partial&lt;StreamQuery&gt;,
+  onMessage: ({ rev, hex }: { rev: string; hex: string }) =&gt; void,
+  onError?: (error: Event) =&gt; void,
+): Promise&lt;() =&gt; void&gt;</code></pre>
+</doc-codeblock></div>
+<h3 id="parameters">Parameters</h3>
+<h4 id="filter"><code translate="no" v-pre>filter</code></h4>
+<p>A partial <code translate="no" v-pre>StreamQuery</code> object that defines the properties a transaction output must satisfy. The supported properties are:</p>
+<retype-table copy-text="| Property    | Type      | Description                                                 |
+| ----------- | --------- | ----------------------------------------------------------- |
+| `satoshis`  | `bigint?` | The number of satoshis on the output.                       |
+| `asm`       | `string?` | The script assembly (ASM) of the output.                    |
+| `exp`       | `string?` | The expression for the output's transaction.                |
+| `mod`       | `string?` | The module specifier for the output.                        |
+| `publicKey` | `string?` | Matches if the output script contains this exact publicKey. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>satoshis</code></td>
+<td><code translate="no" v-pre>bigint?</code></td>
+<td>The number of satoshis on the output.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>asm</code></td>
+<td><code translate="no" v-pre>string?</code></td>
+<td>The script assembly (ASM) of the output.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>exp</code></td>
+<td><code translate="no" v-pre>string?</code></td>
+<td>The expression for the output&#x27;s transaction.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>mod</code></td>
+<td><code translate="no" v-pre>string?</code></td>
+<td>The module specifier for the output.</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>publicKey</code></td>
+<td><code translate="no" v-pre>string?</code></td>
+<td>Matches if the output script contains this exact publicKey.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p>Any combination of the supported fields (e.g., <code translate="no" v-pre>mod</code>, <code translate="no" v-pre>satoshis</code>, <code translate="no" v-pre>asm</code>) can be used. All provided fields are combined with AND logic.</p>
+<p>The <code translate="no" v-pre>publicKey</code> option can also be used to filter for an specific script chunk. A chunk can be an opcode (&quot;OP_1&quot;, &quot;OP_RETURN&quot;, &quot;OP_CHECKSIG&quot;, etc.) or a hexadecimal data push (e.g. a public key &quot;02f7f0...&quot; or OP_RETURN data). To match multiple chunks (e.g. both &quot;OP_1&quot; and a specific public key), subscribe twice with the same callback (see example below).</p>
+<p>Note that if a transaction has multiple outputs that encode objects you will receive updates for each of these outputs when subscribing to <code translate="no" v-pre>exp</code>. This is because the expression <code translate="no" v-pre>exp</code> is a property of the transaction, not of the output.</p>
+<h4 id="onmessage"><code translate="no" v-pre>onMessage</code></h4>
+<p>The function to call when a matching transaction is detected. The callback receives an object containing:</p>
+<ul>
+<li><code translate="no" v-pre>rev</code>: the revision of matching output, that is <code translate="no" v-pre>&lt;transaction id&gt;:&lt;output number&gt;</code></li>
+<li><code translate="no" v-pre>hex</code>: the transaction hex</li>
+</ul>
+<h4 id="onerror-optional"><code translate="no" v-pre>onError</code> (optional)</h4>
+<p>A callback invoked when an error occurs on the SSE connection, such as network interruptions or parsing failures. It receives a standard browser <a href="https://developer.mozilla.org/en-US/docs/Web/API/Event"><code translate="no" v-pre>Event</code></a> object (e.g., with <code translate="no" v-pre>type: 'error'</code> for connection issues).</p>
+<p>For reconnection strategies, consider exponential backoff in your handler. See the <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#handling_errors">MDN SSE error handling guide</a> for more details.</p>
+<h3 id="return-value">Return Value</h3>
+<p>A promise that resolves to a cleanup function once the SSE connection is established. Calling the function closes the connection and stops updates.</p>
+<h2 id="description">Description</h2>
+<p>The <code translate="no" v-pre>streamTXOs</code> method enables real-time updates via Server-Sent Events (SSEs) that match a custom filter. It opens an SSE connection to the server and invokes the provided callback whenever a transaction containing an output that exactly matches all conditions in the filter is broadcast — first in the mempool and again when confirmed in a block.</p>
+<p>The <code translate="no" v-pre>publicKey</code> field gives powerful flexibility: you can subscribe to any individual piece of a script (opcodes or data pushes), making it easy to watch for specific patterns like OP_RETURN data, particular public keys, or script fragments.</p>
+<h2 id="tips">Tips</h2>
+<ul>
+<li><strong>Reconnection:</strong> SSEs can drop on network hiccups—use <code translate="no" v-pre>onError</code> for exponential backoff retries.</li>
+<li><strong>Filter Precision:</strong> Start broad (e.g., just <code translate="no" v-pre>mod</code>) to test, then narrow with <code translate="no" v-pre>satoshis</code> or <code translate="no" v-pre>asm</code> for specificity.</li>
+<li><strong>Performance:</strong> Limit concurrent streams; each opens a dedicated SSE.</li>
+<li><strong>Cleanup Best Practice:</strong> Always invoke the returned function in hooks like React&#x27;s <code translate="no" v-pre>useEffect</code> return.</li>
+</ul>
+<h2 id="example">Example</h2>
+<div id="example-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">import { Computer, SmartContract, Contract } from '@bitcoin-computer/lib'
+import { crypto } from '@bitcoin-computer/nakamotojs'
+import { chain, expect, network, url } from '../../utils/index.js'
+
+describe('stream', () =&gt; {
+  // A smart contract
+  class Counter extends Contract {
+    n: number
+
+    constructor() {
+      super({ n: 0 })
+    }
+    inc() {
+      this.n += 1
+    }
+    transfer(to: string) {
+      this._owners = [to]
+    }
+  }
+
+  let computer: Computer
+  let close: () =&gt; void
+
+  beforeEach('Before Computer', async () =&gt; {
+    computer = new Computer({ chain, network, url })
+    await computer.faucet(14e8)
+  })
+
+  it('Should emit when streaming to asm key field', async () =&gt; {
+    let eventCount = 0
+    const publicKey = computer.getPublicKey()
+    const hash = crypto.hash160(Buffer.from(publicKey, 'hex')).toString('hex')
+    const asm = `OP_DUP OP_HASH160 ${hash} OP_EQUALVERIFY OP_CHECKSIG`
+
+    // subscribe to receive events when the public keys receive funds
+
+    try {
+      close = await computer.streamTXOs(
+        { asm },
+        ({ rev, hex }) =&gt; {
+          expect(typeof rev).eq('string')
+          expect(typeof hex).eq('string')
+          expect(rev.split(':').length).eq(2)
+          eventCount += 1
+        },
+        (error) =&gt; {
+          throw new Error(`Error ${error} in SSE stream`)
+        },
+      )
+    } catch (error) {
+      expect(true).to.eq(false)
+    }
+
+    await computer.send(30000n, computer.getAddress())
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        // expect at least one event (one for the UTXO created and one extra if any change)
+        if (eventCount &gt;= 1) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount &gt; 20) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for asm stream'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should emit when streaming to satoshis field', async () =&gt; {
+    const sats = 50000n
+
+    class Token extends Contract {
+      amount: bigint
+      constructor(amount: bigint) {
+        super({ _satoshis: amount })
+      }
+
+      transfer(to: string): Token {
+        this._owners = [to]
+
+        return new Token(this.amount)
+      }
+    }
+
+    const token1 = await computer.new(Token, [sats])
+    const token2 = await computer.new(Token, [sats])
+
+    let eventCount = 0
+    const expectedEvents = 4 // 2 objects × 2 updates each
+
+    close = await computer.streamTXOs({ satoshis: sats }, ({ rev, hex }) =&gt; {
+      expect(typeof rev).to.eq('string')
+      expect(typeof hex).to.eq('string')
+      expect(rev.split(':').length).to.eq(2)
+
+      // The rev can belong to either token1 or token2
+      expect(
+        rev === token1._rev ||
+          rev === token2._rev ||
+          rev.startsWith(token1._id) ||
+          rev.startsWith(token2._id),
+      ).to.be.true
+
+      eventCount += 1
+    })
+
+    await token1.transfer(token1._owners[0])
+    await token2.transfer(token2._owners[0])
+
+    // Second round
+    await token1.transfer(token1._owners[0])
+    await token2.transfer(token2._owners[0])
+
+    // Wait for all 4 events
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (eventCount &gt;= expectedEvents) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount &gt; 40) {
+          // longer timeout because 4 events + ZMQ can be slow in regtest
+          clearInterval(interval)
+          close()
+          reject(
+            new Error(
+              `Missed SSE for satoshis field. Got ${eventCount}, expected ${expectedEvents}`,
+            ),
+          )
+        }
+      }, 300)
+    })
+    close()
+  })
+
+  it('Should emit when streaming to mod field', async () =&gt; {
+    let eventCount = 0
+    const mod = await computer.deploy(`export ${Counter}`)
+
+    const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
+    await computer.broadcast(tx!)
+    const expectedEvents = 2 // at least 2 (unconfirmed) updates
+
+    close = await computer.streamTXOs({ mod }, ({ rev, hex }) =&gt; {
+      expect(typeof rev).eq('string')
+      expect(typeof hex).eq('string')
+      expect(rev.split(':').length).eq(2)
+      eventCount += 1
+    })
+
+    // Increment on-chain object
+    const counter = effect.res as SmartContract&lt;typeof Counter&gt;
+    await counter.inc()
+    await counter.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (eventCount &gt;= expectedEvents) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount &gt; 20) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for mod stream'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should emit one message for each object involved in the expression', async () =&gt; {
+    class Swap extends Contract {
+      constructor(a: Counter, b: Counter) {
+        super()
+        const [ownerA] = a._owners
+        const [ownerB] = b._owners
+        a.transfer(ownerB)
+        b.transfer(ownerA)
+      }
+    }
+
+    const counterA = await computer.new(Counter, [])
+    const counterB = await computer.new(Counter, [])
+    let eventCount = 0
+    // we expect events for each object passed as parameter + the Swap object
+    // all share the same expression in this transaction
+    const expectedEvents = 3
+    const mod = await computer.deploy(`export ${Swap}`)
+    const exp = `new Swap(a, b)`
+
+    close = await computer.streamTXOs({ exp }, ({ rev, hex }) =&gt; {
+      expect(typeof rev).eq('string')
+      expect(typeof hex).eq('string')
+      expect(rev.split(':').length).eq(2)
+      eventCount += 1
+    })
+    const { tx } = await computer.encode({
+      exp: `new Swap(a, b)`,
+      env: { a: counterA._rev, b: counterB._rev },
+      mod,
+    })
+    await computer.broadcast(tx!)
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (eventCount &gt;= expectedEvents) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount &gt; 20) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for mod stream with multiple owners'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should emit when streaming to expression field', async () =&gt; {
+    let eventCount = 0
+    const counter = await computer.new(Counter, [])
+    const expectedEvents = 2 // 2 updates
+    const exp = '__bc__.inc()'
+
+    close = await computer.streamTXOs({ exp }, ({ rev, hex }) =&gt; {
+      expect(typeof rev).eq('string')
+      expect(typeof hex).eq('string')
+      expect(rev.split(':').length).eq(2)
+      eventCount += 1
+    })
+
+    // Increment on-chain object
+    await counter.inc()
+    await counter.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (eventCount &gt;= expectedEvents) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount &gt; 20) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for exp stream'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should emit events for multiple filter combinations (exp + mod)', async () =&gt; {
+    let eventCount = 0
+    const mod = await computer.deploy(`export ${Counter}`)
+
+    const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
+    await computer.broadcast(tx!)
+    const expectedEvents = 2
+    const exp = '__bc__.inc()'
+
+    close = await computer.streamTXOs({ exp, mod }, ({ rev, hex }) =&gt; {
+      expect(typeof rev).eq('string')
+      expect(typeof hex).eq('string')
+      expect(rev.split(':').length).eq(2)
+      eventCount += 1
+    })
+
+    const counter = effect.res as SmartContract&lt;typeof Counter&gt;
+    await counter.inc()
+    await counter.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (eventCount &gt;= expectedEvents) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount &gt; 20) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for exp + mod stream'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should emit when streaming to publicKey field', async () =&gt; {
+    let eventCount = 0
+    const publicKey = computer.getPublicKey()
+
+    close = await computer.streamTXOs(
+      { publicKey },
+      ({ rev, hex }) =&gt; {
+        expect(typeof rev).eq('string')
+        expect(typeof hex).eq('string')
+        expect(rev.split(':').length).eq(2)
+        eventCount += 1
+      },
+      (error) =&gt; {
+        throw new Error(`Error ${error} in SSE stream`)
+      },
+    )
+
+    const c = await computer.new(Counter, [])
+    // Trigger a transaction that creates an object owned by computer.getPublicKey()
+    await c.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (eventCount &gt;= 1) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount &gt; 25) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for publicKey stream'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should throw validation error for invalid publicKey filter', async () =&gt; {
+    const invalidCases = [
+      { value: ' ', expected: 'cannot be empty' },
+      { value: 'OP_1 OP_CHECKSIG', expected: 'Invalid publicKey: invalid opcode format' },
+      {
+        value: 'invalid-opcode',
+        expected:
+          'Invalid publicKey: must be a valid opcode (starting with OP_) or a hexadecimal string',
+      },
+      {
+        value: 'GG1234',
+        expected:
+          'Invalid publicKey: must be a valid opcode (starting with OP_) or a hexadecimal string',
+      },
+      { value: 'a'.repeat(1041), expected: 'data push too large' }, // 520 bytes = 1040 hex chars
+    ]
+
+    for (const { value, expected } of invalidCases) {
+      await expect(computer.streamTXOs({ publicKey: value }, () =&gt; {})).to.be.rejectedWith(expected)
+    }
+  })
+
+  it('Should not emit events for a chunk that does not exist in the script', async () =&gt; {
+    let eventCount = 0
+
+    close = await computer.streamTXOs({ publicKey: 'OP_RETURN' }, () =&gt; {
+      eventCount++
+    })
+
+    await computer.new(Counter, [])
+
+    await new Promise&lt;void&gt;((resolve) =&gt; {
+      setTimeout(() =&gt; {
+        expect(eventCount).to.eq(0)
+        resolve()
+      }, 1500)
+    })
+    close()
+  })
+
+  it('Should receive two events when output matches two different publicKey subscriptions', async () =&gt; {
+    let eventCount = 0
+    const pubKey = computer.getPublicKey()
+
+    const close1 = await computer.streamTXOs({ publicKey: 'OP_1' }, () =&gt; {
+      eventCount++
+    })
+    const close2 = await computer.streamTXOs({ publicKey: pubKey }, () =&gt; {
+      eventCount++
+    })
+
+    close = () =&gt; {
+      close1()
+      close2()
+    }
+
+    const c = await computer.new(Counter, [])
+    await c.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+        if (eventCount &gt;= 2) {
+          clearInterval(interval)
+          resolve()
+        }
+        if (retryCount &gt; 25) {
+          clearInterval(interval)
+          close()
+          reject(new Error(`Expected at least 2 events, got ${eventCount}`))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should emit when streaming to any asm chunk ', async () =&gt; {
+    let eventCount = 0
+    // Owner script asm prefix as filter
+    const chunk = `OP_1`
+
+    close = await computer.streamTXOs(
+      { publicKey: chunk },
+      ({ rev, hex }) =&gt; {
+        expect(typeof rev).eq('string')
+        expect(typeof hex).eq('string')
+        expect(rev.split(':').length).eq(2)
+        eventCount += 1
+      },
+      (error) =&gt; {
+        throw new Error(`Error ${error} in SSE stream`)
+      },
+    )
+
+    const c = await computer.new(Counter, [])
+    await c.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (eventCount &gt;= 1) {
+          clearInterval(interval)
+          resolve()
+        }
+
+        if (retryCount &gt; 25) {
+          clearInterval(interval)
+          close()
+          reject(new Error('Missed SSE for publicKey stream'))
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should not emit events for partial filter match (wrong exp, only mod)', async () =&gt; {
+    let eventCount = 0
+    const mod = await computer.deploy(`export ${Counter}`)
+    const { effect, tx } = await computer.encode({ exp: 'new Counter()', mod })
+    await computer.broadcast(tx!)
+    const exp = '__bc__.wrong()'
+    close = await computer.streamTXOs({ exp, mod }, () =&gt; {
+      eventCount += 1 // Should not trigger
+    })
+
+    const counter = effect.res as SmartContract&lt;typeof Counter&gt;
+    await counter.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (retryCount &gt; 10) {
+          clearInterval(interval)
+          if (eventCount === 0) {
+            resolve() // Success: no events
+          } else {
+            reject(new Error('Received unexpected SSE for partial filter match'))
+          }
+        }
+      }, 200)
+    })
+    close()
+  })
+
+  it('Should throw error for invalid keys in stream', async () =&gt; {
+    const invalidFilter = { invalidField: 'value' } as Partial&lt;any&gt;
+    await expect(computer.streamTXOs(invalidFilter, () =&gt; {})).to.be.rejectedWith(
+      'Invalid subscription field: invalidField',
+    )
+  })
+
+  it('Unsubscribing to mempool cleanup should not affect current stream subscriptions', async function () {
+    let cleanupCount = 0
+    let streamCount = 0
+
+    // Subscribe to mempool
+    const unsubMempool = await computer.streamMempoolCleanup(({ revs }) =&gt; {
+      cleanupCount++
+    })
+
+    // Subscribe to a streamTXOs (e.g., mod)
+    const mod = await computer.deploy(`export ${Counter}`)
+    const unsubStream = await computer.streamTXOs(
+      { mod },
+      ({ rev }) =&gt; {
+        streamCount++
+      },
+      (err) =&gt; {
+        throw new Error(`Stream error: ${err}`)
+      },
+    )
+
+    // Create object for stream
+    const obj = await computer.new(Counter, [], mod)
+    await obj.inc()
+
+    // Trigger mempool cleanup (simulate if needed; assume your env has a way to force stale TX cleanup)
+    // For test: await someStaleTxCreationAndCleanup(); // Or use RPC to add/remove
+
+    // Wait for initial events
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let attempts = 0
+      const iv = setInterval(() =&gt; {
+        attempts++
+        if (streamCount &gt;= 1) {
+          // Adjust expected if no real cleanup
+          clearInterval(iv)
+          resolve()
+        }
+        if (attempts &gt; 40) {
+          clearInterval(iv)
+          reject(new Error(`Initial missing: stream=${streamCount}, cleanup=${cleanupCount}`))
+        }
+      }, 300)
+    })
+
+    // Unsubscribe mempool stream
+    unsubMempool()
+
+    // Reset counters
+    streamCount = 0
+    cleanupCount = 0
+
+    // Trigger more: stream should fire normally
+    await obj.inc()
+    await obj.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let attempts = 0
+      const iv = setInterval(() =&gt; {
+        attempts++
+        if (cleanupCount === 0 &amp;&amp; streamCount &gt;= 1) {
+          clearInterval(iv)
+          resolve()
+        }
+        if (attempts &gt; 40) {
+          clearInterval(iv)
+          reject(new Error(`After unsub: cleanup=${cleanupCount}, stream got ${streamCount}`))
+        }
+      }, 300)
+    })
+
+    // Cleanup
+    unsubStream()
+  })
+
+  it('Unsubscribing to any streamTXOS subscription should not affect current stream subscriptions', async function () {
+    let streamCount1 = 0
+    let streamCount2 = 0
+
+    // Subscribe to first streamTXOs
+    const mod1 = await computer.deploy(`export ${Counter}`)
+    const unsubStream1 = await computer.streamTXOs(
+      { mod: mod1 },
+      ({ rev }) =&gt; {
+        streamCount1++
+      },
+      (err) =&gt; {
+        throw new Error(`Stream1 error: ${err}`)
+      },
+    )
+
+    // Subscribe to second streamTXOs
+    const mod2 = await computer.deploy(`export ${Counter}`)
+    const unsubStream2 = await computer.streamTXOs(
+      { mod: mod2 },
+      ({ rev }) =&gt; {
+        streamCount2++
+      },
+      (err) =&gt; {
+        throw new Error(`Stream2 error: ${err}`)
+      },
+    )
+
+    // Create objects for both streams
+    const obj1 = await computer.new(Counter, [], mod1)
+    const obj2 = await computer.new(Counter, [], mod2)
+    await obj1.inc()
+    await obj2.inc()
+
+    // Wait for initial events
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let attempts = 0
+      const iv = setInterval(() =&gt; {
+        attempts++
+        if (streamCount1 &gt;= 1 &amp;&amp; streamCount2 &gt;= 1) {
+          clearInterval(iv)
+          resolve()
+        }
+        if (attempts &gt; 40) {
+          clearInterval(iv)
+          reject(new Error(`Initial missing: stream1=${streamCount1}, stream2=${streamCount2}`))
+        }
+      }, 300)
+    })
+
+    // Unsubscribe first stream
+    unsubStream1()
+
+    // Reset counters
+    streamCount1 = 0
+    streamCount2 = 0
+
+    // Trigger more: second stream should fire normally
+    await obj1.inc()
+    await obj2.inc()
+    await obj2.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let attempts = 0
+      const iv = setInterval(() =&gt; {
+        attempts++
+        if (streamCount1 === 0 &amp;&amp; streamCount2 &gt;= 1) {
+          clearInterval(iv)
+          resolve()
+        }
+        if (attempts &gt; 40) {
+          clearInterval(iv)
+          reject(new Error(`Invalid after unsub: stream1=${streamCount1}, stream2=${streamCount2}`))
+        }
+      }, 300)
+    })
+
+    // Cleanup
+    unsubStream2()
+  })
+
+  it('Duplicate subscription to same filter replaces the first', async function () {
+    let firstCount = 0
+    let secondCount = 0
+
+    const mod = await computer.deploy(`export ${Counter}`)
+
+    const closeFirst = await computer.streamTXOs({ mod }, () =&gt; {
+      firstCount += 1
+    })
+    // Subscribe twice to same filter with different callbacks
+    // This should replace the first subscription
+    const closeSecond = await computer.streamTXOs({ mod }, () =&gt; {
+      secondCount += 1
+    })
+
+    const counter = await computer.new(Counter, [], mod)
+    await counter.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (firstCount === 0 &amp;&amp; secondCount &gt;= 1) {
+          clearInterval(interval)
+          resolve() // Success: second fired
+        }
+
+        if (retryCount &gt; 10) {
+          clearInterval(interval)
+          reject(new Error('Did not receive expected SSEs for duplicate subscriptions'))
+        }
+      }, 200)
+    })
+
+    closeFirst()
+
+    // check if first callback still fires or second overrides
+    const counter2 = await computer.new(Counter, [], mod)
+    await counter2.inc()
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+        if (secondCount &gt;= 2) {
+          clearInterval(interval)
+          resolve() // Success: second fired again
+        }
+        if (retryCount &gt; 10) {
+          clearInterval(interval)
+          reject(new Error('Second callback did not fire as expected after first was closed'))
+        }
+      }, 200)
+    })
+
+    closeSecond()
+  })
+
+  it('Duplicate subscription to same filter ignores the first if closed', async function () {
+    let firstCount = 0
+    let secondCount = 0
+
+    const mod = await computer.deploy(`export ${Counter}`)
+
+    const closeFirst = await computer.streamTXOs({ mod }, () =&gt; {
+      firstCount += 1
+    })
+    // Subscribe twice to same filter with different callbacks
+    // This should replace the first subscription
+    const closeSecond = await computer.streamTXOs({ mod }, () =&gt; {
+      secondCount += 1
+    })
+
+    const counter = await computer.new(Counter, [], mod)
+    await counter.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+
+        if (firstCount === 0 &amp;&amp; secondCount &gt;= 1) {
+          clearInterval(interval)
+          resolve() // Success: second fired
+        }
+
+        if (retryCount &gt; 10) {
+          clearInterval(interval)
+          reject(new Error('Did not receive expected SSEs for duplicate subscriptions'))
+        }
+      }, 200)
+    })
+
+    closeSecond()
+
+    secondCount = 0
+    // Check that the first callback does not fire after being closed
+    await counter.inc()
+    await counter.inc()
+    await counter.inc()
+    await counter.inc()
+    await counter.inc()
+
+    await new Promise&lt;void&gt;((resolve, reject) =&gt; {
+      let retryCount = 0
+      const interval = setInterval(() =&gt; {
+        retryCount += 1
+        if (secondCount === 0) {
+          clearInterval(interval)
+          resolve() // Success: second did not fire
+        }
+        if (retryCount &gt; 10) {
+          clearInterval(interval)
+          reject(new Error('First callback fired even after being closed'))
+        }
+      }, 200)
+    })
+
+    closeFirst()
+  })
+})</code></pre>
+</doc-codeblock></div>
+<p><a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/stream.test.ts" target="_blank">Source</a></p>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/streammempoolcleanup/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">stream​Mempool​Cleanup</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/subscribe/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">subscribe</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright BCDB Inc. 2026. All rights reserved.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "streamTXOs", level: 3, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: true, hasMath: false, tocDepth: 23, "md": "/lib/computer/stream.md" }</script>
+</body>
+</html>

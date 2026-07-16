@@ -1,0 +1,101 @@
+﻿# Bitcoin Computer
+
+> The Bitcoin Computer is a protocol for building applications that are as secure and decentralized as Bitcoin is. You can build games, tokens, exchanges and more without relying on a sidechain, an extra token, or a trusted third party.
+
+- [Bitcoin Computer](https://docs.bitcoincomputer.io/index.md): Bitcoin Computer
+- [Start](https://docs.bitcoincomputer.io/start.md): Create the file below and open it in a browser. It shows *, then 0 and finally 1.
+- [Tutorial](https://docs.bitcoincomputer.io/tutorial.md): In this tutorial, we explain how to build a decentralized chat application using Bitcoin Computer. We will start with a simple one-person chat and progressively expand it into a chat platform where users can create communities and even trade them trustlessly via smart contracts.
+- [How it Works](https://docs.bitcoincomputer.io/how-it-works.md): The Bitcoin Computer protocol associates JavaScript values with the outputs of Bitcoin transactions that contain JavaScript expressions.
+- [Smart Contract Language](https://docs.bitcoincomputer.io/language.md): Writing smart contracts is all about imposing constraints of future values. These constraints can be local or global. An example of a local constraint is a non-fungible token: These are objects that can change their owners but the data itself typically cannot be changed.
+- [Optimizations](https://docs.bitcoincomputer.io/optimizations.md): The Bitcoin Computer uses caching and network request batching to quickly load on-chain objects. Server-Sent Events can be used to receive a notification when an on-chain object is updated.
+- [Tx Format](https://docs.bitcoincomputer.io/format.md): The outputs of a Bitcoin Computer transaction are partitioned as follows:
+- [Development](https://docs.bitcoincomputer.io/development.md): There are two modes to run the system: development mode and production mode. In development mode, the system is not optimized and includes additional checks to help with debugging.
+- [Fees](https://docs.bitcoincomputer.io/fees.md): Miner fees are paid to the miners as usual. You can configure the satsPerByte parameter of the Computer constructor to adjust the fee level.
+- [Lib](https://docs.bitcoincomputer.io/lib/index.md): The Bitcoin Computer Library has the exports below.
+- [Node](https://docs.bitcoincomputer.io/node/index.md): You need to have git, node.js and docker installed.
+- [NakamotoJS](https://docs.bitcoincomputer.io/nakamotojs/index.md): NakamotoJS is available on Github here.
+- [Apps](https://docs.bitcoincomputer.io/apps.md): The following are examples of open source applications builded with the Bitcoin Computer. They are all published under MIT licence so you can clone, copy, modify, contribute or use them as a starting point for you project.
+- [Examples](https://docs.bitcoincomputer.io/examples/examples.md): Method
+- [Comparison](https://docs.bitcoincomputer.io/comparison.md): We explain how smart contract systems for Bitcoin work in simple terms. We then compare the Bitcoin Computer to other systems according to the following
+- [MIT License](https://docs.bitcoincomputer.io/license.md): Copyright (c) 2025 BCDB Inc.
+- [Legal Notice](https://docs.bitcoincomputer.io/legal.md): Summary: This software is free to use and modify under the MIT License for its source code. The patented technology is currently available for use under open terms at no additional charge.
+
+## Lib
+
+### Computer
+
+- [Computer](https://docs.bitcoincomputer.io/lib/computer/index.md): The Computer class has the methods listed below.
+- [broadcast](https://docs.bitcoincomputer.io/lib/computer/broadcast.md): Broadcasts a Bitcoin transaction.
+- [constructor](https://docs.bitcoincomputer.io/lib/computer/constructor.md): Creates an instance of the Computer class.
+- [decode](https://docs.bitcoincomputer.io/lib/computer/decode.md): Inputs a Bitcoin transaction or a transaction id and returns its metadata if it is a Bitcoin Computer transaction.
+- [deploy](https://docs.bitcoincomputer.io/lib/computer/deploy.md): Stores a Javascript module on the blockchain.
+- [encode](https://docs.bitcoincomputer.io/lib/computer/encode.md): Creates a transaction according to the Bitcoin Computer protocol.
+- [encodeCall](https://docs.bitcoincomputer.io/lib/computer/encodecall.md): Creates a transaction from a function call.
+- [encodeNew](https://docs.bitcoincomputer.io/lib/computer/encodenew.md): Creates a transaction from a constructor call.
+- [faucet](https://docs.bitcoincomputer.io/lib/computer/faucet.md): Funds an address on regtest for testing.
+- [first](https://docs.bitcoincomputer.io/lib/computer/first.md): Returns the first revision of a given revision.
+- [fund](https://docs.bitcoincomputer.io/lib/computer/fund.md): Funds a Bitcoin transaction.
+- [getAddress](https://docs.bitcoincomputer.io/lib/computer/getaddress.md): Returns the Bitcoin address.
+- [getAncestors](https://docs.bitcoincomputer.io/lib/computer/getancestors.md): Returns the transactions id history of the given revision.
+- [getBalance](https://docs.bitcoincomputer.io/lib/computer/getbalance.md): Returns the balance in satoshi.
+- [getChain](https://docs.bitcoincomputer.io/lib/computer/getchain.md): Returns the chain.
+- [getMnemonic](https://docs.bitcoincomputer.io/lib/computer/getmnemonic.md): Returns the mnemonic
+- [getNetwork](https://docs.bitcoincomputer.io/lib/computer/getnetwork.md): Returns the network.
+- [getOTXOs](https://docs.bitcoincomputer.io/lib/computer/getotxos.md): Returns Bitcoin Computer Objects for the given query parameters.
+- [getOUTXOs](https://docs.bitcoincomputer.io/lib/computer/getoutxos.md): Returns output identifiers of outputs containing *unspent smart objects** for the given query parameters.
+- [getPassphrase](https://docs.bitcoincomputer.io/lib/computer/getpassphrase.md): Returns the passphrase.
+- [getPrivateKey](https://docs.bitcoincomputer.io/lib/computer/getprivatekey.md): Returns a string encoded private key.
+- [getPublicKey](https://docs.bitcoincomputer.io/lib/computer/getpublickey.md): Returns a string encoding a public key.
+- [getTXOs](https://docs.bitcoincomputer.io/lib/computer/gettxos.md): Returns transaction outputs for the given query parameters.
+- [getUTXOs](https://docs.bitcoincomputer.io/lib/computer/getutxos2.md): Returns Unspent Transaction Outputs (UTXOs) for the given query parameters.
+- [getUtxos](https://docs.bitcoincomputer.io/lib/computer/getutxos.md): Warning: This method is deprecated and will be removed in future versions. Use getUTXOs instead (see https://docs.bitcoincomputer.io/Lib/Computer/getUTXOs).
+- [getVersion](https://docs.bitcoincomputer.io/lib/computer/getversion.md): Returns the current version.
+- [latest](https://docs.bitcoincomputer.io/lib/computer/latest.md): Returns the latest revision of an on chain object. Note that the latest revision of an object can be either unspent or spent.
+- [load](https://docs.bitcoincomputer.io/lib/computer/load.md): Loads a module from the blockchain.
+- [new](https://docs.bitcoincomputer.io/lib/computer/new.md): Creates an on-chain object.
+- [next](https://docs.bitcoincomputer.io/lib/computer/next.md): Returns the next revision of a given revision if it exists.
+- [prev](https://docs.bitcoincomputer.io/lib/computer/prev.md): Returns the previous revision of a given revision if it exists.
+- [query](https://docs.bitcoincomputer.io/lib/computer/query.md): Returns the latest revisions of on-chain objects.
+- [rpc](https://docs.bitcoincomputer.io/lib/computer/rpccall.md): Calls a Bitcoin RPC method with the given parameters via the Bitcoin Computer node.
+- [send](https://docs.bitcoincomputer.io/lib/computer/send.md): Sends a payment.
+- [sign](https://docs.bitcoincomputer.io/lib/computer/sign.md): Signs a Bitcoin transaction.
+- [streamMempoolCleanup](https://docs.bitcoincomputer.io/lib/computer/streammempoolcleanup.md): Subscribe to real-time mempool cleanup events. Get notified when the node removes stale unconfirmed transactions from its database, allowing apps to refresh or reload components for consistency.
+- [streamTXOs](https://docs.bitcoincomputer.io/lib/computer/stream.md): Subscribe to real-time transaction updates matching your filter. Get notified twice per match: once on mempool entry, again on block confirmation. Powered by SSE for low-latency streaming.
+- [subscribe](https://docs.bitcoincomputer.io/lib/computer/subscribe.md): Executes a callback when an on-chain object is updated. The client will receive two messages, one when the transaction is first seen in the mempool, and another when it is confirmed on-chain.
+- [sync](https://docs.bitcoincomputer.io/lib/computer/sync.md): Returns smart objects given a location on the blockchain.
+- [waitForIndex](https://docs.bitcoincomputer.io/lib/computer/waitforindex.md): Waits until an on-chain object revision is indexed by the Bitcoin Computer node.
+- [Contract](https://docs.bitcoincomputer.io/lib/contract/index.md): The Contract class allows you to create objects whose properties can only be updated through its methods. This enables the development of smart contracts in JavaScript.
+- [Mock](https://docs.bitcoincomputer.io/lib/mock/index.md): Mocking is a technique for spending objects that are associated with Bitcoin Computer transactions that have not been broadcast yet. This is required for advanced applications like swaps and for using smart contracts over payment channels (see here for more information).
+- [Transaction](https://docs.bitcoincomputer.io/lib/transaction/index.md): The Transaction class exported from @bitcoin-computer/lib extends the Transaction class exported from @bitcoin-computer/nakamotojs and therefore has all of its properties and methods (see here).
+
+## Node
+
+- [ancestors](https://docs.bitcoincomputer.io/node/ancestors.md): Returns an array of transaction ids for all transaction that the on-chain object at the given transaction if depends on.
+- [balance](https://docs.bitcoincomputer.io/node/balance.md): Returns the balance of a given address.
+- [bulk](https://docs.bitcoincomputer.io/node/bulk.md): Get the raw transaction HEX for multiple transactions in a single request.
+- [clean-mempool](https://docs.bitcoincomputer.io/node/clean-mempool.md): Triggers a cleanup of stale unconfirmed mempool entries.
+- [get-txos](https://docs.bitcoincomputer.io/node/get-txos.md): Returns the TXOs (transaction outputs) filtered by the provided query parameters.
+- [hex](https://docs.bitcoincomputer.io/node/hex.md): Returns the raw transaction hex for a given transaction ID.
+- [id](https://docs.bitcoincomputer.io/node/id.md): Get the data stored in the off-chain storage.
+- [json](https://docs.bitcoincomputer.io/node/json.md): Returns the JSON representation of a given transaction.
+- [latest](https://docs.bitcoincomputer.io/node/latest.md): Get the latest revision of a given revision.
+- [list-txs](https://docs.bitcoincomputer.io/node/list-txs.md): Returns the sent and received transactions for a given address.
+- [next](https://docs.bitcoincomputer.io/node/next.md): Get the next revision of a given revision.
+- [non-standard-utxos](https://docs.bitcoincomputer.io/node/non-standard-utxos.md): Query revisions by module specifier, public key, limit, order, offset and list of transaction ids.
+- [post](https://docs.bitcoincomputer.io/node/post.md): Posts a raw transaction to the network and returns its transaction ID.
+- [prev](https://docs.bitcoincomputer.io/node/prev.md): Get the previous revision of a given revision.
+- [received-outputs](https://docs.bitcoincomputer.io/node/received-outputs.md): Returns the outputs that were received by a given address.
+- [revToId](https://docs.bitcoincomputer.io/node/revtoid.md): Given a revision, returns the id of the smart contract.
+- [rpc](https://docs.bitcoincomputer.io/node/rpc.md): Call a Bitcoin RPC method.
+- [sent-outputs](https://docs.bitcoincomputer.io/node/sent-outputs.md): Returns the outputs that were sent from a given address.
+- [store](https://docs.bitcoincomputer.io/node/store.md): Stores the hex of the data in the offchain storage.
+- [subscribe](https://docs.bitcoincomputer.io/node/subscribe.md): Subscribe to server-sent events (SSE) for a given subscription ID.
+
+## Examples
+
+- [Non Fungible Token](https://docs.bitcoincomputer.io/examples/non-fungible-token.md): A smart contract for an NFT is a class with two properties and one function to update the _owners property.
+- [Fungible Token](https://docs.bitcoincomputer.io/examples/fungible-token.md): A fungible token is stored and transferred in a similar way to how satoshis are stored and transferred in Bitcoin. Its current state is stored in a set of UTXOs.
+- [Chat](https://docs.bitcoincomputer.io/examples/chat.md): The smart contract below creates a chat that can be initialized with an array of participants. All messages are encrypted so that only the members can read the messages.
+- [Token Swap](https://docs.bitcoincomputer.io/examples/swap.md): In this section we explain how to exchange to on-chain objects atomically. This means that either both assets change their owner or none of them.
+- [Sale](https://docs.bitcoincomputer.io/examples/sale.md): We explain how to sell a smart object to an unknown buyer atomically. Whereas both objects are known in advance in a swap, the output containing the payment that Buyer will use in the sale is unknown when Seller is building the swap transaction.
+- [Ordinal Sale](https://docs.bitcoincomputer.io/examples/ordinal-sale.md): The Sale smart contract is not safe to use with ordinals because the smart objects have different ordinal ranges before and after the call. To preserve the ordinal ranges the expression must not use the _satoshis keyword and must not return an object or an array containing an object.

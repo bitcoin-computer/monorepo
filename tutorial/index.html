@@ -3,212 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.817272653768">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837560724466">
 
     <!-- See retype.com -->
-    <meta name="generator" content="Retype 3.11.0">
+    <meta name="generator" content="Retype 4.6.0">
 
     <!-- Primary Meta Tags -->
     <title>Tutorial</title>
     <meta name="title" content="Tutorial">
-    <meta name="description" content="In this tutorial we explain how to build a decentralized chat.">
+    <meta name="description" content="In this tutorial, we explain how to build a decentralized chat application using Bitcoin Computer. We will start with a simple one-person chat and progressively expand it into a chat platform where users can create communities and even trade them trustlessly via smart contracts.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.bitcoincomputer.io/tutorial/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://docs.bitcoincomputer.io/sitemap.xml">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.bitcoincomputer.io/tutorial/">
     <meta property="og:title" content="Tutorial">
-    <meta property="og:description" content="In this tutorial we explain how to build a decentralized chat.">
+    <meta property="og:description" content="In this tutorial, we explain how to build a decentralized chat application using Bitcoin Computer. We will start with a simple one-person chat and progressively expand it into a chat platform where users can create communities and even trade them trustlessly via smart contracts.">
+    <meta property="og:site_name" content="Bitcoin Computer">
+    <meta property="og:locale" content="en_US">
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://docs.bitcoincomputer.io/tutorial/">
-    <meta property="twitter:title" content="Tutorial">
-    <meta property="twitter:description" content="In this tutorial we explain how to build a decentralized chat.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://docs.bitcoincomputer.io/tutorial/">
+    <meta name="twitter:title" content="Tutorial">
+    <meta name="twitter:description" content="In this tutorial, we explain how to build a decentralized chat application using Bitcoin Computer. We will start with a simple one-person chat and progressively expand it into a chat platform where users can create communities and even trade them trustlessly via smart contracts.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/tutorial.md">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.817272653768" rel="stylesheet">
+    <link id="retype-favicon" rel="icon" href="../static/favicon.ico" />
+    <link href="../resources/css/retype.css?v=4.6.0.837560724466" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.817272653768" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.817272653768" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=3.11.0.817272653768" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=4.6.0.837560724466" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
-        <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
     
-        <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
-            <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
-                <!-- Mobile menu button skeleton -->
-                <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-none rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
-                <div v-cloak id="retype-sidebar-left-toggle-button"></div>
-        
-                <!-- Logo -->
-                <div class="flex items-center justify-between h-full py-2 md:w-75">
-                    <div class="flex items-center px-2 md:px-6">
-                        <a id="retype-branding-logo" href="../" class="flex items-center leading-snug text-xl">
-                            <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
-                        </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">0.24.0</span>
-                    </div>
-        
-                    <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://docs.bitcoincomputer.io/" class="flex items-center leading-snug text-xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">0.26.0</span>
                 </div>
-        
-                <div class="flex justify-between md:grow">
-                    <!-- Top Nav -->
-                    <nav id="retype-header-nav" class="hidden md:flex">
-                        <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
-                            
-                        </ul>
-                    </nav>
-        
-                    <!-- Header Right Skeleton -->
-                    <div v-cloak class="flex justify-end grow skeleton">
-        
-                        <!-- Search input mock -->
-                        <div class="relative hidden w-40 lg:block lg:max-w-sm lg:ml-auto">
-                            <div class="absolute flex items-center justify-center h-full pl-3 dark:text-dark-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-base" width="16" height="16" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 1px;"><g fill="currentColor" ><path d="M21.71 20.29l-3.68-3.68A8.963 8.963 0 0020 11c0-4.96-4.04-9-9-9s-9 4.04-9 9 4.04 9 9 9c2.12 0 4.07-.74 5.61-1.97l3.68 3.68c.2.19.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.03 0-1.42zM4 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 1.92-.78 3.66-2.04 4.93-.01.01-.02.01-.02.01-.01.01-.01.01-.01.02A6.98 6.98 0 0111 18c-3.86 0-7-3.14-7-7z" ></path></g></svg>
-                            </div>
-                            <input class="w-full h-10 placeholder-search-placeholder transition-colors duration-200 ease-in bg-search-bg border border-transparent rounded md:text-sm hover:border-search-border-hover focus:outline-none focus:border-search-border-focus" style="padding: 0.625rem 0.75rem 0.625rem 2rem" type="text" placeholder="Search">
-                        </div>
-        
-                        <!-- Mobile search button -->
-                        <div class="flex items-center justify-center w-10 h-10 lg:hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 icon-base" width="20" height="20" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor" ><path d="M21.71 20.29l-3.68-3.68A8.963 8.963 0 0020 11c0-4.96-4.04-9-9-9s-9 4.04-9 9 4.04 9 9 9c2.12 0 4.07-.74 5.61-1.97l3.68 3.68c.2.19.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.03 0-1.42zM4 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 1.92-.78 3.66-2.04 4.93-.01.01-.02.01-.02.01-.01.01-.01.01-.01.02A6.98 6.98 0 0111 18c-3.86 0-7-3.14-7-7z" ></path></g></svg>
-                        </div>
-        
-                        <!-- Dark mode switch placeholder -->
-                        <div class="w-10 h-10 lg:ml-2"></div>
-        
-                        <!-- History button -->
-                        <div class="flex items-center justify-center w-10 h-10" style="margin-right: -0.625rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 icon-base" width="22" height="22" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor" ><g ><path d="M12.01 6.01c-.55 0-1 .45-1 1V12a1 1 0 00.4.8l3 2.22a.985.985 0 001.39-.2.996.996 0 00-.21-1.4l-2.6-1.92V7.01c.02-.55-.43-1-.98-1z"></path><path d="M12.01 1.91c-5.33 0-9.69 4.16-10.05 9.4l-.29-.26a.997.997 0 10-1.34 1.48l1.97 1.79c.19.17.43.26.67.26s.48-.09.67-.26l1.97-1.79a.997.997 0 10-1.34-1.48l-.31.28c.34-4.14 3.82-7.41 8.05-7.41 4.46 0 8.08 3.63 8.08 8.09s-3.63 8.08-8.08 8.08c-2.18 0-4.22-.85-5.75-2.4a.996.996 0 10-1.42 1.4 10.02 10.02 0 007.17 2.99c5.56 0 10.08-4.52 10.08-10.08.01-5.56-4.52-10.09-10.08-10.09z"></path></g></g></svg>
-                        </div>
-                    </div>
-        
-                    <div v-cloak class="flex justify-end grow">
-                        <div id="retype-mobile-search-button"></div>
-                        <doc-search-desktop></doc-search-desktop>
-        
-                        <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
-                        <doc-history></doc-history>
-                    </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
                 </div>
             </div>
-        </header>
-    
-    
-        <div id="retype-container" class="container relative flex bg-white">
-            <!-- Sidebar Skeleton -->
-            <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
-            
-                <div class="flex items-center h-16 px-6">
-                    <input class="w-full h-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded shadow-none text-sm focus:outline-none focus:border-filter-border-focus" type="text" placeholder="Filter">
-                </div>
-            
-                <div class="pl-6 mt-1 mb-4">
-                    <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                </div>
-            
-                <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
                     <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
                         <span class="text-xs whitespace-nowrap">Powered by</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
                     </a>
                 </div>
-            </div>
-            
-            <!-- Sidebar component -->
-            <doc-sidebar v-cloak>
-                <template #sidebar-footer>
-                    <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
-            
-                        <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
-                            <span class="text-xs whitespace-nowrap">Powered by</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
-                        </a>
-                    </div>
-                </template>
-            </doc-sidebar>
-    
-            <div class="grow min-w-0 bg-body-bg">
-                <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
-                <div class="flex">
-                    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
-                        <main class="relative pb-12 lg:pt-2">
-                            <div class="retype-markdown" id="retype-content">
-                                <!-- Rendered if sidebar right is enabled -->
-                                <div id="retype-sidebar-right-toggle"></div>
-                                <!-- Page content  -->
-<doc-anchor-target id="tutorial" class="break-words">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#tutorial">#</doc-anchor-trigger>
-        <span>Tutorial</span>
-    </h1>
-</doc-anchor-target>
-<p>In this tutorial we explain how to build a decentralized chat. We will start with a comically simple version of a one person chat, but we will work our way up to a chat platform where users can build a community and sell it trustlessly through a smart contract.</p>
-<doc-anchor-target id="a-smart-contract">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#a-smart-contract">#</doc-anchor-trigger>
-        <span>A Smart Contract</span>
-    </h2>
-</doc-anchor-target>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="tutorial">Tutorial</h1>
+<p>In this tutorial, we explain how to build a decentralized chat application using Bitcoin Computer. We will start with a simple one-person chat and progressively expand it into a chat platform where users can create communities and even trade them trustlessly via smart contracts.</p>
+<h2 id="a-smart-contract">A Smart Contract</h2>
 <p>The JavaScript program below is a smart contract for a one-person chat.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<div id="a-smart-contract-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">import { Contract } from '@bitcoin-computer/lib'
 
+// Define a Chat contract that extends the base Contract class
 class Chat extends Contract {
+  /**
+   * Constructor to create an on-chain chat
+   * @param {string} greeting - The first message in the chat.
+   */
   constructor(greeting) {
-    super({ messages: [greeting] }) // initialize messages array
+    // Initialize messages array with the first message
+    super({ messages: [greeting] })
   }
 
+  /**
+   * Method to post a new message to the chat.
+   * @param {string} message - The message to be added.
+   */
   post(message) {
+    // Append the new message to the existing array
     this.messages.push(message)
   }
 }</code></pre>
 </doc-codeblock></div>
-<p>We recommend to ignore the syntax for initializing <code v-pre>messages</code> in the constructor for now. If you are interested in the details you can find them <a href="../language/">here</a>.</p>
-<doc-anchor-target id="the-client-side-wallet">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#the-client-side-wallet">#</doc-anchor-trigger>
-        <span>The Client-Side Wallet</span>
-    </h2>
-</doc-anchor-target>
-<p>The <code v-pre>Computer</code> class is a client-side JavaScript wallet that manages a Bitcoin private-public key pair. It can create normal Bitcoin transactions but also ones that contain metadata according to the Bitcoin Computer protocol. This allows for the creation, updating, and retrieval of on-chain objects.</p>
-<p>You can pass a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic into the constructor to create a specific private-public key pair, or leave the <code v-pre>mnemonic</code> parameter undefined to generate a random wallet. More configuration options are described <a href="../lib/computer/constructor/">here</a>.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<p>We recommend to ignore the syntax for initializing <code translate="no" v-pre>messages</code> in the constructor for now. If you are interested in the details you can find them <a href="../language/">here</a>.</p>
+<h2 id="the-client-side-wallet">The Client-Side Wallet</h2>
+<p>The <code translate="no" v-pre>Computer</code> class is a client-side JavaScript wallet that manages a Bitcoin private-public key pair. It can create normal Bitcoin transactions but also ones that contain metadata according to the Bitcoin Computer protocol. This allows for the creation, updating, and retrieval of on-chain objects.</p>
+<p>You can pass a <a href="https://github.com/bitcoin/bips/blob/master/bip-0039.mediawiki">BIP39</a> mnemonic into the constructor to create a specific private-public key pair, or leave the <code translate="no" v-pre>mnemonic</code> parameter undefined to generate a random wallet. More configuration options are described <a href="../lib/computer/constructor/">here</a>.</p>
+<div id="the-client-side-wallet-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">import { Computer } from '@bitcoin-computer/lib'
 
+// Initialize a new computer instance with a mnemonic
 const computer = new Computer({ mnemonic: 'replace this seed' })</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="creating-on-chain-objects">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#creating-on-chain-objects">#</doc-anchor-trigger>
-        <span>Creating On-Chain Objects</span>
-    </h2>
-</doc-anchor-target>
-<p>The <a href="../lib/computer/new/"><code v-pre>computer.new</code></a> function broadcasts a transaction inscribed with a JavaScript expression consisting of a class and a constructor call. For example, the call</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<h2 id="creating-on-chain-objects">Creating On-Chain Objects</h2>
+<p>The <a href="../lib/computer/new/"><code translate="no" v-pre>computer.new</code></a> function broadcasts a transaction inscribed with a JavaScript expression consisting of a class and a constructor call. For example, the call</p>
+<div id="creating-on-chain-objects-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const chat = await computer.new(Chat, ['hello'])</code></pre>
 </doc-codeblock></div>
 <p>broadcasts a transaction inscribed with the expression below.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<div id="creating-on-chain-objects-code-2" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">class Chat extends Contract {
   constructor(greeting) {
+    // Initialize an on-chain object with messages array
     super({ messages: [greeting] })
   }
 
@@ -219,29 +196,11 @@ const computer = new Computer({ mnemonic: 'replace this seed' })</code></pre>
 
 new Chat('hello')</code></pre>
 </doc-codeblock></div>
-<p>The Bitcoin Computer protocol interprets such a transaction as creating an on-chain object of type <code v-pre>Chat</code> at the first output of the transaction.</p>
-<p>The object <code v-pre>chat</code> returned from the <code v-pre>computer.new</code> call is similar to the object returned from the call <code v-pre>new Chat('hello')</code>. However it has additional properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code>, <code v-pre>_owners</code> and <code v-pre>_satoshis</code>:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">expect(chat).to.deep.equal({
-  messages: ['hello'],
-  _id: '667c...2357:0',
-  _rev: '667c...2357:0',
-  _root: '667c...2357:0',
-  _owners: ['03...'],
-  _satoshis: 5820n,
-})</code></pre>
-</doc-codeblock></div>
-<ul>
-<li>The properties <code v-pre>_id</code>, <code v-pre>_rev</code>, <code v-pre>_root</code> are set to strings of the form <code v-pre>&lt;id&gt;:&lt;num&gt;</code> where <code v-pre>&lt;id&gt;</code> is the id of the transaction broadcast by the <code v-pre>computer.new</code> call and <code v-pre>&lt;num&gt;</code> is an output number.</li>
-<li>The <code v-pre>_owners</code> property is set to an array containing public keys.</li>
-<li>The <code v-pre>_satoshis</code> property specifies a number of satoshis (bigint).</li>
-</ul>
-<p>We refer to <code v-pre>chat</code> as an <em>on-chain object</em>.</p>
 <div class="flex mb-6">
     <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
     <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
         <div class="flex items-center ml-4 h-7">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
                 <g fill="currentColor"><g>
                     <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
                     <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
@@ -250,54 +209,115 @@ new Chat('hello')</code></pre>
             </svg>
         </div>
         <div class="pr-5 ml-3 w-full">
-<p>Note that the transaction that created <code v-pre>chat</code> does not contain an encoding of the object itself. It only contains code that evaluates to its state.</p>
+<p><strong>Revision (_rev)</strong><br />
+A revision refers to a particular state of an on-chain object, tied to a specific blockchain transaction output. Each update to the object creates a new revision.</p>
         </div>
     </div>
 </div>
-<doc-anchor-target id="updating-on-chain-objects">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#updating-on-chain-objects">#</doc-anchor-trigger>
-        <span>Updating On-Chain Objects</span>
-    </h2>
-</doc-anchor-target>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p><strong>Public Key Ownership (_owners)</strong><br />
+This property defines which public keys control (can update) the on-chain object. If multiple keys are assigned, it&#x27;s a 1-of-n multisig control. The default owner is the key that created the object.</p>
+        </div>
+    </div>
+</div>
+<p>The Bitcoin Computer protocol interprets such a transaction as creating an on-chain object of type <code translate="no" v-pre>Chat</code> at the first output of the transaction.</p>
+<p>The object <code translate="no" v-pre>chat</code> returned from the <code translate="no" v-pre>computer.new</code> call is similar to the object returned from the call <code translate="no" v-pre>new Chat('hello')</code>. However it has additional properties <code translate="no" v-pre>_id</code>, <code translate="no" v-pre>_rev</code>, <code translate="no" v-pre>_root</code>, <code translate="no" v-pre>_owners</code> and <code translate="no" v-pre>_satoshis</code>:</p>
+<div id="creating-on-chain-objects-code-3" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">expect(chat).to.deep.equal({
+  // Application-specific data
+  // Chat messages
+  messages: ['hello'], )
+
+  // Protocol speciic data added by Bitcoin Computer protocol:
+  // Location where the object was first created
+  _id: '667c...2357:0',
+  // Location where the object is currently stored
+  _rev: '667c...2357:0',
+  // Root object reference for object hierarchies
+  _root: '667c...2357:0',
+  // Array of owner public keys that control the object
+  _owners: ['03...'],
+  // satoshis locked in this object
+  _satoshis: 5820n,
+})</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>The properties <code translate="no" v-pre>_id</code>, <code translate="no" v-pre>_rev</code>, <code translate="no" v-pre>_root</code> are set to strings of the form <code translate="no" v-pre>&lt;id&gt;:&lt;num&gt;</code> where <code translate="no" v-pre>&lt;id&gt;</code> is the id of the transaction broadcast by the <code translate="no" v-pre>computer.new</code> call and <code translate="no" v-pre>&lt;num&gt;</code> is an output number.</li>
+<li>The <code translate="no" v-pre>_owners</code> property is set to an array containing public keys.</li>
+<li>The <code translate="no" v-pre>_satoshis</code> property specifies a number of satoshis (bigint).</li>
+</ul>
+<p>We refer to <code translate="no" v-pre>chat</code> as an <em>on-chain object</em>.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>Note that the transaction that created <code translate="no" v-pre>chat</code> does not contain an encoding of the object itself. It only contains code that evaluates to its state.</p>
+        </div>
+    </div>
+</div>
+<h2 id="updating-on-chain-objects">Updating On-Chain Objects</h2>
 <p>When a function is called on an on-chain object, a transaction is broadcast that is inscribed with a JavaScript expression encoding the function call and an environment determining the undefined variables in the expressions. For example, the call</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">await chat.post('world')</code></pre>
+<div id="updating-on-chain-objects-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Broadcasts transaction updating messages array
+await chat.post('world')</code></pre>
 </doc-codeblock></div>
 <p>broadcasts a transaction <em>tx</em> that is inscribed with the data below.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<div id="updating-on-chain-objects-code-2" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">{
   exp: 'chat.post('world')'
   env: [chat]
 }</code></pre>
 </doc-codeblock></div>
-<p>The transaction&#x27;s first input spends the output in which the previous revision of the <code v-pre>chat</code> object was stored.</p>
-<p>Note that it is not possible to compute a value from the expression <code v-pre>chat.post('world')</code> alone because the variable <code v-pre>chat</code> is not defined. To make the expression determined the transaction&#x27;s inscription contains an environment <code v-pre>env</code> that associates the variable name <code v-pre>chat</code> with its first input.</p>
-<p>To compute the value of the <code v-pre>chat</code> after the <code v-pre>post</code> function is called and the transaction <em>tx</em> is broadcast, the Bitcoin Computer protocol first computes the value stored at the output spent by the first input of <em>tx</em>. This value is then substituted for the name <code v-pre>chat</code> in the expression <code v-pre>chat.post('world')</code>. Now the expression is completely determined and can be evaluated. The new value for <code v-pre>chat</code> is associated with the first output of <em>tx</em>. In our example, this value is</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<p>The transaction&#x27;s first input spends the output in which the previous revision of the <code translate="no" v-pre>chat</code> object was stored.</p>
+<p>Note that it is not possible to compute a value from the expression <code translate="no" v-pre>chat.post('world')</code> alone because the variable <code translate="no" v-pre>chat</code> is not defined. To make the expression determined the transaction&#x27;s inscription contains an environment <code translate="no" v-pre>env</code> that associates the variable name <code translate="no" v-pre>chat</code> with its first input.</p>
+<p>To compute the value of the <code translate="no" v-pre>chat</code> after the <code translate="no" v-pre>post</code> function is called and the transaction <em>tx</em> is broadcast, the Bitcoin Computer protocol first computes the value stored at the output spent by the first input of <em>tx</em>. This value is then substituted for the name <code translate="no" v-pre>chat</code> in the expression <code translate="no" v-pre>chat.post('world')</code>. Now the expression is completely determined and can be evaluated. The new value for <code translate="no" v-pre>chat</code> is associated with the first output of <em>tx</em>. In our example, this value is</p>
+<div id="updating-on-chain-objects-code-3" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">Chat {
+  // 'world' has been added to the array of messages
   messages: ['hello', 'world'],
   _id: '667c...2357:0',
+  // the location of where the object has been stored is updated
   _rev: 'de43...818a:0',
   _root: '667c...2357:0',
   _owners: ['03...'],
   _satoshis: 5820n,
 }</code></pre>
 </doc-codeblock></div>
-<p>The property <code v-pre>_rev</code> has been updated and now refers to the first output of <em>tx</em>. The properties <code v-pre>_id</code>, <code v-pre>_root</code>, <code v-pre>_owners</code>, <code v-pre>_satoshis</code> have not changed. The meaning of these special properties is as follows:</p>
+<p>The property <code translate="no" v-pre>_rev</code> has been updated and now refers to the first output of <em>tx</em>. The properties <code translate="no" v-pre>_id</code>, <code translate="no" v-pre>_root</code>, <code translate="no" v-pre>_owners</code>, <code translate="no" v-pre>_satoshis</code> have not changed. The meaning of these special properties is as follows:</p>
 <ul>
-<li><code v-pre>_id</code> is the output in which the on-chain object was first created. As this output never changes the <code v-pre>_id</code> property never changes</li>
-<li><code v-pre>_rev</code> is the output where the current revision of the object is stored. Therefore, initially, the revision is equal to the id, then the revision is changed every time the object is updated.</li>
-<li><code v-pre>_root</code> is never updated. As it is not relevant to the chat example we refer the interested reader to <a href="../language/">this</a> section.</li>
-<li><code v-pre>_owners</code> is set to the public key of the data owner. More on that <doc-anchor-trigger to="#data-ownership">below</doc-anchor-trigger>.</li>
-<li><code v-pre>_satoshis</code> is set to the amount of satoshi of the output in which an on-chain object is stored. More <doc-anchor-trigger to="#cryptocurrency">here</doc-anchor-trigger>.</li>
+<li><code translate="no" v-pre>_id</code> is the output in which the on-chain object was first created. As this output never changes the <code translate="no" v-pre>_id</code> property never changes</li>
+<li><code translate="no" v-pre>_rev</code> is the output where the current revision of the object is stored. Therefore, initially, the revision is equal to the id, then the revision is changed every time the object is updated.</li>
+<li><code translate="no" v-pre>_root</code> is never updated. As it is not relevant to the chat example we refer the interested reader to <a href="../language/">this</a> section.</li>
+<li><code translate="no" v-pre>_owners</code> is set to the public key of the data owner. More on that <doc-anchor-trigger to="#data-ownership">below</doc-anchor-trigger>.</li>
+<li><code translate="no" v-pre>_satoshis</code> is set to the amount of satoshi of the output in which an on-chain object is stored. More <doc-anchor-trigger to="#cryptocurrency">here</doc-anchor-trigger>.</li>
 </ul>
-<p>The properties <code v-pre>_id</code>, <code v-pre>_rev</code>, and <code v-pre>_root</code> are read only and an attempt to assign to them throws an error. The properties <code v-pre>_owners</code> and <code v-pre>_satoshis</code> can be assigned in a smart contract to determine the transaction that is built.</p>
+<p>The properties <code translate="no" v-pre>_id</code>, <code translate="no" v-pre>_rev</code>, and <code translate="no" v-pre>_root</code> are read only and an attempt to assign to them throws an error. The properties <code translate="no" v-pre>_owners</code> and <code translate="no" v-pre>_satoshis</code> can be assigned in a smart contract to determine the transaction that is built.</p>
 <div class="flex mb-6">
     <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
     <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
         <div class="flex items-center ml-4 h-7">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
                 <g fill="currentColor"><g>
                     <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
                     <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
@@ -310,38 +330,37 @@ new Chat('hello')</code></pre>
         </div>
     </div>
 </div>
-<doc-anchor-target id="reading-on-chain-objects">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#reading-on-chain-objects">#</doc-anchor-trigger>
-        <span>Reading On-Chain Objects</span>
-    </h2>
-</doc-anchor-target>
-<p>The <a href="../lib/computer/sync/"><code v-pre>computer.sync</code></a> function computes the state of an on-chain object given its revision. For example, if the function is called with an the id of an on-chain object, it returns the initial state of the object</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const initialChat = await computer.sync(chat._id)
+<h2 id="reading-on-chain-objects">Reading On-Chain Objects</h2>
+<p>The <a href="../lib/computer/sync/"><code translate="no" v-pre>computer.sync</code></a> function computes the state of an on-chain object given its revision. For example, if the function is called with an the id of an on-chain object, it returns the initial state of the object</p>
+<div id="reading-on-chain-objects-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Get initial state using on-chain object id
+const initialChat = await computer.sync(chat._id)
 
+// Original state preserved
 expect(initialChat.messages).deep.eq(['hello'])</code></pre>
 </doc-codeblock></div>
-<p>If <code v-pre>computer.sync</code> is called with latest revision it returns the current state.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const latestChat = await computer.sync(chat._rev)
+<p>If <code translate="no" v-pre>computer.sync</code> is called with latest revision it returns the current state.</p>
+<div id="reading-on-chain-objects-code-2" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Get current state using latest revision id
+const latestChat = await computer.sync(chat._rev)
 
+// Includes all updates
 expect(latestChat.messages).deep.eq(['hello', 'world'])
+// Verify full object consistency
 expect(latestChat).to.deep.equal(chat)</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="finding-on-chain-objects">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#finding-on-chain-objects">#</doc-anchor-trigger>
-        <span>Finding On-Chain Objects</span>
-    </h2>
-</doc-anchor-target>
-<p>The <a href="../lib/computer/query/"><code v-pre>computer.query</code></a> function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const [rev] = await computer.query({ ids: [chat._id] })
+<h2 id="finding-on-chain-objects">Finding On-Chain Objects</h2>
+<p>The <a href="../lib/computer/query/"><code translate="no" v-pre>computer.query</code></a> function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:</p>
+<div id="finding-on-chain-objects-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const [rev] = await computer.query({
+  // Search by original on-chain object id
+  ids: [chat._id],
+})
+// Returns most recent revision
 expect(rev).to.equal(chat._rev)</code></pre>
 </doc-codeblock></div>
-<p>A basic pattern in applications is to identify a on-chain object by its id, to look up the object&#x27;s latest revision using <code v-pre>computer.query</code>, and then to compute its latest state using <code v-pre>computer.sync</code>. For example, in our chat app the url could contain a chat&#x27;s id and the latest state of the chat could be computed as shown below.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<p>A basic pattern in applications is to identify a on-chain object by its id, to look up the object&#x27;s latest revision using <code translate="no" v-pre>computer.query</code>, and then to compute its latest state using <code translate="no" v-pre>computer.sync</code>. For example, in our chat app the url could contain a chat&#x27;s id and the latest state of the chat could be computed as shown below.</p>
+<div id="finding-on-chain-objects-code-2" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Extract the id from the url
 const id = urlToId(window.location)
 
@@ -351,34 +370,29 @@ const [rev] = await computer.query({ ids: [id] })
 // Compute the latest state
 const latestChat = await computer.sync(rev)</code></pre>
 </doc-codeblock></div>
-<p><code v-pre>computer.query</code> can also return all revisions of on-chain objects owned by a public key. This could be useful for creating a user page for the chat application.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<p><code translate="no" v-pre>computer.query</code> can also return all revisions of on-chain objects owned by a public key. This could be useful for creating a user page for the chat application.</p>
+<div id="finding-on-chain-objects-code-3" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Get public key from a client side wallet
 const publicKey = computer.getPublicKey()
 
 // Look up all revisions owned by user
 const revs = await computer.query({ publicKey })</code></pre>
 </doc-codeblock></div>
-<p>It is also possible to navigate the revision history of a on-chain object using <a href="../lib/computer/next/"><code v-pre>computer.next</code></a> and <a href="../lib/computer/prev/"><code v-pre>computer.prev</code></a>:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<p>It is also possible to navigate the revision history of a on-chain object using <a href="../lib/computer/next/"><code translate="no" v-pre>computer.next</code></a> and <a href="../lib/computer/prev/"><code translate="no" v-pre>computer.prev</code></a>:</p>
+<div id="finding-on-chain-objects-code-4" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Navigating forward
 expect(await computer.next(chat._id)).eq(chat._rev)
 
 // Navigating backward
 expect(await computer.prev(chat._rev)).eq(chat._id)</code></pre>
 </doc-codeblock></div>
-<p>Note that the code above only works because there are only two revisions of the chat in our example, otherwise <code v-pre>computer.next</code> or <code v-pre>computer.prev</code> would have to be called multiple times.</p>
-<doc-anchor-target id="data-ownership">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#data-ownership">#</doc-anchor-trigger>
-        <span>Data Ownership</span>
-    </h2>
-</doc-anchor-target>
+<p>Note that the code above only works because there are only two revisions of the chat in our example, otherwise <code translate="no" v-pre>computer.next</code> or <code translate="no" v-pre>computer.prev</code> would have to be called multiple times.</p>
+<h2 id="data-ownership">Data Ownership</h2>
 <p>We are finally ready to elevate our one-person chat to a three-person chat! We will explain how to allow an unlimited number of users <doc-anchor-trigger to="#bitcoin-script-support">further below</doc-anchor-trigger>.</p>
 <p>The <em>owner</em> of an on-chain object is the user that can spend the output that stores it, just like the owner of the satoshi in a output is the user that can spend it.</p>
-<p>The owners can be set by assigning the <code v-pre>_owners</code> property. If this property is set to an array of public keys, the output script is a 1-of-n bare multisig script, meaning that any owner can update the object. If it is undefined the owner default to the public key of the computer object that created the on-chain object.</p>
-<p>In the chat example, the initial owner is the public key of the <code v-pre>computer</code> object on which <code v-pre>computer.new</code> function was called. Only that user can post to the chat. We can add a function <code v-pre>invite</code> to update the owners array to allow other users to post.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<p>The owners can be set by assigning the <code translate="no" v-pre>_owners</code> property. If this property is set to an array of public keys, the output script is a 1-of-n bare multisig script, meaning that any owner can update the object. If it is undefined the owner default to the public key of the computer object that created the on-chain object.</p>
+<p>In the chat example, the initial owner is the public key of the <code translate="no" v-pre>computer</code> object on which <code translate="no" v-pre>computer.new</code> function was called. Only that user can post to the chat. We can add a function <code translate="no" v-pre>invite</code> to update the owners array to allow other users to post.</p>
+<div id="data-ownership-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">class Chat extends Contract {
   ... // like above
 
@@ -391,7 +405,7 @@ expect(await computer.prev(chat._rev)).eq(chat._id)</code></pre>
     <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
     <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
         <div class="flex items-center ml-4 h-7">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
                 <g fill="currentColor"><g>
                     <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
                     <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
@@ -405,19 +419,15 @@ expect(await computer.prev(chat._rev)).eq(chat._id)</code></pre>
         </div>
     </div>
 </div>
-<doc-anchor-target id="encryption">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#encryption">#</doc-anchor-trigger>
-        <span>Encryption</span>
-    </h2>
-</doc-anchor-target>
-<p>By default, the state of an on-chain object is public in the sense that any user can compute its state by using <code v-pre>computer.sync</code>. However, read access can be restricted by setting an objects <code v-pre>_readers</code> property to an array of public keys. If <code v-pre>_readers</code> is assigned, the meta-data on the transaction is encrypted using a combination of AES and ECIES so that only the specified readers have read access.</p>
+<h2 id="encryption">Encryption</h2>
+<p>By default, the state of an on-chain object is public in the sense that any user can compute its state by using <code translate="no" v-pre>computer.sync</code>. However, read access can be restricted by setting an objects <code translate="no" v-pre>_readers</code> property to an array of public keys. If <code translate="no" v-pre>_readers</code> is assigned, the meta-data on the transaction is encrypted using a combination of AES and ECIES so that only the specified readers have read access.</p>
 <p>For example, to ensure that only people invited to the chat can read the messages, you can update our example code as follows:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<div id="encryption-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">class Chat extends Contract {
   constructor(greeting, owner) {
     super({
       messages: [greeting],
+      // Only readers can decrypt the object
       _readers: [owner],
     })
   }
@@ -433,7 +443,7 @@ expect(await computer.prev(chat._rev)).eq(chat._id)</code></pre>
     <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
     <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
         <div class="flex items-center ml-4 h-7">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
                 <g fill="currentColor"><g>
                     <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
                     <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
@@ -446,15 +456,28 @@ expect(await computer.prev(chat._rev)).eq(chat._id)</code></pre>
         </div>
     </div>
 </div>
-<doc-anchor-target id="off-chain-storage">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#off-chain-storage">#</doc-anchor-trigger>
-        <span>Off-Chain Storage</span>
-    </h2>
-</doc-anchor-target>
-<p>It is possible to store the metadata of a transaction off-chain in the database of a Bitcoin Computer Node. In this case a hash of the metadata and a url where the metadata can be retrieved is stored on chain, while the metadata itself is stored on the server. To use this feature, set a property <code v-pre>_url</code> of an on-chain object to the URL of a Bitcoin Computer Node.</p>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p><strong>Encryption (_readers)</strong><br />
+Setting the <code translate="no" v-pre>_readers</code> property on an on-chain object limits who can decrypt and read its state. Only public keys listed here can access the object’s content.</p>
+        </div>
+    </div>
+</div>
+<h2 id="off-chain-storage">Off-Chain Storage</h2>
+<p>It is possible to store the metadata of a transaction off-chain in the database of a Bitcoin Computer Node. In this case a hash of the metadata and a url where the metadata can be retrieved is stored on chain, while the metadata itself is stored on the server. To use this feature, set a property <code translate="no" v-pre>_url</code> of an on-chain object to the URL of a Bitcoin Computer Node.</p>
 <p>For example, if users want to send images to the chat that are too large to store on-chain, they can use the off-chain solution:</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<div id="off-chain-storage-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">class Chat extends Contract {
   // ... as above
 
@@ -464,23 +487,38 @@ expect(await computer.prev(chat._rev)).eq(chat._id)</code></pre>
   }
 
   postImage(image) {
+    // This is the URL where the metadata is stored (including the image)
     this._url = 'https://my.bitcoin.computer.node.example.com'
     this.messages.push(image)
   }
 }</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="cryptocurrency">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#cryptocurrency">#</doc-anchor-trigger>
-        <span>Cryptocurrency</span>
-    </h2>
-</doc-anchor-target>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p><strong>Off-Chain Storage</strong><br />
+A feature allowing large or sensitive data to be stored outside the blockchain, with just a hash and URL on-chain pointing to the actual content. This is useful for images or large metadata.</p>
+        </div>
+    </div>
+</div>
+<h2 id="cryptocurrency">Cryptocurrency</h2>
 <p>Recall that an on-chain object is stored in an output and that the owners of the object are the users that can spend the output. Thus the owners of an object are always the owners of the satoshis in the output that stores the object. We therefore say that the satoshis are stored in the on-chain object.</p>
-<p>The number of satoshis in the output of an on-chain object can be configured by setting the <code v-pre>_satoshis</code> property to a number (bigint). If this property is undefined, the object will store an a minimal (non-dust) amount.</p>
-<p>If the value of the <code v-pre>_satoshis</code> property is increased, the additional satoshi must be provided by the wallet of the <code v-pre>computer</code> object that executes the call. In the case of a constructor call with <code v-pre>computer.new</code> that is that <code v-pre>computer</code> object. In the case of a function call it is the <code v-pre>computer</code> object that created the on-chain object.</p>
-<p>If the value of the <code v-pre>_satoshis</code> property is decreased, the difference in satoshi is credited to the associated computer object&#x27;s wallet.</p>
-<p>For example, if a user <em>Alice</em> wants to send 21000 satoshis to a user <em>Bob</em>, then <em>Alice</em> can create an on-chain object of the following <code v-pre>Payment</code> class.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<p>The number of satoshis in the output of an on-chain object can be configured by setting the <code translate="no" v-pre>_satoshis</code> property to a number (bigint). If this property is undefined, the object will store an a minimal (non-dust) amount.</p>
+<p><strong>Minimizing on-chain costs:</strong> In addition to the satoshis stored in objects, creating/updating objects typically involves minimal-dust metadata outputs (the technical cost of direct on-chain storage via bare multisig + the UTXO hygiene service). To minimize these costs (and thus user fees), prefer <code translate="no" v-pre>moduleStorageType: 'taproot'</code> (default where available; no hygiene dust for the module tx itself), deploy larger logic once as a module so expressions stay tiny, and/or use <code translate="no" v-pre>_url</code> (pointer only on-chain; cost becomes small constant). Direct bare-multisig is useful for single-tx reliability in high-throughput cases (e.g. exchanges) but still benefits from minimization. Full guidance, scope, bare-multisig UX rationale (incl. why not OP_RETURN), and verification notes: see the <a href="../fees/">Fees</a> &quot;User Choices to Control On-Chain Data and Hygiene Dust Costs&quot; section. Also review the <a href="../legal/">Legal Notice</a>.</p>
+<p>If the value of the <code translate="no" v-pre>_satoshis</code> property is increased, the additional satoshi must be provided by the wallet of the <code translate="no" v-pre>computer</code> object that executes the call. In the case of a constructor call with <code translate="no" v-pre>computer.new</code> that is that <code translate="no" v-pre>computer</code> object. In the case of a function call it is the <code translate="no" v-pre>computer</code> object that created the on-chain object.</p>
+<p>If the value of the <code translate="no" v-pre>_satoshis</code> property is decreased, the difference in satoshi is credited to the associated computer object&#x27;s wallet.</p>
+<p>For example, if a user <em>Alice</em> wants to send 21000 satoshis to a user <em>Bob</em>, then <em>Alice</em> can create an on-chain object of the following <code translate="no" v-pre>Payment</code> class.</p>
+<div id="cryptocurrency-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">class Payment extends Contract {
   constructor(_satoshis, recipient) {
     super({ _satoshis, _owners: [recipient] })
@@ -491,34 +529,33 @@ expect(await computer.prev(chat._rev)).eq(chat._id)</code></pre>
   }
 }
 
-const computerAlice = new Computer({ mnemonic: mnemonicAlice })
+const computerAlice = new Computer({
+  // Alice's BIP39 recovery phrase
+  mnemonic: mnemonicAlice,
+})
 const payment = computerA.new(Payment, [21000n, pubKeyBob])</code></pre>
 </doc-codeblock></div>
-<p>When the <code v-pre>payment</code> on-chain object is created, the wallet inside the <code v-pre>computerA</code> object funds the 21000 satoshi that are stored in the <code v-pre>payment</code> object. Bob can withdraw the satoshi by calling the <code v-pre>cashOut</code> function.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const computerB = new Computer({ mnemonic: &lt;B's mnemonic&gt; })
+<p>When the <code translate="no" v-pre>payment</code> on-chain object is created, the wallet inside the <code translate="no" v-pre>computerA</code> object funds the 21000 satoshi that are stored in the <code translate="no" v-pre>payment</code> object. Bob can withdraw the satoshi by calling the <code translate="no" v-pre>cashOut</code> function.</p>
+<div id="cryptocurrency-code-2" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Get latest version of payment object from blockchain
+const computerB = new Computer({ mnemonic: &lt;B's mnemonic&gt; })
 const paymentB = await computerB.sync(payment._rev)
 await paymentB.cashOut()</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="expressions">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#expressions">#</doc-anchor-trigger>
-        <span>Expressions</span>
-    </h2>
-</doc-anchor-target>
-<p>The syntax for on-chain objects introduced above provides a high-level abstraction over the Bitcoin Computer protocol. However we also provide low-level access to the protocol via the <code v-pre>computer.encode()</code> function. This gives more control over the transaction being built, enabling advanced applications like DEXes.</p>
-<p>The <a href="../lib/computer/encode/"><code v-pre>computer.encode</code></a> function takes three arguments:</p>
+<h2 id="expressions">Expressions</h2>
+<p>The syntax for on-chain objects introduced above provides a high-level abstraction over the Bitcoin Computer protocol. However we also provide low-level access to the protocol via the <code translate="no" v-pre>computer.encode()</code> function. This gives more control over the transaction being built, enabling advanced applications like DEXes.</p>
+<p>The <a href="../lib/computer/encode/"><code translate="no" v-pre>computer.encode</code></a> function takes three arguments:</p>
 <ul>
-<li>A JavaScript expression <code v-pre>exp</code>,</li>
-<li>an environment <code v-pre>env</code> that maps names to output specifiers,</li>
-<li>and a module specifier <code v-pre>mod</code>.</li>
+<li>A JavaScript expression <code translate="no" v-pre>exp</code>,</li>
+<li>an environment <code translate="no" v-pre>env</code> that maps names to output specifiers,</li>
+<li>and a module specifier <code translate="no" v-pre>mod</code>.</li>
 </ul>
-<p>It returns a transaction but does not broadcast it. Therefore calling the <code v-pre>encode</code> function does not alter the state of any on-chain object. In addition to the transaction the function returns an object <code v-pre>effect</code> that represents the state that will emerge on-chain if the transaction is broadcast.</p>
+<p>It returns a transaction but does not broadcast it. Therefore calling the <code translate="no" v-pre>encode</code> function does not alter the state of any on-chain object. In addition to the transaction the function returns an object <code translate="no" v-pre>effect</code> that represents the state that will emerge on-chain if the transaction is broadcast.</p>
 <div class="flex mb-6">
     <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-success"></div>
     <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
         <div class="flex items-center ml-4 h-7">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-callout-success" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-success" width="22" height="22" viewBox="0 0 24 24" role="presentation">
                 <g fill="currentColor"><g>
                     <path d="M21 9.09c-.55 0-1 .45-1 1v.92c0 4.96-4.04 8.99-9 8.99-4.97 0-9-4.04-9-9s4.04-9 9-9c1.27 0 2.5.26 3.66.78.51.22 1.1 0 1.32-.51.23-.5 0-1.1-.51-1.32C14.06.32 12.56 0 11.01 0H11C4.94 0 0 4.93 0 10.99 0 17.06 4.93 22 10.99 22H11c6.06 0 11-4.93 11-10.99v-.92c0-.56-.45-1-1-1z"></path>
                     <path d="M8.71 9.31a.996.996 0 10-1.41 1.41l3 3c.19.19.44.29.71.29.27 0 .52-.11.71-.29l10-10.01a.996.996 0 10-1.41-1.41L11 11.6 8.71 9.31z"></path>
@@ -526,19 +563,20 @@ await paymentB.cashOut()</code></pre>
             </svg>
         </div>
         <div class="pr-5 ml-3 w-full">
-<p>The <code v-pre>effect</code> object returned from the <code v-pre>encode</code> function provides absolute certainty about a transaction&#x27;s impact before broadcasting. If the transaction is included, the state updates exactly as reflected in the <code v-pre>effect</code> object, independent of other users&#x27; transactions; otherwise, the state remains unchanged.</p>
+<p>The <code translate="no" v-pre>effect</code> object returned from the <code translate="no" v-pre>encode</code> function provides absolute certainty about a transaction&#x27;s impact before broadcasting. If the transaction is included, the state updates exactly as reflected in the <code translate="no" v-pre>effect</code> object, independent of other users&#x27; transactions; otherwise, the state remains unchanged.</p>
         </div>
     </div>
 </div>
-<p>The <code v-pre>effect</code> object has two sub-objects: <code v-pre>res</code> contains the value returned from the expression and <code v-pre>env</code> contains the side-effect, specifically the new values of the names in the environment.</p>
-<p>The code below is equivalent to calling <code v-pre>await computer.new(Chat, ['hello'])</code>. In fact the <code v-pre>computer.new</code> function is just syntactic sugar for using the <code v-pre>encode</code> function.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const exp = `${Chat} new Chat('hello')`
+<p>The <code translate="no" v-pre>effect</code> object has two sub-objects: <code translate="no" v-pre>res</code> contains the value returned from the expression and <code translate="no" v-pre>env</code> contains the side-effect, specifically the new values of the names in the environment.</p>
+<p>The code below is equivalent to calling <code translate="no" v-pre>await computer.new(Chat, ['hello'])</code>. In fact the <code translate="no" v-pre>computer.new</code> function is just syntactic sugar for using the <code translate="no" v-pre>encode</code> function.</p>
+<div id="expressions-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const exp = `${Chat} new Chat('hello')` // JS expression to evaluate
+const { tx, effect } = await computer.encode({ exp }) // Returns unsigned transaction and predicted effect
 
-const { tx, effect } = await computer.encode({ exp })
-
+// effect shows expected outcome if transaction is broadcast
 expect(effect).deep.eq({
   res: {
+    // Resulting object state
     messages: ['hello'],
     _id: '667c...2357:0',
     _rev: '667c...2357:0',
@@ -558,60 +596,59 @@ expect(effect).deep.eq({
 <li>which inputs to sign</li>
 <li>whether to mock objects to do not exist yet on-chain (see more <doc-anchor-trigger to="#mocking">below</doc-anchor-trigger>)</li>
 </ul>
-<doc-anchor-target id="module-system">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#module-system">#</doc-anchor-trigger>
-        <span>Module System</span>
-    </h2>
-</doc-anchor-target>
-<p>The <a href="../lib/computer/deploy/"><code v-pre>computer.deploy</code></a> function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar <code v-pre>import</code> syntax. In the example below <code v-pre>moduleB</code> refers to <code v-pre>moduleA</code> via <code v-pre>specifierA</code>. Module specifiers can be passed into <code v-pre>computer.encode</code> and <code v-pre>computer.new</code> functions.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<h2 id="module-system">Module System</h2>
+<p>The <a href="../lib/computer/deploy/"><code translate="no" v-pre>computer.deploy</code></a> function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar <code translate="no" v-pre>import</code> syntax. In the example below <code translate="no" v-pre>moduleB</code> refers to <code translate="no" v-pre>moduleA</code> via <code translate="no" v-pre>specifierA</code>. Module specifiers can be passed into <code translate="no" v-pre>computer.encode</code> and <code translate="no" v-pre>computer.new</code> functions.</p>
+<div id="module-system-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const moduleA = 'export class A extends Contract {}'
+// Returns on-chain module id
 const specifierA = await computer.deploy(moduleA)
 
+// Create dependent module referencing first module
 const moduleB = `
+  // Import from on-chain module
   import { A } from '${specifierA}'
+
   export class B extends A {}
 `
+// Deploy second module
 const specifierB = await computer.deploy(moduleB)
 
+// Use deployed module to create contract instance
 const { tx } = await computer.encode({
   exp: `new B()`,
   mod: specifierB,
 })</code></pre>
 </doc-codeblock></div>
 <p>Modules can be loaded from the blockchain using <a href="../lib/computer/load/">computer.load</a>.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<div id="module-system-code-2" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const loadedB = await computer.load(specifierB)
 expect(loadedB).eq(moduleB)</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="bitcoin-script-support">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#bitcoin-script-support">#</doc-anchor-trigger>
-        <span>Bitcoin Script Support</span>
-    </h2>
-</doc-anchor-target>
-<p>In addition to setting the <code v-pre>_owners</code> property to an array of strings as described <doc-anchor-trigger to="#data-ownership">above</doc-anchor-trigger>, it is possible to set <code v-pre>_owners</code> to a string encoding a Bitcoin Script ASM. In this case the output created for that on-chain object will use a pay-to-script-hash (p2sh) output with that script.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<h2 id="bitcoin-script-support">Bitcoin Script Support</h2>
+<p>In addition to setting the <code translate="no" v-pre>_owners</code> property to an array of strings as described <doc-anchor-trigger to="#data-ownership">above</doc-anchor-trigger>, it is possible to set <code translate="no" v-pre>_owners</code> to a string encoding a Bitcoin Script ASM. In this case the output created for that on-chain object will use a pay-to-script-hash (p2sh) output with that script.</p>
+<div id="bitcoin-script-support-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">import { Contract } from '@bitcoin-computer/lib'
 
 class A extends Contract {
   constructor() {
     super({
       n: 1,
+      // Bitcoin Script spending condition
       _owners: 'OP_3 OP_EQUAL',
+      // 1 BTC value lock
       _satoshis: BigInt(1e8),
     })
   }
 
   inc() {
     this.n += 1
+    // Transfer 0.001 BTC
     this._satoshis = 100000000n - 100000n
   }
 }</code></pre>
 </doc-codeblock></div>
-<p>In order to spend an output with a p2sh script, one needs to alter the transaction returned from <code v-pre>encode</code>. The example below shows how to build a transaction with an inputs script <code v-pre>OP_3</code>.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<p>In order to spend an output with a p2sh script, one needs to alter the transaction returned from <code translate="no" v-pre>encode</code>. The example below shows how to build a transaction with an inputs script <code translate="no" v-pre>OP_3</code>.</p>
+<div id="bitcoin-script-support-code-2" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">import { Computer } from '@bitcoin-computer/lib'
 import { payments } from '@bitcoin-computer/nakamotojs'
 
@@ -620,12 +657,8 @@ const a = await computer.new(A)
 
 // Encode transaction that encodes update
 const { tx } = await computer.encode({
-  // Call the 'inc' function
   exp: 'a.inc()',
-
-  // Spend output at revision a._rev
   env: { a: a._rev },
-
   // transaction can only be signed and funded when it is completed
   sign: false,
   fund: false,
@@ -651,17 +684,12 @@ tx.setInputScript(0, input!)
 await computer.broadcast(tx)</code></pre>
 </doc-codeblock></div>
 <p>A Bitcoin Script could be used to allow more than three users to post to a chat. The idea is to use a Taproot script that has one spending path for each user. Taproot scripts have a large number of spending paths, so a large number of users could be supported. When this kind of Taproot chat is updated, only the spending path for the posting user needs to be revealed, meaning that the cost to post is constant and independent of the number of users in the chat.</p>
-<doc-anchor-target id="mocking">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#mocking">#</doc-anchor-trigger>
-        <span>Mocking</span>
-    </h2>
-</doc-anchor-target>
+<h2 id="mocking">Mocking</h2>
 <p>Recall that an on-chain object is an object that is associated with the output of a transaction that is built according to the Bitcoin Computer protocol. We will call such an object an <em>off-chain object</em> if the transaction has not been broadcasted yet.</p>
 <p>It is sometimes necessary to update off-chain objects. For example, if smart contracts are used in payment channels or networks. Or, if an object is sold to an unknown buyer: in this case the object that the buyer will use is not known when seller build the transaction (see <a href="../examples/sale/">here</a>).</p>
-<p>Mocking is a technique for updating off-chain objects. The <code v-pre>mocks</code> property of the <code v-pre>encode</code> function can be set to a mapping from variable names to mocked objects. Here, a <em>mocked object</em> is an object that has <code v-pre>_id</code>, <code v-pre>_rev</code> and <code v-pre>_root</code> set to strings <code v-pre>mock-${hex}:${num}</code> where <code v-pre>hex</code> is a string of 64 hexadecimal characters and <code v-pre>num</code> is a number. In addition a revision needs to be specified for the mocked variable name in the <code v-pre>env</code> array (if the revision in <code v-pre>env</code> does not match the revision of the mocked object for the same variable name the revision in <code v-pre>env</code> takes precedence). When the transaction is built, it is assumed that the value stored at the revision specified in <code v-pre>env</code> evaluates to the value in the <code v-pre>mocks</code> for the same variable name.</p>
-<p>The Bitcoin Computer library exports a class <a href="../lib/mock/"><code v-pre>Mock</code></a> that makes it easy to create mocked objects. The example below shows how a mocked object can be used. Note that in the example, the object <code v-pre>a</code> is created after the transaction that spends it. Thus the revision of <code v-pre>a</code> is not known when <code v-pre>tx</code> is built. Once <code v-pre>a</code> is created on-chain and its revision becomes known, the code below updated the input of <code v-pre>tx</code> to spend the revision of <code v-pre>a</code>.</p>
-<div class="codeblock-wrapper"><doc-codeblock>
+<p>Mocking is a technique for updating off-chain objects. The <code translate="no" v-pre>mocks</code> property of the <code translate="no" v-pre>encode</code> function can be set to a mapping from variable names to mocked objects. Here, a <em>mocked object</em> is an object that has <code translate="no" v-pre>_id</code>, <code translate="no" v-pre>_rev</code> and <code translate="no" v-pre>_root</code> set to strings <code translate="no" v-pre>mock-${hex}:${num}</code> where <code translate="no" v-pre>hex</code> is a string of 64 hexadecimal characters and <code translate="no" v-pre>num</code> is a number. In addition a revision needs to be specified for the mocked variable name in the <code translate="no" v-pre>env</code> array (if the revision in <code translate="no" v-pre>env</code> does not match the revision of the mocked object for the same variable name the revision in <code translate="no" v-pre>env</code> takes precedence). When the transaction is built, it is assumed that the value stored at the revision specified in <code translate="no" v-pre>env</code> evaluates to the value in the <code translate="no" v-pre>mocks</code> for the same variable name.</p>
+<p>The Bitcoin Computer library exports a class <a href="../lib/mock/"><code translate="no" v-pre>Mock</code></a> that makes it easy to create mocked objects. The example below shows how a mocked object can be used. Note that in the example, the object <code translate="no" v-pre>a</code> is created after the transaction that spends it. Thus the revision of <code translate="no" v-pre>a</code> is not known when <code translate="no" v-pre>tx</code> is built. Once <code translate="no" v-pre>a</code> is created on-chain and its revision becomes known, the code below updated the input of <code translate="no" v-pre>tx</code> to spend the revision of <code translate="no" v-pre>a</code>.</p>
+<div id="mocking-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">import { Mock, Contract } from '@bitcoin-computer/lib'
 
 class M extends Mock {
@@ -674,13 +702,14 @@ class M extends Mock {
   }
 }
 
+// Real contract
 class A extends Contract {
   constructor() {
     super({ n: 1 })
   }
 
   inc() {
-    this.n += 1
+    this.n += 1 // Actual implementation
   }
 }
 
@@ -716,82 +745,77 @@ await computer.fund(tx)
 await computer.sign(tx)
 await computer.broadcast(tx)</code></pre>
 </doc-codeblock></div>
-<doc-anchor-target id="building-the-chat-platform">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#building-the-chat-platform">#</doc-anchor-trigger>
-        <span>Building the Chat Platform</span>
-    </h2>
-</doc-anchor-target>
+<h2 id="building-the-chat-platform">Building the Chat Platform</h2>
 <p>We now sketch how a chat platform could be built where moderators can create a community and then sell it over the internet.</p>
-<p>Every community would be represented through multiple on-chain objects that are similar to the <code v-pre>Chat</code> object. In order to guarantee a fast load time, each of these objects contains a constant-size chunk of messages (have a look at <a href="../optimizations/">this</a> section to understand the build-in optimizations). When the current chunk object is full, a new object that would refer to the previous chunk would be created. When the chat app is loaded it syncs to the the latest chunk. If the user scrolls to the first message of the chunk, the user could click a button to load the previous chunk.</p>
+<p>Every community would be represented through multiple on-chain objects that are similar to the <code translate="no" v-pre>Chat</code> object. In order to guarantee a fast load time, each of these objects contains a constant-size chunk of messages (have a look at <a href="../optimizations/">this</a> section to understand the build-in optimizations). When the current chunk object is full, a new object that would refer to the previous chunk would be created. When the chat app is loaded it syncs to the the latest chunk. If the user scrolls to the first message of the chunk, the user could click a button to load the previous chunk.</p>
 <p>In order to support an unlimited number of users, the technique sketched at the end of <doc-anchor-trigger to="#bitcoin-script-support">this</doc-anchor-trigger> section can be used. However the kinds of scripts described there have a 1-of-n ownership structure which can lead to abuse (for example, any member of the chat could destroy the current chunk object). This could be mitigated by maintaining an additional &quot;moderators&quot; object for every community. Moderators could spin up a new chunk in the case of abuse and point to the message before the chat was destroyed. Moderators could also have other privileges like kicking out users and deleting messages from the UI. The moderatos object could have an n-of-m ownership structure. To sell a community one can sell the moderators object. This can be accomplished by using the technique described <a href="../examples/sale/">here</a>.</p>
 <p>If you would like to build such an app please reach out, we would be delighted to try to help you.</p>
 
-                                
-                                <!-- Required only on API pages -->
-                                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
-                            </div>
-                            <footer id="retype-content-footer" class="clear-both">
-                            
-                                <nav id="retype-nextprev" class="print:hidden flex mt-14">
-                                    <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../start/">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
-                                            <span>
-                                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
-                                                <span class="block mt-1">Start</span>
-                                            </span>
-                                        </a>
-                                    </div>
-                            
-                                    <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../how-it-works/">
-                                            <span>
-                                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
-                                                <span class="block mt-1">How it Works</span>
-                                            </span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
-                                        </a>
-                                    </div>
-                                </nav>
-                            </footer>
-                        </main>
                 
-                        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
-                            <footer class="flex flex-wrap items-center justify-between print:justify-center">
-                                <div id="retype-footer-links" class="print:hidden">
-                                    <ul class="flex flex-wrap items-center text-sm">
-                                    </ul>
-                                </div>
-                                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link-weight text-sm leading-relaxed"><p>© Copyright BCDB Inc. 2025. All rights reserved.</p></div>
-                            </footer>
-                        </div>
-                    </div>
-                
-                    <!-- Rendered if sidebar right is enabled -->
-                    <!-- Sidebar right skeleton-->
-                    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:transform-none sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
-                        <div class="pl-5">
-                            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                        </div>
-                    </div>
-                
-                    <!-- User should be able to hide sidebar right -->
-                    <doc-sidebar-right v-cloak></doc-sidebar-right>
-                </div>
-
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
             </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../start/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Start</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../how-it-works/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">How it Works</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright BCDB Inc. 2026. All rights reserved.</p></div>
+            </footer>
         </div>
-    
-        <doc-search-mobile></doc-search-mobile>
-        <doc-back-to-top></doc-back-to-top>
     </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
 
 
     <div id="retype-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Tutorial", level: 1, icon: "file", hasPrism: true, hasMermaid: false, hasMath: false, tocDepth: 23 }</script>
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Tutorial", level: 1, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: false, hasMath: false, tocDepth: 23, "md": "/tutorial.md" }</script>
 </body>
 </html>

@@ -3,196 +3,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="3.11.0.817272653768">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837560724466">
 
     <!-- See retype.com -->
-    <meta name="generator" content="Retype 3.11.0">
+    <meta name="generator" content="Retype 4.6.0">
 
     <!-- Primary Meta Tags -->
     <title>Comparison</title>
     <meta name="title" content="Comparison">
-    <meta name="description" content="We explain how smart contract systems for Bitcoin work in simple terms.">
+    <meta name="description" content="We explain how smart contract systems for Bitcoin work in simple terms. We then compare the Bitcoin Computer to other systems according to the following">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.bitcoincomputer.io/comparison/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://docs.bitcoincomputer.io/sitemap.xml">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.bitcoincomputer.io/comparison/">
     <meta property="og:title" content="Comparison">
-    <meta property="og:description" content="We explain how smart contract systems for Bitcoin work in simple terms.">
+    <meta property="og:description" content="We explain how smart contract systems for Bitcoin work in simple terms. We then compare the Bitcoin Computer to other systems according to the following">
     <meta property="og:image" content="https://docs.bitcoincomputer.io/static/bitvm.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="Comparison">
+    <meta property="og:site_name" content="Bitcoin Computer">
+    <meta property="og:locale" content="en_US">
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://docs.bitcoincomputer.io/comparison/">
-    <meta property="twitter:title" content="Comparison">
-    <meta property="twitter:description" content="We explain how smart contract systems for Bitcoin work in simple terms.">
-    <meta property="twitter:image" content="https://docs.bitcoincomputer.io/static/bitvm.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://docs.bitcoincomputer.io/comparison/">
+    <meta name="twitter:title" content="Comparison">
+    <meta name="twitter:description" content="We explain how smart contract systems for Bitcoin work in simple terms. We then compare the Bitcoin Computer to other systems according to the following">
+    <meta name="twitter:image" content="https://docs.bitcoincomputer.io/static/bitvm.png">
+    <meta name="twitter:image:alt" content="Comparison">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/comparison.md">
 
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
-    <link href="../static/favicon.ico" rel="icon">
-    <link href="../resources/css/retype.css?v=3.11.0.817272653768" rel="stylesheet">
+    <link id="retype-favicon" rel="icon" href="../static/favicon.ico" />
+    <link href="../resources/css/retype.css?v=4.6.0.837560724466" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=3.11.0.817272653768" data-turbo-eval="false" defer></script>
-    <script data-cfasync="false" src="../resources/js/retype.js?v=3.11.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=3.11.0.817272653768" data-turbo-eval="false" defer></script>
-    <link href="../resources/css/katex.css?v=3.11.0" rel="stylesheet">
-    <script id="katex-js" data-cfasync="false" src="../resources/js/katex.js?v=3.11.0" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
+    <link href="../resources/css/katex.css?v=4.6.0" rel="stylesheet">
+    <script id="katex-js" data-cfasync="false" src="../resources/js/katex.js?v=4.6.0" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
 </head>
 <body>
     <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
-        <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
     
-        <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
-            <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
-                <!-- Mobile menu button skeleton -->
-                <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-none rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
-                <div v-cloak id="retype-sidebar-left-toggle-button"></div>
-        
-                <!-- Logo -->
-                <div class="flex items-center justify-between h-full py-2 md:w-75">
-                    <div class="flex items-center px-2 md:px-6">
-                        <a id="retype-branding-logo" href="../" class="flex items-center leading-snug text-xl">
-                            <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
-                        </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">0.24.0</span>
-                    </div>
-        
-                    <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://docs.bitcoincomputer.io/" class="flex items-center leading-snug text-xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">0.26.0</span>
                 </div>
-        
-                <div class="flex justify-between md:grow">
-                    <!-- Top Nav -->
-                    <nav id="retype-header-nav" class="hidden md:flex">
-                        <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
-                            
-                        </ul>
-                    </nav>
-        
-                    <!-- Header Right Skeleton -->
-                    <div v-cloak class="flex justify-end grow skeleton">
-        
-                        <!-- Search input mock -->
-                        <div class="relative hidden w-40 lg:block lg:max-w-sm lg:ml-auto">
-                            <div class="absolute flex items-center justify-center h-full pl-3 dark:text-dark-300">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon-base" width="16" height="16" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 1px;"><g fill="currentColor" ><path d="M21.71 20.29l-3.68-3.68A8.963 8.963 0 0020 11c0-4.96-4.04-9-9-9s-9 4.04-9 9 4.04 9 9 9c2.12 0 4.07-.74 5.61-1.97l3.68 3.68c.2.19.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.03 0-1.42zM4 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 1.92-.78 3.66-2.04 4.93-.01.01-.02.01-.02.01-.01.01-.01.01-.01.02A6.98 6.98 0 0111 18c-3.86 0-7-3.14-7-7z" ></path></g></svg>
-                            </div>
-                            <input class="w-full h-10 placeholder-search-placeholder transition-colors duration-200 ease-in bg-search-bg border border-transparent rounded md:text-sm hover:border-search-border-hover focus:outline-none focus:border-search-border-focus" style="padding: 0.625rem 0.75rem 0.625rem 2rem" type="text" placeholder="Search">
-                        </div>
-        
-                        <!-- Mobile search button -->
-                        <div class="flex items-center justify-center w-10 h-10 lg:hidden">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 icon-base" width="20" height="20" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor" ><path d="M21.71 20.29l-3.68-3.68A8.963 8.963 0 0020 11c0-4.96-4.04-9-9-9s-9 4.04-9 9 4.04 9 9 9c2.12 0 4.07-.74 5.61-1.97l3.68 3.68c.2.19.45.29.71.29s.51-.1.71-.29c.39-.39.39-1.03 0-1.42zM4 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 1.92-.78 3.66-2.04 4.93-.01.01-.02.01-.02.01-.01.01-.01.01-.01.02A6.98 6.98 0 0111 18c-3.86 0-7-3.14-7-7z" ></path></g></svg>
-                        </div>
-        
-                        <!-- Dark mode switch placeholder -->
-                        <div class="w-10 h-10 lg:ml-2"></div>
-        
-                        <!-- History button -->
-                        <div class="flex items-center justify-center w-10 h-10" style="margin-right: -0.625rem;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="shrink-0 icon-base" width="22" height="22" viewBox="0 0 24 24" aria-labelledby="icon" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor" ><g ><path d="M12.01 6.01c-.55 0-1 .45-1 1V12a1 1 0 00.4.8l3 2.22a.985.985 0 001.39-.2.996.996 0 00-.21-1.4l-2.6-1.92V7.01c.02-.55-.43-1-.98-1z"></path><path d="M12.01 1.91c-5.33 0-9.69 4.16-10.05 9.4l-.29-.26a.997.997 0 10-1.34 1.48l1.97 1.79c.19.17.43.26.67.26s.48-.09.67-.26l1.97-1.79a.997.997 0 10-1.34-1.48l-.31.28c.34-4.14 3.82-7.41 8.05-7.41 4.46 0 8.08 3.63 8.08 8.09s-3.63 8.08-8.08 8.08c-2.18 0-4.22-.85-5.75-2.4a.996.996 0 10-1.42 1.4 10.02 10.02 0 007.17 2.99c5.56 0 10.08-4.52 10.08-10.08.01-5.56-4.52-10.09-10.08-10.09z"></path></g></g></svg>
-                        </div>
-                    </div>
-        
-                    <div v-cloak class="flex justify-end grow">
-                        <div id="retype-mobile-search-button"></div>
-                        <doc-search-desktop></doc-search-desktop>
-        
-                        <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
-                        <doc-history></doc-history>
-                    </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
                 </div>
             </div>
-        </header>
-    
-    
-        <div id="retype-container" class="container relative flex bg-white">
-            <!-- Sidebar Skeleton -->
-            <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
-            
-                <div class="flex items-center h-16 px-6">
-                    <input class="w-full h-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded shadow-none text-sm focus:outline-none focus:border-filter-border-focus" type="text" placeholder="Filter">
-                </div>
-            
-                <div class="pl-6 mt-1 mb-4">
-                    <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                    <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                </div>
-            
-                <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
                     <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
                         <span class="text-xs whitespace-nowrap">Powered by</span>
                         <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
                     </a>
                 </div>
-            </div>
-            
-            <!-- Sidebar component -->
-            <doc-sidebar v-cloak>
-                <template #sidebar-footer>
-                    <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
-            
-                        <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
-                            <span class="text-xs whitespace-nowrap">Powered by</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
-                        </a>
-                    </div>
-                </template>
-            </doc-sidebar>
-    
-            <div class="grow min-w-0 bg-body-bg">
-                <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
-                <div class="flex">
-                    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
-                        <main class="relative pb-12 lg:pt-2">
-                            <div class="retype-markdown" id="retype-content">
-                                <!-- Rendered if sidebar right is enabled -->
-                                <div id="retype-sidebar-right-toggle"></div>
-                                <!-- Page content  -->
-<doc-anchor-target id="comparison" class="break-words">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#comparison">#</doc-anchor-trigger>
-        <span>Comparison</span>
-    </h1>
-</doc-anchor-target>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="comparison">Comparison</h1>
 <p>We explain how smart contract systems for Bitcoin work in simple terms. We then compare the Bitcoin Computer to other systems according to the following properties:</p>
 <ul>
 <li><strong>Trustlessness.</strong> We call a system trustless if no trusted third party is required for its operation. Trustlessness is the main point of the entire crypto endeavour as Satoshi pointed out in the second sentence of the Bitcoin white paper: &quot;the main benefits are lost if a trusted third party is still required&quot;.</li>
 <li><strong>Expressiveness.</strong> A system is expressive if it can express all computable smart contracts, formally if it is Turing Complete. Assets created in such general purpose protocols can be freely composed and moved between applications.</li>
 <li><strong>Efficiency.</strong> A system is efficient if it is possible to compute some smart contract data without having to parse all transactions in the blockchain. This is important for two reasons: the obvious one is that it is faster to compute some values. The other is that it is possible to compute values in parallel.</li>
 </ul>
-<div class="flex mb-6">
-    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
-    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
-        <div class="flex items-center ml-4 h-7">
-            <svg xmlns="http://www.w3.org/2000/svg" class="mb-px text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
-                <g fill="currentColor"><g>
-                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
-                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
-                    <path fill="none" d="M0 0h24v24H0z"></path>
-                </g></g>
-            </svg>
-        </div>
-        <div class="pr-5 ml-3 w-full">
-<p>This writeup is based on a presentation we gave at the Litecoin Summit in 2024. You can find the slides <a href="../static/litecoin-summit-2024-slides.pdf">here</a> and a video recording <a href="https://www.youtube.com/live/Sn_Hl2Q5cIw?t=15767s">here</a>.</p>
-        </div>
-    </div>
-</div>
-<doc-anchor-target id="results">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#results">#</doc-anchor-trigger>
-        <span>Results</span>
-    </h2>
-</doc-anchor-target>
+<h2 id="results">Results</h2>
 <p>The table below captures the results of our comparison. Each result is explained in detail in the following sections.</p>
+<retype-table copy-text="| &amp;nbsp;           | Trustless                              | Expressive                             | Efficient                              |
+| ---------------- | -------------------------------------- | -------------------------------------- | -------------------------------------- |
+| Bitcoin          | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    |
+| Ethereum         | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    |
+| Channels         | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    | -                                      |
+| Interoperable    | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    |
+| Sidechain        | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    |
+| Rollup           | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    |
+| Order based      | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    |
+| UTXO based       | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; |
+| Bitcoin Computer | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="comfortable">
 <thead>
@@ -261,42 +233,18 @@
 </tbody>
 </table>
 </div>
-<doc-anchor-target id="blockchains">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#blockchains">#</doc-anchor-trigger>
-        <span>Blockchains</span>
-    </h2>
-</doc-anchor-target>
+</retype-table>
+<h2 id="blockchains">Blockchains</h2>
 <p>For context we briefly discuss to what extent Bitcoin and Ethereum have the three properties we are interested in.</p>
-<doc-anchor-target id="bitcoin">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#bitcoin">#</doc-anchor-trigger>
-        <span>Bitcoin</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="bitcoin">Bitcoin</h3>
 <p>Bitcoin is a trustless peer-to-peer currency. We will assume familiarity with the basic working of Bitcoin and focus on the three properties from above.</p>
 <p>Bitcoin is assumed to be trustless as long as a majority of the hash power is honest. However it is not expressive as it only supports one application: a currency. It is also not efficient as one needs to validate all transactions and check the proof of work of every block in order to determine if the amount in an output is unspent and the transaction containing the output is valid.</p>
-<doc-anchor-target id="ethereum">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#ethereum">#</doc-anchor-trigger>
-        <span>Ethereum</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="ethereum">Ethereum</h3>
 <p>Ethereum is the first blockchain to popularize general purpose smart contracts. It assumed to be trustless as longs as a majority of the staked cryptocurrency is owned by honest validators. In addition it is expressive due to its native smart contract support. However, it is not efficient: to determine the storage of one address, a full node needs to synchronize with the entire blockchain, validating all transactions and computing all smart contract invocations.</p>
-<doc-anchor-target id="state-channels-and-networks">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#state-channels-and-networks">#</doc-anchor-trigger>
-        <span>State Channels and Networks</span>
-    </h2>
-</doc-anchor-target>
+<h2 id="state-channels-and-networks">State Channels and Networks</h2>
 <p>State channels, originally designed to reduce fees, have recently found applications in smart contract systems. They allow two parties to conduct transactions off-chain with only the final agreed-upon state recorded on the blockchain. Two parties can send payments back and forth an unlimited number of times at a constant cost. However the fee reduction is less pronounced for unidirectional payments.</p>
 <p>While state channels work well between two users, they do not scale to a large number of users, because creating channels between all users quickly becomes uneconomical. To address this shortcoming, channel networks have been developed. These use smart contracts called Hashed-Timelock-Contracts (HTLCs) to create chains of channels that securely forward payments, ensuring that intermediate nodes cannot steal funds. This enables efficient hub-and-spoke architectures where a central hub forwards payments between users. One downside is the existence of a central point of failure in the form of the hub; another is that users need to be online to receive payments securely.</p>
-<doc-anchor-target id="examples">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples">#</doc-anchor-trigger>
-        <span>Examples</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="examples">Examples</h3>
 <doc-tabs>
 <doc-tab v-cloak id="the-lightning-network">
 <template #title>The Lightning Network</template>
@@ -316,28 +264,13 @@
 <p>The Bitcoin Computer currently does not support channels networks. However we mention it here as an integration could be built in principal. The Bitcoin Computer will be further discussed <doc-anchor-trigger to="#example-bitcoin-computer">here</doc-anchor-trigger>.</p>
 </doc-tab>
 </doc-tabs>
-<doc-anchor-target id="evaluation">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#evaluation">#</doc-anchor-trigger>
-        <span>Evaluation</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="evaluation">Evaluation</h3>
 <p><strong>Trustlessness.</strong> State channels and networks are trustless as long as users are online. When users are not online they need to trust watchtowers to keep user funds safe. Smart contract systems that rely on channel networks inherit these properties.</p>
 <p><strong>Expressiveness.</strong> Most channel networks are geared towards payments, therefor they cannot express smart contracts. However some smart contract protocols can integrate with state channels, in which case all smart contracts of the respective protocol can be expressed.</p>
 <p><strong>Efficiency.</strong> Our definition of efficiency only makes sense for smart contract systems, so this property does not apply to payment networks.</p>
-<doc-anchor-target id="interoperable-blockchains">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#interoperable-blockchains">#</doc-anchor-trigger>
-        <span>Interoperable Blockchains</span>
-    </h2>
-</doc-anchor-target>
+<h2 id="interoperable-blockchains">Interoperable Blockchains</h2>
 <p>An interoperable blockchain is a separate blockchain that connects to Bitcoin in various ways. In most cases smart contracts of the interoperable blockchain can read and write transaction from and to Bitcoin. In some cases, Bitcoin is used in the consensus of the interoperable blockchain.</p>
-<doc-anchor-target id="examples-1">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples-1">#</doc-anchor-trigger>
-        <span>Examples</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="examples-1">Examples</h3>
 <doc-tabs>
 <doc-tab v-cloak id="stacks">
 <template #title>Stacks</template>
@@ -348,30 +281,15 @@
 <p>Todo. <a href="https://internetcomputer.org/docs/current/developer-docs/getting-started/overview-of-icp">More info</a></p>
 </doc-tab>
 </doc-tabs>
-<doc-anchor-target id="evaluation-1">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#evaluation-1">#</doc-anchor-trigger>
-        <span>Evaluation</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="evaluation-1">Evaluation</h3>
 <p><strong>Trustlessness.</strong> Interoperable blockchains are as trustless as the blockchain that is connected to Bitcoin.</p>
 <p><strong>Expressiveness.</strong> Typically, all smart contract systems can be expressed.</p>
 <p><strong>Efficiency.</strong> Interoperable blockchains that support smart contracts are typically based on the account model like Ethereum and are therefore not efficient.</p>
-<doc-anchor-target id="sidechains">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#sidechains">#</doc-anchor-trigger>
-        <span>Sidechains</span>
-    </h2>
-</doc-anchor-target>
+<h2 id="sidechains">Sidechains</h2>
 <p>A sidechain is a separate blockchain linked to Bitcoin through a two-way peg.</p>
 <p>A user sends their Bitcoin to a dedicated address controlled by the group of users that maintain the peg. These users then create the corresponding value of tokens on the sidechain. Those tokens can be used to access the functionality of the sidechain. Later, the sidechain user can transfer tokens back to the maintainers the peg, who will hopefully send the corresponding amount of tokens back to the sidechain user.</p>
 <p>Two-way pegs can be centralized, federation-based, or SPV-based. In centralized two-way pegs a trusted third party controls the Bitcoin in the peg and is responsible for locking and unlocking the Bitcoin. In a federated peg, the locked Bitcoins are at the custody of a group of users called the federation. A common implementation is to use a multisignature address, in which a quorum of participants is required to spend the funds. Simplified Payment Verification (SPV) makes it possible to verify the inclusion of a transaction in a blockchain without verifying the entire blockchain. A SPV two-way peg scheme could work as follows: The locked Bitcoin are stored in an output that can only be spent if an SPV proof is provided that a corresponding number of tokens have been burnt on the sidechain.</p>
-<doc-anchor-target id="examples-2">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples-2">#</doc-anchor-trigger>
-        <span>Examples</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="examples-2">Examples</h3>
 <doc-tabs>
 <doc-tab v-cloak id="liquid">
 <template #title>Liquid</template>
@@ -385,58 +303,32 @@
 <p>RSK relies on a combination of a federated two-way peg and an SPV (Simplified Payment Verification) scheme. Users can send Bitcoin to the peg and they are issued RBTC on the RSK sidechain. Each transfer between the sidechain and the main chain requires a multi-signature by the RSK federation to complete the transferring process. Federation members use hardware security modules to protect their private keys and enforce transaction validation. <a href="https://rootstock.io/static/a79b27d4889409602174df4710102056/RS-whitepaper.pdf">More info</a></p>
 </doc-tab>
 </doc-tabs>
-<doc-anchor-target id="evaluation-2">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#evaluation-2">#</doc-anchor-trigger>
-        <span>Evaluation</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="evaluation-2">Evaluation</h3>
 <p>Both centralized and federation based sidechains have the disadvantage of introducing trusted third parties, arguably defeating the purpose of a blockchain solution. SPV based solutions have the advantage of being trustless, however users have to wait for lengthy confirmation periods. The second problem is that the consensus mechanism of the sidechain is typically less secure than Bitcoin&#x27;s, making it the weakest link in the system and prone to attacks.</p>
 <p><strong>Trustlessness.</strong> Only for pure SPV based solutions.<br />
 <strong>Expressiveness.</strong> If the sidechain uses the account model.<br />
 <strong>Efficiency.</strong> No as the sidechain typically uses the account model.</p>
-<doc-anchor-target id="rollups">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#rollups">#</doc-anchor-trigger>
-        <span>Rollups</span>
-    </h2>
-</doc-anchor-target>
+<h2 id="rollups">Rollups</h2>
 <p>A rollup is similar to a sidechain but (a) the federation is replaced by a smart contract and (b) transaction data is stored on the main chain instead of a separate blockchain. The rollup can have its own transaction format independent from the main chain and we will refer to these transactions as L2 transactions.</p>
 <p>To use a rollup, a user deposits funds to the rollup smart contract on the main chain. These funds can then be used in L2 transactions. To use the rollup, a user sends a L2 transaction to a designated user called aggregator. Periodically, the aggregator selects a batch of L2 transactions, creates a main chain transaction and publishes it. This main chain transaction contains the L2 transactions in compressed form and the hash of the new state. The rollup’s smart contract on the main chain assures the aggregator posted the hash of the correct new state. There are different ways that this check occurs, optimistically or using zero knowledge proofs, as discussed below. When users wish to redeem their deposit, they transact with the rollup’s smart contract on the main chain and receive funds equal to the amount of their balance on the L2.</p>
-<doc-anchor-target id="optimistic-rollups">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#optimistic-rollups">#</doc-anchor-trigger>
-        <span>Optimistic Rollups</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="optimistic-rollups">Optimistic Rollups</h3>
 <p>In an optimistic rollup the aggregator posts the compressed L2 transactions and the hash of the new state to the main chain without any verification. A group of users called verifiers check that the new state matches the instructions in the L2 transactions. Verifiers can then publish a &quot;fraud proof&quot;, claiming that the aggregator posted an incorrect hash.</p>
 <p>To discourage aggregators and verifiers from acting maliciously, both the aggregator and verifier need to stake a bond. If the verifier can provide a valid fraud proof, the verifier earns half of the aggregator’s bond while the other half is burned (this is to prevent a scenario where a malicious aggregator tries to front-run an honest validator by publishing another fraud proof). If the fraud proof is invalid, the verifier gets fined.</p>
-<doc-anchor-target id="zero-knowledge-rollups">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#zero-knowledge-rollups">#</doc-anchor-trigger>
-        <span>Zero-knowledge Rollups</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="zero-knowledge-rollups">Zero-knowledge Rollups</h3>
 <p>While optimistic rollups use fraud proofs, zero-knowledge (ZK) rollups, and validity rollups more generally, use validity proofs. Instead of allowing the aggregator to publish a transaction and then question it, in ZK rollups, the aggregator must prove that the state hash is the correct using a validity proof.</p>
 <p>Similarly to optimistic rollups, an aggregator (sometimes called sequencer) evaluates L2 transactions and published compressed transaction data and the new state hash to the main chain. However they add a ZK proof that is evaluated by a smart contract on the main chain. The smart contract ensures that only correct executions are recorded on the main chain. In contrast to optimistic rollups, ZK rollups do not require second layer verifiers and there is no dispute resolution. This means transactions achieve finality rapidly; there is no extended period of time where verifiers can trigger a dispute phase.</p>
 <p>The two most commonly used ZK proofs used for rollups are called SNARKs and STARKs. SNARKs are computationally efficient: the time needed to verify a SNARK grows slower than the time of the computation itself. However, they require a trusted setup. STARKs require no trusted setup, but require much more time for proof generation and verification.</p>
-<doc-anchor-target id="examples-3">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#examples-3">#</doc-anchor-trigger>
-        <span>Examples</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="examples-3">Examples</h3>
 <doc-tabs>
 <doc-tab v-cloak id="bitvm">
 <template #title>BitVM</template>
 <p>BitVM is an optimistic rollup. Its primary purpose is facilitating trust minimized bridges between Bitcoin and other chains.</p>
 <p>A federation of 1000 members engage in a trusted setup and users trust that at least 1 participant is honest, otherwise the federation can steal all funds. Peg-ins can be censored by any federation member as a peg in requires the collaboration of all federation members. In addition all federation members need to pre-sign 100 peg-out transactions each (100.000 transactions in total), therefore peg-ins only occur every 6 months.</p>
 <p>There are 100 operators and users trust that at least one online operator is honest, otherwise the user can be prevented from pegging out. Operators must be able to front the money for a peg out for two weeks, so only well capitalized institutions can be operators. Withdraws can take months to give validators the chance to go through the challenge process. Any user can be a validator.</p>
-<p><figure class="content-center">
-    <img src="../static/bitvm.png" alt="The transactions that are broadcast in the BitVM protocol" class="rounded-image-rounded border-image-border border-image-border-width" />
+<figure class="content-center">
+    <img src="../static/bitvm.png" alt="The transactions that are broadcast in the BitVM protocol" class="max-w-full h-auto rounded-image-rounded border-image-border border-image-border-width" width="2762" height="1476" />
     <figcaption class="caption">The transactions that are broadcast in the BitVM protocol</figcaption>
 </figure>
-</p>
 <p>To &quot;peg in&quot;, a user called Bob sends 100 Bitcoin to a n-of-n multisig address controlled by the federation. In exchange, the federation will issue Bob tokens on the destination blockchain. When Bob want&#x27;s to &quot;peg out&quot;, Bob signals his wish to the federation by burning tokens on the destination blockchain. Operators can front the 100 Bitcoin to Bob in a &quot;Peg Out&quot; transaction. The operator then broadcasts the &quot;kick-off&quot; transaction. If all goes well, and there is no dispute, the federation will broadcast the &quot;Take 1&quot; transaction that spends 100 Bitcoin to the operator.</p>
 <p>In the case of a dispute, any validator will broadcast the &quot;Challenge&quot; transaction. Once this transaction is broadcast, the &quot;Take 1&quot; transaction cannot be spend anymore, as both transaction spend the same output (this is called a connector output). Once the &quot;Challenge&quot; transaction is broadcast the operator will broadcast the &quot;Assert&quot; transaction that breaks down the high level statement that the operator originally made, into smaller, easily disprovable statements. If any of these lower level statements are incorrect, any verifier can broadcast a &quot;Disprove&quot; transaction that points to the false statement by the operator. If no validator broadcasts a Disprove transaction, the operator can broadcast a &quot;Take 2&quot; transaction to regain control of the original 100 Bitcoin. More info <a href="https://bitvm.org/">here</a> and <a href="https://www.youtube.com/watch?v=nhR_g9hPnqM">here</a>.</p>
 </doc-tab>
@@ -453,21 +345,18 @@
 <p>Todo. <a href="https://www.alpenlabs.io/">More info</a></p>
 </doc-tab>
 </doc-tabs>
-<doc-anchor-target id="evaluation-3">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#evaluation-3">#</doc-anchor-trigger>
-        <span>Evaluation</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="evaluation-3">Evaluation</h3>
 <p>Rollups rely on smart contracts on the main chain, therefore it is easier to make them trustless and practical on chains with strong native smart contract support like Ethereum. By understanding the properties of rollups on Ethereum, we can understand how rollups on Bitcoin can work in the best case.</p>
 <p>On Ethereum rollups generally introduce trusted third parties, central points of failures, and lockup periods.</p>
 <p>As building a validity proof requires heavy computations ZK rollups’ L2 fees are higher than optimistic rollups. Additionally, ZK rollup main chain transaction fees are higher as the validity proof needs to be validated on the main chain for every batch.</p>
 <p>On the other hand, optimistic rollups have a period where verifiers have an opportunity to publish a fraud proof. Thus users need to wait (usually a week on Ethereum, on Bitcoin it will likely be longer) until their deposits can be withdrawn. In ZK-rollups, deposits could be withdrawn immediately, however in many cases users have to wait for 24h due to safety concerns. In most cases there is only one aggregator and a very small number of validators and users trust that they do not collude.</p>
-<doc-panels>
-   <doc-panel id="complexity-of-snarks-and-starks">
-       <template #title>Complexity of SNARKs and STARKs</template>
+<h3 id="complexity-of-snarks-and-starks">Complexity of SNARKs and STARKs</h3>
 <p>The Big-O notation is used in Computer Science to describe the upper bound of the runtime of an algorithm in terms of the size of its input. An algorithm is said to run in time <span class="math">O(f(n))</span> if for sufficiently large input sizes <span class="math">n</span>, the algorithm&#x27;s runtime will not exceed <span class="math">c * f(n)</span> steps.</p>
 <p>Prover Complexity refers to the computational complexity associated with generating a proof for a given computation. Verifier Complexity refers to the computational complexity associated with verifying the correctness of a proof for a given computation. The table below is obtained from <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=9862815">here</a></p>
+<retype-table copy-text="| Type   | Trustless                              | Prover Complexity            | Verifier Complexity  |
+| ------ | -------------------------------------- | ---------------------------- | -------------------- |
+| SNARKs | &lt;span style=&quot;color: red;&quot;&gt;No&lt;/span&gt;    | $O(n \cdot \text{log}(n))$   | $O(1)$               |
+| STARKs | &lt;span style=&quot;color: green;&quot;&gt;Yes&lt;/span&gt; | $O(n \cdot \text{log}(n)^c)$ | $O(\text{log}(n)^c)$ |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="comfortable">
 <thead>
@@ -494,129 +383,75 @@
 </tbody>
 </table>
 </div>
-<doc-anchor-target id="verifier-complexity-for-snarks-is--meaning-that-the-time-to-verify-a-computation-can-be-take-longer-for-small-inputs-but-is-faster-even-constant-for-large-enough-inputs-verifier-complexity-for-starks-is--meaning-that-it-can-take-much-longer-to-verify-a-short-computation-but-for-very-large-computations-verification-is-faster-than-computation">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#verifier-complexity-for-snarks-is--meaning-that-the-time-to-verify-a-computation-can-be-take-longer-for-small-inputs-but-is-faster-even-constant-for-large-enough-inputs-verifier-complexity-for-starks-is--meaning-that-it-can-take-much-longer-to-verify-a-short-computation-but-for-very-large-computations-verification-is-faster-than-computation">#</doc-anchor-trigger>
-        <span>Verifier complexity for SNARKs is <span class="math">O(1)</span> meaning that the time to verify a computation can be take longer for small inputs but is faster (even constant) for large enough inputs. Verifier complexity for STARKs is <span class="math">O(\text{log}(n)^c)</span> meaning that it can take much longer to verify a short computation but for very large computations verification is faster than computation.</span>
-    </h1>
-</doc-anchor-target>
+</retype-table>
+<p>Verifier complexity for SNARKs is <span class="math">O(1)</span> meaning that the time to verify a computation can be take longer for small inputs but is faster (even constant) for large enough inputs. Verifier complexity for STARKs is <span class="math">O(\text{log}(n)^c)</span> meaning that it can take much longer to verify a short computation but for very large computations verification is faster than computation.</p>
 <p><strong>Trustlessness.</strong> In optimistic rollups users trust that one honest validator is online at all times. STARKs are trustless, SNARKS are not.</p>
 <p><strong>Expressiveness.</strong> Depends on the expressiveness of the L2.</p>
 <p><strong>Efficiency.</strong> Depends on the efficiency of the L2.</p>
-<doc-anchor-target id="meta-protocols">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#meta-protocols">#</doc-anchor-trigger>
-        <span>Meta Protocols</span>
-    </h2>
-</doc-anchor-target>
+<h2 id="meta-protocols">Meta Protocols</h2>
 <p>A user of a meta protocol that wants to write smart contract data adds meta data to a transaction and sends it to the Bitcoin miners. Software that is specific to the protocol parses the meta data and computed smart contract data (like the number of tokens owned by a user) from it.</p>
 <p>There are two basic types of meta protocols called block-order based and UTXO based. These two types result form two basic ways of viewing a UTXO based blockchains: as a list of transactions and as a graph of transactions.</p>
-<doc-anchor-target id="block-order-based">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#block-order-based">#</doc-anchor-trigger>
-        <span>Block-order based</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="block-order-based">Block-order based</h3>
 <p>The software for a block-order based protocol reads all transactions in the main chain in block-order to find transactions with meta data specific for that protocol. It will then interpret that sequence of meta data values as instructions and build up a data structure of smart contract data. The smart contract data will for example store which user owns which tokens.</p>
-   </doc-panel>
-   <doc-panel id="formal-description" collapsed>
-       <template #title>Formal Description</template>
+<!-- prettier-ignore-start -->
+<doc-panel id="formal-description" collapsed>
+    <template #title>Formal Description</template>
 <p>We denote the set of transactions by <span class="math">T</span>. We denote by <span class="math">V</span> the set of smart contract data values where <span class="math">\{\} \in V</span> denotes the empty value. We denote the set of sequences of values in a set <span class="math">X</span> by <span class="math">X^*</span>.</p>
-<doc-anchor-target id="a-block-order-based-meta-protocol--consists-of-a-function--let--be-the-sequence-of-meta-data-values-for--in-the-main-chain-in-the-order-of-their-occurrence-then--computes-the-smart-contract-data-value-">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#a-block-order-based-meta-protocol--consists-of-a-function--let--be-the-sequence-of-meta-data-values-for--in-the-main-chain-in-the-order-of-their-occurrence-then--computes-the-smart-contract-data-value-">#</doc-anchor-trigger>
-        <span>A block-order based meta protocol <span class="math">P</span> consists of a function <span class="math">f: V \times T \rightarrow V</span>. Let <span class="math">t_1 \ldots t_n \in T^*</span> be the sequence of meta data values for <span class="math">P</span> in the main chain in the order of their occurrence. Then <span class="math">P</span> computes the smart contract data value <span class="math">f( \ldots f(f(\{\}, t_1), t_2) \ldots , t_n)</span>.</span>
-    </h1>
-</doc-anchor-target>
-<doc-anchor-target id="example-brc20">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#example-brc20">#</doc-anchor-trigger>
-        <span>Example: BRC20</span>
-    </h4>
-</doc-anchor-target>
-<p><figure class="content-right">
-    <img src="../static/block-order-based.png" alt="Example trace in the BRC20 protocol" class="rounded-image-rounded border-image-border border-image-border-width" />
+<p>A block-order based meta protocol <span class="math">P</span> consists of a function <span class="math">f: V \times T \rightarrow V</span>. Let <span class="math">t_1 \ldots t_n \in T^*</span> be the sequence of meta data values for <span class="math">P</span> in the main chain in the order of their occurrence. Then <span class="math">P</span> computes the smart contract data value <span class="math">f( \ldots f(f(\{\}, t_1), t_2) \ldots , t_n)</span>.</p>
+</doc-panel>
+<!-- prettier-ignore-end -->
+<h4 id="example-brc20">Example: BRC20</h4>
+<figure class="content-right">
+    <img src="../static/block-order-based.png" alt="Example trace in the BRC20 protocol" class="max-w-full h-auto rounded-image-rounded border-image-border border-image-border-width" width="366" height="454" />
     <figcaption class="caption caption-float">Example trace in the BRC20 protocol</figcaption>
 </figure>
-</p>
 <p>The BRC20 protocol is a protocol for fungible tokens.</p>
-<p>The image on the right shows an example execution of the BRC20 protocol. The left column shows the meta data values and the column on the right shows the value that is computed after parsing each respective meta data value. The smart contract data value is initialized to the empty element <span class="math">\{\}</span>. The first meta data value <code v-pre>{ op: deploy, ... }</code> specifies the deployment of a fungible token called &quot;lite&quot; with a maximum supply of <span class="math">1000</span>. Once the BRC20 software parses this meta data value it updates its computed value to <code v-pre>{ lite: { max : 1000 }}</code> as shown on the right. The next transaction contains a mining instruction and the software will update it&#x27;s internal value accordingly as shown on the right. The bottom row shows a transaction shows a transfer transaction and the computed value that reflects that <code v-pre>ownerB</code> received one token from <code v-pre>ownerA</code>. The ownership of the assets is determined by the ownership of the outputs that contain the meta data. See <a href="https://domo-2.gitbook.io/brc-20-experiment">here</a> for more details.</p>
+<p>The image on the right shows an example execution of the BRC20 protocol. The left column shows the meta data values and the column on the right shows the value that is computed after parsing each respective meta data value. The smart contract data value is initialized to the empty element <span class="math">\{\}</span>. The first meta data value <code translate="no" v-pre>{ op: deploy, ... }</code> specifies the deployment of a fungible token called &quot;lite&quot; with a maximum supply of <span class="math">1000</span>. Once the BRC20 software parses this meta data value it updates its computed value to <code translate="no" v-pre>{ lite: { max : 1000 }}</code> as shown on the right. The next transaction contains a mining instruction and the software will update it&#x27;s internal value accordingly as shown on the right. The bottom row shows a transaction shows a transfer transaction and the computed value that reflects that <code translate="no" v-pre>ownerB</code> received one token from <code translate="no" v-pre>ownerA</code>. The ownership of the assets is determined by the ownership of the outputs that contain the meta data. See <a href="https://domo-2.gitbook.io/brc-20-experiment">here</a> for more details.</p>
 <div style="clear: both;"></div>
-<doc-anchor-target id="evaluation-4">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#evaluation-4">#</doc-anchor-trigger>
-        <span>Evaluation</span>
-    </h4>
-</doc-anchor-target>
+<h4 id="evaluation-4">Evaluation</h4>
 <p><strong>Trustlessness.</strong> Yes.</p>
 <p><strong>Expressiveness.</strong> No, the existing block-order based protocols that we are aware of are single purpose only.</p>
 <p><strong>Efficiency.</strong> No, block order based protocols need to parse all transactions to compute a single value.</p>
 <p>There are two other issues issues: Block-order based protocols cannot be real time as there is no indication in which order the transactions will occur on the mempool before a block is mined. Miners are incentivized to include transactions in an order that is advantageous to them. This is a common problem in Ethereum called &quot;miner extracted value&quot; (MEV).</p>
-<doc-anchor-target id="utxo-based">
-    <h3>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#utxo-based">#</doc-anchor-trigger>
-        <span>UTXO based</span>
-    </h3>
-</doc-anchor-target>
+<h3 id="utxo-based">UTXO based</h3>
 <p>Whereas block order based systems compute one global value from all transactions, UTXO based protocols compute a value for each output that is relevant to that protocol. The value computed for an output can usually depend on the meta data on that transaction and the valued computed for the inputs spent.</p>
-   </doc-panel>
-   <doc-panel id="formal-description" collapsed>
-       <template #title>Formal Description</template>
+<!-- prettier-ignore-start -->
+<doc-panel id="formal-description-1" collapsed>
+    <template #title>Formal Description</template>
 <p>Let <span class="math">O</span> be the set of outputs. A UTXO based protocol <span class="math">P</span> is a function <span class="math">P: O \rightarrow V</span> that map outputs to smart contract data values.</p>
 <p>We will say that a protocol <span class="math">P</span> is well designed if <span class="math">P(o)</span> can be computed from the meta data on the transaction containing <span class="math">o</span> and the values of the outputs spent by <span class="math">t</span>. That is, there is a function <span class="math">f_P: O \times V^* \rightarrow V</span> such that <span class="math">P(o) = f_P(o, P(o_1) \ldots P(o_n))</span> where <span class="math">o_1 \ldots o_n</span> are the outputs spent by the transaction containing <span class="math">o</span>.</p>
-<doc-anchor-target id="we-can-see-that-all-well-designed-utxo-based-protocols-are-efficient-you-can-compute-the-value-of-an-output-by-parsing-only-the-transactions-that-are-reachable-form-the-transaction-containing-the-output-via-the-of-the-spending-relation-potentially-using-multiple-hops-this-is-still-a-large-number-of-transactions-in-general-but-for-some-values-for-example-those-on-the-outputs-of-a-coinbase-transaction-can-be-computed-from-one-transaction">
-    <h1>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#we-can-see-that-all-well-designed-utxo-based-protocols-are-efficient-you-can-compute-the-value-of-an-output-by-parsing-only-the-transactions-that-are-reachable-form-the-transaction-containing-the-output-via-the-of-the-spending-relation-potentially-using-multiple-hops-this-is-still-a-large-number-of-transactions-in-general-but-for-some-values-for-example-those-on-the-outputs-of-a-coinbase-transaction-can-be-computed-from-one-transaction">#</doc-anchor-trigger>
-        <span>We can see that all well designed UTXO based protocols are efficient: You can compute the value of an output by parsing &quot;only&quot; the transactions that are reachable form the transaction containing the output via the of the spending relation, potentially using multiple hops. This is still a large number of transactions in general, but for some values for example those on the outputs of a coinbase transaction can be computed from one transaction.</span>
-    </h1>
-</doc-anchor-target>
-<doc-anchor-target id="example-ordinals">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#example-ordinals">#</doc-anchor-trigger>
-        <span>Example: Ordinals</span>
-    </h4>
-</doc-anchor-target>
+</doc-panel>
+<!-- prettier-ignore-end -->
+<p>We can see that all well designed UTXO based protocols are efficient: You can compute the value of an output by parsing &quot;only&quot; the transactions that are reachable form the transaction containing the output via the of the spending relation, potentially using multiple hops. This is still a large number of transactions in general, but for some values for example those on the outputs of a coinbase transaction can be computed from one transaction.</p>
+<h4 id="example-ordinals">Example: Ordinals</h4>
 <p>The ordinals protocol is a protocol for non-fungible token. It associates an integer with every satoshi and a list of integers with each output. The length of the list of integers is equal to the number of satoshis stored in the block. It does not require any meta data.</p>
-<p><figure class="content-left">
-    <img src="../static/ordinals.png" alt="The Ordinals protocol" class="rounded-image-rounded border-image-border border-image-border-width" />
+<figure class="content-left">
+    <img src="../static/ordinals.png" alt="The Ordinals protocol" class="max-w-full h-auto rounded-image-rounded border-image-border border-image-border-width" width="223" height="200" />
     <figcaption class="caption caption-float">The Ordinals protocol</figcaption>
 </figure>
-</p>
 <p>The ordinals algorithm computes the block rewards <span class="math">r_1, r_2, \ldots</span> for every block in a chain. It then labels the output of the coinbase transaction of block <span class="math">i</span> with the numbers ranging from <span class="math">r_0 + \ldots + r_{i-1}</span> to <span class="math">r_0 + \ldots + r_i</span> where <span class="math">r_0 = 0</span>. To label the outputs of a transaction with inputs, the algorithm first determined the ordinal ranges of the outputs being spent and concatenates them. This array is used to label the outputs as follows: for each output, the algorithm will remove as many numbers from the array as the output has satoshis and assign that list of numbers to the output. The array will be sufficiently long as the number of satoshis spent by a transaction transaction must always be at least the number of satoshis in the output. This presentation is slightly simplified as it does not take fees into account, for details see <a href="https://github.com/ordinals/ord/blob/master/bip.mediawiki">here</a>.</p>
 <p>We can see an example in the picture. The top transaction is the coinbase transaction of the first block. As the output of this transaction contains <span class="math">5</span> Billion satoshis (= <span class="math">50</span> Bitcoin) this output is labelled with the numbers <span class="math">1, 2, \ldots 5.000.000.000</span>. The transaction below spends that output and contains two outputs with 20 and 30 Bitcoin. The first of these outputs is labelled with the numbers <span class="math">1, 2, \ldots 2.000.000.000</span> and the second with <span class="math">2.000.000.001 \ldots 5.000.000.000</span>. You can find more information <a href="https://docs.ordinals.com/">here</a>.</p>
 <p><strong>Trustlessness.</strong> Yes.<br />
 <strong>Expressiveness.</strong> No.<br />
 <strong>Efficiency.</strong> Yes.</p>
 <div style="clear: both;"></div>
-<doc-anchor-target id="example-runes">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#example-runes">#</doc-anchor-trigger>
-        <span>Example: Runes</span>
-    </h4>
-</doc-anchor-target>
-<p><figure class="content-right">
-    <img src="../static/runes.png" alt="The Runes protocol" class="rounded-image-rounded border-image-border border-image-border-width" />
+<h4 id="example-runes">Example: Runes</h4>
+<figure class="content-right">
+    <img src="../static/runes.png" alt="The Runes protocol" class="max-w-full h-auto rounded-image-rounded border-image-border border-image-border-width" width="324" height="449" />
     <figcaption class="caption caption-float">The Runes protocol</figcaption>
 </figure>
-</p>
 <p>The runes protocol is a protocol for fungible tokens. Its smart contract data values are key value pairs where keys are token ids and its values are numbers. The meta data values are an efficient encoding of nested json objects.</p>
-<p>There are distinct kinds of meta data values: &quot;etchings&quot; are used to deploy tokens, they can specify for example how many times a token is mined through the <code v-pre>cap</code> key and the number of tokens created in each mint via a key called <code v-pre>amount</code>. Minting instruction specify a token id (encoded as <code v-pre>&lt;block-number&gt;.&lt;offset&gt;</code>). &quot;Edicts&quot; transfer the tokens spent by the inputs into the outputs. A transfer transaction contains a list of edicts, each of which transfers the token id to transfer, the amount, and the output number. The meta-data is encoded into an array of integers which is stored in the op-return.</p>
+<p>There are distinct kinds of meta data values: &quot;etchings&quot; are used to deploy tokens, they can specify for example how many times a token is mined through the <code translate="no" v-pre>cap</code> key and the number of tokens created in each mint via a key called <code translate="no" v-pre>amount</code>. Minting instruction specify a token id (encoded as <code translate="no" v-pre>&lt;block-number&gt;.&lt;offset&gt;</code>). &quot;Edicts&quot; transfer the tokens spent by the inputs into the outputs. A transfer transaction contains a list of edicts, each of which transfers the token id to transfer, the amount, and the output number. The meta-data is encoded into an array of integers which is stored in the op-return.</p>
 <p>The picture shows an etching that deploys a new fungible token called &quot;lite&quot; that can be minted 10 times, creating 100 tokens on every mint. This transaction is assumed to be the 4th transaction in block 123. The second transaction show mints 100 tokens, the third transaction transfers the minted tokens into two outputs with one and 99 tokens each. You can find more information in the <a href="https://docs.ordinals.com/">ordinals docs</a>.</p>
 <p><strong>Trustlessness.</strong> Yes.<br />
 <strong>Expressiveness.</strong> No.<br />
 <strong>Efficiency.</strong> Yes.</p>
 <div style="clear: both;"></div>
-<doc-anchor-target id="example-bitcoin-computer">
-    <h4>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#example-bitcoin-computer">#</doc-anchor-trigger>
-        <span>Example: Bitcoin Computer</span>
-    </h4>
-</doc-anchor-target>
-<p><figure class="content-right">
-    <img src="../static/bitcoin-computer.png" alt="The Bitcoin Computer protocol" class="rounded-image-rounded border-image-border border-image-border-width" />
+<h4 id="example-bitcoin-computer">Example: Bitcoin Computer</h4>
+<figure class="content-right">
+    <img src="../static/bitcoin-computer.png" alt="The Bitcoin Computer protocol" class="max-w-full h-auto rounded-image-rounded border-image-border border-image-border-width" width="584" height="571" />
     <figcaption class="caption caption-float">The Bitcoin Computer protocol</figcaption>
 </figure>
-</p>
 <p>This Bitcoin Computer is a general purpose meta protocol, meaning that it can express all computable smart contracts. The smart contract data values are arbitrarily nested JavaScript objects. The meta data values contain mostly JavaScript expressions.</p>
 <p>There are two types of transactions: &quot;modules&quot; contain JavaScript (ES6) modules. All other transactions contain a JavaScript expression, a &quot;blockchain environment&quot; that associated (free) variables in the expressions with input numbers, and an optional &quot;module specifier&quot; containing a transaction id. In order to compute the value of an output, the Bitcoin Computer software</p>
 <ul>
@@ -634,12 +469,7 @@
 +++ CounterParty
 [More info](https://docs.counterparty.io/docs/basics/what-is-counterparty/)
 +++ -->
-<doc-anchor-target id="sources">
-    <h2>
-        <doc-anchor-trigger class="header-anchor-trigger" to="#sources">#</doc-anchor-trigger>
-        <span>Sources</span>
-    </h2>
-</doc-anchor-target>
+<h2 id="sources">Sources</h2>
 <p>[1] <a href="https://drive.google.com/file/d/1dJ2OsAc4QvIWzxR1JFFmMfMVYIrnXOWW/view">SoK: Applications of Sketches and Rollups in Blockchain Networks</a>, Arad Kotzer, Daniel Gandelman and Ori Rottenstreich; Technion, Florida State University<br />
 [2] <a href="https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&amp;arnumber=9862815">Blockchain Scaling Using Rollups: A Comprehensive Survey</a>, Louis Tremblay Thibault, Tom Sarry, and Abdelhakim Senhaji Hafid; Montreal<br />
 [3] <a href="https://eprint.iacr.org/2018/192.pdf">SoK: unraveling Bitcoin smart contracts</a>, Nicola Atzei, Massimo Bartoletti, Tiziana Cimoli, Stefano Lande, Roberto Zunino; Cagliari, Trento<br />
@@ -656,73 +486,72 @@
 [14] <a href="https://www.bitcoinrollups.io/">bitcoinrollups.io</a><br />
 [15] <a href="https://www.hiro.so/blog/building-on-bitcoin-project-comparison">Hiro Blog</a><br />
 [16] <a href="https://github.com/john-light/validity-rollups/blob/main/">Validity Rollups</a>validity_rollups_on_bitcoin.md</p>
-   </doc-panel>
 
-                                
-                                <!-- Required only on API pages -->
-                                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
-                            </div>
-                            <footer id="retype-content-footer" class="clear-both">
-                            
-                                <nav id="retype-nextprev" class="print:hidden flex mt-14">
-                                    <div class="w-1/2">
-                                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../examples/ordinal-sale/">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
-                                            <span>
-                                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
-                                                <span class="block mt-1">Ordinal Sale</span>
-                                            </span>
-                                        </a>
-                                    </div>
-                            
-                                    <div class="w-1/2">
-                                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../license/">
-                                            <span>
-                                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
-                                                <span class="block mt-1">MIT License</span>
-                                            </span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
-                                        </a>
-                                    </div>
-                                </nav>
-                            </footer>
-                        </main>
                 
-                        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
-                            <footer class="flex flex-wrap items-center justify-between print:justify-center">
-                                <div id="retype-footer-links" class="print:hidden">
-                                    <ul class="flex flex-wrap items-center text-sm">
-                                    </ul>
-                                </div>
-                                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link-weight text-sm leading-relaxed"><p>© Copyright BCDB Inc. 2025. All rights reserved.</p></div>
-                            </footer>
-                        </div>
-                    </div>
-                
-                    <!-- Rendered if sidebar right is enabled -->
-                    <!-- Sidebar right skeleton-->
-                    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:transform-none sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
-                        <div class="pl-5">
-                            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
-                        </div>
-                    </div>
-                
-                    <!-- User should be able to hide sidebar right -->
-                    <doc-sidebar-right v-cloak></doc-sidebar-right>
-                </div>
-
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
             </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../examples/ordinal-sale/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">Ordinal Sale</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../license/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">MIT License</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright BCDB Inc. 2026. All rights reserved.</p></div>
+            </footer>
         </div>
-    
-        <doc-search-mobile></doc-search-mobile>
-        <doc-back-to-top></doc-back-to-top>
     </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
 
 
     <div id="retype-overlay-target"></div>
 
-    <script data-cfasync="false">window.__DOCS__ = { "title": "Comparison", level: 1, icon: "file", hasPrism: false, hasMermaid: false, hasMath: true, tocDepth: 23 }</script>
+        <script data-cfasync="false">window.__DOCS__ = { "title": "Comparison", level: 1, icon: "file", hasPrism: false, hasInstagram: false, hasMermaid: false, hasMath: true, tocDepth: 23, "md": "/comparison.md" }</script>
 </body>
 </html>

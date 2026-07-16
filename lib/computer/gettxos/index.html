@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837560724466">
+
+    <!-- See retype.com -->
+    <meta name="generator" content="Retype 4.6.0">
+
+    <!-- Primary Meta Tags -->
+    <title>getTXOs</title>
+    <meta name="title" content="getTXOs">
+    <meta name="description" content="Returns transaction outputs for the given query parameters.">
+
+    <!-- Canonical -->
+    <link rel="canonical" href="https://docs.bitcoincomputer.io/lib/computer/gettxos/">
+    <link rel="sitemap" type="application/xml" title="Sitemap" href="https://docs.bitcoincomputer.io/sitemap.xml">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://docs.bitcoincomputer.io/lib/computer/gettxos/">
+    <meta property="og:title" content="getTXOs">
+    <meta property="og:description" content="Returns transaction outputs for the given query parameters.">
+    <meta property="og:site_name" content="Bitcoin Computer">
+    <meta property="og:locale" content="en_US">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="https://docs.bitcoincomputer.io/lib/computer/gettxos/">
+    <meta name="twitter:title" content="getTXOs">
+    <meta name="twitter:description" content="Returns transaction outputs for the given query parameters.">
+
+    <!-- Alternate Markdown -->
+    <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/lib/computer/gettxos.md">
+
+    <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
+
+    <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
+    <link href="../../../resources/css/retype.css?v=4.6.0.837560724466" rel="stylesheet">
+
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837560724466" defer></script>
+
+    <link href="/static/custom.css" rel="stylesheet" />
+
+</head>
+<body>
+    <div id="retype-app" class="relative text-base antialiased text-base-text bg-base-bg font-body">
+    <div class="absolute bottom-0 left-0" style="top: 5rem; right: 50%"></div>
+
+    <header id="retype-header" class="sticky top-0 z-30 flex w-full h-16 bg-header-bg border-b border-header-border md:h-20">
+        <div class="container relative flex items-center justify-between pr-6 grow md:justify-start">
+            <!-- Mobile menu button skeleton -->
+            <button v-cloak class="skeleton retype-mobile-menu-button flex items-center justify-center shrink-0 overflow-hidden dark:text-white focus:outline-hidden rounded-full w-10 h-10 ml-3.5 md:hidden"><svg xmlns="http://www.w3.org/2000/svg" class="mb-px shrink-0" width="24" height="24" viewBox="0 0 24 24" role="presentation" style="margin-bottom: 0px;"><g fill="currentColor"><path d="M2 4h20v2H2zM2 11h20v2H2zM2 18h20v2H2z"></path></g></svg></button>
+            <div v-cloak id="retype-sidebar-left-toggle-button"></div>
+    
+            <!-- Logo -->
+            <div class="flex items-center justify-between h-full py-2 md:w-75">
+                <div class="flex items-center px-2 md:px-6">
+                    <a id="retype-branding-logo" href="https://docs.bitcoincomputer.io/" class="flex items-center leading-snug text-xl">
+                        <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">0.26.0</span>
+                </div>
+    
+                <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
+            </div>
+    
+            <div class="flex justify-between md:grow">
+                <!-- Top Nav -->
+                <nav id="retype-header-nav" class="hidden md:flex">
+                    <ul class="flex flex-col mb-4 md:pl-16 md:mb-0 md:flex-row md:items-center">
+                        
+                    </ul>
+                </nav>
+    
+                <div v-cloak class="flex justify-end grow">
+                    <div id="retype-mobile-search-button"></div>
+                    <doc-search-desktop></doc-search-desktop>
+    
+                    <doc-theme-switch class="lg:ml-2"></doc-theme-switch>
+                    <doc-history></doc-history>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <div id="retype-container" class="container relative flex bg-white">
+        <!-- Sidebar Skeleton -->
+        <div v-cloak class="fixed flex flex-col shrink-0 duration-300 ease-in-out bg-sidebar-left-bg border-sidebar-left-border sidebar top-20 w-75 border-r h-screen md:sticky transition-transform skeleton">
+        
+            <div class="flex items-center h-16 px-6">
+                <input id="retype-filter-input-mock" class="w-full h-10 pl-8 px-3 py-2 transition-colors duration-200 ease-linear bg-filter-bg border border-filter-border rounded-lg shadow-none md:text-sm hover:border-filter-border-hover focus:outline-hidden focus:border-filter-border-focus placeholder-filter-placeholder" type="text">
+            </div>
+        
+            <div class="pl-6 mt-1 mb-4">
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+                <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            </div>
+        
+            <div class="shrink-0 mt-auto bg-transparent dark:border-base-border">
+                <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                    <span class="text-xs whitespace-nowrap">Powered by</span>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar component -->
+        <doc-sidebar v-cloak>
+            <template #sidebar-footer>
+                <div class="shrink-0 mt-auto border-t md:bg-transparent md:border-none dark:border-base-border">
+        
+                    <a class="flex items-center justify-center flex-nowrap h-16 text-gray-350 dark:text-dark-400 hover:text-gray-600 dark:hover:text-dark-300 transition-colors duration-150 ease-in docs-powered-by" target="_blank" href="https://retype.com/" rel="noopener">
+                        <span class="text-xs whitespace-nowrap">Powered by</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="ml-2" fill="currentColor" width="96" height="20" overflow="visible"><path d="M0 0v20h13.59V0H0zm11.15 17.54H2.44V2.46h8.71v15.08zM15.8 20h2.44V4.67L15.8 2.22zM20.45 6.89V20h2.44V9.34z"/><g><path d="M40.16 8.44c0 1.49-.59 2.45-1.75 2.88l2.34 3.32h-2.53l-2.04-2.96h-1.43v2.96h-2.06V5.36h3.5c1.43 0 2.46.24 3.07.73s.9 1.27.9 2.35zm-2.48 1.1c.26-.23.38-.59.38-1.09 0-.5-.13-.84-.4-1.03s-.73-.28-1.39-.28h-1.54v2.75h1.5c.72 0 1.2-.12 1.45-.35zM51.56 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92h4.74v1.83h-6.79V5.36h6.64zM60.09 7.15v7.48h-2.06V7.15h-2.61V5.36h7.28v1.79h-2.61zM70.81 14.64h-2.06v-3.66l-3.19-5.61h2.23l1.99 3.45 1.99-3.45H74l-3.19 5.61v3.66zM83.99 6.19c.65.55.97 1.4.97 2.55s-.33 1.98-1 2.51-1.68.8-3.04.8h-1.23v2.59h-2.06V5.36h3.26c1.42 0 2.45.28 3.1.83zm-1.51 3.65c.25-.28.37-.69.37-1.22s-.16-.92-.48-1.14c-.32-.23-.82-.34-1.5-.34H79.7v3.12h1.38c.68 0 1.15-.14 1.4-.42zM95.85 5.36V7.2h-4.59v1.91h4.13v1.76h-4.13v1.92H96v1.83h-6.79V5.36h6.64z"/></g></svg>
+                    </a>
+                </div>
+            </template>
+        </doc-sidebar>
+
+        <div class="grow min-w-0 bg-body-bg">
+            <!-- Render "toolbar" template here on api pages --><!-- Render page content -->
+<div class="flex">
+    <div id="retype-main" class="min-w-0 p-4 grow md:px-16">
+        <main class="relative pb-12 lg:pt-2">
+            <div class="relative retype-markdown" id="retype-content">
+                <!-- Rendered if sidebar right is enabled -->
+                <div id="retype-sidebar-right-toggle"></div>
+                <doc-page-actions></doc-page-actions>
+
+                <!-- Page content  -->
+<h1 id="gettxos">getTXOs</h1>
+<p><em>Returns <em>transaction outputs</em> for the given query parameters.</em></p>
+<h2 id="type">Type</h2>
+<div id="type-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">type TXORecord = {
+  rev: string
+  address: string
+  satoshis: bigint
+  asm: string
+  expHash?: string
+  mod?: string
+  isObject?: boolean
+  previous?: string
+  blockHash?: string
+  blockHeight?: number
+  blockIndex?: number
+}
+
+type TXOQuery = {
+  verbosity?: number
+  limit?: number
+  order?: 'ASC' | 'DESC'
+  offset?: number
+  isSpent?: boolean
+  isConfirmed?: boolean
+  publicKey?: PublicKeyString
+  exp?: string
+} &amp; Partial&lt;Omit&lt;TXORecord, 'expHash'&gt;&gt;
+
+async getTXOs(q: TXOQuery &amp; { verbosity?: 0 }): Promise&lt;string[]&gt;
+async getTXOs(q: TXOQuery &amp; { verbosity: 1 }): Promise&lt;TXORecord[]&gt;
+async getTXOs(q: TXOQuery): Promise&lt;string[] | TXORecord[]&gt;
+</code></pre>
+</doc-codeblock></div>
+<h3 id="parameters">Parameters</h3>
+<h4 id="query"><code translate="no" v-pre>query</code></h4>
+<p>An object with the query parameters.</p>
+<retype-table copy-text="| Key | Description |
+| ------------- | --------------------------------------------------------------------------- |
+| verbosity | 0 for revision strings, 1 for rows from the Output table |
+| rev | Return TXOs with this exact revision |
+| address | Return TXOs that belong to this address. The matching address is computed from the output script (see below) |
+| satoshis | Return TXOs with this exact satoshis amount |
+| asm | Return TXOs matching the asm script |
+| isObject | Return TXOs that are (or are not) smart objects |
+| mod | Return TXOs that are smart objects created with this module or a descendant of it |
+| previous | Return TXOs whose previous revision is the provided parameter |
+| exp | Giving an expression, return TXOs that matches the hash of that expression |
+| blockHash | Return TXOs that are included in the block with this hash |
+| isSpent | Return TXOs that are (or are not) spent |
+| isConfirmed | Return TXOs that are (or are not) included in a block |
+| publicKey | Return TXOs whose asm contains this public key |
+| limit | Limit the number of TXOs returned |
+| offset | Return results starting from offset |
+| order | Order results in ascending or descending order |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Key</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>verbosity</td>
+<td>0 for revision strings, 1 for rows from the Output table</td>
+</tr>
+<tr>
+<td>rev</td>
+<td>Return TXOs with this exact revision</td>
+</tr>
+<tr>
+<td>address</td>
+<td>Return TXOs that belong to this address. The matching address is computed from the output script (see below)</td>
+</tr>
+<tr>
+<td>satoshis</td>
+<td>Return TXOs with this exact satoshis amount</td>
+</tr>
+<tr>
+<td>asm</td>
+<td>Return TXOs matching the asm script</td>
+</tr>
+<tr>
+<td>isObject</td>
+<td>Return TXOs that are (or are not) smart objects</td>
+</tr>
+<tr>
+<td>mod</td>
+<td>Return TXOs that are smart objects created with this module or a descendant of it</td>
+</tr>
+<tr>
+<td>previous</td>
+<td>Return TXOs whose previous revision is the provided parameter</td>
+</tr>
+<tr>
+<td>exp</td>
+<td>Giving an expression, return TXOs that matches the hash of that expression</td>
+</tr>
+<tr>
+<td>blockHash</td>
+<td>Return TXOs that are included in the block with this hash</td>
+</tr>
+<tr>
+<td>isSpent</td>
+<td>Return TXOs that are (or are not) spent</td>
+</tr>
+<tr>
+<td>isConfirmed</td>
+<td>Return TXOs that are (or are not) included in a block</td>
+</tr>
+<tr>
+<td>publicKey</td>
+<td>Return TXOs whose asm contains this public key</td>
+</tr>
+<tr>
+<td>limit</td>
+<td>Limit the number of TXOs returned</td>
+</tr>
+<tr>
+<td>offset</td>
+<td>Return results starting from offset</td>
+</tr>
+<tr>
+<td>order</td>
+<td>Order results in ascending or descending order</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="return-value">Return Value</h3>
+<p>An array of either revision strings or rows from the database Output table, depending on the verbosity level specified in the query.</p>
+<h2 id="description">Description</h2>
+<p>The <code translate="no" v-pre>getTXOs</code> function retrieves transaction outputs (TXOs) from the database based on customizable query parameters. It supports filtering by attributes such as address, satoshi amount, script assembly (ASM), smart object status, ownership via public key, and more. Results can be returned in two formats depending on the <code translate="no" v-pre>verbosity</code> level: an array of revision strings (for <code translate="no" v-pre>verbosity: 0</code>) or an array of detailed <code translate="no" v-pre>TXORecord</code> objects (for <code translate="no" v-pre>verbosity: 1</code>).</p>
+<h3 id="key-column-details">Key Column Details</h3>
+<ul>
+<li><strong>address</strong>: Derived from the output script using <code translate="no" v-pre>address.fromOutputScript</code> from the <code translate="no" v-pre>@bitcoin-computer/nakamotoJs</code> library. If the script cannot be converted (e.g., non-standard P2PKH or P2SH scripts), this value is set to <code translate="no" v-pre>null</code>. When filtering by <code translate="no" v-pre>address</code>, only TXOs with matching convertible scripts are included.</li>
+<li><strong>asm</strong>: The assembly (ASM) string representation of the output script, computed as <code translate="no" v-pre>script.toASM(script)</code>. Use this for exact script-based filtering.</li>
+<li><strong>Other columns</strong>: Include <code translate="no" v-pre>rev</code> (revision string), <code translate="no" v-pre>satoshis</code> (output value as bigint), <code translate="no" v-pre>isObject</code> (boolean indicating if it&#x27;s a smart object), <code translate="no" v-pre>mod</code> (module identifier for smart objects), <code translate="no" v-pre>exp</code> (expression hash), <code translate="no" v-pre>previous</code> (prior TXO reference), <code translate="no" v-pre>blockHash</code> (inclusion in a specific block), and <code translate="no" v-pre>spent</code> (spend status).</li>
+</ul>
+<h3 id="filtering-behaviors">Filtering Behaviors</h3>
+<ul>
+<li><strong>By public key (<code translate="no" v-pre>publicKey</code>)</strong>: Matches TXOs where the output asm script contains specified public key, enabling ownership-based queries. The value does not necessary have to be a public key, the query works for any string. For example if you query for <code translate="no" v-pre>OP_TRUE</code> the query will return all outputs whose script contains <code translate="no" v-pre>OP_TRUE</code>.</li>
+<li><strong>By smart object status (<code translate="no" v-pre>isObject</code>)</strong>: Set to <code translate="no" v-pre>true</code> to retrieve all on-chain smart objects.</li>
+<li><strong>By module (<code translate="no" v-pre>mod</code>)</strong>: Filters for smart objects created with the given module specifier. Modules are inherited in descendant objects within the Bitcoin Computer ecosystem, except during new object creation or explicit module overrides in expressions. This is particularly useful for tracking token transfers or module-specific lineages—refer to the examples for practical demonstrations.</li>
+<li><strong>Spent status (<code translate="no" v-pre>spent</code>)</strong>: Includes or excludes spent TXOs; combine with other filters for UTXO-like queries.</li>
+<li><strong>Pagination and ordering</strong>: Use <code translate="no" v-pre>limit</code>, <code translate="no" v-pre>offset</code>, and <code translate="no" v-pre>order</code> (&#x27;ASC&#x27; or &#x27;DESC&#x27;) for controlled, sorted result sets.</li>
+</ul>
+<p>For security and efficiency, always pair this with <code translate="no" v-pre>publicKey</code> to scope results to a specific owner, and apply <code translate="no" v-pre>limit</code>/<code translate="no" v-pre>offset</code> to manage result volume.</p>
+<p>To retrieve Unspent Transaction Outputs, see the syntactic sugar function <code translate="no" v-pre>getUTXOs</code>, which internally calls <code translate="no" v-pre>getTXOs</code> with the <code translate="no" v-pre>isSpent: false</code> parameter.</p>
+<p>To retrieve Bitcoin Computer objects, see the syntactic sugar function <code translate="no" v-pre>getOTXOs</code>, which internally calls <code translate="no" v-pre>getTXOs</code> with the <code translate="no" v-pre>isObject: true</code> parameter.</p>
+<p>To retrieve unspent Bitcoin Computer objects, see the syntactic sugar function <code translate="no" v-pre>getUOTXOs</code>, which internally calls <code translate="no" v-pre>getTXOs</code> with the parameters <code translate="no" v-pre>isObject: true</code> and <code translate="no" v-pre>isSpent: false</code>.</p>
+<h2 id="example">Example</h2>
+<div id="example-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">import { Computer, Contract } from '@bitcoin-computer/lib'
+import { crypto, script } from '@bitcoin-computer/nakamotojs'
+import { chain, expect, network, sleep, url } from '../../utils/index.js'
+
+describe('getTXOs', () =&gt; {
+  let computer: Computer
+
+  class Counter extends Contract {
+    x: number
+    constructor() {
+      super({ x: 0 })
+    }
+    inc() {
+      this.x += 1
+    }
+  }
+  class Token extends Contract {
+    amount: bigint
+    constructor(to: string, amount: bigint) {
+      super({ _owners: [to], amount })
+    }
+
+    transfer(to: string, amount: bigint): Token {
+      if (this.amount &gt;= amount) {
+        // Send partial amount in a new object
+        this.amount -= amount
+        return new Token(to, amount)
+      }
+      throw new Error('Insufficient funds')
+    }
+  }
+
+  class Payment extends Contract {
+    constructor(_satoshis: bigint) {
+      super({ _satoshis })
+    }
+    transfer(to: string) {
+      this._owners = [to]
+    }
+    setSatoshis(a: bigint) {
+      this._satoshis = a
+    }
+  }
+
+  before('Fund computer', async () =&gt; {
+    computer = new Computer({ chain, network, url })
+    await computer.faucet(3e8)
+    const c = await computer.new(Counter, [])
+    await c.inc()
+  })
+
+  describe('Error handling', () =&gt; {
+    it('Should throw for an empty query string', async () =&gt; {
+      let error
+      try {
+        await computer.getTXOs({})
+      } catch (e: any) {
+        error = e
+      }
+      expect(error).to.be.instanceOf(Error)
+      expect(error.message).to.eq('At least one query parameter must be provided')
+    })
+    it('Should throw when the query string only includes verbosity', async () =&gt; {
+      let error
+      try {
+        await computer.getTXOs({ verbosity: 1 })
+      } catch (e: any) {
+        error = e
+      }
+      expect(error).to.be.instanceOf(Error)
+      expect(error.message).to.eq('At least one query parameter must be provided')
+      try {
+        await computer.getTXOs({ verbosity: 0 })
+      } catch (e: any) {
+        error = e
+      }
+      expect(error).to.be.instanceOf(Error)
+      expect(error.message).to.eq('At least one query parameter must be provided')
+    })
+  })
+  describe('Get by rev', () =&gt; {
+    it('Should get TXOs by rev', async () =&gt; {
+      const c3 = await computer.new(Counter, [])
+      const txos = await computer.getTXOs({ rev: c3._rev })
+      expect(txos.length).to.eq(1)
+      expect(txos[0]).to.eq(c3._rev)
+
+      const txosJson = await computer.getTXOs({ rev: c3._rev, verbosity: 1 })
+      expect(txosJson.length).to.eq(1)
+      expect(txosJson[0].rev).to.eq(c3._rev)
+      expect(txosJson[0].isObject).to.eq(true)
+      expect(txosJson[0].satoshis).to.be.a('bigint')
+      expect(txosJson[0].asm).to.be.a('string')
+    })
+  })
+  describe('Get by address', () =&gt; {
+    it('Should get TXOs by address and return an array of strings with the default verbosity', async () =&gt; {
+      const txos = await computer.getTXOs({ address: computer.getAddress() })
+      expect(txos.length).to.be.greaterThan(0)
+      txos.forEach((txo) =&gt; {
+        expect(txo.split(':').length).to.eq(2)
+        expect(txo.split(':')[0].length).to.eq(64)
+      })
+    })
+
+    it('Should  get TXOs by address and return all attributes with verbosity 1', async () =&gt; {
+      const txos = await computer.getTXOs({ verbosity: 1, address: computer.getAddress() })
+      expect(txos.length).to.be.greaterThan(0)
+      txos.forEach((txo) =&gt; {
+        expect(txo.address).to.eq(computer.getAddress())
+        expect(txo.satoshis).to.be.a('bigint')
+        expect(txo.rev).to.be.a('string')
+        expect(txo.asm).to.be.a('string')
+        expect(txo.isObject).to.be.a('boolean')
+      })
+    })
+
+    it('Should get TXOs by address and return unpent txos only with spent=false', async () =&gt; {
+      const allTxos = await computer.getTXOs({ address: computer.getAddress() })
+      const unspentTxos = await computer.getTXOs({
+        address: computer.getAddress(),
+        isSpent: false,
+      })
+      unspentTxos.forEach((txo) =&gt; {
+        expect(allTxos).to.include(txo)
+      })
+    })
+
+    it('Should get TXOs by address and compute the balance for the computer address', async () =&gt; {
+      const txos = await computer.getTXOs({
+        address: computer.getAddress(),
+        isSpent: false,
+        verbosity: 1,
+      })
+      const balance: bigint = txos.reduce((acc: bigint, txo) =&gt; {
+        return acc + txo.satoshis
+      }, 0n)
+
+      const computerBalance = await computer.getBalance()
+      expect(balance).to.be.a('bigint')
+      expect(balance).to.be.greaterThan(0)
+      expect(balance).to.eq(computerBalance.balance)
+    })
+
+    it('Should get TXOs by address and omit on chain objects', async () =&gt; {
+      const c2 = await computer.new(Counter, [])
+      const txos = await computer.getTXOs({
+        address: computer.getAddress(),
+      })
+      expect(txos.length).to.be.greaterThan(0)
+      // On chain objects do not belong to the address query
+      expect(txos).to.not.include(c2._rev)
+    })
+  })
+  describe('Get by satoshis', () =&gt; {
+    it('Should get TXOs by satoshis amount', async () =&gt; {
+      const c1 = await computer.new(Payment, [1000000n])
+      await computer.faucet(2e8)
+      const satoshis = 2_000_000n
+      await c1.setSatoshis(satoshis)
+
+      const txos = await computer.getTXOs({ satoshis })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.not.include(c1._id)
+      expect(txos).to.include(c1._rev)
+    })
+  })
+  describe('Get by asm', () =&gt; {
+    it('Should get TXOs by asm substring', async () =&gt; {
+      class True extends Contract {
+        constructor(script: string) {
+          super({ _owners: script })
+        }
+      }
+      const scriptString = 'OP_TRUE'
+      const c2 = await computer.new(True, [scriptString])
+      const hash = crypto.hash160(script.fromASM(scriptString)).toString('hex')
+      const asm = `OP_HASH160 ${hash} OP_EQUAL`
+
+      const txos = await computer.getTXOs({ asm })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.include(c2._rev)
+    })
+  })
+  describe('Get by mod', () =&gt; {
+    it('Should get TXOs by mod for creation and object function calls', async () =&gt; {
+      const m = await computer.deploy('')
+      const c4 = await computer.new(Counter, [], m)
+      await c4.inc()
+      await sleep(1000)
+      const txos = await computer.getTXOs({ mod: m })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.include(c4._id)
+      expect(txos).to.include(c4._rev)
+    })
+
+    it('Should get TXOs by mod for objects created directly with .new()', async () =&gt; {
+      const m = await computer.deploy(`export ${Token}`)
+      const t = await computer.new(Token, [computer.getPublicKey(), 100n], m)
+
+      const txos = await computer.getTXOs({ mod: m })
+
+      expect(txos).to.include(t._id)
+    })
+
+    it('Should NOT return TXO revisions created by .transfer() when filtering by mod', async () =&gt; {
+      const m = await computer.deploy(`export ${Token}`)
+      const t = await computer.new(Token, [computer.getPublicKey(), 100n], m)
+      const computer2 = new Computer({ chain, network, url })
+      const newToken = await t.transfer(computer2.getPublicKey(), 40n)
+
+      const txos = await computer.getTXOs({ mod: m })
+
+      expect(txos).not.to.include(newToken._rev)
+    })
+
+    it('Should get TXOs by mod on token transfers with explicit different mod parameter', async () =&gt; {
+      const m = await computer.deploy(`export ${Token}`)
+      const m1 = await computer.deploy(``) // different mod
+      const t = await computer.new(Token, [computer.getPublicKey(), 100n], m)
+      const computer2 = new Computer({ chain, network, url })
+      const transferTx = await computer.encode({
+        exp: `a.transfer('${computer2.getPublicKey()}', 40n)`,
+        env: { a: t._rev },
+        mod: m1, // explicitly specifying the mod here
+      })
+      await computer.broadcast(transferTx.tx!)
+
+      // sync to the new token
+      const newToken = await computer.sync&lt;typeof Token&gt;(`${transferTx.tx!.getId()}:0`)
+
+      await computer.waitForIndexed(newToken._rev)
+      const txos = await computer.getTXOs({ mod: m1 })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.not.include(t._id)
+      expect(txos).to.include(newToken._rev)
+    })
+  })
+  describe('Get by isObject', () =&gt; {
+    it('Should get TXOs by isObject key', async () =&gt; {
+      const computer2 = new Computer({ chain, network, url })
+      await computer2.faucet(1e8)
+      const c2 = await computer2.new(Counter, [])
+      await computer2.waitForIndexed(c2._rev)
+      const objectTxos = await computer2.getTXOs({ isObject: true })
+      expect(objectTxos.length).to.be.greaterThan(0)
+      expect(objectTxos).to.include(c2._rev)
+
+      const nonObjectTxos = await computer2.getTXOs({ isObject: false })
+      expect(nonObjectTxos.length).to.be.greaterThan(0)
+      expect(nonObjectTxos).to.not.include(c2._rev)
+
+      // It is a good practice to combine isObject with publicKey to narrow down the search
+      const objectTxosByPubKey = await computer2.getTXOs({
+        isObject: true,
+        publicKey: computer2.getPublicKey(),
+      })
+      expect(objectTxosByPubKey.length).to.be.greaterThan(0)
+      expect(objectTxosByPubKey).to.include(c2._rev)
+
+      // Lets spend the on chain object to test isObject filter
+      await c2.inc()
+
+      const objectTxosAfterSpend = await computer2.getTXOs({
+        isObject: true,
+        publicKey: computer2.getPublicKey(),
+      })
+
+      expect(objectTxosAfterSpend.length).to.greaterThan(0)
+      const spent = objectTxosAfterSpend.filter((txo) =&gt; txo === c2._id)
+      expect(spent.length).to.eq(1)
+      const unspent = objectTxosAfterSpend.filter((txo) =&gt; txo === c2._rev)
+      expect(unspent.length).to.eq(1)
+    })
+  })
+  describe('Get by previous', () =&gt; {
+    it('Should get TXOs by previous', async () =&gt; {
+      const c2 = await computer.new(Counter, [])
+      await c2.inc()
+
+      const txos = await computer.getTXOs({ previous: c2._id })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.include(c2._rev)
+    })
+  })
+  describe('Get by exp', () =&gt; {
+    it('Should get TXOs by exp', async () =&gt; {
+      class C extends Contract {}
+
+      const exp = `${C} new ${C.name}()`
+      const { tx } = await computer.encode({ exp })
+      await computer.broadcast(tx!)
+
+      const txos = await computer.getTXOs({ exp })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.include(`${tx!.getId()}:0`)
+    })
+  })
+  describe('Get by blockHash', () =&gt; {
+    it('Should get TXOs by blockHash', async () =&gt; {
+      const c2 = await computer.new(Counter, [])
+      const computer2 = new Computer({ chain, network, url })
+
+      // mine a block to confirm the transaction
+      const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
+      await sleep(1000)
+      const txos = await computer.getTXOs({ blockHash: blockHex.result[0] })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.include(c2._rev)
+    })
+  })
+  describe('Get by blockHeight', () =&gt; {
+    it('Should get TXOs by blockHeight', async () =&gt; {
+      const c2 = await computer.new(Counter, [])
+      const computer2 = new Computer({ chain, network, url })
+
+      // mine a block to confirm the transaction
+      const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
+      const blockInfo = await computer.rpc('getBlock', `${blockHex.result[0]} 1`)
+      await sleep(1000)
+      const txos = await computer.getTXOs({ blockHeight: blockInfo.result.height })
+      expect(txos.length).to.be.greaterThan(0)
+      expect(txos).to.include(c2._rev)
+    })
+  })
+  describe('Get TXOs by blockIndex', () =&gt; {
+    it('Should get TXOs by blockIndex', async () =&gt; {
+      const c2 = await computer.new(Counter, [])
+      await c2.inc()
+      const computer2 = new Computer({ chain, network, url })
+
+      // mine a block to confirm the transaction
+      const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
+      const blockInfo = await computer.rpc('getBlock', `${blockHex.result[0]} 1`)
+      await sleep(1000)
+
+      // check tx index 0 and 1
+      const txosIdx0 = await computer.getTXOs({ blockIndex: 0, blockHash: blockInfo.result.hash })
+      expect(txosIdx0.length).to.be.greaterThan(0)
+      expect(txosIdx0).to.include(`${blockInfo.result.tx[0]}:0`)
+      const txosIdx1 = await computer.getTXOs({ blockIndex: 1, blockHash: blockInfo.result.hash })
+      expect(txosIdx1.length).to.be.greaterThan(0)
+      expect(txosIdx1).to.include(`${blockInfo.result.tx[1]}:0`)
+    })
+  })
+  describe('Get by publicKey', () =&gt; {
+    it('Should get TXOs by public key and include on chain objects', async () =&gt; {
+      const c2 = await computer.new(Counter, [])
+      const txos = await computer.getTXOs({ publicKey: computer.getPublicKey() })
+      expect(txos.length).to.be.greaterThan(0)
+      // On chain objects belong to the computer's public key
+      expect(txos).includes(c2._rev)
+    })
+  })
+  describe('Get by isSpent', () =&gt; {
+    it('Should get TXOs by isSpent key', async () =&gt; {
+      const c2 = await computer.new(Counter, [])
+      await c2.inc()
+
+      const unspentTxos = await computer.getTXOs({
+        isSpent: false,
+        publicKey: computer.getPublicKey(),
+      })
+      expect(unspentTxos.length).to.be.greaterThan(0)
+      expect(unspentTxos).to.include(c2._rev)
+      expect(unspentTxos).to.not.include(c2._id)
+
+      const spentTxos = await computer.getTXOs({
+        isSpent: true,
+        publicKey: computer.getPublicKey(),
+      })
+      expect(spentTxos.length).to.be.greaterThan(0)
+      expect(spentTxos).to.include(c2._id)
+      expect(spentTxos).to.not.include(c2._rev)
+    })
+  })
+  describe('Get by isConfirmed', () =&gt; {
+    it('Should get TXOs by isConfirmed key', async () =&gt; {
+      const computer2 = new Computer({ chain, network, url })
+      await computer2.faucet(1e8)
+      const c2 = await computer2.new(Counter, [])
+
+      const unconfirmedTxos = await computer2.getTXOs({
+        isConfirmed: false,
+        publicKey: computer2.getPublicKey(),
+      })
+      expect(unconfirmedTxos.length).to.be.greaterThan(0)
+      expect(unconfirmedTxos).to.include(c2._rev)
+
+      // mine a block to confirm the transaction
+      await computer2.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
+
+      await sleep(1000)
+      const confirmedTxos = await computer2.getTXOs({
+        isConfirmed: true,
+        publicKey: computer2.getPublicKey(),
+      })
+      expect(confirmedTxos.length).to.be.greaterThan(0)
+      expect(confirmedTxos).to.include(c2._rev)
+    })
+  })
+  describe('Get by limit, offset and order', () =&gt; {
+    it('Should get TXOs by limit, offset and order', async () =&gt; {
+      const txoIds: string[] = []
+      for (let i = 0; i &lt; 5; i++) {
+        const c = await computer.new(Counter, [])
+        txoIds.push(c._rev)
+      }
+
+      const allTxos = await computer.getTXOs({
+        publicKey: computer.getPublicKey(),
+        order: 'DESC',
+      })
+      const limitedTxos = await computer.getTXOs({
+        publicKey: computer.getPublicKey(),
+        limit: 2,
+        offset: 1,
+        order: 'DESC',
+      })
+
+      expect(limitedTxos.length).to.eq(2)
+      expect(limitedTxos[0]).to.eq(allTxos[1])
+      expect(limitedTxos[1]).to.eq(allTxos[2])
+    })
+  })
+  describe('Should work with deletions', () =&gt; {
+    it('Deleted objects should not be included in utxos', async () =&gt; {
+      const c2 = await computer.new(Counter, [])
+      await c2.inc()
+      await computer.delete([c2._rev])
+
+      const utxos = await computer.getTXOs({
+        publicKey: computer.getPublicKey(),
+        isSpent: false,
+      })
+      expect(utxos.length).to.be.greaterThan(0)
+      expect(utxos).to.not.include(c2._rev)
+    })
+  })
+})</code></pre>
+</doc-codeblock></div>
+<p><a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-txos.test.ts" target=_blank>Source</a></p>
+
+                
+                <!-- Required only on API pages -->
+                <doc-toolbar-member-filter-no-results></doc-toolbar-member-filter-no-results>
+            </div>
+            <footer id="retype-content-footer" class="clear-both">
+            
+                <nav id="retype-nextprev" class="print:hidden flex mt-14">
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/getpublickey/">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                            <span>
+                                <span class="block text-xs font-normal text-base-text-muted">Previous</span>
+                                <span class="block mt-1">get​Public​Key</span>
+                            </span>
+                        </a>
+                    </div>
+            
+                    <div class="w-1/2">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/getutxos2/">
+                            <span>
+                                <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
+                                <span class="block mt-1">get​UTX​Os</span>
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
+                        </a>
+                    </div>
+                </nav>
+            </footer>
+        </main>
+
+        <div id="retype-page-footer" class="print:border-none border-t border-base-border pt-6 mb-8">
+            <footer class="flex flex-wrap items-center justify-between print:justify-center">
+                <div id="retype-footer-links" class="print:hidden">
+                    <ul class="flex flex-wrap items-center text-sm">
+                    </ul>
+                </div>
+                <div id="retype-copyright" class="print:justify-center py-2 text-footer-text font-footer-link text-sm leading-relaxed"><p>© Copyright BCDB Inc. 2026. All rights reserved.</p></div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Rendered if sidebar right is enabled -->
+    <!-- Sidebar right skeleton-->
+    <div v-cloak class="fixed top-0 bottom-0 right-0 translate-x-full bg-sidebar-right-bg border-sidebar-right-border lg:sticky lg:border-l lg:shrink-0 lg:pt-6 lg:translate-x-0 sm:w-1/2 lg:w-64 lg:z-0 md:w-104 sidebar-right skeleton">
+        <div class="pl-5">
+            <div class="w-32 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-48 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+            <div class="w-40 h-3 mb-4 bg-skeleton-bg rounded-full loading"></div>
+        </div>
+    </div>
+
+    <!-- User should be able to hide sidebar right -->
+    <doc-sidebar-right v-cloak></doc-sidebar-right>
+</div>
+
+        </div>
+    </div>
+
+    <doc-search-mobile></doc-search-mobile>
+    <doc-back-to-top></doc-back-to-top>
+</div>
+
+
+    <div id="retype-overlay-target"></div>
+
+        <script data-cfasync="false">window.__DOCS__ = { "title": "getTXOs", level: 3, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: false, hasMath: false, tocDepth: 23, "md": "/lib/computer/gettxos.md" }</script>
+</body>
+</html>
