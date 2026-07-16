@@ -34,6 +34,7 @@
   "type": "module",
   "exports": {
     ".": {
+      "types": "./types/src/index.d.ts",
       "node": {
         "import": "./dist/bc-lib.main.es.mjs",
         "require": "./dist/bc-lib.commonjs.min.cjs"
@@ -63,8 +64,7 @@
     "LICENSE.md",
     "LEGAL.md",
     "dist",
-    "computer.d.ts",
-    "index.d.ts"
+    "types"
   ],
   "scripts": {
     "clean": "rm -rf js-build && npm run clean:logs",

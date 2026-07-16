@@ -27,9 +27,9 @@ In the Bitcoin Computer protocol, expressions with undefined variables are used 
 
 ### Example
 
-![](/static/legend@1x.png)
+![](./static/legend@1x.png)
 
-![](/static/int-example@1x.png)
+![](./static/int-example@1x.png)
 
 Consider the transactions on the left. The first is labelled with `1+2`. This expression contains no undefined variables and evaluates to `3`, therefore the output of the first transaction is associated with the value `3`.
 
@@ -59,7 +59,6 @@ Smart contracts can contain the keyword properties `_owners`, `_satoshis`, `_url
 - The `_owners` property of a smart object determines the output script of the output that is associated with it. If it is set to an array of strings that encode public keys, then the output script will be a 1-of-n multisig script with these public keys. If it is set to a string that encodes a Bitcoin Script ASM, then that will be the script of the output.
 - The `_satoshis` property can be set to a number (bigint) and determines the number of satoshis of the output associated with a smart object. If this property is undefined the output will contain a minimal, non-dust amount of satoshis.
 - The `_url` and `_readers` properties together control where the metadata (including the JavaScript expression) is stored and whether it is encrypted. There are four combinations:
-
   - **Neither `_url` nor `_readers`**: The expression and full metadata are stored unencrypted directly in the transaction’s metadata outputs.
   - **Only `_readers`**: The expression and metadata are stored encrypted directly in the transaction’s metadata outputs (only the specified readers can decrypt them).
   - **Only `_url`**: Only a small pointer/hash is stored on-chain in the (still-present) dust metadata output(s). The full (unencrypted) metadata is stored on the server at the provided URL. This changes the on-chain dust cost from proportional to the size of the expression to a small constant, independent of expression size.
