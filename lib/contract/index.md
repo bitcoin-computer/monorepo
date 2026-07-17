@@ -70,86 +70,159 @@ expect(c.n).eq(0)
 
 ## Querying inside of a Contract
 
-Smart contracts can access several built-in functions to explore information related to revisions, transaction outputs, trace transaction ancestry or query for balances. These functions do not modify blockchain data. Instead, they allow a contract to traverse its own revision graph, another contract's revision graph or access contextual information derived from transactions.
+Smart contracts can access several built-in functions (provided by `InnerComputer`) to explore information related to revisions, transaction ancestry, on-chain state, and block metadata. These functions do not modify blockchain data. Instead, they allow a contract to traverse its own revision graph, another contract's revision graph, load modules, or access contextual information derived from transactions in a safe and deterministic way.
 
-### Determinism rule
+### Determinism and Safety Rules
 
-The build-in functions are designed to be deterministic, ensuring that they yield consistent results across different instances of the same blockchain state. This means that given two instances of the same blockchain state, executing a contract method with the same parameters will always return the same result.
+The built-in functions are designed to be **deterministic**: given two identical blockchain states and two identical Bitcoin Computer node states, a contract method invoked with the same parameters must always return the same result.
 
-Definition
+To enforce safety and determinism:
+
+- Accessing **non-existent on-chain state** (a revision, transaction, or module that cannot be found) is **forbidden** inside smart contracts.
+- If a query function is called with malformed identifiers, or identifiers that do not correspond to actual Bitcoin Computer state, **the entire contract evaluation is invalidated**.
+- Internally, a global invalid-state flag is set. After evaluation, `Db.eval` checks this flag; if set, the evaluation (and thus the transaction) is rejected.
+- The flag is reset at the start of every new compartment evaluation.
+
+When invalidation occurs, the function throws an error with a message like:
+
+> "Accessing non-existent on-chain state inside a smart contract is forbidden."
+
+This acts as a hard safety boundary: contracts cannot silently read missing data or depend on off-chain assumptions.
+
+### Full API Reference
+
+All query functions available inside `Contract` methods (injected via the secure `InnerComputer` compartment):
+
+| Function          | Signature                                                     | Returns                              | Invalidates on missing / error?      | Notes                                                         |
+| ----------------- | ------------------------------------------------------------- | ------------------------------------ | ------------------------------------ | ------------------------------------------------------------- |
+| `sync`            | `sync(location: string): Promise<any>`                        | The latest object state              | Yes                                  | Deep-cloned with BigInt support                               |
+| `decode`          | `decode(txId: string): Promise<TransitionJSON>`               | `{ exp, env?, mod? }` metadata       | Yes                                  | Normalizes `mod` to `undefined` if absent                     |
+| `load`            | `load(location: string): Promise<Record<string, any>>`        | Module exports namespace             | Yes                                  | For dynamic module loading inside contracts                   |
+| `getAncestors`    | `getAncestors(location: string): Promise<string[]>`           | Array of ancestor locations          | Yes (on error)                       | Empty array `[]` if no ancestors                              |
+| `first`           | `first(rev: string): Promise<string>`                         | First revision in lineage            | Yes                                  | Always returns a string for valid input                       |
+| `prev`            | `prev(rev: string): Promise<string \| undefined>`             | Previous revision or `undefined`     | Only on underlying error             | Safe to call on tip; returns `undefined` without invalidation |
+| `next`            | `next(rev: string): Promise<string \| undefined>`             | Next revision or throws              | **Yes, including if no next exists** | Strict: absence of next **invalidates** execution             |
+| `last`            | `last(rev: string): Promise<string \| undefined>`             | Latest (tip) revision or `undefined` | Only on underlying error             | Returns tip of lineage                                        |
+| `txIdToBlockTime` | `txIdToBlockTime(txId: string): Promise<bigint \| undefined>` | Block time as `bigint`               | Yes                                  | Requires mined Bitcoin Computer transaction                   |
+
+**Quick tip:** Use `getAncestors`, `first`, `last`, and `prev` for safe traversal. Be cautious with `next()` — it will invalidate the contract if you call it on the current tip revision.
+
+### Detailed Function Documentation
+
+#### `sync`
+
+Returns the latest on-chain state for the given `location` (revision identifier) as a plain JavaScript object.
 
 ```ts
-Given two identical blockchain states and two identical Bitcoin Computer Node states, a contract method invoked with the same parameters must always return the same result.
+sync(location: string): Promise<any>
 ```
 
-To warrant this determinism, the functions will throw an error if they are called with invalid arguments, such as malformed revisions/transactionIds, a revision identifier that does not correspond to a Bitcoin Computer revision or a transaction ID that does not correspond to a Bitcoin Computer transaction.
+- Performs a deep clone (via `stringify`/`parse` with BigInt support) so contracts receive a plain, side-effect-free object.
+- If the location does not exist or cannot be synced, the evaluation is **invalidated** and an error is thrown.
 
-### Available Functions
+#### `decode`
 
-These functions are:
-
-#### `prev`
-
-Returns the immediate previous revision of the provided revision identifier, or undefined if there is no immediate previous object.
-If the provided revision identifier is not valid or does not correspond to a Bitcoin Computer revision, the full execution is invalidated and an error is thrown.
+Parses a Bitcoin transaction ID and returns its Bitcoin Computer metadata if it is a valid Bitcoin Computer transaction.
 
 ```ts
-prev(rev: string): Promise<string | undefined>
+decode(txId: string): Promise<TransitionJSON>
 ```
 
-#### `next`
-
-Returns the immediate next revision that follows the provided revision identifier, if any.
-If the provided revision identifier is not valid, does not correspond to a Bitcoin Computer revision, or there is no next object, the full execution is invalidated and an error is thrown.
+Returned shape (approximate):
 
 ```ts
-next(rev: string): Promise<string | undefined>
+{
+  exp: string
+  env?: { [s: string]: string }
+  mod?: string
+}
 ```
+
+- If `mod` is falsy in the raw transition, it is normalized to `undefined`.
+- If the `txId` is malformed or does not correspond to a Bitcoin Computer transaction, the evaluation is **invalidated**.
+
+#### `load`
+
+Dynamically loads a module by its specifier (location) and returns its exports.
+
+```ts
+load(location: string): Promise<Record<string, any>>
+```
+
+- Useful for importing shared contract logic or libraries inside a contract method.
+- If the module specifier is invalid or the module cannot be loaded, the evaluation is **invalidated**.
+
+#### `getAncestors`
+
+Returns the full ancestry chain for a revision/location as an array of revision identifiers.
+
+```ts
+getAncestors(location: string): Promise<string[]>
+```
+
+- Returns `[]` if there are no ancestors.
+- If the location is invalid or cannot be resolved, the evaluation is **invalidated**.
+- This is the recommended safe way to traverse history without risking invalidation from `next()`.
 
 #### `first`
 
-Returns the first revision in the lineage of the given revision, i.e., the original revision from which it was derived.
-If the provided revision identifier is not valid or does not correspond to a Bitcoin Computer revision, the full execution is invalidated and an error is thrown.
+Returns the very first (root/original) revision in the lineage of the given revision.
 
 ```ts
 first(rev: string): Promise<string>
 ```
 
-#### `getAncestors`
+- Always returns a `string` for a valid revision.
+- Invalidates the evaluation if the revision does not exist.
 
-Returns the ancestry of a transaction identifier, describing how it was derived.
-If there is no ancestor, returns an empty array.
-If the provided transaction identifier is malformed, the full execution is invalidated and an error is thrown.
+#### `prev`
 
-```ts
-getAncestors(location: string): Promise<string[] | Map<string, string>>
-```
-
-### `sync`
-
-The `sync` the latest state for a revision, and returns the object representation of that state. If the provided revision identifier is not valid or does not correspond to a Bitcoin Computer revision, the full execution is invalidated and an error is thrown.
+Returns the immediately preceding revision in the lineage, or `undefined` if the given revision is the first in its chain.
 
 ```ts
-sync(rev: string): Promise<any>
+prev(rev: string): Promise<string | undefined>
 ```
 
-### `decode`
+- Safe to call on any revision: if there is no previous revision, it returns `undefined` **without** invalidating the contract.
+- Only invalidates on malformed input or internal retrieval errors.
 
-Parses a Bitcoin transaction ID and returns its metadata if it is a Bitcoin Computer transaction. If the provided transaction identifier is malformed or does not correspond to a Bitcoin Computer transaction, the full execution is invalidated and an error is thrown.
+#### `next`
+
+Returns the immediately following revision in the lineage.
 
 ```ts
-decode(txId: string) =>
-  Promise<{
-    exp: string
-    env?: { [s: string]: string }
-    mod?: string
-  }>
+next(rev: string): Promise<string | undefined>
 ```
 
-### `load`
+- **Critical behavior**: If there is no next revision (i.e. you are at the tip of the lineage), this function **invalidates the entire contract evaluation** and throws.
+- This is stricter than `prev()`. Use it only when you are certain a next revision must exist, or prefer `last()` / `getAncestors()` for safer traversal.
+- Invalidates on malformed input or retrieval errors as well.
 
-Loads a module from a given module specifier. If the provided module specifier is malformed or does not correspond to a valid Bitcoin Computer module, the full execution is invalidated and an error is thrown.
+#### `last`
+
+Returns the most recent (tip) revision in the lineage of the given revision.
 
 ```ts
-load(location: string): Promise<ModuleExportsNamespace>
+last(rev: string): Promise<string | undefined>
 ```
+
+- Returns the current latest revision for that object lineage.
+- Only invalidates on errors retrieving the lineage; may return `undefined` in edge cases without invalidation.
+
+#### `txIdToBlockTime`
+
+Returns the Unix block time (as `bigint`) at which the given transaction was included in a block.
+
+```ts
+txIdToBlockTime(txId: string): Promise<bigint | undefined>
+```
+
+- Useful for time-based logic inside contracts (e.g. vesting, expiration, chess time locks).
+- If the transaction is not found or has no associated block time (e.g. unmined or non-Bitcoin-Computer tx), the evaluation is **invalidated**.
+
+### Usage Notes & Best Practices
+
+1. **Prefer safe traversal methods**: Use `getAncestors()`, `first()`, `last()`, and `prev()` when exploring history. Reserve `next()` for cases where you have already verified a successor must exist.
+2. **Handle `undefined`**: Several functions (`prev`, `last`, possibly `txIdToBlockTime`) can legitimately return `undefined`. Always check before using the result.
+
+This querying API, combined with the strict property update rules of `Contract`, enables powerful, verifiable, and safe on-chain logic while protecting the network from non-deterministic or invalid contract executions.

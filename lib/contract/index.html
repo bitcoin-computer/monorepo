@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837560724466">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837629347400">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../static/favicon.ico" />
-    <link href="../../resources/css/retype.css?v=4.6.0.837560724466" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.837629347400" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.837629347400" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.837560724466" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.837560724466" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.837629347400" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.837629347400" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -63,7 +63,7 @@
                 <div class="flex items-center px-2 md:px-6">
                     <a id="retype-branding-logo" href="https://docs.bitcoincomputer.io/" class="flex items-center leading-snug text-xl">
                         <span class="dark:text-white font-bold line-clamp-1 md:line-clamp-2">Bitcoin Computer</span>
-                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">0.26.0</span>
+                    </a><span id="retype-branding-label" class="inline-flex mt-1 px-2 py-1 ml-4 text-xs font-medium leading-none items-center rounded-md bg-branding-label-bg text-branding-label-text ring-1 ring-branding-label-border ring-inset md:inline-block">0.27.0</span>
                 </div>
     
                 <span class="hidden h-8 border-r md:inline-block border-base-border"></span>
@@ -199,61 +199,212 @@ const c = new C()
 expect(c.n).eq(0)</code></pre>
 </doc-codeblock></div>
 <h2 id="querying-inside-of-a-contract">Querying inside of a Contract</h2>
-<p>Smart contracts can access several built-in functions to explore information related to revisions, transaction outputs, trace transaction ancestry or query for balances. These functions do not modify blockchain data. Instead, they allow a contract to traverse its own revision graph, another contract&#x27;s revision graph or access contextual information derived from transactions.</p>
-<h3 id="determinism-rule">Determinism rule</h3>
-<p>The build-in functions are designed to be deterministic, ensuring that they yield consistent results across different instances of the same blockchain state. This means that given two instances of the same blockchain state, executing a contract method with the same parameters will always return the same result.</p>
-<p>Definition</p>
-<div id="determinism-rule-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">Given two identical blockchain states and two identical Bitcoin Computer Node states, a contract method invoked with the same parameters must always return the same result.</code></pre>
+<p>Smart contracts can access several built-in functions (provided by <code translate="no" v-pre>InnerComputer</code>) to explore information related to revisions, transaction ancestry, on-chain state, and block metadata. These functions do not modify blockchain data. Instead, they allow a contract to traverse its own revision graph, another contract&#x27;s revision graph, load modules, or access contextual information derived from transactions in a safe and deterministic way.</p>
+<h3 id="determinism-and-safety-rules">Determinism and Safety Rules</h3>
+<p>The built-in functions are designed to be <strong>deterministic</strong>: given two identical blockchain states and two identical Bitcoin Computer node states, a contract method invoked with the same parameters must always return the same result.</p>
+<p>To enforce safety and determinism:</p>
+<ul>
+<li>Accessing <strong>non-existent on-chain state</strong> (a revision, transaction, or module that cannot be found) is <strong>forbidden</strong> inside smart contracts.</li>
+<li>If a query function is called with malformed identifiers, or identifiers that do not correspond to actual Bitcoin Computer state, <strong>the entire contract evaluation is invalidated</strong>.</li>
+<li>Internally, a global invalid-state flag is set. After evaluation, <code translate="no" v-pre>Db.eval</code> checks this flag; if set, the evaluation (and thus the transaction) is rejected.</li>
+<li>The flag is reset at the start of every new compartment evaluation.</li>
+</ul>
+<p>When invalidation occurs, the function throws an error with a message like:</p>
+<blockquote>
+<p>&quot;Accessing non-existent on-chain state inside a smart contract is forbidden.&quot;</p>
+</blockquote>
+<p>This acts as a hard safety boundary: contracts cannot silently read missing data or depend on off-chain assumptions.</p>
+<h3 id="full-api-reference">Full API Reference</h3>
+<p>All query functions available inside <code translate="no" v-pre>Contract</code> methods (injected via the secure <code translate="no" v-pre>InnerComputer</code> compartment):</p>
+<retype-table copy-text="| Function          | Signature                                                     | Returns                              | Invalidates on missing / error?      | Notes                                                         |
+| ----------------- | ------------------------------------------------------------- | ------------------------------------ | ------------------------------------ | ------------------------------------------------------------- |
+| `sync`            | `sync(location: string): Promise&lt;any&gt;`                        | The latest object state              | Yes                                  | Deep-cloned with BigInt support                               |
+| `decode`          | `decode(txId: string): Promise&lt;TransitionJSON&gt;`               | `{ exp, env?, mod? }` metadata       | Yes                                  | Normalizes `mod` to `undefined` if absent                     |
+| `load`            | `load(location: string): Promise&lt;Record&lt;string, any&gt;&gt;`        | Module exports namespace             | Yes                                  | For dynamic module loading inside contracts                   |
+| `getAncestors`    | `getAncestors(location: string): Promise&lt;string[]&gt;`           | Array of ancestor locations          | Yes (on error)                       | Empty array `[]` if no ancestors                              |
+| `first`           | `first(rev: string): Promise&lt;string&gt;`                         | First revision in lineage            | Yes                                  | Always returns a string for valid input                       |
+| `prev`            | `prev(rev: string): Promise&lt;string \| undefined&gt;`             | Previous revision or `undefined`     | Only on underlying error             | Safe to call on tip; returns `undefined` without invalidation |
+| `next`            | `next(rev: string): Promise&lt;string \| undefined&gt;`             | Next revision or throws              | **Yes, including if no next exists** | Strict: absence of next **invalidates** execution             |
+| `last`            | `last(rev: string): Promise&lt;string \| undefined&gt;`             | Latest (tip) revision or `undefined` | Only on underlying error             | Returns tip of lineage                                        |
+| `txIdToBlockTime` | `txIdToBlockTime(txId: string): Promise&lt;bigint \| undefined&gt;` | Block time as `bigint`               | Yes                                  | Requires mined Bitcoin Computer transaction                   |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>Function</th>
+<th>Signature</th>
+<th>Returns</th>
+<th>Invalidates on missing / error?</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>sync</code></td>
+<td><code translate="no" v-pre>sync(location: string): Promise&lt;any&gt;</code></td>
+<td>The latest object state</td>
+<td>Yes</td>
+<td>Deep-cloned with BigInt support</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>decode</code></td>
+<td><code translate="no" v-pre>decode(txId: string): Promise&lt;TransitionJSON&gt;</code></td>
+<td><code translate="no" v-pre>{ exp, env?, mod? }</code> metadata</td>
+<td>Yes</td>
+<td>Normalizes <code translate="no" v-pre>mod</code> to <code translate="no" v-pre>undefined</code> if absent</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>load</code></td>
+<td><code translate="no" v-pre>load(location: string): Promise&lt;Record&lt;string, any&gt;&gt;</code></td>
+<td>Module exports namespace</td>
+<td>Yes</td>
+<td>For dynamic module loading inside contracts</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getAncestors</code></td>
+<td><code translate="no" v-pre>getAncestors(location: string): Promise&lt;string[]&gt;</code></td>
+<td>Array of ancestor locations</td>
+<td>Yes (on error)</td>
+<td>Empty array <code translate="no" v-pre>[]</code> if no ancestors</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>first</code></td>
+<td><code translate="no" v-pre>first(rev: string): Promise&lt;string&gt;</code></td>
+<td>First revision in lineage</td>
+<td>Yes</td>
+<td>Always returns a string for valid input</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>prev</code></td>
+<td><code translate="no" v-pre>prev(rev: string): Promise&lt;string \| undefined&gt;</code></td>
+<td>Previous revision or <code translate="no" v-pre>undefined</code></td>
+<td>Only on underlying error</td>
+<td>Safe to call on tip; returns <code translate="no" v-pre>undefined</code> without invalidation</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>next</code></td>
+<td><code translate="no" v-pre>next(rev: string): Promise&lt;string \| undefined&gt;</code></td>
+<td>Next revision or throws</td>
+<td><strong>Yes, including if no next exists</strong></td>
+<td>Strict: absence of next <strong>invalidates</strong> execution</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>last</code></td>
+<td><code translate="no" v-pre>last(rev: string): Promise&lt;string \| undefined&gt;</code></td>
+<td>Latest (tip) revision or <code translate="no" v-pre>undefined</code></td>
+<td>Only on underlying error</td>
+<td>Returns tip of lineage</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>txIdToBlockTime</code></td>
+<td><code translate="no" v-pre>txIdToBlockTime(txId: string): Promise&lt;bigint \| undefined&gt;</code></td>
+<td>Block time as <code translate="no" v-pre>bigint</code></td>
+<td>Yes</td>
+<td>Requires mined Bitcoin Computer transaction</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><strong>Quick tip:</strong> Use <code translate="no" v-pre>getAncestors</code>, <code translate="no" v-pre>first</code>, <code translate="no" v-pre>last</code>, and <code translate="no" v-pre>prev</code> for safe traversal. Be cautious with <code translate="no" v-pre>next()</code> — it will invalidate the contract if you call it on the current tip revision.</p>
+<h3 id="detailed-function-documentation">Detailed Function Documentation</h3>
+<h4 id="sync"><code translate="no" v-pre>sync</code></h4>
+<p>Returns the latest on-chain state for the given <code translate="no" v-pre>location</code> (revision identifier) as a plain JavaScript object.</p>
+<div id="sync-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">sync(location: string): Promise&lt;any&gt;</code></pre>
 </doc-codeblock></div>
-<p>To warrant this determinism, the functions will throw an error if they are called with invalid arguments, such as malformed revisions/transactionIds, a revision identifier that does not correspond to a Bitcoin Computer revision or a transaction ID that does not correspond to a Bitcoin Computer transaction.</p>
-<h3 id="available-functions">Available Functions</h3>
-<p>These functions are:</p>
-<h4 id="prev"><code translate="no" v-pre>prev</code></h4>
-<p>Returns the immediate previous revision of the provided revision identifier, or undefined if there is no immediate previous object.
-If the provided revision identifier is not valid or does not correspond to a Bitcoin Computer revision, the full execution is invalidated and an error is thrown.</p>
-<div id="prev-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">prev(rev: string): Promise&lt;string | undefined&gt;</code></pre>
+<ul>
+<li>Performs a deep clone (via <code translate="no" v-pre>stringify</code>/<code translate="no" v-pre>parse</code> with BigInt support) so contracts receive a plain, side-effect-free object.</li>
+<li>If the location does not exist or cannot be synced, the evaluation is <strong>invalidated</strong> and an error is thrown.</li>
+</ul>
+<h4 id="decode"><code translate="no" v-pre>decode</code></h4>
+<p>Parses a Bitcoin transaction ID and returns its Bitcoin Computer metadata if it is a valid Bitcoin Computer transaction.</p>
+<div id="decode-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">decode(txId: string): Promise&lt;TransitionJSON&gt;</code></pre>
 </doc-codeblock></div>
-<h4 id="next"><code translate="no" v-pre>next</code></h4>
-<p>Returns the immediate next revision that follows the provided revision identifier, if any.
-If the provided revision identifier is not valid, does not correspond to a Bitcoin Computer revision, or there is no next object, the full execution is invalidated and an error is thrown.</p>
-<div id="next-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">next(rev: string): Promise&lt;string | undefined&gt;</code></pre>
+<p>Returned shape (approximate):</p>
+<div id="decode-code-2" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">{
+  exp: string
+  env?: { [s: string]: string }
+  mod?: string
+}</code></pre>
 </doc-codeblock></div>
+<ul>
+<li>If <code translate="no" v-pre>mod</code> is falsy in the raw transition, it is normalized to <code translate="no" v-pre>undefined</code>.</li>
+<li>If the <code translate="no" v-pre>txId</code> is malformed or does not correspond to a Bitcoin Computer transaction, the evaluation is <strong>invalidated</strong>.</li>
+</ul>
+<h4 id="load"><code translate="no" v-pre>load</code></h4>
+<p>Dynamically loads a module by its specifier (location) and returns its exports.</p>
+<div id="load-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">load(location: string): Promise&lt;Record&lt;string, any&gt;&gt;</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>Useful for importing shared contract logic or libraries inside a contract method.</li>
+<li>If the module specifier is invalid or the module cannot be loaded, the evaluation is <strong>invalidated</strong>.</li>
+</ul>
+<h4 id="getancestors"><code translate="no" v-pre>getAncestors</code></h4>
+<p>Returns the full ancestry chain for a revision/location as an array of revision identifiers.</p>
+<div id="getancestors-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">getAncestors(location: string): Promise&lt;string[]&gt;</code></pre>
+</doc-codeblock></div>
+<ul>
+<li>Returns <code translate="no" v-pre>[]</code> if there are no ancestors.</li>
+<li>If the location is invalid or cannot be resolved, the evaluation is <strong>invalidated</strong>.</li>
+<li>This is the recommended safe way to traverse history without risking invalidation from <code translate="no" v-pre>next()</code>.</li>
+</ul>
 <h4 id="first"><code translate="no" v-pre>first</code></h4>
-<p>Returns the first revision in the lineage of the given revision, i.e., the original revision from which it was derived.
-If the provided revision identifier is not valid or does not correspond to a Bitcoin Computer revision, the full execution is invalidated and an error is thrown.</p>
+<p>Returns the very first (root/original) revision in the lineage of the given revision.</p>
 <div id="first-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">first(rev: string): Promise&lt;string&gt;</code></pre>
 </doc-codeblock></div>
-<h4 id="getancestors"><code translate="no" v-pre>getAncestors</code></h4>
-<p>Returns the ancestry of a transaction identifier, describing how it was derived.
-If there is no ancestor, returns an empty array.
-If the provided transaction identifier is malformed, the full execution is invalidated and an error is thrown.</p>
-<div id="getancestors-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">getAncestors(location: string): Promise&lt;string[] | Map&lt;string, string&gt;&gt;</code></pre>
+<ul>
+<li>Always returns a <code translate="no" v-pre>string</code> for a valid revision.</li>
+<li>Invalidates the evaluation if the revision does not exist.</li>
+</ul>
+<h4 id="prev"><code translate="no" v-pre>prev</code></h4>
+<p>Returns the immediately preceding revision in the lineage, or <code translate="no" v-pre>undefined</code> if the given revision is the first in its chain.</p>
+<div id="prev-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">prev(rev: string): Promise&lt;string | undefined&gt;</code></pre>
 </doc-codeblock></div>
-<h3 id="sync"><code translate="no" v-pre>sync</code></h3>
-<p>The <code translate="no" v-pre>sync</code> the latest state for a revision, and returns the object representation of that state. If the provided revision identifier is not valid or does not correspond to a Bitcoin Computer revision, the full execution is invalidated and an error is thrown.</p>
-<div id="sync-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">sync(rev: string): Promise&lt;any&gt;</code></pre>
+<ul>
+<li>Safe to call on any revision: if there is no previous revision, it returns <code translate="no" v-pre>undefined</code> <strong>without</strong> invalidating the contract.</li>
+<li>Only invalidates on malformed input or internal retrieval errors.</li>
+</ul>
+<h4 id="next"><code translate="no" v-pre>next</code></h4>
+<p>Returns the immediately following revision in the lineage.</p>
+<div id="next-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">next(rev: string): Promise&lt;string | undefined&gt;</code></pre>
 </doc-codeblock></div>
-<h3 id="decode"><code translate="no" v-pre>decode</code></h3>
-<p>Parses a Bitcoin transaction ID and returns its metadata if it is a Bitcoin Computer transaction. If the provided transaction identifier is malformed or does not correspond to a Bitcoin Computer transaction, the full execution is invalidated and an error is thrown.</p>
-<div id="decode-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">decode(txId: string) =&gt;
-  Promise&lt;{
-    exp: string
-    env?: { [s: string]: string }
-    mod?: string
-  }&gt;</code></pre>
+<ul>
+<li><strong>Critical behavior</strong>: If there is no next revision (i.e. you are at the tip of the lineage), this function <strong>invalidates the entire contract evaluation</strong> and throws.</li>
+<li>This is stricter than <code translate="no" v-pre>prev()</code>. Use it only when you are certain a next revision must exist, or prefer <code translate="no" v-pre>last()</code> / <code translate="no" v-pre>getAncestors()</code> for safer traversal.</li>
+<li>Invalidates on malformed input or retrieval errors as well.</li>
+</ul>
+<h4 id="last"><code translate="no" v-pre>last</code></h4>
+<p>Returns the most recent (tip) revision in the lineage of the given revision.</p>
+<div id="last-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">last(rev: string): Promise&lt;string | undefined&gt;</code></pre>
 </doc-codeblock></div>
-<h3 id="load"><code translate="no" v-pre>load</code></h3>
-<p>Loads a module from a given module specifier. If the provided module specifier is malformed or does not correspond to a valid Bitcoin Computer module, the full execution is invalidated and an error is thrown.</p>
-<div id="load-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">load(location: string): Promise&lt;ModuleExportsNamespace&gt;</code></pre>
+<ul>
+<li>Returns the current latest revision for that object lineage.</li>
+<li>Only invalidates on errors retrieving the lineage; may return <code translate="no" v-pre>undefined</code> in edge cases without invalidation.</li>
+</ul>
+<h4 id="txidtoblocktime"><code translate="no" v-pre>txIdToBlockTime</code></h4>
+<p>Returns the Unix block time (as <code translate="no" v-pre>bigint</code>) at which the given transaction was included in a block.</p>
+<div id="txidtoblocktime-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">txIdToBlockTime(txId: string): Promise&lt;bigint | undefined&gt;</code></pre>
 </doc-codeblock></div>
+<ul>
+<li>Useful for time-based logic inside contracts (e.g. vesting, expiration, chess time locks).</li>
+<li>If the transaction is not found or has no associated block time (e.g. unmined or non-Bitcoin-Computer tx), the evaluation is <strong>invalidated</strong>.</li>
+</ul>
+<h3 id="usage-notes--best-practices">Usage Notes &amp; Best Practices</h3>
+<ol>
+<li><strong>Prefer safe traversal methods</strong>: Use <code translate="no" v-pre>getAncestors()</code>, <code translate="no" v-pre>first()</code>, <code translate="no" v-pre>last()</code>, and <code translate="no" v-pre>prev()</code> when exploring history. Reserve <code translate="no" v-pre>next()</code> for cases where you have already verified a successor must exist.</li>
+<li><strong>Handle <code translate="no" v-pre>undefined</code></strong>: Several functions (<code translate="no" v-pre>prev</code>, <code translate="no" v-pre>last</code>, possibly <code translate="no" v-pre>txIdToBlockTime</code>) can legitimately return <code translate="no" v-pre>undefined</code>. Always check before using the result.</li>
+</ol>
+<p>This querying API, combined with the strict property update rules of <code translate="no" v-pre>Contract</code>, enables powerful, verifiable, and safe on-chain logic while protecting the network from non-deterministic or invalid contract executions.</p>
 
                 
                 <!-- Required only on API pages -->
