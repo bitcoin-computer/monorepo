@@ -20,11 +20,6 @@ const url = process.env.BCN_URL
 const chain = process.env.BCN_CHAIN
 const network = process.env.BCN_NETWORK
 
-export const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-
 describe('TxWrapper', () => {
   const alice = new Computer({ url, chain, network })
   const bob = new Computer({ url, chain, network })
