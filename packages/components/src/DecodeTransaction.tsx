@@ -4,9 +4,13 @@ import { Transaction as BCTransaction } from '@bitcoin-computer/lib'
 import { ComputerContext } from './ComputerContext'
 import { inputsComponent, outputsComponent, transitionComponent } from './Transaction'
 
+type MyRouteParams = {
+  txn?: string
+}
+
 export function DecodeTransactionComponent() {
   const location = useLocation()
-  const params = useParams()
+  const params = useParams<MyRouteParams>()
   const computer = useContext(ComputerContext)
   const [txnData, setTxnData] = useState<any | null>(null)
   const [rpcTxnData, setRPCTxnData] = useState<any | null>(null)

@@ -3,29 +3,68 @@ import { Computer, SmartContract, Contract } from '@bitcoin-computer/lib'
 // eslint-disable-next-line
 type Constructor<T> = new (...args: any[]) => T
 
-export class Token extends Contract {
+export type TokenConstructorParams = {
+  to: string
   amount: bigint
   name: string
-  symbol: string
-  _owners: string[]
+  symbol?: string
+  [s: string]: unknown
+}
 
-  constructor(to: string, amount: bigint, name: string, symbol = '') {
-    super({ _owners: [to], amount, name, symbol })
+/**
+ * Base fungible token contract for the Bitcoin Computer (TBC20 standard).
+ */
+export class Token extends Contract {
+  amount!: bigint
+  name!: string
+  symbol!: string
+  _owners!: string[]
+
+  get root(): string {
+    return this._root
   }
 
-  transfer(to: string, amount?: bigint): Token | undefined {
+  constructor(params: TokenConstructorParams) {
+    const { to, amount, name, symbol = '', ...rest } = params
+    super({ amount, name, symbol, ...rest, _owners: [to] })
+  }
+
+  /**
+   * Transfer tokens to another owner.
+   *
+   * If `amount` is omitted, the entire balance is transferred by reassigning
+   * ownership of this token in place (the same UTXO/output changes owner). 
+   *
+   * For a partial transfer the value is split off into a new token instance for
+   * the recipient. Subclasses can customize that token by overriding
+   * `_createTransferToken`.
+   */
+  transfer(to: string, amount?: bigint): this | undefined {
     if (typeof amount === 'undefined') {
-      // Send entire amount
       this._owners = [to]
       return undefined
     }
-    if (this.amount >= amount) {
-      // Send partial amount in a new object
-      this.amount -= amount
-      const ctor = this.constructor as Constructor<this>
-      return new ctor(to, amount, this.name, this.symbol)
-    }
-    throw new Error('Insufficient funds')
+
+    if (amount <= 0n) throw new Error('Transfer amount must be positive')
+    if (this.amount < amount) throw new Error('Insufficient funds')
+
+    this.amount -= amount
+    return this._createTransferToken(to, amount)
+  }
+
+  /**
+   * Factory method used by `transfer` when creating a new token for a partial
+   * transfer. Subclasses should override this method to control which fields
+   * are copied to the new token instance.
+   *
+   * Default implementation performs a shallow copy of all current state
+   * (preserving original behavior) while setting the new owner and amount.
+   */
+  protected _createTransferToken(to: string, amount: bigint): this {
+    const ctor = this.constructor as Constructor<this>
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { _id, _root, _rev, _owners, ...cleanState } = this
+    return new ctor({ ...cleanState, to, amount })
   }
 
   burn() {
@@ -33,10 +72,12 @@ export class Token extends Contract {
   }
 
   merge(tokens: Token[]) {
+    if (tokens.some((t) => t._root !== this._root))
+      throw new Error('Cannot merge tokens from different lineages')
     let total = 0n
-    tokens.forEach((token) => {
-      total += token.amount
-      token.burn()
+    tokens.forEach((t) => {
+      total += t.amount
+      t.burn()
     })
     this.amount += total
   }
@@ -72,7 +113,11 @@ export class TokenHelper implements ITBC20 {
     name: string,
     symbol: string,
   ): Promise<string | undefined> {
-    const token = await this.computer.new(Token, [publicKey, amount, name, symbol], this.mod)
+    const token = await this.computer.new(
+      Token,
+      [{ to: publicKey, amount, name, symbol }],
+      this.mod,
+    )
     return token._root
   }
 
@@ -86,8 +131,8 @@ export class TokenHelper implements ITBC20 {
     const bags = await Promise.all(
       revs.map(async (rev: string) => this.computer.sync<typeof Token>(rev)),
     )
-    return bags.flatMap((bag: SmartContract<typeof Token> & { _root: string }) =>
-      bag._root === root ? [bag] : [],
+    return bags.flatMap((bag: SmartContract<typeof Token> & { root: string }) =>
+      bag.root === root ? [bag] : [],
     )
   }
 

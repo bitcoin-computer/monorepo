@@ -122,7 +122,7 @@ describe('Sale', () => {
       await bob.fund(finalTx)
       await bob.sign(finalTx)
       await bob.broadcast(finalTx)
-      await sleep(3000)
+      await bob.waitForIndexed(finalTx.txId)
 
       // Bob reads the updated state from the blockchain
       const { env } = await bob.sync(finalTx.getId())

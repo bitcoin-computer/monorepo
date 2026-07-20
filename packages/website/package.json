@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/website",
-  "version": "0.26.0-beta.0",
+  "version": "0.27.0-beta.0",
   "private": true,
   "license": "MIT",
   "type": "module",

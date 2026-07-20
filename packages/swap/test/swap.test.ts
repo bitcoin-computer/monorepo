@@ -163,9 +163,9 @@ describe('Swap', () => {
 
   describe('Should work with fungible tokens', async () => {
     it('Should work for tokens', async () => {
-      // Alice and Bob create one NFT each
-      const tokenA = await alice.new(Token, [alice.getPublicKey(), 10n, 'A'])
-      const tokenB = await bob.new(Token, [bob.getPublicKey(), 100n, 'B'])
+      // Alice and Bob create one token each
+      const tokenA = await alice.new(Token, [{ to: alice.getPublicKey(), amount: 10n, name: 'A' }])
+      const tokenB = await bob.new(Token, [{ to: bob.getPublicKey(), amount: 100n, name: 'B' }])
 
       // Alice builds a partially signed swap transaction
       const { tx } = await alice.encode({

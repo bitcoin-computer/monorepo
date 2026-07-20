@@ -21,3 +21,4 @@ export declare const FEE_ERROR_THRESHOLD = 1
 export declare const IO_DESCRIPTOR_SCRIPT_LENGTH = 71
 export declare const BYTES_PER_SIG_OP = 20
 export declare const ALLOWED_STREAM_KEYS: string[]
+export declare const SUPPORTED_CHAINS: readonly ['LTC', 'BTC', 'DOGE', 'PEPE']

@@ -8,8 +8,10 @@ export class TBC20 extends Contract {
         super({ amount, name, symbol, ...rest, _owners: [to] });
     }
     transfer(to, amount) {
-        if (typeof amount === 'undefined')
-            amount = this.amount;
+        if (typeof amount === 'undefined') {
+            this._owners = [to];
+            return undefined;
+        }
         if (amount <= 0n)
             throw new Error('Transfer amount must be positive');
         if (this.amount < amount)

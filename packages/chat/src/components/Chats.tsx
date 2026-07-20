@@ -78,10 +78,14 @@ function CreateNewChat() {
   )
 }
 
+type MyRouteParams = {
+  id?: string
+}
+
 export function Chats() {
   const computer = useContext(ComputerContext)
   const publicKey = Auth.getComputer().getPublicKey()
-  const params = useParams()
+  const params = useParams<MyRouteParams>()
   const navigate = useNavigate()
   const [chatId] = useState(params.id || '')
   const [chats, setChats] = useState<ChatSc[]>([])

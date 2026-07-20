@@ -10,11 +10,6 @@ const envPaths = [
   '../node/.env', // when running from local
 ]
 
-const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-
 for (const envPath of envPaths) {
   dotenv.config({ path: envPath })
 }
@@ -208,7 +203,6 @@ describe('TBC777M', () => {
     expect(whiteToken._rev).eq(await white.latest(whiteToken._rev))
     expect(whiteToken._owners).deep.eq([white.getPublicKey()])
 
-    await sleep(3000)
     await whiteToken.withdraw(chess2._rev)
     expect(whiteToken.amount).eq(16n)
   })
