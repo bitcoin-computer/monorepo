@@ -27,11 +27,6 @@ const { SIGHASH_SINGLE, SIGHASH_ANYONECANPAY } = Transaction
 chai.use(chaiMatchPattern)
 const _ = chaiMatchPattern.getLodashModule()
 
-export const sleep = (ms: number): Promise<void> =>
-  new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-
 describe('Sale', () => {
   let tx: Transaction
   let txClone: Transaction
