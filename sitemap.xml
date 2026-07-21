@@ -2,346 +2,346 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://docs.bitcoincomputer.io/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/tutorial/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/fees/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/start/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/how-it-works/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/language/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/optimizations/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/format/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/development/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/examples/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/nakamotojs/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/legal/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/apps/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/constructor/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/deploy/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/transaction/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/comparison/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/license/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/encode/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/contract/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/mock/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/encodenew/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/balance/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/broadcast/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/decode/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/encodecall/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/faucet/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/ancestors/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/bulk/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/clean-mempool/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/get-txos/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/hex/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/first/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/fund/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/id/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/json/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/latest/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/list-txs/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getaddress/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getancestors/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getbalance/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getchain/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/next/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/non-standard-utxos/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/post/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/prev/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getmnemonic/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getnetwork/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getotxos/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getoutxos/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getpassphrase/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/gettxos/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/new/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/received-outputs/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/revtoid/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/rpc/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/sent-outputs/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/examples/fungible-token/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/examples/sale/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getprivatekey/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getpublickey/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/store/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/node/subscribe/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/examples/non-fungible-token/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/examples/chat/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getutxos2/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getutxos/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/latest/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/load/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/next/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/prev/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/examples/swap/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/getversion/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/query/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/rpccall/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/sync/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/examples/ordinal-sale/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/send/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/sign/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/streammempoolcleanup/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/stream/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/subscribe/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
   <url>
     <loc>https://docs.bitcoincomputer.io/lib/computer/waitforindex/</loc>
-    <lastmod>2026-07-17T15:48:43Z</lastmod>
+    <lastmod>2026-07-21T19:05:48Z</lastmod>
   </url>
 </urlset>
