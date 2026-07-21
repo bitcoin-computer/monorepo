@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/node",
-  "version": "0.27.0-beta.0",
+  "version": "0.27.0-beta.1",
   "private": false,
   "description": "Server Side Library for the Bitcoin Computer",
   "keywords": [
@@ -56,9 +56,9 @@
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
-    "@bitcoin-computer/lib": "^0.27.0-beta.0",
-    "@bitcoin-computer/nakamotojs": "^0.27.0-beta.0",
-    "@bitcoin-computer/secp256k1": "^0.27.0-beta.0",
+    "@bitcoin-computer/lib": "^0.27.0-beta.1",
+    "@bitcoin-computer/nakamotojs": "^0.27.0-beta.1",
+    "@bitcoin-computer/secp256k1": "^0.27.0-beta.1",
     "@types/node": "^20.11.20",
     "axios": "1.16.1",
     "bitcoind-rpc": "^0.9.1",
