@@ -81,3 +81,4 @@ for (const row of rows) {
 - [getModule](./getModule.md) — one module by specifier
 - [deploy](./deploy.md) / [load](./load.md)
 - Node [modules](../../Node/modules.md) API
+- Empty index / schema / auth: [Operate & Troubleshoot](../../Node/operations.md)

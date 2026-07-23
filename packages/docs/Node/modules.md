@@ -95,5 +95,6 @@ curl -X GET "http://localhost:1031/v1/LTC/regtest/modules?verbosity=1&storageTyp
 ## See also
 
 - [module](./module.md) — fetch one module (including source) by specifier
-- [deploy](../Lib/Computer/deploy.md) / [load](../Lib/Computer/load.md) — client-side deploy and load
-- [non-standard-utxos](./non-standard-utxos.md) — query smart-object revisions filtered by a module specifier (`mod`), not the module source itself
+- Client: [getModules](../Lib/Computer/getModules.md), [deploy](../Lib/Computer/deploy.md) / [load](../Lib/Computer/load.md)
+- [Operate & Troubleshoot](./operations.md) — auth, schema upgrade, empty `/modules`
+- [non-standard-utxos](./non-standard-utxos.md) — smart-object revisions filtered by module membership (`mod`), not deploy source

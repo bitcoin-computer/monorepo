@@ -197,41 +197,32 @@ expect(latestChat).to.deep.equal(chat)
 
 ## Finding On-Chain Objects
 
-The [`computer.query`](./Lib/Computer/query.md) function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:
+Prefer [`computer.getOUTXOs`](./Lib/Computer/getOUTXOs.md) to list unspent smart-object revisions, and [`computer.latest`](./Lib/Computer/latest.md) plus [`computer.sync`](./Lib/Computer/sync.md) to resolve one object by id. The older [`computer.query`](./Lib/Computer/query.md) API is deprecated and forwards to `getOUTXOs` (it does **not** accept an `ids` filter).
 
-```js
-const [rev] = await computer.query({
-  // Search by original on-chain object id
-  ids: [chat._id],
-})
-// Returns most recent revision
-expect(rev).to.equal(chat._rev)
-```
-
-A basic pattern in applications is to identify a on-chain object by its id, to look up the object's latest revision using `computer.query`, and then to compute its latest state using `computer.sync`. For example, in our chat app the url could contain a chat's id and the latest state of the chat could be computed as shown below.
+To load the latest state of an object from its id (for example from a URL):
 
 ```js
 // Extract the id from the url
 const id = urlToId(window.location)
 
-// Look up the latest revision
-const [rev] = await computer.query({ ids: [id] })
-
-// Compute the latest state
+// Look up the latest revision, then compute state
+const rev = await computer.latest(id)
 const latestChat = await computer.sync(rev)
 ```
 
-`computer.query` can also return all revisions of on-chain objects owned by a public key. This could be useful for creating a user page for the chat application.
+When you already hold a known revision (e.g. `chat._rev`), you can `sync` it directly.
+
+To list all unspent smart objects owned by a public key (useful for a user page):
 
 ```js
 // Get public key from a client side wallet
 const publicKey = computer.getPublicKey()
 
-// Look up all revisions owned by user
-const revs = await computer.query({ publicKey })
+// Unspent smart-object revisions for this owner
+const revs = await computer.getOUTXOs({ publicKey })
 ```
 
-It is also possible to navigate the revision history of a on-chain object using [`computer.next`](./Lib/Computer/next.md) and [`computer.prev`](./Lib/Computer/prev.md):
+It is also possible to navigate the revision history of an on-chain object using [`computer.next`](./Lib/Computer/next.md) and [`computer.prev`](./Lib/Computer/prev.md):
 
 ```js
 // Navigating forward
@@ -422,11 +413,11 @@ The encode function allows fine grained control over the transaction being built
 
 ## Module System
 
-The [`computer.deploy`](./Lib/Computer/deploy.md) function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar `import` syntax. In the example below `moduleB` refers to `moduleA` via `specifierA`. Module specifiers can be passed into `computer.encode` and `computer.new` functions.
+The [`computer.deploy`](./Lib/Computer/deploy.md) function stores a JavaScript module on the blockchain. It returns a module specifier (typically `txId:0`) for the deploy. Modules can refer to one another using the familiar `import` syntax. In the example below `moduleB` refers to `moduleA` via `specifierA`. Module specifiers can be passed into `computer.encode` and `computer.new` functions.
 
 ```js
 const moduleA = 'export class A extends Contract {}'
-// Returns on-chain module id
+// Returns on-chain module specifier
 const specifierA = await computer.deploy(moduleA)
 
 // Create dependent module referencing first module
@@ -446,11 +437,14 @@ const { tx } = await computer.encode({
 })
 ```
 
-Modules can be loaded from the blockchain using [computer.load](./Lib/Computer/load.md).
+[`computer.load`](./Lib/Computer/load.md) fetches the module source and evaluates it, returning its **exports** (not the source string). To inspect the indexed source without evaluating, use [`getModule`](./Lib/Computer/getModule.md) (field `ept`).
 
 ```js
-const loadedB = await computer.load(specifierB)
-expect(loadedB).eq(moduleB)
+const { B } = await computer.load(specifierB)
+expect(typeof B).eq('function')
+
+const row = await computer.getModule(specifierB)
+expect(row.ept).eq(moduleB)
 ```
 
 ## Bitcoin Script Support

@@ -425,6 +425,13 @@ Module deploys store JavaScript (ES) source on chain. The node indexes them sepa
 | [modules](./modules.md) | List indexed module deploys (specifiers or full rows). |
 | [module](./module.md) | Get one indexed module by specifier, including source (`ept`). |
 
+#### Operations
+
+{.compact}
+| Page | Description |
+|-------------------------------------|----------------------------------------------------|
+| [operations](./operations.md) | Auth, empty-result troubleshooting, Module schema upgrade, version match, ops FAQ. |
+
 <!--  ### Configure Parallelism
 
 By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
@@ -451,4 +458,6 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 
 ## Version compatibility
 
-If you run your own node, make sure to use the same versions of Lib and Node.
+If you run your own node, use the **same release line** of `@bitcoin-computer/lib` and the Bitcoin Computer Node (same major and minor, e.g. both `0.27.x`).
+
+Mismatched versions often show up as missing module routes, schema errors, empty indexes after upgrade, or client failures to `load` deploys. Details, schema upgrade steps, and auth/empty-result troubleshooting are in [Operate & Troubleshoot](./operations.md). Protocol wire-format notes are in the [changelog](../changelog.md).

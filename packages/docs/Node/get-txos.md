@@ -72,3 +72,8 @@ On success, the response will be an array of DBOutput objects matching the query
 ```json
 { "error": "Internal server error message" }
 ```
+
+## See also
+
+- Client: [`getTXOs`](../Lib/Computer/getTXOs.md) / [`getUTXOs`](../Lib/Computer/getUTXOs.md) / [`getOUTXOs`](../Lib/Computer/getOUTXOs.md)
+- Empty results, auth, and indexing lag: [Operate & Troubleshoot](./operations.md)

@@ -1,7 +1,7 @@
 # getUtxos
 
 !!!
-**Deprecated** (wallet helper). On `Computer`, use [`getUTXOs`](./getUTXOs2.md) with a query, for example:
+**Deprecated** (wallet helper). On `Computer`, use [`getUTXOs`](./getUTXOs.md) with a query, for example:
 
 ```ts
 await computer.getUTXOs({ address: computer.getAddress(), isObject: false })
@@ -21,4 +21,4 @@ const revs = await computer.getUTXOs({
 })
 ```
 
-See [getUTXOs](./getUTXOs2.md) and [getTXOs](./getTXOs.md).
+See [getUTXOs](./getUTXOs.md) and [getTXOs](./getTXOs.md).

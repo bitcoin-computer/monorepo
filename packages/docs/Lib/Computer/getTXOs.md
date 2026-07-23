@@ -90,7 +90,7 @@ Syntactic sugar:
 
 | Helper | Equivalent |
 | --------------------------- | ------------------------------------------- |
-| [`getUTXOs`](./getUTXOs2.md) | `getTXOs({ …, isSpent: false })` |
+| [`getUTXOs`](./getUTXOs.md) | `getTXOs({ …, isSpent: false })` |
 | [`getOTXOs`](./getOTXOs.md) | `getTXOs({ …, isObject: true })` |
 | [`getOUTXOs`](./getOUTXOs.md) | `getTXOs({ …, isObject: true, isSpent: false })` |
 
@@ -99,3 +99,8 @@ Syntactic sugar:
 :::code source="../../../lib/test/lib/computer/get-txos.test.ts" :::
 
 <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/get-txos.test.ts" target=_blank>Source</a>
+
+## See also
+
+- Node HTTP: [get-txos](../../Node/get-txos.md)
+- Sugar: [getUTXOs](./getUTXOs.md), [getOTXOs](./getOTXOs.md), [getOUTXOs](./getOUTXOs.md)

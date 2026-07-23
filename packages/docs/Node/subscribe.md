@@ -37,3 +37,8 @@ data:
 #### Closing the connection
 
 The stream closes automatically if the client disconnects. The server will then remove the subscription associated with the given id.
+
+## See also
+
+- Client: [`computer.subscribe`](../Lib/Computer/subscribe.md) — smart-object revision updates by id
+- Client: [`computer.streamTXOs`](../Lib/Computer/stream.md) — filtered TXO stream (related SSE surface)

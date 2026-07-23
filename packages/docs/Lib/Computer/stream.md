@@ -88,3 +88,8 @@ The `publicKey` field gives powerful flexibility: you can subscribe to any indiv
 :::code source="../../../lib/test/lib/computer/stream.test.ts" :::
 
 <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/stream.test.ts" target="_blank">Source</a>
+
+## See also
+
+- Object-id subscriptions: [subscribe](./subscribe.md) / Node [subscribe](../../Node/subscribe.md)
+- Output queries: [getTXOs](./getTXOs.md) / Node [get-txos](../../Node/get-txos.md)

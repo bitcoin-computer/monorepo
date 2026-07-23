@@ -39,7 +39,7 @@ Query the node’s `Output` table. All of these accept a `TXOQuery` (see [getTXO
 | Method | Description |
 |---------------------------------|----------------------------------------------------------------|
 | [getTXOs](./getTXOs.md) | Transaction outputs matching the query |
-| [getUTXOs](./getUTXOs2.md) | Unspent outputs (`isSpent: false`) |
+| [getUTXOs](./getUTXOs.md) | Unspent outputs (`isSpent: false`) |
 | [getOTXOs](./getOTXOs.md) | Smart-object outputs (`isObject: true`) |
 | [getOUTXOs](./getOUTXOs.md) | Unspent smart objects (`isObject: true`, `isSpent: false`) |
 
@@ -127,4 +127,4 @@ Still present for backward compatibility; prefer the replacements.
 | Method | Prefer instead |
 |-------------------------------------|----------------------------------------------------|
 | [query](./query.md) | [getOUTXOs](./getOUTXOs.md) |
-| [getUtxos](./getUtxos.md) | [getUTXOs](./getUTXOs2.md) with `{ address, isObject: false }` (wallet-level helper) |
+| [getUtxos](./getUtxos-deprecated.md) | [getUTXOs](./getUTXOs.md) with `{ address, isObject: false }` (wallet-level helper) |
