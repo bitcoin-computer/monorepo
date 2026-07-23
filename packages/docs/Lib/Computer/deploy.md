@@ -46,7 +46,7 @@ To select the module storage type, pass either `multisig` or `taproot` into the 
 
 See also [`Transaction.onChainMetaData`](../Transaction/index.md#onchainmetadata) for how metadata differs between transitions and module deploys.
 
-When connected to a Bitcoin Computer Node, deploys are indexed into the node’s `Module` table. You can list and fetch indexed sources via the node API ([modules](../../Node/modules.md), [module](../../Node/module.md)).
+When connected to a Bitcoin Computer Node, deploys are indexed into the node’s `Module` table. List and fetch them from the client with [`getModules`](./getModules.md) / [`getModule`](./getModule.md), or via the node HTTP API ([modules](../../Node/modules.md), [module](../../Node/module.md)).
 
 {.compact}
 | Coin | Taproot | Module Storage Types | Default | Max Module Size | Segwit Discount

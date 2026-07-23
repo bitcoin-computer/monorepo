@@ -21,7 +21,7 @@ The path parameter `mod` is a revision-style string of the form `<transaction-id
 | `blockHeight`  | `number` \| `null`      | Confirming block height, or `null` if still unconfirmed.                    |
 | `timestamp`    | `string`                | When the node indexed the row (database timestamp).                         |
 
-This endpoint returns the stored source string. It does **not** evaluate the module. Use [`computer.load`](../Lib/Computer/load.md) on the client to import exports in a SES compartment.
+This endpoint returns the stored source string. It does **not** evaluate the module. On the client, use [`computer.getModule`](../Lib/Computer/getModule.md) for the same row, or [`computer.load`](../Lib/Computer/load.md) to import exports in a SES compartment.
 
 ## Path Parameters
 

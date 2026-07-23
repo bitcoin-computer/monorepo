@@ -1,50 +1,55 @@
 # query
 
-_Returns the latest revisions of on-chain objects._
+!!!
+**Deprecated.** Use [`getOUTXOs`](./getOUTXOs.md) instead. `query` logs a deprecation warning and forwards to `getOUTXOs`.
+!!!
+
+_Returns unspent smart-object revisions matching the query (legacy API)._
 
 ## Type
 
 ```ts
-;<T extends new (...args: any) => any>(
-  query:
-    | {
-        ids: string[]
-      }
-    | {
-        publicKey?: string
-        mod?: string
-        limit?: number
-        offset?: number
-        order?: 'ASC' | 'DEC'
-      },
-) => Promise<string[]>
+type Query = {
+  mod?: string
+  publicKey?: string
+  limit?: number
+  offset?: number
+  order?: 'ASC' | 'DESC'
+}
+
+async query(q: Query): Promise<string[]>
 ```
 
 ### Parameters
 
-#### `args`
-
-An object with the query parameters.
+#### `q`
 
 {.compact}
 | Key | Description |
 | --------- | ------------------------------------------------------------------------------ |
-| publicKey | Return latest revisions of on-chain objects owned by a public key |
-| ids | Return latest revision of on-chain objects with ids in order |
-| mod | Return the latest revision of on-chain objects created with this module specifier |
-| limit | Limit the number of revisions returned |
-| offset | Return results starting from offset |
-| order | Order results in ascending or descending order |
+| publicKey | Filter by public key present in the output script |
+| mod | Filter smart objects created with this module specifier (membership) |
+| limit | Maximum number of revisions returned |
+| offset | Number of results to skip |
+| order | `ASC` or `DESC` |
+
+There is **no** `ids` parameter on the current implementation.
 
 ### Return Value
 
-Given the query parameters, returns an array of strings encoding the latest revisions of on-chain objects that matches the specified conditions.
+An array of revision strings for **unspent smart objects** (same as `getOUTXOs` with `verbosity: 0`).
 
 ## Description
 
-The `args` object specifies the on-chain objects of which to return the latest revisions. One can either query by public key to obtain the latests revisions of objects currently owned by that public key
+Historically used as the main “find my objects” API. Prefer:
 
-Conditions can be passed in to determine the on-chain objects. When multiple conditions are passed in, the latest revisions of the on-chain objects that satisfy all conditions are returned.
+```ts
+const revs = await computer.getOUTXOs({ publicKey, mod, limit, offset, order })
+// or with full rows:
+const rows = await computer.getOUTXOs({ publicKey, verbosity: 1 })
+```
+
+To list **module deploys** (source on chain), use [`getModules`](./getModules.md) / [`getModule`](./getModule.md), not `query` / `getOUTXOs`.
 
 ## Example
 

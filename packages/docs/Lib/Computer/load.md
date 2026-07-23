@@ -31,7 +31,7 @@ Do not use [`computer.decode`](./decode.md) on a module specifier or deploy tran
 
 Module sources are cached client-side after the first successful fetch for a given deploy `txId`.
 
-A Bitcoin Computer Node also indexes deploys in its `Module` table. To discover or inspect sources without evaluating them, see the node [modules](../../Node/modules.md) and [module](../../Node/module.md) endpoints.
+A Bitcoin Computer Node also indexes deploys in its `Module` table. To discover or inspect sources without evaluating them, use [`getModules`](./getModules.md) / [`getModule`](./getModule.md) (or the node [modules](../../Node/modules.md) / [module](../../Node/module.md) HTTP endpoints).
 
 ## Example
 

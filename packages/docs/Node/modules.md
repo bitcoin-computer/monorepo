@@ -15,7 +15,7 @@ Module deploys are not smart-object transitions. They store ECMAScript module so
 - **multisig** — cleartext `{ ept }` in bare-multisig data outputs
 - **taproot** — module body in a reveal-input witness envelope with protocol id `BC` (content type `text/javascript`)
 
-Clients deploy modules with [`computer.deploy`](../Lib/Computer/deploy.md) and load them with [`computer.load`](../Lib/Computer/load.md). This endpoint lists what the node has indexed so you can discover module specifiers without knowing every deploy transaction id.
+Clients deploy modules with [`computer.deploy`](../Lib/Computer/deploy.md), load them with [`computer.load`](../Lib/Computer/load.md), and list indexed rows with [`computer.getModules`](../Lib/Computer/getModules.md). This endpoint is the HTTP surface those client methods call.
 
 Owner outputs from module deploys still appear in the `Output` table like other payments; the `Module` row holds the source (`ept`) and storage type.
 

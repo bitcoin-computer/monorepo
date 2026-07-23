@@ -74,23 +74,25 @@ The `getTXOs` function retrieves transaction outputs (TXOs) from the database ba
 
 - **address**: Derived from the output script using `address.fromOutputScript` from the `@bitcoin-computer/nakamotoJs` library. If the script cannot be converted (e.g., non-standard P2PKH or P2SH scripts), this value is set to `null`. When filtering by `address`, only TXOs with matching convertible scripts are included.
 - **asm**: The assembly (ASM) string representation of the output script, computed as `script.toASM(script)`. Use this for exact script-based filtering.
-- **Other columns**: Include `rev` (revision string), `satoshis` (output value as bigint), `isObject` (boolean indicating if it's a smart object), `mod` (module identifier for smart objects), `exp` (expression hash), `previous` (prior TXO reference), `blockHash` (inclusion in a specific block), and `spent` (spend status).
+- **Other columns**: Include `rev` (revision string), `satoshis` (output value as bigint), `isObject` (whether the output encodes a smart object), `mod` (module specifier membership for smart objects), `expHash` (hash of the transition expression), `previous` (prior TXO reference), `blockHash` / `blockHeight` / `blockIndex` (confirmation metadata). Spend status is selected via the `isSpent` query flag, not a column named `spent`.
 
 ### Filtering Behaviors
 
-- **By public key (`publicKey`)**: Matches TXOs where the output asm script contains specified public key, enabling ownership-based queries. The value does not necessary have to be a public key, the query works for any string. For example if you query for `OP_TRUE` the query will return all outputs whose script contains `OP_TRUE`.
-- **By smart object status (`isObject`)**: Set to `true` to retrieve all on-chain smart objects.
-- **By module (`mod`)**: Filters for smart objects created with the given module specifier. Modules are inherited in descendant objects within the Bitcoin Computer ecosystem, except during new object creation or explicit module overrides in expressions. This is particularly useful for tracking token transfers or module-specific lineages—refer to the examples for practical demonstrations.
-- **Spent status (`spent`)**: Includes or excludes spent TXOs; combine with other filters for UTXO-like queries.
-- **Pagination and ordering**: Use `limit`, `offset`, and `order` ('ASC' or 'DESC') for controlled, sorted result sets.
+- **By public key (`publicKey`)**: Matches TXOs where the output asm script contains the given string. The value does not have to be a public key; for example `OP_TRUE` matches outputs whose script contains that chunk.
+- **By smart object status (`isObject`)**: Set to `true` to retrieve on-chain smart objects.
+- **By module (`mod`)**: Filters for smart objects that **belong to** the given module specifier (object membership / inheritance). This is not the module source itself—use [`getModules`](./getModules.md) / [`getModule`](./getModule.md) for deploys.
+- **Spent status (`isSpent`)**: Include or exclude spent TXOs; combine with other filters for UTXO-like queries.
+- **Pagination and ordering**: Use `limit`, `offset`, and `order` (`ASC` or `DESC`) for controlled result sets.
 
-For security and efficiency, always pair this with `publicKey` to scope results to a specific owner, and apply `limit`/`offset` to manage result volume.
+For security and efficiency, pair filters with `publicKey` when scoping to an owner, and apply `limit` / `offset` to manage result volume.
 
-To retrieve Unspent Transaction Outputs, see the syntactic sugar function `getUTXOs`, which internally calls `getTXOs` with the `isSpent: false` parameter.
+Syntactic sugar:
 
-To retrieve Bitcoin Computer objects, see the syntactic sugar function `getOTXOs`, which internally calls `getTXOs` with the `isObject: true` parameter.
-
-To retrieve unspent Bitcoin Computer objects, see the syntactic sugar function `getUOTXOs`, which internally calls `getTXOs` with the parameters `isObject: true` and `isSpent: false`.
+| Helper | Equivalent |
+| --------------------------- | ------------------------------------------- |
+| [`getUTXOs`](./getUTXOs2.md) | `getTXOs({ …, isSpent: false })` |
+| [`getOTXOs`](./getOTXOs.md) | `getTXOs({ …, isObject: true })` |
+| [`getOUTXOs`](./getOUTXOs.md) | `getTXOs({ …, isObject: true, isSpent: false })` |
 
 ## Example
 

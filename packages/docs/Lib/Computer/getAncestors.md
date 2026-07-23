@@ -1,6 +1,6 @@
 # getAncestors
 
-Returns the transactions id history of the given revision.
+_Returns the ancestor transaction history for a revision or transaction id._
 
 ## Type
 
@@ -8,9 +8,20 @@ Returns the transactions id history of the given revision.
 getAncestors(location: string, verbosity?: number): Promise<string[] | Map<string, string>>
 ```
 
+### Parameters
+
+#### `location`
+
+A transaction id or a revision (`<txid>:<vout>`). Ancestors are resolved for the transaction id.
+
+#### `verbosity` (optional)
+
+- omitted / not `1` — array of ancestor transaction ids
+- `1` — `Map<txId, hex>` of those transactions
+
 ### Return Value
 
-Given a location (revision or transaction id), returns a promise that resolves to an array of transaction ids representing the history of the given revision. If verbosity is set to 1, it returns a map where the keys are transaction ids and the values are their corresponding transaction hex strings.
+Ancestor transaction ids (default), or a map of id → raw hex when `verbosity === 1`.
 
 ### Syntax
 
