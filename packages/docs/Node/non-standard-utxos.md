@@ -6,11 +6,17 @@ _Query revisions by module specifier, public key, limit, order, offset and list 
 
 `/v1/CHAIN/NETWORK/non-standard-utxos`
 
+## Description
+
+Returns smart-object (non-standard) UTXO revisions. The optional `mod` filter selects objects that **belong to** a deployed module (module membership on the revision), not the module source itself.
+
+To list or fetch **module deploy** sources, use [modules](./modules.md) and [module](./module.md) instead.
+
 ## Query Parameters
 
 | Parameter   | Type   | Description                                 |
 | ----------- | ------ | ------------------------------------------- |
-| `mod`       | string | Optional filter.                            |
+| `mod`       | string | Optional filter by module specifier (membership on the object). |
 | `publicKey` | string | Optional filter by public key.              |
 | `limit`     | string | Maximum number of results to return.        |
 | `offset`    | string | Number of results to skip (for pagination). |

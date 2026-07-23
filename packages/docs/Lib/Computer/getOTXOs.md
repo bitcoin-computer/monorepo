@@ -12,7 +12,7 @@ async getOTXOs(q: TXOQuery): Promise<string[] | TXORecord[]>
 
 ## Description
 
-The `getOTXOs` function is _syntactic sugar_ for the [`getTXOs`](./getTXOs.md) with `isObject` set to `true`. The name is short for get-object-transaction-outputs, it return only output identifiers of output that encode _smart objects_.
+The `getOTXOs` function is syntactic sugar for [`getTXOs`](./getTXOs.md) with `isObject: true`. The name stands for **get object transaction outputs**: outputs that encode smart objects (spent or unspent).
 
 ## Parameters
 

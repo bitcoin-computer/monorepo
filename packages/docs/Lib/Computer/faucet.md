@@ -5,7 +5,7 @@ _Funds an address on regtest for testing._
 ## Type
 
 ```ts
-;(amount: number, address?: string) => Promise<UTXO>
+;(amount: number, address?: string) => Promise<Unspent>
 ```
 
 ### Parameters

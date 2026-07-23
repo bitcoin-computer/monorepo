@@ -291,6 +291,22 @@ export type AncestorOptions = {
 export interface ModuleSource {
   source: string
 }
+export type ModuleRecord = {
+  mod: string
+  ept: string
+  storageType: ModuleStorageType
+  blockHash?: string | null
+  blockHeight?: number | null
+  timestamp?: string | number
+}
+export type ModuleQuery = {
+  verbosity?: number
+  limit?: number
+  offset?: number
+  order?: 'ASC' | 'DESC'
+  storageType?: ModuleStorageType
+  isConfirmed?: boolean
+}
 export type JsonPrimitive = null | undefined | boolean | number | string | bigint | symbol | Buffer
 export type Json = JsonPrimitive | JsonArray | JsonObject
 export interface JsonObject {

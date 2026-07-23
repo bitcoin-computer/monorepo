@@ -95,6 +95,11 @@ npm run create-indexes
 
 The node uses a Postgres database to store the synced information required by the Bitcoin Computer protocol. The database is automatically created and managed by the node using a docker container. The full db schema can be found [here](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql).
 
+Among other tables, the node maintains:
+
+- **`Output` / `Input`** — the spend graph for payments and smart-object revisions
+- **`Module`** — deployed module sources (`ept`), storage type (`multisig` or `taproot`), and optional confirmation height/hash (see [modules](./modules.md) and [module](./module.md))
+
 By default the database uses the following credentials:
 
 ```shell
@@ -175,16 +180,16 @@ At a high level, the node consists of:
   - Coordinates parallel workers
 - **Parallel sync workers**
   - Parse blocks and transactions
-  - Insert inputs, outputs, and metadata into Postgres
+  - Insert inputs, outputs, module deploys, and related metadata into Postgres
   - Scale automatically with available CPU cores
 - **Live mempool listener**
   - Subscribes to raw transactions via ZeroMQ
-  - Activates once the blockchain is sufficiently synchronized
+  - Indexes mempool outputs, inputs, and module deploys once the chain is sufficiently synchronized
 - **API and SSE service**
   - Serves HTTP API requests
   - Streams real-time updates via Server-Sent Events (SSE)
 - **Background maintenance tasks**
-  - Periodic cleanup of stale unconfirmed (mempool) data (see [clean-mempool](./clean-mempool.md) for more details)
+  - Periodic cleanup of stale unconfirmed (mempool) data, including unconfirmed module rows (see [clean-mempool](./clean-mempool.md) for more details)
 
 The architecture is designed for robustness, scalability, and real-time responsiveness.
 
@@ -410,6 +415,23 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 | [revToId](./revtoid.md) | Given a revision, get the id of the smart contract. |
 | [subscribe](./subscribe.md) | Subscribe to new revisions matching specific query parameters. |
 
+#### Modules
+
+Module deploys store JavaScript (ES) source on chain. The node indexes them separately from smart-object transitions so clients can list and fetch sources by specifier. See also client-side [`deploy`](../Lib/Computer/deploy.md) and [`load`](../Lib/Computer/load.md).
+
+{.compact}
+| Method | Description |
+|-------------------------------------|----------------------------------------------------|
+| [modules](./modules.md) | List indexed module deploys (specifiers or full rows). |
+| [module](./module.md) | Get one indexed module by specifier, including source (`ept`). |
+
+#### Operations
+
+{.compact}
+| Page | Description |
+|-------------------------------------|----------------------------------------------------|
+| [operations](./operations.md) | Auth, empty-result troubleshooting, Module schema upgrade, version match, ops FAQ. |
+
 <!--  ### Configure Parallelism
 
 By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
@@ -436,4 +458,6 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 
 ## Version compatibility
 
-If you run your own node, make sure to use the same versions of Lib and Node.
+If you run your own node, use the **same release line** of `@bitcoin-computer/lib` and the Bitcoin Computer Node (same major and minor, e.g. both `0.27.x`).
+
+Mismatched versions often show up as missing module routes, schema errors, empty indexes after upgrade, or client failures to `load` deploys. Details, schema upgrade steps, and auth/empty-result troubleshooting are in [Operate & Troubleshoot](./operations.md). Protocol wire-format notes are in the [changelog](../changelog.md).
