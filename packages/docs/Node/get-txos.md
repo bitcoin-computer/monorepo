@@ -22,7 +22,7 @@ Validation is performed on all parameters to ensure proper format and type.
 | `satoshis`    | `string`   | Amount in satoshis.                                |
 | `asm`         | `string`   | Script in ASM format.                              |
 | `isObject`    | `boolean`  | Whether to return TXOs as objects.                 |
-| `mod`         | `string`   | Modifier revision (must be valid).                 |
+| `mod`         | `string`   | Module specifier on the object (must be valid).    |
 | `previous`    | `string`   | Previous TXO revision (must be valid).             |
 | `exp`         | `string`   | The Javascript expression.                         |
 | `blockHash`   | `string`   | Block hash (must be hex).                          |
