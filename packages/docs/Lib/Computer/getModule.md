@@ -53,3 +53,4 @@ expect(n).to.equal(42)
 - [getModules](./getModules.md)
 - [load](./load.md)
 - Node [module](../../Node/module.md) API
+- Empty index / schema / auth: [Operate & Troubleshoot](../../Node/operations.md)

@@ -430,6 +430,13 @@ Module deploys store JavaScript (ES) source on chain. The node indexes them sepa
 | [modules](./modules.md) | List indexed module deploys (specifiers or full rows).         |
 | [module](./module.md)   | Get one indexed module by specifier, including source (`ept`). |
 
+#### Operations
+
+{.compact}
+| Page | Description |
+|-------------------------------------|----------------------------------------------------|
+| [operations](./operations.md) | Auth, empty-result troubleshooting, Module schema upgrade, version match, ops FAQ. |
+
 <!--  ### Configure Parallelism
 
 By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.

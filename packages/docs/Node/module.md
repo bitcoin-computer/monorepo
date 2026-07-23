@@ -73,10 +73,6 @@ curl -X GET "http://localhost:1031/v1/LTC/regtest/module/a477af6b2667c29670467e4
 ## See also
 
 - [modules](./modules.md) — list indexed modules
-  <<<<<<< HEAD
 - Client: [getModule](../Lib/Computer/getModule.md), [deploy](../Lib/Computer/deploy.md) / [load](../Lib/Computer/load.md)
 - [Operate & Troubleshoot](./operations.md) — 404 / not indexed / schema missing
-  \=======
 - [deploy](../Lib/Computer/deploy.md) / [load](../Lib/Computer/load.md) — client-side deploy and load
-
-> > > > > > > 67f51c2a (feat(node): index module deploys and expose list/get API)
