@@ -33,12 +33,14 @@ The protocol supports two module storage types:
 - **`multisig`** — One transaction. An owner output is created (so the UTXO appears in the node’s `Output` table), and the module source is stored in cleartext data outputs as:
 
   ```ts
-  { ept: string }  // module source only; no encryption
+  {
+    ept: string
+  } // module source only; no encryption
   ```
 
-  These data outputs use bare multisig scripts. The maximum module size is about 18 kB; larger modules must be split into chunks of less than 18 kB and recombined in another module. *Module encoding transactions using `multisig` generate hygiene dust outputs* (see Fees for scope and costs).
+  These data outputs use bare multisig scripts. The maximum module size is about 18 kB; larger modules must be split into chunks of less than 18 kB and recombined in another module. _Module encoding transactions using `multisig` generate hygiene dust outputs_ (see Fees for scope and costs).
 
-- **`taproot`** — Two transactions (commit + reveal). The commit tx locks a taproot output whose leaf commits to the data; the reveal tx spends that output and embeds the full module source in the **input witness**, inside a script-path envelope tagged with protocol id **`BC`** (Bitcoin Computer module protocol; not ordinals `ord`). Content type is `text/javascript`. These modules can be close to 400 kB or even close to 4 MB (if you know a miner that will include them). Module storage is 4× cheaper due to the SegWit discount. *Crucially, taproot module encoding transactions generate no hygiene dust outputs.*
+- **`taproot`** — Two transactions (commit + reveal). The commit tx locks a taproot output whose leaf commits to the data; the reveal tx spends that output and embeds the full module source in the **input witness**, inside a script-path envelope tagged with protocol id **`BC`** (Bitcoin Computer module protocol; not ordinals `ord`). Content type is `text/javascript`. These modules can be close to 400 kB or even close to 4 MB (if you know a miner that will include them). Module storage is 4× cheaper due to the SegWit discount. _Crucially, taproot module encoding transactions generate no hygiene dust outputs._
 
 Encryption of module payloads is not supported yet (may be added later). Only new-format deploys (`{ ept }` / `BC`) are valid; legacy shapes that stored modules as transition `exp` fields or ordinals-style `ord` inscriptions are not read.
 

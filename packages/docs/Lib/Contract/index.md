@@ -100,7 +100,17 @@ Successful observations must therefore be **invariant under future chain growth*
 4. The compartment is endowed with a **hardened query-only facade** of InnerComputer methods (no internal `Computer` client, no `isInvalid` / `resetInvalid`, methods not replaceable).
 5. **`console` is only available in `dev` / `debug` mode.** In **`prod`**, contracts must not use `console` (it is not in scope → `ReferenceError`). Logging is not part of the deterministic on-chain API; see [Sandbox & Inner Computer](./sandbox-and-inner-computer.md#console-endowment-dev-only).
 
-#### Error message shape
+| Function          | Signature                                                     | Returns                                   | Invalidates on missing / error?      | Notes                                                         |
+| ----------------- | ------------------------------------------------------------- | ----------------------------------------- | ------------------------------------ | ------------------------------------------------------------- |
+| `sync`            | `sync(location: string): Promise<any>`                        | The latest object state                   | Yes                                  | Deep-cloned with BigInt support                               |
+| `decode`          | `decode(txId: string): Promise<TransitionJSON>`               | `{ exp, env?, mod? }` transition metadata | Yes                                  | Transition txs only; module deploys must use `load`           |
+| `load`            | `load(location: string): Promise<Record<string, any>>`        | Module exports namespace                  | Yes                                  | For dynamic module loading inside contracts                   |
+| `getAncestors`    | `getAncestors(location: string): Promise<string[]>`           | Array of ancestor locations               | Yes (on error)                       | Empty array `[]` if no ancestors                              |
+| `first`           | `first(rev: string): Promise<string>`                         | First revision in lineage                 | Yes                                  | Always returns a string for valid input                       |
+| `prev`            | `prev(rev: string): Promise<string \| undefined>`             | Previous revision or `undefined`          | Only on underlying error             | Safe to call on tip; returns `undefined` without invalidation |
+| `next`            | `next(rev: string): Promise<string \| undefined>`             | Next revision or throws                   | **Yes, including if no next exists** | Strict: absence of next **invalidates** execution             |
+| `last`            | `last(rev: string): Promise<string \| undefined>`             | Latest (tip) revision or `undefined`      | Only on underlying error             | Returns tip of lineage                                        |
+| `txIdToBlockTime` | `txIdToBlockTime(txId: string): Promise<bigint \| undefined>` | Block time as `bigint`                    | Yes                                  | Requires mined Bitcoin Computer transaction                   |
 
 All invalidation errors exposed to callers end with **exactly one** copy of:
 
