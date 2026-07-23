@@ -21,14 +21,14 @@ Owner outputs from module deploys still appear in the `Output` table like other 
 
 ## Query Parameters
 
-| Parameter      | Type                  | Description                                                                 |
-| -------------- | --------------------- | --------------------------------------------------------------------------- |
-| `verbosity`    | `0` or `1`            | Response detail. `0` (default): array of module specifier strings. `1`: full rows. |
-| `limit`        | `number`              | Maximum number of results. Defaults to `BCN_QUERY_LIMIT` or `100`.          |
-| `offset`       | `number`              | Number of results to skip (pagination). Defaults to `0`.                    |
-| `order`        | `ASC` or `DESC`       | Sort by insert `timestamp`. Defaults to `DESC`.                             |
-| `storageType`  | `multisig` \| `taproot` | Optional filter by on-chain encoding.                                     |
-| `isConfirmed`  | `boolean`             | Optional. `true`: only modules with a `blockHash`. `false`: mempool only.   |
+| Parameter     | Type                    | Description                                                                        |
+| ------------- | ----------------------- | ---------------------------------------------------------------------------------- |
+| `verbosity`   | `0` or `1`              | Response detail. `0` (default): array of module specifier strings. `1`: full rows. |
+| `limit`       | `number`                | Maximum number of results. Defaults to `BCN_QUERY_LIMIT` or `100`.                 |
+| `offset`      | `number`                | Number of results to skip (pagination). Defaults to `0`.                           |
+| `order`       | `ASC` or `DESC`         | Sort by insert `timestamp`. Defaults to `DESC`.                                    |
+| `storageType` | `multisig` \| `taproot` | Optional filter by on-chain encoding.                                              |
+| `isConfirmed` | `boolean`               | Optional. `true`: only modules with a `blockHash`. `false`: mempool only.          |
 
 > Notes:
 >
@@ -95,6 +95,12 @@ curl -X GET "http://localhost:1031/v1/LTC/regtest/modules?verbosity=1&storageTyp
 ## See also
 
 - [module](./module.md) — fetch one module (including source) by specifier
+  <<<<<<< HEAD
 - Client: [getModules](../Lib/Computer/getModules.md), [deploy](../Lib/Computer/deploy.md) / [load](../Lib/Computer/load.md)
 - [Operate & Troubleshoot](./operations.md) — auth, schema upgrade, empty `/modules`
 - [non-standard-utxos](./non-standard-utxos.md) — smart-object revisions filtered by module membership (`mod`), not deploy source
+  \=======
+- [deploy](../Lib/Computer/deploy.md) / [load](../Lib/Computer/load.md) — client-side deploy and load
+- [non-standard-utxos](./non-standard-utxos.md) — query smart-object revisions filtered by a module specifier (`mod`), not the module source itself
+
+> > > > > > > 67f51c2a (feat(node): index module deploys and expose list/get API)

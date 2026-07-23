@@ -376,61 +376,59 @@ The variables `CHAIN` and `NETWORK` are used to define the chain and network tha
 #### Wallet
 
 {.compact}
-| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [balance](./balance.md) | Get the balance of a wallet. |
-| [list-txs](./list-txs.md) | List sent and received transactions for a given address. |
-| [sent-outputs](./sent-outputs.md) | List sent outputs of a wallet. |
-| [received-outputs](./received-outputs.md) | List received outputs of a wallet. |
+
+| Method                                    | Description                                              |
+| ----------------------------------------- | -------------------------------------------------------- |
+| [balance](./balance.md)                   | Get the balance of a wallet.                             |
+| [list-txs](./list-txs.md)                 | List sent and received transactions for a given address. |
+| [sent-outputs](./sent-outputs.md)         | List sent outputs of a wallet.                           |
+| [received-outputs](./received-outputs.md) | List received outputs of a wallet.                       |
 
 #### Transactions
 
 {.compact}
-| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [ancestors](./ancestors.md) | Get the ancestors of a transaction. |
-| [bulk](./bulk.md) | Get raw transactions for a list of transaction ids. |
-| [hex](./hex.md) | Get a transaction in hex format. |
-| [json](./json.md) | Get a transaction in json format. |
-| [post](./post.md) | Post a transaction to the Bitcoin network. |
+
+| Method                      | Description                                         |
+| --------------------------- | --------------------------------------------------- |
+| [ancestors](./ancestors.md) | Get the ancestors of a transaction.                 |
+| [bulk](./bulk.md)           | Get raw transactions for a list of transaction ids. |
+| [hex](./hex.md)             | Get a transaction in hex format.                    |
+| [json](./json.md)           | Get a transaction in json format.                   |
+| [post](./post.md)           | Post a transaction to the Bitcoin network.          |
 
 #### Blockchain
 
 {.compact}
-| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [rpc](./rpc.md) | Call a Bitcoin RPC method. |
+
+| Method                              | Description                                           |
+| ----------------------------------- | ----------------------------------------------------- |
+| [rpc](./rpc.md)                     | Call a Bitcoin RPC method.                            |
 | [clean-mempool](./clean-mempool.md) | Remove stale unconfirmed mempool entries from the DB. |
 
 #### Query revisions
 
 {.compact}
-| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [get-txos](./get-txos.md) | Get all the transaction outputs based on specific query parameters. |
-| [latest](./latest.md) | Get the latest revision of a smart contract. |
-| [next](./next.md) | Get the next revision of a given revision. |
+
+| Method                                        | Description                                                                                        |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [get-txos](./get-txos.md)                     | Get all the transaction outputs based on specific query parameters.                                |
+| [latest](./latest.md)                         | Get the latest revision of a smart contract.                                                       |
+| [next](./next.md)                             | Get the next revision of a given revision.                                                         |
 | [non-standard-utxos](./non-standard-utxos.md) | Query revisions by module specifier, public key, limit, order, offset and list of transaction ids. |
-| [prev](./prev.md) | Get the previous revision of a given revision. |
-| [revToId](./revtoid.md) | Given a revision, get the id of the smart contract. |
-| [subscribe](./subscribe.md) | Subscribe to new revisions matching specific query parameters. |
+| [prev](./prev.md)                             | Get the previous revision of a given revision.                                                     |
+| [revToId](./revtoid.md)                       | Given a revision, get the id of the smart contract.                                                |
+| [subscribe](./subscribe.md)                   | Subscribe to new revisions matching specific query parameters.                                     |
 
 #### Modules
 
 Module deploys store JavaScript (ES) source on chain. The node indexes them separately from smart-object transitions so clients can list and fetch sources by specifier. See also client-side [`deploy`](../Lib/Computer/deploy.md) and [`load`](../Lib/Computer/load.md).
 
 {.compact}
-| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [modules](./modules.md) | List indexed module deploys (specifiers or full rows). |
-| [module](./module.md) | Get one indexed module by specifier, including source (`ept`). |
 
-#### Operations
-
-{.compact}
-| Page | Description |
-|-------------------------------------|----------------------------------------------------|
-| [operations](./operations.md) | Auth, empty-result troubleshooting, Module schema upgrade, version match, ops FAQ. |
+| Method                  | Description                                                    |
+| ----------------------- | -------------------------------------------------------------- |
+| [modules](./modules.md) | List indexed module deploys (specifiers or full rows).         |
+| [module](./module.md)   | Get one indexed module by specifier, including source (`ept`). |
 
 <!--  ### Configure Parallelism
 
