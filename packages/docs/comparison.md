@@ -280,11 +280,11 @@ The picture shows an etching that deploys a new fungible token called "lite" tha
 
 This Bitcoin Computer is a general purpose meta protocol, meaning that it can express all computable smart contracts. The smart contract data values are arbitrarily nested JavaScript objects. The meta data values contain mostly JavaScript expressions.
 
-There are two types of transactions: "modules" contain JavaScript (ES6) modules. All other transactions contain a JavaScript expression, a "blockchain environment" that associated (free) variables in the expressions with input numbers, and an optional "module specifier" containing a transaction id. In order to compute the value of an output, the Bitcoin Computer software
+There are two types of transactions: **module deploys** store JavaScript (ES6) module source, and **transitions** store a JavaScript expression, a "blockchain environment" that associates free variables with input numbers, and an optional module specifier (a reference to a previously deployed module). Multisig module deploys encode cleartext `{ ept: <source> }` in data outputs; taproot module deploys embed the source in a reveal-input witness under protocol id `BC`. Transitions encode `{ exp, env, mod, v, ioMap }` (optionally encrypted). In order to compute the value of an output, the Bitcoin Computer software
 
-- imports the module from the transaction referred to
+- imports the module from the transaction referred to by `mod` (if any)
 - computes the values for the outputs being spent and then substitutes these values for the free variables in the expressions as designated by the blockchain environment
-- evaluate the expression with the substitution applied in the scope of the module
+- evaluates the expression with the substitution applied in the scope of the module
 
 The picture shows the deployment, minting, and sending a non fungible token and a non fungible token. For more details see the rest of the [documentation](https://docs.bitcoincomputer.io/).
 

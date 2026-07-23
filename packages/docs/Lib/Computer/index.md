@@ -38,7 +38,7 @@ For advanced applications that require control over how the transaction is signe
 | [encode](./encode.md) | Encodes a JavaScript expression into a Bitcoin transaction |
 | [encodeNew](./encodeNew.md) | Encodes a constructor call into a Bitcoin transaction |
 | [encodeCall](./encodeCall.md) | Encodes a function call into a Bitcoin transaction |
-| [decode](./decode.md) | Parses a Bitcoin transaction and returns JavaScript expression |
+| [decode](./decode.md) | Parses a transition transaction and returns its expression metadata (not for module deploys) |
 | [faucet](./faucet) | Fund a computer object on Regtest |
 
 ### History

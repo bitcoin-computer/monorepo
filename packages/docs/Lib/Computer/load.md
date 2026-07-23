@@ -1,6 +1,6 @@
 # load
 
-_Loads a module from the blockchain._
+_Loads a module from the blockchain and returns its exports._
 
 ### Type
 
@@ -12,11 +12,24 @@ _Loads a module from the blockchain._
 
 #### `rev`
 
-A module specifier encoded as a string of the form `<transaction-id>:<output-number>`.
+A module specifier encoded as a string of the form `<transaction-id>:<output-number>` (typically `<txId>:0` as returned by [`computer.deploy`](./deploy.md)).
 
 ### Return Value
 
-A JavaScript module.
+A JavaScript module namespace (the exports of the deployed ES module).
+
+## Description
+
+`load` fetches the module source for the given specifier and evaluates it in a SES compartment (with `Contract` and a restricted inner computer available as globals).
+
+How the source is recovered depends on `moduleStorageType` (see [`deploy`](./deploy.md)):
+
+- **`multisig`** — Reads cleartext `{ ept }` from the deploy transaction’s data outputs (`Transaction.onChainMetaData.ept`).
+- **`taproot`** — Reads the module body from the reveal transaction’s input witness (`BC` protocol envelope, content type `text/javascript`).
+
+Do not use [`computer.decode`](./decode.md) on a module specifier or deploy transaction; `decode` only handles transition metadata (`exp` / `env` / `mod`).
+
+Module sources are cached client-side after the first successful fetch for a given deploy `txId`.
 
 ## Example
 
