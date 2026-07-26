@@ -1,18 +1,24 @@
 /**
- * POW.TS – Canonical Min-Revision Meta-Token on Bitcoin Computer
+ * Digital Commodity Standard on Bitcoin Computer
  *
- * Issuance is bound 1:1 to host-chain blocks (LTC, BTC, …). At most one
- * meta-block / subsidy is issued per host block. The unique winner for height H
- * is the genuine mint whose creation revision is the lexicographically smallest
- * among all smart objects of this module created inside that block.
+ * Commodity is a functional utility standard for digital-commodity issuance on
+ * the Bitcoin Computer. It carries no governance rights, no claim on protocol
+ * or interface revenue, and no expectation of profits from the efforts of BCDB
+ * or others. Supply integrity is enforced solely by the deterministic
+ * min-revision selection rule and the immutable `_root` lineage check.
+ *
+ * Issuance is bound 1:1 to host-chain blocks (LTC, BTC, …). At most one subsidy
+ * is issued per host block. The unique winner for height H is the genuine mint
+ * whose creation revision is the lexicographically smallest among all smart
+ * objects of this module created inside that block.
  *
  * Only pure mints (constructor called with non-empty salt) may claim. Transfer
  * and split children are permanently ineligible, even at creation.
  *
  * The sole “work” is grinding a salt until the mint’s creation produces a
- * competitively small revision, then getting that transaction into a host
- * block. claim() awards the subsidy only when this object holds the absolute
- * minimum creation revision of a genuine mint root.
+ * competitively small revision, then obtaining inclusion of that transaction in
+ * a host block. claim() awards the subsidy only when this object holds the
+ * absolute minimum creation revision of a genuine mint root.
  *
  * Design points
  * - Issuance inherits the host’s difficulty adjustment, heaviest-chain rule,
@@ -28,17 +34,15 @@
  *   Any subsequent update spends that UTXO; children are permanently ineligible
  *   because their _root points to the original mint.
  *
- * Host-miner advantage (intentional and desirable) Host miners control which
- * mint creations are included and can ensure their own is the smallest (or
- * censor competitors). This is a feature: when the meta-token is valuable it
- * generates extra fee/inclusion revenue that helps secure the host chain.
- * Ordinary transfers, splits and exchange activity have no MEV surface with
- * respect to the subsidy.
+ * Host-miner inclusion Host miners decide which mint creations are included in
+ * a block and can therefore favour their own. Competitive minting activity can
+ * generate additional fee demand that helps secure the host chain. Ordinary
+ * transfers and splits have no MEV surface with respect to the subsidy.
  *
- * Reorg note After a successful claim() the subsidy is sticky. A later deep
- * reorg that would have made a different creation canonical (without orphaning
- * this object) does not revoke the credited amount. Clients may wait for extra
- * host confirmations before claiming (analogous to coinbase maturity).
+ * Sticky subsidies Once claim() has succeeded the credited amount is not
+ * revoked by a later reorg that would have selected a different winner
+ * (provided the claimed object itself is not orphaned). Clients may wait for
+ * extra host confirmations before claiming (analogous to coinbase maturity).
  *
  * Mining / claiming workflow
  * 1. Off-chain: grind a salt for a fresh mint until the creation revision is
@@ -47,6 +51,20 @@
  * 3. Once confirmed, call await mint.claim() while still at the creation
  *    revision (_rev === _root). Succeeds only if it is the canonical min for
  *    its host block.
+ *
+ * Commodity is experimental open-source software. Participation involves
+ * material risks, including smart-contract vulnerabilities, user or wallet
+ * errors that may result in permanent loss of funds, blockchain
+ * reorganizations, and regulatory change. BCDB Inc. does not endorse any
+ * particular use of Commodity. Creators and participants are solely responsible
+ * for compliance with the laws of their jurisdiction, including securities laws
+ * (Howey analysis), sanctions, tax, and any applicable state or local rules. Do
+ * your own research. Only use funds you can afford to lose.
+ *
+ * The Protocol remains fully accessible through multiple independent methods,
+ * including the open @bitcoin-computer libraries together with a local node,
+ * direct object ID navigation, raw transactions, and community or self-hosted
+ * renderers.
  *
  * @see https://docs.bitcoincomputer.io
  * @see
@@ -71,7 +89,13 @@ export const config = {
 }
 
 /**
- * Canonical min-revision meta-token.
+ * Canonical min-revision digital commodity.
+ *
+ * Commodity is a functional utility standard for digital-commodity issuance. It
+ * carries no governance rights, no claim on protocol or interface revenue, and
+ * no expectation of profits from the efforts of BCDB or others. Supply
+ * integrity is enforced solely by the deterministic min-revision selection rule
+ * and the immutable `_root` lineage check.
  *
  * One subsidy is issued for every host-chain block that contains a successful
  * mint. The winner is the genuine mint whose creation revision is the
@@ -86,7 +110,7 @@ export const config = {
  * creation revision (_rev === _root). After any mutation that UTXO is spent.
  * Transfer/split children are permanently ineligible.
  */
-export class Pow extends Contract {
+export class Commodity extends Contract {
   amount!: bigint
 
   /**
@@ -120,7 +144,7 @@ export class Pow extends Contract {
    */
   constructor(to: string, salt: string = '', amount: bigint = 0n) {
     if (salt) {
-      if (amount !== 0n) throw new Error('Mined PoW must start with amount === 0n')
+      if (amount !== 0n) throw new Error('Mined Commodity must start with amount === 0n')
     } else {
       if (amount < 0n) throw new Error('Amount cannot be negative')
     }
@@ -138,7 +162,7 @@ export class Pow extends Contract {
    * claim().
    */
   async isGenuine(): Promise<boolean> {
-    const root = this._root === this._rev ? this : await computer.sync<typeof Pow>(this._root)
+    const root = this._root === this._rev ? this : await computer.sync<typeof Commodity>(this._root)
     return !!root.salt
   }
 
@@ -146,16 +170,16 @@ export class Pow extends Contract {
    * Transfer ownership of the entire balance, or split off a portion.
    *
    * - transfer(to)          – re-assign the whole amount to a new owner
-   * - transfer(to, amount)  – create a new Pow of the given amount owned by
-   *                           `to` and deduct that amount from this object. The
-   *                           new object inherits the same _root, so it remains
-   *                           a valid token of the same lineage.
+   * - transfer(to, amount)  – create a new Commodity of the given amount owned
+   *                           by `to` and deduct that amount from this object.
+   *                           The new object inherits the same _root, so it
+   *                           remains a valid token of the same lineage.
    *
    * After this call the original object’s _rev advances, so it can no longer
    * call claim() (only a mint’s creation revision is eligible). The newly
    * created child is also ineligible for any future claim.
    */
-  transfer(to: string, amount?: bigint): Pow | undefined {
+  transfer(to: string, amount?: bigint): Commodity | undefined {
     if (typeof amount === 'undefined') {
       this._owners = [to]
       return undefined
@@ -218,7 +242,7 @@ export class Pow extends Contract {
    * transfer or split child, no mint can claim and the subsidy for that host
    * block is permanently lost. In practice this is negligible: there is no
    * economic incentive to grind a non-mint (it can never claim), and once the
-   * token has any value modest grinding by real minters reliably produces the
+   * token has any utility modest grinding by real minters reliably produces the
    * absolute minimum. Host miners also have a strong interest in including a
    * genuine winning mint.
    *
@@ -263,13 +287,16 @@ export class Pow extends Contract {
     if (!(await this.isGenuine()))
       throw new Error('Only objects belonging to a genuine mint lineage may claim the subsidy')
 
-    this.amount = Pow.getSubsidy(blockHeight)
+    this.amount = Commodity.getSubsidy(blockHeight)
   }
 
   /**
    * Subsidy schedule modelled on Bitcoin’s: 50 coins that halve every 210 000
    * host-chain blocks. Returns 0n after 64 halvings. Units are the host chain’s
    * base unit (satoshis / litoshis / …).
+   *
+   * The schedule is fully public and independently checkable; it forms part of
+   * the deterministic issuance parameters of this utility standard.
    */
   static getSubsidy(hostBlockHeight: number): bigint {
     if (hostBlockHeight < 0) return 0n
