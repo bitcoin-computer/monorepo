@@ -109,18 +109,18 @@ testResultsFiles.forEach((testResultsFile) => {
     );
     console.log(`Rerunning ${failedTests.length} failed tests`);
 
-    // Escape for --grep
+    // Escape for --grep (regex). Use single quotes in the shell so \$ survives.
     const escapedTitles = failedTests
       .map((test) => test.title.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"))
       .filter(Boolean);
-    const grepPattern = escapedTitles.join("|");
+    const grepPattern = escapedTitles.join("|").replace(/'/g, "'\\''");
 
     // Config + FORCE library load (this fixes Contract error)
     const configPath = join(packageDir, ".mocharc.json");
     const configArg = existsSync(configPath) ? "--config .mocharc.json" : "";
     const setupArg = "--require @bitcoin-computer/lib";
 
-    const mochaCommand = `${envVars} mocha ${configArg} ${setupArg} --grep "${grepPattern}" ${failedFiles.join(" ")}`;
+    const mochaCommand = `${envVars} mocha ${configArg} ${setupArg} --grep '${grepPattern}' ${failedFiles.join(" ")}`;
     console.log(`Running in ${packageDir}: ${mochaCommand}`);
 
     execSync(mochaCommand, { cwd: packageDir, stdio: "inherit" });

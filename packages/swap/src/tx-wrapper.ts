@@ -48,6 +48,8 @@ export class TxWrapperHelper {
 
     const fee = await this.computer.db.wallet.estimateFee(wrappedTx)
     const txId = await this.computer.send(BigInt(fee * 10), this.computer.getAddress())
+    // Wait until the funding output is indexed before including it
+    await this.computer.waitForIndexed(`${txId}:0`)
 
     return this.computer.encode({
       exp,
