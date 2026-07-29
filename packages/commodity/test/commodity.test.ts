@@ -356,7 +356,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
   describe('isGenuine() and lineage via immutable _root', () => {
     it('returns true for a genuine mint root (non-empty salt)', async () => {
       const mint = await createMint(alice, mod, 'genuine-salt')
-      expect(await mint.isGenuine()).to.be.true
+      expect(await mint.isGenuine()).to.eq(true)
     })
 
     it('returns true for any transfer/split descendant that inherits the same _root', async () => {
@@ -369,9 +369,9 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       const child = (await mint.transfer(bob.getPublicKey(), half)) as SmartContract<
         typeof Commodity
       >
-      expect(child).to.not.be.undefined
+      expect(child).to.not.eq(undefined)
       expect(child!._root).to.eq(mint._root)
-      expect(await child!.isGenuine()).to.be.true
+      expect(await child!.isGenuine()).to.eq(true)
     })
 
     it('returns true even for deep descendants (only the short root is ever synced)', async () => {
@@ -394,14 +394,14 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       )) as SmartContract<typeof Commodity>
 
       expect(grand!._root).to.eq(mint._root)
-      expect(await grand!.isGenuine()).to.be.true
+      expect(await grand!.isGenuine()).to.eq(true)
     })
 
     it('returns false when the root itself was created with empty salt (fake / non-mint lineage)', async () => {
       const fake = await alice.new(Commodity, [alice.getPublicKey(), '', 10n], mod)
       expect(fake.salt).to.eq('')
       expect(fake._id).to.eq(fake._root)
-      expect(await fake.isGenuine()).to.be.false
+      expect(await fake.isGenuine()).to.eq(false)
     })
   })
 
@@ -434,7 +434,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       it('returns undefined (no new object is created)', async () => {
         const { mint } = await mintClaimAndGet()
         const ret = await mint.transfer(bob.getPublicKey())
-        expect(ret).to.be.undefined
+        expect(ret).to.eq(undefined)
       })
     })
 
@@ -734,7 +734,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
 
       const subsidy = Commodity.getSubsidy(height)
       expect(mint.amount).to.eq(subsidy)
-      expect(await mint.isGenuine()).to.be.true
+      expect(await mint.isGenuine()).to.eq(true)
 
       await mineBlocks(local, 1)
       const recipient = new Computer({ url, chain, network })
@@ -743,7 +743,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       >
       expect(child!.amount).to.eq(subsidy / 2n)
       expect(mint.amount).to.eq(subsidy - subsidy / 2n)
-      expect(await child!.isGenuine()).to.be.true
+      expect(await child!.isGenuine()).to.eq(true)
     })
 
     it('multiple genuine mints in different host blocks can each claim their own subsidy independently', async () => {
@@ -779,7 +779,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       const child = (await mint.transfer(bob.getPublicKey(), 1n)) as SmartContract<typeof Commodity>
       expect(child!.amount).to.eq(1n)
       expect(mint.amount).to.eq(total - 1n)
-      expect(await child!.isGenuine()).to.be.true
+      expect(await child!.isGenuine()).to.eq(true)
 
       await mineBlocks(computer, 1)
       await mint.burn()
@@ -820,11 +820,11 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
   describe('Invariants', () => {
     it('amount is always a non-negative bigint after mint, claim, transfer, and burn', async () => {
       const { mint, computer } = await mintClaimAndGet()
-      expect(mint.amount >= 0n).to.be.true
+      expect(mint.amount >= 0n).to.eq(true)
 
       const child = (await mint.transfer(bob.getPublicKey(), 1n)) as SmartContract<typeof Commodity>
-      expect(mint.amount >= 0n).to.be.true
-      expect(child!.amount >= 0n).to.be.true
+      expect(mint.amount >= 0n).to.eq(true)
+      expect(child!.amount >= 0n).to.eq(true)
 
       await mineBlocks(computer, 1)
       await mint.burn()
@@ -845,7 +845,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       const { mint, computer } = await mintClaimAndGet()
 
       const child = (await mint.transfer(bob.getPublicKey(), 2n)) as SmartContract<typeof Commodity>
-      expect(await child!.isGenuine()).to.be.true
+      expect(await child!.isGenuine()).to.eq(true)
 
       // Only bob can spend the child UTXO.
       await mineBlocks(computer, 1)
