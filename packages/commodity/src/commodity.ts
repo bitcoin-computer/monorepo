@@ -24,7 +24,7 @@
  * - Issuance inherits the host’s difficulty adjustment, heaviest-chain rule,
  *   finality, and sequential linking of mints.
  * - Canonical selection uses only cheap, deterministic InnerComputer queries
- *   (txIdToBlockHeight, decode, getOUTXOs). No candidate objects are ever
+ *   (txIdToBlockHeight, decode, getOTXOs). No candidate objects are ever
  *   materialised or synced; claim() is history-independent and identical for
  *   every validator.
  * - Lineage authenticity is enforced by the framework’s immutable _root.
@@ -224,9 +224,10 @@ export class Commodity extends Contract {
    * 2. Recover the creation txid of this object from its _id.
    * 3. Look up the host-chain block height of that txid.
    * 4. Decode the creation transaction to obtain the module identifier.
-   * 5. Query every creation revision of that module created in the same block
-   *    (cheap getOUTXOs – no object materialisation). Both genuine mints and
-   *    transfer/split children are returned.
+   * 5. Query every object revision of that module that appears in the same
+   *    block (cheap getOTXOs – no object materialisation). Both genuine mints
+   *    and transfer/split children are returned. Spent creations are included
+   *    so claim remains history-stable under re-evaluation (sync after claim).
    * 6. Select the lexicographically smallest creation revision.
    * 7. If it equals this object’s _id (and therefore this is a mint that holds
    *    the absolute minimum), set amount to the subsidy (via getSubsidy);
@@ -234,9 +235,14 @@ export class Commodity extends Contract {
    * 8. Confirm lineage authenticity with the cheap isGenuine() check (only the
    *    short root is synced).
    *
-   * Because getOUTXOs / decode / txIdToBlockHeight are pure functions of the
+   * Because getOTXOs / decode / txIdToBlockHeight are pure functions of the
    * immutable host-chain state, every honest validator reaches the identical
    * conclusion. No deep histories are ever replayed.
+   *
+   * Important: use getOTXOs (all object TXOs), not getOUTXOs (unspent only).
+   * claim() spends the creation UTXO; if selection used getOUTXOs, replaying
+   * claim during sync would see an empty candidate set, and a same-block loser
+   * could claim after the winner spent their creation.
    *
    * If the absolute minimum creation revision in the block belongs to a
    * transfer or split child, no mint can claim and the subsidy for that host
@@ -263,11 +269,11 @@ export class Commodity extends Contract {
     const { mod } = await computer.decode(creationTxId)
     if (!mod) throw new Error('Could not recover module from creation tx')
 
-    // Retrieve all creation revisions of this module that appeared in the host
-    // block. Pure index query – no objects materialised, no histories replayed.
-    // Both genuine mints and transfer/split children are included when
-    // determining the absolute minimum.
-    const candidateRevs = await computer.getOUTXOs({ mod, blockHeight })
+    // Retrieve all object revisions of this module that appeared in the host
+    // block (spent or unspent). Pure index query – no objects materialised.
+    // Must be getOTXOs, not getOUTXOs: after a successful claim the creation is
+    // spent, and validators re-evaluate claim() when syncing the claimed rev.
+    const candidateRevs = await computer.getOTXOs({ mod, blockHeight })
 
     if (candidateRevs.length === 0)
       throw new Error(`No objects of this module found for block ${blockHeight}`)
