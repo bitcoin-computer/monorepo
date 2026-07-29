@@ -5,6 +5,5 @@
     "outDir": "dist",
     "declaration": false
   },
-  "include": ["src/**/*", "test/**/*"],
-  "exclude": ["src/pow.ts"] // Exclude contract since builded with esbuild and not with tsc
+  "include": ["src/**/*", "test/**/*"]
 }

@@ -28,7 +28,7 @@ mechanical properties:
 - The only work is grinding a salt until the resulting creation revision is
   competitively small, then obtaining inclusion in a host-chain block.
 - Selection uses only cheap InnerComputer queries (`txIdToBlockHeight`,
-  `decode`, `getOUTXOs`). No candidate objects are ever synced.
+  `decode`, `getOTXOs`). No candidate objects are ever synced.
 
 Any third party can confirm that a given object is a genuine mint of a genuine
 lineage and that a successful claim credited exactly the scheduled subsidy.
@@ -165,7 +165,7 @@ is not orphaned).
 
 **Module identity**  
 `claim()` recovers the module identifier from the creation transaction and
-queries `getOUTXOs({ mod, blockHeight })`. All competing mints must therefore be
+queries `getOTXOs({ mod, blockHeight })`. All competing mints must therefore be
 created from the same deployed module.
 
 ## Example
