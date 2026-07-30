@@ -39,23 +39,14 @@ export class TxWrapperHelper {
       : `new TxWrapper("${publicKey}", "${url}")`
     const exclude = tx ? tx.getInRevs() : []
     const revsToExclude = excludedRevs ? [...new Set([...exclude, ...excludedRevs])] : exclude
-    const { tx: wrappedTx } = await this.computer.encode({
-      fund: false,
-      exp,
-      exclude: revsToExclude,
-      mod: this.mod,
-    })
 
-    const fee = await this.computer.db.wallet.estimateFee(wrappedTx)
-    const txId = await this.computer.send(BigInt(fee * 10), this.computer.getAddress())
-    // Wait until the funding output is indexed before including it
-    await this.computer.waitForIndexed(`${txId}:0`)
-
+    // Fund in one encode pass with `exclude` so sale-tx inputs are never spent.
+    // (The previous fee*10 + computer.send() path ignored exclude and could
+    // invalidate the embedded / later-added sale tx with missingorspent.)
     return this.computer.encode({
       exp,
       exclude: revsToExclude,
       mod: this.mod,
-      include: [`${txId}:0`],
     })
   }
 

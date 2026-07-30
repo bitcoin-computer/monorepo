@@ -3,7 +3,7 @@ import { Computer, SmartContract, Contract } from '@bitcoin-computer/lib'
 // eslint-disable-next-line
 type Constructor<T> = new (...args: any[]) => T
 
-export type TokenConstructorParams = {
+export type TBC20ConstructorParams = {
   to: string
   amount: bigint
   name: string
@@ -11,10 +11,13 @@ export type TokenConstructorParams = {
   [s: string]: unknown
 }
 
+/** @deprecated Prefer `TBC20ConstructorParams` */
+export type TokenConstructorParams = TBC20ConstructorParams
+
 /**
  * Base fungible token contract for the Bitcoin Computer (TBC20 standard).
  */
-export class Token extends Contract {
+export class TBC20 extends Contract {
   amount!: bigint
   name!: string
   symbol!: string
@@ -24,7 +27,7 @@ export class Token extends Contract {
     return this._root
   }
 
-  constructor(params: TokenConstructorParams) {
+  constructor(params: TBC20ConstructorParams) {
     const { to, amount, name, symbol = '', ...rest } = params
     super({ amount, name, symbol, ...rest, _owners: [to] })
   }
@@ -33,11 +36,17 @@ export class Token extends Contract {
    * Transfer tokens to another owner.
    *
    * If `amount` is omitted, the entire balance is transferred by reassigning
-   * ownership of this token in place (the same UTXO/output changes owner). 
+   * ownership of this token in place (the same UTXO/output changes owner). This
+   * preserves the original TBC20 behavior and keeps the output layout fixed so
+   * SIGHASH_SINGLE-based swaps (e.g. the `Sale` contract) continue to work.
    *
    * For a partial transfer the value is split off into a new token instance for
    * the recipient. Subclasses can customize that token by overriding
    * `_createTransferToken`.
+   *
+   * NOTE: Subclasses that must sanitize per-instance state on transfer (e.g.
+   * TBC777, which strips escrow/claim history) override this method to route
+   * full transfers through `_createTransferToken` as well.
    */
   transfer(to: string, amount?: bigint): this | undefined {
     if (typeof amount === 'undefined') {
@@ -71,7 +80,7 @@ export class Token extends Contract {
     this.amount = 0n
   }
 
-  merge(tokens: Token[]) {
+  merge(tokens: TBC20[]) {
     if (tokens.some((t) => t._root !== this._root))
       throw new Error('Cannot merge tokens from different lineages')
     let total = 0n
@@ -83,6 +92,9 @@ export class Token extends Contract {
   }
 }
 
+/** @deprecated Prefer `TBC20` */
+export { TBC20 as Token }
+
 export interface ITBC20 {
   deploy(): Promise<string>
   mint(publicKey: string, amount: bigint, name: string, symbol: string): Promise<string>
@@ -91,7 +103,7 @@ export interface ITBC20 {
   transfer(to: string, amount: bigint, root: string): Promise<void>
 }
 
-export class TokenHelper implements ITBC20 {
+export class TBC20Helper implements ITBC20 {
   name: string
   symbol: string
   computer: Computer
@@ -103,7 +115,7 @@ export class TokenHelper implements ITBC20 {
   }
 
   async deploy() {
-    this.mod = await this.computer.deploy(`export ${Token}`)
+    this.mod = await this.computer.deploy(`export ${TBC20}`)
     return this.mod
   }
 
@@ -114,7 +126,7 @@ export class TokenHelper implements ITBC20 {
     symbol: string,
   ): Promise<string | undefined> {
     const token = await this.computer.new(
-      Token,
+      TBC20,
       [{ to: publicKey, amount, name, symbol }],
       this.mod,
     )
@@ -122,16 +134,16 @@ export class TokenHelper implements ITBC20 {
   }
 
   async totalSupply(root: string): Promise<bigint> {
-    const rootBag = (await this.computer.sync<typeof Token>(root)) as SmartContract<typeof Token>
+    const rootBag = (await this.computer.sync<typeof TBC20>(root)) as SmartContract<typeof TBC20>
     return rootBag.amount
   }
 
-  private async getBags(publicKey: string, root: string): Promise<SmartContract<typeof Token>[]> {
+  private async getBags(publicKey: string, root: string): Promise<SmartContract<typeof TBC20>[]> {
     const revs = await this.computer.getOUTXOs({ publicKey, mod: this.mod })
     const bags = await Promise.all(
-      revs.map(async (rev: string) => this.computer.sync<typeof Token>(rev)),
+      revs.map(async (rev: string) => this.computer.sync<typeof TBC20>(rev)),
     )
-    return bags.flatMap((bag: SmartContract<typeof Token> & { root: string }) =>
+    return bags.flatMap((bag: SmartContract<typeof TBC20> & { root: string }) =>
       bag.root === root ? [bag] : [],
     )
   }
@@ -156,3 +168,6 @@ export class TokenHelper implements ITBC20 {
     await Promise.all(results)
   }
 }
+
+/** @deprecated Prefer `TBC20Helper` */
+export { TBC20Helper as TokenHelper }

@@ -35,14 +35,14 @@
  * This pattern guarantees that the minted amount exactly matches an audited
  * claim.
  *
- * @see ./tbc20.ts
+ * @see @bitcoin-computer/TBC20
  * @see https://docs.bitcoincomputer.io/
  */
 
 // TYPES & INTERFACES
 
 import { Id, Rev, Root, Contract } from '@bitcoin-computer/lib'
-import { TBC20, TBC20ConstructorParams } from './tbc20.js'
+import { TBC20, TBC20ConstructorParams } from '@bitcoin-computer/TBC20'
 
 export type Constructor<T> = new (...args: any[]) => T
 export type Amount = bigint
