@@ -21,7 +21,6 @@ services:
     networks:
       - bitcoin
     restart: always
-    platform: linux/amd64
     ports:
       - ${BITCOIN_RPC_PORT}:${BITCOIN_RPC_PORT}
       - ${BCN_ZMQ_PORT}:${BCN_ZMQ_PORT}
