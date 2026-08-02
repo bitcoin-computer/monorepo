@@ -525,7 +525,7 @@ export class TBC777 extends TBC20 {
     // Critical no-inflation enforcement point: Even if the escrow maliciously
     // over-authorizes claims in its history, a negative availableBalance will
     // cause this withdrawal to be rejected.
-    if (availableBalance < 0)
+    if (availableBalance < 0n)
       throw new Error(`Escrow available balance (${availableBalance}) too low`)
     if (claimable <= 0n)
       throw new Error(`Claimable ${isFinal ? 'final ' : ''}withdraw amount is zero or negative`)
