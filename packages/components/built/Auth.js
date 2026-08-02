@@ -31,6 +31,8 @@ function getCoinType(chain = 'LTC', network = 'regtest') {
         return 3434;
     if (chain === 'BCH')
         return 145;
+    if (chain === 'WOJAK')
+        return 20760;
     throw new Error(`Unsupported chain ${chain} or network ${network}`);
 }
 function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
@@ -55,8 +57,7 @@ function loggedInConfiguration() {
         url: localStorage.getItem('URL') || getEnv('URL'),
         path: localStorage.getItem('PATH') || getEnv('PATH'),
         moduleStorageType: localStorage.getItem('MODULE_STORAGE_TYPE') ||
-            getEnv('MODULE_STORAGE_TYPE') ||
-            'taproot',
+            getEnv('MODULE_STORAGE_TYPE'),
     };
 }
 function getComputer(options = {}) {
