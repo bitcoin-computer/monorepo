@@ -93,8 +93,6 @@ export class TBC777 extends TBC20 {
         if (amount !== undefined) {
             if (amount < 0n)
                 throw new Error('Amount cannot be negative');
-            if (amount === 0n && !remoteRoot)
-                throw new Error('Zero amount is only valid for remote-root tokens');
             if (remoteRoot && amount !== 0n)
                 throw new Error('Remote-root tokens must be created with amount 0n');
         }
@@ -233,8 +231,6 @@ export class TBC777 extends TBC20 {
         const symbolMatch = exp.match(/symbol\s*:\s*'([^']+)'/)?.[1];
         if (!toMatch || !amountMatch || !nameMatch || !symbolMatch)
             throw new Error('Input string is not in a valid TBC777 constructor form');
-        if (amountMatch === '0' && !exp.includes('remoteRoot'))
-            throw new Error('Zero amount is only valid for remote-root tokens');
         const noStrings = exp
             .replace(/'[^'\\]*(?:\\.[^'\\]*)*'/g, '""')
             .replace(/"[^"\\]*(?:\\.[^"\\]*)*"/g, '""');
