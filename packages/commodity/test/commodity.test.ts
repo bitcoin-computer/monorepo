@@ -15,7 +15,8 @@
  */
 
 import { expect } from 'chai'
-import { Computer, SmartContract } from '@bitcoin-computer/lib'
+import { Computer, Contract, SmartContract } from '@bitcoin-computer/lib'
+import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777'
 import dotenv from 'dotenv'
 import path from 'path'
 import { Commodity, config } from '../src/commodity.js'
@@ -84,10 +85,7 @@ async function fundedComputer(utxos = 2, sats = 5e8): Promise<Computer> {
  * Returns the height of the last mined block.
  */
 async function mineBlocks(computer: Computer, n = 1): Promise<number> {
-  const hashes: string[] = await computer.rpc(
-    'generateToAddress',
-    `${n} ${MINE_SINK_ADDRESS}`,
-  )
+  const hashes: string[] = await computer.rpc('generateToAddress', `${n} ${MINE_SINK_ADDRESS}`)
   await sleep(INDEX_WAIT_MS)
   const last = hashes[hashes.length - 1]
   const blockInfo = await computer.rpc('getBlock', `${last} 1`)
@@ -141,10 +139,22 @@ async function waitForMintInBlockIndex(
   )
 }
 
-/** Deploy a Commodity module (required for claim() – decode must recover mod). */
+/**
+ * Deploy a Commodity module (required for claim() – decode must recover mod).
+ *
+ * Commodity extends TBC777 → TBC20 → Contract. SES only provides `Contract` as a
+ * free global; TBC20 / TBC777 / EscrowAuditor must be exported in the same
+ * module so `class Commodity extends TBC777` can resolve at load time.
+ * EscrowAuditor is referenced from TBC777 methods (withdraw / getBalance).
+ */
 async function deployCommodity(computer: Computer): Promise<string> {
   await ensureFunds(computer, 3e8)
-  return computer.deploy(`export ${stripComments(Commodity.toString())}`)
+  return computer.deploy(`
+    export ${stripComments(TBC20.toString())}
+    export ${stripComments(EscrowAuditor.toString())}
+    export ${stripComments(TBC777.toString())}
+    export ${stripComments(Commodity.toString())}
+  `)
 }
 
 /**
@@ -156,17 +166,18 @@ async function createMint(
   modSpec: string,
   salt = `salt-${Math.random().toString(36).slice(2)}`,
 ): Promise<SmartContract<typeof Commodity>> {
-  return computer.new(Commodity, [computer.getPublicKey(), salt, 0n], modSpec)
+  return computer.new(
+    Commodity,
+    [{ to: computer.getPublicKey(), salt, amount: 0n }],
+    modSpec,
+  )
 }
 
 /**
  * Deploy a private module, mint, confirm, and claim.
  * Uses a fresh wallet by default so coinbase / mempool-chain state stays clean.
  */
-async function mintClaimAndGet(opts?: {
-  computer?: Computer
-  salt?: string
-}): Promise<{
+async function mintClaimAndGet(opts?: { computer?: Computer; salt?: string }): Promise<{
   computer: Computer
   mod: string
   mint: SmartContract<typeof Commodity>
@@ -193,10 +204,7 @@ async function mintClaimAndGet(opts?: {
  * Sync a revision as `owner` so subsequent spends are signed with the correct key.
  * Required after a transfer: only the new owner can spend the child UTXO.
  */
-async function asOwner(
-  owner: Computer,
-  rev: string,
-): Promise<SmartContract<typeof Commodity>> {
+async function asOwner(owner: Computer, rev: string): Promise<SmartContract<typeof Commodity>> {
   return owner.sync<typeof Commodity>(rev)
 }
 
@@ -304,7 +312,11 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     describe('Genuine mint path (salt non-empty, amount must be 0n)', () => {
       it('creates a mint root with amount 0n, non-empty salt, and _id === _rev === _root', async () => {
         const salt = 'salt-abc'
-        const mint = await alice.new(Commodity, [alice.getPublicKey(), salt, 0n], mod)
+        const mint = await alice.new(
+          Commodity,
+          [{ to: alice.getPublicKey(), salt, amount: 0n }],
+          mod,
+        )
 
         expect(mint.amount).to.eq(0n)
         expect(mint.salt).to.eq(salt)
@@ -316,34 +328,38 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
 
       it('throws when a mined Commodity is constructed with amount !== 0n', () => {
         const pk = alice.getPublicKey()
-        expect(() => new Commodity(pk, 'salt', 1n)).to.throw(
+        expect(() => new Commodity({ to: pk, salt: 'salt', amount: 1n })).to.throw(
           'Mined Commodity must start with amount === 0n',
         )
       })
 
       it('stores the grinding salt for transparency (never cryptographically checked)', async () => {
         const salt = 'my-grind-salt'
-        const mint = await alice.new(Commodity, [alice.getPublicKey(), salt, 0n], mod)
+        const mint = await alice.new(
+          Commodity,
+          [{ to: alice.getPublicKey(), salt, amount: 0n }],
+          mod,
+        )
         expect(mint.salt).to.eq(salt)
       })
     })
 
     describe("Transfer / split construction path (salt === '')", () => {
       it('allows construction with empty salt and non-negative amount (used by transfer)', () => {
-        const child = new Commodity(bob.getPublicKey(), '', 5n)
+        const child = new Commodity({ to: bob.getPublicKey(), salt: '', amount: 5n })
         expect(child.salt).to.eq('')
         expect(child.amount).to.eq(5n)
         expect(child._owners).deep.eq([bob.getPublicKey()])
       })
 
       it('throws if amount is negative', () => {
-        expect(() => new Commodity(bob.getPublicKey(), '', -1n)).to.throw(
+        expect(() => new Commodity({ to: bob.getPublicKey(), salt: '', amount: -1n })).to.throw(
           'Amount cannot be negative',
         )
       })
 
       it('allows zero amount with empty salt', () => {
-        const child = new Commodity(bob.getPublicKey(), '', 0n)
+        const child = new Commodity({ to: bob.getPublicKey(), salt: '', amount: 0n })
         expect(child.amount).to.eq(0n)
         expect(child.salt).to.eq('')
       })
@@ -398,7 +414,11 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     })
 
     it('returns false when the root itself was created with empty salt (fake / non-mint lineage)', async () => {
-      const fake = await alice.new(Commodity, [alice.getPublicKey(), '', 10n], mod)
+      const fake = await alice.new(
+        Commodity,
+        [{ to: alice.getPublicKey(), salt: '', amount: 10n }],
+        mod,
+      )
       expect(fake.salt).to.eq('')
       expect(fake._id).to.eq(fake._root)
       expect(await fake.isGenuine()).to.eq(false)
@@ -521,7 +541,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
 
   describe('merge()', () => {
     it('always throws "Merge disabled."', () => {
-      const local = new Commodity(alice.getPublicKey(), 'salt', 0n)
+      const local = new Commodity({ to: alice.getPublicKey(), salt: 'salt', amount: 0n })
       expect(() => local.merge()).to.throw('Merge disabled.')
     })
   })
@@ -587,19 +607,46 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       const local = await fundedComputer()
       const localMod = await deployCommodity(local)
       await mineBlocks(local, 1)
-      const fake = await local.new(Commodity, [local.getPublicKey(), '', 0n], localMod)
+      const fake = await local.new(
+        Commodity,
+        [{ to: local.getPublicKey(), salt: '', amount: 0n }],
+        localMod,
+      )
       await confirmMint(local, fake, localMod)
 
       await expectClaimFails(fake, /genuine mint lineage/)
     })
 
     it('throws when the creation transaction has no module (mod missing)', async () => {
+      // Full Commodity + TBC777 cannot be inlined in a creation tx (sigops limit
+      // on the host chain). The early claim() guard only needs decode().mod, so
+      // exercise it with a minimal Contract that shares the same check.
+      class MinimalClaimModGuard extends Contract {
+        salt!: string
+        amount!: bigint
+        constructor(to: string, salt: string, amount: bigint = 0n) {
+          super({ _owners: [to], salt, amount })
+        }
+        async claim() {
+          const creationTxId = this._id.split(':')[0].toLowerCase()
+          const { mod } = await computer.decode(creationTxId)
+          if (!mod) throw new Error('Could not recover module from creation tx')
+        }
+      }
+
       const solo = await fundedComputer()
-      const bare = await solo.new(Commodity, [solo.getPublicKey(), 'no-mod-salt', 0n])
+      const bare = await solo.new(MinimalClaimModGuard, [
+        solo.getPublicKey(),
+        'no-mod-salt',
+        0n,
+      ])
       // No module: only wait for confirmation, not getOTXOs(mod, height).
       await mineBlocks(solo, 1)
       await solo.waitForIndexed(bare._id)
-      await expectClaimFails(bare, /Could not recover module from creation tx/)
+      await expectClaimFails(
+        bare as unknown as SmartContract<typeof Commodity>,
+        /Could not recover module from creation tx/,
+      )
     })
   })
 
@@ -725,7 +772,11 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       await mineBlocks(local, 1)
 
       const salt = `grind-${Date.now()}`
-      const mint = await local.new(Commodity, [local.getPublicKey(), salt, 0n], localMod)
+      const mint = await local.new(
+        Commodity,
+        [{ to: local.getPublicKey(), salt, amount: 0n }],
+        localMod,
+      )
       expect(mint.amount).to.eq(0n)
       expect(mint._rev).to.eq(mint._root)
 
@@ -851,10 +902,9 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       await mineBlocks(computer, 1)
       await ensureFunds(bob, 2e8)
       const childAsBob = await asOwner(bob, child!._rev)
-      const grandchild = (await childAsBob.transfer(
-        alice.getPublicKey(),
-        1n,
-      )) as SmartContract<typeof Commodity>
+      const grandchild = (await childAsBob.transfer(alice.getPublicKey(), 1n)) as SmartContract<
+        typeof Commodity
+      >
       expect(grandchild!.amount).to.eq(1n)
       expect(grandchild!._root).to.eq(mint._root)
 
