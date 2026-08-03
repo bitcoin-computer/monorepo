@@ -73,10 +73,36 @@
  * https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273
  */
 
-import { Contract } from '@bitcoin-computer/lib'
+import { TBC777, TBC777Params } from '@bitcoin-computer/TBC777'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Constructor<T> = new (...args: any[]) => T
+
+/**
+ * Constructor arguments accepted by Commodity.
+ *
+ * Aligns with TBC777 / TBC20 (single params object). Typical call sites:
+ * - Mint: `new Commodity({ to, salt, amount: 0n })`
+ * - Transfer child: `new Commodity({ to, amount, salt: '' })`
+ *
+ * `amount` and `name` are optional at the call site (default `0n` / `''`);
+ * other fields match TBC777Params (including optional `symbol`, `remoteRoot`, …).
+ */
+export type CommodityConstructorParams = {
+  to: string
+  /** Token amount. Default `0n` (must be `0n` for genuine mints). */
+  amount?: bigint
+  /** Optional display name. Default `''`. */
+  name?: string
+  /** Free-form grinding salt; non-empty marks a genuine mint root. Default `''`. */
+  salt?: string
+  symbol?: string
+  remoteRoot?: TBC777Params['remoteRoot']
+  withdrawn?: TBC777Params['withdrawn']
+  finalWithdrawn?: TBC777Params['finalWithdrawn']
+  escrow?: TBC777Params['escrow']
+  [s: string]: unknown
+}
 
 /**
  * Chain-specific configuration defaults.
@@ -109,8 +135,12 @@ export const config = {
  * Eligibility: claim() succeeds only while the object is still at its mint
  * creation revision (_rev === _root). After any mutation that UTXO is spent.
  * Transfer/split children are permanently ineligible.
+ *
+ * Extends TBC777 so modules can reuse escrow-capable token machinery. Deployed
+ * modules must export the full inheritance chain (TBC20, EscrowAuditor, TBC777,
+ * Commodity) — see the package tests for the canonical deploy helper.
  */
-export class Commodity extends Contract {
+export class Commodity extends TBC777 {
   amount!: bigint
 
   /**
@@ -126,7 +156,7 @@ export class Commodity extends Contract {
   salt!: string
 
   /**
-   * Two constructor paths:
+   * Two construction paths (via a single params object, same shape as TBC777):
    *
    * 1. Mining / minting (salt non-empty):
    *    - amount must be 0n
@@ -141,15 +171,31 @@ export class Commodity extends Contract {
    *    - child inherits the parent's _root (framework guarantee)
    *    - valid token of the same lineage but permanently ineligible to claim
    *      (its _rev never equals its _root)
+   *
+   * Transfer factories call `new Ctor({ to, amount, salt: '', ... })`.
    */
-  constructor(to: string, salt: string = '', amount: bigint = 0n) {
+  constructor(params: CommodityConstructorParams) {
+    const { to, salt = '', amount = 0n, name = '', ...rest } = params
+
     if (salt) {
       if (amount !== 0n) throw new Error('Mined Commodity must start with amount === 0n')
     } else {
       if (amount < 0n) throw new Error('Amount cannot be negative')
     }
 
-    super({ _owners: [to], amount, salt })
+    // TBC777 forbids amount === 0n unless remoteRoot is set (bridged tokens).
+    // Commodity mint roots (and optional zero-amount children) must start at
+    // 0n. Contract also blocks direct property assignment in the constructor,
+    // so we temporarily pass 1n and then burn() to reach the final 0n state.
+    const needsZeroFix = amount === 0n && !rest.remoteRoot
+    super({
+      to,
+      amount: needsZeroFix ? 1n : amount,
+      salt,
+      name,
+      ...rest,
+    })
+    if (needsZeroFix) this.burn()
   }
 
   /**
@@ -169,27 +215,43 @@ export class Commodity extends Contract {
   /**
    * Transfer ownership of the entire balance, or split off a portion.
    *
-   * - transfer(to)          – re-assign the whole amount to a new owner
+   * Commodity keeps the classic fungible-token shape (not TBC777's always-split
+   * transfer):
+   * - transfer(to)          – re-assign the whole amount to a new owner in place
    * - transfer(to, amount)  – create a new Commodity of the given amount owned
    *                           by `to` and deduct that amount from this object.
-   *                           The new object inherits the same _root, so it
-   *                           remains a valid token of the same lineage.
+   *                           The child is constructed with salt === '' so it
+   *                           can never claim; it inherits the same _root.
    *
    * After this call the original object’s _rev advances, so it can no longer
    * call claim() (only a mint’s creation revision is eligible). The newly
    * created child is also ineligible for any future claim.
    */
-  transfer(to: string, amount?: bigint): Commodity | undefined {
+  transfer(to: string, amount?: bigint): this | undefined {
     if (typeof amount === 'undefined') {
       this._owners = [to]
       return undefined
     }
-    if (this.amount >= amount) {
-      this.amount -= amount
-      const Ctor = this.constructor as Constructor<this>
-      return new Ctor(to, '', amount)
-    }
-    throw new Error('Insufficient funds')
+    if (amount <= 0n) throw new Error('Transfer amount must be positive')
+    if (this.amount < amount) throw new Error('Insufficient funds')
+
+    this.amount -= amount
+    return this._createTransferToken(to, amount)
+  }
+
+  /**
+   * Split factory used by transfer(). Always builds a non-mint child (salt '')
+   * and drops escrow bookkeeping so recipients do not inherit claim history.
+   */
+  protected _createTransferToken(to: string, amount: bigint): this {
+    const Ctor = this.constructor as Constructor<this>
+    return new Ctor({
+      to,
+      amount,
+      salt: '',
+      name: this.name ?? '',
+      symbol: this.symbol ?? '',
+    })
   }
 
   /**
@@ -203,7 +265,7 @@ export class Commodity extends Contract {
   /**
    * Merge is intentionally disabled for this meta-token.
    */
-  merge() {
+  merge(): never {
     throw new Error('Merge disabled.')
   }
 

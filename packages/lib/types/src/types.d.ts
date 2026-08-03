@@ -448,8 +448,6 @@ export type TXORecord = {
   previous?: string
   blockHash?: string
   blockHeight?: number
-  lteBlockHeight?: number
-  gteBlockHeight?: number
   blockIndex?: number
   timestamp?: number
 }
@@ -462,6 +460,8 @@ export type TXOQuery = {
   isConfirmed?: boolean
   publicKey?: PublicKeyString
   exp?: string
+  lteBlockHeight?: number
+  gteBlockHeight?: number
 } & Partial<Omit<TXORecord, 'expHash'>>
 export type EvalResult = {
   effect: EvaluatedEffect

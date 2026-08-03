@@ -13,7 +13,7 @@
     "prebuild": "npm run lint",
     "build": "rm -rf build && tsc -p tsconfig.release.json && npm run build:contract",
     "build:turbo": "turbo run build",
-    "build:contract": "esbuild src/commodity.ts --bundle --format=esm --minify --target=es2022 --outfile=build/src/commodity.js",
+    "build:contract": "esbuild src/commodity.ts --bundle --format=esm --minify --target=es2022 --outfile=build/src/commodity.js --external:@bitcoin-computer/*",
     "build:test": "rm -rf dist && tsc -p tsconfig.test.json",
     "clean": "npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
@@ -25,6 +25,7 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
+    "@bitcoin-computer/TBC777": "^0.27.0-beta.1",
     "@bitcoin-computer/lib": "^0.27.0-beta.1"
   },
   "devDependencies": {

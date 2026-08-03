@@ -81,11 +81,11 @@ export class Commodity extends Contract {
   salt!: string
 
   /**
-   * Two constructor paths:
+   * Two constructor paths (single params object, same style as TBC777):
    * - salt non-empty, amount === 0n  → genuine mint root (only these can claim)
    * - salt === '', amount ≥ 0n       → transfer / split child (inherits _root)
    */
-  constructor(to: string, salt: string = '', amount: bigint = 0n)
+  constructor(params: { to: string; salt?: string; amount?: bigint; name?: string })
 
   /** True iff this object descends from a genuine mint (non-empty salt at root). */
   async isGenuine(): Promise<boolean>
@@ -123,8 +123,8 @@ export const config = {
 1. **Off-chain** – Grind a salt until the resulting creation revision is
    competitively small. (The revision is determined by the creation transaction;
    any pure function of the salt can be used.)
-2. **Broadcast** – `const mint = await computer.new(Commodity, [owner, salt,
-0n])`.
+2. **Broadcast** – `const mint = await computer.new(Commodity, [{ to: owner,
+salt, amount: 0n }])`.
 3. **Claim** – Once the mint is confirmed and while it is still at the creation
    revision (`_rev === _root`), call `await mint.claim()`. The call succeeds
    only if this mint holds the absolute minimum creation revision of the module
@@ -186,7 +186,9 @@ await computer.faucet(config.FAUCET_AMOUNT)
 const salt = '…' // result of grinding
 
 // Mint
-const mint = await computer.new(Commodity, [computer.getPublicKey(), salt, 0n])
+const mint = await computer.new(Commodity, [
+  { to: computer.getPublicKey(), salt, amount: 0n },
+])
 
 // After confirmation, claim while still at the creation revision
 await mint.claim()
