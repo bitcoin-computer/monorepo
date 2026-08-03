@@ -368,8 +368,9 @@ export class TBC777 extends TBC20 {
   }
 
   /**
-   * Remote-root tokens (used for bridged / cross-chain value) MUST be created
-   * with `amount: 0n`. The constructor enforces this rule.
+   * Amount may be any non-negative bigint, including `0n` (empty bag / deferred
+   * issuance). Remote-root tokens (bridged / cross-chain value) MUST still be
+   * created with `amount: 0n` so all value originates from audited escrow claims.
    *
    * A remote-root token MUST immediately call `withdraw(rev)` or
    * `finalWithdraw(rev)` inside the same transaction that instantiates it. This
@@ -382,8 +383,6 @@ export class TBC777 extends TBC20 {
 
     if (amount !== undefined) {
       if (amount < 0n) throw new Error('Amount cannot be negative')
-      if (amount === 0n && !remoteRoot)
-        throw new Error('Zero amount is only valid for remote-root tokens')
       if (remoteRoot && amount !== 0n)
         throw new Error('Remote-root tokens must be created with amount 0n')
     }
@@ -636,10 +635,11 @@ export class TBC777 extends TBC20 {
    * constructor expressions.
    *
    * Rejects:
-   * - Invalid `to` addresses, negative/zero amounts (except remote-root)
+   * - Invalid `to` addresses, negative amounts
    * - Expressions containing `class`, `extends`, or `function` keywords
    *   (prevents inline-class / shadowing attacks)
    *
+   * Zero amounts (`0n`) are allowed for any token, including non-remote mints.
    * Used by the semantic-equality path for remote-root tokens.
    */
   static makeRegex(exp: string): RegExp {
@@ -650,8 +650,6 @@ export class TBC777 extends TBC20 {
 
     if (!toMatch || !amountMatch || !nameMatch || !symbolMatch)
       throw new Error('Input string is not in a valid TBC777 constructor form')
-    if (amountMatch === '0' && !exp.includes('remoteRoot'))
-      throw new Error('Zero amount is only valid for remote-root tokens')
 
     const noStrings = exp
       .replace(/'[^'\\]*(?:\\.[^'\\]*)*'/g, '""')
