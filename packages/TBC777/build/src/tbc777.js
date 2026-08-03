@@ -155,7 +155,7 @@ export class TBC777 extends TBC20 {
             throw new Error('Cannot withdraw multiple times');
         const { availableBalance, regularClaimable, finalClaimable } = await EscrowAuditor.audit(rev, this);
         const claimable = isFinal ? finalClaimable : regularClaimable;
-        if (availableBalance < 0)
+        if (availableBalance < 0n)
             throw new Error(`Escrow available balance (${availableBalance}) too low`);
         if (claimable <= 0n)
             throw new Error(`Claimable ${isFinal ? 'final ' : ''}withdraw amount is zero or negative`);
