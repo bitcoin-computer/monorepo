@@ -183,19 +183,7 @@ export class Commodity extends TBC777 {
       if (amount < 0n) throw new Error('Amount cannot be negative')
     }
 
-    // TBC777 forbids amount === 0n unless remoteRoot is set (bridged tokens).
-    // Commodity mint roots (and optional zero-amount children) must start at
-    // 0n. Contract also blocks direct property assignment in the constructor,
-    // so we temporarily pass 1n and then burn() to reach the final 0n state.
-    const needsZeroFix = amount === 0n && !rest.remoteRoot
-    super({
-      to,
-      amount: needsZeroFix ? 1n : amount,
-      salt,
-      name,
-      ...rest,
-    })
-    if (needsZeroFix) this.burn()
+    super({ to, amount, salt, name, ...rest })
   }
 
   /**

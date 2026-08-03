@@ -1161,6 +1161,37 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 })
 
 // ============================================================
+// UNIT TESTS FOR constructor amount rules
+// ============================================================
+describe('TBC777 constructor amount rules (unit)', () => {
+  const validTo = '02abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'
+
+  it('allows zero amount without remoteRoot', () => {
+    const t = new TBC777({ to: validTo, amount: 0n, name: 'test', symbol: 'TST' })
+    expect(t.amount).to.equal(0n)
+    expect(t.remoteRoot).to.be.undefined
+  })
+
+  it('rejects negative amounts', () => {
+    expect(
+      () => new TBC777({ to: validTo, amount: -1n, name: 'test', symbol: 'TST' }),
+    ).to.throw('Amount cannot be negative')
+  })
+
+  it('still requires remote-root tokens to be created with amount 0n', () => {
+    expect(
+      () =>
+        new TBC777({
+          to: validTo,
+          amount: 5n,
+          name: 'test',
+          symbol: 'TST',
+          remoteRoot: 'abc:0',
+        }),
+    ).to.throw('Remote-root tokens must be created with amount 0n')
+  })
+})
+
 // UNIT TESTS FOR makeRegex
 // ============================================================
 describe('TBC777.makeRegex (unit)', () => {
@@ -1181,6 +1212,12 @@ describe('TBC777.makeRegex (unit)', () => {
   it('accepts valid initial constructor expression', () => {
     const regex = TBC777.makeRegex(makeExp())
     expect(regex.test(makeExp())).to.equal(true)
+  })
+
+  it('accepts zero amount without remoteRoot', () => {
+    const exp = makeExp(validTo, '0')
+    const regex = TBC777.makeRegex(exp)
+    expect(regex.test(exp)).to.equal(true)
   })
 
   it('accepts remoteRoot constructor with extra fields', () => {
