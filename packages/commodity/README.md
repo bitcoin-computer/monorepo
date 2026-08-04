@@ -65,6 +65,8 @@ is negligible once the Commodity has utility.
 - Genuine-mint lineage enforced by the framework’s immutable `_root`.
 - Bitcoin-style subsidy schedule (50 coins, halving every 210 000 host blocks).
 - Claimed Commodities remain ordinary fungible objects (transfer, split, burn).
+- Inherits the full escrow-capable machinery of TBC777 (programmable deposits,
+  audited withdrawals, no-inflation invariant).
 - Host miners control inclusion of new mint creations; competitive minting
   activity can increase fee demand on the host chain. Ordinary transfers and
   splits have no MEV surface with respect to the subsidy.
@@ -76,33 +78,59 @@ is negligible once the Commodity has utility.
 ## Public Surface
 
 ```typescript
-export class Commodity extends Contract {
+import { TBC777, TBC777Params } from '@bitcoin-computer/TBC777'
+
+export type CommodityConstructorParams = {
+  to: string
+  /** Token amount. Default `0n` (must be `0n` for genuine mints). */
+  amount?: bigint
+  /** Optional display name. Default `''`. */
+  name?: string
+  /** Free-form grinding salt; non-empty marks a genuine mint root. Default `''`. */
+  salt?: string
+  symbol?: string
+  remoteRoot?: TBC777Params['remoteRoot']
+  // …plus other optional TBC777Params fields
+}
+
+/**
+ * Canonical min-revision digital commodity.
+ *
+ * Extends TBC777 so modules can reuse escrow-capable token machinery.
+ * Deployed modules must export the full inheritance chain
+ * (TBC20, EscrowAuditor, TBC777, Commodity).
+ */
+export class Commodity extends TBC777 {
   amount!: bigint
   salt!: string
 
   /**
-   * Two constructor paths (single params object, same style as TBC777):
+   * Two constructor paths (single params object, same style as TBC777 / TBC20):
    * - salt non-empty, amount === 0n  → genuine mint root (only these can claim)
    * - salt === '', amount ≥ 0n       → transfer / split child (inherits _root)
    */
-  constructor(params: { to: string; salt?: string; amount?: bigint; name?: string })
+  constructor(params: CommodityConstructorParams)
 
   /** True iff this object descends from a genuine mint (non-empty salt at root). */
   async isGenuine(): Promise<boolean>
 
-  /** Whole-balance transfer or partial split. Advances _rev. */
-  transfer(to: string, amount?: bigint): Commodity | undefined
+  /**
+   * Whole-balance transfer or partial split (classic fungible shape).
+   * Advances `_rev`. Children are constructed with `salt === ''` and are
+   * therefore permanently ineligible to claim.
+   */
+  transfer(to: string, amount?: bigint): this | undefined
 
-  /** Sets amount to 0n and advances _rev. */
+  /** Sets amount to 0n and advances `_rev`. */
   burn(): void
 
   /** Always throws. Merge is disabled. */
-  merge(): void
+  merge(): never
 
   /**
    * Credits the host-block subsidy if and only if this object is the
    * lexicographically smallest genuine mint creation in its block.
-   * May be called only while _rev === _root.
+   * May be called only while `_rev === _root`.
    */
   async claim(): Promise<void>
 
@@ -118,6 +146,11 @@ export const config = {
 }
 ```
 
+Commodity inherits the complete TBC777 escrow surface (`deposit`, audited
+withdrawals, etc.). Deployed modules must export the full inheritance chain
+(`TBC20`, `EscrowAuditor`, `TBC777`, `Commodity`) — see the package tests for
+the canonical deploy helper.
+
 ## Mining & Claiming Workflow
 
 1. **Off-chain** – Grind a salt until the resulting creation revision is
@@ -131,7 +164,7 @@ salt, amount: 0n }])`.
    in its host block.
 
 After a successful claim the object behaves like any other fungible Commodity of
-its lineage.
+its lineage and can participate in TBC777 escrows.
 
 Clients that want extra safety against reorgs can wait for additional host
 confirmations before calling `claim()` (analogous to coinbase maturity).
@@ -168,6 +201,11 @@ is not orphaned).
 queries `getOTXOs({ mod, blockHeight })`. All competing mints must therefore be
 created from the same deployed module.
 
+**Inheritance & deployment**  
+Commodity extends TBC777 so that the resulting tokens reuse the escrow-capable
+token machinery and the no-inflation invariant. A deployed module must therefore
+export the full chain `TBC20` → `EscrowAuditor` → `TBC777` → `Commodity`.
+
 ## Example
 
 ```typescript
@@ -186,9 +224,7 @@ await computer.faucet(config.FAUCET_AMOUNT)
 const salt = '…' // result of grinding
 
 // Mint
-const mint = await computer.new(Commodity, [
-  { to: computer.getPublicKey(), salt, amount: 0n },
-])
+const mint = await computer.new(Commodity, [{ to: computer.getPublicKey(), salt, amount: 0n }])
 
 // After confirmation, claim while still at the creation revision
 await mint.claim()
@@ -197,6 +233,8 @@ console.log(mint.amount === Commodity.getSubsidy(/* block height of mint */))
 // The claimed Commodity can now be transferred or split normally
 const recipient = '…' // public key
 const child = mint.transfer(recipient, mint.amount / 2n)
+
+// …and can participate in TBC777 escrows
 ```
 
 A test skeleton covering constructor paths, lineage checks, eligibility guards,
@@ -209,7 +247,7 @@ provided in `commodity.test.ts`.
 
 - One subsidy per host block.
 - Only genuine mints at their creation revision can claim.
-- No inflation of a claimed lineage.
+- No inflation of a claimed lineage (inherited from TBC777 / TBC20).
 
 **Not protected**
 
@@ -220,10 +258,18 @@ provided in `commodity.test.ts`.
 
 ## Relation to Other Standards
 
-Commodity is self-contained; it does not extend TBC20 or TBC777. After a
-successful claim the resulting objects are ordinary fungible tokens of a genuine
-lineage and can be used anywhere a Bitcoin Computer token is accepted, including
-as inputs to other protocols.
+Commodity extends TBC777 (and therefore TBC20). It inherits the full
+escrow-capable token surface and the token-side no-inflation invariant of
+TBC777, while adding the min-revision issuance rule, the `salt`-based genuine-
+mint check, and the `claim()` / `getSubsidy()` machinery.
+
+After a successful claim the resulting objects are ordinary fungible tokens of a
+genuine lineage. They can be used anywhere a Bitcoin Computer token or TBC777
+token is accepted, including as inputs to other protocols and programmable
+escrows.
+
+Deployed modules must export the complete inheritance chain (`TBC20`,
+`EscrowAuditor`, `TBC777`, `Commodity`).
 
 ## Risks and Disclaimers
 
