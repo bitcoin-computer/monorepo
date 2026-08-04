@@ -141,7 +141,7 @@ const sidebars: SidebarsConfig = {
         "reference/node-api",
         "reference/comparison",
         "reference/examples",
-        "reference/legal",
+        "legal",
       ],
     },
 
