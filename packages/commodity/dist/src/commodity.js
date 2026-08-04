@@ -24,7 +24,7 @@
  * - Issuance inherits the host’s difficulty adjustment, heaviest-chain rule,
  *   finality, and sequential linking of mints.
  * - Canonical selection uses only cheap, deterministic InnerComputer queries
- *   (txIdToBlockHeight, decode, getOUTXOs). No candidate objects are ever
+ *   (txIdToBlockHeight, decode, getOTXOs). No candidate objects are ever
  *   materialised or synced; claim() is history-independent and identical for
  *   every validator.
  * - Lineage authenticity is enforced by the framework’s immutable _root.
@@ -72,7 +72,7 @@
  * @see
  * https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273
  */
-import { Contract } from '@bitcoin-computer/lib';
+import { TBC777 } from '@bitcoin-computer/TBC777';
 /**
  * Chain-specific configuration defaults.
  */
@@ -103,10 +103,14 @@ export const config = {
  * Eligibility: claim() succeeds only while the object is still at its mint
  * creation revision (_rev === _root). After any mutation that UTXO is spent.
  * Transfer/split children are permanently ineligible.
+ *
+ * Extends TBC777 so modules can reuse escrow-capable token machinery. Deployed
+ * modules must export the full inheritance chain (TBC20, EscrowAuditor, TBC777,
+ * Commodity) — see the package tests for the canonical deploy helper.
  */
-export class Commodity extends Contract {
+export class Commodity extends TBC777 {
     /**
-     * Two constructor paths:
+     * Two construction paths (via a single params object, same shape as TBC777):
      *
      * 1. Mining / minting (salt non-empty):
      *    - amount must be 0n
@@ -121,8 +125,11 @@ export class Commodity extends Contract {
      *    - child inherits the parent's _root (framework guarantee)
      *    - valid token of the same lineage but permanently ineligible to claim
      *      (its _rev never equals its _root)
+     *
+     * Transfer factories call `new Ctor({ to, amount, salt: '', ... })`.
      */
-    constructor(to, salt = '', amount = 0n) {
+    constructor(params) {
+        const { to, salt = '', amount = 0n, name = '', ...rest } = params;
         if (salt) {
             if (amount !== 0n)
                 throw new Error('Mined Commodity must start with amount === 0n');
@@ -131,7 +138,7 @@ export class Commodity extends Contract {
             if (amount < 0n)
                 throw new Error('Amount cannot be negative');
         }
-        super({ _owners: [to], amount, salt });
+        super({ to, amount, salt, name, ...rest });
     }
     /**
      * Returns true iff this object is a legitimate descendant of a genuine mint.
@@ -149,11 +156,13 @@ export class Commodity extends Contract {
     /**
      * Transfer ownership of the entire balance, or split off a portion.
      *
-     * - transfer(to)          – re-assign the whole amount to a new owner
+     * Commodity keeps the classic fungible-token shape (not TBC777's always-split
+     * transfer):
+     * - transfer(to)          – re-assign the whole amount to a new owner in place
      * - transfer(to, amount)  – create a new Commodity of the given amount owned
      *                           by `to` and deduct that amount from this object.
-     *                           The new object inherits the same _root, so it
-     *                           remains a valid token of the same lineage.
+     *                           The child is constructed with salt === '' so it
+     *                           can never claim; it inherits the same _root.
      *
      * After this call the original object’s _rev advances, so it can no longer
      * call claim() (only a mint’s creation revision is eligible). The newly
@@ -164,12 +173,26 @@ export class Commodity extends Contract {
             this._owners = [to];
             return undefined;
         }
-        if (this.amount >= amount) {
-            this.amount -= amount;
-            const Ctor = this.constructor;
-            return new Ctor(to, '', amount);
-        }
-        throw new Error('Insufficient funds');
+        if (amount <= 0n)
+            throw new Error('Transfer amount must be positive');
+        if (this.amount < amount)
+            throw new Error('Insufficient funds');
+        this.amount -= amount;
+        return this._createTransferToken(to, amount);
+    }
+    /**
+     * Split factory used by transfer(). Always builds a non-mint child (salt '')
+     * and drops escrow bookkeeping so recipients do not inherit claim history.
+     */
+    _createTransferToken(to, amount) {
+        const Ctor = this.constructor;
+        return new Ctor({
+            to,
+            amount,
+            salt: '',
+            name: this.name ?? '',
+            symbol: this.symbol ?? '',
+        });
     }
     /**
      * Destroy this token by setting its amount to zero. Advances _rev, rendering
@@ -201,9 +224,10 @@ export class Commodity extends Contract {
      * 2. Recover the creation txid of this object from its _id.
      * 3. Look up the host-chain block height of that txid.
      * 4. Decode the creation transaction to obtain the module identifier.
-     * 5. Query every creation revision of that module created in the same block
-     *    (cheap getOUTXOs – no object materialisation). Both genuine mints and
-     *    transfer/split children are returned.
+     * 5. Query every object revision of that module that appears in the same
+     *    block (cheap getOTXOs – no object materialisation). Both genuine mints
+     *    and transfer/split children are returned. Spent creations are included
+     *    so claim remains history-stable under re-evaluation (sync after claim).
      * 6. Select the lexicographically smallest creation revision.
      * 7. If it equals this object’s _id (and therefore this is a mint that holds
      *    the absolute minimum), set amount to the subsidy (via getSubsidy);
@@ -211,9 +235,14 @@ export class Commodity extends Contract {
      * 8. Confirm lineage authenticity with the cheap isGenuine() check (only the
      *    short root is synced).
      *
-     * Because getOUTXOs / decode / txIdToBlockHeight are pure functions of the
+     * Because getOTXOs / decode / txIdToBlockHeight are pure functions of the
      * immutable host-chain state, every honest validator reaches the identical
      * conclusion. No deep histories are ever replayed.
+     *
+     * Important: use getOTXOs (all object TXOs), not getOUTXOs (unspent only).
+     * claim() spends the creation UTXO; if selection used getOUTXOs, replaying
+     * claim during sync would see an empty candidate set, and a same-block loser
+     * could claim after the winner spent their creation.
      *
      * If the absolute minimum creation revision in the block belongs to a
      * transfer or split child, no mint can claim and the subsidy for that host
@@ -239,11 +268,11 @@ export class Commodity extends Contract {
         const { mod } = await computer.decode(creationTxId);
         if (!mod)
             throw new Error('Could not recover module from creation tx');
-        // Retrieve all creation revisions of this module that appeared in the host
-        // block. Pure index query – no objects materialised, no histories replayed.
-        // Both genuine mints and transfer/split children are included when
-        // determining the absolute minimum.
-        const candidateRevs = await computer.getOUTXOs({ mod, blockHeight });
+        // Retrieve all object revisions of this module that appeared in the host
+        // block (spent or unspent). Pure index query – no objects materialised.
+        // Must be getOTXOs, not getOUTXOs: after a successful claim the creation is
+        // spent, and validators re-evaluate claim() when syncing the claimed rev.
+        const candidateRevs = await computer.getOTXOs({ mod, blockHeight });
         if (candidateRevs.length === 0)
             throw new Error(`No objects of this module found for block ${blockHeight}`);
         // Lexicographically smallest full revision (txid:vout). String sort is
