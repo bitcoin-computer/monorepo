@@ -46,6 +46,7 @@ export declare class TBC777 extends TBC20 {
     constructor(args: TBC777Params);
     get root(): string;
     merge(): never;
+    transfer(to: string, amount?: bigint): this;
     protected _createTransferToken(to: string, amount: bigint): this;
     deposit(escrow: Id, deposit: Amount): void;
     getBalance(escrowRev: Rev): Promise<bigint>;

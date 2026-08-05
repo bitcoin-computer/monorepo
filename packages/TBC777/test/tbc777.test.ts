@@ -334,7 +334,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
         expect.fail('should have thrown on non-last rev')
       } catch (e: any) {
         expect(e.message).to.include(
-          'Accessing non-existent on-chain state inside a smart contract is forbidden',
+          "finalWithdraws can only be claimed from the escrow's last revision",
         )
       }
 
@@ -938,7 +938,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
         expect.fail('should have thrown on non-last rev')
       } catch (e: any) {
         expect(e.message).to.include(
-          'Accessing non-existent on-chain state inside a smart contract is forbidden',
+          "finalWithdraws can only be claimed from the escrow's last revision",
         )
       }
 
