@@ -67,6 +67,8 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       export ${escrowSource}
       export ${tbc777Source}
     `)
+    // Confirm module so InnerComputer.load(mod) (semantic isEqualTo) is stable.
+    await minter.db.wallet.restClient.mine(1)
 
     await ensureFunds(minter, 20e8)
 
@@ -336,13 +338,16 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
         // Tip is still live/unspent → computer.last(firstRev) returns undefined →
         // InnerComputer invalidates with the framework non-existent-state message.
         // (The domain "can only be claimed from last revision" message only appears
-        // after the tip has been deleted, when last() returns a concrete tip rev.)
+        // after the tip has been deleted *and that spend is confirmed*, when last()
+        // returns a concrete tip rev.)
         expect(e.message).to.include(
           'Accessing non-existent on-chain state inside a smart contract is forbidden',
         )
       }
 
       await minter.delete([lastRev])
+      // last() requires a confirmed spending input of the tip — mine the delete.
+      await mine()
 
       await t.finalWithdraw(lastRev)
       expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)
@@ -952,6 +957,8 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       }
 
       await minter.delete([lastRev])
+      // last() requires a confirmed spending input of the tip — mine the delete.
+      await mine()
 
       await t.finalWithdraw(lastRev)
       expect(t.amount).to.eq(FRESH_TOKEN_AMOUNT)

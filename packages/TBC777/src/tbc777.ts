@@ -83,8 +83,8 @@ export type ClaimAmountEntry = [Id, Amount]
  *   the specific `escrowRev` revision supplied to `audit()`. Escrow
  *   implementations should record final-withdrawal entries only in their
  *   terminal (latest) revision. The `finalWithdraw()` method on tokens
- *   additionally verifies that the supplied revision is currently the live tip
- *   of the escrow via `computer.last(rev)`.
+ *   additionally verifies the tip via `computer.last(rev)` (requires that tip
+ *   to be spent in a **confirmed** transaction — see `finalWithdraw`).
  *
  * SECURITY INVARIANT: Even if an escrow is buggy or malicious and
  * over-authorizes claims, the audited balance for any token lineage can never
@@ -492,11 +492,15 @@ export class TBC777 extends TBC20 {
   /**
    * Claim a final withdrawal from the given escrow revision.
    *
-   * Performs an explicit terminal-revision check via `computer.last(rev)`. The
-   * supplied revision must be the current live tip of the escrow at the moment
-   * of evaluation. This check is intentionally omitted from regular
-   * `withdraw()` and `getBalance()` so those paths stay free of transient
-   * observations and remain deterministic under chain extension.
+   * Performs an explicit terminal-revision check via `computer.last(rev)`.
+   * InnerComputer only returns a definite `last` when the tip is **spent in a
+   * confirmed transaction** (mempool-only or unspent tips invalidate). Typical
+   * flow: record `finalWithdraws` on the tip, `delete` that tip UTXO, wait for
+   * confirmation, then `finalWithdraw(tipRev)`.
+   *
+   * This check is intentionally omitted from regular `withdraw()` and
+   * `getBalance()` so those paths stay free of transient observations and
+   * remain deterministic under chain extension.
    */
   async finalWithdraw(rev: Rev) {
     return this._withdraw(rev, true)

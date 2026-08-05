@@ -211,7 +211,8 @@ function WinnerModal(data: {
               Prize: {data.wagerAmount} tokens
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-              Click &quot;Withdraw Tokens&quot; on the board to collect your prize.
+              Click &quot;Withdraw Tokens&quot; on the board to collect your prize. Withdrawal waits
+              until the final game transaction is confirmed on-chain.
             </p>
           </div>
         ) : (
@@ -282,11 +283,10 @@ function ActionButtons({
         </button>
       )}
 
-      {/* Withdraw Tokens: shown only when the chess contract declares a payout
-          for my token AND my token has not already claimed against the current
-          chess revision. On checkmate the winning move sets withdraws
-          atomically, so the winner can withdraw immediately — no separate
-          "Claim Win" round trip. */}
+      {/* Withdraw Tokens: shown when the chess contract declares a payout for my
+          token and it has not been claimed yet. The helper waits for the game
+          tip to confirm before TBC777 withdraw (InnerComputer history must be
+          confirmed). */}
       {isPayoutEligible && !hasWithdrawn && (
         <button onClick={onWithdraw} className={buttonStyles}>
           Withdraw Tokens
@@ -610,6 +610,8 @@ export function ChessBoard() {
       const myPubKey = computer.getPublicKey()
       const myTokenId =
         myPubKey === chessContract.publicKeyW ? chessContract.tokenIdW : chessContract.tokenIdB
+      // Helper waits for the latest chess tip to confirm before auditing deposits.
+      showSnackBar('Waiting for the game result to confirm, then withdrawing…', true)
       await helper.withdrawTokens(myTokenId, chessContract._id)
       await syncChessContract()
       notifyGamesUpdated()
@@ -641,6 +643,8 @@ export function ChessBoard() {
     try {
       setIsCancelling(true)
       showLoader(true)
+      // Cancel sets withdraws, then waits for confirmation, then TBC777 withdraw.
+      showSnackBar('Cancelling challenge and waiting for confirmation before refund…', true)
       await helper.cancelGameAndWithdraw(chessContract._id)
       if (document.getElementById(winnerModal)) {
         Modal.hideModal(winnerModal)
