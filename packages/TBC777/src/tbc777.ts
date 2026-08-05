@@ -423,8 +423,6 @@ export class TBC777 extends TBC20 {
    * inherit escrow / claim history, so we route every transfer through
    * `_createTransferToken` (which strips `withdrawn` / `finalWithdrawn` / `escrow`).
    */
-  // can this be get rid off???
-  // can it be same?
   transfer(to: string, amount?: bigint): this {
     if (typeof amount === 'undefined') amount = this.amount
 
@@ -527,7 +525,7 @@ export class TBC777 extends TBC20 {
     // Critical no-inflation enforcement point: Even if the escrow maliciously
     // over-authorizes claims in its history, a negative availableBalance will
     // cause this withdrawal to be rejected.
-    if (availableBalance < 0)
+    if (availableBalance < 0n)
       throw new Error(`Escrow available balance (${availableBalance}) too low`)
     if (claimable <= 0n)
       throw new Error(`Claimable ${isFinal ? 'final ' : ''}withdraw amount is zero or negative`)
