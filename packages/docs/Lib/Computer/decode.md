@@ -36,6 +36,10 @@ The `decode` function takes a Bitcoin transaction or a transaction ID as input a
 
 **Module deploy transactions are not transitions.** If `tx` is a module deploy (multisig cleartext `{ ept }` in data outputs, or a taproot reveal with protocol id `BC` in the witness), `decode` throws an error instructing you to use [`computer.load`](./load.md) instead. To inspect raw module payloads without evaluating them, see [`Transaction.onChainMetaData`](../Transaction/index.md#onchainmetadata) (multisig) or `Computer.getInscription(rawTx, index)` (taproot witness).
 
+### Inside smart contracts (`InnerComputer`)
+
+Only **confirmed** transactions may be decoded. Unconfirmed or missing txIds invalidate the evaluation. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
 ## Example
 
 :::code source="../../../lib/test/lib/computer/decode.test.ts" :::

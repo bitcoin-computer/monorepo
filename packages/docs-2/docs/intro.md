@@ -226,11 +226,12 @@ class Escrow extends Contract {
 
 **Important distinction**: The `computer` available _inside_ your contract
 methods is a restricted `InnerComputer`. It only exposes safe read operations
-(`sync`, `decode`, `load`, `first`/`prev`/`next`/`last`, `getAncestors`, etc.).
-It cannot create or broadcast transactions. This is a deliberate security
-boundary. The implementation also uses a global invalid-state flag as a safety
-net: if a contract attempts to access non-existent on-chain state, the entire
-evaluation is rejected.
+(`sync`, `decode`, `load`, `first`/`prev`/`next`/`last`, `getAncestors`,
+block/time helpers, guarded `getTXOs`, etc.). It cannot create or broadcast
+transactions, and it does **not** expose `latest`. Reads generally require
+**confirmed** locations; missing, mempool-only, or other transient observations
+set an invalidation flag and reject the entire evaluation even if the contract
+catches the thrown error.
 
 ### Low-Level Control for Complex Protocols
 

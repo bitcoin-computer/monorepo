@@ -541,6 +541,61 @@ describe('ChessContract', () => {
         expect(blackTokenFinal.amount).toBe(15n)
       })
 
+      it('calculateTimes / hasTimedOut require a confirmed tip (InnerComputer guards)', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const { chess, chessFunded } = await fundChessGame({
+          minter,
+          white,
+          black,
+          tbc777Mod,
+          chessMod,
+          wager,
+          timeLimit,
+        })
+
+        // One unconfirmed move: tip has no block time yet → must invalidate.
+        const head = await white.latest(chess._id)
+        const toMove = await white.sync<typeof ChessContract>(head)
+        const { tx: moveTx, effect: moveEffect } = await white.encodeCall({
+          target: toMove,
+          property: 'move',
+          args: ['e2', 'e4', ''],
+          mod: chessMod,
+        })
+        await white.broadcast(moveTx)
+        const afterMove = (moveEffect as unknown as { env: { __bc__: unknown } }).env
+          .__bc__ as SmartContract<typeof ChessContract>
+        expect(afterMove._rev).not.toBe(chessFunded._rev)
+
+        await expect(async () => {
+          const { tx } = await white.encodeCall({
+            target: afterMove,
+            property: 'hasTimedOutW',
+            args: [],
+            mod: chessMod,
+          })
+          await white.broadcast(tx)
+        }).rejects.toThrow(
+          /Accessing non-existent on-chain state inside a smart contract is forbidden/,
+        )
+
+        // After the move confirms, walking prev + block times is a stable observation.
+        await minter.db.wallet.restClient.mine(1)
+        const confirmed = await white.sync<typeof ChessContract>(afterMove._rev)
+        const { tx: okTx, effect: okEffect } = await white.encodeCall({
+          target: confirmed,
+          property: 'hasTimedOutW',
+          args: [],
+          mod: chessMod,
+        })
+        await white.broadcast(okTx)
+        const timedOut = (okEffect as unknown as { res: boolean }).res
+        expect(typeof timedOut).toBe('boolean')
+        // Fresh game with one move should not exceed a 10-minute limit.
+        expect(timedOut).toBe(false)
+      })
+
       it('Should run fool mate and credit winner balance on withdraw', async () => {
         await minter.faucet(1e8)
         const wager = 5n

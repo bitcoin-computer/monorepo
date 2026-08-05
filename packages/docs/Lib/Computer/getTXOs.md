@@ -43,27 +43,28 @@ async getTXOs(q: TXOQuery): Promise<string[] | TXORecord[]>
 An object with the query parameters.
 
 {.compact}
-| Key | Description |
-| ------------- | --------------------------------------------------------------------------- |
-| verbosity | 0 for revision strings, 1 for rows from the Output table |
-| rev | Return TXOs with this exact revision |
-| address | Return TXOs that belong to this address. The matching address is computed from the output script (see below) |
-| satoshis | Return TXOs with this exact satoshis amount |
-| asm | Return TXOs matching the asm script |
-| isObject | Return TXOs that are (or are not) smart objects |
-| mod | Return TXOs that are smart objects created with this module or a descendant of it |
-| previous | Return TXOs whose previous revision is the provided parameter |
-| exp | Giving an expression, return TXOs that matches the hash of that expression |
-| blockHash | Return TXOs that are included in the block with this hash |
-| blockHeight | Return TXOs that are included in the block with this height |
-| lteBlockHeight | Return TXOs that are included in the block with lower than or equal height |
-| gteBlockHeight | Return TXOs that are included in the block with greater than or equal height |
-| isSpent | Return TXOs that are (or are not) spent |
-| isConfirmed | Return TXOs that are (or are not) included in a block |
-| publicKey | Return TXOs whose asm contains this public key |
-| limit | Limit the number of TXOs returned |
-| offset | Return results starting from offset |
-| order | Order results in ascending or descending order |
+
+| Key            | Description                                                                                                  |
+| -------------- | ------------------------------------------------------------------------------------------------------------ |
+| verbosity      | 0 for revision strings, 1 for rows from the Output table                                                     |
+| rev            | Return TXOs with this exact revision                                                                         |
+| address        | Return TXOs that belong to this address. The matching address is computed from the output script (see below) |
+| satoshis       | Return TXOs with this exact satoshis amount                                                                  |
+| asm            | Return TXOs matching the asm script                                                                          |
+| isObject       | Return TXOs that are (or are not) smart objects                                                              |
+| mod            | Return TXOs that are smart objects created with this module or a descendant of it                            |
+| previous       | Return TXOs whose previous revision is the provided parameter                                                |
+| exp            | Giving an expression, return TXOs that matches the hash of that expression                                   |
+| blockHash      | Return TXOs that are included in the block with this hash                                                    |
+| blockHeight    | Return TXOs that are included in the block with this height                                                  |
+| lteBlockHeight | Return TXOs that are included in the block with lower than or equal height                                   |
+| gteBlockHeight | Return TXOs that are included in the block with greater than or equal height                                 |
+| isSpent        | Return TXOs that are (or are not) spent                                                                      |
+| isConfirmed    | Return TXOs that are (or are not) included in a block                                                        |
+| publicKey      | Return TXOs whose asm contains this public key                                                               |
+| limit          | Limit the number of TXOs returned                                                                            |
+| offset         | Return results starting from offset                                                                          |
+| order          | Order results in ascending or descending order                                                               |
 
 ### Return Value
 
@@ -89,12 +90,22 @@ The `getTXOs` function retrieves transaction outputs (TXOs) from the database ba
 
 For security and efficiency, pair filters with `publicKey` when scoping to an owner, and apply `limit` / `offset` to manage result volume.
 
-Syntactic sugar:
+### Inside smart contracts (`InnerComputer`)
 
-| Helper | Equivalent |
-| --------------------------- | ------------------------------------------- |
-| [`getUTXOs`](./getUTXOs.md) | `getTXOs({ …, isSpent: false })` |
-| [`getOTXOs`](./getOTXOs.md) | `getTXOs({ …, isObject: true })` |
+Off-chain clients may call `getTXOs` with any filter set. **Inside a contract**, the query must include a **stabilizing** filter so results cannot change as the chain grows:
+
+- `lteBlockHeight` (must be ≤ current tip; future heights are forbidden)
+- `blockHeight` (must be ≤ current tip)
+- `blockHash` (fixed historical block)
+
+Queries without one of these filters invalidate the evaluation. Aliases `getUTXOs`, `getOTXOs`, and `getOUTXOs` inherit the same rule. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
+To retrieve Unspent Transaction Outputs, see the syntactic sugar function `getUTXOs`, which internally calls `getTXOs` with the `isSpent: false` parameter.
+
+| Helper                        | Equivalent                                       |
+| ----------------------------- | ------------------------------------------------ |
+| [`getUTXOs`](./getUTXOs.md)   | `getTXOs({ …, isSpent: false })`                 |
+| [`getOTXOs`](./getOTXOs.md)   | `getTXOs({ …, isObject: true })`                 |
 | [`getOUTXOs`](./getOUTXOs.md) | `getTXOs({ …, isObject: true, isSpent: false })` |
 
 ## Example

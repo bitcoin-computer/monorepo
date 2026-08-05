@@ -44,6 +44,8 @@ describe('TBC777M', () => {
     await Promise.all([black.faucet(10e8), white.faucet(1e8), minter.faucet(10e8)])
     await ensureFunds(minter)
     mod = await minter.deploy(`export ${TBC20}`)
+    // Confirm module deploy so any InnerComputer.load of `mod` is stable.
+    await mine()
   })
 
   it('Should work for a naive escrow', async () => {

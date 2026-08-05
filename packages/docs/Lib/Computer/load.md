@@ -33,6 +33,10 @@ Module sources are cached client-side after the first successful fetch for a giv
 
 A Bitcoin Computer Node also indexes deploys in its `Module` table. To discover or inspect sources without evaluating them, use [`getModules`](./getModules.md) / [`getModule`](./getModule.md) (or the node [modules](../../Node/modules.md) / [module](../../Node/module.md) HTTP endpoints).
 
+### Inside smart contracts (`InnerComputer`)
+
+Module locations are revs of the form `txId:outputIndex`. Inside a contract, the module’s deploy transaction must be **confirmed**; an unconfirmed deploy invalidates the evaluation. Off-chain `computer.load` may still resolve mempool deploys for development. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
 ## Example
 
 :::code source="../../../lib/test/lib/computer/load.test.ts" :::
