@@ -423,6 +423,8 @@ export class TBC777 extends TBC20 {
    * inherit escrow / claim history, so we route every transfer through
    * `_createTransferToken` (which strips `withdrawn` / `finalWithdrawn` / `escrow`).
    */
+  // can this be get rid off???
+  // can it be same?
   transfer(to: string, amount?: bigint): this {
     if (typeof amount === 'undefined') amount = this.amount
 
