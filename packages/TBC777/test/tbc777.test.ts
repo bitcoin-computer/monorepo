@@ -333,8 +333,12 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
         await t.finalWithdraw(firstRev)
         expect.fail('should have thrown on non-last rev')
       } catch (e: any) {
+        // Tip is still live/unspent → computer.last(firstRev) returns undefined →
+        // InnerComputer invalidates with the framework non-existent-state message.
+        // (The domain "can only be claimed from last revision" message only appears
+        // after the tip has been deleted, when last() returns a concrete tip rev.)
         expect(e.message).to.include(
-          "finalWithdraws can only be claimed from the escrow's last revision",
+          'Accessing non-existent on-chain state inside a smart contract is forbidden',
         )
       }
 
@@ -887,9 +891,12 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       // 2. Authorize claim for the exact post-deposit token _id
       await (escrow1 as any).setWithdraw(t._id, DEPOSIT_AMOUNT, t.root as Root)
 
-      // 3. Transfer the *remaining* balance to new owner
-      //    _createTransferToken sanitizes escrow state (withdrawn/finalWithdrawn/escrow)
-      const transferred = await t.transfer(white.getPublicKey())
+      // 3. Transfer the *remaining* balance to new owner as a split (explicit amount).
+      //    Full transfer without amount uses TBC20 in-place ownership reassignment
+      //    and returns undefined; partial transfer goes through _createTransferToken
+      //    which sanitizes escrow state and yields a fresh _id for the recipient.
+      const remainingAmount = t.amount
+      const transferred = await t.transfer(white.getPublicKey(), remainingAmount)
       const whiteToken = await white.sync<typeof TBC777>(transferred._rev)
       await mine()
 
@@ -937,8 +944,10 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
         await t.finalWithdraw(firstRev)
         expect.fail('should have thrown on non-last rev')
       } catch (e: any) {
+        // Tip is still live/unspent → computer.last(firstRev) returns undefined →
+        // InnerComputer invalidates with the framework non-existent-state message.
         expect(e.message).to.include(
-          "finalWithdraws can only be claimed from the escrow's last revision",
+          'Accessing non-existent on-chain state inside a smart contract is forbidden',
         )
       }
 
