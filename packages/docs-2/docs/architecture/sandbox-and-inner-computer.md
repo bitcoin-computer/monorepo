@@ -44,10 +44,15 @@ call may succeed:
 ## Invalidation flow
 
 1. Query fails or observes a transient fact.
-2. InnerComputer sets `globalInvalidState` (with a reason message) and throws.
-3. Compartment returns (possibly after `catch` — the flag is **not** cleared).
-4. `Db.eval` sees the flag and rejects the transition with a single public error
-   string.
+2. InnerComputer marks the **current evaluation-stack frame** invalid and
+   throws. Frames are push/pop around each `Db.eval` and `Modules.load` so
+   concurrent async work cannot cross-talk. (Free-var `computer` may be a
+   create/module instance different from the eval endowment; the stack still
+   records invalidation for the active evaluation.)
+3. Compartment returns (possibly after `catch` — the frame flag is **not**
+   cleared until the frame is popped after the invalidity check).
+4. `Db.eval` / `Modules.load` read the frame (via `computer.isInvalid`) and
+   reject with a single public error string.
 
 Error text always ends with exactly one copy of:
 
