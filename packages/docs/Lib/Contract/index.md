@@ -90,23 +90,19 @@ Successful observations must therefore be **invariant under future chain growth*
 
 ### How invalidation works
 
-- On a forbidden observation, InnerComputer sets an internal invalid flag and throws.
-- A contract `try/catch` **cannot** clear that flag. After the SES compartment returns, `Db.eval` still rejects the transition if the flag is set.
-- Error messages end with:
+1. On a forbidden observation, InnerComputer sets an internal invalid flag and throws an `Error`.
+2. A contract `try/catch` **cannot** clear that flag. After the SES compartment returns, `Db.eval` still rejects the transition if the flag is set.
 
-  > Accessing non-existent on-chain state inside a smart contract is forbidden.
+#### Error message shape
 
-| Function          | Signature                                                     | Returns                                   | Invalidates on missing / error?      | Notes                                                         |
-| ----------------- | ------------------------------------------------------------- | ----------------------------------------- | ------------------------------------ | ------------------------------------------------------------- |
-| `sync`            | `sync(location: string): Promise<any>`                        | The latest object state                   | Yes                                  | Deep-cloned with BigInt support                               |
-| `decode`          | `decode(txId: string): Promise<TransitionJSON>`               | `{ exp, env?, mod? }` transition metadata | Yes                                  | Transition txs only; module deploys must use `load`           |
-| `load`            | `load(location: string): Promise<Record<string, any>>`        | Module exports namespace                  | Yes                                  | For dynamic module loading inside contracts                   |
-| `getAncestors`    | `getAncestors(location: string): Promise<string[]>`           | Array of ancestor locations               | Yes (on error)                       | Empty array `[]` if no ancestors                              |
-| `first`           | `first(rev: string): Promise<string>`                         | First revision in lineage                 | Yes                                  | Always returns a string for valid input                       |
-| `prev`            | `prev(rev: string): Promise<string \| undefined>`             | Previous revision or `undefined`          | Only on underlying error             | Safe to call on tip; returns `undefined` without invalidation |
-| `next`            | `next(rev: string): Promise<string \| undefined>`             | Next revision or throws                   | **Yes, including if no next exists** | Strict: absence of next **invalidates** execution             |
-| `last`            | `last(rev: string): Promise<string \| undefined>`             | Latest (tip) revision or `undefined`      | Only on underlying error             | Returns tip of lineage                                        |
-| `txIdToBlockTime` | `txIdToBlockTime(txId: string): Promise<bigint \| undefined>` | Block time as `bigint`                    | Yes                                  | Requires mined Bitcoin Computer transaction                   |
+All invalidation errors exposed to callers end with **exactly one** copy of:
+
+> Accessing non-existent on-chain state inside a smart contract is forbidden.
+
+- Direct policy rejections (for example, future `getBlockHash` height, missing `getTXOs` stabilizer) store a short reason; when the contract catches and continues, `Db.eval` re-throws via a shared formatter so the standard suffix is still present **once**.
+- Uncaught throws and catch-and-continue paths therefore share the same single-suffix convention (no doubled “forbidden” text).
+
+Clients and tests should match with `message.endsWith(...)` (or equivalent), not assume a doubled suffix.
 
 ### Confirmed locations only
 
@@ -220,7 +216,7 @@ Queries without a stabilizer, or with a future height, invalidate. Empty result 
 1. **Confirm before query.** Deploy modules, create objects, update or delete tips, then wait for confirmation before contract methods that call InnerComputer on those locations.
 2. **Prefer `prev` / `getAncestors` / `first` for history walks.** Use `next` only when a confirmed successor must exist (e.g. deposit pre/post pair).
 3. **Do not treat `last` as “latest live tip”.** For terminal claims, spend the tip (e.g. `delete`) and wait for confirmation, then call `last`.
-4. **`try/catch` does not soft-fail invalidation.** Catching the throw still rejects the transition if the invalid flag was set.
+4. **`try/catch` does not soft-fail invalidation.** Catching the throw still rejects the transition if the invalid flag was set. The public error still ends with a **single** “Accessing non-existent…” suffix (whether the throw was uncaught or re-raised by `Db.eval`).
 5. **Stabilize TXO queries** with `lteBlockHeight`, `blockHeight`, or `blockHash`.
 6. **Off-chain code** using the outer `Computer` may still see mempool data; only the in-contract `computer` global enforces these rules.
 
