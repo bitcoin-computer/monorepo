@@ -90,8 +90,9 @@ Successful observations must therefore be **invariant under future chain growth*
 
 ### How invalidation works
 
-1. On a forbidden observation, InnerComputer sets an internal invalid flag and throws an `Error`.
-2. A contract `try/catch` **cannot** clear that flag. After the SES compartment returns, `Db.eval` still rejects the transition if the flag is set.
+1. On a forbidden observation, InnerComputer marks the **current evaluation-stack frame** invalid and throws. Frames are pushed/popped around each `Db.eval` evaluate and each `Modules.load` import (not a process-wide singleton), so concurrent evaluations cannot cross-talk.
+2. Free-variable `computer` in methods may be the create-time or module-load instance (SES lexical binding), different from the eval endowment. Invalidation still applies to the **active frame**, so catch-and-continue cannot soft-succeed.
+3. A contract `try/catch` **cannot** clear the flag (reset requires admin privilege). After the compartment returns, `Db.eval` rejects the transition if the active frame is invalid.
 
 #### Error message shape
 
