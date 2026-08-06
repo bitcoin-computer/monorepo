@@ -8,6 +8,10 @@ Contract methods run inside a restricted SES compartment. The only chain-facing
 API available to that code is the **InnerComputer** (`computer` global): a
 read-only, fail-closed view of confirmed blockchain state.
 
+The live Retype reference lives under `packages/docs/Lib/Contract/`
+([querying](../../../docs/Lib/Contract/index.md#querying-inside-of-a-contract) and
+[sandbox](../../../docs/Lib/Contract/sandbox-and-inner-computer.md)).
+
 ## Goals
 
 1. **Determinism** — If a query succeeds against a chain prefix, the same call
@@ -15,14 +19,14 @@ read-only, fail-closed view of confirmed blockchain state.
 2. **Fail closed** — Transient facts (mempool, “not yet”, future heights) never
    become part of a valid transition.
 3. **No silent soft-fail** — Catching a thrown error does not clear invalidation;
-   `Db.eval` still rejects the transition if the invalid flag is set.
+   the host still rejects if the evaluation frame is marked invalid.
 
 ## Observation stability
 
 For any InnerComputer method `m` and arguments `args`: if
-`computer.m(...args)` succeeds without setting the invalid flag against chain
-state `b₁`, then on any extension `b₂ ⊇ b₁` the same call must succeed and
-return the same value.
+`computer.m(...args)` succeeds without invalidation against chain state `b₁`,
+then on any extension `b₂ ⊇ b₁` the same call must succeed and return the same
+value.
 
 ## Confirmed locations
 
@@ -43,38 +47,41 @@ call may succeed:
 
 ## Invalidation flow
 
-1. Query fails or observes a transient fact.
-2. InnerComputer marks the **current evaluation-stack frame** invalid and
-   throws. Frames are push/pop around each `Db.eval` and `Modules.load` so
-   concurrent async work cannot cross-talk. (Free-var `computer` may be a
-   create/module instance different from the eval endowment; the stack still
-   records invalidation for the active evaluation.)
-3. Compartment returns (possibly after `catch` — the frame flag is **not**
-   cleared until the frame is popped after the invalidity check).
-4. `Db.eval` / `Modules.load` read the frame (via `computer.isInvalid`) and
-   reject with a single public error string.
+1. Query fails or observes a transient fact (or a policy rule rejects, e.g.
+   future height).
+2. InnerComputer marks the **current evaluation frame** invalid and throws.
+   Each `Db.eval` / `Modules.load` runs under `withEvalInvalidation`:
+   - **Node:** `AsyncLocalStorage` (no static `node:async_hooks` import).
+   - **Browser:** await-scoped stack with serialized root frames (no Promise
+     patching under SES `lockdown`). Nested loads nest; concurrent roots queue.
+3. Free-var `computer` may be a create/module instance different from the eval
+   endowment; invalidation still hits the **active frame**.
+4. Compartment may return after `catch` — the frame flag is **not** cleared
+   until the host checks it.
+5. Host checks **`frame.invalid` / `frame.msg`** (not only `computer.isInvalid`)
+   on both throw and catch-and-continue paths.
+6. In-compartment `computer` is a **hardened method facade**.
 
 Error text always ends with exactly one copy of:
 
 > Accessing non-existent on-chain state inside a smart contract is forbidden.
 
-Context from the failing query (or a short policy reason such as “future
-height”) is included at most once before that suffix. Catch-and-continue and
-uncaught paths do **not** double the forbidden sentence.
+A short reason may appear before that suffix. Policy rejects and missing
+observations share the same single-suffix form (never a short reason alone,
+never a doubled forbidden sentence). Match with `message.endsWith(...)`.
 
 ## Client vs contract `computer`
 
-The outer [Computer](/docs/reference/computer-class) client may return
-`undefined` for unconfirmed data and supports writes (`new`, `broadcast`, …).
-The in-contract global is a different, stricter surface. Full method tables and
-examples live in the library Contract reference (Retype docs:
-`Lib/Contract` — Querying inside of a Contract).
+The outer Computer client may return `undefined` for unconfirmed data and
+supports writes (`new`, `broadcast`, …). The in-contract global is a different,
+stricter surface. Full method tables: `packages/docs/Lib/Contract/`.
 
 ## Practical implications
 
 - Confirm deploys before `load` in contracts.
 - Confirm object revisions before history walks or escrow audits.
 - For terminal `last` checks, spend the tip and wait for confirmation.
-- Stabilize in-contract TXO queries with a historical height or block hash.
+- Stabilize in-contract TXO queries with a historical height or block hash;
+  empty results with a valid stabilizer are allowed.
 - Escrow/chess apps: cancel or settle, wait for confirmation, then
   `withdraw` / refund.

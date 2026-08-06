@@ -230,10 +230,11 @@ methods is a restricted `InnerComputer`. It only exposes safe read operations
 block/time helpers, guarded `getTXOs`, etc.). It cannot create or broadcast
 transactions, and it does **not** expose `latest`. Reads generally require
 **confirmed** locations; missing, mempool-only, or other transient observations
-set an invalidation flag and reject the entire evaluation even if the contract
-catches the thrown error. Rejected evaluations surface an error that ends with
-a single standard phrase: “Accessing non-existent on-chain state inside a smart
-contract is forbidden.”
+mark the current **evaluation frame** invalid and reject the entire evaluation
+even if the contract catches the thrown error. Contracts cannot clear or hide invalidation. Rejected evaluations surface an
+error that ends with a single standard phrase: “Accessing non-existent on-chain
+state inside a smart contract is forbidden.” (A short reason may appear before
+that suffix; never the short reason alone.)
 
 ### Low-Level Control for Complex Protocols
 
