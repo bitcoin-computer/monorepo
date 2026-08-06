@@ -90,51 +90,57 @@ Successful observations must therefore be **invariant under future chain growth*
 
 ### How invalidation works
 
-- On a forbidden observation, InnerComputer sets an internal invalid flag and throws.
-- A contract `try/catch` **cannot** clear that flag. After the SES compartment returns, `Db.eval` still rejects the transition if the flag is set.
-- Error messages end with:
+1. On a forbidden observation, InnerComputer sets an internal invalid flag and throws an `Error`.
+2. A contract `try/catch` **cannot** clear that flag. After the SES compartment returns, `Db.eval` still rejects the transition if the flag is set.
 
-  > Accessing non-existent on-chain state inside a smart contract is forbidden.
+#### Error message shape
 
-- The flag is reset under admin privilege at the start of each evaluation.
+All invalidation errors exposed to callers end with **exactly one** copy of:
+
+> Accessing non-existent on-chain state inside a smart contract is forbidden.
+
+- Direct policy rejections (for example, future `getBlockHash` height, missing `getTXOs` stabilizer) store a short reason; when the contract catches and continues, `Db.eval` re-throws via a shared formatter so the standard suffix is still present **once**.
+- Uncaught throws and catch-and-continue paths therefore share the same single-suffix convention (no doubled “forbidden” text).
+
+Clients and tests should match with `message.endsWith(...)` (or equivalent), not assume a doubled suffix.
 
 ### Confirmed locations only
 
 Most location-based APIs require the referenced **transaction to be confirmed** (in a block) before the call may succeed. Unconfirmed / mempool locations are treated as transient.
 
-| API | Confirmation rule |
-| --- | --- |
-| `sync`, `decode`, `getAncestors`, `getRawTransaction` | Starting location / txId must be confirmed |
-| `load` | Module deploy location (`txId:vout`) must be confirmed |
-| `first`, `prev` | Starting revision’s tx must be confirmed |
-| `next` | Starting revision **and** returned successor must be confirmed |
-| `last` | Starting revision, returned tip, and the tip’s **spending** tx must be confirmed (unspent tip or mempool-only spend → invalidate) |
-| `txIdToBlockTime` | Tx must be confirmed (no nullish “not mined yet”) |
-| `txIdToBlockHeight` / `txIdToBlockHash` | Unconfirmed → invalidate (via throw / nullish fail-closed) |
-| `getTXOs` (+ `getUTXOs` / `getOTXOs` / `getOUTXOs`) | Must include a **stabilizing filter** (below); future heights forbidden |
+| API                                                   | Confirmation rule                                                                                                                 |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `sync`, `decode`, `getAncestors`, `getRawTransaction` | Starting location / txId must be confirmed                                                                                        |
+| `load`                                                | Module deploy location (`txId:vout`) must be confirmed                                                                            |
+| `first`, `prev`                                       | Starting revision’s tx must be confirmed                                                                                          |
+| `next`                                                | Starting revision **and** returned successor must be confirmed                                                                    |
+| `last`                                                | Starting revision, returned tip, and the tip’s **spending** tx must be confirmed (unspent tip or mempool-only spend → invalidate) |
+| `txIdToBlockTime`                                     | Tx must be confirmed (no nullish “not mined yet”)                                                                                 |
+| `txIdToBlockHeight` / `txIdToBlockHash`               | Unconfirmed → invalidate (via throw / nullish fail-closed)                                                                        |
+| `getTXOs` (+ `getUTXOs` / `getOTXOs` / `getOUTXOs`)   | Must include a **stabilizing filter** (below); future heights forbidden                                                           |
 
 **App / test implication:** after `deploy`, `new`, method calls, or `delete`, wait for confirmation before on-chain code that walks history, loads modules, or calls `last` / `next` / `txIdToBlockTime` on those locations.
 
 ### Full API reference (InnerComputer)
 
-| Function | Signature | Returns | Invalidates when |
-| --- | --- | --- | --- |
-| `sync` | `sync(location: string)` | Object state (deep-cloned) | Missing / unconfirmed location |
-| `decode` | `decode(txId: string)` | `{ exp, env?, mod? }` | Missing / unconfirmed tx |
-| `load` | `load(location: string)` | Module exports | Missing / unconfirmed module location |
-| `getAncestors` | `getAncestors(location: string)` | `string[]` (may be empty) | Missing / unconfirmed start; empty array is **valid** |
-| `first` | `first(rev: string)` | Creation rev (`string`) | Missing / unconfirmed start |
-| `prev` | `prev(rev: string)` | `string \| undefined` | Missing / unconfirmed start; **`undefined` at root is OK** |
-| `next` | `next(rev: string)` | next rev (`string`) | No next yet; unconfirmed start or unconfirmed successor |
-| `last` | `last(rev: string)` | Spent tip rev (`string`) | Unspent tip; mempool-only spend; unconfirmed start/result |
-| `txIdToBlockTime` | `txIdToBlockTime(txId: string)` | block time | Unconfirmed or missing tx |
-| `txIdToBlockHeight` | `txIdToBlockHeight(txId: string)` | height | Unconfirmed or missing tx |
-| `txIdToBlockHash` | `txIdToBlockHash(txId: string)` | block hash | Unconfirmed or missing tx |
-| `getBlockHash` | `getBlockHash(height: number)` | hash | Negative or **future** height; missing block |
-| `getBlockHeight` | `getBlockHeight(hash: string)` | height | Unknown hash |
-| `getRawTransaction` | `getRawTransaction(txId: string)` | hex | Unconfirmed / missing |
-| `getRawBlock` / `getBlockHeader` | by block hash | hex | Unknown hash |
-| `getTXOs` | `getTXOs(q: TXOQuery)` | revs or records | No stabilizer; future/negative height filters; query failure |
+| Function                         | Signature                         | Returns                    | Invalidates when                                             |
+| -------------------------------- | --------------------------------- | -------------------------- | ------------------------------------------------------------ |
+| `sync`                           | `sync(location: string)`          | Object state (deep-cloned) | Missing / unconfirmed location                               |
+| `decode`                         | `decode(txId: string)`            | `{ exp, env?, mod? }`      | Missing / unconfirmed tx                                     |
+| `load`                           | `load(location: string)`          | Module exports             | Missing / unconfirmed module location                        |
+| `getAncestors`                   | `getAncestors(location: string)`  | `string[]` (may be empty)  | Missing / unconfirmed start; empty array is **valid**        |
+| `first`                          | `first(rev: string)`              | Creation rev (`string`)    | Missing / unconfirmed start                                  |
+| `prev`                           | `prev(rev: string)`               | `string \| undefined`      | Missing / unconfirmed start; **`undefined` at root is OK**   |
+| `next`                           | `next(rev: string)`               | next rev (`string`)        | No next yet; unconfirmed start or unconfirmed successor      |
+| `last`                           | `last(rev: string)`               | Spent tip rev (`string`)   | Unspent tip; mempool-only spend; unconfirmed start/result    |
+| `txIdToBlockTime`                | `txIdToBlockTime(txId: string)`   | block time                 | Unconfirmed or missing tx                                    |
+| `txIdToBlockHeight`              | `txIdToBlockHeight(txId: string)` | height                     | Unconfirmed or missing tx                                    |
+| `txIdToBlockHash`                | `txIdToBlockHash(txId: string)`   | block hash                 | Unconfirmed or missing tx                                    |
+| `getBlockHash`                   | `getBlockHash(height: number)`    | hash                       | Negative or **future** height; missing block                 |
+| `getBlockHeight`                 | `getBlockHeight(hash: string)`    | height                     | Unknown hash                                                 |
+| `getRawTransaction`              | `getRawTransaction(txId: string)` | hex                        | Unconfirmed / missing                                        |
+| `getRawBlock` / `getBlockHeader` | by block hash                     | hex                        | Unknown hash                                                 |
+| `getTXOs`                        | `getTXOs(q: TXOQuery)`            | revs or records            | No stabilizer; future/negative height filters; query failure |
 
 Aliases `getUTXOs`, `getOTXOs`, and `getOUTXOs` inherit the same rules as `getTXOs`.
 
@@ -210,7 +216,7 @@ Queries without a stabilizer, or with a future height, invalidate. Empty result 
 1. **Confirm before query.** Deploy modules, create objects, update or delete tips, then wait for confirmation before contract methods that call InnerComputer on those locations.
 2. **Prefer `prev` / `getAncestors` / `first` for history walks.** Use `next` only when a confirmed successor must exist (e.g. deposit pre/post pair).
 3. **Do not treat `last` as “latest live tip”.** For terminal claims, spend the tip (e.g. `delete`) and wait for confirmation, then call `last`.
-4. **`try/catch` does not soft-fail invalidation.** Catching the throw still rejects the transition if the invalid flag was set.
+4. **`try/catch` does not soft-fail invalidation.** Catching the throw still rejects the transition if the invalid flag was set. The public error still ends with a **single** “Accessing non-existent…” suffix (whether the throw was uncaught or re-raised by `Db.eval`).
 5. **Stabilize TXO queries** with `lteBlockHeight`, `blockHeight`, or `blockHash`.
 6. **Off-chain code** using the outer `Computer` may still see mempool data; only the in-contract `computer` global enforces these rules.
 

@@ -44,9 +44,18 @@ call may succeed:
 ## Invalidation flow
 
 1. Query fails or observes a transient fact.
-2. InnerComputer sets `globalInvalidState` and throws.
-3. Compartment returns (possibly after `catch`).
-4. `Db.eval` sees the flag and rejects the transition.
+2. InnerComputer sets `globalInvalidState` (with a reason message) and throws.
+3. Compartment returns (possibly after `catch` — the flag is **not** cleared).
+4. `Db.eval` sees the flag and rejects the transition with a single public error
+   string.
+
+Error text always ends with exactly one copy of:
+
+> Accessing non-existent on-chain state inside a smart contract is forbidden.
+
+Context from the failing query (or a short policy reason such as “future
+height”) is included at most once before that suffix. Catch-and-continue and
+uncaught paths do **not** double the forbidden sentence.
 
 ## Client vs contract `computer`
 

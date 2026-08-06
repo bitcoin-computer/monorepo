@@ -231,7 +231,9 @@ block/time helpers, guarded `getTXOs`, etc.). It cannot create or broadcast
 transactions, and it does **not** expose `latest`. Reads generally require
 **confirmed** locations; missing, mempool-only, or other transient observations
 set an invalidation flag and reject the entire evaluation even if the contract
-catches the thrown error.
+catches the thrown error. Rejected evaluations surface an error that ends with
+a single standard phrase: “Accessing non-existent on-chain state inside a smart
+contract is forbidden.”
 
 ### Low-Level Control for Complex Protocols
 

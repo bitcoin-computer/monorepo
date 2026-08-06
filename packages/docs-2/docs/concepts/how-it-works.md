@@ -183,10 +183,12 @@ blockchain operations and provides full IDE support.
     invalidation flag (`globalInvalidState` in `inner-computer.ts`). After the
     secure compartment returns, `Db.eval` inspects the flag and rejects the
     entire transition if it was set—even when the contract caught the thrown
-    error. Controlled mutations required for reconstruction and metadata
-    attachment are performed under an explicit privilege guard (`_sudo` /
-    `AdminContext` in `admin.ts`) that restores the normal security invariants
-    afterward.
+    error. The public error message ends with a single standard suffix
+    (“Accessing non-existent on-chain state inside a smart contract is
+    forbidden.”). Controlled mutations required for
+    reconstruction and metadata attachment are performed under an explicit
+    privilege guard (`_sudo` / `AdminContext` in `admin.ts`) that restores the
+    normal security invariants afterward.
 
 [^7]:
     The `SmartContract<T>` type is produced by a covariant recursive lifting
