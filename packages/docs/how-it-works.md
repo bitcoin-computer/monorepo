@@ -44,6 +44,14 @@ We call a string of the form `id:num` where `id` is a transaction id and `num` i
 - `sync` maps a revision to a value.
 - `encode` maps an expression and a blockchain environment to a transaction.
 
+## The Inner Computer
+
+Outside the protocol, the library client can create, fund, and broadcast transactions and may read mempool state. **Inside** a smart-contract method, evaluation runs in a restricted sandbox. The only chain-facing API is a global `computer` object (**InnerComputer**): contracts can load other objects, walk revision history, and read confirmed block times, but they cannot write or broadcast.
+
+Those reads must be deterministic. Successful observations have to stay valid as the chain grows; unstable results invalidate the whole evaluation so every honest validator replaying the method gets the same outcome. A `try/catch` inside the contract cannot soft-succeed. This enables patterns such as escrows whose conditions depend on other contracts or on confirmed time.
+
+The full API, confirmation rules, error shape, and sandbox model are documented under [Contract – Querying](./Lib/Contract/index.md#querying-inside-of-a-contract) and [Sandbox & Inner Computer](./Lib/Contract/sandbox-and-inner-computer.md).
+
 ## Provenance
 
 If the value returned from _sync_ contains an object, it has extra properties _\_id_, _\_rev_, _\_root_ that specify its location on the blockchain and its provenance.

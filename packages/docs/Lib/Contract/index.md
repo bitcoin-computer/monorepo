@@ -76,6 +76,8 @@ expect(c.n).eq(0)
 
 Smart contracts can access a restricted global `computer` (the **InnerComputer**) to read on-chain history and block metadata. These helpers do not write blockchain state. They exist so contracts can traverse revision graphs, load modules, or base decisions on confirmed chain data in a **deterministic** way.
 
+Architecture (SES sandbox, eval-frame invalidation, hardened endowment, client vs contract `computer`) is documented in **[Sandbox & Inner Computer](./sandbox-and-inner-computer.md)**.
+
 The outer [`Computer`](../Computer/index.md) client API is **not** the same surface: many client methods may return `undefined` for mempool data or live tips. Inside a contract, almost every “not yet known / not yet confirmed” observation **invalidates** the whole evaluation so two validators can never disagree under chain extension.
 
 ### Determinism property (observation stability)
@@ -90,9 +92,12 @@ Successful observations must therefore be **invariant under future chain growth*
 
 ### How invalidation works
 
-1. On a forbidden observation, InnerComputer marks the **current evaluation-stack frame** invalid and throws. Frames are pushed/popped around each `Db.eval` evaluate and each `Modules.load` import (not a process-wide singleton), so concurrent evaluations cannot cross-talk.
-2. Free-variable `computer` in methods may be the create-time or module-load instance (SES lexical binding), different from the eval endowment. Invalidation still applies to the **active frame**, so catch-and-continue cannot soft-succeed.
-3. A contract `try/catch` **cannot** clear the flag (reset requires admin privilege). After the compartment returns, `Db.eval` rejects the transition if the active frame is invalid.
+1. On a forbidden observation, InnerComputer marks the **current evaluation frame** invalid and throws. Each `Db.eval` / `Modules.load` binds a frame via `withEvalInvalidation`:
+   - **Node:** `AsyncLocalStorage` (loaded without a static `node:async_hooks` import so browser bundles stay clean). Concurrent evals are isolated by async context.
+   - **Browser:** await-scoped stack with serialized roots (no Promise patching under SES `lockdown`). Nested loads still nest; concurrent root evals queue.
+2. Free-variable `computer` in methods may be the create-time or module-load instance (SES lexical binding), different from the eval endowment. Invalidation still applies to the **active eval frame**, so catch-and-continue cannot soft-succeed.
+3. A contract `try/catch` **cannot** clear the flag (reset requires admin privilege). After the compartment returns **or** throws, the host rejects using the **frame object** it holds (`frame.invalid` / `frame.msg`), not by trusting `computer.isInvalid` alone.
+4. The compartment is endowed with a **hardened facade** of public InnerComputer methods (no internal `Computer` client, methods not replaceable). `resetInvalid` remains admin-only.
 
 #### Error message shape
 
@@ -100,10 +105,10 @@ All invalidation errors exposed to callers end with **exactly one** copy of:
 
 > Accessing non-existent on-chain state inside a smart contract is forbidden.
 
-- Direct policy rejections (for example, future `getBlockHash` height, missing `getTXOs` stabilizer) store a short reason; when the contract catches and continues, `Db.eval` re-throws via a shared formatter so the standard suffix is still present **once**.
-- Uncaught throws and catch-and-continue paths therefore share the same single-suffix convention (no doubled “forbidden” text).
+- Policy rejections (for example, future `getBlockHash` height, missing `getTXOs` stabilizer) and missing/unconfirmed observations both go through a shared formatter as soon as invalidation fires. A short reason may appear **before** the standard suffix; the suffix is never doubled.
+- Uncaught throws and catch-and-continue paths share this shape: the thrown error and `frame.msg` already carry the single suffix; `Db.eval` rethrows the same canonical form when the frame is invalid.
 
-Clients and tests should match with `message.endsWith(...)` (or equivalent), not assume a doubled suffix.
+Clients and tests should match with `message.endsWith(...)` (or equivalent). Do not expect a short policy reason alone without the forbidden suffix.
 
 ### Confirmed locations only
 
@@ -117,8 +122,8 @@ Most location-based APIs require the referenced **transaction to be confirmed** 
 | `next`                                                | Starting revision **and** returned successor must be confirmed                                                                    |
 | `last`                                                | Starting revision, returned tip, and the tip’s **spending** tx must be confirmed (unspent tip or mempool-only spend → invalidate) |
 | `txIdToBlockTime`                                     | Tx must be confirmed (no nullish “not mined yet”)                                                                                 |
-| `txIdToBlockHeight` / `txIdToBlockHash`               | Unconfirmed → invalidate (via throw / nullish fail-closed)                                                                        |
-| `getTXOs` (+ `getUTXOs` / `getOTXOs` / `getOUTXOs`)   | Must include a **stabilizing filter** (below); future heights forbidden                                                           |
+| `txIdToBlockHeight` / `txIdToBlockHash`               | Unconfirmed → invalidate (no block hash / not mined yet)                                                                          |
+| `getTXOs` (+ `getUTXOs` / `getOTXOs` / `getOUTXOs`)   | Must include a **stabilizing filter** (below); future/negative heights forbidden                                                  |
 
 **App / test implication:** after `deploy`, `new`, method calls, or `delete`, wait for confirmation before on-chain code that walks history, loads modules, or calls `last` / `next` / `txIdToBlockTime` on those locations.
 
@@ -210,15 +215,16 @@ Inside a contract the query **must** include one stabilizing filter:
 - `blockHeight` — must be ≤ current tip
 - `blockHash` — fixed historical block
 
-Queries without a stabilizer, or with a future height, invalidate. Empty result sets with a valid stabilizer are fine.
+Queries without a stabilizer, or with a future/negative height, invalidate. Empty result sets with a valid stabilizer are fine (indexing lag is an application concern, not invalidation).
 
 ### Usage notes & best practices
 
 1. **Confirm before query.** Deploy modules, create objects, update or delete tips, then wait for confirmation before contract methods that call InnerComputer on those locations.
 2. **Prefer `prev` / `getAncestors` / `first` for history walks.** Use `next` only when a confirmed successor must exist (e.g. deposit pre/post pair).
 3. **Do not treat `last` as “latest live tip”.** For terminal claims, spend the tip (e.g. `delete`) and wait for confirmation, then call `last`.
-4. **`try/catch` does not soft-fail invalidation.** Catching the throw still rejects the transition if the invalid flag was set. The public error still ends with a **single** “Accessing non-existent…” suffix (whether the throw was uncaught or re-raised by `Db.eval`).
+4. **`try/catch` does not soft-fail invalidation.** Catching the throw still rejects the transition if the evaluation frame is invalid. Public errors always end with a **single** “Accessing non-existent…” suffix (policy reasons and missing locations alike).
 5. **Stabilize TXO queries** with `lteBlockHeight`, `blockHeight`, or `blockHash`.
 6. **Off-chain code** using the outer `Computer` may still see mempool data; only the in-contract `computer` global enforces these rules.
+7. **Escrow / multi-step apps:** after cancel, settle, or `delete`, wait for confirmation before a follow-up contract call that depends on `last`, deposit deltas via `next`, or confirmed history (see [Sandbox & Inner Computer – Practical implications](./sandbox-and-inner-computer.md#practical-implications)).
 
 This API, together with `Contract` property rules, enables verifiable on-chain logic while keeping evaluations fail-closed under non-deterministic observations.

@@ -11,6 +11,8 @@ In order to make it possible to write smart contracts in JavaScript, the Bitcoin
 
 We call an expression a _smart contract_ if it returns a value that contains only sub-objects whose classes that extend from `Contract`. The function `encode` throws an error if it called with an expression that is not a smart contract. Likewise, the function `sync` throws an error if it is called with a transaction whose expression is not a smart contract.
 
+Inside contract methods, a restricted global `computer` (**InnerComputer**) provides deterministic, confirmed-only chain reads. Transient observations invalidate the evaluation (a `try/catch` cannot soft-succeed); public errors end with a single standard forbidden suffix. See [Contract – Querying](./Lib/Contract/index.md#querying-inside-of-a-contract) and [Sandbox & Inner Computer](./Lib/Contract/sandbox-and-inner-computer.md).
+
 To describe the behavior of `Contract` more precisely, let `obj` be an object of a class that extends from `Contract`. Then an error is thrown if either
 
 1. a property of `obj` is assigned outside of a method of `obj`,
