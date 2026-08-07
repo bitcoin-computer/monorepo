@@ -1,23 +1,25 @@
 import { Computer, Contract } from '@bitcoin-computer/lib';
-export type TokenConstructorParams = {
+export type TBC20ConstructorParams = {
     to: string;
     amount: bigint;
     name: string;
     symbol?: string;
     [s: string]: unknown;
 };
-export declare class Token extends Contract {
+export type TokenConstructorParams = TBC20ConstructorParams;
+export declare class TBC20 extends Contract {
     amount: bigint;
     name: string;
     symbol: string;
     _owners: string[];
     get root(): string;
-    constructor(params: TokenConstructorParams);
+    constructor(params: TBC20ConstructorParams);
     transfer(to: string, amount?: bigint): this | undefined;
     protected _createTransferToken(to: string, amount: bigint): this;
     burn(): void;
-    merge(tokens: Token[]): void;
+    merge(tokens: TBC20[]): void;
 }
+export { TBC20 as Token };
 export interface ITBC20 {
     deploy(): Promise<string>;
     mint(publicKey: string, amount: bigint, name: string, symbol: string): Promise<string>;
@@ -25,7 +27,7 @@ export interface ITBC20 {
     balanceOf(publicKey: string, root: string): Promise<bigint>;
     transfer(to: string, amount: bigint, root: string): Promise<void>;
 }
-export declare class TokenHelper implements ITBC20 {
+export declare class TBC20Helper implements ITBC20 {
     name: string;
     symbol: string;
     computer: Computer;
@@ -38,3 +40,4 @@ export declare class TokenHelper implements ITBC20 {
     balanceOf(publicKey: string, root: string): Promise<bigint>;
     transfer(to: string, amount: bigint, root: string): Promise<void>;
 }
+export { TBC20Helper as TokenHelper };

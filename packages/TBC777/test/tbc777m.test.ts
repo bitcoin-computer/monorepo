@@ -2,7 +2,7 @@ import { expect } from 'chai'
 import { Computer, Contract, SmartContract } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import path from 'path'
-import { TBC20 } from '../src/tbc20.js'
+import { TBC20 } from '@bitcoin-computer/TBC20'
 import { Escrow, TBC777M } from '../src/tbc777m.js'
 
 const envPaths = [

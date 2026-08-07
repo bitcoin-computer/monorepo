@@ -44,7 +44,7 @@ export function DrawerComponent({
     <div
       ref={drawerRef}
       id={id}
-      className="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform duration-300 translate-x-full bg-white w-80 dark:bg-gray-800"
+      className="fixed top-0 right-0 z-40 h-screen p-4 overflow-y-auto transition-transform duration-300 translate-x-full bg-white w-full max-w-sm sm:w-80 dark:bg-gray-800"
       tabIndex={-1}
       aria-labelledby="drawer-right-label"
     >

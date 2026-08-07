@@ -1,5 +1,5 @@
 import { Contract } from '@bitcoin-computer/lib';
-import { TBC20 } from './tbc20.js';
+import { TBC20 } from '@bitcoin-computer/TBC20';
 export class Escrow extends Contract {
 }
 export class EscrowAuditor {
