@@ -61,6 +61,9 @@ call may succeed:
 5. Host checks **`frame.invalid` / `frame.msg`** (not only `computer.isInvalid`)
    on both throw and catch-and-continue paths.
 6. In-compartment `computer` is a **hardened method facade**.
+7. Host `console` is endowed only in client `dev` / `debug` mode. In **`prod`**,
+   contracts must not use `console` (not in scope). Logging is not part of the
+   on-chain API.
 
 Error text always ends with exactly one copy of:
 

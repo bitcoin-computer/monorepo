@@ -36,9 +36,28 @@ Most APIs require the referenced transaction to be **in a block** before the cal
 
 `latest` is **not** exposed inside contracts (the live tip is non-deterministic under chain extension).
 
+## Invalidation flow
+
+1. A query fails or observes a transient fact (or a direct policy rule rejects, e.g. future height).
+2. InnerComputer marks the **current evaluation frame** invalid and throws. Each `Db.eval` / `Modules.load` runs under `withEvalInvalidation`:
+   - **Node:** `AsyncLocalStorage` via `process.getBuiltinModule('async_hooks')` (no static `node:async_hooks` import, so browser bundles stay clean). Concurrent evaluations are truly concurrent and isolated by async context.
+   - **Browser:** await-scoped stack with **serialized root** frames (no Promise patching under SES `lockdown`). Nested frames (e.g. `Modules.load` inside `Db.eval`) still nest; concurrent root evals queue so stack tops never cross-talk.
+3. Free-variable `computer` in methods may resolve to the **create-time or module-load** instance (SES lexical binding), which can differ from the eval endowment. Invalidation still applies to the **active eval frame**.
+4. The compartment may return after `catch` — the frame flag is **not** cleared until the host has checked it.
+5. The host accepts or rejects using **`frame.invalid` / `frame.msg`** (not only `computer.isInvalid`), so shadowing getters on the endowment cannot hide invalidation. If the compartment throws *or* returns after catch-and-continue, `Db.eval` still rejects when the frame is marked invalid.
+6. The in-compartment `computer` is a **hardened method facade**: public query methods only, no internal client object, methods not replaceable, `resetInvalid` is admin-only.
+
+### `console` endowment (dev only)
+
+Compartment globals include host `console` only when the client `mode` is **`dev`** or **`debug`**.
+
+In **`prod`**, `console` is **not** endowed. Contract or module code that references `console` gets a `ReferenceError` and the evaluation fails. **Do not use `console` in production smart contracts** — logging is not part of the on-chain API, and endowing the shared host `console` is ambient authority (especially without SES `lockdown`, which runs in prod).
+
+Use off-chain tooling and the outer `Computer` client for diagnostics.
+
 ### Error message shape
 
-Every invalidation path builds the public string with a shared formatter so callers always see **exactly one** copy of:
+Every invalidation path (policy `_invalidate`, missing/nullish `_safeCall`, and host rethrow from `Db.eval`) builds the public string with a shared formatter so callers always see **exactly one** copy of:
 
 > Accessing non-existent on-chain state inside a smart contract is forbidden.
 
@@ -47,21 +66,26 @@ A short reason may appear before that suffix, for example:
 - `getBlockHash with future height is forbidden. Accessing non-existent on-chain state inside a smart contract is forbidden.`
 - `Transaction id … not found or not yet confirmed by sync. Accessing non-existent on-chain state inside a smart contract is forbidden.`
 
+The formatter is idempotent (already-suffixed strings are not doubled). Match with `message.endsWith(...)` (or equivalent). Do **not** expect a short policy reason alone without the standard suffix.
+
 ## Client vs contract `computer`
 
-|                                          | Outer [`Computer`](../Computer/index.md) | InnerComputer (`computer` in contracts)                         |
-| ---------------------------------------- | ---------------------------------------- | --------------------------------------------------------------- |
-| Writes (`new`, `broadcast`, …)           | Yes                                      | No                                                              |
-| Mempool / unconfirmed reads              | Often allowed (may return `undefined`)   | Forbidden → invalidate                                          |
-| `latest`                                 | Yes                                      | **Not exposed**                                                 |
-| `getTXOs` without height/hash stabilizer | Yes                                      | Forbidden → invalidate                                          |
+|                                          | Outer [`Computer`](../Computer/index.md) | InnerComputer (`computer` in contracts) |
+| ---------------------------------------- | ---------------------------------------- | --------------------------------------- |
+| Writes (`new`, `broadcast`, …)           | Yes                                      | No                                      |
+| Mempool / unconfirmed reads              | Often allowed (may return `undefined`)   | Forbidden → invalidate                  |
+| `latest`                                 | Yes                                      | **Not exposed**                         |
+| `getTXOs` without height/hash stabilizer | Yes                                      | Forbidden → invalidate                  |
+| Host `console` in compartment            | N/A                                      | **`dev` / `debug` only** (not in `prod`) |
 | Concurrent evaluations                   | Multiple clients/calls                   | Isolated eval frames (ALS on Node; serialized roots in browser) |
 
 ## Security notes (what contracts cannot do)
 
-- Contracts cannot create or clear eval frames.
-- The endowment is hardened so contracts cannot replace `sync` / `first` / …, redefine internal functions, or reassign the prototype to hide invalidation.
+- Contracts cannot create or clear eval frames (`withEvalInvalidation` is host-only).
+- `computer.resetInvalid()` is a no-op without admin privilege; `constructor.resetGlobalInvalid()` is a no-op for contracts.
+- The endowment is hardened so contracts cannot replace `sync` / `first` / …, redefine `isInvalid`, or reassign the prototype to hide invalidation.
 - Host reject decisions use the **frame**, not only endowment getters.
+- In **`prod`**, contracts cannot use `console` (not endowed). Prefer no logging in on-chain code at all.
 
 ## Practical implications
 
@@ -70,6 +94,7 @@ A short reason may appear before that suffix, for example:
 - For terminal `last` checks, spend the tip (e.g. `delete`) and wait for confirmation.
 - Stabilize in-contract TXO queries with a historical height or block hash; empty result sets with a valid stabilizer are fine (wait for indexing if apps/tests expect a known object to appear).
 - Escrow / chess flows: cancel or settle, **wait for confirmation**, then `withdraw` / refund (cancel and withdraw cannot be one atomic observation of unconfirmed tip spend).
+- Do not ship contract methods that call `console.*` if they must run under `mode: 'prod'`.
 
 ## See also
 
