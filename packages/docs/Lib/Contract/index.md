@@ -98,6 +98,7 @@ Successful observations must therefore be **invariant under future chain growth*
 2. Free-variable `computer` in methods may be the create-time or module-load instance (SES lexical binding), different from the eval endowment. Invalidation still applies to the **active eval frame**, so catch-and-continue cannot soft-succeed.
 3. A contract `try/catch` **cannot** clear the flag (reset requires admin privilege). After the compartment returns **or** throws, the host rejects using the **frame object** it holds (`frame.invalid` / `frame.msg`), not by trusting `computer.isInvalid` alone.
 4. The compartment is endowed with a **hardened facade** of public InnerComputer methods (no internal `Computer` client, methods not replaceable). `resetInvalid` remains admin-only.
+5. **`console` is only available in `dev` / `debug` mode.** In **`prod`**, contracts must not use `console` (it is not in scope → `ReferenceError`). Logging is not part of the deterministic on-chain API; see [Sandbox & Inner Computer](./sandbox-and-inner-computer.md#console-endowment-dev-only).
 
 #### Error message shape
 
