@@ -31,14 +31,33 @@ export declare class ChessContract extends Contract {
     move(from: string, to: string, promotion: string): boolean;
     resign(): void;
     isGameOver(): boolean;
+    /**
+     * Whether white has exceeded `timeLimit` (based on confirmed block times).
+     * Requires every revision on the prev-chain (including the current tip) to be
+     * confirmed — see `calculateTimes`.
+     */
     hasTimedOutW(): Promise<boolean>;
+    /**
+     * Whether black has exceeded `timeLimit` (based on confirmed block times).
+     * Requires every revision on the prev-chain (including the current tip) to be
+     * confirmed — see `calculateTimes`.
+     */
     hasTimedOutB(): Promise<boolean>;
     /**
-     * Calculates white time (timeW) and black time (timeB) from a list of timestamps.
+     * Calculates white time (timeW) and black time (timeB) from block timestamps
+     * of each revision on the game’s prev-chain.
+     *
      * timeW = (t2 - t1) + (t4 - t3) + (t6 - t5) + ...
      * timeB = (t3 - t2) + (t5 - t4) + (t7 - t6) + ...
      *
      * Note: timeW + timeB will equal (tn - t1).
+     *
+     * **InnerComputer determinism:** uses `computer.txIdToBlockTime` and
+     * `computer.prev`. Both require **confirmed** transactions. Calling this (or
+     * `hasTimedOutW` / `hasTimedOutB`) while the tip is still in the mempool
+     * invalidates the transition. Callers must wait for confirmation of the
+     * latest move (and of any older history being walked) before evaluating
+     * timeouts on-chain.
      */
     calculateTimes(): Promise<{
         timeW: bigint;
@@ -75,6 +94,20 @@ export declare class ChessContractHelper {
         newChessContract: SmartContract<typeof ChessContract>;
         isGameOver: boolean;
     }>;
+    /**
+     * Poll until `location` (txId or rev) is included in a block.
+     * Required before TBC777 `withdraw` / InnerComputer history walks: unconfirmed
+     * tips invalidate deterministic queries (`sync` / `prev` / `next` / block time).
+     */
+    waitForConfirmed(location: string, opts?: {
+        timeoutMs?: number;
+        pollMs?: number;
+    }): Promise<void>;
+    /**
+     * Claim escrow payout for `tokenId` against the latest chess revision.
+     * Waits until that chess tip is confirmed so TBC777's InnerComputer audit
+     * (sync / prev / next on deposits) is deterministic.
+     */
     withdrawTokens(tokenId: string, chessId: string): Promise<void>;
     /**
      * Finds any token owned by the current user with at least minAmount balance.
@@ -99,9 +132,12 @@ export declare class ChessContractHelper {
      */
     cancelGame(chessId: string): Promise<SmartContract<typeof ChessContract>>;
     /**
-     * Cancel a pending game and withdraw the creator's wager in one flow.
-     * @deprecated
-     * */
+     * Cancel a pending game and withdraw the creator's wager.
+     *
+     * Cancel and withdraw cannot share one transaction: after cancel, the tip must
+     * be **confirmed** before TBC777 `withdraw` can walk escrow history. This
+     * method cancels, waits for confirmation, then withdraws.
+     */
     cancelGameAndWithdraw(chessId: string): Promise<void>;
     /** Mark a canceled pending game as seen by the invited opponent (clears list badge). */
     markCanceledSeen(chessId: string): Promise<SmartContract<typeof ChessContract>>;
