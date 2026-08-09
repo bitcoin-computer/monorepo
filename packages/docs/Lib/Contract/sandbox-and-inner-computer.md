@@ -39,13 +39,13 @@ Most APIs require the referenced transaction to be **in a block** before the cal
 ## Invalidation flow
 
 1. A query fails or observes a transient fact (or a direct policy rule rejects, e.g. future height).
-2. InnerComputer marks the **current evaluation frame** invalid and throws. Each `Db.eval` / `Modules.load` runs under `withEvalInvalidation`:
+2. InnerComputer marks the **current evaluation frame** invalid and throws. There is **no per-instance invalid flag** and no contract-facing invalidation API. Each `Db.eval` / `Modules.load` runs under `withEvalInvalidation` (implementation lives in a dedicated eval-frame module):
    - **Node:** `AsyncLocalStorage` via `process.getBuiltinModule('async_hooks')` (no static `node:async_hooks` import, so browser bundles stay clean). Concurrent evaluations are truly concurrent and isolated by async context.
    - **Browser:** await-scoped stack with **serialized root** frames (no Promise patching under SES `lockdown`). Nested frames (e.g. `Modules.load` inside `Db.eval`) still nest; concurrent root evals queue so stack tops never cross-talk.
-3. Free-variable `computer` in methods may resolve to the **create-time or module-load** instance (SES lexical binding), which can differ from the eval endowment. Invalidation still applies to the **active eval frame**.
+3. The host sets the active observation client on the frame. Free-variable `computer` methods **route to that client** for the evaluation, so create-time SES bindings and the eval-time client share one observation identity. Invalidation always writes the **active frame**.
 4. The compartment may return after `catch` — the frame flag is **not** cleared until the host has checked it.
-5. The host accepts or rejects using **`frame.invalid` / `frame.msg`** (not only `computer.isInvalid`), so shadowing getters on the endowment cannot hide invalidation. If the compartment throws *or* returns after catch-and-continue, `Db.eval` still rejects when the frame is marked invalid.
-6. The in-compartment `computer` is a **hardened method facade**: public query methods only, no internal client object, methods not replaceable, `resetInvalid` is admin-only.
+5. The host accepts or rejects using **only `frame.invalid` / `frame.msg`**. If the compartment throws *or* returns after catch-and-continue, `Db.eval` still rejects when the frame is marked invalid.
+6. The in-compartment `computer` is a **hardened query-only facade**: public observation methods only (no `isInvalid` / `errorMsg` / `resetInvalid`, no internal client object, methods not replaceable).
 
 ### `console` endowment (dev only)
 
@@ -82,9 +82,9 @@ The formatter is idempotent (already-suffixed strings are not doubled). Match wi
 ## Security notes (what contracts cannot do)
 
 - Contracts cannot create or clear eval frames (`withEvalInvalidation` is host-only).
-- `computer.resetInvalid()` is a no-op without admin privilege; `constructor.resetGlobalInvalid()` is a no-op for contracts.
-- The endowment is hardened so contracts cannot replace `sync` / `first` / …, redefine `isInvalid`, or reassign the prototype to hide invalidation.
-- Host reject decisions use the **frame**, not only endowment getters.
+- The endowment exposes **query methods only** — there is no `isInvalid`, `errorMsg`, `resetInvalid`, or `resetGlobalInvalid` for contracts to call or shadow.
+- The endowment is hardened so contracts cannot replace `sync` / `first` / … or reassign the prototype to hide invalidation.
+- Host reject decisions use the **frame only**.
 - In **`prod`**, contracts cannot use `console` (not endowed). Prefer no logging in on-chain code at all.
 
 ## Practical implications

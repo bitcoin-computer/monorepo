@@ -92,12 +92,12 @@ Successful observations must therefore be **invariant under future chain growth*
 
 ### How invalidation works
 
-1. On a forbidden observation, InnerComputer marks the **current evaluation frame** invalid and throws. Each `Db.eval` / `Modules.load` binds a frame via `withEvalInvalidation`:
+1. On a forbidden observation, InnerComputer marks the **current evaluation frame** invalid and throws. There is **no per-instance invalid flag**. Each `Db.eval` / `Modules.load` binds a frame via `withEvalInvalidation`:
    - **Node:** `AsyncLocalStorage` (loaded without a static `node:async_hooks` import so browser bundles stay clean). Concurrent evals are isolated by async context.
    - **Browser:** await-scoped stack with serialized roots (no Promise patching under SES `lockdown`). Nested loads still nest; concurrent root evals queue.
-2. Free-variable `computer` in methods may be the create-time or module-load instance (SES lexical binding), different from the eval endowment. Invalidation still applies to the **active eval frame**, so catch-and-continue cannot soft-succeed.
-3. A contract `try/catch` **cannot** clear the flag (reset requires admin privilege). After the compartment returns **or** throws, the host rejects using the **frame object** it holds (`frame.invalid` / `frame.msg`), not by trusting `computer.isInvalid` alone.
-4. The compartment is endowed with a **hardened facade** of public InnerComputer methods (no internal `Computer` client, methods not replaceable). `resetInvalid` remains admin-only.
+2. The host installs the active observation client on the frame; free-var query methods route to that client for the evaluation. Invalidation always writes the **active frame**, so catch-and-continue cannot soft-succeed.
+3. A contract `try/catch` **cannot** clear invalidation — the endowment has no invalidation API. After the compartment returns **or** throws, the host rejects using **only** the frame it holds (`frame.invalid` / `frame.msg`).
+4. The compartment is endowed with a **hardened query-only facade** of InnerComputer methods (no internal `Computer` client, no `isInvalid` / `resetInvalid`, methods not replaceable).
 5. **`console` is only available in `dev` / `debug` mode.** In **`prod`**, contracts must not use `console` (it is not in scope → `ReferenceError`). Logging is not part of the deterministic on-chain API; see [Sandbox & Inner Computer](./sandbox-and-inner-computer.md#console-endowment-dev-only).
 
 #### Error message shape

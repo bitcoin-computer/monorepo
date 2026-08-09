@@ -50,17 +50,20 @@ call may succeed:
 1. Query fails or observes a transient fact (or a policy rule rejects, e.g.
    future height).
 2. InnerComputer marks the **current evaluation frame** invalid and throws.
-   Each `Db.eval` / `Modules.load` runs under `withEvalInvalidation`:
+   Invalidation is **frame-only** (no per-instance flags; no contract-facing
+   invalidation API). Each `Db.eval` / `Modules.load` runs under
+   `withEvalInvalidation` (dedicated eval-frame module):
    - **Node:** `AsyncLocalStorage` (no static `node:async_hooks` import).
    - **Browser:** await-scoped stack with serialized root frames (no Promise
      patching under SES `lockdown`). Nested loads nest; concurrent roots queue.
-3. Free-var `computer` may be a create/module instance different from the eval
-   endowment; invalidation still hits the **active frame**.
+3. Host installs the active observation client on the frame; free-var query
+   methods route to that client. Invalidation always hits the **active frame**.
 4. Compartment may return after `catch` — the frame flag is **not** cleared
    until the host checks it.
-5. Host checks **`frame.invalid` / `frame.msg`** (not only `computer.isInvalid`)
-   on both throw and catch-and-continue paths.
-6. In-compartment `computer` is a **hardened method facade**.
+5. Host checks **only `frame.invalid` / `frame.msg`** on both throw and
+   catch-and-continue paths.
+6. In-compartment `computer` is a **hardened query-only facade** (no
+   `isInvalid` / `resetInvalid`).
 7. Host `console` is endowed only in client `dev` / `debug` mode. In **`prod`**,
    contracts must not use `console` (not in scope). Logging is not part of the
    on-chain API.

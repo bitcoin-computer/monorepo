@@ -181,12 +181,14 @@ blockchain operations and provides full IDE support.
     revision, unconfirmed location, no next successor yet, unspent tip for
     `last`, unguarded/future `getTXOs`, RPC error, etc.) marks the current
     **evaluation frame** invalid (`withEvalInvalidation`: ALS on Node; stack +
-    serialized roots in the browser). When the compartment returns or throws,
-    the host rejects if that frame is invalid—even when the contract caught the
-    thrown error—using the frame itself (not only `computer.isInvalid`). Public
-    errors always end with a single standard suffix (“Accessing non-existent
-    on-chain state inside a smart contract is forbidden.”), optionally preceded
-    by a short reason. The compartment endowment is a hardened facade of public
+    serialized roots in the browser). Invalidation is frame-only—there is no
+    per-instance flag and no contract-facing invalidation API. When the
+    compartment returns or throws, the host rejects if that frame is
+    invalid—even when the contract caught the thrown error—using only
+    `frame.invalid` / `frame.msg`. Public errors always end with a single
+    standard suffix (“Accessing non-existent on-chain state inside a smart
+    contract is forbidden.”), optionally preceded by a short reason. The
+    compartment endowment is a hardened **query-only** facade of public
     methods. Controlled mutations required for reconstruction and metadata
     attachment are performed under an explicit privilege guard (`_sudo` /
     `AdminContext` in `admin.ts`) that restores the normal security invariants
