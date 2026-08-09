@@ -579,6 +579,20 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
   // 6. claim() – Tier 1: eligibility guards
   // =========================================================================
   describe('claim() – Tier 1: eligibility guards (no same-block control required)', () => {
+    it('throws if claim() is called before the mint creation tx is confirmed', async () => {
+      // claim() uses InnerComputer.txIdToBlockHeight / decode / getOTXOs — all
+      // require a confirmed creation tx. Unconfirmed mints must fail closed.
+      const local = await fundedComputer()
+      const localMod = await deployCommodity(local)
+      await mineBlocks(local, 1)
+      const mint = await createMint(local, localMod, 'unconfirmed-claim-salt')
+      // Intentionally do not mine / confirmMint before claim.
+      await expectClaimFails(
+        mint,
+        /Accessing non-existent on-chain state inside a smart contract is forbidden/,
+      )
+    })
+
     it('throws if called when _rev !== _root (not on the mint creation revision)', async () => {
       const mint = await createMint(alice, mod)
       await mint.transfer(bob.getPublicKey())
