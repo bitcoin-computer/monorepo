@@ -8,9 +8,8 @@ Contract methods run inside a restricted SES compartment. The only chain-facing
 API available to that code is the **InnerComputer** (`computer` global): a
 read-only, fail-closed view of confirmed blockchain state.
 
-The live Retype reference lives under `packages/docs/Lib/Contract/`
-([querying](../../../docs/Lib/Contract/index.md#querying-inside-of-a-contract) and
-[sandbox](../../../docs/Lib/Contract/sandbox-and-inner-computer.md)).
+The live Retype reference lives under `packages/docs/Lib/Contract/` in the monorepo
+(see `index.md` for querying and `sandbox-and-inner-computer.md` for the sandbox).
 
 ## Goals
 
