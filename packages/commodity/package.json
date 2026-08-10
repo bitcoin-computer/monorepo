@@ -1,0 +1,42 @@
+{
+  "name": "@bitcoin-computer/commodity",
+  "version": "0.27.0-beta.1",
+  "description": "A proof-of-work token implementation.",
+  "license": "MIT",
+  "author": "Clemens Ley <clemens@bitcoincomputer.io>",
+  "type": "module",
+  "files": [
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
+  "scripts": {
+    "prebuild": "npm run lint",
+    "build": "rm -rf build && tsc -p tsconfig.release.json && npm run build:contract",
+    "build:turbo": "turbo run build",
+    "build:contract": "esbuild src/commodity.ts --bundle --format=esm --minify --target=es2022 --outfile=build/src/commodity.js --external:@bitcoin-computer/*",
+    "build:test": "rm -rf dist && tsc -p tsconfig.test.json",
+    "clean": "npm run clean:logs",
+    "clean:logs": "rm -f *.log 2> /dev/null",
+    "deploy": "npm run build && node build/src/deploy.js",
+    "lint": "eslint --fix . --ext .ts,.tsx",
+    "start": "node build/src/main.js",
+    "test": "rm -rf dist && tsc -p tsconfig.test.json && npm run build:contract && mocha --config .mocharc.json",
+    "test:rerun": "rm -rf dist && tsc -p tsconfig.test.json && node ../../scripts/rerun-failed.js",
+    "types": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@bitcoin-computer/TBC777": "^0.27.0-beta.1",
+    "@bitcoin-computer/lib": "^0.27.0-beta.1"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.6",
+    "@types/node": "~20.11.21",
+    "chai": "^5.1.2",
+    "chai-match-pattern": "^1.3.0",
+    "dotenv": "^16.4.5",
+    "esbuild": "^0.27.3",
+    "mocha": "^11.0.0",
+    "prettier": "~3.2.5",
+    "typescript": "^5.8.3"
+  }
+}

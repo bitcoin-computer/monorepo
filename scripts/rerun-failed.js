@@ -44,7 +44,7 @@ function packageLabel(packageDir) {
   // Nested run: cwd is the package itself
   try {
     const name = JSON.parse(
-      readFileSync(join(packageDir, "package.json"), "utf8")
+      readFileSync(join(packageDir, "package.json"), "utf8"),
     ).name;
     if (name) return name;
   } catch {
@@ -112,7 +112,7 @@ function toGrepTarget(rawTitle) {
   // it() names (e.g. "Should return the same result...") scoped to the right
   // suite instead of matching every similar title in the file.
   const beforeHook = rawTitle.match(
-    /^(.*?)\s*"(?:before|after) (?:each|all)" hook/
+    /^(.*?)\s*"(?:before|after) (?:each|all)" hook/,
   );
   if (beforeHook && beforeHook[1].trim()) {
     return { pattern: beforeHook[1].trim(), exact: false };
@@ -120,7 +120,7 @@ function toGrepTarget(rawTitle) {
 
   // Hook title with only "in Suite" (no path prefix)
   const inSuite = rawTitle.match(
-    /"(?:before|after) (?:each|all)" hook(?:[^"]*) in "([^"]+)"/
+    /"(?:before|after) (?:each|all)" hook(?:[^"]*) in "([^"]+)"/,
   );
   if (inSuite) {
     return { pattern: inSuite[1].trim(), exact: false };
@@ -244,7 +244,7 @@ function runMochaForFailures(packageDir, failedTests) {
 
   if (grepParts.length === 0) {
     console.log(
-      `${colors.yellow}No valid failure titles to grep in ${packageLabel(packageDir)}${colors.reset}`
+      `${colors.yellow}No valid failure titles to grep in ${packageLabel(packageDir)}${colors.reset}`,
     );
     return;
   }
@@ -271,7 +271,7 @@ function runMochaForFailures(packageDir, failedTests) {
       : displayPatterns.join(" | ");
 
   console.log(
-    `Running in ${packageLabel(packageDir)}: mocha --grep (${grepParts.length} pattern(s)) ${failedFiles.length} file(s)`
+    `Running in ${packageLabel(packageDir)}: mocha --grep (${grepParts.length} pattern(s)) ${failedFiles.length} file(s)`,
   );
   console.log(`${colors.dim}  patterns: ${displayGrep}${colors.reset}`);
 
@@ -293,7 +293,7 @@ function runMochaForFailures(packageDir, failedTests) {
   if (!stats || stats.tests === 0) {
     throw new Error(
       `Mocha matched 0 tests for ${grepParts.length} failure pattern(s). ` +
-        `Titles may not match (hook cleanup / dynamic describe names).`
+        `Titles may not match (hook cleanup / dynamic describe names).`,
     );
   }
   if (mochaFailed || stats.failures > 0) {
@@ -315,7 +315,7 @@ function groupByPackage(testResultsFiles) {
       parsed = parseFailures(testResultsFile);
     } catch (error) {
       console.error(
-        `${colors.red}Skipping ${rel}: ${error.message}${colors.reset}`
+        `${colors.red}Skipping ${rel}: ${error.message}${colors.reset}`,
       );
       continue;
     }
@@ -323,7 +323,7 @@ function groupByPackage(testResultsFiles) {
     if (parsed.skipReason) {
       if (!nested) {
         console.warn(
-          `${colors.yellow}Skipping ${rel}: ${parsed.skipReason}.${colors.reset}`
+          `${colors.yellow}Skipping ${rel}: ${parsed.skipReason}.${colors.reset}`,
         );
       }
       continue;
@@ -346,14 +346,14 @@ function groupByPackage(testResultsFiles) {
         packageDir = getPackageDir(failedTests[0].file);
       } else {
         console.warn(
-          `${colors.yellow}Skipping ${rel}: no package.json next to results file.${colors.reset}`
+          `${colors.yellow}Skipping ${rel}: no package.json next to results file.${colors.reset}`,
         );
         continue;
       }
     }
     if (!existsSync(join(packageDir, "package.json"))) {
       console.warn(
-        `${colors.yellow}Skipping ${rel}: could not resolve package directory.${colors.reset}`
+        `${colors.yellow}Skipping ${rel}: could not resolve package directory.${colors.reset}`,
       );
       continue;
     }
@@ -393,7 +393,7 @@ function runPackageTestRerun(packageDir) {
     }
     if (stats && stats.tests === 0) {
       throw new Error(
-        `Mocha matched 0 tests (titles may not match after compile)`
+        `Mocha matched 0 tests (titles may not match after compile)`,
       );
     }
     throw new Error(`package test:rerun failed`);
@@ -408,15 +408,13 @@ function processPackage(packageDir, failedTests) {
     `Rerunning ${failedTests.length} failed test(s)` +
       (uniqueCount !== failedTests.length
         ? ` (${uniqueCount} unique pattern(s))`
-        : "")
+        : ""),
   );
 
   // When aggregating from a parent directory, prefer the package's own
   // test:rerun (recompile + this script). Nested invocation runs mocha only.
   const shouldDispatch =
-    !nested &&
-    packageDir !== cwd &&
-    packageHasScript(packageDir, "test:rerun");
+    !nested && packageDir !== cwd && packageHasScript(packageDir, "test:rerun");
 
   if (shouldDispatch) {
     runPackageTestRerun(packageDir);
@@ -432,10 +430,10 @@ const testResultsFiles = getTestResultsFiles();
 
 if (testResultsFiles.length === 0) {
   console.error(
-    `${colors.red}No test-results.json files found.${colors.reset}`
+    `${colors.red}No test-results.json files found.${colors.reset}`,
   );
   console.error(
-    "Run tests first (e.g. npm run test:turbo) so Mocha can write results."
+    "Run tests first (e.g. npm run test:turbo) so Mocha can write results.",
   );
   process.exit(1);
 }
@@ -443,7 +441,7 @@ if (testResultsFiles.length === 0) {
 if (!nested) {
   console.log(
     "Found test-results files:",
-    testResultsFiles.map((f) => relative(cwd, f) || f)
+    testResultsFiles.map((f) => relative(cwd, f) || f),
   );
 }
 
@@ -480,13 +478,13 @@ if (failedPackages > 0) {
   if (!nested) {
     console.log("");
     console.error(
-      `${colors.red}${failedPackages}/${processedPackages} package(s) still had failures after rerun:${colors.reset}`
+      `${colors.red}${failedPackages}/${processedPackages} package(s) still had failures after rerun:${colors.reset}`,
     );
     for (const name of stillFailing) {
       console.error(`  - ${name}`);
     }
     console.error(
-      `${colors.dim}Re-run again with: npm run test:rerun${colors.reset}`
+      `${colors.dim}Re-run again with: npm run test:rerun${colors.reset}`,
     );
   }
   process.exit(1);
@@ -495,7 +493,7 @@ if (failedPackages > 0) {
 if (!nested) {
   console.log("");
   console.log(
-    `${colors.green}Rerun finished: ${processedPackages} package(s) with no remaining failures.${colors.reset}`
+    `${colors.green}Rerun finished: ${processedPackages} package(s) with no remaining failures.${colors.reset}`,
   );
 }
 process.exit(0);

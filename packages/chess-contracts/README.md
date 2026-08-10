@@ -124,6 +124,8 @@ class ChessContract extends Contract {
   resign(): void
   isGameOver(): boolean
   hasTimedOutW / hasTimedOutB(): Promise<boolean>
+  // Uses InnerComputer.txIdToBlockTime + prev on the full prev-chain.
+  // All revisions including the tip must be **confirmed** or the call is rejected.
   calculateTimes(): Promise<{ timeW: bigint; timeB: bigint }>
   setCanceledSeen(): void
 }
@@ -133,9 +135,10 @@ class ChessContractHelper {
   depositTokens(chessRev, tokenRev, wagerAmount, name, nextOwner, coSign?): Promise<SmartContract>
   move(chessId, from, to, promotion?): Promise<{ newChessContract; isGameOver }>
   resign(chessId): Promise<SmartContract>
-  withdrawTokens(tokenId, chessId): Promise<void>
+  withdrawTokens(tokenId, chessId): Promise<void>  // waits for chess tip confirmation first
   cancelGame(chessId): Promise<SmartContract>
-  cancelGameAndWithdraw(chessId): Promise<void>
+  cancelGameAndWithdraw(chessId): Promise<void>    // cancel → wait for confirm → withdraw
+  waitForConfirmed(location): Promise<void>
   markCanceledSeen(chessId): Promise<SmartContract>
   // plus query helpers (isGameStarted, canCancel, isCreator, …)
 }

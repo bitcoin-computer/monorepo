@@ -57,14 +57,12 @@ export class EscrowAuditor {
                 regularClaimable: 0n,
                 finalClaimable: 0n,
                 availableBalance: 0n,
-                isTerminal: false,
             };
         }
         const lineage = token.root;
         const tokenId = token._id;
         const { depositRevs, withdrawEntries, finalEntries } = this.collectRevisions(states, lineage);
         const escrow = states[0]._id;
-        const rev = states[0]._rev;
         const totalDeposited = await this.sumDeposits(depositRevs, escrow, token);
         const totalRegularAuthorized = this.sumClaims(withdrawEntries);
         const totalFinalAuthorized = this.sumClaims(finalEntries);
@@ -73,8 +71,7 @@ export class EscrowAuditor {
             .reduce((sum, [, , amt]) => sum + amt, 0n);
         const { withdraws, finalWithdraws } = states[0];
         const regularClaimable = getClaimable(withdraws);
-        const isTerminal = (await computer.last(rev)) === rev;
-        const finalClaimable = isTerminal ? getClaimable(finalWithdraws) : 0n;
+        const finalClaimable = getClaimable(finalWithdraws);
         const availableBalance = totalDeposited - totalRegularAuthorized - totalFinalAuthorized;
         return {
             totalDeposited,
@@ -83,7 +80,6 @@ export class EscrowAuditor {
             regularClaimable,
             finalClaimable,
             availableBalance,
-            isTerminal,
         };
     }
     static async audit(escrowRev, token) {
@@ -97,8 +93,6 @@ export class TBC777 extends TBC20 {
         if (amount !== undefined) {
             if (amount < 0n)
                 throw new Error('Amount cannot be negative');
-            if (amount === 0n && !remoteRoot)
-                throw new Error('Zero amount is only valid for remote-root tokens');
             if (remoteRoot && amount !== 0n)
                 throw new Error('Remote-root tokens must be created with amount 0n');
         }
@@ -115,16 +109,6 @@ export class TBC777 extends TBC20 {
     }
     merge() {
         throw new Error('merge() is disabled in TBC777.');
-    }
-    transfer(to, amount) {
-        if (typeof amount === 'undefined')
-            amount = this.amount;
-        if (amount <= 0n)
-            throw new Error('Transfer amount must be positive');
-        if (this.amount < amount)
-            throw new Error('Insufficient funds');
-        this.amount -= amount;
-        return this._createTransferToken(to, amount);
     }
     _createTransferToken(to, amount) {
         const ctor = this.constructor;
@@ -159,14 +143,18 @@ export class TBC777 extends TBC20 {
         const targetList = isFinal ? this.finalWithdrawn : this.withdrawn;
         if (targetList.includes(rev))
             throw new Error('Cannot withdraw multiple times');
-        const { availableBalance, regularClaimable, finalClaimable, isTerminal } = await EscrowAuditor.audit(rev, this);
+        const { availableBalance, regularClaimable, finalClaimable } = await EscrowAuditor.audit(rev, this);
         const claimable = isFinal ? finalClaimable : regularClaimable;
         if (availableBalance < 0n)
             throw new Error(`Escrow available balance (${availableBalance}) too low`);
         if (claimable <= 0n)
             throw new Error(`Claimable ${isFinal ? 'final ' : ''}withdraw amount is zero or negative`);
-        if (isFinal && !isTerminal)
-            throw new Error("finalWithdraws can only be claimed from the escrow's last revision");
+        if (isFinal) {
+            const lastRev = await computer.last(rev);
+            if (lastRev !== rev) {
+                throw new Error("finalWithdraws can only be claimed from the escrow's last revision");
+            }
+        }
         this.amount += claimable;
         targetList.push(rev);
         if (!isFinal)
@@ -233,8 +221,6 @@ export class TBC777 extends TBC20 {
         const symbolMatch = exp.match(/symbol\s*:\s*'([^']+)'/)?.[1];
         if (!toMatch || !amountMatch || !nameMatch || !symbolMatch)
             throw new Error('Input string is not in a valid TBC777 constructor form');
-        if (amountMatch === '0' && !exp.includes('remoteRoot'))
-            throw new Error('Zero amount is only valid for remote-root tokens');
         const noStrings = exp
             .replace(/'[^'\\]*(?:\\.[^'\\]*)*'/g, '""')
             .replace(/"[^"\\]*(?:\\.[^"\\]*)*"/g, '""');

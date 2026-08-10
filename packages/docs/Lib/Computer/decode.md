@@ -34,6 +34,10 @@ An object containing the following properties:
 
 The `decode` function takes a Bitcoin transaction or a transaction ID as input and retrieves the associated metadata if the transaction is a Bitcoin Computer transaction. This metadata includes the JavaScript expression, any environment variables, and an optional module specifier.
 
+### Inside smart contracts (`InnerComputer`)
+
+Only **confirmed** transactions may be decoded. Unconfirmed or missing txIds invalidate the evaluation. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
 ## Example
 
 :::code source="../../../lib/test/lib/computer/decode.test.ts" :::
