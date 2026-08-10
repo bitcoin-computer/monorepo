@@ -1,6 +1,6 @@
 # last
 
-_Returns the latest revision of an object if that latest revision is spent; otherwise `undefined`._
+_Returns the last revision of an on-chain object after its tip has been spent (for example after `delete`)._
 
 ## Type
 
@@ -12,18 +12,49 @@ last(rev: string): Promise<string | undefined>
 
 #### `rev`
 
-Any revision of the on-chain object (`<txid>:<vout>`).
+A revision encoded as a string of the form `<transaction-id>:<output-number>`.
 
 ### Return Value
 
-- The latest revision string if that UTXO is **spent**
-- `undefined` if the latest revision is still **unspent**
+A `Promise` that resolves to:
+
+- The **latest revision** of the object when that tip is **spent**.
+- **`undefined`** when the latest revision is still **unspent**.
 
 ## Description
 
-Computes [`latest`](./latest.md) for `rev`, then checks whether that output is still unspent via [`isUnspent`](./isUnspent.md). Useful when you want the tip of a spent chain rather than the live UTXO tip.
+Unlike [`latest`](./latest.md), which returns the current tip whether spent or unspent, `last` only returns a value when the tip is spent. That makes it suitable for **terminal** checks (escrow settlement, final withdraws) rather than reading the live tip.
 
-## See also
+Typical flow:
 
-- [latest](./latest.md)
-- [isUnspent](./isUnspent.md)
+1. Update or finalize the object.
+2. Spend the tip (for example with `delete`).
+3. Wait for confirmation.
+4. Call `last(rev)` to obtain the terminal revision.
+
+### Inside smart contracts (`InnerComputer`)
+
+Behavior is stricter than the outer client API:
+
+- The starting revision, the returned tip, and the tip’s **spending** transaction must all be **confirmed**.
+- An **unspent** tip (or a mempool-only spend) **invalidates** the evaluation — there is no stable `undefined` success path inside contracts.
+- Do **not** treat `last` as “current live tip”; use confirmed history ([`first`](./first.md) / [`prev`](./prev.md) / [`getAncestors`](./getAncestors.md)) for that style of walk.
+
+See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
+## Example
+
+```ts
+const counter = await computer.new(Counter, [])
+await counter.inc()
+
+// Tip is still unspent → undefined
+const open = await computer.last(counter._rev)
+
+// Spend the tip, then last returns the terminal revision
+const tip = await computer.latest(counter._id)
+await computer.delete([tip])
+// For InnerComputer callers: wait until the spend is confirmed
+const terminal = await computer.last(counter._id)
+// terminal === tip
+```
