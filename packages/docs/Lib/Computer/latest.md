@@ -24,7 +24,7 @@ If `latest` is called with a revision for which no output exists, it throws an e
 
 ### Not available inside smart contracts
 
-`latest` is **not** exposed on InnerComputer (the in-contract `computer` global). The live tip can change under chain extension, so it is unsuitable for deterministic contract evaluation. Inside contracts, use confirmed history (`first` / `prev` / `getAncestors`) or terminal checks via `last` after a confirmed spend. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+`latest` is **not** exposed on InnerComputer (the in-contract `computer` global). The live tip can change under chain extension, so it is unsuitable for deterministic contract evaluation. Inside contracts, use confirmed history ([`first`](./first.md) / [`prev`](./prev.md) / [`getAncestors`](./getAncestors.md)) or terminal checks via [`last`](./last.md) after a confirmed spend. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
 
 [![](../../static/latest.png)](https://wallet.bitcoincomputer.io)
 
