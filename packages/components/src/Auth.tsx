@@ -383,6 +383,20 @@ function LoginForm() {
   return (
     <>
       <div className="max-w-sm mx-auto p-4 md:p-5 space-y-4">
+        <div
+          className="p-3 text-sm text-amber-800 border border-amber-300 rounded-lg bg-amber-50 dark:bg-gray-800 dark:text-amber-300 dark:border-amber-800"
+          role="alert"
+        >
+          <p className="font-semibold mb-1">Non-custodial wallet</p>
+          <p className="mb-2">
+            Your mnemonic is stored only in this browser. We never hold your keys or can recover
+            them for you.
+          </p>
+          <p>
+            <strong className="font-semibold">Write down your mnemonic</strong> before you continue.
+            Anyone with it can spend your funds; if you lose it, access is gone permanently.
+          </p>
+        </div>
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />

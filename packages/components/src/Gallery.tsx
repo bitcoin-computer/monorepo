@@ -1,10 +1,9 @@
-import { Computer } from '@bitcoin-computer/lib'
+import { Computer, TXORecord } from '@bitcoin-computer/lib'
 import { useContext, useEffect, useState } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { initFlowbite } from 'flowbite'
-import { jsonMap, strip, toObject } from './common/utils'
-import { useUtilsComponents } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
+import { ObjectCard, ObjectCardSkeleton } from './ObjectCard'
 
 export type Class = new (...args: any) => any
 
@@ -15,80 +14,52 @@ export type UserQuery<T extends Class> = Partial<{
   offset: number
   order: 'ASC' | 'DESC'
   ids: string[]
+  address: string
+  isObject: boolean
   contract: {
     class: T
     args?: ConstructorParameters<T>
   }
 }>
 
-function HomePageCard({ content }: any) {
-  return (
-    <div className="block w-72 p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
-      <pre className="font-normal overflow-auto text-gray-700 dark:text-gray-400 text-xs">
-        {content()}
-      </pre>
-    </div>
-  )
+const DOCS_URL = 'https://docs.bitcoincomputer.io/'
+
+/** Normalize URL search params into a getOUTXOs-compatible query. */
+export function queryFromSearchParams(search: string): Record<string, string | boolean> {
+  const raw = Object.fromEntries(new URLSearchParams(search))
+  const out: Record<string, string | boolean> = {}
+
+  // public-key was used historically; API expects publicKey
+  const publicKey = raw.publicKey || raw['public-key']
+  if (publicKey) out.publicKey = publicKey.trim()
+
+  if (raw.mod) out.mod = raw.mod.trim()
+  if (raw.address) out.address = raw.address.trim()
+  if (raw.order === 'ASC' || raw.order === 'DESC') out.order = raw.order
+
+  if (raw.isObject === 'true' || raw.isObject === '1') out.isObject = true
+  if (raw.isObject === 'false' || raw.isObject === '0') out.isObject = false
+
+  return out
 }
 
-function ValueComponent({ rev, computer }: { rev: string; computer: Computer }) {
-  const [value, setValue] = useState<any>('loading...')
-  const [errorMsg, setMsgError] = useState('')
-  const [loading, setLoading] = useState<boolean>(true)
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        const synced: any = await computer.sync(rev)
-        setValue(toObject(jsonMap(strip)(synced)))
-      } catch (err) {
-        if (err instanceof Error) setMsgError(`Error: ${err.message}`)
-      }
-      setLoading(false)
-    }
-    fetch()
-  }, [computer, rev])
-
-  const loadingContent = () => (
-    <>
-      <svg
-        aria-hidden="true"
-        role="status"
-        className="inline w-4 h-4 me-3 text-gray-200 animate-spin dark:text-gray-600"
-        viewBox="0 0 100 101"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-          fill="currentColor"
-        />
-        <path
-          d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-          fill="#1C64F2"
-        />
-      </svg>
-      <span className="loading-smart-contract-span">&nbsp;Loading...</span>
-    </>
-  )
-
-  return loading ? (
-    <HomePageCard content={loadingContent} />
-  ) : (
-    <HomePageCard content={() => errorMsg || value} />
-  )
-}
-
-function FromRevs({ revs, computer }: { revs: string[]; computer: any }) {
+function FromRecords({
+  records,
+  computer,
+}: {
+  records: TXORecord[]
+  computer: Computer
+}) {
+  const chain = computer.getChain()
   return (
-    <div className="flex flex-wrap flex-col max-h-[75vh] gap-4 mb-4 mt-4">
-      {revs.map((rev) => (
-        <div key={rev}>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 mt-4 w-full">
+      {records.map((record) => (
+        <div key={record.rev}>
           <Link
-            to={`/objects/${rev}`}
-            className="block font-medium text-blue-600 dark:text-blue-500"
+            to={`/objects/${record.rev}`}
+            className="block font-medium text-blue-600 dark:text-blue-500 h-full"
           >
-            <ValueComponent rev={rev} computer={computer} />
+            <ObjectCard record={record} computer={computer} chain={chain} />
           </Link>
         </div>
       ))}
@@ -102,9 +73,10 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
       <ul className="inline-flex items-center -space-x-px">
         <li>
           <button
+            type="button"
             disabled={!isPrevAvailable}
             onClick={handlePrev}
-            className="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            className="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             <span className="sr-only">Previous</span>
             <svg
@@ -126,9 +98,10 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
         </li>
         <li>
           <button
+            type="button"
             disabled={!isNextAvailable}
             onClick={handleNext}
-            className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
           >
             <span className="sr-only">Next</span>
             <svg
@@ -153,68 +126,215 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
   )
 }
 
-export function GalleryWithPagination<T extends Class>(q: UserQuery<T>) {
+function EmptyObjectsState() {
+  return (
+    <div className="w-full py-12 px-4 text-center">
+      <h1 className="mb-3 text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white">
+        No smart objects yet
+      </h1>
+      <p className="mb-6 max-w-xl mx-auto text-base text-gray-600 dark:text-gray-400">
+        On Bitcoin Computer, a <strong className="font-semibold text-gray-800 dark:text-gray-200">smart object</strong>{' '}
+        is on-chain application state you can own, update, and call methods on — not just a bare
+        UTXO. Create one in the Playground, or learn how objects work in the docs.
+      </p>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Link
+          to="/playground"
+          className="inline-flex items-center px-5 py-2.5 text-sm font-medium text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+        >
+          Open Playground
+        </Link>
+        <a
+          href={DOCS_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center px-5 py-2.5 text-sm font-medium text-gray-900 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700"
+        >
+          Read the docs
+        </a>
+      </div>
+    </div>
+  )
+}
+
+function GallerySkeletons({ count = 6 }: { count?: number }) {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 mt-4 w-full">
+      {Array.from({ length: count }, (_, i) => (
+        <ObjectCardSkeleton key={i} />
+      ))}
+    </div>
+  )
+}
+
+export function GalleryWithPagination<T extends Class>(q: UserQuery<T> = {}) {
   const contractsPerPage = 12
   const computer = useContext(ComputerContext)
-  const { showLoader } = useUtilsComponents()
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(true)
-  const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
+  const [isPrevAvailable, setIsPrevAvailable] = useState(false)
   const [showNoAsset, setShowNoAsset] = useState(false)
-  const [revs, setRevs] = useState<string[]>([])
+  const [records, setRecords] = useState<TXORecord[]>([])
+  const [listLoading, setListLoading] = useState(true)
+  const [listError, setListError] = useState<string | null>(null)
   const location = useLocation()
-  const params = Object.fromEntries(new URLSearchParams(location.search))
 
   useEffect(() => {
     initFlowbite()
   }, [])
 
+  // Reset to first page when filters change
   useEffect(() => {
-    const fetch = async () => {
-      showLoader(true)
-      const query = { ...q, ...params }
-      query.offset = contractsPerPage * pageNum
-      query.limit = contractsPerPage + 1
-      query.order = 'DESC'
-      const result = await computer.getOUTXOs(query)
-      setIsNextAvailable(result.length > contractsPerPage)
-      setRevs(result.slice(0, contractsPerPage))
-      if (pageNum === 0 && result?.length === 0) setShowNoAsset(true)
-      showLoader(false)
-    }
-    fetch()
-  }, [computer, pageNum])
+    setPageNum(0)
+    setIsPrevAvailable(false)
+  }, [location.search])
 
-  const handleNext = async () => {
-    setIsPrevAvailable(true)
-    setPageNum(pageNum + 1)
+  useEffect(() => {
+    let cancelled = false
+
+    const fetchPage = async () => {
+      setListLoading(true)
+      setListError(null)
+      setShowNoAsset(false)
+      try {
+        const fromUrl = queryFromSearchParams(location.search)
+        const isObject =
+          fromUrl.isObject !== undefined ? Boolean(fromUrl.isObject) : (q.isObject ?? true)
+        const order = (fromUrl.order as 'ASC' | 'DESC' | undefined) || q.order || 'DESC'
+        const publicKey = (fromUrl.publicKey as string | undefined) || q.publicKey
+        const mod = (fromUrl.mod as string | undefined) || q.mod
+        const address = (fromUrl.address as string | undefined) || q.address
+
+        const result = await computer.getOUTXOs({
+          verbosity: 1,
+          isObject,
+          offset: contractsPerPage * pageNum,
+          limit: contractsPerPage + 1,
+          order,
+          ...(publicKey ? { publicKey } : {}),
+          ...(mod ? { mod } : {}),
+          ...(address ? { address } : {}),
+        })
+        if (cancelled) return
+
+        setIsNextAvailable(result.length > contractsPerPage)
+        setIsPrevAvailable(pageNum > 0)
+        setRecords(result.slice(0, contractsPerPage))
+        if (pageNum === 0 && result.length === 0) setShowNoAsset(true)
+      } catch (err) {
+        if (cancelled) return
+        console.error('Error fetching objects', err)
+        setListError(err instanceof Error ? err.message : 'Error fetching objects')
+        setRecords([])
+        setIsNextAvailable(false)
+        if (pageNum === 0) setShowNoAsset(true)
+      } finally {
+        if (!cancelled) setListLoading(false)
+      }
+    }
+
+    fetchPage()
+    return () => {
+      cancelled = true
+    }
+    // q identity is not stable across parent re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [computer, pageNum, location.search, q.mod, q.publicKey, q.address, q.order, q.isObject])
+
+  const handleNext = () => {
+    setPageNum((n) => n + 1)
   }
 
-  const handlePrev = async () => {
-    setIsNextAvailable(true)
-    if (pageNum - 1 === 0) setIsPrevAvailable(false)
-    setPageNum(pageNum - 1)
+  const handlePrev = () => {
+    setPageNum((n) => Math.max(0, n - 1))
   }
 
   return (
     <div className="relative sm:rounded-lg pt-4 w-full">
-      <FromRevs revs={revs} computer={computer} />
-      {!(pageNum === 0 && revs && revs.length === 0) && (
+      {listLoading && records.length === 0 ? <GallerySkeletons /> : null}
+
+      {listError && !listLoading ? (
+        <div className="py-8 text-center">
+          <p className="text-red-600 dark:text-red-400 mb-2">{listError}</p>
+        </div>
+      ) : null}
+
+      {!listLoading && showNoAsset ? <EmptyObjectsState /> : null}
+
+      {records.length > 0 ? <FromRecords records={records} computer={computer} /> : null}
+
+      {!(pageNum === 0 && records.length === 0) && !listLoading ? (
         <Pagination
-          revs={revs}
           isPrevAvailable={isPrevAvailable}
           handlePrev={handlePrev}
           isNextAvailable={isNextAvailable}
           handleNext={handleNext}
         />
-      )}
-      {pageNum === 0 && revs && revs.length === 0 && showNoAsset && (
-        <h1 className="w-full mb-4 text-2xl font-extrabold leading-none tracking-tight text-gray-900 dark:text-white text-center mx-auto">
-          No Assets
-        </h1>
-      )}
+      ) : null}
     </div>
   )
+}
+
+/** @deprecated Prefer metadata-first Gallery.WithPagination; kept for apps that pass raw revs. */
+function FromRevs({ revs, computer }: { revs: string[]; computer: Computer }) {
+  const [records, setRecords] = useState<TXORecord[] | null>(null)
+
+  useEffect(() => {
+    let cancelled = false
+    const run = async () => {
+      try {
+        if (revs.length === 0) {
+          setRecords([])
+          return
+        }
+        // Fetch metadata for known revs when possible
+        const results = await Promise.all(
+          revs.map(async (rev) => {
+            try {
+              const rows = await computer.getOUTXOs({
+                rev,
+                verbosity: 1,
+              })
+              if (rows[0]) return rows[0]
+            } catch {
+              // fall through
+            }
+            return {
+              rev,
+              address: '',
+              satoshis: 0n,
+              asm: '',
+            } as TXORecord
+          }),
+        )
+        if (!cancelled) setRecords(results)
+      } catch {
+        if (!cancelled) {
+          setRecords(
+            revs.map(
+              (rev) =>
+                ({
+                  rev,
+                  address: '',
+                  satoshis: 0n,
+                  asm: '',
+                }) as TXORecord,
+            ),
+          )
+        }
+      }
+    }
+    run()
+    return () => {
+      cancelled = true
+    }
+  }, [revs, computer])
+
+  if (!records) {
+    return <GallerySkeletons count={Math.min(revs.length || 3, 6)} />
+  }
+
+  return <FromRecords records={records} computer={computer} />
 }
 
 export const Gallery = {
