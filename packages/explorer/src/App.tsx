@@ -16,6 +16,7 @@ import {
 import NavBar from './components/Navbar'
 import Block from './components/Block'
 import Blocks from './components/Blocks'
+import Modules from './components/Modules'
 import Module from './components/Module'
 import Playground from './components/playground/Playground'
 import UTXODisplay from './components/Utxos'
@@ -44,6 +45,7 @@ export default function App() {
               <Route path="/decode-txn/:txn" element={<DecodeTransactionComponent />} />
               <Route path="/blocks/:block" element={<Block />} />
               <Route path="/objects/:rev" element={<SmartObject.Component />} />
+              <Route path="/modules" element={<Modules />} />
               <Route path="/modules/:rev" element={<Module />} />
               <Route path="/utxos/:address" element={<UTXODisplay />} />
               <Route path="*" element={<Error404 />} />

@@ -14,7 +14,8 @@ export function SearchBar() {
       if (searchInput === '') navigate('/')
       else if (searchInput.includes(':')) {
         try {
-          await computer.load(searchInput)
+          // Prefer indexed module source (no evaluation) over load().
+          await computer.getModule(searchInput)
           navigate(`/modules/${searchInput}`)
         } catch {
           navigate(`/objects/${searchInput}`)
