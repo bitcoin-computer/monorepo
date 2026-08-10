@@ -194,7 +194,7 @@ last(rev: string): Promise<string>
 #### Block and time helpers
 
 ```ts
-txIdToBlockTime(txId: string): Promise<bigint>
+txIdToBlockTime(txId: string): Promise<number>
 txIdToBlockHeight(txId: string): Promise<number>
 txIdToBlockHash(txId: string): Promise<string>
 getBlockHash(height: number): Promise<string>

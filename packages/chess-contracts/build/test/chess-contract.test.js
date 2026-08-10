@@ -469,25 +469,23 @@ describe('ChessContract', () => {
                 const afterMove = moveEffect.env
                     .__bc__;
                 expect(afterMove._rev).not.toBe(chessFunded._rev);
-                await expect(async () => {
-                    const { tx } = await white.encodeCall({
-                        target: afterMove,
-                        property: 'hasTimedOutW',
-                        args: [],
-                        mod: chessMod,
-                    });
-                    await white.broadcast(tx);
-                }).rejects.toThrow(/Accessing non-existent on-chain state inside a smart contract is forbidden/);
+                // Pure query: invalidation is raised during encode (no state mutation / no tx).
+                await expect(white.encodeCall({
+                    target: afterMove,
+                    property: 'hasTimedOutW',
+                    args: [],
+                    mod: chessMod,
+                })).rejects.toThrow(/Accessing non-existent on-chain state inside a smart contract is forbidden/);
                 // After the move confirms, walking prev + block times is a stable observation.
+                // hasTimedOutW is read-only — assert the encode effect; do not broadcast.
                 await minter.db.wallet.restClient.mine(1);
                 const confirmed = await white.sync(afterMove._rev);
-                const { tx: okTx, effect: okEffect } = await white.encodeCall({
+                const { effect: okEffect } = await white.encodeCall({
                     target: confirmed,
                     property: 'hasTimedOutW',
                     args: [],
                     mod: chessMod,
                 });
-                await white.broadcast(okTx);
                 const timedOut = okEffect.res;
                 expect(typeof timedOut).toBe('boolean');
                 // Fresh game with one move should not exceed a 10-minute limit.
