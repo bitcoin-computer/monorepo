@@ -1,3 +1,7 @@
+/**
+ * Collect callable methods from the object's prototype chain.
+ */
+export declare function methodNamesFrom(smartObject: unknown): string[];
 export declare const SmartObjectFunctions: ({ smartObject, functionsExist, options, setFunctionResult, setShow, setModalTitle, }: {
     smartObject: any;
     functionsExist: boolean;

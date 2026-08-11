@@ -383,7 +383,7 @@ function TxSummary({ rpcTxnData, txn }: { rpcTxnData: any; txn: string }) {
         </p>
         {blockHash ? (
           <Link
-            to={`/blocks/${blockHash}`}
+            to={`/block/${blockHash}`}
             className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
           >
             {blockHeight != null ? `#${blockHeight}` : truncateMiddle(blockHash, 8, 6)}

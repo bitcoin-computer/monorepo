@@ -1,8 +1,9 @@
-import { useContext, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { TypeSelectionDropdown } from './common/TypeSelectionDropdown'
 import { isValidRev } from './common/utils'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
+import { FieldError } from './InlineAlert'
 
 export const getErrorMessage = (error: any): string => {
   if (
@@ -37,9 +38,13 @@ const getValueForType = (type: string, stringValue: string) => {
   }
 }
 
-export const getParameterNames = (fn: string) => {
-  const match = fn.toString().match(/\(.*?\)/)
-  return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : []
+export const getParameterNames = (fn: ((...args: any[]) => any) | string) => {
+  try {
+    const match = fn.toString().match(/\(.*?\)/)
+    return match ? match[0].replace(/[()]/gi, '').replace(/\s/gi, '').split(',') : []
+  } catch {
+    return []
+  }
 }
 
 const getParameters = (params: string[], fnName: string, formState: any) =>
@@ -55,6 +60,30 @@ const getParameters = (params: string[], fnName: string, formState: any) =>
     return paramValue
   })
 
+function resolveMethodFn(smartObject: any, funcName: string): ((...a: unknown[]) => unknown) | null {
+  try {
+    let proto: object | null = Object.getPrototypeOf(smartObject)
+    while (proto && proto !== Object.prototype) {
+      try {
+        const desc = Object.getOwnPropertyDescriptor(proto, funcName)
+        if (desc && 'value' in desc && typeof desc.value === 'function') return desc.value
+        const v = (proto as any)[funcName]
+        if (typeof v === 'function') return v
+      } catch {
+        // continue
+      }
+      try {
+        proto = Object.getPrototypeOf(proto)
+      } catch {
+        break
+      }
+    }
+  } catch {
+    return null
+  }
+  return null
+}
+
 export const SmartObjectFunction = ({
   smartObject,
   functionsExist,
@@ -63,6 +92,7 @@ export const SmartObjectFunction = ({
   setShow,
   setModalTitle,
   funcName,
+  embedded = false,
 }: {
   smartObject: any
   functionsExist: boolean
@@ -71,23 +101,43 @@ export const SmartObjectFunction = ({
   setShow: any
   setModalTitle: React.Dispatch<React.SetStateAction<string>>
   funcName: string
+  /** When true, omit outer title (parent panel already shows it) */
+  embedded?: boolean
 }) => {
-  const parameterList = getParameterNames(Object.getPrototypeOf(smartObject)[funcName]).filter(
-    (val) => val,
-  )
-  const [formState, setFormState] = useState<any>(
+  const parameterList = useMemo(() => {
+    try {
+      const fn = resolveMethodFn(smartObject, funcName)
+      if (!fn) return [] as string[]
+      return getParameterNames(fn).filter((val) => Boolean(val))
+    } catch {
+      return [] as string[]
+    }
+  }, [smartObject, funcName])
+
+  const buildInitialForm = (params: string[]) =>
     Object.fromEntries(
-      parameterList.flatMap((key) => [
+      params.flatMap((key) => [
         [`${funcName}-${key}`, ''],
-        [`${funcName}-${key}--types`, ''],
+        // Default type so the call button is not stuck disabled until user picks a type
+        [`${funcName}-${key}--types`, 'string'],
       ]),
-    ),
-  )
-  const { showLoader } = UtilsContext.useUtilsComponents()
+    )
+
+  const [formState, setFormState] = useState<any>(() => buildInitialForm(parameterList))
+  const [formError, setFormError] = useState<string | null>(null)
+  const { showLoader, toast } = UtilsContext.useUtilsComponents()
   const computer = useContext(ComputerContext)
+
+  // Keep form fields in sync if parameter list resolves after mount
+  useEffect(() => {
+    setFormState(buildInitialForm(parameterList))
+    setFormError(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when method/params change
+  }, [funcName, parameterList.join(',')])
 
   const handleMethodCall = async (event: any, smartObj: any, fnName: string, params: string[]) => {
     event.preventDefault()
+    setFormError(null)
     showLoader(true)
     try {
       const revMap: any = {}
@@ -109,13 +159,24 @@ export const SmartObjectFunction = ({
       await computer.broadcast(tx!)
       await computer.waitForIndexed(tx.txId)
       const rev = await computer.latest(smartObject._id)
+
+      // Same toast system as Wallet / other actions (no error modal dual-path)
+      toast.success(`Method “${fnName}” executed successfully`, {
+        title: 'Success',
+        action: {
+          label: 'View latest revision',
+          href: `/objects/${rev}`,
+        },
+      })
       setFunctionResult({ _rev: rev })
       setModalTitle('Success')
+      // Success modal still offers a durable link; toast is the primary signal
       setShow(true)
     } catch (error: any) {
-      setFunctionResult(getErrorMessage(error))
-      setModalTitle('Error!')
-      setShow(true)
+      const message = getErrorMessage(error)
+      // Errors: inline field + toast only (no modal — avoids dual error UIs)
+      setFormError(message)
+      toast.error(message, { title: 'Method call failed' })
     } finally {
       showLoader(false)
     }
@@ -126,12 +187,14 @@ export const SmartObjectFunction = ({
     const value = { ...formState }
     value[key] = e.target.value
     setFormState(value)
+    if (formError) setFormError(null)
   }
 
   const updateTypes = (option: string, key: string) => {
     const value = { ...formState }
     value[`${key}--types`] = option
     setFormState(value)
+    if (formError) setFormError(null)
   }
 
   const capitalizeFirstLetter = (s: string) => s.charAt(0).toUpperCase() + s.slice(1)
@@ -142,48 +205,80 @@ export const SmartObjectFunction = ({
     [formState],
   )
 
-  if (!functionsExist) return <></>
+  if (!functionsExist) {
+    return (
+      <p className="text-sm text-gray-500 dark:text-gray-400">Methods are not available.</p>
+    )
+  }
+
+  const inputClass =
+    'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+
   return (
-    <>
-      <div className="mt-6 mb-6" id={`function-${funcName}`}>
+    <div id={`function-${funcName}`} className={embedded ? '' : 'mt-6 mb-6'}>
+      {!embedded ? (
         <h3 className="my-1.5 text-base font-semibold dark:text-white">
           {capitalizeFirstLetter(funcName)}
         </h3>
-        <form>
-          {parameterList.map((paramName, paramIndex) => (
-            <div key={paramIndex} className="mb-4">
-              <div className="flex items-center space-x-4">
+      ) : null}
+      <form className="space-y-3" onSubmit={(e) => e.preventDefault()}>
+        {parameterList.length === 0 ? (
+          <p className="text-sm text-gray-500 dark:text-gray-400 rounded-lg border border-dashed border-gray-200 dark:border-gray-600 px-3 py-2.5">
+            This method takes no parameters.
+          </p>
+        ) : (
+          parameterList.map((paramName, paramIndex) => (
+            <div key={`${funcName}-${paramName}-${paramIndex}`}>
+              <label
+                htmlFor={`${funcName}-${paramName}`}
+                className="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300"
+              >
+                {paramName}
+              </label>
+              <div className="flex flex-row items-center gap-2">
                 <input
                   type="text"
                   id={`${funcName}-${paramName}`}
-                  value={formState[`${funcName}-${paramName}`] || ''}
+                  value={formState[`${funcName}-${paramName}`] ?? ''}
                   onChange={(e) => updateForm(e, `${funcName}-${paramName}`)}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder={paramName}
+                  className={`${inputClass} min-w-0 flex-1`}
+                  placeholder={`Value for ${paramName}`}
                   required
+                  autoComplete="off"
                 />
-                <TypeSelectionDropdown
-                  id={`${funcName}${paramName}`}
-                  dropdownList={options}
-                  onSelectMethod={(option: string) =>
-                    updateTypes(option, `${funcName}-${paramName}`)
-                  }
-                />
+                <div className="shrink-0">
+                  <TypeSelectionDropdown
+                    id={`${funcName}${paramName}`}
+                    dropdownList={options}
+                    selectedType={formState[`${funcName}-${paramName}--types`] || 'string'}
+                    onSelectMethod={(option: string) =>
+                      updateTypes(option, `${funcName}-${paramName}`)
+                    }
+                  />
+                </div>
               </div>
             </div>
-          ))}
-          <button
-            id={`${funcName}-call-function-button`}
-            disabled={isDisabled}
-            className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:ring-4 focus:outline-none
-              ${isDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'}
-            `}
-            onClick={(evt) => handleMethodCall(evt, smartObject, funcName, parameterList)}
-          >
-            Call Function
-          </button>
-        </form>
-      </div>
-    </>
+          ))
+        )}
+
+        {formError ? <FieldError>{formError}</FieldError> : null}
+
+        <button
+          id={`${funcName}-call-function-button`}
+          type="button"
+          disabled={isDisabled}
+          className={`w-full sm:w-auto text-white font-medium rounded-lg text-sm px-5 py-2.5 focus:ring-4 focus:outline-none transition
+            ${
+              isDisabled
+                ? 'bg-gray-400 cursor-not-allowed dark:bg-gray-600'
+                : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+            }
+          `}
+          onClick={(evt) => handleMethodCall(evt, smartObject, funcName, parameterList)}
+        >
+          Call method
+        </button>
+      </form>
+    </div>
   )
 }

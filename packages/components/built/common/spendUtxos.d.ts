@@ -4,13 +4,18 @@ export declare function getSpendableUtxosTotalSatoshis(computer: Computer, modSp
 export type SignAndBroadcastSpendUtxosOptions = {
     computer: Computer;
     modSpecs: string[];
-    /** When set (non-empty after trim), sends this many satoshis to this address and change to self. */
+    /** When set (non-empty after trim), sends to this address (with change to self, unless `sendMax`). */
     toAddress?: string;
-    /** Required when `toAddress` is set. Ignored when consolidating to self. */
+    /** Required when `toAddress` is set and `sendMax` is not true. Ignored when consolidating or sendMax. */
     amountSatoshis?: bigint;
+    /** Send entire balance minus fees/dust to `toAddress` (single output, no change). */
+    sendMax?: boolean;
 };
 /**
  * Builds a transaction from wallet + mod UTXOs, signs, and broadcasts.
  * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus fee and minDust).
+ * @returns Broadcast transaction id when available.
  */
-export declare function signAndBroadcastSpendUtxos(options: SignAndBroadcastSpendUtxosOptions): Promise<void>;
+export declare function signAndBroadcastSpendUtxos(options: SignAndBroadcastSpendUtxosOptions): Promise<string | undefined>;
+/** Validate that `address` is a valid output script for the computer's chain/network. */
+export declare function isValidAddressForComputer(computer: Computer, address: string): boolean;

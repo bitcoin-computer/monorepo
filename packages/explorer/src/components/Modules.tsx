@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ModuleRecord } from '@bitcoin-computer/lib'
-import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, InlineAlert } from '@bitcoin-computer/components'
 
 type StorageFilter = '' | 'multisig' | 'taproot'
 type ConfirmedFilter = '' | 'true' | 'false'
@@ -40,24 +40,41 @@ function selectClassName() {
   return 'bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-blue-500 focus:border-blue-500 block py-1.5 px-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
 }
 
+function ModulesSkeleton() {
+  return (
+    <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
+      {Array.from({ length: 6 }, (_, i) => (
+        <div
+          key={i}
+          className="h-11 border-b last:border-0 border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 animate-pulse"
+        />
+      ))}
+    </div>
+  )
+}
+
 export default function Modules() {
   const computer = useContext(ComputerContext)
-  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
 
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(false)
   const [isPrevAvailable, setIsPrevAvailable] = useState(false)
   const [rows, setRows] = useState<ModuleRecord[]>([])
   const [showEmpty, setShowEmpty] = useState(false)
+  const [listLoading, setListLoading] = useState(true)
+  const [listError, setListError] = useState<string | null>(null)
 
   const [order, setOrder] = useState<OrderFilter>('DESC')
   const [storageType, setStorageType] = useState<StorageFilter>('')
   const [isConfirmed, setIsConfirmed] = useState<ConfirmedFilter>('')
 
   useEffect(() => {
+    let cancelled = false
+
     const fetchModules = async () => {
       try {
-        showLoader(true)
+        setListLoading(true)
+        setListError(null)
         setShowEmpty(false)
         const query: {
           verbosity: 1
@@ -77,23 +94,26 @@ export default function Modules() {
         if (isConfirmed === 'false') query.isConfirmed = false
 
         const result = await computer.getModules(query)
+        if (cancelled) return
         setIsNextAvailable(result.length > MODULES_PER_PAGE)
         setIsPrevAvailable(pageNum > 0)
         setRows(result.slice(0, MODULES_PER_PAGE))
         if (pageNum === 0 && result.length === 0) setShowEmpty(true)
       } catch (error) {
+        if (cancelled) return
         console.error('Error fetching modules', error)
-        showSnackBar('Error fetching modules', false)
+        setListError(error instanceof Error ? error.message : 'Error fetching modules')
         setRows([])
         setIsNextAvailable(false)
-        if (pageNum === 0) setShowEmpty(true)
+        setShowEmpty(false)
       } finally {
-        showLoader(false)
+        if (!cancelled) setListLoading(false)
       }
     }
     fetchModules()
-    // showLoader / showSnackBar are not stable (recreated each UtilsProvider render).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return () => {
+      cancelled = true
+    }
   }, [computer, pageNum, order, storageType, isConfirmed])
 
   const handleFilterChange = <T,>(setter: (v: T) => void, value: T) => {
@@ -159,13 +179,23 @@ export default function Modules() {
         </div>
       </div>
 
-      {showEmpty ? (
+      {listLoading && rows.length === 0 ? <ModulesSkeleton /> : null}
+
+      {listError && !listLoading ? (
+        <InlineAlert variant="error" className="mb-3">
+          {listError}
+        </InlineAlert>
+      ) : null}
+
+      {!listLoading && showEmpty ? (
         <div className="py-8 text-center rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
           <h2 className="text-base font-semibold text-gray-900 dark:text-white">
             No modules indexed
           </h2>
         </div>
-      ) : (
+      ) : null}
+
+      {!listLoading && !listError && !showEmpty && rows.length > 0 ? (
         <>
           <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
             <thead className="text-xs text-gray-600 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
@@ -213,7 +243,9 @@ export default function Modules() {
                   <td className="px-3 py-2 text-xs">
                     <StatusCell row={row} />
                   </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-xs">{formatTimestamp(row.timestamp)}</td>
+                  <td className="px-3 py-2 whitespace-nowrap text-xs">
+                    {formatTimestamp(row.timestamp)}
+                  </td>
                   <td className="px-3 py-2 max-w-xs">
                     <span
                       className="block truncate font-mono text-xs text-gray-600 dark:text-gray-300"
@@ -285,7 +317,7 @@ export default function Modules() {
             </nav>
           )}
         </>
-      )}
+      ) : null}
     </div>
   )
 }

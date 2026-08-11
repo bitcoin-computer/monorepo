@@ -24,15 +24,20 @@ export async function getSpendableUtxosTotalSatoshis(computer, modSpecs) {
 /**
  * Builds a transaction from wallet + mod UTXOs, signs, and broadcasts.
  * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus fee and minDust).
+ * @returns Broadcast transaction id when available.
  */
 export async function signAndBroadcastSpendUtxos(options) {
     const { computer, modSpecs } = options;
     const trimmedTo = options.toAddress?.trim() ?? '';
     const hasRecipient = trimmedTo.length > 0;
-    if (hasRecipient) {
+    const sendMax = Boolean(options.sendMax);
+    if (hasRecipient && !sendMax) {
         if (options.amountSatoshis === undefined || options.amountSatoshis <= 0n) {
             throw new Error('amountSatoshis is required and must be positive when sending to an address');
         }
+    }
+    if (sendMax && !hasRecipient) {
+        throw new Error('toAddress is required when sendMax is true');
     }
     const { utxos, allModUtxos, totalSatoshis: totalInput, } = await listSpendableUtxos(computer, modSpecs);
     const tx = new Transaction();
@@ -67,18 +72,44 @@ export async function signAndBroadcastSpendUtxos(options) {
         catch {
             throw new Error('Invalid recipient address for this network.');
         }
-        const amountSatoshis = options.amountSatoshis;
-        tx.addOutput(recipientScript, amountSatoshis);
-        tx.addOutput(changeScript, totalInput);
-        const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx));
-        const changeAmount = totalInput - estimatedFees - minDust - amountSatoshis;
-        if (changeAmount <= 0n) {
-            throw new Error(changeAmount < 0n
-                ? `Insufficient balance after fees to send this amount (${computer.getChain()}).`
-                : `After fees there is nothing left for change; try a slightly smaller amount (${computer.getChain()}).`);
+        if (sendMax) {
+            tx.addOutput(recipientScript, totalInput);
+            const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx));
+            const outValue = totalInput - estimatedFees - minDust;
+            if (outValue < minDust) {
+                throw new Error(`Balance is too low to cover network fees when sending max (${computer.getChain()}).`);
+            }
+            tx.updateOutput(0, { value: outValue });
         }
-        tx.updateOutput(1, { value: changeAmount });
+        else {
+            const amountSatoshis = options.amountSatoshis;
+            tx.addOutput(recipientScript, amountSatoshis);
+            tx.addOutput(changeScript, totalInput);
+            const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx));
+            const changeAmount = totalInput - estimatedFees - minDust - amountSatoshis;
+            if (changeAmount <= 0n) {
+                throw new Error(changeAmount < 0n
+                    ? `Insufficient balance after fees to send this amount (${computer.getChain()}).`
+                    : `After fees there is nothing left for change; try a slightly smaller amount or Send max (${computer.getChain()}).`);
+            }
+            tx.updateOutput(1, { value: changeAmount });
+        }
     }
     await computer.sign(tx);
-    await computer.broadcast(tx);
+    const txId = await computer.broadcast(tx);
+    return typeof txId === 'string' ? txId : undefined;
+}
+/** Validate that `address` is a valid output script for the computer's chain/network. */
+export function isValidAddressForComputer(computer, address) {
+    const trimmed = address.trim();
+    if (!trimmed)
+        return false;
+    try {
+        const networkObj = networks.getNetwork(computer.getChain(), computer.getNetwork());
+        bAddress.toOutputScript(trimmed, networkObj);
+        return true;
+    }
+    catch {
+        return false;
+    }
 }

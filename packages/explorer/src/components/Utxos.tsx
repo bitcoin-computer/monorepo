@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ComputerContext, UtilsContext, bigIntToStr } from '@bitcoin-computer/components'
+import { ComputerContext, bigIntToStr, InlineAlert } from '@bitcoin-computer/components'
 import { CopyButton } from './ui/CopyButton'
 import { PageHeader, SectionTitle, StatCard } from './ui/PageHeader'
 
@@ -31,7 +31,6 @@ const UTXODisplay = () => {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const computer = useContext(ComputerContext)
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
   const chain = computer.getChain()
 
   const fetchUTXOs = useCallback(
@@ -58,12 +57,11 @@ const UTXODisplay = () => {
         setError(msg)
         setUtxos([])
         setTotalAmount(0n)
-        showSnackBar(msg, false)
       } finally {
         setLoading(false)
       }
     },
-    [computer, showSnackBar],
+    [computer],
   )
 
   useEffect(() => {
@@ -126,11 +124,7 @@ const UTXODisplay = () => {
           </div>
         ) : null}
 
-        {error && !loading ? (
-          <div className="rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 p-3 text-sm text-red-700 dark:text-red-300">
-            {error}
-          </div>
-        ) : null}
+        {error && !loading ? <InlineAlert variant="error">{error}</InlineAlert> : null}
 
         {!loading && !error && utxos.length === 0 ? (
           <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 p-6 text-center">
@@ -166,36 +160,27 @@ const UTXODisplay = () => {
               </thead>
               <tbody>
                 {utxos.map((utxo) => {
-                  const [txId, vout] = (utxo.rev || '').split(':')
+                  const [txId, vout] = utxo.rev.split(':')
                   return (
                     <tr
                       key={utxo.rev}
-                      className="bg-white border-b last:border-0 dark:bg-gray-900 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/60"
+                      className="bg-white border-b last:border-0 dark:bg-gray-900 dark:border-gray-800"
                     >
                       <td className="px-3 py-2 font-mono text-xs">
-                        {txId ? (
-                          <Link
-                            to={`/transactions/${txId}`}
-                            className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                            title={txId}
-                          >
-                            {truncateTxId(txId)}
-                          </Link>
-                        ) : (
-                          '—'
-                        )}
+                        <Link
+                          to={`/transactions/${txId}`}
+                          className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                          title={txId}
+                        >
+                          {truncateTxId(txId)}
+                        </Link>
                       </td>
-                      <td className="px-3 py-2 tabular-nums text-xs">{vout ?? '—'}</td>
-                      <td className="px-3 py-2 text-right font-medium tabular-nums text-gray-900 dark:text-white text-xs">
-                        {bigIntToStr(utxo.satoshis)}
+                      <td className="px-3 py-2">{vout}</td>
+                      <td className="px-3 py-2 text-right font-mono text-xs whitespace-nowrap">
+                        {bigIntToStr(utxo.satoshis)} {chain}
                       </td>
                       <td className="px-3 py-2">
-                        <div className="flex items-center gap-1.5 font-mono text-xs">
-                          <span className="text-gray-500 truncate max-w-[7rem]" title={utxo.rev}>
-                            {utxo.rev ? truncateTxId(utxo.rev, 8, 6) : '—'}
-                          </span>
-                          {utxo.rev ? <CopyButton text={utxo.rev} label="Copy" /> : null}
-                        </div>
+                        <CopyButton text={utxo.rev} label="Copy" />
                       </td>
                     </tr>
                   )

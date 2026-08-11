@@ -1,6 +1,6 @@
 import './App.css'
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Route, Routes, useLocation } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { initFlowbite } from 'flowbite'
 import {
   Auth,
@@ -17,10 +17,17 @@ import NavBar from './components/Navbar'
 import { HomeSearch } from './components/SearchBar'
 import Block from './components/Block'
 import Blocks from './components/Blocks'
+import Transactions from './components/Transactions'
 import Modules from './components/Modules'
 import Module from './components/Module'
 import Playground from './components/playground/Playground'
 import UTXODisplay from './components/Utxos'
+
+/** Legacy `/blocks/:id` → `/block/:id` */
+function RedirectLegacyBlock() {
+  const { block } = useParams()
+  return <Navigate to={`/block/${block ?? ''}`} replace />
+}
 
 function AppRoutes() {
   const { pathname } = useLocation()
@@ -28,18 +35,18 @@ function AppRoutes() {
 
   return (
     <>
-      {/* Home only: full-width grey search band (outside content padding) */}
       {isHome ? <HomeSearch /> : null}
 
-      {/* Shared content shell — same width/padding on home and internal pages */}
       <div className="w-full max-w-screen-xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
         <Routes>
           <Route path="/" element={<Gallery.WithPagination />} />
           <Route path="/blocks" element={<Blocks />} />
-          <Route path="/playground" element={<Playground />} />
+          <Route path="/block/:id" element={<Block />} />
+          <Route path="/blocks/:block" element={<RedirectLegacyBlock />} />
+          <Route path="/transactions" element={<Transactions />} />
           <Route path="/transactions/:txn" element={<Transaction.Component />} />
+          <Route path="/playground" element={<Playground />} />
           <Route path="/decode-txn/:txn" element={<DecodeTransactionComponent />} />
-          <Route path="/blocks/:block" element={<Block />} />
           <Route path="/objects/:rev" element={<SmartObject.Component />} />
           <Route path="/modules" element={<Modules />} />
           <Route path="/modules/:rev" element={<Module />} />

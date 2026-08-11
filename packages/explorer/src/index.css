@@ -14,3 +14,50 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+/* Playground CodeEditor (react-simple-code-editor + Prism) */
+.dark .token.comment,
+.dark .token.prolog,
+.dark .token.doctype,
+.dark .token.cdata {
+  color: #6b7280;
+}
+.dark .token.punctuation {
+  color: #d1d5db;
+}
+.dark .token.property,
+.dark .token.tag,
+.dark .token.constant,
+.dark .token.symbol,
+.dark .token.deleted {
+  color: #f9a8d4;
+}
+.dark .token.boolean,
+.dark .token.number {
+  color: #fcd34d;
+}
+.dark .token.selector,
+.dark .token.attr-name,
+.dark .token.string,
+.dark .token.char,
+.dark .token.builtin,
+.dark .token.inserted {
+  color: #86efac;
+}
+.dark .token.operator,
+.dark .token.entity,
+.dark .token.url,
+.dark .language-css .token.string,
+.dark .style .token.string,
+.dark .token.variable {
+  color: #93c5fd;
+}
+.dark .token.atrule,
+.dark .token.attr-value,
+.dark .token.function,
+.dark .token.class-name {
+  color: #c4b5fd;
+}
+.dark .token.keyword {
+  color: #67e8f9;
+}

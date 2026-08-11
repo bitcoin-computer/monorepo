@@ -1,9 +1,21 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
-import { IoMdRemoveCircleOutline } from 'react-icons/io'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { HiOutlineTrash } from 'react-icons/hi'
 import { Computer } from '@bitcoin-computer/lib'
-import { UtilsContext } from '@bitcoin-computer/components'
+import { Auth, UtilsContext } from '@bitcoin-computer/components'
 import { getErrorMessage, isValidRev } from '../../utils'
 import { ModSpec } from './Modspec'
+import { CodeEditor } from './CodeEditor'
+import { EffectPanel, EffectPreviewData } from './EffectPreview'
+import {
+  ActionBar,
+  EditorToolbar,
+  EmptyWorkspace,
+  inputClassName,
+  Panel,
+  PlaygroundResult,
+  secondaryBtnClassName,
+} from './ui'
+import { loadDraft, saveDraft, useDebouncedDraft } from './usePlaygroundDraft'
 
 interface ExpressionArgument {
   name: string
@@ -13,23 +25,60 @@ interface ExpressionArgument {
 
 const ExecuteExpression = (props: {
   computer: Computer
-  setShow: (flag: boolean) => void
-  // eslint-disable-next-line
-  setFunctionResult: Dispatch<SetStateAction<any>>
-  setModalTitle: Dispatch<SetStateAction<string>>
+  reportResult: (result: PlaygroundResult) => void
   exampleExpression: string
   exampleVars: { name: string; type: string }[]
+  exampleLoaded: boolean
+  onLoadCounter?: () => void
+  onPreviewDone?: () => void
+  onBroadcastDone?: () => void
 }) => {
-  const { computer, exampleExpression, setShow, setModalTitle, setFunctionResult } = props
+  const {
+    computer,
+    exampleExpression,
+    reportResult,
+    exampleLoaded,
+    onLoadCounter,
+    onPreviewDone,
+    onBroadcastDone,
+  } = props
 
-  const [expression, setExpression] = useState<string>()
+  const [expression, setExpression] = useState<string>('')
   const [modSpec, setModSpec] = useState<string>()
   const [expressionArgumentsList, setExpressoinArgumentsList] = useState<ExpressionArgument[]>([])
+  const [effectPreview, setEffectPreview] = useState<EffectPreviewData | null>(null)
+  const [restored, setRestored] = useState(false)
   const { showLoader } = UtilsContext.useUtilsComponents()
+  const loggedIn = Auth.isLoggedIn()
 
   useEffect(() => {
-    setExpression(exampleExpression)
+    if (restored) return
+    if (exampleExpression) {
+      setRestored(true)
+      return
+    }
+    const d = loadDraft('execute')
+    if (d?.expression?.trim()) setExpression(d.expression)
+    if (d?.modSpec) setModSpec(d.modSpec)
+    setRestored(true)
+  }, [exampleExpression, restored])
+
+  useEffect(() => {
+    setExpression(exampleExpression || '')
+    setEffectPreview(null)
   }, [exampleExpression])
+
+  useDebouncedDraft('execute', 'expression', expression, restored && !exampleLoaded)
+
+  useEffect(() => {
+    if (!restored || exampleLoaded) return
+    saveDraft('execute', {
+      expression,
+      modSpec,
+      code: undefined,
+      module: undefined,
+    })
+  }, [expression, modSpec, restored, exampleLoaded])
 
   const handleExpressoinArgumentChange = (
     index: number,
@@ -50,138 +99,232 @@ const ExecuteExpression = (props: {
   const handleAddExpressionArgument = () => {
     setExpressoinArgumentsList([...expressionArgumentsList, { name: '', value: '', hidden: false }])
   }
-  const handleExpressionCall = async () => {
+
+  const buildEnv = () => {
+    const revMap: { [key: string]: string } = {}
+    expressionArgumentsList
+      .filter((argument) => !argument.hidden)
+      .forEach((argument) => {
+        if (isValidRev(argument.value)) revMap[argument.name] = argument.value
+      })
+    return revMap
+  }
+
+  const handlePreview = useCallback(async () => {
     try {
       showLoader(true)
       const expressionCode = expression?.trim()
-
-      const revMap: { [key: string]: string } = {}
-      expressionArgumentsList
-        .filter((argument) => !argument.hidden)
-        .forEach((argument) => {
-          const argValue = argument.value
-          if (isValidRev(argValue)) {
-            revMap[argument.name] = argValue
-          }
-        })
-
-      const encodeObject: {
-        exp: string
-        env: { [key: string]: string }
-        fund: boolean
-        sign: boolean
-        mod?: string
-      } = {
+      const { tx, effect } = await computer.encode({
         exp: `${expressionCode}`,
-        env: { ...revMap },
-        fund: true,
-        sign: true,
-      }
-      if (modSpec) {
-        encodeObject.mod = modSpec
-      }
+        env: buildEnv(),
+        fund: false,
+        sign: false,
+        ...(modSpec ? { mod: modSpec } : {}),
+      })
+      setEffectPreview({
+        kind: 'preview',
+        res: effect?.res,
+        env: effect?.env as Record<string, unknown> | undefined,
+        txHexLength: tx ? tx.toHex?.()?.length : undefined,
+        note: 'Encoded without funding or signing. Nothing was broadcast.',
+      })
+      onPreviewDone?.()
+    } catch (error: unknown) {
+      setEffectPreview(null)
+      reportResult({
+        status: 'error',
+        title: 'Preview failed',
+        data: getErrorMessage(error),
+      })
+    } finally {
+      showLoader(false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [computer, expression, modSpec, expressionArgumentsList, onPreviewDone, reportResult, showLoader])
 
+  const handleExpressionCall = useCallback(async () => {
+    try {
+      showLoader(true)
+      const expressionCode = expression?.trim()
+      const revMap = buildEnv()
       const { tx, effect } = await computer.encode({
         exp: `${expressionCode}`,
         env: { ...revMap },
         fund: true,
         sign: true,
+        ...(modSpec ? { mod: modSpec } : {}),
       })
       if (!tx) throw new Error('Transition does not update the state, no transaction created')
       const txId = await computer.broadcast(tx)
-      setFunctionResult({ _rev: `${txId}:0`, type: 'objects', res: effect.res })
-      setModalTitle('Success!')
-      setShow(true)
+      setEffectPreview({
+        kind: 'broadcast',
+        res: effect?.res,
+        env: effect?.env as Record<string, unknown> | undefined,
+        txId,
+      })
+      reportResult({
+        status: 'success',
+        title: 'Expression executed',
+        data: { _rev: `${txId}:0`, type: 'objects', res: effect.res },
+      })
+      onBroadcastDone?.()
     } catch (error: unknown) {
-      setFunctionResult(getErrorMessage(error))
-      setModalTitle('Error!')
-      setShow(true)
+      reportResult({
+        status: 'error',
+        title: 'Error',
+        data: getErrorMessage(error),
+      })
     } finally {
       showLoader(false)
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [computer, expression, modSpec, expressionArgumentsList, onBroadcastDone, reportResult, showLoader])
 
   const isCallDisabled = useMemo(
-    () => expressionArgumentsList.some((arg) => !arg.name.trim()),
-    [expressionArgumentsList],
+    () =>
+      !expression?.trim() ||
+      expressionArgumentsList.some((arg) => !arg.hidden && !arg.name.trim()),
+    [expressionArgumentsList, expression],
   )
 
+  const visibleArgs = expressionArgumentsList.filter((a) => !a.hidden)
+  const showEmpty = !expression?.trim() && !exampleLoaded
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault()
+      if (e.shiftKey) {
+        if (!isCallDisabled) void handlePreview()
+      } else if (loggedIn && !isCallDisabled) {
+        void handleExpressionCall()
+      }
+    }
+  }
+
   return (
-    <>
-      <textarea
-        id="expression-textarea"
-        value={expression}
-        onChange={(e) => setExpression(e.target.value)}
-        placeholder="Enter expression here"
-        rows={16}
-        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" // Added font-mono for monospaced font
-        // eslint-disable-next-line
-        style={{ tabSize: 2, MozTabSize: 2, OTabSize: 2, WebkitTabSize: 2 } as any} // Set tab size to 2 spaces
-        spellCheck="false" // Disable spell check
-        autoCapitalize="none" // Disable auto capitalization
-        autoComplete="off" // Disable auto completion
-        autoCorrect="off" // Disable auto correction
-        wrap="off" // Disable word wrapping
-      ></textarea>
+    <div className="space-y-4">
+      {showEmpty ? <EmptyWorkspace onPickExample={onLoadCounter} /> : null}
 
-      <h6 className="mt-4 text-lg font-bold dark:text-white">Environment Variables</h6>
+      <div className="xl:grid xl:grid-cols-5 xl:gap-4 xl:items-start space-y-4 xl:space-y-0">
+        <div className="xl:col-span-3 space-y-4 min-w-0">
+          <Panel
+            title="Expression"
+            badge={
+              exampleLoaded ? (
+                <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200">
+                  Example loaded
+                </span>
+              ) : (
+                <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1.5 py-0.5 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                  Custom
+                </span>
+              )
+            }
+            actions={
+              <EditorToolbar
+                canClear={Boolean(expression?.trim())}
+                canReset={Boolean(exampleExpression?.trim())}
+                onCopy={() => {
+                  if (expression) navigator.clipboard.writeText(expression)
+                }}
+                onReset={() => setExpression(exampleExpression || '')}
+                onClear={() => setExpression('')}
+              />
+            }
+            bodyClassName="p-2 sm:p-3"
+          >
+            <CodeEditor
+              id="expression-textarea"
+              value={expression}
+              onChange={setExpression}
+              placeholder="new Counter() or other JS expression"
+              minHeight={280}
+              onKeyDown={onKeyDown}
+              aria-label="Expression source"
+            />
+          </Panel>
 
-      <div>
-        {expressionArgumentsList.map(
-          (argument: ExpressionArgument, index) =>
-            !argument.hidden && (
-              <div key={index} className="mt-2 flex items-center mb-2">
-                <input
-                  type="text"
-                  id={`playground-expression-argument-name-${index}`}
-                  value={argument.name}
-                  onChange={(e) => handleExpressoinArgumentChange(index, 'name', e.target.value)}
-                  className="sm:w-1/4 md:w-1/4 lg:w-1/3 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Name"
-                  required
-                />
-                <input
-                  type="text"
-                  id={`playground-expression-argument-${index}`}
-                  value={argument.value}
-                  onChange={(e) => handleExpressoinArgumentChange(index, 'value', e.target.value)}
-                  className="sm:w-full md:w-2/3 lg:w-1/2 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Value"
-                  required
-                />
-                <IoMdRemoveCircleOutline
-                  className="w-6 h-6 ml-2 text-red-500 cursor-pointer"
-                  onClick={() => removeExpressionArgument(index)}
-                />
+          <Panel title="Environment">
+            {visibleArgs.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                Bind names used in the expression to revision strings (revs).
+              </p>
+            ) : (
+              <div className="space-y-2 mb-3">
+                {expressionArgumentsList.map(
+                  (argument: ExpressionArgument, index) =>
+                    !argument.hidden && (
+                      <div key={index} className="flex flex-wrap items-center gap-2">
+                        <input
+                          type="text"
+                          id={`playground-expression-argument-name-${index}`}
+                          value={argument.name}
+                          onChange={(e) =>
+                            handleExpressoinArgumentChange(index, 'name', e.target.value)
+                          }
+                          className={`${inputClassName} w-full sm:w-40`}
+                          placeholder="Name"
+                          required
+                        />
+                        <input
+                          type="text"
+                          id={`playground-expression-argument-${index}`}
+                          value={argument.value}
+                          onChange={(e) =>
+                            handleExpressoinArgumentChange(index, 'value', e.target.value)
+                          }
+                          className={`${inputClassName} min-w-[10rem] flex-1`}
+                          placeholder="Rev (txid:vout)"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeExpressionArgument(index)}
+                          className="p-1.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-950/30"
+                          aria-label="Remove env binding"
+                          title="Remove"
+                        >
+                          <HiOutlineTrash className="w-5 h-5" />
+                        </button>
+                      </div>
+                    ),
+                )}
               </div>
-            ),
-        )}
+            )}
+            <button
+              type="button"
+              onClick={handleAddExpressionArgument}
+              className={secondaryBtnClassName}
+            >
+              Add environment variable
+            </button>
+          </Panel>
+
+          <Panel title="Advanced">
+            <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
+          </Panel>
+        </div>
+
+        {/* Effect column: sticky on desktop; on mobile stacks between form and broadcast bar */}
+        <div className="xl:col-span-2 min-w-0 xl:sticky xl:top-24">
+          <EffectPanel
+            data={effectPreview}
+            onPreview={() => void handlePreview()}
+            previewDisabled={isCallDisabled}
+            onDismiss={() => setEffectPreview(null)}
+          />
+        </div>
+
+        <div className="xl:col-span-3 min-w-0">
+          <ActionBar
+            primaryLabel="Execute expression"
+            onPrimary={handleExpressionCall}
+            primaryDisabled={isCallDisabled}
+            loggedIn={loggedIn}
+          />
+        </div>
       </div>
-
-      <button
-        type="button"
-        onClick={handleAddExpressionArgument}
-        className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center my-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-      >
-        Add Environment Variable
-      </button>
-
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-      <button
-        type="button"
-        disabled={isCallDisabled}
-        onClick={handleExpressionCall}
-        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:ring-4 focus:outline-none
-          ${isCallDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'}
-        `}
-      >
-        Execute Expression
-      </button>
-    </>
+    </div>
   )
 }
 

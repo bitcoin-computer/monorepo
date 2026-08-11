@@ -1,4 +1,5 @@
-export { SnackBar } from './SnackBar';
+export { SnackBar, Toast, ToastHost } from './SnackBar';
+export { InlineAlert, FieldError } from './InlineAlert';
 export { Auth } from './Auth';
 export { Modal, getModal, showModal, hideModal, toggleModal, ShowModalButton, HideModalButton, ToggleModalButton, ModalComponent, } from './Modal';
 export { Gallery, GalleryWithPagination, queryFromSearchParams } from './Gallery';
@@ -15,5 +16,5 @@ export { Drawer, DrawerComponent, ShowDrawer } from './Drawer';
 export { Wallet } from './Wallet';
 export { Card } from './Card';
 export * from './common/utils';
-export { getSpendableUtxosTotalSatoshis, signAndBroadcastSpendUtxos } from './common/spendUtxos';
+export { getSpendableUtxosTotalSatoshis, signAndBroadcastSpendUtxos, isValidAddressForComputer, } from './common/spendUtxos';
 export { PrimaryActionButton, SecondaryActionButton } from './ActionButtons';

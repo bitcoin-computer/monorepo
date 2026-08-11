@@ -1,11 +1,26 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
-import { IoMdRemoveCircleOutline } from 'react-icons/io'
-import { Computer } from '@bitcoin-computer/lib'
-import { UtilsContext } from '@bitcoin-computer/components'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { HiOutlineTrash } from 'react-icons/hi'
+import { Computer, Contract } from '@bitcoin-computer/lib'
+import { Auth, UtilsContext } from '@bitcoin-computer/components'
 import { TypeSelectionDropdown } from '../TypeSelectionDropdown'
 import { getErrorMessage, getValueForType, isValidRev, sleep } from '../../utils'
 import { ModSpec } from './Modspec'
-import { Contract } from '@bitcoin-computer/lib'
+import { CodeEditor } from './CodeEditor'
+import { TypedValueInput } from './TypedValueInput'
+import { EffectPanel, EffectPreviewData } from './EffectPreview'
+import {
+  ActionBar,
+  EditorToolbar,
+  EmptyWorkspace,
+  Panel,
+  PlaygroundResult,
+  secondaryBtnClassName,
+} from './ui'
+import {
+  loadDraft,
+  saveDraft,
+  useDebouncedDraft,
+} from './usePlaygroundDraft'
 
 interface Argument {
   type: string
@@ -13,27 +28,96 @@ interface Argument {
   hidden: boolean
 }
 
+function buildEncodePayload(
+  code: string,
+  argumentsList: Argument[],
+  modSpec?: string,
+  opts?: { fund?: boolean; sign?: boolean },
+) {
+  const createClassFunction = new Function(`return ${code.trim()}`)
+  const dynamicClass = createClassFunction()
+  if (
+    !(
+      dynamicClass &&
+      typeof dynamicClass === 'function' &&
+      dynamicClass.prototype &&
+      dynamicClass.prototype instanceof Contract
+    )
+  ) {
+    throw new Error('Please check the code you provided — class must extend Contract.')
+  }
+
+  const revMap: { [key: string]: string } = {}
+  argumentsList
+    .filter((argument) => !argument.hidden)
+    .forEach((argument, index) => {
+      if (isValidRev(argument.value)) revMap[`param${index}`] = argument.value
+    })
+
+  return {
+    exp: `
+          ${dynamicClass} 
+          new ${dynamicClass.name}(${argumentsList
+            .filter((argument) => !argument.hidden)
+            .map((argument, index) => {
+              const argValue = getValueForType(argument.type, argument.value)
+              if (isValidRev(argValue)) return `param${index}`
+              if (typeof argValue === 'string') return `'${argValue}'`
+              if (typeof argValue === 'bigint') return `${argValue}n`
+              return argValue
+            })})
+          `,
+    env: { ...revMap },
+    fund: opts?.fund ?? true,
+    sign: opts?.sign ?? true,
+    ...(modSpec ? { mod: modSpec } : {}),
+  }
+}
+
 const CreateNew = (props: {
   computer: Computer
-  setShow: (flag: boolean) => void
-  // eslint-disable-next-line
-  setFunctionResult: Dispatch<SetStateAction<any>>
-  setModalTitle: Dispatch<SetStateAction<string>>
+  reportResult: (result: PlaygroundResult) => void
   exampleCode: string
   exampleVars: { name: string; type: string; value: string }[]
+  exampleLoaded: boolean
+  onLoadCounter?: () => void
+  onPreviewDone?: () => void
+  onBroadcastDone?: () => void
 }) => {
-  const { computer, exampleVars, exampleCode, setShow, setModalTitle, setFunctionResult } = props
-  const [code, setCode] = useState<string>()
+  const {
+    computer,
+    exampleVars,
+    exampleCode,
+    reportResult,
+    exampleLoaded,
+    onLoadCounter,
+    onPreviewDone,
+    onBroadcastDone,
+  } = props
+  const [code, setCode] = useState<string>('')
   const [modSpec, setModSpec] = useState<string>()
   const [argumentsList, setArgumentsList] = useState<Argument[]>([])
-  const options = ['object', 'string', 'number', 'bigint', 'boolean', 'undefined', 'symbol']
+  const [effectPreview, setEffectPreview] = useState<EffectPreviewData | null>(null)
+  const [restored, setRestored] = useState(false)
+  const options = ['object', 'string', 'number', 'bigint', 'boolean', 'undefined', 'null', 'symbol']
   const { showLoader } = UtilsContext.useUtilsComponents()
+  const loggedIn = Auth.isLoggedIn()
+
+  // Restore draft once if no example
+  useEffect(() => {
+    if (restored) return
+    if (exampleCode) {
+      setRestored(true)
+      return
+    }
+    const d = loadDraft('create')
+    if (d?.code?.trim()) setCode(d.code)
+    if (d?.modSpec) setModSpec(d.modSpec)
+    setRestored(true)
+  }, [exampleCode, restored])
 
   useEffect(() => {
-    const newArgumentsList = [...argumentsList]
-    newArgumentsList.forEach((argument) => {
-      argument.hidden = true
-    })
+    const newArgumentsList: Argument[] = []
     if (exampleVars) {
       exampleVars.forEach((exampleVar) => {
         newArgumentsList.push({
@@ -44,16 +128,27 @@ const CreateNew = (props: {
       })
     }
     setArgumentsList(newArgumentsList)
-    setCode(exampleCode)
+    setCode(exampleCode || '')
+    setEffectPreview(null)
   }, [exampleCode, exampleVars])
 
+  useDebouncedDraft('create', 'code', code, restored && !exampleLoaded)
+
+  useEffect(() => {
+    if (!restored || exampleLoaded) return
+    saveDraft('create', { code, modSpec, expression: undefined, module: undefined })
+  }, [modSpec, code, restored, exampleLoaded])
+
   const handleAddArgument = () => {
-    setArgumentsList([...argumentsList, { type: '', value: '', hidden: false }])
+    setArgumentsList([...argumentsList, { type: 'string', value: '', hidden: false }])
   }
 
   const handleArgumentChange = (index: number, field: 'type' | 'value', value: string) => {
     const updatedArguments = [...argumentsList]
     updatedArguments[index][field] = value
+    if (field === 'type' && (value === 'undefined' || value === 'null')) {
+      updatedArguments[index].value = value
+    }
     setArgumentsList(updatedArguments)
   }
 
@@ -63,156 +158,211 @@ const CreateNew = (props: {
     setArgumentsList(newArgumentsList)
   }
 
-  const handleDeploy = async () => {
+  const handlePreview = useCallback(async () => {
     try {
       showLoader(true)
-
-      const createClassFunction = new Function(`return ${code?.trim()}`)
-      const dynamicClass = createClassFunction()
-      if (
-        dynamicClass &&
-        typeof dynamicClass === 'function' &&
-        dynamicClass.prototype &&
-        dynamicClass.prototype instanceof Contract
-      ) {
-        const revMap: { [key: string]: string } = {}
-        argumentsList
-          .filter((argument) => !argument.hidden)
-          .forEach((argument, index) => {
-            const argValue = argument.value
-            if (isValidRev(argValue)) {
-              revMap[`param${index}`] = argValue
-            }
-          })
-
-        const encodeObject: {
-          exp: string
-          env: { [key: string]: string }
-          fund: boolean
-          sign: boolean
-          mod?: string
-        } = {
-          exp: `
-          ${dynamicClass} 
-          new ${dynamicClass.name}(${argumentsList
-            .filter((argument) => !argument.hidden)
-            .map((argument, index) => {
-              const argValue = getValueForType(argument.type, argument.value)
-              if (isValidRev(argValue)) return `param${index}`
-              if (typeof argValue === 'string') return `'${argValue}'`
-              return argValue
-            })})
-          `,
-          env: { ...revMap },
-          fund: true,
-          sign: true,
-        }
-        if (modSpec) {
-          encodeObject.mod = modSpec
-        }
-
-        const { tx } = await computer.encode(encodeObject)
-        if (!tx) throw new Error('Transition does not update the state, no transaction created')
-        const txId = await computer.broadcast(tx)
-        sleep(500)
-        // eslint-disable-next-line
-        const { res } = (await computer.sync(txId)) as any
-        setFunctionResult({ _rev: res._rev, type: 'objects' })
-        setModalTitle('Success!')
-        setShow(true)
-      } else {
-        setFunctionResult('Please check the code you provided!')
-        setModalTitle('Error!')
-        setShow(true)
-      }
+      const payload = buildEncodePayload(code || '', argumentsList, modSpec, {
+        fund: false,
+        sign: false,
+      })
+      const { tx, effect } = await computer.encode(payload)
+      setEffectPreview({
+        kind: 'preview',
+        res: effect?.res,
+        env: effect?.env as Record<string, unknown> | undefined,
+        txHexLength: tx ? tx.toHex?.()?.length ?? undefined : undefined,
+        note: 'Encoded without funding or signing. Nothing was broadcast.',
+      })
+      onPreviewDone?.()
     } catch (error: unknown) {
-      setFunctionResult(getErrorMessage(error))
-      setModalTitle('Error!')
-      setShow(true)
+      setEffectPreview(null)
+      reportResult({
+        status: 'error',
+        title: 'Preview failed',
+        data: getErrorMessage(error),
+      })
     } finally {
       showLoader(false)
     }
-  }
+  }, [argumentsList, code, computer, modSpec, onPreviewDone, reportResult, showLoader])
+
+  const handleDeploy = useCallback(async () => {
+    try {
+      showLoader(true)
+      const payload = buildEncodePayload(code || '', argumentsList, modSpec, {
+        fund: true,
+        sign: true,
+      })
+      const { tx, effect } = await computer.encode(payload)
+      if (!tx) throw new Error('Transition does not update the state, no transaction created')
+      const txId = await computer.broadcast(tx)
+      await sleep(500)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const synced = (await computer.sync(txId)) as any
+      const res = synced?.res ?? effect?.res
+      const rev = res?._rev ?? `${txId}:0`
+      setEffectPreview({
+        kind: 'broadcast',
+        res: res ?? effect?.res,
+        env: effect?.env as Record<string, unknown> | undefined,
+        txId,
+      })
+      reportResult({
+        status: 'success',
+        title: 'Object created',
+        data: { _rev: rev, type: 'objects' },
+      })
+      onBroadcastDone?.()
+    } catch (error: unknown) {
+      reportResult({
+        status: 'error',
+        title: 'Error',
+        data: getErrorMessage(error),
+      })
+    } finally {
+      showLoader(false)
+    }
+  }, [
+    argumentsList,
+    code,
+    computer,
+    modSpec,
+    onBroadcastDone,
+    reportResult,
+    showLoader,
+  ])
 
   const isCallDisabled = useMemo(
-    () => argumentsList.some((arg) => !arg.type.trim() && !arg.hidden),
-    [argumentsList],
+    () => !code?.trim() || argumentsList.some((arg) => !arg.hidden && !arg.type.trim()),
+    [argumentsList, code],
   )
 
+  const visibleArgs = argumentsList.filter((a) => !a.hidden)
+  const showEmpty = !code?.trim() && !exampleLoaded
+
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      e.preventDefault()
+      if (e.shiftKey) {
+        if (!isCallDisabled) void handlePreview()
+      } else if (loggedIn && !isCallDisabled) {
+        void handleDeploy()
+      }
+    }
+  }
+
   return (
-    <>
-      <textarea
-        id="code-textarea"
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        placeholder="Enter your JS class and code here"
-        rows={16}
-        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" // Added font-mono for monospaced font
-        // eslint-disable-next-line
-        style={{ tabSize: 2, MozTabSize: 2, OTabSize: 2, WebkitTabSize: 2 } as any} // Set tab size to 2 spaces
-        spellCheck="false" // Disable spell check
-        autoCapitalize="none" // Disable auto capitalization
-        autoComplete="off" // Disable auto completion
-        autoCorrect="off" // Disable auto correction
-        wrap="off" // Disable word wrapping
-      ></textarea>
+    <div className="space-y-4">
+      {showEmpty ? <EmptyWorkspace onPickExample={onLoadCounter} /> : null}
 
-      <h6 className="mt-4 text-lg font-bold dark:text-white">Arguments</h6>
+      <div className="xl:grid xl:grid-cols-5 xl:gap-4 xl:items-start space-y-4 xl:space-y-0">
+        <div className="xl:col-span-3 space-y-4 min-w-0">
+          <Panel
+            title="Contract class"
+            badge={
+              exampleLoaded ? (
+                <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200">
+                  Example loaded
+                </span>
+              ) : (
+                <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1.5 py-0.5 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
+                  Custom
+                </span>
+              )
+            }
+            actions={
+              <EditorToolbar
+                canClear={Boolean(code?.trim())}
+                canReset={Boolean(exampleCode?.trim())}
+                onCopy={() => {
+                  if (code) navigator.clipboard.writeText(code)
+                }}
+                onReset={() => setCode(exampleCode || '')}
+                onClear={() => setCode('')}
+              />
+            }
+            bodyClassName="p-2 sm:p-3"
+          >
+            <CodeEditor
+              id="code-textarea"
+              value={code}
+              onChange={setCode}
+              placeholder="class MyContract extends Contract { … }"
+              minHeight={320}
+              onKeyDown={onKeyDown}
+              aria-label="Contract class source"
+            />
+          </Panel>
 
-      <div>
-        {argumentsList.map(
-          (argument: Argument, index) =>
-            !argument.hidden && (
-              <div key={index} className="py-2 flex items-center">
-                <input
-                  type="text"
-                  id={`playground-argument-${index}`}
-                  value={argument.value}
-                  onChange={(e) => handleArgumentChange(index, 'value', e.target.value)}
-                  className="sm:w-full md:w-2/3 lg:w-1/2 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Value"
-                  required
-                />
-                <TypeSelectionDropdown
-                  id={`playground-dropdown-${index}`}
-                  onSelectMethod={(option: string) => handleArgumentChange(index, 'type', option)}
-                  dropdownList={options}
-                  selectedType={argument.type}
-                />
-                <IoMdRemoveCircleOutline
-                  className="w-6 h-6 ml-2 text-red-500 cursor-pointer"
-                  onClick={() => removeArgument(index)}
-                />
+          <Panel title="Constructor arguments">
+            {visibleArgs.length === 0 ? (
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                No parameters — add one or load an example.
+              </p>
+            ) : (
+              <div className="space-y-2 mb-3">
+                {argumentsList.map(
+                  (argument: Argument, index) =>
+                    !argument.hidden && (
+                      <div key={index} className="flex flex-wrap items-center gap-2">
+                        <TypedValueInput
+                          id={`playground-argument-${index}`}
+                          type={argument.type}
+                          value={argument.value}
+                          onChange={(v) => handleArgumentChange(index, 'value', v)}
+                        />
+                        <TypeSelectionDropdown
+                          id={`playground-dropdown-${index}`}
+                          onSelectMethod={(option: string) =>
+                            handleArgumentChange(index, 'type', option)
+                          }
+                          dropdownList={options}
+                          selectedType={argument.type}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removeArgument(index)}
+                          className="p-1.5 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 rounded-md hover:bg-red-50 dark:hover:bg-red-950/30"
+                          aria-label="Remove argument"
+                          title="Remove"
+                        >
+                          <HiOutlineTrash className="w-5 h-5" />
+                        </button>
+                      </div>
+                    ),
+                )}
               </div>
-            ),
-        )}
+            )}
+            <button type="button" onClick={handleAddArgument} className={secondaryBtnClassName}>
+              Add argument
+            </button>
+          </Panel>
+
+          <Panel title="Advanced">
+            <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
+          </Panel>
+        </div>
+
+        {/* Effect column: sticky on desktop; on mobile stacks between form and broadcast bar */}
+        <div className="xl:col-span-2 min-w-0 xl:sticky xl:top-24">
+          <EffectPanel
+            data={effectPreview}
+            onPreview={() => void handlePreview()}
+            previewDisabled={isCallDisabled}
+            onDismiss={() => setEffectPreview(null)}
+          />
+        </div>
+
+        <div className="xl:col-span-3 min-w-0">
+          <ActionBar
+            primaryLabel="Create object"
+            onPrimary={handleDeploy}
+            primaryDisabled={isCallDisabled}
+            loggedIn={loggedIn}
+          />
+        </div>
       </div>
-
-      <button
-        type="button"
-        onClick={handleAddArgument}
-        className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center my-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-      >
-        Add Argument
-      </button>
-
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
-
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-      <button
-        type="button"
-        onClick={handleDeploy}
-        disabled={isCallDisabled}
-        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:ring-4 focus:outline-none
-          ${isCallDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'}
-        `}
-      >
-        Call
-      </button>
-    </>
+    </div>
   )
 }
 

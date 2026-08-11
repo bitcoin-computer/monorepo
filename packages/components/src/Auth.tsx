@@ -2,7 +2,6 @@ import { Dispatch, useEffect, useRef, useState } from 'react'
 import { Computer } from '@bitcoin-computer/lib'
 import { initFlowbite } from 'flowbite'
 import { HiRefresh } from 'react-icons/hi'
-import { useUtilsComponents } from './UtilsContext'
 import { Modal } from './Modal'
 import type { Chain, Network, ModuleStorageType } from './common/types'
 import { getEnv } from './common/utils'
@@ -307,42 +306,57 @@ function PathInput({ path, setPath }: { path: string; setPath: Dispatch<string> 
   )
 }
 
-function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) {
-  const { showSnackBar } = useUtilsComponents()
-
+function LoginButton({
+  mnemonic,
+  chain,
+  network,
+  path,
+  url,
+  urlInputRef,
+  onError,
+}: {
+  mnemonic: string
+  chain: Chain | undefined
+  network: Network | undefined
+  path: string
+  url: string | undefined
+  urlInputRef: React.RefObject<HTMLInputElement>
+  onError: (message: string | null) => void
+}) {
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     if (isLoggedIn()) {
-      showSnackBar('A user is already logged in, please log out first.', false)
+      onError('A user is already logged in, please log out first.')
       return
     }
     if (mnemonic.length === 0) {
-      showSnackBar("Please don't use an empty mnemonic string.", false)
+      onError("Please don't use an empty mnemonic string.")
       return
     }
     if (chain === undefined) {
-      showSnackBar('Please select a chain.', false)
+      onError('Please select a chain.')
       return
     }
     if (network === undefined) {
-      showSnackBar('Please select a network.', false)
+      onError('Please select a network.')
       return
     }
     if (path.length === 0) {
-      showSnackBar('Please enter a valid path.', false)
+      onError('Please enter a valid path.')
       return
     }
     if (path.match(pathPattern) === null) {
-      showSnackBar("Path format must be in the form m/44'/0'/0'/0/0.", false)
+      onError("Path format must be in the form m/44'/0'/0'/0/0.")
       return
     }
 
     if (url === undefined || url?.length === 0) {
-      showSnackBar('Please enter a valid URL.', false)
+      onError('Please enter a valid URL.')
       return
     }
     if (isLoggedIn()) return
 
+    onError(null)
     localStorage.setItem('BIP_39_KEY', mnemonic)
     localStorage.setItem('CHAIN', chain)
     localStorage.setItem('NETWORK', network)
@@ -353,16 +367,13 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) 
   }
 
   return (
-    <>
-      <button
-        onClick={login}
-        type="submit"
-        className="w-full text-white bg-blue-3 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-3 dark:hover:brightness-90 dark:focus:ring-blue-2"
-      >
-        Log In
-      </button>
-      {/* {show && <SnackBar message={message} success={success} hideSnackBar={setShow} />} */}
-    </>
+    <button
+      onClick={login}
+      type="submit"
+      className="w-full text-white bg-blue-3 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-3 dark:hover:brightness-90 dark:focus:ring-blue-2"
+    >
+      Log In
+    </button>
   )
 }
 
@@ -375,6 +386,7 @@ function LoginForm() {
   const [url, setUrl] = useState<string | undefined>(getEnv('URL') || 'http://localhost:1031')
   const urlInputRef = useRef<HTMLInputElement>(null)
   const [path, setPath] = useState<string>(getEnv('PATH') || getPath({ chain, network }))
+  const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
     initFlowbite()
@@ -405,6 +417,11 @@ function LoginForm() {
             {!getEnv('URL') && <UrlInput url={url || ''} setUrl={setUrl} />}
             {!getEnv('PATH') && <PathInput path={path} setPath={setPath} />}
           </div>
+          {formError ? (
+            <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+              {formError}
+            </p>
+          ) : null}
         </form>
       </div>
       <div className="max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -415,6 +432,7 @@ function LoginForm() {
           url={url}
           path={path}
           urlInputRef={urlInputRef}
+          onError={setFormError}
         />
       </div>
     </>

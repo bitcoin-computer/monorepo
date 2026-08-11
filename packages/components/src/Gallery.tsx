@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { initFlowbite } from 'flowbite'
 import { ComputerContext } from './ComputerContext'
 import { ObjectCard, ObjectCardSkeleton } from './ObjectCard'
+import { InlineAlert } from './InlineAlert'
 
 export type Class = new (...args: any) => any
 
@@ -405,8 +406,8 @@ export function GalleryWithPagination<T extends Class>(q: UserQuery<T> = {}) {
       {listLoading && records.length === 0 ? <GallerySkeletons /> : null}
 
       {listError && !listLoading ? (
-        <div className="rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 p-3 text-center mb-3">
-          <p className="text-red-700 dark:text-red-300 text-sm">{listError}</p>
+        <div className="mb-3">
+          <InlineAlert variant="error">{listError}</InlineAlert>
         </div>
       ) : null}
 

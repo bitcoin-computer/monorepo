@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Modal, Auth, Drawer, ComputerContext } from '@bitcoin-computer/components'
-import { useContext, useEffect } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { initFlowbite } from 'flowbite'
 import { NavbarSearch } from './SearchBar'
 
@@ -9,7 +9,101 @@ const DOCS_URL = 'https://docs.bitcoincomputer.io/'
 const navLinkClass =
   'block py-1.5 px-2 text-sm text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-200 dark:hover:bg-gray-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-400 whitespace-nowrap'
 
-function PrimaryNavLinks() {
+function BlockchainMenu({ mobile }: { mobile?: boolean }) {
+  const { pathname } = useLocation()
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLLIElement>(null)
+  const active =
+    pathname.startsWith('/block') ||
+    pathname === '/transactions' ||
+    pathname.startsWith('/transactions/') ||
+    pathname.startsWith('/utxos/')
+
+  useEffect(() => {
+    if (mobile) return undefined
+    const onDoc = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false)
+    }
+    document.addEventListener('mousedown', onDoc)
+    return () => document.removeEventListener('mousedown', onDoc)
+  }, [mobile])
+
+  // Close on navigate
+  useEffect(() => {
+    setOpen(false)
+  }, [pathname])
+
+  if (mobile) {
+    return (
+      <>
+        <li className="pt-1">
+          <span className="block px-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+            Blockchain
+          </span>
+        </li>
+        <li>
+          <Link to="/blocks" className={navLinkClass}>
+            Blocks
+          </Link>
+        </li>
+        <li>
+          <Link to="/transactions" className={navLinkClass}>
+            Transactions
+          </Link>
+        </li>
+        <li>
+          <UtxosLink />
+        </li>
+      </>
+    )
+  }
+
+  return (
+    <li ref={ref} className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className={`${navLinkClass} inline-flex items-center gap-1 ${
+          active ? 'text-blue-700 dark:text-blue-400' : ''
+        }`}
+        aria-expanded={open}
+        aria-haspopup="true"
+      >
+        Blockchain
+        <svg className="w-3 h-3 opacity-70" fill="none" viewBox="0 0 10 6" aria-hidden>
+          <path
+            stroke="currentColor"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="m1 1 4 4 4-4"
+          />
+        </svg>
+      </button>
+      {open ? (
+        <div className="absolute right-0 mt-2 z-50 min-w-[10rem] rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-600 dark:bg-gray-800">
+          <Link
+            to="/blocks"
+            className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700"
+            onClick={() => setOpen(false)}
+          >
+            Blocks
+          </Link>
+          <Link
+            to="/transactions"
+            className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700"
+            onClick={() => setOpen(false)}
+          >
+            Transactions
+          </Link>
+          <UtxosLink className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700" />
+        </div>
+      ) : null}
+    </li>
+  )
+}
+
+function UtxosLink({ className }: { className?: string }) {
   const computer = useContext(ComputerContext)
   let utxosPath = '/'
   try {
@@ -17,7 +111,14 @@ function PrimaryNavLinks() {
   } catch {
     utxosPath = '/'
   }
+  return (
+    <Link to={utxosPath} className={className || navLinkClass}>
+      UTXOs
+    </Link>
+  )
+}
 
+function PrimaryNavLinks({ mobile }: { mobile?: boolean }) {
   return (
     <>
       <li>
@@ -26,18 +127,14 @@ function PrimaryNavLinks() {
         </Link>
       </li>
       <li>
-        <Link to="/playground" className={navLinkClass}>
-          Playground
-        </Link>
-      </li>
-      <li>
         <Link to="/modules" className={navLinkClass}>
           Modules
         </Link>
       </li>
+      <BlockchainMenu mobile={mobile} />
       <li>
-        <Link to={utxosPath} className={navLinkClass}>
-          UTXOs
+        <Link to="/playground" className={navLinkClass}>
+          Playground
         </Link>
       </li>
       <li>
@@ -79,10 +176,6 @@ export default function Navbar() {
   return (
     <nav className="bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700 sticky top-0 z-40">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-2.5">
-        {/*
-          Desktop: Logo+title | [compact search when not home] | Objects…Wallet
-          Mobile: logo + hamburger; search (if any) + links in collapse
-        */}
         <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
           <Link to="/" className="flex items-center gap-2 min-w-0 shrink-0">
             <img src="/logo.png" className="h-8 sm:h-9 shrink-0" alt="Bitcoin Computer Logo" />
@@ -92,7 +185,6 @@ export default function Navbar() {
             <span className="sm:hidden text-base font-semibold dark:text-white">BC Explorer</span>
           </Link>
 
-          {/* Compact search between brand and nav tabs (inner pages only) */}
           {!isHome ? (
             <div className="hidden md:flex flex-1 min-w-0 max-w-xl mx-1 lg:mx-2">
               <NavbarSearch />
@@ -109,7 +201,13 @@ export default function Navbar() {
             aria-expanded="false"
           >
             <span className="sr-only">Open main menu</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+            <svg
+              className="w-5 h-5"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 17 14"
+            >
               <path
                 stroke="currentColor"
                 strokeLinecap="round"
@@ -120,18 +218,23 @@ export default function Navbar() {
             </svg>
           </button>
 
-          <div
-            className="hidden w-full md:flex md:w-auto md:items-center md:shrink-0 md:ml-0"
-            id="navbar-dropdown"
-          >
-            {/* Mobile: search inside menu when not home */}
+          {/* Desktop nav */}
+          <div className="hidden md:flex md:items-center md:shrink-0">
+            <ul className="flex flex-row items-center gap-3 lg:gap-4">
+              <PrimaryNavLinks />
+              <AuthNavItem />
+            </ul>
+          </div>
+
+          {/* Mobile collapse (Flowbite) */}
+          <div className="hidden w-full md:hidden" id="navbar-dropdown">
             {!isHome ? (
-              <div className="md:hidden px-1 pt-3 pb-2">
+              <div className="px-1 pt-3 pb-2">
                 <NavbarSearch />
               </div>
             ) : null}
-            <ul className="flex flex-col md:flex-row md:items-center gap-1 md:gap-3 lg:gap-4 p-2 md:p-0 mt-1 md:mt-0 border border-gray-100 md:border-0 rounded-lg bg-gray-50 md:bg-transparent dark:bg-gray-800 md:dark:bg-transparent dark:border-gray-700">
-              <PrimaryNavLinks />
+            <ul className="flex flex-col gap-1 p-2 mt-1 border border-gray-100 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">
+              <PrimaryNavLinks mobile />
               <AuthNavItem />
             </ul>
           </div>

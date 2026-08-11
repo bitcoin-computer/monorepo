@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react';
 import { Computer } from '@bitcoin-computer/lib';
 import { initFlowbite } from 'flowbite';
 import { HiRefresh } from 'react-icons/hi';
-import { useUtilsComponents } from './UtilsContext';
 import { Modal } from './Modal';
 import { getEnv } from './common/utils';
 const pathPattern = /^(m\/)?(\d+'?\/)*\d+'?$/;
@@ -78,40 +77,40 @@ function UrlInput({ url, setUrl }) {
 function PathInput({ path, setPath }) {
     return (_jsxs(_Fragment, { children: [_jsx("div", { className: "flex justify-between", children: _jsx("label", { className: "block mt-4 mb-2 text-sm font-medium text-gray-900 dark:text-white", children: "Path" }) }), _jsx("input", { value: path, onChange: (e) => setPath(e.target.value), className: "bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-3 focus:border-blue-3 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white", required: true })] }));
 }
-function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }) {
-    const { showSnackBar } = useUtilsComponents();
+function LoginButton({ mnemonic, chain, network, path, url, urlInputRef, onError, }) {
     const login = (e) => {
         e.preventDefault();
         if (isLoggedIn()) {
-            showSnackBar('A user is already logged in, please log out first.', false);
+            onError('A user is already logged in, please log out first.');
             return;
         }
         if (mnemonic.length === 0) {
-            showSnackBar("Please don't use an empty mnemonic string.", false);
+            onError("Please don't use an empty mnemonic string.");
             return;
         }
         if (chain === undefined) {
-            showSnackBar('Please select a chain.', false);
+            onError('Please select a chain.');
             return;
         }
         if (network === undefined) {
-            showSnackBar('Please select a network.', false);
+            onError('Please select a network.');
             return;
         }
         if (path.length === 0) {
-            showSnackBar('Please enter a valid path.', false);
+            onError('Please enter a valid path.');
             return;
         }
         if (path.match(pathPattern) === null) {
-            showSnackBar("Path format must be in the form m/44'/0'/0'/0/0.", false);
+            onError("Path format must be in the form m/44'/0'/0'/0/0.");
             return;
         }
         if (url === undefined || url?.length === 0) {
-            showSnackBar('Please enter a valid URL.', false);
+            onError('Please enter a valid URL.');
             return;
         }
         if (isLoggedIn())
             return;
+        onError(null);
         localStorage.setItem('BIP_39_KEY', mnemonic);
         localStorage.setItem('CHAIN', chain);
         localStorage.setItem('NETWORK', network);
@@ -119,7 +118,7 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }) {
         localStorage.setItem('URL', urlInputRef.current?.value || url);
         window.location.href = '/';
     };
-    return (_jsx(_Fragment, { children: _jsx("button", { onClick: login, type: "submit", className: "w-full text-white bg-blue-3 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-3 dark:hover:brightness-90 dark:focus:ring-blue-2", children: "Log In" }) }));
+    return (_jsx("button", { onClick: login, type: "submit", className: "w-full text-white bg-blue-3 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-3 dark:hover:brightness-90 dark:focus:ring-blue-2", children: "Log In" }));
 }
 function LoginForm() {
     const [mnemonic, setMnemonic] = useState(() => new Computer().getMnemonic());
@@ -128,10 +127,11 @@ function LoginForm() {
     const [url, setUrl] = useState(getEnv('URL') || 'http://localhost:1031');
     const urlInputRef = useRef(null);
     const [path, setPath] = useState(getEnv('PATH') || getPath({ chain, network }));
+    const [formError, setFormError] = useState(null);
     useEffect(() => {
         initFlowbite();
     }, []);
-    return (_jsxs(_Fragment, { children: [_jsxs("div", { className: "max-w-sm mx-auto p-4 md:p-5 space-y-4", children: [_jsxs("div", { className: "p-3 text-sm text-amber-800 border border-amber-300 rounded-lg bg-amber-50 dark:bg-gray-800 dark:text-amber-300 dark:border-amber-800", role: "alert", children: [_jsx("p", { className: "font-semibold mb-1", children: "Non-custodial wallet" }), _jsx("p", { className: "mb-2", children: "Your mnemonic is stored only in this browser. We never hold your keys or can recover them for you." }), _jsxs("p", { children: [_jsx("strong", { className: "font-semibold", children: "Write down your mnemonic" }), " before you continue. Anyone with it can spend your funds; if you lose it, access is gone permanently."] })] }), _jsx("form", { className: "space-y-6", children: _jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !getEnv('CHAIN') && _jsx(ChainInput, { chain: chain, setChain: setChain }), !getEnv('NETWORK') && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !getEnv('URL') && _jsx(UrlInput, { url: url || '', setUrl: setUrl }), !getEnv('PATH') && _jsx(PathInput, { path: path, setPath: setPath })] }) })] }), _jsx("div", { className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600", children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, path: path, urlInputRef: urlInputRef }) })] }));
+    return (_jsxs(_Fragment, { children: [_jsxs("div", { className: "max-w-sm mx-auto p-4 md:p-5 space-y-4", children: [_jsxs("div", { className: "p-3 text-sm text-amber-800 border border-amber-300 rounded-lg bg-amber-50 dark:bg-gray-800 dark:text-amber-300 dark:border-amber-800", role: "alert", children: [_jsx("p", { className: "font-semibold mb-1", children: "Non-custodial wallet" }), _jsx("p", { className: "mb-2", children: "Your mnemonic is stored only in this browser. We never hold your keys or can recover them for you." }), _jsxs("p", { children: [_jsx("strong", { className: "font-semibold", children: "Write down your mnemonic" }), " before you continue. Anyone with it can spend your funds; if you lose it, access is gone permanently."] })] }), _jsxs("form", { className: "space-y-6", children: [_jsxs("div", { children: [_jsx(MnemonicInput, { mnemonic: mnemonic, setMnemonic: setMnemonic }), !getEnv('CHAIN') && _jsx(ChainInput, { chain: chain, setChain: setChain }), !getEnv('NETWORK') && _jsx(NetworkInput, { network: network, setNetwork: setNetwork }), !getEnv('URL') && _jsx(UrlInput, { url: url || '', setUrl: setUrl }), !getEnv('PATH') && _jsx(PathInput, { path: path, setPath: setPath })] }), formError ? (_jsx("p", { className: "text-sm text-red-600 dark:text-red-400", role: "alert", children: formError })) : null] })] }), _jsx("div", { className: "max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600", children: _jsx(LoginButton, { mnemonic: mnemonic, chain: chain, network: network, url: url, path: path, urlInputRef: urlInputRef, onError: setFormError }) })] }));
 }
 function LoginModal() {
     return _jsx(Modal.Component, { title: "Sign in", content: LoginForm, id: "sign-in-modal", hideClose: true });
