@@ -192,13 +192,19 @@ const Playground = () => {
 
   return (
     <>
-      <div className="pt-4 w-full relative">
-        <h5 className="my-4 text-xl font-bold dark:text-white">Load Examples</h5>
+      <div className="w-full relative">
+        <header className="mb-3">
+          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Playground</h1>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+            Create objects, run expressions, deploy modules
+          </p>
+        </header>
+        <h2 className="mb-2 text-base font-semibold dark:text-white">Load examples</h2>
         <Examples loadExamples={loadExamples} clearExamples={clearExamples} />
 
-        <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
+        <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
 
-        <h5 className="mt-4 text-xl font-bold dark:text-white">Insert JavaScript Code</h5>
+        <h2 className="mb-2 text-base font-semibold dark:text-white">Insert JavaScript code</h2>
         <Tabs />
         <div id="default-tab-content">
           <div className="hidden" id="create-new" role="tabpanel" aria-labelledby="create-new-tab">

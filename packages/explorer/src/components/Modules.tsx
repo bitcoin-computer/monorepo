@@ -37,7 +37,7 @@ function StatusCell({ row }: { row: ModuleRecord }) {
 }
 
 function selectClassName() {
-  return 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+  return 'bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-blue-500 focus:border-blue-500 block py-1.5 px-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
 }
 
 export default function Modules() {
@@ -110,11 +110,16 @@ export default function Modules() {
   }
 
   return (
-    <div className="relative overflow-x-auto sm:rounded-lg pt-4 w-full">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-4">
-        <h1 className="text-3xl font-extrabold dark:text-white">Modules</h1>
-        <div className="flex flex-wrap items-end gap-3">
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-300">
+    <div className="relative overflow-x-auto w-full">
+      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
+        <div>
+          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Modules</h1>
+          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+            Deployed on-chain module sources
+          </p>
+        </div>
+        <div className="flex flex-wrap items-end gap-2">
+          <label className="flex flex-col gap-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
             Storage
             <select
               className={selectClassName()}
@@ -126,7 +131,7 @@ export default function Modules() {
               <option value="taproot">taproot</option>
             </select>
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-300">
+          <label className="flex flex-col gap-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
             Status
             <select
               className={selectClassName()}
@@ -140,7 +145,7 @@ export default function Modules() {
               <option value="false">Unconfirmed</option>
             </select>
           </label>
-          <label className="flex flex-col gap-1 text-xs font-medium text-gray-700 dark:text-gray-300">
+          <label className="flex flex-col gap-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
             Order
             <select
               className={selectClassName()}
@@ -155,29 +160,29 @@ export default function Modules() {
       </div>
 
       {showEmpty ? (
-        <div className="py-12 text-center">
-          <h2 className="mb-2 text-2xl font-extrabold text-gray-900 dark:text-white">
+        <div className="py-8 text-center rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
+          <h2 className="text-base font-semibold text-gray-900 dark:text-white">
             No modules indexed
           </h2>
         </div>
       ) : (
         <>
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-            <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+            <thead className="text-xs text-gray-600 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
               <tr>
-                <th scope="col" className="px-4 py-3">
+                <th scope="col" className="px-3 py-2">
                   Module
                 </th>
-                <th scope="col" className="px-4 py-3">
+                <th scope="col" className="px-3 py-2">
                   Storage
                 </th>
-                <th scope="col" className="px-4 py-3">
+                <th scope="col" className="px-3 py-2">
                   Status
                 </th>
-                <th scope="col" className="px-4 py-3">
+                <th scope="col" className="px-3 py-2">
                   Indexed
                 </th>
-                <th scope="col" className="px-4 py-3">
+                <th scope="col" className="px-3 py-2">
                   Source preview
                 </th>
               </tr>
@@ -186,11 +191,11 @@ export default function Modules() {
               {rows.map((row) => (
                 <tr
                   key={row.mod}
-                  className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  className="bg-white border-b last:border-0 dark:bg-gray-900 dark:border-gray-800"
                 >
                   <th
                     scope="row"
-                    className="px-4 py-3 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                    className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                   >
                     <Link
                       to={`/modules/${row.mod}`}
@@ -200,16 +205,16 @@ export default function Modules() {
                       {truncateMod(row.mod)}
                     </Link>
                   </th>
-                  <td className="px-4 py-3">
-                    <span className="inline-flex items-center rounded px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                  <td className="px-3 py-2">
+                    <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
                       {row.storageType}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-3 py-2 text-xs">
                     <StatusCell row={row} />
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap">{formatTimestamp(row.timestamp)}</td>
-                  <td className="px-4 py-3 max-w-xs">
+                  <td className="px-3 py-2 whitespace-nowrap text-xs">{formatTimestamp(row.timestamp)}</td>
+                  <td className="px-3 py-2 max-w-xs">
                     <span
                       className="block truncate font-mono text-xs text-gray-600 dark:text-gray-300"
                       title={row.ept}

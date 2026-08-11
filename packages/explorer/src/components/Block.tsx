@@ -41,30 +41,36 @@ function Block() {
   return (
     <>
       {blockData && (
-        <div className="pt-4">
-          <dl className="text-gray-900 divide-y divide-gray-200">
-            <div className="flex flex-col pb-3">
-              <dt className="mb-1 text-gray-500 md:text-md ">Hash</dt>
-              <dd className="text-md font-semibold">
+        <div className="w-full space-y-3">
+          <header>
+            <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
+              Block
+            </p>
+            <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Detail</h1>
+          </header>
+          <dl className="text-gray-900 dark:text-gray-100 divide-y divide-gray-200 dark:divide-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3">
+            <div className="flex flex-col py-2.5">
+              <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Hash</dt>
+              <dd className="text-sm font-mono break-all">
                 <Link
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
                   to={`/blocks/${blockData.hash}`}
                 >
                   {blockData.hash}
                 </Link>
               </dd>
             </div>
-            <div className="flex flex-col py-3">
-              <dt className="mb-1 text-gray-500 md:text-md">Timestamp</dt>
-              <dd className="text-md font-semibold">{blockData.time}</dd>
+            <div className="flex flex-col py-2.5">
+              <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Timestamp</dt>
+              <dd className="text-sm font-medium">{blockData.time}</dd>
             </div>
-            <div className="flex flex-col pt-3">
-              <dt className="mb-1 text-gray-500 md:text-md">Size</dt>
-              <dd className="text-md font-semibold">{blockData.size}</dd>
+            <div className="flex flex-col py-2.5">
+              <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Size</dt>
+              <dd className="text-sm font-medium tabular-nums">{blockData.size}</dd>
             </div>
-            <div className="flex flex-col pt-3">
-              <dt className="mb-1 text-gray-500 md:text-md">Weight</dt>
-              <dd className="text-md font-semibold">{blockData.weight}</dd>
+            <div className="flex flex-col py-2.5">
+              <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">Weight</dt>
+              <dd className="text-sm font-medium tabular-nums">{blockData.weight}</dd>
             </div>
           </dl>
           <nav className="flex items-center justify-between pt-4" aria-label="Table navigation">

@@ -35,6 +35,6 @@ export function DecodeTransactionComponent() {
         };
         fetch();
     }, [computer, txnData]);
-    return (_jsx(_Fragment, { children: _jsxs("div", { className: "pt-8", children: [_jsx("h1", { className: "mb-2 text-5xl font-extrabold dark:text-white", children: "Decoded Transaction" }), transition && transitionComponent({ transition }), rpcTxnData?.vin && inputsComponent({ rpcTxnData, checkForSpentInput: true }), rpcTxnData?.vout && outputsComponent({ rpcTxnData, txn: undefined })] }) }));
+    return (_jsx(_Fragment, { children: _jsxs("div", { className: "w-full space-y-4", children: [_jsxs("header", { children: [_jsx("p", { className: "text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5", children: "Transaction" }), _jsx("h1", { className: "text-xl sm:text-2xl font-semibold dark:text-white", children: "Decoded transaction" })] }), transition && transitionComponent({ transition }), rpcTxnData?.vin && inputsComponent({ rpcTxnData, checkForSpentInput: true }), rpcTxnData?.vout && outputsComponent({ rpcTxnData, txn: undefined })] }) }));
 }
 export const DecodeTransaction = { Component: DecodeTransactionComponent };

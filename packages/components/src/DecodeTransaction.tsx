@@ -46,8 +46,13 @@ export function DecodeTransactionComponent() {
 
   return (
     <>
-      <div className="pt-8">
-        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Decoded Transaction</h1>
+      <div className="w-full space-y-4">
+        <header>
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
+            Transaction
+          </p>
+          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Decoded transaction</h1>
+        </header>
 
         {transition && transitionComponent({ transition })}
 

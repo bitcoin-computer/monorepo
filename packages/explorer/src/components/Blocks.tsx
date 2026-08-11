@@ -62,21 +62,28 @@ export default function Blocks() {
     setPageNum(pageNum - 1)
   }
   return (
-    <div className="relative overflow-x-auto sm:rounded-lg pt-4">
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+    <div className="relative overflow-x-auto w-full">
+      <header className="mb-3">
+        <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Blocks</h1>
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+          Recent blocks on this chain
+        </p>
+      </header>
+      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
+        <thead className="text-xs text-gray-600 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
           <tr>
-            <th scope="col" className="px-6 py-3">
-              Block Number
+            <th scope="col" className="px-3 py-2">
+              Block height
             </th>
           </tr>
         </thead>
         <tbody>
           {blocks.map((block) => (
-            <tr key={block} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+            <tr key={block} className="bg-white border-b last:border-0 dark:bg-gray-900 dark:border-gray-800">
+              <th scope="row" className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap">
                 <button
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  type="button"
+                  className="font-medium text-blue-600 dark:text-blue-400 hover:underline tabular-nums"
                   onClick={() => handleClick(block)}
                 >
                   Block #{block}

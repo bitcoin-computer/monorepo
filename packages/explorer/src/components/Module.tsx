@@ -192,30 +192,35 @@ function Module() {
 
   if (!modSpec) {
     return (
-      <div className="pt-4 w-full">
-        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Module</h1>
-        <p className="text-gray-500 dark:text-gray-400">Missing module specifier.</p>
+      <div className="w-full">
+        <h1 className="mb-1 text-xl sm:text-2xl font-semibold dark:text-white">Module</h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">Missing module specifier.</p>
       </div>
     )
   }
 
   return (
-    <div className="pt-4 w-full relative">
-      <div className="flex flex-wrap items-start justify-between gap-2 mb-2">
-        <h1 className="text-5xl font-extrabold dark:text-white">Module</h1>
+    <div className="w-full relative space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
+            Module
+          </p>
+          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Detail</h1>
+        </div>
         <Link
           to="/modules"
-          className="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline mt-2"
+          className="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
         >
           ← All modules
         </Link>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 mb-6">
-        <p className="text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400 font-mono break-all">
+      <div className="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2">
+        <p className="text-xs sm:text-sm font-mono text-gray-700 dark:text-gray-300 break-all flex-1 min-w-0">
           {modSpec}
         </p>
-        <CopyButton text={modSpec} label="Copy mod" />
+        <CopyButton text={modSpec} label="Copy" />
       </div>
 
       {notFound && !record ? (
@@ -227,18 +232,19 @@ function Module() {
 
       {record ? (
         <>
-          <section className="mb-6">
-            <h2 className="mb-3 text-2xl font-bold dark:text-white">On-chain meta</h2>
+          <section>
+            <h2 className="mb-2 text-base sm:text-lg font-semibold dark:text-white">On-chain meta</h2>
             <ModuleMeta record={record} />
           </section>
 
           <ModuleSource ept={record.ept} />
 
-          <section className="mt-10">
-            <h2 className="mb-2 text-2xl font-bold dark:text-white">Exports (evaluated)</h2>
-            <p className="mb-4 text-sm text-gray-500 dark:text-gray-400">
-              Result of loading the module in a SES compartment. Prefer the source above for
-              inspection without evaluation.
+          <section>
+            <h2 className="mb-1 text-base sm:text-lg font-semibold dark:text-white">
+              Exports (evaluated)
+            </h2>
+            <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
+              SES load result. Prefer source above for inspection without evaluation.
             </p>
             {exportsError ? (
               <p className="text-sm text-amber-700 dark:text-amber-400">

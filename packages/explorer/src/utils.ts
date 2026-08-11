@@ -106,10 +106,27 @@ export const isPossibleCryptoAddress = (address: string): boolean => {
   return p2pkhRegex.test(address) || p2shRegex.test(address) || bech32Regex.test(address)
 }
 
+/** Bitcoin transaction id: 32-byte hex (64 chars). */
+export const isTxId = (value: string): boolean => {
+  if (!value) return false
+  return /^[0-9a-fA-F]{64}$/.test(value.trim())
+}
+
+/**
+ * True for unambiguous public keys only.
+ *
+ * - Compressed: 33 bytes (66 hex), prefix 02/03
+ * - Uncompressed: 65 bytes (130 hex), prefix 04
+ *
+ * Note: 32-byte (64 hex) x-only keys collide with txids. Explorers must prefer
+ * txid for bare 64-hex input; use an explicit `publicKey` query for x-only keys.
+ */
 export const isValidHexadecimalPublicKey = (publicKey: string): boolean => {
   if (!publicKey) return false
-  const trimmedPublicKey = publicKey.trim()
-  return trimmedPublicKey.length === 64 || trimmedPublicKey.length === 66
+  const trimmed = publicKey.trim()
+  if (trimmed.length === 66 && /^(02|03)[0-9a-fA-F]{64}$/.test(trimmed)) return true
+  if (trimmed.length === 130 && /^04[0-9a-fA-F]{128}$/.test(trimmed)) return true
+  return false
 }
 
 export interface ErrorResponse {

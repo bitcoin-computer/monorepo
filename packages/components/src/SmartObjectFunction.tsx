@@ -146,7 +146,7 @@ export const SmartObjectFunction = ({
   return (
     <>
       <div className="mt-6 mb-6" id={`function-${funcName}`}>
-        <h3 className="my-2 text-xl font-bold dark:text-white">
+        <h3 className="my-1.5 text-base font-semibold dark:text-white">
           {capitalizeFirstLetter(funcName)}
         </h3>
         <form>
