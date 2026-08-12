@@ -19,6 +19,15 @@ computer.getAncestors(rev)
 computer.getAncestors(rev, 1)
 ```
 
+### Inside smart contracts (`InnerComputer`)
+
+- Starting location must be **confirmed**.
+- Empty arrays are valid stable results when there are no ancestors.
+- Missing or unconfirmed starts invalidate the evaluation.
+- Verbosity maps are a client-side convenience; contracts typically use the default `string[]` form.
+
+See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
 ## Example
 
 :::code source="../../../lib/test/lib/computer/get-ancestors.test.ts" :::

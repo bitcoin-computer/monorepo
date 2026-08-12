@@ -149,32 +149,51 @@ export class ChessContract extends Contract {
     return new Chess(this.fen).isGameOver()
   }
 
+  /**
+   * Whether white has exceeded `timeLimit` (based on confirmed block times).
+   * Requires every revision on the prev-chain (including the current tip) to be
+   * confirmed — see `calculateTimes`.
+   */
   async hasTimedOutW(): Promise<boolean> {
     const { timeW } = await this.calculateTimes()
     return timeW > this.timeLimit
   }
 
+  /**
+   * Whether black has exceeded `timeLimit` (based on confirmed block times).
+   * Requires every revision on the prev-chain (including the current tip) to be
+   * confirmed — see `calculateTimes`.
+   */
   async hasTimedOutB(): Promise<boolean> {
     const { timeB } = await this.calculateTimes()
     return timeB > this.timeLimit
   }
 
   /**
-   * Calculates white time (timeW) and black time (timeB) from a list of timestamps.
+   * Calculates white time (timeW) and black time (timeB) from block timestamps
+   * of each revision on the game’s prev-chain.
+   *
    * timeW = (t2 - t1) + (t4 - t3) + (t6 - t5) + ...
    * timeB = (t3 - t2) + (t5 - t4) + (t7 - t6) + ...
    *
    * Note: timeW + timeB will equal (tn - t1).
+   *
+   * **InnerComputer determinism:** uses `computer.txIdToBlockTime` and
+   * `computer.prev`. Both require **confirmed** transactions. Calling this (or
+   * `hasTimedOutW` / `hasTimedOutB`) while the tip is still in the mempool
+   * invalidates the transition. Callers must wait for confirmation of the
+   * latest move (and of any older history being walked) before evaluating
+   * timeouts on-chain.
    */
   async calculateTimes(): Promise<{ timeW: bigint; timeB: bigint }> {
     let current = this._rev
     const timestamps: bigint[] = []
 
-    // Collect every historical state. Deposits and withdrawals accumulate
-    // across the entire lifetime of the escrow, so the audit must see them all.
+    // Walk tip → root. Every step must be a confirmed revision.
+    // InnerComputer returns RPC `blocktime` as number (seconds); clocks use bigint.
     while (true) {
       const txId = current.split(':')[0]
-      timestamps.push(await computer.txIdToBlockTime(txId))
+      timestamps.push(BigInt(await computer.txIdToBlockTime(txId)))
       const previous = await computer.prev(current)
       if (!previous) break
       current = previous
@@ -349,12 +368,45 @@ export class ChessContractHelper {
     return { newChessContract, isGameOver }
   }
 
+  /**
+   * Poll until `location` (txId or rev) is included in a block.
+   * Required before TBC777 `withdraw` / InnerComputer history walks: unconfirmed
+   * tips invalidate deterministic queries (`sync` / `prev` / `next` / block time).
+   */
+  async waitForConfirmed(
+    location: string,
+    opts?: { timeoutMs?: number; pollMs?: number },
+  ): Promise<void> {
+    const txId = location.includes(':') ? location.split(':')[0]! : location
+    const timeoutMs = opts?.timeoutMs ?? 180_000
+    const pollMs = opts?.pollMs ?? 1_500
+    const start = Date.now()
+    while (Date.now() - start < timeoutMs) {
+      try {
+        const blockHash = await this.computer.txIdToBlockHash(txId)
+        if (blockHash) return
+      } catch {
+        // not yet known / not confirmed
+      }
+      await new Promise((r) => setTimeout(r, pollMs))
+    }
+    throw new Error(
+      `Timed out waiting for confirmation of ${txId}. Try again after the transaction is mined.`,
+    )
+  }
+
+  /**
+   * Claim escrow payout for `tokenId` against the latest chess revision.
+   * Waits until that chess tip is confirmed so TBC777's InnerComputer audit
+   * (sync / prev / next on deposits) is deterministic.
+   */
   async withdrawTokens(tokenId: string, chessId: string): Promise<void> {
     const latestTokenRev = await this.computer.latest(tokenId)
     const latestChessRev = await this.computer.latest(chessId)
     if (!this.tokenMod) {
       throw new Error('tokenMod is required for TBC777 withdraw')
     }
+    await this.waitForConfirmed(latestChessRev)
     const { tx } = await this.computer.encode({
       exp: `token.withdraw('${latestChessRev}')`,
       env: { token: latestTokenRev },
@@ -447,9 +499,16 @@ export class ChessContractHelper {
     return (effect as any).env.__bc__ as SmartContract<typeof ChessContract>
   }
 
-  /** Cancel a pending game and withdraw the creator's wager in one flow. */
+  /**
+   * Cancel a pending game and withdraw the creator's wager.
+   *
+   * Cancel and withdraw cannot share one transaction: after cancel, the tip must
+   * be **confirmed** before TBC777 `withdraw` can walk escrow history. This
+   * method cancels, waits for confirmation, then withdraws.
+   */
   async cancelGameAndWithdraw(chessId: string): Promise<void> {
     const chess = await this.cancelGame(chessId)
+    await this.waitForConfirmed(chess._rev)
     await this.withdrawTokens(chess.tokenIdW, chessId)
   }
 

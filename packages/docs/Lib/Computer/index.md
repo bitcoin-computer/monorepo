@@ -47,11 +47,28 @@ Access historical versions of on-chain objects.
 
 {.compact}
 | Method | Description |
-|-------------------------------|----------------------------------------------------------------|
+|---------------------------|--------------------------------------------------|
 | [first](./first.md) | Return the first revision |
 | [prev](./prev.md) | Return the previous revision |
 | [next](./next.md) | Return the next revision |
 | [latest](./latest.md) | Return the latest revision |
+| [last](./last.md) | Return the last revision after the tip is spent |
+
+### Blocks & transactions
+
+Look up block and transaction metadata. These methods are also available inside smart contracts via the [Inner Computer](../Contract/index.md#querying-inside-of-a-contract), with stricter confirmation rules.
+
+{.compact}
+| Method | Description |
+|---------------------------------------------|--------------------------------------------------------|
+| [txIdToBlockTime](./txIdToBlockTime.md) | Unix block time when a transaction was mined |
+| [txIdToBlockHeight](./txIdToBlockHeight.md) | Block height when a transaction was mined |
+| [txIdToBlockHash](./txIdToBlockHash.md) | Block hash of the block that included a transaction |
+| [getBlockHash](./getBlockHash.md) | Block hash at a given height |
+| [getBlockHeight](./getBlockHeight.md) | Height of a block given its hash |
+| [getRawTransaction](./getRawTransaction.md) | Raw transaction hex |
+| [getRawBlock](./getRawBlock.md) | Raw block hex |
+| [getBlockHeader](./getBlockHeader.md) | Raw 80-byte block header hex |
 
 ### Wallet
 
