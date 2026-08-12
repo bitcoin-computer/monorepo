@@ -4,8 +4,6 @@ testnet=1
 server=1
 txindex=1
 
-bytespersigop=0
-
 rpcbind=0.0.0.0
 rpcallowip=0.0.0.0/0
 # Username for JSON-RPC connections
