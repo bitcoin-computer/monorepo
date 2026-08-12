@@ -55,6 +55,9 @@ An object with the query parameters.
 | previous | Return TXOs whose previous revision is the provided parameter |
 | exp | Giving an expression, return TXOs that matches the hash of that expression |
 | blockHash | Return TXOs that are included in the block with this hash |
+| blockHeight | Return TXOs that are included in the block with this height |
+| lteBlockHeight | Return TXOs that are included in the block with lower than or equal height |
+| gteBlockHeight | Return TXOs that are included in the block with greater than or equal height |
 | isSpent | Return TXOs that are (or are not) spent |
 | isConfirmed | Return TXOs that are (or are not) included in a block |
 | publicKey | Return TXOs whose asm contains this public key |
@@ -85,6 +88,16 @@ The `getTXOs` function retrieves transaction outputs (TXOs) from the database ba
 - **Pagination and ordering**: Use `limit`, `offset`, and `order` ('ASC' or 'DESC') for controlled, sorted result sets.
 
 For security and efficiency, always pair this with `publicKey` to scope results to a specific owner, and apply `limit`/`offset` to manage result volume.
+
+### Inside smart contracts (`InnerComputer`)
+
+Off-chain clients may call `getTXOs` with any filter set. **Inside a contract**, the query must include a **stabilizing** filter so results cannot change as the chain grows:
+
+- `lteBlockHeight` (must be ≤ current tip; future heights are forbidden)
+- `blockHeight` (must be ≤ current tip)
+- `blockHash` (fixed historical block)
+
+Queries without one of these filters invalidate the evaluation. Aliases `getUTXOs`, `getOTXOs`, and `getOUTXOs` inherit the same rule. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
 
 To retrieve Unspent Transaction Outputs, see the syntactic sugar function `getUTXOs`, which internally calls `getTXOs` with the `isSpent: false` parameter.
 

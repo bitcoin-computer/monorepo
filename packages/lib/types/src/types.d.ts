@@ -460,6 +460,8 @@ export type TXOQuery = {
   isConfirmed?: boolean
   publicKey?: PublicKeyString
   exp?: string
+  lteBlockHeight?: number
+  gteBlockHeight?: number
 } & Partial<Omit<TXORecord, 'expHash'>>
 export type EvalResult = {
   effect: EvaluatedEffect

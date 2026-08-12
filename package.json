@@ -39,7 +39,8 @@
     "lint:fix": "npm run lint --if-present --workspaces -- --fix",
     "prepare": "husky",
     "test:rerun": "node ./scripts/rerun-failed.js",
-    "test:turbo": "turbo run test --concurrency=1 --continue",
+    "test:turbo": "node ./scripts/run-turbo-tests.js",
+    "test:turbo:rerun": "npm run test:turbo; npm run test:rerun",
     "test:compile:mocha": "npm run build:test --if-present --workspaces",
     "test:mocha:all": "npm run test:compile:mocha && BITCOIN_RPC_HOST=127.0.0.1 BCN_CHAIN=LTC BCN_NETWORK=regtest POSTGRES_HOST=127.0.0.1 BITCOIN_RPC_HOST=127.0.0.1 BCN_ZMQ_URL=tcp://127.0.0.1:28332 mocha --config .mocharc.json",
     "test:puppeteer:build": "npm run test:puppeteer:build --if-present --workspace=@bitcoin-computer/vite-template",
@@ -55,6 +56,7 @@
     "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.11.21",
     "buffer": "^6.0.3",
     "eslint-config-prettier": "~9.1.0",
@@ -69,6 +71,14 @@
   },
   "optionalDependencies": {
     "@rollup/rollup-linux-x64-gnu": "^4.28.1"
+  },
+  "overrides": {
+    "@docusaurus/utils": {
+      "jiti": "1.21.7"
+    },
+    "@docusaurus/bundler": {
+      "jiti": "1.21.7"
+    }
   },
   "packageManager": "npm@10.2.4"
 }
