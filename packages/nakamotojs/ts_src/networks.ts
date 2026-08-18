@@ -193,6 +193,42 @@ export const wojakcointestnet: Network = {
   scriptHash: 0xc4,
   wif: 0xef,
 };
+
+export const junkcoin: Network = {
+  messagePrefix: '\x18Junkcoin Signed Message:\n',
+  bech32: 'jc',
+  bip32: {
+    public: 0x0488b21e,
+    private: 0x0488ade4,
+  },
+  pubKeyHash: 0x10,
+  scriptHash: 0x05,
+  wif: 0x90,
+};
+
+export const junkcoinregtest: Network = {
+  messagePrefix: '\x18Junkcoin Signed Message:\n',
+  bech32: 'rjc',
+  bip32: {
+    public: 0x02facafd,
+    private: 0x02fac398,
+  },
+  pubKeyHash: 0x2f,
+  scriptHash: 0x05,
+  wif: 0x99,
+};
+
+export const junkcointestnet: Network = {
+  messagePrefix: '\x18Junkcoin Signed Message:\n',
+  bech32: 'tjc',
+  bip32: {
+    public: 0x02facafd,
+    private: 0x02fac398,
+  },
+  pubKeyHash: 0x6f,
+  scriptHash: 0x05,
+  wif: 0xef,
+};
 export function getNetwork(chain: string, network: string): Network {
   switch (chain) {
     case 'BTC':
@@ -250,6 +286,17 @@ export function getNetwork(chain: string, network: string): Network {
         default:
           throw new Error(`Invalid network ${network}`);
       }
+    case 'JKC':
+      switch (network) {
+        case 'mainnet':
+          return junkcoin;
+        case 'testnet':
+          return junkcointestnet;
+        case 'regtest':
+          return junkcoinregtest;
+        default:
+          throw new Error(`Invalid network ${network}`);
+      }
     default:
       throw new Error(`Invalid chain ${network}`);
   }
@@ -276,4 +323,8 @@ export const NETWORKS: Record<string, any> = {
   wojakcoin,
   wojakcoinregtest,
   wojakcointestnet,
+  // Junkcoin
+  junkcoin,
+  junkcoinregtest,
+  junkcointestnet,
 };

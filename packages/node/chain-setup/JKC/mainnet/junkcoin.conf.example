@@ -1,0 +1,19 @@
+printtoconsole=1
+
+server=1
+txindex=1
+
+# Username for JSON-RPC connections
+rpcauth=bcn-admin:9a18adb803f57099f19745594eba5590$eaaedba1da5983f80b36ee45f4b907c2e6b59f0f60b1312b4ce30827ee5b3e3a
+rpcallowip=0.0.0.0/0
+
+fallbackfee=0.0002
+
+rpcport=9771
+port=9772
+
+rpcbind=0.0.0.0
+rpcallowip=0.0.0.0/0
+
+zmqpubrawblock=tcp://0.0.0.0:28332
+zmqpubrawtx=tcp://0.0.0.0:28332
