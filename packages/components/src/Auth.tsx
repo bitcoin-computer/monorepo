@@ -48,6 +48,7 @@ function getCoinType(chain: string = 'LTC', network: string = 'regtest'): number
   if (chain === 'PEPE') return 3434
   if (chain === 'BCH') return 145
   if (chain === 'WOJAK') return 20760
+  if (chain === 'JKC') return 2013
 
   throw new Error(`Unsupported chain ${chain} or network ${network}`)
 }
