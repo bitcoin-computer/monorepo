@@ -35,7 +35,7 @@ export function CodeEditor({
         textareaId={id}
         value={value}
         onValueChange={onChange}
-        highlight={(code) => highlight(code, languages.javascript, 'javascript')}
+        highlight={(code: string) => highlight(code, languages.javascript, 'javascript')}
         padding={12}
         placeholder={placeholder}
         textareaClassName="outline-none"

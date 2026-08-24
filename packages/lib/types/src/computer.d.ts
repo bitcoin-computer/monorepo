@@ -165,7 +165,14 @@ declare class Computer {
     hasInputs: boolean
   }>
   rpc(method: string, params: string): Promise<any>
-  txIdToBlockTime(hash: string): Promise<bigint>
+  txIdToBlockTime(hash: string): Promise<number | undefined>
+  txIdToBlockHeight(txId: string): Promise<number>
+  txIdToBlockHash(txId: string): Promise<string | undefined>
+  getBlockHash(height: number): Promise<string>
+  getBlockHeight(hash: string): Promise<number>
+  getRawTransaction(txId: string): Promise<string>
+  getRawBlock(blockHash: string): Promise<string>
+  getBlockHeader(blockHash: string): Promise<string>
   getChain(): Chain
   getNetwork(): BtcNetwork
   getMnemonic(): string
