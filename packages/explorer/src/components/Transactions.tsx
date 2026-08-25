@@ -1,7 +1,8 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { ComputerContext, InlineAlert } from '@bitcoin-computer/components'
-import { formatTime, truncateHex, unwrapRpcResult } from '../utils/rpc'
+import { formatTime, getBlock, getBlockHashAtHeight, getTipHeight, truncateHex } from '../utils/rpc'
+import { useAsync } from '../hooks/useAsync'
 import { PageHeader } from './ui/PageHeader'
 import { DataTable, TableRow, TableSkeleton, tdClass } from './ui/Table'
 
@@ -9,7 +10,7 @@ type TxRow = {
   txid: string
   blockHeight: number
   blockHash: string
-  time?: number
+  time?: number | string
   indexInBlock: number
 }
 
@@ -19,69 +20,41 @@ const MAX_ROWS = 40
 
 export default function Transactions() {
   const computer = useContext(ComputerContext)
-  const [rows, setRows] = useState<TxRow[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [tipHeight, setTipHeight] = useState(0)
 
-  const load = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const infoRes = await computer.rpc('getblockchaininfo', '')
-      const info = unwrapRpcResult<{ blocks: number }>(infoRes)
-      const tip = Number(info?.blocks) || 0
-      setTipHeight(tip)
-      if (tip <= 0) {
-        setRows([])
-        return
-      }
+  const { data, loading, error, reload } = useAsync(async () => {
+    const tip = await getTipHeight(computer)
+    if (tip <= 0) return { tip, rows: [] as TxRow[] }
 
-      const collected: TxRow[] = []
-      const from = tip
-      const to = Math.max(0, tip - RECENT_BLOCKS + 1)
+    const collected: TxRow[] = []
+    const from = tip
+    const to = Math.max(0, tip - RECENT_BLOCKS + 1)
 
-      for (let height = from; height >= to && collected.length < MAX_ROWS; height--) {
-        try {
-          const hashRes = await computer.rpc('getblockhash', `${height}`)
-          const hash = String(unwrapRpcResult(hashRes) ?? '')
-          if (!hash) continue
+    for (let height = from; height >= to && collected.length < MAX_ROWS; height--) {
+      try {
+        const hash = await getBlockHashAtHeight(computer, height)
+        if (!hash) continue
 
-          const blockRes = await computer.rpc('getblock', `${hash} 1`)
-          const block = unwrapRpcResult<{
-            hash: string
-            height: number
-            time: number
-            tx?: string[]
-          }>(blockRes)
-          const txids = Array.isArray(block?.tx) ? block.tx : []
-          // Newest txs first within block: reverse index order (coinbase last visually after others)
-          for (let i = txids.length - 1; i >= 0 && collected.length < MAX_ROWS; i--) {
-            collected.push({
-              txid: txids[i],
-              blockHeight: block?.height ?? height,
-              blockHash: block?.hash || hash,
-              time: block?.time,
-              indexInBlock: i,
-            })
-          }
-        } catch {
-          // skip failed block; keep listing others
+        const block = await getBlock(computer, hash)
+        const txids = Array.isArray(block?.tx) ? block.tx.map((t) => (typeof t === 'string' ? t : t.txid)) : []
+        for (let i = txids.length - 1; i >= 0 && collected.length < MAX_ROWS; i--) {
+          collected.push({
+            txid: txids[i],
+            blockHeight: block?.height ?? height,
+            blockHash: block?.hash || hash,
+            time: block?.time,
+            indexInBlock: i,
+          })
         }
+      } catch {
+        // skip failed block; keep listing others
       }
-
-      setRows(collected)
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Error loading transactions')
-      setRows([])
-    } finally {
-      setLoading(false)
     }
+
+    return { tip, rows: collected }
   }, [computer])
 
-  useEffect(() => {
-    load()
-  }, [load])
+  const tipHeight = data?.tip ?? 0
+  const rows = data?.rows ?? []
 
   return (
     <div className="w-full space-y-4">
@@ -93,7 +66,7 @@ export default function Transactions() {
         actions={
           <button
             type="button"
-            onClick={() => load()}
+            onClick={() => reload()}
             disabled={loading}
             className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
           >

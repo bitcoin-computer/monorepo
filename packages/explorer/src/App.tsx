@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
-import { initFlowbite } from 'flowbite'
 import {
   Auth,
   Gallery,
@@ -59,10 +58,6 @@ function AppRoutes() {
 
 export default function App() {
   const [computer] = useState(Auth.getComputer())
-
-  useEffect(() => {
-    initFlowbite()
-  }, [])
 
   return (
     <BrowserRouter>

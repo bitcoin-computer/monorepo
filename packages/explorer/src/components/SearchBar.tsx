@@ -24,6 +24,14 @@ const PLACEHOLDER_BY_FILTER: Record<SearchFilter, string> = {
   module: 'Search by module specifier (txid:vout)',
 }
 
+const FILTER_PATH: Record<Exclude<SearchFilter, 'all'>, (q: string) => string> = {
+  tx: (q) => `/transactions/${q.toLowerCase()}`,
+  object: (q) => `/objects/${q}`,
+  address: (q) => `/utxos/${q}`,
+  pubkey: (q) => `/?publicKey=${encodeURIComponent(q)}`,
+  module: (q) => `/modules/${q}`,
+}
+
 const SEARCH_HINTS = [
   { label: 'TxID', example: '64-char hex' },
   { label: 'Object', example: 'txid:vout' },
@@ -44,24 +52,8 @@ async function resolveSearch(
     return
   }
 
-  if (filter === 'tx') {
-    navigate(`/transactions/${searchInput.toLowerCase()}`)
-    return
-  }
-  if (filter === 'object') {
-    navigate(`/objects/${searchInput}`)
-    return
-  }
-  if (filter === 'address') {
-    navigate(`/utxos/${searchInput}`)
-    return
-  }
-  if (filter === 'pubkey') {
-    navigate(`/?publicKey=${encodeURIComponent(searchInput)}`)
-    return
-  }
-  if (filter === 'module') {
-    navigate(`/modules/${searchInput}`)
+  if (filter !== 'all') {
+    navigate(FILTER_PATH[filter](searchInput))
     return
   }
 
@@ -117,54 +109,9 @@ function SearchIcon({ className }: { className?: string }) {
   )
 }
 
-/**
- * Compact search for the sticky top navbar (non-home pages) — Etherscan-style.
- */
-export function NavbarSearch() {
+function useSearchSubmit(filter: SearchFilter) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
-  const computer = useContext(ComputerContext)
-  const navigate = useNavigate()
-
-  const run = async (e?: FormEvent) => {
-    e?.preventDefault()
-    if (busy) return
-    setBusy(true)
-    try {
-      await resolveSearch(inputRef.current?.value || '', 'all', computer, navigate)
-    } finally {
-      setBusy(false)
-    }
-  }
-
-  return (
-    <form onSubmit={run} className="relative w-full min-w-0 flex-1">
-      <div className="absolute inset-y-0 start-0 flex items-center ps-2.5 pointer-events-none">
-        <SearchIcon className="w-3.5 h-3.5 text-gray-400" />
-      </div>
-      <input
-        ref={inputRef}
-        type="search"
-        name="q"
-        autoComplete="off"
-        spellCheck={false}
-        disabled={busy}
-        className="block w-full h-9 ps-8 pe-3 text-xs sm:text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-100 focus:bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-60 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-500 dark:text-white dark:focus:bg-gray-900"
-        placeholder="TxID / rev / address / pubkey / module"
-        aria-label="Search"
-      />
-    </form>
-  )
-}
-
-/**
- * Full hero search for the home page only (with filter + format hints).
- */
-export function HomeSearch() {
-  const inputRef = useRef<HTMLInputElement>(null)
-  const [busy, setBusy] = useState(false)
-  const [filter, setFilter] = useState<SearchFilter>('all')
-  const [focused, setFocused] = useState(false)
   const computer = useContext(ComputerContext)
   const navigate = useNavigate()
 
@@ -179,8 +126,36 @@ export function HomeSearch() {
     }
   }
 
+  return { inputRef, busy, onSubmit }
+}
+
+export function ExplorerSearch({ variant }: { variant: 'home' | 'nav' }) {
+  const [filter, setFilter] = useState<SearchFilter>('all')
+  const [focused, setFocused] = useState(false)
+  const { inputRef, busy, onSubmit } = useSearchSubmit(variant === 'home' ? filter : 'all')
+
+  if (variant === 'nav') {
+    return (
+      <form onSubmit={onSubmit} className="relative w-full min-w-0 flex-1">
+        <div className="absolute inset-y-0 start-0 flex items-center ps-2.5 pointer-events-none">
+          <SearchIcon className="w-3.5 h-3.5 text-gray-400" />
+        </div>
+        <input
+          ref={inputRef}
+          type="search"
+          name="q"
+          autoComplete="off"
+          spellCheck={false}
+          disabled={busy}
+          className="block w-full h-9 ps-8 pe-3 text-xs sm:text-sm text-gray-900 border border-gray-200 rounded-lg bg-gray-100 focus:bg-white focus:ring-1 focus:ring-blue-500 focus:border-blue-500 disabled:opacity-60 dark:bg-gray-800 dark:border-gray-600 dark:placeholder-gray-500 dark:text-white dark:focus:bg-gray-900"
+          placeholder="TxID / rev / address / pubkey / module"
+          aria-label="Search"
+        />
+      </form>
+    )
+  }
+
   return (
-    /* Full-bleed grey band (Etherscan-style) — distinguish from white content below */
     <div className="w-full border-b border-gray-200 dark:border-gray-700 bg-slate-100 dark:bg-gray-800/80">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-5 sm:py-6">
         <form onSubmit={onSubmit} className="w-full">
@@ -275,4 +250,10 @@ export function HomeSearch() {
   )
 }
 
+export function NavbarSearch() {
+  return <ExplorerSearch variant="nav" />
+}
 
+export function HomeSearch() {
+  return <ExplorerSearch variant="home" />
+}

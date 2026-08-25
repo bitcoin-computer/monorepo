@@ -1,15 +1,16 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { Contract } from '@bitcoin-computer/lib'
-import {
-  ComputerContext,
-  TypeSelectionDropdown,
-  isValidRev,
-  sleep,
-} from '@bitcoin-computer/components'
+import { ComputerContext, isValidRev, sleep } from '@bitcoin-computer/components'
 import { getValueForType } from '../../utils'
 import { TypedValueInput } from './TypedValueInput'
 import { PlaygroundWorkspace } from './PlaygroundWorkspace'
-import { Panel, PlaygroundResult, RemoveRowButton, secondaryBtnClassName } from './ui'
+import {
+  Panel,
+  PlaygroundResult,
+  RemoveRowButton,
+  TypeSelect,
+  secondaryBtnClassName,
+} from './ui'
 import { usePlaygroundDraft } from './usePlaygroundDraft'
 import { ExampleVar } from './examples'
 
@@ -172,11 +173,11 @@ const CreateNew = (props: {
                     value={argument.value}
                     onChange={(v) => handleArgumentChange(index, 'value', v)}
                   />
-                  <TypeSelectionDropdown
+                  <TypeSelect
                     id={`playground-dropdown-${index}`}
-                    onSelectMethod={(option: string) => handleArgumentChange(index, 'type', option)}
-                    dropdownList={TYPE_OPTIONS}
-                    selectedType={argument.type}
+                    value={argument.type}
+                    options={TYPE_OPTIONS}
+                    onChange={(option) => handleArgumentChange(index, 'type', option)}
                   />
                   <RemoveRowButton
                     label="Remove argument"

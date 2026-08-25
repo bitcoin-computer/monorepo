@@ -1,8 +1,9 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ModuleRecord } from '@bitcoin-computer/lib'
 import { ComputerContext, InlineAlert } from '@bitcoin-computer/components'
 import { formatTime, truncateRev } from '../utils/rpc'
+import { useAsync } from '../hooks/useAsync'
 import { PageHeader } from './ui/PageHeader'
 import { DataTable, Pager, TableRow, TableSkeleton, tdClass } from './ui/Table'
 
@@ -34,64 +35,41 @@ export default function Modules() {
   const computer = useContext(ComputerContext)
 
   const [pageNum, setPageNum] = useState(0)
-  const [isNextAvailable, setIsNextAvailable] = useState(false)
-  const [isPrevAvailable, setIsPrevAvailable] = useState(false)
-  const [rows, setRows] = useState<ModuleRecord[]>([])
-  const [showEmpty, setShowEmpty] = useState(false)
-  const [listLoading, setListLoading] = useState(true)
-  const [listError, setListError] = useState<string | null>(null)
-
   const [order, setOrder] = useState<OrderFilter>('DESC')
   const [storageType, setStorageType] = useState<StorageFilter>('')
   const [isConfirmed, setIsConfirmed] = useState<ConfirmedFilter>('')
 
-  useEffect(() => {
-    let cancelled = false
-
-    const fetchModules = async () => {
-      try {
-        setListLoading(true)
-        setListError(null)
-        setShowEmpty(false)
-        const query: {
-          verbosity: 1
-          limit: number
-          offset: number
-          order: OrderFilter
-          storageType?: 'multisig' | 'taproot'
-          isConfirmed?: boolean
-        } = {
-          verbosity: 1,
-          limit: MODULES_PER_PAGE + 1,
-          offset: pageNum * MODULES_PER_PAGE,
-          order,
-        }
-        if (storageType) query.storageType = storageType
-        if (isConfirmed === 'true') query.isConfirmed = true
-        if (isConfirmed === 'false') query.isConfirmed = false
-
-        const result = await computer.getModules(query)
-        if (cancelled) return
-        setIsNextAvailable(result.length > MODULES_PER_PAGE)
-        setIsPrevAvailable(pageNum > 0)
-        setRows(result.slice(0, MODULES_PER_PAGE))
-        if (pageNum === 0 && result.length === 0) setShowEmpty(true)
-      } catch (error) {
-        if (cancelled) return
-        console.error('Error fetching modules', error)
-        setListError(error instanceof Error ? error.message : 'Error fetching modules')
-        setRows([])
-        setIsNextAvailable(false)
-        setShowEmpty(false)
-      } finally {
-        if (!cancelled) setListLoading(false)
-      }
+  const { data, loading: listLoading, error: listError } = useAsync(async () => {
+    const query: {
+      verbosity: 1
+      limit: number
+      offset: number
+      order: OrderFilter
+      storageType?: 'multisig' | 'taproot'
+      isConfirmed?: boolean
+    } = {
+      verbosity: 1,
+      limit: MODULES_PER_PAGE + 1,
+      offset: pageNum * MODULES_PER_PAGE,
+      order,
     }
-    fetchModules()
-    return () => {
-      cancelled = true
+    if (storageType) query.storageType = storageType
+    if (isConfirmed === 'true') query.isConfirmed = true
+    if (isConfirmed === 'false') query.isConfirmed = false
+
+    const result = await computer.getModules(query)
+    return {
+      rows: result.slice(0, MODULES_PER_PAGE),
+      isNextAvailable: result.length > MODULES_PER_PAGE,
+      isPrevAvailable: pageNum > 0,
+      showEmpty: pageNum === 0 && result.length === 0,
     }
   }, [computer, pageNum, order, storageType, isConfirmed])
+
+  const rows = data?.rows ?? []
+  const isNextAvailable = data?.isNextAvailable ?? false
+  const isPrevAvailable = data?.isPrevAvailable ?? false
+  const showEmpty = data?.showEmpty ?? false
 
   const handleFilterChange = <T,>(setter: (v: T) => void, value: T) => {
     setPageNum(0)

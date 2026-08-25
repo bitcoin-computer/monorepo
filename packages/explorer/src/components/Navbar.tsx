@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Modal, Auth, Drawer, ComputerContext } from '@bitcoin-computer/components'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { initFlowbite } from 'flowbite'
 import { NavbarSearch } from './SearchBar'
 
 const DOCS_URL = 'https://docs.bitcoincomputer.io/'
@@ -28,7 +27,6 @@ function BlockchainMenu({ mobile }: { mobile?: boolean }) {
     return () => document.removeEventListener('mousedown', onDoc)
   }, [mobile])
 
-  // Close on navigate
   useEffect(() => {
     setOpen(false)
   }, [pathname])
@@ -168,15 +166,16 @@ function AuthNavItem() {
 export default function Navbar() {
   const { pathname } = useLocation()
   const isHome = pathname === '/'
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
-    initFlowbite()
-  }, [])
+    setMenuOpen(false)
+  }, [pathname])
 
   return (
     <nav className="bg-white border-b border-gray-200 dark:bg-gray-900 dark:border-gray-700 sticky top-0 z-40">
       <div className="max-w-screen-xl mx-auto px-4 sm:px-6 py-2.5">
-        <div className="flex items-center gap-2 sm:gap-3 md:gap-4">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 md:gap-4">
           <Link to="/" className="flex items-center gap-2 min-w-0 shrink-0">
             <img src="/logo.png" className="h-8 sm:h-9 shrink-0" alt="Bitcoin Computer Logo" />
             <span className="hidden sm:inline text-base sm:text-lg font-semibold whitespace-nowrap dark:text-white truncate max-w-[11rem] lg:max-w-none">
@@ -194,11 +193,11 @@ export default function Navbar() {
           )}
 
           <button
-            data-collapse-toggle="navbar-dropdown"
             type="button"
             className="inline-flex items-center p-2 w-9 h-9 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 ml-auto"
             aria-controls="navbar-dropdown"
-            aria-expanded="false"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
           >
             <span className="sr-only">Open main menu</span>
             <svg
@@ -218,7 +217,6 @@ export default function Navbar() {
             </svg>
           </button>
 
-          {/* Desktop nav */}
           <div className="hidden md:flex md:items-center md:shrink-0">
             <ul className="flex flex-row items-center gap-3 lg:gap-4">
               <PrimaryNavLinks />
@@ -226,8 +224,10 @@ export default function Navbar() {
             </ul>
           </div>
 
-          {/* Mobile collapse (Flowbite) */}
-          <div className="hidden w-full md:hidden" id="navbar-dropdown">
+          <div
+            className={`${menuOpen ? 'block' : 'hidden'} w-full md:hidden`}
+            id="navbar-dropdown"
+          >
             {!isHome ? (
               <div className="px-1 pt-3 pb-2">
                 <NavbarSearch />

@@ -1,10 +1,11 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ComputerContext, bigIntToStr, InlineAlert } from '@bitcoin-computer/components'
 import { CopyButton } from './ui/CopyButton'
 import { PageHeader, SectionTitle, StatCard } from './ui/PageHeader'
 import { DataTable, TableRow, TableSkeleton, tdClass } from './ui/Table'
 import { truncateHex } from '../utils/rpc'
+import { useAsync } from '../hooks/useAsync'
 
 interface DbOutput {
   rev: string
@@ -23,47 +24,24 @@ interface DbOutput {
 const UTXODisplay = () => {
   const params = useParams()
   const address = params.address || ''
-  const [utxos, setUtxos] = useState<DbOutput[]>([])
-  const [totalAmount, setTotalAmount] = useState<bigint>(0n)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
   const computer = useContext(ComputerContext)
   const chain = computer.getChain()
 
-  const fetchUTXOs = useCallback(
-    async (addr: string) => {
-      if (!addr) {
-        setLoading(false)
-        setError('No address provided')
-        setUtxos([])
-        setTotalAmount(0n)
-        return
-      }
-      try {
-        setLoading(true)
-        setError(null)
-        const response = (await computer.db.wallet.restClient.getUTXOs({
-          address: addr,
-          verbosity: 1,
-          isObject: false,
-        })) as DbOutput[]
-        setUtxos(response)
-        setTotalAmount(response.reduce((total, unspent) => total + unspent.satoshis, 0n))
-      } catch (err: unknown) {
-        const msg = err instanceof Error ? err.message : 'Error loading UTXOs'
-        setError(msg)
-        setUtxos([])
-        setTotalAmount(0n)
-      } finally {
-        setLoading(false)
-      }
-    },
-    [computer],
-  )
+  const { data, loading, error, reload } = useAsync(async () => {
+    if (!address) throw new Error('No address provided')
+    const response = (await computer.db.wallet.restClient.getUTXOs({
+      address,
+      verbosity: 1,
+      isObject: false,
+    })) as DbOutput[]
+    return {
+      utxos: response,
+      totalAmount: response.reduce((total, unspent) => total + unspent.satoshis, 0n),
+    }
+  }, [computer, address])
 
-  useEffect(() => {
-    fetchUTXOs(address)
-  }, [address, fetchUTXOs])
+  const utxos = data?.utxos ?? []
+  const totalAmount = data?.totalAmount ?? 0n
 
   return (
     <div className="w-full space-y-4">
@@ -102,7 +80,7 @@ const UTXODisplay = () => {
           <SectionTitle>Unspent outputs</SectionTitle>
           <button
             type="button"
-            onClick={() => fetchUTXOs(address)}
+            onClick={() => reload()}
             disabled={loading}
             className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
           >
