@@ -369,8 +369,13 @@ export class ChessContractHelper {
     }
     /** Cancel a pending game and withdraw the creator's wager in one flow. */
     async cancelGameAndWithdraw(chessId) {
-        const chess = await this.cancelGame(chessId);
-        await this.withdrawTokens(chess.tokenIdW, chessId);
+        await this.cancelGame(chessId);
+        /**
+         * Under the strict non-determinism guarantee we cannot cancel and withdraw
+         * in one atomic action anymore. We now have to wait for the next block
+         * before we withdraw. The app needs to be adapted accordingly.
+         * */
+        // await this.withdrawTokens(chess.tokenIdW, chessId)
     }
     /** Mark a canceled pending game as seen by the invited opponent (clears list badge). */
     async markCanceledSeen(chessId) {
