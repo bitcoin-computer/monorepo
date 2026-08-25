@@ -40,14 +40,11 @@ export function EffectPanel({
   onPreview,
   previewDisabled,
   onDismiss,
-  emptyHint,
 }: {
   data: EffectPreviewData | null
   onPreview: () => void
   previewDisabled?: boolean
   onDismiss?: () => void
-  /** Optional empty-state line under the default copy */
-  emptyHint?: string
 }) {
   const isPreview = data?.kind === 'preview'
   const hasData = Boolean(data)
@@ -102,7 +99,6 @@ export function EffectPanel({
             to encode without broadcasting. New state from{' '}
             <code className="text-[11px]">effect.res</code> appears here.
           </p>
-          {emptyHint ? <p className="text-xs mt-1.5 text-gray-400 dark:text-gray-500">{emptyHint}</p> : null}
           <p className="text-[11px] mt-2 text-gray-400 dark:text-gray-500 hidden sm:block">
             Shortcut: ⌘/Ctrl+Shift+Enter
           </p>

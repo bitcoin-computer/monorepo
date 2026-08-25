@@ -1,6 +1,7 @@
 import { ReactNode, RefObject } from 'react'
 import { Link } from 'react-router-dom'
 import { Modal } from '@bitcoin-computer/components'
+import { EmptyState } from '../ui/EmptyState'
 
 export type PlaygroundResult = {
   status: 'success' | 'error'
@@ -171,6 +172,62 @@ export function PrimaryButton({
   )
 }
 
+function ActionControls({
+  primaryLabel,
+  onPrimary,
+  primaryDisabled,
+  loggedIn,
+  onPreview,
+  previewDisabled,
+  previewLabel,
+  compact,
+}: {
+  primaryLabel: string
+  onPrimary: () => void
+  primaryDisabled?: boolean
+  loggedIn: boolean
+  onPreview?: () => void
+  previewDisabled?: boolean
+  previewLabel: string
+  compact?: boolean
+}) {
+  const shownPreviewLabel =
+    compact && previewLabel === 'Preview effect' ? 'Preview' : previewLabel
+
+  return (
+    <>
+      {onPreview ? (
+        <button
+          type="button"
+          onClick={onPreview}
+          disabled={previewDisabled}
+          className={compact ? `${secondaryBtnClassName} shrink-0` : secondaryBtnClassName}
+          title={compact ? undefined : 'Encode without broadcasting (⌘/Ctrl+Shift+Enter)'}
+        >
+          {shownPreviewLabel}
+        </button>
+      ) : null}
+      <PrimaryButton
+        onClick={onPrimary}
+        disabled={primaryDisabled || !loggedIn}
+        title={compact ? undefined : 'Broadcast (⌘/Ctrl+Enter)'}
+        className={compact ? 'flex-1' : ''}
+      >
+        {primaryLabel}
+      </PrimaryButton>
+      {!loggedIn ? (
+        compact ? (
+          <span className="shrink-0 text-sm font-medium text-blue-600 dark:text-blue-400 underline">
+            <Modal.ShowButton id="sign-in-modal" text="Sign in" />
+          </span>
+        ) : (
+          <Modal.ShowButton id="sign-in-modal" text="Sign in to broadcast" />
+        )
+      ) : null}
+    </>
+  )
+}
+
 export function ActionBar({
   primaryLabel,
   onPrimary,
@@ -189,28 +246,20 @@ export function ActionBar({
   previewDisabled?: boolean
   previewLabel?: string
 }) {
+  const controls = {
+    primaryLabel,
+    onPrimary,
+    primaryDisabled,
+    loggedIn,
+    onPreview,
+    previewDisabled,
+    previewLabel,
+  }
+
   return (
     <>
       <div className="hidden sm:flex flex-wrap items-center gap-3">
-        {onPreview ? (
-          <button
-            type="button"
-            onClick={onPreview}
-            disabled={previewDisabled}
-            className={secondaryBtnClassName}
-            title="Encode without broadcasting (⌘/Ctrl+Shift+Enter)"
-          >
-            {previewLabel}
-          </button>
-        ) : null}
-        <PrimaryButton
-          onClick={onPrimary}
-          disabled={primaryDisabled || !loggedIn}
-          title="Broadcast (⌘/Ctrl+Enter)"
-        >
-          {primaryLabel}
-        </PrimaryButton>
-        {!loggedIn ? <Modal.ShowButton id="sign-in-modal" text="Sign in to broadcast" /> : null}
+        <ActionControls {...controls} />
         <span className="text-[11px] text-gray-400 dark:text-gray-500 hidden md:inline">
           {onPreview
             ? '⌘/Ctrl+Enter run · ⌘/Ctrl+Shift+Enter preview'
@@ -220,28 +269,7 @@ export function ActionBar({
 
       <div className="sm:hidden fixed bottom-0 inset-x-0 z-30 border-t border-gray-200 dark:border-gray-700 bg-white/95 dark:bg-gray-900/95 backdrop-blur px-4 py-3">
         <div className="flex items-center gap-2 max-w-screen-xl mx-auto">
-          {onPreview ? (
-            <button
-              type="button"
-              onClick={onPreview}
-              disabled={previewDisabled}
-              className={`${secondaryBtnClassName} shrink-0`}
-            >
-              {previewLabel === 'Preview effect' ? 'Preview' : previewLabel}
-            </button>
-          ) : null}
-          <PrimaryButton
-            onClick={onPrimary}
-            disabled={primaryDisabled || !loggedIn}
-            className="flex-1"
-          >
-            {primaryLabel}
-          </PrimaryButton>
-          {!loggedIn ? (
-            <span className="shrink-0 text-sm font-medium text-blue-600 dark:text-blue-400 underline">
-              <Modal.ShowButton id="sign-in-modal" text="Sign in" />
-            </span>
-          ) : null}
+          <ActionControls {...controls} compact />
         </div>
       </div>
       <div className="sm:hidden h-16" aria-hidden />
@@ -249,12 +277,39 @@ export function ActionBar({
   )
 }
 
+export function FieldList({
+  count,
+  empty,
+  onAdd,
+  addLabel,
+  children,
+}: {
+  count: number
+  empty: ReactNode
+  onAdd: () => void
+  addLabel: string
+  children: ReactNode
+}) {
+  return (
+    <>
+      {count === 0 ? (
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">{empty}</p>
+      ) : (
+        <div className="space-y-2 mb-3">{children}</div>
+      )}
+      <button type="button" onClick={onAdd} className={secondaryBtnClassName}>
+        {addLabel}
+      </button>
+    </>
+  )
+}
+
 export function EmptyWorkspace({ onPickExample }: { onPickExample?: () => void }) {
   return (
-    <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 bg-gray-50/80 dark:bg-gray-900/40 px-4 py-10 text-center">
-      <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">
-        Start with an example or paste code
-      </p>
+    <EmptyState
+      title="Start with an example or paste code"
+      className="bg-gray-50/80 dark:bg-gray-900/40 px-4 py-10"
+    >
       <p className="text-xs text-gray-500 dark:text-gray-400 max-w-sm mx-auto mb-3">
         Pick NFT, Token, Counter, or Chat from the examples, or paste a{' '}
         <code className="text-[11px]">Contract</code> class into the editor.
@@ -268,7 +323,7 @@ export function EmptyWorkspace({ onPickExample }: { onPickExample?: () => void }
           Load Counter example
         </button>
       ) : null}
-    </div>
+    </EmptyState>
   )
 }
 

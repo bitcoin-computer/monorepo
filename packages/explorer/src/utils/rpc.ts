@@ -37,10 +37,6 @@ export function isHex64(id: string): boolean {
   return /^[0-9a-fA-F]{64}$/.test(id.trim())
 }
 
-export function isBlockHash(id: string): boolean {
-  return isHex64(id)
-}
-
 export function isBlockHeight(id: string): boolean {
   return /^\d+$/.test(id.trim())
 }
@@ -66,12 +62,26 @@ export async function getBlock(computer: RpcClient, hash: string, verbosity = 1)
   return unwrapRpcResult<RpcBlock>(res)
 }
 
+export async function fetchBlockByHeight(
+  computer: RpcClient,
+  height: number,
+): Promise<RpcBlock | null> {
+  const hash = await getBlockHashAtHeight(computer, height)
+  if (!isHex64(hash)) return null
+  const block = await getBlock(computer, hash)
+  return {
+    ...(block ?? ({} as RpcBlock)),
+    hash: block?.hash || hash,
+    height: block?.height ?? height,
+  }
+}
+
 export async function resolveBlockHash(computer: RpcClient, id: string): Promise<string> {
   const trimmed = id.trim()
-  if (isBlockHash(trimmed)) return trimmed.toLowerCase()
+  if (isHex64(trimmed)) return trimmed.toLowerCase()
   if (isBlockHeight(trimmed)) {
     const hash = await getBlockHashAtHeight(computer, trimmed)
-    if (!isBlockHash(hash)) throw new Error(`No block at height ${trimmed}`)
+    if (!isHex64(hash)) throw new Error(`No block at height ${trimmed}`)
     return hash.toLowerCase()
   }
   throw new Error('Invalid block id (use 64-char hash or height)')
@@ -86,11 +96,11 @@ export async function resolveNeighbors(
   block: RpcBlock,
 ): Promise<{ prevHash?: string; nextHash?: string }> {
   let prevHash =
-    typeof block.previousblockhash === 'string' && isBlockHash(block.previousblockhash)
+    typeof block.previousblockhash === 'string' && isHex64(block.previousblockhash)
       ? block.previousblockhash
       : undefined
   let nextHash =
-    typeof block.nextblockhash === 'string' && isBlockHash(block.nextblockhash)
+    typeof block.nextblockhash === 'string' && isHex64(block.nextblockhash)
       ? block.nextblockhash
       : undefined
 
@@ -104,7 +114,7 @@ export async function resolveNeighbors(
   if (!prevHash && h > 0) {
     try {
       const hash = await getBlockHashAtHeight(computer, h - 1)
-      if (isBlockHash(hash)) prevHash = hash
+      if (isHex64(hash)) prevHash = hash
     } catch {
       // leave undefined
     }
@@ -113,7 +123,7 @@ export async function resolveNeighbors(
   if (!nextHash) {
     try {
       const hash = await getBlockHashAtHeight(computer, h + 1)
-      if (isBlockHash(hash)) nextHash = hash
+      if (isHex64(hash)) nextHash = hash
     } catch {
       // tip block — no next
     }

@@ -1,16 +1,16 @@
 import { useContext } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ComputerContext } from '@bitcoin-computer/components'
+import { ComputerContext, InlineAlert } from '@bitcoin-computer/components'
 import {
   formatTime,
   getBlock,
   resolveBlockHash,
   resolveNeighbors,
-  truncateHex,
   txIdOf,
   unwrapRpcResult,
 } from '../utils/rpc'
 import { useAsync } from '../hooks/useAsync'
+import { HexLink } from './ui/HexLink'
 import { PageHeader } from './ui/PageHeader'
 import { DataTable, TableRow, tdClass } from './ui/Table'
 
@@ -97,11 +97,10 @@ function Block() {
       ) : null}
 
       {error && !loading ? (
-        <div className="rounded-lg border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 p-4 text-sm text-red-700 dark:text-red-300">
-          <p className="font-medium mb-1">Could not load block</p>
+        <InlineAlert variant="error" title="Could not load block">
           <p className="mb-2">{error}</p>
           <p className="font-mono text-xs break-all opacity-80">{rawId}</p>
-        </div>
+        </InlineAlert>
       ) : null}
 
       {blockData && !loading ? (
@@ -170,14 +169,13 @@ function Block() {
                 <TableRow key={txid}>
                   <td className={`${tdClass} tabular-nums text-xs text-gray-500`}>{i}</td>
                   <td className={`${tdClass} font-mono text-xs`}>
-                    <Link
+                    <HexLink
                       to={`/transactions/${txid}`}
+                      value={txid}
                       className="font-medium text-blue-600 dark:text-blue-400 hover:underline break-all"
-                      title={txid}
-                    >
-                      <span className="sm:hidden">{truncateHex(txid, 12, 10)}</span>
-                      <span className="hidden sm:inline">{txid}</span>
-                    </Link>
+                      mobile={[12, 10]}
+                      desktop="full"
+                    />
                   </td>
                 </TableRow>
               ))}

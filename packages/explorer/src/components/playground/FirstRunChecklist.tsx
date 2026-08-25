@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { readJson, writeJson } from '../../utils/storage'
 
 const STORAGE_KEY = 'bc-explorer-playground-checklist-v1'
 
@@ -17,21 +18,11 @@ const defaultState: ChecklistState = {
 }
 
 function load(): ChecklistState {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return { ...defaultState }
-    return { ...defaultState, ...JSON.parse(raw) }
-  } catch {
-    return { ...defaultState }
-  }
+  return { ...defaultState, ...(readJson<Partial<ChecklistState>>(STORAGE_KEY) ?? {}) }
 }
 
 function save(s: ChecklistState) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(s))
-  } catch {
-    // ignore
-  }
+  writeJson(STORAGE_KEY, s)
 }
 
 export function useChecklist() {

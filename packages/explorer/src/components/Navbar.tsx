@@ -1,7 +1,9 @@
 import { Link, useLocation } from 'react-router-dom'
 import { Modal, Auth, Drawer, ComputerContext } from '@bitcoin-computer/components'
 import { useContext, useEffect, useRef, useState } from 'react'
-import { NavbarSearch } from './SearchBar'
+import { ExplorerSearch } from './SearchBar'
+import { ChevronDownIcon, MenuIcon } from './ui/icons'
+import { tryGet } from '../utils'
 
 const DOCS_URL = 'https://docs.bitcoincomputer.io/'
 
@@ -68,15 +70,7 @@ function BlockchainMenu({ mobile }: { mobile?: boolean }) {
         aria-haspopup="true"
       >
         Blockchain
-        <svg className="w-3 h-3 opacity-70" fill="none" viewBox="0 0 10 6" aria-hidden>
-          <path
-            stroke="currentColor"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="m1 1 4 4 4-4"
-          />
-        </svg>
+        <ChevronDownIcon className="w-3 h-3 opacity-70" />
       </button>
       {open ? (
         <div className="absolute right-0 mt-2 z-50 min-w-[10rem] rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-600 dark:bg-gray-800">
@@ -103,12 +97,7 @@ function BlockchainMenu({ mobile }: { mobile?: boolean }) {
 
 function UtxosLink({ className }: { className?: string }) {
   const computer = useContext(ComputerContext)
-  let utxosPath = '/'
-  try {
-    utxosPath = `/utxos/${computer.getAddress()}`
-  } catch {
-    utxosPath = '/'
-  }
+  const utxosPath = tryGet(() => `/utxos/${computer.getAddress()}`, '/')
   return (
     <Link to={utxosPath} className={className || navLinkClass}>
       UTXOs
@@ -186,7 +175,7 @@ export default function Navbar() {
 
           {!isHome ? (
             <div className="hidden md:flex flex-1 min-w-0 max-w-xl mx-1 lg:mx-2">
-              <NavbarSearch />
+              <ExplorerSearch variant="nav" />
             </div>
           ) : (
             <div className="hidden md:block flex-1" />
@@ -200,21 +189,7 @@ export default function Navbar() {
             onClick={() => setMenuOpen((open) => !open)}
           >
             <span className="sr-only">Open main menu</span>
-            <svg
-              className="w-5 h-5"
-              aria-hidden="true"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 17 14"
-            >
-              <path
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M1 1h15M1 7h15M1 13h15"
-              />
-            </svg>
+            <MenuIcon className="w-5 h-5" />
           </button>
 
           <div className="hidden md:flex md:items-center md:shrink-0">
@@ -230,7 +205,7 @@ export default function Navbar() {
           >
             {!isHome ? (
               <div className="px-1 pt-3 pb-2">
-                <NavbarSearch />
+                <ExplorerSearch variant="nav" />
               </div>
             ) : null}
             <ul className="flex flex-col gap-1 p-2 mt-1 border border-gray-100 rounded-lg bg-gray-50 dark:bg-gray-800 dark:border-gray-700">

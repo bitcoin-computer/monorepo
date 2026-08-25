@@ -2,9 +2,10 @@ import { useContext } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ComputerContext, bigIntToStr, InlineAlert } from '@bitcoin-computer/components'
 import { CopyButton } from './ui/CopyButton'
+import { EmptyState } from './ui/EmptyState'
+import { HexLink } from './ui/HexLink'
 import { PageHeader, SectionTitle, StatCard } from './ui/PageHeader'
 import { DataTable, TableRow, TableSkeleton, tdClass } from './ui/Table'
-import { truncateHex } from '../utils/rpc'
 import { useAsync } from '../hooks/useAsync'
 
 interface DbOutput {
@@ -93,8 +94,7 @@ const UTXODisplay = () => {
         {error && !loading ? <InlineAlert variant="error">{error}</InlineAlert> : null}
 
         {!loading && !error && utxos.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-gray-300 dark:border-gray-600 p-6 text-center">
-            <p className="text-sm font-semibold text-gray-900 dark:text-white mb-1">No UTXOs</p>
+          <EmptyState title="No UTXOs">
             <p className="text-xs text-gray-500 dark:text-gray-400">
               No unspent payment outputs. Smart objects are listed under{' '}
               <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline">
@@ -102,7 +102,7 @@ const UTXODisplay = () => {
               </Link>
               .
             </p>
-          </div>
+          </EmptyState>
         ) : null}
 
         {!loading && utxos.length > 0 ? (
@@ -119,13 +119,11 @@ const UTXODisplay = () => {
               return (
                 <TableRow key={utxo.rev}>
                   <td className={`${tdClass} font-mono text-xs`}>
-                    <Link
+                    <HexLink
                       to={`/transactions/${txId}`}
+                      value={txId}
                       className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
-                      title={txId}
-                    >
-                      {truncateHex(txId)}
-                    </Link>
+                    />
                   </td>
                   <td className={tdClass}>{vout}</td>
                   <td className={`${tdClass} text-right font-mono text-xs whitespace-nowrap`}>

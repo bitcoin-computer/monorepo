@@ -1,15 +1,8 @@
 import { useContext, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { ComputerContext, InlineAlert, limitConcurrency } from '@bitcoin-computer/components'
-import {
-  formatTime,
-  getBlock,
-  getBlockHashAtHeight,
-  getTipHeight,
-  isBlockHash,
-  truncateHex,
-} from '../utils/rpc'
+import { formatTime, fetchBlockByHeight, getTipHeight } from '../utils/rpc'
 import { useAsync } from '../hooks/useAsync'
+import { HexLink } from './ui/HexLink'
 import { PageHeader } from './ui/PageHeader'
 import { DataTable, Pager, TableRow, TableSkeleton, tdClass } from './ui/Table'
 
@@ -43,17 +36,16 @@ export default function Blocks() {
       heights.map((height) =>
         limitConcurrency(async () => {
           try {
-            const hash = await getBlockHashAtHeight(computer, height)
-            if (!isBlockHash(hash)) {
+            const block = await fetchBlockByHeight(computer, height)
+            if (!block) {
               return { height, hash: '', error: 'Missing hash' }
             }
-            const block = await getBlock(computer, hash)
             return {
-              height: block?.height ?? height,
-              hash: block?.hash || hash,
-              time: block?.time,
-              size: block?.size,
-              nTx: Array.isArray(block?.tx) ? block.tx.length : undefined,
+              height: block.height ?? height,
+              hash: block.hash,
+              time: block.time,
+              size: block.size,
+              nTx: Array.isArray(block.tx) ? block.tx.length : undefined,
             }
           } catch {
             return { height, hash: '', error: 'Failed to load' }
@@ -95,25 +87,16 @@ export default function Blocks() {
             <TableRow key={row.height} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
               <td className={`${tdClass} tabular-nums font-medium text-gray-900 dark:text-white`}>
                 {row.hash ? (
-                  <Link
-                    to={`/block/${row.hash}`}
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
-                  >
+                  <HexLink to={`/block/${row.hash}`} value={row.hash}>
                     {row.height}
-                  </Link>
+                  </HexLink>
                 ) : (
                   row.height
                 )}
               </td>
               <td className={`${tdClass} font-mono text-xs`}>
                 {row.hash ? (
-                  <Link
-                    to={`/block/${row.hash}`}
-                    className="text-blue-600 dark:text-blue-400 hover:underline"
-                    title={row.hash}
-                  >
-                    {truncateHex(row.hash)}
-                  </Link>
+                  <HexLink to={`/block/${row.hash}`} value={row.hash} />
                 ) : (
                   <span className="text-red-500">{row.error || '—'}</span>
                 )}

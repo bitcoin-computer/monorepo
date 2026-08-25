@@ -12,7 +12,7 @@ import {
   DecodeTransactionComponent,
 } from '@bitcoin-computer/components'
 import NavBar from './components/Navbar'
-import { HomeSearch } from './components/SearchBar'
+import { ExplorerSearch } from './components/SearchBar'
 import Block from './components/Block'
 import Blocks from './components/Blocks'
 import Transactions from './components/Transactions'
@@ -33,7 +33,7 @@ function AppRoutes() {
 
   return (
     <>
-      {isHome ? <HomeSearch /> : null}
+      {isHome ? <ExplorerSearch variant="home" /> : null}
 
       <div className="w-full max-w-screen-xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
         <Routes>

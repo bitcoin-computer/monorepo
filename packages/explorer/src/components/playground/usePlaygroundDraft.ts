@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { readJson, removeKey, writeJson } from '../../utils/storage'
 
 const PREFIX = 'bc-explorer-playground-draft-v1'
 
@@ -17,32 +18,15 @@ function storageKey(mode: DraftMode) {
 }
 
 export function loadDraft(mode: DraftMode): DraftPayload | null {
-  try {
-    const raw = localStorage.getItem(storageKey(mode))
-    if (!raw) return null
-    return JSON.parse(raw) as DraftPayload
-  } catch {
-    return null
-  }
+  return readJson<DraftPayload>(storageKey(mode))
 }
 
 export function saveDraft(mode: DraftMode, payload: Omit<DraftPayload, 'updatedAt'>) {
-  try {
-    localStorage.setItem(
-      storageKey(mode),
-      JSON.stringify({ ...payload, updatedAt: Date.now() } satisfies DraftPayload),
-    )
-  } catch {
-    // quota / private mode
-  }
+  writeJson(storageKey(mode), { ...payload, updatedAt: Date.now() } satisfies DraftPayload)
 }
 
 export function clearDraft(mode: DraftMode) {
-  try {
-    localStorage.removeItem(storageKey(mode))
-  } catch {
-    // ignore
-  }
+  removeKey(storageKey(mode))
 }
 
 /**

@@ -1,10 +1,18 @@
 import { DependencyList, useCallback, useEffect, useState } from 'react'
 
+const defaultFormatError = (e: unknown) =>
+  e instanceof Error ? e.message : 'Error occurred'
+
 /**
  * Run an async factory whenever `deps` change (or `reload()` is called).
  * Cancels stale in-flight work so late results do not overwrite newer ones.
  */
-export function useAsync<T>(factory: () => Promise<T>, deps: DependencyList, enabled = true) {
+export function useAsync<T>(
+  factory: () => Promise<T>,
+  deps: DependencyList,
+  enabled = true,
+  formatError: (e: unknown) => string = defaultFormatError,
+) {
   const [data, setData] = useState<T | null>(null)
   const [loading, setLoading] = useState(enabled)
   const [error, setError] = useState<string | null>(null)
@@ -32,7 +40,7 @@ export function useAsync<T>(factory: () => Promise<T>, deps: DependencyList, ena
       })
       .catch((e: unknown) => {
         if (!cancelled) {
-          setError(e instanceof Error ? e.message : 'Error occurred')
+          setError(formatError(e))
           setData(null)
         }
       })
@@ -45,7 +53,7 @@ export function useAsync<T>(factory: () => Promise<T>, deps: DependencyList, ena
     }
     // factory is captured from the render that changed deps/tick
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [...deps, tick, enabled])
+  }, [...deps, tick, enabled, formatError])
 
   return { data, loading, error, reload }
 }

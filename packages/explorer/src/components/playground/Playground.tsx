@@ -4,14 +4,12 @@ import CreateNew from './CreateNew'
 import ExecuteExpression from './ExecuteExpression'
 import DeployModule from './DeployModule'
 import { FirstRunChecklist, useChecklist } from './FirstRunChecklist'
-import {
-  EXAMPLE_CARDS,
-  ExampleId,
-  ExampleVar,
-  getExampleBundle,
-  PlaygroundMode,
-} from './examples'
+import { EXAMPLE_CARDS, ExampleBundle, ExampleId, getExampleBundle, PlaygroundMode } from './examples'
 import { PlaygroundResult, ResultPanel } from './ui'
+import { PageHeader } from '../ui/PageHeader'
+import { tryGet } from '../../utils'
+
+const EMPTY_BUNDLE: ExampleBundle = { code: '', expression: '', module: '', vars: [] }
 
 const MODES: { id: PlaygroundMode; label: string; help: string }[] = [
   {
@@ -39,27 +37,15 @@ const Playground = () => {
   const resultRef = useRef<HTMLDivElement>(null)
   const checklist = useChecklist()
 
-  const [exampleCode, setExampleCode] = useState('')
-  const [exampleExpression, setExampleExpression] = useState('')
-  const [exampleModule, setExampleModule] = useState('')
-  const [exampleVars, setExampleVars] = useState<ExampleVar[]>([])
+  const [bundle, setBundle] = useState<ExampleBundle>(EMPTY_BUNDLE)
 
   const loggedIn = Auth.isLoggedIn()
-  let chain = ''
-  let network = ''
-  try {
-    chain = computer.getChain()
-    network = computer.getNetwork()
-  } catch {
-    // ignore
-  }
+  const chain = tryGet(() => computer.getChain(), '')
+  const network = tryGet(() => computer.getNetwork(), '')
 
   const clearExamples = () => {
     setActiveExample(null)
-    setExampleCode('')
-    setExampleExpression('')
-    setExampleModule('')
-    setExampleVars([])
+    setBundle(EMPTY_BUNDLE)
     setResult(null)
   }
 
@@ -67,17 +53,8 @@ const Playground = () => {
     setActiveExample(id)
     setResult(null)
     checklist.mark('pickedExample')
-    let publicKey = ''
-    try {
-      publicKey = computer.getPublicKey()
-    } catch {
-      // guest — token example interpolates an empty key
-    }
-    const bundle = getExampleBundle(id, { publicKey })
-    setExampleCode(bundle.code)
-    setExampleExpression(bundle.expression)
-    setExampleModule(bundle.module)
-    setExampleVars(bundle.vars)
+    const publicKey = tryGet(() => computer.getPublicKey(), '')
+    setBundle(getExampleBundle(id, { publicKey }))
   }
 
   useEffect(() => {
@@ -91,30 +68,28 @@ const Playground = () => {
 
   return (
     <div className="w-full space-y-4 pb-2">
-      <header className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Playground</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Create objects, run expressions, deploy modules
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          {chain || network ? (
-            <span className="inline-flex items-center rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-200">
-              {[chain, network].filter(Boolean).join(' · ')}
+      <PageHeader
+        title="Playground"
+        subtitle="Create objects, run expressions, deploy modules"
+        actions={
+          <>
+            {chain || network ? (
+              <span className="inline-flex items-center rounded-full border border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 px-2.5 py-1 text-xs font-medium text-gray-700 dark:text-gray-200">
+                {[chain, network].filter(Boolean).join(' · ')}
+              </span>
+            ) : null}
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
+                loggedIn
+                  ? 'bg-green-50 text-green-800 border border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-900'
+                  : 'bg-amber-50 text-amber-900 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900'
+              }`}
+            >
+              {loggedIn ? 'Wallet signed in' : 'Guest — sign in to fund & broadcast'}
             </span>
-          ) : null}
-          <span
-            className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium ${
-              loggedIn
-                ? 'bg-green-50 text-green-800 border border-green-200 dark:bg-green-950/40 dark:text-green-300 dark:border-green-900'
-                : 'bg-amber-50 text-amber-900 border border-amber-200 dark:bg-amber-950/40 dark:text-amber-300 dark:border-amber-900'
-            }`}
-          >
-            {loggedIn ? 'Wallet signed in' : 'Guest — sign in to fund & broadcast'}
-          </span>
-        </div>
-      </header>
+          </>
+        }
+      />
 
       <FirstRunChecklist state={checklist.state} onDismiss={checklist.dismiss} />
 
@@ -144,7 +119,6 @@ const Playground = () => {
             <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
               {EXAMPLE_CARDS.map((ex) => {
                 const selected = activeExample === ex.id
-                const suited = ex.modes.includes(mode)
                 return (
                   <button
                     key={ex.id}
@@ -153,9 +127,7 @@ const Playground = () => {
                     className={`text-left rounded-lg border px-3 py-2.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
                       selected
                         ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500 dark:bg-blue-950/40 dark:border-blue-500'
-                        : suited
-                          ? 'border-gray-200 bg-white hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600'
-                          : 'border-gray-100 bg-gray-50/80 opacity-75 hover:opacity-100 dark:border-gray-800 dark:bg-gray-900/50'
+                        : 'border-gray-200 bg-white hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600'
                     }`}
                   >
                     <span className="flex items-center gap-1.5 flex-wrap">
@@ -167,11 +139,9 @@ const Playground = () => {
                           ✓
                         </span>
                       ) : null}
-                      {suited ? (
-                        <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1 py-0.5 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
-                          {mode}
-                        </span>
-                      ) : null}
+                      <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1 py-0.5 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+                        {mode}
+                      </span>
                     </span>
                     <span className="block mt-0.5 text-xs text-gray-500 dark:text-gray-400 leading-snug">
                       {ex.description}
@@ -231,8 +201,8 @@ const Playground = () => {
             {mode === 'create' ? (
               <CreateNew
                 reportResult={setResult}
-                exampleCode={exampleCode}
-                exampleVars={exampleVars}
+                exampleCode={bundle.code}
+                exampleVars={bundle.vars}
                 exampleLoaded={exampleLoaded}
                 onLoadCounter={() => loadExamples('counter')}
                 onPreviewDone={() => checklist.mark('ranPreview')}
@@ -242,7 +212,7 @@ const Playground = () => {
             {mode === 'execute' ? (
               <ExecuteExpression
                 reportResult={setResult}
-                exampleExpression={exampleExpression}
+                exampleExpression={bundle.expression}
                 exampleLoaded={exampleLoaded}
                 onLoadCounter={() => loadExamples('counter')}
                 onPreviewDone={() => checklist.mark('ranPreview')}
@@ -252,7 +222,7 @@ const Playground = () => {
             {mode === 'deploy' ? (
               <DeployModule
                 reportResult={setResult}
-                exampleModule={exampleModule}
+                exampleModule={bundle.module}
                 exampleLoaded={exampleLoaded}
                 onLoadCounter={() => loadExamples('counter')}
                 onBroadcastDone={() => checklist.mark('broadcast')}

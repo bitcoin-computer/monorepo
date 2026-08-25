@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ModuleRecord } from '@bitcoin-computer/lib'
 import {
@@ -9,6 +9,7 @@ import {
   getErrorMessage,
 } from '@bitcoin-computer/components'
 import { formatTime } from '../utils/rpc'
+import { useAsync } from '../hooks/useAsync'
 import { ModuleSource } from './ModuleSource'
 import { CopyButton } from './ui/CopyButton'
 import { PageHeader } from './ui/PageHeader'
@@ -112,60 +113,47 @@ function ModuleExports({ exports }: { exports: Record<string, unknown> }) {
   )
 }
 
+function EvaluatedExports({ modSpec }: { modSpec: string }) {
+  const computer = useContext(ComputerContext)
+  const { data: exports, error: exportsError } = useAsync(
+    async () => (await computer.load(modSpec)) as Record<string, unknown>,
+    [computer, modSpec],
+    true,
+    getErrorMessage,
+  )
+
+  return (
+    <section>
+      <h2 className="mb-1 text-base sm:text-lg font-semibold dark:text-white">
+        Exports (evaluated)
+      </h2>
+      <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
+        SES load result. Prefer source above for inspection without evaluation.
+      </p>
+      {exportsError ? (
+        <InlineAlert variant="warning" className="mb-3">
+          Could not evaluate exports: {exportsError}
+        </InlineAlert>
+      ) : null}
+      {exports ? <ModuleExports exports={exports} /> : null}
+      {!exports && !exportsError ? (
+        <p className="text-sm text-gray-500 dark:text-gray-400">Loading exports…</p>
+      ) : null}
+    </section>
+  )
+}
+
 function Module() {
   const computer = useContext(ComputerContext)
   const { rev: modSpec } = useParams<{ rev: string }>()
 
-  const [record, setRecord] = useState<ModuleRecord | null>(null)
-  const [exports, setExports] = useState<Record<string, unknown> | null>(null)
-  const [exportsError, setExportsError] = useState<string | null>(null)
-  const [notFound, setNotFound] = useState(false)
-  const [loadError, setLoadError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    if (!modSpec) return
-
-    let cancelled = false
-
-    const fetchModule = async () => {
-      try {
-        setLoading(true)
-        setNotFound(false)
-        setLoadError(null)
-        setRecord(null)
-        setExports(null)
-        setExportsError(null)
-
-        const row = await computer.getModule(modSpec)
-        if (cancelled) return
-        setRecord(row)
-
-        try {
-          const loaded = await computer.load(modSpec)
-          if (!cancelled) setExports(loaded as Record<string, unknown>)
-        } catch (error) {
-          if (!cancelled) {
-            setExportsError(getErrorMessage(error))
-            console.warn('Could not evaluate module exports', error)
-          }
-        }
-      } catch (error) {
-        if (!cancelled) {
-          console.error('Error fetching module', error)
-          setNotFound(true)
-          setLoadError(getErrorMessage(error) || 'Error fetching module')
-        }
-      } finally {
-        if (!cancelled) setLoading(false)
-      }
-    }
-
-    fetchModule()
-    return () => {
-      cancelled = true
-    }
-  }, [computer, modSpec])
+  const { data, loading, error: loadError } = useAsync(
+    () => computer.getModule(modSpec!),
+    [computer, modSpec],
+    Boolean(modSpec),
+    getErrorMessage,
+  )
+  const record = loading ? null : data
 
   if (!modSpec) {
     return (
@@ -197,21 +185,21 @@ function Module() {
         <CopyButton text={modSpec} label="Copy" className="text-sm px-1" />
       </div>
 
-      {loading && !record ? (
+      {loading ? (
         <div className="space-y-3">
           <div className="h-24 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 animate-pulse" />
           <div className="h-40 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/40 animate-pulse" />
         </div>
       ) : null}
 
-      {notFound && !record && !loading ? (
+      {loadError && !record && !loading ? (
         <InlineAlert variant="error" title="Module not found">
           {loadError ||
             'It may not be indexed yet, or the node may be missing the Module table (0.27+).'}
         </InlineAlert>
       ) : null}
 
-      {record ? (
+      {record && !loading ? (
         <>
           <section>
             <h2 className="mb-2 text-base sm:text-lg font-semibold dark:text-white">On-chain meta</h2>
@@ -220,23 +208,7 @@ function Module() {
 
           <ModuleSource ept={record.ept} />
 
-          <section>
-            <h2 className="mb-1 text-base sm:text-lg font-semibold dark:text-white">
-              Exports (evaluated)
-            </h2>
-            <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
-              SES load result. Prefer source above for inspection without evaluation.
-            </p>
-            {exportsError ? (
-              <InlineAlert variant="warning" className="mb-3">
-                Could not evaluate exports: {exportsError}
-              </InlineAlert>
-            ) : null}
-            {exports ? <ModuleExports exports={exports} /> : null}
-            {!exports && !exportsError ? (
-              <p className="text-sm text-gray-500 dark:text-gray-400">Loading exports…</p>
-            ) : null}
-          </section>
+          <EvaluatedExports key={modSpec} modSpec={modSpec} />
         </>
       ) : null}
     </div>

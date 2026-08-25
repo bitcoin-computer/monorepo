@@ -1,8 +1,8 @@
 import { useContext } from 'react'
-import { Link } from 'react-router-dom'
 import { ComputerContext, InlineAlert } from '@bitcoin-computer/components'
-import { formatTime, getBlock, getBlockHashAtHeight, getTipHeight, truncateHex } from '../utils/rpc'
+import { fetchBlockByHeight, formatTime, getTipHeight, txIdOf } from '../utils/rpc'
 import { useAsync } from '../hooks/useAsync'
+import { HexLink } from './ui/HexLink'
 import { PageHeader } from './ui/PageHeader'
 import { DataTable, TableRow, TableSkeleton, tdClass } from './ui/Table'
 
@@ -31,17 +31,16 @@ export default function Transactions() {
 
     for (let height = from; height >= to && collected.length < MAX_ROWS; height--) {
       try {
-        const hash = await getBlockHashAtHeight(computer, height)
-        if (!hash) continue
+        const block = await fetchBlockByHeight(computer, height)
+        if (!block?.hash) continue
 
-        const block = await getBlock(computer, hash)
-        const txids = Array.isArray(block?.tx) ? block.tx.map((t) => (typeof t === 'string' ? t : t.txid)) : []
+        const txids = Array.isArray(block.tx) ? block.tx.map(txIdOf) : []
         for (let i = txids.length - 1; i >= 0 && collected.length < MAX_ROWS; i--) {
           collected.push({
             txid: txids[i],
-            blockHeight: block?.height ?? height,
-            blockHash: block?.hash || hash,
-            time: block?.time,
+            blockHeight: block.height ?? height,
+            blockHash: block.hash,
+            time: block.time,
             indexInBlock: i,
           })
         }
@@ -94,22 +93,17 @@ export default function Transactions() {
               className="hover:bg-gray-50 dark:hover:bg-gray-800/50"
             >
               <td className={`${tdClass} font-mono text-xs`}>
-                <Link
+                <HexLink
                   to={`/transactions/${row.txid}`}
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                  title={row.txid}
-                >
-                  <span className="sm:hidden">{truncateHex(row.txid, 10, 8)}</span>
-                  <span className="hidden sm:inline">{truncateHex(row.txid, 16, 12)}</span>
-                </Link>
+                  value={row.txid}
+                  mobile={[10, 8]}
+                  desktop={[16, 12]}
+                />
               </td>
               <td className={`${tdClass} tabular-nums`}>
-                <Link
-                  to={`/block/${row.blockHash}`}
-                  className="text-blue-600 dark:text-blue-400 hover:underline"
-                >
+                <HexLink to={`/block/${row.blockHash}`} value={row.blockHash}>
                   #{row.blockHeight}
-                </Link>
+                </HexLink>
               </td>
               <td className={`${tdClass} text-xs whitespace-nowrap`}>{formatTime(row.time)}</td>
             </TableRow>

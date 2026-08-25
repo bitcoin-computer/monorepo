@@ -7,7 +7,6 @@ export type ExampleMeta = {
   id: ExampleId
   label: string
   description: string
-  modes: PlaygroundMode[]
 }
 
 export const EXAMPLE_CARDS: ExampleMeta[] = [
@@ -15,25 +14,21 @@ export const EXAMPLE_CARDS: ExampleMeta[] = [
     id: 'nft',
     label: 'NFT',
     description: 'Simple non-fungible token with send',
-    modes: ['create', 'execute', 'deploy'],
   },
   {
     id: 'token',
     label: 'Token',
     description: 'Fungible token balance pattern',
-    modes: ['create', 'execute', 'deploy'],
   },
   {
     id: 'counter',
     label: 'Counter',
     description: 'Minimal state + method call',
-    modes: ['create', 'execute', 'deploy'],
   },
   {
     id: 'chat',
     label: 'Chat',
     description: 'Multi-party style contract sketch',
-    modes: ['create', 'execute', 'deploy'],
   },
 ]
 

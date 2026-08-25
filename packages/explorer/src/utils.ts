@@ -1,5 +1,13 @@
 import { isHex64 } from './utils/rpc'
 
+export function tryGet<T>(fn: () => T, fallback: T): T {
+  try {
+    return fn()
+  } catch {
+    return fallback
+  }
+}
+
 export const getValueForType = (type: string, stringValue: string) => {
   switch (type) {
     case 'number':
@@ -35,7 +43,7 @@ export const isPossibleCryptoAddress = (address: string): boolean => {
 }
 
 /** Bitcoin transaction id: 32-byte hex (64 chars). */
-export const isTxId = (value: string): boolean => Boolean(value) && isHex64(value)
+export const isTxId = isHex64
 
 /**
  * True for unambiguous public keys only.

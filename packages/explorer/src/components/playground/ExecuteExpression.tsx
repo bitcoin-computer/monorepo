@@ -1,13 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { isValidRev } from '@bitcoin-computer/components'
 import { PlaygroundWorkspace } from './PlaygroundWorkspace'
-import {
-  inputClassName,
-  Panel,
-  PlaygroundResult,
-  RemoveRowButton,
-  secondaryBtnClassName,
-} from './ui'
+import { FieldList, inputClassName, Panel, PlaygroundResult, RemoveRowButton } from './ui'
 import { usePlaygroundDraft } from './usePlaygroundDraft'
 
 interface EnvBinding {
@@ -44,6 +38,14 @@ const ExecuteExpression = (props: {
     () => !expression?.trim() || envBindings.some((arg) => !arg.name.trim()),
     [envBindings, expression],
   )
+
+  const handleBindingChange = (index: number, field: 'name' | 'value', value: string) => {
+    setEnvBindings((prev) => {
+      const next = [...prev]
+      next[index] = { ...next[index], [field]: value }
+      return next
+    })
+  }
 
   const buildEnv = () => {
     const revMap: { [key: string]: string } = {}
@@ -90,59 +92,39 @@ const ExecuteExpression = (props: {
       })}
       extra={
         <Panel title="Environment">
-          {envBindings.length === 0 ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              Bind names used in the expression to revision strings (revs).
-            </p>
-          ) : (
-            <div className="space-y-2 mb-3">
-              {envBindings.map((argument, index) => (
-                <div key={index} className="flex flex-wrap items-center gap-2">
-                  <input
-                    type="text"
-                    id={`playground-expression-argument-name-${index}`}
-                    value={argument.name}
-                    onChange={(e) =>
-                      setEnvBindings((prev) => {
-                        const next = [...prev]
-                        next[index] = { ...next[index], name: e.target.value }
-                        return next
-                      })
-                    }
-                    className={`${inputClassName} w-full sm:w-40`}
-                    placeholder="Name"
-                    required
-                  />
-                  <input
-                    type="text"
-                    id={`playground-expression-argument-${index}`}
-                    value={argument.value}
-                    onChange={(e) =>
-                      setEnvBindings((prev) => {
-                        const next = [...prev]
-                        next[index] = { ...next[index], value: e.target.value }
-                        return next
-                      })
-                    }
-                    className={`${inputClassName} min-w-[10rem] flex-1`}
-                    placeholder="Rev (txid:vout)"
-                    required
-                  />
-                  <RemoveRowButton
-                    label="Remove env binding"
-                    onClick={() => setEnvBindings((prev) => prev.filter((_, i) => i !== index))}
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() => setEnvBindings((prev) => [...prev, { name: '', value: '' }])}
-            className={secondaryBtnClassName}
+          <FieldList
+            count={envBindings.length}
+            empty="Bind names used in the expression to revision strings (revs)."
+            addLabel="Add environment variable"
+            onAdd={() => setEnvBindings((prev) => [...prev, { name: '', value: '' }])}
           >
-            Add environment variable
-          </button>
+            {envBindings.map((argument, index) => (
+              <div key={index} className="flex flex-wrap items-center gap-2">
+                <input
+                  type="text"
+                  id={`playground-expression-argument-name-${index}`}
+                  value={argument.name}
+                  onChange={(e) => handleBindingChange(index, 'name', e.target.value)}
+                  className={`${inputClassName} w-full sm:w-40`}
+                  placeholder="Name"
+                  required
+                />
+                <input
+                  type="text"
+                  id={`playground-expression-argument-${index}`}
+                  value={argument.value}
+                  onChange={(e) => handleBindingChange(index, 'value', e.target.value)}
+                  className={`${inputClassName} min-w-[10rem] flex-1`}
+                  placeholder="Rev (txid:vout)"
+                  required
+                />
+                <RemoveRowButton
+                  label="Remove env binding"
+                  onClick={() => setEnvBindings((prev) => prev.filter((_, i) => i !== index))}
+                />
+              </div>
+            ))}
+          </FieldList>
         </Panel>
       }
     />

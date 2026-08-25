@@ -5,11 +5,11 @@ import { getValueForType } from '../../utils'
 import { TypedValueInput } from './TypedValueInput'
 import { PlaygroundWorkspace } from './PlaygroundWorkspace'
 import {
+  FieldList,
   Panel,
   PlaygroundResult,
   RemoveRowButton,
   TypeSelect,
-  secondaryBtnClassName,
 } from './ui'
 import { usePlaygroundDraft } from './usePlaygroundDraft'
 import { ExampleVar } from './examples'
@@ -159,45 +159,33 @@ const CreateNew = (props: {
       }}
       extra={
         <Panel title="Constructor arguments">
-          {argumentsList.length === 0 ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
-              No parameters — add one or load an example.
-            </p>
-          ) : (
-            <div className="space-y-2 mb-3">
-              {argumentsList.map((argument, index) => (
-                <div key={index} className="flex flex-wrap items-center gap-2">
-                  <TypedValueInput
-                    id={`playground-argument-${index}`}
-                    type={argument.type}
-                    value={argument.value}
-                    onChange={(v) => handleArgumentChange(index, 'value', v)}
-                  />
-                  <TypeSelect
-                    id={`playground-dropdown-${index}`}
-                    value={argument.type}
-                    options={TYPE_OPTIONS}
-                    onChange={(option) => handleArgumentChange(index, 'type', option)}
-                  />
-                  <RemoveRowButton
-                    label="Remove argument"
-                    onClick={() =>
-                      setArgumentsList((prev) => prev.filter((_, i) => i !== index))
-                    }
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() =>
-              setArgumentsList((prev) => [...prev, { type: 'string', value: '' }])
-            }
-            className={secondaryBtnClassName}
+          <FieldList
+            count={argumentsList.length}
+            empty="No parameters — add one or load an example."
+            addLabel="Add argument"
+            onAdd={() => setArgumentsList((prev) => [...prev, { type: 'string', value: '' }])}
           >
-            Add argument
-          </button>
+            {argumentsList.map((argument, index) => (
+              <div key={index} className="flex flex-wrap items-center gap-2">
+                <TypedValueInput
+                  id={`playground-argument-${index}`}
+                  type={argument.type}
+                  value={argument.value}
+                  onChange={(v) => handleArgumentChange(index, 'value', v)}
+                />
+                <TypeSelect
+                  id={`playground-dropdown-${index}`}
+                  value={argument.type}
+                  options={TYPE_OPTIONS}
+                  onChange={(option) => handleArgumentChange(index, 'type', option)}
+                />
+                <RemoveRowButton
+                  label="Remove argument"
+                  onClick={() => setArgumentsList((prev) => prev.filter((_, i) => i !== index))}
+                />
+              </div>
+            ))}
+          </FieldList>
         </Panel>
       }
     />

@@ -58,7 +58,7 @@ export function TypedValueInput({
     <div className="flex-1 min-w-[10rem] flex flex-col gap-0.5">
       <input
         id={id}
-        type={type === 'number' ? 'text' : 'text'}
+        type="text"
         inputMode={type === 'number' || type === 'bigint' ? 'decimal' : undefined}
         value={value}
         onChange={(e) => onChange(e.target.value)}

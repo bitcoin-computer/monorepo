@@ -3,6 +3,7 @@ import { NavigateFunction, useNavigate } from 'react-router-dom'
 import { Computer } from '@bitcoin-computer/lib'
 import { ComputerContext, isValidRevString } from '@bitcoin-computer/components'
 import { isPossibleCryptoAddress, isTxId, isValidHexadecimalPublicKey } from '../utils'
+import { ChevronDownIcon, SearchIcon } from './ui/icons'
 
 export type SearchFilter = 'all' | 'tx' | 'object' | 'address' | 'pubkey' | 'module'
 
@@ -89,26 +90,6 @@ async function resolveSearch(
   navigate(`/transactions/${searchInput}`)
 }
 
-function SearchIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      className={className}
-      aria-hidden="true"
-      xmlns="http://www.w3.org/2000/svg"
-      fill="none"
-      viewBox="0 0 20 20"
-    >
-      <path
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="2"
-        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-      />
-    </svg>
-  )
-}
-
 function useSearchSubmit(filter: SearchFilter) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [busy, setBusy] = useState(false)
@@ -183,21 +164,7 @@ export function ExplorerSearch({ variant }: { variant: 'home' | 'nav' }) {
                 ))}
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5">
-                <svg
-                  className="w-3 h-3 text-gray-500"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 10 6"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 1 4 4 4-4"
-                  />
-                </svg>
+                <ChevronDownIcon className="w-3 h-3 text-gray-500" />
               </div>
             </div>
 
@@ -250,10 +217,4 @@ export function ExplorerSearch({ variant }: { variant: 'home' | 'nav' }) {
   )
 }
 
-export function NavbarSearch() {
-  return <ExplorerSearch variant="nav" />
-}
 
-export function HomeSearch() {
-  return <ExplorerSearch variant="home" />
-}
