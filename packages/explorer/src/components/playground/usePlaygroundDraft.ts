@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const PREFIX = 'bc-explorer-playground-draft-v1'
 
@@ -12,13 +12,13 @@ type DraftPayload = {
   updatedAt: number
 }
 
-function key(mode: DraftMode) {
+function storageKey(mode: DraftMode) {
   return `${PREFIX}:${mode}`
 }
 
 export function loadDraft(mode: DraftMode): DraftPayload | null {
   try {
-    const raw = localStorage.getItem(key(mode))
+    const raw = localStorage.getItem(storageKey(mode))
     if (!raw) return null
     return JSON.parse(raw) as DraftPayload
   } catch {
@@ -29,7 +29,7 @@ export function loadDraft(mode: DraftMode): DraftPayload | null {
 export function saveDraft(mode: DraftMode, payload: Omit<DraftPayload, 'updatedAt'>) {
   try {
     localStorage.setItem(
-      key(mode),
+      storageKey(mode),
       JSON.stringify({ ...payload, updatedAt: Date.now() } satisfies DraftPayload),
     )
   } catch {
@@ -39,31 +39,58 @@ export function saveDraft(mode: DraftMode, payload: Omit<DraftPayload, 'updatedA
 
 export function clearDraft(mode: DraftMode) {
   try {
-    localStorage.removeItem(key(mode))
+    localStorage.removeItem(storageKey(mode))
   } catch {
     // ignore
   }
 }
 
-/** Debounced persist of a single text field for a mode. */
-export function useDebouncedDraft(
+/**
+ * Restore a draft once (if no example is loaded), apply example source when it
+ * changes, and persist `{ field, modSpec }` on a debounce.
+ */
+export function usePlaygroundDraft(
   mode: DraftMode,
   field: 'code' | 'expression' | 'module',
-  value: string,
-  enabled = true,
+  exampleSource: string,
+  exampleLoaded: boolean,
 ) {
-  const t = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [source, setSource] = useState('')
+  const [modSpec, setModSpec] = useState<string>()
+  const [ready, setReady] = useState(false)
+  const prevExample = useRef<string | null>(null)
 
   useEffect(() => {
-    if (!enabled) return undefined
-    if (t.current) clearTimeout(t.current)
-    t.current = setTimeout(() => {
-      const prev = loadDraft(mode) || { updatedAt: 0 }
-      saveDraft(mode, { ...prev, [field]: value })
-    }, 400)
-    return () => {
-      if (t.current) clearTimeout(t.current)
+    if (ready) return
+    if (exampleSource.trim()) {
+      setSource(exampleSource)
+      setReady(true)
+      return
     }
-  }, [mode, field, value, enabled])
-}
+    const draft = loadDraft(mode)
+    const saved = draft?.[field]
+    if (typeof saved === 'string' && saved.trim()) setSource(saved)
+    if (draft?.modSpec) setModSpec(draft.modSpec)
+    setReady(true)
+  }, [exampleSource, field, mode, ready])
 
+  useEffect(() => {
+    if (prevExample.current === null) {
+      prevExample.current = exampleSource
+      return
+    }
+    if (prevExample.current === exampleSource) return
+    prevExample.current = exampleSource
+    setSource(exampleSource || '')
+  }, [exampleSource])
+
+  useEffect(() => {
+    if (!ready || exampleLoaded) return undefined
+    const t = window.setTimeout(() => {
+      saveDraft(mode, { [field]: source, modSpec })
+    }, 400)
+    return () => window.clearTimeout(t)
+  }, [exampleLoaded, field, mode, modSpec, ready, source])
+
+  return { source, setSource, modSpec, setModSpec, ready }
+}

@@ -5,29 +5,15 @@ import ExecuteExpression from './ExecuteExpression'
 import DeployModule from './DeployModule'
 import { FirstRunChecklist, useChecklist } from './FirstRunChecklist'
 import {
-  chat,
-  chatExport,
-  chatExpresion,
-  chatVars,
-  counter,
-  counterExport,
-  counterExpresion,
-  counterVars,
-  fungibleToken,
-  fungibleTokenExport,
-  fungibleTokenExpresion,
-  nft,
-  nftExport,
-  nftExpresion,
-  nftVars,
-  tokenVars,
+  EXAMPLE_CARDS,
+  ExampleId,
+  ExampleVar,
+  getExampleBundle,
+  PlaygroundMode,
 } from './examples'
 import { PlaygroundResult, ResultPanel } from './ui'
 
-type Mode = 'create' | 'execute' | 'deploy'
-type ExampleId = 'nft' | 'token' | 'counter' | 'chat' | null
-
-const MODES: { id: Mode; label: string; help: string }[] = [
+const MODES: { id: PlaygroundMode; label: string; help: string }[] = [
   {
     id: 'create',
     label: 'Create',
@@ -45,52 +31,18 @@ const MODES: { id: Mode; label: string; help: string }[] = [
   },
 ]
 
-const EXAMPLES: {
-  id: NonNullable<ExampleId>
-  label: string
-  description: string
-  modes: Mode[]
-}[] = [
-  {
-    id: 'nft',
-    label: 'NFT',
-    description: 'Simple non-fungible token with send',
-    modes: ['create', 'execute', 'deploy'],
-  },
-  {
-    id: 'token',
-    label: 'Token',
-    description: 'Fungible token balance pattern',
-    modes: ['create', 'execute', 'deploy'],
-  },
-  {
-    id: 'counter',
-    label: 'Counter',
-    description: 'Minimal state + method call',
-    modes: ['create', 'execute', 'deploy'],
-  },
-  {
-    id: 'chat',
-    label: 'Chat',
-    description: 'Multi-party style contract sketch',
-    modes: ['create', 'execute', 'deploy'],
-  },
-]
-
 const Playground = () => {
   const computer = useContext(ComputerContext)
-  const [mode, setMode] = useState<Mode>('create')
-  const [activeExample, setActiveExample] = useState<ExampleId>(null)
+  const [mode, setMode] = useState<PlaygroundMode>('create')
+  const [activeExample, setActiveExample] = useState<ExampleId | null>(null)
   const [result, setResult] = useState<PlaygroundResult | null>(null)
   const resultRef = useRef<HTMLDivElement>(null)
   const checklist = useChecklist()
 
   const [exampleCode, setExampleCode] = useState('')
-  const [exampleExpression, setExampleExpresion] = useState('')
+  const [exampleExpression, setExampleExpression] = useState('')
   const [exampleModule, setExampleModule] = useState('')
-  const [exampleVars, setExampleVars] = useState<
-    { name: string; type: string; value: string }[]
-  >([])
+  const [exampleVars, setExampleVars] = useState<ExampleVar[]>([])
 
   const loggedIn = Auth.isLoggedIn()
   let chain = ''
@@ -105,48 +57,27 @@ const Playground = () => {
   const clearExamples = () => {
     setActiveExample(null)
     setExampleCode('')
-    setExampleExpresion('')
+    setExampleExpression('')
     setExampleModule('')
     setExampleVars([])
     setResult(null)
   }
 
-  const loadExamples = (type: NonNullable<ExampleId>) => {
-    setActiveExample(type)
+  const loadExamples = (id: ExampleId) => {
+    setActiveExample(id)
     setResult(null)
     checklist.mark('pickedExample')
-    switch (type) {
-      case 'nft':
-        setExampleCode(nft)
-        setExampleExpresion(nftExpresion)
-        setExampleModule(nftExport)
-        setExampleVars(nftVars)
-        break
-      case 'token':
-        setExampleCode(fungibleToken)
-        setExampleExpresion(fungibleTokenExpresion(computer.getPublicKey()))
-        setExampleModule(fungibleTokenExport)
-        setExampleVars(tokenVars(computer.getPublicKey()))
-        break
-      case 'chat':
-        setExampleCode(chat)
-        setExampleExpresion(chatExpresion)
-        setExampleModule(chatExport)
-        setExampleVars(chatVars)
-        break
-      case 'counter':
-        setExampleCode(counter)
-        setExampleExpresion(counterExpresion)
-        setExampleModule(counterExport)
-        setExampleVars(counterVars)
-        break
-      default:
-        break
+    let publicKey = ''
+    try {
+      publicKey = computer.getPublicKey()
+    } catch {
+      // guest — token example interpolates an empty key
     }
-  }
-
-  const reportResult = (r: PlaygroundResult) => {
-    setResult(r)
+    const bundle = getExampleBundle(id, { publicKey })
+    setExampleCode(bundle.code)
+    setExampleExpression(bundle.expression)
+    setExampleModule(bundle.module)
+    setExampleVars(bundle.vars)
   }
 
   useEffect(() => {
@@ -157,61 +88,6 @@ const Playground = () => {
 
   const exampleLoaded = activeExample !== null
   const modeMeta = MODES.find((m) => m.id === mode)!
-
-  const examplesColumn = (
-    <section className="space-y-2" aria-label="Examples">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-base font-semibold dark:text-white">Examples</h2>
-        <button
-          type="button"
-          onClick={clearExamples}
-          className="text-xs font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
-        >
-          Clear
-        </button>
-      </div>
-      <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
-        {EXAMPLES.map((ex) => {
-          const selected = activeExample === ex.id
-          const suited = ex.modes.includes(mode)
-          return (
-            <button
-              key={ex.id}
-              type="button"
-              onClick={() => loadExamples(ex.id)}
-              className={`text-left rounded-lg border px-3 py-2.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
-                selected
-                  ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500 dark:bg-blue-950/40 dark:border-blue-500'
-                  : suited
-                    ? 'border-gray-200 bg-white hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600'
-                    : 'border-gray-100 bg-gray-50/80 opacity-75 hover:opacity-100 dark:border-gray-800 dark:bg-gray-900/50'
-              }`}
-            >
-              <span className="flex items-center gap-1.5 flex-wrap">
-                <span className="text-sm font-semibold text-gray-900 dark:text-white">
-                  {ex.label}
-                </span>
-                {selected ? (
-                  <span className="text-[10px] font-medium text-blue-600 dark:text-blue-300">✓</span>
-                ) : null}
-                {suited ? (
-                  <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1 py-0.5 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
-                    {mode}
-                  </span>
-                ) : null}
-              </span>
-              <span className="block mt-0.5 text-xs text-gray-500 dark:text-gray-400 leading-snug">
-                {ex.description}
-              </span>
-            </button>
-          )
-        })}
-      </div>
-      <p className="text-xs text-gray-500 dark:text-gray-400 hidden lg:block">
-        Badge shows the active mode. Drafts auto-save when not using an example.
-      </p>
-    </section>
-  )
 
   return (
     <div className="w-full space-y-4 pb-2">
@@ -252,10 +128,63 @@ const Playground = () => {
         </div>
       ) : null}
 
-      <div className="lg:hidden">{examplesColumn}</div>
-
-      <div className="lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
-        <aside className="hidden lg:block lg:col-span-3 lg:sticky lg:top-24">{examplesColumn}</aside>
+      <div className="flex flex-col gap-4 lg:grid lg:grid-cols-12 lg:gap-6 lg:items-start">
+        <aside className="lg:col-span-3 lg:sticky lg:top-24" aria-label="Examples">
+          <section className="space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <h2 className="text-base font-semibold dark:text-white">Examples</h2>
+              <button
+                type="button"
+                onClick={clearExamples}
+                className="text-xs font-medium text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"
+              >
+                Clear
+              </button>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
+              {EXAMPLE_CARDS.map((ex) => {
+                const selected = activeExample === ex.id
+                const suited = ex.modes.includes(mode)
+                return (
+                  <button
+                    key={ex.id}
+                    type="button"
+                    onClick={() => loadExamples(ex.id)}
+                    className={`text-left rounded-lg border px-3 py-2.5 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+                      selected
+                        ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500 dark:bg-blue-950/40 dark:border-blue-500'
+                        : suited
+                          ? 'border-gray-200 bg-white hover:border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:hover:border-gray-600'
+                          : 'border-gray-100 bg-gray-50/80 opacity-75 hover:opacity-100 dark:border-gray-800 dark:bg-gray-900/50'
+                    }`}
+                  >
+                    <span className="flex items-center gap-1.5 flex-wrap">
+                      <span className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {ex.label}
+                      </span>
+                      {selected ? (
+                        <span className="text-[10px] font-medium text-blue-600 dark:text-blue-300">
+                          ✓
+                        </span>
+                      ) : null}
+                      {suited ? (
+                        <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1 py-0.5 bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-300">
+                          {mode}
+                        </span>
+                      ) : null}
+                    </span>
+                    <span className="block mt-0.5 text-xs text-gray-500 dark:text-gray-400 leading-snug">
+                      {ex.description}
+                    </span>
+                  </button>
+                )
+              })}
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 hidden lg:block">
+              Badge shows the active mode. Drafts auto-save when not using an example.
+            </p>
+          </section>
+        </aside>
 
         <div className="lg:col-span-9 space-y-4 min-w-0">
           <section>
@@ -301,8 +230,7 @@ const Playground = () => {
           >
             {mode === 'create' ? (
               <CreateNew
-                computer={computer}
-                reportResult={reportResult}
+                reportResult={setResult}
                 exampleCode={exampleCode}
                 exampleVars={exampleVars}
                 exampleLoaded={exampleLoaded}
@@ -313,8 +241,7 @@ const Playground = () => {
             ) : null}
             {mode === 'execute' ? (
               <ExecuteExpression
-                computer={computer}
-                reportResult={reportResult}
+                reportResult={setResult}
                 exampleExpression={exampleExpression}
                 exampleLoaded={exampleLoaded}
                 onLoadCounter={() => loadExamples('counter')}
@@ -324,8 +251,7 @@ const Playground = () => {
             ) : null}
             {mode === 'deploy' ? (
               <DeployModule
-                computer={computer}
-                reportResult={reportResult}
+                reportResult={setResult}
                 exampleModule={exampleModule}
                 exampleLoaded={exampleLoaded}
                 onLoadCounter={() => loadExamples('counter')}
@@ -335,11 +261,7 @@ const Playground = () => {
           </div>
 
           <div aria-live="polite" aria-atomic="true">
-            <ResultPanel
-              result={result}
-              onDismiss={() => setResult(null)}
-              panelRef={resultRef}
-            />
+            <ResultPanel result={result} onDismiss={() => setResult(null)} panelRef={resultRef} />
           </div>
         </div>
       </div>

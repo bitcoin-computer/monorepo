@@ -1,60 +1,30 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Computer } from '@bitcoin-computer/lib'
-import { Auth, UtilsContext, getErrorMessage } from '@bitcoin-computer/components'
-import { CodeEditor } from './CodeEditor'
+import { useCallback, useContext, useMemo } from 'react'
 import {
-  ActionBar,
-  EditorToolbar,
-  EmptyWorkspace,
-  Panel,
-  PlaygroundResult,
-} from './ui'
-import { loadDraft, saveDraft, useDebouncedDraft } from './usePlaygroundDraft'
+  ComputerContext,
+  UtilsContext,
+  getErrorMessage,
+} from '@bitcoin-computer/components'
+import { PlaygroundWorkspace } from './PlaygroundWorkspace'
+import { PlaygroundResult } from './ui'
+import { usePlaygroundDraft } from './usePlaygroundDraft'
 
 const DeployModule = (props: {
-  computer: Computer
   reportResult: (result: PlaygroundResult) => void
   exampleModule: string
   exampleLoaded: boolean
   onLoadCounter?: () => void
   onBroadcastDone?: () => void
 }) => {
-  const {
-    computer,
-    exampleModule,
-    reportResult,
-    exampleLoaded,
-    onLoadCounter,
-    onBroadcastDone,
-  } = props
-  const [module, setModule] = useState<string>('')
-  const [restored, setRestored] = useState(false)
+  const { exampleModule, reportResult, exampleLoaded, onLoadCounter, onBroadcastDone } = props
+  const computer = useContext(ComputerContext)
   const { showLoader } = UtilsContext.useUtilsComponents()
-  const loggedIn = Auth.isLoggedIn()
+  const { source: module, setSource: setModule } = usePlaygroundDraft(
+    'deploy',
+    'module',
+    exampleModule,
+    exampleLoaded,
+  )
 
-  useEffect(() => {
-    if (restored) return
-    if (exampleModule) {
-      setRestored(true)
-      return
-    }
-    const d = loadDraft('deploy')
-    if (d?.module?.trim()) setModule(d.module)
-    setRestored(true)
-  }, [exampleModule, restored])
-
-  useEffect(() => {
-    setModule(exampleModule || '')
-  }, [exampleModule])
-
-  useDebouncedDraft('deploy', 'module', module, restored && !exampleLoaded)
-
-  useEffect(() => {
-    if (!restored || exampleLoaded) return
-    saveDraft('deploy', { module, code: undefined, expression: undefined })
-  }, [module, restored, exampleLoaded])
-
-  /** Deploy has no encode dry-run — validate export surface locally. */
   const handlePreview = useCallback(async () => {
     const src = module?.trim() || ''
     if (!src) {
@@ -102,67 +72,29 @@ const DeployModule = (props: {
   }, [computer, module, onBroadcastDone, reportResult, showLoader])
 
   const disabled = useMemo(() => !module?.trim(), [module])
-  const showEmpty = !module?.trim() && !exampleLoaded
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
-      e.preventDefault()
-      if (e.shiftKey) void handlePreview()
-      else if (loggedIn && !disabled) void handleModuleDeploy()
-    }
-  }
 
   return (
-    <div className="space-y-4">
-      {showEmpty ? <EmptyWorkspace onPickExample={onLoadCounter} /> : null}
-
-      <Panel
-        title="Module source"
-        badge={
-          exampleLoaded ? (
-            <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1.5 py-0.5 bg-blue-50 text-blue-700 dark:bg-blue-900/40 dark:text-blue-200">
-              Example loaded
-            </span>
-          ) : (
-            <span className="text-[10px] font-medium uppercase tracking-wide rounded px-1.5 py-0.5 bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300">
-              Custom
-            </span>
-          )
-        }
-        actions={
-          <EditorToolbar
-            canClear={Boolean(module?.trim())}
-            canReset={Boolean(exampleModule?.trim())}
-            onCopy={() => {
-              if (module) navigator.clipboard.writeText(module)
-            }}
-            onReset={() => setModule(exampleModule || '')}
-            onClear={() => setModule('')}
-          />
-        }
-        bodyClassName="p-2 sm:p-3"
-      >
-        <CodeEditor
-          id="module-textarea"
-          value={module}
-          onChange={setModule}
-          placeholder="export class MyContract extends Contract { … }"
-          minHeight={320}
-          onKeyDown={onKeyDown}
-          aria-label="Module source"
-        />
-      </Panel>
-
-      <ActionBar
-        primaryLabel="Deploy module"
-        onPrimary={handleModuleDeploy}
-        primaryDisabled={disabled}
-        loggedIn={loggedIn}
-        onPreview={handlePreview}
-        previewDisabled={disabled}
-        previewLabel="Validate"
-      />
-    </div>
+    <PlaygroundWorkspace
+      source={module}
+      onSourceChange={setModule}
+      exampleSource={exampleModule}
+      exampleLoaded={exampleLoaded}
+      editorTitle="Module source"
+      editorId="module-textarea"
+      placeholder="export class MyContract extends Contract { … }"
+      minHeight={320}
+      ariaLabel="Module source"
+      showModSpec={false}
+      showEffect={false}
+      primaryLabel="Deploy module"
+      disabled={disabled}
+      onLoadCounter={onLoadCounter}
+      reportResult={reportResult}
+      onBroadcastDone={onBroadcastDone}
+      onPreview={handlePreview}
+      onBroadcast={handleModuleDeploy}
+      previewLabel="Validate"
+    />
   )
 }
 

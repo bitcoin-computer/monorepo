@@ -1,75 +1,62 @@
-export const nft = `class NFT extends Contract {
-  constructor(data) {
-    super({
-      data,
-    })
-  }
-  send(to) {
-    this._owners = [to]
-  }
-}`
+export type ExampleId = 'nft' | 'token' | 'counter' | 'chat'
+export type PlaygroundMode = 'create' | 'execute' | 'deploy'
 
-export const nftExpresion = `class NFT extends Contract {
-  constructor(data) {
-    super({
-      data,
-    })
-  }
-  send(to) {
-    this._owners = [to]
-  }
+export type ExampleVar = { name: string; type: string; value: string }
+
+export type ExampleMeta = {
+  id: ExampleId
+  label: string
+  description: string
+  modes: PlaygroundMode[]
 }
-new NFT("some data")`
 
-export const nftExport = `export class NFT extends Contract {
-  constructor(data) {
-    super({
-      data,
-    })
-  }
-  send(to) {
-    this._owners = [to]
-  }
-}`
-
-export const nftVars = [
+export const EXAMPLE_CARDS: ExampleMeta[] = [
   {
-    name: 'data',
-    type: 'string',
-    value: 'some data',
+    id: 'nft',
+    label: 'NFT',
+    description: 'Simple non-fungible token with send',
+    modes: ['create', 'execute', 'deploy'],
+  },
+  {
+    id: 'token',
+    label: 'Token',
+    description: 'Fungible token balance pattern',
+    modes: ['create', 'execute', 'deploy'],
+  },
+  {
+    id: 'counter',
+    label: 'Counter',
+    description: 'Minimal state + method call',
+    modes: ['create', 'execute', 'deploy'],
+  },
+  {
+    id: 'chat',
+    label: 'Chat',
+    description: 'Multi-party style contract sketch',
+    modes: ['create', 'execute', 'deploy'],
   },
 ]
 
-export const fungibleToken = `class Token extends Contract {
-  constructor(supply, to) {
-    super({
-      tokens: supply,
-      _owners: [to],
-    })
-  }
-  send(amount, to) {
-    if (this.tokens < amount) throw new Error()
-    this.tokens -= amount
-    return new Token(amount, to)
-  }
-}`
+type ExampleCtx = { publicKey: string }
 
-export const fungibleTokenExpresion = (pubKey: string) => `class Token extends Contract {
-  constructor(supply, to) {
-    super({
-      tokens: supply,
-      _owners: [to],
-    })
-  }
-  send(amount, to) {
-    if (this.tokens < amount) throw new Error()
-    this.tokens -= amount
-    return new Token(amount, to)
-  }
+type ExampleDef = {
+  classSource: string
+  instantiate: (ctx: ExampleCtx) => string
+  vars: (ctx: ExampleCtx) => ExampleVar[]
 }
-new Token(100, "${pubKey}")`
 
-export const fungibleTokenExport = `export class Token extends Contract {
+const nftClass = `class NFT extends Contract {
+  constructor(data) {
+    super({
+      data,
+    })
+  }
+  send(to) {
+    this._owners = [to]
+  }
+}`
+
+const tokenClass = `class Token extends Contract {
   constructor(supply, to) {
     super({
       tokens: supply,
@@ -83,102 +70,80 @@ export const fungibleTokenExport = `export class Token extends Contract {
   }
 }`
 
-export const tokenVars = (pubKey: string) => [
-  {
-    name: 'supply',
-    type: 'number',
-    value: '100',
+const chatClass = `class Chat extends Contract {
+  constructor() {
+    super({ messages: [] })
+  }
+  invite(pubKey) {
+    this._owners.push(pubKey)
+  }
+  post(message) {
+    this.messages.push(message)
+  }
+}`
+
+const counterClass = `class Counter extends Contract {
+  constructor() {
+    super({ n: 0 })
+  }
+  inc() {
+    this.n += 1
+  }
+  dec() {
+    this.n -= 1
+  }
+  getVal() {
+    return this.n
+  }
+}`
+
+const EXAMPLES: Record<ExampleId, ExampleDef> = {
+  nft: {
+    classSource: nftClass,
+    instantiate: () => 'new NFT("some data")',
+    vars: () => [{ name: 'data', type: 'string', value: 'some data' }],
   },
-  {
-    name: 'to',
-    type: 'string',
-    value: pubKey,
+  token: {
+    classSource: tokenClass,
+    instantiate: ({ publicKey }) => `new Token(100, "${publicKey}")`,
+    vars: ({ publicKey }) => [
+      { name: 'supply', type: 'number', value: '100' },
+      { name: 'to', type: 'string', value: publicKey },
+    ],
   },
-]
+  chat: {
+    classSource: chatClass,
+    instantiate: () => 'new Chat()',
+    vars: () => [],
+  },
+  counter: {
+    classSource: counterClass,
+    instantiate: () => 'new Counter()',
+    vars: () => [],
+  },
+}
 
-export const chat = `class Chat extends Contract {
-  constructor() {
-    super({ messages: [] })
-  }
-  invite(pubKey) {
-    this._owners.push(pubKey)
-  }
-  post(message) {
-    this.messages.push(message)
-  }
-}`
+function asModule(classSource: string): string {
+  return classSource.replace(/^class /, 'export class ')
+}
 
-export const chatExpresion = `class Chat extends Contract {
-  constructor() {
-    super({ messages: [] })
-  }
-  invite(pubKey) {
-    this._owners.push(pubKey)
-  }
-  post(message) {
-    this.messages.push(message)
+function asExpression(classSource: string, instantiate: string): string {
+  return `${classSource}\n${instantiate}`
+}
+
+export type ExampleBundle = {
+  code: string
+  expression: string
+  module: string
+  vars: ExampleVar[]
+}
+
+export function getExampleBundle(id: ExampleId, ctx: ExampleCtx): ExampleBundle {
+  const ex = EXAMPLES[id]
+  return {
+    code: ex.classSource,
+    expression: asExpression(ex.classSource, ex.instantiate(ctx)),
+    module: asModule(ex.classSource),
+    vars: ex.vars(ctx),
   }
 }
-new Chat()`
-
-export const chatExport = `export class Chat extends Contract {
-  constructor() {
-    super({ messages: [] })
-  }
-  invite(pubKey) {
-    this._owners.push(pubKey)
-  }
-  post(message) {
-    this.messages.push(message)
-  }
-}`
-
-export const chatVars = []
-
-export const counter = `class Counter extends Contract {
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-  dec() {
-    this.n -= 1
-  }
-  getVal() {
-    return this.n
-  }
-}`
-
-export const counterExpresion = `class Counter extends Contract {
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-  dec() {
-    this.n -= 1
-  }
-  getVal() {
-    return this.n
-  }
-}
-new Counter()`
-
-export const counterExport = `export class Counter extends Contract {
-  constructor() {
-    super({ n: 0 })
-  }
-  inc() {
-    this.n += 1
-  }
-  dec() {
-    this.n -= 1
-  }
-  getVal() {
-    return this.n
-  }
-}`
-
-export const counterVars = []
