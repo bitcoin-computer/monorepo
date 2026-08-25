@@ -33,14 +33,15 @@ async getModules(q?: ModuleQuery): Promise<string[] | ModuleRecord[]>
 #### `query` (optional)
 
 {.compact}
-| Key | Description |
-| ------------- | --------------------------------------------------------------------------- |
-| verbosity | `0` (default): module specifier strings. `1`: full `ModuleRecord` rows including source (`ept`) |
-| limit | Maximum number of results |
-| offset | Number of results to skip |
-| order | Sort by node insert timestamp: `ASC` or `DESC` (default `DESC`) |
-| storageType | Filter by on-chain encoding: `multisig` or `taproot` |
-| isConfirmed | `true`: only confirmed modules; `false`: mempool only |
+
+| Key         | Description                                                                                     |
+| ----------- | ----------------------------------------------------------------------------------------------- |
+| verbosity   | `0` (default): module specifier strings. `1`: full `ModuleRecord` rows including source (`ept`) |
+| limit       | Maximum number of results                                                                       |
+| offset      | Number of results to skip                                                                       |
+| order       | Sort by node insert timestamp: `ASC` or `DESC` (default `DESC`)                                 |
+| storageType | Filter by on-chain encoding: `multisig` or `taproot`                                            |
+| isConfirmed | `true`: only confirmed modules; `false`: mempool only                                           |
 
 ### Return Value
 
@@ -81,4 +82,3 @@ for (const row of rows) {
 - [getModule](./getModule.md) — one module by specifier
 - [deploy](./deploy.md) / [load](./load.md)
 - Node [modules](../../Node/modules.md) API
-- Empty index / schema / auth: [Operate & Troubleshoot](../../Node/operations.md)

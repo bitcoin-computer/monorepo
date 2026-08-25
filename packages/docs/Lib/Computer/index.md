@@ -133,7 +133,7 @@ Still present for backward compatibility; prefer the replacements.
 
 {.compact}
 
-| Method                               | Prefer instead                                                                      |
-| ------------------------------------ | ----------------------------------------------------------------------------------- |
-| [query](./query.md)                  | [getOUTXOs](./getOUTXOs.md)                                                         |
-| [getUtxos](./getUtxos-deprecated.md) | [getUTXOs](./getUTXOs.md) with `{ address, isObject: false }` (wallet-level helper) |
+| Method                    | Prefer instead                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| [query](./query.md)       | [getOUTXOs](./getOUTXOs.md)                                                          |
+| [getUtxos](./getUtxos.md) | [getUTXOs](./getUTXOs2.md) with `{ address, isObject: false }` (wallet-level helper) |
