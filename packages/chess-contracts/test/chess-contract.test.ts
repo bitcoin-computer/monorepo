@@ -332,7 +332,7 @@ describe('ChessContract', () => {
         await black.db.wallet.restClient.mine(1)
 
         await helper.withdrawTokens(chess2.tokenIdW, chessPending._id)
-        await confirmChainTip(minter)
+        await minter.faucet(1e8)
 
         const whiteTokenFinal = await white.sync<typeof TBC777>(await white.latest(whiteToken._id))
         expect(whiteTokenFinal.amount).toBe(10n)
