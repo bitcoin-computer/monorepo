@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Computer } from '@bitcoin-computer/lib'
-import { Auth, UtilsContext } from '@bitcoin-computer/components'
-import { getErrorMessage } from '../../utils'
+import { Auth, UtilsContext, getErrorMessage } from '@bitcoin-computer/components'
 import { CodeEditor } from './CodeEditor'
 import {
   ActionBar,

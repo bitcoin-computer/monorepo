@@ -316,7 +316,6 @@ const Playground = () => {
                 computer={computer}
                 reportResult={reportResult}
                 exampleExpression={exampleExpression}
-                exampleVars={exampleVars}
                 exampleLoaded={exampleLoaded}
                 onLoadCounter={() => loadExamples('counter')}
                 onPreviewDone={() => checklist.mark('ranPreview')}

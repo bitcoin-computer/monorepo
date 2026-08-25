@@ -1,19 +1,12 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { TypeSelectionDropdown } from './common/TypeSelectionDropdown'
-import { isValidRev } from './common/utils'
+import { getErrorMessage, isValidRev } from './common/utils'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
 import { FieldError } from './InlineAlert'
 
-export const getErrorMessage = (error: any): string => {
-  if (
-    error?.response?.data?.error ===
-    'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)'
-  )
-    return 'You are not authorized to make changes to this smart object'
-  if (error?.response?.data?.error) return error?.response?.data?.error
-  return error.message ? error.message : 'Error occurred'
-}
+export { getErrorMessage }
 
 const getValueForType = (type: string, stringValue: string) => {
   switch (type) {
@@ -88,18 +81,12 @@ export const SmartObjectFunction = ({
   smartObject,
   functionsExist,
   options,
-  setFunctionResult,
-  setShow,
-  setModalTitle,
   funcName,
   embedded = false,
 }: {
   smartObject: any
   functionsExist: boolean
   options: string[]
-  setFunctionResult: React.Dispatch<any>
-  setShow: any
-  setModalTitle: React.Dispatch<React.SetStateAction<string>>
   funcName: string
   /** When true, omit outer title (parent panel already shows it) */
   embedded?: boolean
@@ -127,6 +114,7 @@ export const SmartObjectFunction = ({
   const [formError, setFormError] = useState<string | null>(null)
   const { showLoader, toast } = UtilsContext.useUtilsComponents()
   const computer = useContext(ComputerContext)
+  const navigate = useNavigate()
 
   // Keep form fields in sync if parameter list resolves after mount
   useEffect(() => {
@@ -160,21 +148,16 @@ export const SmartObjectFunction = ({
       await computer.waitForIndexed(tx.txId)
       const rev = await computer.latest(smartObject._id)
 
-      // Same toast system as Wallet / other actions (no error modal dual-path)
-      toast.success(`Method “${fnName}” executed successfully`, {
+      toast.success(`Method “${fnName}” executed. A new revision was created on chain.`, {
         title: 'Success',
+        durationMs: 8000,
         action: {
           label: 'View latest revision',
-          href: `/objects/${rev}`,
+          onClick: () => navigate(`/objects/${rev}`),
         },
       })
-      setFunctionResult({ _rev: rev })
-      setModalTitle('Success')
-      // Success modal still offers a durable link; toast is the primary signal
-      setShow(true)
     } catch (error: any) {
       const message = getErrorMessage(error)
-      // Errors: inline field + toast only (no modal — avoids dual error UIs)
       setFormError(message)
       toast.error(message, { title: 'Method call failed' })
     } finally {

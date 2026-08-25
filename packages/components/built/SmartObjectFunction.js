@@ -1,18 +1,12 @@
 import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TypeSelectionDropdown } from './common/TypeSelectionDropdown';
-import { isValidRev } from './common/utils';
+import { getErrorMessage, isValidRev } from './common/utils';
 import { UtilsContext } from './UtilsContext';
 import { ComputerContext } from './ComputerContext';
 import { FieldError } from './InlineAlert';
-export const getErrorMessage = (error) => {
-    if (error?.response?.data?.error ===
-        'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)')
-        return 'You are not authorized to make changes to this smart object';
-    if (error?.response?.data?.error)
-        return error?.response?.data?.error;
-    return error.message ? error.message : 'Error occurred';
-};
+export { getErrorMessage };
 const getValueForType = (type, stringValue) => {
     switch (type) {
         case 'number':
@@ -85,7 +79,7 @@ function resolveMethodFn(smartObject, funcName) {
     }
     return null;
 }
-export const SmartObjectFunction = ({ smartObject, functionsExist, options, setFunctionResult, setShow, setModalTitle, funcName, embedded = false, }) => {
+export const SmartObjectFunction = ({ smartObject, functionsExist, options, funcName, embedded = false, }) => {
     const parameterList = useMemo(() => {
         try {
             const fn = resolveMethodFn(smartObject, funcName);
@@ -106,6 +100,7 @@ export const SmartObjectFunction = ({ smartObject, functionsExist, options, setF
     const [formError, setFormError] = useState(null);
     const { showLoader, toast } = UtilsContext.useUtilsComponents();
     const computer = useContext(ComputerContext);
+    const navigate = useNavigate();
     // Keep form fields in sync if parameter list resolves after mount
     useEffect(() => {
         setFormState(buildInitialForm(parameterList));
@@ -133,22 +128,17 @@ export const SmartObjectFunction = ({ smartObject, functionsExist, options, setF
             await computer.broadcast(tx);
             await computer.waitForIndexed(tx.txId);
             const rev = await computer.latest(smartObject._id);
-            // Same toast system as Wallet / other actions (no error modal dual-path)
-            toast.success(`Method “${fnName}” executed successfully`, {
+            toast.success(`Method “${fnName}” executed. A new revision was created on chain.`, {
                 title: 'Success',
+                durationMs: 8000,
                 action: {
                     label: 'View latest revision',
-                    href: `/objects/${rev}`,
+                    onClick: () => navigate(`/objects/${rev}`),
                 },
             });
-            setFunctionResult({ _rev: rev });
-            setModalTitle('Success');
-            // Success modal still offers a durable link; toast is the primary signal
-            setShow(true);
         }
         catch (error) {
             const message = getErrorMessage(error);
-            // Errors: inline field + toast only (no modal — avoids dual error UIs)
             setFormError(message);
             toast.error(message, { title: 'Method call failed' });
         }

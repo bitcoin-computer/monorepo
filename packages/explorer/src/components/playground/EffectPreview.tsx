@@ -1,4 +1,4 @@
-import { toObject } from '../../utils'
+import { toObject } from '@bitcoin-computer/components'
 import { Panel, secondaryBtnClassName } from './ui'
 
 function safeStringify(value: unknown): string {

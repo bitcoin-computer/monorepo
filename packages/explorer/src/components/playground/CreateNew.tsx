@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { HiOutlineTrash } from 'react-icons/hi'
 import { Computer, Contract } from '@bitcoin-computer/lib'
-import { Auth, UtilsContext } from '@bitcoin-computer/components'
-import { TypeSelectionDropdown } from '../TypeSelectionDropdown'
-import { getErrorMessage, getValueForType, isValidRev, sleep } from '../../utils'
+import {
+  Auth,
+  UtilsContext,
+  TypeSelectionDropdown,
+  getErrorMessage,
+  isValidRev,
+  sleep,
+} from '@bitcoin-computer/components'
+import { getValueForType } from '../../utils'
 import { ModSpec } from './Modspec'
 import { CodeEditor } from './CodeEditor'
 import { TypedValueInput } from './TypedValueInput'

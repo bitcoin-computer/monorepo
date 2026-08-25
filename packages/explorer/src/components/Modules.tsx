@@ -2,25 +2,15 @@ import { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ModuleRecord } from '@bitcoin-computer/lib'
 import { ComputerContext, InlineAlert } from '@bitcoin-computer/components'
+import { formatTime, truncateRev } from '../utils/rpc'
+import { PageHeader } from './ui/PageHeader'
+import { DataTable, Pager, TableRow, TableSkeleton, tdClass } from './ui/Table'
 
 type StorageFilter = '' | 'multisig' | 'taproot'
 type ConfirmedFilter = '' | 'true' | 'false'
 type OrderFilter = 'DESC' | 'ASC'
 
 const MODULES_PER_PAGE = 20
-
-function truncateMod(mod: string, head = 8, tail = 8): string {
-  const [txId, vout] = mod.split(':')
-  if (!txId || txId.length <= head + tail) return mod
-  return `${txId.slice(0, head)}…${txId.slice(-tail)}:${vout ?? '0'}`
-}
-
-function formatTimestamp(timestamp?: string | number): string {
-  if (timestamp === undefined || timestamp === null || timestamp === '') return '—'
-  const date = new Date(timestamp)
-  if (Number.isNaN(date.getTime())) return String(timestamp)
-  return date.toLocaleString()
-}
 
 function StatusCell({ row }: { row: ModuleRecord }) {
   if (row.blockHash) {
@@ -38,19 +28,6 @@ function StatusCell({ row }: { row: ModuleRecord }) {
 
 function selectClassName() {
   return 'bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-blue-500 focus:border-blue-500 block py-1.5 px-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
-}
-
-function ModulesSkeleton() {
-  return (
-    <div className="rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-      {Array.from({ length: 6 }, (_, i) => (
-        <div
-          key={i}
-          className="h-11 border-b last:border-0 border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 animate-pulse"
-        />
-      ))}
-    </div>
-  )
 }
 
 export default function Modules() {
@@ -121,70 +98,58 @@ export default function Modules() {
     setter(value)
   }
 
-  const handleNext = () => {
-    setPageNum((n) => n + 1)
-  }
-
-  const handlePrev = () => {
-    setPageNum((n) => Math.max(0, n - 1))
-  }
-
   return (
-    <div className="relative overflow-x-auto w-full">
-      <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-3">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Modules</h1>
-          <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-            Deployed on-chain module sources
-          </p>
-        </div>
-        <div className="flex flex-wrap items-end gap-2">
-          <label className="flex flex-col gap-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
-            Storage
-            <select
-              className={selectClassName()}
-              value={storageType}
-              onChange={(e) => handleFilterChange(setStorageType, e.target.value as StorageFilter)}
-            >
-              <option value="">All</option>
-              <option value="multisig">multisig</option>
-              <option value="taproot">taproot</option>
-            </select>
-          </label>
-          <label className="flex flex-col gap-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
-            Status
-            <select
-              className={selectClassName()}
-              value={isConfirmed}
-              onChange={(e) =>
-                handleFilterChange(setIsConfirmed, e.target.value as ConfirmedFilter)
-              }
-            >
-              <option value="">All</option>
-              <option value="true">Confirmed</option>
-              <option value="false">Unconfirmed</option>
-            </select>
-          </label>
-          <label className="flex flex-col gap-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
-            Order
-            <select
-              className={selectClassName()}
-              value={order}
-              onChange={(e) => handleFilterChange(setOrder, e.target.value as OrderFilter)}
-            >
-              <option value="DESC">Newest first</option>
-              <option value="ASC">Oldest first</option>
-            </select>
-          </label>
-        </div>
-      </div>
+    <div className="w-full space-y-4">
+      <PageHeader
+        title="Modules"
+        subtitle="Deployed on-chain module sources"
+        actions={
+          <div className="flex flex-wrap items-end gap-2">
+            <label className="flex flex-col gap-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
+              Storage
+              <select
+                className={selectClassName()}
+                value={storageType}
+                onChange={(e) => handleFilterChange(setStorageType, e.target.value as StorageFilter)}
+              >
+                <option value="">All</option>
+                <option value="multisig">multisig</option>
+                <option value="taproot">taproot</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
+              Status
+              <select
+                className={selectClassName()}
+                value={isConfirmed}
+                onChange={(e) =>
+                  handleFilterChange(setIsConfirmed, e.target.value as ConfirmedFilter)
+                }
+              >
+                <option value="">All</option>
+                <option value="true">Confirmed</option>
+                <option value="false">Unconfirmed</option>
+              </select>
+            </label>
+            <label className="flex flex-col gap-0.5 text-[11px] font-medium text-gray-600 dark:text-gray-300">
+              Order
+              <select
+                className={selectClassName()}
+                value={order}
+                onChange={(e) => handleFilterChange(setOrder, e.target.value as OrderFilter)}
+              >
+                <option value="DESC">Newest first</option>
+                <option value="ASC">Oldest first</option>
+              </select>
+            </label>
+          </div>
+        }
+      />
 
-      {listLoading && rows.length === 0 ? <ModulesSkeleton /> : null}
+      {listLoading && rows.length === 0 ? <TableSkeleton /> : null}
 
       {listError && !listLoading ? (
-        <InlineAlert variant="error" className="mb-3">
-          {listError}
-        </InlineAlert>
+        <InlineAlert variant="error">{listError}</InlineAlert>
       ) : null}
 
       {!listLoading && showEmpty ? (
@@ -197,125 +162,59 @@ export default function Modules() {
 
       {!listLoading && !listError && !showEmpty && rows.length > 0 ? (
         <>
-          <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
-            <thead className="text-xs text-gray-600 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
-              <tr>
-                <th scope="col" className="px-3 py-2">
-                  Module
-                </th>
-                <th scope="col" className="px-3 py-2">
-                  Storage
-                </th>
-                <th scope="col" className="px-3 py-2">
-                  Status
-                </th>
-                <th scope="col" className="px-3 py-2">
-                  Indexed
-                </th>
-                <th scope="col" className="px-3 py-2">
-                  Source preview
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr
-                  key={row.mod}
-                  className="bg-white border-b last:border-0 dark:bg-gray-900 dark:border-gray-800"
+          <DataTable
+            columns={[
+              { key: 'mod', label: 'Module' },
+              { key: 'storage', label: 'Storage' },
+              { key: 'status', label: 'Status' },
+              { key: 'indexed', label: 'Indexed' },
+              { key: 'preview', label: 'Source preview' },
+            ]}
+          >
+            {rows.map((row) => (
+              <TableRow key={row.mod}>
+                <th
+                  scope="row"
+                  className={`${tdClass} font-medium text-gray-900 whitespace-nowrap dark:text-white`}
                 >
-                  <th
-                    scope="row"
-                    className="px-3 py-2 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                  <Link
+                    to={`/modules/${row.mod}`}
+                    title={row.mod}
+                    className="font-medium text-blue-600 dark:text-blue-500 hover:underline font-mono text-xs"
                   >
-                    <Link
-                      to={`/modules/${row.mod}`}
-                      title={row.mod}
-                      className="font-medium text-blue-600 dark:text-blue-500 hover:underline font-mono text-xs"
-                    >
-                      {truncateMod(row.mod)}
-                    </Link>
-                  </th>
-                  <td className="px-3 py-2">
-                    <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
-                      {row.storageType}
-                    </span>
-                  </td>
-                  <td className="px-3 py-2 text-xs">
-                    <StatusCell row={row} />
-                  </td>
-                  <td className="px-3 py-2 whitespace-nowrap text-xs">
-                    {formatTimestamp(row.timestamp)}
-                  </td>
-                  <td className="px-3 py-2 max-w-xs">
-                    <span
-                      className="block truncate font-mono text-xs text-gray-600 dark:text-gray-300"
-                      title={row.ept}
-                    >
-                      {row.ept.replace(/\s+/g, ' ').slice(0, 80)}
-                      {row.ept.length > 80 ? '…' : ''}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    {truncateRev(row.mod)}
+                  </Link>
+                </th>
+                <td className={tdClass}>
+                  <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[11px] font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                    {row.storageType}
+                  </span>
+                </td>
+                <td className={`${tdClass} text-xs`}>
+                  <StatusCell row={row} />
+                </td>
+                <td className={`${tdClass} whitespace-nowrap text-xs`}>
+                  {formatTime(row.timestamp)}
+                </td>
+                <td className={`${tdClass} max-w-xs`}>
+                  <span
+                    className="block truncate font-mono text-xs text-gray-600 dark:text-gray-300"
+                    title={row.ept}
+                  >
+                    {row.ept.replace(/\s+/g, ' ').slice(0, 80)}
+                    {row.ept.length > 80 ? '…' : ''}
+                  </span>
+                </td>
+              </TableRow>
+            ))}
+          </DataTable>
 
-          {rows.length > 0 && (
-            <nav className="flex items-center justify-between p-4" aria-label="Table navigation">
-              <ul className="inline-flex items-center -space-x-px">
-                <li>
-                  <button
-                    type="button"
-                    disabled={!isPrevAvailable}
-                    onClick={handlePrev}
-                    className="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    <span className="sr-only">Previous</span>
-                    <svg
-                      className="w-2.5 h-2.5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 6 10"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 1 1 5l4 4"
-                      />
-                    </svg>
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    disabled={!isNextAvailable}
-                    onClick={handleNext}
-                    className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 disabled:opacity-40 disabled:cursor-not-allowed dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-                  >
-                    <span className="sr-only">Next</span>
-                    <svg
-                      className="w-2.5 h-2.5"
-                      aria-hidden="true"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 6 10"
-                    >
-                      <path
-                        stroke="currentColor"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="m1 9 4-4-4-4"
-                      />
-                    </svg>
-                  </button>
-                </li>
-              </ul>
-            </nav>
-          )}
+          <Pager
+            prevDisabled={!isPrevAvailable}
+            nextDisabled={!isNextAvailable}
+            onPrev={() => setPageNum((n) => Math.max(0, n - 1))}
+            onNext={() => setPageNum((n) => n + 1)}
+          />
         </>
       ) : null}
     </div>

@@ -3,14 +3,11 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import reactStringReplace from 'react-string-replace'
 import { HiOutlineClipboard, HiCheck } from 'react-icons/hi'
 import { capitalizeFirstLetter, isValidRevString, toObject } from './common/utils'
-import { Modal } from './Modal'
-import { FunctionResultModalContent } from './common/SmartCallExecutionResult'
 import { methodNamesFrom, SmartObjectFunctions } from './SmartObjectFunctions'
 import { ComputerContext } from './ComputerContext'
 import { InlineAlert } from './InlineAlert'
 
 const keywords = ['_id', '_rev', '_owners', '_root', '_satoshis']
-const modalId = 'smart-object-info-modal'
 /** Safety cap when walking first → next → … for the timeline */
 const MAX_TIMELINE_REVS = 100
 
@@ -647,19 +644,8 @@ function Component({ title }: { title?: string }) {
   const [ancestorTxIds, setAncestorTxIds] = useState<string[]>([])
   const [timelineLoading, setTimelineLoading] = useState(true)
   const [functionsExist, setFunctionsExist] = useState(false)
-  const [functionResult, setFunctionResult] = useState<any>({})
   const [loadError, setLoadError] = useState<string | null>(null)
   const options = ['object', 'string', 'number', 'bigint', 'boolean', 'undefined', 'symbol']
-
-  const [modalTitle, setModalTitle] = useState('')
-
-  const setShow: any = (flag: boolean) => {
-    if (flag) {
-      Modal.get(modalId).show()
-    } else {
-      Modal.get(modalId).hide()
-    }
-  }
 
   useEffect(() => {
     if (!rev) return
@@ -739,8 +725,7 @@ function Component({ title }: { title?: string }) {
   const loading = !smartObject && !loadError
 
   return (
-    <>
-      <div className="w-full space-y-5">
+    <div className="w-full space-y-5">
         <header>
           <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
             Smart object
@@ -832,9 +817,6 @@ function Component({ title }: { title?: string }) {
               smartObject={smartObject}
               functionsExist={functionsExist}
               options={options}
-              setFunctionResult={setFunctionResult}
-              setShow={setShow}
-              setModalTitle={setModalTitle}
             />
           </>
         ) : null}
@@ -850,15 +832,8 @@ function Component({ title }: { title?: string }) {
           ancestorTxIds={ancestorTxIds}
         />
 
-        {smartObject ? <MetaDataPanel smartObject={smartObject} /> : null}
-      </div>
-      <Modal.Component
-        title={modalTitle}
-        content={FunctionResultModalContent}
-        contentData={{ functionResult }}
-        id={modalId}
-      />
-    </>
+      {smartObject ? <MetaDataPanel smartObject={smartObject} /> : null}
+    </div>
   )
 }
 

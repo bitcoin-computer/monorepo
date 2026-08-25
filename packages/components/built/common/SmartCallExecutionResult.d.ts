@@ -1,6 +1,6 @@
 /**
- * Success / result body for smart-call modals.
- * Errors from object method calls use toast + FieldError instead (see SmartObjectFunction).
+ * Success / result body for smart-call modals (playground and other callers).
+ * Object method calls on the explorer objects page use toast only (see SmartObjectFunction).
  * Styling aligns with InlineAlert success / error variants.
  */
 export declare function FunctionResultModalContent({ functionResult }: any): import("react").JSX.Element;

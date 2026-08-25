@@ -1,4 +1,3 @@
-import './App.css'
 import { useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import { initFlowbite } from 'flowbite'
@@ -67,7 +66,6 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <span className="bg-gray-900/50 dark:bg-gray-900/80 z-30 inset-0 sr-only"></span>
       <UtilsContext.UtilsProvider>
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 
 const PREFIX = 'bc-explorer-playground-draft-v1'
 
@@ -67,29 +67,3 @@ export function useDebouncedDraft(
   }, [mode, field, value, enabled])
 }
 
-export function useRestoreDraftOnce(
-  mode: DraftMode,
-  field: 'code' | 'expression' | 'module',
-  setValue: (v: string) => void,
-  skip: boolean,
-) {
-  const done = useRef(false)
-  useEffect(() => {
-    if (done.current || skip) return
-    const d = loadDraft(mode)
-    const v = d?.[field]
-    if (typeof v === 'string' && v.trim()) {
-      setValue(v)
-    }
-    done.current = true
-  }, [mode, field, setValue, skip])
-}
-
-export function useClearDraftOnExample(mode: DraftMode, exampleLoaded: boolean) {
-  const clear = useCallback(() => {
-    if (exampleLoaded) clearDraft(mode)
-  }, [exampleLoaded, mode])
-  useEffect(() => {
-    clear()
-  }, [clear])
-}

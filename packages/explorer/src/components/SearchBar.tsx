@@ -1,13 +1,8 @@
 import { FormEvent, useContext, useRef, useState } from 'react'
 import { NavigateFunction, useNavigate } from 'react-router-dom'
 import { Computer } from '@bitcoin-computer/lib'
-import { ComputerContext } from '@bitcoin-computer/components'
-import {
-  isPossibleCryptoAddress,
-  isTxId,
-  isValidHexadecimalPublicKey,
-  isValidRevString,
-} from '../utils'
+import { ComputerContext, isValidRevString } from '@bitcoin-computer/components'
+import { isPossibleCryptoAddress, isTxId, isValidHexadecimalPublicKey } from '../utils'
 
 export type SearchFilter = 'all' | 'tx' | 'object' | 'address' | 'pubkey' | 'module'
 
@@ -280,6 +275,4 @@ export function HomeSearch() {
   )
 }
 
-/** @deprecated Use NavbarSearch or HomeSearch */
-export const ExplorerSearch = HomeSearch
-export const SearchBar = NavbarSearch
+

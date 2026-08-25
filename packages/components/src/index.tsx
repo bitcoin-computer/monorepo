@@ -28,6 +28,7 @@ export { FunctionResultModalContent } from './common/SmartCallExecutionResult'
 export { Drawer, DrawerComponent, ShowDrawer } from './Drawer'
 export { Wallet } from './Wallet'
 export { Card } from './Card'
+export { TypeSelectionDropdown } from './common/TypeSelectionDropdown'
 export * from './common/utils'
 export {
   getSpendableUtxosTotalSatoshis,

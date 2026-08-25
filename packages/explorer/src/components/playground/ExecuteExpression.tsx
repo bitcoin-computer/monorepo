@@ -1,8 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { HiOutlineTrash } from 'react-icons/hi'
 import { Computer } from '@bitcoin-computer/lib'
-import { Auth, UtilsContext } from '@bitcoin-computer/components'
-import { getErrorMessage, isValidRev } from '../../utils'
+import { Auth, UtilsContext, getErrorMessage, isValidRev } from '@bitcoin-computer/components'
 import { ModSpec } from './Modspec'
 import { CodeEditor } from './CodeEditor'
 import { EffectPanel, EffectPreviewData } from './EffectPreview'
@@ -27,7 +26,6 @@ const ExecuteExpression = (props: {
   computer: Computer
   reportResult: (result: PlaygroundResult) => void
   exampleExpression: string
-  exampleVars: { name: string; type: string }[]
   exampleLoaded: boolean
   onLoadCounter?: () => void
   onPreviewDone?: () => void

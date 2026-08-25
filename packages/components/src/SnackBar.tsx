@@ -126,7 +126,10 @@ export function Toast({ item, onDismiss }: { item: ToastItem; onDismiss: (id: st
             ) : (
               <button
                 type="button"
-                onClick={action.onClick}
+                onClick={() => {
+                  action.onClick?.()
+                  onDismiss(id)
+                }}
                 className="mt-1 text-xs font-medium underline underline-offset-2 opacity-90 hover:opacity-100"
               >
                 {action.label}

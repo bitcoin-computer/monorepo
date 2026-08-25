@@ -1,42 +1,17 @@
 import { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ModuleRecord } from '@bitcoin-computer/lib'
-import { ComputerContext, InlineAlert } from '@bitcoin-computer/components'
-import { capitalizeFirstLetter, getErrorMessage } from '../utils'
-import { Card } from './Card'
+import {
+  Card,
+  ComputerContext,
+  InlineAlert,
+  capitalizeFirstLetter,
+  getErrorMessage,
+} from '@bitcoin-computer/components'
+import { formatTime } from '../utils/rpc'
 import { ModuleSource } from './ModuleSource'
-
-function CopyButton({ text, label = 'Copy' }: { text: string; label?: string }) {
-  const [copied, setCopied] = useState(false)
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1500)
-    } catch {
-      // ignore
-    }
-  }
-
-  return (
-    <button
-      type="button"
-      onClick={handleCopy}
-      className="text-sm font-medium text-blue-600 dark:text-blue-500 hover:underline px-1"
-      aria-label={label}
-    >
-      {copied ? 'Copied' : label}
-    </button>
-  )
-}
-
-function formatTimestamp(timestamp?: string | number): string {
-  if (timestamp === undefined || timestamp === null || timestamp === '') return '—'
-  const date = new Date(timestamp)
-  if (Number.isNaN(date.getTime())) return String(timestamp)
-  return date.toLocaleString()
-}
+import { CopyButton } from './ui/CopyButton'
+import { PageHeader } from './ui/PageHeader'
 
 function ModuleMeta({ record }: { record: ModuleRecord }) {
   const txId = record.mod.split(':')[0]
@@ -82,7 +57,7 @@ function ModuleMeta({ record }: { record: ModuleRecord }) {
       </div>
       <div>
         <dt className="text-gray-500 dark:text-gray-400">Indexed at</dt>
-        <dd className="mt-0.5 dark:text-gray-200">{formatTimestamp(record.timestamp)}</dd>
+        <dd className="mt-0.5 dark:text-gray-200">{formatTime(record.timestamp)}</dd>
       </div>
       <div className="sm:col-span-2">
         <dt className="text-gray-500 dark:text-gray-400">Transaction</dt>
@@ -118,7 +93,9 @@ function ModuleExports({ exports }: { exports: Record<string, unknown> }) {
         let content: string
         try {
           content =
-            value !== null && value !== undefined && typeof (value as { toString?: () => string }).toString === 'function'
+            value !== null &&
+            value !== undefined &&
+            typeof (value as { toString?: () => string }).toString === 'function'
               ? (value as { toString: () => string }).toString()
               : String(value)
         } catch {
@@ -193,34 +170,31 @@ function Module() {
   if (!modSpec) {
     return (
       <div className="w-full">
-        <h1 className="mb-1 text-xl sm:text-2xl font-semibold dark:text-white">Module</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400">Missing module specifier.</p>
+        <PageHeader title="Module" subtitle="Missing module specifier." />
       </div>
     )
   }
 
   return (
     <div className="w-full relative space-y-4">
-      <div className="flex flex-wrap items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
-            Module
-          </p>
-          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Detail</h1>
-        </div>
-        <Link
-          to="/modules"
-          className="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-        >
-          ← All modules
-        </Link>
-      </div>
+      <PageHeader
+        eyebrow="Module"
+        title="Detail"
+        actions={
+          <Link
+            to="/modules"
+            className="text-xs sm:text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            ← All modules
+          </Link>
+        }
+      />
 
       <div className="flex flex-wrap items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3 py-2">
         <p className="text-xs sm:text-sm font-mono text-gray-700 dark:text-gray-300 break-all flex-1 min-w-0">
           {modSpec}
         </p>
-        <CopyButton text={modSpec} label="Copy" />
+        <CopyButton text={modSpec} label="Copy" className="text-sm px-1" />
       </div>
 
       {loading && !record ? (

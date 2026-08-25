@@ -1,4 +1,4 @@
-import { CSSProperties, ReactNode, RefObject } from 'react'
+import { ReactNode, RefObject } from 'react'
 import { Link } from 'react-router-dom'
 import { Modal } from '@bitcoin-computer/components'
 
@@ -309,10 +309,3 @@ export function ResultPanel({
     </div>
   )
 }
-
-export const editorTabStyle = {
-  tabSize: 2,
-  MozTabSize: 2,
-  OTabSize: 2,
-  WebkitTabSize: 2,
-} as CSSProperties

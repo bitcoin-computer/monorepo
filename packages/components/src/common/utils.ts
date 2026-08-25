@@ -71,6 +71,16 @@ export const sleep = (ms: number): Promise<void> =>
     setTimeout(resolve, ms)
   })
 
+export const getErrorMessage = (error: any): string => {
+  if (
+    error?.response?.data?.error ===
+    'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)'
+  )
+    return 'You are not authorized to make changes to this smart object'
+  if (error?.response?.data?.error) return error?.response?.data?.error
+  return error.message ? error.message : 'Error occurred'
+}
+
 export function getEnv(name: string) {
   return (
     (typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||

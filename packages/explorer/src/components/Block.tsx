@@ -2,12 +2,14 @@ import { useContext, useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ComputerContext } from '@bitcoin-computer/components'
 import {
-  formatUnixTime,
+  formatTime,
   isBlockHash,
   isBlockHeight,
   truncateHex,
   unwrapRpcResult,
 } from '../utils/rpc'
+import { PageHeader } from './ui/PageHeader'
+import { DataTable, TableRow, tdClass } from './ui/Table'
 
 type BlockData = {
   hash: string
@@ -86,9 +88,42 @@ async function resolveNeighbors(
   return { prevHash, nextHash }
 }
 
+function NeighborNav({
+  prevHash,
+  nextHash,
+}: {
+  prevHash?: string
+  nextHash?: string
+}) {
+  const navBtn =
+    'inline-flex items-center justify-center px-3 h-9 text-sm font-medium border rounded-lg transition'
+  const navEnabled =
+    'bg-white text-gray-900 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-700'
+  const navDisabled =
+    'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed pointer-events-none dark:bg-gray-800 dark:text-gray-500 dark:border-gray-700'
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      {prevHash ? (
+        <Link to={`/block/${prevHash}`} className={`${navBtn} ${navEnabled}`} title={prevHash}>
+          ← Previous
+        </Link>
+      ) : (
+        <span className={`${navBtn} ${navDisabled}`}>← Previous</span>
+      )}
+      {nextHash ? (
+        <Link to={`/block/${nextHash}`} className={`${navBtn} ${navEnabled}`} title={nextHash}>
+          Next →
+        </Link>
+      ) : (
+        <span className={`${navBtn} ${navDisabled}`}>Next →</span>
+      )}
+    </div>
+  )
+}
+
 function Block() {
-  const params = useParams<{ id?: string; block?: string }>()
-  const rawId = params.id || params.block || ''
+  const { id: rawId = '' } = useParams<{ id?: string }>()
   const computer = useContext(ComputerContext)
   const [blockData, setBlockData] = useState<BlockData | null>(null)
   const [prevHash, setPrevHash] = useState<string | undefined>()
@@ -148,31 +183,20 @@ function Block() {
 
   const txs = (blockData?.tx || []).map(txIdOf)
 
-  const navBtn =
-    'inline-flex items-center justify-center px-3 h-9 text-sm font-medium border rounded-lg transition'
-  const navEnabled =
-    'bg-white text-gray-900 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-700'
-  const navDisabled =
-    'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed pointer-events-none dark:bg-gray-800 dark:text-gray-500 dark:border-gray-700'
-
   return (
     <div className="w-full space-y-4">
-      <header className="flex flex-wrap items-start justify-between gap-2">
-        <div>
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
-            Block
-          </p>
-          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">
-            {blockData?.height != null ? `#${blockData.height}` : 'Detail'}
-          </h1>
-        </div>
-        <Link
-          to="/blocks"
-          className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
-        >
-          ← All blocks
-        </Link>
-      </header>
+      <PageHeader
+        eyebrow="Block"
+        title={blockData?.height != null ? `#${blockData.height}` : 'Detail'}
+        actions={
+          <Link
+            to="/blocks"
+            className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            ← All blocks
+          </Link>
+        }
+      />
 
       {loading ? (
         <div className="animate-pulse space-y-3">
@@ -191,22 +215,7 @@ function Block() {
 
       {blockData && !loading ? (
         <>
-          <div className="flex flex-wrap gap-2">
-            {prevHash ? (
-              <Link to={`/block/${prevHash}`} className={`${navBtn} ${navEnabled}`} title={prevHash}>
-                ← Previous
-              </Link>
-            ) : (
-              <span className={`${navBtn} ${navDisabled}`}>← Previous</span>
-            )}
-            {nextHash ? (
-              <Link to={`/block/${nextHash}`} className={`${navBtn} ${navEnabled}`} title={nextHash}>
-                Next →
-              </Link>
-            ) : (
-              <span className={`${navBtn} ${navDisabled}`}>Next →</span>
-            )}
-          </div>
+          <NeighborNav prevHash={prevHash} nextHash={nextHash} />
 
           <dl className="text-gray-900 dark:text-gray-100 divide-y divide-gray-200 dark:divide-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3">
             <div className="flex flex-col py-2.5">
@@ -227,7 +236,7 @@ function Block() {
               <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
                 Time
               </dt>
-              <dd className="text-sm font-medium">{formatUnixTime(blockData.time)}</dd>
+              <dd className="text-sm font-medium">{formatTime(blockData.time)}</dd>
             </div>
             <div className="flex flex-col py-2.5">
               <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -259,65 +268,30 @@ function Block() {
             <h2 className="text-base sm:text-lg font-semibold dark:text-white mb-2">
               Transactions
             </h2>
-            <div className="relative overflow-x-auto rounded-lg border border-gray-200 dark:border-gray-700">
-              <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-600 uppercase bg-gray-50 dark:bg-gray-800 dark:text-gray-300">
-                  <tr>
-                    <th scope="col" className="px-3 py-2">
-                      #
-                    </th>
-                    <th scope="col" className="px-3 py-2">
-                      Transaction ID
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {txs.map((txid, i) => (
-                    <tr
-                      key={txid}
-                      className="bg-white border-b last:border-0 dark:bg-gray-900 dark:border-gray-800"
+            <DataTable
+              columns={[
+                { key: 'i', label: '#' },
+                { key: 'txid', label: 'Transaction ID' },
+              ]}
+              empty={txs.length === 0 ? 'No transactions' : undefined}
+            >
+              {txs.map((txid, i) => (
+                <TableRow key={txid}>
+                  <td className={`${tdClass} tabular-nums text-xs text-gray-500`}>{i}</td>
+                  <td className={`${tdClass} font-mono text-xs`}>
+                    <Link
+                      to={`/transactions/${txid}`}
+                      className="font-medium text-blue-600 dark:text-blue-400 hover:underline break-all"
+                      title={txid}
                     >
-                      <td className="px-3 py-2 tabular-nums text-xs text-gray-500">{i}</td>
-                      <td className="px-3 py-2 font-mono text-xs">
-                        <Link
-                          to={`/transactions/${txid}`}
-                          className="font-medium text-blue-600 dark:text-blue-400 hover:underline break-all"
-                          title={txid}
-                        >
-                          <span className="sm:hidden">{truncateHex(txid, 12, 10)}</span>
-                          <span className="hidden sm:inline">{txid}</span>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                  {txs.length === 0 ? (
-                    <tr>
-                      <td colSpan={2} className="px-3 py-4 text-center text-sm text-gray-500">
-                        No transactions
-                      </td>
-                    </tr>
-                  ) : null}
-                </tbody>
-              </table>
-            </div>
+                      <span className="sm:hidden">{truncateHex(txid, 12, 10)}</span>
+                      <span className="hidden sm:inline">{txid}</span>
+                    </Link>
+                  </td>
+                </TableRow>
+              ))}
+            </DataTable>
           </section>
-
-          <div className="flex flex-wrap gap-2">
-            {prevHash ? (
-              <Link to={`/block/${prevHash}`} className={`${navBtn} ${navEnabled}`} title={prevHash}>
-                ← Previous
-              </Link>
-            ) : (
-              <span className={`${navBtn} ${navDisabled}`}>← Previous</span>
-            )}
-            {nextHash ? (
-              <Link to={`/block/${nextHash}`} className={`${navBtn} ${navEnabled}`} title={nextHash}>
-                Next →
-              </Link>
-            ) : (
-              <span className={`${navBtn} ${navDisabled}`}>Next →</span>
-            )}
-          </div>
         </>
       ) : null}
     </div>

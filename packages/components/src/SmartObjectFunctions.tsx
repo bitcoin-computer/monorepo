@@ -109,16 +109,10 @@ export const SmartObjectFunctions = ({
   smartObject,
   functionsExist,
   options,
-  setFunctionResult,
-  setShow,
-  setModalTitle,
 }: {
   smartObject: any
   functionsExist: boolean
   options: string[]
-  setFunctionResult: React.Dispatch<any>
-  setShow: any
-  setModalTitle: React.Dispatch<React.SetStateAction<string>>
 }) => {
   const methods = useMemo(() => methodNamesFrom(smartObject), [smartObject])
   const [selected, setSelected] = useState<string>('')
@@ -251,9 +245,6 @@ export const SmartObjectFunctions = ({
             smartObject={smartObject}
             functionsExist
             options={options}
-            setFunctionResult={setFunctionResult}
-            setShow={setShow}
-            setModalTitle={setModalTitle}
             embedded
           />
         </div>

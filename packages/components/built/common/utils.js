@@ -46,6 +46,14 @@ export function isValidRev(value) {
 export const sleep = (ms) => new Promise((resolve) => {
     setTimeout(resolve, ms);
 });
+export const getErrorMessage = (error) => {
+    if (error?.response?.data?.error ===
+        'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)')
+        return 'You are not authorized to make changes to this smart object';
+    if (error?.response?.data?.error)
+        return error?.response?.data?.error;
+    return error.message ? error.message : 'Error occurred';
+};
 export function getEnv(name) {
     return ((typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||
         (import.meta.env && import.meta.env[`VITE_${name}`]));

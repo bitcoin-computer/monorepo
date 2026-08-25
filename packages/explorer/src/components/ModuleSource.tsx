@@ -1,21 +1,10 @@
-import { useState } from 'react'
+import { CopyButton } from './ui/CopyButton'
 
 /**
  * Read-only monospace panel for indexed module source (`ept`).
  */
 export function ModuleSource({ ept }: { ept: string }) {
-  const [copied, setCopied] = useState(false)
   const lineCount = ept.length === 0 ? 0 : ept.split('\n').length
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(ept)
-      setCopied(true)
-      window.setTimeout(() => setCopied(false), 1500)
-    } catch {
-      // Clipboard may be unavailable in some contexts; ignore.
-    }
-  }
 
   return (
     <section className="w-full">
@@ -26,14 +15,7 @@ export function ModuleSource({ ept }: { ept: string }) {
             {lineCount} {lineCount === 1 ? 'line' : 'lines'}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="shrink-0 text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline"
-          aria-label="Copy module source"
-        >
-          {copied ? 'Copied' : 'Copy'}
-        </button>
+        <CopyButton text={ept} label="Copy" />
       </div>
       <div className="block max-h-[60vh] overflow-auto rounded-lg border border-gray-200 bg-white dark:border-gray-700 dark:bg-gray-800">
         <pre className="p-3 text-xs font-mono whitespace-pre text-gray-800 dark:text-gray-200 leading-relaxed">
