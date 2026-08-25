@@ -464,8 +464,6 @@ export type TXORecord = {
   previous?: string
   blockHash?: string
   blockHeight?: number
-  lteBlockHeight?: number
-  gteBlockHeight?: number
   blockIndex?: number
   timestamp?: number
 }
