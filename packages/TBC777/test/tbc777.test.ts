@@ -1168,6 +1168,8 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       expect(whiteToken._rev).eq(await white.latest(whiteToken._rev))
       expect(whiteToken._owners).deep.eq([white.getPublicKey()])
 
+      await minter.faucet(1e8)
+
       await whiteToken.withdraw(chess2._rev as Rev)
       expect(whiteToken.amount).eq(16n)
     })

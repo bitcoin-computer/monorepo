@@ -37,6 +37,10 @@ A Bitcoin Computer Node also indexes deploys in its `Module` table. To discover 
 
 Module locations are revs of the form `txId:outputIndex`. Inside a contract, the module’s deploy transaction must be **confirmed**; an unconfirmed deploy invalidates the evaluation. Off-chain `computer.load` may still resolve mempool deploys for development. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
 
+### Inside smart contracts (`InnerComputer`)
+
+Module locations are revs of the form `txId:outputIndex`. Inside a contract, the module’s deploy transaction must be **confirmed**; an unconfirmed deploy invalidates the evaluation. Off-chain `computer.load` may still resolve mempool deploys for development. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
 ## Example
 
 :::code source="../../../lib/test/lib/computer/load.test.ts" :::

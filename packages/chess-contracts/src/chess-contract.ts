@@ -190,9 +190,10 @@ export class ChessContract extends Contract {
     const timestamps: bigint[] = []
 
     // Walk tip → root. Every step must be a confirmed revision.
+    // InnerComputer returns RPC `blocktime` as number (seconds); clocks use bigint.
     while (true) {
       const txId = current.split(':')[0]
-      timestamps.push(await computer.txIdToBlockTime(txId))
+      timestamps.push(BigInt(await computer.txIdToBlockTime(txId)))
       const previous = await computer.prev(current)
       if (!previous) break
       current = previous

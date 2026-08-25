@@ -40,6 +40,10 @@ The `decode` function takes a Bitcoin transaction or a transaction ID as input a
 
 Only **confirmed** transactions may be decoded. Unconfirmed or missing txIds invalidate the evaluation. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
 
+### Inside smart contracts (`InnerComputer`)
+
+Only **confirmed** transactions may be decoded. Unconfirmed or missing txIds invalidate the evaluation. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
 ## Example
 
 :::code source="../../../lib/test/lib/computer/decode.test.ts" :::
