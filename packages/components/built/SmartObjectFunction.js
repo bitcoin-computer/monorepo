@@ -2,7 +2,7 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TypeSelectionDropdown } from './common/TypeSelectionDropdown';
-import { getErrorMessage, isValidRev } from './common/utils';
+import { getErrorMessage, isMissingOrSpentError, isValidRev, toObject } from './common/utils';
 import { UtilsContext } from './UtilsContext';
 import { ComputerContext } from './ComputerContext';
 import { FieldError } from './InlineAlert';
@@ -29,6 +29,24 @@ const getValueForType = (type, stringValue) => {
             return Number(stringValue);
     }
 };
+function formatReturnValue(value) {
+    if (value === undefined)
+        return 'undefined';
+    if (typeof value === 'string')
+        return value;
+    if (typeof value === 'number' || typeof value === 'boolean' || value === null)
+        return String(value);
+    if (typeof value === 'bigint')
+        return `${value.toString()}n`;
+    if (typeof value === 'symbol' || typeof value === 'function')
+        return String(value);
+    try {
+        return toObject(value);
+    }
+    catch {
+        return String(value);
+    }
+}
 export const getParameterNames = (fn) => {
     try {
         const match = fn.toString().match(/\(.*?\)/);
@@ -79,7 +97,7 @@ function resolveMethodFn(smartObject, funcName) {
     }
     return null;
 }
-export const SmartObjectFunction = ({ smartObject, functionsExist, options, funcName, embedded = false, }) => {
+export const SmartObjectFunction = ({ smartObject, functionsExist, options, funcName, embedded = false, latestRev, }) => {
     const parameterList = useMemo(() => {
         try {
             const fn = resolveMethodFn(smartObject, funcName);
@@ -98,6 +116,7 @@ export const SmartObjectFunction = ({ smartObject, functionsExist, options, func
     ]));
     const [formState, setFormState] = useState(() => buildInitialForm(parameterList));
     const [formError, setFormError] = useState(null);
+    const [callResult, setCallResult] = useState(null);
     const { showLoader, toast } = UtilsContext.useUtilsComponents();
     const computer = useContext(ComputerContext);
     const navigate = useNavigate();
@@ -105,11 +124,13 @@ export const SmartObjectFunction = ({ smartObject, functionsExist, options, func
     useEffect(() => {
         setFormState(buildInitialForm(parameterList));
         setFormError(null);
+        setCallResult(null);
         // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when method/params change
     }, [funcName, parameterList.join(',')]);
     const handleMethodCall = async (event, smartObj, fnName, params) => {
         event.preventDefault();
         setFormError(null);
+        setCallResult(null);
         showLoader(true);
         try {
             const revMap = {};
@@ -121,10 +142,20 @@ export const SmartObjectFunction = ({ smartObject, functionsExist, options, func
                     revMap[param] = paramValue;
                 }
             });
-            const { tx } = await computer.encode({
+            const { tx, effect } = await computer.encode({
                 exp: `smartObject.${fnName}(${getParameters(params, fnName, formState)})`,
                 env: { smartObject: smartObj._rev, ...revMap },
             });
+            // Getters / pure methods do not create an on-chain update, so encode returns tx: null.
+            if (!tx) {
+                const returned = formatReturnValue(effect?.res);
+                setCallResult(returned);
+                toast.success(returned, {
+                    title: `Returned from ${fnName}`,
+                    durationMs: 8000,
+                });
+                return;
+            }
             await computer.broadcast(tx);
             await computer.waitForIndexed(tx.txId);
             const rev = await computer.latest(smartObject._id);
@@ -138,9 +169,29 @@ export const SmartObjectFunction = ({ smartObject, functionsExist, options, func
             });
         }
         catch (error) {
+            const spent = isMissingOrSpentError(error);
             const message = getErrorMessage(error);
             setFormError(message);
-            toast.error(message, { title: 'Method call failed' });
+            let goTo = spent ? latestRev : undefined;
+            if (spent && (!goTo || goTo === smartObject._rev)) {
+                try {
+                    goTo = await computer.latest(smartObject._id);
+                }
+                catch {
+                    // keep whatever we have
+                }
+            }
+            const targetRev = goTo;
+            toast.error(message, {
+                title: spent ? 'Old revision' : 'Method call failed',
+                durationMs: spent ? 10000 : undefined,
+                action: spent && targetRev && targetRev !== smartObject._rev
+                    ? {
+                        label: 'Go to latest revision',
+                        onClick: () => navigate(`/objects/${targetRev}`),
+                    }
+                    : undefined,
+            });
         }
         finally {
             showLoader(false);
@@ -167,7 +218,7 @@ export const SmartObjectFunction = ({ smartObject, functionsExist, options, func
         return (_jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "Methods are not available." }));
     }
     const inputClass = 'bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500';
-    return (_jsxs("div", { id: `function-${funcName}`, className: embedded ? '' : 'mt-6 mb-6', children: [!embedded ? (_jsx("h3", { className: "my-1.5 text-base font-semibold dark:text-white", children: capitalizeFirstLetter(funcName) })) : null, _jsxs("form", { className: "space-y-3", onSubmit: (e) => e.preventDefault(), children: [parameterList.length === 0 ? (_jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 rounded-lg border border-dashed border-gray-200 dark:border-gray-600 px-3 py-2.5", children: "This method takes no parameters." })) : (parameterList.map((paramName, paramIndex) => (_jsxs("div", { children: [_jsx("label", { htmlFor: `${funcName}-${paramName}`, className: "block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300", children: paramName }), _jsxs("div", { className: "flex flex-row items-center gap-2", children: [_jsx("input", { type: "text", id: `${funcName}-${paramName}`, value: formState[`${funcName}-${paramName}`] ?? '', onChange: (e) => updateForm(e, `${funcName}-${paramName}`), className: `${inputClass} min-w-0 flex-1`, placeholder: `Value for ${paramName}`, required: true, autoComplete: "off" }), _jsx("div", { className: "shrink-0", children: _jsx(TypeSelectionDropdown, { id: `${funcName}${paramName}`, dropdownList: options, selectedType: formState[`${funcName}-${paramName}--types`] || 'string', onSelectMethod: (option) => updateTypes(option, `${funcName}-${paramName}`) }) })] })] }, `${funcName}-${paramName}-${paramIndex}`)))), formError ? _jsx(FieldError, { children: formError }) : null, _jsx("button", { id: `${funcName}-call-function-button`, type: "button", disabled: isDisabled, className: `w-full sm:w-auto text-white font-medium rounded-lg text-sm px-5 py-2.5 focus:ring-4 focus:outline-none transition
+    return (_jsxs("div", { id: `function-${funcName}`, className: embedded ? '' : 'mt-6 mb-6', children: [!embedded ? (_jsx("h3", { className: "my-1.5 text-base font-semibold dark:text-white", children: capitalizeFirstLetter(funcName) })) : null, _jsxs("form", { className: "space-y-3", onSubmit: (e) => e.preventDefault(), children: [parameterList.length === 0 ? (_jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 rounded-lg border border-dashed border-gray-200 dark:border-gray-600 px-3 py-2.5", children: "This method takes no parameters." })) : (parameterList.map((paramName, paramIndex) => (_jsxs("div", { children: [_jsx("label", { htmlFor: `${funcName}-${paramName}`, className: "block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300", children: paramName }), _jsxs("div", { className: "flex flex-row items-center gap-2", children: [_jsx("input", { type: "text", id: `${funcName}-${paramName}`, value: formState[`${funcName}-${paramName}`] ?? '', onChange: (e) => updateForm(e, `${funcName}-${paramName}`), className: `${inputClass} min-w-0 flex-1`, placeholder: `Value for ${paramName}`, required: true, autoComplete: "off" }), _jsx("div", { className: "shrink-0", children: _jsx(TypeSelectionDropdown, { id: `${funcName}${paramName}`, dropdownList: options, selectedType: formState[`${funcName}-${paramName}--types`] || 'string', onSelectMethod: (option) => updateTypes(option, `${funcName}-${paramName}`) }) })] })] }, `${funcName}-${paramName}-${paramIndex}`)))), formError ? _jsx(FieldError, { children: formError }) : null, callResult != null ? (_jsxs("div", { className: "rounded-lg border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/40 p-2.5 text-green-800 dark:text-green-300", role: "status", children: [_jsx("p", { className: "text-[11px] font-semibold uppercase tracking-wide mb-1", children: "Return value" }), _jsx("pre", { className: "text-xs font-mono whitespace-pre-wrap break-words", children: callResult })] })) : null, _jsx("button", { id: `${funcName}-call-function-button`, type: "button", disabled: isDisabled, className: `w-full sm:w-auto text-white font-medium rounded-lg text-sm px-5 py-2.5 focus:ring-4 focus:outline-none transition
             ${isDisabled
                             ? 'bg-gray-400 cursor-not-allowed dark:bg-gray-600'
                             : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'}

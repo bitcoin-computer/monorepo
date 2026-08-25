@@ -46,7 +46,45 @@ export function isValidRev(value) {
 export const sleep = (ms) => new Promise((resolve) => {
     setTimeout(resolve, ms);
 });
+const SPENT_INPUT_RE = /bad-txns-inputs-missingorspent|missingorspent|missing-inputs/i;
+const OLD_REVISION_MESSAGE = 'This revision is already spent. Are you trying to update an old revision? Open the latest revision and try again.';
+function collectErrorFragments(error, depth = 0, acc = []) {
+    if (error == null || depth > 5)
+        return acc;
+    if (typeof error === 'string') {
+        acc.push(error);
+        const trimmed = error.trim();
+        if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+            try {
+                collectErrorFragments(JSON.parse(trimmed), depth + 1, acc);
+            }
+            catch {
+                // not JSON
+            }
+        }
+        return acc;
+    }
+    if (typeof error !== 'object')
+        return acc;
+    const obj = error;
+    if (typeof obj.message === 'string' || typeof obj.message === 'object') {
+        collectErrorFragments(obj.message, depth + 1, acc);
+    }
+    if (obj.error != null)
+        collectErrorFragments(obj.error, depth + 1, acc);
+    if (obj.response != null)
+        collectErrorFragments(obj.response, depth + 1, acc);
+    if (obj.data != null)
+        collectErrorFragments(obj.data, depth + 1, acc);
+    return acc;
+}
+/** True when bitcoind rejected the tx because inputs were already spent (typical of calling a method on an old revision). */
+export function isMissingOrSpentError(error) {
+    return collectErrorFragments(error).some((s) => SPENT_INPUT_RE.test(s));
+}
 export const getErrorMessage = (error) => {
+    if (isMissingOrSpentError(error))
+        return OLD_REVISION_MESSAGE;
     if (error?.response?.data?.error ===
         'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)')
         return 'You are not authorized to make changes to this smart object';

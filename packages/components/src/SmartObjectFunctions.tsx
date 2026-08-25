@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { SmartObjectFunction, getParameterNames } from './SmartObjectFunction'
 
 /** Built-in / prototype noise we never treat as smart-object methods */
@@ -109,10 +110,12 @@ export const SmartObjectFunctions = ({
   smartObject,
   functionsExist,
   options,
+  latestRev,
 }: {
   smartObject: any
   functionsExist: boolean
   options: string[]
+  latestRev?: string
 }) => {
   const methods = useMemo(() => methodNamesFrom(smartObject), [smartObject])
   const [selected, setSelected] = useState<string>('')
@@ -126,6 +129,7 @@ export const SmartObjectFunctions = ({
   }, [methods])
 
   const hasMethods = methods.length > 0 || functionsExist
+  const isHistorical = Boolean(latestRev && smartObject?._rev && latestRev !== smartObject._rev)
 
   if (!hasMethods || methods.length === 0) {
     return (
@@ -181,6 +185,18 @@ export const SmartObjectFunctions = ({
           {methods.length}
         </span>
       </div>
+
+      {isHistorical ? (
+        <div className="px-4 py-2.5 border-b border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 text-sm text-amber-900 dark:text-amber-200">
+          You are viewing a historical revision. Method calls that spend this object will fail.{' '}
+          <Link
+            to={`/objects/${latestRev}`}
+            className="font-medium underline underline-offset-2 hover:opacity-90"
+          >
+            Go to latest revision →
+          </Link>
+        </div>
+      ) : null}
 
       {/* Two sides: left = method list, right = params + call (always side-by-side) */}
       <div className="flex flex-row items-stretch min-h-[14rem]">
@@ -245,6 +261,7 @@ export const SmartObjectFunctions = ({
             smartObject={smartObject}
             functionsExist
             options={options}
+            latestRev={latestRev}
             embedded
           />
         </div>

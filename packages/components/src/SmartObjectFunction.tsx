@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { TypeSelectionDropdown } from './common/TypeSelectionDropdown'
-import { getErrorMessage, isValidRev } from './common/utils'
+import { getErrorMessage, isMissingOrSpentError, isValidRev, toObject } from './common/utils'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
 import { FieldError } from './InlineAlert'
@@ -28,6 +28,19 @@ const getValueForType = (type: string, stringValue: string) => {
       return Symbol(stringValue)
     default:
       return Number(stringValue)
+  }
+}
+
+function formatReturnValue(value: unknown): string {
+  if (value === undefined) return 'undefined'
+  if (typeof value === 'string') return value
+  if (typeof value === 'number' || typeof value === 'boolean' || value === null) return String(value)
+  if (typeof value === 'bigint') return `${value.toString()}n`
+  if (typeof value === 'symbol' || typeof value === 'function') return String(value)
+  try {
+    return toObject(value)
+  } catch {
+    return String(value)
   }
 }
 
@@ -83,6 +96,7 @@ export const SmartObjectFunction = ({
   options,
   funcName,
   embedded = false,
+  latestRev,
 }: {
   smartObject: any
   functionsExist: boolean
@@ -90,6 +104,8 @@ export const SmartObjectFunction = ({
   funcName: string
   /** When true, omit outer title (parent panel already shows it) */
   embedded?: boolean
+  /** Latest known object revision, if the parent already loaded it */
+  latestRev?: string
 }) => {
   const parameterList = useMemo(() => {
     try {
@@ -112,6 +128,7 @@ export const SmartObjectFunction = ({
 
   const [formState, setFormState] = useState<any>(() => buildInitialForm(parameterList))
   const [formError, setFormError] = useState<string | null>(null)
+  const [callResult, setCallResult] = useState<string | null>(null)
   const { showLoader, toast } = UtilsContext.useUtilsComponents()
   const computer = useContext(ComputerContext)
   const navigate = useNavigate()
@@ -120,12 +137,14 @@ export const SmartObjectFunction = ({
   useEffect(() => {
     setFormState(buildInitialForm(parameterList))
     setFormError(null)
+    setCallResult(null)
     // eslint-disable-next-line react-hooks/exhaustive-deps -- reset only when method/params change
   }, [funcName, parameterList.join(',')])
 
   const handleMethodCall = async (event: any, smartObj: any, fnName: string, params: string[]) => {
     event.preventDefault()
     setFormError(null)
+    setCallResult(null)
     showLoader(true)
     try {
       const revMap: any = {}
@@ -139,12 +158,23 @@ export const SmartObjectFunction = ({
         }
       })
 
-      const { tx } = await computer.encode({
+      const { tx, effect } = await computer.encode({
         exp: `smartObject.${fnName}(${getParameters(params, fnName, formState)})`,
         env: { smartObject: smartObj._rev, ...revMap },
       })
 
-      await computer.broadcast(tx!)
+      // Getters / pure methods do not create an on-chain update, so encode returns tx: null.
+      if (!tx) {
+        const returned = formatReturnValue(effect?.res)
+        setCallResult(returned)
+        toast.success(returned, {
+          title: `Returned from ${fnName}`,
+          durationMs: 8000,
+        })
+        return
+      }
+
+      await computer.broadcast(tx)
       await computer.waitForIndexed(tx.txId)
       const rev = await computer.latest(smartObject._id)
 
@@ -157,9 +187,31 @@ export const SmartObjectFunction = ({
         },
       })
     } catch (error: any) {
+      const spent = isMissingOrSpentError(error)
       const message = getErrorMessage(error)
       setFormError(message)
-      toast.error(message, { title: 'Method call failed' })
+
+      let goTo = spent ? latestRev : undefined
+      if (spent && (!goTo || goTo === smartObject._rev)) {
+        try {
+          goTo = await computer.latest(smartObject._id)
+        } catch {
+          // keep whatever we have
+        }
+      }
+
+      const targetRev = goTo
+      toast.error(message, {
+        title: spent ? 'Old revision' : 'Method call failed',
+        durationMs: spent ? 10000 : undefined,
+        action:
+          spent && targetRev && targetRev !== smartObject._rev
+            ? {
+                label: 'Go to latest revision',
+                onClick: () => navigate(`/objects/${targetRev}`),
+              }
+            : undefined,
+      })
     } finally {
       showLoader(false)
     }
@@ -245,6 +297,16 @@ export const SmartObjectFunction = ({
         )}
 
         {formError ? <FieldError>{formError}</FieldError> : null}
+
+        {callResult != null ? (
+          <div
+            className="rounded-lg border border-green-200 dark:border-green-900 bg-green-50 dark:bg-green-950/40 p-2.5 text-green-800 dark:text-green-300"
+            role="status"
+          >
+            <p className="text-[11px] font-semibold uppercase tracking-wide mb-1">Return value</p>
+            <pre className="text-xs font-mono whitespace-pre-wrap break-words">{callResult}</pre>
+          </div>
+        ) : null}
 
         <button
           id={`${funcName}-call-function-button`}

@@ -817,6 +817,7 @@ function Component({ title }: { title?: string }) {
               smartObject={smartObject}
               functionsExist={functionsExist}
               options={options}
+              latestRev={latest}
             />
           </>
         ) : null}

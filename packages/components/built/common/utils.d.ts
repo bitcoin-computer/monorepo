@@ -11,6 +11,8 @@ export declare const capitalizeFirstLetter: (string: string) => string;
 export declare function isValidRevString(outId: string): boolean;
 export declare function isValidRev(value: string | number | bigint | boolean | symbol | null | undefined): boolean;
 export declare const sleep: (ms: number) => Promise<void>;
+/** True when bitcoind rejected the tx because inputs were already spent (typical of calling a method on an old revision). */
+export declare function isMissingOrSpentError(error: unknown): boolean;
 export declare const getErrorMessage: (error: any) => string;
 export declare function getEnv(name: string): any;
 export declare function bigIntToStr(a: bigint): string;
