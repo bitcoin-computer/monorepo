@@ -157,7 +157,7 @@ export class ChessContract extends Contract {
     // Walk tip → root. Every step must be a confirmed revision.
     while (true) {
       const txId = current.split(':')[0]
-      timestamps.push(BigInt(await computer.txIdToBlockTime(txId)))
+      timestamps.push(await computer.txIdToBlockTime(txId))
       const previous = await computer.prev(current)
       if (!previous) break
       current = previous

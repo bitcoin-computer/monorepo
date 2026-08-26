@@ -29,7 +29,7 @@ Input index whose witness holds the taproot script-path reveal.
 
 Used for taproot module deploys (`moduleStorageType: 'taproot'`). Multisig modules use data-output `{ ept }` instead; see [`deploy`](./deploy.md) and [`Transaction.onChainMetaData`](../Transaction/index.md#onchainmetadata).
 
-Protocol id is **`BC`** (not ordinals `ord`). Content type is typically `text/javascript`.
+Protocol id is **`BC`**. Content type is typically `text/javascript`.
 
 ## Example
 

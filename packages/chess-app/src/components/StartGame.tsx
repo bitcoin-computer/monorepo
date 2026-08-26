@@ -62,7 +62,7 @@ export function StartGameModalContent({
 }) {
   const computer = useContext(ComputerContext)
   const navigate = useNavigate()
-  const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
+  const { showLoader, toast } = UtilsContext.useUtilsComponents()
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
@@ -113,7 +113,7 @@ export function StartGameModalContent({
       notifyGamesUpdated()
       navigate(`/game/${chess._id}`)
     } catch (err) {
-      showSnackBar(err instanceof Error ? err.message : 'Error occurred!', false)
+      toast.error(err instanceof Error ? err.message : 'Error occurred!')
     } finally {
       showLoader(false)
     }
@@ -194,9 +194,9 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
   const [accepted, setAccepted] = useState(false)
   const [canceled, setCanceled] = useState(false)
   const [loading, setLoading] = useState(false)
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
-  const showSnackBarRef = useRef(showSnackBar)
-  showSnackBarRef.current = showSnackBar
+  const { toast } = UtilsContext.useUtilsComponents()
+  const toastRef = useRef(toast)
+  toastRef.current = toast
   const computerRef = useRef(computer)
   computerRef.current = computer
 
@@ -255,9 +255,8 @@ export function StartGameModal({ challengeId }: { challengeId: string }) {
         Modal.showModal(startGameModal)
       } catch (error) {
         if (!cancelled) {
-          showSnackBarRef.current(
+          toastRef.current.error(
             error instanceof Error ? error.message : 'Error occurred',
-            false,
           )
         }
       } finally {

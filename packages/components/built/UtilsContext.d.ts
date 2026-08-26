@@ -9,14 +9,8 @@ export interface ToastApi {
     warning: (message: string, options?: Omit<ToastOptions, 'message' | 'variant'>) => void;
 }
 interface UtilsContextProps {
-    /** Preferred API for transient action feedback. */
+    /** Transient action feedback (success / error / info / warning). */
     toast: ToastApi;
-    /**
-     * @deprecated Prefer `toast.success` / `toast.error`. Kept for call-site compatibility.
-     * Maps `success=true` → success toast, `false` → error toast.
-     */
-    showSnackBar: (message: string, success: boolean) => void;
-    hideSnackBar: () => void;
     showLoader: (show: boolean) => void;
 }
 export declare const useUtilsComponents: () => UtilsContextProps;

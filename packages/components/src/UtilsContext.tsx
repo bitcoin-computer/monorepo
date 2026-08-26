@@ -27,14 +27,8 @@ export interface ToastApi {
 }
 
 interface UtilsContextProps {
-  /** Preferred API for transient action feedback. */
+  /** Transient action feedback (success / error / info / warning). */
   toast: ToastApi
-  /**
-   * @deprecated Prefer `toast.success` / `toast.error`. Kept for call-site compatibility.
-   * Maps `success=true` → success toast, `false` → error toast.
-   */
-  showSnackBar: (message: string, success: boolean) => void
-  hideSnackBar: () => void
   showLoader: (show: boolean) => void
 }
 
@@ -96,28 +90,11 @@ export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
     return api
   }, [pushToast])
 
-  const showSnackBar = useCallback(
-    (message: string, success: boolean) => {
-      pushToast({
-        message,
-        variant: success ? 'success' : 'error',
-      })
-    },
-    [pushToast],
-  )
-
-  const hideSnackBar = useCallback(() => {
-    setToasts([])
-  }, [])
-
   const showLoader = useCallback((show: boolean) => {
     setIsLoading(show)
   }, [])
 
-  const value = useMemo(
-    () => ({ toast, showSnackBar, hideSnackBar, showLoader }),
-    [toast, showSnackBar, hideSnackBar, showLoader],
-  )
+  const value = useMemo(() => ({ toast, showLoader }), [toast, showLoader])
 
   return (
     <utilsContext.Provider value={value}>

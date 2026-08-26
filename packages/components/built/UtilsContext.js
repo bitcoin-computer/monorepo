@@ -47,19 +47,10 @@ export const UtilsProvider = ({ children }) => {
         api.warning = (message, options) => pushToast({ ...options, message, variant: 'warning' });
         return api;
     }, [pushToast]);
-    const showSnackBar = useCallback((message, success) => {
-        pushToast({
-            message,
-            variant: success ? 'success' : 'error',
-        });
-    }, [pushToast]);
-    const hideSnackBar = useCallback(() => {
-        setToasts([]);
-    }, []);
     const showLoader = useCallback((show) => {
         setIsLoading(show);
     }, []);
-    const value = useMemo(() => ({ toast, showSnackBar, hideSnackBar, showLoader }), [toast, showSnackBar, hideSnackBar, showLoader]);
+    const value = useMemo(() => ({ toast, showLoader }), [toast, showLoader]);
     return (_jsxs(utilsContext.Provider, { value: value, children: [children, _jsx(ToastHost, { items: toasts, onDismiss: dismissToast }), isLoading && _jsx(Loader, {})] }));
 };
 export const UtilsContext = {

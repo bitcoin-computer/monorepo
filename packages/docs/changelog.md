@@ -16,9 +16,9 @@ Module deploys are **not** smart-object transitions.
 | Storage | On-chain shape |
 | ------- | -------------- |
 | **multisig** | Cleartext metadata `{ ept: string }` in bare-multisig data outputs (no `exp` / `env` / `mod` / `v`, no encryption on modules yet) |
-| **taproot** | Reveal-input witness envelope with protocol id **`BC`** (not ordinals `ord`), content type `text/javascript` |
+| **taproot** | Reveal-input witness envelope with protocol id **`BC`**, content type `text/javascript` |
 
-Legacy shapes that stored modules as transition `exp` fields or ordinals-style `ord` inscriptions are **not** read.
+Legacy shapes that stored modules as transition `exp` fields or non-`BC` inscription envelopes are **not** read.
 
 ### Client API
 

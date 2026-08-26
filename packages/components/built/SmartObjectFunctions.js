@@ -138,13 +138,13 @@ export const SmartObjectFunctions = ({ smartObject, functionsExist, options, lat
     }, [methods]);
     const hasMethods = methods.length > 0 || functionsExist;
     const isHistorical = Boolean(latestRev && smartObject?._rev && latestRev !== smartObject._rev);
+    // Always have a concrete selection when methods exist
+    const activeMethod = selected && methods.includes(selected) ? selected : methods[0];
+    const selectedSource = methods.length > 0 ? sourceOf(smartObject, activeMethod) : '';
+    const highlightedSource = useMemo(() => highlightJs(selectedSource), [selectedSource]);
     if (!hasMethods || methods.length === 0) {
         return (_jsxs("section", { className: "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden", "aria-label": "Methods", children: [_jsxs("div", { className: "px-4 py-3 border-b border-gray-200 dark:border-gray-700", children: [_jsx("h2", { className: "text-base sm:text-lg font-semibold text-gray-900 dark:text-white", children: "Methods" }), _jsx("p", { className: "text-xs text-gray-500 dark:text-gray-400 mt-0.5", children: "Callable functions on this smart object" })] }), _jsx("div", { className: "p-6 text-center", children: _jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "No public methods on this object." }) })] }));
     }
-    // Always have a concrete selection when methods exist
-    const activeMethod = selected && methods.includes(selected) ? selected : methods[0];
-    const selectedSource = sourceOf(smartObject, activeMethod);
-    const highlightedSource = useMemo(() => highlightJs(selectedSource), [selectedSource]);
     return (_jsxs("section", { className: "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden", "aria-label": "Methods", children: [_jsxs("div", { className: "px-4 py-3 border-b border-gray-200 dark:border-gray-700 flex flex-wrap items-center justify-between gap-2", children: [_jsxs("div", { children: [_jsx("h2", { className: "text-base sm:text-lg font-semibold text-gray-900 dark:text-white", children: "Methods" }), _jsxs("p", { className: "text-xs text-gray-500 dark:text-gray-400 mt-0.5", children: [methods.length, " method", methods.length === 1 ? '' : 's', " \u00B7 select one to call"] })] }), _jsx("span", { className: "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-50 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300 tabular-nums", children: methods.length })] }), isHistorical ? (_jsxs("div", { className: "px-4 py-2.5 border-b border-amber-200 dark:border-amber-900 bg-amber-50 dark:bg-amber-950/30 text-sm text-amber-900 dark:text-amber-200", children: ["You are viewing a historical revision. Method calls that spend this object will fail.", ' ', _jsx(Link, { to: `/objects/${latestRev}`, className: "font-medium underline underline-offset-2 hover:opacity-90", children: "Go to latest revision \u2192" })] })) : null, _jsxs("div", { className: "flex flex-row items-stretch min-h-[14rem] overflow-x-auto", children: [_jsx("nav", { className: "shrink-0 w-44 sm:w-52 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60", "aria-label": "Method list", children: _jsx("ul", { className: "p-1.5 space-y-0.5 overflow-y-auto max-h-80", role: "listbox", "aria-label": "Available methods", children: methods.map((name) => {
                                 const isActive = name === activeMethod;
                                 const arity = arityOf(smartObject, name);

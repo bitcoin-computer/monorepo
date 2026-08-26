@@ -300,7 +300,7 @@ export type ModuleRecord = {
   timestamp?: string | number
 }
 export type ModuleQuery = {
-  verbosity?: number
+  verbosity?: 0 | 1
   limit?: number
   offset?: number
   order?: 'ASC' | 'DESC'
