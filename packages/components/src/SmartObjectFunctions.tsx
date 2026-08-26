@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { SmartObjectFunction, getParameterNames } from './SmartObjectFunction'
+import { highlightJs } from './jsHighlight'
 
 /** Built-in / prototype noise we never treat as smart-object methods */
 const SKIP_METHOD_NAMES = new Set([
@@ -102,8 +103,32 @@ function arityOf(smartObject: any, name: string): number {
   }
 }
 
-function capitalizeFirstLetter(s: string) {
-  return s.charAt(0).toUpperCase() + s.slice(1)
+function sourceOf(smartObject: any, name: string): string {
+  try {
+    const fn = getMethodFn(smartObject, name)
+    if (!fn) return ''
+    return fn.toString()
+  } catch {
+    return ''
+  }
+}
+
+function CopyCode({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false)
+  if (!text) return null
+  return (
+    <button
+      type="button"
+      onClick={() => {
+        navigator.clipboard.writeText(text)
+        setCopied(true)
+        window.setTimeout(() => setCopied(false), 1500)
+      }}
+      className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline shrink-0"
+    >
+      {copied ? 'Copied' : 'Copy'}
+    </button>
+  )
 }
 
 export const SmartObjectFunctions = ({
@@ -131,6 +156,11 @@ export const SmartObjectFunctions = ({
   const hasMethods = methods.length > 0 || functionsExist
   const isHistorical = Boolean(latestRev && smartObject?._rev && latestRev !== smartObject._rev)
 
+  // Always have a concrete selection when methods exist
+  const activeMethod = selected && methods.includes(selected) ? selected : methods[0]
+  const selectedSource = methods.length > 0 ? sourceOf(smartObject, activeMethod) : ''
+  const highlightedSource = useMemo(() => highlightJs(selectedSource), [selectedSource])
+
   if (!hasMethods || methods.length === 0) {
     return (
       <section
@@ -153,19 +183,6 @@ export const SmartObjectFunctions = ({
       </section>
     )
   }
-
-  // Always have a concrete selection when methods exist
-  const activeMethod = selected && methods.includes(selected) ? selected : methods[0]
-
-  const selectedParams = (() => {
-    try {
-      const fn = getMethodFn(smartObject, activeMethod)
-      if (!fn) return [] as string[]
-      return getParameterNames(fn).filter(Boolean)
-    } catch {
-      return [] as string[]
-    }
-  })()
 
   return (
     <section
@@ -198,9 +215,8 @@ export const SmartObjectFunctions = ({
         </div>
       ) : null}
 
-      {/* Two sides: left = method list, right = params + call (always side-by-side) */}
-      <div className="flex flex-row items-stretch min-h-[14rem]">
-        {/* LEFT */}
+      {/* Three columns: methods · javascript · call (params + effect). */}
+      <div className="flex flex-row items-stretch min-h-[14rem] overflow-x-auto">
         <nav
           className="shrink-0 w-44 sm:w-52 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60"
           aria-label="Method list"
@@ -241,30 +257,36 @@ export const SmartObjectFunctions = ({
           </ul>
         </nav>
 
-        {/* RIGHT */}
-        <div className="flex-1 min-w-0 p-4 sm:p-5 overflow-x-auto bg-white dark:bg-gray-900">
-          <div className="mb-4 pb-3 border-b border-gray-100 dark:border-gray-800">
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
-              Call method
+        <div
+          className="flex-1 min-w-[12rem] flex flex-col border-r border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-950/40"
+          aria-label="Method source"
+        >
+          <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between gap-2">
+            <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+              JavaScript
             </p>
-            <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white font-mono">
-              {capitalizeFirstLetter(activeMethod)}
-            </h3>
-            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 font-mono break-all">
-              {activeMethod}({selectedParams.join(', ')})
-            </p>
+            <CopyCode text={selectedSource} />
           </div>
-
-          <SmartObjectFunction
-            key={activeMethod}
-            funcName={activeMethod}
-            smartObject={smartObject}
-            functionsExist
-            options={options}
-            latestRev={latestRev}
-            embedded
-          />
+          {selectedSource ? (
+            <pre className="p-3 text-xs font-mono text-gray-800 dark:text-gray-200 overflow-auto max-h-80 whitespace-pre-wrap break-words leading-relaxed">
+              {highlightedSource}
+            </pre>
+          ) : (
+            <p className="p-3 text-sm text-gray-500 dark:text-gray-400">
+              Source unavailable for this method.
+            </p>
+          )}
         </div>
+
+        <SmartObjectFunction
+          key={activeMethod}
+          funcName={activeMethod}
+          smartObject={smartObject}
+          functionsExist
+          options={options}
+          latestRev={latestRev}
+          embedded
+        />
       </div>
     </section>
   )

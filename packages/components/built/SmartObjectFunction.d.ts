@@ -6,7 +6,7 @@ export declare const SmartObjectFunction: ({ smartObject, functionsExist, option
     functionsExist: boolean;
     options: string[];
     funcName: string;
-    /** When true, omit outer title (parent panel already shows it) */
+    /** When true, render as the call column (header, form, and effect stacked) */
     embedded?: boolean;
     /** Latest known object revision, if the parent already loaded it */
     latestRev?: string;
