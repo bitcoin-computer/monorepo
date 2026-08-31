@@ -23,15 +23,16 @@ Legacy shapes that stored modules as transition `exp` fields or non-`BC` inscrip
 ### Client API
 
 - [`deploy`](./Lib/Computer/deploy.md) / [`load`](./Lib/Computer/load.md) — write and evaluate modules  
-- [`decode`](./Lib/Computer/decode.md) — **throws** `ModuleDecodeError` on module deploys; use `load`  
+- [`decode`](./Lib/Computer/decode.md) — **throws** `ModuleDecodeError` on module deploys; use `load`. Import `{ ModuleDecodeError }` from `@bitcoin-computer/lib` for `instanceof`.  
 - [`getModules`](./Lib/Computer/getModules.md) / [`getModule`](./Lib/Computer/getModule.md) — list/fetch indexed source without evaluating  
 - Static [`getInscription`](./Lib/Computer/getInscription.md) — parse a `BC` witness from raw hex  
+- [`txIdToBlockTime`](./Lib/Computer/txIdToBlockTime.md) now returns `Promise<bigint | undefined>` (was `number`). Mixing `bigint` with number arithmetic throws.
 
 ### Node
 
 - `Module` table + [`GET /modules`](./Node/modules.md) and [`GET /module/:mod`](./Node/module.md)  
 - Existing databases must apply the `Module` DDL if they predate this feature — see [schema upgrade](./Node/operations.md#module-table-schema-upgrade)  
-- ZMQ/sync index module deploys; reorg clears module confirmation fields; mempool cleanup can delete unconfirmed module rows  
+- ZMQ/sync index module deploys; reorg clears module confirmation fields; mempool cleanup can delete unconfirmed module rows
 
 ### Docs / migration tips
 

@@ -34,7 +34,7 @@ An object containing the following properties:
 
 The `decode` function takes a Bitcoin transaction or a transaction ID as input and retrieves the associated **transition** metadata if the transaction is a Bitcoin Computer smart-object transaction. This metadata includes the JavaScript expression, any environment variables, and an optional module specifier (the module used when evaluating the expression—not the module source itself).
 
-**Module deploy transactions are not transitions.** If `tx` is a module deploy (multisig cleartext `{ ept }` in data outputs, or a taproot reveal with protocol id `BC` in the witness), `decode` throws an error instructing you to use [`computer.load`](./load.md) instead. To inspect raw module payloads without evaluating them, see [`Transaction.onChainMetaData`](../Transaction/index.md#onchainmetadata) (multisig) or `Computer.getInscription(rawTx, index)` (taproot witness).
+**Module deploy transactions are not transitions.** If `tx` is a module deploy (multisig cleartext `{ ept }` in data outputs, or a taproot reveal with protocol id `BC` in the witness), `decode` throws `ModuleDecodeError` (import `{ ModuleDecodeError }` from `@bitcoin-computer/lib`) instructing you to use [`computer.load`](./load.md) instead. To inspect raw module payloads without evaluating them, see [`Transaction.onChainMetaData`](../Transaction/index.md#onchainmetadata) (multisig) or `Computer.getInscription(rawTx, index)` (taproot witness).
 
 ### Inside smart contracts (`InnerComputer`)
 

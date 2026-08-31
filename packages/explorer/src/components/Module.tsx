@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ModuleRecord } from '@bitcoin-computer/lib'
 import {
@@ -115,10 +115,11 @@ function ModuleExports({ exports }: { exports: Record<string, unknown> }) {
 
 function EvaluatedExports({ modSpec }: { modSpec: string }) {
   const computer = useContext(ComputerContext)
-  const { data: exports, error: exportsError } = useAsync(
+  const [evaluate, setEvaluate] = useState(false)
+  const { data: exports, error: exportsError, loading } = useAsync(
     async () => (await computer.load(modSpec)) as Record<string, unknown>,
     [computer, modSpec],
-    true,
+    evaluate,
     getErrorMessage,
   )
 
@@ -128,15 +129,24 @@ function EvaluatedExports({ modSpec }: { modSpec: string }) {
         Exports (evaluated)
       </h2>
       <p className="mb-3 text-xs text-gray-500 dark:text-gray-400">
-        SES load result. Prefer source above for inspection without evaluation.
+        Source above is the indexed module without running it. Evaluation is opt-in (SES).
       </p>
-      {exportsError ? (
+      {!evaluate ? (
+        <button
+          type="button"
+          onClick={() => setEvaluate(true)}
+          className="text-sm font-medium px-3 py-1.5 rounded-md border border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-200 dark:hover:bg-gray-700"
+        >
+          Load exports
+        </button>
+      ) : null}
+      {evaluate && exportsError ? (
         <InlineAlert variant="warning" className="mb-3">
           Could not evaluate exports: {exportsError}
         </InlineAlert>
       ) : null}
-      {exports ? <ModuleExports exports={exports} /> : null}
-      {!exports && !exportsError ? (
+      {evaluate && exports ? <ModuleExports exports={exports} /> : null}
+      {evaluate && loading ? (
         <p className="text-sm text-gray-500 dark:text-gray-400">Loading exports…</p>
       ) : null}
     </section>
