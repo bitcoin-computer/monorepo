@@ -455,6 +455,7 @@ export type TXOQuery = {
   verbosity?: number
   limit?: number
   order?: 'ASC' | 'DESC'
+  orderBy?: 'rev' | 'block'
   offset?: number
   isSpent?: boolean
   isConfirmed?: boolean
@@ -462,6 +463,9 @@ export type TXOQuery = {
   exp?: string
   lteBlockHeight?: number
   gteBlockHeight?: number
+  ltBlockHeight?: number
+  ltBlockIndex?: number
+  ltRev?: string
 } & Partial<Omit<TXORecord, 'expHash'>>
 export type EvalResult = {
   effect: EvaluatedEffect
