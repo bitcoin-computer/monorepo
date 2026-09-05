@@ -1,4 +1,5 @@
 import { isMwebTxHex, skipTxsAtHeight } from './parsing.js';
+export const BUILTIN_CHAINS = ['LTC', 'BTC', 'DOGE', 'PEPE', 'WOJAK'];
 const MAINNET_BIP32 = { public: 0x0488b21e, private: 0x0488ade4 };
 const TESTNET_BIP32 = { public: 0x043587cf, private: 0x04358394 };
 const DOGE_MAINNET_BIP32 = { public: 0x02facafd, private: 0x02fac398 };

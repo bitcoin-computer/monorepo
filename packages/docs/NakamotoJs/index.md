@@ -11,7 +11,7 @@ It owns chain **identity** (network params, BIP44 coin type, fees/dust defaults,
 
 ## Adding a UTXO chain
 
-For a Bitcoin-family chain, add a builtin `ChainConfig` in NakamotoJS (`ts_src/chains/builtins.ts`) and `registerChain` it at load time. Lib picks up fees, dust, `moduleStorageType`, and `getCoinType` from that config. `getNetwork` stays a wrapper over the registry.
+For a Bitcoin-family chain, add a builtin `ChainConfig` in NakamotoJS (`ts_src/chains/builtins.ts`), append it to `BUILTIN_CHAINS` / `BUILTIN_CONFIGS` in that same file, and it is registered at load time. Lib picks up fees, dust, `moduleStorageType`, and `getCoinType` from that config. `getNetwork` stays a wrapper over the registry.
 
 Typical fields:
 
