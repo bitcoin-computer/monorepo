@@ -349,6 +349,7 @@ export type DefaultValues = {
   satPerByte: number
   dustRelayTxFee: number
   moduleStorageType: ModuleStorageType
+  minNonDust?: number
 }
 export type Stored = {
   _url: string

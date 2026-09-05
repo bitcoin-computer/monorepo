@@ -1,248 +1,62 @@
-export const bitcoin = {
-  messagePrefix: '\x18Bitcoin Signed Message:\n',
-  bech32: 'bc',
-  bip32: {
-    public: 0x0488b21e,
-    private: 0x0488ade4,
-  },
-  pubKeyHash: 0x00,
-  scriptHash: 0x05,
-  wif: 0x80,
-};
-export const regtest = {
-  messagePrefix: '\x18Bitcoin Signed Message:\n',
-  bech32: 'bcrt',
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x6f,
-  scriptHash: 0xc4,
-  wif: 0xef,
-};
-export const testnet = {
-  messagePrefix: '\x18Bitcoin Signed Message:\n',
-  bech32: 'tb',
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x6f,
-  scriptHash: 0xc4,
-  wif: 0xef,
-};
-export const litecoin = {
-  messagePrefix: '\x18Litecoin Signed Message:\n',
-  bech32: 'ltc',
-  bip32: {
-    public: 0x0488b21e,
-    private: 0x0488ade4,
-  },
-  pubKeyHash: 0x30,
-  scriptHash: 0x32,
-  wif: 0x80,
-};
-export const litecoinregtest = {
-  messagePrefix: '\x18Litecoin Signed Message:\n',
-  bech32: 'rltc',
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x6f,
-  scriptHash: 0x3a,
-  wif: 0xef,
-};
-export const litecointestnet = {
-  messagePrefix: '\x18Litecoin Signed Message:\n',
-  bech32: 'tltc',
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x6f,
-  scriptHash: 0x3a,
-  wif: 0xef,
-};
-export const pepecoin = {
-  messagePrefix: '\x18Pepecoin Signed Message:\n',
-  bech32: 'pepe',
-  bip32: {
-    public: 0x02facafd,
-    private: 0x02fac398,
-  },
-  pubKeyHash: 0x38,
-  scriptHash: 0x16,
-  wif: 0x9e,
-};
-export const pepecoinregtest = {
-  messagePrefix: '\x18Pepecoin Signed Message:\n',
-  bech32: 'rpepe',
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x6f,
-  scriptHash: 0xc4,
-  wif: 0xef,
-};
-export const pepecointestnet = {
-  messagePrefix: '\x18Pepecoin Signed Message:\n',
-  bech32: 'tpepe',
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x71,
-  scriptHash: 0xc4,
-  wif: 0xf1,
-};
-export const dogecoin = {
-  messagePrefix: '\x19Dogecoin Signed Message:\n',
-  bech32: 'doge', // TODO: Dogecoin doesn't use bech32, make type optional
-  bip32: {
-    public: 0x02facafd,
-    private: 0x02fac398,
-  },
-  pubKeyHash: 0x1e,
-  scriptHash: 0x16,
-  wif: 0x9e,
-};
-export const dogecoinregtest = {
-  messagePrefix: '\x19Dogecoin Signed Message:\n',
-  bech32: 'rdoge',
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x6f,
-  scriptHash: 0xc4,
-  wif: 0xef,
-};
-export const dogecointestnet = {
-  messagePrefix: '\x19Dogecoin Signed Message:\n',
-  bech32: 'tdoge',
-  bip32: {
-    public: 0x0432a9a8,
-    private: 0x0432a243,
-  },
-  pubKeyHash: 0x71,
-  scriptHash: 0xc4,
-  wif: 0xf1,
-};
-export const wojakcoin = {
-  messagePrefix: '\x18WojakCoin Signed Message:\n',
-  bech32: 'wojak',
-  bip32: {
-    public: 0x0488b21e,
-    private: 0x0488ade4,
-  },
-  pubKeyHash: 0x49,
-  scriptHash: 0x05,
-  wif: 0xc9,
-};
-export const wojakcoinregtest = {
-  messagePrefix: '\x18WojakCoin Signed Message:\n',
-  bech32: 'rwojak',
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x6f,
-  scriptHash: 0xc4,
-  wif: 0xef,
-};
-export const wojakcointestnet = {
-  messagePrefix: '\x18WojakCoin Signed Message:\n',
-  bech32: 'twojak',
-  bip32: {
-    public: 0x043587cf,
-    private: 0x04358394,
-  },
-  pubKeyHash: 0x6f,
-  scriptHash: 0xc4,
-  wif: 0xef,
-};
-export function getNetwork(chain, network) {
-  switch (chain) {
-    case 'BTC':
-      switch (network) {
-        case 'mainnet':
-          return bitcoin;
-        case 'testnet':
-          return testnet;
-        case 'regtest':
-          return regtest;
-        default:
-          throw new Error(`Invalid network ${network}`);
-      }
-    case 'LTC':
-      switch (network) {
-        case 'mainnet':
-          return litecoin;
-        case 'testnet':
-          return litecointestnet;
-        case 'regtest':
-          return litecoinregtest;
-        default:
-          throw new Error(`Invalid network ${network}`);
-      }
-    case 'PEPE':
-      switch (network) {
-        case 'mainnet':
-          return pepecoin;
-        case 'testnet':
-          return pepecointestnet;
-        case 'regtest':
-          return pepecoinregtest;
-        default:
-          throw new Error(`Invalid network ${network}`);
-      }
-    case 'DOGE':
-      switch (network) {
-        case 'mainnet':
-          return dogecoin;
-        case 'testnet':
-          return dogecointestnet;
-        case 'regtest':
-          return dogecoinregtest;
-        default:
-          throw new Error(`Invalid network ${network}`);
-      }
-    case 'WOJAK':
-      switch (network) {
-        case 'mainnet':
-          return wojakcoin;
-        case 'testnet':
-          return wojakcointestnet;
-        case 'regtest':
-          return wojakcoinregtest;
-        default:
-          throw new Error(`Invalid network ${network}`);
-      }
-    default:
-      throw new Error(`Invalid chain ${network}`);
-  }
+// https://en.bitcoin.it/wiki/List_of_address_prefixes
+// Dogecoin BIP32 is a proposed standard: https://bitcointalk.org/index.php?topic=409731
+import { getNetworkConfig } from './chains/index.js';
+const cache = new Map();
+function toNetwork(params) {
+    return Object.freeze({
+        messagePrefix: params.messagePrefix,
+        bech32: params.bech32 ?? '',
+        bip32: params.bip32,
+        pubKeyHash: params.pubKeyHash,
+        scriptHash: params.scriptHash,
+        wif: params.wif,
+    });
 }
+export function getNetwork(chain, network) {
+    const key = `${chain}:${network}`;
+    const cached = cache.get(key);
+    if (cached)
+        return cached;
+    const resolved = getNetworkConfig(chain, network);
+    const value = toNetwork(resolved);
+    cache.set(key, value);
+    return value;
+}
+export function getBech32Prefix(network) {
+    if (typeof network.bech32 !== 'string' || network.bech32.length === 0) {
+        throw new Error('Network does not define a bech32 prefix');
+    }
+    return network.bech32;
+}
+export const bitcoin = getNetwork('BTC', 'mainnet');
+export const testnet = getNetwork('BTC', 'testnet');
+export const regtest = getNetwork('BTC', 'regtest');
+export const litecoin = getNetwork('LTC', 'mainnet');
+export const litecointestnet = getNetwork('LTC', 'testnet');
+export const litecoinregtest = getNetwork('LTC', 'regtest');
+export const pepecoin = getNetwork('PEPE', 'mainnet');
+export const pepecointestnet = getNetwork('PEPE', 'testnet');
+export const pepecoinregtest = getNetwork('PEPE', 'regtest');
+export const dogecoin = getNetwork('DOGE', 'mainnet');
+export const dogecointestnet = getNetwork('DOGE', 'testnet');
+export const dogecoinregtest = getNetwork('DOGE', 'regtest');
+export const wojakcoin = getNetwork('WOJAK', 'mainnet');
+export const wojakcointestnet = getNetwork('WOJAK', 'testnet');
+export const wojakcoinregtest = getNetwork('WOJAK', 'regtest');
 export const NETWORKS = {
-  // Bitcoin
-  bitcoin,
-  regtest,
-  testnet,
-  // Litecoin
-  litecoin,
-  litecoinregtest,
-  litecointestnet,
-  // Pepecoin
-  pepecoin,
-  pepecoinregtest,
-  pepecointestnet,
-  // Dogecoin
-  dogecoin,
-  dogecoinregtest,
-  dogecointestnet,
-  // WojakCoin
-  wojakcoin,
-  wojakcoinregtest,
-  wojakcointestnet,
+    bitcoin,
+    regtest,
+    testnet,
+    litecoin,
+    litecoinregtest,
+    litecointestnet,
+    pepecoin,
+    pepecoinregtest,
+    pepecointestnet,
+    dogecoin,
+    dogecoinregtest,
+    dogecointestnet,
+    wojakcoin,
+    wojakcoinregtest,
+    wojakcointestnet,
 };
