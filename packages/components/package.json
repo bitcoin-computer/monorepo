@@ -35,7 +35,9 @@
   },
   "typesVersions": {
     "*": {
-      "utils": ["./built/common/utils.d.ts"]
+      "utils": [
+        "./built/common/utils.d.ts"
+      ]
     }
   },
   "files": [
@@ -53,7 +55,8 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.27.0-beta.2",
+    "@bitcoin-computer/lib": "^0.27.0-beta.1",
+    "@bitcoin-computer/nakamotojs": "^0.27.0-beta.1",
     "flowbite": "^2.3.0",
     "prismjs": "^1.30.0",
     "qrcode": "^1.5.4",
