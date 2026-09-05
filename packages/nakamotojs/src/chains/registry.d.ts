@@ -1,5 +1,3 @@
-export declare const BUILTIN_CHAINS: readonly ["LTC", "BTC", "DOGE", "PEPE", "WOJAK"];
-export type BuiltinChain = (typeof BUILTIN_CHAINS)[number];
 export type BtcNetworkName = 'mainnet' | 'testnet' | 'regtest';
 export type ModuleStorageType = 'taproot' | 'multisig';
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr';

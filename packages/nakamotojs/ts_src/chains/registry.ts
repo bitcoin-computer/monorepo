@@ -1,6 +1,3 @@
-export const BUILTIN_CHAINS = ['LTC', 'BTC', 'DOGE', 'PEPE', 'WOJAK'] as const;
-
-export type BuiltinChain = (typeof BUILTIN_CHAINS)[number];
 export type BtcNetworkName = 'mainnet' | 'testnet' | 'regtest';
 export type ModuleStorageType = 'taproot' | 'multisig';
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr';

@@ -5,9 +5,9 @@ for (const config of BUILTIN_CONFIGS) {
   registerChain(config, { builtin: true });
 }
 
-export { BUILTIN_CHAINS } from './registry.js';
+export { BUILTIN_CHAINS } from './builtins.js';
+export type { BuiltinChain } from './builtins.js';
 export type {
-  BuiltinChain,
   BtcNetworkName,
   ModuleStorageType,
   AddressType,

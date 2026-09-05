@@ -1,4 +1,3 @@
-export const BUILTIN_CHAINS = ['LTC', 'BTC', 'DOGE', 'PEPE', 'WOJAK'];
 const registry = new Map();
 const builtins = new Set();
 const resolvedCache = new Map();
