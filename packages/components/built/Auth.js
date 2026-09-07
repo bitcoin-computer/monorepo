@@ -1,6 +1,7 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useEffect, useRef, useState } from 'react';
 import { Computer } from '@bitcoin-computer/lib';
+import { getBip44Path, getCoinType } from '@bitcoin-computer/nakamotojs';
 import { initFlowbite } from 'flowbite';
 import { HiRefresh } from 'react-icons/hi';
 import { useUtilsComponents } from './UtilsContext';
@@ -18,28 +19,8 @@ function logout() {
     localStorage.removeItem('URL');
     window.location.href = '/';
 }
-function getCoinType(chain = 'LTC', network = 'regtest') {
-    if (['testnet', 'regtest'].includes(network))
-        return 1;
-    if (chain === 'BTC')
-        return 0;
-    if (chain === 'LTC')
-        return 2;
-    if (chain === 'DOGE')
-        return 3;
-    if (chain === 'PEPE')
-        return 3434;
-    if (chain === 'BCH')
-        return 145;
-    if (chain === 'WOJAK')
-        return 20760;
-    throw new Error(`Unsupported chain ${chain} or network ${network}`);
-}
-function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
-    return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`;
-}
 function getPath({ chain, network }) {
-    return getBip44Path({ coinType: getCoinType(chain, network) });
+    return getBip44Path({ coinType: getCoinType(chain ?? 'LTC', network ?? 'regtest') });
 }
 function loggedOutConfiguration() {
     return {

@@ -5,38 +5,38 @@ import { varuint } from '../bufferutils.js';
 import { isTapleaf } from '../types.js';
 export const LEAF_VERSION_TAPSCRIPT = 0xc0;
 export const MAX_TAPTREE_DEPTH = 128;
-const isHashBranch = ht => 'left' in ht && 'right' in ht;
+const isHashBranch = (ht) => 'left' in ht && 'right' in ht;
 export function rootHashFromPath(controlBlock, leafHash) {
-  if (controlBlock.length < 33)
-    throw new TypeError(
-      `The control-block length is too small. Got ${controlBlock.length}, expected min 33.`,
-    );
-  const m = (controlBlock.length - 33) / 32;
-  let kj = leafHash;
-  for (let j = 0; j < m; j++) {
-    const ej = controlBlock.slice(33 + 32 * j, 65 + 32 * j);
-    if (kj.compare(ej) < 0) {
-      kj = tapBranchHash(kj, ej);
-    } else {
-      kj = tapBranchHash(ej, kj);
+    if (controlBlock.length < 33)
+        throw new TypeError(`The control-block length is too small. Got ${controlBlock.length}, expected min 33.`);
+    const m = (controlBlock.length - 33) / 32;
+    let kj = leafHash;
+    for (let j = 0; j < m; j++) {
+        const ej = controlBlock.slice(33 + 32 * j, 65 + 32 * j);
+        if (kj.compare(ej) < 0) {
+            kj = tapBranchHash(kj, ej);
+        }
+        else {
+            kj = tapBranchHash(ej, kj);
+        }
     }
-  }
-  return kj;
+    return kj;
 }
 /**
  * Build a hash tree of merkle nodes from the scripts binary tree.
  * @param scriptTree - the tree of scripts to pairwise hash.
  */
 export function toHashTree(scriptTree) {
-  if (isTapleaf(scriptTree)) return { hash: tapleafHash(scriptTree) };
-  const hashes = [toHashTree(scriptTree[0]), toHashTree(scriptTree[1])];
-  hashes.sort((a, b) => a.hash.compare(b.hash));
-  const [left, right] = hashes;
-  return {
-    hash: tapBranchHash(left.hash, right.hash),
-    left,
-    right,
-  };
+    if (isTapleaf(scriptTree))
+        return { hash: tapleafHash(scriptTree) };
+    const hashes = [toHashTree(scriptTree[0]), toHashTree(scriptTree[1])];
+    hashes.sort((a, b) => a.hash.compare(b.hash));
+    const [left, right] = hashes;
+    return {
+        hash: tapBranchHash(left.hash, right.hash),
+        left,
+        right,
+    };
 }
 /**
  * Given a HashTree, finds the path from a particular hash to the root.
@@ -47,47 +47,48 @@ export function toHashTree(scriptTree) {
  * path is found
  */
 export function findScriptPath(node, hash) {
-  if (isHashBranch(node)) {
-    const leftPath = findScriptPath(node.left, hash);
-    if (leftPath !== undefined) return [...leftPath, node.right.hash];
-    const rightPath = findScriptPath(node.right, hash);
-    if (rightPath !== undefined) return [...rightPath, node.left.hash];
-  } else if (node.hash.equals(hash)) {
-    return [];
-  }
-  return undefined;
+    if (isHashBranch(node)) {
+        const leftPath = findScriptPath(node.left, hash);
+        if (leftPath !== undefined)
+            return [...leftPath, node.right.hash];
+        const rightPath = findScriptPath(node.right, hash);
+        if (rightPath !== undefined)
+            return [...rightPath, node.left.hash];
+    }
+    else if (node.hash.equals(hash)) {
+        return [];
+    }
+    return undefined;
 }
 export function tapleafHash(leaf) {
-  const version = leaf.version || LEAF_VERSION_TAPSCRIPT;
-  return bcrypto.taggedHash(
-    'TapLeaf',
-    NBuffer.concat([NBuffer.from([version]), serializeScript(leaf.output)]),
-  );
+    const version = leaf.version || LEAF_VERSION_TAPSCRIPT;
+    return bcrypto.taggedHash('TapLeaf', NBuffer.concat([NBuffer.from([version]), serializeScript(leaf.output)]));
 }
 export function tapTweakHash(pubKey, h) {
-  return bcrypto.taggedHash(
-    'TapTweak',
-    NBuffer.concat(h ? [pubKey, h] : [pubKey]),
-  );
+    return bcrypto.taggedHash('TapTweak', NBuffer.concat(h ? [pubKey, h] : [pubKey]));
 }
 export function tweakKey(pubKey, h) {
-  if (!NBuffer.isBuffer(pubKey)) return null;
-  if (pubKey.length !== 32) return null;
-  if (h && h.length !== 32) return null;
-  const tweakHash = tapTweakHash(pubKey, h);
-  const res = getEccLib().xOnlyPointAddTweak(pubKey, tweakHash);
-  if (!res || res.xOnlyPubkey === null) return null;
-  return {
-    parity: res.parity,
-    x: NBuffer.from(res.xOnlyPubkey),
-  };
+    if (!NBuffer.isBuffer(pubKey))
+        return null;
+    if (pubKey.length !== 32)
+        return null;
+    if (h && h.length !== 32)
+        return null;
+    const tweakHash = tapTweakHash(pubKey, h);
+    const res = getEccLib().xOnlyPointAddTweak(pubKey, tweakHash);
+    if (!res || res.xOnlyPubkey === null)
+        return null;
+    return {
+        parity: res.parity,
+        x: NBuffer.from(res.xOnlyPubkey),
+    };
 }
 function tapBranchHash(a, b) {
-  return bcrypto.taggedHash('TapBranch', NBuffer.concat([a, b]));
+    return bcrypto.taggedHash('TapBranch', NBuffer.concat([a, b]));
 }
 function serializeScript(s) {
-  const varintLen = varuint.encodingLength(s.length);
-  const buffer = NBuffer.allocUnsafe(varintLen); // better
-  varuint.encode(s.length, buffer);
-  return NBuffer.concat([buffer, s]);
+    const varintLen = varuint.encodingLength(s.length);
+    const buffer = NBuffer.allocUnsafe(varintLen); // better
+    varuint.encode(s.length, buffer);
+    return NBuffer.concat([buffer, s]);
 }
