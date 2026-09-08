@@ -1,145 +1,129 @@
-import { useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
+import { useContext, useState } from 'react'
+import { ComputerContext, InlineAlert, limitConcurrency } from '@bitcoin-computer/components'
+import { formatTime, fetchBlockByHeight, getTipHeight } from '../utils/rpc'
+import { useAsync } from '../hooks/useAsync'
+import { HexLink } from './ui/HexLink'
+import { PageHeader } from './ui/PageHeader'
+import { DataTable, Pager, TableRow, TableSkeleton, tdClass } from './ui/Table'
+
+type BlockRow = {
+  height: number
+  hash: string
+  time?: number | string
+  nTx?: number
+  size?: number | string
+  error?: string
+}
+
+const PAGE_SIZE = 15
+const FETCH_CONCURRENCY = 3
 
 export default function Blocks() {
-  const navigate = useNavigate()
   const computer = useContext(ComputerContext)
-  const blocksPerPage = 100
-
-  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
   const [pageNum, setPageNum] = useState(0)
-  const [isNextAvailable, setIsNextAvailable] = useState(true)
-  const [isPrevAvailable, setIsPrevAvailable] = useState(pageNum > 0)
-  const [totalBlocks, setTotalBlocks] = useState(0)
-  const [blocks, setBlocks] = useState<number[]>([])
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        showLoader(true)
-        const res = await computer.rpc('getblockchaininfo', '')
-        setTotalBlocks(res.result.blocks)
-        showLoader(false)
-      } catch (error) {
-        showLoader(false)
-        console.log('Error getting blocks', error)
-        showSnackBar('Error getting blocks', false)
-      }
+
+  const { data, loading, error } = useAsync(async () => {
+    const tip = await getTipHeight(computer)
+    if (tip <= 0) return { tip, rows: [] as BlockRow[] }
+
+    const start = tip - pageNum * PAGE_SIZE
+    const heights: number[] = []
+    for (let h = start; h > start - PAGE_SIZE && h >= 0; h--) {
+      heights.push(h)
     }
-    fetch()
-  }, [computer])
 
-  useEffect(() => {
-    try {
-      let length = blocksPerPage
-      if (totalBlocks - (pageNum * blocksPerPage + blocksPerPage - 1) <= 0) {
-        setIsNextAvailable(false)
-        length = totalBlocks - (pageNum * blocksPerPage + blocksPerPage - 1) + blocksPerPage - 1
-      }
-      setBlocks(Array.from({ length }, (_, i) => totalBlocks - (pageNum * blocksPerPage + i)))
-    } catch (error) {
-      showSnackBar('Error setting blocks', false)
-      console.log('Error setting blocks', error)
-    }
-  }, [totalBlocks, pageNum])
+    const rows = await Promise.all(
+      heights.map((height) =>
+        limitConcurrency(async () => {
+          try {
+            const block = await fetchBlockByHeight(computer, height)
+            if (!block) {
+              return { height, hash: '', error: 'Missing hash' }
+            }
+            return {
+              height: block.height ?? height,
+              hash: block.hash,
+              time: block.time,
+              size: block.size,
+              nTx: Array.isArray(block.tx) ? block.tx.length : undefined,
+            }
+          } catch {
+            return { height, hash: '', error: 'Failed to load' }
+          }
+        }, FETCH_CONCURRENCY),
+      ),
+    )
 
-  const handleClick = async (block: number) => {
-    const res = await computer.db.wallet.restClient.rpc('getblockhash', `${block}`)
-    const blockHash = res.result.result
-    navigate(`/blocks/${blockHash}`)
-  }
+    return { tip, rows }
+  }, [computer, pageNum])
 
-  const handleNext = async () => {
-    setIsPrevAvailable(true)
-    setPageNum(pageNum + 1)
-  }
+  const tipHeight = data?.tip ?? 0
+  const rows = data?.rows ?? []
+  const maxPage = tipHeight > 0 ? Math.floor(tipHeight / PAGE_SIZE) : 0
 
-  const handlePrev = async () => {
-    setIsNextAvailable(true)
-    if (pageNum - 1 === 0) {
-      setIsPrevAvailable(false)
-    }
-    setPageNum(pageNum - 1)
-  }
   return (
-    <div className="relative overflow-x-auto sm:rounded-lg pt-4">
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th scope="col" className="px-6 py-3">
-              Block Number
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {blocks.map((block) => (
-            <tr key={block} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-              <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                <button
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  onClick={() => handleClick(block)}
-                >
-                  Block #{block}
-                </button>
-              </th>
-            </tr>
+    <div className="w-full space-y-4">
+      <PageHeader
+        title="Blocks"
+        subtitle={`Recent blocks${tipHeight > 0 ? ` · tip #${tipHeight}` : ''}`}
+      />
+
+      {error ? <InlineAlert variant="error">{error}</InlineAlert> : null}
+
+      {loading ? (
+        <TableSkeleton rows={6} />
+      ) : (
+        <DataTable
+          columns={[
+            { key: 'height', label: 'Height' },
+            { key: 'hash', label: 'Hash' },
+            { key: 'time', label: 'Time' },
+            { key: 'txs', label: 'Txs', className: 'text-right' },
+            { key: 'size', label: 'Size', className: 'text-right' },
+          ]}
+          empty={rows.length === 0 && !error ? 'No blocks found' : undefined}
+        >
+          {rows.map((row) => (
+            <TableRow key={row.height} className="hover:bg-gray-50 dark:hover:bg-gray-800/50">
+              <td className={`${tdClass} tabular-nums font-medium text-gray-900 dark:text-white`}>
+                {row.hash ? (
+                  <HexLink to={`/block/${row.hash}`} value={row.hash}>
+                    {row.height}
+                  </HexLink>
+                ) : (
+                  row.height
+                )}
+              </td>
+              <td className={`${tdClass} font-mono text-xs`}>
+                {row.hash ? (
+                  <HexLink to={`/block/${row.hash}`} value={row.hash} />
+                ) : (
+                  <span className="text-red-500">{row.error || '—'}</span>
+                )}
+              </td>
+              <td className={`${tdClass} text-xs whitespace-nowrap`}>{formatTime(row.time)}</td>
+              <td className={`${tdClass} text-right tabular-nums`}>
+                {row.nTx != null ? row.nTx : '—'}
+              </td>
+              <td className={`${tdClass} text-right tabular-nums text-xs`}>
+                {row.size != null ? Number(row.size).toLocaleString() : '—'}
+              </td>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
-      {blocks.length > 0 && (
-        <nav className="flex items-center justify-between p-4" aria-label="Table navigation">
-          <ul className="inline-flex items-center -space-x-px">
-            <li>
-              <button
-                disabled={!isPrevAvailable}
-                onClick={handlePrev}
-                className="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                <span className="sr-only">Previous</span>
-                <svg
-                  className="w-2.5 h-2.5"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 6 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 1 1 5l4 4"
-                  />
-                </svg>
-              </button>
-            </li>
-            <li>
-              <button
-                disabled={!isNextAvailable}
-                onClick={handleNext}
-                className="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
-              >
-                <span className="sr-only">Next</span>
-                <svg
-                  className="w-2.5 h-2.5"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 6 10"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="m1 9 4-4-4-4"
-                  />
-                </svg>
-              </button>
-            </li>
-          </ul>
-        </nav>
+        </DataTable>
       )}
+
+      {tipHeight > 0 && !loading ? (
+        <Pager
+          prevLabel="Newer"
+          nextLabel="Older"
+          prevDisabled={pageNum <= 0}
+          nextDisabled={pageNum >= maxPage}
+          onPrev={() => setPageNum((p) => Math.max(0, p - 1))}
+          onNext={() => setPageNum((p) => p + 1)}
+          info={`Page ${pageNum + 1} of ${maxPage + 1}`}
+        />
+      ) : null}
     </div>
   )
 }

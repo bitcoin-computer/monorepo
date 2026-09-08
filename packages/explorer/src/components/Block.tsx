@@ -1,160 +1,179 @@
-import { useContext, useEffect, useState } from 'react'
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
+import { useContext } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { ComputerContext, InlineAlert } from '@bitcoin-computer/components'
+import { formatTime, getBlock, resolveBlockHash, resolveNeighbors, txIdOf } from '../utils/rpc'
+import { useAsync } from '../hooks/useAsync'
+import { HexLink } from './ui/HexLink'
+import { PageHeader } from './ui/PageHeader'
+import { DataTable, TableRow, tdClass } from './ui/Table'
 
-function Block() {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const params = useParams()
-  const computer = useContext(ComputerContext)
-  const [block] = useState(params.block)
-  const [blockData, setBlockData] = useState<{
-    hash: string
-    time: string
-    size: string
-    weight: string
-    previousblockhash: string
-    nextblockhash: string
-    tx: { txid: string }[]
-  } | null>(null)
-  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
-
-  useEffect(() => {
-    const fetch = async () => {
-      try {
-        showLoader(true)
-        const res = await computer.rpc('getblock', `${block} 2`)
-        setBlockData(res.result)
-        showLoader(false)
-      } catch {
-        showLoader(false)
-        showSnackBar('Error getting block', false)
-      }
-    }
-    fetch()
-  }, [computer, block, location])
-
-  const handleClick = async (txid: string) => {
-    navigate(`/transactions/${txid}`)
-  }
+function NeighborNav({ prevHash, nextHash }: { prevHash?: string; nextHash?: string }) {
+  const navBtn =
+    'inline-flex items-center justify-center px-3 h-9 text-sm font-medium border rounded-lg transition'
+  const navEnabled =
+    'bg-white text-gray-900 border-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-700'
+  const navDisabled =
+    'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed pointer-events-none dark:bg-gray-800 dark:text-gray-500 dark:border-gray-700'
 
   return (
-    <>
-      {blockData && (
-        <div className="pt-4">
-          <dl className="text-gray-900 divide-y divide-gray-200">
-            <div className="flex flex-col pb-3">
-              <dt className="mb-1 text-gray-500 md:text-md ">Hash</dt>
-              <dd className="text-md font-semibold">
-                <Link
-                  className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  to={`/blocks/${blockData.hash}`}
-                >
-                  {blockData.hash}
-                </Link>
+    <div className="flex flex-wrap gap-2">
+      {prevHash ? (
+        <Link to={`/block/${prevHash}`} className={`${navBtn} ${navEnabled}`} title={prevHash}>
+          ← Previous
+        </Link>
+      ) : (
+        <span className={`${navBtn} ${navDisabled}`}>← Previous</span>
+      )}
+      {nextHash ? (
+        <Link to={`/block/${nextHash}`} className={`${navBtn} ${navEnabled}`} title={nextHash}>
+          Next →
+        </Link>
+      ) : (
+        <span className={`${navBtn} ${navDisabled}`}>Next →</span>
+      )}
+    </div>
+  )
+}
+
+function Block() {
+  const { id: rawId = '' } = useParams<{ id?: string }>()
+  const computer = useContext(ComputerContext)
+
+  const { data, loading, error } = useAsync(
+    async () => {
+      const hash = await resolveBlockHash(computer, rawId)
+      const block = await getBlock(computer, hash)
+      if (!block?.hash) throw new Error('Block not found')
+
+      if (block.height == null) {
+        try {
+          const header = await computer.rpc('getblockheader', hash)
+          if (header?.height != null) block.height = header.height
+        } catch {
+          // ignore
+        }
+      }
+
+      const neighbors = await resolveNeighbors(computer, block)
+      return { block, prevHash: neighbors.prevHash, nextHash: neighbors.nextHash }
+    },
+    [computer, rawId],
+    Boolean(rawId),
+  )
+
+  const blockData = data?.block
+  const txs = (blockData?.tx || []).map(txIdOf)
+
+  return (
+    <div className="w-full space-y-4">
+      <PageHeader
+        eyebrow="Block"
+        title={blockData?.height != null ? `#${blockData.height}` : 'Detail'}
+        actions={
+          <Link
+            to="/blocks"
+            className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+          >
+            ← All blocks
+          </Link>
+        }
+      />
+
+      {loading ? (
+        <div className="animate-pulse space-y-3">
+          <div className="h-28 rounded-lg bg-gray-200 dark:bg-gray-700" />
+          <div className="h-40 rounded-lg bg-gray-200 dark:bg-gray-700" />
+        </div>
+      ) : null}
+
+      {error && !loading ? (
+        <InlineAlert variant="error" title="Could not load block">
+          <p className="mb-2">{error}</p>
+          <p className="font-mono text-xs break-all opacity-80">{rawId}</p>
+        </InlineAlert>
+      ) : null}
+
+      {blockData && !loading ? (
+        <>
+          <NeighborNav prevHash={data?.prevHash} nextHash={data?.nextHash} />
+
+          <dl className="text-gray-900 dark:text-gray-100 divide-y divide-gray-200 dark:divide-gray-700 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-3">
+            <div className="flex flex-col py-2.5">
+              <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                Hash
+              </dt>
+              <dd className="text-sm font-mono break-all">{blockData.hash}</dd>
+            </div>
+            {blockData.height != null ? (
+              <div className="flex flex-col py-2.5">
+                <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  Height
+                </dt>
+                <dd className="text-sm font-medium tabular-nums">{blockData.height}</dd>
+              </div>
+            ) : null}
+            <div className="flex flex-col py-2.5">
+              <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                Time
+              </dt>
+              <dd className="text-sm font-medium">{formatTime(blockData.time)}</dd>
+            </div>
+            <div className="flex flex-col py-2.5">
+              <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                Size
+              </dt>
+              <dd className="text-sm font-medium tabular-nums">
+                {blockData.size != null ? Number(blockData.size).toLocaleString() : '—'}
               </dd>
             </div>
-            <div className="flex flex-col py-3">
-              <dt className="mb-1 text-gray-500 md:text-md">Timestamp</dt>
-              <dd className="text-md font-semibold">{blockData.time}</dd>
-            </div>
-            <div className="flex flex-col pt-3">
-              <dt className="mb-1 text-gray-500 md:text-md">Size</dt>
-              <dd className="text-md font-semibold">{blockData.size}</dd>
-            </div>
-            <div className="flex flex-col pt-3">
-              <dt className="mb-1 text-gray-500 md:text-md">Weight</dt>
-              <dd className="text-md font-semibold">{blockData.weight}</dd>
+            {blockData.weight != null ? (
+              <div className="flex flex-col py-2.5">
+                <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                  Weight
+                </dt>
+                <dd className="text-sm font-medium tabular-nums">
+                  {Number(blockData.weight).toLocaleString()}
+                </dd>
+              </div>
+            ) : null}
+            <div className="flex flex-col py-2.5">
+              <dt className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                Transactions
+              </dt>
+              <dd className="text-sm font-medium tabular-nums">{txs.length}</dd>
             </div>
           </dl>
-          <nav className="flex items-center justify-between pt-4" aria-label="Table navigation">
-            <ul className="inline-flex items-center -space-x-px">
-              <li>
-                <button
-                  disabled={!blockData.previousblockhash}
-                  onClick={() => navigate(`/blocks/${blockData.previousblockhash}`)}
-                  className="block px-3 py-2 ml-0 leading-tight text-gray-500 bg-white disabled:bg-slate-100 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700"
-                >
-                  <svg
-                    className="w-5 h-5 inline"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                  <span>Prev Block</span>
-                </button>
-              </li>
-              <li>
-                <button
-                  disabled={!blockData.nextblockhash}
-                  onClick={() => navigate(`/blocks/${blockData.nextblockhash}`)}
-                  className="block px-3 py-2 leading-tight text-gray-500 bg-white disabled:bg-slate-100 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700"
-                >
-                  <span>Next Block</span>
-                  <svg
-                    className="w-5 h-5 inline"
-                    aria-hidden="true"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                      clipRule="evenodd"
-                    ></path>
-                  </svg>
-                </button>
-              </li>
-            </ul>
-          </nav>
 
-          <div className="relative overflow-x-auto sm:rounded-lg">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                <tr>
-                  <th scope="col" className="px-6 py-3">
-                    Transaction
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {blockData?.tx?.map((txn: { txid: string }) => (
-                  <tr
-                    key={txn.txid}
-                    className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                  >
-                    <th
-                      scope="row"
-                      className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-                    >
-                      <button
-                        className="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                        onClick={() => handleClick(txn.txid)}
-                      >
-                        {txn.txid}
-                      </button>
-                    </th>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
-      {!blockData && (
-        <div className="flex items-center pt-4 pt-2 w-full">
-          <h1 className="text-md">Not a valid block hash {block}</h1>
-        </div>
-      )}
-    </>
+          <section>
+            <h2 className="text-base sm:text-lg font-semibold dark:text-white mb-2">
+              Transactions
+            </h2>
+            <DataTable
+              columns={[
+                { key: 'i', label: '#' },
+                { key: 'txid', label: 'Transaction ID' },
+              ]}
+              empty={txs.length === 0 ? 'No transactions' : undefined}
+            >
+              {txs.map((txid, i) => (
+                <TableRow key={txid}>
+                  <td className={`${tdClass} tabular-nums text-xs text-gray-500`}>{i}</td>
+                  <td className={`${tdClass} font-mono text-xs`}>
+                    <HexLink
+                      to={`/transactions/${txid}`}
+                      value={txid}
+                      className="font-medium text-blue-600 dark:text-blue-400 hover:underline break-all"
+                      mobile={[12, 10]}
+                      desktop="full"
+                    />
+                  </td>
+                </TableRow>
+              ))}
+            </DataTable>
+          </section>
+        </>
+      ) : null}
+    </div>
   )
 }
 

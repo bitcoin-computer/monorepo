@@ -2,7 +2,6 @@ import { Dispatch, RefObject, useEffect, useRef, useState } from "react";
 import { Computer } from "@bitcoin-computer/lib";
 import { initFlowbite } from "flowbite";
 import { HiRefresh } from "react-icons/hi";
-import { useUtilsComponents } from "./UtilsContext";
 import { Modal } from "./Modal";
 import type { Chain, Network, ModuleStorageType } from "./common/types";
 export type TBCChain = "LTC" | "BTC" | "PEPE" | "DOGE";
@@ -300,6 +299,7 @@ function LoginButton({
   path,
   url,
   urlInputRef,
+  onError,
 }: {
   urlInputRef: RefObject<HTMLInputElement | null>;
   mnemonic: string;
@@ -307,20 +307,25 @@ function LoginButton({
   network: Network | undefined;
   path?: string;
   url: string | undefined;
+  onError: (message: string | null) => void;
 }) {
-  const { showSnackBar } = useUtilsComponents();
-
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    if (isLoggedIn())
-      showSnackBar("A user is already logged in, please log out first.", false);
-    if (mnemonic.length === 0)
-      showSnackBar("Please don't use an empty mnemonic string.", false);
-
-    if (!mnemonic || !chain || !network || !url) {
-      return showSnackBar("Please provide valid values.", false);
+    if (isLoggedIn()) {
+      onError("A user is already logged in, please log out first.");
+      return;
+    }
+    if (mnemonic.length === 0) {
+      onError("Please don't use an empty mnemonic string.");
+      return;
     }
 
+    if (!mnemonic || !chain || !network || !url) {
+      onError("Please provide valid values.");
+      return;
+    }
+
+    onError(null);
     localStorage.setItem("BIP_39_KEY", mnemonic);
     localStorage.setItem("CHAIN", chain);
     localStorage.setItem("NETWORK", network);
@@ -331,16 +336,13 @@ function LoginButton({
   };
 
   return (
-    <>
-      <button
-        onClick={login}
-        type="submit"
-        className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-      >
-        Log In
-      </button>
-      {/* {show && <SnackBar message={message} success={success} hideSnackBar={setShow} />} */}
-    </>
+    <button
+      onClick={login}
+      type="submit"
+      className="w-full text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+    >
+      Log In
+    </button>
   );
 }
 
@@ -356,6 +358,7 @@ function LoginForm() {
   );
   const [url] = useState<string | undefined>(process.env.NEXT_PUBLIC_URL);
   const urlInputRef = useRef<HTMLInputElement>(null);
+  const [formError, setFormError] = useState<string | null>(null);
 
   useEffect(() => {
     initFlowbite();
@@ -371,6 +374,11 @@ function LoginForm() {
             {<NetworkInput network={network} setNetwork={setNetwork} />}
             {!url && <UrlInput urlInputRef={urlInputRef} />}
           </div>
+          {formError ? (
+            <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+              {formError}
+            </p>
+          ) : null}
         </form>
       </div>
       <div className="max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -380,6 +388,7 @@ function LoginForm() {
           network={network}
           url={url}
           urlInputRef={urlInputRef}
+          onError={setFormError}
         />
       </div>
     </>

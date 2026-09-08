@@ -35,7 +35,8 @@ export function SendForm({ computer }: { computer: Computer }) {
   const [to, setTo] = useState<string>('')
   const [amount, setAmount] = useState<string>('')
   const [fee, setFee] = useState<string>('2')
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const [formError, setFormError] = useState<string | null>(null)
+  const { toast } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     initFlowbite()
@@ -43,18 +44,25 @@ export function SendForm({ computer }: { computer: Computer }) {
 
   const transfer = async (e: React.MouseEvent<HTMLElement>) => {
     e.preventDefault()
+    setFormError(null)
+    if (!to.trim()) {
+      setFormError('Enter a recipient address')
+      return
+    }
+    if (!amount.trim()) {
+      setFormError('Enter an amount')
+      return
+    }
     computer.setFee(Number(fee))
     try {
       const txId = await computer.send(strToBigInt(amount), to)
-      showSnackBar(`Sent ${amount} ${computer.getChain()} to ${to} via transaction ${txId}`, true)
+      toast.success(`Sent ${amount} ${computer.getChain()}. Tx ${txId.slice(0, 10)}…`)
+      setTo('')
+      setAmount('')
     } catch (err) {
-      showSnackBar(`Something went wrong ${err instanceof Error ? err.message : ''}`, false)
+      toast.error(err instanceof Error ? err.message : 'Something went wrong')
     }
   }
-
-  useEffect(() => {
-    initFlowbite()
-  }, [])
 
   return (
     <>
@@ -70,7 +78,10 @@ export function SendForm({ computer }: { computer: Computer }) {
           </label>
           <input
             value={to}
-            onChange={(e) => setTo(e.target.value)}
+            onChange={(e) => {
+              setTo(e.target.value)
+              if (formError) setFormError(null)
+            }}
             type="text"
             id="to"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -86,7 +97,10 @@ export function SendForm({ computer }: { computer: Computer }) {
           </label>
           <input
             value={amount}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => {
+              setAmount(e.target.value)
+              if (formError) setFormError(null)
+            }}
             id="amount"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required
@@ -102,11 +116,16 @@ export function SendForm({ computer }: { computer: Computer }) {
           <input
             value={fee}
             onChange={(e) => setFee(e.target.value)}
-            id="amount"
+            id="fee"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required
           />
         </div>
+        {formError ? (
+          <p className="mb-3 text-sm text-red-600 dark:text-red-400" role="alert">
+            {formError}
+          </p>
+        ) : null}
         <button
           type="submit"
           onClick={transfer}

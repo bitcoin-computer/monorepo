@@ -9,7 +9,7 @@ sequenceDiagram
     C->>S: streamMempoolCleanup(callbacks)
     S-->>C: SSE Connected (Promise resolves)
     Note over C,S: Mempool cleanup triggers
-    S->>C: onMessage({type: 'cleanup', staleTxIds, revs}) // Deletions
+    S->>C: onMessage({ revs }) // Deleted unconfirmed revs
     C->>S: unsubscribe() // Closes SSE
 ```    
 

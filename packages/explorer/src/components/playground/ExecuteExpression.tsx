@@ -1,142 +1,111 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
-import { IoMdRemoveCircleOutline } from 'react-icons/io'
-import { Computer } from '@bitcoin-computer/lib'
-import { UtilsContext } from '@bitcoin-computer/components'
-import { getErrorMessage, isValidRev } from '../../utils'
-import { ModSpec } from './Modspec'
+import { useEffect, useMemo, useState } from 'react'
+import { isValidRev } from '@bitcoin-computer/components'
+import { PlaygroundWorkspace } from './PlaygroundWorkspace'
+import { FieldList, inputClassName, Panel, PlaygroundResult, RemoveRowButton } from './ui'
+import { usePlaygroundDraft } from './usePlaygroundDraft'
 
-interface ExpressionArgument {
+interface EnvBinding {
   name: string
   value: string
-  hidden: boolean
 }
 
 const ExecuteExpression = (props: {
-  computer: Computer
-  setShow: (flag: boolean) => void
-  // eslint-disable-next-line
-  setFunctionResult: Dispatch<SetStateAction<any>>
-  setModalTitle: Dispatch<SetStateAction<string>>
+  reportResult: (result: PlaygroundResult) => void
   exampleExpression: string
-  exampleVars: { name: string; type: string }[]
+  exampleLoaded: boolean
+  onLoadCounter?: () => void
+  onPreviewDone?: () => void
+  onBroadcastDone?: () => void
 }) => {
-  const { computer, exampleExpression, setShow, setModalTitle, setFunctionResult } = props
+  const {
+    exampleExpression,
+    reportResult,
+    exampleLoaded,
+    onLoadCounter,
+    onPreviewDone,
+    onBroadcastDone,
+  } = props
 
-  const [expression, setExpression] = useState<string>()
-  const [modSpec, setModSpec] = useState<string>()
-  const [expressionArgumentsList, setExpressoinArgumentsList] = useState<ExpressionArgument[]>([])
-  const { showLoader } = UtilsContext.useUtilsComponents()
+  const { source: expression, setSource: setExpression, modSpec, setModSpec } =
+    usePlaygroundDraft('execute', 'expression', exampleExpression, exampleLoaded)
+  const [envBindings, setEnvBindings] = useState<EnvBinding[]>([])
 
   useEffect(() => {
-    setExpression(exampleExpression)
+    setEnvBindings([])
   }, [exampleExpression])
 
-  const handleExpressoinArgumentChange = (
-    index: number,
-    field: 'name' | 'value',
-    value: string,
-  ) => {
-    const updatedExpressionArguments = [...expressionArgumentsList]
-    updatedExpressionArguments[index][field] = value
-    setExpressoinArgumentsList(updatedExpressionArguments)
-  }
-
-  const removeExpressionArgument = (index: number) => {
-    const newExpressionArgumentsList = [...expressionArgumentsList]
-    newExpressionArgumentsList[index] = { ...newExpressionArgumentsList[index], hidden: true }
-    setExpressoinArgumentsList(newExpressionArgumentsList)
-  }
-
-  const handleAddExpressionArgument = () => {
-    setExpressoinArgumentsList([...expressionArgumentsList, { name: '', value: '', hidden: false }])
-  }
-  const handleExpressionCall = async () => {
-    try {
-      showLoader(true)
-      const expressionCode = expression?.trim()
-
-      const revMap: { [key: string]: string } = {}
-      expressionArgumentsList
-        .filter((argument) => !argument.hidden)
-        .forEach((argument) => {
-          const argValue = argument.value
-          if (isValidRev(argValue)) {
-            revMap[argument.name] = argValue
-          }
-        })
-
-      const encodeObject: {
-        exp: string
-        env: { [key: string]: string }
-        fund: boolean
-        sign: boolean
-        mod?: string
-      } = {
-        exp: `${expressionCode}`,
-        env: { ...revMap },
-        fund: true,
-        sign: true,
-      }
-      if (modSpec) {
-        encodeObject.mod = modSpec
-      }
-
-      const { tx, effect } = await computer.encode({
-        exp: `${expressionCode}`,
-        env: { ...revMap },
-        fund: true,
-        sign: true,
-      })
-      if (!tx) throw new Error('Transition does not update the state, no transaction created')
-      const txId = await computer.broadcast(tx)
-      setFunctionResult({ _rev: `${txId}:0`, type: 'objects', res: effect.res })
-      setModalTitle('Success!')
-      setShow(true)
-    } catch (error: unknown) {
-      setFunctionResult(getErrorMessage(error))
-      setModalTitle('Error!')
-      setShow(true)
-    } finally {
-      showLoader(false)
-    }
-  }
-
   const isCallDisabled = useMemo(
-    () => expressionArgumentsList.some((arg) => !arg.name.trim()),
-    [expressionArgumentsList],
+    () => !expression?.trim() || envBindings.some((arg) => !arg.name.trim()),
+    [envBindings, expression],
   )
 
+  const handleBindingChange = (index: number, field: 'name' | 'value', value: string) => {
+    setEnvBindings((prev) => {
+      const next = [...prev]
+      next[index] = { ...next[index], [field]: value }
+      return next
+    })
+  }
+
+  const buildEnv = () => {
+    const revMap: { [key: string]: string } = {}
+    envBindings.forEach((argument) => {
+      if (isValidRev(argument.value)) revMap[argument.name] = argument.value
+    })
+    return revMap
+  }
+
   return (
-    <>
-      <textarea
-        id="expression-textarea"
-        value={expression}
-        onChange={(e) => setExpression(e.target.value)}
-        placeholder="Enter expression here"
-        rows={16}
-        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" // Added font-mono for monospaced font
-        // eslint-disable-next-line
-        style={{ tabSize: 2, MozTabSize: 2, OTabSize: 2, WebkitTabSize: 2 } as any} // Set tab size to 2 spaces
-        spellCheck="false" // Disable spell check
-        autoCapitalize="none" // Disable auto capitalization
-        autoComplete="off" // Disable auto completion
-        autoCorrect="off" // Disable auto correction
-        wrap="off" // Disable word wrapping
-      ></textarea>
-
-      <h6 className="mt-4 text-lg font-bold dark:text-white">Environment Variables</h6>
-
-      <div>
-        {expressionArgumentsList.map(
-          (argument: ExpressionArgument, index) =>
-            !argument.hidden && (
-              <div key={index} className="mt-2 flex items-center mb-2">
+    <PlaygroundWorkspace
+      source={expression}
+      onSourceChange={setExpression}
+      exampleSource={exampleExpression}
+      exampleLoaded={exampleLoaded}
+      editorTitle="Expression"
+      editorId="expression-textarea"
+      placeholder="new Counter() or other JS expression"
+      minHeight={280}
+      ariaLabel="Expression source"
+      modSpec={modSpec}
+      onModSpecChange={setModSpec}
+      primaryLabel="Execute expression"
+      disabled={isCallDisabled}
+      onLoadCounter={onLoadCounter}
+      reportResult={reportResult}
+      onPreviewDone={onPreviewDone}
+      onBroadcastDone={onBroadcastDone}
+      buildEncode={({ fund, sign }) => ({
+        exp: `${expression?.trim() ?? ''}`,
+        env: buildEnv(),
+        fund,
+        sign,
+        ...(modSpec ? { mod: modSpec } : {}),
+      })}
+      finishBroadcast={async ({ effect, txId }) => ({
+        result: {
+          status: 'success',
+          title: 'Expression executed',
+          data: { _rev: `${txId}:0`, type: 'objects', res: effect.res },
+        },
+        res: effect?.res,
+        env: effect?.env,
+      })}
+      extra={
+        <Panel title="Environment">
+          <FieldList
+            count={envBindings.length}
+            empty="Bind names used in the expression to revision strings (revs)."
+            addLabel="Add environment variable"
+            onAdd={() => setEnvBindings((prev) => [...prev, { name: '', value: '' }])}
+          >
+            {envBindings.map((argument, index) => (
+              <div key={index} className="flex flex-wrap items-center gap-2">
                 <input
                   type="text"
                   id={`playground-expression-argument-name-${index}`}
                   value={argument.name}
-                  onChange={(e) => handleExpressoinArgumentChange(index, 'name', e.target.value)}
-                  className="sm:w-1/4 md:w-1/4 lg:w-1/3 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  onChange={(e) => handleBindingChange(index, 'name', e.target.value)}
+                  className={`${inputClassName} w-full sm:w-40`}
                   placeholder="Name"
                   required
                 />
@@ -144,44 +113,21 @@ const ExecuteExpression = (props: {
                   type="text"
                   id={`playground-expression-argument-${index}`}
                   value={argument.value}
-                  onChange={(e) => handleExpressoinArgumentChange(index, 'value', e.target.value)}
-                  className="sm:w-full md:w-2/3 lg:w-1/2 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Value"
+                  onChange={(e) => handleBindingChange(index, 'value', e.target.value)}
+                  className={`${inputClassName} min-w-[10rem] flex-1`}
+                  placeholder="Rev (txid:vout)"
                   required
                 />
-                <IoMdRemoveCircleOutline
-                  className="w-6 h-6 ml-2 text-red-500 cursor-pointer"
-                  onClick={() => removeExpressionArgument(index)}
+                <RemoveRowButton
+                  label="Remove env binding"
+                  onClick={() => setEnvBindings((prev) => prev.filter((_, i) => i !== index))}
                 />
               </div>
-            ),
-        )}
-      </div>
-
-      <button
-        type="button"
-        onClick={handleAddExpressionArgument}
-        className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center my-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-      >
-        Add Environment Variable
-      </button>
-
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-      <button
-        type="button"
-        disabled={isCallDisabled}
-        onClick={handleExpressionCall}
-        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:ring-4 focus:outline-none
-          ${isCallDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'}
-        `}
-      >
-        Execute Expression
-      </button>
-    </>
+            ))}
+          </FieldList>
+        </Panel>
+      }
+    />
   )
 }
 

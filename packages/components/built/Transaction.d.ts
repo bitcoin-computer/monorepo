@@ -1,3 +1,4 @@
+import { type DecodeFailureKind } from './common/transition';
 export declare const outputsComponent: ({ rpcTxnData, txn, }: {
     rpcTxnData: any;
     txn: string | undefined;
@@ -6,6 +7,11 @@ export declare const inputsComponent: ({ rpcTxnData, checkForSpentInput, }: {
     rpcTxnData: any;
     checkForSpentInput: boolean;
 }) => import("react").JSX.Element;
+export declare function TransitionUnavailable({ kind, error, txn, }: {
+    kind: DecodeFailureKind;
+    error?: string;
+    txn?: string;
+}): import("react").JSX.Element;
 export declare const transitionComponent: ({ transition }: {
     transition: any;
 }) => import("react").JSX.Element;

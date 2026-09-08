@@ -1,65 +1,100 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react'
-import { Computer } from '@bitcoin-computer/lib'
-import { UtilsContext } from '@bitcoin-computer/components'
-import { getErrorMessage } from '../../utils'
+import { useCallback, useContext, useMemo } from 'react'
+import {
+  ComputerContext,
+  UtilsContext,
+  getErrorMessage,
+} from '@bitcoin-computer/components'
+import { PlaygroundWorkspace } from './PlaygroundWorkspace'
+import { PlaygroundResult } from './ui'
+import { usePlaygroundDraft } from './usePlaygroundDraft'
 
 const DeployModule = (props: {
-  computer: Computer
-  setShow: (flag: boolean) => void
-  // eslint-disable-next-line
-  setFunctionResult: Dispatch<SetStateAction<any>>
-  setModalTitle: Dispatch<SetStateAction<string>>
+  reportResult: (result: PlaygroundResult) => void
   exampleModule: string
+  exampleLoaded: boolean
+  onLoadCounter?: () => void
+  onBroadcastDone?: () => void
 }) => {
-  const { computer, exampleModule, setShow, setModalTitle, setFunctionResult } = props
-  const [module, setModule] = useState<string>()
+  const { exampleModule, reportResult, exampleLoaded, onLoadCounter, onBroadcastDone } = props
+  const computer = useContext(ComputerContext)
   const { showLoader } = UtilsContext.useUtilsComponents()
+  const { source: module, setSource: setModule } = usePlaygroundDraft(
+    'deploy',
+    'module',
+    exampleModule,
+    exampleLoaded,
+  )
 
-  useEffect(() => {
-    setModule(exampleModule)
-  }, [exampleModule])
+  const handlePreview = useCallback(async () => {
+    const src = module?.trim() || ''
+    if (!src) {
+      reportResult({ status: 'error', title: 'Preview failed', data: 'Module source is empty.' })
+      return
+    }
+    const hasExport = /\bexport\s+(class|function|const|let|var|default)\b/.test(src)
+    const hasContract = /\bextends\s+Contract\b/.test(src) || /\bContract\b/.test(src)
+    if (!hasExport) {
+      reportResult({
+        status: 'error',
+        title: 'Preview',
+        data: 'Module should include an export (e.g. export class …). Deploy still broadcasts to the chain.',
+      })
+      return
+    }
+    reportResult({
+      status: 'success',
+      title: 'Module looks valid',
+      data: hasContract
+        ? 'Found export and Contract reference. Deploy will broadcast on-chain (no off-chain encode preview for modules).'
+        : 'Found export. Consider extending Contract for smart objects. Deploy will broadcast on-chain.',
+    })
+  }, [module, reportResult])
 
-  const handleModuleDeploy = async () => {
+  const handleModuleDeploy = useCallback(async () => {
     try {
       showLoader(true)
       const modSpec = await computer.deploy(module?.trim() as string)
-      setFunctionResult({ _rev: modSpec, type: 'modules' })
-      setModalTitle('Success!')
-      setShow(true)
+      reportResult({
+        status: 'success',
+        title: 'Module deployed',
+        data: { _rev: modSpec, type: 'modules' },
+      })
+      onBroadcastDone?.()
     } catch (error: unknown) {
-      setFunctionResult(getErrorMessage(error))
-      setModalTitle('Error!')
-      setShow(true)
+      reportResult({
+        status: 'error',
+        title: 'Error',
+        data: getErrorMessage(error),
+      })
     } finally {
       showLoader(false)
     }
-  }
+  }, [computer, module, onBroadcastDone, reportResult, showLoader])
+
+  const disabled = useMemo(() => !module?.trim(), [module])
 
   return (
-    <>
-      <textarea
-        id="module-textarea"
-        value={module}
-        onChange={(e) => setModule(e.target.value)}
-        placeholder="Enter your module here"
-        rows={16}
-        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" // Added font-mono for monospaced font
-        // eslint-disable-next-line
-        style={{ tabSize: 2, MozTabSize: 2, OTabSize: 2, WebkitTabSize: 2 } as any} // Set tab size to 2 spaces
-        spellCheck="false" // Disable spell check
-        autoCapitalize="none" // Disable auto capitalization
-        autoComplete="off" // Disable auto completion
-        autoCorrect="off" // Disable auto correction
-        wrap="off" // Disable word wrapping
-      ></textarea>
-      <button
-        type="button"
-        onClick={handleModuleDeploy}
-        className="mt-8 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-      >
-        Deploy Module
-      </button>
-    </>
+    <PlaygroundWorkspace
+      source={module}
+      onSourceChange={setModule}
+      exampleSource={exampleModule}
+      exampleLoaded={exampleLoaded}
+      editorTitle="Module source"
+      editorId="module-textarea"
+      placeholder="export class MyContract extends Contract { … }"
+      minHeight={320}
+      ariaLabel="Module source"
+      showModSpec={false}
+      showEffect={false}
+      primaryLabel="Deploy module"
+      disabled={disabled}
+      onLoadCounter={onLoadCounter}
+      reportResult={reportResult}
+      onBroadcastDone={onBroadcastDone}
+      onPreview={handlePreview}
+      onBroadcast={handleModuleDeploy}
+      previewLabel="Validate"
+    />
   )
 }
 

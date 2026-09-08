@@ -25,6 +25,7 @@ describe('first', () => {
   it('Should work if an object is not updated', async () => {
     const counter = await computer.new(Counter, [])
 
+    await computer.waitForIndexed(counter._rev)
     // The first of an id is the id
     expect(await computer.first(counter._id)).eq(counter._id)
   })

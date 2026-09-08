@@ -1,8 +1,14 @@
-import { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
-import { ComputerContext, UtilsContext, bigIntToStr } from '@bitcoin-computer/components'
+import { useContext } from 'react'
+import { Link, useParams } from 'react-router-dom'
+import { ComputerContext, bigIntToStr, InlineAlert } from '@bitcoin-computer/components'
+import { CopyButton } from './ui/CopyButton'
+import { EmptyState } from './ui/EmptyState'
+import { HexLink } from './ui/HexLink'
+import { PageHeader, SectionTitle, StatCard } from './ui/PageHeader'
+import { DataTable, TableRow, TableSkeleton, tdClass } from './ui/Table'
+import { useAsync } from '../hooks/useAsync'
 
-interface _DbOutput {
+interface DbOutput {
   rev: string
   address: string
   satoshis: bigint
@@ -18,98 +24,121 @@ interface _DbOutput {
 
 const UTXODisplay = () => {
   const params = useParams()
-  const [utxos, setUtxos] = useState<_DbOutput[]>([])
-  const [totalAmount, setTotalAmount] = useState<bigint>(0n)
-  const [address] = useState<string>(params.address || '')
+  const address = params.address || ''
   const computer = useContext(ComputerContext)
-  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+  const chain = computer.getChain()
 
-  // Extract address from URL params
-  useEffect(() => {
-    fetchUTXOs(address)
-  }, [address])
-
-  // Fetch UTXOs using bitcoind-rpc
-  const fetchUTXOs = async (addr: string) => {
-    try {
-      showLoader(true)
-      const response = (await computer.db.wallet.restClient.getUTXOs({
-        address: addr,
-        verbosity: 1,
-        isObject: false,
-      })) as _DbOutput[]
-      setUtxos(response)
-      setTotalAmount(response.reduce((total, unspent) => total + unspent.satoshis, 0n))
-    } catch (err: unknown) {
-      showSnackBar(err instanceof Error ? err.message : 'Error occurred', true)
-    } finally {
-      showLoader(false)
+  const { data, loading, error, reload } = useAsync(async () => {
+    if (!address) throw new Error('No address provided')
+    const response = (await computer.db.wallet.restClient.getUTXOs({
+      address,
+      verbosity: 1,
+      isObject: false,
+    })) as DbOutput[]
+    return {
+      utxos: response,
+      totalAmount: response.reduce((total, unspent) => total + unspent.satoshis, 0n),
     }
-  }
+  }, [computer, address])
+
+  const utxos = data?.utxos ?? []
+  const totalAmount = data?.totalAmount ?? 0n
 
   return (
-    <>
-      {utxos && utxos.length > 0 && (
-        <>
-          <div className="w-full">
-            <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Address</h1>
-            <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-              {address}
+    <div className="w-full space-y-4">
+      <PageHeader
+        eyebrow="Address"
+        title={address || '—'}
+        monoTitle
+        actions={address ? <CopyButton text={address} label="Copy" /> : null}
+      />
+
+      <section className="grid grid-cols-3 gap-2 sm:gap-3">
+        <StatCard label="Balance">
+          {loading ? (
+            <div className="h-5 w-20 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          ) : (
+            <>
+              {bigIntToStr(totalAmount)}{' '}
+              <span className="text-xs font-medium text-gray-500 dark:text-gray-400">{chain}</span>
+            </>
+          )}
+        </StatCard>
+        <StatCard label="UTXOs">
+          {loading ? (
+            <div className="h-5 w-8 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          ) : (
+            utxos.length
+          )}
+        </StatCard>
+        <StatCard label="Network">
+          <span className="capitalize">{computer.getNetwork()}</span>
+        </StatCard>
+      </section>
+
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <SectionTitle>Unspent outputs</SectionTitle>
+          <button
+            type="button"
+            onClick={() => reload()}
+            disabled={loading}
+            className="text-xs font-medium text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
+          >
+            Refresh
+          </button>
+        </div>
+
+        {loading ? <TableSkeleton rows={3} /> : null}
+
+        {error && !loading ? <InlineAlert variant="error">{error}</InlineAlert> : null}
+
+        {!loading && !error && utxos.length === 0 ? (
+          <EmptyState title="No UTXOs">
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              No unspent payment outputs. Smart objects are listed under{' '}
+              <Link to="/" className="text-blue-600 dark:text-blue-400 hover:underline">
+                Objects
+              </Link>
+              .
             </p>
-          </div>
+          </EmptyState>
+        ) : null}
 
-          <div className="w-full">
-            <h2 className="mb-2 text-4xl font-bold dark:text-white">Balance</h2>
-            <p className="mb-6 text-lg font-normal text-gray-500 lg:text-xl dark:text-gray-400">
-              {bigIntToStr(totalAmount)} {computer.getChain()}
-            </p>
-          </div>
-
-          <div>
-            <h2 className="mb-2 text-4xl font-bold dark:text-white">UTXOs</h2>
-
-            <div className="relative overflow-x-auto">
-              <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                  <tr>
-                    <th scope="col" className="px-6 py-3">
-                      TXID
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      VOUT
-                    </th>
-                    <th scope="col" className="px-6 py-3">
-                      Amount ({computer.getChain()})
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {utxos.map((utxo, index) => (
-                    <tr
-                      key={index}
-                      className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200"
-                    >
-                      <th
-                        scope="row"
-                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
-                      >
-                        {utxo.rev?.split(':')[0]}
-                      </th>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                        {utxo.rev?.split(':')[1]}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white font-bold">
-                        {bigIntToStr(utxo.satoshis)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </>
-      )}
-    </>
+        {!loading && utxos.length > 0 ? (
+          <DataTable
+            columns={[
+              { key: 'tx', label: 'Transaction' },
+              { key: 'vout', label: 'Vout' },
+              { key: 'amount', label: 'Amount', className: 'text-right' },
+              { key: 'outpoint', label: 'Outpoint' },
+            ]}
+          >
+            {utxos.map((utxo) => {
+              const [txId, vout] = utxo.rev.split(':')
+              return (
+                <TableRow key={utxo.rev}>
+                  <td className={`${tdClass} font-mono text-xs`}>
+                    <HexLink
+                      to={`/transactions/${txId}`}
+                      value={txId}
+                      className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                    />
+                  </td>
+                  <td className={tdClass}>{vout}</td>
+                  <td className={`${tdClass} text-right font-mono text-xs whitespace-nowrap`}>
+                    {bigIntToStr(utxo.satoshis)} {chain}
+                  </td>
+                  <td className={tdClass}>
+                    <CopyButton text={utxo.rev} label="Copy" />
+                  </td>
+                </TableRow>
+              )
+            })}
+          </DataTable>
+        ) : null}
+      </section>
+    </div>
   )
 }
 

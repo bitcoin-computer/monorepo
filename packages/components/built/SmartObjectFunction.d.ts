@@ -1,11 +1,13 @@
-export declare const getErrorMessage: (error: any) => string;
-export declare const getParameterNames: (fn: string) => string[];
-export declare const SmartObjectFunction: ({ smartObject, functionsExist, options, setFunctionResult, setShow, setModalTitle, funcName, }: {
+import { getErrorMessage } from './common/utils';
+export { getErrorMessage };
+export declare const getParameterNames: (fn: ((...args: any[]) => any) | string) => string[];
+export declare const SmartObjectFunction: ({ smartObject, functionsExist, options, funcName, embedded, latestRev, }: {
     smartObject: any;
     functionsExist: boolean;
     options: string[];
-    setFunctionResult: React.Dispatch<any>;
-    setShow: any;
-    setModalTitle: React.Dispatch<React.SetStateAction<string>>;
     funcName: string;
+    /** When true, render as the call column (header, form, and effect stacked) */
+    embedded?: boolean;
+    /** Latest known object revision, if the parent already loaded it */
+    latestRev?: string;
 }) => import("react").JSX.Element;

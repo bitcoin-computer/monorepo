@@ -1,218 +1,194 @@
-import { Dispatch, SetStateAction, useEffect, useMemo, useState } from 'react'
-import { IoMdRemoveCircleOutline } from 'react-icons/io'
-import { Computer } from '@bitcoin-computer/lib'
-import { UtilsContext } from '@bitcoin-computer/components'
-import { TypeSelectionDropdown } from '../TypeSelectionDropdown'
-import { getErrorMessage, getValueForType, isValidRev, sleep } from '../../utils'
-import { ModSpec } from './Modspec'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { Contract } from '@bitcoin-computer/lib'
+import { ComputerContext, isValidRev, sleep } from '@bitcoin-computer/components'
+import { getValueForType } from '../../utils'
+import { TypedValueInput } from './TypedValueInput'
+import { PlaygroundWorkspace } from './PlaygroundWorkspace'
+import {
+  FieldList,
+  Panel,
+  PlaygroundResult,
+  RemoveRowButton,
+  TypeSelect,
+} from './ui'
+import { usePlaygroundDraft } from './usePlaygroundDraft'
+import { ExampleVar } from './examples'
 
 interface Argument {
   type: string
   value: string
-  hidden: boolean
+}
+
+const TYPE_OPTIONS = [
+  'object',
+  'string',
+  'number',
+  'bigint',
+  'boolean',
+  'undefined',
+  'null',
+  'symbol',
+]
+
+function buildEncodePayload(code: string, argumentsList: Argument[], modSpec?: string) {
+  const createClassFunction = new Function(`return ${code.trim()}`)
+  const dynamicClass = createClassFunction()
+  if (
+    !(
+      dynamicClass &&
+      typeof dynamicClass === 'function' &&
+      dynamicClass.prototype &&
+      dynamicClass.prototype instanceof Contract
+    )
+  ) {
+    throw new Error('Please check the code you provided — class must extend Contract.')
+  }
+
+  const revMap: { [key: string]: string } = {}
+  argumentsList.forEach((argument, index) => {
+    if (isValidRev(argument.value)) revMap[`param${index}`] = argument.value
+  })
+
+  return {
+    exp: `
+          ${dynamicClass} 
+          new ${dynamicClass.name}(${argumentsList.map((argument, index) => {
+            const argValue = getValueForType(argument.type, argument.value)
+            if (isValidRev(argValue)) return `param${index}`
+            if (typeof argValue === 'string') return `'${argValue}'`
+            if (typeof argValue === 'bigint') return `${argValue}n`
+            return argValue
+          })})
+          `,
+    env: { ...revMap },
+    ...(modSpec ? { mod: modSpec } : {}),
+  }
 }
 
 const CreateNew = (props: {
-  computer: Computer
-  setShow: (flag: boolean) => void
-  // eslint-disable-next-line
-  setFunctionResult: Dispatch<SetStateAction<any>>
-  setModalTitle: Dispatch<SetStateAction<string>>
+  reportResult: (result: PlaygroundResult) => void
   exampleCode: string
-  exampleVars: { name: string; type: string; value: string }[]
+  exampleVars: ExampleVar[]
+  exampleLoaded: boolean
+  onLoadCounter?: () => void
+  onPreviewDone?: () => void
+  onBroadcastDone?: () => void
 }) => {
-  const { computer, exampleVars, exampleCode, setShow, setModalTitle, setFunctionResult } = props
-  const [code, setCode] = useState<string>()
-  const [modSpec, setModSpec] = useState<string>()
+  const {
+    exampleVars,
+    exampleCode,
+    reportResult,
+    exampleLoaded,
+    onLoadCounter,
+    onPreviewDone,
+    onBroadcastDone,
+  } = props
+  const computer = useContext(ComputerContext)
+  const { source: code, setSource: setCode, modSpec, setModSpec } = usePlaygroundDraft(
+    'create',
+    'code',
+    exampleCode,
+    exampleLoaded,
+  )
   const [argumentsList, setArgumentsList] = useState<Argument[]>([])
-  const options = ['object', 'string', 'number', 'bigint', 'boolean', 'undefined', 'symbol']
-  const { showLoader } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
-    const newArgumentsList = [...argumentsList]
-    newArgumentsList.forEach((argument) => {
-      argument.hidden = true
-    })
-    if (exampleVars) {
-      exampleVars.forEach((exampleVar) => {
-        newArgumentsList.push({
-          type: exampleVar.type,
-          value: exampleVar.value ? exampleVar.value : '',
-          hidden: false,
-        })
-      })
-    }
-    setArgumentsList(newArgumentsList)
-    setCode(exampleCode)
+    setArgumentsList(
+      (exampleVars ?? []).map((exampleVar) => ({
+        type: exampleVar.type,
+        value: exampleVar.value ? exampleVar.value : '',
+      })),
+    )
   }, [exampleCode, exampleVars])
 
-  const handleAddArgument = () => {
-    setArgumentsList([...argumentsList, { type: '', value: '', hidden: false }])
-  }
-
   const handleArgumentChange = (index: number, field: 'type' | 'value', value: string) => {
-    const updatedArguments = [...argumentsList]
-    updatedArguments[index][field] = value
-    setArgumentsList(updatedArguments)
-  }
-
-  const removeArgument = (index: number) => {
-    const newArgumentsList = [...argumentsList]
-    newArgumentsList[index] = { ...newArgumentsList[index], hidden: true }
-    setArgumentsList(newArgumentsList)
-  }
-
-  const handleDeploy = async () => {
-    try {
-      showLoader(true)
-
-      const createClassFunction = new Function(`return ${code?.trim()}`)
-      const dynamicClass = createClassFunction()
-      if (
-        dynamicClass &&
-        typeof dynamicClass === 'function' &&
-        dynamicClass.prototype &&
-        dynamicClass.prototype instanceof Contract
-      ) {
-        const revMap: { [key: string]: string } = {}
-        argumentsList
-          .filter((argument) => !argument.hidden)
-          .forEach((argument, index) => {
-            const argValue = argument.value
-            if (isValidRev(argValue)) {
-              revMap[`param${index}`] = argValue
-            }
-          })
-
-        const encodeObject: {
-          exp: string
-          env: { [key: string]: string }
-          fund: boolean
-          sign: boolean
-          mod?: string
-        } = {
-          exp: `
-          ${dynamicClass} 
-          new ${dynamicClass.name}(${argumentsList
-            .filter((argument) => !argument.hidden)
-            .map((argument, index) => {
-              const argValue = getValueForType(argument.type, argument.value)
-              if (isValidRev(argValue)) return `param${index}`
-              if (typeof argValue === 'string') return `'${argValue}'`
-              return argValue
-            })})
-          `,
-          env: { ...revMap },
-          fund: true,
-          sign: true,
-        }
-        if (modSpec) {
-          encodeObject.mod = modSpec
-        }
-
-        const { tx } = await computer.encode(encodeObject)
-        if (!tx) throw new Error('Transition does not update the state, no transaction created')
-        const txId = await computer.broadcast(tx)
-        sleep(500)
-        // eslint-disable-next-line
-        const { res } = (await computer.sync(txId)) as any
-        setFunctionResult({ _rev: res._rev, type: 'objects' })
-        setModalTitle('Success!')
-        setShow(true)
-      } else {
-        setFunctionResult('Please check the code you provided!')
-        setModalTitle('Error!')
-        setShow(true)
+    setArgumentsList((prev) => {
+      const next = [...prev]
+      next[index] = { ...next[index], [field]: value }
+      if (field === 'type' && (value === 'undefined' || value === 'null')) {
+        next[index].value = value
       }
-    } catch (error: unknown) {
-      setFunctionResult(getErrorMessage(error))
-      setModalTitle('Error!')
-      setShow(true)
-    } finally {
-      showLoader(false)
-    }
+      return next
+    })
   }
 
   const isCallDisabled = useMemo(
-    () => argumentsList.some((arg) => !arg.type.trim() && !arg.hidden),
-    [argumentsList],
+    () => !code?.trim() || argumentsList.some((arg) => !arg.type.trim()),
+    [argumentsList, code],
   )
 
   return (
-    <>
-      <textarea
-        id="code-textarea"
-        value={code}
-        onChange={(e) => setCode(e.target.value)}
-        placeholder="Enter your JS class and code here"
-        rows={16}
-        className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white font-mono" // Added font-mono for monospaced font
-        // eslint-disable-next-line
-        style={{ tabSize: 2, MozTabSize: 2, OTabSize: 2, WebkitTabSize: 2 } as any} // Set tab size to 2 spaces
-        spellCheck="false" // Disable spell check
-        autoCapitalize="none" // Disable auto capitalization
-        autoComplete="off" // Disable auto completion
-        autoCorrect="off" // Disable auto correction
-        wrap="off" // Disable word wrapping
-      ></textarea>
-
-      <h6 className="mt-4 text-lg font-bold dark:text-white">Arguments</h6>
-
-      <div>
-        {argumentsList.map(
-          (argument: Argument, index) =>
-            !argument.hidden && (
-              <div key={index} className="py-2 flex items-center">
-                <input
-                  type="text"
+    <PlaygroundWorkspace
+      source={code}
+      onSourceChange={setCode}
+      exampleSource={exampleCode}
+      exampleLoaded={exampleLoaded}
+      editorTitle="Contract class"
+      editorId="code-textarea"
+      placeholder="class MyContract extends Contract { … }"
+      minHeight={320}
+      ariaLabel="Contract class source"
+      modSpec={modSpec}
+      onModSpecChange={setModSpec}
+      primaryLabel="Create object"
+      disabled={isCallDisabled}
+      onLoadCounter={onLoadCounter}
+      reportResult={reportResult}
+      onPreviewDone={onPreviewDone}
+      onBroadcastDone={onBroadcastDone}
+      buildEncode={({ fund, sign }) => ({
+        ...buildEncodePayload(code || '', argumentsList, modSpec),
+        fund,
+        sign,
+      })}
+      finishBroadcast={async ({ effect, txId }) => {
+        await sleep(500)
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const synced = (await computer.sync(txId)) as any
+        const res = synced?.res ?? effect?.res
+        const rev = res?._rev ?? `${txId}:0`
+        return {
+          result: {
+            status: 'success',
+            title: 'Object created',
+            data: { _rev: rev, type: 'objects' },
+          },
+          res: res ?? effect?.res,
+          env: effect?.env,
+        }
+      }}
+      extra={
+        <Panel title="Constructor arguments">
+          <FieldList
+            count={argumentsList.length}
+            empty="No parameters — add one or load an example."
+            addLabel="Add argument"
+            onAdd={() => setArgumentsList((prev) => [...prev, { type: 'string', value: '' }])}
+          >
+            {argumentsList.map((argument, index) => (
+              <div key={index} className="flex flex-wrap items-center gap-2">
+                <TypedValueInput
                   id={`playground-argument-${index}`}
+                  type={argument.type}
                   value={argument.value}
-                  onChange={(e) => handleArgumentChange(index, 'value', e.target.value)}
-                  className="sm:w-full md:w-2/3 lg:w-1/2 mr-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Value"
-                  required
+                  onChange={(v) => handleArgumentChange(index, 'value', v)}
                 />
-                <TypeSelectionDropdown
+                <TypeSelect
                   id={`playground-dropdown-${index}`}
-                  onSelectMethod={(option: string) => handleArgumentChange(index, 'type', option)}
-                  dropdownList={options}
-                  selectedType={argument.type}
+                  value={argument.type}
+                  options={TYPE_OPTIONS}
+                  onChange={(option) => handleArgumentChange(index, 'type', option)}
                 />
-                <IoMdRemoveCircleOutline
-                  className="w-6 h-6 ml-2 text-red-500 cursor-pointer"
-                  onClick={() => removeArgument(index)}
+                <RemoveRowButton
+                  label="Remove argument"
+                  onClick={() => setArgumentsList((prev) => prev.filter((_, i) => i !== index))}
                 />
               </div>
-            ),
-        )}
-      </div>
-
-      <button
-        type="button"
-        onClick={handleAddArgument}
-        className="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center my-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
-      >
-        Add Argument
-      </button>
-
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-      <ModSpec modSpec={modSpec} setModSpec={setModSpec} />
-
-      <hr className="h-px my-8 bg-gray-200 border-0 dark:bg-gray-700" />
-
-      <button
-        type="button"
-        onClick={handleDeploy}
-        disabled={isCallDisabled}
-        className={`text-white font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 focus:ring-4 focus:outline-none
-          ${isCallDisabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-700 hover:bg-blue-800 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'}
-        `}
-      >
-        Call
-      </button>
-    </>
+            ))}
+          </FieldList>
+        </Panel>
+      }
+    />
   )
 }
 

@@ -2,7 +2,18 @@ import { useContext, useEffect, useState } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import { Transaction as BCTransaction } from '@bitcoin-computer/lib'
 import { ComputerContext } from './ComputerContext'
-import { inputsComponent, outputsComponent, transitionComponent } from './Transaction'
+import {
+  classifyDecodeFailure,
+  errorMessage,
+  readOnChainMeta,
+  type DecodeFailureKind,
+} from './common/transition'
+import {
+  inputsComponent,
+  outputsComponent,
+  transitionComponent,
+  TransitionUnavailable,
+} from './Transaction'
 
 type MyRouteParams = {
   txn?: string
@@ -15,15 +26,14 @@ export function DecodeTransactionComponent() {
   const [txnData, setTxnData] = useState<any | null>(null)
   const [rpcTxnData, setRPCTxnData] = useState<any | null>(null)
   const [transition, setTransition] = useState<any | null>(null)
+  const [decodeFailure, setDecodeFailure] = useState<DecodeFailureKind | null>(null)
+  const [decodeError, setDecodeError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetch = async () => {
       const txnDeserialized = BCTransaction.deserialize(params.txn as string)
       setTxnData(txnDeserialized)
-      const { result } = await computer.rpc(
-        'decoderawtransaction',
-        `${txnDeserialized.toHex()} false`,
-      )
+      const result = await computer.rpc('decoderawtransaction', `${txnDeserialized.toHex()} false`)
       setRPCTxnData(result)
     }
     fetch()
@@ -31,25 +41,37 @@ export function DecodeTransactionComponent() {
 
   useEffect(() => {
     const fetch = async () => {
+      if (!txnData) return
       try {
-        if (txnData) {
-          setTransition(await computer.decode(txnData))
-        }
+        setTransition(await computer.decode(txnData))
+        setDecodeFailure(null)
+        setDecodeError(null)
       } catch (err) {
-        if (err instanceof Error) {
-          setTransition('')
-        }
+        setTransition(null)
+        setDecodeFailure(classifyDecodeFailure(readOnChainMeta(txnData), err))
+        setDecodeError(errorMessage(err) || 'Failed to decode transaction metadata.')
       }
     }
     fetch()
   }, [computer, txnData])
 
+  const txId = typeof txnData?.getId === 'function' ? String(txnData.getId()) : undefined
+
   return (
     <>
-      <div className="pt-8">
-        <h1 className="mb-2 text-5xl font-extrabold dark:text-white">Decoded Transaction</h1>
+      <div className="w-full space-y-4">
+        <header>
+          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
+            Transaction
+          </p>
+          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Decoded transaction</h1>
+        </header>
 
-        {transition && transitionComponent({ transition })}
+        {transition ? transitionComponent({ transition }) : null}
+
+        {!transition && decodeFailure ? (
+          <TransitionUnavailable kind={decodeFailure} error={decodeError ?? undefined} txn={txId} />
+        ) : null}
 
         {rpcTxnData?.vin && inputsComponent({ rpcTxnData, checkForSpentInput: true })}
 

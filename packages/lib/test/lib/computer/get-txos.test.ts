@@ -303,7 +303,7 @@ describe('getTXOs', () => {
 
       // mine a block to confirm the transaction
       const blockHex = await computer.rpc('generateToAddress', `1 ${computer2.getAddress()}`)
-      await sleep(1000)
+      await sleep(1500)
       const txos = await computer.getTXOs({ blockHash: blockHex[0] })
       expect(txos.length).to.be.greaterThan(0)
       expect(txos).to.include(c2._rev)

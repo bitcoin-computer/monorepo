@@ -1,6 +1,13 @@
 import { Dispatch, useContext, useEffect, useState } from 'react'
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
-import { Modal, UtilsContext, ComputerContext, bigIntToStr } from '@bitcoin-computer/components'
+import {
+  Modal,
+  UtilsContext,
+  ComputerContext,
+  bigIntToStr,
+  InlineAlert,
+  FieldError,
+} from '@bitcoin-computer/components'
 import { Computer, SmartContract } from '@bitcoin-computer/lib'
 import { TxWrapperHelper, PaymentHelper, PaymentMock, SaleHelper } from '@bitcoin-computer/swap'
 import { NFT } from '@bitcoin-computer/TBC721'
@@ -52,13 +59,18 @@ function ShowOwner({ computer, nft }: { computer: Computer; nft: SmartContract<t
 
 const List = ({ computer, nft }: { computer: Computer; nft: NFT }) => {
   const [amount, setAmount] = useState<string>('')
+  const [amountError, setAmountError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const { toast } = UtilsContext.useUtilsComponents()
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setAmountError(null)
 
-    if (!amount) showSnackBar('Provide valid amount', false)
+    if (!amount) {
+      setAmountError('Provide a valid amount')
+      return
+    }
 
     try {
       setIsLoading(true)
@@ -73,26 +85,25 @@ const List = ({ computer, nft }: { computer: Computer; nft: NFT }) => {
       const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
       const parsedSatoshis = Number(amount) * 1e8
       if (!parsedSatoshis) {
-        showSnackBar('Please provide a valid amount.', false)
+        setAmountError('Please provide a valid amount.')
         return
       }
       const mock = new PaymentMock(BigInt(parsedSatoshis))
       const { tx: saleTx } = await saleHelper.createSaleTx(nft, mock)
       if (!saleTx) {
-        showSnackBar('Failed to list NFT for sale.', false)
+        toast.error('Failed to list NFT for sale.')
         return
       }
 
       const { tx: offerTxWithSaleTx } = await txWrapperHelper.addSaleTx(offerTxId, saleTx)
 
       await computer.broadcast(offerTxWithSaleTx)
-      showSnackBar('Successfully listed NFT for sale.', true)
+      toast.success(`You listed this NFT for ${amount} ${computer.getChain()}`)
       setAmount('')
-      setIsLoading(false)
-      showSnackBar(`You listed this NFT for ${amount} ${computer.getChain()}`, true)
     } catch {
+      toast.error('Failed to create sell offer')
+    } finally {
       setIsLoading(false)
-      showSnackBar('Failed to create sell offer', false)
     }
   }
 
@@ -108,43 +119,48 @@ const List = ({ computer, nft }: { computer: Computer; nft: NFT }) => {
   return (
     <>
       <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
-      <form className="flex flex-row items-center" onSubmit={onSubmit}>
-        <input
-          type="number"
-          id="list-for-sale"
-          value={amount}
-          onChange={(e) => {
-            setAmount(e.target.value)
-          }}
-          className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block flex-1 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-          placeholder={`Amount in ${computer.getChain()}`}
-          required
-        />
-        <button
-          type="submit"
-          className="ml-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-          disabled={isLoading}
-        >
-          <ButtonLabel />
-        </button>
+      <form onSubmit={onSubmit}>
+        <div className="flex flex-row items-center">
+          <input
+            type="number"
+            id="list-for-sale"
+            value={amount}
+            onChange={(e) => {
+              setAmount(e.target.value)
+              if (amountError) setAmountError(null)
+            }}
+            className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block flex-1 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+            placeholder={`Amount in ${computer.getChain()}`}
+            aria-invalid={Boolean(amountError)}
+            required
+          />
+          <button
+            type="submit"
+            className="ml-3 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            disabled={isLoading}
+          >
+            <ButtonLabel />
+          </button>
+        </div>
+        <FieldError>{amountError}</FieldError>
       </form>
     </>
   )
 }
 
 const UnList = ({ nft }: { nft: NFT }) => {
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const { toast } = UtilsContext.useUtilsComponents()
   const [isLoading, setIsLoading] = useState<boolean>(false)
 
   const onClick = async () => {
     try {
       setIsLoading(true)
       await nft.unlist()
-      showSnackBar(`You unlisted this NFT.`, true)
-      setIsLoading(false)
+      toast.success('You unlisted this NFT.')
     } catch {
+      toast.error('Failed to unlist NFT')
+    } finally {
       setIsLoading(false)
-      showSnackBar('Failed to unlist nft', false)
     }
   }
 
@@ -182,17 +198,19 @@ const Buy = ({
   nft: SmartContract<typeof NFT>
   setFunctionResult: Dispatch<React.SetStateAction<string>>
 }) => {
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const { toast } = UtilsContext.useUtilsComponents()
   const [price, setPrice] = useState<bigint>(0n)
   const [isLoadingPrice, setIsLoadingPrice] = useState<boolean>(true)
+  const [priceError, setPriceError] = useState<string | null>(null)
   const [isBuying, setIsBuying] = useState<boolean>(false)
 
   useEffect(() => {
     const fetch = async () => {
       try {
+        setPriceError(null)
         setPrice(await getPrice(computer, nft))
       } catch {
-        showSnackBar('Failed to fetch price of NFT.', false)
+        setPriceError('Failed to fetch price of NFT.')
       } finally {
         setIsLoadingPrice(false)
       }
@@ -225,7 +243,7 @@ const Buy = ({
       setIsLoadingPrice(false)
     } catch (error) {
       setIsLoadingPrice(false)
-      showSnackBar(error instanceof Error ? error.message : 'Failed to buy nft', false)
+      toast.error(error instanceof Error ? error.message : 'Failed to buy NFT')
     } finally {
       setIsBuying(false)
     }
@@ -246,11 +264,16 @@ const Buy = ({
   return (
     <>
       <hr className="h-px my-4 bg-gray-200 border-0 dark:bg-gray-700" />
+      {priceError ? (
+        <InlineAlert variant="error" className="mb-3">
+          {priceError}
+        </InlineAlert>
+      ) : null}
       <button
         type="button"
         onClick={onClick}
         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        disabled={isBuying}
+        disabled={isBuying || Boolean(priceError)}
       >
         <ButtonLabel />
       </button>
@@ -306,7 +329,6 @@ function NewNFT() {
 }
 
 function NftView() {
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
   const location = useLocation()
   const params = useParams()
   const navigate = useNavigate()
@@ -315,18 +337,20 @@ function NftView() {
   const [nft, setNft] = useState<SmartContract<typeof NFT> | null>(null)
   const [functionResult, setFunctionResult] = useState<string>('')
   const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   const isNew = location.state?.isNew || false
 
   useEffect(() => {
     const fetch = async () => {
       try {
+        setLoadError(null)
         const latesRev = await computer.latest(id)
         const synced = await computer.sync<typeof NFT>(latesRev)
         setNft(synced)
       } catch (err) {
         if (err instanceof Error) console.log(err.stack)
-        showSnackBar('Not a valid NFT rev', false)
+        setLoadError('Not a valid NFT rev')
       } finally {
         setIsLoading(false)
       }
@@ -336,7 +360,6 @@ function NftView() {
 
   useEffect(() => {
     if (nft && isNew) {
-      console.log('is NEW!!!')
       Modal.showModal('new-modal')
     }
   }, [nft, isNew])
@@ -363,7 +386,13 @@ function NftView() {
     )
   }
 
-  if (!nft) return <></>
+  if (!nft) {
+    return (
+      <InlineAlert variant="error" title="NFT not found">
+        {loadError || 'Not a valid NFT rev'}
+      </InlineAlert>
+    )
+  }
 
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 mb-4">

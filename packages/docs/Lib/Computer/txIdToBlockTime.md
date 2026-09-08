@@ -5,7 +5,7 @@ _Returns the Unix block time at which a transaction was mined._
 ## Type
 
 ```ts
-txIdToBlockTime(txId: string): Promise<number | undefined>
+txIdToBlockTime(txId: string): Promise<bigint | undefined>
 ```
 
 ### Parameters
@@ -18,7 +18,7 @@ A Bitcoin transaction id (64-character hex string).
 
 A `Promise` that resolves to:
 
-- A **number** — Unix timestamp in seconds (`blocktime` from `getrawtransaction`) when the transaction is confirmed.
+- A **bigint** — Unix timestamp in seconds (`blocktime` from `getrawtransaction`) when the transaction is confirmed.
 - **`undefined`** — when the transaction is unconfirmed or the field is absent.
 
 ## Description
@@ -43,5 +43,5 @@ const pending = await computer.txIdToBlockTime(txId)
 // After the transaction is confirmed (e.g. mine a block on regtest)
 await computer.faucet(1e8)
 const blockTime = await computer.txIdToBlockTime(txId)
-// blockTime is a number (seconds since Unix epoch)
+// blockTime is a bigint (seconds since Unix epoch)
 ```

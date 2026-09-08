@@ -6,21 +6,29 @@ export const TypeSelectionDropdown = ({ id, onSelectMethod, dropdownList, select
     const [type, setType] = useState(selectedType || 'Type');
     const [dropdownSelectionList] = useState(dropdownList);
     useEffect(() => {
-        initFlowbite();
-        const $targetEl = document.getElementById(`dropdownMenu${id}`);
-        const $triggerEl = document.getElementById(`dropdownButton${id}`);
-        const options = {
-            placement: 'bottom',
-            triggerType: 'click',
-            offsetSkidding: 0,
-            offsetDistance: 10,
-            delay: 300,
-        };
-        const instanceOptions = {
-            id: `dropdownMenu${id}`,
-            override: true,
-        };
-        setDropdown(new Dropdown($targetEl, $triggerEl, options, instanceOptions));
+        try {
+            initFlowbite();
+            const $targetEl = document.getElementById(`dropdownMenu${id}`);
+            const $triggerEl = document.getElementById(`dropdownButton${id}`);
+            if (!$targetEl || !$triggerEl)
+                return undefined;
+            const options = {
+                placement: 'bottom',
+                triggerType: 'click',
+                offsetSkidding: 0,
+                offsetDistance: 10,
+                delay: 300,
+            };
+            const instanceOptions = {
+                id: `dropdownMenu${id}`,
+                override: true,
+            };
+            setDropdown(new Dropdown($targetEl, $triggerEl, options, instanceOptions));
+        }
+        catch {
+            // Flowbite init can fail if elements are missing; native click handlers still work
+        }
+        return undefined;
     }, [id]);
     const handleClick = (clickType) => {
         setType(clickType);
