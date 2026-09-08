@@ -33,10 +33,7 @@ export function DecodeTransactionComponent() {
     const fetch = async () => {
       const txnDeserialized = BCTransaction.deserialize(params.txn as string)
       setTxnData(txnDeserialized)
-      const { result } = await computer.rpc(
-        'decoderawtransaction',
-        `${txnDeserialized.toHex()} false`,
-      )
+      const result = await computer.rpc('decoderawtransaction', `${txnDeserialized.toHex()} false`)
       setRPCTxnData(result)
     }
     fetch()
@@ -58,8 +55,7 @@ export function DecodeTransactionComponent() {
     fetch()
   }, [computer, txnData])
 
-  const txId =
-    typeof txnData?.getId === 'function' ? String(txnData.getId()) : undefined
+  const txId = typeof txnData?.getId === 'function' ? String(txnData.getId()) : undefined
 
   return (
     <>

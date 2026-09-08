@@ -1,26 +1,13 @@
 import { useContext } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { ComputerContext, InlineAlert } from '@bitcoin-computer/components'
-import {
-  formatTime,
-  getBlock,
-  resolveBlockHash,
-  resolveNeighbors,
-  txIdOf,
-  unwrapRpcResult,
-} from '../utils/rpc'
+import { formatTime, getBlock, resolveBlockHash, resolveNeighbors, txIdOf } from '../utils/rpc'
 import { useAsync } from '../hooks/useAsync'
 import { HexLink } from './ui/HexLink'
 import { PageHeader } from './ui/PageHeader'
 import { DataTable, TableRow, tdClass } from './ui/Table'
 
-function NeighborNav({
-  prevHash,
-  nextHash,
-}: {
-  prevHash?: string
-  nextHash?: string
-}) {
+function NeighborNav({ prevHash, nextHash }: { prevHash?: string; nextHash?: string }) {
   const navBtn =
     'inline-flex items-center justify-center px-3 h-9 text-sm font-medium border rounded-lg transition'
   const navEnabled =
@@ -52,24 +39,27 @@ function Block() {
   const { id: rawId = '' } = useParams<{ id?: string }>()
   const computer = useContext(ComputerContext)
 
-  const { data, loading, error } = useAsync(async () => {
-    const hash = await resolveBlockHash(computer, rawId)
-    const block = await getBlock(computer, hash)
-    if (!block?.hash) throw new Error('Block not found')
+  const { data, loading, error } = useAsync(
+    async () => {
+      const hash = await resolveBlockHash(computer, rawId)
+      const block = await getBlock(computer, hash)
+      if (!block?.hash) throw new Error('Block not found')
 
-    if (block.height == null) {
-      try {
-        const headerRes = await computer.rpc('getblockheader', hash)
-        const header = unwrapRpcResult<{ height?: number }>(headerRes)
-        if (header?.height != null) block.height = header.height
-      } catch {
-        // ignore
+      if (block.height == null) {
+        try {
+          const header = await computer.rpc('getblockheader', hash)
+          if (header?.height != null) block.height = header.height
+        } catch {
+          // ignore
+        }
       }
-    }
 
-    const neighbors = await resolveNeighbors(computer, block)
-    return { block, prevHash: neighbors.prevHash, nextHash: neighbors.nextHash }
-  }, [computer, rawId], Boolean(rawId))
+      const neighbors = await resolveNeighbors(computer, block)
+      return { block, prevHash: neighbors.prevHash, nextHash: neighbors.nextHash }
+    },
+    [computer, rawId],
+    Boolean(rawId),
+  )
 
   const blockData = data?.block
   const txs = (blockData?.tx || []).map(txIdOf)

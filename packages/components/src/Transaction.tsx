@@ -167,7 +167,10 @@ export const outputsComponent = ({
                   {output.scriptPubKey?.type || '—'}
                 </span>
               </td>
-              <td className="px-4 py-3 break-all font-mono text-xs max-w-xs truncate hidden md:table-cell" title={output.scriptPubKey?.asm}>
+              <td
+                className="px-4 py-3 break-all font-mono text-xs max-w-xs truncate hidden md:table-cell"
+                title={output.scriptPubKey?.asm}
+              >
                 {output.scriptPubKey?.asm || '—'}
               </td>
               <td className="px-4 py-3">
@@ -278,7 +281,10 @@ export const inputsComponent = ({
                   />
                 )}
               </td>
-              <td className="px-4 py-3 break-all font-mono text-xs hidden sm:table-cell max-w-md truncate" title={input.scriptSig?.asm || input.coinbase}>
+              <td
+                className="px-4 py-3 break-all font-mono text-xs hidden sm:table-cell max-w-md truncate"
+                title={input.scriptSig?.asm || input.coinbase}
+              >
                 {input.coinbase
                   ? truncateMiddle(String(input.coinbase), 16, 8)
                   : input.scriptSig?.asm || '—'}
@@ -516,7 +522,7 @@ export function TransactionComponent() {
         setTxnData(tx)
 
         try {
-          const { result } = await computer.rpc('getrawtransaction', `${params.txn} 2`)
+          const result = await computer.rpc('getrawtransaction', `${params.txn} 1`)
           setRPCTxnData(result)
         } catch (rpcErr) {
           console.warn('RPC getrawtransaction failed:', rpcErr)
@@ -585,9 +591,7 @@ export function TransactionComponent() {
           <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
             Tip: 64-character hex values are treated as transaction ids. To filter objects by owner
             public key, use a compressed key (66 hex, starting with 02/03) or open{' '}
-            <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">
-              /?publicKey=…
-            </code>
+            <code className="text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded">/?publicKey=…</code>
             .
           </p>
         </div>
@@ -616,9 +620,7 @@ export function TransactionComponent() {
       {!loading && !error && rpcTxnData?.vin
         ? inputsComponent({ rpcTxnData, checkForSpentInput: false })
         : null}
-      {!loading && !error && rpcTxnData?.vout
-        ? outputsComponent({ rpcTxnData, txn })
-        : null}
+      {!loading && !error && rpcTxnData?.vout ? outputsComponent({ rpcTxnData, txn }) : null}
     </div>
   )
 }

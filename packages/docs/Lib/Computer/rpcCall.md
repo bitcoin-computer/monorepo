@@ -24,15 +24,13 @@ A **space-separated string** containing the arguments for the RPC call.
 
 ### Return Value
 
-Returns a Promise that resolves to the response from the Bitcoin node, typically in the shape:
+Returns a Promise that resolves to **bitcoind's `result`** for the method (not the `{ result, error, id }` JSON-RPC envelope). The node unwraps that envelope before responding.
 
-```ts
-{
-  result: any,   // The actual result returned by bitcoind
-  error: any,
-  id: number
-}
-```
+The shape depends on the method, for example:
+
+- `getblockchaininfo` → `{ blocks, bestblockhash, ... }`
+- `getrawtransaction` with verbosity `1` → `{ txid, hex, vin, vout, ... }`
+- `getblockhash` → a hash string
 
 ## Examples
 

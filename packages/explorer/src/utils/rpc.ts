@@ -1,25 +1,3 @@
-/**
- * Bitcoind / BCN RPC responses sometimes nest as `{ result }` or `{ result: { result } }`.
- */
-export function unwrapRpcResult<T = unknown>(res: unknown): T {
-  if (res == null) return res as T
-  if (typeof res === 'object' && res !== null && 'result' in res) {
-    const inner = (res as { result: unknown }).result
-    if (
-      inner != null &&
-      typeof inner === 'object' &&
-      'result' in (inner as object) &&
-      !('hash' in (inner as object)) &&
-      !('blocks' in (inner as object)) &&
-      !('txid' in (inner as object))
-    ) {
-      return unwrapRpcResult(inner)
-    }
-    return inner as T
-  }
-  return res as T
-}
-
 export type RpcClient = { rpc: (method: string, params: string) => Promise<unknown> }
 
 export type RpcBlock = {
@@ -46,20 +24,25 @@ export function txIdOf(txn: string | { txid: string }): string {
 }
 
 export async function getTipHeight(computer: RpcClient): Promise<number> {
-  const res = await computer.rpc('getblockchaininfo', '')
-  const info = unwrapRpcResult<{ blocks: number }>(res)
+  const info = (await computer.rpc('getblockchaininfo', '')) as { blocks?: number } | null
   return Number(info?.blocks) || 0
 }
 
-export async function getBlockHashAtHeight(computer: RpcClient, height: number | string): Promise<string> {
-  const res = await computer.rpc('getblockhash', `${height}`)
-  return String(unwrapRpcResult(res) ?? '')
+export async function getBlockHashAtHeight(
+  computer: RpcClient,
+  height: number | string,
+): Promise<string> {
+  const hash = await computer.rpc('getblockhash', `${height}`)
+  return String(hash ?? '')
 }
 
 /** verbosity 1: txids only — enough for count, size, time, and neighbor hashes. */
-export async function getBlock(computer: RpcClient, hash: string, verbosity = 1): Promise<RpcBlock> {
-  const res = await computer.rpc('getblock', `${hash} ${verbosity}`)
-  return unwrapRpcResult<RpcBlock>(res)
+export async function getBlock(
+  computer: RpcClient,
+  hash: string,
+  verbosity = 1,
+): Promise<RpcBlock> {
+  return (await computer.rpc('getblock', `${hash} ${verbosity}`)) as RpcBlock
 }
 
 export async function fetchBlockByHeight(
@@ -150,7 +133,10 @@ export function truncateRev(rev: string, head = 8, tail = 8): string {
 export function formatTime(time: number | string | undefined | null): string {
   if (time === undefined || time === null || time === '') return '—'
 
-  if (typeof time === 'number' || (typeof time === 'string' && /^-?\d+(\.\d+)?$/.test(time.trim()))) {
+  if (
+    typeof time === 'number' ||
+    (typeof time === 'string' && /^-?\d+(\.\d+)?$/.test(time.trim()))
+  ) {
     const n = typeof time === 'string' ? Number(time) : time
     if (!Number.isFinite(n)) return String(time)
     const ms = Math.abs(n) >= 1e12 ? n : n * 1000
