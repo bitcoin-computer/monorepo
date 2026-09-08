@@ -2,6 +2,7 @@ import { useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import reactStringReplace from 'react-string-replace'
 import { HiOutlineClipboard, HiCheck } from 'react-icons/hi'
+import { isDecryptionFailure } from './common/transition'
 import { capitalizeFirstLetter, isValidRevString, toObject } from './common/utils'
 import { methodNamesFrom, SmartObjectFunctions } from './SmartObjectFunctions'
 import { ComputerContext } from './ComputerContext'
@@ -662,19 +663,9 @@ function Component({ title }: { title?: string }) {
 
     const fetchCore = async () => {
       try {
-        const [o, p, n, f, l] = await Promise.all([
-          computer.sync(rev),
-          computer.prev(rev),
-          computer.next(rev),
-          computer.first(rev).catch(() => rev),
-          computer.latest(rev).catch(() => rev),
-        ])
+        const o = await computer.sync(rev)
         if (cancelled) return
         setSmartObject(o)
-        setPrev(p)
-        setNext(n)
-        setFirst(f)
-        setLatest(l)
         setLoadError(null)
       } catch (err) {
         if (cancelled) return
@@ -683,6 +674,22 @@ function Component({ title }: { title?: string }) {
         console.log('Error syncing to object:', message)
         setLoadError(message)
         setSmartObject(null)
+      }
+
+      try {
+        const [p, n, f, l] = await Promise.all([
+          computer.prev(rev),
+          computer.next(rev),
+          computer.first(rev).catch(() => rev),
+          computer.latest(rev).catch(() => rev),
+        ])
+        if (cancelled) return
+        setPrev(p)
+        setNext(n)
+        setFirst(f)
+        setLatest(l)
+      } catch (err) {
+        console.warn('Error loading revision links', err)
       }
     }
 
@@ -723,6 +730,7 @@ function Component({ title }: { title?: string }) {
 
   const [txId, outNum] = rev.split(':')
   const loading = !smartObject && !loadError
+  const decryptDenied = isDecryptionFailure(loadError)
 
   return (
     <div className="w-full space-y-5">
@@ -766,7 +774,24 @@ function Component({ title }: { title?: string }) {
           </div>
         </header>
 
-        {loadError ? (
+        {loadError && decryptDenied ? (
+          <InlineAlert variant="info" title="You cannot decrypt this object">
+            <p className="mb-2">
+              Only wallets whose public key is listed in this object&apos;s _readers can read its
+              state.
+            </p>
+            <p className="text-xs opacity-90">
+              <Link
+                to={`/transactions/${txId}`}
+                className="font-medium underline underline-offset-2 hover:opacity-100"
+              >
+                View transaction
+              </Link>
+            </p>
+          </InlineAlert>
+        ) : null}
+
+        {loadError && !decryptDenied ? (
           <InlineAlert
             variant="error"
             title="Could not load object"

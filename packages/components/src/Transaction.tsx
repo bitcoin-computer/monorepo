@@ -4,6 +4,13 @@ import reactStringReplace from 'react-string-replace'
 import { Transaction as BCTransaction } from '@bitcoin-computer/lib'
 import { Card } from './Card'
 import { ComputerContext } from './ComputerContext'
+import { InlineAlert } from './InlineAlert'
+import {
+  classifyDecodeFailure,
+  errorMessage,
+  readOnChainMeta,
+  type DecodeFailureKind,
+} from './common/transition'
 import { HiOutlineRefresh, HiOutlineClipboard, HiCheck } from 'react-icons/hi'
 
 type TransactionRouteParams = {
@@ -319,6 +326,59 @@ const envTable = (env: { [s: string]: string }) => (
   </div>
 )
 
+export function TransitionUnavailable({
+  kind,
+  error,
+  txn,
+}: {
+  kind: DecodeFailureKind
+  error?: string
+  txn?: string
+}) {
+  if (kind === 'encrypted') {
+    return (
+      <InlineAlert variant="info" title="Encrypted/private">
+        <p className="mb-1">You cannot decrypt this expression.</p>
+        <p className="text-xs opacity-90">
+          Only wallets whose public key is listed in this object&apos;s _readers can read it.
+        </p>
+      </InlineAlert>
+    )
+  }
+
+  if (kind === 'module') {
+    return (
+      <InlineAlert variant="info" title="Module deploy">
+        <p className="mb-1">This transaction deploys a module, not a smart-object expression.</p>
+        {txn ? (
+          <p className="text-xs opacity-90">
+            <Link
+              to={`/modules/${txn}:0`}
+              className="font-medium underline underline-offset-2 hover:opacity-100"
+            >
+              View module
+            </Link>
+          </p>
+        ) : null}
+      </InlineAlert>
+    )
+  }
+
+  if (kind === 'error') {
+    return (
+      <InlineAlert variant="error" title="Could not decode expression">
+        <p>{error || 'Failed to decode transaction metadata.'}</p>
+      </InlineAlert>
+    )
+  }
+
+  return (
+    <p className="text-sm text-gray-500 dark:text-gray-400">
+      No Bitcoin Computer expression on this transaction (plain payment or non-BC payload).
+    </p>
+  )
+}
+
 export const transitionComponent = ({ transition }: { transition: any }) => (
   <section className="w-full space-y-4">
     <div>
@@ -434,7 +494,8 @@ export function TransactionComponent() {
   const [transition, setTransition] = useState<any | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [transitionError, setTransitionError] = useState(false)
+  const [decodeFailure, setDecodeFailure] = useState<DecodeFailureKind | null>(null)
+  const [decodeError, setDecodeError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetch = async () => {
@@ -446,7 +507,8 @@ export function TransactionComponent() {
       setTxnData(null)
       setRPCTxnData(null)
       setTransition(null)
-      setTransitionError(false)
+      setDecodeFailure(null)
+      setDecodeError(null)
 
       try {
         const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn])
@@ -472,15 +534,16 @@ export function TransactionComponent() {
 
   useEffect(() => {
     const fetch = async () => {
+      if (!txnData) return
       try {
-        if (txnData) {
-          const decoded = await computer.decode(txnData)
-          setTransition(decoded)
-          setTransitionError(false)
-        }
-      } catch {
+        const decoded = await computer.decode(txnData)
+        setTransition(decoded)
+        setDecodeFailure(null)
+        setDecodeError(null)
+      } catch (err) {
         setTransition(null)
-        setTransitionError(true)
+        setDecodeFailure(classifyDecodeFailure(readOnChainMeta(txnData), err))
+        setDecodeError(errorMessage(err) || 'Failed to decode transaction metadata.')
       }
     }
     fetch()
@@ -546,10 +609,8 @@ export function TransactionComponent() {
 
       {!loading && !error && transition ? transitionComponent({ transition }) : null}
 
-      {!loading && !error && transitionError ? (
-        <p className="text-sm text-gray-500 dark:text-gray-400">
-          No Bitcoin Computer expression on this transaction (plain payment or non-BC payload).
-        </p>
+      {!loading && !error && !transition && decodeFailure ? (
+        <TransitionUnavailable kind={decodeFailure} error={decodeError ?? undefined} txn={txn} />
       ) : null}
 
       {!loading && !error && rpcTxnData?.vin

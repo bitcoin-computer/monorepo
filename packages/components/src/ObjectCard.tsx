@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Computer, TXORecord } from '@bitcoin-computer/lib'
+import { isDecryptionFailure } from './common/transition'
 import { bigIntToStr, jsonMap, strip, toObject } from './common/utils'
 import { limitConcurrency } from './common/limitConcurrency'
 
@@ -43,7 +44,7 @@ export function ObjectCard({
   const cardRef = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
   const [statePreview, setStatePreview] = useState<string | null>(null)
-  const [syncError, setSyncError] = useState<string | null>(null)
+  const [encrypted, setEncrypted] = useState(false)
   const [syncing, setSyncing] = useState(false)
 
   const displayChain = chain || computer.getChain?.() || ''
@@ -72,7 +73,7 @@ export function ObjectCard({
 
     let cancelled = false
     setSyncing(true)
-    setSyncError(null)
+    setEncrypted(false)
 
     limitConcurrency(() => computer.sync(record.rev))
       .then((synced) => {
@@ -81,7 +82,8 @@ export function ObjectCard({
       })
       .catch((err: unknown) => {
         if (cancelled) return
-        setSyncError(err instanceof Error ? err.message : 'Failed to load object state')
+        // Keep the card; never show a red error on the gallery.
+        if (isDecryptionFailure(err)) setEncrypted(true)
       })
       .finally(() => {
         if (!cancelled) setSyncing(false)
@@ -101,12 +103,19 @@ export function ObjectCard({
       className="block w-full p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:hover:border-blue-600 transition-colors text-left h-full"
     >
       <div className="flex items-center justify-between gap-2 mb-1.5">
-        <span
-          className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium bg-blue-50 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 font-mono max-w-[65%] truncate"
-          title={record.mod || 'No module'}
-        >
-          {record.mod ? truncateMod(record.mod) : 'Object'}
-        </span>
+        <div className="flex items-center gap-1 min-w-0 max-w-[75%]">
+          <span
+            className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium bg-blue-50 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 font-mono truncate"
+            title={record.mod || 'No module'}
+          >
+            {record.mod ? truncateMod(record.mod) : 'Object'}
+          </span>
+          {encrypted ? (
+            <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 shrink-0">
+              Encrypted/private
+            </span>
+          ) : null}
+        </div>
         {record.blockHeight != null ? (
           <span className="text-[11px] text-green-700 dark:text-green-400 tabular-nums">
             #{record.blockHeight}
@@ -138,16 +147,16 @@ export function ObjectCard({
         </p>
       ) : null}
 
-      {(syncing || statePreview || syncError) && (
+      {(syncing || statePreview || encrypted) && (
         <div className="border-t border-gray-100 dark:border-gray-700 pt-1.5 mt-1.5">
-          {syncing && !statePreview ? (
+          {syncing && !statePreview && !encrypted ? (
             <div className="animate-pulse space-y-1" aria-hidden="true">
               <div className="h-2 bg-gray-200 rounded dark:bg-gray-700 w-3/4" />
               <div className="h-2 bg-gray-200 rounded dark:bg-gray-700 w-1/2" />
             </div>
           ) : null}
-          {syncError && !statePreview ? (
-            <p className="text-[11px] text-red-600 dark:text-red-400 line-clamp-2">{syncError}</p>
+          {encrypted && !statePreview ? (
+            <p className="text-[11px] text-gray-500 dark:text-gray-400">Encrypted/private</p>
           ) : null}
           {statePreview ? (
             <pre className="font-normal overflow-hidden text-gray-600 dark:text-gray-400 text-[11px] max-h-14 whitespace-pre-wrap break-words leading-snug">

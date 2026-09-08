@@ -3,6 +3,7 @@ import { useContext, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useParams } from 'react-router-dom';
 import reactStringReplace from 'react-string-replace';
 import { HiOutlineClipboard, HiCheck } from 'react-icons/hi';
+import { isDecryptionFailure } from './common/transition';
 import { capitalizeFirstLetter, isValidRevString, toObject } from './common/utils';
 import { methodNamesFrom, SmartObjectFunctions } from './SmartObjectFunctions';
 import { ComputerContext } from './ComputerContext';
@@ -242,20 +243,10 @@ function Component({ title }) {
         setLoadError(null);
         const fetchCore = async () => {
             try {
-                const [o, p, n, f, l] = await Promise.all([
-                    computer.sync(rev),
-                    computer.prev(rev),
-                    computer.next(rev),
-                    computer.first(rev).catch(() => rev),
-                    computer.latest(rev).catch(() => rev),
-                ]);
+                const o = await computer.sync(rev);
                 if (cancelled)
                     return;
                 setSmartObject(o);
-                setPrev(p);
-                setNext(n);
-                setFirst(f);
-                setLatest(l);
                 setLoadError(null);
             }
             catch (err) {
@@ -265,6 +256,23 @@ function Component({ title }) {
                 console.log('Error syncing to object:', message);
                 setLoadError(message);
                 setSmartObject(null);
+            }
+            try {
+                const [p, n, f, l] = await Promise.all([
+                    computer.prev(rev),
+                    computer.next(rev),
+                    computer.first(rev).catch(() => rev),
+                    computer.latest(rev).catch(() => rev),
+                ]);
+                if (cancelled)
+                    return;
+                setPrev(p);
+                setNext(n);
+                setFirst(f);
+                setLatest(l);
+            }
+            catch (err) {
+                console.warn('Error loading revision links', err);
             }
         };
         const fetchTimeline = async () => {
@@ -304,7 +312,8 @@ function Component({ title }) {
     }, [smartObject]);
     const [txId, outNum] = rev.split(':');
     const loading = !smartObject && !loadError;
-    return (_jsxs("div", { className: "w-full space-y-5", children: [_jsxs("header", { children: [_jsx("p", { className: "text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5", children: "Smart object" }), _jsx("h1", { className: "mb-2 text-xl sm:text-2xl font-semibold dark:text-white", children: title || 'Object' }), _jsxs("div", { className: "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm", children: [_jsx("p", { className: "text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1", children: "Revision" }), _jsxs("div", { className: "flex flex-wrap items-center gap-1 font-mono text-xs sm:text-sm break-all", children: [_jsx(Link, { to: `/transactions/${txId}`, className: "font-medium text-blue-600 dark:text-blue-400 hover:underline", children: txId }), _jsxs("span", { className: "text-gray-700 dark:text-gray-300", children: [":", outNum] }), _jsx(Copy, { text: `${txId}:${outNum}` })] }), smartObject?._satoshis != null ? (_jsxs("p", { className: "mt-2 text-sm text-gray-600 dark:text-gray-400", children: [_jsx("span", { className: "font-medium text-gray-900 dark:text-white", children: smartObject._satoshis.toString() }), ' ', "sats", Array.isArray(smartObject._owners) && smartObject._owners.length > 0 ? (_jsxs(_Fragment, { children: [' · ', _jsxs("span", { className: "font-mono text-xs", children: [String(smartObject._owners[0]).slice(0, 12), "\u2026"] })] })) : null] })) : null] })] }), loadError ? (_jsxs(InlineAlert, { variant: "error", title: "Could not load object", onDismiss: () => setLoadError(null), children: [_jsx("p", { className: "mb-2", children: loadError }), _jsxs("p", { className: "text-xs opacity-90", children: ["This revision may not be a smart object, or the node failed to evaluate it.", ' ', _jsx(Link, { to: `/transactions/${txId}`, className: "font-medium underline underline-offset-2 hover:opacity-100", children: "View transaction" })] })] })) : null, loading ? (_jsxs("div", { className: "animate-pulse space-y-4", children: [_jsx("div", { className: "h-36 rounded-xl bg-gray-200 dark:bg-gray-700" }), _jsx("div", { className: "h-48 rounded-xl bg-gray-200 dark:bg-gray-700" }), _jsx("div", { className: "h-40 rounded-xl bg-gray-200 dark:bg-gray-700" }), _jsx("div", { className: "h-28 rounded-xl bg-gray-200 dark:bg-gray-700" })] })) : null, smartObject ? (_jsxs(_Fragment, { children: [_jsxs("section", { className: "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden", "aria-label": "State", children: [_jsxs("div", { className: "px-4 py-3 border-b border-gray-200 dark:border-gray-700", children: [_jsx("h2", { className: "text-base sm:text-lg font-semibold text-gray-900 dark:text-white", children: "State" }), _jsx("p", { className: "text-xs text-gray-500 dark:text-gray-400 mt-0.5", children: "Public properties of this smart object at the current revision \u2014 the data stored on chain after evaluation (not including system fields like _id or _owners)." })] }), _jsx(SmartObjectValues, { smartObject: smartObject })] }), _jsx(SmartObjectFunctions, { smartObject: smartObject, functionsExist: functionsExist, options: options, latestRev: latest })] })) : null, _jsx(RevisionHistory, { prev: prev, next: next, first: first, latest: latest, current: rev, chain: timeline, loading: timelineLoading, ancestorTxIds: ancestorTxIds }), smartObject ? _jsx(MetaDataPanel, { smartObject: smartObject }) : null] }));
+    const decryptDenied = isDecryptionFailure(loadError);
+    return (_jsxs("div", { className: "w-full space-y-5", children: [_jsxs("header", { children: [_jsx("p", { className: "text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5", children: "Smart object" }), _jsx("h1", { className: "mb-2 text-xl sm:text-2xl font-semibold dark:text-white", children: title || 'Object' }), _jsxs("div", { className: "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm", children: [_jsx("p", { className: "text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1", children: "Revision" }), _jsxs("div", { className: "flex flex-wrap items-center gap-1 font-mono text-xs sm:text-sm break-all", children: [_jsx(Link, { to: `/transactions/${txId}`, className: "font-medium text-blue-600 dark:text-blue-400 hover:underline", children: txId }), _jsxs("span", { className: "text-gray-700 dark:text-gray-300", children: [":", outNum] }), _jsx(Copy, { text: `${txId}:${outNum}` })] }), smartObject?._satoshis != null ? (_jsxs("p", { className: "mt-2 text-sm text-gray-600 dark:text-gray-400", children: [_jsx("span", { className: "font-medium text-gray-900 dark:text-white", children: smartObject._satoshis.toString() }), ' ', "sats", Array.isArray(smartObject._owners) && smartObject._owners.length > 0 ? (_jsxs(_Fragment, { children: [' · ', _jsxs("span", { className: "font-mono text-xs", children: [String(smartObject._owners[0]).slice(0, 12), "\u2026"] })] })) : null] })) : null] })] }), loadError && decryptDenied ? (_jsxs(InlineAlert, { variant: "info", title: "You cannot decrypt this object", children: [_jsx("p", { className: "mb-2", children: "Only wallets whose public key is listed in this object's _readers can read its state." }), _jsx("p", { className: "text-xs opacity-90", children: _jsx(Link, { to: `/transactions/${txId}`, className: "font-medium underline underline-offset-2 hover:opacity-100", children: "View transaction" }) })] })) : null, loadError && !decryptDenied ? (_jsxs(InlineAlert, { variant: "error", title: "Could not load object", onDismiss: () => setLoadError(null), children: [_jsx("p", { className: "mb-2", children: loadError }), _jsxs("p", { className: "text-xs opacity-90", children: ["This revision may not be a smart object, or the node failed to evaluate it.", ' ', _jsx(Link, { to: `/transactions/${txId}`, className: "font-medium underline underline-offset-2 hover:opacity-100", children: "View transaction" })] })] })) : null, loading ? (_jsxs("div", { className: "animate-pulse space-y-4", children: [_jsx("div", { className: "h-36 rounded-xl bg-gray-200 dark:bg-gray-700" }), _jsx("div", { className: "h-48 rounded-xl bg-gray-200 dark:bg-gray-700" }), _jsx("div", { className: "h-40 rounded-xl bg-gray-200 dark:bg-gray-700" }), _jsx("div", { className: "h-28 rounded-xl bg-gray-200 dark:bg-gray-700" })] })) : null, smartObject ? (_jsxs(_Fragment, { children: [_jsxs("section", { className: "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden", "aria-label": "State", children: [_jsxs("div", { className: "px-4 py-3 border-b border-gray-200 dark:border-gray-700", children: [_jsx("h2", { className: "text-base sm:text-lg font-semibold text-gray-900 dark:text-white", children: "State" }), _jsx("p", { className: "text-xs text-gray-500 dark:text-gray-400 mt-0.5", children: "Public properties of this smart object at the current revision \u2014 the data stored on chain after evaluation (not including system fields like _id or _owners)." })] }), _jsx(SmartObjectValues, { smartObject: smartObject })] }), _jsx(SmartObjectFunctions, { smartObject: smartObject, functionsExist: functionsExist, options: options, latestRev: latest })] })) : null, _jsx(RevisionHistory, { prev: prev, next: next, first: first, latest: latest, current: rev, chain: timeline, loading: timelineLoading, ancestorTxIds: ancestorTxIds }), smartObject ? _jsx(MetaDataPanel, { smartObject: smartObject }) : null] }));
 }
 export const SmartObject = {
     Component,

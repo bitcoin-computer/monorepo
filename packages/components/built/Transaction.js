@@ -5,6 +5,8 @@ import reactStringReplace from 'react-string-replace';
 import { Transaction as BCTransaction } from '@bitcoin-computer/lib';
 import { Card } from './Card';
 import { ComputerContext } from './ComputerContext';
+import { InlineAlert } from './InlineAlert';
+import { classifyDecodeFailure, errorMessage, readOnChainMeta, } from './common/transition';
 import { HiOutlineRefresh, HiOutlineClipboard, HiCheck } from 'react-icons/hi';
 function CopyIconButton({ text }) {
     const [copied, setCopied] = useState(false);
@@ -107,6 +109,18 @@ export const inputsComponent = ({ rpcTxnData, checkForSpentInput = false, }) => 
                                         ? truncateMiddle(String(input.coinbase), 16, 8)
                                         : input.scriptSig?.asm || '—' })] }, `${input.txid}|${ind}`))) })] }) })] }));
 const envTable = (env) => (_jsx("div", { className: "relative overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm mb-8", children: _jsxs("table", { className: "w-full text-sm text-left text-gray-500 dark:text-gray-400", children: [_jsx("thead", { className: "text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700/80 dark:text-gray-300", children: _jsxs("tr", { children: [_jsx("th", { scope: "col", className: "px-4 py-3", children: "Name" }), _jsx("th", { scope: "col", className: "px-4 py-3", children: "Revision" })] }) }), _jsx("tbody", { children: Object.entries(env).map(([name, output]) => (_jsxs("tr", { className: "bg-white border-b last:border-0 dark:bg-gray-800 dark:border-gray-700", children: [_jsx("td", { className: "px-4 py-3 font-medium text-gray-900 dark:text-white", children: name }), _jsx("td", { className: "px-4 py-3", children: _jsx(Link, { to: `/objects/${output}`, className: "font-medium text-blue-600 dark:text-blue-400 hover:underline font-mono text-xs break-all", children: output }) })] }, output))) })] }) }));
+export function TransitionUnavailable({ kind, error, txn, }) {
+    if (kind === 'encrypted') {
+        return (_jsxs(InlineAlert, { variant: "info", title: "Encrypted/private", children: [_jsx("p", { className: "mb-1", children: "You cannot decrypt this expression." }), _jsx("p", { className: "text-xs opacity-90", children: "Only wallets whose public key is listed in this object's _readers can read it." })] }));
+    }
+    if (kind === 'module') {
+        return (_jsxs(InlineAlert, { variant: "info", title: "Module deploy", children: [_jsx("p", { className: "mb-1", children: "This transaction deploys a module, not a smart-object expression." }), txn ? (_jsx("p", { className: "text-xs opacity-90", children: _jsx(Link, { to: `/modules/${txn}:0`, className: "font-medium underline underline-offset-2 hover:opacity-100", children: "View module" }) })) : null] }));
+    }
+    if (kind === 'error') {
+        return (_jsx(InlineAlert, { variant: "error", title: "Could not decode expression", children: _jsx("p", { children: error || 'Failed to decode transaction metadata.' }) }));
+    }
+    return (_jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "No Bitcoin Computer expression on this transaction (plain payment or non-BC payload)." }));
+}
 export const transitionComponent = ({ transition }) => (_jsxs("section", { className: "w-full space-y-4", children: [_jsxs("div", { children: [_jsx("h2", { className: "mb-2 text-base sm:text-lg font-semibold dark:text-white", children: "Expression" }), _jsx(ExpressionCard, { content: transition.exp, env: transition.env })] }), _jsxs("div", { children: [_jsx("h2", { className: "mb-2 text-base sm:text-lg font-semibold dark:text-white", children: "Environment" }), Object.keys(transition.env || {}).length > 0 ? (envTable(transition.env)) : (_jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400 mb-4", children: "No environment bindings." }))] }), transition.mod && (_jsxs("div", { children: [_jsx("h2", { className: "mb-2 text-base sm:text-lg font-semibold dark:text-white", children: "Module" }), _jsx("div", { className: "mb-4 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-3", children: _jsx(Link, { to: `/modules/${transition.mod}`, className: "font-mono text-sm text-blue-600 dark:text-blue-400 hover:underline break-all", children: transition.mod }) })] }))] }));
 function TxSummary({ rpcTxnData, txn }) {
     const confirmations = rpcTxnData?.confirmations;
@@ -128,7 +142,8 @@ export function TransactionComponent() {
     const [transition, setTransition] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [transitionError, setTransitionError] = useState(false);
+    const [decodeFailure, setDecodeFailure] = useState(null);
+    const [decodeError, setDecodeError] = useState(null);
     useEffect(() => {
         const fetch = async () => {
             if (!params.txn)
@@ -139,7 +154,8 @@ export function TransactionComponent() {
             setTxnData(null);
             setRPCTxnData(null);
             setTransition(null);
-            setTransitionError(false);
+            setDecodeFailure(null);
+            setDecodeError(null);
             try {
                 const [hex] = await computer.db.wallet.restClient.getRawTxs([params.txn]);
                 const tx = BCTransaction.fromHex(hex);
@@ -164,16 +180,18 @@ export function TransactionComponent() {
     }, [computer, params.txn, location]);
     useEffect(() => {
         const fetch = async () => {
+            if (!txnData)
+                return;
             try {
-                if (txnData) {
-                    const decoded = await computer.decode(txnData);
-                    setTransition(decoded);
-                    setTransitionError(false);
-                }
+                const decoded = await computer.decode(txnData);
+                setTransition(decoded);
+                setDecodeFailure(null);
+                setDecodeError(null);
             }
-            catch {
+            catch (err) {
                 setTransition(null);
-                setTransitionError(true);
+                setDecodeFailure(classifyDecodeFailure(readOnChainMeta(txnData), err));
+                setDecodeError(errorMessage(err) || 'Failed to decode transaction metadata.');
             }
         };
         fetch();
@@ -181,7 +199,7 @@ export function TransactionComponent() {
     if (!txn) {
         return (_jsx("div", { className: "w-full py-8 text-center", children: _jsx("p", { className: "text-red-600 dark:text-red-400", children: "Transaction ID not found in URL" }) }));
     }
-    return (_jsxs("div", { className: "w-full space-y-4", children: [_jsxs("header", { children: [_jsx("p", { className: "text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5", children: "Transaction" }), _jsx("h1", { className: "text-xl sm:text-2xl font-semibold dark:text-white", children: "Details" })] }), loading ? (_jsxs("div", { className: "space-y-4 animate-pulse", children: [_jsx("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3", children: [1, 2, 3, 4].map((i) => (_jsx("div", { className: "h-20 rounded-xl bg-gray-200 dark:bg-gray-700" }, i))) }), _jsx("div", { className: "h-40 rounded-xl bg-gray-200 dark:bg-gray-700" })] })) : null, error && !loading ? (_jsxs("div", { className: "rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 p-5", children: [_jsx("p", { className: "font-semibold text-red-800 dark:text-red-300 mb-1", children: "Transaction not found" }), _jsx("p", { className: "text-sm text-red-700 dark:text-red-400 mb-3", children: error }), _jsx("p", { className: "text-xs font-mono break-all text-red-600/80 dark:text-red-400/80", children: txn }), _jsxs("p", { className: "mt-3 text-sm text-gray-600 dark:text-gray-400", children: ["Tip: 64-character hex values are treated as transaction ids. To filter objects by owner public key, use a compressed key (66 hex, starting with 02/03) or open", ' ', _jsx("code", { className: "text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded", children: "/?publicKey=\u2026" }), "."] })] })) : null, !loading && !error && rpcTxnData ? _jsx(TxSummary, { rpcTxnData: rpcTxnData, txn: txn }) : null, !loading && !error && !rpcTxnData && txnData ? (_jsxs("div", { className: "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 mb-4 shadow-sm", children: [_jsxs("div", { className: "flex items-start gap-2", children: [_jsx("p", { className: "font-mono text-xs sm:text-sm break-all flex-1 dark:text-white", children: txn }), _jsx(CopyIconButton, { text: txn })] }), _jsx("p", { className: "mt-2 text-sm text-amber-700 dark:text-amber-400", children: "Loaded raw transaction; RPC details unavailable." })] })) : null, !loading && !error && transition ? transitionComponent({ transition }) : null, !loading && !error && transitionError ? (_jsx("p", { className: "text-sm text-gray-500 dark:text-gray-400", children: "No Bitcoin Computer expression on this transaction (plain payment or non-BC payload)." })) : null, !loading && !error && rpcTxnData?.vin
+    return (_jsxs("div", { className: "w-full space-y-4", children: [_jsxs("header", { children: [_jsx("p", { className: "text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5", children: "Transaction" }), _jsx("h1", { className: "text-xl sm:text-2xl font-semibold dark:text-white", children: "Details" })] }), loading ? (_jsxs("div", { className: "space-y-4 animate-pulse", children: [_jsx("div", { className: "grid grid-cols-2 sm:grid-cols-4 gap-3", children: [1, 2, 3, 4].map((i) => (_jsx("div", { className: "h-20 rounded-xl bg-gray-200 dark:bg-gray-700" }, i))) }), _jsx("div", { className: "h-40 rounded-xl bg-gray-200 dark:bg-gray-700" })] })) : null, error && !loading ? (_jsxs("div", { className: "rounded-xl border border-red-200 dark:border-red-900 bg-red-50 dark:bg-red-950/40 p-5", children: [_jsx("p", { className: "font-semibold text-red-800 dark:text-red-300 mb-1", children: "Transaction not found" }), _jsx("p", { className: "text-sm text-red-700 dark:text-red-400 mb-3", children: error }), _jsx("p", { className: "text-xs font-mono break-all text-red-600/80 dark:text-red-400/80", children: txn }), _jsxs("p", { className: "mt-3 text-sm text-gray-600 dark:text-gray-400", children: ["Tip: 64-character hex values are treated as transaction ids. To filter objects by owner public key, use a compressed key (66 hex, starting with 02/03) or open", ' ', _jsx("code", { className: "text-xs bg-gray-100 dark:bg-gray-800 px-1 rounded", children: "/?publicKey=\u2026" }), "."] })] })) : null, !loading && !error && rpcTxnData ? _jsx(TxSummary, { rpcTxnData: rpcTxnData, txn: txn }) : null, !loading && !error && !rpcTxnData && txnData ? (_jsxs("div", { className: "rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 mb-4 shadow-sm", children: [_jsxs("div", { className: "flex items-start gap-2", children: [_jsx("p", { className: "font-mono text-xs sm:text-sm break-all flex-1 dark:text-white", children: txn }), _jsx(CopyIconButton, { text: txn })] }), _jsx("p", { className: "mt-2 text-sm text-amber-700 dark:text-amber-400", children: "Loaded raw transaction; RPC details unavailable." })] })) : null, !loading && !error && transition ? transitionComponent({ transition }) : null, !loading && !error && !transition && decodeFailure ? (_jsx(TransitionUnavailable, { kind: decodeFailure, error: decodeError ?? undefined, txn: txn })) : null, !loading && !error && rpcTxnData?.vin
                 ? inputsComponent({ rpcTxnData, checkForSpentInput: false })
                 : null, !loading && !error && rpcTxnData?.vout
                 ? outputsComponent({ rpcTxnData, txn })
