@@ -19,7 +19,7 @@
  * - One token may deposit into multiple escrows over its lifetime
  * - One escrow may accept deposits from multiple distinct tokens
  * - Transfers automatically clear escrow-related state on the recipient
- * - `merge()` is disabled; use atomic escrow-based merge instead
+ * - `merge()` is inherited from TBC20 but refused while a bag has escrow history
  *
  * REMOTE-ROOT TOKEN CREATION (bridged / cross-chain tokens): Remote-root tokens
  * MUST be instantiated with `amount: 0n` and MUST immediately perform a
@@ -33,7 +33,7 @@
 
 // TYPES & INTERFACES
 
-import { Id, Rev, Root, Contract } from '@bitcoin-computer/lib'
+import { Computer, SmartContract, Id, Rev, Root, Contract } from '@bitcoin-computer/lib'
 import { TBC20, TBC20ConstructorParams } from '@bitcoin-computer/TBC20'
 
 export type Constructor<T> = new (...args: any[]) => T
@@ -406,12 +406,32 @@ export class TBC777 extends TBC20 {
   }
 
   /**
-   * `merge()` is permanently disabled for TBC777. Use an escrow-based atomic
-   * merge pattern instead: deposit source tokens into an escrow and then claim
-   * the aggregate amount into a single target token.
+   * TBC20 merge plus an escrow-history guard. Bags that have deposited or
+   * claimed cannot be merged (claim history is keyed by `_id`). Clean bags
+   * merge like TBC20. The loop is inlined because `super.merge` is blocked
+   * inside the contract sandbox.
    */
-  merge(): never {
-    throw new Error('merge() is disabled in TBC777.')
+  async merge(tokens: TBC20[] = []): Promise<void> {
+    const all = [this, ...tokens] as TBC777[]
+    if (
+      all.some(
+        (t) =>
+          t.escrow ||
+          (t.withdrawn && t.withdrawn.length > 0) ||
+          (t.finalWithdrawn && t.finalWithdrawn.length > 0),
+      )
+    )
+      throw new Error('Cannot merge tokens with escrow history')
+    for (const t of tokens) {
+      if (!(await this.isFungibleWith(t)))
+        throw new Error('Cannot merge tokens from different lineages')
+    }
+    let total = 0n
+    tokens.forEach((t) => {
+      total += t.amount
+      t.burn()
+    })
+    this.amount += total
   }
 
   /**
@@ -673,5 +693,55 @@ export class TBC777 extends TBC20 {
       `[\\s\\S]*\\}\\s*\\)\\s*$`
 
     return new RegExp(pattern)
+  }
+}
+
+/** Strip comments so a deployed module stays small. */
+export function stripContractComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*$/gm, '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .join('\n')
+}
+
+/** `export ${Class}` for each constructor, comments stripped. */
+export function exportClasses(...ctors: { toString(): string }[]): string {
+  return ctors.map((c) => `export ${stripContractComments(c.toString())}`).join('\n')
+}
+
+export class TBC777Helper {
+  computer: Computer
+  mod: string
+
+  constructor(computer: Computer, mod?: string) {
+    this.computer = computer
+    this.mod = mod ?? ''
+  }
+
+  static moduleSource(): string {
+    return exportClasses(TBC20, EscrowAuditor, TBC777)
+  }
+
+  async deploy(): Promise<string> {
+    this.mod = await this.computer.deploy(TBC777Helper.moduleSource())
+    return this.mod
+  }
+
+  async mint(
+    publicKey: string,
+    amount: bigint,
+    name: string,
+    symbol: string,
+  ): Promise<SmartContract<typeof TBC777>> {
+    // `computer.new(TBC777, …)` stringifies the class into the tx. TBC777 is
+    // too large for that (sigops). Create from the already-deployed module.
+    const exp = `new TBC777({ to: '${publicKey}', amount: ${amount}n, name: '${name}', symbol: '${symbol}' })`
+    const { tx, effect } = await this.computer.encode({ exp, env: {}, mod: this.mod })
+    await this.computer.broadcast(tx)
+    await this.computer.waitForIndexed(tx.getId())
+    return effect.res as SmartContract<typeof TBC777>
   }
 }

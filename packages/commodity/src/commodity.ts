@@ -4,8 +4,9 @@
  * Commodity is a functional utility standard for digital-commodity issuance on
  * the Bitcoin Computer. It carries no governance rights, no claim on protocol
  * or interface revenue, and no expectation of profits from the efforts of BCDB
- * or others. Supply integrity is enforced solely by the deterministic
- * min-revision selection rule and the immutable `_root` lineage check.
+ * or others. Supply integrity is enforced by the deterministic min-revision
+ * selection rule, the immutable `_root` genuineness check, and module-level
+ * fungibility (`mod` / `root`).
  *
  * Issuance is bound 1:1 to host-chain blocks (LTC, BTC, …). At most one subsidy
  * is issued per host block. The unique winner for height H is the genuine mint
@@ -27,9 +28,11 @@
  *   (txIdToBlockHeight, decode, getOTXOs). No candidate objects are ever
  *   materialised or synced; claim() is history-independent and identical for
  *   every validator.
- * - Lineage authenticity is enforced by the framework’s immutable _root.
- *   isGenuine() checks that the root is a genuine mint (non-empty salt). Only
- *   objects belonging to such a lineage may claim.
+ * - Genuineness is enforced by the framework’s immutable `_root`.
+ *   isGenuine() checks that the mint root carries a non-empty salt.
+ * - Fungibility is the deployed module specifier, stored as `mod` and
+ *   exposed as `root`. `claim()` stamps `mod` from the creation tx; every
+ *   genuine mint of the same module is one token.
  * - claim() may succeed only on a mint’s creation revision (_rev === _root).
  *   Any subsequent update spends that UTXO; children are permanently ineligible
  *   because their _root points to the original mint.
@@ -73,6 +76,7 @@
  * https://medium.com/@clemensley/how-to-build-a-token-on-bitcoin-in-javascript-c2439cf1b273
  */
 
+import type { TBC20 } from '@bitcoin-computer/TBC20'
 import { TBC777, TBC777Params } from '@bitcoin-computer/TBC777'
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -83,10 +87,11 @@ type Constructor<T> = new (...args: any[]) => T
  *
  * Aligns with TBC777 / TBC20 (single params object). Typical call sites:
  * - Mint: `new Commodity({ to, salt, amount: 0n })`
- * - Transfer child: `new Commodity({ to, amount, salt: '' })`
+ * - Transfer child: `new Commodity({ to, amount, salt: '', mod })`
  *
- * `amount` and `name` are optional at the call site (default `0n` / `''`);
- * other fields match TBC777Params (including optional `symbol`, `remoteRoot`, …).
+ * `amount` and `name` are optional at the call site (default `0n` / `''`).
+ * `mod` is stamped by `claim()` on genuine mints and copied onto split children.
+ * Other fields match TBC777Params (including optional `symbol`, `remoteRoot`, …).
  */
 export type CommodityConstructorParams = {
   to: string
@@ -96,6 +101,8 @@ export type CommodityConstructorParams = {
   name?: string
   /** Free-form grinding salt; non-empty marks a genuine mint root. Default `''`. */
   salt?: string
+  /** Module specifier. Set by `claim()`; copied onto transfer children. */
+  mod?: string
   symbol?: string
   remoteRoot?: TBC777Params['remoteRoot']
   withdrawn?: TBC777Params['withdrawn']
@@ -120,8 +127,8 @@ export const config = {
  * Commodity is a functional utility standard for digital-commodity issuance. It
  * carries no governance rights, no claim on protocol or interface revenue, and
  * no expectation of profits from the efforts of BCDB or others. Supply
- * integrity is enforced solely by the deterministic min-revision selection rule
- * and the immutable `_root` lineage check.
+ * integrity is enforced by the min-revision selection rule, the `_root`
+ * genuineness check, and module-level fungibility (`mod` / `root`).
  *
  * One subsidy is issued for every host-chain block that contains a successful
  * mint. The winner is the genuine mint whose creation revision is the
@@ -129,8 +136,10 @@ export const config = {
  * the selection and credits only the winner.
  *
  * The Bitcoin Computer framework guarantees every transfer/split child inherits
- * the same _root as the original mint. Consequently isGenuine() only needs to
- * verify that the root itself is a genuine mint (non-empty salt).
+ * the same `_root` as the original mint. Consequently isGenuine() only needs to
+ * verify that the root itself is a genuine mint (non-empty salt). Fungibility
+ * across mints of the same module is `mod` (the module specifier), stamped by
+ * `claim()` and exposed as `root`.
  *
  * Eligibility: claim() succeeds only while the object is still at its mint
  * creation revision (_rev === _root). After any mutation that UTXO is spent.
@@ -156,34 +165,47 @@ export class Commodity extends TBC777 {
   salt!: string
 
   /**
+   * Module specifier of this Commodity. Empty until a successful `claim()`.
+   * Split children copy it from the parent. `get root()` returns this.
+   */
+  mod!: string
+
+  /**
    * Two construction paths (via a single params object, same shape as TBC777):
    *
    * 1. Mining / minting (salt non-empty):
    *    - amount must be 0n
    *    - creates a new mint root (amount = 0n)
-   *    - salt is a pure grinding parameter that influences the creation
-   *      revision of the smart object
-   *    - this object becomes the root of a genuine lineage and is the only kind
-   *      eligible to claim a subsidy
+   *    - `mod` is forced to `''`; `claim()` stamps it from the creation tx
+   *    - this object is the only kind eligible to claim a subsidy
    *
    * 2. Transfer / split (salt === ''):
    *    - amount taken from the parent
-   *    - child inherits the parent's _root (framework guarantee)
-   *    - valid token of the same lineage but permanently ineligible to claim
-   *      (its _rev never equals its _root)
+   *    - child inherits the parent's `_root` (framework guarantee)
+   *    - `mod` is copied from the parent so the child stays the same token
+   *    - permanently ineligible to claim (its `_rev` never equals its `_root`)
    *
-   * Transfer factories call `new Ctor({ to, amount, salt: '', ... })`.
+   * Transfer factories call `new Ctor({ to, amount, salt: '', mod, ... })`.
    */
   constructor(params: CommodityConstructorParams) {
-    const { to, salt = '', amount = 0n, name = '', ...rest } = params
+    const { to, salt = '', amount = 0n, name = '', mod: modParam = '', ...rest } = params
 
     if (salt) {
       if (amount !== 0n) throw new Error('Mined Commodity must start with amount === 0n')
+      // Ignore caller-supplied mod; claim() is the only writer for mints.
+      super({ to, amount, salt, name, ...rest, mod: '' })
     } else {
       if (amount < 0n) throw new Error('Amount cannot be negative')
+      super({ to, amount, salt, name, ...rest, mod: modParam })
     }
+  }
 
-    super({ to, amount, salt, name, ...rest })
+  /**
+   * Fungibility identifier: the module specifier, or `''` before claim.
+   * All claimed genuine mints of the same module share this `root`.
+   */
+  get root(): string {
+    return this.mod
   }
 
   /**
@@ -201,35 +223,9 @@ export class Commodity extends TBC777 {
   }
 
   /**
-   * Transfer ownership of the entire balance, or split off a portion.
-   *
-   * Commodity keeps the classic fungible-token shape (not TBC777's always-split
-   * transfer):
-   * - transfer(to)          – re-assign the whole amount to a new owner in place
-   * - transfer(to, amount)  – create a new Commodity of the given amount owned
-   *                           by `to` and deduct that amount from this object.
-   *                           The child is constructed with salt === '' so it
-   *                           can never claim; it inherits the same _root.
-   *
-   * After this call the original object’s _rev advances, so it can no longer
-   * call claim() (only a mint’s creation revision is eligible). The newly
-   * created child is also ineligible for any future claim.
-   */
-  transfer(to: string, amount?: bigint): this | undefined {
-    if (typeof amount === 'undefined') {
-      this._owners = [to]
-      return undefined
-    }
-    if (amount <= 0n) throw new Error('Transfer amount must be positive')
-    if (this.amount < amount) throw new Error('Insufficient funds')
-
-    this.amount -= amount
-    return this._createTransferToken(to, amount)
-  }
-
-  /**
    * Split factory used by transfer(). Always builds a non-mint child (salt '')
-   * and drops escrow bookkeeping so recipients do not inherit claim history.
+   * and copies `mod` so the child stays the same fungible token. Drops
+   * escrow bookkeeping so recipients do not inherit claim history.
    */
   protected _createTransferToken(to: string, amount: bigint): this {
     const Ctor = this.constructor as Constructor<this>
@@ -237,24 +233,25 @@ export class Commodity extends TBC777 {
       to,
       amount,
       salt: '',
+      mod: this.mod,
       name: this.name ?? '',
       symbol: this.symbol ?? '',
     })
   }
 
   /**
-   * Destroy this token by setting its amount to zero. Advances _rev, rendering
-   * it ineligible for claim().
+   * Same module (non-empty `mod`, stamped by claim) and both genuine.
+   * Fakes can pass a `mod` through the child constructor path; isGenuine()
+   * rejects those.
    */
-  burn() {
-    this.amount = 0n
+  protected async isFungibleWith(other: TBC20): Promise<boolean> {
+    const o = other as Commodity
+    if (!this.mod || this.mod !== o.mod) return false
+    return (await this.isGenuine()) && (await o.isGenuine())
   }
 
-  /**
-   * Merge is intentionally disabled for this meta-token.
-   */
-  merge(): never {
-    throw new Error('Merge disabled.')
+  async isEqualTo(other: TBC777): Promise<boolean> {
+    return this.isFungibleWith(other)
   }
 
   /**
@@ -343,6 +340,7 @@ export class Commodity extends TBC777 {
     if (!(await this.isGenuine()))
       throw new Error('Only objects belonging to a genuine mint lineage may claim the subsidy')
 
+    this.mod = mod
     this.amount = Commodity.getSubsidy(blockHeight)
   }
 

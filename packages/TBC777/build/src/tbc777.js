@@ -107,8 +107,22 @@ export class TBC777 extends TBC20 {
     get root() {
         return this.remoteRoot || this._root;
     }
-    merge() {
-        throw new Error('merge() is disabled in TBC777.');
+    async merge(tokens = []) {
+        const all = [this, ...tokens];
+        if (all.some((t) => t.escrow ||
+            (t.withdrawn && t.withdrawn.length > 0) ||
+            (t.finalWithdrawn && t.finalWithdrawn.length > 0)))
+            throw new Error('Cannot merge tokens with escrow history');
+        for (const t of tokens) {
+            if (!(await this.isFungibleWith(t)))
+                throw new Error('Cannot merge tokens from different lineages');
+        }
+        let total = 0n;
+        tokens.forEach((t) => {
+            total += t.amount;
+            t.burn();
+        });
+        this.amount += total;
     }
     _createTransferToken(to, amount) {
         const ctor = this.constructor;
@@ -242,3 +256,35 @@ TBC777.CLEAN_STATE = {
     finalWithdrawn: [],
     escrow: undefined,
 };
+export function stripContractComments(source) {
+    return source
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\/\/.*$/gm, '')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .join('\n');
+}
+export function exportClasses(...ctors) {
+    return ctors.map((c) => `export ${stripContractComments(c.toString())}`).join('\n');
+}
+export class TBC777Helper {
+    constructor(computer, mod) {
+        this.computer = computer;
+        this.mod = mod ?? '';
+    }
+    static moduleSource() {
+        return exportClasses(TBC20, EscrowAuditor, TBC777);
+    }
+    async deploy() {
+        this.mod = await this.computer.deploy(TBC777Helper.moduleSource());
+        return this.mod;
+    }
+    async mint(publicKey, amount, name, symbol) {
+        const exp = `new TBC777({ to: '${publicKey}', amount: ${amount}n, name: '${name}', symbol: '${symbol}' })`;
+        const { tx, effect } = await this.computer.encode({ exp, env: {}, mod: this.mod });
+        await this.computer.broadcast(tx);
+        await this.computer.waitForIndexed(tx.getId());
+        return effect.res;
+    }
+}

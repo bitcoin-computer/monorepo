@@ -16,10 +16,10 @@
 
 import { expect } from 'chai'
 import { Computer, Contract, SmartContract } from '@bitcoin-computer/lib'
-import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777'
 import dotenv from 'dotenv'
 import path from 'path'
 import { Commodity, config } from '../src/commodity.js'
+import { CommodityHelper } from '../src/helper.js'
 import { Sha256 } from '../src/sha256.js'
 
 const envPaths = [
@@ -45,17 +45,6 @@ const MINE_SINK_ADDRESS = 'mrpdUjdfFZQWRYaqgqjgoXTJqn5rwahTHr'
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
-
-/** Strip comments so the deployed module stays small. */
-function stripComments(source: string): string {
-  return source
-    .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/\/\/.*$/gm, '')
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => line.length > 0)
-    .join('\n')
-}
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
@@ -149,12 +138,7 @@ async function waitForMintInBlockIndex(
  */
 async function deployCommodity(computer: Computer): Promise<string> {
   await ensureFunds(computer, 3e8)
-  return computer.deploy(`
-    export ${stripComments(TBC20.toString())}
-    export ${stripComments(EscrowAuditor.toString())}
-    export ${stripComments(TBC777.toString())}
-    export ${stripComments(Commodity.toString())}
-  `)
+  return new CommodityHelper(computer).deploy()
 }
 
 /**
@@ -320,6 +304,8 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
 
         expect(mint.amount).to.eq(0n)
         expect(mint.salt).to.eq(salt)
+        expect(mint.mod).to.eq('')
+        expect(mint.root).to.eq('')
         expect(mint._owners).deep.eq([alice.getPublicKey()])
         expect(mint._id).to.be.a('string')
         expect(mint._rev).to.eq(mint._id)
@@ -346,22 +332,43 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
 
     describe("Transfer / split construction path (salt === '')", () => {
       it('allows construction with empty salt and non-negative amount (used by transfer)', () => {
-        const child = new Commodity({ to: bob.getPublicKey(), salt: '', amount: 5n })
+        const child = new Commodity({
+          to: bob.getPublicKey(),
+          salt: '',
+          amount: 5n,
+          mod,
+        })
         expect(child.salt).to.eq('')
         expect(child.amount).to.eq(5n)
+        expect(child.mod).to.eq(mod)
         expect(child._owners).deep.eq([bob.getPublicKey()])
       })
 
       it('throws if amount is negative', () => {
-        expect(() => new Commodity({ to: bob.getPublicKey(), salt: '', amount: -1n })).to.throw(
-          'Amount cannot be negative',
-        )
+        expect(() =>
+          new Commodity({ to: bob.getPublicKey(), salt: '', amount: -1n }),
+        ).to.throw('Amount cannot be negative')
       })
 
       it('allows zero amount with empty salt', () => {
-        const child = new Commodity({ to: bob.getPublicKey(), salt: '', amount: 0n })
+        const child = new Commodity({
+          to: bob.getPublicKey(),
+          salt: '',
+          amount: 0n,
+        })
         expect(child.amount).to.eq(0n)
         expect(child.salt).to.eq('')
+        expect(child.mod).to.eq('')
+      })
+
+      it('ignores caller-supplied mod on a genuine mint (claim is the only writer)', () => {
+        const mint = new Commodity({
+          to: alice.getPublicKey(),
+          salt: 'salt',
+          amount: 0n,
+          mod: 'deadbeef:0',
+        })
+        expect(mint.mod).to.eq('')
       })
     })
   })
@@ -416,7 +423,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     it('returns false when the root itself was created with empty salt (fake / non-mint lineage)', async () => {
       const fake = await alice.new(
         Commodity,
-        [{ to: alice.getPublicKey(), salt: '', amount: 10n }],
+        [{ to: alice.getPublicKey(), salt: '', amount: 10n, mod }],
         mod,
       )
       expect(fake.salt).to.eq('')
@@ -475,11 +482,14 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       })
 
       it('the child inherits the exact same _root (lineage preserved)', async () => {
-        const { mint } = await mintClaimAndGet()
+        const { mint, mod: modSpec } = await mintClaimAndGet()
         const child = (await mint.transfer(bob.getPublicKey(), 1n)) as SmartContract<
           typeof Commodity
         >
         expect(child!._root).to.eq(mint._root)
+        expect(child!.mod).to.eq(modSpec)
+        expect(child!.root).to.eq(modSpec)
+        expect(await child!.isGenuine()).to.eq(true)
       })
 
       it("the child has salt === '' and is permanently ineligible for claim()", async () => {
@@ -539,10 +549,129 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     })
   })
 
-  describe('merge()', () => {
-    it('always throws "Merge disabled."', () => {
-      const local = new Commodity({ to: alice.getPublicKey(), salt: 'salt', amount: 0n })
-      expect(() => local.merge()).to.throw('Merge disabled.')
+  describe('merge() and module-level fungibility', () => {
+    it('refuses to merge tokens with escrow history', async () => {
+      const local = new Commodity({
+        to: alice.getPublicKey(),
+        salt: 'salt',
+        amount: 0n,
+        mod: 'mod:0',
+        withdrawn: ['00'.repeat(32) + ':0' as never],
+      })
+      try {
+        await local.merge([])
+        expect.fail('should have thrown')
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err)
+        expect(message).to.include('Cannot merge tokens with escrow history')
+      }
+    })
+
+    it('two claims of the same module share root, differ in _root, and merge', async () => {
+      const computer = await fundedComputer(4)
+      const modSpec = await deployCommodity(computer)
+      await mineBlocks(computer, 1)
+
+      const a = await createMint(computer, modSpec, 'merge-a')
+      const heightA = await confirmMint(computer, a, modSpec)
+      await a.claim()
+      await mineBlocks(computer, 1)
+
+      const b = await createMint(computer, modSpec, 'merge-b')
+      const heightB = await confirmMint(computer, b, modSpec)
+      await b.claim()
+      await mineBlocks(computer, 1)
+
+      expect(a.root).to.eq(modSpec)
+      expect(b.root).to.eq(modSpec)
+      expect(a._root).to.not.eq(b._root)
+      expect(await a.isEqualTo(b)).to.eq(true)
+
+      const sum = a.amount + b.amount
+      expect(sum).to.eq(Commodity.getSubsidy(heightA) + Commodity.getSubsidy(heightB))
+      await a.merge([b])
+      expect(a.amount).to.eq(sum)
+      expect(b.amount).to.eq(0n)
+    })
+
+    it('rejects a fake (empty-salt) bag of the same module', async () => {
+      const { computer, mod: modSpec, mint } = await mintClaimAndGet()
+      const fake = await computer.new(
+        Commodity,
+        [{ to: computer.getPublicKey(), salt: '', amount: 1n, mod: modSpec }],
+        modSpec,
+      )
+      expect(await fake.isGenuine()).to.eq(false)
+      expect(await mint.isEqualTo(fake)).to.eq(false)
+      try {
+        await mint.merge([fake])
+        expect.fail('should have thrown')
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err)
+        expect(message).to.include('Cannot merge')
+      }
+    })
+
+    it('claim() stamps mod from the creation tx (caller-supplied mod on a mint is ignored)', async () => {
+      const computer = await fundedComputer()
+      const modSpec = await deployCommodity(computer)
+      await mineBlocks(computer, 1)
+      const mint = await computer.new(
+        Commodity,
+        [
+          {
+            to: computer.getPublicKey(),
+            salt: 'lie',
+            amount: 0n,
+            mod: 'deadbeefdeadbeef:0',
+          },
+        ],
+        modSpec,
+      )
+      expect(mint.mod).to.eq('')
+      await confirmMint(computer, mint, modSpec)
+      await mint.claim()
+      expect(mint.mod).to.eq(modSpec)
+      expect(mint.root).to.eq(modSpec)
+    })
+  })
+
+  describe('CommodityHelper', () => {
+    it('deploy + mint leaves mod empty until claim', async () => {
+      const computer = await fundedComputer()
+      const helper = new CommodityHelper(computer)
+      const modSpec = await helper.deploy()
+      await mineBlocks(computer, 1)
+      const mint = await helper.mint(computer.getPublicKey(), 'helper-salt')
+      expect(mint.mod).to.eq('')
+      expect(mint.root).to.eq('')
+      expect(mint.amount).to.eq(0n)
+      const height = await confirmMint(computer, mint, modSpec)
+      await mint.claim()
+      expect(mint.mod).to.eq(modSpec)
+      expect(mint.root).to.eq(modSpec)
+      expect(mint.amount).to.eq(Commodity.getSubsidy(height))
+    })
+
+    it('balanceOf sums genuine bags of the module across mint roots', async () => {
+      const computer = await fundedComputer(4)
+      const helper = new CommodityHelper(computer)
+      const modSpec = await helper.deploy()
+      await mineBlocks(computer, 1)
+
+      const a = await helper.mint(computer.getPublicKey(), 'bal-a')
+      const heightA = await confirmMint(computer, a, modSpec)
+      await a.claim()
+      await mineBlocks(computer, 1)
+
+      const b = await helper.mint(computer.getPublicKey(), 'bal-b')
+      const heightB = await confirmMint(computer, b, modSpec)
+      await b.claim()
+      await mineBlocks(computer, 1)
+
+      const expected = Commodity.getSubsidy(heightA) + Commodity.getSubsidy(heightB)
+      const helperBound = new CommodityHelper(computer, modSpec)
+      expect(await helperBound.balanceOf(computer.getPublicKey())).to.eq(expected)
     })
   })
 

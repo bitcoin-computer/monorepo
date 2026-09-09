@@ -3,7 +3,7 @@ import { branded, Computer, Contract, Id, Rev, Root, SmartContract } from '@bitc
 import dotenv from 'dotenv'
 import path from 'path'
 import { TBC20 } from '@bitcoin-computer/TBC20'
-import { Amount, Escrow, TBC777, EscrowAuditor } from '../src/tbc777.js'
+import { Amount, Escrow, TBC777, TBC777Helper, EscrowAuditor } from '../src/tbc777.js'
 
 const envPaths = [path.resolve(process.cwd(), './packages/node/.env'), '../node/.env']
 
@@ -713,13 +713,27 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       }
     })
 
-    it('merge() is permanently disabled with clear error message', async () => {
-      const token = await createFreshToken()
+    it('merge() combines clean same-lineage bags', async () => {
+      const token = await createFreshToken(10n)
+      const child = await token.transfer(minter.getPublicKey(), 4n)
+      expect(token.amount).to.eq(6n)
+      expect(child.amount).to.eq(4n)
+      await token.merge([child])
+      expect(token.amount).to.eq(10n)
+      expect(child.amount).to.eq(0n)
+    })
+
+    it('merge() refuses bags with escrow history', async () => {
+      const escrow = await createNaiveEscrow()
+      const token = await createFreshToken(10n)
+      const child = await token.transfer(minter.getPublicKey(), 4n)
+      const { token: deposited } = await depositAtomic(token, escrow, 1n)
+      expect(deposited.escrow).to.eq(escrow._id)
       try {
-        await token.merge()
+        await deposited.merge([child])
         expect.fail('merge() should have thrown')
       } catch (e: any) {
-        expect(e.message).to.equal('merge() is disabled in TBC777.')
+        expect(e.message).to.equal('Cannot merge tokens with escrow history')
       }
     })
 
@@ -1190,6 +1204,24 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 // ============================================================
 // UNIT TESTS FOR constructor amount rules
 // ============================================================
+describe('TBC777Helper', () => {
+  it('deploy + mint creates a TBC777 from the full inheritance-chain module', async () => {
+    const computer = new Computer({ url, chain, network })
+    const u = await computer.faucet(2e8)
+    await computer.waitForIndexed(u.txId)
+    const helper = new TBC777Helper(computer)
+    const spec = await helper.deploy()
+    expect(spec).to.be.a('string')
+    // Confirm the module so mint does not re-inscribe the full class chain (sigops).
+    await computer.db.wallet.restClient.mine(1)
+    const token = await helper.mint(computer.getPublicKey(), 7n, 'helper', 'HLP')
+    expect(token.amount).to.eq(7n)
+    expect(token.name).to.eq('helper')
+    expect(token.symbol).to.eq('HLP')
+    expect(token.root).to.eq(token._root)
+  })
+})
+
 describe('TBC777 constructor amount rules (unit)', () => {
   const validTo = '02abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'
 

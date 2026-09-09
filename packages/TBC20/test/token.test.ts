@@ -178,6 +178,8 @@ describe('TBC20', () => {
     const token2 = await token1.transfer(computer.getPublicKey(), 1n)
     expect(token1.amount).to.eq(2n)
     expect(token2.amount).to.eq(1n)
+    expect(token1.root).to.eq(token1._root)
+    expect(token2.root).to.eq(token1.root)
 
     await token1.merge([token2])
     expect(token1.amount).to.eq(3n)

@@ -5,6 +5,8 @@
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
   "type": "module",
+  "main": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
   "files": [
     "LICENSE.md",
     "LEGAL.md"
@@ -25,6 +27,7 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
+    "@bitcoin-computer/TBC20": "^0.27.0-beta.1",
     "@bitcoin-computer/TBC777": "^0.27.0-beta.1",
     "@bitcoin-computer/lib": "^0.27.0-beta.1"
   },

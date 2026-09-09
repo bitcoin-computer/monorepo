@@ -88,6 +88,8 @@ export type CommodityConstructorParams = {
   name?: string
   /** Free-form grinding salt; non-empty marks a genuine mint root. Default `''`. */
   salt?: string
+  /** Module specifier. Stamped by `claim()`; copied onto transfer children. */
+  mod?: string
   symbol?: string
   remoteRoot?: TBC777Params['remoteRoot']
   // …plus other optional TBC777Params fields
@@ -103,29 +105,37 @@ export type CommodityConstructorParams = {
 export class Commodity extends TBC777 {
   amount!: bigint
   salt!: string
+  mod!: string
 
   /**
    * Two constructor paths (single params object, same style as TBC777 / TBC20):
    * - salt non-empty, amount === 0n  → genuine mint root (only these can claim)
-   * - salt === '', amount ≥ 0n       → transfer / split child (inherits _root)
+   * - salt === '', amount ≥ 0n       → transfer / split child (inherits `_root`)
+   * `claim()` stamps `mod` from the creation tx; `root` returns `mod`.
    */
   constructor(params: CommodityConstructorParams)
 
-  /** True iff this object descends from a genuine mint (non-empty salt at root). */
+  /** Module specifier after claim, else `''`. All claimed mints of this module share this. */
+  get root(): string
+
+  /** True iff this object descends from a genuine mint (non-empty salt at `_root`). */
   async isGenuine(): Promise<boolean>
 
   /**
    * Whole-balance transfer or partial split (classic fungible shape).
-   * Advances `_rev`. Children are constructed with `salt === ''` and are
-   * therefore permanently ineligible to claim.
+   * Advances `_rev`. Children are constructed with `salt === ''` and copied
+   * `mod`, and are therefore permanently ineligible to claim.
    */
   transfer(to: string, amount?: bigint): this | undefined
 
   /** Sets amount to 0n and advances `_rev`. */
   burn(): void
 
-  /** Always throws. Merge is disabled. */
-  merge(): never
+  /**
+   * TBC20 merge via `isFungibleWith` (same `mod`, both genuine). TBC777 refuses
+   * bags with escrow history.
+   */
+  async merge(tokens?: TBC20[]): Promise<void>
 
   /**
    * Credits the host-block subsidy if and only if this object is the
@@ -156,8 +166,8 @@ the canonical deploy helper.
 1. **Off-chain** – Grind a salt until the resulting creation revision is
    competitively small. (The revision is determined by the creation transaction;
    any pure function of the salt can be used.)
-2. **Broadcast** – `const mint = await computer.new(Commodity, [{ to: owner,
-salt, amount: 0n }])`.
+2. **Broadcast** – `const mint = await helper.mint(owner, salt)` (or
+`computer.new(Commodity, [{ to: owner, salt, amount: 0n }], mod)`).
 3. **Claim** – Once the mint is confirmed and while it is still at the creation
    revision (`_rev === _root`), call `await mint.claim()`. The call succeeds
    only if this mint holds the absolute minimum creation revision of the module
@@ -210,7 +220,7 @@ export the full chain `TBC20` → `EscrowAuditor` → `TBC777` → `Commodity`.
 
 ```typescript
 import { Computer } from '@bitcoin-computer/lib'
-import { Commodity, config } from './commodity'
+import { Commodity, CommodityHelper, config } from '@bitcoin-computer/commodity'
 
 const computer = new Computer({
   chain: config.DEFAULT_CHAIN,
@@ -220,11 +230,14 @@ const computer = new Computer({
 
 await computer.faucet(config.FAUCET_AMOUNT)
 
+const helper = new CommodityHelper(computer)
+const mod = await helper.deploy()
+
 // Off-chain: produce a competitive salt (implementation left to the miner)
 const salt = '…' // result of grinding
 
 // Mint
-const mint = await computer.new(Commodity, [{ to: computer.getPublicKey(), salt, amount: 0n }])
+const mint = await helper.mint(computer.getPublicKey(), salt)
 
 // After confirmation, claim while still at the creation revision
 await mint.claim()
@@ -261,7 +274,10 @@ provided in `commodity.test.ts`.
 Commodity extends TBC777 (and therefore TBC20). It inherits the full
 escrow-capable token surface and the token-side no-inflation invariant of
 TBC777, while adding the min-revision issuance rule, the `salt`-based genuine-
-mint check, and the `claim()` / `getSubsidy()` machinery.
+mint check, and the `claim()` / `getSubsidy()` machinery. Unlike TBC20 (one mint `_root` = one token), Commodity treats every genuine mint
+of the same module as one fungible token: `claim()` stamps `mod` from the
+creation tx, `root` returns `mod`, and `merge` (TBC20 + TBC777 escrow guard)
+combines genuine bags of that module.
 
 After a successful claim the resulting objects are ordinary fungible tokens of a
 genuine lineage. They can be used anywhere a Bitcoin Computer token or TBC777
