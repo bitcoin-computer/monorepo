@@ -3,6 +3,9 @@ export class TBC20 extends Contract {
     get root() {
         return this._root;
     }
+    async isFungibleWith(other) {
+        return this.root === other.root;
+    }
     constructor(params) {
         const { to, amount, name, symbol = '', ...rest } = params;
         super({ amount, name, symbol, ...rest, _owners: [to] });
@@ -27,9 +30,11 @@ export class TBC20 extends Contract {
     burn() {
         this.amount = 0n;
     }
-    merge(tokens) {
-        if (tokens.some((t) => t._root !== this._root))
-            throw new Error('Cannot merge tokens from different lineages');
+    async merge(tokens) {
+        for (const t of tokens) {
+            if (!(await this.isFungibleWith(t)))
+                throw new Error('Cannot merge tokens from different lineages');
+        }
         let total = 0n;
         tokens.forEach((t) => {
             total += t.amount;
