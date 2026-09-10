@@ -63,7 +63,9 @@ is negligible once the Commodity has utility.
 - Issuance rate and finality inherited from the host chain.
 - Canonical min-revision selection with zero candidate materialisation.
 - Genuine-mint lineage enforced by the framework’s immutable `_root`.
-- Bitcoin-style subsidy schedule (50 coins, halving every 210 000 host blocks).
+- Flat subsidy of `4294967296` units (`2^32`) per host block for `210000`
+  blocks (~364.6 days on Litecoin, the reference host), then zero. Total if
+  every block is claimed: `901943132160000` units.
 - Claimed Commodities remain ordinary fungible objects (transfer, split, burn).
 - Inherits the full escrow-capable machinery of TBC777 (programmable deposits,
   audited withdrawals, no-inflation invariant).
@@ -144,7 +146,16 @@ export class Commodity extends TBC777 {
    */
   async claim(): Promise<void>
 
-  /** Bitcoin-style subsidy for the given host block height. */
+  /** Off-chain convenience; must match the inlined cutoff in getSubsidy. */
+  static ISSUANCE_BLOCKS = 210000
+
+  /** Off-chain convenience; must match the inlined return in getSubsidy. */
+  static SUBSIDY = 4294967296n
+
+  /**
+   * Flat 4294967296n units per host block for heights in [0, 210000).
+   * 0n outside that window. Literals are inlined (the on-chain schedule).
+   */
   static getSubsidy(hostBlockHeight: number): bigint
 }
 
@@ -182,16 +193,34 @@ confirmations before calling `claim()` (analogous to coinbase maturity).
 ## Subsidy Schedule
 
 ```typescript
+static ISSUANCE_BLOCKS = 210000
+static SUBSIDY = 4294967296n
+
 static getSubsidy(hostBlockHeight: number): bigint {
+  // Inlined, no numeric separators: Class.toString() / moduleSource() grep.
+  // Do not read Commodity.ISSUANCE_BLOCKS / SUBSIDY from here.
   if (hostBlockHeight < 0) return 0n
-  const halvings = Math.floor(hostBlockHeight / 210_000)
-  if (halvings >= 64) return 0n
-  const COIN = 100_000_000n
-  return (50n * COIN) / (1n << BigInt(halvings))
+  if (hostBlockHeight >= 210000) return 0n
+  return 4294967296n
 }
 ```
 
 Units are the host chain’s base unit (satoshis / litoshis / …).
+
+The window is calibrated to Litecoin (`config.DEFAULT_CHAIN`, ~2.5 min blocks):
+`210000 × 150 s = 364.58` days. After the cutoff `getSubsidy` is `0n` and
+`claim()` throws `Issuance window closed`.
+
+If every host block in the window is claimed, total supply is
+`210000 × 4294967296 = 901943132160000` units (~9.02 million coins at `1e8`).
+A successful claim is one `2^32` bag.
+
+On-chain source of truth is the inlined literals inside `getSubsidy` (they are
+what `CommodityHelper.moduleSource()` / `Class.toString()` deploy). The static
+fields are off-chain conveniences for UI and tests; they do not appear in the
+deployed class body. Edit both in the same change. This package ships one
+Litecoin-calibrated module; a Bitcoin-calibrated window would be a later
+deploy of edited source, not a second module in this package.
 
 ## Design Notes
 

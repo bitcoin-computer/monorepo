@@ -171,6 +171,18 @@ export class Commodity extends TBC777 {
   mod!: string
 
   /**
+   * Off-chain convenience: host blocks in the issuance window. Must match the
+   * inlined cutoff in `getSubsidy`. Does not ship via `Class.toString()`.
+   */
+  static ISSUANCE_BLOCKS = 210000
+
+  /**
+   * Off-chain convenience: units credited per host block in the window.
+   * `2^32 = 4294967296`. Must match the inlined return in `getSubsidy`.
+   */
+  static SUBSIDY = 4294967296n
+
+  /**
    * Two construction paths (via a single params object, same shape as TBC777):
    *
    * 1. Mining / minting (salt non-empty):
@@ -277,8 +289,8 @@ export class Commodity extends TBC777 {
    *    so claim remains history-stable under re-evaluation (sync after claim).
    * 6. Select the lexicographically smallest creation revision.
    * 7. If it equals this object’s _id (and therefore this is a mint that holds
-   *    the absolute minimum), set amount to the subsidy (via getSubsidy);
-   *    otherwise throw.
+   *    the absolute minimum), credit the subsidy (via getSubsidy) unless the
+   *    issuance window is closed (subsidy 0n → throw); otherwise throw.
    * 8. Confirm lineage authenticity with the cheap isGenuine() check (only the
    *    short root is synced).
    *
@@ -341,22 +353,29 @@ export class Commodity extends TBC777 {
       throw new Error('Only objects belonging to a genuine mint lineage may claim the subsidy')
 
     this.mod = mod
-    this.amount = Commodity.getSubsidy(blockHeight)
+    const subsidy = Commodity.getSubsidy(blockHeight)
+    if (subsidy === 0n) throw new Error('Issuance window closed')
+    this.amount = subsidy
   }
 
   /**
-   * Subsidy schedule modelled on Bitcoin’s: 50 coins that halve every 210 000
-   * host-chain blocks. Returns 0n after 64 halvings. Units are the host chain’s
-   * base unit (satoshis / litoshis / …).
+   * Flat subsidy for the first 210000 host-chain blocks, then 0n. Each in-window
+   * block credits 4294967296n units (2^32). Calibrated to Litecoin (~2.5 min
+   * blocks → ~364.6 days). Returns 0n for negative heights and at/after the
+   * cutoff. Units are the host chain’s base unit (satoshis / litoshis / …).
+   *
+   * Literals are inlined (no numeric separators, no static-field reads) so
+   * `Class.toString()` / `CommodityHelper.moduleSource()` is the on-chain
+   * schedule. Statics exist for UI/tests and must match these literals.
    *
    * The schedule is fully public and independently checkable; it forms part of
    * the deterministic issuance parameters of this utility standard.
    */
   static getSubsidy(hostBlockHeight: number): bigint {
+    // Inlined, no numeric separators: Class.toString() / moduleSource() grep.
+    // Do not read Commodity.ISSUANCE_BLOCKS / SUBSIDY from here.
     if (hostBlockHeight < 0) return 0n
-    const halvings = Math.floor(hostBlockHeight / 210000)
-    if (halvings >= 64) return 0n
-    const COIN = 100_000_000n
-    return (50n * COIN) / (1n << BigInt(halvings))
+    if (hostBlockHeight >= 210000) return 0n
+    return 4294967296n
   }
 }

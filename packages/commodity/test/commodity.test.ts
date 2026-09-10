@@ -36,7 +36,6 @@ const url = process.env.BCN_URL ?? config.DEFAULT_URL
 const chain = process.env.BCN_CHAIN ?? config.DEFAULT_CHAIN
 const network = process.env.BCN_NETWORK ?? config.DEFAULT_NETWORK
 
-const COIN = 100_000_000n
 const INDEX_WAIT_MS = 2000
 
 /** Fixed LTC regtest burn address used only as a mining sink (never spent from). */
@@ -675,34 +674,6 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     })
   })
 
-  // =========================================================================
-  // 5. Static subsidy schedule
-  // =========================================================================
-  describe('Commodity.getSubsidy(hostBlockHeight)', () => {
-    it('returns 50 * COIN for heights in [0, 209_999]', () => {
-      expect(Commodity.getSubsidy(0)).to.eq(50n * COIN)
-      expect(Commodity.getSubsidy(1)).to.eq(50n * COIN)
-      expect(Commodity.getSubsidy(209_999)).to.eq(50n * COIN)
-    })
-
-    it('halves every 210_000 host blocks (Bitcoin-style)', () => {
-      expect(Commodity.getSubsidy(210_000)).to.eq(25n * COIN)
-      expect(Commodity.getSubsidy(419_999)).to.eq(25n * COIN)
-      expect(Commodity.getSubsidy(420_000)).to.eq(12n * COIN + 5n * (COIN / 10n)) // 12.5
-      expect(Commodity.getSubsidy(630_000)).to.eq((50n * COIN) / 8n)
-      expect(Commodity.getSubsidy(210_000 * 10)).to.eq((50n * COIN) / 1024n)
-    })
-
-    it('returns 0n after 64 halvings', () => {
-      expect(Commodity.getSubsidy(210_000 * 64)).to.eq(0n)
-      expect(Commodity.getSubsidy(210_000 * 100)).to.eq(0n)
-    })
-
-    it('returns 0n for negative heights', () => {
-      expect(Commodity.getSubsidy(-1)).to.eq(0n)
-      expect(Commodity.getSubsidy(-100)).to.eq(0n)
-    })
-  })
 
   // =========================================================================
   // 6. claim() – Tier 1: eligibility guards
@@ -1066,6 +1037,38 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
         /claim\(\) can only be called on the mint creation revision/,
       )
     })
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Static subsidy schedule (no node)
+// ---------------------------------------------------------------------------
+describe('Commodity.getSubsidy(hostBlockHeight)', () => {
+  it('returns SUBSIDY for heights in [0, ISSUANCE_BLOCKS)', () => {
+    expect(Commodity.getSubsidy(0)).to.eq(Commodity.SUBSIDY)
+    expect(Commodity.getSubsidy(1)).to.eq(Commodity.SUBSIDY)
+    expect(Commodity.getSubsidy(Commodity.ISSUANCE_BLOCKS - 1)).to.eq(Commodity.SUBSIDY)
+  })
+
+  it('returns 0n at and after ISSUANCE_BLOCKS', () => {
+    expect(Commodity.getSubsidy(Commodity.ISSUANCE_BLOCKS)).to.eq(0n)
+    expect(Commodity.getSubsidy(Commodity.ISSUANCE_BLOCKS + 1)).to.eq(0n)
+    expect(Commodity.getSubsidy(Commodity.ISSUANCE_BLOCKS * 2)).to.eq(0n)
+  })
+
+  it('returns 0n for negative heights', () => {
+    expect(Commodity.getSubsidy(-1)).to.eq(0n)
+    expect(Commodity.getSubsidy(-100)).to.eq(0n)
+  })
+
+  it('pins the public total supply product', () => {
+    expect(Commodity.SUBSIDY * BigInt(Commodity.ISSUANCE_BLOCKS)).to.eq(901943132160000n)
+  })
+
+  it('inlines 210000 and 4294967296n in moduleSource() (the on-chain schedule)', () => {
+    const src = CommodityHelper.moduleSource()
+    expect(src).to.include('210000')
+    expect(src).to.include('4294967296n')
   })
 })
 
