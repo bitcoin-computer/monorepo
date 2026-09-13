@@ -37,7 +37,7 @@ function AppRoutes() {
 
       <div className="w-full max-w-screen-xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
         <Routes>
-          <Route path="/" element={<Gallery.WithPagination />} />
+          <Route path="/" element={<Gallery.WithPagination orderBy="timestamp" />} />
           <Route path="/blocks" element={<Blocks />} />
           <Route path="/block/:id" element={<Block />} />
           <Route path="/blocks/:block" element={<RedirectLegacyBlock />} />

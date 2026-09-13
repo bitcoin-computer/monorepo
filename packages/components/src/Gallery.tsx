@@ -14,6 +14,7 @@ export type UserQuery<T extends Class> = Partial<{
   limit: number
   offset: number
   order: 'ASC' | 'DESC'
+  orderBy: 'rev' | 'timestamp'
   ids: string[]
   address: string
   isObject: boolean
@@ -329,6 +330,7 @@ export function GalleryWithPagination<T extends Class>(q: UserQuery<T> = {}) {
         const isObject =
           fromUrl.isObject !== undefined ? Boolean(fromUrl.isObject) : (q.isObject ?? true)
         const order = (fromUrl.order as 'ASC' | 'DESC' | undefined) || q.order || 'DESC'
+        const orderBy = q.orderBy
         const publicKey = (fromUrl.publicKey as string | undefined) || q.publicKey
         const mod = (fromUrl.mod as string | undefined) || q.mod
         const address = (fromUrl.address as string | undefined) || q.address
@@ -339,6 +341,7 @@ export function GalleryWithPagination<T extends Class>(q: UserQuery<T> = {}) {
           offset: contractsPerPage * pageNum,
           limit: contractsPerPage + 1,
           order,
+          ...(orderBy ? { orderBy } : {}),
           ...(publicKey ? { publicKey } : {}),
           ...(mod ? { mod } : {}),
           ...(address ? { address } : {}),
@@ -366,7 +369,7 @@ export function GalleryWithPagination<T extends Class>(q: UserQuery<T> = {}) {
       cancelled = true
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [computer, pageNum, location.search, q.mod, q.publicKey, q.address, q.order, q.isObject])
+  }, [computer, pageNum, location.search, q.mod, q.publicKey, q.address, q.order, q.orderBy, q.isObject])
 
   const handleNext = () => {
     setPageNum((n) => n + 1)

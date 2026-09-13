@@ -6,6 +6,7 @@ export type UserQuery<T extends Class> = Partial<{
     limit: number;
     offset: number;
     order: 'ASC' | 'DESC';
+    orderBy: 'rev' | 'timestamp';
     ids: string[];
     address: string;
     isObject: boolean;

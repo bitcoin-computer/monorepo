@@ -467,10 +467,12 @@ export type TXORecord = {
   blockIndex?: number
   timestamp?: number
 }
+export type TXOOrderBy = 'rev' | 'timestamp'
 export type TXOQuery = {
   verbosity?: number
   limit?: number
   order?: 'ASC' | 'DESC'
+  orderBy?: TXOOrderBy
   offset?: number
   isSpent?: boolean
   isConfirmed?: boolean

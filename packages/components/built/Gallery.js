@@ -141,6 +141,7 @@ export function GalleryWithPagination(q = {}) {
             try {
                 const isObject = fromUrl.isObject !== undefined ? Boolean(fromUrl.isObject) : (q.isObject ?? true);
                 const order = fromUrl.order || q.order || 'DESC';
+                const orderBy = q.orderBy;
                 const publicKey = fromUrl.publicKey || q.publicKey;
                 const mod = fromUrl.mod || q.mod;
                 const address = fromUrl.address || q.address;
@@ -150,6 +151,7 @@ export function GalleryWithPagination(q = {}) {
                     offset: contractsPerPage * pageNum,
                     limit: contractsPerPage + 1,
                     order,
+                    ...(orderBy ? { orderBy } : {}),
                     ...(publicKey ? { publicKey } : {}),
                     ...(mod ? { mod } : {}),
                     ...(address ? { address } : {}),
@@ -182,7 +184,7 @@ export function GalleryWithPagination(q = {}) {
             cancelled = true;
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [computer, pageNum, location.search, q.mod, q.publicKey, q.address, q.order, q.isObject]);
+    }, [computer, pageNum, location.search, q.mod, q.publicKey, q.address, q.order, q.orderBy, q.isObject]);
     const handleNext = () => {
         setPageNum((n) => n + 1);
     };
