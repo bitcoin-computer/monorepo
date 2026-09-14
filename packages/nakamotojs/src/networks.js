@@ -132,7 +132,7 @@ export const dogecointestnet = {
 };
 export const wojakcoin = {
   messagePrefix: '\x18WojakCoin Signed Message:\n',
-  bech32: 'wojak',
+  bech32: 'wojak', // TODO: WojakCoin doesn't use bech32, make type optional
   bip32: {
     public: 0x0488b21e,
     private: 0x0488ade4,

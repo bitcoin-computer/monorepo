@@ -1,4 +1,4 @@
-import { ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, FieldError, Modal, UtilsContext } from '@bitcoin-computer/components'
 import {
   ChessChallengeTxWrapperHelper,
   ChessContractHelper,
@@ -30,16 +30,24 @@ function NewGameModalContent({
   handleClear: () => void
 }) {
   const computer = useContext(ComputerContext)
-  const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
+  const { showLoader, toast } = UtilsContext.useUtilsComponents()
+  const [formError, setFormError] = useState<string | null>(null)
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
+    setFormError(null)
     try {
       showLoader(true)
 
       const wager = BigInt(wagerAmount)
-      if (wager <= 0n) throw new Error('Wager amount must be positive')
-      if (!publicKeyB) throw new Error('Opponent public key is required')
+      if (wager <= 0n) {
+        setFormError('Wager amount must be positive')
+        return
+      }
+      if (!publicKeyB) {
+        setFormError('Opponent public key is required')
+        return
+      }
 
       const helper = ChessContractHelper.fromModSpecs(
         computer,
@@ -76,12 +84,12 @@ function NewGameModalContent({
         publicKeyB,
       )
 
-      showSnackBar('Challenge sent! Waiting for opponent to accept.', true)
+      toast.success('Challenge sent! Waiting for opponent to accept.')
       notifyGamesUpdated()
       Modal.hideModal(newGameModal)
       handleClear()
     } catch (err) {
-      showSnackBar(err instanceof Error ? err.message : 'Error occurred!', false)
+      toast.error(err instanceof Error ? err.message : 'Error occurred!')
     } finally {
       showLoader(false)
     }
@@ -106,7 +114,10 @@ function NewGameModalContent({
             min="1"
             step="1"
             value={wagerAmount}
-            onChange={(e) => setWagerAmount(e.target.value)}
+            onChange={(e) => {
+              setWagerAmount(e.target.value)
+              if (formError) setFormError(null)
+            }}
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
           <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
@@ -124,10 +135,14 @@ function NewGameModalContent({
             type="text"
             id="publicKeyB"
             value={publicKeyB}
-            onChange={(e) => setSecondPlayerPublicKey(e.target.value)}
+            onChange={(e) => {
+              setSecondPlayerPublicKey(e.target.value)
+              if (formError) setFormError(null)
+            }}
             placeholder="Paste opponent's public key"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full p-3 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
           />
+          <FieldError>{formError}</FieldError>
         </div>
       </div>
       <div className="p-6">

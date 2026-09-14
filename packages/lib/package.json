@@ -70,7 +70,7 @@
     "clean": "rm -rf js-build && npm run clean:logs",
     "clean:logs": "rm -f *.log 2> /dev/null",
     "build:test": "tsc",
-    "prepublishOnly": "../../scripts/check-obfuscation.sh",
+    "prepublishOnly": "node ../../scripts/check-obfuscation.js",
     "publish-lib": "npm publish",
     "test:rerun": "tsc && node ../../scripts/rerun-failed.js",
     "test": "tsc && mocha",
