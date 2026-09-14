@@ -60,7 +60,6 @@ function FromRecords({
   records: TXORecord[]
   computer: Computer
 }) {
-  const chain = computer.getChain()
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4 w-full">
       {records.map((record) => (
@@ -69,7 +68,7 @@ function FromRecords({
             to={`/objects/${record.rev}`}
             className="block h-full focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-lg"
           >
-            <ObjectCard record={record} computer={computer} chain={chain} />
+            <ObjectCard record={record} computer={computer} />
           </Link>
         </div>
       ))}

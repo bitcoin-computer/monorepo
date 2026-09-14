@@ -4,6 +4,7 @@ import reactStringReplace from 'react-string-replace'
 import { HiOutlineClipboard, HiCheck } from 'react-icons/hi'
 import { isDecryptionFailure } from './common/transition'
 import { lookupIsObject } from './common/txo'
+import { protoConstructorName, refineObjectClassName } from './common/className'
 import { capitalizeFirstLetter, isValidRevString, toObject } from './common/utils'
 import { methodNamesFrom, SmartObjectFunctions } from './SmartObjectFunctions'
 import { ComputerContext } from './ComputerContext'
@@ -38,53 +39,6 @@ function truncateRev(rev: string, head = 8, tail = 6): string {
   const [txId, vout] = rev.split(':')
   if (!txId || txId.length <= head + tail) return rev
   return `${txId.slice(0, head)}…${txId.slice(-tail)}:${vout ?? '0'}`
-}
-
-function isUsableClassName(name: unknown): name is string {
-  if (typeof name !== 'string' || !name) return false
-  if (name === 'Object' || name === 'Function' || name === 'Contract') return false
-  // Bundled / proxy-trap names are typically 1–2 chars (t, e, n, …)
-  if (name.length <= 2) return false
-  return true
-}
-
-/** Skip the smart-object proxy trap on `.constructor`. */
-function protoConstructorName(smartObject: unknown): string | undefined {
-  if (smartObject == null || typeof smartObject !== 'object') return undefined
-  try {
-    const name = Object.getPrototypeOf(smartObject)?.constructor?.name
-    return isUsableClassName(name) ? name : undefined
-  } catch {
-    return undefined
-  }
-}
-
-function classNameFromExp(exp: string): string | undefined {
-  const match = exp.match(/\bnew\s+([A-Za-z_$][\w$]*)\s*\(/)
-  return isUsableClassName(match?.[1]) ? match[1] : undefined
-}
-
-function classNameFromExports(
-  smartObject: unknown,
-  exports: Record<string, unknown>,
-): string | undefined {
-  let proto: { constructor?: unknown } | null = null
-  try {
-    proto = Object.getPrototypeOf(smartObject)
-  } catch {
-    proto = null
-  }
-  for (const name of Object.getOwnPropertyNames(exports)) {
-    const value = exports[name]
-    if (typeof value !== 'function') continue
-    try {
-      if (proto && proto === (value as { prototype?: unknown }).prototype) return name
-      if (smartObject instanceof (value as new (...args: never[]) => unknown)) return name
-    } catch {
-      // continue
-    }
-  }
-  return undefined
 }
 
 function Copy({ text }: { text: string }) {
@@ -968,37 +922,13 @@ function Component({ title }: { title?: string }) {
     setObjectClass(immediate)
 
     let cancelled = false
-    const resolve = async () => {
-      if (mod) {
-        try {
-          const ns = (await computer.load(mod)) as Record<string, unknown>
-          const fromMod = classNameFromExports(smartObject, ns)
-          if (!cancelled && fromMod) {
-            setObjectClass(fromMod)
-            return
-          }
-        } catch (err) {
-          console.warn('Error resolving class from module exports', err)
-        }
-      }
-
-      const id = smartObject._id
-      if (typeof id === 'string' && id.includes(':')) {
-        try {
-          const decoded = await computer.decode(id.split(':')[0])
-          const fromExp =
-            typeof decoded?.exp === 'string' ? classNameFromExp(decoded.exp) : undefined
-          if (!cancelled && fromExp) {
-            setObjectClass(fromExp)
-            return
-          }
-        } catch (err) {
-          console.warn('Error resolving class from create expression', err)
-        }
-      }
-    }
-
-    resolve()
+    void refineObjectClassName(computer, smartObject, mod)
+      .then((refined) => {
+        if (!cancelled && refined) setObjectClass(refined)
+      })
+      .catch((err) => {
+        console.warn('Error resolving object class name', err)
+      })
     return () => {
       cancelled = true
     }

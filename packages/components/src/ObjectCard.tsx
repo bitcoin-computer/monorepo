@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Computer, TXORecord } from '@bitcoin-computer/lib'
+import { protoConstructorName, refineObjectClassName } from './common/className'
 import { isDecryptionFailure } from './common/transition'
-import { bigIntToStr } from './common/utils'
 import { limitConcurrency } from './common/limitConcurrency'
 import { ObjectStateTable } from './ObjectStateTable'
 
@@ -16,26 +16,19 @@ function truncateRev(rev: string): string {
   return `${truncateMiddle(txId, 8, 6)}:${vout ?? '0'}`
 }
 
-function truncateMod(mod?: string): string {
-  if (!mod) return 'Object'
-  return truncateRev(mod)
-}
-
 export type ObjectCardProps = {
   record: TXORecord
   computer: Computer
-  chain?: string
   progressiveSync?: boolean
 }
 
-export function ObjectCard({ record, computer, chain, progressiveSync = true }: ObjectCardProps) {
+export function ObjectCard({ record, computer, progressiveSync = true }: ObjectCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
   const [syncedObject, setSyncedObject] = useState<unknown>(null)
   const [encrypted, setEncrypted] = useState(false)
   const [syncing, setSyncing] = useState(false)
-
-  const displayChain = chain || computer.getChain?.() || ''
+  const [objectClass, setObjectClass] = useState<string | undefined>(undefined)
 
   useEffect(() => {
     if (!progressiveSync) return undefined
@@ -82,22 +75,55 @@ export function ObjectCard({ record, computer, chain, progressiveSync = true }: 
     }
   }, [progressiveSync, inView, record.rev, computer, syncedObject])
 
-  const satoshis =
-    typeof record.satoshis === 'bigint' ? record.satoshis : BigInt(record.satoshis ?? 0)
+  useEffect(() => {
+    if (syncedObject == null) {
+      setObjectClass(undefined)
+      return undefined
+    }
+
+    const immediate = protoConstructorName(syncedObject)
+    setObjectClass(immediate)
+
+    let cancelled = false
+    void refineObjectClassName(computer, syncedObject, record.mod).then((refined) => {
+      if (!cancelled && refined) setObjectClass(refined)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [computer, syncedObject, record.mod])
+
+  const title = objectClass || 'Object'
+  const showTitleSkeleton = syncing && syncedObject === null && !encrypted && !objectClass
 
   return (
     <div
       ref={cardRef}
       className="block w-full p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm dark:bg-gray-800 dark:border-gray-700 dark:hover:border-blue-600 transition-colors text-left h-full"
     >
-      <div className="flex items-center justify-between gap-2 mb-1.5">
-        <div className="flex items-center gap-1 min-w-0 max-w-[75%]">
-          <span
-            className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium bg-blue-50 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 font-mono truncate"
-            title={record.mod || 'No module'}
-          >
-            {record.mod ? truncateMod(record.mod) : 'Object'}
-          </span>
+      <div className="flex items-center justify-between gap-2 mb-1">
+        <div className="flex items-center gap-1.5 min-w-0 flex-1">
+          {showTitleSkeleton ? (
+            <span
+              className="inline-block h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded animate-pulse shrink-0"
+              aria-hidden="true"
+            />
+          ) : (
+            <span
+              className="text-sm font-semibold text-gray-900 dark:text-white truncate min-w-0"
+              title={title}
+            >
+              {title}
+            </span>
+          )}
+          {record.mod ? (
+            <span
+              className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium bg-blue-50 text-blue-800 dark:bg-blue-900/50 dark:text-blue-200 font-mono truncate max-w-[40%] shrink"
+              title={record.mod}
+            >
+              {truncateRev(record.mod)}
+            </span>
+          ) : null}
           {encrypted ? (
             <span className="inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-medium bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 shrink-0">
               Encrypted/private
@@ -105,38 +131,20 @@ export function ObjectCard({ record, computer, chain, progressiveSync = true }: 
           ) : null}
         </div>
         {record.blockHeight != null ? (
-          <span className="text-[11px] text-green-700 dark:text-green-400 tabular-nums">
+          <span className="text-[11px] text-green-700 dark:text-green-400 tabular-nums shrink-0">
             #{record.blockHeight}
           </span>
         ) : (
-          <span className="text-[11px] text-amber-700 dark:text-amber-400">Mempool</span>
+          <span className="text-[11px] text-amber-700 dark:text-amber-400 shrink-0">Mempool</span>
         )}
       </div>
 
-      <p className="text-sm font-semibold text-gray-900 dark:text-white tabular-nums leading-tight">
-        {bigIntToStr(satoshis)}
-        {displayChain ? (
-          <span className="ml-1 text-xs font-medium text-gray-500 dark:text-gray-400">
-            {displayChain}
-          </span>
-        ) : null}
-      </p>
       <p
-        className="text-[11px] font-mono text-gray-500 dark:text-gray-400 truncate mt-0.5"
+        className="text-[11px] font-mono text-gray-500 dark:text-gray-400 truncate"
         title={record.rev}
       >
         {truncateRev(record.rev)}
       </p>
-
-      {record.address ? (
-        <p
-          className="mt-1.5 text-[11px] font-mono text-gray-600 dark:text-gray-300 truncate"
-          title={record.address}
-        >
-          <span className="text-gray-400 dark:text-gray-500">owner </span>
-          {truncateMiddle(record.address, 8, 6)}
-        </p>
-      ) : null}
 
       {(syncing || syncedObject !== null || encrypted) && (
         <div className="border-t border-gray-100 dark:border-gray-700 pt-1.5 mt-1.5">
@@ -160,9 +168,12 @@ export function ObjectCard({ record, computer, chain, progressiveSync = true }: 
 export function ObjectCardSkeleton() {
   return (
     <div className="block w-full p-3 bg-white border border-gray-200 rounded-lg dark:bg-gray-800 dark:border-gray-700 animate-pulse">
-      <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-1/3 mb-2" />
-      <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-1/2 mb-1" />
-      <div className="h-3 bg-gray-200 rounded dark:bg-gray-700 w-2/3" />
+      <div className="flex items-center justify-between gap-2 mb-1.5">
+        <div className="h-4 bg-gray-200 rounded dark:bg-gray-700 w-1/3" />
+        <div className="h-3 bg-gray-200 rounded dark:bg-gray-700 w-10" />
+      </div>
+      <div className="h-3 bg-gray-200 rounded dark:bg-gray-700 w-2/3 mb-2" />
+      <div className="h-8 bg-gray-200 rounded dark:bg-gray-700 w-full" />
     </div>
   )
 }
