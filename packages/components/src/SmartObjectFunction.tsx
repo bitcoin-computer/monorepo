@@ -368,20 +368,24 @@ export const SmartObjectFunction = ({
       await computer.waitForIndexed(tx.txId)
       const rev = await computer.latest(smartObject._id)
 
+      if (rev && rev !== smartObject._rev) {
+        toast.success(`Method “${fnName}” executed. Showing the latest revision.`, {
+          title: 'Success',
+          durationMs: 8000,
+        })
+        navigate(`/objects/${rev}`)
+        return
+      }
+
       setEffectPreview({
         kind: 'broadcast',
         res: effect?.res,
         env: effect?.env as Record<string, unknown> | undefined,
         txId: tx.txId,
       })
-
       toast.success(`Method “${fnName}” executed. A new revision was created on chain.`, {
         title: 'Success',
         durationMs: 8000,
-        action: {
-          label: 'View latest revision',
-          onClick: () => navigate(`/objects/${rev}`),
-        },
       })
     } catch (error: any) {
       const spent = isMissingOrSpentError(error)

@@ -1,6 +1,7 @@
 import { ReactNode, RefObject } from 'react'
 import { Link } from 'react-router-dom'
 import { Modal } from '@bitcoin-computer/components'
+import { CopyButton } from '../ui/CopyButton'
 import { EmptyState } from '../ui/EmptyState'
 
 export type PlaygroundResult = {
@@ -360,9 +361,12 @@ export function ResultPanel({
             </Link>
             .
           </p>
-          <p className="font-mono text-xs break-all text-gray-700 dark:text-gray-300">
-            <span className="text-gray-500 dark:text-gray-400">rev </span>
-            {obj._rev}
+          <p className="flex items-start gap-1.5 font-mono text-xs text-gray-700 dark:text-gray-300">
+            <span className="min-w-0 break-all">
+              <span className="text-gray-500 dark:text-gray-400">rev </span>
+              {obj._rev}
+            </span>
+            <CopyButton text={obj._rev} label="Copy revision" icon />
           </p>
           {txId ? (
             <p>
