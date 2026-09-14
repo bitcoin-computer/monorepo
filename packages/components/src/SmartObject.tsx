@@ -3,6 +3,7 @@ import { Link, useLocation, useParams } from 'react-router-dom'
 import reactStringReplace from 'react-string-replace'
 import { HiOutlineClipboard, HiCheck } from 'react-icons/hi'
 import { isDecryptionFailure } from './common/transition'
+import { lookupIsObject } from './common/txo'
 import { capitalizeFirstLetter, isValidRevString, toObject } from './common/utils'
 import { methodNamesFrom, SmartObjectFunctions } from './SmartObjectFunctions'
 import { ComputerContext } from './ComputerContext'
@@ -843,6 +844,7 @@ function Component({ title }: { title?: string }) {
   const [loadError, setLoadError] = useState<string | null>(null)
   const [mod, setMod] = useState<string | undefined>(undefined)
   const [objectClass, setObjectClass] = useState<string | undefined>(undefined)
+  const [indexedIsObject, setIndexedIsObject] = useState<boolean | undefined>(undefined)
   const options = ['object', 'string', 'number', 'bigint', 'boolean', 'undefined', 'symbol']
 
   useEffect(() => {
@@ -859,6 +861,7 @@ function Component({ title }: { title?: string }) {
     setLoadError(null)
     setMod(undefined)
     setObjectClass(undefined)
+    setIndexedIsObject(undefined)
 
     const fetchCore = async () => {
       try {
@@ -925,9 +928,22 @@ function Component({ title }: { title?: string }) {
       }
     }
 
-    fetchCore()
-    fetchMod()
-    fetchTimeline()
+    const run = async () => {
+      const flag = await lookupIsObject(computer, rev)
+      if (cancelled) return
+      setIndexedIsObject(flag)
+
+      if (flag === false) {
+        setTimelineLoading(false)
+        return
+      }
+
+      fetchCore()
+      fetchMod()
+      fetchTimeline()
+    }
+
+    void run()
 
     return () => {
       cancelled = true
@@ -989,17 +1005,20 @@ function Component({ title }: { title?: string }) {
   }, [computer, smartObject, mod])
 
   const [txId, outNum] = rev.split(':')
-  const loading = !smartObject && !loadError
+  const notSmartObject = indexedIsObject === false
+  const loading = !smartObject && !loadError && !notSmartObject
   const decryptDenied = isDecryptionFailure(loadError)
+  const evalFailed = Boolean(loadError) && indexedIsObject === true && !decryptDenied
+  const unknownLoadFailed = Boolean(loadError) && indexedIsObject !== true && !decryptDenied
 
   return (
     <div className="w-full space-y-5">
       <header>
         <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
-          Smart object
+          {notSmartObject ? 'Output' : 'Smart object'}
         </p>
         <h1 className="mb-2 text-xl sm:text-2xl font-semibold dark:text-white">
-          {title || objectClass || 'Object'}
+          {notSmartObject ? 'Not a smart object' : title || objectClass || 'Object'}
         </h1>
         <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
           <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">
@@ -1050,6 +1069,20 @@ function Component({ title }: { title?: string }) {
         </div>
       </header>
 
+      {notSmartObject ? (
+        <InlineAlert variant="info" title="This output is not a smart object">
+          <p className="mb-2">It does not hold on-chain application state.</p>
+          <p className="text-xs opacity-90">
+            <Link
+              to={`/transactions/${txId}`}
+              className="font-medium underline underline-offset-2 hover:opacity-100"
+            >
+              View transaction
+            </Link>
+          </p>
+        </InlineAlert>
+      ) : null}
+
       {loadError && decryptDenied ? (
         <InlineAlert variant="info" title="You cannot decrypt this object">
           <p className="mb-2">
@@ -1067,7 +1100,22 @@ function Component({ title }: { title?: string }) {
         </InlineAlert>
       ) : null}
 
-      {loadError && !decryptDenied ? (
+      {unknownLoadFailed ? (
+        <InlineAlert variant="info" title="Could not load this revision">
+          <p className="mb-2">{loadError}</p>
+          <p className="text-xs opacity-90">
+            It may not be a smart object, or it has not been indexed yet.{' '}
+            <Link
+              to={`/transactions/${txId}`}
+              className="font-medium underline underline-offset-2 hover:opacity-100"
+            >
+              View transaction
+            </Link>
+          </p>
+        </InlineAlert>
+      ) : null}
+
+      {evalFailed ? (
         <InlineAlert
           variant="error"
           title="Could not load object"
@@ -1075,7 +1123,7 @@ function Component({ title }: { title?: string }) {
         >
           <p className="mb-2">{loadError}</p>
           <p className="text-xs opacity-90">
-            This revision may not be a smart object, or the node failed to evaluate it.{' '}
+            The node failed to evaluate this smart object.{' '}
             <Link
               to={`/transactions/${txId}`}
               className="font-medium underline underline-offset-2 hover:opacity-100"
@@ -1123,16 +1171,18 @@ function Component({ title }: { title?: string }) {
         </>
       ) : null}
 
-      <RevisionHistory
-        prev={prev}
-        next={next}
-        first={first}
-        latest={latest}
-        current={rev}
-        chain={timeline}
-        loading={timelineLoading}
-        ancestorTxIds={ancestorTxIds}
-      />
+      {!notSmartObject ? (
+        <RevisionHistory
+          prev={prev}
+          next={next}
+          first={first}
+          latest={latest}
+          current={rev}
+          chain={timeline}
+          loading={timelineLoading}
+          ancestorTxIds={ancestorTxIds}
+        />
+      ) : null}
 
       {smartObject ? (
         <MetaDataPanel smartObject={smartObject} objectClass={objectClass} mod={mod} />

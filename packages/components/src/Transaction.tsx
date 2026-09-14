@@ -11,6 +11,7 @@ import {
   readOnChainMeta,
   type DecodeFailureKind,
 } from './common/transition'
+import { lookupIsObject } from './common/txo'
 import { HiOutlineRefresh, HiOutlineClipboard, HiCheck } from 'react-icons/hi'
 
 type TransactionRouteParams = {
@@ -106,7 +107,7 @@ function SpendsCell({ utxo }: { utxo: string }) {
 
   return (
     <Link
-      to={`/objects/${spends}`}
+      to={`/transactions/${spTxid}`}
       className="font-medium text-blue-600 dark:text-blue-400 hover:underline font-mono text-xs"
       title={spends}
     >
@@ -115,78 +116,165 @@ function SpendsCell({ utxo }: { utxo: string }) {
   )
 }
 
-export const outputsComponent = ({
+function SmartObjectBadge({ isObject }: { isObject: boolean | undefined }) {
+  if (isObject === true) {
+    return (
+      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/40 dark:text-green-300">
+        Yes
+      </span>
+    )
+  }
+  if (isObject === false) {
+    return (
+      <span className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300">
+        No
+      </span>
+    )
+  }
+  return <span className="text-gray-400 dark:text-gray-500">—</span>
+}
+
+function OutputIndexCell({
+  txn,
+  n,
+  isObject,
+}: {
+  txn: string | undefined
+  n: number
+  isObject: boolean | undefined
+}) {
+  if (txn && isObject === true) {
+    return (
+      <Link
+        to={`/objects/${txn}:${n}`}
+        className="font-medium text-blue-600 dark:text-blue-400 hover:underline tabular-nums"
+      >
+        {n}
+      </Link>
+    )
+  }
+  return <span className="tabular-nums text-gray-900 dark:text-white">{n}</span>
+}
+
+export function OutputsComponent({
   rpcTxnData,
   txn,
 }: {
   rpcTxnData: any
   txn: string | undefined
-}) => (
-  <section className="w-full">
-    <h2 className="mb-2 text-base sm:text-lg font-semibold dark:text-white">Outputs</h2>
-    <div className="relative overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-      <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700/80 dark:text-gray-300">
-          <tr>
-            <th scope="col" className="px-4 py-3">
-              #
-            </th>
-            <th scope="col" className="px-4 py-3">
-              Value
-            </th>
-            <th scope="col" className="px-4 py-3">
-              Type
-            </th>
-            <th scope="col" className="px-4 py-3 hidden md:table-cell">
-              Script
-            </th>
-            <th scope="col" className="px-4 py-3">
-              Spent by
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {rpcTxnData?.vout?.map((output: any) => (
-            <tr
-              key={output.n}
-              className="bg-white border-b last:border-0 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/40"
-            >
-              <td className="px-4 py-3">
-                <Link
-                  to={`/objects/${txn}:${output.n}`}
-                  className="font-medium text-blue-600 dark:text-blue-400 hover:underline tabular-nums"
-                >
-                  {output.n}
-                </Link>
-              </td>
-              <td className="px-4 py-3 tabular-nums font-medium text-gray-900 dark:text-white">
-                {formatRpcValue(output.value)}
-              </td>
-              <td className="px-4 py-3">
-                <span className="inline-flex rounded px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
-                  {output.scriptPubKey?.type || '—'}
-                </span>
-              </td>
-              <td
-                className="px-4 py-3 break-all font-mono text-xs max-w-xs truncate hidden md:table-cell"
-                title={output.scriptPubKey?.asm}
-              >
-                {output.scriptPubKey?.asm || '—'}
-              </td>
-              <td className="px-4 py-3">
-                {txn ? <SpendsCell utxo={`${txn}:${output.n}`} /> : <span>—</span>}
-              </td>
+}) {
+  const computer = useContext(ComputerContext)
+  const [flags, setFlags] = useState<Record<number, boolean | undefined>>({})
+  const vouts: { n: number }[] = Array.isArray(rpcTxnData?.vout) ? rpcTxnData.vout : []
+
+  useEffect(() => {
+    const outs: { n: number }[] = Array.isArray(rpcTxnData?.vout) ? rpcTxnData.vout : []
+    if (!txn || outs.length === 0) {
+      setFlags({})
+      return
+    }
+    let cancelled = false
+    setFlags({})
+    const load = async () => {
+      const entries = await Promise.all(
+        outs.map(async (output) => {
+          const flag = await lookupIsObject(computer, `${txn}:${output.n}`)
+          return [output.n, flag] as const
+        }),
+      )
+      if (!cancelled) setFlags(Object.fromEntries(entries))
+    }
+    void load()
+    return () => {
+      cancelled = true
+    }
+  }, [computer, txn, rpcTxnData])
+
+  return (
+    <section className="w-full">
+      <h2 className="mb-2 text-base sm:text-lg font-semibold dark:text-white">Outputs</h2>
+      <div className="relative overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
+        <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700/80 dark:text-gray-300">
+            <tr>
+              <th scope="col" className="px-4 py-3">
+                #
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Value
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Type
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Smart object
+              </th>
+              <th scope="col" className="px-4 py-3 hidden md:table-cell">
+                Script
+              </th>
+              <th scope="col" className="px-4 py-3">
+                Spent by
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  </section>
-)
+          </thead>
+          <tbody>
+            {vouts.map((output: any) => (
+              <tr
+                key={output.n}
+                className="bg-white border-b last:border-0 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/40"
+              >
+                <td className="px-4 py-3">
+                  <OutputIndexCell txn={txn} n={output.n} isObject={flags[output.n]} />
+                </td>
+                <td className="px-4 py-3 tabular-nums font-medium text-gray-900 dark:text-white">
+                  {formatRpcValue(output.value)}
+                </td>
+                <td className="px-4 py-3">
+                  <span className="inline-flex rounded px-2 py-0.5 text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200">
+                    {output.scriptPubKey?.type || '—'}
+                  </span>
+                </td>
+                <td className="px-4 py-3">
+                  <SmartObjectBadge isObject={flags[output.n]} />
+                </td>
+                <td
+                  className="px-4 py-3 break-all font-mono text-xs max-w-xs truncate hidden md:table-cell"
+                  title={output.scriptPubKey?.asm}
+                >
+                  {output.scriptPubKey?.asm || '—'}
+                </td>
+                <td className="px-4 py-3">
+                  {txn ? <SpendsCell utxo={`${txn}:${output.n}`} /> : <span>—</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  )
+}
+
+export const outputsComponent = OutputsComponent
 
 function InputRevCell({ utxo, checkForSpentInput }: { utxo: string; checkForSpentInput: boolean }) {
   const computer = useContext(ComputerContext)
   const [spends, setSpends] = useState<string | null | undefined>(null)
+  const [isObject, setIsObject] = useState<boolean | undefined>(undefined)
+
+  useEffect(() => {
+    let cancelled = false
+    setIsObject(undefined)
+    const load = async () => {
+      const flag = await lookupIsObject(computer, utxo)
+      if (!cancelled) setIsObject(flag)
+    }
+    void load()
+    return () => {
+      cancelled = true
+    }
+  }, [computer, utxo])
+
   useEffect(() => {
     if (checkForSpentInput) {
       setSpends(null)
@@ -219,9 +307,12 @@ function InputRevCell({ utxo, checkForSpentInput }: { utxo: string; checkForSpen
     trimmed = `${truncateMiddle(txId, 6, 4)}:${vIn || ''}`
   }
 
+  const [prevTxId] = utxo.split(':')
+  const href = isObject === true ? `/objects/${utxo}` : `/transactions/${prevTxId}`
+
   return (
     <div className="relative group inline-block max-w-full">
-      <Link to={`/objects/${utxo}`} className={linkClass} title={utxo}>
+      <Link to={href} className={linkClass} title={utxo}>
         {truncateMiddle(utxo, 12, 10)}
       </Link>
       {isLoading && (
@@ -620,7 +711,9 @@ export function TransactionComponent() {
       {!loading && !error && rpcTxnData?.vin
         ? inputsComponent({ rpcTxnData, checkForSpentInput: false })
         : null}
-      {!loading && !error && rpcTxnData?.vout ? outputsComponent({ rpcTxnData, txn }) : null}
+      {!loading && !error && rpcTxnData?.vout ? (
+        <OutputsComponent rpcTxnData={rpcTxnData} txn={txn} />
+      ) : null}
     </div>
   )
 }

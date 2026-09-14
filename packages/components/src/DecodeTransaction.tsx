@@ -10,7 +10,7 @@ import {
 } from './common/transition'
 import {
   inputsComponent,
-  outputsComponent,
+  OutputsComponent,
   transitionComponent,
   TransitionUnavailable,
 } from './Transaction'
@@ -75,7 +75,7 @@ export function DecodeTransactionComponent() {
 
         {rpcTxnData?.vin && inputsComponent({ rpcTxnData, checkForSpentInput: true })}
 
-        {rpcTxnData?.vout && outputsComponent({ rpcTxnData, txn: undefined })}
+        {rpcTxnData?.vout ? <OutputsComponent rpcTxnData={rpcTxnData} txn={txId} /> : null}
       </div>
     </>
   )
