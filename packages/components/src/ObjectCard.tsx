@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Computer, TXORecord } from '@bitcoin-computer/lib'
 import { isDecryptionFailure } from './common/transition'
-import { bigIntToStr, jsonMap, strip, toObject } from './common/utils'
+import { bigIntToStr } from './common/utils'
 import { limitConcurrency } from './common/limitConcurrency'
+import { ObjectStateTable } from './ObjectStateTable'
 
 function truncateMiddle(value: string, head = 6, tail = 4): string {
   if (!value || value.length <= head + tail + 1) return value
@@ -20,14 +21,6 @@ function truncateMod(mod?: string): string {
   return truncateRev(mod)
 }
 
-function stateToPreview(synced: unknown): string {
-  try {
-    return toObject(jsonMap(strip)(synced as any))
-  } catch {
-    return toObject(synced)
-  }
-}
-
 export type ObjectCardProps = {
   record: TXORecord
   computer: Computer
@@ -35,15 +28,10 @@ export type ObjectCardProps = {
   progressiveSync?: boolean
 }
 
-export function ObjectCard({
-  record,
-  computer,
-  chain,
-  progressiveSync = true,
-}: ObjectCardProps) {
+export function ObjectCard({ record, computer, chain, progressiveSync = true }: ObjectCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [inView, setInView] = useState(false)
-  const [statePreview, setStatePreview] = useState<string | null>(null)
+  const [syncedObject, setSyncedObject] = useState<unknown>(null)
   const [encrypted, setEncrypted] = useState(false)
   const [syncing, setSyncing] = useState(false)
 
@@ -69,7 +57,7 @@ export function ObjectCard({
 
   useEffect(() => {
     if (!progressiveSync || !inView) return undefined
-    if (statePreview !== null) return undefined
+    if (syncedObject !== null) return undefined
 
     let cancelled = false
     setSyncing(true)
@@ -78,7 +66,7 @@ export function ObjectCard({
     limitConcurrency(() => computer.sync(record.rev))
       .then((synced) => {
         if (cancelled) return
-        setStatePreview(stateToPreview(synced))
+        setSyncedObject(synced)
       })
       .catch((err: unknown) => {
         if (cancelled) return
@@ -92,7 +80,7 @@ export function ObjectCard({
     return () => {
       cancelled = true
     }
-  }, [progressiveSync, inView, record.rev, computer, statePreview])
+  }, [progressiveSync, inView, record.rev, computer, syncedObject])
 
   const satoshis =
     typeof record.satoshis === 'bigint' ? record.satoshis : BigInt(record.satoshis ?? 0)
@@ -133,7 +121,10 @@ export function ObjectCard({
           </span>
         ) : null}
       </p>
-      <p className="text-[11px] font-mono text-gray-500 dark:text-gray-400 truncate mt-0.5" title={record.rev}>
+      <p
+        className="text-[11px] font-mono text-gray-500 dark:text-gray-400 truncate mt-0.5"
+        title={record.rev}
+      >
         {truncateRev(record.rev)}
       </p>
 
@@ -147,22 +138,19 @@ export function ObjectCard({
         </p>
       ) : null}
 
-      {(syncing || statePreview || encrypted) && (
+      {(syncing || syncedObject !== null || encrypted) && (
         <div className="border-t border-gray-100 dark:border-gray-700 pt-1.5 mt-1.5">
-          {syncing && !statePreview && !encrypted ? (
+          {syncing && syncedObject === null && !encrypted ? (
             <div className="animate-pulse space-y-1" aria-hidden="true">
-              <div className="h-2 bg-gray-200 rounded dark:bg-gray-700 w-3/4" />
-              <div className="h-2 bg-gray-200 rounded dark:bg-gray-700 w-1/2" />
+              <div className="h-8 bg-gray-200 rounded dark:bg-gray-700 w-full" />
+              <div className="h-8 bg-gray-200 rounded dark:bg-gray-700 w-5/6" />
+              <div className="h-8 bg-gray-200 rounded dark:bg-gray-700 w-2/3" />
             </div>
           ) : null}
-          {encrypted && !statePreview ? (
+          {encrypted && syncedObject === null ? (
             <p className="text-[11px] text-gray-500 dark:text-gray-400">Encrypted/private</p>
           ) : null}
-          {statePreview ? (
-            <pre className="font-normal overflow-hidden text-gray-600 dark:text-gray-400 text-[11px] max-h-14 whitespace-pre-wrap break-words leading-snug">
-              {statePreview.length > 160 ? `${statePreview.slice(0, 160)}…` : statePreview}
-            </pre>
-          ) : null}
+          {syncedObject !== null ? <ObjectStateTable smartObject={syncedObject} /> : null}
         </div>
       )}
     </div>
