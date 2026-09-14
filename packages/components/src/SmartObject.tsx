@@ -8,9 +8,24 @@ import { methodNamesFrom, SmartObjectFunctions } from './SmartObjectFunctions'
 import { ComputerContext } from './ComputerContext'
 import { InlineAlert } from './InlineAlert'
 
-const keywords = ['_id', '_rev', '_owners', '_root', '_satoshis']
+const keywords = ['_id', '_rev', '_owners', '_root', '_satoshis', '_readers', '_url']
 /** Safety cap when walking first → next → … for the timeline */
 const MAX_TIMELINE_REVS = 100
+/** Prevent infinite render on cyclic nested objects */
+const MAX_STATE_DEPTH = 8
+
+function publicEntries(value: unknown): [string, unknown][] {
+  if (value == null || typeof value !== 'object') return []
+  return Object.entries(value as Record<string, unknown>).filter(
+    ([key, v]) => !keywords.includes(key) && typeof v !== 'function',
+  )
+}
+
+function nestedRevOf(value: unknown): string | undefined {
+  if (value == null || typeof value !== 'object') return undefined
+  const rev = (value as { _rev?: unknown })._rev
+  return typeof rev === 'string' && isValidRevString(rev) ? rev : undefined
+}
 
 export const getFnParamNames = (fn: string) => {
   const match = fn.toString().match(/\(.*?\)/)
@@ -22,6 +37,53 @@ function truncateRev(rev: string, head = 8, tail = 6): string {
   const [txId, vout] = rev.split(':')
   if (!txId || txId.length <= head + tail) return rev
   return `${txId.slice(0, head)}…${txId.slice(-tail)}:${vout ?? '0'}`
+}
+
+function isUsableClassName(name: unknown): name is string {
+  if (typeof name !== 'string' || !name) return false
+  if (name === 'Object' || name === 'Function' || name === 'Contract') return false
+  // Bundled / proxy-trap names are typically 1–2 chars (t, e, n, …)
+  if (name.length <= 2) return false
+  return true
+}
+
+/** Skip the smart-object proxy trap on `.constructor`. */
+function protoConstructorName(smartObject: unknown): string | undefined {
+  if (smartObject == null || typeof smartObject !== 'object') return undefined
+  try {
+    const name = Object.getPrototypeOf(smartObject)?.constructor?.name
+    return isUsableClassName(name) ? name : undefined
+  } catch {
+    return undefined
+  }
+}
+
+function classNameFromExp(exp: string): string | undefined {
+  const match = exp.match(/\bnew\s+([A-Za-z_$][\w$]*)\s*\(/)
+  return isUsableClassName(match?.[1]) ? match[1] : undefined
+}
+
+function classNameFromExports(
+  smartObject: unknown,
+  exports: Record<string, unknown>,
+): string | undefined {
+  let proto: { constructor?: unknown } | null = null
+  try {
+    proto = Object.getPrototypeOf(smartObject)
+  } catch {
+    proto = null
+  }
+  for (const name of Object.getOwnPropertyNames(exports)) {
+    const value = exports[name]
+    if (typeof value !== 'function') continue
+    try {
+      if (proto && proto === (value as { prototype?: unknown }).prototype) return name
+      if (smartObject instanceof (value as new (...args: never[]) => unknown)) return name
+    } catch {
+      // continue
+    }
+  }
+  return undefined
 }
 
 function Copy({ text }: { text: string }) {
@@ -38,7 +100,11 @@ function Copy({ text }: { text: string }) {
       className="inline-flex items-center cursor-pointer pl-1.5 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white focus:outline-none shrink-0"
       aria-label="Copy"
     >
-      {copied ? <HiCheck className="w-4 h-4 text-green-500" /> : <HiOutlineClipboard className="w-4 h-4" />}
+      {copied ? (
+        <HiCheck className="w-4 h-4 text-green-500" />
+      ) : (
+        <HiOutlineClipboard className="w-4 h-4" />
+      )}
     </button>
   )
 }
@@ -54,7 +120,11 @@ function TypeBadge({ type }: { type: string }) {
 
 function formatStatePreview(value: unknown): { type: string; preview: ReactNode; full: string } {
   if (value === null) {
-    return { type: 'null', preview: <span className="text-gray-400 italic">null</span>, full: 'null' }
+    return {
+      type: 'null',
+      preview: <span className="text-gray-400 italic">null</span>,
+      full: 'null',
+    }
   }
   if (value === undefined) {
     return {
@@ -67,7 +137,11 @@ function formatStatePreview(value: unknown): { type: string; preview: ReactNode;
     return {
       type: 'boolean',
       preview: (
-        <span className={value ? 'text-green-700 dark:text-green-400' : 'text-gray-600 dark:text-gray-300'}>
+        <span
+          className={
+            value ? 'text-green-700 dark:text-green-400' : 'text-gray-600 dark:text-gray-300'
+          }
+        >
           {String(value)}
         </span>
       ),
@@ -78,7 +152,9 @@ function formatStatePreview(value: unknown): { type: string; preview: ReactNode;
     return {
       type: typeof value,
       preview: (
-        <span className="tabular-nums font-medium text-gray-900 dark:text-white">{value.toString()}</span>
+        <span className="tabular-nums font-medium text-gray-900 dark:text-white">
+          {value.toString()}
+        </span>
       ),
       full: value.toString(),
     }
@@ -123,7 +199,7 @@ function formatStatePreview(value: unknown): { type: string; preview: ReactNode;
   }
   if (typeof value === 'object') {
     const full = toObject(value)
-    const keys = Object.keys(value as object)
+    const keys = publicEntries(value).map(([k]) => k)
     return {
       type: 'object',
       preview: (
@@ -143,33 +219,69 @@ function formatStatePreview(value: unknown): { type: string; preview: ReactNode;
   }
 }
 
-function StateValueRow({ name, value }: { name: string; value: unknown }) {
-  const [expanded, setExpanded] = useState(false)
-  const { type, preview, full } = formatStatePreview(value)
-  const isComplex =
-    (typeof value === 'object' && value !== null) ||
-    (typeof value === 'string' && value.length > 80)
-  const showExpand = isComplex || full.length > 80
+function NestedStateTable({ value, depth }: { value: object; depth: number }) {
+  const nestedRev = nestedRevOf(value)
+  const entries = Array.isArray(value)
+    ? value.map((item, i) => [String(i), item] as [string, unknown])
+    : publicEntries(value)
 
-  // Link revs inside expanded JSON
-  const isRev = /([0-9a-fA-F]{64}:[0-9]+)/g
-  const expandedContent =
-    typeof value === 'string' && !isComplex
-      ? full
-      : reactStringReplace(full, isRev, (match, i) => (
+  return (
+    <div className="mx-3 sm:mx-4 mb-2 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50/70 dark:bg-gray-800/40 overflow-hidden">
+      {nestedRev ? (
+        <div className="px-3 py-1.5 border-b border-gray-100 dark:border-gray-700">
           <Link
-            key={i}
-            to={`/objects/${match}`}
-            className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+            to={`/objects/${nestedRev}`}
+            className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline font-mono break-all"
           >
-            {match}
+            View object {truncateRev(nestedRev)} →
           </Link>
+        </div>
+      ) : null}
+      {entries.length === 0 ? (
+        <p className="px-3 py-2 text-xs text-gray-500 dark:text-gray-400">No public properties.</p>
+      ) : (
+        entries.map(([key, nested]) => (
+          <StateValueRow key={key} name={key} value={nested} nested depth={depth + 1} />
         ))
+      )}
+    </div>
+  )
+}
+
+function StateValueRow({
+  name,
+  value,
+  nested = false,
+  depth = 0,
+}: {
+  name: string
+  value: unknown
+  nested?: boolean
+  depth?: number
+}) {
+  const [stringExpanded, setStringExpanded] = useState(false)
+  const { type, preview, full } = formatStatePreview(value)
+  const isObjectLike = typeof value === 'object' && value !== null
+  const isLongString = typeof value === 'string' && value.length > 80
+
+  const isRev = /([0-9a-fA-F]{64}:[0-9]+)/g
+  const expandedString = isLongString
+    ? reactStringReplace(full, isRev, (match, i) => (
+        <Link
+          key={i}
+          to={`/objects/${match}`}
+          className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+        >
+          {match}
+        </Link>
+      ))
+    : null
 
   return (
     <div className="border-b border-gray-100 dark:border-gray-800 last:border-0">
-      {/* Single compact line: label · field · type · value · actions */}
-      <div className="px-3 sm:px-4 py-1.5 flex items-center gap-2 sm:gap-3 min-h-0">
+      <div
+        className={`${nested ? 'px-3' : 'px-3 sm:px-4'} py-1.5 flex items-center gap-2 sm:gap-3 min-h-0`}
+      >
         <div className="shrink-0 flex items-center gap-1.5 w-[7.5rem] sm:w-36">
           <span className="text-xs font-medium text-gray-800 dark:text-gray-200 whitespace-nowrap truncate">
             {capitalizeFirstLetter(name)}
@@ -184,20 +296,23 @@ function StateValueRow({ name, value }: { name: string; value: unknown }) {
         </div>
         <div className="flex items-center gap-0.5 shrink-0">
           {full && full !== 'null' && full !== 'undefined' ? <Copy text={full} /> : null}
-          {showExpand ? (
+          {isLongString ? (
             <button
               type="button"
-              onClick={() => setExpanded((v) => !v)}
+              onClick={() => setStringExpanded((v) => !v)}
               className="text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:underline px-1"
             >
-              {expanded ? 'Hide' : 'More'}
+              {stringExpanded ? 'Hide' : 'More'}
             </button>
           ) : null}
         </div>
       </div>
-      {expanded ? (
+      {isObjectLike && depth < MAX_STATE_DEPTH ? (
+        <NestedStateTable value={value as object} depth={depth} />
+      ) : null}
+      {stringExpanded && expandedString ? (
         <pre className="mx-3 sm:mx-4 mb-2 max-h-40 overflow-auto rounded-lg bg-gray-50 dark:bg-gray-800/80 border border-gray-100 dark:border-gray-700 p-2 text-xs font-mono text-gray-700 dark:text-gray-300 whitespace-pre-wrap break-words leading-relaxed">
-          {expandedContent}
+          {expandedString}
         </pre>
       ) : null}
     </div>
@@ -206,7 +321,7 @@ function StateValueRow({ name, value }: { name: string; value: unknown }) {
 
 const SmartObjectValues = ({ smartObject }: any) => {
   if (!smartObject) return null
-  const entries = Object.entries(smartObject).filter(([k]) => !keywords.includes(k))
+  const entries = publicEntries(smartObject)
   if (entries.length === 0) {
     return (
       <p className="px-4 py-3 text-sm text-center text-gray-500 dark:text-gray-400">
@@ -247,10 +362,7 @@ function RevisionHistory({
 }) {
   const isLatest = latest ? latest === current : !next
   const isFirst = first ? first === current : !prev
-  const currentIndex = useMemo(
-    () => chain.findIndex((r) => r === current),
-    [chain, current],
-  )
+  const currentIndex = useMemo(() => chain.findIndex((r) => r === current), [chain, current])
 
   const btnBase =
     'inline-flex items-center justify-center gap-1.5 px-3 h-9 text-sm font-medium rounded-lg border transition focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-800'
@@ -310,15 +422,37 @@ function RevisionHistory({
 
           {prev ? (
             <Link to={`/objects/${prev}`} className={`${btnBase} ${btnActive}`} title={prev}>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
               Previous
             </Link>
           ) : (
             <span className={`${btnBase} ${btnDisabled}`}>
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
               </svg>
               Previous
             </span>
@@ -327,15 +461,37 @@ function RevisionHistory({
           {next ? (
             <Link to={`/objects/${next}`} className={`${btnBase} ${btnActive}`} title={next}>
               Next
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </Link>
           ) : (
             <span className={`${btnBase} ${btnDisabled}`}>
               Next
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                aria-hidden
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
               </svg>
             </span>
           )}
@@ -403,7 +559,9 @@ function RevisionHistory({
                       ) : null}
                     </div>
                     {isCurrent ? (
-                      <p className="font-mono text-xs text-gray-900 dark:text-white break-all">{r}</p>
+                      <p className="font-mono text-xs text-gray-900 dark:text-white break-all">
+                        {r}
+                      </p>
                     ) : (
                       <Link
                         to={`/objects/${r}`}
@@ -482,10 +640,47 @@ function RevisionHistory({
   )
 }
 
-function MetaDataPanel({ smartObject }: { smartObject: any }) {
+function MetaDataPanel({
+  smartObject,
+  objectClass,
+  mod,
+}: {
+  smartObject: any
+  objectClass?: string
+  mod?: string
+}) {
   if (!smartObject) return null
 
-  const rows: { label: string; short: string; value: ReactNode; copy?: string }[] = [
+  const rows: { label: string; short: string; value: ReactNode; copy?: string }[] = []
+
+  if (objectClass) {
+    rows.push({
+      label: 'Class',
+      short: 'constructor',
+      value: (
+        <span className="font-medium text-gray-900 dark:text-white text-sm">{objectClass}</span>
+      ),
+      copy: objectClass,
+    })
+  }
+
+  if (mod) {
+    rows.push({
+      label: 'Module',
+      short: 'mod',
+      value: (
+        <Link
+          to={`/modules/${mod}`}
+          className="font-medium text-blue-600 dark:text-blue-400 hover:underline break-all font-mono text-xs"
+        >
+          {mod}
+        </Link>
+      ),
+      copy: mod,
+    })
+  }
+
+  rows.push(
     {
       label: 'Identity',
       short: '_id',
@@ -554,7 +749,7 @@ function MetaDataPanel({ smartObject }: { smartObject: any }) {
       ),
       copy: String(smartObject._satoshis ?? ''),
     },
-  ]
+  )
 
   return (
     <section
@@ -646,6 +841,8 @@ function Component({ title }: { title?: string }) {
   const [timelineLoading, setTimelineLoading] = useState(true)
   const [functionsExist, setFunctionsExist] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
+  const [mod, setMod] = useState<string | undefined>(undefined)
+  const [objectClass, setObjectClass] = useState<string | undefined>(undefined)
   const options = ['object', 'string', 'number', 'bigint', 'boolean', 'undefined', 'symbol']
 
   useEffect(() => {
@@ -660,6 +857,8 @@ function Component({ title }: { title?: string }) {
     setAncestorTxIds([])
     setTimelineLoading(true)
     setLoadError(null)
+    setMod(undefined)
+    setObjectClass(undefined)
 
     const fetchCore = async () => {
       try {
@@ -693,6 +892,20 @@ function Component({ title }: { title?: string }) {
       }
     }
 
+    const fetchMod = async () => {
+      try {
+        const rows = await computer.getOTXOs({ rev, verbosity: 1 as const })
+        if (cancelled) return
+        const m = rows[0]?.mod
+        setMod(typeof m === 'string' && m.length > 0 ? m : undefined)
+      } catch (err) {
+        if (!cancelled) {
+          console.warn('Error loading object module', err)
+          setMod(undefined)
+        }
+      }
+    }
+
     const fetchTimeline = async () => {
       try {
         const [chain, ancestors] = await Promise.all([
@@ -713,6 +926,7 @@ function Component({ title }: { title?: string }) {
     }
 
     fetchCore()
+    fetchMod()
     fetchTimeline()
 
     return () => {
@@ -728,137 +942,201 @@ function Component({ title }: { title?: string }) {
     setFunctionsExist(methodNamesFrom(smartObject).length > 0)
   }, [smartObject])
 
+  useEffect(() => {
+    if (!smartObject) {
+      setObjectClass(undefined)
+      return
+    }
+
+    const immediate = protoConstructorName(smartObject)
+    setObjectClass(immediate)
+
+    let cancelled = false
+    const resolve = async () => {
+      if (mod) {
+        try {
+          const ns = (await computer.load(mod)) as Record<string, unknown>
+          const fromMod = classNameFromExports(smartObject, ns)
+          if (!cancelled && fromMod) {
+            setObjectClass(fromMod)
+            return
+          }
+        } catch (err) {
+          console.warn('Error resolving class from module exports', err)
+        }
+      }
+
+      const id = smartObject._id
+      if (typeof id === 'string' && id.includes(':')) {
+        try {
+          const decoded = await computer.decode(id.split(':')[0])
+          const fromExp =
+            typeof decoded?.exp === 'string' ? classNameFromExp(decoded.exp) : undefined
+          if (!cancelled && fromExp) {
+            setObjectClass(fromExp)
+            return
+          }
+        } catch (err) {
+          console.warn('Error resolving class from create expression', err)
+        }
+      }
+    }
+
+    resolve()
+    return () => {
+      cancelled = true
+    }
+  }, [computer, smartObject, mod])
+
   const [txId, outNum] = rev.split(':')
   const loading = !smartObject && !loadError
   const decryptDenied = isDecryptionFailure(loadError)
 
   return (
     <div className="w-full space-y-5">
-        <header>
-          <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
-            Smart object
+      <header>
+        <p className="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-0.5">
+          Smart object
+        </p>
+        <h1 className="mb-2 text-xl sm:text-2xl font-semibold dark:text-white">
+          {title || objectClass || 'Object'}
+        </h1>
+        <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
+          <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">
+            Revision
           </p>
-          <h1 className="mb-2 text-xl sm:text-2xl font-semibold dark:text-white">
-            {title || 'Object'}
-          </h1>
-          <div className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-sm">
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">
-              Revision
-            </p>
-            <div className="flex flex-wrap items-center gap-1 font-mono text-xs sm:text-sm break-all">
-              <Link
-                to={`/transactions/${txId}`}
-                className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                {txId}
-              </Link>
-              <span className="text-gray-700 dark:text-gray-300">:{outNum}</span>
-              <Copy text={`${txId}:${outNum}`} />
-            </div>
-            {smartObject?._satoshis != null ? (
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                <span className="font-medium text-gray-900 dark:text-white">
-                  {smartObject._satoshis.toString()}
-                </span>{' '}
-                sats
-                {Array.isArray(smartObject._owners) && smartObject._owners.length > 0 ? (
-                  <>
-                    {' · '}
-                    <span className="font-mono text-xs">
-                      {String(smartObject._owners[0]).slice(0, 12)}…
-                    </span>
-                  </>
-                ) : null}
-              </p>
-            ) : null}
-          </div>
-        </header>
-
-        {loadError && decryptDenied ? (
-          <InlineAlert variant="info" title="You cannot decrypt this object">
-            <p className="mb-2">
-              Only wallets whose public key is listed in this object&apos;s _readers can read its
-              state.
-            </p>
-            <p className="text-xs opacity-90">
-              <Link
-                to={`/transactions/${txId}`}
-                className="font-medium underline underline-offset-2 hover:opacity-100"
-              >
-                View transaction
-              </Link>
-            </p>
-          </InlineAlert>
-        ) : null}
-
-        {loadError && !decryptDenied ? (
-          <InlineAlert
-            variant="error"
-            title="Could not load object"
-            onDismiss={() => setLoadError(null)}
-          >
-            <p className="mb-2">{loadError}</p>
-            <p className="text-xs opacity-90">
-              This revision may not be a smart object, or the node failed to evaluate it.{' '}
-              <Link
-                to={`/transactions/${txId}`}
-                className="font-medium underline underline-offset-2 hover:opacity-100"
-              >
-                View transaction
-              </Link>
-            </p>
-          </InlineAlert>
-        ) : null}
-
-        {loading ? (
-          <div className="animate-pulse space-y-4">
-            <div className="h-36 rounded-xl bg-gray-200 dark:bg-gray-700" />
-            <div className="h-48 rounded-xl bg-gray-200 dark:bg-gray-700" />
-            <div className="h-40 rounded-xl bg-gray-200 dark:bg-gray-700" />
-            <div className="h-28 rounded-xl bg-gray-200 dark:bg-gray-700" />
-          </div>
-        ) : null}
-
-        {/* Order: State → Methods → Revision history → Metadata */}
-        {smartObject ? (
-          <>
-            <section
-              className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
-              aria-label="State"
+          <div className="flex flex-wrap items-center gap-1 font-mono text-xs sm:text-sm break-all">
+            <Link
+              to={`/transactions/${txId}`}
+              className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
             >
-              <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
-                <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
-                  State
-                </h2>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                  Public properties of this smart object at the current revision — the data stored on
-                  chain after evaluation (not including system fields like _id or _owners).
-                </p>
+              {txId}
+            </Link>
+            <span className="text-gray-700 dark:text-gray-300">:{outNum}</span>
+            <Copy text={`${txId}:${outNum}`} />
+          </div>
+          {mod ? (
+            <>
+              <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1 mt-3">
+                Module
+              </p>
+              <div className="flex flex-wrap items-center gap-1 font-mono text-xs sm:text-sm break-all">
+                <Link
+                  to={`/modules/${mod}`}
+                  className="font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                >
+                  {mod}
+                </Link>
+                <Copy text={mod} />
               </div>
-              <SmartObjectValues smartObject={smartObject} />
-            </section>
+            </>
+          ) : null}
+          {smartObject?._satoshis != null ? (
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <span className="font-medium text-gray-900 dark:text-white">
+                {smartObject._satoshis.toString()}
+              </span>{' '}
+              sats
+              {Array.isArray(smartObject._owners) && smartObject._owners.length > 0 ? (
+                <>
+                  {' · '}
+                  <span className="font-mono text-xs">
+                    {String(smartObject._owners[0]).slice(0, 12)}…
+                  </span>
+                </>
+              ) : null}
+            </p>
+          ) : null}
+        </div>
+      </header>
 
-            <SmartObjectFunctions
-              smartObject={smartObject}
-              functionsExist={functionsExist}
-              options={options}
-              latestRev={latest}
-            />
-          </>
-        ) : null}
+      {loadError && decryptDenied ? (
+        <InlineAlert variant="info" title="You cannot decrypt this object">
+          <p className="mb-2">
+            Only wallets whose public key is listed in this object&apos;s _readers can read its
+            state.
+          </p>
+          <p className="text-xs opacity-90">
+            <Link
+              to={`/transactions/${txId}`}
+              className="font-medium underline underline-offset-2 hover:opacity-100"
+            >
+              View transaction
+            </Link>
+          </p>
+        </InlineAlert>
+      ) : null}
 
-        <RevisionHistory
-          prev={prev}
-          next={next}
-          first={first}
-          latest={latest}
-          current={rev}
-          chain={timeline}
-          loading={timelineLoading}
-          ancestorTxIds={ancestorTxIds}
-        />
+      {loadError && !decryptDenied ? (
+        <InlineAlert
+          variant="error"
+          title="Could not load object"
+          onDismiss={() => setLoadError(null)}
+        >
+          <p className="mb-2">{loadError}</p>
+          <p className="text-xs opacity-90">
+            This revision may not be a smart object, or the node failed to evaluate it.{' '}
+            <Link
+              to={`/transactions/${txId}`}
+              className="font-medium underline underline-offset-2 hover:opacity-100"
+            >
+              View transaction
+            </Link>
+          </p>
+        </InlineAlert>
+      ) : null}
 
-      {smartObject ? <MetaDataPanel smartObject={smartObject} /> : null}
+      {loading ? (
+        <div className="animate-pulse space-y-4">
+          <div className="h-36 rounded-xl bg-gray-200 dark:bg-gray-700" />
+          <div className="h-48 rounded-xl bg-gray-200 dark:bg-gray-700" />
+          <div className="h-40 rounded-xl bg-gray-200 dark:bg-gray-700" />
+          <div className="h-28 rounded-xl bg-gray-200 dark:bg-gray-700" />
+        </div>
+      ) : null}
+
+      {/* Order: State → Methods → Revision history → Metadata */}
+      {smartObject ? (
+        <>
+          <section
+            className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-sm overflow-hidden"
+            aria-label="State"
+          >
+            <div className="px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+              <h2 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+                State
+              </h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                Public properties of this smart object at the current revision — the data stored on
+                chain after evaluation (not including system fields like _id or _owners).
+              </p>
+            </div>
+            <SmartObjectValues smartObject={smartObject} />
+          </section>
+
+          <SmartObjectFunctions
+            smartObject={smartObject}
+            functionsExist={functionsExist}
+            options={options}
+            latestRev={latest}
+          />
+        </>
+      ) : null}
+
+      <RevisionHistory
+        prev={prev}
+        next={next}
+        first={first}
+        latest={latest}
+        current={rev}
+        chain={timeline}
+        loading={timelineLoading}
+        ancestorTxIds={ancestorTxIds}
+      />
+
+      {smartObject ? (
+        <MetaDataPanel smartObject={smartObject} objectClass={objectClass} mod={mod} />
+      ) : null}
     </div>
   )
 }

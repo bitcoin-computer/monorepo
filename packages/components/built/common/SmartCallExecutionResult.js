@@ -2,7 +2,8 @@ import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
 import { Link, useNavigate } from 'react-router-dom';
 /**
  * Success / result body for smart-call modals (playground and other callers).
- * Object method calls on the explorer objects page use toast only (see SmartObjectFunction).
+ * Object method calls: getters show an in-page return value; mutations use toast
+ * (see SmartObjectFunction).
  * Styling aligns with InlineAlert success / error variants.
  */
 export function FunctionResultModalContent({ functionResult }) {

@@ -359,18 +359,8 @@ export const SmartObjectFunction = ({
 
       // Getters / pure methods do not create an on-chain update, so encode returns tx: null.
       if (!tx) {
-        const returned = formatReturnValue(effect?.res)
-        setCallResult(returned)
-        setEffectPreview({
-          kind: 'preview',
-          res: effect?.res,
-          env: effect?.env as Record<string, unknown> | undefined,
-          note: 'This method does not create an on-chain update.',
-        })
-        toast.success(returned, {
-          title: `Returned from ${fnName}`,
-          durationMs: 8000,
-        })
+        setCallResult(formatReturnValue(effect?.res))
+        setEffectPreview(null)
         return
       }
 

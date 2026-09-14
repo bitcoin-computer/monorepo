@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
-import { ModuleRecord } from '@bitcoin-computer/lib'
+import { Computer, ModuleRecord } from '@bitcoin-computer/lib'
 import {
   Card,
   ComputerContext,
@@ -14,7 +14,43 @@ import { ModuleSource } from './ModuleSource'
 import { CopyButton } from './ui/CopyButton'
 import { PageHeader } from './ui/PageHeader'
 
-function ModuleMeta({ record }: { record: ModuleRecord }) {
+async function fetchModuleFromChain(
+  computer: Computer,
+  modSpec: string,
+): Promise<ModuleRecord | null> {
+  const txId = modSpec.split(':')[0]
+  if (!txId) return null
+
+  let hex: string
+  try {
+    hex = await computer.getRawTransaction(txId)
+  } catch {
+    return null
+  }
+
+  try {
+    const tx = Computer.txFromHex({ hex })
+    const meta = tx.onChainMetaData as { ept?: unknown; exp?: unknown } | undefined
+    if (typeof meta?.ept === 'string' && meta.exp == null) {
+      return { mod: modSpec, ept: meta.ept, storageType: 'multisig' }
+    }
+    const inputCount = Array.isArray(tx.ins) ? tx.ins.length : 0
+    for (let i = 0; i < inputCount; i += 1) {
+      try {
+        const { body } = Computer.getInscription(hex, i)
+        if (body) return { mod: modSpec, ept: body, storageType: 'taproot' }
+      } catch {
+        // not a BC module inscription on this input
+      }
+    }
+  } catch {
+    return null
+  }
+
+  return null
+}
+
+function ModuleMeta({ record, fromIndex }: { record: ModuleRecord; fromIndex: boolean }) {
   const txId = record.mod.split(':')[0]
   const confirmed = Boolean(record.blockHash)
 
@@ -31,7 +67,9 @@ function ModuleMeta({ record }: { record: ModuleRecord }) {
       <div>
         <dt className="text-gray-500 dark:text-gray-400">Status</dt>
         <dd className="mt-0.5 dark:text-gray-200">
-          {confirmed ? (
+          {!fromIndex ? (
+            'Loaded from chain (not in module index)'
+          ) : confirmed ? (
             <>
               Confirmed
               {record.blockHeight != null ? ` · Block #${record.blockHeight}` : null}
@@ -58,7 +96,9 @@ function ModuleMeta({ record }: { record: ModuleRecord }) {
       </div>
       <div>
         <dt className="text-gray-500 dark:text-gray-400">Indexed at</dt>
-        <dd className="mt-0.5 dark:text-gray-200">{formatTime(record.timestamp)}</dd>
+        <dd className="mt-0.5 dark:text-gray-200">
+          {fromIndex && record.timestamp != null ? formatTime(record.timestamp) : '—'}
+        </dd>
       </div>
       <div className="sm:col-span-2">
         <dt className="text-gray-500 dark:text-gray-400">Transaction</dt>
@@ -116,7 +156,11 @@ function ModuleExports({ exports }: { exports: Record<string, unknown> }) {
 function EvaluatedExports({ modSpec }: { modSpec: string }) {
   const computer = useContext(ComputerContext)
   const [evaluate, setEvaluate] = useState(false)
-  const { data: exports, error: exportsError, loading } = useAsync(
+  const {
+    data: exports,
+    error: exportsError,
+    loading,
+  } = useAsync(
     async () => (await computer.load(modSpec)) as Record<string, unknown>,
     [computer, modSpec],
     evaluate,
@@ -157,13 +201,26 @@ function Module() {
   const computer = useContext(ComputerContext)
   const { rev: modSpec } = useParams<{ rev: string }>()
 
-  const { data, loading, error: loadError } = useAsync(
-    () => computer.getModule(modSpec!),
+  const {
+    data,
+    loading,
+    error: loadError,
+  } = useAsync(
+    async () => {
+      try {
+        return { record: await computer.getModule(modSpec!), fromIndex: true }
+      } catch (indexErr) {
+        const record = await fetchModuleFromChain(computer, modSpec!)
+        if (record) return { record, fromIndex: false }
+        throw indexErr
+      }
+    },
     [computer, modSpec],
     Boolean(modSpec),
     getErrorMessage,
   )
-  const record = loading ? null : data
+  const record = loading ? null : data?.record
+  const fromIndex = data?.fromIndex ?? true
 
   if (!modSpec) {
     return (
@@ -204,16 +261,34 @@ function Module() {
 
       {loadError && !record && !loading ? (
         <InlineAlert variant="error" title="Module not found">
-          {loadError ||
-            'It may not be indexed yet, or the node may be missing the Module table (0.27+).'}
+          <p className="mb-2">
+            {loadError ||
+              'It may not be indexed yet, or the node may be missing the Module table (0.27+).'}
+          </p>
+          <p className="text-xs opacity-90">
+            <Link
+              to={`/transactions/${modSpec.split(':')[0]}`}
+              className="font-medium underline underline-offset-2 hover:opacity-100"
+            >
+              View transaction
+            </Link>
+          </p>
         </InlineAlert>
       ) : null}
 
       {record && !loading ? (
         <>
+          {!fromIndex ? (
+            <InlineAlert variant="info" title="Not in module index">
+              Source was read from the deploy transaction. The node has no Module row for this
+              specifier.
+            </InlineAlert>
+          ) : null}
           <section>
-            <h2 className="mb-2 text-base sm:text-lg font-semibold dark:text-white">On-chain meta</h2>
-            <ModuleMeta record={record} />
+            <h2 className="mb-2 text-base sm:text-lg font-semibold dark:text-white">
+              On-chain meta
+            </h2>
+            <ModuleMeta record={record} fromIndex={fromIndex} />
           </section>
 
           <ModuleSource ept={record.ept} />
