@@ -1,16 +1,10 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
-import { Contract } from '@bitcoin-computer/lib'
+import { Contract, EvaluatedEffect } from '@bitcoin-computer/lib'
 import { ComputerContext, isValidRev, sleep } from '@bitcoin-computer/components'
 import { getValueForType } from '../../utils'
 import { TypedValueInput } from './TypedValueInput'
 import { PlaygroundWorkspace } from './PlaygroundWorkspace'
-import {
-  FieldList,
-  Panel,
-  PlaygroundResult,
-  RemoveRowButton,
-  TypeSelect,
-} from './ui'
+import { FieldList, Panel, PlaygroundResult, RemoveRowButton, TypeSelect } from './ui'
 import { usePlaygroundDraft } from './usePlaygroundDraft'
 import { ExampleVar } from './examples'
 
@@ -19,16 +13,7 @@ interface Argument {
   value: string
 }
 
-const TYPE_OPTIONS = [
-  'object',
-  'string',
-  'number',
-  'bigint',
-  'boolean',
-  'undefined',
-  'null',
-  'symbol',
-]
+const TYPE_OPTIONS = ['object', 'string', 'number', 'bigint', 'boolean', 'undefined', 'null']
 
 function buildEncodePayload(code: string, argumentsList: Argument[], modSpec?: string) {
   const createClassFunction = new Function(`return ${code.trim()}`)
@@ -65,7 +50,7 @@ function buildEncodePayload(code: string, argumentsList: Argument[], modSpec?: s
   }
 }
 
-const CreateNew = (props: {
+export function CreateNew(props: {
   reportResult: (result: PlaygroundResult) => void
   exampleCode: string
   exampleVars: ExampleVar[]
@@ -73,7 +58,7 @@ const CreateNew = (props: {
   onLoadCounter?: () => void
   onPreviewDone?: () => void
   onBroadcastDone?: () => void
-}) => {
+}) {
   const {
     exampleVars,
     exampleCode,
@@ -84,12 +69,12 @@ const CreateNew = (props: {
     onBroadcastDone,
   } = props
   const computer = useContext(ComputerContext)
-  const { source: code, setSource: setCode, modSpec, setModSpec } = usePlaygroundDraft(
-    'create',
-    'code',
-    exampleCode,
-    exampleLoaded,
-  )
+  const {
+    source: code,
+    setSource: setCode,
+    modSpec,
+    setModSpec,
+  } = usePlaygroundDraft('create', 'code', exampleCode, exampleLoaded)
   const [argumentsList, setArgumentsList] = useState<Argument[]>([])
 
   useEffect(() => {
@@ -143,10 +128,12 @@ const CreateNew = (props: {
       })}
       finishBroadcast={async ({ effect, txId }) => {
         await sleep(500)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const synced = (await computer.sync(txId)) as any
+        const synced = (await computer.sync(txId)) as EvaluatedEffect
         const res = synced?.res ?? effect?.res
-        const rev = res?._rev ?? `${txId}:0`
+        const rev =
+          res && typeof res === 'object' && '_rev' in res && typeof res._rev === 'string'
+            ? res._rev
+            : `${txId}:0`
         return {
           result: {
             status: 'success',
@@ -191,5 +178,3 @@ const CreateNew = (props: {
     />
   )
 }
-
-export default CreateNew

@@ -1,13 +1,8 @@
-import { Dispatch, ReactNode, SetStateAction, useCallback, useContext, useEffect, useState } from 'react'
-import {
-  Auth,
-  ComputerContext,
-  UtilsContext,
-  getErrorMessage,
-} from '@bitcoin-computer/components'
+import { Dispatch, KeyboardEvent, ReactNode, SetStateAction } from 'react'
+import { Auth } from '@bitcoin-computer/components'
 import { CodeEditor } from './CodeEditor'
-import { EffectPanel, EffectPreviewData } from './EffectPreview'
-import { ModSpec } from './Modspec'
+import { EffectPanel } from './EffectPreview'
+import { ModSpec } from './ModSpec'
 import {
   ActionBar,
   EditorToolbar,
@@ -16,27 +11,7 @@ import {
   PlaygroundResult,
   SourceBadge,
 } from './ui'
-
-export type EncodePayload = {
-  exp: string
-  env?: Record<string, string>
-  fund?: boolean
-  sign?: boolean
-  mod?: string
-}
-
-type BroadcastCtx = {
-  effect: { res?: unknown; env?: Record<string, unknown> }
-  txId: string
-}
-
-export type BroadcastFinish = (ctx: BroadcastCtx) => Promise<{
-  result: PlaygroundResult
-  res?: unknown
-  env?: Record<string, unknown>
-}>
-
-const PREVIEW_NOTE = 'Encoded without funding or signing. Nothing was broadcast.'
+import { BroadcastFinish, EncodePayload, usePlaygroundEncode } from './usePlaygroundEncode'
 
 export function PlaygroundWorkspace({
   source,
@@ -91,101 +66,20 @@ export function PlaygroundWorkspace({
   previewLabel?: string
   finishBroadcast?: BroadcastFinish
 }) {
-  const computer = useContext(ComputerContext)
-  const { showLoader } = UtilsContext.useUtilsComponents()
   const loggedIn = Auth.isLoggedIn()
-  const [effectPreview, setEffectPreview] = useState<EffectPreviewData | null>(null)
+  const { effectPreview, setEffectPreview, handlePreview, handleBroadcast } = usePlaygroundEncode({
+    exampleSource,
+    disabled,
+    reportResult,
+    onPreviewDone,
+    onBroadcastDone,
+    buildEncode,
+    onPreview,
+    onBroadcast,
+    finishBroadcast,
+  })
 
-  useEffect(() => {
-    setEffectPreview(null)
-  }, [exampleSource])
-
-  const runEncode = useCallback(
-    async (broadcast: boolean) => {
-      if (!buildEncode) return
-      try {
-        showLoader(true)
-        const payload = buildEncode({ fund: broadcast, sign: broadcast })
-        const { tx, effect } = await computer.encode(payload)
-        if (!broadcast) {
-          setEffectPreview({
-            kind: 'preview',
-            res: effect?.res,
-            env: effect?.env as Record<string, unknown> | undefined,
-            txHexLength: tx ? tx.toHex?.()?.length ?? undefined : undefined,
-            note: PREVIEW_NOTE,
-          })
-          onPreviewDone?.()
-          return
-        }
-        if (!tx) throw new Error('Transition does not update the state, no transaction created')
-        const txId = await computer.broadcast(tx)
-        const finished = finishBroadcast
-          ? await finishBroadcast({
-              effect: {
-                res: effect?.res,
-                env: effect?.env as Record<string, unknown> | undefined,
-              },
-              txId,
-            })
-          : {
-              result: {
-                status: 'success' as const,
-                title: 'Success',
-                data: { _rev: `${txId}:0`, type: 'objects' },
-              },
-              res: effect?.res,
-              env: effect?.env as Record<string, unknown> | undefined,
-            }
-        setEffectPreview({
-          kind: 'broadcast',
-          res: finished.res ?? effect?.res,
-          env: finished.env ?? (effect?.env as Record<string, unknown> | undefined),
-          txId,
-        })
-        reportResult(finished.result)
-        onBroadcastDone?.()
-      } catch (error: unknown) {
-        if (!broadcast) setEffectPreview(null)
-        reportResult({
-          status: 'error',
-          title: broadcast ? 'Error' : 'Preview failed',
-          data: getErrorMessage(error),
-        })
-      } finally {
-        showLoader(false)
-      }
-    },
-    [
-      buildEncode,
-      computer,
-      finishBroadcast,
-      onBroadcastDone,
-      onPreviewDone,
-      reportResult,
-      showLoader,
-    ],
-  )
-
-  const handlePreview = useCallback(() => {
-    if (onPreview) {
-      void onPreview()
-      return
-    }
-    if (disabled) return
-    void runEncode(false)
-  }, [disabled, onPreview, runEncode])
-
-  const handleBroadcast = useCallback(() => {
-    if (onBroadcast) {
-      void onBroadcast()
-      return
-    }
-    if (disabled) return
-    void runEncode(true)
-  }, [disabled, onBroadcast, runEncode])
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
+  const onKeyDown = (e: KeyboardEvent) => {
     if (!(e.metaKey || e.ctrlKey) || e.key !== 'Enter') return
     e.preventDefault()
     if (e.shiftKey) {
@@ -225,11 +119,12 @@ export function PlaygroundWorkspace({
     </Panel>
   )
 
-  const advanced = showModSpec && onModSpecChange ? (
-    <Panel title="Advanced">
-      <ModSpec modSpec={modSpec} setModSpec={onModSpecChange} />
-    </Panel>
-  ) : null
+  const advanced =
+    showModSpec && onModSpecChange ? (
+      <Panel title="Advanced">
+        <ModSpec modSpec={modSpec} setModSpec={onModSpecChange} />
+      </Panel>
+    ) : null
 
   const actions = (
     <ActionBar

@@ -197,7 +197,7 @@ function EvaluatedExports({ modSpec }: { modSpec: string }) {
   )
 }
 
-function Module() {
+export function Module() {
   const computer = useContext(ComputerContext)
   const { rev: modSpec } = useParams<{ rev: string }>()
 
@@ -299,5 +299,3 @@ function Module() {
     </div>
   )
 }
-
-export default Module

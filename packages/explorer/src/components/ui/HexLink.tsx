@@ -2,7 +2,7 @@ import { ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { truncateHex, truncateRev } from '../../utils/rpc'
 
-const explorerLinkClass = 'text-blue-600 dark:text-blue-400 hover:underline'
+export const explorerLinkClass = 'text-blue-600 dark:text-blue-400 hover:underline'
 
 type Pair = readonly [number, number]
 

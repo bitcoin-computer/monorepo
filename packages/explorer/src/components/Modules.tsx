@@ -31,7 +31,7 @@ function StatusCell({ row }: { row: ModuleRecord }) {
 const SELECT_CLASS =
   'bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-blue-500 focus:border-blue-500 block py-1.5 px-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white'
 
-export default function Modules() {
+export function Modules() {
   const computer = useContext(ComputerContext)
 
   const [pageNum, setPageNum] = useState(0)
@@ -39,7 +39,11 @@ export default function Modules() {
   const [storageType, setStorageType] = useState<StorageFilter>('')
   const [isConfirmed, setIsConfirmed] = useState<ConfirmedFilter>('')
 
-  const { data, loading: listLoading, error: listError } = useAsync(async () => {
+  const {
+    data,
+    loading: listLoading,
+    error: listError,
+  } = useAsync(async () => {
     const query: {
       verbosity: 1
       limit: number
@@ -88,7 +92,9 @@ export default function Modules() {
               <select
                 className={SELECT_CLASS}
                 value={storageType}
-                onChange={(e) => handleFilterChange(setStorageType, e.target.value as StorageFilter)}
+                onChange={(e) =>
+                  handleFilterChange(setStorageType, e.target.value as StorageFilter)
+                }
               >
                 <option value="">All</option>
                 <option value="multisig">multisig</option>
@@ -126,9 +132,7 @@ export default function Modules() {
 
       {listLoading && rows.length === 0 ? <TableSkeleton /> : null}
 
-      {listError && !listLoading ? (
-        <InlineAlert variant="error">{listError}</InlineAlert>
-      ) : null}
+      {listError && !listLoading ? <InlineAlert variant="error">{listError}</InlineAlert> : null}
 
       {!listLoading && showEmpty ? (
         <EmptyState

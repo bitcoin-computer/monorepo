@@ -1,5 +1,6 @@
 import { toObject } from '@bitcoin-computer/components'
-import { Panel, secondaryBtnClassName } from './ui'
+import { secondaryBtnClassName } from './classes'
+import { Panel } from './ui'
 
 function safeStringify(value: unknown): string {
   try {
@@ -10,11 +11,7 @@ function safeStringify(value: unknown): string {
     return String(value)
   } catch {
     try {
-      return JSON.stringify(
-        value,
-        (_k, v) => (typeof v === 'bigint' ? v.toString() : v),
-        2,
-      )
+      return JSON.stringify(value, (_k, v) => (typeof v === 'bigint' ? v.toString() : v), 2)
     } catch {
       return String(value)
     }
@@ -95,7 +92,8 @@ export function EffectPanel({
       {!hasData ? (
         <div className="text-sm text-gray-500 dark:text-gray-400">
           <p className="text-xs leading-relaxed">
-            Run <strong className="font-medium text-gray-700 dark:text-gray-300">Preview effect</strong>{' '}
+            Run{' '}
+            <strong className="font-medium text-gray-700 dark:text-gray-300">Preview effect</strong>{' '}
             to encode without broadcasting. New state from{' '}
             <code className="text-[11px]">effect.res</code> appears here.
           </p>
@@ -158,5 +156,3 @@ function EffectBody({ data }: { data: EffectPreviewData }) {
     </>
   )
 }
-
-

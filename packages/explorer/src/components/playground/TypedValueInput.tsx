@@ -1,6 +1,5 @@
-import { inputClassName } from './ui'
+import { inputClassName } from './classes'
 
-/** Richer typed value input (Phase C5). */
 export function TypedValueInput({
   id,
   type,

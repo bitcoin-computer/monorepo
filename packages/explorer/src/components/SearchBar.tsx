@@ -5,7 +5,7 @@ import { ComputerContext, isValidRevString } from '@bitcoin-computer/components'
 import { isPossibleCryptoAddress, isTxId, isValidHexadecimalPublicKey } from '../utils'
 import { ChevronDownIcon, SearchIcon } from './ui/icons'
 
-export type SearchFilter = 'all' | 'tx' | 'object' | 'address' | 'pubkey' | 'module'
+type SearchFilter = 'all' | 'tx' | 'object' | 'address' | 'pubkey' | 'module'
 
 const FILTER_LABELS: Record<SearchFilter, string> = {
   all: 'All Filters',
@@ -216,5 +216,3 @@ export function ExplorerSearch({ variant }: { variant: 'home' | 'nav' }) {
     </div>
   )
 }
-
-

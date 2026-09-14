@@ -3,7 +3,7 @@ export type PlaygroundMode = 'create' | 'execute' | 'deploy'
 
 export type ExampleVar = { name: string; type: string; value: string }
 
-export type ExampleMeta = {
+type ExampleMeta = {
   id: ExampleId
   label: string
   description: string

@@ -1,10 +1,16 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { Auth, ComputerContext } from '@bitcoin-computer/components'
-import CreateNew from './CreateNew'
-import ExecuteExpression from './ExecuteExpression'
-import DeployModule from './DeployModule'
+import { CreateNew } from './CreateNew'
+import { ExecuteExpression } from './ExecuteExpression'
+import { DeployModule } from './DeployModule'
 import { FirstRunChecklist, useChecklist } from './FirstRunChecklist'
-import { EXAMPLE_CARDS, ExampleBundle, ExampleId, getExampleBundle, PlaygroundMode } from './examples'
+import {
+  EXAMPLE_CARDS,
+  ExampleBundle,
+  ExampleId,
+  getExampleBundle,
+  PlaygroundMode,
+} from './examples'
 import { PlaygroundResult, ResultPanel } from './ui'
 import { PageHeader } from '../ui/PageHeader'
 import { tryGet } from '../../utils'
@@ -29,7 +35,7 @@ const MODES: { id: PlaygroundMode; label: string; help: string }[] = [
   },
 ]
 
-const Playground = () => {
+export function Playground() {
   const computer = useContext(ComputerContext)
   const [mode, setMode] = useState<PlaygroundMode>('create')
   const [activeExample, setActiveExample] = useState<ExampleId | null>(null)
@@ -238,5 +244,3 @@ const Playground = () => {
     </div>
   )
 }
-
-export default Playground

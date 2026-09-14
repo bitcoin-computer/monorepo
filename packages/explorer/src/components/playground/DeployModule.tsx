@@ -1,20 +1,16 @@
 import { useCallback, useContext, useMemo } from 'react'
-import {
-  ComputerContext,
-  UtilsContext,
-  getErrorMessage,
-} from '@bitcoin-computer/components'
+import { ComputerContext, UtilsContext, getErrorMessage } from '@bitcoin-computer/components'
 import { PlaygroundWorkspace } from './PlaygroundWorkspace'
 import { PlaygroundResult } from './ui'
 import { usePlaygroundDraft } from './usePlaygroundDraft'
 
-const DeployModule = (props: {
+export function DeployModule(props: {
   reportResult: (result: PlaygroundResult) => void
   exampleModule: string
   exampleLoaded: boolean
   onLoadCounter?: () => void
   onBroadcastDone?: () => void
-}) => {
+}) {
   const { exampleModule, reportResult, exampleLoaded, onLoadCounter, onBroadcastDone } = props
   const computer = useContext(ComputerContext)
   const { showLoader } = UtilsContext.useUtilsComponents()
@@ -51,9 +47,10 @@ const DeployModule = (props: {
   }, [module, reportResult])
 
   const handleModuleDeploy = useCallback(async () => {
+    const src = module.trim()
     try {
       showLoader(true)
-      const modSpec = await computer.deploy(module?.trim() as string)
+      const modSpec = await computer.deploy(src)
       reportResult({
         status: 'success',
         title: 'Module deployed',
@@ -97,5 +94,3 @@ const DeployModule = (props: {
     />
   )
 }
-
-export default DeployModule

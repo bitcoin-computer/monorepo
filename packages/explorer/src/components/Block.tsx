@@ -35,7 +35,7 @@ function NeighborNav({ prevHash, nextHash }: { prevHash?: string; nextHash?: str
   )
 }
 
-function Block() {
+export function Block() {
   const { id: rawId = '' } = useParams<{ id?: string }>()
   const computer = useContext(ComputerContext)
 
@@ -176,5 +176,3 @@ function Block() {
     </div>
   )
 }
-
-export default Block

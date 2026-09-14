@@ -11,15 +11,15 @@ import {
   ComputerContext,
   DecodeTransactionComponent,
 } from '@bitcoin-computer/components'
-import NavBar from './components/Navbar'
+import { Navbar } from './components/Navbar'
 import { ExplorerSearch } from './components/SearchBar'
-import Block from './components/Block'
-import Blocks from './components/Blocks'
-import Transactions from './components/Transactions'
-import Modules from './components/Modules'
-import Module from './components/Module'
-import Playground from './components/playground/Playground'
-import UTXODisplay from './components/Utxos'
+import { Block } from './components/Block'
+import { Blocks } from './components/Blocks'
+import { Transactions } from './components/Transactions'
+import { Modules } from './components/Modules'
+import { Module } from './components/Module'
+import { Playground } from './components/playground/Playground'
+import { Utxos } from './components/Utxos'
 
 /** Legacy `/blocks/:id` → `/block/:id` */
 function RedirectLegacyBlock() {
@@ -48,7 +48,7 @@ function AppRoutes() {
           <Route path="/objects/:rev" element={<SmartObject.Component />} />
           <Route path="/modules" element={<Modules />} />
           <Route path="/modules/:rev" element={<Module />} />
-          <Route path="/utxos/:address" element={<UTXODisplay />} />
+          <Route path="/utxos/:address" element={<Utxos />} />
           <Route path="*" element={<Error404 />} />
         </Routes>
       </div>
@@ -65,7 +65,7 @@ export default function App() {
         <ComputerContext.Provider value={computer}>
           <Auth.LoginModal />
           <Wallet />
-          <NavBar />
+          <Navbar />
           <AppRoutes />
         </ComputerContext.Provider>
       </UtilsContext.UtilsProvider>

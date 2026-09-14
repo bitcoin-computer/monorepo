@@ -8,21 +8,7 @@ import { PageHeader, SectionTitle, StatCard } from './ui/PageHeader'
 import { DataTable, TableRow, TableSkeleton, tdClass } from './ui/Table'
 import { useAsync } from '../hooks/useAsync'
 
-interface DbOutput {
-  rev: string
-  address: string
-  satoshis: bigint
-  asm: string
-  expHash?: string
-  mod?: string
-  isObject?: boolean
-  previous?: string
-  blockHash?: string
-  blockHeight?: number
-  blockIndex?: number
-}
-
-const UTXODisplay = () => {
+export function Utxos() {
   const params = useParams()
   const address = params.address || ''
   const computer = useContext(ComputerContext)
@@ -30,11 +16,11 @@ const UTXODisplay = () => {
 
   const { data, loading, error, reload } = useAsync(async () => {
     if (!address) throw new Error('No address provided')
-    const response = (await computer.db.wallet.restClient.getUTXOs({
+    const response = await computer.getUTXOs({
       address,
       verbosity: 1,
       isObject: false,
-    })) as DbOutput[]
+    })
     return {
       utxos: response,
       totalAmount: response.reduce((total, unspent) => total + unspent.satoshis, 0n),
@@ -141,5 +127,3 @@ const UTXODisplay = () => {
     </div>
   )
 }
-
-export default UTXODisplay

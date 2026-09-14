@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
-import { readJson, removeKey, writeJson } from '../../utils/storage'
+import { readJson, writeJson } from '../../utils/storage'
+import { PlaygroundMode } from './examples'
 
 const PREFIX = 'bc-explorer-playground-draft-v1'
-
-export type DraftMode = 'create' | 'execute' | 'deploy'
 
 type DraftPayload = {
   code?: string
@@ -13,20 +12,16 @@ type DraftPayload = {
   updatedAt: number
 }
 
-function storageKey(mode: DraftMode) {
+function storageKey(mode: PlaygroundMode) {
   return `${PREFIX}:${mode}`
 }
 
-export function loadDraft(mode: DraftMode): DraftPayload | null {
+function loadDraft(mode: PlaygroundMode): DraftPayload | null {
   return readJson<DraftPayload>(storageKey(mode))
 }
 
-export function saveDraft(mode: DraftMode, payload: Omit<DraftPayload, 'updatedAt'>) {
+function saveDraft(mode: PlaygroundMode, payload: Omit<DraftPayload, 'updatedAt'>) {
   writeJson(storageKey(mode), { ...payload, updatedAt: Date.now() } satisfies DraftPayload)
-}
-
-export function clearDraft(mode: DraftMode) {
-  removeKey(storageKey(mode))
 }
 
 /**
@@ -34,7 +29,7 @@ export function clearDraft(mode: DraftMode) {
  * changes, and persist `{ field, modSpec }` on a debounce.
  */
 export function usePlaygroundDraft(
-  mode: DraftMode,
+  mode: PlaygroundMode,
   field: 'code' | 'expression' | 'module',
   exampleSource: string,
   exampleLoaded: boolean,
@@ -76,5 +71,5 @@ export function usePlaygroundDraft(
     return () => window.clearTimeout(t)
   }, [exampleLoaded, field, mode, modSpec, ready, source])
 
-  return { source, setSource, modSpec, setModSpec, ready }
+  return { source, setSource, modSpec, setModSpec }
 }

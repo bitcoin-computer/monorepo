@@ -10,6 +10,14 @@ const DOCS_URL = 'https://docs.bitcoincomputer.io/'
 const navLinkClass =
   'block py-1.5 px-2 text-sm text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-gray-200 dark:hover:bg-gray-700 md:dark:hover:bg-transparent md:dark:hover:text-blue-400 whitespace-nowrap'
 
+const dropdownLinkClass =
+  'block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700'
+
+const BLOCKCHAIN_LINKS = [
+  { to: '/blocks', label: 'Blocks' },
+  { to: '/transactions', label: 'Transactions' },
+] as const
+
 function BlockchainMenu({ mobile }: { mobile?: boolean }) {
   const { pathname } = useLocation()
   const [open, setOpen] = useState(false)
@@ -41,16 +49,13 @@ function BlockchainMenu({ mobile }: { mobile?: boolean }) {
             Blockchain
           </span>
         </li>
-        <li>
-          <Link to="/blocks" className={navLinkClass}>
-            Blocks
-          </Link>
-        </li>
-        <li>
-          <Link to="/transactions" className={navLinkClass}>
-            Transactions
-          </Link>
-        </li>
+        {BLOCKCHAIN_LINKS.map((item) => (
+          <li key={item.to}>
+            <Link to={item.to} className={navLinkClass}>
+              {item.label}
+            </Link>
+          </li>
+        ))}
         <li>
           <UtxosLink />
         </li>
@@ -74,21 +79,17 @@ function BlockchainMenu({ mobile }: { mobile?: boolean }) {
       </button>
       {open ? (
         <div className="absolute right-0 mt-2 z-50 min-w-[10rem] rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-600 dark:bg-gray-800">
-          <Link
-            to="/blocks"
-            className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700"
-            onClick={() => setOpen(false)}
-          >
-            Blocks
-          </Link>
-          <Link
-            to="/transactions"
-            className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700"
-            onClick={() => setOpen(false)}
-          >
-            Transactions
-          </Link>
-          <UtxosLink className="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 dark:text-gray-200 dark:hover:bg-gray-700" />
+          {BLOCKCHAIN_LINKS.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className={dropdownLinkClass}
+              onClick={() => setOpen(false)}
+            >
+              {item.label}
+            </Link>
+          ))}
+          <UtxosLink className={dropdownLinkClass} />
         </div>
       ) : null}
     </li>
@@ -152,7 +153,7 @@ function AuthNavItem() {
   )
 }
 
-export default function Navbar() {
+export function Navbar() {
   const { pathname } = useLocation()
   const isHome = pathname === '/'
   const [menuOpen, setMenuOpen] = useState(false)
@@ -199,10 +200,7 @@ export default function Navbar() {
             </ul>
           </div>
 
-          <div
-            className={`${menuOpen ? 'block' : 'hidden'} w-full md:hidden`}
-            id="navbar-dropdown"
-          >
+          <div className={`${menuOpen ? 'block' : 'hidden'} w-full md:hidden`} id="navbar-dropdown">
             {!isHome ? (
               <div className="px-1 pt-3 pb-2">
                 <ExplorerSearch variant="nav" />

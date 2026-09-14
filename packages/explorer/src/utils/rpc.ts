@@ -15,7 +15,7 @@ export function isHex64(id: string): boolean {
   return /^[0-9a-fA-F]{64}$/.test(id.trim())
 }
 
-export function isBlockHeight(id: string): boolean {
+function isBlockHeight(id: string): boolean {
   return /^\d+$/.test(id.trim())
 }
 
@@ -28,10 +28,7 @@ export async function getTipHeight(computer: RpcClient): Promise<number> {
   return Number(info?.blocks) || 0
 }
 
-export async function getBlockHashAtHeight(
-  computer: RpcClient,
-  height: number | string,
-): Promise<string> {
+async function getBlockHashAtHeight(computer: RpcClient, height: number | string): Promise<string> {
   const hash = await computer.rpc('getblockhash', `${height}`)
   return String(hash ?? '')
 }

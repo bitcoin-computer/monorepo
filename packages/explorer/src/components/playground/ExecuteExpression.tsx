@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { isValidRev } from '@bitcoin-computer/components'
 import { PlaygroundWorkspace } from './PlaygroundWorkspace'
-import { FieldList, inputClassName, Panel, PlaygroundResult, RemoveRowButton } from './ui'
+import { inputClassName } from './classes'
+import { FieldList, Panel, PlaygroundResult, RemoveRowButton } from './ui'
 import { usePlaygroundDraft } from './usePlaygroundDraft'
 
 interface EnvBinding {
@@ -9,14 +10,14 @@ interface EnvBinding {
   value: string
 }
 
-const ExecuteExpression = (props: {
+export function ExecuteExpression(props: {
   reportResult: (result: PlaygroundResult) => void
   exampleExpression: string
   exampleLoaded: boolean
   onLoadCounter?: () => void
   onPreviewDone?: () => void
   onBroadcastDone?: () => void
-}) => {
+}) {
   const {
     exampleExpression,
     reportResult,
@@ -26,8 +27,12 @@ const ExecuteExpression = (props: {
     onBroadcastDone,
   } = props
 
-  const { source: expression, setSource: setExpression, modSpec, setModSpec } =
-    usePlaygroundDraft('execute', 'expression', exampleExpression, exampleLoaded)
+  const {
+    source: expression,
+    setSource: setExpression,
+    modSpec,
+    setModSpec,
+  } = usePlaygroundDraft('execute', 'expression', exampleExpression, exampleLoaded)
   const [envBindings, setEnvBindings] = useState<EnvBinding[]>([])
 
   useEffect(() => {
@@ -130,5 +135,3 @@ const ExecuteExpression = (props: {
     />
   )
 }
-
-export default ExecuteExpression

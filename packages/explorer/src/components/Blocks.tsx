@@ -18,7 +18,7 @@ type BlockRow = {
 const PAGE_SIZE = 15
 const FETCH_CONCURRENCY = 3
 
-export default function Blocks() {
+export function Blocks() {
   const computer = useContext(ComputerContext)
   const [pageNum, setPageNum] = useState(0)
 

@@ -14,9 +14,6 @@ type Props = {
   'aria-label'?: string
 }
 
-/**
- * Lightweight Prism-highlighted JS editor (Phase C1).
- */
 export function CodeEditor({
   id,
   value,

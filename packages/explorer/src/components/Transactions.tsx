@@ -11,14 +11,13 @@ type TxRow = {
   blockHeight: number
   blockHash: string
   time?: number | string
-  indexInBlock: number
 }
 
 /** How many tip blocks to scan for recent txs (keep small for public RPC). */
 const RECENT_BLOCKS = 3
 const MAX_ROWS = 40
 
-export default function Transactions() {
+export function Transactions() {
   const computer = useContext(ComputerContext)
 
   const { data, loading, error, reload } = useAsync(async () => {
@@ -41,7 +40,6 @@ export default function Transactions() {
             blockHeight: block.height ?? height,
             blockHash: block.hash,
             time: block.time,
-            indexInBlock: i,
           })
         }
       } catch {

@@ -15,11 +15,3 @@ export function writeJson(key: string, value: unknown): void {
     // quota / private mode
   }
 }
-
-export function removeKey(key: string): void {
-  try {
-    localStorage.removeItem(key)
-  } catch {
-    // ignore
-  }
-}
