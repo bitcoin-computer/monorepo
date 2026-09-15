@@ -58,7 +58,14 @@ Inside every contract method you have access to a global `computer` object that
 provides deterministic, read-only access to on-chain state. You can fetch other
 smart objects with `sync(rev)`, inspect historical transactions with
 `decode(txId)`, traverse ancestor chains, follow revision history with
-`first`/`prev`/`next`/`latest`, and retrieve block times with `txIdToBlockTime`.
+`first`/`prev`/`next`/`last`, load confirmed modules with `load`, query TXOs
+with stabilizing height/hash filters via `getTXOs`, and read block times with
+`txIdToBlockTime`.
+
+Successful observations must be **stable under chain extension**: unconfirmed
+(mempool) locations, “no next revision yet”, and unspent tips as `last` all
+**invalidate** the evaluation (a `try/catch` cannot clear that flag).
+`latest` is **not** available inside contracts for this reason.
 
 Because every participant executes exactly the same sequence of deterministic
 queries when replaying a transaction, the system remains safe and predictable.
@@ -170,11 +177,19 @@ blockchain operations and provides full IDE support.
 
 [^6]:
     Inside contract methods the `computer` global exposes only deterministic,
-    read-only on-chain queries. Any failure during such a query (missing
-    revision, RPC error, etc.) raises an internal invalidation flag
-    (`globalInvalidState` in `inner-computer.ts`). After the secure compartment
-    returns, `Db.eval` inspects the flag and rejects the entire transition if it
-    was set. Controlled mutations required for reconstruction and metadata
+    read-only on-chain queries. Any failure or transient observation (missing
+    revision, unconfirmed location, no next successor yet, unspent tip for
+    `last`, unguarded/future `getTXOs`, RPC error, etc.) marks the current
+    **evaluation frame** invalid (`withEvalInvalidation`: ALS on Node; stack +
+    serialized roots in the browser). Invalidation is frame-only—there is no
+    per-instance flag and no contract-facing invalidation API. When the
+    compartment returns or throws, the host rejects if that frame is
+    invalid—even when the contract caught the thrown error—using only
+    `frame.invalid` / `frame.msg`. Public errors always end with a single
+    standard suffix (“Accessing non-existent on-chain state inside a smart
+    contract is forbidden.”), optionally preceded by a short reason. The
+    compartment endowment is a hardened **query-only** facade of public
+    methods. Controlled mutations required for reconstruction and metadata
     attachment are performed under an explicit privilege guard (`_sudo` /
     `AdminContext` in `admin.ts`) that restores the normal security invariants
     afterward.

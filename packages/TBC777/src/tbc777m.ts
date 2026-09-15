@@ -207,9 +207,12 @@ export class TBC777M extends TBC20 {
    * Returns the amount this specific token instance (`_id`) is allowed to
    * withdraw according to the escrow's `finalWithdraws` list. The amount is
    * only returned if the supplied `rev` is the final (last) revision of the
-   * escrow (checked via `computer.last(rev)`); otherwise returns `0n`. Only
-   * matching entries for the token’s root and id are summed. Intended for
-   * one-time final payouts (e.g. winner-takes-all).
+   * escrow (checked via `computer.last(rev)`).
+   *
+   * Note: InnerComputer `last` invalidates the transition when the tip is still
+   * unspent or only spent in the mempool. Callers must use a tip whose spend is
+   * confirmed (same protocol as TBC777 `finalWithdraw`). When `last` succeeds
+   * but points at a different rev, this returns `0n`.
    */
   static async computeFinalWithdraw(rev: string, _id: string, _root: string): Promise<bigint> {
     if ((await computer.last(rev)) !== rev) return 0n

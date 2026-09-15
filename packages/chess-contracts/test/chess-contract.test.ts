@@ -326,8 +326,12 @@ describe('ChessContract', () => {
         const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod)
         expect(helper.canCancel(chessPending)).toBe(true)
         expect(helper.isCreator(chessPending)).toBe(true)
+        await black.db.wallet.restClient.mine(1)
 
-        await helper.cancelGameAndWithdraw(chessPending._id)
+        const chess2 = await helper.cancelGame(chessPending._id)
+        await black.db.wallet.restClient.mine(1)
+
+        await helper.withdrawTokens(chess2.tokenIdW, chessPending._id)
         await minter.faucet(1e8)
 
         const whiteTokenFinal = await white.sync<typeof TBC777>(await white.latest(whiteToken._id))
@@ -532,8 +536,64 @@ describe('ChessContract', () => {
           5n,
         )
 
+        await black.db.wallet.restClient.mine(1)
         const blackTokenFinal = await withdrawFromChess(black, blackToken._id, chess._id, tbc777Mod)
         expect(blackTokenFinal.amount).toBe(15n)
+      })
+
+      it('calculateTimes / hasTimedOut require a confirmed tip (InnerComputer guards)', async () => {
+        const wager = 5n
+        const timeLimit = 60n * 10n
+        const { chess, chessFunded } = await fundChessGame({
+          minter,
+          white,
+          black,
+          tbc777Mod,
+          chessMod,
+          wager,
+          timeLimit,
+        })
+
+        // One unconfirmed move: tip has no block time yet → must invalidate.
+        const head = await white.latest(chess._id)
+        const toMove = await white.sync<typeof ChessContract>(head)
+        const { tx: moveTx, effect: moveEffect } = await white.encodeCall({
+          target: toMove,
+          property: 'move',
+          args: ['e2', 'e4', ''],
+          mod: chessMod,
+        })
+        await white.broadcast(moveTx)
+        const afterMove = (moveEffect as unknown as { env: { __bc__: unknown } }).env
+          .__bc__ as SmartContract<typeof ChessContract>
+        expect(afterMove._rev).not.toBe(chessFunded._rev)
+
+        // Pure query: invalidation is raised during encode (no state mutation / no tx).
+        await expect(
+          white.encodeCall({
+            target: afterMove,
+            property: 'hasTimedOutW',
+            args: [],
+            mod: chessMod,
+          }),
+        ).rejects.toThrow(
+          /Accessing non-existent on-chain state inside a smart contract is forbidden/,
+        )
+
+        // After the move confirms, walking prev + block times is a stable observation.
+        // hasTimedOutW is read-only — assert the encode effect; do not broadcast.
+        await minter.db.wallet.restClient.mine(1)
+        const confirmed = await white.sync<typeof ChessContract>(afterMove._rev)
+        const { effect: okEffect } = await white.encodeCall({
+          target: confirmed,
+          property: 'hasTimedOutW',
+          args: [],
+          mod: chessMod,
+        })
+        const timedOut = (okEffect as unknown as { res: boolean }).res
+        expect(typeof timedOut).toBe('boolean')
+        // Fresh game with one move should not exceed a 10-minute limit.
+        expect(timedOut).toBe(false)
       })
 
       it('Should run fool mate and credit winner balance on withdraw', async () => {

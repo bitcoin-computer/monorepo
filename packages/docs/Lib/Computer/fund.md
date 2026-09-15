@@ -18,18 +18,20 @@ _Funds a Bitcoin transaction._
 
 #### `tx`
 
-A [NakamotoJS transaction](../../NakamotoJs/) object or a [Bitcoin Computer Transaction](../Transaction/) object (that the object from Bitcoin Computer extends the object from NakamotoJS).
+A [NakamotoJS transaction](../../NakamotoJs/) object or a [Bitcoin Computer Transaction](../Transaction/) object (Bitcoin Computer’s `Transaction` extends NakamotoJS).
 
 #### `opts`
 
-An optional object can be passed as parameter to `include` or `exclude` certain UTXOs. When using `include`, the transaction will be funded with the UTXOs specified as the first inputs.
+Optional UTXO selection. When `include` is set, those UTXOs are preferred as funding inputs.
 
 {.compact}
 
-| Key     | Description      | Default Value |
-| ------- | ---------------- | ------------- |
-| include | UTXOs to include | `[]`          |
-| exclude | UTXOs to exclude | `[]`          |
+| Key | Description | Default |
+| ------- | ----------- | ------- |
+| include | UTXOs to prefer as inputs | `[]` |
+| exclude | UTXOs to avoid | `[]` |
+
+Fee rate is controlled via [`setFee`](./setFee.md) / [`getFee`](./getFee.md) (`satPerByte`), not via `fund` options.
 
 UTXOs are encoded as `<transaction-id>:<output-number>`.
 

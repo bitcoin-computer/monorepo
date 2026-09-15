@@ -14,7 +14,7 @@ function CreateNewChat() {
   const computer = useContext(ComputerContext)
   const [name, setName] = useState('')
   const [creating, setCreating] = useState(false)
-  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+  const { toast, showLoader } = UtilsContext.useUtilsComponents()
   const navigate = useNavigate()
 
   const onSubmit = async (e: React.SyntheticEvent) => {
@@ -30,13 +30,13 @@ function CreateNewChat() {
       setName('')
       if (typeof effect.res === 'object' && !Array.isArray(effect.res)) {
         showLoader(false)
-        showSnackBar('You created a new chat', true)
+        toast.success('You created a new chat')
         navigate(`/chats/${(effect.res as SmartContract<typeof ChatSc>)._id}`)
         window.location.reload()
       }
     } catch (err) {
       if (err instanceof Error) {
-        showSnackBar(err.message, false)
+        toast.error(err.message)
       }
     } finally {
       setCreating(false)

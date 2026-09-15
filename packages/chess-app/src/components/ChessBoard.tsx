@@ -211,7 +211,8 @@ function WinnerModal(data: {
               Prize: {data.wagerAmount} tokens
             </p>
             <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
-              Click &quot;Withdraw Tokens&quot; on the board to collect your prize.
+              Click &quot;Withdraw Tokens&quot; on the board to collect your prize. Withdrawal waits
+              until the final game transaction is confirmed on-chain.
             </p>
           </div>
         ) : (
@@ -282,11 +283,10 @@ function ActionButtons({
         </button>
       )}
 
-      {/* Withdraw Tokens: shown only when the chess contract declares a payout
-          for my token AND my token has not already claimed against the current
-          chess revision. On checkmate the winning move sets withdraws
-          atomically, so the winner can withdraw immediately — no separate
-          "Claim Win" round trip. */}
+      {/* Withdraw Tokens: shown when the chess contract declares a payout for my
+          token and it has not been claimed yet. The helper waits for the game
+          tip to confirm before TBC777 withdraw (InnerComputer history must be
+          confirmed). */}
       {isPayoutEligible && !hasWithdrawn && (
         <button onClick={onWithdraw} className={buttonStyles}>
           Withdraw Tokens
@@ -305,7 +305,7 @@ function ActionButtons({
 export function ChessBoard() {
   const params = useParams()
   const navigate = useNavigate()
-  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+  const { toast, showLoader } = UtilsContext.useUtilsComponents()
   const [gameId, setGameId] = useState<string>(params.id || '')
   const [orientation, setOrientation] = useState<'white' | 'black'>('white')
   const [winnerData, setWinnerData] = useState<{
@@ -558,7 +558,7 @@ export function ChessBoard() {
 
   const handleError = (error: unknown) => {
     if (error instanceof Error) {
-      showSnackBar(error.message, false)
+      toast.error(error.message)
       syncChessContract()
     }
   }
@@ -610,12 +610,14 @@ export function ChessBoard() {
       const myPubKey = computer.getPublicKey()
       const myTokenId =
         myPubKey === chessContract.publicKeyW ? chessContract.tokenIdW : chessContract.tokenIdB
+      // Helper waits for the latest chess tip to confirm before auditing deposits.
+      toast.info('Waiting for the game result to confirm, then withdrawing…')
       await helper.withdrawTokens(myTokenId, chessContract._id)
       await syncChessContract()
       notifyGamesUpdated()
-      showSnackBar('Tokens withdrawn successfully!', true)
+      toast.success('Tokens withdrawn successfully!')
     } catch (error) {
-      showSnackBar(error instanceof Error ? error.message : 'Error withdrawing tokens', false)
+      toast.error(error instanceof Error ? error.message : 'Error withdrawing tokens')
     } finally {
       showLoader(false)
     }
@@ -628,9 +630,9 @@ export function ChessBoard() {
       await helper.resign(chessContract._id)
       await syncChessContract()
       notifyGamesUpdated()
-      showSnackBar('You resigned. Your opponent can now withdraw the pot.', true)
+      toast.success('You resigned. Your opponent can now withdraw the pot.')
     } catch (error) {
-      showSnackBar(error instanceof Error ? error.message : 'Error resigning', false)
+      toast.error(error instanceof Error ? error.message : 'Error resigning')
     } finally {
       showLoader(false)
     }
@@ -641,6 +643,8 @@ export function ChessBoard() {
     try {
       setIsCancelling(true)
       showLoader(true)
+      // Cancel sets withdraws, then waits for confirmation, then TBC777 withdraw.
+      toast.info('Cancelling challenge and waiting for confirmation before refund…')
       await helper.cancelGameAndWithdraw(chessContract._id)
       if (document.getElementById(winnerModal)) {
         Modal.hideModal(winnerModal)
@@ -653,9 +657,9 @@ export function ChessBoard() {
       setGameId('')
       notifyGamesUpdated()
       if (params.id) navigate('/')
-      showSnackBar('Challenge cancelled. Your wager has been refunded.', true)
+      toast.success('Challenge cancelled. Your wager has been refunded.')
     } catch (error) {
-      showSnackBar(error instanceof Error ? error.message : 'Error cancelling challenge', false)
+      toast.error(error instanceof Error ? error.message : 'Error cancelling challenge')
       await syncChessContract()
     } finally {
       setIsCancelling(false)

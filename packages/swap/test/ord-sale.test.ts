@@ -132,7 +132,7 @@ describe('Ord Sale', () => {
       const payment = await bob.new(Payment, [nftPrice])
       const b1 = await bob.new(Payment, [mockSatoshis])
       const b2 = await bob.new(Payment, [mockSatoshis])
-      const finalTx = OrdSaleHelper.finalizeSaleTx(tx, b1, b2, payment, bob.toScriptPubKey())
+      const finalTx = OrdSaleHelper.finalizeSaleTx(tx, b1, b2, payment, bob.toScriptPubKey()!)
 
       // Bob signs an broadcasts the transaction to execute the swap
       await bob.fund(finalTx)
@@ -153,28 +153,28 @@ describe('Ord Sale', () => {
     let tx: any
     const fee = 1e6
     let sellerPublicKey: string
+    let nft: NFT
 
-    describe('Creating an NFT and an offer to sell', () => {
-      let nft: NFT
+    before(async () => {
+      // Shared seller-side setup (runs for any .only inside Detailed Tests)
       const seller = new Computer({ url, chain, network })
       sellerPublicKey = seller.getPublicKey()
       const saleHelper = new OrdSaleHelper(seller)
 
-      it('Seller deploys the smart contract', async () => {
-        await seller.faucet(1e8)
-        await saleHelper.deploy()
-      })
+      await seller.faucet(1e8)
+      await saleHelper.deploy()
 
+      nft = await seller.new(NFT, ['name', 'artist', 'URL'])
+
+      const b1Mock = new PaymentMock(BigInt(mockSatoshis))
+      const b2Mock = new PaymentMock(BigInt(mockSatoshis))
+      const paymentMock = new PaymentMock(BigInt(nftPrice))
+      ;({ tx } = await saleHelper.createSaleTx(b1Mock, b2Mock, nft, paymentMock))
+    })
+
+    describe('Creating an NFT and an offer to sell', () => {
       it('Seller creates an NFT', async () => {
-        nft = await seller.new(NFT, ['name', 'artist', 'URL'])
         expect(nft).to.matchPattern({ name: 'name', artist: 'artist', url: 'URL', ...meta })
-      })
-
-      it('Seller creates a swap transaction for the NFT with the desired price', async () => {
-        const b1Mock = new PaymentMock(BigInt(mockSatoshis))
-        const b2Mock = new PaymentMock(BigInt(mockSatoshis))
-        const paymentMock = new PaymentMock(BigInt(nftPrice))
-        ;({ tx } = await saleHelper.createSaleTx(b1Mock, b2Mock, nft, paymentMock))
       })
 
       it('The third input representing the nft has been signed by seller, the other inputs are unsigned', () => {
@@ -201,15 +201,21 @@ describe('Ord Sale', () => {
       let payment: Payment
       let txId: string
 
-      before("Fund Buyers's wallet", async () => {
+      before(async () => {
         await buyer.faucet(Number(nftPrice) + fee + 1e8)
-      })
 
-      it('Buyer creates a payment object', async () => {
         b1 = await buyer.new(Payment, [mockSatoshis])
         b2 = await buyer.new(Payment, [mockSatoshis])
         payment = await buyer.new(Payment, [nftPrice])
 
+        // Finalize, fund, sign and broadcast the sale
+        tx = OrdSaleHelper.finalizeSaleTx(tx, b1, b2, payment, buyer.toScriptPubKey()!)
+        await buyer.fund(tx)
+        await buyer.sign(tx)
+        txId = await buyer.broadcast(tx)
+      })
+
+      it('Buyer creates a payment object', async () => {
         expect(payment).matchPattern({
           _id: _.isString,
           _rev: _.isString,
@@ -219,20 +225,7 @@ describe('Ord Sale', () => {
         })
       })
 
-      it("Buyer update's the swap transaction to receive the NFT", () => {
-        tx = OrdSaleHelper.finalizeSaleTx(tx, b1, b2, payment, buyer.toScriptPubKey())
-      })
-
-      it('Buyer funds the swap transaction', async () => {
-        await buyer.fund(tx)
-      })
-
-      it('Buyer signs the swap transaction', async () => {
-        await buyer.sign(tx)
-      })
-
       it('Buyer broadcast the swap transaction to execute the sale', async () => {
-        txId = await buyer.broadcast(tx)
         expect(typeof txId).eq('string')
       })
 

@@ -102,20 +102,19 @@ const SentMessage = ({ message }: { message: messageI }) => {
 function AddUserToChat(chatObj: SmartContract<typeof ChatSc>) {
   const [publicKey, setPublicKey] = useState('')
   const [creating, setCreating] = useState(false)
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const { toast } = UtilsContext.useUtilsComponents()
 
   const inviteUser = async (e: React.SyntheticEvent) => {
     e.preventDefault()
     try {
       setCreating(true)
-      console.log(chatObj)
       await chatObj.invite(publicKey)
       setPublicKey('')
-      showSnackBar('User added to the chat', true)
+      toast.success('User added to the chat')
       Modal.hideModal(addUserModal)
     } catch (err) {
       if (err instanceof Error) {
-        showSnackBar(err.message, false)
+        toast.error(err.message)
       }
     } finally {
       setCreating(false)
@@ -222,7 +221,7 @@ const ChatInput = ({
   const computer = useContext(ComputerContext)
   const [message, setMessage] = useState<string>('')
   const [sending, setSending] = useState(false)
-  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+  const { toast, showLoader } = UtilsContext.useUtilsComponents()
 
   const sendMessage = async () => {
     try {
@@ -240,7 +239,7 @@ const ChatInput = ({
       await refreshChat()
       setMessage('')
     } catch (error) {
-      if (error instanceof Error) showSnackBar(error.message, false)
+      if (error instanceof Error) toast.error(error.message)
     } finally {
       showLoader(false)
       setSending(false)
@@ -281,15 +280,17 @@ const ChatInput = ({
 
 export function Chat({ chatId }: { chatId: string }) {
   const computer = useContext(ComputerContext)
-  const { showSnackBar, showLoader } = UtilsContext.useUtilsComponents()
+  const { showLoader } = UtilsContext.useUtilsComponents()
   const navigate = useNavigate()
   const [id] = useState(chatId || '')
   const [chatObj, setChatObj] = useState<SmartContract<typeof ChatSc> | null>(null)
   const [messages, setMessages] = useState<messageI[]>([])
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   const refreshChat = async () => {
     try {
       showLoader(true)
+      setLoadError(null)
       const latesRev = await computer.latest(id)
       const synced = await computer.sync<typeof ChatSc>(latesRev)
       setChatObj(synced)
@@ -298,10 +299,10 @@ export function Chat({ chatId }: { chatId: string }) {
         messagesData.push(JSON.parse(message))
       })
       setMessages(messagesData)
-      showLoader(false)
     } catch {
+      setLoadError('Not a valid chat')
+    } finally {
       showLoader(false)
-      showSnackBar('Not a valid Chat ', false)
     }
   }
 
@@ -340,6 +341,13 @@ export function Chat({ chatId }: { chatId: string }) {
           className="flex flex-col bg-gray-50 dark:bg-gray-800 max-w"
           style={{ minHeight: 'calc(100vh - 10vh)', maxHeight: 'calc(100vh - 10vh)' }}
         >
+          {loadError && !chatObj ? (
+            <div className="p-4">
+              <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+                {loadError}
+              </p>
+            </div>
+          ) : null}
           {chatObj && (
             <>
               <ChatHeader

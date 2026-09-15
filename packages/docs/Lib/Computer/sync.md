@@ -34,6 +34,10 @@ If the function is called with a revision, it returns the smart object stored at
 
 If the function is called with a transaction id, it returns an object of type `{ res: Json; env: Json }`. The value of `res` is the result of evaluating the expression inscribed into the transaction. The `env` object has the same keys as the blockchain environment of the transaction, the values of `env` are the smart objects at these revisions _after_ evaluating the expression.
 
+### Inside smart contracts (`InnerComputer`)
+
+The location’s transaction must be **confirmed**. Missing or mempool-only locations invalidate the contract evaluation. Objects returned inside contracts are deep-cloned plain data (not live proxies for mutation). See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
 <!-- TODO: explain other type of errors:
 - code validation errors like super not allowed
 - validate that the object re-created with the contract matches the object stored at that location
