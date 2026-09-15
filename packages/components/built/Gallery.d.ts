@@ -17,7 +17,11 @@ export type UserQuery<T extends Class> = Partial<{
 }>;
 /** Normalize URL search params into a getOUTXOs-compatible query. */
 export declare function queryFromSearchParams(search: string): Record<string, string | boolean>;
-export declare function GalleryWithPagination<T extends Class>(q?: UserQuery<T>): import("react").JSX.Element;
+export type GalleryProps<T extends Class> = UserQuery<T> & {
+    /** Hide explorer page chrome (title, Create, Playground empty state) when embedding in other apps. */
+    embed?: boolean;
+};
+export declare function GalleryWithPagination<T extends Class>(q?: GalleryProps<T>): import("react").JSX.Element;
 /** @deprecated Prefer metadata-first Gallery.WithPagination; kept for apps that pass raw revs. */
 declare function FromRevs({ revs, computer }: {
     revs: string[];

@@ -136,11 +136,14 @@ export const SmartObjectFunctions = ({
   functionsExist,
   options,
   latestRev,
+  compact = false,
 }: {
   smartObject: any
   functionsExist: boolean
   options: string[]
   latestRev?: string
+  /** Stack every method form instead of the explorer three-column panel. */
+  compact?: boolean
 }) => {
   const methods = useMemo(() => methodNamesFrom(smartObject), [smartObject])
   const [selected, setSelected] = useState<string>('')
@@ -195,7 +198,8 @@ export const SmartObjectFunctions = ({
             Methods
           </h2>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            {methods.length} method{methods.length === 1 ? '' : 's'} · select one to call
+            {methods.length} method{methods.length === 1 ? '' : 's'}
+            {compact ? '' : ' · select one to call'}
           </p>
         </div>
         <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-50 text-blue-800 dark:bg-blue-950/50 dark:text-blue-300 tabular-nums">
@@ -215,79 +219,96 @@ export const SmartObjectFunctions = ({
         </div>
       ) : null}
 
-      {/* Three columns: methods · javascript · call (params + effect). */}
-      <div className="flex flex-row items-stretch min-h-[14rem] overflow-x-auto">
-        <nav
-          className="shrink-0 w-44 sm:w-52 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60"
-          aria-label="Method list"
-        >
-          <ul
-            className="p-1.5 space-y-0.5 overflow-y-auto max-h-80"
-            role="listbox"
-            aria-label="Available methods"
+      {compact ? (
+        <div className="p-4 sm:p-5 max-w-2xl">
+          {methods.map((name) => (
+            <SmartObjectFunction
+              key={name}
+              funcName={name}
+              smartObject={smartObject}
+              functionsExist
+              options={options}
+              latestRev={latestRev}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex flex-row items-stretch min-h-[14rem] overflow-x-auto">
+          <nav
+            className="shrink-0 w-44 sm:w-52 border-r border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60"
+            aria-label="Method list"
           >
-            {methods.map((name) => {
-              const isActive = name === activeMethod
-              const arity = arityOf(smartObject, name)
-              return (
-                <li key={name} role="option" aria-selected={isActive}>
-                  <button
-                    type="button"
-                    onClick={() => setSelected(name)}
-                    className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-800 ${
-                      isActive
-                        ? 'bg-blue-600 text-white shadow-sm'
-                        : 'text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700/80'
-                    }`}
-                  >
-                    <span className="font-medium font-mono text-[13px] block truncate" title={name}>
-                      {name}
-                    </span>
-                    <span
-                      className={`text-[11px] ${
-                        isActive ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
+            <ul
+              className="p-1.5 space-y-0.5 overflow-y-auto max-h-80"
+              role="listbox"
+              aria-label="Available methods"
+            >
+              {methods.map((name) => {
+                const isActive = name === activeMethod
+                const arity = arityOf(smartObject, name)
+                return (
+                  <li key={name} role="option" aria-selected={isActive}>
+                    <button
+                      type="button"
+                      onClick={() => setSelected(name)}
+                      className={`w-full text-left px-3 py-2.5 rounded-lg text-sm transition focus:outline-none focus:ring-2 focus:ring-blue-300 dark:focus:ring-blue-800 ${
+                        isActive
+                          ? 'bg-blue-600 text-white shadow-sm'
+                          : 'text-gray-800 dark:text-gray-200 hover:bg-white dark:hover:bg-gray-700/80'
                       }`}
                     >
-                      {arity === 0 ? 'no args' : `${arity} arg${arity === 1 ? '' : 's'}`}
-                    </span>
-                  </button>
-                </li>
-              )
-            })}
-          </ul>
-        </nav>
+                      <span
+                        className="font-medium font-mono text-[13px] block truncate"
+                        title={name}
+                      >
+                        {name}
+                      </span>
+                      <span
+                        className={`text-[11px] ${
+                          isActive ? 'text-blue-100' : 'text-gray-500 dark:text-gray-400'
+                        }`}
+                      >
+                        {arity === 0 ? 'no args' : `${arity} arg${arity === 1 ? '' : 's'}`}
+                      </span>
+                    </button>
+                  </li>
+                )
+              })}
+            </ul>
+          </nav>
 
-        <div
-          className="flex-1 min-w-[12rem] flex flex-col border-r border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-950/40"
-          aria-label="Method source"
-        >
-          <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between gap-2">
-            <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
-              JavaScript
-            </p>
-            <CopyCode text={selectedSource} />
+          <div
+            className="flex-1 min-w-[12rem] flex flex-col border-r border-gray-200 dark:border-gray-700 bg-slate-50 dark:bg-gray-950/40"
+            aria-label="Method source"
+          >
+            <div className="px-3 py-2 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between gap-2">
+              <p className="text-[11px] uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                JavaScript
+              </p>
+              <CopyCode text={selectedSource} />
+            </div>
+            {selectedSource ? (
+              <pre className="p-3 text-xs font-mono text-gray-800 dark:text-gray-200 overflow-auto max-h-80 whitespace-pre-wrap break-words leading-relaxed">
+                {highlightedSource}
+              </pre>
+            ) : (
+              <p className="p-3 text-sm text-gray-500 dark:text-gray-400">
+                Source unavailable for this method.
+              </p>
+            )}
           </div>
-          {selectedSource ? (
-            <pre className="p-3 text-xs font-mono text-gray-800 dark:text-gray-200 overflow-auto max-h-80 whitespace-pre-wrap break-words leading-relaxed">
-              {highlightedSource}
-            </pre>
-          ) : (
-            <p className="p-3 text-sm text-gray-500 dark:text-gray-400">
-              Source unavailable for this method.
-            </p>
-          )}
-        </div>
 
-        <SmartObjectFunction
-          key={activeMethod}
-          funcName={activeMethod}
-          smartObject={smartObject}
-          functionsExist
-          options={options}
-          latestRev={latestRev}
-          embedded
-        />
-      </div>
+          <SmartObjectFunction
+            key={activeMethod}
+            funcName={activeMethod}
+            smartObject={smartObject}
+            functionsExist
+            options={options}
+            latestRev={latestRev}
+            embedded
+          />
+        </div>
+      )}
     </section>
   )
 }

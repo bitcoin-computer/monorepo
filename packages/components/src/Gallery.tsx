@@ -135,7 +135,23 @@ function Pagination({ isPrevAvailable, handlePrev, isNextAvailable, handleNext }
   )
 }
 
-function EmptyObjectsState({ hasFilters }: { hasFilters: boolean }) {
+function EmptyObjectsState({
+  hasFilters,
+  embed,
+}: {
+  hasFilters: boolean
+  embed?: boolean
+}) {
+  if (embed) {
+    return (
+      <div className="w-full py-8 px-4 text-center rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
+          {hasFilters ? 'No objects match this filter' : 'No smart objects yet'}
+        </p>
+      </div>
+    )
+  }
+
   return (
     <div className="w-full py-8 px-4 text-center rounded-lg border border-dashed border-gray-300 dark:border-gray-600">
       <h2 className="mb-1.5 text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
@@ -279,9 +295,15 @@ function ActiveFilters({
   )
 }
 
-export function GalleryWithPagination<T extends Class>(q: UserQuery<T> = {}) {
+export type GalleryProps<T extends Class> = UserQuery<T> & {
+  /** Hide explorer page chrome (title, Create, Playground empty state) when embedding in other apps. */
+  embed?: boolean
+}
+
+export function GalleryWithPagination<T extends Class>(q: GalleryProps<T> = {}) {
   const contractsPerPage = 12
   const computer = useContext(ComputerContext)
+  const embed = Boolean(q.embed)
   const navigate = useNavigate()
   const [pageNum, setPageNum] = useState(0)
   const [isNextAvailable, setIsNextAvailable] = useState(true)
@@ -380,30 +402,34 @@ export function GalleryWithPagination<T extends Class>(q: UserQuery<T> = {}) {
 
   return (
     <div className="relative w-full">
-      <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Smart objects</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Unspent on-chain application state
-            {records.length > 0
-              ? ` · ${records.length}${isNextAvailable ? '+' : ''} on this page`
-              : ''}
-          </p>
-        </div>
-        <Link
-          to="/playground"
-          className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500"
-        >
-          Create
-        </Link>
-      </header>
+      {embed ? null : (
+        <header className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-xl sm:text-2xl font-semibold dark:text-white">Smart objects</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              Unspent on-chain application state
+              {records.length > 0
+                ? ` · ${records.length}${isNextAvailable ? '+' : ''} on this page`
+                : ''}
+            </p>
+          </div>
+          <Link
+            to="/playground"
+            className="inline-flex items-center px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-500"
+          >
+            Create
+          </Link>
+        </header>
+      )}
 
-      <ActiveFilters
-        publicKey={(fromUrl.publicKey as string) || q.publicKey}
-        mod={(fromUrl.mod as string) || q.mod}
-        address={(fromUrl.address as string) || q.address}
-        order={(fromUrl.order as string) || q.order}
-      />
+      {embed ? null : (
+        <ActiveFilters
+          publicKey={(fromUrl.publicKey as string) || q.publicKey}
+          mod={(fromUrl.mod as string) || q.mod}
+          address={(fromUrl.address as string) || q.address}
+          order={(fromUrl.order as string) || q.order}
+        />
+      )}
 
       {listLoading && records.length === 0 ? <GallerySkeletons /> : null}
 
@@ -413,7 +439,9 @@ export function GalleryWithPagination<T extends Class>(q: UserQuery<T> = {}) {
         </div>
       ) : null}
 
-      {!listLoading && showNoAsset ? <EmptyObjectsState hasFilters={hasFilters} /> : null}
+      {!listLoading && showNoAsset ? (
+        <EmptyObjectsState hasFilters={hasFilters} embed={embed} />
+      ) : null}
 
       {records.length > 0 ? <FromRecords records={records} computer={computer} /> : null}
 

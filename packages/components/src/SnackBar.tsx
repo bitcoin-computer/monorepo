@@ -109,6 +109,7 @@ export function Toast({ item, onDismiss }: { item: ToastItem; onDismiss: (id: st
       className={`pointer-events-auto w-full max-w-sm rounded-lg border shadow-sm px-3 py-2.5 ${styles.box}`}
       role={isAssertive ? 'alert' : 'status'}
       aria-live={isAssertive ? 'assertive' : 'polite'}
+      data-toast={variant}
     >
       <div className="flex items-start gap-2.5">
         <VariantIcon variant={variant} />
