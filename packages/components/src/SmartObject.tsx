@@ -246,7 +246,10 @@ function StateValueRow({
           </code>
         </div>
         <TypeBadge type={type} />
-        <div className="min-w-0 flex-1 text-xs text-gray-700 dark:text-gray-300 truncate">
+        <div
+          id={!nested ? `property-${name}-value` : undefined}
+          className="min-w-0 flex-1 text-xs text-gray-700 dark:text-gray-300 truncate"
+        >
           {preview}
         </div>
         <div className="flex items-center gap-0.5 shrink-0">
@@ -781,7 +784,7 @@ type MyRouteParams = {
   rev?: string
 }
 
-function Component({ title }: { title?: string }) {
+function Component({ title, compact }: { title?: string; compact?: boolean }) {
   const location = useLocation()
   const params = useParams<MyRouteParams>()
   const rev = params.rev || ''
@@ -1097,6 +1100,7 @@ function Component({ title }: { title?: string }) {
             functionsExist={functionsExist}
             options={options}
             latestRev={latest}
+            compact={compact}
           />
         </>
       ) : null}
