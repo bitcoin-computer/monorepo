@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -12,7 +12,7 @@
     <!-- Primary Meta Tags -->
     <title>waitForIndex</title>
     <meta name="title" content="waitForIndex">
-    <meta name="description" content="Waits until an on-chain object revision is indexed by the Bitcoin Computer node.">
+    <meta name="description" content="This page name is outdated. The method is waitForIndexed. See waitForIndexed.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.bitcoincomputer.io/lib/computer/waitforindex/">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.bitcoincomputer.io/lib/computer/waitforindex/">
     <meta property="og:title" content="waitForIndex">
-    <meta property="og:description" content="Waits until an on-chain object revision is indexed by the Bitcoin Computer node.">
+    <meta property="og:description" content="This page name is outdated. The method is waitForIndexed. See waitForIndexed.">
     <meta property="og:site_name" content="Bitcoin Computer">
     <meta property="og:locale" content="en_US">
 
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://docs.bitcoincomputer.io/lib/computer/waitforindex/">
     <meta name="twitter:title" content="waitForIndex">
-    <meta name="twitter:description" content="Waits until an on-chain object revision is indexed by the Bitcoin Computer node.">
+    <meta name="twitter:description" content="This page name is outdated. The method is waitForIndexed. See waitForIndexed.">
 
     <!-- Alternate Markdown -->
     <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/lib/computer/waitforindex.md">
@@ -38,12 +38,11 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
-    <link href="../../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -139,30 +138,24 @@
 
                 <!-- Page content  -->
 <h1 id="waitforindex">waitForIndex</h1>
-<p><em>Waits until an on-chain object revision is indexed by the Bitcoin Computer node.</em></p>
-<h2 id="type">Type</h2>
-<div id="type-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">;(rev: string) =&gt; Promise&lt;void&gt;</code></pre>
-</doc-codeblock></div>
-<h3 id="parameters">Parameters</h3>
-<ul>
-<li><code translate="no" v-pre>rev</code>: The revision of the on-chain object (<code translate="no" v-pre>&lt;txid&gt;:&lt;vout&gt;</code>).</li>
-</ul>
-<h3 id="return-value">Return Value</h3>
-<p>A <code translate="no" v-pre>Promise</code> that resolves when the revision has been indexed and is available via <code translate="no" v-pre>sync</code> / <code translate="no" v-pre>query</code>.</p>
-<h3 id="syntax">Syntax</h3>
-<div id="syntax-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">await computer.waitForIndex(rev)</code></pre>
-</doc-codeblock></div>
-<h2 id="example">Example</h2>
-<div id="example-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const counter = await computer.new(Counter, [0])
-
-// Wait until the object is indexed before reading its state
-await computer.waitForIndex(counter._rev)
-
-const latest = await computer.sync(counter._rev)</code></pre>
-</doc-codeblock></div>
+<div class="flex mb-6">
+    <div class="shrink-0 w-1.5 rounded-tl-lg rounded-bl-lg bg-callout-primary"></div>
+    <div class="flex w-full py-4 border border-l-0 rounded-tr-lg rounded-br-lg doc-callout bg-callout-base-bg border-callout-base-border" role="alert">
+        <div class="flex items-center ml-4 h-7">
+            <svg xmlns="http://www.w3.org/2000/svg" class="block text-callout-primary" width="22" height="22" viewBox="0 0 24 24" role="presentation">
+                <g fill="currentColor"><g>
+                    <path d="M12 1C5.93 1 1 5.93 1 12s4.93 11 11 11 11-4.93 11-11S18.07 1 12 1zm0 20c-4.96 0-9-4.04-9-9s4.04-9 9-9 9 4.04 9 9-4.04 9-9 9z"></path>
+                    <path d="M12 11c-.55 0-1 .45-1 1v4c0 .55.45 1 1 1s1-.45 1-1v-4c0-.55-.45-1-1-1zM12.01 7c-.56 0-1 .45-1 1s.45 1 1 1 1-.45 1-1-.45-1-1-1z"></path>
+                    <path fill="none" d="M0 0h24v24H0z"></path>
+                </g></g>
+            </svg>
+        </div>
+        <div class="pr-5 ml-3 w-full">
+<p>This page name is outdated. The method is <strong><code translate="no" v-pre>waitForIndexed</code></strong>. See <a href="../waitforindexed/">waitForIndexed</a>.</p>
+        </div>
+    </div>
+</div>
+<p>Redirect: use <a href="../waitforindexed/"><code translate="no" v-pre>computer.waitForIndexed(location, opts?)</code></a>.</p>
 
                 
                 <!-- Required only on API pages -->
@@ -172,20 +165,20 @@ const latest = await computer.sync(counter._rev)</code></pre>
             
                 <nav id="retype-nextprev" class="print:hidden flex mt-14">
                     <div class="w-1/2">
-                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/sync/">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/txidtoblocktime/">
                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                             <span>
                                 <span class="block text-xs font-normal text-base-text-muted">Previous</span>
-                                <span class="block mt-1">sync</span>
+                                <span class="block mt-1">tx​Id​To​Block​Time</span>
                             </span>
                         </a>
                     </div>
             
                     <div class="w-1/2">
-                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/contract/">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/waitforindexed/">
                             <span>
                                 <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
-                                <span class="block mt-1">Contract</span>
+                                <span class="block mt-1">wait​For​Indexed</span>
                             </span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                         </a>
@@ -229,6 +222,6 @@ const latest = await computer.sync(counter._rev)</code></pre>
 
     <div id="retype-overlay-target"></div>
 
-        <script data-cfasync="false">window.__DOCS__ = { "title": "waitForIndex", level: 3, icon: "file", hasPrism: true, hasInstagram: false, hasMermaid: false, hasMath: false, tocDepth: 23, "md": "/lib/computer/waitforindex.md" }</script>
+        <script data-cfasync="false">window.__DOCS__ = { "title": "waitForIndex", level: 3, icon: "file", hasPrism: false, hasInstagram: false, hasMermaid: false, hasMath: false, tocDepth: 23, "md": "/lib/computer/waitforindex.md" }</script>
 </body>
 </html>

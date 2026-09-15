@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -12,7 +12,7 @@
     <!-- Primary Meta Tags -->
     <title>Development</title>
     <meta name="title" content="Development">
-    <meta name="description" content="There are two modes to run the system: development mode and production mode. In development mode, the system is not optimized and includes additional checks to help with debugging.">
+    <meta name="description" content="For node-side issues (401 auth, empty get-txos / modules, Module table upgrade, lib↔node version match, reorg confirmation fields), see Node: Operate & Troubleshoot and the changelog.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.bitcoincomputer.io/development/">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.bitcoincomputer.io/development/">
     <meta property="og:title" content="Development">
-    <meta property="og:description" content="There are two modes to run the system: development mode and production mode. In development mode, the system is not optimized and includes additional checks to help with debugging.">
+    <meta property="og:description" content="For node-side issues (401 auth, empty get-txos / modules, Module table upgrade, lib↔node version match, reorg confirmation fields), see Node: Operate & Troubleshoot and the changelog.">
     <meta property="og:site_name" content="Bitcoin Computer">
     <meta property="og:locale" content="en_US">
 
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://docs.bitcoincomputer.io/development/">
     <meta name="twitter:title" content="Development">
-    <meta name="twitter:description" content="There are two modes to run the system: development mode and production mode. In development mode, the system is not optimized and includes additional checks to help with debugging.">
+    <meta name="twitter:description" content="For node-side issues (401 auth, empty get-txos / modules, Module table upgrade, lib↔node version match, reorg confirmation fields), see Node: Operate & Troubleshoot and the changelog.">
 
     <!-- Alternate Markdown -->
     <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/development.md">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../static/favicon.ico" />
-    <link href="../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -140,6 +140,7 @@
                 <!-- Page content  -->
 <h1 id="development">Development</h1>
 <h2 id="troubleshooting">Troubleshooting</h2>
+<p>For node-side issues (401 auth, empty <code translate="no" v-pre>get-txos</code> / modules, Module table upgrade, lib↔node version match, reorg confirmation fields), see <a href="../node/operations/">Node: Operate &amp; Troubleshoot</a> and the <a href="../changelog/">changelog</a>.</p>
 <h3 id="production-mode">Production mode</h3>
 <p>There are two modes to run the system: development mode and production mode. In development mode, the system is not optimized and includes additional checks to help with debugging. For example, you can use the <code translate="no" v-pre>console.log()</code> function to print messages to the console inside of smart contract methods. Also, the ses <code translate="no" v-pre>lockdown</code> is not applied in development mode. The <code translate="no" v-pre>lockdown</code> prevents the use of certain JavaScript features that are not safe for smart contracts, such as <code translate="no" v-pre>eval</code> and <code translate="no" v-pre>Function</code> constructor, or the use or overwriting of certain global objects, such as <code translate="no" v-pre>Array</code> or <code translate="no" v-pre>Object</code>. See the ses docs for more details.</p>
 <p>The production mode is intended for running the system in a live environment. This is the default mode.</p>

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -44,11 +44,11 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../static/favicon.ico" />
-    <link href="../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <link href="../resources/css/katex.css?v=4.6.0" rel="stylesheet">
     <script id="katex-js" data-cfasync="false" src="../resources/js/katex.js?v=4.6.0" defer></script>
 
@@ -453,11 +453,11 @@
     <figcaption class="caption caption-float">The Bitcoin Computer protocol</figcaption>
 </figure>
 <p>This Bitcoin Computer is a general purpose meta protocol, meaning that it can express all computable smart contracts. The smart contract data values are arbitrarily nested JavaScript objects. The meta data values contain mostly JavaScript expressions.</p>
-<p>There are two types of transactions: &quot;modules&quot; contain JavaScript (ES6) modules. All other transactions contain a JavaScript expression, a &quot;blockchain environment&quot; that associated (free) variables in the expressions with input numbers, and an optional &quot;module specifier&quot; containing a transaction id. In order to compute the value of an output, the Bitcoin Computer software</p>
+<p>There are two types of transactions: <strong>module deploys</strong> store JavaScript (ES6) module source, and <strong>transitions</strong> store a JavaScript expression, a &quot;blockchain environment&quot; that associates free variables with input numbers, and an optional module specifier (a reference to a previously deployed module). Multisig module deploys encode cleartext <code translate="no" v-pre>{ ept: &lt;source&gt; }</code> in data outputs; taproot module deploys embed the source in a reveal-input witness under protocol id <code translate="no" v-pre>BC</code>. Transitions encode <code translate="no" v-pre>{ exp, env, mod, v, ioMap }</code> (optionally encrypted). In order to compute the value of an output, the Bitcoin Computer software</p>
 <ul>
-<li>imports the module from the transaction referred to</li>
+<li>imports the module from the transaction referred to by <code translate="no" v-pre>mod</code> (if any)</li>
 <li>computes the values for the outputs being spent and then substitutes these values for the free variables in the expressions as designated by the blockchain environment</li>
-<li>evaluate the expression with the substitution applied in the scope of the module</li>
+<li>evaluates the expression with the substitution applied in the scope of the module</li>
 </ul>
 <p>The picture shows the deployment, minting, and sending a non fungible token and a non fungible token. For more details see the rest of the <a href="https://docs.bitcoincomputer.io/">documentation</a>.</p>
 <div style="clear: both;"></div>

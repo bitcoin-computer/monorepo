@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
-    <link href="../../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -150,14 +150,29 @@
 <h3 id="return-value">Return Value</h3>
 <p>A string of the form <code translate="no" v-pre>&lt;transaction-id&gt;:&lt;output number&gt;</code> encoding the location where the module is stored.</p>
 <h2 id="description">Description</h2>
-<p>The <code translate="no" v-pre>deploy</code> function stores a JavaScript module on the blockchain and returns a module specifier that identifier that module. This specifier can be passed into <a href="../new/"><code translate="no" v-pre>computer.new</code></a>, <a href="../encode/"><code translate="no" v-pre>computer.encode</code></a>, <a href="../encodenew/"><code translate="no" v-pre>computer.encodeNew</code></a>, and <a href="../encodecall/"><code translate="no" v-pre>computer.encodeCall</code></a> as an optional parameter. In this case, the names exported from the module are available in the evaluation of these functions.</p>
+<p>The <code translate="no" v-pre>deploy</code> function stores a JavaScript module on the blockchain and returns a module specifier that identifies that module. This specifier can be passed into <a href="../new/"><code translate="no" v-pre>computer.new</code></a>, <a href="../encode/"><code translate="no" v-pre>computer.encode</code></a>, <a href="../encodenew/"><code translate="no" v-pre>computer.encodeNew</code></a>, and <a href="../encodecall/"><code translate="no" v-pre>computer.encodeCall</code></a> as an optional parameter. In this case, the names exported from the module are available in the evaluation of these functions.</p>
+<p>Module deploys are <strong>not</strong> smart-object transitions. They do not store <code translate="no" v-pre>{ exp, env, mod, v }</code> metadata. Use <a href="../load/"><code translate="no" v-pre>computer.load</code></a> to retrieve and evaluate a module; <a href="../decode/"><code translate="no" v-pre>computer.decode</code></a> rejects module deploy transactions.</p>
 <p>The rationale for deploying modules is to minimize on-chain data (and thereby the technical on-chain storage costs / hygiene dust): a module can be deployed once (preferably via taproot) and then referenced to create or update many smart objects using tiny expressions. This keeps using transactions small. This is unlike on-chain objects whose associated data is tied to a single use/revision. See the <a href="../../../fees/">Fees</a> &quot;User Choices...&quot; section for full minimization guidance.</p>
+<h3 id="on-chain-encoding">On-chain encoding</h3>
 <p>The protocol supports two module storage types:</p>
 <ul>
-<li><code translate="no" v-pre>multisig</code> - A module is stored in one transaction with several outputs that contain a bare multisig script each. These outputs are currently un-spendable (in a future update we will make them spendable). The maximum module size is about 18 kB; larger modules must be split into chunks of less than 18 kB and recombined in another module. <em>Module encoding transactions using <code translate="no" v-pre>multisig</code> generate hygiene dust outputs</em> (see Fees for scope and costs).</li>
-<li><code translate="no" v-pre>taproot</code> - A module is stored in two transactions: one commits to the hash of the data on a taproot output script, and the second spends that output and contains the entire module in its input. These modules can be close to 400 kB or even close to 4 MB (if you know a miner that will include them). In addition, module storage is 4x cheaper due to the SegWit discount. <em>Crucially, taproot module encoding transactions generate no hygiene dust outputs.</em></li>
+<li>
+<p><strong><code translate="no" v-pre>multisig</code></strong> — One transaction. An owner output is created (so the UTXO appears in the node’s <code translate="no" v-pre>Output</code> table), and the module source is stored in cleartext data outputs as:</p>
+<div class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">{
+  ept: string
+} // module source only; no encryption</code></pre>
+</doc-codeblock></div>
+<p>These data outputs use bare multisig scripts. The maximum module size is about 18 kB; larger modules must be split into chunks of less than 18 kB and recombined in another module. <em>Module encoding transactions using <code translate="no" v-pre>multisig</code> generate hygiene dust outputs</em> (see Fees for scope and costs).</p>
+</li>
+<li>
+<p><strong><code translate="no" v-pre>taproot</code></strong> — Two transactions (commit + reveal). The commit tx locks a taproot output whose leaf commits to the data; the reveal tx spends that output and embeds the full module source in the <strong>input witness</strong>, inside a script-path envelope tagged with protocol id <strong><code translate="no" v-pre>BC</code></strong>. Content type is <code translate="no" v-pre>text/javascript</code>. These modules can be close to 400 kB or even close to 4 MB (if you know a miner that will include them). Module storage is 4× cheaper due to the SegWit discount. <em>Crucially, taproot module encoding transactions generate no hygiene dust outputs.</em></p>
+</li>
 </ul>
+<p>Encryption of module payloads is not supported yet (may be added later). Only new-format deploys (<code translate="no" v-pre>{ ept }</code> / <code translate="no" v-pre>BC</code>) are valid; legacy shapes that stored modules as transition <code translate="no" v-pre>exp</code> fields or non-<code translate="no" v-pre>BC</code> inscription envelopes are not read.</p>
 <p>To select the module storage type, pass either <code translate="no" v-pre>multisig</code> or <code translate="no" v-pre>taproot</code> into the property <code translate="no" v-pre>moduleStorageType</code> of the <code translate="no" v-pre>Computer</code> constructor. If <code translate="no" v-pre>moduleStorageType</code> is not specified, it will use <code translate="no" v-pre>taproot</code> if available and <code translate="no" v-pre>multisig</code> otherwise. For minimization of on-chain data and hygiene dust (and the UX trade-offs of single-tx vs. two-tx), see the <a href="../../../fees/">Fees</a> documentation, especially &quot;User Choices to Control On-Chain Data and Hygiene Dust Costs&quot; and the bare-multisig rationale (single-tx direct data for high-throughput reliability).</p>
+<p>See also <a href="../../transaction/#onchainmetadata"><code translate="no" v-pre>Transaction.onChainMetaData</code></a> for how metadata differs between transitions and module deploys.</p>
+<p>When connected to a Bitcoin Computer Node, deploys are indexed into the node’s <code translate="no" v-pre>Module</code> table. List and fetch them from the client with <a href="../getmodules/"><code translate="no" v-pre>getModules</code></a> / <a href="../getmodule/"><code translate="no" v-pre>getModule</code></a>, or via the node HTTP API (<a href="../../../node/modules/">modules</a>, <a href="../../../node/module/">module</a>).</p>
 <retype-table copy-text="| Coin | Taproot | Module Storage Types | Default | Max Module Size | Segwit Discount
 | ---- | ------- | --------------------- | ---------- | -------------
 | BTC | Yes | `taproot` `multisig` | `taproot` | 4 MB | Yes
@@ -335,11 +350,11 @@ export const s = c0 + c1 + c2 + c3</code></pre>
             
                 <nav id="retype-nextprev" class="print:hidden flex mt-14">
                     <div class="w-1/2">
-                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/decode/">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/delete/">
                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                             <span>
                                 <span class="block text-xs font-normal text-base-text-muted">Previous</span>
-                                <span class="block mt-1">decode</span>
+                                <span class="block mt-1">delete</span>
                             </span>
                         </a>
                     </div>

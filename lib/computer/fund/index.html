@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
-    <link href="../../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -152,37 +152,38 @@
 </doc-codeblock></div>
 <h3 id="parameters">Parameters</h3>
 <h4 id="tx"><code translate="no" v-pre>tx</code></h4>
-<p>A <a href="../../../nakamotojs/">NakamotoJS transaction</a> object or a <a href="../../transaction/">Bitcoin Computer Transaction</a> object (that the object from Bitcoin Computer extends the object from NakamotoJS).</p>
+<p>A <a href="../../../nakamotojs/">NakamotoJS transaction</a> object or a <a href="../../transaction/">Bitcoin Computer Transaction</a> object (Bitcoin Computer’s <code translate="no" v-pre>Transaction</code> extends NakamotoJS).</p>
 <h4 id="opts"><code translate="no" v-pre>opts</code></h4>
-<p>An optional object can be passed as parameter to <code translate="no" v-pre>include</code> or <code translate="no" v-pre>exclude</code> certain UTXOs. When using <code translate="no" v-pre>include</code>, the transaction will be funded with the UTXOs specified as the first inputs.</p>
-<retype-table copy-text="| Key     | Description      | Default Value |
-| ------- | ---------------- | ------------- |
-| include | UTXOs to include | `[]`          |
-| exclude | UTXOs to exclude | `[]`          |">
+<p>Optional UTXO selection. When <code translate="no" v-pre>include</code> is set, those UTXOs are preferred as funding inputs.</p>
+<retype-table copy-text="| Key | Description | Default |
+| ------- | ----------- | ------- |
+| include | UTXOs to prefer as inputs | `[]` |
+| exclude | UTXOs to avoid | `[]` |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
 <tr>
 <th>Key</th>
 <th>Description</th>
-<th>Default Value</th>
+<th>Default</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td>include</td>
-<td>UTXOs to include</td>
+<td>UTXOs to prefer as inputs</td>
 <td><code translate="no" v-pre>[]</code></td>
 </tr>
 <tr>
 <td>exclude</td>
-<td>UTXOs to exclude</td>
+<td>UTXOs to avoid</td>
 <td><code translate="no" v-pre>[]</code></td>
 </tr>
 </tbody>
 </table>
 </div>
 </retype-table>
+<p>Fee rate is controlled via <a href="../setfee/"><code translate="no" v-pre>setFee</code></a> / <a href="../getfee/"><code translate="no" v-pre>getFee</code></a> (<code translate="no" v-pre>satPerByte</code>), not via <code translate="no" v-pre>fund</code> options.</p>
 <p>UTXOs are encoded as <code translate="no" v-pre>&lt;transaction-id&gt;:&lt;output-number&gt;</code>.</p>
 <h3 id="return-value">Return Value</h3>
 <p>If the wallet does not have sufficient funds, an error is thrown.</p>

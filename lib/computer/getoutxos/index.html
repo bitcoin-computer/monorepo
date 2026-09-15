@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -12,7 +12,7 @@
     <!-- Primary Meta Tags -->
     <title>getOUTXOs</title>
     <meta name="title" content="getOUTXOs">
-    <meta name="description" content="Returns output identifiers of outputs containing *unspent smart objects** for the given query parameters.">
+    <meta name="description" content="Returns unspent smart-object outputs for the given query parameters.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.bitcoincomputer.io/lib/computer/getoutxos/">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.bitcoincomputer.io/lib/computer/getoutxos/">
     <meta property="og:title" content="getOUTXOs">
-    <meta property="og:description" content="Returns output identifiers of outputs containing *unspent smart objects** for the given query parameters.">
+    <meta property="og:description" content="Returns unspent smart-object outputs for the given query parameters.">
     <meta property="og:site_name" content="Bitcoin Computer">
     <meta property="og:locale" content="en_US">
 
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://docs.bitcoincomputer.io/lib/computer/getoutxos/">
     <meta name="twitter:title" content="getOUTXOs">
-    <meta name="twitter:description" content="Returns output identifiers of outputs containing *unspent smart objects** for the given query parameters.">
+    <meta name="twitter:description" content="Returns unspent smart-object outputs for the given query parameters.">
 
     <!-- Alternate Markdown -->
     <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/lib/computer/getoutxos.md">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
-    <link href="../../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -139,21 +139,21 @@
 
                 <!-- Page content  -->
 <h1 id="getoutxos">getOUTXOs</h1>
-<p><em>Returns output identifiers of outputs containing *unspent smart objects** for the given query parameters.</em></p>
+<p><em>Returns <strong>unspent smart-object</strong> outputs for the given query parameters.</em></p>
 <h2 id="type">Type</h2>
 <div id="type-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">async getOUTXOs(q: TXOQuery &amp; { verbosity?: 0 }): Promise&lt;string[]&gt;
-async getOUTXOs(q: TXOQuery &amp; { verbosity: 1 }): Promise&lt;DbOutput[]&gt;
+async getOUTXOs(q: TXOQuery &amp; { verbosity: 1 }): Promise&lt;TXORecord[]&gt;
 async getOUTXOs(q: TXOQuery): Promise&lt;string[] | TXORecord[]&gt;</code></pre>
 </doc-codeblock></div>
 <h2 id="description">Description</h2>
-<p>The <code translate="no" v-pre>getOUTXOs</code> function is <em>syntactic sugar</em> for the <a href="../gettxos/"><code translate="no" v-pre>getTXOs</code></a> with <code translate="no" v-pre>isObject</code> set to <code translate="no" v-pre>true</code> and <code translate="no" v-pre>isSpent</code> set to <code translate="no" v-pre>false</code>. The name is short for get-object-unspent-transaction-outputs, it return only output identifiers of output that encode unpent smart objects.</p>
-<p>This function is commonly used to query for the latest revisions of smart objects.</p>
+<p>The <code translate="no" v-pre>getOUTXOs</code> function is syntactic sugar for <a href="./gettxos.md"><code translate="no" v-pre>getTXOs</code></a> with <code translate="no" v-pre>isObject: true</code> and <code translate="no" v-pre>isSpent: false</code>. The name stands for <strong>get object unspent transaction outputs</strong>: only unspent outputs that encode smart objects.</p>
+<p>This is the preferred replacement for the deprecated <a href="../query/"><code translate="no" v-pre>query</code></a> method when listing live object revisions (for example by <code translate="no" v-pre>publicKey</code> or <code translate="no" v-pre>mod</code>).</p>
+<p>To list <strong>module deploys</strong> (source text), use <a href="../getmodules/"><code translate="no" v-pre>getModules</code></a>, not <code translate="no" v-pre>getOUTXOs</code>.</p>
 <h2 id="parameters">Parameters</h2>
-<p>It accepts the same parameters as <a href="../gettxos/"><code translate="no" v-pre>getTXOs</code></a>, except that <code translate="no" v-pre>isObject</code> and <code translate="no" v-pre>isSpent</code> are always set.</p>
+<p>Same as <a href="./gettxos.md"><code translate="no" v-pre>getTXOs</code></a>, except:</p>
 <retype-table copy-text="| Key | Description |
 | ------------- | -------------------------------------------- |
-| All keys from `getTXOs` | Same behavior as in `getTXOs` |
 | isObject | Always `true` |
 | isSpent | Always `false` |">
 <div class="table-wrapper scrollbar overflow-hidden">
@@ -165,10 +165,6 @@ async getOUTXOs(q: TXOQuery): Promise&lt;string[] | TXORecord[]&gt;</code></pre>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td>All keys from <code translate="no" v-pre>getTXOs</code></td>
-<td>Same behavior as in <code translate="no" v-pre>getTXOs</code></td>
-</tr>
 <tr>
 <td>isObject</td>
 <td>Always <code translate="no" v-pre>true</code></td>
@@ -182,13 +178,17 @@ async getOUTXOs(q: TXOQuery): Promise&lt;string[] | TXORecord[]&gt;</code></pre>
 </div>
 </retype-table>
 <h2 id="return-value">Return Value</h2>
-<p>An array of either revision strings or rows from the Output table, depending on the verbosity level.</p>
+<p>An array of revision strings (<code translate="no" v-pre>verbosity: 0</code>) or <code translate="no" v-pre>TXORecord</code> rows (<code translate="no" v-pre>verbosity: 1</code>).</p>
 <h2 id="example">Example</h2>
 <div id="example-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">// Return all unspent smart objects owned by a public key
-const unspentObjects = await computer.getUOTXOs({ publicKey, verbosity: 1 })</code></pre>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">// Unspent smart objects for a public key
+const revs = await computer.getOUTXOs({ publicKey })
+const rows = await computer.getOUTXOs({ publicKey, verbosity: 1 })
+
+// Objects created with a given module
+const tokenRevs = await computer.getOUTXOs({ mod: modSpecifier })</code></pre>
 </doc-codeblock></div>
-<p><a href="../gettxos/">See also → getTXOs</a></p>
+<p><a href="./gettxos.md">See also → getTXOs</a></p>
 
                 
                 <!-- Required only on API pages -->

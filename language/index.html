@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../static/favicon.ico" />
-    <link href="../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -142,6 +142,7 @@
 <p>Writing smart contracts is all about imposing constraints of future values. These constraints can be local or global. An example of a local constraint is a non-fungible token: These are objects that can change their owners but the data itself typically cannot be changed. A non-fungible token is an example of a class with a non-local constraint: the number of tokens must remain constant across all objects emerging from the same mint.</p>
 <p>In order to make it possible to write smart contracts in JavaScript, the Bitcoin Computer library exports a class <code translate="no" v-pre>Contract</code> that enforces that whenever a class extends from it, its properties can only be assigned through function calls. This is reminiscent to the behavior of Solidity and makes it possible to write smart contracts in JavaScript.</p>
 <p>We call an expression a <em>smart contract</em> if it returns a value that contains only sub-objects whose classes that extend from <code translate="no" v-pre>Contract</code>. The function <code translate="no" v-pre>encode</code> throws an error if it called with an expression that is not a smart contract. Likewise, the function <code translate="no" v-pre>sync</code> throws an error if it is called with a transaction whose expression is not a smart contract.</p>
+<p>Inside contract methods, a restricted global <code translate="no" v-pre>computer</code> (<strong>InnerComputer</strong>) provides deterministic, confirmed-only chain reads. Transient observations invalidate the evaluation (a <code translate="no" v-pre>try/catch</code> cannot soft-succeed); public errors end with a single standard forbidden suffix. Host <code translate="no" v-pre>console</code> is available only in <code translate="no" v-pre>dev</code> / <code translate="no" v-pre>debug</code> client mode — <strong>not in <code translate="no" v-pre>prod</code></strong> (do not rely on <code translate="no" v-pre>console</code> in production contracts). See <a href="../lib/contract/#querying-inside-of-a-contract">Contract – Querying</a> and <a href="../lib/contract/sandbox-and-inner-computer/">Sandbox &amp; Inner Computer</a>.</p>
 <p>To describe the behavior of <code translate="no" v-pre>Contract</code> more precisely, let <code translate="no" v-pre>obj</code> be an object of a class that extends from <code translate="no" v-pre>Contract</code>. Then an error is thrown if either</p>
 <ol>
 <li>a property of <code translate="no" v-pre>obj</code> is assigned outside of a method of <code translate="no" v-pre>obj</code>,</li>

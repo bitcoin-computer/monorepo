@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -12,7 +12,7 @@
     <!-- Primary Meta Tags -->
     <title>Computer</title>
     <meta name="title" content="Computer">
-    <meta name="description" content="The Computer class has the methods listed below.">
+    <meta name="description" content="The Computer class is the main client API for the Bitcoin Computer. Methods are grouped below. Prefer the query helpers under Query outputs over the deprecated query.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.bitcoincomputer.io/lib/computer/">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.bitcoincomputer.io/lib/computer/">
     <meta property="og:title" content="Computer">
-    <meta property="og:description" content="The Computer class has the methods listed below.">
+    <meta property="og:description" content="The Computer class is the main client API for the Bitcoin Computer. Methods are grouped below. Prefer the query helpers under Query outputs over the deprecated query.">
     <meta property="og:site_name" content="Bitcoin Computer">
     <meta property="og:locale" content="en_US">
 
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://docs.bitcoincomputer.io/lib/computer/">
     <meta name="twitter:title" content="Computer">
-    <meta name="twitter:description" content="The Computer class has the methods listed below.">
+    <meta name="twitter:description" content="The Computer class is the main client API for the Bitcoin Computer. Methods are grouped below. Prefer the query helpers under Query outputs over the deprecated query.">
 
     <!-- Alternate Markdown -->
     <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/lib/computer/index.md">
@@ -38,11 +38,11 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../static/favicon.ico" />
-    <link href="../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -138,15 +138,15 @@
 
                 <!-- Page content  -->
 <h1 id="computer">Computer</h1>
-<p>The <code translate="no" v-pre>Computer</code> class has the methods listed below.</p>
+<p>The <code translate="no" v-pre>Computer</code> class is the main client API for the Bitcoin Computer. Methods are grouped below. Prefer the <strong>query</strong> helpers under <doc-anchor-trigger to="#query-outputs">Query outputs</doc-anchor-trigger> over the deprecated <a href="query/"><code translate="no" v-pre>query</code></a>.</p>
 <h3 id="basic">Basic</h3>
 <p>You can build almost all smart contracts with these.</p>
-<retype-table copy-text="| Method | Description |
-|---------------------------------|------------------------------------------------------------|
-| [constructor](./constructor.md) | Creates an instance of class Computer |
-| [new](./new.md) | Creates a smart object from a smart contract |
-| [query](./query.md) | Finds the latest revisions of smart object |
-| [sync](./sync.md) | Computes the state of a smart object from a given revision |">
+<retype-table copy-text="| Method                          | Description                                                                      |
+| ------------------------------- | -------------------------------------------------------------------------------- |
+| [constructor](./constructor.md) | Creates an instance of class `Computer`                                          |
+| [new](./new.md)                 | Creates a smart object from a smart contract                                     |
+| [getOUTXOs](./getOUTXOs.md)     | Unspent smart-object revisions (preferred replacement for `query`)               |
+| [sync](./sync.md)               | Computes the state of a smart object from a revision (or an effect from a tx id) |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
@@ -158,19 +158,19 @@
 <tbody>
 <tr>
 <td><a href="constructor/">constructor</a></td>
-<td>Creates an instance of class Computer</td>
+<td>Creates an instance of class <code translate="no" v-pre>Computer</code></td>
 </tr>
 <tr>
 <td><a href="new/">new</a></td>
 <td>Creates a smart object from a smart contract</td>
 </tr>
 <tr>
-<td><a href="query/">query</a></td>
-<td>Finds the latest revisions of smart object</td>
+<td><a href="getoutxos/">getOUTXOs</a></td>
+<td>Unspent smart-object revisions (preferred replacement for <code translate="no" v-pre>query</code>)</td>
 </tr>
 <tr>
 <td><a href="sync/">sync</a></td>
-<td>Computes the state of a smart object from a given revision</td>
+<td>Computes the state of a smart object from a revision (or an effect from a tx id)</td>
 </tr>
 </tbody>
 </table>
@@ -178,10 +178,13 @@
 </retype-table>
 <h3 id="modules">Modules</h3>
 <p>Deploy JavaScript modules (preferably via taproot) to avoid redundant on-chain storage for smart contracts, keep using expressions tiny, and minimize on-chain technical dust / hygiene dust costs. See <a href="../../fees/">Fees</a> for details and best practices.</p>
-<retype-table copy-text="| Method | Description |
-|-----------------------|-----------------------------------------|
-| [deploy](./deploy.md) | Deploys a JavaScript module on the blockchain |
-| [load](./load.md) | Loads a JavaScript module from the blockchain |">
+<retype-table copy-text="| Method                                | Description                                                        |
+| ------------------------------------- | ------------------------------------------------------------------ |
+| [deploy](./deploy.md)                 | Deploys a JavaScript module on the blockchain                      |
+| [load](./load.md)                     | Loads and evaluates a module (returns exports)                     |
+| [getModules](./getModules.md)         | Lists module deploys indexed by the node                           |
+| [getModule](./getModule.md)           | Fetches one indexed module row (including source `ept`)            |
+| [getInscription](./getInscription.md) | Static helper: parse a taproot `BC` module witness from raw tx hex |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
@@ -197,21 +200,71 @@
 </tr>
 <tr>
 <td><a href="load/">load</a></td>
-<td>Loads a JavaScript module from the blockchain</td>
+<td>Loads and evaluates a module (returns exports)</td>
+</tr>
+<tr>
+<td><a href="getmodules/">getModules</a></td>
+<td>Lists module deploys indexed by the node</td>
+</tr>
+<tr>
+<td><a href="getmodule/">getModule</a></td>
+<td>Fetches one indexed module row (including source <code translate="no" v-pre>ept</code>)</td>
+</tr>
+<tr>
+<td><a href="getinscription/">getInscription</a></td>
+<td>Static helper: parse a taproot <code translate="no" v-pre>BC</code> module witness from raw tx hex</td>
 </tr>
 </tbody>
 </table>
 </div>
 </retype-table>
-<h3 id="advanced">Advanced</h3>
-<p>For advanced applications that require control over how the transaction is signed, the UTXOs to be spent, custom scripts, or collaborative transaction building.</p>
-<retype-table copy-text="| Method | Description |
-|-------------------------------|----------------------------------------------------------------|
-| [encode](./encode.md) | Encodes a JavaScript expression into a Bitcoin transaction |
-| [encodeNew](./encodeNew.md) | Encodes a constructor call into a Bitcoin transaction |
-| [encodeCall](./encodeCall.md) | Encodes a function call into a Bitcoin transaction |
-| [decode](./decode.md) | Parses a Bitcoin transaction and returns JavaScript expression |
-| [faucet](./faucet) | Fund a computer object on Regtest |">
+<h3 id="query-outputs">Query outputs</h3>
+<p>Query the node’s <code translate="no" v-pre>Output</code> table. All of these accept a <code translate="no" v-pre>TXOQuery</code> (see <a href="./gettxos.md">getTXOs</a>). <code translate="no" v-pre>verbosity: 0</code> (default) returns revision strings; <code translate="no" v-pre>verbosity: 1</code> returns full rows.</p>
+<retype-table copy-text="| Method                      | Description                                                |
+| --------------------------- | ---------------------------------------------------------- |
+| [getTXOs](./getTXOs.md)     | Transaction outputs matching the query                     |
+| [getUTXOs](./getUTXOs.md)   | Unspent outputs (`isSpent: false`)                         |
+| [getOTXOs](./getOTXOs.md)   | Smart-object outputs (`isObject: true`)                    |
+| [getOUTXOs](./getOUTXOs.md) | Unspent smart objects (`isObject: true`, `isSpent: false`) |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="./gettxos.md">getTXOs</a></td>
+<td>Transaction outputs matching the query</td>
+</tr>
+<tr>
+<td><a href="./getutxos.md">getUTXOs</a></td>
+<td>Unspent outputs (<code translate="no" v-pre>isSpent: false</code>)</td>
+</tr>
+<tr>
+<td><a href="getotxos/">getOTXOs</a></td>
+<td>Smart-object outputs (<code translate="no" v-pre>isObject: true</code>)</td>
+</tr>
+<tr>
+<td><a href="getoutxos/">getOUTXOs</a></td>
+<td>Unspent smart objects (<code translate="no" v-pre>isObject: true</code>, <code translate="no" v-pre>isSpent: false</code>)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="advanced-encode--decode">Advanced encode / decode</h3>
+<p>For applications that need control over signing, UTXOs spent, custom scripts, or collaborative transaction building.</p>
+<retype-table copy-text="| Method                        | Description                                                                         |
+| ----------------------------- | ----------------------------------------------------------------------------------- |
+| [encode](./encode.md)         | Encodes a JavaScript expression into a Bitcoin transaction                          |
+| [encodeNew](./encodeNew.md)   | Encodes a constructor call into a Bitcoin transaction                               |
+| [encodeCall](./encodeCall.md) | Encodes a function call into a Bitcoin transaction                                  |
+| [decode](./decode.md)         | Parses a **transition** transaction (`exp` / `env` / `mod`); not for module deploys |
+| [fund](./fund.md)             | Adds inputs/change so a transaction can pay fees                                    |
+| [delete](./delete.md)         | Spends the given smart-object revisions (destroys those UTXOs)                      |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
@@ -235,24 +288,31 @@
 </tr>
 <tr>
 <td><a href="decode/">decode</a></td>
-<td>Parses a Bitcoin transaction and returns JavaScript expression</td>
+<td>Parses a <strong>transition</strong> transaction (<code translate="no" v-pre>exp</code> / <code translate="no" v-pre>env</code> / <code translate="no" v-pre>mod</code>); not for module deploys</td>
 </tr>
 <tr>
-<td><a href="faucet/">faucet</a></td>
-<td>Fund a computer object on Regtest</td>
+<td><a href="fund/">fund</a></td>
+<td>Adds inputs/change so a transaction can pay fees</td>
+</tr>
+<tr>
+<td><a href="delete/">delete</a></td>
+<td>Spends the given smart-object revisions (destroys those UTXOs)</td>
 </tr>
 </tbody>
 </table>
 </div>
 </retype-table>
 <h3 id="history">History</h3>
-<p>Access historical versions of on-chain objects.</p>
-<retype-table copy-text="| Method | Description |
-|-------------------------------|----------------------------------------------------------------|
-| [first](./first.md) | Return the first revision |
-| [prev](./prev.md) | Return the previous revision |
-| [next](./next.md) | Return the next revision |
-| [latest](./latest.md) | Return the latest revision |">
+<p>Access historical versions of on-chain objects and related graph data.</p>
+<retype-table copy-text="| Method                              | Description                                          |
+| ----------------------------------- | ---------------------------------------------------- |
+| [first](./first.md)                 | Return the first revision (object id) for a revision |
+| [prev](./prev.md)                   | Return the previous revision                         |
+| [next](./next.md)                   | Return the next revision                             |
+| [latest](./latest.md)               | Return the latest revision                           |
+| [last](./last.md)                   | Latest revision if spent; otherwise `undefined`      |
+| [spendingInput](./spendingInput.md) | Input that spent a given revision                    |
+| [getAncestors](./getAncestors.md)   | Ancestor transaction ids (or hex map) for a location |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
@@ -264,7 +324,7 @@
 <tbody>
 <tr>
 <td><a href="first/">first</a></td>
-<td>Return the first revision</td>
+<td>Return the first revision (object id) for a revision</td>
 </tr>
 <tr>
 <td><a href="prev/">prev</a></td>
@@ -278,27 +338,46 @@
 <td><a href="latest/">latest</a></td>
 <td>Return the latest revision</td>
 </tr>
+<tr>
+<td><a href="last/">last</a></td>
+<td>Latest revision if spent; otherwise <code translate="no" v-pre>undefined</code></td>
+</tr>
+<tr>
+<td><a href="spendinginput/">spendingInput</a></td>
+<td>Input that spent a given revision</td>
+</tr>
+<tr>
+<td><a href="getancestors/">getAncestors</a></td>
+<td>Ancestor transaction ids (or hex map) for a location</td>
+</tr>
 </tbody>
 </table>
 </div>
 </retype-table>
 <h3 id="wallet">Wallet</h3>
-<p>Access the client side wallet.</p>
-<retype-table copy-text="| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [sign](./sign.md) | Signs a Bitcoin transaction |
-| [broadcast](./broadcast.md) | Broadcasts a Bitcoin transaction |
-| [send](./send.md) | Sends satoshis to an address |
-| [rpc](./rpcCall.md) | Access Bitcoin's RPC interface |
-| [getAddress](./getAddress.md) | Returns the Bitcoin address of the computer wallet |
-| [getBalance](./getBalance.md) | Confirmed, unconfirmed and total balance in sats |
-| [getChain](./getChain.md) | Returns the blockchain |
-| [getNetwork](./getNetwork.md) | Returns the network |
-| [getMnemonic](./getMnemonic.md) | Returns a BIP39 mnemonic sentence |
-| [getPassphrase](./getPassphrase.md) | Returns the passphrase |
-| [getPrivateKey](./getPrivateKey.md) | Returns the private key |
-| [getPublicKey](./getPublicKey.md) | Returns the public key |
-| [getUtxos](./getUtxos.md) | Returns an array of unspent transaction outputs |">
+<p>Access the client-side wallet and node connection.</p>
+<retype-table copy-text="| Method                              | Description                                          |
+| ----------------------------------- | ---------------------------------------------------- |
+| [sign](./sign.md)                   | Signs a Bitcoin transaction                          |
+| [broadcast](./broadcast.md)         | Broadcasts a Bitcoin transaction                     |
+| [send](./send.md)                   | Sends satoshis to an address                         |
+| [faucet](./faucet.md)               | Fund an address on regtest                           |
+| [listTxs](./listTxs.md)             | Sent and received transactions for an address        |
+| [rpc](./rpcCall.md)                 | Call Bitcoin RPC methods via the node                |
+| [getAddress](./getAddress.md)       | Wallet address                                       |
+| [getBalance](./getBalance.md)       | Confirmed, unconfirmed, and total balance in sats    |
+| [getChain](./getChain.md)           | Chain (`LTC`, `BTC`, …)                              |
+| [getNetwork](./getNetwork.md)       | Network (`mainnet`, `testnet`, `regtest`)            |
+| [getUrl](./getUrl.md)               | URL of the connected Bitcoin Computer Node           |
+| [getMnemonic](./getMnemonic.md)     | BIP39 mnemonic                                       |
+| [getPassphrase](./getPassphrase.md) | Wallet passphrase                                    |
+| [getPath](./getPath.md)             | BIP32 derivation path                                |
+| [getPrivateKey](./getPrivateKey.md) | Private key (hex/WIF string form used by the wallet) |
+| [getPublicKey](./getPublicKey.md)   | Public key (hex)                                     |
+| [getFee](./getFee.md)               | Fee rate in sat/byte                                 |
+| [setFee](./setFee.md)               | Set fee rate in sat/byte                             |
+| [getVersion](./getVersion.md)       | Static: library version string                       |
+| [isUnspent](./isUnspent.md)         | Whether a revision is still unspent on the chain     |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
@@ -321,44 +400,157 @@
 <td>Sends satoshis to an address</td>
 </tr>
 <tr>
+<td><a href="faucet/">faucet</a></td>
+<td>Fund an address on regtest</td>
+</tr>
+<tr>
+<td><a href="listtxs/">listTxs</a></td>
+<td>Sent and received transactions for an address</td>
+</tr>
+<tr>
 <td><a href="rpccall/">rpc</a></td>
-<td>Access Bitcoin&#x27;s RPC interface</td>
+<td>Call Bitcoin RPC methods via the node</td>
 </tr>
 <tr>
 <td><a href="getaddress/">getAddress</a></td>
-<td>Returns the Bitcoin address of the computer wallet</td>
+<td>Wallet address</td>
 </tr>
 <tr>
 <td><a href="getbalance/">getBalance</a></td>
-<td>Confirmed, unconfirmed and total balance in sats</td>
+<td>Confirmed, unconfirmed, and total balance in sats</td>
 </tr>
 <tr>
 <td><a href="getchain/">getChain</a></td>
-<td>Returns the blockchain</td>
+<td>Chain (<code translate="no" v-pre>LTC</code>, <code translate="no" v-pre>BTC</code>, …)</td>
 </tr>
 <tr>
 <td><a href="getnetwork/">getNetwork</a></td>
-<td>Returns the network</td>
+<td>Network (<code translate="no" v-pre>mainnet</code>, <code translate="no" v-pre>testnet</code>, <code translate="no" v-pre>regtest</code>)</td>
+</tr>
+<tr>
+<td><a href="geturl/">getUrl</a></td>
+<td>URL of the connected Bitcoin Computer Node</td>
 </tr>
 <tr>
 <td><a href="getmnemonic/">getMnemonic</a></td>
-<td>Returns a BIP39 mnemonic sentence</td>
+<td>BIP39 mnemonic</td>
 </tr>
 <tr>
 <td><a href="getpassphrase/">getPassphrase</a></td>
-<td>Returns the passphrase</td>
+<td>Wallet passphrase</td>
+</tr>
+<tr>
+<td><a href="getpath/">getPath</a></td>
+<td>BIP32 derivation path</td>
 </tr>
 <tr>
 <td><a href="getprivatekey/">getPrivateKey</a></td>
-<td>Returns the private key</td>
+<td>Private key (hex/WIF string form used by the wallet)</td>
 </tr>
 <tr>
 <td><a href="getpublickey/">getPublicKey</a></td>
-<td>Returns the public key</td>
+<td>Public key (hex)</td>
 </tr>
 <tr>
-<td><a href="getutxos/">getUtxos</a></td>
-<td>Returns an array of unspent transaction outputs</td>
+<td><a href="getfee/">getFee</a></td>
+<td>Fee rate in sat/byte</td>
+</tr>
+<tr>
+<td><a href="setfee/">setFee</a></td>
+<td>Set fee rate in sat/byte</td>
+</tr>
+<tr>
+<td><a href="getversion/">getVersion</a></td>
+<td>Static: library version string</td>
+</tr>
+<tr>
+<td><a href="isunspent/">isUnspent</a></td>
+<td>Whether a revision is still unspent on the chain</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="indexer-readiness">Indexer readiness</h3>
+<p>After broadcast, the node may take a short time to index outputs. Use these when you need strong read consistency before <code translate="no" v-pre>sync</code> / <code translate="no" v-pre>getOUTXOs</code>.</p>
+<retype-table copy-text="| Method                                | Description                                         |
+| ------------------------------------- | --------------------------------------------------- |
+| [isIndexed](./isIndexed.md)           | Whether the node has committed Output rows for a tx |
+| [waitForIndexed](./waitForIndexed.md) | Poll until indexed (or timeout)                     |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="isindexed/">isIndexed</a></td>
+<td>Whether the node has committed Output rows for a tx</td>
+</tr>
+<tr>
+<td><a href="waitforindexed/">waitForIndexed</a></td>
+<td>Poll until indexed (or timeout)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="real-time-sse">Real-time (SSE)</h3>
+<retype-table copy-text="| Method                                            | Description                                       |
+| ------------------------------------------------- | ------------------------------------------------- |
+| [subscribe](./subscribe.md)                       | Updates for a smart-object id                     |
+| [streamTXOs](./stream.md)                         | Stream outputs matching a filter                  |
+| [streamMempoolCleanup](./streamMempoolCleanup.md) | Notifications when stale mempool rows are removed |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="subscribe/">subscribe</a></td>
+<td>Updates for a smart-object id</td>
+</tr>
+<tr>
+<td><a href="stream/">streamTXOs</a></td>
+<td>Stream outputs matching a filter</td>
+</tr>
+<tr>
+<td><a href="streammempoolcleanup/">streamMempoolCleanup</a></td>
+<td>Notifications when stale mempool rows are removed</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h3 id="deprecated">Deprecated</h3>
+<p>Still present for backward compatibility; prefer the replacements.</p>
+<retype-table copy-text="| Method                    | Prefer instead                                                                       |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| [query](./query.md)       | [getOUTXOs](./getOUTXOs.md)                                                          |
+| [getUtxos](./getUtxos.md) | [getUTXOs](./getUTXOs2.md) with `{ address, isObject: false }` (wallet-level helper) |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Prefer instead</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="query/">query</a></td>
+<td><a href="getoutxos/">getOUTXOs</a></td>
+</tr>
+<tr>
+<td><a href="./getutxos.md">getUtxos</a></td>
+<td><a href="./getutxos2.md">getUTXOs</a> with <code translate="no" v-pre>{ address, isObject: false }</code> (wallet-level helper)</td>
 </tr>
 </tbody>
 </table>

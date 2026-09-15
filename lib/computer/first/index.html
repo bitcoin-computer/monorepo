@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -44,12 +44,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
-    <link href="../../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -157,6 +157,8 @@
 <p>Returns the first revision of the same on chain object, that is, its id.</p>
 <h2 id="description">Description</h2>
 <p>If <code translate="no" v-pre>first</code> is called with a revision for which no output exists, it throws an error <code translate="no" v-pre>Rev not found</code>. If the output exists but contains no object, the same error is thrown. If the output contains an object, <code translate="no" v-pre>first</code> will return the first revision of an object as indicated by the arrows in the figure below.</p>
+<h3 id="inside-smart-contracts-innercomputer">Inside smart contracts (<code translate="no" v-pre>InnerComputer</code>)</h3>
+<p>The starting revision must be <strong>confirmed</strong>. Missing or unconfirmed starts invalidate the contract evaluation. See <a href="../../contract/#querying-inside-of-a-contract">Contract – Querying</a>.</p>
 <figure class="content-center">
     <a href="https://wallet.bitcoincomputer.io">
         <img src="../../../static/first.png" alt="" class="max-w-full h-auto rounded-image-rounded border-image-border border-image-border-width" width="2181" height="522" />
@@ -166,7 +168,7 @@
 <h2 id="example">Example</h2>
 <div id="example-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">import { Computer, Contract } from '@bitcoin-computer/lib'
-import { chain, expect, network, url } from '../../utils/index.js'
+import { chain, expect, network, sleep, url } from '../../utils/index.js'
 
 describe('first', () =&gt; {
   // A smart contract
@@ -192,6 +194,7 @@ describe('first', () =&gt; {
   it('Should work if an object is not updated', async () =&gt; {
     const counter = await computer.new(Counter, [])
 
+    await computer.waitForIndexed(counter._rev)
     // The first of an id is the id
     expect(await computer.first(counter._id)).eq(counter._id)
   })

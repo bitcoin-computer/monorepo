@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../static/favicon.ico" />
-    <link href="../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -350,36 +350,27 @@ expect(latestChat.messages).deep.eq(['hello', 'world'])
 expect(latestChat).to.deep.equal(chat)</code></pre>
 </doc-codeblock></div>
 <h2 id="finding-on-chain-objects">Finding On-Chain Objects</h2>
-<p>The <a href="../lib/computer/query/"><code translate="no" v-pre>computer.query</code></a> function returns an array of strings containing the latest revisions of on-chain objects. For example, it can return the latest revision of an object given its id:</p>
+<p>Prefer <a href="../lib/computer/getoutxos/"><code translate="no" v-pre>computer.getOUTXOs</code></a> to list unspent smart-object revisions, and <a href="../lib/computer/latest/"><code translate="no" v-pre>computer.latest</code></a> plus <a href="../lib/computer/sync/"><code translate="no" v-pre>computer.sync</code></a> to resolve one object by id. The older <a href="../lib/computer/query/"><code translate="no" v-pre>computer.query</code></a> API is deprecated and forwards to <code translate="no" v-pre>getOUTXOs</code> (it does <strong>not</strong> accept an <code translate="no" v-pre>ids</code> filter).</p>
+<p>To load the latest state of an object from its id (for example from a URL):</p>
 <div id="finding-on-chain-objects-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const [rev] = await computer.query({
-  // Search by original on-chain object id
-  ids: [chat._id],
-})
-// Returns most recent revision
-expect(rev).to.equal(chat._rev)</code></pre>
-</doc-codeblock></div>
-<p>A basic pattern in applications is to identify a on-chain object by its id, to look up the object&#x27;s latest revision using <code translate="no" v-pre>computer.query</code>, and then to compute its latest state using <code translate="no" v-pre>computer.sync</code>. For example, in our chat app the url could contain a chat&#x27;s id and the latest state of the chat could be computed as shown below.</p>
-<div id="finding-on-chain-objects-code-2" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Extract the id from the url
 const id = urlToId(window.location)
 
-// Look up the latest revision
-const [rev] = await computer.query({ ids: [id] })
-
-// Compute the latest state
+// Look up the latest revision, then compute state
+const rev = await computer.latest(id)
 const latestChat = await computer.sync(rev)</code></pre>
 </doc-codeblock></div>
-<p><code translate="no" v-pre>computer.query</code> can also return all revisions of on-chain objects owned by a public key. This could be useful for creating a user page for the chat application.</p>
-<div id="finding-on-chain-objects-code-3" class="codeblock-wrapper"><doc-codeblock>
+<p>When you already hold a known revision (e.g. <code translate="no" v-pre>chat._rev</code>), you can <code translate="no" v-pre>sync</code> it directly.</p>
+<p>To list all unspent smart objects owned by a public key (useful for a user page):</p>
+<div id="finding-on-chain-objects-code-2" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Get public key from a client side wallet
 const publicKey = computer.getPublicKey()
 
-// Look up all revisions owned by user
-const revs = await computer.query({ publicKey })</code></pre>
+// Unspent smart-object revisions for this owner
+const revs = await computer.getOUTXOs({ publicKey })</code></pre>
 </doc-codeblock></div>
-<p>It is also possible to navigate the revision history of a on-chain object using <a href="../lib/computer/next/"><code translate="no" v-pre>computer.next</code></a> and <a href="../lib/computer/prev/"><code translate="no" v-pre>computer.prev</code></a>:</p>
-<div id="finding-on-chain-objects-code-4" class="codeblock-wrapper"><doc-codeblock>
+<p>It is also possible to navigate the revision history of an on-chain object using <a href="../lib/computer/next/"><code translate="no" v-pre>computer.next</code></a> and <a href="../lib/computer/prev/"><code translate="no" v-pre>computer.prev</code></a>:</p>
+<div id="finding-on-chain-objects-code-3" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">// Navigating forward
 expect(await computer.next(chat._id)).eq(chat._rev)
 
@@ -597,10 +588,10 @@ expect(effect).deep.eq({
 <li>whether to mock objects to do not exist yet on-chain (see more <doc-anchor-trigger to="#mocking">below</doc-anchor-trigger>)</li>
 </ul>
 <h2 id="module-system">Module System</h2>
-<p>The <a href="../lib/computer/deploy/"><code translate="no" v-pre>computer.deploy</code></a> function stores a JavaScript modules on the blockchain. It returns a string representing the output where the module is stored. Modules can refer to one another using the familiar <code translate="no" v-pre>import</code> syntax. In the example below <code translate="no" v-pre>moduleB</code> refers to <code translate="no" v-pre>moduleA</code> via <code translate="no" v-pre>specifierA</code>. Module specifiers can be passed into <code translate="no" v-pre>computer.encode</code> and <code translate="no" v-pre>computer.new</code> functions.</p>
+<p>The <a href="../lib/computer/deploy/"><code translate="no" v-pre>computer.deploy</code></a> function stores a JavaScript module on the blockchain. It returns a module specifier (typically <code translate="no" v-pre>txId:0</code>) for the deploy. Modules can refer to one another using the familiar <code translate="no" v-pre>import</code> syntax. In the example below <code translate="no" v-pre>moduleB</code> refers to <code translate="no" v-pre>moduleA</code> via <code translate="no" v-pre>specifierA</code>. Module specifiers can be passed into <code translate="no" v-pre>computer.encode</code> and <code translate="no" v-pre>computer.new</code> functions.</p>
 <div id="module-system-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const moduleA = 'export class A extends Contract {}'
-// Returns on-chain module id
+// Returns on-chain module specifier
 const specifierA = await computer.deploy(moduleA)
 
 // Create dependent module referencing first module
@@ -619,10 +610,13 @@ const { tx } = await computer.encode({
   mod: specifierB,
 })</code></pre>
 </doc-codeblock></div>
-<p>Modules can be loaded from the blockchain using <a href="../lib/computer/load/">computer.load</a>.</p>
+<p><a href="../lib/computer/load/"><code translate="no" v-pre>computer.load</code></a> fetches the module source and evaluates it, returning its <strong>exports</strong> (not the source string). To inspect the indexed source without evaluating, use <a href="../lib/computer/getmodule/"><code translate="no" v-pre>getModule</code></a> (field <code translate="no" v-pre>ept</code>).</p>
 <div id="module-system-code-2" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const loadedB = await computer.load(specifierB)
-expect(loadedB).eq(moduleB)</code></pre>
+<pre translate="no" class="language-javascript"><code v-pre class="language-javascript">const { B } = await computer.load(specifierB)
+expect(typeof B).eq('function')
+
+const row = await computer.getModule(specifierB)
+expect(row.ept).eq(moduleB)</code></pre>
 </doc-codeblock></div>
 <h2 id="bitcoin-script-support">Bitcoin Script Support</h2>
 <p>In addition to setting the <code translate="no" v-pre>_owners</code> property to an array of strings as described <doc-anchor-trigger to="#data-ownership">above</doc-anchor-trigger>, it is possible to set <code translate="no" v-pre>_owners</code> to a string encoding a Bitcoin Script ASM. In this case the output created for that on-chain object will use a pay-to-script-hash (p2sh) output with that script.</p>

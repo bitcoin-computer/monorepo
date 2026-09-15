@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../static/favicon.ico" />
-    <link href="../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -142,10 +142,13 @@
 <p><em>Query revisions by module specifier, public key, limit, order, offset and list of transaction ids.</em></p>
 <h2 id="endpoint">Endpoint</h2>
 <p><code translate="no" v-pre>/v1/CHAIN/NETWORK/non-standard-utxos</code></p>
+<h2 id="description">Description</h2>
+<p>Returns smart-object (non-standard) UTXO revisions. The optional <code translate="no" v-pre>mod</code> filter selects objects that <strong>belong to</strong> a deployed module (module membership on the revision), not the module source itself.</p>
+<p>To list or fetch <strong>module deploy</strong> sources, use <a href="../modules/">modules</a> and <a href="../module/">module</a> instead.</p>
 <h2 id="query-parameters">Query Parameters</h2>
 <retype-table copy-text="| Parameter   | Type   | Description                                 |
 | ----------- | ------ | ------------------------------------------- |
-| `mod`       | string | Optional filter.                            |
+| `mod`       | string | Optional filter by module specifier (membership on the object). |
 | `publicKey` | string | Optional filter by public key.              |
 | `limit`     | string | Maximum number of results to return.        |
 | `offset`    | string | Number of results to skip (for pagination). |
@@ -163,7 +166,7 @@
 <tr>
 <td><code translate="no" v-pre>mod</code></td>
 <td>string</td>
-<td>Optional filter.</td>
+<td>Optional filter by module specifier (membership on the object).</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>publicKey</code></td>

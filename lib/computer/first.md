@@ -22,6 +22,10 @@ Returns the first revision of the same on chain object, that is, its id.
 
 If `first` is called with a revision for which no output exists, it throws an error `Rev not found`. If the output exists but contains no object, the same error is thrown. If the output contains an object, `first` will return the first revision of an object as indicated by the arrows in the figure below.
 
+### Inside smart contracts (`InnerComputer`)
+
+The starting revision must be **confirmed**. Missing or unconfirmed starts invalidate the contract evaluation. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
+
 [![](../../static/first.png)](https://wallet.bitcoincomputer.io)
 
 ## Example

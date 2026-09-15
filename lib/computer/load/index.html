@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -12,7 +12,7 @@
     <!-- Primary Meta Tags -->
     <title>load</title>
     <meta name="title" content="load">
-    <meta name="description" content="Loads a module from the blockchain.">
+    <meta name="description" content="Loads a module from the blockchain and returns its exports.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.bitcoincomputer.io/lib/computer/load/">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.bitcoincomputer.io/lib/computer/load/">
     <meta property="og:title" content="load">
-    <meta property="og:description" content="Loads a module from the blockchain.">
+    <meta property="og:description" content="Loads a module from the blockchain and returns its exports.">
     <meta property="og:site_name" content="Bitcoin Computer">
     <meta property="og:locale" content="en_US">
 
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://docs.bitcoincomputer.io/lib/computer/load/">
     <meta name="twitter:title" content="load">
-    <meta name="twitter:description" content="Loads a module from the blockchain.">
+    <meta name="twitter:description" content="Loads a module from the blockchain and returns its exports.">
 
     <!-- Alternate Markdown -->
     <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/lib/computer/load.md">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
-    <link href="../../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -139,16 +139,30 @@
 
                 <!-- Page content  -->
 <h1 id="load">load</h1>
-<p><em>Loads a module from the blockchain.</em></p>
+<p><em>Loads a module from the blockchain and returns its exports.</em></p>
 <h3 id="type">Type</h3>
 <div id="type-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">;(rev: string) =&gt; Promise&lt;ModuleExportsNamespace&gt;</code></pre>
 </doc-codeblock></div>
 <h3 id="parameters">Parameters</h3>
 <h4 id="rev"><code translate="no" v-pre>rev</code></h4>
-<p>A module specifier encoded as a string of the form <code translate="no" v-pre>&lt;transaction-id&gt;:&lt;output-number&gt;</code>.</p>
+<p>A module specifier encoded as a string of the form <code translate="no" v-pre>&lt;transaction-id&gt;:&lt;output-number&gt;</code> (typically <code translate="no" v-pre>&lt;txId&gt;:0</code> as returned by <a href="../deploy/"><code translate="no" v-pre>computer.deploy</code></a>).</p>
 <h3 id="return-value">Return Value</h3>
-<p>A JavaScript module.</p>
+<p>A JavaScript module namespace (the exports of the deployed ES module).</p>
+<h2 id="description">Description</h2>
+<p><code translate="no" v-pre>load</code> fetches the module source for the given specifier and evaluates it in a SES compartment (with <code translate="no" v-pre>Contract</code> and a restricted inner computer available as globals).</p>
+<p>How the source is recovered depends on <code translate="no" v-pre>moduleStorageType</code> (see <a href="../deploy/"><code translate="no" v-pre>deploy</code></a>):</p>
+<ul>
+<li><strong><code translate="no" v-pre>multisig</code></strong> — Reads cleartext <code translate="no" v-pre>{ ept }</code> from the deploy transaction’s data outputs (<code translate="no" v-pre>Transaction.onChainMetaData.ept</code>).</li>
+<li><strong><code translate="no" v-pre>taproot</code></strong> — Reads the module body from the reveal transaction’s input witness (<code translate="no" v-pre>BC</code> protocol envelope, content type <code translate="no" v-pre>text/javascript</code>).</li>
+</ul>
+<p>Do not use <a href="../decode/"><code translate="no" v-pre>computer.decode</code></a> on a module specifier or deploy transaction; <code translate="no" v-pre>decode</code> only handles transition metadata (<code translate="no" v-pre>exp</code> / <code translate="no" v-pre>env</code> / <code translate="no" v-pre>mod</code>).</p>
+<p>Module sources are cached client-side after the first successful fetch for a given deploy <code translate="no" v-pre>txId</code>.</p>
+<p>A Bitcoin Computer Node also indexes deploys in its <code translate="no" v-pre>Module</code> table. To discover or inspect sources without evaluating them, use <a href="../getmodules/"><code translate="no" v-pre>getModules</code></a> / <a href="../getmodule/"><code translate="no" v-pre>getModule</code></a> (or the node <a href="../../../node/modules/">modules</a> / <a href="../../../node/module/">module</a> HTTP endpoints).</p>
+<h3 id="inside-smart-contracts-innercomputer">Inside smart contracts (<code translate="no" v-pre>InnerComputer</code>)</h3>
+<p>Module locations are revs of the form <code translate="no" v-pre>txId:outputIndex</code>. Inside a contract, the module’s deploy transaction must be <strong>confirmed</strong>; an unconfirmed deploy invalidates the evaluation. Off-chain <code translate="no" v-pre>computer.load</code> may still resolve mempool deploys for development. See <a href="../../contract/#querying-inside-of-a-contract">Contract – Querying</a>.</p>
+<h3 id="inside-smart-contracts-innercomputer-1">Inside smart contracts (<code translate="no" v-pre>InnerComputer</code>)</h3>
+<p>Module locations are revs of the form <code translate="no" v-pre>txId:outputIndex</code>. Inside a contract, the module’s deploy transaction must be <strong>confirmed</strong>; an unconfirmed deploy invalidates the evaluation. Off-chain <code translate="no" v-pre>computer.load</code> may still resolve mempool deploys for development. See <a href="../../contract/#querying-inside-of-a-contract">Contract – Querying</a>.</p>
 <h2 id="example">Example</h2>
 <div id="example-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">import { Computer, Contract } from '@bitcoin-computer/lib'
@@ -186,11 +200,11 @@ describe('load', () =&gt; {
             
                 <nav id="retype-nextprev" class="print:hidden flex mt-14">
                     <div class="w-1/2">
-                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/latest/">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../../lib/computer/listtxs/">
                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                             <span>
                                 <span class="block text-xs font-normal text-base-text-muted">Previous</span>
-                                <span class="block mt-1">latest</span>
+                                <span class="block mt-1">list​Txs</span>
                             </span>
                         </a>
                     </div>

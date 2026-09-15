@@ -24,15 +24,13 @@ A **space-separated string** containing the arguments for the RPC call.
 
 ### Return Value
 
-Returns a Promise that resolves to the response from the Bitcoin node, typically in the shape:
+Returns a Promise that resolves to **bitcoind's `result`** for the method (not the `{ result, error, id }` JSON-RPC envelope). The node unwraps that envelope before responding.
 
-```ts
-{
-  result: any,   // The actual result returned by bitcoind
-  error: any,
-  id: number
-}
-```
+The shape depends on the method, for example:
+
+- `getblockchaininfo` → `{ blocks, bestblockhash, ... }`
+- `getrawtransaction` with verbosity `1` → `{ txid, hex, vin, vout, ... }`
+- `getblockhash` → a hash string
 
 ## Examples
 
@@ -52,5 +50,6 @@ const tx = await computer.rpc('getrawtransaction', `${txId} 1`)
 - The underlying node now supports omitting optional parameters for methods like
   `getrawtransaction`, `getblock`, and `getblockheader`.
 - Only whitelisted methods (controlled by `BCN_ALLOWED_RPC_METHODS` on the node) can be called.
+- For common lookups, prefer the typed helpers: [`txIdToBlockTime`](./txIdToBlockTime.md), [`txIdToBlockHeight`](./txIdToBlockHeight.md), [`txIdToBlockHash`](./txIdToBlockHash.md), [`getBlockHash`](./getBlockHash.md), [`getBlockHeight`](./getBlockHeight.md), [`getRawTransaction`](./getRawTransaction.md), [`getRawBlock`](./getRawBlock.md), and [`getBlockHeader`](./getBlockHeader.md).
 
 <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/rpc-call.test.ts" target=_blank>Source</a>

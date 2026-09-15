@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../static/favicon.ico" />
-    <link href="../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -199,34 +199,116 @@ const c = new C()
 expect(c.n).eq(0)</code></pre>
 </doc-codeblock></div>
 <h2 id="querying-inside-of-a-contract">Querying inside of a Contract</h2>
-<p>Smart contracts can access several built-in functions (provided by <code translate="no" v-pre>InnerComputer</code>) to explore information related to revisions, transaction ancestry, on-chain state, and block metadata. These functions do not modify blockchain data. Instead, they allow a contract to traverse its own revision graph, another contract&#x27;s revision graph, load modules, or access contextual information derived from transactions in a safe and deterministic way.</p>
-<h3 id="determinism-and-safety-rules">Determinism and Safety Rules</h3>
-<p>The built-in functions are designed to be <strong>deterministic</strong>: given two identical blockchain states and two identical Bitcoin Computer node states, a contract method invoked with the same parameters must always return the same result.</p>
-<p>To enforce safety and determinism:</p>
-<ul>
-<li>Accessing <strong>non-existent on-chain state</strong> (a revision, transaction, or module that cannot be found) is <strong>forbidden</strong> inside smart contracts.</li>
-<li>If a query function is called with malformed identifiers, or identifiers that do not correspond to actual Bitcoin Computer state, <strong>the entire contract evaluation is invalidated</strong>.</li>
-<li>Internally, a global invalid-state flag is set. After evaluation, <code translate="no" v-pre>Db.eval</code> checks this flag; if set, the evaluation (and thus the transaction) is rejected.</li>
-<li>The flag is reset at the start of every new compartment evaluation.</li>
-</ul>
-<p>When invalidation occurs, the function throws an error with a message like:</p>
+<p>Smart contracts can access a restricted global <code translate="no" v-pre>computer</code> (the <strong>InnerComputer</strong>) to read on-chain history and block metadata. These helpers do not write blockchain state. They exist so contracts can traverse revision graphs, load modules, or base decisions on confirmed chain data in a <strong>deterministic</strong> way.</p>
+<p>Architecture (SES sandbox, eval-frame invalidation, hardened endowment, client vs contract <code translate="no" v-pre>computer</code>) is documented in <strong><a href="sandbox-and-inner-computer/">Sandbox &amp; Inner Computer</a></strong>.</p>
+<p>The outer <a href="../computer/"><code translate="no" v-pre>Computer</code></a> client API is <strong>not</strong> the same surface: many client methods may return <code translate="no" v-pre>undefined</code> for mempool data or live tips. Inside a contract, almost every “not yet known / not yet confirmed” observation <strong>invalidates</strong> the whole evaluation so two validators can never disagree under chain extension.</p>
+<h3 id="determinism-property-observation-stability">Determinism property (observation stability)</h3>
+<p>Let <code translate="no" v-pre>b₁</code> and <code translate="no" v-pre>b₂</code> be chain states such that <code translate="no" v-pre>b₂</code> extends <code translate="no" v-pre>b₁</code> (every block and transaction present in <code translate="no" v-pre>b₁</code> is also in <code translate="no" v-pre>b₂</code>).</p>
+<p>For any InnerComputer method <code translate="no" v-pre>m</code> and arguments <code translate="no" v-pre>args</code>:</p>
 <blockquote>
-<p>&quot;Accessing non-existent on-chain state inside a smart contract is forbidden.&quot;</p>
+<p>If <code translate="no" v-pre>computer.m(...args)</code> <strong>succeeds without invalidation</strong> against <code translate="no" v-pre>b₁</code>, then the same call against <code translate="no" v-pre>b₂</code> must succeed and return the <strong>same value</strong>.</p>
 </blockquote>
-<p>This acts as a hard safety boundary: contracts cannot silently read missing data or depend on off-chain assumptions.</p>
-<h3 id="full-api-reference">Full API Reference</h3>
-<p>All query functions available inside <code translate="no" v-pre>Contract</code> methods (injected via the secure <code translate="no" v-pre>InnerComputer</code> compartment):</p>
-<retype-table copy-text="| Function          | Signature                                                     | Returns                              | Invalidates on missing / error?      | Notes                                                         |
-| ----------------- | ------------------------------------------------------------- | ------------------------------------ | ------------------------------------ | ------------------------------------------------------------- |
-| `sync`            | `sync(location: string): Promise&lt;any&gt;`                        | The latest object state              | Yes                                  | Deep-cloned with BigInt support                               |
-| `decode`          | `decode(txId: string): Promise&lt;TransitionJSON&gt;`               | `{ exp, env?, mod? }` metadata       | Yes                                  | Normalizes `mod` to `undefined` if absent                     |
-| `load`            | `load(location: string): Promise&lt;Record&lt;string, any&gt;&gt;`        | Module exports namespace             | Yes                                  | For dynamic module loading inside contracts                   |
-| `getAncestors`    | `getAncestors(location: string): Promise&lt;string[]&gt;`           | Array of ancestor locations          | Yes (on error)                       | Empty array `[]` if no ancestors                              |
-| `first`           | `first(rev: string): Promise&lt;string&gt;`                         | First revision in lineage            | Yes                                  | Always returns a string for valid input                       |
-| `prev`            | `prev(rev: string): Promise&lt;string \| undefined&gt;`             | Previous revision or `undefined`     | Only on underlying error             | Safe to call on tip; returns `undefined` without invalidation |
-| `next`            | `next(rev: string): Promise&lt;string \| undefined&gt;`             | Next revision or throws              | **Yes, including if no next exists** | Strict: absence of next **invalidates** execution             |
-| `last`            | `last(rev: string): Promise&lt;string \| undefined&gt;`             | Latest (tip) revision or `undefined` | Only on underlying error             | Returns tip of lineage                                        |
-| `txIdToBlockTime` | `txIdToBlockTime(txId: string): Promise&lt;bigint \| undefined&gt;` | Block time as `bigint`               | Yes                                  | Requires mined Bitcoin Computer transaction                   |">
+<p>Successful observations must therefore be <strong>invariant under future chain growth</strong>. Transient facts (mempool-only txs, “no next revision yet”, unspent tip as “last”, future block heights) must not become part of a valid transition.</p>
+<h3 id="how-invalidation-works">How invalidation works</h3>
+<ol>
+<li>On a forbidden observation, InnerComputer marks the <strong>current evaluation frame</strong> invalid and throws. There is <strong>no per-instance invalid flag</strong>. Each <code translate="no" v-pre>Db.eval</code> / <code translate="no" v-pre>Modules.load</code> binds a frame via <code translate="no" v-pre>withEvalInvalidation</code>:
+<ul>
+<li><strong>Node:</strong> <code translate="no" v-pre>AsyncLocalStorage</code> (loaded without a static <code translate="no" v-pre>node:async_hooks</code> import so browser bundles stay clean). Concurrent evals are isolated by async context.</li>
+<li><strong>Browser:</strong> await-scoped stack with serialized roots (no Promise patching under SES <code translate="no" v-pre>lockdown</code>). Nested loads still nest; concurrent root evals queue.</li>
+</ul>
+</li>
+<li>The host installs the active observation client on the frame; free-var query methods route to that client for the evaluation. Invalidation always writes the <strong>active frame</strong>, so catch-and-continue cannot soft-succeed.</li>
+<li>A contract <code translate="no" v-pre>try/catch</code> <strong>cannot</strong> clear invalidation — the endowment has no invalidation API. After the compartment returns <strong>or</strong> throws, the host rejects using <strong>only</strong> the frame it holds (<code translate="no" v-pre>frame.invalid</code> / <code translate="no" v-pre>frame.msg</code>).</li>
+<li>The compartment is endowed with a <strong>hardened query-only facade</strong> of InnerComputer methods (no internal <code translate="no" v-pre>Computer</code> client, no <code translate="no" v-pre>isInvalid</code> / <code translate="no" v-pre>resetInvalid</code>, methods not replaceable).</li>
+<li><strong><code translate="no" v-pre>console</code> is only available in <code translate="no" v-pre>dev</code> / <code translate="no" v-pre>debug</code> mode.</strong> In <strong><code translate="no" v-pre>prod</code></strong>, contracts must not use <code translate="no" v-pre>console</code> (it is not in scope → <code translate="no" v-pre>ReferenceError</code>). Logging is not part of the deterministic on-chain API; see <a href="sandbox-and-inner-computer/#console-endowment-dev-only">Sandbox &amp; Inner Computer</a>.</li>
+</ol>
+<h4 id="error-message-shape">Error message shape</h4>
+<p>All invalidation errors exposed to callers end with <strong>exactly one</strong> copy of:</p>
+<blockquote>
+<p>Accessing non-existent on-chain state inside a smart contract is forbidden.</p>
+</blockquote>
+<ul>
+<li>Policy rejections (for example, future <code translate="no" v-pre>getBlockHash</code> height, missing <code translate="no" v-pre>getTXOs</code> stabilizer) and missing/unconfirmed observations both go through a shared formatter as soon as invalidation fires. A short reason may appear <strong>before</strong> the standard suffix; the suffix is never doubled.</li>
+<li>Uncaught throws and catch-and-continue paths share this shape: the thrown error and <code translate="no" v-pre>frame.msg</code> already carry the single suffix; <code translate="no" v-pre>Db.eval</code> rethrows the same canonical form when the frame is invalid.</li>
+</ul>
+<p>Clients and tests should match with <code translate="no" v-pre>message.endsWith(...)</code> (or equivalent). Do not expect a short policy reason alone without the forbidden suffix.</p>
+<h3 id="confirmed-locations-only">Confirmed locations only</h3>
+<p>Most location-based APIs require the referenced <strong>transaction to be confirmed</strong> (in a block) before the call may succeed. Unconfirmed / mempool locations are treated as transient.</p>
+<retype-table copy-text="| API                                                   | Confirmation rule                                                                                                                 |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `sync`, `decode`, `getAncestors`, `getRawTransaction` | Starting location / txId must be confirmed                                                                                        |
+| `load`                                                | Module deploy location (`txId:vout`) must be confirmed                                                                            |
+| `first`, `prev`                                       | Starting revision’s tx must be confirmed                                                                                          |
+| `next`                                                | Starting revision **and** returned successor must be confirmed                                                                    |
+| `last`                                                | Starting revision, returned tip, and the tip’s **spending** tx must be confirmed (unspent tip or mempool-only spend → invalidate) |
+| `txIdToBlockTime`                                     | Tx must be confirmed (no nullish “not mined yet”)                                                                                 |
+| `txIdToBlockHeight` / `txIdToBlockHash`               | Unconfirmed → invalidate (no block hash / not mined yet)                                                                          |
+| `getTXOs` (+ `getUTXOs` / `getOTXOs` / `getOUTXOs`)   | Must include a **stabilizing filter** (below); future/negative heights forbidden                                                  |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="comfortable">
+<thead>
+<tr>
+<th>API</th>
+<th>Confirmation rule</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code translate="no" v-pre>sync</code>, <code translate="no" v-pre>decode</code>, <code translate="no" v-pre>getAncestors</code>, <code translate="no" v-pre>getRawTransaction</code></td>
+<td>Starting location / txId must be confirmed</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>load</code></td>
+<td>Module deploy location (<code translate="no" v-pre>txId:vout</code>) must be confirmed</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>first</code>, <code translate="no" v-pre>prev</code></td>
+<td>Starting revision’s tx must be confirmed</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>next</code></td>
+<td>Starting revision <strong>and</strong> returned successor must be confirmed</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>last</code></td>
+<td>Starting revision, returned tip, and the tip’s <strong>spending</strong> tx must be confirmed (unspent tip or mempool-only spend → invalidate)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>txIdToBlockTime</code></td>
+<td>Tx must be confirmed (no nullish “not mined yet”)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>txIdToBlockHeight</code> / <code translate="no" v-pre>txIdToBlockHash</code></td>
+<td>Unconfirmed → invalidate (no block hash / not mined yet)</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getTXOs</code> (+ <code translate="no" v-pre>getUTXOs</code> / <code translate="no" v-pre>getOTXOs</code> / <code translate="no" v-pre>getOUTXOs</code>)</td>
+<td>Must include a <strong>stabilizing filter</strong> (below); future/negative heights forbidden</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<p><strong>App / test implication:</strong> after <code translate="no" v-pre>deploy</code>, <code translate="no" v-pre>new</code>, method calls, or <code translate="no" v-pre>delete</code>, wait for confirmation before on-chain code that walks history, loads modules, or calls <code translate="no" v-pre>last</code> / <code translate="no" v-pre>next</code> / <code translate="no" v-pre>txIdToBlockTime</code> on those locations.</p>
+<h3 id="full-api-reference-innercomputer">Full API reference (InnerComputer)</h3>
+<retype-table copy-text="| Function                         | Signature                         | Returns                    | Invalidates when                                             |
+| -------------------------------- | --------------------------------- | -------------------------- | ------------------------------------------------------------ |
+| `sync`                           | `sync(location: string)`          | Object state (deep-cloned) | Missing / unconfirmed location                               |
+| `decode`                         | `decode(txId: string)`            | `{ exp, env?, mod? }`      | Missing / unconfirmed tx                                     |
+| `load`                           | `load(location: string)`          | Module exports             | Missing / unconfirmed module location                        |
+| `getAncestors`                   | `getAncestors(location: string)`  | `string[]` (may be empty)  | Missing / unconfirmed start; empty array is **valid**        |
+| `first`                          | `first(rev: string)`              | Creation rev (`string`)    | Missing / unconfirmed start                                  |
+| `prev`                           | `prev(rev: string)`               | `string \| undefined`      | Missing / unconfirmed start; **`undefined` at root is OK**   |
+| `next`                           | `next(rev: string)`               | next rev (`string`)        | No next yet; unconfirmed start or unconfirmed successor      |
+| `last`                           | `last(rev: string)`               | Spent tip rev (`string`)   | Unspent tip; mempool-only spend; unconfirmed start/result    |
+| `txIdToBlockTime`                | `txIdToBlockTime(txId: string)`   | block time                 | Unconfirmed or missing tx                                    |
+| `txIdToBlockHeight`              | `txIdToBlockHeight(txId: string)` | height                     | Unconfirmed or missing tx                                    |
+| `txIdToBlockHash`                | `txIdToBlockHash(txId: string)`   | block hash                 | Unconfirmed or missing tx                                    |
+| `getBlockHash`                   | `getBlockHash(height: number)`    | hash                       | Negative or **future** height; missing block                 |
+| `getBlockHeight`                 | `getBlockHeight(hash: string)`    | height                     | Unknown hash                                                 |
+| `getRawTransaction`              | `getRawTransaction(txId: string)` | hex                        | Unconfirmed / missing                                        |
+| `getRawBlock` / `getBlockHeader` | by block hash                     | hex                        | Unknown hash                                                 |
+| `getTXOs`                        | `getTXOs(q: TXOQuery)`            | revs or records            | No stabilizer; future/negative height filters; query failure |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="comfortable">
 <thead>
@@ -234,177 +316,180 @@ expect(c.n).eq(0)</code></pre>
 <th>Function</th>
 <th>Signature</th>
 <th>Returns</th>
-<th>Invalidates on missing / error?</th>
-<th>Notes</th>
+<th>Invalidates when</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code translate="no" v-pre>sync</code></td>
-<td><code translate="no" v-pre>sync(location: string): Promise&lt;any&gt;</code></td>
-<td>The latest object state</td>
-<td>Yes</td>
-<td>Deep-cloned with BigInt support</td>
+<td><code translate="no" v-pre>sync(location: string)</code></td>
+<td>Object state (deep-cloned)</td>
+<td>Missing / unconfirmed location</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>decode</code></td>
-<td><code translate="no" v-pre>decode(txId: string): Promise&lt;TransitionJSON&gt;</code></td>
-<td><code translate="no" v-pre>{ exp, env?, mod? }</code> metadata</td>
-<td>Yes</td>
-<td>Normalizes <code translate="no" v-pre>mod</code> to <code translate="no" v-pre>undefined</code> if absent</td>
+<td><code translate="no" v-pre>decode(txId: string)</code></td>
+<td><code translate="no" v-pre>{ exp, env?, mod? }</code></td>
+<td>Missing / unconfirmed tx</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>load</code></td>
-<td><code translate="no" v-pre>load(location: string): Promise&lt;Record&lt;string, any&gt;&gt;</code></td>
-<td>Module exports namespace</td>
-<td>Yes</td>
-<td>For dynamic module loading inside contracts</td>
+<td><code translate="no" v-pre>load(location: string)</code></td>
+<td>Module exports</td>
+<td>Missing / unconfirmed module location</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>getAncestors</code></td>
-<td><code translate="no" v-pre>getAncestors(location: string): Promise&lt;string[]&gt;</code></td>
-<td>Array of ancestor locations</td>
-<td>Yes (on error)</td>
-<td>Empty array <code translate="no" v-pre>[]</code> if no ancestors</td>
+<td><code translate="no" v-pre>getAncestors(location: string)</code></td>
+<td><code translate="no" v-pre>string[]</code> (may be empty)</td>
+<td>Missing / unconfirmed start; empty array is <strong>valid</strong></td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>first</code></td>
-<td><code translate="no" v-pre>first(rev: string): Promise&lt;string&gt;</code></td>
-<td>First revision in lineage</td>
-<td>Yes</td>
-<td>Always returns a string for valid input</td>
+<td><code translate="no" v-pre>first(rev: string)</code></td>
+<td>Creation rev (<code translate="no" v-pre>string</code>)</td>
+<td>Missing / unconfirmed start</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>prev</code></td>
-<td><code translate="no" v-pre>prev(rev: string): Promise&lt;string \| undefined&gt;</code></td>
-<td>Previous revision or <code translate="no" v-pre>undefined</code></td>
-<td>Only on underlying error</td>
-<td>Safe to call on tip; returns <code translate="no" v-pre>undefined</code> without invalidation</td>
+<td><code translate="no" v-pre>prev(rev: string)</code></td>
+<td><code translate="no" v-pre>string \| undefined</code></td>
+<td>Missing / unconfirmed start; <strong><code translate="no" v-pre>undefined</code> at root is OK</strong></td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>next</code></td>
-<td><code translate="no" v-pre>next(rev: string): Promise&lt;string \| undefined&gt;</code></td>
-<td>Next revision or throws</td>
-<td><strong>Yes, including if no next exists</strong></td>
-<td>Strict: absence of next <strong>invalidates</strong> execution</td>
+<td><code translate="no" v-pre>next(rev: string)</code></td>
+<td>next rev (<code translate="no" v-pre>string</code>)</td>
+<td>No next yet; unconfirmed start or unconfirmed successor</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>last</code></td>
-<td><code translate="no" v-pre>last(rev: string): Promise&lt;string \| undefined&gt;</code></td>
-<td>Latest (tip) revision or <code translate="no" v-pre>undefined</code></td>
-<td>Only on underlying error</td>
-<td>Returns tip of lineage</td>
+<td><code translate="no" v-pre>last(rev: string)</code></td>
+<td>Spent tip rev (<code translate="no" v-pre>string</code>)</td>
+<td>Unspent tip; mempool-only spend; unconfirmed start/result</td>
 </tr>
 <tr>
 <td><code translate="no" v-pre>txIdToBlockTime</code></td>
-<td><code translate="no" v-pre>txIdToBlockTime(txId: string): Promise&lt;bigint \| undefined&gt;</code></td>
-<td>Block time as <code translate="no" v-pre>bigint</code></td>
-<td>Yes</td>
-<td>Requires mined Bitcoin Computer transaction</td>
+<td><code translate="no" v-pre>txIdToBlockTime(txId: string)</code></td>
+<td>block time</td>
+<td>Unconfirmed or missing tx</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>txIdToBlockHeight</code></td>
+<td><code translate="no" v-pre>txIdToBlockHeight(txId: string)</code></td>
+<td>height</td>
+<td>Unconfirmed or missing tx</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>txIdToBlockHash</code></td>
+<td><code translate="no" v-pre>txIdToBlockHash(txId: string)</code></td>
+<td>block hash</td>
+<td>Unconfirmed or missing tx</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getBlockHash</code></td>
+<td><code translate="no" v-pre>getBlockHash(height: number)</code></td>
+<td>hash</td>
+<td>Negative or <strong>future</strong> height; missing block</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getBlockHeight</code></td>
+<td><code translate="no" v-pre>getBlockHeight(hash: string)</code></td>
+<td>height</td>
+<td>Unknown hash</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getRawTransaction</code></td>
+<td><code translate="no" v-pre>getRawTransaction(txId: string)</code></td>
+<td>hex</td>
+<td>Unconfirmed / missing</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getRawBlock</code> / <code translate="no" v-pre>getBlockHeader</code></td>
+<td>by block hash</td>
+<td>hex</td>
+<td>Unknown hash</td>
+</tr>
+<tr>
+<td><code translate="no" v-pre>getTXOs</code></td>
+<td><code translate="no" v-pre>getTXOs(q: TXOQuery)</code></td>
+<td>revs or records</td>
+<td>No stabilizer; future/negative height filters; query failure</td>
 </tr>
 </tbody>
 </table>
 </div>
 </retype-table>
-<p><strong>Quick tip:</strong> Use <code translate="no" v-pre>getAncestors</code>, <code translate="no" v-pre>first</code>, <code translate="no" v-pre>last</code>, and <code translate="no" v-pre>prev</code> for safe traversal. Be cautious with <code translate="no" v-pre>next()</code> — it will invalidate the contract if you call it on the current tip revision.</p>
-<h3 id="detailed-function-documentation">Detailed Function Documentation</h3>
-<h4 id="sync"><code translate="no" v-pre>sync</code></h4>
-<p>Returns the latest on-chain state for the given <code translate="no" v-pre>location</code> (revision identifier) as a plain JavaScript object.</p>
-<div id="sync-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">sync(location: string): Promise&lt;any&gt;</code></pre>
+<p>Aliases <code translate="no" v-pre>getUTXOs</code>, <code translate="no" v-pre>getOTXOs</code>, and <code translate="no" v-pre>getOUTXOs</code> inherit the same rules as <code translate="no" v-pre>getTXOs</code>.</p>
+<p><strong><code translate="no" v-pre>latest</code> is not exposed</strong> on InnerComputer (the live tip is inherently non-deterministic under chain extension).</p>
+<h3 id="detailed-notes">Detailed notes</h3>
+<h4 id="sync--decode--load"><code translate="no" v-pre>sync</code> / <code translate="no" v-pre>decode</code> / <code translate="no" v-pre>load</code></h4>
+<div id="sync--decode--load-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">sync(location: string): Promise&lt;any&gt;
+decode(txId: string): Promise&lt;TransitionJSON&gt;
+load(location: string): Promise&lt;Record&lt;string, any&gt;&gt;</code></pre>
 </doc-codeblock></div>
 <ul>
-<li>Performs a deep clone (via <code translate="no" v-pre>stringify</code>/<code translate="no" v-pre>parse</code> with BigInt support) so contracts receive a plain, side-effect-free object.</li>
-<li>If the location does not exist or cannot be synced, the evaluation is <strong>invalidated</strong> and an error is thrown.</li>
-</ul>
-<h4 id="decode"><code translate="no" v-pre>decode</code></h4>
-<p>Parses a Bitcoin transaction ID and returns its Bitcoin Computer metadata if it is a valid Bitcoin Computer transaction.</p>
-<div id="decode-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">decode(txId: string): Promise&lt;TransitionJSON&gt;</code></pre>
-</doc-codeblock></div>
-<p>Returned shape (approximate):</p>
-<div id="decode-code-2" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">{
-  exp: string
-  env?: { [s: string]: string }
-  mod?: string
-}</code></pre>
-</doc-codeblock></div>
-<ul>
-<li>If <code translate="no" v-pre>mod</code> is falsy in the raw transition, it is normalized to <code translate="no" v-pre>undefined</code>.</li>
-<li>If the <code translate="no" v-pre>txId</code> is malformed or does not correspond to a Bitcoin Computer transaction, the evaluation is <strong>invalidated</strong>.</li>
-</ul>
-<h4 id="load"><code translate="no" v-pre>load</code></h4>
-<p>Dynamically loads a module by its specifier (location) and returns its exports.</p>
-<div id="load-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">load(location: string): Promise&lt;Record&lt;string, any&gt;&gt;</code></pre>
-</doc-codeblock></div>
-<ul>
-<li>Useful for importing shared contract logic or libraries inside a contract method.</li>
-<li>If the module specifier is invalid or the module cannot be loaded, the evaluation is <strong>invalidated</strong>.</li>
+<li><code translate="no" v-pre>sync</code> deep-clones the object (BigInt-safe) so contracts cannot mutate live graph state.</li>
+<li><code translate="no" v-pre>decode</code> requires a confirmed Bitcoin Computer transaction.</li>
+<li><code translate="no" v-pre>load</code> accepts a module rev (<code translate="no" v-pre>txId:outputIndex</code>); the deploy transaction must be confirmed.</li>
+<li>Missing or unconfirmed targets invalidate the evaluation.</li>
 </ul>
 <h4 id="getancestors"><code translate="no" v-pre>getAncestors</code></h4>
-<p>Returns the full ancestry chain for a revision/location as an array of revision identifiers.</p>
 <div id="getancestors-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">getAncestors(location: string): Promise&lt;string[]&gt;</code></pre>
 </doc-codeblock></div>
 <ul>
-<li>Returns <code translate="no" v-pre>[]</code> if there are no ancestors.</li>
-<li>If the location is invalid or cannot be resolved, the evaluation is <strong>invalidated</strong>.</li>
-<li>This is the recommended safe way to traverse history without risking invalidation from <code translate="no" v-pre>next()</code>.</li>
+<li>Starting location must be confirmed.</li>
+<li>An empty array is a stable result when there are no ancestors; it does <strong>not</strong> require special “allow null” handling (empty arrays are not nullish).</li>
 </ul>
-<h4 id="first"><code translate="no" v-pre>first</code></h4>
-<p>Returns the very first (root/original) revision in the lineage of the given revision.</p>
-<div id="first-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">first(rev: string): Promise&lt;string&gt;</code></pre>
+<h4 id="first--prev--next--last"><code translate="no" v-pre>first</code> / <code translate="no" v-pre>prev</code> / <code translate="no" v-pre>next</code> / <code translate="no" v-pre>last</code></h4>
+<div id="first--prev--next--last-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">first(rev: string): Promise&lt;string&gt;
+prev(rev: string): Promise&lt;string | undefined&gt;
+next(rev: string): Promise&lt;string&gt;
+last(rev: string): Promise&lt;string&gt;</code></pre>
 </doc-codeblock></div>
 <ul>
-<li>Always returns a <code translate="no" v-pre>string</code> for a valid revision.</li>
-<li>Invalidates the evaluation if the revision does not exist.</li>
+<li><strong><code translate="no" v-pre>first</code></strong>: starting rev must be confirmed; returns the creation revision.</li>
+<li><strong><code translate="no" v-pre>prev</code></strong>: starting rev must be confirmed. <code translate="no" v-pre>undefined</code> at the <strong>confirmed root</strong> is stable and does <strong>not</strong> invalidate. This is the only nullish success path among these helpers.</li>
+<li><strong><code translate="no" v-pre>next</code></strong>: “no successor yet” is transient → <strong>invalidates</strong>. A mempool-only successor also invalidates; the returned next rev must be confirmed.</li>
+<li><strong><code translate="no" v-pre>last</code></strong>: does <strong>not</strong> mean “current unspent tip”. An unspent tip yields <code translate="no" v-pre>undefined</code> from the underlying API and <strong>invalidates</strong>. A definite last is the tip of a lineage whose tip is <strong>spent in a confirmed transaction</strong> (e.g. after a confirmed <code translate="no" v-pre>delete</code>). Use this for terminal escrow checks, not for reading the live tip.</li>
 </ul>
-<h4 id="prev"><code translate="no" v-pre>prev</code></h4>
-<p>Returns the immediately preceding revision in the lineage, or <code translate="no" v-pre>undefined</code> if the given revision is the first in its chain.</p>
-<div id="prev-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">prev(rev: string): Promise&lt;string | undefined&gt;</code></pre>
+<h4 id="block-and-time-helpers">Block and time helpers</h4>
+<div id="block-and-time-helpers-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">txIdToBlockTime(txId: string): Promise&lt;bigint&gt;
+txIdToBlockHeight(txId: string): Promise&lt;number&gt;
+txIdToBlockHash(txId: string): Promise&lt;string&gt;
+getBlockHash(height: number): Promise&lt;string&gt;
+getBlockHeight(hash: string): Promise&lt;number&gt;</code></pre>
 </doc-codeblock></div>
 <ul>
-<li>Safe to call on any revision: if there is no previous revision, it returns <code translate="no" v-pre>undefined</code> <strong>without</strong> invalidating the contract.</li>
-<li>Only invalidates on malformed input or internal retrieval errors.</li>
+<li>Unconfirmed transactions cannot be observed as stable times/heights/hashes.</li>
+<li><code translate="no" v-pre>getBlockHash</code> rejects negative heights and heights <strong>greater than the current tip</strong> (future blocks are non-deterministic).</li>
 </ul>
-<h4 id="next"><code translate="no" v-pre>next</code></h4>
-<p>Returns the immediately following revision in the lineage.</p>
-<div id="next-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">next(rev: string): Promise&lt;string | undefined&gt;</code></pre>
+<h4 id="gettxos-and-aliases"><code translate="no" v-pre>getTXOs</code> (and aliases)</h4>
+<div id="gettxos-and-aliases-code-1" class="codeblock-wrapper"><doc-codeblock>
+<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">getTXOs(q: TXOQuery): Promise&lt;string[] | TXORecord[]&gt;</code></pre>
 </doc-codeblock></div>
+<p>Inside a contract the query <strong>must</strong> include one stabilizing filter:</p>
 <ul>
-<li><strong>Critical behavior</strong>: If there is no next revision (i.e. you are at the tip of the lineage), this function <strong>invalidates the entire contract evaluation</strong> and throws.</li>
-<li>This is stricter than <code translate="no" v-pre>prev()</code>. Use it only when you are certain a next revision must exist, or prefer <code translate="no" v-pre>last()</code> / <code translate="no" v-pre>getAncestors()</code> for safer traversal.</li>
-<li>Invalidates on malformed input or retrieval errors as well.</li>
+<li><code translate="no" v-pre>lteBlockHeight</code> — must be ≤ current tip (not in the future)</li>
+<li><code translate="no" v-pre>blockHeight</code> — must be ≤ current tip</li>
+<li><code translate="no" v-pre>blockHash</code> — fixed historical block</li>
 </ul>
-<h4 id="last"><code translate="no" v-pre>last</code></h4>
-<p>Returns the most recent (tip) revision in the lineage of the given revision.</p>
-<div id="last-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">last(rev: string): Promise&lt;string | undefined&gt;</code></pre>
-</doc-codeblock></div>
-<ul>
-<li>Returns the current latest revision for that object lineage.</li>
-<li>Only invalidates on errors retrieving the lineage; may return <code translate="no" v-pre>undefined</code> in edge cases without invalidation.</li>
-</ul>
-<h4 id="txidtoblocktime"><code translate="no" v-pre>txIdToBlockTime</code></h4>
-<p>Returns the Unix block time (as <code translate="no" v-pre>bigint</code>) at which the given transaction was included in a block.</p>
-<div id="txidtoblocktime-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">txIdToBlockTime(txId: string): Promise&lt;bigint | undefined&gt;</code></pre>
-</doc-codeblock></div>
-<ul>
-<li>Useful for time-based logic inside contracts (e.g. vesting, expiration, chess time locks).</li>
-<li>If the transaction is not found or has no associated block time (e.g. unmined or non-Bitcoin-Computer tx), the evaluation is <strong>invalidated</strong>.</li>
-</ul>
-<h3 id="usage-notes--best-practices">Usage Notes &amp; Best Practices</h3>
+<p>Queries without a stabilizer, or with a future/negative height, invalidate. Empty result sets with a valid stabilizer are fine (indexing lag is an application concern, not invalidation).</p>
+<h3 id="usage-notes--best-practices">Usage notes &amp; best practices</h3>
 <ol>
-<li><strong>Prefer safe traversal methods</strong>: Use <code translate="no" v-pre>getAncestors()</code>, <code translate="no" v-pre>first()</code>, <code translate="no" v-pre>last()</code>, and <code translate="no" v-pre>prev()</code> when exploring history. Reserve <code translate="no" v-pre>next()</code> for cases where you have already verified a successor must exist.</li>
-<li><strong>Handle <code translate="no" v-pre>undefined</code></strong>: Several functions (<code translate="no" v-pre>prev</code>, <code translate="no" v-pre>last</code>, possibly <code translate="no" v-pre>txIdToBlockTime</code>) can legitimately return <code translate="no" v-pre>undefined</code>. Always check before using the result.</li>
+<li><strong>Confirm before query.</strong> Deploy modules, create objects, update or delete tips, then wait for confirmation before contract methods that call InnerComputer on those locations.</li>
+<li><strong>Prefer <code translate="no" v-pre>prev</code> / <code translate="no" v-pre>getAncestors</code> / <code translate="no" v-pre>first</code> for history walks.</strong> Use <code translate="no" v-pre>next</code> only when a confirmed successor must exist (e.g. deposit pre/post pair).</li>
+<li><strong>Do not treat <code translate="no" v-pre>last</code> as “latest live tip”.</strong> For terminal claims, spend the tip (e.g. <code translate="no" v-pre>delete</code>) and wait for confirmation, then call <code translate="no" v-pre>last</code>.</li>
+<li><strong><code translate="no" v-pre>try/catch</code> does not soft-fail invalidation.</strong> Catching the throw still rejects the transition if the evaluation frame is invalid. Public errors always end with a <strong>single</strong> “Accessing non-existent…” suffix (policy reasons and missing locations alike).</li>
+<li><strong>Stabilize TXO queries</strong> with <code translate="no" v-pre>lteBlockHeight</code>, <code translate="no" v-pre>blockHeight</code>, or <code translate="no" v-pre>blockHash</code>.</li>
+<li><strong>Off-chain code</strong> using the outer <code translate="no" v-pre>Computer</code> may still see mempool data; only the in-contract <code translate="no" v-pre>computer</code> global enforces these rules.</li>
+<li><strong>Escrow / multi-step apps:</strong> after cancel, settle, or <code translate="no" v-pre>delete</code>, wait for confirmation before a follow-up contract call that depends on <code translate="no" v-pre>last</code>, deposit deltas via <code translate="no" v-pre>next</code>, or confirmed history (see <a href="sandbox-and-inner-computer/#practical-implications">Sandbox &amp; Inner Computer – Practical implications</a>).</li>
 </ol>
-<p>This querying API, combined with the strict property update rules of <code translate="no" v-pre>Contract</code>, enables powerful, verifiable, and safe on-chain logic while protecting the network from non-deterministic or invalid contract executions.</p>
+<p>This API, together with <code translate="no" v-pre>Contract</code> property rules, enables verifiable on-chain logic while keeping evaluations fail-closed under non-deterministic observations.</p>
 
                 
                 <!-- Required only on API pages -->
@@ -414,20 +499,20 @@ expect(c.n).eq(0)</code></pre>
             
                 <nav id="retype-nextprev" class="print:hidden flex mt-14">
                     <div class="w-1/2">
-                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../lib/computer/waitforindex/">
+                        <a class="px-5 py-4 h-full flex items-center break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-l-lg transition-colors duration-150 relative hover:z-5" href="../../lib/computer/waitforindexed/">
                             <svg xmlns="http://www.w3.org/2000/svg" class="mr-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19 11H7.41l5.29-5.29a.996.996 0 10-1.41-1.41l-7 7a1 1 0 000 1.42l7 7a1.024 1.024 0 001.42-.01.996.996 0 000-1.41L7.41 13H19c.55 0 1-.45 1-1s-.45-1-1-1z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                             <span>
                                 <span class="block text-xs font-normal text-base-text-muted">Previous</span>
-                                <span class="block mt-1">wait​For​Index</span>
+                                <span class="block mt-1">wait​For​Indexed</span>
                             </span>
                         </a>
                     </div>
             
                     <div class="w-1/2">
-                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../lib/mock/">
+                        <a class="px-5 py-4 -mx-px h-full flex items-center justify-end break-normal font-medium text-body-link border border-base-border hover:border-base-border-hover rounded-r-lg transition-colors duration-150 relative hover:z-5" href="../../lib/contract/sandbox-and-inner-computer/">
                             <span>
                                 <span class="block text-xs font-normal text-right text-base-text-muted">Next</span>
-                                <span class="block mt-1">Mock</span>
+                                <span class="block mt-1">Sandbox &amp; Inner Computer</span>
                             </span>
                             <svg xmlns="http://www.w3.org/2000/svg" class="ml-3" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" overflow="visible"><path d="M19.92 12.38a1 1 0 00-.22-1.09l-7-7a.996.996 0 10-1.41 1.41l5.3 5.3H5c-.55 0-1 .45-1 1s.45 1 1 1h11.59l-5.29 5.29a.996.996 0 000 1.41c.19.2.44.3.7.3s.51-.1.71-.29l7-7c.09-.09.16-.21.21-.33z" /><path fill="none" d="M0 0h24v24H0z" /></svg>
                         </a>

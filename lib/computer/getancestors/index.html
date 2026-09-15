@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -12,7 +12,7 @@
     <!-- Primary Meta Tags -->
     <title>getAncestors</title>
     <meta name="title" content="getAncestors">
-    <meta name="description" content="Returns the transactions id history of the given revision.">
+    <meta name="description" content="Returns the ancestor transaction history for a revision or transaction id.">
 
     <!-- Canonical -->
     <link rel="canonical" href="https://docs.bitcoincomputer.io/lib/computer/getancestors/">
@@ -22,7 +22,7 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://docs.bitcoincomputer.io/lib/computer/getancestors/">
     <meta property="og:title" content="getAncestors">
-    <meta property="og:description" content="Returns the transactions id history of the given revision.">
+    <meta property="og:description" content="Returns the ancestor transaction history for a revision or transaction id.">
     <meta property="og:site_name" content="Bitcoin Computer">
     <meta property="og:locale" content="en_US">
 
@@ -30,7 +30,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://docs.bitcoincomputer.io/lib/computer/getancestors/">
     <meta name="twitter:title" content="getAncestors">
-    <meta name="twitter:description" content="Returns the transactions id history of the given revision.">
+    <meta name="twitter:description" content="Returns the ancestor transaction history for a revision or transaction id.">
 
     <!-- Alternate Markdown -->
     <link rel="alternate" type="text/markdown" href="https://docs.bitcoincomputer.io/lib/computer/getancestors.md">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
-    <link href="../../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -139,18 +139,34 @@
 
                 <!-- Page content  -->
 <h1 id="getancestors">getAncestors</h1>
-<p>Returns the transactions id history of the given revision.</p>
+<p><em>Returns the ancestor transaction history for a revision or transaction id.</em></p>
 <h2 id="type">Type</h2>
 <div id="type-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">getAncestors(location: string, verbosity?: number): Promise&lt;string[] | Map&lt;string, string&gt;&gt;</code></pre>
 </doc-codeblock></div>
+<h3 id="parameters">Parameters</h3>
+<h4 id="location"><code translate="no" v-pre>location</code></h4>
+<p>A transaction id or a revision (<code translate="no" v-pre>&lt;txid&gt;:&lt;vout&gt;</code>). Ancestors are resolved for the transaction id.</p>
+<h4 id="verbosity-optional"><code translate="no" v-pre>verbosity</code> (optional)</h4>
+<ul>
+<li>omitted / not <code translate="no" v-pre>1</code> — array of ancestor transaction ids</li>
+<li><code translate="no" v-pre>1</code> — <code translate="no" v-pre>Map&lt;txId, hex&gt;</code> of those transactions</li>
+</ul>
 <h3 id="return-value">Return Value</h3>
-<p>Given a location (revision or transaction id), returns a promise that resolves to an array of transaction ids representing the history of the given revision. If verbosity is set to 1, it returns a map where the keys are transaction ids and the values are their corresponding transaction hex strings.</p>
+<p>Ancestor transaction ids (default), or a map of id → raw hex when <code translate="no" v-pre>verbosity === 1</code>.</p>
 <h3 id="syntax">Syntax</h3>
 <div id="syntax-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-javascript"><code v-pre class="language-javascript">computer.getAncestors(rev)
 computer.getAncestors(rev, 1)</code></pre>
 </doc-codeblock></div>
+<h3 id="inside-smart-contracts-innercomputer">Inside smart contracts (<code translate="no" v-pre>InnerComputer</code>)</h3>
+<ul>
+<li>Starting location must be <strong>confirmed</strong>.</li>
+<li>Empty arrays are valid stable results when there are no ancestors.</li>
+<li>Missing or unconfirmed starts invalidate the evaluation.</li>
+<li>Verbosity maps are a client-side convenience; contracts typically use the default <code translate="no" v-pre>string[]</code> form.</li>
+</ul>
+<p>See <a href="../../contract/#querying-inside-of-a-contract">Contract – Querying</a>.</p>
 <h2 id="example">Example</h2>
 <div id="example-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">import { Computer, Contract } from '@bitcoin-computer/lib'

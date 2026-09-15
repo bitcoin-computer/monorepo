@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
-    <link href="../../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -147,9 +147,9 @@ async getOTXOs(q: TXOQuery &amp; { verbosity: 1 }): Promise&lt;TXORecord[]&gt;
 async getOTXOs(q: TXOQuery): Promise&lt;string[] | TXORecord[]&gt;</code></pre>
 </doc-codeblock></div>
 <h2 id="description">Description</h2>
-<p>The <code translate="no" v-pre>getOTXOs</code> function is <em>syntactic sugar</em> for the <a href="../gettxos/"><code translate="no" v-pre>getTXOs</code></a> with <code translate="no" v-pre>isObject</code> set to <code translate="no" v-pre>true</code>. The name is short for get-object-transaction-outputs, it return only output identifiers of output that encode <em>smart objects</em>.</p>
+<p>The <code translate="no" v-pre>getOTXOs</code> function is syntactic sugar for <a href="./gettxos.md"><code translate="no" v-pre>getTXOs</code></a> with <code translate="no" v-pre>isObject: true</code>. The name stands for <strong>get object transaction outputs</strong>: outputs that encode smart objects (spent or unspent).</p>
 <h2 id="parameters">Parameters</h2>
-<p>It accepts the same parameters as <a href="../gettxos/"><code translate="no" v-pre>getTXOs</code></a>, except that <code translate="no" v-pre>isObject</code> is always set to <code translate="no" v-pre>true</code>.</p>
+<p>It accepts the same parameters as <a href="./gettxos.md"><code translate="no" v-pre>getTXOs</code></a>, except that <code translate="no" v-pre>isObject</code> is always set to <code translate="no" v-pre>true</code>.</p>
 <retype-table copy-text="| Key | Description |
 | ------------- | -------------------------------------------- |
 | All keys from `getTXOs` | Same behavior as in `getTXOs` |
@@ -182,7 +182,7 @@ async getOTXOs(q: TXOQuery): Promise&lt;string[] | TXORecord[]&gt;</code></pre>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">// Return all on-chain objects owned by a public key
 const objects = await computer.getOTXOs({ publicKey, verbosity: 1 })</code></pre>
 </doc-codeblock></div>
-<p><a href="../gettxos/">See also → getTXOs</a></p>
+<p><a href="./gettxos.md">See also → getTXOs</a></p>
 
                 
                 <!-- Required only on API pages -->

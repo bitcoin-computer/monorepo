@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,11 +38,11 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../static/favicon.ico" />
-    <link href="../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -166,6 +166,10 @@
 <li><code translate="no" v-pre>sync</code> maps a revision to a value.</li>
 <li><code translate="no" v-pre>encode</code> maps an expression and a blockchain environment to a transaction.</li>
 </ul>
+<h2 id="the-inner-computer">The Inner Computer</h2>
+<p>Outside the protocol, the library client can create, fund, and broadcast transactions and may read mempool state. <strong>Inside</strong> a smart-contract method, evaluation runs in a restricted sandbox. The only chain-facing API is a global <code translate="no" v-pre>computer</code> object (<strong>InnerComputer</strong>): contracts can load other objects, walk revision history, and read confirmed block times, but they cannot write or broadcast.</p>
+<p>Those reads must be deterministic. Successful observations have to stay valid as the chain grows; unstable results invalidate the whole evaluation so every honest validator replaying the method gets the same outcome. A <code translate="no" v-pre>try/catch</code> inside the contract cannot soft-succeed. Host <code translate="no" v-pre>console</code> is available inside contracts only in <code translate="no" v-pre>dev</code> / <code translate="no" v-pre>debug</code> client mode — <strong>not in <code translate="no" v-pre>prod</code></strong>. This enables patterns such as escrows whose conditions depend on other contracts or on confirmed time.</p>
+<p>The full API, confirmation rules, error shape, and sandbox model are documented under <a href="../lib/contract/#querying-inside-of-a-contract">Contract – Querying</a> and <a href="../lib/contract/sandbox-and-inner-computer/">Sandbox &amp; Inner Computer</a>.</p>
 <h2 id="provenance">Provenance</h2>
 <p>If the value returned from <em>sync</em> contains an object, it has extra properties <em>_id</em>, <em>_rev</em>, <em>_root</em> that specify its location on the blockchain and its provenance.</p>
 <ul>

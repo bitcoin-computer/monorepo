@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../../../static/favicon.ico" />
-    <link href="../../../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../../../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../../../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../../../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../../../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../../../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -155,14 +155,13 @@
 <li>Example: <code translate="no" v-pre>&quot;txid123 1&quot;</code> or just <code translate="no" v-pre>&quot;txid123&quot;</code> (when the second parameter is optional).</li>
 </ul>
 <h3 id="return-value">Return Value</h3>
-<p>Returns a Promise that resolves to the response from the Bitcoin node, typically in the shape:</p>
-<div id="return-value-code-1" class="codeblock-wrapper"><doc-codeblock>
-<pre translate="no" class="language-typescript"><code v-pre class="language-typescript">{
-  result: any,   // The actual result returned by bitcoind
-  error: any,
-  id: number
-}</code></pre>
-</doc-codeblock></div>
+<p>Returns a Promise that resolves to <strong>bitcoind&#x27;s <code translate="no" v-pre>result</code></strong> for the method (not the <code translate="no" v-pre>{ result, error, id }</code> JSON-RPC envelope). The node unwraps that envelope before responding.</p>
+<p>The shape depends on the method, for example:</p>
+<ul>
+<li><code translate="no" v-pre>getblockchaininfo</code> → <code translate="no" v-pre>{ blocks, bestblockhash, ... }</code></li>
+<li><code translate="no" v-pre>getrawtransaction</code> with verbosity <code translate="no" v-pre>1</code> → <code translate="no" v-pre>{ txid, hex, vin, vout, ... }</code></li>
+<li><code translate="no" v-pre>getblockhash</code> → a hash string</li>
+</ul>
 <h2 id="examples">Examples</h2>
 <div id="examples-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-typescript"><code v-pre class="language-typescript">// Call with no parameters
@@ -182,6 +181,9 @@ const tx = await computer.rpc('getrawtransaction', `${txId} 1`)</code></pre>
 </li>
 <li>
 <p>Only whitelisted methods (controlled by <code translate="no" v-pre>BCN_ALLOWED_RPC_METHODS</code> on the node) can be called.</p>
+</li>
+<li>
+<p>For common lookups, prefer the typed helpers: <a href="../txidtoblocktime/"><code translate="no" v-pre>txIdToBlockTime</code></a>, <a href="../txidtoblockheight/"><code translate="no" v-pre>txIdToBlockHeight</code></a>, <a href="../txidtoblockhash/"><code translate="no" v-pre>txIdToBlockHash</code></a>, <a href="../getblockhash/"><code translate="no" v-pre>getBlockHash</code></a>, <a href="../getblockheight/"><code translate="no" v-pre>getBlockHeight</code></a>, <a href="../getrawtransaction/"><code translate="no" v-pre>getRawTransaction</code></a>, <a href="../getrawblock/"><code translate="no" v-pre>getRawBlock</code></a>, and <a href="../getblockheader/"><code translate="no" v-pre>getBlockHeader</code></a>.</p>
 </li>
 </ul>
 <p><a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/rpc-call.test.ts" target=_blank>Source</a></p>

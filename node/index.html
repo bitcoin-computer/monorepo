@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark">
-    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.837986767938">
+    <meta name="turbo-cache-control" content="no-cache" data-turbo-track="reload" data-track-token="4.6.0.842829645514">
 
     <!-- See retype.com -->
     <meta name="generator" content="Retype 4.6.0">
@@ -38,12 +38,12 @@
     <script data-cfasync="false">(function(){var cl=document.documentElement.classList,ls=localStorage.getItem("retype_scheme"),hd=cl.contains("dark"),hl=cl.contains("light"),wm=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches;if(ls==="dark"||(!ls&&wm&&!hd&&!hl)){cl.remove("light");cl.add("dark")}else if(ls==="light"||(!ls&&!wm&&!hd&&!hl)){cl.remove("dark");cl.add("light")}})();</script>
 
     <link id="retype-favicon" rel="icon" href="../static/favicon.ico" />
-    <link href="../resources/css/retype.css?v=4.6.0.837986767938" rel="stylesheet">
+    <link href="../resources/css/retype.css?v=4.6.0.842829645514" rel="stylesheet">
 
-    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
+    <script data-cfasync="false" src="../resources/js/config.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
     <script data-cfasync="false" src="../resources/js/retype.js?v=4.6.0" data-turbo-eval="false" defer></script>
-    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.837986767938" data-turbo-eval="false" defer></script>
-    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=4.6.0.837986767938" defer></script>
+    <script id="lunr-js" data-cfasync="false" src="../resources/js/lunr.js?v=4.6.0.842829645514" data-turbo-eval="false" defer></script>
+    <script id="prism-js" data-cfasync="false" src="../resources/js/prism.js?v=4.6.0.842829645514" defer></script>
 
     <link href="/static/custom.css" rel="stylesheet" />
 
@@ -215,6 +215,11 @@ npm run create-indexes</code></pre>
 </font>
 <h3 id="postgres-database">Postgres Database</h3>
 <p>The node uses a Postgres database to store the synced information required by the Bitcoin Computer protocol. The database is automatically created and managed by the node using a docker container. The full db schema can be found <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql">here</a>.</p>
+<p>Among other tables, the node maintains:</p>
+<ul>
+<li><strong><code translate="no" v-pre>Output</code> / <code translate="no" v-pre>Input</code></strong> — the spend graph for payments and smart-object revisions</li>
+<li><strong><code translate="no" v-pre>Module</code></strong> — deployed module sources (<code translate="no" v-pre>ept</code>), storage type (<code translate="no" v-pre>multisig</code> or <code translate="no" v-pre>taproot</code>), and optional confirmation height/hash (see <a href="modules/">modules</a> and <a href="module/">module</a>)</li>
+</ul>
 <p>By default the database uses the following credentials:</p>
 <div id="postgres-database-code-1" class="codeblock-wrapper"><doc-codeblock>
 <pre translate="no" class="language-bash"><code v-pre class="language-bash">POSTGRES_USER='bcn'
@@ -273,14 +278,14 @@ subscriptions.</p>
 <li><strong>Parallel sync workers</strong>
 <ul>
 <li>Parse blocks and transactions</li>
-<li>Insert inputs, outputs, and metadata into Postgres</li>
+<li>Insert inputs, outputs, module deploys, and related metadata into Postgres</li>
 <li>Scale automatically with available CPU cores</li>
 </ul>
 </li>
 <li><strong>Live mempool listener</strong>
 <ul>
 <li>Subscribes to raw transactions via ZeroMQ</li>
-<li>Activates once the blockchain is sufficiently synchronized</li>
+<li>Indexes mempool outputs, inputs, and module deploys once the chain is sufficiently synchronized</li>
 </ul>
 </li>
 <li><strong>API and SSE service</strong>
@@ -291,7 +296,7 @@ subscriptions.</p>
 </li>
 <li><strong>Background maintenance tasks</strong>
 <ul>
-<li>Periodic cleanup of stale unconfirmed (mempool) data (see <a href="clean-mempool/">clean-mempool</a> for more details)</li>
+<li>Periodic cleanup of stale unconfirmed (mempool) data, including unconfirmed module rows (see <a href="clean-mempool/">clean-mempool</a> for more details)</li>
 </ul>
 </li>
 </ul>
@@ -456,12 +461,12 @@ expect(await computer.listTxs(address)).deep.eq({
 <p>The Bitcoin Computer Node exposes an API that can be used to interact with the node.
 The variables <code translate="no" v-pre>CHAIN</code> and <code translate="no" v-pre>NETWORK</code> are used to define the chain and network that the node is running on.</p>
 <h4 id="wallet">Wallet</h4>
-<retype-table copy-text="| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [balance](./balance.md) | Get the balance of a wallet. |
-| [list-txs](./list-txs.md) | List sent and received transactions for a given address. |
-| [sent-outputs](./sent-outputs.md) | List sent outputs of a wallet. |
-| [received-outputs](./received-outputs.md) | List received outputs of a wallet. |">
+<retype-table copy-text="| Method                                    | Description                                              |
+| ----------------------------------------- | -------------------------------------------------------- |
+| [balance](./balance.md)                   | Get the balance of a wallet.                             |
+| [list-txs](./list-txs.md)                 | List sent and received transactions for a given address. |
+| [sent-outputs](./sent-outputs.md)         | List sent outputs of a wallet.                           |
+| [received-outputs](./received-outputs.md) | List received outputs of a wallet.                       |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
@@ -492,13 +497,13 @@ The variables <code translate="no" v-pre>CHAIN</code> and <code translate="no" v
 </div>
 </retype-table>
 <h4 id="transactions">Transactions</h4>
-<retype-table copy-text="| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [ancestors](./ancestors.md) | Get the ancestors of a transaction. |
-| [bulk](./bulk.md) | Get raw transactions for a list of transaction ids. |
-| [hex](./hex.md) | Get a transaction in hex format. |
-| [json](./json.md) | Get a transaction in json format. |
-| [post](./post.md) | Post a transaction to the Bitcoin network. |">
+<retype-table copy-text="| Method                      | Description                                         |
+| --------------------------- | --------------------------------------------------- |
+| [ancestors](./ancestors.md) | Get the ancestors of a transaction.                 |
+| [bulk](./bulk.md)           | Get raw transactions for a list of transaction ids. |
+| [hex](./hex.md)             | Get a transaction in hex format.                    |
+| [json](./json.md)           | Get a transaction in json format.                   |
+| [post](./post.md)           | Post a transaction to the Bitcoin network.          |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
@@ -533,9 +538,9 @@ The variables <code translate="no" v-pre>CHAIN</code> and <code translate="no" v
 </div>
 </retype-table>
 <h4 id="blockchain">Blockchain</h4>
-<retype-table copy-text="| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [rpc](./rpc.md) | Call a Bitcoin RPC method. |
+<retype-table copy-text="| Method                              | Description                                           |
+| ----------------------------------- | ----------------------------------------------------- |
+| [rpc](./rpc.md)                     | Call a Bitcoin RPC method.                            |
 | [clean-mempool](./clean-mempool.md) | Remove stale unconfirmed mempool entries from the DB. |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
@@ -559,15 +564,15 @@ The variables <code translate="no" v-pre>CHAIN</code> and <code translate="no" v
 </div>
 </retype-table>
 <h4 id="query-revisions">Query revisions</h4>
-<retype-table copy-text="| Method | Description |
-|-------------------------------------|----------------------------------------------------|
-| [get-txos](./get-txos.md) | Get all the transaction outputs based on specific query parameters. |
-| [latest](./latest.md) | Get the latest revision of a smart contract. |
-| [next](./next.md) | Get the next revision of a given revision. |
+<retype-table copy-text="| Method                                        | Description                                                                                        |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| [get-txos](./get-txos.md)                     | Get all the transaction outputs based on specific query parameters.                                |
+| [latest](./latest.md)                         | Get the latest revision of a smart contract.                                                       |
+| [next](./next.md)                             | Get the next revision of a given revision.                                                         |
 | [non-standard-utxos](./non-standard-utxos.md) | Query revisions by module specifier, public key, limit, order, offset and list of transaction ids. |
-| [prev](./prev.md) | Get the previous revision of a given revision. |
-| [revToId](./revtoid.md) | Given a revision, get the id of the smart contract. |
-| [subscribe](./subscribe.md) | Subscribe to new revisions matching specific query parameters. |">
+| [prev](./prev.md)                             | Get the previous revision of a given revision.                                                     |
+| [revToId](./revtoid.md)                       | Given a revision, get the id of the smart contract.                                                |
+| [subscribe](./subscribe.md)                   | Subscribe to new revisions matching specific query parameters.                                     |">
 <div class="table-wrapper scrollbar overflow-hidden">
 <table class="compact">
 <thead>
@@ -609,6 +614,54 @@ The variables <code translate="no" v-pre>CHAIN</code> and <code translate="no" v
 </table>
 </div>
 </retype-table>
+<h4 id="modules">Modules</h4>
+<p>Module deploys store JavaScript (ES) source on chain. The node indexes them separately from smart-object transitions so clients can list and fetch sources by specifier. See also client-side <a href="../lib/computer/deploy/"><code translate="no" v-pre>deploy</code></a> and <a href="../lib/computer/load/"><code translate="no" v-pre>load</code></a>.</p>
+<retype-table copy-text="| Method                  | Description                                                    |
+| ----------------------- | -------------------------------------------------------------- |
+| [modules](./modules.md) | List indexed module deploys (specifiers or full rows).         |
+| [module](./module.md)   | Get one indexed module by specifier, including source (`ept`). |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="modules/">modules</a></td>
+<td>List indexed module deploys (specifiers or full rows).</td>
+</tr>
+<tr>
+<td><a href="module/">module</a></td>
+<td>Get one indexed module by specifier, including source (<code translate="no" v-pre>ept</code>).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
+<h4 id="operations">Operations</h4>
+<retype-table copy-text="| Page | Description |
+|-------------------------------------|----------------------------------------------------|
+| [operations](./operations.md) | Auth, empty-result troubleshooting, Module schema upgrade, version match, ops FAQ. |">
+<div class="table-wrapper scrollbar overflow-hidden">
+<table class="compact">
+<thead>
+<tr>
+<th>Page</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="operations/">operations</a></td>
+<td>Auth, empty-result troubleshooting, Module schema upgrade, version match, ops FAQ.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</retype-table>
 <!--  ### Configure Parallelism
 
 By default the synchronization runs in parallel and uses all cores of your machine. You can use the `-cpus` flag to limit the number of cores used.
@@ -633,7 +686,8 @@ The following table shows the times and costs for syncing to a Litecoin node on 
 | 16   | 32GB | 4h 45m    | $440          |
  -->
 <h2 id="version-compatibility">Version compatibility</h2>
-<p>If you run your own node, make sure to use the same versions of Lib and Node.</p>
+<p>If you run your own node, use the <strong>same release line</strong> of <code translate="no" v-pre>@bitcoin-computer/lib</code> and the Bitcoin Computer Node (same major and minor, e.g. both <code translate="no" v-pre>0.27.x</code>).</p>
+<p>Mismatched versions often show up as missing module routes, schema errors, empty indexes after upgrade, or client failures to <code translate="no" v-pre>load</code> deploys. Details, schema upgrade steps, and auth/empty-result troubleshooting are in <a href="operations/">Operate &amp; Troubleshoot</a>. Protocol wire-format notes are in the <a href="../changelog/">changelog</a>.</p>
 
                 
                 <!-- Required only on API pages -->
