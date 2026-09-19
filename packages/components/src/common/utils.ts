@@ -125,6 +125,54 @@ export function getEnv(name: string) {
   )
 }
 
+/** BIP32 path accepted by the login form and by nakamotojs. */
+export const BIP32_PATH_PATTERN = /^(m\/)?(\d+'?\/)*\d+'?$/
+
+const CHAINS = new Set(['LTC', 'BTC', 'DOGE', 'PEPE', 'WOJAK', 'BCH'])
+const NETWORKS = new Set(['testnet', 'mainnet', 'regtest'])
+
+/** Reject null, empty, and the string "undefined"/"null" that localStorage.setItem produces. */
+export function asNonEmpty(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined
+  const s = value.trim()
+  if (!s || s === 'undefined' || s === 'null') return undefined
+  return s
+}
+
+export function validPath(value: unknown): string | undefined {
+  const s = asNonEmpty(value)
+  if (!s || !BIP32_PATH_PATTERN.test(s)) return undefined
+  return s
+}
+
+export function validChain(value: unknown): string | undefined {
+  const s = asNonEmpty(value)
+  if (!s || !CHAINS.has(s)) return undefined
+  return s
+}
+
+export function validNetwork(value: unknown): string | undefined {
+  const s = asNonEmpty(value)
+  if (!s || !NETWORKS.has(s)) return undefined
+  return s
+}
+
+export function validUrl(value: unknown): string | undefined {
+  return asNonEmpty(value)
+}
+
+export function validModuleStorageType(value: unknown): string | undefined {
+  const s = asNonEmpty(value)
+  if (s === 'taproot' || s === 'multisig') return s
+  return undefined
+}
+
+export function compactUndefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined && v !== null),
+  ) as Partial<T>
+}
+
 export function bigIntToStr(a: bigint): string {
   if (a < 0n) throw new Error('Balance must be a non-negative')
 

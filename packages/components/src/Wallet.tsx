@@ -14,7 +14,15 @@ import { Auth } from './Auth'
 import { Drawer } from './Drawer'
 import { UtilsContext } from './UtilsContext'
 import { ComputerContext } from './ComputerContext'
-import { getEnv, bigIntToStr, strToBigInt } from './common/utils'
+import {
+  getEnv,
+  bigIntToStr,
+  strToBigInt,
+  validChain,
+  validNetwork,
+  validPath,
+  validUrl,
+} from './common/utils'
 import {
   isValidAddressForComputer,
   signAndBroadcastSpendUtxos,
@@ -923,16 +931,16 @@ function WalletContent({
       <Collapsible title="Account & security">
         <PublicKeyField computer={computer} />
         <MnemonicField computer={computer} />
-        {!getEnv('CHAIN') ? (
+        {!validChain(getEnv('CHAIN')) ? (
           <SimpleInfo label="Chain" value={computer.getChain()} />
         ) : null}
-        {!getEnv('NETWORK') ? (
+        {!validNetwork(getEnv('NETWORK')) ? (
           <SimpleInfo label="Network" value={computer.getNetwork()} />
         ) : null}
-        {!getEnv('URL') ? (
+        {!validUrl(getEnv('URL')) ? (
           <SimpleInfo label="Node URL" value={computer.getUrl()} />
         ) : null}
-        {!getEnv('PATH') ? (
+        {!validPath(getEnv('PATH')) ? (
           <SimpleInfo label="Derivation path" value={computer.getPath()} />
         ) : null}
       </Collapsible>

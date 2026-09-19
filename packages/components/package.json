@@ -23,6 +23,21 @@
   ],
   "main": "built/index.js",
   "types": "built/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./built/index.d.ts",
+      "default": "./built/index.js"
+    },
+    "./utils": {
+      "types": "./built/common/utils.d.ts",
+      "default": "./built/common/utils.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "utils": ["./built/common/utils.d.ts"]
+    }
+  },
   "files": [
     "LICENSE.md",
     "LEGAL.md"

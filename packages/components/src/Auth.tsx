@@ -4,12 +4,20 @@ import { initFlowbite } from 'flowbite'
 import { HiRefresh } from 'react-icons/hi'
 import { Modal } from './Modal'
 import type { Chain, Network, ModuleStorageType } from './common/types'
-import { getEnv } from './common/utils'
+import {
+  asNonEmpty,
+  compactUndefined,
+  getEnv,
+  validChain,
+  validModuleStorageType,
+  validNetwork,
+  validPath,
+  validUrl,
+} from './common/utils'
 
 export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
 export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest'
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
-const pathPattern = /^(m\/)?(\d+'?\/)*\d+'?$/
 
 export type ComputerOptions = Partial<{
   chain: TBCChain
@@ -26,7 +34,7 @@ export type ComputerOptions = Partial<{
 }>
 
 function isLoggedIn(): boolean {
-  return !!localStorage.getItem('BIP_39_KEY')
+  return !!asNonEmpty(localStorage.getItem('BIP_39_KEY'))
 }
 
 function logout() {
@@ -59,31 +67,49 @@ function getPath({ chain, network }: { chain?: Chain; network?: Network }): stri
   return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 
+function envThenStorage(name: string, validate: (value: unknown) => string | undefined) {
+  return validate(getEnv(name)) || validate(localStorage.getItem(name))
+}
+
+function storageThenEnv(name: string, validate: (value: unknown) => string | undefined) {
+  return validate(localStorage.getItem(name)) || validate(getEnv(name))
+}
+
+function persistUserOrClear(key: string, userValue: string | undefined, envIsValid: boolean) {
+  if (!envIsValid && userValue) localStorage.setItem(key, userValue)
+  else localStorage.removeItem(key)
+}
+
 function loggedOutConfiguration() {
-  return {
-    chain: getEnv('CHAIN') as Chain,
-    network: getEnv('NETWORK') as Network,
-    url: getEnv('URL'),
-    path: getEnv('PATH'),
-  }
+  return compactUndefined({
+    chain: validChain(getEnv('CHAIN')) as Chain | undefined,
+    network: validNetwork(getEnv('NETWORK')) as Network | undefined,
+    url: validUrl(getEnv('URL')),
+    path: validPath(getEnv('PATH')),
+  })
 }
 
 function loggedInConfiguration() {
-  return {
-    mnemonic: localStorage.getItem('BIP_39_KEY'),
-    chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')) as Chain,
-    network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
-    url: localStorage.getItem('URL') || getEnv('URL'),
-    path: localStorage.getItem('PATH') || getEnv('PATH'),
-    moduleStorageType:
-      (localStorage.getItem('MODULE_STORAGE_TYPE') as ModuleStorageType) ||
-      getEnv('MODULE_STORAGE_TYPE'),
-  }
+  return compactUndefined({
+    mnemonic: asNonEmpty(localStorage.getItem('BIP_39_KEY')),
+    // Node/deploy settings: env wins when valid so a new deploy is not stuck on stale storage.
+    chain: envThenStorage('CHAIN', validChain) as Chain | undefined,
+    network: envThenStorage('NETWORK', validNetwork) as Network | undefined,
+    url: envThenStorage('URL', validUrl),
+    // Path is user-owned: valid login value first, then env, else omit (Computer default path).
+    path: storageThenEnv('PATH', validPath),
+    moduleStorageType: envThenStorage(
+      'MODULE_STORAGE_TYPE',
+      validModuleStorageType,
+    ) as ModuleStorageType | undefined,
+  })
 }
 
 function getComputer(options: ComputerOptions = {}): Computer {
   const defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration()
-  return new Computer({ ...defaultConfiguration, ...options })
+  return new Computer(
+    compactUndefined({ ...defaultConfiguration, ...options }) as ComputerOptions,
+  )
 }
 
 function MnemonicInput({
@@ -341,16 +367,16 @@ function LoginButton({
       onError('Please select a network.')
       return
     }
-    if (path.length === 0) {
-      onError('Please enter a valid path.')
-      return
-    }
-    if (path.match(pathPattern) === null) {
+    const envPath = validPath(getEnv('PATH'))
+    const userPath = validPath(path)
+    if (!envPath && !userPath) {
       onError("Path format must be in the form m/44'/0'/0'/0/0.")
       return
     }
 
-    if (url === undefined || url?.length === 0) {
+    const envUrl = validUrl(getEnv('URL'))
+    const userUrl = validUrl(urlInputRef.current?.value || url)
+    if (!envUrl && !userUrl) {
       onError('Please enter a valid URL.')
       return
     }
@@ -358,10 +384,10 @@ function LoginButton({
 
     onError(null)
     localStorage.setItem('BIP_39_KEY', mnemonic)
-    localStorage.setItem('CHAIN', chain)
-    localStorage.setItem('NETWORK', network)
-    localStorage.setItem('PATH', path)
-    localStorage.setItem('URL', urlInputRef.current?.value || url)
+    persistUserOrClear('CHAIN', chain, !!validChain(getEnv('CHAIN')))
+    persistUserOrClear('NETWORK', network, !!validNetwork(getEnv('NETWORK')))
+    persistUserOrClear('PATH', userPath, !!envPath)
+    persistUserOrClear('URL', userUrl, !!envUrl)
 
     window.location.href = '/'
   }
@@ -379,13 +405,19 @@ function LoginButton({
 
 function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(() => new Computer().getMnemonic())
-  const [chain, setChain] = useState<Chain | undefined>(getEnv('CHAIN') as Chain | undefined)
-  const [network, setNetwork] = useState<Network | undefined>(
-    getEnv('NETWORK') as Network | undefined,
+  const [chain, setChain] = useState<Chain | undefined>(
+    validChain(getEnv('CHAIN')) as Chain | undefined,
   )
-  const [url, setUrl] = useState<string | undefined>(getEnv('URL') || 'http://localhost:1031')
+  const [network, setNetwork] = useState<Network | undefined>(
+    validNetwork(getEnv('NETWORK')) as Network | undefined,
+  )
+  const [url, setUrl] = useState<string | undefined>(
+    validUrl(getEnv('URL')) || 'http://localhost:1031',
+  )
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const [path, setPath] = useState<string>(getEnv('PATH') || getPath({ chain, network }))
+  const [path, setPath] = useState<string>(
+    validPath(getEnv('PATH')) || getPath({ chain, network }),
+  )
   const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -412,10 +444,12 @@ function LoginForm() {
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {!getEnv('CHAIN') && <ChainInput chain={chain} setChain={setChain} />}
-            {!getEnv('NETWORK') && <NetworkInput network={network} setNetwork={setNetwork} />}
-            {!getEnv('URL') && <UrlInput url={url || ''} setUrl={setUrl} />}
-            {!getEnv('PATH') && <PathInput path={path} setPath={setPath} />}
+            {!validChain(getEnv('CHAIN')) && <ChainInput chain={chain} setChain={setChain} />}
+            {!validNetwork(getEnv('NETWORK')) && (
+              <NetworkInput network={network} setNetwork={setNetwork} />
+            )}
+            {!validUrl(getEnv('URL')) && <UrlInput url={url || ''} setUrl={setUrl} />}
+            {!validPath(getEnv('PATH')) && <PathInput path={path} setPath={setPath} />}
           </div>
           {formError ? (
             <p className="text-sm text-red-600 dark:text-red-400" role="alert">

@@ -9,7 +9,7 @@ const modalTitle = "Connect to Node";
 const modalId = "unsupported-config-modal";
 export const signInModal = "sign-in-modal";
 
-function formatChainAndNetwork(chain: Chain, network: Network) {
+function formatChainAndNetwork(chain?: Chain, network?: Network) {
   if (!chain || !network) return "";
   const map = {
     mainnet: "",
