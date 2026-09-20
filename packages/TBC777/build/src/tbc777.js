@@ -108,6 +108,12 @@ export class TBC777 extends TBC20 {
         return this.remoteRoot || this._root;
     }
     async merge(tokens = []) {
+        const seen = new Set([this._rev]);
+        for (const t of tokens) {
+            if (seen.has(t._rev))
+                throw new Error('Cannot merge the same token twice');
+            seen.add(t._rev);
+        }
         const all = [this, ...tokens];
         if (all.some((t) => t.escrow ||
             (t.withdrawn && t.withdrawn.length > 0) ||
@@ -125,6 +131,11 @@ export class TBC777 extends TBC20 {
         this.amount += total;
     }
     _createTransferToken(to, amount) {
+        if (amount <= 0n)
+            throw new Error('Transfer amount must be positive');
+        if (this.amount < amount)
+            throw new Error('Insufficient funds');
+        this.amount -= amount;
         const ctor = this.constructor;
         const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this;
         return new ctor({ ...preserved, to, amount });

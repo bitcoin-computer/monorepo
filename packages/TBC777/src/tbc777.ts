@@ -412,6 +412,17 @@ export class TBC777 extends TBC20 {
    * inside the contract sandbox.
    */
   async merge(tokens: TBC20[] = []): Promise<void> {
+    // One revision may not be counted twice. Two names in a transaction's environment can
+    // refer to the same output; each entry's amount is read before it is burned, so a repeated
+    // token used to add its value once per mention. The library now shares one instance per
+    // revision, which makes the repeat harmless — this refuses it outright so the invariant
+    // does not depend on that, and so a caller sees its mistake.
+    const seen = new Set<string>([this._rev])
+    for (const t of tokens) {
+      if (seen.has(t._rev)) throw new Error('Cannot merge the same token twice')
+      seen.add(t._rev)
+    }
+
     const all = [this, ...tokens] as TBC777[]
     if (
       all.some(
@@ -445,6 +456,12 @@ export class TBC777 extends TBC20 {
    */
 
   protected _createTransferToken(to: string, amount: bigint): this {
+    // Debit before creating: see TBC20._createTransferToken. This method is reachable directly
+    // from a transaction, so the balance check cannot live only in `transfer`.
+    if (amount <= 0n) throw new Error('Transfer amount must be positive')
+    if (this.amount < amount) throw new Error('Insufficient funds')
+    this.amount -= amount
+
     const ctor = this.constructor as Constructor<this>
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

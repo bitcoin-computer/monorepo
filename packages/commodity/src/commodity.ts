@@ -240,6 +240,12 @@ export class Commodity extends TBC777 {
    * escrow bookkeeping so recipients do not inherit claim history.
    */
   protected _createTransferToken(to: string, amount: bigint): this {
+    // Debit before creating: see TBC20._createTransferToken. This method is reachable directly
+    // from a transaction, so the balance check cannot live only in `transfer`.
+    if (amount <= 0n) throw new Error('Transfer amount must be positive')
+    if (this.amount < amount) throw new Error('Insufficient funds')
+    this.amount -= amount
+
     const Ctor = this.constructor as Constructor<this>
     return new Ctor({
       to,
