@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest'
-import { bigIntToStr, strToBigInt } from '../src/common/utils'
+import {
+  asNonEmpty,
+  bigIntToStr,
+  compactUndefined,
+  strToBigInt,
+  validChain,
+  validPath,
+} from '../src/common/utils'
 
 describe('strToBigInt/bigIntToStr', () => {
   it('Should throw if an invalid number is provided', async () => {
@@ -53,5 +60,37 @@ describe('strToBigInt/bigIntToStr', () => {
     expect(bigIntToStr(BigInt('100000000000000000000000000001'))).to.eq(
       '1000000000000000000000.00000001',
     )
+  })
+})
+
+describe('config value helpers', () => {
+  it('treats localStorage-style undefined as missing', () => {
+    expect(asNonEmpty(undefined)).to.eq(undefined)
+    expect(asNonEmpty(null)).to.eq(undefined)
+    expect(asNonEmpty('undefined')).to.eq(undefined)
+    expect(asNonEmpty('null')).to.eq(undefined)
+    expect(asNonEmpty('')).to.eq(undefined)
+    expect(asNonEmpty('  ')).to.eq(undefined)
+  })
+
+  it('rejects invalid PATH values that would crash Computer', () => {
+    expect(validPath('undefined')).to.eq(undefined)
+    expect(validPath('null')).to.eq(undefined)
+    expect(validPath('')).to.eq(undefined)
+    expect(validPath('foo')).to.eq(undefined)
+    expect(validPath("m/44'/1'/0'")).to.eq("m/44'/1'/0'")
+    expect(validPath("m/44'/0'/0'/0")).to.eq("m/44'/0'/0'/0")
+  })
+
+  it('rejects invalid chain values', () => {
+    expect(validChain('undefined')).to.eq(undefined)
+    expect(validChain('LTC')).to.eq('LTC')
+  })
+
+  it('omits undefined keys so Computer defaults are not overwritten', () => {
+    expect(compactUndefined({ mnemonic: 'word', path: undefined, url: 'http://n' })).to.deep.eq({
+      mnemonic: 'word',
+      url: 'http://n',
+    })
   })
 })

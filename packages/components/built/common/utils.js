@@ -96,6 +96,49 @@ export function getEnv(name) {
     return ((typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||
         (import.meta.env && import.meta.env[`VITE_${name}`]));
 }
+/** BIP32 path accepted by the login form and by nakamotojs. */
+export const BIP32_PATH_PATTERN = /^(m\/)?(\d+'?\/)*\d+'?$/;
+const CHAINS = new Set(['LTC', 'BTC', 'DOGE', 'PEPE', 'WOJAK', 'BCH']);
+const NETWORKS = new Set(['testnet', 'mainnet', 'regtest']);
+/** Reject null, empty, and the string "undefined"/"null" that localStorage.setItem produces. */
+export function asNonEmpty(value) {
+    if (typeof value !== 'string')
+        return undefined;
+    const s = value.trim();
+    if (!s || s === 'undefined' || s === 'null')
+        return undefined;
+    return s;
+}
+export function validPath(value) {
+    const s = asNonEmpty(value);
+    if (!s || !BIP32_PATH_PATTERN.test(s))
+        return undefined;
+    return s;
+}
+export function validChain(value) {
+    const s = asNonEmpty(value);
+    if (!s || !CHAINS.has(s))
+        return undefined;
+    return s;
+}
+export function validNetwork(value) {
+    const s = asNonEmpty(value);
+    if (!s || !NETWORKS.has(s))
+        return undefined;
+    return s;
+}
+export function validUrl(value) {
+    return asNonEmpty(value);
+}
+export function validModuleStorageType(value) {
+    const s = asNonEmpty(value);
+    if (s === 'taproot' || s === 'multisig')
+        return s;
+    return undefined;
+}
+export function compactUndefined(obj) {
+    return Object.fromEntries(Object.entries(obj).filter(([, v]) => v !== undefined && v !== null));
+}
 export function bigIntToStr(a) {
     if (a < 0n)
         throw new Error('Balance must be a non-negative');
