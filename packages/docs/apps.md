@@ -5,7 +5,7 @@ icon: device-mobile
 
 # Apps
 
-The following are examples of open source applications builded with the Bitcoin Computer. They are all published under MIT licence so you can clone, copy, modify, contribute or use them as a starting point for you project.
+The following are examples of open source applications built with the Bitcoin Computer. They are all published under the MIT license so you can clone, copy, modify, contribute, or use them as a starting point for your project.
 
 ## Wallet
 

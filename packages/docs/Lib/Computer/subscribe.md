@@ -41,3 +41,8 @@ When invoked, the function establishes a connection to the server to listen for 
 :::code source="../../../lib/test/lib/computer/subscribe.test.ts" :::
 
 <a href="https://github.com/bitcoin-computer/monorepo/blob/main/packages/lib/test/lib/computer/subscribe.test.ts" target=_blank>Source</a>
+
+## See also
+
+- Node HTTP: [subscribe](../../Node/subscribe.md)
+- Filtered TXO stream: [streamTXOs](./stream.md)

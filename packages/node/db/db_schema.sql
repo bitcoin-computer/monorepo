@@ -74,6 +74,22 @@ CREATE TABLE IF NOT EXISTS
     "blockToSync" INTEGER NOT NULL PRIMARY KEY
   );
 
+CREATE TABLE IF NOT EXISTS
+  "Module" (
+    "mod" VARCHAR(70) NOT NULL PRIMARY KEY,
+    "ept" TEXT NOT NULL,
+    "storageType" VARCHAR(16) NOT NULL,
+    "blockHash" VARCHAR(64),
+    "blockHeight" INTEGER,
+    "timestamp" timestamp default CURRENT_TIMESTAMP not null
+  );
+
+CREATE INDEX IF NOT EXISTS "ModuleBlockHashIndex"
+ON "Module"("blockHash");
+
+CREATE INDEX IF NOT EXISTS "ModuleBlockHeightIndex"
+ON "Module"("blockHeight");
+
 CREATE VIEW "Utxos" AS
 SELECT "rev", "address", "satoshis", "asm", "timestamp", "blockHash"
 FROM "Output" WHERE "isObject" = false AND NOT EXISTS

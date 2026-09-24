@@ -63,14 +63,24 @@ curl -X POST http://localhost:1031/v1/BTC/mainnet/rpc \
 
 ### Success (200)
 
+The HTTP body is bitcoind's `result` field (already unwrapped). It is **not** wrapped again as `{ result: { result, error, id } }`.
+
+`getblockchaininfo`:
+
 ```json
-{
-  "result": {
-    "result": { ... },   // actual result from bitcoind
-    "error": null,
-    "id": 40795
-  }
-}
+{ "blocks": 123, "bestblockhash": "00000000...", "chain": "regtest" }
+```
+
+`getblockhash`:
+
+```json
+"00000000abcdef..."
+```
+
+`getrawtransaction` with verbosity `1`:
+
+```json
+{ "txid": "...", "hex": "...", "vin": [], "vout": [] }
 ```
 
 ### Invalid / Unsupported Method (400)

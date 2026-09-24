@@ -1,10 +1,16 @@
-import React, { createContext, ReactNode, useContext, useState } from "react";
+import React, { createContext, ReactNode, useContext, useMemo, useState } from "react";
 import { SnackBar } from "./SnackBar";
 import { Loader } from "./Loader";
 
+interface ToastApi {
+  success: (message: string) => void;
+  error: (message: string) => void;
+  info: (message: string) => void;
+  warning: (message: string) => void;
+}
+
 interface UtilsContextProps {
-  showSnackBar: (message: string, success: boolean) => void;
-  hideSnackBar: () => void;
+  toast: ToastApi;
   showLoader: (show: boolean) => void;
 }
 
@@ -19,7 +25,7 @@ export const useUtilsComponents = (): UtilsContextProps => {
 };
 
 interface UtilsProviderProps {
-  children: ReactNode; // Explicitly type children as ReactNode
+  children: ReactNode;
 }
 
 export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
@@ -29,9 +35,15 @@ export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
   } | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const showSnackBar = (message: string, success: boolean) => {
-    setSnackBar({ message, success });
-  };
+  const toast = useMemo<ToastApi>(
+    () => ({
+      success: (message) => setSnackBar({ message, success: true }),
+      error: (message) => setSnackBar({ message, success: false }),
+      info: (message) => setSnackBar({ message, success: true }),
+      warning: (message) => setSnackBar({ message, success: false }),
+    }),
+    []
+  );
 
   const showLoader = (show: boolean) => {
     setIsLoading(show);
@@ -42,7 +54,7 @@ export const UtilsProvider: React.FC<UtilsProviderProps> = ({ children }) => {
   };
 
   return (
-    <utilsContext.Provider value={{ showSnackBar, hideSnackBar, showLoader }}>
+    <utilsContext.Provider value={{ toast, showLoader }}>
       {children}
       {snackBar && (
         <SnackBar

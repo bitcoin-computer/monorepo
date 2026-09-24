@@ -25,7 +25,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     server: {
-      port: parseInt(env.VITE_PORT) || 3000, // Fallback port if env.VITE_PORT is undefined
+      port: parseInt(env.VITE_PORT) || 1032,
       headers: {
         'Cross-Origin-Opener-Policy': 'same-origin',
         'Cross-Origin-Embedder-Policy': 'require-corp',

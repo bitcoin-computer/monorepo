@@ -30,6 +30,8 @@ import {
   Balance,
   TXOQuery,
   TXORecord,
+  ModuleQuery,
+  ModuleRecord,
   Stream,
 } from './types.js'
 import { Subscription } from './subscription.js'
@@ -126,6 +128,17 @@ declare class Computer {
   decode(tx: Transaction | TxIdString): Promise<TransitionJSON>
   deploy(module: string, opts?: Partial<ModuleOptions>): Promise<string>
   load(rev: ModString): Promise<ModuleExportsNamespace>
+  getModules(
+    q?: ModuleQuery & {
+      verbosity?: 0
+    },
+  ): Promise<string[]>
+  getModules(
+    q: ModuleQuery & {
+      verbosity: 1
+    },
+  ): Promise<ModuleRecord[]>
+  getModule(mod: ModString | string): Promise<ModuleRecord>
   listTxs(address?: AddressString): Promise<{
     sentTxs: import('./types.js').TxSatoshisInfo[]
     receivedTxs: import('./types.js').TxSatoshisInfo[]
@@ -152,7 +165,7 @@ declare class Computer {
     hasInputs: boolean
   }>
   rpc(method: string, params: string): Promise<any>
-  txIdToBlockTime(hash: string): Promise<number | undefined>
+  txIdToBlockTime(hash: string): Promise<bigint | undefined>
   txIdToBlockHeight(txId: string): Promise<number>
   txIdToBlockHash(txId: string): Promise<string | undefined>
   getBlockHash(height: number): Promise<string>

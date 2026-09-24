@@ -1,5 +1,11 @@
 import { useContext, useEffect, useState } from 'react'
-import { bigIntToStr, ComputerContext, Modal, UtilsContext } from '@bitcoin-computer/components'
+import {
+  bigIntToStr,
+  ComputerContext,
+  FieldError,
+  Modal,
+  UtilsContext,
+} from '@bitcoin-computer/components'
 import { Computer } from '@bitcoin-computer/lib'
 import { User, UserHelper } from '@bitcoin-computer/chess-contracts'
 import { HiRefresh } from 'react-icons/hi'
@@ -26,12 +32,18 @@ export function CreateUserModalContent({
   setTitle: React.Dispatch<React.SetStateAction<string>>
   currentBalance: bigint
 }) {
-  const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
+  const { showLoader } = UtilsContext.useUtilsComponents()
   const [balance, setBalance] = useState<bigint>(currentBalance)
   const [address, setAddress] = useState<string>('')
+  const [formError, setFormError] = useState<string | null>(null)
 
   const onSubmit = async (e: React.SyntheticEvent) => {
     e.preventDefault()
+    setFormError(null)
+    if (!userName.trim()) {
+      setFormError('Enter a name')
+      return
+    }
     try {
       showLoader(true)
       const userHelper = new UserHelper({ computer, mod: VITE_CHESS_USER_MOD_SPEC })
@@ -43,11 +55,7 @@ export function CreateUserModalContent({
       setTitle('Account created!')
       showLoader(false)
     } catch (err) {
-      if (err instanceof Error) {
-        showSnackBar(err.message, false)
-      } else {
-        showSnackBar('Error occurred!', false)
-      }
+      setFormError(err instanceof Error ? err.message : 'Error occurred!')
       showLoader(false)
     }
   }
@@ -122,10 +130,14 @@ export function CreateUserModalContent({
                 type="text"
                 id="userName"
                 value={userName}
-                onChange={(e) => setUserName(e.target.value)}
+                onChange={(e) => {
+                  setUserName(e.target.value)
+                  if (formError) setFormError(null)
+                }}
                 className="w-full px-4 py-2 text-sm bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white rounded-md focus:ring-blue-500 focus:border-blue-500 dark:focus:ring-blue-500 dark:focus:border-blue-500 transition-colors"
                 placeholder="Enter your name"
               />
+              <FieldError>{formError}</FieldError>
             </div>
             <button
               type="submit"

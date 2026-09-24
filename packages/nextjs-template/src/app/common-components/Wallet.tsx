@@ -17,7 +17,7 @@ const Balance = ({
 }) => {
   const [balance, setBalance] = useState<bigint>(0n);
   const [, setChain] = useState<string>(localStorage.getItem("CHAIN") || "LTC");
-  const { showSnackBar, showLoader } = useUtilsComponents();
+  const { toast, showLoader } = useUtilsComponents();
 
   const refreshBalance = useCallback(async () => {
     try {
@@ -52,9 +52,8 @@ const Balance = ({
       }
     } catch (err) {
       showLoader(false);
-      showSnackBar(
-        `${err instanceof Error ? err.message : "Error fetching wallet details"}`,
-        false
+      toast.error(
+        `${err instanceof Error ? err.message : "Error fetching wallet details"}`
       );
     }
   }, [computer]);
