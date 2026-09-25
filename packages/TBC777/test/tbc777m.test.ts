@@ -215,4 +215,148 @@ describe('TBC777M', () => {
     await whiteToken.withdraw(chess2._rev)
     expect(whiteToken.amount).eq(16n)
   })
+
+  describe('escrow audit', () => {
+    // An escrow that lets its owner authorize any payout. The token must stay
+    // safe even when the escrow is malicious, so these tests use it to
+    // over-authorize on purpose.
+    class OpenEscrow extends Contract implements Escrow {
+      deposits!: [string, string][]
+      withdraws!: [string, string, bigint][]
+      finalWithdraws!: [string, string, bigint][]
+
+      constructor() {
+        super({ deposits: [], withdraws: [], finalWithdraws: [] })
+      }
+
+      acceptDeposit(root: string, rev: string) {
+        this.deposits.push([root, rev])
+      }
+
+      setWithdraws(withdraws: [string, string, bigint][]) {
+        this.withdraws = withdraws
+      }
+
+      setFinalWithdraws(finalWithdraws: [string, string, bigint][]) {
+        this.finalWithdraws = finalWithdraws
+      }
+    }
+
+    // A write returns before the node has indexed its spend, so the next write
+    // can pick an already-spent fee output (txn-mempool-conflict). Wait for it.
+    const indexed = (rev: string) => minter.waitForIndexed(rev)
+
+    // Mints 3n to the minter and deposits 2n of it into a fresh escrow.
+    async function depositTwo() {
+      const to = minter.getPublicKey()
+      const token = await minter.new(TBC777M, [{ to, amount: 3n, name: 'test' }], mod)
+      await indexed(token._rev)
+      const escrow = await minter.new(OpenEscrow, [])
+      await indexed(escrow._rev)
+      await escrow.acceptDeposit(token._root, token._rev)
+      await indexed(escrow._rev)
+      await token.deposit(escrow._id, 2n)
+      await indexed(token._rev)
+      expect(token.amount).eq(1n)
+      return { token, escrow }
+    }
+
+    // The audit runs inside the contract, where only confirmed revisions are
+    // visible. mine() returns before the node has indexed the new block, so
+    // wait until the node reports rev as confirmed.
+    async function mineAndConfirm(rev: string) {
+      await mine()
+      const deadline = Date.now() + 30_000
+      while (!(await minter.getTXOs({ rev, isConfirmed: true })).length) {
+        if (Date.now() > deadline) throw new Error(`${rev} not confirmed after 30s`)
+        await new Promise((resolve) => setTimeout(resolve, 100))
+      }
+    }
+
+    // finalWithdraws are paid only from the escrow's last revision, and
+    // InnerComputer only reports a last revision once the tip is spent in a
+    // confirmed transaction. The tip and its spend are mined in the same block.
+    async function closeEscrow(escrow: { _rev: string }) {
+      await indexed(escrow._rev)
+      await minter.delete([escrow._rev])
+      await mineAndConfirm(escrow._rev)
+    }
+
+    it('rejects a withdraw of more than was deposited', async () => {
+      const { token, escrow } = await depositTwo()
+      await escrow.setWithdraws([[token._root, token._id, 1000n]])
+      await mineAndConfirm(escrow._rev)
+
+      try {
+        await token.withdraw(escrow._rev)
+        expect.fail('should have thrown on over-claim')
+      } catch (e: any) {
+        expect(e.message).to.include('too low')
+      }
+      expect(token.amount).eq(1n)
+    })
+
+    it('rejects a negative claim that would offset an over-claim', async () => {
+      const { token, escrow } = await depositTwo()
+      // Summed, the two claims equal the 2n deposit.
+      await escrow.setWithdraws([
+        [token._root, token._id, 1000n],
+        [token._root, 'a-token-that-never-withdraws', -998n],
+      ])
+      await mineAndConfirm(escrow._rev)
+
+      try {
+        await token.withdraw(escrow._rev)
+        expect.fail('should have thrown on a negative claim')
+      } catch (e: any) {
+        expect(e.message).to.include('must be non-negative')
+      }
+      expect(token.amount).eq(1n)
+    })
+
+    it('allows a partial withdraw while the escrow still holds the rest', async () => {
+      const { token, escrow } = await depositTwo()
+      await escrow.setWithdraws([[token._root, token._id, 1n]])
+      await mineAndConfirm(escrow._rev)
+
+      await token.withdraw(escrow._rev)
+      expect(token.amount).eq(2n)
+    })
+
+    it('pays a final withdraw from the last revision', async () => {
+      const { token, escrow } = await depositTwo()
+      await escrow.setFinalWithdraws([[token._root, token._id, 2n]])
+      const lastRev = escrow._rev
+      await closeEscrow(escrow)
+
+      await token.withdrawFinal(lastRev)
+      expect(token.amount).eq(3n)
+    })
+
+    it('rejects final withdraws that together exceed the deposits', async () => {
+      const { token, escrow } = await depositTwo()
+      const other = await token.transfer(minter.getPublicKey(), 1n)
+      await indexed(other!._rev)
+      expect(token.amount).eq(0n)
+
+      // Each entry alone is covered by the 2n deposit; together they are not.
+      await escrow.setFinalWithdraws([
+        [token._root, token._id, 2n],
+        [token._root, other!._id, 2n],
+      ])
+      const lastRev = escrow._rev
+      await closeEscrow(escrow)
+
+      for (const t of [token, other!]) {
+        try {
+          await t.withdrawFinal(lastRev)
+          expect.fail('should have thrown on over-authorized final withdraws')
+        } catch (e: any) {
+          expect(e.message).to.include('too low')
+        }
+      }
+      expect(token.amount).eq(0n)
+      expect(other!.amount).eq(1n)
+    })
+  })
 })

@@ -128,7 +128,7 @@ export class TBC777M extends TBC20 {
   escrowId: string | undefined
 
   constructor(args: TBC20ConstructorParams) {
-    super({ withdrawn: [], escrowId: undefined, ...args })
+    super({ withdrawn: [], finalWithdrawn: [], escrowId: undefined, ...args })
   }
 
   /**
@@ -161,7 +161,7 @@ export class TBC777M extends TBC20 {
     if (this.withdrawn.includes(rev)) throw new Error('Cannot withdraw multiple times')
 
     const balance = await TBC777M.getBalance(rev, _root)
-    if (0 < balance) throw new Error(`Escrow balance (${balance}) too low`)
+    if (balance < 0n) throw new Error(`Escrow balance (${balance}) too low`)
 
     this.withdrawn.push(rev)
     this.amount += await TBC777M.computeWithdraw(rev, _id, _root)
@@ -182,8 +182,8 @@ export class TBC777M extends TBC20 {
     if (this.finalWithdrawn.includes(rev)) throw new Error('Cannot withdraw multiple times')
 
     const balance = await TBC777M.getBalance(rev, _root)
+    if (balance < 0n) throw new Error(`Escrow balance (${balance}) too low`)
     const finalWithdraw = await TBC777M.computeFinalWithdraw(rev, _id, _root)
-    if (balance < finalWithdraw) throw new Error(`Escrow balance (${balance}) too low`)
 
     this.finalWithdrawn.push(rev)
     this.amount += finalWithdraw
@@ -227,7 +227,8 @@ export class TBC777M extends TBC20 {
 
   /**
    * Computes the balance of the escrow at the revision, assuming that all
-   * withdraws at that revision had been processed.
+   * withdraws and final withdraws at that revision had been processed. A
+   * negative balance means the escrow authorized more than was deposited.
    *
    * Walks the complete linear revision history ("prev-chain") of the escrow
    * starting from `rev`, then compares total actual deposits against total
@@ -248,8 +249,9 @@ export class TBC777M extends TBC20 {
 
     const deposits = await TBC777M.computeDeposits(states, root)
     const withdraws = await TBC777M.computeWithdraws(states, root)
+    const finalWithdraws = await TBC777M.computeFinalWithdraws(states, root)
 
-    return deposits - withdraws
+    return deposits - withdraws - finalWithdraws
   }
 
   /**
@@ -312,7 +314,7 @@ export class TBC777M extends TBC20 {
   static async computeWithdraws(states: Escrow[], root: string): Promise<bigint> {
     let total = 0n
     for (const state of states) {
-      const amounts = state.withdraws.filter(([r]) => r === root).map(([, , amt]) => amt)
+      const amounts = TBC777M.claimAmounts(state.withdraws, root)
       total += amounts.reduce((prev, amt) => prev + amt, 0n)
     }
     return total
@@ -328,7 +330,19 @@ export class TBC777M extends TBC20 {
   static async computeFinalWithdraws(states: Escrow[], root: string): Promise<bigint> {
     if (states.length === 0) return 0n
     const [finalState] = states
-    const amounts = finalState.finalWithdraws.filter(([r]) => r === root).map(([, , amt]) => amt)
+    const amounts = TBC777M.claimAmounts(finalState.finalWithdraws ?? [], root)
     return amounts.reduce((prev, amt) => prev + amt, 0n)
+  }
+
+  /**
+   * Returns the amounts of the claims for `root`, which must be non-negative
+   * bigints. A negative claim for a token that never withdraws would otherwise
+   * offset a larger claim in the audit totals.
+   */
+  static claimAmounts(claims: [string, string, bigint][], root: string): bigint[] {
+    const amounts = claims.filter(([r]) => r === root).map(([, , amt]) => amt)
+    if (amounts.some((amt) => typeof amt !== 'bigint' || amt < 0n))
+      throw new Error('Escrow claim amounts must be non-negative bigints')
+    return amounts
   }
 }
