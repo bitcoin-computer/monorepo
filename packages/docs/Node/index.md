@@ -40,8 +40,8 @@ To start your node at `http://localhost:1031` run the commands below. The node i
 cd packages/node
 
 # Copy the .env file and litecoin.conf file from the examples
-cp chain-setup/ltc/regtest/.env.example .env
-cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
+cp chain-setup/LTC/regtest/.env.example .env
+cp chain-setup/LTC/regtest/litecoin.conf.example litecoin.conf
 
 # Run the node on litecoin regtest
 npm run up
@@ -63,8 +63,8 @@ To run the node in production, you need to configure the `.env` file with approp
 # Move to node folder
 cd packages/node
 # Copy the .env file from the examples
-cp chain-setup/ltc/mainnet/.env.example .env
-cp chain-setup/ltc/mainnet/litecoin.conf.example litecoin.conf
+cp chain-setup/LTC/mainnet/.env.example .env
+cp chain-setup/LTC/mainnet/litecoin.conf.example litecoin.conf
 ```
 
 </font>
@@ -86,7 +86,7 @@ To speed up the syncing process, syncing is carried out without db indexes. Afte
 
 ```sh
 # In the node folder run the following command
-npm run create-indexes
+npm run create:indexes
 ```
 
 </font>
