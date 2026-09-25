@@ -2,8 +2,8 @@ import { expect } from 'chai'
 import { branded, Computer, Contract, Id, Rev, Root, SmartContract } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import path from 'path'
-import { TBC20 } from '../src/tbc20.js'
-import { Amount, Escrow, TBC777, EscrowAuditor } from '../src/tbc777.js'
+import { TBC20 } from '@bitcoin-computer/TBC20'
+import { Amount, Escrow, TBC777, TBC777Helper, EscrowAuditor } from '../src/tbc777.js'
 
 const envPaths = [path.resolve(process.cwd(), './packages/node/.env'), '../node/.env']
 
@@ -39,12 +39,18 @@ let white: Computer
 let minter: Computer
 let mod: string
 
+async function faucetIndexed(c: Computer, sats: number) {
+  const u = await c.faucet(sats)
+  await c.waitForIndexed(u.txId)
+  return u
+}
+
 async function ensureFunds(c: Computer, minSats = 20e8) {
   try {
     const { balance } = await c.getBalance()
-    if (balance < minSats) await c.faucet(minSats)
+    if (balance < minSats) await faucetIndexed(c, minSats)
   } catch {
-    await c.faucet(minSats)
+    await faucetIndexed(c, minSats)
   }
 }
 
@@ -54,7 +60,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     black = new Computer({ url, chain, network })
     white = new Computer({ url, chain, network })
 
-    await Promise.all([black.faucet(2e8), white.faucet(2e8), minter.faucet(2e8)])
+    await Promise.all([faucetIndexed(black, 2e8), faucetIndexed(white, 2e8), faucetIndexed(minter, 2e8)])
     await ensureFunds(minter, 2e8)
 
     // Strip comments from all three classes before deploying
@@ -79,10 +85,13 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     const exp = `new TBC777({ to: '${to}', amount: ${amount}n, name: '${name}', symbol: '${symbol}' })`
     const { tx } = await minter.encode({ exp, mod })
     await minter.broadcast(tx)
+    await minter.waitForIndexed(tx.getId())
   })
 
   beforeEach(async () => {
-    await Promise.all([black.faucet(2e8), white.faucet(2e8), minter.faucet(2e8)])
+    // Fresh faucet outputs break unconfirmed descendant chains that cause
+    // txn-mempool-conflict / bad-txns-inputs-missingorspent under suite load.
+    await Promise.all([faucetIndexed(black, 2e8), faucetIndexed(white, 2e8), faucetIndexed(minter, 2e8)])
     await ensureFunds(minter, 2e8)
   })
 
@@ -133,6 +142,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       env: { escrow: escrow._rev, token: token._rev },
     })
     await depositor.broadcast(tx)
+    await depositor.waitForIndexed(tx.getId())
 
     // Return both updated objects so callers can re-bind if needed
     return {
@@ -154,14 +164,15 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
     expect(balance >= 0n).eq(true)
   }
 
-  /** Create a fresh token instance (via transfer for efficiency) */
   /** Create a fresh token instance (mint fresh each time to avoid depleting
    * shared root) */
   async function createFreshToken(amount = FRESH_TOKEN_AMOUNT, owner = minter.getPublicKey()) {
+    await faucetIndexed(minter, 2e8)
     const exp = `new TBC777({ to: '${owner}', amount: ${amount}n, name: '${TEST_NAME}', symbol: '${TEST_SYMBOL}' })`
     const { effect, tx } = await minter.encode({ exp, mod })
     const fresh = branded(effect.res as SmartContract<typeof TBC777>)
     await minter.broadcast(tx)
+    await minter.waitForIndexed(tx.getId())
     return fresh
   }
 
@@ -702,13 +713,27 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       }
     })
 
-    it('merge() is permanently disabled with clear error message', async () => {
-      const token = await createFreshToken()
+    it('merge() combines clean same-lineage bags', async () => {
+      const token = await createFreshToken(10n)
+      const child = await token.transfer(minter.getPublicKey(), 4n)
+      expect(token.amount).to.eq(6n)
+      expect(child.amount).to.eq(4n)
+      await token.merge([child])
+      expect(token.amount).to.eq(10n)
+      expect(child.amount).to.eq(0n)
+    })
+
+    it('merge() refuses bags with escrow history', async () => {
+      const escrow = await createNaiveEscrow()
+      const token = await createFreshToken(10n)
+      const child = await token.transfer(minter.getPublicKey(), 4n)
+      const { token: deposited } = await depositAtomic(token, escrow, 1n)
+      expect(deposited.escrow).to.eq(escrow._id)
       try {
-        await token.merge()
+        await deposited.merge([child])
         expect.fail('merge() should have thrown')
       } catch (e: any) {
-        expect(e.message).to.equal('merge() is disabled in TBC777.')
+        expect(e.message).to.equal('Cannot merge tokens with escrow history')
       }
     })
 
@@ -1179,6 +1204,24 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
 // ============================================================
 // UNIT TESTS FOR constructor amount rules
 // ============================================================
+describe('TBC777Helper', () => {
+  it('deploy + mint creates a TBC777 from the full inheritance-chain module', async () => {
+    const computer = new Computer({ url, chain, network })
+    const u = await computer.faucet(2e8)
+    await computer.waitForIndexed(u.txId)
+    const helper = new TBC777Helper(computer)
+    const spec = await helper.deploy()
+    expect(spec).to.be.a('string')
+    // Confirm the module so mint does not re-inscribe the full class chain (sigops).
+    await computer.db.wallet.restClient.mine(1)
+    const token = await helper.mint(computer.getPublicKey(), 7n, 'helper', 'HLP')
+    expect(token.amount).to.eq(7n)
+    expect(token.name).to.eq('helper')
+    expect(token.symbol).to.eq('HLP')
+    expect(token.root).to.eq(token._root)
+  })
+})
+
 describe('TBC777 constructor amount rules (unit)', () => {
   const validTo = '02abcdef0123456789abcdef0123456789abcdef0123456789abcdef0123456789'
 

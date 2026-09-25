@@ -71,7 +71,7 @@
  */
 
 import { Contract } from '@bitcoin-computer/lib'
-import { TBC20, type TBC20ConstructorParams } from './tbc20.js'
+import { TBC20, type TBC20ConstructorParams } from '@bitcoin-computer/TBC20'
 
 /**
  * Minimal interface that any escrow contract must satisfy to be compatible with

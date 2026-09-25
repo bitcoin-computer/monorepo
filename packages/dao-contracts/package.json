@@ -59,6 +59,7 @@
     }
   },
   "dependencies": {
+    "@bitcoin-computer/TBC20": "^0.27.0-beta.2",
     "@bitcoin-computer/lib": "^0.27.0-beta.2",
     "@bitcoin-computer/secp256k1": "^0.27.0-beta.2",
     "assert": "^2.0.0",

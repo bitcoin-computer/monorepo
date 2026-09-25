@@ -467,7 +467,7 @@ export type TXORecord = {
   blockIndex?: number
   timestamp?: number
 }
-export type TXOOrderBy = 'rev' | 'timestamp'
+export type TXOOrderBy = 'rev' | 'timestamp' | 'block'
 export type TXOQuery = {
   verbosity?: number
   limit?: number
@@ -480,6 +480,9 @@ export type TXOQuery = {
   exp?: string
   lteBlockHeight?: number
   gteBlockHeight?: number
+  ltBlockHeight?: number
+  ltBlockIndex?: number
+  ltRev?: string
 } & Partial<Omit<TXORecord, 'expHash'>>
 export type EvalResult = {
   effect: EvaluatedEffect
