@@ -232,6 +232,8 @@ export class EscrowAuditor {
    *   prev-chain (`states`).
    * - Final-withdraw entries are taken only from `states[0]` (the exact
    *   `escrowRev` supplied to `audit()`).
+   * - Claim amounts must be non-negative bigints. A negative claim for a token
+   *   that never withdraws would otherwise offset a larger claim in the totals.
    */
   static collectRevisions(states: Escrow[], lineage: Root) {
     const depositRevs = new Set<Rev>()
@@ -246,15 +248,21 @@ export class EscrowAuditor {
         if (r === lineage) depositRevs.add(rev)
       }
       for (const [r, id, amt] of withdraws) {
-        if (r === lineage) withdrawEntries.add([id, amt] as ClaimAmountEntry)
+        if (r === lineage) withdrawEntries.add([id, this.checkClaimAmount(amt)] as ClaimAmountEntry)
       }
     }
 
     for (const [r, id, amt] of finalState.finalWithdraws) {
-      if (r === lineage) finalEntries.add([id, amt] as ClaimAmountEntry)
+      if (r === lineage) finalEntries.add([id, this.checkClaimAmount(amt)] as ClaimAmountEntry)
     }
 
     return { depositRevs, withdrawEntries, finalEntries }
+  }
+
+  static checkClaimAmount(amount: unknown): Amount {
+    if (typeof amount !== 'bigint' || amount < 0n)
+      throw new Error('Escrow claim amounts must be non-negative bigints')
+    return amount
   }
 
   /**
