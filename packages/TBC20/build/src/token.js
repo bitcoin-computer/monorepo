@@ -3,6 +3,9 @@ export class TBC20 extends Contract {
     get root() {
         return this._root;
     }
+    async isFungibleWith(other) {
+        return this.root === other.root;
+    }
     constructor(params) {
         const { to, amount, name, symbol = '', ...rest } = params;
         super({ amount, name, symbol, ...rest, _owners: [to] });
@@ -12,14 +15,14 @@ export class TBC20 extends Contract {
             this._owners = [to];
             return undefined;
         }
+        return this._createTransferToken(to, amount);
+    }
+    _createTransferToken(to, amount) {
         if (amount <= 0n)
             throw new Error('Transfer amount must be positive');
         if (this.amount < amount)
             throw new Error('Insufficient funds');
         this.amount -= amount;
-        return this._createTransferToken(to, amount);
-    }
-    _createTransferToken(to, amount) {
         const ctor = this.constructor;
         const { _id, _root, _rev, _owners, ...cleanState } = this;
         return new ctor({ ...cleanState, to, amount });
@@ -27,9 +30,17 @@ export class TBC20 extends Contract {
     burn() {
         this.amount = 0n;
     }
-    merge(tokens) {
-        if (tokens.some((t) => t._root !== this._root))
-            throw new Error('Cannot merge tokens from different lineages');
+    async merge(tokens) {
+        const seen = new Set([this._rev]);
+        for (const t of tokens) {
+            if (seen.has(t._rev))
+                throw new Error('Cannot merge the same token twice');
+            seen.add(t._rev);
+        }
+        for (const t of tokens) {
+            if (!(await this.isFungibleWith(t)))
+                throw new Error('Cannot merge tokens from different lineages');
+        }
         let total = 0n;
         tokens.forEach((t) => {
             total += t.amount;

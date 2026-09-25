@@ -13,11 +13,12 @@ export declare class TBC20 extends Contract {
     symbol: string;
     _owners: string[];
     get root(): string;
+    protected isFungibleWith(other: TBC20): Promise<boolean>;
     constructor(params: TBC20ConstructorParams);
     transfer(to: string, amount?: bigint): this | undefined;
     protected _createTransferToken(to: string, amount: bigint): this;
     burn(): void;
-    merge(tokens: TBC20[]): void;
+    merge(tokens: TBC20[]): Promise<void>;
 }
 export { TBC20 as Token };
 export interface ITBC20 {

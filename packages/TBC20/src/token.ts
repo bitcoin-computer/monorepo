@@ -23,8 +23,21 @@ export class TBC20 extends Contract {
   symbol!: string
   _owners!: string[]
 
+  /**
+   * Fungibility identifier. TBC20 uses the object `_root` (one mint = one token).
+   * Subclasses may override (TBC777: remoteRoot; Commodity: module specifier).
+   */
   get root(): string {
     return this._root
+  }
+
+  /**
+   * Overridable. True iff `other` is the same fungible token as `this`.
+   * Default: same `root`. Subclasses add extra rules (e.g. Commodity requires
+   * both bags to be genuine mints of that module).
+   */
+  protected async isFungibleWith(other: TBC20): Promise<boolean> {
+    return this.root === other.root
   }
 
   constructor(params: TBC20ConstructorParams) {
@@ -54,10 +67,6 @@ export class TBC20 extends Contract {
       return undefined
     }
 
-    if (amount <= 0n) throw new Error('Transfer amount must be positive')
-    if (this.amount < amount) throw new Error('Insufficient funds')
-
-    this.amount -= amount
     return this._createTransferToken(to, amount)
   }
 
@@ -70,6 +79,15 @@ export class TBC20 extends Contract {
    * (preserving original behavior) while setting the new owner and amount.
    */
   protected _createTransferToken(to: string, amount: bigint): this {
+    // The debit lives here, with the creation, not in `transfer`. A caller is not obliged to
+    // come through `transfer`: `protected` is erased at runtime, so an expression can name this
+    // method directly. While the check sat in `transfer`, doing so minted a token of any size
+    // and left the parent untouched — money from nothing, and indistinguishable from real
+    // holdings afterwards. Guarding the method that creates value makes every route to it safe.
+    if (amount <= 0n) throw new Error('Transfer amount must be positive')
+    if (this.amount < amount) throw new Error('Insufficient funds')
+    this.amount -= amount
+
     const ctor = this.constructor as Constructor<this>
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _id, _root, _rev, _owners, ...cleanState } = this
@@ -80,9 +98,22 @@ export class TBC20 extends Contract {
     this.amount = 0n
   }
 
-  merge(tokens: TBC20[]) {
-    if (tokens.some((t) => t._root !== this._root))
-      throw new Error('Cannot merge tokens from different lineages')
+  async merge(tokens: TBC20[]): Promise<void> {
+    // One revision may not be counted twice. Two names in a transaction's environment can
+    // refer to the same output; each entry's amount is read before it is burned, so a repeated
+    // token used to add its value once per mention. The library now shares one instance per
+    // revision, which makes the repeat harmless — this refuses it outright so the invariant
+    // does not depend on that, and so a caller sees its mistake.
+    const seen = new Set<string>([this._rev])
+    for (const t of tokens) {
+      if (seen.has(t._rev)) throw new Error('Cannot merge the same token twice')
+      seen.add(t._rev)
+    }
+
+    for (const t of tokens) {
+      if (!(await this.isFungibleWith(t)))
+        throw new Error('Cannot merge tokens from different lineages')
+    }
     let total = 0n
     tokens.forEach((t) => {
       total += t.amount
