@@ -38,7 +38,7 @@ function Component() {
   const [txn, setTxn] = useState<string>(
     typeof params.txn === "string"
       ? decodeURIComponent(params.txn)
-      : decodeURIComponent(params.txn?.[0] || "")
+      : decodeURIComponent(params.txn?.[0] || ""),
   );
   const [txnData, setTxnData] = useState<any | null>(null);
   const [rpcTxnData, setRPCTxnData] = useState<any | null>(null);
@@ -50,7 +50,7 @@ function Component() {
         setTxn(
           typeof params.txn === "string"
             ? decodeURIComponent(params.txn)
-            : decodeURIComponent(params.txn?.[0] || "")
+            : decodeURIComponent(params.txn?.[0] || ""),
         );
         const [hex] = await computer.db.wallet.restClient.getRawTxs([
           params.txn as string,
@@ -58,9 +58,9 @@ function Component() {
         const tx = Computer.txFromHex({ hex });
         setTxnData(tx);
 
-        const { result } = await computer.rpc(
+        const result = await computer.rpc(
           "getrawtransaction",
-          `${params.txn} 2`
+          `${params.txn} 1`,
         );
         setRPCTxnData(result);
       }

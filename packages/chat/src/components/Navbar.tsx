@@ -93,13 +93,13 @@ function SignInItem() {
 
 export function NotLoggedMenu() {
   const [dropDownLabel, setDropDownLabel] = useState<string>('LTC')
-  const { showSnackBar } = UtilsContext.useUtilsComponents()
+  const { toast } = UtilsContext.useUtilsComponents()
 
   useEffect(() => {
     initFlowbite()
 
     const { chain, network } = Auth.defaultConfiguration()
-    setDropDownLabel(formatChainAndNetwork(chain, network))
+    setDropDownLabel(formatChainAndNetwork(chain ?? 'LTC', network ?? 'regtest'))
   }, [])
 
   const setChainAndNetwork = (chain: Chain, network: Network) => {
@@ -109,7 +109,7 @@ export function NotLoggedMenu() {
       setDropDownLabel(formatChainAndNetwork(chain, network))
       window.location.href = '/'
     } catch {
-      showSnackBar('Error setting chain and network', false)
+      toast.error('Error setting chain and network')
       Modal.get(modalId).show()
     }
   }

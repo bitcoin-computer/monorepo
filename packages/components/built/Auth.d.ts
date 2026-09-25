@@ -24,20 +24,20 @@ declare function getBip44Path({ purpose, coinType, account }?: {
     coinType?: number | undefined;
     account?: number | undefined;
 }): string;
-declare function loggedOutConfiguration(): {
-    chain: Chain;
-    network: Network;
-    url: any;
-    path: any;
-};
-declare function loggedInConfiguration(): {
-    mnemonic: string | null;
-    chain: Chain;
-    network: Network;
-    url: any;
-    path: any;
-    moduleStorageType: ModuleStorageType;
-};
+declare function loggedOutConfiguration(): Partial<{
+    chain: Chain | undefined;
+    network: Network | undefined;
+    url: string | undefined;
+    path: string | undefined;
+}>;
+declare function loggedInConfiguration(): Partial<{
+    mnemonic: string | undefined;
+    chain: Chain | undefined;
+    network: Network | undefined;
+    url: string | undefined;
+    path: string | undefined;
+    moduleStorageType: ModuleStorageType | undefined;
+}>;
 declare function getComputer(options?: ComputerOptions): Computer;
 declare function LoginForm(): import("react").JSX.Element;
 declare function LoginModal(): import("react").JSX.Element;

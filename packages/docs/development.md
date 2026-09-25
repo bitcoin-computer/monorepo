@@ -7,6 +7,8 @@ icon: beaker
 
 ## Troubleshooting
 
+For node-side issues (401 auth, empty `get-txos` / modules, Module table upgrade, lib↔node version match, reorg confirmation fields), see [Node: Operate & Troubleshoot](./Node/operations.md) and the [changelog](./changelog.md).
+
 ### Production mode
 
 There are two modes to run the system: development mode and production mode. In development mode, the system is not optimized and includes additional checks to help with debugging. For example, you can use the `console.log()` function to print messages to the console inside of smart contract methods. Also, the ses `lockdown` is not applied in development mode. The `lockdown` prevents the use of certain JavaScript features that are not safe for smart contracts, such as `eval` and `Function` constructor, or the use or overwriting of certain global objects, such as `Array` or `Object`. See the ses docs for more details.

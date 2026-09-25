@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/components",
-  "version": "0.27.0-beta.1",
+  "version": "0.27.0-beta.2",
   "description": "",
   "homepage": "http://bitcoincomputer.io/",
   "bugs": {
@@ -23,6 +23,21 @@
   ],
   "main": "built/index.js",
   "types": "built/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./built/index.d.ts",
+      "default": "./built/index.js"
+    },
+    "./utils": {
+      "types": "./built/common/utils.d.ts",
+      "default": "./built/common/utils.js"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "utils": ["./built/common/utils.d.ts"]
+    }
+  },
   "files": [
     "LICENSE.md",
     "LEGAL.md"
@@ -37,8 +52,10 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.27.0-beta.1",
+    "@bitcoin-computer/lib": "^0.27.0-beta.2",
     "flowbite": "^2.3.0",
+    "prismjs": "^1.30.0",
+    "qrcode": "^1.5.4",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^5.2.1",
@@ -47,6 +64,8 @@
   },
   "devDependencies": {
     "@babel/preset-react": "^7.23.3",
+    "@types/prismjs": "^1.26.6",
+    "@types/qrcode": "^1.5.6",
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "vitest": "^2.0.5"
   }

@@ -71,11 +71,106 @@ export const sleep = (ms: number): Promise<void> =>
     setTimeout(resolve, ms)
   })
 
+const SPENT_INPUT_RE =
+  /bad-txns-inputs-missingorspent|missingorspent|missing-inputs/i
+
+const OLD_REVISION_MESSAGE =
+  'This revision is already spent. Are you trying to update an old revision? Open the latest revision and try again.'
+
+function collectErrorFragments(error: unknown, depth = 0, acc: string[] = []): string[] {
+  if (error == null || depth > 5) return acc
+  if (typeof error === 'string') {
+    acc.push(error)
+    const trimmed = error.trim()
+    if (trimmed.startsWith('{') || trimmed.startsWith('[')) {
+      try {
+        collectErrorFragments(JSON.parse(trimmed), depth + 1, acc)
+      } catch {
+        // not JSON
+      }
+    }
+    return acc
+  }
+  if (typeof error !== 'object') return acc
+  const obj = error as Record<string, unknown>
+  if (typeof obj.message === 'string' || typeof obj.message === 'object') {
+    collectErrorFragments(obj.message, depth + 1, acc)
+  }
+  if (obj.error != null) collectErrorFragments(obj.error, depth + 1, acc)
+  if (obj.response != null) collectErrorFragments(obj.response, depth + 1, acc)
+  if (obj.data != null) collectErrorFragments(obj.data, depth + 1, acc)
+  return acc
+}
+
+/** True when bitcoind rejected the tx because inputs were already spent (typical of calling a method on an old revision). */
+export function isMissingOrSpentError(error: unknown): boolean {
+  return collectErrorFragments(error).some((s) => SPENT_INPUT_RE.test(s))
+}
+
+export const getErrorMessage = (error: any): string => {
+  if (isMissingOrSpentError(error)) return OLD_REVISION_MESSAGE
+  if (
+    error?.response?.data?.error ===
+    'mandatory-script-verify-flag-failed (Operation not valid with the current stack size)'
+  )
+    return 'You are not authorized to make changes to this smart object'
+  if (error?.response?.data?.error) return error?.response?.data?.error
+  return error.message ? error.message : 'Error occurred'
+}
+
 export function getEnv(name: string) {
   return (
     (typeof process !== 'undefined' && process.env[`REACT_APP_${name}`]) ||
     (import.meta.env && import.meta.env[`VITE_${name}`])
   )
+}
+
+/** BIP32 path accepted by the login form and by nakamotojs. */
+export const BIP32_PATH_PATTERN = /^(m\/)?(\d+'?\/)*\d+'?$/
+
+const CHAINS = new Set(['LTC', 'BTC', 'DOGE', 'PEPE', 'WOJAK', 'BCH'])
+const NETWORKS = new Set(['testnet', 'mainnet', 'regtest'])
+
+/** Reject null, empty, and the string "undefined"/"null" that localStorage.setItem produces. */
+export function asNonEmpty(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined
+  const s = value.trim()
+  if (!s || s === 'undefined' || s === 'null') return undefined
+  return s
+}
+
+export function validPath(value: unknown): string | undefined {
+  const s = asNonEmpty(value)
+  if (!s || !BIP32_PATH_PATTERN.test(s)) return undefined
+  return s
+}
+
+export function validChain(value: unknown): string | undefined {
+  const s = asNonEmpty(value)
+  if (!s || !CHAINS.has(s)) return undefined
+  return s
+}
+
+export function validNetwork(value: unknown): string | undefined {
+  const s = asNonEmpty(value)
+  if (!s || !NETWORKS.has(s)) return undefined
+  return s
+}
+
+export function validUrl(value: unknown): string | undefined {
+  return asNonEmpty(value)
+}
+
+export function validModuleStorageType(value: unknown): string | undefined {
+  const s = asNonEmpty(value)
+  if (s === 'taproot' || s === 'multisig') return s
+  return undefined
+}
+
+export function compactUndefined<T extends Record<string, unknown>>(obj: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(obj).filter(([, v]) => v !== undefined && v !== null),
+  ) as Partial<T>
 }
 
 export function bigIntToStr(a: bigint): string {

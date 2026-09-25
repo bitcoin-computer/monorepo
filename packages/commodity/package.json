@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/commodity",
-  "version": "0.27.0-beta.1",
+  "version": "0.27.0-beta.2",
   "description": "A proof-of-work token implementation.",
   "license": "MIT",
   "author": "Clemens Ley <clemens@bitcoincomputer.io>",
@@ -27,9 +27,9 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/TBC20": "^0.27.0-beta.1",
-    "@bitcoin-computer/TBC777": "^0.27.0-beta.1",
-    "@bitcoin-computer/lib": "^0.27.0-beta.1"
+    "@bitcoin-computer/TBC20": "^0.27.0-beta.2",
+    "@bitcoin-computer/TBC777": "^0.27.0-beta.2",
+    "@bitcoin-computer/lib": "^0.27.0-beta.2"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.6",

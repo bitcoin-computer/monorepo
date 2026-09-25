@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { Computer } from '@bitcoin-computer/lib'
-import { ComputerContext, UtilsContext } from '@bitcoin-computer/components'
+import { ComputerContext, InlineAlert, UtilsContext } from '@bitcoin-computer/components'
 import { Auth } from '@bitcoin-computer/components'
 import { Modal } from '@bitcoin-computer/components'
 import { VITE_TBC20_MOD_SPEC } from '../constants/modSpecs'
@@ -54,15 +54,17 @@ function TokenRow({ token }: { token: TokenInfo }) {
 
 export function TokenBalance() {
   const computer = useContext(ComputerContext)
-  const { showLoader, showSnackBar } = UtilsContext.useUtilsComponents()
+  const { showLoader, toast } = UtilsContext.useUtilsComponents()
   const [tokens, setTokens] = useState<TokenInfo[]>([])
   const [totalBalance, setTotalBalance] = useState<bigint>(0n)
   const [loading, setLoading] = useState(false)
   const [claiming, setClaiming] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
 
   const fetchTokens = async () => {
     if (!Auth.isLoggedIn()) return
     setLoading(true)
+    setLoadError(null)
     showLoader(true)
     try {
       const tokenRevs = await computer.getOUTXOs({
@@ -77,7 +79,7 @@ export function TokenBalance() {
       setTokens(tokenInfos)
       setTotalBalance(tokenInfos.reduce((sum, t) => sum + t.amount, 0n))
     } catch (err) {
-      showSnackBar(err instanceof Error ? err.message : 'Failed to load tokens', false)
+      setLoadError(err instanceof Error ? err.message : 'Failed to load tokens')
     } finally {
       setLoading(false)
       showLoader(false)
@@ -90,7 +92,7 @@ export function TokenBalance() {
 
   const claimTokens = async () => {
     if (!MINTER_MNEMONIC || !CHESS_TOKEN_ID) {
-      showSnackBar('Token distributor is not configured yet. Run deploy first.', false)
+      toast.error('Token distributor is not configured yet. Run deploy first.')
       return
     }
 
@@ -111,10 +113,10 @@ export function TokenBalance() {
         mod: VITE_TBC20_MOD_SPEC,
       })
       await minter.broadcast(tx)
-      showSnackBar(`Sent ${TOKEN_CLAIM_AMOUNT.toString()} tokens to your wallet`, true)
+      toast.success(`Sent ${TOKEN_CLAIM_AMOUNT.toString()} tokens to your wallet`)
       await fetchTokens()
     } catch (err) {
-      showSnackBar(err instanceof Error ? err.message : 'Failed to claim tokens', false)
+      toast.error(err instanceof Error ? err.message : 'Failed to claim tokens')
     } finally {
       setClaiming(false)
       showLoader(false)
@@ -160,6 +162,12 @@ export function TokenBalance() {
           </button>
         </div>
       </div>
+
+      {loadError ? (
+        <InlineAlert variant="error" className="mb-4" onDismiss={() => setLoadError(null)}>
+          {loadError}
+        </InlineAlert>
+      ) : null}
 
       {/* Total balance card */}
       <div className="bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl p-6 mb-6 text-white shadow-lg">

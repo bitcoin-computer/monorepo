@@ -2,15 +2,22 @@ import { Dispatch, useEffect, useRef, useState } from 'react'
 import { Computer } from '@bitcoin-computer/lib'
 import { initFlowbite } from 'flowbite'
 import { HiRefresh } from 'react-icons/hi'
-import { useUtilsComponents } from './UtilsContext'
 import { Modal } from './Modal'
 import type { Chain, Network, ModuleStorageType } from './common/types'
-import { getEnv } from './common/utils'
+import {
+  asNonEmpty,
+  compactUndefined,
+  getEnv,
+  validChain,
+  validModuleStorageType,
+  validNetwork,
+  validPath,
+  validUrl,
+} from './common/utils'
 
 export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
 export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest'
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
-const pathPattern = /^(m\/)?(\d+'?\/)*\d+'?$/
 
 export type ComputerOptions = Partial<{
   chain: TBCChain
@@ -27,7 +34,7 @@ export type ComputerOptions = Partial<{
 }>
 
 function isLoggedIn(): boolean {
-  return !!localStorage.getItem('BIP_39_KEY')
+  return !!asNonEmpty(localStorage.getItem('BIP_39_KEY'))
 }
 
 function logout() {
@@ -47,6 +54,7 @@ function getCoinType(chain: string = 'LTC', network: string = 'regtest'): number
   if (chain === 'DOGE') return 3
   if (chain === 'PEPE') return 3434
   if (chain === 'BCH') return 145
+  if (chain === 'WOJAK') return 20760
 
   throw new Error(`Unsupported chain ${chain} or network ${network}`)
 }
@@ -59,32 +67,49 @@ function getPath({ chain, network }: { chain?: Chain; network?: Network }): stri
   return getBip44Path({ coinType: getCoinType(chain, network) })
 }
 
+function envThenStorage(name: string, validate: (value: unknown) => string | undefined) {
+  return validate(getEnv(name)) || validate(localStorage.getItem(name))
+}
+
+function storageThenEnv(name: string, validate: (value: unknown) => string | undefined) {
+  return validate(localStorage.getItem(name)) || validate(getEnv(name))
+}
+
+function persistUserOrClear(key: string, userValue: string | undefined, envIsValid: boolean) {
+  if (!envIsValid && userValue) localStorage.setItem(key, userValue)
+  else localStorage.removeItem(key)
+}
+
 function loggedOutConfiguration() {
-  return {
-    chain: getEnv('CHAIN') as Chain,
-    network: getEnv('NETWORK') as Network,
-    url: getEnv('URL'),
-    path: getEnv('PATH'),
-  }
+  return compactUndefined({
+    chain: validChain(getEnv('CHAIN')) as Chain | undefined,
+    network: validNetwork(getEnv('NETWORK')) as Network | undefined,
+    url: validUrl(getEnv('URL')),
+    path: validPath(getEnv('PATH')),
+  })
 }
 
 function loggedInConfiguration() {
-  return {
-    mnemonic: localStorage.getItem('BIP_39_KEY'),
-    chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')) as Chain,
-    network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
-    url: localStorage.getItem('URL') || getEnv('URL'),
-    path: localStorage.getItem('PATH') || getEnv('PATH'),
-    moduleStorageType:
-      (localStorage.getItem('MODULE_STORAGE_TYPE') as ModuleStorageType) ||
-      getEnv('MODULE_STORAGE_TYPE') ||
-      'taproot',
-  }
+  return compactUndefined({
+    mnemonic: asNonEmpty(localStorage.getItem('BIP_39_KEY')),
+    // Node/deploy settings: env wins when valid so a new deploy is not stuck on stale storage.
+    chain: envThenStorage('CHAIN', validChain) as Chain | undefined,
+    network: envThenStorage('NETWORK', validNetwork) as Network | undefined,
+    url: envThenStorage('URL', validUrl),
+    // Path is user-owned: valid login value first, then env, else omit (Computer default path).
+    path: storageThenEnv('PATH', validPath),
+    moduleStorageType: envThenStorage(
+      'MODULE_STORAGE_TYPE',
+      validModuleStorageType,
+    ) as ModuleStorageType | undefined,
+  })
 }
 
 function getComputer(options: ComputerOptions = {}): Computer {
   const defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration()
-  return new Computer({ ...defaultConfiguration, ...options })
+  return new Computer(
+    compactUndefined({ ...defaultConfiguration, ...options }) as ComputerOptions,
+  )
 }
 
 function MnemonicInput({
@@ -307,74 +332,93 @@ function PathInput({ path, setPath }: { path: string; setPath: Dispatch<string> 
   )
 }
 
-function LoginButton({ mnemonic, chain, network, path, url, urlInputRef }: any) {
-  const { showSnackBar } = useUtilsComponents()
-
+function LoginButton({
+  mnemonic,
+  chain,
+  network,
+  path,
+  url,
+  urlInputRef,
+  onError,
+}: {
+  mnemonic: string
+  chain: Chain | undefined
+  network: Network | undefined
+  path: string
+  url: string | undefined
+  urlInputRef: React.RefObject<HTMLInputElement>
+  onError: (message: string | null) => void
+}) {
   const login = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
     if (isLoggedIn()) {
-      showSnackBar('A user is already logged in, please log out first.', false)
+      onError('A user is already logged in, please log out first.')
       return
     }
     if (mnemonic.length === 0) {
-      showSnackBar("Please don't use an empty mnemonic string.", false)
+      onError("Please don't use an empty mnemonic string.")
       return
     }
     if (chain === undefined) {
-      showSnackBar('Please select a chain.', false)
+      onError('Please select a chain.')
       return
     }
     if (network === undefined) {
-      showSnackBar('Please select a network.', false)
+      onError('Please select a network.')
       return
     }
-    if (path.length === 0) {
-      showSnackBar('Please enter a valid path.', false)
-      return
-    }
-    if (path.match(pathPattern) === null) {
-      showSnackBar("Path format must be in the form m/44'/0'/0'/0/0.", false)
+    const envPath = validPath(getEnv('PATH'))
+    const userPath = validPath(path)
+    if (!envPath && !userPath) {
+      onError("Path format must be in the form m/44'/0'/0'/0/0.")
       return
     }
 
-    if (url === undefined || url?.length === 0) {
-      showSnackBar('Please enter a valid URL.', false)
+    const envUrl = validUrl(getEnv('URL'))
+    const userUrl = validUrl(urlInputRef.current?.value || url)
+    if (!envUrl && !userUrl) {
+      onError('Please enter a valid URL.')
       return
     }
     if (isLoggedIn()) return
 
+    onError(null)
     localStorage.setItem('BIP_39_KEY', mnemonic)
-    localStorage.setItem('CHAIN', chain)
-    localStorage.setItem('NETWORK', network)
-    localStorage.setItem('PATH', path)
-    localStorage.setItem('URL', urlInputRef.current?.value || url)
+    persistUserOrClear('CHAIN', chain, !!validChain(getEnv('CHAIN')))
+    persistUserOrClear('NETWORK', network, !!validNetwork(getEnv('NETWORK')))
+    persistUserOrClear('PATH', userPath, !!envPath)
+    persistUserOrClear('URL', userUrl, !!envUrl)
 
     window.location.href = '/'
   }
 
   return (
-    <>
-      <button
-        onClick={login}
-        type="submit"
-        className="w-full text-white bg-blue-3 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-3 dark:hover:brightness-90 dark:focus:ring-blue-2"
-      >
-        Log In
-      </button>
-      {/* {show && <SnackBar message={message} success={success} hideSnackBar={setShow} />} */}
-    </>
+    <button
+      onClick={login}
+      type="submit"
+      className="w-full text-white bg-blue-3 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-3 dark:hover:brightness-90 dark:focus:ring-blue-2"
+    >
+      Log In
+    </button>
   )
 }
 
 function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(() => new Computer().getMnemonic())
-  const [chain, setChain] = useState<Chain | undefined>(getEnv('CHAIN') as Chain | undefined)
-  const [network, setNetwork] = useState<Network | undefined>(
-    getEnv('NETWORK') as Network | undefined,
+  const [chain, setChain] = useState<Chain | undefined>(
+    validChain(getEnv('CHAIN')) as Chain | undefined,
   )
-  const [url, setUrl] = useState<string | undefined>(getEnv('URL') || 'http://localhost:1031')
+  const [network, setNetwork] = useState<Network | undefined>(
+    validNetwork(getEnv('NETWORK')) as Network | undefined,
+  )
+  const [url, setUrl] = useState<string | undefined>(
+    validUrl(getEnv('URL')) || 'http://localhost:1031',
+  )
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const [path, setPath] = useState<string>(getEnv('PATH') || getPath({ chain, network }))
+  const [path, setPath] = useState<string>(
+    validPath(getEnv('PATH')) || getPath({ chain, network }),
+  )
+  const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
     initFlowbite()
@@ -383,14 +427,35 @@ function LoginForm() {
   return (
     <>
       <div className="max-w-sm mx-auto p-4 md:p-5 space-y-4">
+        <div
+          className="p-3 text-sm text-amber-800 border border-amber-300 rounded-lg bg-amber-50 dark:bg-gray-800 dark:text-amber-300 dark:border-amber-800"
+          role="alert"
+        >
+          <p className="font-semibold mb-1">Non-custodial wallet</p>
+          <p className="mb-2">
+            Your mnemonic is stored only in this browser. We never hold your keys or can recover
+            them for you.
+          </p>
+          <p>
+            <strong className="font-semibold">Write down your mnemonic</strong> before you continue.
+            Anyone with it can spend your funds; if you lose it, access is gone permanently.
+          </p>
+        </div>
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {!getEnv('CHAIN') && <ChainInput chain={chain} setChain={setChain} />}
-            {!getEnv('NETWORK') && <NetworkInput network={network} setNetwork={setNetwork} />}
-            {!getEnv('URL') && <UrlInput url={url || ''} setUrl={setUrl} />}
-            {!getEnv('PATH') && <PathInput path={path} setPath={setPath} />}
+            {!validChain(getEnv('CHAIN')) && <ChainInput chain={chain} setChain={setChain} />}
+            {!validNetwork(getEnv('NETWORK')) && (
+              <NetworkInput network={network} setNetwork={setNetwork} />
+            )}
+            {!validUrl(getEnv('URL')) && <UrlInput url={url || ''} setUrl={setUrl} />}
+            {!validPath(getEnv('PATH')) && <PathInput path={path} setPath={setPath} />}
           </div>
+          {formError ? (
+            <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+              {formError}
+            </p>
+          ) : null}
         </form>
       </div>
       <div className="max-w-sm mx-auto flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
@@ -401,6 +466,7 @@ function LoginForm() {
           url={url}
           path={path}
           urlInputRef={urlInputRef}
+          onError={setFormError}
         />
       </div>
     </>

@@ -9,7 +9,7 @@ const modalTitle = "Connect to Node";
 const modalId = "unsupported-config-modal";
 export const signInModal = "sign-in-modal";
 
-function formatChainAndNetwork(chain: Chain, network: Network) {
+function formatChainAndNetwork(chain?: Chain, network?: Network) {
   if (!chain || !network) return "";
   const map = {
     mainnet: "",
@@ -117,7 +117,7 @@ function SignInItem() {
 
 export function NotLoggedMenu() {
   const [dropDownLabel, setDropDownLabel] = useState<string>("LTC");
-  const { showSnackBar } = useUtilsComponents();
+  const { toast } = useUtilsComponents();
 
   useEffect(() => {
     initFlowbite();
@@ -145,10 +145,7 @@ export function NotLoggedMenu() {
       window.location.href = "/";
     } catch (error) {
       if (error instanceof Error) {
-        showSnackBar(
-          `Error setting chain and network: ${error.message}`,
-          false
-        );
+        toast.error(`Error setting chain and network: ${error.message}`);
         Modal.get(modalId).show();
       }
     }

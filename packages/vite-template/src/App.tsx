@@ -30,12 +30,12 @@ export default function App() {
           <Auth.LoginModal />
           <Wallet />
           <Navbar />
-          <div className="p-4 max-w-screen-xl flex flex-wrap items-center justify-between mx-auto">
+          <div className="w-full max-w-screen-xl mx-auto px-4 py-6 sm:px-6 sm:py-8">
             <Routes>
               <Route path="/" element={<AllAssets />} />
               <Route path="/mine" element={<MyAssets />} />
               <Route path="/mint" element={<Mint />} />
-              <Route path="/objects/:rev" element={<SmartObject.Component />} />
+              <Route path="/objects/:rev" element={<SmartObject.Component compact />} />
               <Route path="/transactions/:txn" element={<Transaction.Component />} />
               <Route path="*" element={<Navigate to="/" replace={true} />} />
               <Route path="*" element={<Error404 />} />
