@@ -353,6 +353,8 @@ export type TBC777Params = TBC20ConstructorParams & {
   withdrawn?: Rev[]
   finalWithdrawn?: Rev[]
   escrow?: Id
+  depositFrom?: Rev
+  depositAmount?: Amount
 }
 
 export class TBC777 extends TBC20 {
@@ -360,11 +362,20 @@ export class TBC777 extends TBC20 {
   withdrawn!: Rev[]
   finalWithdrawn!: Rev[]
   escrow?: Id
+  /**
+   * The revision that the last `deposit()` spent, and the amount it deposited
+   * into `escrow`. The auditor only credits a deposit when the listed revision
+   * is `depositFrom`, and at most `depositAmount`.
+   */
+  depositFrom?: Rev
+  depositAmount?: Amount
 
   private static readonly CLEAN_STATE = {
     withdrawn: [] as Rev[],
     finalWithdrawn: [] as Rev[],
     escrow: undefined as Id | undefined,
+    depositFrom: undefined as Rev | undefined,
+    depositAmount: undefined as Amount | undefined,
   }
 
   /**
@@ -387,7 +398,7 @@ export class TBC777 extends TBC20 {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { withdrawn, finalWithdrawn, escrow, ...rest } = args
+    const { withdrawn, finalWithdrawn, escrow, depositFrom, depositAmount, ...rest } = args
 
     super({
       ...TBC777.CLEAN_STATE,
@@ -427,8 +438,20 @@ export class TBC777 extends TBC20 {
   protected _createTransferToken(to: string, amount: bigint): this {
     const ctor = this.constructor as Constructor<this>
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    const {
+      _id,
+      _root,
+      _rev,
+      _owners,
+      withdrawn,
+      finalWithdrawn,
+      escrow,
+      depositFrom,
+      depositAmount,
+      ...preserved
+    } = this
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     return new ctor({ ...preserved, to, amount })
   }
@@ -444,7 +467,15 @@ export class TBC777 extends TBC20 {
     if (deposit <= 0n) throw new Error('Deposit amount must be positive')
     if (this.amount < deposit) throw new Error('Insufficient balance for deposit')
 
-    this.escrow = escrow
+    // `_rev` is the revision this transaction spends, so repeated deposits into
+    // the same escrow within one transaction add up.
+    if (this.escrow === escrow && this.depositFrom === this._rev) {
+      this.depositAmount = (this.depositAmount ?? 0n) + deposit
+    } else {
+      this.escrow = escrow
+      this.depositFrom = this._rev as Rev
+      this.depositAmount = deposit
+    }
     this.amount -= deposit
   }
 
@@ -614,7 +645,14 @@ export class TBC777 extends TBC20 {
     const nextToken = (await computer.sync(nextRev)) as unknown as TBC777
     if (String(nextToken.escrow) !== String(escrow)) return 0n
 
-    return depositData.amount - nextToken.amount
+    // Credit only a deposit made in this very transition, and no more than it
+    // deposited: the balance can also drop through a transfer or burn in the
+    // same or an earlier transaction, which must not count.
+    if (nextToken.depositFrom !== depositData._rev) return 0n
+    const delta = depositData.amount - nextToken.amount
+    const deposited = nextToken.depositAmount ?? 0n
+    if (delta <= 0n) return 0n
+    return delta < deposited ? delta : deposited
   }
 
   /**

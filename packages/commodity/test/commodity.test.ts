@@ -539,6 +539,66 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     })
   })
 
+  describe('escrow deposits', () => {
+    // An escrow that records any deposit revision it is given.
+    class ListEscrow extends Contract {
+      deposits!: [string, string][]
+      withdraws!: [string, string, bigint][]
+      finalWithdraws!: [string, string, bigint][]
+
+      constructor() {
+        super({ deposits: [], withdraws: [], finalWithdraws: [] })
+      }
+
+      addDeposit(root: string, rev: string) {
+        this.deposits.push([root, rev])
+      }
+
+      setWithdraws(withdraws: [string, string, bigint][]) {
+        this.withdraws = withdraws
+      }
+    }
+
+    for (const method of ['transfer', 'burn'] as const) {
+      it(`does not count a ${method} after a deposit as a deposit`, async () => {
+        const { computer, mint, subsidy } = await mintClaimAndGet()
+        const escrow = await computer.new(ListEscrow, [])
+        await computer.waitForIndexed(escrow._rev)
+
+        // Deposit 1 satoshi's worth, recording the pre-deposit revision.
+        await escrow.addDeposit(mint.root, mint._rev)
+        await computer.waitForIndexed(escrow._rev)
+        await mint.deposit(escrow._id, 1n)
+        await computer.waitForIndexed(mint._rev)
+        const afterDeposit = mint._rev
+
+        // Lower the rest of the balance without depositing it.
+        if (method === 'transfer') await mint.transfer(bob.getPublicKey(), mint.amount)
+        else await mint.burn()
+        await computer.waitForIndexed(mint._rev)
+        expect(mint.amount).to.eq(0n)
+
+        // The escrow also lists the post-deposit revision, then claims the whole subsidy.
+        await escrow.addDeposit(mint.root, afterDeposit)
+        await computer.waitForIndexed(escrow._rev)
+        await escrow.setWithdraws([[mint.root, mint._id, subsidy]])
+        await mineBlocks(computer, 1)
+        const deadline = Date.now() + 30_000
+        while (!(await computer.getTXOs({ rev: escrow._rev, isConfirmed: true })).length) {
+          if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+          await sleep(100)
+        }
+
+        try {
+          await mint.withdraw(escrow._rev)
+          expect.fail(`should not count the ${method} as a deposit`)
+        } catch (e) {
+          expect((e as Error).message).eq(`Escrow available balance (${1n - subsidy}) too low`)
+        }
+      })
+    }
+  })
+
   describe('merge()', () => {
     it('always throws "Merge disabled."', () => {
       const local = new Commodity({ to: alice.getPublicKey(), salt: 'salt', amount: 0n })

@@ -244,6 +244,69 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       }
     })
 
+    for (const method of ['transfer', 'burn'] as const) {
+      it(`does not count a ${method} after a deposit as a deposit`, async () => {
+        // An escrow that records any deposit revision it is given.
+        class ListEscrow extends Contract implements Escrow {
+          deposits!: [Root, Rev][]
+          withdraws!: [Root, Id, Amount][]
+          finalWithdraws!: [Root, Id, Amount][]
+
+          constructor() {
+            super({ deposits: [], withdraws: [], finalWithdraws: [] })
+          }
+
+          async acceptDeposit(token: any, amount: Amount) {
+            token.deposit(this._id, amount)
+            this.deposits.push(token.depositTuple)
+          }
+
+          addDeposit(root: Root, rev: Rev) {
+            this.deposits.push([root, rev])
+          }
+
+          setWithdraws(withdraws: [Root, Id, Amount][]) {
+            this.withdraws = withdraws
+          }
+        }
+
+        const escrow = await minter.new(ListEscrow, [])
+        await minter.waitForIndexed(escrow._rev)
+        let t = await createFreshToken()
+        await minter.waitForIndexed(t._rev)
+
+        const { escrow: escrow1, token: updatedToken } = await depositAtomic(t, escrow, 1n)
+        t = updatedToken
+        await minter.waitForIndexed(escrow1._rev)
+        const afterDeposit = t._rev as Rev
+
+        // Lower the rest of the balance without depositing it.
+        if (method === 'transfer') await t.transfer(white.getPublicKey(), t.amount)
+        else await t.burn()
+        await minter.waitForIndexed(t._rev)
+        expect(t.amount).to.equal(0n)
+
+        // The escrow also lists the post-deposit revision, then claims the whole mint.
+        await (escrow1 as any).addDeposit(t.root, afterDeposit)
+        await minter.waitForIndexed(escrow1._rev)
+        await (escrow1 as any).setWithdraws([[t.root, t._id, FRESH_TOKEN_AMOUNT]])
+        // The audit only sees confirmed revisions; wait until the node has indexed the block.
+        await mine()
+        const deadline = Date.now() + 30_000
+        while (!(await minter.getTXOs({ rev: escrow1._rev, isConfirmed: true })).length) {
+          if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+          await new Promise((resolve) => setTimeout(resolve, 100))
+        }
+
+        try {
+          await withdraw(t, escrow1._rev as Rev)
+          expect.fail(`should not count the ${method} as a deposit`)
+        } catch (e: any) {
+          expect(e.message).eq(`Escrow available balance (${1n - FRESH_TOKEN_AMOUNT}) too low`)
+        }
+      })
+    }
+
     it('rejects cumulative inflation across multiple revisions in escrow history', async () => {
       const escrow = await createNaiveEscrow()
       let t = await createFreshToken()
