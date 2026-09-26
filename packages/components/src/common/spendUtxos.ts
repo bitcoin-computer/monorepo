@@ -48,7 +48,8 @@ export type SignAndBroadcastSpendUtxosOptions = {
 
 /**
  * Builds a transaction from wallet + mod UTXOs, signs, and broadcasts.
- * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus fee and minDust).
+ * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus the fee).
+ * `estimateFee` accounts for the signatures, so outputs are the inputs minus the estimated fee.
  * @returns Broadcast transaction id when available.
  */
 export async function signAndBroadcastSpendUtxos(
@@ -92,13 +93,14 @@ export async function signAndBroadcastSpendUtxos(
 
   const networkObj = networks.getNetwork(computer.getChain(), computer.getNetwork())
   const changeScript = bAddress.toOutputScript(computer.getAddress().toString(), networkObj)
-  const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')))
+  // The node's dust limit depends on the output script.
+  const dustLimit = (script: Buffer) => BigInt(computer.db.wallet.getDustThreshold(false, script))
+  const estimateFee = async () => BigInt(await computer.db.wallet.estimateFee(tx))
 
   if (!hasRecipient) {
     tx.addOutput(changeScript, totalInput)
-    const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx))
-    const outValue = totalInput - estimatedFees - minDust
-    if (outValue < minDust) {
+    const outValue = totalInput - (await estimateFee())
+    if (outValue < dustLimit(changeScript)) {
       throw new Error(
         'Balance is too low to cover network fees and the minimum output size after consolidation.',
       )
@@ -114,9 +116,8 @@ export async function signAndBroadcastSpendUtxos(
 
     if (sendMax) {
       tx.addOutput(recipientScript, totalInput)
-      const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx))
-      const outValue = totalInput - estimatedFees - minDust
-      if (outValue < minDust) {
+      const outValue = totalInput - (await estimateFee())
+      if (outValue < dustLimit(recipientScript)) {
         throw new Error(
           `Balance is too low to cover network fees when sending max (${computer.getChain()}).`,
         )
@@ -124,18 +125,26 @@ export async function signAndBroadcastSpendUtxos(
       tx.updateOutput(0, { value: outValue })
     } else {
       const amountSatoshis = options.amountSatoshis!
-      tx.addOutput(recipientScript, amountSatoshis)
-      tx.addOutput(changeScript, totalInput)
-      const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx))
-      const changeAmount = totalInput - estimatedFees - minDust - amountSatoshis
-      if (changeAmount <= 0n) {
+      const recipientDust = dustLimit(recipientScript)
+      if (amountSatoshis < recipientDust) {
         throw new Error(
-          changeAmount < 0n
-            ? `Insufficient balance after fees to send this amount (${computer.getChain()}).`
-            : `After fees there is nothing left for change; try a slightly smaller amount or Send max (${computer.getChain()}).`,
+          `Amount is below the minimum output size of ${recipientDust} satoshis (${computer.getChain()}).`,
         )
       }
-      tx.updateOutput(1, { value: changeAmount })
+      tx.addOutput(recipientScript, amountSatoshis)
+      tx.addOutput(changeScript, totalInput)
+      const changeAmount = totalInput - (await estimateFee()) - amountSatoshis
+      if (changeAmount >= dustLimit(changeScript)) {
+        tx.updateOutput(1, { value: changeAmount })
+      } else {
+        // Change too small for an output: send without it, and the rest goes to the fee.
+        tx.outs.pop()
+        if (totalInput - amountSatoshis < (await estimateFee())) {
+          throw new Error(
+            `Insufficient balance after fees to send this amount (${computer.getChain()}).`,
+          )
+        }
+      }
     }
   }
 
