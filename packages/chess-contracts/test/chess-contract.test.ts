@@ -687,6 +687,64 @@ describe('ChessContract', () => {
         expect(timedOut).toBe(false)
       })
 
+      it('calculateTimes counts elapsed time forward, so time limits can be exceeded', async () => {
+        const { chessFunded } = await fundChessGame({
+          minter,
+          white,
+          black,
+          tbc777Mod,
+          chessMod,
+          wager: 5n,
+          timeLimit: 1n,
+        })
+
+        // Confirm each move in its own block, a couple of seconds apart, so the
+        // block times on the prev-chain differ.
+        const confirm = async (rev: string) => {
+          await minter.db.wallet.restClient.mine(1)
+          const deadline = Date.now() + 30_000
+          while (!(await minter.getTXOs({ rev, isConfirmed: true })).length) {
+            if (Date.now() > deadline) throw new Error(`${rev} not confirmed`)
+            await new Promise((resolve) => setTimeout(resolve, 100))
+          }
+        }
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        let tip: any = chessFunded
+        await confirm(tip._rev)
+        for (const [player, from, to] of [
+          [white, 'e2', 'e4'],
+          [black, 'e7', 'e5'],
+          [white, 'g1', 'f3'],
+        ] as const) {
+          await new Promise((resolve) => setTimeout(resolve, 2_000))
+          const synced = await player.sync<typeof ChessContract>(await player.latest(tip._id))
+          const { tx, effect } = await player.encodeCall({
+            target: synced,
+            property: 'move',
+            args: [from, to, ''],
+            mod: chessMod,
+          })
+          await player.broadcast(tx)
+          tip = (effect as unknown as { env: { __bc__: unknown } }).env.__bc__
+          await confirm(tip._rev)
+        }
+
+        // Methods can't return plain objects, so query the boolean checks. Moves
+        // were more than the 1-second limit apart, so a clock that counts forward
+        // must report a timeout for at least one player.
+        const confirmed = await white.sync<typeof ChessContract>(tip._rev)
+        const timedOut = async (property: 'hasTimedOutW' | 'hasTimedOutB') => {
+          const { effect } = await white.encodeCall({
+            target: confirmed,
+            property,
+            args: [],
+            mod: chessMod,
+          })
+          return (effect as unknown as { res: boolean }).res
+        }
+        expect((await timedOut('hasTimedOutW')) || (await timedOut('hasTimedOutB'))).toBe(true)
+      })
+
       it('Should run fool mate and credit winner balance on withdraw', async () => {
         await minter.faucet(1e8)
         const wager = 5n
