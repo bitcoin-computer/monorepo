@@ -23,7 +23,6 @@ import {
   isTaprootInput,
   checkTaprootInputFields,
   checkTaprootOutputFields,
-  tweakInternalPubKey,
   checkTaprootInputForSigs,
 } from './psbt/bip371.js';
 import {
@@ -36,6 +35,7 @@ import {
   isP2WPKH,
   isP2WSHScript,
   isP2SHScript,
+  isP2TR,
 } from './psbt/psbtutils.js';
 import { Buffer } from 'buffer';
 /**
@@ -516,14 +516,16 @@ export class Psbt {
           this.__CACHE,
         );
     if (!allHashses.length) throw new Error('No signatures for this pubkey');
-    const tapKeyHash = allHashses.find(h => !!h.leafHash);
+    const tapKeyHash = allHashses.find(h => !h.leafHash);
+    let validationResultCount = 0;
     if (tapKeySig && tapKeyHash) {
       const isValidTapkeySig = validator(
         tapKeyHash.pubkey,
         tapKeyHash.hash,
-        tapKeySig,
+        trimTaprootSig(tapKeySig),
       );
       if (!isValidTapkeySig) return false;
+      validationResultCount++;
     }
     if (tapScriptSig) {
       for (const tapSig of tapScriptSig) {
@@ -532,13 +534,14 @@ export class Psbt {
           const isValidTapScriptSig = validator(
             tapSig.pubkey,
             tapSigHash.hash,
-            tapSig.signature,
+            trimTaprootSig(tapSig.signature),
           );
           if (!isValidTapScriptSig) return false;
+          validationResultCount++;
         }
       }
     }
-    return true;
+    return validationResultCount > 0;
   }
   signAllInputsHD(hdKeyPair, sighashTypes = [Transaction.SIGHASH_ALL]) {
     if (!hdKeyPair || !hdKeyPair.publicKey || !hdKeyPair.fingerprint) {
@@ -1296,8 +1299,10 @@ function getHashForSig(inputIndex, input, cache, forValidate, sighashTypes) {
 function getAllTaprootHashesForSig(inputIndex, input, inputs, cache) {
   const allPublicKeys = [];
   if (input.tapInternalKey) {
-    const outputKey = tweakInternalPubKey(inputIndex, input);
-    allPublicKeys.push(outputKey);
+    const key = getPrevoutTaprootKey(inputIndex, input, cache);
+    if (key) {
+      allPublicKeys.push(key);
+    }
   }
   if (input.tapScriptSig) {
     const tapScriptPubkeys = input.tapScriptSig.map(tss => tss.pubkey);
@@ -1307,6 +1312,13 @@ function getAllTaprootHashesForSig(inputIndex, input, inputs, cache) {
     getTaprootHashesForSig(inputIndex, input, inputs, pubicKey, cache),
   );
   return allHashes.flat();
+}
+function getPrevoutTaprootKey(inputIndex, input, cache) {
+  const { script } = getScriptAndAmountFromUtxo(inputIndex, input, cache);
+  return isP2TR(script) ? script.subarray(2, 34) : null;
+}
+function trimTaprootSig(signature) {
+  return signature.length === 64 ? signature : signature.subarray(0, 64);
 }
 function getTaprootHashesForSig(
   inputIndex,
@@ -1327,7 +1339,8 @@ function getTaprootHashesForSig(
   const values = prevOuts.map(o => o.value);
   const hashes = [];
   if (input.tapInternalKey && !tapLeafHashToSign) {
-    const outputKey = tweakInternalPubKey(inputIndex, input);
+    const outputKey =
+      getPrevoutTaprootKey(inputIndex, input, cache) || Buffer.from([]);
     if (toXOnly(pubkey).equals(outputKey)) {
       const tapKeyHash = unsignedTx.hashForWitnessV1(
         inputIndex,
