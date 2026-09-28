@@ -69,6 +69,36 @@ cp chain-setup/ltc/mainnet/litecoin.conf.example litecoin.conf
 
 </font>
 
+The mainnet templates leave the secrets empty, and the node won't start until you set them:
+
+<font size=1>
+
+```sh
+# Create RPC credentials. Put the printed rpcauth= line in litecoin.conf
+# and the printed password in BITCOIN_RPC_PASSWORD in .env
+python3 scripts/rpc-auth.py bcn-admin
+# Create a Postgres password for POSTGRES_PASSWORD in .env
+openssl rand -base64 32
+```
+
+</font>
+
+If you copied an older template, replace its `rpcauth`, `BITCOIN_RPC_PASSWORD` and `POSTGRES_PASSWORD`: those
+values were published in this repository. `POSTGRES_PASSWORD` only applies when the database is first created, so
+changing `.env` alone isn't enough for an existing database. Change the password inside Postgres first
+(`docker compose exec db psql -U bcn -c "ALTER USER bcn WITH PASSWORD '...'"`), then put the same value in `.env`
+and restart the node.
+
+Only the Bitcoin Computer Node port (`BCN_PORT`) is meant to be public. `docker-compose.yml` publishes the Postgres,
+RPC and ZMQ ports on `127.0.0.1` only. To publish them on another address, set `BCN_PRIVATE_BIND` in the shell or in
+`.env`, and restrict access with Docker-aware firewall rules (for example in the `DOCKER-USER` chain): traffic to
+Docker's published ports doesn't pass through ordinary `ufw` input rules.
+
+The node's `/rpc` endpoint doesn't require authentication, so the mainnet templates set `BCN_ALLOWED_RPC_METHODS` to
+the chain reads and `sendrawtransaction` the library needs. Don't allow wallet methods such as `sendtoaddress` on a
+public node: anyone who can reach it could spend from the node's wallet. The regtest and testnet templates allow
+`^send` and `^gen` for the faucet and mining, so don't expose a node that uses them unless that's what you intend.
+
 After configuring the `.env` file, you can start the node with the following command:
 <font size=1>
 
@@ -100,7 +130,7 @@ Among other tables, the node maintains:
 - **`Output` / `Input`** — the spend graph for payments and smart-object revisions
 - **`Module`** — deployed module sources (`ept`), storage type (`multisig` or `taproot`), and optional confirmation height/hash (see [modules](./modules.md) and [module](./module.md))
 
-By default the database uses the following credentials:
+The regtest templates use the following credentials (the mainnet templates leave the password empty, see above):
 
 ```shell
 POSTGRES_USER='bcn'
