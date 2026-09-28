@@ -70,7 +70,7 @@
  *    conservatively from the provided revision’s `finalWithdraws` list.
  */
 
-import { Contract } from '@bitcoin-computer/lib'
+import { Contract, JsonData } from '@bitcoin-computer/lib'
 import { TBC20, type TBC20ConstructorParams } from './tbc20.js'
 
 /**
@@ -234,7 +234,7 @@ export class TBC777M extends TBC20 {
    * claimed withdrawals for this token's `_root`.
    */
   static async getBalance(rev: string, root: string): Promise<bigint> {
-    const states: Escrow[] = []
+    const states: JsonData<typeof Escrow>[] = []
     let current = rev
 
     // Collect every historical state. Deposits and withdrawals accumulate
@@ -260,7 +260,7 @@ export class TBC777M extends TBC20 {
    * recorded deposit revision we load the TBC777M state and compute the precise
    * transfer amount via the pre/post-deposit balance delta.
    */
-  static async computeDeposits(states: Escrow[], root: string): Promise<bigint> {
+  static async computeDeposits(states: JsonData<typeof Escrow>[], root: string): Promise<bigint> {
     if (states.length === 0) return 0n
 
     const escrowId = states[0]._id
@@ -309,7 +309,7 @@ export class TBC777M extends TBC20 {
    * historical states for the given root. This is the "claimed" side of the
    * audit.
    */
-  static async computeWithdraws(states: Escrow[], root: string): Promise<bigint> {
+  static async computeWithdraws(states: JsonData<typeof Escrow>[], root: string): Promise<bigint> {
     let total = 0n
     for (const state of states) {
       const amounts = state.withdraws.filter(([r]) => r === root).map(([, , amt]) => amt)

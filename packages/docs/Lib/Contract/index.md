@@ -218,6 +218,10 @@ Inside a contract the query **must** include one stabilizing filter:
 
 Queries without a stabilizer, or with a future/negative height, invalidate. Empty result sets with a valid stabilizer are fine (indexing lag is an application concern, not invalidation).
 
+`limit`, `offset`, and `blockIndex` must be non-negative integers. `orderBy` must be `rev` (the default). `order` is `ASC` or `DESC`.
+
+The call is a single read. It does not page. With no `limit`, a successful result is **every** match in `rev` order. If more rows match than the node's [`BCN_QUERY_LIMIT`](../../Node/operations.md#bcn_query_limit-and-apps), the transition is invalidated rather than shortened. An explicit `limit` is a window the contract chose; that `limit` must be ≤ `BCN_QUERY_LIMIT`. App operators set the cap at least as high as the largest in-contract query the app must observe. A higher cap does not change a successful result.
+
 ### Usage notes & best practices
 
 1. **Confirm before query.** Deploy modules, create objects, update or delete tips, then wait for confirmation before contract methods that call InnerComputer on those locations.

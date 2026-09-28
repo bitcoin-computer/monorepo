@@ -32,7 +32,7 @@ Most APIs require the referenced transaction to be **in a block** before the cal
 | `last`                                      | Start and result confirmed; tip must be **spent confirmed** (not a live unspent tip) |
 | Block time/height/hash of a tx              | Tx confirmed                                                                         |
 | `getBlockHash(height)`                      | Height ≤ tip; not future                                                             |
-| `getTXOs` (+ aliases)                       | Stabilizer: `lteBlockHeight` / `blockHeight` / `blockHash`                           |
+| `getTXOs` (+ aliases)                       | Stabilizer required. No client paging. A result cut by `BCN_QUERY_LIMIT` invalidates |
 
 `latest` is **not** exposed inside contracts (the live tip is non-deterministic under chain extension).
 
@@ -93,6 +93,7 @@ The formatter is idempotent (already-suffixed strings are not doubled). Match wi
 - Confirm object revisions before history walks or escrow audits.
 - For terminal `last` checks, spend the tip (e.g. `delete`) and wait for confirmation.
 - Stabilize in-contract TXO queries with a historical height or block hash; empty result sets with a valid stabilizer are fine (wait for indexing if apps/tests expect a known object to appear).
+- Size [`BCN_QUERY_LIMIT`](../../Node/operations.md#bcn_query_limit-and-apps) for the app. In-contract `getTXOs` does not page. If the match set is larger than that cap, the transition is rejected. Every operator of the app sets the cap at least that high.
 - Escrow / chess flows: cancel or settle, **wait for confirmation**, then `withdraw` / refund (cancel and withdraw cannot be one atomic observation of unconfirmed tip spend).
 - Do not ship contract methods that call `console.*` if they must run under `mode: 'prod'`.
 

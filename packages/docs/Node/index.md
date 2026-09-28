@@ -197,6 +197,8 @@ The architecture is designed for robustness, scalability, and real-time responsi
 
 You can configure several options by editing the `.env` file. See the [example](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/chain-setup/LTC/regtest/.env.example) for details.
 
+Apps that call `getTXOs` from inside a contract need `BCN_QUERY_LIMIT` set on every node that runs the app. The library does not page past that cap; a query that would be cut off is rejected. How to choose the value is in [BCN_QUERY_LIMIT and apps](./operations.md#bcn_query_limit-and-apps).
+
 <font size=1>
 
 ```bash

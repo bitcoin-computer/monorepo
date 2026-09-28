@@ -34,6 +34,11 @@ Validation is performed on all parameters to ensure proper format and type.
 | `limit`       | `number`   | Maximum number of results (must not exceed limit). |
 | `offset`      | `number`   | Number of items to skip (must be non-negative).    |
 | `order`       | `string`   | Sort order: `"ASC"` or `"DESC"`.                   |
+| `orderBy`     | `string`   | `"rev"` (default) or `"timestamp"`.                |
+
+`BCN_QUERY_LIMIT` in `.env` caps how many rows this route returns when `limit` is omitted. A `limit` greater than that value is rejected.
+
+In-contract `getTXOs` (InnerComputer) sends one extra flag, `errorIfTruncated=true`. Wallet and other off-chain callers do not. With that flag, an omitted `limit` that matches **more** rows than `BCN_QUERY_LIMIT` returns an error (`BCN_QUERY_LIMIT of N reached`) instead of a shorter list. The contract transition is then invalidated. See [BCN_QUERY_LIMIT and apps](./operations.md#bcn_query_limit-and-apps). Do not send `errorIfTruncated` from application code; the library sets it only for the in-contract read.
 
 ## Example
 

@@ -100,6 +100,37 @@ The chain stores transactions; the **node indexes** outputs, inputs, and modules
 
 ---
 
+## `BCN_QUERY_LIMIT` and apps
+
+`BCN_QUERY_LIMIT` is the maximum number of rows a list query may return. It is set in the node `.env`:
+
+```bash
+BCN_QUERY_LIMIT='10000'
+```
+
+Unset, `get-txos` returns every match. That is acceptable on a private dev node. It is the wrong setting for an app other people will run.
+
+Bitcoin Computer apps are written against a node the operator runs. The node is not a shared hosted API with one global page size. Anyone who wants to run the same app runs their own node and points the app at it. For in-contract `getTXOs` to agree on every such node, the query must not depend on a hidden, per-node prefix of the result.
+
+### What the contract sees
+
+Inside a contract, `computer.getTXOs` makes **one** request. The library does not page.
+
+- **No `limit`.** The call asks for every output that matches, in `rev` order. If that set is larger than `BCN_QUERY_LIMIT`, the node refuses the query and the transition is **invalidated**. It does not succeed with the first N rows. A successful call is the complete match set. Raising the cap later does not change that result. A cap that is too low rejects the transition instead of returning a different, shorter list.
+- **Explicit `limit` (and `offset`).** This is a window the contract chose. It is deterministic. The requested `limit` must be less than or equal to `BCN_QUERY_LIMIT`, or the node rejects it and the transition is invalidated. A full window of that size is a successful observation; the contract asked for at most that many rows.
+
+The outer `Computer.getTXOs` used by wallets and off-chain code is different. It may still return a list cut at `BCN_QUERY_LIMIT`. Do not copy that behavior into a contract and expect every replica to see the same prefix unless every node is configured identically **and** the contract treats the cap as part of the answer. The in-contract path refuses that.
+
+### What to publish with an app
+
+Publish the node parameters the app was tested with (`BCN_CHAIN`, `BCN_NETWORK`, and `BCN_QUERY_LIMIT` at minimum). Operators who want to run that app set the same chain and network, and set `BCN_QUERY_LIMIT` **at least as high** as the largest in-contract `getTXOs` the app must observe — including any explicit `limit` the contract passes.
+
+A higher cap is safe: successful queries still return the same rows. A lower cap is not: those queries invalidate. Leaving the variable unset is also not the same as another operator's `10000`; one node returns every row, the other rejects once the match count passes 10000.
+
+Size the cap from the app, not from a default page size. If an election contract loads every vote for a proposal with `getTXOs({ mod, lteBlockHeight })` and the design allows 50000 votes, the app's nodes need `BCN_QUERY_LIMIT` of at least 50000. If the contract only ever reads `limit: 20`, the cap must be at least 20, and the contract must not assume those 20 rows are the entire set.
+
+Restart the node after changing `.env`. The value is process configuration, not chain state.
+
 ## Module table (schema upgrade)
 
 New nodes create the `Module` table from [db_schema.sql](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/db/db_schema.sql).
