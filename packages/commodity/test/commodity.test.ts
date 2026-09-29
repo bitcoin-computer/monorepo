@@ -15,7 +15,7 @@
  */
 
 import { expect } from 'chai'
-import { Computer, Contract, SmartContract } from '@bitcoin-computer/lib'
+import { Computer, Contract, Id, SmartContract } from '@bitcoin-computer/lib'
 import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777'
 import dotenv from 'dotenv'
 import path from 'path'
@@ -166,11 +166,7 @@ async function createMint(
   modSpec: string,
   salt = `salt-${Math.random().toString(36).slice(2)}`,
 ): Promise<SmartContract<typeof Commodity>> {
-  return computer.new(
-    Commodity,
-    [{ to: computer.getPublicKey(), salt, amount: 0n }],
-    modSpec,
-  )
+  return computer.new(Commodity, [{ to: computer.getPublicKey(), salt, amount: 0n }], modSpec)
 }
 
 /**
@@ -561,7 +557,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
         depositAmount: bigint,
       ) {
         const child = token.transfer(to, transferAmount)
-        token.deposit(this._id, depositAmount)
+        token.deposit(this._id as Id, depositAmount)
         this.deposits.push(token.depositTuple)
         return child
       }
@@ -764,11 +760,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       }
 
       const solo = await fundedComputer()
-      const bare = await solo.new(MinimalClaimModGuard, [
-        solo.getPublicKey(),
-        'no-mod-salt',
-        0n,
-      ])
+      const bare = await solo.new(MinimalClaimModGuard, [solo.getPublicKey(), 'no-mod-salt', 0n])
       // No module: only wait for confirmation, not getOTXOs(mod, height).
       await mineBlocks(solo, 1)
       await solo.waitForIndexed(bare._id)
