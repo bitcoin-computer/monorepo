@@ -554,6 +554,18 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
         this.deposits.push([root, rev])
       }
 
+      transferThenDeposit(
+        token: Commodity,
+        to: string,
+        transferAmount: bigint,
+        depositAmount: bigint,
+      ) {
+        const child = token.transfer(to, transferAmount)
+        token.deposit(this._id, depositAmount)
+        this.deposits.push(token.depositTuple)
+        return child
+      }
+
       setWithdraws(withdraws: [string, string, bigint][]) {
         this.withdraws = withdraws
       }
@@ -597,6 +609,49 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
         }
       })
     }
+
+    it('does not count a same-transaction transfer as a deposit', async function () {
+      this.timeout(600_000)
+      const { computer, mint, subsidy } = await mintClaimAndGet()
+      const escrow = await computer.new(ListEscrow, [])
+      await computer.waitForIndexed(escrow._rev)
+      const spent = mint._rev
+
+      const { tx, effect } = await computer.encode({
+        exp: `escrow.transferThenDeposit(mint, '${bob.getPublicKey()}', ${subsidy - 1n}n, 1n)`,
+        env: { escrow: escrow._rev, mint: mint._rev },
+      })
+      await computer.broadcast(tx)
+
+      const updated = effect.env.mint as SmartContract<typeof Commodity>
+      const updatedEscrow = effect.env.escrow as SmartContract<typeof ListEscrow>
+      const child = effect.res as SmartContract<typeof Commodity>
+      await computer.waitForIndexed(updated._rev)
+      await computer.waitForIndexed(updatedEscrow._rev)
+
+      expect(updated.amount).to.eq(0n)
+      expect(updated.depositFrom).to.eq(spent)
+      expect(updated.depositAmount).to.eq(1n)
+      expect(updated.escrow).to.eq(escrow._id)
+      expect(child.amount).to.eq(subsidy - 1n)
+      expect(child.escrow).to.eq(undefined)
+      expect(updatedEscrow.deposits).to.deep.eq([[updated.root, spent]])
+
+      await updatedEscrow.setWithdraws([[updated.root, updated._id, subsidy]])
+      await mineBlocks(computer, 1)
+      const deadline = Date.now() + 30_000
+      while (!(await computer.getTXOs({ rev: updatedEscrow._rev, isConfirmed: true })).length) {
+        if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+        await sleep(100)
+      }
+
+      try {
+        await updated.withdraw(updatedEscrow._rev)
+        expect.fail('should not count the same-transaction transfer as a deposit')
+      } catch (e) {
+        expect((e as Error).message).eq(`Escrow available balance (${1n - subsidy}) too low`)
+      }
+    })
   })
 
   describe('merge()', () => {

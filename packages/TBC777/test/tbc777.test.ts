@@ -307,6 +307,73 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       })
     }
 
+    it('does not count a same-transaction transfer as a deposit', async () => {
+      // Transfer then deposit in one transaction. Clearing escrow on transfer
+      // would miss this: the next revision still has escrow set, and the balance
+      // drop includes the transfer. The credit must be the deposited 1n.
+      class ListEscrow extends Contract implements Escrow {
+        deposits!: [Root, Rev][]
+        withdraws!: [Root, Id, Amount][]
+        finalWithdraws!: [Root, Id, Amount][]
+
+        constructor() {
+          super({ deposits: [], withdraws: [], finalWithdraws: [] })
+        }
+
+        transferThenDeposit(token: any, to: string, transferAmount: Amount, depositAmount: Amount) {
+          const child = token.transfer(to, transferAmount)
+          token.deposit(this._id, depositAmount)
+          this.deposits.push(token.depositTuple)
+          return child
+        }
+
+        setWithdraws(withdraws: [Root, Id, Amount][]) {
+          this.withdraws = withdraws
+        }
+      }
+
+      const escrow = await minter.new(ListEscrow, [])
+      await minter.waitForIndexed(escrow._rev)
+      const t0 = await createFreshToken()
+      await minter.waitForIndexed(t0._rev)
+      const spent = t0._rev as Rev
+
+      const { tx, effect } = await minter.encode({
+        exp: `escrow.transferThenDeposit(token, '${white.getPublicKey()}', ${FRESH_TOKEN_AMOUNT - 1n}n, 1n)`,
+        env: { escrow: escrow._rev, token: t0._rev },
+      })
+      await minter.broadcast(tx)
+
+      const t = effect.env.token as SmartContract<typeof TBC777>
+      const escrow1 = effect.env.escrow as SmartContract<typeof ListEscrow>
+      const child = effect.res as SmartContract<typeof TBC777>
+      await minter.waitForIndexed(t._rev)
+      await minter.waitForIndexed(escrow1._rev)
+
+      expect(t.amount).to.equal(0n)
+      expect(t.depositFrom).to.equal(spent)
+      expect(t.depositAmount).to.equal(1n)
+      expect(t.escrow).to.equal(escrow._id)
+      expect(child.amount).to.equal(FRESH_TOKEN_AMOUNT - 1n)
+      expect(child.escrow).to.equal(undefined)
+      expect(escrow1.deposits).to.deep.equal([[t.root, spent]])
+
+      await (escrow1 as any).setWithdraws([[t.root, t._id, FRESH_TOKEN_AMOUNT]])
+      await mine()
+      const deadline = Date.now() + 30_000
+      while (!(await minter.getTXOs({ rev: escrow1._rev, isConfirmed: true })).length) {
+        if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+        await new Promise((resolve) => setTimeout(resolve, 100))
+      }
+
+      try {
+        await withdraw(t, escrow1._rev as Rev)
+        expect.fail('should not count the same-transaction transfer as a deposit')
+      } catch (e: any) {
+        expect(e.message).eq(`Escrow available balance (${1n - FRESH_TOKEN_AMOUNT}) too low`)
+      }
+    })
+
     it('rejects cumulative inflation across multiple revisions in escrow history', async () => {
       const escrow = await createNaiveEscrow()
       let t = await createFreshToken()
