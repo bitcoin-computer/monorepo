@@ -195,6 +195,31 @@ export class ChessContract extends Contract {
         return { timeW, timeB };
     }
 }
+/**
+ * The chess revision that first recorded a payout in `withdraws`, or the latest
+ * revision if none has.
+ *
+ * An owner can still extend the chain after the payout (a move after resign),
+ * and every later revision repeats `withdraws`. TBC777 counts the claims of
+ * every revision in the prev-chain, so a withdraw against a later revision sees
+ * the payout authorized twice and fails. Withdrawing against the first payout
+ * revision keeps the claim valid whatever is appended afterwards.
+ */
+export async function getPayoutRev(computer, chessId) {
+    let rev = await computer.latest(chessId);
+    const tip = await computer.sync(rev);
+    if (tip.withdraws.length === 0)
+        return rev;
+    for (;;) {
+        const prevRev = await computer.prev(rev);
+        if (!prevRev)
+            return rev;
+        const prev = await computer.sync(prevRev);
+        if (prev.withdraws.length === 0)
+            return rev;
+        rev = prevRev;
+    }
+}
 export class ChessContractHelper {
     constructor({ computer, mod, userMod, tokenMod, }) {
         this.computer = computer;
@@ -321,19 +346,20 @@ export class ChessContractHelper {
         throw new Error(`Timed out waiting for confirmation of ${txId}. Try again after the transaction is mined.`);
     }
     /**
-     * Claim escrow payout for `tokenId` against the latest chess revision.
-     * Waits until that chess tip is confirmed so TBC777's InnerComputer audit
-     * (sync / prev / next on deposits) is deterministic.
+     * Claim escrow payout for `tokenId` against the chess revision that first
+     * recorded the payout (see `getPayoutRev`). Waits until that revision is
+     * confirmed so TBC777's InnerComputer audit (sync / prev / next on deposits)
+     * is deterministic.
      */
     async withdrawTokens(tokenId, chessId) {
         const latestTokenRev = await this.computer.latest(tokenId);
-        const latestChessRev = await this.computer.latest(chessId);
+        const payoutRev = await getPayoutRev(this.computer, chessId);
         if (!this.tokenMod) {
             throw new Error('tokenMod is required for TBC777 withdraw');
         }
-        await this.waitForConfirmed(latestChessRev);
+        await this.waitForConfirmed(payoutRev);
         const { tx } = await this.computer.encode({
-            exp: `token.withdraw('${latestChessRev}')`,
+            exp: `token.withdraw('${payoutRev}')`,
             env: { token: latestTokenRev },
             mod: this.tokenMod,
         });
@@ -366,12 +392,12 @@ export class ChessContractHelper {
         if (chess.publicKeyW || !chess.tokenIdW || chess.deposits.length !== 1)
             return false;
         try {
-            const latestChessRev = await this.computer.latest(chess._id);
+            const payoutRev = await getPayoutRev(this.computer, chess._id);
             const latestTokenRev = await this.computer.latest(chess.tokenIdW);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const token = (await this.computer.sync(latestTokenRev));
             const withdrawn = token.withdrawn ?? [];
-            return withdrawn.includes(latestChessRev);
+            return withdrawn.includes(payoutRev);
         }
         catch {
             return false;
@@ -385,6 +411,17 @@ export class ChessContractHelper {
             chess.deposits.length === 1 &&
             chess.withdraws.length === 0 &&
             chess.finalWithdraws.length === 0);
+    }
+    /**
+     * True when a pending game was canceled but the creator has not necessarily
+     * claimed the refund. The invited opponent co-owns a pending game and can
+     * call `cancel()` directly, so this state does not imply the creator canceled.
+     */
+    hasPendingRefund(chess) {
+        return (!!chess.creatorPublicKey &&
+            !chess.publicKeyW &&
+            chess.deposits.length === 1 &&
+            chess.withdraws.length > 0);
     }
     isCreator(chess) {
         return chess.creatorPublicKey === this.computer.getPublicKey();
@@ -420,10 +457,13 @@ export class ChessContractHelper {
      *
      * Cancel and withdraw cannot share one transaction: after cancel, the tip must
      * be **confirmed** before TBC777 `withdraw` can walk escrow history. This
-     * method cancels, waits for confirmation, then withdraws.
+     * method cancels, waits for confirmation, then withdraws. If the game is
+     * already canceled (the invited opponent can cancel too), it only withdraws.
      */
     async cancelGameAndWithdraw(chessId) {
-        const chess = await this.cancelGame(chessId);
+        const latest = await this.computer.sync(await this.computer.latest(chessId));
+        const alreadyCanceled = this.isCreator(latest) && this.hasPendingRefund(latest);
+        const chess = alreadyCanceled ? latest : await this.cancelGame(chessId);
         await this.waitForConfirmed(chess._rev);
         await this.withdrawTokens(chess.tokenIdW, chessId);
     }
