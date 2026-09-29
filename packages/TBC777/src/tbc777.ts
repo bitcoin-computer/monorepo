@@ -429,9 +429,9 @@ export class TBC777 extends TBC20 {
    * Factory used by `transfer()`. Creates a clean token instance for the
    * recipient.
    *
-   * All escrow-related mutable state (`withdrawn`, `finalWithdrawn`, `escrow`)
-   * is deliberately omitted so the recipient does not inherit any claim
-   * history. Escrow claims are always bound to a concrete token `_id`, making
+   * All escrow-related mutable state (`withdrawn`, `finalWithdrawn`, `escrow`,
+   * `depositFrom`, `depositAmount`) is deliberately omitted so the recipient
+   * does not inherit any claim or deposit history. Escrow claims are always bound to a concrete token `_id`, making
    * this safe.
    */
 
