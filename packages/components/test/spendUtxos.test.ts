@@ -82,6 +82,7 @@ describe('signAndBroadcastSpendUtxos', () => {
     const { computer, broadcasts } = fakeComputer([100_000n])
     await send(computer, 100_000n - fee(2) - 5_000n)
     expect(outputsOf(broadcasts[0])).toEqual([{ to: recipient, value: 100_000n - fee(2) - 5_000n }])
+    expect(feeOf(broadcasts[0], 100_000n)).toBe(fee(2) + 5_000n)
   })
 
   it('never creates an output below the dust limit', async () => {
