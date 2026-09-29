@@ -175,7 +175,7 @@ export class TBC777M extends TBC20 {
    * has never released more tokens than were deposited for this exact token
    * lineage (`_root`).
    *
-   * The `withdrawn` array prevents claiming the same revision multiple times.
+   * The `finalWithdrawn` array prevents claiming the same revision multiple times.
    */
   async withdrawFinal(rev: string) {
     const { _id, _root } = this

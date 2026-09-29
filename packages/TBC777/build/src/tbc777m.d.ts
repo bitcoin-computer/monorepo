@@ -20,4 +20,5 @@ export declare class TBC777M extends TBC20 {
     static computeDeposit(token: TBC777M, escrowId: string, root: string): Promise<bigint>;
     static computeWithdraws(states: Escrow[], root: string): Promise<bigint>;
     static computeFinalWithdraws(states: Escrow[], root: string): Promise<bigint>;
+    static claimAmounts(claims: [string, string, bigint][], root: string): bigint[];
 }

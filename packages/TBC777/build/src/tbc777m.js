@@ -4,7 +4,7 @@ export class Escrow extends Contract {
 }
 export class TBC777M extends TBC20 {
     constructor(args) {
-        super({ withdrawn: [], escrowId: undefined, ...args });
+        super({ withdrawn: [], finalWithdrawn: [], escrowId: undefined, ...args });
     }
     deposit(escrowId, deposit) {
         if (deposit <= 0n)
@@ -19,7 +19,7 @@ export class TBC777M extends TBC20 {
         if (this.withdrawn.includes(rev))
             throw new Error('Cannot withdraw multiple times');
         const balance = await TBC777M.getBalance(rev, _root);
-        if (0 < balance)
+        if (balance < 0n)
             throw new Error(`Escrow balance (${balance}) too low`);
         this.withdrawn.push(rev);
         this.amount += await TBC777M.computeWithdraw(rev, _id, _root);
@@ -29,9 +29,9 @@ export class TBC777M extends TBC20 {
         if (this.finalWithdrawn.includes(rev))
             throw new Error('Cannot withdraw multiple times');
         const balance = await TBC777M.getBalance(rev, _root);
-        const finalWithdraw = await TBC777M.computeFinalWithdraw(rev, _id, _root);
-        if (balance < finalWithdraw)
+        if (balance < 0n)
             throw new Error(`Escrow balance (${balance}) too low`);
+        const finalWithdraw = await TBC777M.computeFinalWithdraw(rev, _id, _root);
         this.finalWithdrawn.push(rev);
         this.amount += finalWithdraw;
     }
@@ -57,7 +57,8 @@ export class TBC777M extends TBC20 {
         }
         const deposits = await TBC777M.computeDeposits(states, root);
         const withdraws = await TBC777M.computeWithdraws(states, root);
-        return deposits - withdraws;
+        const finalWithdraws = await TBC777M.computeFinalWithdraws(states, root);
+        return deposits - withdraws - finalWithdraws;
     }
     static async computeDeposits(states, root) {
         if (states.length === 0)
@@ -80,7 +81,7 @@ export class TBC777M extends TBC20 {
     static async computeWithdraws(states, root) {
         let total = 0n;
         for (const state of states) {
-            const amounts = state.withdraws.filter(([r]) => r === root).map(([, , amt]) => amt);
+            const amounts = TBC777M.claimAmounts(state.withdraws, root);
             total += amounts.reduce((prev, amt) => prev + amt, 0n);
         }
         return total;
@@ -89,7 +90,13 @@ export class TBC777M extends TBC20 {
         if (states.length === 0)
             return 0n;
         const [finalState] = states;
-        const amounts = finalState.finalWithdraws.filter(([r]) => r === root).map(([, , amt]) => amt);
+        const amounts = TBC777M.claimAmounts(finalState.finalWithdraws ?? [], root);
         return amounts.reduce((prev, amt) => prev + amt, 0n);
+    }
+    static claimAmounts(claims, root) {
+        const amounts = claims.filter(([r]) => r === root).map(([, , amt]) => amt);
+        if (amounts.some((amt) => typeof amt !== 'bigint' || amt < 0n))
+            throw new Error('Escrow claim amounts must be non-negative bigints');
+        return amounts;
     }
 }
