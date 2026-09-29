@@ -96,7 +96,7 @@ export class TBC777 extends TBC20 {
             if (remoteRoot && amount !== 0n)
                 throw new Error('Remote-root tokens must be created with amount 0n');
         }
-        const { withdrawn, finalWithdrawn, escrow, ...rest } = args;
+        const { withdrawn, finalWithdrawn, escrow, depositFrom, depositAmount, ...rest } = args;
         super({
             ...TBC777.CLEAN_STATE,
             ...rest,
@@ -112,7 +112,7 @@ export class TBC777 extends TBC20 {
     }
     _createTransferToken(to, amount) {
         const ctor = this.constructor;
-        const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this;
+        const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, depositFrom, depositAmount, ...preserved } = this;
         return new ctor({ ...preserved, to, amount });
     }
     deposit(escrow, deposit) {
@@ -120,7 +120,14 @@ export class TBC777 extends TBC20 {
             throw new Error('Deposit amount must be positive');
         if (this.amount < deposit)
             throw new Error('Insufficient balance for deposit');
-        this.escrow = escrow;
+        if (this.escrow === escrow && this.depositFrom === this._rev) {
+            this.depositAmount = (this.depositAmount ?? 0n) + deposit;
+        }
+        else {
+            this.escrow = escrow;
+            this.depositFrom = this._rev;
+            this.depositAmount = deposit;
+        }
         this.amount -= deposit;
     }
     async getBalance(escrowRev) {
@@ -204,7 +211,13 @@ export class TBC777 extends TBC20 {
         const nextToken = (await computer.sync(nextRev));
         if (String(nextToken.escrow) !== String(escrow))
             return 0n;
-        return depositData.amount - nextToken.amount;
+        if (nextToken.depositFrom !== depositData._rev)
+            return 0n;
+        const delta = depositData.amount - nextToken.amount;
+        const deposited = nextToken.depositAmount ?? 0n;
+        if (delta <= 0n)
+            return 0n;
+        return delta < deposited ? delta : deposited;
     }
     static async isValidMint(token) {
         if (!token.remoteRoot)
@@ -241,4 +254,6 @@ TBC777.CLEAN_STATE = {
     withdrawn: [],
     finalWithdrawn: [],
     escrow: undefined,
+    depositFrom: undefined,
+    depositAmount: undefined,
 };
