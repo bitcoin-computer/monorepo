@@ -374,6 +374,61 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       }
     })
 
+    it('rejects a negative claim that would offset an over-claim', async () => {
+      class ListEscrow extends Contract implements Escrow {
+        deposits!: [Root, Rev][]
+        withdraws!: [Root, Id, Amount][]
+        finalWithdraws!: [Root, Id, Amount][]
+
+        constructor() {
+          super({ deposits: [], withdraws: [], finalWithdraws: [] })
+        }
+
+        async acceptDeposit(token: any, amount: Amount) {
+          token.deposit(this._id, amount)
+          this.deposits.push(token.depositTuple)
+        }
+
+        setWithdraws(withdraws: [Root, Id, Amount][]) {
+          this.withdraws = withdraws
+        }
+      }
+
+      const escrow = await minter.new(ListEscrow, [])
+      await minter.waitForIndexed(escrow._rev)
+      let t = await createFreshToken()
+      await minter.waitForIndexed(t._rev)
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+      await minter.waitForIndexed(escrow1._rev)
+
+      // Summed, the two claims equal the deposit.
+      const OVER_CLAIM = 100n
+      await (escrow1 as any).setWithdraws([
+        [t.root, t._id, OVER_CLAIM],
+        [t.root, 'a-token-that-never-withdraws', DEPOSIT_AMOUNT - OVER_CLAIM],
+      ])
+      // The audit only sees confirmed revisions; wait until the node has indexed the block.
+      await mine()
+      const deadline = Date.now() + 30_000
+      while (!(await minter.getTXOs({ rev: escrow1._rev, isConfirmed: true })).length) {
+        if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+        await new Promise((resolve) => setTimeout(resolve, 100))
+      }
+
+      try {
+        await withdraw(t, escrow1._rev as Rev)
+        expect.fail('should have thrown on a negative claim')
+      } catch (e: any) {
+        expect(e.message).to.include('must be non-negative')
+      }
+    })
+
     it('rejects cumulative inflation across multiple revisions in escrow history', async () => {
       const escrow = await createNaiveEscrow()
       let t = await createFreshToken()
