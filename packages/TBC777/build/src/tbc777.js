@@ -26,14 +26,19 @@ export class EscrowAuditor {
             }
             for (const [r, id, amt] of withdraws) {
                 if (r === lineage)
-                    withdrawEntries.add([id, amt]);
+                    withdrawEntries.add([id, this.checkClaimAmount(amt)]);
             }
         }
         for (const [r, id, amt] of finalState.finalWithdraws) {
             if (r === lineage)
-                finalEntries.add([id, amt]);
+                finalEntries.add([id, this.checkClaimAmount(amt)]);
         }
         return { depositRevs, withdrawEntries, finalEntries };
+    }
+    static checkClaimAmount(amount) {
+        if (typeof amount !== 'bigint' || amount < 0n)
+            throw new Error('Escrow claim amounts must be non-negative bigints');
+        return amount;
     }
     static async sumDeposits(depositRevs, escrow, token) {
         const getDepositAmount = async (rev) => {
