@@ -170,7 +170,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
   }
 
   // ============================================================
-  // TBC20 TRANSFER (base class — TBC777 / TBC777M inherit this)
+  // TBC20 TRANSFER (base class — TBC777 inherits this)
   // ============================================================
   describe('TBC20 transfer (base class)', () => {
     it('mint and partial transfer set recipient _owners on chain', async () => {
@@ -1216,7 +1216,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
   })
 
   // ============================================================
-  // CHESS APP COMPATIBILITY (mirrors tbc777m.test.ts chess flow)
+  // CHESS APP COMPATIBILITY
   // ============================================================
   describe('Chess app compatibility', () => {
     it('Should work atomically for a chess game without timeout', async () => {
