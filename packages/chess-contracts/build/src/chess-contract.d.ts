@@ -68,11 +68,12 @@ export declare class ChessContract extends Contract {
  * The chess revision that first recorded a payout in `withdraws`, or the latest
  * revision if none has.
  *
- * An owner can still extend the chain after the payout (a move after resign),
- * and every later revision repeats `withdraws`. TBC777 counts the claims of
- * every revision in the prev-chain, so a withdraw against a later revision sees
- * the payout authorized twice and fails. Withdrawing against the first payout
- * revision keeps the claim valid whatever is appended afterwards.
+ * TBC777 counts the claims of every revision in the prev-chain, so a withdraw
+ * against a later revision that repeats `withdraws` sees the payout twice and
+ * fails. This module rejects `move`, `resign`, `cancel`, and `setCanceledSeen`
+ * once `withdraws` is set. Modules deployed before that guard can still append
+ * those revisions, and withdrawing against the first payout revision keeps
+ * that claim valid.
  */
 export declare function getPayoutRev(computer: Computer, chessId: string): Promise<string>;
 export declare class ChessContractHelper {
@@ -162,8 +163,8 @@ export declare class ChessContractHelper {
     markCanceledSeen(chessId: string): Promise<SmartContract<typeof ChessContract>>;
     /**
      * Resigns from the current game. Sets the withdraws array so the opponent
-     * (winner) can call withdrawTokens. Can only be called by the current
-     * contract owner (the player whose turn it is).
+     * (winner) can call withdrawTokens, and transfers ownership to that opponent.
+     * Can only be called by the current contract owner (the player whose turn it is).
      */
     resign(chessId: string): Promise<SmartContract<typeof ChessContract>>;
 }
