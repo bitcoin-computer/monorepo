@@ -541,6 +541,97 @@ describe('ChessContract', () => {
         expect(blackTokenFinal.amount).toBe(15n)
       })
 
+      describe('Payout revisions', () => {
+        // An owner can extend the chess chain after the payout is recorded. Each later
+        // revision repeats `withdraws`, and TBC777 counts the entries of every revision, so
+        // a withdraw against the latest revision sees the payout authorized twice.
+        async function createPendingGame(wager: bigint) {
+          const token = await minter.new(
+            TBC777,
+            [{ to: minter.getPublicKey(), amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }],
+            tbc777Mod,
+          )
+          await minter.faucet(1e8)
+          const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n)
+          if (!whiteTokenUtxo) throw new Error('expected white token UTXO')
+          const chess = await white.new(ChessContract, [token._root, wager, 60n * 10n], chessMod)
+          const whiteToken = await white.sync<typeof TBC777>(whiteTokenUtxo._rev)
+          const { tx, effect } = await white.encode({
+            exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+            env: { chess: chess._rev, whiteToken: whiteToken._rev },
+            mod: chessMod,
+          })
+          await white.broadcast(tx)
+          await minter.faucet(1e8)
+          const chessPending = effect.env.chess as SmartContract<typeof ChessContract>
+          return { whiteToken, chessPending }
+        }
+
+        async function callOnLatest(
+          player: Computer,
+          chessId: string,
+          property: 'cancel' | 'resign' | 'move',
+          args: [] | [string, string, string] = [],
+        ) {
+          const chess = await player.sync<typeof ChessContract>(await player.latest(chessId))
+          const { tx } = await player.encodeCall({
+            target: chess,
+            property,
+            args,
+            mod: chessMod,
+          })
+          if (!tx) throw new Error(`encodeCall(${property}) on ${chess._rev} gave no transaction`)
+          const txId = await player.broadcast(tx)
+          await player.waitForIndexed(txId)
+          await player.db.wallet.restClient.mine(1)
+        }
+
+        it('Should let the creator claim the refund when the opponent cancels', async () => {
+          const { whiteToken, chessPending } = await createPendingGame(5n)
+          await black.db.wallet.restClient.mine(1)
+          await callOnLatest(black, chessPending._id, 'cancel')
+
+          const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod)
+          await helper.cancelGameAndWithdraw(chessPending._id)
+          await minter.faucet(1e8)
+          const whiteTokenFinal = await white.sync<typeof TBC777>(
+            await white.latest(whiteToken._id),
+          )
+          expect(whiteTokenFinal.amount).toBe(10n)
+        })
+
+        it('Should keep the resign payout claimable after the loser moves again', async () => {
+          const wager = 5n
+          const { blackToken, chess } = await fundChessGame({
+            minter,
+            white,
+            black,
+            tbc777Mod,
+            chessMod,
+            wager,
+            timeLimit: 60n * 10n,
+          })
+          await black.db.wallet.restClient.mine(1)
+          await callOnLatest(white, chess._id, 'resign')
+          // Resign does not hand ownership over, so the loser can still move. The move
+          // creates a revision that repeats the payout entry.
+          await callOnLatest(white, chess._id, 'move', ['e2', 'e4', ''])
+
+          const blackHelper = ChessContractHelper.fromModSpecs(
+            black,
+            chessMod,
+            undefined,
+            tbc777Mod,
+          )
+          await blackHelper.withdrawTokens(blackToken._id, chess._id)
+          await minter.faucet(1e8)
+          const blackTokenFinal = await black.sync<typeof TBC777>(
+            await black.latest(blackToken._id),
+          )
+          expect(blackTokenFinal.amount).toBe(15n)
+        })
+      })
+
       it('calculateTimes / hasTimedOut require a confirmed tip (InnerComputer guards)', async () => {
         const wager = 5n
         const timeLimit = 60n * 10n

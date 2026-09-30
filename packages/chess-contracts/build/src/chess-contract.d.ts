@@ -64,6 +64,17 @@ export declare class ChessContract extends Contract {
         timeB: bigint;
     }>;
 }
+/**
+ * The chess revision that first recorded a payout in `withdraws`, or the latest
+ * revision if none has.
+ *
+ * An owner can still extend the chain after the payout (a move after resign),
+ * and every later revision repeats `withdraws`. TBC777 counts the claims of
+ * every revision in the prev-chain, so a withdraw against a later revision sees
+ * the payout authorized twice and fails. Withdrawing against the first payout
+ * revision keeps the claim valid whatever is appended afterwards.
+ */
+export declare function getPayoutRev(computer: Computer, chessId: string): Promise<string>;
 export declare class ChessContractHelper {
     computer: Computer;
     mod?: string;
@@ -104,9 +115,10 @@ export declare class ChessContractHelper {
         pollMs?: number;
     }): Promise<void>;
     /**
-     * Claim escrow payout for `tokenId` against the latest chess revision.
-     * Waits until that chess tip is confirmed so TBC777's InnerComputer audit
-     * (sync / prev / next on deposits) is deterministic.
+     * Claim escrow payout for `tokenId` against the chess revision that first
+     * recorded the payout (see `getPayoutRev`). Waits until that revision is
+     * confirmed so TBC777's InnerComputer audit (sync / prev / next on deposits)
+     * is deterministic.
      */
     withdrawTokens(tokenId: string, chessId: string): Promise<void>;
     /**
@@ -125,6 +137,12 @@ export declare class ChessContractHelper {
     isPendingGameCanceled(chess: SmartContract<typeof ChessContract>): Promise<boolean>;
     /** True when waiting for the opponent's deposit (creator may cancel). */
     canCancel(chess: SmartContract<typeof ChessContract>): boolean;
+    /**
+     * True when a pending game was canceled but the creator has not necessarily
+     * claimed the refund. The invited opponent co-owns a pending game and can
+     * call `cancel()` directly, so this state does not imply the creator canceled.
+     */
+    hasPendingRefund(chess: SmartContract<typeof ChessContract>): boolean;
     isCreator(chess: SmartContract<typeof ChessContract>): boolean;
     /**
      * Cancel a pending game before the opponent deposits. Sets `withdraws` on-chain
@@ -136,7 +154,8 @@ export declare class ChessContractHelper {
      *
      * Cancel and withdraw cannot share one transaction: after cancel, the tip must
      * be **confirmed** before TBC777 `withdraw` can walk escrow history. This
-     * method cancels, waits for confirmation, then withdraws.
+     * method cancels, waits for confirmation, then withdraws. If the game is
+     * already canceled (the invited opponent can cancel too), it only withdraws.
      */
     cancelGameAndWithdraw(chessId: string): Promise<void>;
     /** Mark a canceled pending game as seen by the invited opponent (clears list badge). */
