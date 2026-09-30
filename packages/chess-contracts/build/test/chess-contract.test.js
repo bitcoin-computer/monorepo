@@ -447,9 +447,9 @@ describe('ChessContract', () => {
                 expect(blackTokenFinal.amount).toBe(15n);
             });
             describe('Payout revisions', () => {
-                // Once withdraws is set, move, resign, and cancel throw. Resign also
-                // transfers ownership to the winner. getPayoutRev still selects the first
-                // payout revision, which is what modules deployed before this guard need.
+                // Once withdraws is set, move, resign, cancel, and setCanceledSeen throw.
+                // Resign also transfers ownership to the winner. getPayoutRev still selects
+                // the first payout revision, which is what modules deployed before this guard need.
                 async function createPendingGame(wager) {
                     const token = await minter.new(TBC777, [{ to: minter.getPublicKey(), amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
                     await minter.faucet(1e8);
@@ -495,9 +495,15 @@ describe('ChessContract', () => {
                 it('Should reject a second cancel once the refund is recorded', async () => {
                     const { chessPending } = await createPendingGame(5n);
                     await black.db.wallet.restClient.mine(1);
+                    // Empty withdraws: the invitee can still mark the pending challenge seen.
+                    await callOnLatest(black, chessPending._id, 'setCanceledSeen');
+                    const seen = await white.sync(await white.latest(chessPending._id));
+                    expect(seen.canceledSeen).toBe(true);
+                    expect(seen.withdraws).toEqual([]);
                     await callOnLatest(black, chessPending._id, 'cancel');
                     // The creator is still a pending co-owner, so this reaches the contract.
                     await expect(callOnLatest(white, chessPending._id, 'cancel')).rejects.toThrow('Game is already over');
+                    await expect(callOnLatest(black, chessPending._id, 'setCanceledSeen')).rejects.toThrow('Game is already over');
                 });
                 it('Should reject further play after resign and still pay the winner', async () => {
                     const wager = 5n;
@@ -519,18 +525,8 @@ describe('ChessContract', () => {
                     await expect(callOnLatest(black, chess._id, 'move', ['e7', 'e5', ''])).rejects.toThrow('Game is already over');
                     await expect(callOnLatest(black, chess._id, 'resign')).rejects.toThrow('Game is already over');
                     await expect(callOnLatest(black, chess._id, 'cancel')).rejects.toThrow('Game is already over');
-                    // setCanceledSeen does not check withdraws. The resigning player no longer
-                    // owns the output, so they cannot append that revision either.
-                    const { tx: loserTx } = await white.encodeCall({
-                        target: await white.sync(resignedRev),
-                        property: 'setCanceledSeen',
-                        args: [],
-                        mod: chessMod,
-                    });
-                    if (!loserTx)
-                        throw new Error('expected a transaction from the resigning player');
-                    await expect(white.broadcast(loserTx)).rejects.toThrow();
-                    expect(await white.latest(chess._id)).toBe(resignedRev);
+                    await expect(callOnLatest(black, chess._id, 'setCanceledSeen')).rejects.toThrow('Game is already over');
+                    expect(await black.latest(chess._id)).toBe(resignedRev);
                     const blackHelper = ChessContractHelper.fromModSpecs(black, chessMod, undefined, tbc777Mod);
                     await blackHelper.withdrawTokens(blackToken._id, chess._id);
                     await minter.faucet(1e8);

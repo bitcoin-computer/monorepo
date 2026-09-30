@@ -21,6 +21,10 @@ export class ChessContract extends Contract {
         });
     }
     setCanceledSeen() {
+        // A revision here would copy withdraws onto the prev-chain. TBC777 counts
+        // that copy again, so a withdraw against the tip fails.
+        if (this.withdraws.length > 0)
+            throw new Error('Game is already over');
         this.canceledSeen = true;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -130,7 +134,7 @@ export class ChessContract extends Contract {
         const winnerId = resignerIsWhite ? this.tokenIdB : this.tokenIdW;
         this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]];
         // The resigning player must not remain an owner, or they can append another
-        // revision. The winner holds the finished game and cannot move, resign, or cancel.
+        // revision. The winner holds the finished game, and every mutating method throws.
         this._owners = [resignerIsWhite ? this.publicKeyB : this.publicKeyW];
     }
     isGameOver() {
@@ -209,9 +213,10 @@ export class ChessContract extends Contract {
  *
  * TBC777 counts the claims of every revision in the prev-chain, so a withdraw
  * against a later revision that repeats `withdraws` sees the payout twice and
- * fails. This module rejects `move`, `resign`, and `cancel` once `withdraws`
- * is set. Modules deployed before that guard can still append those revisions,
- * and withdrawing against the first payout revision keeps that claim valid.
+ * fails. This module rejects `move`, `resign`, `cancel`, and `setCanceledSeen`
+ * once `withdraws` is set. Modules deployed before that guard can still append
+ * those revisions, and withdrawing against the first payout revision keeps
+ * that claim valid.
  */
 export async function getPayoutRev(computer, chessId) {
     let rev = await computer.latest(chessId);

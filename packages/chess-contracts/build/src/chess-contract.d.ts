@@ -70,9 +70,10 @@ export declare class ChessContract extends Contract {
  *
  * TBC777 counts the claims of every revision in the prev-chain, so a withdraw
  * against a later revision that repeats `withdraws` sees the payout twice and
- * fails. This module rejects `move`, `resign`, and `cancel` once `withdraws`
- * is set. Modules deployed before that guard can still append those revisions,
- * and withdrawing against the first payout revision keeps that claim valid.
+ * fails. This module rejects `move`, `resign`, `cancel`, and `setCanceledSeen`
+ * once `withdraws` is set. Modules deployed before that guard can still append
+ * those revisions, and withdrawing against the first payout revision keeps
+ * that claim valid.
  */
 export declare function getPayoutRev(computer: Computer, chessId: string): Promise<string>;
 export declare class ChessContractHelper {
