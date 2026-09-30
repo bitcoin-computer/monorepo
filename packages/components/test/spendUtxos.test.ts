@@ -6,12 +6,15 @@ const network = networks.getNetwork('LTC', 'regtest')
 const walletAddress = payments.p2pkh({ hash: Buffer.alloc(20, 1), network }).address!
 const recipient = payments.p2pkh({ hash: Buffer.alloc(20, 2), network }).address!
 
-// Mirrors the lib on LTC regtest: the dust limit is (script length + 157) * 30,
-// so 5460 for a P2PKH output (the node rejects 5459 as dust), and estimateFee
-// covers the signatures: 1000 for one output, 34 more per extra output.
+// Mirrors the lib on LTC regtest. Non-witness dust is (script length + 157) * 30
+// (5460 for P2PKH; the node rejects 5459 as dust). Witness dust follows the lib,
+// which is a little above the node. estimateFee appends one wallet output, then
+// charges 1000 for the first output and 34 more for each extra output.
 const P2PKH_DUST = 5_460n
 const dustLimit = (script: Buffer) => (script.length + 157) * 30
+const witnessDust = (script: Buffer) => Math.ceil(30 * (script.length + 9 + 37 + 107 / 4 + 4))
 const fee = (outputs: number) => 1_000n + 34n * BigInt(outputs - 1)
+const walletScript = bAddress.toOutputScript(walletAddress, network)
 
 function fakeComputer(utxoSatoshis: bigint[]) {
   const broadcasts: any[] = []
@@ -26,8 +29,14 @@ function fakeComputer(utxoSatoshis: bigint[]) {
         : [],
     db: {
       wallet: {
-        estimateFee: async (tx: any) => Number(fee(tx.outs.length)),
-        getDustThreshold: (_segwit: boolean, script: Buffer) => dustLimit(script),
+        restClient: { satPerByte: 2 },
+        estimateFee: async (tx: any) => {
+          const sized = tx.clone()
+          sized.addOutput(walletScript, P2PKH_DUST)
+          return Number(fee(sized.outs.length))
+        },
+        getDustThreshold: (segwit: boolean, script: Buffer) =>
+          segwit ? witnessDust(script) : dustLimit(script),
       },
     },
     sign: async () => {},
@@ -108,6 +117,47 @@ describe('signAndBroadcastSpendUtxos', () => {
     await send(computer, 100_000n - fee(1) - 10n)
     expect(outputsOf(broadcasts[0])).toEqual([{ to: recipient, value: 100_000n - fee(1) - 10n }])
     expect(feeOf(broadcasts[0], 100_000n)).toBe(fee(1) + 10n)
+  })
+
+  it('keeps change that sits between the real fee and a fee that includes an extra output', async () => {
+    // Pricing the change from a three-output fee would put it one sat under dust.
+    const change = P2PKH_DUST + (fee(3) - fee(2)) - 1n
+    const { computer, broadcasts } = fakeComputer([100_000n])
+    await send(computer, 100_000n - fee(2) - change)
+    expect(outputsOf(broadcasts[0])).toEqual([
+      { to: recipient, value: 100_000n - fee(2) - change },
+      { to: walletAddress, value: change },
+    ])
+  })
+
+  it('accepts a witness amount between the witness and legacy dust limits', async () => {
+    const witness = payments.p2wpkh({ hash: Buffer.alloc(20, 3), network }).address!
+    const amount = BigInt(witnessDust(bAddress.toOutputScript(witness, network)))
+    const { computer, broadcasts } = fakeComputer([100_000n])
+    await signAndBroadcastSpendUtxos({
+      computer,
+      modSpecs: [],
+      toAddress: witness,
+      amountSatoshis: amount,
+    })
+    expect(outputsOf(broadcasts[0])).toEqual([
+      { to: witness, value: amount },
+      { to: walletAddress, value: 100_000n - amount - fee(2) },
+    ])
+  })
+
+  it('adjusts send-max when the recipient script is a different length', async () => {
+    const witness = payments.p2wpkh({ hash: Buffer.alloc(20, 3), network }).address!
+    const script = bAddress.toOutputScript(witness, network)
+    const adjust = BigInt(script.length - walletScript.length) * 2n
+    const { computer, broadcasts } = fakeComputer([100_000n])
+    await signAndBroadcastSpendUtxos({
+      computer,
+      modSpecs: [],
+      toAddress: witness,
+      sendMax: true,
+    })
+    expect(outputsOf(broadcasts[0])).toEqual([{ to: witness, value: 100_000n - fee(1) - adjust }])
   })
 
   it('rejects an amount below the dust limit', async () => {

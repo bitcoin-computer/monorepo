@@ -49,6 +49,7 @@
     "lint": "eslint --fix . --ext .ts,.tsx --ignore-pattern built/",
     "lint:fix": "eslint src --fix",
     "tsc:compile": "rm -rf built/* && tsc",
+    "test": "vitest run",
     "types": "tsc --noEmit"
   },
   "dependencies": {

@@ -46,10 +46,19 @@ export type SignAndBroadcastSpendUtxosOptions = {
   sendMax?: boolean
 }
 
+// BIP141 witness program: OP_0 or OP_1..OP_16, then a 2..40 byte push.
+function isWitnessProgram(script: Buffer): boolean {
+  if (script.length < 4 || script.length > 42) return false
+  const version = script[0]
+  const programLength = script[1]
+  if (programLength !== script.length - 2 || programLength < 2 || programLength > 40) return false
+  return version === 0x00 || (version >= 0x51 && version <= 0x60)
+}
+
 /**
  * Builds a transaction from wallet + mod UTXOs, signs, and broadcasts.
  * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus the fee).
- * `estimateFee` accounts for the signatures, so outputs are the inputs minus the estimated fee.
+ * `estimateFee` appends one output before it measures, so the fee is read while that output is still absent.
  * @returns Broadcast transaction id when available.
  */
 export async function signAndBroadcastSpendUtxos(
@@ -93,19 +102,25 @@ export async function signAndBroadcastSpendUtxos(
 
   const networkObj = networks.getNetwork(computer.getChain(), computer.getNetwork())
   const changeScript = bAddress.toOutputScript(computer.getAddress().toString(), networkObj)
-  // The node's dust limit depends on the output script.
-  const dustLimit = (script: Buffer) => BigInt(computer.db.wallet.getDustThreshold(false, script))
-  const estimateFee = async () => BigInt(await computer.db.wallet.estimateFee(tx))
+  const satPerByte = BigInt(computer.db.wallet.restClient.satPerByte)
+  // getDustThreshold's flag selects the spend size. It does not inspect the script.
+  const dustLimit = (script: Buffer) =>
+    BigInt(computer.db.wallet.getDustThreshold(isWitnessProgram(script), script))
+  // The appended output pays this wallet. Output script bytes are not discounted,
+  // so a different script changes the fee by its length difference times satPerByte.
+  const feeFor = async (script: Buffer) => {
+    const estimated = BigInt(await computer.db.wallet.estimateFee(tx))
+    return estimated + BigInt(script.length - changeScript.length) * satPerByte
+  }
 
   if (!hasRecipient) {
-    tx.addOutput(changeScript, totalInput)
-    const outValue = totalInput - (await estimateFee())
+    const outValue = totalInput - (await feeFor(changeScript))
     if (outValue < dustLimit(changeScript)) {
       throw new Error(
         'Balance is too low to cover network fees and the minimum output size after consolidation.',
       )
     }
-    tx.updateOutput(0, { value: outValue })
+    tx.addOutput(changeScript, outValue)
   } else {
     let recipientScript: Buffer
     try {
@@ -115,14 +130,13 @@ export async function signAndBroadcastSpendUtxos(
     }
 
     if (sendMax) {
-      tx.addOutput(recipientScript, totalInput)
-      const outValue = totalInput - (await estimateFee())
+      const outValue = totalInput - (await feeFor(recipientScript))
       if (outValue < dustLimit(recipientScript)) {
         throw new Error(
           `Balance is too low to cover network fees when sending max (${computer.getChain()}).`,
         )
       }
-      tx.updateOutput(0, { value: outValue })
+      tx.addOutput(recipientScript, outValue)
     } else {
       const amountSatoshis = options.amountSatoshis!
       const recipientDust = dustLimit(recipientScript)
@@ -132,18 +146,18 @@ export async function signAndBroadcastSpendUtxos(
         )
       }
       tx.addOutput(recipientScript, amountSatoshis)
-      tx.addOutput(changeScript, totalInput)
-      const changeAmount = totalInput - (await estimateFee()) - amountSatoshis
+      const changeAmount = totalInput - (await feeFor(changeScript)) - amountSatoshis
       if (changeAmount >= dustLimit(changeScript)) {
-        tx.updateOutput(1, { value: changeAmount })
+        tx.addOutput(changeScript, changeAmount)
       } else {
-        // Change too small for an output: send without it, and the rest goes to the fee.
+        // No change output. Drop the recipient so the fee's extra output stands in for it.
         tx.outs.pop()
-        if (totalInput - amountSatoshis < (await estimateFee())) {
+        if (totalInput - amountSatoshis < (await feeFor(recipientScript))) {
           throw new Error(
             `Insufficient balance after fees to send this amount (${computer.getChain()}).`,
           )
         }
+        tx.addOutput(recipientScript, amountSatoshis)
       }
     }
   }

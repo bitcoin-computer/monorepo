@@ -13,7 +13,8 @@ export type SignAndBroadcastSpendUtxosOptions = {
 };
 /**
  * Builds a transaction from wallet + mod UTXOs, signs, and broadcasts.
- * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus fee and minDust).
+ * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus the fee).
+ * `estimateFee` appends one output before it measures, so the fee is read while that output is still absent.
  * @returns Broadcast transaction id when available.
  */
 export declare function signAndBroadcastSpendUtxos(options: SignAndBroadcastSpendUtxosOptions): Promise<string | undefined>;
