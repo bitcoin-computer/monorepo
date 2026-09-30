@@ -525,12 +525,14 @@ describe('ChessContract', () => {
           args: [],
           mod: chessMod,
         })
-        await white.broadcast(resignTx)
+        const resignTxId = await white.broadcast(resignTx)
+        await white.waitForIndexed(resignTxId)
         const chessFinal = (resignEffect as unknown as { env: { __bc__: unknown } }).env
           .__bc__ as SmartContract<typeof ChessContract>
 
         const totalPot = wager * 2n
         expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]])
+        expect(chessFinal._owners).toEqual([black.getPublicKey()])
 
         expect((await black.sync<typeof TBC777>(await black.latest(blackToken._id))).amount).toBe(
           5n,
@@ -542,9 +544,9 @@ describe('ChessContract', () => {
       })
 
       describe('Payout revisions', () => {
-        // An owner can extend the chess chain after the payout is recorded. Each later
-        // revision repeats `withdraws`, and TBC777 counts the entries of every revision, so
-        // a withdraw against the latest revision sees the payout authorized twice.
+        // Once withdraws is set, move, resign, and cancel throw. Resign also
+        // transfers ownership to the winner. getPayoutRev still selects the first
+        // payout revision, which is what modules deployed before this guard need.
         async function createPendingGame(wager: bigint) {
           const token = await minter.new(
             TBC777,
@@ -600,7 +602,17 @@ describe('ChessContract', () => {
           expect(whiteTokenFinal.amount).toBe(10n)
         })
 
-        it('Should keep the resign payout claimable after the loser moves again', async () => {
+        it('Should reject a second cancel once the refund is recorded', async () => {
+          const { chessPending } = await createPendingGame(5n)
+          await black.db.wallet.restClient.mine(1)
+          await callOnLatest(black, chessPending._id, 'cancel')
+          // The creator is still a pending co-owner, so this reaches the contract.
+          await expect(callOnLatest(white, chessPending._id, 'cancel')).rejects.toThrow(
+            'Game is already over',
+          )
+        })
+
+        it('Should reject further play after resign and still pay the winner', async () => {
           const wager = 5n
           const { blackToken, chess } = await fundChessGame({
             minter,
@@ -613,9 +625,33 @@ describe('ChessContract', () => {
           })
           await black.db.wallet.restClient.mine(1)
           await callOnLatest(white, chess._id, 'resign')
-          // Resign does not hand ownership over, so the loser can still move. The move
-          // creates a revision that repeats the payout entry.
-          await callOnLatest(white, chess._id, 'move', ['e2', 'e4', ''])
+
+          const resignedRev = await black.latest(chess._id)
+          const resigned = await black.sync<typeof ChessContract>(resignedRev)
+          expect(resigned._owners).toEqual([black.getPublicKey()])
+          expect(resigned.withdraws).toEqual([[resigned.root, blackToken._id, 2n * wager]])
+
+          await expect(callOnLatest(black, chess._id, 'move', ['e7', 'e5', ''])).rejects.toThrow(
+            'Game is already over',
+          )
+          await expect(callOnLatest(black, chess._id, 'resign')).rejects.toThrow(
+            'Game is already over',
+          )
+          await expect(callOnLatest(black, chess._id, 'cancel')).rejects.toThrow(
+            'Game is already over',
+          )
+
+          // setCanceledSeen does not check withdraws. The resigning player no longer
+          // owns the output, so they cannot append that revision either.
+          const { tx: loserTx } = await white.encodeCall({
+            target: await white.sync<typeof ChessContract>(resignedRev),
+            property: 'setCanceledSeen',
+            args: [],
+            mod: chessMod,
+          })
+          if (!loserTx) throw new Error('expected a transaction from the resigning player')
+          await expect(white.broadcast(loserTx)).rejects.toThrow()
+          expect(await white.latest(chess._id)).toBe(resignedRev)
 
           const blackHelper = ChessContractHelper.fromModSpecs(
             black,
