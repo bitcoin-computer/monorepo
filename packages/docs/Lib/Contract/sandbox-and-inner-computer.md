@@ -24,15 +24,15 @@ Equivalently: every successful observation is **invariant under future chain gro
 
 Most APIs require the referenced transaction to be **in a block** before the call may succeed:
 
-| Family                                      | Rule (summary)                                                                       |
-| ------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `sync` / `decode` / `load` / `getAncestors` | Start location/tx confirmed                                                          |
-| `first` / `prev`                            | Start rev confirmed; `prev` may return `undefined` at root                           |
-| `next`                                      | Start **and** returned successor confirmed; no next → invalidate                     |
-| `last`                                      | Start and result confirmed; tip must be **spent confirmed** (not a live unspent tip) |
-| Block time/height/hash of a tx              | Tx confirmed                                                                         |
-| `getBlockHash(height)`                      | Height ≤ tip; not future                                                             |
-| `getTXOs` (+ aliases)                       | Stabilizer required. No client paging. A result cut by `BCN_QUERY_LIMIT` invalidates |
+| Family                                      | Rule (summary)                                                                                  |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `sync` / `decode` / `load` / `getAncestors` | Start location/tx confirmed                                                                     |
+| `first` / `prev`                            | Start rev confirmed; `prev` may return `undefined` at root                                      |
+| `next`                                      | Start **and** returned successor confirmed; no next → invalidate                                |
+| `last`                                      | Start and result confirmed; tip must be **spent confirmed** (not a live unspent tip)            |
+| Block time/height/hash of a tx              | Tx confirmed                                                                                    |
+| `getBlockHash(height)`                      | Height ≤ tip; not future                                                                        |
+| `getTXOs` (+ aliases)                       | Stabilizer required. Full rev-ordered set, in pages of 10000. A node cap below that invalidates |
 
 `latest` is **not** exposed inside contracts (the live tip is non-deterministic under chain extension).
 
@@ -44,7 +44,7 @@ Most APIs require the referenced transaction to be **in a block** before the cal
    - **Browser:** await-scoped stack with **serialized root** frames (no Promise patching under SES `lockdown`). Nested frames (e.g. `Modules.load` inside `Db.eval`) still nest; concurrent root evals queue so stack tops never cross-talk.
 3. The host sets the active observation client on the frame. Free-variable `computer` methods **route to that client** for the evaluation, so create-time SES bindings and the eval-time client share one observation identity. Invalidation always writes the **active frame**.
 4. The compartment may return after `catch` — the frame flag is **not** cleared until the host has checked it.
-5. The host accepts or rejects using **only `frame.invalid` / `frame.msg`**. If the compartment throws *or* returns after catch-and-continue, `Db.eval` still rejects when the frame is marked invalid.
+5. The host accepts or rejects using **only `frame.invalid` / `frame.msg`**. If the compartment throws _or_ returns after catch-and-continue, `Db.eval` still rejects when the frame is marked invalid.
 6. The in-compartment `computer` is a **hardened query-only facade**: public observation methods only (no `isInvalid` / `errorMsg` / `resetInvalid`, no internal client object, methods not replaceable).
 
 ### `console` endowment (dev only)
@@ -70,13 +70,13 @@ The formatter is idempotent (already-suffixed strings are not doubled). Match wi
 
 ## Client vs contract `computer`
 
-|                                          | Outer [`Computer`](../Computer/index.md) | InnerComputer (`computer` in contracts) |
-| ---------------------------------------- | ---------------------------------------- | --------------------------------------- |
-| Writes (`new`, `broadcast`, …)           | Yes                                      | No                                      |
-| Mempool / unconfirmed reads              | Often allowed (may return `undefined`)   | Forbidden → invalidate                  |
-| `latest`                                 | Yes                                      | **Not exposed**                         |
-| `getTXOs` without height/hash stabilizer | Yes                                      | Forbidden → invalidate                  |
-| Host `console` in compartment            | N/A                                      | **`dev` / `debug` only** (not in `prod`) |
+|                                          | Outer [`Computer`](../Computer/index.md) | InnerComputer (`computer` in contracts)                         |
+| ---------------------------------------- | ---------------------------------------- | --------------------------------------------------------------- |
+| Writes (`new`, `broadcast`, …)           | Yes                                      | No                                                              |
+| Mempool / unconfirmed reads              | Often allowed (may return `undefined`)   | Forbidden → invalidate                                          |
+| `latest`                                 | Yes                                      | **Not exposed**                                                 |
+| `getTXOs` without height/hash stabilizer | Yes                                      | Forbidden → invalidate                                          |
+| Host `console` in compartment            | N/A                                      | **`dev` / `debug` only** (not in `prod`)                        |
 | Concurrent evaluations                   | Multiple clients/calls                   | Isolated eval frames (ALS on Node; serialized roots in browser) |
 
 ## Security notes (what contracts cannot do)
@@ -93,7 +93,7 @@ The formatter is idempotent (already-suffixed strings are not doubled). Match wi
 - Confirm object revisions before history walks or escrow audits.
 - For terminal `last` checks, spend the tip (e.g. `delete`) and wait for confirmation.
 - Stabilize in-contract TXO queries with a historical height or block hash; empty result sets with a valid stabilizer are fine (wait for indexing if apps/tests expect a known object to appear).
-- Size [`BCN_QUERY_LIMIT`](../../Node/operations.md#bcn_query_limit-and-apps) for the app. In-contract `getTXOs` does not page. If the match set is larger than that cap, the transition is rejected. Every operator of the app sets the cap at least that high.
+- Set [`BCN_QUERY_LIMIT`](../../Node/operations.md#bcn_query_limit-and-apps) to at least 10000, or leave it unset. In-contract `getTXOs` reads pages of 10000 rows. A lower cap rejects the transition instead of shortening the list. The cap does not have to cover the whole match set.
 - Escrow / chess flows: cancel or settle, **wait for confirmation**, then `withdraw` / refund (cancel and withdraw cannot be one atomic observation of unconfirmed tip spend).
 - Do not ship contract methods that call `console.*` if they must run under `mode: 'prod'`.
 

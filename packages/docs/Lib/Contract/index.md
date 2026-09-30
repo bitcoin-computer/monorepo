@@ -130,24 +130,24 @@ Most location-based APIs require the referenced **transaction to be confirmed** 
 
 ### Full API reference (InnerComputer)
 
-| Function                         | Signature                         | Returns                    | Invalidates when                                             |
-| -------------------------------- | --------------------------------- | -------------------------- | ------------------------------------------------------------ |
-| `sync`                           | `sync(location: string)`          | Object state (deep-cloned) | Missing / unconfirmed location                               |
-| `decode`                         | `decode(txId: string)`            | `{ exp, env?, mod? }`      | Missing / unconfirmed tx                                     |
-| `load`                           | `load(location: string)`          | Module exports             | Missing / unconfirmed module location                        |
-| `getAncestors`                   | `getAncestors(location: string)`  | `string[]` (may be empty)  | Missing / unconfirmed start; empty array is **valid**        |
-| `first`                          | `first(rev: string)`              | Creation rev (`string`)    | Missing / unconfirmed start                                  |
-| `prev`                           | `prev(rev: string)`               | `string \| undefined`      | Missing / unconfirmed start; **`undefined` at root is OK**   |
-| `next`                           | `next(rev: string)`               | next rev (`string`)        | No next yet; unconfirmed start or unconfirmed successor      |
-| `last`                           | `last(rev: string)`               | Spent tip rev (`string`)   | Unspent tip; mempool-only spend; unconfirmed start/result    |
-| `txIdToBlockTime`                | `txIdToBlockTime(txId: string)`   | block time                 | Unconfirmed or missing tx                                    |
-| `txIdToBlockHeight`              | `txIdToBlockHeight(txId: string)` | height                     | Unconfirmed or missing tx                                    |
-| `txIdToBlockHash`                | `txIdToBlockHash(txId: string)`   | block hash                 | Unconfirmed or missing tx                                    |
-| `getBlockHash`                   | `getBlockHash(height: number)`    | hash                       | Negative or **future** height; missing block                 |
-| `getBlockHeight`                 | `getBlockHeight(hash: string)`    | height                     | Unknown hash                                                 |
-| `getRawTransaction`              | `getRawTransaction(txId: string)` | hex                        | Unconfirmed / missing                                        |
-| `getRawBlock` / `getBlockHeader` | by block hash                     | hex                        | Unknown hash                                                 |
-| `getTXOs`                        | `getTXOs(q: TXOQuery)`            | revs or records            | No stabilizer; future/negative height filters; query failure |
+| Function                         | Signature                         | Returns                    | Invalidates when                                                                                                               |
+| -------------------------------- | --------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `sync`                           | `sync(location: string)`          | Object state (deep-cloned) | Missing / unconfirmed location                                                                                                 |
+| `decode`                         | `decode(txId: string)`            | `{ exp, env?, mod? }`      | Missing / unconfirmed tx                                                                                                       |
+| `load`                           | `load(location: string)`          | Module exports             | Missing / unconfirmed module location                                                                                          |
+| `getAncestors`                   | `getAncestors(location: string)`  | `string[]` (may be empty)  | Missing / unconfirmed start; empty array is **valid**                                                                          |
+| `first`                          | `first(rev: string)`              | Creation rev (`string`)    | Missing / unconfirmed start                                                                                                    |
+| `prev`                           | `prev(rev: string)`               | `string \| undefined`      | Missing / unconfirmed start; **`undefined` at root is OK**                                                                     |
+| `next`                           | `next(rev: string)`               | next rev (`string`)        | No next yet; unconfirmed start or unconfirmed successor                                                                        |
+| `last`                           | `last(rev: string)`               | Spent tip rev (`string`)   | Unspent tip; mempool-only spend; unconfirmed start/result                                                                      |
+| `txIdToBlockTime`                | `txIdToBlockTime(txId: string)`   | block time                 | Unconfirmed or missing tx                                                                                                      |
+| `txIdToBlockHeight`              | `txIdToBlockHeight(txId: string)` | height                     | Unconfirmed or missing tx                                                                                                      |
+| `txIdToBlockHash`                | `txIdToBlockHash(txId: string)`   | block hash                 | Unconfirmed or missing tx                                                                                                      |
+| `getBlockHash`                   | `getBlockHash(height: number)`    | hash                       | Negative or **future** height; missing block                                                                                   |
+| `getBlockHeight`                 | `getBlockHeight(hash: string)`    | height                     | Unknown hash                                                                                                                   |
+| `getRawTransaction`              | `getRawTransaction(txId: string)` | hex                        | Unconfirmed / missing                                                                                                          |
+| `getRawBlock` / `getBlockHeader` | by block hash                     | hex                        | Unknown hash                                                                                                                   |
+| `getTXOs`                        | `getTXOs(q: TXOQuery)`            | revs or records            | No stabilizer; future/negative height filters; node cap below the page size; stabilizer changed during the read; query failure |
 
 Aliases `getUTXOs`, `getOTXOs`, and `getOUTXOs` inherit the same rules as `getTXOs`.
 
@@ -220,7 +220,7 @@ Queries without a stabilizer, or with a future/negative height, invalidate. Empt
 
 `limit`, `offset`, and `blockIndex` must be non-negative integers. `orderBy` must be `rev` (the default). `order` is `ASC` or `DESC`.
 
-The call is a single read. It does not page. With no `limit`, a successful result is **every** match in `rev` order. If more rows match than the node's [`BCN_QUERY_LIMIT`](../../Node/operations.md#bcn_query_limit-and-apps), the transition is invalidated rather than shortened. An explicit `limit` is a window the contract chose; that `limit` must be ≤ `BCN_QUERY_LIMIT`. App operators set the cap at least as high as the largest in-contract query the app must observe. A higher cap does not change a successful result.
+The library reads the match set in `rev` order, 10000 rows at a time (`INNER_GET_TXOS_PAGE_SIZE`). With no `limit`, a successful result is **every** match. An explicit `limit` and `offset` is a window of that ordered set; the library still fetches the window in pages of at most 10000. A node whose [`BCN_QUERY_LIMIT`](../../Node/operations.md#bcn_query_limit-and-apps) is below 10000 rejects a page, and the transition is invalidated rather than shortened. The same is true if a later page fails, or if the stabilizer's best-chain hash changes while the pages are read. Operators leave the cap unset or set it to at least 10000. A higher cap does not change a successful result, and the cap does not have to cover the whole match set.
 
 ### Usage notes & best practices
 

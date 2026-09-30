@@ -43,12 +43,12 @@ Options:
 
 ### Common auth errors
 
-| Symptom | Likely cause | What to do |
-| ------- | ------------ | ---------- |
-| 401 no Authentication key | Missing header | Use lib, or add a valid Bearer token |
-| 401 Signature is too old | Clock skew or reused token | Sync clocks; mint a new timestamp each request |
-| 401 Please use a fresh authentication token | Replayed or out-of-order timestamp | Do not reuse headers; ensure monotonic client timestamps |
-| 401 origin / public key mismatch | `BCN_URL` on node ≠ URL the client signs | Align `.env` `BCN_URL` with the URL clients use (e.g. `http://127.0.0.1:1031`) |
+| Symptom                                     | Likely cause                             | What to do                                                                     |
+| ------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
+| 401 no Authentication key                   | Missing header                           | Use lib, or add a valid Bearer token                                           |
+| 401 Signature is too old                    | Clock skew or reused token               | Sync clocks; mint a new timestamp each request                                 |
+| 401 Please use a fresh authentication token | Replayed or out-of-order timestamp       | Do not reuse headers; ensure monotonic client timestamps                       |
+| 401 origin / public key mismatch            | `BCN_URL` on node ≠ URL the client signs | Align `.env` `BCN_URL` with the URL clients use (e.g. `http://127.0.0.1:1031`) |
 
 Health checks may skip auth depending on deployment; normal API routes do not.
 
@@ -78,9 +78,9 @@ The chain stores transactions; the **node indexes** outputs, inputs, and modules
 
    Or poll [`isIndexed`](../Lib/Computer/isIndexed.md). Prefer this over fixed `sleep`.
 
-4. **Wrong query shape**  
-   - Objects: [`getOUTXOs`](../Lib/Computer/getOUTXOs.md) / [get-txos](./get-txos.md) with `isObject` / `isSpent` filters.  
-   - Module **source**: [modules](./modules.md) / [`getModules`](../Lib/Computer/getModules.md).  
+4. **Wrong query shape**
+   - Objects: [`getOUTXOs`](../Lib/Computer/getOUTXOs.md) / [get-txos](./get-txos.md) with `isObject` / `isSpent` filters.
+   - Module **source**: [modules](./modules.md) / [`getModules`](../Lib/Computer/getModules.md).
    - `mod` on object queries filters **membership**, not deploy source.
 
 5. **Mempool cleanup**  
@@ -91,43 +91,45 @@ The chain stores transactions; the **node indexes** outputs, inputs, and modules
 
 ### “I see the tx on the chain but not in the API”
 
-| Check | Action |
-| ----- | ------ |
-| Tx in bitcoind, not in DB | Sync/ZMQ path; inspect node logs for parse/insert errors |
+| Check                              | Action                                                                            |
+| ---------------------------------- | --------------------------------------------------------------------------------- |
+| Tx in bitcoind, not in DB          | Sync/ZMQ path; inspect node logs for parse/insert errors                          |
 | Tx in `Output` but not in `Module` | Deploy format (must be `{ ept }` or taproot `BC`); node version with Module table |
-| `GET /module/:mod` 404 | Specifier wrong, not indexed yet, or hard-deleted unconfirmed row |
-| Client `getModules` empty | Same as above + auth + filters (`storageType`, `isConfirmed`) |
+| `GET /module/:mod` 404             | Specifier wrong, not indexed yet, or hard-deleted unconfirmed row                 |
+| Client `getModules` empty          | Same as above + auth + filters (`storageType`, `isConfirmed`)                     |
 
 ---
 
 ## `BCN_QUERY_LIMIT` and apps
 
-`BCN_QUERY_LIMIT` is the maximum number of rows a list query may return. It is set in the node `.env`:
+`BCN_QUERY_LIMIT` is the maximum number of rows **one list response** may contain. It is set in the node `.env`:
 
 ```bash
 BCN_QUERY_LIMIT='10000'
 ```
 
-Unset, `get-txos` returns every match. That is acceptable on a private dev node. It is the wrong setting for an app other people will run.
+Unset, a `get-txos` request that omits `limit` returns every match. That is acceptable on a private dev node. Set the cap on any node that serves those unbounded off-chain queries.
 
-Bitcoin Computer apps are written against a node the operator runs. The node is not a shared hosted API with one global page size. Anyone who wants to run the same app runs their own node and points the app at it. For in-contract `getTXOs` to agree on every such node, the query must not depend on a hidden, per-node prefix of the result.
+The cap is not the number of rows an in-contract `getTXOs` returns. That number is fixed by the query and the chain. Two synced nodes return the same contract result when each accepts a request for 10000 rows.
 
 ### What the contract sees
 
-Inside a contract, `computer.getTXOs` makes **one** request. The library does not page.
+Inside a contract, `computer.getTXOs` reads the rev-ordered match set in pages of **10000** rows. That page size is `INNER_GET_TXOS_PAGE_SIZE` in `@bitcoin-computer/lib`. It is part of the library, not node configuration, and it stays 10000 unless the library makes a breaking change.
 
-- **No `limit`.** The call asks for every output that matches, in `rev` order. If that set is larger than `BCN_QUERY_LIMIT`, the node refuses the query and the transition is **invalidated**. It does not succeed with the first N rows. A successful call is the complete match set. Raising the cap later does not change that result. A cap that is too low rejects the transition instead of returning a different, shorter list.
-- **Explicit `limit` (and `offset`).** This is a window the contract chose. It is deterministic. The requested `limit` must be less than or equal to `BCN_QUERY_LIMIT`, or the node rejects it and the transition is invalidated. A full window of that size is a successful observation; the contract asked for at most that many rows.
+Each page is one request with an explicit `limit` of at most 10000 and an `offset` into the ordered set. The library stops when a page comes back shorter than requested. A short page is the end of the set, because this route honors an explicit `limit` instead of silently substituting `BCN_QUERY_LIMIT`. When the match count is an exact multiple of 10000, the last request is an empty page.
 
-The outer `Computer.getTXOs` used by wallets and off-chain code is different. It may still return a list cut at `BCN_QUERY_LIMIT`. Do not copy that behavior into a contract and expect every replica to see the same prefix unless every node is configured identically **and** the contract treats the cap as part of the answer. The in-contract path refuses that.
+- **No `limit`.** The call returns every match, in `rev` order. A set of 50000 rows is five pages of 10000, on every node that accepts a page of 10000. The node's cap does not have to be 50000.
+- **Explicit `limit` and `offset`.** This is a window the contract chose. The library still fetches it in pages of at most 10000. The window is the same on every node that accepts those pages.
 
-### What to publish with an app
+If a page is rejected because `limit` is greater than `BCN_QUERY_LIMIT`, or a later page fails, the transition is **invalidated**. The library does not return the pages it already has. A cap that is too low is not a shorter result.
 
-Publish the node parameters the app was tested with (`BCN_CHAIN`, `BCN_NETWORK`, and `BCN_QUERY_LIMIT` at minimum). Operators who want to run that app set the same chain and network, and set `BCN_QUERY_LIMIT` **at least as high** as the largest in-contract `getTXOs` the app must observe — including any explicit `limit` the contract passes.
+Before the call returns, it reads the stabilizer's best-chain block hash again. If that hash moved while the pages were being read, the transition is invalidated.
 
-A higher cap is safe: successful queries still return the same rows. A lower cap is not: those queries invalidate. Leaving the variable unset is also not the same as another operator's `10000`; one node returns every row, the other rejects once the match count passes 10000.
+The outer `Computer.getTXOs` used by wallets and off-chain code is different. It is still one request. When `limit` is omitted and `BCN_QUERY_LIMIT` is set, the node returns a prefix of that length and does not error. Do not copy that behavior into a contract.
 
-Size the cap from the app, not from a default page size. If an election contract loads every vote for a proposal with `getTXOs({ mod, lteBlockHeight })` and the design allows 50000 votes, the app's nodes need `BCN_QUERY_LIMIT` of at least 50000. If the contract only ever reads `limit: 20`, the cap must be at least 20, and the contract must not assume those 20 rows are the entire set.
+### What to set
+
+On every node that serves in-contract `getTXOs`, leave `BCN_QUERY_LIMIT` unset or set it to **at least 10000**. The library never asks for more than 10000 rows in one request, so a higher cap does not change a successful contract result. A lower cap rejects the read. The example above is that floor, not an application-specific total.
 
 Restart the node after changing `.env`. The value is process configuration, not chain state.
 
@@ -175,12 +177,12 @@ New deploys are indexed from ZMQ and sync. Historical deploys before the feature
 
 **Use the same release version of `@bitcoin-computer/lib` and the Bitcoin Computer Node.**
 
-| Mismatch symptom | Typical cause |
-| ---------------- | ------------- |
-| Module routes 404 / table missing | Old node without Module API/schema |
+| Mismatch symptom                              | Typical cause                                                     |
+| --------------------------------------------- | ----------------------------------------------------------------- |
+| Module routes 404 / table missing             | Old node without Module API/schema                                |
 | Client cannot parse module txs / `load` fails | Lib expects `{ ept }` / `BC`; node or peers on legacy assumptions |
-| `decode` vs `load` confusion | Lib rejects module deploys in `decode` (`ModuleDecodeError`) |
-| Empty index after upgrade | Schema not applied (see above) or node not restarted |
+| `decode` vs `load` confusion                  | Lib rejects module deploys in `decode` (`ModuleDecodeError`)      |
+| Empty index after upgrade                     | Schema not applied (see above) or node not restarted              |
 
 See also [Breaking changes](../changelog.md) for protocol-level wire format notes (module deploys, protocol id `BC`).
 
@@ -224,7 +226,7 @@ Expected. Rows remain; `blockHash` / `blockHeight` cleared until re-confirmed.
 
 ## Related
 
-- [Node overview](./index.md) — install, env, architecture  
-- [modules](./modules.md) / [module](./module.md) — module HTTP API  
-- [get-txos](./get-txos.md) — output queries  
-- Client: [waitForIndexed](../Lib/Computer/waitForIndexed.md), [getModules](../Lib/Computer/getModules.md), [getOUTXOs](../Lib/Computer/getOUTXOs.md)  
+- [Node overview](./index.md) — install, env, architecture
+- [modules](./modules.md) / [module](./module.md) — module HTTP API
+- [get-txos](./get-txos.md) — output queries
+- Client: [waitForIndexed](../Lib/Computer/waitForIndexed.md), [getModules](../Lib/Computer/getModules.md), [getOUTXOs](../Lib/Computer/getOUTXOs.md)

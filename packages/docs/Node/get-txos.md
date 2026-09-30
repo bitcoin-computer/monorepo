@@ -38,7 +38,9 @@ Validation is performed on all parameters to ensure proper format and type.
 
 `BCN_QUERY_LIMIT` in `.env` caps how many rows this route returns when `limit` is omitted. A `limit` greater than that value is rejected.
 
-In-contract `getTXOs` (InnerComputer) sends one extra flag, `errorIfTruncated=true`. Wallet and other off-chain callers do not. With that flag, an omitted `limit` that matches **more** rows than `BCN_QUERY_LIMIT` returns an error (`BCN_QUERY_LIMIT of N reached`) instead of a shorter list. The contract transition is then invalidated. See [BCN_QUERY_LIMIT and apps](./operations.md#bcn_query_limit-and-apps). Do not send `errorIfTruncated` from application code; the library sets it only for the in-contract read.
+In-contract `getTXOs` does not omit `limit` and does not send `errorIfTruncated`. It asks for explicit pages of 10000 rows (`INNER_GET_TXOS_PAGE_SIZE` in the library), in `rev` order, until the match set or the contract's own `limit` is exhausted. A node that rejects a page because `BCN_QUERY_LIMIT` is below 10000 invalidates the transition instead of returning a shorter list. See [BCN_QUERY_LIMIT and apps](./operations.md#bcn_query_limit-and-apps).
+
+`errorIfTruncated=true` is a node flag for a caller who omits `limit`. The match count is then an error (`BCN_QUERY_LIMIT of N reached`) instead of a truncated list. Wallet and other off-chain callers leave it unset and can still receive a prefix cut at `BCN_QUERY_LIMIT`. Do not send `errorIfTruncated` from application code.
 
 ## Example
 
