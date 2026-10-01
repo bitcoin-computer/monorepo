@@ -58,7 +58,8 @@ function isWitnessProgram(script: Buffer): boolean {
 /**
  * Builds a transaction from wallet + mod UTXOs, signs, and broadcasts.
  * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus the fee).
- * `estimateFee` appends one output before it measures, so the fee is read while that output is still absent.
+ * `estimateFee` includes one extra output to this wallet, so the fee is read before that output is added.
+ * A signature can be a few bytes longer than that estimate. Change, or the send-max output, is reduced to cover the signed size when it stays above the dust limit.
  * @returns Broadcast transaction id when available.
  */
 export async function signAndBroadcastSpendUtxos(
@@ -102,12 +103,12 @@ export async function signAndBroadcastSpendUtxos(
 
   const networkObj = networks.getNetwork(computer.getChain(), computer.getNetwork())
   const changeScript = bAddress.toOutputScript(computer.getAddress().toString(), networkObj)
-  const satPerByte = BigInt(computer.db.wallet.restClient.satPerByte)
-  // getDustThreshold's flag selects the spend size. It does not inspect the script.
+  const satPerByte = BigInt(computer.getFee())
+  // The flag selects the spend size. It does not inspect the script.
   const dustLimit = (script: Buffer) =>
     BigInt(computer.db.wallet.getDustThreshold(isWitnessProgram(script), script))
-  // The appended output pays this wallet. Output script bytes are not discounted,
-  // so a different script changes the fee by its length difference times satPerByte.
+  // The extra output pays this wallet. Output script bytes are not discounted,
+  // so a different script changes the fee by its length difference times the fee rate.
   const feeFor = async (script: Buffer) => {
     const estimated = BigInt(await computer.db.wallet.estimateFee(tx))
     return estimated + BigInt(script.length - changeScript.length) * satPerByte
@@ -159,6 +160,27 @@ export async function signAndBroadcastSpendUtxos(
         }
         tx.addOutput(recipientScript, amountSatoshis)
       }
+    }
+  }
+
+  // The estimate signs different output bytes, so the real signature can be longer.
+  // Take the difference from change, or from the send-max output, while it stays above dust.
+  let adjustable: number | undefined
+  if (!hasRecipient || sendMax) adjustable = 0
+  else if (tx.outs.length > 1) adjustable = tx.outs.length - 1
+  if (adjustable !== undefined) {
+    for (let attempt = 0; attempt < 3; attempt += 1) {
+      const trial = tx.clone()
+      await computer.sign(trial)
+      const need = BigInt(trial.virtualSize()) * satPerByte
+      const paid =
+        totalInput -
+        tx.outs.reduce((sum: bigint, output: { value: bigint }) => sum + output.value, 0n)
+      if (paid >= need) break
+      const output = tx.outs[adjustable]
+      const reduced = (output.value as bigint) - (need - paid)
+      if (reduced < dustLimit(output.script)) break
+      tx.updateOutput(adjustable, { value: reduced })
     }
   }
 

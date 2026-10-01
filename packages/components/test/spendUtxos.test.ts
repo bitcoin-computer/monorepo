@@ -23,13 +23,13 @@ function fakeComputer(utxoSatoshis: bigint[]) {
     getPublicKey: () => '02' + '00'.repeat(32),
     getChain: () => 'LTC',
     getNetwork: () => 'regtest',
+    getFee: () => 2,
     getUTXOs: async (q: { address?: string }) =>
       q.address
         ? utxoSatoshis.map((satoshis, i) => ({ rev: `${'ab'.repeat(32)}:${i}`, satoshis }))
         : [],
     db: {
       wallet: {
-        restClient: { satPerByte: 2 },
         estimateFee: async (tx: any) => {
           const sized = tx.clone()
           sized.addOutput(walletScript, P2PKH_DUST)
@@ -117,6 +117,19 @@ describe('signAndBroadcastSpendUtxos', () => {
     await send(computer, 100_000n - fee(1) - 10n)
     expect(outputsOf(broadcasts[0])).toEqual([{ to: recipient, value: 100_000n - fee(1) - 10n }])
     expect(feeOf(broadcasts[0], 100_000n)).toBe(fee(1) + 10n)
+  })
+
+  it('takes a too-small fee out of change after the transaction is signed', async () => {
+    const { computer, broadcasts } = fakeComputer([100_000n])
+    computer.sign = async (tx: any) => {
+      tx.ins[0].script = Buffer.alloc(500)
+    }
+    await send(computer, 30_000n)
+    const tx = broadcasts[0]
+    const paid = feeOf(tx, 100_000n)
+    expect(paid).toBeGreaterThan(fee(2))
+    expect(paid).toBeGreaterThanOrEqual(BigInt(tx.virtualSize()) * 2n)
+    expect(outputsOf(tx)[0]).toEqual({ to: recipient, value: 30_000n })
   })
 
   it('keeps change that sits between the real fee and a fee that includes an extra output', async () => {
