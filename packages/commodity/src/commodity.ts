@@ -323,7 +323,10 @@ export class Commodity extends TBC777 {
     // block (spent or unspent). Pure index query – no objects materialised.
     // Must be getOTXOs, not getOUTXOs: after a successful claim the creation is
     // spent, and validators re-evaluate claim() when syncing the claimed rev.
-    const candidateRevs = await computer.getOTXOs({ mod, blockHeight })
+    // Only creations (no previous revision) compete: transfers and claims of
+    // other objects in the same block must not displace the winner.
+    const records = await computer.getOTXOs({ mod, blockHeight, verbosity: 1 })
+    const candidateRevs = records.filter((r) => !r.previous).map((r) => r.rev)
 
     if (candidateRevs.length === 0)
       throw new Error(`No objects of this module found for block ${blockHeight}`)
