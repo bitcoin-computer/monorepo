@@ -53,7 +53,14 @@ export function SendForm({ computer }: { computer: Computer }) {
       setFormError('Enter an amount')
       return
     }
-    computer.setFee(Number(fee))
+    // Number('') is 0 and setFee accepts any number, so check before changing the
+    // fee: the page keeps this computer, so a bad rate would stick for later sends.
+    const satPerByte = Number(fee)
+    if (!fee.trim() || !Number.isFinite(satPerByte) || satPerByte <= 0) {
+      setFormError('Enter a fee greater than 0')
+      return
+    }
+    computer.setFee(satPerByte)
     try {
       const txId = await computer.send(strToBigInt(amount), to)
       toast.success(`Sent ${amount} ${computer.getChain()}. Tx ${txId.slice(0, 10)}…`)
@@ -115,7 +122,10 @@ export function SendForm({ computer }: { computer: Computer }) {
           </label>
           <input
             value={fee}
-            onChange={(e) => setFee(e.target.value)}
+            onChange={(e) => {
+              setFee(e.target.value)
+              if (formError) setFormError(null)
+            }}
             id="fee"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required
