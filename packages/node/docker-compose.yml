@@ -7,7 +7,9 @@ services:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
     # command: ["postgres", "-c", "log_statement=all"]
     ports:
-      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+      # Postgres, RPC and ZMQ are only needed by the containers. Publish them on
+      # localhost by default; set BCN_PRIVATE_BIND to change the host address.
+      - '${BCN_PRIVATE_BIND:-127.0.0.1}:${POSTGRES_PORT}:${POSTGRES_PORT}'
     networks:
       - bcn
     environment:
@@ -22,8 +24,8 @@ services:
       - bitcoin
     restart: always
     ports:
-      - ${BITCOIN_RPC_PORT}:${BITCOIN_RPC_PORT}
-      - ${BCN_ZMQ_PORT}:${BCN_ZMQ_PORT}
+      - '${BCN_PRIVATE_BIND:-127.0.0.1}:${BITCOIN_RPC_PORT}:${BITCOIN_RPC_PORT}'
+      - '${BCN_PRIVATE_BIND:-127.0.0.1}:${BCN_ZMQ_PORT}:${BCN_ZMQ_PORT}'
     volumes:
       - ./chain-setup/${BCN_CHAIN}/${BCN_NETWORK}/blockchain-data:${BITCOIN_DATA_DIR}
       - ./${BITCOIN_CONF_FILE}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}

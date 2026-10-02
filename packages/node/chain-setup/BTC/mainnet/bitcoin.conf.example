@@ -5,7 +5,8 @@ txindex=1
 # Accept command line and JSON-RPC commands.
 server=1
 # Username for JSON-RPC connections
-rpcauth=bcn-admin:c71460f0f08e4eeec90e033c04f7bb82$c36e8561d46abbf3bf13da6b88612c19d758d46d02c45cd2716f06a13ec407af
+# Generate with: python3 scripts/rpc-auth.py bcn-admin, and put the password in .env
+rpcauth=
 rpcallowip=0.0.0.0/0
 rpcbind=0.0.0.0
 
