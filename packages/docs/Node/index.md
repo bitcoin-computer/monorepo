@@ -227,6 +227,8 @@ The architecture is designed for robustness, scalability, and real-time responsi
 
 You can configure several options by editing the `.env` file. See the [example](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/chain-setup/LTC/regtest/.env.example) for details.
 
+List routes (`get-txos`, `modules`) return at most 10000 rows per response. `Computer.getTXOs` (and `getUTXOs`, `getOTXOs`, `getOUTXOs`) and `getModules`, including in-contract `getTXOs`, walk those pages until the requested window or, when `limit` is omitted, the end of the set. A failed page returns nothing. See [List page size](./operations.md#list-page-size).
+
 <font size=1>
 
 ```bash
