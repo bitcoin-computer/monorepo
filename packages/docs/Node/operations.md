@@ -100,38 +100,15 @@ The chain stores transactions; the **node indexes** outputs, inputs, and modules
 
 ---
 
-## `BCN_QUERY_LIMIT` and apps
+## List page size
 
-`BCN_QUERY_LIMIT` is the maximum number of rows **one list response** may contain. It is set in the node `.env`:
+`getTXOs` and `getModules` read lists **10000** rows at a time. That size is `LIST_PAGE_SIZE` in `@bitcoin-computer/lib` and in the node. It is fixed. There is no environment variable for it.
 
-```bash
-BCN_QUERY_LIMIT='10000'
-```
+One HTTP response is one page. [`get-txos`](./get-txos.md) and [`modules`](./modules.md) reject a `limit` above 10000. An omitted `limit` on those routes is one page of 10000, not the whole table. Pass `offset` for the next page. A response shorter than the requested `limit` is the end of the set.
 
-Unset, a `get-txos` request that omits `limit` returns every match. That is acceptable on a private dev node. Set the cap on any node that serves those unbounded off-chain queries.
+`Computer.getTXOs`, `getUTXOs`, `getOTXOs`, `getOUTXOs`, and `getModules` walk those pages. With no `limit`, the call returns every match. An explicit `limit` and `offset` is a window, still fetched in pages of at most 10000. In-contract `computer.getTXOs` calls the same `Computer.getTXOs`, so it sees the same rows. A failed page — including a rate limit or a dropped connection — fails the call and discards the pages already read. In-contract, that failure invalidates the evaluation. A node that cannot finish produces no result. Every node that does finish, for the same parameters and the same stabilizer, sees the same rows. The page size does not have to cover the whole match set.
 
-The cap is not the number of rows an in-contract `getTXOs` returns. That number is fixed by the query and the chain. Two synced nodes return the same contract result when each accepts a request for 10000 rows.
-
-### What the contract sees
-
-Inside a contract, `computer.getTXOs` reads the rev-ordered match set in pages of **10000** rows. That page size is `INNER_GET_TXOS_PAGE_SIZE` in `@bitcoin-computer/lib`. It is part of the library, not node configuration, and it stays 10000 unless the library makes a breaking change.
-
-Each page is one request with an explicit `limit` of at most 10000 and an `offset` into the ordered set. The library stops when a page comes back shorter than requested. A short page is the end of the set, because this route honors an explicit `limit` instead of silently substituting `BCN_QUERY_LIMIT`. When the match count is an exact multiple of 10000, the last request is an empty page.
-
-- **No `limit`.** The call returns every match, in `rev` order. A set of 50000 rows is five pages of 10000, on every node that accepts a page of 10000. The node's cap does not have to be 50000.
-- **Explicit `limit` and `offset`.** This is a window the contract chose. The library still fetches it in pages of at most 10000. The window is the same on every node that accepts those pages.
-
-If a page is rejected because `limit` is greater than `BCN_QUERY_LIMIT`, or a later page fails, the transition is **invalidated**. The library does not return the pages it already has. A cap that is too low is not a shorter result.
-
-Before the call returns, it reads the stabilizer's best-chain block hash again. If that hash moved while the pages were being read, the transition is invalidated.
-
-The outer `Computer.getTXOs` used by wallets and off-chain code is different. It is still one request. When `limit` is omitted and `BCN_QUERY_LIMIT` is set, the node returns a prefix of that length and does not error. Do not copy that behavior into a contract.
-
-### What to set
-
-On every node that serves in-contract `getTXOs`, leave `BCN_QUERY_LIMIT` unset or set it to **at least 10000**. The library never asks for more than 10000 rows in one request, so a higher cap does not change a successful contract result. A lower cap rejects the read. The example above is that floor, not an application-specific total.
-
-Restart the node after changing `.env`. The value is process configuration, not chain state.
+Before the in-contract call returns, it reads the stabilizer's best-chain block hash again. If that hash moved while the pages were read, the transition is invalidated.
 
 ## Module table (schema upgrade)
 

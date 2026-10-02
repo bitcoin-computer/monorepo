@@ -227,7 +227,7 @@ The architecture is designed for robustness, scalability, and real-time responsi
 
 You can configure several options by editing the `.env` file. See the [example](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/chain-setup/LTC/regtest/.env.example) for details.
 
-In-contract `getTXOs` reads the match set in pages of 10000 rows (`INNER_GET_TXOS_PAGE_SIZE`). Set `BCN_QUERY_LIMIT` to at least 10000, or leave it unset. A lower cap rejects the read instead of shortening it. The cap is the most rows one response may contain, not the size of the contract's result. See [BCN_QUERY_LIMIT and apps](./operations.md#bcn_query_limit-and-apps).
+List routes (`get-txos`, `modules`) return at most 10000 rows per response. `Computer.getTXOs` (and `getUTXOs`, `getOTXOs`, `getOUTXOs`) and `getModules`, including in-contract `getTXOs`, walk those pages until the requested window or, when `limit` is omitted, the end of the set. A failed page returns nothing. See [List page size](./operations.md#list-page-size).
 
 <font size=1>
 

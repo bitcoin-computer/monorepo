@@ -147,7 +147,7 @@ Most location-based APIs require the referenced **transaction to be confirmed** 
 | `getBlockHeight`                 | `getBlockHeight(hash: string)`    | height                     | Unknown hash                                                                                                                   |
 | `getRawTransaction`              | `getRawTransaction(txId: string)` | hex                        | Unconfirmed / missing                                                                                                          |
 | `getRawBlock` / `getBlockHeader` | by block hash                     | hex                        | Unknown hash                                                                                                                   |
-| `getTXOs`                        | `getTXOs(q: TXOQuery)`            | revs or records            | No stabilizer; future/negative height filters; node cap below the page size; stabilizer changed during the read; query failure |
+| `getTXOs`                        | `getTXOs(q: TXOQuery)`            | revs or records            | No stabilizer; future/negative height filters; stabilizer changed during the read; query failure |
 
 Aliases `getUTXOs`, `getOTXOs`, and `getOUTXOs` inherit the same rules as `getTXOs`.
 
@@ -220,7 +220,7 @@ Queries without a stabilizer, or with a future/negative height, invalidate. Empt
 
 `limit`, `offset`, and `blockIndex` must be non-negative integers. `orderBy` must be `rev` (the default). `order` is `ASC` or `DESC`.
 
-The library reads the match set in `rev` order, 10000 rows at a time (`INNER_GET_TXOS_PAGE_SIZE`). With no `limit`, a successful result is **every** match. An explicit `limit` and `offset` is a window of that ordered set; the library still fetches the window in pages of at most 10000. A node whose [`BCN_QUERY_LIMIT`](../../Node/operations.md#bcn_query_limit-and-apps) is below 10000 rejects a page, and the transition is invalidated rather than shortened. The same is true if a later page fails, or if the stabilizer's best-chain hash changes while the pages are read. Operators leave the cap unset or set it to at least 10000. A higher cap does not change a successful result, and the cap does not have to cover the whole match set.
+In-contract `getTXOs` calls the same [`Computer.getTXOs`](../Computer/index.md#query-outputs) used off chain. That method reads the match set in `rev` order, 10000 rows at a time (`LIST_PAGE_SIZE`). With no `limit`, a successful result is **every** match. An explicit `limit` and `offset` is a window of that ordered set. A failed page, including a rate limit or a dropped connection, invalidates the transition instead of returning the pages already read. The same is true if the stabilizer's best-chain hash changes while the pages are read. The page size is fixed and does not have to cover the whole match set. See [List page size](../../Node/operations.md#list-page-size).
 
 ### Usage notes & best practices
 

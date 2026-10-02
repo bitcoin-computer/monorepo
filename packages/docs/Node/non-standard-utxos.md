@@ -22,9 +22,7 @@ To list or fetch **module deploy** sources, use [modules](./modules.md) and [mod
 | `offset`    | string | Number of results to skip (for pagination). |
 | `order`     | string | Sort order: `ASC` or `DESC`.                |
 
-> Notes:
->
-> - `BCN_QUERY_LIMIT` is configurable in your `.env` file. If set, any `limit` exceeding this value will throw a validation error.
+An omitted `limit` is not capped, and a larger `limit` is not rejected. This route does not use the [list page size](./operations.md#list-page-size).
 
 ## Example
 

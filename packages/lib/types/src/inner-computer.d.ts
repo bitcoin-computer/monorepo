@@ -29,7 +29,6 @@ export type InnerTXOQuery = {
   blockIndex?: number
 }
 export declare const INNER_TXO_QUERY_KEYS: (keyof InnerTXOQuery)[]
-export declare const INNER_GET_TXOS_PAGE_SIZE = 10000
 export declare class InnerComputer {
   private readonly c
   constructor({ chain, network, url }: { chain: Chain; network: BtcNetwork; url: string })
@@ -76,6 +75,5 @@ export declare class InnerComputer {
     },
   ): Promise<TXORecord[]>
   private _stabilizerFingerprint
-  private _fetchTXOPage
   private _readTXOs
 }

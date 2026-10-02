@@ -35,7 +35,7 @@ Deploy JavaScript modules (preferably via taproot) to avoid redundant on-chain s
 
 ### Query outputs
 
-Query the node’s `Output` table. All of these accept a `TXOQuery` (see [getTXOs](./getTXOs.md)). `verbosity: 0` (default) returns revision strings; `verbosity: 1` returns full rows.
+Query the node’s `Output` table. All of these accept a `TXOQuery` (see [getTXOs](./getTXOs.md)). `verbosity: 0` (default) returns revision strings; `verbosity: 1` returns full rows. Each method reads 10000 rows at a time (`LIST_PAGE_SIZE`). An omitted `limit` is every match; an explicit `limit` and `offset` is a window of that ordered set. [`getModules`](./getModules.md) uses the same page size.
 
 {.compact}
 

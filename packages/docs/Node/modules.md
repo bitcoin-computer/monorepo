@@ -24,7 +24,7 @@ Owner outputs from module deploys still appear in the `Output` table like other 
 | Parameter     | Type                    | Description                                                                        |
 | ------------- | ----------------------- | ---------------------------------------------------------------------------------- |
 | `verbosity`   | `0` or `1`              | Response detail. `0` (default): array of module specifier strings. `1`: full rows. |
-| `limit`       | `number`                | Maximum number of results. Defaults to `BCN_QUERY_LIMIT` or `100`.                 |
+| `limit`       | `number`                | Maximum number of results. At most 10000. Omitted means 10000.                     |
 | `offset`      | `number`                | Number of results to skip (pagination). Defaults to `0`.                           |
 | `order`       | `ASC` or `DESC`         | Sort by insert `timestamp`. Defaults to `DESC`.                                    |
 | `storageType` | `multisig` \| `taproot` | Optional filter by on-chain encoding.                                              |
@@ -32,7 +32,7 @@ Owner outputs from module deploys still appear in the `Output` table like other 
 
 > Notes:
 >
-> - `BCN_QUERY_LIMIT` is configurable in your `.env` file. If set, any `limit` exceeding this value returns a validation error.
+> - One response is at most 10000 rows. A larger `limit` is a validation error. `computer.getModules` with no `limit` walks these pages and returns every indexed module. A failed page fails the call and does not return the pages already read. See [List page size](./operations.md#list-page-size).
 > - Results are ordered by the row `timestamp` (when the node indexed the module), not by block height.
 > - Unconfirmed (mempool) modules have `blockHash` / `blockHeight` unset until the deploy is confirmed. On reorg, confirmation fields are cleared; on hard mempool cleanup, unconfirmed module rows may be deleted.
 
