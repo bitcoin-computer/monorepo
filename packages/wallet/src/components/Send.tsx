@@ -6,6 +6,20 @@ import { HiRefresh } from 'react-icons/hi'
 import TransactionTable from './TransactionTable'
 import { TableTxs } from '../types/common'
 
+// A typed rate is satoshis per byte. 10000 is already far above a normal
+// LTC or congested BTC rate, and it stops one extra zero from pricing a coin-sized fee.
+const MAX_SAT_PER_BYTE = 10000
+
+// Number('1e3') is 1000 and Number('0x10') is 16, so only a plain decimal counts.
+function readSatPerByte(value: string): number | 'invalid' | 'high' {
+  const text = value.trim()
+  if (!/^(?:0|[1-9]\d*)(?:\.\d+)?$/.test(text)) return 'invalid'
+  const rate = Number(text)
+  if (!Number.isFinite(rate) || rate <= 0) return 'invalid'
+  if (rate > MAX_SAT_PER_BYTE) return 'high'
+  return rate
+}
+
 export function SentTransactions({ computer }: { computer: Computer }) {
   const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
 
@@ -53,7 +67,17 @@ export function SendForm({ computer }: { computer: Computer }) {
       setFormError('Enter an amount')
       return
     }
-    computer.setFee(Number(fee))
+    // setFee stores the rate on this page's computer before send, so a bad rate would stick.
+    const satPerByte = readSatPerByte(fee)
+    if (satPerByte === 'invalid') {
+      setFormError('Enter a fee greater than 0')
+      return
+    }
+    if (satPerByte === 'high') {
+      setFormError(`Enter a fee of at most ${MAX_SAT_PER_BYTE} satoshis per byte`)
+      return
+    }
+    computer.setFee(satPerByte)
     try {
       const txId = await computer.send(strToBigInt(amount), to)
       toast.success(`Sent ${amount} ${computer.getChain()}. Tx ${txId.slice(0, 10)}…`)
@@ -115,7 +139,10 @@ export function SendForm({ computer }: { computer: Computer }) {
           </label>
           <input
             value={fee}
-            onChange={(e) => setFee(e.target.value)}
+            onChange={(e) => {
+              setFee(e.target.value)
+              if (formError) setFormError(null)
+            }}
             id="fee"
             className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
             required

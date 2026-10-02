@@ -115,3 +115,26 @@ export function strToBigInt(a: string): bigint {
 
   return BigInt(totalSatoshisStr);
 }
+
+export {
+  asNonEmpty,
+  BIP32_PATH_PATTERN,
+  compactUndefined,
+  validChain,
+  validModuleStorageType,
+  validNetwork,
+  validPath,
+  validUrl,
+} from "@bitcoin-computer/components/utils";
+
+/** Next.js only inlines NEXT_PUBLIC_* on static property access, not `process.env[key]`. */
+export function getEnv(name: string) {
+  const env: Record<string, string | undefined> = {
+    CHAIN: process.env.NEXT_PUBLIC_CHAIN,
+    NETWORK: process.env.NEXT_PUBLIC_NETWORK,
+    URL: process.env.NEXT_PUBLIC_URL,
+    PATH: process.env.NEXT_PUBLIC_PATH,
+    MODULE_STORAGE_TYPE: process.env.NEXT_PUBLIC_MODULE_STORAGE_TYPE,
+  };
+  return env[name];
+}

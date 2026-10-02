@@ -434,15 +434,105 @@ describe('ChessContract', () => {
                     args: [],
                     mod: chessMod,
                 });
-                await white.broadcast(resignTx);
+                const resignTxId = await white.broadcast(resignTx);
+                await white.waitForIndexed(resignTxId);
                 const chessFinal = resignEffect.env
                     .__bc__;
                 const totalPot = wager * 2n;
                 expect(chessFinal.withdraws).toEqual([[token._root, blackToken._id, totalPot]]);
+                expect(chessFinal._owners).toEqual([black.getPublicKey()]);
                 expect((await black.sync(await black.latest(blackToken._id))).amount).toBe(5n);
                 await black.db.wallet.restClient.mine(1);
                 const blackTokenFinal = await withdrawFromChess(black, blackToken._id, chess._id, tbc777Mod);
                 expect(blackTokenFinal.amount).toBe(15n);
+            });
+            describe('Payout revisions', () => {
+                // Once withdraws is set, move, resign, cancel, and setCanceledSeen throw.
+                // Resign also transfers ownership to the winner. getPayoutRev still selects
+                // the first payout revision, which is what modules deployed before this guard need.
+                async function createPendingGame(wager) {
+                    const token = await minter.new(TBC777, [{ to: minter.getPublicKey(), amount: 20n, name: 'chess', symbol: TOKEN_SYMBOL }], tbc777Mod);
+                    await minter.faucet(1e8);
+                    const whiteTokenUtxo = await token.transfer(white.getPublicKey(), 10n);
+                    if (!whiteTokenUtxo)
+                        throw new Error('expected white token UTXO');
+                    const chess = await white.new(ChessContract, [token._root, wager, 60n * 10n], chessMod);
+                    const whiteToken = await white.sync(whiteTokenUtxo._rev);
+                    const { tx, effect } = await white.encode({
+                        exp: `chess.acceptDeposit(whiteToken, ${wager}n, 'White', '${black.getPublicKey()}')`,
+                        env: { chess: chess._rev, whiteToken: whiteToken._rev },
+                        mod: chessMod,
+                    });
+                    await white.broadcast(tx);
+                    await minter.faucet(1e8);
+                    const chessPending = effect.env.chess;
+                    return { whiteToken, chessPending };
+                }
+                async function callOnLatest(player, chessId, property, args = []) {
+                    const chess = await player.sync(await player.latest(chessId));
+                    const { tx } = await player.encodeCall({
+                        target: chess,
+                        property,
+                        args,
+                        mod: chessMod,
+                    });
+                    if (!tx)
+                        throw new Error(`encodeCall(${property}) on ${chess._rev} gave no transaction`);
+                    const txId = await player.broadcast(tx);
+                    await player.waitForIndexed(txId);
+                    await player.db.wallet.restClient.mine(1);
+                }
+                it('Should let the creator claim the refund when the opponent cancels', async () => {
+                    const { whiteToken, chessPending } = await createPendingGame(5n);
+                    await black.db.wallet.restClient.mine(1);
+                    await callOnLatest(black, chessPending._id, 'cancel');
+                    const helper = ChessContractHelper.fromModSpecs(white, chessMod, undefined, tbc777Mod);
+                    await helper.cancelGameAndWithdraw(chessPending._id);
+                    await minter.faucet(1e8);
+                    const whiteTokenFinal = await white.sync(await white.latest(whiteToken._id));
+                    expect(whiteTokenFinal.amount).toBe(10n);
+                });
+                it('Should reject a second cancel once the refund is recorded', async () => {
+                    const { chessPending } = await createPendingGame(5n);
+                    await black.db.wallet.restClient.mine(1);
+                    // Empty withdraws: the invitee can still mark the pending challenge seen.
+                    await callOnLatest(black, chessPending._id, 'setCanceledSeen');
+                    const seen = await white.sync(await white.latest(chessPending._id));
+                    expect(seen.canceledSeen).toBe(true);
+                    expect(seen.withdraws).toEqual([]);
+                    await callOnLatest(black, chessPending._id, 'cancel');
+                    // The creator is still a pending co-owner, so this reaches the contract.
+                    await expect(callOnLatest(white, chessPending._id, 'cancel')).rejects.toThrow('Game is already over');
+                    await expect(callOnLatest(black, chessPending._id, 'setCanceledSeen')).rejects.toThrow('Game is already over');
+                });
+                it('Should reject further play after resign and still pay the winner', async () => {
+                    const wager = 5n;
+                    const { blackToken, chess } = await fundChessGame({
+                        minter,
+                        white,
+                        black,
+                        tbc777Mod,
+                        chessMod,
+                        wager,
+                        timeLimit: 60n * 10n,
+                    });
+                    await black.db.wallet.restClient.mine(1);
+                    await callOnLatest(white, chess._id, 'resign');
+                    const resignedRev = await black.latest(chess._id);
+                    const resigned = await black.sync(resignedRev);
+                    expect(resigned._owners).toEqual([black.getPublicKey()]);
+                    expect(resigned.withdraws).toEqual([[resigned.root, blackToken._id, 2n * wager]]);
+                    await expect(callOnLatest(black, chess._id, 'move', ['e7', 'e5', ''])).rejects.toThrow('Game is already over');
+                    await expect(callOnLatest(black, chess._id, 'resign')).rejects.toThrow('Game is already over');
+                    await expect(callOnLatest(black, chess._id, 'cancel')).rejects.toThrow('Game is already over');
+                    await expect(callOnLatest(black, chess._id, 'setCanceledSeen')).rejects.toThrow('Game is already over');
+                    expect(await black.latest(chess._id)).toBe(resignedRev);
+                    const blackHelper = ChessContractHelper.fromModSpecs(black, chessMod, undefined, tbc777Mod);
+                    await blackHelper.withdrawTokens(blackToken._id, chess._id);
+                    await minter.faucet(1e8);
+                    const blackTokenFinal = await black.sync(await black.latest(blackToken._id));
+                    expect(blackTokenFinal.amount).toBe(15n);
+                });
             });
             it('calculateTimes / hasTimedOut require a confirmed tip (InnerComputer guards)', async () => {
                 const wager = 5n;
