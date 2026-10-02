@@ -6,6 +6,20 @@ import { HiRefresh } from 'react-icons/hi'
 import TransactionTable from './TransactionTable'
 import { TableTxs } from '../types/common'
 
+// A typed rate is satoshis per byte. 10000 is already far above a normal
+// LTC or congested BTC rate, and it stops one extra zero from pricing a coin-sized fee.
+const MAX_SAT_PER_BYTE = 10000
+
+// Number('1e3') is 1000 and Number('0x10') is 16, so only a plain decimal counts.
+function readSatPerByte(value: string): number | 'invalid' | 'high' {
+  const text = value.trim()
+  if (!/^(?:0|[1-9]\d*)(?:\.\d+)?$/.test(text)) return 'invalid'
+  const rate = Number(text)
+  if (!Number.isFinite(rate) || rate <= 0) return 'invalid'
+  if (rate > MAX_SAT_PER_BYTE) return 'high'
+  return rate
+}
+
 export function SentTransactions({ computer }: { computer: Computer }) {
   const [txs, setTxs] = useState<TableTxs>({ sentTxs: [], receivedTxs: [] })
 
@@ -53,11 +67,14 @@ export function SendForm({ computer }: { computer: Computer }) {
       setFormError('Enter an amount')
       return
     }
-    // Number('') is 0 and setFee accepts any number, so check before changing the
-    // fee: the page keeps this computer, so a bad rate would stick for later sends.
-    const satPerByte = Number(fee)
-    if (!fee.trim() || !Number.isFinite(satPerByte) || satPerByte <= 0) {
+    // setFee stores the rate on this page's computer before send, so a bad rate would stick.
+    const satPerByte = readSatPerByte(fee)
+    if (satPerByte === 'invalid') {
       setFormError('Enter a fee greater than 0')
+      return
+    }
+    if (satPerByte === 'high') {
+      setFormError(`Enter a fee of at most ${MAX_SAT_PER_BYTE} satoshis per byte`)
       return
     }
     computer.setFee(satPerByte)
