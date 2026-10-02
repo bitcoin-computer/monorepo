@@ -69,7 +69,8 @@ production use. This software is provided “AS IS.”
    a terminal position the contract immediately writes the appropriate
    `withdraws` entries.
 5. **Resign** – The player to move may call `resign()`, which awards the pot to
-   the opponent.
+   the opponent and transfers ownership of the finished game to that opponent.
+   `move`, `resign`, `cancel`, and `setCanceledSeen` throw once a payout is recorded.
 6. **Claim** – The entitled player(s) call `token.withdraw(chessRev)` on their
    TBC777 token. No co-signature from the loser is required.
 

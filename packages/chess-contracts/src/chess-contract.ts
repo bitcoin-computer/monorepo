@@ -45,6 +45,9 @@ export class ChessContract extends Contract {
   }
 
   setCanceledSeen() {
+    // A revision here would copy withdraws onto the prev-chain. TBC777 counts
+    // that copy again, so a withdraw against the tip fails.
+    if (this.withdraws.length > 0) throw new Error('Game is already over')
     this.canceledSeen = true
   }
 
@@ -95,17 +98,17 @@ export class ChessContract extends Contract {
    * via `withdraws` set in this method; the creator then claims with `withdrawTokens`.
    */
   cancel() {
+    if (this.withdraws.length > 0) throw new Error('Game is already over')
     if (this.publicKeyW) throw new Error('Game started use resign to forfeit')
     if (this.deposits.length !== 1) throw new Error('Cannot cancel: invalid deposit state')
     if (!this.tokenIdW) throw new Error('Cannot cancel: no deposit to refund')
     if (!this.creatorPublicKey) throw new Error('Cannot cancel: creator not set')
-    if (this.withdraws.length === 0) {
-      this.withdraws = [[this.root, this.tokenIdW, this.wagerAmount]]
-    }
+    this.withdraws = [[this.root, this.tokenIdW, this.wagerAmount]]
     this.canceledSeen = true
   }
 
   move(from: string, to: string, promotion: string): boolean {
+    if (this.withdraws.length > 0) throw new Error('Game is already over')
     if (!this.publicKeyB || !this.publicKeyW) throw new Error('Game not yet fully funded')
     // @ts-expect-error Chess is available in the deployed module scope
     const chessLib = new Chess(this.fen)
@@ -140,8 +143,13 @@ export class ChessContract extends Contract {
     if (!this.publicKeyW || !this.publicKeyB) {
       throw new Error('Game not yet started')
     }
-    const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdB : this.tokenIdW
+    if (this.withdraws.length > 0) throw new Error('Game is already over')
+    const resignerIsWhite = this._owners[0] === this.publicKeyW
+    const winnerId = resignerIsWhite ? this.tokenIdB : this.tokenIdW
     this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]]
+    // The resigning player must not remain an owner, or they can append another
+    // revision. The winner holds the finished game, and every mutating method throws.
+    this._owners = [resignerIsWhite ? this.publicKeyB : this.publicKeyW]
   }
 
   isGameOver(): boolean {
@@ -229,11 +237,12 @@ export class ChessContract extends Contract {
  * The chess revision that first recorded a payout in `withdraws`, or the latest
  * revision if none has.
  *
- * An owner can still extend the chain after the payout (a move after resign),
- * and every later revision repeats `withdraws`. TBC777 counts the claims of
- * every revision in the prev-chain, so a withdraw against a later revision sees
- * the payout authorized twice and fails. Withdrawing against the first payout
- * revision keeps the claim valid whatever is appended afterwards.
+ * TBC777 counts the claims of every revision in the prev-chain, so a withdraw
+ * against a later revision that repeats `withdraws` sees the payout twice and
+ * fails. This module rejects `move`, `resign`, `cancel`, and `setCanceledSeen`
+ * once `withdraws` is set. Modules deployed before that guard can still append
+ * those revisions, and withdrawing against the first payout revision keeps
+ * that claim valid.
  */
 export async function getPayoutRev(computer: Computer, chessId: string): Promise<string> {
   let rev = await computer.latest(chessId)
@@ -580,8 +589,8 @@ export class ChessContractHelper {
 
   /**
    * Resigns from the current game. Sets the withdraws array so the opponent
-   * (winner) can call withdrawTokens. Can only be called by the current
-   * contract owner (the player whose turn it is).
+   * (winner) can call withdrawTokens, and transfers ownership to that opponent.
+   * Can only be called by the current contract owner (the player whose turn it is).
    */
   async resign(chessId: string): Promise<SmartContract<typeof ChessContract>> {
     const latestRev = await this.computer.latest(chessId)
