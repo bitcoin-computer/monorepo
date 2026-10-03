@@ -190,6 +190,9 @@ export class ChessContract extends Contract {
         }
         if (timestamps.length < 2)
             return { timeW: 0n, timeB: 0n };
+        // The walk collected them newest first; the formula above needs t1 (the
+        // root) first, or every difference is negative.
+        timestamps.reverse();
         let timeW = 0n;
         let timeB = 0n;
         // Start from the first move (index 0)

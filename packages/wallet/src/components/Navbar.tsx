@@ -1,9 +1,10 @@
+import { Auth } from '@bitcoin-computer/components'
 import { Computer } from '@bitcoin-computer/lib'
 import { initFlowbite } from 'flowbite'
 import { Dispatch, useEffect, useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { explorerURL } from '../config'
-import { isValidHexadecimalPrivateKey } from '../utils'
+import { isValidHexadecimalPublicKey } from '../utils'
 
 export default function Navbar({
   setShowLogin,
@@ -18,22 +19,23 @@ export default function Navbar({
     initFlowbite()
   }, [])
 
-  const isLoggedIn = !!localStorage.getItem('BIP_39_KEY')
+  const isLoggedIn = Auth.isLoggedIn()
 
   const search = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     const code = event.keyCode || event.which
     if (code === 13) {
-      if (searchInput === '') navigate('/')
-      else if (searchInput.includes(':')) {
+      const query = searchInput.trim()
+      if (query === '') navigate('/')
+      else if (query.includes(':')) {
         try {
-          await computer.load(searchInput)
-          navigate(`/modules/${searchInput}`)
+          await computer.load(query)
+          navigate(`/modules/${query}`)
         } catch {
-          navigate(`/objects/${searchInput}`)
+          navigate(`/objects/${query}`)
         }
-      } else if (isValidHexadecimalPrivateKey(searchInput))
-        navigate(`/?public-key=${searchInput.trim()}`)
-      else navigate(`/transactions/${searchInput}`)
+      } else if (isValidHexadecimalPublicKey(query)) navigate(`/?public-key=${query}`)
+      // A bare 64-hex value is a transaction id, not a key.
+      else navigate(`/transactions/${query}`)
     }
   }
 
