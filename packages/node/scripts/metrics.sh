@@ -1,8 +1,16 @@
 #!/bin/bash
 
 # Load environment variables from .env
-if [ -f /home/ubuntu/monorepo/packages/node/.env ]; then
-  export $(grep -v '^#' /home/ubuntu/monorepo/packages/node/.env | xargs)
+ENV_FILE=/home/ubuntu/monorepo/packages/node/.env
+if [ -f "$ENV_FILE" ]; then
+  envPerms=$(stat -c '%a' "$ENV_FILE" 2>/dev/null || stat -f '%Lp' "$ENV_FILE")
+  if [ -n "$envPerms" ] && [ "$((8#$envPerms & 8#077))" -ne 0 ]; then
+    echo "Refusing to source $ENV_FILE: permissions ($envPerms) allow group/other access. Run 'chmod 600 $ENV_FILE'." >&2
+    exit 1
+  fi
+  set -a
+  . "$ENV_FILE"
+  set +a
 fi
 
 # Executes a shell command in the DB container
