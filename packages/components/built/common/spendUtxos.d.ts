@@ -13,7 +13,9 @@ export type SignAndBroadcastSpendUtxosOptions = {
 };
 /**
  * Builds a transaction from wallet + mod UTXOs, signs, and broadcasts.
- * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus fee and minDust).
+ * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus the fee).
+ * `estimateFee` includes one extra output to this wallet, so the fee is read before that output is added.
+ * A signature can be a few bytes longer than that estimate. Change, or the send-max output, is reduced to cover the signed size when it stays above the dust limit.
  * @returns Broadcast transaction id when available.
  */
 export declare function signAndBroadcastSpendUtxos(options: SignAndBroadcastSpendUtxosOptions): Promise<string | undefined>;

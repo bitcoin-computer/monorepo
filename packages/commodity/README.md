@@ -53,8 +53,9 @@ selection rule and the immutable `_root` lineage check.
   children inherit the same `_root` and are therefore valid Commodities of the
   lineage, but they are permanently ineligible to claim.
 
-If the absolute minimum creation revision in a block happens to belong to a
-transfer or split child, the subsidy for that host block is permanently lost.
+A transfer is an update, so it cannot win. A split child has no parent
+revision, so it still competes. If that child is the smallest new object
+revision in the block, the subsidy for that host block is permanently lost.
 There is no economic incentive to produce such a child, so the practical impact
 is negligible once the Commodity has utility.
 
@@ -198,8 +199,20 @@ is not orphaned).
 
 **Module identity**  
 `claim()` recovers the module identifier from the creation transaction and
-queries `getOTXOs({ mod, blockHeight })`. All competing mints must therefore be
-created from the same deployed module.
+reads one row:
+
+```ts
+const [winnerRev] = await computer.getOTXOs({
+  mod,
+  blockHeight,
+  previous: 'NULL',
+  order: 'ASC',
+  limit: 1,
+})
+```
+
+`previous: 'NULL'` selects new object outputs (mints and split children). All
+competing mints must be created from the same deployed module.
 
 **Inheritance & deployment**  
 Commodity extends TBC777 so that the resulting tokens reuse the escrow-capable
