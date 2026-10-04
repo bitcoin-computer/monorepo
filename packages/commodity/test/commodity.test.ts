@@ -421,6 +421,48 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     })
   })
 
+  // A call on a claimed mint copies that mint's `_root` onto every other
+  // object the transaction creates. The sibling below is not funded by the
+  // mint. isGenuine() still returns true. This test states that fact by
+  // failing. It does not change the contract.
+  describe('inherited _root', () => {
+    it('a sibling constructed beside a call passes isGenuine', async function () {
+      this.timeout(600_000)
+      const { computer, mod: modSpec, mint, subsidy } = await mintClaimAndGet()
+
+      class Holder extends Contract {
+        constructor() {
+          super({})
+        }
+        keep(bag: Commodity) {
+          ;(this as { bag?: Commodity }).bag = bag
+        }
+      }
+
+      const holder = await computer.new(Holder, [])
+      const owner = computer.getPublicKey()
+      const { tx, effect } = await computer.encode({
+        exp:
+          `const c = new Commodity({ to: '${owner}', salt: '', amount: 1000n, mod: '${modSpec}', name: '' });\n` +
+          `h.keep(c);\n` +
+          `m.isGenuine()`,
+        env: { h: holder._rev, m: mint._rev },
+        mod: modSpec,
+      })
+      await computer.broadcast(tx)
+
+      const bag = (effect.env.h as unknown as { bag: SmartContract<typeof Commodity> }).bag
+      expect(bag._root).to.eq(mint._root)
+      expect(bag.salt).to.eq('')
+      expect(bag.amount).to.eq(1000n)
+      expect(mint.amount).to.eq(subsidy)
+
+      await mineBlocks(computer, 1)
+      await computer.waitForIndexed(bag._rev)
+      expect(await bag.isGenuine()).to.eq(false)
+    })
+  })
+
   // =========================================================================
   // 3. transfer()
   // =========================================================================
