@@ -233,7 +233,8 @@ export class TBC777 extends TBC20 {
     }
     static async computeDepositAmount(depositData, escrow, lineage) {
         const root = depositData.remoteRoot || depositData._root;
-        if (root !== lineage)
+        const sameModule = typeof depositData.mod === 'string' && depositData.mod !== '' && depositData.mod === lineage;
+        if (root !== lineage && !sameModule)
             return 0n;
         const nextRev = await computer.next(depositData._rev);
         if (!nextRev)

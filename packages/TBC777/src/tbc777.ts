@@ -683,7 +683,14 @@ export class TBC777 extends TBC20 {
    */
   static async computeDepositAmount(depositData: any, escrow: Id, lineage: Root): Promise<bigint> {
     const root = depositData.remoteRoot || depositData._root
-    if (root !== lineage) return 0n
+    // Commodity.root is the module specifier, stored as `mod`. The `root`
+    // getter does not survive a sync snapshot, so compare that field too.
+    // This is not proof of class. `isValidDeposit` must already have accepted
+    // the revision. Tokens that do not store `mod` still match on `_root` /
+    // `remoteRoot` only.
+    const sameModule =
+      typeof depositData.mod === 'string' && depositData.mod !== '' && depositData.mod === lineage
+    if (root !== lineage && !sameModule) return 0n
 
     const nextRev = await computer.next(depositData._rev)
     if (!nextRev) return 0n
