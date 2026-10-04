@@ -289,6 +289,7 @@ export class Commodity extends TBC777 {
    * 2. Recover the creation txid of this object from its _id.
    * 3. Look up the host-chain block height of that txid.
    * 4. Decode the creation transaction to obtain the module identifier.
+<<<<<<< HEAD
    * 5. Query every object revision of that module that appears in the same
    *    block (cheap getOTXOs – no object materialisation). Both genuine mints
    *    and transfer/split children are returned. Spent creations are included
@@ -297,6 +298,18 @@ export class Commodity extends TBC777 {
    * 7. If it equals this object’s _id (and therefore this is a mint that holds
    *    the absolute minimum), credit the subsidy (via getSubsidy) unless the
    *    issuance window is closed (subsidy 0n → throw); otherwise throw.
+=======
+   * 5. Ask for one row: the lexicographically smallest new object revision of
+   *    that module in the block.
+   *    getOTXOs({ mod, blockHeight, previous: 'NULL', order: 'ASC', limit: 1 }).
+   *    previous: 'NULL' selects outputs with no parent revision (mints and
+   *    split children). A transfer is an update and is excluded. Spent
+   *    creations stay in the index, so a validator that re-evaluates claim()
+   *    after the winner is spent still sees the same row.
+   * 6. That revision is the winner.
+   * 7. If it equals this object’s _id, set amount to the subsidy (via
+   *    getSubsidy); otherwise throw.
+>>>>>>> staging
    * 8. Confirm lineage authenticity with the cheap isGenuine() check (only the
    *    short root is synced).
    *
@@ -309,13 +322,13 @@ export class Commodity extends TBC777 {
    * claim during sync would see an empty candidate set, and a same-block loser
    * could claim after the winner spent their creation.
    *
-   * If the absolute minimum creation revision in the block belongs to a
-   * transfer or split child, no mint can claim and the subsidy for that host
-   * block is permanently lost. In practice this is negligible: there is no
-   * economic incentive to grind a non-mint (it can never claim), and once the
-   * token has any utility modest grinding by real minters reliably produces the
-   * absolute minimum. Host miners also have a strong interest in including a
-   * genuine winning mint.
+   * A split child has no parent revision, so it still competes. If that child
+   * is the smallest such revision, no mint can claim and the subsidy for that
+   * host block is permanently lost. In practice this is negligible: there is
+   * no economic incentive to grind a non-mint (it can never claim), and once
+   * the token has any utility modest grinding by real minters reliably produces
+   * the absolute minimum. Host miners also have a strong interest in including
+   * a genuine winning mint.
    *
    * Note: host miners enjoy an inclusion advantage for new mint creations (see
    * file header). Ordinary transfers have no MEV surface with respect to the
@@ -334,20 +347,21 @@ export class Commodity extends TBC777 {
     const { mod } = await computer.decode(creationTxId)
     if (!mod) throw new Error('Could not recover module from creation tx')
 
-    // Retrieve all object revisions of this module that appeared in the host
-    // block (spent or unspent). Pure index query – no objects materialised.
-    // Must be getOTXOs, not getOUTXOs: after a successful claim the creation is
-    // spent, and validators re-evaluate claim() when syncing the claimed rev.
-    const candidateRevs = await computer.getOTXOs({ mod, blockHeight })
+    // One index row: the lexicographically smallest new object of this module
+    // in the host block (spent or unspent). Pure index query – no objects
+    // materialised. Must be getOTXOs, not getOUTXOs: after a successful claim
+    // the creation is spent, and validators re-evaluate claim() when syncing
+    // the claimed rev. previous: 'NULL' keeps mints and split children and
+    // drops transfers and later claims, which have a parent revision.
+    const [winnerRev] = await computer.getOTXOs({
+      mod,
+      blockHeight,
+      previous: 'NULL',
+      order: 'ASC',
+      limit: 1,
+    })
 
-    if (candidateRevs.length === 0)
-      throw new Error(`No objects of this module found for block ${blockHeight}`)
-
-    // Lexicographically smallest full revision (txid:vout). String sort is
-    // deterministic and sufficient; a numeric-vout comparator can be
-    // substituted later if extremely high vouts become common.
-    candidateRevs.sort()
-    const winnerRev = candidateRevs[0]
+    if (!winnerRev) throw new Error(`No objects of this module found for block ${blockHeight}`)
 
     if (this._id !== winnerRev)
       throw new Error(`Object ${this._id} is not canonical for host block ${blockHeight}. `)

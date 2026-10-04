@@ -181,7 +181,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
   }
 
   // ============================================================
-  // TBC20 TRANSFER (base class — TBC777 / TBC777M inherit this)
+  // TBC20 TRANSFER (base class — TBC777 inherits this)
   // ============================================================
   describe('TBC20 transfer (base class)', () => {
     it('mint and partial transfer set recipient _owners on chain', async () => {
@@ -252,6 +252,191 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       } catch (e: any) {
         const msg = `Escrow available balance (${DEPOSIT_AMOUNT - MALICIOUS_AMOUNT}) too low`
         expect(e.message).eq(msg)
+      }
+    })
+
+    for (const method of ['transfer', 'burn'] as const) {
+      it(`does not count a ${method} after a deposit as a deposit`, async () => {
+        // An escrow that records any deposit revision it is given.
+        class ListEscrow extends Contract implements Escrow {
+          deposits!: [Root, Rev][]
+          withdraws!: [Root, Id, Amount][]
+          finalWithdraws!: [Root, Id, Amount][]
+
+          constructor() {
+            super({ deposits: [], withdraws: [], finalWithdraws: [] })
+          }
+
+          async acceptDeposit(token: any, amount: Amount) {
+            token.deposit(this._id, amount)
+            this.deposits.push(token.depositTuple)
+          }
+
+          addDeposit(root: Root, rev: Rev) {
+            this.deposits.push([root, rev])
+          }
+
+          setWithdraws(withdraws: [Root, Id, Amount][]) {
+            this.withdraws = withdraws
+          }
+        }
+
+        const escrow = await minter.new(ListEscrow, [])
+        await minter.waitForIndexed(escrow._rev)
+        let t = await createFreshToken()
+        await minter.waitForIndexed(t._rev)
+
+        const { escrow: escrow1, token: updatedToken } = await depositAtomic(t, escrow, 1n)
+        t = updatedToken
+        await minter.waitForIndexed(escrow1._rev)
+        const afterDeposit = t._rev as Rev
+
+        // Lower the rest of the balance without depositing it.
+        if (method === 'transfer') await t.transfer(white.getPublicKey(), t.amount)
+        else await t.burn()
+        await minter.waitForIndexed(t._rev)
+        expect(t.amount).to.equal(0n)
+
+        // The escrow also lists the post-deposit revision, then claims the whole mint.
+        await (escrow1 as any).addDeposit(t.root, afterDeposit)
+        await minter.waitForIndexed(escrow1._rev)
+        await (escrow1 as any).setWithdraws([[t.root, t._id, FRESH_TOKEN_AMOUNT]])
+        // The audit only sees confirmed revisions; wait until the node has indexed the block.
+        await mine()
+        const deadline = Date.now() + 30_000
+        while (!(await minter.getTXOs({ rev: escrow1._rev, isConfirmed: true })).length) {
+          if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+          await new Promise((resolve) => setTimeout(resolve, 100))
+        }
+
+        try {
+          await withdraw(t, escrow1._rev as Rev)
+          expect.fail(`should not count the ${method} as a deposit`)
+        } catch (e: any) {
+          expect(e.message).eq(`Escrow available balance (${1n - FRESH_TOKEN_AMOUNT}) too low`)
+        }
+      })
+    }
+
+    it('does not count a same-transaction transfer as a deposit', async () => {
+      // Transfer then deposit in one transaction. Clearing escrow on transfer
+      // would miss this: the next revision still has escrow set, and the balance
+      // drop includes the transfer. The credit must be the deposited 1n.
+      class ListEscrow extends Contract implements Escrow {
+        deposits!: [Root, Rev][]
+        withdraws!: [Root, Id, Amount][]
+        finalWithdraws!: [Root, Id, Amount][]
+
+        constructor() {
+          super({ deposits: [], withdraws: [], finalWithdraws: [] })
+        }
+
+        transferThenDeposit(token: any, to: string, transferAmount: Amount, depositAmount: Amount) {
+          const child = token.transfer(to, transferAmount)
+          token.deposit(this._id, depositAmount)
+          this.deposits.push(token.depositTuple)
+          return child
+        }
+
+        setWithdraws(withdraws: [Root, Id, Amount][]) {
+          this.withdraws = withdraws
+        }
+      }
+
+      const escrow = await minter.new(ListEscrow, [])
+      await minter.waitForIndexed(escrow._rev)
+      const t0 = await createFreshToken()
+      await minter.waitForIndexed(t0._rev)
+      const spent = t0._rev as Rev
+
+      const { tx, effect } = await minter.encode({
+        exp: `escrow.transferThenDeposit(token, '${white.getPublicKey()}', ${FRESH_TOKEN_AMOUNT - 1n}n, 1n)`,
+        env: { escrow: escrow._rev, token: t0._rev },
+      })
+      await minter.broadcast(tx)
+
+      const t = effect.env.token as SmartContract<typeof TBC777>
+      const escrow1 = effect.env.escrow as SmartContract<typeof ListEscrow>
+      const child = effect.res as SmartContract<typeof TBC777>
+      await minter.waitForIndexed(t._rev)
+      await minter.waitForIndexed(escrow1._rev)
+
+      expect(t.amount).to.equal(0n)
+      expect(t.depositFrom).to.equal(spent)
+      expect(t.depositAmount).to.equal(1n)
+      expect(t.escrow).to.equal(escrow._id)
+      expect(child.amount).to.equal(FRESH_TOKEN_AMOUNT - 1n)
+      expect(child.escrow).to.equal(undefined)
+      expect(escrow1.deposits).to.deep.equal([[t.root, spent]])
+
+      await (escrow1 as any).setWithdraws([[t.root, t._id, FRESH_TOKEN_AMOUNT]])
+      await mine()
+      const deadline = Date.now() + 30_000
+      while (!(await minter.getTXOs({ rev: escrow1._rev, isConfirmed: true })).length) {
+        if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+        await new Promise((resolve) => setTimeout(resolve, 100))
+      }
+
+      try {
+        await withdraw(t, escrow1._rev as Rev)
+        expect.fail('should not count the same-transaction transfer as a deposit')
+      } catch (e: any) {
+        expect(e.message).eq(`Escrow available balance (${1n - FRESH_TOKEN_AMOUNT}) too low`)
+      }
+    })
+
+    it('rejects a negative claim that would offset an over-claim', async () => {
+      class ListEscrow extends Contract implements Escrow {
+        deposits!: [Root, Rev][]
+        withdraws!: [Root, Id, Amount][]
+        finalWithdraws!: [Root, Id, Amount][]
+
+        constructor() {
+          super({ deposits: [], withdraws: [], finalWithdraws: [] })
+        }
+
+        async acceptDeposit(token: any, amount: Amount) {
+          token.deposit(this._id, amount)
+          this.deposits.push(token.depositTuple)
+        }
+
+        setWithdraws(withdraws: [Root, Id, Amount][]) {
+          this.withdraws = withdraws
+        }
+      }
+
+      const escrow = await minter.new(ListEscrow, [])
+      await minter.waitForIndexed(escrow._rev)
+      let t = await createFreshToken()
+      await minter.waitForIndexed(t._rev)
+
+      const { escrow: escrow1, token: updatedToken } = await depositAtomic(
+        t,
+        escrow,
+        DEPOSIT_AMOUNT,
+      )
+      t = updatedToken
+      await minter.waitForIndexed(escrow1._rev)
+
+      // Summed, the two claims equal the deposit.
+      const OVER_CLAIM = 100n
+      await (escrow1 as any).setWithdraws([
+        [t.root, t._id, OVER_CLAIM],
+        [t.root, 'a-token-that-never-withdraws', DEPOSIT_AMOUNT - OVER_CLAIM],
+      ])
+      // The audit only sees confirmed revisions; wait until the node has indexed the block.
+      await mine()
+      const deadline = Date.now() + 30_000
+      while (!(await minter.getTXOs({ rev: escrow1._rev, isConfirmed: true })).length) {
+        if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+        await new Promise((resolve) => setTimeout(resolve, 100))
+      }
+
+      try {
+        await withdraw(t, escrow1._rev as Rev)
+        expect.fail('should have thrown on a negative claim')
+      } catch (e: any) {
+        expect(e.message).to.include('must be non-negative')
       }
     })
 
@@ -1111,7 +1296,7 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
   })
 
   // ============================================================
-  // CHESS APP COMPATIBILITY (mirrors tbc777m.test.ts chess flow)
+  // CHESS APP COMPATIBILITY
   // ============================================================
   describe('Chess app compatibility', () => {
     it('Should work atomically for a chess game without timeout', async () => {

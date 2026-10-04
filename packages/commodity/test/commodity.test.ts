@@ -15,7 +15,12 @@
  */
 
 import { expect } from 'chai'
+<<<<<<< HEAD
 import { Computer, Contract, SmartContract } from '@bitcoin-computer/lib'
+=======
+import { Computer, Contract, Id, SmartContract } from '@bitcoin-computer/lib'
+import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777'
+>>>>>>> staging
 import dotenv from 'dotenv'
 import path from 'path'
 import { Commodity, config } from '../src/commodity.js'
@@ -149,11 +154,7 @@ async function createMint(
   modSpec: string,
   salt = `salt-${Math.random().toString(36).slice(2)}`,
 ): Promise<SmartContract<typeof Commodity>> {
-  return computer.new(
-    Commodity,
-    [{ to: computer.getPublicKey(), salt, amount: 0n }],
-    modSpec,
-  )
+  return computer.new(Commodity, [{ to: computer.getPublicKey(), salt, amount: 0n }], modSpec)
 }
 
 /**
@@ -548,6 +549,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     })
   })
 
+<<<<<<< HEAD
   describe('merge() and module-level fungibility', () => {
     it('refuses to merge tokens with escrow history', async () => {
       const local = new Commodity({
@@ -632,6 +634,127 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       await mint.claim()
       expect(mint.mod).to.eq(modSpec)
       expect(mint.root).to.eq(modSpec)
+=======
+  describe('escrow deposits', () => {
+    // An escrow that records any deposit revision it is given.
+    class ListEscrow extends Contract {
+      deposits!: [string, string][]
+      withdraws!: [string, string, bigint][]
+      finalWithdraws!: [string, string, bigint][]
+
+      constructor() {
+        super({ deposits: [], withdraws: [], finalWithdraws: [] })
+      }
+
+      addDeposit(root: string, rev: string) {
+        this.deposits.push([root, rev])
+      }
+
+      transferThenDeposit(
+        token: Commodity,
+        to: string,
+        transferAmount: bigint,
+        depositAmount: bigint,
+      ) {
+        const child = token.transfer(to, transferAmount)
+        token.deposit(this._id as Id, depositAmount)
+        this.deposits.push(token.depositTuple)
+        return child
+      }
+
+      setWithdraws(withdraws: [string, string, bigint][]) {
+        this.withdraws = withdraws
+      }
+    }
+
+    for (const method of ['transfer', 'burn'] as const) {
+      it(`does not count a ${method} after a deposit as a deposit`, async () => {
+        const { computer, mint, subsidy } = await mintClaimAndGet()
+        const escrow = await computer.new(ListEscrow, [])
+        await computer.waitForIndexed(escrow._rev)
+
+        // Deposit 1 satoshi's worth, recording the pre-deposit revision.
+        await escrow.addDeposit(mint.root, mint._rev)
+        await computer.waitForIndexed(escrow._rev)
+        await mint.deposit(escrow._id, 1n)
+        await computer.waitForIndexed(mint._rev)
+        const afterDeposit = mint._rev
+
+        // Lower the rest of the balance without depositing it.
+        if (method === 'transfer') await mint.transfer(bob.getPublicKey(), mint.amount)
+        else await mint.burn()
+        await computer.waitForIndexed(mint._rev)
+        expect(mint.amount).to.eq(0n)
+
+        // The escrow also lists the post-deposit revision, then claims the whole subsidy.
+        await escrow.addDeposit(mint.root, afterDeposit)
+        await computer.waitForIndexed(escrow._rev)
+        await escrow.setWithdraws([[mint.root, mint._id, subsidy]])
+        await mineBlocks(computer, 1)
+        const deadline = Date.now() + 30_000
+        while (!(await computer.getTXOs({ rev: escrow._rev, isConfirmed: true })).length) {
+          if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+          await sleep(100)
+        }
+
+        try {
+          await mint.withdraw(escrow._rev)
+          expect.fail(`should not count the ${method} as a deposit`)
+        } catch (e) {
+          expect((e as Error).message).eq(`Escrow available balance (${1n - subsidy}) too low`)
+        }
+      })
+    }
+
+    it('does not count a same-transaction transfer as a deposit', async function () {
+      this.timeout(600_000)
+      const { computer, mint, subsidy } = await mintClaimAndGet()
+      const escrow = await computer.new(ListEscrow, [])
+      await computer.waitForIndexed(escrow._rev)
+      const spent = mint._rev
+
+      const { tx, effect } = await computer.encode({
+        exp: `escrow.transferThenDeposit(mint, '${bob.getPublicKey()}', ${subsidy - 1n}n, 1n)`,
+        env: { escrow: escrow._rev, mint: mint._rev },
+      })
+      await computer.broadcast(tx)
+
+      const updated = effect.env.mint as SmartContract<typeof Commodity>
+      const updatedEscrow = effect.env.escrow as SmartContract<typeof ListEscrow>
+      const child = effect.res as SmartContract<typeof Commodity>
+      await computer.waitForIndexed(updated._rev)
+      await computer.waitForIndexed(updatedEscrow._rev)
+
+      expect(updated.amount).to.eq(0n)
+      expect(updated.depositFrom).to.eq(spent)
+      expect(updated.depositAmount).to.eq(1n)
+      expect(updated.escrow).to.eq(escrow._id)
+      expect(child.amount).to.eq(subsidy - 1n)
+      expect(child.escrow).to.eq(undefined)
+      expect(updatedEscrow.deposits).to.deep.eq([[updated.root, spent]])
+
+      await updatedEscrow.setWithdraws([[updated.root, updated._id, subsidy]])
+      await mineBlocks(computer, 1)
+      const deadline = Date.now() + 30_000
+      while (!(await computer.getTXOs({ rev: updatedEscrow._rev, isConfirmed: true })).length) {
+        if (Date.now() > deadline) throw new Error('escrow revision not confirmed')
+        await sleep(100)
+      }
+
+      try {
+        await updated.withdraw(updatedEscrow._rev)
+        expect.fail('should not count the same-transaction transfer as a deposit')
+      } catch (e) {
+        expect((e as Error).message).eq(`Escrow available balance (${1n - subsidy}) too low`)
+      }
+    })
+  })
+
+  describe('merge()', () => {
+    it('always throws "Merge disabled."', () => {
+      const local = new Commodity({ to: alice.getPublicKey(), salt: 'salt', amount: 0n })
+      expect(() => local.merge()).to.throw('Merge disabled.')
+>>>>>>> staging
     })
   })
 
@@ -749,11 +872,7 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       }
 
       const solo = await fundedComputer()
-      const bare = await solo.new(MinimalClaimModGuard, [
-        solo.getPublicKey(),
-        'no-mod-salt',
-        0n,
-      ])
+      const bare = await solo.new(MinimalClaimModGuard, [solo.getPublicKey(), 'no-mod-salt', 0n])
       // No module: only wait for confirmation, not getOTXOs(mod, height).
       await mineBlocks(solo, 1)
       await solo.waitForIndexed(bare._id)

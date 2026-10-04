@@ -21,9 +21,21 @@ export async function getSpendableUtxosTotalSatoshis(computer, modSpecs) {
     const { totalSatoshis } = await listSpendableUtxos(computer, modSpecs);
     return totalSatoshis;
 }
+// BIP141 witness program: OP_0 or OP_1..OP_16, then a 2..40 byte push.
+function isWitnessProgram(script) {
+    if (script.length < 4 || script.length > 42)
+        return false;
+    const version = script[0];
+    const programLength = script[1];
+    if (programLength !== script.length - 2 || programLength < 2 || programLength > 40)
+        return false;
+    return version === 0x00 || (version >= 0x51 && version <= 0x60);
+}
 /**
  * Builds a transaction from wallet + mod UTXOs, signs, and broadcasts.
- * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus fee and minDust).
+ * If `toAddress` is empty/omitted, consolidates everything into one output to this wallet (minus the fee).
+ * `estimateFee` includes one extra output to this wallet, so the fee is read before that output is added.
+ * A signature can be a few bytes longer than that estimate. Change, or the send-max output, is reduced to cover the signed size when it stays above the dust limit.
  * @returns Broadcast transaction id when available.
  */
 export async function signAndBroadcastSpendUtxos(options) {
@@ -54,15 +66,21 @@ export async function signAndBroadcastSpendUtxos(options) {
     }
     const networkObj = networks.getNetwork(computer.getChain(), computer.getNetwork());
     const changeScript = bAddress.toOutputScript(computer.getAddress().toString(), networkObj);
-    const minDust = BigInt(computer.db.wallet.getDustThreshold(false, Buffer.from('')));
+    const satPerByte = BigInt(computer.getFee());
+    // The flag selects the spend size. It does not inspect the script.
+    const dustLimit = (script) => BigInt(computer.db.wallet.getDustThreshold(isWitnessProgram(script), script));
+    // The extra output pays this wallet. Output script bytes are not discounted,
+    // so a different script changes the fee by its length difference times the fee rate.
+    const feeFor = async (script) => {
+        const estimated = BigInt(await computer.db.wallet.estimateFee(tx));
+        return estimated + BigInt(script.length - changeScript.length) * satPerByte;
+    };
     if (!hasRecipient) {
-        tx.addOutput(changeScript, totalInput);
-        const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx));
-        const outValue = totalInput - estimatedFees - minDust;
-        if (outValue < minDust) {
+        const outValue = totalInput - (await feeFor(changeScript));
+        if (outValue < dustLimit(changeScript)) {
             throw new Error('Balance is too low to cover network fees and the minimum output size after consolidation.');
         }
-        tx.updateOutput(0, { value: outValue });
+        tx.addOutput(changeScript, outValue);
     }
     else {
         let recipientScript;
@@ -73,26 +91,54 @@ export async function signAndBroadcastSpendUtxos(options) {
             throw new Error('Invalid recipient address for this network.');
         }
         if (sendMax) {
-            tx.addOutput(recipientScript, totalInput);
-            const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx));
-            const outValue = totalInput - estimatedFees - minDust;
-            if (outValue < minDust) {
+            const outValue = totalInput - (await feeFor(recipientScript));
+            if (outValue < dustLimit(recipientScript)) {
                 throw new Error(`Balance is too low to cover network fees when sending max (${computer.getChain()}).`);
             }
-            tx.updateOutput(0, { value: outValue });
+            tx.addOutput(recipientScript, outValue);
         }
         else {
             const amountSatoshis = options.amountSatoshis;
-            tx.addOutput(recipientScript, amountSatoshis);
-            tx.addOutput(changeScript, totalInput);
-            const estimatedFees = BigInt(await computer.db.wallet.estimateFee(tx));
-            const changeAmount = totalInput - estimatedFees - minDust - amountSatoshis;
-            if (changeAmount <= 0n) {
-                throw new Error(changeAmount < 0n
-                    ? `Insufficient balance after fees to send this amount (${computer.getChain()}).`
-                    : `After fees there is nothing left for change; try a slightly smaller amount or Send max (${computer.getChain()}).`);
+            const recipientDust = dustLimit(recipientScript);
+            if (amountSatoshis < recipientDust) {
+                throw new Error(`Amount is below the minimum output size of ${recipientDust} satoshis (${computer.getChain()}).`);
             }
-            tx.updateOutput(1, { value: changeAmount });
+            tx.addOutput(recipientScript, amountSatoshis);
+            const changeAmount = totalInput - (await feeFor(changeScript)) - amountSatoshis;
+            if (changeAmount >= dustLimit(changeScript)) {
+                tx.addOutput(changeScript, changeAmount);
+            }
+            else {
+                // No change output. Drop the recipient so the fee's extra output stands in for it.
+                tx.outs.pop();
+                if (totalInput - amountSatoshis < (await feeFor(recipientScript))) {
+                    throw new Error(`Insufficient balance after fees to send this amount (${computer.getChain()}).`);
+                }
+                tx.addOutput(recipientScript, amountSatoshis);
+            }
+        }
+    }
+    // The estimate signs different output bytes, so the real signature can be longer.
+    // Take the difference from change, or from the send-max output, while it stays above dust.
+    let adjustable;
+    if (!hasRecipient || sendMax)
+        adjustable = 0;
+    else if (tx.outs.length > 1)
+        adjustable = tx.outs.length - 1;
+    if (adjustable !== undefined) {
+        for (let attempt = 0; attempt < 3; attempt += 1) {
+            const trial = tx.clone();
+            await computer.sign(trial);
+            const need = BigInt(trial.virtualSize()) * satPerByte;
+            const paid = totalInput -
+                tx.outs.reduce((sum, output) => sum + output.value, 0n);
+            if (paid >= need)
+                break;
+            const output = tx.outs[adjustable];
+            const reduced = output.value - (need - paid);
+            if (reduced < dustLimit(output.script))
+                break;
+            tx.updateOutput(adjustable, { value: reduced });
         }
     }
     await computer.sign(tx);
