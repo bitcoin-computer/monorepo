@@ -289,16 +289,6 @@ export class Commodity extends TBC777 {
    * 2. Recover the creation txid of this object from its _id.
    * 3. Look up the host-chain block height of that txid.
    * 4. Decode the creation transaction to obtain the module identifier.
-<<<<<<< HEAD
-   * 5. Query every object revision of that module that appears in the same
-   *    block (cheap getOTXOs – no object materialisation). Both genuine mints
-   *    and transfer/split children are returned. Spent creations are included
-   *    so claim remains history-stable under re-evaluation (sync after claim).
-   * 6. Select the lexicographically smallest creation revision.
-   * 7. If it equals this object’s _id (and therefore this is a mint that holds
-   *    the absolute minimum), credit the subsidy (via getSubsidy) unless the
-   *    issuance window is closed (subsidy 0n → throw); otherwise throw.
-=======
    * 5. Ask for one row: the lexicographically smallest new object revision of
    *    that module in the block.
    *    getOTXOs({ mod, blockHeight, previous: 'NULL', order: 'ASC', limit: 1 }).
@@ -307,9 +297,9 @@ export class Commodity extends TBC777 {
    *    creations stay in the index, so a validator that re-evaluates claim()
    *    after the winner is spent still sees the same row.
    * 6. That revision is the winner.
-   * 7. If it equals this object’s _id, set amount to the subsidy (via
-   *    getSubsidy); otherwise throw.
->>>>>>> staging
+   * 7. If it equals this object’s _id, credit the subsidy (via getSubsidy)
+   *    unless the issuance window is closed (subsidy 0n → throw); otherwise
+   *    throw.
    * 8. Confirm lineage authenticity with the cheap isGenuine() check (only the
    *    short root is synced).
    *

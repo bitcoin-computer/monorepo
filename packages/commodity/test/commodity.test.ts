@@ -15,12 +15,7 @@
  */
 
 import { expect } from 'chai'
-<<<<<<< HEAD
-import { Computer, Contract, SmartContract } from '@bitcoin-computer/lib'
-=======
 import { Computer, Contract, Id, SmartContract } from '@bitcoin-computer/lib'
-import { EscrowAuditor, TBC20, TBC777 } from '@bitcoin-computer/TBC777'
->>>>>>> staging
 import dotenv from 'dotenv'
 import path from 'path'
 import { Commodity, config } from '../src/commodity.js'
@@ -549,7 +544,6 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     })
   })
 
-<<<<<<< HEAD
   describe('merge() and module-level fungibility', () => {
     it('refuses to merge tokens with escrow history', async () => {
       const local = new Commodity({
@@ -634,7 +628,9 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       await mint.claim()
       expect(mint.mod).to.eq(modSpec)
       expect(mint.root).to.eq(modSpec)
-=======
+    })
+  })
+
   describe('escrow deposits', () => {
     // An escrow that records any deposit revision it is given.
     class ListEscrow extends Contract {
@@ -747,14 +743,6 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       } catch (e) {
         expect((e as Error).message).eq(`Escrow available balance (${1n - subsidy}) too low`)
       }
-    })
-  })
-
-  describe('merge()', () => {
-    it('always throws "Merge disabled."', () => {
-      const local = new Commodity({ to: alice.getPublicKey(), salt: 'salt', amount: 0n })
-      expect(() => local.merge()).to.throw('Merge disabled.')
->>>>>>> staging
     })
   })
 
