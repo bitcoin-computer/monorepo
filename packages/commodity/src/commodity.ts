@@ -252,8 +252,10 @@ export class Commodity extends TBC777 {
 
   /**
    * Merge is intentionally disabled for this meta-token.
+   * `tokens` matches the TBC20 call shape and is ignored.
    */
-  merge(): never {
+  merge(tokens?: Commodity[]): never {
+    void tokens
     throw new Error('Merge disabled.')
   }
 
