@@ -6,6 +6,7 @@
   "license": "MIT",
   "files": [
     "index.html",
+    "assets",
     "LICENSE.md",
     "LEGAL.md"
   ],

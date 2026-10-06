@@ -489,6 +489,10 @@ p:last-child { margin-bottom:0; }
 .book-strip .brand svg { width:24px; height:24px; color: var(--bc-brand-logo); display:block; }
 .book-strip ol { position:relative; list-style:none; margin:0; padding:0; display:flex; gap: var(--bc-space-4); overflow-x:auto; scrollbar-width:none; flex:1; height:100%; align-items:stretch; }
 .book-strip ol::-webkit-scrollbar { display:none; }
+.book-strip li a:focus-visible { outline:2px solid var(--bc-border-focus); outline-offset:-2px; }
+@media (max-width: 960px) {
+  .book-strip ol { mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent); -webkit-mask-image: linear-gradient(to right, #000 0, #000 calc(100% - 28px), transparent); }
+}
 .book-strip li { display:flex; flex:none; }
 .book-strip li a { display:flex; align-items:center; padding:0 2px; font-size:13px; line-height:20px; color: var(--bc-text-secondary); text-decoration:none; border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap; }
 .book-strip li a:hover { color: var(--bc-text-heading); }
@@ -679,7 +683,7 @@ details.snippet summary::-webkit-details-marker { color: var(--bc-text-secondary
   <div class="clearspace">
     <figure><svg viewBox="0 0 220 140" width="100%" role="img" aria-label="Clear space diagram">
   <rect x="10" y="10" width="200" height="120" fill="none" stroke="var(--bc-border-strong)" stroke-dasharray="4 3"/>
-  <svg x="40" y="40" width="60" height="60" style="color:var(--bc-blue-500)" role="img" aria-label="Bitcoin Computer mark" viewBox="9.944 9.944 36.805 36.805" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"> <g transform="matrix(1,0,0,1,37.581,20.958)"> <g> <path d="M0,14.777L-1.846,16.623L-16.623,16.623L-18.469,14.777L-18.469,0L-16.623,-1.846L-1.846,-1.846L0,0L0,14.777ZM-9.234,-11.014C-19.398,-11.014 -27.637,-2.775 -27.637,7.388C-27.637,17.552 -19.398,25.791 -9.234,25.791C0.929,25.791 9.168,17.552 9.168,7.388C9.168,-2.775 0.929,-11.014 -9.234,-11.014" style="fill:currentColor;fill-rule:nonzero;"/> </g> </g> </svg>
+  <svg x="40" y="40" width="60" height="60" role="img" aria-label="Bitcoin Computer mark" viewBox="9.944 9.944 36.805 36.805" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" style="color:var(--bc-blue-500);fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;"> <g transform="matrix(1,0,0,1,37.581,20.958)"> <g> <path d="M0,14.777L-1.846,16.623L-16.623,16.623L-18.469,14.777L-18.469,0L-16.623,-1.846L-1.846,-1.846L0,0L0,14.777ZM-9.234,-11.014C-19.398,-11.014 -27.637,-2.775 -27.637,7.388C-27.637,17.552 -19.398,25.791 -9.234,25.791C0.929,25.791 9.168,17.552 9.168,7.388C9.168,-2.775 0.929,-11.014 -9.234,-11.014" style="fill:currentColor;fill-rule:nonzero;"/> </g> </g> </svg>
   <rect x="108" y="46" width="72" height="48" fill="none" stroke="var(--bc-blue-100)"/>
   <text x="144" y="73" text-anchor="middle" font-family="Formular, sans-serif" font-size="8" fill="var(--bc-text-secondary)">wordmark</text>
   <line x1="10" y1="25" x2="40" y2="25" stroke="var(--bc-blue-500)"/><line x1="10" y1="22" x2="10" y2="28" stroke="var(--bc-blue-500)"/><line x1="40" y1="22" x2="40" y2="28" stroke="var(--bc-blue-500)"/>
@@ -725,7 +729,7 @@ details.snippet summary::-webkit-details-marker { color: var(--bc-text-secondary
   </div>
 </div>
 <div class="swatch">
-  <div class="chip" style="background:#6B93FF"><span class="pair" style="color:#FFFFFF">blue-300</span></div>
+  <div class="chip" style="background:#6B93FF"><span class="pair" style="color:#000F38">blue-300</span></div>
   <div class="body">
     <div class="name"><span>blue-300</span><span class="tag tag-brand">brand</span></div>
     <div class="hex">#6B93FF <button class="copy" type="button" data-copy="#6B93FF">Copy</button></div>
@@ -808,7 +812,7 @@ details.snippet summary::-webkit-details-marker { color: var(--bc-text-secondary
   </div>
 </div>
 <div class="swatch">
-  <div class="chip" style="background:#999999"><span class="pair" style="color:#FFFFFF">neutral-400</span></div>
+  <div class="chip" style="background:#999999"><span class="pair" style="color:#000F38">neutral-400</span></div>
   <div class="body">
     <div class="name"><span>neutral-400</span><span class="tag tag-brand">brand</span></div>
     <div class="hex">#999999 <button class="copy" type="button" data-copy="#999999">Copy</button></div>
@@ -882,7 +886,7 @@ details.snippet summary::-webkit-details-marker { color: var(--bc-text-secondary
   </div>
 </div>
 <div class="swatch">
-  <div class="chip" style="background:#009536"><span class="pair" style="color:#FFFFFF">success-700</span></div>
+  <div class="chip" style="background:#009536"><span class="pair" style="color:#000F38">success-700</span></div>
   <div class="body">
     <div class="name"><span>success-700</span><span class="tag tag-brand">brand</span></div>
     <div class="hex">#009536 <button class="copy" type="button" data-copy="#009536">Copy</button></div>
@@ -985,7 +989,7 @@ details.snippet summary::-webkit-details-marker { color: var(--bc-text-secondary
   </div>
 </div>
 <div class="swatch">
-  <div class="chip" style="background:#FF4B00"><span class="pair" style="color:#FFFFFF">danger-500</span></div>
+  <div class="chip" style="background:#FF4B00"><span class="pair" style="color:#000F38">danger-500</span></div>
   <div class="body">
     <div class="name"><span>danger-500</span><span class="tag tag-brand">brand</span></div>
     <div class="hex">#FF4B00 <button class="copy" type="button" data-copy="#FF4B00">Copy</button></div>
@@ -994,7 +998,7 @@ details.snippet summary::-webkit-details-marker { color: var(--bc-text-secondary
   </div>
 </div>
 <div class="swatch">
-  <div class="chip" style="background:#FF1500"><span class="pair" style="color:#FFFFFF">danger-700</span></div>
+  <div class="chip" style="background:#FF1500"><span class="pair" style="color:#000F38">danger-700</span></div>
   <div class="body">
     <div class="name"><span>danger-700</span><span class="tag tag-brand">brand</span></div>
     <div class="hex">#FF1500 <button class="copy" type="button" data-copy="#FF1500">Copy</button></div>
@@ -2136,6 +2140,7 @@ code.bc-inline { font: 400 0.9em/1 var(--bc-font-mono); background: var(--bc-sur
 <section class="chapter" id="assets"><div class="bc-wrap">
   <h2 class="chapter-title">Assets</h2>
   <p class="lead">Every file below is embedded in this document. Download links are generated from the embedded data, so they work offline.</p>
+  <p>The monorepo copy of this package also keeps the logo, the palette sheet, the illustrations, and the social images as ordinary files under <code class="bc-inline">assets/</code>. Font files are embedded in this document.</p>
   <div class="bc-table-wrap"><table class="bc-table"><thead><tr><th>Preview</th><th>File</th><th>Format</th><th>Size</th><th>Use</th><th></th></tr></thead><tbody><tr><td><div class="asset-preview light" style="font:400 20px/1 var(--bc-font-sans);color:#000F38">Aa</div></td><td class="mono">formular-regular.woff2</td><td>WOFF2</td><td class="num">36.2 KB</td><td>Formular · Body, interface text, display headlines</td><td><a class="dl" data-asset="font-formular" href="#">Download</a></td></tr><tr><td><div class="asset-preview light" style="font:italic 400 20px/1 var(--bc-font-sans);color:#000F38">Aa</div></td><td class="mono">formular-regularitalic.woff2</td><td>WOFF2</td><td class="num">37.5 KB</td><td>Formular Italic · Emphasis inside body text only</td><td><a class="dl" data-asset="font-formular-italic" href="#">Download</a></td></tr><tr><td><div class="asset-preview light" style="font:700 20px/1 var(--bc-font-sans);color:#000F38">Aa</div></td><td class="mono">formular-bold.woff2</td><td>WOFF2</td><td class="num">36.0 KB</td><td>Formular Bold · Headings, buttons, table headers, field labels</td><td><a class="dl" data-asset="font-formular-bold" href="#">Download</a></td></tr><tr><td><div class="asset-preview light" style="font:400 20px/1 var(--bc-font-mono);color:#000F38">Aa</div></td><td class="mono">formular-mono.woff2</td><td>WOFF2</td><td class="num">24.6 KB</td><td>Formular Mono · Hashes, addresses, public keys, code, amounts</td><td><a class="dl" data-asset="font-formular-mono" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="logo-full-blue-svg"></div></td><td class="mono">BitcoinComputer-Logo.svg</td><td>SVG</td><td class="num">7.4 KB</td><td>Full logo, blue. Default for light surfaces</td><td><a class="dl" data-asset="logo-full-blue-svg" href="#">Download</a></td></tr><tr><td><div class="asset-preview dark"><img alt="" data-asset="logo-full-white-svg"></div></td><td class="mono">BitcoinComputer-Logo-White.svg</td><td>SVG</td><td class="num">7.3 KB</td><td>Full logo, white. For blue-500 or blue-900 surfaces</td><td><a class="dl" data-asset="logo-full-white-svg" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="logo-full-black-svg"></div></td><td class="mono">BitcoinComputer-Logo-Black.svg</td><td>SVG</td><td class="num">7.2 KB</td><td>Full logo, black. One-color print only</td><td><a class="dl" data-asset="logo-full-black-svg" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="mark-blue-svg"></div></td><td class="mono">BitcoinComputer-LogoOnly.svg</td><td>SVG</td><td class="num">0.9 KB</td><td>Mark only, blue. App icons, nav, favicons</td><td><a class="dl" data-asset="mark-blue-svg" href="#">Download</a></td></tr><tr><td><div class="asset-preview dark"><img alt="" data-asset="mark-white-svg"></div></td><td class="mono">BitcoinComputer-LogoOnly-White.svg</td><td>SVG</td><td class="num">0.9 KB</td><td>Mark only, white</td><td><a class="dl" data-asset="mark-white-svg" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="mark-black-svg"></div></td><td class="mono">BitcoinComputer-LogoOnly-Black.svg</td><td>SVG</td><td class="num">0.9 KB</td><td>Mark only, black</td><td><a class="dl" data-asset="mark-black-svg" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="logo-full-blue-png-2500"></div></td><td class="mono">BitcoinComputer-Logo-2500px.png</td><td>PNG</td><td class="num">40.3 KB</td><td>Full logo, blue, 2500px wide</td><td><a class="dl" data-asset="logo-full-blue-png-2500" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="logo-full-blue-png-1500"></div></td><td class="mono">BitcoinComputer-Logo-1500px.png</td><td>PNG</td><td class="num">22.3 KB</td><td>Full logo, blue, 1500px wide</td><td><a class="dl" data-asset="logo-full-blue-png-1500" href="#">Download</a></td></tr><tr><td><div class="asset-preview dark"><img alt="" data-asset="logo-full-white-png-2500"></div></td><td class="mono">BitcoinComputer-Logo-White-2500px.png</td><td>PNG</td><td class="num">37.2 KB</td><td>Full logo, white, 2500px wide</td><td><a class="dl" data-asset="logo-full-white-png-2500" href="#">Download</a></td></tr><tr><td><div class="asset-preview dark"><img alt="" data-asset="logo-full-white-png-1500"></div></td><td class="mono">BitcoinComputer-Logo-White-1500px.png</td><td>PNG</td><td class="num">20.4 KB</td><td>Full logo, white, 1500px wide</td><td><a class="dl" data-asset="logo-full-white-png-1500" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="logo-full-black-png-2500"></div></td><td class="mono">BitcoinComputer-Logo-Black-2500px.png</td><td>PNG</td><td class="num">40.3 KB</td><td>Full logo, black, 2500px wide</td><td><a class="dl" data-asset="logo-full-black-png-2500" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="mark-blue-png-2000"></div></td><td class="mono">BitcoinComputer-LogoOnly-2000px.png</td><td>PNG</td><td class="num">42.5 KB</td><td>Mark, blue, 2000px</td><td><a class="dl" data-asset="mark-blue-png-2000" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="mark-blue-png-500"></div></td><td class="mono">BitcoinComputer-LogoOnly-500px.png</td><td>PNG</td><td class="num">9.0 KB</td><td>Mark, blue, 500px</td><td><a class="dl" data-asset="mark-blue-png-500" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="mark-blue-png-256"></div></td><td class="mono">BitcoinComputer-LogoOnly-256.png</td><td>PNG</td><td class="num">10.9 KB</td><td>Mark, blue, 256px (app icon)</td><td><a class="dl" data-asset="mark-blue-png-256" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="mark-blue-png-32"></div></td><td class="mono">BitcoinComputer-LogoOnly-32px.png</td><td>PNG</td><td class="num">3.2 KB</td><td>Mark, blue, 32px (favicon)</td><td><a class="dl" data-asset="mark-blue-png-32" href="#">Download</a></td></tr><tr><td><div class="asset-preview dark"><img alt="" data-asset="mark-white-png-2000"></div></td><td class="mono">BitcoinComputer-LogoOnly-White-2000px.png</td><td>PNG</td><td class="num">43.1 KB</td><td>Mark, white, 2000px</td><td><a class="dl" data-asset="mark-white-png-2000" href="#">Download</a></td></tr><tr><td><div class="asset-preview dark"><img alt="" data-asset="mark-white-png-500"></div></td><td class="mono">BitcoinComputer-LogoOnly-White-500px.png</td><td>PNG</td><td class="num">9.1 KB</td><td>Mark, white, 500px</td><td><a class="dl" data-asset="mark-white-png-500" href="#">Download</a></td></tr><tr><td><div class="asset-preview light"><img alt="" data-asset="mark-black-png-2000"></div></td><td class="mono">BitcoinComputer-LogoOnly-Black-2000px.png</td><td>PNG</td><td class="num">41.3 KB</td><td>Mark, black, 2000px</td><td><a class="dl" data-asset="mark-black-png-2000" href="#">Download</a></td></tr></tbody></table></div>
 </div></section>
 
@@ -2160,7 +2165,7 @@ code.bc-inline { font: 400 0.9em/1 var(--bc-font-mono); background: var(--bc-sur
   var root = document.documentElement;
   var toggle = document.getElementById('theme-toggle');
   function current() { return root.getAttribute('data-theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); }
-  function label() { var small = window.matchMedia('(max-width: 639px)').matches; toggle.textContent = current() === 'dark' ? 'Light mode' : 'Dark mode'; toggle.setAttribute('aria-label', current() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'); }
+  function label() { var small = window.matchMedia('(max-width: 639px)').matches; var dark = current() === 'dark'; toggle.textContent = dark ? (small ? 'Light' : 'Light mode') : (small ? 'Dark' : 'Dark mode'); toggle.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode'); }
   window.addEventListener('resize', label);
   root.setAttribute('data-theme', current());
   toggle.addEventListener('click', function () { root.setAttribute('data-theme', current() === 'dark' ? 'light' : 'dark'); label(); });
@@ -2183,17 +2188,25 @@ code.bc-inline { font: 400 0.9em/1 var(--bc-font-mono); background: var(--bc-sur
     b.addEventListener('click', function () {
       var v = b.getAttribute('data-copy');
       var text = v === 'next' ? b.parentElement.querySelector('.bc-code').textContent : v;
-      var done = function () { var o = b.textContent; b.textContent = 'Copied'; setTimeout(function () { b.textContent = o; }, 1200); };
-      if (navigator.clipboard) { navigator.clipboard.writeText(text).then(done, function () {}); }
+      var flash = function (word) { var o = b.textContent; b.textContent = word; setTimeout(function () { b.textContent = o; }, 1200); };
+      var fallback = function () {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.left = '-9999px';
+        document.body.appendChild(ta); ta.select();
+        var ok = false; try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+        ta.remove(); flash(ok ? 'Copied' : 'Failed');
+      };
+      if (navigator.clipboard && window.isSecureContext) { navigator.clipboard.writeText(text).then(function () { flash('Copied'); }, fallback); }
+      else { fallback(); }
     });
   });
 
-  var links = Array.prototype.slice.call(document.querySelectorAll('.book-strip a'));
+  var links = Array.prototype.slice.call(document.querySelectorAll('.book-strip ol a'));
   var strip = document.querySelector('.book-strip ol');
   var sections = links.map(function (l) { return document.getElementById(l.getAttribute('href').slice(1)); });
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) { if (e.isIntersecting) { links.forEach(function (l) { var on = l.getAttribute('href') === '#' + e.target.id; l.classList.toggle('is-active', on); if (on && strip) { strip.scrollTo({ left: Math.max(0, l.offsetLeft - 24), behavior: 'smooth' }); } }); } });
+      entries.forEach(function (e) { if (e.isIntersecting) { links.forEach(function (l) { var on = l.getAttribute('href') === '#' + e.target.id; l.classList.toggle('is-active', on); if (on && strip) { var left = l.offsetLeft; var right = left + l.offsetWidth; if (left < strip.scrollLeft + 8 || right > strip.scrollLeft + strip.clientWidth - 8) { strip.scrollTo({ left: Math.max(0, left - 24), behavior: 'smooth' }); } } }); } });
     }, { rootMargin: '-15% 0px -75% 0px' });
     sections.forEach(function (s) { if (s) io.observe(s); });
   }
