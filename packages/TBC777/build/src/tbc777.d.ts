@@ -26,6 +26,7 @@ export declare class EscrowAuditor {
         withdrawEntries: Set<ClaimAmountEntry>;
         finalEntries: Set<ClaimAmountEntry>;
     };
+    static checkClaimAmount(amount: unknown): Amount;
     static sumDeposits(depositRevs: Set<Rev>, escrow: Id, token: TBC777): Promise<bigint>;
     static sumClaims(entries: Set<ClaimAmountEntry>): bigint;
     static getAudit(states: Escrow[], token: TBC777): Promise<AuditResult>;
@@ -36,12 +37,16 @@ export type TBC777Params = TBC20ConstructorParams & {
     withdrawn?: Rev[];
     finalWithdrawn?: Rev[];
     escrow?: Id;
+    depositFrom?: Rev;
+    depositAmount?: Amount;
 };
 export declare class TBC777 extends TBC20 {
     remoteRoot?: string;
     withdrawn: Rev[];
     finalWithdrawn: Rev[];
     escrow?: Id;
+    depositFrom?: Rev;
+    depositAmount?: Amount;
     private static readonly CLEAN_STATE;
     constructor(args: TBC777Params);
     get root(): string;

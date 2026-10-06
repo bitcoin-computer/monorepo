@@ -26,14 +26,19 @@ export class EscrowAuditor {
             }
             for (const [r, id, amt] of withdraws) {
                 if (r === lineage)
-                    withdrawEntries.add([id, amt]);
+                    withdrawEntries.add([id, this.checkClaimAmount(amt)]);
             }
         }
         for (const [r, id, amt] of finalState.finalWithdraws) {
             if (r === lineage)
-                finalEntries.add([id, amt]);
+                finalEntries.add([id, this.checkClaimAmount(amt)]);
         }
         return { depositRevs, withdrawEntries, finalEntries };
+    }
+    static checkClaimAmount(amount) {
+        if (typeof amount !== 'bigint' || amount < 0n)
+            throw new Error('Escrow claim amounts must be non-negative bigints');
+        return amount;
     }
     static async sumDeposits(depositRevs, escrow, token) {
         const getDepositAmount = async (rev) => {
@@ -96,7 +101,7 @@ export class TBC777 extends TBC20 {
             if (remoteRoot && amount !== 0n)
                 throw new Error('Remote-root tokens must be created with amount 0n');
         }
-        const { withdrawn, finalWithdrawn, escrow, ...rest } = args;
+        const { withdrawn, finalWithdrawn, escrow, depositFrom, depositAmount, ...rest } = args;
         super({
             ...TBC777.CLEAN_STATE,
             ...rest,
@@ -137,7 +142,7 @@ export class TBC777 extends TBC20 {
             throw new Error('Insufficient funds');
         this.amount -= amount;
         const ctor = this.constructor;
-        const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this;
+        const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, depositFrom, depositAmount, ...preserved } = this;
         return new ctor({ ...preserved, to, amount });
     }
     deposit(escrow, deposit) {
@@ -145,7 +150,14 @@ export class TBC777 extends TBC20 {
             throw new Error('Deposit amount must be positive');
         if (this.amount < deposit)
             throw new Error('Insufficient balance for deposit');
-        this.escrow = escrow;
+        if (this.escrow === escrow && this.depositFrom === this._rev) {
+            this.depositAmount = (this.depositAmount ?? 0n) + deposit;
+        }
+        else {
+            this.escrow = escrow;
+            this.depositFrom = this._rev;
+            this.depositAmount = deposit;
+        }
         this.amount -= deposit;
     }
     async getBalance(escrowRev) {
@@ -221,7 +233,8 @@ export class TBC777 extends TBC20 {
     }
     static async computeDepositAmount(depositData, escrow, lineage) {
         const root = depositData.remoteRoot || depositData._root;
-        if (root !== lineage)
+        const sameModule = typeof depositData.mod === 'string' && depositData.mod !== '' && depositData.mod === lineage;
+        if (root !== lineage && !sameModule)
             return 0n;
         const nextRev = await computer.next(depositData._rev);
         if (!nextRev)
@@ -229,7 +242,13 @@ export class TBC777 extends TBC20 {
         const nextToken = (await computer.sync(nextRev));
         if (String(nextToken.escrow) !== String(escrow))
             return 0n;
-        return depositData.amount - nextToken.amount;
+        if (nextToken.depositFrom !== depositData._rev)
+            return 0n;
+        const delta = depositData.amount - nextToken.amount;
+        const deposited = nextToken.depositAmount ?? 0n;
+        if (delta <= 0n)
+            return 0n;
+        return delta < deposited ? delta : deposited;
     }
     static async isValidMint(token) {
         if (!token.remoteRoot)
@@ -266,6 +285,8 @@ TBC777.CLEAN_STATE = {
     withdrawn: [],
     finalWithdrawn: [],
     escrow: undefined,
+    depositFrom: undefined,
+    depositAmount: undefined,
 };
 export function stripContractComments(source) {
     return source
