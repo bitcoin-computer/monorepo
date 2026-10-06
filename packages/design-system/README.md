@@ -7,7 +7,7 @@
   </p>
 </div>
 
-[`index.html`](./index.html) is the whole package. It is the brand book for people and the specification for build tools. Nothing in the file is loaded from the network. Logos and the Formular webfonts are embedded.
+[`index.html`](./index.html) is the brand book for people and the specification for build tools. Nothing in that file is loaded from the network. Logos and the Formular webfonts are embedded in it. [`assets/`](./assets) holds the logo, the palette, and the illustrations as ordinary files.
 
 The specification inside the file is version 1.0.0, dated 2026-09-22. The `package.json` version follows the monorepo release.
 
@@ -34,6 +34,15 @@ npm start
 
 Then open [http://127.0.0.1:4174](http://127.0.0.1:4174).
 
+## Brand files
+
+| Folder | Contents |
+| --- | --- |
+| [`assets/logo`](./assets/logo) | Wordmark and mark, in blue, black, and white. SVG, PNG, and PDF. |
+| [`assets/aliens`](./assets/aliens) | The glyph illustrations, as PNG. |
+| [`assets/colors`](./assets/colors) | The palette the tokens are built from. Every swatch on the sheet is in the JSON. The JSON also has the derived tints and the dark-mode surfaces. |
+| [`assets/social`](./assets/social) | The X header and the Open Graph image. |
+
 ## Using it from another package
 
 The [website](../website) copies `#bc-fonts`, `#bc-tokens`, and `#bc-components` into its own `index.html`. Those three blocks are the shared system. Page layout stays in the page.
@@ -44,6 +53,6 @@ Product pages pick colors by role (`tokens.roles`), use the type scale, and foll
 
 This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
 
-Formular is a commercial typeface by Brownfox (Gayane Bagdasaryan and Vyacheslav Kirilenko). The embedded files are the Regular, Italic, Bold, and Mono webfonts. Public web use requires a web license from [brownfox.org](https://brownfox.org/fonts/formular/).
+Formular is a commercial typeface by Brownfox (Gayane Bagdasaryan and Vyacheslav Kirilenko). `index.html` embeds the Regular, Italic, Bold, and Mono webfonts. The font files themselves are not in `assets/`. Public web use requires a web license from [brownfox.org](https://brownfox.org/fonts/formular/).
 
 This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.
