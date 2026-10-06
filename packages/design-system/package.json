@@ -1,0 +1,15 @@
+{
+  "name": "@bitcoin-computer/design-system",
+  "version": "0.27.0-beta.2",
+  "private": true,
+  "description": "Bitcoin Computer brand book and design system",
+  "license": "MIT",
+  "files": [
+    "index.html",
+    "LICENSE.md",
+    "LEGAL.md"
+  ],
+  "scripts": {
+    "start": "python3 -m http.server 4174 --bind 127.0.0.1"
+  }
+}
