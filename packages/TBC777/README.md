@@ -71,7 +71,7 @@ carefully.
   from many tokens
 - Transfers always produce a clean recipient instance (no inherited claim or
   escrow state)
-- `merge()` is disabled — use an escrow for atomic merges instead
+- `merge()` is inherited from TBC20 but refused while a bag has escrow history
 
 ## Public Surface
 
@@ -194,8 +194,9 @@ for escrow participation.
 
 Because transfers sanitize all escrow-related mutable state (`withdrawn`,
 `finalWithdrawn`, `escrow`), a TBC777 token remains usable anywhere a plain
-TBC20 is expected. `merge()` is intentionally disabled — perform atomic merges
-through an escrow instead so the supply invariant is enforced.
+TBC20 is expected. `merge()` works for clean bags; bags that have deposited or
+claimed cannot be merged (claim history is keyed by `_id`). Use an escrow when
+you need to combine bags that already have escrow history.
 
 ## Installation
 
@@ -242,8 +243,8 @@ into `EscrowAuditor` at validation time).
 - **Remote-root tokens** do not mint new supply; they represent a validated
   claim on an existing lineage. Use them for bridging and cross-chain value
   transfer.
-- The decision to disable `merge()` forces developers to use escrows for atomic
-  multi-party value consolidation, keeping all supply changes auditable.
+- Bags with escrow history cannot be `merge()`d, so consolidation of those
+  bags stays on the audited escrow path.
 
 ## Getting Help
 

@@ -26,20 +26,21 @@ export const sleep = (ms: number): Promise<void> =>
   })
 
 describe('TxWrapper', () => {
-  const alice = new Computer({ url, chain, network })
-  const bob = new Computer({ url, chain, network })
-
-  before('Before', async () => {
-    await alice.faucet(1e8)
-    await bob.faucet(1e8)
-  })
-
   describe('Alice and Bob Creates and swap NFTs', () => {
+    let alice: Computer
+    let bob: Computer
     let a: NFT
     let b: NFT
     let wrappedTxId: string
 
     before('Create NFTs and Alice offer', async () => {
+      alice = new Computer({ url, chain, network })
+      bob = new Computer({ url, chain, network })
+      const u1 = await alice.faucet(2e8)
+      const u2 = await bob.faucet(2e8)
+      await alice.waitForIndexed(u1.txId)
+      await bob.waitForIndexed(u2.txId)
+
       a = await alice.new(NFT, ['A', 'AAA', 'URL'])
       expect(a).to.matchPattern({
         ...meta,
@@ -60,7 +61,8 @@ describe('TxWrapper', () => {
 
       const txWrapperHelper = new TxWrapperHelper(alice)
 
-      await alice.faucet(0.1e8)
+      const u3 = await alice.faucet(0.1e8)
+      await alice.waitForIndexed(u3.txId)
       await txWrapperHelper.deploy()
 
       const { tx: aliceTx } = await alice.encode({
@@ -68,7 +70,8 @@ describe('TxWrapper', () => {
         env: { a: a._rev, b: b._rev },
       })
 
-      await alice.faucet(1e8)
+      const u4 = await alice.faucet(1e8)
+      await alice.waitForIndexed(u4.txId)
       const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
         bob.getPublicKey(),
         bob.getUrl(),
@@ -80,6 +83,8 @@ describe('TxWrapper', () => {
     })
 
     it('Bob accepts the offer', async () => {
+      const u = await bob.faucet(1e8)
+      await bob.waitForIndexed(u.txId)
       const txWrapperHelper = new TxWrapperHelper(bob)
       const bobsTx = await txWrapperHelper.decodeTx(wrappedTxId)
 
@@ -111,11 +116,20 @@ describe('TxWrapper', () => {
   })
 
   describe('Alice and Bob Creates and swap NFTs using addSaleTx', () => {
+    let alice: Computer
+    let bob: Computer
     let a: NFT
     let b: NFT
     let wrappedTxId: string
 
     before('Alice creates offer using addSaleTx', async () => {
+      alice = new Computer({ url, chain, network })
+      bob = new Computer({ url, chain, network })
+      const fu1 = await alice.faucet(2e8)
+      const fu2 = await bob.faucet(2e8)
+      await alice.waitForIndexed(fu1.txId)
+      await bob.waitForIndexed(fu2.txId)
+
       const txWrapperHelper = new TxWrapperHelper(alice)
 
       a = await alice.new(NFT, ['A', 'AAA', 'URL'])
@@ -136,21 +150,28 @@ describe('TxWrapper', () => {
         _owners: [bob.getPublicKey()],
       })
 
-      await alice.faucet(0.1e8)
+      const u1 = await alice.faucet(0.1e8)
+      await alice.waitForIndexed(u1.txId)
       await txWrapperHelper.deploy()
 
-      const { tx: aliceTx } = await alice.encode({
-        exp: `${StaticSwap} StaticSwap.exec(a, b)`,
-        env: { a: a._rev, b: b._rev },
-      })
-
-      await alice.faucet(1e8)
+      // Create the empty wrapper before encoding the sale tx. Otherwise later
+      // funding can spend fee inputs already locked into aliceTx.
+      const u2 = await alice.faucet(1e8)
+      await alice.waitForIndexed(u2.txId)
       const { tx: wrappedTx } = await txWrapperHelper.createWrappedTx(
         alice.getPublicKey(),
         alice.getUrl(),
       )
 
       wrappedTxId = await alice.broadcast(wrappedTx)
+      await alice.waitForIndexed(wrappedTxId)
+
+      const u3 = await alice.faucet(1e8)
+      await alice.waitForIndexed(u3.txId)
+      const { tx: aliceTx } = await alice.encode({
+        exp: `${StaticSwap} StaticSwap.exec(a, b)`,
+        env: { a: a._rev, b: b._rev },
+      })
 
       const { tx: offerTxWithAliceTx } = await txWrapperHelper.addSaleTx(wrappedTxId, aliceTx)
 
@@ -159,6 +180,8 @@ describe('TxWrapper', () => {
     })
 
     it('Bob accepts the offer after alice add sale txn', async () => {
+      const u = await bob.faucet(1e8)
+      await bob.waitForIndexed(u.txId)
       const txWrapperHelper = new TxWrapperHelper(bob)
       const bobsTx = await txWrapperHelper.decodeTx(wrappedTxId)
 
