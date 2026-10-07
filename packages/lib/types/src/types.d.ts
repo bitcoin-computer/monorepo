@@ -507,7 +507,8 @@ export type TXOQuery = {
   exp?: string
   lteBlockHeight?: number
   gteBlockHeight?: number
-} & Partial<Omit<TXORecord, 'expHash'>>
+  previous?: string
+} & Partial<Omit<TXORecord, 'expHash' | 'previous'>>
 export type EvalResult = {
   effect: EvaluatedEffect
   tx: Transaction

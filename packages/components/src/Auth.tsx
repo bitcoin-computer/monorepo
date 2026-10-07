@@ -415,9 +415,9 @@ function LoginForm() {
     validUrl(getEnv('URL')) || 'http://localhost:1031',
   )
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const [path, setPath] = useState<string>(
-    validPath(getEnv('PATH')) || getPath({ chain, network }),
-  )
+  // Undefined until the user edits the path, so the default follows the chain and network.
+  const [customPath, setCustomPath] = useState<string | undefined>(undefined)
+  const path = validPath(getEnv('PATH')) || (customPath ?? getPath({ chain, network }))
   const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -449,7 +449,7 @@ function LoginForm() {
               <NetworkInput network={network} setNetwork={setNetwork} />
             )}
             {!validUrl(getEnv('URL')) && <UrlInput url={url || ''} setUrl={setUrl} />}
-            {!validPath(getEnv('PATH')) && <PathInput path={path} setPath={setPath} />}
+            {!validPath(getEnv('PATH')) && <PathInput path={path} setPath={setCustomPath} />}
           </div>
           {formError ? (
             <p className="text-sm text-red-600 dark:text-red-400" role="alert">
