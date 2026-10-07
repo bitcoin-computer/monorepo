@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Bitcoin Computer · Javascript Smart Contracts on Bitcoin</title>
-<meta name="description" content="Write smart contracts in Javascript and run them on Bitcoin, Litecoin, Dogecoin and Pepecoin. Fixed fees, no middleman, your normal tools.">
+<title>Bitcoin Computer · JavaScript Smart Contracts on Bitcoin</title>
+<meta name="description" content="Write smart contracts in JavaScript and run them on Bitcoin, Litecoin, Dogecoin and Pepecoin. Fixed fees, no middleman, your normal tools.">
 <link rel="canonical" href="https://www.bitcoincomputer.io/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://www.bitcoincomputer.io/">
@@ -421,7 +421,14 @@ code.bc-inline { font: 400 0.9em/1 var(--bc-font-mono); background: var(--bc-sur
 
 /* Closing call to action */
 .bc-cta { padding: var(--bc-space-16) 0; border-top:1px solid var(--bc-border-default); }
-.bc-cta h2 { font: 400 32px/40px var(--bc-font-sans); letter-spacing:-0.01em; color: var(--bc-text-heading); margin:0 0 var(--bc-space-6); max-width: 24ch; }
+.bc-cta h2 { font: 400 32px/40px var(--bc-font-sans); letter-spacing:-0.01em; color: var(--bc-text-heading); margin:0 0 var(--bc-space-6); }
+.bc-cta h2 .nw { display:block; }
+@media (max-width: 479px) {
+  .bc-cta h2 { font-size: 24px; line-height: 32px; }
+}
+@media (max-width: 389px) {
+  .bc-cta h2 { font-size: 20px; line-height: 28px; }
+}
 
 /* Footer */
 .bc-footer { background: var(--bc-blue-900); color:#FFFFFF; padding: var(--bc-space-12) 0 var(--bc-space-8); }
@@ -658,7 +665,7 @@ p{max-width:64ch;text-wrap:pretty}
     <a class="bc-mnav-logo" href="https://www.bitcoincomputer.io/" aria-label="Bitcoin Computer home"><svg viewBox="0 0 420.88 61.72" aria-hidden="true" focusable="false"><use href="#bc-logo"/></svg></a>
     <nav class="bc-mnav-links" id="menu" aria-label="Primary">
       <a href="#examples">Examples</a>
-      <a href="#why">Why it works</a>
+      <a href="#why">Why It Works</a>
       <a href="https://docs.bitcoincomputer.io/" data-ext>Docs</a>
       <a href="https://github.com/bitcoin-computer/monorepo#readme" data-ext>GitHub</a>
       <a class="bc-btn bc-btn-primary bc-btn-lg menu-cta" href="https://explorer.bitcoincomputer.io/playground" data-ext>Open the playground</a>
@@ -675,7 +682,7 @@ p{max-width:64ch;text-wrap:pretty}
 <section class="bc-hero">
   <div class="bc-wrap hero-grid">
     <div>
-      <h1 class="bc-display">Javascript Smart Contracts on Bitcoin.</h1>
+      <h1 class="bc-display">JavaScript Smart Contracts on Bitcoin.</h1>
       <p class="bc-lead">A Turing-complete metaprotocol for UTXO-based blockchains.</p>
       <div class="bc-hero-actions">
         <a class="bc-btn bc-btn-primary bc-btn-lg" href="https://explorer.bitcoincomputer.io/playground" data-ext>Run it in the playground</a>
@@ -736,13 +743,13 @@ p{max-width:64ch;text-wrap:pretty}
   <div class="bc-wrap">
     <div class="head-row">
       <div class="bc-section-head">
-        <h2>Try it in the playground.</h2>
+        <h2>Try It in the Playground.</h2>
         <p>Load the Counter smart contract and preview exactly what it would write to the chain. Signing in and broadcasting happens in the full playground.</p>
       </div>
       <a class="bc-btn bc-btn-outline bc-btn-lg" href="https://explorer.bitcoincomputer.io/playground" data-ext>Open the full playground</a>
     </div>
     <div class="frame" id="frame">
-      <iframe data-src="https://explorer.bitcoincomputer.io/playground" title="Bitcoin Computer playground" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write"></iframe>
+      <iframe data-src="https://explorer.bitcoincomputer.io/playground" title="Bitcoin Computer Playground" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write"></iframe>
       <div class="frame-loading" role="status">
         <span class="frame-spinner" aria-hidden="true"></span>
         <span>Loading the playground</span>
@@ -751,9 +758,9 @@ p{max-width:64ch;text-wrap:pretty}
     </div>
     <p class="frame-note note" id="frame-note">The editor works best on a bigger screen. Tap the picture to open the playground.</p>
     <ol class="steps" aria-label="How to run your first contract">
-      <li><h3>Load an example</h3><p>Pick Counter, Token, NFT or Chat from the list on the left.</p></li>
-      <li><h3>Preview the effect</h3><p>See exactly what the contract will write, without broadcasting.</p></li>
-      <li><h3>Broadcast it</h3><p>In the full playground, sign in, fund from the faucet, and put it on-chain.</p></li>
+      <li><h3>Load an Example</h3><p>Pick Counter, Token, NFT or Chat from the list on the left.</p></li>
+      <li><h3>Preview the Effect</h3><p>See exactly what the contract will write, without broadcasting.</p></li>
+      <li><h3>Broadcast It</h3><p>In the full playground, sign in, fund from the faucet, and put it on-chain.</p></li>
     </ol>
   </div>
 </section>
@@ -761,22 +768,22 @@ p{max-width:64ch;text-wrap:pretty}
 <section class="bc-section" id="examples">
   <div class="bc-wrap">
     <div class="bc-section-head">
-      <h2>Five things already running on it.</h2>
+      <h2>Five Things Already Running on It.</h2>
       <p>All open source. Clone any of them and ship your own.</p>
     </div>
     <div class="ex-list">
       <div class="ex">
-        <div class="ex-media"><img loading="lazy" fetchpriority="low" src="images/exchange.webp" width="1100" height="647" decoding="async" alt="Order book exchange showing new sell and buy orders and open order tables"></div>
+        <div class="ex-media"><img loading="lazy" fetchpriority="low" src="images/exchange.webp" width="1100" height="647" decoding="async" alt="Order-book exchange showing new sell and buy orders and open order tables"></div>
         <div>
-          <h3 class="h-block">An order-book exchange on Bitcoin</h3>
+          <h3 class="h-block">An Order-Book Exchange on Bitcoin</h3>
           <p>Ethereum exchanges use automated market makers, not because they trade better but because a real order book needs more compute than the chain can afford. On Bitcoin Computer the order book runs as a smart contract. That makes order books, the best trading algorithm there is, available to decentralized exchanges for the first time, with high capital efficiency.</p>
-          <div class="actions"><a class="bc-btn bc-btn-outline bc-btn-lg" href="#contact" data-mail="clemens" data-domain="bitcoincomputer.io" data-subject="Demo Request: Dex">Request a demo</a></div>
+          <div class="actions"><a class="bc-btn bc-btn-outline bc-btn-lg" href="#contact" data-mail="clemens" data-domain="bitcoincomputer.io" data-subject="Demo Request: DEX">Request a demo</a></div>
         </div>
       </div>
       <div class="ex">
         <div class="ex-media"><img loading="lazy" fetchpriority="low" src="images/chess.webp" width="1100" height="557" decoding="async" alt="Chess game showing a board, move history and a balance in Litecoin"></div>
         <div>
-          <h3 class="h-block">Chess for money</h3>
+          <h3 class="h-block">Chess for Money</h3>
           <p>Two players put coins down. The winner takes them at the end of the game. Checking whether a chess position is winning takes more compute than an entire Ethereum block allows. On Bitcoin Computer it is a 1ms computation on the user's device.</p>
           <div class="actions"><a class="bc-btn bc-btn-outline bc-btn-lg" href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/chess-app" data-ext>View the code</a></div>
         </div>
@@ -784,7 +791,7 @@ p{max-width:64ch;text-wrap:pretty}
       <div class="ex">
         <div class="ex-media"><img loading="lazy" fetchpriority="low" src="images/nft.webp" width="1100" height="456" decoding="async" alt="NFT gallery with artworks stored on-chain"></div>
         <div>
-          <h3 class="h-block">A Bitcoin-only NFT site</h3>
+          <h3 class="h-block">A Bitcoin-Only NFT Site</h3>
           <p>Mint NFTs and store the metadata or the artwork itself on-chain. Clone the repo, add your branding, and launch your own trading site.</p>
           <div class="actions"><a class="bc-btn bc-btn-outline bc-btn-lg" href="https://nft.bitcoincomputer.io/" data-ext>Open the NFT site</a><a class="bc-btn bc-btn-ghost bc-btn-lg" href="#contact" data-mail="clemens" data-domain="bitcoincomputer.io" data-subject="Contact: NFTs">Talk to us</a></div>
         </div>
@@ -792,7 +799,7 @@ p{max-width:64ch;text-wrap:pretty}
       <div class="ex">
         <div class="ex-media"><img loading="lazy" fetchpriority="low" src="images/explorer.webp" width="1100" height="598" decoding="async" alt="Block explorer with a code editor for creating smart objects"></div>
         <div>
-          <h3 class="h-block">A block explorer you can write to</h3>
+          <h3 class="h-block">A Block Explorer You Can Write To</h3>
           <p>Browse smart objects on Bitcoin, create new ones, and update any object you own by calling a method on it.</p>
           <div class="actions"><a class="bc-btn bc-btn-outline bc-btn-lg" href="https://explorer.bitcoincomputer.io/" data-ext>Open the explorer</a></div>
         </div>
@@ -800,7 +807,7 @@ p{max-width:64ch;text-wrap:pretty}
       <div class="ex">
         <div class="ex-media"><img loading="lazy" fetchpriority="low" src="images/wallet.webp" width="1100" height="617" decoding="async" alt="Non-custodial wallet showing a Litecoin balance, a send form and recent transactions"></div>
         <div>
-          <h3 class="h-block">A non-custodial wallet for coins and assets</h3>
+          <h3 class="h-block">A Non-Custodial Wallet for Coins and Assets</h3>
           <p>Holds your money and your on-chain assets across Bitcoin, Litecoin, Dogecoin, Bitcoin Cash and Pepecoin. Wallet developers can add the same support to their own product.</p>
           <div class="actions"><a class="bc-btn bc-btn-outline bc-btn-lg" href="https://wallet.bitcoincomputer.io/" data-ext>Try the wallet</a><a class="bc-btn bc-btn-ghost bc-btn-lg" href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/wallet#readme" data-ext>Wallet code</a></div>
         </div>
@@ -812,17 +819,17 @@ p{max-width:64ch;text-wrap:pretty}
 <section class="bc-section alt" id="why">
   <div class="bc-wrap">
     <div class="bc-section-head">
-      <h2><span class="nw">No bridge.</span><span class="nw">No new chain.</span><span class="nw">No new language.</span></h2>
+      <h2><span class="nw">No Bridge.</span><span class="nw">No New Chain.</span><span class="nw">No New Language.</span></h2>
     </div>
     <div class="reasons">
       <div class="reason">
-        <h3 class="h-block">No middlemen that hold your coins</h3>
+        <h3 class="h-block">No Middlemen That Hold Your Coins</h3>
         <figure class="fig"><svg class="g" viewBox="0 0 420 340" role="img" aria-label="Two paths compared. With a bridge, you send your coin to a bridge, which holds it under the bridge's own key and locks it on Bitcoin. With Bitcoin Computer, you sign with your own key and your coin, with your object inside it, sits directly on Bitcoin.">
-  <text class="tb" x="0" y="16">With a bridge</text>
+  <text class="tb" x="0" y="16">With a Bridge</text>
   <circle class="person-muted" cx="24" cy="72" r="8"/>
   <path class="person-muted" d="M10 98 a14 13 0 0 1 28 0 Z"/>
   <text class="ts" x="24" y="128" text-anchor="middle">You</text>
-  <text class="ts" x="86" y="62" text-anchor="middle">send coin</text>
+  <text class="ts" x="86" y="62" text-anchor="middle">Send coin</text>
   <path class="line" d="M50 80 H112"/>
   <path class="head" d="M118 80 l-8 -4.5 v9 Z"/>
   <rect class="box-muted" x="124.5" y="48.5" width="124" height="72" rx="8"/>
@@ -831,7 +838,7 @@ p{max-width:64ch;text-wrap:pretty}
   <circle class="ring" cx="152" cy="98" r="7"/>
   <circle class="key-muted" cx="184" cy="98" r="5.5"/>
   <path class="key-muted" d="M189.5 98 H214 M207 98 v5.5 M214 98 v5.5"/>
-  <text class="ts" x="274" y="62" text-anchor="middle">locks</text>
+  <text class="ts" x="274" y="62" text-anchor="middle">Locks</text>
   <path class="line" d="M252 80 H292"/>
   <path class="head" d="M298 80 l-8 -4.5 v9 Z"/>
   <rect class="box" x="304.5" y="48.5" width="108" height="72" rx="8"/>
@@ -849,7 +856,7 @@ p{max-width:64ch;text-wrap:pretty}
   <text class="ts" x="24" y="308" text-anchor="middle">You</text>
   <circle class="key" cx="62" cy="260" r="5.5"/>
   <path class="key" d="M67.5 260 H90 M83 260 v5.5 M90 260 v5.5"/>
-  <text class="ts" x="196" y="236" text-anchor="middle">sign with your key</text>
+  <text class="ts" x="196" y="236" text-anchor="middle">Sign with your key</text>
   <path class="line-key" d="M96 260 H292"/>
   <path class="head-key" d="M298 260 l-8 -4.5 v9 Z"/>
   <rect class="box-hi" x="304.5" y="228.5" width="108" height="72" rx="8"/>
@@ -867,7 +874,7 @@ p{max-width:64ch;text-wrap:pretty}
         <p>Most ways to run smart contracts on Bitcoin use a separate chain joined to Bitcoin by a bridge. Your coins typically move to an address that middlemen control. Bitcoin Computer runs directly on Bitcoin and Bitcoin-like chains. The coin that carries your object stays under your key, and its code and every call made to it are written into ordinary transactions. There is no bridge, no custodian, and nobody who can switch it off.</p>
       </div>
       <div class="reason">
-        <h3 class="h-block">Fees stay flat no matter how much the contract computes</h3>
+        <h3 class="h-block">Fees Stay Flat No Matter How Much the Contract Computes</h3>
         <figure class="fig"><svg class="g" viewBox="0 0 420 216" role="img" aria-label="Fee against computational steps on a log scale. The Bitcoin Computer line stays flat: a call with 1 step and a call with 1,000,000 steps both cost 4,122 sats. The account model line rises as steps grow.">
   <text class="ts" x="0" y="16">Fee</text>
   <path class="axis" d="M48.5 28 V164.5 H408"/>
@@ -904,9 +911,9 @@ p{max-width:64ch;text-wrap:pretty}
         <p class="table-note note">Both transactions are 626 bytes. The second one took the counter from 1 to 1,000,001. <a href="https://explorer.bitcoincomputer.io/objects/21b2bfcfea115c8f66371866dec3c50c7721370746a6ee83de9efd06b7b52ad3:0" data-ext>See the object</a>.</p>
       </div>
       <div class="reason">
-        <h3 class="h-block">Your data is as hard to change as your coins</h3>
-        <figure class="fig"><svg class="g" viewBox="0 0 420 260" role="img" aria-label="Two rows that match. Your bitcoin sits in a coin locked by your key, and anyone else who tries to spend it is rejected. Your data sits in the same kind of coin, locked by the same key, and anyone else who tries to change it is rejected the same way.">
-  <text class="tb" x="0" y="16">Your bitcoin</text>
+        <h3 class="h-block">Your Data Is as Hard to Change as Your Coins</h3>
+        <figure class="fig"><svg class="g" viewBox="0 0 420 260" role="img" aria-label="Two rows that match. Your Bitcoin sits in a coin locked by your key, and anyone else who tries to spend it is rejected. Your data sits in the same kind of coin, locked by the same key, and anyone else who tries to change it is rejected the same way.">
+  <text class="tb" x="0" y="16">Your Bitcoin</text>
   <circle class="coin" cx="36" cy="74" r="26"/>
   <circle class="ring" cx="36" cy="74" r="19"/>
   <text class="tb" x="36" y="78" text-anchor="middle">BTC</text>
@@ -915,43 +922,43 @@ p{max-width:64ch;text-wrap:pretty}
   <rect class="lock-body" x="110" y="66" width="34" height="26" rx="4"/>
   <circle class="lock-hole" cx="127" cy="77" r="3"/>
   <rect class="lock-hole" x="125.5" y="78" width="3" height="8" rx="1"/>
-  <text class="ts" x="127" y="120" text-anchor="middle">your key</text>
-  <text class="ts" x="236" y="52" text-anchor="middle">tries to spend it</text>
+  <text class="ts" x="127" y="120" text-anchor="middle">Your key</text>
+  <text class="ts" x="236" y="52" text-anchor="middle">Tries to spend it</text>
   <path class="line" d="M308 80 H164"/>
   <path class="head" d="M158 80 l8 -5 v10 Z"/>
   <circle class="gap" cx="236" cy="80" r="13"/>
   <path class="x" d="M228 72 l16 16 M244 72 l-16 16"/>
-  <text class="t-danger" x="236" y="112" text-anchor="middle">rejected</text>
+  <text class="t-danger" x="236" y="112" text-anchor="middle">Rejected</text>
   <circle class="person-muted" cx="372" cy="62" r="8"/>
   <path class="person-muted" d="M358 88 a14 13 0 0 1 28 0 Z"/>
-  <text class="ts" x="372" y="120" text-anchor="middle">anyone else</text>
-  <text class="tb" x="0" y="156">Your data</text>
+  <text class="ts" x="372" y="120" text-anchor="middle">Anyone else</text>
+  <text class="tb" x="0" y="156">Your Data</text>
   <circle class="coin" cx="36" cy="210" r="26"/>
   <circle class="ring" cx="36" cy="210" r="19"/>
   <rect class="obj-tint" x="22" y="201" width="28" height="18" rx="3"/>
   <text class="t-tint mono" x="36" y="214" text-anchor="middle">n:3</text>
-  <text class="ts" x="36" y="252" text-anchor="middle">your object</text>
+  <text class="ts" x="36" y="252" text-anchor="middle">Your object</text>
   <path class="key" d="M116 202 v-10 a11 11 0 0 1 22 0 v10"/>
   <rect class="lock-body" x="110" y="202" width="34" height="26" rx="4"/>
   <circle class="lock-hole" cx="127" cy="213" r="3"/>
   <rect class="lock-hole" x="125.5" y="214" width="3" height="8" rx="1"/>
-  <text class="ts" x="127" y="252" text-anchor="middle">your key</text>
-  <text class="ts" x="236" y="188" text-anchor="middle">tries to change it</text>
+  <text class="ts" x="127" y="252" text-anchor="middle">Your key</text>
+  <text class="ts" x="236" y="188" text-anchor="middle">Tries to change it</text>
   <path class="line" d="M308 216 H164"/>
   <path class="head" d="M158 216 l8 -5 v10 Z"/>
   <circle class="gap" cx="236" cy="216" r="13"/>
   <path class="x" d="M228 208 l16 16 M244 208 l-16 16"/>
-  <text class="t-danger" x="236" y="244" text-anchor="middle">rejected</text>
+  <text class="t-danger" x="236" y="244" text-anchor="middle">Rejected</text>
   <circle class="person-muted" cx="372" cy="198" r="8"/>
   <path class="person-muted" d="M358 224 a14 13 0 0 1 28 0 Z"/>
-  <text class="ts" x="372" y="252" text-anchor="middle">anyone else</text>
+  <text class="ts" x="372" y="252" text-anchor="middle">Anyone else</text>
 </svg>
           <figcaption class="note">Same kind of coin, same key, same rule. Miners enforce both.</figcaption>
         </figure>
         <p>A smart object is carried by a coin, an unspent transaction output with a small amount in it. Updating the object means spending that output and creating a new one for the next version, which takes the owner's private key. So changing someone else's data is exactly as hard as stealing their Bitcoin, and miners enforce it.</p>
       </div>
       <div class="reason">
-        <h3 class="h-block">Every version is kept, signed and timestamped</h3>
+        <h3 class="h-block">Every Version Is Kept, Signed and Timestamped</h3>
         <div class="bc-table-wrap proof-top">
           <table class="bc-table">
             <thead><tr><th class="num">Version</th><th class="num">n</th><th>Confirmed</th><th>Transaction</th></tr></thead>
@@ -969,12 +976,12 @@ p{max-width:64ch;text-wrap:pretty}
     </div>
 
     <div class="bc-features why-features">
-      <div class="bc-feature"><h3>Your normal tools</h3><p>Your IDE, your package manager, your linter and your test runner all work as they do for any web project.</p></div>
-      <div class="bc-feature"><h3>Browser and Node.js</h3><p>Contracts run in modern Javascript engines, so you get their speed and their security work for free.</p></div>
-      <div class="bc-feature"><h3>Built-in encryption</h3><p>Keep user data private with encryption that is part of the library, not something you bolt on.</p></div>
-      <div class="bc-feature"><h3>On-chain or off-chain storage</h3><p>Put data where it belongs. Games, DeFi and digital assets each need a different mix.</p></div>
+      <div class="bc-feature"><h3>Your Normal Tools</h3><p>Your IDE, your package manager, your linter and your test runner all work as they do for any web project.</p></div>
+      <div class="bc-feature"><h3>Browser and Node.js</h3><p>Contracts run in modern JavaScript engines, so you get their speed and their security work for free.</p></div>
+      <div class="bc-feature"><h3>Built-In Encryption</h3><p>Keep user data private with encryption that is part of the library, not something you bolt on.</p></div>
+      <div class="bc-feature"><h3>On-Chain or Off-Chain Storage</h3><p>Put data where it belongs. Games, DeFi and digital assets each need a different mix.</p></div>
       <div class="bc-feature"><h3>Compatible with Runes and Ordinals</h3><p>Fungible and non-fungible tokens work alongside the protocols people already use.</p></div>
-      <div class="bc-feature"><h3>GDPR, CCPA and AML ready</h3><p>Designed from the start so that meeting privacy law is not a retrofit.</p></div>
+      <div class="bc-feature"><h3>GDPR, CCPA and AML Ready</h3><p>Designed from the start so that meeting privacy law is not a retrofit.</p></div>
     </div>
   </div>
 </section>
@@ -982,13 +989,13 @@ p{max-width:64ch;text-wrap:pretty}
 <section class="bc-section">
   <div class="bc-wrap">
     <div class="bc-section-head">
-      <h2>What people build with it.</h2>
+      <h2>What People Build with It.</h2>
     </div>
     <div class="bc-features">
       <div class="bc-feature"><h3>Games</h3><p>Monetize player-to-player payments, tournaments, levels, items and achievements without ever holding player funds.</p></div>
-      <div class="bc-feature"><h3>Runes and Ordinals apps</h3><p>Build fungible and non-fungible token applications that stay compatible with the protocols people already trade on.</p></div>
+      <div class="bc-feature"><h3>Runes and Ordinals Apps</h3><p>Build fungible and non-fungible token applications that stay compatible with the protocols people already trade on.</p></div>
       <div class="bc-feature"><h3>DeFi</h3><p>Exchanges, lending platforms and stablecoins, built on real order books instead of automated market makers.</p></div>
-      <div class="bc-feature"><h3>Shared data between organizations</h3><p>Keep records synchronized across companies with a signed history of every change, and skip the manual reconciliation.</p></div>
+      <div class="bc-feature"><h3>Shared Data Between Organizations</h3><p>Keep records synchronized across companies with a signed history of every change, and skip the manual reconciliation.</p></div>
     </div>
   </div>
 </section>
@@ -996,19 +1003,19 @@ p{max-width:64ch;text-wrap:pretty}
 <section class="bc-section alt" id="contact">
   <div class="bc-wrap help-grid">
     <div class="partner">
-      <h2 class="h-section">Need a team to build it?</h2>
+      <h2 class="h-section">Need a Team to Build It?</h2>
       <img loading="lazy" fetchpriority="low" class="partner-logo" src="images/metarune.webp" width="600" height="170" decoding="async" alt="MetaRune Labs">
       <p>MetaRune Labs is the official development partner. They have shipped several applications on Bitcoin Computer and know the platform well. Tell us what you want to build and we will make the introduction.</p>
-      <div class="actions"><a class="bc-btn bc-btn-primary bc-btn-lg" href="#contact" data-mail="clemens" data-domain="bitcoincomputer.io" data-subject="Development support">Ask for an introduction</a></div>
+      <div class="actions"><a class="bc-btn bc-btn-primary bc-btn-lg" href="#contact" data-mail="clemens" data-domain="bitcoincomputer.io" data-subject="Development Support">Ask for an introduction</a></div>
       <p class="note" id="mail-note"></p>
     </div>
     <div class="community">
-      <h3 class="h-block">Where the project lives</h3>
+      <h3 class="h-block">Where the Project Lives</h3>
       <ul>
-        <li><a href="https://github.com/bitcoin-computer/monorepo" data-ext>GitHub monorepo</a><span class="note" id="stars">Library, apps and templates</span></li>
+        <li><a href="https://github.com/bitcoin-computer/monorepo" data-ext>GitHub Monorepo</a><span class="note" id="stars">Library, apps and templates</span></li>
         <li><a href="https://docs.bitcoincomputer.io/" data-ext>Documentation</a><span class="note">Quickstart, API and guides</span></li>
-        <li><a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template" data-ext>Node.js template</a><span class="note">Start a backend project</span></li>
-        <li><a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/vite-template" data-ext>Vite template</a><span class="note">Start a browser app</span></li>
+        <li><a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/nodejs-template" data-ext>Node.js Template</a><span class="note">Start a backend project</span></li>
+        <li><a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/vite-template" data-ext>Vite Template</a><span class="note">Start a browser app</span></li>
         <li><a href="https://x.com/BTC_Computer/" data-ext>X</a><span class="note">@BTC_Computer</span></li>
         <li><a href="https://t.me/thebitcoincomputer" data-ext>Telegram</a><span class="note">Ask questions, get answers</span></li>
       </ul>
@@ -1018,7 +1025,7 @@ p{max-width:64ch;text-wrap:pretty}
 
 <section class="bc-cta">
   <div class="bc-wrap">
-    <h2>Build your first Javascript smart contract in your browser.</h2>
+    <h2><span class="nw">Build Your First</span> <span class="nw">JavaScript Smart Contract</span> <span class="nw">In Your Browser</span></h2>
     <div class="actions">
       <a class="bc-btn bc-btn-primary bc-btn-lg" href="https://explorer.bitcoincomputer.io/playground" data-ext>Open the playground</a>
       <a class="bc-btn bc-btn-outline bc-btn-lg" href="https://docs.bitcoincomputer.io/" data-ext>Read the docs</a>
@@ -1037,13 +1044,13 @@ p{max-width:64ch;text-wrap:pretty}
       <li><a href="https://explorer.bitcoincomputer.io/playground" data-ext>Playground</a></li>
       <li><a href="https://explorer.bitcoincomputer.io/" data-ext>Explorer</a></li>
       <li><a href="https://wallet.bitcoincomputer.io/" data-ext>Wallet</a></li>
-      <li><a href="https://nft.bitcoincomputer.io/" data-ext>NFT site</a></li>
+      <li><a href="https://nft.bitcoincomputer.io/" data-ext>NFT Site</a></li>
     </ul></div>
     <div><h4>Developers</h4><ul>
       <li><a href="https://docs.bitcoincomputer.io/" data-ext>Docs</a></li>
       <li><a href="https://docs.bitcoincomputer.io/start/" data-ext>Quickstart</a></li>
       <li><a href="https://github.com/bitcoin-computer/monorepo#readme" data-ext>GitHub</a></li>
-      <li><a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme" data-ext>Run a node</a></li>
+      <li><a href="https://github.com/bitcoin-computer/monorepo/tree/main/packages/node#readme" data-ext>Run a Node</a></li>
     </ul></div>
     <div><h4>Company</h4><ul>
       <li><a href="#contact" data-mail="clemens" data-domain="bitcoincomputer.io">Contact</a></li>
