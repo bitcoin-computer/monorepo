@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light dark">
-<title>Bitcoin Computer · Javascript smart contracts on Bitcoin</title>
+<title>Bitcoin Computer · Javascript Smart Contracts on Bitcoin</title>
 <meta name="description" content="Write smart contracts in Javascript and run them on Bitcoin, Litecoin, Dogecoin and Pepecoin. Fixed fees, no middleman, your normal tools.">
 <link rel="canonical" href="https://www.bitcoincomputer.io/">
 <meta property="og:type" content="website">
@@ -94,10 +94,13 @@
   --bc-danger-500: #FF4B00;
   --bc-danger-700: #FF1500;
   --bc-danger-900: #A00E00;
-  --bc-dark-surface-raised: #06184A;
-  --bc-dark-border: #1C2F66;
-  --bc-dark-border-strong: #2A3F7A;
-  --bc-dark-text-disabled: #4C5F8F;
+  --bc-dark-surface-page: #111827;
+  --bc-dark-surface-raised: #1F2937;
+  --bc-dark-surface-inset: #1F2937;
+  --bc-dark-border: #374151;
+  --bc-dark-border-strong: #4B5563;
+  --bc-dark-text-disabled: #6B7280;
+  --bc-dark-text-secondary: #9CA3AF;
   --bc-dark-action-hover: #1F5BFF;
   /* Fonts */
   --bc-font-sans: "Formular", "Helvetica Neue", Arial, sans-serif;
@@ -157,17 +160,17 @@
   color-scheme: light;
 }
 [data-theme="dark"] {
-  --bc-surface-page: var(--bc-blue-900);
+  --bc-surface-page: var(--bc-dark-surface-page);
   --bc-surface-alt: var(--bc-dark-surface-raised);
   --bc-surface-raised: var(--bc-dark-surface-raised);
-  --bc-surface-inset: var(--bc-blue-900);
+  --bc-surface-inset: var(--bc-dark-surface-inset);
   --bc-border-default: var(--bc-dark-border);
   --bc-border-strong: var(--bc-dark-border-strong);
   --bc-border-focus: var(--bc-blue-300);
   --bc-text-heading: var(--bc-neutral-0);
   --bc-text-primary: var(--bc-neutral-100);
-  --bc-text-secondary: var(--bc-blue-100);
-  --bc-text-tertiary: var(--bc-blue-300);
+  --bc-text-secondary: var(--bc-dark-text-secondary);
+  --bc-text-tertiary: var(--bc-neutral-400);
   --bc-text-disabled: var(--bc-dark-text-disabled);
   --bc-text-link: var(--bc-blue-300);
   --bc-text-on-action: var(--bc-neutral-0);
@@ -191,17 +194,17 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bc-surface-page: var(--bc-blue-900);
+    --bc-surface-page: var(--bc-dark-surface-page);
     --bc-surface-alt: var(--bc-dark-surface-raised);
     --bc-surface-raised: var(--bc-dark-surface-raised);
-    --bc-surface-inset: var(--bc-blue-900);
+    --bc-surface-inset: var(--bc-dark-surface-inset);
     --bc-border-default: var(--bc-dark-border);
     --bc-border-strong: var(--bc-dark-border-strong);
     --bc-border-focus: var(--bc-blue-300);
     --bc-text-heading: var(--bc-neutral-0);
     --bc-text-primary: var(--bc-neutral-100);
-    --bc-text-secondary: var(--bc-blue-100);
-    --bc-text-tertiary: var(--bc-blue-300);
+    --bc-text-secondary: var(--bc-dark-text-secondary);
+    --bc-text-tertiary: var(--bc-neutral-400);
     --bc-text-disabled: var(--bc-dark-text-disabled);
     --bc-text-link: var(--bc-blue-300);
     --bc-text-on-action: var(--bc-neutral-0);
@@ -361,7 +364,7 @@ code.bc-inline { font: 400 0.9em/1 var(--bc-font-mono); background: var(--bc-sur
 .bc-mnav { height:64px; border-bottom:1px solid var(--bc-border-default); background: var(--bc-surface-page); }
 .bc-mnav .bc-wrap { display:flex; align-items:center; gap: var(--bc-space-8); height:100%; }
 .bc-mnav-logo { display:block; color: var(--bc-brand-logo); }
-.bc-mnav-logo svg { height:32px; width:auto; display:block; }
+.bc-mnav-logo svg { height:36px; width:auto; display:block; }
 .bc-mnav-links { display:flex; gap: var(--bc-space-6); margin-left:auto; }
 .bc-mnav-links a { color: var(--bc-text-primary); text-decoration:none; }
 .bc-mnav-links a:hover { color: var(--bc-text-link); }
@@ -448,7 +451,7 @@ a:hover{text-decoration:underline}
 a.bc-btn:hover{text-decoration:none}
 :focus-visible{outline:2px solid var(--bc-border-focus);outline-offset:2px}
 h1,h2,h3,h4{text-wrap:balance}
-p{max-width:64ch}
+p{max-width:64ch;text-wrap:pretty}
 .nw{white-space:nowrap}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .skip{position:absolute;left:-999px;top:var(--bc-space-3);z-index:50;display:inline-flex;align-items:center;height:var(--bc-control-height);padding:0 var(--bc-space-4);border-radius:var(--bc-radius-md);background:var(--bc-action-primary);color:var(--bc-text-on-action);font:700 14px/20px var(--bc-font-sans)}
@@ -502,8 +505,12 @@ p{max-width:64ch}
 .code-panel .bc-code{--sp:1ch;border:0;border-radius:0;padding:var(--bc-space-4);white-space:pre-wrap;overflow-wrap:break-word;overflow:visible}
 .code-panel .bc-code .ln{--w:calc(var(--i,0) * var(--sp));display:block;padding-left:calc(var(--w) + 2ch);text-indent:calc(-1 * (var(--w) + 2ch))}
 .code-panel .bc-code .ind{display:inline-block;width:var(--w);overflow:hidden;vertical-align:top;text-indent:0;white-space:pre}
-@media (max-width:639px){.code-panel .bc-code{--sp:.5ch;padding:var(--bc-space-3);font-size:12px;line-height:16px}}
+@media (max-width:639px){.code-panel .bc-code{--sp:.5ch;padding:var(--bc-space-3);font-size:13px;line-height:20px}.bc-hero .bc-display{font-size:40px;line-height:48px}}
 .tk-c{color:var(--bc-text-secondary)}
+.tk-s{color:var(--bc-status-success-text)}
+.tk-n{color:var(--bc-status-warning-text)}
+.tk-k{color:var(--bc-text-link)}
+#why .bc-section-head h2 .nw{display:block}
 .code-foot{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:var(--bc-space-2) var(--bc-space-4);padding:var(--bc-space-3) var(--bc-space-4);background:var(--bc-surface-raised);border-top:1px solid var(--bc-border-default)}
 .code-foot p{max-width:44ch}
 
@@ -513,7 +520,9 @@ p{max-width:64ch}
 
 /* Playground */
 .frame{border:1px solid var(--bc-border-default);border-radius:var(--bc-radius-md);overflow:hidden;background:var(--bc-surface-raised)}
-.frame iframe{display:none;width:100%;height:720px;border:0;background:var(--bc-neutral-0);color-scheme:light}
+.frame iframe{display:none;width:100%;height:720px;border:0;background:transparent;color-scheme:light}
+[data-theme="dark"] .frame iframe{color-scheme:dark}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .frame iframe{color-scheme:dark}}
 .frame.live iframe{display:block}
 .frame.live .frame-fallback{display:none}
 .frame-fallback{display:block}
@@ -649,7 +658,7 @@ p{max-width:64ch}
 <section class="bc-hero">
   <div class="bc-wrap hero-grid">
     <div>
-      <h1 class="bc-display">Javascript smart contracts on Bitcoin.</h1>
+      <h1 class="bc-display">Javascript Smart Contracts on Bitcoin.</h1>
       <p class="bc-lead">Smart contract development made as easy as web development. One file, no build step.</p>
       <div class="bc-hero-actions">
         <a class="bc-btn bc-btn-primary bc-btn-lg" href="https://explorer.bitcoincomputer.io/playground" data-ext>Run it in the playground</a>
@@ -782,19 +791,85 @@ p{max-width:64ch}
 <section class="bc-section alt" id="why">
   <div class="bc-wrap">
     <div class="bc-section-head">
-      <h2><span class="nw">No new language.</span> <span class="nw">No new chain.</span> <span class="nw">No bridge.</span></h2>
+      <h2><span class="nw">No new language.</span><span class="nw">No new chain.</span><span class="nw">No bridge.</span></h2>
     </div>
     <div class="reasons">
       <div class="reason">
         <h3 class="h-block">No bridge between your app and the chain</h3>
-        <figure class="fig"><svg class="g" viewBox="0 0 340 276" role="img" aria-label="Two paths compared. With a bridge, you send your coin to a bridge, which holds it under the bridge's own key and locks it on Bitcoin. With Bitcoin Computer, you sign with your own key and your coin, with your object inside it, sits directly on Bitcoin."><text class="tb" x="0" y="14">With a bridge</text><circle class="person-muted" cx="20" cy="54" r="7"/><path class="person-muted" d="M8 77 a12 11 0 0 1 24 0 Z"/><text class="ts" x="20" y="94" text-anchor="middle">You</text><text class="ts" x="68" y="55" text-anchor="middle">send coin</text><path class="line" d="M40 64 H90"/><path class="head" d="M96 64 l-7 -4 v8 Z"/><rect class="box-muted" x="100.5" y="36.5" width="96" height="56" rx="8"/><text class="tb" x="112" y="56">Bridge</text><circle class="coin-muted" cx="122" cy="74" r="9"/><circle class="ring" cx="122" cy="74" r="5"/><circle class="key-muted" cx="142" cy="74" r="4.5"/><path class="key-muted" d="M146.5 74 H166 M161 74 v4.5 M166 74 v4.5"/><text class="ts" x="220" y="55" text-anchor="middle">locks</text><path class="line" d="M201 64 H233"/><path class="head" d="M239 64 l-7 -4 v8 Z"/><rect class="box" x="243.5" y="36.5" width="96" height="56" rx="8"/><text class="tb" x="255" y="56">Bitcoin</text><rect class="block" x="255" y="67" width="14" height="14" rx="3"/><path class="link" d="M269 74 H277"/><rect class="block" x="277" y="67" width="14" height="14" rx="3"/><path class="link" d="M291 74 H299"/><rect class="block" x="299" y="67" width="14" height="14" rx="3"/><rect class="pill" x="100" y="104" width="224" height="24" rx="4"/><text class="ts" x="110" y="120">The bridge's key controls your coin</text><text class="tb" x="0" y="164">Bitcoin Computer</text><circle class="person" cx="20" cy="204" r="7"/><path class="person" d="M8 227 a12 11 0 0 1 24 0 Z"/><text class="ts" x="20" y="244" text-anchor="middle">You</text><circle class="key" cx="40" cy="214" r="4.5"/><path class="key" d="M44.5 214 H64 M59 214 v4.5 M64 214 v4.5"/><text class="ts" x="155" y="205" text-anchor="middle">sign with your key</text><path class="line-key" d="M72 214 H233"/><path class="head-key" d="M239 214 l-7 -4 v8 Z"/><rect class="box-hi" x="243.5" y="186.5" width="96" height="56" rx="8"/><text class="tb" x="255" y="206">Bitcoin</text><rect class="block" x="255" y="217" width="14" height="14" rx="3"/><path class="link" d="M269 224 H277"/><rect class="block" x="277" y="217" width="14" height="14" rx="3"/><path class="link" d="M291 224 H299"/><circle class="coin-key" cx="309" cy="224" r="9.5"/><rect class="obj" x="305" y="220" width="8" height="8" rx="1.5"/><rect class="pill-tint" x="100" y="252" width="190" height="24" rx="4"/><text class="t-tint" x="110" y="268">Your key controls your coin</text></svg>
+        <figure class="fig"><svg class="g" viewBox="0 0 420 340" role="img" aria-label="Two paths compared. With a bridge, you send your coin to a bridge, which holds it under the bridge's own key and locks it on Bitcoin. With Bitcoin Computer, you sign with your own key and your coin, with your object inside it, sits directly on Bitcoin.">
+  <text class="tb" x="0" y="16">With a bridge</text>
+  <circle class="person-muted" cx="24" cy="72" r="8"/>
+  <path class="person-muted" d="M10 98 a14 13 0 0 1 28 0 Z"/>
+  <text class="ts" x="24" y="128" text-anchor="middle">You</text>
+  <text class="ts" x="86" y="62" text-anchor="middle">send coin</text>
+  <path class="line" d="M50 80 H112"/>
+  <path class="head" d="M118 80 l-8 -4.5 v9 Z"/>
+  <rect class="box-muted" x="124.5" y="48.5" width="124" height="72" rx="8"/>
+  <text class="tb" x="136" y="70">Bridge</text>
+  <circle class="coin-muted" cx="152" cy="98" r="12"/>
+  <circle class="ring" cx="152" cy="98" r="7"/>
+  <circle class="key-muted" cx="184" cy="98" r="5.5"/>
+  <path class="key-muted" d="M189.5 98 H214 M207 98 v5.5 M214 98 v5.5"/>
+  <text class="ts" x="274" y="62" text-anchor="middle">locks</text>
+  <path class="line" d="M252 80 H292"/>
+  <path class="head" d="M298 80 l-8 -4.5 v9 Z"/>
+  <rect class="box" x="304.5" y="48.5" width="108" height="72" rx="8"/>
+  <text class="tb" x="316" y="70">Bitcoin</text>
+  <rect class="block" x="316" y="84" width="18" height="18" rx="3"/>
+  <path class="link" d="M334 93 H342"/>
+  <rect class="block" x="342" y="84" width="18" height="18" rx="3"/>
+  <path class="link" d="M360 93 H368"/>
+  <rect class="block" x="368" y="84" width="18" height="18" rx="3"/>
+  <rect class="pill" x="124" y="132" width="288" height="28" rx="4"/>
+  <text class="ts" x="138" y="150">The bridge's key controls your coin</text>
+  <text class="tb" x="0" y="196">Bitcoin Computer</text>
+  <circle class="person" cx="24" cy="252" r="8"/>
+  <path class="person" d="M10 278 a14 13 0 0 1 28 0 Z"/>
+  <text class="ts" x="24" y="308" text-anchor="middle">You</text>
+  <circle class="key" cx="62" cy="260" r="5.5"/>
+  <path class="key" d="M67.5 260 H90 M83 260 v5.5 M90 260 v5.5"/>
+  <text class="ts" x="196" y="236" text-anchor="middle">sign with your key</text>
+  <path class="line-key" d="M96 260 H292"/>
+  <path class="head-key" d="M298 260 l-8 -4.5 v9 Z"/>
+  <rect class="box-hi" x="304.5" y="228.5" width="108" height="72" rx="8"/>
+  <text class="tb" x="316" y="250">Bitcoin</text>
+  <rect class="block" x="316" y="264" width="16" height="16" rx="3"/>
+  <path class="link" d="M332 272 H340"/>
+  <rect class="block" x="340" y="264" width="16" height="16" rx="3"/>
+  <circle class="coin-key" cx="382" cy="272" r="13"/>
+  <rect class="obj" x="376" y="266" width="12" height="12" rx="2"/>
+  <rect class="pill-tint" x="124" y="312" width="248" height="28" rx="4"/>
+  <text class="t-tint" x="138" y="330">Your key controls your coin</text>
+</svg>
           <figcaption class="note">A bridge adds a hop that holds your coin. Bitcoin Computer has none.</figcaption>
         </figure>
         <p>Most ways to run smart contracts on Bitcoin use a separate chain joined to Bitcoin by a bridge, and your coins move to an address the bridge controls. Bitcoin Computer runs directly on Bitcoin and Bitcoin-like chains. The coin that carries your object stays under your key, and its code and every call made to it are written into ordinary transactions. There is no bridge, no custodian, and nobody who can switch it off.</p>
       </div>
       <div class="reason">
         <h3 class="h-block">Fees stay flat no matter how much the contract computes</h3>
-        <figure class="fig"><svg class="g" viewBox="0 0 340 204" role="img" aria-label="Fee against computational steps on a log scale. The Bitcoin Computer line stays flat: a call with 1 step and a call with 1,000,000 steps both cost 4,122 sats. The account model line rises as steps grow."><text class="ts" x="30" y="12">Fee</text><path class="axis" d="M24.5 4 V160.5 H336"/><path class="axis" d="M40.5 160.5 v4"/><text class="ts" x="40" y="180" text-anchor="middle">1</text><path class="axis" d="M173.5 160.5 v4"/><text class="ts" x="173" y="180" text-anchor="middle">1,000</text><path class="axis" d="M306.5 160.5 v4"/><text class="ts" x="306" y="180" text-anchor="middle">1,000,000</text><text class="ts" x="173" y="200" text-anchor="middle">Computational steps</text><path class="series-muted" d="M40 128 C110 126 200 90 306 20"/><text class="t" x="240" y="40" text-anchor="end">Account model</text><path class="series" d="M40 128 H306"/><text class="t" x="306" y="118" text-anchor="end">Bitcoin Computer</text><circle class="marker" cx="40" cy="128" r="5"/><circle class="marker" cx="306" cy="128" r="5"/><text class="ts" x="34" y="150"><tspan class="mono">inc()</tspan> 4,122 sats</text><text class="ts" x="312" y="150" text-anchor="end"><tspan class="mono">big()</tspan> 4,122 sats</text><circle class="hit" cx="40" cy="128" r="14"><title>inc(): 1 step, 4,122 sats</title></circle><circle class="hit" cx="306" cy="128" r="14"><title>big(): 1,000,000 steps, 4,122 sats</title></circle></svg><div class="legend"><span><i></i>Bitcoin Computer, measured on testnet</span><span><i class="muted"></i>Account model, where every step is charged</span></div></figure>
+        <figure class="fig"><svg class="g" viewBox="0 0 420 216" role="img" aria-label="Fee against computational steps on a log scale. The Bitcoin Computer line stays flat: a call with 1 step and a call with 1,000,000 steps both cost 4,122 sats. The account model line rises as steps grow.">
+  <text class="ts" x="0" y="16">Fee</text>
+  <path class="axis" d="M48.5 28 V164.5 H408"/>
+  <path class="axis" d="M48.5 74 H408"/>
+  <path class="axis" d="M48.5 120 H408"/>
+  <path class="axis" d="M72.5 164.5 v5"/>
+  <text class="ts" x="72" y="184" text-anchor="middle">1</text>
+  <path class="axis" d="M228.5 164.5 v5"/>
+  <text class="ts" x="228" y="184" text-anchor="middle">1,000</text>
+  <path class="axis" d="M384.5 164.5 v5"/>
+  <text class="ts" x="384" y="184" text-anchor="middle">1,000,000</text>
+  <text class="ts" x="228" y="208" text-anchor="middle">Computational steps</text>
+  <path class="series-muted" d="M72 128 C200 126 300 108 384 40"/>
+  <text class="t" x="292" y="36" text-anchor="end">Account model</text>
+  <path class="series" d="M72 128 H384"/>
+  <text class="t" x="84" y="116">Bitcoin Computer</text>
+  <circle class="marker" cx="72" cy="128" r="5"/>
+  <circle class="marker" cx="384" cy="128" r="5"/>
+  <text class="ts" x="84" y="152"><tspan class="mono">inc()</tspan> 4,122 sats</text>
+  <text class="ts" x="372" y="152" text-anchor="end"><tspan class="mono">big()</tspan> 4,122 sats</text>
+  <circle class="hit" cx="72" cy="128" r="16"><title>inc(): 1 step, 4,122 sats</title></circle>
+  <circle class="hit" cx="384" cy="128" r="16"><title>big(): 1,000,000 steps, 4,122 sats</title></circle>
+</svg><div class="legend"><span><i></i>Bitcoin Computer, measured on testnet</span><span><i class="muted"></i>Account model, where every step is charged</span></div></figure>
         <p>Only the people who use a contract run its code, not every validator on the network. The fee pays for the bytes a transaction takes up, not for the work inside it, so a call that runs a million steps costs the same as a call that runs one. On an account-model chain every validator would run all million steps and charge for each.</p>
         <div class="bc-table-wrap">
           <table class="bc-table">
@@ -809,7 +884,47 @@ p{max-width:64ch}
       </div>
       <div class="reason">
         <h3 class="h-block">Your data is as hard to change as your coins</h3>
-        <figure class="fig"><svg class="g" viewBox="0 0 340 230" role="img" aria-label="Two rows that match. Your bitcoin sits in a coin locked by your key, and anyone else who tries to spend it is rejected. Your data sits in the same kind of coin, locked by the same key, and anyone else who tries to change it is rejected the same way."><text class="tb" x="0" y="14">Your bitcoin</text><circle class="coin" cx="34" cy="48" r="22"/><circle class="ring" cx="34" cy="48" r="17"/><text class="tb" x="34" y="52.5" text-anchor="middle" style="font-size:12px">BTC</text><text class="ts" x="34" y="88" text-anchor="middle">0.5 BTC</text><path class="key" d="M91 44 v-6 a7 7 0 0 1 14 0 v6"/><rect class="lock-body" x="87" y="43" width="22" height="17" rx="3"/><circle class="lock-hole" cx="98" cy="50" r="2.25"/><rect class="lock-hole" x="97" y="51" width="2" height="5" rx="1"/><text class="ts" x="98" y="88" text-anchor="middle">your key</text><path class="line" d="M286 50 H124"/><path class="head" d="M118 50 l7 -4 v8 Z"/><circle class="gap" cx="200" cy="50" r="9"/><path class="x" d="M194 44 l12 12 M206 44 l-12 12"/><text class="ts" x="200" y="36" text-anchor="middle">tries to spend it</text><text class="t-danger" x="200" y="74" text-anchor="middle">rejected</text><circle class="person-muted" cx="306" cy="39" r="7"/><path class="person-muted" d="M294 62 a12 11 0 0 1 24 0 Z"/><text class="ts" x="306" y="88" text-anchor="middle">anyone else</text><text class="tb" x="0" y="132">Your data</text><circle class="coin" cx="34" cy="166" r="22"/><circle class="ring" cx="34" cy="166" r="17"/><rect class="obj-tint" x="20" y="157" width="28" height="18" rx="3"/><text class="t-tint mono" x="34" y="170" text-anchor="middle" style="font-size:11px">n:3</text><text class="ts" x="34" y="206" text-anchor="middle">your object</text><path class="key" d="M91 162 v-6 a7 7 0 0 1 14 0 v6"/><rect class="lock-body" x="87" y="161" width="22" height="17" rx="3"/><circle class="lock-hole" cx="98" cy="168" r="2.25"/><rect class="lock-hole" x="97" y="169" width="2" height="5" rx="1"/><text class="ts" x="98" y="206" text-anchor="middle">your key</text><path class="line" d="M286 168 H124"/><path class="head" d="M118 168 l7 -4 v8 Z"/><circle class="gap" cx="200" cy="168" r="9"/><path class="x" d="M194 162 l12 12 M206 162 l-12 12"/><text class="ts" x="200" y="154" text-anchor="middle">tries to change it</text><text class="t-danger" x="200" y="192" text-anchor="middle">rejected</text><circle class="person-muted" cx="306" cy="157" r="7"/><path class="person-muted" d="M294 180 a12 11 0 0 1 24 0 Z"/><text class="ts" x="306" y="206" text-anchor="middle">anyone else</text></svg>
+        <figure class="fig"><svg class="g" viewBox="0 0 420 260" role="img" aria-label="Two rows that match. Your bitcoin sits in a coin locked by your key, and anyone else who tries to spend it is rejected. Your data sits in the same kind of coin, locked by the same key, and anyone else who tries to change it is rejected the same way.">
+  <text class="tb" x="0" y="16">Your bitcoin</text>
+  <circle class="coin" cx="36" cy="74" r="26"/>
+  <circle class="ring" cx="36" cy="74" r="19"/>
+  <text class="tb" x="36" y="78" text-anchor="middle">BTC</text>
+  <text class="ts" x="36" y="120" text-anchor="middle">0.5 BTC</text>
+  <path class="key" d="M116 66 v-10 a11 11 0 0 1 22 0 v10"/>
+  <rect class="lock-body" x="110" y="66" width="34" height="26" rx="4"/>
+  <circle class="lock-hole" cx="127" cy="77" r="3"/>
+  <rect class="lock-hole" x="125.5" y="78" width="3" height="8" rx="1"/>
+  <text class="ts" x="127" y="120" text-anchor="middle">your key</text>
+  <text class="ts" x="236" y="52" text-anchor="middle">tries to spend it</text>
+  <path class="line" d="M308 80 H164"/>
+  <path class="head" d="M158 80 l8 -5 v10 Z"/>
+  <circle class="gap" cx="236" cy="80" r="13"/>
+  <path class="x" d="M228 72 l16 16 M244 72 l-16 16"/>
+  <text class="t-danger" x="236" y="112" text-anchor="middle">rejected</text>
+  <circle class="person-muted" cx="372" cy="62" r="8"/>
+  <path class="person-muted" d="M358 88 a14 13 0 0 1 28 0 Z"/>
+  <text class="ts" x="372" y="120" text-anchor="middle">anyone else</text>
+  <text class="tb" x="0" y="156">Your data</text>
+  <circle class="coin" cx="36" cy="210" r="26"/>
+  <circle class="ring" cx="36" cy="210" r="19"/>
+  <rect class="obj-tint" x="22" y="201" width="28" height="18" rx="3"/>
+  <text class="t-tint mono" x="36" y="214" text-anchor="middle">n:3</text>
+  <text class="ts" x="36" y="252" text-anchor="middle">your object</text>
+  <path class="key" d="M116 202 v-10 a11 11 0 0 1 22 0 v10"/>
+  <rect class="lock-body" x="110" y="202" width="34" height="26" rx="4"/>
+  <circle class="lock-hole" cx="127" cy="213" r="3"/>
+  <rect class="lock-hole" x="125.5" y="214" width="3" height="8" rx="1"/>
+  <text class="ts" x="127" y="252" text-anchor="middle">your key</text>
+  <text class="ts" x="236" y="188" text-anchor="middle">tries to change it</text>
+  <path class="line" d="M308 216 H164"/>
+  <path class="head" d="M158 216 l8 -5 v10 Z"/>
+  <circle class="gap" cx="236" cy="216" r="13"/>
+  <path class="x" d="M228 208 l16 16 M244 208 l-16 16"/>
+  <text class="t-danger" x="236" y="244" text-anchor="middle">rejected</text>
+  <circle class="person-muted" cx="372" cy="198" r="8"/>
+  <path class="person-muted" d="M358 224 a14 13 0 0 1 28 0 Z"/>
+  <text class="ts" x="372" y="252" text-anchor="middle">anyone else</text>
+</svg>
           <figcaption class="note">Same kind of coin, same key, same rule. Miners enforce both.</figcaption>
         </figure>
         <p>A smart object is carried by a coin, an unspent transaction output with a small amount in it. Updating the object means spending that output and creating a new one for the next version, which takes the owner's private key. So changing someone else's data is exactly as hard as stealing their Bitcoin, and miners enforce it.</p>
@@ -943,15 +1058,52 @@ p{max-width:64ch}
     document.addEventListener('keydown',function(e){if(e.key==='Escape'){setOpen(false)}});
   }
 
-  /* Code sample: comments in the secondary text color */
+  /* Code sample: comments, strings, numbers, keywords. Tokens are text.secondary,
+     status.success.text, status.warning.text and text.link. No network highlighter. */
   var pre=$('#src');
   var plain=pre?pre.textContent:'';
   function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+  var KW={import:1,from:1,class:1,extends:1,constructor:1,new:1,const:1,await:1,this:1,super:1,return:1,let:1,var:1,function:1,async:1,static:1,if:1,else:1,for:1,while:1,of:1,in:1,true:1,false:1,null:1,undefined:1,typeof:1,void:1};
+  function paint(code){
+    if(!code) return '';
+    if(code.charAt(0)==='/'&&code.charAt(1)==='/') return '<span class="tk-c">'+esc(code)+'</span>';
+    var out='', i=0, n=code.length;
+    while(i<n){
+      var c=code.charAt(i);
+      if(c==='"'||c==="'"){
+        var j=i+1;
+        while(j<n&&code.charAt(j)!==c){ if(code.charAt(j)==='\\') j++; j++; }
+        if(j<n) j++;
+        out+='<span class="tk-s">'+esc(code.slice(i,j))+'</span>';
+        i=j; continue;
+      }
+      if(c==='<'&&/[A-Za-z\/]/.test(code.charAt(i+1)||'')){
+        var k=i+1; if(code.charAt(k)==='/') k++;
+        var name='';
+        while(k<n&&/[A-Za-z0-9]/.test(code.charAt(k))){ name+=code.charAt(k); k++; }
+        if(name){
+          out+=esc(code.slice(i,k-name.length));
+          out+='<span class="tk-k">'+esc(name)+'</span>';
+          i=k; continue;
+        }
+      }
+      if(/[0-9]/.test(c)&&(i===0||!/[A-Za-z0-9_$]/.test(code.charAt(i-1)))){
+        var num=/^(?:\d+\.?\d*|\.\d+)(?:e[+-]?\d+)?/i.exec(code.slice(i));
+        if(num){ out+='<span class="tk-n">'+esc(num[0])+'</span>'; i+=num[0].length; continue; }
+      }
+      if(/[A-Za-z_$]/.test(c)){
+        var w=/^[A-Za-z_$][\w$]*/.exec(code.slice(i))[0];
+        out+=KW[w]?'<span class="tk-k">'+esc(w)+'</span>':esc(w);
+        i+=w.length; continue;
+      }
+      out+=esc(c); i++;
+    }
+    return out;
+  }
   /* Each line is its own block, so a long line wraps under itself instead of scrolling sideways */
   if(pre){
     pre.innerHTML=plain.split('\n').map(function(line){
-      var m=/^( *)(.*)$/.exec(line), t=esc(m[2]);
-      if(/^\/\//.test(m[2])) t='<span class="tk-c">'+t+'</span>';
+      var m=/^( *)(.*)$/.exec(line), t=paint(m[2]);
       return '<span class="ln" style="--i:'+m[1].length+'"><span class="ind">'+m[1]+'</span>'+(t||' ')+'</span>';
     }).join('');
   }
