@@ -216,7 +216,7 @@ Inside a contract the query **must** include one stabilizing filter:
 - `blockHeight` — must be ≤ current tip
 - `blockHash` — fixed historical block
 
-Queries without a stabilizer, or with a future/negative height, invalidate. Empty result sets with a valid stabilizer are fine (indexing lag is an application concern, not invalidation).
+Queries without a stabilizer, or with a future/negative height, invalidate. An empty result is valid only when the stabilizing height is already inside the indexed prefix. A stabilizer ahead of `GET /indexed-tip`, or a missing or incomplete cursor set, invalidates.
 
 `limit`, `offset`, and `blockIndex` must be non-negative integers. `orderBy` must be `rev` (the default). `order` is `ASC` or `DESC`.
 
