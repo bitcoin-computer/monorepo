@@ -100,15 +100,17 @@ The chain stores transactions; the **node indexes** outputs, inputs, and modules
 
 ---
 
-## List page size
+## Query limit
 
-`getTXOs` and `getModules` read lists **10000** rows at a time. That size is `LIST_PAGE_SIZE` in `@bitcoin-computer/lib` and in the node. It is fixed. There is no environment variable for it.
+[`get-txos`](./get-txos.md) and [`modules`](./modules.md) have no fixed page size. An omitted `limit` is the whole match set. An explicit `limit` is that many rows, and `offset` skips that many. A shorter response than the requested `limit` is the end of the set.
 
-One HTTP response is one page. [`get-txos`](./get-txos.md) and [`modules`](./modules.md) reject a `limit` above 10000. An omitted `limit` on those routes is one page of 10000, not the whole table. Pass `offset` for the next page. A response shorter than the requested `limit` is the end of the set.
+`BCN_MAX_QUERY_LIMIT` is optional. Leave it unset or blank and any `limit` is accepted, including one that is omitted. Set it to a non-negative integer and both routes require `limit` to be an integer no larger than that value. A missing or larger `limit` is rejected with HTTP 400 and code `QUERY_LIMIT` before the query runs. The node does not return a shorter prefix. A value that is not a non-negative integer, including one JavaScript cannot represent exactly, fails process startup. There is no other ceiling.
 
-`Computer.getTXOs`, `getUTXOs`, `getOTXOs`, `getOUTXOs`, and `getModules` walk those pages. With no `limit`, the call returns every match. An explicit `limit` and `offset` is a window, still fetched in pages of at most 10000. In-contract `computer.getTXOs` calls the same `Computer.getTXOs`, so it sees the same rows. A failed page — including a rate limit or a dropped connection — fails the call and discards the pages already read. In-contract, that failure invalidates the evaluation. A node that cannot finish produces no result. Every node that does finish, for the same parameters and the same stabilizer, sees the same rows. The page size does not have to cover the whole match set.
+`Computer.getTXOs`, `getUTXOs`, `getOTXOs`, `getOUTXOs`, and `getModules` each make one request. With no `limit`, the call returns every match. An explicit `limit` and `offset` is that window. A failed request returns nothing. In-contract `computer.getTXOs` uses the same call, so it sees the same rows. A failure — including a query-limit rejection, a rate limit, or a dropped connection — invalidates the transition instead of returning a shorter list. A node that cannot finish produces no result. Every node that does finish, for the same parameters and the same stabilizer, sees the same rows.
 
-Before the in-contract call returns, it reads the stabilizer's best-chain block hash again. If that hash moved while the pages were read, the transition is invalidated.
+Before the in-contract call returns, it reads the stabilizer's best-chain block hash again. If that hash moved during the read, the transition is invalidated.
+
+[`non-standard-utxos`](./non-standard-utxos.md) does not use `BCN_MAX_QUERY_LIMIT`.
 
 ## Module table (schema upgrade)
 

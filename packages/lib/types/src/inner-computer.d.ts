@@ -32,12 +32,6 @@ export declare const INNER_TXO_QUERY_KEYS: (keyof InnerTXOQuery)[]
 export declare class InnerComputer {
   private readonly c
   constructor({ chain, network, url }: { chain: Chain; network: BtcNetwork; url: string })
-  private _invalidate
-  private _safeCall
-  private _ensureConfirmedTx
-  private _ensureConfirmedLocation
-  private _getIndexedTip
-  private _assertNonNegativeInt
   sync<T extends Class = any>(location: string): Promise<JsonData<T>>
   decode(txId: string): Promise<TransitionJSON>
   load(location: string): Promise<Record<string, any>>
@@ -74,6 +68,4 @@ export declare class InnerComputer {
       verbosity: 1
     },
   ): Promise<TXORecord[]>
-  private _stabilizerFingerprint
-  private _readTXOs
 }

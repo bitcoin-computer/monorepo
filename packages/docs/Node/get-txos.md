@@ -31,14 +31,16 @@ Validation is performed on all parameters to ensure proper format and type.
 | `isSpent`     | `boolean`  | Filter spent/unspent outputs.                      |
 | `isConfirmed` | `boolean`  | Filter confirmed/unconfirmed outputs.              |
 | `publicKey`   | `string`   | Public key in hex format.                          |
-| `limit`       | `number`   | Maximum number of results. At most 10000. Omitted means 10000. |
+| `limit`       | `number`   | Maximum number of results. Omitted means every match. Required, and at most `BCN_MAX_QUERY_LIMIT`, only when that variable is set. |
 | `offset`      | `number`   | Number of items to skip (must be non-negative).    |
 | `order`       | `string`   | Sort order: `"ASC"` or `"DESC"`.                   |
 | `orderBy`     | `string`   | `"rev"` (default) or `"timestamp"`.                |
 
-One response contains at most **10000** rows (`LIST_PAGE_SIZE`). A `limit` greater than that is rejected. An omitted `limit` is 10000, not the whole match set. Use `offset` for the next page. A shorter response is the end of the set.
+An omitted `limit` is the whole match set. An explicit `limit` is that many rows. Use `offset` to skip rows. A shorter response than the requested `limit` is the end of the set. There is no fixed page size.
 
-`Computer.getTXOs`, `getUTXOs`, `getOTXOs`, `getOUTXOs`, and in-contract `getTXOs` walk these pages until the caller's `limit` or, when `limit` is omitted, the end of the set. They do not send a `limit` above 10000 on one request. A failed page fails the call and does not return the pages already read. See [List page size](./operations.md#list-page-size).
+When `BCN_MAX_QUERY_LIMIT` is set, `limit` is required and must be an integer no larger than that value. A missing or larger `limit` is `400` with code `QUERY_LIMIT`, and the query does not run. See [Query limit](./operations.md#query-limit).
+
+`Computer.getTXOs`, `getUTXOs`, `getOTXOs`, `getOUTXOs`, and in-contract `getTXOs` send one request. With no `limit`, the result is every match. An explicit `limit` and `offset` is that window. A failed request returns nothing.
 
 ## Example
 

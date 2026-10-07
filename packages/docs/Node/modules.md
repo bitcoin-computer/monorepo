@@ -24,7 +24,7 @@ Owner outputs from module deploys still appear in the `Output` table like other 
 | Parameter     | Type                    | Description                                                                        |
 | ------------- | ----------------------- | ---------------------------------------------------------------------------------- |
 | `verbosity`   | `0` or `1`              | Response detail. `0` (default): array of module specifier strings. `1`: full rows. |
-| `limit`       | `number`                | Maximum number of results. At most 10000. Omitted means 10000.                     |
+| `limit`       | `number`                | Maximum number of results. Omitted means every match. Required, and at most `BCN_MAX_QUERY_LIMIT`, only when that variable is set. |
 | `offset`      | `number`                | Number of results to skip (pagination). Defaults to `0`.                           |
 | `order`       | `ASC` or `DESC`         | Sort by insert `timestamp`. Defaults to `DESC`.                                    |
 | `storageType` | `multisig` \| `taproot` | Optional filter by on-chain encoding.                                              |
@@ -32,7 +32,7 @@ Owner outputs from module deploys still appear in the `Output` table like other 
 
 > Notes:
 >
-> - One response is at most 10000 rows. A larger `limit` is a validation error. `computer.getModules` with no `limit` walks these pages and returns every indexed module. A failed page fails the call and does not return the pages already read. See [List page size](./operations.md#list-page-size).
+> - An omitted `limit` is every indexed module, in one response. When `BCN_MAX_QUERY_LIMIT` is set, `limit` is required and a larger value is a validation error (`400`, code `QUERY_LIMIT`) before the query runs. `computer.getModules` with no `limit` asks for that whole set in one request. A failed request fails the call and does not return a partial list. See [Query limit](./operations.md#query-limit).
 > - Results are ordered by the row `timestamp` (when the node indexed the module), not by block height.
 > - Unconfirmed (mempool) modules have `blockHash` / `blockHeight` unset until the deploy is confirmed. On reorg, confirmation fields are cleared; on hard mempool cleanup, unconfirmed module rows may be deleted.
 
@@ -79,7 +79,7 @@ curl -X GET "http://localhost:1031/v1/LTC/regtest/modules?verbosity=1&storageTyp
 #### Validation errors (400)
 
 ```json
-{ "error": "limit must be a number not exceeding 1000" }
+{ "error": "limit is required and must be an integer not exceeding BCN_MAX_QUERY_LIMIT", "code": "QUERY_LIMIT" }
 ```
 
 ```json

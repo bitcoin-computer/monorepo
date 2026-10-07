@@ -22,7 +22,7 @@ To list or fetch **module deploy** sources, use [modules](./modules.md) and [mod
 | `offset`    | string | Number of results to skip (for pagination). |
 | `order`     | string | Sort order: `ASC` or `DESC`.                |
 
-An omitted `limit` is not capped, and a larger `limit` is not rejected. This route does not use the [list page size](./operations.md#list-page-size).
+An omitted `limit` is the whole match set, and a larger `limit` is not rejected. This route does not use [`BCN_MAX_QUERY_LIMIT`](./operations.md#query-limit).
 
 ## Example
 

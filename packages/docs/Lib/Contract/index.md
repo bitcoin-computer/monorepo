@@ -220,7 +220,7 @@ Queries without a stabilizer, or with a future/negative height, invalidate. Empt
 
 `limit`, `offset`, and `blockIndex` must be non-negative integers. `orderBy` must be `rev` (the default). `order` is `ASC` or `DESC`.
 
-In-contract `getTXOs` calls the same [`Computer.getTXOs`](../Computer/index.md#query-outputs) used off chain. That method reads the match set in `rev` order, 10000 rows at a time (`LIST_PAGE_SIZE`). With no `limit`, a successful result is **every** match. An explicit `limit` and `offset` is a window of that ordered set. A failed page, including a rate limit or a dropped connection, invalidates the transition instead of returning the pages already read. The same is true if the stabilizer's best-chain hash changes while the pages are read. The page size is fixed and does not have to cover the whole match set. See [List page size](../../Node/operations.md#list-page-size).
+In-contract `getTXOs` calls the same [`Computer.getTXOs`](../Computer/index.md#query-outputs) used off chain. That method reads the match set in `rev` order in one request. With no `limit`, a successful result is **every** match. An explicit `limit` and `offset` is a window of that ordered set. A failed request, including a query-limit rejection, a rate limit, or a dropped connection, invalidates the transition instead of returning a shorter list. The same is true if the stabilizer's best-chain hash changes during the read. See [Query limit](../../Node/operations.md#query-limit).
 
 ### Usage notes & best practices
 
