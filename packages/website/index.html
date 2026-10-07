@@ -525,14 +525,20 @@ p{max-width:64ch;text-wrap:pretty}
 .head-row .bc-section-head{margin-bottom:0}
 
 /* Playground */
-.frame{border:1px solid var(--bc-border-default);border-radius:var(--bc-radius-md);overflow:hidden;background:var(--bc-surface-raised)}
+.frame{position:relative;border:1px solid var(--bc-border-default);border-radius:var(--bc-radius-md);overflow:hidden;background:var(--bc-surface-raised)}
 .frame iframe{display:none;width:100%;height:720px;border:0;background:transparent;color-scheme:light}
 [data-theme="dark"] .frame iframe{color-scheme:dark}
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .frame iframe{color-scheme:dark}}
-.frame.live iframe{display:block}
-.frame.live .frame-fallback{display:none}
+.frame.loading iframe,.frame.live iframe{display:block}
+.frame.loading iframe{pointer-events:none}
+.frame.loading .frame-fallback,.frame.live .frame-fallback{display:none}
 .frame-fallback{display:block}
 .frame-fallback img{width:100%}
+.frame-loading{display:none;position:absolute;inset:0;z-index:1;flex-direction:column;align-items:center;justify-content:center;gap:var(--bc-space-3);background:var(--bc-surface-raised);color:var(--bc-text-secondary);font:400 14px/20px var(--bc-font-sans)}
+.frame.loading .frame-loading{display:flex}
+.frame-spinner{width:24px;height:24px;box-sizing:border-box;border:2px solid var(--bc-border-strong);border-top-color:var(--bc-action-primary);border-radius:var(--bc-radius-full);animation:frame-spin .7s linear infinite}
+@keyframes frame-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.frame-spinner{animation:none}}
 .frame-note{margin-top:var(--bc-space-3)}
 .steps{list-style:none;display:grid;gap:var(--bc-space-6);margin-top:var(--bc-space-8);counter-reset:step}
 @media (min-width:640px){.steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
@@ -737,6 +743,10 @@ p{max-width:64ch;text-wrap:pretty}
     </div>
     <div class="frame" id="frame">
       <iframe data-src="https://explorer.bitcoincomputer.io/playground" title="Bitcoin Computer playground" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write"></iframe>
+      <div class="frame-loading" role="status">
+        <span class="frame-spinner" aria-hidden="true"></span>
+        <span>Loading the playground</span>
+      </div>
       <a class="frame-fallback" href="https://explorer.bitcoincomputer.io/playground" data-ext aria-label="Open the playground"><img loading="lazy" fetchpriority="low" src="images/playground.webp" width="1400" height="875" decoding="async" alt="The Bitcoin Computer playground with the Counter smart contract ready to load"></a>
     </div>
     <p class="frame-note note" id="frame-note">The editor works best on a bigger screen. Tap the picture to open the playground.</p>
@@ -1134,10 +1144,21 @@ p{max-width:64ch;text-wrap:pretty}
      Phones get a picture that opens it. */
   var frame=$('#frame'), iframe=frame&&$('iframe',frame), fnote=$('#frame-note'), wide=window.matchMedia('(min-width:960px)');
   var openTab='<a href="https://explorer.bitcoincomputer.io/playground" target="_blank" rel="noopener noreferrer">open it in a new tab</a>';
+  var frameBlocked=false;
+  function showFrame(){
+    if(frameBlocked||!frame) return;
+    iframe.inert=false;
+    frame.classList.remove('loading');
+    frame.classList.add('live');
+    if(fnote) fnote.innerHTML='This is the live playground. If it does not load, '+openTab+'.';
+  }
   function loadFrame(){
     if(!iframe||iframe.getAttribute('src')) return;
-    iframe.src=iframe.getAttribute('data-src'); frame.classList.add('live');
-    if(fnote) fnote.innerHTML='This is the live playground. If it does not load, '+openTab+'.';
+    iframe.inert=true;
+    iframe.addEventListener('load', showFrame);
+    iframe.src=iframe.getAttribute('data-src');
+    frame.classList.add('loading');
+    if(fnote) fnote.innerHTML='Loading the playground. If it does not appear, '+openTab+'.';
   }
   var frameObs=null, scheduled=false;
   function scheduleFrame(){
@@ -1160,7 +1181,8 @@ p{max-width:64ch;text-wrap:pretty}
   document.addEventListener('securitypolicyviolation',function(e){
     var d=(e.violatedDirective||'')+' '+(e.effectiveDirective||'');
     if(/frame-src|child-src/.test(d)&&frame){
-      frame.classList.remove('live');
+      frameBlocked=true;
+      frame.classList.remove('live','loading');
       if(fnote) fnote.innerHTML='This page cannot embed the playground, so here is a picture of it. Click it or '+openTab+'.';
     }
   });
