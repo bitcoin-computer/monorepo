@@ -7,7 +7,7 @@
   </p>
 </div>
 
-The site is a single file, [`index.html`](./index.html). Logos and the Formular webfonts are embedded, so the page does not load assets from this repository.
+The page is [`index.html`](./index.html). Logos and the Formular webfonts are embedded. Screenshots live in [`images/`](./images) and load as the reader reaches them.
 
 The font, color, and component style blocks (`#bc-fonts`, `#bc-tokens`, `#bc-components`) are copied from the [design system](../design-system). That package is the source for those blocks. The `#page` style block belongs to this page.
 

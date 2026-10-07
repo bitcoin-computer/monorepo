@@ -6,12 +6,13 @@
   "license": "MIT",
   "files": [
     "index.html",
+    "images",
     "LICENSE.md",
     "LEGAL.md"
   ],
   "scripts": {
     "start": "python3 -m http.server 4173 --bind 127.0.0.1",
-    "predeploy": "rm -rf dist && mkdir -p dist && cp index.html dist/index.html",
+    "predeploy": "rm -rf dist && mkdir -p dist && cp index.html dist/index.html && cp -R images dist/images",
     "deploy": "gh-pages -d dist"
   },
   "devDependencies": {
