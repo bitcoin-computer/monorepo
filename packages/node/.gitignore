@@ -1,0 +1,12 @@
+.DS_Store
+coverage/
+logs/
+node_modules/
+data
+.env
+.docker.config
+.DS_Store
+*.log
+bcn.config.json
+scripts/__pycache__
+*.conf

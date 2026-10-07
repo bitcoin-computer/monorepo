@@ -1,0 +1,17 @@
+{
+  "require": ["source-map-support/register"],
+  "node-option": ["experimental-specifier-resolution=node"],
+  "timeout": 30000,
+  "spec": [
+    "packages/nakamotojs/test/*.spec.js",
+    "packages/nakamotojs/test/integration/*.spec.js",
+    "packages/lib/js-build/*.test.js",
+    "packages/node/test/*.js",
+    "packages/nodejs-template/dist/test/*.js",
+    "packages/swap/dist/test/*.js",
+    "packages/TBC20/dist/test/*.js",
+    "packages/TBC721/dist/test/*.js"
+  ],
+  "reporter": "mocha-multi",
+  "reporter-option": ["spec=-", "json=test-results.json"]
+}
