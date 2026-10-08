@@ -1,50 +1,50 @@
-import { Computer } from '@bitcoin-computer/lib'
-import { getBip44Path, getCoinType } from '@bitcoin-computer/nakamotojs'
-import type { Chain, Network, ModuleStorageType } from './common/types'
-export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
-export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest'
-export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
+import { Computer } from '@bitcoin-computer/lib';
+import { getBip44Path, getCoinType } from '@bitcoin-computer/nakamotojs';
+import type { Chain, Network, ModuleStorageType } from './common/types';
+export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE';
+export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest';
+export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr';
 export type ComputerOptions = Partial<{
-  chain: TBCChain
-  mnemonic: string
-  network: TBCNetwork
-  passphrase: string
-  path: string
-  url: string
-  satPerByte: number
-  addressType: AddressType
-  moduleStorageType: ModuleStorageType
-  thresholdBytes: number
-  mode: 'prod' | 'dev'
-}>
-declare function isLoggedIn(): boolean
-declare function logout(): void
-declare function loggedOutConfiguration(): {
-  chain: Chain
-  network: Network
-  url: any
-  path: any
-}
-declare function loggedInConfiguration(): {
-  mnemonic: string | null
-  chain: Chain
-  network: Network
-  url: any
-  path: any
-  moduleStorageType: ModuleStorageType
-}
-declare function getComputer(options?: ComputerOptions): Computer
-declare function LoginForm(): import('react').JSX.Element
-declare function LoginModal(): import('react').JSX.Element
+    chain: TBCChain;
+    mnemonic: string;
+    network: TBCNetwork;
+    passphrase: string;
+    path: string;
+    url: string;
+    satPerByte: number;
+    addressType: AddressType;
+    moduleStorageType: ModuleStorageType;
+    thresholdBytes: number;
+    mode: 'prod' | 'dev';
+}>;
+declare function isLoggedIn(): boolean;
+declare function logout(): void;
+declare function loggedOutConfiguration(): Partial<{
+    chain: Chain | undefined;
+    network: Network | undefined;
+    url: string | undefined;
+    path: string | undefined;
+}>;
+declare function loggedInConfiguration(): Partial<{
+    mnemonic: string | undefined;
+    chain: Chain | undefined;
+    network: Network | undefined;
+    url: string | undefined;
+    path: string | undefined;
+    moduleStorageType: ModuleStorageType | undefined;
+}>;
+declare function getComputer(options?: ComputerOptions): Computer;
+declare function LoginForm(): import("react").JSX.Element;
+declare function LoginModal(): import("react").JSX.Element;
 export declare const Auth: {
-  isLoggedIn: typeof isLoggedIn
-  logout: typeof logout
-  getCoinType: typeof getCoinType
-  getBip44Path: typeof getBip44Path
-  defaultConfiguration: typeof loggedOutConfiguration
-  browserConfiguration: typeof loggedInConfiguration
-  getComputer: typeof getComputer
-  LoginForm: typeof LoginForm
-  LoginModal: typeof LoginModal
-}
-export {}
+    isLoggedIn: typeof isLoggedIn;
+    logout: typeof logout;
+    getCoinType: typeof getCoinType;
+    getBip44Path: typeof getBip44Path;
+    defaultConfiguration: typeof loggedOutConfiguration;
+    browserConfiguration: typeof loggedInConfiguration;
+    getComputer: typeof getComputer;
+    LoginForm: typeof LoginForm;
+    LoginModal: typeof LoginModal;
+};
+export {};
