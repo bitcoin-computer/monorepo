@@ -1,6 +1,13 @@
 import { jsx as _jsx, jsxs as _jsxs, Fragment as _Fragment } from "react/jsx-runtime";
 import { useState, useEffect, useRef, useCallback, useId } from 'react';
+function removeFlowbiteDrawerBackdrops() {
+    document.querySelectorAll('[drawer-backdrop]').forEach((node) => node.remove());
+}
 function setDrawerOpen(el, open) {
+    // Flowbite's Drawer.show() inserts its own backdrop and transform-none. This
+    // component draws the only scrim, so drop that overlay on open and on close.
+    removeFlowbiteDrawerBackdrops();
+    el.classList.remove('transform-none');
     if (open) {
         el.classList.remove('translate-x-full');
         el.setAttribute('aria-hidden', 'false');
@@ -8,19 +15,23 @@ function setDrawerOpen(el, open) {
     else {
         el.classList.add('translate-x-full');
         el.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('overflow-hidden');
     }
     el.dispatchEvent(new CustomEvent('bc-drawer-change', { detail: { open }, bubbles: true }));
 }
 const FOCUSABLE = 'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 export function ShowDrawer({ text, id }) {
     const open = (e) => {
+        // Capture runs before a Flowbite bubble listener, so its Drawer.show() never
+        // inserts a second backdrop. data-drawer-show is omitted for the same reason.
         e.preventDefault();
         e.stopPropagation();
+        e.nativeEvent.stopImmediatePropagation();
         const el = document.getElementById(id);
         if (el)
             setDrawerOpen(el, true);
     };
-    return (_jsx("button", { type: "button", "data-drawer-target": id, "data-drawer-show": id, "data-drawer-placement": "right", "aria-controls": id, onClick: open, className: "bg-transparent border-0 p-0 m-0 font-inherit text-inherit cursor-pointer", children: text }));
+    return (_jsx("button", { type: "button", "data-drawer-target": id, "data-drawer-placement": "right", "data-drawer-backdrop": "false", "aria-controls": id, onClickCapture: open, className: "bg-transparent border-0 p-0 m-0 font-inherit text-inherit cursor-pointer", children: text }));
 }
 export function DrawerComponent({ Content, id, title = 'Drawer', }) {
     const [isOpen, setIsOpen] = useState(false);
