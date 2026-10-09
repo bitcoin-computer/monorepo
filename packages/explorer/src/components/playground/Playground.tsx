@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { Auth, ComputerContext } from '@bitcoin-computer/components'
 import { CreateNew } from './CreateNew'
 import { ExecuteExpression } from './ExecuteExpression'
@@ -9,6 +10,7 @@ import {
   ExampleBundle,
   ExampleId,
   getExampleBundle,
+  parseExampleId,
   PlaygroundMode,
 } from './examples'
 import { PlaygroundResult, ResultPanel } from './ui'
@@ -37,13 +39,20 @@ const MODES: { id: PlaygroundMode; label: string; help: string }[] = [
 
 export function Playground() {
   const computer = useContext(ComputerContext)
+  const [searchParams] = useSearchParams()
+  const linkedExample = parseExampleId(searchParams.get('example'))
   const [mode, setMode] = useState<PlaygroundMode>('create')
-  const [activeExample, setActiveExample] = useState<ExampleId | null>(null)
+  const [activeExample, setActiveExample] = useState<ExampleId | null>(linkedExample)
   const [result, setResult] = useState<PlaygroundResult | null>(null)
   const resultRef = useRef<HTMLDivElement>(null)
-  const checklist = useChecklist()
+  const checklist = useChecklist(linkedExample ? { pickedExample: true } : undefined)
 
-  const [bundle, setBundle] = useState<ExampleBundle>(EMPTY_BUNDLE)
+  const [bundle, setBundle] = useState<ExampleBundle>(() => {
+    if (!linkedExample) return EMPTY_BUNDLE
+    return getExampleBundle(linkedExample, {
+      publicKey: tryGet(() => computer.getPublicKey(), ''),
+    })
+  })
 
   const loggedIn = Auth.isLoggedIn()
   const chain = tryGet(() => computer.getChain(), '')

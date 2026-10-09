@@ -37,11 +37,23 @@ export function ResultPanel({
     body = (
       <div className="space-y-2 text-sm">
         <p>
-          Created {isModule ? 'a' : 'an'}{' '}
-          <Link to={path} className={`font-medium ${explorerLinkClass}`}>
-            {label}
-          </Link>
-          .
+          {isModule ? (
+            <>
+              Created a{' '}
+              <Link to={path} className={`font-medium ${explorerLinkClass}`}>
+                {label}
+              </Link>
+              .
+            </>
+          ) : (
+            <>
+              Created an{' '}
+              <Link to={path} className={`font-medium ${explorerLinkClass}`}>
+                {label}
+              </Link>
+              . Open the object and call a method.
+            </>
+          )}
         </p>
         <p className="flex items-start gap-1.5 font-mono text-xs text-gray-700 dark:text-gray-300">
           <span className="min-w-0 break-all">

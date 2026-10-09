@@ -159,6 +159,7 @@ Full setup instructions (browser, Node, local node, templates):
   [`nodejs-template`](packages/nodejs-template) — Starter projects
 - [`docs-2`](packages/docs-2) — Source for the official documentation
 - [`website`](packages/website) — Source for bitcoincomputer.io
+- [`design-system`](packages/design-system) — Brand book and design system
 
 ## How It Works (High Level)
 
