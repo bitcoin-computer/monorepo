@@ -35,7 +35,7 @@ Deploy JavaScript modules (preferably via taproot) to avoid redundant on-chain s
 
 ### Query outputs
 
-Query the node’s `Output` table. All of these accept a `TXOQuery` (see [getTXOs](./getTXOs.md)). `verbosity: 0` (default) returns revision strings; `verbosity: 1` returns full rows.
+Query the node’s `Output` table. All of these accept a `TXOQuery` (see [getTXOs](./getTXOs.md)). `verbosity: 0` (default) returns revision strings; `verbosity: 1` returns full rows. Each method is one request. An omitted `limit` is every match; an explicit `limit` and `offset` is that window. [`getModules`](./getModules.md) uses the same rule. The node applies [`BCN_MAX_QUERY_LIMIT`](../../Node/operations.md#query-limit) only when that variable is set.
 
 {.compact}
 

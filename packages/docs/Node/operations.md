@@ -43,12 +43,12 @@ Options:
 
 ### Common auth errors
 
-| Symptom | Likely cause | What to do |
-| ------- | ------------ | ---------- |
-| 401 no Authentication key | Missing header | Use lib, or add a valid Bearer token |
-| 401 Signature is too old | Clock skew or reused token | Sync clocks; mint a new timestamp each request |
-| 401 Please use a fresh authentication token | Replayed or out-of-order timestamp | Do not reuse headers; ensure monotonic client timestamps |
-| 401 origin / public key mismatch | `BCN_URL` on node ≠ URL the client signs | Align `.env` `BCN_URL` with the URL clients use (e.g. `http://127.0.0.1:1031`) |
+| Symptom                                     | Likely cause                             | What to do                                                                     |
+| ------------------------------------------- | ---------------------------------------- | ------------------------------------------------------------------------------ |
+| 401 no Authentication key                   | Missing header                           | Use lib, or add a valid Bearer token                                           |
+| 401 Signature is too old                    | Clock skew or reused token               | Sync clocks; mint a new timestamp each request                                 |
+| 401 Please use a fresh authentication token | Replayed or out-of-order timestamp       | Do not reuse headers; ensure monotonic client timestamps                       |
+| 401 origin / public key mismatch            | `BCN_URL` on node ≠ URL the client signs | Align `.env` `BCN_URL` with the URL clients use (e.g. `http://127.0.0.1:1031`) |
 
 Health checks may skip auth depending on deployment; normal API routes do not.
 
@@ -78,9 +78,9 @@ The chain stores transactions; the **node indexes** outputs, inputs, and modules
 
    Or poll [`isIndexed`](../Lib/Computer/isIndexed.md). Prefer this over fixed `sleep`.
 
-4. **Wrong query shape**  
-   - Objects: [`getOUTXOs`](../Lib/Computer/getOUTXOs.md) / [get-txos](./get-txos.md) with `isObject` / `isSpent` filters.  
-   - Module **source**: [modules](./modules.md) / [`getModules`](../Lib/Computer/getModules.md).  
+4. **Wrong query shape**
+   - Objects: [`getOUTXOs`](../Lib/Computer/getOUTXOs.md) / [get-txos](./get-txos.md) with `isObject` / `isSpent` filters.
+   - Module **source**: [modules](./modules.md) / [`getModules`](../Lib/Computer/getModules.md).
    - `mod` on object queries filters **membership**, not deploy source.
 
 5. **Mempool cleanup**  
@@ -91,14 +91,26 @@ The chain stores transactions; the **node indexes** outputs, inputs, and modules
 
 ### “I see the tx on the chain but not in the API”
 
-| Check | Action |
-| ----- | ------ |
-| Tx in bitcoind, not in DB | Sync/ZMQ path; inspect node logs for parse/insert errors |
+| Check                              | Action                                                                            |
+| ---------------------------------- | --------------------------------------------------------------------------------- |
+| Tx in bitcoind, not in DB          | Sync/ZMQ path; inspect node logs for parse/insert errors                          |
 | Tx in `Output` but not in `Module` | Deploy format (must be `{ ept }` or taproot `BC`); node version with Module table |
-| `GET /module/:mod` 404 | Specifier wrong, not indexed yet, or hard-deleted unconfirmed row |
-| Client `getModules` empty | Same as above + auth + filters (`storageType`, `isConfirmed`) |
+| `GET /module/:mod` 404             | Specifier wrong, not indexed yet, or hard-deleted unconfirmed row                 |
+| Client `getModules` empty          | Same as above + auth + filters (`storageType`, `isConfirmed`)                     |
 
 ---
+
+## Query limit
+
+[`get-txos`](./get-txos.md) and [`modules`](./modules.md) have no fixed page size. An omitted `limit` is the whole match set. An explicit `limit` is that many rows, and `offset` skips that many. A shorter response than the requested `limit` is the end of the set.
+
+`BCN_MAX_QUERY_LIMIT` is optional. Leave it unset or blank and any `limit` is accepted, including one that is omitted. Set it to a non-negative integer and both routes require `limit` to be an integer no larger than that value. A missing or larger `limit` is rejected with HTTP 400 and code `QUERY_LIMIT` before the query runs. The node does not return a shorter prefix. A value that is not a non-negative integer, including one JavaScript cannot represent exactly, fails process startup. There is no other ceiling.
+
+`Computer.getTXOs`, `getUTXOs`, `getOTXOs`, `getOUTXOs`, and `getModules` each make one request. With no `limit`, the call returns every match. An explicit `limit` and `offset` is that window. A failed request returns nothing. In-contract `computer.getTXOs` uses the same call, so it sees the same rows. A failure — including a query-limit rejection, a rate limit, or a dropped connection — invalidates the transition instead of returning a shorter list. A node that cannot finish produces no result. Every node that does finish, for the same parameters and the same stabilizer, sees the same rows.
+
+Before the in-contract call returns, it reads the stabilizer's best-chain block hash again. If that hash moved during the read, the transition is invalidated.
+
+[`non-standard-utxos`](./non-standard-utxos.md) does not use `BCN_MAX_QUERY_LIMIT`.
 
 ## Module table (schema upgrade)
 
@@ -144,12 +156,12 @@ New deploys are indexed from ZMQ and sync. Historical deploys before the feature
 
 **Use the same release version of `@bitcoin-computer/lib` and the Bitcoin Computer Node.**
 
-| Mismatch symptom | Typical cause |
-| ---------------- | ------------- |
-| Module routes 404 / table missing | Old node without Module API/schema |
+| Mismatch symptom                              | Typical cause                                                     |
+| --------------------------------------------- | ----------------------------------------------------------------- |
+| Module routes 404 / table missing             | Old node without Module API/schema                                |
 | Client cannot parse module txs / `load` fails | Lib expects `{ ept }` / `BC`; node or peers on legacy assumptions |
-| `decode` vs `load` confusion | Lib rejects module deploys in `decode` (`ModuleDecodeError`) |
-| Empty index after upgrade | Schema not applied (see above) or node not restarted |
+| `decode` vs `load` confusion                  | Lib rejects module deploys in `decode` (`ModuleDecodeError`)      |
+| Empty index after upgrade                     | Schema not applied (see above) or node not restarted              |
 
 See also [Breaking changes](../changelog.md) for protocol-level wire format notes (module deploys, protocol id `BC`).
 
@@ -193,7 +205,7 @@ Expected. Rows remain; `blockHash` / `blockHeight` cleared until re-confirmed.
 
 ## Related
 
-- [Node overview](./index.md) — install, env, architecture  
-- [modules](./modules.md) / [module](./module.md) — module HTTP API  
-- [get-txos](./get-txos.md) — output queries  
-- Client: [waitForIndexed](../Lib/Computer/waitForIndexed.md), [getModules](../Lib/Computer/getModules.md), [getOUTXOs](../Lib/Computer/getOUTXOs.md)  
+- [Node overview](./index.md) — install, env, architecture
+- [modules](./modules.md) / [module](./module.md) — module HTTP API
+- [get-txos](./get-txos.md) — output queries
+- Client: [waitForIndexed](../Lib/Computer/waitForIndexed.md), [getModules](../Lib/Computer/getModules.md), [getOUTXOs](../Lib/Computer/getOUTXOs.md)

@@ -124,32 +124,33 @@ Most location-based APIs require the referenced **transaction to be confirmed** 
 | `last`                                                | Starting revision, returned tip, and the tip’s **spending** tx must be confirmed (unspent tip or mempool-only spend → invalidate) |
 | `txIdToBlockTime`                                     | Tx must be confirmed (no nullish “not mined yet”)                                                                                 |
 | `txIdToBlockHeight` / `txIdToBlockHash`               | Unconfirmed → invalidate (no block hash / not mined yet)                                                                          |
-| `getTXOs` (+ `getUTXOs` / `getOTXOs` / `getOUTXOs`)   | Must include a **stabilizing filter** (below); future/negative heights forbidden                                                  |
+| `getTXOs`, `getOTXOs`                                | Must include a **stabilizing filter** (below); future/negative heights forbidden                                                  |
 
 **App / test implication:** after `deploy`, `new`, method calls, or `delete`, wait for confirmation before on-chain code that walks history, loads modules, or calls `last` / `next` / `txIdToBlockTime` on those locations.
 
 ### Full API reference (InnerComputer)
 
-| Function                         | Signature                         | Returns                    | Invalidates when                                             |
-| -------------------------------- | --------------------------------- | -------------------------- | ------------------------------------------------------------ |
-| `sync`                           | `sync(location: string)`          | Object state (deep-cloned) | Missing / unconfirmed location                               |
-| `decode`                         | `decode(txId: string)`            | `{ exp, env?, mod? }`      | Missing / unconfirmed tx                                     |
-| `load`                           | `load(location: string)`          | Module exports             | Missing / unconfirmed module location                        |
-| `getAncestors`                   | `getAncestors(location: string)`  | `string[]` (may be empty)  | Missing / unconfirmed start; empty array is **valid**        |
-| `first`                          | `first(rev: string)`              | Creation rev (`string`)    | Missing / unconfirmed start                                  |
-| `prev`                           | `prev(rev: string)`               | `string \| undefined`      | Missing / unconfirmed start; **`undefined` at root is OK**   |
-| `next`                           | `next(rev: string)`               | next rev (`string`)        | No next yet; unconfirmed start or unconfirmed successor      |
-| `last`                           | `last(rev: string)`               | Spent tip rev (`string`)   | Unspent tip; mempool-only spend; unconfirmed start/result    |
-| `txIdToBlockTime`                | `txIdToBlockTime(txId: string)`   | block time                 | Unconfirmed or missing tx                                    |
-| `txIdToBlockHeight`              | `txIdToBlockHeight(txId: string)` | height                     | Unconfirmed or missing tx                                    |
-| `txIdToBlockHash`                | `txIdToBlockHash(txId: string)`   | block hash                 | Unconfirmed or missing tx                                    |
-| `getBlockHash`                   | `getBlockHash(height: number)`    | hash                       | Negative or **future** height; missing block                 |
-| `getBlockHeight`                 | `getBlockHeight(hash: string)`    | height                     | Unknown hash                                                 |
-| `getRawTransaction`              | `getRawTransaction(txId: string)` | hex                        | Unconfirmed / missing                                        |
-| `getRawBlock` / `getBlockHeader` | by block hash                     | hex                        | Unknown hash                                                 |
-| `getTXOs`                        | `getTXOs(q: TXOQuery)`            | revs or records            | No stabilizer; future/negative height filters; query failure |
+| Function                         | Signature                         | Returns                    | Invalidates when                                                                                                               |
+| -------------------------------- | --------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `sync`                           | `sync(location: string)`          | Object state (deep-cloned) | Missing / unconfirmed location                                                                                                 |
+| `decode`                         | `decode(txId: string)`            | `{ exp, env?, mod? }`      | Missing / unconfirmed tx                                                                                                       |
+| `load`                           | `load(location: string)`          | Module exports             | Missing / unconfirmed module location                                                                                          |
+| `getAncestors`                   | `getAncestors(location: string)`  | `string[]` (may be empty)  | Missing / unconfirmed start; empty array is **valid**                                                                          |
+| `first`                          | `first(rev: string)`              | Creation rev (`string`)    | Missing / unconfirmed start                                                                                                    |
+| `prev`                           | `prev(rev: string)`               | `string \| undefined`      | Missing / unconfirmed start; **`undefined` at root is OK**                                                                     |
+| `next`                           | `next(rev: string)`               | next rev (`string`)        | No next yet; unconfirmed start or unconfirmed successor                                                                        |
+| `last`                           | `last(rev: string)`               | Spent tip rev (`string`)   | Unspent tip; mempool-only spend; unconfirmed start/result                                                                      |
+| `txIdToBlockTime`                | `txIdToBlockTime(txId: string)`   | block time                 | Unconfirmed or missing tx                                                                                                      |
+| `txIdToBlockHeight`              | `txIdToBlockHeight(txId: string)` | height                     | Unconfirmed or missing tx                                                                                                      |
+| `txIdToBlockHash`                | `txIdToBlockHash(txId: string)`   | block hash                 | Unconfirmed or missing tx                                                                                                      |
+| `getBlockHash`                   | `getBlockHash(height: number)`    | hash                       | Negative or **future** height; missing block                                                                                   |
+| `getBlockHeight`                 | `getBlockHeight(hash: string)`    | height                     | Unknown hash                                                                                                                   |
+| `getRawTransaction`              | `getRawTransaction(txId: string)` | hex                        | Unconfirmed / missing                                                                                                          |
+| `getRawBlock` / `getBlockHeader` | by block hash                     | hex                        | Unknown hash                                                                                                                   |
+| `getTXOs`                        | `getTXOs(q: InnerTXOQuery)`       | revs or records            | No stabilizer; future/negative height filters; stabilizer changed during the read; query failure; `isSpent`, `isConfirmed`, or `orderBy: "timestamp"` |
+| `getOTXOs`                       | `getOTXOs(q: InnerTXOQuery)`      | revs or records            | Same as `getTXOs`. Sets `isObject: true` and does not filter on spentness                                                                                  |
 
-Aliases `getUTXOs`, `getOTXOs`, and `getOUTXOs` inherit the same rules as `getTXOs`.
+`getUTXOs` and `getOUTXOs` are not exposed inside a contract. `getOTXOs` is `getTXOs` with `isObject: true`, not an unspent filter. `InnerTXOQuery` has no `isSpent`, no `isConfirmed`, and no `orderBy: "timestamp"`; passing those keys invalidates.
 
 **`latest` is not exposed** on InnerComputer (the live tip is inherently non-deterministic under chain extension).
 
@@ -204,11 +205,14 @@ getBlockHeight(hash: string): Promise<number>
 - Unconfirmed transactions cannot be observed as stable times/heights/hashes.
 - `getBlockHash` rejects negative heights and heights **greater than the current tip** (future blocks are non-deterministic).
 
-#### `getTXOs` (and aliases)
+#### `getTXOs` and `getOTXOs`
 
 ```ts
-getTXOs(q: TXOQuery): Promise<string[] | TXORecord[]>
+getTXOs(q: InnerTXOQuery): Promise<string[] | TXORecord[]>
+getOTXOs(q: InnerTXOQuery): Promise<string[] | TXORecord[]>
 ```
+
+These are the only list methods on the in-contract `computer`. `getOTXOs` calls `getTXOs` with `isObject: true`. It does not filter on spentness: a later spend must not drop a row that was visible at the stabilizer. `getUTXOs` and `getOUTXOs` exist only on the outer `Computer`.
 
 Inside a contract the query **must** include one stabilizing filter:
 
@@ -216,7 +220,11 @@ Inside a contract the query **must** include one stabilizing filter:
 - `blockHeight` — must be ≤ current tip
 - `blockHash` — fixed historical block
 
-Queries without a stabilizer, or with a future/negative height, invalidate. Empty result sets with a valid stabilizer are fine (indexing lag is an application concern, not invalidation).
+Queries without a stabilizer, or with a future/negative height, invalidate. An empty result is valid only when the stabilizing height is already inside the indexed prefix. A stabilizer ahead of `GET /indexed-tip`, or a missing or incomplete cursor set, invalidates.
+
+`limit`, `offset`, and `blockIndex` must be non-negative integers. `orderBy` must be `rev` (the default). `order` is `ASC` or `DESC`. `isSpent`, `isConfirmed`, and `orderBy: "timestamp"` are not part of `InnerTXOQuery` and invalidate.
+
+In-contract `getTXOs` calls the same [`Computer.getTXOs`](../Computer/index.md#query-outputs) used off chain. That method reads the match set in `rev` order in one request. With no `limit`, a successful result is **every** match. An explicit `limit` and `offset` is a window of that ordered set. A failed request, including a query-limit rejection, a rate limit, or a dropped connection, invalidates the transition instead of returning a shorter list. The same is true if the stabilizer's best-chain hash changes during the read. See [Query limit](../../Node/operations.md#query-limit).
 
 ### Usage notes & best practices
 
