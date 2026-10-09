@@ -503,9 +503,14 @@ p{max-width:64ch;text-wrap:pretty}
   .bc-mnav-links .menu-cta,.bc-mnav-links .menu-cta:hover{color:var(--bc-text-on-action)}
 }
 
-/* Hero: bc-hero with the code sample beside it */
+/* Hero: bc-hero with the code sample beside it.
+   The sample is the tall column, and 96px under the bar pushes it past a
+   laptop screen, so this page uses a shorter top pad. */
 .hero-grid{display:grid;grid-template-columns:minmax(0,1fr);gap:var(--bc-space-10);align-items:center}
-@media (min-width:960px){.hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--bc-space-12)}}
+@media (min-width:960px){
+  .hero-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:var(--bc-space-12)}
+  .bc-hero{padding-top:var(--bc-space-8)}
+}
 .hero-meta{margin-top:var(--bc-space-10)}
 .coins{display:flex;align-items:center;flex-wrap:wrap;gap:var(--bc-space-2);margin-top:var(--bc-space-4);list-style:none}
 .coins svg,.coins img{display:block;width:32px;height:32px;flex:none}
@@ -720,15 +725,15 @@ p{max-width:64ch;text-wrap:pretty}
       const computer = new Computer()
       await computer.faucet(1e5)
 
-      // Create an on-chain object, then update it
-      const counter = await computer.new(Counter)
-      await counter.inc()
-      const el = document.getElementById('count')
-      el.innerHTML = counter.n
+      // Create and update an on-chain object
+      const counter = await computer.new(Counter);
+      document.getElementById("count").innerHTML = counter.n;
+      await counter.inc(); // Update
+      document.getElementById("count").innerHTML = counter.n;
     &lt;/script&gt;
   &lt;/head&gt;
   &lt;body&gt;
-    &lt;span id="count"&gt;*&lt;/span&gt;
+    &lt;span style="font-size:200px" id="count"&gt;*&lt;/span&gt;
   &lt;/body&gt;
 &lt;/html&gt;</pre>
       <div class="code-foot note">
@@ -749,7 +754,7 @@ p{max-width:64ch;text-wrap:pretty}
       <a class="bc-btn bc-btn-outline bc-btn-lg" href="https://explorer.bitcoincomputer.io/playground?example=counter" data-ext>Open the playground</a>
     </div>
     <div class="frame" id="frame">
-      <iframe data-src="https://explorer.bitcoincomputer.io/playground?example=counter" title="Bitcoin Computer Playground" referrerpolicy="no-referrer-when-downgrade" allow="clipboard-write"></iframe>
+      <iframe data-src="https://explorer.bitcoincomputer.io/playground?example=counter" title="Bitcoin Computer Playground" referrerpolicy="no-referrer" allow="clipboard-write" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
       <div class="frame-loading" role="status">
         <span class="frame-spinner" aria-hidden="true"></span>
         <span>Loading the playground</span>
@@ -1148,7 +1153,11 @@ p{max-width:64ch;text-wrap:pretty}
 
   /* The live playground loads on wide screens only, and only once it is near the
      viewport, so the embed does not compete with the first paint or the first scroll.
-     Phones get a picture that opens it. */
+     Phones get a picture that opens it.
+     The frame is a different origin. allow-same-origin keeps the explorer's own
+     sign-in and storage, and does not let it read this page. Top navigation is
+     omitted, so the embed cannot send this page somewhere else. A popup, such
+     as the docs link, stays sandboxed too. */
   var frame=$('#frame'), iframe=frame&&$('iframe',frame), fnote=$('#frame-note'), wide=window.matchMedia('(min-width:960px)');
   var openTab='<a href="https://explorer.bitcoincomputer.io/playground?example=counter" target="_blank" rel="noopener noreferrer">open it in a new tab</a>';
   var frameBlocked=false;
