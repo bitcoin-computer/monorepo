@@ -5,10 +5,11 @@ const TESTNET_BIP32 = { public: 0x043587cf, private: 0x04358394 };
 const DOGE_MAINNET_BIP32 = { public: 0x02facafd, private: 0x02fac398 };
 const DOGE_TESTNET_BIP32 = { public: 0x0432a9a8, private: 0x0432a243 };
 const BTC_MESSAGE = '\x18Bitcoin Signed Message:\n';
-const LTC_MESSAGE = '\x18Litecoin Signed Message:\n';
+const LTC_MESSAGE = '\x19Litecoin Signed Message:\n';
 const DOGE_MESSAGE = '\x19Dogecoin Signed Message:\n';
-const PEPE_MESSAGE = '\x18Pepecoin Signed Message:\n';
-const WOJAK_MESSAGE = '\x18WojakCoin Signed Message:\n';
+const PEPE_MESSAGE = '\x19Pepecoin Signed Message:\n';
+// WojakCoin Core kept Bitcoin's signed-message magic.
+const WOJAK_MESSAGE = BTC_MESSAGE;
 const ltcShouldParse = hex => !isMwebTxHex(hex);
 // https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki
 // Duplicate coinbases on BTC mainnet; skip the later occurrence at the given height.
@@ -77,7 +78,7 @@ export const LTC = {
       bip32: MAINNET_BIP32,
       pubKeyHash: 0x30,
       scriptHash: 0x32,
-      wif: 0x80,
+      wif: 0xb0,
       coinType: 2,
       parsing: { shouldParse: ltcShouldParse },
     },

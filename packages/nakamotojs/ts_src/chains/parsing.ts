@@ -31,13 +31,8 @@ export function isMwebTxHex(hex: string): boolean {
   ) {
     return false;
   }
-  const flag = hex.slice(
-    ADVANCED_TX_FLAG_OFFSET,
-    ADVANCED_TX_FLAG_OFFSET + 2,
-  );
-  return (
-    flag === MWEB_ADVANCED_TX_FLAG || flag === MWEB_WITNESS_PROGRAM_FLAG
-  );
+  const flag = hex.slice(ADVANCED_TX_FLAG_OFFSET, ADVANCED_TX_FLAG_OFFSET + 2);
+  return flag === MWEB_ADVANCED_TX_FLAG || flag === MWEB_WITNESS_PROGRAM_FLAG;
 }
 
 /**

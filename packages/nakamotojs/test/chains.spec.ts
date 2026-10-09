@@ -98,12 +98,12 @@ describe('chain registry', () => {
     assert.deepStrictEqual(
       { ...getNetwork('LTC', 'mainnet') },
       {
-        messagePrefix: '\x18Litecoin Signed Message:\n',
+        messagePrefix: '\x19Litecoin Signed Message:\n',
         bech32: 'ltc',
         bip32: { public: 0x0488b21e, private: 0x0488ade4 },
         pubKeyHash: 0x30,
         scriptHash: 0x32,
-        wif: 0x80,
+        wif: 0xb0,
       },
     );
     assert.deepStrictEqual(
@@ -120,7 +120,7 @@ describe('chain registry', () => {
     assert.deepStrictEqual(
       { ...getNetwork('PEPE', 'mainnet') },
       {
-        messagePrefix: '\x18Pepecoin Signed Message:\n',
+        messagePrefix: '\x19Pepecoin Signed Message:\n',
         bech32: 'pepe',
         bip32: { public: 0x02facafd, private: 0x02fac398 },
         pubKeyHash: 0x38,
@@ -131,7 +131,7 @@ describe('chain registry', () => {
     assert.deepStrictEqual(
       { ...getNetwork('WOJAK', 'mainnet') },
       {
-        messagePrefix: '\x18WojakCoin Signed Message:\n',
+        messagePrefix: '\x18Bitcoin Signed Message:\n',
         bech32: 'wojak',
         bip32: { public: 0x0488b21e, private: 0x0488ade4 },
         pubKeyHash: 0x49,
@@ -139,6 +139,34 @@ describe('chain registry', () => {
         wif: 0xc9,
       },
     );
+  });
+
+  // Litecoin Core SECRET_KEY is 176 on mainnet and 239 on testnet and regtest.
+  it('uses the Litecoin Core WIF version', () => {
+    assert.strictEqual(getNetwork('LTC', 'mainnet').wif, 0xb0);
+    assert.strictEqual(getNetwork('LTC', 'testnet').wif, 0xef);
+    assert.strictEqual(getNetwork('LTC', 'regtest').wif, 0xef);
+  });
+
+  // The prefix's first byte is the length of the magic. WojakCoin kept Bitcoin's.
+  it('uses Core signed-message magic for LTC, PEPE, and WOJAK', () => {
+    const prefix = (magic: string) =>
+      `${String.fromCharCode(magic.length)}${magic}`;
+    const expected = {
+      LTC: prefix('Litecoin Signed Message:\n'),
+      PEPE: prefix('Pepecoin Signed Message:\n'),
+      WOJAK: prefix('Bitcoin Signed Message:\n'),
+    };
+    for (const network of ['mainnet', 'testnet', 'regtest']) {
+      assert.deepStrictEqual(
+        {
+          LTC: getNetwork('LTC', network).messagePrefix,
+          PEPE: getNetwork('PEPE', network).messagePrefix,
+          WOJAK: getNetwork('WOJAK', network).messagePrefix,
+        },
+        expected,
+      );
+    }
   });
 
   it('returns BIP44 coin types from config, not bech32 identity', () => {
