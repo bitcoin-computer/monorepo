@@ -10,5 +10,28 @@ export { Block } from './block.js';
 export { Psbt } from './psbt.js';
 export { OPS as opcodes } from './ops.js';
 export { Transaction } from './transaction.js';
+export { getBech32Prefix } from './networks.js';
 export { initEccLib } from './ecc_lib.js';
 export { bip371 };
+export {
+  BUILTIN_CHAINS,
+  registerChain,
+  getChainConfig,
+  getNetworkConfig,
+  listSupportedChains,
+  isBuiltinChain,
+  ADVANCED_TX_FLAG_OFFSET,
+  ADVANCED_TX_MARKER_OFFSET,
+  ADVANCED_TX_MARKER,
+  MWEB_ADVANCED_TX_FLAG,
+  MWEB_WITNESS_PROGRAM_FLAG,
+  isMwebTxHex,
+  skipAdvancedTx,
+  skipTxsAtHeight,
+  getParsingPolicy,
+  shouldParseTransaction,
+  shouldIndexTransaction,
+  getCoinType,
+  getBip44Path,
+  getPath,
+} from './chains/index.js';

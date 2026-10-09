@@ -53,6 +53,21 @@ npm run up
 The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database. The postgres database is used to efficiently store the complete blockchain data, for fast access and indexing.
 !!!
 
+### Adding a chain
+
+Network params, fees, and parse/index hooks live in [NakamotoJS](../NakamotoJs/index.md). After that config exists, add a node example under `chain-setup/<CHAIN>/<network>/` (`.env.example`, daemon conf, Docker image, data dir, ports).
+
+After building NakamotoJS with your changes, copy the environment file and the chain `.conf` file to the Bitcoin Computer Node base folder and try the setup locally:
+
+```sh
+cd packages/node
+cp chain-setup/<CHAIN>/<network>/.env.example .env
+cp chain-setup/<CHAIN>/<network>/<daemon>.conf.example <daemon>.conf
+npm run up
+```
+
+To fully add a supported chain, open a PR with your changes. The Bitcoin Computer team will review the code and, if approved, the chain will be fully supported in the ecosystem.
+
 ### Running a production node
 
 To run the node in production, you need to configure the `.env` file with appropriate settings for your environment. You can copy the example file and modify it as needed.
