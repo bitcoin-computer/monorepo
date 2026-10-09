@@ -21,7 +21,6 @@ export interface ChainDefaults {
     preferredAddressType?: AddressType;
 }
 export interface ChainFeatures {
-    segwit?: boolean;
     taproot?: boolean;
     mweb?: boolean;
 }
@@ -61,7 +60,6 @@ export interface ChainConfig {
     };
 }
 export interface ResolvedFeatures {
-    segwit: boolean;
     taproot: boolean;
     mweb: boolean;
 }

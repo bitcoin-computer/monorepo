@@ -224,7 +224,6 @@ export function getNetworkConfig(chain, network) {
     coinType: net.coinType,
     defaults: mergeDefaults(config.defaults, net.defaults),
     features: {
-      segwit: net.features?.segwit ?? config.features?.segwit ?? false,
       taproot: net.features?.taproot ?? config.features?.taproot ?? false,
       mweb: net.features?.mweb ?? config.features?.mweb ?? false,
     },

@@ -31,7 +31,7 @@ export const BTC = {
     dustRelayTxFee: 3000,
     moduleStorageType: 'taproot',
   },
-  features: { segwit: true, taproot: true, mweb: false },
+  features: { taproot: true, mweb: false },
   networks: {
     mainnet: {
       messagePrefix: BTC_MESSAGE,
@@ -70,7 +70,7 @@ export const LTC = {
     dustRelayTxFee: 30000,
     moduleStorageType: 'taproot',
   },
-  features: { segwit: true, taproot: true, mweb: true },
+  features: { taproot: true, mweb: true },
   networks: {
     mainnet: {
       messagePrefix: LTC_MESSAGE,
@@ -111,7 +111,7 @@ export const DOGE = {
     dustRelayTxFee: 10000000,
     moduleStorageType: 'multisig',
   },
-  features: { segwit: true, taproot: false, mweb: false },
+  features: { taproot: false, mweb: false },
   networks: {
     mainnet: {
       messagePrefix: DOGE_MESSAGE,
@@ -151,7 +151,7 @@ export const PEPE = {
     dustRelayTxFee: 10000000,
     moduleStorageType: 'multisig',
   },
-  features: { segwit: true, taproot: false, mweb: false },
+  features: { taproot: false, mweb: false },
   networks: {
     mainnet: {
       messagePrefix: PEPE_MESSAGE,
@@ -189,7 +189,7 @@ export const WOJAK = {
     dustRelayTxFee: 3000,
     moduleStorageType: 'multisig',
   },
-  features: { segwit: true, taproot: false, mweb: false },
+  features: { taproot: false, mweb: false },
   networks: {
     mainnet: {
       messagePrefix: WOJAK_MESSAGE,
