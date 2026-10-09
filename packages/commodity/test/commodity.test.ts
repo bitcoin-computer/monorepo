@@ -421,6 +421,50 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
     })
   })
 
+  // A new Commodity inherits a mint's `_root` only when a method of that mint
+  // is executing the `new`. A sibling constructed beside the call is its own
+  // creation output, so isGenuine() is false.
+  describe('inherited _root', () => {
+    it('a sibling constructed beside a call does not pass isGenuine', async function () {
+      this.timeout(600_000)
+      const { computer, mod: modSpec, mint, subsidy } = await mintClaimAndGet()
+
+      class Holder extends Contract {
+        constructor() {
+          super({})
+        }
+        keep(bag: Commodity) {
+          ;(this as { bag?: Commodity }).bag = bag
+        }
+      }
+
+      const holder = await computer.new(Holder, [])
+      const owner = computer.getPublicKey()
+      const { tx, effect } = await computer.encode({
+        exp:
+          `const c = new Commodity({ to: '${owner}', salt: '', amount: 1000n, mod: '${modSpec}', name: '' });\n` +
+          `h.keep(c);\n` +
+          `m.isGenuine()`,
+        env: { h: holder._rev, m: mint._rev },
+        mod: modSpec,
+      })
+      await computer.broadcast(tx)
+
+      const bag = (effect.env.h as unknown as { bag: SmartContract<typeof Commodity> }).bag
+      expect(bag.salt).to.eq('')
+      expect(bag.amount).to.eq(1000n)
+      expect(bag._root).to.eq(bag._id)
+      expect(bag._root).to.not.eq(mint._root)
+      expect(mint.amount).to.eq(subsidy)
+
+      await mineBlocks(computer, 1)
+      await computer.waitForIndexed(bag._rev)
+      const synced = await computer.sync<typeof Commodity>(bag._rev)
+      expect(synced._root).to.eq(bag._root)
+      expect(await bag.isGenuine()).to.eq(false)
+    })
+  })
+
   // =========================================================================
   // 3. transfer()
   // =========================================================================
