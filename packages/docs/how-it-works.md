@@ -60,6 +60,17 @@ If the value returned from _sync_ contains an object, it has extra properties _\
 - The _revision_ of an object, denoted `obj._rev`, encodes an object's current location on the blockchain.
 - The _root_ of an object, denoted `obj._root`, records whether _obj_ was created in a function call of another object, and if so which object that was.
 
+The root is decided by the code that runs when the object is created:
+
+- If a method or getter of an object `x` is running, the new object gets the root of `x`. This also holds in a nested call: if `pool.pay(token)` calls `token.transfer`, the new object gets the root of `token`.
+- An object created earlier in the same expression has no `_root` until the transaction is built, but the objects its methods create still join its family. A `new` written in the expression is still its own root. Objects created by its methods get that root, and a further call stays in that same root. If a method of `x` created it, its methods pass on the root of `x` instead.
+- In every other case the new object is its own root: `obj._root === obj._id`. This covers a `new` written in the expression, a `new` in an argument (`x.f(new T())`), `new x.constructor(...)`, and a `new` inside a constructor that runs outside any method.
+- Only the synchronous part of a method counts. An object created after the first `await` in an async method is its own root.
+
+The properties `_id`, `_rev` and `_root` are read only from an object's own data. A getter with one of these names on a class is ignored.
+
+A field of a smart-object argument is not checked. Array elements are checked, and a plain object there is refused. A plain object's `valueOf` or getter, reached from a field, runs while your method is still active, so a `new` inside it joins your family. A method or getter of a smart object is its own frame. Before using another object's fields, check its `_root` and the type of the values. An object created in this transaction has no `_root` yet while the method runs, so that check fails closed.
+
 ## Keyword Properties
 
 Smart contracts can contain the keyword properties `_owners`, `_satoshis`, `_url` and `_readers` that determine how the transaction is built. Specifically:
