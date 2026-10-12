@@ -67,7 +67,7 @@ When a module specifier `mod` is supplied to `encode`, all objects that are crea
 
 Other options can customize the funding and signing process. It is also possible to pass in an object specifying [mocked](../../tutorial.md#mocking) objects.
 
-It is important to note that `encode` does not broadcast the transaction. Nonetheless the `effect` object reflects the on-chain state that will emerge once the transaction is broadcast.
+It is important to note that `encode` does not broadcast the transaction. Nonetheless the `effect` object reflects the on-chain state that will emerge once the transaction is broadcast. Until then the objects in `effect` are not on the chain: they cannot be read with `sync`, and another `encode` cannot use their revisions. Broadcast the transaction first.
 
 !!!success
 The state update effected by a Bitcoin Computer transaction is completely predictable:
