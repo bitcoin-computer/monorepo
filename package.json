@@ -52,7 +52,7 @@
     "types": "turbo run types --concurrency=1 --continue=never"
   },
   "dependencies": {
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.28.2",
     "react-router-dom": "^6.23.1"
   },
   "devDependencies": {
