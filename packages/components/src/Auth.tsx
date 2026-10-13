@@ -47,6 +47,29 @@ function logout() {
   window.location.href = '/'
 }
 
+// Same-tab session signal. A `storage` event does not fire in the tab that wrote localStorage.
+const AUTH_LOGIN_EVENT = 'bc-auth-login'
+
+function onLogin(listener: () => void): () => void {
+  const handler = (event: Event) => {
+    event.preventDefault()
+    listener()
+  }
+  window.addEventListener(AUTH_LOGIN_EVENT, handler)
+  return () => window.removeEventListener(AUTH_LOGIN_EVENT, handler)
+}
+
+function emitLogin(): boolean {
+  const event = new CustomEvent(AUTH_LOGIN_EVENT, { cancelable: true })
+  window.dispatchEvent(event)
+  return event.defaultPrevented
+}
+
+function hideSignInModal() {
+  if (!document.getElementById('sign-in-modal')) return
+  Modal.hideModal('sign-in-modal')
+}
+
 function getPath({ chain, network }: { chain?: Chain; network?: Network }): string {
   return getBip44Path({ coinType: getCoinType(chain ?? 'LTC', network ?? 'regtest') })
 }
@@ -82,18 +105,15 @@ function loggedInConfiguration() {
     url: envThenStorage('URL', validUrl),
     // Path is user-owned: valid login value first, then env, else omit (Computer default path).
     path: storageThenEnv('PATH', validPath),
-    moduleStorageType: envThenStorage(
-      'MODULE_STORAGE_TYPE',
-      validModuleStorageType,
-    ) as ModuleStorageType | undefined,
+    moduleStorageType: envThenStorage('MODULE_STORAGE_TYPE', validModuleStorageType) as
+      | ModuleStorageType
+      | undefined,
   })
 }
 
 function getComputer(options: ComputerOptions = {}): Computer {
   const defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration()
-  return new Computer(
-    compactUndefined({ ...defaultConfiguration, ...options }) as ComputerOptions,
-  )
+  return new Computer(compactUndefined({ ...defaultConfiguration, ...options }) as ComputerOptions)
 }
 
 function MnemonicInput({
@@ -373,7 +393,10 @@ function LoginButton({
     persistUserOrClear('PATH', userPath, !!envPath)
     persistUserOrClear('URL', userUrl, !!envUrl)
 
-    window.location.href = '/'
+    hideSignInModal()
+    // Listeners (the explorer) swap in a new Computer without leaving the page.
+    // Apps that capture Auth.getComputer() once still reload, as before.
+    if (!emitLogin()) window.location.href = '/'
   }
 
   return (
@@ -464,6 +487,7 @@ function LoginModal() {
 export const Auth = {
   isLoggedIn,
   logout,
+  onLogin,
   getCoinType,
   getBip44Path,
   defaultConfiguration: loggedOutConfiguration,

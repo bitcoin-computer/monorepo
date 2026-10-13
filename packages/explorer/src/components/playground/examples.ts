@@ -133,6 +133,11 @@ export type ExampleBundle = {
   vars: ExampleVar[]
 }
 
+export function parseExampleId(value: string | null | undefined): ExampleId | null {
+  if (value === 'nft' || value === 'token' || value === 'counter' || value === 'chat') return value
+  return null
+}
+
 export function getExampleBundle(id: ExampleId, ctx: ExampleCtx): ExampleBundle {
   const ex = EXAMPLES[id]
   return {
