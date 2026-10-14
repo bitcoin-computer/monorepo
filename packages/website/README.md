@@ -7,7 +7,7 @@
   </p>
 </div>
 
-The page is [`index.html`](./index.html). Logos and the Formular webfonts are embedded. Screenshots live in [`images/`](./images) and load as the reader reaches them.
+The page is [`index.html`](./index.html). The logo and the Formular webfonts are embedded for display. Screenshots live in [`images/`](./images) and load as the reader reaches them.
 
 The font, color, and component style blocks (`#bc-fonts`, `#bc-tokens`, `#bc-components`) are copied from the [design system](../design-system). That package is the source for those blocks. The `#page` style block belongs to this page.
 
@@ -28,7 +28,5 @@ Follow [deploy.md](./deploy.md). Publishing happens by merging into main and run
 ## License
 
 This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
-
-The page embeds Formular Regular, Italic, Bold, and Mono, a commercial typeface by Brownfox (Gayane Bagdasaryan and Vyacheslav Kirilenko). Public web use of those files requires a web license from [brownfox.org](https://brownfox.org/fonts/formular/).
 
 This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.
