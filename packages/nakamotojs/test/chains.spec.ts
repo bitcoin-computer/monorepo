@@ -209,6 +209,14 @@ describe('chain registry', () => {
       getNetworkConfig('DOGE', 'regtest').defaults.moduleStorageType,
       'multisig',
     );
+    for (const chain of ['DOGE', 'PEPE'] as const) {
+      for (const network of ['mainnet', 'testnet', 'regtest'] as const) {
+        assert.strictEqual(
+          getNetworkConfig(chain, network).defaults.minNonDust,
+          1000000,
+        );
+      }
+    }
     assert.strictEqual(getNetworkConfig('LTC', 'regtest').features.mweb, true);
     assert.strictEqual(
       getNetworkConfig('BTC', 'mainnet').features.taproot,

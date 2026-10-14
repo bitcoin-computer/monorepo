@@ -119,6 +119,8 @@ export const DOGE: ChainConfig = {
   defaults: {
     satPerByte: 3000,
     dustRelayTxFee: 10000000,
+    // Flat 0.01-coin soft dust (Dogecoin and Pepecoin discard threshold).
+    minNonDust: 1000000,
     moduleStorageType: 'multisig',
   },
   features: { taproot: false, mweb: false },
@@ -160,6 +162,8 @@ export const PEPE: ChainConfig = {
   defaults: {
     satPerByte: 3000,
     dustRelayTxFee: 10000000,
+    // Flat 0.01-coin soft dust (Dogecoin and Pepecoin discard threshold).
+    minNonDust: 1000000,
     moduleStorageType: 'multisig',
   },
   features: { taproot: false, mweb: false },

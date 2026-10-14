@@ -16,7 +16,7 @@ For a Bitcoin-family chain, add a builtin `ChainConfig` in NakamotoJS (`ts_src/c
 Typical fields:
 
 - `networks.mainnet | testnet | regtest` — `messagePrefix`, optional `bech32`, `bip32`, `pubKeyHash`, `scriptHash`, `wif`, `coinType` (testnet/regtest are `1`)
-- `defaults` — `satPerByte`, `dustRelayTxFee`, `moduleStorageType` (`taproot` | `multisig`)
+- `defaults` — `satPerByte`, `dustRelayTxFee`, `minNonDust`, `moduleStorageType` (`taproot` | `multisig`)
 - `features` — set `taproot: false` on networks that cannot store modules in taproot (lib will reject `moduleStorageType: 'taproot'`)
 
 ### Parse / index hooks
@@ -27,10 +27,10 @@ The node never branches on chain name in the ingest path. It binds two functions
 const { shouldParse, shouldIndex } = getParsingPolicy(chain, network)
 ```
 
-| Hook | When | Return `false` to |
-|---|---|---|
-| `shouldParse(hex)` | Before `Transaction.fromHex` | Skip unparseable extra-tx formats (e.g. LTC MWEB flags `00`+`08`/`09`). Use `skipAdvancedTx(marker, flags)` or write your own. |
-| `shouldIndex({ txId, height })` | After parse, sync path only | Skip historical duplicates. Use `skipTxsAtHeight([{ txId, height }])`. Omit `height` on ZMQ — skip-by-txid-only is unsafe for BIP30. |
+| Hook                            | When                         | Return `false` to                                                                                                                    |
+| ------------------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `shouldParse(hex)`              | Before `Transaction.fromHex` | Skip unparseable extra-tx formats (e.g. LTC MWEB flags `00`+`08`/`09`). Use `skipAdvancedTx(marker, flags)` or write your own.       |
+| `shouldIndex({ txId, height })` | After parse, sync path only  | Skip historical duplicates. Use `skipTxsAtHeight([{ txId, height }])`. Omit `height` on ZMQ — skip-by-txid-only is unsafe for BIP30. |
 
 Standard clones can omit `parsing` (both hooks default to “accept”). Hooks must be TypeScript functions in the repo (or `registerChain` from a local `import`). Do not load them from JSON or the network.
 
