@@ -224,6 +224,37 @@ describe('chain registry', () => {
     );
   });
 
+  it('deep-freezes the resolved network view', () => {
+    const resolved = getNetworkConfig('BTC', 'mainnet');
+    assert.ok(Object.isFrozen(resolved));
+    assert.ok(Object.isFrozen(resolved.defaults));
+    assert.ok(Object.isFrozen(resolved.features));
+    assert.throws(() => {
+      resolved.defaults.satPerByte = 99;
+    });
+    assert.throws(() => {
+      resolved.features.taproot = false;
+    });
+    assert.strictEqual(
+      getNetworkConfig('BTC', 'mainnet').defaults.satPerByte,
+      2,
+    );
+    assert.strictEqual(
+      getNetworkConfig('BTC', 'mainnet').features.taproot,
+      true,
+    );
+
+    const wojak = getNetworkConfig('WOJAK', 'regtest');
+    assert.ok(Object.isFrozen(wojak.defaults));
+    assert.throws(() => {
+      wojak.defaults.moduleStorageType = 'multisig';
+    });
+    assert.strictEqual(
+      getNetworkConfig('WOJAK', 'regtest').defaults.moduleStorageType,
+      'taproot',
+    );
+  });
+
   it('freezes built-in configs and refuses override', () => {
     const cfg = getChainConfig('BTC');
     assert.ok(Object.isFrozen(cfg));

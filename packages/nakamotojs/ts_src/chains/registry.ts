@@ -347,6 +347,7 @@ export function getNetworkConfig(
     },
     parsing: net.parsing,
   };
-  resolvedCache.set(key, Object.freeze(resolved));
-  return resolved;
+  const frozen = deepFreeze(resolved);
+  resolvedCache.set(key, frozen);
+  return frozen;
 }
