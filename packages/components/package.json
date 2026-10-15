@@ -56,6 +56,7 @@
   },
   "dependencies": {
     "@bitcoin-computer/lib": "^0.27.0-beta.2",
+    "@bitcoin-computer/nakamotojs": "^0.27.0-beta.2",
     "flowbite": "^2.3.0",
     "prismjs": "^1.30.0",
     "qrcode": "^1.5.4",

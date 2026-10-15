@@ -81,6 +81,24 @@ describe('LoginForm derivation path', () => {
     select(container, 'network-mainnet')
     expect(pathInput(container).value).toBe("m/44'/0'/5'")
   })
+
+  it('Should ignore an unregistered BCH chain env and still render', () => {
+    const previousChain = process.env.REACT_APP_CHAIN
+    const previousPath = process.env.REACT_APP_PATH
+    process.env.REACT_APP_CHAIN = 'BCH'
+    delete process.env.REACT_APP_PATH
+    try {
+      const { container } = render(<Auth.LoginForm />)
+      expect(container.querySelector('#chain-ltc')).not.toBeNull()
+      expect(pathInput(container).value).toBe("m/44'/1'/0'")
+      expect(Auth.defaultConfiguration().chain).toBeUndefined()
+    } finally {
+      if (previousChain === undefined) delete process.env.REACT_APP_CHAIN
+      else process.env.REACT_APP_CHAIN = previousChain
+      if (previousPath === undefined) delete process.env.REACT_APP_PATH
+      else process.env.REACT_APP_PATH = previousPath
+    }
+  })
 })
 
 describe('Login session', () => {
