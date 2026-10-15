@@ -16,6 +16,26 @@ function logout() {
     localStorage.removeItem('URL');
     window.location.href = '/';
 }
+// Same-tab session signal. A `storage` event does not fire in the tab that wrote localStorage.
+const AUTH_LOGIN_EVENT = 'bc-auth-login';
+function onLogin(listener) {
+    const handler = (event) => {
+        event.preventDefault();
+        listener();
+    };
+    window.addEventListener(AUTH_LOGIN_EVENT, handler);
+    return () => window.removeEventListener(AUTH_LOGIN_EVENT, handler);
+}
+function emitLogin() {
+    const event = new CustomEvent(AUTH_LOGIN_EVENT, { cancelable: true });
+    window.dispatchEvent(event);
+    return event.defaultPrevented;
+}
+function hideSignInModal() {
+    if (!document.getElementById('sign-in-modal'))
+        return;
+    Modal.hideModal('sign-in-modal');
+}
 function getCoinType(chain = 'LTC', network = 'regtest') {
     if (['testnet', 'regtest'].includes(network))
         return 1;
@@ -129,7 +149,11 @@ function LoginButton({ mnemonic, chain, network, path, url, urlInputRef, onError
         persistUserOrClear('NETWORK', network, !!validNetwork(getEnv('NETWORK')));
         persistUserOrClear('PATH', userPath, !!envPath);
         persistUserOrClear('URL', userUrl, !!envUrl);
-        window.location.href = '/';
+        hideSignInModal();
+        // Listeners (the explorer) swap in a new Computer without leaving the page.
+        // Apps that capture Auth.getComputer() once still reload, as before.
+        if (!emitLogin())
+            window.location.href = '/';
     };
     return (_jsx("button", { onClick: login, type: "submit", className: "w-full text-white bg-blue-3 hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-blue-4 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-3 dark:hover:brightness-90 dark:focus:ring-blue-2", children: "Log In" }));
 }
@@ -154,6 +178,7 @@ function LoginModal() {
 export const Auth = {
     isLoggedIn,
     logout,
+    onLogin,
     getCoinType,
     getBip44Path,
     defaultConfiguration: loggedOutConfiguration,
