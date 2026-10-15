@@ -12,7 +12,7 @@ const PEPE_MESSAGE = '\x19Pepecoin Signed Message:\n';
 const WOJAK_MESSAGE = BTC_MESSAGE;
 const ltcShouldParse = hex => !isMwebTxHex(hex);
 // https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki
-// Duplicate coinbases on BTC mainnet; skip the later occurrence at the given height.
+// Duplicate coinbases on BTC mainnet; skip the earlier occurrence at the given height.
 const BTC_MAINNET_SKIP_TXS = [
   {
     txId: 'e3bf3d07d4b0375638d5f1db5255fe07ba2c4cb067cd81b84ee974b6585fb468',
