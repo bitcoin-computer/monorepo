@@ -22,7 +22,7 @@ export {
 export { OPS as opcodes } from './ops.js';
 export { Transaction } from './transaction.js';
 
-export { Network } from './networks.js';
+export { Network, getBech32Prefix } from './networks.js';
 export {
   Payment,
   PaymentCreator,
@@ -33,3 +33,42 @@ export {
 export { Input as TxInput, Output as TxOutput } from './transaction.js';
 export { initEccLib } from './ecc_lib.js';
 export { bip371 };
+export {
+  BUILTIN_CHAINS,
+  registerChain,
+  getChainConfig,
+  getNetworkConfig,
+  listSupportedChains,
+  isBuiltinChain,
+  ADVANCED_TX_FLAG_OFFSET,
+  ADVANCED_TX_MARKER_OFFSET,
+  ADVANCED_TX_MARKER,
+  MWEB_ADVANCED_TX_FLAG,
+  MWEB_WITNESS_PROGRAM_FLAG,
+  isMwebTxHex,
+  skipAdvancedTx,
+  skipTxsAtHeight,
+  getParsingPolicy,
+  shouldParseTransaction,
+  shouldIndexTransaction,
+  getCoinType,
+  getBip44Path,
+  getPath,
+} from './chains/index.js';
+export type {
+  BuiltinChain,
+  BtcNetworkName,
+  ModuleStorageType,
+  AddressType,
+  NetworkParams,
+  ChainDefaults,
+  ChainFeatures,
+  ShouldParseTx,
+  ShouldIndexTx,
+  ParsingPolicy,
+  ParsingPolicyBound,
+  NetworkConfig,
+  ChainConfig,
+  ResolvedFeatures,
+  ResolvedNetworkConfig,
+} from './chains/index.js';

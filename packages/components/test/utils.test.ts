@@ -84,7 +84,12 @@ describe('config value helpers', () => {
 
   it('rejects invalid chain values', () => {
     expect(validChain('undefined')).to.eq(undefined)
+    expect(validChain('BCH')).to.eq(undefined)
     expect(validChain('LTC')).to.eq('LTC')
+    expect(validChain('BTC')).to.eq('BTC')
+    expect(validChain('DOGE')).to.eq('DOGE')
+    expect(validChain('PEPE')).to.eq('PEPE')
+    expect(validChain('WOJAK')).to.eq('WOJAK')
   })
 
   it('omits undefined keys so Computer defaults are not overwritten', () => {
