@@ -31,9 +31,16 @@ Validation is performed on all parameters to ensure proper format and type.
 | `isSpent`     | `boolean`  | Filter spent/unspent outputs.                      |
 | `isConfirmed` | `boolean`  | Filter confirmed/unconfirmed outputs.              |
 | `publicKey`   | `string`   | Public key in hex format.                          |
-| `limit`       | `number`   | Maximum number of results (must not exceed limit). |
+| `limit`       | `number`   | Maximum number of results. Omitted means every match. Required, and at most `BCN_MAX_QUERY_LIMIT`, only when that variable is set. |
 | `offset`      | `number`   | Number of items to skip (must be non-negative).    |
 | `order`       | `string`   | Sort order: `"ASC"` or `"DESC"`.                   |
+| `orderBy`     | `string`   | `"rev"` (default) or `"timestamp"`.                |
+
+An omitted `limit` is the whole match set. An explicit `limit` is that many rows. Use `offset` to skip rows. A shorter response than the requested `limit` is the end of the set. There is no fixed page size.
+
+When `BCN_MAX_QUERY_LIMIT` is set, `limit` is required and must be an integer no larger than that value. A missing or larger `limit` is `400` with code `QUERY_LIMIT`, and the query does not run. See [Query limit](./operations.md#query-limit).
+
+`Computer.getTXOs`, `getUTXOs`, `getOTXOs`, `getOUTXOs`, and in-contract `getTXOs` send one request. With no `limit`, the result is every match. An explicit `limit` and `offset` is that window. A failed request returns nothing.
 
 ## Example
 

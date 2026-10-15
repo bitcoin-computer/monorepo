@@ -316,6 +316,33 @@ export type JsonArray = readonly Json[]
 export type SmartJson = JsonPrimitive | SmartContract | SmartJsonArray
 export type SmartJsonArray = readonly SmartJson[]
 export type InformationValue = string | number | boolean | bigint | null | InformationValue[]
+export type Jsonify<T, Seen = never> = T extends any ? JsonifyValue<T, Seen> : never
+type JsonifyValue<T, Seen> = T extends (...args: any[]) => any
+  ? never
+  : T extends bigint | boolean | number | string | null | undefined
+    ? T
+    : T extends Date
+      ? string
+      : T extends readonly any[]
+        ? number extends T['length']
+          ? T extends readonly (infer U)[]
+            ? readonly Jsonify<U, Seen>[]
+            : never
+          : JsonifyTuple<T, Seen>
+        : T extends object
+          ? T extends Seen
+            ? Json
+            : JsonifyObject<T, Seen | T>
+          : never
+type JsonifyTuple<T extends readonly any[], Seen> = {
+  [K in keyof T]: Jsonify<T[K], Seen>
+}
+type JsonifyObject<T, Seen> = {
+  [
+    K in keyof T as K extends string ? (Jsonify<T[K], Seen> extends never ? never : K) : never
+  ]: Jsonify<T[K], Seen>
+}
+export type JsonData<T extends Class = any> = Compute<Jsonify<InstanceType<T>>>
 export declare const isJsonUndefined: (a: unknown) => a is undefined
 export declare const isJsonNull: (a: unknown) => a is null
 export declare const isJsonBoolean: (a: unknown) => a is boolean
