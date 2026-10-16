@@ -69,7 +69,7 @@ The root is decided by the code that runs when the object is created:
 
 The properties `_id`, `_rev` and `_root` are read only from an object's own data. A getter with one of these names on a class is ignored.
 
-A field of a smart-object argument is not checked. Array elements are checked, and a plain object there is refused. A plain object's `valueOf` or getter, reached from a field, runs while your method is still active, so a `new` inside it joins your family. A method or getter of a smart object is its own frame. Before using another object's fields, check its `_root` and the type of the values. An object created in this transaction has no `_root` yet while the method runs, so that check fails closed.
+A field of a smart-object argument is not checked. Array elements are checked, and a plain object there is refused. A plain object's `valueOf` or getter, reached from a field, runs while your method is still active, so a `new` inside it joins your family. A method or getter of a smart object is its own frame. Before using another object's fields, check its `_root` and the type of the values. A missing `_root` fails that check only when the receiver's `_root` is already a string. If the receiver was created in this expression, both sides are still unset and compare equal, so that is not proof of family.
 
 ## Keyword Properties
 
