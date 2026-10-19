@@ -32,7 +32,7 @@ Most APIs require the referenced transaction to be **in a block** before the cal
 | `last`                                      | Start and result confirmed; tip must be **spent confirmed** (not a live unspent tip)            |
 | Block time/height/hash of a tx              | Tx confirmed                                                                                    |
 | `getBlockHash(height)`                      | Height ≤ tip; not future                                                                        |
-| `getTXOs` (+ aliases)                       | Stabilizer required. No `limit`: every rev-ordered match, in one request. An explicit `limit` is a window |
+| `getTXOs`, `getOTXOs`                       | Stabilizer required. No `limit`: every rev-ordered match, in one request. An explicit `limit` is a window |
 
 `latest` is **not** exposed inside contracts (the live tip is non-deterministic under chain extension).
 
@@ -92,7 +92,7 @@ The formatter is idempotent (already-suffixed strings are not doubled). Match wi
 - Confirm module deploys before contract `load`.
 - Confirm object revisions before history walks or escrow audits.
 - For terminal `last` checks, spend the tip (e.g. `delete`) and wait for confirmation.
-- Stabilize in-contract TXO queries with a historical height or block hash; empty result sets with a valid stabilizer are fine (wait for indexing if apps/tests expect a known object to appear).
+- Stabilize in-contract TXO queries with a historical height or block hash. An empty result is valid only inside the indexed prefix; a stabilizer ahead of the indexed tip invalidates instead of returning an empty set.
 - In-contract `getTXOs` uses the same one-request read as off-chain `Computer.getTXOs`. With no `limit`, a successful result is every match. A failed request, including a query-limit rejection or a rate limit, rejects the transition instead of shortening the list. See [Query limit](../../Node/operations.md#query-limit).
 - Escrow / chess flows: cancel or settle, **wait for confirmation**, then `withdraw` / refund (cancel and withdraw cannot be one atomic observation of unconfirmed tip spend).
 - Do not ship contract methods that call `console.*` if they must run under `mode: 'prod'`.

@@ -40,7 +40,7 @@ An omitted `limit` is the whole match set. An explicit `limit` is that many rows
 
 When `BCN_MAX_QUERY_LIMIT` is set, `limit` is required and must be an integer no larger than that value. A missing or larger `limit` is `400` with code `QUERY_LIMIT`, and the query does not run. See [Query limit](./operations.md#query-limit).
 
-`Computer.getTXOs`, `getUTXOs`, `getOTXOs`, `getOUTXOs`, and in-contract `getTXOs` send one request. With no `limit`, the result is every match. An explicit `limit` and `offset` is that window. A failed request returns nothing.
+`Computer.getTXOs`, `getUTXOs`, `getOTXOs`, `getOUTXOs`, and in-contract `getTXOs` send one request. With no `limit`, the result is every match. An explicit `limit` and `offset` is that window. The outer call fails and does not return a partial list. The same failure invalidates an in-contract transition.
 
 ## Example
 

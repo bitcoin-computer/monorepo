@@ -242,7 +242,7 @@ The architecture is designed for robustness, scalability, and real-time responsi
 
 You can configure several options by editing the `.env` file. See the [example](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/chain-setup/LTC/regtest/.env.example) for details.
 
-[`get-txos`](./get-txos.md) and [`modules`](./modules.md) return every match when `limit` is omitted. Set `BCN_MAX_QUERY_LIMIT` to require a `limit` no larger than that value. `Computer.getTXOs` (and `getUTXOs`, `getOTXOs`, `getOUTXOs`) and `getModules`, including in-contract `getTXOs`, make one request for that window or, when `limit` is omitted, the whole set. A failed request returns nothing. See [Query limit](./operations.md#query-limit).
+[`get-txos`](./get-txos.md) and [`modules`](./modules.md) return every match when `limit` is omitted. Set `BCN_MAX_QUERY_LIMIT` to require a `limit` no larger than that value. `Computer.getTXOs` (and `getUTXOs`, `getOTXOs`, `getOUTXOs`) and `getModules`, including in-contract `getTXOs`, make one request for that window or, when `limit` is omitted, the whole set. The outer call fails and does not return a partial list. The same failure invalidates an in-contract transition. See [Query limit](./operations.md#query-limit).
 
 <font size=1>
 
