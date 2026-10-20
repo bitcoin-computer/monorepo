@@ -37,7 +37,7 @@ async getModules(q?: ModuleQuery): Promise<string[] | ModuleRecord[]>
 | Key         | Description                                                                                     |
 | ----------- | ----------------------------------------------------------------------------------------------- |
 | verbosity   | `0` (default): module specifier strings. `1`: full `ModuleRecord` rows including source (`ept`) |
-| limit       | Maximum number of results                                                                       |
+| limit       | Maximum number of results. Omitted means every match, in one request. Required only when the node sets `BCN_MAX_QUERY_LIMIT` |
 | offset      | Number of results to skip                                                                       |
 | order       | Sort by node insert timestamp: `ASC` or `DESC` (default `DESC`)                                 |
 | storageType | Filter by on-chain encoding: `multisig` or `taproot`                                            |
@@ -50,7 +50,7 @@ async getModules(q?: ModuleQuery): Promise<string[] | ModuleRecord[]>
 
 ## Description
 
-Calls the node’s [`GET /modules`](../../Node/modules.md) endpoint. The node indexes **module deploys** (multisig cleartext `{ ept }` or taproot `BC` witness) into its `Module` table when they appear in the mempool or a block.
+Calls the node’s [`GET /modules`](../../Node/modules.md) endpoint once. The node indexes **module deploys** (multisig cleartext `{ ept }` or taproot `BC` witness) into its `Module` table when they appear in the mempool or a block. An omitted `limit` is every indexed module. An explicit `limit` and `offset` is that window. A failed request fails the call and does not return a partial list. When the node sets `BCN_MAX_QUERY_LIMIT`, `limit` is required and must not exceed it. See [Query limit](../../Node/operations.md#query-limit).
 
 This method does **not** evaluate modules. Use [`load`](./load.md) to import exports in a SES compartment. Use [`getModule`](./getModule.md) for a single known specifier.
 
