@@ -61,7 +61,7 @@
     "@bitcoin-computer/nakamotojs": "^0.27.0-beta.2",
     "@bitcoin-computer/secp256k1": "^0.27.0-beta.2",
     "@types/node": "^20.11.20",
-    "axios": "1.20.0",
+    "axios": "1.16.1",
     "bitcoind-rpc": "^0.9.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
