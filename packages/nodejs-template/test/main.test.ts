@@ -28,20 +28,20 @@ const _ = chaiMatchPattern.getLodashModule()
 
 describe('Bitcoin Computer', () => {
   it('should export a function', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    // eslint-disable-next-line
     expect(Computer).not.to.be.undefined
     expect(typeof Computer).eq('function')
   })
 
   it('should create a computer object', () => {
     const computer = new Computer({ url, chain })
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    // eslint-disable-next-line
     expect(computer).not.to.be.undefined
     expect(typeof computer).eq('object')
   })
 
   it('should create a JavaScript object', () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
+    // eslint-disable-next-line
     expect(Counter).not.to.be.undefined
     expect(typeof Counter).eq('function')
     const counter = new Counter()

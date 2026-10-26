@@ -89,7 +89,7 @@ export class TBC20 extends Contract {
     this.amount -= amount
 
     const ctor = this.constructor as Constructor<this>
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line
     const { _id, _root, _rev, _owners, ...cleanState } = this
     return new ctor({ ...cleanState, to, amount })
   }
