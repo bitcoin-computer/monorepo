@@ -20,7 +20,8 @@ const network = process.env.BCN_NETWORK
 describe('List', () => {
   it('Should work', async () => {
     const computer = new Computer({ url, chain, network })
-    await computer.faucet(1e8)
+    const u = await computer.faucet(1e8)
+    await computer.waitForIndexed(u.txId)
     const list = await computer.new(List, [])
     expect(list.elements).deep.eq([])
     await list.add('k')
