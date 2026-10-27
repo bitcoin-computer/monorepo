@@ -1,26 +1,29 @@
 <div align="center">
   <h1>Bitcoin Computer Website</h1>
   <p>
-    The official Bitcoin Computer Website
+    The official Bitcoin Computer website
     <br />
-    <a href="http://bitcoincomputer.io/">website</a> &#183; <a href="http://docs.bitcoincomputer.io/">docs</a>
+    <a href="https://www.bitcoincomputer.io/">website</a> &#183; <a href="https://docs.bitcoincomputer.io/">docs</a> &#183; <a href="../design-system/">design system</a>
   </p>
 </div>
 
-> [!NOTE]
-> Intended for internal use.
+The page is [`index.html`](./index.html). The logo and the Formular webfonts are embedded for display. Screenshots live in [`images/`](./images) and load as the reader reaches them.
 
-## Usage
+The font, color, and component style blocks (`#bc-fonts`, `#bc-tokens`, `#bc-components`) are copied from the [design system](../design-system). That package is the source for those blocks. The `#page` style block belongs to this page.
 
-### Run Locally
+## Preview
 
-```
+Open `index.html` in a browser, or from this directory:
+
+```sh
 npm start
 ```
 
-### Deploy
+Then open [http://127.0.0.1:4173](http://127.0.0.1:4173).
 
-To deploy a new version merge a pull request into main.
+## Deploy
+
+Follow [deploy.md](./deploy.md). Publishing happens by merging into main and running the deploy script, which publishes `index.html` to GitHub Pages.
 
 ## License
 

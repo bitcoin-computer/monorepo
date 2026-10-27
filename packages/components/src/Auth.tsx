@@ -1,5 +1,6 @@
 import { Dispatch, useEffect, useRef, useState } from 'react'
 import { Computer } from '@bitcoin-computer/lib'
+import { getBip44Path, getCoinType } from '@bitcoin-computer/nakamotojs'
 import { initFlowbite } from 'flowbite'
 import { HiRefresh } from 'react-icons/hi'
 import { Modal } from './Modal'
@@ -46,25 +47,31 @@ function logout() {
   window.location.href = '/'
 }
 
-function getCoinType(chain: string = 'LTC', network: string = 'regtest'): number {
-  if (['testnet', 'regtest'].includes(network)) return 1
+// Same-tab session signal. A `storage` event does not fire in the tab that wrote localStorage.
+const AUTH_LOGIN_EVENT = 'bc-auth-login'
 
-  if (chain === 'BTC') return 0
-  if (chain === 'LTC') return 2
-  if (chain === 'DOGE') return 3
-  if (chain === 'PEPE') return 3434
-  if (chain === 'BCH') return 145
-  if (chain === 'WOJAK') return 20760
-
-  throw new Error(`Unsupported chain ${chain} or network ${network}`)
+function onLogin(listener: () => void): () => void {
+  const handler = (event: Event) => {
+    event.preventDefault()
+    listener()
+  }
+  window.addEventListener(AUTH_LOGIN_EVENT, handler)
+  return () => window.removeEventListener(AUTH_LOGIN_EVENT, handler)
 }
 
-function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
-  return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
+function emitLogin(): boolean {
+  const event = new CustomEvent(AUTH_LOGIN_EVENT, { cancelable: true })
+  window.dispatchEvent(event)
+  return event.defaultPrevented
+}
+
+function hideSignInModal() {
+  if (!document.getElementById('sign-in-modal')) return
+  Modal.hideModal('sign-in-modal')
 }
 
 function getPath({ chain, network }: { chain?: Chain; network?: Network }): string {
-  return getBip44Path({ coinType: getCoinType(chain, network) })
+  return getBip44Path({ coinType: getCoinType(chain ?? 'LTC', network ?? 'regtest') })
 }
 
 function envThenStorage(name: string, validate: (value: unknown) => string | undefined) {
@@ -98,18 +105,15 @@ function loggedInConfiguration() {
     url: envThenStorage('URL', validUrl),
     // Path is user-owned: valid login value first, then env, else omit (Computer default path).
     path: storageThenEnv('PATH', validPath),
-    moduleStorageType: envThenStorage(
-      'MODULE_STORAGE_TYPE',
-      validModuleStorageType,
-    ) as ModuleStorageType | undefined,
+    moduleStorageType: envThenStorage('MODULE_STORAGE_TYPE', validModuleStorageType) as
+      | ModuleStorageType
+      | undefined,
   })
 }
 
 function getComputer(options: ComputerOptions = {}): Computer {
   const defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration()
-  return new Computer(
-    compactUndefined({ ...defaultConfiguration, ...options }) as ComputerOptions,
-  )
+  return new Computer(compactUndefined({ ...defaultConfiguration, ...options }) as ComputerOptions)
 }
 
 function MnemonicInput({
@@ -389,7 +393,10 @@ function LoginButton({
     persistUserOrClear('PATH', userPath, !!envPath)
     persistUserOrClear('URL', userUrl, !!envUrl)
 
-    window.location.href = '/'
+    hideSignInModal()
+    // Listeners (the explorer) swap in a new Computer without leaving the page.
+    // Apps that capture Auth.getComputer() once still reload, as before.
+    if (!emitLogin()) window.location.href = '/'
   }
 
   return (
@@ -480,6 +487,7 @@ function LoginModal() {
 export const Auth = {
   isLoggedIn,
   logout,
+  onLogin,
   getCoinType,
   getBip44Path,
   defaultConfiguration: loggedOutConfiguration,
