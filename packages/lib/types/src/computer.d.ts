@@ -169,6 +169,8 @@ declare class Computer {
   txIdToBlockHeight(txId: string): Promise<number>
   txIdToBlockHash(txId: string): Promise<string | undefined>
   getBlockHash(height: number): Promise<string>
+  getIndexedTip(): Promise<number>
+  getIndexedBlockHash(height: number): Promise<string>
   getBlockHeight(hash: string): Promise<number>
   getRawTransaction(txId: string): Promise<string>
   getRawBlock(blockHash: string): Promise<string>

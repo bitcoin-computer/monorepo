@@ -128,7 +128,7 @@ export function getEnv(name: string) {
 /** BIP32 path accepted by the login form and by nakamotojs. */
 export const BIP32_PATH_PATTERN = /^(m\/)?(\d+'?\/)*\d+'?$/
 
-const CHAINS = new Set(['LTC', 'BTC', 'DOGE', 'PEPE', 'WOJAK', 'BCH'])
+const CHAINS = new Set(['LTC', 'BTC', 'DOGE', 'PEPE', 'WOJAK'])
 const NETWORKS = new Set(['testnet', 'mainnet', 'regtest'])
 
 /** Reject null, empty, and the string "undefined"/"null" that localStorage.setItem produces. */

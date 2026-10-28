@@ -40,7 +40,7 @@ call may succeed:
 | `last` | Start and result confirmed; tip must be **spent confirmed** (not live unspent tip) |
 | Block time/height/hash of a tx | Tx confirmed |
 | `getBlockHash(height)` | Height ≤ tip; not future |
-| `getTXOs` (+ aliases) | Stabilizer: `lteBlockHeight` / `blockHeight` / `blockHash` |
+| `getTXOs`, `getOTXOs` | Stabilizer: `lteBlockHeight` / `blockHeight` / `blockHash` |
 
 `latest` is **not** exposed inside contracts.
 
@@ -86,7 +86,8 @@ stricter surface. Full method tables: `packages/docs/Lib/Contract/`.
 - Confirm deploys before `load` in contracts.
 - Confirm object revisions before history walks or escrow audits.
 - For terminal `last` checks, spend the tip and wait for confirmation.
-- Stabilize in-contract TXO queries with a historical height or block hash;
-  empty results with a valid stabilizer are allowed.
+- Stabilize in-contract TXO queries with a historical height or block hash.
+  An empty result is valid only inside the indexed prefix; a stabilizer ahead
+  of the indexed tip invalidates instead of returning an empty set.
 - Escrow/chess apps: cancel or settle, wait for confirmation, then
   `withdraw` / refund.

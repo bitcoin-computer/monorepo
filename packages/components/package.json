@@ -35,7 +35,9 @@
   },
   "typesVersions": {
     "*": {
-      "utils": ["./built/common/utils.d.ts"]
+      "utils": [
+        "./built/common/utils.d.ts"
+      ]
     }
   },
   "files": [
@@ -54,6 +56,7 @@
   },
   "dependencies": {
     "@bitcoin-computer/lib": "^0.27.0-beta.2",
+    "@bitcoin-computer/nakamotojs": "^0.27.0-beta.2",
     "flowbite": "^2.3.0",
     "prismjs": "^1.30.0",
     "qrcode": "^1.5.4",
@@ -70,6 +73,6 @@
     "@types/qrcode": "^1.5.6",
     "@typescript-eslint/eslint-plugin": "^8.35.0",
     "jsdom": "^25.0.0",
-    "vitest": "^2.0.5"
+    "vitest": "^4.1.11"
   }
 }
