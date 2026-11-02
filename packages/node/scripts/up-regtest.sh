@@ -77,6 +77,25 @@ set_key() {
   mv "$tmp" "$file"
 }
 
+# node-secret tests dial the chain named in .env on its example host ports
+# (Postgres 5432, BCN 1031, ZMQ 28332). Start that chain first so only the
+# others move to the next free host port. npm run up publishes the same ports.
+home_chain=$(env_value .env BCN_CHAIN)
+home_chain=$(printf '%s' "${home_chain:-LTC}" | tr '[:lower:]' '[:upper:]')
+home_first=''
+others=''
+placed_home=0
+for raw in $chain_list; do
+  chain=$(printf '%s' "$raw" | tr '[:lower:]' '[:upper:]')
+  if [ "$placed_home" -eq 0 ] && [ "$chain" = "$home_chain" ]; then
+    home_first=$chain
+    placed_home=1
+  else
+    others="$others $chain"
+  fi
+done
+chain_list="$home_first$others"
+
 seen_chains=''
 used_bcn=''
 used_pg=''
