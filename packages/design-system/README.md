@@ -7,20 +7,20 @@
   </p>
 </div>
 
-[`index.html`](./index.html) is the brand book for people and the specification for build tools. Nothing in that file is loaded from the network. Logos and the Formular webfonts are embedded in it. [`assets/`](./assets) holds the logo, the palette, and the illustrations as ordinary files.
+[`index.html`](./index.html) is the brand book for people and the specification for build tools. Nothing in that file is loaded from the network. Logo files are embedded in it. [`assets/`](./assets) holds the logo, the palette, and the illustrations as ordinary files.
 
 The specification inside the file is version 1.0.0, dated 2026-09-22. The `package.json` version follows the monorepo release.
 
 ## Where the data is
 
-| Location | Contents |
-| --- | --- |
-| `script#bc-design-system` | The specification, as JSON. If the prose and the JSON disagree, the JSON wins. |
-| `style#bc-fonts` | `@font-face` rules for Formular Regular, Italic, Bold, and Mono |
-| `style#bc-tokens` | Colors, roles, spacing, radius, and layout, for light and dark |
-| `style#bc-components` | Reference component CSS. Class prefix `bc-` |
-| `style#bc-book` | Styles for this document only |
-| `[data-asset]` | Previews and download links for each embedded asset |
+| Location                  | Contents                                                                                                              |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `script#bc-design-system` | The specification, as JSON. If the prose and the JSON disagree, the JSON wins.                                        |
+| `style#bc-fonts`          | `@font-face` rules for Formular Regular, Italic, Bold, and Mono. Used to display this page. Not a downloadable asset. |
+| `style#bc-tokens`         | Colors, roles, spacing, radius, and layout, for light and dark                                                        |
+| `style#bc-components`     | Reference component CSS. Class prefix `bc-`                                                                           |
+| `style#bc-book`           | Styles for this document only                                                                                         |
+| `[data-asset]`            | Previews and download links for each embedded asset                                                                   |
 
 Parse the JSON with `document.getElementById('bc-design-system').textContent`. Without a DOM, take the text from the end of the opening `script` tag whose id is `bc-design-system` up to the next `</script>`.
 
@@ -36,12 +36,12 @@ Then open [http://127.0.0.1:4174](http://127.0.0.1:4174).
 
 ## Brand files
 
-| Folder | Contents |
-| --- | --- |
-| [`assets/logo`](./assets/logo) | Wordmark and mark, in blue, black, and white. SVG, PNG, and PDF. |
-| [`assets/aliens`](./assets/aliens) | The glyph illustrations, as PNG. |
+| Folder                             | Contents                                                                                                                                         |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [`assets/logo`](./assets/logo)     | Wordmark and mark, in blue, black, and white. SVG, PNG, and PDF.                                                                                 |
+| [`assets/aliens`](./assets/aliens) | The glyph illustrations, as PNG.                                                                                                                 |
 | [`assets/colors`](./assets/colors) | The palette the tokens are built from. Every swatch on the sheet is in the JSON. The JSON also has the derived tints and the dark-mode surfaces. |
-| [`assets/social`](./assets/social) | The X header and the Open Graph image. |
+| [`assets/social`](./assets/social) | The X header and the Open Graph image.                                                                                                           |
 
 ## Using it from another package
 
@@ -52,7 +52,5 @@ Product pages pick colors by role (`tokens.roles`), use the type scale, and foll
 ## License
 
 This software is licensed under the MIT License. See the [LICENSE.md](./LICENSE.md) file.
-
-Formular is a commercial typeface by Brownfox (Gayane Bagdasaryan and Vyacheslav Kirilenko). `index.html` embeds the Regular, Italic, Bold, and Mono webfonts. The font files themselves are not in `assets/`. Public web use requires a web license from [brownfox.org](https://brownfox.org/fonts/formular/).
 
 This software includes patented technology that requires payment for use on mainnet or production environments. Please review the [LEGAL.md](./LEGAL.md) file for details on patent usage and payment requirements.
