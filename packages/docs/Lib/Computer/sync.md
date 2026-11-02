@@ -38,6 +38,8 @@ If the function is called with a transaction id, it returns an object of type `{
 
 The location’s transaction must be **confirmed**. Missing or mempool-only locations invalidate the contract evaluation. Objects returned inside contracts are deep-cloned plain data (not live proxies for mutation). See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
 
+`computer.sync(chain, location)` reads one confirmed object on another built-in chain. `chain` is that chain’s name (`'BTC'`, any case). `location` is a transaction id or `txid:vout` on that chain. The node URL comes from the computer’s `remoteChains` configuration, not from the contract. The result is the same plain JSON as a one-argument `sync`: methods are removed, `bigint` is kept, and `_rev` stays `txid:vout` with no chain prefix. One-argument `sync`, including `sync('BTC')`, is still a read on this computer’s own chain. Passing this computer’s own chain name uses that same one-argument read. An unknown chain, a chain with no `remoteChains` entry, or a location that is not a transaction id or revision invalidates the evaluation.
+
 <!-- TODO: explain other type of errors:
 - code validation errors like super not allowed
 - validate that the object re-created with the contract matches the object stored at that location

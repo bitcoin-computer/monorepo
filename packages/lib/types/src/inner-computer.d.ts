@@ -1,11 +1,13 @@
 import {
   Chain,
   BtcNetwork,
+  Mode,
   TransitionJSON,
   TXORecord,
   PublicKeyString,
   Class,
   JsonData,
+  RemoteChainConfig,
 } from './types.js'
 export type InnerTXOQuery = {
   verbosity?: 0 | 1
@@ -29,10 +31,28 @@ export type InnerTXOQuery = {
   blockIndex?: number
 }
 export declare const INNER_TXO_QUERY_KEYS: (keyof InnerTXOQuery)[]
+export type InnerComputerOptions = {
+  chain: Chain
+  network: BtcNetwork
+  url: string
+  mode?: Mode
+  remoteChains?: Partial<Record<Chain, RemoteChainConfig>>
+  readOnly?: boolean
+  onCallError?: (err: unknown) => void
+}
+export declare let lastInnerComputerOpts: InnerComputerOptions | undefined
 export declare class InnerComputer {
   private readonly c
-  constructor({ chain, network, url }: { chain: Chain; network: BtcNetwork; url: string })
+  private readonly onCallError?
+  private readonly foreignInners
+  constructor(opts: InnerComputerOptions)
+  private _chainArg
+  private _useForeign
+  private _foreignInner
+  private _tie
   sync<T extends Class = any>(location: string): Promise<JsonData<T>>
+  sync<T extends Class = any>(chain: Chain, location: string): Promise<JsonData<T>>
+  private _syncLocation
   decode(txId: string): Promise<TransitionJSON>
   load(location: string): Promise<Record<string, any>>
   getAncestors(location: string): Promise<string[]>

@@ -14,7 +14,9 @@ new (config: {
   addressType?: 'p2pkh' | 'p2wpkh' | 'p2tr',
   url?: string,
   satPerByte?: number,
-  moduleStorageType?: 'taproot' | 'multisig'
+  moduleStorageType?: 'taproot' | 'multisig',
+  remoteChains?: { [chain: string]: { url: string } },
+  readOnly?: boolean
 }) => Computer
 ```
 
@@ -36,6 +38,8 @@ A configuration object with the properties listed below. All properties are opti
 | url | Url of a Bitcoin Computer Node | `https://rltc.node.bitcoincomputer.io` |
 | satPerByte | Fee in satoshi per byte | `2` |
 | moduleStorageType | Store JavaScript modules on Taproot (`taproot`) or bare multisig (`multisig`). Taproot (default where available) produces *no* hygiene dust outputs for the module encoding txs and supports larger modules (with SegWit discount) but uses a two-tx pattern with a `BC` protocol witness envelope. Multisig uses single-tx cleartext `{ ept }` data outputs (with hygiene dust). Choose based on minimization goals and high-throughput single-tx UX needs. See [deploy](./deploy.md) and [Fees](../../fees.md) "User Choices..." section. | `taproot` |
+| remoteChains | Other built-in chains a contract may read with `computer.sync(chain, location)`. Each entry is `{ url }` for one node: absolute `http` or `https` origin, optional port, no userinfo, path, query, hash, or trailing slash. The computer’s own chain is not a key; set `url` for that node. Omitted means contracts cannot read another chain. | omitted |
+| readOnly | When `true`, this computer can read and replay but cannot fund, sign, broadcast, send, faucet, or create a new transition. Leave this unset on a computer that deploys contracts. Clients used for another chain are read-only. | `false` |
 
 ### Return Value
 
