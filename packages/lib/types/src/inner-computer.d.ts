@@ -37,7 +37,6 @@ export type InnerComputerOptions = {
   url: string
   mode?: Mode
   remoteChains?: Partial<Record<Chain, RemoteChainConfig>>
-  readOnly?: boolean
   onCallError?: (err: unknown) => void
 }
 export declare let lastInnerComputerOpts: InnerComputerOptions | undefined
