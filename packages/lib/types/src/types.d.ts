@@ -386,7 +386,6 @@ export type ComputerOptions = Partial<{
   checkFee: boolean
   mode: Mode
   remoteChains?: Partial<Record<Chain, RemoteChainConfig>>
-  readOnly?: boolean
 }>
 export interface ApiBalance {
   confirmed: string
