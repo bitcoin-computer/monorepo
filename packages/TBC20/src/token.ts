@@ -58,10 +58,6 @@ export class TBC20 extends Contract {
    * For a partial transfer the value is split off into a new token instance for
    * the recipient. Subclasses can customize that token by overriding
    * `_createTransferToken`.
-   *
-   * NOTE: Subclasses that must sanitize per-instance state on transfer (e.g.
-   * TBC777, which strips escrow/claim history) override this method to route
-   * full transfers through `_createTransferToken` as well.
    */
   transfer(to: string, amount?: bigint): this | undefined {
     if (typeof amount === 'undefined') {
