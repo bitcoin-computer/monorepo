@@ -259,15 +259,14 @@ export class Commodity extends TBC777 {
 
   /**
    * Same module (non-empty `mod`, stamped by claim) and both genuine.
-   * Fakes can pass a `mod` through the child constructor path; isGenuine()
-   * rejects those. A synced revision has the fields and no methods, so the
-   * salt check is applied to its `_root` directly.
+   * Fakes can pass a `mod` through the child constructor path; the salt check
+   * rejects those. The other bag is checked by the salt stored on its `_root`,
+   * never by calling one of its methods, which its own class or fields decide.
    */
   protected async isFungibleWith(other: TBC20): Promise<boolean> {
     const o = other as Commodity
     if (!this.mod || this.mod !== o.mod) return false
     if (!(await this.isGenuine())) return false
-    if (typeof o.isGenuine === 'function') return o.isGenuine()
     const root = o._root === o._rev ? o : await computer.sync<typeof Commodity>(o._root)
     return !!root.salt
   }

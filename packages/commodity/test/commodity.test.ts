@@ -651,6 +651,31 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       }
     })
 
+    it('rejects an empty-salt bag whose class answers isGenuine itself', async () => {
+      const { computer, mod: modSpec, mint } = await mintClaimAndGet()
+      // Merge reads the salt stored on the other bag's _root. It calls no method of that bag.
+      const exp = `class OwnAnswer extends Commodity {
+          async isGenuine() { return true }
+        }
+        new OwnAnswer({ to: '${computer.getPublicKey()}', salt: '', amount: 1n, mod: '${modSpec}' })`
+      const { tx, effect } = await computer.encode({ exp, mod: modSpec })
+      await computer.broadcast(tx)
+      await computer.waitForIndexed(tx.getId())
+      const other = effect.res as SmartContract<typeof Commodity>
+      expect(other.mod).to.eq(modSpec)
+
+      const before = mint.amount
+      expect(await mint.isEqualTo(other)).to.eq(false)
+      try {
+        await mint.merge([other])
+        expect.fail('should have thrown')
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err)
+        expect(message).to.include('Cannot merge')
+      }
+      expect(mint.amount).to.eq(before)
+    })
+
     it('claim() stamps mod from the creation tx (caller-supplied mod on a mint is ignored)', async () => {
       const computer = await fundedComputer()
       const modSpec = await deployCommodity(computer)
