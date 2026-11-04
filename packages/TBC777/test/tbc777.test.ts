@@ -908,6 +908,30 @@ describe('TBC777 - Programmable Escrow Token (No-Inflation Focus)', () => {
       expect(child.amount).to.eq(0n)
     })
 
+    it('merge() refuses a bag of another lineage whose class reports the same root', async () => {
+      const token = await createFreshToken(10n)
+
+      // `root` is a getter, so a class can return any value from it. Merge reads `_root`.
+      const exp = `class NamedRoot extends TBC777 {
+          get root() { return this.namedRoot }
+        }
+        new NamedRoot({ to: '${minter.getPublicKey()}', amount: 4n, name: '${TEST_NAME}', symbol: '${TEST_SYMBOL}', namedRoot: '${token.root}' })`
+      const { tx, effect } = await minter.encode({ exp, mod })
+      await minter.broadcast(tx)
+      await minter.waitForIndexed(tx.getId())
+      const other = effect.res as SmartContract<typeof TBC777>
+      expect(other.root).to.eq(token.root)
+      expect(other._root).to.not.eq(token._root)
+
+      try {
+        await token.merge([other])
+        expect.fail('merge() should have thrown')
+      } catch (e: any) {
+        expect(e.message).to.equal('Cannot merge tokens from different lineages')
+      }
+      expect(token.amount).to.eq(10n)
+    })
+
     it('merge() refuses bags with escrow history', async () => {
       const escrow = await createNaiveEscrow()
       const token = await createFreshToken(10n)

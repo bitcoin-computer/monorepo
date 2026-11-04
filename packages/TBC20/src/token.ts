@@ -24,8 +24,9 @@ export class TBC20 extends Contract {
   _owners!: string[]
 
   /**
-   * Fungibility identifier. TBC20 uses the object `_root` (one mint = one token).
+   * Token identifier. TBC20 uses the object `_root` (one mint = one token).
    * Subclasses may override (TBC777: remoteRoot; Commodity: module specifier).
+   * `merge` does not read it: see `isFungibleWith`.
    */
   get root(): string {
     return this._root
@@ -33,11 +34,12 @@ export class TBC20 extends Contract {
 
   /**
    * Overridable. True iff `other` is the same fungible token as `this`.
-   * Default: same `root`. Subclasses add extra rules (e.g. Commodity requires
-   * both bags to be genuine mints of that module).
+   * Default: same stored `_root`. Not `root`: that is a getter, which another class can
+   * define to return anything, while `_root` is data no class can define. Subclasses add
+   * extra rules (e.g. Commodity requires both bags to be genuine mints of that module).
    */
   protected async isFungibleWith(other: TBC20): Promise<boolean> {
-    return this.root === other.root
+    return this._root === other._root
   }
 
   constructor(params: TBC20ConstructorParams) {

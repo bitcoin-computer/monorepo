@@ -205,6 +205,34 @@ describe('TBC20', () => {
     }
   })
 
+  it('Should refuse to merge a token of another lineage whose class reports the same root', async () => {
+    const computer = await fundedComputer()
+    const tokenA = await computer.new(TBC20, [
+      { to: computer.getPublicKey(), amount: 3n, name: 'A' },
+    ])
+
+    // `root` is a getter, so a class can return any value from it. Merge reads `_root`.
+    const exp = `${TBC20}
+      class NamedRoot extends TBC20 {
+        get root() { return this.namedRoot }
+      }
+      new NamedRoot({ to: '${computer.getPublicKey()}', amount: 3n, name: 'B', namedRoot: '${tokenA.root}' })`
+    const { tx, effect } = await computer.encode({ exp })
+    await computer.broadcast(tx)
+    await computer.waitForIndexed(tx.getId())
+    const tokenB = effect.res as SmartContract<typeof TBC20>
+    expect(tokenB.root).to.eq(tokenA.root)
+    expect(tokenB._root).to.not.eq(tokenA._root)
+
+    try {
+      await tokenA.merge([tokenB])
+      expect.fail('should have thrown on cross-lineage merge')
+    } catch (err) {
+      expect(err.message).to.include('Cannot merge tokens from different lineages')
+    }
+    expect(tokenA.amount).to.eq(3n)
+  })
+
   it('Should burn a token', async () => {
     const token = await sender.new(TBC20, [{ to: sender.getPublicKey(), amount: 3n, name: 'test' }])
     await token.burn()

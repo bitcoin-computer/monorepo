@@ -4,7 +4,7 @@ export class TBC20 extends Contract {
         return this._root;
     }
     async isFungibleWith(other) {
-        return this.root === other.root;
+        return this._root === other._root;
     }
     constructor(params) {
         const { to, amount, name, symbol = '', ...rest } = params;
