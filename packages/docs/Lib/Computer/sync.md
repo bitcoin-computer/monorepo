@@ -38,7 +38,28 @@ If the function is called with a transaction id, it returns an object of type `{
 
 The location’s transaction must be **confirmed**. Missing or mempool-only locations invalidate the contract evaluation. Objects returned inside contracts are deep-cloned plain data (not live proxies for mutation). See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
 
-`computer.sync(chain, location)` reads one confirmed object on another built-in chain. `chain` is that chain’s name (`'BTC'`, any case). `location` is a transaction id or `txid:vout` on that chain. The node URL comes from the computer’s `remoteChains` configuration, not from the contract. The result is the same plain JSON as a one-argument `sync`: methods are removed, `bigint` is kept, and `_rev` stays `txid:vout` with no chain prefix. One-argument `sync`, including `sync('BTC')`, is still a read on this computer’s own chain. Passing this computer’s own chain name uses that same one-argument read. An unknown chain, a chain with no `remoteChains` entry, or a location that is not a transaction id or revision invalidates the evaluation.
+`computer.sync(location, chain)` reads one confirmed object on another built-in chain. `location` is a transaction id or `txid:vout` on that chain. `chain` is that chain’s name (`'BTC'`, any case) and is the second argument. The node URL comes from the computer’s [`remoteChains`](./constructor.md) configuration, not from the contract. The result is the same plain JSON as a one-argument `sync`: methods are removed, `bigint` is kept, and `_rev` stays `txid:vout` with no chain prefix. One-argument `sync`, including `sync('BTC')`, is still a read on this computer’s own chain: that string is a location, not a chain name. Passing this computer’s own chain name as the second argument uses that same one-argument read. An unknown chain, a chain with no `remoteChains` entry, a chain that is not a string, or a location that is not a transaction id or revision invalidates the evaluation. Only in-contract `sync` takes a chain. The outer `Computer.sync` shown above does not. A host that wants a live object on another chain constructs a `Computer` for that chain and calls one-argument `sync`.
+
+The location has to be confirmed on the chain being read before the contract calls `sync`. The value has data fields only. Calling a method on it throws a normal JavaScript error and does not invalidate the evaluation.
+
+```ts
+const ltc = new Computer({
+  chain: 'LTC',
+  url: ltcUrl,
+  remoteChains: { BTC: { url: btcUrl } },
+})
+
+class Reader extends Contract {
+  async readN(location: string) {
+    const obj = await computer.sync(location, 'BTC')
+    return obj.n
+  }
+}
+
+const reader = await ltc.new(Reader, [])
+// onBtc was created on the BTC node at btcUrl, then confirmed
+const n = await reader.readN(onBtc._rev)
+```
 
 <!-- TODO: explain other type of errors:
 - code validation errors like super not allowed

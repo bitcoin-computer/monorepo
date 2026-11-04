@@ -37,11 +37,27 @@ A configuration object with the properties listed below. All properties are opti
 | url | Url of a Bitcoin Computer Node | `https://rltc.node.bitcoincomputer.io` |
 | satPerByte | Fee in satoshi per byte | `2` |
 | moduleStorageType | Store JavaScript modules on Taproot (`taproot`) or bare multisig (`multisig`). Taproot (default where available) produces *no* hygiene dust outputs for the module encoding txs and supports larger modules (with SegWit discount) but uses a two-tx pattern with a `BC` protocol witness envelope. Multisig uses single-tx cleartext `{ ept }` data outputs (with hygiene dust). Choose based on minimization goals and high-throughput single-tx UX needs. See [deploy](./deploy.md) and [Fees](../../fees.md) "User Choices..." section. | `taproot` |
-| remoteChains | Other built-in chains a contract may read with `computer.sync(chain, location)`. Each entry is `{ url }` for one node: absolute `http` or `https` origin, optional port, no userinfo, path, query, hash, or trailing slash. The computer’s own chain is not a key; set `url` for that node. Omitted means contracts cannot read another chain. | omitted |
+| remoteChains | Other built-in chains a contract may read with [`computer.sync(location, chain)`](./sync.md). Each entry is `{ url }` for one node: absolute `http` or `https` origin, optional port, no userinfo, path, query, hash, or trailing slash. The computer’s own chain is not a key; set `url` for that node. Omitted means contracts cannot read another chain. | omitted |
 
 ### Return Value
 
 An instance of the `Computer` class
+
+### Reading another chain from a contract
+
+`remoteChains` is host configuration. A contract calls `computer.sync(location, 'BTC')`. It cannot pass the node URL. Do not put this computer’s own chain in the map.
+
+```ts
+const ltc = new Computer({
+  chain: 'LTC',
+  url: ltcUrl,
+  remoteChains: {
+    BTC: { url: btcUrl },
+  },
+})
+```
+
+The in-contract call, and the plain JSON it returns, are documented on [sync](./sync.md).
 
 ## Examples
 

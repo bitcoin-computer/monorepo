@@ -132,7 +132,7 @@ Most location-based APIs require the referenced **transaction to be confirmed** 
 
 | Function                         | Signature                         | Returns                    | Invalidates when                                                                                                               |
 | -------------------------------- | --------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `sync`                           | `sync(location: string)` or `sync(chain, location)` | Object state (deep-cloned) | Missing / unconfirmed location. For two arguments: chain not built in, chain not configured, or location not a txid or revision |
+| `sync`                           | `sync(location: string)` or `sync(location: string, chain: string)` | Object state (deep-cloned) | Missing / unconfirmed location. With a chain argument: chain not a string, not built in, or not configured; location not a txid or revision |
 | `decode`                         | `decode(txId: string)`            | `{ exp, env?, mod? }`      | Missing / unconfirmed tx                                                                                                       |
 | `load`                           | `load(location: string)`          | Module exports             | Missing / unconfirmed module location                                                                                          |
 | `getAncestors`                   | `getAncestors(location: string)`  | `string[]` (may be empty)  | Missing / unconfirmed start; empty array is **valid**                                                                          |
@@ -160,16 +160,25 @@ Most location-based APIs require the referenced **transaction to be confirmed** 
 
 ```ts
 sync(location: string): Promise<any>
-sync(chain: string, location: string): Promise<any>
+sync(location: string, chain: string): Promise<any>
 decode(txId: string): Promise<TransitionJSON>
 load(location: string): Promise<Record<string, any>>
 ```
 
-- `sync(location)` deep-clones the object (BigInt-safe) so contracts cannot mutate live graph state. The location’s transaction must be confirmed. A value that is not a revision or transaction id throws `Invalid Rev` and does not invalidate the evaluation.
-- `sync(chain, location)` is the same confirm-and-clone read on another built-in chain. The chain name is case-insensitive. `location` must be a transaction id or `txid:vout` on that chain. The node is `remoteChains[chain].url` on the computer that is evaluating the contract. The contract cannot pass a URL. The computer’s own chain name reads this chain, same as one argument. Any other failure invalidates the evaluation, including an unknown chain, a chain that was not configured, a bad location, a missing or unconfirmed transaction, and a node that does not answer. The JSON does not include the node URL. `_rev` stays `txid:vout`.
+- `sync(location)` deep-clones the object (BigInt-safe) so contracts cannot mutate live graph state. The location’s transaction must be confirmed. One argument is always a location on this computer’s chain, including `sync('BTC')`. A value that is not a revision or transaction id throws `Invalid Rev` and does not invalidate the evaluation.
+- `sync(location, chain)` is that same read on another built-in chain. `location` comes first: a transaction id or `txid:vout` on that chain. `chain` is the chain name and is case-insensitive. The node is `remoteChains[chain].url` on the computer that is evaluating the contract. The contract cannot pass a URL. The computer’s own chain name reads this chain, same as one argument. A location that is not a transaction id or revision invalidates the evaluation. So do an unknown chain, a chain that was not configured, a chain that is not a string, a missing or unconfirmed transaction, and a node that does not answer. The JSON does not include the node URL, and it has no methods. Calling one throws a normal JavaScript error and does not invalidate. `_rev` stays `txid:vout`. Only `sync` takes a chain. The other methods on this page read the evaluating computer’s chain. The evaluating computer is built with `remoteChains`; see [constructor](../Computer/constructor.md) and [sync](../Computer/sync.md).
 - `decode` requires a confirmed Bitcoin Computer transaction.
 - `load` accepts a module rev (`txId:outputIndex`); the deploy transaction must be confirmed.
 - Missing or unconfirmed targets invalidate the evaluation.
+
+```ts
+class Reader extends Contract {
+  async readN(location: string) {
+    const obj = await computer.sync(location, 'BTC')
+    return obj.n
+  }
+}
+```
 
 #### `getAncestors`
 
