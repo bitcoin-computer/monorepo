@@ -73,6 +73,7 @@ The formatter is idempotent (already-suffixed strings are not doubled). Match wi
 |                                          | Outer [`Computer`](../Computer/index.md) | InnerComputer (`computer` in contracts)                         |
 | ---------------------------------------- | ---------------------------------------- | --------------------------------------------------------------- |
 | Writes (`new`, `broadcast`, …)           | Yes                                      | No                                                              |
+| `sync` on another built-in chain         | Construct a `Computer` for that chain    | `sync(location, chain)` when the host set `remoteChains`        |
 | Mempool / unconfirmed reads              | Often allowed (may return `undefined`)   | Forbidden → invalidate                                          |
 | `latest`                                 | Yes                                      | **Not exposed**                                                 |
 | `getTXOs` without height/hash stabilizer | Yes                                      | Forbidden → invalidate                                          |
