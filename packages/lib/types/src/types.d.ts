@@ -370,6 +370,9 @@ export type Fee = Partial<{
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
 export type ModuleStorageType = 'multisig' | 'taproot'
 export type Mode = 'prod' | 'dev' | 'debug'
+export type RemoteChainConfig = {
+  url: string
+}
 export type ComputerOptions = Partial<{
   chain: ChainString
   mnemonic: string
@@ -382,6 +385,7 @@ export type ComputerOptions = Partial<{
   moduleStorageType: ModuleStorageType
   checkFee: boolean
   mode: Mode
+  remoteChains?: Partial<Record<Chain, RemoteChainConfig>>
 }>
 export interface ApiBalance {
   confirmed: string
@@ -495,7 +499,7 @@ export type TXORecord = {
   blockIndex?: number
   timestamp?: number
 }
-export type TXOOrderBy = 'rev' | 'timestamp'
+export type TXOOrderBy = 'rev' | 'timestamp' | 'block'
 export type TXOQuery = {
   verbosity?: number
   limit?: number
@@ -508,6 +512,9 @@ export type TXOQuery = {
   exp?: string
   lteBlockHeight?: number
   gteBlockHeight?: number
+  ltBlockHeight?: number
+  ltBlockIndex?: number
+  ltRev?: string
   previous?: string
 } & Partial<Omit<TXORecord, 'expHash' | 'previous'>>
 export type EvalResult = {
