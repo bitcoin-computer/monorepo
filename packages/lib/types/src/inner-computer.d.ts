@@ -50,7 +50,7 @@ export declare class InnerComputer {
   private _foreignInner
   private _tie
   sync<T extends Class = any>(location: string): Promise<JsonData<T>>
-  sync<T extends Class = any>(chain: Chain, location: string): Promise<JsonData<T>>
+  sync<T extends Class = any>(location: string, chain: Chain): Promise<JsonData<T>>
   private _syncLocation
   decode(txId: string): Promise<TransitionJSON>
   load(location: string): Promise<Record<string, any>>
