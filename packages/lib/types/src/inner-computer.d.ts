@@ -46,45 +46,52 @@ export declare class InnerComputer {
   private readonly foreignInners
   constructor(opts: InnerComputerOptions)
   private _chainArg
+  private _foreignChain
   private _useForeign
   private _foreignInner
   private _tie
   sync<T extends Class = any>(location: string): Promise<JsonData<T>>
-  sync<T extends Class = any>(chain: Chain, location: string): Promise<JsonData<T>>
+  sync<T extends Class = any>(location: string, chain: Chain): Promise<JsonData<T>>
   private _syncLocation
-  decode(txId: string): Promise<TransitionJSON>
-  load(location: string): Promise<Record<string, any>>
-  getAncestors(location: string): Promise<string[]>
-  first(rev: string): Promise<string>
-  prev(rev: string): Promise<string | undefined>
-  next(rev: string): Promise<string>
-  last(rev: string): Promise<string>
-  txIdToBlockTime(txId: string): Promise<bigint>
-  txIdToBlockHeight(txId: string): Promise<number>
-  txIdToBlockHash(txId: string): Promise<string>
-  getBlockHash(height: number): Promise<string>
-  getBlockHeight(hash: string): Promise<number>
-  getRawTransaction(txId: string): Promise<string>
-  getRawBlock(blockHash: string): Promise<string>
-  getBlockHeader(blockHash: string): Promise<string>
+  decode(txId: string, chain?: Chain): Promise<TransitionJSON>
+  load(location: string, chain?: Chain): Promise<Record<string, any>>
+  getAncestors(location: string, chain?: Chain): Promise<string[]>
+  first(rev: string, chain?: Chain): Promise<string>
+  prev(rev: string, chain?: Chain): Promise<string | undefined>
+  next(rev: string, chain?: Chain): Promise<string>
+  last(rev: string, chain?: Chain): Promise<string>
+  txIdToBlockTime(txId: string, chain?: Chain): Promise<bigint>
+  txIdToBlockHeight(txId: string, chain?: Chain): Promise<number>
+  txIdToBlockHash(txId: string, chain?: Chain): Promise<string>
+  getBlockHash(height: number, chain?: Chain): Promise<string>
+  getBlockHeight(hash: string, chain?: Chain): Promise<number>
+  getRawTransaction(txId: string, chain?: Chain): Promise<string>
+  getRawBlock(blockHash: string, chain?: Chain): Promise<string>
+  getBlockHeader(blockHash: string, chain?: Chain): Promise<string>
   getTXOs(
     q: InnerTXOQuery & {
       verbosity?: 0
     },
+    chain?: Chain,
   ): Promise<string[]>
   getTXOs(
     q: InnerTXOQuery & {
       verbosity: 1
     },
+    chain?: Chain,
   ): Promise<TXORecord[]>
+  getTXOs(q: InnerTXOQuery, chain?: Chain): Promise<string[] | TXORecord[]>
   getOTXOs(
     q: InnerTXOQuery & {
       verbosity?: 0
     },
+    chain?: Chain,
   ): Promise<string[]>
   getOTXOs(
     q: InnerTXOQuery & {
       verbosity: 1
     },
+    chain?: Chain,
   ): Promise<TXORecord[]>
+  getOTXOs(q: InnerTXOQuery, chain?: Chain): Promise<string[] | TXORecord[]>
 }

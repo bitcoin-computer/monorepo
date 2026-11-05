@@ -27,6 +27,14 @@ For any InnerComputer method `m` and arguments `args`: if
 then on any extension `b₂ ⊇ b₁` the same call must succeed and return the same
 value.
 
+Every method takes an optional chain name as its second argument
+(`sync(location, chain)`, `getTXOs(query, chain)`, and the rest). One argument
+reads this computer's chain. A second argument reads that configured chain, and
+the successful result is stable under extension of that chain's prefix as well
+as this one. The outer Computer does not take the argument. The host sets the
+node URL in `remoteChains`. The method list and the argument rules are in
+`packages/docs/Lib/Contract/cross-chain.md`.
+
 ## Confirmed locations
 
 Most APIs require the referenced transaction to be **in a block** before the
