@@ -676,6 +676,35 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       expect(mint.amount).to.eq(before)
     })
 
+    it('rejects an empty-salt bag whose getter supplies the salt', async function () {
+      this.timeout(600_000)
+      const { computer, mod: modSpec, mint } = await mintClaimAndGet()
+      const before = mint.amount
+      const owner = computer.getPublicKey()
+      // Same expression as the merge: a fresh bag's _root is its _rev, so the
+      // salt read sees this object. The setter drops the empty salt the constructor assigns.
+      const exp = `class SaltLie extends Commodity {
+          get salt() { return 'x' }
+          set salt(_v) {}
+        }
+        const bag = new SaltLie({ to: '${owner}', salt: '', amount: 1000n, mod: '${modSpec}', name: '' })
+        m.merge([bag])`
+      try {
+        const { effect } = await computer.encode({
+          exp,
+          env: { m: mint._rev },
+          mod: modSpec,
+        })
+        const updated = effect.env.m as { amount?: bigint }
+        expect.fail(`merge should have thrown, honest amount ${before} -> ${updated?.amount}`)
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err)
+        if (message.includes('merge should have thrown')) throw err
+        expect(message).to.include('Cannot merge')
+      }
+      expect(mint.amount).to.eq(before)
+    })
+
     it('claim() stamps mod from the creation tx (caller-supplied mod on a mint is ignored)', async () => {
       const computer = await fundedComputer()
       const modSpec = await deployCommodity(computer)

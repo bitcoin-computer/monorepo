@@ -222,16 +222,17 @@ export class Commodity extends TBC777 {
 
   /**
    * Returns true iff this object is a legitimate descendant of a genuine mint.
-   * Walks to the immutable _root and verifies that the root carries a non-empty
-   * salt. Because the framework forces every child to inherit its parent's
-   * _root, this single check authenticates the whole lineage.
+   * Walks to the immutable _root and reads that object's own salt. Only a
+   * non-empty own value is genuine. Because the framework forces every child
+   * to inherit its parent's _root, this single check authenticates the lineage.
    *
    * Syncs only the short root mint; never called on the candidate list inside
    * claim().
    */
   async isGenuine(): Promise<boolean> {
     const root = this._root === this._rev ? this : await computer.sync<typeof Commodity>(this._root)
-    return !!root.salt
+    const desc = Object.getOwnPropertyDescriptor(root, 'salt')
+    return !!desc && 'value' in desc && !!desc.value
   }
 
   /**
@@ -259,16 +260,16 @@ export class Commodity extends TBC777 {
 
   /**
    * Same module (non-empty `mod`, stamped by claim) and both genuine.
-   * Fakes can pass a `mod` through the child constructor path; the salt check
-   * rejects those. The other bag is checked by the salt stored on its `_root`,
-   * never by calling one of its methods, which its own class or fields decide.
+   * The other root counts only when its own salt value is non-empty. A getter
+   * answers if that own value is missing, so the check reads the descriptor.
    */
   protected async isFungibleWith(other: TBC20): Promise<boolean> {
     const o = other as Commodity
     if (!this.mod || this.mod !== o.mod) return false
     if (!(await this.isGenuine())) return false
     const root = o._root === o._rev ? o : await computer.sync<typeof Commodity>(o._root)
-    return !!root.salt
+    const desc = Object.getOwnPropertyDescriptor(root, 'salt')
+    return !!desc && 'value' in desc && !!desc.value
   }
 
   async isEqualTo(other: TBC777): Promise<boolean> {
