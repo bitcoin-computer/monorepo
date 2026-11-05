@@ -705,6 +705,90 @@ describe('Commodity – Canonical Min-Revision Digital Commodity', function () {
       expect(mint.amount).to.eq(before)
     })
 
+    // In-process only. A fresh bag's _root is its _rev, so the salt read is this object.
+    // The encode form waits until a node is up; these lock the values new returns.
+    const owner = '02' + '11'.repeat(32)
+    const realMod = 'ab'.repeat(32) + ':0'
+
+    it('keeps the empty salt a setter would replace', () => {
+      class SaltPlant extends Commodity {
+        // The constructor stores salt as own data. This setter must not run for that write.
+        // @ts-expect-error salt is own data on Commodity; the setter is the attack
+        set salt(v: string) {
+          void v
+          Object.defineProperty(this, 'salt', {
+            value: 'x',
+            writable: true,
+            enumerable: true,
+            configurable: true,
+          })
+        }
+      }
+      const bag = new SaltPlant({
+        to: owner,
+        salt: '',
+        amount: 1000n,
+        mod: realMod,
+        name: '',
+      })
+      const salt = Object.getOwnPropertyDescriptor(bag, 'salt')
+      const amount = Object.getOwnPropertyDescriptor(bag, 'amount')
+      const mod = Object.getOwnPropertyDescriptor(bag, 'mod')
+      expect(salt && 'value' in salt && salt.value).to.eq('')
+      expect(amount && 'value' in amount && amount.value).to.eq(1000n)
+      expect(mod && 'value' in mod && mod.value).to.eq(realMod)
+      expect(bag._root).to.eq(bag._rev)
+    })
+
+    it('keeps the mint amount and empty mod that setters would replace', () => {
+      class MintPlant extends Commodity {
+        // @ts-expect-error amount is own data on Commodity; the setter is the attack
+        set amount(v: bigint) {
+          void v
+          Object.defineProperty(this, 'amount', {
+            value: 1000n,
+            writable: true,
+            enumerable: true,
+            configurable: true,
+          })
+        }
+        // @ts-expect-error mod is own data on Commodity; the setter is the attack
+        set mod(v: string) {
+          void v
+          Object.defineProperty(this, 'mod', {
+            value: realMod,
+            writable: true,
+            enumerable: true,
+            configurable: true,
+          })
+        }
+      }
+      const bag = new MintPlant({ to: owner, salt: 'real', amount: 0n, name: '' })
+      const salt = Object.getOwnPropertyDescriptor(bag, 'salt')
+      const amount = Object.getOwnPropertyDescriptor(bag, 'amount')
+      const mod = Object.getOwnPropertyDescriptor(bag, 'mod')
+      expect(salt && 'value' in salt && salt.value).to.eq('real')
+      expect(amount && 'value' in amount && amount.value).to.eq(0n)
+      expect(mod && 'value' in mod && mod.value).to.eq('')
+      expect(bag._root).to.eq(bag._rev)
+    })
+
+    it('refuses a constructor method that replaces amount and mod', () => {
+      class ViaMethod extends Commodity {
+        constructor(p: ConstructorParameters<typeof Commodity>[0]) {
+          super(p)
+          this.inflate()
+        }
+        inflate(): void {
+          this.amount = 1000n
+          this.mod = realMod
+        }
+      }
+      expect(
+        () => new ViaMethod({ to: owner, salt: 'real', amount: 0n, name: '' }),
+      ).to.throw(/Cannot replace constructor argument/)
+    })
+
     it('claim() stamps mod from the creation tx (caller-supplied mod on a mint is ignored)', async () => {
       const computer = await fundedComputer()
       const modSpec = await deployCommodity(computer)
