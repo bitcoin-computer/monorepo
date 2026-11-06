@@ -18,7 +18,7 @@ import { expect } from 'chai'
 import { Computer, Contract, Id, SmartContract } from '@bitcoin-computer/lib'
 import dotenv from 'dotenv'
 import path from 'path'
-import { Commodity, config } from '../src/commodity.js'
+import { Commodity, config, type CommodityConstructorParams } from '../src/commodity.js'
 import { CommodityHelper } from '../src/helper.js'
 import { Sha256 } from '../src/sha256.js'
 
@@ -1364,6 +1364,58 @@ describe('Commodity.getSubsidy(hostBlockHeight)', () => {
 // ---------------------------------------------------------------------------
 // Sha256 (off-chain grinding helper)
 // ---------------------------------------------------------------------------
+/**
+ * No Computer and no faucet. An unnamed explicit superclass, or a cleared
+ * Commodity.name, used to drop the constructor pin before the subclass body.
+ * Mint arguments stay the values the mint branch checked.
+ */
+describe('Commodity constructor arguments across an unnamed superclass', () => {
+  const mint: CommodityConstructorParams = { to: '', salt: 'real', amount: 0n, name: '' }
+  const realMod = 'commodity-module'
+
+  function anonymousSuperclass(): Commodity {
+    return new (class extends class extends Commodity {
+      constructor(params: CommodityConstructorParams) {
+        super(params)
+      }
+    } {
+      constructor(params: CommodityConstructorParams) {
+        super(params)
+        this.inflate()
+      }
+      inflate(): void {
+        this.amount = 1000n
+        this.mod = realMod
+      }
+    })(mint)
+  }
+
+  it('does not let an unnamed superclass replace the checked amount and mod', () => {
+    expect(() => anonymousSuperclass()).to.throw("Cannot replace constructor argument 'amount'")
+  })
+
+  it('does not let a cleared Commodity name replace the checked amount and mod', () => {
+    const saved = Object.getOwnPropertyDescriptor(Commodity, 'name')
+    Object.defineProperty(Commodity, 'name', { value: '', configurable: true })
+    try {
+      class Child extends Commodity {
+        constructor(params: CommodityConstructorParams) {
+          super(params)
+          this.inflate()
+        }
+        inflate(): void {
+          this.amount = 1000n
+          this.mod = realMod
+        }
+      }
+      expect(() => new Child(mint)).to.throw("Cannot replace constructor argument 'amount'")
+    } finally {
+      if (saved) Object.defineProperty(Commodity, 'name', saved)
+    }
+    expect(Commodity.name).to.eq('Commodity')
+  })
+})
+
 describe('Sha256', () => {
   it('matches the empty-string SHA-256 digest', () => {
     expect(Sha256.hash('')).to.eq(
