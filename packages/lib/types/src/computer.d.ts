@@ -89,8 +89,8 @@ declare class Computer {
     },
   ): Promise<TXORecord[]>
   sync(location: TxIdString): Promise<EvaluatedEffect>
-  sync<T extends Class = any>(location: RevString): Promise<SmartContract<T>>
-  sync(location: string): Promise<SmartContract<any> | EvaluatedEffect>
+  sync<T extends Class = any>(location: RevString, cls?: T): Promise<SmartContract<T>>
+  sync(location: string, cls?: Class): Promise<SmartContract<any> | EvaluatedEffect>
   getAncestors(location: string, verbosity: 1): Promise<Map<string, string>>
   getAncestors(location: string, verbosity?: number): Promise<string[]>
   private wrappedEncode
@@ -111,6 +111,8 @@ declare class Computer {
     effect: EvaluatedEffect
     db: Db
   }>
+  private readonly sameClassByKey
+  private exportsSameClass
   encodeCall<T extends Class, K extends keyof InstanceType<T>>({
     target,
     property,

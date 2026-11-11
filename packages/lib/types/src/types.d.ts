@@ -262,6 +262,7 @@ export type SigOptions = {
 }
 export type MockOptions = {
   mocks?: Record<string, Mock>
+  mockClasses?: Record<string, unknown>
 }
 export type RetryOptions = {
   maxRetries?: number
