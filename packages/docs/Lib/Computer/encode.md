@@ -23,6 +23,7 @@ _Creates a transaction according to the Bitcoin Computer protocol._
 
   // Mock options
   mocks?: Record<string, any> // values to mock
+  mockClasses?: Record<string, Class> // module class each mock stands in for
 }) =>
   Promise<{
     // the transaction with the expression inscribed
@@ -54,6 +55,7 @@ An object with a specification to build a transaction according to the Bitcoin C
 | inputIndex  | If set to an number only the corresponding input is signed. If undefined all inputs are signed.                                                                             | `undefined`   |
 | inputScript | If set to a string a custom input script can be provided. If undefined a signature script is generated.                                                                     | `undefined`   |
 | mocks       | A pair <name, object>. The object is an instance of a mocked class (A class that does not extends from Contract but has the keywords `_id`, `_root`, `_satoshis`,`_owners`) | `{}`          |
+| mockClasses | A pair <name, class>. The mock with that name counts as an instance of the class (a class a module exports, as `computer.load` returns it) while the transaction is built.  | `{}`          |
 
 ### Return Value
 
