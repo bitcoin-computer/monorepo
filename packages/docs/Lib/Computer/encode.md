@@ -67,7 +67,7 @@ The `encode` function builds a Bitcoin transaction from a JavaScript expression.
 
 When a module specifier `mod` is supplied to `encode`, all objects that are created in the transaction are associated with that module specifier. The module specifier never changes, even when the object it updated. It is important to note that if an object `o1` created a second object `o2` in a method call, `o2` does not automatically inherit `o1`'s module specifier. If this is desired, then module specifier needs to be passe into the expression encoding the function call. For example, the transfer function of the TBC20 contract creates a new object for the receipient. This object will not inherit the module specifier of the original token. If this is desired the module specifier needs to be passed into the `encode` call of the transfer function.
 
-Other options can customize the funding and signing process. It is also possible to pass in an object specifying [mocked](../../tutorial.md#mocking) objects.
+Other options can customize the funding and signing process. It is also possible to pass in an object specifying [mocked](../../tutorial.md#mocking) objects. With `mockClasses`, a mock counts as an instance of a module class while the transaction is built. A name in `mockClasses` with no mock in `mocks`, or a class that no module exports, is refused. Replay never sees the mock: it uses the real object.
 
 It is important to note that `encode` does not broadcast the transaction. Nonetheless the `effect` object reflects the on-chain state that will emerge once the transaction is broadcast.
 
