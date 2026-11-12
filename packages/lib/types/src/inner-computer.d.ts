@@ -33,6 +33,7 @@ export declare class InnerComputer {
   private readonly c
   constructor({ chain, network, url }: { chain: Chain; network: BtcNetwork; url: string })
   sync<T extends Class = any>(location: string): Promise<JsonData<T>>
+  sync<T extends Class>(rev: string, cls: T): Promise<JsonData<T>>
   decode(txId: string): Promise<TransitionJSON>
   load(location: string): Promise<Record<string, any>>
   getAncestors(location: string): Promise<string[]>
