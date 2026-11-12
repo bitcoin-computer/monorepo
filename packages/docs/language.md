@@ -16,8 +16,9 @@ Inside contract methods, a restricted global `computer` (**InnerComputer**) prov
 To describe the behavior of `Contract` more precisely, let `obj` be an object of a class that extends from `Contract`. Then an error is thrown if either
 
 1. a property of `obj` is assigned outside of a method of `obj`,
-2. a property `_id`, `_rev`, and `_root` is assigned, or
-3. `this` is assigned to in the constructor of `C`.
+2. a property `_id`, `_rev`, and `_root` is assigned,
+3. `this` is assigned to in the constructor of `C`, or
+4. a method of `obj` is called with an argument that is not a primitive, a smart object, a mocked object or an array of those. A function would run as the method, and the fields of a plain object would be trusted like those of a smart object. Constructors are not affected.
 
 To initialize objects without violating rule 3. an initialization object can be passed into `super` in a constructor:
 
