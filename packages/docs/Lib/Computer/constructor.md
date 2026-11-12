@@ -14,7 +14,8 @@ new (config: {
   addressType?: 'p2pkh' | 'p2wpkh' | 'p2tr',
   url?: string,
   satPerByte?: number,
-  moduleStorageType?: 'taproot' | 'multisig'
+  moduleStorageType?: 'taproot' | 'multisig',
+  remoteChains?: { [chain: string]: { url: string } },
 }) => Computer
 ```
 
@@ -36,10 +37,27 @@ A configuration object with the properties listed below. All properties are opti
 | url | Url of a Bitcoin Computer Node | `https://rltc.node.bitcoincomputer.io` |
 | satPerByte | Fee in satoshi per byte | `2` |
 | moduleStorageType | Store JavaScript modules on Taproot (`taproot`) or bare multisig (`multisig`). Taproot (default where available) produces *no* hygiene dust outputs for the module encoding txs and supports larger modules (with SegWit discount) but uses a two-tx pattern with a `BC` protocol witness envelope. Multisig uses single-tx cleartext `{ ept }` data outputs (with hygiene dust). Choose based on minimization goals and high-throughput single-tx UX needs. See [deploy](./deploy.md) and [Fees](../../fees.md) "User Choices..." section. | `taproot` |
+| remoteChains | Other built-in chains a contract may read. Each entry is `{ url }` for one node: absolute `http` or `https` origin, optional port, no userinfo, path, query, hash, or trailing slash. The computer’s own chain is not a key; set `url` for that node. Omitted means contracts cannot read another chain. See [Cross-chain reads](../Contract/cross-chain.md). | omitted |
 
 ### Return Value
 
 An instance of the `Computer` class
+
+### Reading another chain from a contract
+
+`remoteChains` is host configuration. A contract passes the chain as the second argument, for example `computer.sync(location, 'BTC')` or `computer.getTXOs(query, 'BTC')`. It cannot pass the node URL. Do not put this computer’s own chain in the map. The first argument stays a location, a block hash, a height, or a query on this computer’s chain when the chain argument is omitted.
+
+```ts
+const ltc = new Computer({
+  chain: 'LTC',
+  url: ltcUrl,
+  remoteChains: {
+    BTC: { url: btcUrl },
+  },
+})
+```
+
+The in-contract calls are documented in [Cross-chain reads](../Contract/cross-chain.md). `sync`’s return value is also described on [sync](./sync.md).
 
 ## Examples
 

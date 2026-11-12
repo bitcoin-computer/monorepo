@@ -1,7 +1,7 @@
 services:
   db:
     image: postgres:15
-    env_file: .env
+    env_file: ${BCN_ENV_FILE:-.env}
     restart: always
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
@@ -9,7 +9,9 @@ services:
     ports:
       # Postgres, RPC and ZMQ are only needed by the containers. Publish them on
       # localhost by default; set BCN_PRIVATE_BIND to change the host address.
-      - '${BCN_PRIVATE_BIND:-127.0.0.1}:${POSTGRES_PORT}:${POSTGRES_PORT}'
+      # The host port can differ from the container port so two stacks can publish
+      # at once. Postgres keeps listening on POSTGRES_PORT.
+      - '${BCN_PRIVATE_BIND:-127.0.0.1}:${POSTGRES_HOST_PORT:-${POSTGRES_PORT}}:${POSTGRES_PORT}'
     networks:
       - bcn
     environment:
@@ -24,14 +26,15 @@ services:
       - bitcoin
     restart: always
     ports:
-      - '${BCN_PRIVATE_BIND:-127.0.0.1}:${BITCOIN_RPC_PORT}:${BITCOIN_RPC_PORT}'
-      - '${BCN_PRIVATE_BIND:-127.0.0.1}:${BCN_ZMQ_PORT}:${BCN_ZMQ_PORT}'
+      # Container ports stay the values in the coin conf and in BCN_ZMQ_URL.
+      - '${BCN_PRIVATE_BIND:-127.0.0.1}:${BITCOIN_RPC_HOST_PORT:-${BITCOIN_RPC_PORT}}:${BITCOIN_RPC_PORT}'
+      - '${BCN_PRIVATE_BIND:-127.0.0.1}:${BCN_ZMQ_HOST_PORT:-${BCN_ZMQ_PORT}}:${BCN_ZMQ_PORT}'
     volumes:
       - ./chain-setup/${BCN_CHAIN}/${BCN_NETWORK}/blockchain-data:${BITCOIN_DATA_DIR}
       - ./${BITCOIN_CONF_FILE}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}
   bcn:
     image: bcdb/bcn
-    env_file: .env
+    env_file: ${BCN_ENV_FILE:-.env}
     restart: always
     build: ../../
     healthcheck:
@@ -43,7 +46,9 @@ services:
     command: npm run start:bcn
     working_dir: /dist/packages/node
     ports:
-      - ${BCN_PORT}:${BCN_PORT}
+      # BCN_PORT is the port the process listens on. BCN_HOST_PORT is the host
+      # side, so a second chain can be published without moving the listen port.
+      - '${BCN_HOST_PORT:-${BCN_PORT}}:${BCN_PORT}'
     environment:
       - BCN_CHAIN=${BCN_CHAIN}
       - BCN_NETWORK=${BCN_NETWORK}
@@ -64,11 +69,11 @@ services:
       - bitcoin
       - bcn
     volumes:
-      - ./logs:/dist/packages/node/logs
+      - ${BCN_LOG_DIR:-./logs}:/dist/packages/node/logs
   sync:
     command: npm run start:sync
     image: bcdb/bcn
-    env_file: .env
+    env_file: ${BCN_ENV_FILE:-.env}
     restart: always
     environment:
       - BCN_CHAIN=${BCN_CHAIN}
@@ -86,7 +91,7 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
     volumes:
-      - ./logs:/dist/packages/node/logs
+      - ${BCN_LOG_DIR:-./logs}:/dist/packages/node/logs
     depends_on:
       - db
       - node
