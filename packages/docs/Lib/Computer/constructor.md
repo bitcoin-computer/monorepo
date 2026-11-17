@@ -45,7 +45,7 @@ An instance of the `Computer` class
 
 ### Reading another chain from a contract
 
-`remoteChains` is host configuration. A contract passes the chain as the second argument, for example `computer.sync(location, 'BTC')` or `computer.getTXOs(query, 'BTC')`. It cannot pass the node URL. Do not put this computer’s own chain in the map. The first argument stays a location, a block hash, a height, or a query on this computer’s chain when the chain argument is omitted.
+`remoteChains` is host configuration. A contract passes the chain in an object, for example `computer.sync(location, { chain: 'BTC' })` or `computer.getTXOs(query, { chain: 'BTC' })`. It cannot pass the node URL. Do not put this computer’s own chain in the map. The first argument stays a location, a block hash, a height, or a query on this computer’s chain when the object, or its `chain`, is omitted.
 
 ```ts
 const ltc = new Computer({

@@ -132,23 +132,23 @@ Most location-based APIs require the referenced **transaction to be confirmed** 
 
 | Function                         | Signature                         | Returns                    | Invalidates when                                                                                                               |
 | -------------------------------- | --------------------------------- | -------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `sync`                           | `sync(location)` or `sync(location, chain)` | Object state (deep-cloned) | Missing / unconfirmed location. With a chain argument: chain not a string, not built in, or not configured; location not a txid or revision |
-| `decode`                         | `decode(txId, chain?)`            | `{ exp, env?, mod? }`      | Missing / unconfirmed tx. Same chain-argument failures as `sync`                                                               |
-| `load`                           | `load(location, chain?)`          | Module exports             | Missing / unconfirmed module location. Same chain-argument failures as `sync`                                                  |
-| `getAncestors`                   | `getAncestors(location, chain?)`  | `string[]` (may be empty)  | Missing / unconfirmed start; empty array is **valid**. Same chain-argument failures as `sync`                                  |
-| `first`                          | `first(rev, chain?)`              | Creation rev (`string`)    | Missing / unconfirmed start. Same chain-argument failures as `sync`                                                            |
-| `prev`                           | `prev(rev, chain?)`               | `string \| undefined`      | Missing / unconfirmed start; **`undefined` at root is OK**. Same chain-argument failures as `sync`                             |
-| `next`                          | `next(rev, chain?)`               | next rev (`string`)        | No next yet; unconfirmed start or unconfirmed successor. Same chain-argument failures as `sync`                                |
-| `last`                           | `last(rev, chain?)`               | Spent tip rev (`string`)   | Unspent tip; mempool-only spend; unconfirmed start/result. Same chain-argument failures as `sync`                              |
-| `txIdToBlockTime`                | `txIdToBlockTime(txId, chain?)`   | block time                 | Unconfirmed or missing tx. Same chain-argument failures as `sync`                                                              |
-| `txIdToBlockHeight`              | `txIdToBlockHeight(txId, chain?)` | height                     | Unconfirmed or missing tx. Same chain-argument failures as `sync`                                                              |
-| `txIdToBlockHash`                | `txIdToBlockHash(txId, chain?)`   | block hash                 | Unconfirmed or missing tx. Same chain-argument failures as `sync`                                                              |
-| `getBlockHash`                   | `getBlockHash(height, chain?)`    | hash                       | Negative or **future** height on that chain; missing block. Same chain-argument failures as `sync`                             |
-| `getBlockHeight`                 | `getBlockHeight(hash, chain?)`    | height                     | Unknown hash. Same chain-argument failures as `sync`                                                                           |
-| `getRawTransaction`              | `getRawTransaction(txId, chain?)` | hex                        | Unconfirmed / missing. Same chain-argument failures as `sync`                                                                  |
-| `getRawBlock` / `getBlockHeader` | `(blockHash, chain?)`             | hex                        | Unknown hash. Same chain-argument failures as `sync`                                                                           |
-| `getTXOs`                        | `getTXOs(q, chain?)`              | revs or records            | No stabilizer; future/negative height on that chain; stabilizer changed during the read; query failure; `isSpent`, `isConfirmed`, `orderBy: "timestamp"`, or a `chain` key inside `q` |
-| `getOTXOs`                       | `getOTXOs(q, chain?)`             | revs or records            | Same as `getTXOs`. Sets `isObject: true` and does not filter on spentness                                                      |
+| `sync`                           | `sync(location)` or `sync(location, { chain })` | Object state (deep-cloned) | Missing / unconfirmed location. With `{ chain }`: second argument not a plain object, unknown key, third argument, chain not a string, not built in, or not configured; location not a txid or revision |
+| `decode`                         | `decode(txId, { chain }?)`            | `{ exp, env?, mod? }`      | Missing / unconfirmed tx. Same chain-argument failures as `sync`                                                               |
+| `load`                           | `load(location, { chain }?)`          | Module exports             | Missing / unconfirmed module location. Same chain-argument failures as `sync`                                                  |
+| `getAncestors`                   | `getAncestors(location, { chain }?)`  | `string[]` (may be empty)  | Missing / unconfirmed start; empty array is **valid**. Same chain-argument failures as `sync`                                  |
+| `first`                          | `first(rev, { chain }?)`              | Creation rev (`string`)    | Missing / unconfirmed start. Same chain-argument failures as `sync`                                                            |
+| `prev`                           | `prev(rev, { chain }?)`               | `string \| undefined`      | Missing / unconfirmed start; **`undefined` at root is OK**. Same chain-argument failures as `sync`                             |
+| `next`                          | `next(rev, { chain }?)`               | next rev (`string`)        | No next yet; unconfirmed start or unconfirmed successor. Same chain-argument failures as `sync`                                |
+| `last`                           | `last(rev, { chain }?)`               | Spent tip rev (`string`)   | Unspent tip; mempool-only spend; unconfirmed start/result. Same chain-argument failures as `sync`                              |
+| `txIdToBlockTime`                | `txIdToBlockTime(txId, { chain }?)`   | block time                 | Unconfirmed or missing tx. Same chain-argument failures as `sync`                                                              |
+| `txIdToBlockHeight`              | `txIdToBlockHeight(txId, { chain }?)` | height                     | Unconfirmed or missing tx. Same chain-argument failures as `sync`                                                              |
+| `txIdToBlockHash`                | `txIdToBlockHash(txId, { chain }?)`   | block hash                 | Unconfirmed or missing tx. Same chain-argument failures as `sync`                                                              |
+| `getBlockHash`                   | `getBlockHash(height, { chain }?)`    | hash                       | Negative or **future** height on that chain; missing block. Same chain-argument failures as `sync`                             |
+| `getBlockHeight`                 | `getBlockHeight(hash, { chain }?)`    | height                     | Unknown hash. Same chain-argument failures as `sync`                                                                           |
+| `getRawTransaction`              | `getRawTransaction(txId, { chain }?)` | hex                        | Unconfirmed / missing. Same chain-argument failures as `sync`                                                                  |
+| `getRawBlock` / `getBlockHeader` | `(blockHash, { chain }?)`             | hex                        | Unknown hash. Same chain-argument failures as `sync`                                                                           |
+| `getTXOs`                        | `getTXOs(q, { chain }?)`              | revs or records            | No stabilizer; future/negative height on that chain; stabilizer changed during the read; query failure; `isSpent`, `isConfirmed`, `orderBy: "timestamp"`, or a `chain` key inside `q` |
+| `getOTXOs`                       | `getOTXOs(q, { chain }?)`             | revs or records            | Same as `getTXOs`. Sets `isObject: true` and does not filter on spentness                                                      |
 
 `getUTXOs` and `getOUTXOs` are not exposed inside a contract. `getOTXOs` is `getTXOs` with `isObject: true`, not an unspent filter. `InnerTXOQuery` has no `isSpent`, no `isConfirmed`, and no `orderBy: "timestamp"`; passing those keys invalidates.
 
@@ -160,14 +160,14 @@ Most location-based APIs require the referenced **transaction to be confirmed** 
 
 ```ts
 sync(location: string): Promise<any>
-sync(location: string, chain: string): Promise<any>
-decode(txId: string, chain?: string): Promise<TransitionJSON>
-load(location: string, chain?: string): Promise<Record<string, any>>
+sync(location: string, options?: { chain?: string }): Promise<any>
+decode(txId: string, options?: { chain?: string }): Promise<TransitionJSON>
+load(location: string, options?: { chain?: string }): Promise<Record<string, any>>
 ```
 
-- `sync(location)` deep-clones the object (BigInt-safe) so contracts cannot mutate live graph state. The location’s transaction must be confirmed. One argument is always a location on this computer’s chain, including `sync('BTC')`. A value that is not a revision or transaction id throws `Invalid Rev` and does not invalidate the evaluation.
-- `sync(location, chain)` is that same read on another built-in chain. `location` comes first: a transaction id or `txid:vout` on that chain. `chain` is the chain name and is case-insensitive. The node is `remoteChains[chain].url` on the computer that is evaluating the contract. The contract cannot pass a URL. The computer’s own chain name reads this chain, same as one argument. A location that is not a transaction id or revision invalidates the evaluation. So do an unknown chain, a chain that was not configured, a chain that is not a string, a missing or unconfirmed transaction, and a node that does not answer. The JSON does not include the node URL, and it has no methods. Calling one throws a normal JavaScript error and does not invalidate. `_rev` stays `txid:vout`. The evaluating computer is built with `remoteChains`; see [constructor](../Computer/constructor.md) and [sync](../Computer/sync.md).
-- The other methods take that same optional second argument. The rules, including one-argument calls, `load`, and returned revisions, are in [Cross-chain reads](./cross-chain.md).
+- `sync(location)` deep-clones the object (BigInt-safe) so contracts cannot mutate live graph state. The location’s transaction must be confirmed. One argument is always a location on this computer’s chain, including `sync('BTC')`. A value that is not a revision or transaction id throws `Invalid Rev` and does not invalidate the evaluation. `sync(location, {})` is that same read.
+- `sync(location, { chain })` is that same read on another built-in chain. `location` comes first: a transaction id or `txid:vout` on that chain. `chain` is the chain name and is case-insensitive. The node is `remoteChains[chain].url` on the computer that is evaluating the contract. The contract cannot pass a URL. The computer’s own chain name reads this chain, same as one argument. A location that is not a transaction id or revision invalidates the evaluation when `chain` is set. So do a second argument that is not a plain object, an unknown key, a third argument, an unknown chain, a chain that was not configured, a `chain` that is not a string, a missing or unconfirmed transaction, and a node that does not answer. The JSON does not include the node URL, and it has no methods. Calling one throws a normal JavaScript error and does not invalidate. `_rev` stays `txid:vout`. The evaluating computer is built with `remoteChains`; see [constructor](../Computer/constructor.md) and [sync](../Computer/sync.md).
+- The other methods take that same optional object. The rules, including one-argument calls, `load`, and returned revisions, are in [Cross-chain reads](./cross-chain.md).
 - `decode` requires a confirmed Bitcoin Computer transaction on the chain being read.
 - `load` accepts a module rev (`txId:outputIndex`); the deploy transaction must be confirmed on the chain being read.
 - Missing or unconfirmed targets invalidate the evaluation.
@@ -175,7 +175,7 @@ load(location: string, chain?: string): Promise<Record<string, any>>
 ```ts
 class Reader extends Contract {
   async readN(location: string) {
-    const obj = await computer.sync(location, 'BTC')
+    const obj = await computer.sync(location, { chain: 'BTC' })
     return obj.n
   }
 }
@@ -184,7 +184,7 @@ class Reader extends Contract {
 #### `getAncestors`
 
 ```ts
-getAncestors(location: string, chain?: string): Promise<string[]>
+getAncestors(location: string, options?: { chain?: string }): Promise<string[]>
 ```
 
 - Starting location must be confirmed.
@@ -193,10 +193,10 @@ getAncestors(location: string, chain?: string): Promise<string[]>
 #### `first` / `prev` / `next` / `last`
 
 ```ts
-first(rev: string, chain?: string): Promise<string>
-prev(rev: string, chain?: string): Promise<string | undefined>
-next(rev: string, chain?: string): Promise<string>
-last(rev: string, chain?: string): Promise<string>
+first(rev: string, options?: { chain?: string }): Promise<string>
+prev(rev: string, options?: { chain?: string }): Promise<string | undefined>
+next(rev: string, options?: { chain?: string }): Promise<string>
+last(rev: string, options?: { chain?: string }): Promise<string>
 ```
 
 - **`first`**: starting rev must be confirmed; returns the creation revision.
@@ -207,14 +207,14 @@ last(rev: string, chain?: string): Promise<string>
 #### Block and time helpers
 
 ```ts
-txIdToBlockTime(txId: string, chain?: string): Promise<bigint>
-txIdToBlockHeight(txId: string, chain?: string): Promise<number>
-txIdToBlockHash(txId: string, chain?: string): Promise<string>
-getBlockHash(height: number, chain?: string): Promise<string>
-getBlockHeight(hash: string, chain?: string): Promise<number>
-getRawTransaction(txId: string, chain?: string): Promise<string>
-getRawBlock(blockHash: string, chain?: string): Promise<string>
-getBlockHeader(blockHash: string, chain?: string): Promise<string>
+txIdToBlockTime(txId: string, options?: { chain?: string }): Promise<bigint>
+txIdToBlockHeight(txId: string, options?: { chain?: string }): Promise<number>
+txIdToBlockHash(txId: string, options?: { chain?: string }): Promise<string>
+getBlockHash(height: number, options?: { chain?: string }): Promise<string>
+getBlockHeight(hash: string, options?: { chain?: string }): Promise<number>
+getRawTransaction(txId: string, options?: { chain?: string }): Promise<string>
+getRawBlock(blockHash: string, options?: { chain?: string }): Promise<string>
+getBlockHeader(blockHash: string, options?: { chain?: string }): Promise<string>
 ```
 
 - Unconfirmed transactions cannot be observed as stable times/heights/hashes.
@@ -223,8 +223,8 @@ getBlockHeader(blockHash: string, chain?: string): Promise<string>
 #### `getTXOs` and `getOTXOs`
 
 ```ts
-getTXOs(q: InnerTXOQuery, chain?: string): Promise<string[] | TXORecord[]>
-getOTXOs(q: InnerTXOQuery, chain?: string): Promise<string[] | TXORecord[]>
+getTXOs(q: InnerTXOQuery, options?: { chain?: string }): Promise<string[] | TXORecord[]>
+getOTXOs(q: InnerTXOQuery, options?: { chain?: string }): Promise<string[] | TXORecord[]>
 ```
 
 These are the only list methods on the in-contract `computer`. `getOTXOs` calls `getTXOs` with `isObject: true`. It does not filter on spentness: a later spend must not drop a row that was visible at the stabilizer. `getUTXOs` and `getOUTXOs` exist only on the outer `Computer`.
