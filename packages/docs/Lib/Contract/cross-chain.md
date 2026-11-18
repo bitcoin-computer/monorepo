@@ -62,7 +62,7 @@ A revision that comes back is `txid:vout`. It has no chain prefix. Passing that 
 
 `try/catch` does not commit. A failed read marks the evaluation, and the public error does not include the node URL. It ends with one copy of “Accessing non-existent on-chain state inside a smart contract is forbidden.”
 
-These locations do not use `sync`’s location check. `load` and `getAncestors` parse a revision inside their own body. A value that is not a revision throws `Invalid Rev` and does not mark the evaluation. `sync(notARev, { chain })` does mark it when `chain` is set. `sync(notARev)` and `sync(notARev, {})` do not: an omitted `chain` is the one-argument read.
+These locations do not use `sync`’s location check. `load`, `getAncestors`, `first`, `prev`, `next`, and `last` parse a revision inside their own body. A value that is not a revision throws `Invalid Rev` and does not mark the evaluation, even when `{ chain }` is set. By contrast, `sync(notARev, { chain })` marks the evaluation. `sync(notARev)` and `sync(notARev, {})` do not: an omitted `chain` is treated as a one-argument read.
 
 ## Code that runs
 
