@@ -74,6 +74,8 @@ A deployed module cannot use top-level `await`. The compartment evaluates the mo
 
 ## Example
 
+On a local regtest, `npm run up:regtest` in `packages/node` publishes one node per chain. With the quickstart `.env`, LTC is `http://127.0.0.1:1031` and BTC is `http://127.0.0.1:1032`. That command mounts a copy of each chain's example conf. `npm run up` mounts the package-root conf instead. See [Several regtest chains](../../Node/index.md#several-regtest-chains).
+
 ```ts
 const ltc = new Computer({
   chain: 'LTC',

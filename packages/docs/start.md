@@ -157,6 +157,8 @@ cp chain-setup/LTC/regtest/litecoin.conf.example litecoin.conf
 npm run up
 ```
 
+`npm run up` mounts the `litecoin.conf` in this directory. `BITCOIN_RPC_PASSWORD` in `.env` matches the `rpcauth` line in that file. For one regtest stack per chain, run `npm run up:regtest` from `packages/node`. That command copies each chain's example conf to `.regtest/` and mounts those copies. This `litecoin.conf` stays the conf for `npm run up`. See [Several regtest chains](Node/index.md#several-regtest-chains).
+
 ### Run the Tests
 
 Once the node is up an running, open a separate terminal window and navigate the monorepo folder. You can run the following commands. The commands will be executed in each package. You can also navigate a package and run the same scripts there.

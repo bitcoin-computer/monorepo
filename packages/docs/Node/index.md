@@ -53,6 +53,35 @@ npm run up
 Blockchain data is stored in `packages/node/chain-setup/<chain>/<network>`. Postgres data lives in a Docker volume named `bcn-db-<chain>-<network>` and stores the indexed chain for fast access. An older `db-data` directory in that folder is no longer used. After upgrading, the node indexes the chain once into the new volume, and that directory can be deleted.
 !!!
 
+`npm run up` mounts one daemon conf: the file in this directory named by `BITCOIN_CONF_FILE`. For the commands above that file is `litecoin.conf`, and `BITCOIN_RPC_PASSWORD` in `.env` matches its `rpcauth` line. When you generate a new `rpcauth`, put that password in `.env`. Leave `BITCOIN_CONF_HOST_FILE` unset. With it unset, Compose keeps mounting `./${BITCOIN_CONF_FILE}`.
+
+### Several regtest chains
+
+`npm run up:regtest` starts one regtest stack per chain, so a contract can read another chain. The default chains are LTC and BTC. The chain named by `BCN_CHAIN` in `.env` starts first when it is in the list, and it keeps the example host ports, including node port 1031. Each other chain takes the next free host port. The process inside the container still listens on the example port. With the quickstart `.env`, LTC is `http://127.0.0.1:1031` and BTC is `http://127.0.0.1:1032`.
+
+<font size=1>
+
+```sh
+cd packages/node
+
+# LTC and BTC
+npm run up:regtest
+
+# A different list. BCN_REGTEST_CHAINS='LTC DOGE' selects chains the same way.
+npm run up:regtest -- DOGE PEPE
+
+# Stop those stacks
+npm run down:regtest
+```
+
+</font>
+
+For each chain the script copies `chain-setup/<CHAIN>/regtest/.env.example` and `chain-setup/<CHAIN>/regtest/<daemon>.conf.example`. The conf copy is `.regtest/<chain>.conf` under `packages/node` (`.regtest/ltc.conf`, `.regtest/btc.conf`), and Compose mounts that file by setting `BITCOIN_CONF_HOST_FILE`. The example `BITCOIN_RPC_PASSWORD` matches the `rpcauth` line in that example conf. The package-root conf stays where the quickstart put it, and `npm run up` keeps mounting that file. The next `up:regtest` copies the examples again, so an edit under `.regtest/` is replaced.
+
+`npm run up` publishes the same host ports as the first of these stacks, including 1031. Run one of them at a time. `npm run down` stops the `npm run up` stack. `npm run down:regtest` stops the stacks from `up:regtest`.
+
+Pass the published node URLs as `remoteChains` on the computer that evaluates the contract. See [Cross-chain reads](../Lib/Contract/cross-chain.md).
+
 ### Adding a chain
 
 Network params, fees, and parse/index hooks live in [NakamotoJS](../NakamotoJs/index.md). After that config exists, add a node example under `chain-setup/<CHAIN>/<network>/` (`.env.example`, daemon conf, Docker image, data dir, ports).

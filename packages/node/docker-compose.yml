@@ -42,7 +42,9 @@ services:
       - '${BCN_PRIVATE_BIND:-127.0.0.1}:${BCN_ZMQ_HOST_PORT:-${BCN_ZMQ_PORT}}:${BCN_ZMQ_PORT}'
     volumes:
       - ./chain-setup/${BCN_CHAIN}/${BCN_NETWORK}/blockchain-data:${BITCOIN_DATA_DIR}
-      - ./${BITCOIN_CONF_FILE}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}
+      # npm run up leaves BITCOIN_CONF_HOST_FILE unset and mounts the package-root
+      # conf. up:regtest sets it to that stack's own copy of the regtest example.
+      - '${BITCOIN_CONF_HOST_FILE:-./${BITCOIN_CONF_FILE}}:${BITCOIN_DATA_DIR}/${BITCOIN_CONF_FILE}'
   bcn:
     image: bcdb/bcn
     env_file: ${BCN_ENV_FILE:-.env}

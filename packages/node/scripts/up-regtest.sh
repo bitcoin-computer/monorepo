@@ -30,7 +30,7 @@ unset BCN_CHAIN BCN_NETWORK BCN_ENV BCN_PORT BCN_URL BCN_HOST_PORT BCN_ENV_FILE 
   BCN_ZMQ_URL BCN_ZMQ_PORT BCN_ZMQ_HOST_PORT \
   POSTGRES_PORT POSTGRES_HOST_PORT POSTGRES_HOST POSTGRES_USER \
   BITCOIN_RPC_PORT BITCOIN_RPC_HOST_PORT BITCOIN_RPC_HOST \
-  BITCOIN_IMAGE BITCOIN_DATA_DIR BITCOIN_CONF_FILE BITCOIN_P2P_PORT \
+  BITCOIN_IMAGE BITCOIN_DATA_DIR BITCOIN_CONF_FILE BITCOIN_CONF_HOST_FILE BITCOIN_P2P_PORT \
   BCN_PRIVATE_BIND || true
 
 in_list() {
@@ -126,6 +126,29 @@ for raw in $chain_list; do
   project="bcn-$lower"
   out="/tmp/bcn-regtest-$lower.env"
   cp "$example" "$out"
+
+  # The example env's RPC password matches this example conf. Mount that copy
+  # from a path this script owns under the package, which Docker can read.
+  # /tmp is not shared with Docker Desktop: a bind mount there becomes an
+  # empty directory. The package-root conf stays in place for npm run up.
+  # *.conf is gitignored, so a fresh checkout has no bitcoin.conf, and a
+  # litecoin.conf whose rpcauth was replaced would not match this password.
+  conf_file=$(env_value "$out" BITCOIN_CONF_FILE)
+  case "$conf_file" in
+    ''|*[!A-Za-z0-9._-]*)
+      echo "$example has no usable BITCOIN_CONF_FILE." >&2
+      exit 1
+      ;;
+  esac
+  conf_example="chain-setup/$chain/regtest/${conf_file}.example"
+  if [ ! -f "$conf_example" ]; then
+    echo "No regtest conf for $chain ($conf_example)." >&2
+    exit 1
+  fi
+  mkdir -p .regtest
+  conf_out="$(pwd)/.regtest/$lower.conf"
+  cp "$conf_example" "$conf_out"
+  set_key "$out" BITCOIN_CONF_HOST_FILE "$conf_out"
 
   bcn_port=$(env_value "$out" BCN_PORT)
   pg_port=$(env_value "$out" POSTGRES_PORT)
