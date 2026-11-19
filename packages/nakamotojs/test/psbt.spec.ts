@@ -7,8 +7,8 @@ import { describe, it } from 'mocha';
 import { Buffer } from 'buffer';
 
 import { convertScriptTree } from './payments.utils.js';
-import { LEAF_VERSION_TAPSCRIPT } from '../src/payments/bip341.js';
-import { tapTreeToList, tapTreeFromList } from '../src/psbt/bip371.js';
+import { LEAF_VERSION_TAPSCRIPT, tapleafHash } from '../src/payments/bip341.js';
+import { tapTreeToList, tapTreeFromList, toXOnly } from '../src/psbt/bip371.js';
 import { Taptree } from '../src/types.js';
 import { initEccLib } from '../src/index.js';
 const bip32 = BIP32Factory(ecc);
@@ -18,8 +18,10 @@ import {
   networks as NETWORKS,
   payments,
   Psbt,
+  script as bscript,
   Signer,
   SignerAsync,
+  Transaction,
 } from '../src/index.js';
 import psbt from './fixtures/psbt.js';
 import p2tr from './fixtures/p2tr.js';
@@ -1125,6 +1127,96 @@ describe(`Psbt`, () => {
         psbt.validateSignaturesOfAllInputs(schnorrValidator),
         true,
       );
+      psbt.finalizeAllInputs();
+      const keySpends = psbt
+        .extractTransaction()
+        .ins.filter(input => input.witness.length === 1);
+      assert.strictEqual(keySpends.length, 1);
+      assert.strictEqual(keySpends[0].witness[0].length, 65);
+      assert.strictEqual(keySpends[0].witness[0][64], 0x83);
+    });
+  });
+
+  describe('tapleaf sighash', () => {
+    it('Signs a tapleaf with the input sighash', () => {
+      initEccLib(ecc);
+      const leafKey = ECPair.makeRandom();
+      const internalKey = ECPair.makeRandom();
+      const leafScript = bscript.fromASM(
+        `${toXOnly(leafKey.publicKey).toString('hex')} OP_CHECKSIG`,
+      );
+      const scriptTree = { output: leafScript };
+      const redeem = {
+        output: leafScript,
+        redeemVersion: LEAF_VERSION_TAPSCRIPT,
+      };
+      const { output, witness } = payments.p2tr({
+        internalPubkey: toXOnly(internalKey.publicKey),
+        scriptTree,
+        redeem,
+      });
+      const amount = 100000;
+      const psbt = new Psbt();
+      psbt.addInput({
+        hash: '11'.repeat(32),
+        index: 0,
+        witnessUtxo: { value: amount, script: output! },
+        sighashType: Transaction.SIGHASH_ALL,
+        tapLeafScript: [
+          {
+            leafVersion: redeem.redeemVersion,
+            script: redeem.output,
+            controlBlock: witness![witness!.length - 1],
+          },
+        ],
+      });
+      psbt.addOutput({
+        script: Buffer.concat([
+          Buffer.from('0014', 'hex'),
+          Buffer.alloc(20, 2),
+        ]),
+        value: amount - 1000,
+      });
+      psbt.signTaprootInput(0, leafKey, undefined, [Transaction.SIGHASH_ALL]);
+
+      const tapSig = psbt.data.inputs[0].tapScriptSig![0].signature;
+      assert.strictEqual(tapSig.length, 65);
+      assert.strictEqual(tapSig[64], Transaction.SIGHASH_ALL);
+      assert.strictEqual(
+        psbt.validateSignaturesOfInput(0, schnorrValidator),
+        true,
+      );
+
+      const leafHash = tapleafHash({
+        output: leafScript,
+        version: LEAF_VERSION_TAPSCRIPT,
+      });
+      const pubkey = toXOnly(leafKey.publicKey);
+      const payload = tapSig.subarray(0, 64);
+      const unsignedTx = (psbt as any).__CACHE.__TX;
+      const hashAll = unsignedTx.hashForWitnessV1(
+        0,
+        [output],
+        [amount],
+        Transaction.SIGHASH_ALL,
+        leafHash,
+      );
+      const hashDefault = unsignedTx.hashForWitnessV1(
+        0,
+        [output],
+        [amount],
+        Transaction.SIGHASH_DEFAULT,
+        leafHash,
+      );
+      assert.strictEqual(ecc.verifySchnorr(hashAll, pubkey, payload), true);
+      assert.strictEqual(
+        ecc.verifySchnorr(hashDefault, pubkey, payload),
+        false,
+      );
+
+      psbt.finalizeInput(0);
+      const finalized = psbt.extractTransaction().ins[0].witness;
+      assert.ok(finalized.some(item => item.equals(tapSig)));
     });
   });
 
