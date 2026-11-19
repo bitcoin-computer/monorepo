@@ -4,7 +4,18 @@ services:
     env_file: ${BCN_ENV_FILE:-.env}
     restart: always
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER}']
+      # Passes only when the real server is up, database POSTGRES_DB exists, and
+      # db/db_schema.sql has created "Output". The image loads that file on a
+      # temporary server and then execs postgres, so pid 1 must be postgres.
+      test:
+        [
+          'CMD-SHELL',
+          'psql -U "$$POSTGRES_USER" -d "$$POSTGRES_DB" -c ''SELECT 1 FROM "Output" LIMIT 1;'' && [ "$$(cat /proc/1/comm)" = postgres ]',
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
     # command: ["postgres", "-c", "log_statement=all"]
     ports:
       # Postgres, RPC and ZMQ are only needed by the containers. Publish them on
@@ -18,7 +29,7 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
     volumes:
-      - ./chain-setup/${BCN_CHAIN}/${BCN_NETWORK}/db-data:/var/lib/postgresql/data
+      - bcn-db:/var/lib/postgresql/data
       - ./db/db_schema.sql:/docker-entrypoint-initdb.d/db_schema.sql
   node:
     image: ${BITCOIN_IMAGE}
@@ -63,8 +74,10 @@ services:
       - POSTGRES_PORT=${POSTGRES_PORT}
       - POSTGRES_HOST=${POSTGRES_HOST}
     depends_on:
-      - db
-      - node
+      db:
+        condition: service_healthy
+      node:
+        condition: service_started
     networks:
       - bitcoin
       - bcn
@@ -93,11 +106,16 @@ services:
     volumes:
       - ${BCN_LOG_DIR:-./logs}:/dist/packages/node/logs
     depends_on:
-      - db
-      - node
+      db:
+        condition: service_healthy
+      node:
+        condition: service_started
     networks:
       - bitcoin
       - bcn
 networks:
   bitcoin: null
   bcn: null
+volumes:
+  bcn-db:
+    name: bcn-db-${BCN_CHAIN}-${BCN_NETWORK}

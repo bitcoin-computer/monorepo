@@ -50,7 +50,7 @@ npm run up
 </font>
 
 !!!
-The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database. The postgres database is used to efficiently store the complete blockchain data, for fast access and indexing.
+Blockchain data is stored in `packages/node/chain-setup/<chain>/<network>`. Postgres data lives in a Docker volume named `bcn-db-<chain>-<network>` and stores the indexed chain for fast access. An older `db-data` directory in that folder is no longer used. After upgrading, the node indexes the chain once into the new volume, and that directory can be deleted.
 !!!
 
 ### Adding a chain
