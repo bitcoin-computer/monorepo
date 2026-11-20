@@ -10,7 +10,7 @@ The node URL is [`remoteChains`](../Computer/constructor.md) on the computer tha
 
 ## Argument order
 
-The subject comes first. The second argument is a plain object, `{ chain }`. `chain` is the chain name. Omit the object, or omit `chain`, to read this computer.
+The subject comes first. The second argument is a plain object, `{ chain }`. `chain` is the chain name. Omit the argument, or omit `chain`, to read this computer. Passing `undefined` counts as a second argument and invalidates. Each method is typed as one argument, or a required `{ chain }` object, the same two forms as `sync`.
 
 ```ts
 sync(location, { chain }?)
@@ -40,7 +40,7 @@ await computer.getTXOs(query, { chain: 'BTC' })
 await computer.getOTXOs(query, { chain: 'BTC' })
 ```
 
-One argument is a read of this computer’s chain. That includes `sync('BTC')`, `getBlockHash('BTC')`, and `getTXOs('BTC')`: the string is a location, a height, or a query, not a chain name. `{ chain: 'LTC' }` on a Litecoin computer is that same read. The name is case-insensitive. `{}` is that same read, because `chain` is omitted.
+One argument is a read of this computer’s chain. That includes `sync('BTC')`, `getBlockHash('BTC')`, and `getTXOs('BTC')`: the string is a location, a height, or a query, not a chain name. `{ chain: 'LTC' }` on a Litecoin computer is that same read. The published type is the uppercase id. Any other case is accepted at runtime and read as that id. Keys in `remoteChains` are already the uppercase id. `{}` is that same read, because `chain` is omitted.
 
 The second argument has to be a plain object. A string, a number, `null`, or an array invalidates. The only key is `chain`. Any other key invalidates, so a later option can be added without a new positional argument. A third argument invalidates. A value that is not a string in `chain` invalidates. An unknown chain, or a chain with no `remoteChains` entry, invalidates.
 
@@ -52,7 +52,7 @@ A revision that comes back is `txid:vout`. It has no chain prefix. Passing that 
 
 `chain` does not add a new read. It runs the one-argument method against the named chain’s node. Confirmation, the block tip, and the indexed prefix are that chain’s.
 
-- `sync` returns the same plain JSON as a one-argument `sync`: methods are removed, `bigint` is kept, and a missing or unconfirmed location invalidates. A location that is not a transaction id or revision also invalidates. Calling a method on the JSON throws a normal JavaScript error and does not invalidate.
+- `sync` returns the same plain JSON as a one-argument `sync`: methods are removed, `bigint` is kept, and a missing or unconfirmed location invalidates. When `chain` is set, a location that is not a transaction id or revision also invalidates. Calling a method on the JSON throws a normal JavaScript error and does not invalidate.
 - `prev` of a confirmed root returns `undefined` and does not invalidate.
 - `next` with no confirmed successor invalidates. `last` invalidates unless the tip is spent by a confirmed transaction.
 - `getBlockHash` rejects a height above that chain’s tip.
@@ -60,7 +60,7 @@ A revision that comes back is `txid:vout`. It has no chain prefix. Passing that 
 - `getAncestors` returns the ancestor set. The order of that array is not part of the result.
 - `getBlockHeight`, `getRawBlock`, and `getBlockHeader` still answer for the hash they are given. They do not gain a best-chain check.
 
-`try/catch` does not commit. A failed read marks the evaluation, and the public error does not include the node URL. It ends with one copy of “Accessing non-existent on-chain state inside a smart contract is forbidden.”
+`try/catch` does not commit a read that marks the evaluation. The public error does not include the node URL. It ends with one copy of “Accessing non-existent on-chain state inside a smart contract is forbidden.”
 
 These locations do not use `sync`’s location check. `load`, `getAncestors`, `first`, `prev`, `next`, and `last` parse a revision inside their own body. A value that is not a revision throws `Invalid Rev` and does not mark the evaluation, even when `{ chain }` is set. By contrast, `sync(notARev, { chain })` marks the evaluation. `sync(notARev)` and `sync(notARev, {})` do not: an omitted `chain` is treated as a one-argument read.
 

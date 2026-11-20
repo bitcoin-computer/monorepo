@@ -70,15 +70,18 @@ npm run up:regtest
 # A different list. BCN_REGTEST_CHAINS='LTC DOGE' selects chains the same way.
 npm run up:regtest -- DOGE PEPE
 
-# Stop those stacks
+# Stop every stack up:regtest started, including an earlier list.
 npm run down:regtest
+
+# Stop one of those stacks.
+npm run down:regtest -- DOGE
 ```
 
 </font>
 
 For each chain the script copies `chain-setup/<CHAIN>/regtest/.env.example` and `chain-setup/<CHAIN>/regtest/<daemon>.conf.example`. The conf copy is `.regtest/<chain>.conf` under `packages/node` (`.regtest/ltc.conf`, `.regtest/btc.conf`), and Compose mounts that file by setting `BITCOIN_CONF_HOST_FILE`. The example `BITCOIN_RPC_PASSWORD` matches the `rpcauth` line in that example conf. The package-root conf stays where the quickstart put it, and `npm run up` keeps mounting that file. The next `up:regtest` copies the examples again, so an edit under `.regtest/` is replaced.
 
-`npm run up` publishes the same host ports as the first of these stacks, including 1031. Run one of them at a time. `npm run down` stops the `npm run up` stack. `npm run down:regtest` stops the stacks from `up:regtest`.
+`npm run up` publishes the same host ports as the first of these stacks, including 1031. Run one of them at a time. `npm run down` stops the `npm run up` stack. `npm run down:regtest` with no chain names stops every stack `up:regtest` has started and not yet stopped, including a list from an earlier run. That list is `.regtest/stacks`. Pass chain names to stop only those. A later `up:regtest` does not stop the previous stacks; they keep their host ports until `down:regtest`. When nothing has been recorded, a bare `down:regtest` uses `BCN_REGTEST_CHAINS` if it is set, and otherwise LTC and BTC.
 
 Pass the published node URLs as `remoteChains` on the computer that evaluates the contract. See [Cross-chain reads](../Lib/Contract/cross-chain.md).
 

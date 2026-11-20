@@ -159,15 +159,19 @@ Most location-based APIs require the referenced **transaction to be confirmed** 
 #### `sync` / `decode` / `load`
 
 ```ts
+type ChainRead = { chain?: 'LTC' | 'BTC' | 'DOGE' | 'PEPE' | 'WOJAK' }
+
 sync(location: string): Promise<any>
-sync(location: string, options?: { chain?: string }): Promise<any>
-decode(txId: string, options?: { chain?: string }): Promise<TransitionJSON>
-load(location: string, options?: { chain?: string }): Promise<Record<string, any>>
+sync(location: string, options: ChainRead): Promise<any>
+decode(txId: string): Promise<TransitionJSON>
+decode(txId: string, options: ChainRead): Promise<TransitionJSON>
+load(location: string): Promise<Record<string, any>>
+load(location: string, options: ChainRead): Promise<Record<string, any>>
 ```
 
 - `sync(location)` deep-clones the object (BigInt-safe) so contracts cannot mutate live graph state. The location’s transaction must be confirmed. One argument is always a location on this computer’s chain, including `sync('BTC')`. A value that is not a revision or transaction id throws `Invalid Rev` and does not invalidate the evaluation. `sync(location, {})` is that same read.
-- `sync(location, { chain })` is that same read on another built-in chain. `location` comes first: a transaction id or `txid:vout` on that chain. `chain` is the chain name and is case-insensitive. The node is `remoteChains[chain].url` on the computer that is evaluating the contract. The contract cannot pass a URL. The computer’s own chain name reads this chain, same as one argument. A location that is not a transaction id or revision invalidates the evaluation when `chain` is set. So do a second argument that is not a plain object, an unknown key, a third argument, an unknown chain, a chain that was not configured, a `chain` that is not a string, a missing or unconfirmed transaction, and a node that does not answer. The JSON does not include the node URL, and it has no methods. Calling one throws a normal JavaScript error and does not invalidate. `_rev` stays `txid:vout`. The evaluating computer is built with `remoteChains`; see [constructor](../Computer/constructor.md) and [sync](../Computer/sync.md).
-- The other methods take that same optional object. The rules, including one-argument calls, `load`, and returned revisions, are in [Cross-chain reads](./cross-chain.md).
+- `sync(location, { chain })` is that same read on another built-in chain. `location` comes first: a transaction id or `txid:vout` on that chain. The published type writes `chain` as `'LTC' | 'BTC' | 'DOGE' | 'PEPE' | 'WOJAK'`. Any other case is accepted at runtime and read as that id. The node is `remoteChains` for that uppercase id on the computer that is evaluating the contract. The contract cannot pass a URL. The computer’s own chain name reads this chain, same as one argument. A location that is not a transaction id or revision invalidates the evaluation when `chain` is set. So do a second argument that is not a plain object, an unknown key, a third argument, an unknown chain, a chain that was not configured, a `chain` that is not a string, a missing or unconfirmed transaction, and a node that does not answer. The JSON does not include the node URL, and it has no methods. Calling one throws a normal JavaScript error and does not invalidate. `_rev` stays `txid:vout`. The evaluating computer is built with `remoteChains`; see [constructor](../Computer/constructor.md) and [sync](../Computer/sync.md).
+- The other methods take that same object. Omit the argument to read this computer. The second argument is required when it is passed, so `undefined` is not a home read. The rules, including one-argument calls, `load`, and returned revisions, are in [Cross-chain reads](./cross-chain.md).
 - `decode` requires a confirmed Bitcoin Computer transaction on the chain being read.
 - `load` accepts a module rev (`txId:outputIndex`); the deploy transaction must be confirmed on the chain being read.
 - Missing or unconfirmed targets invalidate the evaluation.
@@ -184,7 +188,8 @@ class Reader extends Contract {
 #### `getAncestors`
 
 ```ts
-getAncestors(location: string, options?: { chain?: string }): Promise<string[]>
+getAncestors(location: string): Promise<string[]>
+getAncestors(location: string, options: ChainRead): Promise<string[]>
 ```
 
 - Starting location must be confirmed.
@@ -193,10 +198,14 @@ getAncestors(location: string, options?: { chain?: string }): Promise<string[]>
 #### `first` / `prev` / `next` / `last`
 
 ```ts
-first(rev: string, options?: { chain?: string }): Promise<string>
-prev(rev: string, options?: { chain?: string }): Promise<string | undefined>
-next(rev: string, options?: { chain?: string }): Promise<string>
-last(rev: string, options?: { chain?: string }): Promise<string>
+first(rev: string): Promise<string>
+first(rev: string, options: ChainRead): Promise<string>
+prev(rev: string): Promise<string | undefined>
+prev(rev: string, options: ChainRead): Promise<string | undefined>
+next(rev: string): Promise<string>
+next(rev: string, options: ChainRead): Promise<string>
+last(rev: string): Promise<string>
+last(rev: string, options: ChainRead): Promise<string>
 ```
 
 - **`first`**: starting rev must be confirmed; returns the creation revision.
@@ -207,14 +216,22 @@ last(rev: string, options?: { chain?: string }): Promise<string>
 #### Block and time helpers
 
 ```ts
-txIdToBlockTime(txId: string, options?: { chain?: string }): Promise<bigint>
-txIdToBlockHeight(txId: string, options?: { chain?: string }): Promise<number>
-txIdToBlockHash(txId: string, options?: { chain?: string }): Promise<string>
-getBlockHash(height: number, options?: { chain?: string }): Promise<string>
-getBlockHeight(hash: string, options?: { chain?: string }): Promise<number>
-getRawTransaction(txId: string, options?: { chain?: string }): Promise<string>
-getRawBlock(blockHash: string, options?: { chain?: string }): Promise<string>
-getBlockHeader(blockHash: string, options?: { chain?: string }): Promise<string>
+txIdToBlockTime(txId: string): Promise<bigint>
+txIdToBlockTime(txId: string, options: ChainRead): Promise<bigint>
+txIdToBlockHeight(txId: string): Promise<number>
+txIdToBlockHeight(txId: string, options: ChainRead): Promise<number>
+txIdToBlockHash(txId: string): Promise<string>
+txIdToBlockHash(txId: string, options: ChainRead): Promise<string>
+getBlockHash(height: number): Promise<string>
+getBlockHash(height: number, options: ChainRead): Promise<string>
+getBlockHeight(hash: string): Promise<number>
+getBlockHeight(hash: string, options: ChainRead): Promise<number>
+getRawTransaction(txId: string): Promise<string>
+getRawTransaction(txId: string, options: ChainRead): Promise<string>
+getRawBlock(blockHash: string): Promise<string>
+getRawBlock(blockHash: string, options: ChainRead): Promise<string>
+getBlockHeader(blockHash: string): Promise<string>
+getBlockHeader(blockHash: string, options: ChainRead): Promise<string>
 ```
 
 - Unconfirmed transactions cannot be observed as stable times/heights/hashes.
@@ -223,8 +240,10 @@ getBlockHeader(blockHash: string, options?: { chain?: string }): Promise<string>
 #### `getTXOs` and `getOTXOs`
 
 ```ts
-getTXOs(q: InnerTXOQuery, options?: { chain?: string }): Promise<string[] | TXORecord[]>
-getOTXOs(q: InnerTXOQuery, options?: { chain?: string }): Promise<string[] | TXORecord[]>
+getTXOs(q: InnerTXOQuery): Promise<string[] | TXORecord[]>
+getTXOs(q: InnerTXOQuery, options: ChainRead): Promise<string[] | TXORecord[]>
+getOTXOs(q: InnerTXOQuery): Promise<string[] | TXORecord[]>
+getOTXOs(q: InnerTXOQuery, options: ChainRead): Promise<string[] | TXORecord[]>
 ```
 
 These are the only list methods on the in-contract `computer`. `getOTXOs` calls `getTXOs` with `isObject: true`. It does not filter on spentness: a later spend must not drop a row that was visible at the stabilizer. `getUTXOs` and `getOUTXOs` exist only on the outer `Computer`.

@@ -4,8 +4,13 @@
 #   npm run up:regtest
 #   npm run up:regtest -- DOGE PEPE
 #   BCN_REGTEST_CHAINS='LTC DOGE' npm run up:regtest
-#   npm run down:regtest -- LTC BTC
+#   npm run down:regtest
+#   npm run down:regtest -- DOGE
+# A successful up records the chain in .regtest/stacks. down with no chain
+# names stops that recorded set, including an earlier up. Pass names to stop
+# only those chains. With no record, down uses BCN_REGTEST_CHAINS, else LTC BTC.
 # Set BCN_REGTEST_DRY_RUN=1 to print the compose commands without running them.
+# A dry run does not record or forget.
 set -eu
 
 cd "$(dirname "$0")/.."
@@ -16,7 +21,33 @@ if [ "${1:-}" = up ] || [ "${1:-}" = down ]; then
   shift
 fi
 
-if [ "$#" -gt 0 ]; then
+stacks_file=.regtest/stacks
+
+record_stack() {
+  stack_chain=$1
+  mkdir -p .regtest
+  if [ -f "$stacks_file" ] && grep -qxF "$stack_chain" "$stacks_file"; then
+    return 0
+  fi
+  printf '%s\n' "$stack_chain" >> "$stacks_file"
+}
+
+forget_stack() {
+  stack_chain=$1
+  [ -f "$stacks_file" ] || return 0
+  tmp=$(mktemp)
+  grep -vxF "$stack_chain" "$stacks_file" > "$tmp" || true
+  if [ -s "$tmp" ]; then
+    mv "$tmp" "$stacks_file"
+  else
+    rm -f "$tmp" "$stacks_file"
+  fi
+}
+
+if [ "$action" = down ] && [ "$#" -eq 0 ] && [ -s "$stacks_file" ]; then
+  chain_list=$(grep -v '^[[:space:]]*$' "$stacks_file" | tr '\n' ' ' | sed 's/[[:space:]]*$//')
+  echo "Stopping stacks recorded by up:regtest: $chain_list"
+elif [ "$#" -gt 0 ]; then
   chain_list=$*
 elif [ -n "${BCN_REGTEST_CHAINS:-}" ]; then
   chain_list=$BCN_REGTEST_CHAINS
@@ -189,7 +220,9 @@ for raw in $chain_list; do
 
   if [ "$action" = up ]; then
     docker compose -p "$project" -f docker-compose.yml --env-file "$out" up -d
+    record_stack "$chain"
   else
     docker compose -p "$project" -f docker-compose.yml --env-file "$out" down
+    forget_stack "$chain"
   fi
 done
