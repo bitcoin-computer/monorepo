@@ -374,6 +374,9 @@ export type Fee = Partial<{
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
 export type ModuleStorageType = 'multisig' | 'taproot'
 export type Mode = 'prod' | 'dev' | 'debug'
+export type RemoteChainConfig = {
+  url: string
+}
 export type ComputerOptions = Partial<{
   chain: ChainString
   mnemonic: string
@@ -386,6 +389,7 @@ export type ComputerOptions = Partial<{
   moduleStorageType: ModuleStorageType
   checkFee: boolean
   mode: Mode
+  remoteChains?: Partial<Record<Chain, RemoteChainConfig>>
 }>
 export interface ApiBalance {
   confirmed: string
