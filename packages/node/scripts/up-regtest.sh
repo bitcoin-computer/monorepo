@@ -6,9 +6,13 @@
 #   BCN_REGTEST_CHAINS='LTC DOGE' npm run up:regtest
 #   npm run down:regtest
 #   npm run down:regtest -- DOGE
-# A successful up records the chain in .regtest/stacks. down with no chain
-# names stops that recorded set, including an earlier up. Pass names to stop
-# only those chains. With no record, down uses BCN_REGTEST_CHAINS, else LTC BTC.
+# A successful up records the chain and the host ports it published in
+# .regtest/stacks and .regtest/hosts. A later up leaves those stacks running
+# and does not reuse their host ports. The chain named in .env still keeps
+# the example ports when those ports are free.
+# down with no chain names stops that recorded set, including an earlier up.
+# Pass names to stop only those chains. With no record, down uses
+# BCN_REGTEST_CHAINS, else LTC BTC.
 # Set BCN_REGTEST_DRY_RUN=1 to print the compose commands without running them.
 # A dry run does not record or forget.
 set -eu
@@ -22,6 +26,7 @@ if [ "${1:-}" = up ] || [ "${1:-}" = down ]; then
 fi
 
 stacks_file=.regtest/stacks
+hosts_file=.regtest/hosts
 
 record_stack() {
   stack_chain=$1
@@ -41,6 +46,34 @@ forget_stack() {
     mv "$tmp" "$stacks_file"
   else
     rm -f "$tmp" "$stacks_file"
+  fi
+}
+
+# One line per chain: CHAIN bcn pg zmq rpc. Replaced when that chain is started again.
+record_hosts() {
+  host_chain=$1
+  host_bcn=$2
+  host_pg=$3
+  host_zmq=$4
+  host_rpc=$5
+  mkdir -p .regtest
+  tmp=$(mktemp)
+  if [ -f "$hosts_file" ]; then
+    grep -v "^${host_chain} " "$hosts_file" > "$tmp" || true
+  fi
+  printf '%s %s %s %s %s\n' "$host_chain" "$host_bcn" "$host_pg" "$host_zmq" "$host_rpc" >> "$tmp"
+  mv "$tmp" "$hosts_file"
+}
+
+forget_hosts() {
+  host_chain=$1
+  [ -f "$hosts_file" ] || return 0
+  tmp=$(mktemp)
+  grep -v "^${host_chain} " "$hosts_file" > "$tmp" || true
+  if [ -s "$tmp" ]; then
+    mv "$tmp" "$hosts_file"
+  else
+    rm -f "$tmp" "$hosts_file"
   fi
 }
 
@@ -108,9 +141,10 @@ set_key() {
   mv "$tmp" "$file"
 }
 
-# node-secret tests dial the chain named in .env on its example host ports
-# (Postgres 5432, BCN 1031, ZMQ 28332). Start that chain first so only the
-# others move to the next free host port. npm run up publishes the same ports.
+# The chain named in .env keeps the example host ports (Postgres 5432, BCN 1031,
+# ZMQ 28332) when they are free. Those are the ports npm run up publishes, so
+# only later chains move. Stacks already recorded and not started again here
+# keep the host ports from the last up, and those ports count as taken.
 home_chain=$(env_value .env BCN_CHAIN)
 home_chain=$(printf '%s' "${home_chain:-LTC}" | tr '[:lower:]' '[:upper:]')
 home_first=''
@@ -132,6 +166,52 @@ used_bcn=''
 used_pg=''
 used_zmq=''
 used_rpc=''
+
+# Host ports published by a previous up. Chains this command starts or stops
+# are left out: up replaces that project, and down releases the port.
+if [ -s "$stacks_file" ]; then
+  while IFS= read -r recorded || [ -n "$recorded" ]; do
+    recorded=$(printf '%s' "$recorded" | tr '[:lower:]' '[:upper:]')
+    case "$recorded" in
+      ''|*[!A-Z0-9]*) continue ;;
+    esac
+    if in_list "$chain_list" "$recorded"; then
+      continue
+    fi
+    host_line=''
+    if [ -f "$hosts_file" ]; then
+      host_line=$(grep -E "^${recorded} " "$hosts_file" | head -n 1 || true)
+    fi
+    if [ -z "$host_line" ]; then
+      recorded_lower=$(printf '%s' "$recorded" | tr '[:upper:]' '[:lower:]')
+      recorded_env="/tmp/bcn-regtest-${recorded_lower}.env"
+      if [ -f "$recorded_env" ]; then
+        held_bcn=$(env_value "$recorded_env" BCN_HOST_PORT)
+        held_pg=$(env_value "$recorded_env" POSTGRES_HOST_PORT)
+        held_zmq=$(env_value "$recorded_env" BCN_ZMQ_HOST_PORT)
+        held_rpc=$(env_value "$recorded_env" BITCOIN_RPC_HOST_PORT)
+        if [ -n "$held_bcn" ] && [ -n "$held_pg" ] && [ -n "$held_zmq" ] && [ -n "$held_rpc" ]; then
+          host_line="$recorded $held_bcn $held_pg $held_zmq $held_rpc"
+        fi
+      fi
+    fi
+    [ -n "$host_line" ] || continue
+    held_bcn=$(printf '%s\n' "$host_line" | awk '{print $2}')
+    held_pg=$(printf '%s\n' "$host_line" | awk '{print $3}')
+    held_zmq=$(printf '%s\n' "$host_line" | awk '{print $4}')
+    held_rpc=$(printf '%s\n' "$host_line" | awk '{print $5}')
+    if [ -z "$held_bcn" ] || [ -z "$held_pg" ] || [ -z "$held_zmq" ] || [ -z "$held_rpc" ]; then
+      continue
+    fi
+    case "${held_bcn}${held_pg}${held_zmq}${held_rpc}" in
+      *[!0-9]*) continue ;;
+    esac
+    used_bcn="$used_bcn $held_bcn"
+    used_pg="$used_pg $held_pg"
+    used_zmq="$used_zmq $held_zmq"
+    used_rpc="$used_rpc $held_rpc"
+  done < "$stacks_file"
+fi
 
 for raw in $chain_list; do
   chain=$(printf '%s' "$raw" | tr '[:lower:]' '[:upper:]')
@@ -221,8 +301,10 @@ for raw in $chain_list; do
   if [ "$action" = up ]; then
     docker compose -p "$project" -f docker-compose.yml --env-file "$out" up -d
     record_stack "$chain"
+    record_hosts "$chain" "$bcn_host" "$pg_host" "$zmq_host" "$rpc_host"
   else
     docker compose -p "$project" -f docker-compose.yml --env-file "$out" down
     forget_stack "$chain"
+    forget_hosts "$chain"
   fi
 done
