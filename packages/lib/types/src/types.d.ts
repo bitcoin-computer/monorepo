@@ -264,6 +264,9 @@ export type MockOptions = {
   mocks?: Record<string, Mock>
   mockClasses?: Record<string, Class>
 }
+export type SyncClassOptions = {
+  exact?: boolean
+}
 export type RetryOptions = {
   maxRetries?: number
 }
