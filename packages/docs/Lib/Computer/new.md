@@ -37,7 +37,9 @@ Arguments to the constructor of the class `T`.
 
 Optionally, a string of the form `<transaction-id>:<output-number>` that references a module.
 
-When a `mod` is supplied, the module specifier is attached to the top-level created object **and automatically propagated to every descendant object** created during the constructor execution. This guarantees that the entire object graph produced by a single `new` call shares the same module membership. The same propagation rule applies during method calls: if the target object (or any argument) carries a `mod`, every new object created inside the method inherits that module specifier. This behavior enables consistent module-based querying and powerful patterns such as DAOs.
+With a `mod` that exports a class named as `T`, `new` builds that class of the module; the source of `T` is not used. Otherwise `T` is pasted into the transaction, and the names the module exports are available to it.
+
+When a `mod` is supplied, the module specifier is attached to the created object and to every object the constructor creates, so the whole object graph of one `new` call shares the same module membership. A later method call does not pass it on: an object created in a method call has the module specifier of that call's transaction, if any (see [`encode`](./encode.md)). This enables module-based querying and patterns such as DAOs.
 
 ### Return Value
 
