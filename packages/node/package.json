@@ -44,6 +44,7 @@
     "clean:logs": "rm -f *.log 2> /dev/null",
     "create:indexes": "nohup node --loader ts-node/esm ./scripts/create-indexes.ts > /dev/null 2>&1 &",
     "down": "docker compose -f docker-compose.yml down",
+    "down:regtest": "sh ./scripts/up-regtest.sh down",
     "fund": "node --loader ts-node/esm ./scripts/fund.ts",
     "prune": "docker system prune -f",
     "setup": "./scripts/setup.sh",
@@ -53,7 +54,8 @@
     "test": "mocha --config .mocharc.json",
     "test:ci": "mocha --config .mocharc.json --retries 3 --exit --timeout 40000",
     "test:rerun": "node ../../scripts/rerun-failed.js",
-    "up": "docker compose -f docker-compose.yml up"
+    "up": "docker compose -f docker-compose.yml up",
+    "up:regtest": "sh ./scripts/up-regtest.sh up"
   },
   "dependencies": {
     "@babel/core": "^7.23.9",
