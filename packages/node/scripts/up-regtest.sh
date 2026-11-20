@@ -8,8 +8,9 @@
 #   npm run down:regtest -- DOGE
 # A successful up records the chain and the host ports it published in
 # .regtest/stacks and .regtest/hosts. A later up leaves those stacks running
-# and does not reuse their host ports. The chain named in .env still keeps
-# the example ports when those ports are free.
+# and does not give their host ports to another chain. A chain this command
+# starts again publishes the ports recorded for it. The chain named in .env
+# keeps the example ports when those ports are free.
 # down with no chain names stops that recorded set, including an earlier up.
 # Pass names to stop only those chains. With no record, down uses
 # BCN_REGTEST_CHAINS, else LTC BTC.
@@ -143,8 +144,10 @@ set_key() {
 
 # The chain named in .env keeps the example host ports (Postgres 5432, BCN 1031,
 # ZMQ 28332) when they are free. Those are the ports npm run up publishes, so
-# only later chains move. Stacks already recorded and not started again here
-# keep the host ports from the last up, and those ports count as taken.
+# only later chains move. A chain that already has a hosts line publishes those
+# ports again. Every recorded line counts as taken, including a chain this
+# command starts again, so an earlier chain cannot bind those ports while the
+# holder is still up.
 home_chain=$(env_value .env BCN_CHAIN)
 home_chain=$(printf '%s' "${home_chain:-LTC}" | tr '[:lower:]' '[:upper:]')
 home_first=''
@@ -167,49 +170,74 @@ used_pg=''
 used_zmq=''
 used_rpc=''
 
-# Host ports published by a previous up. Chains this command starts or stops
-# are left out: up replaces that project, and down releases the port.
+# CHAIN bcn pg zmq rpc for every stack that already published host ports.
+# Read before the per-chain loop rewrites /tmp/bcn-regtest-*.env.
+port_note=$(mktemp)
+trap 'rm -f "$port_note"' EXIT
+
+note_has() {
+  note_chain=$1
+  grep -qE "^${note_chain} " "$port_note"
+}
+
+# Ignore a line that is not four numeric host ports. The first line for a chain wins.
+note_add() {
+  note_chain=$(printf '%s' "$1" | tr '[:lower:]' '[:upper:]')
+  note_bcn=${2:-}
+  note_pg=${3:-}
+  note_zmq=${4:-}
+  note_rpc=${5:-}
+  case "$note_chain" in
+    ''|*[!A-Z0-9]*) return 0 ;;
+  esac
+  if [ -z "$note_bcn" ] || [ -z "$note_pg" ] || [ -z "$note_zmq" ] || [ -z "$note_rpc" ]; then
+    return 0
+  fi
+  case "${note_bcn}${note_pg}${note_zmq}${note_rpc}" in
+    *[!0-9]*) return 0 ;;
+  esac
+  if note_has "$note_chain"; then
+    return 0
+  fi
+  printf '%s %s %s %s %s\n' "$note_chain" "$note_bcn" "$note_pg" "$note_zmq" "$note_rpc" >> "$port_note"
+  used_bcn="$used_bcn $note_bcn"
+  used_pg="$used_pg $note_pg"
+  used_zmq="$used_zmq $note_zmq"
+  used_rpc="$used_rpc $note_rpc"
+}
+
+if [ -f "$hosts_file" ]; then
+  while IFS= read -r host_line || [ -n "$host_line" ]; do
+    [ -n "$host_line" ] || continue
+    note_add \
+      "$(printf '%s\n' "$host_line" | awk '{print $1}')" \
+      "$(printf '%s\n' "$host_line" | awk '{print $2}')" \
+      "$(printf '%s\n' "$host_line" | awk '{print $3}')" \
+      "$(printf '%s\n' "$host_line" | awk '{print $4}')" \
+      "$(printf '%s\n' "$host_line" | awk '{print $5}')"
+  done < "$hosts_file"
+fi
+
+# A stack recorded before .regtest/hosts existed still holds the ports in its env file.
 if [ -s "$stacks_file" ]; then
   while IFS= read -r recorded || [ -n "$recorded" ]; do
     recorded=$(printf '%s' "$recorded" | tr '[:lower:]' '[:upper:]')
     case "$recorded" in
       ''|*[!A-Z0-9]*) continue ;;
     esac
-    if in_list "$chain_list" "$recorded"; then
+    if note_has "$recorded"; then
       continue
     fi
-    host_line=''
-    if [ -f "$hosts_file" ]; then
-      host_line=$(grep -E "^${recorded} " "$hosts_file" | head -n 1 || true)
-    fi
-    if [ -z "$host_line" ]; then
-      recorded_lower=$(printf '%s' "$recorded" | tr '[:upper:]' '[:lower:]')
-      recorded_env="/tmp/bcn-regtest-${recorded_lower}.env"
-      if [ -f "$recorded_env" ]; then
-        held_bcn=$(env_value "$recorded_env" BCN_HOST_PORT)
-        held_pg=$(env_value "$recorded_env" POSTGRES_HOST_PORT)
-        held_zmq=$(env_value "$recorded_env" BCN_ZMQ_HOST_PORT)
-        held_rpc=$(env_value "$recorded_env" BITCOIN_RPC_HOST_PORT)
-        if [ -n "$held_bcn" ] && [ -n "$held_pg" ] && [ -n "$held_zmq" ] && [ -n "$held_rpc" ]; then
-          host_line="$recorded $held_bcn $held_pg $held_zmq $held_rpc"
-        fi
-      fi
-    fi
-    [ -n "$host_line" ] || continue
-    held_bcn=$(printf '%s\n' "$host_line" | awk '{print $2}')
-    held_pg=$(printf '%s\n' "$host_line" | awk '{print $3}')
-    held_zmq=$(printf '%s\n' "$host_line" | awk '{print $4}')
-    held_rpc=$(printf '%s\n' "$host_line" | awk '{print $5}')
-    if [ -z "$held_bcn" ] || [ -z "$held_pg" ] || [ -z "$held_zmq" ] || [ -z "$held_rpc" ]; then
+    recorded_lower=$(printf '%s' "$recorded" | tr '[:upper:]' '[:lower:]')
+    recorded_env="/tmp/bcn-regtest-${recorded_lower}.env"
+    if [ ! -f "$recorded_env" ]; then
       continue
     fi
-    case "${held_bcn}${held_pg}${held_zmq}${held_rpc}" in
-      *[!0-9]*) continue ;;
-    esac
-    used_bcn="$used_bcn $held_bcn"
-    used_pg="$used_pg $held_pg"
-    used_zmq="$used_zmq $held_zmq"
-    used_rpc="$used_rpc $held_rpc"
+    note_add "$recorded" \
+      "$(env_value "$recorded_env" BCN_HOST_PORT)" \
+      "$(env_value "$recorded_env" POSTGRES_HOST_PORT)" \
+      "$(env_value "$recorded_env" BCN_ZMQ_HOST_PORT)" \
+      "$(env_value "$recorded_env" BITCOIN_RPC_HOST_PORT)"
   done < "$stacks_file"
 fi
 
@@ -270,14 +298,28 @@ for raw in $chain_list; do
     exit 1
   fi
 
-  bcn_host=$(next_free "$bcn_port" "$used_bcn")
-  pg_host=$(next_free "$pg_port" "$used_pg")
-  zmq_host=$(next_free "$zmq_port" "$used_zmq")
-  rpc_host=$(next_free "$rpc_port" "$used_rpc")
-  used_bcn="$used_bcn $bcn_host"
-  used_pg="$used_pg $pg_host"
-  used_zmq="$used_zmq $zmq_host"
-  used_rpc="$used_rpc $rpc_host"
+  # A recorded chain publishes the same four host ports. They are already in
+  # the used sets, so a chain earlier in this list cannot have taken them.
+  # A chain with no line takes the next free port, and that port stays taken.
+  held_line=''
+  if note_has "$chain"; then
+    held_line=$(grep -E "^${chain} " "$port_note" | head -n 1 || true)
+  fi
+  if [ -n "$held_line" ]; then
+    bcn_host=$(printf '%s\n' "$held_line" | awk '{print $2}')
+    pg_host=$(printf '%s\n' "$held_line" | awk '{print $3}')
+    zmq_host=$(printf '%s\n' "$held_line" | awk '{print $4}')
+    rpc_host=$(printf '%s\n' "$held_line" | awk '{print $5}')
+  else
+    bcn_host=$(next_free "$bcn_port" "$used_bcn")
+    pg_host=$(next_free "$pg_port" "$used_pg")
+    zmq_host=$(next_free "$zmq_port" "$used_zmq")
+    rpc_host=$(next_free "$rpc_port" "$used_rpc")
+    used_bcn="$used_bcn $bcn_host"
+    used_pg="$used_pg $pg_host"
+    used_zmq="$used_zmq $zmq_host"
+    used_rpc="$used_rpc $rpc_host"
+  fi
 
   set_key "$out" BCN_ENV_FILE "$out"
   set_key "$out" BCN_LOG_DIR "./logs/$chain"
