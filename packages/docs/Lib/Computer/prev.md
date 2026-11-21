@@ -24,6 +24,8 @@ Given the revision of an on-chain object, the function returns the previous revi
 
 ### Inside smart contracts (`InnerComputer`)
 
+The node's index is a hint, and inside a contract `prev` returns the indexed parent only when this revision's transaction passes the replay check; a confirmed rejection throws a catchable `ConfirmedBytesError`.
+
 - The starting revision must be **confirmed**.
 - `undefined` at a confirmed root is a **stable** result and does **not** invalidate the evaluation (unlike `next` at the tip).
 - See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
