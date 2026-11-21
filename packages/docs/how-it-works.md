@@ -76,7 +76,7 @@ A field of a smart-object argument is not checked. Array elements are checked, a
 Smart contracts can contain the keyword properties `_owners`, `_satoshis`, `_url` and `_readers` that determine how the transaction is built. Specifically:
 
 - The `_owners` property of a smart object determines the output script of the output that is associated with it. If it is set to an array of strings that encode public keys, then the output script will be a 1-of-n multisig script with these public keys. If it is set to a string that encodes a Bitcoin Script ASM, then the output is a pay-to-script-hash (P2SH) output for that script, and the script is the redeem script that spends it.
-- The `_satoshis` property can be set to a number (bigint) and determines the number of satoshis of the output associated with a smart object. If this property is undefined the output will contain a minimal, non-dust amount of satoshis.
+- The `_satoshis` property can be set to a number (bigint) and determines the number of satoshis of the output associated with a smart object. If this property is undefined the output will contain a minimal, non-dust amount of satoshis. An explicit value below the dust threshold is raised to the threshold, and the object shows the raised amount.
 - The `_url` and `_readers` properties together control where the metadata (including the JavaScript expression) is stored and whether it is encrypted. There are four combinations:
   - **Neither `_url` nor `_readers`**: The expression and full metadata are stored unencrypted directly in the transaction’s metadata outputs.
   - **Only `_readers`**: The expression and metadata are stored encrypted directly in the transaction’s metadata outputs (only the specified readers can decrypt them).
