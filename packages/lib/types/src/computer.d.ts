@@ -49,6 +49,10 @@ declare class Computer {
     mod?: string,
   ): Promise<SmartContract<T>>
   private _getTXOsFamily
+  private _verifiedPrevious
+  private _previousWindow
+  private _rowReplays
+  private requireReplay
   getTXOs(
     q: TXOQuery & {
       verbosity?: 0
@@ -198,6 +202,7 @@ declare class Computer {
   next(rev: string): Promise<string | undefined>
   spendingInput(rev: string): Promise<string | undefined>
   latest(rev: string): Promise<string>
+  private _replayIfConfirmed
   last(rev: string): Promise<string | undefined>
   subscribe(
     id: string,

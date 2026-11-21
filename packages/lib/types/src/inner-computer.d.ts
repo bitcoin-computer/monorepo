@@ -57,6 +57,7 @@ export declare class InnerComputer {
   private _useForeign
   private _foreignInner
   private _tie
+  private _replaySuccessor
   sync<T extends Class = any>(location: string): Promise<JsonData<T>>
   sync<T extends Class = any>(location: string, options: SyncRead<T>): Promise<JsonData<T>>
   private _rejectEncryptedEnvelope
