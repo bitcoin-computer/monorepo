@@ -32,6 +32,8 @@ computer.getAncestors(rev, 1)
 
 ### Inside smart contracts (`InnerComputer`)
 
+The node's index is a hint, and inside a contract `getAncestors` returns the indexed ancestors only when this location's transaction passes the replay check; a confirmed rejection throws a catchable `ConfirmedBytesError`.
+
 - Starting location must be **confirmed**.
 - Empty arrays are valid stable results when there are no ancestors.
 - Missing or unconfirmed starts invalidate the evaluation.

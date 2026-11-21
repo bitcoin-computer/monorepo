@@ -24,6 +24,8 @@ If `first` is called with a revision for which no output exists, it throws an er
 
 ### Inside smart contracts (`InnerComputer`)
 
+The node's index is a hint, and inside a contract `first` returns the indexed root only when this revision's transaction passes the replay check; a confirmed rejection throws a catchable `ConfirmedBytesError`.
+
 The starting revision must be **confirmed**. Missing or unconfirmed starts invalidate the contract evaluation. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).
 
 [![](../../static/first.png)](https://wallet.bitcoincomputer.io)

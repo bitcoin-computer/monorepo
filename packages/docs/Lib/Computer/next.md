@@ -24,6 +24,8 @@ Given the revision of an on-chain object, the function returns the next revision
 
 ### Inside smart contracts (`InnerComputer`)
 
+The node's index is a hint, and inside a contract `next` returns the indexed successor only when that successor's transaction passes the replay check; a confirmed rejection throws a catchable `ConfirmedBytesError`.
+
 When called via the global `computer` **inside** a `Contract` method, behavior is stricter than the outer client API:
 
 - Absence of a next revision **invalidates** the entire evaluation (no stable `undefined` success).
