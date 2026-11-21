@@ -59,6 +59,7 @@ export declare class InnerComputer {
   private _tie
   sync<T extends Class = any>(location: string): Promise<JsonData<T>>
   sync<T extends Class = any>(location: string, options: SyncRead<T>): Promise<JsonData<T>>
+  private _rejectEncryptedEnvelope
   private _syncLocation
   decode(txId: string): Promise<TransitionJSON>
   decode(txId: string, options: ChainRead): Promise<TransitionJSON>
