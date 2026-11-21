@@ -262,6 +262,11 @@ export type SigOptions = {
 }
 export type MockOptions = {
   mocks?: Record<string, Mock>
+  mockClasses?: Record<string, Class>
+}
+export type SyncOptions<T extends Class = Class> = {
+  class: T
+  exact?: boolean
 }
 export type RetryOptions = {
   maxRetries?: number
