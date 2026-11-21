@@ -22,6 +22,8 @@ Returns the latest revision of the same on chain object - that is, its id.
 
 If `latest` is called with a revision for which no output exists, it throws an error `Rev not found`. If the output exists but contains no object, the same error is thrown. If the output contains an object, `latest` will return the latest revision of an object as indicated by the arrows in the figure below.
 
+The node's index is a hint, and `latest` returns a confirmed tip only when that tip's transaction passes the replay check; a confirmed rejection throws a catchable `ConfirmedBytesError`.
+
 ### Not available inside smart contracts
 
 `latest` is **not** exposed on InnerComputer (the in-contract `computer` global). The live tip can change under chain extension, so it is unsuitable for deterministic contract evaluation. Inside contracts, use confirmed history ([`first`](./first.md) / [`prev`](./prev.md) / [`getAncestors`](./getAncestors.md)) or terminal checks via [`last`](./last.md) after a confirmed spend. See [Contract – Querying](../Contract/index.md#querying-inside-of-a-contract).

@@ -34,6 +34,8 @@ Typical flow:
 
 ### Inside smart contracts (`InnerComputer`)
 
+The node's index is a hint, and inside a contract `last` returns that tip only when its transaction passes the replay check; a confirmed rejection throws a catchable `ConfirmedBytesError`.
+
 Behavior is stricter than the outer client API:
 
 - The starting revision, the returned tip, and the tip’s **spending** transaction must all be **confirmed**.
