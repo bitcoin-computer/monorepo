@@ -32,7 +32,6 @@ export type InnerTXOQuery = {
 }
 export declare const INNER_TXO_QUERY_KEYS: (keyof InnerTXOQuery)[]
 export type ChainRead = {
-  /** Uppercase builtin id. Another case is accepted at runtime only. */
   chain?: Chain
 }
 export type InnerComputerOptions = {
@@ -56,6 +55,7 @@ export declare class InnerComputer {
   private _tie
   sync<T extends Class = any>(location: string): Promise<JsonData<T>>
   sync<T extends Class = any>(location: string, options: ChainRead): Promise<JsonData<T>>
+  private _rejectEncryptedEnvelope
   private _syncLocation
   decode(txId: string): Promise<TransitionJSON>
   decode(txId: string, options: ChainRead): Promise<TransitionJSON>
