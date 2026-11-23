@@ -117,8 +117,8 @@ declare class Computer {
     effect: EvaluatedEffect
     db: Db
   }>
-  private readonly exportNamesByMod
-  private exportsName
+  private readonly classExportsByMod
+  private bindsClass
   encodeCall<T extends Class, K extends keyof InstanceType<T>>({
     target,
     property,
