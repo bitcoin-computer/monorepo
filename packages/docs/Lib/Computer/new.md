@@ -37,7 +37,7 @@ Arguments to the constructor of the class `T`.
 
 Optionally, a string of the form `<transaction-id>:<output-number>` that references a module.
 
-With a `mod` that exports a class named as `T`, `new` builds that class of the module; the source of `T` is not used. Otherwise `T` is pasted into the transaction, and the names the module exports are available to it.
+With a `mod` that has a class named as `T`, its own (`export class T`) or re-exported (`export { T } from '…'`, `export * from '…'`), `new` builds that class of the module; the source of `T` is not used. Otherwise the source of `T` is pasted into the transaction, and the names the module exports are available to it. That is also the case when the module exports a function or a value named as `T`, a class under another name (`export { T as U }`) or as `default`, a name that two `export *` both provide, or a class named `console`.
 
 When a `mod` is supplied, the module specifier is attached to the created object and to every object the constructor creates, so the whole object graph of one `new` call shares the same module membership. A later method call does not pass it on: an object created in a method call has the module specifier of that call's transaction, if any (see [`encode`](./encode.md)). This enables module-based querying and patterns such as DAOs.
 
