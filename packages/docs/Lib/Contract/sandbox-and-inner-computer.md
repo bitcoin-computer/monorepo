@@ -87,8 +87,8 @@ The formatter is idempotent (already-suffixed strings are not doubled). Match wi
 - The endowment is hardened so contracts cannot replace `sync` / `first` / … or reassign the prototype to hide invalidation.
 - Host reject decisions use the **frame only**.
 - In **`prod`**, contracts cannot use `console` (not endowed). Prefer no logging in on-chain code at all.
-- In contract and module code, `Reflect.construct(C, args, D)` throws when `D` is not `C`. An object is built only by the constructor of its own class.
-- Contract and module code cannot replace a global: the compartment's global object is frozen. All modules of one load share it, so a module cannot change what the code of a module it imports finds.
+- In contract and module code, `Reflect.construct(C, args, D)` throws when `D` is not `C`, also when `D` is `undefined`, and there is no `Proxy`. So `new` builds the class it is called on, and an object is built only by the constructor of its own class. A module that exports a function sharing a class's prototype does not load.
+- Contract and module code cannot replace a global: the compartment's global object is frozen. All modules of one load share it, so a module cannot change what the code of a module it imports finds. The lib's own globals, which every compartment shares, are frozen with everything they reach (`Contract` and its `instanceof` check, `Reflect` and its `construct`), so one evaluation cannot leave a value that a later one on the same client reads.
 
 ## Practical implications
 
