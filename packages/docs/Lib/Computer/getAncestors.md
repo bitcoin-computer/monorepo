@@ -12,7 +12,7 @@ getAncestors(location: string, verbosity?: number): Promise<string[] | Map<strin
 
 #### `location`
 
-A transaction id or a revision (`<txid>:<vout>`). Ancestors are resolved for the transaction id.
+A transaction id or a revision (`<txid>:<vout>`). Ancestors are resolved for the transaction id. The transaction id is in lowercase hex; one in capitals, or one that is not hex, throws `Invalid Rev` instead of returning an empty list.
 
 #### `verbosity` (optional)
 

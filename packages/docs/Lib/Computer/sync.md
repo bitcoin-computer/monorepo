@@ -17,6 +17,8 @@ The location can either be
 - a revision encoded as `<transaction-id>:<output-number>`
 - a transaction id
 
+The transaction id is in lowercase hex, as the node writes it. A location in capitals throws `Invalid location`, in `sync` and in every other method that takes a transaction id or revision (`Invalid Rev` or `Invalid TxId` there), before any request: the node finds a transaction whatever the case of its id, so a location has one spelling only.
+
 #### `options`
 
 Optional, only for a revision: `{ class, exact }`. With a transaction id, `class` throws and nothing is read.
