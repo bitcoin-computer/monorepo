@@ -1,6 +1,6 @@
 {
   "name": "@bitcoin-computer/components",
-  "version": "0.27.0-beta.2",
+  "version": "0.28.0-beta.0",
   "description": "",
   "homepage": "http://bitcoincomputer.io/",
   "bugs": {
@@ -55,8 +55,8 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
-    "@bitcoin-computer/lib": "^0.27.0-beta.2",
-    "@bitcoin-computer/nakamotojs": "^0.27.0-beta.2",
+    "@bitcoin-computer/lib": "^0.28.0-beta.0",
+    "@bitcoin-computer/nakamotojs": "^0.28.0-beta.0",
     "flowbite": "^2.3.0",
     "prismjs": "^1.30.0",
     "qrcode": "^1.5.4",
