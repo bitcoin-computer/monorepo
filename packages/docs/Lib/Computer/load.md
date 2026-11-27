@@ -12,7 +12,7 @@ _Loads a module from the blockchain and returns its exports._
 
 #### `rev`
 
-A module specifier encoded as a string of the form `<transaction-id>:<output-number>` (typically `<txId>:0` as returned by [`computer.deploy`](./deploy.md)). The transaction id is in lowercase, as `deploy` returns it: a module has one spelling, so a specifier in capitals is refused, also in an `import` of a module.
+A module specifier `<txId>:0`, as returned by [`computer.deploy`](./deploy.md), with the transaction id in lowercase hex. A module has one spelling, so any other (capitals, another output number, a leading zero) is refused, also in an `import` of a module.
 
 ### Return Value
 
