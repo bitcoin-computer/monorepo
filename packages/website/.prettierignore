@@ -1,0 +1,3 @@
+# Prettier rewrites this page on save and makes the file much larger.
+# The pattern is only this file (including dist/index.html). Other files still format.
+index.html

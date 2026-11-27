@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
 import {
   Auth,
@@ -57,7 +57,15 @@ function AppRoutes() {
 }
 
 export default function App() {
-  const [computer] = useState(Auth.getComputer())
+  const [computer, setComputer] = useState(() => Auth.getComputer())
+
+  useEffect(
+    () =>
+      Auth.onLogin(() => {
+        setComputer(Auth.getComputer())
+      }),
+    [],
+  )
 
   return (
     <BrowserRouter>

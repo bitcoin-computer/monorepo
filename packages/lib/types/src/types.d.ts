@@ -316,6 +316,33 @@ export type JsonArray = readonly Json[]
 export type SmartJson = JsonPrimitive | SmartContract | SmartJsonArray
 export type SmartJsonArray = readonly SmartJson[]
 export type InformationValue = string | number | boolean | bigint | null | InformationValue[]
+export type Jsonify<T, Seen = never> = T extends any ? JsonifyValue<T, Seen> : never
+type JsonifyValue<T, Seen> = T extends (...args: any[]) => any
+  ? never
+  : T extends bigint | boolean | number | string | null | undefined
+    ? T
+    : T extends Date
+      ? string
+      : T extends readonly any[]
+        ? number extends T['length']
+          ? T extends readonly (infer U)[]
+            ? readonly Jsonify<U, Seen>[]
+            : never
+          : JsonifyTuple<T, Seen>
+        : T extends object
+          ? T extends Seen
+            ? Json
+            : JsonifyObject<T, Seen | T>
+          : never
+type JsonifyTuple<T extends readonly any[], Seen> = {
+  [K in keyof T]: Jsonify<T[K], Seen>
+}
+type JsonifyObject<T, Seen> = {
+  [
+    K in keyof T as K extends string ? (Jsonify<T[K], Seen> extends never ? never : K) : never
+  ]: Jsonify<T[K], Seen>
+}
+export type JsonData<T extends Class = any> = Compute<Jsonify<InstanceType<T>>>
 export declare const isJsonUndefined: (a: unknown) => a is undefined
 export declare const isJsonNull: (a: unknown) => a is null
 export declare const isJsonBoolean: (a: unknown) => a is boolean
@@ -343,6 +370,9 @@ export type Fee = Partial<{
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
 export type ModuleStorageType = 'multisig' | 'taproot'
 export type Mode = 'prod' | 'dev' | 'debug'
+export type RemoteChainConfig = {
+  url: string
+}
 export type ComputerOptions = Partial<{
   chain: ChainString
   mnemonic: string
@@ -355,6 +385,7 @@ export type ComputerOptions = Partial<{
   moduleStorageType: ModuleStorageType
   checkFee: boolean
   mode: Mode
+  remoteChains?: Partial<Record<Chain, RemoteChainConfig>>
 }>
 export interface ApiBalance {
   confirmed: string
@@ -365,6 +396,7 @@ export type DefaultValues = {
   satPerByte: number
   dustRelayTxFee: number
   moduleStorageType: ModuleStorageType
+  minNonDust?: number
 }
 export type Stored = {
   _url: string
@@ -467,7 +499,7 @@ export type TXORecord = {
   blockIndex?: number
   timestamp?: number
 }
-export type TXOOrderBy = 'rev' | 'timestamp'
+export type TXOOrderBy = 'rev' | 'timestamp' | 'block'
 export type TXOQuery = {
   verbosity?: number
   limit?: number
@@ -480,7 +512,11 @@ export type TXOQuery = {
   exp?: string
   lteBlockHeight?: number
   gteBlockHeight?: number
-} & Partial<Omit<TXORecord, 'expHash'>>
+  ltBlockHeight?: number
+  ltBlockIndex?: number
+  ltRev?: string
+  previous?: string
+} & Partial<Omit<TXORecord, 'expHash' | 'previous'>>
 export type EvalResult = {
   effect: EvaluatedEffect
   tx: Transaction

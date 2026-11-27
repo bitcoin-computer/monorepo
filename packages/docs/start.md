@@ -150,12 +150,14 @@ To start your node at `http://localhost:1031` run the commands below. The node i
 cd packages/node
 
 # Copy the .env file and litecoin.conf file from the examples
-cp chain-setup/ltc/regtest/.env.example .env
-cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
+cp chain-setup/LTC/regtest/.env.example .env
+cp chain-setup/LTC/regtest/litecoin.conf.example litecoin.conf
 
 # Run the node
 npm run up
 ```
+
+`npm run up` mounts the `litecoin.conf` in this directory. `BITCOIN_RPC_PASSWORD` in `.env` matches the `rpcauth` line in that file. For one regtest stack per chain, run `npm run up:regtest` from `packages/node`. That command copies each chain's example conf to `.regtest/` and mounts those copies. This `litecoin.conf` stays the conf for `npm run up`. See [Several regtest chains](Node/index.md#several-regtest-chains).
 
 ### Run the Tests
 

@@ -9,6 +9,7 @@ import {
   ChessContract,
   ChessContractHelper,
   Chess as ChessLib,
+  getPayoutRev,
   Square,
   User,
 } from '@bitcoin-computer/chess-contracts'
@@ -98,7 +99,10 @@ function WaitingForOpponent({
   onCancel: () => Promise<void>
   isCancelling: boolean
 }) {
-  const canCancel = helper.canCancel(chessContract) && helper.isCreator(chessContract)
+  // The invited opponent can cancel too; the creator then only claims the refund.
+  const hasPendingRefund = helper.hasPendingRefund(chessContract)
+  const canCancel =
+    (helper.canCancel(chessContract) || hasPendingRefund) && helper.isCreator(chessContract)
   const isInvitedBlack = helper.computer.getPublicKey() === chessContract.publicKeyB
 
   return (
@@ -146,7 +150,11 @@ function WaitingForOpponent({
           disabled={isCancelling}
           className="mt-6 text-white bg-red-600 hover:bg-red-700 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
-          {isCancelling ? 'Cancelling…' : 'Cancel Challenge & Refund Wager'}
+          {isCancelling
+            ? 'Cancelling…'
+            : hasPendingRefund
+              ? 'Claim Refunded Wager'
+              : 'Cancel Challenge & Refund Wager'}
         </button>
       )}
       <p className="text-xs text-gray-500 dark:text-gray-400 mt-6">
@@ -368,10 +376,11 @@ export function ChessBoard() {
       return
     }
 
-    const chessRev = chessContract._rev
     let cancelled = false
     ;(async () => {
       try {
+        // Withdraws are made against the first payout revision, not the tip.
+        const chessRev = await getPayoutRev(computer, chessContract._id)
         const latestTokenRev = await computer.latest(myTokenId)
         const token = (await computer.sync(latestTokenRev)) as { withdrawn?: string[] }
         if (cancelled) return
@@ -610,7 +619,7 @@ export function ChessBoard() {
       const myPubKey = computer.getPublicKey()
       const myTokenId =
         myPubKey === chessContract.publicKeyW ? chessContract.tokenIdW : chessContract.tokenIdB
-      // Helper waits for the latest chess tip to confirm before auditing deposits.
+      // Helper waits for the payout revision to confirm before auditing deposits.
       toast.info('Waiting for the game result to confirm, then withdrawing…')
       await helper.withdrawTokens(myTokenId, chessContract._id)
       await syncChessContract()

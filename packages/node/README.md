@@ -48,6 +48,14 @@ npm install
 
 Have a look at the [docs](https://docs.bitcoincomputer.io/node/).
 
+## Database
+
+Postgres data lives in a Docker volume named `bcn-db-<chain>-<network>`. Litecoin regtest uses `bcn-db-LTC-regtest`. Each chain and network has its own volume.
+
+`npm run clean` deletes those volumes for every chain and network, and it succeeds when none exist. It also stops the containers and removes the blockchain data. To drop one database, run `npm run down`, then `docker volume rm bcn-db-<chain>-<network>`.
+
+A `chain-setup/<chain>/<network>/db-data` directory from an older checkout is no longer used. After upgrading, the node indexes the chain once into the new volume. That directory can be deleted.
+
 ## Getting Help
 
 If you have any questions, please let us know on <a href="https://t.me/thebitcoincomputer" target="_blank">Telegram</a>, <a href="https://twitter.com/TheBitcoinToken" target="_blank">Twitter</a>, or by email clemens@bitcoincomputer.io.

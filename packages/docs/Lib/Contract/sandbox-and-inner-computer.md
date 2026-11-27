@@ -24,15 +24,15 @@ Equivalently: every successful observation is **invariant under future chain gro
 
 Most APIs require the referenced transaction to be **in a block** before the call may succeed:
 
-| Family                                      | Rule (summary)                                                                       |
-| ------------------------------------------- | ------------------------------------------------------------------------------------ |
-| `sync` / `decode` / `load` / `getAncestors` | Start location/tx confirmed                                                          |
-| `first` / `prev`                            | Start rev confirmed; `prev` may return `undefined` at root                           |
-| `next`                                      | Start **and** returned successor confirmed; no next → invalidate                     |
-| `last`                                      | Start and result confirmed; tip must be **spent confirmed** (not a live unspent tip) |
-| Block time/height/hash of a tx              | Tx confirmed                                                                         |
-| `getBlockHash(height)`                      | Height ≤ tip; not future                                                             |
-| `getTXOs` (+ aliases)                       | Stabilizer: `lteBlockHeight` / `blockHeight` / `blockHash`                           |
+| Family                                      | Rule (summary)                                                                                  |
+| ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `sync` / `decode` / `load` / `getAncestors` | Start location/tx confirmed                                                                     |
+| `first` / `prev`                            | Start rev confirmed; `prev` may return `undefined` at root                                      |
+| `next`                                      | Start **and** returned successor confirmed; no next → invalidate                                |
+| `last`                                      | Start and result confirmed; tip must be **spent confirmed** (not a live unspent tip)            |
+| Block time/height/hash of a tx              | Tx confirmed                                                                                    |
+| `getBlockHash(height)`                      | Height ≤ tip; not future                                                                        |
+| `getTXOs`, `getOTXOs`                       | Stabilizer required. No `limit`: every rev-ordered match, in one request. An explicit `limit` is a window |
 
 `latest` is **not** exposed inside contracts (the live tip is non-deterministic under chain extension).
 
@@ -41,10 +41,10 @@ Most APIs require the referenced transaction to be **in a block** before the cal
 1. A query fails or observes a transient fact (or a direct policy rule rejects, e.g. future height).
 2. InnerComputer marks the **current evaluation frame** invalid and throws. There is **no per-instance invalid flag** and no contract-facing invalidation API. Each `Db.eval` / `Modules.load` runs under `withEvalInvalidation` (implementation lives in a dedicated eval-frame module):
    - **Node:** `AsyncLocalStorage` via `process.getBuiltinModule('async_hooks')` (no static `node:async_hooks` import, so browser bundles stay clean). Concurrent evaluations are truly concurrent and isolated by async context.
-   - **Browser:** await-scoped stack with **serialized root** frames (no Promise patching under SES `lockdown`). Nested frames (e.g. `Modules.load` inside `Db.eval`) still nest; concurrent root evals queue so stack tops never cross-talk.
+   - **Browser:** await-scoped stack (no Promise patching under SES `lockdown`). Every evaluation waits in line, so one root evaluation runs at a time. The one exception is a call from a contract's own `computer` (`sync`, `load`) while the evaluation that computer belongs to is running: it runs at once, on top of that evaluation's frame. An evaluation keeps its place in line until every such call inside it has finished, even one it did not await; a call started after that waits in line like any other.
 3. The host sets the active observation client on the frame. Free-variable `computer` methods **route to that client** for the evaluation, so create-time SES bindings and the eval-time client share one observation identity. Invalidation always writes the **active frame**.
 4. The compartment may return after `catch` — the frame flag is **not** cleared until the host has checked it.
-5. The host accepts or rejects using **only `frame.invalid` / `frame.msg`**. If the compartment throws *or* returns after catch-and-continue, `Db.eval` still rejects when the frame is marked invalid.
+5. The host accepts or rejects using **only `frame.invalid` / `frame.msg`**. If the compartment throws _or_ returns after catch-and-continue, `Db.eval` still rejects when the frame is marked invalid.
 6. The in-compartment `computer` is a **hardened query-only facade**: public observation methods only (no `isInvalid` / `errorMsg` / `resetInvalid`, no internal client object, methods not replaceable).
 
 ### `console` endowment (dev only)
@@ -70,13 +70,14 @@ The formatter is idempotent (already-suffixed strings are not doubled). Match wi
 
 ## Client vs contract `computer`
 
-|                                          | Outer [`Computer`](../Computer/index.md) | InnerComputer (`computer` in contracts) |
-| ---------------------------------------- | ---------------------------------------- | --------------------------------------- |
-| Writes (`new`, `broadcast`, …)           | Yes                                      | No                                      |
-| Mempool / unconfirmed reads              | Often allowed (may return `undefined`)   | Forbidden → invalidate                  |
-| `latest`                                 | Yes                                      | **Not exposed**                         |
-| `getTXOs` without height/hash stabilizer | Yes                                      | Forbidden → invalidate                  |
-| Host `console` in compartment            | N/A                                      | **`dev` / `debug` only** (not in `prod`) |
+|                                          | Outer [`Computer`](../Computer/index.md) | InnerComputer (`computer` in contracts)                         |
+| ---------------------------------------- | ---------------------------------------- | --------------------------------------------------------------- |
+| Writes (`new`, `broadcast`, …)           | Yes                                      | No                                                              |
+| Read on another built-in chain           | Construct a `Computer` for that chain    | Second argument `chain` on any inner method. See [Cross-chain reads](./cross-chain.md). The host sets `remoteChains` |
+| Mempool / unconfirmed reads              | Often allowed (may return `undefined`)   | Forbidden → invalidate                                          |
+| `latest`                                 | Yes                                      | **Not exposed**                                                 |
+| `getTXOs` without height/hash stabilizer | Yes                                      | Forbidden → invalidate                                          |
+| Host `console` in compartment            | N/A                                      | **`dev` / `debug` only** (not in `prod`)                        |
 | Concurrent evaluations                   | Multiple clients/calls                   | Isolated eval frames (ALS on Node; serialized roots in browser) |
 
 ## Security notes (what contracts cannot do)
@@ -92,7 +93,8 @@ The formatter is idempotent (already-suffixed strings are not doubled). Match wi
 - Confirm module deploys before contract `load`.
 - Confirm object revisions before history walks or escrow audits.
 - For terminal `last` checks, spend the tip (e.g. `delete`) and wait for confirmation.
-- Stabilize in-contract TXO queries with a historical height or block hash; empty result sets with a valid stabilizer are fine (wait for indexing if apps/tests expect a known object to appear).
+- Stabilize in-contract TXO queries with a historical height or block hash. An empty result is valid only inside the indexed prefix; a stabilizer ahead of the indexed tip invalidates instead of returning an empty set.
+- In-contract `getTXOs` uses the same one-request read as off-chain `Computer.getTXOs`. With no `limit`, a successful result is every match. A failed request, including a query-limit rejection or a rate limit, rejects the transition instead of shortening the list. See [Query limit](../../Node/operations.md#query-limit).
 - Escrow / chess flows: cancel or settle, **wait for confirmation**, then `withdraw` / refund (cancel and withdraw cannot be one atomic observation of unconfirmed tip spend).
 - Do not ship contract methods that call `console.*` if they must run under `mode: 'prod'`.
 

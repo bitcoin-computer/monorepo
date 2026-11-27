@@ -42,3 +42,4 @@ The monorepo contains the following packages
 
 - [Docs](https://github.com/bitcoin-computer/monorepo/tree/main/packages/docs#readme) - The sources for the documentation
 - [Website](https://github.com/bitcoin-computer/monorepo/tree/main/packages/website#readme) - The sources for the website
+- [Design system](https://github.com/bitcoin-computer/monorepo/tree/main/packages/design-system#readme) - The brand book and design system

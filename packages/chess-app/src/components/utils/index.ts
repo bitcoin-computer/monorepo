@@ -1,4 +1,4 @@
-import { ChessContract, Chess as ChessLib } from '@bitcoin-computer/chess-contracts'
+import { ChessContract, Chess as ChessLib, getPayoutRev } from '@bitcoin-computer/chess-contracts'
 import { Computer, SmartContract } from '@bitcoin-computer/lib'
 
 export async function isCreatorRefunded(
@@ -7,10 +7,10 @@ export async function isCreatorRefunded(
 ): Promise<boolean> {
   if (chess.publicKeyW || !chess.tokenIdW || chess.deposits.length !== 1) return false
   try {
-    const latestChessRev = await computer.latest(chess._id)
+    const payoutRev = await getPayoutRev(computer, chess._id)
     const latestTokenRev = await computer.latest(chess.tokenIdW)
     const token = (await computer.sync(latestTokenRev)) as { withdrawn?: string[] }
-    return (token.withdrawn ?? []).includes(latestChessRev)
+    return (token.withdrawn ?? []).includes(payoutRev)
   } catch {
     return false
   }

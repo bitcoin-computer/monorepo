@@ -1070,6 +1070,62 @@ describe(`Psbt`, () => {
         );
       }, new RegExp('No signatures for this pubkey'));
     });
+
+    it('Rejects a tampered key-path signature', () => {
+      initEccLib(ecc);
+      const psbt = Psbt.fromBase64(f.psbt);
+      const tapKeySig = Buffer.from(psbt.data.inputs[f.index].tapKeySig!);
+      tapKeySig[10] ^= 1;
+      psbt.data.inputs[f.index].tapKeySig = tapKeySig;
+      assert.strictEqual(
+        psbt.validateSignaturesOfInput(f.index, schnorrValidator),
+        false,
+      );
+    });
+
+    // Regression vectors from bitcoinjs-lib #1931 and #1934, both with
+    // 65-byte key-path signatures (64 bytes plus the sighash type).
+    it('Rejects an invalid key-path signature (bitcoinjs-lib #1931)', () => {
+      initEccLib(ecc);
+      const psbt = Psbt.fromBase64(
+        `cHNidP8BAFICAAAAAe1h73A6zedruNERV6JU7Ty1IlYZh2KO1cBklZqCMEy8AAAAAAD/////ARA
+        nAAAAAAAAFgAUS0GlfqWSeEWIpwPwrvRIjBbJQroAAAAAAAEA/TgBAQAAAAABAnGJ6st1FIvYLEV
+        bJMQaZ3HSOJnkw5C+ViCuJYiFEYosAAAAAAD9////xuZd0xArNSaBuElLX3nzjwtZW95O7L/wbz9
+        4v+v0vuYAAAAAAP3///8CECcAAAAAAAAiUSAVbMSHgwYVdyBgfNy0syr6TMaFOGhFjXJYuQcRLlp
+        DS8hgBwAAAAAAIlEgthWGz3o2R7WpgjIK52ODoEaA/0HcImSUjVk6agZgghwBQIP9WWErMfeBBYy
+        uHuSZS7MdXVICtlFgNveDrvuXeQGSZl1gGG6/r3Aw7h9TifGtoA+7JwYBjLMcEG6hbeyQGXIBQNS
+        qKH1p/NFzO9bxe9vpvBZQIaX5Qa9SY2NfNCgSRNabmX5EiaihWcLC+ALgchm7DUfYrAmi1r4uSI/
+        YaQ1lq8gAAAAAAQErECcAAAAAAAAiUSAVbMSHgwYVdyBgfNy0syr6TMaFOGhFjXJYuQcRLlpDSwE
+        DBIMAAAABCEMBQZUpv6e1Hwfpi/PpglkkK/Rx40vZIIHwtJ7dXWFZ5TcZUEelCnfKOAWZ4xWjauY
+        M2y+JcgFcVsuPzPuiM+z5AH+DARNBlSm/p7UfB+mL8+mCWSQr9HHjS9kggfC0nt1dYVnlNxlQR6U
+        Kd8o4BZnjFaNq5gzbL4lyAVxWy4/M+6Iz7PkAf4MBFyC6ZCT2zZVrEbkw/T1fyS8eLKQaP2MH6rz
+        dlMauGvQzLQAA`.replace(/\s+/g, ''),
+      );
+      assert.strictEqual(
+        psbt.validateSignaturesOfAllInputs(schnorrValidator),
+        false,
+      );
+    });
+
+    it('Accepts a valid key-path signature (bitcoinjs-lib #1934)', () => {
+      initEccLib(ecc);
+      const psbt = Psbt.fromBase64(
+        `cHNidP8BAF4CAAAAAU6UzYPa7tES0HoS+obnRJuXX41Ob64Zs59qDEyKsu1ZAAAAAAD/////AYA
+        zAjsAAAAAIlEgIlIzfR+flIWYTyewD9v+1N84IubZ/7qg6oHlYLzv1aYAAAAAAAEAXgEAAAAB8f+
+        afEJBun7sRQLFE1Olc/gK9LBaduUpz3vB4fjXVF0AAAAAAP3///8BECcAAAAAAAAiUSAiUjN9H5+
+        UhZhPJ7AP2/7U3zgi5tn/uqDqgeVgvO/VpgAAAAABASsQJwAAAAAAACJRICJSM30fn5SFmE8nsA/
+        b/tTfOCLm2f+6oOqB5WC879WmAQMEgwAAAAETQWQwNOao3RMOBWPuAQ9Iph7Qzk47MvroTHbJR49
+        MxKJmQ6hfhZa5wVVrdKYea5BW/loqa7al2pYYZMlGvdS06wODARcgjuYXxIpyOMVTYEvl35gDidC
+        m/vUICZyuNNZKaPz9dxAAAQUgjuYXxIpyOMVTYEvl35gDidCm/vUICZyuNNZKaPz9dxAA`.replace(
+          /\s+/g,
+          '',
+        ),
+      );
+      assert.strictEqual(
+        psbt.validateSignaturesOfAllInputs(schnorrValidator),
+        true,
+      );
+    });
   });
 
   describe('validateSignaturesOfTapScriptInput', () => {

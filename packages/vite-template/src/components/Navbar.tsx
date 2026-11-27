@@ -99,7 +99,7 @@ export function NotLoggedMenu() {
     initFlowbite()
 
     const { chain, network } = Auth.defaultConfiguration()
-    setDropDownLabel(formatChainAndNetwork(chain, network))
+    setDropDownLabel(formatChainAndNetwork(chain ?? 'LTC', network ?? 'regtest'))
   }, [])
 
   const setChainAndNetwork = (chain: Chain, network: Network) => {

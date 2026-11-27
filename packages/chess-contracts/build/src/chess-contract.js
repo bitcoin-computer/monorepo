@@ -21,6 +21,10 @@ export class ChessContract extends Contract {
         });
     }
     setCanceledSeen() {
+        // A revision here would copy withdraws onto the prev-chain. TBC777 counts
+        // that copy again, so a withdraw against the tip fails.
+        if (this.withdraws.length > 0)
+            throw new Error('Game is already over');
         this.canceledSeen = true;
     }
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,6 +77,8 @@ export class ChessContract extends Contract {
      * via `withdraws` set in this method; the creator then claims with `withdrawTokens`.
      */
     cancel() {
+        if (this.withdraws.length > 0)
+            throw new Error('Game is already over');
         if (this.publicKeyW)
             throw new Error('Game started use resign to forfeit');
         if (this.deposits.length !== 1)
@@ -81,12 +87,12 @@ export class ChessContract extends Contract {
             throw new Error('Cannot cancel: no deposit to refund');
         if (!this.creatorPublicKey)
             throw new Error('Cannot cancel: creator not set');
-        if (this.withdraws.length === 0) {
-            this.withdraws = [[this.root, this.tokenIdW, this.wagerAmount]];
-        }
+        this.withdraws = [[this.root, this.tokenIdW, this.wagerAmount]];
         this.canceledSeen = true;
     }
     move(from, to, promotion) {
+        if (this.withdraws.length > 0)
+            throw new Error('Game is already over');
         if (!this.publicKeyB || !this.publicKeyW)
             throw new Error('Game not yet fully funded');
         // @ts-expect-error Chess is available in the deployed module scope
@@ -122,8 +128,14 @@ export class ChessContract extends Contract {
         if (!this.publicKeyW || !this.publicKeyB) {
             throw new Error('Game not yet started');
         }
-        const winnerId = this._owners[0] === this.publicKeyW ? this.tokenIdB : this.tokenIdW;
+        if (this.withdraws.length > 0)
+            throw new Error('Game is already over');
+        const resignerIsWhite = this._owners[0] === this.publicKeyW;
+        const winnerId = resignerIsWhite ? this.tokenIdB : this.tokenIdW;
         this.withdraws = [[this.root, winnerId, 2n * this.wagerAmount]];
+        // The resigning player must not remain an owner, or they can append another
+        // revision. The winner holds the finished game, and every mutating method throws.
+        this._owners = [resignerIsWhite ? this.publicKeyB : this.publicKeyW];
     }
     isGameOver() {
         // @ts-expect-error Chess is available in the deployed module scope
@@ -178,6 +190,9 @@ export class ChessContract extends Contract {
         }
         if (timestamps.length < 2)
             return { timeW: 0n, timeB: 0n };
+        // The walk collected them newest first; the formula above needs t1 (the
+        // root) first, or every difference is negative.
+        timestamps.reverse();
         let timeW = 0n;
         let timeB = 0n;
         // Start from the first move (index 0)
@@ -193,6 +208,32 @@ export class ChessContract extends Contract {
             }
         }
         return { timeW, timeB };
+    }
+}
+/**
+ * The chess revision that first recorded a payout in `withdraws`, or the latest
+ * revision if none has.
+ *
+ * TBC777 counts the claims of every revision in the prev-chain, so a withdraw
+ * against a later revision that repeats `withdraws` sees the payout twice and
+ * fails. This module rejects `move`, `resign`, `cancel`, and `setCanceledSeen`
+ * once `withdraws` is set. Modules deployed before that guard can still append
+ * those revisions, and withdrawing against the first payout revision keeps
+ * that claim valid.
+ */
+export async function getPayoutRev(computer, chessId) {
+    let rev = await computer.latest(chessId);
+    const tip = await computer.sync(rev);
+    if (tip.withdraws.length === 0)
+        return rev;
+    for (;;) {
+        const prevRev = await computer.prev(rev);
+        if (!prevRev)
+            return rev;
+        const prev = await computer.sync(prevRev);
+        if (prev.withdraws.length === 0)
+            return rev;
+        rev = prevRev;
     }
 }
 export class ChessContractHelper {
@@ -321,19 +362,20 @@ export class ChessContractHelper {
         throw new Error(`Timed out waiting for confirmation of ${txId}. Try again after the transaction is mined.`);
     }
     /**
-     * Claim escrow payout for `tokenId` against the latest chess revision.
-     * Waits until that chess tip is confirmed so TBC777's InnerComputer audit
-     * (sync / prev / next on deposits) is deterministic.
+     * Claim escrow payout for `tokenId` against the chess revision that first
+     * recorded the payout (see `getPayoutRev`). Waits until that revision is
+     * confirmed so TBC777's InnerComputer audit (sync / prev / next on deposits)
+     * is deterministic.
      */
     async withdrawTokens(tokenId, chessId) {
         const latestTokenRev = await this.computer.latest(tokenId);
-        const latestChessRev = await this.computer.latest(chessId);
+        const payoutRev = await getPayoutRev(this.computer, chessId);
         if (!this.tokenMod) {
             throw new Error('tokenMod is required for TBC777 withdraw');
         }
-        await this.waitForConfirmed(latestChessRev);
+        await this.waitForConfirmed(payoutRev);
         const { tx } = await this.computer.encode({
-            exp: `token.withdraw('${latestChessRev}')`,
+            exp: `token.withdraw('${payoutRev}')`,
             env: { token: latestTokenRev },
             mod: this.tokenMod,
         });
@@ -366,12 +408,12 @@ export class ChessContractHelper {
         if (chess.publicKeyW || !chess.tokenIdW || chess.deposits.length !== 1)
             return false;
         try {
-            const latestChessRev = await this.computer.latest(chess._id);
+            const payoutRev = await getPayoutRev(this.computer, chess._id);
             const latestTokenRev = await this.computer.latest(chess.tokenIdW);
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const token = (await this.computer.sync(latestTokenRev));
             const withdrawn = token.withdrawn ?? [];
-            return withdrawn.includes(latestChessRev);
+            return withdrawn.includes(payoutRev);
         }
         catch {
             return false;
@@ -385,6 +427,17 @@ export class ChessContractHelper {
             chess.deposits.length === 1 &&
             chess.withdraws.length === 0 &&
             chess.finalWithdraws.length === 0);
+    }
+    /**
+     * True when a pending game was canceled but the creator has not necessarily
+     * claimed the refund. The invited opponent co-owns a pending game and can
+     * call `cancel()` directly, so this state does not imply the creator canceled.
+     */
+    hasPendingRefund(chess) {
+        return (!!chess.creatorPublicKey &&
+            !chess.publicKeyW &&
+            chess.deposits.length === 1 &&
+            chess.withdraws.length > 0);
     }
     isCreator(chess) {
         return chess.creatorPublicKey === this.computer.getPublicKey();
@@ -420,10 +473,13 @@ export class ChessContractHelper {
      *
      * Cancel and withdraw cannot share one transaction: after cancel, the tip must
      * be **confirmed** before TBC777 `withdraw` can walk escrow history. This
-     * method cancels, waits for confirmation, then withdraws.
+     * method cancels, waits for confirmation, then withdraws. If the game is
+     * already canceled (the invited opponent can cancel too), it only withdraws.
      */
     async cancelGameAndWithdraw(chessId) {
-        const chess = await this.cancelGame(chessId);
+        const latest = await this.computer.sync(await this.computer.latest(chessId));
+        const alreadyCanceled = this.isCreator(latest) && this.hasPendingRefund(latest);
+        const chess = alreadyCanceled ? latest : await this.cancelGame(chessId);
         await this.waitForConfirmed(chess._rev);
         await this.withdrawTokens(chess.tokenIdW, chessId);
     }
@@ -448,8 +504,8 @@ export class ChessContractHelper {
     }
     /**
      * Resigns from the current game. Sets the withdraws array so the opponent
-     * (winner) can call withdrawTokens. Can only be called by the current
-     * contract owner (the player whose turn it is).
+     * (winner) can call withdrawTokens, and transfers ownership to that opponent.
+     * Can only be called by the current contract owner (the player whose turn it is).
      */
     async resign(chessId) {
         const latestRev = await this.computer.latest(chessId);

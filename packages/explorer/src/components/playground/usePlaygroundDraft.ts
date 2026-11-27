@@ -34,9 +34,9 @@ export function usePlaygroundDraft(
   exampleSource: string,
   exampleLoaded: boolean,
 ) {
-  const [source, setSource] = useState('')
+  const [source, setSource] = useState(exampleSource)
   const [modSpec, setModSpec] = useState<string>()
-  const [ready, setReady] = useState(false)
+  const [ready, setReady] = useState(() => exampleSource.trim().length > 0)
   const prevExample = useRef<string | null>(null)
 
   useEffect(() => {

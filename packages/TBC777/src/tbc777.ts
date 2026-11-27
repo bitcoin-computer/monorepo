@@ -19,7 +19,7 @@
  * - One token may deposit into multiple escrows over its lifetime
  * - One escrow may accept deposits from multiple distinct tokens
  * - Transfers automatically clear escrow-related state on the recipient
- * - `merge()` is disabled; use atomic escrow-based merge instead
+ * - `merge()` is inherited from TBC20 but refused while a bag has escrow history
  *
  * REMOTE-ROOT TOKEN CREATION (bridged / cross-chain tokens): Remote-root tokens
  * MUST be instantiated with `amount: 0n` and MUST immediately perform a
@@ -27,14 +27,14 @@
  * creates them. This guarantees the initial balance originates from a validated
  * escrow claim.
  *
- * @see ./tbc20.ts
+ * @see @bitcoin-computer/TBC20
  * @see https://docs.bitcoincomputer.io/
  */
 
 // TYPES & INTERFACES
 
-import { Id, Rev, Root, Contract } from '@bitcoin-computer/lib'
-import { TBC20, TBC20ConstructorParams } from './tbc20.js'
+import { Computer, SmartContract, Id, Rev, Root, Contract } from '@bitcoin-computer/lib'
+import { TBC20, TBC20ConstructorParams } from '@bitcoin-computer/TBC20'
 
 export type Constructor<T> = new (...args: any[]) => T
 export type Amount = bigint
@@ -232,6 +232,8 @@ export class EscrowAuditor {
    *   prev-chain (`states`).
    * - Final-withdraw entries are taken only from `states[0]` (the exact
    *   `escrowRev` supplied to `audit()`).
+   * - Claim amounts must be non-negative bigints. A negative claim for a token
+   *   that never withdraws would otherwise offset a larger claim in the totals.
    */
   static collectRevisions(states: Escrow[], lineage: Root) {
     const depositRevs = new Set<Rev>()
@@ -246,15 +248,21 @@ export class EscrowAuditor {
         if (r === lineage) depositRevs.add(rev)
       }
       for (const [r, id, amt] of withdraws) {
-        if (r === lineage) withdrawEntries.add([id, amt] as ClaimAmountEntry)
+        if (r === lineage) withdrawEntries.add([id, this.checkClaimAmount(amt)] as ClaimAmountEntry)
       }
     }
 
     for (const [r, id, amt] of finalState.finalWithdraws) {
-      if (r === lineage) finalEntries.add([id, amt] as ClaimAmountEntry)
+      if (r === lineage) finalEntries.add([id, this.checkClaimAmount(amt)] as ClaimAmountEntry)
     }
 
     return { depositRevs, withdrawEntries, finalEntries }
+  }
+
+  static checkClaimAmount(amount: unknown): Amount {
+    if (typeof amount !== 'bigint' || amount < 0n)
+      throw new Error('Escrow claim amounts must be non-negative bigints')
+    return amount
   }
 
   /**
@@ -353,6 +361,8 @@ export type TBC777Params = TBC20ConstructorParams & {
   withdrawn?: Rev[]
   finalWithdrawn?: Rev[]
   escrow?: Id
+  depositFrom?: Rev
+  depositAmount?: Amount
 }
 
 export class TBC777 extends TBC20 {
@@ -360,11 +370,20 @@ export class TBC777 extends TBC20 {
   withdrawn!: Rev[]
   finalWithdrawn!: Rev[]
   escrow?: Id
+  /**
+   * The revision that the last `deposit()` spent, and the amount it deposited
+   * into `escrow`. The auditor only credits a deposit when the listed revision
+   * is `depositFrom`, and at most `depositAmount`.
+   */
+  depositFrom?: Rev
+  depositAmount?: Amount
 
   private static readonly CLEAN_STATE = {
     withdrawn: [] as Rev[],
     finalWithdrawn: [] as Rev[],
     escrow: undefined as Id | undefined,
+    depositFrom: undefined as Rev | undefined,
+    depositAmount: undefined as Amount | undefined,
   }
 
   /**
@@ -387,7 +406,7 @@ export class TBC777 extends TBC20 {
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { withdrawn, finalWithdrawn, escrow, ...rest } = args
+    const { withdrawn, finalWithdrawn, escrow, depositFrom, depositAmount, ...rest } = args
 
     super({
       ...TBC777.CLEAN_STATE,
@@ -406,29 +425,78 @@ export class TBC777 extends TBC20 {
   }
 
   /**
-   * `merge()` is permanently disabled for TBC777. Use an escrow-based atomic
-   * merge pattern instead: deposit source tokens into an escrow and then claim
-   * the aggregate amount into a single target token.
+   * TBC20 merge plus an escrow-history guard. Bags that have deposited or
+   * claimed cannot be merged (claim history is keyed by `_id`). Clean bags
+   * merge like TBC20. The loop is inlined because `super.merge` is blocked
+   * inside the contract sandbox.
    */
-  merge(): never {
-    throw new Error('merge() is disabled in TBC777.')
+  async merge(tokens: TBC20[] = []): Promise<void> {
+    // One revision may not be counted twice. Two names in a transaction's environment can
+    // refer to the same output; each entry's amount is read before it is burned, so a repeated
+    // token used to add its value once per mention. The library now shares one instance per
+    // revision, which makes the repeat harmless — this refuses it outright so the invariant
+    // does not depend on that, and so a caller sees its mistake.
+    const seen = new Set<string>([this._rev])
+    for (const t of tokens) {
+      if (seen.has(t._rev)) throw new Error('Cannot merge the same token twice')
+      seen.add(t._rev)
+    }
+
+    const all = [this, ...tokens] as TBC777[]
+    if (
+      all.some(
+        (t) =>
+          t.escrow ||
+          (t.withdrawn && t.withdrawn.length > 0) ||
+          (t.finalWithdrawn && t.finalWithdrawn.length > 0),
+      )
+    )
+      throw new Error('Cannot merge tokens with escrow history')
+    for (const t of tokens) {
+      if (!(await this.isFungibleWith(t)))
+        throw new Error('Cannot merge tokens from different lineages')
+    }
+    let total = 0n
+    tokens.forEach((t) => {
+      total += t.amount
+      t.burn()
+    })
+    this.amount += total
   }
 
   /**
    * Factory used by `transfer()`. Creates a clean token instance for the
    * recipient.
    *
-   * All escrow-related mutable state (`withdrawn`, `finalWithdrawn`, `escrow`)
-   * is deliberately omitted so the recipient does not inherit any claim
-   * history. Escrow claims are always bound to a concrete token `_id`, making
+   * All escrow-related mutable state (`withdrawn`, `finalWithdrawn`, `escrow`,
+   * `depositFrom`, `depositAmount`) is deliberately omitted so the recipient
+   * does not inherit any claim or deposit history. Escrow claims are always bound to a concrete token `_id`, making
    * this safe.
    */
 
   protected _createTransferToken(to: string, amount: bigint): this {
+    // Debit before creating: see TBC20._createTransferToken. This method is reachable directly
+    // from a transaction, so the balance check cannot live only in `transfer`.
+    if (amount <= 0n) throw new Error('Transfer amount must be positive')
+    if (this.amount < amount) throw new Error('Insufficient funds')
+    this.amount -= amount
+
     const ctor = this.constructor as Constructor<this>
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this
+    /* eslint-disable @typescript-eslint/no-unused-vars */
+    const {
+      _id,
+      _root,
+      _rev,
+      _owners,
+      withdrawn,
+      finalWithdrawn,
+      escrow,
+      depositFrom,
+      depositAmount,
+      ...preserved
+    } = this
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 
     return new ctor({ ...preserved, to, amount })
   }
@@ -444,7 +512,15 @@ export class TBC777 extends TBC20 {
     if (deposit <= 0n) throw new Error('Deposit amount must be positive')
     if (this.amount < deposit) throw new Error('Insufficient balance for deposit')
 
-    this.escrow = escrow
+    // `_rev` is the revision this transaction spends, so repeated deposits into
+    // the same escrow within one transaction add up.
+    if (this.escrow === escrow && this.depositFrom === this._rev) {
+      this.depositAmount = (this.depositAmount ?? 0n) + deposit
+    } else {
+      this.escrow = escrow
+      this.depositFrom = this._rev as Rev
+      this.depositAmount = deposit
+    }
     this.amount -= deposit
   }
 
@@ -607,14 +683,28 @@ export class TBC777 extends TBC20 {
    */
   static async computeDepositAmount(depositData: any, escrow: Id, lineage: Root): Promise<bigint> {
     const root = depositData.remoteRoot || depositData._root
-    if (root !== lineage) return 0n
+    // Commodity.root is the module specifier, stored as `mod`. The `root`
+    // getter does not survive a sync snapshot, so compare that field too.
+    // This is not proof of class. `isValidDeposit` must already have accepted
+    // the revision. Tokens that do not store `mod` still match on `_root` /
+    // `remoteRoot` only.
+    const sameModule =
+      typeof depositData.mod === 'string' && depositData.mod !== '' && depositData.mod === lineage
+    if (root !== lineage && !sameModule) return 0n
 
     const nextRev = await computer.next(depositData._rev)
     if (!nextRev) return 0n
     const nextToken = (await computer.sync(nextRev)) as unknown as TBC777
     if (String(nextToken.escrow) !== String(escrow)) return 0n
 
-    return depositData.amount - nextToken.amount
+    // Credit only a deposit made in this very transition, and no more than it
+    // deposited: the balance can also drop through a transfer or burn in the
+    // same or an earlier transaction, which must not count.
+    if (nextToken.depositFrom !== depositData._rev) return 0n
+    const delta = depositData.amount - nextToken.amount
+    const deposited = nextToken.depositAmount ?? 0n
+    if (delta <= 0n) return 0n
+    return delta < deposited ? delta : deposited
   }
 
   /**
@@ -673,5 +763,55 @@ export class TBC777 extends TBC20 {
       `[\\s\\S]*\\}\\s*\\)\\s*$`
 
     return new RegExp(pattern)
+  }
+}
+
+/** Strip comments so a deployed module stays small. */
+export function stripContractComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\/\/.*$/gm, '')
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0)
+    .join('\n')
+}
+
+/** `export ${Class}` for each constructor, comments stripped. */
+export function exportClasses(...ctors: { toString(): string }[]): string {
+  return ctors.map((c) => `export ${stripContractComments(c.toString())}`).join('\n')
+}
+
+export class TBC777Helper {
+  computer: Computer
+  mod: string
+
+  constructor(computer: Computer, mod?: string) {
+    this.computer = computer
+    this.mod = mod ?? ''
+  }
+
+  static moduleSource(): string {
+    return exportClasses(TBC20, EscrowAuditor, TBC777)
+  }
+
+  async deploy(): Promise<string> {
+    this.mod = await this.computer.deploy(TBC777Helper.moduleSource())
+    return this.mod
+  }
+
+  async mint(
+    publicKey: string,
+    amount: bigint,
+    name: string,
+    symbol: string,
+  ): Promise<SmartContract<typeof TBC777>> {
+    // `computer.new(TBC777, …)` stringifies the class into the tx. TBC777 is
+    // too large for that (sigops). Create from the already-deployed module.
+    const exp = `new TBC777({ to: '${publicKey}', amount: ${amount}n, name: '${name}', symbol: '${symbol}' })`
+    const { tx, effect } = await this.computer.encode({ exp, env: {}, mod: this.mod })
+    await this.computer.broadcast(tx)
+    await this.computer.waitForIndexed(tx.getId())
+    return effect.res as SmartContract<typeof TBC777>
   }
 }

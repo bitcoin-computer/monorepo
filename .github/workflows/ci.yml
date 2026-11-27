@@ -1,0 +1,57 @@
+# Checks that need no Bitcoin Computer node: obfuscation, lint, types, the
+# nakamotojs unit tests and the offline app tests. Contract tests need a
+# regtest node and still run locally.
+name: Checks
+
+on:
+  push:
+    branches: [main, staging]
+  pull_request:
+    branches: [main, staging]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check obfuscation of lib and node builds
+        run: npm run check:obfuscation
+
+      - name: Lint
+        run: npx turbo run lint --continue=always
+
+      # Some lint scripts run eslint --fix. Fail if lint changed or added files.
+      - name: Lint made no changes
+        run: |
+          git status --porcelain
+          test -z "$(git status --porcelain)"
+
+      - name: Type check
+        run: npx turbo run types --continue=always
+
+      - name: Test nakamotojs
+        run: npm test -w @bitcoin-computer/nakamotojs
+
+      - name: Test apps
+        run: |
+          for app in chat explorer wallet; do
+            (cd "packages/$app" && npx vitest run)
+          done

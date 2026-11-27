@@ -40,8 +40,8 @@ To start your node at `http://localhost:1031` run the commands below. The node i
 cd packages/node
 
 # Copy the .env file and litecoin.conf file from the examples
-cp chain-setup/ltc/regtest/.env.example .env
-cp chain-setup/ltc/regtest/litecoin.conf.example litecoin.conf
+cp chain-setup/LTC/regtest/.env.example .env
+cp chain-setup/LTC/regtest/litecoin.conf.example litecoin.conf
 
 # Run the node on litecoin regtest
 npm run up
@@ -50,8 +50,55 @@ npm run up
 </font>
 
 !!!
-The node will create the docker volumes in the `packages/node/chain-setup/**` directory of the selected chain and network. This folder contains the blockchain data and the database. The postgres database is used to efficiently store the complete blockchain data, for fast access and indexing.
+Blockchain data is stored in `packages/node/chain-setup/<chain>/<network>`. Postgres data lives in a Docker volume named `bcn-db-<chain>-<network>` and stores the indexed chain for fast access. An older `db-data` directory in that folder is no longer used. After upgrading, the node indexes the chain once into the new volume, and that directory can be deleted.
 !!!
+
+`npm run up` mounts one daemon conf: the file in this directory named by `BITCOIN_CONF_FILE`. For the commands above that file is `litecoin.conf`, and `BITCOIN_RPC_PASSWORD` in `.env` matches its `rpcauth` line. When you generate a new `rpcauth`, put that password in `.env`. Leave `BITCOIN_CONF_HOST_FILE` unset. With it unset, Compose keeps mounting `./${BITCOIN_CONF_FILE}`.
+
+### Several regtest chains
+
+`npm run up:regtest` starts one regtest stack per chain, so a contract can read another chain. The default chains are LTC and BTC. The chain named by `BCN_CHAIN` in `.env` starts first when it is in the list, and it keeps the example host ports, including node port 1031, when those ports are free. Each other chain takes the next free host port. A chain with a line in `.regtest/hosts` publishes those host ports again, including when this command starts it again. The process inside the container still listens on the example port. With the quickstart `.env` and no stacks recorded yet, LTC is `http://127.0.0.1:1031` and BTC is `http://127.0.0.1:1032`.
+
+<font size=1>
+
+```sh
+cd packages/node
+
+# LTC and BTC
+npm run up:regtest
+
+# A different list. BCN_REGTEST_CHAINS='LTC DOGE' selects chains the same way.
+npm run up:regtest -- DOGE PEPE
+
+# Stop every stack up:regtest started, including an earlier list.
+npm run down:regtest
+
+# Stop one of those stacks.
+npm run down:regtest -- DOGE
+```
+
+</font>
+
+For each chain the script copies `chain-setup/<CHAIN>/regtest/.env.example` and `chain-setup/<CHAIN>/regtest/<daemon>.conf.example`. The conf copy is `.regtest/<chain>.conf` under `packages/node` (`.regtest/ltc.conf`, `.regtest/btc.conf`), and Compose mounts that file by setting `BITCOIN_CONF_HOST_FILE`. The example `BITCOIN_RPC_PASSWORD` matches the `rpcauth` line in that example conf. The package-root conf stays where the quickstart put it, and `npm run up` keeps mounting that file. The next `up:regtest` copies the examples again, so an edit under `.regtest/` is replaced.
+
+`npm run up` publishes the same host ports as the first of these stacks, including 1031. Run one of them at a time. `npm run down` stops the `npm run up` stack. `npm run down:regtest` with no chain names stops every stack `up:regtest` has started and not yet stopped, including a list from an earlier run. That list is `.regtest/stacks`, and the host ports those stacks published are `.regtest/hosts`. Pass chain names to stop only those. A later `up:regtest` does not stop the previous stacks, and it does not reuse the host ports recorded for them, so both sets can stay up. Starting one of those chains again publishes the same recorded host ports. Those ports stay taken for the whole command, so a chain ordered earlier cannot bind them while that stack is still up. `down:regtest` stops them. When nothing has been recorded, a bare `down:regtest` uses `BCN_REGTEST_CHAINS` if it is set, and otherwise LTC and BTC.
+
+Pass the published node URLs as `remoteChains` on the computer that evaluates the contract. See [Cross-chain reads](../Lib/Contract/cross-chain.md).
+
+### Adding a chain
+
+Network params, fees, and parse/index hooks live in [NakamotoJS](../NakamotoJs/index.md). After that config exists, add a node example under `chain-setup/<CHAIN>/<network>/` (`.env.example`, daemon conf, Docker image, data dir, ports).
+
+After building NakamotoJS with your changes, copy the environment file and the chain `.conf` file to the Bitcoin Computer Node base folder and try the setup locally:
+
+```sh
+cd packages/node
+cp chain-setup/<CHAIN>/<network>/.env.example .env
+cp chain-setup/<CHAIN>/<network>/<daemon>.conf.example <daemon>.conf
+npm run up
+```
+
+To fully add a supported chain, open a PR with your changes. The Bitcoin Computer team will review the code and, if approved, the chain will be fully supported in the ecosystem.
 
 ### Running a production node
 
@@ -63,11 +110,41 @@ To run the node in production, you need to configure the `.env` file with approp
 # Move to node folder
 cd packages/node
 # Copy the .env file from the examples
-cp chain-setup/ltc/mainnet/.env.example .env
-cp chain-setup/ltc/mainnet/litecoin.conf.example litecoin.conf
+cp chain-setup/LTC/mainnet/.env.example .env
+cp chain-setup/LTC/mainnet/litecoin.conf.example litecoin.conf
 ```
 
 </font>
+
+The mainnet templates leave the secrets empty, and the node won't start until you set them:
+
+<font size=1>
+
+```sh
+# Create RPC credentials. Put the printed rpcauth= line in litecoin.conf
+# and the printed password in BITCOIN_RPC_PASSWORD in .env
+python3 scripts/rpc-auth.py bcn-admin
+# Create a Postgres password for POSTGRES_PASSWORD in .env
+openssl rand -base64 32
+```
+
+</font>
+
+If you copied an older template, replace its `rpcauth`, `BITCOIN_RPC_PASSWORD` and `POSTGRES_PASSWORD`: those
+values were published in this repository. `POSTGRES_PASSWORD` only applies when the database is first created, so
+changing `.env` alone isn't enough for an existing database. Change the password inside Postgres first
+(`docker compose exec db psql -U bcn -c "ALTER USER bcn WITH PASSWORD '...'"`), then put the same value in `.env`
+and restart the node.
+
+Only the Bitcoin Computer Node port (`BCN_PORT`) is meant to be public. `docker-compose.yml` publishes the Postgres,
+RPC and ZMQ ports on `127.0.0.1` only. To publish them on another address, set `BCN_PRIVATE_BIND` in the shell or in
+`.env`, and restrict access with Docker-aware firewall rules (for example in the `DOCKER-USER` chain): traffic to
+Docker's published ports doesn't pass through ordinary `ufw` input rules.
+
+The node's `/rpc` endpoint doesn't require authentication, so the mainnet templates set `BCN_ALLOWED_RPC_METHODS` to
+the chain reads and `sendrawtransaction` the library needs. Don't allow wallet methods such as `sendtoaddress` on a
+public node: anyone who can reach it could spend from the node's wallet. The regtest and testnet templates allow
+`^send` and `^gen` for the faucet and mining, so don't expose a node that uses them unless that's what you intend.
 
 After configuring the `.env` file, you can start the node with the following command:
 <font size=1>
@@ -86,7 +163,7 @@ To speed up the syncing process, syncing is carried out without db indexes. Afte
 
 ```sh
 # In the node folder run the following command
-npm run create-indexes
+npm run create:indexes
 ```
 
 </font>
@@ -100,7 +177,7 @@ Among other tables, the node maintains:
 - **`Output` / `Input`** — the spend graph for payments and smart-object revisions
 - **`Module`** — deployed module sources (`ept`), storage type (`multisig` or `taproot`), and optional confirmation height/hash (see [modules](./modules.md) and [module](./module.md))
 
-By default the database uses the following credentials:
+The regtest templates use the following credentials (the mainnet templates leave the password empty, see above):
 
 ```shell
 POSTGRES_USER='bcn'
@@ -197,6 +274,8 @@ The architecture is designed for robustness, scalability, and real-time responsi
 
 You can configure several options by editing the `.env` file. See the [example](https://github.com/bitcoin-computer/monorepo/blob/main/packages/node/chain-setup/LTC/regtest/.env.example) for details.
 
+[`get-txos`](./get-txos.md) and [`modules`](./modules.md) return every match when `limit` is omitted. Set `BCN_MAX_QUERY_LIMIT` to require a `limit` no larger than that value. `Computer.getTXOs` (and `getUTXOs`, `getOTXOs`, `getOUTXOs`) and `getModules`, including in-contract `getTXOs`, make one request for that window or, when `limit` is omitted, the whole set. The outer call fails and does not return a partial list. The same failure invalidates an in-contract transition. See [Query limit](./operations.md#query-limit).
+
 <font size=1>
 
 ```bash
@@ -279,6 +358,11 @@ BCN_RATE_LIMIT_WINDOW='900000'
 BCN_RATE_LIMIT_MAX='300'
 BCN_RATE_LIMIT_STANDARD_HEADERS='true'
 BCN_RATE_LIMIT_LEGACY_HEADERS='false'
+
+# Optional cap for get-txos and modules. Unset or blank: an omitted limit is every
+# match, and any explicit limit is accepted. Set to a non-negative integer: those
+# routes must send limit, and limit must be no larger than this value.
+# BCN_MAX_QUERY_LIMIT=
 
 # Comma separated list of banned countries, encoded as ISO-3166 alpha2 country.
 # codes (see https://www.geonames.org/countries/)

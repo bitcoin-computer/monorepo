@@ -17,6 +17,7 @@ import {
   VITE_SALE_MOD_SPEC,
 } from '../constants/modSpecs'
 import { Loader } from '../utils'
+import { parseListPrice } from '../utils/price'
 
 const modalId = 'smart-object-bought-modal'
 
@@ -67,8 +68,13 @@ const List = ({ computer, nft }: { computer: Computer; nft: NFT }) => {
     e.preventDefault()
     setAmountError(null)
 
-    if (!amount) {
-      setAmountError('Provide a valid amount')
+    // Validate before broadcasting anything, so an invalid price can't leave the
+    // NFT listed without a sale.
+    let satoshis: bigint
+    try {
+      satoshis = parseListPrice(amount)
+    } catch (err) {
+      setAmountError(err instanceof Error ? err.message : 'Provide a valid amount')
       return
     }
 
@@ -83,12 +89,7 @@ const List = ({ computer, nft }: { computer: Computer; nft: NFT }) => {
       await nft.list(offerTxId)
 
       const saleHelper = new SaleHelper(computer, VITE_SALE_MOD_SPEC)
-      const parsedSatoshis = Number(amount) * 1e8
-      if (!parsedSatoshis) {
-        setAmountError('Please provide a valid amount.')
-        return
-      }
-      const mock = new PaymentMock(BigInt(parsedSatoshis))
+      const mock = new PaymentMock(satoshis)
       const { tx: saleTx } = await saleHelper.createSaleTx(nft, mock)
       if (!saleTx) {
         toast.error('Failed to list NFT for sale.')
@@ -435,4 +436,4 @@ function NftView() {
   )
 }
 
-export { NftView }
+export { NftView, List }

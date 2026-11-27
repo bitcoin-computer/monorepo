@@ -25,8 +25,8 @@ function save(s: ChecklistState) {
   writeJson(STORAGE_KEY, s)
 }
 
-export function useChecklist() {
-  const [state, setState] = useState<ChecklistState>(() => load())
+export function useChecklist(seed?: Partial<ChecklistState>) {
+  const [state, setState] = useState<ChecklistState>(() => ({ ...load(), ...seed }))
 
   useEffect(() => {
     save(state)

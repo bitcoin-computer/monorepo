@@ -24,7 +24,7 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true,
       include: ['src/**/*.test.tsx'],
-      environment: 'jsdom',
+      environment: './src/testEnvironment.ts',
       setupFiles: ['./src/setupTests.ts'],
       alias: {
         '@bitcoin-computer/lib': getAliasPath(),

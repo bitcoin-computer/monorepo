@@ -1,5 +1,5 @@
 import { Contract } from '@bitcoin-computer/lib';
-import { TBC20 } from './tbc20.js';
+import { TBC20 } from '@bitcoin-computer/TBC20';
 export class Escrow extends Contract {
 }
 export class EscrowAuditor {
@@ -26,14 +26,19 @@ export class EscrowAuditor {
             }
             for (const [r, id, amt] of withdraws) {
                 if (r === lineage)
-                    withdrawEntries.add([id, amt]);
+                    withdrawEntries.add([id, this.checkClaimAmount(amt)]);
             }
         }
         for (const [r, id, amt] of finalState.finalWithdraws) {
             if (r === lineage)
-                finalEntries.add([id, amt]);
+                finalEntries.add([id, this.checkClaimAmount(amt)]);
         }
         return { depositRevs, withdrawEntries, finalEntries };
+    }
+    static checkClaimAmount(amount) {
+        if (typeof amount !== 'bigint' || amount < 0n)
+            throw new Error('Escrow claim amounts must be non-negative bigints');
+        return amount;
     }
     static async sumDeposits(depositRevs, escrow, token) {
         const getDepositAmount = async (rev) => {
@@ -96,7 +101,7 @@ export class TBC777 extends TBC20 {
             if (remoteRoot && amount !== 0n)
                 throw new Error('Remote-root tokens must be created with amount 0n');
         }
-        const { withdrawn, finalWithdrawn, escrow, ...rest } = args;
+        const { withdrawn, finalWithdrawn, escrow, depositFrom, depositAmount, ...rest } = args;
         super({
             ...TBC777.CLEAN_STATE,
             ...rest,
@@ -107,12 +112,37 @@ export class TBC777 extends TBC20 {
     get root() {
         return this.remoteRoot || this._root;
     }
-    merge() {
-        throw new Error('merge() is disabled in TBC777.');
+    async merge(tokens = []) {
+        const seen = new Set([this._rev]);
+        for (const t of tokens) {
+            if (seen.has(t._rev))
+                throw new Error('Cannot merge the same token twice');
+            seen.add(t._rev);
+        }
+        const all = [this, ...tokens];
+        if (all.some((t) => t.escrow ||
+            (t.withdrawn && t.withdrawn.length > 0) ||
+            (t.finalWithdrawn && t.finalWithdrawn.length > 0)))
+            throw new Error('Cannot merge tokens with escrow history');
+        for (const t of tokens) {
+            if (!(await this.isFungibleWith(t)))
+                throw new Error('Cannot merge tokens from different lineages');
+        }
+        let total = 0n;
+        tokens.forEach((t) => {
+            total += t.amount;
+            t.burn();
+        });
+        this.amount += total;
     }
     _createTransferToken(to, amount) {
+        if (amount <= 0n)
+            throw new Error('Transfer amount must be positive');
+        if (this.amount < amount)
+            throw new Error('Insufficient funds');
+        this.amount -= amount;
         const ctor = this.constructor;
-        const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, ...preserved } = this;
+        const { _id, _root, _rev, _owners, withdrawn, finalWithdrawn, escrow, depositFrom, depositAmount, ...preserved } = this;
         return new ctor({ ...preserved, to, amount });
     }
     deposit(escrow, deposit) {
@@ -120,7 +150,14 @@ export class TBC777 extends TBC20 {
             throw new Error('Deposit amount must be positive');
         if (this.amount < deposit)
             throw new Error('Insufficient balance for deposit');
-        this.escrow = escrow;
+        if (this.escrow === escrow && this.depositFrom === this._rev) {
+            this.depositAmount = (this.depositAmount ?? 0n) + deposit;
+        }
+        else {
+            this.escrow = escrow;
+            this.depositFrom = this._rev;
+            this.depositAmount = deposit;
+        }
         this.amount -= deposit;
     }
     async getBalance(escrowRev) {
@@ -196,7 +233,8 @@ export class TBC777 extends TBC20 {
     }
     static async computeDepositAmount(depositData, escrow, lineage) {
         const root = depositData.remoteRoot || depositData._root;
-        if (root !== lineage)
+        const sameModule = typeof depositData.mod === 'string' && depositData.mod !== '' && depositData.mod === lineage;
+        if (root !== lineage && !sameModule)
             return 0n;
         const nextRev = await computer.next(depositData._rev);
         if (!nextRev)
@@ -204,7 +242,13 @@ export class TBC777 extends TBC20 {
         const nextToken = (await computer.sync(nextRev));
         if (String(nextToken.escrow) !== String(escrow))
             return 0n;
-        return depositData.amount - nextToken.amount;
+        if (nextToken.depositFrom !== depositData._rev)
+            return 0n;
+        const delta = depositData.amount - nextToken.amount;
+        const deposited = nextToken.depositAmount ?? 0n;
+        if (delta <= 0n)
+            return 0n;
+        return delta < deposited ? delta : deposited;
     }
     static async isValidMint(token) {
         if (!token.remoteRoot)
@@ -241,4 +285,38 @@ TBC777.CLEAN_STATE = {
     withdrawn: [],
     finalWithdrawn: [],
     escrow: undefined,
+    depositFrom: undefined,
+    depositAmount: undefined,
 };
+export function stripContractComments(source) {
+    return source
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/\/\/.*$/gm, '')
+        .split('\n')
+        .map((line) => line.trim())
+        .filter((line) => line.length > 0)
+        .join('\n');
+}
+export function exportClasses(...ctors) {
+    return ctors.map((c) => `export ${stripContractComments(c.toString())}`).join('\n');
+}
+export class TBC777Helper {
+    constructor(computer, mod) {
+        this.computer = computer;
+        this.mod = mod ?? '';
+    }
+    static moduleSource() {
+        return exportClasses(TBC20, EscrowAuditor, TBC777);
+    }
+    async deploy() {
+        this.mod = await this.computer.deploy(TBC777Helper.moduleSource());
+        return this.mod;
+    }
+    async mint(publicKey, amount, name, symbol) {
+        const exp = `new TBC777({ to: '${publicKey}', amount: ${amount}n, name: '${name}', symbol: '${symbol}' })`;
+        const { tx, effect } = await this.computer.encode({ exp, env: {}, mod: this.mod });
+        await this.computer.broadcast(tx);
+        await this.computer.waitForIndexed(tx.getId());
+        return effect.res;
+    }
+}

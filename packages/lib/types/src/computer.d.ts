@@ -48,6 +48,10 @@ declare class Computer {
     mod?: string,
   ): Promise<SmartContract<T>>
   private _getTXOsFamily
+  private _verifiedPrevious
+  private _previousWindow
+  private _rowReplays
+  private requireReplay
   getTXOs(
     q: TXOQuery & {
       verbosity?: 0
@@ -169,6 +173,8 @@ declare class Computer {
   txIdToBlockHeight(txId: string): Promise<number>
   txIdToBlockHash(txId: string): Promise<string | undefined>
   getBlockHash(height: number): Promise<string>
+  getIndexedTip(): Promise<number>
+  getIndexedBlockHash(height: number): Promise<string>
   getBlockHeight(hash: string): Promise<number>
   getRawTransaction(txId: string): Promise<string>
   getRawBlock(blockHash: string): Promise<string>
@@ -192,6 +198,7 @@ declare class Computer {
   next(rev: string): Promise<string | undefined>
   spendingInput(rev: string): Promise<string | undefined>
   latest(rev: string): Promise<string>
+  private _replayIfConfirmed
   last(rev: string): Promise<string | undefined>
   subscribe(
     id: string,

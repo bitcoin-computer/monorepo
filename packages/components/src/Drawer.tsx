@@ -1,12 +1,21 @@
 import { useState, useEffect, useRef, useCallback, useId } from 'react'
 
+function removeFlowbiteDrawerBackdrops() {
+  document.querySelectorAll('[drawer-backdrop]').forEach((node) => node.remove())
+}
+
 function setDrawerOpen(el: HTMLElement, open: boolean) {
+  // Flowbite's Drawer.show() inserts its own backdrop and transform-none. This
+  // component draws the only scrim, so drop that overlay on open and on close.
+  removeFlowbiteDrawerBackdrops()
+  el.classList.remove('transform-none')
   if (open) {
     el.classList.remove('translate-x-full')
     el.setAttribute('aria-hidden', 'false')
   } else {
     el.classList.add('translate-x-full')
     el.setAttribute('aria-hidden', 'true')
+    document.body.classList.remove('overflow-hidden')
   }
   el.dispatchEvent(new CustomEvent('bc-drawer-change', { detail: { open }, bubbles: true }))
 }
@@ -16,8 +25,11 @@ const FOCUSABLE =
 
 export function ShowDrawer({ text, id }: { text: string; id: string }) {
   const open = (e: React.MouseEvent) => {
+    // Capture runs before a Flowbite bubble listener, so its Drawer.show() never
+    // inserts a second backdrop. data-drawer-show is omitted for the same reason.
     e.preventDefault()
     e.stopPropagation()
+    e.nativeEvent.stopImmediatePropagation()
     const el = document.getElementById(id)
     if (el) setDrawerOpen(el, true)
   }
@@ -26,10 +38,10 @@ export function ShowDrawer({ text, id }: { text: string; id: string }) {
     <button
       type="button"
       data-drawer-target={id}
-      data-drawer-show={id}
       data-drawer-placement="right"
+      data-drawer-backdrop="false"
       aria-controls={id}
-      onClick={open}
+      onClickCapture={open}
       className="bg-transparent border-0 p-0 m-0 font-inherit text-inherit cursor-pointer"
     >
       {text}

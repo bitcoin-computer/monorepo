@@ -96,10 +96,16 @@ export const getValueForType = (type: string, stringValue: string) => {
 export const capitalizeFirstLetter = (string: string) =>
   string.charAt(0).toUpperCase() + string.slice(1)
 
-export const isValidHexadecimalPrivateKey = (privateKey: string): boolean => {
-  if (!privateKey) return false
-  const trimmedPrivateKey = privateKey.trim()
-  return trimmedPrivateKey.length === 64 || trimmedPrivateKey.length === 66
+/**
+ * Format check for unambiguous public keys: compressed (66 hex, prefix 02/03) or
+ * uncompressed (130 hex, prefix 04). It does not check that the point is on the
+ * curve. A bare 64-hex value is treated as a transaction id (x-only keys collide
+ * with txids), the same rule as the explorer's search.
+ */
+export const isValidHexadecimalPublicKey = (publicKey: string): boolean => {
+  if (!publicKey) return false
+  const trimmed = publicKey.trim()
+  return /^(02|03)[0-9a-fA-F]{64}$/.test(trimmed) || /^04[0-9a-fA-F]{128}$/.test(trimmed)
 }
 
 export interface ErrorResponse {

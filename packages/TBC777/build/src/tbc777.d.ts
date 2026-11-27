@@ -1,5 +1,5 @@
-import { Id, Rev, Root, Contract } from '@bitcoin-computer/lib';
-import { TBC20, TBC20ConstructorParams } from './tbc20.js';
+import { Computer, SmartContract, Id, Rev, Root, Contract } from '@bitcoin-computer/lib';
+import { TBC20, TBC20ConstructorParams } from '@bitcoin-computer/TBC20';
 export type Constructor<T> = new (...args: any[]) => T;
 export type Amount = bigint;
 export type DepositEntry = [Root, Rev];
@@ -26,6 +26,7 @@ export declare class EscrowAuditor {
         withdrawEntries: Set<ClaimAmountEntry>;
         finalEntries: Set<ClaimAmountEntry>;
     };
+    static checkClaimAmount(amount: unknown): Amount;
     static sumDeposits(depositRevs: Set<Rev>, escrow: Id, token: TBC777): Promise<bigint>;
     static sumClaims(entries: Set<ClaimAmountEntry>): bigint;
     static getAudit(states: Escrow[], token: TBC777): Promise<AuditResult>;
@@ -36,16 +37,20 @@ export type TBC777Params = TBC20ConstructorParams & {
     withdrawn?: Rev[];
     finalWithdrawn?: Rev[];
     escrow?: Id;
+    depositFrom?: Rev;
+    depositAmount?: Amount;
 };
 export declare class TBC777 extends TBC20 {
     remoteRoot?: string;
     withdrawn: Rev[];
     finalWithdrawn: Rev[];
     escrow?: Id;
+    depositFrom?: Rev;
+    depositAmount?: Amount;
     private static readonly CLEAN_STATE;
     constructor(args: TBC777Params);
     get root(): string;
-    merge(): never;
+    merge(tokens?: TBC20[]): Promise<void>;
     protected _createTransferToken(to: string, amount: bigint): this;
     deposit(escrow: Id, deposit: Amount): void;
     getBalance(escrowRev: Rev): Promise<bigint>;
@@ -61,4 +66,16 @@ export declare class TBC777 extends TBC20 {
     static computeDepositAmount(depositData: any, escrow: Id, lineage: Root): Promise<bigint>;
     static isValidMint(token: TBC777): Promise<boolean>;
     static makeRegex(exp: string): RegExp;
+}
+export declare function stripContractComments(source: string): string;
+export declare function exportClasses(...ctors: {
+    toString(): string;
+}[]): string;
+export declare class TBC777Helper {
+    computer: Computer;
+    mod: string;
+    constructor(computer: Computer, mod?: string);
+    static moduleSource(): string;
+    deploy(): Promise<string>;
+    mint(publicKey: string, amount: bigint, name: string, symbol: string): Promise<SmartContract<typeof TBC777>>;
 }

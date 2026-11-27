@@ -5,10 +5,10 @@ _Returns the chain._
 ## Type
 
 ```ts
-;() => 'LTC' | 'BTC' | 'PEPE' | 'BCH' | 'DOGE'
+;() => 'LTC' | 'BTC' | 'DOGE' | 'PEPE' | 'WOJAK'
 ```
 
-\* `BCH` and `DOGE` support coming soon
+Supported product chains are listed in NakamotoJS `BUILTIN_CHAINS`. To add another UTXO chain, see [NakamotoJS — Adding a UTXO chain](../../NakamotoJs/index.md).
 
 ### Return Value
 

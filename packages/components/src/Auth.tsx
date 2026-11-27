@@ -1,15 +1,24 @@
 import { Dispatch, useEffect, useRef, useState } from 'react'
 import { Computer } from '@bitcoin-computer/lib'
+import { getBip44Path, getCoinType } from '@bitcoin-computer/nakamotojs'
 import { initFlowbite } from 'flowbite'
 import { HiRefresh } from 'react-icons/hi'
 import { Modal } from './Modal'
 import type { Chain, Network, ModuleStorageType } from './common/types'
-import { getEnv } from './common/utils'
+import {
+  asNonEmpty,
+  compactUndefined,
+  getEnv,
+  validChain,
+  validModuleStorageType,
+  validNetwork,
+  validPath,
+  validUrl,
+} from './common/utils'
 
 export type TBCChain = 'LTC' | 'BTC' | 'PEPE' | 'DOGE'
 export type TBCNetwork = 'testnet' | 'mainnet' | 'regtest'
 export type AddressType = 'p2pkh' | 'p2wpkh' | 'p2tr'
-const pathPattern = /^(m\/)?(\d+'?\/)*\d+'?$/
 
 export type ComputerOptions = Partial<{
   chain: TBCChain
@@ -26,7 +35,7 @@ export type ComputerOptions = Partial<{
 }>
 
 function isLoggedIn(): boolean {
-  return !!localStorage.getItem('BIP_39_KEY')
+  return !!asNonEmpty(localStorage.getItem('BIP_39_KEY'))
 }
 
 function logout() {
@@ -38,52 +47,73 @@ function logout() {
   window.location.href = '/'
 }
 
-function getCoinType(chain: string = 'LTC', network: string = 'regtest'): number {
-  if (['testnet', 'regtest'].includes(network)) return 1
+// Same-tab session signal. A `storage` event does not fire in the tab that wrote localStorage.
+const AUTH_LOGIN_EVENT = 'bc-auth-login'
 
-  if (chain === 'BTC') return 0
-  if (chain === 'LTC') return 2
-  if (chain === 'DOGE') return 3
-  if (chain === 'PEPE') return 3434
-  if (chain === 'BCH') return 145
-  if (chain === 'WOJAK') return 20760
-
-  throw new Error(`Unsupported chain ${chain} or network ${network}`)
+function onLogin(listener: () => void): () => void {
+  const handler = (event: Event) => {
+    event.preventDefault()
+    listener()
+  }
+  window.addEventListener(AUTH_LOGIN_EVENT, handler)
+  return () => window.removeEventListener(AUTH_LOGIN_EVENT, handler)
 }
 
-function getBip44Path({ purpose = 44, coinType = 1, account = 0 } = {}) {
-  return `m/${purpose.toString()}'/${coinType.toString()}'/${account.toString()}'`
+function emitLogin(): boolean {
+  const event = new CustomEvent(AUTH_LOGIN_EVENT, { cancelable: true })
+  window.dispatchEvent(event)
+  return event.defaultPrevented
+}
+
+function hideSignInModal() {
+  if (!document.getElementById('sign-in-modal')) return
+  Modal.hideModal('sign-in-modal')
 }
 
 function getPath({ chain, network }: { chain?: Chain; network?: Network }): string {
-  return getBip44Path({ coinType: getCoinType(chain, network) })
+  return getBip44Path({ coinType: getCoinType(chain ?? 'LTC', network ?? 'regtest') })
+}
+
+function envThenStorage(name: string, validate: (value: unknown) => string | undefined) {
+  return validate(getEnv(name)) || validate(localStorage.getItem(name))
+}
+
+function storageThenEnv(name: string, validate: (value: unknown) => string | undefined) {
+  return validate(localStorage.getItem(name)) || validate(getEnv(name))
+}
+
+function persistUserOrClear(key: string, userValue: string | undefined, envIsValid: boolean) {
+  if (!envIsValid && userValue) localStorage.setItem(key, userValue)
+  else localStorage.removeItem(key)
 }
 
 function loggedOutConfiguration() {
-  return {
-    chain: getEnv('CHAIN') as Chain,
-    network: getEnv('NETWORK') as Network,
-    url: getEnv('URL'),
-    path: getEnv('PATH'),
-  }
+  return compactUndefined({
+    chain: validChain(getEnv('CHAIN')) as Chain | undefined,
+    network: validNetwork(getEnv('NETWORK')) as Network | undefined,
+    url: validUrl(getEnv('URL')),
+    path: validPath(getEnv('PATH')),
+  })
 }
 
 function loggedInConfiguration() {
-  return {
-    mnemonic: localStorage.getItem('BIP_39_KEY'),
-    chain: (localStorage.getItem('CHAIN') || getEnv('CHAIN')) as Chain,
-    network: (localStorage.getItem('NETWORK') || getEnv('NETWORK')) as Network,
-    url: localStorage.getItem('URL') || getEnv('URL'),
-    path: localStorage.getItem('PATH') || getEnv('PATH'),
-    moduleStorageType:
-      (localStorage.getItem('MODULE_STORAGE_TYPE') as ModuleStorageType) ||
-      getEnv('MODULE_STORAGE_TYPE'),
-  }
+  return compactUndefined({
+    mnemonic: asNonEmpty(localStorage.getItem('BIP_39_KEY')),
+    // Node/deploy settings: env wins when valid so a new deploy is not stuck on stale storage.
+    chain: envThenStorage('CHAIN', validChain) as Chain | undefined,
+    network: envThenStorage('NETWORK', validNetwork) as Network | undefined,
+    url: envThenStorage('URL', validUrl),
+    // Path is user-owned: valid login value first, then env, else omit (Computer default path).
+    path: storageThenEnv('PATH', validPath),
+    moduleStorageType: envThenStorage('MODULE_STORAGE_TYPE', validModuleStorageType) as
+      | ModuleStorageType
+      | undefined,
+  })
 }
 
 function getComputer(options: ComputerOptions = {}): Computer {
   const defaultConfiguration = isLoggedIn() ? loggedInConfiguration() : loggedOutConfiguration()
-  return new Computer({ ...defaultConfiguration, ...options })
+  return new Computer(compactUndefined({ ...defaultConfiguration, ...options }) as ComputerOptions)
 }
 
 function MnemonicInput({
@@ -341,16 +371,16 @@ function LoginButton({
       onError('Please select a network.')
       return
     }
-    if (path.length === 0) {
-      onError('Please enter a valid path.')
-      return
-    }
-    if (path.match(pathPattern) === null) {
+    const envPath = validPath(getEnv('PATH'))
+    const userPath = validPath(path)
+    if (!envPath && !userPath) {
       onError("Path format must be in the form m/44'/0'/0'/0/0.")
       return
     }
 
-    if (url === undefined || url?.length === 0) {
+    const envUrl = validUrl(getEnv('URL'))
+    const userUrl = validUrl(urlInputRef.current?.value || url)
+    if (!envUrl && !userUrl) {
       onError('Please enter a valid URL.')
       return
     }
@@ -358,12 +388,15 @@ function LoginButton({
 
     onError(null)
     localStorage.setItem('BIP_39_KEY', mnemonic)
-    localStorage.setItem('CHAIN', chain)
-    localStorage.setItem('NETWORK', network)
-    localStorage.setItem('PATH', path)
-    localStorage.setItem('URL', urlInputRef.current?.value || url)
+    persistUserOrClear('CHAIN', chain, !!validChain(getEnv('CHAIN')))
+    persistUserOrClear('NETWORK', network, !!validNetwork(getEnv('NETWORK')))
+    persistUserOrClear('PATH', userPath, !!envPath)
+    persistUserOrClear('URL', userUrl, !!envUrl)
 
-    window.location.href = '/'
+    hideSignInModal()
+    // Listeners (the explorer) swap in a new Computer without leaving the page.
+    // Apps that capture Auth.getComputer() once still reload, as before.
+    if (!emitLogin()) window.location.href = '/'
   }
 
   return (
@@ -379,13 +412,19 @@ function LoginButton({
 
 function LoginForm() {
   const [mnemonic, setMnemonic] = useState<string>(() => new Computer().getMnemonic())
-  const [chain, setChain] = useState<Chain | undefined>(getEnv('CHAIN') as Chain | undefined)
-  const [network, setNetwork] = useState<Network | undefined>(
-    getEnv('NETWORK') as Network | undefined,
+  const [chain, setChain] = useState<Chain | undefined>(
+    validChain(getEnv('CHAIN')) as Chain | undefined,
   )
-  const [url, setUrl] = useState<string | undefined>(getEnv('URL') || 'http://localhost:1031')
+  const [network, setNetwork] = useState<Network | undefined>(
+    validNetwork(getEnv('NETWORK')) as Network | undefined,
+  )
+  const [url, setUrl] = useState<string | undefined>(
+    validUrl(getEnv('URL')) || 'http://localhost:1031',
+  )
   const urlInputRef = useRef<HTMLInputElement>(null)
-  const [path, setPath] = useState<string>(getEnv('PATH') || getPath({ chain, network }))
+  // Undefined until the user edits the path, so the default follows the chain and network.
+  const [customPath, setCustomPath] = useState<string | undefined>(undefined)
+  const path = validPath(getEnv('PATH')) || (customPath ?? getPath({ chain, network }))
   const [formError, setFormError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -412,10 +451,12 @@ function LoginForm() {
         <form className="space-y-6">
           <div>
             <MnemonicInput mnemonic={mnemonic} setMnemonic={setMnemonic} />
-            {!getEnv('CHAIN') && <ChainInput chain={chain} setChain={setChain} />}
-            {!getEnv('NETWORK') && <NetworkInput network={network} setNetwork={setNetwork} />}
-            {!getEnv('URL') && <UrlInput url={url || ''} setUrl={setUrl} />}
-            {!getEnv('PATH') && <PathInput path={path} setPath={setPath} />}
+            {!validChain(getEnv('CHAIN')) && <ChainInput chain={chain} setChain={setChain} />}
+            {!validNetwork(getEnv('NETWORK')) && (
+              <NetworkInput network={network} setNetwork={setNetwork} />
+            )}
+            {!validUrl(getEnv('URL')) && <UrlInput url={url || ''} setUrl={setUrl} />}
+            {!validPath(getEnv('PATH')) && <PathInput path={path} setPath={setCustomPath} />}
           </div>
           {formError ? (
             <p className="text-sm text-red-600 dark:text-red-400" role="alert">
@@ -446,6 +487,7 @@ function LoginModal() {
 export const Auth = {
   isLoggedIn,
   logout,
+  onLogin,
   getCoinType,
   getBip44Path,
   defaultConfiguration: loggedOutConfiguration,

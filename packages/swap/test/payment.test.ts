@@ -21,7 +21,8 @@ describe('Payment', () => {
   const alice = new Computer({ url, chain, network })
 
   before('Before', async () => {
-    await alice.faucet(4e8)
+    const u = await alice.faucet(4e8)
+    await alice.waitForIndexed(u.txId)
   })
 
   describe('Alice creates payment', () => {
@@ -37,6 +38,7 @@ describe('Payment', () => {
       const { tx: paymentTx } = await paymentHelper.createPaymentTx(BigInt(2e8))
 
       paymentTxId = await alice.broadcast(paymentTx)
+      await alice.waitForIndexed(paymentTxId)
 
       const payment: Payment = await paymentHelper.getPayment(paymentTxId)
       expect(payment._satoshis).eq(BigInt(2e8))

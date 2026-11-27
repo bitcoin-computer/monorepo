@@ -1,3 +1,4 @@
+import { Auth } from '@bitcoin-computer/components'
 import { Computer } from '@bitcoin-computer/lib'
 import { initFlowbite } from 'flowbite'
 import { useEffect, useState } from 'react'
@@ -12,12 +13,6 @@ export const CustomDrawer = ({ id, computer }: { id: string; computer: Computer 
         <pre className="font-normal text-gray-500 dark:text-gray-400 text-xm">{content}</pre>
       </div>
     )
-  }
-
-  const logout = () => {
-    localStorage.removeItem('BIP_39_KEY')
-    localStorage.removeItem('CHAIN')
-    window.location.href = '/'
   }
 
   const mnemonicWell = () => {
@@ -136,7 +131,7 @@ export const CustomDrawer = ({ id, computer }: { id: string; computer: Computer 
 
         <div className="grid grid-cols-2 gap-4">
           <button
-            onClick={logout}
+            onClick={() => Auth.logout()}
             className="rounded-lg border border-gray-200 bg-white px-4 py-2 text-center text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700"
           >
             Log out

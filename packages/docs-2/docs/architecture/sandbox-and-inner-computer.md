@@ -27,6 +27,15 @@ For any InnerComputer method `m` and arguments `args`: if
 then on any extension `b₂ ⊇ b₁` the same call must succeed and return the same
 value.
 
+Every method takes an optional plain object as its second argument
+(`sync(location, { chain })`, `getTXOs(query, { chain })`, and the rest).
+`chain` names the chain. One argument, or an object that omits `chain`, reads
+this computer's chain. A `chain` value reads that configured chain, and the
+successful result is stable under extension of that chain's prefix as well as
+this one. The outer Computer does not take the argument. The host sets the
+node URL in `remoteChains`. The method list and the argument rules are in
+`packages/docs/Lib/Contract/cross-chain.md`.
+
 ## Confirmed locations
 
 Most APIs require the referenced transaction to be **in a block** before the
@@ -40,7 +49,7 @@ call may succeed:
 | `last` | Start and result confirmed; tip must be **spent confirmed** (not live unspent tip) |
 | Block time/height/hash of a tx | Tx confirmed |
 | `getBlockHash(height)` | Height ≤ tip; not future |
-| `getTXOs` (+ aliases) | Stabilizer: `lteBlockHeight` / `blockHeight` / `blockHash` |
+| `getTXOs`, `getOTXOs` | Stabilizer: `lteBlockHeight` / `blockHeight` / `blockHash` |
 
 `latest` is **not** exposed inside contracts.
 
@@ -86,7 +95,8 @@ stricter surface. Full method tables: `packages/docs/Lib/Contract/`.
 - Confirm deploys before `load` in contracts.
 - Confirm object revisions before history walks or escrow audits.
 - For terminal `last` checks, spend the tip and wait for confirmation.
-- Stabilize in-contract TXO queries with a historical height or block hash;
-  empty results with a valid stabilizer are allowed.
+- Stabilize in-contract TXO queries with a historical height or block hash.
+  An empty result is valid only inside the indexed prefix; a stabilizer ahead
+  of the indexed tip invalidates instead of returning an empty set.
 - Escrow/chess apps: cancel or settle, wait for confirmation, then
   `withdraw` / refund.
