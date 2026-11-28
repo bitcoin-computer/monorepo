@@ -33,6 +33,7 @@ import {
   ModuleQuery,
   ModuleRecord,
   Stream,
+  SyncOptions,
 } from './types.js'
 import { Subscription } from './subscription.js'
 declare class Computer {
@@ -94,7 +95,8 @@ declare class Computer {
   ): Promise<TXORecord[]>
   sync(location: TxIdString): Promise<EvaluatedEffect>
   sync<T extends Class = any>(location: RevString): Promise<SmartContract<T>>
-  sync(location: string): Promise<SmartContract<any> | EvaluatedEffect>
+  sync<T extends Class>(rev: RevString, options: SyncOptions<T>): Promise<SmartContract<T>>
+  sync(location: string, options?: SyncOptions): Promise<SmartContract<any> | EvaluatedEffect>
   getAncestors(location: string, verbosity: 1): Promise<Map<string, string>>
   getAncestors(location: string, verbosity?: number): Promise<string[]>
   private wrappedEncode
@@ -115,6 +117,8 @@ declare class Computer {
     effect: EvaluatedEffect
     db: Db
   }>
+  private readonly classExportsByMod
+  private bindsClass
   encodeCall<T extends Class, K extends keyof InstanceType<T>>({
     target,
     property,

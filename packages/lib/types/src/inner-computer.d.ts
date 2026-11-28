@@ -34,6 +34,10 @@ export declare const INNER_TXO_QUERY_KEYS: (keyof InnerTXOQuery)[]
 export type ChainRead = {
   chain?: Chain
 }
+export type SyncRead<T extends Class = Class> = ChainRead & {
+  class?: T
+  exact?: boolean
+}
 export type InnerComputerOptions = {
   chain: Chain
   network: BtcNetwork
@@ -55,7 +59,7 @@ export declare class InnerComputer {
   private _tie
   private _replaySuccessor
   sync<T extends Class = any>(location: string): Promise<JsonData<T>>
-  sync<T extends Class = any>(location: string, options: ChainRead): Promise<JsonData<T>>
+  sync<T extends Class = any>(location: string, options: SyncRead<T>): Promise<JsonData<T>>
   private _rejectEncryptedEnvelope
   private _syncLocation
   decode(txId: string): Promise<TransitionJSON>

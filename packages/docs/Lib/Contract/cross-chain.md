@@ -42,7 +42,7 @@ await computer.getOTXOs(query, { chain: 'BTC' })
 
 One argument is a read of this computer’s chain. That includes `sync('BTC')`, `getBlockHash('BTC')`, and `getTXOs('BTC')`: the string is a location, a height, or a query, not a chain name. `{ chain: 'LTC' }` on a Litecoin computer is that same read. The published type is the uppercase id. Any other case is accepted at runtime and read as that id. Keys in `remoteChains` are already the uppercase id. `{}` is that same read, because `chain` is omitted.
 
-The second argument has to be a plain object. A string, a number, `null`, or an array invalidates. The only key is `chain`. Any other key invalidates, so a later option can be added without a new positional argument. A third argument invalidates. A value that is not a string in `chain` invalidates. An unknown chain, or a chain with no `remoteChains` entry, invalidates.
+The second argument has to be a plain object. A string, a number, `null`, or an array invalidates. The only key is `chain`; `sync` also takes `class` and `exact` (see [`sync`](../Computer/sync.md#instanceof)). With `class`, the class must come from `computer.load(mod, { chain })` on the chain being read: a class loaded from this chain names a module of this chain, so no object on the other chain matches it. Any other key invalidates, so a later option can be added without a new positional argument. A third argument invalidates. A value that is not a string in `chain` invalidates. An unknown chain, or a chain with no `remoteChains` entry, invalidates.
 
 `chain` is not a field of a `getTXOs` or `getOTXOs` query. A query that contains `chain` is an unknown parameter and invalidates.
 
