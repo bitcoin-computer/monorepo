@@ -105,6 +105,11 @@ jobs:
           cp chain-setup/LTC/regtest/.env.example .env
           cp chain-setup/LTC/regtest/litecoin.conf.example litecoin.conf
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          cache: npm
+
       - name: Install dependencies
         run: npm ci
 
